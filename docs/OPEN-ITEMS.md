@@ -340,6 +340,56 @@ the one place a layer is decided by a literal rather than by the scale.
 
 ---
 
+## Scoring the unscored: two items authorised 2026-09-21, both blocked on ground truth
+
+The CEO authorised all three answers to "why can't we score them". The first
+(rate the chartered broadcasters) shipped in rev 79: eight outlets placed,
+3.4% of article volume recovered. These two did not, and the reason is the
+same for both.
+
+### 1. Per-market English lexicons
+
+India (24 outlets), Pakistan, Nigeria, Kenya, Bangladesh and Sri Lanka publish
+in English, and their political discourse is highly placeable: Hindutva /
+secular, communal, reservation, Dalit, anti-national for India; comparable
+vocabularies elsewhere. Adding them would move real articles off 50 for real
+reasons, which is the largest single reduction available in the 26% unscored
+population.
+
+**Blocked on:** all 43 fixtures in `pipeline/validation/fixtures.py` are US or
+Western outlets (AP, Reuters, NYT, Fox, Jacobin, ProPublica, Bellingcat,
+Intercept, Mother Jones, Breitbart, Daily Wire, Newsmax, RT, CGTN, Sputnik,
+NPR). There is **no** Indian, Pakistani, Nigerian or Kenyan fixture. So
+running the suite after a lexicon change proves only that US scoring still
+works. It cannot show that the new terms score an Indian article correctly,
+and it cannot show they do not misfire on Indian NEUTRAL reporting, which is
+the failure mode `political_lean.py` already documents three times over:
+`fossil fuel`, `renewable energy`, `carbon neutral`, `diversity`, `equity`,
+`inclusivity` and `housing crisis` were all REMOVED for firing on neutral
+copy, each costing 20-30 points of false lean.
+
+**First step is a corpus, not code:** real articles from those outlets with
+expected lean ranges, the way the 43 existing fixtures are built. That is
+research (`linguist` and `bias-auditor` exist for it), and until it exists a
+lexicon expansion ships unvalidated keyword changes straight into production
+bias scores.
+
+### 2. A second axis for politics that does not run left/right
+
+The deeper answer, and the one no lexicon reaches. India's main cleavage is
+secular / Hindutva. Kenya's is ethnic-regional. Scoring those on a left/right
+axis is a category error however good the vocabulary, which is why 234 of the
+287 still-unplaced outlets are in countries of exactly that kind.
+
+**Blocked on two things.** It needs the same ground truth as item 1, and it
+changes a **locked decision**: the 6-axis bias model is on the CEO's locked
+list, and this is either a 7th axis or a per-region axis with its own labels,
+ladder, colours and public methodology copy. Worth a written proposal before
+any code, since it touches `/about`, `/sources#methodology`, the Sigil and
+every card.
+
+---
+
 ## Deliberately not done, with reasons
 
 **Ranking signal weights are unchanged.** They must not be tuned against a
