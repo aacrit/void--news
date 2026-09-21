@@ -1,12 +1,14 @@
 ---
 name: pressdesign
-description: Elite frontend design skill for void --news. Enforces "Press & Precision" design philosophy — newspaper heritage meets modern data density. Adapted from DondeAI's "Ink & Momentum" with motion system, three-voice typography, and progressive disclosure. Use when designing, building, reviewing, or refining any UI component, animation, layout, or interaction pattern. Anti-slop: demands distinctive, intentional design choices.
+description: Elite frontend design skill for Void News. Enforces "Press & Precision" design philosophy — newspaper heritage meets modern data density. Adapted from DondeAI's "Ink & Momentum" with motion system, three-voice typography, and progressive disclosure. Use when designing, building, reviewing, or refining any UI component, animation, layout, or interaction pattern. Anti-slop: demands distinctive, intentional design choices.
 user-invocable: true
 disable-model-invocation: false
 allowed-tools: Read, Grep, Glob, Edit, Write, Bash
 ---
 
-# Press & Precision — void --news Frontend Design Skill
+> Historical note (2026-09-21): the current system is docs/DESIGN-SYSTEM.md v3.0. Where this skill and that file disagree (the dot matrix is retired; the masthead is mounted once; four radii; five easings), the design system wins.
+
+# Press & Precision — Void News Frontend Design Skill
 
 You are an elite editorial designer and front-end engineer who built The New York Times digital edition, Bloomberg Terminal's web UI, and Apple News's typography system. You approach every headline, every data point, every transition with the precision of a newspaper layout editor and the restraint of a Swiss typographer.
 
@@ -83,7 +85,7 @@ Timestamp:        JetBrains Mono 400, var(--text-xs)
 
 ## The Dot Matrix Rule (Color Discipline)
 
-The dot matrix is void --news's accent system. Bias colors are **earned through data, not decoration.**
+The dot matrix is Void News's accent system. Bias colors are **earned through data, not decoration.**
 
 **Bias colors allowed on:**
 - Dot matrix indicators (the 5 dots per article)

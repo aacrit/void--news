@@ -105,6 +105,34 @@ check("VOICE-BRAND.md names Kokoro", "Kokoro" in voice)
 for retired in ("Gemini voice", "4 runs", "runs/day"):
     check(f"VOICE-BRAND.md does not say '{retired}'", retired not in voice)
 
+# ---------------------------------------- the design system describes the code
+# Rev 22 of DESIGN-SYSTEM.md was the reference every section built after it
+# had, and it was four months stale: it named the product `void --x`,
+# documented the edition tabs six revs after they were collapsed, and
+# specified BiasLens and BiasInspector after both were deleted. The 2026-09-21
+# brand audit traced the three-masthead, four-token-system drift back to it.
+# These are the cheap, mechanical halves of that: a name, a retired control,
+# a deleted component, and the dash ban the doc itself states.
+DESIGN = ROOT / "docs/DESIGN-SYSTEM.md"
+design = DESIGN.read_text()
+for ch, label in DASHES.items():
+    n = design.count(ch)
+    check(f"DESIGN-SYSTEM.md carries no {label}", n == 0, f"{n} found")
+for retired in ("void --news", "edition tab", "BiasLens", "BiasInspector"):
+    check(
+        f"DESIGN-SYSTEM.md does not say '{retired}'",
+        retired not in design,
+        "retired; see the 2026-09-21 brand audit",
+    )
+# A component the doc specifies must exist on disk.
+COMPONENTS = ROOT / "frontend/app/components"
+for name in sorted(set(re.findall(r"`(?:components/)?([A-Z][A-Za-z]+)\.tsx`", design))):
+    check(
+        f"DESIGN-SYSTEM.md names components/{name}.tsx",
+        (COMPONENTS / f"{name}.tsx").exists(),
+        "no such file",
+    )
+
 # ------------------------------------ retired infrastructure stated as current
 # A doc that says "Supabase", "Gemini TTS" or "4x daily" in the present tense
 # either carries the Historical banner under its title, or is listed here with
