@@ -11,6 +11,7 @@ import {
 } from "../../lib/archive";
 import { SITE_URL, OG_IMAGE, OG_IMAGE_URL } from "../../lib/siteMeta";
 import StandaloneDeepDive from "../../components/StandaloneDeepDive";
+import { hasStoryCard } from "./ogCard";
 
 /* ---------------------------------------------------------------------------
    /story/[id] — the shareable, prerendered standalone Deep Dive.
@@ -123,10 +124,14 @@ export async function generateMetadata(
     160,
   );
   const url = `${SITE_URL}${storyHref(row.id)}`;
-  // Until per-story OG cards ship, every story shares the site brand card. It
-  // MUST be declared here explicitly: a route that sets its own openGraph does
-  // NOT inherit openGraph.images from the root layout, so an omitted image left
-  // twitter:card=summary_large_image pointing at nothing (a broken share card).
+  // The latest edition's stories each have a card of their own
+  // (opengraph-image.tsx). Next uses that file ONLY where the route does not
+  // declare openGraph.images itself, so those stories must NOT set one here.
+  // Every older permalink still shares the site brand card, and that one MUST
+  // be declared explicitly: a route that sets its own openGraph does NOT
+  // inherit openGraph.images from the root layout, so an omitted image would
+  // leave twitter:card=summary_large_image pointing at nothing.
+  const ownCard = await hasStoryCard(row.id);
   return {
     title,
     description,
@@ -137,13 +142,13 @@ export async function generateMetadata(
       url,
       type: "article",
       siteName: "Void News",
-      images: [OG_IMAGE],
+      ...(ownCard ? {} : { images: [OG_IMAGE] }),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [OG_IMAGE_URL],
+      ...(ownCard ? {} : { images: [OG_IMAGE_URL] }),
     },
   };
 }
@@ -168,8 +173,9 @@ export default async function StoryPage(
   const url = `${SITE_URL}${storyHref(row.id)}`;
 
   // schema.org NewsArticle. datePublished from first_published (ISO). Publisher
-  // + author are the Void News organization. og:image intentionally omitted
-  // (per-story cards are a follow-up); crawlers still get headline + summary.
+  // + author are the Void News organization. No `image`: the share card is a
+  // composed brand card, not a photograph OF the event, which is what a
+  // schema.org `image` is read as.
   const jsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",

@@ -25,6 +25,9 @@ export interface HistoryCatalogEntry {
   subtitle: string;
   era: string;
   region: string;
+  /** "539 BCE", "1948". The event's own dateline, as the page sets it. The
+   *  share card places the event in time with it. */
+  dateDisplay: string;
 }
 
 /* The emitted row, relations nested, exactly as export_history.py writes it.
@@ -49,6 +52,7 @@ export function getHistoryCatalog(): HistoryCatalogEntry[] {
       subtitle: String(r.subtitle ?? ""),
       era: String(r.era ?? ""),
       region: String(r.region ?? ""),
+      dateDisplay: String(r.date_display ?? ""),
     }));
   return _catalog;
 }

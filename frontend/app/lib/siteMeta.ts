@@ -19,7 +19,10 @@ export const SITE_URL = "https://news.voidvision.org";
 
 /** Site-wide brand share card. Our own artwork (og-image.png) — no publisher
  *  content, zero copyright exposure. Resolved to an absolute URL by the root
- *  layout's `metadataBase`. Every route emits this until per-story cards ship. */
+ *  layout's `metadataBase`. Rendered from the one card composer by
+ *  `brand/ci/render_og.mjs`; it is never hand-edited. Routes that have a card
+ *  of their own (History, Weekly, the latest edition's stories) omit it so the
+ *  opengraph-image file convention wins; every other route emits this. */
 export const OG_IMAGE_URL = `${BASE_PATH}/og-image.png`;
 export const OG_IMAGE = {
   url: OG_IMAGE_URL,

@@ -10,7 +10,7 @@ This document is the positive definition of the show. The code that enforces it:
 
 | What | Where |
 |---|---|
-| The rundown (prompt, parser, validators R-01..R-13) | `pipeline/briefing/radio_script_generator.py` |
+| The rundown (prompt, parser, validators R-01..R-15) | `pipeline/briefing/radio_script_generator.py` |
 | Spoken-text normalisation (numbers, currency, initialisms, respellings) | `pipeline/briefing/spoken_text.py` |
 | Voices (Kokoro primary, edge-tts fallback) | `pipeline/briefing/tts_engines.py`, `tts_kokoro_worker.py`, `kokoro_assets.py`, `kokoro.lock.json`, `pipeline/requirements-tts.txt` |
 | Assembly, music placement, mastering, chapters | `pipeline/briefing/radio_producer.py` |
@@ -68,10 +68,10 @@ with the findings named, then the legacy audio path; warn = logged):
 | Id | Rule | Level |
 |---|---|---|
 | R-01 | Sign-on and sign-off are Void's exact lines; the sign-on names the day | fail |
-| R-02 | No quotation marks. Reported speech only; a quote is never read aloud | fail |
+| R-02 | No quotation marks. Reported speech only; a quote is never read aloud. Advisory until 2026-09-21, when the served script carried four marks and the finding changed nothing (brand audit F-02). Now a hard fail; if the retry still carries marks they are stripped and the script re-validated, so punctuation alone never costs the show | fail |
 | R-03 | Numbers are words. Code normalises anyway (`spoken_text`), so this warns | warn |
 | R-04 | No a.m./p.m. clock forms, no print datelines | fail |
-| R-05 | No borrowed or AI-podcast phrases: "Up first", "Here's what we're covering", "First the headlines", "And that's the headlines", "these are our main stories", "Stay with us", "And finally", "Welcome", "Thanks", "Absolutely", "Wow", "Over to you" and the show never names or thanks a host | fail |
+| R-05 | No borrowed or AI-podcast phrases: "Up first", "Here's what we're covering", "First the headlines", "And that's the headlines", "these are our main stories", "Stay with us", "And finally", "Welcome", "Thanks", "Absolutely", "Wow", "Over to you"; no significance word ("significant", "notable", "importantly", "interestingly", "crucially", "marks a"), since 2026-09-21, when "a significant escalation" reached the air (brand audit F-13); and the show never names or thanks a host | fail |
 | R-06 | Word budgets at ~165 wpm per segment, five menu lines, six to eight brief items, 850-1150 news words | fail outside +-25 % |
 | R-07 | Attribution before the claim ("The Fed chair says ..."), never trailing | warn |
 | R-08 | Exactly four STORY segments, ranks 1-4 in order; ids are bound from the feed by rank (the model never copies UUIDs: the first real run mis-copied two by one hex digit); the kicker must name a feed rank from 5 up, and never the editorial's story | fail |
@@ -80,6 +80,8 @@ with the findings named, then the legacy audio path; warn = logged):
 | R-11 | Sentences under twenty words; one idea per sentence | warn |
 | R-12 | Lead voice alternates story by story; the second voice adds at most one line per story | fail |
 | R-13 | `## SAY` respellings are well formed and used; they are lowercased before synthesis because the phonemizer reads a run of capitals as initials ("KAR-nee" came out as K, A, arnee on 2026-09-19) | warn |
+| R-14 | Grounded attribution. A news sentence of the shape proper noun + says/argues/states/describes/calls + clause is checked against the story it was cut from: the clause's content words (stop words out, suffixes stripped) must reach 0.6 overlap with the cluster's summary, consensus and divergence, and the speaker must be named there. Where the summary carries the same speaker's claim, a cut that keeps under 0.6 of that claim's content words while adding a word the story never used fails too: that is the substitution the rule exists for. On 2026-09-21 the served script had "Waltz argues the Supreme Court has protected such actions" for a summary that read "the right to publish, but not access to any government facility" (brand audit F-02). Skipped, never guessed, when the feed rows carry no summary | fail |
+| R-15 | No unattributed statement of law. A sentence whose subject is a court, a law, an act, a statute, an amendment or the Constitution, with a present or present-perfect verb of the protects/prohibits/allows/requires/has held family, must carry an attribution or follow one in the same turn. The same served script went on, in a new turn and in Void's own voice, "The Supreme Court has previously protected the government's right to limit access to facilities": an ambassador's argument restated as settled law | fail |
 
 Before synthesis every line passes through `normalize_for_speech`: `## SAY`
 respellings, then numerals to words ("$4 billion" -> "four billion dollars",
@@ -191,7 +193,7 @@ Weekly, History or the site plays in the house voice over its own bed
 (`radio_promo_bed.wav`: the motif at the Sunday tempo over a low D drone,
 with a riser and a landing on the outro's D), while the outro is pulled 12 dB
 down beneath it. It is not a script marker (the
-rundown grammar and R-01..R-13 are untouched) and it never promotes On Air.
+rundown grammar and R-01..R-15 are untouched) and it never promotes On Air.
 The programme's length does not change, so A-04 holds. It is selected by the
 sha256 of `onair:<edition>:<date>:<slot>` into `data/promos/house.yaml`, so a
 re-render carries the same promo, and it appears as a final chapter, kind

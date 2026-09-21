@@ -47,6 +47,10 @@ apart and set them together. Do not rewrite, do not paraphrase, do not add a
 word the column does not contain. A line that is not in the column is rejected
 automatically and the episode does not render.
 
+Every fact MUST appear in the provided articles. Do not supplement with prior knowledge.
+The articles here are this issue's published columns, given below in full. You may
+only cut them: nothing enters the programme that the page does not already carry.
+
 WRITE FOR THE EAR. One idea a sentence. Present tense. Attribution before the
 claim. Numbers as words. No quotation marks: attribute in words instead, because
 a synthesiser reads a quotation mark as nothing and the listener hears an

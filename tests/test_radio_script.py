@@ -111,9 +111,19 @@ def test_planted_defects(raw: str) -> None:
     lopsided = raw.replace("\nB: ", "\nA: ")
     rep = validate_rundown(parse_rundown(lopsided), ctx())
     check("R-10" in ids_of(rep), "one voice reading everything fails R-10")
-    # R-02 quotation marks warn (the normaliser strips them), never fail
+    # R-02 quotation marks are a hard fail since 2026-09-21. They warned, the
+    # engine stripped them anyway, and the served script carried four; a
+    # finding that changes nothing is not a rule (brand audit F-02).
     rep = validate_rundown(parse_rundown(raw.replace("has called the idea a hostile act", 'called it a "hostile act"')), ctx())
-    check(rep.passed and any(f.id == "R-02" for f in rep.findings), "quote marks warn but pass")
+    check("R-02" in ids_of(rep), "quote marks fail R-02")
+    # R-05 the significance family. "This attack marks a significant
+    # escalation" reached the air because the sanitizer that deletes these
+    # words is skipped for audio (brand audit F-13).
+    for word in ("a significant increase", "a notable increase", "importantly, an increase"):
+        rep = validate_rundown(parse_rundown(raw.replace("It is the first increase in three years.", f"It is {word}, the first in three years.")), ctx())
+        check("R-05" in ids_of(rep), f"{word!r} fails R-05")
+    rep = validate_rundown(parse_rundown(raw.replace("It is the first increase in three years.", "It marks a shift, the first in three years.")), ctx())
+    check("R-05" in ids_of(rep), "'marks a' fails R-05")
     # R-08: ids are bound by rank, so a mis-copied uuid in a STORY marker is harmless
     legacy = raw.replace("## STORY 2 | The Fed raises rates", "## STORY 2 | b4a7fae8-a1cf-44fc-8496-6fa90ec4ea34 | The Fed raises rates")
     r_leg = parse_rundown(legacy)
@@ -138,6 +148,73 @@ def test_planted_defects(raw: str) -> None:
         "Carney says closer ties with Europe would stop any single country from controlling Canada's markets or undermining its sovereignty.",
         "Closer ties with Europe would stop any single country from controlling Canada's markets, Carney said.")), ctx())
     check(any(f.id == "R-07" for f in rep.findings), "trailing attribution warns")
+
+
+# The served pair of 2026-09-21 (brand audit F-02), verbatim: the summary the
+# rundown was cut from, and the two lines it became.
+WALTZ_SUMMARY = (
+    "U.N. Ambassador Mike Waltz has barred two outlets from the mission's briefings. "
+    "Waltz argues the Supreme Court has protected the right to publish, but not access "
+    "to any government facility."
+)
+
+
+def test_grounded_attribution(raw: str) -> None:
+    rows = top20()
+    rows[0] = dict(rows[0], title="Waltz bars two outlets", summary=WALTZ_SUMMARY)
+    head, rest = raw.split("## STORY 1 | Canada turns toward Europe")
+    tail = rest[rest.index("## STORY 2"):]
+
+    def with_story1(*lines: str) -> str:
+        return head + "## STORY 1 | Waltz bars two outlets\n" + "\n".join(lines) + "\n\n" + tail
+
+    bad = with_story1(
+        "A: U-N Ambassador Mike Waltz has barred two outlets from the mission's briefings.",
+        "A: Ambassador Waltz argues the Supreme Court has protected such actions.",
+        "A: The Supreme Court has previously protected the government's right to limit access to facilities. "
+        "This protection applies to journalists.",
+    )
+    fired = ids_of(validate_rundown(parse_rundown(bad), ctx(rows)))
+    check("R-14" in fired, f"'such actions' for 'the right to publish' fails R-14 (fired {sorted(fired)})")
+    check("R-15" in fired, f"the court stated in Void's own voice fails R-15 (fired {sorted(fired)})")
+
+    good = with_story1(
+        "A: U-N Ambassador Mike Waltz has barred two outlets from the mission's briefings.",
+        "A: Waltz argues the Supreme Court has protected the right to publish, but not access to any "
+        "government facility. He says the same court has never protected access to a government building.",
+    )
+    fired = ids_of(validate_rundown(parse_rundown(good), ctx(rows)))
+    check("R-14" not in fired and "R-15" not in fired, f"the faithful cut passes R-14 and R-15 (fired {sorted(fired)})")
+
+    # Cutting is the job: a clause that keeps only the first half of the
+    # claim, adding nothing, is grounded.
+    cut = with_story1(
+        "A: U-N Ambassador Mike Waltz has barred two outlets from the mission's briefings.",
+        "A: Waltz argues the Supreme Court has protected the right to publish.",
+    )
+    fired = ids_of(validate_rundown(parse_rundown(cut), ctx(rows)))
+    check("R-14" not in fired, f"a shorter cut of the same claim passes R-14 (fired {sorted(fired)})")
+
+    # A statement of law after an attribution IN THE SAME TURN is reported speech.
+    same_turn = with_story1(
+        "A: Ambassador Waltz argues the Supreme Court has protected the right to publish. "
+        "The Supreme Court has protected only that right, he says. The court has protected nothing else.",
+    )
+    fired = ids_of(validate_rundown(parse_rundown(same_turn), ctx(rows)))
+    check("R-15" not in fired, f"a legal sentence following an attribution in the same turn passes R-15 (fired {sorted(fired)})")
+
+    # A speaker the stories never name is not grounded.
+    invented = with_story1(
+        "A: U-N Ambassador Mike Waltz has barred two outlets from the mission's briefings.",
+        "A: Press Secretary Dana Ortiz says the outlets were warned twice.",
+    )
+    fired = ids_of(validate_rundown(parse_rundown(invented), ctx(rows)))
+    check("R-14" in fired, f"a speaker absent from the stories fails R-14 (fired {sorted(fired)})")
+
+    # No summary to judge against: R-14 abstains rather than accuses; R-15
+    # needs no summary.
+    fired = ids_of(validate_rundown(parse_rundown(bad), ctx(top20())))
+    check("R-14" not in fired and "R-15" in fired, f"without summaries R-14 abstains and R-15 still fires (fired {sorted(fired)})")
 
 
 def test_parser_tolerance() -> None:
@@ -228,10 +305,28 @@ def test_prompt_and_generation() -> None:
                                            generate_fn=lambda s, u: "nonsense with no markers")
     check(r is None and label == "gemini-flash-rejected", "unfixable output returns None for the fallback")
 
+    # R-02 spends the retry; if the retry still carries quotation marks they
+    # are stripped and the script re-validated, so punctuation alone never
+    # costs the show.
+    quoted = clean.replace("has called the idea a hostile act", 'called it a "hostile act"')
+    qcalls = []
+
+    def fake_quoted(system: str, user: str) -> str:
+        qcalls.append(user)
+        return quoted
+
+    r, rep, label = generate_radio_rundown(rows, date=datetime.datetime(2026, 9, 18, tzinfo=datetime.timezone.utc),
+                                           generate_fn=fake_quoted)
+    check(r is not None and label == "gemini-flash" and len(qcalls) == 2 and "R-02" in qcalls[1],
+          "quotation marks: the retry is spent naming R-02, then the marks are stripped and the script accepted")
+    check(r is not None and not any(has_quotation_marks(t.text) for s in r.segments for t in s.turns),
+          "no quotation mark survives the strip")
+
 
 if __name__ == "__main__":
     raw = test_clean_fixture()
     test_planted_defects(raw)
+    test_grounded_attribution(raw)
     test_parser_tolerance()
     test_spoken_text()
     test_prompt_and_generation()

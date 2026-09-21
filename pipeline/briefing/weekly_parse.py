@@ -11,8 +11,9 @@ function inside it was untestable. That import wall, not neglect, is why the
 weekly had zero tests while the `week_offset` sign bug served Issue #23 for
 three weeks.
 
-Everything here imports `re` and `datetime` and nothing else, so
-`tests/test_weekly.py` can exercise it with no key, no database and no network.
+Everything here imports `re`, `datetime` and the stdlib-only shared kill list
+in `utils.prohibited_terms`, and nothing else, so `tests/test_weekly.py` can
+exercise it with no key, no database and no network.
 
 THE HEADLINE GUARD
 ------------------
@@ -34,6 +35,8 @@ from __future__ import annotations
 import json
 import re
 from datetime import datetime, timedelta, timezone
+
+from utils.prohibited_terms import find_prohibited, find_slop
 
 # A headline is short and is one utterance. These are deliberately loose: the
 # job is to reject a PARAGRAPH, not to police house style. The live defect was
@@ -166,24 +169,12 @@ def parse_recap(raw):
 # is testable without a key: the generator cannot be imported without one.
 # ---------------------------------------------------------------------------
 
-#: Told-not-shown tells. A word here is banned because it ASSERTS significance
-#: instead of showing it, which is the cardinal rule in CLAUDE.md.
-PROHIBITED_TERMS = (
-    # "crucial" as well as "crucially": the bare adjective is four of the nine
-    # hits on the published issue, and the bounded check would have missed it.
-    "notable", "notably", "significant", "significantly", "crucial",
-    "it should be noted",
-    "interestingly", "crucially", "it is worth noting", "it's worth noting",
-    "it bears mentioning", "noteworthy", "what you need to know",
-    "here's what", "here is what", "let's break down", "let's dive",
-    "in conclusion", "to summarize", "all things considered",
-    "a testament to", "should chill", "game-changing", "revolutionary",
-)
-
-_TERM_RE = {
-    t: re.compile(r"(?<![a-z])" + re.escape(t) + r"(?![a-z])", re.I)
-    for t in PROHIBITED_TERMS
-}
+# The kill list itself lives in `utils.prohibited_terms` (SIGNIFICANCE_WORDS
+# and SLOP_PATTERN) since 2026-09-21. This module used to carry its own tuple
+# of 24 terms: the significance family and the Vox scaffolding, and none of
+# the VOICE-BRAND VII AI-slop set, so 27 of the 34 kill-list hits on the two
+# published issues were words the weekly's check had never heard of (brand
+# audit F-03). One list, three consumers: feed, weekly, served-output gate.
 
 
 def word_count(text) -> int:
@@ -192,15 +183,29 @@ def word_count(text) -> int:
 
 
 def banned_terms(text):
-    """Every prohibited term present, word-bounded.
+    """Every kill-list term present, word-bounded, from the shared list.
 
     Bounded deliberately: a raw substring test flags "signify" for
     "significant" and, more to the point, cannot tell a quoted source saying
     "crucial" from our own prose. The bound is the cheap half of that; the
     quote case is left alone rather than guessed at.
     """
-    low = (text or "")
-    return [t for t, rx in _TERM_RE.items() if rx.search(low)]
+    return find_prohibited(text or "")
+
+
+def drop_terms(text):
+    """The kill-list hits that DROP a section rather than ship it.
+
+    `enforce` regenerates once and ships the better attempt, and that is the
+    right call for a word count: a department forty words long reads better
+    than no department. It is the wrong call for "underscores the
+    vulnerability", which cannot be deleted by code (the sentence loses its
+    verb) and was shipped seven times over on Vol. I, No. 1 by exactly that
+    once-then-ship path. Verbs, nouns and scaffolding from the shared slop set
+    are returned here; the significance adjectives are not, because
+    `strip_significance` removes those deterministically before this runs.
+    """
+    return find_slop(text or "")
 
 
 def strip_dashes(text):
