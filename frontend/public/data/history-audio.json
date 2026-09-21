@@ -1,12 +1,12 @@
 {
- "generatedAt": "2026-09-20T20:13:08+00:00",
+ "generatedAt": "2026-09-21T01:56:24+00:00",
  "episodes": {
   "alexanders-conquests": {
-   "url": "/audio/history/alexanders-conquests.mp3?v=21d3017c",
-   "chaptersUrl": "/audio/history/alexanders-conquests.chapters.json?v=21d3017c",
+   "url": "/audio/history/alexanders-conquests.mp3?v=ab0c51b6",
+   "chaptersUrl": "/audio/history/alexanders-conquests.chapters.json?v=ab0c51b6",
    "title": "The Conquests of Alexander",
    "durationSeconds": 867.84,
-   "bytes": 13903237,
+   "bytes": 13903344,
    "chapters": [
     {
      "startTime": 0.0,
@@ -96,17 +96,30 @@
      "startTime": 831.383,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 854.712
+    },
+    {
+     "startTime": 854.712,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 867.812
     }
    ],
-   "publishedAt": "2026-09-20T19:09:39+00:00"
+   "renderedAt": "2026-09-20T19:09:39+00:00",
+   "publishedAt": "2026-09-21T01:07:17+00:00",
+   "promo": {
+    "id": "weekly-02-question",
+    "sha": "5dd59e568129",
+    "voice": "af_kore",
+    "startTime": 854.712
+   }
   },
   "algerian-war": {
-   "url": "/audio/history/algerian-war.mp3?v=86517d93",
-   "chaptersUrl": "/audio/history/algerian-war.chapters.json?v=86517d93",
+   "url": "/audio/history/algerian-war.mp3?v=368890ae",
+   "chaptersUrl": "/audio/history/algerian-war.chapters.json?v=368890ae",
    "title": "The Algerian War of Independence",
    "durationSeconds": 899.84,
-   "bytes": 14415258,
+   "bytes": 14415365,
    "chapters": [
     {
      "startTime": 0.0,
@@ -196,17 +209,30 @@
      "startTime": 870.529,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 886.69
+    },
+    {
+     "startTime": 886.69,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 899.79
     }
    ],
-   "publishedAt": "2026-09-20T19:09:39+00:00"
+   "renderedAt": "2026-09-20T19:09:39+00:00",
+   "publishedAt": "2026-09-21T01:07:58+00:00",
+   "promo": {
+    "id": "site-02-outlets",
+    "sha": "6ffef1fe8cbd",
+    "voice": "af_kore",
+    "startTime": 886.69
+   }
   },
   "angkor-khmer-empire": {
-   "url": "/audio/history/angkor-khmer-empire.mp3?v=2774c424",
-   "chaptersUrl": "/audio/history/angkor-khmer-empire.chapters.json?v=2774c424",
+   "url": "/audio/history/angkor-khmer-empire.mp3?v=d66b25ca",
+   "chaptersUrl": "/audio/history/angkor-khmer-empire.chapters.json?v=d66b25ca",
    "title": "The Khmer Empire",
    "durationSeconds": 885.969,
-   "bytes": 14193124,
+   "bytes": 14193231,
    "chapters": [
     {
      "startTime": 0.0,
@@ -296,17 +322,30 @@
      "startTime": 843.276,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 872.828
+    },
+    {
+     "startTime": 872.828,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 885.928
     }
    ],
-   "publishedAt": "2026-09-20T19:09:39+00:00"
+   "renderedAt": "2026-09-20T19:09:39+00:00",
+   "publishedAt": "2026-09-21T01:08:37+00:00",
+   "promo": {
+    "id": "weekly-04-no-host",
+    "sha": "537c6d381004",
+    "voice": "af_kore",
+    "startTime": 872.828
+   }
   },
   "apartheid": {
-   "url": "/audio/history/apartheid.mp3?v=836de3b2",
-   "chaptersUrl": "/audio/history/apartheid.chapters.json?v=836de3b2",
+   "url": "/audio/history/apartheid.mp3?v=dfdc1356",
+   "chaptersUrl": "/audio/history/apartheid.chapters.json?v=dfdc1356",
    "title": "Apartheid and Its End",
    "durationSeconds": 841.456,
-   "bytes": 13479999,
+   "bytes": 13480106,
    "chapters": [
     {
      "startTime": 0.0,
@@ -390,17 +429,30 @@
      "startTime": 788.474,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 828.33
+    },
+    {
+     "startTime": 828.33,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 841.43
     }
    ],
-   "publishedAt": "2026-09-20T01:47:17+00:00"
+   "renderedAt": "2026-09-20T01:47:17+00:00",
+   "publishedAt": "2026-09-21T01:09:14+00:00",
+   "promo": {
+    "id": "site-01-twenty",
+    "sha": "c81c375eab7d",
+    "voice": "af_kore",
+    "startTime": 828.33
+   }
   },
   "apollo-11-moon-landing": {
-   "url": "/audio/history/apollo-11-moon-landing.mp3?v=70d51e2f",
-   "chaptersUrl": "/audio/history/apollo-11-moon-landing.chapters.json?v=70d51e2f",
+   "url": "/audio/history/apollo-11-moon-landing.mp3?v=b3186227",
+   "chaptersUrl": "/audio/history/apollo-11-moon-landing.chapters.json?v=b3186227",
    "title": "Apollo 11 and the Space Race",
    "durationSeconds": 625.894,
-   "bytes": 10027383,
+   "bytes": 10027490,
    "chapters": [
     {
      "startTime": 0.0,
@@ -478,17 +530,30 @@
      "startTime": 578.765,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 612.748
+    },
+    {
+     "startTime": 612.748,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 625.848
     }
    ],
-   "publishedAt": "2026-09-19T23:09:20+00:00"
+   "renderedAt": "2026-09-19T23:09:20+00:00",
+   "publishedAt": "2026-09-21T01:09:43+00:00",
+   "promo": {
+    "id": "weekly-01-verbatim",
+    "sha": "da7009d30a33",
+    "voice": "af_kore",
+    "startTime": 612.748
+   }
   },
   "arab-spring": {
-   "url": "/audio/history/arab-spring.mp3?v=2ac6709a",
-   "chaptersUrl": "/audio/history/arab-spring.chapters.json?v=2ac6709a",
+   "url": "/audio/history/arab-spring.mp3?v=57ba419c",
+   "chaptersUrl": "/audio/history/arab-spring.chapters.json?v=57ba419c",
    "title": "The Arab Spring",
    "durationSeconds": 875.964,
-   "bytes": 14032441,
+   "bytes": 14032548,
    "chapters": [
     {
      "startTime": 0.0,
@@ -572,17 +637,30 @@
      "startTime": 849.378,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 862.83
+    },
+    {
+     "startTime": 862.83,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 875.93
     }
    ],
-   "publishedAt": "2026-09-20T18:52:19+00:00"
+   "renderedAt": "2026-09-20T18:52:19+00:00",
+   "publishedAt": "2026-09-21T01:10:22+00:00",
+   "promo": {
+    "id": "weekly-06-week-in-bias",
+    "sha": "5d3bb7b7d195",
+    "voice": "af_kore",
+    "startTime": 862.83
+   }
   },
   "armenian-genocide": {
-   "url": "/audio/history/armenian-genocide.mp3?v=132fc989",
-   "chaptersUrl": "/audio/history/armenian-genocide.chapters.json?v=132fc989",
+   "url": "/audio/history/armenian-genocide.mp3?v=7cdd24d2",
+   "chaptersUrl": "/audio/history/armenian-genocide.chapters.json?v=7cdd24d2",
    "title": "The Armenian Genocide",
    "durationSeconds": 733.649,
-   "bytes": 11753163,
+   "bytes": 11753270,
    "chapters": [
     {
      "startTime": 0.0,
@@ -660,17 +738,30 @@
      "startTime": 671.265,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 720.501
+    },
+    {
+     "startTime": 720.501,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 733.601
     }
    ],
-   "publishedAt": "2026-09-20T01:47:17+00:00"
+   "renderedAt": "2026-09-20T01:47:17+00:00",
+   "publishedAt": "2026-09-21T01:10:55+00:00",
+   "promo": {
+    "id": "site-06-sources",
+    "sha": "86f1cdbf5435",
+    "voice": "af_kore",
+    "startTime": 720.501
+   }
   },
   "ashoka-maurya-empire": {
-   "url": "/audio/history/ashoka-maurya-empire.mp3?v=705bcb02",
-   "chaptersUrl": "/audio/history/ashoka-maurya-empire.chapters.json?v=705bcb02",
+   "url": "/audio/history/ashoka-maurya-empire.mp3?v=6b7ba300",
+   "chaptersUrl": "/audio/history/ashoka-maurya-empire.chapters.json?v=6b7ba300",
    "title": "Ashoka and the Maurya Empire",
    "durationSeconds": 678.896,
-   "bytes": 10876140,
+   "bytes": 10876247,
    "chapters": [
     {
      "startTime": 0.0,
@@ -742,17 +833,30 @@
      "startTime": 615.379,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 665.767
+    },
+    {
+     "startTime": 665.767,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 678.867
     }
    ],
-   "publishedAt": "2026-09-20T00:21:56+00:00"
+   "renderedAt": "2026-09-20T00:21:56+00:00",
+   "publishedAt": "2026-09-21T01:11:25+00:00",
+   "promo": {
+    "id": "weekly-04-no-host",
+    "sha": "537c6d381004",
+    "voice": "af_kore",
+    "startTime": 665.767
+   }
   },
   "assassination-of-caesar": {
-   "url": "/audio/history/assassination-of-caesar.mp3?v=0ace5b85",
-   "chaptersUrl": "/audio/history/assassination-of-caesar.chapters.json?v=0ace5b85",
+   "url": "/audio/history/assassination-of-caesar.mp3?v=0ef5ae13",
+   "chaptersUrl": "/audio/history/assassination-of-caesar.chapters.json?v=0ef5ae13",
    "title": "The Assassination of Julius Caesar",
    "durationSeconds": 890.227,
-   "bytes": 14261431,
+   "bytes": 14261538,
    "chapters": [
     {
      "startTime": 0.0,
@@ -836,17 +940,30 @@
      "startTime": 860.39,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 877.085
+    },
+    {
+     "startTime": 877.085,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 890.185
     }
    ],
-   "publishedAt": "2026-09-20T19:09:39+00:00"
+   "renderedAt": "2026-09-20T19:09:39+00:00",
+   "publishedAt": "2026-09-21T01:12:04+00:00",
+   "promo": {
+    "id": "weekly-03-shape",
+    "sha": "f0e39c05137d",
+    "voice": "af_kore",
+    "startTime": 877.085
+   }
   },
   "bandung-conference": {
-   "url": "/audio/history/bandung-conference.mp3?v=c18809b2",
-   "chaptersUrl": "/audio/history/bandung-conference.chapters.json?v=c18809b2",
+   "url": "/audio/history/bandung-conference.mp3?v=c56f7b97",
+   "chaptersUrl": "/audio/history/bandung-conference.chapters.json?v=c56f7b97",
    "title": "The Bandung Conference",
    "durationSeconds": 886.674,
-   "bytes": 14204220,
+   "bytes": 14204327,
    "chapters": [
     {
      "startTime": 0.0,
@@ -930,17 +1047,30 @@
      "startTime": 857.252,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 873.542
+    },
+    {
+     "startTime": 873.542,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 886.642
     }
    ],
-   "publishedAt": "2026-09-20T19:09:39+00:00"
+   "renderedAt": "2026-09-20T19:09:39+00:00",
+   "publishedAt": "2026-09-21T01:12:44+00:00",
+   "promo": {
+    "id": "site-05-nothing-to-sign",
+    "sha": "ff70eda2551a",
+    "voice": "af_kore",
+    "startTime": 873.542
+   }
   },
   "black-death": {
-   "url": "/audio/history/black-death.mp3?v=0887b759",
-   "chaptersUrl": "/audio/history/black-death.chapters.json?v=0887b759",
+   "url": "/audio/history/black-death.mp3?v=ccc473f8",
+   "chaptersUrl": "/audio/history/black-death.chapters.json?v=ccc473f8",
    "title": "The Black Death",
    "durationSeconds": 841.953,
-   "bytes": 13487936,
+   "bytes": 13488043,
    "chapters": [
     {
      "startTime": 0.0,
@@ -1024,17 +1154,30 @@
      "startTime": 804.798,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 828.824
+    },
+    {
+     "startTime": 828.824,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 841.924
     }
    ],
-   "publishedAt": "2026-09-20T01:47:17+00:00"
+   "renderedAt": "2026-09-20T01:47:17+00:00",
+   "publishedAt": "2026-09-21T01:13:21+00:00",
+   "promo": {
+    "id": "weekly-04-no-host",
+    "sha": "537c6d381004",
+    "voice": "af_kore",
+    "startTime": 828.824
+   }
   },
   "bolivarian-revolutions": {
-   "url": "/audio/history/bolivarian-revolutions.mp3?v=dffb3eb4",
-   "chaptersUrl": "/audio/history/bolivarian-revolutions.chapters.json?v=dffb3eb4",
+   "url": "/audio/history/bolivarian-revolutions.mp3?v=e84c1e55",
+   "chaptersUrl": "/audio/history/bolivarian-revolutions.chapters.json?v=e84c1e55",
    "title": "The Bolivarian Revolutions",
    "durationSeconds": 889.417,
-   "bytes": 14248275,
+   "bytes": 14248382,
    "chapters": [
     {
      "startTime": 0.0,
@@ -1124,17 +1267,30 @@
      "startTime": 862.812,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 876.271
+    },
+    {
+     "startTime": 876.271,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 889.371
     }
    ],
-   "publishedAt": "2026-09-20T19:09:40+00:00"
+   "renderedAt": "2026-09-20T19:09:40+00:00",
+   "publishedAt": "2026-09-21T01:14:00+00:00",
+   "promo": {
+    "id": "weekly-01-verbatim",
+    "sha": "da7009d30a33",
+    "voice": "af_kore",
+    "startTime": 876.271
+   }
   },
   "cambodian-genocide": {
-   "url": "/audio/history/cambodian-genocide.mp3?v=4f940e55",
-   "chaptersUrl": "/audio/history/cambodian-genocide.chapters.json?v=4f940e55",
+   "url": "/audio/history/cambodian-genocide.mp3?v=12be5cc7",
+   "chaptersUrl": "/audio/history/cambodian-genocide.chapters.json?v=12be5cc7",
    "title": "The Cambodian Genocide",
    "durationSeconds": 818.521,
-   "bytes": 13112443,
+   "bytes": 13112550,
    "chapters": [
     {
      "startTime": 0.0,
@@ -1212,17 +1368,30 @@
      "startTime": 789.08,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 805.391
+    },
+    {
+     "startTime": 805.391,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 818.491
     }
    ],
-   "publishedAt": "2026-09-20T14:52:53+00:00"
+   "renderedAt": "2026-09-20T14:52:53+00:00",
+   "publishedAt": "2026-09-21T01:14:37+00:00",
+   "promo": {
+    "id": "onair-04-front-page",
+    "sha": "bf338b01af9d",
+    "voice": "af_kore",
+    "startTime": 805.391
+   }
   },
   "chernobyl-disaster": {
-   "url": "/audio/history/chernobyl-disaster.mp3?v=46469463",
-   "chaptersUrl": "/audio/history/chernobyl-disaster.chapters.json?v=46469463",
+   "url": "/audio/history/chernobyl-disaster.mp3?v=716c98e6",
+   "chaptersUrl": "/audio/history/chernobyl-disaster.chapters.json?v=716c98e6",
    "title": "The Chernobyl Disaster",
    "durationSeconds": 673.176,
-   "bytes": 10784618,
+   "bytes": 10784725,
    "chapters": [
     {
      "startTime": 0.0,
@@ -1300,17 +1469,30 @@
      "startTime": 621.472,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 660.042
+    },
+    {
+     "startTime": 660.042,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 673.142
     }
    ],
-   "publishedAt": "2026-09-19T23:38:03+00:00"
+   "renderedAt": "2026-09-19T23:38:03+00:00",
+   "publishedAt": "2026-09-21T01:15:08+00:00",
+   "promo": {
+    "id": "weekly-03-shape",
+    "sha": "f0e39c05137d",
+    "voice": "af_kore",
+    "startTime": 660.042
+   }
   },
   "chinese-civil-war": {
-   "url": "/audio/history/chinese-civil-war.mp3?v=17c13926",
-   "chaptersUrl": "/audio/history/chinese-civil-war.chapters.json?v=17c13926",
+   "url": "/audio/history/chinese-civil-war.mp3?v=ac20bfcf",
+   "chaptersUrl": "/audio/history/chinese-civil-war.chapters.json?v=ac20bfcf",
    "title": "The Chinese Civil War and the Founding of the People's Republic",
    "durationSeconds": 854.753,
-   "bytes": 13693198,
+   "bytes": 13693305,
    "chapters": [
     {
      "startTime": 0.0,
@@ -1400,17 +1582,30 @@
      "startTime": 821.919,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 841.615
+    },
+    {
+     "startTime": 841.615,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 854.715
     }
    ],
-   "publishedAt": "2026-09-20T19:09:40+00:00"
+   "renderedAt": "2026-09-20T19:09:40+00:00",
+   "publishedAt": "2026-09-21T01:15:46+00:00",
+   "promo": {
+    "id": "onair-04-front-page",
+    "sha": "bf338b01af9d",
+    "voice": "af_kore",
+    "startTime": 841.615
+   }
   },
   "chinese-cultural-revolution": {
-   "url": "/audio/history/chinese-cultural-revolution.mp3?v=c0e5a8d4",
-   "chaptersUrl": "/audio/history/chinese-cultural-revolution.chapters.json?v=c0e5a8d4",
+   "url": "/audio/history/chinese-cultural-revolution.mp3?v=b09b15bb",
+   "chaptersUrl": "/audio/history/chinese-cultural-revolution.chapters.json?v=b09b15bb",
    "title": "The Chinese Cultural Revolution",
    "durationSeconds": 861.623,
-   "bytes": 13802994,
+   "bytes": 13803101,
    "chapters": [
     {
      "startTime": 0.0,
@@ -1494,17 +1689,30 @@
      "startTime": 829.619,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 848.49
+    },
+    {
+     "startTime": 848.49,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 861.59
     }
    ],
-   "publishedAt": "2026-09-20T18:52:19+00:00"
+   "renderedAt": "2026-09-20T18:52:19+00:00",
+   "publishedAt": "2026-09-21T01:16:24+00:00",
+   "promo": {
+    "id": "onair-06-twenty-four",
+    "sha": "0369e00caadd",
+    "voice": "af_kore",
+    "startTime": 848.49
+   }
   },
   "civil-rights-movement": {
-   "url": "/audio/history/civil-rights-movement.mp3?v=3da41ec7",
-   "chaptersUrl": "/audio/history/civil-rights-movement.chapters.json?v=3da41ec7",
+   "url": "/audio/history/civil-rights-movement.mp3?v=c9b4d58f",
+   "chaptersUrl": "/audio/history/civil-rights-movement.chapters.json?v=c9b4d58f",
    "title": "The American Civil Rights Movement",
    "durationSeconds": 757.473,
-   "bytes": 12134736,
+   "bytes": 12134843,
    "chapters": [
     {
      "startTime": 0.0,
@@ -1582,17 +1790,30 @@
      "startTime": 707.369,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 744.338
+    },
+    {
+     "startTime": 744.338,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 757.438
     }
    ],
-   "publishedAt": "2026-09-20T00:21:56+00:00"
+   "renderedAt": "2026-09-20T00:21:56+00:00",
+   "publishedAt": "2026-09-21T01:16:58+00:00",
+   "promo": {
+    "id": "onair-03-room-tone",
+    "sha": "4eec9e37e7a7",
+    "voice": "af_kore",
+    "startTime": 744.338
+   }
   },
   "columbian-exchange": {
-   "url": "/audio/history/columbian-exchange.mp3?v=39411e9e",
-   "chaptersUrl": "/audio/history/columbian-exchange.chapters.json?v=39411e9e",
+   "url": "/audio/history/columbian-exchange.mp3?v=d072c5cd",
+   "chaptersUrl": "/audio/history/columbian-exchange.chapters.json?v=d072c5cd",
    "title": "Columbus and the Columbian Exchange",
    "durationSeconds": 794.018,
-   "bytes": 12720340,
+   "bytes": 12720447,
    "chapters": [
     {
      "startTime": 0.0,
@@ -1676,17 +1897,30 @@
      "startTime": 751.474,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 780.877
+    },
+    {
+     "startTime": 780.877,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 793.977
     }
    ],
-   "publishedAt": "2026-09-20T14:52:53+00:00"
+   "renderedAt": "2026-09-20T14:52:53+00:00",
+   "publishedAt": "2026-09-21T01:17:33+00:00",
+   "promo": {
+    "id": "onair-01-ranked",
+    "sha": "ea6c46324a7c",
+    "voice": "af_kore",
+    "startTime": 780.877
+   }
   },
   "congo-free-state": {
-   "url": "/audio/history/congo-free-state.mp3?v=45eab3e5",
-   "chaptersUrl": "/audio/history/congo-free-state.chapters.json?v=45eab3e5",
+   "url": "/audio/history/congo-free-state.mp3?v=0f3d60db",
+   "chaptersUrl": "/audio/history/congo-free-state.chapters.json?v=0f3d60db",
    "title": "The Congo Free State",
    "durationSeconds": 860.108,
-   "bytes": 13778662,
+   "bytes": 13778769,
    "chapters": [
     {
      "startTime": 0.0,
@@ -1764,17 +1998,30 @@
      "startTime": 821.274,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 846.965
+    },
+    {
+     "startTime": 846.965,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 860.065
     }
    ],
-   "publishedAt": "2026-09-20T18:52:19+00:00"
+   "renderedAt": "2026-09-20T18:52:19+00:00",
+   "publishedAt": "2026-09-21T01:18:12+00:00",
+   "promo": {
+    "id": "weekly-03-shape",
+    "sha": "f0e39c05137d",
+    "voice": "af_kore",
+    "startTime": 846.965
+   }
   },
   "congo-wars": {
-   "url": "/audio/history/congo-wars.mp3?v=77826dc8",
-   "chaptersUrl": "/audio/history/congo-wars.chapters.json?v=77826dc8",
+   "url": "/audio/history/congo-wars.mp3?v=47a87a26",
+   "chaptersUrl": "/audio/history/congo-wars.chapters.json?v=47a87a26",
    "title": "The Congo Wars",
    "durationSeconds": 892.813,
-   "bytes": 14302583,
+   "bytes": 14302690,
    "chapters": [
     {
      "startTime": 0.0,
@@ -1858,17 +2105,30 @@
      "startTime": 844.351,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 879.685
+    },
+    {
+     "startTime": 879.685,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 892.785
     }
    ],
-   "publishedAt": "2026-09-20T19:09:40+00:00"
+   "renderedAt": "2026-09-20T19:09:40+00:00",
+   "publishedAt": "2026-09-21T01:18:51+00:00",
+   "promo": {
+    "id": "onair-06-twenty-four",
+    "sha": "0369e00caadd",
+    "voice": "af_kore",
+    "startTime": 879.685
+   }
   },
   "creation-of-israel-nakba": {
-   "url": "/audio/history/creation-of-israel-nakba.mp3?v=96d54c81",
-   "chaptersUrl": "/audio/history/creation-of-israel-nakba.chapters.json?v=96d54c81",
+   "url": "/audio/history/creation-of-israel-nakba.mp3?v=0385c8ff",
+   "chaptersUrl": "/audio/history/creation-of-israel-nakba.chapters.json?v=0385c8ff",
    "title": "The Creation of Israel and the Nakba",
    "durationSeconds": 874.344,
-   "bytes": 14006596,
+   "bytes": 14006703,
    "chapters": [
     {
      "startTime": 0.0,
@@ -1946,17 +2206,30 @@
      "startTime": 816.982,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 861.206
+    },
+    {
+     "startTime": 861.206,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 874.306
     }
    ],
-   "publishedAt": "2026-09-20T01:47:17+00:00"
+   "renderedAt": "2026-09-20T01:47:17+00:00",
+   "publishedAt": "2026-09-21T01:19:30+00:00",
+   "promo": {
+    "id": "weekly-06-week-in-bias",
+    "sha": "5d3bb7b7d195",
+    "voice": "af_kore",
+    "startTime": 861.206
+   }
   },
   "cuban-missile-crisis": {
-   "url": "/audio/history/cuban-missile-crisis.mp3?v=9ac5122b",
-   "chaptersUrl": "/audio/history/cuban-missile-crisis.chapters.json?v=9ac5122b",
+   "url": "/audio/history/cuban-missile-crisis.mp3?v=077f9a8e",
+   "chaptersUrl": "/audio/history/cuban-missile-crisis.chapters.json?v=077f9a8e",
    "title": "The Cuban Missile Crisis",
    "durationSeconds": 785.136,
-   "bytes": 12577746,
+   "bytes": 12577853,
    "chapters": [
     {
      "startTime": 0.0,
@@ -2034,17 +2307,30 @@
      "startTime": 728.097,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 771.999
+    },
+    {
+     "startTime": 771.999,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 785.099
     }
    ],
-   "publishedAt": "2026-09-20T00:21:56+00:00"
+   "renderedAt": "2026-09-20T00:21:56+00:00",
+   "publishedAt": "2026-09-21T01:20:07+00:00",
+   "promo": {
+    "id": "site-03-both",
+    "sha": "5d5a4ff4d5fc",
+    "voice": "af_kore",
+    "startTime": 771.999
+   }
   },
   "cuban-revolution": {
-   "url": "/audio/history/cuban-revolution.mp3?v=567773b6",
-   "chaptersUrl": "/audio/history/cuban-revolution.chapters.json?v=567773b6",
+   "url": "/audio/history/cuban-revolution.mp3?v=cf42de51",
+   "chaptersUrl": "/audio/history/cuban-revolution.chapters.json?v=cf42de51",
    "title": "The Cuban Revolution",
    "durationSeconds": 859.533,
-   "bytes": 13769523,
+   "bytes": 13769630,
    "chapters": [
     {
      "startTime": 0.0,
@@ -2128,17 +2414,30 @@
      "startTime": 811.806,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 846.392
+    },
+    {
+     "startTime": 846.392,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 859.492
     }
    ],
-   "publishedAt": "2026-09-20T14:52:53+00:00"
+   "renderedAt": "2026-09-20T14:52:53+00:00",
+   "publishedAt": "2026-09-21T01:20:46+00:00",
+   "promo": {
+    "id": "onair-02-firewall",
+    "sha": "5dc16aaca50d",
+    "voice": "af_kore",
+    "startTime": 846.392
+   }
   },
   "cyrus-cylinder": {
-   "url": "/audio/history/cyrus-cylinder.mp3?v=77a1e6eb",
-   "chaptersUrl": "/audio/history/cyrus-cylinder.chapters.json?v=77a1e6eb",
+   "url": "/audio/history/cyrus-cylinder.mp3?v=1fed32cc",
+   "chaptersUrl": "/audio/history/cyrus-cylinder.chapters.json?v=1fed32cc",
    "title": "The Cyrus Cylinder",
    "durationSeconds": 865.437,
-   "bytes": 13863976,
+   "bytes": 13864083,
    "chapters": [
     {
      "startTime": 0.0,
@@ -2216,17 +2515,30 @@
      "startTime": 807.56,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 852.295
+    },
+    {
+     "startTime": 852.295,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 865.395
     }
    ],
-   "publishedAt": "2026-09-20T19:09:40+00:00"
+   "renderedAt": "2026-09-20T19:09:40+00:00",
+   "publishedAt": "2026-09-21T01:21:26+00:00",
+   "promo": {
+    "id": "onair-05-cold-open",
+    "sha": "d2845fcb5ec1",
+    "voice": "af_kore",
+    "startTime": 852.295
+   }
   },
   "fall-of-berlin-wall": {
-   "url": "/audio/history/fall-of-berlin-wall.mp3?v=cc288558",
-   "chaptersUrl": "/audio/history/fall-of-berlin-wall.chapters.json?v=cc288558",
+   "url": "/audio/history/fall-of-berlin-wall.mp3?v=ffbb2d68",
+   "chaptersUrl": "/audio/history/fall-of-berlin-wall.chapters.json?v=ffbb2d68",
    "title": "The Fall of the Berlin Wall",
    "durationSeconds": 702.537,
-   "bytes": 11254898,
+   "bytes": 11255005,
    "chapters": [
     {
      "startTime": 0.0,
@@ -2304,17 +2616,30 @@
      "startTime": 656.667,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 689.39
+    },
+    {
+     "startTime": 689.39,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 702.49
     }
    ],
-   "publishedAt": "2026-09-20T00:21:56+00:00"
+   "renderedAt": "2026-09-20T00:21:56+00:00",
+   "publishedAt": "2026-09-21T01:21:59+00:00",
+   "promo": {
+    "id": "weekly-02-question",
+    "sha": "5dd59e568129",
+    "voice": "af_kore",
+    "startTime": 689.39
+   }
   },
   "fall-of-constantinople": {
-   "url": "/audio/history/fall-of-constantinople.mp3?v=fc20c10f",
-   "chaptersUrl": "/audio/history/fall-of-constantinople.chapters.json?v=fc20c10f",
+   "url": "/audio/history/fall-of-constantinople.mp3?v=03fc44f2",
+   "chaptersUrl": "/audio/history/fall-of-constantinople.chapters.json?v=03fc44f2",
    "title": "The Fall of Constantinople",
    "durationSeconds": 891.298,
-   "bytes": 14278312,
+   "bytes": 14278419,
    "chapters": [
     {
      "startTime": 0.0,
@@ -2398,17 +2723,30 @@
      "startTime": 858.006,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 878.163
+    },
+    {
+     "startTime": 878.163,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 891.263
     }
    ],
-   "publishedAt": "2026-09-20T02:54:35+00:00"
+   "renderedAt": "2026-09-20T02:54:35+00:00",
+   "publishedAt": "2026-09-21T01:22:39+00:00",
+   "promo": {
+    "id": "weekly-04-no-host",
+    "sha": "537c6d381004",
+    "voice": "af_kore",
+    "startTime": 878.163
+   }
   },
   "fall-of-rome": {
-   "url": "/audio/history/fall-of-rome.mp3?v=18c26814",
-   "chaptersUrl": "/audio/history/fall-of-rome.chapters.json?v=18c26814",
+   "url": "/audio/history/fall-of-rome.mp3?v=11c25a48",
+   "chaptersUrl": "/audio/history/fall-of-rome.chapters.json?v=11c25a48",
    "title": "Fall of the Western Roman Empire",
    "durationSeconds": 824.712,
-   "bytes": 13211941,
+   "bytes": 13212048,
    "chapters": [
     {
      "startTime": 0.0,
@@ -2492,17 +2830,30 @@
      "startTime": 793.205,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 811.564
+    },
+    {
+     "startTime": 811.564,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 824.664
     }
    ],
-   "publishedAt": "2026-09-20T14:52:53+00:00"
+   "renderedAt": "2026-09-20T14:52:53+00:00",
+   "publishedAt": "2026-09-21T01:23:16+00:00",
+   "promo": {
+    "id": "weekly-03-shape",
+    "sha": "f0e39c05137d",
+    "voice": "af_kore",
+    "startTime": 811.564
+   }
   },
   "fall-of-tenochtitlan": {
-   "url": "/audio/history/fall-of-tenochtitlan.mp3?v=41cbb5c8",
-   "chaptersUrl": "/audio/history/fall-of-tenochtitlan.chapters.json?v=41cbb5c8",
+   "url": "/audio/history/fall-of-tenochtitlan.mp3?v=fcea68e8",
+   "chaptersUrl": "/audio/history/fall-of-tenochtitlan.chapters.json?v=fcea68e8",
    "title": "The Fall of Tenochtitlan",
    "durationSeconds": 827.141,
-   "bytes": 13250610,
+   "bytes": 13250717,
    "chapters": [
     {
      "startTime": 0.0,
@@ -2586,17 +2937,30 @@
      "startTime": 771.928,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 813.996
+    },
+    {
+     "startTime": 813.996,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 827.096
     }
    ],
-   "publishedAt": "2026-09-20T01:47:18+00:00"
+   "renderedAt": "2026-09-20T01:47:18+00:00",
+   "publishedAt": "2026-09-21T01:23:54+00:00",
+   "promo": {
+    "id": "site-02-outlets",
+    "sha": "6ffef1fe8cbd",
+    "voice": "af_kore",
+    "startTime": 813.996
+   }
   },
   "french-revolution": {
-   "url": "/audio/history/french-revolution.mp3?v=077f6eff",
-   "chaptersUrl": "/audio/history/french-revolution.chapters.json?v=077f6eff",
+   "url": "/audio/history/french-revolution.mp3?v=7abe7c4b",
+   "chaptersUrl": "/audio/history/french-revolution.chapters.json?v=7abe7c4b",
    "title": "The French Revolution",
    "durationSeconds": 734.198,
-   "bytes": 11761879,
+   "bytes": 11761986,
    "chapters": [
     {
      "startTime": 0.0,
@@ -2674,17 +3038,30 @@
      "startTime": 683.179,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 721.065
+    },
+    {
+     "startTime": 721.065,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 734.165
     }
    ],
-   "publishedAt": "2026-09-20T01:47:18+00:00"
+   "renderedAt": "2026-09-20T01:47:18+00:00",
+   "publishedAt": "2026-09-21T01:24:28+00:00",
+   "promo": {
+    "id": "weekly-05-cover",
+    "sha": "7857ffcfc989",
+    "voice": "af_kore",
+    "startTime": 721.065
+   }
   },
   "global-financial-crisis-2008": {
-   "url": "/audio/history/global-financial-crisis-2008.mp3?v=55dd3921",
-   "chaptersUrl": "/audio/history/global-financial-crisis-2008.chapters.json?v=55dd3921",
+   "url": "/audio/history/global-financial-crisis-2008.mp3?v=8cd8d249",
+   "chaptersUrl": "/audio/history/global-financial-crisis-2008.chapters.json?v=8cd8d249",
    "title": "The 2008 Global Financial Crisis",
    "durationSeconds": 851.383,
-   "bytes": 13639053,
+   "bytes": 13639160,
    "chapters": [
     {
      "startTime": 0.0,
@@ -2768,17 +3145,30 @@
      "startTime": 822.36,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 838.237
+    },
+    {
+     "startTime": 838.237,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 851.337
     }
    ],
-   "publishedAt": "2026-09-20T19:09:40+00:00"
+   "renderedAt": "2026-09-20T19:09:40+00:00",
+   "publishedAt": "2026-09-21T01:25:08+00:00",
+   "promo": {
+    "id": "onair-02-firewall",
+    "sha": "5dc16aaca50d",
+    "voice": "af_kore",
+    "startTime": 838.237
+   }
   },
   "great-depression": {
-   "url": "/audio/history/great-depression.mp3?v=62a9a06a",
-   "chaptersUrl": "/audio/history/great-depression.chapters.json?v=62a9a06a",
+   "url": "/audio/history/great-depression.mp3?v=6163e91f",
+   "chaptersUrl": "/audio/history/great-depression.chapters.json?v=6163e91f",
    "title": "The Great Depression",
    "durationSeconds": 798.119,
-   "bytes": 12785864,
+   "bytes": 12785971,
    "chapters": [
     {
      "startTime": 0.0,
@@ -2862,17 +3252,30 @@
      "startTime": 766.914,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 784.974
+    },
+    {
+     "startTime": 784.974,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 798.074
     }
    ],
-   "publishedAt": "2026-09-20T14:52:53+00:00"
+   "renderedAt": "2026-09-20T14:52:53+00:00",
+   "publishedAt": "2026-09-21T01:25:44+00:00",
+   "promo": {
+    "id": "onair-05-cold-open",
+    "sha": "d2845fcb5ec1",
+    "voice": "af_kore",
+    "startTime": 784.974
+   }
   },
   "great-leap-forward": {
-   "url": "/audio/history/great-leap-forward.mp3?v=3fdb073c",
-   "chaptersUrl": "/audio/history/great-leap-forward.chapters.json?v=3fdb073c",
+   "url": "/audio/history/great-leap-forward.mp3?v=2f2fda30",
+   "chaptersUrl": "/audio/history/great-leap-forward.chapters.json?v=2f2fda30",
    "title": "The Great Leap Forward and the Great Chinese Famine",
    "durationSeconds": 800.522,
-   "bytes": 12824376,
+   "bytes": 12824483,
    "chapters": [
     {
      "startTime": 0.0,
@@ -2956,17 +3359,30 @@
      "startTime": 772.074,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 787.382
+    },
+    {
+     "startTime": 787.382,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 800.482
     }
    ],
-   "publishedAt": "2026-09-20T18:52:19+00:00"
+   "renderedAt": "2026-09-20T18:52:19+00:00",
+   "publishedAt": "2026-09-21T01:26:21+00:00",
+   "promo": {
+    "id": "weekly-06-week-in-bias",
+    "sha": "5d3bb7b7d195",
+    "voice": "af_kore",
+    "startTime": 787.382
+   }
   },
   "gutenberg-printing-press": {
-   "url": "/audio/history/gutenberg-printing-press.mp3?v=7402621b",
-   "chaptersUrl": "/audio/history/gutenberg-printing-press.chapters.json?v=7402621b",
+   "url": "/audio/history/gutenberg-printing-press.mp3?v=854c3a67",
+   "chaptersUrl": "/audio/history/gutenberg-printing-press.chapters.json?v=854c3a67",
    "title": "The Gutenberg Revolution",
    "durationSeconds": 702.224,
-   "bytes": 11249783,
+   "bytes": 11249890,
    "chapters": [
     {
      "startTime": 0.0,
@@ -3044,17 +3460,30 @@
      "startTime": 659.795,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 689.084
+    },
+    {
+     "startTime": 689.084,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 702.184
     }
    ],
-   "publishedAt": "2026-09-20T18:52:19+00:00"
+   "renderedAt": "2026-09-20T18:52:19+00:00",
+   "publishedAt": "2026-09-21T01:26:54+00:00",
+   "promo": {
+    "id": "site-03-both",
+    "sha": "5d5a4ff4d5fc",
+    "voice": "af_kore",
+    "startTime": 689.084
+   }
   },
   "haitian-revolution": {
-   "url": "/audio/history/haitian-revolution.mp3?v=710d4eeb",
-   "chaptersUrl": "/audio/history/haitian-revolution.chapters.json?v=710d4eeb",
+   "url": "/audio/history/haitian-revolution.mp3?v=0ff60e2a",
+   "chaptersUrl": "/audio/history/haitian-revolution.chapters.json?v=0ff60e2a",
    "title": "The Haitian Revolution",
    "durationSeconds": 725.995,
-   "bytes": 11630591,
+   "bytes": 11630698,
    "chapters": [
     {
      "startTime": 0.0,
@@ -3132,17 +3561,30 @@
      "startTime": 668.344,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 712.844
+    },
+    {
+     "startTime": 712.844,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 725.944
     }
    ],
-   "publishedAt": "2026-09-19T23:38:03+00:00"
+   "renderedAt": "2026-09-19T23:38:03+00:00",
+   "publishedAt": "2026-09-21T01:27:28+00:00",
+   "promo": {
+    "id": "onair-05-cold-open",
+    "sha": "d2845fcb5ec1",
+    "voice": "af_kore",
+    "startTime": 712.844
+   }
   },
   "hiroshima-nagasaki": {
-   "url": "/audio/history/hiroshima-nagasaki.mp3?v=937efc9d",
-   "chaptersUrl": "/audio/history/hiroshima-nagasaki.chapters.json?v=937efc9d",
+   "url": "/audio/history/hiroshima-nagasaki.mp3?v=173acecc",
+   "chaptersUrl": "/audio/history/hiroshima-nagasaki.chapters.json?v=173acecc",
    "title": "The Atomic Bombings of Hiroshima and Nagasaki",
    "durationSeconds": 850.286,
-   "bytes": 13621317,
+   "bytes": 13621424,
    "chapters": [
     {
      "startTime": 0.0,
@@ -3220,17 +3662,30 @@
      "startTime": 795.809,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 837.151
+    },
+    {
+     "startTime": 837.151,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 850.251
     }
    ],
-   "publishedAt": "2026-09-20T00:04:51+00:00"
+   "renderedAt": "2026-09-20T00:04:51+00:00",
+   "publishedAt": "2026-09-21T01:28:08+00:00",
+   "promo": {
+    "id": "weekly-03-shape",
+    "sha": "f0e39c05137d",
+    "voice": "af_kore",
+    "startTime": 837.151
+   }
   },
   "holodomor": {
-   "url": "/audio/history/holodomor.mp3?v=a627a96e",
-   "chaptersUrl": "/audio/history/holodomor.chapters.json?v=a627a96e",
+   "url": "/audio/history/holodomor.mp3?v=0df0406b",
+   "chaptersUrl": "/audio/history/holodomor.chapters.json?v=0df0406b",
    "title": "The Holodomor",
    "durationSeconds": 872.568,
-   "bytes": 13978087,
+   "bytes": 13978194,
    "chapters": [
     {
      "startTime": 0.0,
@@ -3308,17 +3763,30 @@
      "startTime": 829.655,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 859.42
+    },
+    {
+     "startTime": 859.42,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 872.52
     }
    ],
-   "publishedAt": "2026-09-20T14:52:53+00:00"
+   "renderedAt": "2026-09-20T14:52:53+00:00",
+   "publishedAt": "2026-09-21T01:28:48+00:00",
+   "promo": {
+    "id": "weekly-04-no-host",
+    "sha": "537c6d381004",
+    "voice": "af_kore",
+    "startTime": 859.42
+   }
   },
   "inca-conquest-peru": {
-   "url": "/audio/history/inca-conquest-peru.mp3?v=58cb1a7a",
-   "chaptersUrl": "/audio/history/inca-conquest-peru.chapters.json?v=58cb1a7a",
+   "url": "/audio/history/inca-conquest-peru.mp3?v=f73a8240",
+   "chaptersUrl": "/audio/history/inca-conquest-peru.chapters.json?v=f73a8240",
    "title": "The Inca Empire and the Spanish Conquest",
    "durationSeconds": 862.119,
-   "bytes": 13811058,
+   "bytes": 13811165,
    "chapters": [
     {
      "startTime": 0.0,
@@ -3408,17 +3876,30 @@
      "startTime": 833.019,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 848.989
+    },
+    {
+     "startTime": 848.989,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 862.089
     }
    ],
-   "publishedAt": "2026-09-20T18:52:19+00:00"
+   "renderedAt": "2026-09-20T18:52:19+00:00",
+   "publishedAt": "2026-09-21T01:29:27+00:00",
+   "promo": {
+    "id": "onair-05-cold-open",
+    "sha": "d2845fcb5ec1",
+    "voice": "af_kore",
+    "startTime": 848.989
+   }
   },
   "indian-independence-movement": {
-   "url": "/audio/history/indian-independence-movement.mp3?v=4cb0b4a5",
-   "chaptersUrl": "/audio/history/indian-independence-movement.chapters.json?v=4cb0b4a5",
+   "url": "/audio/history/indian-independence-movement.mp3?v=2e1695a0",
+   "chaptersUrl": "/audio/history/indian-independence-movement.chapters.json?v=2e1695a0",
    "title": "The Indian Independence Movement",
    "durationSeconds": 807.576,
-   "bytes": 12937630,
+   "bytes": 12937737,
    "chapters": [
     {
      "startTime": 0.0,
@@ -3514,17 +3995,30 @@
      "startTime": 762.122,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 794.448
+    },
+    {
+     "startTime": 794.448,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 807.548
     }
    ],
-   "publishedAt": "2026-09-20T18:52:19+00:00"
+   "renderedAt": "2026-09-20T18:52:19+00:00",
+   "publishedAt": "2026-09-21T01:30:06+00:00",
+   "promo": {
+    "id": "onair-06-twenty-four",
+    "sha": "0369e00caadd",
+    "voice": "af_kore",
+    "startTime": 794.448
+   }
   },
   "industrial-revolution": {
-   "url": "/audio/history/industrial-revolution.mp3?v=4f3987e0",
-   "chaptersUrl": "/audio/history/industrial-revolution.chapters.json?v=4f3987e0",
+   "url": "/audio/history/industrial-revolution.mp3?v=b8af63aa",
+   "chaptersUrl": "/audio/history/industrial-revolution.chapters.json?v=b8af63aa",
    "title": "The Industrial Revolution",
    "durationSeconds": 876.931,
-   "bytes": 14048023,
+   "bytes": 14048130,
    "chapters": [
     {
      "startTime": 0.0,
@@ -3602,17 +4096,30 @@
      "startTime": 828.522,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 863.792
+    },
+    {
+     "startTime": 863.792,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 876.892
     }
    ],
-   "publishedAt": "2026-09-20T02:54:35+00:00"
+   "renderedAt": "2026-09-20T02:54:35+00:00",
+   "publishedAt": "2026-09-21T01:30:47+00:00",
+   "promo": {
+    "id": "site-02-outlets",
+    "sha": "6ffef1fe8cbd",
+    "voice": "af_kore",
+    "startTime": 863.792
+   }
   },
   "iran-iraq-war": {
-   "url": "/audio/history/iran-iraq-war.mp3?v=09aa663c",
-   "chaptersUrl": "/audio/history/iran-iraq-war.chapters.json?v=09aa663c",
+   "url": "/audio/history/iran-iraq-war.mp3?v=d3187805",
+   "chaptersUrl": "/audio/history/iran-iraq-war.chapters.json?v=d3187805",
    "title": "The Iran-Iraq War",
    "durationSeconds": 875.154,
-   "bytes": 14019887,
+   "bytes": 14019994,
    "chapters": [
     {
      "startTime": 0.0,
@@ -3702,17 +4209,30 @@
      "startTime": 827.0,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 862.028
+    },
+    {
+     "startTime": 862.028,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 875.128
     }
    ],
-   "publishedAt": "2026-09-20T19:26:02+00:00"
+   "renderedAt": "2026-09-20T19:26:02+00:00",
+   "publishedAt": "2026-09-21T01:31:27+00:00",
+   "promo": {
+    "id": "weekly-05-cover",
+    "sha": "7857ffcfc989",
+    "voice": "af_kore",
+    "startTime": 862.028
+   }
   },
   "iranian-revolution": {
-   "url": "/audio/history/iranian-revolution.mp3?v=4efd0e29",
-   "chaptersUrl": "/audio/history/iranian-revolution.chapters.json?v=4efd0e29",
+   "url": "/audio/history/iranian-revolution.mp3?v=29060a66",
+   "chaptersUrl": "/audio/history/iranian-revolution.chapters.json?v=29060a66",
    "title": "The Iranian Revolution",
    "durationSeconds": 766.851,
-   "bytes": 12284911,
+   "bytes": 12285018,
    "chapters": [
     {
      "startTime": 0.0,
@@ -3790,17 +4310,30 @@
      "startTime": 710.031,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 753.72
+    },
+    {
+     "startTime": 753.72,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 766.82
     }
    ],
-   "publishedAt": "2026-09-20T00:21:56+00:00"
+   "renderedAt": "2026-09-20T00:21:56+00:00",
+   "publishedAt": "2026-09-21T01:32:03+00:00",
+   "promo": {
+    "id": "onair-03-room-tone",
+    "sha": "4eec9e37e7a7",
+    "voice": "af_kore",
+    "startTime": 753.72
+   }
   },
   "kingdom-of-kongo": {
-   "url": "/audio/history/kingdom-of-kongo.mp3?v=a56c05f7",
-   "chaptersUrl": "/audio/history/kingdom-of-kongo.chapters.json?v=a56c05f7",
+   "url": "/audio/history/kingdom-of-kongo.mp3?v=83445baa",
+   "chaptersUrl": "/audio/history/kingdom-of-kongo.chapters.json?v=83445baa",
    "title": "The Kingdom of Kongo",
    "durationSeconds": 861.048,
-   "bytes": 13793837,
+   "bytes": 13793944,
    "chapters": [
     {
      "startTime": 0.0,
@@ -3884,17 +4417,30 @@
      "startTime": 812.976,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 847.919
+    },
+    {
+     "startTime": 847.919,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 861.019
     }
    ],
-   "publishedAt": "2026-09-20T19:26:02+00:00"
+   "renderedAt": "2026-09-20T19:26:02+00:00",
+   "publishedAt": "2026-09-21T01:32:43+00:00",
+   "promo": {
+    "id": "site-02-outlets",
+    "sha": "6ffef1fe8cbd",
+    "voice": "af_kore",
+    "startTime": 847.919
+   }
   },
   "korean-war": {
-   "url": "/audio/history/korean-war.mp3?v=d36fe089",
-   "chaptersUrl": "/audio/history/korean-war.chapters.json?v=d36fe089",
+   "url": "/audio/history/korean-war.mp3?v=805bf46a",
+   "chaptersUrl": "/audio/history/korean-war.chapters.json?v=805bf46a",
    "title": "The Korean War",
    "durationSeconds": 883.54,
-   "bytes": 14154007,
+   "bytes": 14154114,
    "chapters": [
     {
      "startTime": 0.0,
@@ -3978,17 +4524,30 @@
      "startTime": 855.583,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 870.407
+    },
+    {
+     "startTime": 870.407,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 883.507
     }
    ],
-   "publishedAt": "2026-09-20T14:52:53+00:00"
+   "renderedAt": "2026-09-20T14:52:53+00:00",
+   "publishedAt": "2026-09-21T01:33:24+00:00",
+   "promo": {
+    "id": "weekly-04-no-host",
+    "sha": "537c6d381004",
+    "voice": "af_kore",
+    "startTime": 870.407
+   }
   },
   "mali-empire-mansa-musa": {
-   "url": "/audio/history/mali-empire-mansa-musa.mp3?v=b583f053",
-   "chaptersUrl": "/audio/history/mali-empire-mansa-musa.chapters.json?v=b583f053",
+   "url": "/audio/history/mali-empire-mansa-musa.mp3?v=42f88e32",
+   "chaptersUrl": "/audio/history/mali-empire-mansa-musa.chapters.json?v=42f88e32",
    "title": "The Mali Empire and Mansa Musa's Pilgrimage",
    "durationSeconds": 848.771,
-   "bytes": 13597094,
+   "bytes": 13597201,
    "chapters": [
     {
      "startTime": 0.0,
@@ -4066,17 +4625,30 @@
      "startTime": 800.865,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 835.637
+    },
+    {
+     "startTime": 835.637,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 848.737
     }
    ],
-   "publishedAt": "2026-09-19T23:59:58+00:00"
+   "renderedAt": "2026-09-19T23:59:58+00:00",
+   "publishedAt": "2026-09-21T01:34:03+00:00",
+   "promo": {
+    "id": "onair-02-firewall",
+    "sha": "5dc16aaca50d",
+    "voice": "af_kore",
+    "startTime": 835.637
+   }
   },
   "meiji-restoration": {
-   "url": "/audio/history/meiji-restoration.mp3?v=f6682c33",
-   "chaptersUrl": "/audio/history/meiji-restoration.chapters.json?v=f6682c33",
+   "url": "/audio/history/meiji-restoration.mp3?v=c755f25b",
+   "chaptersUrl": "/audio/history/meiji-restoration.chapters.json?v=c755f25b",
    "title": "The Meiji Restoration",
    "durationSeconds": 882.704,
-   "bytes": 14140500,
+   "bytes": 14140607,
    "chapters": [
     {
      "startTime": 0.0,
@@ -4160,17 +4732,30 @@
      "startTime": 843.137,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 869.552
+    },
+    {
+     "startTime": 869.552,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 882.652
     }
    ],
-   "publishedAt": "2026-09-20T01:47:18+00:00"
+   "renderedAt": "2026-09-20T01:47:18+00:00",
+   "publishedAt": "2026-09-21T01:34:44+00:00",
+   "promo": {
+    "id": "onair-04-front-page",
+    "sha": "bf338b01af9d",
+    "voice": "af_kore",
+    "startTime": 869.552
+   }
   },
   "mongol-conquest-baghdad": {
-   "url": "/audio/history/mongol-conquest-baghdad.mp3?v=bdf7615a",
-   "chaptersUrl": "/audio/history/mongol-conquest-baghdad.chapters.json?v=bdf7615a",
+   "url": "/audio/history/mongol-conquest-baghdad.mp3?v=187524ba",
+   "chaptersUrl": "/audio/history/mongol-conquest-baghdad.chapters.json?v=187524ba",
    "title": "The Mongol Conquest of Baghdad",
    "durationSeconds": 855.223,
-   "bytes": 13700457,
+   "bytes": 13700564,
    "chapters": [
     {
      "startTime": 0.0,
@@ -4254,17 +4839,30 @@
      "startTime": 821.396,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 842.08
+    },
+    {
+     "startTime": 842.08,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 855.18
     }
    ],
-   "publishedAt": "2026-09-20T18:52:19+00:00"
+   "renderedAt": "2026-09-20T18:52:19+00:00",
+   "publishedAt": "2026-09-21T01:35:23+00:00",
+   "promo": {
+    "id": "onair-05-cold-open",
+    "sha": "d2845fcb5ec1",
+    "voice": "af_kore",
+    "startTime": 842.08
+   }
   },
   "mongol-empire": {
-   "url": "/audio/history/mongol-empire.mp3?v=3f674848",
-   "chaptersUrl": "/audio/history/mongol-empire.chapters.json?v=3f674848",
+   "url": "/audio/history/mongol-empire.mp3?v=0fcbe9c7",
+   "chaptersUrl": "/audio/history/mongol-empire.chapters.json?v=0fcbe9c7",
    "title": "The Mongol Empire",
    "durationSeconds": 788.48,
-   "bytes": 12631377,
+   "bytes": 12631484,
    "chapters": [
     {
      "startTime": 0.0,
@@ -4348,17 +4946,30 @@
      "startTime": 736.308,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 775.347
+    },
+    {
+     "startTime": 775.347,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 788.447
     }
    ],
-   "publishedAt": "2026-09-20T03:41:26+00:00"
+   "renderedAt": "2026-09-20T03:41:26+00:00",
+   "publishedAt": "2026-09-21T01:35:59+00:00",
+   "promo": {
+    "id": "onair-05-cold-open",
+    "sha": "d2845fcb5ec1",
+    "voice": "af_kore",
+    "startTime": 775.347
+   }
   },
   "mughal-empire": {
-   "url": "/audio/history/mughal-empire.mp3?v=efbb4034",
-   "chaptersUrl": "/audio/history/mughal-empire.chapters.json?v=efbb4034",
+   "url": "/audio/history/mughal-empire.mp3?v=726a0910",
+   "chaptersUrl": "/audio/history/mughal-empire.chapters.json?v=726a0910",
    "title": "The Mughal Empire",
    "durationSeconds": 841.012,
-   "bytes": 13473117,
+   "bytes": 13473257,
    "chapters": [
     {
      "startTime": 0.0,
@@ -4442,17 +5053,30 @@
      "startTime": 814.384,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 827.864
+    },
+    {
+     "startTime": 827.864,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 840.964
     }
    ],
-   "publishedAt": "2026-09-20T19:26:02+00:00"
+   "renderedAt": "2026-09-20T19:26:02+00:00",
+   "publishedAt": "2026-09-21T01:36:37+00:00",
+   "promo": {
+    "id": "site-03-both",
+    "sha": "5d5a4ff4d5fc",
+    "voice": "af_kore",
+    "startTime": 827.864
+   }
   },
   "nanjing-massacre": {
-   "url": "/audio/history/nanjing-massacre.mp3?v=1a5faf65",
-   "chaptersUrl": "/audio/history/nanjing-massacre.chapters.json?v=1a5faf65",
+   "url": "/audio/history/nanjing-massacre.mp3?v=477caa4a",
+   "chaptersUrl": "/audio/history/nanjing-massacre.chapters.json?v=477caa4a",
    "title": "The Nanjing Massacre",
    "durationSeconds": 809.953,
-   "bytes": 12975284,
+   "bytes": 12975391,
    "chapters": [
     {
      "startTime": 0.0,
@@ -4530,17 +5154,30 @@
      "startTime": 776.83,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 796.804
+    },
+    {
+     "startTime": 796.804,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 809.904
     }
    ],
-   "publishedAt": "2026-09-20T02:54:36+00:00"
+   "renderedAt": "2026-09-20T02:54:36+00:00",
+   "publishedAt": "2026-09-21T01:37:15+00:00",
+   "promo": {
+    "id": "site-04-nothing-knows",
+    "sha": "5c2c800fc41f",
+    "voice": "af_kore",
+    "startTime": 796.804
+   }
   },
   "opium-wars": {
-   "url": "/audio/history/opium-wars.mp3?v=17606953",
-   "chaptersUrl": "/audio/history/opium-wars.chapters.json?v=17606953",
+   "url": "/audio/history/opium-wars.mp3?v=d3fc2468",
+   "chaptersUrl": "/audio/history/opium-wars.chapters.json?v=d3fc2468",
    "title": "The Opium Wars",
    "durationSeconds": 803.997,
-   "bytes": 12879825,
+   "bytes": 12879932,
    "chapters": [
     {
      "startTime": 0.0,
@@ -4618,17 +5255,30 @@
      "startTime": 761.913,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 790.867
+    },
+    {
+     "startTime": 790.867,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 803.967
     }
    ],
-   "publishedAt": "2026-09-20T01:47:18+00:00"
+   "renderedAt": "2026-09-20T01:47:18+00:00",
+   "publishedAt": "2026-09-21T01:37:52+00:00",
+   "promo": {
+    "id": "site-04-nothing-knows",
+    "sha": "5c2c800fc41f",
+    "voice": "af_kore",
+    "startTime": 790.867
+   }
   },
   "ottoman-empire": {
-   "url": "/audio/history/ottoman-empire.mp3?v=a7b5bb65",
-   "chaptersUrl": "/audio/history/ottoman-empire.chapters.json?v=a7b5bb65",
+   "url": "/audio/history/ottoman-empire.mp3?v=087f2d03",
+   "chaptersUrl": "/audio/history/ottoman-empire.chapters.json?v=087f2d03",
    "title": "The Ottoman Empire",
    "durationSeconds": 925.074,
-   "bytes": 14819286,
+   "bytes": 14819393,
    "chapters": [
     {
      "startTime": 0.0,
@@ -4712,17 +5362,30 @@
      "startTime": 894.39,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 911.923
+    },
+    {
+     "startTime": 911.923,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 925.023
     }
    ],
-   "publishedAt": "2026-09-20T19:26:02+00:00"
+   "renderedAt": "2026-09-20T19:26:02+00:00",
+   "publishedAt": "2026-09-21T01:38:35+00:00",
+   "promo": {
+    "id": "site-04-nothing-knows",
+    "sha": "5c2c800fc41f",
+    "voice": "af_kore",
+    "startTime": 911.923
+   }
   },
   "partition-of-india": {
-   "url": "/audio/history/partition-of-india.mp3?v=d8377c14",
-   "chaptersUrl": "/audio/history/partition-of-india.chapters.json?v=d8377c14",
+   "url": "/audio/history/partition-of-india.mp3?v=6b9ce4cd",
+   "chaptersUrl": "/audio/history/partition-of-india.chapters.json?v=6b9ce4cd",
    "title": "The Partition of India",
    "durationSeconds": 842.005,
-   "bytes": 13488759,
+   "bytes": 13488866,
    "chapters": [
     {
      "startTime": 0.0,
@@ -4812,17 +5475,30 @@
      "startTime": 768.116,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 828.858
+    },
+    {
+     "startTime": 828.858,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 841.958
     }
    ],
-   "publishedAt": "2026-09-19T23:09:20+00:00"
+   "renderedAt": "2026-09-19T23:09:20+00:00",
+   "publishedAt": "2026-09-21T01:39:14+00:00",
+   "promo": {
+    "id": "weekly-06-week-in-bias",
+    "sha": "5d3bb7b7d195",
+    "voice": "af_kore",
+    "startTime": 828.858
+   }
   },
   "peloponnesian-war": {
-   "url": "/audio/history/peloponnesian-war.mp3?v=f7438351",
-   "chaptersUrl": "/audio/history/peloponnesian-war.chapters.json?v=f7438351",
+   "url": "/audio/history/peloponnesian-war.mp3?v=9c9c07fb",
+   "chaptersUrl": "/audio/history/peloponnesian-war.chapters.json?v=9c9c07fb",
    "title": "The Peloponnesian War",
    "durationSeconds": 912.536,
-   "bytes": 14618810,
+   "bytes": 14618917,
    "chapters": [
     {
      "startTime": 0.0,
@@ -4918,17 +5594,30 @@
      "startTime": 870.468,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 899.401
+    },
+    {
+     "startTime": 899.401,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 912.501
     }
    ],
-   "publishedAt": "2026-09-20T19:26:02+00:00"
+   "renderedAt": "2026-09-20T19:26:02+00:00",
+   "publishedAt": "2026-09-21T01:39:56+00:00",
+   "promo": {
+    "id": "site-03-both",
+    "sha": "5d5a4ff4d5fc",
+    "voice": "af_kore",
+    "startTime": 899.401
+   }
   },
   "rise-of-islam": {
-   "url": "/audio/history/rise-of-islam.mp3?v=f1dc14d6",
-   "chaptersUrl": "/audio/history/rise-of-islam.chapters.json?v=f1dc14d6",
+   "url": "/audio/history/rise-of-islam.mp3?v=6d7ba1bd",
+   "chaptersUrl": "/audio/history/rise-of-islam.chapters.json?v=6d7ba1bd",
    "title": "The Rise of Islam",
    "durationSeconds": 866.09,
-   "bytes": 13874611,
+   "bytes": 13874718,
    "chapters": [
     {
      "startTime": 0.0,
@@ -5018,17 +5707,30 @@
      "startTime": 818.808,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 852.954
+    },
+    {
+     "startTime": 852.954,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 866.054
     }
    ],
-   "publishedAt": "2026-09-20T18:52:19+00:00"
+   "renderedAt": "2026-09-20T18:52:19+00:00",
+   "publishedAt": "2026-09-21T01:40:36+00:00",
+   "promo": {
+    "id": "weekly-03-shape",
+    "sha": "f0e39c05137d",
+    "voice": "af_kore",
+    "startTime": 852.954
+   }
   },
   "russian-revolution": {
-   "url": "/audio/history/russian-revolution.mp3?v=dff08c63",
-   "chaptersUrl": "/audio/history/russian-revolution.chapters.json?v=dff08c63",
+   "url": "/audio/history/russian-revolution.mp3?v=9305a267",
+   "chaptersUrl": "/audio/history/russian-revolution.chapters.json?v=9305a267",
    "title": "The Russian Revolution",
    "durationSeconds": 850.416,
-   "bytes": 13623446,
+   "bytes": 13623553,
    "chapters": [
     {
      "startTime": 0.0,
@@ -5112,17 +5814,30 @@
      "startTime": 798.839,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 837.286
+    },
+    {
+     "startTime": 837.286,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 850.386
     }
    ],
-   "publishedAt": "2026-09-20T18:52:20+00:00"
+   "renderedAt": "2026-09-20T18:52:20+00:00",
+   "publishedAt": "2026-09-21T01:41:15+00:00",
+   "promo": {
+    "id": "onair-04-front-page",
+    "sha": "bf338b01af9d",
+    "voice": "af_kore",
+    "startTime": 837.286
+   }
   },
   "rwandan-genocide": {
-   "url": "/audio/history/rwandan-genocide.mp3?v=40afc39b",
-   "chaptersUrl": "/audio/history/rwandan-genocide.chapters.json?v=40afc39b",
+   "url": "/audio/history/rwandan-genocide.mp3?v=f356c614",
+   "chaptersUrl": "/audio/history/rwandan-genocide.chapters.json?v=f356c614",
    "title": "The Rwandan Genocide",
    "durationSeconds": 755.592,
-   "bytes": 12104390,
+   "bytes": 12104497,
    "chapters": [
     {
      "startTime": 0.0,
@@ -5194,17 +5909,30 @@
      "startTime": 689.949,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 742.462
+    },
+    {
+     "startTime": 742.462,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 755.562
     }
    ],
-   "publishedAt": "2026-09-20T00:21:56+00:00"
+   "renderedAt": "2026-09-20T00:21:56+00:00",
+   "publishedAt": "2026-09-21T01:41:51+00:00",
+   "promo": {
+    "id": "weekly-06-week-in-bias",
+    "sha": "5d3bb7b7d195",
+    "voice": "af_kore",
+    "startTime": 742.462
+   }
   },
   "scramble-for-africa": {
-   "url": "/audio/history/scramble-for-africa.mp3?v=09f8c047",
-   "chaptersUrl": "/audio/history/scramble-for-africa.chapters.json?v=09f8c047",
+   "url": "/audio/history/scramble-for-africa.mp3?v=1403f7f3",
+   "chaptersUrl": "/audio/history/scramble-for-africa.chapters.json?v=1403f7f3",
    "title": "The Scramble for Africa",
    "durationSeconds": 771.082,
-   "bytes": 12352751,
+   "bytes": 12352858,
    "chapters": [
     {
      "startTime": 0.0,
@@ -5276,17 +6004,30 @@
      "startTime": 725.386,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 757.946
+    },
+    {
+     "startTime": 757.946,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 771.046
     }
    ],
-   "publishedAt": "2026-09-20T01:47:18+00:00"
+   "renderedAt": "2026-09-20T01:47:18+00:00",
+   "publishedAt": "2026-09-21T01:42:28+00:00",
+   "promo": {
+    "id": "weekly-04-no-host",
+    "sha": "537c6d381004",
+    "voice": "af_kore",
+    "startTime": 757.946
+   }
   },
   "september-11-attacks": {
-   "url": "/audio/history/september-11-attacks.mp3?v=9dc4df06",
-   "chaptersUrl": "/audio/history/september-11-attacks.chapters.json?v=9dc4df06",
+   "url": "/audio/history/september-11-attacks.mp3?v=c6b9ebe4",
+   "chaptersUrl": "/audio/history/september-11-attacks.chapters.json?v=c6b9ebe4",
    "title": "September 11 and the War on Terror",
    "durationSeconds": 882.39,
-   "bytes": 14135783,
+   "bytes": 14135890,
    "chapters": [
     {
      "startTime": 0.0,
@@ -5382,17 +6123,30 @@
      "startTime": 849.903,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 869.264
+    },
+    {
+     "startTime": 869.264,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 882.364
     }
    ],
-   "publishedAt": "2026-09-20T19:26:02+00:00"
+   "renderedAt": "2026-09-20T19:26:02+00:00",
+   "publishedAt": "2026-09-21T01:43:08+00:00",
+   "promo": {
+    "id": "onair-04-front-page",
+    "sha": "bf338b01af9d",
+    "voice": "af_kore",
+    "startTime": 869.264
+   }
   },
   "silk-road": {
-   "url": "/audio/history/silk-road.mp3?v=1bb2e73b",
-   "chaptersUrl": "/audio/history/silk-road.chapters.json?v=1bb2e73b",
+   "url": "/audio/history/silk-road.mp3?v=33a1c8c1",
+   "chaptersUrl": "/audio/history/silk-road.chapters.json?v=33a1c8c1",
    "title": "The Silk Road",
    "durationSeconds": 789.969,
-   "bytes": 12655018,
+   "bytes": 12655125,
    "chapters": [
     {
      "startTime": 0.0,
@@ -5464,17 +6218,30 @@
      "startTime": 736.342,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 776.831
+    },
+    {
+     "startTime": 776.831,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 789.931
     }
    ],
-   "publishedAt": "2026-09-20T00:04:51+00:00"
+   "renderedAt": "2026-09-20T00:04:51+00:00",
+   "publishedAt": "2026-09-21T01:43:44+00:00",
+   "promo": {
+    "id": "onair-06-twenty-four",
+    "sha": "0369e00caadd",
+    "voice": "af_kore",
+    "startTime": 776.831
+   }
   },
   "six-day-war": {
-   "url": "/audio/history/six-day-war.mp3?v=d1b9c5a4",
-   "chaptersUrl": "/audio/history/six-day-war.chapters.json?v=d1b9c5a4",
+   "url": "/audio/history/six-day-war.mp3?v=dc027bd9",
+   "chaptersUrl": "/audio/history/six-day-war.chapters.json?v=dc027bd9",
    "title": "The Six-Day War",
    "durationSeconds": 837.982,
-   "bytes": 13424172,
+   "bytes": 13424279,
    "chapters": [
     {
      "startTime": 0.0,
@@ -5558,17 +6325,30 @@
      "startTime": 787.825,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 824.837
+    },
+    {
+     "startTime": 824.837,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 837.937
     }
    ],
-   "publishedAt": "2026-09-20T19:26:02+00:00"
+   "renderedAt": "2026-09-20T19:26:02+00:00",
+   "publishedAt": "2026-09-21T01:44:23+00:00",
+   "promo": {
+    "id": "weekly-05-cover",
+    "sha": "7857ffcfc989",
+    "voice": "af_kore",
+    "startTime": 824.837
+   }
   },
   "soviet-union-collapse": {
-   "url": "/audio/history/soviet-union-collapse.mp3?v=2b0ecd00",
-   "chaptersUrl": "/audio/history/soviet-union-collapse.chapters.json?v=2b0ecd00",
+   "url": "/audio/history/soviet-union-collapse.mp3?v=22394b4d",
+   "chaptersUrl": "/audio/history/soviet-union-collapse.chapters.json?v=22394b4d",
    "title": "The Collapse of the Soviet Union",
    "durationSeconds": 847.047,
-   "bytes": 13569386,
+   "bytes": 13569493,
    "chapters": [
     {
      "startTime": 0.0,
@@ -5646,17 +6426,30 @@
      "startTime": 796.329,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 833.917
+    },
+    {
+     "startTime": 833.917,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 847.017
     }
    ],
-   "publishedAt": "2026-09-20T19:26:02+00:00"
+   "renderedAt": "2026-09-20T19:26:02+00:00",
+   "publishedAt": "2026-09-21T01:45:03+00:00",
+   "promo": {
+    "id": "onair-03-room-tone",
+    "sha": "4eec9e37e7a7",
+    "voice": "af_kore",
+    "startTime": 833.917
+   }
   },
   "spanish-civil-war": {
-   "url": "/audio/history/spanish-civil-war.mp3?v=6c32c828",
-   "chaptersUrl": "/audio/history/spanish-civil-war.chapters.json?v=6c32c828",
+   "url": "/audio/history/spanish-civil-war.mp3?v=4485830a",
+   "chaptersUrl": "/audio/history/spanish-civil-war.chapters.json?v=4485830a",
    "title": "The Spanish Civil War",
    "durationSeconds": 877.949,
-   "bytes": 14064680,
+   "bytes": 14064787,
    "chapters": [
     {
      "startTime": 0.0,
@@ -5746,17 +6539,30 @@
      "startTime": 842.716,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 864.808
+    },
+    {
+     "startTime": 864.808,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 877.908
     }
    ],
-   "publishedAt": "2026-09-20T19:26:02+00:00"
+   "renderedAt": "2026-09-20T19:26:02+00:00",
+   "publishedAt": "2026-09-21T01:45:44+00:00",
+   "promo": {
+    "id": "weekly-05-cover",
+    "sha": "7857ffcfc989",
+    "voice": "af_kore",
+    "startTime": 864.808
+   }
   },
   "spanish-flu-1918": {
-   "url": "/audio/history/spanish-flu-1918.mp3?v=10164fc5",
-   "chaptersUrl": "/audio/history/spanish-flu-1918.chapters.json?v=10164fc5",
+   "url": "/audio/history/spanish-flu-1918.mp3?v=f349fa2b",
+   "chaptersUrl": "/audio/history/spanish-flu-1918.chapters.json?v=f349fa2b",
    "title": "The 1918 Influenza Pandemic",
    "durationSeconds": 736.81,
-   "bytes": 11804038,
+   "bytes": 11804145,
    "chapters": [
     {
      "startTime": 0.0,
@@ -5828,17 +6634,30 @@
      "startTime": 700.665,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 723.667
+    },
+    {
+     "startTime": 723.667,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 736.767
     }
    ],
-   "publishedAt": "2026-09-20T03:41:27+00:00"
+   "renderedAt": "2026-09-20T03:41:27+00:00",
+   "publishedAt": "2026-09-21T01:46:21+00:00",
+   "promo": {
+    "id": "site-02-outlets",
+    "sha": "6ffef1fe8cbd",
+    "voice": "af_kore",
+    "startTime": 723.667
+   }
   },
   "srebrenica-genocide": {
-   "url": "/audio/history/srebrenica-genocide.mp3?v=2bb75ca8",
-   "chaptersUrl": "/audio/history/srebrenica-genocide.chapters.json?v=2bb75ca8",
+   "url": "/audio/history/srebrenica-genocide.mp3?v=861ca508",
+   "chaptersUrl": "/audio/history/srebrenica-genocide.chapters.json?v=861ca508",
    "title": "The Srebrenica Genocide and the Bosnian War",
    "durationSeconds": 869.198,
-   "bytes": 13924526,
+   "bytes": 13924633,
    "chapters": [
     {
      "startTime": 0.0,
@@ -5922,17 +6741,30 @@
      "startTime": 847.406,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 856.065
+    },
+    {
+     "startTime": 856.065,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 869.165
     }
    ],
-   "publishedAt": "2026-09-20T19:26:02+00:00"
+   "renderedAt": "2026-09-20T19:26:02+00:00",
+   "publishedAt": "2026-09-21T01:47:03+00:00",
+   "promo": {
+    "id": "weekly-06-week-in-bias",
+    "sha": "5d3bb7b7d195",
+    "voice": "af_kore",
+    "startTime": 856.065
+   }
   },
   "suez-crisis": {
-   "url": "/audio/history/suez-crisis.mp3?v=409a35de",
-   "chaptersUrl": "/audio/history/suez-crisis.chapters.json?v=409a35de",
+   "url": "/audio/history/suez-crisis.mp3?v=2e9d88b2",
+   "chaptersUrl": "/audio/history/suez-crisis.chapters.json?v=2e9d88b2",
    "title": "The Suez Crisis",
    "durationSeconds": 857.417,
-   "bytes": 13735614,
+   "bytes": 13735721,
    "chapters": [
     {
      "startTime": 0.0,
@@ -6022,17 +6854,30 @@
      "startTime": 823.495,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 844.286
+    },
+    {
+     "startTime": 844.286,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 857.386
     }
    ],
-   "publishedAt": "2026-09-20T20:13:08+00:00"
+   "renderedAt": "2026-09-20T20:13:08+00:00",
+   "publishedAt": "2026-09-21T01:47:45+00:00",
+   "promo": {
+    "id": "site-01-twenty",
+    "sha": "c81c375eab7d",
+    "voice": "af_kore",
+    "startTime": 844.286
+   }
   },
   "sykes-picot-agreement": {
-   "url": "/audio/history/sykes-picot-agreement.mp3?v=ac408453",
-   "chaptersUrl": "/audio/history/sykes-picot-agreement.chapters.json?v=ac408453",
+   "url": "/audio/history/sykes-picot-agreement.mp3?v=ea0a8a29",
+   "chaptersUrl": "/audio/history/sykes-picot-agreement.chapters.json?v=ea0a8a29",
    "title": "The Sykes-Picot Agreement",
    "durationSeconds": 910.994,
-   "bytes": 14593825,
+   "bytes": 14593932,
    "chapters": [
     {
      "startTime": 0.0,
@@ -6122,17 +6967,30 @@
      "startTime": 878.158,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 897.867
+    },
+    {
+     "startTime": 897.867,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 910.967
     }
    ],
-   "publishedAt": "2026-09-20T20:13:08+00:00"
+   "renderedAt": "2026-09-20T20:13:08+00:00",
+   "publishedAt": "2026-09-21T01:48:29+00:00",
+   "promo": {
+    "id": "site-02-outlets",
+    "sha": "6ffef1fe8cbd",
+    "voice": "af_kore",
+    "startTime": 897.867
+   }
   },
   "taiping-rebellion": {
-   "url": "/audio/history/taiping-rebellion.mp3?v=c9d4c3dd",
-   "chaptersUrl": "/audio/history/taiping-rebellion.chapters.json?v=c9d4c3dd",
+   "url": "/audio/history/taiping-rebellion.mp3?v=b9db2c26",
+   "chaptersUrl": "/audio/history/taiping-rebellion.chapters.json?v=b9db2c26",
    "title": "The Taiping Rebellion",
    "durationSeconds": 872.333,
-   "bytes": 13974521,
+   "bytes": 13974628,
    "chapters": [
     {
      "startTime": 0.0,
@@ -6216,17 +7074,30 @@
      "startTime": 843.077,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 859.196
+    },
+    {
+     "startTime": 859.196,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 872.296
     }
    ],
-   "publishedAt": "2026-09-20T20:13:08+00:00"
+   "renderedAt": "2026-09-20T20:13:08+00:00",
+   "publishedAt": "2026-09-21T01:49:12+00:00",
+   "promo": {
+    "id": "weekly-06-week-in-bias",
+    "sha": "5d3bb7b7d195",
+    "voice": "af_kore",
+    "startTime": 859.196
+   }
   },
   "the-crusades": {
-   "url": "/audio/history/the-crusades.mp3?v=07df501f",
-   "chaptersUrl": "/audio/history/the-crusades.chapters.json?v=07df501f",
+   "url": "/audio/history/the-crusades.mp3?v=1a205f87",
+   "chaptersUrl": "/audio/history/the-crusades.chapters.json?v=1a205f87",
    "title": "The Crusades",
    "durationSeconds": 841.195,
-   "bytes": 13475679,
+   "bytes": 13475786,
    "chapters": [
     {
      "startTime": 0.0,
@@ -6310,17 +7181,30 @@
      "startTime": 781.806,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 828.056
+    },
+    {
+     "startTime": 828.056,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 841.156
     }
    ],
-   "publishedAt": "2026-09-20T00:04:51+00:00"
+   "renderedAt": "2026-09-20T00:04:51+00:00",
+   "publishedAt": "2026-09-21T01:49:53+00:00",
+   "promo": {
+    "id": "weekly-01-verbatim",
+    "sha": "da7009d30a33",
+    "voice": "af_kore",
+    "startTime": 828.056
+   }
   },
   "the-holocaust": {
-   "url": "/audio/history/the-holocaust.mp3?v=f585d52c",
-   "chaptersUrl": "/audio/history/the-holocaust.chapters.json?v=f585d52c",
+   "url": "/audio/history/the-holocaust.mp3?v=a0781f82",
+   "chaptersUrl": "/audio/history/the-holocaust.chapters.json?v=a0781f82",
    "title": "The Holocaust",
    "durationSeconds": 871.21,
-   "bytes": 13956289,
+   "bytes": 13956396,
    "chapters": [
     {
      "startTime": 0.0,
@@ -6398,17 +7282,30 @@
      "startTime": 820.833,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 858.08
+    },
+    {
+     "startTime": 858.08,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 871.18
     }
    ],
-   "publishedAt": "2026-09-20T00:04:51+00:00"
+   "renderedAt": "2026-09-20T00:04:51+00:00",
+   "publishedAt": "2026-09-21T01:50:34+00:00",
+   "promo": {
+    "id": "weekly-01-verbatim",
+    "sha": "da7009d30a33",
+    "voice": "af_kore",
+    "startTime": 858.08
+   }
   },
   "the-reformation": {
-   "url": "/audio/history/the-reformation.mp3?v=053b4c98",
-   "chaptersUrl": "/audio/history/the-reformation.chapters.json?v=053b4c98",
+   "url": "/audio/history/the-reformation.mp3?v=4341e4f4",
+   "chaptersUrl": "/audio/history/the-reformation.chapters.json?v=4341e4f4",
    "title": "The Protestant Reformation",
    "durationSeconds": 797.492,
-   "bytes": 12775805,
+   "bytes": 12775912,
    "chapters": [
     {
      "startTime": 0.0,
@@ -6492,17 +7389,30 @@
      "startTime": 765.81,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 784.361
+    },
+    {
+     "startTime": 784.361,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 797.461
     }
    ],
-   "publishedAt": "2026-09-20T03:41:27+00:00"
+   "renderedAt": "2026-09-20T03:41:27+00:00",
+   "publishedAt": "2026-09-21T01:51:12+00:00",
+   "promo": {
+    "id": "weekly-01-verbatim",
+    "sha": "da7009d30a33",
+    "voice": "af_kore",
+    "startTime": 784.361
+   }
   },
   "tiananmen-square": {
-   "url": "/audio/history/tiananmen-square.mp3?v=be29cab3",
-   "chaptersUrl": "/audio/history/tiananmen-square.chapters.json?v=be29cab3",
+   "url": "/audio/history/tiananmen-square.mp3?v=c2065dc6",
+   "chaptersUrl": "/audio/history/tiananmen-square.chapters.json?v=c2065dc6",
    "title": "Tiananmen Square, 1989",
    "durationSeconds": 783.464,
-   "bytes": 12551206,
+   "bytes": 12551313,
    "chapters": [
     {
      "startTime": 0.0,
@@ -6586,17 +7496,30 @@
      "startTime": 757.927,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 770.319
+    },
+    {
+     "startTime": 770.319,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 783.419
     }
    ],
-   "publishedAt": "2026-09-20T01:47:18+00:00"
+   "renderedAt": "2026-09-20T01:47:18+00:00",
+   "publishedAt": "2026-09-21T01:51:49+00:00",
+   "promo": {
+    "id": "site-05-nothing-to-sign",
+    "sha": "ff70eda2551a",
+    "voice": "af_kore",
+    "startTime": 770.319
+   }
   },
   "trail-of-tears": {
-   "url": "/audio/history/trail-of-tears.mp3?v=f90a4d22",
-   "chaptersUrl": "/audio/history/trail-of-tears.chapters.json?v=f90a4d22",
+   "url": "/audio/history/trail-of-tears.mp3?v=2bf15f46",
+   "chaptersUrl": "/audio/history/trail-of-tears.chapters.json?v=2bf15f46",
    "title": "The Trail of Tears",
    "durationSeconds": 823.353,
-   "bytes": 13190012,
+   "bytes": 13190119,
    "chapters": [
     {
      "startTime": 0.0,
@@ -6680,17 +7603,30 @@
      "startTime": 772.038,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 810.202
+    },
+    {
+     "startTime": 810.202,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 823.302
     }
    ],
-   "publishedAt": "2026-09-20T02:54:36+00:00"
+   "renderedAt": "2026-09-20T02:54:36+00:00",
+   "publishedAt": "2026-09-21T01:52:29+00:00",
+   "promo": {
+    "id": "weekly-05-cover",
+    "sha": "7857ffcfc989",
+    "voice": "af_kore",
+    "startTime": 810.202
+   }
   },
   "transatlantic-slave-trade": {
-   "url": "/audio/history/transatlantic-slave-trade.mp3?v=32def9ec",
-   "chaptersUrl": "/audio/history/transatlantic-slave-trade.chapters.json?v=32def9ec",
+   "url": "/audio/history/transatlantic-slave-trade.mp3?v=0ede9cb7",
+   "chaptersUrl": "/audio/history/transatlantic-slave-trade.chapters.json?v=0ede9cb7",
    "title": "The Transatlantic Slave Trade",
    "durationSeconds": 857.757,
-   "bytes": 13740868,
+   "bytes": 13740975,
    "chapters": [
     {
      "startTime": 0.0,
@@ -6768,17 +7704,30 @@
      "startTime": 792.971,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 844.61
+    },
+    {
+     "startTime": 844.61,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 857.71
     }
    ],
-   "publishedAt": "2026-09-20T00:21:56+00:00"
+   "renderedAt": "2026-09-20T00:21:56+00:00",
+   "publishedAt": "2026-09-21T01:53:10+00:00",
+   "promo": {
+    "id": "site-02-outlets",
+    "sha": "6ffef1fe8cbd",
+    "voice": "af_kore",
+    "startTime": 844.61
+   }
   },
   "treaty-of-waitangi": {
-   "url": "/audio/history/treaty-of-waitangi.mp3?v=4df056da",
-   "chaptersUrl": "/audio/history/treaty-of-waitangi.chapters.json?v=4df056da",
+   "url": "/audio/history/treaty-of-waitangi.mp3?v=69846e87",
+   "chaptersUrl": "/audio/history/treaty-of-waitangi.chapters.json?v=69846e87",
    "title": "The Treaty of Waitangi and the New Zealand Wars",
    "durationSeconds": 857.809,
-   "bytes": 13742311,
+   "bytes": 13742418,
    "chapters": [
     {
      "startTime": 0.0,
@@ -6862,17 +7811,30 @@
      "startTime": 820.322,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 844.668
+    },
+    {
+     "startTime": 844.668,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 857.768
     }
    ],
-   "publishedAt": "2026-09-20T20:13:08+00:00"
+   "renderedAt": "2026-09-20T20:13:08+00:00",
+   "publishedAt": "2026-09-21T01:53:50+00:00",
+   "promo": {
+    "id": "site-02-outlets",
+    "sha": "6ffef1fe8cbd",
+    "voice": "af_kore",
+    "startTime": 844.668
+   }
   },
   "vietnam-war": {
-   "url": "/audio/history/vietnam-war.mp3?v=4d8fda7d",
-   "chaptersUrl": "/audio/history/vietnam-war.chapters.json?v=4d8fda7d",
+   "url": "/audio/history/vietnam-war.mp3?v=79efb0e4",
+   "chaptersUrl": "/audio/history/vietnam-war.chapters.json?v=79efb0e4",
    "title": "The Vietnam War",
    "durationSeconds": 808.725,
-   "bytes": 12955789,
+   "bytes": 12955896,
    "chapters": [
     {
      "startTime": 0.0,
@@ -6956,17 +7918,30 @@
      "startTime": 783.294,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 795.594
+    },
+    {
+     "startTime": 795.594,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 808.694
     }
    ],
-   "publishedAt": "2026-09-20T03:41:27+00:00"
+   "renderedAt": "2026-09-20T03:41:27+00:00",
+   "publishedAt": "2026-09-21T01:54:28+00:00",
+   "promo": {
+    "id": "weekly-01-verbatim",
+    "sha": "da7009d30a33",
+    "voice": "af_kore",
+    "startTime": 795.594
+   }
   },
   "watergate": {
-   "url": "/audio/history/watergate.mp3?v=56856e19",
-   "chaptersUrl": "/audio/history/watergate.chapters.json?v=56856e19",
+   "url": "/audio/history/watergate.mp3?v=b4d578f3",
+   "chaptersUrl": "/audio/history/watergate.chapters.json?v=b4d578f3",
    "title": "The Pentagon Papers and Watergate",
    "durationSeconds": 809.482,
-   "bytes": 12968102,
+   "bytes": 12968209,
    "chapters": [
     {
      "startTime": 0.0,
@@ -7056,17 +8031,30 @@
      "startTime": 784.357,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 796.344
+    },
+    {
+     "startTime": 796.344,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 809.444
     }
    ],
-   "publishedAt": "2026-09-20T20:13:08+00:00"
+   "renderedAt": "2026-09-20T20:13:08+00:00",
+   "publishedAt": "2026-09-21T01:55:06+00:00",
+   "promo": {
+    "id": "site-04-nothing-knows",
+    "sha": "5c2c800fc41f",
+    "voice": "af_kore",
+    "startTime": 796.344
+   }
   },
   "womens-suffrage": {
-   "url": "/audio/history/womens-suffrage.mp3?v=a5c127ce",
-   "chaptersUrl": "/audio/history/womens-suffrage.chapters.json?v=a5c127ce",
+   "url": "/audio/history/womens-suffrage.mp3?v=eb627a87",
+   "chaptersUrl": "/audio/history/womens-suffrage.chapters.json?v=eb627a87",
    "title": "The Global Struggle for Women's Suffrage",
    "durationSeconds": 777.744,
-   "bytes": 12459679,
+   "bytes": 12459786,
    "chapters": [
     {
      "startTime": 0.0,
@@ -7150,17 +8138,30 @@
      "startTime": 729.587,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 764.615
+    },
+    {
+     "startTime": 764.615,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 777.715
     }
    ],
-   "publishedAt": "2026-09-20T02:54:36+00:00"
+   "renderedAt": "2026-09-20T02:54:36+00:00",
+   "publishedAt": "2026-09-21T01:55:43+00:00",
+   "promo": {
+    "id": "onair-02-firewall",
+    "sha": "5dc16aaca50d",
+    "voice": "af_kore",
+    "startTime": 764.615
+   }
   },
   "world-war-i": {
-   "url": "/audio/history/world-war-i.mp3?v=6da90e5c",
-   "chaptersUrl": "/audio/history/world-war-i.chapters.json?v=6da90e5c",
+   "url": "/audio/history/world-war-i.mp3?v=e02b377e",
+   "chaptersUrl": "/audio/history/world-war-i.chapters.json?v=e02b377e",
    "title": "World War I",
    "durationSeconds": 834.508,
-   "bytes": 13368754,
+   "bytes": 13368861,
    "chapters": [
     {
      "startTime": 0.0,
@@ -7244,10 +8245,23 @@
      "startTime": 790.097,
      "title": "Legacy",
      "kind": "segment",
+     "endTime": 821.377
+    },
+    {
+     "startTime": 821.377,
+     "title": "Also from Void News",
+     "kind": "segment",
      "endTime": 834.477
     }
    ],
-   "publishedAt": "2026-09-20T03:41:27+00:00"
+   "renderedAt": "2026-09-20T03:41:27+00:00",
+   "publishedAt": "2026-09-21T01:56:22+00:00",
+   "promo": {
+    "id": "site-03-both",
+    "sha": "5d5a4ff4d5fc",
+    "voice": "af_kore",
+    "startTime": 821.377
+   }
   }
  }
 }
