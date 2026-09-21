@@ -47,6 +47,49 @@ export function landingMetadata(eventCount: number): Metadata {
   );
 }
 
+/* The three browse routes. They were built, prerendered and served with no
+   `metadata` export at all, so /history/threads, /history/era/<era> and
+   /history/region/<region> each shipped the ROOT layout's title ("Void News.
+   See through the void.") and the site-wide card: sixteen served pages that
+   said nothing about themselves in a search result or a shared link. Each
+   description is assembled from the catalogue the page itself renders, so
+   none of them can assert something the page does not show. */
+
+export function eraMetadata(opts: {
+  label: string;
+  dateRange: string;
+  description: string;
+  era: string;
+}): Metadata {
+  return yieldToCardFile(
+    pageMetadata({
+      title: `${opts.label} | History`,
+      description: `${opts.dateRange}. ${opts.description}. Each event told from every side that claimed it.`,
+      path: `/history/era/${opts.era}/`,
+    })
+  );
+}
+
+export function regionMetadata(opts: { label: string; region: string }): Metadata {
+  return yieldToCardFile(
+    pageMetadata({
+      title: `${opts.label} | History`,
+      description: `Events from ${opts.label}, each told from every side that claimed it. Primary sources, named perspectives, and what each account leaves out.`,
+      path: `/history/region/${opts.region}/`,
+    })
+  );
+}
+
+export function threadsMetadata(threadCount: number): Metadata {
+  return yieldToCardFile(
+    pageMetadata({
+      title: "Threads | History",
+      description: `${threadCount} threads through the archive, each one following a single argument across centuries.`,
+      path: "/history/threads/",
+    })
+  );
+}
+
 export function eventMetadata(opts: {
   title: string;
   description: string;

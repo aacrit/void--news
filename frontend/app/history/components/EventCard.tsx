@@ -21,7 +21,7 @@ export default function EventCard({ event }: EventCardProps) {
     <Link
       href={`/history/${event.slug}`}
       className="hist-event-card"
-      aria-label={`${event.title} — ${event.datePrimary}`}
+      aria-label={`${event.title}, ${event.datePrimary}`}
     >
       <div className="hist-event-card__image">
         {event.heroImage ? (

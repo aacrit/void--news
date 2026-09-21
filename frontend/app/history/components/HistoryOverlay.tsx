@@ -198,7 +198,7 @@ export default function HistoryOverlay({
       className={`hist-overlay ${reducedMotion ? "hist-overlay--instant" : ""}`}
       role="dialog"
       aria-modal="true"
-      aria-label={`${event.title} — full story`}
+      aria-label={`${event.title}, full story`}
     >
       {/* Close button */}
       <button

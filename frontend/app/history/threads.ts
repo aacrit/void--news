@@ -23,7 +23,7 @@ export const THREADS: ThematicThread[] = [
   {
     id: "cold-war",
     label: "THE COLD WAR",
-    subtitle: "Capitalism vs. Communism — the 200-year ideological contest that never formally ended",
+    subtitle: "Capitalism vs. Communism: the 200-year ideological contest that never formally ended",
     colorVar: "var(--hist-persp-a)",
     eventSlugs: [
       "industrial-revolution",     // capitalism born, 1760
@@ -41,7 +41,7 @@ export const THREADS: ThematicThread[] = [
   {
     id: "colonialism",
     label: "COLONIALISM",
-    subtitle: "The extraction project — from the first ships to the last borders",
+    subtitle: "The extraction project, from the first ships to the last borders",
     colorVar: "var(--hist-persp-b)",
     eventSlugs: [
       "columbian-exchange",        // the biological conquest, 1492
@@ -61,7 +61,7 @@ export const THREADS: ThematicThread[] = [
   {
     id: "revolution",
     label: "REVOLUTION",
-    subtitle: "When the governed stopped consenting — and what came next",
+    subtitle: "When the governed stopped consenting, and what came next",
     colorVar: "var(--hist-persp-c)",
     eventSlugs: [
       "french-revolution",         // liberty, equality, guillotine, 1789
@@ -78,7 +78,7 @@ export const THREADS: ThematicThread[] = [
   {
     id: "war-empire",
     label: "WAR & EMPIRE",
-    subtitle: "How power is seized, held, and lost — from Athens to Hiroshima",
+    subtitle: "How power is seized, held, and lost: from Athens to Hiroshima",
     colorVar: "var(--hist-persp-d)",
     eventSlugs: [
       "peloponnesian-war",         // Athens vs Sparta, 431 BCE
@@ -96,7 +96,7 @@ export const THREADS: ThematicThread[] = [
   {
     id: "genocide-memory",
     label: "GENOCIDE & MEMORY",
-    subtitle: "The systematic killing of peoples — and who decides what is remembered",
+    subtitle: "The systematic killing of peoples, and who decides what is remembered",
     colorVar: "var(--hist-persp-e)",
     eventSlugs: [
       "armenian-genocide",         // the word 'genocide' came from here, 1915
@@ -110,7 +110,7 @@ export const THREADS: ThematicThread[] = [
   {
     id: "trade-technology",
     label: "TRADE & TECHNOLOGY",
-    subtitle: "The networks that connected — and the power they transferred",
+    subtitle: "The networks that connected, and the power they transferred",
     colorVar: "var(--hist-persp-f)",
     eventSlugs: [
       "silk-road",                 // merchants, monks, and microbes
