@@ -1,4 +1,5 @@
 # Simplification — full scope, beyond engine code
+> Historical. Written before the 2026-09-01 Supabase decommission and the Kokoro switch; the current state is CLAUDE.md.
 
 > Companion to [ENGINE-BREAKAGE-ANALYSIS.md](./ENGINE-BREAKAGE-ANALYSIS.md).
 > The engine simplification reaches into the database, the workflows, the

@@ -128,8 +128,6 @@ ALLOWED_WITHOUT_BANNER = {
     "INDEPENDENT-REVIEW-2026-06-11.md": "dated report",
     "PERF-REPORT-2026-03-22.md": "dated report",
     # Undated, not in the audit's banner list; candidates for the banner.
-    "ENGINE-SIMPLIFICATION-FULL-SCOPE.md": "scope note on retired migrations",
-    "MEMORY-ENGINE-ARCHITECTURE.md": "diagram of the retired data plane",
 }
 for path in sorted((ROOT / "docs").glob("*.md")):
     lines = path.read_text().split("\n")
