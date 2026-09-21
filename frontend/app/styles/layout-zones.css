@@ -616,3 +616,17 @@
   margin: 0;
   color: var(--fg-tertiary);
 }
+
+/* ===========================================================================
+   The ranker's order shows (2026-09-21). Rank 0 takes the wider column and
+   the larger headline; rank 1 sits beside it one notch down. Two identical
+   halves discarded an order the pipeline had already decided.
+   =========================================================================== */
+@media (min-width: 1024px) {
+  .lead-twin {
+    grid-template-columns: 1.3fr 1fr;
+  }
+  .lead-twin > .lead-story:nth-child(2) .lead-headline {
+    font-size: clamp(1.25rem, 0.95rem + 1vw, 1.8rem);
+  }
+}

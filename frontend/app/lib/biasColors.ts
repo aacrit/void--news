@@ -182,18 +182,23 @@ export function isUnscoredTilt(
    shown on. The mean averages sources sitting on both sides, so it is
    compressed toward 50 by construction: on 2026-08-13 the entire live top-50
    sat within |lean-50| <= 6 against a threshold of 8, and 52 of 52 cards
-   rendered "Flat". The wing counts are not compressed that way, so they carry
+   rendered "Balanced". The wing counts are not compressed that way, so they carry
    the direction the mean loses. The gate stays fully symmetric: Left and Right
    are judged by the same thresholds on both routes. When a tilt fails the gate:
      - genuinely split (both wings present AND high polarization) -> "Contested".
-     - otherwise -> "Flat" (no clear lean, and no confident numeric score).
+     - otherwise -> "Balanced" when measured, "Not measured" when the gate fails.
    This changes label TEXT and numeric-score visibility ONLY; the Sigil beam
    angle, color, and fan geometry are untouched, and the Deep Dive spectrum still
    plots the full true distribution.                                          ── */
 
 export const LEAN_BAND_LOW = 48;
 export const LEAN_BAND_HIGH = 52;
-export const NO_CLEAR_LEAN_LABEL = "Flat";
+/* The three measurement states a card can be in, said out loud. "Balanced"
+   means measured and sitting at the centre; "Not measured" means the engine
+   did not have enough measured articles or confidence to say anything, and
+   the mark paints no direction. They used to share one word, "Flat". */
+export const BALANCED_LABEL = "Balanced";
+export const UNMEASURED_LABEL = "Not measured";
 export const CONTESTED_LABEL = "Contested";
 
 /** A directional partisan label needs at least this many sources behind it —
@@ -240,7 +245,7 @@ export const LABEL_MIN_SUPPORT_POLARIZATION = 35;
  *  rather than "Flat" — matches LeanCoverageBar's contested threshold. */
 export const CONTESTED_MIN_POLARIZATION = 50;
 
-export type LeanLabelState = "confident" | "contested" | "no-clear-lean";
+export type LeanLabelState = "confident" | "contested" | "balanced" | "unmeasured";
 
 interface WingCounts {
   leanLeftCount?: number;
@@ -284,7 +289,8 @@ export function leanShareTilt(spread?: WingCounts | null): number {
  *   "confident"      well-supported tilt, shown either by the mean's magnitude
  *                    or by a lopsided coverage roster -> keep the directional label + score.
  *   "contested"      failed gate but genuinely split (both wings + high polarization) -> "Contested".
- *   "no-clear-lean"  failed gate, not genuinely split -> "Flat" (score withheld).
+ *   "balanced"       measured, passed support, not split, mean at centre (score withheld).
+ *   "unmeasured"     failed the support gate (measured count, sources, confidence).
  *
  * `sourceCount` defaults to +Infinity so callers that omit it keep the pre-gate
  * behavior for the source-count factor; pass the cluster's real source count to
@@ -328,11 +334,15 @@ export function leanLabelState(
     Math.abs(shareTilt) >= LABEL_MIN_SHARE_TILT &&
     Math.sign(shareTilt) === Math.sign(lean - 50);
 
-  if (wellSupported && (meanIsMeaningful || rosterIsLopsided)) return "confident";
+  // Not enough measured articles, outlets or confidence: the engine has no
+  // read, and the card says so rather than calling the story balanced.
+  if (!wellSupported) return "unmeasured";
+
+  if (meanIsMeaningful || rosterIsLopsided) return "confident";
 
   const genuinelyContested =
     bothWingsPresent(spread) && pol >= CONTESTED_MIN_POLARIZATION;
-  return genuinelyContested ? "contested" : "no-clear-lean";
+  return genuinelyContested ? "contested" : "balanced";
 }
 
 /* ── The one label a story gets ────────────────────────────────────────────
@@ -347,9 +357,9 @@ export function leanLabelState(
    already calling Flat.                                                     ── */
 
 export interface StoryLeanLabel {
-  /** "Center-Right", or "Contested" / "Flat" / "Unscored" when suppressed. */
+  /** "Center-Right", or "Contested" / "Balanced" / "Not measured" / "Unscored" when suppressed. */
   text: string;
-  /** "CR", or the same suppressed text (there is no abbreviation for Flat). */
+  /** "CR", or the same suppressed text (suppressed states are not abbreviated). */
   abbr: string;
   color: string;
   state: LeanLabelState | "unscored";
@@ -368,8 +378,12 @@ export function storyLeanLabel(
              state: "unscored", suppressed: true };
   }
   const state = leanLabelState(lean, spread, sourceCount);
-  if (state === "no-clear-lean") {
-    return { text: NO_CLEAR_LEAN_LABEL, abbr: NO_CLEAR_LEAN_LABEL,
+  if (state === "unmeasured") {
+    return { text: UNMEASURED_LABEL, abbr: UNMEASURED_LABEL,
+             color: "var(--fg-tertiary)", state, suppressed: true };
+  }
+  if (state === "balanced") {
+    return { text: BALANCED_LABEL, abbr: BALANCED_LABEL,
              color: "var(--fg-tertiary)", state, suppressed: true };
   }
   if (state === "contested") {

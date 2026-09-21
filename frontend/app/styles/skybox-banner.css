@@ -1006,3 +1006,51 @@
   .skb__topbar-chip:hover { color: var(--fg-secondary); }
   .skb__topbar-collapse:hover { border-color: color-mix(in srgb, var(--accent-warm) 20%, transparent); background: var(--cin-amber-ghost); }
 }
+
+/* ===========================================================================
+   One object, not two (2026-09-21). The compact skybox used to be two
+   peer-weighted columns, The Brief and Opinion, each claiming "the day in
+   one read" above the first headline. The Brief keeps its column; Opinion
+   folds to a single line beneath it (label, lean badge, headline), still a
+   tap target that expands in place. The first headline moves up a row.
+   =========================================================================== */
+@media (min-width: 768px) {
+  .skb__compact-cols {
+    grid-template-columns: 1fr;
+  }
+  .skb__compact-col--tldr {
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-right: var(--space-4);
+  }
+  .skb__compact-col--opinion {
+    padding: var(--space-2) var(--space-4);
+    flex-direction: row;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+  }
+  .skb__compact-col--opinion .skb__compact-label {
+    flex: 0 0 auto;
+  }
+  .skb__compact-col--opinion .skb__compact-desc {
+    display: none;
+  }
+  .skb__compact-col--opinion .skb__compact-hl--opinion {
+    flex: 1 1 24ch;
+    min-width: 0;
+    margin: 0;
+    font-size: var(--text-base);
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .skb__compact-col--opinion .skb__compact-preview--opinion {
+    display: none;
+  }
+  .skb__compact-col--opinion .skb__compact-expand {
+    position: static;
+    margin-left: auto;
+  }
+}

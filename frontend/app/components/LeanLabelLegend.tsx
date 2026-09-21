@@ -7,7 +7,7 @@ import { Info } from "@phosphor-icons/react";
    LeanLabelLegend — a small info affordance next to the feed header that
    defines the coverage descriptors shown under each headline.
 
-   Readers see tags like "Right", "Flat", "Contested", "Split" but nothing
+   Readers see tags like "Right", "Balanced", "Not measured", "Contested", "Split" but nothing
    tells them which read the LEAN (which way coverage tilts) and which read the
    SPREAD (how much sources agree). This popover names both groups once, at the
    top of the feed. Accessible: a labelled toggle button (aria-expanded /
@@ -64,11 +64,11 @@ export default function LeanLabelLegend() {
             </div>
             <div className="lean-legend__row">
               <dt>Balanced</dt>
-              <dd>Sources sit at the center.</dd>
+              <dd>Measured, and the coverage sits at the center.</dd>
             </div>
             <div className="lean-legend__row">
-              <dt>Flat</dt>
-              <dd>No clear lean; the coverage does not tilt either way.</dd>
+              <dt>Not measured</dt>
+              <dd>Too few measured articles, or too little confidence, to read a lean. The mark stays level and grey.</dd>
             </div>
           </dl>
 

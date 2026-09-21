@@ -191,7 +191,12 @@ export default function WeeklyIssue({
   return (
     <div className="wk-page">
       <CinematicCover
-        nameplate={<SigilWordmark product="WEEKLY" height={44} accent="var(--palette-weekly)" />}
+        nameplate={
+          <span className="wk-nameplate">
+            <span className="wk-nameplate__parent"><SigilWordmark product="NEWS" height={14} /></span>
+            <span className="wk-nameplate__word">Weekly</span>
+          </span>
+        }
         issueLine={`${issueName} · ${weekRange}`}
         headline={coverHeadline}
         coverlines={coverlines}

@@ -1962,3 +1962,27 @@ a.wk-archive__item:hover { color: var(--wk-accent); }
 
   a[href^="/"]::after { content: " (news.voidvision.org" attr(href) ")"; font-size: 0.7em; }
 }
+
+/* ---------------------------------------------------------------------------
+   Cover nameplate (2026-09-21). Weekly is a section of Void News, so the
+   cover carries the small VOID NEWS mark over the section's name in the
+   magazine red, instead of a VOID WEEKLY lockup of its own.
+   --------------------------------------------------------------------------- */
+.wk-nameplate {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+.wk-nameplate__parent {
+  display: inline-flex;
+  opacity: 0.8;
+}
+.wk-nameplate__word {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: clamp(2.25rem, 1.5rem + 3vw, 3.25rem);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  color: var(--wk-accent);
+}

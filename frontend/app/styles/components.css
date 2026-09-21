@@ -2047,7 +2047,7 @@ button:focus-visible .sigil-word__beam {
    tagline + dateline + spinoffs + pages without squeezing the dateline off.
    Below this the dateline (functional) keeps the space; the tagline is
    decorative branding and degrades gracefully by hiding. */
-@media (min-width: 1180px) {
+@media (min-width: 1440px) {
   .nav-tagline {
     display: inline-block;
   }

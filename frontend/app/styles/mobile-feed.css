@@ -118,14 +118,19 @@
   filter: saturate(var(--sigil-saturation-boost, 1));
 }
 
-/* The 7px lean text stacked under the Sigil ring is redundant with the
-   ring color itself — both encode the same political-lean signal. Hide
-   on mobile where viewport space is precious; the ring carries the
-   signal alone. Desktop renders Sigil at "lg" size where the inline
-   label has more readable proportions. */
+/* The caption under the Sigil is shown on phones too (2026-09-21): the ring
+   colour alone cannot say "Balanced" or "Not measured", and a label that
+   exists on desktop and not on the phone is the same card saying two
+   things. Floored at 9px, nowrap, allowed to run wider than the mark. */
 .msc__headline--hero .sigil__lean-label,
 .msc__headline--compact .sigil__lean-label {
-  display: none;
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  max-width: 72px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .msc__summary {
