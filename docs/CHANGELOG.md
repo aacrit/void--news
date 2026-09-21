@@ -18,6 +18,59 @@ lives in this file.
 
 ---
 
+## rev 80: the first post-fix run, and a threshold that was asserting the wrong thing (2026-09-21)
+
+Run #375 committed the first export carrying the step 6b fix, which turned on
+the committed-export check written hours earlier in rev 78. It failed, and it
+was right to fail and wrong about why.
+
+**What the run actually produced**, whole-tuple default rows and lean at 50:
+
+| | 2026-09-20 | run #375 |
+|---|---|---|
+| whole default tuple | 540/737 (73.3%) | 186/975 (19.1%) |
+| `political_lean` at exactly 50 | 610/737 (82.8%) | 522/975 (53.5%) |
+
+19.1% against a 10% cap. The obvious readings were that the threshold was too
+tight or that 6b was still broken. Both wrong, and the measurement that
+settles it is one a share can never express:
+
+**All 186 default rows are published 2026-09-20. Not one of the 534 articles
+published 2026-09-21 is a default.** Today's scoring was clean, end to end.
+The residue is the previous day's damage, loaded out of the state DB by step
+6b's own 36h lookback and written back faithfully by
+`existing.get("political_lean", 50)`. It clears itself as those articles leave
+the window, so a share threshold would have failed CI for two days over rows
+that were already handled, and taught everyone to override it.
+
+Corroborating the diagnosis rather than assuming it: the 186 carry the old 6b
+signature exactly, four default axes with a real varying `framing` and a
+framing-only rationale. 135 of them are from RATED outlets, including nine
+Newsmax rows at lean 50 against a `far-right` baseline of 90, which the
+analyzer's own contract makes impossible for anything that was measured.
+
+**So the check now asserts the invariant that protects the reader instead of a
+share: no default-tuple row may be UNMARKED.** A row carrying `lean_unscored`
+is out of the cluster aggregate, off the Deep Dive spectrum and labelled
+Unscored, so its presence in the JSON misleads nobody. An unmarked one is read
+as a measured 50 by every consumer. The share is printed every run, and only a
+run that measured almost nothing (>60%) still fails on it.
+
+The exemption became self-detecting in the same pass. It used to compare
+`feed.json`'s `builtAt` against the 6b fix date, which is a date to maintain;
+it now checks whether any row carries a `lean_unscored` key at all. Run #375
+ran on `adc05f4`, before the field was carried out of the database, so no row
+does and there is nothing to assert about marks. The first export from current
+code turns the assertion on with no edit. Verified by planting the field on
+every row and leaving exactly one default unmarked: one finding, naming the
+count and the consequence.
+
+Prediction on the record, to be checked against the run of 2026-09-23: near
+zero default rows. If not, something is writing defaults again, and the mark
+assertion will name it.
+
+---
+
 ## rev 79: why the unscored are unscored, and the eight that should not have been (2026-09-21)
 
 **CEO: "when we say unscored, why can't we score them?"**

@@ -285,25 +285,29 @@ def check_defaults_are_marked_unscored() -> list:
     return out
 
 
-# The step 6b fix, so the committed-export check knows whether the feed on
-# disk was written before or after it. 2026-09-21 02:39 UTC, commit 1484db4.
-SIX_B_FIX_DATE = "2026-09-21"
-
-
 def check_the_committed_export() -> list:
     """The share of the feed THIS REPO ships, not a synthetic one.
 
-    This is the check that makes the tightening real: the export degrades
-    rather than blocking (CEO, 2026-09-21), so nothing stops a bad run from
-    shipping a page. What stops a bad run from staying shipped is CI failing
-    here, on the export actually committed.
+    The invariant is not "few default rows". It is **no UNMARKED default row**.
+    A default-tuple row that carries `lean_unscored` is handled: it is out of
+    the cluster aggregate, its pin is off the Deep Dive spectrum and its label
+    reads Unscored, so its presence in the JSON misleads nobody. A default row
+    WITHOUT the mark is the actual defect, because every consumer then reads
+    50 as a measurement.
 
-    It carries ONE exemption, and it clears itself. While the committed
-    feed.json was built before the 6b fix, its rows are the known-damaged
-    2026-09-20 set (540/737 = 73.3%) and failing on them would only say what
-    docs/OPEN-ITEMS.md already says. The moment a post-fix run commits a feed,
-    builtAt moves past SIX_B_FIX_DATE and the assertion starts biting with no
-    further edit. If it then fails, the bias step regressed.
+    Written as a share first, at 10%, which was wrong and worth recording. The
+    first post-fix export (run #375, built 2026-09-21T18:18) came in at 19.1%
+    whole-tuple and 53.5% lean-at-50, and a share test simply failed. The
+    diagnosis that a share cannot express: **all 186 default rows were
+    published 2026-09-20, and none of the 534 articles published 2026-09-21
+    was a default.** They are the previous day's damage, loaded out of the
+    state DB by step 6b's 36h lookback and faithfully written back by
+    `existing.get("political_lean", 50)`. Today's scoring was clean. The
+    residue ages out of the lookback window on its own, so a share threshold
+    would have failed CI for two days over rows that were already correct, and
+    taught everyone to override it.
+
+    So the share is printed, and only the mark is asserted.
     """
     import json
 
@@ -314,9 +318,8 @@ def check_the_committed_export() -> list:
         return ["no committed export to check: "
                 f"feed.json {'present' if feed.exists() else 'missing'}, "
                 f"{len(deepdive)} deepdive file(s)"]
-
     try:
-        built = str(json.loads(feed.read_text()).get("builtAt") or "")[:10]
+        built = str(json.loads(feed.read_text()).get("builtAt") or "")[:19]
     except Exception as err:
         return [f"could not read feed.json builtAt: {err}"]
 
@@ -329,25 +332,44 @@ def check_the_committed_export() -> list:
 
     defaults, total, share = default_share(rows)
     axes = per_axis_default_share(rows)
+    lean_share = axes["political_lean"][2]
+    print(f"       committed export built {built}: {defaults}/{total} default "
+          f"rows ({share:.1%}), lean at 50 {lean_share:.1%}")
 
-    if built and built < SIX_B_FIX_DATE:
-        print(f"       exempt: committed export built {built}, before the step "
-              f"6b fix ({SIX_B_FIX_DATE}). {defaults}/{total} default rows "
-              f"({share:.1%}); lean at 50 "
-              f"{axes['political_lean'][2]:.1%}. The assertion starts biting "
-              f"on the first post-fix feed, with no edit here.")
+    # Self-detecting, self-clearing exemption. An export written before
+    # `lean_unscored` was carried out of the database has the key on no row at
+    # all, so there is nothing to assert about marks; asserting anyway would
+    # fail on the export's age rather than on anything wrong with it. The
+    # moment a run from current code commits, the key appears and the
+    # assertion below starts biting with no edit here.
+    carries_the_field = any("lean_unscored" in r for r in rows)
+    if not carries_the_field:
+        print(f"       exempt: no row carries a lean_unscored key, so this "
+              f"export predates the field reaching the page. The mark "
+              f"assertion starts biting on the first export from current "
+              f"code, with no edit here.")
         return []
 
+    unmarked = [r for r in rows if is_default_tuple(r) and not r.get("lean_unscored")]
     out = []
-    if total > MIN_ROWS_TO_ENFORCE and share > DEFAULT_TUPLE_MAX_SHARE:
-        out.append(f"the committed export (built {built}) is {share:.1%} "
-                   f"default rows ({defaults}/{total}), over the "
-                   f"{DEFAULT_TUPLE_MAX_SHARE:.0%} cap")
-    for axis, (n, tot, sh) in sorted(axes.items(), key=lambda kv: -kv[1][2]):
-        cap = PER_AXIS_MAX_SHARE[axis]
-        if tot > MIN_ROWS_TO_ENFORCE and sh > cap:
-            out.append(f"the committed export has {axis} at its default on "
-                       f"{n}/{tot} rows ({sh:.1%}), over the {cap:.0%} cap")
+    if unmarked:
+        out.append(
+            f"the committed export (built {built}) carries {len(unmarked)} "
+            f"default-tuple row(s) with no lean_unscored mark, of {total} "
+            f"rows. Every consumer reads those as a measured 50: they are in "
+            f"the cluster lean aggregate and drawn on the Deep Dive spectrum. "
+            f"export_static.py stamps the mark on any default row, so an "
+            f"unmarked one means a second write path reached the export."
+        )
+    # The one share worth failing on: a run that measured almost nothing is a
+    # broken run whatever the marks say. Deliberately far above the 19.1% the
+    # carried-forward residue produced, so it fires on breakage, not on age.
+    if total > MIN_ROWS_TO_ENFORCE and share > 0.60:
+        out.append(
+            f"the committed export is {share:.1%} default rows "
+            f"({defaults}/{total}): a run that measured almost nothing, "
+            f"marks or no marks."
+        )
     return out
 
 

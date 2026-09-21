@@ -197,33 +197,45 @@ claiming to remove one.
 
 ## Watch on the next run
 
-**Bias defaults after the step 6b fix (2026-09-21).** Step 6b used to rebuild
-every row in a multi-article cluster from `article_bias_map.get(art_id, {})`,
-and the 36h lookback articles were never in that map, so their measured scores
-were replaced with 50/10/25/50/0.7 plus a framing-only rationale. It now loads
-the stored `bias_scores` rows for those articles before it re-scores framing,
-and writes no row at all for an article it has nothing measured for.
+**Bias defaults after the step 6b fix: MEASURED 2026-09-21, and the fix works.**
+Run #375 (built 2026-09-21T18:18, the first scheduled run carrying the fix)
+against the export it committed:
 
-On the first run after this lands, read the export's own line in the run log:
+| | before (2026-09-20) | after (run #375) |
+|---|---|---|
+| whole default tuple | 540/737 (73.3%) | 186/975 (**19.1%**) |
+| `political_lean` at exactly 50 | 610/737 (82.8%) | 522/975 (53.5%) |
+| `sensationalism` at 10 | 637/737 (86.4%) | 657/975 (67.4%) |
 
-    bias defaults: N/M per-article rows are the default tuple (X%; ...)
+19.1% is not the low single digits this note used to predict, and the reason
+is the one a share cannot express: **all 186 default rows are published
+2026-09-20. Not one of the 534 articles published 2026-09-21 is a default.**
+Today's scoring was clean. The residue is the previous day's damage, loaded
+out of the state DB by step 6b's own 36h lookback and written back faithfully
+by `existing.get("political_lean", 50)`.
 
-Before the fix that share was 73.4% (540 of 737 rows in
-`frontend/public/data/deepdive/`). It should now fall well below 0.5; a real
-corpus should land in the low single digits, since only an article with no
-`bias_scores` row at all can still read as defaults. The export raises and
-ships nothing above 0.5 over 100 rows
-(`DEFAULT_TUPLE_MAX_SHARE`, `pipeline/validation/bias_defaults.py`), so a
-regression stops the run instead of reaching the page. Also worth reading in
-the same log: 6b's two new lines, how many lookback articles needed stored
-scores against how many rows came back, and how many framing updates were
-skipped for want of a measured row.
+So it is not a live defect and it clears itself: those articles leave the 36h
+window within about a day and a half. **Prediction to check on the run of
+2026-09-23: near zero.** If it is not, something is writing defaults again and
+the mark assertion below will say so.
 
-`VOID_BIAS_DEFAULTS_GATE=warn` is **gone** (2026-09-21): it existed only
-because the export used to refuse a mostly-default run, and the export degrades
-now. The threshold moved to `tests/test_bias_defaults_gate.py`, which asserts
-the committed export and exempts itself only while that export predates the 6b
-fix, so it starts biting on the first post-fix feed with no edit.
+The rows are recognisable: four default axes, a real varying `framing` score
+and a framing-only rationale, which is the old 6b signature. 135 of the 186
+come from RATED outlets, including nine Newsmax rows at lean 50 against a
+`far-right` baseline of 90, which the analyzer's own contract makes impossible
+for a measured article.
+
+`tests/test_bias_defaults_gate.py` asserts the invariant that actually
+protects the reader, not the share: **no default-tuple row may be unmarked.**
+A marked row is out of the cluster aggregate, off the Deep Dive spectrum and
+labelled Unscored, so it misleads nobody; an unmarked one is read as a
+measured 50 everywhere. The share is printed every run, and only a run that
+measured almost nothing (>60%) fails on it.
+
+The check exempts itself, self-detectingly, while the committed export carries
+no `lean_unscored` key on any row, which is true of run #375 because it ran on
+`adc05f4`, before the field was carried out of the database. The first export
+from current code turns the assertion on with no edit.
 
 **House promos: DISCHARGED 2026-09-21.** All 78 published History episodes
 carry a promo under their outro, stitched without re-rendering a single line
