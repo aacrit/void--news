@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
 import type { HistoricalEvent, RedactedEvent, HistoryEra } from "../types";
-import { ERAS } from "../types";
+import { ERAS, REGIONS } from "../types";
 import { HOOKS, CTAS } from "../hooks";
 import { ARC_FEATURES } from "../arc-features";
 import { THREADS, buildThreadMembership } from "../threads";
@@ -31,40 +31,56 @@ import { THREADS, buildThreadMembership } from "../threads";
 const ERA_CONTEXT: Record<string, { label: string; years: string; description: string; color: string }> = {
   ancient: {
     label: "The Ancient World",
-    years: "3000 BCE — 500 BCE",
+    years: "3000 to 500 BCE",
     description: "First civilizations, written law, and organized warfare",
     color: "var(--hist-persp-c)",
   },
   classical: {
     label: "The Classical Age",
-    years: "500 BCE — 500 CE",
+    years: "500 BCE to 500 CE",
     description: "Empires rose and fell. Democracy was invented. So was crucifixion.",
     color: "var(--hist-persp-a)",
   },
   medieval: {
     label: "The Medieval World",
-    years: "500 — 1500",
+    years: "500 to 1500",
     description: "Crusades, plagues, and the Mongol storm. Europe called them the Dark Ages. The rest of the world didn\u2019t.",
     color: "var(--hist-persp-d)",
   },
   "early-modern": {
     label: "The Early Modern Period",
-    years: "1500 — 1800",
+    years: "1500 to 1800",
     description: "Colonialism begins. Millions enslaved. Revolutions brew.",
     color: "var(--hist-persp-b)",
   },
   modern: {
     label: "The Modern Era",
-    years: "1800 — 1945",
+    years: "1800 to 1945",
     description: "Industry, nationalism, two world wars, and the atom split open",
     color: "var(--hist-accent)",
   },
   contemporary: {
     label: "The Contemporary World",
-    years: "1945 — Present",
+    years: "1945 to present",
     description: "Decolonization, cold war, genocide, and the unfinished project of human rights",
     color: "var(--hist-brass)",
   },
+};
+
+/* Era chip labels: the phone strip, and only the phone strip.
+   The strip used to print the last word of the long label
+   (`ERA_CONTEXT[id].label.split(" ").pop()`). The six long labels end in
+   World, Age, World, Period, Era, World, so three chips read WORLD and the
+   row named nothing. These are the short forms, one per era, each unique.
+   Used by the chip row alone: the long label still heads the timeline and
+   still labels the desktop pills. */
+const ERA_CHIP_LABEL: Record<string, string> = {
+  ancient: "Ancient",
+  classical: "Classical",
+  medieval: "Medieval",
+  "early-modern": "Early Modern",
+  modern: "Modern",
+  contemporary: "Contemporary",
 };
 
 /* ── Fun facts — ephemeral context between events ── */
@@ -419,9 +435,7 @@ export default function HistoryLanding({
   redacted,
 }: HistoryLandingProps) {
   const timelineRef = useRef<HTMLDivElement>(null);
-  const bgLayerRef = useRef<HTMLDivElement>(null);
   const inkPathRef = useRef<SVGPathElement>(null);
-  const scrollVelocityRef = useRef(0);
   const focusedIndexRef = useRef(0);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(0);
@@ -613,6 +627,11 @@ export default function HistoryLanding({
         setFocusedIndex(closest);
       }
 
+      /* The brief fades and the era header appears on the first scroll. This
+         used to ride the parallax listener; it rides the one that is left.
+         Setting it to the value it already holds does not re-render. */
+      setHasScrolled(true);
+
       /* Rolling year: interpolate from scroll fraction */
       let leftIdx = 0;
       let rightIdx = positions.length - 1;
@@ -694,133 +713,36 @@ export default function HistoryLanding({
     }).filter(Boolean) as (typeof FUN_FACTS[0] & { position: number })[];
   }, [sortedEvents, positions]);
 
-  /* ── Parallax scroll handler — enhanced differential (bg 0.3x = 0.7x relative) ── */
-  useEffect(() => {
-    if (reducedMotion) return;
-    const container = timelineRef.current;
-    const bg = bgLayerRef.current;
-    if (!container || !bg) return;
+  /* ── The timeline scrolls natively, and that is the whole change ──
 
-    const handleScroll = () => {
-      const scrollLeft = container.scrollLeft;
-      bg.style.transform = `translateX(${-scrollLeft * 0.30}px)`;
-      /* Note: cards scroll at native 1x. Background at 0.7x effective (0.30 offset).
-         The 0.3x differential is sufficient for depth perception. Adding 1.05x to cards
-         would fight with their absolute positioning + Dutch angle transforms. */
-      if (!hasScrolled) setHasScrolled(true);
-    };
+     What was here: a `wheel` listener with `preventDefault()` that turned
+     every vertical delta into horizontal velocity, a rAF friction loop
+     (`velocity *= 0.88`) with its own snap-to-card at rest, a second rAF loop
+     that scrolled the container whenever the pointer sat within 60px of a
+     screen edge, and a third scroll listener writing `transform` on the
+     background layer on every frame of all of it. Three drivers, one
+     scrollbar, and physics no other section of the site uses.
 
-    container.addEventListener("scroll", handleScroll, { passive: true });
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [reducedMotion, hasScrolled]);
+     Now: `scroll-snap-type: x mandatory` on the container and
+     `scroll-snap-align: start` on the cards (history.css). Trackpads,
+     shift-wheel, touch, and the browsers that map a vertical wheel onto a
+     horizontal-only scroller all work without being intercepted, and the
+     snap the friction loop hand-rolled is the browser's. A mouse-only reader
+     gets the prev/next pair instead of the edge zones. The parallax is a CSS
+     scroll-driven animation where the browser has one, and nothing at all
+     where it does not. */
 
-  /* ── Momentum wheel: vertical scroll -> horizontal, snappier physics (desktop only) ── */
-  useEffect(() => {
-    if (isMobileVertical) return; /* Skip on mobile — native vertical scroll */
-    const container = timelineRef.current;
-    if (!container) return;
-
-    let velocity = 0;
-    let rafId: number;
-    let isAnimating = false;
-
-    const applyMomentum = () => {
-      if (Math.abs(velocity) < 0.5) {
-        isAnimating = false;
-        /* Snap assist: settle on nearest card */
-        const scrollCenter = container.scrollLeft + container.clientWidth / 3;
-        const totalW = container.scrollWidth;
-        let closest = 0;
-        let closestDist = Infinity;
-        for (let i = 0; i < positions.length; i++) {
-          const cardX = positions[i] * totalW;
-          const dist = Math.abs(cardX - scrollCenter);
-          if (dist < closestDist) {
-            closestDist = dist;
-            closest = i;
-          }
-        }
-        const targetLeft = positions[closest] * totalW - container.clientWidth / 3;
-        const currentLeft = container.scrollLeft;
-        if (Math.abs(targetLeft - currentLeft) > 5 && Math.abs(targetLeft - currentLeft) < 400) {
-          container.scrollTo({ left: targetLeft, behavior: "smooth" });
-        }
-        return;
-      }
-      container.scrollLeft += velocity;
-      velocity *= 0.88;
-      rafId = requestAnimationFrame(applyMomentum);
-    };
-
-    const handleWheel = (e: WheelEvent) => {
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        velocity += e.deltaY * 1.2;
-        if (!isAnimating) {
-          isAnimating = true;
-          rafId = requestAnimationFrame(applyMomentum);
-        }
-      }
-    };
-
-    container.addEventListener("wheel", handleWheel, { passive: false });
-    return () => {
-      container.removeEventListener("wheel", handleWheel);
-      cancelAnimationFrame(rafId);
-    };
-  }, [positions, isMobileVertical]);
-
-  /* ── Edge scroll: mouse near left/right edge triggers auto-scroll (desktop) ── */
-  useEffect(() => {
-    if (reducedMotion) return;
-    const container = timelineRef.current;
-    if (!container) return;
-
-    /* Only on desktop (pointer: fine) */
-    const isTouch = window.matchMedia("(pointer: coarse)").matches;
-    if (isTouch) return;
-
-    const EDGE_ZONE = 60;
-    const MAX_SPEED = 12;
-
-    let rafId: number;
-    const tick = () => {
-      if (scrollVelocityRef.current === 0) return;
-      if (container) container.scrollLeft += scrollVelocityRef.current;
-      rafId = requestAnimationFrame(tick);
-    };
-    const startTick = () => {
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(tick);
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (e.clientX < EDGE_ZONE) {
-        const intensity = 1 - e.clientX / EDGE_ZONE;
-        scrollVelocityRef.current = -MAX_SPEED * intensity;
-        startTick();
-      } else if (e.clientX > window.innerWidth - EDGE_ZONE) {
-        const intensity = 1 - (window.innerWidth - e.clientX) / EDGE_ZONE;
-        scrollVelocityRef.current = MAX_SPEED * intensity;
-        startTick();
-      } else {
-        scrollVelocityRef.current = 0;
-      }
-    };
-
-    const handleMouseLeave = () => {
-      scrollVelocityRef.current = 0;
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseleave", handleMouseLeave);
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseleave", handleMouseLeave);
-      cancelAnimationFrame(rafId);
-      scrollVelocityRef.current = 0;
-    };
-  }, [reducedMotion]);
+  /* ── Step one card, for the prev/next pair ── */
+  const stepTo = useCallback((index: number) => {
+    const clamped = Math.max(0, Math.min(index, sortedEvents.length - 1));
+    const station = stationRefs.current[clamped];
+    if (!station) return;
+    station.scrollIntoView({
+      block: isMobileVertical ? "center" : "nearest",
+      inline: isMobileVertical ? "nearest" : "center",
+      behavior: reducedMotion ? "auto" : "smooth",
+    });
+  }, [sortedEvents.length, isMobileVertical, reducedMotion]);
 
   /* ── Auto-scroll to 1945 on initial load ── */
   useEffect(() => {
@@ -877,19 +799,24 @@ export default function HistoryLanding({
     return () => { links.forEach((l) => l.remove()); };
   }, [focusedIndex, sortedEvents]);
 
-  /* ── Easter Egg: Anniversary Vigil — events glow on their date ── */
-  const anniversarySlugs = useMemo(() => {
+  /* ── Easter Egg: Anniversary Vigil — events glow on their date ──
+     Read in an effect, not in render. The landing is prerendered now, so a
+     `new Date()` during render is the BUILD date on the server and TODAY in
+     the browser: two different class lists for the same station, which is a
+     hydration mismatch. The server renders no vigil; the browser lights it. */
+  const [anniversarySlugs, setAnniversarySlugs] = useState<Set<string>>(new Set());
+  useEffect(() => {
     const today = new Date();
     const monthName = today.toLocaleString("en-US", { month: "long" }).toLowerCase();
     const day = today.getDate();
-    return new Set(
+    setAnniversarySlugs(new Set(
       sortedEvents
         .filter((e) => {
           const dp = (e.datePrimary || "").toLowerCase();
           return dp.includes(monthName) && dp.includes(String(day));
         })
         .map((e) => e.slug)
-    );
+    ));
   }, [sortedEvents]);
 
   /* ── Current era context for header ── */
@@ -994,12 +921,49 @@ export default function HistoryLanding({
                 type="button"
                 aria-label={`Jump to ${ERA_CONTEXT[era.id]?.label || era.label}`}
               >
-                {(ERA_CONTEXT[era.id]?.label || era.label).split(" ").pop()}
+                {ERA_CHIP_LABEL[era.id] || era.label}
               </button>
             );
           })}
         </nav>
       )}
+
+      {/* ── The masthead: the page's name, and the three ways into the
+             archive that nothing used to link to.
+
+             /history/era/<era>, /history/region/<region> and /history/threads
+             were built, served and reachable only by typing the URL. They are
+             plain links here, and each destination carries the full list of
+             its siblings at its foot, so one click into a family reaches all
+             of it. The <h1> lives here rather than in the brief below because
+             the brief fades on the first scroll and a page's name should not.
+             ── */}
+      <header className="hist-tl-masthead">
+        <h1 className="hist-tl-masthead__title">History</h1>
+        <nav
+          className="hist-tl-masthead__browse"
+          aria-label="Browse by era, region or thread"
+        >
+          <span className="hist-tl-masthead__browse-label" aria-hidden="true">
+            Browse
+          </span>
+          {ERAS.map((e) => (
+            <Link key={`era-${e.id}`} href={`/history/era/${e.id}`} className="hist-tl-masthead__link">
+              {e.label}
+            </Link>
+          ))}
+          <span className="hist-tl-masthead__rule" aria-hidden="true" />
+          {REGIONS.filter((r) => r.id !== "global").map((r) => (
+            <Link key={`region-${r.id}`} href={`/history/region/${r.id}`} className="hist-tl-masthead__link">
+              {r.label}
+            </Link>
+          ))}
+          <span className="hist-tl-masthead__rule" aria-hidden="true" />
+          <Link href="/history/threads" className="hist-tl-masthead__link">
+            Threads
+          </Link>
+        </nav>
+      </header>
 
       {/* Mission Brief -- fades on first scroll */}
       <div
@@ -1013,6 +977,43 @@ export default function HistoryLanding({
           {isMobileVertical ? "scroll through time" : "\u2190 scroll through time \u2192"}
         </span>
       </div>
+
+      {/* ── Prev/next, for a mouse with no horizontal wheel ──
+             The edge-scroll zones used to do this by moving the scrollbar
+             under the pointer whenever it strayed within 60px of a screen
+             edge. A named control that moves one card is the same service
+             without the ambush, and it lands on a snap point. Hidden under
+             768px, where the timeline is a native vertical scroll. ── */}
+      {!threadsMode && sortedEvents.length > 1 && (
+        <div className="hist-tl-step" role="group" aria-label="Move through the timeline">
+          <button
+            type="button"
+            className="hist-tl-step__btn"
+            onClick={() => stepTo(focusedIndex - 1)}
+            disabled={focusedIndex <= 0}
+            aria-label={
+              sortedEvents[focusedIndex - 1]
+                ? `Earlier: ${sortedEvents[focusedIndex - 1].title}`
+                : "Earlier"
+            }
+          >
+            <span aria-hidden="true">&lsaquo;</span>
+          </button>
+          <button
+            type="button"
+            className="hist-tl-step__btn"
+            onClick={() => stepTo(focusedIndex + 1)}
+            disabled={focusedIndex >= sortedEvents.length - 1}
+            aria-label={
+              sortedEvents[focusedIndex + 1]
+                ? `Later: ${sortedEvents[focusedIndex + 1].title}`
+                : "Later"
+            }
+          >
+            <span aria-hidden="true">&rsaquo;</span>
+          </button>
+        </div>
+      )}
 
       {/* ── Long View toggle + Ledger link ── */}
       {ARC_FEATURES.LONG_VIEW && (
@@ -1188,10 +1189,14 @@ export default function HistoryLanding({
       >
         {/* Parallax background layer: era gradient bands */}
         <div
-          ref={bgLayerRef}
           className="hist-tl-full__bg-layer"
           aria-hidden="true"
-          style={{ width: `${totalWidthVw}px` }}
+          style={{
+            width: `${totalWidthVw}px`,
+            /* The one number the CSS parallax needs: how far the layer has to
+               travel. history.css reads it inside a `scroll()` timeline. */
+            "--tl-total-w": `${totalWidthVw}px`,
+          } as React.CSSProperties}
         >
           {eraGroups.map((era) => {
             const startPct = sortedEvents.length > 1
@@ -1448,7 +1453,7 @@ function TimelineCard({
       href={`/history/${event.slug}`}
       className={`hist-tl-card hist-tl-card--${side} ${severityClass}${entranceClass}${focusedClass}${isPulsed ? " hist-tl-card--conn-pulse" : ""}`}
       data-slug={event.slug}
-      aria-label={`${event.title} — ${event.datePrimary}`}
+      aria-label={`${event.title}, ${event.datePrimary}`}
       style={{
         ...(reducedMotion ? {} : { "--card-index": index }),
         "--photo-sat": photoSat,

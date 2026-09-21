@@ -27,7 +27,7 @@ export const HOOKS: Record<string, string> = {
   "transatlantic-slave-trade":
     "12.5 million embarked. 10.7 million survived the crossing. The database lists 36,000 individual voyages.",
   "armenian-genocide":
-    "The American ambassador cabled Washington: \u2018Race extermination.\u2019 Raphael Lemkin later coined a word for it \u2014 \u2018genocide.\u2019",
+    "The American ambassador cabled Washington: \u2018Race extermination.\u2019 Raphael Lemkin later coined a word for it: \u2018genocide.\u2019",
   "holodomor":
     "Gareth Jones walked through Ukrainian villages counting bodies. Walter Duranty won a Pulitzer for saying there was no famine.",
   "congo-free-state":
@@ -51,21 +51,21 @@ export const HOOKS: Record<string, string> = {
   "ashoka-maurya-empire":
     "He carved the body count into rock for everyone to read: 100,000 killed, 150,000 deported. Then, on the same stone, he said he regretted it.",
   "fall-of-rome":
-    "The last emperor was sixteen. The general who deposed him didn\u2019t kill him \u2014 he gave him a pension and mailed the crown to Constantinople.",
+    "The last emperor was sixteen. The general who deposed him didn\u2019t kill him. He gave him a pension and mailed the crown to Constantinople.",
   "mali-empire-mansa-musa":
     "Mansa Musa carried 18 tons of gold to Mecca. His charity crashed Egypt\u2019s gold market for twelve years.",
   "the-crusades":
-    "The Fourth Crusade never reached Jerusalem. It sacked Constantinople \u2014 the largest Christian city on earth \u2014 instead.",
+    "The Fourth Crusade never reached Jerusalem. It sacked Constantinople, the largest Christian city on earth, instead.",
   "september-11-attacks":
     "Nineteen men with box cutters turned the world\u2019s most powerful military against two countries that didn\u2019t attack it.",
   "black-death":
-    "It killed one in three Europeans \u2014 and the survivors demanded higher wages.",
+    "It killed one in three Europeans, and the survivors demanded higher wages.",
   "assassination-of-caesar":
     "The Senate voted him dictator for life. Forty days later, twenty-three senators voted with knives.",
   "civil-rights-movement":
     "Four college students sat at a lunch counter in Greensboro. Within two months, sit-ins had spread to 54 cities.",
   "indian-independence-movement":
-    "A lawyer in a loincloth walked to the sea to pick up salt \u2014 and broke an empire\u2019s monopoly on everything.",
+    "A lawyer in a loincloth walked to the sea to pick up salt, and broke an empire\u2019s monopoly on everything.",
   "fall-of-tenochtitlan":
     "Cort\u00e9s had 500 soldiers. Tenochtitlan had 300,000 people. Smallpox decided the math.",
   "alexanders-conquests":
@@ -87,7 +87,7 @@ export const HOOKS: Record<string, string> = {
   "chinese-cultural-revolution":
     "Students beat their teachers to death with the textbooks they\u2019d been taught from.",
   "cyrus-cylinder":
-    "He freed the Babylonians, the Jews, and the Egyptians \u2014 and put it in writing. 2,500 years before human rights became a legal concept.",
+    "He freed the Babylonians, the Jews, and the Egyptians, and put it in writing. 2,500 years before human rights became a legal concept.",
   "fall-of-constantinople":
     "A 21-year-old sultan hired a cannon maker the emperor couldn\u2019t pay. Then someone left a gate unlocked.",
   "mughal-empire":
@@ -105,11 +105,11 @@ export const HOOKS: Record<string, string> = {
   "ottoman-empire":
     "The empire lasted 623 years. The men who carved it up needed six.",
   "industrial-revolution":
-    "In 1750, a Bengali weaver earned more than his English counterpart. By 1830, the looms of Dacca were silent \u2014 Britain had made sure of it.",
+    "In 1750, a Bengali weaver earned more than his English counterpart. By 1830, the looms of Dacca were silent. Britain had made sure of it.",
   "vietnam-war":
     "The Pentagon Papers showed the government knew by 1967 it couldn\u2019t win. The war continued for eight more years. 2.1 million more people died.",
   "womens-suffrage":
-    "New Zealand gave women the vote in 1893. Switzerland waited until 1971. One canton held out until 1990 \u2014 a federal court forced it.",
+    "New Zealand gave women the vote in 1893. Switzerland waited until 1971. One canton held out until 1990; a federal court forced it.",
   "arab-spring":
     "A fruit vendor set himself on fire in a town of 40,000. Within 60 days, three presidents had fallen.",
   "columbian-exchange":
@@ -119,7 +119,7 @@ export const HOOKS: Record<string, string> = {
   "congo-wars":
     "The deadliest war since 1945 killed 5.4 million people. Most people cannot name the country where it happened.",
   "bandung-conference":
-    "Twenty-nine nations sent delegates to a city in Java. They represented 1.5 billion people \u2014 more than half the world \u2014 and not one of their countries had been independent 15 years earlier.",
+    "Twenty-nine nations sent delegates to a city in Java. They represented 1.5 billion people, more than half the world, and not one of their countries had been independent 15 years earlier.",
   "iranian-revolution":
     "Women marched alongside mullahs to overthrow the Shah. Within a year, the mullahs made the veil mandatory.",
 };
@@ -138,13 +138,13 @@ export const CTAS: Record<string, string> = {
   "french-revolution":
     "Read the revolution from Paris, Versailles, and Haiti",
   "creation-of-israel-nakba":
-    "Same day, same land \u2014 read both declarations side by side",
+    "Same day, same land: read both declarations side by side",
   "trail-of-tears":
     "The court said no. The president said yes. Read both arguments",
   "fall-of-berlin-wall":
     "Compare what East and West saw on the same night",
   "transatlantic-slave-trade":
-    "Ledger entries vs. survivor testimony \u2014 two records of the same voyage",
+    "Ledger entries vs. survivor testimony: two records of the same voyage",
   "armenian-genocide":
     "The ambassador\u2019s cables vs. the government\u2019s denials",
   "holodomor":
@@ -160,9 +160,9 @@ export const CTAS: Record<string, string> = {
   "mongol-conquest-baghdad":
     "Destroyer or globalizer? Two accounts of what happened to the library",
   "haitian-revolution":
-    "The enslaved who defeated Napoleon \u2014 told by 4 sides",
+    "The enslaved who defeated Napoleon, told by 4 sides",
   "meiji-restoration":
-    "How Japan avoided China\u2019s fate \u2014 reformers vs. the last samurai",
+    "How Japan avoided China\u2019s fate: reformers vs. the last samurai",
   "treaty-of-waitangi":
     "Two texts, two languages, two meanings. Read both treaties",
   "bolivarian-revolutions":
@@ -172,31 +172,31 @@ export const CTAS: Record<string, string> = {
   "fall-of-rome":
     "Did it fall or transform? The debate that shaped how the West thinks about collapse",
   "mali-empire-mansa-musa":
-    "European maps vs. oral tradition \u2014 two records of Africa\u2019s wealthiest empire",
+    "European maps vs. oral tradition: two records of Africa\u2019s wealthiest empire",
   "the-crusades":
-    "Jerusalem 1099 vs. Jerusalem 1187 \u2014 the massacre and the mercy, side by side",
+    "Jerusalem 1099 vs. Jerusalem 1187: the massacre and the mercy, side by side",
   "september-11-attacks":
-    "Ground Zero vs. Kabul \u2014 two countries\u2019 view of the same war",
+    "Ground Zero vs. Kabul: two countries\u2019 view of the same war",
   "black-death":
     "Divine punishment or labor revolution? Read 5 accounts of the same plague",
   "assassination-of-caesar":
     "Tyrannicide or murder? The debate that shaped 2,000 years of politics",
   "civil-rights-movement":
-    "King\u2019s dream vs. Malcolm\u2019s warning \u2014 two visions of the same struggle",
+    "King\u2019s dream vs. Malcolm\u2019s warning: two visions of the same struggle",
   "indian-independence-movement":
-    "Gandhi\u2019s salt vs. Bhagat Singh\u2019s pistol \u2014 two paths to the same freedom",
+    "Gandhi\u2019s salt vs. Bhagat Singh\u2019s pistol: two paths to the same freedom",
   "fall-of-tenochtitlan":
-    "Cort\u00e9s\u2019s letters vs. the Broken Spears \u2014 the conquest told by both sides",
+    "Cort\u00e9s\u2019s letters vs. the Broken Spears: the conquest told by both sides",
   "alexanders-conquests":
     "Greek hero or Persian destroyer? The sources that survived vs. the ones he burned",
   "the-holocaust":
-    "Survivor testimony vs. bureaucratic records \u2014 two archives of the same crime",
+    "Survivor testimony vs. bureaucratic records: two archives of the same crime",
   "russian-revolution":
     "Workers\u2019 liberation or state hijacking? Five versions of October 1917",
   "apartheid":
-    "Mandela\u2019s cell vs. Verwoerd\u2019s parliament \u2014 46 years, two South Africas",
+    "Mandela\u2019s cell vs. Verwoerd\u2019s parliament: 46 years, two South Africas",
   "silk-road":
-    "Merchants, monks, and microbes \u2014 what traveled the road besides silk",
+    "Merchants, monks, and microbes: what traveled the road besides silk",
   "mongol-empire":
     "Destroyer of civilizations or connector of continents? Read the conquered and the Khan",
   "cuban-missile-crisis":
@@ -210,7 +210,7 @@ export const CTAS: Record<string, string> = {
   "fall-of-constantinople":
     "The last emperor died with his soldiers. Read five versions of the empire\u2019s final night",
   "mughal-empire":
-    "Din-i-Ilahi to Babri Masjid \u2014 500 years of one civilization, four contested narratives",
+    "Din-i-Ilahi to Babri Masjid: 500 years of one civilization, four contested narratives",
   "angkor-khmer-empire":
     "What LIDAR found in the jungle vs. what colonial France chose to see",
   "kingdom-of-kongo":
@@ -218,27 +218,27 @@ export const CTAS: Record<string, string> = {
   "rise-of-islam":
     "Divine revelation or social revolution? Five traditions on the same century of expansion",
   "inca-conquest-peru":
-    "Atahualpa\u2019s ransom vs. Pizarro\u2019s letters \u2014 two accounts of the same plaza at Cajamarca",
+    "Atahualpa\u2019s ransom vs. Pizarro\u2019s letters: two accounts of the same plaza at Cajamarca",
   "taiping-rebellion":
-    "Mao\u2019s hero vs. the dynasty that burned his kingdom \u2014 30 million dead, two explanations",
+    "Mao\u2019s hero vs. the dynasty that burned his kingdom: 30 million dead, two explanations",
   "ottoman-empire":
-    "The empire that governed three continents \u2014 told by Turks, Arabs, Balkan Christians, and the people Sykes and Picot replaced it with",
+    "The empire that governed three continents, told by Turks, Arabs, Balkan Christians, and the people Sykes and Picot replaced it with",
   "industrial-revolution":
-    "The progress narrative vs. the workers it crushed vs. the colonies it deindustrialized \u2014 five accounts of the same engine",
+    "The progress narrative vs. the workers it crushed vs. the colonies it deindustrialized: five accounts of the same engine",
   "vietnam-war":
-    "The American War vs. the American War \u2014 five names for one conflict, four countries, three million dead",
+    "The American War vs. the American War: five names for one conflict, four countries, three million dead",
   "womens-suffrage":
     "New Zealand first. Switzerland last. Black women excluded in between. Read five versions of the same demand",
   "arab-spring":
-    "Same spark, six outcomes \u2014 why Tunisia built a democracy and Syria became a graveyard",
+    "Same spark, six outcomes: why Tunisia built a democracy and Syria became a graveyard",
   "columbian-exchange":
-    "The discovery vs. the destruction \u2014 Columbus\u2019s diary vs. Las Casas\u2019s testimony vs. the biology that decided it all",
+    "The discovery vs. the destruction: Columbus\u2019s diary vs. Las Casas\u2019s testimony vs. the biology that decided it all",
   "korean-war":
-    "Four names for one war: \u2018police action,\u2019 \u2018liberation war,\u2019 \u20186.25,\u2019 \u2018resist aggression\u2019 \u2014 read all four",
+    "Four names for one war: \u2018police action,\u2019 \u2018liberation war,\u2019 \u20186.25,\u2019 \u2018resist aggression\u2019; read all four",
   "congo-wars":
-    "Rwanda\u2019s security logic vs. Congo\u2019s sovereignty vs. the coltan in your phone \u2014 5.4 million dead, three explanations",
+    "Rwanda\u2019s security logic vs. Congo\u2019s sovereignty vs. the coltan in your phone: 5.4 million dead, three explanations",
   "bandung-conference":
-    "The birth of the Third World \u2014 told by the nations that built it, the superpowers that feared it, and the women it excluded",
+    "The birth of the Third World, told by the nations that built it, the superpowers that feared it, and the women it excluded",
   "iranian-revolution":
-    "Islamic awakening, hijacked revolution, Cold War blowback, or women betrayed \u2014 four readings of one February afternoon",
+    "Islamic awakening, hijacked revolution, Cold War blowback, or women betrayed: four readings of one February afternoon",
 };

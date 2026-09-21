@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { HistoricalEvent, RedactedEvent } from "./types";
-import { fetchHistoryEvents, fetchRedactedEvents } from "./data";
+import { fetchHistoryEvents } from "./data";
 import HistoryLanding from "./components/HistoryLanding";
 
 /* ===========================================================================
@@ -14,35 +14,40 @@ import HistoryLanding from "./components/HistoryLanding";
    See through the void." and the site-wide card, and no share of any History
    link ever said what it was. Same split /sources and /about already use.
 
-   The runtime fetch below is unchanged and is still a known item: the landing
-   shows a spinner where Weekly server-renders. That is a larger change (the
-   filter state lives in HistoryLanding) and is deliberately not bundled with
-   the metadata fix.
+   The runtime fetch is now the FALLBACK, not the path. page.tsx reads the
+   emitted catalogue at build and passes it in, so the served HTML carries the
+   heading and all 78 event titles and links. The effect below runs only when
+   that prop arrives empty, which means the snapshot was missing at build; it
+   then fetches, and failing that `fetchHistoryEvents` returns mock data. A
+   checkout that has never run the pipeline still renders a visibly
+   placeholder archive rather than a blank page.
    =========================================================================== */
 
-export default function HistoryClient() {
-  const [events, setEvents] = useState<HistoricalEvent[]>([]);
-  const [redacted, setRedacted] = useState<RedactedEvent[]>([]);
-  const [loading, setLoading] = useState(true);
+interface HistoryClientProps {
+  events: HistoricalEvent[];
+  redacted: RedactedEvent[];
+}
+
+export default function HistoryClient({ events, redacted }: HistoryClientProps) {
+  const prerendered = events.length > 0;
+  const [fetched, setFetched] = useState<HistoricalEvent[]>([]);
+  const [loading, setLoading] = useState(!prerendered);
 
   useEffect(() => {
+    if (prerendered) return;
     let cancelled = false;
 
     async function load() {
-      const [evts, red] = await Promise.all([
-        fetchHistoryEvents(),
-        fetchRedactedEvents(),
-      ]);
+      const evts = await fetchHistoryEvents();
       if (!cancelled) {
-        setEvents(evts);
-        setRedacted(red);
+        setFetched(evts);
         setLoading(false);
       }
     }
 
     load();
     return () => { cancelled = true; };
-  }, []);
+  }, [prerendered]);
 
   if (loading) {
     return (
@@ -59,5 +64,5 @@ export default function HistoryClient() {
     );
   }
 
-  return <HistoryLanding events={events} redacted={redacted} />;
+  return <HistoryLanding events={prerendered ? events : fetched} redacted={redacted} />;
 }

@@ -19,6 +19,10 @@ Checks, against the LIVE site (stdlib only, like verify_production.py):
         here: images pointed at Special:Redirect, which answers HTTP 429 and
         rendered the archive pictureless, and six were licensed fair-use.
   H-04  every /history/<slug>/ in the catalog is actually prerendered
+  H-05  the served /history/ carries no em or en dash, in its prose OR in an
+        aria-label. A screen reader's output is written editorial output.
+  H-06  the served /history/ is a page and not a shell: exactly one <h1>, and
+        at least 60 event card links.
   W-08  the served /weekly carries no em or en dash outside its <title>.
   W-09  the audio edition ships an ordered chapter rail and its sidecar.
   W-01  data/weekly.json carries an issue number and a Monday-to-Sunday week
@@ -65,6 +69,69 @@ def fetch(url: str, head: bool = False):
     )
     with urllib.request.urlopen(req, timeout=60) as r:
         return r.status, r.geturl(), (b"" if head else r.read().decode("utf-8", "replace"))
+
+
+def history_body(html: str) -> str:
+    """The served /history/ with its chrome removed.
+
+    The whole <head> goes, not just <title>: og:title and og:description are
+    chrome in the same way a tab label is. Scripts go because Next inlines the
+    RSC payload into them, which is a data blob rather than prose a reader is
+    shown. This mirrors W-08's treatment of /weekly exactly.
+    """
+    body = re.sub(r"<head\b.*?</head>", "", html, flags=re.S)
+    return re.sub(r"<script.*?</script>", "", body, flags=re.S)
+
+
+def check_h05(html: str) -> None:
+    """H-05 - no em or en dash in the served prose OR in an accessible name.
+
+    CLAUDE.md bans both in generated copy AND in frontend microcopy, and W-08
+    enforced it on /weekly only. /history served six era ranges ("3000 BCE -
+    500 BCE" with an em dash) and four aria-labels joining a title to its date
+    with one. An aria-label is checked separately because it lives inside a
+    tag, where the prose scan below would never look.
+    """
+    body = history_body(html)
+
+    labels = re.findall(r'aria-label="([^"]*)"', html)
+    bad_labels = [t for t in labels if "\u2014" in t or "\u2013" in t]
+
+    visible = re.sub(r"<[^>]+>", " ", body)
+    dashes = visible.count("\u2014") + visible.count("\u2013")
+
+    sample = ""
+    m = re.search(r".{50}[\u2014\u2013].{50}", visible)
+    if m:
+        sample = ": ..." + m.group().replace("\n", " ")
+
+    report("H-05", dashes == 0 and not bad_labels,
+           "no dash in the served text or any accessible name"
+           if dashes == 0 and not bad_labels
+           else f"{dashes} dash(es) in visible text{sample}"
+                + (f"; {len(bad_labels)} aria-label(s): {bad_labels[:2]}" if bad_labels else ""))
+
+
+def check_h06(html: str, catalog_size: int) -> None:
+    """H-06 - the landing is a page, not a shell.
+
+    /history mounted a client component that fetched data/history.json in an
+    effect, so the served <main> was one italic line and the section had no
+    <h1> at all: nothing for a crawler, and a blank screen until the round trip
+    landed. Counting the heading and the event links is the only check that
+    proves the landing is prerendered, the same way W-04 proves it for
+    /weekly. More than one <h1> is its own defect, so the count is exact.
+    """
+    h1s = len(re.findall(r"<h1[\s>]", html))
+    links = set(re.findall(r'href="(?:https?://[^/"]+)?/history/([a-z0-9][a-z0-9-]*)/"', html))
+    # era/, region/ and threads/ are browse routes, not events.
+    events = {s_ for s_ in links if s_ not in ("era", "region", "threads")}
+
+    floor = min(60, catalog_size) if catalog_size else 60
+    report("H-06", h1s == 1 and len(events) >= floor,
+           f"{h1s} <h1> and {len(events)} event card link(s) (floor {floor})"
+           + ("" if h1s == 1 and len(events) >= floor
+              else "  <- client-only shell, or a heading went missing"))
 
 
 def main(site: str) -> int:
@@ -161,6 +228,15 @@ def main(site: str) -> int:
     report("H-04", not missing,
            f"{len(sample)} sampled event pages all render"
            if not missing else f"not prerendered: {missing}")
+
+    # H-05/H-06 - the served landing itself. One fetch, two checks.
+    try:
+        _, _, hhtml = fetch(f"{base}/history/")
+        check_h05(hhtml)
+        check_h06(hhtml, len(events))
+    except Exception as e:
+        report("H-05", False, f"could not fetch /history/: {type(e).__name__}: {e}")
+        report("H-06", False, "skipped (no page)")
 
     # W-01/W-02 — the weekly snapshot.
     try:
