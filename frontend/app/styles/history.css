@@ -13,7 +13,14 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow-x: hidden;
+  /* `clip`, not `hidden`: `overflow-x: hidden` establishes a scroll container,
+     and a scroll container between the viewport and a `position: sticky`
+     descendant is what stops it sticking. The Hearing's rail sat in the flow
+     and scrolled away for exactly this reason. `clip` clips the same
+     horizontal overflow without creating the scroll box. (layout.css carries
+     the same note for .page-container, for the same defect on the masthead.)
+     Chrome 90+ / FF 81+ / Safari 16+. */
+  overflow-x: clip;
   max-width: 100%;
   width: 100%;
 
@@ -476,7 +483,14 @@
   flex: 1;
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;
+  /* `clip`, not `hidden`: `overflow-x: hidden` establishes a scroll container,
+     and a scroll container between the viewport and a `position: sticky`
+     descendant is what stops it sticking. The Hearing's rail sat in the flow
+     and scrolled away for exactly this reason. `clip` clips the same
+     horizontal overflow without creating the scroll box. (layout.css carries
+     the same note for .page-container, for the same defect on the masthead.)
+     Chrome 90+ / FF 81+ / Safari 16+. */
+  overflow-x: clip;
 }
 
 .hist-main {
@@ -3133,7 +3147,14 @@
 .hist-event-detail {
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;
+  /* `clip`, not `hidden`: `overflow-x: hidden` establishes a scroll container,
+     and a scroll container between the viewport and a `position: sticky`
+     descendant is what stops it sticking. The Hearing's rail sat in the flow
+     and scrolled away for exactly this reason. `clip` clips the same
+     horizontal overflow without creating the scroll box. (layout.css carries
+     the same note for .page-container, for the same defect on the masthead.)
+     Chrome 90+ / FF 81+ / Safari 16+. */
+  overflow-x: clip;
 }
 
 .hist-stage {
@@ -5018,9 +5039,12 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 /* ── Base Mobile (375px) ──
    All base styles above already target mobile. Additional mobile hardening: */
 
-/* Prevent horizontal overflow from any child */
+/* Prevent horizontal overflow from any child. `clip`, not `hidden`: see the
+   note on .hist-page at the top of this file. A second `hidden` here was
+   re-establishing the scroll container the first rule had just stopped
+   establishing, and the Hearing's rail scrolled away again. */
 .hist-page {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Word-wrap safety on all headline elements */
@@ -9853,6 +9877,23 @@ a.hist-record__figure-name:hover {
 .hist-hearing-page {
   --hist-measure: 36rem;   /* the 65ch reading column the weekly measured */
   --hist-rail-col: 17ch;
+  /* Height of the enhanced mobile bar (readout + the two step carets). 44px
+     is the touch-target floor, and the sections' scroll-margin is measured
+     from it so a jump never lands under the chrome. */
+  --hist-rail-bar-h: 44px;
+  /* Desktop rail geometry: the caret box at each end of the track, and the
+     ceiling the whole rail is held under. */
+  --hist-rail-caret: 16px;
+  --hist-rail-cap: calc(100dvh - var(--hist-topbar-height) - var(--space-4) * 2);
+}
+
+/* Past 1280px the page has room the rail can use: the contents entries read
+   in full instead of clipping at the second word. The reading measure does
+   not move; the outer gutters give the width up. */
+@media (min-width: 1280px) {
+  .hist-hearing-page {
+    --hist-rail-col: 21ch;
+  }
 }
 
 /* ── The named-line grid the weekly introduced: full / rail / text ── */
@@ -9864,7 +9905,16 @@ a.hist-record__figure-name:hover {
     [text-start] min(var(--hist-measure), 100%) [text-end]
     minmax(0, var(--hist-rail-col)) [rail-end]
     minmax(0, 1fr) [full-end];
-  column-gap: var(--space-4);
+  /* No column gap until the flanking tracks actually exist.
+     The text track is min(--hist-measure, 100%), so once the viewport is
+     narrower than the measure it claims the WHOLE content box and the four
+     gaps have nowhere to go: the grid overflows by exactly 4 x gap. At 390px
+     that put a full-bleed rest at 438px against a 390px viewport, 48px past
+     the edge, cropping the image rather than scrolling because an ancestor
+     clips the overflow. Measured in Chromium, not reasoned.
+     Above the breakpoint the measure is fixed and the flanks absorb the gaps,
+     which is why only narrow widths ever broke. */
+  column-gap: 0;
   padding-inline: var(--space-4);
   padding-block: var(--space-6) var(--space-7);
 }
@@ -9872,6 +9922,17 @@ a.hist-record__figure-name:hover {
 .hist-hearing > * {
   grid-column: text;
   min-width: 0;
+  /* A station jump clears the sticky topbar. On a phone the enhanced strip
+     and readout sit under it, so the offset carries them too. */
+  scroll-margin-top: calc(
+    var(--hist-topbar-height) + 3px + var(--hist-rail-bar-h) + var(--space-3)
+  );
+}
+
+@media (min-width: 1024px) {
+  .hist-hearing > * {
+    scroll-margin-top: calc(var(--hist-topbar-height) + var(--space-4));
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -10482,8 +10543,44 @@ a.hist-record__figure-name:hover {
 .hist-rail__track,
 .hist-rail__strip,
 .hist-rail__readout,
+.hist-rail__step,
 .hist-rail__scrim {
   display: none;
+}
+
+/* ── The step carets ──
+   One station either way, anchored to the rail. Shape only: a caret drawn
+   with borders, the same technique the readout chevron uses, so no new asset
+   and no new colour. Position is set per breakpoint below. */
+.hist-rail__step {
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--hist-ink-muted);
+  cursor: pointer;
+}
+.hist-rail__step::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+}
+.hist-rail__step--prev::before {
+  border-bottom: 5px solid currentColor;
+}
+.hist-rail__step--next::before {
+  border-top: 5px solid currentColor;
+}
+.hist-rail__step:disabled {
+  opacity: 0.28;
+  cursor: default;
+}
+.hist-rail__step:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
 }
 
 .hist-rail__list {
@@ -10545,12 +10642,18 @@ a.hist-record__figure-name:hover {
 .hist-rail__station[aria-current="true"] {
   color: var(--hist-ink);
 }
+/* The scene number follows the station's ink rather than staying muted, so
+   the current scene is current at the glyph as well as at the label. */
+.hist-rail__station[aria-current="true"] .hist-rail__num {
+  color: inherit;
+}
 
 /* ── Mobile, enhanced: a 3px strip under the sticky topbar and one line of
       readout. It stays out of the way until the hero has scrolled off. ── */
 @media (max-width: 1023px) {
   .hist-rail[data-enhanced] .hist-rail__strip,
-  .hist-rail[data-enhanced] .hist-rail__readout {
+  .hist-rail[data-enhanced] .hist-rail__readout,
+  .hist-rail[data-enhanced] .hist-rail__step {
     display: flex;
     position: fixed;
     left: 0;
@@ -10564,7 +10667,8 @@ a.hist-record__figure-name:hover {
       transform var(--dur-fast) var(--ease-cinematic);
   }
   .hist-rail[data-enhanced][data-past-hero] .hist-rail__strip,
-  .hist-rail[data-enhanced][data-past-hero] .hist-rail__readout {
+  .hist-rail[data-enhanced][data-past-hero] .hist-rail__readout,
+  .hist-rail[data-enhanced][data-past-hero] .hist-rail__step {
     opacity: 1;
     pointer-events: auto;
     transform: none;
@@ -10588,12 +10692,15 @@ a.hist-record__figure-name:hover {
   .hist-rail__seg[data-passed] {
     opacity: 1;
   }
+  /* 44px, not the old 24px: the readout is a real touch target now, and it
+     has to hold the two carets at its right end. */
   .hist-rail[data-enhanced] .hist-rail__readout {
     top: calc(var(--hist-topbar-height) + 3px);
     align-items: center;
     gap: var(--space-2);
-    height: 24px;
-    padding-inline: var(--space-4);
+    height: var(--hist-rail-bar-h);
+    padding-left: var(--space-4);
+    padding-right: calc(var(--hist-rail-bar-h) * 2 + var(--space-3));
     border: 0;
     border-bottom: 1px solid var(--hist-border-subtle);
     background: var(--hist-bg);
@@ -10601,25 +10708,54 @@ a.hist-record__figure-name:hover {
     text-align: left;
     cursor: pointer;
   }
+
+  /* The carets ride on the readout bar, right-aligned, 44 x 44 each. They sit
+     above it so the bar's background and rule run behind them. */
+  .hist-rail[data-enhanced] .hist-rail__step {
+    top: calc(var(--hist-topbar-height) + 3px);
+    left: auto;
+    z-index: 31;
+    width: var(--hist-rail-bar-h);
+    height: var(--hist-rail-bar-h);
+    color: var(--hist-ink-secondary);
+  }
+  .hist-rail[data-enhanced] .hist-rail__step--prev {
+    right: var(--hist-rail-bar-h);
+  }
+  .hist-rail[data-enhanced] .hist-rail__step--next {
+    right: 0;
+  }
+  .hist-rail__step:active:not(:disabled) {
+    color: var(--hist-brass);
+  }
   .hist-rail__readout-pos {
     font-family: var(--font-data);
     font-size: var(--text-xxs);
     color: var(--hist-brass);
   }
   .hist-rail__readout-label {
+    flex: 0 1 auto;
+    min-width: 0;
     font-size: var(--text-xxs);
     letter-spacing: 0.1em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  /* The disclosure marker stays with the label it discloses. Pushed to the
+     far right it landed beside the two step carets and the reader met three
+     triangles in a row, two of which mean something else. */
   .hist-rail__readout-chevron {
-    margin-left: auto;
+    flex: 0 0 auto;
     width: 0;
     height: 0;
     border-top: 4px solid currentColor;
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
+  }
+  /* A hairline says the pair is its own control, not more of the readout. */
+  .hist-rail[data-enhanced] .hist-rail__step--prev {
+    border-left: 1px solid var(--hist-border-subtle);
   }
 
   /* The list is the mechanism without JavaScript and the sheet with it. */
@@ -10654,6 +10790,18 @@ a.hist-record__figure-name:hover {
 
 /* ── Desktop: a sticky vertical index in the rail track ── */
 @media (min-width: 1024px) {
+  /* The rail sits beside the text from here up, so the gap earns its keep.
+     Below this the flanks are zero-width and the gap is pure overflow. */
+  .hist-hearing {
+    column-gap: var(--space-4);
+  }
+
+  /* The slot spans every row of the spine and sticks below the topbar, so it
+     holds still for the whole read. Sticky, not fixed, deliberately: the rail
+     track is a named line in an fr-based grid with no static pixel offset, so
+     a fixed rail would have to be re-measured in JavaScript on every resize
+     and would still be one rounding error away from sitting on the text. The
+     cap below is what fixed was wanted for. */
   .hist-rail-slot {
     grid-column: rail-start / text-start;
     grid-row: 1 / span var(--hist-rail-span, 1);
@@ -10661,19 +10809,39 @@ a.hist-record__figure-name:hover {
     top: calc(var(--hist-topbar-height) + var(--space-4));
     align-self: start;
     z-index: 2;
+    /* Fifteen stations with their labels shown can outgrow a short window.
+       The rail is capped at the window and the list scrolls inside it. The
+       cap is repeated on .hist-rail because a percentage max-height against
+       an auto-height grid item resolves to none. */
+    max-height: var(--hist-rail-cap);
+  }
+  .hist-rail {
+    display: flex;
+    flex-direction: column;
+    max-height: var(--hist-rail-cap);
+    min-height: 0;
   }
   .hist-rail__list {
     position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
     margin: 0;
     padding-left: var(--space-3);
     border-top: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--hist-border) transparent;
+    scroll-behavior: smooth;
   }
+  /* The track is anchored to the rail, not the list, so it stays put while
+     the list scrolls behind it. Its insets clear the two carets. */
   .hist-rail__track {
     display: block;
     position: absolute;
     left: 6px;
-    top: 10px;
-    bottom: 10px;
+    top: calc(var(--hist-rail-caret) + var(--space-2) + 10px);
+    bottom: calc(var(--hist-rail-caret) + var(--space-2) + 10px);
     width: 1.5px;
     background: var(--hist-border);
   }
@@ -10686,39 +10854,80 @@ a.hist-record__figure-name:hover {
   }
   .hist-rail__station {
     position: relative;
+    align-items: flex-start;
     min-height: 0;
     padding: 6px 0;
     border-bottom: 0;
+    color: var(--hist-ink-muted);
+    transition: color var(--dur-fast) var(--ease-cinematic);
   }
   .hist-rail__glyph {
     position: relative;
     z-index: 1;
+    /* Held to the first line of the label, not to the middle of a label that
+       ran to two. */
+    margin-top: 1px;
   }
-  /* Only the current station keeps its label; the rest surface on hover or
-     focus, so the track stays a track and not a list of headlines. */
+  /* Every station reads. The rail is the contents of the record, so it is set
+     as contents: two lines at most, quiet, and never the width of a headline.
+     Hierarchy comes from weight and ink, not from hiding the other fourteen. */
   .hist-rail__label {
-    opacity: 0;
-    transform: translateX(-4px);
-    transition:
-      opacity var(--dur-fast) var(--ease-cinematic),
-      transform var(--dur-fast) var(--ease-cinematic);
-    white-space: nowrap;
-    max-width: 14ch;
+    flex: 1 1 auto;
+    min-width: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     overflow: hidden;
-    text-overflow: ellipsis;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    line-height: 1.35;
+    transition:
+      color var(--dur-fast) var(--ease-cinematic),
+      font-weight var(--dur-fast) var(--ease-cinematic);
   }
-  .hist-rail__station[aria-current="true"] .hist-rail__label,
-  .hist-rail__station:hover .hist-rail__label,
-  .hist-rail__station:focus-visible .hist-rail__label {
-    opacity: 1;
-    transform: none;
+  .hist-rail__station[aria-current="true"] .hist-rail__label {
+    font-weight: 700;
   }
-  .hist-rail:not([data-enhanced]) .hist-rail__label {
-    opacity: 1;
-    transform: none;
+  .hist-rail__station:hover,
+  .hist-rail__station:focus-visible,
+  .hist-rail__station[aria-current="true"] {
+    color: var(--hist-ink);
   }
   .hist-rail__station[aria-current="true"] .hist-rail__glyph::before {
     box-shadow: 0 0 0 3px var(--hist-brass-wash);
+  }
+
+  /* ── The carets, at the two ends of the track ──
+     Centred on the track's own axis (6px + half its width), so the pair and
+     the spine read as one line. */
+  .hist-rail[data-enhanced] .hist-rail__step {
+    display: flex;
+    position: static;
+    flex: 0 0 auto;
+    width: var(--hist-rail-caret);
+    height: var(--hist-rail-caret);
+    margin-left: calc(6px + 0.75px - var(--hist-rail-caret) / 2);
+    transition:
+      color var(--dur-fast) var(--ease-cinematic),
+      opacity var(--dur-fast) var(--ease-cinematic),
+      transform var(--dur-fast) var(--ease-cinematic);
+  }
+  .hist-rail__step--prev {
+    margin-bottom: var(--space-2);
+  }
+  .hist-rail__step--next {
+    margin-top: var(--space-2);
+  }
+  .hist-rail__step:hover:not(:disabled),
+  .hist-rail__step:focus-visible {
+    color: var(--hist-brass);
+  }
+  .hist-rail__step--prev:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  .hist-rail__step--next:hover:not(:disabled) {
+    transform: translateY(1px);
   }
 
   /* A rest breaks out to the right of the rail track, never across it: the
@@ -10740,11 +10949,21 @@ a.hist-record__figure-name:hover {
 @media (prefers-reduced-motion: reduce) {
   .hist-rail__fill,
   .hist-rail__label,
+  .hist-rail__station,
   .hist-rail__seg,
   .hist-rail__strip,
   .hist-rail__readout,
+  .hist-rail__step,
   .hist-hr-account__summary::before,
   .hist-hr-turn__record-summary::before {
     transition: none;
+  }
+  /* Nothing glides: the step carets and the anchors land. */
+  .hist-rail__list {
+    scroll-behavior: auto;
+  }
+  .hist-rail__step--prev:hover:not(:disabled),
+  .hist-rail__step--next:hover:not(:disabled) {
+    transform: none;
   }
 }

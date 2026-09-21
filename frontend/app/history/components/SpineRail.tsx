@@ -15,12 +15,19 @@ import type { Station } from "../hearing";
    Every station is an <a href="#…">, rendered on the server. With JavaScript
    off the rail is a working contents list, inline under the hero on a phone
    and sticky in the left track on a desktop, and that is the mechanism. The
-   fill, the current marker, the segmented strip and the readout are the
-   enhancement: they appear only once this mounts and sets data-enhanced.
+   fill, the current marker, the segmented strip, the readout and the step
+   carets are the enhancement: they appear only once this mounts and sets
+   data-enhanced.
 
    Progress comes from an IntersectionObserver on the sections. There is no
    scroll listener: a scroll handler that measures on every frame is what the
    reel did, and it is why the reel fought the medium.
+
+   The carets step one station at a time. They are live: their labels name the
+   station they go to, and each end of the spine disables its own caret. The
+   keyboard reaches the same two moves, j/k anywhere on the page and the arrow
+   keys once focus is inside the rail. Plain arrow keys stay the reader's, so
+   an 800-word account still scrolls a line at a time.
    =========================================================================== */
 
 interface SpineRailProps {
@@ -31,6 +38,33 @@ interface SpineRailProps {
   heroId: string;
 }
 
+/** Read at the moment of the move, not cached: a reader can flip the setting
+ *  mid-page and the next step should already obey it. */
+function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
+/** Typing, choosing, or reading inside a disclosure. The keys are theirs. */
+function isTypingContext(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  const tag = target.tagName;
+  if (
+    tag === "INPUT" ||
+    tag === "TEXTAREA" ||
+    tag === "SELECT" ||
+    tag === "AUDIO" ||
+    tag === "VIDEO"
+  ) {
+    return true;
+  }
+  if (target.isContentEditable) return true;
+  return target.closest("details") !== null;
+}
+
 export default function SpineRail({ stations, heroId }: SpineRailProps) {
   const [enhanced, setEnhanced] = useState(false);
   const [current, setCurrent] = useState(0);
@@ -38,6 +72,8 @@ export default function SpineRail({ stations, heroId }: SpineRailProps) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [weights, setWeights] = useState<number[]>([]);
   const visible = useRef<Set<string>>(new Set());
+  const navRef = useRef<HTMLElement>(null);
+  const listRef = useRef<HTMLOListElement>(null);
 
   /* ── Which station the reader is in ──
      A thin band across the middle of the viewport. Whatever is in that band is
@@ -132,16 +168,98 @@ export default function SpineRail({ stations, heroId }: SpineRailProps) {
     return () => document.removeEventListener("keydown", onKey);
   }, [sheetOpen]);
 
+  /* ── One station, either way ──
+     The page glides. setCurrent runs ahead of the observer so a second press
+     lands on the next station rather than repeating the first; the observer
+     confirms the same answer when the scroll settles. */
+  const goTo = useCallback(
+    (index: number) => {
+      const station = stations[index];
+      if (!station) return;
+      const el = document.getElementById(station.id);
+      if (!el) return;
+      el.scrollIntoView({
+        behavior: prefersReducedMotion() ? "auto" : "smooth",
+        block: "start",
+      });
+      setCurrent(index);
+      setSheetOpen(false);
+    },
+    [stations],
+  );
+
+  /* ── Keyboard ──
+     j and k anywhere the reader is not typing. The arrow keys only once focus
+     is inside the rail, where up and down are what a list of controls means by
+     them: a plain ArrowDown in the middle of a 900-word account is the
+     reader's own scroll, and taking it would be worse than not binding it. */
+  useEffect(() => {
+    if (!enhanced) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+      if (isTypingContext(e.target)) return;
+
+      let step = 0;
+      if (e.key === "j") step = 1;
+      else if (e.key === "k") step = -1;
+      else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        const nav = navRef.current;
+        const active = document.activeElement;
+        if (!nav || !active || !nav.contains(active)) return;
+        step = e.key === "ArrowDown" ? 1 : -1;
+      } else return;
+
+      const next = current + step;
+      if (next < 0 || next >= stations.length) return;
+      e.preventDefault();
+      goTo(next);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [enhanced, current, stations.length, goTo]);
+
+  /* ── Keep the current station inside a rail that had to scroll ──
+     Only when the list actually overflows, and only the list: scrollIntoView
+     would take the page with it. */
+  useEffect(() => {
+    if (!enhanced) return;
+    const list = listRef.current;
+    if (!list) return;
+    if (list.scrollHeight <= list.clientHeight + 1) return;
+    const item = list.children[current];
+    if (!(item instanceof HTMLElement)) return;
+
+    const pad = 28;
+    const top = item.offsetTop;
+    const bottom = top + item.offsetHeight;
+    const viewTop = list.scrollTop;
+    const viewBottom = viewTop + list.clientHeight;
+
+    let next = viewTop;
+    if (top - pad < viewTop) next = Math.max(0, top - pad);
+    else if (bottom + pad > viewBottom) next = bottom + pad - list.clientHeight;
+    if (Math.abs(next - viewTop) < 1) return;
+
+    list.scrollTo({
+      top: next,
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
+    });
+  }, [current, enhanced]);
+
   if (stations.length === 0) return null;
 
   const total = weights.reduce((a, b) => a + b, 0) || stations.length;
   const fill =
     stations.length > 1 ? `${(current / (stations.length - 1)) * 100}%` : "0%";
 
+  const prev = stations[current - 1];
+  const next = stations[current + 1];
+
   return (
     <nav
       className="hist-rail"
       aria-label="Where you are in the record"
+      ref={navRef}
       data-enhanced={enhanced ? "true" : undefined}
       data-past-hero={pastHero ? "true" : undefined}
       data-sheet={sheetOpen ? "open" : undefined}
@@ -178,6 +296,16 @@ export default function SpineRail({ stations, heroId }: SpineRailProps) {
         </button>
       )}
 
+      {enhanced && (
+        <button
+          type="button"
+          className="hist-rail__step hist-rail__step--prev"
+          disabled={!prev}
+          aria-label={prev ? `Previous: ${prev.label}` : "Previous station"}
+          onClick={() => goTo(current - 1)}
+        />
+      )}
+
       <span className="hist-rail__track" aria-hidden="true">
         <span
           className="hist-rail__fill"
@@ -185,7 +313,7 @@ export default function SpineRail({ stations, heroId }: SpineRailProps) {
         />
       </span>
 
-      <ol className="hist-rail__list">
+      <ol className="hist-rail__list" ref={listRef}>
         {stations.map((s, i) => (
           <li key={s.id} className="hist-rail__item">
             <a
@@ -206,6 +334,16 @@ export default function SpineRail({ stations, heroId }: SpineRailProps) {
           </li>
         ))}
       </ol>
+
+      {enhanced && (
+        <button
+          type="button"
+          className="hist-rail__step hist-rail__step--next"
+          disabled={!next}
+          aria-label={next ? `Next: ${next.label}` : "Next station"}
+          onClick={() => goTo(current + 1)}
+        />
+      )}
 
       {sheetOpen && (
         <button
