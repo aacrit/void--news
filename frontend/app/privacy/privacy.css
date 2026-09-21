@@ -5,33 +5,4 @@
    Privacy share one measure and one ramp instead of three sets of literals.
    What is left here is the kit furniture the press room needs. */
 
-.press__kit {
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-none);
-  padding: var(--space-5);
-  background: var(--bg-card);
-}
 
-.press__kit ul {
-  margin: 0;
-}
-
-.press__kit-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-5);
-  margin-bottom: var(--space-3);
-  font-family: var(--font-data);
-  font-size: var(--text-sm);
-  color: var(--fg-secondary);
-}
-
-.press__contact {
-  background: var(--bg-card);
-  border-left: 3px solid var(--fg-accent);
-  padding: var(--space-4) var(--space-5);
-  margin: var(--space-6) 0;
-  font-family: var(--font-data);
-  font-size: var(--text-base);
-}

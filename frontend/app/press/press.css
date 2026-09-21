@@ -484,11 +484,6 @@
   text-underline-offset: 3px;
 }
 
-.press-contact__note {
-  font-size: 14px;
-  color: var(--fg-tertiary);
-  margin: 16px 0 0;
-}
 
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 640px) {

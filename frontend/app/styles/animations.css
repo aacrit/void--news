@@ -107,9 +107,6 @@
   animation: fadeIn var(--dur-normal) var(--ease-cinematic);
 }
 
-.anim-fade-in-up {
-  animation: fadeInUp var(--dur-normal) var(--ease-cinematic) both;
-}
 
 /* Staggered entrance — story cards with cinematic unfold.
    Paused by default: IntersectionObserver adds .anim-stagger--visible
@@ -144,9 +141,6 @@
    Applied to card wrappers when lean/category filter changes.
    animationDelay is set via inline style for per-card stagger (max 50ms gap).
    Re-mount via React key triggers re-play on every filter change. */
-.anim-filter-card {
-  animation: fadeInUp var(--dur-step) var(--spring) both;
-}
 
 /* Lead story stagger — primary lead fades in first, secondary 120ms later.
    Uses --ease-cinematic (Deakins dolly settle) not --ease-out for reveals. */
@@ -159,13 +153,7 @@
 }
 
 /* Skeleton → content crossfade: skeleton fades out as content arrives */
-.anim-crossfade-in {
-  animation: fadeIn var(--dur-normal) var(--ease-cinematic) both;
-}
 
-.anim-crossfade-out {
-  animation: fadeOut var(--dur-fast) var(--ease-cinematic) both;
-}
 
 @keyframes fadeOut {
   from { opacity: 1; }
@@ -221,9 +209,6 @@
 }
 
 /* Filter chip active spring press feedback — elastic for snappy toggle feel */
-.filter-chip--active {
-  animation: springChipPress var(--dur-normal) var(--spring-elastic, var(--spring));
-}
 
 /* DeepDive panel entrance/exit is driven by JS inline transform + transition
    (translateX on desktop ≥1024px, translateY on mobile <1024px).
@@ -244,15 +229,6 @@
 
 .anim-cold-open-nav {
   animation: coldOpenSettle var(--cold-open-dur) var(--ease-cinematic) var(--cold-open-nav) both;
-}
-.anim-cold-open-skybox {
-  animation: coldOpenDollyIn var(--cold-open-dur) var(--ease-cinematic) var(--cold-open-skybox) both;
-}
-.anim-cold-open-lead {
-  animation: coldOpenRackIn var(--cold-open-dur) var(--ease-cinematic) var(--cold-open-lead) both;
-}
-.anim-cold-open-feed {
-  animation: coldOpenFeedRise var(--cold-open-dur) var(--spring-gentle) var(--cold-open-feed) both;
 }
 
 /* ---- Golden Hour Utility Class ----------------------------------------- */
@@ -644,25 +620,15 @@
   /* Deep Dive micro-interactions: explicit overrides for clarity.
      The * rule above already zeroes animation-duration; these ensure
      no unexpected visual state from animation fill-mode. */
-  .dd-press-trigger__arrow {
-    animation: none;
-  }
 
   /* Spectrum dot hover: suppress the translateY lift — only keep the
      base translateX(-50%) centering. Scale is still suppressed via
      transition-duration: 0ms from the * rule above. */
-  .dd-spectrum__dot:hover {
-    transform: translateX(-50%);
-  }
 
   /* Glass morphism + micro-interaction overrides */
   .story-card,
   .lead-story,
-  .filter-chip,
-  .nav-tab,
-  .nav-tab::after,
   .nav-page,
-  .nav-weekly,
   .theme-toggle,
   .theme-toggle__icon,
   .category-tag {
@@ -675,9 +641,6 @@
     transform: none;
   }
 
-  .filter-chip:hover {
-    transform: none;
-  }
 
   .nav-page:hover {
     transform: none;
@@ -722,25 +685,12 @@
   line-height: 1;
 }
 
-.pull-to-refresh__spinner--active {
-  animation: pullSpin 800ms linear infinite;
-}
 
 @keyframes pullSpin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-.pull-to-refresh__text {
-  font-weight: 500;
-}
-
-
-@media (prefers-reduced-motion: reduce) {
-  .pull-to-refresh__spinner--active {
-    animation: none;
-  }
-}
 
 /* ==========================================================================
    MOTION DIRECTOR — Scene Choreography
@@ -1084,14 +1034,7 @@
 /* ── Section boundary divider ──
    When crossing importance tiers (lead->medium->compact), a subtle
    horizontal rule fades in as a scene divider. */
-.anim-scene-divider {
-  opacity: 0;
-  transition: opacity 400ms var(--ease-cinematic);
-}
 
-.anim-scene-divider--visible {
-  opacity: 1;
-}
 
 /* ── Deep Dive backdrop drag-linked opacity ──
    During swipe-to-dismiss, the backdrop opacity is directly
@@ -1105,8 +1048,7 @@
    More aggressive than desktop hover — mobile interaction is binary
    (touching or not), desktop is analog (approaching or not). */
 @media (hover: none) and (prefers-reduced-motion: no-preference) {
-  .story-card:active,
-  .mf-card:active {
+  .story-card:active{
     transform: scale(0.985);
     opacity: 0.92;
     transition: transform 80ms var(--spring-snappy), opacity 80ms var(--ease-cinematic);
@@ -1142,10 +1084,7 @@
     animation: none;
     opacity: 1;
   }
-  .anim-cold-open-nav,
-  .anim-cold-open-lead,
-  .anim-cold-open-skybox,
-  .anim-cold-open-feed {
+  .anim-cold-open-nav{
     animation: none;
     opacity: 1;
   }
@@ -1153,19 +1092,5 @@
     animation: none;
   }
   /* Scroll-driven animations + Deep Dive defocus: all disabled */
-  .page-main--deep-dive-open,
-  .page-main--deep-dive-closing {
-    transform: none;
-    filter: none;
-    transition: none;
-  }
   /* Backdrop rack animations: instant state, no ramp */
-  .deep-dive-backdrop,
-  .deep-dive-backdrop--closing {
-    animation: none;
-  }
-  .anim-scene-divider {
-    opacity: 1;
-    transition: none;
-  }
 }

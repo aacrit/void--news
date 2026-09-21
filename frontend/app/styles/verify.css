@@ -29,66 +29,12 @@
    ConsensusBadge — compact ratio indicator on story cards
    -------------------------------------------------------------------------- */
 
-.consensus-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  line-height: 1;
-  color: var(--cin-amber-muted);
-  opacity: 0;
-  transform: translateY(3px);
-  filter: var(--cin-haze-mid);
-  transition:
-    opacity var(--rack-focus-dur) var(--rack-focus-ease),
-    filter var(--rack-focus-dur) var(--rack-focus-ease);
-  cursor: default;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
 
 /* [C-P1] Viewport entrance — subtle translateY fade-in */
-.consensus-badge[data-entered="true"] {
-  animation: badgeReveal 300ms var(--ease-cinematic) forwards;
-}
 
-.consensus-badge:hover {
-  opacity: 1;
-  filter: none;
-}
-
-.consensus-badge__ratio {
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.02em;
-}
-
-.consensus-badge__disputed {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.125em;
-  color: var(--cin-amber);
-}
-
-.consensus-badge__mark {
-  line-height: 1;
-  opacity: 0;
-  transform: scale(0.6);
-  transition:
-    opacity 300ms var(--ease-cinematic),
-    transform 300ms var(--spring-snappy);
-}
 
 /* Lightning pulse on first viewport entry */
-.consensus-badge__disputed--entered .consensus-badge__mark {
-  opacity: 1;
-  transform: scale(1);
-  animation: consensusPulse 600ms var(--ease-cinematic) 100ms 1;
-}
 
-.consensus-badge__count {
-  font-variant-numeric: tabular-nums;
-}
 
 /* --------------------------------------------------------------------------
    ClaimMark — inline contradiction highlight
@@ -618,60 +564,6 @@
    Weekly Contested Section — wk-contested-*
    -------------------------------------------------------------------------- */
 
-.wk-contested-section {
-  margin-bottom: var(--space-5);
-}
-
-.wk-contested__list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.wk-contested__item {
-  display: flex;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  border-left: 3px solid var(--wk-accent, var(--cin-amber));
-  border-radius: 0 4px 4px 0;
-  background: color-mix(in srgb, var(--wk-accent, var(--cin-amber)) 3%, transparent);
-}
-
-.wk-contested__mark {
-  font-size: var(--text-base);
-  line-height: 1.4;
-  flex-shrink: 0;
-  opacity: 0.8;
-}
-
-.wk-contested__body {
-  flex: 1;
-  min-width: 0;
-}
-
-.wk-contested__headline {
-  font-family: var(--font-editorial);
-  font-size: var(--text-base);
-  font-weight: 700;
-  line-height: 1.3;
-  color: var(--fg-primary);
-  margin-bottom: var(--space-1);
-}
-
-.wk-contested__stat {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--fg-tertiary);
-  font-variant-numeric: tabular-nums;
-  margin-bottom: var(--space-1);
-}
-
-.wk-contested__summary {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  color: var(--fg-secondary);
-  line-height: 1.5;
-}
 
 /* --------------------------------------------------------------------------
    Animations
@@ -713,17 +605,11 @@
   100% { filter: drop-shadow(0 0 0 transparent); }
 }
 
-.consensus-badge__disputed--entered .consensus-badge__lightning-icon {
-  animation: lightningFlare 600ms var(--ease-cinematic) 100ms 1;
-}
 
 /* --------------------------------------------------------------------------
    Dark Mode — [data-mode="dark"]
    -------------------------------------------------------------------------- */
 
-:root[data-mode="dark"] .consensus-badge {
-  color: var(--cin-amber-muted);
-}
 
 :root[data-mode="dark"] .claim-mark {
   text-decoration-color: var(--cin-amber-muted);
@@ -780,9 +666,6 @@
     flex-wrap: wrap;
   }
 
-  .consensus-badge {
-    font-size: clamp(0.5rem, 0.45rem + 0.2vw, 0.625rem);
-  }
 }
 
 /* --------------------------------------------------------------------------
@@ -790,30 +673,7 @@
    -------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .consensus-badge {
-    transition-duration: 0ms;
-    opacity: 0.7;
-    transform: none;
-  }
 
-  .consensus-badge[data-entered="true"] {
-    animation: none;
-    opacity: 0.7;
-  }
-
-  .consensus-badge__mark {
-    transition-duration: 0ms;
-  }
-
-  .consensus-badge__disputed--entered .consensus-badge__mark {
-    animation: none;
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  .consensus-badge__disputed--entered .consensus-badge__lightning-icon {
-    animation: none;
-  }
 
   .claim-mark {
     transition-duration: 0ms;
