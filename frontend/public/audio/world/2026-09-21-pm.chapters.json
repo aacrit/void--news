@@ -1,0 +1,52 @@
+{
+ "version": "1.2.0",
+ "title": "On Air · Monday 21 September 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Headlines",
+   "endTime": 46.268
+  },
+  {
+   "startTime": 46.268,
+   "title": "China U-S Visit",
+   "endTime": 142.893
+  },
+  {
+   "startTime": 142.893,
+   "title": "Pakistan Detentions",
+   "endTime": 228.33
+  },
+  {
+   "startTime": 228.33,
+   "title": "Russia Election",
+   "endTime": 305.506
+  },
+  {
+   "startTime": 305.506,
+   "title": "Paramount Merger",
+   "endTime": 383.776
+  },
+  {
+   "startTime": 383.776,
+   "title": "Also today",
+   "endTime": 443.68
+  },
+  {
+   "startTime": 443.68,
+   "title": "Google Fine",
+   "endTime": 484.339
+  },
+  {
+   "startTime": 484.339,
+   "title": "Opinion",
+   "endTime": 684.928
+  },
+  {
+   "startTime": 684.928,
+   "endTime": 698.028,
+   "title": "Also from Void"
+  }
+ ]
+}
