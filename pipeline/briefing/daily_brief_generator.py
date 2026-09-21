@@ -38,9 +38,13 @@ from summarizer.gemini_client import (
     _FLASH_MODEL as GEMINI_FLASH_MODEL,
 )
 try:
-    from utils.prohibited_terms import sanitize_editorial_text as _sanitize_editorial
+    from utils.prohibited_terms import (
+        sanitize_editorial_text as _sanitize_editorial,
+        strip_significance as _strip_significance,
+    )
 except ImportError:
     _sanitize_editorial = lambda t: t
+    _strip_significance = lambda t: t
 from briefing.voice_rotation import get_voices_for_today, get_opinion_host
 from editorial.standard import title_word_stems
 
@@ -248,7 +252,7 @@ def _brief_calls_remaining() -> int:
 # System instruction — WHO you are (~300 words). HOW is in the user prompt.
 # ---------------------------------------------------------------------------
 _SYSTEM_INSTRUCTION = """\
-You are the editorial voice of void --news — a news platform that scores 1,016 \
+You are the editorial voice of Void News, a news platform that scores 1,016 \
 sources across six bias axes. You have the full picture. Your job: what \
 actually changed today, and the patterns connecting it.
 
@@ -257,9 +261,9 @@ requirements, not suggestions, and you reach them by CARRYING MORE STORIES with 
 real facts — never by padding the first few. Do not stop at three stories \
 because three feels tidy; stop when you have met the length the prompt asks for.
 
-GROUNDING RULE: Every fact, figure, name, quote, and claim MUST appear in the \
-provided stories. Do not supplement with prior knowledge or background context \
-you recall. If the stories don't say it, you don't write it.
+GROUNDING RULE: Every fact MUST appear in the provided articles. Do not supplement with prior knowledge. \
+Every figure, name, quote and claim MUST appear in the provided stories. Do not add \
+background context you recall. If the stories don't say it, you don't write it.
 
 ATTRIBUTION RULE: Bind every quote and every role to the exact person the source \
 articles bind it to. A quotation must be credited to the SAME speaker the source \
@@ -345,7 +349,7 @@ def _build_host_blocks(voices: dict) -> tuple[str, str]:
     )
 
 _USER_PROMPT_TEMPLATE = """\
-Generate the daily brief for the {EDITION} edition of void --news.
+Generate the daily brief for the {EDITION} edition of Void News.
 Date: {DATE}
 
 EDITION FOCUS: {EDITION_FOCUS}
@@ -1280,7 +1284,7 @@ def _get_today_lean() -> str:
 # Opinion system instruction — single-story Atlantic/WSJ editorial.
 # ---------------------------------------------------------------------------
 _OPINION_SYSTEM_INSTRUCTION = """\
-You are the lead editorial writer at void --news. You got the nod to write \
+You are the lead editorial writer at Void News. You got the nod to write \
 tomorrow's column because you have been living inside this story and you are \
 ready to argue. You use "we" — not as a hiding place behind the institution, \
 but because what you are saying carries the desk's weight behind it.
@@ -1301,8 +1305,13 @@ your argument.
 
 CARDINAL RULE — SHOW, DON'T TELL:
 Every sentence earns its place through evidence. Never assert significance — \
-demonstrate it through mechanism and historical parallel. The editorial's weight \
+demonstrate it through mechanism drawn from the provided facts. The editorial's weight \
 comes from facts marshaled in sequence, not from adjectives.
+
+GROUNDING:
+Every fact MUST appear in the provided articles. Do not supplement with prior knowledge. \
+Argue only from facts in the provided stories. Historical parallels, other countries \
+and 'patterns' are not permitted unless a provided article states them.
 
 KILL SCAFFOLDING — ZERO TOLERANCE (output containing these is REJECTED):
 Never announce what you are about to argue. These are ALL banned: \
@@ -1331,10 +1340,9 @@ IDEOLOGICAL LENS — {LEAN_UPPER}:
 
 TODAY'S EDITORIAL VOICE:
 {OPINION_HOST_BLOCK}
-Write in this host's voice. The editorial uses "we" (institutional), not "I" \
-(personal). This host's personality shapes HOW the argument is built — the \
-Investigator builds evidence chains, the Editor weighs historical patterns, \
-the Realist challenges with counter-data.
+The editorial uses "we" (institutional), not "I" (personal): the desk speaks, \
+not a host. Register: evidence first, then the argument the evidence has earned, \
+and a close that lands on the tension rather than a summary.
 
 CRITICAL: Argue from PRINCIPLES, not parties. Never mention Democrats, \
 Republicans, BJP, Congress, Labour, or any political party by name. Never \
@@ -1385,7 +1393,8 @@ than the problem, that is the story.""",
 }
 
 _OPINION_USER_PROMPT = """\
-Write a void --opinion editorial for the {LEAN_UPPER} lens.
+Write the Opinion column for the {LEAN_UPPER} lens.
+Every fact MUST appear in the provided articles. Do not supplement with prior knowledge.
 Edition: {EDITION_UPPER}
 Perspective: {EDITION_FOCUS}
 Date: {DATE}
@@ -1648,8 +1657,10 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
 
         opinion_audio = raw.get("opinion_audio_script")
         if isinstance(opinion_audio, str) and opinion_audio.strip():
-            # Audio keeps em dashes (TTS prosody) — never sanitized.
-            opinion_audio = opinion_audio.strip()
+            # Audio keeps em dashes (TTS prosody); only the significance
+            # words go. "Skip the sanitizer entirely" was how "a significant
+            # escalation" reached the air (brand audit F-13).
+            opinion_audio = _strip_significance(opinion_audio.strip())
             print(f"  [opinion] Audio script: {len(opinion_audio.split())} words")
         else:
             # Fallback: synthesize audio script from opinion text. The opinion
@@ -1984,15 +1995,15 @@ def generate_daily_briefs(
                     if isinstance(tldr, str) and tldr.strip():
                         brief_result = {
                             # Written editorial fields are sanitized (em-dash
-                            # ban); the audio script is NOT (dashes are TTS
-                            # prosody there).
+                            # ban); the audio script keeps its dashes (TTS
+                            # prosody) and loses only the significance words.
                             "tldr_headline": _sanitize_editorial(raw.get("tldr_headline") or "") or None,
                             "tldr_text": _sanitize_multiline(tldr.strip()),
                             "opinion_text": None,
                             "opinion_headline": None,
                             "opinion_lean": None,
                             "opinion_cluster_id": None,
-                            "audio_script": script if isinstance(script, str) and script.strip() else None,
+                            "audio_script": _strip_significance(script.strip()) if isinstance(script, str) and script.strip() else None,
                             "top_cluster_ids": top_ids,
                         }
                         passed, quality_report = _check_quality(raw, edition)

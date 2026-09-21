@@ -38,9 +38,10 @@ from utils.supabase_client import supabase
 from briefing.weekly_parse import (  # pure: no DB, no LLM, no network
     build_weekly_row, clean_headline, parse_essay, parse_recap,
     looks_like_headline, weekly_window,
-    banned_terms, enforce, enforce_recap, retry_suffix, strip_dashes,
+    banned_terms, drop_terms, enforce, enforce_recap, retry_suffix, strip_dashes,
     word_count,
 )
+from utils.prohibited_terms import strip_significance
 from summarizer.gemini_client import (
     generate_json as gemini_generate_json,
     generate_text as gemini_generate_text,
@@ -212,9 +213,13 @@ def _gen_essay(prompt, system, model=None, max_output_tokens=4096,
     """Generate a {headline, text[, numbers]} essay, measured against its spec.
 
     Returns (result_or_None, calls_made). The spec is checked, ONE regeneration
-    is attempted naming the findings, and whichever attempt is cleaner ships —
-    a missing department reads worse than a long one, so this never drops a
-    piece. The prose is dash-stripped either way.
+    is attempted naming the findings, and whichever attempt is cleaner ships
+    when the remaining findings are about LENGTH: a missing department reads
+    worse than a long one. A kill-list verb, noun or scaffolding opener that
+    survives the regeneration DROPS the piece instead (`drop_terms`): it
+    cannot be deleted by code, and a missing department is visible and honest
+    where "underscores the vulnerability" is neither. The prose is
+    dash-stripped and significance-stripped either way.
     """
     spec = spec or {}
     best, best_findings, calls = None, None, 0
@@ -233,9 +238,9 @@ def _gen_essay(prompt, system, model=None, max_output_tokens=4096,
             best_findings = ["it returned nothing usable"]
             continue
 
-        result["text"] = strip_dashes(result["text"])
+        result["text"] = strip_significance(strip_dashes(result["text"]))
         if result.get("headline"):
-            result["headline"] = strip_dashes(result["headline"])
+            result["headline"] = strip_significance(strip_dashes(result["headline"]))
         findings = enforce(result["text"], **spec)
 
         if not findings:
@@ -251,8 +256,14 @@ def _gen_essay(prompt, system, model=None, max_output_tokens=4096,
             break
         print(f"    [{label}] rejected: {'; '.join(findings)} — regenerating")
 
-    if best is not None and best_findings:
-        print(f"    [{label}] shipped with {len(best_findings)} finding(s): {'; '.join(best_findings)}")
+    if best is not None:
+        slop = drop_terms(best["text"]) + drop_terms(best.get("headline"))
+        if slop:
+            print(f"    [{label}] DROPPED: still carries {', '.join(repr(t) for t in slop)} "
+                  f"after regeneration; the section does not ship")
+            return None, calls
+        if best_findings:
+            print(f"    [{label}] shipped with {len(best_findings)} finding(s): {'; '.join(best_findings)}")
     return best, calls
 
 
@@ -366,7 +377,7 @@ def _fetch_bias_stats(edition, week_start, week_end):
 
 # ── SECTION 1: THE COVER (2 deep-dive stories with daily timeline) ──
 
-COVER_SYSTEM = """You are the lead writer for void --weekly, a magazine-style news digest.
+COVER_SYSTEM = """You are the lead writer for Void Weekly, a magazine-style news digest.
 Write in the register of The Economist or The Atlantic: measured, analytical,
 mechanism-focused. Juxtapose concrete facts. Never assert significance.
 
@@ -387,6 +398,9 @@ lands.
 You will receive a DATA TIMELINE showing real cluster creation dates and titles.
 Use it as the chronological skeleton and weave those dates and developments into
 FLOWING PROSE. Do NOT invent events not shown.
+Every fact MUST appear in the provided articles. Do not supplement with prior knowledge.
+Never reference outlet names, "coverage," "sources," or "reporting patterns."
+Synthesize the facts; do not narrate where they came from.
 
 BANNED (output containing these is REJECTED): "notable", "significant", "it
 should be noted", "interestingly", "crucially", "here's what you need to know",
@@ -682,7 +696,7 @@ def _generate_cover_stories(threads, edition):
         )
 
         prompt = (
-            f"Write a deep-dive cover story for void --weekly ({edition} edition).\n\n"
+            f"Write a deep-dive cover story for Void Weekly ({edition} edition).\n\n"
             f"MAIN STORY: {lead.get('title', 'Untitled')}\n"
             f"Total sources across the week: {thread['cumulative_sources']}\n"
             f"Days active: {thread['daily_appearances']}\n"
@@ -746,8 +760,10 @@ def _generate_cover_stories(threads, edition):
 
 # ── SECTION 2: THE OPINIONS (5-6 topics × 1 voice each) ──
 
-OPINION_SYSTEM = """You are a {perspective} columnist for void --weekly.
+OPINION_SYSTEM = """You are a {perspective} columnist for Void Weekly.
 Write a 400-600 word opinion essay. {instruction}
+Every fact MUST appear in the provided articles. Do not supplement with prior knowledge.
+Argue only from facts in the provided stories. Historical parallels, other countries and 'patterns' are not permitted unless a provided article states them.
 
 Your essay should:
 - Take a clear position informed by {tradition} values
@@ -814,7 +830,7 @@ def _generate_opinions(top_threads, all_threads, edition):
             system += f"\n\nThis is a PAIRED opinion. A {opposing} columnist writes about the same story. Your reader sees both side by side."
 
         prompt = (
-            f"Write a {voice['perspective']} opinion essay for void --weekly ({edition}).\n\n"
+            f"Write a {voice['perspective']} opinion essay for Void Weekly ({edition}).\n\n"
             f"Topic: {cluster.get('title', 'Untitled')}\n"
             f"Summary: {cluster.get('summary', '')}\n"
             f"Key points: {json.dumps(cluster.get('consensus_points', []))}\n"
@@ -883,9 +899,10 @@ def _attach_art(essay, cluster):
 
 # ── SECTION 3: TECH BRIEF ──
 
-TECH_SYSTEM = """You are the technology correspondent for void --weekly. Write a
+TECH_SYSTEM = """You are the technology correspondent for Void Weekly. Write a
 500-700 word analysis of this week's most important technology story.
 Focus on mechanism and implication, not hype. Think Ars Technica meets The Economist.
+Every fact MUST appear in the provided articles. Do not supplement with prior knowledge.
 
 BANNED: "game-changing", "revolutionary", "notable", "significant", "disrupting".
 
@@ -913,7 +930,7 @@ def _generate_tech_brief(clusters, edition):
 
     top_tech = tech_clusters[0]
     prompt = (
-        f"Write a tech brief for void --weekly ({edition}).\n\n"
+        f"Write a tech brief for Void Weekly ({edition}).\n\n"
         f"Story: {top_tech.get('title', '')}\n"
         f"Summary: {top_tech.get('summary', '')}\n"
         f"Sources: {top_tech.get('source_count', 0)}\n"
@@ -931,11 +948,12 @@ def _generate_tech_brief(clusters, edition):
 
 # ── SECTION 4: SPORTS PAGE ──
 
-SPORTS_SYSTEM = """You are the sports-and-culture correspondent for void --weekly.
+SPORTS_SYSTEM = """You are the sports-and-culture correspondent for Void Weekly.
 Write a 400-600 word piece about this week's top sports story — but through the
 lens of culture, politics, or economics. Sports as a mirror of society.
 Think of how The New Yorker covers sports: the game is the entry point, the
 story is about something larger.
+Every fact MUST appear in the provided articles. Do not supplement with prior knowledge.
 
 OUTPUT FORMAT — plain text only, no JSON, no Markdown:
 Line 1 is the headline only (no label, no quotes). Then a blank line. Then the
@@ -1055,7 +1073,7 @@ def _generate_sports(clusters, edition):
 
     top = sports_clusters[0]
     prompt = (
-        f"Write a sports-as-culture piece for void --weekly ({edition}).\n\n"
+        f"Write a sports-as-culture piece for Void Weekly ({edition}).\n\n"
         f"Story: {top.get('title', '')}\n"
         f"Summary: {top.get('summary', '')}\n"
     )
@@ -1120,13 +1138,15 @@ def _generate_bias_report(clusters, bias_stats, edition, clusters_truncated=Fals
 
 # ── SECTION 6: WEEK IN BRIEF (8-10 additional stories) ──
 
-RECAP_SYSTEM = """You are an editor for void --weekly. Write 55-75 word briefs.
+RECAP_SYSTEM = """You are an editor for Void Weekly. Write 55-75 word briefs.
 
 Three sentences: what happened, who it lands on, and the one thing it changes.
 This is a Week in Brief column, not a second feature well. A fourth sentence
 belongs elsewhere in the issue; two sentences is a headline with a comma in it,
 and any brief under 55 words is carrying one fact where it owes three. Lead
 with the concrete fact. Use specific names and numbers.
+Every fact MUST appear in the provided articles. Do not supplement with prior knowledge.
+Never reference outlet names, "coverage," "sources," or "reporting patterns."
 
 BANNED: "notable", "significant", "it should be noted", "interestingly".
 
@@ -1223,8 +1243,8 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
             break
 
         for story in items:
-            story["summary"] = strip_dashes(story.get("summary", ""))
-            story["headline"] = strip_dashes(story.get("headline", ""))
+            story["summary"] = strip_significance(strip_dashes(story.get("summary", "")))
+            story["headline"] = strip_significance(strip_dashes(story.get("headline", "")))
 
         # The band lives in `weekly_parse`, the pure core, so it is reachable
         # from a test that does not import this module. That is the whole
@@ -1273,6 +1293,18 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
                         story["image_attribution"] = found["attribution"]
                     if found.get("caption"):
                         story["image_caption"] = found["caption"]
+        # A brief that still carries a kill-list verb or noun after the
+        # column's one regeneration is dropped from the column, not shipped:
+        # the same rule `_gen_essay` applies to a whole department.
+        kept = []
+        for story in parsed["stories"]:
+            slop = drop_terms(story.get("summary")) + drop_terms(story.get("headline"))
+            if slop:
+                print(f"    [brief] DROPPED {story.get('headline', '')[:50]!r}: "
+                      f"still carries {', '.join(repr(t) for t in slop)}")
+                continue
+            kept.append(story)
+        parsed["stories"] = kept
     return parsed, calls
 
 
@@ -1392,6 +1424,11 @@ def _produce_argument(issue: dict, edition: str):
         print("    [weekly-audio] RUNDOWN REJECTED by the validators above")
         return None, calls
 
+    # Validated first, stripped second: the L: and R: lines were selected from
+    # columns that are already significance-free, so only Void's own E: lines
+    # can change here, and W-01's selection check has already passed on them.
+    script_text = strip_significance(script_text)
+
     import tempfile
     out = Path(tempfile.mkdtemp(prefix="void-weekly-audio-"))
     try:
@@ -1424,22 +1461,20 @@ def _produce_argument(issue: dict, edition: str):
 # ── SECTION 7b: the legacy two-voice read (fallback only) ──
 
 # ---------------------------------------------------------------------------
-# Weekly-specific voice pair — fixed for gravitas and reflective authority.
-# The Editor (Sadaltager, knowledgeable) + Correspondent (Charon, informative)
-# are the two most authoritative, lowest-tempo voices in the roster. The Editor
-# synthesizes and contextualizes (the "step back" voice); the Correspondent
-# delivers facts with weight and patience. Together they create the Sunday
-# magazine register: unhurried, substantive, the voice of two people who have
-# spent the week reading everything so you don't have to.
-#
-# This pair does NOT rotate. The weekly is a branded product — same hosts
-# every Sunday, same sonic signature. Listeners learn to associate these
-# two voices with the long-form format.
+# Weekly-specific voice pair for the LEGACY read: two registers, no hosts.
+# The host roster these once named ("The Editor", "The Correspondent") was
+# retired with the Gemini TTS path; the names lived on here and in a
+# production prompt long after the product had no hosts (brand audit F-06).
+# What remains is the register: voice A synthesizes and frames, voice B
+# delivers facts with weight and patience. Institutional "we", evidence first
+# and then the argument, and every segment ends on the tension rather than a
+# summary. The pair does not rotate.
 # ---------------------------------------------------------------------------
 WEEKLY_VOICE_PAIR = {
     "host_a": {
         "id": "Sadaltager",
-        "name": "The Editor",
+        "name": "Voice A",
+        "register": "synthesizes and frames; evidence first, then the argument",
         "key": "editor",
         "gender": "male",
         "google_label": "knowledgeable",
@@ -1457,7 +1492,8 @@ WEEKLY_VOICE_PAIR = {
     },
     "host_b": {
         "id": "Achernar",
-        "name": "The Correspondent",
+        "name": "Voice B",
+        "register": "delivers facts with weight and patience; ends on the tension",
         "key": "correspondent",
         "gender": "female",
         "google_label": "informative",
@@ -1502,7 +1538,7 @@ _WEEKLY_TTS_PREAMBLE = (
 
 
 AUDIO_SYSTEM = """\
-You are writing void --onair WEEKLY — the Sunday magazine broadcast from void --news. \
+You are writing On Air Weekly, the Sunday magazine broadcast from Void News. \
 This is a 15-minute long-form conversation, NOT a breaking-news update. Two hosts: \
 A (the senior editor) and B (the foreign correspondent). They have spent the week \
 reading everything. Now they sit down and make sense of it.
@@ -1526,6 +1562,7 @@ Thursday — three days after the leak, which changes the calculus."
 - Short sentences after long ones create emphasis. "That changed Tuesday." lands \
 harder after a 30-word explanation.
 - Names, numbers, dates, places always. Attribute to institutions and officials.
+- Every fact MUST appear in the provided articles. Do not supplement with prior knowledge.
 
 WRONG (daily-brief pace): A reports 3 sentences. B reacts 2 sentences. Repeat.
 RIGHT (magazine pace): A develops a thought across 4-5 sentences, building to \
@@ -1742,7 +1779,7 @@ def _generate_audio(covers, opinions, tech, sports, recap, bias_data, edition,
 
     # --- Assemble the user prompt ---
     prompt = (
-        f"Write void --onair WEEKLY for the {edition} edition.\n"
+        f"Write On Air Weekly for the {edition} edition.\n"
         f"Week: {week_label}\n\n"
         f"{'=' * 60}\n"
         f"COVER STORIES (for deep-dive segments):\n\n{cover_context}\n\n"
@@ -1777,7 +1814,8 @@ def _generate_audio(covers, opinions, tech, sports, recap, bias_data, edition,
     # "Gemini JSON parse failed -> No audio script generated").
     script = _smart_generate_text(prompt, system_instruction=system, max_output_tokens=8192)
     if script and script.strip():
-        return {"script": script.strip()}, 1
+        # Significance words go; the dashes stay, they are breath marks here.
+        return {"script": strip_significance(script.strip())}, 1
     return None, 1
 
 
@@ -1823,7 +1861,7 @@ problems, that is the story.""",
 
 
 _WEEKLY_OPINION_SYSTEM = """\
-You are the lead editorial writer at void --weekly. Once a week you step back from the \
+You are the lead editorial writer at Void Weekly. Once a week you step back from the \
 daily churn to write the column that only makes sense at the week's length. You use \
 "we" — not as a hiding place behind the institution, but because what you are saying \
 carries the desk's weight behind it.
@@ -1852,6 +1890,10 @@ CARDINAL RULE — SHOW, DON'T TELL:
 Every sentence earns its place through evidence. Never assert significance — demonstrate \
 it through mechanism and the pattern across the week. The column's weight comes from \
 facts marshaled in sequence, not from adjectives.
+
+GROUNDING:
+Every fact MUST appear in the provided articles. Do not supplement with prior knowledge. \
+Argue only from facts in the provided stories. Historical parallels, other countries and 'patterns' are not permitted unless a provided article states them.
 
 KILL SCAFFOLDING — ZERO TOLERANCE (output containing these is REJECTED):
 Never announce what you are about to argue. ALL banned: "This isn't just...", "Here's \
@@ -1896,7 +1938,8 @@ institution.\
 
 
 _WEEKLY_OPINION_PROMPT = """\
-Write the void --weekly editorial for the {LEAN_UPPER} lens.
+Write the Void Weekly editorial for the {LEAN_UPPER} lens.
+Every fact MUST appear in the provided articles. Do not supplement with prior knowledge.
 Week: {WEEK_LABEL}
 Edition: {EDITION_UPPER}
 
@@ -1927,7 +1970,7 @@ the facts; never cite where they came from. NO em dashes in this field.\
 
 
 _WEEKLY_OPINION_AUDIO_PROMPT = """\
-Rewrite the editorial below as a single-voice spoken monologue for the void --weekly \
+Rewrite the editorial below as a single-voice spoken monologue for the Void Weekly \
 broadcast. ONE speaker at the editorial desk on a Sunday, who has spent the week with \
 these stories and has something to say. Not reading — TELLING.
 
@@ -1937,6 +1980,8 @@ Headline: {HEADLINE}
 {TEXT}
 
 Write ONLY the spoken monologue — no labels, no A:/B: tags, just flowing text.
+Every fact MUST appear in the provided articles. Do not supplement with prior knowledge. \
+The editorial above is the only article you have.
 Open with exactly: "Now, the void weekly editorial."
 Then: "The week, through a {LEAN_LABEL} lens."
 Then speak the headline as a title.
@@ -2041,8 +2086,8 @@ def _generate_weekly_opinion(covers, top_threads, recap, bias_data, daily_opinio
         if not (result and isinstance(result, dict)):
             findings = ["it returned nothing usable"]
             continue
-        cand_text = strip_dashes((result.get("opinion_text") or "").strip())
-        cand_head = strip_dashes((result.get("opinion_headline") or "").strip())
+        cand_text = strip_significance(strip_dashes((result.get("opinion_text") or "").strip()))
+        cand_head = strip_significance(strip_dashes((result.get("opinion_headline") or "").strip()))
         if not cand_text or word_count(cand_text) < 150:
             print("    [weekly-opinion] Text too short or empty — discarding")
             findings = ["it returned almost nothing; write the full column"]
@@ -2065,6 +2110,13 @@ def _generate_weekly_opinion(covers, top_threads, recap, bias_data, daily_opinio
 
     if not text:
         print("    [weekly-opinion] Editorial generation failed")
+        return None, calls
+    slop = drop_terms(text) + drop_terms(headline)
+    if slop:
+        # Same rule as `_gen_essay`: a length finding ships, a kill-list verb
+        # or noun that survived the regeneration does not.
+        print(f"    [weekly-opinion] DROPPED: still carries {', '.join(repr(t) for t in slop)} "
+              f"after regeneration; no editorial this week")
         return None, calls
 
     # --- Call 2: spoken monologue (flash-lite, plain text) ---
@@ -2089,6 +2141,8 @@ def _generate_weekly_opinion(covers, top_threads, recap, bias_data, daily_opinio
         if "this was void opinion" not in audio_script.lower()[-80:]:
             audio_script = f"{audio_script}\n\nThis was void opinion."
         print(f"    [weekly-opinion] Audio script: {len(audio_script.split())} words")
+    # Significance words go from the spoken text too; the dashes stay.
+    audio_script = strip_significance(audio_script)
 
     return {
         "opinion_text": text,

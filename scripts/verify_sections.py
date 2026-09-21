@@ -21,6 +21,8 @@ Checks, against the LIVE site (stdlib only, like verify_production.py):
   H-04  every /history/<slug>/ in the catalog is actually prerendered
   W-08  the served /weekly carries no em or en dash outside its <title>.
   W-09  the audio edition ships an ordered chapter rail and its sidecar.
+  W-10  the served /weekly prose carries no kill-list term (the shared list in
+        pipeline/utils/prohibited_terms.py) outside <blockquote> and <q>.
   W-01  data/weekly.json carries an issue number and a Monday-to-Sunday week
   W-03  the cover image, if present, comes from a freely licensed source.
         Issue #26 shipped an AFP wire photograph hotlinked off a publisher CDN.
@@ -33,6 +35,7 @@ Exit 1 on any failure; prints one line per check. Run by verify-production.yml.
 from __future__ import annotations
 
 import datetime as dt
+import html
 import re
 import json
 import sys
@@ -46,6 +49,39 @@ SAMPLE_SLUGS = 8          # H-04 spot-checks rather than fetching all 78
 # because this script is stdlib-only and runs against the LIVE site with no
 # repo on the path; tests/test_weekly.py asserts the two agree.
 MAX_HEADLINE_CHARS = 120
+
+# Mirrors pipeline/utils/prohibited_terms.py SIGNIFICANCE_WORDS and
+# SLOP_PATTERN, verbatim, for the same reason as MAX_HEADLINE_CHARS above;
+# tests/test_weekly.py asserts the copies agree.
+SIGNIFICANCE_WORDS = (
+    r"significantly|significant|notably|notable|crucially|crucial|"
+    r"remarkably|strikingly|importantly|interestingly|markedly"
+)
+SLOP_PATTERN = (
+    r"\b(?:"
+    r"underscor(?:e|es|ed|ing)|robust(?:ly)?|navigat(?:e|es|ed|ing)|nuanced|pivotal|"
+    r"delv(?:e|es|ed|ing)|multifaceted|tapestry|"
+    r"pav(?:e|es|ed|ing)\s+the\s+way|"
+    r"(?:send|sends|sent|sending)\s+a\s+clear\s+(?:message|signal)|"
+    r"a\s+testament\s+to|"
+    r"(?:shed|sheds|shedding)\s+light\s+on|"
+    r"mark(?:s|ed|ing)?\s+a\s+(?:key|pivotal|significant)\s+moment|"
+    r"complex\s+interplay|"
+    r"this\s+(?:isn['\u2019]t|is\s+not)\s+just\s+about|"
+    # The weekly's own list, kept so nothing it caught before is lost.
+    r"game-changing|should\s+chill|in\s+conclusion|to\s+summarize|"
+    r"all\s+things\s+considered|noteworthy|what\s+you\s+need\s+to\s+know|"
+    r"here['\u2019]?s\s+what|let['\u2019]?s\s+break\s+down|let['\u2019]?s\s+dive|"
+    r"it\s+bears\s+mentioning|it\s+should\s+be\s+noted|"
+    r"it\s+(?:is|['\u2019]s)\s+worth\s+noting"
+    r")\b"
+)
+_KILL_SIGNIFICANCE_RE = re.compile(
+    r"\b(?P<neg>no|not|without|little|any|minimal|hardly|barely)?\s*"
+    r"(?:(?:most|more|very|highly|particularly|quite|so|the\s+most)\s+)?"
+    r"(?P<word>" + SIGNIFICANCE_WORDS + r")\b", re.I,
+)
+_KILL_SLOP_RE = re.compile(SLOP_PATTERN, re.I)
 
 ok = True
 
@@ -302,6 +338,22 @@ def main(site: str) -> int:
     except Exception as e:
         report("W-08", False, f"could not fetch /weekly/: {type(e).__name__}: {e}")
 
+    # W-10: no kill-list term in the SERVED prose. W-08 proved the pattern:
+    # the two published issues carried 34 kill-list hits across 104 fields
+    # because five of six weekly generators measured nothing and the sixth
+    # shipped whatever the one regeneration returned (brand audit F-03). The
+    # generator now drops a section that still carries one; this is the check
+    # that the page agrees. Quotation is exempt: a columnist quoting a source
+    # who said "robust" is reporting, not writing it.
+    try:
+        status, _, whtml = fetch(f"{base}/weekly/")
+        hits = kill_list_hits(whtml)
+        report("W-10", not hits,
+               "no kill-list term in the served prose" if not hits
+               else f"{len(hits)} kill-list hit(s) in served prose: " + "; ".join(hits[:6]))
+    except Exception as e:
+        report("W-10", False, f"could not fetch /weekly/: {type(e).__name__}: {e}")
+
     # W-09 — the Sunday audio edition, if the issue has one, ships its chapter
     # sidecar and the rail is ordered from zero. A chapter rail that starts
     # late or runs backwards is a player that jumps to the wrong movement, and
@@ -333,6 +385,29 @@ def main(site: str) -> int:
                else f"chapters ordered={bool(ordered)}, sidecar returned {sstatus}")
 
     return 0 if ok else 1
+
+
+def kill_list_hits(page_html: str) -> list[str]:
+    """Kill-list terms in the visible prose of a served page, with context.
+
+    Head, scripts, styles and JSON payloads are chrome; <blockquote> and <q>
+    are somebody else's words. Everything else is Void's prose. A negated
+    significance word ("no significant damage") carries a fact and is not a
+    hit, the same rule the pipeline's sanitizer applies.
+    """
+    body = re.sub(r"<head\b.*?</head>", " ", page_html, flags=re.S)
+    body = re.sub(r"<(script|style)\b.*?</\1>", " ", body, flags=re.S | re.I)
+    body = re.sub(r"<(blockquote|q)\b.*?</\1>", " ", body, flags=re.S | re.I)
+    text = html.unescape(re.sub(r"<[^>]+>", " ", body))
+    text = re.sub(r"\s+", " ", text)
+    hits = []
+    for m in _KILL_SIGNIFICANCE_RE.finditer(text):
+        if m.group("neg"):
+            continue
+        hits.append(f"{m.group('word').lower()!r} in ...{text[max(0, m.start() - 40):m.end() + 40]}...")
+    for m in _KILL_SLOP_RE.finditer(text):
+        hits.append(f"{m.group(0).lower()!r} in ...{text[max(0, m.start() - 40):m.end() + 40]}...")
+    return hits
 
 
 def html_escape_variants(text):

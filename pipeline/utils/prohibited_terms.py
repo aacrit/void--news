@@ -212,13 +212,96 @@ _EM_EN_DASH_RE = _re.compile(r"\s*[—–]\s*")
 # Significance assertions. An optional leading intensifier (most/very/...) is
 # swallowed with the word. A leading negation/minimizer is CAPTURED so the
 # replacement can keep load-bearing phrases ("no significant damage") intact.
+#: The significance words, as one alternation. scripts/verify_sections.py
+#: carries a verbatim copy (it is stdlib-only and runs against the live site
+#: with no repo on the path); tests/test_weekly.py asserts the copies agree.
+SIGNIFICANCE_WORDS = (
+    r"significantly|significant|notably|notable|crucially|crucial|"
+    r"remarkably|strikingly|importantly|interestingly|markedly"
+)
 _SIGNIFICANCE_RE = _re.compile(
     r"\b(?P<neg>no|not|without|little|any|minimal|hardly|barely)?\s*"
     r"(?:(?:most|more|very|highly|particularly|quite|so|the\s+most)\s+)?"
-    r"(?P<word>significantly|significant|notably|notable|crucially|crucial|"
-    r"remarkably|strikingly|importantly|interestingly|markedly)\b",
+    r"(?P<word>" + SIGNIFICANCE_WORDS + r")\b",
     _re.IGNORECASE,
 )
+
+# ---------------------------------------------------------------------------
+# The shared kill list (2026-09-21, brand audit F-03).
+#
+# docs/VOICE-BRAND.md section VII names the AI-slop set; until this date the
+# weekly's own check knew the significance family and the Vox scaffolding and
+# none of it, so 27 of the 34 kill-list hits on the two published issues were
+# words the check had never heard of. One regex now serves the feed, the
+# weekly, the served-output gate and the promos.
+#
+# These are FINDINGS, never substitutions. Deleting "underscores" leaves a
+# sentence with no verb, so unlike the significance adjectives above nothing
+# here is ever removed by code: a section that still carries one after its
+# regeneration is dropped, not shipped. Word-bounded, case-insensitive, and
+# tolerant of a curly apostrophe. "revolutionary" is deliberately absent: the
+# Revolutionary Guard is a proper noun the news carries every week.
+# ---------------------------------------------------------------------------
+SLOP_PATTERN = (
+    r"\b(?:"
+    r"underscor(?:e|es|ed|ing)|robust(?:ly)?|navigat(?:e|es|ed|ing)|nuanced|pivotal|"
+    r"delv(?:e|es|ed|ing)|multifaceted|tapestry|"
+    r"pav(?:e|es|ed|ing)\s+the\s+way|"
+    r"(?:send|sends|sent|sending)\s+a\s+clear\s+(?:message|signal)|"
+    r"a\s+testament\s+to|"
+    r"(?:shed|sheds|shedding)\s+light\s+on|"
+    r"mark(?:s|ed|ing)?\s+a\s+(?:key|pivotal|significant)\s+moment|"
+    r"complex\s+interplay|"
+    r"this\s+(?:isn['\u2019]t|is\s+not)\s+just\s+about|"
+    # The weekly's own list, kept so nothing it caught before is lost.
+    r"game-changing|should\s+chill|in\s+conclusion|to\s+summarize|"
+    r"all\s+things\s+considered|noteworthy|what\s+you\s+need\s+to\s+know|"
+    r"here['\u2019]?s\s+what|let['\u2019]?s\s+break\s+down|let['\u2019]?s\s+dive|"
+    r"it\s+bears\s+mentioning|it\s+should\s+be\s+noted|"
+    r"it\s+(?:is|['\u2019]s)\s+worth\s+noting"
+    r")\b"
+)
+_SLOP_RE = _re.compile(SLOP_PATTERN, _re.IGNORECASE)
+
+
+def find_slop(text: str) -> list[str]:
+    """Kill-list verbs, nouns and scaffolding present in ``text``.
+
+    The subset of `find_prohibited` that no code may delete: each hit fails
+    the piece that carries it. Surface forms, lowercased, whitespace
+    collapsed, first occurrence order, no duplicates.
+    """
+    if not text or not isinstance(text, str):
+        return []
+    out: list[str] = []
+    for m in _SLOP_RE.finditer(_html.unescape(text)):
+        hit = _re.sub(r"\s+", " ", m.group(0).lower())
+        if hit not in out:
+            out.append(hit)
+    return out
+
+
+def find_prohibited(text: str) -> list[str]:
+    """Every kill-list term present in ``text``: significance words that
+    `strip_significance` would delete, plus the slop set that nothing may.
+
+    A negated significance word ("no significant damage") is not a finding,
+    for the same reason the sanitizer keeps it: the negation carries a fact.
+    """
+    if not text or not isinstance(text, str):
+        return []
+    plain = _html.unescape(text)
+    out: list[str] = []
+    for m in _SIGNIFICANCE_RE.finditer(plain):
+        if m.group("neg"):
+            continue
+        word = m.group("word").lower()
+        if word not in out:
+            out.append(word)
+    for hit in find_slop(plain):
+        if hit not in out:
+            out.append(hit)
+    return out
 
 
 def _significance_sub(m: "_re.Match") -> str:
@@ -311,23 +394,17 @@ def _an_agreement_sub(m: "_re.Match") -> str:
     return ("An" if art == "A" else "an") + " " + word
 
 
-def sanitize_editorial_text(text: str) -> str:
-    """Enforce the no-em-dash + show-don't-tell Cardinal Rules deterministically.
-
-    Returns a cleaned copy of ``text``. Safe on None/empty. Do NOT apply to
-    audio script fields (em dashes are intentional prosody there).
-    """
-    if not text or not isinstance(text, str):
-        return text
-    # Decode HTML entities first (&mdash; &amp; &#39; ...) so raw article text
-    # never displays escape artifacts and every dash spelling is normalised.
-    out = _html.unescape(text)
-    out = _EM_EN_DASH_RE.sub(", ", out)
-    out = _SIGNIFICANCE_RE.sub(_significance_sub, out)
-    # Clean up artifacts left by word deletion.
+def _tidy_after_deletion(out: str, keep_newlines: bool) -> str:
+    """Repair what deleting a word leaves behind, then fix casing and articles."""
     out = out.replace(" ,", ",").replace(" .", ".").replace(" ;", ";").replace(" :", ":")
     out = _re.sub(r",\s*,", ",", out)          # doubled commas
-    out = _re.sub(r"\s{2,}", " ", out)          # collapsed double spaces
+    if keep_newlines:
+        # Runs of spaces collapse; a paragraph break is a beat of silence in
+        # an audio script and stays.
+        out = _re.sub(r"[^\S\n]{2,}", " ", out)
+        out = _re.sub(r"[^\S\n]+\n", "\n", out)
+    else:
+        out = _re.sub(r"\s{2,}", " ", out)      # collapsed double spaces
     out = _re.sub(r"\(\s+", "(", out).replace(" )", ")")
     out = out.strip(" ,;:")
     # Re-capitalize sentence starts a leading-word deletion may have lowercased.
@@ -340,3 +417,36 @@ def sanitize_editorial_text(text: str) -> str:
     # a/an agreement on generated text ("a opposition" -> "an opposition").
     out = _AN_AGREEMENT_RE.sub(_an_agreement_sub, out)
     return out
+
+
+def strip_significance(text: str) -> str:
+    """The show-don't-tell half of the sanitizer, with no dash handling.
+
+    Safe for audio scripts: em dashes are prosody there and are left alone,
+    paragraph breaks are kept, and only the significance words go. Until
+    2026-09-21 the dash exemption for audio was implemented as "skip the
+    sanitizer entirely", which is how "a significant escalation" reached the
+    air (brand audit F-13).
+    """
+    if not text or not isinstance(text, str):
+        return text
+    out = _html.unescape(text)
+    out = _SIGNIFICANCE_RE.sub(_significance_sub, out)
+    return _tidy_after_deletion(out, keep_newlines=True)
+
+
+def sanitize_editorial_text(text: str) -> str:
+    """Enforce the no-em-dash + show-don't-tell Cardinal Rules deterministically.
+
+    Returns a cleaned copy of ``text``. Safe on None/empty. Do NOT apply to
+    audio script fields (em dashes are intentional prosody there); use
+    `strip_significance` for those.
+    """
+    if not text or not isinstance(text, str):
+        return text
+    # Decode HTML entities first (&mdash; &amp; &#39; ...) so raw article text
+    # never displays escape artifacts and every dash spelling is normalised.
+    out = _html.unescape(text)
+    out = _EM_EN_DASH_RE.sub(", ", out)
+    out = _SIGNIFICANCE_RE.sub(_significance_sub, out)
+    return _tidy_after_deletion(out, keep_newlines=False)
