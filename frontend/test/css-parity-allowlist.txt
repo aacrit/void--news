@@ -1,0 +1,15 @@
+# Dead CSS classes this repo keeps on purpose.
+#
+# test/css-parity.test.mjs fails on any class selector that no .tsx/.ts/.js
+# under frontend/app references. A name listed here is exempted. The gate also
+# fails on a line here that is NOT dead any more, so the file cannot rot.
+#
+# A name belongs here only with a reason on the line above it: CSS for a route
+# that is hidden but coming back, or a class a tool applies at runtime in a way
+# a text scan cannot see. "I might need it later" is not a reason; git has it.
+#
+# games.css, games-brand.css and revolt.css are skipped wholesale by the gate
+# (hidden routes), so nothing from them needs a line here.
+#
+# The list is empty. It was empty the day the purge landed and the intent is
+# that it stays that way.

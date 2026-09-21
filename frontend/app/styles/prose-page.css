@@ -83,7 +83,6 @@
   margin: 0 0 var(--space-5);
 }
 
-.press__byline,
 .privacy__updated {
   font-family: var(--font-data);
   font-size: var(--text-sm);

@@ -153,6 +153,12 @@ jobs:
           python-version: '3.11'
       - name: Install ffprobe
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      # tests/test_history_audio.py reads data/promos/house.yaml to check the
+      # promo under every outro. Without pyyaml it fails all 78 episodes with
+      # "promo checks need pyyaml", which is what run 35557957513 did after
+      # rendering five good episodes.
+      - name: Install the publish checks' one dependency
+        run: pip install --quiet pyyaml
       - uses: actions/download-artifact@v4
         with:
           pattern: history-episode-*

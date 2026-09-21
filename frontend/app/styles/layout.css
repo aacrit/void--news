@@ -123,31 +123,9 @@
 }
 
 /* ---- Section Header — Newspaper tradition ------------------------------ */
-.section-header {
-  border-bottom: none;
-  padding-top: var(--space-5);
-  padding-bottom: var(--space-2);
-  margin-bottom: var(--space-2);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-}
 
 /* Ink stroke section divider — organic wavy line replaces rigid border-bottom */
-.section-header::after {
-  content: "";
-  flex-basis: 100%;
-  height: 6px;
-  margin-top: var(--space-2);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C30 1 70 5 100 3 C130 1 170 5 200 3 C230 1 270 5 300 3 C330 1 370 5 400 3' stroke='%2352504A' stroke-width='1' fill='none' opacity='0.3' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-}
 
-:root[data-mode="dark"] .section-header::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C30 1 70 5 100 3 C130 1 170 5 200 3 C230 1 270 5 300 3 C330 1 370 5 400 3' stroke='%239CA3AF' stroke-width='1' fill='none' opacity='0.2' stroke-linecap='round'/%3E%3C/svg%3E");
-}
 
 /* Reusable organic ink rule — horizontal wavy SVG stroke */
 .ink-rule {
@@ -163,20 +141,6 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C30 1 70 5 100 3 C130 1 170 5 200 3 C230 1 270 5 300 3 C330 1 370 5 400 3' stroke='%239CA3AF' stroke-width='1' fill='none' opacity='0.2' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 
-.section-header__title {
-  font-family: var(--font-editorial);
-  font-size: var(--text-lg);
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--fg-primary);
-}
-
-.section-header__actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
 
 /* ---- Hero Slot — rank 0 front-page image treatment --------------------- */
 .hero-slot {
@@ -222,11 +186,6 @@
   margin: 0 auto;
 }
 
-.empty-state--inline {
-  padding: var(--space-7) 0;
-  text-align: center;
-  max-width: none;
-}
 
 /* ---- Footer ------------------------------------------------------------ */
 .site-footer {
@@ -273,41 +232,10 @@
 }
 
 /* ---- Source Row (Deep Dive) -------------------------------------------- */
-.source-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  transition: background-color var(--dur-fast) var(--ease-cinematic);
-}
 
-.source-row:nth-child(even) {
-  background-color: var(--bg-secondary);
-}
 
 /* Clickable source row — whole row is a link */
-.source-row--link {
-  cursor: pointer;
-}
 
-.source-row--link:hover {
-  background-color: var(--bg-secondary);
-}
-
-.source-row--link:hover .source-link {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.source-row--link:active {
-  background-color: var(--bg-secondary);
-  opacity: 0.85;
-}
-
-.source-row--link:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-}
 
 /* ---- Screen Reader Only ------------------------------------------------ */
 .sr-only {

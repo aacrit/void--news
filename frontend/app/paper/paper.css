@@ -609,7 +609,7 @@ html:has(.np-root) body { background: transparent; }
   :root:has(.np-root) .site-footer,
   :root:has(.np-root) .mtb,
   :root:has(.np-root) .msp,
-  :root:has(.np-root) .experimental-banner,
+  :root:has(.np-root) .exp-banner,
   :root:has(.np-root) .floating-player {
     display: none;
   }
