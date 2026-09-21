@@ -278,7 +278,7 @@ adds nothing to the state that anything reads back.
 | **History audio** | **78/78 scripts written, 78/78 rendered**, each carrying a house promo under its outro. Register: `docs/data/history-episodes.csv`, regenerate with `python3 pipeline/history/episode_report.py`. |
 | **Revolt** | 301-hidden, serves MOCK data. Cannot be un-hidden until it reads static JSON. |
 | **Ship / Feedback** | Live on the Worker + D1. |
-| **Podcast feeds** | Generated: `podcast-world.xml`, `podcast-weekly.xml`, `podcast-history.xml` (78). Linked from `/listen` and `layout.tsx`. **Not yet submitted** to Apple or Spotify; weekly and history covers exist as SVG only. |
+| **Podcast feeds** | Generated: `podcast-world.xml`, `podcast-weekly.xml`, `podcast-history.xml` (78). Linked from `/listen` and `layout.tsx`. **Not yet submitted** to Apple or Spotify. Three covers rendered 2026-09-21 from the house lockup (`podcast-cover-{world,weekly,history}.jpg`); `tests/test_podcast_feed.py` gates them. |
 | **House promos** | Live. 24 promos, `af_kore` at speed 0.86 over `radio_promo_bed.wav`. **All 78 History episodes stitched 2026-09-21**; On Air and Weekly pick one up on their next render. |
 | **Paper** | **Live 2026-09-21** as the printable twenty: the same 20 stories as the front page, in the same order, read from `build-data/feed.json`, every headline a link to its Deep Dive, print stylesheet, no classifieds, no datelines, no edition route. Gated by P-01..P-04. |
 | **Games** | 301-hidden. |
