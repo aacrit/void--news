@@ -57,7 +57,10 @@ EM, EN = "—", "–"
 
 # Keys holding someone's actual words, or a published title. Exempt from the
 # dash gate; see the module docstring.
-VERBATIM_KEYS = {"quote", "text", "excerpt", "title", "caption_original"}
+# `work` holds a published work's title exactly as `title` does: Li Peng's
+# diary is called "The Critical Moment - Li Peng June Fourth Diary" and the
+# dash is the publisher's, not ours.
+VERBATIM_KEYS = {"quote", "text", "excerpt", "title", "work", "caption_original"}
 
 # A quoted span ANYWHERE is also exempt, not only a field named "quote". The
 # reason quotations are spared is that the words are as the source printed

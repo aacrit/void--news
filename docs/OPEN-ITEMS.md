@@ -219,3 +219,33 @@ accruing in git history.
   IP_SALT`) — the checked-in value in `worker/wrangler.toml` is a dev
   placeholder. The D1 `database_id` there is genuinely provisioned.
 - iOS/Android signing, first store submission, branch protection.
+
+## History: 70 over-escaped apostrophes reach the reader
+
+Found 2026-09-21 by a drafter working the dash pass, who flagged it rather than
+silently editing text outside its remit.
+
+70 string values across `apartheid`, `bandung-conference`, `mongol-empire`,
+`silk-road` and `the-crusades` carry a literal doubled apostrophe, and it
+reaches `frontend/public/data/history.json`. Readers see `Mandela''s`,
+`Biko''s`, `Chang''an`, `the world''s tallest equestrian statue`, and
+`Jami'' al-Tawarikh` for what should be `Jami' al-Tawarikh`.
+
+The diagnosis is certain. In a single-quoted YAML scalar `''` is the escape for
+one apostrophe and the parser collapses it, so anything still doubled AFTER
+`yaml.safe_load` is an escape written into a scalar that does not honour it.
+
+What is NOT certain is where each one sits, and that is why this is written
+down rather than fixed. Every sampled instance is on a CONTINUATION line of a
+multi-line scalar, with no `key:` prefix to say how the scalar opened. A
+line-based replacement cannot tell a plain continuation from the continuation
+of a single-quoted scalar, where `''` is correct and must stay. A first attempt
+proved it: it broke all four files it touched, and only a "revert anything that
+will not re-parse" guard kept the damage at zero.
+
+The sound fix is a formatting-preserving round trip (`ruamel.yaml`, not
+installed here) or a scalar-span tracker that knows which quoting style opened
+the block. Not a regex.
+
+Worth doing with the tree quiet, since the same five files were being rewritten
+by the dash pass when this was found.

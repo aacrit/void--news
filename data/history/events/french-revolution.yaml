@@ -476,7 +476,7 @@ perspectives:
   - The colonial lobby's explicit exclusion of enslaved people from the Rights of Man
   omitted:
   - French abolitionists (Societe des Amis des Noirs) who genuinely advocated for colonial subjects' rights
-  - The complexity of free people of color's position — some were slaveholders themselves
+  - The complexity of free people of color's position, since some were slaveholders themselves
   - The revolution's long-term influence on global abolition movements despite its immediate colonial failures
   - French revolutionary soldiers who fought alongside the enslaved in Saint-Domingue
 media:
@@ -572,7 +572,7 @@ connections:
   description: The revolution's universalist language directly inspired the Haitian Revolution (1791-1804), the only successful slave revolution in history; France first abolished then reinstated slavery
 - target_slug: fall-of-berlin-wall
   connection_type: influenced
-  description: The revolution established the vocabulary and principles — popular sovereignty, citizens' rights, political left and right — that shaped every subsequent revolutionary moment including 1989
+  description: The revolution established the vocabulary and principles (popular sovereignty, citizens' rights, political left and right) that shaped every subsequent revolutionary moment including 1989
 - target_slug: creation-of-israel-nakba
   connection_type: influenced
   description: Revolutionary principles of national self-determination influenced both Zionist and Arab nationalist movements in the 20th century
