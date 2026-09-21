@@ -62,6 +62,14 @@ def _load_issue(week: str | None):
     raise SystemExit(f"no published issue for week {week}")
 
 
+#: The columns weekly-archive.json carries. Must match export_static.py, which
+#: is the other producer of this file; a test asserts the index is the
+#: projection of weekly-issues.json onto exactly these.
+INDEX_COLS = ("id", "issue_number", "edition", "week_start", "week_end",
+              "cover_headline", "cover_image_url", "audio_url",
+              "audio_duration_seconds", "created_at")
+
+
 def _write_back(issue: dict, rendered: dict, url: str) -> list[str]:
     """Put the audio fields on every copy of the issue that a page reads.
 
@@ -90,8 +98,7 @@ def _write_back(issue: dict, rendered: dict, url: str) -> list[str]:
     week = issue.get("week_start")
     touched = []
 
-    for path in (WEEKLY, ISSUES,
-                 REPO / "frontend" / "public" / "data" / "weekly-archive.json"):
+    for path in (WEEKLY, ISSUES):
         if not path.exists():
             continue
         data = json.loads(path.read_text(encoding="utf-8"))
@@ -99,17 +106,36 @@ def _write_back(issue: dict, rendered: dict, url: str) -> list[str]:
         hit = False
         for row in rows:
             if isinstance(row, dict) and row.get("week_start") == week:
-                # The summary index carries only a few of these keys; writing
-                # the rest into it would invent columns it does not have.
                 for k, v in fields.items():
-                    if isinstance(data, list) and path.name == "weekly-archive.json" \
-                            and k not in ("audio_url", "audio_duration_seconds"):
-                        continue
                     row[k] = v
                 hit = True
         if hit:
             path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
             touched.append(path.name)
+
+    # The index is DERIVED, so re-derive it rather than patching its rows.
+    #
+    # Patching was the bug. On 2026-09-20 the cover page and the index carried
+    # two different issues under number 26, because a run wrote audio fields
+    # into whatever row its own checkout happened to hold while the rest of
+    # that row was stale. Reconciling it by hand did not hold either: the next
+    # run's conflict rule takes generated files whole, in favour of itself, and
+    # put the stale row straight back. W-T13 caught that.
+    #
+    # Projecting from weekly-issues.json makes the two agree by construction,
+    # so a stale checkout can no longer publish a headline the issue does not
+    # have. Same columns as export_static.py, which is the other producer.
+    archive = REPO / "frontend" / "public" / "data" / "weekly-archive.json"
+    if archive.exists() and ISSUES.exists():
+        issues = json.loads(ISSUES.read_text(encoding="utf-8"))
+        issues = issues if isinstance(issues, list) else [issues]
+        merged = sorted(issues, key=lambda i: str(i.get("week_start") or ""),
+                        reverse=True)
+        archive.write_text(
+            json.dumps([{k: i.get(k) for k in INDEX_COLS} for i in merged],
+                       ensure_ascii=False),
+            encoding="utf-8")
+        touched.append(archive.name)
     return touched
 
 
