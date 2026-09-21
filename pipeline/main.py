@@ -2713,7 +2713,50 @@ def main():
         # cluster). This reduces spaCy calls from O(N*M) to O(N+M).
         print("\n[6b] Re-scoring framing with cluster context...")
         framing_updated = 0
+        framing_no_scores = 0
         framing_update_rows: list[dict] = []  # batch DB updates
+
+        # 2026-09-21: load the MEASURED bias rows for articles that entered
+        # clustering from the 36h lookback. Step 5 scores only THIS run's
+        # batch, so a lookback article was absent from article_bias_map and
+        # the upsert below rebuilt its row out of `.get(art_id, {})`
+        # fallbacks, replacing yesterday's measured scores with the default
+        # tuple 50/10/25/50/0.7. 540 of 737 exported per-article rows carried
+        # that tuple on 2026-09-20.
+        #
+        # Held in its OWN map rather than merged into article_bias_map: the
+        # opinion split, cluster content_type/confidence and the step 9c
+        # source-topic EMA all iterate article_bias_map, and feeding them a
+        # day of already-counted articles would change clustering and
+        # tracking behaviour. Step 6b is the only reader of this map.
+        lookback_bias_map: dict[str, dict] = {}
+        try:
+            _need_ids = sorted({
+                a.get("id", "")
+                for cl in clusters
+                if len(cl.get("articles", [])) >= 2
+                for a in cl.get("articles", [])
+                if a.get("id") and a.get("id") not in article_bias_map
+            })
+            _lb_chunk = 200  # URL length limit on the IN clause
+            for _i in range(0, len(_need_ids), _lb_chunk):
+                _slice = _need_ids[_i:_i + _lb_chunk]
+                _lb_resp = supabase.table("bias_scores").select("*").in_(
+                    "article_id", _slice
+                ).execute()
+                for _row in (_lb_resp.data or []):
+                    _aid = _row.pop("article_id", None)
+                    if not _aid:
+                        continue
+                    for _dbonly in ("id", "created_at", "updated_at"):
+                        _row.pop(_dbonly, None)
+                    lookback_bias_map[_aid] = _row
+            if _need_ids:
+                print(f"  Lookback articles needing stored scores: "
+                      f"{len(_need_ids)}; bias rows loaded: "
+                      f"{len(lookback_bias_map)}")
+        except Exception as _lb_err:
+            print(f"  [warn] lookback bias_scores preload failed: {_lb_err}")
 
         try:
             from utils.nlp_shared import get_nlp
@@ -2773,11 +2816,21 @@ def main():
                     # Update in-memory bias map
                     if art_id in article_bias_map:
                         article_bias_map[art_id]["framing"] = new_framing
+                    elif art_id in lookback_bias_map:
+                        lookback_bias_map[art_id]["framing"] = new_framing
 
                     # Build update row for batch — include ALL bias axes so the
                     # upsert does not null-out columns that aren't in the dict.
                     # (Fix F7: partial upsert was setting 4/5 axes to NULL)
-                    existing = article_bias_map.get(art_id, {})
+                    existing = (article_bias_map.get(art_id)
+                                or lookback_bias_map.get(art_id))
+                    if not existing:
+                        # Nothing measured for this article, in memory or in
+                        # the DB. Writing the row anyway would publish the
+                        # default tuple as though it had been measured, so the
+                        # framing re-score is dropped instead.
+                        framing_no_scores += 1
+                        continue
                     update_data: dict = {
                         "article_id": art_id,
                         "political_lean": existing.get("political_lean", 50),
@@ -2817,6 +2870,9 @@ def main():
                   f"({upserted} DB rows updated in batches)")
         else:
             print(f"  Framing re-scored: {framing_updated} articles in multi-article clusters")
+        if framing_no_scores:
+            print(f"  Framing update skipped for {framing_no_scores} articles "
+                  f"with no measured bias row (defaults are never written)")
 
         # Step 6a: Extract claims (void --verify)
         # Uses spaCy dependency parsing to extract factual claims (SVO triples
