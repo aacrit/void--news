@@ -1,6 +1,6 @@
 /* ==========================================================================
    PipelineFlow — Static pipeline visualization
-   Server component (no 'use client'). Renders every step of the 3x-daily
+   Server component (no 'use client'). Renders every step of the daily
    Python pipeline in a dark terminal aesthetic.
    ========================================================================== */
 
@@ -256,7 +256,7 @@ const PHASES: Phase[] = [
         num: "8",
         title: "Store Clusters",
         detail:
-          "Upsert story_clusters + cluster_articles \u00b7 writes a single rank_world for one daily feed (top 50) via feed_ranker.py",
+          "Upsert story_clusters + cluster_articles \u00b7 writes a single rank_world for one daily feed via feed_ranker.py",
       },
       {
         num: "8b",
@@ -325,7 +325,7 @@ const PHASES: Phase[] = [
         num: "\u221e",
         title: "Retention Policy",
         detail:
-          "Clusters: 2 days \u00b7 Articles: 8 days \u00b7 Briefs: 8 days \u00b7 Empty clusters: RPC cleanup \u00b7 Stuck pipeline runs: RPC cleanup",
+          "Clusters: 2 days \u00b7 Articles: 7 days \u00b7 Briefs: 8 days \u00b7 Empty clusters: RPC cleanup \u00b7 Stuck pipeline runs: RPC cleanup",
       },
     ],
   },
@@ -623,7 +623,7 @@ export default function PipelineFlow() {
           <span className="pf-header__title">Pipeline</span>
           <span className="pf-header__sep" aria-hidden="true" />
           <span className="pf-header__meta">
-            1x daily &middot; 25-35 min &middot; GitHub Actions
+            1x daily &middot; ~1.5-2h &middot; GitHub Actions
           </span>
         </div>
         <Link href="/command-center" className="pf-header__back">

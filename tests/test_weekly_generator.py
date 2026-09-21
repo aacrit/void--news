@@ -127,6 +127,144 @@ def main():
         check(f"the core carries {key}", key in core)
     check("the core adds no picture", "image_url" not in core)
 
+    # ── WG-05  The cluster read is a count, not a ceiling ──────────────────
+    # Issues #23 and #26 BOTH published exactly "500 story clusters", because
+    # `_fetch_week_clusters` was a bare .limit(500). Two for two on a round
+    # number is a cap, not a measurement, and the colophon printed it as an
+    # exact claim along with `total_articles`, which sums the same capped rows.
+    print("\nWG-05  the week's clusters are paged, and the ceiling is flagged")
+
+    class _FakeQuery:
+        """Only what the query chain actually calls, plus honest ranging."""
+
+        def __init__(self, rows):
+            self._rows = rows
+            self._start, self._end = 0, len(rows) - 1
+
+        def select(self, *a, **k): return self
+        def contains(self, *a, **k): return self
+        def gte(self, *a, **k): return self
+        def lte(self, *a, **k): return self
+        def order(self, *a, **k): return self
+
+        def range(self, start, end):
+            self._start, self._end = start, end
+            return self
+
+        def execute(self):
+            return type("R", (), {"data": self._rows[self._start:self._end + 1]})()
+
+    class _FakeDB:
+        def __init__(self, n):
+            self._rows = [{"id": f"c{i}", "title": f"t{i}", "source_count": 1}
+                          for i in range(n)]
+            self.pages = 0
+
+        def table(self, name):
+            self.pages += 1
+            return _FakeQuery(self._rows)
+
+    from datetime import date
+    real_db, real_max = g.supabase, g._CLUSTER_MAX
+    try:
+        # 1,200 clusters in the week. The old query returned 500 of them.
+        g.supabase = _FakeDB(1200)
+        rows, trunc = g._fetch_week_clusters("world", date(2026, 9, 14), date(2026, 9, 20))
+        check("a week larger than one page is read whole", len(rows) == 1200, f"{len(rows)}")
+        check("a complete read is NOT flagged truncated", trunc is False, str(trunc))
+        check("it took more than one query", g.supabase.pages > 1, f"{g.supabase.pages} page(s)")
+
+        # Exactly one page. A real 500 must not be slandered as a cap.
+        g.supabase = _FakeDB(g._CLUSTER_PAGE)
+        rows, trunc = g._fetch_week_clusters("world", date(2026, 9, 14), date(2026, 9, 20))
+        check("a week that really is one page long reads whole",
+              len(rows) == g._CLUSTER_PAGE, f"{len(rows)}")
+        check("and is not flagged", trunc is False, str(trunc))
+
+        # The hard ceiling. When it IS hit, the row must say so.
+        g._CLUSTER_MAX = g._CLUSTER_PAGE * 2
+        g.supabase = _FakeDB(g._CLUSTER_PAGE * 5)
+        rows, trunc = g._fetch_week_clusters("world", date(2026, 9, 14), date(2026, 9, 20))
+        check("the hard ceiling stops the read", len(rows) == g._CLUSTER_MAX, f"{len(rows)}")
+        check("and the ceiling is flagged", trunc is True, str(trunc))
+    finally:
+        g.supabase, g._CLUSTER_MAX = real_db, real_max
+
+    # The flag has to survive the whole way to the row the page reads.
+    rep_text, rep_data = g._generate_bias_report(
+        [{"title": "x", "divergence_score": 1}],
+        {"total_scored": 10, "avg_lean": 50.0, "avg_sensationalism": 20.0,
+         "avg_rigor": 70.0, "lean_std": 10.0, "truncated": False},
+        "world", clusters_truncated=True)
+    check("the bias payload carries clusters_truncated",
+          rep_data.get("clusters_truncated") is True, str(rep_data.get("clusters_truncated")))
+    check("the report text hedges the cluster count",
+          "across more than 1 story clusters" in rep_text, rep_text.splitlines()[0])
+    check("stats is left whole, so the page cannot render NaN",
+          set(rep_data["stats"]) >= {"avg_lean", "lean_std", "total_scored"})
+
+    # No bias stats at all still has to carry the flag: the colophon prints the
+    # cluster count whether or not The Week in Bias renders.
+    _, no_stats = g._generate_bias_report([{"title": "x"}], None, "world",
+                                          clusters_truncated=True)
+    check("the flag survives a week with no bias stats",
+          no_stats.get("clusters_truncated") is True, str(no_stats))
+    check("and no half-built stats object is emitted", "stats" not in no_stats)
+
+    # ── WG-06  Sports & Culture must contain sport or culture ──────────────
+    # Issue #26 filed a German federal election under Sports & Culture. The
+    # cluster carried the category label and nothing checked its words.
+    print("\nWG-06  the Sports & Culture gate reads the cluster, not the label")
+
+    german_election = {
+        "id": "de-1",
+        "category": "Culture",
+        "title": "German election: far-right AfD surges to strongest result since the war",
+        "summary": ("Germany's federal election returned the far-right AfD to its "
+                    "strongest position since the Second World War, reshaping the "
+                    "coalition arithmetic in the Bundestag and unsettling the "
+                    "cultural discourse around accusation and blame."),
+    }
+    real_sport = {
+        "id": "sp-1",
+        "category": "Sports",
+        "title": "Premier League clubs vote to scrap the January transfer window",
+        "summary": "Twenty clubs met at Wembley; the vote was 14 to 6.",
+    }
+    real_culture = {
+        "id": "cu-1",
+        "category": "Culture",
+        "title": "Cannes jury gives the Palme d'Or to a first-time director",
+        "summary": "The film was shot in eleven days on a single roll of stock.",
+    }
+    unlabelled_sport = {
+        "id": "sp-2",
+        "category": "World",
+        "title": "Olympic host city loses its main stadium contractor",
+        "summary": "The tournament opens in nine months.",
+    }
+
+    check("a German election is NOT sport or culture",
+          g._is_sport_or_culture(german_election) is False)
+    check("a Premier League vote is", g._is_sport_or_culture(real_sport) is True)
+    check("a Palme d'Or is", g._is_sport_or_culture(real_culture) is True)
+    check("the word 'war' inside a political summary does not qualify it",
+          g._is_sport_or_culture(
+              {"title": "Chancellor names new cabinet",
+               "summary": "The war cabinet met for ninety minutes."}) is False)
+
+    sports, calls = g._generate_sports([german_election], "world")
+    check("a week whose only labelled cluster is an election runs WITHOUT the department",
+          sports is None, str(sports))
+    check("and spends no model call on it", calls == 0, str(calls))
+
+    # The gate must not silence a real one, and must still reach past the label.
+    check("a labelled sports cluster is still selected",
+          [c["id"] for c in [german_election, real_sport] if g._is_sport_or_culture(c)]
+          == ["sp-1"])
+    check("an unlabelled sports cluster is still reachable",
+          g._is_sport_or_culture(unlabelled_sport) is True)
+
     print()
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))

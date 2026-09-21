@@ -1,5 +1,6 @@
 "use client";
 
+import { FEED_DISPLAYED } from "../../lib/feedConfig";
 import Link from "next/link";
 import { useReveal } from "./useReveal";
 import { SIX_AXES } from "../../film/data";
@@ -15,7 +16,7 @@ import { SIX_AXES } from "../../film/data";
 const QA = [
   {
     q: "Does Void learn what I like?",
-    a: "No. There is no personalization. The same 50 stories, in the same order, for every reader. A front page, not a feed.",
+    a: `No. There is no personalization. The same ${FEED_DISPLAYED} stories, in the same order, for every reader. A front page, not a feed.`,
   },
   {
     q: "Do I need an account?",

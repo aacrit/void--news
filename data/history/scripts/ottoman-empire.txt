@@ -19,14 +19,11 @@ N: What Osman starts on that border does not stop growing for six hundred and tw
 N: By fourteen fifty three the great-great-grandson has the city, and instead of a Christian capital he sets out to build a different kind of city entirely.
 N: He renames it Istanbul, calls himself Kayser i Rum, Caesar of Rome, appoints a Greek Orthodox patriarch, invites Jews back into the city, and resettles Muslims from across Anatolia.
 N: By the time Mehmed the Second dies at forty nine, possibly poisoned by his own physician, the empire he leaves runs from the Danube to the Euphrates.
-
-## DOCUMENT | Sultan Bayezid II | Attributed invitation to Sephardic Jews | c. 1492
-N: Eleven years later, when Spain's Alhambra Decree orders every Jew in the country expelled, an invitation attributed to Sultan Bayezid the Second survives in the record.
-M: You, the Jews, who have been expelled from Spain and Portugal, who have been persecuted by the Inquisition, come to us.
+N: Eleven years later, when Spain's Alhambra Decree orders every Jew in the country expelled, Bayezid the Second sends ships to Spain and offers the refugees Ottoman territory.
 N: Sephardic communities resettle in Thessaloniki, Istanbul, Izmir, and Sarajevo. Within a century, Thessaloniki is a majority Jewish city, the only one in Europe.
 
 ## ASIDE
-N: That invitation became policy, and the policy was not equality. Non Muslims paid the jizya, a poll tax, and could not bear arms.
+N: That offer became policy, and the policy was not equality. Non Muslims paid the jizya, a poll tax, and could not bear arms.
 N: It was still more structured pluralism than the Europe of the Inquisition had to offer.
 
 ## REST

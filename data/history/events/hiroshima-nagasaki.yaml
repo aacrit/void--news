@@ -9,7 +9,7 @@ region: east-asia
 country: Japan
 category: war
 severity: catastrophic
-death_toll: 110,000-210,000 by end of 1945
+death_toll: 180,000-210,000 by end of 1945
 affected_population: Over 500,000 residents of both cities; hibakusha survivors and descendants numbering in the hundreds of thousands
 duration: August 6-9, 1945 (bombings); radiation effects ongoing
 hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/hiroshima-nagasaki/Nagasakibomb.jpg
@@ -21,29 +21,29 @@ summary: 'At 8:15 a.m. on August 6, 1945, the B-29 Superfortress Enola Gay, pilo
 
 
   Three days later, on August 9, the B-29 Bockscar, piloted by Major Charles Sweeney, dropped a plutonium implosion bomb codenamed "Fat Man" on Nagasaki. The primary target had been Kokura, but cloud cover
-  diverted the mission. Fat Man detonated at 1,650 feet above Nagasaki''s Urakami Valley at 11:02 a.m. The yield was approximately 21 kilotons — more powerful than Little Boy — but Nagasaki''s hilly terrain
+  diverted the mission. Fat Man detonated at 1,650 feet above Nagasaki''s Urakami Valley at 11:02 a.m. The yield was approximately 21 kilotons, more powerful than Little Boy, but Nagasaki''s hilly terrain
   contained the blast. Between 40,000 and 70,000 people died by the end of 1945. Nagasaki''s Urakami Cathedral, the largest Christian church in East Asia, was destroyed with its congregation; roughly a
   third of Nagasaki''s 12,000 Catholics died.
 
 
-  The immediate aftermath defied medical understanding. Survivors who appeared uninjured collapsed days later from acute radiation syndrome — bleeding gums, hair loss, hemorrhaging, organ failure. Dr. Michihiko
+  The immediate aftermath defied medical understanding. Survivors who appeared uninjured collapsed days later from acute radiation syndrome: bleeding gums, hair loss, hemorrhaging, organ failure. Dr. Michihiko
   Hachiya, director of the Hiroshima Communications Hospital, recorded the first systematic observations in his Hiroshima Diary: patients who had seemed healthy at triage died within two weeks. "Black rain"
-  — radioactive fallout mixed with condensation — fell across both cities for hours after the blasts, contaminating water supplies and exposed skin.
+  (radioactive fallout mixed with condensation) fell across both cities for hours after the blasts, contaminating water supplies and exposed skin.
 
 
-  Japan announced its acceptance of the Potsdam Declaration on August 15, 1945, six days after Nagasaki. Emperor Hirohito''s recorded radio address — the first time most Japanese citizens heard his voice
-  — cited "a new and most cruel bomb" as the reason for surrender. The formal instrument of surrender was signed aboard the USS Missouri on September 2, 1945.
+  Japan announced its acceptance of the Potsdam Declaration on August 15, 1945, six days after Nagasaki. Emperor Hirohito''s recorded radio address, the first time most Japanese citizens heard his voice,
+  cited "a new and most cruel bomb" as the reason for surrender. The formal instrument of surrender was signed aboard the USS Missouri on September 2, 1945.
 
 
   By 1950, the combined death toll from both bombings, including radiation-related illnesses, reached an estimated 340,000. Japan''s Atomic Bomb Casualty Commission (later the Radiation Effects Research
-  Foundation) has tracked survivors — hibakusha — ever since. As of 2024, approximately 106,000 hibakusha were still alive, their average age above 85.
+  Foundation) has tracked survivors, hibakusha, ever since. As of 2024, approximately 106,000 hibakusha were still alive, their average age above 85.
 
   '
 significance: 'Hiroshima and Nagasaki ended World War II in the Pacific and inaugurated the nuclear age. The bombings triggered the Cold War arms race: the Soviet Union tested its first atomic bomb in August
-  1949, and by the 1980s global arsenals peaked at roughly 70,000 warheads. The doctrine of Mutual Assured Destruction — premised on the demonstrated reality of what a single weapon could do to a city —
+  1949, and by the 1980s global arsenals peaked at roughly 70,000 warheads. The doctrine of Mutual Assured Destruction, premised on the demonstrated reality of what a single weapon could do to a city,
   shaped geopolitics for the next 80 years. Japan''s postwar constitution, Article 9, renounced war and became the template for nuclear pacifism. The hibakusha movement produced the 2017 Treaty on the Prohibition
   of Nuclear Weapons and the Nobel Peace Prize for the International Campaign to Abolish Nuclear Weapons (ICAN). Whether the bombings were militarily necessary, morally justified, or a war crime has generated
-  continuous scholarly and political debate since 1945 — Gar Alperovitz, Tsuyoshi Hasegawa, and Barton Bernstein have challenged the original military rationale, while J. Samuel Walker and Richard Frank
+  continuous scholarly and political debate since 1945. Gar Alperovitz, Tsuyoshi Hasegawa, and Barton Bernstein have challenged the original military rationale, while J. Samuel Walker and Richard Frank
   have defended it.
 
   '
@@ -83,7 +83,7 @@ key_figures:
   wikipedia: https://en.wikipedia.org/wiki/Setsuko_Thurlow
 legacy_points:
 - Inaugurated the nuclear age and the Cold War arms race, peaking at ~70,000 warheads globally
-- Japan's Article 9 constitution — renunciation of war — became the template for nuclear pacifism
+- Japan's Article 9 constitution, the renunciation of war, became the template for nuclear pacifism
 - Hibakusha testimony drove the 2017 Treaty on the Prohibition of Nuclear Weapons
 - Radiation Effects Research Foundation has tracked survivor health for 80 years, shaping global radiation science
 - The Hiroshima Peace Memorial (Genbaku Dome) became a UNESCO World Heritage Site in 1996
@@ -116,20 +116,20 @@ perspectives:
 - viewpoint: American Military/Strategic
   viewpoint_type: victor
   region_origin: americas
-  narrative: 'The decision to use atomic weapons against Japan followed a logic rooted in the projected costs of invasion. Operation Downfall — the planned two-phase invasion of the Japanese home islands
-    — was scheduled for November 1945 (Kyushu, Operation Olympic) and March 1946 (Honshu, Operation Coronet). U.S. military planners estimated American casualties between 250,000 and 1 million, depending
+  narrative: 'The decision to use atomic weapons against Japan followed a logic rooted in the projected costs of invasion. Operation Downfall, the planned two-phase invasion of the Japanese home islands,
+    was scheduled for November 1945 (Kyushu, Operation Olympic) and March 1946 (Honshu, Operation Coronet). U.S. military planners estimated American casualties between 250,000 and 1 million, depending
     on assumptions about Japanese defensive strength. Japanese military casualties were projected in the millions. Secretary of War Henry Stimson''s Interim Committee, which met in May-June 1945, concluded
     that the bomb should be used against a military-industrial target without prior warning.
 
 
-    Truman learned of the bomb''s existence only after becoming president on April 12, 1945. At the Potsdam Conference in July, he received word of the successful Trinity test on July 16 — the world''s
+    Truman learned of the bomb''s existence only after becoming president on April 12, 1945. At the Potsdam Conference in July, he received word of the successful Trinity test on July 16, the world''s
     first nuclear detonation, in the New Mexico desert. The Potsdam Declaration, issued July 26, demanded Japan''s unconditional surrender and warned of "prompt and utter destruction." Japan''s Prime Minister
-    Kantaro Suzuki responded with the word "mokusatsu," translated at the time as "treat with silent contempt," though the term''s ambiguity — it can also mean "withhold comment" — remains a point of historical
+    Kantaro Suzuki responded with the word "mokusatsu," translated at the time as "treat with silent contempt," though the term''s ambiguity (it can also mean "withhold comment") remains a point of historical
     debate.
 
 
     The military rationale rested on three pillars. First, Japan''s military leadership showed no sign of surrendering despite the firebombing campaign that had already destroyed 67 Japanese cities. The
-    March 9-10, 1945 firebombing of Tokyo killed an estimated 100,000 people — more immediate deaths than either atomic bomb — yet Japan''s Supreme War Council had not moved toward capitulation. Second,
+    March 9-10, 1945 firebombing of Tokyo killed an estimated 100,000 people, more immediate deaths than either atomic bomb, yet Japan''s Supreme War Council had not moved toward capitulation. Second,
     the Soviet Union was about to enter the Pacific War (it declared war on August 8), and American strategists wanted to end the conflict before Soviet forces could advance into Manchuria, Korea, and potentially
     Hokkaido. Third, the bomb had cost $2 billion (approximately $30 billion in 2024 dollars) and employed 125,000 people at its peak; there was institutional momentum to demonstrate its capability.
 
@@ -139,8 +139,8 @@ perspectives:
     lost any sleep over it."
 
 
-    The American strategic narrative acknowledges the horror but insists on the counterfactual: without the bombs, the war would have continued for months or years, with total casualties — Japanese and
-    Allied — far exceeding those of Hiroshima and Nagasaki combined. General George Marshall estimated that Olympic alone could produce 500,000 American casualties in the first 30 days. The argument is
+    The American strategic narrative acknowledges the horror but insists on the counterfactual: without the bombs, the war would have continued for months or years, with total casualties, Japanese and
+    Allied, far exceeding those of Hiroshima and Nagasaki combined. General George Marshall estimated that Olympic alone could produce 500,000 American casualties in the first 30 days. The argument is
     that the bombs, terrible as they were, ended the war and saved net lives.
 
     '
@@ -186,33 +186,33 @@ perspectives:
   viewpoint_type: vanquished
   region_origin: east-asia
   narrative: 'At 8:15 a.m. on August 6, 1945, Sunao Tsuboi was a 20-year-old engineering student walking to class at Hiroshima University of Literature and Science, 1.2 kilometers from the hypocenter. The
-    flash came first — a white light that turned everything to negative, like a photographic plate. Then the heat: his exposed skin bubbled and peeled. Then the blast wave threw him 10 meters. When he stood,
+    flash came first, a white light that turned everything to negative, like a photographic plate. Then the heat: his exposed skin bubbled and peeled. Then the blast wave threw him 10 meters. When he stood,
     the city was gone. Where buildings had been, there was flatness. People walked past him with their skin hanging in sheets from their arms. A woman carried a headless infant. The river was full of bodies.
 
 
     John Hersey''s Hiroshima (1946), published as the entire issue of The New Yorker on August 31, 1946, introduced the Western world to six survivors'' accounts. Hersey followed a clerk, two doctors, a
-    minister, a seamstress, and a Jesuit priest through the hours and months after the blast. The account was deliberately understated — clinical, precise, refusing to editorialize — and its effect was
+    minister, a seamstress, and a Jesuit priest through the hours and months after the blast. The account was deliberately understated, clinical, precise, refusing to editorialize, and its effect was
     seismic. It sold out immediately and remains in print 80 years later.
 
 
-    The hibakusha — literally "explosion-affected people" — number approximately 650,000 by the Japanese government''s registry. They experienced not one catastrophe but a series: the blast itself, the
+    The hibakusha, literally "explosion-affected people," number approximately 650,000 by the Japanese government''s registry. They experienced not one catastrophe but a series: the blast itself, the
     fires that burned for days, the "black rain" that contaminated water and soil, and then the radiation sickness that killed people who had appeared unhurt. Acute radiation syndrome killed 20% of initial
     survivors within weeks. Leukemia rates among hibakusha rose tenfold in the first five years. Thyroid cancer, breast cancer, and lung cancer followed in subsequent decades.
 
 
-    Beyond the physical toll, hibakusha faced social stigma in postwar Japan. Radiation exposure was poorly understood; many Japanese feared it was contagious or hereditary. Hibakusha — especially women
-    — were rejected as marriage partners. Families concealed their hibakusha status. The Japanese government did not pass the Atomic Bomb Survivors Relief Law until 1957, 12 years after the bombings. Recognition
+    Beyond the physical toll, hibakusha faced social stigma in postwar Japan. Radiation exposure was poorly understood; many Japanese feared it was contagious or hereditary. Hibakusha, especially women,
+    were rejected as marriage partners. Families concealed their hibakusha status. The Japanese government did not pass the Atomic Bomb Survivors Relief Law until 1957, 12 years after the bombings. Recognition
     of "black rain" survivors as hibakusha was not extended until a 2021 court ruling, 76 years after the event.
 
 
-    The hibakusha testimony tradition — speaking publicly about the experience to prevent recurrence — became a global movement. Setsuko Thurlow, who was 13 years old in Hiroshima and dug herself out of
+    The hibakusha testimony tradition, speaking publicly about the experience to prevent recurrence, became a global movement. Setsuko Thurlow, who was 13 years old in Hiroshima and dug herself out of
     a collapsed building, spent seven decades speaking at the United Nations and in schools. She accepted the 2017 Nobel Peace Prize on behalf of ICAN, telling the audience in Oslo: "Each warhead has the
     power to obliterate a city. They are not weapons of war. They are instruments of extinction."
 
 
     Nagasaki''s hibakusha carry an additional burden: the perception that their city was a secondary target, an afterthought. Kokura was the primary target that morning; Nagasaki was bombed because the
-    clouds parted. Sumiteru Taniguchi, who was 16 years old and delivering mail on his bicycle 1.8 kilometers from the Nagasaki hypocenter, survived with burns covering his entire back. His photograph —
-    lying face-down on a treatment table, his back a single wound — was published in LIFE, Der Spiegel, and newspapers across 30 countries; it remains a permanent exhibit at the Nagasaki Atomic Bomb Museum
+    clouds parted. Sumiteru Taniguchi, who was 16 years old and delivering mail on his bicycle 1.8 kilometers from the Nagasaki hypocenter, survived with burns covering his entire back. His photograph,
+    lying face-down on a treatment table, his back a single wound, was published in LIFE, Der Spiegel, and newspapers across 30 countries; it remains a permanent exhibit at the Nagasaki Atomic Bomb Museum
     and the UN headquarters. He testified before the United Nations in 2010: "I want you to understand that it is not merely a picture. It is my body."
 
 
@@ -221,7 +221,7 @@ perspectives:
 
     '
   key_arguments:
-  - Civilians — not military targets — bore the overwhelming cost of the bombings
+  - Civilians, not military targets, bore the overwhelming cost of the bombings
   - Radiation effects extended suffering decades beyond the initial blasts
   - Hibakusha faced social stigma and delayed government recognition in Japan
   - No strategic calculation justifies the deliberate destruction of a civilian population
@@ -262,7 +262,7 @@ perspectives:
   viewpoint_type: bystander
   region_origin: global
   narrative: 'The scientific community that built the bomb was among the first to grasp its implications. Within weeks of Hiroshima, many Manhattan Project scientists began organizing against the weapon
-    they had created. In September 1945, Leo Szilard — the physicist whose 1939 letter to Einstein had initiated U.S. atomic research — circulated a petition signed by 70 scientists urging Truman not to
+    they had created. In September 1945, Leo Szilard, the physicist whose 1939 letter to Einstein had initiated U.S. atomic research, circulated a petition signed by 70 scientists urging Truman not to
     use the bomb on Japan without first offering a demonstration. The petition reached Truman''s desk after Nagasaki.
 
 
@@ -272,17 +272,17 @@ perspectives:
 
 
     Oppenheimer''s response to the bombing was layered. In October 1945, he told Truman: "Mr. President, I feel I have blood on my hands." Truman later told Dean Acheson: "I don''t want to see that son
-    of a bitch in this office ever again." Oppenheimer''s subsequent opposition to the hydrogen bomb — and his security clearance revocation in 1954 during the McCarthy era — became a parable about the
+    of a bitch in this office ever again." Oppenheimer''s subsequent opposition to the hydrogen bomb, and his security clearance revocation in 1954 during the McCarthy era, became a parable about the
     tension between scientific innovation and moral responsibility.
 
 
     The international response was shaped by the geopolitical context. The Soviet Union, which had been racing to develop its own atomic capability since 1942, accelerated its program. Igor Kurchatov''s
     team, aided by intelligence from Klaus Fuchs and other spies within the Manhattan Project, detonated "First Lightning" (Joe-1) on August 29, 1949. The arms race was underway. By 1952, the U.S. tested
-    the first thermonuclear weapon (hydrogen bomb), with a yield of 10.4 megatons — 700 times more powerful than Little Boy.
+    the first thermonuclear weapon (hydrogen bomb), with a yield of 10.4 megatons, 700 times more powerful than Little Boy.
 
 
     The Bulletin of the Atomic Scientists, founded in December 1945 by Manhattan Project veterans including Hyman Goldsmith and Eugene Rabinowitch, introduced the Doomsday Clock in 1947 at 7 minutes to
-    midnight. It has served as a scientific consensus indicator of existential risk ever since. In 2023, the clock stood at 90 seconds to midnight — the closest it has ever been.
+    midnight. It has served as a scientific consensus indicator of existential risk ever since. In 2023, the clock stood at 90 seconds to midnight, the closest it has ever been.
 
 
     The scientific-international perspective frames Hiroshima and Nagasaki as a species-level inflection point. Before August 6, 1945, humanity lacked the capacity for self-annihilation. After it, the capacity
@@ -292,7 +292,7 @@ perspectives:
 
     '
   key_arguments:
-  - Manhattan Project scientists warned against surprise use — the Franck Report of June 1945
+  - 'Manhattan Project scientists warned against surprise use: the Franck Report of June 1945'
   - The bombings triggered an arms race that produced 70,000 warheads at peak
   - Nuclear proliferation transformed existential risk into a permanent feature of geopolitics
   - Scientific community organized against its own creation within weeks
@@ -338,34 +338,34 @@ perspectives:
 
 
     The evidence: by July 1945, Japan''s Supreme War Council was deeply divided. Foreign Minister Shigenori Togo had approached the Soviet Union through Ambassador Naotake Sato in Moscow, seeking Soviet
-    mediation for a negotiated peace. The intercepted "Magic" cables — decoded Japanese diplomatic traffic that Truman received daily — showed that elements of the Japanese government were exploring surrender
+    mediation for a negotiated peace. The intercepted "Magic" cables, decoded Japanese diplomatic traffic that Truman received daily, showed that elements of the Japanese government were exploring surrender
     terms, though the military faction insisted on conditions (no occupation, no war crimes trials, no disarmament, preservation of the imperial institution). Truman and his advisors knew this.
 
 
-    The Potsdam Declaration of July 26 demanded "unconditional surrender" — a phrase that hardened Japanese resistance because it appeared to threaten the emperor. Revisionist historians note that the final
+    The Potsdam Declaration of July 26 demanded "unconditional surrender," a phrase that hardened Japanese resistance because it appeared to threaten the emperor. Revisionist historians note that the final
     terms accepted on August 15 did preserve the imperial institution, precisely the condition Japan had been exploring. Had the U.S. offered this assurance earlier, revisionists argue, surrender might
     have come without either the bombs or an invasion.
 
 
     The Soviet dimension is central to the revisionist case. Stalin had committed at the Yalta Conference (February 1945) to enter the Pacific War within three months of Germany''s surrender. Germany surrendered
     on May 8; the Soviet Union declared war on Japan on August 8, exactly three months later, launching a massive offensive into Manchuria. Tsuyoshi Hasegawa''s Racing the Enemy (2005) argues that it was
-    the Soviet declaration of war — not the atomic bombs — that tipped the balance in the Supreme War Council. The military faction had been counting on Soviet neutrality to negotiate terms; when that collapsed,
+    the Soviet declaration of war, not the atomic bombs, that tipped the balance in the Supreme War Council. The military faction had been counting on Soviet neutrality to negotiate terms; when that collapsed,
     surrender became inevitable.
 
 
     Revisionists also challenge the casualty projections used to justify the bombings. The oft-cited figure of "500,000 to 1 million American lives saved" was not produced by any wartime planning document.
-    Barton Bernstein''s research found that the Joint War Plans Committee estimated 46,000 American dead in the first phase (Kyushu) — a figure far below the postwar claims. Truman''s memoir figure of "half
+    Barton Bernstein''s research found that the Joint War Plans Committee estimated 46,000 American dead in the first phase (Kyushu), a figure far below the postwar claims. Truman''s memoir figure of "half
     a million" appeared only in 1955 and has no documented wartime origin.
 
 
-    The revisionist perspective does not exonerate Japan. It acknowledges the atrocities of Japanese militarism — the Rape of Nanjing, the Manila massacre, the Burma Railway, Unit 731''s biological weapons
+    The revisionist perspective does not exonerate Japan. It acknowledges the atrocities of Japanese militarism: the Rape of Nanjing, the Manila massacre, the Burma Railway, Unit 731''s biological weapons
     experiments, the sexual enslavement of "comfort women." But it argues that moral accounting does not work by offset: Japanese war crimes do not retroactively justify the incineration of Hiroshima''s
-    civilian population. The question is not whether Japan deserved defeat — it did — but whether the specific method chosen was necessary, or whether it served purposes beyond ending the Pacific War.
+    civilian population. The question is not whether Japan deserved defeat (it did) but whether the specific method chosen was necessary, or whether it served purposes beyond ending the Pacific War.
 
 
     The atomic diplomacy thesis holds that Truman used the bombs partly to strengthen America''s postwar negotiating position with the Soviet Union. Stimson''s diary entry for September 4, 1945 records
     a discussion about using the bomb as a diplomatic "master card." James Byrnes, who became Secretary of State on July 3, 1945, told Leo Szilard that the bomb''s use would "make Russia more manageable
-    in Europe." Whether this was the primary motivation or a secondary benefit remains debated, but the revisionist school insists it was a factor — and that the traditional narrative''s silence on this
+    in Europe." Whether this was the primary motivation or a secondary benefit remains debated, but the revisionist school insists it was a factor, and that the traditional narrative''s silence on this
     point is itself a form of historical distortion.
 
     '
@@ -410,13 +410,13 @@ perspectives:
   region_origin: east-asia
   narrative: 'Among the dead at Hiroshima on August 6, 1945, were an estimated 20,000 to 40,000 Koreans. They were not Japanese citizens by choice. Korea had been annexed by Japan in 1910. Under the National
     Mobilization Law of 1938 and the subsequent labor conscription orders, hundreds of thousands of Koreans were transported to Japan to work in mines, factories, and military installations. By August 1945,
-    approximately 2.4 million Koreans were in Japan — roughly 600,000 of them conscripted laborers. In Hiroshima, Korean workers were concentrated in industrial zones and military supply facilities. At the
+    approximately 2.4 million Koreans were in Japan, roughly 600,000 of them conscripted laborers. In Hiroshima, Korean workers were concentrated in industrial zones and military supply facilities. At the
     Mitsubishi shipyards in Nagasaki, Korean laborers worked alongside Japanese civilians and Allied prisoners of war. When the bombs fell, they died alongside their colonizers.
 
 
-    The Korean dead occupied a category that neither Japanese nor American postwar narratives could accommodate. Japan''s hibakusha (bomb survivor) identity was constructed around Japanese national suffering
-    — the uniquely Japanese experience of nuclear victimhood. Koreans who survived the bombings were not included in the hibakusha recognition framework until 1978, when the Japanese Supreme Court ruled that
-    Korean survivors in Japan were entitled to the same medical benefits. Koreans who had returned to Korea after the war — many of them repatriated to the southern zone that became South Korea — received
+    The Korean dead occupied a category that neither Japanese nor American postwar narratives could accommodate. Japan''s hibakusha (bomb survivor) identity was constructed around Japanese national suffering,
+    the uniquely Japanese experience of nuclear victimhood. Koreans who survived the bombings were not included in the hibakusha recognition framework until 1978, when the Japanese Supreme Court ruled that
+    Korean survivors in Japan were entitled to the same medical benefits. Koreans who had returned to Korea after the war, many of them repatriated to the southern zone that became South Korea, received
     no Japanese government support until 2003, when the Supreme Court extended limited assistance. Those who ended up in North Korea received nothing.
 
 
@@ -425,28 +425,28 @@ perspectives:
     Koreans. Neither does Truman''s diary. The laborers were invisible in the logic that justified the weapons that killed them.
 
 
-    In Hiroshima, the Korean memorial — the Cenotaph for Korean Victims — was originally placed outside the Peace Memorial Park, across the Honkawa River. Korean community leaders and the South Korean government
-    protested for decades. The cenotaph was moved inside the park in 1999 — fifty-four years after the bombing. The inscription reads: "The Korean victims were given no choice but to come to Hiroshima, where
-    they were subjected to the atomic bombing. They died nameless, their spirits unable to return home." The memorial''s location history — excluded from the park for half a century, then included after prolonged
-    advocacy — mirrors the broader pattern of Korean erasure from the atomic narrative.
+    In Hiroshima, the Korean memorial, the Cenotaph for Korean Victims, was originally placed outside the Peace Memorial Park, across the Honkawa River. Korean community leaders and the South Korean government
+    protested for decades. The cenotaph was moved inside the park in 1999, fifty-four years after the bombing. The inscription reads: "The Korean victims were given no choice but to come to Hiroshima, where
+    they were subjected to the atomic bombing. They died nameless, their spirits unable to return home." The memorial''s location history (excluded from the park for half a century, then included after prolonged
+    advocacy) mirrors the broader pattern of Korean erasure from the atomic narrative.
 
 
     Among the survivors who returned to Korea, the stigma was compounded. In South Korea, atomic bomb survivors formed the Korean Atomic Bomb Victims Association in 1967, seeking recognition and medical assistance
     from both the Japanese and South Korean governments. As of 2024, approximately 1,700 Korean hibakusha were still alive in South Korea, their average age above 85. Their situation was unique: colonial subjects
     of Japan, bombed by America, returned to a divided Korea, ignored by both the country that had conscripted them and the country that had bombed them. They were caught in the intersection of three imperial
-    histories — Japanese colonialism, American military power, and the Cold War division of Korea — and rendered invisible by each.
+    histories (Japanese colonialism, American military power, and the Cold War division of Korea) and rendered invisible by each.
 
 
     Historian Naoko Wake''s American Survivors (2014) and Lisa Yoneyama''s Hiroshima Traces (1999) have documented how the Korean experience disrupts the neat binaries of the atomic narrative. If Hiroshima
-    is framed as Japanese victimhood, the Korean presence complicates the claim — Japan was simultaneously a victim of the bomb and a colonial power whose conscription placed non-Japanese in the blast zone.
-    If Hiroshima is framed as American military necessity, the Korean dead expose the fiction that the calculus weighed only American against Japanese lives. The forced laborers died because two empires — one
-    colonial, one military — intersected at a single point in space and time. Neither empire counted them.
+    is framed as Japanese victimhood, the Korean presence complicates the claim: Japan was simultaneously a victim of the bomb and a colonial power whose conscription placed non-Japanese in the blast zone.
+    If Hiroshima is framed as American military necessity, the Korean dead expose the fiction that the calculus weighed only American against Japanese lives. The forced laborers died because two empires, one
+    colonial and one military, intersected at a single point in space and time. Neither empire counted them.
 
     '
   key_arguments:
-  - 20,000-40,000 Koreans — colonial subjects conscripted as forced laborers — died in the bombings, appearing in neither Japanese nor American narratives
+  - 20,000-40,000 Koreans, colonial subjects conscripted as forced laborers, died in the bombings, appearing in neither Japanese nor American narratives
   - Korean survivors were excluded from Japan's hibakusha recognition framework until 1978; those in Korea waited until 2003
-  - The Hiroshima Korean Cenotaph was placed outside the Peace Park for 54 years (1945-1999) — exclusion from the memorial space mirrored exclusion from the narrative
+  - The Hiroshima Korean Cenotaph was placed outside the Peace Park for 54 years (1945-1999); exclusion from the memorial space mirrored exclusion from the narrative
   - The Korean dead disrupt both the Japanese victimhood narrative and the American military necessity calculus
   - Approximately 1,700 Korean hibakusha were still alive in South Korea as of 2024, caught between three imperial histories
   sources:
@@ -475,11 +475,11 @@ perspectives:
   emphasized:
   - Korean forced laborers as invisible victims of both Japanese colonialism and American military action
   - The 54-year exclusion of the Korean cenotaph from the Peace Memorial Park as a spatial enactment of narrative erasure
-  - The disruption of neat victim/aggressor binaries — Japan was both colonial power and nuclear target
+  - The disruption of neat victim/aggressor binaries; Japan was both colonial power and nuclear target
   - The intersection of three imperial histories (Japanese, American, Cold War) rendering Korean survivors invisible to each
   omitted:
   - Japanese civilians who suffered equally from the bombings regardless of their government's colonial policies
-  - American POWs who also died at Hiroshima — at least 12 confirmed
+  - American POWs who also died at Hiroshima, at least 12 confirmed
   - The postwar Japanese peace movement's evolution toward acknowledging non-Japanese victims
   - Koreans who had voluntarily migrated to Japan for economic reasons, complicating the forced labor narrative
 media:
@@ -493,7 +493,7 @@ media:
   creation_date: August 9, 1945
   supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/hiroshima-nagasaki/wiki_0.jpg
 - media_type: photograph
-  title: Hiroshima aftermath — Genbaku Dome and surrounding devastation
+  title: 'Hiroshima aftermath: Genbaku Dome and surrounding devastation'
   description: The Hiroshima Prefectural Industrial Promotion Hall (now the Genbaku Dome / Atomic Bomb Dome) stands amid the flattened city. Located 160 meters from the hypocenter, its steel frame survived
     while everything around it was destroyed.
   source_url: https://commons.wikimedia.org/wiki/File:AtomicEffects-Hiroshima.jpg
@@ -503,7 +503,7 @@ media:
   creation_date: October 1945
   supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/hiroshima-nagasaki/wiki_1.jpg
 - media_type: photograph
-  title: Watch stopped at 8:15 a.m. — the moment of the Hiroshima blast
+  title: Watch stopped at 8:15 a.m., the moment of the Hiroshima blast
   description: A pocket watch recovered from the ruins of Hiroshima, its hands frozen at 8:15, the precise moment of the detonation. Now displayed at the Hiroshima Peace Memorial Museum.
   source_url: https://commons.wikimedia.org/wiki/File:Stopped_watch_in_Hiroshima.jpg
   attribution: Hiroshima Peace Memorial Museum, public domain
@@ -575,8 +575,8 @@ media:
   license: pexels-license
   creator: じいじ
 - media_type: video
-  title: "Trinity Test — first nuclear detonation, July 16, 1945"
-  description: "The world's first nuclear explosion at the Trinity site in New Mexico. Filmed by the U.S. Army at 10,000 frames per second. The blast yielded 21 kilotons — equivalent to 21,000 tons of TNT."
+  title: "Trinity Test: first nuclear detonation, July 16, 1945"
+  description: "The world's first nuclear explosion at the Trinity site in New Mexico. Filmed by the U.S. Army at 10,000 frames per second. The blast yielded 21 kilotons, equivalent to 21,000 tons of TNT."
   source_url: https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Trinity_Test_Fireball_16ms.jpg/1200px-Trinity_Test_Fireball_16ms.jpg
   embed_url: https://archive.org/embed/trinity-and-beyond-the-atomic-bomb-movie
   attribution: U.S. Department of Energy / National Archives

@@ -79,6 +79,9 @@ export default function BiasReport({
   const [ref, visible] = useScrollReveal(0.1);
   const stats = data?.stats;
   const polarized = (data?.most_polarized || []).filter((p) => p?.title);
+  // The cluster read has its own ceiling, separate from the scorer's, and
+  // `totalClusters` is a floor when it was hit.
+  const clustersTruncated = !!data?.clusters_truncated;
   if (!stats) return null;
 
   const mean = pct(stats.avg_lean);
@@ -106,6 +109,7 @@ export default function BiasReport({
       <p className="wk-bias__standfirst">
         Void scored {stats.truncated ? "more than " : ""}
         {groupDigits(stats.total_scored)} articles across{" "}
+        {clustersTruncated ? "more than " : ""}
         {groupDigits(totalClusters)} stories this week. Coverage sat{" "}
         {leanWord(stats.avg_lean)}, at {stats.avg_lean.toFixed(1)} on a
         hundred-point scale, with a spread of {stats.lean_std.toFixed(1)},{" "}
@@ -146,7 +150,11 @@ export default function BiasReport({
           label="Articles scored"
           note={stats.truncated ? "at least" : undefined}
         />
-        <Stat value={groupDigits(totalClusters)} label="Stories clustered" />
+        <Stat
+          value={(clustersTruncated ? "+" : "") + groupDigits(totalClusters)}
+          label="Stories clustered"
+          note={clustersTruncated ? "at least" : undefined}
+        />
         <Stat
           value={stats.avg_rigor.toFixed(1)}
           label="Factual rigor"

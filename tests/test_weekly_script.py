@@ -272,11 +272,113 @@ def main():
     test_columns_match_the_page(issue)
     test_committed_scripts()
     print()
+    if not test_wa05_word_budget_lands_inside_the_band():
+        _failures.append("WA-05")
+    print()
+    if not test_wa06_the_prompt_names_the_banned_phrases():
+        _failures.append("WA-06")
+    print()
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))
         return 1
     print("All weekly-audio script gates passed.")
     return 0
+
+
+
+
+
+# ---------------------------------------------------------------------------
+# WA-05: the word budget the generator is given must land inside W-07's band.
+#
+# The scheduled run of 2026-09-20 fell back to the legacy two-voice read
+# because W-07 rejected a 3,463-word rundown at 22.6 minutes. The rundown was
+# not disobedient: its prompt asked for "about 2934 to 3586 words", computed as
+# the minute band times a flat 163 wpm. `estimated_minutes` adds MUSIC_MINUTES
+# on top, 1.4 minutes of theme, beds and outro that nobody speaks over, so the
+# prompt's ceiling was roughly 228 words past what the band allows. A rundown
+# could obey the prompt exactly and still fail the validator.
+#
+# The two edges take opposite rates, which a synthetic script at each edge
+# caught in review: runtime is words over rate, so the ceiling must assume the
+# slowest voice and the floor the fastest. One blended rate put the floor below
+# the band whenever the Editor carries most of the programme, which he always
+# does.
+# ---------------------------------------------------------------------------
+def _synthetic(total_words: int, editor_share: float) -> str:
+    editor = int(total_words * editor_share)
+    half = (total_words - editor) // 2
+
+    def block(speaker: str, words: int) -> str:
+        return "\n".join(f"{speaker}: " + " word" * 40
+                         for _ in range(max(1, words // 40)))
+
+    return ("## OPEN\n" + block("E", editor)
+            + "\n## LEFT\n" + block("L", half)
+            + "\n## RIGHT\n" + block("R", half)
+            + "\n## CLOSE\nE: and what now?\n")
+
+
+def test_wa05_word_budget_lands_inside_the_band() -> bool:
+    from briefing.weekly_script import (
+        MUSIC_MINUTES, TARGET_MINUTES, VOICE_WPM, estimated_minutes,
+        parse_script, word_budget,
+    )
+    voices = {"editor": "bm_lewis", "left": "am_michael", "right": "af_heart"}
+    lo_band, hi_band = TARGET_MINUTES
+    lo_w, hi_w = word_budget(voices)
+    ok = True
+
+    print("WA-05  the generator's word budget lands inside W-07's band")
+
+    # Both edges, across every plausible split of airtime.
+    for share, label in ((0.85, "editor-heavy"), (0.75, "typical"),
+                         (0.55, "bench-heavy")):
+        for words, edge in ((lo_w, "floor"), (hi_w, "ceiling")):
+            script = parse_script(_synthetic(words, share), "world")
+            minutes, _ = estimated_minutes(script, voices)
+            inside = lo_band <= minutes <= hi_band
+            print(f"  [{'ok' if inside else 'FAIL'}] {label} {edge}: "
+                  f"{script.words} words is {minutes:.2f} min")
+            ok = ok and inside
+
+    # The budget must account for music, or it is the old bug again.
+    speech_only_ceiling = int(hi_band * VOICE_WPM["am_michael"])
+    if hi_w >= speech_only_ceiling:
+        print(f"  [FAIL] ceiling {hi_w} ignores MUSIC_MINUTES "
+              f"({speech_only_ceiling} would)")
+        ok = False
+    else:
+        print(f"  [ok] the ceiling accounts for {MUSIC_MINUTES} min of music — "
+              f"{hi_w} not {speech_only_ceiling}")
+
+    # And the exact rundown that caused the fallback must now be out of budget.
+    if lo_w <= 3463 <= hi_w:
+        print("  [FAIL] 3,463 words, the rundown that failed W-07, is still "
+              "inside the budget the prompt hands out")
+        ok = False
+    else:
+        print("  [ok] 3,463 words, the rundown that sent 2026-09-20 to the "
+              "legacy read, is outside the budget")
+    return ok
+
+
+def test_wa06_the_prompt_names_the_banned_phrases() -> bool:
+    """W-08 rejected 'absolutely'. The prompt had never mentioned it."""
+    from briefing import weekly_rundown
+    from briefing.weekly_script import BORROWED
+    ok = True
+    print("WA-06  the rundown prompt names the phrases W-08 rejects")
+    rendered = weekly_rundown.SYSTEM.format(
+        LO=18, HI=22, MUSIC=1.4, WORDS_LO=1, WORDS_HI=2,
+        BORROWED=", ".join(f'"{b}"' for b in BORROWED))
+    for phrase in ("absolutely", "great question", "let's dive"):
+        if phrase not in rendered:
+            print(f"  [FAIL] the prompt never tells the model to avoid {phrase!r}")
+            ok = False
+    if ok:
+        print(f"  [ok] all {len(BORROWED)} borrowed phrases are named in the prompt")
+    return ok
 
 
 if __name__ == "__main__":

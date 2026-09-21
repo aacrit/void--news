@@ -8,6 +8,8 @@
 
 /* ── Canonical source counts (data/sources.json — verified) ───────────────
    Use these everywhere instead of hard-coding, so the figures can't drift. */
+import { FEED_DISPLAYED } from "../lib/feedConfig";
+
 export const SOURCE_TIERS = {
   usMajor: 43,
   international: 373,
@@ -121,8 +123,9 @@ export const RANKING_SIGNALS: RankingSignal[] = [
   { name: "Institutional authority", weight: 8 },
   { name: "Factual density", weight: 8 },
   { name: "Divergence", weight: 7 },
-  { name: "Perspective diversity", weight: 6 },
+  { name: "Perspective diversity", weight: 9 },
   { name: "Geographic impact", weight: 6 },
+  { name: "Velocity", weight: 3 },
 ];
 
 /** Tenth signal is a gate, not a positive weight. */
@@ -169,7 +172,7 @@ export interface ProductWorld {
 
 // The products — the things you read and listen to.
 export const PRODUCT_FAMILY: ProductWorld[] = [
-  { name: "Void News", subtitle: "The Front Page", desc: "One daily front page. The 50 stories that matter, ranked once.", href: "/", accentLight: "#6B4423", accentDark: "#C9A88A" },
+  { name: "Void News", subtitle: "The Front Page", desc: `One daily front page. The ${FEED_DISPLAYED} stories that matter, ranked once.`, href: "/", accentLight: "#6B4423", accentDark: "#C9A88A" },
   { name: "On Air", subtitle: "The Broadcast", desc: "The daily brief, read aloud.", href: "/onair", accentLight: "#2E8B7D", accentDark: "#4DAFA0" },
 ];
 
@@ -183,7 +186,7 @@ export const TRANSPARENCY_TOOLS: ProductWorld[] = [
 /* ── First principles (page-only footer) ─────────────────────────────────── */
 
 export const FIRST_PRINCIPLES = [
-  "A front page, not a feed. The same 50 stories, in the same order, for every reader.",
+  `A front page, not a feed. The same ${FEED_DISPLAYED} stories, in the same order, for every reader.`,
   "Every bias score weighs two things: the outlet's track record and the article's own words. No black box, no opinion.",
   "Free to read. No paywall. No account. No feed tuned to you.",
 ];
@@ -212,7 +215,7 @@ export const BEATS: Beat[] = [
   {
     id: "engine",
     headline: "A front page, not a feed.",
-    body: "A newspaper prints one front page, the same for everyone. So do we: the 50 stories that matter most each day, chosen once by importance, never by what you click. No endless scroll, no feed tuned to you. Here is what decides the order.",
+    body: `A newspaper prints one front page, the same for everyone. So do we: the ${FEED_DISPLAYED} stories that matter most each day, chosen once by importance, never by what you click. No endless scroll, no feed tuned to you. Here is what decides the order.`,
   },
   {
     id: "verdict",

@@ -16,29 +16,29 @@ duration: September 11, 2001 - ongoing (Afghanistan war 2001-2021; Iraq war 2003
   continuing)
 summary: 'At 8:46 AM Eastern on September 11, 2001, American Airlines Flight 11 struck the North Tower of the World Trade
   Center. Seventeen minutes later, United Airlines Flight 175 hit the South Tower. At 9:37, American Airlines Flight 77 struck
-  the Pentagon. At 10:03, United Airlines Flight 93 — its passengers having stormed the cockpit after learning by phone what
-  had happened in New York — crashed into a field in Shanksville, Pennsylvania. The South Tower collapsed at 9:59. The North
+  the Pentagon. At 10:03, United Airlines Flight 93 crashed into a field in Shanksville, Pennsylvania. Its passengers had
+  stormed the cockpit after learning by phone what had happened in New York. The South Tower collapsed at 9:59. The North
   Tower followed at 10:28. 2,977 people died: 2,753 in New York, 184 at the Pentagon, 40 in Pennsylvania.
 
 
   The nineteen hijackers were members of al-Qaeda, an organization built in the late 1980s by Osama bin Laden, a Saudi millionaire
   who had fought against the Soviet occupation of Afghanistan with CIA-funded mujahideen. Khalid Sheikh Mohammed conceived
   the operation in 1996. Fifteen of the nineteen hijackers were Saudi citizens. None were Iraqi. None were Afghan. The operational
-  cell trained at flight schools in Florida and Arizona. The CIA had tracked two of them — Nawaf al-Hazmi and Khalid al-Mihdhar
-  — to a meeting in Kuala Lumpur in January 2000 but did not share the intelligence with the FBI.
+  cell trained at flight schools in Florida and Arizona. The CIA had tracked two of them (Nawaf al-Hazmi and Khalid
+  al-Mihdhar) to a meeting in Kuala Lumpur in January 2000 but did not share the intelligence with the FBI.
 
 
   Within 26 days, the United States invaded Afghanistan. The Taliban government fell by December 2001. Bin Laden escaped into
-  Pakistan at Tora Bora. Eighteen months later, on March 20, 2003, the United States invaded Iraq based on claims — presented
-  by Secretary of State Colin Powell to the UN Security Council on February 5, 2003 — that Saddam Hussein possessed weapons
-  of mass destruction. No such weapons were found. The Senate Intelligence Committee later concluded that every major pre-war
+  Pakistan at Tora Bora. Eighteen months later, on March 20, 2003, the United States invaded Iraq based on claims that Saddam
+  Hussein possessed weapons of mass destruction, claims Secretary of State Colin Powell presented to the UN Security Council
+  on February 5, 2003. No such weapons were found. The Senate Intelligence Committee later concluded that every major pre-war
   claim about Iraqi WMD was unsupported by the underlying intelligence.
 
 
   The wars metastasized. By 2021, the Brown University Costs of War Project estimated 900,000 to 929,000 people had been killed
   directly in post-9/11 war zones across Afghanistan, Iraq, Pakistan, Syria, Yemen, Somalia, Libya, and other theaters. 37
   million people had been displaced. The financial cost to the United States exceeded $8 trillion. On August 30, 2021, the
-  last American soldier left Afghanistan. The Taliban retook Kabul eleven days before the final withdrawal.
+  last American soldier left Afghanistan. The Taliban retook Kabul fifteen days before the final withdrawal.
 
 
   At home, the attacks restructured American governance. The USA PATRIOT Act, signed October 26, 2001, expanded surveillance
@@ -49,12 +49,12 @@ summary: 'At 8:46 AM Eastern on September 11, 2001, American Airlines Flight 11 
 
   '
 significance: 'September 11 ended the post-Cold War period that began with the fall of the Berlin Wall in 1989. The "unipolar
-  moment" — twelve years in which American military supremacy appeared unchallenged — gave way to asymmetric warfare, indefinite
+  moment", twelve years in which American military supremacy appeared unchallenged, gave way to asymmetric warfare, indefinite
   detention, and preemptive invasion. The Bush Doctrine, articulated in the 2002 National Security Strategy, asserted the
   right to strike nations that harbored terrorists or pursued weapons of mass destruction before any attack occurred. No prior
   administration had claimed so sweeping a prerogative. The doctrine was invoked to justify Iraq, setting a precedent that
   Russia later cited when invading Georgia (2008) and Ukraine (2014, 2022). The global surveillance architecture built after
-  9/11 — revealed in detail by Edward Snowden in 2013 — became the template for domestic intelligence programs in dozens of
+  9/11 (revealed in detail by Edward Snowden in 2013) became the template for domestic intelligence programs in dozens of
   countries. The Islamophobia unleashed by the attacks reshaped immigration politics across Europe and North America. And
   the twenty-year Afghan war ended exactly where it began: with the Taliban in Kabul.
 
@@ -107,7 +107,7 @@ key_figures:
 legacy_points:
 - Triggered the longest war in American history (Afghanistan, 2001-2021) and the invasion of Iraq (2003) based on intelligence
   later discredited
-- Created the global surveillance state — NSA mass data collection, PATRIOT Act, FISA Court expansion — revealed by Snowden
+- Created the global surveillance state (NSA mass data collection, PATRIOT Act, FISA Court expansion), revealed by Snowden
   in 2013
 - Displaced 37 million people across eight countries (Brown University Costs of War Project estimate)
 - Established the doctrine of preemptive war, eroding the post-WWII international order built on state sovereignty
@@ -154,18 +154,19 @@ perspectives:
 
 
     Iraq followed a different logic. The administration argued that Saddam Hussein possessed weapons of mass destruction,
-    maintained ties to al-Qaeda, and posed a gathering threat that could not be contained. Powell''s February 2003 UN presentation
-    — which he later called "a blot" on his record — displayed satellite imagery, intercepted communications, and a vial of
-    simulated anthrax. The invasion began on March 20. Baghdad fell on April 9. On May 1, Bush declared major combat operations
+    maintained ties to al-Qaeda, and posed a gathering threat that could not be contained. Powell''s February 2003 UN
+    presentation, which he later called "a blot" on his record, displayed satellite imagery, intercepted communications,
+    and a vial of simulated anthrax. The invasion began on March 20. Baghdad fell on April 9. On May 1, Bush declared major combat operations
     over aboard the USS Abraham Lincoln beneath a banner reading "Mission Accomplished." The insurgency that followed lasted
     eight years.
 
 
     The establishment narrative holds that the war on terror prevented another attack on the American homeland for two decades.
-    The intelligence apparatus created after 9/11 — the Director of National Intelligence, the National Counterterrorism Center,
-    the TSA, the fusion centers — detected and disrupted dozens of plots. Bin Laden was killed by SEAL Team Six in Abbottabad,
-    Pakistan, on May 2, 2011. The administration''s defenders argue that the errors — Abu Ghraib, WMD intelligence failures,
-    the chaos of de-Ba''athification — were failures of execution, not of the fundamental decision to respond with force.
+    The intelligence apparatus created after 9/11 (the Director of National Intelligence, the National Counterterrorism
+    Center, the TSA, the fusion centers) detected and disrupted dozens of plots. Bin Laden was killed by SEAL Team Six in
+    Abbottabad, Pakistan, on May 2, 2011. The administration''s defenders argue that Abu Ghraib, the WMD intelligence
+    failures and the chaos of de-Ba''athification were errors of execution, not of the fundamental decision to respond with
+    force.
 
     '
   key_arguments:
@@ -208,7 +209,7 @@ perspectives:
   viewpoint_type: vanquished
   region_origin: middle-east
   narrative: 'On October 7, 2001, American bombs began falling on Kabul. The city''s population was 1.5 million. Many had
-    survived two decades of war — the Soviet invasion, the mujahideen civil war, the Taliban''s takeover. Now the Americans
+    survived two decades of war: the Soviet invasion, the mujahideen civil war, the Taliban''s takeover. Now the Americans
     had come to find a Saudi fugitive and his Egyptian deputy. Within weeks, B-52s were carpet-bombing Tora Bora while bin
     Laden slipped across the Pakistani border with a small escort. He would live another decade. The Afghans remained under
     the bombs.
@@ -216,7 +217,7 @@ perspectives:
 
     The Afghanistan Independent Human Rights Commission documented over 31,000 civilian deaths between 2001 and 2021. The
     Bureau of Investigative Journalism tracked over 13,000 drone strikes in Afghanistan, Pakistan, Yemen, and Somalia, killing
-    between 10,000 and 17,000 people, of whom 800 to 1,750 were civilians — including 252 to 400 children. Individual strikes
+    between 10,000 and 17,000 people, of whom 800 to 1,750 were civilians, including 252 to 400 children. Individual strikes
     became infamous: the Kunduz hospital attack of October 3, 2015, killed 42 people in a Doctors Without Borders trauma center.
     A drone strike in Kabul on August 29, 2021, three days before the final withdrawal, killed Zemari Ahmadi, an aid worker,
     and nine members of his family, including seven children. The Pentagon initially called it a "righteous strike."
@@ -224,7 +225,7 @@ perspectives:
 
     In Iraq, the civilian toll was greater. The Iraq Body Count project documented over 200,000 civilian deaths between 2003
     and 2023. The Lancet survey of 2006, using cluster sampling, estimated 654,965 excess deaths through July 2006 alone.
-    The de-Ba''athification order of May 2003 — Coalition Provisional Authority Order Number 1, signed by L. Paul Bremer —
+    The de-Ba''athification order of May 2003 (Coalition Provisional Authority Order Number 1, signed by L. Paul Bremer)
     dismissed 30,000 to 50,000 Sunni civil servants and dissolved the 400,000-member Iraqi army. Those men, stripped of income
     and status, became the recruiting base for the insurgency and, later, for the Islamic State.
 
@@ -232,9 +233,9 @@ perspectives:
     Abu Ghraib prison became the emblem. In April 2004, photographs emerged showing American soldiers torturing Iraqi detainees:
     hooded men stacked naked in pyramids, a man standing on a box with wires attached to his hands, a soldier holding a leash
     around a crawling prisoner''s neck. Eleven soldiers were convicted. No officer above the rank of colonel was prosecuted.
-    Brigadier General Janis Karpinski, who oversaw the prison, was demoted. The techniques — stress positions, sleep deprivation,
-    sensory bombardment — had been authorized through a chain of legal memoranda running from the Office of Legal Counsel
-    to the Secretary of Defense.
+    Brigadier General Janis Karpinski, who oversaw the prison, was demoted. Stress positions, sleep deprivation and sensory
+    bombardment had been authorized through a chain of legal memoranda running from the Office of Legal Counsel to the
+    Secretary of Defense.
 
 
     By August 2021, when the Taliban retook Kabul in eleven days, the Afghan government the United States had spent $2.3 trillion
@@ -286,18 +287,18 @@ perspectives:
   - Taliban and Saddam Hussein regime atrocities against their own populations
   - Infrastructure and institutional development during occupation periods
   - Afghan and Iraqi agency in governance decisions during the occupation
-- viewpoint: Intelligence Community — The Blowback Thesis
+- viewpoint: 'Intelligence Community: The Blowback Thesis'
   viewpoint_type: revisionist
   region_origin: americas
   narrative: 'In 1979, the CIA launched Operation Cyclone, funneling $3 billion in arms and training to Afghan mujahideen
     fighting the Soviet occupation. The program, the largest covert operation in CIA history, ran through Pakistan''s Inter-Services
     Intelligence (ISI). Among the recipients: Gulbuddin Hekmatyar, who later joined the Taliban insurgency against the Americans,
     and the network of Arab volunteers that coalesced around a young Saudi named Osama bin Laden. The CIA did not directly
-    fund bin Laden — this is a persistent oversimplification — but it armed and empowered the ecosystem in which he built
+    fund bin Laden (this is a persistent oversimplification), but it armed and empowered the ecosystem in which he built
     al-Qaeda.
 
 
-    Chalmers Johnson, in his 2000 book Blowback — published a year before the attacks — defined the term as "the unintended
+    Chalmers Johnson published his book Blowback in 2000, a year before the attacks, and defined the term as "the unintended
     consequences of policies that were kept secret from the American people." The concept originates from CIA internal jargon.
     Johnson argued that decades of American military bases, covert operations, and support for authoritarian regimes across
     the Middle East and Central Asia had created conditions in which anti-American violence was not irrational but predictable.
@@ -309,7 +310,7 @@ perspectives:
     The intelligence failures were institutional. The 9/11 Commission documented a "wall" between CIA foreign intelligence
     and FBI domestic investigation that prevented information sharing. The CIA''s Counterterrorism Center knew that al-Mihdhar
     had a US visa and had met with suspected al-Qaeda operatives in Kuala Lumpur in January 2000. They did not inform the
-    FBI until August 23, 2001 — nineteen days before the attacks. The FBI''s Minneapolis field office arrested Zacarias Moussaoui
+    FBI until August 23, 2001, nineteen days before the attacks. The FBI''s Minneapolis field office arrested Zacarias Moussaoui
     on August 16, 2001, on immigration charges after a flight school instructor reported that Moussaoui wanted to learn to
     fly large jets but had no interest in takeoffs or landings. FBI headquarters declined to seek a warrant to search his
     laptop.
@@ -327,7 +328,7 @@ perspectives:
   - CIA covert operations in Afghanistan during the 1980s empowered the networks that produced al-Qaeda
   - Bin Laden's stated grievances were responses to specific American policies, not civilizational hatred
   - Multiple intelligence agencies had actionable warnings that were not shared or acted upon
-  - The post-9/11 response replicated the pattern — military intervention creating the conditions for future blowback
+  - The post-9/11 response replicated the pattern, with military intervention creating the conditions for future blowback
   sources:
   - title: 'Blowback: The Costs and Consequences of American Empire'
     author: Chalmers Johnson
@@ -352,37 +353,37 @@ perspectives:
   - CIA Operation Cyclone and the arming of Afghan mujahideen in the 1980s
   - Specific intelligence failures and institutional barriers that allowed the plot to succeed
   - Bin Laden's concrete political grievances versus the "they hate our freedom" framing
-  - Pattern repetition — intervention generating the next generation of enemies
+  - Pattern repetition, with intervention generating the next generation of enemies
   omitted:
   - Al-Qaeda's own ideological agency independent of American policy
   - Soviet atrocities in Afghanistan that motivated the original intervention
   - Genuine security improvements in domestic counterterrorism after 9/11
-- viewpoint: Muslim Diaspora — Under Suspicion
+- viewpoint: 'Muslim Diaspora: Under Suspicion'
   viewpoint_type: bystander
   region_origin: global
   narrative: 'On September 12, 2001, Balbir Singh Sodhi, a Sikh gas station owner in Mesa, Arizona, was shot and killed by
     a man who told friends he wanted to "kill a towelhead." Sodhi was the first person murdered in a post-9/11 hate crime.
     He was not Muslim. He was wearing a turban. In the twelve months after September 11, the FBI recorded a 1,617% increase
-    in anti-Muslim hate crimes in the United States — from 28 incidents in 2000 to 481 in 2001.
+    in anti-Muslim hate crimes in the United States, from 28 incidents in 2000 to 481 in 2001.
 
 
     The legal architecture arrived quickly. The USA PATRIOT Act, signed on October 26, 2001, expanded the government''s authority
     to conduct surveillance, issue National Security Letters without court approval, and detain non-citizens on the attorney
     general''s certification. Within weeks, the FBI launched the Absconder Apprehension Initiative, targeting 6,000 men from
     Muslim-majority countries for deportation. The National Security Entry-Exit Registration System (NSEERS), implemented
-    in 2002, required males over 16 from 25 countries — 24 of them Muslim-majority — to register with immigration authorities.
+    in 2002, required males over 16 from 25 countries, 24 of them Muslim-majority, to register with immigration authorities.
     Of the 83,000 who registered, 13,000 were placed in deportation proceedings. None were charged with terrorism.
 
 
     The NYPD''s Demographics Unit, revealed by the Associated Press in 2011, had infiltrated Muslim student organizations,
     mapped every mosque in the northeastern United States, and sent undercover officers into Muslim-owned businesses, cafes,
     and bookstores. In fourteen years, the program produced zero terrorism leads. It was disbanded in 2014. The FBI''s use
-    of informants in Muslim communities — documented by Trevor Aaronson in The Terror Factory — created a pattern in which
+    of informants in Muslim communities (documented by Trevor Aaronson in The Terror Factory) created a pattern in which
     undercover agents proposed, planned, and supplied materials for plots that would not have existed without government initiation.
     Of 508 federal terrorism prosecutions between 2001 and 2013, Aaronson found that nearly half involved informants.
 
 
-    For 3.45 million American Muslims in 2001 — and the far larger global Muslim population — September 11 imposed a burden
+    For 3.45 million American Muslims in 2001, and for the far larger global Muslim population, September 11 imposed a burden
     of collective suspicion. The phrase "moderate Muslim" entered common usage, carrying the implication that moderation was
     the exception. Bush himself visited the Islamic Center of Washington on September 17, 2001, and declared that "Islam is
     peace." But the structural apparatus his administration built treated Muslim identity as a risk factor. Guantanamo Bay
@@ -430,18 +431,18 @@ perspectives:
   - Muslim-American community cooperation with law enforcement and counterterrorism efforts
   - Genuine security threats posed by radicalized individuals within diaspora communities
   - Internal debates within Muslim communities about extremism and reform
-- viewpoint: Global South — The Unipolar Fracture
+- viewpoint: 'Global South: The Unipolar Fracture'
   viewpoint_type: academic
   region_origin: global
   narrative: 'On September 12, 2001, the UN Security Council passed Resolution 1368 unanimously, recognizing the attacks as
-    a threat to international peace and security. NATO invoked Article 5 — collective defense — for the first time in its
+    a threat to international peace and security. NATO invoked Article 5 (collective defense) for the first time in its
     history. For a brief interval, the entire international order aligned behind the United States. Within eighteen months,
     the United States had shattered that alignment by invading Iraq without Security Council authorization.
 
 
     The Iraq war was the inflection point. France, Germany, and Russia opposed the invasion. On February 14, 2003, French
     Foreign Minister Dominique de Villepin delivered a speech to the Security Council arguing that inspections should continue
-    and that war was not justified. He received a standing ovation — an extraordinary breach of Council protocol. The United
+    and that war was not justified. He received a standing ovation, an extraordinary breach of Council protocol. The United
     States proceeded without a second resolution. International law scholars debated whether the invasion constituted aggression
     under the UN Charter. Kofi Annan, the UN Secretary-General, stated in September 2004 that the invasion was "not in conformity
     with the UN Charter" and was therefore "illegal."
@@ -450,10 +451,10 @@ perspectives:
     For the Global South, the war on terror confirmed a longer pattern. The doctrine of preemptive war, articulated in the
     2002 National Security Strategy, asserted that the United States could strike any nation it deemed a threat, based on
     its own intelligence assessment, without prior authorization from the Security Council. This was sovereignty for the powerful
-    and subjection for the rest. The extraordinary rendition program — in which the CIA kidnapped suspects on the streets
-    of Milan, Stockholm, and Islamabad and transported them to black sites or to allied countries known to practice torture
-    — violated the sovereignty of allied nations. Italy convicted 23 CIA agents in absentia for the 2003 kidnapping of Hassan
-    Mustafa Osama Nasr from a Milan street.
+    and subjection for the rest. Under the extraordinary rendition program, the CIA kidnapped suspects on the streets of
+    Milan, Stockholm, and Islamabad and transported them to black sites or to allied countries known to practice torture.
+    The program violated the sovereignty of allied nations. Italy convicted 23 CIA agents in absentia for the 2003 kidnapping
+    of Hassan Mustafa Osama Nasr from a Milan street.
 
 
     The precedent radiated outward. Russia invoked the logic of preemptive security when it intervened in Georgia in 2008
@@ -468,8 +469,8 @@ perspectives:
     the Terrorist Finance Tracking Program. Dollar dominance became a weapon: any bank touching the US financial system could
     be compelled to enforce American sanctions. Countries from Iran to Venezuela to North Korea found themselves locked out
     of the global financial system by executive order. The weaponization of financial infrastructure accelerated the search
-    for alternatives — China''s CIPS system, Russia''s SPFS, the BRICS push for de-dollarization — that gained momentum two
-    decades later.
+    for alternatives that gained momentum two decades later: China''s CIPS system, Russia''s SPFS, the BRICS push for
+    de-dollarization.
 
     '
   key_arguments:

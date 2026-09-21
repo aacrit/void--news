@@ -478,16 +478,15 @@ def build_weekly_row(*, edition, week_start, week_end, issue_number, cover_items
         # An engine string, as On Air writes it, not a pair of display names.
         # "The Editor" and "The Correspondent" were a label over an identical
         # signal chain: both mapped to the same two edge voices.
-        "audio_voice": (
-            audio.get("voice")
-            or (f"{voice_pair['host_a']['id']}+{voice_pair['host_b']['id']}"
-                if audio_url and voice_pair else None)
-        ),
-        "audio_voice_label": (
-            audio.get("voice_label")
-            or (f"{voice_pair['host_a']['name']} & {voice_pair['host_b']['name']}"
-                if audio_url and voice_pair else None)
-        ),
+        # No `voice_pair` fallback. It used to fill these in whenever an
+        # audio_url existed and the renderer had not named a voice, which is
+        # how a row came to advertise "Sadaltager+Achernar" and "The Editor &
+        # The Correspondent" over a file those voices never read. The legacy
+        # path that needed it is gone; the only renderer left always names its
+        # own cast, so a missing voice here means something is wrong and must
+        # read as missing rather than be guessed at.
+        "audio_voice": audio.get("voice"),
+        "audio_voice_label": audio.get("voice_label"),
         # Cover image
         "cover_image_url": cover_image["url"] if cover_image else None,
         "cover_image_attribution": cover_image["attribution"] if cover_image else None,

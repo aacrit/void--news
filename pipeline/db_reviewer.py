@@ -610,7 +610,10 @@ class DataQualityAuditor:
         self.stats["most_recent_pipeline_run"] = most_recent_run
         self.stats["articles_older_than_7_days_pct"] = round(old_pct, 1)
         self.stats["pipeline_runs_last_100_avg_interval_hours"] = round(avg_interval, 1)
-        self.stats["pipeline_runs_total"] = len(runs)
+        # Not a total: the query above caps at 100, so this is the sample the
+        # interval average was computed over. Its sibling stat already says
+        # "last_100" in its own name; this one claimed to be the population.
+        self.stats["pipeline_runs_sampled"] = len(runs)
 
         self.scores["temporal_freshness"] = max(0, score)
         if self.verbose:
