@@ -232,3 +232,57 @@ venv and the model cache, but nothing has run it. Listen for: the bench
 swapping voices mid-argument, the 2.4 s spine, the dateline beat inside the
 cover feature, the spectrum under the numbers, and the outro reaching true
 silence.
+
+---
+
+## The fallback is gone (2026-09-21)
+
+`_produce_argument` used to return `None` on any of six failures and the caller
+silently shipped the legacy two-voice edge-tts read in its place. The reasoning
+for refusing a bad rundown was sound and still stands: an essay forty words long
+is worth shipping, but a bench line the published column does not contain is
+words put in a columnist's mouth.
+
+The flaw was that the substitution was **silent**. Every scheduled run since the
+format shipped had taken that path, so a format that had never once produced a
+scheduled episode looked like a format that worked. The published row said
+"Three voices" and `kokoro:bm_lewis+am_michael+af_heart` over a file measuring
+24000 Hz, 1 channel, 96 kb/s, 1002 s, -20.5 LUFS, while claiming 1349.7 s. A
+listener was told three voices and heard two.
+
+**Now:** if The Argument does not render, the run raises and the Weekly ships
+without audio. Each of the six causes names itself in the log; an import error,
+a rejected rundown and a render crash are three different problems.
+`VOID_WEEKLY_AUDIO_FORMAT=0` is the only remaining route to the legacy read, and
+it **parks** audio rather than substituting for it.
+
+Two supports were removed with it. `build_weekly_row` used to fill
+`audio_voice` from `voice_pair` whenever an audio_url existed and the renderer
+had not named a cast, which is how a row learns to advertise voices that never
+read it; a missing voice now reads as missing. And
+`scripts/verify_sections.py:315` read
+`report("W-09", True, "legacy two-voice read, no chapter rail (acceptable)")`,
+a gate hard-coded to pass the exact defect it exists to catch.
+
+`tests/test_weekly_audio_served.py` probes the **artifact**: duration against
+the row, stereo, loudness within 1 LU of -16, a chapters sidecar, a Kokoro cast.
+Every other Weekly check runs before synthesis.
+
+## The word budget
+
+W-07's band is the format and is not negotiable. The generator used to be told
+something different from what W-07 measures: its prompt asked for
+`band x 163 wpm`, while `estimated_minutes` adds `MUSIC_MINUTES` (1.4) of theme,
+beds and outro that nobody speaks over. The prompt's ceiling was ~228 words past
+what the band allows, so a rundown could obey the prompt exactly and still be
+rejected. That is what sent 2026-09-20 to the legacy read.
+
+`weekly_script.word_budget()` owns the conversion now, beside the constants
+W-07 measures with. **The two edges take opposite rates**: runtime is words over
+rate, so the ceiling assumes the slowest voice and the floor the fastest. One
+blended rate puts the floor below the band whenever the Editor at 172 wpm
+carries most of the programme, which he always does.
+
+The prompt also now names the `BORROWED` list. W-08 rejected "absolutely" from
+a rundown whose prompt had never mentioned it; a rule the writer cannot see is
+not a rule.
