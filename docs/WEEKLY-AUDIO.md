@@ -1,4 +1,4 @@
-# The Argument — void --weekly's audio edition
+# The Argument — Weekly's audio edition
 
 Written 2026-09-20 (rev 72). Companion to `docs/ON-AIR-RADIO.md` and
 `docs/HISTORY-AUDIO.md`.

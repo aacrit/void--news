@@ -90,6 +90,63 @@ for claimed in re.findall(r"\*\*([\d,]+) sources\*\*|^([\d,]+) sources", text, r
         f"roster says {sources}",
     )
 
+# ------------------------------------------ the voice bible describes the code
+# Rev 1 of VOICE-BRAND.md described six Gemini-TTS hosts on a four-runs-a-day
+# schedule for three months after the pipeline went to one Kokoro run a day,
+# and used the em dash 59 times while banning it. A production prompt still
+# obeyed the retired roster when the 2026-09-21 audit found it.
+VOICE = ROOT / "docs/VOICE-BRAND.md"
+voice = VOICE.read_text()
+DASHES = {"—": "em dash", "–": "en dash"}
+for ch, label in DASHES.items():
+    n = voice.count(ch)
+    check(f"VOICE-BRAND.md carries no {label}", n == 0, f"{n} found")
+check("VOICE-BRAND.md names Kokoro", "Kokoro" in voice)
+for retired in ("Gemini voice", "4 runs", "runs/day"):
+    check(f"VOICE-BRAND.md does not say '{retired}'", retired not in voice)
+
+# ------------------------------------ retired infrastructure stated as current
+# A doc that says "Supabase", "Gemini TTS" or "4x daily" in the present tense
+# either carries the Historical banner under its title, or is listed here with
+# the reason it may keep the words.
+BANNER = (
+    "> Historical. Written before the 2026-09-01 Supabase decommission and "
+    "the Kokoro switch; the current state is CLAUDE.md."
+)
+STALE_TERMS = re.compile(r"Supabase|Gemini[ -]TTS|4x daily")
+# A line that says the thing is gone is not a claim that it is current.
+PAST_TENSE = re.compile(r"retired|decommission|historical|\bwas\b|\bwere\b|\bdead\b")
+ALLOWED_WITHOUT_BANNER = {
+    # Referenced from CLAUDE.md; each names the decommission as past.
+    "CHANGELOG.md": "verbatim revision record",
+    "OPEN-ITEMS.md": "describes Revolt's dead Supabase fallback as unfinished work",
+    "HISTORY-AUDIO.md": "one line, on Revolt's dead fallback",
+    "PODCAST-DISTRIBUTION.md": "explains why podcast-us.xml was deleted",
+    # Dated reports, read as such by their titles.
+    "EDITORIAL-AUDIT-2026-08-10.md": "dated report",
+    "FEED-QUALITY-AUDIT-2026-06-28.md": "dated report",
+    "INDEPENDENT-REVIEW-2026-06-11.md": "dated report",
+    "PERF-REPORT-2026-03-22.md": "dated report",
+    # Undated, not in the audit's banner list; candidates for the banner.
+    "ENGINE-SIMPLIFICATION-FULL-SCOPE.md": "scope note on retired migrations",
+    "MEMORY-ENGINE-ARCHITECTURE.md": "diagram of the retired data plane",
+}
+for path in sorted((ROOT / "docs").glob("*.md")):
+    lines = path.read_text().split("\n")
+    stale = [l for l in lines if STALE_TERMS.search(l) and not PAST_TENSE.search(l)]
+    if not stale:
+        continue
+    if BANNER in lines[:3] or path.name in ALLOWED_WITHOUT_BANNER:
+        continue
+    check(
+        f"docs/{path.name} states retired infrastructure as current",
+        False,
+        f"{len(stale)} line(s), first: {stale[0].strip()[:80]!r}; add the "
+        "Historical banner under the title or list it in ALLOWED_WITHOUT_BANNER",
+    )
+for name in ALLOWED_WITHOUT_BANNER:
+    check(f"allowlisted docs/{name} exists", (ROOT / "docs" / name).exists())
+
 if failures:
     print(f"FAIL  {len(failures)} docs-facts check(s)")
     for f in failures:

@@ -1,4 +1,5 @@
 # News Memory Engine — Strategic Proposal
+> Historical. Written before the 2026-09-01 Supabase decommission and the Kokoro switch; the current state is CLAUDE.md.
 
 Last updated: 2026-04-28 (rev 1)
 

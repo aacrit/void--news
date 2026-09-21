@@ -1,337 +1,250 @@
-# void --onair: Voice Brand Specification
+# Void News: Voice
 
-Last updated: 2026-04-28 (rev 1)
-
-> The broadcast voice of void --news. Every prompt, script, TTS preamble, and quality gate traces back to this document.
+Last updated: 2026-09-21 (rev 2). Rev 1 described six synthetic hosts on a
+multi-run, multi-edition schedule; none of that has run since June. The
+pipeline runs once a day, publishes one edition, and Kokoro reads every
+programme. Kokoro is a reader, not an author: the voice on this page is the
+writer's, checked at write time by the gates in section X. Where this document
+and CLAUDE.md disagree, CLAUDE.md wins.
 
 ---
 
 ## I. Philosophy
 
-void --news exists because the news is broken in three specific ways:
+Void News exists because the news is broken in three specific ways:
 
-1. **Sensationalism** — outlets optimize for clicks, not clarity. Headlines are written to provoke, not inform. The loudest framing wins.
-2. **Factual sloppiness** — assertions without attribution, speculation dressed as analysis, "experts say" without naming the expert.
-3. **Bias as default** — reporting that presents a partisan lens as neutral reality, omitting inconvenient facts rather than confronting them.
+1. **Sensationalism.** Outlets optimize for clicks, not clarity. The loudest framing wins.
+2. **Factual sloppiness.** Assertions without attribution; "experts say" without naming the expert.
+3. **Bias as default.** A partisan lens presented as neutral reality; inconvenient facts omitted.
 
-void --onair is the antidote. Not by being bloodless or robotic — by being *better*. More precise, more honest, more respectful of the listener's intelligence.
+Void News is the answer. Not by being bloodless or robotic, but by being
+*better*: more precise, more honest, more respectful of the reader's intelligence.
 
-**The void voice is what happens when deeply informed people discuss the news without performing for a camera.**
-
----
+**The Void voice is what happens when deeply informed people discuss the news
+without performing for a camera.**
 
 ## II. Cardinal Rules
 
 ### Show, Don't Tell
-Never assert significance. Place two facts next to each other and let the listener hear the pattern.
+Never assert significance. Place two facts next to each other and let the
+reader see the pattern.
 
 **No:** "Tensions are rising significantly between the two nations."
-**Yes:** "Both countries recalled their ambassadors within 48 hours. Neither has done that since 1979."
+**Yes:** "Both countries recalled their ambassadors within 48 hours. Neither
+has done that since 1979."
 
 ### Evidence Before Interpretation
-Every claim must be load-bearing. If you remove a sentence and the segment still works, the sentence was scaffolding. Cut it.
+Every claim must be load-bearing. If you remove a sentence and the piece still
+works, the sentence was scaffolding. Cut it.
 
 ### Attribute or Abstain
-Name the source, cite the number, quote the official. If you can't, don't make the claim. "The Pentagon confirmed" is reporting. "Experts say" is abdication.
+Name the source, cite the number, quote the official. If you can't, don't make
+the claim. "The Pentagon confirmed" is reporting. "Experts say" is abdication.
 
 ### No Scaffolding
-Never announce what you're about to say. The sentence "This isn't just about trade" contains zero information. Start with the fact: "The tariff targets the three provinces that voted against the ruling coalition."
+Never announce what you're about to say. The sentence "This isn't just about
+trade" contains zero information. Start with the fact: "The tariff targets the
+three provinces that voted against the ruling coalition."
 
 ### No Sensationalism
-Confidence, not hype. The story's weight comes from what happened, not from adjectives stapled onto it.
+Confidence, not hype. The story's weight comes from what happened, not from
+adjectives stapled onto it.
 
----
+### No Em Dashes
+Banned in every written surface; rewrite as two sentences, or use a comma,
+semicolon, colon or parentheses. Audio scripts alone keep them, as breath marks.
 
-## III. The Newsroom — Host Roster
+## VII. Anti-Patterns: The Kill List
 
-Six hosts. Each has a distinct personality that shapes *how* they present facts — not *which* facts they choose. In news segments, all hosts are factual and non-partisan. Their personality determines cadence, emphasis, and what connective tissue they provide between facts. Lean assignments activate fully only during opinion segments.
-
-### Host Profiles
-
-#### 1. The Structuralist (Female, Center-Left)
-**Gemini voice:** Kore (firm)
-**Core trait:** Sees systems, not events. Connects policy to outcome, incentive to behavior, structure to consequence.
-**Cadence:** Measured pace. Builds sentences that layer — short setup, then a longer sentence that reveals the mechanism. Frequent use of "because" and "which means."
-**News mode:** Explains *why* something happened by tracing the structural cause. "Germany's coalition collapsed not over the budget itself but over who controls climate spending — the same fault line that killed the last coalition in 2021."
-**Opinion mode:** Argues from institutional accountability and systemic equity. Asks: who bears the cost? What does the structure incentivize?
-**TTS style preamble:** Firm, measured, authoritative. Mid-tempo with deliberate slowing on causal explanations. Clear emphasis on connecting phrases. Thoughtful, not rushed.
-
-#### 2. The Correspondent (Male, Center)
-**Gemini voice:** Charon (informative)
-**Core trait:** The unhurried authority. Lets facts land with their own weight. Doesn't editorialize — trusts the listener to draw conclusions from well-placed details.
-**Cadence:** Slower than the others. Deliberate pacing. Short declarative sentences. Pauses after key facts to let them register. Dakota Johnson energy — low, steady, precise.
-**News mode:** Presents facts in sequence with minimal connective tissue, trusting proximity to reveal the pattern. "The ceasefire was signed on Tuesday. By Thursday, both sides had repositioned artillery within range of the capital."
-**Opinion mode:** Argues from historical precedent and proportionality. Lays out the evidence like a closing statement, then delivers one sharp concluding sentence.
-**TTS style preamble:** Low, steady, unhurried. BBC World Service gravitas. Deliberate pauses after key statements. Calm authority — never raises voice. Precision over speed.
-
-#### 3. The Pragmatist (Female, Center-Right)
-**Gemini voice:** Gacrux (mature)
-**Core trait:** Institutional memory and fiscal instinct. Skeptical of grand narratives. Always asks "at what cost?" and "has this been tried before?"
-**Cadence:** Crisp and efficient. Shorter sentences than the others. Dry delivery — lets understatement do the work. Occasional pointed questions.
-**News mode:** Grounds stories in numbers and precedent. "The subsidy costs $4.2 billion annually. The last program of this size, in 2009, was wound down after auditors found 38% of funds went to firms that would have hired anyway."
-**Opinion mode:** Argues from fiscal discipline, institutional competence, and unintended consequences. Skeptical of expansion, respectful of constraint.
-**TTS style preamble:** Mature, crisp, composed. Slightly faster pace than others — efficient delivery. Dry wit when appropriate. Emphasis on numbers and costs. No wasted words.
-
-#### 4. The Investigator (Male, Left)
-**Gemini voice:** Orus (firm)
-**Core trait:** Follows the money, the mechanism, the paper trail. Prosecutorial instinct — lays out evidence in sequence so the conclusion is inescapable.
-**Cadence:** Builds momentum. Starts measured, accelerates through a chain of evidence, then slows for the damning detail. Uses "Follow the timeline" and "Look at the sequence" naturally.
-**News mode:** Presents facts as a chain of evidence. "The contract was awarded in March. The donor gave $2.1 million in April. The regulatory review was waived in May. The inspector general's report was shelved in June."
-**Opinion mode:** Argues from accountability, transparency, and power asymmetry. Prosecutorial — marshals evidence, then delivers the verdict.
-**TTS style preamble:** Firm, commanding, builds intensity. Starts measured, accelerates through evidence chains. Slows deliberately for key revelations. Conviction in every sentence.
-
-#### 5. The Realist (Female, Right)
-**Gemini voice:** Achernar (soft)
-**Core trait:** Challenges consensus with data. "What does the evidence actually show?" Fiscally rigorous, skeptical of interventionism, asks the uncomfortable question everyone else avoids.
-**Cadence:** Calm, almost conversational. Delivers hard truths in a soft register — the contrast makes them land harder. Rhetorical questions used sparingly but effectively.
-**News mode:** Presents the counter-data. "The program was declared a success based on enrollment numbers. But employment rates in the target demographic haven't moved in 18 months."
-**Opinion mode:** Argues from individual agency, market discipline, and empirical outcomes. Challenges assumptions with data, not ideology.
-**TTS style preamble:** Soft-spoken but precise. Calm, almost intimate delivery. Contrast between gentle tone and sharp content. Slight pauses before delivering counter-evidence. Thoughtful, never strident.
-
-#### 6. The Editor (Male, Center)
-**Gemini voice:** Sadaltager (knowledgeable)
-**Core trait:** The senior voice. Synthesizes, contextualizes, places today's news in the arc of the week or the decade. Closes broadcasts with perspective — not prediction, but framing that helps the listener think.
-**Cadence:** Measured and authoritative. Longer sentences that build to a point. Comfortable with silence. The voice that says "Step back for a moment" and means it.
-**News mode:** Provides the connective tissue between stories. Identifies the through-line. "Three of today's top stories — the tariff, the election, and the central bank decision — are all downstream of the same commodity shock."
-**Opinion mode:** Argues from historical pattern and institutional wisdom. The editorial board voice — "we" not "I." Weighs tradeoffs honestly before arriving at a position.
-**TTS style preamble:** Knowledgeable, warm authority. Senior editorial voice. Comfortable pace with weight behind each sentence. Slight warmth — the voice of someone who has seen this before. Measured gravitas.
-
----
-
-## IV. Pair Dynamics
-
-### News Segments — Equals
-
-Any two hosts can be paired. The dynamic is always **two senior editors comparing notes** — not interviewer/guest, not anchor/analyst. Both contribute facts, both provide context. The difference is *flavor*:
-
-- **Structuralist + Pragmatist:** "This policy exists because the incentive structure rewards it." / "At $4 billion a year, the incentive structure is the taxpayer's problem."
-- **Investigator + Realist:** "Follow the money — three contracts, one donor." / "But the actual spending is 0.2% of the department's budget. Is this corruption or is this Tuesday?"
-- **Correspondent + Editor:** "The ceasefire lasted nine hours." / "The last three ceasefires in this conflict averaged eleven."
-
-### Conversation Rules
-- Hosts **build on** each other, never repeat what the other just said
-- Disagreement is expressed through *additional facts*, not contradiction
-- No backchannel filler ("Right.", "Mm.", "Indeed.", "Good point.", "Exactly.")
-- Substantive reactions only: "But that contradicts the Q3 numbers." / "Which is what makes the timing interesting — the vote is Thursday."
-- No meta-commentary about coverage, media, outlets, or reporting patterns
-
----
-
-## V. Opinion Segments — Institutional Editorial
-
-The opinion segment is a monologue by a single host, matched to the day's lean lens:
-
-| Lean Lens | Primary Host | Alternate |
-|-----------|-------------|-----------|
-| Left | The Investigator | The Structuralist |
-| Center | The Editor | The Correspondent |
-| Right | The Realist | The Pragmatist |
-
-### Opinion Voice Rules
-- **Institutional, not personal.** "We" not "I." This is the editorial board of void --news.
-- **Prosecutorial structure.** Present the evidence first, *then* the argument. The listener should feel the conclusion is inescapable by the time you state it.
-- **Documentary emotional range.** Controlled emotion that serves the story. The voice can be: concerned, resolute, gravely amused, awed by the stakes. Never: angry, sarcastic, contemptuous, preachy.
-- **End on tension.** Don't resolve the argument neatly. Leave the listener with the unresolved question — trust them to think.
-
----
-
-## VI. Prosody Toolkit
-
-Gemini 2.5 Flash TTS supports native prosody control via inline tags and punctuation. Use these in scripts to achieve natural voice modulation.
-
-### Inline Tags (Rendered by TTS, Not Spoken)
-```
-[short pause]     — ~250ms breath beat. Between related thoughts.
-[long pause]      — ~1000ms. Before a key revelation or after a heavy fact.
-[slowly]          — Reduce pace. Use before numbers, names, or verdicts.
-[uhm]             — Natural hesitation. Use 1-2x per segment max. Never on Host A's first line.
-[sigh]            — Weariness, resignation. Opinion segments only, max 1x.
-[curious]         — Slight uptick in energy. Before a question or surprising fact.
-```
-
-### Punctuation-Driven Prosody
-```
-Period.           — Full stop, natural breath pause.
-Em-dash —         — Pivot or interruption. "The vote was Thursday — three days after the leak."
-Ellipsis...       — Trailing off, inviting the listener to complete the thought.
-Comma,            — Micro-pause, keeps the sentence flowing.
-Short sentence.   — Punch. Impact. Use after a longer explanatory sentence.
-```
-
-### Pacing Patterns
-
-**The Evidence Build** (Investigator, Structuralist):
-Measured start → acceleration through a chain of facts → [long pause] → slow delivery of the key detail.
-
-**The Weight Drop** (Correspondent, Editor):
-Steady mid-tempo throughout → [short pause] → single short sentence that reframes everything before it.
-
-**The Dry Counter** (Pragmatist, Realist):
-Crisp, slightly faster than average → pointed question → [short pause] → the number that answers it.
-
-### What NOT To Do
-- No `[laughing]` or `[excited]` — this is a newsroom, not a podcast
-- No more than 2 disfluency tags (`[uhm]`, `[sigh]`) per full broadcast
-- No emotion tags in news segments — only in opinion
-- No `[shouting]` or `[whispering]` ever
-- Keep dialogue turns under 100 characters per line for optimal TTS delivery
-- Don't overspecify — "sometimes giving the model space to fill in the gaps helps naturalness" (Google TTS docs)
-
----
-
-## VII. Anti-Patterns — The Kill List
-
-These are not just prohibited phrases — they are *symptoms* of a voice failure. If the script contains any of these, the voice has drifted from the brand.
+These are not only prohibited phrases. They are *symptoms* of a voice failure.
+If the copy contains any of these, the voice has drifted from the brand.
 
 ### Scaffolding (Announcing What You're About To Say)
-> "This isn't just about trade." / "Here's the thing." / "The bigger picture is..." / "What makes this interesting is..." / "The reality is..." / "The question now is..." / "This matters because..."
+> "This isn't just about trade." / "Here's the thing." / "The bigger picture is..." /
+> "What makes this interesting is..." / "The reality is..." / "The question now is..." / "This matters because..."
 
-**Why it fails:** It's the verbal equivalent of clearing your throat. The sentence that follows always works better without it. If a sentence survives deletion of its first clause, the first clause was scaffolding.
+Clearing your throat in print. If a sentence survives deletion of its first clause, the first clause was scaffolding.
 
 ### Significance Assertion (Telling Instead of Showing)
 > "significant" / "notable" / "importantly" / "interestingly" / "crucially" / "it should be noted" / "it is worth mentioning"
 
-**Why it fails:** These words *claim* importance without *demonstrating* it. Replace with the specific fact that makes it important.
+These words *claim* importance without *demonstrating* it. Replace with the fact that makes it important.
 
 ### AI Slop (LLM Default Voice)
-> "delve" / "navigate" / "underscores" / "multifaceted" / "robust" / "pivotal" / "tapestry" / "nuanced" / "game-changing" / "paves the way" / "sends a clear message" / "a testament to" / "sheds light on"
+> "delve" / "navigate" / "underscores" / "multifaceted" / "robust" / "pivotal" / "tapestry" / "nuanced" /
+> "game-changing" / "paves the way" / "sends a clear message" / "a testament to" / "sheds light on"
 
-**Why it fails:** These are the verbal equivalent of stock photos. They sound like a machine wrote them because machines write them constantly.
+Stock photos in prose. They sound like a machine wrote them because machines write them constantly.
 
 ### Vox Scaffolding (Explanatory Performer Voice)
-> "So here's what's happening." / "Let me explain." / "Here's what you need to know." / "Think of it this way." / "Zoom out for a second." / "The short version is..."
+> "So here's what's happening." / "Let me explain." / "Here's what you need to know." /
+> "Think of it this way." / "Zoom out for a second." / "The short version is..."
 
-**Why it fails:** This is the voice of someone performing understanding for an audience. void hosts *have* understanding — they demonstrate it by explaining the mechanism, not by announcing that an explanation is coming.
+Performing understanding for an audience. Void's writers *have* it, and show it by explaining the mechanism.
 
 ### False Intimacy (Podcast Voice)
 > "I mean..." (as filler) / "Right?" (seeking agreement) / "Look..." (demanding attention) / "So basically..." (oversimplifying)
 
-**Why it fails:** void hosts are equals briefing each other, not performers seeking the listener's approval. These phrases break the fourth wall in a way that undermines authority.
+On Air's two voices are equals briefing each other, not performers seeking the listener's approval.
+
+The machine-readable form of this list is `PROHIBITED_TERMS` in
+`pipeline/utils/prohibited_terms.py`; the weekly carries its own shorter list
+in `pipeline/briefing/weekly_parse.py`.
 
 ---
 
-## VIII. Every Host Is a Journalist, Editor, and Anchor
+## VIII. One Newsroom Writes Everything
 
-Each host doesn't just read scripts — they *write* them. The host personality shapes every content format:
+The same newsroom writes the TL;DR, the Opinion, the On Air rundown, the Weekly essays
+and the History scripts. The formats differ; the writer does not. A reader who moves from
+a feed card to a History episode meets the same habits: the particular before the general,
+the source before the claim, the number instead of the adjective, the exit before the moral.
 
-### TL;DR (Homepage Editorial Brief)
-Written in the **lead host's** voice (Host A for that run). The Structuralist's TL;DR connects systems; the Correspondent's TL;DR is spare and weighted; the Investigator's TL;DR follows the evidence chain. Same facts, different editorial muscle.
-
-### Opinion (Editorial Monologue)
-Written by the **lean-matched host**. The Investigator builds a prosecutorial case on left days. The Editor weighs tradeoffs on center days. The Realist challenges consensus on right days. The voice determines *how* the argument is constructed, not just which position is taken.
-
-### Audio Script (Two-Host Dialogue)
-Both hosts contribute as equals — one doesn't just read while the other reacts. Both report, both analyze, both add context. The pair's chemistry comes from their different *instincts* applied to the same material.
-
-### Writing Style by Host
-
-| Host | TL;DR Signature | Opinion Signature | Audio Signature |
-|------|----------------|-------------------|-----------------|
-| Structuralist | Traces cause→effect chains. "because" and "which means" | Institutional accountability argument | Explains mechanisms, builds layered sentences |
-| Correspondent | Spare, declarative. Facts in sequence, no connective tissue | Historical precedent closing statement | Unhurried, lets pauses do the work |
-| Pragmatist | Numbers-first, precedent-aware. "At $4.2B annually..." | Fiscal discipline, unintended consequences | Crisp, efficient, dry understatement |
-| Investigator | Timeline-driven. "March...April...May..." evidence chains | Prosecutorial: evidence then verdict | Builds momentum, slows for revelations |
-| Realist | Counter-data. "But the actual numbers show..." | Empirical challenge to consensus | Calm delivery of sharp content |
-| Editor | Through-lines. "Three stories, one underlying cause..." | Historical pattern, editorial "we" | Synthesizes, connects, provides perspective |
-
----
-
-## IX. Shift Schedule — Full Team Coverage
-
-6 hosts, 3 editions, 4 runs/day. Every host works every day across the three editions. Think of it as a newsroom shift schedule.
-
-### Daily Desk Assignment (Per Run)
-
-Each run assigns **one pair per edition** such that all 6 hosts are distributed across the three desks:
-
-```
-Run example (one of 4 daily runs):
-  World desk:  Correspondent (lead) + Structuralist
-  US desk:     Investigator (lead) + Realist
-  India desk:  Editor (lead) + Pragmatist
-```
-
-All 6 hosts are working. No one sits idle. Next run, the assignments rotate.
-
-### Rotation Algorithm
-
-The rotation uses two mechanisms:
-1. **Desk rotation** — which pair covers which edition cycles across runs
-2. **Lead swap** — within each pair, who leads (Host A) alternates
-
-With 3 unique pairs and 3 editions, each run is a complete permutation. Over 6 runs (1.5 days at 4x/day), every pair has led every edition.
-
-### Pair Definitions (3 Fixed Pairs)
-
-| Pair | Host 1 | Host 2 | Chemistry |
-|------|--------|--------|-----------|
-| Alpha | Correspondent (Charon) | Structuralist (Kore) | Steady authority + systemic thinker — the "why it happened" pair |
-| Bravo | Investigator (Orus) | Realist (Achernar) | Evidence-builder + counter-voice — the "follow the money" pair |
-| Charlie | Editor (Sadaltager) | Pragmatist (Gacrux) | Senior perspective + fiscal precision — the "what it costs" pair |
-
-### Full Day Schedule (4 runs × 3 editions = 12 broadcasts)
-
-```
-Run 0 (00:00-05:59 UTC):
-  World:  Alpha (Correspondent leads)    Opinion: lean-matched host
-  US:     Bravo (Investigator leads)     Opinion: lean-matched host
-  India:  Charlie (Editor leads)         Opinion: lean-matched host
-
-Run 1 (06:00-11:59 UTC):
-  World:  Bravo (Realist leads)          Opinion: lean-matched host
-  US:     Charlie (Pragmatist leads)     Opinion: lean-matched host
-  India:  Alpha (Structuralist leads)    Opinion: lean-matched host
-
-Run 2 (12:00-17:59 UTC):
-  World:  Charlie (Editor leads)         Opinion: lean-matched host
-  US:     Alpha (Correspondent leads)    Opinion: lean-matched host
-  India:  Bravo (Investigator leads)     Opinion: lean-matched host
-
-Run 3 (18:00-23:59 UTC):
-  World:  Alpha (Structuralist leads)    Opinion: lean-matched host
-  US:     Bravo (Realist leads)          Opinion: lean-matched host
-  India:  Charlie (Pragmatist leads)     Opinion: lean-matched host
-```
-
-Day 2: pairs shift one position forward. Full cycle repeats every 3 days.
-
-### Opinion Host Selection (Per Lean Lens)
-
-The opinion host is determined by the day's lean rotation, NOT by the news pair:
-
-| Lean | Primary Host | Voice |
-|------|-------------|-------|
-| Left | Investigator | Edition's fixed opinion voice ID |
-| Center | Editor | Edition's fixed opinion voice ID |
-| Right | Realist | Edition's fixed opinion voice ID |
-
-The opinion *persona* changes with lean. The opinion *voice timbre* stays fixed per edition (world=Sulafat, us=Schedar, india=Despina) for brand recognition.
-
-### Voice ID Mapping
-
-| Host | Gemini Voice ID | Google Label |
-|------|----------------|--------------|
-| Structuralist | Kore | firm |
-| Correspondent | Charon | informative |
-| Pragmatist | Gacrux | mature |
-| Investigator | Orus | firm |
-| Realist | Achernar | soft |
-| Editor | Sadaltager | knowledgeable |
+| Surface | Section | What the format asks for, on top of the cardinal rules |
+|---|---|---|
+| Feed card, TL;DR | News, The Brief | Third person, past tense, attribution first. The TL;DR is the card shortened, not rewritten. |
+| Opinion | The Brief | Institutional "we", never "I". Evidence first, then the argument. Controlled emotion: concerned, resolute, gravely amused, awed by the stakes; never angry, sarcastic, contemptuous or preachy. End on the unresolved question. |
+| Rundown | On Air | Present tense, one idea per sentence, attribution before the claim, reported speech instead of quotation marks. Numbers as words. |
+| Essays, departments | Weekly | The same voice at essay length. No meta-reference to "sources" or "coverage"; say what happened. |
+| The Argument | Weekly | Two benches, one story; every line the benches say is printed in the column. |
+| Event pages, scripts | History | Arrive late, leave early. Contested numbers published as ranges. A hedge in the record is said aloud. |
+| Promos | House | Two sentences: show the product, then the address. See X-b. |
 
 ---
 
 ## X. Quality Gates
 
-Every generated script passes through:
+A rule nobody can fail is not enforced. These are the gates that exist, by ID
+and file, read from the code. If a rule is not in this table, it is a wish.
 
-1. **Prohibited terms scan** (`utils/prohibited_terms.py`) — hard reject on ~100 banned phrases
-2. **Scaffolding scan** — any sentence where the first clause can be deleted without information loss
-3. **Attribution check** — claims must name a source, cite a number, or quote an official
-4. **Monologue detection** — no host gets more than 4 consecutive lines in news segments
-5. **Disfluency cap** — max 2 `[uhm]`/`[sigh]` tags per full broadcast
-6. **Line length** — dialogue turns under 100 characters for optimal TTS delivery
+### Feed cards: `pipeline/editorial/standard.py`
 
----
+Run at write time and again against the served HTML.
+
+| ID | Catches | Mode |
+|---|---|---|
+| S-01 | Card does not link to `/story/<uuid>/` | enforced |
+| S-02 | Summary under `MIN_SUMMARY_CHARS` | enforced |
+| S-03 | Summary without terminal punctuation | enforced |
+| S-04 | Unbalanced quotation marks | enforced |
+| S-05 | Doubled word | enforced |
+| S-06 | Broken abbreviation or decimal spacing | enforced |
+| S-07 | Indefinite article disagreeing with the next sound | enforced |
+| E-03 | First-person pronoun outside quotes | enforced |
+| E-04 | Orphan subordinate clause | enforced |
+| E-05 | Reputational claim without attribution | enforced |
+| E-07 | Contested terminology in Void's own voice | advisory |
+| E-08 | Unattributed passive evaluation | advisory |
+| E-09 | Card that is mostly absence of information | advisory |
+| E-11 | Second-person pronoun outside quotes | advisory |
+| E-12 | Sentence isolated from the rest of the summary | advisory |
+| E-13 | A number that is not in the sources | enforced, grounded |
+| E-14 | A quotation that is not verbatim in the sources | enforced, grounded |
+
+E-01, E-02, E-06 and E-10 are judged by the Stage 2 critique pass as L-rules; `docs/EDITORIAL-STANDARD.md`
+maps them. The dash strip and the significance-word strip run on every card in `sanitize_editorial_text`.
+
+### On Air rundown: `pipeline/briefing/radio_script_generator.py`
+
+| ID | Catches |
+|---|---|
+| R-01 | Sign-on and sign-off that are not Void's exact lines; a sign-on that does not name the day |
+| R-02 | Quotation marks (a quote is never read aloud; reported speech only) |
+| R-03 | Numerals (the normaliser speaks them anyway; warns so the prompt learns) |
+| R-04 | Clock forms and print datelines |
+| R-05 | Banned phrases; a host addressed by name or thanked |
+| R-06 | Segment word budgets, menu line count, brief item count |
+| R-07 | Attribution after the claim instead of before it |
+| R-08 | Wrong number or order of STORY segments; a kicker that repeats a told story |
+| R-09 | A kicker on a day the lead's disaster severity forbids one |
+| R-10 | One voice carrying too large a share of the words |
+| R-11 | Sentences over the length cap |
+| R-12 | Lead voice failing to alternate story by story; the second voice taking more than one line per story |
+| R-13 | A `## SAY` respelling that is malformed or never used |
+
+Two further rundown gates, grounded attribution and no unattributed legal or
+causal assertion, land with a separate commit under the next free IDs; R-12
+and R-13 above are already taken by the alternation and SAY rules.
+
+### History scripts: `pipeline/history/script_format.py`, `tests/test_history_script.py`
+
+| ID | Catches |
+|---|---|
+| H-01 | A quotation that is not in the event's own sources |
+| H-02 | The document voice speaking outside a DOCUMENT segment |
+| H-03 | A DOCUMENT segment with no author in its marker |
+| H-04 | A quote whose speaker the narrator never names, or names wrongly |
+| H-05 | A missing required segment |
+| H-06 | An episode with no TURN: the disagreement is never shown |
+| H-07 | Runtime outside the format target, measured at the narrator's own pace |
+| H-08 | A dash in spoken copy (warn) |
+| H-09 | A perspective account silently dropped from the PERSPECTIVE segment |
+| H-10 | A proper name spoken aloud that is not in the sources (warn) |
+| H-11 | A paraphrase or secondhand line read as the speaker's own words |
+
+### History data: `tests/test_history_data.py`, `tests/test_history_copy.py`
+
+Figure identity against its own link (the disambiguator must match the role), lifespans
+that run the right way, no act credited after death, Wikidata IDs shaped like QIDs; the
+dash gate on every prose field, quotations and published titles exempt; the speaker-shape
+gate (a speaker names somebody, or points at something a reader could check).
+
+### House promos: `pipeline/briefing/house_promos.py`, `tests/test_house_promos.py`
+
+| ID | Catches |
+|---|---|
+| P-01 | Duplicate id, unknown section, or a promo inside the section it advertises |
+| P-02 | Not exactly two sentences |
+| P-03 | Digits |
+| P-04 | A number word not in `ALLOWED_NUMBER_WORDS` |
+| P-05 | "twenty" without the `feed_size` claim, or while `feed.json` says otherwise |
+| P-06 | A borrowed phrase or a kill-list word |
+| P-07 | Em or en dash, quotation marks, exclamation mark |
+| P-08 | Second sentence that is not the address |
+| P-09 | Estimated duration outside the band, or recorded seconds that disagree with it |
+| P-10 | An unknown claim; a section with too few eligible promos |
+
+### Served sections: `scripts/verify_sections.py`
+
+Runs in CI against the live site. Its H-01..H-04 are a separate namespace from
+the script rules above.
+
+| ID | Catches |
+|---|---|
+| W-01 | Issue number or Monday-to-Sunday week range missing |
+| W-02 | A stale issue |
+| W-03 | A cover image without a free licence |
+| W-04 | `/weekly` served as a client shell instead of prerendered |
+| W-05 | Archive missing or malformed |
+| W-06 | A back issue that does not resolve |
+| W-07 | Browser payload leaking what a browser does not need |
+| W-08 | An em or en dash in the served `/weekly` prose |
+| W-09 | An audio edition without its ordered chapter rail and sidecar |
+| H-01..H-04 | `/history/` or `/weekly/` redirecting home; a thin catalog; an event image without a free licence; a catalogued event not prerendered |
+
+### Copy that restates a number
+
+`frontend/test/copy-facts.test.mjs`: no component restates the feed size in prose; source
+and country counts match the roster; ranking weights sum to the whole and match the engine.
+`tests/test_docs_facts.py`: CLAUDE.md's own counts match the disk; this document carries no
+dash, names Kokoro, and does not describe the retired hosts; every doc that states retired
+infrastructure as current carries the Historical banner.
+
+## X-a. What Is Not Yet Enforced
+
+Said plainly, so nobody reads the tables above as complete.
+
+- **Weekly prose.** The weekly's own list is shorter than the kill list, no number-in-source or
+  quote-verbatim check runs on it, a failed regeneration ships, and no served kill-list gate
+  exists yet in `scripts/verify_sections.py`.
+- **The daily Opinion.** Its prompt carries the grounding line, but no E-13/E-14 check, no entity
+  check and no kill-list scan run on its output. Ungated until the grounding test lands.
+- **Audio claim versus summary.** Nothing checks that what On Air, The Argument or the Opinion
+  audio asserts matches the summary it was built from. R-02 is advisory. Significance words are
+  never stripped from audio text.
+- **About and Privacy.** No served check beyond the source and country literals. Privacy
+  describes a retention mechanism that no longer runs.
+- **Frontend string literals and accessible names.** No dash or kill-word scan.
 
 ## X-b. House Promos
 
@@ -360,8 +273,27 @@ The pool lives in `data/promos/house.yaml`; every rule below is asserted by
 > Every line the two benches say is printed in the column. Visit
 > news.voidvision.org to check out The Argument.
 
+## X-c. The Two-Newsroom Finding
+
+The 2026-09-21 brand audit set one served paragraph from each surface side by side. The
+feed card, the TL;DR, the On Air rundown, the History summary, the History script, the
+house promo and About read as one house: concrete, attributed, short sentences, the
+particular first, the exit early. The daily Opinion and the Weekly prose read as a second
+house: abstract, hedged, adjectival, self-referential about "sources" and "coverage". The
+History summary averaged six numbers a paragraph and no hedges; the Weekly cover, one
+number and two hedges, at more than twice the sentence length. The split follows the
+plumbing, not the writer's taste: the surfaces whose prompts carry the grounding line and
+whose output passes through `sanitize_editorial_text` sound like one house, and the
+surfaces that do not, do not. The rule that follows: every prompt carries the grounding
+line ("Every fact MUST appear in the provided articles. Do not supplement with prior
+knowledge."), and every written surface passes the shared kill list before it ships.
+
+---
+
 ## XI. The One-Line Test
 
-If someone listens to 30 seconds of void --onair and thinks "this sounds like two people who actually know what they're talking about, discussing the news without performing for me" — the brand is working.
+If someone reads thirty seconds of Void News, or listens to thirty seconds of On Air, and
+thinks "this sounds like people who actually know what they're talking about, discussing
+the news without performing for me", the brand is working.
 
-If they think "this sounds like a podcast trying to explain the news to me" — the brand has failed.
+If they think "this sounds like a podcast trying to explain the news to me", the brand has failed.
