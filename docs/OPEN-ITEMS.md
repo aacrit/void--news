@@ -247,3 +247,47 @@ the block. Not a regex.
 
 Worth doing with the tree quiet, since the same five files were being rewritten
 by the dash pass when this was found.
+
+## History audio: four episodes are stale against their scripts
+
+Their scripts changed on 2026-09-20 and the rendered MP3 no longer matches:
+
+- `ottoman-empire` — a fabricated Bayezid II quotation removed, the surviving
+  facts folded into SCENE 2 as narration
+- `iran-iraq-war` — two analytical lines that were never utterances removed
+- `iranian-revolution` — the CLOSE dated the Islamic Republic to 11 February
+  1979, when the monarchy fell; it was proclaimed 1 April after a referendum
+- `fall-of-constantinople` — "within forty years" was false for voyages that
+  took 44 and 45; now "within half a century"
+
+`tests/test_history_audio.py` names these automatically on a **full clone**, by
+comparing each episode's `publishedAt` to its script's last commit. At
+`fetch-depth: 1` it skips that check by design, so the list has to be carried by
+hand until a render runs with full history.
+
+Also pending: `peloponnesian-war` estimates 15.06 minutes against a 15.0 warn
+line (the hard gate is 15.5, so it ships), and `treaty-of-waitangi` reads a te
+reo Maori passage verbatim and has never been ear-checked. No validator can sign
+off a synthesiser on unfamiliar phonemes.
+
+## The Hearing: deletion and production gates
+
+Steps 3d and 3e of `docs/proposals/HISTORY-PAGE-REVAMP.md` are unbuilt.
+
+**Nothing has been deleted yet.** `EventDetail`, `PerspectiveFrame`,
+`PerspectiveReader`, `ReelScrubber`, `OmissionsPanel`, the reel CSS and the
+six-stage CSS are all still present, and `EventDetail` is still mounted from
+`HistoryOverlay` on the landing. Port the weekly's two-directional class-parity
+test to `history.css` **before** deleting anything: the file is large and a
+class removed from CSS while still referenced in TSX fails silently.
+
+`scripts/verify_production.py` still has **no History checks at all**, which is
+why the JS-off regression and the client-shell string had to be caught by hand.
+
+## Weekly: no scheduled run has produced The Argument
+
+The format works and the episode is live, but it got there by manual
+`audio-only` dispatch. Every scheduled run so far fell back to the legacy read,
+and that fallback is now deleted, so the next Sunday 18:00 run either produces a
+real episode or ships none. The generator fix (`word_budget`) is what should
+make it produce one. **Watch the first scheduled run.**
