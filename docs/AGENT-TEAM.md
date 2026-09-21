@@ -1,4 +1,5 @@
 # void --news Agent Team Structure
+> Historical. Written before the 2026-09-01 Supabase decommission and the Kokoro switch; the current state is CLAUDE.md.
 
 Last updated: 2026-05-03 (rev 28 — frontend-builder completed mobile UX pass + PWA service worker + Capacitor iOS/Android shell init)
 

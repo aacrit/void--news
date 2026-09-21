@@ -1,4 +1,5 @@
 # Database Quality Audit Framework
+> Historical. Written before the 2026-09-01 Supabase decommission and the Kokoro switch; the current state is CLAUDE.md.
 
 > **⚠ PRE-MIGRATION (added 2026-09-20).** Describes the retired Postgres
 > schema. There is no Supabase. See `migration/PORT_NOTES.md`.

@@ -1,4 +1,5 @@
 # void --news Pipeline Brain
+> Historical. Written before the 2026-09-01 Supabase decommission and the Kokoro switch; the current state is CLAUDE.md.
 
 > **⚠ STALE IN PARTS — read this first (added 2026-09-20).**
 > Last revised 2026-05-18, so it predates four structural changes. Trust the

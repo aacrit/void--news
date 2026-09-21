@@ -1,4 +1,5 @@
 # void --news Mobile Release Runbook
+> Historical. Written before the 2026-09-01 Supabase decommission and the Kokoro switch; the current state is CLAUDE.md.
 
 Practical steps to sign and ship the Capacitor iOS and Android apps to their
 store test tracks. This is the operational counterpart to `APP-BUILD-GUIDE.md`

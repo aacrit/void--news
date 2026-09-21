@@ -1,4 +1,5 @@
 # Plan: Take void --news live (experimental launch → 3-month friends-first rollout)
+> Historical. Written before the 2026-09-01 Supabase decommission and the Kokoro switch; the current state is CLAUDE.md.
 
 ## Context
 
