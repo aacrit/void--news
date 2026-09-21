@@ -16,6 +16,8 @@
      Never invent a new teal: --voice-accent is the shared audio identity used
      by the FloatingPlayer broadcast view. */
   --oa-accent: var(--voice-accent);
+  /* The teal as TEXT: the accent reads 2.2:1 on light paper. */
+  --oa-ink: var(--voice-ink);
   --oa-amber: var(--cin-amber, var(--accent-warm));
 
   max-width: 660px;
@@ -32,11 +34,11 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-family: var(--font-ibm-mono), monospace;
+  font-family: var(--font-data);
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: lowercase;
-  color: var(--oa-accent);
+  color: var(--oa-ink);
 }
 .onair__dot {
   width: 7px;
@@ -56,7 +58,7 @@
   100% { box-shadow: 0 0 0 0 rgba(77, 175, 160, 0); }
 }
 .onair__title {
-  font-family: var(--font-playfair), Georgia, serif;
+  font-family: var(--font-editorial);
   font-size: clamp(1.7rem, 6.5vw, 2.4rem);
   line-height: 1.05;
   font-weight: 700;
@@ -67,6 +69,7 @@
 /* -- Empty state ---------------------------------------------------------- */
 .onair__empty {
   border: 1px dashed var(--border-strong);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 12px;
   padding: 2.5rem 1.5rem;
   text-align: center;
@@ -85,6 +88,7 @@
   flex-direction: column;
   gap: 0.9rem;
   padding: clamp(1.1rem, 4.5vw, 1.6rem) clamp(1.1rem, 4vw, 1.5rem) clamp(1.25rem, 4.5vw, 1.6rem);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 16px;
 
   /* Console surface — same gradient + border + shadow as the desktop portal */
@@ -94,7 +98,7 @@
   box-shadow:
     0 6px 26px var(--console-shadow-strong),
     inset 0 1px 0 color-mix(in srgb, var(--oa-accent) 8%, transparent);
-  transition: border-color 300ms var(--ease-cinematic, ease), box-shadow 500ms var(--ease-cinematic, ease);
+  transition: border-color var(--dur-normal) var(--ease-cinematic, ease), box-shadow 500ms var(--ease-cinematic, ease);
 }
 
 .onair__portal--live {
@@ -163,13 +167,13 @@
   gap: 0.5rem;
 }
 .onair__pbrand-void {
-  font-family: var(--font-playfair), Georgia, serif;
+  font-family: var(--font-editorial);
   font-size: 1.02rem;
   font-weight: 600;
   color: var(--oa-accent);
 }
 .onair__pbrand-cmd {
-  font-family: var(--font-ibm-mono), monospace;
+  font-family: var(--font-data);
   font-size: 0.82rem;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -183,10 +187,11 @@
   gap: 5px;
   margin-left: 0.35rem;
   padding: 2px 8px 2px 6px;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 3px;
   border: 1px solid color-mix(in srgb, var(--console-fg) 12%, transparent);
   background: color-mix(in srgb, var(--console-fg) 4%, transparent);
-  transition: border-color 300ms, background 300ms;
+  transition: border-color var(--dur-normal), background var(--dur-normal);
 }
 .onair__status--live {
   border-color: color-mix(in srgb, var(--indicator-broadcast) 40%, transparent);
@@ -198,7 +203,7 @@
   border-radius: 50%;
   background: color-mix(in srgb, var(--console-fg) 18%, transparent);
   flex: none;
-  transition: background 300ms, box-shadow 300ms;
+  transition: background var(--dur-normal), box-shadow var(--dur-normal);
 }
 .onair__status--live .onair__status-dot {
   background: var(--indicator-broadcast);
@@ -210,13 +215,13 @@
   50% { opacity: 0.45; }
 }
 .onair__status-label {
-  font-family: var(--font-barlow), sans-serif;
+  font-family: var(--font-meta);
   font-size: 8px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: color-mix(in srgb, var(--console-fg) 45%, transparent);
-  transition: color 300ms;
+  transition: color var(--dur-normal);
 }
 .onair__status--live .onair__status-label {
   color: var(--indicator-broadcast);
@@ -225,16 +230,17 @@
 .onair__speed {
   background: none;
   border: 1px solid color-mix(in srgb, var(--oa-accent) 25%, transparent);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 6px;
   color: var(--oa-accent);
-  font-family: var(--font-ibm-mono), monospace;
+  font-family: var(--font-data);
   font-size: 0.76rem;
   font-weight: 600;
   padding: 0.28rem 0.55rem;
   min-width: 2.6rem;
   min-height: 32px;
   cursor: pointer;
-  transition: border-color 150ms var(--ease-cinematic, ease);
+  transition: border-color var(--dur-fast) var(--ease-cinematic, ease);
 }
 .onair__speed:hover {
   border-color: color-mix(in srgb, var(--oa-accent) 50%, transparent);
@@ -246,7 +252,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem;
-  font-family: var(--font-ibm-mono), monospace;
+  font-family: var(--font-data);
   font-size: 0.66rem;
   color: color-mix(in srgb, var(--console-fg) 55%, transparent);
   letter-spacing: 0.02em;
@@ -259,7 +265,7 @@
   color: color-mix(in srgb, var(--oa-accent) 30%, transparent);
 }
 .onair__dateline-edition {
-  font-family: var(--font-barlow), sans-serif;
+  font-family: var(--font-meta);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -267,7 +273,7 @@
   color: var(--oa-accent);
 }
 .onair__dateline-date {
-  font-family: var(--font-playfair), Georgia, serif;
+  font-family: var(--font-editorial);
   font-style: italic;
   font-size: 0.78rem;
   color: color-mix(in srgb, var(--console-fg) 68%, transparent);
@@ -279,7 +285,7 @@
 
 /* Now-playing headline */
 .onair__np-headline {
-  font-family: var(--font-playfair), Georgia, serif;
+  font-family: var(--font-editorial);
   font-size: clamp(1.15rem, 4.5vw, 1.5rem);
   line-height: 1.2;
   font-weight: 700;
@@ -295,18 +301,19 @@
   gap: 4px;
   height: 68px;
   padding: 0.4rem 0.6rem;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 8px;
   background: var(--voice-accent-ghost, rgba(77, 175, 160, 0.08));
   box-shadow: inset 0 0 12px color-mix(in srgb, var(--oa-accent) 6%, transparent);
-  transition: box-shadow 500ms var(--ease-cinematic, ease), background 300ms;
+  transition: box-shadow 500ms var(--ease-cinematic, ease), background var(--dur-normal);
 }
 .onair__vu-bar {
   flex: 1;
   max-width: 8px;
   height: 15%;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   background: color-mix(in srgb, var(--oa-accent) 22%, transparent);
-  transition: height 400ms var(--ease-cinematic, ease), background 300ms;
+  transition: height var(--dur-morph) var(--ease-cinematic, ease), background var(--dur-normal);
 }
 .onair__vu--active {
   box-shadow: inset 0 0 14px var(--voice-accent-glow, rgba(77, 175, 160, 0.15));
@@ -379,12 +386,12 @@
   min-width: 44px;
   min-height: 44px;
   border-radius: 50%;
-  transition: color 150ms var(--ease-cinematic, ease);
+  transition: color var(--dur-fast) var(--ease-cinematic, ease);
 }
 .onair__tbtn:hover { color: var(--oa-accent); }
 .onair__tbtn-n {
   position: absolute;
-  font-family: var(--font-ibm-mono), monospace;
+  font-family: var(--font-data);
   font-size: 0.5rem;
   font-weight: 600;
   top: 52%;
@@ -403,7 +410,7 @@
   place-items: center;
   cursor: pointer;
   box-shadow: 0 4px 16px var(--voice-accent-glow);
-  transition: transform 0.12s ease, box-shadow 300ms var(--ease-cinematic, ease);
+  transition: transform 0.12s ease, box-shadow var(--dur-normal) var(--ease-cinematic, ease);
 }
 .onair__play:active { transform: scale(0.94); }
 .onair__play--on {
@@ -427,16 +434,17 @@
   padding: 0.4rem 0.5rem;
   min-height: 34px;
   border: 1px solid color-mix(in srgb, var(--console-fg) 14%, transparent);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 8px;
   background: transparent;
   color: color-mix(in srgb, var(--console-fg) 62%, transparent);
-  font-family: var(--font-barlow), sans-serif;
+  font-family: var(--font-meta);
   font-size: 0.72rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  transition: color var(--dur-fast), border-color var(--dur-fast), background var(--dur-fast);
 }
 .onair__section--on {
   color: var(--oa-accent);
@@ -464,7 +472,7 @@
   flex: 1;
 }
 .onair__rail-kind {
-  font-family: var(--font-barlow), sans-serif;
+  font-family: var(--font-meta);
   font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.09em;
@@ -474,7 +482,7 @@
   flex: none;
 }
 .onair__rail-title {
-  font-family: var(--font-playfair), Georgia, serif;
+  font-family: var(--font-editorial);
   font-size: 0.9rem;
   line-height: 1.25;
   font-weight: 700;
@@ -485,7 +493,7 @@
   min-width: 0;
 }
 .onair__rail-title--between {
-  font-family: var(--font-barlow), sans-serif;
+  font-family: var(--font-meta);
   font-weight: 600;
   font-size: 0.72rem;
   letter-spacing: 0.08em;
@@ -493,7 +501,7 @@
   color: color-mix(in srgb, var(--console-fg) 55%, transparent);
 }
 .onair__rail-count {
-  font-family: var(--font-ibm-mono), monospace;
+  font-family: var(--font-data);
   font-size: 0.68rem;
   font-variant-numeric: tabular-nums;
   color: color-mix(in srgb, var(--console-fg) 55%, transparent);
@@ -505,16 +513,17 @@
   min-height: 30px;
   padding: 0.25rem 0.6rem;
   border: 1px solid color-mix(in srgb, var(--console-fg) 16%, transparent);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 8px;
   background: transparent;
   color: color-mix(in srgb, var(--console-fg) 62%, transparent);
-  font-family: var(--font-barlow), sans-serif;
+  font-family: var(--font-meta);
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  transition: color var(--dur-fast), border-color var(--dur-fast), background var(--dur-fast);
 }
 .onair__rail-jump:hover { color: var(--oa-accent); }
 .onair__rail-jump--on {
@@ -544,6 +553,7 @@
   right: 0;
   height: 5px;
   background: color-mix(in srgb, var(--oa-accent) 14%, transparent);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 2.5px;
   transform: translateY(-50%);
   box-shadow: inset 0 1px 1px color-mix(in srgb, var(--oa-accent) 6%, transparent);
@@ -554,6 +564,7 @@
   left: 0;
   height: 100%;
   background: var(--oa-accent);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 2.5px;
   transition: width 100ms linear;
 }
@@ -565,7 +576,7 @@
   width: 2px;
   height: 13px;
   background: var(--oa-accent);
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
 }
 .onair__seek-mark {
   position: absolute;
@@ -574,7 +585,7 @@
   height: 12px;
   transform: translate(-1px, -50%);
   background: var(--accent-warm);
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   z-index: 1;
   pointer-events: none;
 }
@@ -610,7 +621,7 @@
 .onair__times {
   display: flex;
   justify-content: space-between;
-  font-family: var(--font-ibm-mono), monospace;
+  font-family: var(--font-data);
   font-size: 0.7rem;
   font-variant-numeric: tabular-nums;
   color: color-mix(in srgb, var(--console-fg) 55%, transparent);
@@ -631,7 +642,7 @@
    =========================================================================== */
 .onair__notes { margin-top: 1.5rem; display: grid; gap: 1.25rem; }
 .onair__note-h {
-  font-family: var(--font-barlow), sans-serif;
+  font-family: var(--font-meta);
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -642,17 +653,18 @@
   gap: 0.6rem;
 }
 .onair__lean {
-  font-family: var(--font-ibm-mono), monospace;
+  font-family: var(--font-data);
   font-size: 0.6rem;
   letter-spacing: 0.04em;
-  color: var(--oa-accent);
+  color: var(--oa-ink);
   border: 1px solid var(--voice-accent-dim);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 4px;
   padding: 0.05rem 0.35rem;
   text-transform: none;
 }
 .onair__note-lead {
-  font-family: var(--font-playfair), Georgia, serif;
+  font-family: var(--font-editorial);
   font-size: 0.95rem;
   line-height: 1.3;
   font-weight: 700;
@@ -680,7 +692,7 @@
    =========================================================================== */
 .onair__runorder { margin-top: 1.75rem; }
 .onair__runorder-h {
-  font-family: var(--font-barlow), sans-serif;
+  font-family: var(--font-meta);
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -711,11 +723,12 @@
   min-height: 44px;
   background: none;
   border: none;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 6px;
   text-align: left;
   color: inherit;
   cursor: pointer;
-  transition: background 0.15s var(--ease-cinematic, ease);
+  transition: background var(--dur-fast) var(--ease-cinematic, ease);
 }
 .onair__chap-seek:hover { background: var(--bg-elevated); }
 .onair__chap-seek:focus-visible {
@@ -725,13 +738,13 @@
 .onair__chap--on { background: var(--voice-accent-ghost); }
 .onair__chap-time {
   flex: none;
-  font-family: var(--font-ibm-mono), monospace;
+  font-family: var(--font-data);
   font-size: 0.68rem;
   font-variant-numeric: tabular-nums;
   color: var(--fg-muted);
   min-width: 3.1ch;
 }
-.onair__chap--on .onair__chap-time { color: var(--oa-accent); }
+.onair__chap--on .onair__chap-time { color: var(--oa-ink); }
 .onair__chap-body {
   flex: 1;
   min-width: 0;
@@ -740,7 +753,7 @@
   gap: 0.12rem;
 }
 .onair__chap-title {
-  font-family: var(--font-playfair), Georgia, serif;
+  font-family: var(--font-editorial);
   font-size: 0.92rem;
   line-height: 1.3;
   font-weight: 700;
@@ -754,7 +767,7 @@
 .onair__chap-kind {
   flex: none;
   align-self: center;
-  font-family: var(--font-barlow), sans-serif;
+  font-family: var(--font-meta);
   font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -769,7 +782,7 @@
   align-items: center;
   padding: 0 0.5rem;
   min-height: 44px;
-  font-family: var(--font-barlow), sans-serif;
+  font-family: var(--font-meta);
   font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.07em;
@@ -793,7 +806,7 @@
    =========================================================================== */
 .onair__archive { margin-top: 2rem; }
 .onair__archive-h {
-  font-family: var(--font-barlow), sans-serif;
+  font-family: var(--font-meta);
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -803,7 +816,7 @@
   margin: 0 0 0.85rem;
 }
 .onair__archive-date {
-  font-family: var(--font-ibm-mono), monospace;
+  font-family: var(--font-data);
   font-size: 0.66rem;
   color: var(--fg-muted);
   margin: 0.85rem 0 0.4rem;
@@ -817,11 +830,12 @@
   padding: 0.5rem 0.5rem;
   background: none;
   border: none;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 8px;
   cursor: pointer;
   text-align: left;
   color: inherit;
-  transition: background 0.15s;
+  transition: background var(--dur-fast);
 }
 .onair__ep:hover { background: var(--bg-elevated); }
 .onair__ep:disabled { opacity: 0.45; cursor: default; }
@@ -850,7 +864,7 @@
   overflow: hidden;
 }
 .onair__ep-meta {
-  font-family: var(--font-ibm-mono), monospace;
+  font-family: var(--font-data);
   font-size: 0.64rem;
   color: var(--fg-muted);
 }

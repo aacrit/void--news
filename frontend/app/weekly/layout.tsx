@@ -1,4 +1,16 @@
 import "../styles/weekly.css";
+import type { Viewport } from "next";
+
+/* The status bar wears the Weekly paper (--wk-paper in both modes). */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#EDE4D0" },
+    { media: "(prefers-color-scheme: dark)", color: "#1E1A16" },
+  ],
+};
 
 export default function WeeklyLayout({ children }: { children: React.ReactNode }) {
   return (

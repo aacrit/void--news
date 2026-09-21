@@ -377,12 +377,20 @@ function HomeContentInner({
     return () => document.removeEventListener("visibilitychange", onResume);
   }, [initialBuiltAt]);
 
-  // Cmd+K / Ctrl+K to open search
+  // Cmd+K / Ctrl+K toggles search; a bare "/" opens it, the way every
+  // reader of a search box expects, unless the reader is already typing.
   useEffect(() => {
     function handleCmdK(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
         setSearchOpen((v) => !v);
+        return;
+      }
+      if (e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        const t = e.target as HTMLElement | null;
+        if (t && (t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement || t.isContentEditable)) return;
+        e.preventDefault();
+        setSearchOpen(true);
       }
     }
     document.addEventListener("keydown", handleCmdK);

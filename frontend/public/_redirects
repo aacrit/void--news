@@ -47,6 +47,11 @@
 /ig                /  301
 /ig/*              /  301
 
+# 2026-09-21. Listen (three feed addresses) folded into the Audio section,
+# which holds every programme and the feeds in one place.
+/listen      /audio  301
+/listen/     /audio  301
+
 # 2026-08-03. Games is hidden from prod (temporarily). 301 to home.
 # Paper returned 2026-09-21 as the printable twenty; its 301 is gone.
 /games       /  301

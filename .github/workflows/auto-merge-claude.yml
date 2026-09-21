@@ -57,6 +57,15 @@ jobs:
         run: cd frontend && npx playwright install --with-deps chromium
       - name: Responsive layout gate (overflow + sticky)
         run: cd frontend && node scripts/verify-responsive.mjs
+      # 2026-09-21: the product in a browser, as one system. Five routes at
+      # 390 and 1440 in dark plus every scenario (search, theme, drawer,
+      # Sigil, shortcuts, banner, player, Paper parity, the brand layer):
+      # console and hydration errors, dangling links, one h1, title grammar,
+      # the masthead's section, accessible names, dashes in chrome, focus
+      # order, axe WCAG 2.1 AA. The full grid (every route family x 4 widths
+      # x both modes) is `node scripts/verify-headless.mjs` without --quick.
+      - name: Headless sweep (quick)
+        run: cd frontend && node scripts/verify-headless.mjs --quick
 
       # 2026-09-06: tests/ was run by nothing. test_verify_gate.py was RED
       # (its clean fixture predated MIN_SUMMARY_CHARS=300) and nobody knew,

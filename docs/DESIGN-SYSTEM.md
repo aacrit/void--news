@@ -1,7 +1,12 @@
 # Void News Design System: "Cinematic Press"
 
-**Version:** 3.0
+**Version:** 3.1
 **Last updated:** 2026-09-21
+
+**What changed in v3.1 (same day):** the browser-chrome layer
+(`styles/brand.css`, section 5), print for the two long reads (section 12),
+the reading rule and the on-air beam (section 10), and the headless sweep as
+the gate on all of it (section 14).
 
 **What changed in v3.0:** rewritten against the code after the frame was
 unified: one masthead and footer for every route, sections as skins rather
@@ -188,39 +193,53 @@ open a private namespace.
 
 The rest of the standard, stated so a reviewer can fail a diff against it:
 
-- **Five easings.** `--ease-cinematic`, `--ease-whip`, `--ease-rack`,
-  `--ease-out`, `--ease-unfold`, all in `tokens.css`. No raw `cubic-bezier(`
-  in any stylesheet.
-- **No `font-family` literal.** The four variables only.
-- **Four radii.** `--radius-none` 0, `--radius-sm` 1px, `--radius-md` 2px, and
-  the documented bottom-sheet exception. The product is newsprint, not an app.
-- **One reduced-motion block**, global, rather than one per stylesheet.
+- **Fifteen easings, all named.** The five of v3.0 (`--ease-cinematic`,
+  `--ease-whip`, `--ease-rack`, `--ease-out`, `--ease-unfold`) plus the nine
+  the code was already using as literals and now names: `--ease-spring`
+  `(0.34, 1.56, 0.64, 1)` (the overshoot; `--spring` is a `linear()` curve
+  and stays), `--ease-sine`, `--ease-out-quad`, `--ease-classic`,
+  `--ease-shake`, `--ease-stamp`, `--ease-hard-cut`, and `--ease-archive-snap`
+  and `--ease-lectern-turn` promoted from History. No raw `cubic-bezier(`
+  outside `tokens.css`; `--ease-steadicam`, `--ease-dramatic`,
+  `--ease-whip-out`, `--ease-in`, `--ease-in-out` are gone, unreferenced.
+- **Six durations.** `--dur-fast` 150ms, `--dur-step` 260ms, `--dur-normal`
+  300ms, `--dur-reveal` 350ms, `--dur-morph` 400ms, `--dur-slow` 600ms.
+  `--dur-instant` and `--dur-micro` are gone. A literal that matches a token
+  is the token; 200ms has no token and stays a literal.
+- **No `font-family` literal.** The four variables only (`onair.css` named
+  the raw `--font-playfair` family for 29 rules; it names the semantic
+  tokens now).
+- **Five radii.** `--radius-none` 0, `--radius-sm` 1px, `--radius-md` 2px,
+  `--radius-pill` 999px, `--radius-sheet` 16px 16px 0 0. The 62 literal
+  radii that predate the scale each carry a `stylelint-disable-next-line`
+  with the reason; the list only shrinks. The product is newsprint, not an
+  app.
+- **One reduced-motion block**, in `animations.css`, global: durations to
+  0ms (not .01ms: at .01ms a transition still starts, and `HistoryLanding`
+  read a start value and drew the timeline 330px off), `scroll-behavior:
+  auto` on `*` with `!important` (the old `html` rule lost to the `smooth`
+  that `globals.css` set after its imports, so under reduced motion the
+  page had always scrolled smoothly). 52 per-file blocks that set a state
+  (opacity, transform, display, stroke) stay; 15 that only repeated the
+  global one are gone.
+- **Every keyframe defined once.** `pullSpin`, `skbFadeIn` lost their
+  byte-identical twins; `onboardDialogInSheet`, `fpBroadcastInCentered` and
+  `wire-input-shake` are the variants that used to shadow their namesakes.
+- **188 global tokens** (267 declarations across the light and dark blocks),
+  down from 326 names: 138 unreferenced names deleted, the derivation in
+  `frontend/test/css-tokens-purge.txt`.
 - **One image grade with variants**, applied to `img`, never to a page
   container.
 - **One shadow ladder, one z-index scale, one spacing scale**
   (`--space-1` through `--space-8`).
 
-**Where the code falls short, as of 2026-09-21:** 20 distinct easing curves
-and 91 raw `cubic-bezier(` literals against the five named above, 34 distinct
-border-radius values against four, 107 distinct `box-shadow` declarations, 93
-`prefers-reduced-motion` blocks across 27 stylesheets against one, nine
-unrelated image grade chains, and 109 of 315 global tokens with no consumer
-(`docs/audits/BRAND-AUDIT-2026-09-21.md`, Appendix B: T-03, M-01, M-04,
-PF-01, IM-01). The list above is the target; this paragraph is the open work.
-
-### CSS load order (`frontend/app/globals.css`)
-
-```
-tokens -> layout -> typography -> components -> animations -> mobile-feed
--> desktop-feed -> layout-zones -> skybox-banner -> floating-player
--> mobile-nav -> responsive -> onboarding
-```
-
-Route-scoped sheets are imported from their own `layout.tsx` or component, so
-they ship only with that route: `spectrum.css` (`/sources`), `verify.css` and
-`deep-dive-page.css` (Deep Dive), `inline-dd.css`, `history.css`,
-`weekly.css`, `onair.css`, `prose-page.css`, `paper/paper.css`,
-`experimental.css`.
+**Gates.** `frontend/test/css-lint.mjs` (stylelint, three rules, in
+`npm test`): no `cubic-bezier(` outside `tokens.css`, no `font-family` value
+off the four semantic tokens, no literal `border-radius` without a disable
+and its reason. `frontend/test/css-parity.test.mjs`: every class selector is
+referenced by markup (1,168 of 3,109 were not on 2026-09-21; the pre-purge
+report is `css-parity-baseline.txt`). `games.css` and `revolt.css` are exempt
+from both: hidden routes, kept for their return.
 
 ---
 
@@ -234,12 +253,18 @@ and below `{children}`. **No section renders its own topbar.**
 - **Section from the pathname.** `sectionForPath()` runs the same on the
   server and the client, so the served HTML already carries the right
   nameplate and the right `aria-current`, with no flash.
-- **Nameplate** beside the wordmark for `history`, `weekly` and `paper`. Every
-  other route gets the experimental badge and the tagline instead.
-- **Section links**: On Air, History, Weekly, Listen. **Page links**: Sources,
+- **Nameplate** beside the wordmark for `history`, `weekly`, `paper` and
+  `audio` (On Air's page wears the Audio nameplate: it is a programme inside
+  the section, and the nameplate links to the section). Every other route
+  gets the experimental badge and the tagline instead.
+- **Section links**: Audio, History, Weekly. **Page links**: Sources,
   Feedback, About. The current page carries `aria-current="page"` and a 2px
-  accent rule under the label, no arrow. Listen drops out in the 768px to
-  1023px band, where the footer and the drawer still carry it.
+  accent rule under the label, no arrow; Audio is current on `/onair/` too.
+  At rest the links are neutral; on hover and focus each draws its own
+  accent in from the left (History umber, Weekly red, Audio teal), the same
+  device the nameplate uses. On Air and Listen were two links for one
+  section until 2026-09-21; Listen was a page of feed addresses and 301s to
+  `/audio`, which holds every programme, its play buttons and the feeds.
 - **Dateline only on daily surfaces.** `DATED_SECTIONS` is news, On Air,
   Sources and a story page. The date is the build-time UTC string passed down
   from the layout; without it the masthead shows no date rather than the
@@ -250,9 +275,14 @@ and below `{children}`. **No section renders its own topbar.**
 - **Theme toggle hidden below 768px**, where the drawer carries it, so it is
   not rendered twice.
 - **Scroll-compact**: `data-scroll-compact` goes on past 80px and off at 40px,
-  through a single rAF-throttled listener.
+  through a single rAF-throttled listener. It scales the logo and fades the
+  tagline and never changes the bar's height: the 6px it used to lose was
+  compensated by scroll anchoring at the top of every client-side navigation,
+  which landed the page at scrollY 6 with its first pixels under the bar
+  (2026-09-21). `html { scroll-padding-top }` keeps navigations and in-page
+  anchors below the bar.
 
-`Footer.tsx` carries ten destinations: On Air, History, Weekly, Paper, Listen,
+`Footer.tsx` carries ten destinations: On Air, History, Weekly, Paper, Audio,
 About, Sources, Feedback, Press, Privacy.
 
 ### Section skins
@@ -282,6 +312,26 @@ shared link, meets a headline before a bug-report request; the masthead's
 badge carries the posture until then. A visit is counted once per browser
 session, a dismissal lasts fourteen days, and nothing renders when storage is
 unavailable.
+
+### The browser wears the section (`styles/brand.css`)
+
+Six touches, each a token and a rule, none of them script, all of them
+asserted by `scripts/verify-headless.mjs` so that a touch which quietly rots
+fails a gate instead of fading out:
+
+| Touch | Rule | Section-aware by |
+|---|---|---|
+| Status bar | `theme-color` from the `viewport` export of the root, History and Weekly layouts: the section's **paper**, never its accent. `ThemeToggle` rewrites both metas from `--nav-paper`, the custom property the masthead is painted with (a property does not transition, so it is already the new value the moment the mode flips) | the layout that exports it |
+| Scrollbar | `html { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent }` plus the WebKit pseudo-elements, no radius | `:root:has(.hist-page)` and `:has(.wk-page)` retint `--scrollbar-thumb` with the section accent mixed into its paper |
+| Selection | 24% of the accent under the ink, `color-mix`; the old inversion survives only under `@supports not (color-mix)` | the same two selectors swap the accent |
+| Nameplate | `.nav-nameplate::after` draws a 1px rule in from the left on hover, focus and `aria-current`, on `--dur-step` and `--ease-unfold` | `--nav-accent` |
+| Reading rule | on a long read only (`.story-page`, `.hist-hearing-page`, `.wk-issue`), a 2px brass `.nav-header::after` scales with `animation-timeline: scroll(root block)`; nothing under reduced motion or where the timeline is unsupported | brass, deliberately not the accent |
+| On air | `NavBar` sets `data-playing` from `useAudio().isPlaying`; the wordmark's beam rocks three degrees each way over six seconds in brass (`brand-on-air`), never the lean sweep, off under reduced motion | brass |
+
+What is NOT in the layer, with the reason: the loading skeleton's ink doodle
+(a rare client refetch state with inline radii, not worth a rule) and
+cross-document view transitions (they would cross-fade the sticky masthead
+against itself, and the React API is behind an experimental flag).
 
 ---
 
@@ -438,14 +488,15 @@ Springs, as `linear()` curves in `tokens.css`: `--spring` (the default),
 `--spring-bouncy`, `--spring-snappy`, `--spring-gentle`, `--spring-elastic`,
 `--spring-beam` (tighter, so a second oscillation reads as mass).
 
-Durations: `--dur-instant` 0ms, `--dur-micro` 80ms, `--dur-fast` 150ms,
-`--dur-normal` 300ms, `--dur-step` 260ms, `--dur-reveal` 350ms,
-`--dur-morph` 400ms, `--dur-slow` 600ms.
+Durations: `--dur-fast` 150ms, `--dur-step` 260ms, `--dur-normal` 300ms,
+`--dur-reveal` 350ms, `--dur-morph` 400ms, `--dur-slow` 600ms.
 
-Easings, the five the system allows: `--ease-cinematic`
+Easings, the fifteen the system names (section 4): `--ease-cinematic`
 `cubic-bezier(0.22, 1, 0.36, 1)` for the primary deceleration, `--ease-whip`
 `(0.25, 0, 0, 1)`, `--ease-rack` `(0.4, 0, 0.2, 1)` for a focus pull,
-`--ease-out` `(0.16, 1, 0.3, 1)`, `--ease-unfold` `(0.14, 0.8, 0.26, 1)`.
+`--ease-out` `(0.16, 1, 0.3, 1)`, `--ease-unfold` `(0.14, 0.8, 0.26, 1)`,
+`--ease-spring` `(0.34, 1.56, 0.64, 1)` for an overshoot, and the nine
+one-offs named after what they do.
 
 ### What moves
 
@@ -459,6 +510,9 @@ Easings, the five the system allows: `--ease-cinematic`
 | Inline Deep Dive | Open | Section cascade, `translateY(12px)` to 0 |
 | Theme toggle | Tap | Cross-fade plus a 700ms warmth swell on `.page-main`, zero layout shift |
 | History timeline | Scroll | Native snap, plus a CSS scroll-driven parallax (section 13) |
+| Reading rule | Scroll, long reads only | `.nav-header::after` scales 0 to 1 on a scroll timeline, no listener |
+| Wordmark beam | Audio playing | `brand-on-air`, 3 degrees each way over 6s, brass |
+| Nameplate rule | Hover, focus, current | `scaleX(0)` to 1 from the left, `--dur-step` on `--ease-unfold` |
 
 ### Reduced motion
 
@@ -520,13 +574,21 @@ the same footed geometry as `ScaleIcon.tsx`, `SigilWordmark.tsx` and
 
 ### Prose pages
 
-`styles/prose-page.css` is the shared reading surface for Listen, Press and
+`styles/prose-page.css` is the shared reading surface for Audio, Press and
 Privacy. It replaced `about.css`, which shipped 1,102 lines to four routes and
 matched nothing in any component. One measure (`--measure-prose: 72ch`, set as
 a property so a page that needs more room widens the token rather than
 overriding the rule), one type ramp off `--text-*`, spacing from `--space-*`,
 radii from the three tokens. Page files layer on top and win, being imported
 after.
+
+### Print for the long reads (`styles/brand.css`)
+
+A Deep Dive page and a History event print the way Paper does: the masthead,
+footer, bars, banner, player, vignette and rail are gone, the paper is white
+and the ink black, every reveal is revealed, and the sheet opens with
+`components/PrintMast.tsx` (the wordmark and the page's own address, hidden on
+screen). Paper keeps its own sheet.
 
 ### Paper (`frontend/app/paper/paper.css`)
 
@@ -624,6 +686,32 @@ vitrine makes you lean in. Connection types are drawn as glyphs, not labels:
 - **Touch targets** 44x44px minimum.
 - **Zoom** to 200% with no horizontal scroll, asserted by
   `frontend/scripts/verify-responsive.mjs`.
+- **The sweep.** `frontend/scripts/verify-headless.mjs` loads every route
+  family at 390, 768, 1024 and 1440 in both modes and asserts: no console or
+  hydration error, no same-origin 4xx, no dangling link, one `h1`, one
+  masthead and footer with the right `data-section` and `aria-current`, a
+  name on every control, no dash in chrome, the skip link first in the Tab
+  order with a visible ring, and axe-core at WCAG 2.1 AA (critical and
+  serious fail). Then the scenarios: Deep Dive inline and full page, search by
+  three routes, the theme toggle and both `theme-color` metas, the drawer's
+  focus trap, the Sigil's popup, the shortcuts overlay telling the truth,
+  the banner's second-visit rule, the player's presence per route, Paper
+  parity, and the brand layer above; then the journeys: search typed to a
+  result and Enter into the story, the phone Deep Dive's share landing the
+  permalink on the clipboard, the Audio hub loading each programme into the
+  one player, History's long-view toggle and the event's Listen island,
+  Weekly loading The Argument on arrival, the Sources picker and the axis
+  dots opening their detail, the About demo answering its sliders, an empty
+  feedback submit refused in the page with nothing sent, every client-side
+  navigation landing at scrollY 0 below the masthead, and the podcast feeds,
+  manifest, service worker and robots file present. `--quick` runs in CI;
+  the full grid by hand before a release. Its first run found six contrast failures (the
+  dateline's stacked opacities, the player clock and chapter title, the
+  History nameplate in dark, the long-view toggle), a control nested in a
+  control (the player pill), a focusable row under `aria-hidden` (the year
+  ribbon), a doubled masthead on the phone Deep Dive, and a lead Sigil whose
+  popup closed a frame after it opened because the hover shift on its
+  headline had trapped it under the stretched link.
 ---
 
 ## 15. Containment: `overflow-x: clip`, never `hidden`

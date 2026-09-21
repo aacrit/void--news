@@ -124,7 +124,7 @@ function DataMark({ data, size, mounted }: {
   // centre colour (green when agreed, slate when split), never a hue that
   // hints at a direction the caption withholds.
   const beamCol = !measured
-    ? "var(--fg-tertiary)"
+    ? "var(--fg-muted)"
     : gate === "confident"
       ? getSigilLeanColor(lean, leanSpread, conf)
       : getSigilLeanColor(50, leanSpread, conf);
@@ -621,7 +621,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
         : "";
   const labelState = info.state;
   const displayLabel = { text: `${info.text}${suffix}`, color: info.color };
-  const lc = unscored ? "var(--fg-tertiary)" : getSigilLeanColor(data.politicalLean, data.biasSpread?.leanSpread ?? 0, data.biasSpread?.aggregateConfidence ?? 1);
+  const lc = unscored ? "var(--fg-muted)" : getSigilLeanColor(data.politicalLean, data.biasSpread?.leanSpread ?? 0, data.biasSpread?.aggregateConfidence ?? 1);
   const full = isFullDetail(size);
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t); }, []);

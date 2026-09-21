@@ -225,7 +225,7 @@
   width: 32px;
   height: 4px;
   background: var(--border-subtle);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   vertical-align: middle;
 }
@@ -247,7 +247,7 @@
   text-transform: uppercase;
   padding: 2px 8px;
   border: 1px solid var(--border-subtle);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--fg-secondary);
 }
 
@@ -274,6 +274,7 @@
   padding: var(--space-3);
   border: 1px solid var(--border-subtle);
   background: var(--bg-card);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 4px;
 }
 
@@ -459,6 +460,7 @@
   padding: var(--space-4);
   background: var(--bg-elevated, var(--bg-primary));
   border: 1px solid var(--border-subtle);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 8px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
   text-align: left;

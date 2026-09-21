@@ -129,7 +129,7 @@
   transform: translateY(12px);
   /* 260ms (was 440ms): scroll-triggered entries must keep pace with the
      thumb — a 440ms fade read as the feed lagging the scroll. */
-  animation: staggerUnfold 260ms var(--ease-unfold, cubic-bezier(0.25, 0.1, 0.25, 1)) both;
+  animation: staggerUnfold var(--dur-step) var(--ease-unfold) both;
   animation-play-state: paused;
 }
 
@@ -180,7 +180,7 @@
   opacity: 0;
   transform: translateY(8px) scale(var(--dd-content-scale-from, 0.99));
   transition:
-    opacity 150ms var(--ease-cinematic),
+    opacity var(--dur-fast) var(--ease-cinematic),
     transform 200ms var(--ease-cinematic);
 }
 
@@ -268,7 +268,7 @@
 .sigil__ink-underline path {
   stroke-dasharray: var(--ink-len, 100);
   stroke-dashoffset: var(--ink-len, 100);
-  animation: inkUnderlineDraw 500ms cubic-bezier(0.25, 0.1, 0.25, 1) 350ms forwards;
+  animation: inkUnderlineDraw 500ms var(--ease-classic) 350ms forwards;
 }
 
 @keyframes inkUnderlineDraw {
@@ -377,9 +377,10 @@
   }
 }
 
-/* Mobile bottom-sheet version: slides up */
+/* Mobile bottom-sheet version: slides up. Its own name, so each keyframe
+   block is defined once; a consumer on a phone picks onboardDialogInSheet. */
 @media (max-width: 479px) {
-  @keyframes onboardDialogIn {
+  @keyframes onboardDialogInSheet {
     from {
       opacity: 0;
       transform: translateY(24px);
@@ -600,6 +601,18 @@
 /* ---- Reduced Motion ---------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
+  /* The one reduced-motion block. Every animation and transition collapses
+     to nothing, delays go with them, and nothing scrolls smoothly. The
+     durations are 0ms, not the .01ms some guides suggest: at .01ms a
+     transition still starts, so a script that measures layout right after
+     it flips a class reads the start value, and the History timeline laid
+     itself out 330px off (2026-09-21, caught by the screenshot gate). The
+     scroll-behavior rule sits here on * with !important because the old
+     "html { scroll-behavior: auto }" lost to globals.css's smooth, which
+     the cascade places after every @import. A stylesheet keeps its own
+     block only where it sets a resting state this rule cannot know: an
+     opacity, a transform, a display, a stroke offset. A block that only
+     says "transition: none" is a duplicate of this one and does not belong. */
   *,
   *::before,
   *::after {
@@ -607,10 +620,7 @@
     animation-delay: 0ms !important;
     transition-duration: 0ms !important;
     transition-delay: 0ms !important;
-  }
-
-  html {
-    scroll-behavior: auto;
+    scroll-behavior: auto !important;
   }
 
   .skeleton {

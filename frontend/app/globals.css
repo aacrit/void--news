@@ -21,6 +21,7 @@
 @import url("./styles/mobile-nav.css");
 @import url("./styles/responsive.css");
 @import url("./styles/onboarding.css");
+@import url("./styles/brand.css");
 /* spectrum.css → imported by /sources/page.tsx AND
                   components/DeepDiveSpectrum.tsx (Deep Dive routes).
                   Stays out of globals.css so it doesn't ship on the
@@ -184,29 +185,7 @@ h1, h2, h3 {
   outline-offset: 2px;
 }
 
-/* --------------------------------------------------------------------------
-   Selection
-   -------------------------------------------------------------------------- */
-::selection {
-  background-color: var(--fg-primary);
-  color: var(--bg-primary);
-}
-
-/* --------------------------------------------------------------------------
-   Scrollbar (subtle)
-   -------------------------------------------------------------------------- */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 3px;
-}
+/* Selection and scrollbar: styles/brand.css (the section-aware versions). */
 
 /* --------------------------------------------------------------------------
    Dark Mode Transition
@@ -216,39 +195,4 @@ h1, h2, h3 {
   transition:
     color var(--dur-morph) var(--ease-out),
     background-color var(--dur-morph) var(--ease-out);
-}
-
-/* --------------------------------------------------------------------------
-   Reduced Motion — Strip theme transition for users who prefer less motion
-   -------------------------------------------------------------------------- */
-@media (prefers-reduced-motion: reduce) {
-  body {
-    transition: none;
-  }
-}
-
-/* --------------------------------------------------------------------------
-   System Dark Mode Preference — Auto-detect on first visit
-   -------------------------------------------------------------------------- */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-mode="light"]):not([data-mode="dark"]) {
-    --bg-primary:    #1C1A17;
-    --bg-secondary:  #252320;
-    --bg-card:       #2A2725;
-    --bg-elevated:   #333028;
-    --fg-primary:    #EDE8E0;
-    --fg-secondary:  #B8B0A5;
-    --fg-tertiary:   #8A8278;
-    --fg-muted:      #5A5550;
-    --border-subtle: #3A3530;
-    --border-strong: #4A4540;
-    --divider:       #403B35;
-    --shadow-e0: none;
-    --shadow-e1: 0 1px 3px rgba(0, 0, 0, 0.2);
-    --shadow-e2: 0 4px 12px rgba(0, 0, 0, 0.3);
-    --shadow-e3: 0 8px 24px rgba(0, 0, 0, 0.4);
-    --accent: #EDE8E0;
-    --accent-hover: #D4CCC2;
-    --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
-  }
 }

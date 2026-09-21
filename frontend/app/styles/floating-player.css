@@ -127,7 +127,7 @@ body:has(.mms--open) .fp {
     0 4px 20px color-mix(in srgb, var(--fp-amber) 12%, transparent),
     0 0 8px color-mix(in srgb, var(--fp-amber) 6%, transparent),
     inset 0 1px 0 color-mix(in srgb, var(--fp-accent) 15%, transparent);
-  transition: box-shadow 600ms var(--ease-cinematic, ease), border-color 300ms;
+  transition: box-shadow var(--dur-slow) var(--ease-cinematic, ease), border-color var(--dur-normal);
 }
 
 /* ---------------------------------------------------------------------------
@@ -140,6 +140,7 @@ body:has(.mms--open) .fp {
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
   min-height: 44px;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 22px;
   cursor: pointer;
   position: relative;
@@ -155,7 +156,7 @@ body:has(.mms--open) .fp {
     0 2px 12px var(--console-shadow),
     inset 0 1px 0 color-mix(in srgb, var(--fp-accent) 8%, transparent);
 
-  transition: box-shadow 300ms var(--ease-cinematic, ease), border-color 200ms;
+  transition: box-shadow var(--dur-normal) var(--ease-cinematic, ease), border-color 200ms;
 }
 
 /* .fp__pill:hover glow removed — pill is always visible, glow adds no info */
@@ -194,12 +195,30 @@ body:has(.mms--open) .fp {
 }
 
 /* Track info */
+/* A button since 2026-09-21: the pill itself was role="button" with the play
+   button inside it, which is a control nested in a control (axe
+   nested-interactive). The pill is a plain surface now; this is the keyboard
+   way in, and the play button sits beside it. */
 .fp__info {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   min-width: 0;
   flex: 1;
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.fp__info:focus-visible {
+  outline: 2px solid var(--fp-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }
 
 .fp__rec-dot {
@@ -213,7 +232,8 @@ body:has(.mms--open) .fp {
   font-family: var(--font-data);
   font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--fp-accent);
+  /* The programme accent as text, pulled toward the ink: 3.8:1 raw on light. */
+  color: color-mix(in srgb, var(--fp-accent) 70%, var(--fg-primary));
   letter-spacing: 0.02em;
   white-space: nowrap;
 }
@@ -224,7 +244,8 @@ body:has(.mms--open) .fp {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: color-mix(in srgb, var(--fp-accent) 50%, transparent);
+  /* Text is ink, not accent: the accent at 50% read 2.8:1 in light mode. */
+  color: var(--fg-muted);
   white-space: nowrap;
 }
 
@@ -237,7 +258,7 @@ body:has(.mms--open) .fp {
   text-transform: none;
   letter-spacing: 0;
   font-size: var(--text-xs);
-  color: color-mix(in srgb, var(--fp-accent) 80%, transparent);
+  color: var(--fg-primary);
   min-width: 0;
   max-width: 22ch;
   overflow: hidden;
@@ -248,7 +269,7 @@ body:has(.mms--open) .fp {
   font-family: var(--font-data);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
-  color: color-mix(in srgb, var(--voice-accent) 65%, transparent);
+  color: var(--voice-ink);
   white-space: nowrap;
   min-width: 28px;
   text-align: right;
@@ -260,6 +281,7 @@ body:has(.mms--open) .fp {
   bottom: 0; left: 0; right: 0;
   height: 2px;
   background: color-mix(in srgb, var(--voice-accent) 12%, transparent);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 0 0 22px 22px;
   overflow: hidden;
 }
@@ -298,13 +320,14 @@ body:has(.mms--open) .fp {
     0 -4px 20px var(--console-shadow-strong),
     0 -2px 16px color-mix(in srgb, var(--fp-amber) 10%, transparent),
     inset 0 1px 0 color-mix(in srgb, var(--fp-accent) 12%, transparent);
-  transition: box-shadow 500ms var(--ease-cinematic, ease), border-color 300ms;
+  transition: box-shadow 500ms var(--ease-cinematic, ease), border-color var(--dur-normal);
 }
 
 /* Drag indicator — swipe down to minimize */
 .fp__drag-indicator {
   width: 32px;
   height: 3px;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 1.5px;
   background: color-mix(in srgb, var(--fp-accent) 25%, transparent);
   margin: 0 auto var(--space-1);
@@ -344,10 +367,11 @@ body:has(.mms--open) .fp {
   gap: 5px;
   margin-left: var(--space-2);
   padding: 2px 8px 2px 6px;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 3px;
   border: 1px solid color-mix(in srgb, var(--console-fg) 12%, transparent);
   background: color-mix(in srgb, var(--console-fg) 4%, transparent);
-  transition: border-color 300ms, background 300ms;
+  transition: border-color var(--dur-normal), background var(--dur-normal);
 }
 
 .fp__status--live {
@@ -361,7 +385,7 @@ body:has(.mms--open) .fp {
   border-radius: 50%;
   background: color-mix(in srgb, var(--console-fg) 18%, transparent);
   flex-shrink: 0;
-  transition: background 300ms, box-shadow 300ms;
+  transition: background var(--dur-normal), box-shadow var(--dur-normal);
 }
 
 .fp__status--live .fp__status-dot {
@@ -377,7 +401,7 @@ body:has(.mms--open) .fp {
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: color-mix(in srgb, var(--console-fg) 40%, transparent);
-  transition: color 300ms;
+  transition: color var(--dur-normal);
 }
 
 .fp__status--live .fp__status-label {
@@ -396,11 +420,12 @@ body:has(.mms--open) .fp {
   font-weight: 600;
   color: var(--fp-accent);
   border: 1px solid color-mix(in srgb, var(--fp-accent) 25%, transparent);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 4px;
   padding: 2px 8px;
   min-height: 28px;
   cursor: pointer;
-  transition: border-color 150ms var(--ease-cinematic);
+  transition: border-color var(--dur-fast) var(--ease-cinematic);
   position: relative;
 }
 
@@ -420,7 +445,7 @@ body:has(.mms--open) .fp {
   border-radius: 50%;
   color: color-mix(in srgb, var(--fp-accent) 50%, transparent);
   cursor: pointer;
-  transition: color 150ms var(--ease-cinematic), background 150ms var(--ease-cinematic);
+  transition: color var(--dur-fast) var(--ease-cinematic), background var(--dur-fast) var(--ease-cinematic);
   position: relative;
 }
 
@@ -464,7 +489,7 @@ body:has(.mms--open) .fp {
   border-radius: 50%;
   color: color-mix(in srgb, var(--fp-accent) 50%, transparent);
   cursor: pointer;
-  transition: color 150ms var(--ease-cinematic), background 150ms var(--ease-cinematic);
+  transition: color var(--dur-fast) var(--ease-cinematic), background var(--dur-fast) var(--ease-cinematic);
   position: relative;
 }
 .fp__detach::after { content: ""; position: absolute; inset: -6px; }
@@ -499,7 +524,7 @@ body:has(.mms--open) .fp {
 }
 .fp__pill-eq-bar {
   width: 2px;
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   background: var(--voice-accent);
   animation: vuBar-mid 1.2s var(--ease-rack) infinite alternate;
 }
@@ -516,6 +541,7 @@ body:has(.mms--open) .fp {
   gap: 3px;
   height: 32px;
   padding: 0 var(--space-2);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 4px;
   background: color-mix(in srgb, var(--fp-accent) 4%, transparent);
 }
@@ -524,9 +550,10 @@ body:has(.mms--open) .fp {
   flex: 1;
   max-width: 6px;
   height: 15%;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 1.5px;
   background: color-mix(in srgb, var(--voice-accent) 20%, transparent);
-  transition: height 400ms var(--ease-cinematic, ease), background 300ms;
+  transition: height var(--dur-morph) var(--ease-cinematic, ease), background var(--dur-normal);
 }
 
 /* Active — bars animate with staggered VU keyframes.
@@ -587,7 +614,7 @@ body:has(.mms--open) .fp {
 .fp__vu--active {
   box-shadow: inset 0 0 12px var(--voice-accent-glow, rgba(77, 175, 160, 0.15));
   background: var(--voice-accent-ghost, rgba(77, 175, 160, 0.08));
-  transition: box-shadow 500ms var(--ease-cinematic, ease), background 300ms;
+  transition: box-shadow 500ms var(--ease-cinematic, ease), background var(--dur-normal);
 }
 
 /* Live — Web Audio analyser driving bar heights via JS.
@@ -602,12 +629,13 @@ body:has(.mms--open) .fp {
   height: 80px;
   gap: 4px;
   padding: var(--space-2) var(--space-3);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 6px;
 }
 
 .fp__vu--hero .fp__vu-bar {
   max-width: 8px;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
 }
 
 /* Transport */
@@ -627,7 +655,7 @@ body:has(.mms--open) .fp {
   display: flex; align-items: center; justify-content: center;
   border-radius: 50%;
   cursor: pointer;
-  transition: color 150ms var(--ease-cinematic);
+  transition: color var(--dur-fast) var(--ease-cinematic);
   position: relative;
 }
 
@@ -643,7 +671,7 @@ body:has(.mms--open) .fp {
   font-size: 18px;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  transition: background 200ms var(--ease-cinematic), box-shadow 300ms var(--ease-cinematic);
+  transition: background 200ms var(--ease-cinematic), box-shadow var(--dur-normal) var(--ease-cinematic);
 }
 
 /* Play-lg button hover: keep bg shift (button affordance), kill glow */
@@ -678,10 +706,11 @@ body:has(.mms--open) .fp {
   color: color-mix(in srgb, var(--fp-accent) 35%, transparent);
   padding: 2px 8px;
   border: 1px solid color-mix(in srgb, var(--fp-accent) 12%, transparent);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 3px;
   min-height: 24px;
   cursor: pointer;
-  transition: color 150ms var(--ease-cinematic), border-color 150ms var(--ease-cinematic);
+  transition: color var(--dur-fast) var(--ease-cinematic), border-color var(--dur-fast) var(--ease-cinematic);
   position: relative;
 }
 
@@ -741,10 +770,11 @@ body:has(.mms--open) .fp {
   padding: 2px 8px;
   min-height: 24px;
   border: 1px solid color-mix(in srgb, var(--fp-accent) 12%, transparent);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 3px;
   background: none;
   cursor: pointer;
-  transition: color 150ms var(--ease-cinematic), border-color 150ms var(--ease-cinematic);
+  transition: color var(--dur-fast) var(--ease-cinematic), border-color var(--dur-fast) var(--ease-cinematic);
 }
 
 /* Expand the jump target to 44px without moving the chip — WCAG 2.5.5 */
@@ -773,7 +803,7 @@ body:has(.mms--open) .fp {
   top: 50%; left: 0; right: 0;
   height: 4px;
   background: color-mix(in srgb, var(--voice-accent) 14%, transparent);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   transform: translateY(-50%);
   box-shadow: inset 0 1px 1px color-mix(in srgb, var(--voice-accent) 6%, transparent);
 }
@@ -782,11 +812,11 @@ body:has(.mms--open) .fp {
   position: absolute; top: 0; left: 0; height: 100%;
   width: 100%;
   background: color-mix(in srgb, var(--voice-accent) 18%, transparent);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   /* transform: scaleX() from the component — compositor-only. */
   transform-origin: left center;
   transform: scaleX(0);
-  transition: transform 300ms linear;
+  transition: transform var(--dur-normal) linear;
 }
 
 /* .fp__seek-fill intentionally KEEPS width%: its ::after playhead nub is
@@ -797,7 +827,7 @@ body:has(.mms--open) .fp {
 .fp__seek-fill {
   position: absolute; top: 0; left: 0; height: 100%;
   background: var(--voice-accent);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   transition: width 100ms linear;
 }
 
@@ -807,7 +837,7 @@ body:has(.mms--open) .fp {
   right: -1px; top: -4px;
   width: 2px; height: 12px;
   background: var(--voice-accent);
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
 }
 
 .fp__seek-mark {
@@ -815,6 +845,7 @@ body:has(.mms--open) .fp {
   top: 50%; width: 1.5px; height: 10px;
   transform: translateY(-50%);
   background: color-mix(in srgb, var(--voice-accent) 45%, transparent);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 0.75px;
   z-index: 1;
 }
@@ -968,11 +999,13 @@ body:has(.mms--open) .fp {
     max-width: 560px;
     width: calc(100vw - 48px);
     bottom: var(--space-4);
+    /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
     border-radius: 16px;
     overflow: hidden;
   }
 
   .fp__bar {
+    /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
     border-radius: 16px;
     border: 1px solid color-mix(in srgb, var(--fp-accent) 20%, transparent);
   }
@@ -985,6 +1018,7 @@ body:has(.mms--open) .fp {
 /* Desktop (1024px+) */
 @media (min-width: 1024px) {
   .fp--expanded { max-width: 640px; }
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   .fp__seek-bar { height: 5px; border-radius: 2.5px; }
 }
 
@@ -1264,11 +1298,12 @@ body:has(.mms--open) .fp {
   min-height: 40px;
   background: none;
   border: none;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 3px;
   text-align: left;
   color: inherit;
   cursor: pointer;
-  transition: background 150ms var(--ease-cinematic);
+  transition: background var(--dur-fast) var(--ease-cinematic);
 }
 
 .fp__chap-seek:hover {
@@ -1383,7 +1418,7 @@ body:has(.mms--open) .fp {
   letter-spacing: 0.06em;
   color: color-mix(in srgb, var(--fp-accent) 50%, transparent);
   list-style: none;
-  transition: color 150ms var(--ease-cinematic);
+  transition: color var(--dur-fast) var(--ease-cinematic);
 }
 
 .fp__bcast-summary::-webkit-details-marker { display: none; }
@@ -1424,7 +1459,7 @@ body:has(.mms--open) .fp {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   padding: 1px 6px;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   border: 1px solid;
 }
 
@@ -1510,14 +1545,17 @@ body:has(.mms--open) .fp {
     left: 50%;
     right: auto;
     transform: translateX(-50%);
+    animation-name: fpBroadcastInCentered;
     max-width: 560px;
     width: calc(100vw - 48px);
     bottom: var(--space-4);
+    /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
     border-radius: 16px;
     overflow: hidden;
   }
 
   .fp__broadcast {
+    /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
     border-radius: 16px;
     border: 1px solid color-mix(in srgb, var(--fp-accent) 20%, transparent);
   }
@@ -1526,7 +1564,8 @@ body:has(.mms--open) .fp {
     border-color: color-mix(in srgb, var(--fp-accent) 40%, transparent);
   }
 
-  @keyframes fpBroadcastIn {
+  /* The centered overlay keeps its translateX(-50%) while it rises. */
+  @keyframes fpBroadcastInCentered {
     from { opacity: 0; transform: translateX(-50%) translateY(20px); }
     to   { opacity: 1; transform: translateX(-50%) translateY(0); }
   }
@@ -1608,7 +1647,7 @@ body:has(.mms--open) .fp {
 
   /* Pane exit — slide out left before unmount */
   .fp--closing.fp--broadcast {
-    animation: fpPaneSlideOut 300ms var(--ease-whip, ease) both;
+    animation: fpPaneSlideOut var(--dur-normal) var(--ease-whip, ease) both;
   }
 
   /* Transport: slightly more compact */
@@ -1696,6 +1735,7 @@ body:has(.mms--open) .fp {
   align-items: flex-start;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-1);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 6px;
   cursor: pointer;
   background: transparent;
@@ -1704,7 +1744,7 @@ body:has(.mms--open) .fp {
   text-align: left;
   width: 100%;
   min-height: 44px;
-  transition: background 150ms var(--ease-cinematic);
+  transition: background var(--dur-fast) var(--ease-cinematic);
   position: relative;
 }
 
@@ -1752,7 +1792,7 @@ body:has(.mms--open) .fp {
 
 .fp__track-eq span {
   width: 2px;
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   background: var(--voice-accent);
 }
 
@@ -1828,7 +1868,7 @@ body:has(.mms--open) .fp {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   flex-shrink: 0;
 }
 
@@ -1874,7 +1914,7 @@ body:has(.mms--open) .fp {
   color: var(--fp-accent);
   padding: 1px 5px;
   border: 1px solid color-mix(in srgb, var(--fp-accent) 30%, transparent);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   background: color-mix(in srgb, var(--fp-accent) 6%, transparent);
 }
 
@@ -1897,7 +1937,7 @@ body:has(.mms--open) .fp {
 
 .fp__bcast-details[open] .fp__track {
   opacity: 0;
-  animation: fpTrackSlideOut 300ms var(--ease-cinematic, ease) both;
+  animation: fpTrackSlideOut var(--dur-normal) var(--ease-cinematic, ease) both;
   animation-delay: calc(var(--fp-track-i, 0) * 50ms + 80ms);
 }
 

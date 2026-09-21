@@ -484,8 +484,7 @@ export default function FloatingPlayer() {
     >
       {/* ── COMPACT PILL ── */}
       {view === "compact" && (
-        <div className="fp__pill" onClick={openPane} role="button" tabIndex={0}
-          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openPane(); } }}>
+        <div className="fp__pill" onClick={openPane}>
           <LogoIcon size={16} animation={isPlaying ? "analyzing" : "idle"} className="fp__logo" />
 
           {isPlaying && (
@@ -506,7 +505,8 @@ export default function FloatingPlayer() {
             {isPlaying ? <PauseIcon /> : <PlayIcon />}
           </button>
 
-          <div className="fp__info">
+          <button type="button" className="fp__info" title="Open the player"
+            onClick={(e) => { e.stopPropagation(); openPane(); }}>
             {isPlaying && <span className="fp__rec-dot" aria-hidden="true" />}
             <span className="fp__title">{productLabel}</span>
             <span
@@ -517,7 +517,7 @@ export default function FloatingPlayer() {
                 ? currentChapter?.title ?? "On air"
                 : isHistory ? "Account" : isWeekly ? "Issue" : inOpinion ? "Opinion" : "News"}
             </span>
-          </div>
+          </button>
 
           <span className="fp__time">
             {isPlaying || currentTime > 0 ? formatTime(currentTime) : durationMin ? `${durationMin}m` : ""}

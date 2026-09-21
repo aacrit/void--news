@@ -168,6 +168,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border-strong);
   border-left: 3px solid var(--palette-news);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 4px;
   padding: 18px 22px 22px;
   margin: 0 0 16px;
@@ -216,6 +217,7 @@
   color: var(--fg-secondary);
   background: var(--bg-primary);
   border: 1px solid var(--border-strong);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 4px;
   padding: 7px 12px;
   min-height: 34px;
@@ -278,6 +280,7 @@
 .press-callout {
   background: var(--bg-card);
   border-left: 3px solid var(--palette-news);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 4px;
   padding: 16px 20px;
   margin: 0 0 26px;
@@ -297,6 +300,7 @@
 
 .press-spectrum__bar {
   height: 16px;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 9px;
   overflow: hidden;
   display: flex;
@@ -422,6 +426,7 @@
   color: var(--fg-accent);
   text-decoration: none;
   border: 1px solid var(--border-strong);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 4px;
   padding: 5px 12px;
   min-height: 30px;
@@ -512,10 +517,3 @@
   }
 }
 
-/* ── Reduced motion ─────────────────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  .press-copy,
-  .press-kit__dl {
-    transition: none;
-  }
-}

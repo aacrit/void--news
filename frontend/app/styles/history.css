@@ -10,13 +10,14 @@
    --------------------------------------------------------------------------- */
 /* The section's palette lives on :root while a History page is mounted, so the shared masthead and footer can wear it too (they sit outside .hist-page). */
 :root:has(.hist-page) {
-  --hist-accent: #5C4033;
+  --hist-accent: var(--palette-history);
   --hist-accent-bright: #6D4E3F;
   --hist-accent-dim: #4A3328;
   --hist-accent-ghost: rgba(92, 64, 51, 0.06);
   --hist-accent-wash: rgba(92, 64, 51, 0.14);
   --hist-accent-ink: rgba(92, 64, 51, 0.22);
   --hist-brass: #9B7A2F;
+  --hist-brass-ink: #7A5F20;  /* the brass as small text: 5.2:1 on the paper; the brass itself is 3.6 */
   --hist-brass-bright: #B08D3A;
   --hist-brass-dim: #836722;
   --hist-brass-ghost: rgba(155, 122, 47, 0.08);
@@ -31,7 +32,7 @@
   --hist-bg-inset: #EDE8D8;
   --hist-persp-a: #4A6E85;
   --hist-persp-b: #8E5B42;
-  --hist-persp-c: #5D7748;
+  --hist-persp-c: #4E6539;  /* 5.5:1 on the paper as 9px text; #5D7748 read 4.3 */
   --hist-persp-d: #7D5A6E;
   --hist-persp-e: #8B7638;
   --hist-persp-f: #6E5242; /* THE COLD WAR — deep iron red */
@@ -57,7 +58,7 @@
     4px 6px 16px rgba(44, 36, 24, 0.12),
     6px 10px 32px rgba(44, 36, 24, 0.08);
   --hist-topbar-height: var(--nav-height); /* the shared masthead; History has no topbar of its own */
-  --hist-mobile-chrome-height: 52px;
+  --hist-mobile-chrome-height: var(--nav-bottom-height);
 }
 
 .hist-page {
@@ -87,11 +88,10 @@
 
   /* Document edge shadow — key light from top-left, directional */
 
-  /* Spring presets (CSS approximations) */
-  --ease-archive-snap: cubic-bezier(0.22, 1.4, 0.36, 1);
-  --ease-document-settle: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-lectern-turn: cubic-bezier(0.42, 0, 0.12, 1.15);
-  --ease-unfold: cubic-bezier(0.14, 0.8, 0.26, 1);
+  /* Section easing. --ease-archive-snap and --ease-lectern-turn are global
+     tokens now (tokens.css); --ease-unfold was a byte-identical copy of the
+     global and is inherited. Document-settle is the house ease-out. */
+  --ease-document-settle: var(--ease-out);
 
   /* Mobile navigation tokens */
 
@@ -109,6 +109,7 @@
   --hist-accent-wash: rgba(142, 106, 86, 0.18);
   --hist-accent-ink: rgba(142, 106, 86, 0.25);
   --hist-brass: #C4A04A;
+  --hist-brass-ink: var(--hist-brass);  /* 7.3:1 on the dark paper */
   --hist-brass-bright: #D4B05A;
   --hist-brass-dim: #A88A3A;
   --hist-brass-ghost: rgba(196, 160, 74, 0.08);
@@ -360,8 +361,8 @@
   opacity: 0;
   transform: translateY(12px);
   transition:
-    opacity 300ms var(--ease-cinematic),
-    transform 300ms var(--ease-cinematic);
+    opacity var(--dur-normal) var(--ease-cinematic),
+    transform var(--dur-normal) var(--ease-cinematic);
 }
 
 
@@ -373,13 +374,13 @@
   flex-direction: column;
   background: var(--hist-bg-card);
   box-shadow: var(--hist-doc-edge);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   cursor: pointer;
   transition:
-    filter 300ms var(--ease-cinematic),
-    transform 300ms var(--ease-cinematic),
-    box-shadow 300ms var(--ease-cinematic);
+    filter var(--dur-normal) var(--ease-cinematic),
+    transform var(--dur-normal) var(--ease-cinematic),
+    box-shadow var(--dur-normal) var(--ease-cinematic);
 }
 
 /* .hist-event-card:hover shadow removed — card sits still */
@@ -402,7 +403,7 @@
   height: 100%;
   object-fit: cover;
   filter: var(--img-grade-history-card);
-  transition: transform 600ms var(--ease-cinematic);
+  transition: transform var(--dur-slow) var(--ease-cinematic);
 }
 
 /* .hist-event-card:hover img zoom removed — images sit still */
@@ -417,7 +418,7 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 2px 6px;
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   background: rgba(44, 36, 24, 0.75);
   color: var(--hist-paper-fixed);
   backdrop-filter: blur(4px);
@@ -461,7 +462,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--hist-brass);
+  color: var(--hist-brass-ink);
 }
 
 .hist-event-card__meta {
@@ -522,7 +523,7 @@
   padding: var(--space-4);
   background: var(--hist-bg-card);
   box-shadow: var(--hist-doc-edge);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   margin-bottom: var(--space-5);
   max-width: 720px;
   margin-left: auto;
@@ -586,7 +587,7 @@
   background: var(--hist-bg-card);
   border: 1px solid var(--hist-border-subtle);
   border-left: 3px solid transparent;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition:
     filter 250ms var(--ease-cinematic),
@@ -729,7 +730,7 @@
     width: 4px;
     height: 40px;
     background: var(--hist-brass);
-    border-radius: 2px;
+    border-radius: var(--radius-md);
     opacity: 0.5;
     transition: opacity 200ms;
   }
@@ -791,7 +792,7 @@
     var(--hist-bg-card);
   box-shadow: var(--hist-doc-edge);
   border-left: 3px solid var(--hist-brass);
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   /* Organic document corner — foxed watercolor stain */
   background-clip: padding-box;
 }
@@ -957,7 +958,7 @@
 
 .hist-gallery::-webkit-scrollbar-thumb {
   background: var(--hist-border);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
 }
 
 .hist-gallery__item {
@@ -965,7 +966,7 @@
   width: 280px;
   scroll-snap-align: start;
   cursor: pointer;
-  transition: transform 300ms var(--ease-cinematic);
+  transition: transform var(--dur-normal) var(--ease-cinematic);
   /* Button reset — these are semantic <button> elements */
   background: none;
   border: none;
@@ -992,9 +993,9 @@
   width: 100%;
   aspect-ratio: 3 / 2;
   object-fit: cover;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   filter: var(--img-grade-history-gallery);
-  transition: filter 300ms var(--ease-cinematic);
+  transition: filter var(--dur-normal) var(--ease-cinematic);
 }
 
 .hist-gallery__item:hover .hist-gallery__image {
@@ -1028,7 +1029,7 @@
   justify-content: center;
   background: rgba(0, 0, 0, 0.92);
   backdrop-filter: blur(12px);
-  animation: histLightboxIn 300ms var(--ease-cinematic) both;
+  animation: histLightboxIn var(--dur-normal) var(--ease-cinematic) both;
 }
 
 @keyframes histLightboxIn {
@@ -1040,7 +1041,7 @@
   max-width: 90vw;
   max-height: 80vh;
   object-fit: contain;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
 }
 
 /* Archival plate — the lightbox backdrop is always dark, so tones are tuned
@@ -1057,6 +1058,7 @@
   max-width: min(90vw, 640px);
   padding: var(--space-3) var(--space-4);
   text-align: center;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 3px;
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(6px);
@@ -1382,7 +1384,7 @@
   aspect-ratio: 2 / 1;
   background: var(--hist-bg-card);
   box-shadow: var(--hist-doc-edge);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   margin: var(--space-5) 0;
 }
@@ -1396,7 +1398,7 @@
   fill: var(--hist-paper-deep);
   stroke: var(--hist-border);
   stroke-width: 0.5;
-  transition: fill 300ms var(--ease-cinematic);
+  transition: fill var(--dur-normal) var(--ease-cinematic);
 }
 
 .hist-map__region:hover {
@@ -1468,7 +1470,7 @@
 .hist-era-drawer__chevron {
   font-size: var(--text-sm);
   color: var(--hist-ink-muted);
-  transition: transform 300ms var(--ease-unfold);
+  transition: transform var(--dur-normal) var(--ease-unfold);
 }
 
 .hist-era-drawer--open .hist-era-drawer__chevron {
@@ -1481,8 +1483,8 @@
   opacity: 0;
   transition:
     max-height 500ms var(--ease-unfold),
-    opacity 400ms var(--ease-cinematic),
-    padding 300ms var(--ease-unfold);
+    opacity var(--dur-morph) var(--ease-cinematic),
+    padding var(--dur-normal) var(--ease-unfold);
   padding: 0 var(--space-4);
 }
 
@@ -1502,10 +1504,10 @@
   padding: var(--space-5);
   background: var(--hist-bg-card);
   box-shadow: var(--hist-doc-edge);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   cursor: default;
-  transition: box-shadow 300ms var(--ease-cinematic);
+  transition: box-shadow var(--dur-normal) var(--ease-cinematic);
 }
 
 /* .hist-redacted:hover shadow removed — card sits still */
@@ -1548,7 +1550,7 @@
   height: 14px;
   background: var(--hist-ink);
   opacity: 0.12;
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   margin: var(--space-2) 0;
 }
 
@@ -1600,7 +1602,7 @@
   justify-content: center;
   background: color-mix(in srgb, var(--hist-bg-card) 90%, transparent);
   opacity: 0;
-  transition: opacity 400ms var(--ease-cinematic);
+  transition: opacity var(--dur-morph) var(--ease-cinematic);
   pointer-events: none;
 }
 
@@ -1656,7 +1658,7 @@
   pointer-events: none;
   text-align: center;
   opacity: 1;
-  transition: opacity 600ms var(--ease-document-settle);
+  transition: opacity var(--dur-slow) var(--ease-document-settle);
 }
 
 .hist-tl-brief--hidden {
@@ -1771,7 +1773,7 @@
   transform: translateX(-50%);
   z-index: 3;
   opacity: calc(1 - max(var(--card-dist, 0) - 2, 0) * 0.1);
-  transition: opacity 300ms var(--ease-cinematic);
+  transition: opacity var(--dur-normal) var(--ease-cinematic);
 }
 
 .hist-tl-full__station--focused {
@@ -1857,9 +1859,9 @@
   overflow: hidden;
 
   /* Hover animation */
-  transition: transform 300ms var(--ease-archive-snap),
+  transition: transform var(--dur-normal) var(--ease-archive-snap),
               box-shadow 250ms var(--ease-cinematic),
-              filter 300ms var(--ease-cinematic);
+              filter var(--dur-normal) var(--ease-cinematic);
   z-index: 3;
 }
 
@@ -1994,7 +1996,7 @@
   opacity: 0;
   overflow: hidden;
   padding: 0 10px;
-  transition: max-height 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+  transition: max-height 350ms var(--ease-out-quad),
               opacity 200ms var(--ease-cinematic) 100ms,
               padding 350ms var(--ease-cinematic);
 }
@@ -2077,7 +2079,7 @@
 
 .hist-tl-card__cta-arrow {
   display: inline-block;
-  transition: transform 250ms var(--ease-archive-snap, cubic-bezier(0.22, 1.4, 0.36, 1));
+  transition: transform 250ms var(--ease-archive-snap);
 }
 
 .hist-tl-card__cta:hover {
@@ -2182,7 +2184,7 @@
   transform: rotateY(90deg);
   transition:
     opacity 0.35s var(--ease-cinematic),
-    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform 0.5s var(--ease-spring);
   pointer-events: none;
   z-index: 3;
 }
@@ -2531,7 +2533,7 @@
      Token: --img-grade-history provides the canonical archival grade. */
   filter: var(--img-grade-history);
   /* H06: Dolly-in — 1.5s subtle settle (was 4s) */
-  animation: histDollyIn 1.5s var(--ease-cinematic, cubic-bezier(0.16, 1, 0.3, 1)) both;
+  animation: histDollyIn 1.5s var(--ease-cinematic) both;
 }
 
 .hist-stage__hero-fallback {
@@ -2624,7 +2626,7 @@
   padding: 10px 20px 10px 16px;
   background: rgba(155, 122, 47, 0.15);
   border: 1px solid rgba(155, 122, 47, 0.5);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   color: var(--hist-paper-fixed, #F2EDE0);
   backdrop-filter: blur(8px);
@@ -2854,7 +2856,7 @@
   background: var(--hist-bg);
   overflow-y: auto;
   overflow-x: hidden;
-  animation: histOverlayIn 300ms var(--ease-cinematic) both;
+  animation: histOverlayIn var(--dur-normal) var(--ease-cinematic) both;
 }
 
 .hist-overlay--instant {
@@ -3376,7 +3378,7 @@
 
 /* Vocabulary highlights: instant, no stagger delay */
 .hist-vocab-unique {
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   padding: 0 1px;
 }
 
@@ -3571,7 +3573,7 @@
   padding: var(--space-1) var(--space-3);
   min-height: 44px;
   border: 1px solid var(--hist-border);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   background: transparent;
   color: var(--hist-ink-secondary);
@@ -3584,8 +3586,10 @@
 }
 
 .hist-compare-option--active {
-  background: var(--hist-accent);
-  color: var(--hist-paper);
+  /* Same fill as the long-view toggle: the raw accent under paper text read
+     4.1:1 (dark, ink text on it 3.7:1). */
+  background: color-mix(in srgb, var(--hist-accent) 82%, var(--hist-bg));
+  color: var(--hist-paper-fixed, #F2EDE0);
   border-color: var(--hist-accent);
 }
 
@@ -3697,7 +3701,7 @@
   padding: var(--space-2) var(--space-4) var(--space-1);
   background: linear-gradient(180deg, var(--hist-bg) 60%, transparent);
   pointer-events: none;
-  transition: opacity 400ms var(--ease-cinematic);
+  transition: opacity var(--dur-morph) var(--ease-cinematic);
 }
 
 .hist-tl-top-zone--hidden {
@@ -3766,7 +3770,7 @@
   cursor: pointer;
   pointer-events: auto;
   padding: 2px 6px;
-  transition: opacity 300ms var(--ease-cinematic), filter 300ms var(--ease-cinematic), transform 300ms var(--ease-cinematic);
+  transition: opacity var(--dur-normal) var(--ease-cinematic), filter var(--dur-normal) var(--ease-cinematic), transform var(--dur-normal) var(--ease-cinematic);
   /* Distance-based depth-of-field: --yr-dist 0=sharp, 1-4=progressively blurred */
   font-size: clamp(0.65rem, 0.55rem + 0.4vw, 0.85rem);
   color: var(--hist-ink-muted);
@@ -3873,7 +3877,7 @@
     min-width: 44px;
     background: transparent;
     border: 1px solid var(--hist-border);
-    border-radius: 2px;
+    border-radius: var(--radius-md);
     color: var(--hist-ink-muted);
     font-family: var(--font-meta);
     font-size: 0.6rem;
@@ -3917,7 +3921,7 @@
   background: color-mix(in srgb, var(--hist-bg) 92%, transparent);
   backdrop-filter: blur(4px);
   pointer-events: auto;
-  animation: histCartoFadeIn 300ms var(--ease-cinematic) forwards;
+  animation: histCartoFadeIn var(--dur-normal) var(--ease-cinematic) forwards;
 }
 
 @keyframes histCartoFadeIn {
@@ -3936,7 +3940,7 @@
 .hist-carto-strip__region {
   fill: var(--hist-paper-deep, #E8E0CF);
   cursor: pointer;
-  transition: fill 300ms var(--ease-cinematic, ease);
+  transition: fill var(--dur-normal) var(--ease-cinematic, ease);
 }
 
 .hist-carto-strip__region:hover {
@@ -3963,7 +3967,7 @@
 }
 
 .hist-carto-strip__pin {
-  transition: r 300ms var(--ease-cinematic), opacity 300ms var(--ease-cinematic);
+  transition: r var(--dur-normal) var(--ease-cinematic), opacity var(--dur-normal) var(--ease-cinematic);
 }
 
 @keyframes histPinPulseStrip {
@@ -4037,13 +4041,13 @@
 }
 
 .hist-tl-card--entrance {
-  animation: histCardEntrance 250ms var(--ease-document-settle, cubic-bezier(0.16, 1, 0.3, 1)) both;
+  animation: histCardEntrance 250ms var(--ease-document-settle) both;
   animation-delay: min(calc(var(--card-index, 0) * 15ms), 100ms);
 }
 
 /* Above cards: entrance includes the side-specific positioning */
 .hist-tl-card--entrance.hist-tl-card--above {
-  animation: histCardEntranceAbove 250ms var(--ease-document-settle, cubic-bezier(0.16, 1, 0.3, 1)) both;
+  animation: histCardEntranceAbove 250ms var(--ease-document-settle) both;
   animation-delay: min(calc(var(--card-index, 0) * 15ms), 100ms);
 }
 
@@ -4053,7 +4057,7 @@
 }
 
 .hist-tl-card--entrance.hist-tl-card--below {
-  animation: histCardEntranceBelow 250ms var(--ease-document-settle, cubic-bezier(0.16, 1, 0.3, 1)) both;
+  animation: histCardEntranceBelow 250ms var(--ease-document-settle) both;
   animation-delay: min(calc(var(--card-index, 0) * 15ms), 100ms);
 }
 
@@ -4072,7 +4076,7 @@
 }
 
 .hist-tl-full--era-flash {
-  animation: histEraFlash 600ms var(--ease-cinematic);
+  animation: histEraFlash var(--dur-slow) var(--ease-cinematic);
 }
 
 /* ---------------------------------------------------------------------------
@@ -4080,12 +4084,12 @@
    --------------------------------------------------------------------------- */
 .hist-tl-full__stem {
   --stem-stretch: 0px;
-  transition: height 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: height var(--dur-normal) var(--ease-spring);
 }
 
 .hist-tl-full__stem svg {
   height: calc(var(--tl-stem-h) + var(--stem-stretch));
-  transition: height 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: height var(--dur-normal) var(--ease-spring);
 }
 
 /* .hist-tl-full__station:hover stem stretch removed — stems sit still */
@@ -4100,7 +4104,7 @@
 }
 
 .hist-tl-full__dot--focused {
-  animation: histDotPop 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: histDotPop var(--dur-morph) var(--ease-spring);
 }
 
 /* ---------------------------------------------------------------------------
@@ -4496,8 +4500,8 @@
   opacity: 0;
   transform: translateY(8px);
   transition:
-    opacity 400ms var(--ease-cinematic),
-    transform 400ms var(--ease-cinematic);
+    opacity var(--dur-morph) var(--ease-cinematic),
+    transform var(--dur-morph) var(--ease-cinematic);
 }
 
 .hist-threads__strip--revealed .hist-threads__strip-header {
@@ -4539,7 +4543,7 @@
   top: 140px; /* vertically center within card height */
   transform-origin: left center;
   transform: scaleX(0);
-  transition: transform 600ms var(--ease-cinematic) 200ms;
+  transition: transform var(--dur-slow) var(--ease-cinematic) 200ms;
 }
 
 .hist-threads__strip--revealed .hist-threads__track-line {
@@ -4737,7 +4741,7 @@
 
 .hist-tl-thread-bar {
   width: 4px;
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   opacity: 0;
   transform: scaleY(0);
   transform-origin: top center;
@@ -4771,8 +4775,8 @@
   opacity: 0.3;
   filter: grayscale(0.5) blur(0.5px);
   transition:
-    opacity 300ms var(--ease-cinematic),
-    filter 300ms var(--ease-cinematic);
+    opacity var(--dur-normal) var(--ease-cinematic),
+    filter var(--dur-normal) var(--ease-cinematic);
 }
 
 /* Restore from dimmed state: slower settle (rack focus returning) */
@@ -4803,7 +4807,7 @@
   opacity: 0.5;
   padding: 2px 5px;
   background: var(--hist-paper-deep);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   z-index: 4;
   pointer-events: none;
   transition: opacity 250ms var(--ease-cinematic);
@@ -4841,7 +4845,7 @@
 }
 
 .hist-tl-card--conn-pulse {
-  animation: hist-conn-pulse 400ms var(--ease-cinematic) 1 forwards;
+  animation: hist-conn-pulse var(--dur-morph) var(--ease-cinematic) 1 forwards;
 }
 
 /* Thread bars flash brighter when their event is pulse-targeted */
@@ -4867,6 +4871,7 @@
   padding: var(--space-2) var(--space-3);
   background: var(--hist-bg);
   border: 1px solid var(--hist-border);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 4px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18), 0 1px 4px rgba(0, 0, 0, 0.08);
   max-width: calc(100dvw - 2rem);
@@ -4900,7 +4905,7 @@
   display: flex;
   gap: 0;
   border: 1px solid var(--hist-border);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
@@ -4916,11 +4921,13 @@
   border: none;
   cursor: pointer;
   min-height: 32px;
-  transition: background 150ms var(--ease-cinematic), color 150ms var(--ease-cinematic);
+  transition: background var(--dur-fast) var(--ease-cinematic), color var(--dur-fast) var(--ease-cinematic);
 }
 
 .hist-longview-toggle__btn--active {
-  background: var(--hist-accent);
+  /* The accent alone read 4.1:1 under the paper-coloured label in dark mode;
+     a fifth of the page ground mixed in takes it past 5:1 in both modes. */
+  background: color-mix(in srgb, var(--hist-accent) 82%, var(--hist-bg));
   color: var(--hist-paper-fixed, #F2EDE0);
 }
 
@@ -4938,7 +4945,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-  animation: histLegendFadeIn 400ms var(--ease-cinematic) both;
+  animation: histLegendFadeIn var(--dur-morph) var(--ease-cinematic) both;
 }
 
 @keyframes histLegendFadeIn {
@@ -4958,14 +4965,14 @@
   color: var(--hist-ink-muted);
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   padding: var(--space-1) var(--space-2);
   cursor: pointer;
   min-height: 28px;
   /* Staggered entrance per chip */
   opacity: 0;
   animation: histLegendChipIn 350ms var(--ease-cinematic) both;
-  transition: border-color 150ms var(--ease-cinematic), color 150ms var(--ease-cinematic), opacity 150ms var(--ease-cinematic);
+  transition: border-color var(--dur-fast) var(--ease-cinematic), color var(--dur-fast) var(--ease-cinematic), opacity var(--dur-fast) var(--ease-cinematic);
 }
 
 .hist-longview-legend__item:nth-child(1) { animation-delay: 80ms; }
@@ -5073,7 +5080,7 @@
   flex-shrink: 0;
   width: 3px;
   height: 42px;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   margin-top: 2px;
   opacity: 0.85;
 }
@@ -5107,6 +5114,7 @@
   color: var(--hist-ink-muted);
   border: 1px solid var(--hist-border-subtle);
   padding: 2px 8px;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 10px;
   margin-top: 2px;
 }
@@ -5133,7 +5141,7 @@
 
 .hist-thread-group__row::-webkit-scrollbar-thumb {
   background: var(--hist-border);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
 }
 
 /* Individual event tile */
@@ -5149,7 +5157,7 @@
   text-decoration: none;
   color: inherit;
   scroll-snap-align: start;
-  transition: border-color 150ms var(--ease-cinematic), transform 150ms var(--ease-cinematic);
+  transition: border-color var(--dur-fast) var(--ease-cinematic), transform var(--dur-fast) var(--ease-cinematic);
   position: relative;
 }
 
@@ -5209,7 +5217,7 @@
   color: var(--hist-ink-muted);
   border: 1px solid;
   padding: 1px 5px;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   white-space: nowrap;
   opacity: 0.7;
 }
@@ -5221,7 +5229,7 @@
   font-size: 12px;
   color: var(--hist-brass);
   opacity: 0;
-  transition: opacity 150ms var(--ease-cinematic);
+  transition: opacity var(--dur-fast) var(--ease-cinematic);
 }
 
 .hist-thread-tile:hover .hist-thread-tile__arrow {
@@ -5614,7 +5622,7 @@ a.hist-record__figure-name:hover {
   margin: 0;
   background: var(--hist-border-subtle);
   border: 1px solid var(--hist-border-subtle);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
@@ -5740,7 +5748,7 @@ a.hist-record__figure-name:hover {
   color: var(--hist-accent);
   background: transparent;
   border: 1px solid var(--hist-border);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
@@ -5764,10 +5772,6 @@ a.hist-record__figure-name:hover {
   font-family: var(--font-data);
   font-weight: 600;
   color: var(--hist-ink-muted);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hist-numbers__gallery { transition: none; }
 }
 
 /* ── The reel: horizontal scroll-snap (vertical on mobile) ── */
@@ -5991,7 +5995,7 @@ a.hist-record__figure-name:hover {
   text-decoration: none;
   padding: var(--space-3);
   border: 1px solid var(--hist-border-subtle);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   background: var(--hist-bg-card);
   transition: border-color 200ms var(--ease-document-settle);
 }
@@ -6167,7 +6171,7 @@ a.hist-record__figure-name:hover {
   cursor: pointer;
   min-height: 44px;
   -webkit-tap-highlight-color: transparent;
-  transition: background var(--dur-quick, 150ms) ease;
+  transition: background var(--dur-quick, var(--dur-fast)) ease;
 }
 .hist-reel-leadin:hover .hist-reel-leadin__label,
 .hist-reel-leadin:focus-visible .hist-reel-leadin__label {
@@ -6213,12 +6217,12 @@ a.hist-record__figure-name:hover {
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--hist-border-subtle);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: color-mix(in srgb, var(--hist-bg-card) 88%, transparent);
   backdrop-filter: blur(4px);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
   pointer-events: none;
-  animation: histCueIn 400ms var(--ease-document-settle) both;
+  animation: histCueIn var(--dur-morph) var(--ease-document-settle) both;
 }
 
 .hist-reel__cue--vertical {
@@ -6325,7 +6329,7 @@ a.hist-record__figure-name:hover {
   padding: var(--space-7) var(--space-6);
   background: var(--hist-bg);
   box-shadow: var(--hist-doc-edge-lifted, 0 24px 60px rgba(0,0,0,0.3));
-  border-radius: 2px;
+  border-radius: var(--radius-md);
 }
 
 .hist-reader__close {
@@ -6617,7 +6621,7 @@ a.hist-record__figure-name:hover {
   border-bottom: 1px solid var(--hist-border-subtle);
 }
 .hist-hr-scene__num {
-  color: var(--hist-brass);
+  color: var(--hist-brass-ink);
 }
 .hist-hr-scene__title {
   color: var(--hist-ink);
@@ -6738,7 +6742,9 @@ a.hist-record__figure-name:hover {
   gap: var(--space-2);
   font-size: var(--text-xs);
   letter-spacing: 0.14em;
-  color: var(--hist-account-color, var(--hist-accent));
+  /* The account's own colour, pulled toward the ink: raw, the gold accounts
+     read 3.8:1 as 9px small caps. */
+  color: color-mix(in srgb, var(--hist-account-color, var(--hist-accent)) 72%, var(--hist-ink));
   margin-bottom: var(--space-2);
 }
 .hist-hr-account__sep {
@@ -6890,7 +6896,7 @@ a.hist-record__figure-name:hover {
 .hist-hr-turn__eyebrow {
   font-size: var(--text-xs);
   letter-spacing: 0.2em;
-  color: var(--hist-brass);
+  color: var(--hist-brass-ink);
   margin-bottom: var(--space-4);
 }
 .hist-hr-turn__framing,
@@ -7637,7 +7643,7 @@ a.hist-record__figure-name:hover {
   padding: 0;
   background: var(--hist-bg-elevated);
   border: 1px solid var(--hist-border);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   color: var(--hist-ink-muted);
   font-family: var(--font-meta);
   font-size: var(--text-sm);
@@ -7696,7 +7702,7 @@ a.hist-record__figure-name:hover {
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   border: 1px solid var(--hist-border-subtle);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   /* The view toggle is centred on the same line at `bottom: 2rem` and is
      about 210px wide, so the plate has to stop short of (50vw - 105px). The
      second term is that, with a gutter: at 768px it yields 240px, at 1024px

@@ -432,9 +432,9 @@ html:has(.np-root) body { background: transparent; }
   text-transform: uppercase;
   min-height: 44px;
   padding: 0 16px;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: color 150ms ease-out, border-color 150ms ease-out;
+  transition: color var(--dur-fast) ease-out, border-color var(--dur-fast) ease-out;
 }
 
 .np-pdf-btn:hover {
@@ -445,10 +445,6 @@ html:has(.np-root) body { background: transparent; }
 .np-pdf-btn:focus-visible {
   outline: 2px solid var(--np-ink);
   outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .np-pdf-btn { transition: none; }
 }
 
 /* ==========================================================================

@@ -42,10 +42,26 @@
   --wk-accent-ink: rgba(185, 28, 28, 0.20);
   --wk-cream: #F8F3E8;
   --wk-cream-deep: #EDE5D4;
-  --wk-paper: #EDE4D0;
+  --wk-paper: var(--palette-weekly-paper);
   --wk-topbar-h: var(--nav-height); /* the shared masthead; Weekly has no topbar of its own */
   --wk-measure: 36rem;
   --wk-rail: 17ch;
+}
+/* The issue page, as distinct from the archive index, which is also a
+   .wk-page. brand.css keys the reading rule on it; this rule exists so the
+   Weekly's own class-parity test (W-T06) sees the class has a home here. */
+.wk-issue {
+  scroll-margin-top: var(--nav-height);
+}
+
+/* On a wide canvas the 36rem measure used 40% of the width and read as a
+   lonely column; 40rem is still inside the 60-75 character range at the
+   body size, and the rails keep their share. */
+@media (min-width: 1280px) {
+  :root:has(.wk-page) {
+    --wk-measure: 40rem;
+    --wk-rail: 19ch;
+  }
 }
 
 .wk-page {
@@ -89,7 +105,7 @@
   --wk-accent-ink: rgba(239, 83, 80, 0.22);
   --wk-cream: #2A2420;
   --wk-cream-deep: #221E1A;
-  --wk-paper: #1E1A16;
+  --wk-paper: var(--palette-weekly-paper);
 }
 
 :root[data-mode="dark"] .wk-page {
@@ -813,7 +829,7 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 0.6s var(--ease-cinematic, ease-out);
+  transition: opacity var(--dur-slow) var(--ease-cinematic, ease-out);
   filter: var(--img-grade-weekly, contrast(1.05) saturate(0.92) sepia(0.04));
 }
 
@@ -879,6 +895,31 @@
 }
 
 /* --- The figures rail --- */
+/* The rails sit beside the body on a canvas wide enough to have rails
+   (matching markup order: numbers, body, timeline). Narrower, they take the
+   text column after the body, which the source order also makes natural. */
+@media (min-width: 1024px) {
+  .wk-feature__numbers {
+    grid-column: rail-start / text-start;
+    align-self: start;
+    position: sticky;
+    top: calc(var(--nav-height) + var(--space-5));
+    margin-top: 0;
+  }
+  .wk-feature__timeline {
+    grid-column: text-end / rail-end;
+    align-self: start;
+    position: sticky;
+    top: calc(var(--nav-height) + var(--space-5));
+    margin-top: 0;
+  }
+}
+@media (max-width: 1023px) {
+  .wk-feature__numbers { order: 2; }
+  .wk-feature__timeline { order: 3; }
+  .wk-feature__body { order: 1; }
+  .wk-pullquote { order: 4; }
+}
 .wk-feature__numbers {
   grid-column: text-start / rail-end;
   display: grid;
@@ -1131,7 +1172,7 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 0.6s var(--ease-cinematic, ease-out);
+  transition: opacity var(--dur-slow) var(--ease-cinematic, ease-out);
   filter: var(--img-grade-weekly, contrast(1.05) saturate(0.92) sepia(0.04));
 }
 
@@ -1242,7 +1283,7 @@
   inset: 50% 0 auto 0;
   height: 6px;
   transform: translateY(-50%);
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   background: linear-gradient(
     to right,
     var(--bias-left) 0%,
@@ -1372,7 +1413,7 @@
   display: block;
   height: 4px;
   background: var(--wk-accent-ghost);
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 

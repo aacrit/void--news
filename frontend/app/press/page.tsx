@@ -315,7 +315,7 @@ export default function PressPage() {
           that any app can subscribe to, and each plays on its own section of
           the site. All three are read by synthetic voices from scripts the
           pipeline writes and checks; the addresses are listed on{" "}
-          <Link href="/listen">/listen</Link>.
+          <Link href="/audio">/audio</Link>.
         </p>
         <div className="press-axes press-axes--programmes">
           {PROGRAMMES.map((p) => (
@@ -554,9 +554,9 @@ export default function PressPage() {
             </Link>
           </li>
           <li className="press-kit__item">
-            <span className="press-kit__name">Listen, the three podcast feeds</span>
-            <Link className="press-kit__dl" href="/listen">
-              /listen
+            <span className="press-kit__name">Audio, every programme and the three podcast feeds</span>
+            <Link className="press-kit__dl" href="/audio">
+              /audio
             </Link>
           </li>
         </ul>

@@ -189,7 +189,7 @@ export default function WeeklyIssue({
   if (archivePage) contents.push({ label: "Back Issues", title: `${archive.length - 1} earlier issues`, href: "#wk-archive", page: archivePage });
 
   return (
-    <div className="wk-page">
+    <div className="wk-page wk-issue">
       <CinematicCover
         nameplate={
           <span className="wk-nameplate">

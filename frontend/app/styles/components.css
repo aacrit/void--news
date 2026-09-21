@@ -121,6 +121,7 @@
   left: 0;
   right: 0;
   border-top: 1px solid var(--border-subtle);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 12px 12px 0 0;
   max-height: 80vh;
   overflow-y: auto;
@@ -131,7 +132,7 @@
   position: fixed;
   width: 280px;
   border: 1px solid var(--border-subtle);
-  transition: opacity 250ms var(--ease-cinematic), transform 300ms var(--spring);
+  transition: opacity 250ms var(--ease-cinematic), transform var(--dur-normal) var(--spring);
 }
 
 /* Sigil popup sections — extracted from inline styles (F02) */
@@ -155,7 +156,7 @@
   cursor: pointer;
   position: relative;
   min-height: 44px;
-  transition: opacity 300ms var(--ease-cinematic), filter 300ms var(--ease-cinematic);
+  transition: opacity var(--dur-normal) var(--ease-cinematic), filter var(--dur-normal) var(--ease-cinematic);
 }
 
 .sigil--sm  { gap: 7px; }
@@ -186,7 +187,7 @@
      signal — `both` fill kept it invisible for nearly half a second on
      every card mount. The beam-settle → stamp L-cut survives at 120ms. */
   animation: tiltLabelStamp 250ms var(--spring-snappy) 120ms both;
-  transition: color 400ms var(--ease-cinematic);
+  transition: color var(--dur-morph) var(--ease-cinematic);
 }
 
 /* Unscored beam: dashed stroke + idle pulse */
@@ -270,7 +271,7 @@
   top: 4px;
   width: 2px;
   height: 32px;
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   opacity: 0.4;
 }
 
@@ -329,7 +330,7 @@
   font-size: var(--text-xs);
   padding: 1px 5px;
   border: 1px solid var(--border-subtle);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   color: var(--fg-tertiary);
 }
 
@@ -490,7 +491,7 @@
   flex-shrink: 0;
   margin-top: 0.15em;
   color: var(--fg-muted);
-  transition: transform 300ms var(--spring-snappy), opacity 200ms var(--ease-cinematic);
+  transition: transform var(--dur-normal) var(--spring-snappy), opacity 200ms var(--ease-cinematic);
   opacity: 0.5;
 }
 
@@ -523,7 +524,7 @@
 .story-card__family-dot {
   width: 5px;
   height: 5px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: currentColor;
   opacity: 0.55;
 }
@@ -551,7 +552,7 @@
   width: 2px;
   background: var(--ink-quiet, #6b6258);
   opacity: 0.22;
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   pointer-events: none;
 }
 
@@ -611,6 +612,7 @@
   flex: 1 1 auto;
   display: flex;
   height: 6px;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 3px;
   overflow: hidden;
   background: var(--bg-subtle, rgba(127, 127, 127, 0.12));
@@ -652,7 +654,7 @@
      hover-capable devices only, ensuring smooth interpolation there. */
   filter: var(--cin-warmth-near);
   transition:
-    box-shadow 300ms 30ms var(--ease-cinematic),
+    box-shadow var(--dur-normal) 30ms var(--ease-cinematic),
     transform  320ms var(--spring-snappy);
 }
 
@@ -730,7 +732,7 @@
   overflow-wrap: break-word;
   word-break: break-word;
   text-shadow: 0 0 0 transparent;
-  transition: text-shadow 300ms var(--ease-cinematic);
+  transition: text-shadow var(--dur-normal) var(--ease-cinematic);
 }
 
 .lead-story__headline-text {
@@ -982,7 +984,15 @@
      translucent ground let feed content bleed through it while scrolling.
      Dropping backdrop-filter also removes the composited layer that used to
      freeze .nav-inner's max-width on a bfcache restore. */
-  background-color: var(--bg-primary);
+  /* --nav-paper is what the bar is painted with. ThemeToggle reads it to set
+     the status bar colour: a custom property does not transition, so it is
+     already the new value the moment the mode flips, where background-color
+     is still mid cross-fade. Section skins override it below. */
+  --nav-paper: var(--bg-primary);
+  /* The nameplate is TEXT in the accent: the news accent reads 3.8:1 on
+     Paper's stock, so the bar carries an ink-safe reading of its accent. */
+  --nav-accent-ink: var(--fg-accent);
+  background-color: var(--nav-paper);
   border-bottom: 1px solid var(--glass-border);
   transition: background-color var(--dur-morph) var(--ease-cinematic);
 }
@@ -995,10 +1005,14 @@
    Tokens: --scroll-nav-compact-scale (0.98). Range (120px) is advisory;
    the JS uses 80px-on / 40px-off hysteresis to prevent jitter. Desktop
    only — mobile nav is a separate component.                             */
-.nav-header[data-scroll-compact="true"] .nav-inner {
-  padding-top: var(--space-1);
-  padding-bottom: var(--space-1);
-}
+/* The compact state no longer changes the bar's HEIGHT. It used to drop
+   .nav-inner's padding from --space-2 to --space-1, 57px to 51px, and that
+   6px was the "canvas jump" the CEO saw on 2026-09-21: on a client-side
+   navigation the bar un-compacts at the top of the new page, grows by 6px,
+   and scroll anchoring moves the document by 6px to keep its anchor still,
+   so the page lands at scrollY 6 with its first pixels under the bar. The
+   logo scale and the tagline fade carry the compact state; the height is
+   constant, so nothing below it moves. */
 .nav-header[data-scroll-compact="true"] .nav-logo {
   transform: scale(var(--scroll-nav-compact-scale));
   transform-origin: left center;
@@ -1014,13 +1028,6 @@
 }
 .nav-logo {
   transition: transform var(--dur-settle, 240ms) var(--ease-rack, ease-in-out);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nav-inner,
-  .nav-logo{
-    transition: none;
-  }
 }
 
 /* ===========================================================================
@@ -1299,8 +1306,8 @@ button:focus-visible .sigil-word__beam {
   cursor: pointer;
   border-radius: var(--radius-sm);
   transition:
-    color 150ms var(--ease-cinematic),
-    background-color 150ms var(--ease-cinematic);
+    color var(--dur-fast) var(--ease-cinematic),
+    background-color var(--dur-fast) var(--ease-cinematic);
 }
 
 .nav-search-btn:hover {
@@ -1384,10 +1391,11 @@ button:focus-visible .sigil-word__beam {
   margin: 0 var(--space-1);
   opacity: 0.4;
 }
-.nav-dateline-line__time {
-  opacity: 0.7;
-}
 
+/* The time and the "as of" prefix used to sit at opacity 0.7 and 0.8 on top of
+   --fg-muted, which is tuned to exactly 4.5:1: the compound read 3.5:1 and
+   2.7:1 in the headless sweep (2026-09-21). Hierarchy comes from size and
+   tracking now, and the colour stays at the token. */
 /* ---- Dateline inline (Tier 3) — between logo and utility buttons -------- */
 /* JetBrains Mono, very subtle. Fills remaining flex space, right-aligned.
    Shown only >=1280px: narrower desktop rows leave it so little room it
@@ -1401,7 +1409,6 @@ button:focus-visible .sigil-word__beam {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 0.82em;
-  opacity: 0.8;
 }
 
 /* Mobile dateline — compact time (with optional date), hidden on desktop.
@@ -1465,7 +1472,7 @@ button:focus-visible .sigil-word__beam {
   justify-content: center;
   transition:
     opacity 200ms var(--ease-cinematic),
-    transform 300ms var(--spring-bouncy);
+    transform var(--dur-normal) var(--spring-bouncy);
 }
 
 .theme-toggle__icon--hidden {
@@ -2242,7 +2249,7 @@ button:focus-visible .sigil-word__beam {
 .dd-history-context__link:focus-visible {
   outline: 2px solid var(--fg-primary);
   outline-offset: 2px;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
 }
 
 .dd-history-context__arrow {
@@ -2294,15 +2301,6 @@ button:focus-visible .sigil-word__beam {
     width: 100%;
     padding-left: calc(var(--space-2) + 1em); /* align under title, after arrow */
     white-space: normal;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .dd-history-context__arrow {
-    transition: none;
-  }
-  .dd-history-context__link {
-    transition: none;
   }
 }
 
@@ -2552,7 +2550,7 @@ button:focus-visible .sigil-word__beam {
 }
 
 .comp-view__favicon {
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   flex-shrink: 0;
 }
 
@@ -2654,12 +2652,6 @@ button:focus-visible .sigil-word__beam {
   animation: dd-methodology-reveal var(--dur-normal) var(--spring-gentle) both;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .comp-view__insights-content {
-    animation: none;
-  }
-}
-
 .comp-view__insight-item {
   display: flex;
   align-items: flex-start;
@@ -2724,18 +2716,6 @@ button:focus-visible .sigil-word__beam {
 
   .comp-view__item--wire {
     padding: 2px 0;
-  }
-}
-
-/* ---- Reduced motion ---- */
-@media (prefers-reduced-motion: reduce) {
-  .comp-view__col,
-  .comp-view__item {
-    transition: none;
-  }
-
-  .comp-view__wire-arrow {
-    transition: none;
   }
 }
 
@@ -2943,6 +2923,7 @@ button:focus-visible .sigil-word__beam {
 .kbd-overlay__panel {
   background-color: var(--bg-card);
   border: 1px solid var(--border-subtle);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 12px;
   padding: var(--space-5) var(--space-6);
   box-shadow: var(--shadow-e3);
@@ -2990,6 +2971,7 @@ button:focus-visible .sigil-word__beam {
   color: var(--fg-primary);
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-strong);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 4px;
   padding: 2px 8px;
   min-width: 28px;
@@ -3147,7 +3129,7 @@ button:focus-visible .sigil-word__beam {
 .page-main,
 .nav-header {
   filter: var(--cin-grade);
-  transition: filter 400ms var(--ease-cinematic);
+  transition: filter var(--dur-morph) var(--ease-cinematic);
 }
 
 /* ── Vignette ── */
@@ -3273,7 +3255,7 @@ button:focus-visible .sigil-word__beam {
   .skb:has(.skb__onair-pill--active) {
     background-color: var(--cin-practical-warmth);
     transition:
-      background-color 300ms var(--ease-cinematic),
+      background-color var(--dur-normal) var(--ease-cinematic),
       border-color 200ms var(--ease-cinematic);
   }
 }
@@ -3303,7 +3285,7 @@ button:focus-visible .sigil-word__beam {
   .skb,
   .site-footer {
     transition:
-      background-color var(--dissolve-surface-dur, 300ms) var(--ease-cinematic),
+      background-color var(--dissolve-surface-dur, var(--dur-normal)) var(--ease-cinematic),
       color var(--dissolve-ink-dur, 200ms) var(--ease-cinematic),
       border-color var(--dissolve-border-dur, 250ms) var(--ease-cinematic),
       box-shadow var(--dissolve-shadow-dur, 200ms) var(--ease-cinematic);
@@ -3311,7 +3293,7 @@ button:focus-visible .sigil-word__beam {
   .page-main,
   .nav-header {
     transition:
-      background-color var(--dissolve-surface-dur, 300ms) var(--ease-cinematic),
+      background-color var(--dissolve-surface-dur, var(--dur-normal)) var(--ease-cinematic),
       color var(--dissolve-ink-dur, 200ms) var(--ease-cinematic),
       border-color var(--dissolve-border-dur, 250ms) var(--ease-cinematic),
       box-shadow var(--dissolve-shadow-dur, 200ms) var(--ease-cinematic),
@@ -3321,7 +3303,7 @@ button:focus-visible .sigil-word__beam {
      layer theme dissolve underneath */
   .story-card {
     transition:
-      background-color var(--dissolve-surface-dur, 300ms) var(--ease-cinematic),
+      background-color var(--dissolve-surface-dur, var(--dur-normal)) var(--ease-cinematic),
       color var(--dissolve-ink-dur, 200ms) var(--ease-cinematic),
       border-color var(--dissolve-border-dur, 250ms) var(--ease-cinematic),
       box-shadow 120ms var(--ease-cinematic),
@@ -3329,10 +3311,10 @@ button:focus-visible .sigil-word__beam {
   }
   .lead-story {
     transition:
-      background-color var(--dissolve-surface-dur, 300ms) var(--ease-cinematic),
+      background-color var(--dissolve-surface-dur, var(--dur-normal)) var(--ease-cinematic),
       color var(--dissolve-ink-dur, 200ms) var(--ease-cinematic),
       border-color var(--dissolve-border-dur, 250ms) var(--ease-cinematic),
-      box-shadow 300ms var(--shadow-lag, 30ms) var(--ease-cinematic);
+      box-shadow var(--dur-normal) var(--shadow-lag, 30ms) var(--ease-cinematic);
   }
 }
 
@@ -3654,10 +3636,16 @@ button:focus-visible .sigil-word__beam {
   .story-card:hover .story-card__summary,
   .lead-story:hover .lead-story__headline-text,
   .lead-story:hover .lead-story__summary,
-  .lead-story:hover .lead-headline,
+  .lead-story:hover .lead-headline__text,
   .lead-story:hover .lead-summary {
     transform: translateX(2px);
   }
+  /* The shift is on the TEXT span, never on .lead-headline itself: the Sigil
+     lives inside that h2, and a transform there makes it a stacking context
+     with z-index auto, which paints under the card's stretched link
+     (z-index 2). Hovering the lead Sigil then opened its popup and lost the
+     pointer to the link a frame later, closing it after 240ms. Caught by
+     scripts/verify-headless.mjs, 2026-09-21. */
 }
 
 /* ---- Reduced motion — collapse all Tier 2 additions -------------------- */
@@ -3712,7 +3700,7 @@ button:focus-visible .sigil-word__beam {
   .story-card:hover .story-card__summary,
   .lead-story:hover .lead-story__headline-text,
   .lead-story:hover .lead-story__summary,
-  .lead-story:hover .lead-headline,
+  .lead-story:hover .lead-headline__text,
   .lead-story:hover .lead-summary {
     transform: none;
     transition: none;
@@ -3753,7 +3741,7 @@ button:focus-visible .sigil-word__beam {
   appearance: none;
   background: transparent;
   border: 1px solid var(--border-subtle);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 10px 22px;
   min-height: 44px;
   font-family: var(--font-structural);
@@ -3864,7 +3852,7 @@ button:focus-visible .sigil-word__beam {
   pointer-events: none;
   z-index: 1;
   opacity: 0;
-  transition: opacity 300ms var(--ease-cinematic);
+  transition: opacity var(--dur-normal) var(--ease-cinematic);
 }
 .deep-dive-panel[data-settled]::before {
   opacity: 1;
@@ -3916,6 +3904,7 @@ button:focus-visible .sigil-word__beam {
     height: 80vh;
     max-height: 80vh;
     min-height: 0;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
     border-radius: 6px;
     border: 1px solid var(--border-subtle);
     background-color: var(--bg-primary);
@@ -3942,7 +3931,7 @@ button:focus-visible .sigil-word__beam {
     width: 100%;
     max-width: 100%;
     max-height: 92vh;
-    border-radius: 16px 16px 0 0;
+    border-radius: var(--radius-sheet);
     border: none;
     background: var(--bg-primary);
     backdrop-filter: none;
@@ -3962,13 +3951,6 @@ button:focus-visible .sigil-word__beam {
   }
   .deep-dive-panel::-webkit-scrollbar { display: none; }
   .dd-headline { font-size: clamp(1.25rem, 5vw, 1.5rem); }
-}
-
-/* ── Reduced motion: no rack, no reveal, no grade transition ── */
-@media (prefers-reduced-motion: reduce) {
-  .deep-dive-panel::before{
-    transition: none;
-  }
 }
 
 /* ===========================================================================
@@ -3995,7 +3977,7 @@ button:focus-visible .sigil-word__beam {
   font-size: var(--text-lg);
   letter-spacing: 0.01em;
   line-height: 1;
-  color: var(--nav-accent);
+  color: var(--nav-accent-ink, var(--nav-accent));
   text-decoration: none;
   white-space: nowrap;
 }
@@ -4021,7 +4003,6 @@ button:focus-visible .sigil-word__beam {
 /* Tablet band: the row is tight, so drop Listen (footer and drawer keep it)
    and tighten the link padding. */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .nav-sections .nav-page[data-section="listen"] { display: none; }
   .nav-sections .nav-page,
   .nav-pages .nav-page { padding-left: var(--space-2); padding-right: var(--space-2); }
 }
@@ -4043,6 +4024,21 @@ button:focus-visible .sigil-word__beam {
 .nav-page[aria-current="page"]:hover { transform: none; }
 .nav-sections .nav-page[data-section="history"][aria-current="page"]::before { background: var(--palette-history); }
 .nav-sections .nav-page[data-section="weekly"][aria-current="page"]::before { background: var(--palette-weekly); }
+.nav-sections .nav-page[data-section="audio"][aria-current="page"]::before { background: var(--voice-ink); }
+
+/* Client-side navigation lands the new page's first element at the top of
+   the viewport, and the masthead is sticky, so the page's first 51px sat
+   under the bar after EVERY in-app navigation (scrollY 51, never 0) and the
+   bar, which only un-compacts below 40px, stayed compact: a 57px bar on a
+   fresh load, 51px after a click, and the reader saw the canvas jump.
+   scroll-padding-top makes the browser aim below the bar, which lands at 0,
+   and makes in-page anchors (#account-5) land under the bar no longer. */
+html {
+  /* 16px, not the bar's own 4px of slack: the token is 53px and the bar
+     measures 57 at rest, and the History page's main sits 6px lower still.
+     Overshooting clamps to 0; undershooting landed at scrollY 6. */
+  scroll-padding-top: calc(var(--nav-height) + 16px);
+}
 
 /* Phones: the drawer carries the theme control; the masthead keeps only the
    wordmark, the nameplate, the dateline and search. (The duplicate toggle
@@ -4057,14 +4053,24 @@ button:focus-visible .sigil-word__beam {
 :root:has(.hist-page) .nav-header,
 :root:has(.hist-page) .site-footer {
   --nav-accent: var(--palette-history);
-  background-color: var(--hist-bg);
+  --nav-accent-ink: var(--palette-history);
+  --nav-paper: var(--hist-bg);
+  background-color: var(--nav-paper);
   border-color: var(--hist-border-subtle);
   color: var(--hist-ink);
 }
 :root:has(.wk-page) .nav-header,
 :root:has(.wk-page) .site-footer {
   --nav-accent: var(--palette-weekly);
-  background-color: var(--wk-paper);
+  --nav-accent-ink: var(--palette-weekly);
+  --nav-paper: var(--wk-paper);
+  background-color: var(--nav-paper);
+}
+/* Audio keeps the site's paper; its accent is the voice teal, as text. */
+:root:has(.audio-page) .nav-header,
+:root:has(.audio-page) .site-footer {
+  --nav-accent: var(--voice-accent);
+  --nav-accent-ink: var(--voice-ink);
 }
 :root:has(.hist-page) body,
 :root:has(.wk-page) body {

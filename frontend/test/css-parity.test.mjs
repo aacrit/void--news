@@ -55,7 +55,7 @@ function walk(dir, pred, out = []) {
 
 function cssFiles() {
   const list = walk(path.join(APP, 'styles'), (p) => p.endsWith('.css'));
-  for (const extra of ['paper/paper.css', 'listen/listen.css', 'press/press.css', 'privacy/privacy.css']) {
+  for (const extra of ['paper/paper.css', 'audio/audio.css', 'press/press.css', 'privacy/privacy.css']) {
     const p = path.join(APP, extra);
     if (existsSync(p)) list.push(p);
   }

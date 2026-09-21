@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node test/labels.test.mjs && node test/chapters.test.mjs && node test/volume.test.mjs && node test/copy-facts.test.mjs && node test/css-parity.test.mjs"
+    "test": "node test/labels.test.mjs && node test/chapters.test.mjs && node test/volume.test.mjs && node test/copy-facts.test.mjs && node test/css-parity.test.mjs && node test/css-lint.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.3.1",
@@ -26,8 +26,10 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "axe-core": "^4.13.0",
     "eslint": "^9",
     "eslint-config-next": "^16.2.4",
+    "stylelint": "^17.15.0",
     "typescript": "^5"
   },
   "overrides": {

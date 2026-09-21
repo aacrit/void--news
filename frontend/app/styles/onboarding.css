@@ -25,7 +25,7 @@
   border-radius: var(--radius-md);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
   opacity: 0;
-  transition: transform 520ms var(--spring, cubic-bezier(0.22, 1, 0.36, 1)), opacity 320ms ease;
+  transition: transform 520ms var(--spring), opacity 320ms ease;
 }
 .onb-invite--visible { transform: translate(-50%, 0); opacity: 1; }
 .onb-invite__grain { display: none; }
@@ -73,7 +73,7 @@
   display: flex;
   flex-direction: column;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
-  animation: onbStageIn 420ms var(--ease-cinematic, cubic-bezier(0.22, 1, 0.36, 1));
+  animation: onbStageIn 420ms var(--ease-cinematic);
 }
 .onb--exiting .onb__stage { animation: onbStageOut 340ms var(--ease-cinematic) forwards; }
 .onb--exiting .onb__backdrop { animation: onbFadeOut 340ms ease forwards; }
@@ -150,7 +150,7 @@
 /* Branded name: the product renders in its own accent, prefixed with a small
    coverage-ring glyph (the Sigil "O") so the suite reads as one branded family
    rather than a grey word list. */
-.about-x__world-name { display: inline-flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-family: var(--font-editorial); font-weight: 600; font-size: var(--text-lg); color: var(--card-accent); }
+.about-x__world-name { display: inline-flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-family: var(--font-editorial); font-weight: 600; font-size: var(--text-lg); color: color-mix(in srgb, var(--card-accent) 70%, var(--fg-primary)); }
 .about-x__world-name::before {
   content: "";
   flex: 0 0 auto;
@@ -196,7 +196,7 @@
    box centre to stay inside), which is what keeps the two far-left and two
    far-right landings readable — and stops horizontal scroll on narrow phones. */
 .vrail { position: relative; margin-top: var(--space-5); min-height: 24rem; touch-action: pan-y; }
-.vrail__track { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); height: 4px; border-radius: 2px;
+.vrail__track { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); height: 4px; border-radius: var(--radius-md);
   background: linear-gradient(90deg, var(--bias-left), var(--bias-center), var(--bias-right)); }
 .vrail__end { position: absolute; top: calc(50% + 0.75rem); font-family: var(--font-data); font-size: var(--text-xxs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-tertiary); }
 .vrail__end--l { left: 0; } .vrail__end--r { right: 0; }
@@ -267,7 +267,9 @@
 .rsignals { list-style: none; padding: 0; margin: var(--space-5) auto 0; max-width: 30rem; display: grid; gap: var(--space-2); }
 .rsignals__row { display: grid; grid-template-columns: 9rem 1fr 2.5rem; align-items: center; gap: var(--space-2); }
 .rsignals__name { font-family: var(--font-structural); font-size: var(--text-sm); color: var(--fg-secondary); }
+/* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
 .rsignals__bar { height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; }
+/* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
 .rsignals__fill { display: block; height: 100%; width: 100%; transform-origin: left center; background: var(--about-accent); border-radius: 4px; }
 .rsignals__w { font-family: var(--font-data); font-size: var(--text-xs); color: var(--fg-tertiary); text-align: right; }
 .rsignals__gate { text-align: center; margin-top: var(--space-3); font-family: var(--font-data); font-size: var(--text-xs); color: var(--fg-tertiary); }
@@ -326,7 +328,7 @@
   box-shadow: 0 6px 18px color-mix(in srgb, var(--card-accent) 22%, transparent);
 }
 .verdict__map-link:focus-visible { outline: 2px solid var(--card-accent); outline-offset: 2px; }
-.verdict__map-name { font-family: var(--font-editorial); font-weight: 600; font-size: var(--text-base); color: var(--card-accent); }
+.verdict__map-name { font-family: var(--font-editorial); font-weight: 600; font-size: var(--text-base); color: color-mix(in srgb, var(--card-accent) 70%, var(--fg-primary)); }
 .verdict__map-sub { font-family: var(--font-structural); font-size: var(--text-xs); color: var(--fg-secondary); line-height: 1.35; }
 .verdict__map-note { font-family: var(--font-structural); font-size: var(--text-xs); color: var(--fg-tertiary); max-width: 34rem; margin: var(--space-3) auto 0; }
 
@@ -355,7 +357,7 @@
   box-shadow: 0 4px 14px rgba(122, 60, 34, 0.28),
               inset 0 0 0 0 rgba(255, 241, 226, 0);
   transition: background-color 180ms ease,
-              box-shadow 260ms var(--ease-cinematic, ease),
+              box-shadow var(--dur-step) var(--ease-cinematic, ease),
               transform 140ms var(--ease-cinematic, ease);
 }
 .onb-invite__btn--go:hover,

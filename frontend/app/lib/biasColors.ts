@@ -374,17 +374,19 @@ export function storyLeanLabel(
   unscored = false,
 ): StoryLeanLabel {
   if (unscored) {
-    return { text: "Unscored", abbr: "Unscored", color: "var(--fg-tertiary)",
+    /* --fg-muted, not --fg-tertiary: the label is 8px on a card that sits at
+       85% opacity while it settles, and tertiary read 3.7:1 there (2026-09-21). */
+    return { text: "Unscored", abbr: "Unscored", color: "var(--fg-muted)",
              state: "unscored", suppressed: true };
   }
   const state = leanLabelState(lean, spread, sourceCount);
   if (state === "unmeasured") {
     return { text: UNMEASURED_LABEL, abbr: UNMEASURED_LABEL,
-             color: "var(--fg-tertiary)", state, suppressed: true };
+             color: "var(--fg-muted)", state, suppressed: true };
   }
   if (state === "balanced") {
     return { text: BALANCED_LABEL, abbr: BALANCED_LABEL,
-             color: "var(--fg-tertiary)", state, suppressed: true };
+             color: "var(--fg-muted)", state, suppressed: true };
   }
   if (state === "contested") {
     return { text: CONTESTED_LABEL, abbr: CONTESTED_LABEL,
@@ -469,7 +471,22 @@ export function lerpColor(a: string, b: string, t: number): string {
 export const GREEN_HALF = 3;
 
 export function getLeanColor(v: number): string {
-  const c = getColors();
+  /* A color-mix() of the tokens rather than a hex: the server has no
+     stylesheet, so a hex computed there is the LIGHT palette baked into the
+     HTML, which is what the About page's demo Sigil shipped in dark mode
+     (rgb(17,54,121) on a dark ground, 1.5:1). A mix of var()s is the same
+     string on both sides and takes the mode's value when painted. */
+  const c = {
+    "--bias-center": "var(--bias-center)",
+    "--bias-center-left": "var(--bias-center-left)",
+    "--bias-left": "var(--bias-left)",
+    "--bias-far-left": "var(--bias-far-left)",
+    "--bias-center-right": "var(--bias-center-right)",
+    "--bias-right": "var(--bias-right)",
+    "--bias-far-right": "var(--bias-far-right)",
+  };
+  const lerp = (a: string, b: string, t: number) =>
+    `color-mix(in srgb, ${a} ${Math.round((1 - t) * 100)}%, ${b})`;
   // Green is reserved for STRICTLY balanced (50 ± GREEN_HALF). Outside that,
   // a continuous light→dark ramp: left = center-left → left → far-left (light
   // steel blue to navy); right = center-right → right → far-right (coral to
@@ -482,13 +499,13 @@ export function getLeanColor(v: number): string {
   if (d < 0) {
     // Left — light → dark blue across two stops.
     return t <= 0.5
-      ? lerpColor(c["--bias-center-left"], c["--bias-left"], t / 0.5)
-      : lerpColor(c["--bias-left"], c["--bias-far-left"], (t - 0.5) / 0.5);
+      ? lerp(c["--bias-center-left"], c["--bias-left"], t / 0.5)
+      : lerp(c["--bias-left"], c["--bias-far-left"], (t - 0.5) / 0.5);
   }
   // Right — light → dark red across two stops.
   return t <= 0.5
-    ? lerpColor(c["--bias-center-right"], c["--bias-right"], t / 0.5)
-    : lerpColor(c["--bias-right"], c["--bias-far-right"], (t - 0.5) / 0.5);
+    ? lerp(c["--bias-center-right"], c["--bias-right"], t / 0.5)
+    : lerp(c["--bias-right"], c["--bias-far-right"], (t - 0.5) / 0.5);
 }
 
 /** leanSpread (stddev) at/above which a cluster's coverage counts as divergent. */
