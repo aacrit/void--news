@@ -107,6 +107,8 @@ impossible, not a note asking people to be careful:
 | `tests/test_paper.py` | Paper drifting from the front page, a dash or a retired claim in its source |
 | `frontend/test/copy-facts.test.mjs` | a stale story count in page copy, and any dash or kill-list word in a frontend string literal or JSX text |
 | `frontend/test/labels.test.mjs` | the one lean ladder; asserts the word "Flat" is gone (a card says Balanced, Not measured, Contested, or a direction) |
+| `frontend/test/css-parity.test.mjs` | a class selector nothing in `app/` references (1,168 of 3,109 were dead on 2026-09-21); prints the reverse direction too |
+| `frontend/scripts/verify-headless.mjs` | the product in a browser: console and hydration errors, a link to a page the export does not carry, a second `h1` or masthead, a title outside the grammar, a masthead that disagrees with the URL, a control with no name, a dash in chrome, a focus ring that is not there, axe WCAG 2.1 AA; and the scenarios (search, theme, drawer, Sigil, shortcuts, banner, player, Paper parity, the brand layer). `--quick` in CI, the full grid by hand |
 
 Every one of these runs in `auto-merge-claude.yml`. Nine of them did not until
 2026-09-21, which is the whole reason the line above this table is worth
@@ -316,7 +318,13 @@ covers; the masthead reads VOID NEWS · History. Podcast channels are all
 and `Page | Section | Void News` for a leaf (`sectionTitle()` in
 `lib/siteMeta.ts`). Themes stay: History keeps its archival paper and umber,
 Weekly its magazine red; a section overrides at most an accent ramp, its
-paper, its card surface and its grain.
+paper, its card surface and its grain. The browser wears the section too,
+quietly: the status bar is the section's paper (never its accent), the
+scrollbar and the selection take its accent, the nameplate draws its rule in,
+a long read carries a brass reading rule under the masthead, the wordmark's
+beam rocks while audio plays, and a Deep Dive or a History event prints as a
+sheet with its own address. All of it is `app/styles/brand.css` plus one
+attribute, and every touch is asserted by the headless sweep.
 
 Internal identifiers were deliberately NOT renamed in the 2026-08-03 rebrand:
 routes (`/weekly`, `/history`), `.void--news` classes, `void-news-*` storage

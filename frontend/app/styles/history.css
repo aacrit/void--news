@@ -4920,7 +4920,9 @@
 }
 
 .hist-longview-toggle__btn--active {
-  background: var(--hist-accent);
+  /* The accent alone read 4.1:1 under the paper-coloured label in dark mode;
+     a fifth of the page ground mixed in takes it past 5:1 in both modes. */
+  background: color-mix(in srgb, var(--hist-accent) 82%, var(--hist-bg));
   color: var(--hist-paper-fixed, #F2EDE0);
 }
 

@@ -22,6 +22,7 @@
      The radio panel (#1A1816) is always dark regardless of theme.
      This fixed value ensures 6.71:1 contrast on that surface. */
   --voice-accent:       #4DAFA0;
+  --voice-ink:          #1F6A5F;  /* the teal as text: 5.1:1 on the console surface */
   --voice-accent-dim:   #3D9A8C;
   --voice-accent-ghost: rgba(77, 175, 160, 0.08);
   --voice-accent-glow:  rgba(77, 175, 160, 0.15);
@@ -560,6 +561,7 @@
 
   /* ── Voice Accent — scoped to radio console ── */
   --voice-accent:       #4DAFA0;
+  --voice-ink:          #48A092;  /* 5.7:1 on #1A1816 */
   --voice-accent-dim:   #3D9A8C;
   --voice-accent-ghost: rgba(77, 175, 160, 0.08);
   --voice-accent-glow:  rgba(77, 175, 160, 0.15);
@@ -669,7 +671,7 @@
   --palette-news-ink: #D89A7C;
   --palette-weekly: #EF5350;
   --palette-weekly-paper: #1E1A16;
-  --palette-history: #8B7355;
+  --palette-history: #A38B6E;  /* 5.5:1 on the History paper #1A1612; #8B7355 read 4.0:1 in the 14px nameplate */
   --palette-revolt: #6AA0FF;
   --palette-onair-surface: #1A1816;
 

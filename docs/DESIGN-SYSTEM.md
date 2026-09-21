@@ -1,7 +1,12 @@
 # Void News Design System: "Cinematic Press"
 
-**Version:** 3.0
+**Version:** 3.1
 **Last updated:** 2026-09-21
+
+**What changed in v3.1 (same day):** the browser-chrome layer
+(`styles/brand.css`, section 5), print for the two long reads (section 12),
+the reading rule and the on-air beam (section 10), and the headless sweep as
+the gate on all of it (section 14).
 
 **What changed in v3.0:** rewritten against the code after the frame was
 unified: one masthead and footer for every route, sections as skins rather
@@ -213,8 +218,12 @@ PF-01, IM-01). The list above is the target; this paragraph is the open work.
 ```
 tokens -> layout -> typography -> components -> animations -> mobile-feed
 -> desktop-feed -> layout-zones -> skybox-banner -> floating-player
--> mobile-nav -> responsive -> onboarding
+-> mobile-nav -> responsive -> onboarding -> brand
 ```
+
+`brand.css` is last on purpose: it is the layer that sits on top of the
+section skins (the scrollbar, the selection, the nameplate rule, the reading
+rule, the on-air beam, print for the long reads), and it must win a tie.
 
 Route-scoped sheets are imported from their own `layout.tsx` or component, so
 they ship only with that route: `spectrum.css` (`/sources`), `verify.css` and
@@ -282,6 +291,26 @@ shared link, meets a headline before a bug-report request; the masthead's
 badge carries the posture until then. A visit is counted once per browser
 session, a dismissal lasts fourteen days, and nothing renders when storage is
 unavailable.
+
+### The browser wears the section (`styles/brand.css`)
+
+Six touches, each a token and a rule, none of them script, all of them
+asserted by `scripts/verify-headless.mjs` so that a touch which quietly rots
+fails a gate instead of fading out:
+
+| Touch | Rule | Section-aware by |
+|---|---|---|
+| Status bar | `theme-color` from the `viewport` export of the root, History and Weekly layouts: the section's **paper**, never its accent. `ThemeToggle` rewrites both metas from `--nav-paper`, the custom property the masthead is painted with (a property does not transition, so it is already the new value the moment the mode flips) | the layout that exports it |
+| Scrollbar | `html { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent }` plus the WebKit pseudo-elements, no radius | `:root:has(.hist-page)` and `:has(.wk-page)` retint `--scrollbar-thumb` with the section accent mixed into its paper |
+| Selection | 24% of the accent under the ink, `color-mix`; the old inversion survives only under `@supports not (color-mix)` | the same two selectors swap the accent |
+| Nameplate | `.nav-nameplate::after` draws a 1px rule in from the left on hover, focus and `aria-current`, on `--dur-step` and `--ease-unfold` | `--nav-accent` |
+| Reading rule | on a long read only (`.story-page`, `.hist-hearing-page`, `.wk-issue`), a 2px brass `.nav-header::after` scales with `animation-timeline: scroll(root block)`; nothing under reduced motion or where the timeline is unsupported | brass, deliberately not the accent |
+| On air | `NavBar` sets `data-playing` from `useAudio().isPlaying`; the wordmark's beam rocks three degrees each way over six seconds in brass (`brand-on-air`), never the lean sweep, off under reduced motion | brass |
+
+What is NOT in the layer, with the reason: the loading skeleton's ink doodle
+(a rare client refetch state with inline radii, not worth a rule) and
+cross-document view transitions (they would cross-fade the sticky masthead
+against itself, and the React API is behind an experimental flag).
 
 ---
 
@@ -459,6 +488,9 @@ Easings, the five the system allows: `--ease-cinematic`
 | Inline Deep Dive | Open | Section cascade, `translateY(12px)` to 0 |
 | Theme toggle | Tap | Cross-fade plus a 700ms warmth swell on `.page-main`, zero layout shift |
 | History timeline | Scroll | Native snap, plus a CSS scroll-driven parallax (section 13) |
+| Reading rule | Scroll, long reads only | `.nav-header::after` scales 0 to 1 on a scroll timeline, no listener |
+| Wordmark beam | Audio playing | `brand-on-air`, 3 degrees each way over 6s, brass |
+| Nameplate rule | Hover, focus, current | `scaleX(0)` to 1 from the left, `--dur-step` on `--ease-unfold` |
 
 ### Reduced motion
 
@@ -527,6 +559,14 @@ a property so a page that needs more room widens the token rather than
 overriding the rule), one type ramp off `--text-*`, spacing from `--space-*`,
 radii from the three tokens. Page files layer on top and win, being imported
 after.
+
+### Print for the long reads (`styles/brand.css`)
+
+A Deep Dive page and a History event print the way Paper does: the masthead,
+footer, bars, banner, player, vignette and rail are gone, the paper is white
+and the ink black, every reveal is revealed, and the sheet opens with
+`components/PrintMast.tsx` (the wordmark and the page's own address, hidden on
+screen). Paper keeps its own sheet.
 
 ### Paper (`frontend/app/paper/paper.css`)
 
@@ -624,6 +664,24 @@ vitrine makes you lean in. Connection types are drawn as glyphs, not labels:
 - **Touch targets** 44x44px minimum.
 - **Zoom** to 200% with no horizontal scroll, asserted by
   `frontend/scripts/verify-responsive.mjs`.
+- **The sweep.** `frontend/scripts/verify-headless.mjs` loads every route
+  family at 390, 768, 1024 and 1440 in both modes and asserts: no console or
+  hydration error, no same-origin 4xx, no dangling link, one `h1`, one
+  masthead and footer with the right `data-section` and `aria-current`, a
+  name on every control, no dash in chrome, the skip link first in the Tab
+  order with a visible ring, and axe-core at WCAG 2.1 AA (critical and
+  serious fail). Then the scenarios: Deep Dive inline and full page, search by
+  three routes, the theme toggle and both `theme-color` metas, the drawer's
+  focus trap, the Sigil's popup, the shortcuts overlay telling the truth,
+  the banner's second-visit rule, the player's presence per route, Paper
+  parity, and the brand layer above. `--quick` runs in CI; the full grid by
+  hand before a release. Its first run found six contrast failures (the
+  dateline's stacked opacities, the player clock and chapter title, the
+  History nameplate in dark, the long-view toggle), a control nested in a
+  control (the player pill), a focusable row under `aria-hidden` (the year
+  ribbon), a doubled masthead on the phone Deep Dive, and a lead Sigil whose
+  popup closed a frame after it opened because the hover shift on its
+  headline had trapped it under the stretched link.
 ---
 
 ## 15. Containment: `overflow-x: clip`, never `hidden`

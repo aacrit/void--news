@@ -856,6 +856,7 @@ export default function HistoryLanding({
               key={item.index}
               className={`hist-tl-year-ribbon__year${item.distance === 0 ? " hist-tl-year-ribbon__year--focused" : ""}`}
               style={{ "--yr-dist": item.distance } as React.CSSProperties}
+              tabIndex={-1}
               onClick={() => {
                 const station = stationRefs.current[item.index];
                 if (station) {

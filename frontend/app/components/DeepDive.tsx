@@ -14,13 +14,12 @@ import {
   ShareNetwork,
 } from "@phosphor-icons/react";
 import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel, DisputedClaim } from "../lib/types";
-import { fetchDeepDiveData, fetchLastPipelineRun } from "../lib/supabase";
+import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
 import { SITE_URL } from "../lib/siteMeta";
 import { hapticLight } from "../lib/haptics";
 import { findHistoryContext } from "../lib/historyContext";
 import Sigil from "./Sigil";
-import NavBar from "./NavBar";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
 import BiasSnapshot from "./BiasSnapshot";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
@@ -35,9 +34,9 @@ import LazyOnView from "./LazyOnView";
 
    This is NOT a modal, backdrop, or bottom sheet. It fills the viewport as its
    own page and REPLACES the feed (HomeContent renders it instead of MobileFeed
-   on the mobile branch). It mounts the Void News masthead (<NavBar/>) at the
-   top exactly like /onair, pushes a history entry on open so the hardware Back
-   button returns to the feed, and offers prev/next story walkers.
+   on the mobile branch). It sits under the one masthead app/layout.tsx mounts,
+   pushes a history entry on open so the hardware Back button returns to the
+   feed, and offers prev/next story walkers.
 
    One scrollable page (2026-08-11): the old Story / Spread segmented switch was
    removed; the summary, spectrum, coverage meta, and source columns now stack in
@@ -64,7 +63,7 @@ interface DeepDiveProps {
   storyIndex?: number;
   /** Total stories in the visible feed. */
   totalStories?: number;
-  /** Pipeline completed_at for the NavBar "as of" dateline. */
+  /** Accepted for call-site compatibility; the masthead in app/layout.tsx owns the dateline. */
   editionBuiltAt?: string | null;
   /** Accepted for call-site compatibility (desktop FLIP origin). Unused here. */
   originRect?: DOMRect | null;
@@ -166,7 +165,6 @@ export default function DeepDive({
   onNavigate,
   storyIndex = -1,
   totalStories = 0,
-  editionBuiltAt = null,
 }: DeepDiveProps) {
   const [liveData, setLiveData] = useState<DeepDiveData | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(false);
@@ -175,18 +173,6 @@ export default function DeepDive({
   const [analysisExpanded, setAnalysisExpanded] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   const shareTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  /* NavBar "as of" dateline. Seeded from the prop (HomeContent already knows the
-     pipeline time); fetches as a fallback so the masthead matches Home. */
-  const [builtAt, setBuiltAt] = useState<string | null>(editionBuiltAt);
-  useEffect(() => {
-    if (builtAt) return;
-    let alive = true;
-    fetchLastPipelineRun().then((run) => {
-      if (alive && run?.completed_at) setBuiltAt(run.completed_at);
-    });
-    return () => { alive = false; };
-  }, [builtAt]);
 
   // Stable ref for onClose — used by the popstate listener without re-binding.
   const onCloseRef = useRef(onClose);
@@ -486,10 +472,9 @@ export default function DeepDive({
 
   return (
     <div className="page-container">
-      {/* Void News masthead — same top bar as Home / On Air. Search is omitted
-          (the overlay searches the feed, which this page has replaced). */}
-      <NavBar editionBuiltAt={builtAt} />
-
+      {/* The masthead is mounted once, in app/layout.tsx. Mounting a second
+          NavBar here stacked two mastheads on the phone Deep Dive
+          (headless sweep, 2026-09-21). */}
       <main id="main-content" className="dd-page" aria-label={`Deep dive: ${story.title}`}>
         {/* Top toolbar — Back to feed + prev/next + share. */}
         <div className="dd-page__bar">

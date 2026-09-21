@@ -982,7 +982,12 @@
      translucent ground let feed content bleed through it while scrolling.
      Dropping backdrop-filter also removes the composited layer that used to
      freeze .nav-inner's max-width on a bfcache restore. */
-  background-color: var(--bg-primary);
+  /* --nav-paper is what the bar is painted with. ThemeToggle reads it to set
+     the status bar colour: a custom property does not transition, so it is
+     already the new value the moment the mode flips, where background-color
+     is still mid cross-fade. Section skins override it below. */
+  --nav-paper: var(--bg-primary);
+  background-color: var(--nav-paper);
   border-bottom: 1px solid var(--glass-border);
   transition: background-color var(--dur-morph) var(--ease-cinematic);
 }
@@ -1384,10 +1389,11 @@ button:focus-visible .sigil-word__beam {
   margin: 0 var(--space-1);
   opacity: 0.4;
 }
-.nav-dateline-line__time {
-  opacity: 0.7;
-}
 
+/* The time and the "as of" prefix used to sit at opacity 0.7 and 0.8 on top of
+   --fg-muted, which is tuned to exactly 4.5:1: the compound read 3.5:1 and
+   2.7:1 in the headless sweep (2026-09-21). Hierarchy comes from size and
+   tracking now, and the colour stays at the token. */
 /* ---- Dateline inline (Tier 3) — between logo and utility buttons -------- */
 /* JetBrains Mono, very subtle. Fills remaining flex space, right-aligned.
    Shown only >=1280px: narrower desktop rows leave it so little room it
@@ -1401,7 +1407,6 @@ button:focus-visible .sigil-word__beam {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 0.82em;
-  opacity: 0.8;
 }
 
 /* Mobile dateline — compact time (with optional date), hidden on desktop.
@@ -3654,10 +3659,16 @@ button:focus-visible .sigil-word__beam {
   .story-card:hover .story-card__summary,
   .lead-story:hover .lead-story__headline-text,
   .lead-story:hover .lead-story__summary,
-  .lead-story:hover .lead-headline,
+  .lead-story:hover .lead-headline__text,
   .lead-story:hover .lead-summary {
     transform: translateX(2px);
   }
+  /* The shift is on the TEXT span, never on .lead-headline itself: the Sigil
+     lives inside that h2, and a transform there makes it a stacking context
+     with z-index auto, which paints under the card's stretched link
+     (z-index 2). Hovering the lead Sigil then opened its popup and lost the
+     pointer to the link a frame later, closing it after 240ms. Caught by
+     scripts/verify-headless.mjs, 2026-09-21. */
 }
 
 /* ---- Reduced motion — collapse all Tier 2 additions -------------------- */
@@ -3712,7 +3723,7 @@ button:focus-visible .sigil-word__beam {
   .story-card:hover .story-card__summary,
   .lead-story:hover .lead-story__headline-text,
   .lead-story:hover .lead-story__summary,
-  .lead-story:hover .lead-headline,
+  .lead-story:hover .lead-headline__text,
   .lead-story:hover .lead-summary {
     transform: none;
     transition: none;
@@ -4057,14 +4068,16 @@ button:focus-visible .sigil-word__beam {
 :root:has(.hist-page) .nav-header,
 :root:has(.hist-page) .site-footer {
   --nav-accent: var(--palette-history);
-  background-color: var(--hist-bg);
+  --nav-paper: var(--hist-bg);
+  background-color: var(--nav-paper);
   border-color: var(--hist-border-subtle);
   color: var(--hist-ink);
 }
 :root:has(.wk-page) .nav-header,
 :root:has(.wk-page) .site-footer {
   --nav-accent: var(--palette-weekly);
-  background-color: var(--wk-paper);
+  --nav-paper: var(--wk-paper);
+  background-color: var(--nav-paper);
 }
 :root:has(.hist-page) body,
 :root:has(.wk-page) body {

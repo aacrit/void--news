@@ -10,6 +10,7 @@ import "../styles/story-page.css";
 
 import { useCallback, useRef, useState } from "react";
 import Link from "next/link";
+import PrintMast from "./PrintMast";
 import { ArrowLeft, ShareNetwork } from "@phosphor-icons/react";
 import type { Story, StorySource } from "../lib/types";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
@@ -118,6 +119,7 @@ export default function StandaloneDeepDive({
         aria-label={`Story: ${story.title}`}
       >
         <div className="story-page__inner">
+          <PrintMast path={story.permalink ?? `/story/${story.id}/`} />
           {/* Top toolbar — Go to today's feed + Share. A shared archive story
               must never inline into today's feed, so this is an explicit link. */}
           <div className="dd-page__bar">

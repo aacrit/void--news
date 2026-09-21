@@ -194,12 +194,30 @@ body:has(.mms--open) .fp {
 }
 
 /* Track info */
+/* A button since 2026-09-21: the pill itself was role="button" with the play
+   button inside it, which is a control nested in a control (axe
+   nested-interactive). The pill is a plain surface now; this is the keyboard
+   way in, and the play button sits beside it. */
 .fp__info {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   min-width: 0;
   flex: 1;
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.fp__info:focus-visible {
+  outline: 2px solid var(--fp-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }
 
 .fp__rec-dot {
@@ -224,7 +242,8 @@ body:has(.mms--open) .fp {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: color-mix(in srgb, var(--fp-accent) 50%, transparent);
+  /* Text is ink, not accent: the accent at 50% read 2.8:1 in light mode. */
+  color: var(--fg-muted);
   white-space: nowrap;
 }
 
@@ -237,7 +256,7 @@ body:has(.mms--open) .fp {
   text-transform: none;
   letter-spacing: 0;
   font-size: var(--text-xs);
-  color: color-mix(in srgb, var(--fp-accent) 80%, transparent);
+  color: var(--fg-primary);
   min-width: 0;
   max-width: 22ch;
   overflow: hidden;
@@ -248,7 +267,7 @@ body:has(.mms--open) .fp {
   font-family: var(--font-data);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
-  color: color-mix(in srgb, var(--voice-accent) 65%, transparent);
+  color: var(--voice-ink);
   white-space: nowrap;
   min-width: 28px;
   text-align: right;

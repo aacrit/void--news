@@ -234,6 +234,16 @@ accruing in git history.
   IP_SALT`) — the checked-in value in `worker/wrangler.toml` is a dev
   placeholder. The D1 `database_id` there is genuinely provisioned.
 - iOS/Android signing, first store submission, branch protection.
+- 74 class names are written in markup with no rule behind them (the reverse
+  direction of `frontend/test/css-parity.test.mjs`, printed on every run, not
+  failing). Among them `.dd-page__section`, `.hist-hr-account__type`,
+  `.fp__playlist`. Each is either a hook nothing styles yet or a name that
+  outlived its CSS; the owner of each component decides which.
+- The section links in the masthead have no hover draw-in; only the nameplate
+  does. The sweep records this as `[skip] section-link-draw`, on purpose: the
+  current-page mark under a section link is a different device and adding a
+  second rule under the same word was judged noise. Revisit if the nameplate
+  rule reads well after a week.
 
 ## History: 70 over-escaped apostrophes reach the reader
 

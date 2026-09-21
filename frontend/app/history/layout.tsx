@@ -1,4 +1,18 @@
 import '../styles/history.css';
+import type { Viewport } from "next";
+
+/* The status bar wears the History paper (--hist-bg in both modes), never
+   the accent: the bar is part of the page, not a badge. ThemeToggle keeps
+   the two metas in step when the reader switches mode. */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F2EDE0" },
+    { media: "(prefers-color-scheme: dark)", color: "#1A1612" },
+  ],
+};
 
 /* ===========================================================================
    History Layout: wraps all /history routes.

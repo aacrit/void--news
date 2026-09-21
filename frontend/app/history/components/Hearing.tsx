@@ -1,4 +1,5 @@
 import Link from "next/link";
+import PrintMast from "../../components/PrintMast";
 import type { CSSProperties } from "react";
 import type { HistoricalEvent, ConnectionType } from "../types";
 import type { Hearing as HearingModel, HearingBlock, HearingSection } from "../hearing";
@@ -360,6 +361,7 @@ export default function Hearing({ event, hearing, nextEvent }: HearingProps) {
 
   return (
     <div className="hist-event-detail hist-hearing-page">
+      <PrintMast path={`/history/${event.slug}/`} />
       {/* ── HERO — kept as it was: image, date, title, subtitle, Listen ── */}
       <section className="hist-stage hist-stage--scene" id={HERO_ID}>
         <div

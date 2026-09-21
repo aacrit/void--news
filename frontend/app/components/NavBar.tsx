@@ -7,6 +7,7 @@ import { MagnifyingGlass } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
 import LogoFull from "./LogoFull";
 import ExperimentalBadge from "./ExperimentalBadge";
+import { useAudio } from "./AudioProvider";
 import { BASE_PATH, getEditionTimestampLocal, getEditionDatelineUTC } from "../lib/utils";
 
 /* ---------------------------------------------------------------------------
@@ -158,11 +159,17 @@ export default function NavBar({
     else window.dispatchEvent(new CustomEvent(SEARCH_EVENT));
   };
 
+  /* While the shared player is playing, the wordmark's beam rocks in brass
+     (brand.css, "On air"). The attribute is the only thing the bar does with
+     audio; the player owns the rest. */
+  const { isPlaying } = useAudio();
+
   return (
     <header
       className="nav-header anim-cold-open-nav"
       data-section={section}
       data-scroll-compact={scrollCompact ? "true" : undefined}
+      data-playing={isPlaying ? "true" : undefined}
     >
       <nav className="nav-inner" aria-label="Main navigation">
         <div className="nav-left">

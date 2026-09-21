@@ -198,9 +198,9 @@ export default async function RootLayout({
         <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-414x896.png`} media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
         <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-375x812.png`} media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
         <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-375x667.png`} media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
-        {/* Status bar integration — matches app chrome to warm paper tones */}
-        <meta name="theme-color" content="#1C1A17" media="(prefers-color-scheme: dark)" />
-        <meta name="theme-color" content="#F0EBDD" media="(prefers-color-scheme: light)" />
+        {/* theme-color comes from the `viewport` export above (and from the
+            History and Weekly layouts, which wear their own paper). A second
+            hand-written pair here doubled the metas until 2026-09-21. */}
         {/* Inline script to set theme + viewport before first paint — avoids flash */}
         <script
           dangerouslySetInnerHTML={{

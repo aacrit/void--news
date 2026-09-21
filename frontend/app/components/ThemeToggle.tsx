@@ -24,6 +24,27 @@ function getThemeFromStorage(): "light" | "dark" {
 
 const subscribe = () => () => {};
 
+/* The masthead's paper as a custom property: read the moment data-mode flips,
+   before the background-color transition has moved. */
+function mastheadPaper(): string {
+  const nav = document.querySelector<HTMLElement>(".nav-header");
+  const v = nav ? getComputedStyle(nav).getPropertyValue("--nav-paper").trim() : "";
+  return v || getComputedStyle(document.documentElement).getPropertyValue("--bg-primary").trim();
+}
+
+/* Any CSS colour to #RRGGBB, through the engine's own parser. */
+function resolveHex(value: string): string | null {
+  if (!value) return null;
+  const probe = document.createElement("span");
+  probe.style.color = value;
+  document.body.appendChild(probe);
+  const rgb = getComputedStyle(probe).color;
+  probe.remove();
+  const m = rgb.match(/\d+(\.\d+)?/g);
+  if (!m || m.length < 3) return null;
+  return "#" + m.slice(0, 3).map((n) => Math.round(Number(n)).toString(16).padStart(2, "0")).join("").toUpperCase();
+}
+
 export default function ThemeToggle() {
   const mounted = useSyncExternalStore(subscribe, () => true, () => false);
   const [mode, setMode] = useState<"light" | "dark">(getThemeFromStorage);
@@ -35,10 +56,11 @@ export default function ThemeToggle() {
     document.documentElement.setAttribute("data-mode", next);
     localStorage.setItem("void-news-theme", next);
 
-    // Update status bar color to match app chrome
-    const themeColor = next === "light" ? "#F0EBDD" : "#1C1A17";
-    document.querySelector('meta[name="theme-color"][media*="dark"]')?.setAttribute("content", themeColor);
-    document.querySelector('meta[name="theme-color"][media*="light"]')?.setAttribute("content", themeColor);
+    // The status bar follows the masthead. The bar is painted with --nav-paper
+    // (components.css), which the section skins override, so History reads
+    // its archival paper here and Weekly its magazine stock, not a site literal.
+    const themeColor = resolveHex(mastheadPaper()) ?? (next === "light" ? "#F0EBDD" : "#1C1A17");
+    document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute("content", themeColor));
 
     // Golden hour pulse — cinematic color grade flash on theme switch.
     // Targets .page-main (not .page-container) because the color grade filter
