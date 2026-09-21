@@ -265,9 +265,9 @@ the block. Not a regex.
 Worth doing with the tree quiet, since the same five files were being rewritten
 by the dash pass when this was found.
 
-## History audio: four episodes are stale against their scripts
+## History audio: five episodes are stale against their scripts
 
-Their scripts changed on 2026-09-20 and the rendered MP3 no longer matches:
+Their scripts changed on 2026-09-20 and 2026-09-21 and the rendered MP3 no longer matches:
 
 - `ottoman-empire` — a fabricated Bayezid II quotation removed, the surviving
   facts folded into SCENE 2 as narration
@@ -276,6 +276,9 @@ Their scripts changed on 2026-09-20 and the rendered MP3 no longer matches:
   1979, when the monarchy fell; it was proclaimed 1 April after a referendum
 - `fall-of-constantinople` — "within forty years" was false for voyages that
   took 44 and 45; now "within half a century"
+- `mongol-conquest-baghdad` (2026-09-21): "Some sources say he was made to watch
+  his sons killed first" cut from SCENE 3; the record names four chroniclers
+  and attaches the claim to none, so the YAML dropped it the same day
 
 `tests/test_history_audio.py` names these automatically on a **full clone**, by
 comparing each episode's `publishedAt` to its script's last commit. At
