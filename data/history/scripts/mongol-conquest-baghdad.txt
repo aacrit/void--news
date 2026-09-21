@@ -36,7 +36,7 @@ M: They swept through the city like hungry falcons attacking a flock of doves, o
 ## SCENE 3 | The killing
 N: The killing that followed was not chaos. It was organized: the army divided into units, and every unit given a target.
 N: Accounts of how long it lasted disagree. Some say seven days. Others count forty.
-N: Al-Musta'sim was captured alive. Mongol custom held that royal blood must never touch bare ground, or it would offend the Eternal Blue Sky, Tengri. So the last Abbasid caliph was rolled inside a carpet and trampled by horses. Some sources say he was made to watch his sons killed first.
+N: Al-Musta'sim was captured alive. Mongol custom held that royal blood must never touch bare ground, or it would offend the Eternal Blue Sky, Tengri. So the last Abbasid caliph was rolled inside a carpet and trampled by horses.
 
 ## DOCUMENT | Rashid al-Din Hamadani | Jami al-Tawarikh | c. 1307
 N: Rashid al-Din served the Mongol Ilkhanid court and had access to its own military records. He put a number on every unit's target.

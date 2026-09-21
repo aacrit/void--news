@@ -36,7 +36,7 @@ summary: 'At 1:23:40 a.m. on April 26, 1986, operators at the Chernobyl Nuclear 
 
   Between April 27 and May, some 1,800 helicopter sorties dumped over 5,000 tons of sand, clay, lead, and boron onto the exposed core. Roughly 600,000 people, most of them conscripted soldiers and civilian
   workers called "liquidators," were sent to build a concrete sarcophagus over the ruin, bury topsoil, and shoot contaminated animals. Many received doses far above safe limits in exchange for a certificate
-  and a small pension. The exclusion zone drawn around the plant, 2,600 square kilometers, remains largely uninhabited in 2026.
+  and a small pension. The exclusion zone drawn around the plant, 2,600 square kilometers, was never reopened to resettlement.
 
   '
 significance: 'Chernobyl released roughly 400 times more radioactive material than the Hiroshima bomb, contaminating large areas of Ukraine, Belarus, and Russia and depositing fallout across Europe. The
@@ -92,7 +92,7 @@ legacy_points:
 - The state hid a meltdown from its own citizens for 36 hours; the world found out when a Swedish plant's alarm caught the fallout on a worker's shoes
 - Roughly 600,000 liquidators were sent into the zone; many received a certificate and a pension in exchange for their exposure
 - The death toll spans two orders of magnitude, from 31 (Soviet) to 4,000 (WHO) to 93,000+ (Greenpeace), depending on who is counting and how
-- Pripyat, a city of 49,360, was emptied in three and a half hours and never reoccupied; the 2,600 sq km exclusion zone persists in 2026
+- Pripyat, a city of 49,360, was emptied in three and a half hours and never reoccupied; the 2,600 sq km exclusion zone was never lifted
 - Gorbachev called Chernobyl, not perestroika, "perhaps the real cause of the collapse of the Soviet Union"
 primary_source_excerpts:
 - text: An accident has occurred at the Chernobyl nuclear power plant. One of the reactors was damaged. Measures are being taken to eliminate the consequences of the accident. Aid is being given to those
@@ -378,8 +378,7 @@ perspectives:
   viewpoint_type: academic
   region_origin: global
   narrative: 'Within the nuclear engineering community, the argument about Chernobyl is not whether the operators erred, but how much the reactor itself was a trap waiting to spring. The Soviet state''s
-    1986 account, delivered by Valery Legasov in Vienna, put the accident down to a catalogue of operator violations during a botched safety test. Six years later, the IAEA''s own advisory group revisited
-    that verdict in the report INSAG-7 and shifted the weight substantially toward the machine.
+    1986 account, delivered by Valery Legasov in Vienna, put the accident down to a catalogue of operator violations during a botched safety test. In 1992 the IAEA''s own advisory group revisited that verdict in the report INSAG-7 and shifted the weight substantially toward the machine.
 
 
     The RBMK reactor had two flaws that turned a bad test into a catastrophe. The first was a large positive void coefficient: when the cooling water in the core boiled into steam, the reactor did not slow
@@ -391,14 +390,11 @@ perspectives:
 
     INSAG-7 concluded that the operators did violate procedures, but that they were operating a reactor whose most dangerous characteristics had been concealed from them, in a safety culture that prioritized
     output and secrecy over defense in depth. This is the industry''s core lesson: Chernobyl was a systems failure, a product of design, training, regulation, and institutional secrecy interacting, not
-    a story of uniquely reckless men. Western reactors, with negative void coefficients and containment structures the RBMK lacked, were held to be categorically safer, though critics noted the industry
-    had strong incentives to draw that line firmly.
+    a story of uniquely reckless men. Western reactors, with negative void coefficients and containment structures the RBMK lacked, were held to be categorically safer, a line the industry had strong incentives to draw firmly.
 
 
     The consequences reshaped the industry. The remaining RBMK reactors were retrofitted to reduce the void coefficient and speed the scram. Global reactor construction, already slowing after Three Mile
-    Island in 1979, stalled further; Chernobyl became, with Fukushima in 2011, one of the two accidents that define public fear of nuclear power. That fear is itself contested: pro-nuclear analysts argue
-    that even counting Chernobyl and Fukushima, nuclear power has caused far fewer deaths per unit of energy than coal, and that the retreat from nuclear after 1986 locked in decades of fossil-fuel emissions.
-    In this framing Chernobyl is a lesson about a specific flawed reactor and a specific secretive state, wrongly generalized into a verdict on an entire technology.
+    Island in 1979, stalled further; Chernobyl became, with Fukushima in 2011, one of the two accidents that define public fear of nuclear power. That fear is itself contested. In this framing Chernobyl is a lesson about a specific flawed reactor and a specific secretive state, wrongly generalized into a verdict on an entire technology.
 
     '
   key_arguments:
