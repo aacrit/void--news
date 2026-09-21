@@ -206,7 +206,10 @@ def stitch_one(slug: str, manifest: dict, work: Path, *, upload: bool, force: bo
     last_word = outro_at + OUTRO_OVERLAP_MS
 
     promo_seg = hp.mastered(raw, ep_dir)
-    stitched, at = hp.stitch_post_roll(audio, outro_at, promo_seg, last_word_ms=last_word)
+    bed = hp.load_bed()
+    if bed is None:
+        raise StitchError(f"{slug}: the promo bed asset is missing")
+    stitched, at = hp.stitch_post_roll(audio, outro_at, promo_seg, last_word_ms=last_word, bed=bed)
     if len(stitched) != len(audio):
         raise StitchError(f"{slug}: length changed ({len(audio)} -> {len(stitched)} ms)")
 
@@ -229,8 +232,8 @@ def stitch_one(slug: str, manifest: dict, work: Path, *, upload: bool, force: bo
     if stitched[-TAIL_SILENCE_MS:].max_dBFS >= TAIL_SILENCE_DBFS:
         raise StitchError(f"{slug}: file no longer ends in silence "
                           f"({stitched[-TAIL_SILENCE_MS:].max_dBFS:.1f} dBFS)")
-    if stitched[-2000:].raw_data != audio[-2000:].raw_data:
-        raise StitchError(f"{slug}: the outro's fall was altered")
+    if stitched[-1000:].raw_data != audio[-1000:].raw_data:
+        raise StitchError(f"{slug}: the end of the file was altered")
 
     mp3 = ep_dir / f"{slug}.mp3"
     if not rp.encode_mp3(out_wav, mp3, "128k", 2):

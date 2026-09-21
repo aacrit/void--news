@@ -244,8 +244,8 @@ that un-hides the section). The audio is ready and reachable ahead of both.
 ## House promo (post-roll)
 
 The close ends on its particular, the outro starts, and a beat later the house
-voice reads a two-sentence promo for On Air, Weekly or the site under the
-outro's held bars. The episode's length does not change, so H-07 and the
+voice reads a two-sentence promo for On Air, Weekly or the site over the promo
+bed, under the outro's held bars. The episode's length does not change, so H-07 and the
 15.5 minute gate are untouched, and the outro still falls to silence after
 it. Selected by the sha256 of `history:<slug>`, so every re-render of an
 episode carries the same promo; it appears as a final chapter, kind
@@ -262,7 +262,7 @@ master is parked under the release tag `history-audio-clean` so a later copy
 change re-stitches from the original. Guards, measured on every episode:
 integrated loudness within 1 LU of the original, true peak at or below
 -0.8 dBTP, the promo within 3 dB of the last eight seconds of speech, the
-last 300 ms below -50 dBFS, and the outro's fall byte-identical. Workflow:
+last 300 ms below -50 dBFS, and the last second byte-identical. Workflow:
 `.github/workflows/stitch-promos.yml`.
 
 ## Staging

@@ -65,11 +65,13 @@ SECTION_NAMES = {"onair": "On Air", "weekly": "Weekly", "history": "History",
 # coming back. af_kore is on the ear-tested alternates list in
 # docs/ON-AIR-RADIO.md; af_sarah (also American) is the alternate.
 HOUSE_VOICE = os.environ.get("VOID_PROMO_VOICE", "af_kore")
-HOUSE_SPEED = float(os.environ.get("VOID_PROMO_SPEED", "0.95") or 0.95)
+# 0.86: slower than the programmes (CEO: "slow it down"); a station voice is
+# unhurried, and the bed under it does the moving.
+HOUSE_SPEED = float(os.environ.get("VOID_PROMO_SPEED", "0.86") or 0.86)
 HOUSE_WPM = 181.0 * HOUSE_SPEED   # af_kore's measured natural rate, house pace
 
 MIN_SECONDS = 5.0
-MAX_SECONDS = 9.0
+MAX_SECONDS = 10.0
 RENDER_TOLERANCE = 0.5            # a real render may land this far outside
 
 # Every number word a promo may say, and the fact in the code it is tied to.
@@ -103,9 +105,14 @@ ALLOWED_CLAIMS = {
 OUTRO_MS = 14000
 OUTRO_SILENT_MS = 13750
 END_MARGIN_MS = 1500
-LEAD_MS = 1200
-DUCK_DB = -8.0
+LEAD_MS = 1000
+# The outro is pulled well down while the promo bed plays; the bed, not the
+# outro, is the music under the promo (CEO: "more dramatic music").
+DUCK_DB = -12.0
 RAMP_MS = 250
+BED_LEAD_MS = 1200          # the bed swells in this long before the first word
+BED_GAIN_DB = 4.0           # over the asset's -34 dBFS RMS: about 10 dB under speech
+BED_MS = 13000              # the asset's length; silent from 12.5 s
 
 PROMO_CHAPTER_TITLE = "Also from Void"
 HISTORY_PROMO_CHAPTER_TITLE = "Also from Void News"
@@ -246,8 +253,9 @@ def validate(promos: list[Promo]) -> list[str]:
     P-05 "twenty" only while feed.json says twenty, and only with feed_size
     P-06 nothing borrowed, nothing from the kill list
     P-07 no em or en dash, no quotation marks, no exclamation mark
-    P-08 names_url agrees with the text
-    P-09 5-9 s estimated, and the recorded seconds are within a second of it
+    P-08 names_url agrees with the text; the second sentence is "Visit
+         news.voidvision.org to check out <section>." 
+    P-09 5-10 s estimated, and the recorded seconds are within a second of it
     P-10 claims are known; every section has at least three eligible promos
     """
     from utils.prohibited_terms import check_prohibited_terms
@@ -312,6 +320,9 @@ def validate(promos: list[Promo]) -> list[str]:
                             f"{'is' if SITE_HOST in p.text else 'is not'} in the text")
         if SITE_HOST not in p.text:
             findings.append(f"P-08 {tag}: the second sentence must send the listener to {SITE_HOST}")
+        sents = sentences(p.text)
+        if len(sents) == 2 and not re.match(rf"^Visit SITEHOST to check out .+", sents[1]):
+            findings.append(f"P-08 {tag}: second sentence must read 'Visit {SITE_HOST} to check out ...'")
 
         est = estimate_seconds(p)
         if not (MIN_SECONDS <= est <= MAX_SECONDS):
@@ -487,13 +498,26 @@ def _duck_window(mix, start_ms: int, end_ms: int, duck_db: float, ramp_ms: int):
     return mix[:a] + window._spawn(out.tobytes()) + mix[b:]
 
 
+def load_bed():
+    """The promo bed, or None (the promo then plays over the ducked outro)."""
+    try:
+        from briefing import radio_producer as rp
+
+        return rp._asset("promo_bed")
+    except Exception:
+        return None
+
+
 def stitch_post_roll(mix, outro_at_ms: int, promo, *, last_word_ms: int | None = None,
                      lead_ms: int = LEAD_MS, duck_db: float = DUCK_DB, ramp_ms: int = RAMP_MS,
-                     promo_gain_db: float = 0.0):
-    """Lay the promo under the outro's held bars. Returns (mix, promo_at_ms).
+                     promo_gain_db: float = 0.0, bed=None, bed_gain_db: float = BED_GAIN_DB):
+    """Lay the promo, and its bed, under the outro's held bars. Returns
+    (mix, promo_at_ms).
 
-    The mix's length never changes: the promo is overlaid, the music under it
-    is dipped, and the outro's fall and the room tone after it are untouched.
+    The mix's length never changes. The bed swells in `BED_LEAD_MS` before the
+    first word, the outro is pulled down for as long as the bed plays, the
+    promo is overlaid, and the bed's own fall hands the ending back to the
+    outro's fall and the room tone, which are untouched.
     """
     anchor = last_word_ms if last_word_ms is not None else outro_at_ms
     promo_at = int(anchor + lead_ms)
@@ -507,8 +531,17 @@ def stitch_post_roll(mix, outro_at_ms: int, promo, *, last_word_ms: int | None =
     p = promo.set_frame_rate(mix.frame_rate).set_channels(mix.channels)
     if promo_gain_db:
         p = p + promo_gain_db
-    ducked = _duck_window(mix, promo_at, promo_end, duck_db, ramp_ms)
-    return ducked.overlay(p, position=promo_at), promo_at
+    bed_at = max(0, promo_at - BED_LEAD_MS)
+    bed_end = promo_end + ramp_ms
+    out = mix
+    if bed is not None:
+        b = bed.set_frame_rate(mix.frame_rate).set_channels(mix.channels) + bed_gain_db
+        bed_end = min(bed_at + len(b), outro_at_ms + OUTRO_SILENT_MS - 300)
+        b = b[: bed_end - bed_at]
+        out = _duck_window(out, bed_at, bed_end, duck_db, ramp_ms).overlay(b, position=bed_at)
+    else:
+        out = _duck_window(out, promo_at, promo_end, duck_db, ramp_ms)
+    return out.overlay(p, position=promo_at), promo_at
 
 
 def append_promo_chapter(chapters: list[dict], promo: Promo, at_ms: int, total_ms: int, *,
@@ -546,7 +579,7 @@ def post_roll(mix, *, outro_at_ms: int, last_word_ms: int | None, plays_in: str,
         return mix, None
     try:
         stitched, at = stitch_post_roll(mix, outro_at_ms, voiced(raw, work, label),
-                                        last_word_ms=last_word_ms)
+                                        last_word_ms=last_word_ms, bed=load_bed())
     except PromoDoesNotFit as e:
         print(f"  [promo] {promo.id} does not fit ({e}); shipping without a promo")
         return mix, None

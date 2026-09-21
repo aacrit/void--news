@@ -108,7 +108,9 @@ treatment `history/data.ts` got in rev 69 before the 301 comes off.
 ## Watch on the next run
 
 **House promos (2026-09-20).** The pool (`data/promos/house.yaml`, 24 promos)
-validates and is rendered in `af_kore` (American, CEO: "prefer American voice");
+validates and is rendered in `af_kore` (American, CEO: "prefer American voice")
+at speed 0.86 (CEO: "slow it down") over the promo bed (CEO: "more dramatic
+music"); the second sentences follow "Visit news.voidvision.org to check out X";
 `af_sarah` is the alternate (`VOID_PROMO_VOICE`). On Air, Weekly and History
 pick a promo up at render time only when `data/promos/rendered/` carries a
 render whose sha matches the pool; otherwise they ship exactly as before.

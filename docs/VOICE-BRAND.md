@@ -340,7 +340,8 @@ The pool lives in `data/promos/house.yaml`; every rule below is asserted by
 `tests/test_house_promos.py`, and a pool that fails does not render.
 
 - **Two sentences.** A pitch, then the address. The first sentence earns the
-  second; the second sends the listener to news.voidvision.org.
+  second; the second is always "Visit news.voidvision.org to check out
+  <section>."
 - **Show the product, do not praise it.** One concrete thing the section does
   ("every line the two benches say is printed in the column"), never a
   claim about how good it is.
@@ -353,11 +354,11 @@ The pool lives in `data/promos/house.yaml`; every rule below is asserted by
 - **After the designed ending, under the outro.** On Air's tag, Weekly's open
   question and History's particular are all still the last words spoken in
   the programme's own voice. The promo is a different voice, the house
-  voice, under the outro's held bars, and the outro's own fall to silence
-  still closes the file.
+  voice, read slower than the programmes, over its own bed under the outro's
+  held bars, and the outro's own fall to silence still closes the file.
 
-> Every line the two benches say is printed in the column. The Argument,
-> Sundays, at news.voidvision.org.
+> Every line the two benches say is printed in the column. Visit
+> news.voidvision.org to check out The Argument.
 
 ## XI. The One-Line Test
 

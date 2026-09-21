@@ -150,6 +150,7 @@ RADIO_ASSETS = {
     "close_bed": "radio_close_bed.wav",
     "outro": "radio_outro.wav",
     "room": "radio_room_tone.wav",
+    "promo_bed": "radio_promo_bed.wav",   # under the house promo (house_promos.py)
 }
 # Beds rendered with an exact seam (_lock in generate_assets): these are looped
 # with NO crossfade, because a crossfade shortens every cycle and drifts the
