@@ -59,6 +59,22 @@ EM, EN = "—", "–"
 # dash gate; see the module docstring.
 VERBATIM_KEYS = {"quote", "text", "excerpt", "title", "caption_original"}
 
+# A quoted span ANYWHERE is also exempt, not only a field named "quote". The
+# reason quotations are spared is that the words are as the source printed
+# them, and that reason does not care which field holds them.
+#
+# ashoka-maurya-empire quotes Rock Edict XIII inside a perspective narrative:
+# "those who are well cared for in the conquered country - the friends,
+# acquaintances, companions, and relatives". Keyed on the field name alone this
+# gate would have demanded someone repunctuate a 3rd-century BCE edict to
+# satisfy a house style rule, which is precisely the inversion Rule 1 forbids.
+_QUOTED_SPAN = re.compile(r"[\u201c\"]([^\u201c\u201d\"]{2,600})[\u201d\"]")
+
+
+def outside_quotations(text: str) -> str:
+    """The text with every quoted span blanked, so only our own prose is judged."""
+    return _QUOTED_SPAN.sub(lambda m: " " * len(m.group(0)), text or "")
+
 # A speaker that is not a bare name is acceptable when the entry points
 # somewhere a reader could go, OR discloses its own mediation out loud. Both
 # satisfy Rule 1's "say so out loud or do not use it"; only a bare description
@@ -170,6 +186,7 @@ for path in EVENTS:
     for field, key, text in walk(ev):
         if key in VERBATIM_KEYS:
             continue
+        text = outside_quotations(text)
         if EM in text or EN in text:
             dash_hits += 1
             if dash_hits <= 25:
