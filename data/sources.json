@@ -513,7 +513,7 @@
     "tier": "international",
     "country": "DE",
     "type": "broadcast",
-    "political_lean_baseline": "unrated",
+    "political_lean_baseline": "center",
     "credibility_notes": "Germany's international broadcaster, funded by German federal tax revenue. Publishes in 30 languages. Known for balanced European perspective."
   },
   {
@@ -524,7 +524,7 @@
     "tier": "international",
     "country": "FR",
     "type": "broadcast",
-    "political_lean_baseline": "unrated",
+    "political_lean_baseline": "center",
     "credibility_notes": "French international news channel. Part of France Medias Monde (state-funded). Strong Africa and Middle East coverage."
   },
   {
@@ -1761,7 +1761,7 @@
     "tier": "international",
     "country": "CZ",
     "type": "broadcast",
-    "political_lean_baseline": "unrated",
+    "political_lean_baseline": "center",
     "credibility_notes": "US government-funded broadcaster targeting authoritarian countries in Europe and Asia. Editorially independent and professional. Considered credible for Eastern Europe/former Soviet region coverage. Maintains journalistic standards."
   },
   {
@@ -2576,8 +2576,9 @@
     "tier": "international",
     "country": "GH",
     "type": "broadsheet",
-    "political_lean_baseline": "unrated",
-    "credibility_notes": "State-owned daily, founded 1958. Ghana's newspaper of record."
+    "political_lean_baseline": "center",
+    "credibility_notes": "State-owned daily, founded 1958. Ghana's newspaper of record.",
+    "state_affiliated": true
   },
   {
     "id": "myjoyonline",
@@ -2631,8 +2632,9 @@
     "tier": "international",
     "country": "GH",
     "type": "broadsheet",
-    "political_lean_baseline": "unrated",
-    "credibility_notes": "Ghana's highest-circulation daily. State-owned but editorially credible."
+    "political_lean_baseline": "center",
+    "credibility_notes": "Ghana's highest-circulation daily. State-owned but editorially credible.",
+    "state_affiliated": true
   },
   {
     "id": "frontpage-africa",
@@ -3119,7 +3121,7 @@
     "tier": "international",
     "country": "CZ",
     "type": "broadcast",
-    "political_lean_baseline": "unrated",
+    "political_lean_baseline": "center",
     "credibility_notes": "Czech Radio's international English service. Since 1936."
   },
   {
@@ -3196,7 +3198,7 @@
     "tier": "international",
     "country": "CH",
     "type": "broadcast",
-    "political_lean_baseline": "unrated",
+    "political_lean_baseline": "center",
     "credibility_notes": "Swiss Broadcasting Corporation's international service. Covers UN, WTO, Red Cross in Geneva."
   },
   {
@@ -10855,7 +10857,7 @@
     "tier": "international",
     "country": "DE",
     "type": "broadcast",
-    "political_lean_baseline": "unrated",
+    "political_lean_baseline": "center",
     "credibility_notes": "Deutsche Welle Europe-focused feed. German public international broadcaster. Dedicated European affairs coverage including EU politics and policy."
   },
   {

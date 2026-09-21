@@ -155,6 +155,46 @@ treatment `history/data.ts` got in rev 69 before the 301 comes off.
 
 ---
 
+## The roster's `state_affiliated` flag is not applied consistently (CEO call)
+
+Found 2026-09-21 while answering "why can't we score the unscored". **Not
+acted on**, because acting on it either way changes how ~25 major outlets are
+scored and that is an editorial decision about what Void asserts.
+
+`tests/test_source_roster.py` reports the split every run:
+
+- **48 outlets carry `state_affiliated`.** Mostly state media whose alignment
+  is the dominant editorial signal (RT, CGTN, Xinhua, TASS, Global Times, Gulf
+  and Saudi state press), plus six democratic public broadcasters: SVT, NRK,
+  RTP, Tagesschau, SABC, Agencia Brasil.
+- **30 more are described in their own notes as publicly funded and carry no
+  flag.** Among them the BBC ("charter requires impartiality"), CBC ("funded
+  by parliamentary appropriation"), NPR, Yle, AFP, DPA, and **Voice of
+  America**, whose note reads "US federal government international broadcaster
+  operated by USAGM".
+
+The two groups are the same class of outlet under two different conventions.
+SVT is flagged; Yle is not. Tagesschau is flagged; the BBC is not.
+
+**Why it matters, concretely:** `_delta_max_for` gives a flagged outlet a text
+delta of 8 instead of the default, so its own words move its score far less
+and the baseline anchors harder. And `political_lean.py`'s `unscored` rule
+excludes a state-affiliated outlet outright. So the flag is not cosmetic; it
+changes both the number and whether the article counts.
+
+**The decision:** does `state_affiliated` mean *state-funded* (then the BBC,
+CBC, NPR, Yle, AFP and VOA all need it, and their scores tighten) or
+*state-aligned editorial control* (then SVT, NRK, RTP, Tagesschau, SABC and
+Agencia Brasil should lose it)? Either answer is defensible; picking one by
+inference is not, which is why nothing was changed.
+
+Recorded because an assertion demanding the first reading was written, ran, and
+flagged the BBC. It was downgraded to a report before it could be committed:
+"fixing" 25 rows on an unchecked inference would have introduced error while
+claiming to remove one.
+
+---
+
 ## Watch on the next run
 
 **Bias defaults after the step 6b fix (2026-09-21).** Step 6b used to rebuild

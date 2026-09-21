@@ -18,6 +18,92 @@ lives in this file.
 
 ---
 
+## rev 79: why the unscored are unscored, and the eight that should not have been (2026-09-21)
+
+**CEO: "when we say unscored, why can't we score them?"**
+
+Because `political_lean.py:1057` requires two things to be absent AT ONCE: the
+outlet has no left/right placement, and the article's own words carry no signal
+(2 or fewer distinct partisan terms, all three shifts under 2.0). It is not
+that a number cannot be computed. It is that `baseline 50 + shift 0 = 50`
+computed from two empty inputs is an invention wearing a measurement's
+clothes, which is the Rule 1 line and the difference from Ground News, which
+assigns everything a lean.
+
+**Why both inputs fail together: the axis is US-shaped, and so is everything
+that feeds it.**
+
+- **All 294 unrated outlets were non-anglosphere.** Zero US/UK/CA/AU/NZ/IE
+  outlets lacked a rating, so the roster was not a backlog. There is no
+  AllSides for Pakistan or Kenya.
+- **The 340-term lexicon is US discourse** even where it is not US-referential
+  by name. Only 12 terms name a US institution, but the "universal" vocabulary
+  is `systemic racism`, `intersectionality`, `white privilege`, `build the
+  wall`, `anchor baby`, `catch and release`. An article in Dawn about Pakistani
+  politics has framing, in a vocabulary this lexicon has never heard of.
+
+Measured share: 194 of 737 rows (26.3%) come from unrated outlets. That is a
+CEILING, not the unscored figure: it still contains step-6b-damaged rows that
+cannot be separated on this export.
+
+**Eight outlets were unscored because the roster disagreed with itself.** Not
+a limit of the engine. Tagesschau (Germany, ARD, public broadcaster) carried
+`center`; Deutsche Welle (Germany, federal-tax-funded public international
+broadcaster) carried `unrated`. Likewise NRK against Swissinfo, RTP against
+Radio Prague, and Ghana News Agency against two Ghanaian state-owned dailies
+in the same country. Now placed at `center`: Deutsche Welle, DW Europe,
+France 24, SWI Swissinfo.ch, Radio Prague International, Radio Free Europe /
+Radio Liberty, Ghanaian Times, Daily Graphic. 25 of 737 rows (3.4%) on the
+measured export, and 294 unplaced falls to 286.
+
+3.4%, not the 8% estimated before measuring: that estimate counted every
+Europe/international-broadcaster row, including Straits Times ("operates within
+Singapore's press framework"), SCMP ("editorial independence under scrutiny")
+and Cyprus Mail, which are deliberately NOT placed. Filing those at centre to
+reduce a count would be the invention this whole pass removes.
+
+**A refutation worth keeping, because it was nearly shipped.** The roster check
+was first written to assert that any outlet its notes describe as publicly
+funded must carry `state_affiliated`. It ran, and flagged 25 outlets including
+the BBC, CBC, NPR, Yle, AFP and Voice of America. Following it would have
+changed how the BBC is scored on an inference nobody had checked.
+
+Reading the rows instead of guessing: the roster's dominant convention is that
+state-FUNDED but editorially independent gets a real baseline and NO flag.
+Voice of America, note and all ("US federal government international
+broadcaster operated by USAGM"), is `center` with no flag; so are the BBC,
+CBC, Yle, NPR, AFP, DPA. The flag is for state media whose alignment is the
+dominant editorial signal, plus six democratic public broadcasters (SVT, NRK,
+RTP, Tagesschau, SABC, Agencia Brasil) that sit on the wrong side of that line.
+
+So the assertion was downgraded to a report, and the inconsistency went to
+`docs/OPEN-ITEMS.md` as a CEO decision: does the flag mean state-funded (the
+BBC needs it) or state-aligned (SVT should lose it)? It is not cosmetic;
+`_delta_max_for` gives a flagged outlet a text delta of 8 instead of the
+default, and `unscored` excludes a state-affiliated outlet outright. Of the
+eight placed above, only the two Ghanaian state-OWNED dailies took the flag,
+matching Ghana News Agency in the same country.
+
+**The control:** `tests/test_source_roster.py`, in CI. An outlet its own notes
+call state-owned or a public broadcaster may not sit at `unrated`; nothing
+carries the flag without a placement; every baseline is a rung `BASELINE_MAP`
+knows (a typo resolves to 50 silently, indistinguishable from assessed
+centrism); and the remaining 286 unplaced rows are asserted to be the axis's
+edge rather than a backlog, by requiring that no outlet in a country whose
+politics runs on this axis is left unplaced. Verified to fail by returning
+Deutsche Welle to `unrated`.
+
+**Still open**, and both were authorised but not started here: per-market
+English lexicons (Indian, Pakistani, Nigerian and Kenyan English political
+discourse is highly placeable, and the trap is documented in the code, where
+`fossil fuel`, `diversity`, `equity` and `housing crisis` were all REMOVED for
+firing on neutral reporting), and a second axis for politics that does not run
+left/right at all (India's cleavage is secular/Hindutva, Kenya's is
+ethnic-regional; no lexicon fixes a category error, and the 6-axis model is a
+locked decision).
+
+---
+
 ## rev 78: the bias engine was not the problem (2026-09-21)
 
 **CEO: "do we need to recalibrate the bias scores for the outlets? And do we
