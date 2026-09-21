@@ -4,10 +4,10 @@
    ========================================================================== */
 
 /* ---- CSS Cascade (load order matters) ----------------------------------
-   Route-scoped stylesheets (games, weekly, ship, film, about, pipeline,
-   command-center) are imported from per-route layout.tsx files so they
-   ship only on the routes that use them.  Keeps the homepage CSS bundle
-   focused on feed + deep-dive surfaces. */
+   Route-scoped stylesheets (games, weekly, ship, film, history, onair)
+   are imported from per-route layout.tsx files so they ship only on the
+   routes that use them.  Keeps the homepage CSS bundle focused on feed +
+   deep-dive surfaces. */
 @import url("./styles/tokens.css");
 @import url("./styles/layout.css");
 @import url("./styles/typography.css");

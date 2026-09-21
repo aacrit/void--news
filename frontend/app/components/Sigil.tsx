@@ -621,7 +621,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
       : "";
 
   const ringTitle = data.divergenceFlag === "divergent"
-    ? "Sources disagree significantly on this story"
+    ? "Sources split on this story"
     : data.divergenceFlag === "consensus"
       ? "Sources largely agree on this story"
       : undefined;

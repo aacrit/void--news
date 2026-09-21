@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import "../styles/about.css";
+import "../styles/prose-page.css";
 import "./privacy.css";
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default function PrivacyPage() {
       <header className="privacy__hdr">
         <p className="privacy__eyebrow">Void News / privacy</p>
         <h1>What we collect. What we don&rsquo;t.</h1>
-        <p className="privacy__updated">Last updated 2026-08-08.</p>
+        <p className="privacy__updated">Last updated 2026-09-21.</p>
       </header>
 
       <section>
@@ -83,8 +83,9 @@ export default function PrivacyPage() {
       <section>
         <h2>Data retention.</h2>
         <p>
-          Article text is retained for about a week, then removed by the daily
-          cleanup job.
+          Article text lives in the pipeline&rsquo;s working database for about a
+          week, and a compressed snapshot of that database is kept as a build
+          artifact for up to 90 days.
         </p>
       </section>
 

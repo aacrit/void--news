@@ -33,6 +33,20 @@
 /revolt      /  301
 /revolt/*    /  301
 
+# 2026-09-21 - Internal tooling is no longer served publicly. The command
+# center (a client-side password gate whose hash shipped in the bundle), the
+# pipeline diagram, the IG admin surface and the IG render route were all
+# reachable at 200 with no link and no robots rule. 301 them to home; the
+# /ig render templates stay in the build for manual social exports only.
+/command-center    /  301
+/command-center/*  /  301
+/admin             /  301
+/admin/*           /  301
+/pipeline          /  301
+/pipeline/*        /  301
+/ig                /  301
+/ig/*              /  301
+
 # 2026-08-03 — Games + Paper hidden from prod (temporarily). 301 to home.
 /games       /  301
 /games/*     /  301

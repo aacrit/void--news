@@ -141,7 +141,7 @@ export interface StorySource {
   tier: "us_major" | "international" | "independent";
   biasScores: BiasScores;
   lensData?: ThreeLensData;
-  /** Raw analysis confidence 0–1 from pipeline (optional, for BiasInspector) */
+  /** Raw analysis confidence 0-1 from pipeline (optional) */
   confidence?: number;
   /** Article title from source (for ComparativeView) */
   articleTitle?: string;

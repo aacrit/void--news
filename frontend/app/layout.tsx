@@ -58,8 +58,9 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://news.voidvision.org"),
   // Fallback title/description for routes that do not set their own metadata.
-  // The seven primary routes (/, /sources, /about, /ship, /onair, /paper,
-  // /games) each export a DISTINCT title + description + canonical. `keywords`
+  // The primary routes (/, /sources, /about, /ship, /onair, /history,
+  // /weekly, /listen) each export a DISTINCT title + description + canonical.
+  // /paper and /games are 301-hidden and no longer listed here. `keywords`
   // was removed 2026-08-09: search engines have ignored the meta keywords tag
   // for over a decade, so it was dead weight.
   title: "Void News. See through the void.",

@@ -19,6 +19,12 @@ identically in CI, locally, and against a Pages preview URL.
 Parsing is deliberately regex-over-rendered-DOM (stdlib only, no bs4): the story
 text is server-rendered into `story-card__summary` / `lead-summary` nodes, so we
 verify precisely the bytes a reader receives.
+
+One exception to the no-I/O rule, added 2026-09-21: `check_internal_routes_hidden`
+issues three HEAD requests, because "is /command-center still served?" cannot be
+answered from the homepage's bytes. It reads its origin out of the page's own
+canonical link, so it needs no new plumbing, and it never fails on a network
+error: only a live 200 is a defect.
 """
 
 from __future__ import annotations
@@ -687,6 +693,61 @@ def check_card_sigil_label(p: Page) -> list[str]:
     return out[:8]
 
 
+# Internal tooling must not be served to the public (brand audit 2026-09-21,
+# F-05). /pipeline/, /command-center/ and /admin/ig/ each answered 200 with no
+# link into them, no sitemap entry and no robots rule; the command center also
+# shipped its password hash in the bundle. The routes are deleted and
+# public/_redirects 301s the paths to home, but a redirect file is easy to drop
+# in a merge, and nothing on the homepage can show that it is gone. So this
+# check asks the origin directly.
+#
+# Origin comes from the page's own canonical link, so the check works wherever
+# the gate already runs (CI, a Pages preview, a hand-run URL) with no extra
+# argument. No canonical (a stripped fixture) means nothing to probe. Only a
+# 200 fails: a 301, a 404 and an unreachable host are all "not exposed".
+_INTERNAL_PATHS = ("/command-center/", "/admin/ig/", "/pipeline/")
+_CANONICAL_RE = re.compile(
+    r'<link[^>]+rel="canonical"[^>]+href="(https?://[^"/]+)'
+    r'|<meta[^>]+property="og:url"[^>]+content="(https?://[^"/]+)'
+)
+
+
+def _head_status(url: str, timeout: float = 10.0) -> int | None:
+    """Status of a single HEAD, redirects NOT followed. None => could not ask."""
+    import urllib.error
+    import urllib.request
+
+    class _NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            return None
+
+    opener = urllib.request.build_opener(_NoRedirect)
+    req = urllib.request.Request(url, method="HEAD",
+                                 headers={"Cache-Control": "no-cache"})
+    try:
+        with opener.open(req, timeout=timeout) as resp:
+            return resp.status
+    except urllib.error.HTTPError as e:
+        return e.code
+    except Exception:
+        return None
+
+
+def check_internal_routes_hidden(p: Page) -> list[str]:
+    m = _CANONICAL_RE.search(p.raw)
+    if not m:
+        return []
+    origin = (m.group(1) or m.group(2)).rstrip("/")
+    out = []
+    for path in _INTERNAL_PATHS:
+        if _head_status(f"{origin}{path}") == 200:
+            out.append(
+                f"{path} is served publicly (HTTP 200) at {origin}: internal "
+                f"tooling must 301 to / (public/_redirects) and stay out of the build"
+            )
+    return out
+
+
 CHECKS = [
     ("structural: single Top story", check_top_story),
     ("structural: wordmark not doubled", check_wordmark),
@@ -711,6 +772,7 @@ CHECKS = [
     ("consistency: card lean label == canonical (Sigil)", check_card_sigil_label),
     ("structural: every card links to /story/<uuid>/", check_card_anchor_coverage),
     ("integrity: confidence is real (not COUNT/5 proxy)", check_confidence_not_proxy),
+    ("exposure: internal tooling routes are not served", check_internal_routes_hidden),
 ]
 
 # Reported on every run, promoted to hard failures by --strict once the

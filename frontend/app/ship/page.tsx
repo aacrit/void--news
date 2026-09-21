@@ -11,9 +11,10 @@ export const metadata: Metadata = pageMetadata({
 });
 
 /* Ship board reverted to the simple feedback form for launch (2026-08-05).
-   ShipBoard.tsx is intact and un-rendered; restore it here when the
-   transparency board ships as a feature. The /ship route + ship_requests
-   linkage are unchanged so existing links keep working. */
+   ShipBoard.tsx was never re-rendered after that and was deleted on
+   2026-09-21 (brand audit B-03); git history holds it if the transparency
+   board comes back. The /ship route + ship_requests linkage are unchanged so
+   existing links keep working. */
 export default function ShipPage() {
   return (
     <main className="fb-page">
