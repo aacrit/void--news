@@ -99,7 +99,14 @@ impossible, not a note asking people to be careful:
 | `tests/test_weekly_audio_served.py` | an MP3 that is not what its own row says it is |
 | `tests/test_docs_facts.py` | this file's own numbers, against disk |
 | `frontend/scripts/verify-responsive.mjs` | content past the viewport, and sticky that does not stick |
-| `scripts/verify_production.py` | what the live page actually serves |
+| `scripts/verify_production.py` | what the live page actually serves, and that `/command-center`, `/admin`, `/pipeline` are not served at all |
+| `scripts/verify_sections.py` | served History (H-01..H-06), Weekly (W-01..W-10, W-10 is the kill list on the page), Paper (P-01..P-04: the front page's twenty, in order, no dash, no retired claim) and Press (PR-01: the feed size it quotes) |
+| `tests/test_prompt_grounding.py` | a production prompt without the grounding sentence, or one that still calls the product `void --x` |
+| `tests/test_bias_defaults_gate.py` + `pipeline/validation/bias_defaults.py` | an export whose per-article bias rows are mostly the default tuple (the step 6b overwrite, 73% of rows on 2026-09-20) |
+| `tests/test_podcast_feed.py` | a podcast cover that is missing or carries retired text, a channel title outside "Void News: <programme>", an item title that disagrees with the page |
+| `tests/test_paper.py` | Paper drifting from the front page, a dash or a retired claim in its source |
+| `frontend/test/copy-facts.test.mjs` | a stale story count in page copy, and any dash or kill-list word in a frontend string literal or JSX text |
+| `frontend/test/labels.test.mjs` | the one lean ladder; asserts the word "Flat" is gone (a card says Balanced, Not measured, Contested, or a direction) |
 
 Every one of these runs in `auto-merge-claude.yml`. Nine of them did not until
 2026-09-21, which is the whole reason the line above this table is worth
@@ -228,7 +235,7 @@ adds nothing to the state that anything reads back.
 |---|---|
 | Frontend, CSS, animation | `docs/DESIGN-SYSTEM.md` |
 | Pipeline flow, ranker, bias axes | `docs/PIPELINE-BRAIN.md` ⚠ predates rev 64 restructure |
-| Editorial rules (13 validators, one impl, two consumers) | `docs/EDITORIAL-STANDARD.md`, `pipeline/editorial/standard.py` |
+| Editorial rules (18 validators incl. E-15 hedge-is-not-attribution, one impl, two consumers) | `docs/EDITORIAL-STANDARD.md`, `pipeline/editorial/standard.py` |
 | Voice and brand | `docs/VOICE-BRAND.md` |
 | Stage 2 (bench → coherence → summarize → merge → critique → validate → order) | `pipeline/editorial/stage2.py` |
 | Clustering (5 live phases; 2.5/2.55/2.6 parked, no prod caller; `MERGE_HARD_CEILING=120`) | `pipeline/clustering/story_cluster.py` |
@@ -236,9 +243,13 @@ adds nothing to the state that anything reads back.
 | Run the editorial half offline, no LLM key | `tests/test_editorial_stage.py` + `tests/build_test_db.py` |
 | Feed size (one source of truth) | `frontend/config/feed.json` |
 | The display window (one definition) | `pipeline/utils/display_window.py` |
-| Lean labels, suppression gate, the one ladder | `frontend/app/lib/biasColors.ts` (`storyLeanLabel`) |
+| Lean labels, suppression gate, the one ladder. Three measurement states said aloud: **Balanced** (measured, at the centre), **Not measured** (gate failed), **Contested** (measured, split), else a direction. The Sigil tilts only on a confident read | `frontend/app/lib/biasColors.ts` (`storyLeanLabel`, `leanLabelState`) |
+| **The one masthead and footer**: mounted once in `app/layout.tsx`, section read from the pathname, skinned per section via `:root:has(.hist-page)` / `:has(.wk-page)` / `:has(.np-root)` (section palettes live on `:root` while mounted). No section renders its own topbar | `frontend/app/components/NavBar.tsx`, `Footer.tsx`, `styles/components.css` "Section skins" |
+| **Share cards**: one composer draws every card (Sigil, VOID NEWS, section nameplate, content); `og-image.png` is rendered by `node brand/ci/render_og.mjs`, never hand-edited; per-story cards for the latest edition only | `frontend/app/lib/ogCard.tsx`, `app/story/[id]/ogCard.tsx` |
+| **Paper** (the printable twenty) | `frontend/app/paper/`, `scripts/verify_sections.py` P-01..P-04, `tests/test_paper.py` |
+| Shared kill list (significance + AI slop), one regex for feed, Weekly, Opinion, promos, served pages | `pipeline/utils/prohibited_terms.py` (`find_prohibited`, `strip_significance`) |
 | Served-output gates | `scripts/verify_production.py` |
-| **On Air** radio: rundown grammar, R-01..R-13, voices, mastering | `docs/ON-AIR-RADIO.md` |
+| **On Air** radio: rundown grammar, R-01..R-15 (R-14 grounded attribution, R-15 no unattributed statement of law), voices, mastering | `docs/ON-AIR-RADIO.md` |
 | **Weekly audio** "The Argument": W-01..W-12, the moat, the dry argument | `docs/WEEKLY-AUDIO.md` |
 | **History audio**: format, casting, H-01..H-11 | `docs/HISTORY-AUDIO.md`, `docs/HISTORY-SCRIPT-BRIEF.md` |
 | **The Hearing**: `/history/[slug]`, a SERVER component. Three client islands (rail, Listen, lightbox). `omitted` appears in the turn and nowhere else | `frontend/app/history/components/Hearing.tsx`, `hearing.ts`, `docs/proposals/HISTORY-PAGE-REVAMP.md` |
@@ -263,13 +274,14 @@ adds nothing to the state that anything reads back.
 | **The Brief** (TL;DR + Opinion) | Live. One story per paragraph. |
 | **Weekly** | Live. **Vol. I, No. 1 published 2026-09-20**, the first issue on the Sunday cadence and the first ever to carry departments. Aug 24-30 is kept as the pilot. |
 | **Weekly audio** ("The Argument") | Live. Three Kokoro anchors, 11 chapters, mastered to -16 LUFS, verified against the served file. Rendered by **manual `audio-only` dispatch**; no scheduled run has produced one yet. There is no fallback: a failed render ships no audio rather than a quiet legacy substitute. |
-| **History** | Live, 78 events, static JSON since rev 69. |
+| **History** | Live, 78 events, static JSON since rev 69. Landing prerendered with an `<h1>` and every card (2026-09-21); era, region and thread browse routes linked and in the sitemap; native scroll, no wheel hijack. 149 time-bound claims dated or dropped 2026-09-21 (`docs/audits/HISTORY-DATA-2026-09-21.md`). |
 | **History audio** | **78/78 scripts written, 78/78 rendered**, each carrying a house promo under its outro. Register: `docs/data/history-episodes.csv`, regenerate with `python3 pipeline/history/episode_report.py`. |
 | **Revolt** | 301-hidden, serves MOCK data. Cannot be un-hidden until it reads static JSON. |
 | **Ship / Feedback** | Live on the Worker + D1. |
 | **Podcast feeds** | Generated: `podcast-world.xml`, `podcast-weekly.xml`, `podcast-history.xml` (78). Linked from `/listen` and `layout.tsx`. **Not yet submitted** to Apple or Spotify; weekly and history covers exist as SVG only. |
 | **House promos** | Live. 24 promos, `af_kore` at speed 0.86 over `radio_promo_bed.wav`. **All 78 History episodes stitched 2026-09-21**; On Air and Weekly pick one up on their next render. |
-| **Paper, Games** | 301-hidden. |
+| **Paper** | **Live 2026-09-21** as the printable twenty: the same 20 stories as the front page, in the same order, read from `build-data/feed.json`, every headline a link to its Deep Dive, print stylesheet, no classifieds, no datelines, no edition route. Gated by P-01..P-04. |
+| **Games** | 301-hidden. |
 
 ---
 
@@ -294,6 +306,17 @@ adds nothing to the state that anything reads back.
 Vision** is a coming sibling. Everything else is a SECTION of Void News, in
 title case with plain names: The Brief (tag "TL;DR"), On Air, History, Weekly,
 Paper, Sources, Deep Dive, Opinion, Ship, Games, Revolt.
+
+**The one-line rule for every surface (CEO, 2026-09-21): `VOID NEWS` is the
+only word that gets a lockup; a section gets a nameplate in its accent; a
+programme (On Air, The Argument, History audio) gets a title.** There is no
+VOID HISTORY or VOID WEEKLY lockup on the site, the cards or the podcast
+covers; the masthead reads VOID NEWS · History. Podcast channels are all
+"Void News: <programme>". Page titles are `Page | Void News` for a landing
+and `Page | Section | Void News` for a leaf (`sectionTitle()` in
+`lib/siteMeta.ts`). Themes stay: History keeps its archival paper and umber,
+Weekly its magazine red; a section overrides at most an accent ramp, its
+paper, its card surface and its grain.
 
 Internal identifiers were deliberately NOT renamed in the 2026-08-03 rebrand:
 routes (`/weekly`, `/history`), `.void--news` classes, `void-news-*` storage

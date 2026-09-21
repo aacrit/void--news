@@ -1,8 +1,19 @@
 /* ==========================================================================
-   E-PAPER EDITION — 1970s New York Times Broadsheet
-   6-column broadsheet. Clean newsprint. Modular layout.
-   Cheltenham-style headlines (Playfair Display). Period typography.
-   Scoped to .np-root.
+   PAPER: the printable front page. Scoped to .np-root.
+
+   Broadsheet presentation over the same twenty stories the home page carries:
+   a lead across the top, then three zones reading left, centre, right. Six
+   reading columns on a desktop, one on a phone.
+
+   Type: two voices, the site's own. Playfair (--font-editorial) sets the
+   nameplate, the headlines and the decks; Inter (--font-structural) sets the
+   labels, bylines and body. Lora and Old Standard TT were loaded by a route
+   layout and referenced through two variables nothing ever defined, so the
+   broadsheet had been rendering in Georgia since it was written; both families
+   went on 2026-09-21 rather than being wired up to add a fourth and fifth face.
+
+   Colour: warm paper and ink, from Paper's own five tokens. Nothing here is a
+   bias colour.
    ========================================================================== */
 
 /* --- Tokens --- */
@@ -14,12 +25,9 @@
   --np-rule: #BABABA;
   --np-rule-dark: #888888;
 
-  /* Font stacks — 1970s NYT: Cheltenham headlines, Century body, Gothic labels */
-  --np-font-nameplate: var(--font-playfair, 'Playfair Display'), 'Georgia', serif;
-  --np-font-head: var(--font-playfair, 'Playfair Display'), 'Georgia', serif;
-  --np-font-body: var(--np-lora, 'Lora'), 'Georgia', 'Times New Roman', serif;
-  --np-font-deck: var(--np-oldstandard, 'Old Standard TT'), 'Georgia', serif;
-  --np-font-label: var(--font-inter, 'Inter'), 'Helvetica Neue', 'Arial', sans-serif;
+  --np-font-head: var(--font-editorial);
+  --np-font-body: var(--font-structural);
+  --np-font-label: var(--font-structural);
 
   /* Column metrics */
   --np-col-gap: 20px;
@@ -43,6 +51,21 @@ html:has(.np-root) { background: #E8E5E0; }
 html[data-mode="dark"]:has(.np-root) { background: #141210; }
 html:has(.np-root) body { background: transparent; }
 
+/* --- Section skin ---------------------------------------------------------
+   The shared masthead skins itself per section off the root. Paper's sheet is
+   warmer and lighter than the site canvas, so the nav sits on the same paper
+   the broadsheet is printed on rather than floating on the feed's background.
+   --------------------------------------------------------------------------- */
+:root:has(.np-root) {
+  --nav-accent: #6E6E6E;
+  --bg-primary: #E8E5E0;
+}
+
+:root[data-mode="dark"]:has(.np-root) {
+  --nav-accent: #8A8278;
+  --bg-primary: #141210;
+}
+
 /* --- Base --- */
 .np-root {
   min-height: 100vh;
@@ -54,101 +77,34 @@ html:has(.np-root) body { background: transparent; }
   position: relative;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
   overflow-wrap: break-word;
-  word-break: break-word;
-}
-
-/* No grain/crease textures — 1970s = clean newsprint */
-.np-root::before,
-.np-root::after {
-  display: none;
-}
-
-/* All content at z-index 2 (legacy compat — textures removed) */
-.np-masthead,
-.np-front,
-.np-section-label,
-.np-section-flow,
-.np-classifieds,
-.np-colophon,
-.np-loading,
-.np-pdf-action {
-  position: relative;
-  z-index: 2;
 }
 
 /* ==========================================================================
-   MASTHEAD — 1970s NYT: clean, authoritative, centered
+   MASTHEAD
    ========================================================================== */
 
 .np-masthead {
   text-align: center;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 
-/* --- Ears (flanking motto) --- */
-.np-masthead__ears {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  border-top: 3px solid var(--np-ink);
-  border-bottom: 1px solid var(--np-ink);
-  padding: 4px 0;
-}
-
-.np-masthead__ear {
-  padding: 3px 8px;
-  display: flex;
-  align-items: center;
-}
-
-.np-masthead__ear--left {
-  border-right: 1px solid var(--np-ink);
-  justify-content: flex-start;
-}
-
-.np-masthead__ear--right {
-  justify-content: flex-end;
-  text-align: right;
-}
-
-.np-masthead__ear-text {
-  font-family: var(--np-font-label);
-  font-size: 9px;
-  line-height: 1.4;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--np-ink-mid);
-}
-
-/* --- Top rule --- */
 .np-masthead__top-rule {
   border: none;
   border-top: 6px solid var(--np-ink);
   margin: 0;
 }
 
-/* --- Nameplate — Cheltenham-style, large, bold --- */
 .np-masthead__nameplate {
-  font-family: var(--np-font-nameplate);
-  font-size: clamp(56px, 6.5vw, 84px);
+  font-family: var(--np-font-head);
+  font-size: clamp(2.5rem, 6.5vw, 5.25rem);
   font-weight: 700;
-  line-height: 1.0;
+  line-height: 1;
   letter-spacing: -0.01em;
   color: var(--np-ink);
-  margin: 12px 0 6px;
+  margin: 12px 0 8px;
 }
 
-.np-masthead__edition-subtitle {
-  font-family: var(--np-font-label);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--np-ink-mid);
-  margin: 0 0 4px;
-}
-
-/* --- Double rule (thick + thin) --- */
+/* Double rule (thick + thin) */
 .np-double-rule {
   border: none;
   border-top: 3px solid var(--np-ink);
@@ -158,64 +114,94 @@ html:has(.np-root) body { background: transparent; }
   height: 0;
 }
 
-/* --- Info bar (issue no., date, price) --- */
+/* Edition row: count, date, publisher */
 .np-masthead__info {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
+  gap: var(--space-2, 8px);
   padding: 6px 0;
   font-family: var(--np-font-label);
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--np-ink-mid);
 }
 
-.np-masthead__info-left  { text-align: left; }
+.np-masthead__info-left   { text-align: left; }
 .np-masthead__info-center { text-align: center; }
 .np-masthead__info-right  { text-align: right; }
 
-/* --- Edition navigation --- */
-.np-edition-nav {
+/* One line saying what the page is. */
+.np-masthead__standfirst {
   font-family: var(--np-font-label);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.10em;
-  text-transform: uppercase;
+  font-size: 0.75rem;
+  line-height: 1.5;
   color: var(--np-ink-light);
-  padding: 5px 0 0;
-}
-
-.np-edition-nav a {
-  color: var(--np-ink-mid);
-  text-decoration: none;
-}
-
-.np-edition-nav a:hover {
-  color: var(--np-ink);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.np-edition-nav__active {
-  font-weight: 600;
-  color: var(--np-ink);
+  margin: 8px auto 0;
+  max-width: 46ch;
 }
 
 /* ==========================================================================
-   FRONT PAGE — 3-Zone Layout (6 visual columns)
+   THE BRIEF
    ========================================================================== */
 
-.np-front {
+.np-brief {
+  border-top: 2px solid var(--np-ink);
+  border-bottom: 1px solid var(--np-ink);
+  padding: 10px 0;
+  margin-bottom: 14px;
+}
+
+.np-brief__label {
+  font-family: var(--np-font-label);
+  font-size: 0.5625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--np-ink-light);
+  margin: 0 0 6px;
+  text-align: center;
+}
+
+.np-brief__text {
+  font-family: var(--np-font-body);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--np-ink-mid);
+  margin: 0 auto;
+  max-width: 78ch;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+/* One story per paragraph. Broadsheet convention: indent, do not space. */
+.np-brief__text p + p {
+  margin-top: 0.25rem;
+  text-indent: 1em;
+}
+
+/* ==========================================================================
+   FRONT PAGE: lead across the top, then three zones
+   Document order is rank order: lead, zone A, zone B, zone C.
+   ========================================================================== */
+
+.np-front__lead {
+  border-bottom: 3px solid var(--np-ink);
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+}
+
+.np-front__zones {
   display: grid;
   grid-template-columns: 5fr 4fr 5fr;
   gap: 0;
-  margin-bottom: 0;
   align-items: start;
 }
 
-/* Side zones: 2 columns each (total 6 reading columns) */
+/* Side zones: two reading columns each. */
 .np-front__zone-a,
 .np-front__zone-c {
   column-count: 2;
@@ -224,7 +210,7 @@ html:has(.np-root) body { background: transparent; }
   column-fill: balance;
 }
 
-/* Lead zone — single column, bordered */
+/* Centre zone: one column, ruled off from its neighbours. */
 .np-front__zone-b {
   column-count: 1;
   padding: 0 var(--np-col-gap);
@@ -233,64 +219,7 @@ html:has(.np-root) body { background: transparent; }
 }
 
 /* ==========================================================================
-   SECTION FLOW — 6-Column CSS Multi-Column
-   ========================================================================== */
-
-.np-section-flow {
-  column-count: 6;
-  column-gap: var(--np-col-gap);
-  column-rule: var(--np-col-rule);
-  column-fill: balance;
-  margin-bottom: 0;
-}
-
-/* Compact mode for editions with fewer stories */
-.np-front--compact {
-  grid-template-columns: 1fr 2fr 1fr;
-}
-
-.np-front--compact .np-front__zone-a,
-.np-front--compact .np-front__zone-c {
-  column-count: 1;
-}
-
-.np-section-flow--compact {
-  column-count: 3;
-}
-
-/* ==========================================================================
-   SECTION LABELS — 1970s: clean, sans-serif, ruled
-   ========================================================================== */
-
-.np-section-label {
-  text-align: center;
-  padding: 10px 0 8px;
-}
-
-.np-section-label__rule-top {
-  border: none;
-  border-top: 3px solid var(--np-ink);
-  margin: 0 0 8px;
-}
-
-.np-section-label__text {
-  font-family: var(--np-font-label);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.30em;
-  text-transform: uppercase;
-  color: var(--np-ink);
-  margin: 0;
-}
-
-.np-section-label__rule-bottom {
-  border: none;
-  border-top: 1px solid var(--np-ink);
-  margin: 8px 0 0;
-}
-
-/* ==========================================================================
-   ARTICLES — 6 Tiers, 1970s Cheltenham-style headlines
+   ARTICLES
    ========================================================================== */
 
 .np-article {
@@ -302,15 +231,22 @@ html:has(.np-root) body { background: transparent; }
   border-bottom: var(--np-cutoff);
 }
 
-/* First article in each zone — no top padding */
+.np-front__lead > .np-article,
 .np-front__zone-a > .np-article:first-child,
 .np-front__zone-b > .np-article:first-child,
-.np-front__zone-c > .np-article:first-child,
-.np-section-flow > .np-article:first-child {
+.np-front__zone-c > .np-article:first-child {
   padding-top: 0;
 }
 
-/* --- Headlines — Cheltenham-style (Playfair Display) --- */
+.np-front__lead > .np-article {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+/* --- Headlines ---
+   .np-article__headline-text carries no style. It is the hook verify_sections
+   P-02 and tests/test_paper.py T-06 read the printed headlines out of, the way
+   the front page's .story-card__headline-text does. Do not remove it. */
 .np-article__headline {
   font-family: var(--np-font-head);
   font-weight: 700;
@@ -323,150 +259,97 @@ html:has(.np-root) body { background: transparent; }
   -webkit-hyphens: auto;
 }
 
-/* Banner tier — lead story, large Cheltenham */
+/* Every headline is the story's Deep Dive. Ink-on-paper until hover, where a
+   rule appears under it; the underline is the affordance, never a colour. */
+.np-article__headline-link {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}
+
+.np-article__headline-link:hover,
+.np-article__headline-link:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--np-rule-dark);
+}
+
+.np-article__headline-link:focus-visible {
+  outline: 2px solid var(--np-ink);
+  outline-offset: 2px;
+}
+
 .np-article--banner .np-article__headline {
-  font-size: clamp(26px, 3vw, 40px);
+  font-size: clamp(1.75rem, 3.4vw, 3rem);
   letter-spacing: -0.01em;
   text-align: center;
   margin-bottom: 8px;
-  line-height: 1.05;
+  line-height: 1.04;
 }
 
-/* Major tier */
 .np-article--major .np-article__headline {
-  font-size: clamp(18px, 2vw, 26px);
+  font-size: clamp(1.125rem, 2vw, 1.625rem);
   letter-spacing: -0.005em;
 }
 
-/* Standard tier */
-.np-article--standard .np-article__headline {
-  font-size: 17px;
-}
+.np-article--standard .np-article__headline { font-size: 1.0625rem; }
 
-/* Brief tier */
 .np-article--brief .np-article__headline {
-  font-size: 15px;
+  font-size: 0.9375rem;
   line-height: 1.15;
 }
 
-/* Bulletin tier — sans-serif, compact */
 .np-article--bulletin .np-article__headline {
   font-family: var(--np-font-label);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   line-height: 1.25;
 }
 
-/* Filler tier */
-.np-article--filler .np-article__headline {
-  font-family: var(--np-font-label);
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  line-height: 1.3;
-}
-
-/* --- Multi-Deck Headlines (sub-heads below main) --- */
-.np-headline-deck {
-  margin-bottom: 6px;
-}
-
-.np-headline-deck__sub {
-  font-family: var(--np-font-deck);
+/* --- Decks: the summary's opening sentences, lifted --- */
+.np-article__deck {
+  font-family: var(--np-font-head);
   color: var(--np-ink);
   margin: 3px 0;
-  line-height: 1.25;
-}
-
-.np-headline-deck__sub--1 {
-  font-size: 15px;
-  font-style: italic;
-  text-align: center;
-}
-
-.np-headline-deck__sub--2 {
-  font-size: 13px;
-  text-align: center;
-}
-
-.np-headline-deck__sub--3 {
-  font-size: 11px;
-  font-style: italic;
-  text-align: center;
-  color: var(--np-ink-mid);
-}
-
-/* Non-banner decks: left-aligned */
-.np-article--major .np-headline-deck__sub,
-.np-article--standard .np-headline-deck__sub {
+  line-height: 1.3;
   text-align: left;
 }
 
-/* --- Byline — 1970s: clean sans, caps --- */
+.np-article__deck--1 { font-size: 0.9375rem; font-style: italic; }
+.np-article__deck--2 { font-size: 0.8125rem; }
+.np-article__deck--3 {
+  font-size: 0.6875rem;
+  font-style: italic;
+  color: var(--np-ink-mid);
+}
+
+.np-article--banner .np-article__deck {
+  text-align: center;
+  max-width: 68ch;
+  margin-inline: auto;
+}
+
+/* --- Byline: the source count, which is the only byline we have --- */
 .np-article__byline {
   font-family: var(--np-font-label);
-  font-size: 8.5px;
+  font-size: 0.5rem;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.10em;
   color: var(--np-ink-light);
-  margin: 0 0 5px;
+  margin: 5px 0;
 }
 
-/* --- Front-Page Photograph — 1960s newspaper B&W ----------------------- */
-/*
- * Full grayscale: saturate(0) strips all color. High contrast (1.15 light,
- * 1.20 dark) delivers the punchy halftone look of 1960s wire photography.
- * brightness(1.02) lifts midtones so the desat + contrast combo doesn't
- * crush shadow detail.
- *
- * The e-paper page (.np-root) is NOT inside .page-main, so there is no
- * compounding with --cin-grade. The image filter is the only filter applied.
- *
- * No grain/vignette pseudo-elements — the e-paper design is clean newsprint.
- * CLS safety: explicit aspect-ratio on the wrapper prevents layout shift.
- */
-.np-article__image-wrap {
-  position: relative;
-  width: 100%;
-  margin: 0 0 8px;
-  overflow: hidden;
-  background: var(--np-paper);
-}
+.np-article--banner .np-article__byline { text-align: center; }
 
-/* Banner layout: centered image spanning columns */
-.np-article--banner .np-article__image-wrap {
-  aspect-ratio: 16 / 9;
-  max-height: 380px;
-  margin-bottom: 12px;
-}
-
-.np-article__image {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 400ms ease-out;
-  filter: var(--img-grade-epaper);
-}
-
-.np-article__image--loaded {
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .np-article__image { transition: opacity 10ms ease-out; }
-}
-
-/* --- Body Text — Century/Imperial style (Lora) --- */
+/* --- Body --- */
 .np-article__summary {
   font-family: var(--np-font-body);
-  font-size: 13.5px;
-  line-height: 1.40;
+  font-size: 0.84375rem;
+  line-height: 1.5;
   text-align: justify;
   hyphens: auto;
   -webkit-hyphens: auto;
@@ -474,171 +357,27 @@ html:has(.np-root) body { background: transparent; }
   margin: 0;
 }
 
-.np-article__dateline {
-  font-family: var(--np-font-label);
-  text-transform: uppercase;
-  font-size: 0.78em;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-
-/* --- Drop cap (banner only) — 1970s style, clean --- */
+/* Drop cap on the lead only. */
 .np-article--banner .np-article__summary::first-letter {
   float: left;
   font-family: var(--np-font-head);
   font-size: 3.2em;
   font-weight: 700;
-  line-height: 0.80;
+  line-height: 0.8;
   margin: 0.02em 0.08em 0 0;
   color: var(--np-ink);
 }
 
-/* --- Article meta: source count + lean --- */
+/* --- The lean caption. One ladder, from storyLeanLabel. --- */
 .np-article__meta {
   font-family: var(--np-font-label);
-  font-size: 8px;
+  font-size: 0.5rem;
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--np-ink-light);
   margin: 4px 0 0;
   text-align: right;
-  opacity: 0.6;
-}
-
-/* ==========================================================================
-   TODAY'S BRIEF (TL;DR)
-   ========================================================================== */
-
-.np-brief {
-  border-top: 2px solid var(--np-ink);
-  border-bottom: 1px solid var(--np-ink);
-  padding: 10px 0;
-  margin-bottom: 12px;
-  text-align: center;
-  position: relative;
-  z-index: 2;
-}
-
-.np-brief__label {
-  font-family: var(--np-font-label);
-  font-size: 9px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.22em;
-  color: var(--np-ink-light);
-  margin: 0 0 6px;
-}
-
-.np-brief__text {
-  font-family: var(--np-font-body);
-  font-style: italic;
-  font-size: 13px;
-  line-height: 1.55;
-  color: var(--np-ink-mid);
-  margin: 0 auto;
-  max-width: 85%;
-  text-align: justify;
-  hyphens: auto;
-  -webkit-hyphens: auto;
-}
-
-/* One story per paragraph. Broadsheet convention: indent, don't space. */
-.np-brief__text p + p {
-  margin-top: 0.25rem;
-  text-indent: 1em;
-}
-
-/* ==========================================================================
-   FILLER ITEMS
-   ========================================================================== */
-
-.np-filler {
-  break-inside: avoid;
-  -webkit-column-break-inside: avoid;
-  page-break-inside: avoid;
-  padding: 6px 0;
-  border-bottom: var(--np-cutoff);
-}
-
-.np-filler__heading {
-  font-family: var(--np-font-label);
-  font-size: 9px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.10em;
-  color: var(--np-ink);
-  margin: 0 0 3px;
-}
-
-.np-filler__text {
-  font-family: var(--np-font-body);
-  font-size: 12px;
-  line-height: 1.40;
-  color: var(--np-ink-mid);
-  margin: 0;
-  text-align: justify;
-  hyphens: auto;
-  -webkit-hyphens: auto;
-}
-
-/* ==========================================================================
-   ORNAMENTAL RULE — 1970s: strong double rule
-   ========================================================================== */
-
-.np-ornamental-rule {
-  border: none;
-  height: 4px;
-  background: linear-gradient(
-    to bottom,
-    var(--np-ink) 0px, var(--np-ink) 2px,
-    transparent 2px, transparent 3px,
-    var(--np-rule-dark) 3px, var(--np-rule-dark) 4px
-  );
-  margin: 10px 0;
-  position: relative;
-  z-index: 2;
-}
-
-/* ==========================================================================
-   CLASSIFIEDS
-   ========================================================================== */
-
-.np-classifieds {
-  margin-top: 10px;
-  position: relative;
-  z-index: 2;
-}
-
-.np-classifieds__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-}
-
-.np-classified-ad {
-  padding: 10px 14px;
-  border: 1px solid var(--np-rule);
-  border-right: none;
-  font-family: var(--np-font-body);
-  font-size: 11px;
-  line-height: 1.55;
-  text-align: justify;
-  hyphens: auto;
-  -webkit-hyphens: auto;
-  color: var(--np-ink);
-}
-
-.np-classified-ad:last-child { border-right: 1px solid var(--np-rule); }
-
-.np-classified-ad__heading {
-  font-family: var(--np-font-label);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  display: block;
-  margin-bottom: 4px;
-  font-size: 10px;
 }
 
 /* ==========================================================================
@@ -649,11 +388,13 @@ html:has(.np-root) body { background: transparent; }
   text-align: center;
   padding: 24px 0 0;
   font-family: var(--np-font-label);
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--np-ink-light);
-  line-height: 2.0;
+  line-height: 2;
   letter-spacing: 0.02em;
 }
+
+.np-colophon p { margin: 0; }
 
 .np-colophon__rule {
   border: none;
@@ -669,7 +410,7 @@ html:has(.np-root) body { background: transparent; }
 }
 
 /* ==========================================================================
-   PDF EXPORT BUTTON
+   PRINT BUTTON
    ========================================================================== */
 
 .np-pdf-action {
@@ -681,179 +422,78 @@ html:has(.np-root) body { background: transparent; }
 
 .np-pdf-btn {
   appearance: none;
-  border: 1px solid #AAA;
-  background: rgba(255, 255, 255, 0.9);
-  color: #555;
+  border: 1px solid var(--np-rule-dark);
+  background: var(--np-paper);
+  color: var(--np-ink-mid);
   font-family: var(--np-font-label);
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 6px 14px;
+  min-height: 44px;
+  padding: 0 16px;
   border-radius: 2px;
   cursor: pointer;
-  backdrop-filter: blur(8px);
-  transition: opacity 0.15s ease-out;
-  opacity: 0.4;
+  transition: color 150ms ease-out, border-color 150ms ease-out;
 }
 
 .np-pdf-btn:hover {
-  opacity: 1;
-  border-color: #666;
-  color: #222;
+  border-color: var(--np-ink);
+  color: var(--np-ink);
+}
+
+.np-pdf-btn:focus-visible {
+  outline: 2px solid var(--np-ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .np-pdf-btn { transition: none; }
 }
 
 /* ==========================================================================
-   LOADING
+   RESPONSIVE: 6 columns, then 4, then 2, then 1
    ========================================================================== */
 
-.np-loading {
-  text-align: center;
-  padding: 80px 0;
-  font-family: var(--np-font-body);
-  font-style: italic;
-  font-size: 15px;
-  color: var(--np-ink-light);
-}
-
-/* ==========================================================================
-   RESPONSIVE — 6 → 4 → 2 → 1 columns
-   ========================================================================== */
-
-/* Narrower desktop: keep 6, tighten spacing */
 @media (max-width: 1400px) {
   .np-root {
     max-width: 1100px;
     padding: 20px 28px 40px;
   }
 
-  .np-masthead__nameplate { font-size: clamp(48px, 6vw, 68px); }
-
-  .np-front {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-
-  .np-section-flow {
-    column-count: 4;
-  }
+  .np-front__zones { grid-template-columns: 1fr 1fr 1fr; }
 }
 
-/* Tablet landscape: 4 columns, lead on top */
+/* Tablet landscape: three single columns. */
 @media (max-width: 1024px) {
   .np-root {
     max-width: none;
     padding: 20px 24px 36px;
   }
 
-  .np-masthead__nameplate { font-size: 52px; }
-
-  .np-front {
-    grid-template-columns: 1fr 1fr;
+  .np-front__zone-a,
+  .np-front__zone-b,
+  .np-front__zone-c {
+    column-count: 1;
   }
 
   .np-front__zone-a {
-    column-count: 1;
     border-right: 1px solid var(--np-rule);
     padding-right: var(--np-col-gap);
   }
 
-  .np-front__zone-b {
-    column-count: 1;
-    border-left: none;
-    border-right: none;
-    padding: 0;
-    grid-column: 1 / -1;
-    order: -1;
-    border-bottom: 2px solid var(--np-ink);
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-  }
-
-  .np-front__zone-c {
-    column-count: 1;
-    padding-left: var(--np-col-gap);
-  }
-
-  .np-article--banner .np-article__headline { font-size: 32px; }
-
-  .np-section-flow {
-    column-count: 3;
-  }
-
-  .np-classifieds__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .np-classified-ad:nth-child(2n) {
-    border-right: 1px solid var(--np-rule);
-  }
+  .np-front__zone-c { padding-left: var(--np-col-gap); }
 }
 
-/* Tablet portrait: 2 columns */
+/* Phone and small tablet: ONE column, no multicol. Two-column body text at
+   360px wide is four words a line, and a column break mid-article reads as a
+   different story. Below 768px the page is a single ranked stack. */
 @media (max-width: 767px) {
   .np-root { padding: 16px 20px 32px; }
-  .np-masthead__nameplate { font-size: clamp(1.75rem, 8vw, 2.625rem); }
 
-  .np-front {
+  .np-front__zones {
     display: block;
   }
-
-  .np-front__zone-a,
-  .np-front__zone-b,
-  .np-front__zone-c {
-    column-count: 2;
-    column-gap: var(--np-col-gap);
-    column-rule: var(--np-col-rule);
-    column-fill: balance;
-    border: none;
-    padding: 0;
-    margin-bottom: 8px;
-    order: unset;
-  }
-
-  .np-front__zone-b {
-    column-count: 1;
-    border-bottom: 2px solid var(--np-ink);
-    padding-bottom: 8px;
-    margin-bottom: 10px;
-  }
-
-  .np-article--banner .np-article__headline { font-size: 28px; }
-  .np-article--major .np-article__headline { font-size: 20px; }
-
-  .np-section-flow { column-count: 2; }
-}
-
-/* Mobile: single column */
-@media (max-width: 560px) {
-  .np-root { padding: 12px 14px 24px; }
-
-  .np-masthead__nameplate {
-    font-size: 32px;
-    letter-spacing: 0;
-  }
-
-  .np-masthead__ears {
-    grid-template-columns: 1fr;
-    border-bottom: none;
-  }
-
-  .np-masthead__ear--left {
-    border-right: none;
-    border-bottom: 1px solid var(--np-ink);
-    justify-content: center;
-    text-align: center;
-  }
-
-  .np-masthead__ear--right {
-    justify-content: center;
-    text-align: center;
-  }
-
-  .np-masthead__ear-text { font-size: 8px; }
-  .np-masthead__info { font-size: 8px; letter-spacing: 0.05em; }
-
-  .np-front { display: block; }
 
   .np-front__zone-a,
   .np-front__zone-b,
@@ -864,72 +504,57 @@ html:has(.np-root) body { background: transparent; }
     padding: 0;
   }
 
-  .np-article--banner .np-article__headline { font-size: 24px; }
-  .np-article--major .np-article__headline { font-size: 18px; }
-  .np-article--standard .np-article__headline { font-size: 16px; }
-  .np-article__summary { font-size: 14px; line-height: 1.50; }
-
-  .np-section-flow { column-count: 1; }
-
-  .np-classifieds__grid { grid-template-columns: 1fr; }
-
-  .np-classified-ad {
-    border-right: none;
-    border-bottom: 1px solid var(--np-rule);
+  /* Touch targets: every headline is a link, and a bulletin headline is one
+     13px line. Given here rather than in the base rule because a 44px floor on
+     a desktop broadsheet opens a gap under every short headline. */
+  .np-article__headline-link {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
   }
 
-  .np-classified-ad:last-child {
-    border-right: none;
-    border-bottom: none;
+  .np-article__summary { font-size: 0.875rem; line-height: 1.55; }
+  .np-article__deck { text-align: left; }
+  .np-article--banner .np-article__deck { text-align: left; }
+  .np-article--banner .np-article__headline { text-align: left; }
+  .np-article--banner .np-article__byline { text-align: left; }
+
+  .np-masthead__info {
+    font-size: 0.5rem;
+    letter-spacing: 0.05em;
   }
 
-  .np-pdf-action { bottom: 12px; right: 12px; }
+  .np-brief__text { max-width: none; }
 
-  /* Tab bar clearance — content must not hide behind fixed bottom nav */
+  /* Tab bar clearance: content must not hide behind the fixed bottom nav. */
   .np-root {
-    padding-bottom: calc(var(--tab-bar-height, 64px) + env(safe-area-inset-bottom, 0px) + var(--space-4, 16px));
+    padding-bottom: calc(
+      var(--tab-bar-height, 64px) + env(safe-area-inset-bottom, 0px) +
+      var(--space-4, 16px)
+    );
   }
 
-  /* Touch targets — WCAG 44x44px minimum */
-  .np-article { min-height: 44px; }
-  .np-pdf-action { min-height: 44px; min-width: 44px; }
+  .np-pdf-action {
+    bottom: calc(var(--tab-bar-height, 64px) + 12px);
+    right: 12px;
+  }
 }
 
 /* ==========================================================================
-   DARK MODE — Hardcoded color overrides
+   DARK MODE: surface tweaks the tokens above cannot carry
    ========================================================================== */
 
-/* Soften the paper shadow in dark mode — warm glow instead of cool shadow */
 :root[data-mode="dark"] .np-root {
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.40);
 }
 
-/* PDF action button — dark surface with warm muted text */
-:root[data-mode="dark"] .np-pdf-btn {
-  border-color: #5A5550;
-  background: rgba(28, 26, 23, 0.90);
-  color: #8A8278;
-}
-
-:root[data-mode="dark"] .np-pdf-btn:hover {
-  border-color: #8A8278;
-  color: #EDE8E0;
-}
-
 /* ==========================================================================
-   PRINT — Landscape A3, 4-column flow
+   PRINT: A3 landscape, the lead across the top, three zones below
    ========================================================================== */
 
 @page {
   margin: 0.5in 0.6in;
   size: A3 landscape;
-
-  @bottom-center {
-    content: "\2014  " counter(page) " \2014";
-    font-family: 'Georgia', serif;
-    font-size: 9pt;
-    color: #6E6E6E;
-  }
 }
 
 @page :first {
@@ -937,11 +562,6 @@ html:has(.np-root) body { background: transparent; }
 }
 
 @media print {
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
   .np-root {
     max-width: none;
     width: 100%;
@@ -952,20 +572,12 @@ html:has(.np-root) body { background: transparent; }
     overflow: visible;
   }
 
-  .np-masthead {
-    text-align: center;
-    margin-bottom: 12px;
-  }
+  .np-masthead__nameplate { font-size: 60pt; }
 
-  .np-masthead__nameplate {
-    font-size: 60pt;
-  }
-
-  .np-front {
+  .np-front__zones {
     display: grid;
     grid-template-columns: 5fr 4fr 5fr;
     gap: 0;
-    break-inside: avoid;
   }
 
   .np-front__zone-a,
@@ -983,13 +595,6 @@ html:has(.np-root) body { background: transparent; }
     padding: 0 12px;
   }
 
-  .np-section-flow {
-    column-count: 4;
-    column-gap: 12px;
-    column-rule: 1px solid var(--np-rule);
-    column-fill: balance;
-  }
-
   .np-article {
     break-inside: avoid;
     page-break-inside: avoid;
@@ -997,17 +602,23 @@ html:has(.np-root) body { background: transparent; }
     widows: 2;
   }
 
-  .np-section-label {
-    break-before: auto;
-    page-break-before: auto;
-    padding-top: 8px;
+  /* A printed sheet carries no navigation. The shared masthead, footer, mobile
+     bars, banner and player are screen chrome; the page is the artefact. */
+  .np-pdf-action,
+  :root:has(.np-root) .nav-header,
+  :root:has(.np-root) .site-footer,
+  :root:has(.np-root) .mtb,
+  :root:has(.np-root) .msp,
+  :root:has(.np-root) .experimental-banner,
+  :root:has(.np-root) .floating-player {
+    display: none;
   }
 
-  .np-classifieds__grid {
-    grid-template-columns: repeat(3, 1fr);
+  .np-article__headline-link {
+    text-decoration: none;
+    display: block;
+    min-height: 0;
   }
 
-  .np-pdf-action { display: none !important; }
-  .np-edition-nav { display: none; }
   .np-colophon__link { text-decoration: none; }
 }
