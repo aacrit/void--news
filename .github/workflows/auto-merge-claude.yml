@@ -42,6 +42,22 @@ jobs:
           npx next build || npx next build || npx next build
           npm test
 
+      # The built output is right here, so this is where the layout gate
+      # belongs. It caught two defects that shipped and were invisible both in
+      # the CSS and in the browser, because the page's own `overflow-x: hidden`
+      # was clipping them: a spine overflowing by four column gaps at phone
+      # widths, and a `position: sticky` rail that had never once held.
+      # Chromium is cached, so a warm run costs seconds.
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('frontend/package-lock.json') }}
+      - name: Install Chromium
+        run: cd frontend && npx playwright install --with-deps chromium
+      - name: Responsive layout gate (overflow + sticky)
+        run: cd frontend && node scripts/verify-responsive.mjs
+
       # 2026-09-06: tests/ was run by nothing. test_verify_gate.py was RED
       # (its clean fixture predated MIN_SUMMARY_CHARS=300) and nobody knew,
       # so the served-output checkers had no working self-test. Both suites
@@ -69,6 +85,18 @@ jobs:
           pip install --quiet pyyaml
           python tests/test_history_script.py
           python tests/test_house_promos.py
+
+          # The rule-1 controls. Each of these was written the day a real
+          # defect shipped, and none of them could fail a merge until now:
+          # a gate nobody can fail is not enforced, which is the sentence the
+          # controls table in CLAUDE.md opens with.
+          python tests/test_history_data.py          # figure identity, lifespans
+          python tests/test_history_copy.py          # the dash ban, speaker shape
+          python tests/test_history_scripts_export.py # accounts resolve one to one
+          python tests/test_history_export_parity.py  # the served JSON matches the record
+          python tests/test_grounding.py             # the evidence outlives the run
+          python tests/test_truncation_lint.py       # no cap published as a count
+          python tests/test_docs_facts.py            # CLAUDE.md's own numbers
 
   # End-to-end run of the editorial half of the pipeline (8c through 8f plus
   # the static export) against a synthetic state DB built from the committed
@@ -154,6 +182,13 @@ jobs:
         run: |
           python tests/test_radio_assembly.py
           python tests/test_weekly_assembly.py
+      # The one check that judges the ARTIFACT rather than the row. It lives
+      # here because it needs ffprobe and ffmpeg, which this job already has.
+      # Every other Weekly check runs before synthesis, which is how a row
+      # advertising "Three voices" over a mono 24 kHz file nobody had mastered
+      # shipped for weeks with every gate green.
+      - name: The served Weekly episode is what its row says it is
+        run: python tests/test_weekly_audio_served.py
       - name: Kokoro timing bench
         env:
           VOID_TTS_ENGINE: kokoro-only

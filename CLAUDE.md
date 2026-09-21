@@ -91,8 +91,19 @@ impossible, not a note asking people to be careful:
 | `tests/test_history_data.py` | figure identity against its own link, impossible lifespans, malformed attribution |
 | `tests/test_history_script.py` (H-01..H-11) | a quote not in the sources, a hedge not said aloud, a speaker not named |
 | `tests/test_history_audio.py` | audio that no longer matches its corrected script |
-| `pipeline/editorial/standard.py` | the daily feed's editorial rules, run at write time and against served HTML |
+| `pipeline/editorial/standard.py` | the daily feed's editorial rules, run at write time and against served HTML. **E-13** a number not in the sources, **E-14** a quotation not in the sources |
+| `pipeline/editorial/grounding.py` | keeps the text a card was written from, so E-13 and E-14 can still be run after the run that wrote it |
+| `tests/test_history_copy.py` | an em dash in page-facing prose, a speaker that is a description with nothing behind it |
+| `tests/test_history_export_parity.py` | a correction that never reached the served JSON |
+| `tests/test_truncation_lint.py` | a query cap published as an exact count |
+| `tests/test_weekly_audio_served.py` | an MP3 that is not what its own row says it is |
+| `tests/test_docs_facts.py` | this file's own numbers, against disk |
+| `frontend/scripts/verify-responsive.mjs` | content past the viewport, and sticky that does not stick |
 | `scripts/verify_production.py` | what the live page actually serves |
+
+Every one of these runs in `auto-merge-claude.yml`. Nine of them did not until
+2026-09-21, which is the whole reason the line above this table is worth
+repeating: a rule nobody can fail is not enforced.
 
 When a factual error reaches production, the fix is not complete until a check
 exists that would have caught it. Add the check in the same commit.
@@ -230,6 +241,7 @@ adds nothing to the state that anything reads back.
 | **On Air** radio: rundown grammar, R-01..R-13, voices, mastering | `docs/ON-AIR-RADIO.md` |
 | **Weekly audio** "The Argument": W-01..W-12, the moat, the dry argument | `docs/WEEKLY-AUDIO.md` |
 | **History audio**: format, casting, H-01..H-11 | `docs/HISTORY-AUDIO.md`, `docs/HISTORY-SCRIPT-BRIEF.md` |
+| **The Hearing**: `/history/[slug]`, a SERVER component. Three client islands (rail, Listen, lightbox). `omitted` appears in the turn and nowhere else | `frontend/app/history/components/Hearing.tsx`, `hearing.ts`, `docs/proposals/HISTORY-PAGE-REVAMP.md` |
 | **House promos** (post-roll under every outro; pool, rules, retrofit) | `data/promos/house.yaml`, `pipeline/briefing/house_promos.py`, `docs/VOICE-BRAND.md` "House Promos" |
 | **Podcast feeds** (On Air, The Argument, History) and directory submission | `pipeline/briefing/podcast_feed_generator.py`, `docs/PODCAST-DISTRIBUTION.md`, `/listen` |
 | Weekly magazine: running order, the measure, the grid | `frontend/app/weekly/`, `frontend/app/styles/weekly.css` |
@@ -250,7 +262,7 @@ adds nothing to the state that anything reads back.
 | **On Air** (daily radio) | Live. Kokoro three voices, chapters, mastered to -16 LUFS. |
 | **The Brief** (TL;DR + Opinion) | Live. One story per paragraph. |
 | **Weekly** | Live. **Vol. I, No. 1 published 2026-09-20**, the first issue on the Sunday cadence and the first ever to carry departments. Aug 24-30 is kept as the pilot. |
-| **Weekly audio** ("The Argument") | Built rev 72, **first episode never heard**. |
+| **Weekly audio** ("The Argument") | Live. Three Kokoro anchors, 11 chapters, mastered to -16 LUFS, verified against the served file. Rendered by **manual `audio-only` dispatch**; no scheduled run has produced one yet. There is no fallback: a failed render ships no audio rather than a quiet legacy substitute. |
 | **History** | Live, 78 events, static JSON since rev 69. |
 | **History audio** | **78/78 scripts written, 78/78 rendered**, each carrying a house promo under its outro. Register: `docs/data/history-episodes.csv`, regenerate with `python3 pipeline/history/episode_report.py`. |
 | **Revolt** | 301-hidden, serves MOCK data. Cannot be un-hidden until it reads static JSON. |

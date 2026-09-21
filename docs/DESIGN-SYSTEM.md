@@ -891,3 +891,69 @@ Inherits main Cinematic Press tokens plus `--hist-*` namespace: `--hist-accent` 
 ### Stylesheet
 
 `history.css` (~8,575 lines, `.hist-page` namespace). Full implementation of all museum UX elements.
+
+---
+
+## 15. Containment: `overflow-x: clip`, never `hidden`
+
+**This is a system-wide rule, and it cost a rail and a topbar that had never
+once pinned.**
+
+`overflow-x: hidden` establishes a scroll container. A scroll container between
+the viewport and a `position: sticky` descendant kills the stickiness silently:
+the CSS is correct, the element simply never pins, and nothing in devtools says
+why. On the History section four ancestors carried it, so the Hearing's rail
+measured **y = -3130** at scrollY 4000, and the topbar had never pinned on any
+History page either.
+
+Use `overflow-x: clip` for horizontal containment. It clips without creating a
+scroll container, so sticky survives. `layout.css` already carried this note for
+`.page-container`; it had simply never been applied to `history.css`.
+
+The exception is a rule that pairs with a real `overflow-y: auto` on a genuine
+scroller (`.hist-tl-full`, `.hist-overlay`, `.hist-reel--vertical`). Those want
+to be scroll containers.
+
+`frontend/scripts/verify-responsive.mjs` asserts this by scrolling to 4000 and
+checking the rail and topbar are still in the viewport.
+
+## 16. The Hearing's rail
+
+`/history/[slug]` is a server component; the rail is one of three client
+islands.
+
+- **Labels are legible at rest.** Hierarchy is weight and ink, not visibility:
+  the current station is 700 / `--hist-ink`, the rest are 500 /
+  `--hist-ink-muted`, plus the brass wash already on the current glyph.
+  Showing only the current label left the reader with bare `01 02 03`.
+- **Height-capped with an internal scroll.** Fifteen labelled stations can
+  outgrow a short viewport, so the slot and the rail carry
+  `max-height: var(--hist-rail-cap)`, the `<ol>` scrolls, and a JS effect keeps
+  the current station in view. The track anchors to the rail, not the list, so
+  it does not scroll away.
+- **A prev/next caret pair** rides the ends of the track and names its
+  destination. `j`/`k` move between stations anywhere the reader is not typing.
+  Plain `ArrowUp`/`ArrowDown` are bound **only** when focus is inside the rail:
+  taking line-by-line scroll away from a reader mid-account, on a page whose
+  argument is that it is a long read, costs more than the shortcut is worth.
+- **Tokens:** `--hist-rail-bar-h` (44px), `--hist-rail-caret` (16px),
+  `--hist-rail-cap`, and `--hist-rail-col` widening from 17ch to 21ch at
+  1280px.
+
+### There is no scroll-snap on the spine, and there should not be
+
+Measured on `partition-of-india`: the OPEN is 66 words, scenes run 89 to 209,
+and the five account sections run **603 to 883 words**, which is three to five
+viewport heights each. Mandatory snap would grab the reader at an account's top
+and fight every gesture for 800 words. Navigation here is an affordance, not a
+constraint. Recorded so it is not re-proposed.
+
+### The full-bleed trap
+
+A `grid-column: full` child cancels the container's `padding-inline` with a
+negative margin. That arithmetic only works while the flanking tracks exist.
+The text track is `min(--hist-measure, 100%)`, so below the measure it claims
+the entire content box and the column gaps have nowhere to go: the grid
+overflows by exactly `4 x gap`. At 390px that put a rest at 438px against a
+390px viewport, cropping rather than scrolling because an ancestor clipped it.
+The gap is therefore scoped to the widths where the flanks exist.

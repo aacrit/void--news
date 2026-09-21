@@ -53,6 +53,22 @@ them. `L-*` rules need the model in the loop and are wired in Block 2.
 | E-10 | A location named in the headline is not contradicted by the summary | L-07 | "Malvinas Islands" led a story headlined "Falkland Islands". A regex cannot tell a place from any other capitalised opener: the first draft flagged "Mudslides Kill Dozens". |
 | E-11 | No second-person pronoun outside quotation marks | ADVISORY | "Vance also told El-Sayed to keep their wife's name the hell out of your mouth" shipped: the scrubber rewrote `my` and had no rule for `your`, so Void addressed the reader. |
 | E-12 | No sentence shares zero vocabulary with the rest of the summary | ADVISORY | The 09-10 Colombia gun-permit card carried "The judge ruled the images could be harmful to minors" between a Rubio quote and a request for comment. Recurring: a Hayward City Council seat on 08-21, Saddam-era Iraq on 08-18. **The obvious rule was measured and rejected**: flagging a sentence whose NAMED ENTITIES appear nowhere else misses this sentence entirely (it has none) and fires 2,844 times over 1,375 archived summaries. Shared vocabulary fires 205 times, 0.15 per summary, and catches it. ADVISORY because roughly half its hits are on-topic sentences worded in isolation ("A minute's silence was observed throughout the country"), and grounding each sentence against the articles does not separate them: the Colombia sentence scores 0.60 grounded because `judge`, `ruled` and `harmful` each appear somewhere across fourteen articles. The enforcing check is L-08, which reads meaning rather than words. |
+| E-13 | Every multi-digit number in the card appears in its source articles | ENFORCED, **GROUNDED** | A live card headlined "Suicide Attack Kills 31 at Pakistan Mosque". Across its 22 source articles there were 23 mentions of 16, two of 21 and **none of 31**, and the summary itself said "Other reports state at least 21 people died" a sentence later: it knew the sources disagreed and asserted a third number anyway. Nothing caught it and nothing could have, because every other rule here reads the card alone. Deliberately narrow: two digits or more, so "five officers" and ordinary prose are out of scope; separators stripped, so a reformatted 1,200 still matches. |
+| E-14 | Every quotation of four words or more is verbatim in its source articles | ENFORCED, **GROUNDED** | L-02 has said "every quotation is verbatim, pronouns included" since this standard was written, but only an LLM ever judged it and the critique pass is capped at 20 flash requests a day. A quotation is the one thing a reader is entitled to read as literal. Four words or more, so scare quotes and quoted titles are out; case, whitespace and curly apostrophes folded, because the summarizer rewrites all three; an elided quote is checked around the ellipsis, which no source contains. L-02 still judges what a regex cannot: pronouns, tense, and whether the speaker is the one being quoted. |
+
+**The grounded scope.** E-13 and E-14 are the first rules here that read the
+card against the text it was written from rather than against itself. Both
+**skip rather than accuse** when no source text is present: a rule that cannot
+see the evidence must not claim the card is wrong.
+
+That made persistence a prerequisite. `articles.full_text` lives in the
+gitignored state database and `deepdive/<id>.json` keeps only an RSS snippet,
+so neither rule could be run after the fact, and the 2026-09-20 audit left two
+findings unresolved for exactly that reason. `pipeline/editorial/grounding.py`
+writes the evidence to `build-data/grounding/` at export time. Each record is
+capped per article and says so: a silent cap would make absence read as
+fabrication, which is the same defect the Weekly shipped by publishing
+`.limit(500)` as an exact count.
 
 ### Feed level
 
