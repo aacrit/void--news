@@ -60,6 +60,12 @@ def main() -> int:
             "DISABLE_ANTHROPIC": "1",
             "VOID_EXPORT_BUILD_DIR": str(tmp / "build-data"),
             "VOID_EXPORT_PUBLIC_DIR": str(tmp / "public-data"),
+            # This DB is built from the committed 2026-09-20 snapshot, which
+            # the broken step 6b wrote: 539 of its 734 per-article bias rows
+            # are the default tuple. The export's defaults gate would refuse
+            # it, so here it warns and the assertion below checks it ran.
+            # Drop this line once a post-fix feed.json has been committed.
+            "VOID_BIAS_DEFAULTS_GATE": "warn",
         }
         env.pop("GEMINI_API_KEY", None)
 
@@ -172,6 +178,18 @@ def main() -> int:
             print("FAIL: static export exited non-zero")
             print(export.stdout[-2000:])
             return 1
+
+        # The defaults gate runs on every export and reports the share of
+        # per-article rows that were never measured (see
+        # pipeline/validation/bias_defaults.py and
+        # tests/test_bias_defaults_gate.py for the pass/fail behaviour).
+        gate_line = next((ln for ln in export.stdout.splitlines()
+                          if ln.startswith("bias defaults:")), "")
+        if not gate_line:
+            print("FAIL: the export did not report the bias defaults share")
+            ok = False
+        else:
+            print(f"PASS: defaults gate ran ({gate_line})")
 
         feed = json.loads((tmp / "build-data" / "feed.json").read_text())["clusters"]
         amap = json.loads((tmp / "build-data" / "archiveMap.json").read_text())

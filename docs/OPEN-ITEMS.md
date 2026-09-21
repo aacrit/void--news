@@ -13,16 +13,6 @@ because it sends the next session chasing a fixed bug.
 
 ## Blocked on a CEO decision
 
-**Step 6b overwrites measured bias scores with defaults.** Documented with
-evidence in `docs/proposals/NEXT-LEVEL-2026-09-20.md` (finding 1 and the
-"intentional damper" analysis). Not fixed in any branch: the CEO asked that
-clustering, ranking and bias not be touched without a deliberate decision.
-The fix is small (preload `bias_scores` for the 36h lookback into
-`article_bias_map`; never write a defaults row) and needs a pipeline run to
-prove it before anything is built on the scores.
-
-
-
 **Block 5a — the pronoun scrubber rewrites quoted speech.** It converts
 we/our/us/my and has no rule for "I", so it leaves a sentence in two voices.
 On the live 09-09 feed it turned Ted Cruz's "a traumatic experience for all of
@@ -106,6 +96,32 @@ treatment `history/data.ts` got in rev 69 before the 301 comes off.
 ---
 
 ## Watch on the next run
+
+**Bias defaults after the step 6b fix (2026-09-21).** Step 6b used to rebuild
+every row in a multi-article cluster from `article_bias_map.get(art_id, {})`,
+and the 36h lookback articles were never in that map, so their measured scores
+were replaced with 50/10/25/50/0.7 plus a framing-only rationale. It now loads
+the stored `bias_scores` rows for those articles before it re-scores framing,
+and writes no row at all for an article it has nothing measured for.
+
+On the first run after this lands, read the export's own line in the run log:
+
+    bias defaults: N/M per-article rows are the default tuple (X%; ...)
+
+Before the fix that share was 73.4% (540 of 737 rows in
+`frontend/public/data/deepdive/`). It should now fall well below 0.5; a real
+corpus should land in the low single digits, since only an article with no
+`bias_scores` row at all can still read as defaults. The export raises and
+ships nothing above 0.5 over 100 rows
+(`DEFAULT_TUPLE_MAX_SHARE`, `pipeline/validation/bias_defaults.py`), so a
+regression stops the run instead of reaching the page. Also worth reading in
+the same log: 6b's two new lines, how many lookback articles needed stored
+scores against how many rows came back, and how many framing updates were
+skipped for want of a measured row.
+
+Once a post-fix feed is committed, drop `VOID_BIAS_DEFAULTS_GATE=warn` from
+`tests/test_editorial_stage.py`: it is there only because that harness builds
+its DB from the damaged 2026-09-20 snapshot.
 
 **House promos: DISCHARGED 2026-09-21.** All 78 published History episodes
 carry a promo under their outro, stitched without re-rendering a single line
