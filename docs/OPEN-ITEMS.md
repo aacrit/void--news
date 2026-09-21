@@ -107,21 +107,20 @@ treatment `history/data.ts` got in rev 69 before the 301 comes off.
 
 ## Watch on the next run
 
-**House promos (2026-09-20).** The pool (`data/promos/house.yaml`, 24 promos)
-validates and is rendered in `af_kore` (American, CEO: "prefer American voice")
-at speed 0.86 (CEO: "slow it down") over the promo bed (CEO: "more dramatic
-music"); the second sentences follow "Visit news.voidvision.org to check out X";
-`af_sarah` is the alternate (`VOID_PROMO_VOICE`). On Air, Weekly and History
-pick a promo up at render time only when `data/promos/rendered/` carries a
-render whose sha matches the pool; otherwise they ship exactly as before.
-The 73 published History episodes are **not stitched yet**: dispatch
-`.github/workflows/stitch-promos.yml` (render: false if the committed
-renders are the ones wanted), outside 11:00-17:00 UTC, and read the guard
-numbers it prints per episode. A dry run on three live episodes (ottoman-empire,
-partition-of-india, algerian-war, pulled from the site with `--from-site`)
-passed every guard: integrated loudness unchanged at -16.4 LUFS, true peak
--1.3 to -1.5 dBTP, promo window within 1.7 dB of the closing speech. First daily run after this lands: confirm the
-served On Air MP3's last chapter is kind `promo` and A-04 still passes.
+**House promos: DISCHARGED 2026-09-21.** All 78 published History episodes
+carry a promo under their outro, stitched without re-rendering a single line
+of TTS (run 2 of `stitch-promos.yml`, 50 minutes, zero guard failures). Every
+duration is unchanged and inside the 7.5-15.5 minute gate, 18 distinct promos
+are in use, none advertises History to itself, and `renderedAt` is preserved
+so the script-staleness check still bites.
+
+Left to watch: the first daily run after this lands should put a `promo`
+chapter on the served On Air MP3 with A-04 still passing, and the first Sunday
+issue the same for The Argument. The CEO ear test on `af_kore` at speed 0.86
+over `radio_promo_bed.wav` has not happened; `af_sarah` is the American
+alternate (`VOID_PROMO_VOICE`), and a voice change means a re-render plus a
+re-stitch, which is cheap because the un-stitched masters are parked under the
+release tag `history-audio-clean`.
 
 **Podcast channel.** `podcast-history.xml` (73 items) and `podcast-weekly.xml`
 now generate and are linked from `/listen` and `layout.tsx`. Not submitted to

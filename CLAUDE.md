@@ -252,11 +252,11 @@ adds nothing to the state that anything reads back.
 | **Weekly** | Live. **Vol. I, No. 1 published 2026-09-20**, the first issue on the Sunday cadence and the first ever to carry departments. Aug 24-30 is kept as the pilot. |
 | **Weekly audio** ("The Argument") | Built rev 72, **first episode never heard**. |
 | **History** | Live, 78 events, static JSON since rev 69. |
-| **History audio** | **78/78 scripts written, 78/78 rendered.** Register: `docs/data/history-episodes.csv`, regenerate with `python3 pipeline/history/episode_report.py`. |
+| **History audio** | **78/78 scripts written, 78/78 rendered**, each carrying a house promo under its outro. Register: `docs/data/history-episodes.csv`, regenerate with `python3 pipeline/history/episode_report.py`. |
 | **Revolt** | 301-hidden, serves MOCK data. Cannot be un-hidden until it reads static JSON. |
 | **Ship / Feedback** | Live on the Worker + D1. |
-| **Podcast feeds** | Generated: `podcast-world.xml`, `podcast-weekly.xml`, `podcast-history.xml` (73). Linked from `/listen` and `layout.tsx`. **Not yet submitted** to Apple or Spotify; weekly and history covers exist as SVG only. |
-| **House promos** | Pool of 24 written and validated. Rendered WAVs committed only if `data/promos/rendered/manifest.json` exists. History catalogue **not yet stitched**; run `stitch-promos.yml`. |
+| **Podcast feeds** | Generated: `podcast-world.xml`, `podcast-weekly.xml`, `podcast-history.xml` (78). Linked from `/listen` and `layout.tsx`. **Not yet submitted** to Apple or Spotify; weekly and history covers exist as SVG only. |
+| **House promos** | Live. 24 promos, `af_kore` at speed 0.86 over `radio_promo_bed.wav`. **All 78 History episodes stitched 2026-09-21**; On Air and Weekly pick one up on their next render. |
 | **Paper, Games** | 301-hidden. |
 
 ---
