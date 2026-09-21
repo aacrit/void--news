@@ -60,10 +60,10 @@
   padding: 0;
   color: var(--fg-tertiary);
   cursor: pointer;
-  border-radius: var(--radius-sm, 4px);
+  border-radius: var(--radius-sm);
   transition:
-    color var(--dur-fast, 150ms) var(--ease-cinematic, ease-out),
-    background-color var(--dur-fast, 150ms) var(--ease-cinematic, ease-out);
+    color var(--dur-fast) var(--ease-cinematic, ease-out),
+    background-color var(--dur-fast) var(--ease-cinematic, ease-out);
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -93,14 +93,10 @@
   color: var(--fg-secondary);
   background: var(--bg-elevated);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm, 4px);
+  border-radius: var(--radius-sm);
   padding: 4px 8px;
   white-space: nowrap;
   pointer-events: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .inline-dd__action { transition: none; }
 }
 
 /* Headline IS the collapse toggle — a reset button styled like .dd-headline. */
@@ -140,7 +136,7 @@
 .inline-dd__headline:focus-visible {
   outline: 2px solid var(--accent-warm);
   outline-offset: 4px;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
 }
 
 /* Meta row — give it a touch of air below the headline. */
@@ -269,7 +265,7 @@
    cleaner and subtler; the slightly deeper dim carries the depth on its own. */
 .feed-grid__item,
 .lead-twin {
-  transition: opacity var(--dur-normal, 300ms) var(--ease-rack, ease);
+  transition: opacity var(--dur-normal) var(--ease-rack, ease);
 }
 
 .feed-grid--recede .feed-grid__item,

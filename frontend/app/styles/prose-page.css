@@ -138,13 +138,6 @@
   color: var(--fg-tertiary);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .press a,
-  .privacy a {
-    transition: none;
-  }
-}
-
 /* ==========================================================================
    The 404. Same measure, same ramp, nothing else on the page.
    ========================================================================== */

@@ -258,12 +258,6 @@
       padding var(--dur-settle, 240ms) var(--ease-rack, ease-in-out);
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .nav-dateline-line {
-      transition: none;
-    }
-  }
-
   /* Filter toggle — full touch target on mobile */
 
   /* === LAYOUT === */
@@ -417,7 +411,7 @@
   .anim-dd-section {
     transform: translateY(8px);
     transition:
-      opacity 150ms var(--ease-cinematic),
+      opacity var(--dur-fast) var(--ease-cinematic),
       transform 250ms var(--ease-cinematic);
   }
 

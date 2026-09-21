@@ -42,7 +42,7 @@
   --wk-accent-ink: rgba(185, 28, 28, 0.20);
   --wk-cream: #F8F3E8;
   --wk-cream-deep: #EDE5D4;
-  --wk-paper: #EDE4D0;
+  --wk-paper: var(--palette-weekly-paper);
   --wk-topbar-h: var(--nav-height); /* the shared masthead; Weekly has no topbar of its own */
   --wk-measure: 36rem;
   --wk-rail: 17ch;
@@ -89,7 +89,7 @@
   --wk-accent-ink: rgba(239, 83, 80, 0.22);
   --wk-cream: #2A2420;
   --wk-cream-deep: #221E1A;
-  --wk-paper: #1E1A16;
+  --wk-paper: var(--palette-weekly-paper);
 }
 
 :root[data-mode="dark"] .wk-page {
@@ -813,7 +813,7 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 0.6s var(--ease-cinematic, ease-out);
+  transition: opacity var(--dur-slow) var(--ease-cinematic, ease-out);
   filter: var(--img-grade-weekly, contrast(1.05) saturate(0.92) sepia(0.04));
 }
 
@@ -1131,7 +1131,7 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 0.6s var(--ease-cinematic, ease-out);
+  transition: opacity var(--dur-slow) var(--ease-cinematic, ease-out);
   filter: var(--img-grade-weekly, contrast(1.05) saturate(0.92) sepia(0.04));
 }
 
@@ -1242,7 +1242,7 @@
   inset: 50% 0 auto 0;
   height: 6px;
   transform: translateY(-50%);
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   background: linear-gradient(
     to right,
     var(--bias-left) 0%,
@@ -1372,7 +1372,7 @@
   display: block;
   height: 4px;
   background: var(--wk-accent-ghost);
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 

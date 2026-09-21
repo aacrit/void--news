@@ -208,13 +208,3 @@
   border-color: var(--fg-accent);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .fb-back__link,
-  .fb-input,
-  .fb-textarea,
-  .fb-select,
-  .fb-submit,
-  .fb-success__again {
-    transition: none;
-  }
-}

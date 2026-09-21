@@ -52,7 +52,7 @@
     text-decoration-color var(--rack-focus-dur) var(--rack-focus-ease),
     filter var(--rack-focus-dur) var(--rack-focus-ease),
     background-color var(--rack-focus-dur) var(--rack-focus-ease);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   padding: 0 1px;
   position: relative;
 }
@@ -95,12 +95,12 @@
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   /* [V06] border-radius 8px -> 2px */
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   /* [C-P0] Practical amber glow + cinematic dramatic shadow */
   box-shadow: 0 0 20px color-mix(in srgb, var(--cin-amber) 15%, transparent),
               var(--shadow-cinematic-dramatic);
   /* [V17] Spring physics approximation with overshoot */
-  animation: claimReveal 400ms var(--ease-cinematic) both;
+  animation: claimReveal var(--dur-morph) var(--ease-cinematic) both;
 }
 
 .claim-mark__label {
@@ -159,7 +159,7 @@
   padding-top: var(--space-3);
   opacity: 0;
   transform: translateY(8px);
-  animation: ccSectionReveal 400ms var(--ease-cinematic) forwards;
+  animation: ccSectionReveal var(--dur-morph) var(--ease-cinematic) forwards;
 }
 
 .cc-header {
@@ -192,6 +192,7 @@
 .cc-bar__track {
   display: flex;
   height: 6px;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 3px;
   overflow: hidden;
   background: var(--bg-secondary);
@@ -242,7 +243,7 @@
   display: inline-block;
   width: 8px;
   height: 8px;
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   flex-shrink: 0;
 }
 
@@ -306,8 +307,8 @@
   overflow: hidden;
   opacity: 0;
   transition:
-    max-height 300ms var(--ease-rack),
-    opacity 300ms var(--ease-rack);
+    max-height var(--dur-normal) var(--ease-rack),
+    opacity var(--dur-normal) var(--ease-rack);
 }
 
 /* [V09] max-height 600px -> 2000px to prevent clipping */
@@ -321,6 +322,7 @@
 .cc-claim {
   padding: var(--space-2) var(--space-3);
   border-left: 3px solid transparent;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 0 4px 4px 0;
 }
 
@@ -333,7 +335,7 @@
 .cc-claim--disputed {
   border-left-color: var(--cin-amber);
   background: color-mix(in srgb, var(--cin-amber) 4%, transparent);
-  animation: claimReveal 400ms var(--ease-cinematic) both;
+  animation: claimReveal var(--dur-morph) var(--ease-cinematic) both;
 }
 
 .cc-claim--single {
@@ -364,9 +366,10 @@
 .cc-dispute {
   padding: var(--space-3);
   border-left: 3px solid var(--cin-amber);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 0 4px 4px 0;
   background: color-mix(in srgb, var(--cin-amber) 3%, transparent);
-  animation: claimReveal 400ms var(--ease-cinematic) both;
+  animation: claimReveal var(--dur-morph) var(--ease-cinematic) both;
 }
 
 .cc-dispute__topic {
@@ -448,7 +451,7 @@
 .cc-expand__caret {
   display: inline-block;
   font-size: 0.75em;
-  transition: transform 300ms var(--ease-rack);
+  transition: transform var(--dur-normal) var(--ease-rack);
 }
 
 .cc-expand__caret--open {
@@ -519,7 +522,7 @@
 .cred-arc__bar-track {
   display: flex;
   height: 4px;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   background: var(--bg-secondary);
 }
@@ -795,6 +798,6 @@
   width: 9px;
   height: 0;
   border-top: 2px solid var(--point-mark);
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   opacity: 0.9;
 }

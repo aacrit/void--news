@@ -72,6 +72,7 @@
   border: none;
   color: var(--fg-secondary);
   cursor: pointer;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 8px;
   position: relative;
 }
@@ -80,7 +81,7 @@
 .dd-page__nav-btn:disabled { opacity: 0.3; cursor: default; }
 
 .dd-page__counter {
-  font-family: var(--font-data, monospace);
+  font-family: var(--font-data);
   font-size: var(--text-xxs, 0.7rem);
   color: var(--fg-tertiary);
   letter-spacing: 0.06em;
@@ -94,11 +95,12 @@
   right: 0;
   margin-top: 2px;
   white-space: nowrap;
-  font-family: var(--font-data, monospace);
+  font-family: var(--font-data);
   font-size: var(--text-xxs, 0.7rem);
   color: var(--fg-secondary);
   background: var(--bg-elevated, var(--bg-secondary));
   border: 1px solid var(--border-subtle, var(--border-color));
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 6px;
   padding: 2px 8px;
   z-index: 5;

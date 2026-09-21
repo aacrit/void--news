@@ -311,6 +311,7 @@
   padding: var(--space-1) var(--space-3);
   background: none;
   border: 1px solid var(--border-subtle);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 100px;
   cursor: pointer;
   color: var(--fg-secondary);
@@ -320,7 +321,7 @@
   text-transform: uppercase;
   min-height: 44px;
   min-width: 44px;
-  transition: border-color 150ms var(--ease-cinematic), color 150ms var(--ease-cinematic);
+  transition: border-color var(--dur-fast) var(--ease-cinematic), color var(--dur-fast) var(--ease-cinematic);
 }
 
 .mbp--skybox .mbp__play:active {
@@ -523,11 +524,6 @@
 }
 
 
-@keyframes pullSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 
 /* ---------------------------------------------------------------------------
    Narrow viewports — prevent justified text rivers
@@ -626,7 +622,7 @@
   width: 100%;
   max-width: 100%;
   background: var(--bg-primary);
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--radius-sheet);
   padding-bottom: env(safe-area-inset-bottom);
   animation: mscModalSlideUp 250ms var(--ease-cinematic) both;
   max-height: 80vh;
@@ -701,11 +697,12 @@
   gap: var(--space-3);
   padding: var(--space-3);
   background: var(--bg-secondary);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 8px;
   text-decoration: none;
   color: inherit;
   border: 1px solid var(--border-subtle);
-  transition: background 150ms var(--ease-cinematic), border-color 150ms var(--ease-cinematic);
+  transition: background var(--dur-fast) var(--ease-cinematic), border-color var(--dur-fast) var(--ease-cinematic);
 }
 
 .mpp__source-card:active {
@@ -761,6 +758,7 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   padding: var(--space-1) var(--space-2);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 4px;
 }
 
@@ -786,6 +784,7 @@
   background: var(--accent-warm);
   color: white;
   border: none;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 6px;
   font-family: var(--font-data);
   font-size: var(--text-xs);
@@ -794,7 +793,7 @@
   letter-spacing: 0.04em;
   cursor: pointer;
   min-height: 44px;
-  transition: background 150ms var(--ease-cinematic);
+  transition: background var(--dur-fast) var(--ease-cinematic);
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -867,7 +866,7 @@
   font-size: var(--text-xxs);
   color: color-mix(in srgb, var(--fg-secondary) 60%, transparent);
   letter-spacing: 0.02em;
-  transition: color 150ms var(--ease-cinematic);
+  transition: color var(--dur-fast) var(--ease-cinematic);
 }
 
 .mbp__prev-toggle:active .mbp__prev-label {
@@ -897,6 +896,7 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-1);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 4px;
   cursor: pointer;
   background: transparent;
@@ -961,7 +961,7 @@
   color: var(--accent-warm);
   padding: 1px 4px;
   border: 1px solid color-mix(in srgb, var(--accent-warm) 25%, transparent);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   flex-shrink: 0;
 }
 

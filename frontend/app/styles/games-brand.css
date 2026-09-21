@@ -26,23 +26,23 @@
 
 /* "void" — fades in first; fallback: opacity 1 if animation fails */
 .games-wordmark__void {
-  animation: gw-void-in 400ms var(--ease-cinematic, cubic-bezier(0.22,1,0.36,1)) 100ms both;
+  animation: gw-void-in var(--dur-morph) var(--ease-cinematic) 100ms both;
 }
 
 /* Signal diamond */
 .games-wordmark__signal {
-  animation: gw-signal-in 300ms var(--ease-cinematic, cubic-bezier(0.22,1,0.36,1)) 350ms both;
+  animation: gw-signal-in var(--dur-normal) var(--ease-cinematic) 350ms both;
   transform-origin: 124px 19px;
 }
 
 /* "--games" — slides in from right */
 .games-wordmark__flag {
-  animation: gw-flag-in 450ms var(--ease-cinematic, cubic-bezier(0.22,1,0.36,1)) 400ms both;
+  animation: gw-flag-in 450ms var(--ease-cinematic) 400ms both;
 }
 
 /* The "--" dashes */
 .games-wordmark__dashes {
-  animation: gw-dash-in 350ms var(--ease-cinematic, cubic-bezier(0.22,1,0.36,1)) 350ms both;
+  animation: gw-dash-in 350ms var(--ease-cinematic) 350ms both;
 }
 
 /* --------------------------------------------------------------------------
