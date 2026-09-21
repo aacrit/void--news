@@ -417,42 +417,42 @@ perspectives:
 
 
     John K. Thornton, the foremost American historian of the Kongo, and Linda M. Heywood, his frequent collaborator, have spent four decades reconstructing the agency of Kongolese historical actors. Their
-    work — grounded in Portuguese, Italian, and Kikongo-language sources — challenges two opposing mythologies: the colonial myth that Africans had no civilization worth studying, and the anti-colonial myth
+    work (grounded in Portuguese, Italian, and Kikongo-language sources) challenges two opposing mythologies: the colonial myth that Africans had no civilization worth studying, and the anti-colonial myth
     that Africans were passive victims of European aggression.
 
 
     The slave trade in the Kongo region was not a European invention imposed on an unwilling society. It was an expansion of existing practices. The Kongo had internal slavery before 1483: war captives, judicial
     offenders, and debtors could be enslaved, and enslaved people could be traded. Portuguese demand intensified the system catastrophically, but the trade operated through Kongolese institutions. The Manikongo
-    received customs duties on slave exports. Provincial governors sold captives from their territories. Kongolese war chiefs conducted raids against neighboring peoples — the Tio, the Mbundu, the peoples
-    of the interior — specifically to acquire captives for the Atlantic market. Afonso I''s letters protesting the trade are genuine and anguished, but they protest the kidnapping of his own subjects, not
+    received customs duties on slave exports. Provincial governors sold captives from their territories. Kongolese war chiefs conducted raids against neighboring peoples (the Tio, the Mbundu, the peoples
+    of the interior) specifically to acquire captives for the Atlantic market. Afonso I''s letters protesting the trade are genuine and anguished, but they protest the kidnapping of his own subjects, not
     the institution of slavery itself. He continued to sell war captives from the kingdom''s borders.
 
 
     This is not an exoneration of Portugal. Portuguese demand drove the scale of the trade from thousands to millions. Portuguese traders introduced firearms that altered the military balance. Portuguese
     colonial officials in Angola conducted wars of conquest specifically to generate captives. The system was asymmetric: Europe consumed the labor; Africa bore the demographic cost. But within that asymmetric
-    system, Kongolese elites were active participants — making choices, negotiating terms, profiting from sales, and fighting wars that generated the captives who filled the ships.
+    system, Kongolese elites were active participants, making choices, negotiating terms, profiting from sales, and fighting wars that generated the captives who filled the ships.
 
 
     Thornton''s work on the Battle of Mbwila (1665) demonstrates this complexity. The battle was not a simple Portuguese-vs-Kongolese confrontation. Antonio I was fighting a coalition that included Portuguese
-    musketeers, Imbangala mercenaries, and Kongolese rivals from competing lineages. The political fragmentation that followed Mbwila was driven as much by Kongolese internal dynamics — the Kimpanzu vs.
-    Kinlaza succession dispute — as by Portuguese intervention. To reduce the kingdom''s collapse to European villainy erases Kongolese political agency even in the narrative of Kongolese destruction.
+    musketeers, Imbangala mercenaries, and Kongolese rivals from competing lineages. The political fragmentation that followed Mbwila was driven as much by Kongolese internal dynamics (the Kimpanzu vs.
+    Kinlaza succession dispute) as by Portuguese intervention. To reduce the kingdom''s collapse to European villainy erases Kongolese political agency even in the narrative of Kongolese destruction.
 
 
     Heywood''s work on the Kongolese diaspora extends this argument across the Atlantic. The Kongolese who arrived in the Americas as enslaved people were not a homogeneous mass of victims. They included
-    soldiers, priests, nobles, and merchants — people with skills, knowledge, and political experience that they deployed in their new circumstances. The leaders of the Stono Rebellion were likely Kongolese
+    soldiers, priests, nobles, and merchants, people with skills, knowledge, and political experience that they deployed in their new circumstances. The leaders of the Stono Rebellion were likely Kongolese
     elites who had held positions of authority in their homeland. The founders of Afro-Brazilian religious traditions were Kongolese ritual specialists who adapted their practices to new conditions. Erasing
-    their agency — treating them as objects of a European trade rather than actors in a transatlantic system — is a second violence: it denies them the complexity of their own history.
+    their agency (treating them as objects of a European trade rather than actors in a transatlantic system) is a second violence: it denies them the complexity of their own history.
 
 
-    The Thornton-Heywood school does not excuse the slave trade or minimize its horror. It insists that understanding the trade requires acknowledging the full range of human actors — including African ones
-    — and that the alternative, a narrative in which Africans exist only as victims, is both historically false and morally patronizing.
+    The Thornton-Heywood school does not excuse the slave trade or minimize its horror. It insists that understanding the trade requires acknowledging the full range of human actors, including African ones,
+    and that the alternative, a narrative in which Africans exist only as victims, is both historically false and morally patronizing.
 
     '
   key_arguments:
-  - Kongolese elites actively participated in the slave trade — the Manikongo collected customs on slave exports, and provincial governors sold captives
-  - Afonso I's letters protested the kidnapping of his own subjects, not the institution of slavery itself — he continued to sell war captives
+  - Kongolese elites actively participated in the slave trade; the Manikongo collected customs on slave exports, and provincial governors sold captives
+  - Afonso I's letters protested the kidnapping of his own subjects, not the institution of slavery itself. He continued to sell war captives
   - The Battle of Mbwila was a complex political event involving Kongolese factions, not a simple European-vs-African confrontation
-  - Erasing African agency — even in narratives of victimhood — is both historically false and morally patronizing
+  - Erasing African agency, even in narratives of victimhood, is both historically false and morally patronizing
   sources:
   - title: 'Africa and Africans in the Making of the Atlantic World, 1400-1800'
     author: John K. Thornton
@@ -475,19 +475,19 @@ perspectives:
     speaker: John K. Thornton (paraphrased)
     context: Synthesis of Thornton's argument across multiple works
   emphasized:
-  - African agency in the slave trade — Kongolese elites as participants, not just victims
+  - African agency in the slave trade (Kongolese elites as participants, not just victims)
   - The complexity of Kongolese internal politics, including succession wars and factional rivalries
   - The danger of patronizing narratives that deny Africans historical complexity
   - The continuity of Kongolese skills and knowledge in the diaspora
   omitted:
   - The massive asymmetry of power between European and African participants in the trade
   - The degree to which European demand created incentives that distorted Kongolese political institutions
-  - The moral weight of 4 million people extracted from the region — agency does not equal equivalence
+  - The moral weight of 4 million people extracted from the region; agency does not equal equivalence
   - The environmental and demographic devastation of the Kongo region caused by three centuries of depopulation
 connections:
 - target_slug: transatlantic-slave-trade
   connection_type: consequence
-  description: The greater Kongo region was the single largest source area for the transatlantic slave trade — an estimated 4 million people shipped from Kongolese ports between 1500 and 1800; Afonso I's
+  description: The greater Kongo region was the single largest source area for the transatlantic slave trade, an estimated 4 million people shipped from Kongolese ports between 1500 and 1800; Afonso I's
     1526 letters are the earliest surviving African protest against the trade
 - target_slug: congo-free-state
   connection_type: consequence
@@ -500,4 +500,4 @@ connections:
 - target_slug: mali-empire-mansa-musa
   connection_type: parallel
   description: 'Both the Mali Empire and the Kingdom of Kongo demonstrate pre-colonial African state-building at a scale and sophistication that European historiography systematically erased; Mansa Musa
-    ruled in West Africa as Afonso I ruled in Central Africa — on their own terms, in their own right'
+    ruled in West Africa as Afonso I ruled in Central Africa, on their own terms, in their own right'

@@ -574,8 +574,8 @@ perspectives:
     granted women''s suffrage in 1934, earlier than France (1944) or Switzerland (1971). But Turkey''s
     example reinforced the broader pattern: women''s rights were treated as a marker of modernity to be
     displayed, not a principle to be universalized. The "new nations" emerging from colonialism used
-    women''s participation to signal progress. Women marched in Egypt, fought in Algeria, organized in
-    India and Vietnam, and then the new nations restricted women''s autonomy once state power was consolidated.
+    women''s participation to signal progress (women marched in Egypt, fought in Algeria, organized in
+    India and Vietnam) and then restricted women''s autonomy once state power was consolidated.
 
 
     The feminist critique of Bandung does not reject the conference''s anti-colonial purpose. It asks who
@@ -590,7 +590,7 @@ perspectives:
   - The Final Communique mentioned women zero times across ten sections and twenty-nine sub-articles
   - Anti-colonial movements recruited women as participants and then excluded them from the states those
     movements built
-  - Women fought in every struggle represented at Bandung — India, Egypt, Indonesia, Algeria — and were
+  - Women fought in every struggle represented at Bandung (India, Egypt, Indonesia, Algeria) and were
     told women's rights would come "after" national liberation
   - The conference dismantled the hierarchy between colonizer and colonized while reproducing the
     hierarchy between men and women
@@ -623,15 +623,15 @@ perspectives:
   - Zero mentions of women in the Final Communique
   - The systematic pattern of mobilizing women during liberation struggles and marginalizing them after
     independence
-  - Specific cases — Doria Shafik placed under house arrest, Algerian Family Code of 1984, Funmilayo
-    Ransome-Kuti marginalized at international forums
+  - 'Specific cases: Doria Shafik placed under house arrest, Algerian Family Code of 1984, Funmilayo
+    Ransome-Kuti marginalized at international forums'
   - Self-determination as defined by men for states governed by men
   omitted:
   - Genuine achievements of post-colonial women's movements in education, legal reform, and political
     participation
-  - Women's agency within anti-colonial movements — not only as victims but as strategic actors who
+  - Women's agency within anti-colonial movements, not only as victims but as strategic actors who
     shaped outcomes
-  - The global context of women's exclusion — Western democracies were also male-dominated in 1955
+  - The global context of women's exclusion; Western democracies were also male-dominated in 1955
   - Internal feminist debates about the relationship between national liberation and gender liberation
 media:
 - media_type: photograph
@@ -645,8 +645,8 @@ media:
   creation_date: April 1955
 - media_type: photograph
   title: Sukarno, Nehru, and Nasser at the Bandung Conference
-  description: Three of the conference's central figures — Sukarno (Indonesia), Nehru (India), and Nasser
-    (Egypt) — together at Bandung. Within a decade of this photograph, Sukarno would be overthrown and
+  description: Three of the conference's central figures, Sukarno (Indonesia), Nehru (India), and Nasser
+    (Egypt), together at Bandung. Within a decade of this photograph, Sukarno would be overthrown and
     Nehru would be dead.
   source_url: https://commons.wikimedia.org/wiki/File:Soekarno,_Nehru,_Nasser_at_the_Bandung_Conference.jpg
   attribution: Indonesian government photograph, 1955, public domain via Wikimedia Commons
@@ -655,7 +655,7 @@ media:
   creation_date: April 1955
 - media_type: map
   title: The 29 nations that attended the Bandung Conference, April 1955
-  description: Map showing the 29 Asian and African nations that sent delegations to Bandung — spanning
+  description: Map showing the 29 Asian and African nations that sent delegations to Bandung, spanning
     from Japan and the Philippines in the east to Liberia and Ethiopia in the west, representing 54% of
     the world's population.
   source_url: https://commons.wikimedia.org/wiki/File:Bandung_Conference_Participants.svg
@@ -664,10 +664,10 @@ media:
   creator: Wikimedia Commons contributors
   creation_date: null
 - media_type: document
-  title: The Dasasila Bandung — Ten Principles of the Asian-African Conference
+  title: 'The Dasasila Bandung: Ten Principles of the Asian-African Conference'
   description: The Final Communique of the Asian-African Conference, containing the Ten Principles
-    (Dasasila Bandung) of international relations — sovereignty, non-aggression, non-interference,
-    equality, peaceful coexistence — adopted by the 29 delegations on April 24, 1955.
+    (Dasasila Bandung) of international relations (sovereignty, non-aggression, non-interference,
+    equality, peaceful coexistence) adopted by the 29 delegations on April 24, 1955.
   source_url: https://franke.uchicago.edu/Final_Communique_Bandung_1955.pdf
   attribution: Asian-African Conference Final Communique, Bandung, April 24, 1955
   license: public-domain
@@ -676,26 +676,26 @@ media:
 connections:
 - target_slug: indian-independence-movement
   connection_type: consequence
-  description: Nehru's presence at Bandung expressed India's vision for post-independence foreign policy
-    — non-alignment as the extension of the independence struggle into global politics, the newly sovereign
-    refusing to become subordinate again
+  description: 'Nehru''s presence at Bandung expressed India''s vision for post-independence foreign policy:
+    non-alignment as the extension of the independence struggle into global politics, the newly sovereign
+    refusing to become subordinate again'
 - target_slug: scramble-for-africa
   connection_type: response-to
   description: Bandung was the collective response to the world the Berlin Conference (1884-1885) had
-    created — colonized peoples organizing to dismantle the system of partition and extraction built
+    created, colonized peoples organizing to dismantle the system of partition and extraction built
     without their consent
 - target_slug: rwandan-genocide
   connection_type: influenced
   description: The Non-Aligned Movement's principle of non-interference in member states' internal affairs
-    provided no framework for intervention — when 800,000 were killed in Rwanda in 100 days, the NAM
+    provided no framework for intervention. When 800,000 were killed in Rwanda in 100 days, the NAM
     offered no mechanism to override sovereignty in defense of human life
 - target_slug: cuban-missile-crisis
   connection_type: parallel
-  description: The Cuban Missile Crisis (1962) demonstrated the limits of Bandung's vision — the non-aligned
+  description: 'The Cuban Missile Crisis (1962) demonstrated the limits of Bandung''s vision: the non-aligned
     world remained subject to superpower decisions it could not influence, two men in Washington and Moscow
-    negotiating the fate of the planet
+    negotiating the fate of the planet'
 - target_slug: creation-of-israel-nakba
   connection_type: influenced
-  description: The Palestine question was on Bandung's agenda — the conference declared support for
+  description: The Palestine question was on Bandung's agenda, and the conference declared support for
     Palestinian self-determination, establishing the Third World solidarity with Palestine that persists
     through the NAM, the G-77, and the UN General Assembly in 2026
