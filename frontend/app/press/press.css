@@ -16,7 +16,7 @@
    room carries a facts strip and an asset grid that want a little more room,
    while the prose still holds a comfortable measure. */
 .press {
-  max-width: 760px;
+  max-width: var(--measure-prose, 760px);
 }
 
 /* ── Accessible helper ──────────────────────────────────────────────────── */
