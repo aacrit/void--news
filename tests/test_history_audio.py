@@ -46,9 +46,11 @@ def check(name: str, cond: bool, detail: str = "") -> None:
 
 
 sys.path.insert(0, str(ROOT / "pipeline"))
+PROMO_CHAPTER_TITLE = "Also from Void News"   # house_promos.HISTORY_PROMO_CHAPTER_TITLE
 try:
     from briefing import house_promos as hp
     PROMOS = hp.load_pool()
+    assert hp.HISTORY_PROMO_CHAPTER_TITLE == PROMO_CHAPTER_TITLE
 except Exception as _e:  # pyyaml missing: the promo checks degrade to "no promo entries"
     hp = None
     PROMOS = []
@@ -171,7 +173,7 @@ def main() -> int:
                 check(f"{slug}: promo is the deterministic pick for this slug",
                       hp.select("history", f"history:{slug}", PROMOS).id == pp.id)
             check(f"{slug}: last chapter is the promo",
-                  bool(chapters) and chapters[-1].get("title") == hp.HISTORY_PROMO_CHAPTER_TITLE,
+                  bool(chapters) and chapters[-1].get("title") == PROMO_CHAPTER_TITLE,
                   str(chapters[-1].get("title") if chapters else None))
             if len(chapters) >= 2 and isinstance(claimed, (int, float)):
                 start = chapters[-1].get("startTime")
@@ -194,7 +196,7 @@ def main() -> int:
                     check(f"{slug}: file still ends in silence", tail < -50.0, f"{tail:.1f} dBFS")
         else:
             check(f"{slug}: no promo chapter without a promo entry",
-                  not any(c.get("title") == hp.HISTORY_PROMO_CHAPTER_TITLE for c in chapters))
+                  not any(c.get("title") == PROMO_CHAPTER_TITLE for c in chapters))
 
     if AUDIO.exists():
         for mp3 in sorted(AUDIO.glob("*.mp3")):

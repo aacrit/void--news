@@ -51,7 +51,7 @@ jobs:
           python-version: '3.11'
       - name: Gate self-test + feed-config consistency
         run: |
-          pip install --quiet nltk
+          pip install --quiet nltk pyyaml
           python tests/test_verify_gate.py
           python tests/test_feed_config.py
           python tests/test_editorial_standard.py
