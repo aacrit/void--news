@@ -7,15 +7,17 @@ plus a manifest naming the text each was rendered from.
 ## What a promo is
 
 A pitch, not an announcement. The first sentence earns the second; the second
-sends the listener to news.voidvision.org. Five to nine seconds at the house
-voice. Dry, concrete, unimpressed by its own product.
+is always "Visit news.voidvision.org to check out <section>." Five to ten
+seconds at the house voice, which reads slower than the programmes (Kokoro
+speed 0.86). Dry, concrete, unimpressed by its own product.
 
-> Every line the two benches say is printed in the column. The Argument,
-> Sundays, at news.voidvision.org.
+> Every line the two benches say is printed in the column. Visit
+> news.voidvision.org to check out The Argument.
 
 ## Rules, all asserted by `tests/test_house_promos.py`
 
-1. Exactly two sentences. The address does not count as a sentence end.
+1. Exactly two sentences, the second in the form "Visit news.voidvision.org
+   to check out <section>." The address does not count as a sentence end.
 2. No digits. Number words only from the allowed set in
    `pipeline/briefing/house_promos.py`, each tied to a constant in the code:
    "four" is the story count the radio validator enforces, "fifteen" is the
@@ -51,8 +53,11 @@ voice. Dry, concrete, unimpressed by its own product.
 ## Where it plays
 
 Post-roll, under the outro's held bars, starting a beat after the last
-spoken word and finishing before the outro's fall to silence. The
-programme's length does not change. Selection is the sha256 of the episode
+spoken word and finishing before the outro's fall to silence. A promo bed
+(`pipeline/briefing/assets/radio_promo_bed.wav`, the house motif at the
+Sunday tempo over a low D drone, with a riser and a landing) swells in 1.2 s
+before the first word while the outro is pulled 12 dB down, and its own fall
+hands the ending back to the outro. The programme's length does not change. Selection is the sha256 of the episode
 key (`onair:world:2026-09-20:pm`, `weekly:world:2026-09-14`,
 `history:partition-of-india`) into the eligible pool, so the same episode
 always carries the same promo.

@@ -1,128 +1,128 @@
 {
- "generatedAt": "2026-09-20T23:20:11+00:00",
+ "generatedAt": "2026-09-21T00:54:41+00:00",
  "voice": "af_kore",
- "speed": 0.95,
+ "speed": 0.86,
  "engine": "kokoro",
  "promos": {
   "history-01-sides": {
-   "sha": "d1baface8685",
-   "seconds": 9.49,
-   "bytes": 455724
+   "sha": "7c12bab1af61",
+   "seconds": 9.45,
+   "bytes": 453676
   },
   "history-02-documents": {
-   "sha": "1591d1f15907",
-   "seconds": 9.22,
-   "bytes": 442412
+   "sha": "5aa010194ac3",
+   "seconds": 9.09,
+   "bytes": 436268
   },
   "history-03-particular": {
-   "sha": "3570ff9ac5e5",
-   "seconds": 8.32,
-   "bytes": 399404
+   "sha": "95bc38aca59d",
+   "seconds": 8.13,
+   "bytes": 390188
   },
   "history-04-partition": {
-   "sha": "cf7b79a9672a",
-   "seconds": 8.72,
-   "bytes": 418860
+   "sha": "abe7ce917000",
+   "seconds": 9.71,
+   "bytes": 465964
   },
   "history-05-quarter-hour": {
-   "sha": "485775a56b22",
-   "seconds": 8.6,
-   "bytes": 412716
+   "sha": "c4073c09ed75",
+   "seconds": 9.58,
+   "bytes": 459820
   },
   "history-06-accounts": {
-   "sha": "63ae70430ab8",
+   "sha": "63759b283ffb",
    "seconds": 9.45,
    "bytes": 453676
   },
   "onair-01-ranked": {
-   "sha": "7ad3e9025b6b",
-   "seconds": 8.66,
-   "bytes": 415788
+   "sha": "ea6c46324a7c",
+   "seconds": 9.15,
+   "bytes": 439340
   },
   "onair-02-firewall": {
-   "sha": "0b5f76f1ac27",
-   "seconds": 8.19,
-   "bytes": 393260
+   "sha": "5dc16aaca50d",
+   "seconds": 9.28,
+   "bytes": 445484
   },
   "onair-03-room-tone": {
-   "sha": "3373e5985561",
-   "seconds": 8.51,
-   "bytes": 408620
+   "sha": "4eec9e37e7a7",
+   "seconds": 8.04,
+   "bytes": 386092
   },
   "onair-04-front-page": {
-   "sha": "b56a4d7f9dbc",
-   "seconds": 8.53,
-   "bytes": 409644
+   "sha": "bf338b01af9d",
+   "seconds": 9.13,
+   "bytes": 438316
   },
   "onair-05-cold-open": {
-   "sha": "b5c7be4057d0",
-   "seconds": 8.21,
-   "bytes": 394284
+   "sha": "d2845fcb5ec1",
+   "seconds": 8.09,
+   "bytes": 388140
   },
   "onair-06-twenty-four": {
-   "sha": "65d3db2d4b0d",
-   "seconds": 8.36,
-   "bytes": 401452
+   "sha": "0369e00caadd",
+   "seconds": 8.92,
+   "bytes": 428076
   },
   "site-01-twenty": {
-   "sha": "0fd59eaa6170",
-   "seconds": 8.72,
-   "bytes": 418860
+   "sha": "c81c375eab7d",
+   "seconds": 9.84,
+   "bytes": 472108
   },
   "site-02-outlets": {
-   "sha": "9382eaf4b134",
-   "seconds": 7.83,
-   "bytes": 375852
+   "sha": "6ffef1fe8cbd",
+   "seconds": 9.47,
+   "bytes": 454700
   },
   "site-03-both": {
-   "sha": "8239fa5537c3",
-   "seconds": 8.21,
-   "bytes": 394284
+   "sha": "5d5a4ff4d5fc",
+   "seconds": 10.11,
+   "bytes": 485420
   },
   "site-04-nothing-knows": {
-   "sha": "313a7dbe49a1",
-   "seconds": 8.81,
-   "bytes": 422956
+   "sha": "5c2c800fc41f",
+   "seconds": 9.22,
+   "bytes": 442412
   },
   "site-05-nothing-to-sign": {
-   "sha": "4aca37b90737",
-   "seconds": 8.49,
-   "bytes": 407596
+   "sha": "ff70eda2551a",
+   "seconds": 9.09,
+   "bytes": 436268
   },
   "site-06-sources": {
-   "sha": "d9538b17ada9",
-   "seconds": 8.77,
-   "bytes": 420908
+   "sha": "86f1cdbf5435",
+   "seconds": 10.09,
+   "bytes": 484396
   },
   "weekly-01-verbatim": {
-   "sha": "d1d3bbef4b9e",
-   "seconds": 8.23,
-   "bytes": 395308
+   "sha": "da7009d30a33",
+   "seconds": 9.3,
+   "bytes": 446508
   },
   "weekly-02-question": {
-   "sha": "366f699905b8",
-   "seconds": 8.66,
-   "bytes": 415788
+   "sha": "5dd59e568129",
+   "seconds": 9.45,
+   "bytes": 453676
   },
   "weekly-03-shape": {
-   "sha": "7649c5a4ab98",
-   "seconds": 7.92,
-   "bytes": 379948
+   "sha": "f0e39c05137d",
+   "seconds": 8.34,
+   "bytes": 400428
   },
   "weekly-04-no-host": {
-   "sha": "cafe7ed8772f",
-   "seconds": 9.2,
-   "bytes": 441388
+   "sha": "537c6d381004",
+   "seconds": 9.09,
+   "bytes": 436268
   },
   "weekly-05-cover": {
-   "sha": "e62503fe2d98",
-   "seconds": 8.94,
-   "bytes": 429100
+   "sha": "7857ffcfc989",
+   "seconds": 9.98,
+   "bytes": 479276
   },
   "weekly-06-week-in-bias": {
-   "sha": "f3967ad5a743",
-   "seconds": 9.41,
-   "bytes": 451628
+   "sha": "5d3bb7b7d195",
+   "seconds": 9.37,
+   "bytes": 449580
   }
  }
 }
