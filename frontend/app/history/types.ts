@@ -48,6 +48,19 @@ export interface EventConnection {
   description: string;
 }
 
+/** A work cited by one account. Emitted verbatim from the event YAML's
+ *  `perspectives[].sources`; the Hearing lists it inside that account's
+ *  "Read the full account" disclosure. */
+export interface PerspectiveSource {
+  title: string;
+  author?: string;
+  year?: string;
+  type?: string;
+  doi?: string;
+  openlibrary?: string;
+  archive_url?: string;
+}
+
 export interface Perspective {
   id: string;
   viewpointName: string;
@@ -60,6 +73,10 @@ export interface Perspective {
   omissions: string[];
   disputed: string[];
   primarySources: PrimarySource[];
+  /** YAML `key_arguments`. Optional: mock events carry none. */
+  keyArguments?: string[];
+  /** YAML `sources`. Optional for the same reason. */
+  sources?: PerspectiveSource[];
 }
 
 export interface HistoricalEvent {
@@ -82,6 +99,9 @@ export interface HistoricalEvent {
   significance?: string;
   legacyPoints?: string[];
   keyFigures: KeyFigure[];
+  /** YAML `primary_source_excerpts` — documents belonging to the event rather
+   *  than to any one account. Rendered in full in the Hearing's end matter. */
+  primarySources?: PrimarySource[];
   deathToll?: string;
   displaced?: string;
   duration?: string;

@@ -43,6 +43,7 @@ from briefing.weekly_parse import build_weekly_row  # noqa: E402
 
 FIXTURES = Path(__file__).parent / "fixtures"
 WEEKLY_JSON = ROOT / "frontend" / "public" / "data" / "weekly.json"
+ISSUES_JSON = ROOT / "frontend" / "build-data" / "weekly-issues.json"
 EXPORT_PY = ROOT / "pipeline" / "export_static.py"
 READER_TS = ROOT / "frontend" / "app" / "lib" / "supabase.ts"
 
@@ -806,6 +807,132 @@ def test_archive():
               "; ".join(missing))
 
 
+# ---------------------------------------------------------------------------
+# W-T12  No published count may be a query cap
+# ---------------------------------------------------------------------------
+# Two issues shipped "500 story clusters" and one shipped "3,000 articles
+# scored". Neither was a measurement: each was the ceiling of a bare .limit(),
+# printed on the page as an exact number. A count that lands exactly on a round
+# ceiling is a claim nobody made, so it has to be flagged or it has to go.
+#
+# These are the ceilings the weekly's queries have ever used. A published count
+# sitting on one is guilty until the row says it was truncated.
+QUERY_CAPS = {500, 1000, 3000, 5000, 20000, 60000}
+
+
+def _cap_findings(row):
+    """(field, value) for every count on this row that is a bare query cap."""
+    brd = row.get("bias_report_data") or {}
+    if isinstance(brd, str):
+        brd = json.loads(brd)
+    stats = brd.get("stats") or {}
+
+    found = []
+    if row.get("total_clusters") in QUERY_CAPS and not brd.get("clusters_truncated"):
+        found.append(("total_clusters", row["total_clusters"]))
+    if stats.get("total_scored") in QUERY_CAPS and not stats.get("truncated"):
+        found.append(("bias_report_data.stats.total_scored", stats["total_scored"]))
+    return found
+
+
+def test_no_cap_published_as_count():
+    print("\nW-T12  no published count is a query cap")
+    seen = 0
+    for path in (WEEKLY_JSON, ISSUES_JSON):
+        if not path.exists():
+            check(f"{path.name} exists", False, str(path))
+            continue
+        blob = json.loads(path.read_text())
+        rows = blob if isinstance(blob, list) else [blob]
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            seen += 1
+            bad = _cap_findings(row)
+            check(f"{path.name} #{row.get('issue_number')} publishes counts, not caps",
+                  not bad,
+                  "; ".join(f"{f} == {v}, unflagged" for f, v in bad))
+    check("there was something to check", seen > 0, f"{seen} issue row(s)")
+
+    # The flag itself has to reach the two components that print the number.
+    colophon = (ROOT / "frontend" / "app" / "weekly" / "components" / "Colophon.tsx").read_text()
+    bias = (ROOT / "frontend" / "app" / "weekly" / "components" / "BiasReport.tsx").read_text()
+    check("the colophon reads clusters_truncated",
+          "clusters_truncated" in colophon)
+    check("the colophon hedges both of its figures",
+          colophon.count("{atLeast}") >= 2, f"{colophon.count('{atLeast}')} hedge(s)")
+    check("The Week in Bias reads clusters_truncated",
+          "clusters_truncated" in bias)
+
+
+# The ten columns export_static.py:280 projects onto. Kept here verbatim so a
+# change to either side shows up as a test failure rather than as a silent
+# divergence between the index and the issues it indexes.
+INDEX_COLS = ("id", "issue_number", "edition", "week_start", "week_end",
+              "cover_headline", "cover_image_url", "audio_url",
+              "audio_duration_seconds", "created_at")
+
+
+def test_archive_is_derived():
+    """weekly-archive.json is a projection of weekly-issues.json, not a peer.
+
+    On 2026-09-20 the two disagreed about what issue #26 WAS. The cover page
+    served "Greenland's Arctic Calculus", generated 17:52, while the back-issue
+    index served "Trump Mocks Banned Reporters", generated 20:44. Same number,
+    two different issues, both live.
+
+    The scheduled run regenerated #26 and committed all three files. A branch
+    whose checkout predated that then ran a backfill against the older copy and
+    touched only weekly.json and weekly-issues.json, and the auto-merge put
+    those two back while the archive kept the newer row. The workflow's own
+    conflict guard is scoped to one run's push and never saw it.
+
+    The archive is DERIVED, so the invariant is not "these three happen to
+    agree" but "the index is the projection of the issues". Asserting the
+    derivation catches any future writer that updates one file and not its
+    siblings, which is the actual failure mode, rather than this one instance.
+    """
+    print("\nW-T13  the archive index is derived from the issues, not written beside them")
+    if not (ISSUES_JSON.exists() and ARCHIVE_JSON.exists()):
+        check("both files exist", False,
+              f"issues={ISSUES_JSON.exists()} archive={ARCHIVE_JSON.exists()}")
+        return
+
+    issues = json.loads(ISSUES_JSON.read_text())
+    archive = json.loads(ARCHIVE_JSON.read_text())
+    issues = issues if isinstance(issues, list) else [issues]
+    archive = archive if isinstance(archive, list) else [archive]
+
+    check("the index has a row per issue", len(archive) == len(issues),
+          f"{len(archive)} index row(s) for {len(issues)} issue(s)")
+
+    by_number = {i.get("issue_number"): i for i in issues}
+    for row in archive:
+        num = row.get("issue_number")
+        issue = by_number.get(num)
+        if issue is None:
+            check(f"index row #{num} has an issue", False, "no such issue")
+            continue
+        drift = [c for c in INDEX_COLS if row.get(c) != issue.get(c)]
+        check(f"index row #{num} is the projection of its issue",
+              not drift,
+              "; ".join(f"{c}: index {row.get(c)!r} vs issue {issue.get(c)!r}"
+                        for c in drift[:3]))
+
+    # And the cover page must be the newest issue the archive knows about.
+    if WEEKLY_JSON.exists() and issues:
+        blob = json.loads(WEEKLY_JSON.read_text())
+        current = blob if isinstance(blob, dict) else blob[0]
+        newest = max(issues, key=lambda i: str(i.get("week_start") or ""))
+        check("the cover page is the newest issue",
+              current.get("issue_number") == newest.get("issue_number")
+              and current.get("created_at") == newest.get("created_at"),
+              f"cover #{current.get('issue_number')} at "
+              f"{str(current.get('created_at'))[:19]} vs newest "
+              f"#{newest.get('issue_number')} at "
+              f"{str(newest.get('created_at'))[:19]}")
+
+
 def main():
     print("void --weekly gates")
     test_headline_guard()
@@ -821,6 +948,8 @@ def main():
     test_end_matter_frontend()
     test_document_structure()
     test_archive()
+    test_no_cap_published_as_count()
+    test_archive_is_derived()
     print()
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))

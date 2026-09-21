@@ -1,12 +1,13 @@
 "use client";
 
+import { FEED_DISPLAYED } from "../../lib/feedConfig";
 import { useReveal } from "./useReveal";
 import { SOURCE_TIERS, RANKING_SIGNALS, RANKING_SIGNAL_COUNT, SIX_AXES } from "../../film/data";
 
 /* ---------------------------------------------------------------------------
    About — "How the front page is built". A transparent five-step pipeline
    explainer (Read, Cluster, Measure, Rank, Publish), stepped cards that stagger
-   in on scroll. This is the "why 50 stories, and how they are chosen" section.
+   in on scroll. This is the "why N stories, and how they are chosen" section.
    All figures pull from film/data.ts so they cannot drift.
    --------------------------------------------------------------------------- */
 
@@ -38,7 +39,7 @@ const STEPS = [
   {
     n: "05",
     verb: "Publish",
-    detail: "The top 50 stories go out once a day, in one order, the same front page for every reader. When the news settles, so does the page.",
+    detail: `The top ${FEED_DISPLAYED} stories go out once a day, in one order, the same front page for every reader. When the news settles, so does the page.`,
   },
 ];
 
@@ -49,7 +50,7 @@ export default function AboutPipeline() {
     <section className="about-sec about-sec--pipeline" ref={rootRef} aria-labelledby="about-pipeline-h">
       <p className="about-sec__eyebrow" ref={register(0)} style={{ opacity: 0 }}>How the front page is built</p>
       <h2 id="about-pipeline-h" className="about-sec__h" ref={register(1)} style={{ opacity: 0 }}>
-        From a thousand sources to fifty stories.
+        From a thousand sources to {FEED_DISPLAYED} stories.
       </h2>
       <p className="about-sec__lede" ref={register(2)} style={{ opacity: 0 }}>
         No editors picking favorites, no feed learning your habits. The same five steps run once a day, and

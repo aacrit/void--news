@@ -104,6 +104,13 @@ export interface WeeklyDepartment {
 
 export interface WeeklyBiasReportData {
   most_polarized?: Array<{ title: string; divergence: number }>;
+  /* True only when the week's cluster read stopped short of the week. Issues
+     #23 and #26 both published "500 story clusters", which was a query cap,
+     not a count, and `total_articles` was summed from those same capped rows.
+     It sits beside `stats` rather than inside it because it is true whether or
+     not the bias scorer returned anything, and the colophon prints the counts
+     even when this section does not render. */
+  clusters_truncated?: boolean;
   stats?: {
     total_scored: number;
     avg_lean: number;

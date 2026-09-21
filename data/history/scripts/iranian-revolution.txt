@@ -98,10 +98,10 @@ N: And the women's account is the best documented and the least powerful. It is 
 ## REST
 
 ## CLOSE
-N: The Islamic Republic declared on the eleventh of February nineteen seventy nine is still governing Iran.
+N: The monarchy fell on the eleventh of February nineteen seventy nine. The Islamic Republic was proclaimed seven weeks later, after a referendum on the first of April, and it is governing Iran still.
 N: Within twenty months it was at war with Iraq, for eight years, with chemical weapons used by both sides and somewhere between half a million and a million dead.
 N: In nineteen eighty eight, thousands of political prisoners were hanged on the strength of a single order, and the state denied it for twenty eight years, until a recording of one of its own senior clerics objecting to it was leaked.
-N: And the decree that fifteen thousand women marched against on the eighth of March, on the twenty seventh day of the republic, is still the law.
+N: And the decree that fifteen thousand women marched against on the eighth of March, twenty five days after the monarchy fell, is still the law.
 
 ## SAY
 Ettela'at = et-teh-lah-AHT

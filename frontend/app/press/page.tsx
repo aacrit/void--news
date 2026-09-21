@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { FEED_DISPLAYED } from "../lib/feedConfig";
 import { BASE_PATH } from "../lib/utils";
 import CopyButton from "./CopyButton";
 import "../styles/about.css";
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 const BOILER_SHORT =
-  "Void News is an independent daily news reader that shows the political lean and editorial character of every story. It gathers reporting from 1,016 sources across 158 countries into one shared edition of fifty stories, ranked once a day, the same for every reader.";
+  `Void News is an independent daily news reader that shows the political lean and editorial character of every story. It gathers reporting from 1,016 sources across 158 countries into one shared edition of ${FEED_DISPLAYED} stories, ranked once a day, the same for every reader.`;
 
 const BOILER_LONG =
   "Void News is an independent daily news reader. Each day it gathers reporting from more than a thousand outlets across 158 countries, groups the coverage of each event together, and scores every story on six axes: political lean, sensationalism, opinion versus reporting, factual rigor, framing, and how an outlet has covered a subject over time. Every score is produced by a documented, transparent method and carries a written explanation, so a reader sees not only where a story sits but why.\n\nThere are no accounts, no trackers, and no personalized feed. The fifty most important stories are ranked once a day, in the same order for everyone, on the principle that a shared set of facts matters more than an engaging one. Void News is an independent product of Void, with no outside investors, published at news.voidvision.org.";
@@ -159,7 +160,7 @@ export default function PressPage() {
             <Link href="/sources">/sources</Link>.
           </li>
           <li>
-            One shared edition of fifty stories, ranked once a day in the same
+            One shared edition of {FEED_DISPLAYED} stories, ranked once a day in the same
             order for every reader. No accounts, no personalization.
           </li>
           <li>

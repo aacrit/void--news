@@ -85,8 +85,7 @@ N: Saddam Hussein names his war Qadisiyyat Saddam, after the seventh century bat
 N: The concrete grievance is the Shatt al-Arab. The nineteen seventy five Algiers Agreement moved the border to the middle of the waterway, a humiliation Iraq accepted only because it was weak at the time.
 N: Once the Shah falls and Iran dissolves into revolutionary chaos, Saddam judges the humiliation reversible and abrogates Algiers.
 N: When Iran carries the war onto Iraqi soil after nineteen eighty two, the story becomes national survival: Iraq holding a larger enemy at the gates of Basra.
-N: When the ceasefire comes in nineteen eighty eight on the old border, Baghdad declares total victory. Its own state framing of the invasion never wavers.
-M: The Shatt al-Arab must return to Arab and Iraqi sovereignty as it has been throughout history.
+N: When the ceasefire comes in nineteen eighty eight on the old border, Baghdad declares total victory. Its own account of why it invaded never wavers: the Shatt al-Arab was Iraqi, and Algiers had taken it away.
 
 ## PERSPECTIVE | Kurdish / Halabja and the Anfal | indigenous
 N: For the Kurds of northern Iraq, the war within the war has its own name: the Anfal, the spoils, a term the Ba'ath borrows from the Quran for a campaign of extermination.
@@ -112,7 +111,6 @@ N: After eight years, perhaps a million dead, and hundreds of billions of dollar
 N: What the war does change is the region's power structure. It bankrupts Iraq and arms it at the same time, a combination that points straight at Kuwait in nineteen ninety.
 N: For Iran the war becomes foundational: the Revolutionary Guard emerges as an economic and political empire, and the memory of being gassed while the world watched becomes the standing justification for a missile program and, later, a nuclear hedge.
 N: This is now the scholarly consensus: the war was modern and industrial, planned in ministries and fought with imported weapons, not an ancient sectarian one, and its true death toll remains an estimate because neither state has ever fully counted its own.
-M: The road from Halabja runs to the nuclear question.
 
 ## REST
 

@@ -12,7 +12,7 @@ severity: catastrophic
 death_toll: ~21,000 political killings (1960-1994)
 affected_population: 3.5 million forcibly removed under Group Areas Act
 duration: 46 years (1948-1994)
-summary: 'On May 26, 1948, the Herenigde Nasionale Party won 70 seats in South Africa''s general election — fewer votes than
+summary: 'On May 26, 1948, the Herenigde Nasionale Party won 70 seats in South Africa''s general election: fewer votes than
   Jan Smuts''s United Party, but more seats, thanks to rural constituency weighting that overrepresented Afrikaner farming
   districts. D.F. Malan became prime minister. Within two years, Parliament passed the Population Registration Act (classifying
   every South African into one of four racial groups), the Group Areas Act (designating where each group could live), and
@@ -20,11 +20,11 @@ summary: 'On May 26, 1948, the Herenigde Nasionale Party won 70 seats in South A
   and indexed.
 
 
-  Hendrik Verwoerd, Minister of Native Affairs from 1950 and Prime Minister from 1958, transformed petty apartheid — segregated
-  benches, separate entrances — into grand apartheid: the Bantustan system. Ten nominally self-governing homelands were carved
+  Hendrik Verwoerd, Minister of Native Affairs from 1950 and Prime Minister from 1958, transformed petty apartheid (segregated
+  benches, separate entrances) into grand apartheid: the Bantustan system. Ten nominally self-governing homelands were carved
   from 13% of South Africa''s land for 75% of its population. Transkei received "independence" in 1976; no country except
   South Africa recognized it. Black South Africans assigned to homelands lost their South African citizenship. A worker commuting
-  from Soweto to Johannesburg — 15 kilometers — crossed an international border twice daily, carrying a passbook that could
+  from Soweto to Johannesburg (15 kilometers) crossed an international border twice daily, carrying a passbook that could
   result in arrest if not produced on demand. Between 1948 and 1986, over 17 million people were prosecuted under the pass
   laws.
 
@@ -38,7 +38,7 @@ summary: 'On May 26, 1948, the Herenigde Nasionale Party won 70 seats in South A
 
   June 16, 1976: police in Soweto opened fire on schoolchildren marching against mandatory Afrikaans-language instruction.
   Hector Pieterson, 12 years old, was among the first killed. Sam Nzima''s photograph of Mbuyisa Makhubu carrying Pieterson''s
-  body — his sister Antoinette running alongside — became the single most reproduced image of apartheid. The Soweto Uprising
+  body, his sister Antoinette running alongside, became the single most reproduced image of apartheid. The Soweto Uprising
   killed at least 176 people in its first week and radicalized a generation. Steve Biko, founder of the Black Consciousness
   Movement, died in police custody on September 12, 1977, after sustaining massive head injuries during interrogation. The
   police claimed he had gone on a hunger strike.
@@ -52,24 +52,24 @@ summary: 'On May 26, 1948, the Herenigde Nasionale Party won 70 seats in South A
   2, 1990. Nine days later, Mandela walked out of Victor Verster Prison.
 
 
-  Four years of negotiations followed — punctuated by the Boipatong massacre (June 1992, 45 dead), Chris Hani''s assassination
+  Four years of negotiations followed, punctuated by the Boipatong massacre (June 1992, 45 dead), Chris Hani''s assassination
   (April 1993), and the constant threat of right-wing Afrikaner insurrection. On April 27, 1994, 19.7 million South Africans
   voted in the first universal-suffrage election. Lines stretched for kilometers. Some voters waited 11 hours. The ANC won
-  62.6% of the vote. Mandela was inaugurated on May 10, 1994, at the Union Buildings in Pretoria — the same complex where,
+  62.6% of the vote. Mandela was inaugurated on May 10, 1994, at the Union Buildings in Pretoria, the same complex where,
   46 years earlier, the apartheid state had been administered.
 
   '
 significance: 'South Africa''s transition produced a model studied by every subsequent post-conflict society: the Truth and
   Reconciliation Commission. Between 1996 and 1998, the TRC heard testimony from 21,000 victims and granted amnesty to 1,500
-  perpetrators who disclosed their crimes fully. Archbishop Desmond Tutu chaired it. The bargain — truth for amnesty, confession
-  for freedom — was Tutu''s theological innovation: ubuntu, the idea that individual humanity is bound to collective humanity.
+  perpetrators who disclosed their crimes fully. Archbishop Desmond Tutu chaired it. The bargain (truth for amnesty, confession
+  for freedom) was Tutu''s theological innovation: ubuntu, the idea that individual humanity is bound to collective humanity.
   Critics called it impunity with a conscience. Supporters called it the only alternative to civil war. The TRC model was
   subsequently adopted, in modified form, in Sierra Leone, Liberia, Canada, and Colombia.
 
 
   Apartheid''s economic legacy proved harder to legislate away than its political structures. In 1994, white South Africans
-  (10% of the population) owned 87% of the land. By 2024, that figure had barely moved. The Gini coefficient — 0.63 in 2024
-  — makes South Africa the most unequal country on earth by income distribution. The ANC''s Black Economic Empowerment program
+  (10% of the population) owned 87% of the land. By 2024, that figure had barely moved. The Gini coefficient, 0.63 in 2024,
+  makes South Africa the most unequal country on earth by income distribution. The ANC''s Black Economic Empowerment program
   created a black elite but left structural poverty largely intact: unemployment among black South Africans exceeded 40% in
   2024, compared to 8% among white South Africans.
 
@@ -119,7 +119,7 @@ key_figures:
   wikipedia: https://en.wikipedia.org/wiki/Winnie_Madikizela-Mandela
 legacy_points:
 - 'TRC model exported to 40+ countries: truth-for-amnesty as alternative to retributive justice'
-- 3.5 million forcibly removed under Group Areas Act — the largest forced relocation in Africa
+- 3.5 million forcibly removed under Group Areas Act, the largest forced relocation in Africa
 - International sanctions movement became template for global divestment campaigns
 - Post-apartheid South Africa remains the world's most unequal country by Gini coefficient (0.63)
 - Mandela''s 27-year imprisonment and subsequent reconciliation became the defining political parable of the 20th century
@@ -150,25 +150,25 @@ perspectives:
 - viewpoint: ANC / Liberation Movement
   viewpoint_type: victor
   region_origin: africa
-  narrative: 'The ANC''s armed wing, Umkhonto we Sizwe (MK), launched its first sabotage attacks on December 16, 1961 — the
+  narrative: 'The ANC''s armed wing, Umkhonto we Sizwe (MK), launched its first sabotage attacks on December 16, 1961, the
     date Afrikaners celebrated as the Day of the Vow, commemorating their 1838 victory over the Zulu at Blood River. The symbolism
     was deliberate. MK targeted infrastructure: power stations, railway lines, government offices. Mandela, who had gone underground
     and traveled to Algeria and Ethiopia for guerrilla training, was captured in August 1962 after a tip-off widely attributed
     to the CIA.
 
 
-    The Rivonia Trial (1963-1964) was meant to break the movement. Instead, Mandela''s speech from the dock — four hours long,
-    delivered without notes — became the founding text of the liberation struggle. "I have cherished the ideal of a democratic
+    The Rivonia Trial (1963-1964) was meant to break the movement. Instead, Mandela''s speech from the dock (four hours long,
+    delivered without notes) became the founding text of the liberation struggle. "I have cherished the ideal of a democratic
     and free society," he said. "It is an ideal for which I am prepared to die." The judge sentenced all eight defendants
     to life imprisonment rather than death, reportedly influenced by international pressure including a UN Security Council
     resolution.
 
 
     On Robben Island, the prisoners built an internal university. Mandela studied Afrikaans, read Afrikaner history, and corresponded
-    — secretly, through a network of smuggled letters — with the ANC in exile. Walter Sisulu, who had recruited Mandela to
+    (secretly, through a network of smuggled letters) with the ANC in exile. Walter Sisulu, who had recruited Mandela to
     the ANC in 1944, served alongside him for 25 years on the island. Ahmed Kathrada, Govan Mbeki, and Raymond Mhlaba completed
     the core group. They debated strategy endlessly: armed struggle, negotiations, international pressure, mass action. By
-    the 1980s, the consensus shifted toward negotiation — but from a position of strength, not capitulation.
+    the 1980s, the consensus shifted toward negotiation, but from a position of strength, not capitulation.
 
 
     Oliver Tambo led the ANC in exile from Lusaka, Zambia, for 30 years. He built an international network that secured the
@@ -186,7 +186,7 @@ perspectives:
     '
   key_arguments:
   - Armed struggle was a last resort after decades of peaceful protest were met with massacre and bannings
-  - Robben Island forged the leadership that negotiated the transition — prison was a university, not a defeat
+  - Robben Island forged the leadership that negotiated the transition; prison was a university, not a defeat
   - International solidarity and sanctions were decisive in forcing the regime to negotiate
   - The ANC accepted a negotiated compromise to prevent civil war, not because it had been defeated
   sources:
@@ -226,21 +226,21 @@ perspectives:
 - viewpoint: Afrikaner Nationalist
   viewpoint_type: vanquished
   region_origin: africa
-  narrative: 'The Afrikaner narrative begins not in 1948 but in 1838 — at Blood River, where 470 Voortrekkers defeated an
+  narrative: 'The Afrikaner narrative begins not in 1948 but in 1838, at Blood River, where 470 Voortrekkers defeated an
     estimated 15,000-20,000 Zulu warriors without a single Boer fatality. The Day of the Vow, sworn before the battle, became
     the founding myth: God had chosen the Afrikaner people for this land. The Great Trek itself (1835-1846) was a flight from
-    British imperialism — from the abolition of slavery in 1834, from anglicization of the Cape Colony''s courts and schools,
+    British imperialism: from the abolition of slavery in 1834, from anglicization of the Cape Colony''s courts and schools,
     from what Piet Retief''s manifesto called "the unjustifiable odium cast upon us by interested and dishonest persons."
 
 
     The Anglo-Boer Wars (1880-1881, 1899-1902) deepened the siege mentality. In the second war, the British burned 30,000
     Boer farms and interned 116,000 Afrikaner women and children in concentration camps; 27,927 died, most of them children
     under 16. Emily Hobhouse documented the conditions; the British government initially dismissed her reports. For Afrikaners,
-    the concentration camps were their Holocaust — proof that the English-speaking world would destroy them if given the chance.
+    the concentration camps were their Holocaust, proof that the English-speaking world would destroy them if given the chance.
 
 
     The National Party''s 1948 victory was, in this telling, the final assertion of Afrikaner self-determination. Apartheid
-    was framed not as oppression but as "separate development" — each racial group governing itself in its own territory,
+    was framed not as oppression but as "separate development", each racial group governing itself in its own territory,
     developing at its own pace. Verwoerd argued in Parliament that integration would mean the "suicide of the white race"
     in South Africa. The Bantustans were presented as the African equivalent of decolonization: just as Britain was granting
     independence to its African colonies, South Africa was granting independence to its African nations within its borders.
@@ -257,12 +257,12 @@ perspectives:
     from the National Party in 1982 over the tricameral parliament, won more Afrikaner votes than the NP in 1989. Constand
     Viljoen formed the Afrikaner Volksfront and assembled a force of 50,000 armed men. Eugene Terre''Blanche''s Afrikaner
     Weerstandsbeweging (AWB) launched attacks in Bophuthatswana in March 1994. The far right collapsed only when Viljoen chose
-    elections over insurrection, registering the Freedom Front at the last moment. The Afrikaner nation — 2.7 million people
-    — went from ruling 40 million to minority status in a single election.
+    elections over insurrection, registering the Freedom Front at the last moment. The Afrikaner nation, 2.7 million people,
+    went from ruling 40 million to minority status in a single election.
 
     '
   key_arguments:
-  - Afrikaners were themselves victims of British imperialism — concentration camps killed 28,000 women and children
+  - Afrikaners were themselves victims of British imperialism. Concentration camps killed 28,000 women and children
   - Separate development was framed as self-determination for all groups, not domination
   - The Dutch Reformed Church provided theological justification for racial separation
   - De Klerk''s negotiations were seen by many Afrikaners as capitulation, not statesmanship
@@ -295,13 +295,13 @@ perspectives:
   omitted:
   - Daily violence of pass laws, forced removals, and police brutality against black South Africans
   - The 3.5 million people uprooted by the Group Areas Act
-  - Economic exploitation — black labor in mines and farms at a fraction of white wages
+  - Economic exploitation (black labor in mines and farms at a fraction of white wages)
   - Deaths in detention, including Biko, and systematic use of torture by security forces
 - viewpoint: Black Consciousness Movement
   viewpoint_type: revisionist
   region_origin: africa
   narrative: 'Steve Biko was 23 when he founded the South African Students'' Organisation (SASO) in 1968. His argument was
-    not primarily with the apartheid state — that was, in a sense, the easy enemy. His argument was with white liberals and
+    not primarily with the apartheid state. That was, in a sense, the easy enemy. His argument was with white liberals and
     the multiracial organizations they dominated. The National Union of South African Students (NUSAS), nominally nonracial,
     was led by white students who set the agenda, defined the terms, and expected black members to be grateful for inclusion.
     Biko called this "integration on white terms" and rejected it.
@@ -309,28 +309,28 @@ perspectives:
 
     Black Consciousness held that the first step toward liberation was psychological. "The most potent weapon in the hands
     of the oppressor is the mind of the oppressed," Biko wrote. Centuries of colonialism and decades of apartheid had produced
-    what Biko called a "colonized mentality" — black people who internalized their own inferiority, who measured themselves
+    what Biko called a "colonized mentality": black people who internalized their own inferiority, who measured themselves
     against white standards, who saw their own culture as backward. Before black people could fight the system, they had to
     recover themselves.
 
 
     The movement drew on Frantz Fanon (Black Skin, White Masks), Aimé Césaire (Négritude), and the American Black Power movement.
     Biko corresponded with Black Power activists and read Stokely Carmichael and Malcolm X. But Black Consciousness was not
-    imported — it was rooted in South African conditions. The community programs SASO organized — health clinics, literacy
-    projects, cooperatives — were explicitly designed to demonstrate that black communities could govern themselves without
+    imported; it was rooted in South African conditions. The community programs SASO organized (health clinics, literacy
+    projects, cooperatives) were explicitly designed to demonstrate that black communities could govern themselves without
     white intermediaries or state permission.
 
 
-    The Soweto Uprising of June 16, 1976 was Black Consciousness in action. The students who marched were not ANC members
-    — the ANC had been banned for 16 years and its leadership was either imprisoned or in exile. They were products of SASO''s
+    The Soweto Uprising of June 16, 1976 was Black Consciousness in action. The students who marched were not ANC members.
+    The ANC had been banned for 16 years and its leadership was either imprisoned or in exile. They were products of SASO''s
     campus organizing and the Black People''s Convention that Biko helped found in 1972. Their refusal to be taught in Afrikaans
-    — the language of the oppressor — was a rejection not just of a policy but of a worldview. When police opened fire, the
+    (the language of the oppressor) was a rejection not just of a policy but of a worldview. When police opened fire, the
     uprising spread to 160 communities across South Africa in the following months.
 
 
-    Biko was banned — restricted to the King William''s Town magisterial district — in 1973. He was arrested on August 18,
+    Biko was banned, restricted to the King William''s Town magisterial district, in 1973. He was arrested on August 18,
     1977, at a roadblock near Grahamstown. During interrogation at the Walmer police station in Port Elizabeth, security police
-    subjected him to what they later described as a "scuffle" — he sustained brain lesions and left-side paralysis. On September
+    subjected him to what they later described as a "scuffle". He sustained brain lesions and left-side paralysis. On September
     11, 1977, he was transported 1,200 kilometers to Pretoria in the back of a Land Rover, naked and manacled. He died the
     next day. He was 30 years old. The inquest magistrate ruled that nobody was responsible for his death. Minister of Justice
     Jimmy Kruger told the National Party congress that Biko''s death "leaves me cold."
@@ -378,12 +378,12 @@ perspectives:
   region_origin: europe
   narrative: 'On March 21, 1960, the day of the Sharpeville massacre, South Africa held a seat on the UN Security Council.
     Within four years, it had been suspended from the General Assembly. The distance between those two facts measures the
-    speed of South Africa''s international isolation — and the slowness of that isolation''s translation into actual economic
+    speed of South Africa''s international isolation, and the slowness of that isolation''s translation into actual economic
     pressure.
 
 
     The arms embargo came first. The UN Security Council passed a voluntary embargo in 1963 (Resolution 181) and made it mandatory
-    in 1977 (Resolution 418) — the first mandatory sanctions against a member state in UN history. France, which had been
+    in 1977 (Resolution 418), the first mandatory sanctions against a member state in UN history. France, which had been
     South Africa''s primary arms supplier, complied on paper but continued selling submarines and helicopters through intermediaries
     until the mid-1980s. Israel, which maintained a close military relationship with Pretoria including alleged nuclear cooperation
     (the Vela Incident of 1979, a suspected joint nuclear test in the South Atlantic, remains officially unconfirmed), was
@@ -393,7 +393,7 @@ perspectives:
     The sports boycott hit Afrikaner identity harder than any trade restriction. South Africa was expelled from the Olympic
     movement in 1970. The Gleneagles Agreement of 1977 committed Commonwealth nations to discouraging sporting contact. When
     the New Zealand All Blacks toured South Africa in 1981, 28 African nations boycotted the Montreal Olympics in protest.
-    Rugby and cricket — the two sports that defined white South African manhood — became international pariahs. The psychological
+    Rugby and cricket, the two sports that defined white South African manhood, became international pariahs. The psychological
     impact was immense: Afrikaners who could rationalize economic sanctions as foreign meddling could not rationalize being
     excluded from the rugby World Cup.
 
@@ -409,14 +409,14 @@ perspectives:
     The Reagan and Thatcher governments resisted sanctions throughout the 1980s. Reagan''s policy of "constructive engagement,"
     crafted by Chester Crocker, argued that engagement, not isolation, would reform apartheid. Thatcher called the ANC a "terrorist
     organization" and opposed sanctions at every Commonwealth summit. The US Congress overrode Reagan''s veto of the Comprehensive
-    Anti-Apartheid Act in October 1986 — one of the few foreign policy veto overrides in American history. The vote was 313-83
+    Anti-Apartheid Act in October 1986, one of the few foreign policy veto overrides in American history. The vote was 313-83
     in the House and 78-21 in the Senate, with significant Republican support.
 
     '
   key_arguments:
   - Economic sanctions and divestment created financial pressure that made apartheid unsustainable
   - Sports boycotts struck at Afrikaner cultural identity more effectively than trade restrictions
-  - Western governments — particularly Reagan and Thatcher — delayed effective sanctions by a decade
+  - Western governments, particularly Reagan and Thatcher, delayed effective sanctions by a decade
   - Corporate divestment demonstrated the power of civil society pressure on multinational capital
   sources:
   - title: 'The Sanctions Weapon: South Africa and International Society'
@@ -446,7 +446,7 @@ perspectives:
   - Sports boycott as uniquely effective pressure on Afrikaner identity
   - Campus divestment movement as model for future campaigns (later applied to fossil fuels, Israel)
   omitted:
-  - African front-line states bore the heaviest cost of opposing apartheid — South African raids into Angola, Mozambique,
+  - African front-line states bore the heaviest cost of opposing apartheid; South African raids into Angola, Mozambique,
     and Botswana killed thousands
   - Internal resistance, not external sanctions, was the primary driver of change
   - Sanctions hurt black South African workers most in the short term
@@ -456,7 +456,7 @@ perspectives:
   region_origin: africa
   narrative: 'The negotiators at Kempton Park faced a specific problem: the security forces would not accept a transition
     that ended in Nuremberg-style trials. The generals made this explicit. Without an amnesty provision, there would be no
-    transition. But the ANC could not accept blanket amnesty — its constituency had suffered too much. The compromise, inserted
+    transition. But the ANC could not accept blanket amnesty. Its constituency had suffered too much. The compromise, inserted
     into the postamble of the 1993 interim constitution, was a single sentence: "there is a need for understanding but not
     for vengeance, a need for reparation but not for retaliation, a need for ubuntu but not for victimization."
 
@@ -464,8 +464,8 @@ perspectives:
     The Truth and Reconciliation Commission, established by the Promotion of National Unity and Reconciliation Act of 1995,
     operationalized that sentence. Archbishop Desmond Tutu chaired it. The design was unprecedented: perpetrators who applied
     for amnesty and disclosed the full truth of their political crimes would be granted immunity from prosecution. Victims
-    would testify publicly. The commission would produce a public record. The theory was that truth itself — the act of speaking
-    and being heard — could substitute for punishment.
+    would testify publicly. The commission would produce a public record. The theory was that truth itself, the act of speaking
+    and being heard, could substitute for punishment.
 
 
     Between April 1996 and July 1998, the TRC heard testimony from 21,298 victims and received 7,112 amnesty applications.
@@ -477,13 +477,13 @@ perspectives:
 
 
     The commission''s limitations were structural. It could only consider "politically motivated" acts committed between March
-    1, 1960 and May 10, 1994. This excluded the everyday violence of apartheid — the pass law arrests, the forced removals,
-    the labor exploitation — which was legal under apartheid law and therefore not "criminal." It also excluded the beneficiaries:
+    1, 1960 and May 10, 1994. This excluded the everyday violence of apartheid (the pass law arrests, the forced removals,
+    the labor exploitation), which was legal under apartheid law and therefore not "criminal." It also excluded the beneficiaries:
     white South Africans who profited from cheap black labor, segregated education, and preferential employment were never
     called to account. The business community was largely absent from the hearings.
 
 
-    Tutu''s theology of ubuntu — "I am because we are" — provided the philosophical framework. Retributive justice, he argued,
+    Tutu''s theology of ubuntu ("I am because we are") provided the philosophical framework. Retributive justice, he argued,
     was a Western import alien to African jurisprudence. In African tradition, the goal of justice was not to punish the offender
     but to restore the community. Critics, including the Azanian People''s Organisation (AZAPO) and the families of Steve
     Biko and the Cradock Four, challenged the TRC in court, arguing that amnesty without the consent of victims violated their
@@ -492,7 +492,7 @@ perspectives:
 
     '
   key_arguments:
-  - Truth-for-amnesty was a pragmatic bargain — without it, the security forces would not have permitted transition
+  - Truth-for-amnesty was a pragmatic bargain. Without it, the security forces would not have permitted transition
   - Tutu''s ubuntu theology reframed justice as restoration rather than retribution
   - The TRC''s structural limitations excluded everyday apartheid violence and economic beneficiaries
   - The model''s exportability (Sierra Leone, Colombia, Canada) validated its principles but each adaptation revealed new
@@ -523,18 +523,18 @@ perspectives:
   emphasized:
   - TRC as a pragmatic compromise between impunity and impossible prosecution
   - Ubuntu theology as distinctly African contribution to transitional justice theory
-  - Public testimony as a form of justice — being heard as reparation
+  - Public testimony as a form of justice, being heard as reparation
   - The commission''s influence on subsequent transitional justice processes worldwide
   omitted:
-  - Most victims received no material reparations — the government implemented only a fraction of TRC recommendations
+  - Most victims received no material reparations; the government implemented only a fraction of TRC recommendations
   - Amnesty was experienced by many victims as a second injustice
   - The everyday structural violence of apartheid fell outside the TRC''s mandate
   - White economic privilege remained essentially untouched by the process
 media:
 - media_type: photograph
   title: Nelson Mandela voting for the first time, April 27, 1994
-  description: Mandela casts his ballot in South Africa''s first democratic election at Ohlange High School in Inanda, KwaZulu-Natal
-    — near the grave of ANC founder John Dube.
+  description: Mandela casts his ballot in South Africa''s first democratic election at Ohlange High School in Inanda, KwaZulu-Natal,
+    near the grave of ANC founder John Dube.
   source_url: https://commons.wikimedia.org/wiki/File:Nelson_Mandela_1994.jpg
   attribution: Wikimedia Commons, public domain
   license: public-domain
@@ -630,7 +630,7 @@ connections:
 - target_slug: scramble-for-africa
   connection_type: consequence
   description: The 1913 Natives Land Act confined black South Africans to 7% of the country's land. It passed 35 years before
-    the National Party took power — apartheid codified what the Berlin Conference had already partitioned
+    the National Party took power. Apartheid codified what the Berlin Conference had already partitioned
 - target_slug: civil-rights-movement
   connection_type: parallel
   description: Martin Luther King Jr. wrote to the ANC from Birmingham jail in 1962. Albert Luthuli had won the Nobel Peace
