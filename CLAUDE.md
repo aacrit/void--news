@@ -230,6 +230,8 @@ adds nothing to the state that anything reads back.
 | **On Air** radio: rundown grammar, R-01..R-13, voices, mastering | `docs/ON-AIR-RADIO.md` |
 | **Weekly audio** "The Argument": W-01..W-12, the moat, the dry argument | `docs/WEEKLY-AUDIO.md` |
 | **History audio**: format, casting, H-01..H-11 | `docs/HISTORY-AUDIO.md`, `docs/HISTORY-SCRIPT-BRIEF.md` |
+| **House promos** (post-roll under every outro; pool, rules, retrofit) | `data/promos/house.yaml`, `pipeline/briefing/house_promos.py`, `docs/VOICE-BRAND.md` "House Promos" |
+| **Podcast feeds** (On Air, The Argument, History) and directory submission | `pipeline/briefing/podcast_feed_generator.py`, `docs/PODCAST-DISTRIBUTION.md`, `/listen` |
 | Weekly magazine: running order, the measure, the grid | `frontend/app/weekly/`, `frontend/app/styles/weekly.css` |
 | Weekly's pure core (testable with no key) | `pipeline/briefing/weekly_parse.py` |
 | Weekly end matter (colophon, week-over-week, day-by-day, corrections, OG card, issue index) | `frontend/app/weekly/components/{Colophon,WeekDelta,WeekRail,Corrections}.tsx`, `app/weekly/ogCard.tsx` |
@@ -253,6 +255,8 @@ adds nothing to the state that anything reads back.
 | **History audio** | **78/78 scripts written, 78/78 rendered.** Register: `docs/data/history-episodes.csv`, regenerate with `python3 pipeline/history/episode_report.py`. |
 | **Revolt** | 301-hidden, serves MOCK data. Cannot be un-hidden until it reads static JSON. |
 | **Ship / Feedback** | Live on the Worker + D1. |
+| **Podcast feeds** | Generated: `podcast-world.xml`, `podcast-weekly.xml`, `podcast-history.xml` (73). Linked from `/listen` and `layout.tsx`. **Not yet submitted** to Apple or Spotify; weekly and history covers exist as SVG only. |
+| **House promos** | Pool of 24 written and validated. Rendered WAVs committed only if `data/promos/rendered/manifest.json` exists. History catalogue **not yet stitched**; run `stitch-promos.yml`. |
 | **Paper, Games** | 301-hidden. |
 
 ---

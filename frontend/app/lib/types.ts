@@ -322,6 +322,7 @@ export interface AudioChapter {
   kind:
     | "headlines" | "story" | "briefs" | "finally" | "opinion" | "editorial"
     | "segment"
+    | "promo"
     | "open" | "contents" | "cover" | "topic" | "second" | "department"
     | "numbers" | "close";
   /** story_clusters.id when kind is "story" or "finally" */

@@ -190,6 +190,15 @@ precise boundary between what is reusable and what is this format's own.
 What is **not** reused is `build_timeline`, which hard-codes the radio segment
 kinds, and the gap table. A magazine has a different grammar.
 
+## House promo (post-roll)
+
+After the open question, under the outro, the house voice reads a two-sentence
+promo for On Air, History or the site. It is a producer-level post-roll, not
+a marker, so W-05's closed set is untouched, and W-07's length is measured
+before it and unchanged by it. Selected by the sha256 of
+`weekly:<edition>:<week_start>`; appears as a final chapter, kind `promo`.
+Rules and copy: `docs/VOICE-BRAND.md`, "House Promos".
+
 ## Size
 
 22 MiB, with On Air's rule: **the editorial is never dropped**. Twenty minutes

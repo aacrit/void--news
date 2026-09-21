@@ -215,6 +215,14 @@ jobs:
           VOID_EXPORT_ONLY: weekly
         run: python pipeline/export_static.py
 
+      # The Sunday podcast feed. Built from build-data/weekly-issues.json, the
+      # same archive of record the export above just refreshed, and only from
+      # issues whose MP3 is in the working tree, so no enclosure can 404. No
+      # database, no Gemini call.
+      - name: Generate weekly podcast feed
+        if: inputs.mode != 'image-probe'
+        run: python3 pipeline/briefing/podcast_feed_generator.py --weekly
+
       # image-probe is READ ONLY. Left unguarded the export above would
       # regenerate weekly.json from the restored state DB and this step would
       # commit it, so a job whose whole purpose is to measure the published
@@ -235,7 +243,8 @@ jobs:
           git add frontend/public/data/weekly.json \
                   frontend/public/data/weekly-archive.json \
                   frontend/build-data/weekly-issues.json \
-                  frontend/public/audio/weekly-* || true
+                  frontend/public/audio/weekly-* \
+                  frontend/public/podcast-weekly.xml || true
           if git diff --cached --quiet; then
             echo "No weekly changes to commit."
             exit 0
@@ -265,7 +274,7 @@ jobs:
             while IFS= read -r f; do
               [ -n "$f" ] || continue
               case "$f" in
-                frontend/public/data/weekly*.json|frontend/build-data/weekly-issues.json|frontend/public/audio/weekly-*) ;;
+                frontend/public/data/weekly*.json|frontend/build-data/weekly-issues.json|frontend/public/audio/weekly-*|frontend/public/podcast-weekly.xml) ;;
                 *) echo "conflict outside the weekly data: $f"; return 1 ;;
               esac
             done <<< "$conflicted"

@@ -1,0 +1,161 @@
+name: "Audio: house promos"
+
+# Renders the house promo pool once (Kokoro, the house voice) and stitches a
+# promo under the outro of every published History episode without sending
+# any episode back through TTS. On Air and Weekly pick their promo up at
+# render time from the same committed WAVs, so this workflow is the only
+# place a promo is ever synthesised.
+#
+#   render: true      re-render data/promos/rendered/ from data/promos/house.yaml
+#   slugs: "all"      stitch every episode in the manifest (skips ones that
+#                     already carry the current promo), or a comma list
+#   upload: true      replace the release assets; false measures and stops
+#
+# Run it outside 11:00-17:00 UTC: the daily deploy fetches the release, and a
+# replaced asset is briefly absent while it is re-uploaded.
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      render:
+        description: 'Render the promo pool with Kokoro before stitching'
+        required: false
+        default: true
+        type: boolean
+      slugs:
+        description: 'History slugs to stitch: "all", "none", or a comma list'
+        required: false
+        default: 'all'
+        type: string
+      upload:
+        description: 'Publish: replace release assets and commit the manifest'
+        required: false
+        default: true
+        type: boolean
+
+concurrency:
+  group: history-audio-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  render-promos:
+    if: ${{ inputs.render }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg espeak-ng
+      - name: Install audio dependencies
+        run: pip install --quiet "numpy~=1.26.4" pydub mutagen pyyaml
+      - name: Cache Kokoro model files
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/void-kokoro
+          key: kokoro-${{ hashFiles('pipeline/briefing/kokoro.lock.json') }}
+      - name: Cache TTS venv
+        id: tts-venv
+        uses: actions/cache@v4
+        with:
+          path: .venv-tts
+          key: venv-tts-py3.11-${{ hashFiles('pipeline/requirements-tts.txt') }}
+      - name: Build TTS venv (cache miss)
+        if: steps.tts-venv.outputs.cache-hit != 'true'
+        run: python -m venv .venv-tts && .venv-tts/bin/pip install -q -r pipeline/requirements-tts.txt
+      - name: Fetch Kokoro model files
+        run: python pipeline/briefing/kokoro_assets.py
+      - name: Validate the pool
+        run: python tests/test_house_promos.py
+      - name: Render the pool
+        env:
+          VOID_TTS_ENGINE: kokoro-only
+          VOID_KOKORO_PYTHON: .venv-tts/bin/python
+        run: python pipeline/briefing/house_promos.py render
+      - name: Re-validate against the renders
+        run: python tests/test_house_promos.py
+      - name: Commit the renders
+        if: ${{ inputs.upload }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A data/promos/rendered
+          if git diff --cached --quiet; then echo "no change"; exit 0; fi
+          git commit -m "Audio: render the house promo pool" \
+                     -m "Rendered by .github/workflows/stitch-promos.yml."
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${{ github.ref_name }}" && \
+              git push origin HEAD:"${{ github.ref_name }}" && break
+            sleep $((2 ** i))
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: promo-renders
+          path: data/promos/rendered/
+          retention-days: 3
+
+  stitch:
+    needs: [render-promos]
+    if: ${{ always() && !cancelled() && (needs.render-promos.result == 'success' || needs.render-promos.result == 'skipped') && inputs.slugs != 'none' }}
+    runs-on: ubuntu-latest
+    # About seventy seconds an episode; the whole catalogue in one job so the
+    # manifest is written once and the release is touched by one actor.
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The staleness check in tests/test_history_audio.py needs real
+          # history; see render-history-audio.yml for why depth 1 fails it.
+          fetch-depth: 200
+          ref: ${{ github.ref_name }}
+      - name: Pull the renders committed a moment ago
+        run: git pull --rebase origin "${{ github.ref_name }}" || true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install ffmpeg and ffprobe
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Install audio dependencies
+        run: pip install --quiet "numpy~=1.26.4" pydub mutagen pyyaml
+      - name: Validate the pool and the renders
+        run: python tests/test_house_promos.py
+      - name: Stitch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLUGS: ${{ inputs.slugs }}
+          UPLOAD: ${{ inputs.upload }}
+        run: |
+          set -e
+          ARGS="--work stitch-work"
+          if [ "$SLUGS" = "all" ]; then ARGS="$ARGS --all"; else ARGS="$ARGS --slugs $SLUGS"; fi
+          if [ "$UPLOAD" != "true" ]; then ARGS="$ARGS --dry-run --no-upload"; fi
+          python pipeline/history/stitch_promos.py $ARGS
+      - name: Verify what was published
+        if: ${{ inputs.upload }}
+        run: |
+          python tests/test_history_audio.py
+          python pipeline/briefing/podcast_feed_generator.py --history
+      - name: Commit the manifest, sidecars and feed
+        if: ${{ inputs.upload }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # MP3s are gitignored and live in the release; this commits the
+          # manifest, the chapter sidecars and the History podcast feed.
+          git add -A frontend/public/audio/history frontend/public/data/history-audio.json \
+                     frontend/public/podcast-history.xml
+          if git diff --cached --quiet; then echo "no change"; exit 0; fi
+          git commit -m "History: stitch the house promo under every published episode" \
+                     -m "Stitched by .github/workflows/stitch-promos.yml; no episode was re-rendered."
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${{ github.ref_name }}" && \
+              git push origin HEAD:"${{ github.ref_name }}" && break
+            sleep $((2 ** i))
+          done

@@ -251,6 +251,29 @@ def main() -> None:
     finally:
         rp.MUSIC_STYLE = prev_style
 
+    # house promo: a fake render stands in for Kokoro; the stitch must keep the
+    # length, dip the music under the promo, and refuse a promo that would run
+    # into the outro's fall to silence
+    from briefing import house_promos as hp
+    promo_render = Sine(330).to_audio_segment(duration=6000).apply_gain(-12)
+    hp.load_render = lambda promo, render_dir=hp.RENDER_DIR: promo_render
+    bed = Sine(110).to_audio_segment(duration=20000).apply_gain(-20).set_channels(2)
+    stitched, at = hp.stitch_post_roll(bed, 4000, promo_render, last_word_ms=4500)
+    check(len(stitched) == len(bed), f"stitch keeps the length ({len(stitched)} vs {len(bed)})")
+    check(at == 4500 + hp.LEAD_MS, f"promo placed a beat after the last word ({at})")
+    ducked_only = hp._duck_window(bed, at, at + 6000, hp.DUCK_DB, hp.RAMP_MS)
+    drop = bed[at + 500:at + 5500].dBFS - ducked_only[at + 500:at + 5500].dBFS
+    check(abs(drop - (-hp.DUCK_DB)) < 0.5, f"music under the promo is dipped by {drop:.1f} dB")
+    check(bed[:at - hp.RAMP_MS - 10].raw_data == stitched[:at - hp.RAMP_MS - 10].raw_data,
+          "nothing before the promo is touched")
+    try:
+        hp.stitch_post_roll(bed, 4000, Sine(330).to_audio_segment(duration=12000), last_word_ms=4500)
+        check(False, "a 12 s promo is refused")
+    except hp.PromoDoesNotFit:
+        pass
+    chosen = hp.select("onair", "onair:world:2026-09-18:pm")
+    check(chosen is not None and chosen.promotes != "onair", f"On Air never promotes itself ({chosen})")
+
     # end to end through produce_radio_show (fake engine, scratch dir)
     out = Path(tempfile.mkdtemp(prefix="void-radio-test-"))
     try:
@@ -268,7 +291,16 @@ def main() -> None:
                 check(sc["version"] == "1.2.0" and len(sc["chapters"]) == len(result.chapters), "sidecar round-trips")
                 check(all(ch["startTime"] == r["startTime"] for ch, r in zip(sc["chapters"], result.chapters)), "sidecar times match")
             check(result.engine == "fake" and result.voices == "fake:fake_a+fake_b+fake_c", f"voices label {result.voices}")
-            check(result.opinion_start_seconds == result.chapters[-1]["startTime"], "opinion_start = editorial chapter")
+            op = next((c for c in result.chapters if c.get("kind") in ("opinion", "editorial")), None)
+            check(op is not None and result.opinion_start_seconds == op["startTime"], "opinion_start = editorial chapter")
+            if promo_render is not None:
+                last = result.chapters[-1]
+                check(last.get("kind") == "promo" and last.get("title") == hp.PROMO_CHAPTER_TITLE,
+                      f"last chapter is the promo: {last}")
+                check(abs(last["startTime"] - (tl.cues[-1].end_ms + hp.LEAD_MS) / 1000) < 0.05,
+                      f"promo starts a beat after the last word: {last['startTime']}")
+                check(result.chapters[-2].get("endTime") == last["startTime"],
+                      "chapter before the promo closes where it starts")
             check(abs(result.duration_seconds - tl.total_ms / 1000) < 0.2, f"duration {result.duration_seconds} vs {tl.total_ms / 1000}")
             try:
                 from mutagen.id3 import ID3

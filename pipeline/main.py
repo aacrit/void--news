@@ -1713,6 +1713,16 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                         print(f"  Podcast feeds: {', '.join(feed_results.keys())}")
                 except Exception as e:
                     print(f"  [warn] Podcast feed generation failed: {e}")
+                # The History feed reads the committed audio manifest, not the
+                # DB, so it is regenerated here so a manifest change lands in
+                # podcast-history.xml on the next daily commit as well as in
+                # the render job's own commit. Never fatal.
+                try:
+                    from briefing.podcast_feed_generator import generate_history_podcast_feed
+                    if generate_history_podcast_feed():
+                        print("  Podcast feeds: history")
+                except Exception as e:
+                    print(f"  [warn] History podcast feed generation failed: {e}")
         except Exception as e:
             print(f"  [warn] Daily brief generation failed: {e}")
             # P0 fix (UAT 2026-05-13): on total generator failure we MUST

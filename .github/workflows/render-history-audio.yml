@@ -167,6 +167,10 @@ jobs:
           echo "publishing: $SLUGS"
           python pipeline/history/publish_audio.py $SLUGS --from rendered
           python tests/test_history_audio.py
+          # The History podcast feed is built from the manifest publish_audio
+          # just rewrote, so a new episode reaches podcast apps in the same
+          # commit as its chapters. No database needed.
+          python pipeline/briefing/podcast_feed_generator.py --history
       - name: Store the audio outside git
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -179,7 +183,8 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           # The MP3s are gitignored and live in the release; this commits the
           # manifest and the chapter sidecars, which are a few KB in total.
-          git add -A frontend/public/audio/history frontend/public/data/history-audio.json
+          git add -A frontend/public/audio/history frontend/public/data/history-audio.json \
+                     frontend/public/podcast-history.xml
           if git diff --cached --quiet; then
             echo "no change"; exit 0
           fi

@@ -1149,6 +1149,14 @@ def produce_radio_show(
         music, used = render_music_bus(tl, assets)
         print(f"  [radio] music cues: {used}")
         mix = _silent(tl.total_ms, channels=2).overlay(a).overlay(b).overlay(c).overlay(music)
+        # House promo under the outro's held bars, after the sign-off tag.
+        # The length does not change, so A-04 and the size ladder are
+        # untouched; a missing render ships the programme exactly as before.
+        from briefing import house_promos
+        promo_key = f"onair:{edition}:{date.strftime('%Y-%m-%d')}:{'am' if date.hour < 12 else 'pm'}"
+        mix, promo_info = house_promos.post_roll(
+            mix, outro_at_ms=tl.outro_at_ms, last_word_ms=tl.cues[-1].end_ms if tl.cues else None,
+            plays_in="onair", key=promo_key, work=work)
         mix_wav = work / "mix.wav"
         mix.export(str(mix_wav), format="wav")
         master_wav = work / "master.wav"
@@ -1174,6 +1182,10 @@ def produce_radio_show(
 
         duration_s = round(len(mix) / 1000.0, 1)
         chapters = chapters_from_timeline(tl, opinion_headline, permalinks)
+        if promo_info:
+            chapters = house_promos.append_promo_chapter(
+                chapters, house_promos.select("onair", promo_key), promo_info["at_ms"], tl.total_ms,
+                kind="promo")
         title = f"On Air · {date.strftime('%A %d %B %Y')}"
         mp3_path = chosen[2]
         if write_id3_chapters(mp3_path, chapters, title, date.strftime("%Y-%m-%d")):
