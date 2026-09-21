@@ -6,6 +6,12 @@ The brief was: does the brand have the voice it claims, is every word driven by 
 
 ---
 
+## 0. Outcome, same day
+
+The CEO answered the six questions in section 10 (sections with named programmes; fix step 6b; hide `/pipeline`; the banner from the second visit, below the masthead; Paper as the printable twenty; three lean states everywhere) and asked for everything but the Instagram automation to be built. It was, the same day, by eight agents in isolated worktrees merged behind the gates: items 1 to 8, 10 to 17, 19 to 23 of the backlog in section 9 are shipped; item 9 (the Instagram pipeline) is excluded by decision; item 11 (the token collapse) and item 18 (the dead-CSS purge and the DESIGN-SYSTEM rewrite) remain open. The record is `docs/CHANGELOG.md` rev 75; what is still open is in `docs/OPEN-ITEMS.md`. Two corrections to this report were found while building: `motion` is live (Appendix B, B-04 is corrected in place), and gate IDs R-12, R-13 and W-09 were already taken, so the new gates are R-14, R-15, W-10 and PR-01.
+
+---
+
 ## 1. The verdict in five sentences
 
 Void has one product idea worth protecting and eight surfaces that each present it differently. The editorial voice is real where the rules reach it (the feed, On Air, History, the promos, About) and absent where they do not (Weekly prose and the daily Opinion, which carry 34 kill-list words between them, no grounding line, and today assert facts from model memory), so the product currently speaks as two newsrooms. Underneath both, 73% of the per-article bias rows behind today's Deep Dives are the engine's default tuple, so the product's central claim rests on numbers that were never measured. History, Weekly, On Air and Paper were each built as a separate product under the old `void --x` model and the 2026-08-03 rebrand renamed the words without touching the architecture, which is why there are three mastheads, four token systems, twenty easing curves, six identity marks and no path from History to any sibling. The Instagram funnel cannot currently produce a post, and if it could, no post would link to the thing it advertised. None of this needs new mechanisms; it needs one system, applied everywhere, and gates that make the drift structurally impossible.
