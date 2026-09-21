@@ -305,6 +305,66 @@ def retry_suffix(findings):
 
 ISSUE_EPOCH = datetime(2026, 3, 22, tzinfo=timezone.utc)
 
+# ---------------------------------------------------------------------------
+# Volume and number: the ONE issue label
+#
+# `issue_number` counts weeks from ISSUE_EPOCH and is the sort key; a reader
+# never sees it. The page sets "Vol. I, No. 1" from frontend/app/weekly/
+# format.ts, and until 2026-09-21 the podcast feed set "Issue #26" for the
+# same issue from the raw number: one issue, two labels. This is the Python
+# twin of format.ts (issueRef / romanNumeral / issueLabel), and
+# tests/test_podcast_feed.py asserts the two constants agree.
+# ---------------------------------------------------------------------------
+
+# Epoch issue number of Vol. I, No. 1: the week of 2026-09-14.
+WEEKLY_LAUNCH_ISSUE = 26
+WEEKS_PER_VOLUME = 52
+
+_ROMAN = (
+    (1000, "M"), (900, "CM"), (500, "D"), (400, "CD"), (100, "C"), (90, "XC"),
+    (50, "L"), (40, "XL"), (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I"),
+)
+
+
+def roman_numeral(n) -> str:
+    try:
+        left = int(n)
+    except (TypeError, ValueError):
+        return ""
+    if left < 1:
+        return ""
+    out = ""
+    for value, sym in _ROMAN:
+        while left >= value:
+            out += sym
+            left -= value
+    return out
+
+
+def issue_ref(raw) -> dict:
+    """{pilot, volume, number, serial}: the same arithmetic as format.ts."""
+    try:
+        n = int(raw)
+    except (TypeError, ValueError):
+        return {"pilot": True, "volume": 0, "number": 0, "serial": 0}
+    serial = n - WEEKLY_LAUNCH_ISSUE + 1
+    if serial < 1:
+        return {"pilot": True, "volume": 0, "number": 0, "serial": 0}
+    return {
+        "pilot": False,
+        "volume": (serial - 1) // WEEKS_PER_VOLUME + 1,
+        "number": (serial - 1) % WEEKS_PER_VOLUME + 1,
+        "serial": serial,
+    }
+
+
+def issue_label(raw) -> str:
+    """"Vol. I, No. 1", or "Pilot issue" for an issue before the launch."""
+    r = issue_ref(raw)
+    if r["pilot"]:
+        return "Pilot issue"
+    return f"Vol. {roman_numeral(r['volume'])}, No. {r['number']}"
+
 
 def weekly_window(now, week_offset=0):
     """-> (week_start, week_end, issue_number) for a Monday-to-Sunday week.
