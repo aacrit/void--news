@@ -47,10 +47,10 @@ import LazyOnView from "./LazyOnView";
    never rendered above 767px.
    --------------------------------------------------------------------------- */
 
-// History is hidden pre-launch (the /history routes 301 away), so the archival
-// cross-link must never render or link into a dead route. Flip HISTORY_HIDDEN to
-// false to re-enable it when History returns.
-const HISTORY_HIDDEN: boolean = true;
+// History shipped as a feature on 2026-09-19 (its launch-hiding 301s are gone),
+// so the archival cross-link renders again. Set true only if the section is
+// hidden again, and remove the nav links in the same commit.
+const HISTORY_HIDDEN: boolean = false;
 
 // The separate source roster is gone (2026-08-10): the DeepDiveSpectrum's
 // positioned logos are the sole source display (tap/hover a logo for its name).

@@ -29,6 +29,13 @@ export const OG_IMAGE = {
   type: "image/png",
 } as const;
 
+/** One title grammar for the whole site. A section landing or a top-level
+ *  page is "Page | Void News"; a leaf inside a section is
+ *  "Page | Section | Void News". The front page alone carries the tagline. */
+export function sectionTitle(page: string, section?: string): string {
+  return section ? `${page} | ${section} | Void News` : `${page} | Void News`;
+}
+
 export function pageMetadata(opts: {
   title: string;
   description: string;

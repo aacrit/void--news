@@ -35,8 +35,6 @@ import type { WeeklyDigestData, WeeklyIssueSummary, WeeklyOpinion } from "./type
 import type { WeeklyCorrection } from "../lib/weeklyIssues";
 import { AUDIO_ENABLED } from "../lib/audioGate";
 import { useAudio, type EpisodeMeta } from "../components/AudioProvider";
-import Footer from "../components/Footer";
-import ThemeToggle from "../components/ThemeToggle";
 import SigilWordmark from "../components/SigilWordmark";
 import { formatWeekRange, issueLabel, clip, essayParagraphs } from "./format";
 import { InkRule, RevealFlourish } from "./components/furniture";
@@ -208,32 +206,8 @@ export default function WeeklyIssue({
 
       <div id="wk-page-1" className="wk-page-anchor" aria-hidden="true" />
 
-      {/* Compact sticky three-zone topbar, matching void --history:
-          back-to-parent mark, centred product logo, theme toggle. A <header>
-          outside <main> is the page's banner landmark; it was a bare <div>,
-          so a screen reader had no way to reach or skip it. */}
-      <header className="wk-topbar">
-        <nav className="wk-topbar__left" aria-label="Section">
-          <Link href="/" className="wk-back" aria-label="Back to Void News">
-            <span className="wk-back__arrow" aria-hidden="true">&larr;</span>
-            <span className="wk-back__word">
-              <SigilWordmark product="NEWS" height={14} />
-            </span>
-          </Link>
-        </nav>
-        <Link href="/weekly" className="wk-topbar__brand" aria-label="Void Weekly home">
-          <span className="wk-topbar__brand-lg">
-            <SigilWordmark product="WEEKLY" height={26} accent="var(--palette-weekly)" />
-          </span>
-          <span className="wk-topbar__brand-sm">
-            <SigilWordmark product="WEEKLY" height={21} accent="var(--palette-weekly)" />
-          </span>
-        </Link>
-        <div className="wk-topbar__actions">
-          <ThemeToggle />
-        </div>
-      </header>
-
+      {/* The masthead is the site's own, mounted once in the root layout and
+          skinned in Weekly red while this page is mounted. */}
       <main id="main-content" className="wk-main">
         <Contents entries={contents} issueNumber={issue.issue_number} />
 
@@ -377,7 +351,6 @@ export default function WeeklyIssue({
         </div>
       </main>
 
-      <Footer />
     </div>
   );
 }

@@ -19,7 +19,7 @@
    --------------------------------------------------------------------------- */
 
 import type { Metadata } from "next";
-import { pageMetadata, SITE_URL } from "../lib/siteMeta";
+import { pageMetadata, SITE_URL, sectionTitle } from "../lib/siteMeta";
 
 /** `pageMetadata`, with the site-wide card removed so the file convention wins. */
 export function yieldToCardFile(base: Metadata): Metadata {
@@ -54,7 +54,7 @@ export function eventMetadata(opts: {
 }): Metadata {
   return yieldToCardFile(
     pageMetadata({
-      title: `${opts.title} | History`,
+      title: sectionTitle(opts.title, "History"),
       description: opts.description,
       path: `/history/${opts.slug}/`,
     })

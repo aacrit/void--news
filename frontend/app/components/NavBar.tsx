@@ -2,44 +2,109 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { MagnifyingGlass } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
-import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
-import SigilWordmark from "./SigilWordmark";
 import ExperimentalBadge from "./ExperimentalBadge";
-import { getEditionTimestampLocal, getEditionDatelineUTC } from "../lib/utils";
+import { BASE_PATH, getEditionTimestampLocal, getEditionDatelineUTC } from "../lib/utils";
+
+/* ---------------------------------------------------------------------------
+   NavBar: the one masthead, mounted once in the root layout.
+
+   Every route wears the same bar. A section (History, Weekly, Paper) does not
+   get its own topbar any more; it gets a nameplate beside the wordmark and an
+   accent, the way the floating player is skinned per section by swapping one
+   variable. The section is read from the pathname on the server and on the
+   client alike, so the served HTML already carries the right nameplate and
+   the right aria-current, with no flash.
+
+   Row: wordmark [+ nameplate | tagline] | dateline | sections | pages | search | theme
+
+   The search button renders only on the front page. It raises a DOM event
+   (SEARCH_EVENT) that HomeContent listens for, so the masthead does not need
+   to know about the feed's state.
+   --------------------------------------------------------------------------- */
+
+export const SEARCH_EVENT = "void:search";
+
+export type Section =
+  | "news"
+  | "history"
+  | "weekly"
+  | "paper"
+  | "onair"
+  | "listen"
+  | "sources"
+  | "ship"
+  | "about"
+  | "press"
+  | "privacy"
+  | "story"
+  | "other";
+
+/** Section for a route path (BASE_PATH already stripped). */
+export function sectionForPath(path: string): Section {
+  const p = path || "/";
+  if (p === "/") return "news";
+  const head = p.split("/").filter(Boolean)[0];
+  switch (head) {
+    case "history": return "history";
+    case "weekly": return "weekly";
+    case "paper": return "paper";
+    case "onair": return "onair";
+    case "listen": return "listen";
+    case "sources": return "sources";
+    case "ship":
+    case "feedback": return "ship";
+    case "about": return "about";
+    case "press": return "press";
+    case "privacy": return "privacy";
+    case "story": return "story";
+    default: return "other";
+  }
+}
+
+/** Sections that carry a nameplate beside the wordmark. */
+const NAMEPLATES: Partial<Record<Section, { href: string; label: string }>> = {
+  history: { href: "/history", label: "History" },
+  weekly: { href: "/weekly", label: "Weekly" },
+  paper: { href: "/paper", label: "Paper" },
+};
+
+/** The section links. Order is the reading order of the product: the daily
+ *  broadcast, then the two slower sections, then the feeds. */
+const SECTION_LINKS: { href: string; label: string; section: Section }[] = [
+  { href: "/onair", label: "On Air", section: "onair" },
+  { href: "/history", label: "History", section: "history" },
+  { href: "/weekly", label: "Weekly", section: "weekly" },
+  { href: "/listen", label: "Listen", section: "listen" },
+];
+
+const PAGE_LINKS: { href: string; label: string; section: Section; title: string }[] = [
+  { href: "/sources", label: "Sources", section: "sources", title: "Every outlet Void News reads" },
+  { href: "/ship", label: "Feedback", section: "ship", title: "Tell us what to build or fix" },
+  { href: "/about", label: "About", section: "about", title: "About Void News" },
+];
+
+/** Sections whose masthead shows the daily edition dateline. The others are
+ *  not daily, so a daily date beside their nameplate would be a false signal. */
+const DATED_SECTIONS: ReadonlySet<Section> = new Set(["news", "onair", "sources", "story"]);
 
 interface NavBarProps {
   onSearchClick?: () => void;
   /** Edition build time (pipeline completed_at, ISO). Drives the masthead
-      dateline + timestamp so they reflect when THIS edition was built, not the
-      reader's current clock. Falls back to now when absent. */
+      "as of" time, rendered in the viewer's local zone after mount. */
   editionBuiltAt?: string | null;
   /** Deterministic, preformatted edition DATE, computed once at build time in
-      UTC (prerendered front page). When supplied it renders directly on first
-      paint (server + client match exactly, no #418), bypassing the client-local
-      mounted gate below. Absent on client-only routes. The TIME is NEVER passed
-      this way: local time is machine-dependent, so it is always computed after
-      mount from editionBuiltAt (see below). */
+      UTC. Renders byte-identically on server and client. When absent the
+      masthead shows no date rather than the viewer's clock: a date the build
+      did not supply is not a fact the masthead may claim. */
   editionDateline?: string;
-  /** Explicit literal override for the "as of" TIME node. Normally left
-      undefined so the time is computed in the viewer's local zone after mount.
-      Pass "" to SUPPRESS the time entirely (e.g. an archived StandaloneDeepDive
-      snapshot shows its edition DATE only, no live "as of" clock). */
+  /** Explicit literal override for the "as of" TIME node. Pass "" to
+      suppress the time entirely. */
   editionTimestamp?: string;
 }
-
-/* ---------------------------------------------------------------------------
-   NavBar — Single-row masthead
-
-   Row 1 (Chrome — structural, about the app):
-     Logo | dateline · timestamp | Spinoffs | Pages | Theme | Search
-
-   Filters (lean chips + topic dropdown) and the inline Row 2 lens were removed
-   in 2026-05-15 redesign — pure curation, no client-side filtering. The
-   server-side ranker enforces topic diversity and source-count quality floor.
-   --------------------------------------------------------------------------- */
 
 export default function NavBar({
   onSearchClick,
@@ -47,144 +112,124 @@ export default function NavBar({
   editionDateline,
   editionTimestamp,
 }: NavBarProps) {
+  const pathname = usePathname() || "/";
+  const route = pathname.replace(BASE_PATH, "") || "/";
+  const section = sectionForPath(route);
+  const nameplate = NAMEPLATES[section];
+  const dated = DATED_SECTIONS.has(section);
+
   const [mounted, setMounted] = useState(false);
-  // SSR-safe hydration pattern — defer dateline/timestamp render until after
-  // mount so server HTML matches client HTML on first paint (avoids React #418).
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); }, []);
-  // DATE: the preformatted build-time UTC string wins when supplied (front-page
-  // prerender) so it renders immediately and byte-identically on server +
-  // client. Otherwise fall back to the client-fetched build time formatted UTC,
-  // mount-gated so an absent build time (which falls back to "now") can't
-  // mismatch on first paint. The date stays UTC across every surface.
-  const dateline = editionDateline ?? (mounted ? getEditionDatelineUTC(editionBuiltAt) : "");
-  // TIME: rendered in the VIEWER'S LOCAL zone (e.g. "4:00 PM CDT") so it is
-  // relevant to each reader. Local time is machine-dependent and MUST NOT be
-  // baked into the prerendered HTML, so it is ALWAYS computed after mount from
-  // the raw ISO editionBuiltAt. Server HTML and the first client render both
-  // resolve to "" (mounted === false), so there is no hydration mismatch; the
-  // local time paints in only after the mount effect fires. An explicit
-  // editionTimestamp prop (e.g. "" from an archived snapshot) overrides the
-  // local computation, letting a permalink page suppress the live clock.
+
+  // DATE: the build-time UTC string wins. Without it, the masthead shows the
+  // date only once the build time is known on the client; it never shows
+  // "now". (The old fallback to the viewer's clock put "Sep 21 · as of 2:00
+  // AM" above a card dated September 20.)
+  const dateline = editionDateline ?? (mounted && editionBuiltAt ? getEditionDatelineUTC(editionBuiltAt) : "");
   const timestamp =
     editionTimestamp !== undefined
       ? editionTimestamp
-      : mounted
+      : mounted && editionBuiltAt
         ? getEditionTimestampLocal(editionBuiltAt)
         : "";
 
-  /* ── Scroll-compact masthead (NYT-style): wires --scroll-nav-compact-* tokens.
-     Adds data-scroll-compact="true" past 80px, removes at ≤40px (hysteresis
-     prevents jitter at threshold). rAF-throttled, passive listener.
-     Desktop-only behavior — mobile nav is a separate component (MobileNav).   */
+  /* Scroll-compact masthead: data-scroll-compact past 80px, off at 40px. */
   const [scrollCompact, setScrollCompact] = useState(false);
   useEffect(() => {
     let ticking = false;
     let compact = false;
-
     const update = () => {
       ticking = false;
       const y = window.scrollY;
-      if (!compact && y > 80) {
-        compact = true;
-        setScrollCompact(true);
-      } else if (compact && y <= 40) {
-        compact = false;
-        setScrollCompact(false);
-      }
+      if (!compact && y > 80) { compact = true; setScrollCompact(true); }
+      else if (compact && y <= 40) { compact = false; setScrollCompact(false); }
     };
-
     const onScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        window.requestAnimationFrame(update);
-      }
+      if (!ticking) { ticking = true; window.requestAnimationFrame(update); }
     };
-
-    // Prime initial state (e.g., page reload mid-scroll)
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const openSearch = () => {
+    if (onSearchClick) onSearchClick();
+    else window.dispatchEvent(new CustomEvent(SEARCH_EVENT));
+  };
+
   return (
     <header
       className="nav-header anim-cold-open-nav"
+      data-section={section}
       data-scroll-compact={scrollCompact ? "true" : undefined}
     >
-      {/* ── Row 1: Chrome — structural, about the app ── */}
       <nav className="nav-inner" aria-label="Main navigation">
         <div className="nav-left">
           <Link href="/" aria-label="Void News home" className="nav-logo si-hoverable">
-            {/* Single responsive wordmark. Previously three copies (desktop 30 /
-                tablet 22 / mobile 18) rendered and were CSS-toggled, which
-                triplicated the "VOID NEWS" glyph text in the served DOM. One
-                em-sized instance now scales via .nav-logo-mark font-size at each
-                breakpoint (see components.css), so the mark serializes once. */}
             <LogoFull responsive className="nav-logo-mark" />
           </Link>
-          <ExperimentalBadge />
-          {/* Masthead tagline — lives inline in the top bar (desktop only). The
-              standalone full-width ".home-flag" strip was retired 2026-08-02 so
-              the feed starts higher; this italic subline carries the tagline. */}
-          <span className="nav-tagline" aria-hidden="true">See through the void.</span>
-        </div>
-
-        {/* Single dateline element (was two mutually-exclusive spans that both
-            carried the date, duplicating it in the served DOM as
-            "Aug 11, 2026Aug 11, 2026"). One node now renders the date + time
-            once; CSS positions it inline on desktop and right-aligned on mobile,
-            and hides the date under 400px. See components.css/responsive.css. */}
-        <span className="nav-dateline-line" aria-hidden="true" suppressHydrationWarning>
-          <span className="nav-dateline-line__date">{dateline}</span>
-          {timestamp && (
+          {nameplate ? (
+            <Link
+              href={nameplate.href}
+              className="nav-nameplate"
+              aria-current={route === nameplate.href || route === `${nameplate.href}/` ? "page" : undefined}
+            >
+              {nameplate.label}
+            </Link>
+          ) : (
             <>
-              <span className="nav-dateline-line__sep">&middot;</span>
-              <span className="nav-dateline-line__time"><span className="nav-asof">as of </span>{timestamp}</span>
+              <ExperimentalBadge />
+              <span className="nav-tagline" aria-hidden="true">See through the void.</span>
             </>
           )}
-        </span>
-
-        {/* Spinoff product family (Void History + Void Weekly). Hidden for the
-            2026-08-05 launch, restored 2026-09-19 when both sections shipped as
-            features. The Weekly link carries BOTH classes: .nav-history supplies
-            the layout, active/focus and underline-draw, .nav-weekly overrides
-            only --hist-nav-accent to magazine red. Shown from 768px up; below
-            that the mobile tab bar + side panel carry these destinations. */}
-        <div className="nav-spinoffs">
-          <span className="nav-spinoffs__divider" aria-hidden="true" />
-          <span className="nav-spinoffs__eyebrow">Also from Void</span>
-          <Link href="/history" className="nav-history" aria-label="Void History" title="History">
-            <SigilWordmark product="HISTORY" responsive className="nav-spinoff-mark" accent="var(--hist-nav-accent)" height={14} />
-          </Link>
-          <Link href="/weekly" className="nav-history nav-weekly" aria-label="Void Weekly" title="Weekly">
-            <SigilWordmark product="WEEKLY" responsive className="nav-spinoff-mark" accent="var(--hist-nav-accent)" height={14} />
-          </Link>
         </div>
 
+        {dated && (
+          <span className="nav-dateline-line" aria-hidden="true" suppressHydrationWarning>
+            <span className="nav-dateline-line__date">{dateline}</span>
+            {timestamp && (
+              <>
+                <span className="nav-dateline-line__sep">&middot;</span>
+                <span className="nav-dateline-line__time"><span className="nav-asof">as of </span>{timestamp}</span>
+              </>
+            )}
+          </span>
+        )}
+
         <div className="nav-right">
-          {/* Page navigation — destinations.
-              Games + Paper hidden from production nav (not ready). Routes
-              still resolve at /games and /paper for direct URL access. */}
+          <nav className="nav-sections" aria-label="Sections">
+            {SECTION_LINKS.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="nav-page"
+                data-section={l.section}
+                aria-current={section === l.section ? "page" : undefined}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
           <nav className="nav-pages" aria-label="Pages">
-            <PageToggle activePage="feed" />
-            {/* On Air reaches the daily broadcast from the docked/floating
-                player and the footer On Air pill on desktop, so the duplicate
-                top-nav On Air button was removed 2026-08-10 (nav-onair-dedup). */}
-            <Link href="/ship" className="nav-page" aria-label="Feedback: tell us what to build or fix" title="Feedback">
-              Feedback
-            </Link>
-            <Link href="/about" className="nav-page" aria-label="About Void News" title="About">
-              About
-            </Link>
+            {PAGE_LINKS.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="nav-page"
+                title={l.title}
+                aria-current={section === l.section ? "page" : undefined}
+              >
+                {l.label}
+              </Link>
+            ))}
           </nav>
 
-          {/* Search — single icon button. Cmd+K opens overlay. */}
-          {onSearchClick && (
+          {section === "news" && (
             <button
               type="button"
               className="nav-search-btn"
-              onClick={onSearchClick}
+              onClick={openSearch}
               aria-label="Search stories (Ctrl+K)"
               title="Search (Ctrl+K)"
             >
@@ -192,12 +237,9 @@ export default function NavBar({
             </button>
           )}
 
-          {/* Utility: Theme (hidden on mobile — ThemeToggle is in MobileSidePanel) */}
           <ThemeToggle />
         </div>
       </nav>
-
-      {/* Mobile edition tabs removed 2026-06-02 single-feed. */}
     </header>
   );
 }

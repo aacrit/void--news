@@ -16,9 +16,6 @@ import { formatArchiveRange, issueFolio, issueLabel, essayParagraphs, clip } fro
 import { readingMinutes } from "../components/IssueUtilities";
 import { DepartmentPlate, InkRule } from "../components/furniture";
 import { useScrollReveal } from "../hooks";
-import Footer from "../../components/Footer";
-import ThemeToggle from "../../components/ThemeToggle";
-import SigilWordmark from "../../components/SigilWordmark";
 
 /** Every word of prose an issue prints, for the reading time. */
 function words(issue: WeeklyDigestData): number {
@@ -73,28 +70,6 @@ export default function IssueIndex({ issues }: { issues: WeeklyDigestData[] }) {
 
   return (
     <div className="wk-page">
-      <header className="wk-topbar">
-        <nav className="wk-topbar__left" aria-label="Section">
-          <Link href="/weekly" className="wk-back" aria-label="Back to the current issue">
-            <span className="wk-back__arrow" aria-hidden="true">&larr;</span>
-            <span className="wk-back__word">
-              <SigilWordmark product="WEEKLY" height={14} accent="var(--palette-weekly)" />
-            </span>
-          </Link>
-        </nav>
-        <Link href="/weekly" className="wk-topbar__brand" aria-label="Void Weekly home">
-          <span className="wk-topbar__brand-lg">
-            <SigilWordmark product="WEEKLY" height={26} accent="var(--palette-weekly)" />
-          </span>
-          <span className="wk-topbar__brand-sm">
-            <SigilWordmark product="WEEKLY" height={21} accent="var(--palette-weekly)" />
-          </span>
-        </Link>
-        <div className="wk-topbar__actions">
-          <ThemeToggle />
-        </div>
-      </header>
-
       <main id="main-content" className="wk-main">
         <section
           ref={ref as React.RefObject<HTMLElement>}
@@ -117,7 +92,6 @@ export default function IssueIndex({ issues }: { issues: WeeklyDigestData[] }) {
         </section>
       </main>
 
-      <Footer />
     </div>
   );
 }

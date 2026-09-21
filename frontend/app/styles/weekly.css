@@ -31,6 +31,23 @@
 /* ---------------------------------------------------------------------------
    Page container — palette, paper, grain, vignette
    --------------------------------------------------------------------------- */
+/* The magazine's palette lives on :root while a Weekly page is mounted, so the shared masthead and footer can wear it (they sit outside .wk-page). */
+:root:has(.wk-page) {
+  --wk-accent: var(--palette-weekly);
+  --wk-accent-bright: #D41920;
+  --wk-accent-light: #E4252C;
+  --wk-accent-dim: #991717;
+  --wk-accent-ghost: rgba(185, 28, 28, 0.06);
+  --wk-accent-glow: rgba(185, 28, 28, 0.12);
+  --wk-accent-ink: rgba(185, 28, 28, 0.20);
+  --wk-cream: #F8F3E8;
+  --wk-cream-deep: #EDE5D4;
+  --wk-paper: #EDE4D0;
+  --wk-topbar-h: var(--nav-height); /* the shared masthead; Weekly has no topbar of its own */
+  --wk-measure: 36rem;
+  --wk-rail: 17ch;
+}
+
 .wk-page {
   min-height: 100vh;
   display: flex;
@@ -47,34 +64,22 @@
   overflow-x: clip;
 
   /* Magazine red — Economist/TIME lineage. */
-  --wk-accent: var(--palette-weekly);
-  --wk-accent-bright: #D41920;
-  --wk-accent-light: #E4252C;
-  --wk-accent-dim: #991717;
-  --wk-accent-ghost: rgba(185, 28, 28, 0.06);
-  --wk-accent-glow: rgba(185, 28, 28, 0.12);
-  --wk-accent-ink: rgba(185, 28, 28, 0.20);
-  --wk-cream: #F8F3E8;
-  --wk-cream-deep: #EDE5D4;
 
   /* Opaque page paper, reused by the sticky topbar so a pinned element paints
      cleanly over what scrolls beneath it. Matches background-color below. */
-  --wk-paper: #EDE4D0;
-  --wk-topbar-h: 3rem;
 
   /* THE MEASURE. A rem track rather than a ch one, because ch resolves against
      whichever font the grid container happens to carry and the feature body is
      set in the editorial serif. ~69 characters at the body size; the body also
      carries a belt-and-braces ch cap. */
-  --wk-measure: 36rem;
-  --wk-rail: 17ch;
 
   /* Warmer, thicker-feeling stock than the feed's #F0EBDD. */
   background-color: #EDE4D0;
   color: var(--fg-primary);
 }
 
-:root[data-mode="dark"] .wk-page {
+/* Dark palette, same scope rule as above. */
+:root[data-mode="dark"]:has(.wk-page) {
   --wk-accent: var(--palette-weekly);
   --wk-accent-bright: #F87171;
   --wk-accent-light: #FCA5A5;
@@ -85,6 +90,9 @@
   --wk-cream: #2A2420;
   --wk-cream-deep: #221E1A;
   --wk-paper: #1E1A16;
+}
+
+:root[data-mode="dark"] .wk-page {
   background-color: #1E1A16;
 }
 
@@ -111,72 +119,6 @@
   );
   pointer-events: none;
   z-index: 3;
-}
-
-/* ---------------------------------------------------------------------------
-   Sticky topbar — back mark | product logo | theme
-   --------------------------------------------------------------------------- */
-.wk-topbar {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  /* Equal 1fr side columns keep the centred logo optically centred whatever
-     the side zones measure. */
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  min-height: var(--wk-topbar-h);
-  background-color: color-mix(in srgb, var(--wk-paper) 85%, transparent);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--wk-accent-ink);
-}
-
-@media (min-width: 768px) {
-  .wk-topbar { padding: var(--space-2) var(--space-6); }
-}
-
-.wk-topbar__left { display: flex; align-items: center; justify-self: start; }
-.wk-topbar__actions { display: flex; align-items: center; justify-self: end; }
-
-.wk-topbar__brand {
-  display: inline-flex;
-  align-items: center;
-  justify-self: center;
-  text-decoration: none;
-  /* The mark itself is 21-26px tall; the LINK has to be reachable. */
-  min-height: 44px;
-}
-
-.wk-topbar__brand-lg { display: inline-flex; }
-.wk-topbar__brand-sm { display: none; }
-
-.wk-back {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  text-decoration: none;
-  color: var(--fg-tertiary);
-  opacity: 0.75;
-  transition: opacity 0.2s var(--ease-cinematic, ease-out);
-  min-height: 44px;
-}
-
-.wk-back:hover { opacity: 1; }
-.wk-back__arrow { font-size: var(--text-sm); line-height: 1; }
-.wk-back__word { display: inline-flex; }
-
-@media (max-width: 599px) {
-  .wk-topbar__brand-lg { display: none; }
-  .wk-topbar__brand-sm { display: inline-flex; }
-}
-
-@media (max-width: 419px) {
-  /* The word hides, so the arrow has to carry the whole target. Without the
-     min-width this collapses to a 12x44 hit area, well under WCAG 2.5.5. */
-  .wk-back__word { display: none; }
-  .wk-back { min-width: 44px; justify-content: center; }
 }
 
 /* Anchor the cover's scroll cue lands on. */
@@ -1972,8 +1914,7 @@ a.wk-archive__item:hover { color: var(--wk-accent); }
 
   /* The cover is a 100vh takeover: on paper it would be a blank first sheet. */
   .wk-cover,
-  .wk-topbar,
-  .wk-cover__cue { display: none !important; }
+.wk-cover__cue { display: none !important; }
 
   .wk-reveal,
   .wk-reveal-child {

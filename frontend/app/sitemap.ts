@@ -26,6 +26,10 @@ const ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[number]["ch
   // for launch), so they are deliberately NOT listed here: a sitemap must not
   // advertise redirecting URLs. Restore them when those sections go live.
   { path: "/ship/", changeFrequency: "monthly", priority: 0.4 },
+  // The press room and the privacy page: the two pages a journalist or a
+  // cautious reader looks for by name.
+  { path: "/press/", changeFrequency: "monthly", priority: 0.4 },
+  { path: "/privacy/", changeFrequency: "yearly", priority: 0.2 },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

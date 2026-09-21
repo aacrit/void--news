@@ -110,12 +110,8 @@ export default function StandaloneDeepDive({
 
   return (
     <div className="page-container">
-      {/* Void News masthead — same top bar as Home / On Air. An archived story
-          is a permanent snapshot, so we show its edition DATE only and suppress
-          the live "as of <time>" freshness signal (passing an empty timestamp;
-          NavBar renders no time block when it is empty). */}
-      <NavBar editionDateline={datelineLabel} editionTimestamp="" />
-
+      {/* The masthead is mounted once in the root layout and shows the current
+          edition; the story's own printed-on date is carried in the page body. */}
       <main
         id="main-content"
         className="story-page dd-page"

@@ -32,10 +32,8 @@
   justify-content: center;
   gap: var(--space-3);
   padding: var(--space-1) var(--space-4);
-  /* PWA/notch: the banner is the topmost element, so it must clear the status
-     bar itself, otherwise its text + dismiss sit under the notch and the X is
-     untappable. env() is 0 in normal browser tabs, so no effect there. */
-  padding-top: calc(var(--space-1) + env(safe-area-inset-top, 0px));
+  /* Sits below the masthead (which clears the notch itself), so no
+     safe-area padding of its own. */
   background: color-mix(in srgb, var(--accent-warm) 8%, var(--bg-secondary));
   border-bottom: 1px solid color-mix(in srgb, var(--accent-warm) 30%, var(--border-subtle));
 }
@@ -94,14 +92,6 @@
   .exp-banner__dismiss {
     width: 44px;
     height: 44px;
-  }
-}
-
-/* When the banner is shown it already reserves the notch inset, so the sticky
-   nav must NOT add its own on top, or the status-bar gap is doubled (PWA). */
-@media (max-width: 767px) {
-  body:has(.exp-banner) .nav-header {
-    padding-top: 0;
   }
 }
 

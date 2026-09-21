@@ -2,7 +2,7 @@
    Server-only: imported by the two page modules' generateMetadata. */
 
 import type { Metadata } from "next";
-import { SITE_URL, pageMetadata } from "../lib/siteMeta";
+import { SITE_URL, pageMetadata, sectionTitle } from "../lib/siteMeta";
 import type { WeeklyDigestData } from "./types";
 import { clip, essayParagraphs, formatWeekRange, issueLabel } from "./format";
 
@@ -25,11 +25,11 @@ export function issueMetadata(issue: WeeklyDigestData, path: string): Metadata {
   const lede = essayParagraphs(issue.cover_text?.[0]?.text || "")[0] || "";
 
   const title = headline
-    ? `${name}: ${headline} · Void Weekly`
-    : `${name} · Void Weekly`;
+    ? sectionTitle(`${name}: ${headline}`, "Weekly")
+    : sectionTitle(name, "Weekly");
   const description = lede
     ? clip(lede, 160)
-    : `Void Weekly, ${name}, covering ${range}.`;
+    : `Weekly, ${name}, covering ${range}. The Sunday magazine from Void News.`;
 
   const base = pageMetadata({ title, description, path });
 

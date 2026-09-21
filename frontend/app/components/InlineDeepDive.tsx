@@ -51,11 +51,10 @@ import LazyOnView from "./LazyOnView";
    choreography arrives in a later stage.
    --------------------------------------------------------------------------- */
 
-/* History is hidden for launch (nav links removed + /history 301s to home).
-   While hidden, the Deep Dive archival cross-link must not render (it would
-   promise perspectives and bounce the reader to the homepage). Flip to false
-   when History ships again as a feature. */
-const HISTORY_HIDDEN: boolean = true;
+/* History shipped as a feature on 2026-09-19 (its launch-hiding 301s are gone),
+   so the archival cross-link renders again. Set true only if the section is
+   hidden again, and remove the nav links in the same commit. */
+const HISTORY_HIDDEN: boolean = false;
 
 /* --- History Context Link — subtle archival cross-link (mirrors DeepDive) -- */
 function HistoryContextLink({
