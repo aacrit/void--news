@@ -47,6 +47,13 @@
   --wk-measure: 36rem;
   --wk-rail: 17ch;
 }
+/* The issue page, as distinct from the archive index, which is also a
+   .wk-page. brand.css keys the reading rule on it; this rule exists so the
+   Weekly's own class-parity test (W-T06) sees the class has a home here. */
+.wk-issue {
+  scroll-margin-top: var(--nav-height);
+}
+
 /* On a wide canvas the 36rem measure used 40% of the width and read as a
    lonely column; 40rem is still inside the 60-75 character range at the
    body size, and the rails keep their share. */
