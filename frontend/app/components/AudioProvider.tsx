@@ -123,8 +123,13 @@ export interface AudioState {
   seekTo: (seconds: number) => void;
   isPlayerVisible: boolean;
   setPlayerVisible: (v: boolean) => void;
-  isExpanded: boolean;
-  setExpanded: (v: boolean) => void;
+  /* The On Air panel. It is chrome, not a route: the tab bar, the pill and the
+     wordmark open it where the reader already is, and /onair stays a real page
+     rendering the same transport. One flag, so two surfaces cannot disagree
+     about whether the panel is open (the old local `view` state and the
+     provider's `isExpanded` had to be reconciled by an effect that bounced). */
+  isPanelOpen: boolean;
+  setPanelOpen: (v: boolean) => void;
   analyserRef: React.RefObject<AnalyserNode | null>;
   /** Lazily connect Web Audio API analyser — call when viz becomes visible */
   connectAnalyser: () => void;
@@ -209,7 +214,7 @@ export default function AudioProvider({
     }
   });
   const [isPlayerVisible, setPlayerVisible] = useState(false);
-  const [isExpanded, setExpanded] = useState(false);
+  const [isPanelOpen, setPanelOpen] = useState(false);
   const [hasEverPlayed, setHasEverPlayed] = useState(false);
   const [previousEpisodes, setPreviousEpisodes] = useState<EpisodeMeta[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -362,7 +367,7 @@ export default function AudioProvider({
     // Web Audio API analyser: LAZY connection — only when visualization is
     // first needed. Connecting immediately causes iOS to route audio through
     // AudioContext, which gets suspended in background and kills playback.
-    // The analyser is connected on first play when isExpanded/broadcast is open.
+    // The analyser is connected on first play when the panel is open.
 
     listenerCleanupRef.current = () => {
       el.removeEventListener("timeupdate", onTime);
@@ -892,8 +897,8 @@ export default function AudioProvider({
       seekTo,
       isPlayerVisible,
       setPlayerVisible,
-      isExpanded,
-      setExpanded,
+      isPanelOpen,
+      setPanelOpen,
       analyserRef,
       connectAnalyser,
       hasEverPlayed,
@@ -909,7 +914,7 @@ export default function AudioProvider({
       dailyBrief, nowPlaying, edition, setEdition, contentType, play, load,
       playWeekly, playHistory, isPlaying, currentTime, duration, buffered,
       audioError, handlePlayPause, handleSeek, playbackSpeed, cycleSpeed,
-      skipForward, skipBackward, seekTo, isPlayerVisible, isExpanded,
+      skipForward, skipBackward, seekTo, isPlayerVisible, isPanelOpen,
       connectAnalyser, hasEverPlayed, previousEpisodes, loadEpisode, chapters,
       currentChapterIndex, seekToChapter, nextChapter, prevChapter,
     ]

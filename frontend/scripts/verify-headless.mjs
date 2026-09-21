@@ -28,7 +28,7 @@
    Needs: a completed `next build` (frontend/out). Serving and Chromium are
    shared with verify-responsive.mjs through lib/headless.mjs.
    =========================================================================== */
-import { readFileSync, existsSync, readdirSync, statSync, mkdirSync, writeFileSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync, statSync, mkdirSync, writeFileSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { OUT, readBasePath, serve, launchChromium, isStyled, measureOverflow } from "./lib/headless.mjs";
 
@@ -617,9 +617,12 @@ async function scenarios(browser) {
       assert(await page.locator(".exp-banner").count() === 0, "banner-dismiss", "dismiss removes it");
     }
   });
-  /* The floating player: on the news, On Air and Weekly pages; not on Ship,
-     not on History (the event page carries its own Listen). */
-  for (const [route, expect] of [["/", true], ["/onair/", true], ["/audio/", true], ["/weekly/", true], ["/ship/", false], ["/history/", false]]) {
+  /* The floating player: on the news, Audio and Weekly pages; not on Ship,
+     not on History (the event page carries its own Listen), and NOT on /onair,
+     where the page's own portal is the transport. It used to appear there too,
+     so at 1440 two transports showed the same episode through two
+     implementations. See the no-double-transport scenario. */
+  for (const [route, expect] of [["/", true], ["/onair/", false], ["/audio/", true], ["/weekly/", true], ["/ship/", false], ["/history/", false]]) {
     await withPage(browser, { width: 1440, route }, `floating-player ${route}`, async (page) => {
       await page.waitForTimeout(500);
       const n = await page.locator(".fp").count();
@@ -690,11 +693,13 @@ async function journeys(browser) {
     const title = await page.evaluate(() => document.querySelector(".fp__title")?.textContent?.trim() ?? null);
     assert(title === "History", "hearing-listen", `player title after Listen: ${title}`);
   });
-  /* Weekly loads The Argument into the shared player on arrival. */
+  /* Weekly offers The Argument to an idle player on arrival, and the player
+     names the PROGRAMME. It used to read "Weekly", the section, because the
+     label was a constant picked from which slot had been written last. */
   await withPage(browser, { width: 1440, route: "/weekly/" }, "weekly-argument", async (page) => {
     await page.waitForTimeout(1200);
     const title = await page.evaluate(() => document.querySelector(".fp__title")?.textContent?.trim() ?? null);
-    assert(title === "Weekly", "weekly-argument-loaded", `player title on the issue: ${title}`);
+    assert(title === "The Argument", "weekly-argument-loaded", `player title on the issue: ${title}`);
   });
   /* Sources: the picker and the six-axis dots. */
   await withPage(browser, { width: 1440, route: "/sources/" }, "sources-picker", async (page) => {
@@ -840,6 +845,297 @@ async function brandChecks(browser) {
     const fp = await page.evaluate(() => ({ title: document.querySelector(".fp__title")?.textContent?.trim() ?? null, state: document.querySelector(".audio-play[data-kind='history']")?.getAttribute("data-state") }));
     assert(fp.title === "History" && fp.state !== "idle", "audio-hub-plays-history", `player title ${fp.title}, button state ${fp.state}`);
   });
+  /* ─────────────────────────────────────────────────────────────────────
+     THE ON AIR SYSTEM
+
+     Eight scenarios, one per reader-visible defect measured in a browser on
+     2026-09-21 before the two-slot restructure. Each one failed then. The
+     root cause was a single `brief` slot that all three programmes wrote
+     into, read everywhere as if it were always the daily edition, with no
+     element listeners under `isPlaying` and the transport built twice.
+
+     A History episode's MP3 lives in a GitHub release rather than the repo
+     (deploy-cloudflare.yml fetches it into out/audio/history at build time),
+     so a local export carries the chapter JSON and no audio. serveHistoryAudio
+     stands a real file in for it; without that the press rule could only be
+     asserted on two of the three programmes, which is where the silent
+     History Play button hid in the first place.
+     ───────────────────────────────────────────────────────────────────── */
+  const STAND_IN_MP3 = ["audio/world", "audio/weekly-world"]
+    .map((d) => join(OUT, d))
+    .flatMap((d) => existsSync(d) ? readdirSync(d).filter((f) => f.endsWith(".mp3")).map((f) => join(d, f)) : [])[0] ?? null;
+
+  /* Playwright's route interception does not reach Chromium's media loader:
+     a fulfilled response (200 or a correct 206 for the range it asks for)
+     leaves the element with the src set, paused at 0 and raising nothing.
+     Measured, twice. So the stand-in goes on DISK, where the sweep's own
+     static server will serve it, which is also what the deploy does for real
+     (deploy-cloudflare.yml fetches the release into out/audio/history).
+     Removed again in a finally, so a local export is left as it was found. */
+  function standInHistoryAudio() {
+    if (!STAND_IN_MP3) return { ok: false, clean() {} };
+    const manifest = join(OUT, "data/history-audio.json");
+    if (!existsSync(manifest)) return { ok: false, clean() {} };
+    let episodes;
+    try { episodes = JSON.parse(readFileSync(manifest, "utf8")).episodes ?? {}; }
+    catch { return { ok: false, clean() {} }; }
+    const body = readFileSync(STAND_IN_MP3);
+    const written = [];
+    for (const e of Object.values(episodes)) {
+      const rel = String(e?.url ?? "").split("?")[0].replace(/^\//, "");
+      if (!rel.startsWith("audio/history/")) continue;
+      const path = join(OUT, rel);
+      if (existsSync(path)) continue;
+      mkdirSync(join(OUT, "audio/history"), { recursive: true });
+      writeFileSync(path, body);
+      written.push(path);
+    }
+    return { ok: true, clean() { for (const f of written) try { unlinkSync(f); } catch {} } };
+  }
+
+  /* What the element is really doing, and what every surface claims. */
+  const REPORT = `(() => {
+    const a = document.querySelector("audio");
+    const beam = document.querySelector(".nav-logo [data-playing], .nav-logo[data-playing]");
+    return {
+      src: a ? (a.currentSrc || a.src || "").split("/").pop().split("?")[0] : null,
+      paused: a ? a.paused : null,
+      t: a ? Math.round(a.currentTime * 10) / 10 : null,
+      claimsPlaying: {
+        pill: !!document.querySelector(".fp--playing"),
+        tab: !!document.querySelector(".mtb__tab--onair-live"),
+        beam: !!beam,
+        hubButtons: [...document.querySelectorAll(".audio-play")].map((b) => b.getAttribute("data-state")),
+        onairPortal: !!document.querySelector(".onair__portal--live"),
+      },
+      label: document.querySelector(".fp__title")?.textContent?.trim() ?? null,
+    };
+  })()`;
+
+  /* 1. ONE PLAY BUTTON. Every hub button plays on the first press and pauses
+        on the second. Before this, Play on a History episode loaded the
+        episode and played nothing at all. */
+  const standIn = standInHistoryAudio();
+  try {
+  await withPage(browser, { width: 1440, route: "/audio/" }, "one-play-button", async (page) => {
+    const stood = standIn.ok;
+    for (const kind of ["daily", "weekly", "history"]) {
+      const btn = page.locator(`.audio-play[data-kind='${kind}']`).first();
+      if (await btn.count() === 0) { skip(`one-play-button-${kind}`, "no button for this programme"); continue; }
+      if (kind === "history" && !stood) { skip("one-play-button-history", "no stand-in mp3 in this export"); continue; }
+      await btn.click();
+      await page.waitForTimeout(1800);
+      const playing = await page.evaluate(REPORT);
+      assert(playing.paused === false && playing.t > 0, `one-play-button-${kind}`,
+        `${kind}: paused ${playing.paused}, currentTime ${playing.t}, src ${playing.src}`);
+      assert((await btn.textContent())?.includes("Pause"), `one-play-button-${kind}-reads-pause`,
+        `${kind} button reads ${JSON.stringify((await btn.textContent())?.trim())}`);
+      await btn.click();
+      await page.waitForTimeout(600);
+      assert((await page.evaluate(REPORT)).paused === true, `one-play-button-${kind}-toggles`,
+        `${kind}: a second press paused it`);
+    }
+  });
+
+  /* The element survives a CLIENT navigation, which is what the provider can
+     promise: a full document load builds a new one by definition. So these
+     walk the site the way a reader does, by clicking links, never by goto. */
+  async function clickTo(page, href) {
+    const link = page.locator(`a[href$="${href}"]`).first();
+    if (await link.count() === 0) return false;
+    await link.click();
+    await page.waitForURL((u) => u.pathname.endsWith(href), { timeout: 10_000 }).catch(() => {});
+    await page.waitForTimeout(1200);
+    return true;
+  }
+
+  /* 2. AUDIO SURVIVES NAVIGATION. Playing the brief and walking the site used
+        to pause it and swap the source, twice over: /weekly seized the
+        element on mount, and returning home detached what was playing. */
+  await withPage(browser, { width: 1440, route: "/audio/" }, "audio-survives-navigation", async (page) => {
+    const btn = page.locator(".audio-play[data-kind='daily']").first();
+    if (await btn.count() === 0) { skip("audio-survives-navigation", "no daily programme in this export"); return; }
+    await btn.click();
+    await page.waitForTimeout(1500);
+    const started = await page.evaluate(REPORT);
+    if (!assert(started.paused === false, "audio-survives-navigation-starts", `paused ${started.paused}`)) return;
+    for (const href of ["/weekly/", "/", "/audio/"]) {
+      if (!(await clickTo(page, href))) { skip(`audio-survives-navigation ${href}`, "no link to this route on the page"); continue; }
+      const now = await page.evaluate(REPORT);
+      assert(now.src === started.src && now.paused === false && now.t >= started.t,
+        `audio-survives-navigation ${href}`,
+        `src ${now.src} (was ${started.src}), paused ${now.paused}, t ${now.t} (was ${started.t})`);
+    }
+  });
+
+  /* 3. WEEKLY OFFERS, IT DOES NOT SEIZE. Opening the issue while the brief
+        plays used to pause it mid-sentence and swap the source with no
+        gesture. It may still offer the Argument to an idle player. */
+  await withPage(browser, { width: 1440, route: "/audio/" }, "weekly-does-not-seize", async (page) => {
+    const btn = page.locator(".audio-play[data-kind='daily']").first();
+    if (await btn.count() === 0) { skip("weekly-does-not-seize", "no daily programme in this export"); return; }
+    await btn.click();
+    await page.waitForTimeout(1500);
+    const before = await page.evaluate(REPORT);
+    if (!assert(before.paused === false, "weekly-does-not-seize-starts", `paused ${before.paused}`)) return;
+    if (!(await clickTo(page, "/weekly/"))) { skip("weekly-does-not-seize", "no link to /weekly on the hub"); return; }
+    await page.waitForTimeout(800);
+    const after = await page.evaluate(REPORT);
+    assert(after.src === before.src && after.paused === false, "weekly-does-not-seize",
+      `on /weekly the element holds ${after.src} paused ${after.paused}, was ${before.src}`);
+  });
+
+  /* 4. A TAB RESUME KEEPS ITS PROGRAMME. Backgrounding /weekly and returning
+        used to swap the daily MP3 in and stop it, while every label still
+        said Weekly. The refetch writes today's edition now; it cannot reach
+        the element. */
+  await withPage(browser, { width: 1440, route: "/weekly/" }, "tab-resume-keeps-its-programme", async (page) => {
+    await page.waitForTimeout(1500);
+    const before = await page.evaluate(REPORT);
+    if (!before.src) { skip("tab-resume-keeps-its-programme", "no audio loaded on the issue"); return; }
+    await page.evaluate(() => {
+      Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    await page.waitForTimeout(300);
+    await page.evaluate(() => {
+      Object.defineProperty(document, "visibilityState", { value: "visible", configurable: true });
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    await page.waitForTimeout(2000);
+    const after = await page.evaluate(REPORT);
+    assert(after.src === before.src, "tab-resume-keeps-its-programme",
+      `after the resume the element holds ${after.src}, was ${before.src}`);
+    assert(after.label === before.label, "tab-resume-keeps-its-label",
+      `player label ${after.label}, was ${before.label}`);
+  });
+
+  /* 5. /onair TELLS THE TRUTH. It used to print "ON AIR, World Edition,
+        23 min" over the Weekly's cover headline and over a documentary. The
+        page's subject is today's broadcast; another programme in the element
+        is named in one line rather than wearing today's dateline. */
+  await withPage(browser, { width: 1440, route: "/audio/" }, "onair-tells-the-truth", async (page) => {
+    const stood = standIn.ok;
+    const hist = page.locator(".audio-play[data-kind='history']").first();
+    if (await hist.count() === 0 || !stood) { skip("onair-tells-the-truth", "no history episode to load"); return; }
+    const episodeTitle = (await page.locator(".audio-episode").first().locator(".audio-episode__title").textContent())?.trim();
+    await hist.click();
+    await page.waitForTimeout(1500);
+    if (!(await clickTo(page, "/onair/"))) { skip("onair-tells-the-truth", "no link to /onair on the hub"); return; }
+    await page.waitForTimeout(600);
+    const p = await page.evaluate(() => ({
+      elsewhere: document.querySelector(".onair__elsewhere")?.textContent?.trim() ?? null,
+      headline: document.querySelector(".onair__np-headline")?.textContent?.trim() ?? null,
+      edition: document.querySelector(".onair__dateline-edition")?.textContent?.trim() ?? null,
+      live: !!document.querySelector(".onair__portal--live"),
+    }));
+    assert(!!p.elsewhere && p.elsewhere.includes("History"), "onair-names-what-is-playing",
+      `notice: ${JSON.stringify(p.elsewhere)}`);
+    assert(!p.headline || p.headline !== episodeTitle, "onair-does-not-wear-another-episode",
+      `page headline ${JSON.stringify(p.headline)} vs loaded ${JSON.stringify(episodeTitle)}`);
+    assert(p.live === false, "onair-portal-not-live-for-another-programme",
+      `portal live while History owns the element: ${p.live}`);
+  });
+
+  } finally { standIn.clean(); }
+
+  /* 6. PLAY STATE CANNOT LIE. Losing audio to a call, a Bluetooth drop or the
+        OS left the pill's pause icon, the tab bar's live dot and the
+        wordmark's beam all claiming to play: `isPlaying` was set optimistically
+        beside play(), with no listener on the element. */
+  await withPage(browser, { width: 390, route: "/audio/" }, "play-state-cannot-lie", async (page) => {
+    const btn = page.locator(".audio-play[data-kind='daily']").first();
+    if (await btn.count() === 0) { skip("play-state-cannot-lie", "no daily programme in this export"); return; }
+    await btn.click();
+    await page.waitForTimeout(1500);
+    const on = await page.evaluate(REPORT);
+    if (!assert(on.paused === false, "play-state-cannot-lie-starts", `paused ${on.paused}`)) return;
+    assert(on.claimsPlaying.tab === true || on.claimsPlaying.pill === true,
+      "play-state-lights-up", `live while playing: ${Object.entries(on.claimsPlaying).filter(([k, v]) => k !== "hubButtons" && v === true).map(([k]) => k).join(", ") || "none"}`);
+    /* Pause the ELEMENT, the way the OS would: outside React entirely. */
+    await page.evaluate(() => document.querySelector("audio").pause());
+    await page.waitForTimeout(700);
+    const off = await page.evaluate(REPORT);
+    const lying = Object.entries(off.claimsPlaying)
+      .filter(([k, v]) => k !== "hubButtons" && v === true)
+      .map(([k]) => k);
+    const buttonsLying = (off.claimsPlaying.hubButtons ?? []).filter((s) => s === "playing");
+    assert(off.paused === true && lying.length === 0 && buttonsLying.length === 0,
+      "play-state-cannot-lie",
+      `element paused ${off.paused}; still claiming to play: ${[...lying, ...buttonsLying].join(", ") || "nothing"}`);
+  });
+
+  /* 7. NO DOUBLE TRANSPORT. At 1440 the page's portal and the pill's console
+        were both on screen, showing the same episode through two
+        implementations (onair.css:5 admitted the duplication). */
+  await withPage(browser, { width: 1440, route: "/onair/" }, "no-double-transport", async (page) => {
+    await page.waitForTimeout(900);
+    const n = await page.evaluate(() => ({
+      portal: document.querySelectorAll(".onair__portal").length,
+      pill: document.querySelectorAll(".fp").length,
+      panel: document.querySelectorAll(".oap").length,
+    }));
+    assert(n.portal === 1 && n.pill === 0 && n.panel === 0, "no-double-transport",
+      `/onair carries ${n.portal} portal, ${n.pill} floating player, ${n.panel} panel`);
+  });
+
+  /* 8. THE PANEL OPENS WHERE THE READER IS. On Air used to push a route,
+        costing a reader their place to reach a transport already on screen.
+        A dialog: right-anchored at 1440, Escape restores focus to the
+        opener, the URL does not change, and the pill stands down. */
+  for (const width of [1440, 390]) {
+    await withPage(browser, { width, route: "/" }, `onair-panel @${width}`, async (page) => {
+      await page.waitForTimeout(1200);
+      const opener = width >= 768 ? ".fp__info" : ".mtb__tab--onair";
+      if (await page.locator(opener).count() === 0) { skip("onair-panel", `no ${opener} at ${width}`); return; }
+      const urlBefore = page.url();
+      await page.locator(opener).click();
+      await page.waitForTimeout(700);
+      const o = await page.evaluate(() => {
+        const p = document.querySelector(".oap");
+        const b = p?.getBoundingClientRect();
+        return {
+          open: !!p,
+          role: p?.getAttribute("role"),
+          modal: p?.getAttribute("aria-modal"),
+          labelled: !!p?.getAttribute("aria-label"),
+          right: b ? Math.round(innerWidth - b.right) : null,
+          width: b ? Math.round(b.width) : null,
+          scrim: !!document.querySelector(".oap__scrim"),
+          pill: !!document.querySelector(".fp__pill"),
+          focusInside: !!document.activeElement.closest(".oap"),
+          overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        };
+      });
+      if (!assert(o.open, "onair-panel-opens", `press on ${opener}: panel ${o.open ? "open" : "not opened"}`)) return;
+      assert(page.url() === urlBefore, "onair-panel-keeps-the-page", `url ${page.url()} was ${urlBefore}`);
+      assert(o.role === "dialog" && o.labelled, "onair-panel-is-a-dialog", `role ${o.role}, labelled ${o.labelled}`);
+      assert(o.focusInside, "onair-panel-takes-focus", `focus is ${o.focusInside ? "inside" : "outside"} the panel`);
+      assert(!o.pill, "onair-panel-hides-the-pill", `pill behind the panel: ${o.pill ? "present" : "none"}`);
+      assert(o.overflowX === 0, "onair-panel-no-overflow", `${o.overflowX}px past the viewport`);
+      if (width >= 1024) {
+        /* A pane beside the page, not over it: right-anchored, and it must not
+           claim aria-modal while the page behind stays scrollable. */
+        assert(o.right === 0 && o.width >= 360 && o.width <= 480, "onair-panel-right-anchored",
+          `${o.width}px, ${o.right}px from the right edge`);
+        assert(o.modal === null && !o.scrim, "onair-panel-pane-is-not-modal",
+          `aria-modal ${o.modal}, scrim ${o.scrim}`);
+      } else {
+        assert(o.modal === "true" && o.scrim, "onair-panel-sheet-is-modal",
+          `aria-modal ${o.modal}, scrim ${o.scrim}`);
+      }
+      await page.keyboard.press("Escape");
+      await page.waitForTimeout(700);
+      const c = await page.evaluate((sel) => ({
+        open: !!document.querySelector(".oap"),
+        focusOnOpener: document.activeElement?.matches(sel) ?? false,
+        focusTag: document.activeElement?.tagName,
+      }), opener);
+      assert(!c.open, "onair-panel-escape-closes", `after Escape the panel is ${c.open ? "still open" : "closed"}`);
+      assert(c.focusOnOpener, "onair-panel-restores-focus",
+        `focus landed on ${c.focusOnOpener ? opener : c.focusTag}`);
+    });
+  }
   /* Reading progress on long reads: a brass rule under the masthead that
      tracks the scroll, with no JavaScript. */
   const longRead = dynamicRoutes().find((r) => r.startsWith("/story/")) ?? null;

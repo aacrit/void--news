@@ -36,8 +36,6 @@ export interface DailyBriefState {
   isPlayerVisible: boolean;
   setPlayerVisible: (v: boolean) => void;
   /** Whether the player is expanded (full panel) */
-  isExpanded: boolean;
-  setExpanded: (v: boolean) => void;
   /** Web Audio API analyser for real-time waveform visualization */
   analyserRef: React.RefObject<AnalyserNode | null>;
   /** Lazily connect Web Audio API analyser — call when viz becomes visible */
@@ -109,8 +107,6 @@ export function useDailyBrief(edition: string): DailyBriefState {
     seekTo: audio.seekTo,
     isPlayerVisible: audio.isPlayerVisible,
     setPlayerVisible: audio.setPlayerVisible,
-    isExpanded: audio.isExpanded,
-    setExpanded: audio.setExpanded,
     analyserRef: audio.analyserRef,
     connectAnalyser: audio.connectAnalyser,
     previousEpisodes: audio.previousEpisodes,

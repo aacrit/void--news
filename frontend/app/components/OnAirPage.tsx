@@ -346,7 +346,11 @@ export default function OnAirPage() {
                       )}
                     </span>
                     <span className="onair__rail-count" aria-label={`Chapter ${chapIndex + 1} of ${chapters.length}`}>
-                      {chapIndex >= 0 ? chapIndex + 1 : "\u2013"} / {chapters.length}
+                      {/* Between chapters, the length of the running order
+                          rather than a dash for the missing index. */}
+                      {chapIndex >= 0
+                        ? `${chapIndex + 1} / ${chapters.length}`
+                        : `${chapters.length} chapters`}
                     </span>
                     {opinionIndex >= 0 && (
                       <button

@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { hapticMicro, hapticMedium } from "../lib/haptics";
 import { BASE_PATH } from "../lib/utils";
 import { useAudio } from "./AudioProvider";
@@ -20,9 +20,8 @@ import ScaleIcon from "./ScaleIcon";
      to "/". This is the center logo/anchor.
    - On Air (left) — a standard side tab (icon + label), demoted from the old
      raised disc but keeping a teal accent on its broadcast glyph + label.
-     Tapping it always navigates to the dedicated /onair broadcast page (On Air
-     is a first-class destination, not a floating overlay). A small teal dot
-     marks the live/playing state.
+     Tapping it opens the On Air panel over the current page, so the reader
+     keeps their place. A small teal dot marks the live/playing state.
    - Menu (right) — a hamburger (three horizontal lines) that slides the
      MobileSidePanel drawer in from the right with the complete secondary nav
      + info surface.
@@ -39,20 +38,20 @@ interface MobileTabBarProps {
 
 export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps) {
   const pathname = usePathname();
-  const router = useRouter();
-  const { isPlaying, nowPlaying } = useAudio();
+  const { isPlaying, nowPlaying, setPanelOpen } = useAudio();
 
   const path = pathname.replace(BASE_PATH, "") || "/";
   const homeActive =
     path === "/" || path === "" || /^\/(world)\/?$/.test(path);
 
-  // On Air: always navigate to the dedicated /onair broadcast page. On Air is a
-  // destination page (its own masthead, transport, show notes, archive), not a
-  // floating overlay — playback state persists there via the global AudioProvider.
+  // On Air opens the player PANEL where the reader already is. It used to
+  // push /onair, which cost a reader three screens into a story their place
+  // to reach a transport that was already on screen as a pill. /onair is
+  // still a real page, reachable from the Audio section and by URL.
   const handleOnAir = useCallback(() => {
     hapticMedium();
-    router.push("/onair");
-  }, [router]);
+    setPanelOpen(true);
+  }, [setPanelOpen]);
 
   return (
     <nav className="mtb" aria-label="Primary navigation">

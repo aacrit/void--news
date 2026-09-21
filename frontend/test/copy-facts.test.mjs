@@ -113,9 +113,20 @@ const SCAN_SKIP_DIRS = new Set(["games", "revolt", "ig", "node_modules", ".next"
 // "1914-1918" style ranges through a RegExp built from a template literal, so
 // its character classes have to be able to spell both dashes.
 const SCAN_SKIP_FILES = new Set(["stats.ts"]);
+/* A dash the reader sees is a dash, however it was spelled in the source. The
+   literal characters below were the only forms checked until 2026-09-21, so
+   three rendered dashes shipped past this gate: "\u2013" as the chapter-rail
+   placeholder in three player surfaces, and &mdash; as the wire separator in
+   ComparativeView. Every escape that resolves to one of the two banned
+   characters is named here now, so the next one cannot pass by being written
+   differently. */
 const KILL = [
   ["em dash (U+2014)", /—/],
   ["en dash (U+2013)", /–/],
+  ["escaped em dash (\\u2014, \\x{2014}, &mdash;, &#8212;, &#x2014;)",
+    /\\u\{?2014\}?|\\x\{2014\}|&mdash;|&#8212;|&#x2014;/i],
+  ["escaped en dash (\\u2013, \\x{2013}, &ndash;, &#8211;, &#x2013;)",
+    /\\u\{?2013\}?|\\x\{2013\}|&ndash;|&#8211;|&#x2013;/i],
   ["significantly", /\bsignificantly\b/i],
   ["notably", /\bnotably\b/i],
   ["it should be noted", /\bit\s+should\s+be\s+noted\b/i],

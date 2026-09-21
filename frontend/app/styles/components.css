@@ -2506,10 +2506,17 @@ button:focus-visible .sigil-word__beam {
   cursor: default;
 }
 
+/* The wire separator between a source name and its headline. It used to be an
+   em dash written as &mdash;, which is a banned character reaching the reader
+   through an HTML entity. A 1px rule is what a newspaper draws here anyway,
+   and it cannot be mistaken for punctuation. */
 .comp-view__wire-sep {
-  color: var(--fg-muted);
   flex-shrink: 0;
-  font-size: var(--text-xs);
+  width: 10px;
+  height: 1px;
+  align-self: center;
+  background: var(--fg-muted);
+  opacity: 0.6;
 }
 
 .comp-view__wire-title {

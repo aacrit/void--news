@@ -145,7 +145,7 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
                             </span>
                           )}
                           <span className="comp-view__source-name text-data">{source.name}</span>
-                          <span className="comp-view__wire-sep" aria-hidden="true">&mdash;</span>
+                          <span className="comp-view__wire-sep" aria-hidden="true" />
                           <span className="comp-view__wire-title">{title}</span>
                           <span className="comp-view__wire-arrow" aria-hidden="true">&#8250;</span>
                         </a>
@@ -169,7 +169,7 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
                             </span>
                           )}
                           <span className="comp-view__source-name text-data">{source.name}</span>
-                          <span className="comp-view__wire-sep" aria-hidden="true">&mdash;</span>
+                          <span className="comp-view__wire-sep" aria-hidden="true" />
                           <span className="comp-view__wire-title">{title}</span>
                         </span>
                       )}

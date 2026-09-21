@@ -18,6 +18,118 @@ lives in this file.
 
 ---
 
+## rev 77: one episode, one truth, one press (2026-09-21)
+
+**CEO: "Check consistency on the on air system. It should always be in sync
+with the page it's on, the floating as well as the sidebar should be in sync
+always. One play button should work universally. Explore opening the side bar
+instead of a fresh page for on air."**
+
+It was not in sync. Six reader-visible defects, measured in a browser against
+the built export before anything was changed, not inferred from reading code:
+
+| What a reader does | What actually happened |
+|---|---|
+| Plays the brief on `/`, opens Weekly | The brief is paused mid-sentence and the element's source swapped to the issue, with no gesture |
+| Loads the Weekly or a History episode, then opens `/onair` | The page reads "ON AIR", "World Edition", "23 min" over the Weekly's cover headline, or over "The Fall of Constantinople" |
+| Plays a documentary, clicks the wordmark home | The documentary is paused and detached; the pill relabels to On Air |
+| Presses Play on a History episode on `/audio` | The episode loads and nothing plays |
+| Loses audio to a call, a Bluetooth drop or the OS | The pill keeps its pause icon, the tab bar keeps its live dot, the wordmark's beam keeps rocking |
+| Backgrounds the tab on `/weekly` and returns | The source is swapped back to the daily MP3 and stopped, while every surface still says Weekly, playing |
+
+One root cause under all six: **`brief` was a single slot that three
+programmes wrote into**, and every consumer read it as if it were always the
+daily edition. `contentType` recorded who owned the slot, but `OnAirPage`,
+`MobileBriefPill`, `SkyboxBanner` and the Media Session never read it, and
+ownership was only ever restored by mounting `HomeContent`, so `/` was the one
+route that could make the player daily again. Two faults compounded it: there
+were no `play`/`pause` listeners on the element, so `isPlaying` was an
+optimistic guess set beside the call; and the transport was implemented twice,
+in `FloatingPlayer`'s broadcast view and again in `OnAirPage`'s portal, which
+`onair.css:5` admitted in its own header ("mirrors `.fp__broadcast`").
+
+**Two slots.** `dailyBrief` is today's edition and only the daily fetch writes
+it. `nowPlaying: Episode | null` is what is in the element, and the `<audio>`
+element's `src` comes from it, which is what makes the tab-resume defect
+disappear structurally rather than by a guard: a background refetch of today's
+brief now has nowhere to reach the element from. `contentType` is derived from
+`nowPlaying.kind` instead of kept as a second copy that could disagree.
+
+**`app/lib/episode.ts`** is the pure core: one `Episode` shape per programme,
+`sameEpisode` (compared on the URL as well as the id, because the archive rows
+carry a brief id a later refetch can reissue, which is how a play button lost
+track of its own episode), `decidePress` (toggle what is already loaded, else
+load and play) and `mayTakeOver` (a page that merely renders may offer its
+programme to an idle player and may never interrupt one that is playing). No
+React, no DOM, no fetch, which is what lets `frontend/test/episode.test.mjs`
+assert the press rule with no browser.
+
+**Element truth.** `play`, `playing`, `pause` and `ended` listeners are the
+only writers of `isPlaying`. Nothing sets it optimistically, so a pause from
+the OS clears every live indicator at once rather than leaving three surfaces
+claiming to play.
+
+**One press.** The hub's three buttons, the pill, the History hero and the
+event page all call `play(ep)`. The History button that loaded an episode and
+played nothing now plays it.
+
+**The panel (CEO's third question).** `OnAirPanel` is the console opened where
+the reader is: right-anchored from 1024px at `--onair-pane-w`
+(`clamp(360px, 30vw, 480px)`), a modal bottom sheet below that, full screen on
+a phone. `/onair` keeps its URL, metadata, `<h1>` and sitemap entry, and the
+tab bar's On Air tab opens the panel instead of pushing the route.
+
+Three refutations recorded, because each looked like the obvious move:
+
+- **The two mounts are not the same component with a prop.** The plan called
+  for one `Broadcast.tsx` under `variant: "panel" | "page"`. They do not share
+  a subject: the PAGE is about today's broadcast whoever owns the element, and
+  the PANEL is about what is playing. Collapsing them would either make the
+  page rename itself after a documentary (the defect this rev removes) or make
+  the panel lie about a History episode. The console's markup is shared
+  through the `fp fp--broadcast` classes and `broadcast/VuMeter.tsx`; the
+  subject is supplied by each mount.
+- **`aria-modal` is not a property of the panel.** It is a property of the
+  form. At 1024px and up the page behind stays visible and scrollable, so the
+  pane asserts no `aria-modal`, draws no scrim, locks no scroll and does not
+  trap Tab. Only the sheet does all four.
+- **The old pane width was not responsive.** `calc(100vw - 1400px - 80px)`
+  resolves below its own 320px floor at every viewport under 1800px: the pane
+  was 320px at 1440 and only reached 480px past 1960px. A calculation that can
+  only produce its own floor is a constant.
+
+**The player lost a tier.** `FloatingPlayer` carried three: the pill, a
+compact bar, and the console. With the console moved out into the panel the
+bar had neither a way in nor a purpose, so it went too; the file fell from 813
+lines to 158 and is the pill and nothing else. `css-parity` flagged six
+classes dead the moment the branch could no longer render, which is what
+stopped the markup from being deleted and the stylesheet left behind.
+
+**The dash gate had a hole, and three dashes had gone through it.** The kill
+list checked the literal characters `—` and `–`. `"\u2013"` (the chapter-rail
+placeholder in three player surfaces) and `&mdash;` (ComparativeView's wire
+separator) render as those characters and were never checked. Both are fixed
+at the source: the rail now reads "12 chapters" between chapters rather than
+drawing a dash for the missing index, and the wire separator is a 1px rule,
+which is what a newspaper draws there anyway. `copy-facts.test.mjs` names
+every escape form now, and the widening was proved to bite before it was
+committed.
+
+**Gates, one per measured defect** (`verify-headless.mjs`): `one-play-button`
+(all three programmes audibly playing and toggling; a History MP3 lives in a
+GitHub release rather than the repo, so the scenario stands a real file in for
+it, which is exactly where the silent History button hid),
+`audio-survives-navigation`, `weekly-does-not-seize`,
+`tab-resume-keeps-its-programme`, `onair-tells-the-truth`,
+`play-state-cannot-lie` (pauses the element outside React and asserts no
+surface still claims to play), `no-double-transport`, `onair-panel` at 1440
+and 390. Plus `frontend/test/episode.test.mjs` in `npm test`. Two existing
+checks were asserting the old behaviour and were corrected with their reason:
+the floating player is now expected ABSENT on `/onair`, and the pill names the
+programme ("The Argument"), not the section ("Weekly").
+
+---
+
 ## rev 76: the product in a browser, and the layer under the chrome (2026-09-21)
 
 **CEO: "let us perform headless playwright testing holistically and beyond

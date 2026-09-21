@@ -235,6 +235,31 @@ were clean, `14208/14208 re-ranked`, `Errors: 0`, verify-production green):
 
 ---
 
+## Left by the audio restructure (rev 77, 2026-09-21)
+
+Three things the two-slot rewrite deliberately did not touch. None of them
+causes the desyncs that rev fixed; each would have widened it.
+
+**The daily archive UI is permanently empty.** `lib/supabase.ts:201-231`
+takes an `edition` argument and ignores it, so the "Previous broadcasts" list
+on `/onair` and in the panel has nothing to show. The whole `edition` axis
+(`world`, `us`, `europe`, `south-asia`) is dead below the label: the pipeline
+writes one edition and the reader has no control that switches it.
+`setEdition` still exists in the provider and now only sets state, having lost
+the ownership claim it used to make. Decide whether the axis comes back or the
+archive, `previousEpisodes`, `loadEpisode` and `setEdition` all go.
+
+**Revolt has its own `<audio>` element.** It can play at the same time as the
+shared player, which no other section can. Revolt is 301-hidden and serves
+MOCK data, so nobody can reach it; the fix belongs with the work that makes it
+read static JSON.
+
+**`.msc__modal-backdrop` carries `z-index: 1000`**, off the token scale
+(`--z-modal` is 100). It happens to sit above everything and so works; it is
+the one place a layer is decided by a literal rather than by the scale.
+
+---
+
 ## Deliberately not done, with reasons
 
 **Ranking signal weights are unchanged.** They must not be tuned against a
