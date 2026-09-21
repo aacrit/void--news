@@ -80,6 +80,7 @@ export default function IssueIndex({ issues }: { issues: WeeklyDigestData[] }) {
             label="Every issue"
             folio={`${issues.length} ${issues.length === 1 ? "issue" : "issues"} · World`}
             id="wk-index-heading"
+            as="h1"
           />
           {issues.length === 0 ? (
             <p className="wk-index__empty">No issues have been published yet.</p>

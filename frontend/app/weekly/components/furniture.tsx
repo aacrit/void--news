@@ -85,8 +85,12 @@ export function DepartmentPlate({
   page,
   id,
   folio,
+  as: Heading = "h2",
 }: {
   label: string;
+  /** The heading level. An issue's departments are h2 under the cover's h1;
+      the issue index has no cover, so its plate is the page's h1. */
+  as?: "h1" | "h2";
   issueNumber?: number;
   edition?: string;
   page?: number;
@@ -98,9 +102,9 @@ export function DepartmentPlate({
 }) {
   return (
     <div className="wk-plate">
-      <h2 className="wk-plate__label" id={id}>
+      <Heading className="wk-plate__label" id={id}>
         {label}
-      </h2>
+      </Heading>
       <span className="wk-plate__rule" aria-hidden="true" />
       <span className="wk-plate__folio" aria-hidden="true">
         {folio ?? (

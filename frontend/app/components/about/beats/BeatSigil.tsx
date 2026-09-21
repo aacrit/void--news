@@ -36,7 +36,10 @@ export default function BeatSigil() {
       </div>
 
       <div className="sigdemo">
-        <div className="sigdemo__stage" aria-hidden="true">
+        {/* Hidden from assistive tech (the readout below says the same in
+            words) and inert, so the demo Sigil is not a stop in the Tab
+            order either: aria-hidden with a focusable child is a trap. */}
+        <div className="sigdemo__stage" aria-hidden="true" inert>
           <Sigil data={data} size="xl" instant />
         </div>
 

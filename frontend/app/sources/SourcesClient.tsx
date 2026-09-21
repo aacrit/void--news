@@ -193,15 +193,18 @@ function AxisGlyphSmall({ id }: { id: string }) {
    Score label helpers for each axis
    --------------------------------------------------------------------------- */
 
+/* A missing score is said in words, the way the lean ladder says it: an em
+   dash is banned everywhere a reader can see one, and a bare dash inside a
+   button was the only thing the sweep found on this page (2026-09-21). */
 function getAxisLabel(id: string, score: number | null): string {
-  if (score === null) return "\u2014";
+  if (score === null) return "Not measured";
   switch (id) {
     case "lean": return leanLabel(score);
     case "sensationalism": return senseLabel(score);
     case "opinion": return score <= 25 ? "Reporting" : score <= 50 ? "Analysis" : score <= 75 ? "Opinion" : "Editorial";
     case "rigor": return rigorLabel(score);
     case "framing": return score <= 25 ? "Neutral" : score <= 50 ? "Moderate" : score <= 75 ? "Noticeable" : "Heavy";
-    case "tracking": return "\u2014";
+    case "tracking": return "Outlet level";
     default: return "";
   }
 }
@@ -673,7 +676,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
                 return (
                   <div key={axis.id} className="meth-rationale-card">
                     <span className="meth-rationale-card__name">{axis.name}</span>
-                    <span className="meth-rationale-card__score">{score ?? "\u2014"}</span>
+                    <span className="meth-rationale-card__score">{score ?? "n/a"}</span>
                     <RationaleTree axisId={axis.id} rationale={activeRationale} />
                   </div>
                 );
