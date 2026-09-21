@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { MOCK_EVENTS } from "../mockData";
 import { HOOKS } from "../hooks";
-<<<<<<< HEAD
 import {
   getHistoryEntry,
   getHistoryRow,
@@ -12,11 +11,7 @@ import { getHistoryScript } from "../../lib/historyScript";
 import { mapRow } from "../data";
 import { buildHearing } from "../hearing";
 import Hearing from "../components/Hearing";
-=======
-import { getHistoryEntry, getHistorySlugs } from "../../lib/historyCatalog";
 import { eventMetadata } from "../historyMeta";
-import EventPageClient from "./EventPageClient";
->>>>>>> origin/main
 
 /* ===========================================================================
    /history/[slug] — one event, as The Hearing.
