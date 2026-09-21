@@ -55,7 +55,7 @@ interface MobileSidePanelProps {
   onClose: () => void;
 }
 
-type NavIcon = "feed" | "onair" | "history" | "weekly" | "listen" | "sources" | "feedback";
+type NavIcon = "feed" | "onair" | "history" | "weekly" | "paper" | "listen" | "sources" | "feedback";
 
 interface NavItem {
   href: string;
@@ -79,6 +79,7 @@ const MAIN_ITEMS: NavItem[] = [
   { href: "/onair", label: "On Air", desc: "The broadcast.", accent: "onair", icon: "onair", cascade: 2 },
   { href: "/history", label: "History", desc: "One event, told from every side.", accent: "neutral", icon: "history", cascade: 3 },
   { href: "/weekly", label: "Weekly", desc: "The week, in one issue.", accent: "neutral", icon: "weekly", cascade: 3 },
+  { href: "/paper", label: "Paper", desc: "Today’s front page, laid out to print.", accent: "neutral", icon: "paper", cascade: 3 },
   { href: "/listen", label: "Listen", desc: "Three programmes, three podcast feeds.", accent: "neutral", icon: "listen", cascade: 3 },
   { href: "/sources", label: "Sources", desc: "1,016 sources, 158 countries.", accent: "neutral", icon: "sources", cascade: 3 },
   { href: "/ship", label: "Feedback", desc: "Tell us what to build or fix.", accent: "neutral", icon: "feedback", cascade: 3 },
@@ -122,6 +123,17 @@ function NavGlyph({ icon }: { icon: NavIcon }) {
         <path d="M6 22h12" />
         <path d="M6 2v5l6 5 6-5V2" />
         <path d="M6 22v-5l6-5 6 5v5" />
+      </svg>
+    );
+  }
+  if (icon === "paper") {
+    // A sheet with a fold: the printable edition.
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M6 3h9l4 4v14H6z" />
+        <path d="M15 3v4h4" />
+        <path d="M9 12h6" />
+        <path d="M9 16h6" />
       </svg>
     );
   }

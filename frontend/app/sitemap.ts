@@ -23,9 +23,11 @@ const ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[number]["ch
   { path: "/weekly/archive/", changeFrequency: "weekly", priority: 0.5 },
   // The three podcast feed addresses, for people rather than apps.
   { path: "/listen/", changeFrequency: "monthly", priority: 0.5 },
-  // /paper and /games are 301-redirected to home in public/_redirects (hidden
-  // for launch), so they are deliberately NOT listed here: a sitemap must not
-  // advertise redirecting URLs. Restore them when those sections go live.
+  // Paper: the same twenty as the front page, laid out to print. Back 2026-09-21.
+  { path: "/paper/", changeFrequency: "daily", priority: 0.6 },
+  // /games is 301-redirected to home in public/_redirects (hidden for launch),
+  // so it is deliberately NOT listed here: a sitemap must not advertise a
+  // redirecting URL. Restore it when that section goes live.
   { path: "/ship/", changeFrequency: "monthly", priority: 0.4 },
   // The press room and the privacy page: the two pages a journalist or a
   // cautious reader looks for by name.

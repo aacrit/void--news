@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Served-output gate for History and Weekly: does production actually serve them?
+"""Served-output gate for History, Weekly and Paper: does production serve them?
 
     python scripts/verify_sections.py [https://news.voidvision.org/]
 
@@ -32,10 +32,14 @@ Checks, against the LIVE site (stdlib only, like verify_production.py):
         Issue #26 shipped an AFP wire photograph hotlinked off a publisher CDN.
   W-02  the issue is not stale: three consecutive missed Mondays means the
         weekly job is broken, not merely late
-  P-01  /press/ states the feed size the config holds. The press kit said
+  PR-01 /press/ states the feed size the config holds. The press kit said
         "50" and "fifty" for two weeks after the feed became 20, under a
         heading telling journalists to copy it as written, and no served gate
         fetched the one page whose whole job is to be quoted.
+  P-01  /paper/ resolves to itself, not to the launch-hiding 301 to home
+  P-02  /paper/ carries exactly the front page's headlines, in the same order
+  P-03  no em or en dash in the served /paper/ prose
+  P-04  none of the five untrue strings the pre-relaunch Paper served
 
 Exit 1 on any failure; prints one line per check. Run by verify-production.yml.
 """
@@ -50,6 +54,7 @@ import sys
 from pathlib import Path
 import urllib.error
 import urllib.request
+from html import unescape
 
 MIN_EVENTS = 70          # the catalog is 78; a real regression drops it far below
 MAX_WEEKLY_AGE_DAYS = 21  # three missed Mondays
@@ -58,6 +63,27 @@ SAMPLE_SLUGS = 8          # H-04 spot-checks rather than fetching all 78
 # because this script is stdlib-only and runs against the LIVE site with no
 # repo on the path; tests/test_weekly.py asserts the two agree.
 MAX_HEADLINE_CHARS = 120
+# Mirrors frontend/config/feed.json `displayed`, duplicated for the same reason
+# MAX_HEADLINE_CHARS is: this script is stdlib-only and runs against the LIVE
+# site with no repo on the path. tests/test_paper.py asserts the two agree.
+FEED_DISPLAYED = 20
+
+# Paper prints the front page's headlines; the front page renders its two leads
+# as .lead-headline__text (or .lead-story__headline-text when the split headline
+# is off) and every remaining card as .story-card__headline-text, in that
+# document order. Paper wraps each headline in .np-article__headline-text.
+HOME_HEADLINE_RE = (
+    r'class="(?:lead-headline__text|lead-story__headline-text'
+    r'|story-card__headline-text)"[^>]*>([^<]*)<'
+)
+PAPER_HEADLINE_RE = r'class="np-article__headline-text"[^>]*>([^<]*)<'
+
+# Strings the pre-relaunch Paper served that were not true: a category-to-city
+# dateline (a Ukraine story datelined BEIRUT), a source count off by 816, a
+# cadence that was never twice daily, a next-edition promise, and a joke
+# weather forecast. P-04 is the lock on all five.
+PAPER_BANNED = ("BEIRUT", "200 curated", "twice daily", "Next edition at dawn",
+                "Weather")
 
 # Mirrors pipeline/utils/prohibited_terms.py SIGNIFICANCE_WORDS and
 # SLOP_PATTERN, verbatim, for the same reason as MAX_HEADLINE_CHARS above;
@@ -468,6 +494,9 @@ def main(site: str) -> int:
                if ordered and sstatus == 200
                else f"chapters ordered={bool(ordered)}, sidecar returned {sstatus}")
 
+    # P-01..P-04 — Paper, the printable front page.
+    check_paper(base)
+
     return 0 if ok else 1
 
 
@@ -517,24 +546,24 @@ def _visible_text(html: str) -> str:
 
 
 def check_press(base: str) -> None:
-    """P-01: every count of stories on the served /press/ is the configured
+    """PR-01: every count of stories on the served /press/ is the configured
     feed size, as a number or as a word. Any other count next to "stories"
     is the stale one; "50" survived in a stat ledger where the number and
     the noun sat in different tags, so the match runs on visible text."""
     displayed = _feed_displayed(base)
     if displayed is None:
-        report("P-01", False, "could not determine the configured feed size")
+        report("PR-01", False, "could not determine the configured feed size")
         return
     try:
         status, final, html = fetch(f"{base}/press/")
     except urllib.error.HTTPError as e:
-        report("P-01", False, f"/press/ returned HTTP {e.code}")
+        report("PR-01", False, f"/press/ returned HTTP {e.code}")
         return
     except Exception as e:
-        report("P-01", False, f"/press/ failed: {type(e).__name__}: {e}")
+        report("PR-01", False, f"/press/ failed: {type(e).__name__}: {e}")
         return
     if status != 200 or not final.rstrip("/").endswith("/press"):
-        report("P-01", False, f"/press/ returned {status} at {final}")
+        report("PR-01", False, f"/press/ returned {status} at {final}")
         return
     text = _visible_text(html)
     counts = re.findall(
@@ -544,7 +573,7 @@ def check_press(base: str) -> None:
         text, flags=re.I)
     want = {str(displayed), _number_word(displayed)}
     wrong = [c for c in counts if c.lower() not in want]
-    report("P-01", bool(counts) and not wrong,
+    report("PR-01", bool(counts) and not wrong,
            f"/press/ counts stories as {sorted(set(c.lower() for c in counts))} "
            f"(config says {displayed}, {_number_word(displayed)!r})"
            + ("" if counts else "  <- no story count on the page at all")
@@ -571,6 +600,93 @@ def kill_list_hits(page_html: str) -> list[str]:
     for m in _KILL_SLOP_RE.finditer(text):
         hits.append(f"{m.group(0).lower()!r} in ...{text[max(0, m.start() - 40):m.end() + 40]}...")
     return hits
+def strip_chrome(doc: str) -> str:
+    """The served page minus <head> and every <script>: what a reader is shown.
+
+    Same treatment W-08 gives /weekly. A <title>, an og:description and a JSON
+    payload are chrome, not prose.
+    """
+    body = re.sub(r"<head\b.*?</head>", "", doc, flags=re.S)
+    return re.sub(r"<script.*?</script>", "", body, flags=re.S)
+
+
+def check_paper(base: str) -> None:
+    """P-01..P-04 — /paper prints the front page and nothing it cannot support.
+
+    P-01  /paper/ resolves to itself (200, not the launch-hiding 301 to home)
+    P-02  it carries exactly FEED_DISPLAYED articles whose headlines equal the
+          front page's, in the same order. Paper's whole claim is "the same
+          stories in the same order"; nothing else on the site checks it, and
+          the page spent its first life reading a 150-row window the homepage
+          deliberately excluded 130 of.
+    P-03  no em or en dash in the served prose (CLAUDE.md, same as W-08)
+    P-04  none of the five untrue strings the pre-relaunch Paper served
+    """
+    try:
+        status, final, paper = fetch(f"{base}/paper/")
+    except urllib.error.HTTPError as e:
+        report("P-01", False, f"HTTP {e.code}")
+        for code in ("P-02", "P-03", "P-04"):
+            report(code, False, "skipped (no page)")
+        return
+    except Exception as e:
+        report("P-01", False, f"{type(e).__name__}: {e}")
+        for code in ("P-02", "P-03", "P-04"):
+            report(code, False, "skipped (no page)")
+        return
+
+    landed = final.rstrip("/").endswith("/paper")
+    report("P-01", status == 200 and landed,
+           f"{status} at {final}"
+           + ("" if landed else " (redirected away from Paper)"))
+
+    # P-02 — the same headlines, in the same order, as the front page.
+    paper_heads = [unescape(h).strip()
+                   for h in re.findall(PAPER_HEADLINE_RE, paper)]
+    try:
+        _, _, home = fetch(f"{base}/")
+        home_heads = [unescape(h).strip()
+                      for h in re.findall(HOME_HEADLINE_RE, home)]
+    except Exception as e:
+        home_heads = []
+        report("P-02", False, f"could not fetch the front page: {type(e).__name__}: {e}")
+    else:
+        if len(paper_heads) != FEED_DISPLAYED:
+            report("P-02", False,
+                   f"{len(paper_heads)} article(s) on /paper/, expected {FEED_DISPLAYED}")
+        elif paper_heads == home_heads[:FEED_DISPLAYED]:
+            report("P-02", True,
+                   f"{FEED_DISPLAYED} articles, headlines match the front page in order")
+        else:
+            first = next((i for i, (p, h) in
+                          enumerate(zip(paper_heads, home_heads)) if p != h), 0)
+            report("P-02", False,
+                   f"{len(paper_heads)} article(s) vs {len(home_heads)} on the front "
+                   f"page; first divergence at position {first + 1}: "
+                   f'paper "{paper_heads[first][:60]}" vs '
+                   f'home "{(home_heads[first] if first < len(home_heads) else "(missing)")[:60]}"')
+
+    body = strip_chrome(paper)
+
+    # P-03 — the dash ban, on the served prose.
+    dashes = body.count("—") + body.count("–")
+    m = re.search(r".{50}[—–].{50}", body)
+    report("P-03", dashes == 0,
+           "no dash in the served prose" if dashes == 0
+           else f"{dashes} dash(es) in served prose: ..."
+                + (m.group().replace("\n", " ") if m else ""))
+
+    # P-04 — the five untrue strings. Checked against Paper's OWN furniture:
+    # the story <article> elements and the Brief body are pipeline copy, and a
+    # real hurricane story saying "Weather" is not a Paper defect. Everything
+    # left is masthead, standfirst, colophon and button, which is exactly where
+    # all five lived.
+    chrome = re.sub(r"<article\b.*?</article>", "", body, flags=re.S)
+    chrome = re.sub(r'<div class="np-brief__text".*?</div>', "", chrome, flags=re.S)
+    found = [s for s in PAPER_BANNED if s in chrome]
+    report("P-04", not found,
+           "none of the retired strings are served"
+           if not found else f"still serving: {found}")
 
 
 def html_escape_variants(text):

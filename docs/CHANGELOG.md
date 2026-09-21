@@ -18,6 +18,63 @@ lives in this file.
 
 ---
 
+## rev 75 — one Void, applied everywhere (2026-09-21)
+
+**CEO: a third-party product and brand audit of the whole ecosystem, then
+"go ahead with the remaining" (Instagram automation excluded).** The audit is
+`docs/audits/BRAND-AUDIT-2026-09-21.md` (six appendices, every finding with a
+root cause, a file:line and a fix). Six decisions taken the same day: sections
+with named programmes rather than sub-brands; fix step 6b; hide `/pipeline`
+with the other operator routes; the experimental banner below the masthead
+from the second visit; Paper back as the printable twenty; a three-state lean
+label shown everywhere.
+
+**What shipped, by the audit's own sections.** *Facts:* step 6b no longer
+overwrites measured bias rows with defaults (540 of 737 rows on 09-20 were the
+default tuple); the export now fails above a 50% default share. The three
+podcast covers are rendered from the house lockup (the old one read `void
+--onair`, `WORLD BRIEF`, `409 sources` under all three shows) and the weekly
+channel is "Void News: The Argument". The press kit derives its story count
+from config (it said fifty). The masthead never shows the viewer's clock as
+"as of". Every production prompt carries the grounding sentence, asserted by
+`tests/test_prompt_grounding.py`; the Opinion and Weekly editorial prompts
+forbid historical parallels not in the sources. One shared kill list
+(`prohibited_terms.py`) serves the feed, Weekly, Opinion, promos and the served
+page (W-10); a Weekly section that still carries slop after one regeneration is
+dropped, not shipped. R-14 grounded attribution and R-15 no unattributed
+statement of law on the rundown (the Waltz pair); R-02 hard. E-15 hedge is not
+attribution (advisory). 149 time-bound History claims dated or dropped, with a
+gate; five "analysts argue" hedges named or cut. *Consistency:* NavBar and
+Footer are mounted once in the root layout; History and Weekly lost their
+private topbars and gained the site's nine destinations (History had none);
+sections skin the shared bar by `:root:has(.section)`; VOID HISTORY and VOID
+WEEKLY lockups are gone from the site, the cards and the covers; one title
+grammar (`sectionTitle`); one share-card composer with the Sigil, and per-story
+cards for the latest edition. The lean label says Balanced, Not measured,
+Contested or a direction, on desktop and phone alike, and the Sigil tilts only
+on a confident read. *Journey:* the two `HISTORY_HIDDEN` flags flipped; `/about`
+and `/press` name every section; Listen in the drawer; the History landing is
+prerendered with an `<h1>` and links its era, region and thread routes; the
+wheel hijack is gone. `/command-center`, `/admin`, `/pipeline`, `/ig` are
+301-hidden and disallowed, with a gate. *Paper:* live as the printable twenty
+(P-01..P-04). *Bloat:* `about.css` (1,102 dead lines), ten unimported
+components, `lib/mockData.ts`, the Pillow OG renderer, legacy logo files and
+`qrcode` deleted (~13,000 lines); `motion` stays (the audit's "0 imports" was
+wrong: `about/useMotion.ts` loads it dynamically). *Docs:* VOICE-BRAND rev 2
+describes the product that exists; 26 Supabase-era docs carry a Historical
+banner; DESIGN-SYSTEM still needs its rewrite (open item).
+
+**Refutations and corrections recorded:** `motion` is live; R-12/R-13 and W-09
+already existed, so the new gates took R-14/R-15/W-10 and the press check
+PR-01; the audit's suggested rewrite "In 2024 the embargo entered its
+sixty-fourth year" fails its own regex, so the History gate spares `by <year>`
+and adjectival years and the rewrites use those forms.
+
+**Left open (in OPEN-ITEMS):** the token collapse and the dead-CSS purge behind
+class-parity tests; DESIGN-SYSTEM.md rewrite; the five History episodes to
+re-render; `verify_production.py` reads only `/`; older story permalinks keep
+the site card.
+
 ## rev 74 — the rule-1 pass (2026-09-20 / 09-21)
 
 Rule 1 was written into `CLAUDE.md` today: nothing Void publishes may contain a

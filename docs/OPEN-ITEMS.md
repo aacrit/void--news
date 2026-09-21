@@ -301,8 +301,10 @@ six-stage CSS are all still present, and `EventDetail` is still mounted from
 test to `history.css` **before** deleting anything: the file is large and a
 class removed from CSS while still referenced in TSX fails silently.
 
-`scripts/verify_production.py` still has **no History checks at all**, which is
-why the JS-off regression and the client-shell string had to be caught by hand.
+Served History checks live in `scripts/verify_sections.py`: H-01..H-04 plus
+H-05 (no dash in the served text or any accessible name) and H-06 (one `<h1>`,
+at least 60 event card links), added 2026-09-21 when the landing became a
+prerendered page. `verify_production.py` itself still reads only `/`.
 
 ## Weekly: no scheduled run has produced The Argument
 
