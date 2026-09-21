@@ -17,7 +17,8 @@ const CATEGORY_OPTIONS: { value: ShipCategory; label: string }[] = [
   { value: "bug", label: "Something is broken" },
 ];
 
-/* Same key + window as ShipBoard, so the limit is shared across both surfaces. */
+/* Shared with the Worker's per-ip limit: this only stops an accidental
+   double submit from the same browser. */
 const RATE_LIMIT_KEY = "void-ship-submissions";
 const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW = 3600000;

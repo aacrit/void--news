@@ -295,8 +295,8 @@ export function generateFingerprint(): string {
 /* ---------------------------------------------------------------------------
    void --ship — backed by the void-api Cloudflare Worker (D1), not Supabase.
    Reads and writes go to `${API_BASE}/api/ship/*`. When API_BASE is unset the
-   board degrades to empty reads / no-op writes. Supabase realtime is replaced
-   by client polling in ShipBoard; the subscribe* helpers are now no-ops.
+   board degrades to empty reads / no-op writes. Supabase realtime is gone and
+   nothing polls in its place; the subscribe* helpers are now no-ops.
    The Worker enforces the old RLS/trigger/RPC logic (submit hardening, per-ip
    and global rate limits, and the sync_ship_votes recount). See
    ../../worker/src/index.ts and migration/PORT_NOTES.md.
@@ -358,7 +358,7 @@ export async function voteOnShipRequest(requestId: string, fingerprint: string):
   return d && typeof d.votes === 'number' ? d.votes : null;
 }
 
-/** Realtime removed with Supabase; ShipBoard polls fetchShipRequests instead. */
+/** Realtime removed with Supabase; callers read fetchShipRequests directly. */
 export function subscribeToShipRequests(
   _onUpdate: (payload: { eventType: string; new: ShipRequest; old: Partial<ShipRequest> }) => void
 ): (() => void) {
@@ -388,7 +388,7 @@ export async function submitShipReply(requestId: string, body: string, fingerpri
   });
 }
 
-/** Realtime removed with Supabase; ShipBoard polls fetchShipReplies instead. */
+/** Realtime removed with Supabase; callers read fetchShipReplies directly. */
 export function subscribeToShipReplies(
   _onInsert: (reply: ShipReply) => void
 ): (() => void) {

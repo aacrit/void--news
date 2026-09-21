@@ -65,8 +65,8 @@
     max-width: min(1720px, 96vw);
     /* No outer scroll: fill the viewport minus whatever chrome sits above the
        page (the dismissible experimental banner). --ship-chrome-offset is set
-       by ShipBoard via a ResizeObserver, so this stays exact when the banner
-       is dismissed. minmax(0, 1fr) + min-height:0 let the grid children shrink. */
+       by the board shell via a ResizeObserver (ShipBoard.tsx, deleted
+       2026-09-21), so this stays exact when the banner is dismissed. minmax(0, 1fr) + min-height:0 let the grid children shrink. */
     height: calc(100dvh - var(--ship-chrome-offset, 0px));
     max-height: calc(100dvh - var(--ship-chrome-offset, 0px));
     overflow: hidden;
@@ -1870,7 +1870,8 @@ a.ship-card__commit:hover {
   justify-content: flex-start;
 }
 
-/* Disabled "coming soon" chip. No invite URL yet; wire one in ShipBoard.tsx. */
+/* Disabled "coming soon" chip. No invite URL yet. Unrendered since the
+   board reverted to the feedback form. */
 .ship-discord {
   display: inline-flex;
   align-items: center;

@@ -4,7 +4,7 @@ import { FEED_DISPLAYED } from "../lib/feedConfig";
 import { SITE_URL } from "../lib/siteMeta";
 import { BASE_PATH } from "../lib/utils";
 import CopyButton from "./CopyButton";
-import "../styles/about.css";
+import "../styles/prose-page.css";
 import "../privacy/privacy.css";
 import "./press.css";
 
