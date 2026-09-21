@@ -10,21 +10,52 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
-import type { AudioChapter, DailyBriefData, Edition } from "../lib/types";
-import { coerceChapters, findChapterIndex } from "../lib/chapters";
+import type { AudioChapter, DailyBriefData } from "../lib/types";
+import { findChapterIndex } from "../lib/chapters";
+import {
+  type Episode,
+  type HistoryAudioPayload,
+  type ProgrammeKind,
+  decidePress,
+  editionLabelFor,
+  episodeFromBrief,
+  episodeFromHistory,
+  episodeFromWeekly,
+  mayTakeOver,
+  sameEpisode,
+} from "../lib/episode";
 import { fetchDailyBrief, fetchPreviousEpisodes } from "../lib/supabase";
 import { hapticLight, hapticTick } from "../lib/haptics";
 import { AUDIO_ENABLED } from "../lib/audioGate";
 
 /* ---------------------------------------------------------------------------
-   AudioProvider — Global audio context for void --onair.
+   AudioProvider — the one audio state for Void News.
    Wraps layout.tsx so <audio> survives page navigation.
-   Any component can consume playback state via useAudio().
 
-   Design:
-   - The <audio> element lives here, not in any page component.
-   - Brief data fetching also lives here (coupled to edition).
-   - Navigator.mediaSession for iOS lock screen / notification controls.
+   TWO SLOTS, and the difference is the whole design (2026-09-21):
+
+   - `dailyBrief` is today's edition. The daily fetch owns it and NO programme
+     may write it, so every surface that means "today" (the skybox, the mobile
+     brief pill, /onair's edition dateline) is always right.
+   - `nowPlaying` is an Episode: what is in the element, whoever made it. The
+     transport labels, the chapter rail and the <audio> src all read it.
+
+   Before the split there was one `brief` slot that three programmes wrote
+   into, and it produced every one of these, each measured in a browser:
+   /onair announced a History documentary as "World Edition · ON AIR"; opening
+   the Weekly issue paused a playing brief and swapped the source with no
+   gesture; returning home detached a playing documentary; a tab resume put
+   the daily brief under a player still labelled Weekly; and a pause that came
+   from outside React (a call, a Bluetooth drop) left every live dot lit,
+   because isPlaying was an optimistic guess rather than the element's truth.
+
+   Two rules follow, and the gates in scripts/verify-headless.mjs hold them:
+   1. ONE PRESS RULE. `play(ep)` toggles when it already owns that episode and
+      loads then plays when it does not, so every play button in the product
+      behaves the same (see decidePress in lib/episode.ts).
+   2. A NAVIGATION NEVER STOPS PLAYBACK. `load(ep)` reveals without autoplay
+      and refuses to interrupt something that is playing (mayTakeOver), so a
+      page that merely renders can offer its programme but never seize it.
    --------------------------------------------------------------------------- */
 
 /** Episode metadata for the "Previous Episodes" playlist */
@@ -48,26 +79,28 @@ export interface EpisodeMeta {
   created_at: string;
 }
 
-/** Minimal void --history event audio payload for the shared player.
- *  History audio is a single narrated account (no opinion firewall, no host
- *  personas), so only the fields the shared transport needs are threaded in. */
-export interface HistoryAudioPayload {
-  id: string;
-  title: string;
-  subtitle?: string | null;
-  audioUrl: string;
-  durationSeconds: number;
-  /** Documentary chapter marks. Omitted on accounts recorded before the
-   *  audio edition, which keep the single undifferentiated transport. */
-  chapters?: AudioChapter[] | null;
-}
+/* Re-exported so the history surfaces keep importing it from here. */
+export type { HistoryAudioPayload, Episode, ProgrammeKind };
 
 export interface AudioState {
+  /** TODAY'S EDITION. Never another programme's episode: read this for "the
+   *  brief", and `nowPlaying` for "what is playing". */
   brief: DailyBriefData | null;
+  /** What is loaded in the element, whoever made it. null when nothing is. */
+  nowPlaying: Episode | null;
   edition: string;
   setEdition: (ed: string) => void;
-  /** Which product currently owns the player — drives accent theming + labels */
-  contentType: "daily" | "weekly" | "history";
+  /** Which programme owns the player. Derived from `nowPlaying`, so it can no
+   *  longer disagree with what is actually loaded. */
+  contentType: ProgrammeKind;
+  /** THE one press: toggles when it owns this episode, loads and plays when
+   *  it does not. Every play button in the product calls this. `startAt` lets
+   *  a chapter or a section start an episode that is not loaded yet. */
+  play: (ep: Episode, opts?: { startAt?: number }) => void;
+  /** Reveal an episode without autoplay. Refuses to interrupt playback, so a
+   *  page may offer its programme on mount without seizing the player. Pass
+   *  `interrupt` only for a deliberate press. */
+  load: (ep: Episode, opts?: { interrupt?: boolean }) => void;
   /** Load a weekly digest (+ optional archive playlist) into the shared player */
   playWeekly: (
     digest: import("../lib/types").WeeklyDigestData,
@@ -101,9 +134,11 @@ export interface AudioState {
   previousEpisodes: EpisodeMeta[];
   /** Load and play a specific episode by its audio URL */
   loadEpisode: (episode: EpisodeMeta) => void;
-  /* ---- Chapter rail (radio-show episodes) ----
-     Empty on legacy episodes, weekly issues and history accounts: every
-     consumer treats an empty rail as "keep the old News / Opinion transport". */
+  /* ---- Chapter rail ----
+     Read off `nowPlaying`, so the rail always belongs to the audio in the
+     element. Empty on a legacy episode: every consumer treats an empty rail as
+     "keep the old News / Opinion transport", so the null guard lives here once
+     rather than in each player view. */
   chapters: AudioChapter[];
   /** Index into `chapters` for the current playhead, or -1 when between chapters. */
   currentChapterIndex: number;
@@ -123,6 +158,8 @@ export function useAudio(): AudioState {
   return ctx;
 }
 
+const SPEEDS = [1, 1.25, 1.5, 2] as const;
+
 export default function AudioProvider({
   children,
   initialBrief = null,
@@ -134,10 +171,24 @@ export default function AudioProvider({
   initialBrief?: DailyBriefData | null;
 }) {
   const [edition, setEditionState] = useState<string>("world");
-  const [brief, setBrief] = useState<DailyBriefData | null>(initialBrief);
+  /* TODAY'S EDITION. Only the daily fetch writes this. */
+  const [dailyBrief, setDailyBrief] = useState<DailyBriefData | null>(initialBrief);
+  /* WHAT IS PLAYING. Seeded from the daily brief when the player is idle. */
+  const [nowPlaying, setNowPlaying] = useState<Episode | null>(() =>
+    AUDIO_ENABLED ? episodeFromBrief(initialBrief) : null
+  );
   // Timestamp of the last successful brief fetch — drives the resume-refetch
-  // staleness check (see the visibilitychange effect below).
+  // staleness check (see the visibilitychange effect below). Seeded to "now"
+  // when the build handed us a brief: at 0 the very first resume always
+  // refetched, whoever owned the player.
   const briefFetchedAtRef = useRef<number>(0);
+  /* Seeded on mount rather than during render (Date.now() is impure): at 0
+     the very first tab resume always refetched, whoever owned the player. */
+  useEffect(() => {
+    if (initialBrief != null && briefFetchedAtRef.current === 0) {
+      briefFetchedAtRef.current = Date.now();
+    }
+  }, [initialBrief]);
   // True until the seeded brief has satisfied the first edition-fetch effect
   // run, so we keep the build-time brief instead of clearing + refetching it.
   const seededRef = useRef<boolean>(initialBrief != null);
@@ -146,11 +197,13 @@ export default function AudioProvider({
   const [duration, setDuration] = useState(0);
   const [audioError, setAudioError] = useState(false);
   const [buffered, setBuffered] = useState(0);
-  const [playbackSpeed, setPlaybackSpeed] = useState(() => {
+  const [playbackSpeed, setPlaybackSpeed] = useState<number>(() => {
     if (typeof window === "undefined") return 1;
     try {
-      const s = localStorage.getItem("void-onair-speed");
-      return s ? Number(s) : 1;
+      // Validated against the ladder: an unparseable or hand-edited value used
+      // to reach audio.playbackRate as NaN and silence the element.
+      const stored = Number(localStorage.getItem("void-onair-speed"));
+      return (SPEEDS as readonly number[]).includes(stored) ? stored : 1;
     } catch {
       return 1;
     }
@@ -159,20 +212,46 @@ export default function AudioProvider({
   const [isExpanded, setExpanded] = useState(false);
   const [hasEverPlayed, setHasEverPlayed] = useState(false);
   const [previousEpisodes, setPreviousEpisodes] = useState<EpisodeMeta[]>([]);
-  // Which product owns the player. A ref mirror lets the edition-fetch effect
-  // bail when a weekly issue or history account is loaded, without re-running on
-  // contentType change.
-  const [contentType, setContentType] = useState<"daily" | "weekly" | "history">("daily");
-  const contentTypeRef = useRef<"daily" | "weekly" | "history">("daily");
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Public setEdition: the daily flow (useDailyBrief) is the only caller, so
-  // any setEdition means we are back on a daily surface — flip ownership to
-  // 'daily' BEFORE the edition-fetch effect re-runs so its clobber guard lets
-  // the daily brief load. (Ref is updated synchronously; state for rendering.)
+  /* Ownership is DERIVED, not stored. The old `contentType` state plus its ref
+     mirror could disagree with the audio in the element; this cannot. */
+  const contentType: ProgrammeKind = nowPlaying?.kind ?? "daily";
+
+  /* The live episode, for callbacks that must not re-subscribe on every
+     change (the element listeners, the press rule, the Media Session). */
+  const nowPlayingRef = useRef<Episode | null>(nowPlaying);
+  useEffect(() => {
+    nowPlayingRef.current = nowPlaying;
+  }, [nowPlaying]);
+  const isPlayingRef = useRef(false);
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
+
+  /* May today's broadcast take the player? Only when the player is EMPTY, or
+     when it already holds a daily episode the reader is not listening to (the
+     stale-brief self-heal, which exists to replace yesterday's edition with
+     today's). A paused episode of another programme is a reader's place in it,
+     not an idle player: swapping it out would lose their position. */
+  const maySeed = useCallback(
+    (ep: Episode) => {
+      const cur = nowPlayingRef.current;
+      if (!cur) return true;
+      if (sameEpisode(cur, ep)) return false;
+      return cur.kind === "daily" && !isPlayingRef.current;
+    },
+    []
+  );
+  const maySeedRef = useRef(maySeed);
+  useEffect(() => {
+    maySeedRef.current = maySeed;
+  }, [maySeed]);
+
+  /* Public setEdition: sets the edition and nothing else. It used to claim
+     ownership of the player for the daily programme, which is why merely
+     opening the front page detached a playing documentary. */
   const setEdition = useCallback((ed: string) => {
-    contentTypeRef.current = "daily";
-    setContentType("daily");
     setEditionState(ed);
   }, []);
 
@@ -181,22 +260,19 @@ export default function AudioProvider({
   const analyserRef = useRef<AnalyserNode | null>(null);
   const connectedElements = useRef<WeakSet<HTMLAudioElement>>(new WeakSet());
 
-  /* ---- Fetch brief when edition changes (or when returning to the daily surface) ---- */
+  /* ---- Fetch today's edition when the edition changes ----
+     This writes `dailyBrief` ONLY. It never touches the element and never
+     touches `nowPlaying`, so a refetch cannot swap the source under a reader
+     who is listening to something else. When the player is idle it seeds
+     `nowPlaying` with today's broadcast, so the pill still comes up ready. */
   useEffect(() => {
-    // A weekly issue or a history account currently owns the player — do NOT
-    // overwrite it with the daily brief. (Read the ref for the live value:
-    // playWeekly / playHistory set the ref synchronously, so even if this
-    // effect fires from the contentType state change it sees the non-daily
-    // owner and bails.)
-    if (contentTypeRef.current !== "daily") return;
-
     let cancelled = false;
 
     // First mount with a build-time seeded brief: keep it. Refetching here would
     // clear the brief to null (flashing "Loading today's brief…") and could
     // produce a hydration-time first paint that differs from the server render
     // (React #418). We still load the audio playlist. Any later edition change
-    // (or return from a weekly/history load) falls through to a normal refetch.
+    // falls through to a normal refetch.
     if (seededRef.current) {
       seededRef.current = false;
       if (AUDIO_ENABLED) {
@@ -209,33 +285,17 @@ export default function AudioProvider({
       };
     }
 
-    // Pause and detach audio before switching briefs. No-ops when audio is
-    // parked (the <audio> element is never mounted, so audioRef is null).
-    const audio = audioRef.current;
-    if (audio) {
-      audio.pause();
-      audio.src = "";
-      audio.load();
-    }
-
-    setBrief(null);
-    setIsPlaying(false);
-    setCurrentTime(0);
-    setDuration(0);
-    setAudioError(false);
-    setBuffered(0);
-    setPreviousEpisodes([]);
-
     // TL;DR + opinion are editorial TEXT, not audio: they must load even when
     // the void --onair kill switch is on. Only the audio playback layer
     // (previous-episode list + <audio> mount) is gated by AUDIO_ENABLED.
     // Coupling this fetch to the kill switch left SkyboxBanner / MobileBriefPill
     // stuck on "Loading today's brief…" whenever audio was disabled.
     fetchDailyBrief(edition).then((data) => {
-      if (!cancelled) {
-        setBrief(data);
-        briefFetchedAtRef.current = Date.now();
-      }
+      if (cancelled) return;
+      setDailyBrief(data);
+      briefFetchedAtRef.current = Date.now();
+      const ep = AUDIO_ENABLED ? episodeFromBrief(data) : null;
+      if (ep && maySeedRef.current(ep)) setNowPlaying(ep);
     });
 
     if (AUDIO_ENABLED) {
@@ -246,10 +306,7 @@ export default function AudioProvider({
     return () => {
       cancelled = true;
     };
-    // contentType is a dep so returning from a weekly issue to the daily surface
-    // reloads the brief even when the edition string is unchanged. The ref guard
-    // above prevents a weekly load from triggering a stray daily fetch.
-  }, [edition, contentType]);
+  }, [edition]);
 
   /* ---- Callback ref — attaches listeners when <audio> mounts ---- */
   const listenerCleanupRef = useRef<(() => void) | null>(null);
@@ -266,6 +323,18 @@ export default function AudioProvider({
     const onMeta = () => {
       if (el.duration && isFinite(el.duration)) setDuration(el.duration);
     };
+    /* THE ELEMENT IS THE TRUTH about whether sound is coming out. `play`,
+       `pause` and `ended` are the only writers of isPlaying. Without them a
+       pause from outside React — an incoming call, a Bluetooth disconnect, an
+       autoplay rejection, the OS — left the pill showing a pause icon, the tab
+       bar's live dot lit and the wordmark beam rocking over silence, and the
+       next press then paused an element that was already paused. */
+    const onPlay = () => {
+      setIsPlaying(true);
+      setHasEverPlayed(true);
+      setAudioError(false);
+    };
+    const onPause = () => setIsPlaying(false);
     const onEnd = () => setIsPlaying(false);
     const onError = () => {
       setAudioError(true);
@@ -282,6 +351,9 @@ export default function AudioProvider({
     el.addEventListener("timeupdate", onTime);
     el.addEventListener("loadedmetadata", onMeta);
     el.addEventListener("durationchange", onMeta);
+    el.addEventListener("play", onPlay);
+    el.addEventListener("playing", onPlay);
+    el.addEventListener("pause", onPause);
     el.addEventListener("ended", onEnd);
     el.addEventListener("error", onError);
     el.addEventListener("progress", onProgress);
@@ -296,6 +368,9 @@ export default function AudioProvider({
       el.removeEventListener("timeupdate", onTime);
       el.removeEventListener("loadedmetadata", onMeta);
       el.removeEventListener("durationchange", onMeta);
+      el.removeEventListener("play", onPlay);
+      el.removeEventListener("playing", onPlay);
+      el.removeEventListener("pause", onPause);
       el.removeEventListener("ended", onEnd);
       el.removeEventListener("error", onError);
       el.removeEventListener("progress", onProgress);
@@ -346,7 +421,12 @@ export default function AudioProvider({
      are resumed from memory for hours or days without a remount — observed
      live: a reader resumed a yesterday session and saw yesterday's TL;DR
      under today's dateline. On visibility resume, if the last brief fetch is
-     older than 15 minutes, refetch. Data-only; playback state untouched. */
+     older than 15 minutes, refetch.
+
+     It writes `dailyBrief` and NOTHING else. It used to write the single
+     `brief` slot: backgrounding the tab on /weekly and returning swapped the
+     element's source back to the daily MP3 and stopped it, while every
+     surface still said Weekly, playing (measured 2026-09-21). */
   useEffect(() => {
     const BRIEF_STALE_MS = 15 * 60 * 1000;
     const handleResumeRefetch = () => {
@@ -354,38 +434,118 @@ export default function AudioProvider({
       if (Date.now() - briefFetchedAtRef.current < BRIEF_STALE_MS) return;
       briefFetchedAtRef.current = Date.now(); // debounce concurrent resumes
       fetchDailyBrief(edition).then((data) => {
-        if (data) setBrief(data);
+        if (!data) return;
+        setDailyBrief(data);
+        const ep = AUDIO_ENABLED ? episodeFromBrief(data) : null;
+        if (ep && maySeedRef.current(ep)) setNowPlaying(ep);
       });
     };
     document.addEventListener("visibilitychange", handleResumeRefetch);
     return () => document.removeEventListener("visibilitychange", handleResumeRefetch);
   }, [edition]);
 
+  /* ---- Transport ------------------------------------------------------- */
+
+  /** Start the element. isPlaying is not set here: the `play` listener does
+   *  that, so the UI only ever claims to play once the element really does. */
+  const startPlayback = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (audioError) {
+      setAudioError(false);
+      audio.load();
+    }
+    // Resume AudioContext for iOS Safari
+    if (audioContextRef.current?.state === "suspended") {
+      audioContextRef.current.resume();
+    }
+    audio.play().catch(() => {
+      setAudioError(true);
+      setIsPlaying(false);
+    });
+  }, [audioError]);
+
   const handlePlayPause = useCallback(() => {
     const audio = getAudio();
     if (!audio) return;
-    if (isPlaying) {
-      audio.pause();
-      setIsPlaying(false);
-    } else {
-      if (audioError) {
-        setAudioError(false);
-        audio.load();
-      }
-      // Resume AudioContext for iOS Safari
-      if (audioContextRef.current?.state === "suspended") {
-        audioContextRef.current.resume();
-      }
-      audio
-        .play()
-        .catch(() => {
-          setAudioError(true);
-          setIsPlaying(false);
-        });
-      setIsPlaying(true);
-      setHasEverPlayed(true);
+    if (isPlaying) audio.pause();
+    else startPlayback();
+  }, [isPlaying, getAudio, startPlayback]);
+
+  /* Set when a press asks for playback on an episode that is not in the
+     element yet: React swaps the <audio> src on the next commit, and this
+     effect plays it once the new source is attached. Setting src imperatively
+     instead would fire a second request for a file we are about to mount. */
+  const playOnLoadRef = useRef<{ url: string; startAt: number } | null>(null);
+  /* `seekTo` is declared below (it needs startPlayback), so `play` reaches it
+     through a ref rather than being reordered around it. */
+  const seekToRef = useRef<(seconds: number) => void>(() => {});
+
+  /** Reveal an episode. Never autoplays; refuses to interrupt live audio
+   *  unless the caller says this came from a press. */
+  const load = useCallback((ep: Episode, opts?: { interrupt?: boolean }) => {
+    if (!ep.audioUrl) return;
+    if (sameEpisode(nowPlayingRef.current, ep)) {
+      setPlayerVisible(true);
+      return;
     }
-  }, [isPlaying, audioError, getAudio]);
+    if (!opts?.interrupt && !mayTakeOver(nowPlayingRef.current, isPlayingRef.current, ep)) {
+      return;
+    }
+    const audio = audioRef.current;
+    if (audio) audio.pause();
+    nowPlayingRef.current = ep;
+    setNowPlaying(ep);
+    setCurrentTime(0);
+    setDuration(ep.durationSeconds || 0);
+    setBuffered(0);
+    setAudioError(false);
+    setIsPlaying(false);
+    setPlayerVisible(true);
+  }, []);
+
+  /** THE one press. Toggles when it already owns this episode, loads and
+   *  plays when it does not. Before this rule, the same button played an
+   *  already-loaded issue and merely loaded a History episode, so "Play"
+   *  produced silence (measured 2026-09-21). */
+  const play = useCallback(
+    (ep: Episode, opts?: { startAt?: number }) => {
+      if (!ep.audioUrl) return;
+      if (decidePress(nowPlayingRef.current, ep) === "toggle") {
+        if (opts?.startAt != null) {
+          seekToRef.current(opts.startAt);
+          return;
+        }
+        handlePlayPause();
+        return;
+      }
+      hapticLight();
+      playOnLoadRef.current = { url: ep.audioUrl, startAt: opts?.startAt ?? 0 };
+      load(ep, { interrupt: true });
+    },
+    [handlePlayPause, load]
+  );
+
+  /* Play the episode a press asked for, once its source is in the element. */
+  useEffect(() => {
+    const wanted = playOnLoadRef.current;
+    if (!wanted || !nowPlaying || nowPlaying.audioUrl !== wanted.url) return;
+    playOnLoadRef.current = null;
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (wanted.startAt > 0) {
+      /* The element has the new src but no metadata yet; currentTime only
+         sticks once it is seekable, so set it on loadedmetadata when needed. */
+      /* No setState here: seeking fires `timeupdate`, and the element's own
+         listener is the one writer of currentTime. */
+      const seek = () => {
+        try { audio.currentTime = wanted.startAt; } catch {}
+      };
+      if (audio.readyState >= 1) seek();
+      else audio.addEventListener("loadedmetadata", seek, { once: true });
+    }
+    startPlayback();
+  }, [nowPlaying, startPlayback]);
 
   const lastSeekTick = useRef(0);
   const handleSeek = useCallback(
@@ -404,7 +564,6 @@ export default function AudioProvider({
     [getAudio]
   );
 
-  const SPEEDS = [1, 1.25, 1.5, 2] as const;
   const cycleSpeed = useCallback(() => {
     setPlaybackSpeed((prev) => {
       const idx = SPEEDS.indexOf(prev as (typeof SPEEDS)[number]);
@@ -418,11 +577,11 @@ export default function AudioProvider({
     });
   }, []);
 
-  // Apply saved speed when audio loads
+  // Apply saved speed when the loaded episode changes
   useEffect(() => {
     const audio = audioRef.current;
     if (audio && playbackSpeed !== 1) audio.playbackRate = playbackSpeed;
-  }, [brief, playbackSpeed]);
+  }, [nowPlaying, playbackSpeed]);
 
   const skipForward = useCallback(() => {
     const audio = getAudio();
@@ -450,30 +609,22 @@ export default function AudioProvider({
       hapticLight();
       audio.currentTime = seconds;
       setCurrentTime(seconds);
-      if (!isPlaying) {
-        if (audioError) {
-          setAudioError(false);
-          audio.load();
-        }
-        audio.play().catch(() => {
-          setAudioError(true);
-          setIsPlaying(false);
-        });
-        setIsPlaying(true);
-        setHasEverPlayed(true);
-      }
+      if (!isPlaying) startPlayback();
     },
-    [isPlaying, audioError]
+    [isPlaying, getAudio, startPlayback]
   );
 
-  /* ---- Chapter rail ----------------------------------------------------
-     The daily brief is a radio show with real chapters; weekly, history and
-     every legacy episode are one continuous read. `chapters` is empty in that
-     case and every surface falls back to the News / Opinion transport, so the
-     null guard lives here once rather than in each player view. */
+  useEffect(() => {
+    seekToRef.current = seekTo;
+  }, [seekTo]);
+
+  /* ---- Chapter rail ----
+     Off `nowPlaying`, so the rail belongs to the audio in the element. It used
+     to come off the single brief slot, which is how /onair showed the daily
+     broadcast's eight chapters over a Weekly issue's eleven movements. */
   const chapters = useMemo<AudioChapter[]>(
-    () => brief?.audio_chapters ?? [],
-    [brief?.audio_chapters]
+    () => nowPlaying?.chapters ?? [],
+    [nowPlaying]
   );
 
   const currentChapterIndex = useMemo(
@@ -528,162 +679,67 @@ export default function AudioProvider({
     seekTo(target >= 0 ? chapters[target].startTime : 0);
   }, [chapters, currentTime, seekTo]);
 
-  // Auto-show player when brief has audio — DESKTOP ONLY. On mobile (<768px)
-  // the auto-show is suppressed so nothing audio-related appears until the
-  // reader taps the On Air tab. The brief TEXT (TL;DR / Opinion pill) still
+  // Auto-show the player once something is loaded — DESKTOP ONLY. On mobile
+  // (<768px) the auto-show is suppressed so nothing audio-related appears
+  // until the reader asks for it. The brief TEXT (TL;DR / Opinion pill) still
   // loads and renders independently of this (see the fetch effect above).
   useEffect(() => {
-    if (!brief?.audio_url) return;
+    if (!nowPlaying) return;
     const isMobile =
       typeof window !== "undefined" &&
       window.matchMedia("(max-width: 767px)").matches;
     if (isMobile) return;
     setPlayerVisible(true);
-  }, [brief]);
+  }, [nowPlaying]);
 
-  /** Load a previous episode — swap audio source and reset playback state.
-   *  We only pause the current element here; the actual source swap happens
-   *  when React reconciles the <audio> element with the new brief.audio_url.
-   *  Setting audio.src imperatively would trigger a wasted HTTP request on
-   *  the old element that gets unmounted moments later. */
-  const loadEpisode = useCallback((episode: EpisodeMeta) => {
-    if (!episode.audio_url) return;
-    const audio = audioRef.current;
-    if (audio) {
-      audio.pause();
-    }
-    // Create DailyBriefData from episode metadata
-    setBrief((prev) => ({
-      ...(prev || {} as DailyBriefData),
-      id: episode.id,
-      edition: episode.edition as DailyBriefData["edition"],
-      tldr_headline: episode.tldr_headline,
-      tldr_text: episode.tldr_text || "",
-      opinion_headline: episode.opinion_headline,
-      opinion_text: episode.opinion_text || null,
-      opinion_lean: episode.opinion_lean as DailyBriefData["opinion_lean"],
-      audio_url: episode.audio_url,
-      audio_duration_seconds: episode.audio_duration_seconds,
-      opinion_start_seconds: episode.opinion_start_seconds,
-      audio_voice_label: episode.audio_voice_label,
-      audio_voice: episode.audio_voice,
-      audio_chapters: episode.audio_chapters ?? null,
-      news_start_seconds: episode.news_start_seconds ?? null,
-      created_at: episode.created_at,
-    }));
-    setCurrentTime(0);
-    setDuration(episode.audio_duration_seconds || 0);
-    setAudioError(false);
-    setBuffered(0);
-    setIsPlaying(false);
-    setPlayerVisible(true);
-    hapticLight();
-  }, []);
+  /** Load a previous episode from an archive row. A press, so it plays. */
+  const loadEpisode = useCallback(
+    (episode: EpisodeMeta) => {
+      if (!episode.audio_url) return;
+      play({
+        kind: "daily",
+        id: episode.id,
+        title: episode.tldr_headline ?? "Broadcast",
+        subtitle: null,
+        audioUrl: episode.audio_url,
+        durationSeconds: Number(episode.audio_duration_seconds) || 0,
+        chapters: episode.audio_chapters ?? [],
+        publishedAt: episode.created_at ?? null,
+        programmeLabel: "On Air",
+        editionLabel: editionLabelFor(episode.edition),
+        voiceLabel: episode.audio_voice_label ?? null,
+        opinionStartSeconds: episode.opinion_start_seconds ?? null,
+      });
+    },
+    [play]
+  );
 
-  /** Load a weekly issue into the shared player. Maps WeeklyDigestData onto the
-   *  DailyBriefData shape the player consumes (weekly lacks opinion sections /
-   *  voice metadata, so those are null). Does NOT auto-play — it reveals the
-   *  player ready to start, mirroring the daily brief's load behaviour. The
-   *  optional archiveIssues become the "Previous issues" playlist. */
+  /** Offer a weekly issue to the player. Called from the issue page on mount,
+   *  so it must NOT seize: `load` leaves live audio alone. The optional
+   *  archiveIssues become the "Previous issues" playlist. */
   const playWeekly = useCallback(
     (
       digest: import("../lib/types").WeeklyDigestData,
       archiveIssues?: EpisodeMeta[]
     ) => {
-      if (!digest.audio_url) return;
-      contentTypeRef.current = "weekly";
-      setContentType("weekly");
-
-      const audio = audioRef.current;
-      if (audio) audio.pause();
-
-      // cover_text is a structured WeeklyCoverStory[]; take the lead story's body.
-      const coverText =
-        Array.isArray(digest.cover_text) && digest.cover_text.length > 0
-          ? digest.cover_text[0]?.text ?? ""
-          : "";
-
-      setBrief({
-        id: digest.id,
-        edition: (digest.edition ?? "world") as DailyBriefData["edition"],
-        tldr_text: coverText,
-        tldr_headline: digest.cover_headline ?? null,
-        opinion_text: digest.opinion_text ?? null,
-        opinion_headline: digest.opinion_headline ?? null,
-        opinion_lean: digest.opinion_lean ?? null,
-        opinion_cluster_id: null,
-        audio_url: digest.audio_url,
-        audio_duration_seconds: digest.audio_duration_seconds,
-        opinion_start_seconds: digest.opinion_start_seconds ?? null,
-        audio_voice_label: digest.audio_voice_label ?? null,
-        audio_voice: digest.audio_voice ?? null,
-        audio_script: null,
-        // The Sunday edition is a scored programme with movements, not one
-        // continuous read, so it gets the same rail On Air and History have.
-        // Issues rendered on the legacy two-voice path carry no chapters and
-        // fall back to the News / Opinion transport, exactly as before.
-        audio_chapters: coerceChapters(digest.audio_chapters ?? null),
-        news_start_seconds: null,
-        top_cluster_ids: null,
-        created_at: digest.created_at,
-      });
-      setPreviousEpisodes(archiveIssues ?? []);
-      setCurrentTime(0);
-      setDuration(digest.audio_duration_seconds ?? 0);
-      setBuffered(0);
-      setAudioError(false);
-      setIsPlaying(false);
-      setPlayerVisible(true);
+      const ep = episodeFromWeekly(digest);
+      if (!ep) return;
+      if (archiveIssues && archiveIssues.length > 0) setPreviousEpisodes(archiveIssues);
+      load(ep);
     },
-    []
+    [load]
   );
 
-  /** Load a void --history event's companion audio into the shared player.
-   *  Mirrors playWeekly: maps the event onto the DailyBriefData shape the player
-   *  consumes (history has no opinion firewall or host personas, so those are
-   *  null → the transport renders a single "Account" section). Does NOT auto-play
-   *  — it reveals the player ready to start, matching the daily/weekly behaviour.
-   *  Taking ownership here also pauses any daily brief that was playing, so the
-   *  news broadcast never continues on a history route. */
-  const playHistory = useCallback((payload: HistoryAudioPayload) => {
-    if (!payload.audioUrl) return;
-    contentTypeRef.current = "history";
-    setContentType("history");
-
-    const audio = audioRef.current;
-    if (audio) audio.pause();
-
-    setBrief({
-      id: payload.id,
-      edition: "world" as DailyBriefData["edition"],
-      tldr_text: payload.subtitle ?? "",
-      tldr_headline: payload.title,
-      opinion_text: null,
-      opinion_headline: null,
-      opinion_lean: null,
-      opinion_cluster_id: null,
-      audio_url: payload.audioUrl,
-      audio_duration_seconds: payload.durationSeconds,
-      opinion_start_seconds: null,
-      audio_voice_label: null,
-      audio_voice: null,
-      audio_script: null,
-      // A produced History episode carries its own chapter marks (scenes,
-      // each perspective, the reckoning, the legacy). Accounts published
-      // before the audio edition pass none and keep the plain transport.
-      audio_chapters: coerceChapters(payload.chapters ?? null),
-      news_start_seconds: null,
-      top_cluster_ids: null,
-      created_at: new Date().toISOString(),
-    });
-    setPreviousEpisodes([]);
-    setCurrentTime(0);
-    setDuration(payload.durationSeconds || 0);
-    setBuffered(0);
-    setAudioError(false);
-    setIsPlaying(false);
-    setPlayerVisible(true);
-  }, []);
+  /** A History event's Listen control: a press, so it plays and a second
+   *  press pauses instead of restarting the documentary from zero. */
+  const playHistory = useCallback(
+    (payload: HistoryAudioPayload) => {
+      const ep = episodeFromHistory(payload);
+      if (!ep) return;
+      play(ep);
+    },
+    [play]
+  );
 
   /* Chapter navigation changes identity on every timeupdate (it reads the
      playhead), so the Media Session effect must NOT depend on it: rebuilding
@@ -694,48 +750,40 @@ export default function AudioProvider({
     chapterNavRef.current = { next: nextChapter, prev: prevChapter };
   }, [nextChapter, prevChapter]);
 
-  /* ---- Media Session API — iOS lock screen + notification controls ---- */
+  /* ---- Media Session API — iOS lock screen + notification controls ----
+     Off `nowPlaying`, so the lock screen names the programme that is playing.
+     It used to hardcode "Void News · On Air" and an edition label for every
+     programme, and date a 1258 documentary today. */
   useEffect(() => {
     if (typeof navigator === "undefined" || !("mediaSession" in navigator))
       return;
-
-    const editionLabels: Record<string, string> = {
-      world: "World",
-      us: "US",
-      europe: "Europe",
-      "south-asia": "South Asia",
-    };
-    const editionLabel = editionLabels[edition] || "World";
+    if (!nowPlaying) return;
 
     // On a chaptered episode the lock screen reads like a radio show: the
-    // chapter is the track, the edition and date are the album. Between
-    // chapters (ident, sign-off) it falls back to the show name rather than
-    // freezing on whichever chapter ran last.
+    // chapter is the track, the programme and date are the album. Between
+    // chapters (ident, sign-off) it falls back to the episode title rather
+    // than freezing on whichever chapter ran last.
     const chapter =
       currentChapterIndex >= 0 ? chapters[currentChapterIndex] : null;
-    const dateLabel = brief?.created_at
-      ? new Date(brief.created_at).toLocaleDateString("en-US", {
+    const dateLabel = nowPlaying.publishedAt
+      ? new Date(nowPlaying.publishedAt).toLocaleDateString("en-US", {
           month: "long",
           day: "numeric",
           year: "numeric",
         })
       : "";
+    const album = [
+      nowPlaying.editionLabel ? `${nowPlaying.editionLabel} Edition` : nowPlaying.programmeLabel,
+      dateLabel,
+    ]
+      .filter(Boolean)
+      .join(" · ");
 
-    navigator.mediaSession.metadata = new MediaMetadata(
-      chapters.length > 0
-        ? {
-            title: chapter?.title || "On Air",
-            artist: "Void News \u00b7 On Air",
-            album: dateLabel
-              ? `${editionLabel} Edition \u00b7 ${dateLabel}`
-              : `${editionLabel} Edition`,
-          }
-        : {
-            title: "On Air",
-            artist: "Void News",
-            album: editionLabel + " Edition",
-          }
-    );
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: chapters.length > 0 ? chapter?.title || nowPlaying.title : nowPlaying.title,
+      artist: `Void News · ${nowPlaying.programmeLabel}`,
+      album,
+    });
 
     navigator.mediaSession.setActionHandler("play", () => {
       if (!isPlaying) handlePlayPause();
@@ -783,14 +831,13 @@ export default function AudioProvider({
     };
     // Deliberately NOT depending on nextChapter / prevChapter: see chapterNavRef.
   }, [
-    edition,
+    nowPlaying,
     isPlaying,
     handlePlayPause,
     skipForward,
     skipBackward,
     chapters,
     currentChapterIndex,
-    brief?.created_at,
   ]);
 
   /* ---- Media Session position state ----
@@ -800,7 +847,7 @@ export default function AudioProvider({
   useEffect(() => {
     if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
     if (typeof navigator.mediaSession.setPositionState !== "function") return;
-    const total = brief?.audio_duration_seconds || duration;
+    const total = nowPlaying?.durationSeconds || duration;
     if (!total || !isFinite(total) || total <= 0) return;
     const now = Date.now();
     if (now - lastPositionPush.current < 1000) return;
@@ -814,54 +861,72 @@ export default function AudioProvider({
     } catch {
       // Safari throws when position exceeds duration mid-load.
     }
-  }, [currentTime, duration, playbackSpeed, brief?.audio_duration_seconds]);
+  }, [currentTime, duration, playbackSpeed, nowPlaying]);
 
-  const value: AudioState = {
-    brief,
-    edition,
-    setEdition,
-    contentType,
-    playWeekly,
-    playHistory,
-    isPlaying,
-    currentTime,
-    duration,
-    buffered,
-    audioError,
-    audioRef,
-    handlePlayPause,
-    handleSeek,
-    playbackSpeed,
-    cycleSpeed,
-    skipForward,
-    skipBackward,
-    seekTo,
-    isPlayerVisible,
-    setPlayerVisible,
-    isExpanded,
-    setExpanded,
-    analyserRef,
-    connectAnalyser,
-    hasEverPlayed,
-    previousEpisodes,
-    loadEpisode,
-    chapters,
-    currentChapterIndex,
-    seekToChapter,
-    nextChapter,
-    prevChapter,
-  };
+  /* Memoized: the value object used to be rebuilt on every render, so every
+     useAudio() consumer — including NavBar, MobileTabBar and MobileNav, which
+     each need one boolean — re-rendered four times a second on timeupdate. */
+  const value = useMemo<AudioState>(
+    () => ({
+      brief: dailyBrief,
+      nowPlaying,
+      edition,
+      setEdition,
+      contentType,
+      play,
+      load,
+      playWeekly,
+      playHistory,
+      isPlaying,
+      currentTime,
+      duration,
+      buffered,
+      audioError,
+      audioRef,
+      handlePlayPause,
+      handleSeek,
+      playbackSpeed,
+      cycleSpeed,
+      skipForward,
+      skipBackward,
+      seekTo,
+      isPlayerVisible,
+      setPlayerVisible,
+      isExpanded,
+      setExpanded,
+      analyserRef,
+      connectAnalyser,
+      hasEverPlayed,
+      previousEpisodes,
+      loadEpisode,
+      chapters,
+      currentChapterIndex,
+      seekToChapter,
+      nextChapter,
+      prevChapter,
+    }),
+    [
+      dailyBrief, nowPlaying, edition, setEdition, contentType, play, load,
+      playWeekly, playHistory, isPlaying, currentTime, duration, buffered,
+      audioError, handlePlayPause, handleSeek, playbackSpeed, cycleSpeed,
+      skipForward, skipBackward, seekTo, isPlayerVisible, isExpanded,
+      connectAnalyser, hasEverPlayed, previousEpisodes, loadEpisode, chapters,
+      currentChapterIndex, seekToChapter, nextChapter, prevChapter,
+    ]
+  );
 
   return (
     <AudioContext.Provider value={value}>
       {children}
-      {/* Global <audio> element — survives page navigation.
+      {/* The one <audio> element — survives page navigation. Its src is the
+          LOADED EPISODE, not the daily brief, so refreshing today's edition
+          can never swap the file under a reader listening to something else.
           Gated by the audio kill switch (void --onair parked): when audio is
           disabled the element is never rendered and no .mp3 is requested. */}
-      {AUDIO_ENABLED && brief?.audio_url && (
+      {AUDIO_ENABLED && nowPlaying?.audioUrl && (
         <audio
           ref={audioCallbackRef}
-          src={brief.audio_url}
+          src={nowPlaying.audioUrl}
           /* Defer the MP3 fetch until the reader actually plays. "metadata"
              (the old value) fetched the file's header bytes on every home load
              even though the player auto-shows without interaction. "none" until

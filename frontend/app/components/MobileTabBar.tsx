@@ -40,7 +40,7 @@ interface MobileTabBarProps {
 export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { isPlaying } = useAudio();
+  const { isPlaying, nowPlaying } = useAudio();
 
   const path = pathname.replace(BASE_PATH, "") || "/";
   const homeActive =
@@ -60,7 +60,13 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
       <button
         type="button"
         className={`mtb__tab mtb__tab--onair${isPlaying ? " mtb__tab--onair-live" : ""}`}
-        aria-label={isPlaying ? "On Air, playing" : "On Air"}
+        /* Names the programme in the element: the live dot used to say
+           "On Air, playing" over a Weekly issue or a documentary. */
+        aria-label={
+          isPlaying
+            ? `On Air. ${nowPlaying?.programmeLabel ?? "Audio"} is playing`
+            : "On Air"
+        }
         onClick={handleOnAir}
       >
         <span className="mtb__onair-glyph">

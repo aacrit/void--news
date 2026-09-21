@@ -41,15 +41,23 @@ export default function HeroListen({
   chapters,
   accountCount,
 }: HeroListenProps) {
-  const { playHistory } = useAudio();
+  const { playHistory, nowPlaying, isPlaying } = useAudio();
+  /* The control reads the shared player, so while this account is the audio
+     in the element it says Pause. It used to be a hardcoded triangle labelled
+     Listen that restarted the documentary from 0:00 on a second press. */
+  const playingThis = isPlaying && nowPlaying?.kind === "history" && nowPlaying.id === id;
   return (
     <button
       type="button"
-      className="hist-hero-listen"
+      className={`hist-hero-listen${playingThis ? " hist-hero-listen--playing" : ""}`}
       onClick={() =>
         playHistory({ id, title, subtitle, audioUrl, durationSeconds, chapters })
       }
-      aria-label={`Listen to ${title}, ${accountCount} accounts`}
+      aria-label={
+        playingThis
+          ? `Pause ${title}`
+          : `Listen to ${title}, ${accountCount} accounts`
+      }
     >
       <svg
         width="12"
@@ -59,9 +67,11 @@ export default function HeroListen({
         aria-hidden="true"
         className="hist-hero-listen__icon"
       >
-        <path d="M1 1.5v11l10-5.5z" />
+        {playingThis
+          ? <><rect x="1" y="1" width="3.5" height="12" /><rect x="7.5" y="1" width="3.5" height="12" /></>
+          : <path d="M1 1.5v11l10-5.5z" />}
       </svg>
-      <span className="hist-hero-listen__label">Listen</span>
+      <span className="hist-hero-listen__label">{playingThis ? "Pause" : "Listen"}</span>
       <span className="hist-hero-listen__meta">
         {accountCount} accounts · {formatClock(durationSeconds)}
       </span>

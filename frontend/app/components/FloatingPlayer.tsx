@@ -67,13 +67,15 @@ export default function FloatingPlayer() {
     playbackSpeed, cycleSpeed, skipForward, skipBackward, seekTo,
     isPlayerVisible, setPlayerVisible,
     isExpanded, setExpanded,
-    previousEpisodes, loadEpisode, contentType,
+    previousEpisodes, loadEpisode, contentType, nowPlaying,
     chapters, currentChapterIndex, seekToChapter,
   } = state;
   const isWeekly = contentType === "weekly";
   const isHistory = contentType === "history";
-  // Product label shown across pill / expanded / broadcast surfaces.
-  const productLabel = isHistory ? "History" : isWeekly ? "Weekly" : "On Air";
+  /* Everything the player SAYS comes off the loaded episode, not off the
+     daily brief. `brief` is today's edition now, so reading it here would
+     print today's headline and duration over a Weekly issue. */
+  const productLabel = nowPlaying?.programmeLabel ?? "On Air";
 
   const [view, setView] = useState<PlayerView>("compact");
   const [closing, setClosing] = useState(false);
@@ -220,10 +222,12 @@ export default function FloatingPlayer() {
 
   /* ---- Derived episode metadata. Hosts are no longer named: the dateline
      carries the stored voice label instead. ---- */
-  const voiceLabel = brief?.audio_voice_label || null;
+  const voiceLabel = nowPlaying?.voiceLabel || null;
   const opinionIndex = useMemo(() => findOpinionIndex(chapters), [chapters]);
-  const editionLabel = brief?.edition ? brief.edition.charAt(0).toUpperCase() + brief.edition.slice(1) : "World";
-  const episodeDate = brief?.created_at ? formatDate(brief.created_at) : "";
+  /* Only the daily programme has an edition. The Sunday Argument used to be
+     datelined "World Edition" because it was written into the same slot. */
+  const editionLabel = nowPlaying?.editionLabel ?? null;
+  const episodeDate = nowPlaying?.publishedAt ? formatDate(nowPlaying.publishedAt) : "";
 
   /* ---- Desktop left-pane: push page canvas right when broadcast is open ---- */
   useEffect(() => {
@@ -262,9 +266,9 @@ export default function FloatingPlayer() {
     return () => document.removeEventListener("keydown", handleEsc);
   }, [view, setExpanded]);
 
-  if (!brief || !brief.audio_url || !isPlayerVisible) return null;
+  if (!nowPlaying || !isPlayerVisible) return null;
 
-  const displayDuration = brief.audio_duration_seconds || duration;
+  const displayDuration = nowPlaying.durationSeconds || duration;
   const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
   const durationMin = displayDuration ? Math.ceil(displayDuration / 60) : null;
   const speedLabel = `${playbackSpeed}x`;
@@ -274,8 +278,9 @@ export default function FloatingPlayer() {
      60% of the episode whenever opinion_start_seconds was missing, which drew
      a seek mark and an Opinion tab pointing at a moment nobody had measured.
      A null start now means no mark and no tab. */
-  const opinionStart = brief.opinion_start_seconds ?? null;
-  const hasOpinionSection = brief.opinion_text != null && opinionStart !== null;
+  const ownsDaily = nowPlaying.kind === "daily";
+  const opinionStart = nowPlaying.opinionStartSeconds ?? null;
+  const hasOpinionSection = ownsDaily && brief?.opinion_text != null && opinionStart !== null;
   const opinionPct = opinionStart !== null && displayDuration > 0
     ? (opinionStart / displayDuration) * 100
     : null;
@@ -632,11 +637,14 @@ export default function FloatingPlayer() {
           {/* Episode dateline. History has no edition/date; it leads with the
               event title instead so the panel reads like an archival plate. */}
           <div className="fp__bcast-dateline">
-            {isHistory ? (
-              <span className="fp__bcast-edition">{brief.tldr_headline || "Account"}</span>
-            ) : (
+            {editionLabel ? (
               <>
                 <span className="fp__bcast-edition">{editionLabel} Edition</span>
+                {episodeDate && <span className="fp__bcast-date">{episodeDate}</span>}
+              </>
+            ) : (
+              <>
+                <span className="fp__bcast-edition">{nowPlaying.title}</span>
                 {episodeDate && <span className="fp__bcast-date">{episodeDate}</span>}
               </>
             )}
@@ -687,7 +695,10 @@ export default function FloatingPlayer() {
             </ol>
           )}
 
-          {/* Episode notes — collapsed by default, "Read more" disclosure */}
+          {/* Episode notes — the DAILY brief's own text (summary, firewall,
+              opinion). Rendered only while the daily programme is loaded: it
+              used to print today's TL;DR under a History documentary. */}
+          {ownsDaily && brief && (
           <details className="fp__bcast-details">
             <summary className="fp__bcast-summary">
               <span>Episode notes</span>
@@ -721,6 +732,7 @@ export default function FloatingPlayer() {
               )}
             </div>
           </details>
+          )}
 
           {/* Previous Episodes — playlist with news/opinion separation */}
           {groupedEpisodes && (
@@ -734,7 +746,9 @@ export default function FloatingPlayer() {
                     <div key={dayLabel} className="fp__playlist-day">
                       <div className="fp__playlist-day-label" style={{ '--fp-track-i': ti++ } as React.CSSProperties}>{dayLabel}</div>
                       {eps.map((ep) => {
-                        const isCurrent = brief.audio_url === ep.audio_url;
+                        /* Against the LOADED episode, not the daily brief:
+                           the row that is playing must be the one marked. */
+                        const isCurrent = !!ep.audio_url && nowPlaying.audioUrl === ep.audio_url;
                         const epDuration = ep.audio_duration_seconds ? Math.ceil(ep.audio_duration_seconds / 60) : null;
                         const timeStr = formatEpisodeTime(ep.created_at);
                         const hasOpinion = !!ep.opinion_text;

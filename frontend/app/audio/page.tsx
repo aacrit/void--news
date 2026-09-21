@@ -113,7 +113,7 @@ export default function AudioPage() {
                 <span>{clock(dailyDuration)}</span>
               </p>
               <div className="audio-prog__actions">
-                <AudioPlay kind="daily" id={daily.id} label="Play today's programme" />
+                <AudioPlay kind="daily" label="Play today's programme" />
                 <Link href="/onair" className="audio-prog__open">Open On Air</Link>
               </div>
             </>
@@ -135,22 +135,7 @@ export default function AudioPage() {
                 {weekly.audio_duration_seconds ? <span>{clock(Number(weekly.audio_duration_seconds))}</span> : null}
               </p>
               <div className="audio-prog__actions">
-                <AudioPlay
-                  kind="weekly"
-                  id={weekly.id}
-                  label="Play this week's Argument"
-                  issue={{
-                    id: weekly.id,
-                    edition: weekly.edition,
-                    week_start: weekly.week_start,
-                    cover_headline: weekly.cover_headline,
-                    cover_text: Array.isArray(weekly.cover_text) ? weekly.cover_text.slice(0, 1) : weekly.cover_text,
-                    audio_url: weekly.audio_url,
-                    audio_duration_seconds: weekly.audio_duration_seconds,
-                    audio_chapters: weekly.audio_chapters ?? null,
-                    created_at: weekly.created_at,
-                  }}
-                />
+                <AudioPlay kind="weekly" label="Play this week's Argument" issue={weekly} />
                 <Link href="/weekly" className="audio-prog__open">Open the issue</Link>
               </div>
             </>
@@ -179,10 +164,9 @@ export default function AudioPage() {
                 </div>
                 <AudioPlay
                   kind="history"
-                  id={slug}
                   label={`Play ${e.title}`}
                   compact
-                  payload={{ id: slug, title: e.title, subtitle: null, audioUrl: e.url, durationSeconds: e.durationSeconds, chapters: e.chapters ?? null }}
+                  payload={{ id: slug, title: e.title, subtitle: null, audioUrl: e.url, durationSeconds: e.durationSeconds, chapters: e.chapters ?? null, publishedAt: e.publishedAt ?? null }}
                 />
               </li>
             ))}

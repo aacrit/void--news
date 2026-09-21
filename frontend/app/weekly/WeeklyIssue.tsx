@@ -83,9 +83,15 @@ export default function WeeklyIssue({
 }) {
   const { playWeekly } = useAudio();
 
-  /* Hand this issue to the shared On Air player, recoloured to the weekly
-     accent. Previous issues with audio become the playlist — which was empty
-     for as long as fetchWeeklyArchive returned only the current issue. */
+  /* OFFER this issue to the shared player, recoloured to the weekly accent.
+     `playWeekly` routes through `load`, which refuses to interrupt playback,
+     so opening the issue no longer pauses a brief mid-sentence and swaps the
+     source with no gesture (measured 2026-09-21). Previous issues with audio
+     become the playlist — which was empty for as long as fetchWeeklyArchive
+     returned only the current issue.
+
+     Keyed on the issue id ALONE: `archive` is an array identity, so any
+     parent re-render used to re-run this and slam the playhead back to 0. */
   useEffect(() => {
     if (!AUDIO_ENABLED || !issue.audio_url) return;
     const episodes: EpisodeMeta[] = archive
@@ -110,7 +116,7 @@ export default function WeeklyIssue({
       }));
     playWeekly(issue, episodes);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [issue.id, archive]);
+  }, [issue.id]);
 
   const weekRange = formatWeekRange(issue.week_start, issue.week_end);
   const covers = (issue.cover_text || []).filter((c) => c?.text);

@@ -53,7 +53,11 @@ interface EventDetailProps {
 }
 
 export default function EventDetail({ event, allEvents }: EventDetailProps) {
-  const { playHistory } = useAudio();
+  const { playHistory, nowPlaying, isPlaying } = useAudio();
+  /* Whether the shared player is playing THIS event, so the hero control can
+     say Pause instead of offering to restart the documentary from 0:00. */
+  const playingThis =
+    isPlaying && nowPlaying?.kind === "history" && nowPlaying.id === event.id;
   const reelRef = useRef<HTMLDivElement>(null);
   const galleryRef = useRef<HTMLElement>(null);
   const [focusedIndex, setFocusedIndex] = useState(0);
@@ -289,7 +293,7 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
             {event.audioUrl && (
               <button
                 type="button"
-                className="hist-hero-listen"
+                className={`hist-hero-listen${playingThis ? " hist-hero-listen--playing" : ""}`}
                 onClick={() =>
                   playHistory({
                     id: event.id,
@@ -300,12 +304,18 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
                     chapters: event.audioChapters ?? null,
                   })
                 }
-                aria-label={`Listen to ${event.title}, ${event.perspectives.length} perspectives`}
+                aria-label={
+                  playingThis
+                    ? `Pause ${event.title}`
+                    : `Listen to ${event.title}, ${event.perspectives.length} perspectives`
+                }
               >
                 <svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor" aria-hidden="true" className="hist-hero-listen__icon">
-                  <path d="M1 1.5v11l10-5.5z" />
+                  {playingThis
+                    ? <><rect x="1" y="1" width="3.5" height="12" /><rect x="7.5" y="1" width="3.5" height="12" /></>
+                    : <path d="M1 1.5v11l10-5.5z" />}
                 </svg>
-                <span className="hist-hero-listen__label">Listen</span>
+                <span className="hist-hero-listen__label">{playingThis ? "Pause" : "Listen"}</span>
                 <span className="hist-hero-listen__meta">{event.perspectives.length} perspectives · {formatClock(event.audioDuration ?? 0)}</span>
               </button>
             )}

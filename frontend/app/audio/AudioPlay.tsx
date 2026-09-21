@@ -1,40 +1,46 @@
 "use client";
 
-import { useAudio, type HistoryAudioPayload } from "../components/AudioProvider";
-import type { WeeklyDigestData } from "../weekly/types";
+import { useAudio } from "../components/AudioProvider";
+import {
+  type Episode,
+  episodeFromBrief,
+  episodeFromHistory,
+  episodeFromWeekly,
+  sameEpisode,
+  type HistoryAudioPayload,
+} from "../lib/episode";
+import type { WeeklyDigestData } from "../lib/types";
 
 /* ---------------------------------------------------------------------------
    AudioPlay: the one client island on /audio.
 
-   Each programme is loaded into the SHARED player the way its own page does
-   it, so the hub never grows a second transport: On Air through the daily
-   flow (setEdition flips ownership back to the daily brief; the provider
-   fetches it), The Argument through playWeekly, a History episode through
-   playHistory. None of those autoplay; they reveal the player ready to
-   start, and a second press toggles it. The label says which state the
-   reader is in: the button that owns the playing episode reads Pause.
+   Every button here calls the provider's `play(ep)`, which toggles when it
+   already owns that episode and loads then plays when it does not. That one
+   rule is why all three programmes now behave the same. Before it, this
+   button played an already-loaded issue and merely LOADED a History episode,
+   so a reader pressed Play and heard nothing (measured 2026-09-21).
+
+   The label follows the element, not a guess: the button that owns the
+   playing episode reads Pause.
    --------------------------------------------------------------------------- */
 
 type Props =
-  | { kind: "daily"; id: string; label: string; compact?: boolean }
-  | { kind: "weekly"; id: string; label: string; compact?: boolean; issue: Partial<WeeklyDigestData> }
-  | { kind: "history"; id: string; label: string; compact?: boolean; payload: HistoryAudioPayload };
+  | { kind: "daily"; label: string; compact?: boolean }
+  | { kind: "weekly"; label: string; compact?: boolean; issue: WeeklyDigestData }
+  | { kind: "history"; label: string; compact?: boolean; payload: HistoryAudioPayload };
 
 export default function AudioPlay(props: Props) {
   const a = useAudio();
-  const mine = a.brief?.id === props.id && a.contentType === props.kind;
-  const playing = mine && a.isPlaying;
 
-  const onClick = () => {
-    if (mine) { a.handlePlayPause(); return; }
-    if (props.kind === "daily") {
-      if (a.contentType === "daily" && a.brief?.audio_url) a.handlePlayPause();
-      else a.setEdition("world");
-      return;
-    }
-    if (props.kind === "weekly") { a.playWeekly(props.issue as WeeklyDigestData); return; }
-    a.playHistory(props.payload);
-  };
+  const episode: Episode | null =
+    props.kind === "daily"
+      ? episodeFromBrief(a.brief)
+      : props.kind === "weekly"
+        ? episodeFromWeekly(props.issue)
+        : episodeFromHistory(props.payload);
+
+  const mine = sameEpisode(a.nowPlaying, episode);
+  const playing = mine && a.isPlaying;
 
   return (
     <button
@@ -42,7 +48,8 @@ export default function AudioPlay(props: Props) {
       className={`audio-play${props.compact ? " audio-play--compact" : ""}${playing ? " audio-play--playing" : ""}`}
       data-kind={props.kind}
       data-state={playing ? "playing" : mine ? "loaded" : "idle"}
-      onClick={onClick}
+      disabled={!episode}
+      onClick={() => episode && a.play(episode)}
       aria-label={playing ? props.label.replace(/^Play/, "Pause") : props.label}
     >
       <svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor" aria-hidden="true" className="audio-play__icon">
