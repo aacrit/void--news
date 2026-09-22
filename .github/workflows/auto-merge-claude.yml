@@ -111,6 +111,7 @@ jobs:
           python tests/test_bias_defaults_gate.py    # exported bias rows are measured, not defaults
           python tests/test_source_roster.py         # the roster does not disagree with itself about an outlet
           python tests/test_bias_bins.py             # one lean ladder, two languages, rungs on their own baselines
+          python tests/test_lean_prior_is_not_self_fed.py  # the lean prior is not fed by the lean it publishes
           python tests/test_nlp_languages.py         # no silent fallback to an English parser for non-English text
           python tests/test_podcast_feed.py          # covers exist and carry no stale text; titles agree
           python tests/test_prompt_grounding.py      # every production prompt carries the grounding line

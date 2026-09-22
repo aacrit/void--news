@@ -442,6 +442,64 @@ on `main` before this change and still is; it is not this rev's.
 
 ---
 
+## rev 79: the lean prior stops reading its own output (2026-09-22)
+
+`analyze_political_lean` blended the Axis 6 per-topic EMA into the outlet prior
+at 0.7 baseline / 0.3 topic. `topic_outlet_tracker.update_source_topic_lean`
+builds that EMA by averaging `political_lean` over each batch, which is this
+engine's own PUBLISHED OUTPUT, with a missing key defaulting to 50. The score
+wrote the table and the table moved the score.
+
+The problem is not that the loop is positive feedback, it is that **no outside
+evidence enters it anywhere**. The only input is a number the engine already
+emitted, so the cycle cannot correct an error, only carry it forward, and its
+fixed point is the mean of what it has already said. For the 63% of the roster
+that resolves to exactly 50, that fixed point is 50.
+
+**Measured before cutting, because a plausible mechanism is not a cause.** This
+is NOT what pulls the feed to the centre. Mean |published lean minus label
+baseline| for rated non-centre outlets is 5.45 across all rows and **0.74** once
+default-tuple rows are excluded. The apparent compression is 6,256 rows that
+were never measured, which is a different defect with a different fix
+(`tests/test_bias_defaults_gate.py` and the feed repairs). The loop was real and
+latent.
+
+It is cut now anyway, and the reason is sequencing: the outlet-baseline
+programme wires a LEARNED per-outlet offset into this same prior. A self-fed
+term sitting beside a learned one does not merely add noise, it corrupts the
+thing being learned, and it would do so invisibly because the rationale reported
+`source_baseline` AFTER the blend had already overwritten it. That is how a
+0.7/0.3 blend on every scored article stayed unnoticed through every audit of
+this file.
+
+`topic_lean_data` is still accepted and discarded (`del`), so the four call
+sites need no edit and Axis 6 keeps writing its table for its own reporting. It
+is read by nothing that scores.
+
+**The gate, per Rule 1.** `tests/test_lean_prior_is_not_self_fed.py` asserts two
+properties. The first is behavioural and length-aware, because `confidence` is
+`min(1, words/150)` and a blend that survived only on short items would be
+invisible in a single-length test: five probe values (0, 10, 50, 90, 100) must
+move the score by zero on empty text, an 11-word wire snippet, a 60-word item
+and a 400-word article, across a rated left, centre, right and an unrated
+outlet, and the reported `source_baseline` must still be the outlet's own. The
+second is structural, and it is the one that stops the loop being reintroduced
+by someone reading the old docstring: the scorer may name no string literal
+naming a field of its own output table (an AST walk, so a comment is fine and a
+literal the code reads is not), and the tracker may not import the scorer,
+which would close the cycle from the other side. Restoring the blend fails 18 of
+its 19 checks, which is how I know the gate is real and not a tautology.
+
+**Not measured, and stated rather than assumed:** how many rows
+`source_topic_lean` actually held. The table is in
+`migration/schema_pipeline.sql` and written every run at `main.py` step 8's
+tracking call, so the loop was wired at both ends in production, but the row
+count needs the gitignored state database and I did not have it. The cut is
+correct either way; what I cannot tell you is the magnitude it was already
+costing.
+
+---
+
 ## rev 78: the evidence, without the article (2026-09-22)
 
 **The audit's own record was the leak.** E-13 and E-14 are the two editorial

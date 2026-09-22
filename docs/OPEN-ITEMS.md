@@ -149,16 +149,33 @@ language. Run Gentzkow-Shapiro chi-squared per market against it. Outlet labels
 may derive candidate features; they may never evaluate, or the result is an
 outlet classifier that scores well and measures nothing.
 
-### `source_topic_lean` is a closed loop in code (latent, not yet biting)
+### `source_topic_lean` was a closed loop (CUT 2026-09-22)
 
-`political_lean.py:955` blends the EMA into the prior at 0.7/0.3;
+FIXED. `political_lean.py` blended the EMA into the prior at 0.7/0.3;
 `topic_outlet_tracker.py:88` builds that EMA from `political_lean`, the
-engine's published OUTPUT, defaulting a missing key to 50. Output becomes input.
+engine's published OUTPUT, defaulting a missing key to 50. Output became input,
+and no outside evidence entered anywhere in the cycle, so it could not correct
+an error, only compound one.
 
-Measured 2026-09-22, it is **not** currently the cause of the centre pull: mean
+Measured before cutting, it was **not** the cause of the centre pull: mean
 |published - label| for rated non-centre outlets is 5.45 across all rows and
 **0.74** once default-tuple rows are excluded. The apparent compression is
-6,256 unmeasured rows. Cut the loop before wiring in any learned offset.
+6,256 unmeasured rows. It was cut anyway because the outlet-baseline programme
+wires a LEARNED per-outlet offset into the same prior, and a self-fed term
+beside a learned one corrupts the thing being learned.
+
+`topic_lean_data` is still accepted and discarded, so the four call sites need
+no edit and Axis 6 keeps writing the table for its own reporting.
+`tests/test_lean_prior_is_not_self_fed.py` asserts the parameter is inert at
+four text lengths across four outlet ratings, that the reported
+`source_baseline` is the outlet's own, and (the part that stops it coming back)
+that the scorer names no field of its own output table and the tracker does not
+import the scorer. Restoring the blend fails 18 of its 19 checks.
+
+**Not measured:** how many rows `source_topic_lean` actually held. The table is
+in `migration/schema_pipeline.sql` and written every run, so the loop was wired
+at both ends in production; the row count needs the state database, which is
+gitignored and not present here.
 
 ### Publisher prose in git history (the working tree is clean)
 
