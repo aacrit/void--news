@@ -88,6 +88,58 @@ claims about its own confidence. It needs a decision, not a tweak.
 
 ## Known defects, not yet fixed
 
+### The outlet baselines have no resolution, and the learning table would make it worse
+
+Measured 2026-09-22, full write-up in
+`docs/audits/OUTLET-BASELINE-DATA-2026-09-22.md`.
+
+`political_lean_baseline` is a string label mapped to seven integers, so
+**636 of 1,016 outlets (63%) resolve to exactly 50.000** and AP, Reuters,
+Bloomberg, DW and 346 others are numerically identical. The article layer does
+not rescue it: mean absolute `text_shift` is **1.93 points**. The published
+lean is the label, plus or minus two. That is the whole of the "everything
+reads centre" complaint, and no display change touches it.
+
+Three things block re-deriving per-outlet numbers from our own corpus, which
+is otherwise the only non-fabricated source:
+
+1. **Only 17.3% of bias rows store `rationale.lean.text_score`** (13,386 of
+   77,390), the one signal not already contaminated by the baseline. 293
+   outlets, median 32 readings, none above 300.
+2. **The text scorer reads flat outside American partisan vocabulary.** Mean
+   text deviation: N1 Info -0.10, Euro Weekly -0.09, The National -0.08, ARY
+   +0.11, against Townhall at **+7.07**. 37% of full-length articles score
+   `text_score` exactly 50.0. Deriving 730 baselines from this would yield
+   ~40 real numbers and ~690 zeros. This makes the per-market lexicon item
+   below the **critical path**, not an enhancement.
+3. **`source_topic_lean` already implements the learning, and it is
+   inverted.** 6,356 rows, 4,484 backed by >=20 articles, median |deviation|
+   from the label **0.04**, and every large deviation points toward 50
+   (Financial Express: 189 economy articles, label 65, EMA exactly 50.00). It
+   averages unscored rows in as measured centrism, so it measures scoring
+   failure rather than outlet lean. **Do not wire it into the baseline until
+   it excludes `lean_unscored` rows.**
+
+Also recorded there: the Supabase pg_dumps are **gone** (14-day retention,
+last run 2026-08-30, expired 2026-09-13). The durable archive is the
+`void-state-snapshot` artifact, 90-day retention, which carries
+`pipeline_state.db` with 78,328 articles back to 2026-03-22 by `created_at`,
+though 95% of it is the last three weeks.
+
+### The default-tuple gate exempts itself on the exact failure it exists to catch
+
+`tests/test_bias_defaults_gate.py` skips the mark assertion when **no** row in
+the committed export carries a `lean_unscored` key, on the reasoning that such
+an export predates the field. That condition is indistinguishable from the
+marking having broken. Measured 2026-09-22: the committed export carries
+**186 default-tuple rows and not one is marked**, and the gate passes. The
+export code stamps them correctly (`export_static.py:377`), so this export
+genuinely predates it, but the exemption needs to lapse on something that
+changes, such as the export's `builtAt` being newer than the stamping code,
+rather than on nothing being marked.
+
+
+
 ### `--sense-high` is a 3.16:1 colour and is still used as text
 
 `#EF4444` is defined once for both modes. On the dark paper it measures
