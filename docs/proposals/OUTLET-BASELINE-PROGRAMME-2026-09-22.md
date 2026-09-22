@@ -408,3 +408,86 @@ construction and not merely empirically. It should be replaced with the
 anchor-and-modulate form the code implements and the served `/sources`
 methodology copy already uses correctly. That is a one-paragraph Rule 1 fix in
 our own instructions file, and it is the cheapest item on this list.
+
+---
+
+## 10. Addendum: do we need 1,000 sources? (CEO questions, 2026-09-22)
+
+CEO decisions taken: prune hard and restate honestly; one row per agency with
+syndication double-counting killed; volume must serve reader trust, breadth
+**via measurable sources**, and depth per story. Not SEO.
+
+### Q1. No. 63 outlets deliver half the product.
+
+From `frontend/build-data/archive.json`, 1,597 stories over 41 days, 34,233
+outlet-story observations:
+
+| outlets | share of all coverage |
+|---|---|
+| 63 | 50% |
+| 184 | 80% |
+| 280 | 90% |
+| 499 | 99% |
+
+**370 of 1,016 roster outlets published nothing at all in 41 days.** A further
+283 publish on under a quarter of days.
+
+### Q2. 27.1% of what the Bench counts as separate coverage is the same copy.
+
+Title-fingerprinting 975 article rows across 35 clusters (Jaccard >= 0.6 on
+masthead-stripped titles): 113 near-identical groups, **264 redundant
+observations, 27.1% of all rows**. One AP story on Presley Gerber appeared
+under 20 outlets; a second phrasing of it under 13 more.
+
+It is not only wire syndication, it is **chain syndication**: Quad-City Times,
+Helena Independent Record, Missoulian, Bismarck Tribune and Lincoln Journal Star
+are all Lee Enterprises; Chicago Tribune, Orlando Sentinel and Virginian-Pilot
+are Tribune. Of 375 US "independent" rows, **119 are dead and 220 are
+Google-News-fed**, so only 52 survive into the measured core.
+
+Of 40 rows typed `wire`, 21 publish regularly, and **13 of those 21 are
+themselves Google-News-fed**, so our wire rows are largely receiving headlines.
+
+### Q3. Half the archive is already usable, and the core already has enough n.
+
+| population | observations | share |
+|---|---|---|
+| all | 34,233 | 100% |
+| direct feed (real article text) | 21,773 | 63.6% |
+| placed on the lean axis | 27,338 | 79.9% |
+| **both, i.e. usable** | **17,165** | **50.1%** |
+
+229 outlets meet both, median 31 observations each, **116 at n >= 30 and 54 at
+n >= 100 in 41 days**. Against the statistical requirement (SE 3.0 at n=25, SE
+1.9 at n=60 versus ladder rungs 10 to 15 points apart), **the core already has
+the sample size. No harvest is needed to place it.**
+
+### The four tiers that actually exist
+
+| tier | definition | outlets | countries |
+|---|---|---|---|
+| **A** | direct feed + placed + publishes >= 25% of days | 147 | 26 |
+| **B** | direct feed + regular, lean honestly not placed (5 axes still measured) | 45 | 24 |
+| **C** | recoverable: publishing regularly but Google-News-fed | 171 | 44 |
+| **D** | dead: nothing in 41 days | 370 | 121 |
+
+- **A + B = 192 outlets across 41 countries.** What we can measure honestly today.
+- **A + B + C = 363 outlets across 59 countries**, once C is migrated off Google
+  News onto direct feeds. **This is the recommended published figure.**
+- Lean placement is the US-shaped axis, so it is the wrong filter for breadth.
+  Tier B outlets get sensationalism, rigor, opinion and framing measured
+  honestly and are stated as not placed on left/right, which is what the
+  existing `unscored` mechanism already does correctly.
+
+### The recommendation
+
+1. **Prune tier D outright.** 370 rows, no product cost, immediate honesty gain.
+2. **Migrate tier C to direct feeds.** 171 outlets, 44 countries, and the single
+   highest-leverage action available: it converts the largest block of dead
+   weight into usable breadth and fixes the 11-word problem at the same time.
+3. **Consolidate wires to one row per agency** and repair the syndication
+   detector, which removes roughly 27% phantom coverage from cluster counts and
+   the Bench.
+4. **Publish "363 sources across 59 countries"**, every one of them measured on
+   at least five axes, rather than 1,016 across 158 where 370 never publish.
+   That is a smaller number that survives being checked.
