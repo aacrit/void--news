@@ -59,6 +59,43 @@ ALIAS = {
     "The Telegraph India": "The Telegraph (India)",
     "ABC News (Australia)": "ABC News (Australia)",
     "Novaya Gazeta Europe": "Novaya Gazeta Europe",
+
+    # Found 2026-09-22 by checking each target's homepage HOST against the
+    # roster's, which is a stronger signal than either name matching or my
+    # memory: 20 targets the name audit called absent were already on the
+    # roster under a different masthead spelling. Adding them as new rows would
+    # have created 20 duplicate outlets, each double-counting its own copy on
+    # the Bench. Listed here in the open so a wrong equivalence is arguable.
+    "The Daily Telegraph": "The Telegraph",
+    "Handelsblatt": "Handelsblatt Global",
+    "Balkan Insight": "Balkan Insight (BIRN)",
+    "Ekathimerini": "Kathimerini English",
+    "The Wire": "The Wire (India)",
+    "Republic World": "Republic TV",
+    "Yomiuri Shimbun": "The Japan News (Yomiuri Shimbun)",
+    "Global Times": "Global Times (China)",
+    "VnExpress": "VnExpress International",
+    "The Times of Israel": "Times of Israel",
+    "IOL": "IOL (South Africa)",
+    "Premium Times": "Premium Times Nigeria",
+    "The Punch": "Punch Nigeria",
+    "Vanguard": "Vanguard Nigeria",
+    "Daily Nation": "Nation Africa",
+    "Folha de S.Paulo": "Folha de Sao Paulo (English)",
+    "Brazilian Report": "The Brazilian Report",
+    "ABC News (Australia)": "ABC Australia",
+    "RNZ": "RNZ News",
+    # Found by an accent-folded substring scan run to FLAG possible
+    # duplicates before adding rows, not to match automatically. Three
+    # flags, one real: the roster carries the Chosun Ilbo already.
+    # ("The Daily Star" on the roster is Bangladesh's, so Lebanon's is a
+    # genuine absence; L'Express against Financial Express was noise.)
+    "Chosun Ilbo": "The Chosun Ilbo (English)",
+    # The Observer is a distinct Sunday title, and it publishes on
+    # theguardian.com under Guardian feeds. A separate row would put the same
+    # copy on the Bench twice under two mastheads, which is the syndication
+    # double-count this roster work exists to remove. Counted as covered.
+    "The Observer": "The Guardian",
 }
 
 
@@ -74,14 +111,36 @@ def main() -> int:
     with open(tiers_path, encoding="utf-8") as fh:
         tiers = json.load(fh)
     tier_of = {r["name"]: k for k, v in tiers.items() for r in v}
+    # A roster row absent from the tiers snapshot is NEW, not unknown. The
+    # snapshot is built from the 41-day archive, and an outlet added today has
+    # published nothing into it. Calling that "?" let the table report "no
+    # right" for France after Le Point was added with a verified direct feed,
+    # and calling it healthy would claim an archive record that does not exist.
+    NEW = "N"
     exact = {norm(s["name"]): s["name"] for s in srcs}
+
+    # The roster names a foreign-language outlet's English edition with a
+    # suffix ("Le Monde (English)", "Al Arabiya English"). Trying those two
+    # suffixes is a RULE, not a guess, and it cannot reproduce the
+    # shared-masthead false positives the fuzzy version produced, because the
+    # comparison is still exact after normalisation. Without it the audit
+    # reported Le Monde, El Pais and eight others absent while they were on the
+    # roster, which is a false negative that would have had me add duplicates.
+    SUFFIXES = ("", " (English)", " English")
 
     def find(target: str):
         a = ALIAS.get(target, target)
-        return exact.get(norm(a))
+        for suffix in SUFFIXES:
+            hit = exact.get(norm(a + suffix))
+            if hit:
+                return hit
+        return None
 
     tot = have = missing = 0
-    print(f"{'market':36s} {'tgt':>4} {'have':>5} {'A':>3} {'C':>3} {'D':>3} {'E':>3} {'gone':>5}  healthy sides")
+    print(f"{'market':36s} {'tgt':>4} {'have':>5} {'A':>3} {'N':>3} {'C':>3} "
+          f"{'D':>3} {'E':>3} {'gone':>5}  healthy sides")
+    print("   A healthy in the 41-day archive · N added 2026-09-22, direct feed "
+          "verified, no archive history yet · C/D/E thinner · gone absent")
     gaps = []
     for market, entries in MAJORS.items():
         got = []
@@ -89,29 +148,45 @@ def main() -> int:
         for name, side in entries:
             r = find(name)
             (got if r else miss).append((name, side, r))
-        cnt = collections.Counter(tier_of.get(r, "?") for _, _, r in got)
+        cnt = collections.Counter(tier_of.get(r, NEW) for _, _, r in got)
         hsides = {side for _, side, r in got if tier_of.get(r) == "A"}
+        # A side whose only evidence is a row added today: real feeds, no
+        # archive record. Reported as pending, never folded into healthy.
+        psides = {side for _, side, r in got
+                  if tier_of.get(r, NEW) == NEW} - hsides
         verdict = "".join(s for s in "LCR" if s in hsides) or "NONE"
+        if psides:
+            verdict += "+" + "".join(s for s in "LCR" if s in psides)
         flag = ""
-        if "L" not in hsides and "R" not in hsides:
-            flag = "  <-- NO WING HEALTHY"
-            gaps.append((market, "both wings"))
-        elif "L" not in hsides:
-            flag = "  <-- right only"
-            gaps.append((market, "no left"))
-        elif "R" not in hsides:
-            flag = "  <-- left only"
-            gaps.append((market, "no right"))
-        print(f"{market:36s} {len(entries):>4} {len(got):>5} {cnt['A']:>3} {cnt['C']:>3} "
-              f"{cnt['D']:>3} {cnt['E']:>3} {len(miss):>5}  {verdict:<4}{flag}")
+        missing_wings = [w for w in ("L", "R") if w not in hsides]
+        if missing_wings:
+            pending = [w for w in missing_wings if w in psides]
+            still = [w for w in missing_wings if w not in psides]
+            if still and len(still) == 2:
+                flag = "  <-- NO WING HEALTHY"
+                gaps.append((market, "both wings"))
+            elif still:
+                flag = f"  <-- no {'left' if still[0] == 'L' else 'right'}"
+                gaps.append((market, f"no {'left' if still[0] == 'L' else 'right'}"))
+            if pending:
+                sides = "/".join("left" if w == "L" else "right" for w in pending)
+                flag += f"  ({sides} pending: added today, no archive yet)"
+        print(f"{market:36s} {len(entries):>4} {len(got):>5} {cnt['A']:>3} "
+              f"{cnt[NEW]:>3} {cnt['C']:>3} {cnt['D']:>3} {cnt['E']:>3} "
+              f"{len(miss):>5}  {verdict:<6}{flag}")
         tot += len(entries); have += len(got); missing += len(miss)
         if detail:
             for name, side, r in got:
-                print(f"      [{side}] {tier_of.get(r,'?')}  {name}")
+                print(f"      [{side}] {tier_of.get(r, NEW)}  {name}")
             for name, side, _ in miss:
                 print(f"      [{side}] --  {name}   MISSING")
     print(f"\ntargets {tot}, on the roster {have}, absent {missing}")
-    print(f"markets whose HEALTHY subset is one-sided or empty: {len(gaps)} of {len(MAJORS)}")
+    newly = sum(1 for _, v in tiers.items() for _ in v) and sum(
+        1 for s in srcs if s["name"] not in tier_of)
+    print(f"{newly} roster row(s) are newer than the tiers snapshot and count "
+          f"as N, not as healthy: rebuild the tiers file to resolve them")
+    print(f"markets whose HEALTHY subset is one-sided or empty, counting only "
+          f"archive evidence: {len(gaps)} of {len(MAJORS)}")
     for m, why in gaps:
         print(f"    {m:36s} {why}")
     return 0

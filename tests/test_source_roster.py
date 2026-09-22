@@ -176,7 +176,9 @@ def check_the_unrated_tail_is_deliberate(rows) -> list:
     Asserted as behaviour rather than a count: no outlet in a country whose
     national politics runs on the same left/right axis the roster measures may
     be left unplaced. Every anglosphere outlet was already placed when this
-    was written (0 unrated of 1,016), and that is the property worth keeping.
+    was written (0 unrated, on a roster of 1,016 at the time), and that is
+    the property worth keeping. The count is the date's, not today's; the
+    assertion below reads the roster.
     """
     SAME_AXIS = {"US", "GB", "UK", "CA", "AU", "NZ", "IE"}
     out = []

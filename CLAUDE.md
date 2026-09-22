@@ -1,6 +1,6 @@
 # Void News
 
-News aggregation with 6-axis rule-based NLP bias analysis. 1,016 sources,
+News aggregation with 6-axis rule-based NLP bias analysis. 1,064 sources,
 158 countries. **Live: https://news.voidvision.org** (Cloudflare Pages).
 
 **This file is the current state and the rules in force.** The record of how it
@@ -105,6 +105,7 @@ impossible, not a note asking people to be careful:
 | `tests/test_bias_bins.py` | the lean ladder drifting between its two implementations, or a rung leaving its own baseline. The bins were `<=20, <=35, <=45, <=55, <=65, <=80` until 2026-09-21, which put four of the seven outlet baselines on a bucket's upper EDGE. On the right that lands correctly by luck; on the left the upper edge is the LEAST extreme end, so a `left` outlet (baseline 20) was shown as **Far Left** and a `center-left` outlet (35) as **Left**, while the right-hand rungs were right. The error ran one way. Both sides now bin on the baselines, nearest wins, ties toward the centre |
 | `tests/test_robots_compliance.py` | a refusal on robots.txt being read as permission. `_check_robots_txt` returned True for every non-200 and every network error, so a 403, a 503 and a 429 all read as consent on the one file whose job is to say no, and the error ran one way: it never refused a site that had allowed us. Split per RFC 9309 2.3.1 (404/410 and 2xx allow, 401/403 deny, 429/5xx and transport failures deny for the run, after ONE retry because a timeout is noise and 4 of 70 sampled domains failed at the transport). Measured cost: 14.3% of 70 roster domains would be denied, 7% of them an outright 403 |
 | `tests/test_wire_attribution.py` | a wire's own copy being tagged the duplicate of a subscriber's. `deduplicator`'s hand-written slug set matched **5 of the 40** outlets the roster marks `"type": "wire"`, missing `dpa-international`, `kyodo-news`, `pti-india`, `tass-english` and 31 others through near-miss slugs, so the origin of a syndicate group was usually picked by publish time and a wire that files late lost to its own subscribers. A `tier == "wire"` branch sat above it and matched zero rows, because `tier` only ever holds independent / international / us_major. The set is derived from the roster now; the gate asserts all 40 are covered and that each one wins its own group |
+| `tests/test_roster_config.py` | the roster's size going stale in page copy. "1,016 sources" was hand-written in nine files under `frontend/app/` plus the SERVED `manifest.json`, four docs, two pipeline modules and two tests, and the three tiers were literals too (43/373/600) printed as exact counts on `/about` and `/sources`, so adding 48 international outlets would have left the site asserting 373 against a roster of 421. `frontend/config/roster.json` is generated from `data/sources.json` by `scripts/roster/emit_roster_config.py`, which runs inside `add_sources.py --apply`, and is read through `app/lib/rosterConfig.ts` exactly as `feedConfig.ts` reads `feed.json`. The gate asserts the config matches the roster, that the tiers sum to the total, that every key the reader imports exists, and that no component writes a count out again |
 | `tests/test_source_roster.py` | the roster disagreeing with itself: an outlet its own notes call state-owned or a public broadcaster left at `unrated`, which silently drops every article it publishes from the lean aggregate and the spectrum (Deutsche Welle was, while Tagesschau was rated `center`). Asserts the 286 still-unplaced rows are the axis's edge, not a backlog: **no** outlet in a country whose politics runs on this axis may be unplaced |
 | `tests/test_bias_defaults_gate.py` + `pipeline/validation/bias_defaults.py` | a bias row that was never measured being drawn as a measurement. The export **degrades, it does not block** (CEO 2026-09-21): a default-tuple row is stamped `lean_unscored`, so it leaves the cluster aggregate, its pin leaves the Deep Dive spectrum and its label reads Unscored. CI asserts the invariant that protects the reader, not a share: against the **committed** export, **no default-tuple row may be unmarked**. A marked row misleads nobody; an unmarked one is read as a measured 50 everywhere. The share and a per-axis breakdown are printed every run, and only a run that measured almost nothing (>60%) fails on the share. A share cap was tried at 10% and removed: run #375 came in at 19.1%, but all 186 of those rows were published the previous day and none of that day's 534 articles was a default, so they were the prior day's damage carried in by 6b's own 36h lookback and clearing itself |
 | `tests/test_podcast_feed.py` | a podcast cover that is missing or carries retired text, a channel title outside "Void News: <programme>", an item title that disagrees with the page |
@@ -200,7 +201,7 @@ to earn it. Do not quote a blend ratio for this engine anywhere; quote
 ## Locked decisions (CEO)
 
 Cinematic Press design · 6-axis bias model · Cloudflare stack · static export ·
-1,016 sources (3 tiers, 7-point lean) · no personalization · $0/mo LLM cost ·
+1,064 sources (3 tiers, 7-point lean) · no personalization · $0/mo LLM cost ·
 1×/day pipeline · **top-20 homepage feed** (moved from 50 on 2026-09-07 — the
 one locked decision that has ever changed) · Claude Max CLI for agent work.
 
@@ -394,7 +395,7 @@ frontend/
   public/audio/ MP3s on the CDN, committed each run
 worker/         Cloudflare Worker + D1 — the ONLY live database
 migration/      PORT_NOTES.md is authoritative
-data/           sources.json (1,016) · history/events (78) · history/scripts (78)
+data/           sources.json · history/events (78) · history/scripts (78)
 tests/          editorial stage, weekly, radio, history script + audio, gates
 docs/           CHANGELOG.md · OPEN-ITEMS.md · 45 reference docs
 ```

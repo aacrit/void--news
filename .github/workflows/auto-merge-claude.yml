@@ -110,6 +110,7 @@ jobs:
           # Brand audit gates (2026-09-21): the served product is what it says.
           python tests/test_bias_defaults_gate.py    # exported bias rows are measured, not defaults
           python tests/test_source_roster.py         # the roster does not disagree with itself about an outlet
+          python tests/test_roster_config.py         # the roster's size and tiers come from the roster, in one place
           python tests/test_bias_bins.py             # one lean ladder, two languages, rungs on their own baselines
           python tests/test_lean_prior_is_not_self_fed.py  # the lean prior is not fed by the lean it publishes
           python tests/test_wire_attribution.py      # a wire's own copy is recognised as the wire's

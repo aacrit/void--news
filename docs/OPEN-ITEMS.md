@@ -93,7 +93,8 @@ claims about its own confidence. It needs a decision, not a tweak.
 **The largest measured defect in the product.** Full write-up in
 `docs/proposals/OUTLET-BASELINE-PROGRAMME-2026-09-22.md` section 0.
 
-540 of 1,016 sources (53%) are fed by Google News search queries. Across 78,328
+540 of the 1,016 sources on the roster as measured on 2026-09-22 (53%) are fed
+by Google News search queries. Across 78,328
 archived articles:
 
 | feed type | articles | median word count | share >= 150 words |
@@ -250,7 +251,8 @@ Measured 2026-09-22, full write-up in
 `docs/audits/OUTLET-BASELINE-DATA-2026-09-22.md`.
 
 `political_lean_baseline` is a string label mapped to seven integers, so
-**636 of 1,016 outlets (63%) resolve to exactly 50.000** and AP, Reuters,
+**636 of the 1,016 outlets on the roster that day (63%) resolve to exactly
+50.000** and AP, Reuters,
 Bloomberg, DW and 346 others are numerically identical. The article layer does
 not rescue it: mean absolute `text_shift` is **1.93 points**. The published
 lean is the label, plus or minus two. That is the whole of the "everything

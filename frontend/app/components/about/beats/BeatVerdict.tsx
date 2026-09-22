@@ -7,6 +7,7 @@ import { demoSigil } from "../demoSigil";
 import { BEATS, NUMBERS } from "../../../film/data";
 import { useReducedMotion } from "../../../film/useReducedMotion";
 import { useMotion } from "../useMotion";
+import { ROSTER_SOURCES_TEXT } from "../../../lib/rosterConfig";
 
 /* ---------------------------------------------------------------------------
    Beat 4 — "Read with clarity."
@@ -28,7 +29,7 @@ const ARCHETYPES = [
    mirror the product-family palette used across About and the nav. */
 const EXPLORE = [
   { name: "Today's Feed", sub: "The front page, ranked once", href: "/", accentLight: "#9A5638", accentDark: "#D89A7C" },
-  { name: "Sources", sub: "All 1,016, on one axis", href: "/sources", accentLight: "#3F7A5A", accentDark: "#77B994" },
+  { name: "Sources", sub: `All ${ROSTER_SOURCES_TEXT}, on one axis`, href: "/sources", accentLight: "#3F7A5A", accentDark: "#77B994" },
   { name: "On Air", sub: "The daily brief, read aloud", href: "/onair", accentLight: "#2E8B7D", accentDark: "#4DAFA0" },
   { name: "Feedback", sub: "Tell us what to build or fix", href: "/ship", accentLight: "#BE4326", accentDark: "#D2593A" },
 ] as const;

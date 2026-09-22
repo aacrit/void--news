@@ -30,7 +30,7 @@ Reference for every intelligent system in the pipeline: bias, clustering, rankin
                             INGESTION
   ============================================================
 
-  [1] LOAD SOURCES                    1,016 sources, 3 tiers, 158 countries
+  [1] LOAD SOURCES                    1,064 sources, 3 tiers, 158 countries
                                       data/sources.json
   [2] PIPELINE RUN                    Create run record in Supabase
   [3] FETCH RSS                       30 articles/feed cap, parallel
