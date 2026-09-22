@@ -204,6 +204,46 @@ pushed public branch changes every downstream clone's hashes and is the CEO's
 call, not a maintenance action. Until it is taken, the tree is compliant and
 the history is not.
 
+### 22 major outlets still absent, and why each class of them is
+
+Added 48 on 2026-09-22 (roster 1,064; 216 of 238 targets covered, was 147). Full
+record in `docs/CHANGELOG.md` rev 80 and
+`data/roster/majors-added-2026-09-22.json`. The 22 that remain are not a
+backlog of the same work; they fall into classes that need different answers:
+
+- **A bot wall.** Reuters returns 401 and AP a Cloudflare 403 to any
+  non-browser client, and several majors now serve RSS only behind one. These
+  cannot be migrated by a fetcher and need a decision: accept that they are
+  scored on headlines and say so on the page, or drop them.
+- **RSS discontinued.** Some majors no longer publish a public feed at all
+  (10 of the 70 returned 404 on every candidate path, 7 returned 403).
+- **Paywalled at the feed.** A feed whose items carry a teaser and whose
+  article the scraper cannot read is a Google-News-grade 11-word item wearing
+  a direct feed's URL.
+
+Still absent: Ahram Online, Asahi Shimbun, Diario de Noticias, Die Zeit, Duvar English, El Mostrador, El Tiempo, Expresso, GhanaWeb, Il Foglio, L'Express, Le Figaro, Le Soir, Les Echos, Mediapart, Publico, Publico (Portugal), Sueddeutsche Zeitung, Svenska Dagbladet, Tages-Anzeiger, The Daily Star (Lebanon), taz.
+
+**The added rows carry a provisional baseline, not a measurement.** The
+intended side is mapped inward (L to `center-left`, C to `center`, R to
+`center-right`) and every row's notes say so. The outlet-baseline programme
+measures them; until it does, the roster understates rather than overstates,
+and `unrated` was rejected because it would have dropped all 48 out of the lean
+aggregate and off the spectrum.
+
+**Their market verdicts read `pending`, not covered.** The healthy-sides column
+in `scripts/roster/audit_majors.py` reads a tiers snapshot built from the
+41-day archive, which a row verified today cannot be in. Such a row is tier
+`N`, and a side whose only evidence is an N row says "added today, no archive
+yet". Rebuild `data/roster/tiers-<date>.json` after these outlets have
+published for a few weeks to resolve them.
+
+**Two feeds are held on a 429 from this runner's IP**, not on their merits: St.
+Louis Post-Dispatch and Rapid City Journal, both Lee Enterprises. St. Louis
+measured 50 items / 50 on-domain / 50 article-shaped once in the same session,
+which is one observation and not two, so it is recorded rather than applied
+(`data/roster/rejection-corrections-2026-09-22.json`). Re-run from an
+unthrottled IP.
+
 ### robots.txt: statuses FIXED, the UA token is a product decision
 
 The fail-open half is fixed (2026-09-22). `_check_robots_txt` returned `True`

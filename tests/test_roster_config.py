@@ -112,6 +112,45 @@ for path in sorted(APP.rglob("*.ts")) + sorted(APP.rglob("*.tsx")):
 check("no component restates the roster's counts as a literal",
       not offenders, f"{len(offenders)}: {offenders[:4]}")
 
+# ---------------------------------------------------------------------------
+# A hand-written alias may not contradict the file that created the name
+# ---------------------------------------------------------------------------
+# `add_sources.py` disambiguates a generic masthead when it writes a row: the
+# target "ABC" becomes "ABC (Spain)", "BusinessDay (SA)" becomes
+# "BusinessDay (South Africa)". `audit_majors.py` reads that mapping out of the
+# metadata files, and its hand-written ALIAS table wins over it, which is
+# correct for the equivalences a human checked.
+#
+# It is not correct when the hand entry is STALE. `"BusinessDay (SA)":
+# "BusinessDay"` pointed at a row that does not exist, so after the real row
+# was written it overrode the mapping and the audit reported an outlet it had
+# just added as absent. A stale alias beats the file that knows, so it has to
+# fail here rather than be noticed by eye.
+sys.path.insert(0, str(ROOT / "scripts" / "roster"))
+import importlib.util  # noqa: E402
+
+spec = importlib.util.spec_from_file_location(
+    "audit_majors", ROOT / "scripts" / "roster" / "audit_majors.py")
+audit = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(audit)
+
+roster_names = {r["name"] for r in rows}
+conflicts, dangling = [], []
+for target, roster_name in audit.metadata_aliases().items():
+    hand = audit.ALIAS.get(target)
+    if hand is None:
+        continue
+    if hand != roster_name and roster_name in roster_names:
+        conflicts.append(f"{target!r}: ALIAS says {hand!r}, the metadata that "
+                         f"wrote the row says {roster_name!r}")
+for target, hand in audit.ALIAS.items():
+    if hand not in roster_names:
+        dangling.append(f"{target!r} -> {hand!r}")
+check("no hand-written alias contradicts the metadata that wrote the row",
+      not conflicts, "; ".join(conflicts))
+check("every hand-written alias points at a row that exists",
+      not dangling, f"{len(dangling)}: {dangling[:4]}")
+
 if failures:
     print(f"\nFAIL  {len(failures)} roster-config check(s)")
     sys.exit(1)

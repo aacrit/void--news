@@ -26,7 +26,9 @@ from majors_target import MAJORS  # noqa: E402
 
 # target name -> exact roster name, where the two legitimately differ
 ALIAS = {
-    "Sueddeutsche Zeitung": "Süddeutsche Zeitung",
+    # "Sueddeutsche Zeitung": "Süddeutsche Zeitung" was aspirational: no such
+    # row exists. The roster name it WOULD get now lives in
+    # data/roster/majors-metadata-2026-09-22.json, which is read directly.
     "Hurriyet Daily News": "Hürriyet Daily News",
     "Frankfurter Allgemeine": "Frankfurter Allgemeine Zeitung",
     "Xinhua": "Xinhua (English)",
@@ -35,11 +37,17 @@ ALIAS = {
     "The National (UAE)": "The National",
     "La Nacion (AR)": "La Nacion",
     "El Universal (MX)": "El Universal (English)",
-    "Publico (Portugal)": "Publico",
+    # "Publico (Portugal)": "Publico" pointed at a row that does not exist.
     "The Daily Star (Bangladesh)": "The Daily Star",
-    "The Daily Star (Lebanon)": "The Daily Star (Lebanon)",
+    # An identity alias for a row that does not exist. "The Daily Star" on
+    # the roster is Bangladesh's, which is why Lebanon's is a real absence.
     "The Standard (Kenya)": "The Standard",
-    "BusinessDay (SA)": "BusinessDay",
+    # "BusinessDay (SA)": "BusinessDay" was here and pointed at a row that
+    # does not exist. Once add_sources wrote the real row as
+    # "BusinessDay (South Africa)", this hand entry overrode the correct
+    # mapping and the audit went on reporting the outlet absent. A stale alias
+    # is worse than a missing one: it wins over the file that knows.
+    # tests/test_roster_config.py fails on a contradiction now.
     "Focus Taiwan": "Focus Taiwan (CNA)",
     "Al Arabiya": "Al Arabiya English",
     "The Korea Herald": "Korea Herald",
@@ -56,7 +64,11 @@ ALIAS = {
     "Daily Mirror (Sri Lanka)": "Daily Mirror Sri Lanka",
     "The Island (Sri Lanka)": "The Island (Sri Lanka)",
     "The EastAfrican": "The East African",
-    "The Telegraph India": "The Telegraph (India)",
+    # "The Telegraph India": "The Telegraph (India)" was WORSE than dangling:
+    # the roster row is named "The Telegraph India" exactly, so the alias
+    # redirected a match that already worked to a name that does not exist,
+    # and the audit reported an outlet it already had as absent. Found by
+    # tests/test_roster_config.py the day that gate was written.
     "ABC News (Australia)": "ABC News (Australia)",
     "Novaya Gazeta Europe": "Novaya Gazeta Europe",
 
@@ -103,6 +115,37 @@ def norm(s: str) -> str:
     return re.sub(r"[^a-z0-9]", "", s.lower())
 
 
+def metadata_aliases() -> dict:
+    """target name -> roster name, read from every majors-metadata-*.json.
+
+    `add_sources.py` deliberately disambiguates a generic masthead when it
+    writes a row: the target "ABC" becomes "ABC (Spain)", "Focus" becomes
+    "Focus (Germany)", "Stuff" becomes "Stuff (NZ)". Those names are how the
+    roster avoids colliding with itself later, and they are also why the first
+    run of this audit after the 2026-09-22 additions reported 31 absent while
+    12 of the 31 had just been added under their disambiguated names. That is
+    the same false-negative class as the 20 shared mastheads above, and it
+    would have had someone add them a second time.
+
+    So the mapping is READ from the file that created it rather than
+    hand-copied into ALIAS. One file to update on the next round, not two.
+    """
+    out = {}
+    folder = os.path.join(ROOT, "data", "roster")
+    if not os.path.isdir(folder):
+        return out
+    for name in sorted(os.listdir(folder)):
+        if not (name.startswith("majors-metadata-") and name.endswith(".json")):
+            continue
+        with open(os.path.join(folder, name), encoding="utf-8") as fh:
+            doc = json.load(fh)
+        for target, row in (doc.get("outlets") or {}).items():
+            roster_name = row.get("roster_name")
+            if roster_name and roster_name != target:
+                out[target] = roster_name
+    return out
+
+
 def main() -> int:
     detail = "--detail" in sys.argv
     with open(os.path.join(ROOT, "data", "sources.json"), encoding="utf-8") as fh:
@@ -128,8 +171,14 @@ def main() -> int:
     # roster, which is a false negative that would have had me add duplicates.
     SUFFIXES = ("", " (English)", " English")
 
+    # ALIAS wins: it holds the hand-checked equivalences, including the ones
+    # that say "this target is covered by a row under another masthead". The
+    # metadata mapping only fills in names this project itself created.
+    lookup = dict(metadata_aliases())
+    lookup.update(ALIAS)
+
     def find(target: str):
-        a = ALIAS.get(target, target)
+        a = lookup.get(target, target)
         for suffix in SUFFIXES:
             hit = exact.get(norm(a + suffix))
             if hit:

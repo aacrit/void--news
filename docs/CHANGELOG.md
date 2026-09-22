@@ -442,6 +442,212 @@ on `main` before this change and still is; it is not this rev's.
 
 ---
 
+## rev 80: the majors, and the four bugs that nearly lost them (2026-09-22)
+
+The CEO asked that the major outlets across the globe be covered, the US and
+Europe especially. What that produced is worth reading for the corrections
+rather than the additions: the audit answering the question was wrong twice,
+and the tooling doing the work was wrong four times. Every one of those was
+found by an outlet the system wrongly rejected, which is the only reason any of
+them is in this entry rather than in production.
+
+### The audit was wrong twice, in opposite directions
+
+**False positives first.** Fuzzy name matching had the UK *Daily Telegraph*
+matching the Australian one, *The Observer* matching *Observer Uganda*, and
+India's *The Wire* matching *The Wire China*. Fixed with exact matching plus an
+explicit alias table, and the absent count went 28 to 101.
+
+**Then false negatives, which were the dangerous ones.** Checking each target's
+homepage HOST against the roster's found **20 targets already on the roster
+under a different masthead**: The Telegraph, Kathimerini English, Punch
+Nigeria, Vanguard Nigeria, Nation Africa, Folha de Sao Paulo (English), ABC
+Australia, RNZ News, Times of Israel, Global Times (China), VnExpress
+International, Premium Times Nigeria, IOL (South Africa), The Brazilian Report,
+Republic TV, The Japan News, The Wire (India), Balkan Insight (BIRN) and
+Handelsblatt Global. An accent-folded scan found a 21st, The Chosun Ilbo.
+
+Adding those would have created 21 duplicate outlets, each double-counting its
+own copy on the Bench, which is precisely the syndication double-count this
+roster work exists to remove. The reported figure went 101 to 91 to **70**.
+`find()` also tries the "(English)" and "English" suffixes as a RULE now, which
+is what recovered Le Monde, El Pais and eight others.
+
+The lesson is not "check twice". It is that a name audit's two failure modes
+have opposite costs. A false positive leaves a market uncovered, which is
+visible. A false negative creates a duplicate that inflates the Bench, which
+is not.
+
+### Four bugs in the tooling, each named by its victim
+
+| Bug | Found by | What it did |
+|---|---|---|
+| **CDATA** | eldiario.es, Rzeczpospolita | `<link><![CDATA[https://...]]></link>` is invisible to a regex whose class is `[^<]`, because the content opens with `<`. Both feeds were reported as having ZERO links on their own domain, which is the verdict these tools give a Google News proxy. A Spanish left major and a Polish right major were one step from being dropped over a choice of XML escaping. Re-probed: 198 and 42 own-domain links |
+| **Registrable domain** | Hankyoreh | `reg()` took a host's last two labels, so `english.hani.co.kr` became `co.kr` and the expected-domain test asked whether a link was on any `.co.kr` site. That is the same vacuity that let Botswana Guardian's hijacked `bettingbotswana.com` pass the FIRST version of this pass. Six added outlets sit on a two-label suffix |
+| **Encoding** | Hankyoreh | `requests` falls back to ISO-8859-1 when a response declares no charset, which is most RSS, so a Korean title arrived as mojibake and the check asking whether a title names its outlet was asking it of garbage |
+| **Accents** | Pagina 12 | The name check folded to `[a-z0-9]`, which DELETES an accented letter rather than mapping it: "Página" became "pgina", so the token "pagina" did not match and Pagina 12's own feed was rejected for not naming Pagina 12 |
+
+The registrable-domain fix earned itself within a minute of landing:
+BusinessDay's feed serves articles on `businessday.co.za`, not the
+`businesslive.co.za` homepage used for discovery, and the corrected check
+caught the mismatch. Left uncaught, every article that row published would have
+failed the own-domain test for the life of the row.
+
+### 48 added, at a bar that then held nothing back
+
+10+ items, 10+ links on the outlet's own registrable domain, 10+
+article-shaped, and a feed title that names the outlet. Where a feed titles
+itself with the outlet's own brand instead, the brand is declared per outlet in
+`data/roster/majors-metadata-2026-09-22.json` rather than by loosening the
+check: FAZ.NET, EWmagazine.nl, www.rp.pl, and Hankyoreh's Korean masthead. An
+alias stated in a reviewable file can be argued with; a loosened regex cannot.
+
+| | before | after |
+|---|---|---|
+| Targets on the roster | 147 | **216** of 238 |
+| Absent | 91 | **22** |
+| Roster size | 1,016 | **1,064** |
+| Google-fed rows | 475 | 473 |
+
+### The baselines are not measured, and every row says so
+
+Decided by the CEO. The intended side from `majors_target.py` is mapped
+conservatively INWARD (L to `center-left`, C to `center`, R to
+`center-right`), and each row's `credibility_notes` ends with the sentence
+naming it a provisional placement pending the outlet-baseline programme.
+
+`unrated` was the alternative and is worse, not safer: `political_lean.py`
+drops every article from an unrated outlet out of the lean aggregate and off
+the Deep Dive spectrum, so 48 new majors would have been invisible exactly
+where they were added to be seen. All-`center` was rejected too, because
+putting Le Figaro and Liberation both at 50 asserts they are identical, which
+is the flattening this whole sequence of revisions has been removing.
+
+### The audit tells the truth about a row with no history
+
+The healthy-sides column reads `data/roster/tiers-2026-09-22.json`, built from
+the 41-day archive. An outlet verified today cannot be in it, so `tier_of`
+returned "?" and the table went on printing "no right" for France AFTER Le
+Point was added with a working direct feed.
+
+Both available readings were dishonest. Saying the wings are covered claims an
+archive record that does not exist; saying nothing changed ignores 48 verified
+feeds. So a row newer than the snapshot is tier **N**, in its own column, and a
+side whose only evidence is an N row reads `pending: added today, no archive
+yet`. The next tiers rebuild resolves each N on its own evidence.
+
+### The alias table was hiding rows it was meant to find
+
+Two more instances of the same false-negative class, both found the day
+`tests/test_roster_config.py` was written, which is the argument for writing
+the gate rather than reading the table.
+
+`add_sources.py` deliberately disambiguates a generic masthead when it writes a
+row: the target "ABC" becomes "ABC (Spain)", "Focus" becomes "Focus
+(Germany)", "Stuff" becomes "Stuff (NZ)". The audit looks up the TARGET name,
+so the first run after the additions reported 31 absent while **12 of the 31
+had just been added** under those names. Fixed by reading the mapping out of
+the metadata file that created it, instead of hand-copying twelve entries into
+`ALIAS`: one file to update on the next round rather than two.
+
+Then the hand table itself, which wins over that mapping and should:
+
+- `"BusinessDay (SA)": "BusinessDay"` pointed at a row that does not exist, so
+  once the real row was written as "BusinessDay (South Africa)" the stale hand
+  entry overrode the correct mapping and the audit reported an outlet it had
+  just added as absent.
+- `"The Telegraph India": "The Telegraph (India)"` was worse than dangling. The
+  roster row is named "The Telegraph India" exactly, so the alias redirected a
+  match that already worked to a name that does not exist. That outlet had been
+  reported absent by its own alias, and would have been added a second time.
+- Three aspirational entries pointed at rows nobody has added
+  (Süddeutsche Zeitung, Publico, an identity alias for Lebanon's Daily Star).
+
+The gate now fails on an alias that contradicts the metadata and on one
+pointing at a row that does not exist. A stale alias beats the file that knows,
+which makes it worse than a missing one.
+
+Coverage after all of it: **216 of 238**, absent 22.
+
+### Five outlets a false rejection had stranded
+
+The earlier feed pass put 8 rows in `failed_domain_check`, described as failing
+a hijacked-domain test. Re-measured with the corrected tooling, **three of the
+eight were real**:
+
+- Botswana Guardian, a genuine hijack: feed on `bettingbotswana.com`, titled
+  "Betting Botswana", sample link a football betting page. This is the case the
+  check exists for.
+- The Santiago Times, not hijacked but abandoned: feed on `.com` where the
+  roster has `.cl`, newest item dated 2023.
+- The Texan: 0 items.
+
+The other five were not. MSNBC (to `ms.now`) and The War Zone (to `twz.com`)
+are REBRANDS. Novinite and St. Louis Post-Dispatch were **our own heuristics**:
+Novinite serves every article as `view_news.php?id=240715` and `looks_article`
+dropped the query string, scoring 0 of 24 real articles, while St. Louis titles
+its feed "www.stltoday.com - RSS Results of type article...". Rapid City
+Journal was a 429.
+
+So the cost of those false rejections was five outlets left on a Google News
+search feed, which carries a median of 11 words and cannot be scored on its
+text at all. The check meant to protect the roster caused five instances of the
+exact defect the roster work exists to fix. Three are migrated; the two Lee
+Enterprises papers are held on a 429 from this runner's IP, with
+`data/roster/rejection-corrections-2026-09-22.json` recording what was and was
+not observed (St. Louis measured 50/50/50 once, which is one observation, not
+two).
+
+### The roster's size now comes from the roster
+
+"1,016 sources" was hand-written in **nine files** under `frontend/app/`, plus
+the SERVED `manifest.json`, four docs, two pipeline modules and two tests. The
+three credibility tiers were literals too (43 / 373 / 600), printed as exact
+counts on `/about` and `/sources`, so adding 48 international outlets would
+have left three served pages asserting 373 against a roster holding 421. A
+breakdown that does not sum to its own total is an error a reader can check
+without leaving the page.
+
+`frontend/config/feed.json` read through `app/lib/feedConfig.ts` had already
+solved this for the feed size, and that file's header says in as many words
+"never restate these numbers as literals in a component". The prose restated
+them anyway, which is how the site said "50 stories" for two weeks after the
+feed became 20. Rule 1 calls a number that goes stale a future error wherever a
+durable formulation exists.
+
+So `frontend/config/roster.json` is generated from `data/sources.json` by
+`scripts/roster/emit_roster_config.py`, which runs INSIDE
+`add_sources.py --apply` so the two cannot be updated separately, and is read
+through `app/lib/rosterConfig.ts`. The daily brief's system instruction reads
+it too, and that one matters most: a stale number in a PROMPT is a number the
+model is told is true and may repeat to a reader, which makes it a published
+factual error rather than stale marketing copy. Its fallback is "over a
+thousand", true of every roster this product has had.
+
+Dated figures keep their date rather than being bumped. PROJECT-CHARTER's
+"Sources at launch" row and OPEN-ITEMS' measurements ("540 of 1,016 are
+Google-fed", "636 of 1,016 resolve to exactly 50") are observations on a
+1,016-row roster; rewriting a denominator restates someone else's measurement.
+
+### Gates, per Rule 1
+
+`tests/test_roster_config.py` asserts the config matches the roster, that the
+tiers sum to the total, that every key `rosterConfig.ts` imports exists (or the
+build prints `undefined` into page copy), and that no component writes a count
+out again. That last one is matched only NEAR a word that makes it a roster
+claim, because 600 is both the independent-tier count and a timeout in four
+Games components.
+
+`frontend/test/copy-facts.test.mjs` gains two widenings. Its pattern was
+`/1,?0\d\d/`, which matches 1000-1099 only and **would have silently stopped
+asserting** the day the roster passed 1,099: a gate that quietly stops
+asserting is worse than no gate, because its PASS is read as evidence. And its
+scan covered `app/` only, while `public/manifest.json` is served and carries
+the same sentence, so the count a browser installs the app with was never
+checked.
+
+---
+
 ## rev 79: the lean prior stops reading its own output (2026-09-22)
 
 `analyze_political_lean` blended the Axis 6 per-topic EMA into the outlet prior
