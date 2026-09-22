@@ -285,6 +285,27 @@ Cheap fix: key on `type == "wire"` from the roster.
 
 
 
+### The lexicon cannot be derived from the surviving corpus (2026-09-22)
+
+Tried and measured, full write-up in `docs/audits/LEAN-SIGNAL-2026-09-22.md`.
+
+`lexicon_derive.py` reached **rho +0.226 on 119 held-out outlets, scoring 100% of
+them**, against the hand-written lexicon's +0.201 on 54%. It also rediscovered **zero
+of the 318** hand-written political phrases, and its top entries were `getty images`,
+`continue`, `follow`, `photo`, `this article` and `sep`.
+
+It was fingerprinting CMS templates. Outlets on a side often share a publishing
+platform, and `full_text` is truncated to 300 chars after analysis, so the surviving
+corpus is titles, RSS summaries and leads: largely boilerplate. **Nothing was
+promoted.**
+
+**The unblock is `pipeline/analyzers/phrase_counts.py`**, which accumulates per-outlet
+phrase counts from full article bodies before the truncation. Counts, never text, on
+the grounding index's argument. **It is written and gated but NOT yet wired into
+`pipeline/main.py`**: the call belongs in the analysis step, before step 10 truncates
+`full_text`, and that is the next action here. Until it runs for a few weeks there is
+no corpus a real lexicon can come from.
+
 ### Deriving the baselines: measured 2026-09-22, and the lever is not more data
 
 Full write-up in `docs/audits/LEAN-SIGNAL-2026-09-22.md`, reproducible with

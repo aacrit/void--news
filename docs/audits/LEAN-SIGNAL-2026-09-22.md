@@ -137,3 +137,56 @@ waiting a day.
   could be wrong together.
 - That 73.6% silence is a bug. It is a coverage limit of a rule-based lexicon,
   which is the documented, deliberate design (no LLM in bias scoring, $0/day).
+
+---
+
+## Addendum, same day: the derivation was tried, and it failed usefully
+
+`pipeline/analyzers/lexicon_derive.py` implements the plan above: derive phrases by
+chi-squared from our own labelled corpus, Gentzkow-Shapiro in shape, split by OUTLET so
+the validation is not a mirror.
+
+**It reached rho +0.226 on 119 held-out outlets and scored 100% of them**, against the
+hand-written lexicon's +0.201 on 54% of the same outlets, measured by the same function
+on the same corpus. On the numbers alone it won on both axes.
+
+**The numbers alone were wrong.** The derived list rediscovers **zero of the 318**
+hand-written political phrases, at every depth and across all 1,789 candidates. Its top
+entries are:
+
+| side | top phrases |
+|---|---|
+| left | `image`, `the federal`, `sunday`, `this article`, `journalist`, `read`, `continue` |
+| right | `photo`, `follow`, `september`, `sep`, `search`, `see`, `videos`, `getty images` |
+
+Those are CMS boilerplate and page furniture. Outlets on the same side often share a
+publishing platform, so a chi-squared ranking separates the sides by **fingerprinting
+their templates**. It generalises to held-out outlets exactly insofar as those outlets
+share a CMS with a fit outlet, and it says nothing whatever about politics. A
+real-looking number measuring the wrong thing is worse than a low one, and this one
+would have passed a review that only read the rho.
+
+An earlier run was worse and more obvious: with the floors at 5 outlets, the top "left"
+phrases were `herald`, `sacramento`, `scotland`, `portland`, `beast`, `toronto`,
+`baltimore`, `monitor` and `telegram`. Mastheads and the cities their papers are based
+in. Raising the floors to 20 outlets, banning every word of every outlet's own name,
+and requiring a phrase to be used by at least 8 outlets ON EACH SIDE removed the
+geography. It could not remove the boilerplate, because the boilerplate genuinely is
+used by both sides at different rates.
+
+**The cause is the corpus, not the method.** `full_text` is truncated to 300 characters
+after analysis, so what survives is titles, RSS summaries and leads, and those are
+largely template. "Continue reading", "Photo: Getty Images", "Follow us", a date stamp.
+There is not enough argument in the surviving text to find argument in.
+
+**So no candidate is promoted, and Track B stops being an enhancement.**
+`pipeline/analyzers/phrase_counts.py` accumulates per-outlet phrase COUNTS from full
+article bodies before the truncation, storing counts and never text, on the same
+argument the grounding index won: a count is derived data, cannot be read as
+journalism, and answers the only question the derivation asks. The table carries no
+article id, so rows cannot be re-associated, and no row may exceed three words even if
+a caller hands `persist()` a sentence.
+
+`lexicon_derive.py` now prints the rediscovery count beside every rho it reports, so
+the next person cannot read the correlation without the sanity check that invalidates
+it.

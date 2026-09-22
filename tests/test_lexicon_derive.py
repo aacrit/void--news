@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+"""The derivation must not be allowed to measure itself, or to store an article.
+
+Two modules, one question each.
+
+`lexicon_derive.py` derives lean phrases from outlets the roster has placed. Deriving
+from labels and then reporting how well the result predicts labels is a mirror, not a
+measurement, and it is the same mistake as the `source_topic_lean` loop cut on
+2026-09-22. The defence is a split by OUTLET, never by article: two articles from one
+outlet share its vocabulary, so an article split would let a phrase fitted on one
+"predict" the other and the number would measure memorisation.
+
+It also needs a sanity test with no judgement in it, because the first run looked
+successful and was not. It reached rho +0.226 on held-out outlets while rediscovering
+ZERO of the 318 hand-written political phrases, and its top entries were `getty
+images`, `continue`, `follow`, `photo` and `sep`. Outlets on a side often share a
+publishing platform, so the ranking was fingerprinting CMS templates. A real-looking
+number measuring the wrong thing is worse than a low one.
+
+`phrase_counts.py` is what unblocks that, by counting phrases in full article bodies
+before the IP truncation and storing counts rather than text. Its one invariant is that
+a stored row is a phrase and not a sentence, and a promise in a comment is not an
+invariant.
+"""
+import collections
+import importlib.util
+import pathlib
+import sqlite3
+import sys
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "pipeline"))
+
+
+def load(name):
+    spec = importlib.util.spec_from_file_location(
+        name, ROOT / "pipeline" / "analyzers" / f"{name}.py")
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[name] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+ld = load("lexicon_derive")
+pc = load("phrase_counts")
+
+failures: list[str] = []
+
+
+def check(name, cond, detail=""):
+    if cond:
+        print(f"PASS  {name}")
+    else:
+        failures.append(f"{name}: {detail}" if detail else name)
+        print(f"FAIL  {name} {detail}")
+
+
+# --- the split is by outlet, and it is stable -------------------------------
+slugs = [f"outlet-{i}" for i in range(400)]
+held = {s for s in slugs if ld.hash_split(s)}
+fit = {s for s in slugs if not ld.hash_split(s)}
+check("fit and holdout outlets are disjoint", not (held & fit))
+check("every outlet lands on exactly one side", len(held) + len(fit) == len(slugs))
+check("the holdout is a usable share, not empty or everything",
+      0.1 < len(held) / len(slugs) < 0.45, f"{len(held) / len(slugs):.0%}")
+check("the split is deterministic across calls",
+      all(ld.hash_split(s) == (s in held) for s in slugs))
+check("the split does not depend on insertion order",
+      {s for s in reversed(slugs) if ld.hash_split(s)} == held)
+
+# --- a planted signal is found, and noise is not ----------------------------
+LEFT_MARK, RIGHT_MARK = "wealth tax now", "border security now"
+
+
+def corpus(mark_left, mark_right, n_outlets=30, n_articles=60):
+    """A corpus where each mark is used by BOTH sides, at different rates.
+
+    The first version of this fixture gave each mark exclusively to one side, and the
+    derivation correctly refused to return it: a phrase only ever used by one side is
+    what a masthead, a city name or a CMS template looks like, and refusing those is
+    the entire point of MIN_OUTLETS_PER_SIDE. Ideology does not look like that.
+    "illegal alien" appears in left coverage too, criticising it; what differs is the
+    RATE. So the left mark appears in 80% of left articles and 20% of right ones, and
+    the test is whether a rate difference is recovered.
+    """
+    rows = []
+    for i in range(n_outlets):
+        side_left = i % 2 == 0
+        base = 20 if side_left else 80
+        for j in range(n_articles):
+            filler = f"ordinary council coverage number {j % 7} about a meeting"
+            marks = []
+            # 3 of every 10 on the owning side, 1 of every 20 on the other. Kept well
+            # under MAX_DOC_FREQ: a first attempt used 80%/20%, which put the phrase in
+            # half of all documents and the derivation dropped it for being too common,
+            # correctly. A phrase in half the corpus is "said", not "wealth tax".
+            if (j % 10) < (3 if side_left else 0) or (side_left is False and j % 20 == 0):
+                marks.append(mark_left)
+            if (j % 10) < (3 if not side_left else 0) or (side_left and j % 20 == 0):
+                marks.append(mark_right)
+            rows.append({"slug": f"o{i}", "name": f"Outlet {i}", "lab": "x",
+                         "base": base, "text": f"{filler} {' '.join(marks)}"})
+    return rows
+
+
+found = ld.derive(corpus(LEFT_MARK, RIGHT_MARK))
+phrases = {d["phrase"]: d for d in found}
+check("a planted left phrase is recovered on the left",
+      LEFT_MARK in phrases and phrases[LEFT_MARK]["side"] == "left",
+      str(phrases.get(LEFT_MARK)))
+check("a planted right phrase is recovered on the right",
+      RIGHT_MARK in phrases and phrases[RIGHT_MARK]["side"] == "right",
+      str(phrases.get(RIGHT_MARK)))
+# The top entry is `border`, the unigram inside the planted trigram, and that is
+# right: it carries the same signal and occurs more often, so it ranks higher. The
+# assertion is that the top phrase comes FROM a planted mark, not that it is the whole
+# mark. Demanding the exact trigram would have been a test of my fixture rather than
+# of the derivation.
+planted_words = set(LEFT_MARK.split()) | set(RIGHT_MARK.split())
+check("the top phrase comes from a planted mark, not the filler",
+      found and set(found[0]["phrase"].split()) <= planted_words,
+      found[0]["phrase"] if found else "nothing derived")
+
+# The other direction, which is the one that matters: identical text on both sides
+# must yield no high-confidence phrase at all.
+# Both marks identical means both sides use both at the same rate: no signal.
+flat = ld.derive(corpus("same phrase here", "same phrase here"))
+top = flat[0]["chi2"] if flat else 0.0
+check("a corpus with no side signal yields no strong phrase", top < 10.0,
+      f"top chi2 {top}")
+
+# --- a masthead may not become a political phrase ---------------------------
+mast = corpus("", "")
+for r in mast:
+    if r["base"] == 20:
+        r["name"] = "The Sentinel"
+        r["text"] += " sentinel"
+check("an outlet's own name is excluded from its phrases",
+      "sentinel" not in {d["phrase"] for d in ld.derive(mast)})
+
+# --- a candidate carries the evidence behind it -----------------------------
+check("every candidate records its counts and its outlets per side",
+      all({"left", "right", "left_outlets", "right_outlets", "chi2"} <= set(d)
+          for d in found), str(found[0]) if found else "")
+
+# --- phrase_counts stores a phrase, never a sentence ------------------------
+SENTENCE = ("The minister said the policy would proceed despite objections from "
+            "three separate committees and a lengthy public consultation process")
+tally = pc.accumulate([{"source_id": "s1", "title": SENTENCE,
+                        "summary": "", "full_text": SENTENCE}])
+widest = max((len(p.split()) for p in tally["s1"]), default=0)
+check(f"no accumulated phrase exceeds {pc.MAX_PHRASE_WORDS} words",
+      widest <= pc.MAX_PHRASE_WORDS, f"widest {widest}")
+
+conn = sqlite3.connect(":memory:")
+# A caller handing it a sentence must be refused at the write, not trusted upstream.
+forced = {"s1": collections.Counter({SENTENCE: 3, "wealth tax": 5, "": 2})}
+pc.persist(conn, forced, now="2026-09-22")
+stored = list(conn.execute("select phrase, words, count from outlet_phrase_counts"))
+check("a sentence handed straight to persist() is refused",
+      all(w <= pc.MAX_PHRASE_WORDS for _, w, _ in stored),
+      str([p for p, w, _ in stored if w > pc.MAX_PHRASE_WORDS])[:120])
+check("an empty phrase is refused", all(p.strip() for p, _, _ in stored))
+check("the phrase that belongs is kept",
+      any(p == "wealth tax" for p, _, _ in stored), str(stored))
+
+pc.persist(conn, {"s1": collections.Counter({"wealth tax": 4})}, now="2026-09-23")
+merged = conn.execute("select count from outlet_phrase_counts where phrase='wealth tax'"
+                      ).fetchone()[0]
+check("a second run adds to the count rather than replacing it", merged == 9, merged)
+
+cols = {r[1] for r in conn.execute("pragma table_info(outlet_phrase_counts)")}
+check("the table stores no article identifier, so rows cannot be re-associated",
+      not (cols & {"article_id", "url", "text", "body", "full_text"}), str(sorted(cols)))
+
+if failures:
+    print(f"\nFAIL  {len(failures)} lexicon check(s)")
+    sys.exit(1)
+print("\nPASS  the derivation cannot measure itself, and the counts cannot hold prose")
