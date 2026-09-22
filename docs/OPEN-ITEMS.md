@@ -160,15 +160,31 @@ Measured 2026-09-22, it is **not** currently the cause of the centre pull: mean
 **0.74** once default-tuple rows are excluded. The apparent compression is
 6,256 unmeasured rows. Cut the loop before wiring in any learned offset.
 
-### Publisher prose is committed to git
+### Publisher prose in git history (the working tree is clean)
 
-`pipeline/editorial/grounding.py:31` sets `PER_ARTICLE_CHARS = 24_000`.
-`frontend/build-data/grounding/` holds 35 files, 975 records, **519,041
-characters of source article text**, longest record 10,003 chars, committed
-2026-09-21 and therefore in history permanently. The daily pipeline truncates
-`full_text` to 300 chars at `main.py:4180` for exactly this reason, so the
-throwaway state DB is protected and the public repo leaks.
+FIXED IN THE TREE 2026-09-22, still in history.
+
+`frontend/build-data/grounding/` held 35 files, 975 records, **519,041
+characters of source article text**, longest record 10,003 chars, because
+`grounding.py` stored the prose E-13 and E-14 read and the repo commits
+`build-data/`. The daily pipeline truncates `full_text` to 300 chars at
+`main.py` step 10 for exactly this reason, so the throwaway state DB was
+protected and the permanent public repo leaked.
 `docs/IP-COMPLIANCE.md` names this as its single highest-priority control.
+
+A record is now a verification index rather than prose: the set of numbers, and
+a Bloom filter of 4-word shingles that answers membership and cannot be
+inverted. All 35 committed records were converted in place by
+`scripts/migrate_grounding_index.py` with no loss of audit power (501/501
+numbers, 5,826/5,826 within-article 8-word spans still verify; 700/700 shuffled
+spans still rejected). `tests/test_grounding.py` now fails on any committed
+record that is format 1 or carries a string over 12 words.
+
+**What is left is a decision, not a task.** The prose committed on 2026-09-21
+is in git history permanently unless the history is rewritten. A rewrite of a
+pushed public branch changes every downstream clone's hashes and is the CEO's
+call, not a maintenance action. Until it is taken, the tree is compliant and
+the history is not.
 
 ### robots.txt fails open, and wire attribution matches 5 of 40
 

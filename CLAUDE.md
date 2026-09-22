@@ -92,7 +92,7 @@ impossible, not a note asking people to be careful:
 | `tests/test_history_script.py` (H-01..H-11) | a quote not in the sources, a hedge not said aloud, a speaker not named |
 | `tests/test_history_audio.py` | audio that no longer matches its corrected script |
 | `pipeline/editorial/standard.py` | the daily feed's editorial rules, run at write time and against served HTML. **E-13** a number not in the sources, **E-14** a quotation not in the sources |
-| `pipeline/editorial/grounding.py` | keeps the text a card was written from, so E-13 and E-14 can still be run after the run that wrote it |
+| `tests/test_grounding.py` | a card's evidence not outliving the run that wrote it, and **publisher prose in the committed tree**: `pipeline/editorial/grounding.py` keeps a verification INDEX of what a card was written from (the set of numbers, a Bloom filter of 4-word shingles), never the articles, so E-13 and E-14 can still be run after the run without the repo carrying the text. It used to carry the text: 519,041 characters of it, committed, against `docs/IP-COMPLIANCE.md`'s top control. The gate fails on any committed record that is format 1 or holds a string over 12 words |
 | `tests/test_history_copy.py` | an em dash in page-facing prose, a speaker that is a description with nothing behind it |
 | `tests/test_history_export_parity.py` | a correction that never reached the served JSON |
 | `tests/test_truncation_lint.py` | a query cap published as an exact count |

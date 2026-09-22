@@ -442,6 +442,127 @@ on `main` before this change and still is; it is not this rev's.
 
 ---
 
+## rev 78: the evidence, without the article (2026-09-22)
+
+**The audit's own record was the leak.** E-13 and E-14 are the two editorial
+rules that read a card against the articles it was written from, and they are
+the reason the 2026-09-20 mosque fabrication ("Kills 31" against 23 mentions of
+16 and none of 31) cannot ship again. Both need the sources to still exist.
+`articles.full_text` lives in the gitignored state database and dies with the
+Actions cache, and `deepdive/<id>.json` keeps only an RSS snippet, so
+`pipeline/editorial/grounding.py` was built to persist the evidence at export
+time.
+
+It persisted the prose. Up to 24,000 characters of each source article, into
+`frontend/build-data/grounding/`, which the repo commits, and the repo keeps
+every commit forever. Measured on the committed tree, not estimated:
+
+| | |
+|---|---|
+| Files | 35 |
+| Records | 975 |
+| Publisher article text | **519,041 characters** |
+| Longest single record | 10,003 characters |
+| First committed | 2026-09-21 (`dacfde45`) |
+
+`docs/IP-COMPLIANCE.md` names as its single highest-priority control: do not
+store `full_text` permanently, truncate it, store the derived scores and not the
+source text. The daily pipeline obeys that at `main.py` step 10, cutting
+`full_text` to 300 characters after analysis. So **the protection was pointing
+the wrong way**: the throwaway database was guarded and the permanent public
+repository was not. Nobody had counted the second retention path, because it
+was added for a correctness reason and reviewed as a correctness change.
+
+**Deleting the record was the quick fix and was refused.** An audit with no
+evidence is not an audit, and the 2026-09-21 feed is the only feed whose sources
+still exist anywhere. Rule 1 does not get traded against a compliance control;
+both have to hold.
+
+**What is stored now is a verification index.** The two rules ask exactly two
+questions, and neither needs the text:
+
+| Rule | Asks | Stored |
+|---|---|---|
+| E-13 | is this multi-digit number in any source? | the SET of numbers. A list of integers is not expressive content. |
+| E-14 | is this span of four or more words verbatim in any source? | a Bloom filter of the sources' overlapping 4-word shingles. It answers membership and **cannot be inverted**: it is a bit array, the words are gone. |
+
+The trade is a false-positive rate, and the direction is why it is acceptable. A
+Bloom filter never reports absent-when-present, so E-14 can never gain a false
+accusation from this; the dangerous direction is present-when-absent, letting a
+fabricated quote through. So the rate is 0.001 per shingle AND a quotation is
+cleared only when EVERY one of its consecutive shingles is present: for k
+shingles the error compounds to 0.001 ** k, about 1e-12 on a ten-word quote. The
+shortest span E-14 inspects is four words, which is one shingle, and carries the
+bare 0.001.
+
+Four words per shingle is not a tuning choice. It is E-14's own floor for what
+counts as a quotation, so the shortest inspectable quote maps to exactly one
+shingle and nothing E-14 looks at falls between the resolution of the index.
+
+**One rule, two backings.** `standard._evidence` takes either the source text
+(write time, when the pipeline has the articles) or a `grounding.Verifier`
+(audit time, when only the index survives), and E-13 and E-14 read the
+interface. Two rules, one per backing, would be two rules that drift;
+`tests/test_grounding.py` asserts they reach the same verdict on the same card.
+
+**A measured bug, kept in the record because the naive version of this would
+ship broken.** The first end-to-end run had E-13 perfect (16 true, 21 true, 31
+FALSE, 1200 true) and E-14 returning false on a **verbatim** quotation. Cause:
+source words carry attached punctuation (`"we`, `responsible,"`) where a
+quotation carries bare words, and E-14's old substring test tolerated that
+because a substring does not care about token edges. A word-shingle index does.
+Fixed by stripping edge punctuation at index time and at query time
+(`grounding.words_of`), and the widening that buys is stated in the docstring
+rather than hidden: a shingle can now straddle a sentence boundary, so a span
+appearing only as "... he said. The minister ..." would be cleared as though
+contiguous. The realistic failure E-14 exists to catch is a quotation that
+appears NOWHERE in the sources, which is unaffected; keeping the punctuation
+fails every genuine quotation instead, which is far worse.
+
+**The 35 committed records were converted, not deleted.**
+`scripts/migrate_grounding_index.py` builds each index from that record's own
+prose, then drops the prose. 519,041 characters of article text out, 449,069
+characters of index in. Verified before applying, against the real records
+rather than a fixture:
+
+| | |
+|---|---|
+| Numbers still verifying | 501 / 501 |
+| Within-article 8-word spans still verifying | 5,826 / 5,826 |
+| Shuffled spans still rejected | 700 / 700 |
+
+The 59 apparent losses in the first pass were a fault in the test, not the
+index: the probe concatenated all of a cluster's articles and drew windows
+across the joins, so those spans were verbatim in no single source and
+rejecting them was correct. Re-measured per article, zero losses. A Bloom filter
+cannot produce a false negative, so a real loss would have meant the folding
+disagreed, and that is worth distinguishing from a bad probe rather than
+explaining away.
+
+**The check that would have caught it.** Per Rule 1 the fix is not complete
+without one, and the defect was never in the module's API, it was in what the
+repo was carrying, so the assertion is made against the repo:
+`tests/test_grounding.py` (already in `auto-merge-claude.yml`) now fails on any
+committed record that is format 1, or that holds a string longer than 12 words
+in any field at any nesting, the Bloom blob excepted by name. It also asserts
+that no source sentence survives serialisation at all, that the index catches
+the 2026-09-20 fabrication, that an ABSENT index accuses nobody (a `Verifier` is
+truthy even when it holds no record, so presence is asked of the evidence rather
+than inferred from the key being set, or an empty index reads as "this number is
+in no source" and accuses every card in the feed), and that
+`grounding.numbers_in`/`fold` agree with `standard._numbers`/`_fold_quote`,
+which are deliberately duplicated because the export must not import the
+validator graph.
+
+**What this does not fix, and it is a decision rather than a task.** The prose
+committed on 2026-09-21 is in git history permanently unless the history is
+rewritten. Rewriting a pushed public branch changes every downstream clone's
+hashes, so it is the CEO's call. Until it is taken the working tree is compliant
+and the history is not, and `docs/OPEN-ITEMS.md` says so in those words rather
+than marking the item closed.
+
+---
+
 ## rev 77: one episode, one truth, one press (2026-09-21)
 
 **CEO: "Check consistency on the on air system. It should always be in sync
