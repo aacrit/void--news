@@ -245,7 +245,22 @@ def squash(text: str) -> str:
 def named(name: str, title: str, domain: str) -> bool:
     """Does the feed admit whose it is, in its title or its own domain?"""
     hay = squash(f"{title} {domain}")
-    return any(squash(t) in hay for t in name_tokens(name))
+    if any(squash(t) in hay for t in name_tokens(name)):
+        return True
+    # A SHORT NAME cannot clear NAME_TOKEN_MIN at all. MIA (North Macedonia)
+    # titles its feed "Mia" and publishes on mia.mk, and was held because
+    # "mia" is three characters while its only long words are "north" and
+    # "macedonia", which appear in neither. So a name word of any length is
+    # accepted when it matches the DOMAIN'S OWN FIRST LABEL: that says the
+    # outlet's name is in its own registered domain, which is strong evidence
+    # rather than a loosening. It does not accept a short word appearing
+    # anywhere in the title, which would match almost anything.
+    label = squash((domain or "").split(".")[0])
+    if len(label) >= 2:
+        words = re.findall(r"[a-z0-9]+", deaccent(name or "").lower())
+        if any(squash(w) == label for w in words):
+            return True
+    return False
 
 
 def main() -> int:

@@ -219,6 +219,34 @@ for url, why in SECTION:
     check(f"looks_article rejects {why}", vf.looks_article(url) is False, url)
 
 # ---------------------------------------------------------------------------
+# named(): the outlet's own domain counts, and a rival's does not
+# ---------------------------------------------------------------------------
+# A short name cannot clear the 4-character token floor at all. MIA (North
+# Macedonia) titles its feed "Mia" and publishes on mia.mk, and was held
+# because its only long words are "north" and "macedonia", which appear in
+# neither. A name word of any length is accepted when it equals the DOMAIN'S
+# OWN FIRST LABEL, which says the outlet's name is in its own registered
+# domain. The negative cases are what make that safe: Pravda.sk's discovered
+# feed titled "Slovak Spectator" on sme.sk must still be refused, because
+# catching a discovery that landed on a DIFFERENT outlet is what this check is
+# for.
+NAMED = [
+    ("MIA (North Macedonia)", "Mia", "mia.mk", True, "short name, own domain"),
+    ("Lincoln Journal Star", "journalstar.com - RSS Results",
+     "journalstar.com", True, "long token in the domain"),
+    ("Sports Illustrated", "SI Feed", "si.com", False,
+     "two-letter brand is NOT auto-accepted; it is declared instead"),
+    ("Pravda.sk (English)", "Slovak Spectator", "sme.sk", False,
+     "a different outlet must never match"),
+    ("The Daily Star", "Some Feed", "randomsite.com", False,
+     "nothing in common"),
+]
+for outlet, title, domain, want, why in NAMED:
+    got = vf.named(outlet, title, domain)
+    check(f"named() {'accepts' if want else 'refuses'}: {why}",
+          got is want, f"{outlet!r} / {title!r} / {domain} -> {got}")
+
+# ---------------------------------------------------------------------------
 # The declared title tokens must name outlets that exist
 # ---------------------------------------------------------------------------
 # A feed titling itself with the outlet's own domain is accepted only when the
