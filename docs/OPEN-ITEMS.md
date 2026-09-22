@@ -88,6 +88,105 @@ claims about its own confidence. It needs a decision, not a tweak.
 
 ## Known defects, not yet fixed
 
+### 62% of article volume is scored on eleven words (2026-09-22)
+
+**The largest measured defect in the product.** Full write-up in
+`docs/proposals/OUTLET-BASELINE-PROGRAMME-2026-09-22.md` section 0.
+
+540 of 1,016 sources (53%) are fed by Google News search queries. Across 78,328
+archived articles:
+
+| feed type | articles | median word count | share >= 150 words |
+|---|---|---|---|
+| direct outlet feed | 29,594 | 407 | 66.0% |
+| Google News query | 48,734 | **11** | **0.0%** |
+
+`confidence = min(1, word_count/150)` is therefore ~0.073 for half the roster:
+the text term is scaled to 7% of its budget before the lexicon is consulted.
+
+Mechanism: Google News returns opaque `news.google.com/rss/articles/CBMi...`
+tokens. `web_scraper.py:589-596` takes `canonical_url` from `response.url`
+after redirects and `main.py:1165-1173` relies on it to recover a publisher
+URL. Measured 2026-09-22 with both a browser UA and `VoidNews/1.0`: the
+redirect no longer leaves news.google.com (one hop, 582 KB of JavaScript, no
+publisher URL). Scraping falls through to the RSS summary at
+`main.py:1178-1182`, and the archive shows the result is a headline.
+
+Fix before any bias-engine or baseline work: resolving the token needs the
+private `batchexecute` RPC (signature-sensitive, breaks on Google's schedule)
+or Playwright at 2 to 3s per item, so the honest options are to migrate those
+540 sources to direct feeds where they exist, or to accept and DECLARE that
+those outlets are scored on headlines. Either way the 6 axes are currently
+measuring something different for 53% of sources than the methodology copy
+describes.
+
+**Add a check in the same commit:** assert median `word_count` by feed type in
+the state DB after a run, and fail when a source class collapses below a floor.
+Nothing today would have noticed this.
+
+### The lexicon is flat outside US politics, and it is a separate defect
+
+Confirmed independently of the above, which is what makes it clean: every
+outlet whose text signal reads near zero is a DIRECT feed holding real
+articles. N1 Info (median 350 words, 89.3% over 150) reads -0.10; Euro Weekly
+News (498, 96.1%) reads -0.09; The National (588, 96.7%) reads -0.08; ARY News
+(369, 98.6%) reads +0.11. Townhall, also direct at 675 words, reads **+7.07**.
+
+`_keyword_score` returns exactly 50 iff zero lexicon types fire, and the
+sigmoid gives 55.5 for one type, 59.9 for two, 66.6 for three. A mean absolute
+shift of 1.93 implies the lexicon fires about 0.3 of a term per article. Every
+entry in `LEFT/RIGHT_CODED_ENTITIES` is a US actor.
+
+The clamp is NOT the constraint: `_CENTER_TEXT_DELTA_MAX = 24` governs 62.6% of
+the roster at `_TEXT_AUTHORITY = 1.0`, and we use 8% of available travel.
+Widening any weight turns a valve that is already open.
+
+Non-circular route to per-market lexicons, which is what unblocks the item
+already recorded below: **Manifesto Project (MARPOR/CMP) RILE scores**,
+hand-coded left-right for ~1,000 parties across 50+ countries, plus party press
+feeds, give a per-country reference corpus of known-ideology text in the target
+language. Run Gentzkow-Shapiro chi-squared per market against it. Outlet labels
+may derive candidate features; they may never evaluate, or the result is an
+outlet classifier that scores well and measures nothing.
+
+### `source_topic_lean` is a closed loop in code (latent, not yet biting)
+
+`political_lean.py:955` blends the EMA into the prior at 0.7/0.3;
+`topic_outlet_tracker.py:88` builds that EMA from `political_lean`, the
+engine's published OUTPUT, defaulting a missing key to 50. Output becomes input.
+
+Measured 2026-09-22, it is **not** currently the cause of the centre pull: mean
+|published - label| for rated non-centre outlets is 5.45 across all rows and
+**0.74** once default-tuple rows are excluded. The apparent compression is
+6,256 unmeasured rows. Cut the loop before wiring in any learned offset.
+
+### Publisher prose is committed to git
+
+`pipeline/editorial/grounding.py:31` sets `PER_ARTICLE_CHARS = 24_000`.
+`frontend/build-data/grounding/` holds 35 files, 975 records, **519,041
+characters of source article text**, longest record 10,003 chars, committed
+2026-09-21 and therefore in history permanently. The daily pipeline truncates
+`full_text` to 300 chars at `main.py:4180` for exactly this reason, so the
+throwaway state DB is protected and the public repo leaks.
+`docs/IP-COMPLIANCE.md` names this as its single highest-priority control.
+
+### robots.txt fails open, and wire attribution matches 5 of 40
+
+`web_scraper.py:230-252` returns `True` when robots.txt is unreachable AND on
+any non-200, and checks `rp.can_fetch("*", url)` rather than our own UA token,
+so a site disallowing only named bots reads as open. A documented tradeoff at
+daily volume; a finding at harvest volume.
+
+`CANONICAL_WIRE_SLUGS` matches **5 of the 40** outlets carrying
+`"type": "wire"` (ap-news, reuters, upi, afp, ians), missing
+`dpa-international`, `kyodo-news`, `pti-india`, `anadolu-agency`,
+`tass-english` and 30 others through near-miss slugs. The
+`tier in ("wire","wire-service")` branch matches **zero** rows, because `tier`
+only ever holds `independent`/`international`/`us_major`, so it is dead code.
+Cheap fix: key on `type == "wire"` from the roster.
+
+
+
 ### The outlet baselines have no resolution, and the learning table would make it worse
 
 Measured 2026-09-22, full write-up in
