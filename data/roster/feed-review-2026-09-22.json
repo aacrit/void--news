@@ -1,0 +1,44 @@
+[
+ {
+  "name": "BOOM",
+  "was": "https://news.google.com/rss/search?q=site:boomlive.in+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
+  "now": "https://www.boomlive.in/google_feeds.xml",
+  "items": 6,
+  "own_domain_links": 8
+ },
+ {
+  "name": "MercoPress",
+  "was": "https://en.mercopress.com/rss.xml",
+  "now": "https://en.mercopress.com/rss/",
+  "items": 10,
+  "own_domain_links": 2
+ },
+ {
+  "name": "Quartz",
+  "was": "https://news.google.com/rss/search?q=site:qz.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://qz.com/rss",
+  "items": 5,
+  "own_domain_links": 6
+ },
+ {
+  "name": "TRT World",
+  "was": "https://www.trtworld.com/rss",
+  "now": "https://www.trtworld.com/feed/rss.xml",
+  "items": 100,
+  "own_domain_links": 1
+ },
+ {
+  "name": "The Daily Star",
+  "was": "https://www.thedailystar.net/rss.xml",
+  "now": "https://www.thedailystar.net/rss.xml",
+  "items": 8,
+  "own_domain_links": 9
+ },
+ {
+  "name": "The Quint",
+  "was": "https://www.thequint.com/quintlab/rss-feeds/the-quint-rss-feed.xml",
+  "now": "https://www.thequint.com/stories.rss",
+  "items": 2,
+  "own_domain_links": 3
+ }
+]

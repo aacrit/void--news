@@ -1,0 +1,254 @@
+[
+ {
+  "name": "AEI Ideas",
+  "was": "https://www.aei.org/feed/",
+  "now": "https://www.aei.org/feed/",
+  "items": 24,
+  "own_domain_links": 25
+ },
+ {
+  "name": "Asharq Al-Awsat",
+  "was": "https://news.google.com/rss/search?q=site:english.aawsat.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://english.aawsat.com/feed",
+  "items": 300,
+  "own_domain_links": 301
+ },
+ {
+  "name": "Bellingcat",
+  "was": "https://www.bellingcat.com/feed/",
+  "now": "https://www.bellingcat.com/feed",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "Center for Public Integrity",
+  "was": "https://publicintegrity.org/feed/",
+  "now": "https://publicintegrity.org/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "China Media Project",
+  "was": "https://chinamediaproject.org/feed/",
+  "now": "https://chinamediaproject.org/feed/",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "Daily Monitor",
+  "was": "https://www.monitor.co.ug/uganda/rss",
+  "now": "https://www.monitor.co.ug/rss.xml",
+  "items": 40,
+  "own_domain_links": 41
+ },
+ {
+  "name": "Deccan Herald",
+  "was": "https://www.deccanherald.com/rss",
+  "now": "https://www.deccanherald.com/stories.rss",
+  "items": 62,
+  "own_domain_links": 63
+ },
+ {
+  "name": "Dissent Magazine",
+  "was": "https://www.dissentmagazine.org/feed",
+  "now": "https://dissentmagazine.org/feed/",
+  "items": 50,
+  "own_domain_links": 52
+ },
+ {
+  "name": "Eurasianet",
+  "was": "https://eurasianet.org/feed",
+  "now": "https://eurasianet.org/rss",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "Foreign Affairs",
+  "was": "https://news.google.com/rss/search?q=site:foreignaffairs.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.foreignaffairs.com/rss.xml",
+  "items": 20,
+  "own_domain_links": 21
+ },
+ {
+  "name": "Gulf News",
+  "was": "https://news.google.com/rss/search?q=site:gulfnews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://gulfnews.com/stories.rss",
+  "items": 22,
+  "own_domain_links": 23
+ },
+ {
+  "name": "IOL (South Africa)",
+  "was": "https://news.google.com/rss/search?q=site:iol.co.za+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://iol.co.za/rss/",
+  "items": 30,
+  "own_domain_links": 32
+ },
+ {
+  "name": "Iraqi News",
+  "was": "https://news.google.com/rss/search?q=site:iraqinews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.iraqinews.com/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "Just Security",
+  "was": "https://www.justsecurity.org/feed/",
+  "now": "https://www.justsecurity.org/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "Just The News",
+  "was": "https://news.google.com/rss/search?q=site:justthenews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://justthenews.com/rss.xml",
+  "items": 20,
+  "own_domain_links": 21
+ },
+ {
+  "name": "LRT English",
+  "was": "https://www.lrt.lt/en/news-in-english/rss",
+  "now": "https://www.lrt.lt/en/news-in-english?rss",
+  "items": 100,
+  "own_domain_links": 102
+ },
+ {
+  "name": "MSNBC",
+  "was": "https://news.google.com/rss/search?q=site:msnbc.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.ms.now/feed",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "Mail & Guardian",
+  "was": "https://mg.co.za/feed/",
+  "now": "https://mg.co.za/atom/",
+  "items": 50,
+  "own_domain_links": 52
+ },
+ {
+  "name": "Middle East Monitor",
+  "was": "https://www.middleeastmonitor.com/feed/",
+  "now": "https://www.middleeastmonitor.com/comments/feed/",
+  "items": 50,
+  "own_domain_links": 51
+ },
+ {
+  "name": "NTD News",
+  "was": "https://news.google.com/rss/search?q=site:ntd.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://api.ntd.com/feed",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "Nawaat",
+  "was": "https://nawaat.org/feed/",
+  "now": "https://nawaat.org/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "Phnom Penh Post",
+  "was": "https://www.phnompenhpost.com/rss.xml",
+  "now": "https://phnompenhpost.com/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "PolitiFact",
+  "was": "https://www.politifact.com/rss/all/",
+  "now": "https://politifact.com/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "Quillette",
+  "was": "https://quillette.com/feed/",
+  "now": "https://quillette.com/blog/rss/",
+  "items": 15,
+  "own_domain_links": 17
+ },
+ {
+  "name": "Reveal (Center for Investigative Reporting)",
+  "was": "https://revealnews.org/feed/",
+  "now": "https://revealnews.org/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "The Citizen Tanzania",
+  "was": "https://www.thecitizen.co.tz/feed",
+  "now": "https://www.thecitizen.co.tz/rss.xml",
+  "items": 40,
+  "own_domain_links": 41
+ },
+ {
+  "name": "The Indian Express",
+  "was": "https://indianexpress.com/feed/",
+  "now": "https://indianexpress.com/feed/",
+  "items": 200,
+  "own_domain_links": 202
+ },
+ {
+  "name": "The Irish Times",
+  "was": "https://www.irishtimes.com/feed/",
+  "now": "https://www.irishtimes.com/arc/outboundfeeds/rss/",
+  "items": 100,
+  "own_domain_links": 101
+ },
+ {
+  "name": "The Markup",
+  "was": "https://themarkup.org/feeds/rss.xml",
+  "now": "https://themarkup.org/feeds/rss.xml",
+  "items": 20,
+  "own_domain_links": 22
+ },
+ {
+  "name": "The Marshall Project",
+  "was": "https://www.themarshallproject.org/rss/recent.rss",
+  "now": "https://www.themarshallproject.org/rss/recent",
+  "items": 50,
+  "own_domain_links": 52
+ },
+ {
+  "name": "The National Interest",
+  "was": "https://nationalinterest.org/rss-feeds/all",
+  "now": "https://nationalinterest.org/feed",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "The New Humanitarian",
+  "was": "https://www.thenewhumanitarian.org/rss.xml",
+  "now": "https://www.thenewhumanitarian.org/rss.xml",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "The Progressive",
+  "was": "https://progressive.org/latest/feed/",
+  "now": "https://progressive.org/api/rss/content.rss",
+  "items": 30,
+  "own_domain_links": 31
+ },
+ {
+  "name": "Voice of America",
+  "was": "https://news.google.com/rss/search?q=site:voanews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.voanews.com/api/",
+  "items": 20,
+  "own_domain_links": 22
+ },
+ {
+  "name": "bne IntelliNews",
+  "was": "https://news.google.com/rss/search?q=site:intellinews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.intellinews.com/feed/",
+  "items": 12,
+  "own_domain_links": 14
+ },
+ {
+  "name": "openDemocracy",
+  "was": "https://www.opendemocracy.net/en/rss.xml",
+  "now": "https://www.opendemocracy.net/rss/",
+  "items": 15,
+  "own_domain_links": 17
+ }
+]
