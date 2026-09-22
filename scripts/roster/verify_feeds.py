@@ -167,6 +167,23 @@ def channel_title(xml: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", t)).strip()
 
 
+# What a section front is called. A single-segment URL is an article unless it
+# is one of these. Written out rather than inferred, so a wrong entry shows.
+SECTION_WORDS = frozenset({
+    "news", "latest", "home", "index", "sport", "sports", "business",
+    "politics", "opinion", "world", "national", "local", "tech",
+    "technology", "science", "health", "culture", "arts", "entertainment",
+    "lifestyle", "life", "travel", "food", "money", "markets", "economy",
+    "environment", "climate", "education", "media", "features", "analysis",
+    "comment", "editorial", "letters", "obituaries", "weather", "video",
+    "videos", "photos", "podcasts", "audio", "newsletters", "archive",
+    "about", "contact", "subscribe", "advertise", "privacy", "terms",
+    "search", "tag", "tags", "topic", "topics", "category", "categories",
+    "author", "authors", "staff", "section", "sections", "feed", "rss",
+    "blog", "blogs", "stories", "articles", "all", "more", "page",
+})
+
+
 def looks_article(u: str) -> bool:
     """Is this a link to one article rather than a section front?
 
@@ -188,10 +205,16 @@ def looks_article(u: str) -> bool:
     # path: `?id=240715`, `?p=8812`, `?story=long-slug-here`.
     if re.search(r"\b(id|p|story|article|aid|nid)=[\w-]{3,}", query):
         return True
-    segs = [s for s in path.split("/") if s]
-    return (len(segs) >= 2
-            or any(len(s) >= 25 or s.count("-") >= 3 for s in segs)
-            or bool(re.search(r"\d{4,}", path)))
+    segs = [seg for seg in path.split("/") if seg]
+    if len(segs) >= 2 or any(len(seg) >= 25 or seg.count("-") >= 3
+                             for seg in segs) or re.search(r"\d{4,}", path):
+        return True
+    # A SHORT SINGLE SEGMENT is the third false-negative class this heuristic
+    # has had. `/dangers-of-ai/`, `/protectdemocracy` and
+    # `/irooj-mike-farewelled/` are articles and were all rejected, which held
+    # three healthy feeds at 9 of 10. The rule is not relaxed until they pass;
+    # instead a section front is named for what it is, a navigational word.
+    return bool(segs) and segs[-1].lower() not in SECTION_WORDS
 
 
 def name_tokens(name: str) -> list[str]:

@@ -48,7 +48,7 @@ overwrite an existing record for the same date and label; `--label=<name>`
 writes beside it and `--force` replaces it.
 """
 from __future__ import annotations
-import json, sys, os, datetime
+import json, re, sys, os, datetime
 
 MIN_ITEMS = 10          # a feed of three stories is not a daily feed
 MIN_ON_EXPECTED = 10    # links must be on the outlet's OWN registered domain
@@ -61,6 +61,48 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 DATA = os.environ.get("VOID_ROSTER_DATA") or os.path.join(ROOT, "data")
 SOURCES = os.path.join(DATA, "sources.json")
 OUTDIR = os.path.join(DATA, "roster")
+
+
+def title_tokens() -> dict:
+    """roster id -> brands its own feed title may use in place of its masthead.
+
+    Some feeds title themselves with the outlet's domain rather than its
+    masthead: stltoday.com for the St. Louis Post-Dispatch, "SI Feed" for
+    Sports Illustrated, "Alaska Dispatch News" for the Anchorage Daily News
+    (its former name). The title check would reject all of those, and it must
+    not be loosened to let them through, because a guessed-but-live domain
+    passes a domain test by construction and the one feed this whole pass
+    exists to catch (a hijacked bettingbotswana.com) cleared a bar with no
+    title test at all.
+
+    So the equivalence is declared per outlet in
+    data/roster/feed-title-tokens.json, which also records the ones NOT
+    declared and why: a platform feed carrying several papers, a feed that is
+    a different outlet, a section feed.
+    """
+    path = os.path.join(OUTDIR, "feed-title-tokens.json")
+    try:
+        with open(path, encoding="utf-8") as fh:
+            return json.load(fh).get("tokens") or {}
+    except Exception:
+        return {}
+
+
+_TOKENS = None
+
+
+def named_ok(v: dict) -> bool:
+    global _TOKENS
+    if v.get("named"):
+        return True
+    if _TOKENS is None:
+        _TOKENS = title_tokens()
+    toks = _TOKENS.get(v.get("id") or "") or []
+    if not toks:
+        return False
+    hay = re.sub(r"[^a-z0-9]", "",
+                 f"{v.get('title') or ''} {v.get('expected_domain') or ''}".lower())
+    return any(re.sub(r"[^a-z0-9]", "", t.lower()) in hay for t in toks)
 
 
 def why_not(v: dict) -> str | None:
@@ -81,7 +123,7 @@ def why_not(v: dict) -> str | None:
     if v.get("articles", 0) < MIN_ARTICLES:
         return (f"{v.get('articles', 0)} of {v.get('on_expected', 0)} "
                 f"on-domain links look like articles")
-    if not v.get("named"):
+    if not named_ok(v):
         return f"channel title does not name the outlet: {v.get('title', '')!r}"
     return None
 
@@ -113,6 +155,10 @@ def main() -> int:
     by_id = {s["id"]: s for s in srcs}
 
     applied, review, absent = [], [], []
+    # feed url -> the id that holds it, seeded with every row we are NOT
+    # changing so a migration cannot collide with an existing assignment.
+    feed_owner = {row["rss_url"]: row["id"] for row in srcs
+                  if row.get("rss_url") and "news.google.com" not in row["rss_url"]}
     for name, v in sorted(recs.items()):
         if "found" in v and "status" not in v:
             print(f"    [stop] {name}: this looks like discover_feeds output. "
@@ -134,10 +180,25 @@ def main() -> int:
                             "title": (v.get("title") or "")[:80],
                             "sample": v.get("sample")}}
         reason = why_not(v)
+        # A feed may not be assigned to two rows. Caught by
+        # tests/test_roster_config.py on this pass's own output: The American
+        # Spectator and The American Spectator Blog both discovered
+        # spectator.org/feed/, so the migration would have drawn every article
+        # the magazine published twice on the Bench as two independent
+        # sources. That is the double-count this whole roster effort exists to
+        # remove, and the tool was able to create it. Checked against rows we
+        # are not changing AND against earlier decisions in this same run.
+        if not reason:
+            owner = feed_owner.get(v["feed"])
+            if owner and owner != row0["id"]:
+                reason = (f"feed already belongs to {owner!r}: assigning it "
+                          f"here would draw the same article twice on the "
+                          f"Bench as two independent sources")
         if reason:
             row["why_held"] = reason
             review.append(row)
         else:
+            feed_owner[v["feed"]] = row0["id"]
             applied.append(row)
 
     print(f"verified records: {len(recs)}")

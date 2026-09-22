@@ -167,6 +167,88 @@ check("nothing was written when the input was refused",
       before == snapshot(tmp))
 shutil.rmtree(tmp)
 
+# ---------------------------------------------------------------------------
+# looks_article, which has now been wrong three times
+# ---------------------------------------------------------------------------
+# Every one of these was found by a healthy feed it rejected, not by review:
+#
+#   the query string was dropped   Novinite serves every article as
+#                                  `view_news.php?id=240715`, so `view_news.php`
+#                                  remained and looked like a section front.
+#                                  0 of 24 real articles accepted, and
+#                                  Bulgaria's news agency stayed on a Google
+#                                  feed with an 11-word median.
+#   a short single segment         `/dangers-of-ai/`, `/protectdemocracy` and
+#                                  `/irooj-mike-farewelled/` are articles and
+#                                  failed all four of the old rule's tests,
+#                                  holding three healthy feeds at 9 of 10.
+#
+# A heuristic wrong three times needs its cases written down, in BOTH
+# directions: the point is not that more URLs pass, it is that section fronts
+# still do not.
+sys.path.insert(0, str(ROOT / "scripts" / "roster"))
+import importlib.util  # noqa: E402
+
+_spec = importlib.util.spec_from_file_location(
+    "verify_feeds", ROOT / "scripts" / "roster" / "verify_feeds.py")
+vf = importlib.util.module_from_spec(_spec)
+sys.modules["verify_feeds"] = vf
+_spec.loader.exec_module(vf)
+
+ARTICLE = [
+    ("https://spectator.org/dangers-of-ai/", "short hyphenated slug"),
+    ("https://sojo.net/protectdemocracy", "single word slug"),
+    ("https://marshallislandsjournal.com/irooj-mike-farewelled/", "21-char slug"),
+    ("https://www.novinite.com/view_news.php?id=240715", "id in the query"),
+    ("https://www.stltoday.com/article_088787ec-8e42.html", "id in the filename"),
+    ("https://example.com/news/2026/09/a-real-story", "dated path"),
+    ("https://example.com/a-headline-long-enough-to-be-a-slug", "long slug"),
+]
+SECTION = [
+    ("https://example.com/", "the homepage"),
+    ("https://example.com/index.html", "an index page"),
+    ("https://example.com/news", "a section front"),
+    ("https://example.com/politics/", "a section front with a slash"),
+    ("https://example.com/opinion", "a section front"),
+    ("https://example.com/tag", "a tag index"),
+    ("https://example.com/author", "an author index"),
+]
+for url, why in ARTICLE:
+    check(f"looks_article accepts {why}", vf.looks_article(url) is True, url)
+for url, why in SECTION:
+    check(f"looks_article rejects {why}", vf.looks_article(url) is False, url)
+
+# ---------------------------------------------------------------------------
+# The declared title tokens must name outlets that exist
+# ---------------------------------------------------------------------------
+# A feed titling itself with the outlet's own domain is accepted only when the
+# equivalence is declared per outlet, because the title check is what caught a
+# discovery pointing at a DIFFERENT outlet (Pravda.sk's feed resolved to
+# sme.sk, titled "Slovak Spectator"). An entry keyed on an id nobody carries is
+# a silent no-op, and six of the twelve ids in the first draft of that file
+# were wrong.
+TOKENS = ROOT / "data" / "roster" / "feed-title-tokens.json"
+if TOKENS.exists():
+    doc = json.loads(TOKENS.read_text(encoding="utf-8"))
+    roster_ids = {r["id"] for r in json.loads(
+        (ROOT / "data" / "sources.json").read_text(encoding="utf-8"))}
+    declared = doc.get("tokens") or {}
+    holds = doc.get("_not_listed_and_why") or {}
+    unknown = sorted(set(declared) - roster_ids)
+    check("every declared title token names a roster row", not unknown,
+          f"{len(unknown)}: {unknown[:4]}")
+    unknown_holds = sorted(set(holds) - roster_ids)
+    check("every documented hold names a roster row", not unknown_holds,
+          f"{len(unknown_holds)}: {unknown_holds[:4]}")
+    check("every declared token is a non-empty list",
+          all(isinstance(v, list) and v and all(isinstance(t, str) and t.strip()
+                                                for t in v)
+              for v in declared.values()),
+          str({k: v for k, v in declared.items() if not v})[:120])
+    check("the file says why each undeclared outlet was NOT declared",
+          all(isinstance(v, str) and len(v) > 40 for v in holds.values()),
+          "a hold with no reason teaches nobody anything")
+
 if failures:
     print(f"\nFAIL  {len(failures)} apply-feeds check(s)")
     sys.exit(1)
