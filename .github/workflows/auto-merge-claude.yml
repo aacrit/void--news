@@ -113,6 +113,7 @@ jobs:
           python tests/test_bias_bins.py             # one lean ladder, two languages, rungs on their own baselines
           python tests/test_lean_prior_is_not_self_fed.py  # the lean prior is not fed by the lean it publishes
           python tests/test_wire_attribution.py      # a wire's own copy is recognised as the wire's
+          python tests/test_robots_compliance.py     # a refusal on robots.txt is read as a refusal
           python tests/test_nlp_languages.py         # no silent fallback to an English parser for non-English text
           python tests/test_podcast_feed.py          # covers exist and carry no stale text; titles agree
           python tests/test_prompt_grounding.py      # every production prompt carries the grounding line

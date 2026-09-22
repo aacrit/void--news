@@ -203,12 +203,36 @@ pushed public branch changes every downstream clone's hashes and is the CEO's
 call, not a maintenance action. Until it is taken, the tree is compliant and
 the history is not.
 
-### robots.txt fails open, and wire attribution matches 5 of 40
+### robots.txt: statuses FIXED, the UA token is a product decision
 
-`web_scraper.py:230-252` returns `True` when robots.txt is unreachable AND on
-any non-200, and checks `rp.can_fetch("*", url)` rather than our own UA token,
-so a site disallowing only named bots reads as open. A documented tradeoff at
-daily volume; a finding at harvest volume.
+The fail-open half is fixed (2026-09-22). `_check_robots_txt` returned `True`
+for every non-200 and every network error, so a 403 on robots.txt, a 503 and a
+429 all read as consent, on the one file whose job is to say no. The error ran
+one way: it never refused a site that had allowed us, it only scraped sites
+whose answer we had failed to obtain. Now split per RFC 9309 section 2.3.1:
+404/410 and other 2xx allow (no restrictions exist), 401/403 deny
+("unauthorized", access completely disallowed), 429/5xx and network errors deny
+for the run. `robots_verdict_for_status` is a pure function so
+`tests/test_robots_compliance.py` can assert it with no network, which is the
+point: the old behaviour was untestable except against real sites, so it was
+never tested.
+
+**The cost was measured, not assumed.** Sampled 70 random roster domains on
+2026-09-22: 60 served robots.txt (200), 5 returned 403, 1 returned 429, and 4
+failed at the transport (2 read timeouts, 1 proxy error, 1 TLS error, at least
+two of them this container's network rather than the site's). So the split
+denies 14.3% of domains, of which 7% are an outright refusal we should always
+have honoured. Because most of the rest is noise rather than a decision, a
+transient failure now gets ONE retry before it denies; a 401, 403 or 404 is a
+real answer and is not retried.
+
+**Still open, and it is a product decision, not a defect.** We send a browser
+User-Agent, so we present no product token and the applicable group is `*`.
+That is the correct robots reading for an unnamed agent, and it is also why a
+site disallowing only named crawlers reads as open to us. Declaring our own
+token would fix the reading and would also change what a great many sites serve
+us, which is a CEO call. Wire attribution, the other half of this entry, was
+fixed the same day: see `tests/test_wire_attribution.py`.
 
 `CANONICAL_WIRE_SLUGS` matches **5 of the 40** outlets carrying
 `"type": "wire"` (ap-news, reuters, upi, afp, ians), missing
