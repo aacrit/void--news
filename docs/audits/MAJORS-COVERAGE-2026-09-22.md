@@ -406,3 +406,104 @@ days of the committed archive.
 | C | Stuff | ABSENT | - |
 | R | The Australian | HEADLINES | center-right |
 
+
+---
+
+# Addendum: do we need translation for Europe? (2026-09-22)
+
+## First, a correction to the table above
+
+The audit called ten majors ABSENT that are on the roster as English editions.
+The alias table did not know about the `(English)` suffix. Corrected:
+
+| Market | Side | Target | Actually on roster as | Status |
+|---|---|---|---|---|
+| France | L | Le Monde | Le Monde (English) | **OK** |
+| Spain | L | El Pais | El Pais (English) | **OK** |
+| Germany | R | Die Welt | Die Welt (English) | SPARSE |
+| Italy | R | Il Giornale | Il Giornale (English) | SPARSE |
+| Nordics | L | Politiken | Politiken (English) | SPARSE |
+| Switzerland/Austria | R | Neue Zurcher Zeitung | Neue Zurcher Zeitung (English) | SPARSE |
+| Switzerland/Austria | L | Der Standard | Der Standard (English) | BROKEN |
+| Southern Europe | R | Kathimerini | Kathimerini English | HEADLINES |
+| Turkey | L | Bianet | Bianet (English) | SPARSE |
+| Pakistan etc | C | Geo News | Geo News (English) | tier B |
+
+**So the true absent count is 91, not 101.** France has two healthy sources, not
+one.
+
+## Do English editions actually publish? Mostly no, but the head is strong.
+
+| population | rows | publishing | median observations | mean days live |
+|---|---|---|---|---|
+| named as an English edition | 52 | 30 (57.7%) | **1** | 8.9 / 41 |
+| everything else | 964 | 616 (63.9%) | 5 | 10.3 / 41 |
+
+The median English edition is nearly silent. The head is not:
+
+| Outlet | Observations | Days live |
+|---|---|---|
+| Le Monde (English) | 221 | 40 / 41 |
+| Al Arabiya English | 219 | 39 / 41 |
+| Tempo (English) | 152 | 40 / 41 |
+| El Pais (English) | 76 | 31 / 41 |
+| ANSA (English) | 57 | 21 / 41 |
+
+**22 of 52 English editions published nothing in 41 days**, including Corriere
+della Sera, Helsingin Sanomat, Aftenposten, Der Standard, Folha de S.Paulo,
+El Universal and LRT. Every one of those sits in tier D, so this is the broken
+feed problem again, not a language problem, and feed repair may recover them.
+
+## Does English availability skew politically? Measured: NO.
+
+European majors, presence on the roster by intended side:
+
+| Side | On roster | Absent | % present |
+|---|---|---|---|
+| Left | 8 | 21 | **28%** |
+| Centre / wire | 13 | 13 | **50%** |
+| Right | 7 | 18 | **28%** |
+
+Left and right are equally absent. The skew is toward centre and wire desks,
+which is why the earlier audit found Europe "centre only". So English-only
+coverage of Europe carries an INSTITUTIONAL-VOICE tilt, not a left or right
+one. That is a real bias but a different and more tractable one.
+
+## The recommendation: do not translate yet
+
+In order, cheapest first:
+
+1. **Repair the 22 dead English editions.** Already on the roster, already
+   placed, no vetting needed. Corriere della Sera, Helsingin Sanomat and
+   Aftenposten are exactly the European wing coverage that is missing.
+2. **Add the European majors that DO run an English edition** and are simply
+   not on the roster.
+3. **Only then translation**, for the outlets that genuinely have no English
+   edition: Le Figaro, Liberation, Mediapart, Les Echos, Sueddeutsche Zeitung,
+   Die Zeit, taz, Frankfurter Allgemeine, El Mundo, ABC, De Volkskrant,
+   De Telegraaf, Dagens Nyheter, Svenska Dagbladet, Gazeta Wyborcza,
+   Jyllands-Posten. That list is the only way to get real wing coverage in most
+   European markets, and it is evenly split left and right.
+
+## If we do translate, the danger is not cost, it is validity
+
+A local model on the CEO's GPU makes machine translation free. The problem is
+what happens next. `_keyword_score` is calibrated on native English partisan
+vocabulary, and every coded entity in `LEFT/RIGHT_CODED_ENTITIES` is a US
+actor. Machine translation normalises register: a charged French phrase can
+arrive in English as neutral wire prose, and a neutral one can arrive charged.
+Scoring translated text with that lexicon would manufacture noise and present
+it as measurement.
+
+What survives translation is STRUCTURE, not vocabulary: who is quoted and in
+what order, attribution verb choice, agent deletion in passives,
+nominalisation rate, where the opposing view first appears. So translation is
+only worth doing AFTER the structural features exist, and the two projects are
+therefore the same project in the right order.
+
+## Also found
+
+Two duplicate roster rows, same name twice with different ids:
+**The Conversation** and **Ukrainska Pravda (English)**. The latter double
+counts in every cluster it appears in, which inflates its market's apparent
+coverage.
