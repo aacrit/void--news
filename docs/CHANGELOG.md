@@ -506,7 +506,7 @@ alias stated in a reviewable file can be argued with; a loosened regex cannot.
 |---|---|---|
 | Targets on the roster | 147 | **216** of 238 |
 | Absent | 91 | **22** |
-| Roster size | 1,016 | **1,064** |
+| Roster size | 1,016 | **1,061** |
 | Google-fed rows | 475 | 473 |
 
 ### The baselines are not measured, and every row says so
@@ -597,6 +597,35 @@ Enterprises papers are held on a 429 from this runner's IP, with
 `data/roster/rejection-corrections-2026-09-22.json` recording what was and was
 not observed (St. Louis measured 50/50/50 once, which is one observation, not
 two).
+
+### Four rows were one outlet twice, and a gate found three of them
+
+Written as an afterthought to `tests/test_roster_config.py`: no two rows may
+share a name, an id, or a feed url. It failed on the spot.
+
+**Two rows shared a name.** "The Conversation" was two real editions, US
+(`the-conversation`) and global (`the-conversation-global`), each with its own
+working feed. Both belong on the roster; two rows a reader cannot tell apart do
+not, because on the Bench and in the source picker they collapse into one
+outlet and a story carried by both is drawn as one source or two depending on
+which row a lookup by name happens to hit. Renamed, both kept.
+
+"Ukrainska Pravda (English)" was one outlet twice, on the SAME url. The
+duplicate was the worse row on both axes that matter: Google-fed, so
+unscoreable on its text at a median of 11 words, and `unrated`, so dropped from
+the lean aggregate and off the spectrum. Its articles were being counted as a
+second, independent, unmeasurable source for the same reporting. Removed.
+
+**Two more shared a FEED**, which is the check nobody had thought to write:
+`arkansas-democrat-gazette` / `little-rock-democrat-gazette` and
+`the-state-newspaper` / `columbia-state`. Each pair is one paper entered twice
+under two ids pointing at one Google News feed, so every article it published
+was drawn twice on the Bench as two independent sources. Merged, with the
+removed row's notes folded into the survivor.
+
+Roster 1,064 to **1,061**, and four phantom sources off the Bench. The count
+moving twice in one session is itself the argument for the section above: every
+literal would have had to be edited twice.
 
 ### The roster's size now comes from the roster
 

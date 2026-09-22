@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -77,6 +78,18 @@ def main() -> int:
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(live, indent=2) + "\n", encoding="utf-8")
+    # The SERVED manifest carries the same sentence and is not a component, so
+    # nothing imports the config into it. It is mechanical JSON, so it is
+    # rewritten here rather than left to be remembered: the count a browser
+    # installs the app with was never checked at all until 2026-09-22.
+    man = ROOT / "frontend" / "public" / "manifest.json"
+    if man.exists():
+        text = man.read_text(encoding="utf-8")
+        fixed = re.sub(r"\b\d{1,2},?\d{3}(?= sources\b)",
+                       f"{live['sources']:,}", text)
+        if fixed != text:
+            man.write_text(fixed, encoding="utf-8")
+            print(f"updated {man.relative_to(ROOT)}")
     print(f"wrote {OUT.relative_to(ROOT)}: {live['sources']} sources, "
           f"{live['countries']} countries")
     return 0

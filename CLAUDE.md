@@ -1,6 +1,6 @@
 # Void News
 
-News aggregation with 6-axis rule-based NLP bias analysis. 1,064 sources,
+News aggregation with 6-axis rule-based NLP bias analysis. 1,061 sources,
 158 countries. **Live: https://news.voidvision.org** (Cloudflare Pages).
 
 **This file is the current state and the rules in force.** The record of how it
@@ -201,7 +201,7 @@ to earn it. Do not quote a blend ratio for this engine anywhere; quote
 ## Locked decisions (CEO)
 
 Cinematic Press design · 6-axis bias model · Cloudflare stack · static export ·
-1,064 sources (3 tiers, 7-point lean) · no personalization · $0/mo LLM cost ·
+1,061 sources (3 tiers, 7-point lean) · no personalization · $0/mo LLM cost ·
 1×/day pipeline · **top-20 homepage feed** (moved from 50 on 2026-09-07 — the
 one locked decision that has ever changed) · Claude Max CLI for agent work.
 

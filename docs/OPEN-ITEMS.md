@@ -206,7 +206,7 @@ the history is not.
 
 ### 22 major outlets still absent, and why each class of them is
 
-Added 48 on 2026-09-22 (roster 1,064; 216 of 238 targets covered, was 147). Full
+Added 48 on 2026-09-22 (roster 1,061; 216 of 238 targets covered, was 147). Full
 record in `docs/CHANGELOG.md` rev 80 and
 `data/roster/majors-added-2026-09-22.json`. The 22 that remain are not a
 backlog of the same work; they fall into classes that need different answers:

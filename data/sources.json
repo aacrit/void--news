@@ -3566,14 +3566,14 @@
   },
   {
     "id": "the-conversation-global",
-    "name": "The Conversation",
+    "name": "The Conversation (Global)",
     "url": "https://theconversation.com/global",
     "rss_url": "https://theconversation.com/global/articles.atom",
     "tier": "international",
     "country": "AU",
     "type": "nonprofit",
     "political_lean_baseline": "center",
-    "credibility_notes": "Global academic-to-public analysis. Founded 2011."
+    "credibility_notes": "Global academic-to-public analysis. Founded 2011. Renamed 2026-09-22 to distinguish it from the US edition (`the-conversation`), which carried the same name: two rows a reader cannot tell apart collapse into one outlet on the Bench."
   },
   {
     "id": "ieee-spectrum",
@@ -5548,7 +5548,7 @@
     "country": "US",
     "type": "broadsheet",
     "political_lean_baseline": "center-right",
-    "credibility_notes": "Arkansas's largest newspaper, independently owned by WEHCO Media. Conservative editorial page."
+    "credibility_notes": "Arkansas's largest newspaper, independently owned by WEHCO Media. Conservative editorial page. Arkansas capital and largest newspaper. WEHCO Media. Strong Southern politics coverage. (Merged 2026-09-22 from a duplicate row `little-rock-democrat-gazette` that shared this feed, so the paper was drawn twice on the Bench.)"
   },
   {
     "id": "new-haven-register",
@@ -6146,17 +6146,6 @@
     "type": "broadsheet",
     "political_lean_baseline": "unrated",
     "credibility_notes": "English-language newspaper covering Estonia, Latvia, and Lithuania. Independent. Covers NATO Baltic security."
-  },
-  {
-    "id": "pravda-ukraine",
-    "name": "Ukrainska Pravda (English)",
-    "url": "https://www.pravda.com.ua/eng/",
-    "rss_url": "https://news.google.com/rss/search?q=site:pravda.com.ua+when:24h&ceid=US:en&hl=en-US&gl=US",
-    "tier": "international",
-    "country": "UA",
-    "type": "digital",
-    "political_lean_baseline": "unrated",
-    "credibility_notes": "Major Ukrainian news site, founded 2000. Independent. Key source for Ukraine conflict coverage."
   },
   {
     "id": "cyprus-mail",
@@ -7555,7 +7544,7 @@
     "country": "US",
     "type": "broadsheet",
     "political_lean_baseline": "center",
-    "credibility_notes": "South Carolina's capital daily. McClatchy. Covers state politics, military, and early primary state."
+    "credibility_notes": "South Carolina's capital daily. McClatchy. Covers state politics, military, and early primary state. South Carolina capital newspaper. McClatchy. Covers Deep South politics. Founded 1891. (Merged 2026-09-22 from a duplicate row `columbia-state` that shared this feed, so the paper was drawn twice on the Bench.)"
   },
   {
     "id": "reno-gazette-journal",
@@ -8736,17 +8725,6 @@
     "type": "broadsheet",
     "political_lean_baseline": "center",
     "credibility_notes": "Southeastern North Carolina newspaper. Swing-state coverage. Gannett-owned."
-  },
-  {
-    "id": "little-rock-democrat-gazette",
-    "name": "Arkansas Democrat-Gazette (Little Rock)",
-    "url": "https://www.arkansasonline.com/news/",
-    "rss_url": "https://news.google.com/rss/search?q=site:arkansasonline.com+when:24h&ceid=US:en&hl=en-US&gl=US",
-    "tier": "independent",
-    "country": "US",
-    "type": "broadsheet",
-    "political_lean_baseline": "center-right",
-    "credibility_notes": "Arkansas capital and largest newspaper. WEHCO Media. Strong Southern politics coverage."
   },
   {
     "id": "copenhagen-post",
@@ -10153,17 +10131,6 @@
     "type": "broadsheet",
     "political_lean_baseline": "center",
     "credibility_notes": "Southern New Mexico newspaper covering border region. Gannett-owned."
-  },
-  {
-    "id": "columbia-state",
-    "name": "The State (Columbia SC)",
-    "url": "https://www.thestate.com/news/",
-    "rss_url": "https://news.google.com/rss/search?q=site:thestate.com+when:24h&ceid=US:en&hl=en-US&gl=US",
-    "tier": "independent",
-    "country": "US",
-    "type": "broadsheet",
-    "political_lean_baseline": "center",
-    "credibility_notes": "South Carolina capital newspaper. McClatchy. Covers Deep South politics. Founded 1891."
   },
   {
     "id": "maine-press-herald",

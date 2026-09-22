@@ -113,6 +113,27 @@ check("no component restates the roster's counts as a literal",
       not offenders, f"{len(offenders)}: {offenders[:4]}")
 
 # ---------------------------------------------------------------------------
+# One row per outlet, one name per row
+# ---------------------------------------------------------------------------
+# Two rows shared a name until 2026-09-22. "The Conversation" was two real
+# editions (US and global) that a reader could not tell apart, so on the Bench
+# and in the source picker they collapsed into one outlet. "Ukrainska Pravda
+# (English)" was one outlet twice, on the SAME url, and the duplicate was the
+# worse row on both axes that matter: Google-fed, so unscoreable on its text at
+# a median of 11 words, and `unrated`, so dropped from the lean aggregate. Its
+# articles were being counted as a second independent source for the same
+# reporting, which is exactly the double-count the Bench exists to avoid.
+by_name, by_id, by_feed = {}, {}, {}
+for r in rows:
+    by_name.setdefault(r["name"], []).append(r["id"])
+    by_id.setdefault(r["id"], []).append(r["name"])
+    by_feed.setdefault(r["rss_url"], []).append(r["id"])
+for label, index in (("name", by_name), ("id", by_id), ("feed url", by_feed)):
+    shared = {k: v for k, v in index.items() if len(v) > 1}
+    check(f"no two rows share a {label}", not shared,
+          f"{len(shared)}: {list(shared.items())[:3]}")
+
+# ---------------------------------------------------------------------------
 # A hand-written alias may not contradict the file that created the name
 # ---------------------------------------------------------------------------
 # `add_sources.py` disambiguates a generic masthead when it writes a row: the

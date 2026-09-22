@@ -112,7 +112,7 @@ Narrative-engineer pass: 25 YAML event files rewritten Show-Don't-Tell + Arrive 
 |---|---|---|---|
 | `feed-intelligence` | RSS health, collection, deduplication, cluster summarization | Yes | Pipeline development |
 | `nlp-engineer` | spaCy/NLTK — bias scoring algorithms, NER, sentiment | Yes | Bias engine development |
-| `source-curator` | Source vetting, RSS/scrape config, 1,064-source list | Yes | Source list changes |
+| `source-curator` | Source vetting, RSS/scrape config, 1,061-source list | Yes | Source list changes |
 | `linguist` | Media bias vocabulary research, lexicon expansion across 5 analyzers | Yes | After bias calibration, lexicon gaps |
 | `media-curator` | Free-API image sourcing for weekly cover + history (Wikimedia, Unsplash, Pexels, Pixabay) | Yes | Weekly digest, history media |
 
@@ -248,7 +248,7 @@ Narrative-engineer pass: 25 YAML event files rewritten Show-Don't-Tell + Arrive 
 - 6-axis bias scoring model
 - Supabase as single data layer
 - Static export (Next.js → GitHub Pages)
-- 1,064-source curated list (3 tiers: 43 us_major, 421 international, 600 independent); 7-point lean spectrum; 158 countries
+- 1,061-source curated list (3 tiers: 43 us_major, 420 international, 598 independent); 7-point lean spectrum; 158 countries
 - ~$30/mo LLM cost target (Sonnet 4.6 primary, Gemini fallback); broken intentionally from prior $0 ceiling for editorial quality
 - 1x/day pipeline cadence; top-50 homepage feed
 - Claude Max CLI for all agent work
