@@ -285,6 +285,45 @@ Cheap fix: key on `type == "wire"` from the roster.
 
 
 
+### Deriving the baselines: measured 2026-09-22, and the lever is not more data
+
+Full write-up in `docs/audits/LEAN-SIGNAL-2026-09-22.md`, reproducible with
+`scripts/roster/measure_lean_signal.py` against a state snapshot.
+
+**The signal is real.** Spearman rho between an outlet's mean TEXT-ONLY score
+(`rationale.lean.keyword_score`, which never sees the outlet, so this is not
+the cut loop reopened) and its label's baseline is **+0.479 across 129
+outlets**, +0.515 US, **+0.428 non-US**. This project's own literature review
+put the realistic ceiling at 0.5 to 0.7 over 50+ articles per outlet. We are
+there on 8.
+
+It also qualifies the entry above about the lexicon being flat outside US
+politics: it fires LESS often there and is still directionally right.
+
+**Two numbers say why it cannot be published as a baseline yet.** The lexicon
+fires on **26.4%** of the articles the scorer could fully read, so 73.6% of
+usable articles say nothing about their outlet; and the text scores span **29
+points against the ladder's 80**, a 3x compression.
+
+**A correction to this file's own earlier claim.** It reported "229 outlets,
+median 31, 116 at n >= 30, the core already has the sample size". That counted
+USABLE articles. The count that governs a per-outlet estimate is
+SIGNAL-BEARING, which is median **8**, with only **20** outlets at n >= 25 and
+8 at n >= 50. The "no harvest needed" conclusion survives; the reasoning under
+it did not.
+
+**So waiting is the wrong lever.** Doubling n moves rho by roughly nothing,
+because rho is already at its ceiling and the constraint is coverage. Firing on
+50% of articles instead of 26% would take the median outlet from 8 to ~16 and
+put ~80 outlets over n=25 instead of 20, at once, with no waiting. Per-market
+lexicon coverage is the long pole, and it is linguistic work.
+
+**Publishable now:** rho = +0.48 over 129 outlets belongs on
+`/sources#methodology`, said in the same sentence as the fact that it is
+measured against our own curated labels rather than an independent panel.
+**Blocked on that independence:** raising `_TEXT_DELTA_MAX`. On a signal
+spanning 29 points it would let noise move a published score.
+
 ### The outlet baselines have no resolution, and the learning table would make it worse
 
 Measured 2026-09-22, full write-up in
