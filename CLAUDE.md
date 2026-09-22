@@ -160,10 +160,39 @@ Newspaper principle. Same stories, same order, for everyone. No accounts, no
 recommendation algorithms.
 
 ### Bias scoring weighs BOTH outlet and text
-Not one or the other. Political lean blends outlet baseline against the
-article's own words, length-adaptively (~50/50 on a short wire item, ~90/10
-text-weighted on a full article). Public copy on `/about` and
-`/sources#methodology` must lead with "both", never "words not the outlet".
+Not one or the other. Public copy on `/about` and `/sources#methodology` must
+lead with "both", never "words not the outlet" (it does, and carries no ratio).
+
+**It is not a weighted blend, and this file used to say it was.** The claim
+"~50/50 on a short wire item, ~90/10 text-weighted on a full article" was
+wrong in structure and inverted in magnitude. The engine is
+baseline-anchored with a BOUNDED deviation:
+
+    score = baseline + clamp((text_score - 50) * 1.0, ±delta_max) * confidence
+    confidence = min(1.0, words / 150)          # LENGTH, not certainty
+
+So `delta_max` is the whole of the text's authority, and it is small.
+Measured 2026-09-22 by driving a 600-word article to each extreme of the
+lexicon:
+
+| Outlet | baseline | most a max-left article reaches | most a max-right article reaches |
+|---|---|---|---|
+| rated `left` | 20 | 10 | 30 |
+| rated `center` | 50 | 40 | 60 |
+| rated `right` | 80 | 70 | 90 |
+| `unrated`/`varies` | 50 | 26 | 74 |
+| state-affiliated | its own | ±8 | ±8 |
+
+A rated outlet's article can move **10 points, never more**, however long it is
+and whatever it says. Length only decides how much of that 10 it earns. So on a
+full article the outlet dominates roughly 5 to 1, which is the opposite of
+"90/10 text-weighted", and the ONLY row with real text authority is the unrated
+one at ±24.
+
+That is a capability limit, not a dishonesty: the architecture is built to grant
+more, and `docs/proposals/OUTLET-BASELINE-PROGRAMME-2026-09-22.md` is the work
+to earn it. Do not quote a blend ratio for this engine anywhere; quote
+`delta_max`.
 
 ---
 

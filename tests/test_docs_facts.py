@@ -173,6 +173,41 @@ for path in sorted((ROOT / "docs").glob("*.md")):
 for name in ALLOWED_WITHOUT_BANNER:
     check(f"allowlisted docs/{name} exists", (ROOT / "docs" / name).exists())
 
+# ---------------------------------------------------------------------------
+# The lean engine's text authority, as CLAUDE.md states it
+# ---------------------------------------------------------------------------
+# CLAUDE.md described the lean as a weighted blend, "~90/10 text-weighted on a
+# full article". It is not a blend at all: it is a baseline plus a deviation
+# bounded by delta_max, so a RATED outlet's article can move 10 points and no
+# more, whatever it says and however long it is. The stated ratio was wrong in
+# structure and inverted in magnitude, and it survived because nothing read the
+# constants back. This does.
+sys.path.insert(0, str(ROOT / "pipeline"))
+from analyzers import political_lean as _pl  # noqa: E402
+
+claude_md = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+for label, const in (("rated", _pl._TEXT_DELTA_MAX),
+                     ("unrated", _pl._CENTER_TEXT_DELTA_MAX),
+                     ("state-affiliated", _pl._STATE_TEXT_DELTA_MAX)):
+    # The table prints each bound as a reachable score or a plus-minus, so the
+    # assertion is that the NUMBER appears in the lean section at all. A change
+    # to a constant that nobody carried into the table fails here.
+    check(f"CLAUDE.md's lean table carries the {label} delta_max "
+          f"({const})",
+          str(int(const)) in claude_md,
+          f"_TEXT_DELTA_MAX-family constant {const} appears nowhere in CLAUDE.md")
+
+# "90/10" may still APPEAR, because the correction quotes the wrong claim in
+# order to refute it. What must not come back is the claim standing alone, so
+# the assertion is that the refutation is present whenever the ratio is.
+check("CLAUDE.md does not state a blend ratio for the lean engine as fact",
+      "90/10" not in claude_md
+      or "It is not a weighted blend" in claude_md,
+      "the '~90/10 text-weighted' claim is back without its refutation")
+check("the length-confidence divisor is stated",
+      str(int(_pl._LENGTH_FULL_CONFIDENCE)) in claude_md,
+      f"{_pl._LENGTH_FULL_CONFIDENCE} appears nowhere in CLAUDE.md")
+
 if failures:
     print(f"FAIL  {len(failures)} docs-facts check(s)")
     for f in failures:
