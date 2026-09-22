@@ -41,6 +41,11 @@ a feed repair is not a re-rating.
     python3 scripts/roster/verify_feeds.py   verify.json > verified.jsonl
     python3 scripts/roster/apply_feeds.py --dry-run verified.jsonl
     python3 scripts/roster/apply_feeds.py --apply   verified.jsonl
+    python3 scripts/roster/apply_feeds.py --apply --label=gfed verified.jsonl
+
+A dry run writes NOTHING, including no record files. A real run refuses to
+overwrite an existing record for the same date and label; `--label=<name>`
+writes beside it and `--force` replaces it.
 """
 from __future__ import annotations
 import json, sys, os, datetime
@@ -49,8 +54,13 @@ MIN_ITEMS = 10          # a feed of three stories is not a daily feed
 MIN_ON_EXPECTED = 10    # links must be on the outlet's OWN registered domain
 MIN_ARTICLES = 10       # and must look like articles, not section fronts
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-SOURCES = os.path.join(ROOT, "data", "sources.json")
-OUTDIR = os.path.join(ROOT, "data", "roster")
+# Overridable so this script can be exercised against a throwaway tree.
+# It was not testable before, which is why a dry run that wrote two files went
+# unnoticed until it overwrote a committed record:
+# tests/test_apply_feeds.py now runs it against a temp copy.
+DATA = os.environ.get("VOID_ROSTER_DATA") or os.path.join(ROOT, "data")
+SOURCES = os.path.join(DATA, "sources.json")
+OUTDIR = os.path.join(DATA, "roster")
 
 
 def why_not(v: dict) -> str | None:
@@ -138,17 +148,52 @@ def main() -> int:
     if absent:
         print(f"discovery named {len(absent)} outlet(s) not in the roster: {absent[:5]}")
 
+    # The run label keeps a second run on the same day beside the first rather
+    # than on top of it. Two runs in a day is the normal case.
     stamp = datetime.date.today().isoformat()
-    os.makedirs(OUTDIR, exist_ok=True)
-    with open(os.path.join(OUTDIR, f"feed-review-{stamp}.json"), "w", encoding="utf-8") as fh:
-        json.dump(review, fh, indent=1)
-    with open(os.path.join(OUTDIR, f"feed-changes-{stamp}.json"), "w", encoding="utf-8") as fh:
-        json.dump(applied, fh, indent=1)
+    label = ""
+    for a in sys.argv[1:]:
+        if a.startswith("--label="):
+            label = "-" + a.split("=", 1)[1].strip().strip("-")
+    changes_path = os.path.join(OUTDIR, f"feed-changes-{stamp}{label}.json")
+    review_path = os.path.join(OUTDIR, f"feed-review-{stamp}{label}.json")
 
+    # A DRY RUN WRITES NOTHING. It used to write both record files before
+    # reading this flag, and on 2026-09-22 two guard tests against an unrelated
+    # input overwrote the committed record in place: 129 applied changes became
+    # 35, and the review file's two named groups became a flat list. The flag
+    # was being checked at the point of the dangerous action rather than at
+    # every side effect, and a dry run is a promise about all of them.
     if not apply_:
-        print("\n--dry-run: data/sources.json untouched. "
-              f"Wrote data/roster/feed-changes-{stamp}.json and feed-review-{stamp}.json")
+        print(f"\n--dry-run: nothing written. A real run would write "
+              f"{os.path.relpath(changes_path, ROOT)} "
+              f"({len(applied)} change(s)) and "
+              f"{os.path.relpath(review_path, ROOT)} ({len(review)} held).")
         return 0
+
+    # A real run will not clobber an existing record for the same date and
+    # label. Losing the record of what a previous run decided is worse than
+    # failing here, because the record is the only thing that makes a change
+    # reversible without reading git.
+    existing = [q for q in (changes_path, review_path) if os.path.exists(q)]
+    if existing and "--force" not in sys.argv:
+        for q in existing:
+            try:
+                with open(q, encoding="utf-8") as fh:
+                    held = json.load(fh)
+                n = len(held) if isinstance(held, list) else len(held.keys())
+            except Exception:
+                n = "?"
+            print(f"    [stop] {os.path.relpath(q, ROOT)} already exists and "
+                  f"holds {n} row(s). Pass --label=<name> to write beside it, "
+                  f"or --force to replace it.")
+        return 2
+
+    os.makedirs(OUTDIR, exist_ok=True)
+    with open(review_path, "w", encoding="utf-8") as fh:
+        json.dump(review, fh, indent=1, ensure_ascii=False)
+    with open(changes_path, "w", encoding="utf-8") as fh:
+        json.dump(applied, fh, indent=1, ensure_ascii=False)
 
     noop = [r for r in applied if r["was"] == r["now"]]
     for row in applied:
@@ -167,7 +212,7 @@ def main() -> int:
     google = sum(1 for s in srcs if "news.google.com" in s.get("rss_url", ""))
     print(f"    Google-fed rows remaining: {google} of {len(srcs)} "
           f"({google / len(srcs) * 100:.1f}%)")
-    print(f"previous URLs recorded in data/roster/feed-changes-{stamp}.json")
+    print(f"previous URLs recorded in {os.path.relpath(changes_path, ROOT)}")
     return 0
 
 
