@@ -232,8 +232,14 @@ def main() -> int:
         # The homepage is echoed through so the next stage writes the roster's
         # `url` from the same value this pass verified against, rather than
         # re-deriving it and possibly disagreeing with itself.
+        # The roster `id` is echoed through when the caller supplies one, so
+        # apply_feeds can key on it. A name can be renamed (and two rows shared
+        # one until 2026-09-22); an id cannot, and a row matched by the wrong
+        # key is a feed written onto the wrong outlet.
         rec = {"name": c["name"], "url": c.get("url"), "feed": c.get("feed"),
                "expected_domain": expected}
+        if c.get("id"):
+            rec["id"] = c["id"]
         try:
             r = S.get(c["feed"], timeout=15, allow_redirects=True)
             xml = decoded(r)
