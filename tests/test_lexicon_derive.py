@@ -170,6 +170,42 @@ merged = conn.execute("select count from outlet_phrase_counts where phrase='weal
                       ).fetchone()[0]
 check("a second run adds to the count rather than replacing it", merged == 9, merged)
 
+# --- the band keeps the rare middle, not the commonest N --------------------
+# `persist` used to keep `most_common(4000)` per outlet. Measured 2026-09-23 on the
+# first real harvest, all 98 outlets hit that ceiling EXACTLY out of 112,891 distinct
+# phrases, 259 of the 318 known political phrases never entered the table, and the 59
+# that did sat at a median frequency rank of 37,906. The derivation was handed each
+# outlet's page furniture and asked to find politics in it.
+BAND_CASES = collections.Counter({
+    "subscribe now": 90,    # furniture: in 90 of the outlet's 100 articles
+    "wealth tax": 14,       # the middle, where argument lives
+    "border security": 8,
+    "a one off": 2,         # too rare to carry a rate difference
+})
+kept = dict(pc.band(BAND_CASES, 100))
+check("the band drops an outlet's own furniture",
+      "subscribe now" not in kept, str(sorted(kept)))
+check("the band keeps the rare middle",
+      {"wealth tax", "border security"} <= set(kept), str(sorted(kept)))
+check("the band drops the long tail", "a one off" not in kept, str(sorted(kept)))
+
+# A share is meaningless without a denominator, and inferring one from the counts is
+# exactly the mistake that hid the ceiling. No article count means no band.
+check("no article count means nothing is cut",
+      len(pc.band(BAND_CASES, None)) == len(BAND_CASES))
+check(f"under {pc.BAND_MIN_ARTICLES} articles nothing is cut",
+      len(pc.band(BAND_CASES, pc.BAND_MIN_ARTICLES - 1)) == len(BAND_CASES))
+check("the ceiling applies to what the band already kept, so it cannot decide "
+      "which KIND of phrase survives",
+      pc.MAX_ROWS_PER_OUTLET > 10000, pc.MAX_ROWS_PER_OUTLET)
+
+# The band must reach the table, not just the helper.
+conn2 = sqlite3.connect(":memory:")
+pc.persist(conn2, {"s9": BAND_CASES}, now="2026-09-23", articles={"s9": 100})
+banded = {r[0] for r in conn2.execute("select phrase from outlet_phrase_counts")}
+check("persist() applies the band when given a real article count",
+      banded == {"wealth tax", "border security"}, str(sorted(banded)))
+
 cols = {r[1] for r in conn.execute("pragma table_info(outlet_phrase_counts)")}
 check("the table stores no article identifier, so rows cannot be re-associated",
       not (cols & {"article_id", "url", "text", "body", "full_text"}), str(sorted(cols)))

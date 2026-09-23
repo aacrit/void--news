@@ -109,6 +109,11 @@ class Harvester:
     def __init__(self):
         self.tally: dict[str, collections.Counter] = collections.defaultdict(
             collections.Counter)
+        #: Articles actually COUNTED per outlet. `phrase_counts.band` takes a
+        #: document share against this, and will not take one against a number
+        #: inferred from the counts: that inference is what let a 4,000-row
+        #: ceiling look like a filter for a day.
+        self.articles: collections.Counter = collections.Counter()
         self.stats = collections.Counter()
         self.lock = threading.Lock()
         self.host_last: dict[str, float] = {}
@@ -158,6 +163,7 @@ class Harvester:
         counted = set(pc.phrases_of(text))
         with self.lock:
             self.tally[sid].update(counted)
+            self.articles[sid] += 1
             self.stats["ok"] += 1
             self.stats["words"] += words
         del text
@@ -222,8 +228,14 @@ def run(db_path: str, apply: bool, sample: int = 0) -> int:
         return 0
 
     conn = sqlite3.connect(db_path)
-    written = pc.persist(conn, h.tally, now=time.strftime("%Y-%m-%dT%H:%M:%SZ"))
-    print(f"\nwrote {written:,} count rows to outlet_phrase_counts in {db_path}")
+    written = pc.persist(conn, h.tally, now=time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                         articles=dict(h.articles))
+    banded = sum(1 for sid in h.tally if h.articles[sid] >= pc.BAND_MIN_ARTICLES)
+    print(f"\nband: kept {pc.MIN_ARTICLES_PER_PHRASE}+ articles and at most "
+          f"{pc.MAX_DOC_SHARE:.0%} of an outlet's own, applied to {banded} of "
+          f"{len(h.tally)} outlets ({len(h.tally) - banded} had under "
+          f"{pc.BAND_MIN_ARTICLES} bodies, so nothing was cut from them)")
+    print(f"wrote {written:,} count rows to outlet_phrase_counts in {db_path}")
     widest = conn.execute("select max(words) from outlet_phrase_counts").fetchone()[0]
     print(f"widest stored phrase: {widest} words (bound is {pc.MAX_PHRASE_WORDS})")
     return 0

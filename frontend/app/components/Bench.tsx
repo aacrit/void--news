@@ -7,6 +7,7 @@ import {
   leanToBucket,
   leanLabel,
   leanShapeLabel,
+  leanShapeColor,
   type LeanCategory,
   type WingCounts,
 } from "../lib/biasColors";
@@ -23,6 +24,8 @@ import {
   BENCH_GAP,
   type BenchPack,
 } from "../lib/bench";
+import { envelope, whitespace, type BenchGeometry } from "../lib/benchCurve";
+import BenchSigil from "./BenchSigil";
 
 /* ---------------------------------------------------------------------------
    Bench — who is sitting where, left to right.
@@ -305,6 +308,34 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
     [colWidth, boxH, tallest],
   );
 
+  /* The silhouette over the columns, and the room the columns leave. Both are
+     pure and live in lib/benchCurve.ts, which is where the argument for them
+     is: the line is built so that it CANNOT draw a peak between two columns,
+     which is the exact defect the KDE wave was removed for. */
+  const geom: BenchGeometry = useMemo(
+    () => ({
+      counts,
+      mark: pack.mark,
+      perRow: pack.perRow,
+      gap: BENCH_GAP,
+      cap: pack.capPerColumn,
+      colWidth,
+      colGap,
+      boxH,
+    }),
+    [counts, pack, colWidth, colGap, boxH],
+  );
+  const curve = useMemo(() => envelope(geom), [geom]);
+  /* The mark wants a square it can breathe in. Below that the head keeps it,
+     which is what a flat distribution gets. */
+  const room = useMemo(
+    () => whitespace(geom, { minSide: narrow ? 40 : 52 }),
+    [geom, narrow],
+  );
+  const markSide = room
+    ? Math.round(Math.min(room.width, room.height, narrow ? 64 : 92))
+    : 0;
+
   /* The toggle is offered on whether the COLLAPSED box cuts anything, not on
      whether the current one does. Read off `pack` it would vanish the moment
      it worked, leaving the reader inside an expanded Bench with no way back. */
@@ -367,7 +398,16 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
         .join(" ")}
     >
       <div className="bench__head">
-        <p className="bench__shape">{leanShapeLabel(spread)}</p>
+        {/* The shape is DRAWN now, over the columns, in the space they leave.
+            The word stays here for a screen reader, for which a silhouette is
+            nothing at all, and comes back into view only where there is no
+            room on the Bench to draw it in. */}
+        <p className={room ? "bench__shape bench__shape--sr" : "bench__shape"}>
+          {leanShapeLabel(spread)}
+        </p>
+        {!room && (
+          <BenchSigil spread={spread} size={28} className="bench__mark-inline" />
+        )}
         <p className="bench__count">
           {total} {total === 1 ? "source" : "sources"} placed
           {headlineOnly > 0 && (
@@ -394,6 +434,41 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
         role="group"
         aria-label="Sources by political lean, far left to far right"
       >
+        {/* THE SPECTRUM LINE. Rides the top of every column, so seven counts
+            read as one silhouette. Decoration to a screen reader and to the
+            pointer: the marks under it are the content and the hit targets. */}
+        {curve && (
+          <svg
+            className="bench__curve"
+            viewBox={`0 0 ${curve.width} ${boxH}`}
+            preserveAspectRatio="none"
+            aria-hidden="true"
+            focusable="false"
+            style={{ color: leanShapeColor(spread) }}
+          >
+            <path className="bench__curve-area" d={curve.area} />
+            <path className="bench__curve-line" d={curve.line} />
+          </svg>
+        )}
+
+        {/* The mark, in the room the distribution leaves. Its POSITION is part
+            of the reading: on a right-leaning roster it stands out on the
+            left, over nothing, with the weight to its right. */}
+        {room && markSide > 0 && (
+          <div
+            className="bench__room"
+            aria-hidden="true"
+            style={{
+              left: `${room.x + room.width / 2}px`,
+              top: `${Math.max(2, (room.height - markSide) / 2)}px`,
+              width: `${markSide}px`,
+              height: `${markSide}px`,
+            }}
+          >
+            <BenchSigil spread={spread} size={markSide} />
+          </div>
+        )}
+
         {columns.map(({ bucket, items }, ci) => {
           const drawnItems =
             pack.capPerColumn === Infinity ? items : items.slice(0, pack.capPerColumn);

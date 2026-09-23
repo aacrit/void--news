@@ -52,10 +52,44 @@ import sqlite3
 # mistake is not one.
 MAX_PHRASE_WORDS = 3
 
-# Rows per outlet per run. A cap, because an unbounded table of every 3-gram every
-# outlet ever printed drifts back toward being a corpus. The tail is noise for a
-# chi-squared anyway: `lexicon_derive` discards anything under 50 articles.
-TOP_PER_OUTLET = 4000
+# THE KEEP CRITERION, and the defect it replaces.
+#
+# This was `most_common(4000)`: the 4,000 commonest phrases per outlet. Measured
+# 2026-09-23 against the first real harvest (7,901 bodies, 7.34M words, 98 outlets),
+# every single outlet hit that ceiling EXACTLY, 392,000 rows over 98 outlets being
+# 4,000 each to the row, out of 112,891 distinct phrases seen. Of the 318 hand-written
+# political phrases, 59 reached the table and 259 never entered it, and those 59 sat at
+# a median frequency rank of 37,906 of 112,891.
+#
+# So the derivation was handed each outlet's commonest 4,000 phrases, which is by
+# construction its page furniture, and asked to find politics in it. It rediscovered
+# zero political phrases twice, and neither zero was evidence about the method. Raw
+# frequency is the wrong keep criterion because the thing being looked for is RARE.
+#
+# The band is Gentzkow and Shapiro's own move, in both directions:
+#
+#   upper   a phrase present in most of an outlet's articles is that outlet's
+#           template, not its politics. "subscribe", "follow", "continue reading".
+#   lower   a phrase seen once or twice cannot carry a rate difference and is the
+#           long tail that made an unbounded table look like a corpus.
+#
+# WHEN THE BAND APPLIES. Only where the caller supplies a real article count and that
+# count clears BAND_MIN_ARTICLES. A document SHARE is meaningless over six articles,
+# and a caller that cannot say how many articles it read gets the width bound and
+# nothing else, because guessing the denominator is how the 4,000 ceiling hid for a
+# day: `max(counter.values())` looks like an article count and is not one.
+BAND_MIN_ARTICLES = 20
+
+#: Above this share of an outlet's own articles, a phrase is that outlet's furniture.
+MAX_DOC_SHARE = 0.50
+
+#: Below this many articles, a phrase cannot carry a rate difference.
+MIN_ARTICLES_PER_PHRASE = 3
+
+#: A ceiling still, because an unbounded table drifts back toward being a corpus.
+#: It applies to what the band already kept, so it no longer decides WHICH KIND of
+#: phrase survives, only how much of the middle is stored.
+MAX_ROWS_PER_OUTLET = 60000
 
 _WORD = re.compile(r"[a-z][a-z'-]+")
 
@@ -98,18 +132,40 @@ def accumulate(rows) -> dict[str, collections.Counter]:
     return out
 
 
+def band(counter: collections.Counter, articles: int | None):
+    """The phrases worth storing, commonest first.
+
+    `articles` is how many articles this outlet's counter was built from. Without it,
+    or below BAND_MIN_ARTICLES, there is no denominator a share could be taken against
+    and everything is kept: the width bound is then the only invariant, which is what
+    it has always been for a caller that hands `persist()` a hand-built Counter.
+    """
+    items = counter.most_common()
+    if not articles or articles < BAND_MIN_ARTICLES:
+        return items
+    ceiling = MAX_DOC_SHARE * articles
+    kept = [(p, c) for p, c in items
+            if MIN_ARTICLES_PER_PHRASE <= c <= ceiling]
+    return kept[:MAX_ROWS_PER_OUTLET]
+
+
 def persist(conn: sqlite3.Connection, tally: dict[str, collections.Counter],
-            now: str | None = None) -> int:
+            now: str | None = None,
+            articles: dict[str, int] | None = None) -> int:
     """Merge a run's tally into the table. Returns rows written.
 
     Refuses any phrase wider than MAX_PHRASE_WORDS. That is the one invariant this
     module exists to hold, so it is enforced at the write rather than upstream where a
     later caller could bypass it.
+
+    `articles` maps source_id to the number of articles that outlet's counter was built
+    from. It is what turns a count into a document share, and without it no band is
+    applied. See the note on the band above for why it is not inferred.
     """
     conn.executescript(SCHEMA)
     written = 0
     for sid, counter in (tally or {}).items():
-        for phrase, count in counter.most_common(TOP_PER_OUTLET):
+        for phrase, count in band(counter, (articles or {}).get(sid)):
             n = len(phrase.split())
             if n > MAX_PHRASE_WORDS or not phrase.strip():
                 continue
@@ -126,6 +182,15 @@ def persist(conn: sqlite3.Connection, tally: dict[str, collections.Counter],
     return written
 
 
-def record(conn: sqlite3.Connection, articles, now: str | None = None) -> int:
-    """The one entry point for the pipeline: tally these articles and merge them."""
-    return persist(conn, accumulate(articles), now)
+def record(conn: sqlite3.Connection, rows, now: str | None = None) -> int:
+    """The one entry point for the pipeline: tally these articles and merge them.
+
+    Counts the articles per outlet on the way past, so the band has a real
+    denominator rather than one inferred from the counts themselves.
+    """
+    tally = accumulate(rows)
+    per_outlet: collections.Counter = collections.Counter()
+    for row in rows or []:
+        if row.get("source_id"):
+            per_outlet[row["source_id"]] += 1
+    return persist(conn, tally, now, dict(per_outlet))

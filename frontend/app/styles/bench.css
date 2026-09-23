@@ -54,6 +54,145 @@
   color: var(--fg-muted);
 }
 
+/* ---- The spectrum line, and the room it leaves ---------------------------
+   THE LINE rides the top of every column. It is a hairline and a wash, not a
+   chart: the columns under it are the measurement and it must never look like
+   a second, smoother opinion of them. `lib/benchCurve.ts` builds it so it
+   cannot draw a peak between two columns, which is the defect the KDE wave
+   was removed for; the styling keeps it subordinate so it cannot LOOK like
+   one either.
+
+   It takes its colour from `leanShapeColor` through `currentcolor`, which is
+   the same rule the shape word, the card's register and the mark obey. One
+   rule, four surfaces: the word, its colour, the silhouette and the mark can
+   never disagree about a story. */
+
+.bench__grid {
+  position: relative;
+}
+
+.bench__curve {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--bench-box);
+  width: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bench__curve-line {
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1;
+  /* The path is drawn in a non-uniform viewBox, so a plain stroke-width would
+     be stretched horizontally with it. This keeps the hairline a hairline. */
+  vector-effect: non-scaling-stroke;
+  opacity: 0.55;
+  stroke-linejoin: round;
+}
+
+.bench__curve-area {
+  fill: currentcolor;
+  opacity: 0.05;
+  stroke: none;
+}
+
+/* The line draws itself once, left to right, on open. The wash follows it
+   rather than arriving with it, so the shape is read before it is filled. */
+.bench--drawn .bench__curve-line {
+  animation: bench-trace var(--dur-slow, 700ms) var(--ease-cinematic) both;
+}
+
+.bench--drawn .bench__curve-area {
+  animation: bench-wash var(--dur-slow, 700ms) var(--ease-out) 180ms both;
+}
+
+@keyframes bench-trace {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes bench-wash {
+  from { opacity: 0; }
+  to   { opacity: 0.05; }
+}
+
+/* THE ROOM. Centred on the widest run of low columns, which is where the
+   coverage is not. Behind the marks, never over them. */
+.bench__room {
+  position: absolute;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* The mark itself. The beam is the reading and carries the shape colour; the
+   void is the room it sits in and is held right back, because at this size a
+   full-strength ring would read as a target over the distribution. */
+.bsig__ring {
+  stroke: var(--fg-muted);
+  opacity: 0.16;
+}
+
+.bsig__beam line,
+.bsig__split line {
+  transition: transform var(--dur-slow, 700ms) var(--spring);
+}
+
+.bsig__hollow {
+  stroke: var(--divider);
+  opacity: 0.55;
+}
+
+.bench--drawn .bsig {
+  animation: bsig-settle var(--dur-slow, 700ms) var(--ease-cinematic) 120ms both;
+}
+
+@keyframes bsig-settle {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 0.9; transform: none; }
+}
+
+.bsig {
+  opacity: 0.9;
+  overflow: visible;
+}
+
+/* The mark that stands in the head when the Bench has no room for one. */
+.bench__mark-inline {
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+/* The shape word, once the shape is drawn. Still in the accessibility tree,
+   where the silhouette is nothing at all. */
+.bench__shape--sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bench--drawn .bench__curve-line,
+  .bench--drawn .bench__curve-area,
+  .bench--drawn .bsig {
+    animation: none;
+  }
+  .bsig__beam line,
+  .bsig__split line {
+    transition: none;
+  }
+}
+
 /* ---- The seven columns --------------------------------------------------- */
 
 .bench__grid {
@@ -71,6 +210,10 @@
   flex-direction: column;
   align-items: center;
   min-width: 0;
+  /* Above the silhouette and the mark: they are the picture, these are the
+     measurement and the hit targets. */
+  position: relative;
+  z-index: 1;
 }
 
 .bench__stack {

@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { leanShape, type WingCounts } from "../lib/biasColors";
+import { leanShape, leanShapeColor, type WingCounts } from "../lib/biasColors";
+import { envelopeFrom } from "../lib/benchCurve";
 
 /* ---------------------------------------------------------------------------
    RosterStrip — seven hairline strokes on a rule, one per lean bucket.
@@ -25,6 +26,21 @@ import { leanShape, type WingCounts } from "../lib/biasColors";
    hit the ceiling); pure normalising made two articles stand as tall as
    twenty-six. So the strip's overall height comes from the sample size and
    the bars are normalised inside it.
+
+   THE SILHOUETTE over the strokes is the SAME PATH BUILDER the Deep Dive's
+   Bench uses (`lib/benchCurve.envelopeFrom`), at a twentieth of the size. The
+   card and the Deep Dive were two drawings of one distribution that had
+   nothing in common to look at: a reader learned a row of ticks on the front
+   page and met a field of favicons on the story. Now the shape is the shape,
+   and the strokes underneath stay the measurement.
+
+   It inherits the guarantee with the code: the curve cannot rise above the
+   taller of two neighbouring strokes or dip below the shorter, so at 16px it
+   still cannot draw a bucket that is not there.
+
+   It is drawn as a wash rather than the Bench's hairline, which is a scale
+   decision and not a second design: over strokes two or three pixels tall a
+   0.6px line is a grey smudge. Same paths, same colour rule, different weight.
    --------------------------------------------------------------------------- */
 
 const TOKENS = [
@@ -60,6 +76,19 @@ export default function RosterStrip({ spread, weight = 1, className }: RosterStr
   const tallest = Math.max(...counts) || 1;
   const shape = leanShape(spread);
 
+  /* The heights the strokes are drawn at, computed once so the silhouette
+     rides exactly the strokes the reader can see rather than a second
+     rounding of the same numbers. */
+  const heights = counts.map((n) => (n ? Math.max(2.5, (peak * n) / tallest) : 0));
+  const curve = envelopeFrom(heights, {
+    /* One stroke IS one column here, so the column is `weight` wide and the
+       space between is what is left of the pitch. `columnCentre` then lands on
+       the stroke, which is the whole point. */
+    colWidth: weight,
+    colGap: gap - weight,
+    boxH: box + 2,
+  });
+
   /* Spoken in full, because the strip itself is decoration to a screen
      reader: the counts are the content. */
   const label = counts
@@ -77,6 +106,14 @@ export default function RosterStrip({ spread, weight = 1, className }: RosterStr
       aria-label={`${total} measured ${total === 1 ? "article" : "articles"}: ${label}`}
     >
       <rect x={0} y={box + 2} width={width} height={0.75} className="roster__rule" />
+      {curve && (
+        <g style={{ color: leanShapeColor(spread) }}>
+          <path className="roster__curve roster__curve--area" d={curve.area}
+            fill="currentcolor" />
+          <path className="roster__curve roster__curve--line" d={curve.line}
+            stroke="currentcolor" />
+        </g>
+      )}
       {counts.map((n, i) => {
         const x = i * gap;
         if (!n) {
