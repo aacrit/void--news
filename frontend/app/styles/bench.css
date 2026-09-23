@@ -81,31 +81,40 @@
   z-index: 0;
 }
 
-.bench__curve-line {
-  fill: none;
-  stroke: currentcolor;
-  stroke-width: 1;
-  /* The path is drawn in a non-uniform viewBox, so a plain stroke-width would
-     be stretched horizontally with it. This keeps the hairline a hairline. */
-  vector-effect: non-scaling-stroke;
-  opacity: 0.55;
-  stroke-linejoin: round;
-}
+/* INK, NOT A CHART. The stroke is a filled ribbon whose width follows the
+   count, laid down in the two passes the house already uses under a lean
+   label (`InkUnderline`): a blurred bleed feathering into the paper, then the
+   pen on top of it.
 
-.bench__curve-area {
+   THE WASH THAT WAS HERE IS GONE. A flat tint under a curve is a data-viz
+   convention, it was the one element on this panel that was not ink, and on
+   the Bench it was redundant besides: the area under the curve is already
+   filled, with the source marks themselves. Pressure says what the tint was
+   saying, on the line instead of behind it. */
+
+.bench__curve-ink {
   fill: currentcolor;
-  opacity: 0.05;
   stroke: none;
+  /* The marks are the measurement and must stay the loudest thing here. */
+  opacity: 0.56;
 }
 
-/* The line draws itself once, left to right, on open. The wash follows it
-   rather than arriving with it, so the shape is read before it is filled. */
-.bench--drawn .bench__curve-line {
+.bench__curve-bleed {
+  fill: currentcolor;
+  stroke: none;
+  opacity: 0.1;
+  filter: blur(1.5px);
+}
+
+/* The stroke is laid down once, left to right, the way a pen crosses a page.
+   The bleed follows it rather than arriving with it, so the line is read
+   before the paper takes it. */
+.bench--drawn .bench__curve-ink {
   animation: bench-trace var(--dur-slow, 700ms) var(--ease-cinematic) both;
 }
 
-.bench--drawn .bench__curve-area {
-  animation: bench-wash var(--dur-slow, 700ms) var(--ease-out) 180ms both;
+.bench--drawn .bench__curve-bleed {
+  animation: bench-bleed var(--dur-slow, 700ms) var(--ease-out) 180ms both;
 }
 
 @keyframes bench-trace {
@@ -113,9 +122,9 @@
   to   { clip-path: inset(0 0 0 0); }
 }
 
-@keyframes bench-wash {
+@keyframes bench-bleed {
   from { opacity: 0; }
-  to   { opacity: 0.05; }
+  to   { opacity: 0.1; }
 }
 
 /* THE ROOM. Centred on the widest run of low columns, which is where the
@@ -134,7 +143,9 @@
    full-strength ring would read as a target over the distribution. */
 .bsig__ring {
   stroke: var(--fg-muted);
-  opacity: 0.16;
+  /* Held back, but not to nothing: the pen stroke over the columns carries
+     real weight now, and at 0.16 the void read as a smudge beside it. */
+  opacity: 0.24;
 }
 
 .bsig__beam line,
@@ -182,8 +193,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bench--drawn .bench__curve-line,
-  .bench--drawn .bench__curve-area,
+  .bench--drawn .bench__curve-ink,
+  .bench--drawn .bench__curve-bleed,
   .bench--drawn .bsig {
     animation: none;
   }

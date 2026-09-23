@@ -105,6 +105,52 @@ export function envelopeFrom(
   return trace(heights, geo);
 }
 
+/** The monotone cubic through a list of points. Both edges of the ink ribbon
+ *  are built with it, so neither edge can invent a peak either. */
+function through(points: readonly [number, number][]): string {
+  let d = `M ${round(points[0][0])} ${round(points[0][1])}`;
+  for (let i = 1; i < points.length; i += 1) {
+    const [x0, y0] = points[i - 1];
+    const [x1, y1] = points[i];
+    const dx = (x1 - x0) / 3;
+    d += ` C ${round(x0 + dx)} ${round(y0)} ${round(x1 - dx)} ${round(y1)} ` +
+         `${round(x1)} ${round(y1)}`;
+  }
+  return d;
+}
+
+/** The same curve as a PEN STROKE rather than a stroked line: a filled ribbon
+ *  whose width follows the count in each bucket, heavy where the coverage is
+ *  and tapering to a hairline where it is not.
+ *
+ *  THIS IS WHAT REPLACED THE WASH. A flat tint under a curve is a chart
+ *  convention and the one element on the panel that was not ink; it was also
+ *  redundant, because the area under the Bench's curve is already filled with
+ *  the source marks themselves. Pressure variation says the same thing the
+ *  wash was saying, in the house's own hand (see `InkUnderline`: a faint
+ *  blurred bleed under a pen stroke that thickens at the press), and it says
+ *  it on the line instead of behind it.
+ *
+ *  The ribbon's CENTRELINE is still exactly the envelope, so the reading is
+ *  unchanged. Width is a second rendering of the count that height already
+ *  carries, never a third number. */
+export function inkRibbon(
+  env: Envelope,
+  weights: readonly number[],
+  { minHalf = 0.35, maxHalf = 2.2 }: { minHalf?: number; maxHalf?: number } = {},
+): string {
+  const peak = Math.max(...weights, 0) || 1;
+  /* The two outer anchors sit on the baseline and carry no count, so the
+     stroke enters and leaves the page at its thinnest. */
+  const halves = [minHalf, ...weights.map(
+    (w) => minHalf + (maxHalf - minHalf) * Math.min(1, Math.max(0, w) / peak)), minHalf];
+  const top = env.points.map(([x, y], i) => [x, y - halves[i]] as [number, number]);
+  const bottom = env.points.map(([x, y], i) => [x, y + halves[i]] as [number, number]);
+  const back = [...bottom].reverse();
+  return `${through(top)} L ${round(back[0][0])} ${round(back[0][1])} ` +
+         `${through(back).slice(through(back).indexOf("C") - 1)} Z`;
+}
+
 function trace(heights: readonly number[], g: BenchGeometry): Envelope | null {
 
   const width = columnCentre(heights.length - 1, g) + g.colWidth / 2;
@@ -117,16 +163,9 @@ function trace(heights: readonly number[], g: BenchGeometry): Envelope | null {
     [width, g.boxH],
   ];
 
-  let line = `M ${round(points[0][0])} ${round(points[0][1])}`;
-  for (let i = 1; i < points.length; i += 1) {
-    const [x0, y0] = points[i - 1];
-    const [x1, y1] = points[i];
-    const dx = (x1 - x0) / 3;
-    /* Control points carry their own endpoint's y. See the header: this is
-       what makes overshoot unrepresentable rather than merely unlikely. */
-    line += ` C ${round(x0 + dx)} ${round(y0)} ${round(x1 - dx)} ${round(y1)} ` +
-            `${round(x1)} ${round(y1)}`;
-  }
+  /* Control points carry their own endpoint's y. See the header: this is what
+     makes overshoot unrepresentable rather than merely unlikely. */
+  const line = through(points);
   const area = `${line} L ${round(width)} ${round(g.boxH)} L 0 ${round(g.boxH)} Z`;
   return { line, area, points, width };
 }

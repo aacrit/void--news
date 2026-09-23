@@ -24,7 +24,7 @@ import {
   BENCH_GAP,
   type BenchPack,
 } from "../lib/bench";
-import { envelope, whitespace, type BenchGeometry } from "../lib/benchCurve";
+import { envelope, inkRibbon, whitespace, type BenchGeometry } from "../lib/benchCurve";
 import BenchSigil from "./BenchSigil";
 
 /* ---------------------------------------------------------------------------
@@ -326,6 +326,13 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
     [counts, pack, colWidth, colGap, boxH],
   );
   const curve = useMemo(() => envelope(geom), [geom]);
+  /* Drawn as a pen stroke, not a stroked line with a tint under it. The
+     width follows the count, so the ink is heavy over the buckets that carry
+     the story and tapers to a hairline where nothing stands. */
+  const ink = useMemo(
+    () => (curve ? inkRibbon(curve, counts, { minHalf: 0.4, maxHalf: 2.4 }) : null),
+    [curve, counts],
+  );
   /* The mark wants a square it can breathe in. Below that the head keeps it,
      which is what a flat distribution gets. */
   const room = useMemo(
@@ -446,8 +453,13 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
             focusable="false"
             style={{ color: leanShapeColor(spread) }}
           >
-            <path className="bench__curve-area" d={curve.area} />
-            <path className="bench__curve-line" d={curve.line} />
+            {/* The bleed. Ink feathering into paper, the same two-pass
+                construction `InkUnderline` uses under a lean label. It is
+                what replaced the flat wash: a tint under a curve is a chart
+                convention, and it was restating what the marks beneath it
+                already say. */}
+            <path className="bench__curve-bleed" d={ink ?? curve.line} />
+            <path className="bench__curve-ink" d={ink ?? curve.line} />
           </svg>
         )}
 

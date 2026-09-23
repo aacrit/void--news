@@ -203,10 +203,53 @@ check("the marks sit above the line",
   /\.bench__col\s*\{[^}]*z-index:\s*1/.test(css));
 check("the shape word is hidden visually, not removed",
   /\.bench__shape--sr\s*\{[^}]*clip-path/.test(css));
-check("the wash stays a wash",
-  /\.bench__curve-area\s*\{[^}]*opacity:\s*0\.0[0-9]/.test(css));
+check("the bleed stays a bleed",
+  /\.bench__curve-bleed\s*\{[^}]*opacity:\s*0\.1/.test(css) &&
+  /\.bench__curve-bleed\s*\{[^}]*filter:\s*blur/.test(css));
 check("motion is given up under prefers-reduced-motion",
-  /prefers-reduced-motion[\s\S]*bench__curve-line[\s\S]*animation:\s*none/.test(css));
+  /prefers-reduced-motion[\s\S]*bench__curve-ink[\s\S]*animation:\s*none/.test(css));
+/* The wash was a chart convention and the one element that was not ink. It
+   must not come back by habit. */
+check("no flat tint under the curve, on either surface",
+  !/bench__curve-area/.test(css) && !/roster__curve--area/.test(
+    readFileSync(join(ROOT, "app/styles/components.css"), "utf8")));
+
+/* ---- 6. the pen stroke ------------------------------------------------- */
+
+for (const counts of CASES) {
+  const g = G(counts);
+  const env = bc.envelope(g);
+  if (!env) continue;
+  const d = bc.inkRibbon(env, counts, { minHalf: 0.4, maxHalf: 2.4 });
+  check(`the ribbon is one closed figure (${counts})`,
+    (d.match(/M/g) || []).length === 1 && (d.match(/Z/g) || []).length === 1, d.slice(0, 60));
+  check(`the ribbon carries no stray command (${counts})`,
+    d.replace(/[MCLZ0-9 .-]/g, "") === "", d.replace(/[MCLZ0-9 .-]/g, ""));
+}
+
+{
+  /* Width is a second rendering of the count, so it must RISE with it, and
+     the outer anchors carry no count and so enter at the thinnest. */
+  const g = G([0, 0, 0, 0, 0, 0, 20]);
+  const env = bc.envelope(g);
+  const wide = bc.inkRibbon(env, g.counts, { minHalf: 0.5, maxHalf: 3 });
+  const thin = bc.inkRibbon(env, g.counts, { minHalf: 0.5, maxHalf: 0.5 });
+  check("a heavier bucket lays down more ink than a flat pen would",
+    wide !== thin);
+  const flat = bc.inkRibbon(env, [1, 1, 1, 1, 1, 1, 1], { minHalf: 0.5, maxHalf: 3 });
+  check("an even distribution lays an even stroke", flat !== wide);
+}
+
+{
+  /* The centreline is the reading and must not move when the pen changes. */
+  const g = G([0, 2, 6, 14, 5, 1, 0]);
+  const env = bc.envelope(g);
+  const hs = bc.columnHeights(g);
+  for (let i = 0; i < 7; i += 1) {
+    check(`the pen does not move vertex ${i} off its column top`,
+      Math.abs(env.points[i + 1][1] - (g.boxH - hs[i])) < 0.01);
+  }
+}
 
 rmSync(out, { recursive: true, force: true });
 console.log(failures ? `\n${failures} failure(s)` : "\nPASS  bench curve: no invented peak, the room is the empty side, one mark");

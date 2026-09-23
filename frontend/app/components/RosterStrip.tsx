@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { leanShape, leanShapeColor, type WingCounts } from "../lib/biasColors";
-import { envelopeFrom } from "../lib/benchCurve";
+import { envelopeFrom, inkRibbon } from "../lib/benchCurve";
 
 /* ---------------------------------------------------------------------------
    RosterStrip — seven hairline strokes on a rule, one per lean bucket.
@@ -38,9 +38,12 @@ import { envelopeFrom } from "../lib/benchCurve";
    taller of two neighbouring strokes or dip below the shorter, so at 16px it
    still cannot draw a bucket that is not there.
 
-   It is drawn as a wash rather than the Bench's hairline, which is a scale
-   decision and not a second design: over strokes two or three pixels tall a
-   0.6px line is a grey smudge. Same paths, same colour rule, different weight.
+   It is the same PEN STROKE the Bench draws, at register weight: a ribbon
+   whose width follows the count, with a blurred bleed under it, which is the
+   house's own ink hand (see `InkUnderline`). A flat wash sat here first and
+   was removed for the same reason it was removed from the Bench: a tint under
+   a curve is a chart convention and the one thing in the mark that was not
+   ink.
    --------------------------------------------------------------------------- */
 
 const TOKENS = [
@@ -108,10 +111,12 @@ export default function RosterStrip({ spread, weight = 1, className }: RosterStr
       <rect x={0} y={box + 2} width={width} height={0.75} className="roster__rule" />
       {curve && (
         <g style={{ color: leanShapeColor(spread) }}>
-          <path className="roster__curve roster__curve--area" d={curve.area}
+          <path className="roster__curve roster__curve--bleed"
+            d={inkRibbon(curve, counts, { minHalf: 0.3, maxHalf: 1.15 })}
             fill="currentcolor" />
-          <path className="roster__curve roster__curve--line" d={curve.line}
-            stroke="currentcolor" />
+          <path className="roster__curve roster__curve--ink"
+            d={inkRibbon(curve, counts, { minHalf: 0.18, maxHalf: 0.8 })}
+            fill="currentcolor" />
         </g>
       )}
       {counts.map((n, i) => {

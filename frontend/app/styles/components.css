@@ -4021,11 +4021,13 @@ html {
    card and the Deep Dive used to be two pictures of one distribution with
    nothing in common to look at.
 
-   It is a WASH here and a hairline there, and that is a scale decision, not a
-   second design: over strokes two or three pixels tall a 0.6px line is a grey
-   smudge, while a filled area reads as a shape at a glance. Both carry
-   `leanShapeColor`, so the silhouette, the strokes, the word under them and
-   the Bench can never disagree about a story.
+   Both are drawn as a PEN STROKE, a ribbon whose width follows the count,
+   over a blurred bleed: the house's ink hand, the same two passes that sit
+   under a lean label. A flat wash was here first and was removed for the same
+   reason it left the Bench, that a tint under a curve is a chart convention
+   and the one thing in the mark that was not ink. Both carry `leanShapeColor`,
+   so the silhouette, the strokes, the word under them and the Bench can never
+   disagree about a story.
 
    `shape-rendering` is reset because `.roster` asks for crispEdges, which is
    right for seven vertical strokes and turns a curve into a staircase. */
@@ -4035,15 +4037,18 @@ html {
   stroke-linejoin: round;
 }
 
-.roster__curve--area {
+/* The bleed: ink feathering into paper. Wider than the pen and barely there,
+   which is what keeps the mark from reading as a chart at 16px. */
+.roster__curve--bleed {
   stroke: none;
-  opacity: 0.16;
+  opacity: 0.13;
+  filter: blur(0.6px);
 }
 
-.roster__curve--line {
-  fill: none;
-  stroke-width: 0.6;
-  opacity: 0.5;
+/* The pen. Filled, not stroked, because its width is the count. */
+.roster__curve--ink {
+  stroke: none;
+  opacity: 0.55;
 }
 
 /* The register sits directly under the mark, in the slot the printed score
