@@ -81,10 +81,23 @@ MAX_PHRASE_WORDS = 3
 BAND_MIN_ARTICLES = 20
 
 #: Above this share of an outlet's own articles, a phrase is that outlet's furniture.
-MAX_DOC_SHARE = 0.50
+#:
+#: BOTH OF THESE WERE GUESSED FIRST AND THEN MEASURED, and the guess was wrong in the
+#: direction that matters. Taken against the 175 rows in the pre-band table that match
+#: the hand-written political phrases (98 outlets, ~81 bodies each): a floor of 3 cut
+#: 17% of them, 4 cut 36%, 5 cut 44%, while a floor of 2 cuts 5% and still removes the
+#: count-1 noise that is 15% of all rows. A ceiling of 0.50 cut a further 6%.
+#:
+#: So the band is set where it bounds STORAGE and nothing else. The signal filter is
+#: `lexicon_derive.MAX_DOC_FREQ` (0.25, corpus-wide), which is the right place for it:
+#: a storage rule should not be quietly deciding which political phrases exist. That
+#: is exactly what the 4,000-row ceiling was doing.
+MAX_DOC_SHARE = 0.65
 
-#: Below this many articles, a phrase cannot carry a rate difference.
-MIN_ARTICLES_PER_PHRASE = 3
+#: Below this many articles, a phrase cannot carry a rate difference. Set to 2 rather
+#: than 3 on the measurement above, and deliberately not to 1: a phrase seen once at an
+#: outlet is the long tail that made an unbounded table look like a corpus.
+MIN_ARTICLES_PER_PHRASE = 2
 
 #: A ceiling still, because an unbounded table drifts back toward being a corpus.
 #: It applies to what the band already kept, so it no longer decides WHICH KIND of
@@ -103,6 +116,26 @@ create table if not exists outlet_phrase_counts (
     primary key (source_id, phrase)
 );
 create index if not exists idx_opc_source on outlet_phrase_counts(source_id);
+
+-- HOW MANY ARTICLES EACH OUTLET'S COUNTS WERE BUILT FROM. It is a COUNT, not an
+-- identifier, so the invariant above is untouched: nothing here can be re-associated
+-- with an article, and this table on its own says only "we read 81 pieces from this
+-- outlet".
+--
+-- It exists because the band broke the denominator downstream.
+-- `lexicon_derive.derive_from_counts` used to take `max(counter.values())` as a proxy
+-- for the article count, which was roughly right while the commonest phrase was
+-- stored: "the" appears in nearly every article. The band DELETES every phrase above
+-- MAX_DOC_SHARE of an outlet's articles, so that maximum is now bounded by
+-- MAX_DOC_SHARE itself and the proxy understates the truth by about 1.5x. Every rate
+-- computed from it is inflated by that factor, and MAX_DOC_FREQ would then cut phrases
+-- really sitting at 12-16%, which is precisely the middle band this whole change
+-- exists to preserve.
+create table if not exists outlet_phrase_articles (
+    source_id  text not null primary key,
+    articles   integer not null default 0,
+    updated_at text
+);
 """
 
 
@@ -178,6 +211,17 @@ def persist(conn: sqlite3.Connection, tally: dict[str, collections.Counter],
                      updated_at = excluded.updated_at""",
                 (sid, phrase, n, int(count), now))
             written += 1
+        # The denominator, recorded beside the counts and accumulated the same way,
+        # so a second run over more articles keeps the share meaningful.
+        n_articles = (articles or {}).get(sid)
+        if n_articles:
+            conn.execute(
+                """insert into outlet_phrase_articles(source_id, articles, updated_at)
+                   values(?,?,?)
+                   on conflict(source_id) do update set
+                     articles = articles + excluded.articles,
+                     updated_at = excluded.updated_at""",
+                (sid, int(n_articles), now))
     conn.commit()
     return written
 

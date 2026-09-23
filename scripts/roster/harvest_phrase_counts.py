@@ -53,7 +53,11 @@ PLACED = ("far-left", "left", "center-left", "center",
           "center-right", "right", "far-right")
 
 MIN_ARTICLES_PER_OUTLET = 30   # below this the outlet cannot reach a usable n anyway
-LIMIT_PER_OUTLET = 150         # do not ask any one publisher for more than this
+# Do not ask any one publisher for more than this. Measured 2026-09-23: the corpus
+# holds 13,981 eligible URLs across the 132 outlets that have 30 or more, so a cap of
+# 150 was binding on only 32 of them and lifting it entirely costs about two minutes.
+# The median eligible outlet has 84 and is nowhere near it.
+LIMIT_PER_OUTLET = 400
 WORKERS = 8                    # across DIFFERENT hosts only
 DELAY = 0.5                    # seconds between fetches to the same host
 TIMEOUT = 15
@@ -169,6 +173,75 @@ class Harvester:
         del text
 
 
+def band_report(h: "Harvester") -> None:
+    """Where the hand-written political phrases fall against the band, measured on
+    the untruncated tally, before a single row is written.
+
+    THIS IS THE ONLY MOMENT THE QUESTION IS CHEAP. After `persist` the cut phrases are
+    gone and nobody can tell whether the thresholds were right; that is how a 4,000-row
+    ceiling sat over this corpus for a day while two derivations reported zero and were
+    read as evidence about the method. The band's two numbers were set from a sample of
+    what a TRUNCATED table happened to contain, so they are an estimate until a full
+    tally checks them, and this checks them on every run.
+
+    A floor that cuts far more than the ~5% measured on that sample means the
+    untruncated tail behaves differently and the thresholds need re-reading BEFORE the
+    derivation that follows is believed.
+    """
+    try:
+        from analyzers.political_lean import LEFT_KEYWORDS as L, RIGHT_KEYWORDS as R
+        from analyzers.lexicon_derive import reachable_known
+    except Exception as exc:
+        print(f"\nband report unavailable: {exc}")
+        return
+    known, _ = reachable_known({p.lower() for p in L} | {p.lower() for p in R})
+
+    inside = below = above = 0
+    seen: set[str] = set()
+    banded_outlets = 0
+    for sid, counter in h.tally.items():
+        n = h.articles.get(sid, 0)
+        if n < pc.BAND_MIN_ARTICLES:
+            continue                      # no band applied, nothing to report
+        banded_outlets += 1
+        ceiling = pc.MAX_DOC_SHARE * n
+        for phrase in known:
+            c = counter.get(phrase, 0)
+            if not c:
+                continue
+            seen.add(phrase)
+            if c < pc.MIN_ARTICLES_PER_PHRASE:
+                below += 1
+            elif c > ceiling:
+                above += 1
+            else:
+                inside += 1
+    total = inside + below + above
+    print(f"\nband: floor {pc.MIN_ARTICLES_PER_PHRASE} article(s), ceiling "
+          f"{pc.MAX_DOC_SHARE:.0%} of an outlet's own, applied to {banded_outlets} of "
+          f"{len(h.tally)} outlets")
+    if not banded_outlets:
+        # Not the same thing as seeing no political language, and saying so would be a
+        # diagnostic reporting a corpus failure that did not happen. A --sample run
+        # gives every outlet one or two articles, so none clears BAND_MIN_ARTICLES and
+        # the loop above never looked at a single phrase.
+        print(f"  no outlet reached {pc.BAND_MIN_ARTICLES} bodies, so no band was "
+              f"applied and nothing was measured against it. Nothing is being said "
+              f"here about the corpus.")
+        return
+    if not total:
+        print("  the harvest saw none of the hand-written political phrases at all, "
+              "in outlets the band DID apply to. That is a corpus problem, not a "
+              "threshold problem.")
+        return
+    print(f"  hand-written political phrases the harvest SAW: {len(seen)} of "
+          f"{len(known)} reachable, in {total:,} outlet-phrase pairs")
+    print(f"    inside the band (kept):    {inside:>6,}  ({inside/total:.0%})")
+    print(f"    below the floor (cut):     {below:>6,}  ({below/total:.0%})"
+          f"   <- ~5% expected; much more means re-read the floor")
+    print(f"    above the ceiling (cut):   {above:>6,}  ({above/total:.0%})")
+
+
 def run(db_path: str, apply: bool, sample: int = 0) -> int:
     scope, names = targets(db_path)
     if not scope:
@@ -222,6 +295,11 @@ def run(db_path: str, apply: bool, sample: int = 0) -> int:
     for k, v in sorted(h.stats.items(), key=lambda kv: -kv[1]):
         if k not in ("ok", "words"):
             print(f"  {k}: {v:,}")
+
+    # Before the early return, so `--sample N` exercises this path too. A diagnostic
+    # that only runs on the 19-minute path is one nobody checks before spending 19
+    # minutes.
+    band_report(h)
 
     if not apply:
         print("\n--sample run: counts NOT persisted. Pass --apply to write them.")

@@ -93,6 +93,33 @@ MAX_DOC_FREQ = 0.25
 
 _WORD = re.compile(r"[a-z][a-z'-]+")
 
+
+def reachable_known(known: set[str]) -> tuple[set[str], set[str]]:
+    """Split the hand-written phrases into the ones a harvest could ever store
+    and the ones it could not.
+
+    EVERY REPORT SO FAR HAS SAID "zero of the 318", AND 318 IS NOT REACHABLE.
+    `phrase_counts.MAX_PHRASE_WORDS` is 3, so nine of them are four or five words
+    (`right to bear arms`, `shall not be infringed`, `tax cuts for the wealthy`) and
+    can never be stored, by the same invariant that keeps a stored row a phrase and
+    not a sentence. Two more carry digits (`project 2025`, `top 1%`) which the
+    tokeniser strips. The achievable ceiling is 307.
+
+    A failure reported against the wrong denominator is partly just arithmetic, and
+    this is a gate that has already been read three times as evidence about the
+    method. It divides by what the method could actually reach.
+    """
+    from analyzers import phrase_counts as _pc
+    reach, out = set(), set()
+    for p in known:
+        if len(p.split()) > _pc.MAX_PHRASE_WORDS:
+            out.add(p)
+        elif " ".join(_pc._WORD.findall(p)) != p:
+            out.add(p)      # digits or punctuation the tokeniser will not emit
+        else:
+            reach.add(p)
+    return reach, out
+
 # Function words, which dominate any n-gram count and say nothing about a side. Kept
 # short deliberately: a stopword list that grows to include political words would
 # quietly decide the answer.
@@ -351,10 +378,15 @@ def main() -> int:
     try:
         from analyzers.political_lean import LEFT_KEYWORDS as _L, RIGHT_KEYWORDS as _R
         known = {p.lower() for p in _L} | {p.lower() for p in _R}
+        reachable, unreachable = reachable_known(known)
         allp = {d["phrase"] for d in cands}
-        hit = allp & known
-        print(f"\nsanity: rediscovers {len(hit)} of the {len(known)} hand-written "
-              f"political phrases" + (f" {sorted(hit)[:6]}" if hit else ""))
+        hit = allp & reachable
+        print(f"\nsanity: rediscovers {len(hit)} of the {len(reachable)} REACHABLE "
+              f"hand-written political phrases"
+              + (f" {sorted(hit)[:6]}" if hit else ""))
+        print(f"  ({len(unreachable)} of the {len(known)} are unreachable by "
+              f"construction and are not counted against the derivation: "
+              f"{sorted(unreachable)[:4]} ...)")
         if not hit:
             print("  ZERO. The list is not political language. Do not promote any of "
                   "it into the lexicon: inspect the top entries and you will find "
@@ -414,8 +446,36 @@ def derive_from_counts(conn, roster: dict) -> list[dict]:
     per_outlet = collections.defaultdict(dict)
     for sid, phrase, count in rows:
         per_outlet[sid][phrase] = count
-    # The proxy denominator, one per outlet.
-    articles = {sid: max(d.values()) for sid, d in per_outlet.items() if d}
+
+    # THE DENOMINATOR, and why it is no longer taken from the counts themselves.
+    #
+    # This was `max(counter.values())` and called a proxy. It was roughly right while
+    # the commonest phrase was stored, because "the" appears in nearly every article.
+    # `phrase_counts.band` now DELETES every phrase above MAX_DOC_SHARE of an outlet's
+    # articles, so that maximum is bounded by MAX_DOC_SHARE and the proxy understates
+    # the article count by about 1.5x. Every rate below would be inflated by that
+    # factor and MAX_DOC_FREQ would cut phrases really sitting at 12-16%, which is
+    # exactly the middle band the band exists to preserve.
+    #
+    # `outlet_phrase_articles` records the real count beside the phrases. The fallback
+    # stays for tables written before it existed, and SAYS SO rather than guessing
+    # quietly, because a silent proxy is how the 4,000-row ceiling hid for a day.
+    articles: dict[str, int] = {}
+    try:
+        articles = {sid: n for sid, n in conn.execute(
+            "select source_id, articles from outlet_phrase_articles") if n}
+    except sqlite3.OperationalError:
+        pass
+    missing = [sid for sid in per_outlet if sid not in articles]
+    if missing:
+        for sid in missing:
+            d = per_outlet[sid]
+            if d:
+                articles[sid] = max(d.values())
+        print(f"  WARNING: no stored article count for {len(missing)} of "
+              f"{len(per_outlet)} outlets; falling back to max(count) for those, "
+              f"which UNDERSTATES a banded outlet by roughly 1/MAX_DOC_SHARE and "
+              f"inflates its rates. Re-harvest to remove this.")
 
     banned = set()
     for sid, meta in roster.items():

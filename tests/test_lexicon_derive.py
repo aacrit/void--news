@@ -45,6 +45,44 @@ def load(name):
 ld = load("lexicon_derive")
 pc = load("phrase_counts")
 
+# The hand-written lexicon the derivation is measured against. `political_lean`
+# imports the Supabase switch, which raises without VOID_SQLITE_PATH, so the two
+# tuples are read straight out of the file rather than imported: this gate has to run
+# in CI, where no state database exists.
+def _known_phrases() -> set:
+    import ast
+    src = (ROOT / "pipeline" / "analyzers" / "political_lean.py").read_text("utf-8")
+    tree = ast.parse(src)
+    out: set = set()
+    for node in tree.body:
+        # They are annotated dict literals (`LEFT_KEYWORDS: dict[str, int] = {...}`),
+        # so the node is an AnnAssign and the phrases are the dict's KEYS.
+        if isinstance(node, ast.AnnAssign):
+            target, value = node.target, node.value
+        elif isinstance(node, ast.Assign) and len(node.targets) == 1:
+            target, value = node.targets[0], node.value
+        else:
+            continue
+        if not (isinstance(target, ast.Name)
+                and target.id in ("LEFT_KEYWORDS", "RIGHT_KEYWORDS")):
+            continue
+        if isinstance(value, ast.Dict):
+            items = value.keys
+        else:
+            items = getattr(value, "elts", [])
+        for k in items:
+            if isinstance(k, ast.Constant) and isinstance(k.value, str):
+                out.add(k.value.lower())
+    if not out:
+        raise SystemExit(
+            "could not read LEFT_KEYWORDS/RIGHT_KEYWORDS out of political_lean.py; "
+            "this gate measures against them and must not silently pass on an "
+            "empty set")
+    return out
+
+
+KNOWN_PHRASES = _known_phrases()
+
 failures: list[str] = []
 
 
@@ -180,7 +218,7 @@ BAND_CASES = collections.Counter({
     "subscribe now": 90,    # furniture: in 90 of the outlet's 100 articles
     "wealth tax": 14,       # the middle, where argument lives
     "border security": 8,
-    "a one off": 2,         # too rare to carry a rate difference
+    "a one off": 1,         # too rare to carry a rate difference
 })
 kept = dict(pc.band(BAND_CASES, 100))
 check("the band drops an outlet's own furniture",
@@ -205,6 +243,66 @@ pc.persist(conn2, {"s9": BAND_CASES}, now="2026-09-23", articles={"s9": 100})
 banded = {r[0] for r in conn2.execute("select phrase from outlet_phrase_counts")}
 check("persist() applies the band when given a real article count",
       banded == {"wealth tax", "border security"}, str(sorted(banded)))
+
+# --- the thresholds are set where they bound STORAGE, not signal --------------
+# Measured against the pre-band table (98 outlets, ~81 bodies each) over the 175 rows
+# matching hand-written political phrases: a floor of 3 cut 17% of them, 4 cut 36%,
+# 5 cut 44%; a floor of 2 cuts 5%. A storage rule that removes a sixth of the
+# vocabulary the derivation is looking for is not a storage rule.
+check(f"the floor does not cut a sixth of the political vocabulary "
+      f"(is {pc.MIN_ARTICLES_PER_PHRASE})", pc.MIN_ARTICLES_PER_PHRASE <= 2,
+      pc.MIN_ARTICLES_PER_PHRASE)
+check("the floor still removes the count-1 tail",
+      pc.MIN_ARTICLES_PER_PHRASE >= 2, pc.MIN_ARTICLES_PER_PHRASE)
+check("the per-outlet ceiling is looser than the derivation's own signal filter, "
+      "which is where that decision belongs",
+      pc.MAX_DOC_SHARE > ld.MAX_DOC_FREQ,
+      f"band {pc.MAX_DOC_SHARE} vs MAX_DOC_FREQ {ld.MAX_DOC_FREQ}")
+
+# --- the denominator the band would otherwise break ---------------------------
+# `derive_from_counts` took max(count) as the article count. The band deletes every
+# phrase above MAX_DOC_SHARE of an outlet's articles, so that maximum is bounded by
+# MAX_DOC_SHARE and the proxy understates by ~1/MAX_DOC_SHARE. Rates inflate, and
+# MAX_DOC_FREQ then cuts the middle band this change exists to keep.
+conn3 = sqlite3.connect(":memory:")
+pc.persist(conn3, {"s1": collections.Counter(
+    {"wealth tax": 14, "border security": 8, "subscribe now": 90})},
+    now="2026-09-23", articles={"s1": 100})
+stored_n = conn3.execute(
+    "select articles from outlet_phrase_articles where source_id='s1'").fetchone()
+check("persist records how many articles the counts came from",
+      stored_n and stored_n[0] == 100, str(stored_n))
+top = conn3.execute("select max(count) from outlet_phrase_counts").fetchone()[0]
+check("and the old proxy would have been wrong by more than a third here",
+      top < 100 * 0.7, f"max(count)={top} against 100 articles")
+
+pc.persist(conn3, {"s1": collections.Counter({"wealth tax": 6})},
+           now="2026-09-24", articles={"s1": 40})
+again = conn3.execute(
+    "select articles from outlet_phrase_articles where source_id='s1'").fetchone()[0]
+check("a second run accumulates the denominator with the counts", again == 140, again)
+
+check("the article table holds a COUNT and no identifier",
+      {r[1] for r in conn3.execute("pragma table_info(outlet_phrase_articles)")}
+      == {"source_id", "articles", "updated_at"},
+      str(sorted(r[1] for r in conn3.execute(
+          "pragma table_info(outlet_phrase_articles)"))))
+
+# --- the gate's own denominator ----------------------------------------------
+# Every report so far said "zero of the 318". 318 is not reachable: nine phrases are
+# four or five words and cannot be stored under MAX_PHRASE_WORDS, and two carry digits
+# the tokeniser strips. A gate read three times as evidence about the method has to
+# divide by what the method can actually reach.
+reach, unreach = ld.reachable_known(KNOWN_PHRASES)
+check("the unreachable phrases are excluded from the gate's denominator",
+      len(reach) == len(KNOWN_PHRASES) - len(unreach) and len(unreach) > 0,
+      f"{len(reach)} reachable, {len(unreach)} not")
+check("nothing reachable exceeds the stored width bound",
+      all(len(p.split()) <= pc.MAX_PHRASE_WORDS for p in reach))
+check("a phrase the tokeniser cannot emit is called unreachable, not missed",
+      all(" ".join(pc._WORD.findall(p)) == p for p in reach))
+check("the four and five word phrases are the ones excluded",
+      any(len(p.split()) > pc.MAX_PHRASE_WORDS for p in unreach), str(sorted(unreach)[:3]))
 
 cols = {r[1] for r in conn.execute("pragma table_info(outlet_phrase_counts)")}
 check("the table stores no article identifier, so rows cannot be re-associated",
