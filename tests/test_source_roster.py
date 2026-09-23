@@ -111,9 +111,17 @@ def report_state_affiliated_spread(rows) -> list:
 
     Which reading is right changes the score of ~25 major outlets, because
     `_delta_max_for` gives a flagged outlet a delta of 8 instead of the
-    default. That is an editorial decision about what Void asserts, so it is
-    in docs/OPEN-ITEMS.md for the CEO, and this function only prints the
-    population so the number cannot quietly drift.
+    default of 10.
+
+    SETTLED 2026-09-23. The CEO's reading, which is also the reading the roster's
+    own majority already followed: the BBC is publicly funded like PBS, and the flag
+    is for outlets whose government alignment IS the dominant editorial signal. Seven
+    democratic public broadcasters were unflagged to match (SVT, NRK, Tagesschau,
+    RTP, Lusa, SABC, Agencia Brasil); 41 outlets keep it.
+
+    This function still only PRINTS, because the population is worth watching and
+    "publicly funded" in a credibility note is a loose match. The decision is asserted
+    by `check_public_broadcasters_are_one_class` instead, which names its peers.
     """
     funded_unflagged = []
     for s in rows:
@@ -126,6 +134,54 @@ def report_state_affiliated_spread(rows) -> list:
           f"do not. Which is correct is an open CEO question, not a defect: "
           f"see docs/OPEN-ITEMS.md.")
     return []
+
+
+#: Publicly funded, editorially independent, and the flag decides how much an
+#: article's own words may move their score (8 points against 10). The roster rated
+#: PBS, NPR, BBC, CBC and Voice of America without the flag while flagging seven
+#: identical peers, and nothing in the data distinguished them. Settled by the CEO on
+#: 2026-09-23 in favour of the majority reading: the BBC is publicly funded like PBS,
+#: and `state_affiliated` is for outlets whose government alignment IS the dominant
+#: editorial signal (RT, CGTN, TASS, Sputnik, Xinhua, the Gulf state press).
+PUBLIC_BROADCASTER_PEERS = (
+    "PBS NewsHour", "NPR", "BBC News", "CBC News", "Voice of America",
+    "Agencia Brasil (English)", "Lusa (Portuguese News Agency)", "NRK (English)",
+    "RTP (English)", "SABC News", "SVT Nyheter (English)", "Tagesschau (English)",
+)
+
+
+def check_public_broadcasters_are_one_class(rows) -> list:
+    """Every peer in PUBLIC_BROADCASTER_PEERS carries the same flag value.
+
+    Deliberately NOT "no outlet in a democracy may be flagged". A public broadcaster
+    captured by its government is a real case, and a blanket rule would force a wrong
+    answer the day one of those joins the roster. What is asserted is the consistency
+    that was actually broken: these twelve are the same kind of thing, so they are
+    flagged together or not at all.
+
+    A peer that genuinely diverges gets removed from this tuple WITH a reason, which
+    makes the divergence an argued decision rather than a silent drift.
+    """
+    out = []
+    by_name = {r.get("name"): r for r in rows}
+    missing = [n for n in PUBLIC_BROADCASTER_PEERS if n not in by_name]
+    if missing:
+        out.append(
+            f"{len(missing)} peer(s) named here are not on the roster: {missing}. "
+            f"Either they were renamed, in which case update this tuple, or removed, "
+            f"in which case drop them from it."
+        )
+    flagged = [n for n in PUBLIC_BROADCASTER_PEERS
+               if by_name.get(n, {}).get("state_affiliated")]
+    if flagged and len(flagged) != len(PUBLIC_BROADCASTER_PEERS) - len(missing):
+        out.append(
+            f"the public-broadcaster class is split: {len(flagged)} flagged "
+            f"({flagged}) and the rest not. These are the same kind of outlet, so "
+            f"they are flagged together or not at all. The flag costs an article 2 "
+            f"points of movement (8 against 10), and the CEO settled this on "
+            f"2026-09-23 in favour of no flag, matching PBS and the BBC."
+        )
+    return out
 
 
 def check_flagged_outlets_are_placed(rows) -> list:
@@ -199,6 +255,7 @@ def check_the_unrated_tail_is_deliberate(rows) -> list:
 CHECKS = (
     ("public outlets are placed", check_public_outlets_are_placed),
     ("state_affiliated spread (report only)", report_state_affiliated_spread),
+    ("public broadcasters are one class", check_public_broadcasters_are_one_class),
     ("flagged outlets are placed", check_flagged_outlets_are_placed),
     ("baselines are on the ladder", check_baselines_are_on_the_ladder),
     ("the unrated tail is the axis's edge", check_the_unrated_tail_is_deliberate),

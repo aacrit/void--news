@@ -6098,8 +6098,8 @@
     "country": "SE",
     "type": "broadcast",
     "political_lean_baseline": "center",
-    "credibility_notes": "Sweden's public broadcaster. Independent editorial board. Covers Nordic affairs.",
-    "state_affiliated": true
+    "credibility_notes": "Sweden's public broadcaster. Independent editorial board. Covers Nordic affairs. Unflagged 2026-09-23 (CEO): publicly funded and editorially independent, the same class as PBS, NPR, BBC and CBC, which this roster has always rated without the flag. `state_affiliated` is for outlets whose government alignment IS the dominant editorial signal.",
+    "state_affiliated": false
   },
   {
     "id": "nrk-english",
@@ -6110,8 +6110,8 @@
     "country": "NO",
     "type": "broadcast",
     "political_lean_baseline": "center",
-    "credibility_notes": "Norway's public broadcaster. Government-funded but editorially independent. Strong Nordic coverage.",
-    "state_affiliated": true
+    "credibility_notes": "Norway's public broadcaster. Government-funded but editorially independent. Strong Nordic coverage. Unflagged 2026-09-23 (CEO): publicly funded and editorially independent, the same class as PBS, NPR, BBC and CBC, which this roster has always rated without the flag. `state_affiliated` is for outlets whose government alignment IS the dominant editorial signal.",
+    "state_affiliated": false
   },
   {
     "id": "rtp-english",
@@ -6122,8 +6122,8 @@
     "country": "PT",
     "type": "broadcast",
     "political_lean_baseline": "center",
-    "credibility_notes": "Portugal's public broadcaster. Covers Lusophone world. Editorially independent from government.",
-    "state_affiliated": true
+    "credibility_notes": "Portugal's public broadcaster. Covers Lusophone world. Editorially independent from government. Unflagged 2026-09-23 (CEO): publicly funded and editorially independent, the same class as PBS, NPR, BBC and CBC, which this roster has always rated without the flag. `state_affiliated` is for outlets whose government alignment IS the dominant editorial signal.",
+    "state_affiliated": false
   },
   {
     "id": "greek-reporter",
@@ -6322,8 +6322,8 @@
     "country": "BR",
     "type": "wire",
     "political_lean_baseline": "center",
-    "credibility_notes": "Brazilian government news agency. State-affiliated but maintains editorial standards. Covers Brazil policy.",
-    "state_affiliated": true
+    "credibility_notes": "Brazilian government news agency. State-affiliated but maintains editorial standards. Covers Brazil policy. Unflagged 2026-09-23 (CEO): publicly funded and editorially independent, the same class as PBS, NPR, BBC and CBC, which this roster has always rated without the flag. `state_affiliated` is for outlets whose government alignment IS the dominant editorial signal.",
+    "state_affiliated": false
   },
   {
     "id": "rpp-english",
@@ -7290,8 +7290,8 @@
     "country": "DE",
     "type": "broadcast",
     "political_lean_baseline": "center",
-    "credibility_notes": "Germany's most-watched news program. ARD public broadcaster. Editorially independent.",
-    "state_affiliated": true
+    "credibility_notes": "Germany's most-watched news program. ARD public broadcaster. Editorially independent. Unflagged 2026-09-23 (CEO): publicly funded and editorially independent, the same class as PBS, NPR, BBC and CBC, which this roster has always rated without the flag. `state_affiliated` is for outlets whose government alignment IS the dominant editorial signal.",
+    "state_affiliated": false
   },
   {
     "id": "frc-action",
@@ -8107,8 +8107,8 @@
     "country": "ZA",
     "type": "broadcast",
     "political_lean_baseline": "center",
-    "credibility_notes": "South African Broadcasting Corporation. Public broadcaster. State-affiliated but editorially reforming.",
-    "state_affiliated": true
+    "credibility_notes": "South African Broadcasting Corporation. Public broadcaster. State-affiliated but editorially reforming. Unflagged 2026-09-23 (CEO): publicly funded and editorially independent, the same class as PBS, NPR, BBC and CBC, which this roster has always rated without the flag. `state_affiliated` is for outlets whose government alignment IS the dominant editorial signal.",
+    "state_affiliated": false
   },
   {
     "id": "ground-news",
@@ -8869,8 +8869,8 @@
     "country": "PT",
     "type": "wire",
     "political_lean_baseline": "center",
-    "credibility_notes": "Portugal's national news agency. English-language wire service. State-owned but editorially independent.",
-    "state_affiliated": true
+    "credibility_notes": "Portugal's national news agency. English-language wire service. State-owned but editorially independent. Unflagged 2026-09-23 (CEO): publicly funded and editorially independent, the same class as PBS, NPR, BBC and CBC, which this roster has always rated without the flag. `state_affiliated` is for outlets whose government alignment IS the dominant editorial signal.",
+    "state_affiliated": false
   },
   {
     "id": "albanian-daily-news",

@@ -522,11 +522,34 @@ treatment `history/data.ts` got in rev 69 before the 301 comes off.
 
 ---
 
-## The roster's `state_affiliated` flag is not applied consistently (CEO call)
+## The roster's `state_affiliated` flag: SETTLED 2026-09-23 (CEO)
 
-Found 2026-09-21 while answering "why can't we score the unscored". **Not
-acted on**, because acting on it either way changes how ~25 major outlets are
-scored and that is an editorial decision about what Void asserts.
+Found 2026-09-21 while answering "why can't we score the unscored", and left
+unacted for two days because acting either way changes how ~25 major outlets are
+scored, which is an editorial decision about what Void asserts rather than a
+defect to fix by inference.
+
+**The answer: `state_affiliated` means state-ALIGNED editorial control, not
+state-funded.** The CEO's reading, and the one the roster's own majority already
+followed: the BBC is publicly funded like PBS, and that is a different thing from
+RT. So the seven democratic public broadcasters that carried the flag lost it
+(SVT, NRK, Tagesschau, RTP, Lusa, SABC, Agencia Brasil) and 41 outlets whose
+government alignment IS the dominant editorial signal keep it. Zero flagged
+outlets now sit in a democracy.
+
+**Magnitude, stated precisely because an earlier note of mine got it wrong:** all
+seven are labelled `center`, which `_is_unrated_source` treats as a FINDING and
+not the absence of one, so they were never on the 24-point unrated budget.
+Unflagging moves them from **8 points to 10**. It widens what their own words may
+say about them by two points; it changes no baseline, tier or placement.
+
+**The gate is deliberately not "no democracy may be flagged",** because a public
+broadcaster captured by its government is a real case and a blanket rule would
+force a wrong answer the day one appears. `check_public_broadcasters_are_one_class`
+names its twelve peers and fails if they are not flagged alike, so a future
+divergence has to be argued rather than drift in.
+
+The record of what was wrong, kept because it is the reason this took two days:
 
 `tests/test_source_roster.py` reports the split every run:
 
