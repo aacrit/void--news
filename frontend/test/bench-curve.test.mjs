@@ -203,8 +203,34 @@ check("the marks sit above the line",
   /\.bench__col\s*\{[^}]*z-index:\s*1/.test(css));
 check("the shape word is hidden visually, not removed",
   /\.bench__shape--sr\s*\{[^}]*clip-path/.test(css));
+/* TWO INKS, AND THEY MUST NOT SWAP. The pen is the story's verdict and the
+   bleed is the axis it sits on. If the pen ever took the ramp, a Split story,
+   whose whole finding is that the room has no direction, would be drawn with a
+   confident blue-to-red sweep. */
+check("the pen takes the story's verdict colour, never the axis ramp",
+  /className="bench__curve-ink"[\s\S]{0,120}\/>/.test(bench) &&
+  !/className="bench__curve-ink"[\s\S]{0,120}url\(#/.test(bench));
+check("the bleed is wider than the pen, or the colour never reaches the page",
+  /minHalf: 1\.5, maxHalf: 4\.4/.test(bench) && /minHalf: 0\.4, maxHalf: 2\.4/.test(bench));
+check("the bleed takes the axis ramp",
+  /className="bench__curve-bleed"[\s\S]{0,160}fill=\{`url\(#/.test(bench));
+check("the pen still resolves currentcolor from leanShapeColor",
+  /style=\{\{ color: leanShapeColor\(spread\) \}\}/.test(bench) &&
+  /\.bench__curve-ink\s*\{[^}]*fill:\s*currentcolor/.test(css));
+check("the ramp is the same seven stops the axis rule draws",
+  /AXIS_RAMP/.test(bench) &&
+  ["--bias-far-left", "--bias-left", "--bias-center-left", "--bias-center",
+   "--bias-center-right", "--bias-right", "--bias-far-right"]
+    .every((t) => new RegExp(`"${t}"`).test(bench)));
+/* Two Benches mount on one page (the inline Deep Dive and the full one). A
+   fixed id would silently repoint the second one's fill at the first's. */
+check("the gradient id cannot collide between mounts",
+  /useId\(\)/.test(bench) && !/id="bench-ramp"/.test(bench));
+check("the ramp is laid out in user space, so it lands where the rule does",
+  /gradientUnits="userSpaceOnUse"/.test(bench));
+
 check("the bleed stays a bleed",
-  /\.bench__curve-bleed\s*\{[^}]*opacity:\s*0\.1/.test(css) &&
+  /\.bench__curve-bleed\s*\{[^}]*opacity:\s*0\.[1-4]/.test(css) &&
   /\.bench__curve-bleed\s*\{[^}]*filter:\s*blur/.test(css));
 check("motion is given up under prefers-reduced-motion",
   /prefers-reduced-motion[\s\S]*bench__curve-ink[\s\S]*animation:\s*none/.test(css));

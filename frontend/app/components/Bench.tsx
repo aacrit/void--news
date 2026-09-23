@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect, useLayoutEffect, useCallback } from "react";
+import {
+  useState, useMemo, useRef, useEffect, useLayoutEffect, useCallback, useId,
+} from "react";
 import { createPortal } from "react-dom";
 import {
   LEAN_BASELINES,
@@ -72,6 +74,16 @@ const BUCKET_TOKEN: Record<LeanCategory, string> = {
 };
 
 const BUCKET_ORDER = LEAN_BASELINES.map(([name]) => name);
+
+/** The axis ramp, at the positions `.bench__rule` already draws it. Held here
+ *  rather than in the stylesheet because the gradient needs an SVG element and
+ *  a per-mount id; the stops themselves stay the CSS tokens, so a theme change
+ *  still reaches them. */
+const AXIS_RAMP: readonly (readonly [number, string])[] = [
+  [0, "--bias-far-left"], [16, "--bias-left"], [32, "--bias-center-left"],
+  [50, "--bias-center"], [68, "--bias-center-right"], [84, "--bias-right"],
+  [100, "--bias-far-right"],
+];
 
 const BUCKET_NAME: Record<LeanCategory, string> = {
   "far-left": "far left",
@@ -232,6 +244,7 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
   const [card, setCard] = useState<CardData | null>(null);
   const [pinned, setPinned] = useState<string | null>(null);
   const [drawn, setDrawn] = useState(settled);
+  const rampId = `bench-ramp-${useId().replace(/:/g, "")}`;
 
   /* Own width, because the mark size is chosen from it. Falls back to a
      desktop-ish default before the first measurement so the server render and
@@ -331,6 +344,16 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
      the story and tapers to a hairline where nothing stands. */
   const ink = useMemo(
     () => (curve ? inkRibbon(curve, counts, { minHalf: 0.4, maxHalf: 2.4 }) : null),
+    [curve, counts],
+  );
+  /* The bleed is a WIDER ribbon, not the same one at a lower opacity. That is
+     the relationship `InkUnderline` already has (stroke 3 under a pen of 1.8):
+     ink spreads into paper past the nib, so it has to show AROUND the stroke.
+     Drawn at the same width it sits entirely behind the pen and the axis
+     colour it carries never reaches the page, which is exactly what the first
+     attempt did. */
+  const bleed = useMemo(
+    () => (curve ? inkRibbon(curve, counts, { minHalf: 1.5, maxHalf: 4.4 }) : null),
     [curve, counts],
   );
   /* The mark wants a square it can breathe in. Below that the head keeps it,
@@ -453,12 +476,40 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
             focusable="false"
             style={{ color: leanShapeColor(spread) }}
           >
-            {/* The bleed. Ink feathering into paper, the same two-pass
-                construction `InkUnderline` uses under a lean label. It is
-                what replaced the flat wash: a tint under a curve is a chart
-                convention, and it was restating what the marks beneath it
-                already say. */}
-            <path className="bench__curve-bleed" d={ink ?? curve.line} />
+            {/* TWO INKS, TWO DIFFERENT THINGS SAID.
+
+                The PEN carries `leanShapeColor`, which is this story's
+                verdict and the same rule the word under the card's register
+                obeys: red end to end where the roster leans right, blue where
+                it leans left, and plain ink on a Split, which is the one shape
+                with no direction to name. Colouring the pen by position would
+                trade that verdict for a restatement of the axis, and give a
+                divided room a confident sweep it has not earned.
+
+                The BLEED carries the axis instead. It is ink feathering into
+                paper, blurred and barely there, so the far left of the stroke
+                warms to blue and the far right to red without the pen saying
+                anything it should not. The stops are the ones `.bench__rule`
+                already uses under the columns, in user space, so the ramp
+                lands on the same positions the rule does rather than merely
+                near them. */}
+            <defs>
+              <linearGradient
+                id={rampId}
+                gradientUnits="userSpaceOnUse"
+                x1={0} y1={0} x2={curve.width} y2={0}
+              >
+                {AXIS_RAMP.map(([at, token]) => (
+                  <stop key={token} offset={`${at}%`}
+                    style={{ stopColor: `var(${token})` }} />
+                ))}
+              </linearGradient>
+            </defs>
+            <path
+              className="bench__curve-bleed"
+              d={bleed ?? curve.line}
+              fill={`url(#${rampId})`}
+            />
             <path className="bench__curve-ink" d={ink ?? curve.line} />
           </svg>
         )}

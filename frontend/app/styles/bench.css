@@ -99,11 +99,14 @@
   opacity: 0.56;
 }
 
+/* Filled from the axis ramp in the markup, not from currentcolor: the pen
+   carries the story's verdict and the bleed carries the axis it sits on. A
+   shade more presence than the plain bleed had, because a saturated ramp at
+   0.1 under a blur is not perceptible at either end. */
 .bench__curve-bleed {
-  fill: currentcolor;
   stroke: none;
-  opacity: 0.1;
-  filter: blur(1.5px);
+  opacity: 0.3;
+  filter: blur(2px);
 }
 
 /* The stroke is laid down once, left to right, the way a pen crosses a page.
@@ -124,7 +127,7 @@
 
 @keyframes bench-bleed {
   from { opacity: 0; }
-  to   { opacity: 0.1; }
+  to   { opacity: 0.3; }
 }
 
 /* THE ROOM. Centred on the widest run of low columns, which is where the
