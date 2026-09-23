@@ -145,6 +145,37 @@
 .bench__disc[data-lean="right"]        { color: var(--bias-right); }
 .bench__disc[data-lean="far-right"]    { color: var(--bias-far-right); }
 
+/* ---- A score read off the article, against one placed on the baseline ----
+   The mark keeps its colour and its column: the lean reading does not change,
+   only the claim about where that reading came from. So the ring changes
+   character rather than hue. A solid rule is asserted, a dashed rule is
+   provisional, which is the same convention a drafting table uses and does not
+   spend a colour that means something else here.
+
+   `outline` rather than `border`, because the disc's width and height are set
+   inline by the packing arithmetic and a border would eat into the mark while
+   an outline sits on it. `outline-offset: -1px` keeps it inside the circle.
+   `box-shadow: none` removes the solid ring it replaces, so the two states are
+   one ring in two characters rather than two rings. */
+.bench__disc[data-authority="headline"] {
+  box-shadow: none;
+  outline: 1px dashed currentcolor;
+  outline-offset: -1px;
+}
+
+/* A dashed hairline is the one thing here that a coarse screen can lose
+   entirely, so below the favicon threshold the mark also gives up its fill. */
+.bench__disc[data-authority="headline"] .bench__disc-img,
+.bench__disc[data-authority="headline"] .bench__disc-letter {
+  opacity: 0.75;
+}
+
+@media (prefers-contrast: more) {
+  .bench__disc[data-authority="headline"] {
+    outline-width: 2px;
+  }
+}
+
 /* ---- Rack focus: the named mark holds, its neighbours recede ------------- */
 
 .bench--focused .bench__mark {
@@ -378,6 +409,18 @@
   line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* The card's one sentence of provenance. Sits under the headline because it is
+   about that headline: it is the whole of what we were served. */
+.bench__card-headline-only {
+  margin-top: var(--space-1);
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  color: var(--fg-tertiary);
+  border-top: 1px dashed var(--divider);
+  padding-top: var(--space-1);
 }
 
 .bench__card-hint {

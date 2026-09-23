@@ -12,6 +12,11 @@ import {
 } from "../lib/biasColors";
 import { sourceLogoUrl } from "../lib/sourceLogos";
 import {
+  textAuthority,
+  authorityNote,
+  headlineOnlyCount,
+} from "../lib/textAuthority";
+import {
   packBench,
   benchRows,
   BENCH_FAVICON_MIN,
@@ -46,6 +51,11 @@ export interface BenchSource {
   politicalLean: number;
   /** The article's own headline, where the surface has one. */
   headline?: string;
+  /** `bias_scores.confidence`, 0-1: the share of the text's movement budget
+   *  this article was long enough to earn. Below `AUTHORITY_CUT` the published
+   *  score is the outlet's baseline, and the mark says so rather than drawing
+   *  identically to one read off a full article. */
+  confidence?: number;
 }
 
 const BUCKET_TOKEN: Record<LeanCategory, string> = {
@@ -141,6 +151,9 @@ function BenchCard({ data }: { data: CardData }) {
       </p>
       <p className="bench__card-tier">{tierLabel(s.tier)}</p>
       {s.headline && <p className="bench__card-headline">{s.headline}</p>}
+      {authorityNote(s.confidence) && (
+        <p className="bench__card-headline-only">{authorityNote(s.confidence)}</p>
+      )}
       <p className="bench__card-hint">
         <a
           href={s.articleUrl}
@@ -163,10 +176,16 @@ function Mark({ source, size }: { source: BenchSource; size: number }) {
   const [failed, setFailed] = useState(false);
   const url = size >= BENCH_FAVICON_MIN ? sourceLogoUrl(source.name) : "";
   const bucket = leanToBucket(source.politicalLean);
+  /* A hollow ring, not a second colour: the column a mark sits in is its lean
+     and that reading must not change. Fill state is the same double encoding
+     the dot matrix already uses, and it degrades to "an outline" rather than
+     to "a different politics" for a reader who cannot separate the hues. */
+  const authority = textAuthority(source.confidence);
   return (
     <span
       className="bench__disc"
       data-lean={bucket}
+      data-authority={authority}
       style={{ width: size, height: size }}
       aria-hidden="true"
     >
@@ -199,6 +218,10 @@ export interface BenchProps {
 }
 
 export default function Bench({ sources, unscoredCount = 0, settled = false }: BenchProps) {
+  /* Said out loud in the head, not only on hover: 13 us_major outlets serve us
+     no article text, so on a wire-heavy story most of the bench can be sitting
+     on its outlets' baselines and every mark used to look the same. */
+  const headlineOnly = useMemo(() => headlineOnlyCount(sources), [sources]);
   const wrapRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const [coarse, setCoarse] = useState(false);
@@ -347,6 +370,11 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
         <p className="bench__shape">{leanShapeLabel(spread)}</p>
         <p className="bench__count">
           {total} {total === 1 ? "source" : "sources"} placed
+          {headlineOnly > 0 && (
+            <span className="bench__unscored">
+              {" "}&middot; {headlineOnly} from headlines only
+            </span>
+          )}
           {unscoredCount > 0 && (
             <span className="bench__unscored"> &middot; {unscoredCount} not measured</span>
           )}
@@ -396,7 +424,11 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
                           type="button"
                           className="bench__mark"
                           data-focused={focusName === s.name ? "true" : undefined}
-                          aria-label={`${s.name}, ${leanLabel(s.politicalLean)}. Show details.`}
+                          aria-label={`${s.name}, ${leanLabel(s.politicalLean)}${
+                            textAuthority(s.confidence) === "headline"
+                              ? ", scored from the headline"
+                              : ""
+                          }. Show details.`}
                           aria-expanded={pinned === s.name}
                           onClick={(e) => {
                             if (pinned === s.name) {
@@ -418,7 +450,11 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
                           rel="noopener noreferrer"
                           className="bench__mark"
                           data-focused={focusName === s.name ? "true" : undefined}
-                          aria-label={`${s.name}, ${leanLabel(s.politicalLean)}`}
+                          aria-label={`${s.name}, ${leanLabel(s.politicalLean)}${
+                            textAuthority(s.confidence) === "headline"
+                              ? ", scored from the headline"
+                              : ""
+                          }`}
                           onPointerEnter={(e) => show(e.currentTarget, s)}
                           onPointerLeave={() => setCard(null)}
                           onFocus={(e) => show(e.currentTarget, s)}
