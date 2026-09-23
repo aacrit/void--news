@@ -62,20 +62,17 @@ MIN_BODY_WORDS = 150           # the scorer's own full-confidence threshold
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36")
 
-_TAG = re.compile(r"<(script|style|nav|header|footer|aside)[^>]*>.*?</\1>",
-                  re.S | re.I)
-_STRIP = re.compile(r"<[^>]+>")
-
-
-def body_text(html: str) -> str:
-    """Rough visible text. Good enough to COUNT phrases in, which is all it is for.
-
-    Deliberately not a parser: nothing downstream reads this string except the phrase
-    counter, and it is discarded in the same call. A precise extraction would be worth
-    it if the text were kept, and it is not.
-    """
-    cleaned = _TAG.sub(" ", html or "")
-    return re.sub(r"\s+", " ", _STRIP.sub(" ", cleaned)).strip()
+# EXTRACTION IS THE WHOLE BALL GAME, and the first version of this file got it
+# wrong. It stripped tags with a regex and called the result "good enough to COUNT
+# phrases in". It was not. The 10.5M words that produced were mostly page chrome,
+# and the derivation over them ranked `pic twitter com`, `sign`, `if you`,
+# `instagram` and `page` at the top and rediscovered ZERO of the 318 hand-written
+# political phrases, exactly as the truncated-lead corpus had.
+#
+# The pipeline already owns a real extractor. `web_scraper.scrape_article` does
+# JSON-LD first, then article-body selectors, then Playwright, with paywall
+# detection, image-credit stripping and title-echo detection on top. Writing a
+# worse one beside it was the mistake; this now calls it.
 
 
 def targets(db_path: str) -> dict[str, list[tuple[str, str]]]:
@@ -143,15 +140,16 @@ class Harvester:
             return
         self._wait_for_host(host_of(url))
         try:
-            resp = self.session.get(url, timeout=TIMEOUT, allow_redirects=True)
+            from fetchers.web_scraper import scrape_article
+            got = scrape_article(url)
         except Exception as exc:
             self.stats[f"error_{type(exc).__name__}"] += 1
             return
-        if resp.status_code != 200:
-            self.stats[f"http_{resp.status_code}"] += 1
+        text = got.get("full_text") or ""
+        words = got.get("word_count") or len(text.split())
+        if not text:
+            self.stats["no_text"] += 1
             return
-        text = body_text(resp.text)
-        words = len(text.split())
         if words < MIN_BODY_WORDS:
             self.stats["too_short"] += 1
             return

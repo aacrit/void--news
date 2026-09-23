@@ -386,3 +386,88 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+# ---------------------------------------------------------------------------
+# Deriving from harvested COUNTS instead of stored text
+# ---------------------------------------------------------------------------
+# `scripts/roster/harvest_phrase_counts.py` re-fetched 8,697 article bodies for
+# URLs already in the corpus and kept only per-outlet phrase counts: 10.5M words,
+# against 5.3M of truncated leads. That is the corpus the first derivation needed
+# and did not have, and it exists without any article text being stored.
+#
+# A count here is "articles from this outlet containing this phrase", because the
+# harvester counted `set(phrases_of(text))` per article. So it is a DOCUMENT
+# count and the same chi-squared applies, with one substitution: the per-outlet
+# article total is not stored, so the outlet's largest single phrase count stands
+# in for it. Some near-universal word appears in essentially every article, which
+# makes the proxy tight, and it is only ever used as a denominator for rates.
+
+def derive_from_counts(conn, roster: dict) -> list[dict]:
+    """Chi-squared over harvested counts. Same filters, same meaning, more text.
+
+    `roster` maps source_id -> {"base": int, "name": str}, so this never reads a
+    label out of the counts table and the split stays by outlet.
+    """
+    rows = conn.execute(
+        "select source_id, phrase, count from outlet_phrase_counts").fetchall()
+    per_outlet = collections.defaultdict(dict)
+    for sid, phrase, count in rows:
+        per_outlet[sid][phrase] = count
+    # The proxy denominator, one per outlet.
+    articles = {sid: max(d.values()) for sid, d in per_outlet.items() if d}
+
+    banned = set()
+    for sid, meta in roster.items():
+        for w in _WORD.findall((meta.get("name") or "").lower()):
+            banned.add(w)
+
+    left_docs = right_docs = 0
+    counts = collections.defaultdict(lambda: [0, 0])
+    outlets = collections.defaultdict(lambda: (set(), set()))
+    for sid, phrases_map in per_outlet.items():
+        meta = roster.get(sid)
+        if not meta or meta["base"] == 50:
+            continue
+        side = 0 if meta["base"] < 50 else 1
+        n_articles = articles.get(sid, 0)
+        if side == 0:
+            left_docs += n_articles
+        else:
+            right_docs += n_articles
+        for phrase, count in phrases_map.items():
+            if phrase in banned:
+                continue
+            counts[phrase][side] += count
+            outlets[phrase][side].add(sid)
+
+    total = left_docs + right_docs
+    if not total:
+        return []
+    out = []
+    for phrase, (l, r) in counts.items():
+        n = l + r
+        left_outlets, right_outlets = outlets[phrase]
+        if n < MIN_ARTICLES or len(left_outlets) + len(right_outlets) < MIN_OUTLETS:
+            continue
+        if (len(left_outlets) < MIN_OUTLETS_PER_SIDE
+                or len(right_outlets) < MIN_OUTLETS_PER_SIDE):
+            continue
+        if n / total > MAX_DOC_FREQ:
+            continue
+        el = n * left_docs / total
+        er = n * right_docs / total
+        if el < 1 or er < 1:
+            continue
+        chi = ((abs(l - el) - 0.5) ** 2) / el + ((abs(r - er) - 0.5) ** 2) / er
+        rate_l = l / left_docs
+        rate_r = r / right_docs
+        out.append({"phrase": phrase, "side": "left" if rate_l > rate_r else "right",
+                    "chi2": round(chi, 2), "left": l, "right": r,
+                    "outlets": len(left_outlets) + len(right_outlets),
+                    "left_outlets": len(left_outlets),
+                    "right_outlets": len(right_outlets),
+                    "rate_left": round(rate_l * 100, 3),
+                    "rate_right": round(rate_r * 100, 3)})
+    out.sort(key=lambda d: -d["chi2"])
+    return out
