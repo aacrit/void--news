@@ -237,8 +237,12 @@ def band_report(h: "Harvester") -> None:
     print(f"  hand-written political phrases the harvest SAW: {len(seen)} of "
           f"{len(known)} reachable, in {total:,} outlet-phrase pairs")
     print(f"    inside the band (kept):    {inside:>6,}  ({inside/total:.0%})")
-    print(f"    below the floor (cut):     {below:>6,}  ({below/total:.0%})"
-          f"   <- ~5% expected; much more means re-read the floor")
+    print(f"    below the floor (cut):     {below:>6,}  ({below/total:.0%})")
+    print(f"      NOT comparable to the 5% measured when the floor was chosen. That "
+          f"5% was taken over a HEAD-TRUNCATED table, which by construction held no "
+          f"count-1 rows at all. A full tally surfaces every phrase an outlet used "
+          f"once, so a healthy run lands far higher here. What would be alarming is "
+          f"the KEPT count being small in absolute terms, not this share being large.")
     print(f"    above the ceiling (cut):   {above:>6,}  ({above/total:.0%})")
 
 
@@ -306,6 +310,32 @@ def run(db_path: str, apply: bool, sample: int = 0) -> int:
         return 0
 
     conn = sqlite3.connect(db_path)
+
+    # ROWS WRITTEN UNDER ONE BAND POLICY CANNOT BE RE-BANDED UNDER ANOTHER, and
+    # `persist` MERGES (count = count + excluded.count), so a run on top of a table
+    # from a different policy silently produces counts from two regimes with a
+    # denominator from one. Furniture the new band declines to write stays at its old
+    # value forever, because a band cannot delete a row it never touches.
+    #
+    # A counts table with no companion article table is the exact signature of the
+    # pre-band top-4,000 data. Refuse it rather than produce a number that looks fine.
+    existing = conn.execute(
+        "select count(*) from sqlite_master where type='table' "
+        "and name='outlet_phrase_counts'").fetchone()[0]
+    if existing:
+        n_counts = conn.execute("select count(*) from outlet_phrase_counts").fetchone()[0]
+        has_articles = conn.execute(
+            "select count(*) from sqlite_master where type='table' "
+            "and name='outlet_phrase_articles'").fetchone()[0]
+        if n_counts and not has_articles:
+            print(f"\nREFUSING TO WRITE: outlet_phrase_counts holds {n_counts:,} rows "
+                  f"and there is no outlet_phrase_articles table, which is the "
+                  f"signature of the pre-band top-4,000 data. persist() merges, so "
+                  f"this run would add banded counts on top of unbanded ones and "
+                  f"report a denominator for only half of them.\n"
+                  f"  delete from outlet_phrase_counts;  then re-run.")
+            return 2
+
     written = pc.persist(conn, h.tally, now=time.strftime("%Y-%m-%dT%H:%M:%SZ"),
                          articles=dict(h.articles))
     banded = sum(1 for sid in h.tally if h.articles[sid] >= pc.BAND_MIN_ARTICLES)

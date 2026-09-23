@@ -109,7 +109,17 @@ def reachable_known(known: set[str]) -> tuple[set[str], set[str]]:
     this is a gate that has already been read three times as evidence about the
     method. It divides by what the method could actually reach.
     """
-    from analyzers import phrase_counts as _pc
+    # Loaded by path, not by package: this module is run as a script
+    # (`python3 pipeline/analyzers/lexicon_derive.py`), where `analyzers` is not an
+    # importable package, and a gate that raises here is a gate that does not run.
+    try:
+        from analyzers import phrase_counts as _pc          # inside the pipeline
+    except ImportError:
+        import importlib.util
+        _spec = importlib.util.spec_from_file_location(
+            "phrase_counts", pathlib.Path(__file__).with_name("phrase_counts.py"))
+        _pc = importlib.util.module_from_spec(_spec)
+        _spec.loader.exec_module(_pc)
     reach, out = set(), set()
     for p in known:
         if len(p.split()) > _pc.MAX_PHRASE_WORDS:
@@ -416,8 +426,96 @@ def main() -> int:
     return 0
 
 
-if __name__ == "__main__":
-    raise SystemExit(main())
+def main_counts(db_path: str) -> int:
+    """Run the derivation over harvested COUNTS and report the gate.
+
+    `derive_from_counts` had no caller anywhere in the repo: the rediscovery check,
+    `reachable_known` and the candidate writer all lived in `main()`, which reads the
+    truncated-text corpus instead. So the counts path could be run only by hand, and
+    the one number that decides whether any of this is political language was not
+    printed by it.
+
+        python3 pipeline/analyzers/lexicon_derive.py --counts <state.db>
+    """
+    conn = sqlite3.connect(db_path)
+    roster = {}
+    for sid, name, lean in conn.execute(
+            "select id, name, political_lean_baseline from sources"):
+        if lean in BASELINE:
+            roster[sid] = {"base": BASELINE[lean], "name": name}
+    n_rows = conn.execute("select count(*) from outlet_phrase_counts").fetchone()[0]
+    n_out = conn.execute(
+        "select count(distinct source_id) from outlet_phrase_counts").fetchone()[0]
+    print(f"counts: {n_rows:,} rows over {n_out} outlets; "
+          f"{len(roster)} roster outlets carry a baseline")
+
+    cands = derive_from_counts(conn, roster)
+    print(f"\ncandidates passing the floors: {len(cands):,}")
+    for side in ("left", "right"):
+        top = [d["phrase"] for d in cands if d["side"] == side][:14]
+        print(f"  top {side}: {top}")
+
+    known = _hand_written()
+    if not known:
+        # Refused, not skipped. This number is the whole point of the run.
+        print("\nABORT: could not read LEFT_KEYWORDS/RIGHT_KEYWORDS out of "
+              "political_lean.py, so the gate cannot be applied. Reporting "
+              "candidates without it would be reporting nothing.")
+        return 2
+    reach, unreach = reachable_known(known)
+    hit = {d["phrase"] for d in cands} & reach
+    print(f"\nGATE: rediscovers {len(hit)} of the {len(reach)} REACHABLE "
+          f"hand-written political phrases ({len(unreach)} of {len(known)} cannot be "
+          f"stored at all and are not counted)")
+    if hit:
+        rank = {d["phrase"]: i for i, d in enumerate(cands, 1)}
+        print(f"  {sorted(hit)[:25]}")
+        print(f"  best rank among them: {min(rank[p] for p in hit)} of {len(cands)}")
+    else:
+        print("  ZERO. On a corpus that now contains the words, this is the first "
+              "result that is evidence about the METHOD rather than the storage.")
+
+    # The floors, printed, because they are the likeliest binding constraint now:
+    # MIN_OUTLETS_PER_SIDE=8 means a phrase needs 16 distinct outlets, and on the
+    # truncated table exactly one known phrase ever reached that.
+    import collections as _c
+    spread = _c.Counter(min(d.get("left_outlets", 0), d.get("right_outlets", 0))
+                        for d in cands if d["phrase"] in reach)
+    if spread:
+        print(f"  reachable-known candidates by thinner-side outlet count: "
+              f"{dict(sorted(spread.items()))}")
+    return 0
+
+
+def _hand_written() -> set:
+    """The hand-written lexicon, read from source rather than imported.
+
+    `political_lean` pulls in the Supabase switch and the spaCy chain, either of which
+    can fail for reasons that have nothing to do with this gate, and a gate that
+    silently does not apply is the same defect as one that passes vacuously. The
+    tuples are annotated DICT literals, so the phrases are the dict's keys.
+    """
+    import ast
+    src = (pathlib.Path(__file__).with_name("political_lean.py")
+           .read_text(encoding="utf-8"))
+    out: set = set()
+    for node in ast.parse(src).body:
+        if isinstance(node, ast.AnnAssign):
+            target, value = node.target, node.value
+        elif isinstance(node, ast.Assign) and len(node.targets) == 1:
+            target, value = node.targets[0], node.value
+        else:
+            continue
+        if not (isinstance(target, ast.Name)
+                and target.id in ("LEFT_KEYWORDS", "RIGHT_KEYWORDS")):
+            continue
+        items = value.keys if isinstance(value, ast.Dict) else getattr(value, "elts", [])
+        for k in items:
+            if isinstance(k, ast.Constant) and isinstance(k.value, str):
+                out.add(k.value.lower())
+    return out
+
+
 
 
 # ---------------------------------------------------------------------------
@@ -453,9 +551,21 @@ def derive_from_counts(conn, roster: dict) -> list[dict]:
     # the commonest phrase was stored, because "the" appears in nearly every article.
     # `phrase_counts.band` now DELETES every phrase above MAX_DOC_SHARE of an outlet's
     # articles, so that maximum is bounded by MAX_DOC_SHARE and the proxy understates
-    # the article count by about 1.5x. Every rate below would be inflated by that
-    # factor and MAX_DOC_FREQ would cut phrases really sitting at 12-16%, which is
-    # exactly the middle band the band exists to preserve.
+    # the article count by exactly 1/MAX_DOC_SHARE.
+    #
+    # WHAT THAT DOES, stated correctly, because the first version of this note got it
+    # wrong. The chi-squared is SCALE-INVARIANT: `el = n * left_docs / total` depends
+    # only on the ratio left_docs/total, so scaling every outlet by the same factor
+    # leaves el, er and chi untouched, and the side test `l/L > r/R` with it. Measured
+    # over the pre-band table, the two rankings agree at Spearman 0.9999 with 7 side
+    # flips in 2,448, and those come from the scale being slightly NON-uniform (0.479
+    # to 0.500, plus unbanded small outlets at 1.0), not from the factor itself.
+    #
+    # The damage is in `MAX_DOC_FREQ`, and it is large. That test is `n / total`, where
+    # n is unaffected and total is halved, so a filter meant to fire at 25% fires at a
+    # true document frequency of 12.5%. Measured: 2,448 candidates against 2,794, so
+    # 346 of them, 12%, silently deleted, and by construction the highest-n ones, which
+    # is exactly the middle band this whole change exists to preserve.
     #
     # `outlet_phrase_articles` records the real count beside the phrases. The fallback
     # stays for tables written before it existed, and SAYS SO rather than guessing
@@ -468,14 +578,18 @@ def derive_from_counts(conn, roster: dict) -> list[dict]:
         pass
     missing = [sid for sid in per_outlet if sid not in articles]
     if missing:
+        # EXCLUDED, not estimated. A uniform error in the denominator is nearly free:
+        # `el` and `er` below depend only on left_docs/total, so scaling every outlet
+        # by the same factor leaves the chi-squared unchanged. A MIXED scale is not
+        # free, and falling back for some outlets while others carry the real count is
+        # exactly that. Dropping them loses their evidence; keeping them corrupts
+        # everyone else's.
         for sid in missing:
-            d = per_outlet[sid]
-            if d:
-                articles[sid] = max(d.values())
+            per_outlet.pop(sid, None)
         print(f"  WARNING: no stored article count for {len(missing)} of "
-              f"{len(per_outlet)} outlets; falling back to max(count) for those, "
-              f"which UNDERSTATES a banded outlet by roughly 1/MAX_DOC_SHARE and "
-              f"inflates its rates. Re-harvest to remove this.")
+              f"{len(missing) + len(articles)} outlets, so they are EXCLUDED rather "
+              f"than estimated: mixing a real denominator with a proxy one is worse "
+              f"than either alone. Re-harvest to bring them back.")
 
     banned = set()
     for sid, meta in roster.items():
@@ -485,6 +599,22 @@ def derive_from_counts(conn, roster: dict) -> list[dict]:
     left_docs = right_docs = 0
     counts = collections.defaultdict(lambda: [0, 0])
     outlets = collections.defaultdict(lambda: (set(), set()))
+    # THE FILTER THIS PATH WAS MISSING. `phrases()` drops STOP unigrams, anything
+    # under three letters, and any bigram or trigram bracketed by stopwords ("of the",
+    # "at the"). `phrase_counts.phrases_of` deliberately stores raw, which is the right
+    # layering, but this function never applied the rule at read time, so `at the`,
+    # `to be`, `with the`, `were`, `than` and `had` could rank.
+    #
+    # That is not cosmetic. `score_outlets` is the only function that turns a candidate
+    # into a number, and it iterates `phrases()`, which CAN NEVER EMIT those. A fifth
+    # of anything promoted from here was structurally unscoreable, and the head of the
+    # ranking was polluted with it.
+    def _emittable(phrase: str) -> bool:
+        parts = phrase.split()
+        if len(parts) == 1:
+            return parts[0] not in STOP and len(parts[0]) > 2
+        return not (parts[0] in STOP and parts[-1] in STOP)
+
     for sid, phrases_map in per_outlet.items():
         meta = roster.get(sid)
         if not meta or meta["base"] == 50:
@@ -496,7 +626,7 @@ def derive_from_counts(conn, roster: dict) -> list[dict]:
         else:
             right_docs += n_articles
         for phrase, count in phrases_map.items():
-            if phrase in banned:
+            if phrase in banned or not _emittable(phrase):
                 continue
             counts[phrase][side] += count
             outlets[phrase][side].add(sid)
@@ -531,3 +661,9 @@ def derive_from_counts(conn, roster: dict) -> list[dict]:
                     "rate_right": round(rate_r * 100, 3)})
     out.sort(key=lambda d: -d["chi2"])
     return out
+
+
+if __name__ == "__main__":
+    if "--counts" in sys.argv:
+        raise SystemExit(main_counts(sys.argv[sys.argv.index("--counts") + 1]))
+    raise SystemExit(main())

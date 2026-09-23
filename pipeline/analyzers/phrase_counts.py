@@ -100,9 +100,21 @@ MAX_DOC_SHARE = 0.65
 MIN_ARTICLES_PER_PHRASE = 2
 
 #: A ceiling still, because an unbounded table drifts back toward being a corpus.
-#: It applies to what the band already kept, so it no longer decides WHICH KIND of
-#: phrase survives, only how much of the middle is stored.
-MAX_ROWS_PER_OUTLET = 60000
+#:
+#: IT IS THE 4,000-ROW DEFECT IN WAITING, and at 60,000 it was close enough to the
+#: real figure to be a live risk: a single outlet at 239 bodies of ~929 words plausibly
+#: carries tens of thousands of phrases at document frequency 2 or more. When a cap
+#: binds on a list sorted by descending count it keeps the entries nearest the ceiling,
+#: which are the most furniture-like, and drops the rare middle. That is exactly how
+#: the top-4,000 ceiling emptied this table of political language, and it would have
+#: done it again silently, on the largest outlets only, manufacturing an outlet-level
+#: signal out of a storage policy.
+#:
+#: So: raised, cut from the COMMON end rather than the rare one when it does bind, and
+#: never silent. `persist` reports every outlet that hits it. The IP argument does not
+#: depend on the row count (the table holds counts and no article id at any size), so
+#: there is no reason to keep this tight.
+MAX_ROWS_PER_OUTLET = 200000
 
 _WORD = re.compile(r"[a-z][a-z'-]+")
 
@@ -179,7 +191,12 @@ def band(counter: collections.Counter, articles: int | None):
     ceiling = MAX_DOC_SHARE * articles
     kept = [(p, c) for p, c in items
             if MIN_ARTICLES_PER_PHRASE <= c <= ceiling]
-    return kept[:MAX_ROWS_PER_OUTLET]
+    if len(kept) > MAX_ROWS_PER_OUTLET:
+        # Drop from the COMMON end. `kept` is descending, so slicing off the head
+        # sheds what is nearest the furniture ceiling and keeps the rare middle,
+        # which is the only part the derivation is looking for.
+        kept = kept[len(kept) - MAX_ROWS_PER_OUTLET:]
+    return kept
 
 
 def persist(conn: sqlite3.Connection, tally: dict[str, collections.Counter],
@@ -197,8 +214,18 @@ def persist(conn: sqlite3.Connection, tally: dict[str, collections.Counter],
     """
     conn.executescript(SCHEMA)
     written = 0
+    capped: list[tuple[str, int, int]] = []
     for sid, counter in (tally or {}).items():
-        for phrase, count in band(counter, (articles or {}).get(sid)):
+        n_for_band = (articles or {}).get(sid)
+        rows = band(counter, n_for_band)
+        # A cap that binds invisibly is the whole defect this module was rewritten
+        # for, so it is counted and reported rather than trusted not to happen.
+        if n_for_band and n_for_band >= BAND_MIN_ARTICLES:
+            in_band = sum(1 for _, c in counter.most_common()
+                          if MIN_ARTICLES_PER_PHRASE <= c <= MAX_DOC_SHARE * n_for_band)
+            if in_band > len(rows):
+                capped.append((sid, in_band, in_band - len(rows)))
+        for phrase, count in rows:
             n = len(phrase.split())
             if n > MAX_PHRASE_WORDS or not phrase.strip():
                 continue
@@ -222,6 +249,12 @@ def persist(conn: sqlite3.Connection, tally: dict[str, collections.Counter],
                      articles = articles + excluded.articles,
                      updated_at = excluded.updated_at""",
                 (sid, int(n_articles), now))
+    if capped:
+        worst = max(c for _, _, c in capped)
+        print(f"  MAX_ROWS_PER_OUTLET ({MAX_ROWS_PER_OUTLET:,}) BOUND on "
+              f"{len(capped)} outlet(s), discarding up to {worst:,} in-band phrases "
+              f"from the commonest end. Raise it: a storage cap deciding which "
+              f"phrases exist is the defect this band replaced.")
     conn.commit()
     return written
 
