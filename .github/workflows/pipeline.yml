@@ -177,6 +177,26 @@ jobs:
           VOID_EXPORT_ONLY: feed,brief,archive,methodology,history
         run: python pipeline/export_static.py
 
+      # The data commit goes STRAIGHT TO MAIN and skipped every gate until
+      # 2026-09-23, because the controls live in auto-merge-claude.yml, which
+      # only runs when a claude/* branch merges. So this job could commit
+      # anything to a public repo and nothing could catch it.
+      #
+      # It did. Run 2026-09-22 (d2520a39) checked out main before the grounding
+      # fix landed and wrote 35 format-1 records carrying 439,244 characters of
+      # publisher prose, against docs/IP-COMPLIANCE.md's top control. The check
+      # that forbids exactly that already existed and could not fire, which is
+      # the whole argument for this step: a gate that cannot run on the path
+      # that writes is not a gate.
+      #
+      # Kept narrow on purpose. This is the daily production path, so it runs
+      # the checks that read what THIS run just wrote, not the whole suite.
+      - name: Gate the emitted data before committing it
+        run: |
+          set -e
+          python tests/test_grounding.py        # no publisher prose in build-data
+          python tests/test_bias_defaults_gate.py   # no unmarked default bias row
+
       - name: Commit refreshed static data to main
         run: |
           git config user.name "github-actions[bot]"

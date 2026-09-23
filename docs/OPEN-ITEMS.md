@@ -178,6 +178,29 @@ in `migration/schema_pipeline.sql` and written every run, so the loop was wired
 at both ends in production; the row count needs the state database, which is
 gitignored and not present here.
 
+### The pipeline commits to main with no gate (FIXED 2026-09-23)
+
+`pipeline.yml` pushed `frontend/build-data`, `frontend/public/data` and the audio
+straight to main and ran **zero tests** first. Every control lives in
+`auto-merge-claude.yml`, which only runs when a `claude/*` branch merges, so the
+daily production path could commit anything to a public repository and nothing
+could catch it.
+
+It did, on 2026-09-22. Run `d2520a39` checked out main before the grounding fix
+had merged and wrote 35 format-1 records carrying **439,244 characters of
+publisher prose**, against `docs/IP-COMPLIANCE.md`'s top control. The check that
+forbids exactly that had been written the day before and could not fire.
+Converted in place by `scripts/migrate_grounding_index.py`; the tree is clean
+again at 70 records, all format 2.
+
+`test_grounding.py` and `test_bias_defaults_gate.py` now run in `pipeline.yml`
+immediately before its `git add`. Kept to those two on purpose: this is the daily
+production path, and the right checks there are the ones that read what the run
+just wrote.
+
+**The general lesson, worth more than the fix:** a gate that cannot run on the
+path that writes is not a gate. Worth auditing the other workflows that commit.
+
 ### Publisher prose in git history (the working tree is clean)
 
 FIXED IN THE TREE 2026-09-22, still in history.
