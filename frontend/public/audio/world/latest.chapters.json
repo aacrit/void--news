@@ -1,51 +1,51 @@
 {
  "version": "1.2.0",
- "title": "On Air · Tuesday 22 September 2026",
+ "title": "On Air · Wednesday 23 September 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Headlines",
-   "endTime": 35.302
+   "endTime": 38.63
   },
   {
-   "startTime": 35.302,
-   "title": "Trump T-V Launch",
-   "endTime": 98.062
+   "startTime": 38.63,
+   "title": "Iran at the U-N",
+   "endTime": 121.565
   },
   {
-   "startTime": 98.062,
-   "title": "U-K Supports Saudi Arabia",
-   "endTime": 185.952
+   "startTime": 121.565,
+   "title": "U-K and Russia",
+   "endTime": 205.253
   },
   {
-   "startTime": 185.952,
-   "title": "Belarus Potash Deal",
-   "endTime": 256.861
+   "startTime": 205.253,
+   "title": "Trump and Iran",
+   "endTime": 272.216
   },
   {
-   "startTime": 256.861,
-   "title": "Trump Meets Mamdani",
-   "endTime": 333.637
+   "startTime": 272.216,
+   "title": "Gaza Reconstruction",
+   "endTime": 359.532
   },
   {
-   "startTime": 333.637,
+   "startTime": 359.532,
    "title": "Also today",
-   "endTime": 423.664
+   "endTime": 423.596
   },
   {
-   "startTime": 423.664,
-   "title": "Ed Sheeran Expresses Sympathy",
-   "endTime": 461.827
+   "startTime": 423.596,
+   "title": "Roman Coin Hoard",
+   "endTime": 458.154
   },
   {
-   "startTime": 461.827,
+   "startTime": 458.154,
    "title": "Opinion",
-   "endTime": 687.287
+   "endTime": 657.763
   },
   {
-   "startTime": 687.287,
-   "endTime": 700.387,
+   "startTime": 657.763,
+   "endTime": 670.863,
    "title": "Also from Void"
   }
  ]
