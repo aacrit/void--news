@@ -196,6 +196,12 @@ jobs:
           set -e
           python tests/test_grounding.py        # no publisher prose in build-data
           python tests/test_bias_defaults_gate.py   # no unmarked default bias row
+          # A feed the front page cannot render must not reach main. The
+          # 2026-09-22 run emitted 14 displayable stories against 20 required,
+          # committed it here, and froze the site AND every branch's build-check
+          # for a day. Failing the run leaves the previous day's data in place,
+          # which is a bad day rather than an outage.
+          python tests/test_feed_buildable.py
 
       - name: Commit refreshed static data to main
         run: |

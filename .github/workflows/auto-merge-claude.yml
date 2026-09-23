@@ -104,6 +104,7 @@ jobs:
           python tests/test_history_scripts_export.py # accounts resolve one to one
           python tests/test_history_export_parity.py  # the served JSON matches the record
           python tests/test_grounding.py             # the evidence outlives the run
+          python tests/test_feed_buildable.py        # the feed can fill the front page
           python tests/test_truncation_lint.py       # no cap published as a count
           python tests/test_docs_facts.py            # CLAUDE.md's own numbers
 
