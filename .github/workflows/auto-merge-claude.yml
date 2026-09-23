@@ -69,14 +69,35 @@ jobs:
 
       # 2026-09-06: tests/ was run by nothing. test_verify_gate.py was RED
       # (its clean fixture predated MIN_SUMMARY_CHARS=300) and nobody knew,
-      # so the served-output checkers had no working self-test. Both suites
-      # are stdlib-only apart from nltk and take seconds.
+      # so the served-output checkers had no working self-test.
+      #
+      # 2026-09-23: this step used to install `nltk pyyaml` under a comment
+      # saying the suites were "stdlib-only apart from nltk". That stopped
+      # being true, and the consequence was invisible for as long as it was,
+      # because a defect further up was failing the job before these ran at
+      # all. When the feed was restored and the build finally passed, the
+      # gates below started raising ModuleNotFoundError one at a time:
+      # test_docs_facts on textblob, then test_apply_feeds on requests, with
+      # numpy, scikit-learn and bs4 waiting behind them. NINE of these gates
+      # had never once executed in CI.
+      #
+      # So the job installs the pipeline's declared environment. These gates
+      # test pipeline code and belong in the environment that code runs in;
+      # naming the five missing packages instead would leave the same trap
+      # armed for the next gate that imports something new. `editorial-stage`
+      # below already installs this exact file with this exact caching, so the
+      # wheels are shared rather than downloaded twice.
+      #
+      # A gate that cannot execute is not a gate, which is the sentence the
+      # controls table in CLAUDE.md opens with.
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: pipeline/requirements.txt
       - name: Gate self-test + feed-config consistency
         run: |
-          pip install --quiet nltk pyyaml
+          pip install --quiet -r pipeline/requirements.txt
           python tests/test_verify_gate.py
           python tests/test_feed_config.py
           python tests/test_editorial_standard.py
@@ -91,7 +112,6 @@ jobs:
           python tests/test_weekly_script.py
           python tests/test_weekly_assembly.py
           python tests/test_history_meta.py
-          pip install --quiet pyyaml
           python tests/test_history_script.py
           python tests/test_house_promos.py
 
