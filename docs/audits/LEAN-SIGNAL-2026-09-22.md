@@ -190,3 +190,61 @@ a caller hands `persist()` a sentence.
 `lexicon_derive.py` now prints the rediscovery count beside every rho it reports, so
 the next person cannot read the correlation without the sanity check that invalidates
 it.
+
+---
+
+## Addendum, 2026-09-23: the harvest ran, and the failure has a named cause
+
+`scripts/roster/harvest_phrase_counts.py --apply` re-fetched 12,399 stored
+publisher URLs through `web_scraper.scrape_article`, the pipeline's real
+extractor, rather than the tag-stripping regex the first attempt used. It
+counted **7,901 bodies, 7,340,849 words across 98 outlets**, and kept no text.
+
+`derive_from_counts` over that corpus produced 2,853 candidates and
+**rediscovered zero of the 318 hand-written political phrases**, again. Its top
+entries were `image`, `spokesperson`, `content`, `experts` on the left and
+`join`, `videos`, `subscribe`, `follow`, `photo` on the right. Page furniture,
+again.
+
+**The first explanation was wrong.** I read that second zero as the method
+failing, and checked the obvious confound: that left-labelled and
+right-labelled outlets are different KINDS of publisher, so a chi-squared
+separates the populations by their templates. The roster does not support it.
+Of the 70 outlets with a side in this corpus: 34 left and 36 right; by tier 15
+left against 21 right independent, 12 against 8 us_major, 7 against 7
+international; by type 16 against 18 digital, 7 against 3 broadsheet, 4 against
+4 magazine, 4 against 4 broadcast; by country 23 against 26 US. Balanced.
+
+**The actual cause is a ceiling in our own storage.** `phrase_counts.persist`
+keeps `counter.most_common(TOP_PER_OUTLET)` with `TOP_PER_OUTLET = 4000`. Every
+one of the 98 outlets hit it exactly: 392,000 rows over 98 outlets is 4,000
+each, to the row. The harvest saw 112,891 distinct phrases and stored the
+commonest 4,000 per outlet.
+
+The hand-written political vocabulary does not live there. Of the 318 phrases,
+**59 survived into the table and 259 never entered it**, and the 59 that did
+sit at a median frequency rank of **37,906** of 112,891, roughly an order of
+magnitude below the cut.
+
+So the derivation was handed the 4,000 commonest phrases per outlet, which is
+by construction the furniture, and asked to find politics in it. It could not
+have succeeded. The two zeros are one defect reported twice, and neither of
+them is evidence about the method.
+
+**What this changes.** The roadmap's gate was "if it rediscovers zero again,
+the method is wrong, not the corpus". That gate must not be read as fired: the
+derivation has still never been run on a corpus that contains the words it is
+looking for. The experiment is pending, not failed.
+
+**What the fix is.** Not a bigger `TOP_PER_OUTLET`: raw frequency is the wrong
+keep criterion in both directions. Gentzkow and Shapiro's own move is a
+frequency BAND, dropping the hyper-common (which is furniture) and the
+one-off (which is noise), keeping the middle where argument lives. The IP
+argument is unaffected either way: the table carries counts and no article id,
+so it cannot be reassembled into prose at any row count. This is a storage
+policy change in one function plus a re-run of the harvest already written.
+
+**What is NOT claimed.** That a band will work. It makes the experiment
+possible; it does not make it succeed. The rediscovery check stays the gate,
+and a run that finds furniture again after this fix IS evidence about the
+method.
