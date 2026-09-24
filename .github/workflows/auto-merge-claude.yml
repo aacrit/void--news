@@ -131,6 +131,7 @@ jobs:
           python tests/test_radio_script.py
           python tests/test_history_audio.py
           python tests/test_weekly.py
+          python tests/test_weekly_killlist.py      # the kill list in the committed issues, before W-10 can see it served
           python tests/test_weekly_script.py
           python tests/test_weekly_assembly.py
           python tests/test_history_meta.py
