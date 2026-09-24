@@ -128,8 +128,9 @@ def fixture_ledger() -> dict:
         "analyses": [
             {"id": "an-crowd", "title": "Four counts of one crowd",
              "method": "Every figure the record gives for the crowd, by document and date.",
-             "finding": "The counts run from 17,500 to 25,000.", "confidence": "entailed",
-             "against": None, "result": [17500, 25000],
+             "finding": "The counts run from 17,500 to 25,000.",
+             "confidence": "high: both figures are in one court extract",
+             "against": "none found in the six primary documents held", "result": [17500, 25000],
              "derivation": {"compute": "range", "column": "count", "columns": ["document", "count"],
                             "rows": [{"document": "commander's report", "count": 17500, "extract": "src-court-tj.para84"},
                                      {"document": "witness", "count": 25000, "extract": "src-court-tj.para84"}]}},
@@ -408,6 +409,10 @@ def test_t12_excluded_and_wrong_tier():
             entry(d, "src-ministry")["identifiers"]["url"] = "https://en.wikipedia.org/wiki/Harbour"
         assert "T-12" in ids(pathlib.Path(t), ledger=mutated(wiki))
         assert "T-12" in ids(pathlib.Path(t), thesis=THESIS.replace("[^src-ministry p12]", "[^src-partisan]") .replace("numbered 600 men at 3 observation posts", "numbered 600 men"))
+        # ... but a position speaking in its own words in the historiography is what Tier D is for
+        spoken = THESIS.replace("::: position critical\n", "::: position critical\n\nThe critical account holds that the count is “inflated”.[^src-partisan p5]\n")
+        found = ids(pathlib.Path(t), thesis=spoken, extracts={**EXTRACTS, "src-partisan.p5.txt": ("src-partisan", "p5", "https://example.org/partisan.pdf", "The count is inflated, the critics hold.")})
+        assert "T-12" not in found, found
 
 
 def test_t13_bar():
@@ -443,9 +448,22 @@ def test_t16_analysis():
         def no_method(d):
             d["analyses"][0]["method"] = None
         assert "L-10" in ids(pathlib.Path(t), ledger=mutated(no_method))
-        def unentailed_without_against(d):
-            d["analyses"][0]["confidence"] = "likely"
-        assert "L-10" in ids(pathlib.Path(t), ledger=mutated(unentailed_without_against))
+        def no_against(d):
+            d["analyses"][0]["against"] = None
+        assert "L-10" in ids(pathlib.Path(t), ledger=mutated(no_against))
+        def entailed_is_no_waiver(d):
+            d["analyses"][0]["against"] = None
+            d["analyses"][0]["confidence"] = "entailed"
+        assert "L-10" in ids(pathlib.Path(t), ledger=mutated(entailed_is_no_waiver))
+        def none_found_nowhere(d):
+            d["analyses"][0]["against"] = "none found"
+        assert "L-10" in ids(pathlib.Path(t), ledger=mutated(none_found_nowhere))
+        def bare_confidence(d):
+            d["analyses"][0]["confidence"] = "high"
+        assert "L-10" in ids(pathlib.Path(t), ledger=mutated(bare_confidence))
+        def off_scale(d):
+            d["analyses"][0]["confidence"] = "likely, because the rows agree"
+        assert "L-10" in ids(pathlib.Path(t), ledger=mutated(off_scale))
         assert "T-16" in ids(pathlib.Path(t), thesis=THESIS.replace("::: analysis an-crowd", "::: analysis an-nothing"))
 
 

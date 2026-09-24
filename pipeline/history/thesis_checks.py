@@ -125,8 +125,12 @@ def check_markers(th: Thesis, ledger: Ledger, out: list[Finding]) -> None:
             url = str(ids.get("url") or (e.get("access") or {}).get("free_copy") or "")
             if any(h in url for h in EXCLUDED_HOSTS) or str(e.get("kind")) in EXCLUDED_KINDS:
                 _fail(out, "T-12", _where(sec, sen), f"{src} is an excluded source ({e.get('kind')}, {url[:50]})")
-            if loaded and e.get("tier") in ("C", "D"):
-                _fail(out, "T-12", _where(sec, sen), f"Tier {e.get('tier')} entry {src} cited on a number or a quote")
+            # A Tier C or D entry may carry a number or a quotation only in
+            # the historiography, where it is a labelled position speaking in
+            # its own words (§4a); in the record or the argument it would be
+            # a fact, and it may not be one.
+            if loaded and e.get("tier") in ("C", "D") and sec.kind != "historiography":
+                _fail(out, "T-12", _where(sec, sen), f"Tier {e.get('tier')} entry {src} cited on a number or a quote outside the historiography")
         if loaded and sen.markers and not has_extract:
             _fail(out, "T-01", _where(sec, sen), "a sentence with a quote or a number cites no stored extract")
 
