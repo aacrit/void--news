@@ -32,9 +32,9 @@ N: Between twenty five thousand and thirty thousand women, children, and elderly
 N: The men, roughly eight thousand of them, go to fields, schools, and warehouses. At a warehouse in Kravica, on July thirteenth, more than a thousand men are packed inside and killed with grenades and gunfire through the windows.
 N: At Orahovac, at Petkovci, at a farm called Branjevo, at a cultural center in Pilica, prisoners are bused out, lined up, and shot. The dead are pushed into pits by excavator.
 
-## DOCUMENT | Drazen Erdemovic | Testimony before the ICTY on the executions at Branjevo Military Farm | 1996
-N: Drazen Erdemovic was one of eight men doing the shooting at Branjevo that day. This is what he told the tribunal about the ones who tried to refuse.
-M: They told me that if I felt sorry for them, I should line up with them so they could kill me too.
+## DOCUMENT | Drazen Erdemovic | Statement at his guilty plea, in the court's English, ICTY Sentencing Judgement, paragraph 10 | 1996
+N: Drazen Erdemovic was one of eight men doing the shooting at Branjevo that day. When he pleaded guilty, he told the tribunal what happened when he refused. In the court's English:
+M: When I refused, they told me: 'If you're sorry for them, stand up, line up with them and we will kill you too.'
 
 ## ASIDE
 N: Erdemovic later estimated that he alone killed seventy men that day. He was one shooter, at one farm, of eight running at once.

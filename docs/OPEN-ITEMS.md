@@ -945,13 +945,14 @@ T-01..T-20. What is unfinished:
   IRMCT appeal judgments** are gaps for the same reason (host unreachable,
   no open archive found, guessed paths 404). Each is listed in the ledger's
   `gaps` with what was tried.
-- **The Erdemović quotation in the event YAML and the script** ("if I felt
-  sorry for them, I should line up with them so they could kill me too") is
-  not what the sentencing judgment prints ("If you're sorry for them, stand up,
-  line up with them and we will kill you too", ¶10). H-01 passes because the
-  script matches the YAML. CEO decision 10: the page never waits on the audio;
-  the episode is flagged for a re-cut against the ledger, and the YAML excerpt
-  should be corrected by the Phase 0 owner (this branch did not touch the YAML).
+- **The Srebrenica episode speaks two lines the page no longer prints.**
+  Corrected 2026-09-24 in the YAML, the script and the served JSON: the
+  Erdemović quotation is now the sentencing judgment's own words (para. 10,
+  in the court's English), the narration no longer says the words were about
+  "the ones who tried to refuse" (they were about his own refusal), and
+  Resolution 819 gets back its silently cut "and others concerned".
+  `tests/test_history_quote_ledger.py` fails either divergence. The MP3 still
+  carries the old lines until the episode is re-rendered.
 - **Partition of India and Mongol Baghdad** were not started: Srebrenica took
   the session. The path is worn now; each should be a shorter run.
 - **Wikimedia's API answers HTTP 429 to this container**, so the two exhibit
