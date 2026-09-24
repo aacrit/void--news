@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-pintar-2024.abstract
+names: МКСЈ=ICTY; МСП=ICJ; УН=UN; ЕУ=EU
+
+The paper at the same time points to the dynamics of change in official interpretations of the war, from initial attempts to conceal the crime, through a period in which changes came in the process of aligning the politics of history with the judgments of the international courts, the ICTY and the ICJ, and the decisions of the political organisations of the UN and the EU, to resolute opposition to and denial of historical interpretations grounded in the facts presented in court proceedings.

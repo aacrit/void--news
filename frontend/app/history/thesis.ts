@@ -110,6 +110,9 @@ export interface ThesisPositionBlock {
   }[];
   claim: string;
   omits: string;
+  /** Tier A or B extracts that describe what this position is (§4a); required
+   *  when the position rests on a Tier D source. */
+  describedBy: ThesisExtractRef[];
   adjudications: ThesisAdjudication[];
 }
 
@@ -153,6 +156,7 @@ export interface ThesisAnalysisBlock {
   compute: string;
   columns: string[];
   rows: ThesisAnalysisRow[];
+  rowCount: number;
 }
 
 export type ThesisBlock =

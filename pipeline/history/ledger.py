@@ -228,6 +228,11 @@ def locator_label(loc: str) -> str:
             "dispositif": "disposition", "caption": "caption"}.get(loc, loc)
 
 
+_WORD_NUMBERS = {w: i for i, w in enumerate(
+    ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+     "eleven", "twelve", "thirteen", "fourteen", "fifteen"])}
+_WORD_NUMBERS["twenty"] = 20
+
 _NUM_RE = re.compile(r"(?<![\w.])\d[\d,.]*\d|(?<![\w.])\d(?![\w])")
 
 
@@ -529,6 +534,23 @@ def validate_ledger(ledger: Ledger) -> list[Finding]:
             if adj.get("verdict") in ("contradicted", "supported") and len(producers) < 2:
                 fail("L-13", pid, f"{adj.get('verdict')} on one side's record alone ({', '.join(sorted(producers)) or 'none'}); cap is qualified")
 
+    # L-16 a Tier D position is admitted only when a Tier A or B source is
+    # cited for what the position is (§4a). `described_by` names the extracts.
+    for pid, pos in ledger.positions.items():
+        tiers = {str((ledger.entries.get(src) or {}).get("tier")) for src in (pos.get("rests_on") or [])}
+        if "D" not in tiers:
+            continue
+        refs = pos.get("described_by") or []
+        if not refs:
+            fail("L-16", pid, "a Tier D position must name a Tier A or B extract that describes it (described_by)")
+        for ref in refs:
+            src, _, loc = str(ref).partition(".")
+            e = ledger.entries.get(src)
+            if e is None or e.get("tier") not in ("A", "B"):
+                fail("L-16", pid, f"described_by {ref} is not a Tier A or B entry")
+            elif not loc or ledger.extract(src, loc) is None:
+                fail("L-16", pid, f"described_by {ref} names no stored extract")
+
     # L-08 contested.
     for cid, c in ledger.contested.items():
         rows = c.get("rows") or []
@@ -624,6 +646,18 @@ def validate_ledger(ledger: Ledger) -> list[Finding]:
                 fail("L-10", aid, f"row {i} does not resolve to a stored extract ({ref!r})")
             elif ledger.entries[src].get("tier") not in ("A", "B"):
                 fail("L-10", aid, f"row {i} rests on a Tier {ledger.entries[src].get('tier')} entry")
+        # L-17 a count the analysis writes about itself ("six counts", "10 rows",
+        # "nine figures") must be the number of rows it holds. Typed counts
+        # drift when rows are added; this is what the 2026-09-24 re-audit found.
+        n_rows = len(rows)
+        for field_name in ("title", "finding", "confidence", "method"):
+            text = str(a.get(field_name) or "")
+            for m in re.finditer(r"\b(\d{1,3}|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|twenty)\s+(counts|rows|figures)\b", text, re.I):
+                n = _WORD_NUMBERS.get(m.group(1).lower(), None)
+                if n is None:
+                    n = int(m.group(1))
+                if n != n_rows:
+                    fail("L-17", aid, f"{field_name} says {m.group(0)!r} but the derivation holds {n_rows} rows")
         got, how = compute_analysis(a)
         if not result_matches(a.get("result"), got):
             fail("L-11", aid, f"stated result {a.get('result')!r} does not recompute: {how}")

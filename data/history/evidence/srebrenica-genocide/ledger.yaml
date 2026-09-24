@@ -730,6 +730,7 @@ positions:
     name: Denial in Serbia and Republika Srpska
     holders: ["Atlagić and Martinović (2021)"]
     rests_on: [src-atlagic-2021]
+    described_by: [src-pintar-2024.abstract]
     claim: "No genocide occurred, because no statement by a Republika Srpska official wanting the Muslim population destroyed can be found; the real number of Muslim victims was between 800 and 1,200; the figure of 8,000 was constructed for propaganda by the United States and the Bosnian leadership."
     omits: "The forensic record of blindfolds, ligatures and reburied graves that the tribunal set out, and the count of bodies exhumed, which the position's own abstract does not mention."
     adjudications:
@@ -843,7 +844,7 @@ contested:
         holds: "There was no genocide because genocide did not occur; crimes were committed, but the Army of Republika Srpska did not intend to commit genocide."
         figures: []
         source: src-atlagic-2021
-        locator: p16
+        locator: secsummary
 
 # ------------------------------------------------------------- exhibits
 exhibits:
@@ -908,10 +909,10 @@ exhibits:
 # ------------------------------------------------------------- the thesis's own analysis
 analyses:
   - id: an-crowd-counts
-    title: One crowd, six counts
+    title: One crowd, ten counts
     method: "Every figure the fetched primary documents give for the number of people who gathered at Potočari on 11 to 13 July 1995, one row per figure, with the document and the moment it counts. The result is the range of the column."
     finding: "The record counts the crowd at Potočari at between 15,000 and 30,000, and the two lowest figures are the two the battalion commander wrote on the day."
-    confidence: "high for the range, which is the extreme of nine figures in two producers' documents; the figures count different moments over three days, so the range is a spread of counts, not a change in the crowd"
+    confidence: "high for the range, which is the extreme of ten figures from seven documents of two producers; the figures count different moments over three days, so the range is a spread of counts, not a change in the crowd"
     against: "the tribunal's own paragraph 34 gives 20,000 to 30,000 as the number who had fled to the compound and surrounding areas, a wider upper bound than paragraph 37's 25,000 from the same producer; it is included as the last two rows rather than resolved"
     result: [15000, 30000]
     derivation:
