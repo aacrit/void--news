@@ -497,6 +497,9 @@ def main(site: str) -> int:
     # P-01..P-04 — Paper, the printable front page.
     check_paper(base)
 
+    # TH-01..TH-04 — a published History thesis page, if any.
+    check_thesis(base)
+
     return 0 if ok else 1
 
 
@@ -687,6 +690,90 @@ def check_paper(base: str) -> None:
     report("P-04", not found,
            "none of the retired strings are served"
            if not found else f"still serving: {found}")
+
+
+def check_thesis(base: str) -> None:
+    """TH-01..TH-04 — a served thesis page (docs/proposals/HISTORY-THESIS-PAGE.md §9).
+
+    The exporter writes data/history-theses.json listing every PUBLISHED thesis
+    with the note and exhibit counts its page must carry. With no thesis
+    published the checks report that and pass: a draft has no page. Set
+    VOID_THESIS_SAMPLE=<slug> to check a local draft export instead.
+
+    TH-01  one <h1>, and the question text present: a page, not a shell
+    TH-02  the page carries exactly the index's note count, and every note
+           anchor a citation points at exists on the page
+    TH-03  every exhibit carries a provenance line
+    TH-04  every source link is absolute, and no em or en dash in the page's
+           own prose or in any accessible name. Verbatim extracts are quotations
+           (<blockquote>) and keep the dashes their documents print, exactly as
+           W-10 spares a columnist quoting a source.
+    """
+    import os
+    sample = os.environ.get("VOID_THESIS_SAMPLE")
+    expect_notes = None
+    question = ""
+    if not sample:
+        try:
+            _, _, raw = fetch(f"{base}/data/history-theses.json")
+            index = json.loads(raw) or {}
+        except Exception as e:
+            report("TH-01", False, f"could not read data/history-theses.json: {type(e).__name__}: {e}")
+            for code in ("TH-02", "TH-03", "TH-04"):
+                report(code, False, "skipped (no index)")
+            return
+        theses = index.get("theses") or []
+        if not theses:
+            for code in ("TH-01", "TH-02", "TH-03", "TH-04"):
+                report(code, True, "no thesis published yet; every event still renders the Hearing")
+            return
+        sample = theses[0]["slug"]
+        expect_notes = theses[0].get("notes")
+        question = str(theses[0].get("question") or "")
+    try:
+        status, final, page = fetch(f"{base}/history/{sample}/")
+    except Exception as e:
+        report("TH-01", False, f"/history/{sample}/ failed: {type(e).__name__}: {e}")
+        for code in ("TH-02", "TH-03", "TH-04"):
+            report(code, False, "skipped (no page)")
+        return
+    body = strip_chrome(page)
+    h1s = len(re.findall(r"<h1[\s>]", page))
+    is_thesis = 'class="hist-event-detail hist-hearing-page hist-thesis-page"' in page
+    has_q = (not question) or any(v in page for v in html_escape_variants(question[:60]))
+    report("TH-01", status == 200 and h1s == 1 and is_thesis and has_q,
+           f"/history/{sample}/ is a thesis page with {h1s} <h1>"
+           + ("" if has_q else "  <- the question text is missing")
+           + ("" if is_thesis else "  <- the route rendered the Hearing"))
+
+    notes = set(re.findall(r'id="n(\d+)"', body))
+    refs = set(re.findall(r'href="#n(\d+)"', body))
+    dangling = sorted(refs - notes, key=int)
+    count_ok = expect_notes is None or len(notes) == expect_notes
+    report("TH-02", count_ok and not dangling,
+           f"{len(notes)} notes on the page"
+           + (f" (index says {expect_notes})" if expect_notes is not None else "")
+           + (f"; {len(dangling)} citation(s) point at no note: {dangling[:5]}" if dangling else ", every citation resolves"))
+
+    exhibits = len(re.findall(r'class="hist-th-exhibit"', body))
+    provs = len(re.findall(r'class="hist-th-exhibit__prov"', body))
+    report("TH-03", exhibits > 0 and exhibits == provs,
+           f"{provs} of {exhibits} exhibits carry a provenance line")
+
+    src_block = re.search(r'<section id="sources".*?</section>', body, re.S)
+    src_links = re.findall(r'href="([^"]*)"', src_block.group(0)) if src_block else []
+    relative = [u for u in src_links if not u.startswith("https://") and not u.startswith("#")]
+    prose = re.sub(r"<blockquote\b.*?</blockquote>", " ", body, flags=re.S)
+    visible = unescape(re.sub(r"<[^>]+>", " ", prose))
+    dashes = visible.count("—") + visible.count("–")
+    labels = [t for t in re.findall(r'aria-label="([^"]*)"', page) if "—" in t or "–" in t]
+    m = re.search(r".{40}[—–].{40}", visible)
+    report("TH-04", not relative and dashes == 0 and not labels,
+           f"{len(src_links)} source links, all absolute; no dash in prose or accessible names"
+           if not relative and dashes == 0 and not labels
+           else f"{len(relative)} relative source link(s) {relative[:2]}; {dashes} dash(es) in prose"
+                + (f": ...{m.group().replace(chr(10), ' ')}" if m else "")
+                + (f"; {len(labels)} dashed aria-label(s)" if labels else ""))
 
 
 def html_escape_variants(text):

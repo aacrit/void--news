@@ -1,4 +1,5 @@
 import '../styles/history.css';
+import '../styles/history-thesis.css';
 import type { Viewport } from "next";
 
 /* The status bar wears the History paper (--hist-bg in both modes), never

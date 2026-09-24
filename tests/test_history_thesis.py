@@ -506,15 +506,24 @@ def test_t14_served_json_matches_the_thesis():
     """A port of tests/test_history_export_parity.py: the committed export is
     what a fresh export writes, and it carries nothing that is not published."""
     committed = ROOT / "frontend/build-data/history-theses"
+    committed_index = ROOT / "frontend/public/data/history-theses.json"
     with tempfile.TemporaryDirectory() as t:
         env = dict(os.environ)
         env["VOID_EXPORT_BUILD_DIR"] = t
+        env["VOID_EXPORT_PUBLIC_DIR"] = str(pathlib.Path(t) / "public")
         run = subprocess.run([sys.executable, "-m", "pipeline.history.export_thesis"],
                              cwd=ROOT, env=env, capture_output=True, text=True)
         assert run.returncode == 0, run.stdout[-1500:] + run.stderr[-800:]
         fresh = {p.name: json.loads(p.read_text(encoding="utf-8"))
                  for p in (pathlib.Path(t) / "history-theses").glob("*.json")} \
             if (pathlib.Path(t) / "history-theses").exists() else {}
+        fresh_index = json.loads((pathlib.Path(t) / "public" / "history-theses.json").read_text(encoding="utf-8"))
+    # The served index (which events are theses, with the counts TH-02 checks
+    # against) is committed too, and must be the fresh one.
+    assert committed_index.exists(), "frontend/public/data/history-theses.json is not committed; run python3 -m pipeline.history.export_thesis"
+    have_index = json.loads(committed_index.read_text(encoding="utf-8"))
+    assert json.dumps(have_index, sort_keys=True) == json.dumps(fresh_index, sort_keys=True), \
+        "public/data/history-theses.json has drifted; run python3 -m pipeline.history.export_thesis"
     have = {p.name: json.loads(p.read_text(encoding="utf-8")) for p in committed.glob("*.json")} \
         if committed.exists() else {}
     for name, blob in have.items():

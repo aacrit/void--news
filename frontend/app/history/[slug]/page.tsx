@@ -8,9 +8,11 @@ import {
   getHistorySlugs,
 } from "../../lib/historyCatalog";
 import { getHistoryScript } from "../../lib/historyScript";
+import { getHistoryThesis } from "../../lib/historyThesis";
 import { mapRow } from "../data";
 import { buildHearing } from "../hearing";
 import Hearing from "../components/Hearing";
+import Thesis from "../components/Thesis";
 import { eventMetadata } from "../historyMeta";
 
 /* ===========================================================================
@@ -82,5 +84,13 @@ export default async function EventPage({ params }: { params: Promise<{ slug: st
       ? { slug: String(ordered[at + 1].slug), title: String(ordered[at + 1].title ?? "") }
       : null;
 
+  /* The per-event switch (proposal §11): a thesis whose front matter is
+     `published` and whose every check passed is what the exporter wrote to
+     build-data/history-theses; the route renders it and nothing else changes.
+     An event below the bar renders the Hearing exactly as before. */
+  const thesis = getHistoryThesis(slug);
+  if (thesis) {
+    return <Thesis event={event} doc={thesis} nextEvent={next} />;
+  }
   return <Hearing event={event} hearing={hearing} nextEvent={next} />;
 }

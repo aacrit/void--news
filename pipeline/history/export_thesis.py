@@ -42,6 +42,7 @@ from pipeline.history.thesis_checks import validate_thesis  # noqa: E402
 
 BUILD_DIR = pathlib.Path(os.environ.get("VOID_EXPORT_BUILD_DIR") or (ROOT / "frontend/build-data"))
 OUT = BUILD_DIR / "history-theses"
+PUBLIC_DIR = pathlib.Path(os.environ.get("VOID_EXPORT_PUBLIC_DIR") or (ROOT / "frontend/public/data"))
 SCRIPTS = ROOT / "frontend/build-data/history-scripts"
 MANIFEST = ROOT / "frontend/public/data/history-audio.json"
 
@@ -128,7 +129,7 @@ class Exporter:
         n = len(self.notes) + 1
         key = f"{src}.{loc}" if loc else src
         self.notes.append({
-            "n": n, "source": src, "locator": loc or None,
+            "n": n, "source": src, "locator": loc or None, "inText": self._in_text,
             "locatorLabel": locator_label(loc) if loc else None,
             "short": short_cite(e) + (f", {locator_label(loc)}" if loc else ""),
             "exhibit": self.exhibit_by_key.get(key),
@@ -136,12 +137,18 @@ class Exporter:
         })
         return n
 
+    _in_text = False
+
     def sentence(self, sen) -> dict:
-        return {
-            "text": sen.text,
-            "notes": [self.note(src, loc) for src, loc in sen.markers],
-            "interpretive": sen.interpretive,
-        }
+        self._in_text = True
+        try:
+            return {
+                "text": sen.text,
+                "notes": [self.note(src, loc) for src, loc in sen.markers],
+                "interpretive": sen.interpretive,
+            }
+        finally:
+            self._in_text = False
 
     # -- extracts
     def extract_ref(self, ref: str) -> dict:
@@ -340,15 +347,19 @@ class Exporter:
         th = self.thesis
         # Exhibits are numbered in document order, and a note must know its
         # exhibit's number, so the exhibits are placed before the notes are.
+        counter = 0
         for sec in th.sections:
             for d in sec.directives:
                 if d.kind == "exhibit":
                     ref = d.args["ref"]
                     key = ref if ref in self.ledger.exhibits else f"{ref}.{d.args.get('locator')}"
                     if key not in self.exhibit_by_key:
-                        self.exhibit_by_key[key] = len(self.exhibit_by_key) + 1
+                        counter += 1
+                        self.exhibit_by_key[key] = counter
                     x = self.ledger.exhibits.get(ref)
                     if x and x.get("kind") == "document" and x.get("source"):
+                        # A note on the same passage links to the exhibit; the
+                        # alias shares the number rather than taking one.
                         self.exhibit_by_key.setdefault(f"{x['source']}.{x['locator']}", self.exhibit_by_key[key])
         self.exhibits = []
         sections = [self.section(s) for s in th.sections]
@@ -417,7 +428,20 @@ def main(argv: list[str]) -> int:
         written += 1
         print(f"{slug}: {blob['status']}, {len(blob['notes'])} notes, {len(blob['exhibits'])} exhibits, "
               f"{blob['words']} words -> {OUT / (slug + '.json')}")
-    print(f"history-theses/: {written} file(s)")
+    # The served index: which events are theses, with the counts the served
+    # gates (scripts/verify_sections.py TH-01..TH-04) check the page against.
+    index = []
+    for p in sorted(OUT.glob("*.json")):
+        blob = json.loads(p.read_text(encoding="utf-8"))
+        if blob.get("status") != "published":
+            continue
+        index.append({"slug": blob["slug"], "notes": len(blob.get("notes") or []),
+                      "exhibits": len(blob.get("exhibits") or []),
+                      "question": blob.get("question"), "auditedAt": blob.get("auditedAt")})
+    PUBLIC_DIR.mkdir(parents=True, exist_ok=True)
+    (PUBLIC_DIR / "history-theses.json").write_text(
+        json.dumps({"count": len(index), "theses": index}, ensure_ascii=False, default=str), encoding="utf-8")
+    print(f"history-theses/: {written} file(s); index lists {len(index)} published")
     return rc
 
 

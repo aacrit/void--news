@@ -1,0 +1,936 @@
+/* ===========================================================================
+   THE THESIS — the History event page once its ledger clears the bar
+   ---------------------------------------------------------------------------
+   Within the History skin: the same paper, ink, umber and brass, the four
+   voices, the Hearing's named-line grid (`.hist-hearing`) and its rail. This
+   sheet adds only what the thesis needs on top of history.css: sidenotes in
+   the right rail from 1024px, inline note disclosures below it, exhibit
+   frames, ruled contested tables, verdict chips, analysis tables and the
+   episode block. Nothing here introduces a colour: every value is a token,
+   and a position's colour is `--hist-account-color`, never its only carrier.
+   =========================================================================== */
+
+/* ── The grid: a section spans text + right rail from 1024px, so a note can
+      sit beside the paragraph that cites it; below that it is one column. ── */
+.hist-th > .hist-th-section,
+.hist-th > .hist-th-endmatter {
+  min-width: 0;
+}
+.hist-th-section > * {
+  max-width: min(var(--hist-measure), 100%);
+}
+
+/* ── Headings: the record's labels, Barlow ── */
+.hist-th-h2 {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: var(--text-xs);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--hist-brass-ink);
+  margin: var(--space-7) 0 var(--space-4);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+.hist-th-section:first-of-type .hist-th-h2 {
+  margin-top: var(--space-5);
+}
+.hist-th-h3 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3);
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: var(--text-xl);
+  line-height: 1.2;
+  color: var(--hist-ink);
+  margin: var(--space-6) 0 var(--space-4);
+}
+.hist-th-h3__num {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  letter-spacing: 0.16em;
+  color: var(--hist-brass-ink);
+}
+.hist-th-h3--plain {
+  font-size: var(--text-lg);
+}
+.hist-th-h3--quiet {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: var(--text-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--hist-ink-muted);
+  margin-top: var(--space-5);
+}
+.hist-th-label {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: var(--text-xxs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hist-brass-ink);
+  margin-right: var(--space-2);
+}
+
+/* ── Prose: formal, Inter, the 65ch measure; the question in Playfair ── */
+.hist-th-para {
+  margin-block: var(--space-4);
+}
+.hist-th-p {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  line-height: 1.65;
+  color: var(--hist-ink-secondary);
+  margin: 0;
+}
+.hist-th-para--editorial {
+  max-width: 40ch;
+}
+.hist-th-para--editorial .hist-th-p {
+  font-family: var(--font-editorial);
+  font-size: var(--text-lg);
+  line-height: 1.5;
+  color: var(--hist-ink);
+}
+.hist-th-p--quiet,
+.hist-th-p--note {
+  font-size: var(--text-sm);
+  color: var(--hist-ink-muted);
+  margin-block: var(--space-3);
+}
+/* The historian's own sentence: a hairline of umber under it, and the sr-only
+   phrase the markup carries, so colour is never the only carrier. */
+.hist-th-i {
+  text-decoration: underline;
+  text-decoration-color: var(--hist-accent-ink);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+.hist-th-claims {
+  margin: var(--space-4) 0 0;
+  padding-left: 1.6em;
+  max-width: 40ch;
+}
+.hist-th-claim {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  color: var(--hist-ink);
+  margin-bottom: var(--space-2);
+}
+
+/* ── Citation numbers ── */
+.hist-th-sup {
+  line-height: 0;
+}
+.hist-th-ref {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: 0.7em;
+  letter-spacing: 0.04em;
+  color: var(--hist-brass-ink);
+  text-decoration: none;
+  padding: 0 0.15em;
+}
+.hist-th-ref:hover,
+.hist-th-ref:focus-visible {
+  color: var(--hist-accent);
+  text-decoration: underline;
+}
+.hist-th-ref--cell {
+  font-size: var(--text-xs);
+}
+
+/* ── Notes: sidenotes beside the paragraph on a wide page, a native
+      disclosure under it on a narrow one. Both are the same list. ── */
+.hist-th-sidenotes {
+  display: none;
+}
+.hist-th-inline {
+  margin-top: var(--space-2);
+  border-top: 1px solid var(--hist-border-subtle);
+}
+.hist-th-inline__summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hist-ink-muted);
+}
+.hist-th-inline__summary::-webkit-details-marker {
+  display: none;
+}
+.hist-th-inline__summary::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 0;
+  height: 0;
+  border-left: 5px solid currentColor;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transition: transform var(--dur-fast) var(--ease-cinematic);
+}
+.hist-th-inline[open] > .hist-th-inline__summary::before {
+  transform: rotate(90deg);
+}
+.hist-th-inline__list,
+.hist-th-sidenotes__list,
+.hist-th-notes__list {
+  margin: 0;
+  padding-left: 2.2em;
+}
+.hist-th-inline__note,
+.hist-th-sidenote,
+.hist-th-note {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--hist-ink-secondary);
+  margin-bottom: var(--space-2);
+}
+.hist-th-inline__note::marker,
+.hist-th-sidenote::marker,
+.hist-th-note::marker {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  color: var(--hist-brass-ink);
+}
+.hist-th-note__link,
+.hist-th-note__back,
+.hist-th-source__link,
+.hist-th-exhibit__link,
+.hist-th-omit__against,
+.hist-th-contested__pos,
+.hist-th-gap__url {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hist-brass-ink);
+  text-decoration: none;
+  margin-left: var(--space-2);
+  white-space: nowrap;
+}
+.hist-th-note__link:hover,
+.hist-th-note__back:hover,
+.hist-th-source__link:hover,
+.hist-th-exhibit__link:hover,
+.hist-th-omit__against:hover,
+.hist-th-contested__pos:hover,
+.hist-th-gap__url:hover,
+.hist-th-note__link:focus-visible,
+.hist-th-note__back:focus-visible,
+.hist-th-source__link:focus-visible,
+.hist-th-exhibit__link:focus-visible,
+.hist-th-omit__against:focus-visible,
+.hist-th-contested__pos:focus-visible,
+.hist-th-gap__url:focus-visible {
+  color: var(--hist-accent);
+  text-decoration: underline;
+}
+.hist-th-notes__list {
+  columns: 1;
+}
+.hist-th-note {
+  scroll-margin-top: calc(var(--hist-topbar-height) + var(--space-5));
+}
+.hist-th-note:target,
+.hist-th-sidenote:target {
+  background: var(--hist-brass-ghost);
+}
+
+/* ── Exhibits: a frame, the eyebrow, the document in Plex Mono on deep
+      paper, provenance in Inter under a hairline ── */
+.hist-th-exhibit {
+  margin: var(--space-6) 0;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--hist-brass);
+  background: var(--hist-bg-card);
+  max-width: none;
+  scroll-margin-top: calc(var(--hist-topbar-height) + var(--space-5));
+}
+.hist-th-exhibit__cap {
+  margin-bottom: var(--space-3);
+}
+.hist-th-exhibit__eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: var(--text-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--hist-brass-ink);
+  margin: 0 0 var(--space-1);
+}
+.hist-th-exhibit__eyebrow span + span::before {
+  content: "·";
+  margin-right: var(--space-2);
+  color: var(--hist-ink-muted);
+}
+.hist-th-exhibit__title {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: var(--text-base);
+  color: var(--hist-ink);
+  margin: 0;
+}
+.hist-th-extract {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  color: var(--hist-ink);
+  background: var(--hist-paper-deep);
+  border-left: 3px solid var(--hist-brass);
+  margin: var(--space-3) 0;
+  padding: var(--space-3) var(--space-4);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.hist-th-extract--rendering {
+  border-left-color: var(--hist-border);
+  background: var(--hist-bg-elevated);
+}
+.hist-th-extract__label {
+  display: block;
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: var(--text-xxs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hist-ink-muted);
+  margin-bottom: var(--space-2);
+}
+.hist-th-extract--void-translation .hist-th-extract__label {
+  color: var(--hist-brass-ink);
+}
+.hist-th-exhibit__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: var(--img-grade-history);
+}
+.hist-th-exhibit__prov {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--hist-border-subtle);
+}
+.hist-th-prov {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--space-1) var(--space-3);
+  margin: 0;
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--hist-ink-muted);
+  flex: 1 1 24rem;
+  min-width: 0;
+}
+.hist-th-prov > div {
+  display: contents;
+}
+.hist-th-prov dt {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hist-brass-ink);
+}
+.hist-th-prov dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ── Analysis: the thesis's own finding, with its working ── */
+.hist-th-analysis {
+  margin: var(--space-6) 0;
+  padding: var(--space-4) var(--space-5);
+  border-top: 2px solid var(--hist-accent);
+  border-bottom: 1px solid var(--hist-border-subtle);
+  background: var(--hist-accent-ghost);
+  max-width: none;
+}
+.hist-th-analysis__eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: var(--text-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--hist-brass-ink);
+  margin: 0 0 var(--space-2);
+}
+.hist-th-analysis__own {
+  color: var(--hist-ink-muted);
+}
+.hist-th-analysis__own::before {
+  content: "·";
+  margin-right: var(--space-2);
+}
+.hist-th-analysis__title {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: var(--text-lg);
+  line-height: 1.25;
+  color: var(--hist-ink);
+  margin: 0 0 var(--space-3);
+}
+.hist-th-analysis__method,
+.hist-th-analysis__result,
+.hist-th-analysis__confidence {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--hist-ink-secondary);
+  margin: var(--space-2) 0;
+}
+.hist-th-analysis__finding {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  color: var(--hist-ink);
+  margin: var(--space-3) 0 var(--space-2);
+}
+
+/* ── Tables: a real <table>, a hairline per row, scrolls inside its frame ── */
+.hist-th-tablewrap {
+  max-width: none;
+  overflow-x: auto;
+  margin: var(--space-4) 0;
+}
+.hist-th-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--hist-ink-secondary);
+}
+.hist-th-table th,
+.hist-th-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+.hist-th-table thead th {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: var(--text-xxs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hist-brass-ink);
+  border-bottom: 1px solid var(--hist-border);
+}
+.hist-th-table tbody th {
+  font-weight: 600;
+  color: var(--hist-ink);
+  white-space: nowrap;
+}
+.hist-th-contested__caption {
+  caption-side: top;
+  text-align: left;
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: var(--text-base);
+  color: var(--hist-ink);
+  padding: var(--space-3) 0;
+}
+.hist-th-contested__cite {
+  font-size: var(--text-xs);
+  color: var(--hist-ink-muted);
+}
+.hist-th-contested__pos {
+  margin-left: var(--space-1);
+  white-space: normal;
+}
+
+/* ── The position's colour: a chip beside its name, never instead of it ── */
+.hist-th-chip {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--hist-account-color, var(--hist-accent));
+  margin-right: var(--space-2);
+  vertical-align: middle;
+}
+
+/* ── Positions ── */
+.hist-th-position {
+  margin: var(--space-5) 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--hist-border);
+  max-width: none;
+}
+.hist-th-position__name {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: var(--text-lg);
+  line-height: 1.25;
+  color: var(--hist-ink);
+  margin: 0 0 var(--space-3);
+}
+.hist-th-position__dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  max-width: min(var(--hist-measure), 100%);
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--hist-ink-secondary);
+}
+.hist-th-position__dl > div {
+  display: contents;
+}
+.hist-th-position__dl dt {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: var(--text-xxs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hist-brass-ink);
+  padding-top: 0.25em;
+}
+.hist-th-position__dl dd {
+  margin: 0;
+  min-width: 0;
+}
+.hist-th-position__sources {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.hist-th-position__sources li {
+  margin-bottom: var(--space-1);
+}
+.hist-th-position__sources a {
+  color: var(--hist-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--hist-border);
+  text-underline-offset: 0.15em;
+}
+.hist-th-position__tag {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hist-ink-muted);
+  margin-left: var(--space-2);
+}
+.hist-th-tested {
+  margin-top: var(--space-4);
+}
+.hist-th-tested__label {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: var(--text-xxs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--hist-brass-ink);
+  margin: 0 0 var(--space-2);
+}
+.hist-th-tested__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.hist-th-verdict {
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--hist-border-subtle);
+  max-width: min(var(--hist-measure), 100%);
+}
+.hist-th-verdict__claim {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  color: var(--hist-ink);
+  margin: 0 0 var(--space-2);
+}
+.hist-th-verdict__chip {
+  flex: 0 0 auto;
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: var(--text-xxs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.2em 0.6em;
+  border: 1px solid currentColor;
+  color: var(--hist-ink-muted);
+}
+.hist-th-verdict[data-verdict="supported"] .hist-th-verdict__chip {
+  color: var(--hist-persp-c);
+}
+.hist-th-verdict[data-verdict="contradicted"] .hist-th-verdict__chip {
+  color: var(--hist-persp-b);
+}
+.hist-th-verdict[data-verdict="qualified"] .hist-th-verdict__chip {
+  color: var(--hist-brass-ink);
+}
+.hist-th-verdict__basis,
+.hist-th-verdict__reasoning {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--hist-ink-secondary);
+  margin: var(--space-1) 0;
+}
+.hist-th-verdict__basis {
+  color: var(--hist-ink-muted);
+}
+.hist-th-verdict__extracts {
+  margin-top: var(--space-2);
+}
+.hist-th-verdict__summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hist-ink-muted);
+}
+.hist-th-verdict__summary::-webkit-details-marker {
+  display: none;
+}
+.hist-th-verdict__summary::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 0;
+  height: 0;
+  border-left: 5px solid currentColor;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transition: transform var(--dur-fast) var(--ease-cinematic);
+}
+.hist-th-verdict__extracts[open] > .hist-th-verdict__summary::before {
+  transform: rotate(90deg);
+}
+.hist-th-verdict__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.hist-th-verdict__item {
+  margin-bottom: var(--space-3);
+}
+.hist-th-verdict__cite {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  color: var(--hist-ink-muted);
+  margin: 0;
+}
+
+/* ── Omits: the hollow bullet in the position's colour ── */
+.hist-th-omits {
+  list-style: none;
+  margin: var(--space-3) 0;
+  padding: 0;
+}
+.hist-th-omit {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+.hist-th-omit .hist-omission-bullet--hollow {
+  flex: 0 0 auto;
+  margin-top: 0.5em;
+  border-color: var(--hist-account-color, var(--hist-ink-muted));
+}
+.hist-th-omit__text {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  line-height: 1.55;
+  color: var(--hist-ink-secondary);
+}
+.hist-th-omit__against {
+  white-space: normal;
+}
+
+/* ── The record's standing and its gaps ── */
+.hist-th-standing {
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  gap: var(--space-1) var(--space-4);
+  margin: var(--space-4) 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--hist-border-subtle);
+  background: var(--hist-bg-card);
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--hist-ink-secondary);
+}
+.hist-th-standing > div {
+  display: contents;
+}
+.hist-th-standing dd {
+  margin: 0;
+  font-family: var(--font-meta);
+  font-weight: 600;
+  color: var(--hist-ink);
+  text-align: right;
+}
+.hist-th-gaps__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.hist-th-gap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--hist-border-subtle);
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+.hist-th-gap__what {
+  color: var(--hist-ink);
+}
+.hist-th-gap__status,
+.hist-th-gap__tried {
+  color: var(--hist-ink-muted);
+  font-size: var(--text-xs);
+}
+.hist-th-gap__url {
+  margin-left: var(--space-2);
+}
+
+/* ── Sources ── */
+.hist-th-tier {
+  margin-top: var(--space-4);
+}
+.hist-th-tier__letter {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  letter-spacing: 0.16em;
+  color: var(--hist-brass-ink);
+  margin-right: var(--space-2);
+}
+.hist-th-tier__list {
+  margin: 0;
+  padding-left: 1.6em;
+}
+.hist-th-source {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--hist-ink-secondary);
+  margin-bottom: var(--space-2);
+}
+.hist-th-source__cite {
+  color: var(--hist-ink);
+}
+.hist-th-source__meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  margin-left: var(--space-2);
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hist-ink-muted);
+}
+.hist-th-source__link {
+  margin-left: 0;
+}
+
+/* ── From the episode ── */
+.hist-th-episode {
+  margin: var(--space-5) 0;
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--hist-brass);
+}
+.hist-th-episode__eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: var(--text-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--hist-brass-ink);
+  margin: 0 0 var(--space-2);
+}
+.hist-th-episode__chapter {
+  color: var(--hist-ink-muted);
+}
+.hist-th-episode__chapter::before {
+  content: "·";
+  margin-right: var(--space-2);
+}
+.hist-th-episode__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.hist-th-episode__play {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: flex-start;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 var(--space-4) 0 var(--space-3);
+  border: 1px solid var(--hist-brass);
+  border-radius: var(--radius-pill);
+  background: var(--hist-brass-ghost);
+  color: var(--hist-brass-ink);
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-cinematic), color var(--dur-fast) var(--ease-cinematic);
+}
+.hist-th-episode__play:hover,
+.hist-th-episode__play:focus-visible,
+.hist-th-episode__play--playing {
+  background: var(--hist-brass-wash);
+  color: var(--hist-ink);
+}
+.hist-th-episode__lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.hist-th-episode__line {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--text-lg);
+  line-height: 1.45;
+  color: var(--hist-ink);
+  margin: 0;
+}
+.hist-th-episode__line--voice {
+  font-family: var(--font-data);
+  font-style: normal;
+  font-size: var(--text-sm);
+  line-height: 1.7;
+}
+
+/* ── 1024px and up: the section takes the text and the right rail, the
+      paragraph becomes a two-column grid, and the notes sit beside it ── */
+@media (min-width: 1024px) {
+  .hist-th > .hist-th-section {
+    grid-column: text-start / rail-end;
+  }
+  .hist-th-para {
+    display: grid;
+    grid-template-columns: min(var(--hist-measure), 100%) minmax(0, var(--hist-rail-col));
+    column-gap: var(--space-4);
+    align-items: start;
+    max-width: none;
+  }
+  .hist-th-para--editorial {
+    grid-template-columns: 40ch minmax(0, var(--hist-rail-col));
+  }
+  .hist-th-sidenotes {
+    display: block;
+    border-left: 1px solid var(--hist-brass-wash);
+    padding-left: var(--space-3);
+  }
+  .hist-th-sidenotes__list {
+    padding-left: 1.6em;
+  }
+  .hist-th-sidenote {
+    font-size: var(--text-xs);
+    line-height: 1.45;
+    color: var(--hist-ink-muted);
+  }
+  .hist-th-inline {
+    display: none;
+  }
+  .hist-th-notes__list {
+    columns: 2;
+    column-gap: var(--space-5);
+  }
+  .hist-th-exhibit {
+    padding: var(--space-5) var(--space-6);
+  }
+}
+
+/* ── Print: sidenotes and disclosures collapse to the Notes section, every
+      source prints its free-copy address, exhibits keep their frames, the
+      play glyph goes ── */
+@media print {
+  .hist-th-sidenotes,
+  .hist-th-inline,
+  .hist-th-episode__play,
+  .hist-th-note__back {
+    display: none !important;
+  }
+  .hist-th-source__link::after,
+  .hist-th-exhibit__link::after {
+    content: " " attr(href);
+    font-family: var(--font-data);
+    font-size: var(--text-xxs);
+    text-transform: none;
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+  }
+  .hist-th-verdict__extracts[open] .hist-th-verdict__summary,
+  .hist-th-verdict__extracts:not([open]) .hist-th-verdict__summary {
+    display: none;
+  }
+  .hist-th-verdict__extracts:not([open]) > .hist-th-verdict__list {
+    display: block;
+  }
+  .hist-th-exhibit,
+  .hist-th-analysis,
+  .hist-th-position,
+  .hist-th-tablewrap {
+    break-inside: avoid;
+  }
+  .hist-th-notes__list {
+    columns: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hist-th-inline__summary::before,
+  .hist-th-verdict__summary::before,
+  .hist-th-episode__play {
+    transition: none;
+  }
+}
