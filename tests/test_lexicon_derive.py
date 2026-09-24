@@ -23,6 +23,7 @@ a stored row is a phrase and not a sentence, and a promise in a comment is not a
 invariant.
 """
 import collections
+import json
 import importlib.util
 import pathlib
 import sqlite3
@@ -159,6 +160,59 @@ planted_words = set(LEFT_MARK.split()) | set(RIGHT_MARK.split())
 check("the top phrase comes from a planted mark, not the filler",
       found and set(found[0]["phrase"].split()) <= planted_words,
       found[0]["phrase"] if found else "nothing derived")
+
+# --- the ranking is REPRODUCIBLE, not merely sorted -----------------------------
+# This gate passed locally four times and failed in CI, which is the signature of
+# hash-order dependence rather than flakiness. `sort(key=-chi2)` is not a total
+# order: nine phrases tie at 87.820 on the fixture above, Python's sort is stable,
+# and the surviving order came from iterating SETS of strings, which Python
+# randomises per process. Seed 0 gave `wealth`, seed 1 `border`, seed 5
+# `about meeting wealth`, and that last one is filler straddling the plant.
+#
+# A same-process re-run cannot catch this, because PYTHONHASHSEED is fixed once
+# the interpreter starts. So this runs the derivation in two subprocesses with
+# different seeds and requires the same answer from both.
+import subprocess  # noqa: E402
+
+_PROBE = r"""
+import importlib.util, pathlib, sys, json
+R = pathlib.Path(%r)
+sys.path.insert(0, str(R)); sys.path.insert(0, str(R / "pipeline"))
+sp = importlib.util.spec_from_file_location("ld", R / "pipeline/analyzers/lexicon_derive.py")
+ld = importlib.util.module_from_spec(sp); sys.modules["ld"] = ld; sp.loader.exec_module(ld)
+L, RM = "wealth tax", "border security"
+rows = []
+for i in range(40):
+    sl = i %% 2 == 0; base = 20 if sl else 80
+    for j in range(30):
+        f = f"ordinary council coverage number {j %% 7} about a meeting"; m = []
+        if (j %% 10) < (3 if sl else 0) or (sl is False and j %% 20 == 0): m.append(L)
+        if (j %% 10) < (3 if not sl else 0) or (sl and j %% 20 == 0): m.append(RM)
+        rows.append({"slug": f"o{i}", "name": f"Outlet {i}", "lab": "x",
+                     "base": base, "text": f"{f} {' '.join(m)}"})
+print(json.dumps([d["phrase"] for d in ld.derive(rows)[:10]]))
+""" % str(ROOT)
+
+
+def _top_ten(seed: str):
+    import os
+    env = dict(os.environ, PYTHONHASHSEED=seed)
+    r = subprocess.run([sys.executable, "-c", _PROBE], capture_output=True,
+                       text=True, env=env, timeout=300)
+    if r.returncode != 0:
+        return None, r.stderr.strip()[-200:]
+    return json.loads(r.stdout.strip().splitlines()[-1]), ""
+
+
+_a, _ea = _top_ten("0")
+_b, _eb = _top_ten("5")
+check("the derivation runs under a fixed hash seed", _a is not None, _ea)
+check("and under a different one", _b is not None, _eb)
+if _a is not None and _b is not None:
+    check("the ranking does not depend on PYTHONHASHSEED",
+          _a == _b, f"seed 0 {_a[:3]} vs seed 5 {_b[:3]}")
+    check("ties are broken toward the SHORTER phrase, which is the general finding",
+          _a and len(_a[0].split()) == 1, str(_a[:3]))
 
 # The other direction, which is the one that matters: identical text on both sides
 # must yield no high-confidence phrase at all.

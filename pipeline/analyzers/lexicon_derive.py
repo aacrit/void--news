@@ -94,6 +94,34 @@ MAX_DOC_FREQ = 0.25
 _WORD = re.compile(r"[a-z][a-z'-]+")
 
 
+def _rank(d: dict) -> tuple:
+    """The order candidates are reported in. A TOTAL order, deliberately.
+
+    `sort(key=lambda d: -d["chi2"])` looked complete and was not. Chi-squared
+    ties constantly, because a planted phrase, its unigrams, and every n-gram
+    that straddles it all carry identical counts: on the gate's own fixture
+    NINE phrases tie at 87.820. Python's sort is stable, so the winner was
+    whatever insertion order the dicts happened to have, and that order comes
+    from iterating SETS of strings, which is PYTHONHASHSEED-dependent. So
+    `derive()` returned a different top phrase in every process.
+
+    Measured on that fixture: seed 0 gave `wealth`, seed 1 `border`, seed 2
+    `wealth tax`, seed 5 `about meeting wealth`. The last one is filler
+    straddling the plant, which is what finally failed the gate in CI after
+    passing locally four times. A derivation nobody can reproduce is one
+    nobody can act on, and the ranked lists this function produced were being
+    read and quoted.
+
+    The tie-break is shortest-then-alphabetical, and the first half of that is
+    a real editorial preference rather than an arbitrary stabiliser: among
+    phrases of identical discriminating power, the shortest is the general
+    finding. A trigram that ties with its own unigram is that unigram plus
+    context contributing nothing. Alphabetical last, purely so the order is
+    total and no tie can fall through to hash order again.
+    """
+    return (-d["chi2"], len(d["phrase"].split()), d["phrase"])
+
+
 def reachable_known(known: set[str]) -> tuple[set[str], set[str]]:
     """Split the hand-written phrases into the ones a harvest could ever store
     and the ones it could not.
@@ -262,7 +290,7 @@ def derive(rows: list[dict]) -> list[dict]:
                     "right_outlets": len(right_outlets),
                     "rate_left": round(rate_l * 100, 3),
                     "rate_right": round(rate_r * 100, 3)})
-    out.sort(key=lambda d: -d["chi2"])
+    out.sort(key=_rank)
     return out
 
 
@@ -659,7 +687,7 @@ def derive_from_counts(conn, roster: dict) -> list[dict]:
                     "right_outlets": len(right_outlets),
                     "rate_left": round(rate_l * 100, 3),
                     "rate_right": round(rate_r * 100, 3)})
-    out.sort(key=lambda d: -d["chi2"])
+    out.sort(key=_rank)
     return out
 
 

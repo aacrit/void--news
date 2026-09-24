@@ -211,6 +211,34 @@ one locked decision that has ever changed) · Claude Max CLI for agent work.
 
 ## Git & dev
 
+### main is production. One branch at a time.
+
+`deploy-cloudflare.yml` serves the site from `main` and nothing else
+(`on: push: branches: [main]`, plus `workflow_run` after auto-merge and the
+pipeline). So **a commit that is not on main is not live**, however finished it
+looks, and a red `main` freezes the whole product.
+
+Two rules follow, and both were learned the expensive way on 2026-09-23, when
+the site served two-day-old data while 35 commits waited behind a red
+build-check and 279 stale `claude/*` branches sat on the remote:
+
+1. **Finish a branch before starting another.** One live `claude/*` branch at a
+   time. A second branch opened while the first is unmerged inherits the
+   first's problems (every branch carries main's data, so main's breakage is
+   every branch's breakage) and doubles the surface that has to go green.
+   Delete the branch once auto-merge has taken it.
+2. **A red main is the first thing fixed, before any new work.** Not after the
+   current task. The pipeline pushes data straight to main with no build behind
+   it, so main can go red without anyone touching code: on 2026-09-22 a run
+   committed a feed carrying 14 displayable stories against the 20
+   `frontend/config/feed.json` requires, `serverFeed.ts` threw as designed, and
+   every branch's build-check failed for a day. `tests/test_feed_buildable.py`
+   now refuses that commit at the source, but the rule stands for the next
+   thing that gets past a gate.
+
+**Check before assuming a branch shipped:** `git log --oneline -1 origin/main`,
+and the live page. Thirty-five commits described as done were not live.
+
 - **Always push to `claude/*` branches.** Auto-merge to main.
 - **Always commit AND push after every task.** Never wait to be asked.
 - **Sync before push:** `git fetch origin main && git merge origin/main --no-edit`
