@@ -199,7 +199,7 @@ perspectives:
     author: Jack Weatherford
     year: '2004'
     type: book
-    archive_url: https://archive.org/details/genghiskhanmakin00weat
+    verified: false
   - title: 'The Mongol Empire: Genghis Khan, His Heirs and the Founding of Modern China'
     author: John Man
     year: '2014'
@@ -282,12 +282,12 @@ perspectives:
     author: Jacques Gernet
     year: '1962'
     type: book
-    archive_url: https://archive.org/details/dailylifeinchin000gern
+    verified: false
   - title: The Travels of Marco Polo
     author: Marco Polo (translated by Ronald Latham)
     year: c. 1298 (translation 1958)
     type: book
-    archive_url: https://archive.org/details/travelstravelsof00polo
+    verified: false
   notable_quotes:
   - text: The Tatars have utterly destroyed the northern regions. The bones of the dead cover the land like a great snowfall.
     speaker: Southern Song court report
@@ -360,7 +360,7 @@ perspectives:
     author: Ata-Malik Juvaini
     year: c. 1260
     type: book
-    archive_url: https://archive.org/details/historyofworldco01juvauoft
+    verified: false
   - title: Al-Kamil fi al-Tarikh (The Complete History)
     author: Ibn al-Athir
     year: c. 1231
@@ -441,7 +441,7 @@ perspectives:
     author: George Vernadsky
     year: '1953'
     type: book
-    archive_url: https://archive.org/details/mongolsrussia0000vern
+    verified: false
   - title: 'Russia and the Golden Horde: The Mongol Impact on Medieval Russian History'
     author: Charles Halperin
     year: '1985'
@@ -530,7 +530,7 @@ perspectives:
     author: Jack Weatherford
     year: '2004'
     type: book
-    archive_url: https://archive.org/details/genghiskhanmakin00weat
+    verified: false
   - title: Culture and Conquest in Mongol Eurasia
     author: Thomas T. Allsen
     year: '2001'
@@ -596,62 +596,6 @@ media:
   license: cc-by-sa
   creator: David Stanley
   creation_date: '2011'
-- media_type: photograph
-  title: green trees and grass field during daytime
-  description: Landscape orientation, 3872x2592px
-  source_url: https://unsplash.com/photos/green-trees-and-grass-field-during-daytime-0xiJC8szfmQ
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/mongol-empire/unsplash_1.jpg
-  attribution: Photo by Ken Shono on Unsplash
-  license: unsplash-license
-  creator: Ken Shono
-- media_type: photograph
-  title: Wild horses grazing in a dry, grassy field.
-  description: Landscape orientation, 3456x2304px
-  source_url: https://unsplash.com/photos/wild-horses-grazing-in-a-dry-grassy-field-_D6eU2mEzXA
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/mongol-empire/unsplash_2.jpg
-  attribution: Photo by nee k on Unsplash
-  license: unsplash-license
-  creator: nee k
-- media_type: photograph
-  title: man riding horse statue under cloudy sky during daytime
-  description: Landscape orientation, 3888x2600px
-  source_url: https://unsplash.com/photos/man-riding-horse-statue-under-cloudy-sky-during-daytime-OeYNUhx_FdU
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/mongol-empire/unsplash_3.jpg
-  attribution: Photo by Tolunay Karavar on Unsplash
-  license: unsplash-license
-  creator: Tolunay Karavar
-- media_type: photograph
-  title: a statue of a man sitting on a bench in front of a building
-  description: Landscape orientation, 8064x6048px
-  source_url: https://unsplash.com/photos/a-statue-of-a-man-sitting-on-a-bench-in-front-of-a-building-UWvOHIZKz_Y
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/mongol-empire/unsplash_4.jpg
-  attribution: Photo by Andy Bridge on Unsplash
-  license: unsplash-license
-  creator: Andy Bridge
-- media_type: photograph
-  title: Two Przewalski's horses grazing peacefully on the Mongolian steppe.
-  description: Landscape orientation, 5577x3137px
-  source_url: https://www.pexels.com/photo/przewalski-s-horses-grazing-in-natural-habitat-29406172/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/mongol-empire/pexels_1.jpg
-  attribution: Photo by Gundula Vogel on Pexels
-  license: pexels-license
-  creator: Gundula Vogel
-- media_type: photograph
-  title: Dogs running around ethnic cattleman riding horse on grassy terrain in evening time
-  description: Landscape orientation, 5464x3640px
-  source_url: https://www.pexels.com/photo/cattleman-with-dogs-in-remote-terrain-4326739/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/mongol-empire/pexels_2.jpg
-  attribution: Photo by ArtHouse Studio on Pexels
-  license: pexels-license
-  creator: ArtHouse Studio
-- media_type: photograph
-  title: Close-up of the iconic Genghis Khan statue in Mongolia against a clear sky.
-  description: Landscape orientation, 4752x3168px
-  source_url: https://www.pexels.com/photo/genghis-khan-statue-in-close-up-photography-6466768/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/mongol-empire/pexels_3.jpg
-  attribution: Photo by MBVisign on Pexels
-  license: pexels-license
-  creator: MBVisign
 connections:
 - target_slug: mongol-conquest-baghdad
   connection_type: caused

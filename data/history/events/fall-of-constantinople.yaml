@@ -181,7 +181,7 @@ perspectives:
     author: Tursun Beg
     year: c. 1490
     type: book
-    archive_url: https://archive.org/details/tarikhi-ebul-feth
+    verified: false
   - title: 'Constantinople: The Last Great Siege, 1453'
     author: Roger Crowley
     year: '2005'
@@ -192,7 +192,7 @@ perspectives:
     year: '1978'
     type: book
     openlibrary: OL4577143M
-    archive_url: https://archive.org/details/mehmedconquerorh0000babi
+    verified: false
   notable_quotes:
   - text: The spider weaves the curtains in the palace of the Caesars; the owl calls the watches in the towers of Afrasiab.
     speaker: Mehmed II
@@ -260,7 +260,7 @@ perspectives:
     author: Nicolo Barbaro
     year: '1453'
     type: document
-    archive_url: https://archive.org/details/diary-of-siege-of-constantinople
+    verified: false
   - title: The Fall of Constantinople 1453
     author: Steven Runciman
     year: '1965'
@@ -272,7 +272,7 @@ perspectives:
     year: '1995'
     type: book
     openlibrary: OL1103656M
-    archive_url: https://archive.org/details/byzantiumdecline0000norw
+    verified: false
   notable_quotes:
   - text: The city is fallen and I am still alive.
     speaker: Constantine XI Palaiologos
@@ -339,7 +339,6 @@ perspectives:
     author: Kenneth Setton (ed.)
     year: '1975'
     type: book
-    doi: 10.2307/2495267
     archive_url: https://archive.org/details/historyofcrusade0003unse
   - title: 'Osman''s Dream: The Story of the Ottoman Empire 1300-1923'
     author: Caroline Finkel
@@ -406,7 +405,7 @@ perspectives:
     year: '1999'
     type: book
     openlibrary: OL372131M
-    archive_url: https://archive.org/details/balkans1804199900glen
+    verified: false
   - title: 'Kosovo: A Short History'
     author: Noel Malcolm
     year: '1998'
@@ -487,7 +486,7 @@ perspectives:
     author: William Miller
     year: '1908'
     type: book
-    archive_url: https://archive.org/details/latinslevant00mill
+    verified: false
   - title: 'The Portuguese Seaborne Empire, 1415-1825'
     author: C.R. Boxer
     year: '1969'

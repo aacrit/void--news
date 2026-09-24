@@ -193,7 +193,7 @@ perspectives:
     year: '1994'
     type: book
     openlibrary: OL1097546M
-    archive_url: https://archive.org/details/longwalktofre00mand
+    verified: false
   - title: 'Oliver Tambo: Beyond the Engeli Mountains'
     author: Luli Callinicos
     year: '2004'
@@ -344,7 +344,7 @@ perspectives:
     author: Steve Biko
     year: '1978'
     type: book
-    archive_url: https://archive.org/details/iwritewhatilike0000biko
+    verified: false
   - title: 'Biko: A Biography'
     author: Donald Woods
     year: '1978'
@@ -500,7 +500,7 @@ perspectives:
     author: Desmond Tutu
     year: '1999'
     type: book
-    archive_url: https://archive.org/details/nofuturewithou00tutu
+    verified: false
   - title: 'Country of My Skull: Guilt, Sorrow, and the Limits of Forgiveness in the New South Africa'
     author: Antjie Krog
     year: '1998'
@@ -568,62 +568,6 @@ media:
   creator: World Economic Forum
   creation_date: '1992'
   supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/apartheid/wiki_3.jpg
-- media_type: photograph
-  title: a man riding a bicycle
-  description: Landscape orientation, 4752x3168px
-  source_url: https://unsplash.com/photos/a-man-riding-a-bicycle-HMVX-gEYYQ4
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/apartheid/unsplash_1.jpg
-  attribution: Photo by Soweto Graphics on Unsplash
-  license: unsplash-license
-  creator: Soweto Graphics
-- media_type: photograph
-  title: a person holding a baby
-  description: Landscape orientation, 4752x3168px
-  source_url: https://unsplash.com/photos/a-person-holding-a-baby-1nQJf4oN5Xk
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/apartheid/unsplash_2.jpg
-  attribution: Photo by Soweto Graphics on Unsplash
-  license: unsplash-license
-  creator: Soweto Graphics
-- media_type: photograph
-  title: white metal gate
-  description: Landscape orientation, 5717x3811px
-  source_url: https://unsplash.com/photos/white-metal-gate-PPWXd6bvRoM
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/apartheid/unsplash_3.jpg
-  attribution: Photo by Grant Durr on Unsplash
-  license: unsplash-license
-  creator: Grant Durr
-- media_type: photograph
-  title: a close up of a fence with a building in the background
-  description: Landscape orientation, 4032x3024px
-  source_url: https://unsplash.com/photos/a-close-up-of-a-fence-with-a-building-in-the-background-YNnuvtt9XCY
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/apartheid/unsplash_4.jpg
-  attribution: Photo by Rohan Chhipa on Unsplash
-  license: unsplash-license
-  creator: Rohan Chhipa
-- media_type: photograph
-  title: A cozy rustic wooden shelf displaying vintage books with gold embossed titles.
-  description: Landscape orientation, 6000x4000px
-  source_url: https://www.pexels.com/photo/wood-man-person-people-7218364/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/apartheid/pexels_1.jpg
-  attribution: Photo by MART  PRODUCTION on Pexels
-  license: pexels-license
-  creator: MART  PRODUCTION
-- media_type: photograph
-  title: 'A vibrant crowd in red attire gathers at Soweto stadium for an energetic sports event under a clear '
-  description: Landscape orientation, 3872x2592px
-  source_url: https://www.pexels.com/photo/crowd-in-the-stadium-4955984/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/apartheid/pexels_2.jpg
-  attribution: Photo by Bongani Nkwinika on Pexels
-  license: pexels-license
-  creator: Bongani Nkwinika
-- media_type: photograph
-  title: Stunning aerial view of Cape Town City Hall against Table Mountain backdrop in South Africa.
-  description: Landscape orientation, 4256x2832px
-  source_url: https://www.pexels.com/photo/concrete-buildings-near-the-mountain-9981909/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/apartheid/pexels_3.jpg
-  attribution: Photo by Patrick Rashidi on Pexels
-  license: pexels-license
-  creator: Patrick Rashidi
 connections:
 - target_slug: scramble-for-africa
   connection_type: consequence

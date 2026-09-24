@@ -168,8 +168,8 @@ perspectives:
     author: Pierre Briant (translated by Peter T. Daniels)
     year: '2002'
     type: book
-    doi: 10.5860/choice.40-5765
     openlibrary: OL3960415M
+    verified: false
   - title: The Persian Empire
     author: Amelie Kuhrt
     year: '2007'
@@ -248,7 +248,7 @@ perspectives:
     author: Amelie Kuhrt
     year: '1983'
     type: journal
-    doi: 10.2307/3642581
+    verified: false
   - title: 'The Ancient Near Eastern Background of the Concept of Universal Human Rights'
     author: Amelie Kuhrt
     year: '2007'
@@ -261,7 +261,7 @@ perspectives:
     author: Matt Waters
     year: '2014'
     type: journal
-    doi: 10.1163/15685209-12341284
+    verified: false
   notable_quotes:
   - text: The cylinder is not a declaration of human rights. It is a traditional Mesopotamian royal building inscription.
     speaker: Amelie Kuhrt
@@ -419,12 +419,12 @@ perspectives:
     author: Paul-Alain Beaulieu
     year: '2006'
     type: chapter
-    doi: 10.1017/CHOL9780521780858.007
+    verified: false
   - title: 'The Reign of Nabonidus, King of Babylon, 556-539 BC'
     author: Paul-Alain Beaulieu
     year: '1989'
     type: book
-    doi: 10.12987/yale/9780300043143.001.0001
+    verified: false
   notable_quotes:
   - text: He [Nabonidus] did not know the rites, he ruined the regular offerings. He did evil against Marduk's city.
     speaker: Verse Account of Nabonidus
@@ -492,17 +492,17 @@ perspectives:
     author: James Cuno (ed.)
     year: '2009'
     type: book
-    doi: 10.1515/9781400831708
+    verified: false
   - title: 'Asshur Is King! Asshur Is King! Religion in the Exercise of Power in the Neo-Assyrian Empire'
     author: Hormuzd Rassam (primary source reference, Asshur and the Land of Nimrod, 1897)
     year: '1897'
     type: book
-    archive_url: https://archive.org/details/asshurandthelan00rassgoog
+    verified: false
   - title: 'The Rape of Mesopotamia: Behind the Looting of the Iraq Museum'
     author: Lawrence Rothfield
     year: '2009'
     type: book
-    doi: 10.7208/chicago/9780226729480.001.0001
+    verified: false
   - title: 'Declaration on the Importance and Value of Universal Museums'
     author: British Museum et al. (18 signatories)
     year: '2002'

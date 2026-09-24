@@ -426,8 +426,8 @@ perspectives:
     author: Donald Bloxham
     year: '2005'
     type: book
-    doi: 10.1111/j.1469-8129.2006.00266_7.x
     openlibrary: OL22622720M
+    verified: false
   notable_quotes:
   - text: I became interested in genocide because it happened so many times. It happened to the Armenians, then after the Armenians, Hitler took action.
     speaker: Raphael Lemkin
@@ -500,7 +500,7 @@ perspectives:
     author: Raphael Lemkin (ed. Donna-Lee Frieze)
     year: '2013'
     type: book
-    doi: 10.12987/yale/9780300186963.001.0001
+    verified: false
   - title: 'The Armenian Genocide in International Law: The State of the Art'
     author: Alfred de Zayas
     year: '2010'
@@ -552,62 +552,6 @@ media:
   license: public-domain
   creator: Library of Congress
   creation_date: '1913'
-- media_type: photograph
-  title: black and white wooden cabinet
-  description: Landscape orientation, 4770x3180px
-  source_url: https://unsplash.com/photos/black-and-white-wooden-cabinet-jfiiIAegN74
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/armenian-genocide/unsplash_1.jpg
-  attribution: Photo by Amir Kh on Unsplash
-  license: unsplash-license
-  creator: Amir Kh
-- media_type: photograph
-  title: green grass near monument
-  description: Landscape orientation, 4500x3000px
-  source_url: https://unsplash.com/photos/green-grass-near-monument-chL-_obaZTY
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/armenian-genocide/unsplash_2.jpg
-  attribution: Photo by A P on Unsplash
-  license: unsplash-license
-  creator: A P
-- media_type: photograph
-  title: green grass near monument
-  description: Landscape orientation, 4500x3000px
-  source_url: https://unsplash.com/photos/green-grass-near-monument-chL-_obaZTY
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/armenian-genocide/unsplash_3.jpg
-  attribution: Photo by A P on Unsplash
-  license: unsplash-license
-  creator: A P
-- media_type: photograph
-  title: a black sign with a cross on top of it
-  description: Landscape orientation, 4032x3024px
-  source_url: https://unsplash.com/photos/a-black-sign-with-a-cross-on-top-of-it-cQZiZ-EK4p4
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/armenian-genocide/unsplash_4.jpg
-  attribution: Photo by Harri P on Unsplash
-  license: unsplash-license
-  creator: Harri P
-- media_type: photograph
-  title: A large monument in Yerevan surrounded by visitors on a sunny day.
-  description: Landscape orientation, 3872x2592px
-  source_url: https://www.pexels.com/photo/monument-in-yerevan-with-group-of-visitors-35215780/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/armenian-genocide/pexels_1.jpg
-  attribution: Photo by Valeria Drozdova on Pexels
-  license: pexels-license
-  creator: Valeria Drozdova
-- media_type: photograph
-  title: Explore the stunning architecture and artistic design of the Yerevan Cascade in Armenia.
-  description: Landscape orientation, 3637x2433px
-  source_url: https://www.pexels.com/photo/one-of-the-levels-of-yerevan-cascade-in-armenia-17501682/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/armenian-genocide/pexels_2.jpg
-  attribution: Photo by Darya Sannikova on Pexels
-  license: pexels-license
-  creator: Darya Sannikova
-- media_type: photograph
-  title: Historic Armenian church with detailed architecture and a serene sky backdrop.
-  description: Landscape orientation, 3207x2404px
-  source_url: https://www.pexels.com/photo/church-13190774/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/armenian-genocide/pexels_3.jpg
-  attribution: Photo by Astghik Khachatryan on Pexels
-  license: pexels-license
-  creator: Astghik Khachatryan
 connections:
 - target_slug: rwandan-genocide
   connection_type: parallel

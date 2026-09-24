@@ -230,17 +230,17 @@ perspectives:
     author: Babur (translated by Wheeler Thackston)
     year: c. 1530
     type: document
-    archive_url: https://archive.org/details/bababornamefirdo00babuuoft
+    verified: false
   - title: Akbarnama
     author: Abu'l-Fazl ibn Mubarak (translated by H. Beveridge)
     year: '1902'
     type: book
-    archive_url: https://archive.org/details/akbarnama01abufuoft
+    verified: false
   - title: 'The Mughal Empire (The New Cambridge History of India I.5)'
     author: John F. Richards
     year: '1993'
     type: book
-    doi: 10.1017/CHOL9780521251198
+    verified: false
   notable_quotes:
   - text: Hindustan is a place of little charm. There is no beauty in its people, no graceful social intercourse, no
       poetic talent or understanding.
@@ -317,7 +317,7 @@ perspectives:
     author: V.D. Savarkar
     year: '1923'
     type: book
-    archive_url: https://archive.org/details/hindutva-vinayak-damodar-savarkar
+    verified: false
   - title: 'Hindu Temples: What Happened to Them (Vol. 1 & 2)'
     author: Sita Ram Goel
     year: '1990'
@@ -408,12 +408,12 @@ perspectives:
     author: Percival Spear
     year: '1965'
     type: book
-    archive_url: https://archive.org/details/historyofindia0002spea
+    verified: false
   - title: The Embassy of Sir Thomas Roe to India
     author: Thomas Roe (edited by William Foster)
     year: '1926'
     type: book
-    archive_url: https://archive.org/details/embassyofsirthom01roet
+    verified: false
   notable_quotes:
   - text: I stood astonished at the prince's wealth. In his throne room he displayed more gems than I had seen in my life.
     speaker: Sir Thomas Roe
@@ -496,12 +496,12 @@ perspectives:
     author: Irfan Habib
     year: '1963'
     type: book
-    doi: 10.1093/acprof:oso/9780198077244.003.0035
+    verified: false
   - title: Elementary Aspects of Peasant Insurgency in Colonial India
     author: Ranajit Guha
     year: '1983'
     type: book
-    archive_url: https://archive.org/details/elementaryaspect0000guha
+    verified: false
   - title: 'An Agrarian History of South Asia (The New Cambridge History of India IV.1)'
     author: David Ludden
     year: '1999'
@@ -583,12 +583,12 @@ perspectives:
     author: Audrey Truschke
     year: '2017'
     type: book
-    doi: 10.1017/9781316414392
+    verified: false
   - title: Temple Desecration and Muslim States in Medieval India
     author: Richard M. Eaton
     year: '2000'
     type: journal
-    doi: 10.1017/S0021911800009724
+    verified: false
   - title: The Crisis of Empire in Mughal North India
     author: Muzaffar Alam
     year: '1986'
@@ -601,7 +601,7 @@ perspectives:
     author: Dara Shikoh
     year: c. 1657
     type: document
-    archive_url: https://archive.org/details/SirrIAkbar
+    verified: false
   notable_quotes:
   - text: The communal reading of Indian history is a British invention. James Mill divided Indian history into Hindu,
       Muslim, and British periods. Pre-colonial sources do not organize political history by the religious identity

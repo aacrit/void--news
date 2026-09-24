@@ -143,7 +143,7 @@ perspectives:
     author: James Barr
     year: '2011'
     type: book
-    archive_url: https://archive.org/details/lineinsandbritai0000barr
+    verified: false
   - title: "Britain's Moment in the Middle East, 1914-1971"
     author: Elizabeth Monroe
     year: '1963'
@@ -284,7 +284,7 @@ perspectives:
     author: David McDowall
     year: '2004'
     type: book
-    archive_url: https://archive.org/details/modernhistoryofk0000mcdo
+    verified: false
   - title: 'The Ottoman Twilight in the Arab Lands: Turkish Memoirs and Testimonies of the Great War'
     author: Salim Tamari
     year: '2021'

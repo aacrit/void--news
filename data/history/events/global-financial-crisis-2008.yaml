@@ -115,7 +115,7 @@ perspectives:
     author: Andrew Ross Sorkin
     year: '2009'
     type: book
-    archive_url: https://archive.org/details/toobigtofailhows0000sork
+    verified: false
   - title: 'The Big Short: Inside the Doomsday Machine'
     author: Michael Lewis
     year: '2010'
@@ -214,7 +214,7 @@ perspectives:
     author: Neil Barofsky
     year: '2012'
     type: book
-    archive_url: https://archive.org/details/bailoutinsideacc0000baro
+    verified: false
   - title: 'The Price of Inequality: How Today''s Divided Society Endangers Our Future'
     author: Joseph E. Stiglitz
     year: '2012'
@@ -229,7 +229,7 @@ perspectives:
     author: David Graeber
     year: '2013'
     type: book
-    archive_url: https://archive.org/details/democracyproject0000grae
+    verified: false
   notable_quotes:
   - text: We are the 99 percent.
     speaker: Occupy Wall Street
@@ -266,7 +266,7 @@ perspectives:
     author: Carmen M. Reinhart and Kenneth S. Rogoff
     year: '2009'
     type: book
-    archive_url: https://archive.org/details/thistimeisdiffer0000rein
+    verified: false
   - title: World Economic Outlook - Crisis and Recovery
     author: International Monetary Fund
     year: '2009'
@@ -275,7 +275,7 @@ perspectives:
     author: Dani Rodrik
     year: '2011'
     type: book
-    archive_url: https://archive.org/details/globalizationpar0000rodr
+    verified: false
   - title: 'Crisis Economics: A Crash Course in the Future of Finance'
     author: Nouriel Roubini and Stephen Mihm
     year: '2010'
@@ -330,7 +330,7 @@ perspectives:
     author: John B. Taylor
     year: '2009'
     type: book
-    archive_url: https://archive.org/details/gettingofftrackh0000tayl
+    verified: false
   notable_quotes:
   - text: Over the past decade a combination of diverse forces has created a significant increase in the global supply of saving, a global saving glut.
     speaker: Ben Bernanke

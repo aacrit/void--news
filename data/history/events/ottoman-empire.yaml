@@ -213,7 +213,7 @@ perspectives:
     author: Mustafa Kemal Ataturk
     year: '1927'
     type: document
-    archive_url: https://archive.org/details/speechdeliveredg00atat
+    verified: false
   - title: 'Ataturk: The Biography of the Founder of Modern Turkey'
     author: Andrew Mango
     year: '1999'
@@ -297,7 +297,7 @@ perspectives:
     author: George Antonius
     year: '1938'
     type: book
-    archive_url: https://archive.org/details/arabawakening00anto
+    verified: false
   - title: Seven Pillars of Wisdom
     author: T.E. Lawrence
     year: '1926'
@@ -394,13 +394,13 @@ perspectives:
     author: William Ewart Gladstone
     year: '1876'
     type: document
-    archive_url: https://archive.org/details/bulgarianhorrors00gladuoft
+    verified: false
   - title: 'The Balkans: Nationalism, War, and the Great Powers, 1804-2012'
     author: Misha Glenny
     year: '1999'
     type: book
     openlibrary: OL372131M
-    archive_url: https://archive.org/details/balkans1804199900glen
+    verified: false
   notable_quotes:
   - text: 'Let the Turks now carry away their abuses in the only possible manner, namely, by carrying off themselves.'
     speaker: William Ewart Gladstone
@@ -489,7 +489,7 @@ perspectives:
     author: Various (W.E. Grigsby translation)
     year: '1895'
     type: document
-    archive_url: https://archive.org/details/medjelle00turkuoft
+    verified: false
   notable_quotes:
   - text: 'You venture to call Ferdinand a wise ruler — he who has impoverished his own country and enriched mine?'
     speaker: Sultan Bayezid II (attributed)

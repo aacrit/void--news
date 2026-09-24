@@ -13,7 +13,7 @@ death_toll: No reliable aggregate figure; the Plague of Athens alone killed an e
   expedition killed ~40,000 Athenians and allies
 affected_population: The entire Greek world, an estimated 2-4 million people across hundreds of poleis drawn into the conflict or affected by its economic disruption
 duration: 27 years (431-404 BCE), with an unstable peace (the Peace of Nicias, 421-415 BCE) dividing the war into two phases
-hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/peloponnesian-war/pexels_1.jpg
+hero_image_url: https://commons.wikimedia.org/wiki/File:Peloponnesian_war_alliances_431_BC.png
 hero_image_attribution: Marsyas, CC BY-SA 3.0, via Wikimedia Commons
 summary: 'In the summer of 431 BCE, a Theban force of 300 men entered the city of Plataea at night, invited by a faction within the walls. The Plataeans discovered them, barricaded the streets, and killed
   or captured 180 of the intruders. Thebes was Sparta''s ally; Plataea was Athens''s. The attack triggered the general war that Thucydides, an Athenian general who would later be exiled for losing a battle,
@@ -498,13 +498,13 @@ perspectives:
     author: Russell Meiggs
     year: '1972'
     type: book
-    doi: 10.1093/acprof:oso/9780198142348.001.0001
     openlibrary: OL5094785M
+    verified: false
   - title: 'Thucydides and the Idea of History: Between Science and Literature'
     author: Neville Morley
     year: '2014'
     type: book
-    doi: 10.5040/9781472511539
+    verified: false
   notable_quotes:
   - text: The strong do what they can; the weak suffer what they must.
     speaker: Athenian envoys to Melos (as rendered by Thucydides)
@@ -553,30 +553,6 @@ media:
   creator: Philipp Foltz
   creation_date: '1852'
   supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/peloponnesian-war/wiki_2.jpg
-- media_type: photograph
-  title: The iconic Parthenon temple bathed in warm light at the Acropolis of Athens, Greece.
-  description: Landscape orientation, 6240x4159px
-  source_url: https://www.pexels.com/photo/historic-parthenon-temple-at-acropolis-athens-33590031/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/peloponnesian-war/pexels_1.jpg
-  attribution: Photo by Irina Nesterenko on Pexels
-  license: pexels-license
-  creator: Irina Nesterenko
-- media_type: photograph
-  title: Close-up of ancient temple ruins in the Acropolis of Athens under a clear sky.
-  description: Landscape orientation, 6960x4640px
-  source_url: https://www.pexels.com/photo/ancient-greek-architecture-at-the-acropolis-28511693/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/peloponnesian-war/pexels_2.jpg
-  attribution: Photo by Efrem  Efre on Pexels
-  license: pexels-license
-  creator: Efrem  Efre
-- media_type: photograph
-  title: Explore the historic stone ruins with towering columns, showcasing the remnants of ancient architect
-  description: Landscape orientation, 2880x1920px
-  source_url: https://www.pexels.com/photo/ancient-ruins-with-stone-columns-under-clear-skies-34491544/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/peloponnesian-war/pexels_3.jpg
-  attribution: Photo by Ali Akdemir on Pexels
-  license: pexels-license
-  creator: Ali Akdemir
 connections:
 - target_slug: french-revolution
   connection_type: influenced

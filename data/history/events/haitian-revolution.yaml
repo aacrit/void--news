@@ -227,7 +227,6 @@ perspectives:
     author: Andrew Roberts
     year: '2014'
     type: book
-    doi: 10.1093/nq/s7-ii.32.108g
     openlibrary: OL10492276M
     archive_url: https://archive.org/details/napoleonwellingt0000robe_d5v0
   - title: 'The Making of Haiti: The Saint Domingue Revolution from Below'
@@ -384,7 +383,7 @@ perspectives:
     author: Julius Scott
     year: '2018'
     type: book
-    doi: 10.4324/9781315840376-8
+    verified: false
   - title: Haitian Revolutionary Studies
     author: David Geggus
     year: '2002'
@@ -461,7 +460,6 @@ perspectives:
     author: David Graeber
     year: '2011'
     type: book
-    doi: 10.5860/choice.49-3633
     openlibrary: OL24833863M
     archive_url: https://archive.org/details/debtfirst5000yea0000grae
   notable_quotes:
@@ -511,30 +509,6 @@ media:
   license: public-domain
   creator: Louis Boisrond-Tonnerre
   creation_date: January 1, 1804
-- media_type: photograph
-  title: Stunning aerial image of a beachside resort in Haiti, showcasing turquoise waters and lush greenery.
-  description: Landscape orientation, 3342x1880px
-  source_url: https://www.pexels.com/photo/a-beautiful-resort-on-an-island-4637299/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/haitian-revolution/pexels_1.jpg
-  attribution: Photo by Junior Ceranor Nelson on Pexels
-  license: pexels-license
-  creator: Junior Ceranor Nelson
-- media_type: photograph
-  title: A quaint wooden signboard in a historic alley in Saint-Guilhem-le-Désert, France.
-  description: Landscape orientation, 4889x3258px
-  source_url: https://www.pexels.com/photo/charming-signboard-in-saint-guilhem-le-desert-28504631/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/haitian-revolution/pexels_2.jpg
-  attribution: Photo by marie françoise bastien on Pexels
-  license: pexels-license
-  creator: marie françoise bastien
-- media_type: photograph
-  title: Elegant facade of a Parisian café, Au Chien Qui Fume, with vintage signage and awnings.
-  description: Landscape orientation, 5472x3648px
-  source_url: https://www.pexels.com/photo/white-and-blue-awnings-1048293/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/haitian-revolution/pexels_3.jpg
-  attribution: Photo by Clarisa Lizana on Pexels
-  license: pexels-license
-  creator: Clarisa Lizana
 connections:
 - target_slug: french-revolution
   connection_type: consequence

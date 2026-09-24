@@ -252,7 +252,6 @@ perspectives:
     author: Ilan Pappe
     year: '2006'
     type: book
-    doi: 10.1525/jps.2006.36.1.6
     openlibrary: OL8971660M
     archive_url: https://archive.org/details/ilan-pappe-the-ethnic-cleansing-of-palestine
   notable_quotes:
@@ -465,20 +464,18 @@ perspectives:
     author: Avi Shlaim
     year: '1988'
     type: book
-    doi: 10.7312/shla93334
     archive_url: https://archive.org/details/collusionacrossj0000shla
   - title: 'The Iron Cage: The Story of the Palestinian Struggle for Statehood'
     author: Rashid Khalidi
     year: '2006'
     type: book
-    doi: 10.1093/ia/iim023
     archive_url: https://archive.org/details/ironcagestoryofp0000khal
   - title: 'A Soldier with the Arabs: A British Officer''s Memoir of the Arab Legion'
     author: John Bagot Glubb
     year: '1957'
     type: book
     openlibrary: OL6257766M
-    archive_url: https://archive.org/details/soldierwithara00glub
+    verified: false
   notable_quotes:
   - text: The Arab armies entered Palestine to prevent the establishment of a Jewish state — and to prevent each other from getting the pieces.
     speaker: Avi Shlaim
@@ -527,62 +524,6 @@ media:
   creator: United Nations
   creation_date: '1947'
   supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/creation-of-israel-nakba/wiki_2.jpg
-- media_type: photograph
-  title: a view of a city from the top of a building
-  description: Landscape orientation, 4240x2384px
-  source_url: https://unsplash.com/photos/a-view-of-a-city-from-the-top-of-a-building-myKZ1yVIR28
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/creation-of-israel-nakba/unsplash_1.jpg
-  attribution: Photo by Data Lore on Unsplash
-  license: unsplash-license
-  creator: Data Lore
-- media_type: photograph
-  title: people walking on street near concrete building during daytime
-  description: Landscape orientation, 5803x3869px
-  source_url: https://unsplash.com/photos/people-walking-on-street-near-concrete-building-during-daytime-y8IIOb-Q7aM
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/creation-of-israel-nakba/unsplash_2.jpg
-  attribution: Photo by Levi Meir Clancy on Unsplash
-  license: unsplash-license
-  creator: Levi Meir Clancy
-- media_type: photograph
-  title: a man sitting on the ground next to a pile of trash
-  description: Landscape orientation, 8000x5301px
-  source_url: https://unsplash.com/photos/a-man-sitting-on-the-ground-next-to-a-pile-of-trash-8C1DLrCrn6k
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/creation-of-israel-nakba/unsplash_3.jpg
-  attribution: Photo by AHMAD BADER on Unsplash
-  license: unsplash-license
-  creator: AHMAD BADER
-- media_type: photograph
-  title: a large sunflower in front of a brick wall
-  description: Landscape orientation, 3554x2480px
-  source_url: https://unsplash.com/photos/a-large-sunflower-in-front-of-a-brick-wall-nL6ysNq6tDE
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/creation-of-israel-nakba/unsplash_4.jpg
-  attribution: Photo by AHMAD BADER on Unsplash
-  license: unsplash-license
-  creator: AHMAD BADER
-- media_type: photograph
-  title: View of Jerusalem showcasing the ancient city walls and iconic architecture under a cloudy sky.
-  description: Landscape orientation, 6240x4160px
-  source_url: https://www.pexels.com/photo/the-city-of-jerusalem-is-seen-from-above-27358635/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/creation-of-israel-nakba/pexels_1.jpg
-  attribution: Photo by Виктор Соломоник on Pexels
-  license: pexels-license
-  creator: Виктор Соломоник
-- media_type: photograph
-  title: Low angle shot of a historic stone fortress under a clear blue sky at dusk, with the moon visible.
-  description: Landscape orientation, 3939x2954px
-  source_url: https://www.pexels.com/photo/jaffa-gate-in-redbrick-city-wall-5951184/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/creation-of-israel-nakba/pexels_2.jpg
-  attribution: Photo by Aqsawii on Pexels
-  license: pexels-license
-  creator: Aqsawii
-- media_type: photograph
-  title: View of Daegu city and surrounding mountains under a clear sky
-  description: Landscape orientation, 5472x3648px
-  source_url: https://www.pexels.com/photo/scenic-daegu-cityscape-with-mountains-29291616/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/creation-of-israel-nakba/pexels_3.jpg
-  attribution: Photo by Khan Ishaan on Pexels
-  license: pexels-license
-  creator: Khan Ishaan
 connections:
 - target_slug: partition-of-india
   connection_type: parallel

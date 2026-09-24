@@ -175,7 +175,7 @@ perspectives:
     author: John M. Barry
     year: '2004'
     type: book
-    archive_url: https://archive.org/details/greatinfluenzast0000barr
+    verified: false
   - title: 'America''s Forgotten Pandemic: The Influenza of 1918'
     author: Alfred W. Crosby
     year: '2003'

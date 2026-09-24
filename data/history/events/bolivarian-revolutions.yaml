@@ -169,7 +169,7 @@ perspectives:
     author: Robert Harvey
     year: '2000'
     type: book
-    doi: 10.2307/20050198
+    verified: false
   notable_quotes:
   - text: We were never viceroys or governors except by extraordinary chance; seldom were we bishops or archbishops; diplomats, never; soldiers, only in subordinate ranks.
     speaker: Simon Bolivar
@@ -234,13 +234,11 @@ perspectives:
     author: Christon Archer (ed.)
     year: '2000'
     type: book
-    doi: 10.2307/2677551
     archive_url: https://archive.org/details/underflagsoffree0000blan
   - title: 'Spain and the Independence of the United States: An Intrinsic Gift'
     author: Thomas Chavez
     year: '2002'
     type: book
-    doi: 10.1163/2468-1733_shafr_sim020150038
     archive_url: https://archive.org/details/spainindependenc0000chav
   notable_quotes:
   - text: These provinces belong to the Crown of Spain, and no assembly of rebels can dissolve the bonds that Providence has established.
@@ -381,7 +379,6 @@ perspectives:
     author: Jay Sexton
     year: '2011'
     type: book
-    doi: 10.1093/acprof:oso/9780190459840.003.0002
     archive_url: https://archive.org/details/monroedoctrineem0000sext
   - title: 'Simon Bolivar: A Life'
     author: John Lynch
@@ -455,12 +452,12 @@ perspectives:
     author: Silvia Rivera Cusicanqui
     year: '1987'
     type: book
-    archive_url: https://archive.org/details/oppressedbutnot0000rive
+    verified: false
   - title: 'The Tupac Amaru Rebellion: Anticolonialism and Protonationalism in Late Colonial Peru'
     author: Charles F. Walker
     year: '2014'
     type: book
-    doi: 10.4159/harvard.9780674726116
+    verified: false
   - title: 'Latin America Since Independence: A History with Primary Sources'
     author: Alexander Ferraro and Noel Maurer
     year: '2021'
@@ -511,30 +508,6 @@ media:
   license: public-domain
   creator: Simon Bolivar
   creation_date: September 6, 1815
-- media_type: photograph
-  title: The Statue of Liberty stands tall against a cloudy sky in New York City, symbolizing freedom.
-  description: Landscape orientation, 8992x6000px
-  source_url: https://www.pexels.com/photo/statue-of-liberty-in-nyc-18012331/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/bolivarian-revolutions/pexels_1.jpg
-  attribution: Photo by Jorge Alcalá on Pexels
-  license: pexels-license
-  creator: Jorge Alcalá
-- media_type: photograph
-  title: Iconic view of the Statue of Liberty against a clear blue sky in New York City.
-  description: Landscape orientation, 6000x4000px
-  source_url: https://www.pexels.com/photo/statue-of-liberty-in-clear-blue-skies-32839125/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/bolivarian-revolutions/pexels_2.jpg
-  attribution: Photo by Willian Justen de Vasconcellos on Pexels
-  license: pexels-license
-  creator: Willian Justen de Vasconcellos
-- media_type: photograph
-  title: A collection of vintage encyclopedia books arranged creatively on a vibrant blue and yellow backgrou
-  description: Landscape orientation, 6000x4000px
-  source_url: https://www.pexels.com/photo/old-geography-books-standing-on-blue-and-yellow-background-16035012/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/bolivarian-revolutions/pexels_3.jpg
-  attribution: Photo by Arturo Añez. on Pexels
-  license: pexels-license
-  creator: Arturo Añez.
 connections:
 - target_slug: french-revolution
   connection_type: influenced

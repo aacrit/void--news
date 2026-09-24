@@ -156,7 +156,7 @@ perspectives:
     author: Frank Dikotter
     year: '2010'
     type: book
-    archive_url: https://archive.org/details/maosgreatfaminehi0000diko
+    verified: false
   - title: 'Hungry Ghosts: Mao''s Secret Famine'
     author: Jasper Becker
     year: '1996'
