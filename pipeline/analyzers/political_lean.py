@@ -928,9 +928,11 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
         article: Dict with keys: full_text, title, summary, source_id.
         source: Dict with keys: political_lean_baseline, tier, name,
                 state_affiliated (optional bool).
-        topic_lean_data: Optional dict from Axis 6 EMA with key "avg_lean"
-                         (float 0-100). When provided, blended with source
-                         baseline (70% baseline, 30% topic) for a topic-aware prior.
+        topic_lean_data: IGNORED since 2026-09-22. It carried the Axis 6 EMA,
+                         which is built from this function's own output, so
+                         blending it into the prior closed a loop that no
+                         outside evidence could enter. See the note at the cut.
+                         Accepted and discarded so the call sites need no edit.
 
     Returns:
         Dict with "score" (int 0-100) and "rationale" (dict with evidence).
@@ -947,12 +949,29 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
     rated_baseline = source_baseline
     is_unrated = _is_unrated_source(source)
 
-    # Fix 20: Topic-specific source prior from Axis 6 EMA data.
-    # Blend source baseline with topic-specific lean before text blending,
-    # giving a more accurate prior for sources whose lean varies by topic.
-    if topic_lean_data and "avg_lean" in topic_lean_data:
-        topic_lean = float(topic_lean_data["avg_lean"])
-        source_baseline = source_baseline * 0.7 + topic_lean * 0.3
+    # CUT 2026-09-22: the topic prior was a closed loop, and it is now ignored.
+    #
+    # It used to blend the Axis 6 EMA into the prior at 0.7/0.3. That EMA is
+    # built by `topic_outlet_tracker.update_source_topic_lean`, which averages
+    # `political_lean` over the batch: this engine's own PUBLISHED OUTPUT, with
+    # a missing key defaulting to 50. So the score fed the table and the table
+    # fed the score, and the fixed point of that loop is the mean of whatever
+    # it has already emitted, which for 63% of the roster is exactly 50. No
+    # outside evidence enters anywhere in the cycle, so it cannot correct an
+    # error, only compound one.
+    #
+    # Measured before cutting, because a plausible mechanism is not a cause
+    # (Rule 1). It is NOT what is currently pulling the feed to the centre:
+    # mean |published - label| for rated non-centre outlets is 5.45 across all
+    # rows and 0.74 once default-tuple rows are excluded. The compression is
+    # 6,256 unmeasured rows, not this loop. The loop is real and latent, and
+    # the reason to cut it now is that the outlet-baseline programme wires a
+    # LEARNED per-outlet offset into the prior, at which point a self-fed term
+    # sitting beside it would corrupt the thing being learned.
+    #
+    # The parameter stays because ~4 call sites pass it and Axis 6 still writes
+    # the table for its own reporting. It is read by nothing that scores.
+    del topic_lean_data
 
     # State-affiliated outlets (RT, CGTN, Sputnik, Global Times, TRT World)
     # publish geopolitical content that uses neither Western left nor Western

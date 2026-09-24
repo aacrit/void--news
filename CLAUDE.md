@@ -1,6 +1,6 @@
 # Void News
 
-News aggregation with 6-axis rule-based NLP bias analysis. 1,016 sources,
+News aggregation with 6-axis rule-based NLP bias analysis. 1,061 sources,
 158 countries. **Live: https://news.voidvision.org** (Cloudflare Pages).
 
 **This file is the current state and the rules in force.** The record of how it
@@ -92,7 +92,7 @@ impossible, not a note asking people to be careful:
 | `tests/test_history_script.py` (H-01..H-11) | a quote not in the sources, a hedge not said aloud, a speaker not named |
 | `tests/test_history_audio.py` | audio that no longer matches its corrected script |
 | `pipeline/editorial/standard.py` | the daily feed's editorial rules, run at write time and against served HTML. **E-13** a number not in the sources, **E-14** a quotation not in the sources |
-| `pipeline/editorial/grounding.py` | keeps the text a card was written from, so E-13 and E-14 can still be run after the run that wrote it |
+| `tests/test_grounding.py` | a card's evidence not outliving the run that wrote it, and **publisher prose in the committed tree**: `pipeline/editorial/grounding.py` keeps a verification INDEX of what a card was written from (the set of numbers, a Bloom filter of 4-word shingles), never the articles, so E-13 and E-14 can still be run after the run without the repo carrying the text. It used to carry the text: 519,041 characters of it, committed, against `docs/IP-COMPLIANCE.md`'s top control. The gate fails on any committed record that is format 1 or holds a string over 12 words |
 | `tests/test_history_copy.py` | an em dash in page-facing prose, a speaker that is a description with nothing behind it |
 | `tests/test_history_export_parity.py` | a correction that never reached the served JSON |
 | `tests/test_truncation_lint.py` | a query cap published as an exact count |
@@ -103,7 +103,11 @@ impossible, not a note asking people to be careful:
 | `scripts/verify_sections.py` | served History (H-01..H-06), Weekly (W-01..W-10, W-10 is the kill list on the page), Paper (P-01..P-04: the front page's twenty, in order, no dash, no retired claim) and Press (PR-01: the feed size it quotes) |
 | `tests/test_prompt_grounding.py` | a production prompt without the grounding sentence, or one that still calls the product `void --x` |
 | `tests/test_bias_bins.py` | the lean ladder drifting between its two implementations, or a rung leaving its own baseline. The bins were `<=20, <=35, <=45, <=55, <=65, <=80` until 2026-09-21, which put four of the seven outlet baselines on a bucket's upper EDGE. On the right that lands correctly by luck; on the left the upper edge is the LEAST extreme end, so a `left` outlet (baseline 20) was shown as **Far Left** and a `center-left` outlet (35) as **Left**, while the right-hand rungs were right. The error ran one way. Both sides now bin on the baselines, nearest wins, ties toward the centre |
-| `tests/test_source_roster.py` | the roster disagreeing with itself: an outlet its own notes call state-owned or a public broadcaster left at `unrated`, which silently drops every article it publishes from the lean aggregate and the spectrum (Deutsche Welle was, while Tagesschau was rated `center`). Asserts the 286 still-unplaced rows are the axis's edge, not a backlog: **no** outlet in a country whose politics runs on this axis may be unplaced |
+| `tests/test_robots_compliance.py` | a refusal on robots.txt being read as permission. `_check_robots_txt` returned True for every non-200 and every network error, so a 403, a 503 and a 429 all read as consent on the one file whose job is to say no, and the error ran one way: it never refused a site that had allowed us. Split per RFC 9309 2.3.1 (404/410 and 2xx allow, 401/403 deny, 429/5xx and transport failures deny for the run, after ONE retry because a timeout is noise and 4 of 70 sampled domains failed at the transport). Measured cost: 14.3% of 70 roster domains would be denied, 7% of them an outright 403 |
+| `tests/test_wire_attribution.py` | a wire's own copy being tagged the duplicate of a subscriber's. `deduplicator`'s hand-written slug set matched **5 of the 40** outlets the roster marks `"type": "wire"`, missing `dpa-international`, `kyodo-news`, `pti-india`, `tass-english` and 31 others through near-miss slugs, so the origin of a syndicate group was usually picked by publish time and a wire that files late lost to its own subscribers. A `tier == "wire"` branch sat above it and matched zero rows, because `tier` only ever holds independent / international / us_major. The set is derived from the roster now; the gate asserts all 40 are covered and that each one wins its own group |
+| `tests/test_apply_feeds.py` | a "dry run" with side effects, and a roster record replaced in silence. `apply_feeds.py --dry-run` printed "data/sources.json untouched" and meant it, while writing both record files UNCONDITIONALLY before reading the flag: two guard tests against an unrelated input overwrote the committed 2026-09-22 record in place, turning 129 applied feed changes into 35 and flattening the review file's two named groups. The flag was checked at the dangerous action rather than at every side effect. A dry run now writes nothing, a real run refuses to replace an existing record (`--label` writes beside it, `--force` replaces it), and the script takes `VOID_ROSTER_DATA` so it can be exercised against a throwaway tree at all, which it could not be before |
+| `tests/test_roster_config.py` | the roster's size going stale in page copy. "1,016 sources" was hand-written in nine files under `frontend/app/` plus the SERVED `manifest.json`, four docs, two pipeline modules and two tests, and the three tiers were literals too (43/373/600) printed as exact counts on `/about` and `/sources`, so adding 48 international outlets would have left the site asserting 373 against a roster of 421. `frontend/config/roster.json` is generated from `data/sources.json` by `scripts/roster/emit_roster_config.py`, which runs inside `add_sources.py --apply`, and is read through `app/lib/rosterConfig.ts` exactly as `feedConfig.ts` reads `feed.json`. The gate asserts the config matches the roster, that the tiers sum to the total, that every key the reader imports exists, and that no component writes a count out again |
+| `tests/test_source_roster.py` | the roster disagreeing with itself. **The public-broadcaster class split in two**: PBS, NPR, BBC, CBC and Voice of America carried a real baseline and no `state_affiliated` flag while seven identical peers (SVT, NRK, Tagesschau, RTP, Lusa, SABC, Agencia Brasil) carried it, and nothing in the data distinguished them. The flag costs an article 2 points of movement (8 against 10). Settled by the CEO 2026-09-23 in favour of the majority reading, so the seven are unflagged and 41 outlets whose government alignment IS the editorial signal keep it. The gate names its twelve peers and fails if they are not flagged alike; it deliberately is NOT "no democracy may be flagged", because a captured public broadcaster is a real case. Also: an outlet its own notes call state-owned or a public broadcaster left at `unrated`, which silently drops every article it publishes from the lean aggregate and the spectrum (Deutsche Welle was, while Tagesschau was rated `center`). Asserts the 286 still-unplaced rows are the axis's edge, not a backlog: **no** outlet in a country whose politics runs on this axis may be unplaced |
 | `tests/test_bias_defaults_gate.py` + `pipeline/validation/bias_defaults.py` | a bias row that was never measured being drawn as a measurement. The export **degrades, it does not block** (CEO 2026-09-21): a default-tuple row is stamped `lean_unscored`, so it leaves the cluster aggregate, its pin leaves the Deep Dive spectrum and its label reads Unscored. CI asserts the invariant that protects the reader, not a share: against the **committed** export, **no default-tuple row may be unmarked**. A marked row misleads nobody; an unmarked one is read as a measured 50 everywhere. The share and a per-axis breakdown are printed every run, and only a run that measured almost nothing (>60%) fails on the share. A share cap was tried at 10% and removed: run #375 came in at 19.1%, but all 186 of those rows were published the previous day and none of that day's 534 articles was a default, so they were the prior day's damage carried in by 6b's own 36h lookback and clearing itself |
 | `tests/test_podcast_feed.py` | a podcast cover that is missing or carries retired text, a channel title outside "Void News: <programme>", an item title that disagrees with the page |
 | `tests/test_paper.py` | Paper drifting from the front page, a dash or a retired claim in its source |
@@ -111,12 +115,14 @@ impossible, not a note asking people to be careful:
 | `frontend/test/episode.test.mjs` | the pure core of the audio system: an episode wearing another programme's edition, a play button that loads and does not play, a page that seizes a playing element |
 | `frontend/test/labels.test.mjs` | the one lean ladder, and the shape rule calling a story with one empty wing "Balanced"; asserts the word "Flat" is gone |
 | `tests/test_bias_bins.py` | the pipeline's lean bins and the frontend's disagreeing on any score 0..100, a baseline outside its own rung, an asymmetric ladder |
+| `tests/test_lexicon_derive.py` | a lexicon derivation grading its own homework, and a phrase table growing into a corpus. Phrases derived from outlet labels and validated against outlet labels is a mirror, so the split is by OUTLET, never by article (two articles from one outlet share its vocabulary, so an article split measures memorisation). The gate asserts the sets are disjoint, that a planted RATE difference is recovered and a no-signal corpus yields nothing, and that an outlet's own masthead cannot become a political phrase. It also pins `phrase_counts`: no stored row may exceed 3 words even when a caller hands `persist()` a whole sentence, and the table carries no article id, so rows cannot be re-associated into prose |
+| `tests/test_lean_prior_is_not_self_fed.py` | the lean prior being fed by the lean it publishes. `political_lean` blended the Axis 6 EMA into the outlet prior at 0.7/0.3, and `topic_outlet_tracker` builds that EMA from `political_lean`'s own output: no outside evidence entered the cycle, so it could not correct an error, only compound one. Cut 2026-09-22 (it was measured first and was NOT the centre pull: 0.74pt, not 5.45, once unmeasured rows are excluded; it was cut because a learned per-outlet offset is going into the same prior). The gate asserts the parameter is inert at four text lengths, that the scorer names no field of its own output table, and that the tracker does not import the scorer |
 | `frontend/test/bench.test.mjs` + `tests/bench_corpus.py` | a Bench pack that overflows its box, a column height that is no longer the count, a source dropped with no `+N` |
 | `frontend/test/css-parity.test.mjs` | a class selector nothing in `app/` references (1,168 of 3,109 were dead on 2026-09-21); prints the reverse direction too |
 | `frontend/test/css-lint.mjs` + `.stylelintrc.json` | a raw `cubic-bezier(` outside `tokens.css`, a `font-family` off the four semantic tokens, a literal radius without a disable and its reason |
 | `frontend/scripts/verify-headless.mjs` | the product in a browser: console and hydration errors, a link to a page the export does not carry, a second `h1` or masthead, a title outside the grammar, a masthead that disagrees with the URL, a control with no name, a dash in chrome, a focus ring that is not there, axe WCAG 2.1 AA; and the journeys (search to a result and into the story, Deep Dive share to the clipboard, theme, drawer, Sigil, shortcuts, banner, the player per route, the Audio hub's play buttons, History's long-view toggle and Listen island, Weekly's Argument loading, the Sources picker and axis dots, the About demo's sliders, an empty feedback submit refused in the page, navigation landing at the top, Paper parity, the podcast feeds and manifest, the brand layer); and the On Air system, one scenario per measured desync (`one-play-button` on all three programmes, `audio-survives-navigation`, `weekly-does-not-seize`, `tab-resume-keeps-its-programme`, `onair-tells-the-truth`, `play-state-cannot-lie`, `no-double-transport`, `onair-panel` at both widths); and the lean display (`bench` at 1440 and 390: seven columns, nothing dropped, the busiest bucket the tallest column, one mark size, circles, a card that names the mark it came from and stays on screen; `lean-label-contrast` measures every label on the feed in both schemes rather than waiting for axe to sample the failing one). `--quick` in CI, the full grid by hand |
 
-Every one of these runs in `auto-merge-claude.yml`. Nine of them did not until
+Every one of these runs in `auto-merge-claude.yml`. **Two of them also run in `pipeline.yml`, before its data commit** (`test_grounding`, `test_bias_defaults_gate`), because that job pushes STRAIGHT TO MAIN and skipped every gate until 2026-09-23. It committed 439,244 characters of publisher prose on 2026-09-22 by checking out main before the grounding fix landed, and the check that forbids exactly that already existed and could not fire. A gate that cannot run on the path that writes is not a gate. Nine of them did not until
 2026-09-21, which is the whole reason the line above this table is worth
 repeating: a rule nobody can fail is not enforced.
 
@@ -158,23 +164,80 @@ Newspaper principle. Same stories, same order, for everyone. No accounts, no
 recommendation algorithms.
 
 ### Bias scoring weighs BOTH outlet and text
-Not one or the other. Political lean blends outlet baseline against the
-article's own words, length-adaptively (~50/50 on a short wire item, ~90/10
-text-weighted on a full article). Public copy on `/about` and
-`/sources#methodology` must lead with "both", never "words not the outlet".
+Not one or the other. Public copy on `/about` and `/sources#methodology` must
+lead with "both", never "words not the outlet" (it does, and carries no ratio).
+
+**It is not a weighted blend, and this file used to say it was.** The claim
+"~50/50 on a short wire item, ~90/10 text-weighted on a full article" was
+wrong in structure and inverted in magnitude. The engine is
+baseline-anchored with a BOUNDED deviation:
+
+    score = baseline + clamp((text_score - 50) * 1.0, ±delta_max) * confidence
+    confidence = min(1.0, words / 150)          # LENGTH, not certainty
+
+So `delta_max` is the whole of the text's authority, and it is small.
+Measured 2026-09-22 by driving a 600-word article to each extreme of the
+lexicon:
+
+| Outlet | baseline | most a max-left article reaches | most a max-right article reaches |
+|---|---|---|---|
+| rated `left` | 20 | 10 | 30 |
+| rated `center` | 50 | 40 | 60 |
+| rated `right` | 80 | 70 | 90 |
+| `unrated`/`varies` | 50 | 26 | 74 |
+| state-affiliated | its own | ±8 | ±8 |
+
+A rated outlet's article can move **10 points, never more**, however long it is
+and whatever it says. Length only decides how much of that 10 it earns. So on a
+full article the outlet dominates roughly 5 to 1, which is the opposite of
+"90/10 text-weighted", and the ONLY row with real text authority is the unrated
+one at ±24.
+
+That is a capability limit, not a dishonesty: the architecture is built to grant
+more, and `docs/proposals/OUTLET-BASELINE-PROGRAMME-2026-09-22.md` is the work
+to earn it. Do not quote a blend ratio for this engine anywhere; quote
+`delta_max`.
 
 ---
 
 ## Locked decisions (CEO)
 
 Cinematic Press design · 6-axis bias model · Cloudflare stack · static export ·
-1,016 sources (3 tiers, 7-point lean) · no personalization · $0/mo LLM cost ·
+1,061 sources (3 tiers, 7-point lean) · no personalization · $0/mo LLM cost ·
 1×/day pipeline · **top-20 homepage feed** (moved from 50 on 2026-09-07 — the
 one locked decision that has ever changed) · Claude Max CLI for agent work.
 
 ---
 
 ## Git & dev
+
+### main is production. One branch at a time.
+
+`deploy-cloudflare.yml` serves the site from `main` and nothing else
+(`on: push: branches: [main]`, plus `workflow_run` after auto-merge and the
+pipeline). So **a commit that is not on main is not live**, however finished it
+looks, and a red `main` freezes the whole product.
+
+Two rules follow, and both were learned the expensive way on 2026-09-23, when
+the site served two-day-old data while 35 commits waited behind a red
+build-check and 279 stale `claude/*` branches sat on the remote:
+
+1. **Finish a branch before starting another.** One live `claude/*` branch at a
+   time. A second branch opened while the first is unmerged inherits the
+   first's problems (every branch carries main's data, so main's breakage is
+   every branch's breakage) and doubles the surface that has to go green.
+   Delete the branch once auto-merge has taken it.
+2. **A red main is the first thing fixed, before any new work.** Not after the
+   current task. The pipeline pushes data straight to main with no build behind
+   it, so main can go red without anyone touching code: on 2026-09-22 a run
+   committed a feed carrying 14 displayable stories against the 20
+   `frontend/config/feed.json` requires, `serverFeed.ts` threw as designed, and
+   every branch's build-check failed for a day. `tests/test_feed_buildable.py`
+   now refuses that commit at the source, but the rule stands for the next
+   thing that gets past a gate.
+
+**Check before assuming a branch shipped:** `git log --oneline -1 origin/main`,
+and the live page. Thirty-five commits described as done were not live.
 
 - **Always push to `claude/*` branches.** Auto-merge to main.
 - **Always commit AND push after every task.** Never wait to be asked.
@@ -362,7 +425,7 @@ frontend/
   public/audio/ MP3s on the CDN, committed each run
 worker/         Cloudflare Worker + D1 — the ONLY live database
 migration/      PORT_NOTES.md is authoritative
-data/           sources.json (1,016) · history/events (78) · history/scripts (78)
+data/           sources.json · history/events (78) · history/scripts (78)
 tests/          editorial stage, weekly, radio, history script + audio, gates
 docs/           CHANGELOG.md · OPEN-ITEMS.md · 45 reference docs
 ```

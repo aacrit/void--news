@@ -54,6 +54,159 @@
   color: var(--fg-muted);
 }
 
+/* ---- The spectrum line, and the room it leaves ---------------------------
+   THE LINE rides the top of every column. It is a hairline and a wash, not a
+   chart: the columns under it are the measurement and it must never look like
+   a second, smoother opinion of them. `lib/benchCurve.ts` builds it so it
+   cannot draw a peak between two columns, which is the defect the KDE wave
+   was removed for; the styling keeps it subordinate so it cannot LOOK like
+   one either.
+
+   It takes its colour from `leanShapeColor` through `currentcolor`, which is
+   the same rule the shape word, the card's register and the mark obey. One
+   rule, four surfaces: the word, its colour, the silhouette and the mark can
+   never disagree about a story. */
+
+.bench__grid {
+  position: relative;
+}
+
+.bench__curve {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--bench-box);
+  width: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* INK, NOT A CHART. The stroke is a filled ribbon whose width follows the
+   count, laid down in the two passes the house already uses under a lean
+   label (`InkUnderline`): a blurred bleed feathering into the paper, then the
+   pen on top of it.
+
+   THE WASH THAT WAS HERE IS GONE. A flat tint under a curve is a data-viz
+   convention, it was the one element on this panel that was not ink, and on
+   the Bench it was redundant besides: the area under the curve is already
+   filled, with the source marks themselves. Pressure says what the tint was
+   saying, on the line instead of behind it. */
+
+.bench__curve-ink {
+  fill: currentcolor;
+  stroke: none;
+  /* The marks are the measurement and must stay the loudest thing here. */
+  opacity: 0.56;
+}
+
+/* Filled from the axis ramp in the markup, not from currentcolor: the pen
+   carries the story's verdict and the bleed carries the axis it sits on. A
+   shade more presence than the plain bleed had, because a saturated ramp at
+   0.1 under a blur is not perceptible at either end. */
+.bench__curve-bleed {
+  stroke: none;
+  opacity: 0.3;
+  filter: blur(2px);
+}
+
+/* The stroke is laid down once, left to right, the way a pen crosses a page.
+   The bleed follows it rather than arriving with it, so the line is read
+   before the paper takes it. */
+.bench--drawn .bench__curve-ink {
+  animation: bench-trace var(--dur-slow, 700ms) var(--ease-cinematic) both;
+}
+
+.bench--drawn .bench__curve-bleed {
+  animation: bench-bleed var(--dur-slow, 700ms) var(--ease-out) 180ms both;
+}
+
+@keyframes bench-trace {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes bench-bleed {
+  from { opacity: 0; }
+  to   { opacity: 0.3; }
+}
+
+/* THE ROOM. Centred on the widest run of low columns, which is where the
+   coverage is not. Behind the marks, never over them. */
+.bench__room {
+  position: absolute;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* The mark itself. The beam is the reading and carries the shape colour; the
+   void is the room it sits in and is held right back, because at this size a
+   full-strength ring would read as a target over the distribution. */
+.bsig__ring {
+  stroke: var(--fg-muted);
+  /* Held back, but not to nothing: the pen stroke over the columns carries
+     real weight now, and at 0.16 the void read as a smudge beside it. */
+  opacity: 0.24;
+}
+
+.bsig__beam line,
+.bsig__split line {
+  transition: transform var(--dur-slow, 700ms) var(--spring);
+}
+
+.bsig__hollow {
+  stroke: var(--divider);
+  opacity: 0.55;
+}
+
+.bench--drawn .bsig {
+  animation: bsig-settle var(--dur-slow, 700ms) var(--ease-cinematic) 120ms both;
+}
+
+@keyframes bsig-settle {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 0.9; transform: none; }
+}
+
+.bsig {
+  opacity: 0.9;
+  overflow: visible;
+}
+
+/* The mark that stands in the head when the Bench has no room for one. */
+.bench__mark-inline {
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+/* The shape word, once the shape is drawn. Still in the accessibility tree,
+   where the silhouette is nothing at all. */
+.bench__shape--sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bench--drawn .bench__curve-ink,
+  .bench--drawn .bench__curve-bleed,
+  .bench--drawn .bsig {
+    animation: none;
+  }
+  .bsig__beam line,
+  .bsig__split line {
+    transition: none;
+  }
+}
+
 /* ---- The seven columns --------------------------------------------------- */
 
 .bench__grid {
@@ -71,6 +224,10 @@
   flex-direction: column;
   align-items: center;
   min-width: 0;
+  /* Above the silhouette and the mark: they are the picture, these are the
+     measurement and the hit targets. */
+  position: relative;
+  z-index: 1;
 }
 
 .bench__stack {
@@ -144,6 +301,37 @@
 .bench__disc[data-lean="center-right"] { color: var(--bias-center-right); }
 .bench__disc[data-lean="right"]        { color: var(--bias-right); }
 .bench__disc[data-lean="far-right"]    { color: var(--bias-far-right); }
+
+/* ---- A score read off the article, against one placed on the baseline ----
+   The mark keeps its colour and its column: the lean reading does not change,
+   only the claim about where that reading came from. So the ring changes
+   character rather than hue. A solid rule is asserted, a dashed rule is
+   provisional, which is the same convention a drafting table uses and does not
+   spend a colour that means something else here.
+
+   `outline` rather than `border`, because the disc's width and height are set
+   inline by the packing arithmetic and a border would eat into the mark while
+   an outline sits on it. `outline-offset: -1px` keeps it inside the circle.
+   `box-shadow: none` removes the solid ring it replaces, so the two states are
+   one ring in two characters rather than two rings. */
+.bench__disc[data-authority="headline"] {
+  box-shadow: none;
+  outline: 1px dashed currentcolor;
+  outline-offset: -1px;
+}
+
+/* A dashed hairline is the one thing here that a coarse screen can lose
+   entirely, so below the favicon threshold the mark also gives up its fill. */
+.bench__disc[data-authority="headline"] .bench__disc-img,
+.bench__disc[data-authority="headline"] .bench__disc-letter {
+  opacity: 0.75;
+}
+
+@media (prefers-contrast: more) {
+  .bench__disc[data-authority="headline"] {
+    outline-width: 2px;
+  }
+}
 
 /* ---- Rack focus: the named mark holds, its neighbours recede ------------- */
 
@@ -378,6 +566,18 @@
   line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* The card's one sentence of provenance. Sits under the headline because it is
+   about that headline: it is the whole of what we were served. */
+.bench__card-headline-only {
+  margin-top: var(--space-1);
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  color: var(--fg-tertiary);
+  border-top: 1px dashed var(--divider);
+  padding-top: var(--space-1);
 }
 
 .bench__card-hint {

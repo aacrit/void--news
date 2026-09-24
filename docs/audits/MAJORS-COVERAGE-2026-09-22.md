@@ -507,3 +507,48 @@ Two duplicate roster rows, same name twice with different ids:
 **The Conversation** and **Ukrainska Pravda (English)**. The latter double
 counts in every cluster it appears in, which inflates its market's apparent
 coverage.
+
+
+---
+
+# Correction: "tier D" over-counts breakage (2026-09-22)
+
+Tier D was defined as "published nothing in 41 days", measured against
+`frontend/build-data/archive.json`. **That file is `printed_stories`: only
+stories that reached the top-20 front page.** So the tier really means "none of
+this outlet's articles ever made a printed story", which is a different and
+much weaker claim than "its feed is broken".
+
+Found by applying the feed repair: **24 of the 129 applied changes were no-ops,
+setting an rss_url that was already correct.** Every one is tier D, and the
+list is its own explanation:
+
+AEI Ideas, Bellingcat, Carbon Brief, Center for Public Integrity, China Media
+Project, Climate Home News, Earthjustice, Follow The Money, High Country News,
+IEEE Spectrum, Just Security, Latino Rebels, Law & Liberty, Lighthouse Reports,
+Nawaat, Reveal, The Costa Rica Star, The Hechinger Report.
+
+These are low-volume specialist, investigative and think-tank publications.
+They publish a handful of pieces a week on narrow subjects. Their feeds work.
+They are absent from the archive because their articles never reached a
+front-page cluster, which for Carbon Brief or IEEE Spectrum is the expected
+outcome, not a defect.
+
+So tier D conflates three populations:
+
+| | what it is | what to do |
+|---|---|---|
+| genuinely broken feed | MSNBC (moved to ms.now), The Irish Times, Mail & Guardian | repair, done |
+| working feed, niche output | Bellingcat, Carbon Brief, IEEE Spectrum | nothing; this is correct behaviour |
+| genuinely dead | to be determined | prune |
+
+**The archive cannot separate the first two.** The right discriminator is the
+state DB's `articles` table, which records what was FETCHED regardless of
+whether it was ever printed, against `printed_stories`, which records what was
+published. An outlet with fetched articles and no printed ones is working and
+niche; an outlet with neither is broken.
+
+That query needs the `void-state-snapshot` artifact, so it is a measurement to
+redo rather than a conclusion to draw now. Until it is done, **the earlier
+figure of "370 broken feeds" should be read as an upper bound**, and the 105
+real feed repairs applied here are the part that is certain.

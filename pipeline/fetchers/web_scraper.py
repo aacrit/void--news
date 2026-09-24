@@ -212,44 +212,99 @@ USER_AGENT = (
 REQUEST_TIMEOUT = 12  # seconds — balanced: 8s was too aggressive for CDN-heavy sites
 MAX_RETRIES = 1  # single retry on transient failures (timeout, 5xx)
 
-# Cache for robots.txt parsers (keyed by domain)
-_robots_cache: dict[str, urllib.robotparser.RobotFileParser] = {}
+# Cache for robots.txt verdicts, keyed by domain. A parser means "ask it"; the
+# sentinels below mean the answer is already known and no parser exists.
+_ALLOW_ALL = "allow-all"        # no robots.txt exists, so nothing is restricted
+_DENY_ALL = "deny-all"          # robots.txt exists but we could not read it
+_robots_cache: dict[str, object] = {}
+
+
+def robots_verdict_for_status(status: int | None) -> str:
+    """What an HTTP status on /robots.txt means, per RFC 9309 section 2.3.1.
+
+    Split out so it can be tested without a network, because the version this
+    replaces got it wrong in one direction only and that direction was ours.
+    It returned ALLOW for every non-200: a 403 on robots.txt, a 503, a 429,
+    all read as permission. A 403 is a site actively refusing us; reading that
+    as consent is the wrong reading of the one file whose entire job is to say
+    no.
+
+        404, 410   allow. "Unavailable" in the RFC means no restrictions
+                   exist, and this is the common case for small publishers.
+        2xx other  allow. Not a parseable file, but not a refusal either.
+        401, 403   deny. The RFC calls these "unauthorized" and says access is
+                   completely disallowed.
+        429, 5xx   deny for this run. The RFC allows treating an unreachable
+                   robots.txt as a full disallow, and a site under load or
+                   rate-limiting us is the case where restraint costs least.
+        anything   deny, because an unclassified status is not permission.
+        else
+    """
+    if status is None:
+        return _DENY_ALL
+    if status in (404, 410):
+        return _ALLOW_ALL
+    if 200 <= status < 300:
+        return _ALLOW_ALL
+    return _DENY_ALL
 
 
 def _check_robots_txt(url: str) -> bool:
     """
     Check if the URL is allowed by the site's robots.txt.
     Results are cached per domain to avoid repeated fetches.
+
+    We send a browser User-Agent, so we present no product token of our own and
+    the applicable group is `*`. That is the correct robots reading for an
+    unnamed agent, and it is also why a site that disallows only named
+    crawlers reads as open to us. Declaring our own token would change that,
+    and it would also change what a great many sites serve us, so it is a
+    product decision rather than a fix; `docs/OPEN-ITEMS.md` carries it.
     """
     parsed = urlparse(url)
     domain = f"{parsed.scheme}://{parsed.netloc}"
 
     if domain not in _robots_cache:
-        rp = urllib.robotparser.RobotFileParser()
         robots_url = f"{domain}/robots.txt"
-        try:
-            # Use the SSRF-hardened session (refuses private/loopback IPs on
-            # any redirect hop). Timeout still set to 5s — robots.txt is small.
-            resp = safe_get(robots_url, timeout=5, headers={"User-Agent": USER_AGENT})
-            if resp.status_code == 200:
-                rp.parse(resp.text.splitlines())
-            else:
-                _robots_cache[domain] = None
-                return True
-        except Exception:
-            _robots_cache[domain] = None
-            return True
-        _robots_cache[domain] = rp
+        # One retry, because the split above denies on a transient failure and
+        # a transient failure is most of what we measured. Sampled 70 roster
+        # domains on 2026-09-22: 60 served robots.txt, 5 returned 403, 1
+        # returned 429, and 4 failed at the transport (2 read timeouts, 1
+        # proxy error, 1 TLS error, at least two of them this container's
+        # network rather than the site's). A refusal is a decision and is
+        # cached; a timeout is noise, and paying for noise with a whole
+        # domain's coverage would trade one honest failure for a worse one.
+        resp = None
+        for attempt in (1, 2):
+            try:
+                # Use the SSRF-hardened session (refuses private/loopback IPs
+                # on any redirect hop). 5s: robots.txt is small.
+                resp = safe_get(robots_url, timeout=5,
+                                headers={"User-Agent": USER_AGENT})
+            except Exception:
+                resp = None
+            if resp is not None and (resp.status_code == 200
+                                     or resp.status_code in (404, 410)
+                                     or 400 <= resp.status_code < 429):
+                break  # a real answer, retrying cannot change it
+            if attempt == 1:
+                time.sleep(1.0)
+        if resp is None:
+            _robots_cache[domain] = _DENY_ALL
+            return False
+        if resp.status_code == 200:
+            rp = urllib.robotparser.RobotFileParser()
+            rp.parse(resp.text.splitlines())
+            _robots_cache[domain] = rp
+        else:
+            _robots_cache[domain] = robots_verdict_for_status(resp.status_code)
 
-    rp = _robots_cache[domain]
-    if rp is None:
-        # Permissive: if robots.txt is unreachable (network error, 404, etc.),
-        # assume allowed. The alternative — refusing to scrape any site whose
-        # robots.txt we can't fetch — blocks too many legitimate sources and
-        # is the primary cause of word_count=0 on valid articles.
+    cached = _robots_cache[domain]
+    if cached == _ALLOW_ALL:
         return True
-
-    return rp.can_fetch("*", url)
+    if cached == _DENY_ALL:
+        return False
+    return cached.can_fetch("*", url)
 
 
 def _extract_json_ld_text(soup: BeautifulSoup) -> str:

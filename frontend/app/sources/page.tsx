@@ -5,6 +5,7 @@ import type { SpectrumSource } from "../components/SpectrumChart";
 import { pageMetadata } from "../lib/siteMeta";
 import SourcesClient from "./SourcesClient";
 import { SOURCE_TIERS } from "../film/data";
+import { ROSTER_SOURCES_TEXT, ROSTER_COUNTRIES } from "../lib/rosterConfig";
 
 /* ---------------------------------------------------------------------------
    /sources — PRERENDERED source list (static export).
@@ -23,7 +24,7 @@ import { SOURCE_TIERS } from "../film/data";
 export const metadata: Metadata = pageMetadata({
   title: `${SOURCE_TIERS.total.toLocaleString()} Sources | Void News`,
   description:
-    "Every outlet Void News reads, plotted on a seven-zone political lean spectrum. 1,016 hand-curated sources across three tiers and 158 countries, with the scoring methodology in full.",
+    `Every outlet Void News reads, plotted on a seven-zone political lean spectrum. ${ROSTER_SOURCES_TEXT} hand-curated sources across three tiers and ${ROSTER_COUNTRIES} countries, with the scoring methodology in full.`,
   path: "/sources/",
 });
 

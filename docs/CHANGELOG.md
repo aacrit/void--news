@@ -442,6 +442,420 @@ on `main` before this change and still is; it is not this rev's.
 
 ---
 
+## rev 80: the majors, and the four bugs that nearly lost them (2026-09-22)
+
+The CEO asked that the major outlets across the globe be covered, the US and
+Europe especially. What that produced is worth reading for the corrections
+rather than the additions: the audit answering the question was wrong twice,
+and the tooling doing the work was wrong four times. Every one of those was
+found by an outlet the system wrongly rejected, which is the only reason any of
+them is in this entry rather than in production.
+
+### The audit was wrong twice, in opposite directions
+
+**False positives first.** Fuzzy name matching had the UK *Daily Telegraph*
+matching the Australian one, *The Observer* matching *Observer Uganda*, and
+India's *The Wire* matching *The Wire China*. Fixed with exact matching plus an
+explicit alias table, and the absent count went 28 to 101.
+
+**Then false negatives, which were the dangerous ones.** Checking each target's
+homepage HOST against the roster's found **20 targets already on the roster
+under a different masthead**: The Telegraph, Kathimerini English, Punch
+Nigeria, Vanguard Nigeria, Nation Africa, Folha de Sao Paulo (English), ABC
+Australia, RNZ News, Times of Israel, Global Times (China), VnExpress
+International, Premium Times Nigeria, IOL (South Africa), The Brazilian Report,
+Republic TV, The Japan News, The Wire (India), Balkan Insight (BIRN) and
+Handelsblatt Global. An accent-folded scan found a 21st, The Chosun Ilbo.
+
+Adding those would have created 21 duplicate outlets, each double-counting its
+own copy on the Bench, which is precisely the syndication double-count this
+roster work exists to remove. The reported figure went 101 to 91 to **70**.
+`find()` also tries the "(English)" and "English" suffixes as a RULE now, which
+is what recovered Le Monde, El Pais and eight others.
+
+The lesson is not "check twice". It is that a name audit's two failure modes
+have opposite costs. A false positive leaves a market uncovered, which is
+visible. A false negative creates a duplicate that inflates the Bench, which
+is not.
+
+### Four bugs in the tooling, each named by its victim
+
+| Bug | Found by | What it did |
+|---|---|---|
+| **CDATA** | eldiario.es, Rzeczpospolita | `<link><![CDATA[https://...]]></link>` is invisible to a regex whose class is `[^<]`, because the content opens with `<`. Both feeds were reported as having ZERO links on their own domain, which is the verdict these tools give a Google News proxy. A Spanish left major and a Polish right major were one step from being dropped over a choice of XML escaping. Re-probed: 198 and 42 own-domain links |
+| **Registrable domain** | Hankyoreh | `reg()` took a host's last two labels, so `english.hani.co.kr` became `co.kr` and the expected-domain test asked whether a link was on any `.co.kr` site. That is the same vacuity that let Botswana Guardian's hijacked `bettingbotswana.com` pass the FIRST version of this pass. Six added outlets sit on a two-label suffix |
+| **Encoding** | Hankyoreh | `requests` falls back to ISO-8859-1 when a response declares no charset, which is most RSS, so a Korean title arrived as mojibake and the check asking whether a title names its outlet was asking it of garbage |
+| **Accents** | Pagina 12 | The name check folded to `[a-z0-9]`, which DELETES an accented letter rather than mapping it: "Página" became "pgina", so the token "pagina" did not match and Pagina 12's own feed was rejected for not naming Pagina 12 |
+
+The registrable-domain fix earned itself within a minute of landing:
+BusinessDay's feed serves articles on `businessday.co.za`, not the
+`businesslive.co.za` homepage used for discovery, and the corrected check
+caught the mismatch. Left uncaught, every article that row published would have
+failed the own-domain test for the life of the row.
+
+### 48 added, at a bar that then held nothing back
+
+10+ items, 10+ links on the outlet's own registrable domain, 10+
+article-shaped, and a feed title that names the outlet. Where a feed titles
+itself with the outlet's own brand instead, the brand is declared per outlet in
+`data/roster/majors-metadata-2026-09-22.json` rather than by loosening the
+check: FAZ.NET, EWmagazine.nl, www.rp.pl, and Hankyoreh's Korean masthead. An
+alias stated in a reviewable file can be argued with; a loosened regex cannot.
+
+| | before | after |
+|---|---|---|
+| Targets on the roster | 147 | **216** of 238 |
+| Absent | 91 | **22** |
+| Roster size | 1,016 | **1,061** |
+| Google-fed rows | 475 | 473 |
+
+### The baselines are not measured, and every row says so
+
+Decided by the CEO. The intended side from `majors_target.py` is mapped
+conservatively INWARD (L to `center-left`, C to `center`, R to
+`center-right`), and each row's `credibility_notes` ends with the sentence
+naming it a provisional placement pending the outlet-baseline programme.
+
+`unrated` was the alternative and is worse, not safer: `political_lean.py`
+drops every article from an unrated outlet out of the lean aggregate and off
+the Deep Dive spectrum, so 48 new majors would have been invisible exactly
+where they were added to be seen. All-`center` was rejected too, because
+putting Le Figaro and Liberation both at 50 asserts they are identical, which
+is the flattening this whole sequence of revisions has been removing.
+
+### The audit tells the truth about a row with no history
+
+The healthy-sides column reads `data/roster/tiers-2026-09-22.json`, built from
+the 41-day archive. An outlet verified today cannot be in it, so `tier_of`
+returned "?" and the table went on printing "no right" for France AFTER Le
+Point was added with a working direct feed.
+
+Both available readings were dishonest. Saying the wings are covered claims an
+archive record that does not exist; saying nothing changed ignores 48 verified
+feeds. So a row newer than the snapshot is tier **N**, in its own column, and a
+side whose only evidence is an N row reads `pending: added today, no archive
+yet`. The next tiers rebuild resolves each N on its own evidence.
+
+### The alias table was hiding rows it was meant to find
+
+Two more instances of the same false-negative class, both found the day
+`tests/test_roster_config.py` was written, which is the argument for writing
+the gate rather than reading the table.
+
+`add_sources.py` deliberately disambiguates a generic masthead when it writes a
+row: the target "ABC" becomes "ABC (Spain)", "Focus" becomes "Focus
+(Germany)", "Stuff" becomes "Stuff (NZ)". The audit looks up the TARGET name,
+so the first run after the additions reported 31 absent while **12 of the 31
+had just been added** under those names. Fixed by reading the mapping out of
+the metadata file that created it, instead of hand-copying twelve entries into
+`ALIAS`: one file to update on the next round rather than two.
+
+Then the hand table itself, which wins over that mapping and should:
+
+- `"BusinessDay (SA)": "BusinessDay"` pointed at a row that does not exist, so
+  once the real row was written as "BusinessDay (South Africa)" the stale hand
+  entry overrode the correct mapping and the audit reported an outlet it had
+  just added as absent.
+- `"The Telegraph India": "The Telegraph (India)"` was worse than dangling. The
+  roster row is named "The Telegraph India" exactly, so the alias redirected a
+  match that already worked to a name that does not exist. That outlet had been
+  reported absent by its own alias, and would have been added a second time.
+- Three aspirational entries pointed at rows nobody has added
+  (Süddeutsche Zeitung, Publico, an identity alias for Lebanon's Daily Star).
+
+The gate now fails on an alias that contradicts the metadata and on one
+pointing at a row that does not exist. A stale alias beats the file that knows,
+which makes it worse than a missing one.
+
+Coverage after all of it: **216 of 238**, absent 22.
+
+### Five outlets a false rejection had stranded
+
+The earlier feed pass put 8 rows in `failed_domain_check`, described as failing
+a hijacked-domain test. Re-measured with the corrected tooling, **three of the
+eight were real**:
+
+- Botswana Guardian, a genuine hijack: feed on `bettingbotswana.com`, titled
+  "Betting Botswana", sample link a football betting page. This is the case the
+  check exists for.
+- The Santiago Times, not hijacked but abandoned: feed on `.com` where the
+  roster has `.cl`, newest item dated 2023.
+- The Texan: 0 items.
+
+The other five were not. MSNBC (to `ms.now`) and The War Zone (to `twz.com`)
+are REBRANDS. Novinite and St. Louis Post-Dispatch were **our own heuristics**:
+Novinite serves every article as `view_news.php?id=240715` and `looks_article`
+dropped the query string, scoring 0 of 24 real articles, while St. Louis titles
+its feed "www.stltoday.com - RSS Results of type article...". Rapid City
+Journal was a 429.
+
+So the cost of those false rejections was five outlets left on a Google News
+search feed, which carries a median of 11 words and cannot be scored on its
+text at all. The check meant to protect the roster caused five instances of the
+exact defect the roster work exists to fix. Three are migrated; the two Lee
+Enterprises papers are held on a 429 from this runner's IP, with
+`data/roster/rejection-corrections-2026-09-22.json` recording what was and was
+not observed (St. Louis measured 50/50/50 once, which is one observation, not
+two).
+
+### Four rows were one outlet twice, and a gate found three of them
+
+Written as an afterthought to `tests/test_roster_config.py`: no two rows may
+share a name, an id, or a feed url. It failed on the spot.
+
+**Two rows shared a name.** "The Conversation" was two real editions, US
+(`the-conversation`) and global (`the-conversation-global`), each with its own
+working feed. Both belong on the roster; two rows a reader cannot tell apart do
+not, because on the Bench and in the source picker they collapse into one
+outlet and a story carried by both is drawn as one source or two depending on
+which row a lookup by name happens to hit. Renamed, both kept.
+
+"Ukrainska Pravda (English)" was one outlet twice, on the SAME url. The
+duplicate was the worse row on both axes that matter: Google-fed, so
+unscoreable on its text at a median of 11 words, and `unrated`, so dropped from
+the lean aggregate and off the spectrum. Its articles were being counted as a
+second, independent, unmeasurable source for the same reporting. Removed.
+
+**Two more shared a FEED**, which is the check nobody had thought to write:
+`arkansas-democrat-gazette` / `little-rock-democrat-gazette` and
+`the-state-newspaper` / `columbia-state`. Each pair is one paper entered twice
+under two ids pointing at one Google News feed, so every article it published
+was drawn twice on the Bench as two independent sources. Merged, with the
+removed row's notes folded into the survivor.
+
+Roster 1,064 to **1,061**, and four phantom sources off the Bench. The count
+moving twice in one session is itself the argument for the section above: every
+literal would have had to be edited twice.
+
+### The roster's size now comes from the roster
+
+"1,016 sources" was hand-written in **nine files** under `frontend/app/`, plus
+the SERVED `manifest.json`, four docs, two pipeline modules and two tests. The
+three credibility tiers were literals too (43 / 373 / 600), printed as exact
+counts on `/about` and `/sources`, so adding 48 international outlets would
+have left three served pages asserting 373 against a roster holding 421. A
+breakdown that does not sum to its own total is an error a reader can check
+without leaving the page.
+
+`frontend/config/feed.json` read through `app/lib/feedConfig.ts` had already
+solved this for the feed size, and that file's header says in as many words
+"never restate these numbers as literals in a component". The prose restated
+them anyway, which is how the site said "50 stories" for two weeks after the
+feed became 20. Rule 1 calls a number that goes stale a future error wherever a
+durable formulation exists.
+
+So `frontend/config/roster.json` is generated from `data/sources.json` by
+`scripts/roster/emit_roster_config.py`, which runs INSIDE
+`add_sources.py --apply` so the two cannot be updated separately, and is read
+through `app/lib/rosterConfig.ts`. The daily brief's system instruction reads
+it too, and that one matters most: a stale number in a PROMPT is a number the
+model is told is true and may repeat to a reader, which makes it a published
+factual error rather than stale marketing copy. Its fallback is "over a
+thousand", true of every roster this product has had.
+
+Dated figures keep their date rather than being bumped. PROJECT-CHARTER's
+"Sources at launch" row and OPEN-ITEMS' measurements ("540 of 1,016 are
+Google-fed", "636 of 1,016 resolve to exactly 50") are observations on a
+1,016-row roster; rewriting a denominator restates someone else's measurement.
+
+### Gates, per Rule 1
+
+`tests/test_roster_config.py` asserts the config matches the roster, that the
+tiers sum to the total, that every key `rosterConfig.ts` imports exists (or the
+build prints `undefined` into page copy), and that no component writes a count
+out again. That last one is matched only NEAR a word that makes it a roster
+claim, because 600 is both the independent-tier count and a timeout in four
+Games components.
+
+`frontend/test/copy-facts.test.mjs` gains two widenings. Its pattern was
+`/1,?0\d\d/`, which matches 1000-1099 only and **would have silently stopped
+asserting** the day the roster passed 1,099: a gate that quietly stops
+asserting is worse than no gate, because its PASS is read as evidence. And its
+scan covered `app/` only, while `public/manifest.json` is served and carries
+the same sentence, so the count a browser installs the app with was never
+checked.
+
+---
+
+## rev 79: the lean prior stops reading its own output (2026-09-22)
+
+`analyze_political_lean` blended the Axis 6 per-topic EMA into the outlet prior
+at 0.7 baseline / 0.3 topic. `topic_outlet_tracker.update_source_topic_lean`
+builds that EMA by averaging `political_lean` over each batch, which is this
+engine's own PUBLISHED OUTPUT, with a missing key defaulting to 50. The score
+wrote the table and the table moved the score.
+
+The problem is not that the loop is positive feedback, it is that **no outside
+evidence enters it anywhere**. The only input is a number the engine already
+emitted, so the cycle cannot correct an error, only carry it forward, and its
+fixed point is the mean of what it has already said. For the 63% of the roster
+that resolves to exactly 50, that fixed point is 50.
+
+**Measured before cutting, because a plausible mechanism is not a cause.** This
+is NOT what pulls the feed to the centre. Mean |published lean minus label
+baseline| for rated non-centre outlets is 5.45 across all rows and **0.74** once
+default-tuple rows are excluded. The apparent compression is 6,256 rows that
+were never measured, which is a different defect with a different fix
+(`tests/test_bias_defaults_gate.py` and the feed repairs). The loop was real and
+latent.
+
+It is cut now anyway, and the reason is sequencing: the outlet-baseline
+programme wires a LEARNED per-outlet offset into this same prior. A self-fed
+term sitting beside a learned one does not merely add noise, it corrupts the
+thing being learned, and it would do so invisibly because the rationale reported
+`source_baseline` AFTER the blend had already overwritten it. That is how a
+0.7/0.3 blend on every scored article stayed unnoticed through every audit of
+this file.
+
+`topic_lean_data` is still accepted and discarded (`del`), so the four call
+sites need no edit and Axis 6 keeps writing its table for its own reporting. It
+is read by nothing that scores.
+
+**The gate, per Rule 1.** `tests/test_lean_prior_is_not_self_fed.py` asserts two
+properties. The first is behavioural and length-aware, because `confidence` is
+`min(1, words/150)` and a blend that survived only on short items would be
+invisible in a single-length test: five probe values (0, 10, 50, 90, 100) must
+move the score by zero on empty text, an 11-word wire snippet, a 60-word item
+and a 400-word article, across a rated left, centre, right and an unrated
+outlet, and the reported `source_baseline` must still be the outlet's own. The
+second is structural, and it is the one that stops the loop being reintroduced
+by someone reading the old docstring: the scorer may name no string literal
+naming a field of its own output table (an AST walk, so a comment is fine and a
+literal the code reads is not), and the tracker may not import the scorer,
+which would close the cycle from the other side. Restoring the blend fails 18 of
+its 19 checks, which is how I know the gate is real and not a tautology.
+
+**Not measured, and stated rather than assumed:** how many rows
+`source_topic_lean` actually held. The table is in
+`migration/schema_pipeline.sql` and written every run at `main.py` step 8's
+tracking call, so the loop was wired at both ends in production, but the row
+count needs the gitignored state database and I did not have it. The cut is
+correct either way; what I cannot tell you is the magnitude it was already
+costing.
+
+---
+
+## rev 78: the evidence, without the article (2026-09-22)
+
+**The audit's own record was the leak.** E-13 and E-14 are the two editorial
+rules that read a card against the articles it was written from, and they are
+the reason the 2026-09-20 mosque fabrication ("Kills 31" against 23 mentions of
+16 and none of 31) cannot ship again. Both need the sources to still exist.
+`articles.full_text` lives in the gitignored state database and dies with the
+Actions cache, and `deepdive/<id>.json` keeps only an RSS snippet, so
+`pipeline/editorial/grounding.py` was built to persist the evidence at export
+time.
+
+It persisted the prose. Up to 24,000 characters of each source article, into
+`frontend/build-data/grounding/`, which the repo commits, and the repo keeps
+every commit forever. Measured on the committed tree, not estimated:
+
+| | |
+|---|---|
+| Files | 35 |
+| Records | 975 |
+| Publisher article text | **519,041 characters** |
+| Longest single record | 10,003 characters |
+| First committed | 2026-09-21 (`dacfde45`) |
+
+`docs/IP-COMPLIANCE.md` names as its single highest-priority control: do not
+store `full_text` permanently, truncate it, store the derived scores and not the
+source text. The daily pipeline obeys that at `main.py` step 10, cutting
+`full_text` to 300 characters after analysis. So **the protection was pointing
+the wrong way**: the throwaway database was guarded and the permanent public
+repository was not. Nobody had counted the second retention path, because it
+was added for a correctness reason and reviewed as a correctness change.
+
+**Deleting the record was the quick fix and was refused.** An audit with no
+evidence is not an audit, and the 2026-09-21 feed is the only feed whose sources
+still exist anywhere. Rule 1 does not get traded against a compliance control;
+both have to hold.
+
+**What is stored now is a verification index.** The two rules ask exactly two
+questions, and neither needs the text:
+
+| Rule | Asks | Stored |
+|---|---|---|
+| E-13 | is this multi-digit number in any source? | the SET of numbers. A list of integers is not expressive content. |
+| E-14 | is this span of four or more words verbatim in any source? | a Bloom filter of the sources' overlapping 4-word shingles. It answers membership and **cannot be inverted**: it is a bit array, the words are gone. |
+
+The trade is a false-positive rate, and the direction is why it is acceptable. A
+Bloom filter never reports absent-when-present, so E-14 can never gain a false
+accusation from this; the dangerous direction is present-when-absent, letting a
+fabricated quote through. So the rate is 0.001 per shingle AND a quotation is
+cleared only when EVERY one of its consecutive shingles is present: for k
+shingles the error compounds to 0.001 ** k, about 1e-12 on a ten-word quote. The
+shortest span E-14 inspects is four words, which is one shingle, and carries the
+bare 0.001.
+
+Four words per shingle is not a tuning choice. It is E-14's own floor for what
+counts as a quotation, so the shortest inspectable quote maps to exactly one
+shingle and nothing E-14 looks at falls between the resolution of the index.
+
+**One rule, two backings.** `standard._evidence` takes either the source text
+(write time, when the pipeline has the articles) or a `grounding.Verifier`
+(audit time, when only the index survives), and E-13 and E-14 read the
+interface. Two rules, one per backing, would be two rules that drift;
+`tests/test_grounding.py` asserts they reach the same verdict on the same card.
+
+**A measured bug, kept in the record because the naive version of this would
+ship broken.** The first end-to-end run had E-13 perfect (16 true, 21 true, 31
+FALSE, 1200 true) and E-14 returning false on a **verbatim** quotation. Cause:
+source words carry attached punctuation (`"we`, `responsible,"`) where a
+quotation carries bare words, and E-14's old substring test tolerated that
+because a substring does not care about token edges. A word-shingle index does.
+Fixed by stripping edge punctuation at index time and at query time
+(`grounding.words_of`), and the widening that buys is stated in the docstring
+rather than hidden: a shingle can now straddle a sentence boundary, so a span
+appearing only as "... he said. The minister ..." would be cleared as though
+contiguous. The realistic failure E-14 exists to catch is a quotation that
+appears NOWHERE in the sources, which is unaffected; keeping the punctuation
+fails every genuine quotation instead, which is far worse.
+
+**The 35 committed records were converted, not deleted.**
+`scripts/migrate_grounding_index.py` builds each index from that record's own
+prose, then drops the prose. 519,041 characters of article text out, 449,069
+characters of index in. Verified before applying, against the real records
+rather than a fixture:
+
+| | |
+|---|---|
+| Numbers still verifying | 501 / 501 |
+| Within-article 8-word spans still verifying | 5,826 / 5,826 |
+| Shuffled spans still rejected | 700 / 700 |
+
+The 59 apparent losses in the first pass were a fault in the test, not the
+index: the probe concatenated all of a cluster's articles and drew windows
+across the joins, so those spans were verbatim in no single source and
+rejecting them was correct. Re-measured per article, zero losses. A Bloom filter
+cannot produce a false negative, so a real loss would have meant the folding
+disagreed, and that is worth distinguishing from a bad probe rather than
+explaining away.
+
+**The check that would have caught it.** Per Rule 1 the fix is not complete
+without one, and the defect was never in the module's API, it was in what the
+repo was carrying, so the assertion is made against the repo:
+`tests/test_grounding.py` (already in `auto-merge-claude.yml`) now fails on any
+committed record that is format 1, or that holds a string longer than 12 words
+in any field at any nesting, the Bloom blob excepted by name. It also asserts
+that no source sentence survives serialisation at all, that the index catches
+the 2026-09-20 fabrication, that an ABSENT index accuses nobody (a `Verifier` is
+truthy even when it holds no record, so presence is asked of the evidence rather
+than inferred from the key being set, or an empty index reads as "this number is
+in no source" and accuses every card in the feed), and that
+`grounding.numbers_in`/`fold` agree with `standard._numbers`/`_fold_quote`,
+which are deliberately duplicated because the export must not import the
+validator graph.
+
+**What this does not fix, and it is a decision rather than a task.** The prose
+committed on 2026-09-21 is in git history permanently unless the history is
+rewritten. Rewriting a pushed public branch changes every downstream clone's
+hashes, so it is the CEO's call. Until it is taken the working tree is compliant
+and the history is not, and `docs/OPEN-ITEMS.md` says so in those words rather
+than marking the item closed.
+
+---
+
 ## rev 77: one episode, one truth, one press (2026-09-21)
 
 **CEO: "Check consistency on the on air system. It should always be in sync

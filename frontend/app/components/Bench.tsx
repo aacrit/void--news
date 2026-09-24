@@ -1,16 +1,24 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect, useLayoutEffect, useCallback } from "react";
+import {
+  useState, useMemo, useRef, useEffect, useLayoutEffect, useCallback, useId,
+} from "react";
 import { createPortal } from "react-dom";
 import {
   LEAN_BASELINES,
   leanToBucket,
   leanLabel,
   leanShapeLabel,
+  leanShapeColor,
   type LeanCategory,
   type WingCounts,
 } from "../lib/biasColors";
 import { sourceLogoUrl } from "../lib/sourceLogos";
+import {
+  textAuthority,
+  authorityNote,
+  headlineOnlyCount,
+} from "../lib/textAuthority";
 import {
   packBench,
   benchRows,
@@ -18,6 +26,8 @@ import {
   BENCH_GAP,
   type BenchPack,
 } from "../lib/bench";
+import { envelope, inkRibbon, whitespace, type BenchGeometry } from "../lib/benchCurve";
+import BenchSigil from "./BenchSigil";
 
 /* ---------------------------------------------------------------------------
    Bench — who is sitting where, left to right.
@@ -46,6 +56,11 @@ export interface BenchSource {
   politicalLean: number;
   /** The article's own headline, where the surface has one. */
   headline?: string;
+  /** `bias_scores.confidence`, 0-1: the share of the text's movement budget
+   *  this article was long enough to earn. Below `AUTHORITY_CUT` the published
+   *  score is the outlet's baseline, and the mark says so rather than drawing
+   *  identically to one read off a full article. */
+  confidence?: number;
 }
 
 const BUCKET_TOKEN: Record<LeanCategory, string> = {
@@ -59,6 +74,16 @@ const BUCKET_TOKEN: Record<LeanCategory, string> = {
 };
 
 const BUCKET_ORDER = LEAN_BASELINES.map(([name]) => name);
+
+/** The axis ramp, at the positions `.bench__rule` already draws it. Held here
+ *  rather than in the stylesheet because the gradient needs an SVG element and
+ *  a per-mount id; the stops themselves stay the CSS tokens, so a theme change
+ *  still reaches them. */
+const AXIS_RAMP: readonly (readonly [number, string])[] = [
+  [0, "--bias-far-left"], [16, "--bias-left"], [32, "--bias-center-left"],
+  [50, "--bias-center"], [68, "--bias-center-right"], [84, "--bias-right"],
+  [100, "--bias-far-right"],
+];
 
 const BUCKET_NAME: Record<LeanCategory, string> = {
   "far-left": "far left",
@@ -141,6 +166,9 @@ function BenchCard({ data }: { data: CardData }) {
       </p>
       <p className="bench__card-tier">{tierLabel(s.tier)}</p>
       {s.headline && <p className="bench__card-headline">{s.headline}</p>}
+      {authorityNote(s.confidence) && (
+        <p className="bench__card-headline-only">{authorityNote(s.confidence)}</p>
+      )}
       <p className="bench__card-hint">
         <a
           href={s.articleUrl}
@@ -163,10 +191,16 @@ function Mark({ source, size }: { source: BenchSource; size: number }) {
   const [failed, setFailed] = useState(false);
   const url = size >= BENCH_FAVICON_MIN ? sourceLogoUrl(source.name) : "";
   const bucket = leanToBucket(source.politicalLean);
+  /* A hollow ring, not a second colour: the column a mark sits in is its lean
+     and that reading must not change. Fill state is the same double encoding
+     the dot matrix already uses, and it degrades to "an outline" rather than
+     to "a different politics" for a reader who cannot separate the hues. */
+  const authority = textAuthority(source.confidence);
   return (
     <span
       className="bench__disc"
       data-lean={bucket}
+      data-authority={authority}
       style={{ width: size, height: size }}
       aria-hidden="true"
     >
@@ -199,6 +233,10 @@ export interface BenchProps {
 }
 
 export default function Bench({ sources, unscoredCount = 0, settled = false }: BenchProps) {
+  /* Said out loud in the head, not only on hover: 13 us_major outlets serve us
+     no article text, so on a wire-heavy story most of the bench can be sitting
+     on its outlets' baselines and every mark used to look the same. */
+  const headlineOnly = useMemo(() => headlineOnlyCount(sources), [sources]);
   const wrapRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const [coarse, setCoarse] = useState(false);
@@ -206,6 +244,7 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
   const [card, setCard] = useState<CardData | null>(null);
   const [pinned, setPinned] = useState<string | null>(null);
   const [drawn, setDrawn] = useState(settled);
+  const rampId = `bench-ramp-${useId().replace(/:/g, "")}`;
 
   /* Own width, because the mark size is chosen from it. Falls back to a
      desktop-ish default before the first measurement so the server render and
@@ -282,6 +321,51 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
     [colWidth, boxH, tallest],
   );
 
+  /* The silhouette over the columns, and the room the columns leave. Both are
+     pure and live in lib/benchCurve.ts, which is where the argument for them
+     is: the line is built so that it CANNOT draw a peak between two columns,
+     which is the exact defect the KDE wave was removed for. */
+  const geom: BenchGeometry = useMemo(
+    () => ({
+      counts,
+      mark: pack.mark,
+      perRow: pack.perRow,
+      gap: BENCH_GAP,
+      cap: pack.capPerColumn,
+      colWidth,
+      colGap,
+      boxH,
+    }),
+    [counts, pack, colWidth, colGap, boxH],
+  );
+  const curve = useMemo(() => envelope(geom), [geom]);
+  /* Drawn as a pen stroke, not a stroked line with a tint under it. The
+     width follows the count, so the ink is heavy over the buckets that carry
+     the story and tapers to a hairline where nothing stands. */
+  const ink = useMemo(
+    () => (curve ? inkRibbon(curve, counts, { minHalf: 0.4, maxHalf: 2.4 }) : null),
+    [curve, counts],
+  );
+  /* The bleed is a WIDER ribbon, not the same one at a lower opacity. That is
+     the relationship `InkUnderline` already has (stroke 3 under a pen of 1.8):
+     ink spreads into paper past the nib, so it has to show AROUND the stroke.
+     Drawn at the same width it sits entirely behind the pen and the axis
+     colour it carries never reaches the page, which is exactly what the first
+     attempt did. */
+  const bleed = useMemo(
+    () => (curve ? inkRibbon(curve, counts, { minHalf: 1.5, maxHalf: 4.4 }) : null),
+    [curve, counts],
+  );
+  /* The mark wants a square it can breathe in. Below that the head keeps it,
+     which is what a flat distribution gets. */
+  const room = useMemo(
+    () => whitespace(geom, { minSide: narrow ? 40 : 52 }),
+    [geom, narrow],
+  );
+  const markSide = room
+    ? Math.round(Math.min(room.width, room.height, narrow ? 64 : 92))
+    : 0;
+
   /* The toggle is offered on whether the COLLAPSED box cuts anything, not on
      whether the current one does. Read off `pack` it would vanish the moment
      it worked, leaving the reader inside an expanded Bench with no way back. */
@@ -344,9 +428,23 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
         .join(" ")}
     >
       <div className="bench__head">
-        <p className="bench__shape">{leanShapeLabel(spread)}</p>
+        {/* The shape is DRAWN now, over the columns, in the space they leave.
+            The word stays here for a screen reader, for which a silhouette is
+            nothing at all, and comes back into view only where there is no
+            room on the Bench to draw it in. */}
+        <p className={room ? "bench__shape bench__shape--sr" : "bench__shape"}>
+          {leanShapeLabel(spread)}
+        </p>
+        {!room && (
+          <BenchSigil spread={spread} size={28} className="bench__mark-inline" />
+        )}
         <p className="bench__count">
           {total} {total === 1 ? "source" : "sources"} placed
+          {headlineOnly > 0 && (
+            <span className="bench__unscored">
+              {" "}&middot; {headlineOnly} from headlines only
+            </span>
+          )}
           {unscoredCount > 0 && (
             <span className="bench__unscored"> &middot; {unscoredCount} not measured</span>
           )}
@@ -366,6 +464,74 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
         role="group"
         aria-label="Sources by political lean, far left to far right"
       >
+        {/* THE SPECTRUM LINE. Rides the top of every column, so seven counts
+            read as one silhouette. Decoration to a screen reader and to the
+            pointer: the marks under it are the content and the hit targets. */}
+        {curve && (
+          <svg
+            className="bench__curve"
+            viewBox={`0 0 ${curve.width} ${boxH}`}
+            preserveAspectRatio="none"
+            aria-hidden="true"
+            focusable="false"
+            style={{ color: leanShapeColor(spread) }}
+          >
+            {/* TWO INKS, TWO DIFFERENT THINGS SAID.
+
+                The PEN carries `leanShapeColor`, which is this story's
+                verdict and the same rule the word under the card's register
+                obeys: red end to end where the roster leans right, blue where
+                it leans left, and plain ink on a Split, which is the one shape
+                with no direction to name. Colouring the pen by position would
+                trade that verdict for a restatement of the axis, and give a
+                divided room a confident sweep it has not earned.
+
+                The BLEED carries the axis instead. It is ink feathering into
+                paper, blurred and barely there, so the far left of the stroke
+                warms to blue and the far right to red without the pen saying
+                anything it should not. The stops are the ones `.bench__rule`
+                already uses under the columns, in user space, so the ramp
+                lands on the same positions the rule does rather than merely
+                near them. */}
+            <defs>
+              <linearGradient
+                id={rampId}
+                gradientUnits="userSpaceOnUse"
+                x1={0} y1={0} x2={curve.width} y2={0}
+              >
+                {AXIS_RAMP.map(([at, token]) => (
+                  <stop key={token} offset={`${at}%`}
+                    style={{ stopColor: `var(${token})` }} />
+                ))}
+              </linearGradient>
+            </defs>
+            <path
+              className="bench__curve-bleed"
+              d={bleed ?? curve.line}
+              fill={`url(#${rampId})`}
+            />
+            <path className="bench__curve-ink" d={ink ?? curve.line} />
+          </svg>
+        )}
+
+        {/* The mark, in the room the distribution leaves. Its POSITION is part
+            of the reading: on a right-leaning roster it stands out on the
+            left, over nothing, with the weight to its right. */}
+        {room && markSide > 0 && (
+          <div
+            className="bench__room"
+            aria-hidden="true"
+            style={{
+              left: `${room.x + room.width / 2}px`,
+              top: `${Math.max(2, (room.height - markSide) / 2)}px`,
+              width: `${markSide}px`,
+              height: `${markSide}px`,
+            }}
+          >
+            <BenchSigil spread={spread} size={markSide} />
+          </div>
+        )}
+
         {columns.map(({ bucket, items }, ci) => {
           const drawnItems =
             pack.capPerColumn === Infinity ? items : items.slice(0, pack.capPerColumn);
@@ -396,7 +562,11 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
                           type="button"
                           className="bench__mark"
                           data-focused={focusName === s.name ? "true" : undefined}
-                          aria-label={`${s.name}, ${leanLabel(s.politicalLean)}. Show details.`}
+                          aria-label={`${s.name}, ${leanLabel(s.politicalLean)}${
+                            textAuthority(s.confidence) === "headline"
+                              ? ", scored from the headline"
+                              : ""
+                          }. Show details.`}
                           aria-expanded={pinned === s.name}
                           onClick={(e) => {
                             if (pinned === s.name) {
@@ -418,7 +588,11 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
                           rel="noopener noreferrer"
                           className="bench__mark"
                           data-focused={focusName === s.name ? "true" : undefined}
-                          aria-label={`${s.name}, ${leanLabel(s.politicalLean)}`}
+                          aria-label={`${s.name}, ${leanLabel(s.politicalLean)}${
+                            textAuthority(s.confidence) === "headline"
+                              ? ", scored from the headline"
+                              : ""
+                          }`}
                           onPointerEnter={(e) => show(e.currentTarget, s)}
                           onPointerLeave={() => setCard(null)}
                           onFocus={(e) => show(e.currentTarget, s)}

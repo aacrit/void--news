@@ -10,6 +10,7 @@ import ScaleIcon from "./ScaleIcon";
 import { hapticLight } from "../lib/haptics";
 import { BASE_PATH, getEditionTimestampLocal } from "../lib/utils";
 import { fetchLastPipelineRun } from "../lib/supabase";
+import { ROSTER_SOURCES_TEXT, ROSTER_COUNTRIES } from "../lib/rosterConfig";
 
 /* ---------------------------------------------------------------------------
    MobileSidePanel — the mobile secondary-navigation drawer.
@@ -31,7 +32,8 @@ import { fetchLastPipelineRun } from "../lib/supabase";
      Sources (/sources) — peer row, muted layers icon.
      Feedback (/ship)   — peer row, muted chat icon.
      About · Press · Privacy — quiet inline utility trio, subordinate.
-     Info bar — "Edition as of {time}", "1,016 sources across 158 countries",
+     Info bar — "Edition as of {time}", the roster's size and country count
+     (read from lib/rosterConfig, never written out here),
                 ThemeToggle
 
    History and Weekly are the drawer's share of the masthead .nav-spinoffs row,
@@ -81,7 +83,7 @@ const MAIN_ITEMS: NavItem[] = [
   { href: "/weekly", label: "Weekly", desc: "The week, in one issue.", accent: "neutral", icon: "weekly", cascade: 3 },
   { href: "/paper", label: "Paper", desc: "Today’s front page, laid out to print.", accent: "neutral", icon: "paper", cascade: 3 },
   { href: "/audio", label: "Audio", desc: "Every programme, one place.", accent: "neutral", icon: "listen", cascade: 3 },
-  { href: "/sources", label: "Sources", desc: "1,016 sources, 158 countries.", accent: "neutral", icon: "sources", cascade: 3 },
+  { href: "/sources", label: "Sources", desc: `${ROSTER_SOURCES_TEXT} sources, ${ROSTER_COUNTRIES} countries.`, accent: "neutral", icon: "sources", cascade: 3 },
   { href: "/ship", label: "Feedback", desc: "Tell us what to build or fix.", accent: "neutral", icon: "feedback", cascade: 3 },
 ];
 
@@ -449,7 +451,7 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
               {mounted ? `Edition as of ${getEditionTimestampLocal(editionBuiltAt)}` : " "}
             </span>
             <span className="msp__info-line msp__info-line--muted">
-              1,016 sources across 158 countries
+              {ROSTER_SOURCES_TEXT} sources across {ROSTER_COUNTRIES} countries
             </span>
           </div>
           <div className="msp__theme-row">

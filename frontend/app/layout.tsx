@@ -14,6 +14,7 @@ import ExperimentalBanner from "./components/ExperimentalBanner";
 import { BASE_PATH } from "./lib/utils";
 import { getInitialBrief } from "./lib/serverBrief";
 import { fetchInitialFeed } from "./lib/serverFeed";
+import { ROSTER_SOURCES_TEXT } from "./lib/rosterConfig";
 
 /* ---------------------------------------------------------------------------
    Four Voices of Type
@@ -68,7 +69,7 @@ export const metadata: Metadata = {
   // for over a decade, so it was dead weight.
   title: "Void News. See through the void.",
   description:
-    "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No feed tuned to you. Just the news, dissected.",
+    `An experimental newsroom: free per-article bias analysis across ${ROSTER_SOURCES_TEXT} sources. Six axes. No paywall. No feed tuned to you. Just the news, dissected.`,
   authors: [{ name: "Void News" }],
   // The three podcast feeds, so a podcast app or a feed reader pointed at
   // any page discovers them. Resolved against metadataBase. The daily and
@@ -86,7 +87,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Void News. See through the void.",
     description:
-      "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No feed tuned to you. Just the news, dissected.",
+      `An experimental newsroom: free per-article bias analysis across ${ROSTER_SOURCES_TEXT} sources. Six axes. No paywall. No feed tuned to you. Just the news, dissected.`,
     type: "website",
     siteName: "Void News",
     // Static site-wide share image. Per-story OG images (a generated card per
@@ -105,7 +106,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Void News. See through the void.",
     description:
-      "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No feed tuned to you.",
+      `An experimental newsroom: free per-article bias analysis across ${ROSTER_SOURCES_TEXT} sources. Six axes. No paywall. No feed tuned to you.`,
     images: [`${BASE_PATH}/og-image.png`],
   },
   icons: {

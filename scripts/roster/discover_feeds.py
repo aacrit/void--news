@@ -37,16 +37,26 @@ S=requests.Session(); S.headers.update({'User-Agent':UA,'Accept':'application/rs
 COMMON=["/feed","/feed/","/rss","/rss/","/rss.xml","/feed.xml","/index.xml","/atom.xml",
         "/feeds/all.atom.xml","/en/rss","/rss/news","/news/rss","/?feed=rss2","/feeds/rss.xml",
         "/arc/outboundfeeds/rss/","/rssfeeds/latest.xml","/api/rss"]
-def reg(host):
-    p=host.split('.'); return '.'.join(p[-2:]) if len(p)>=2 else host
+# See scripts/roster/verify_feeds.py for why two labels is not the registrable
+# domain: `english.hani.co.kr` became `co.kr`, so the own-domain test asked
+# whether a link was on any .co.kr site at all.
+from verify_feeds import reg  # noqa: E402  (same directory, same definition)
 def probe(u):
     try: r=S.get(u,timeout=12,allow_redirects=True)
     except Exception as e: return None,f"{type(e).__name__}"
     if r.status_code!=200: return None,f"HTTP {r.status_code}"
     h=r.text[:1500].lower()
     if not ('<rss' in h or '<feed' in h or '<rdf' in h): return None,"not a feed"
-    links=re.findall(r'<link[^>]*>\s*([^<\s]+)\s*</link>', r.text) \
-        + re.findall(r'<link[^>]*href=["\']([^"\']+)["\']', r.text)
+    # CDATA first: a `<link><![CDATA[https://...]]></link>` is invisible to a
+    # `[^<]` class, because the content opens with "<". Measured 2026-09-22:
+    # eldiario.es and Rzeczpospolita were both reported as having zero
+    # own-domain links and dropped, which is the verdict this script exists to
+    # give a Google News proxy. A publisher's XML escaping is not evidence
+    # about their feed.
+    body=re.sub(r'<!\[CDATA\[(.*?)\]\]>', lambda m: m.group(1), r.text, flags=re.S)
+    links=re.findall(r'<link[^>]*>\s*([^<\s]+)\s*</link>', body) \
+        + re.findall(r'<link[^>]*href=["\']([^"\']+)["\']', body) \
+        + re.findall(r'<guid[^>]*>\s*(https?://[^<\s]+)\s*</guid>', body)
     links=[l for l in links if l.startswith('http')]
     items=len(re.findall(r'<item[ >]|<entry[ >]', r.text))
     if items==0: return None,"0 items"
@@ -86,7 +96,15 @@ def run(rec):
             if best is None or got['own_domain_links']>best['own_domain_links']: best=got
             if best['own_domain_links']>=5: break
         time.sleep(0.25)
-    return {**rec,'found':best,'why':('ok' if best else (whys[0] if whys else 'no candidates'))}
+    # `whys[0]` alone produced records reading found=null, why='ok', which is
+    # a contradiction: 'ok' from probe() means a parseable feed with items,
+    # and reaching here means none of them had a link on the outlet's own
+    # domain. Say that instead.
+    if best: why='ok'
+    elif 'ok' in whys: why='feed found, no item link on the outlet own domain'
+    elif whys: why=whys[0]
+    else: why='no candidates'
+    return {**rec,'found':best,'why':why}
 if __name__=='__main__':
     recs=json.load(open(sys.argv[1]))
     for rec in recs:
