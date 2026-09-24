@@ -24,10 +24,10 @@ Detection algorithm:
      ~400 characters using TF-IDF. This guards against accidental hash
      collisions on very short bodies.
   5. The "wire origin" within a confirmed group is chosen by:
-        a) explicit `tier == "wire"`
-        b) source slug in CANONICAL_WIRE_SLUGS (ap-news, reuters, ...)
-        c) earliest published_at
-        d) first article in the group (deterministic fallback)
+        a) source slug in WIRE_SLUGS, which is the 40 outlets the roster
+           marks `"type": "wire"` plus a hand-written superset
+        b) earliest published_at
+        c) first article in the group (deterministic fallback)
 
 No LLM API calls -- scikit-learn TF-IDF, SHA1, and a small wire-prefix
 regex only.
@@ -36,6 +36,8 @@ regex only.
 from __future__ import annotations
 
 import hashlib
+import json
+import pathlib
 import re
 from typing import Iterable
 
@@ -55,6 +57,20 @@ WIRE_LEAD_COSINE_CHARS = 400            # cosine vector built on first N chars
 # confirmed wire group is chosen as the "origin", and (b) ALSO as a
 # direct-tag heuristic for groups that share a wire origin slug even when
 # their body bytes diverge slightly (rewritten leads, location inserts).
+#
+# HAND-WRITTEN AND WRONG ON ITS OWN (measured 2026-09-22). This set matched
+# **5 of the 40** outlets the roster marks `"type": "wire"`: afp, ap-news,
+# ians, reuters, upi. It missed dpa-international, kyodo-news, pti-india,
+# anadolu-agency, tass-english, xinhua-english, yonhap-news, efe-english,
+# ansa-english and 26 more, all through near-miss slugs ("dpa" against
+# "dpa-international", "tass" against "tass-english"). So the origin of a
+# confirmed syndicate group was usually picked by publish time rather than by
+# being the wire, and the wire's own copy was as likely to be tagged a
+# duplicate of a subscriber's as the other way round.
+#
+# The roster already knows. It is the source of truth for what an outlet IS,
+# so the set is derived from it and this list is kept only as a superset, for
+# a slug that appears in article rows but not in the roster.
 CANONICAL_WIRE_SLUGS = frozenset({
     "ap", "ap-news", "associated-press",
     "reuters",
@@ -71,6 +87,32 @@ CANONICAL_WIRE_SLUGS = frozenset({
     "pti",
     "epa-efe",
 })
+
+
+def _roster_wire_slugs() -> frozenset:
+    """Slugs the roster marks `"type": "wire"`, plus the hand-written set.
+
+    Read once at import. If the roster cannot be read the hand-written set
+    still works, but it says so rather than degrading in silence: the whole
+    reason this function exists is that a set which quietly matched 5 of 40
+    looked like it was working.
+    """
+    path = (pathlib.Path(__file__).resolve().parents[2]
+            / "data" / "sources.json")
+    try:
+        rows = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:  # missing, unreadable, or not JSON
+        print(f"    [warn] wire slugs: could not read {path.name} "
+              f"({type(exc).__name__}); falling back to the hand-written set "
+              f"of {len(CANONICAL_WIRE_SLUGS)}")
+        return CANONICAL_WIRE_SLUGS
+    wires = {str(r.get("id") or "").lower() for r in rows
+             if str(r.get("type") or "").lower() == "wire"}
+    wires.discard("")
+    return frozenset(wires | set(CANONICAL_WIRE_SLUGS))
+
+
+WIRE_SLUGS = _roster_wire_slugs()
 
 # Mirror of the wire-prefix regex used by story_cluster.py — kept inline
 # here so the deduplicator does not import from clustering during pipeline
@@ -164,22 +206,25 @@ def _pick_origin(group_articles: list[dict]) -> dict:
     """Pick the origin article for a confirmed wire group.
 
     Priority:
-      1. tier == "wire"
-      2. slug in CANONICAL_WIRE_SLUGS
-      3. earliest published_at (lexicographic on ISO timestamps is fine)
-      4. first item (deterministic)
+      1. slug in WIRE_SLUGS (the roster's `"type": "wire"`, plus the
+         hand-written superset)
+      2. earliest published_at (lexicographic on ISO timestamps is fine)
+      3. first item (deterministic)
+
+    A `tier == "wire"` branch used to sit above all of that and matched ZERO
+    rows: `tier` only ever holds independent / international / us_major, which
+    is what the roster puts there and what `Counter` over sources.json says.
+    Dead code at the TOP of a priority list is worse than dead code anywhere
+    else, because it reads as the rule and the rule that actually decides is
+    the one below it.
     """
-    def _key(a: dict) -> tuple[int, int, str, int]:
-        tier = (a.get("tier") or "").lower()
+    def _key(a: dict) -> tuple[int, str, int]:
         slug = (a.get("source_id") or "").lower()
         pub = a.get("published_at") or ""
         # Tuple ordered so SMALLER is BETTER → we use min().
-        # tier_rank: wire=0, anything else=1
-        tier_rank = 0 if tier in ("wire", "wire-service") else 1
-        # slug_rank: canonical wire=0 else 1
-        slug_rank = 0 if slug in CANONICAL_WIRE_SLUGS else 1
+        slug_rank = 0 if slug in WIRE_SLUGS else 1
         # group_articles is small (<= ~30); index acts as deterministic tiebreaker
-        return (tier_rank, slug_rank, pub or "~", group_articles.index(a))
+        return (slug_rank, pub or "~", group_articles.index(a))
 
     return min(group_articles, key=_key)
 

@@ -69,14 +69,57 @@ jobs:
 
       # 2026-09-06: tests/ was run by nothing. test_verify_gate.py was RED
       # (its clean fixture predated MIN_SUMMARY_CHARS=300) and nobody knew,
-      # so the served-output checkers had no working self-test. Both suites
-      # are stdlib-only apart from nltk and take seconds.
+      # so the served-output checkers had no working self-test.
+      #
+      # 2026-09-23: this step used to install `nltk pyyaml` under a comment
+      # saying the suites were "stdlib-only apart from nltk". That stopped
+      # being true, and the consequence was invisible for as long as it was,
+      # because a defect further up was failing the job before these ran at
+      # all. When the feed was restored and the build finally passed, the
+      # gates below started raising ModuleNotFoundError one at a time:
+      # test_docs_facts on textblob, then test_apply_feeds on requests, with
+      # numpy, scikit-learn and bs4 waiting behind them. NINE of these gates
+      # had never once executed in CI.
+      #
+      # So the job installs the pipeline's declared environment. These gates
+      # test pipeline code and belong in the environment that code runs in;
+      # naming the five missing packages instead would leave the same trap
+      # armed for the next gate that imports something new. `editorial-stage`
+      # below already installs this exact file with this exact caching, so the
+      # wheels are shared rather than downloaded twice.
+      #
+      # A gate that cannot execute is not a gate, which is the sentence the
+      # controls table in CLAUDE.md opens with.
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: pipeline/requirements.txt
+      # THE MODEL, not just the package. `test_lean_prior_is_not_self_fed`
+      # asserts the retired blend parameter is inert by actually scoring four
+      # articles, and `analyze_political_lean` reaches `_entity_sentiment_score`
+      # which reaches `get_nlp()`. With spaCy installed but no model,
+      # `nlp_shared` raises ModelUnavailable, correctly: it refuses to fall
+      # back to an English parser for text it cannot parse, which is what
+      # `test_nlp_languages` exists to enforce. `test_nlp_languages` also skips
+      # its parse checks without the model, so without this step it would sit
+      # in CI reporting a skip forever.
+      #
+      # Same cache and key as editorial-stage, validate-bias and
+      # validate-clustering below, so the download happens once across all four.
+      - name: Install the pipeline's environment
+        run: pip install --quiet -r pipeline/requirements.txt
+      - name: Cache spaCy model
+        id: spacy-cache-gates
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
+          key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
+      - name: Download spaCy model
+        if: steps.spacy-cache-gates.outputs.cache-hit != 'true'
+        run: python -m spacy download en_core_web_sm
       - name: Gate self-test + feed-config consistency
         run: |
-          pip install --quiet nltk pyyaml
           python tests/test_verify_gate.py
           python tests/test_feed_config.py
           python tests/test_editorial_standard.py
@@ -91,7 +134,6 @@ jobs:
           python tests/test_weekly_script.py
           python tests/test_weekly_assembly.py
           python tests/test_history_meta.py
-          pip install --quiet pyyaml
           python tests/test_history_script.py
           python tests/test_house_promos.py
 
@@ -104,13 +146,21 @@ jobs:
           python tests/test_history_scripts_export.py # accounts resolve one to one
           python tests/test_history_export_parity.py  # the served JSON matches the record
           python tests/test_grounding.py             # the evidence outlives the run
+          python tests/test_feed_buildable.py        # the feed can fill the front page
           python tests/test_truncation_lint.py       # no cap published as a count
           python tests/test_docs_facts.py            # CLAUDE.md's own numbers
 
           # Brand audit gates (2026-09-21): the served product is what it says.
           python tests/test_bias_defaults_gate.py    # exported bias rows are measured, not defaults
           python tests/test_source_roster.py         # the roster does not disagree with itself about an outlet
+          python tests/test_roster_config.py         # the roster's size and tiers come from the roster, in one place
+          python tests/test_apply_feeds.py           # a dry run writes nothing; a record is never silently replaced
           python tests/test_bias_bins.py             # one lean ladder, two languages, rungs on their own baselines
+          python tests/test_lean_prior_is_not_self_fed.py  # the lean prior is not fed by the lean it publishes
+          python tests/test_lexicon_derive.py        # the derivation cannot measure itself; counts cannot hold prose
+          python tests/test_wire_attribution.py      # a wire's own copy is recognised as the wire's
+          python tests/test_robots_compliance.py     # a refusal on robots.txt is read as a refusal
+          python tests/test_nlp_languages.py         # no silent fallback to an English parser for non-English text
           python tests/test_podcast_feed.py          # covers exist and carry no stale text; titles agree
           python tests/test_prompt_grounding.py      # every production prompt carries the grounding line
           python tests/test_paper.py                 # Paper prints the front page's twenty, in order, with no retired claim

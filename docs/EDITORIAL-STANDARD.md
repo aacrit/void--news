@@ -71,6 +71,42 @@ capped per article and says so: a silent cap would make absence read as
 fabrication, which is the same defect the Weekly shipped by publishing
 `.limit(500)` as an exact count.
 
+**What persists is an index, not the articles (2026-09-22).** The first version
+of that record kept up to 24,000 characters of each source article, and the
+repo commits `build-data/`, so the committed tree held 519,041 characters of
+publisher prose in a public repository's permanent history, against the
+top-priority control in `docs/IP-COMPLIANCE.md`. The protection was pointing
+the wrong way: the throwaway state database truncates `full_text` to 300
+characters at `main.py` step 10, and the permanent public repo did not.
+
+Deleting the record was not an option, because an audit with no evidence is not
+an audit. So a record now carries only what the two rules ask for: the SET of
+multi-digit numbers, for E-13, and a Bloom filter of the sources' overlapping
+4-word shingles, for E-14. A Bloom filter answers membership and cannot be
+inverted to recover text.
+
+The trade is a false-positive rate, and its direction is the reason it is
+acceptable. A Bloom filter never reports absent-when-present, so E-14 can never
+gain a false accusation from the index. It can report present-when-absent,
+which would let a fabricated quotation through, so the rate is set to 0.001 per
+shingle and a quotation is cleared only when EVERY one of its consecutive
+shingles is present: for a quote of k shingles the error compounds to
+0.001 ** k, about 1e-12 for a ten-word quote. The shortest span E-14 inspects
+is four words, which is one shingle, and carries the bare 0.001.
+
+E-13 and E-14 remain **one** implementation with two evidence backings, behind
+`standard._evidence`: the source text at write time, a `grounding.Verifier` at
+audit time. Two rules, one per backing, would be two rules that drift.
+`tests/test_grounding.py` asserts they reach the same verdict on the same card,
+that no record carries a sentence, and that no record in the committed tree is
+still a format-1 prose record. The 35 records committed on 2026-09-21 were
+converted in place by `scripts/migrate_grounding_index.py`, which builds each
+index from that record's own prose and then drops it: 519,041 characters of
+article text out, zero lost answers (501 of 501 numbers and 5,826 of 5,826
+within-article 8-word spans still verify; 700 of 700 shuffled spans still
+rejected). Prose committed before that conversion is still in git history;
+removing it is a history rewrite and a separate decision.
+
 ### Feed level
 
 | ID | Rule | Status | Derivation |

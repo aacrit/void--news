@@ -1,0 +1,89 @@
+# Collect same-story cross-language article pairs from multilingual newsrooms.
+#
+# WHY A SCHEDULED JOB. The pairs come from RSS, and an RSS feed is a sliding
+# window: what it holds today is gone tomorrow. Deutsche Welle, France 24,
+# Euronews and RFI each publish the same journalism in two or more languages,
+# and those pairs are the only way to put a French lexicon and an English one
+# on a single scale (see scripts/roster/anchor_pairs.py for the argument and
+# the falsification test it carries). Measured at about 11 verified pairs per
+# run at 100% precision on a hand-checked sample, so a few hundred pairs is
+# weeks of collection. Nothing recovers a window we did not collect, which is
+# the whole reason this runs on a cron rather than on demand.
+#
+# It appends to data/roster/anchor-pairs/<date>.json and commits. It touches no
+# other path, reads no database, needs no secrets and scores nothing: there is
+# no non-English lexicon yet, so this is corpus collection only.
+name: Anchor Pairs
+
+on:
+  schedule:
+    # Twice daily, deliberately offset from the 11:00 pipeline so the two never
+    # contend for the runner or the commit.
+    - cron: '30 7 * * *'
+    - cron: '30 19 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: anchor-pairs
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install requests
+        run: pip install --quiet requests
+
+      - name: Collect pairs
+        run: |
+          mkdir -p data/roster/anchor-pairs
+          STAMP=$(date -u +%Y-%m-%dT%H)
+          python3 scripts/roster/anchor_pairs.py \
+            --out "data/roster/anchor-pairs/${STAMP}.json"
+
+      - name: Report the running total
+        run: |
+          python3 - <<'PY'
+          import glob, json
+          files = sorted(glob.glob('data/roster/anchor-pairs/*.json'))
+          total = 0
+          by_pair = {}
+          for f in files:
+              with open(f, encoding='utf-8') as fh:
+                  rows = json.load(fh)
+              total += len(rows)
+              for r in rows:
+                  k = f"{r['newsroom']} {r['lang_a']}-{r['lang_b']}"
+                  by_pair[k] = by_pair.get(k, 0) + 1
+          print(f"snapshots: {len(files)}, pairs collected to date: {total}")
+          for k, n in sorted(by_pair.items(), key=lambda x: -x[1]):
+              print(f"  {n:>5}  {k}")
+          # The calibration needs a few hundred clean pairs. Say how far off.
+          print(f"\n{max(0, 300 - total)} more to reach a 300-pair calibration set")
+          PY
+
+      - name: Commit
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/roster/anchor-pairs
+          if git diff --staged --quiet; then
+            echo "no new pairs this run"
+            exit 0
+          fi
+          git commit -m "anchor pairs: cross-language calibration corpus $(date -u +%Y-%m-%d\ %H:%MZ)"
+          for i in 1 2 3 4; do
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push && exit 0
+            sleep $((2 ** i))
+          done
+          echo "push failed after retries"; exit 1

@@ -9,13 +9,15 @@
 /* ── Canonical source counts (data/sources.json — verified) ───────────────
    Use these everywhere instead of hard-coding, so the figures can't drift. */
 import { FEED_DISPLAYED } from "../lib/feedConfig";
+import { ROSTER_SOURCES, ROSTER_SOURCES_TEXT, ROSTER_COUNTRIES,
+         ROSTER_US_MAJOR, ROSTER_INTERNATIONAL, ROSTER_INDEPENDENT } from "../lib/rosterConfig";
 
 export const SOURCE_TIERS = {
-  usMajor: 43,
-  international: 373,
-  independent: 600,
-  total: 1016,
-  countries: 158,
+  usMajor: ROSTER_US_MAJOR,
+  international: ROSTER_INTERNATIONAL,
+  independent: ROSTER_INDEPENDENT,
+  total: ROSTER_SOURCES,
+  countries: ROSTER_COUNTRIES,
 } as const;
 
 /* ── Beat 1 — "Same story, five headlines" ──────────────────────────────── */
@@ -136,7 +138,7 @@ export const RANKING_SIGNAL_COUNT = 10;
    Headline numbers (verified against the live codebase). */
 
 export const NUMBERS = [
-  { value: "1,016", label: "sources" },
+  { value: ROSTER_SOURCES_TEXT, label: "sources" },
   { value: "158", label: "countries" },
   { value: "50", label: "top stories" },
   { value: "1×", label: "a day" },
@@ -179,7 +181,7 @@ export const PRODUCT_FAMILY: ProductWorld[] = [
 // Transparency and feedback tools — how the work stays honest and open, not
 // products in their own right.
 export const TRANSPARENCY_TOOLS: ProductWorld[] = [
-  { name: "Sources", subtitle: "The Spectrum", desc: "All 1,016 sources we read, placed on one axis.", href: "/sources", accentLight: "#3F7A5A", accentDark: "#77B994" },
+  { name: "Sources", subtitle: "The Spectrum", desc: `All ${ROSTER_SOURCES_TEXT} sources we read, placed on one axis.`, href: "/sources", accentLight: "#3F7A5A", accentDark: "#77B994" },
   { name: "Feedback", subtitle: "The Suggestion Box", desc: "Tell us what to build or fix.", href: "/ship", accentLight: "#BE4326", accentDark: "#D2593A" },
 ];
 

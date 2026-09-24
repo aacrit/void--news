@@ -1,10 +1,45 @@
 [
  {
+  "name": "100Reporters",
+  "was": "https://news.google.com/rss/search?q=site:100r.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://100r.org/feed/",
+  "items": 20,
+  "own_domain_links": 21
+ },
+ {
   "name": "AEI Ideas",
   "was": "https://www.aei.org/feed/",
   "now": "https://www.aei.org/feed/",
   "items": 24,
   "own_domain_links": 25
+ },
+ {
+  "name": "AlgorithmWatch",
+  "was": "https://algorithmwatch.org/en/feed/",
+  "now": "https://algorithmwatch.org/feed/",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "America Magazine",
+  "was": "https://www.americamagazine.org/xml/rss/blog.xml",
+  "now": "https://www.americamagazine.org/feed/",
+  "items": 150,
+  "own_domain_links": 152
+ },
+ {
+  "name": "American Thinker",
+  "was": "https://www.americanthinker.com/rss/blog_all.xml",
+  "now": "https://www.americanthinker.com/index.xml",
+  "items": 25,
+  "own_domain_links": 27
+ },
+ {
+  "name": "Arab Reporters for Investigative Journalism",
+  "was": "https://news.google.com/rss/search?q=site:arij.net+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://en.arij.net/feed/",
+  "items": 10,
+  "own_domain_links": 12
  },
  {
   "name": "Asharq Al-Awsat",
@@ -21,6 +56,48 @@
   "own_domain_links": 11
  },
  {
+  "name": "Billings Gazette",
+  "was": "https://news.google.com/rss/search?q=site:billingsgazette.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://billingsgazette.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "Brasil Wire",
+  "was": "https://news.google.com/rss/search?q=site:brasilwire.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.brasilwire.com/feed/",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "CONNECTAS",
+  "was": "https://news.google.com/rss/search?q=site:connectas.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.connectas.org/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "CSIS",
+  "was": "https://www.csis.org/rss",
+  "now": "https://www.csis.org/rss.xml",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "CTV News",
+  "was": "https://news.google.com/rss/search?q=site:ctvnews.ca+when:24h&ceid=CA:en&hl=en-CA&gl=CA",
+  "now": "https://www.ctvnews.ca/arc/outboundfeeds/rss/",
+  "items": 100,
+  "own_domain_links": 101
+ },
+ {
+  "name": "Carbon Brief",
+  "was": "https://www.carbonbrief.org/feed/",
+  "now": "https://www.carbonbrief.org/feed",
+  "items": 12,
+  "own_domain_links": 14
+ },
+ {
   "name": "Center for Public Integrity",
   "was": "https://publicintegrity.org/feed/",
   "now": "https://publicintegrity.org/feed/",
@@ -35,11 +112,60 @@
   "own_domain_links": 11
  },
  {
+  "name": "Christianity Today",
+  "was": "https://www.christianitytoday.com/ct/all.rss",
+  "now": "https://www.christianitytoday.com/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "Claremont Review of Books",
+  "was": "https://news.google.com/rss/search?q=site:claremontreviewofbooks.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://claremontreviewofbooks.com/feed",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "Climate Home News",
+  "was": "https://www.climatechangenews.com/feed/",
+  "now": "https://www.climatechangenews.com/feed/",
+  "items": 40,
+  "own_domain_links": 42
+ },
+ {
+  "name": "Correctiv",
+  "was": "https://correctiv.org/en/feed/",
+  "now": "https://correctiv.org/feed/",
+  "items": 100,
+  "own_domain_links": 101
+ },
+ {
+  "name": "Council on Foreign Relations",
+  "was": "https://www.cfr.org/feeds/public/rss/news",
+  "now": "https://www.cfr.org/feed",
+  "items": 24,
+  "own_domain_links": 25
+ },
+ {
+  "name": "Crux",
+  "was": "https://cruxnow.com/feed/",
+  "now": "https://wp.cruxnow.com/feed/",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
   "name": "Daily Monitor",
   "was": "https://www.monitor.co.ug/uganda/rss",
   "now": "https://www.monitor.co.ug/rss.xml",
   "items": 40,
   "own_domain_links": 41
+ },
+ {
+  "name": "Daily Times (Pakistan)",
+  "was": "https://news.google.com/rss/search?q=site:dailytimes.com.pk+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://dailytimes.com.pk/feed/",
+  "items": 10,
+  "own_domain_links": 12
  },
  {
   "name": "Deccan Herald",
@@ -49,6 +175,13 @@
   "own_domain_links": 63
  },
  {
+  "name": "Dhaka Tribune",
+  "was": "https://news.google.com/rss/search?q=site:dhakatribune.com+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
+  "now": "https://www.dhakatribune.com/feed/",
+  "items": 100,
+  "own_domain_links": 102
+ },
+ {
   "name": "Dissent Magazine",
   "was": "https://www.dissentmagazine.org/feed",
   "now": "https://dissentmagazine.org/feed/",
@@ -56,11 +189,32 @@
   "own_domain_links": 52
  },
  {
+  "name": "Earthjustice",
+  "was": "https://earthjustice.org/feed",
+  "now": "https://earthjustice.org/feed",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
   "name": "Eurasianet",
   "was": "https://eurasianet.org/feed",
   "now": "https://eurasianet.org/rss",
   "items": 10,
   "own_domain_links": 11
+ },
+ {
+  "name": "Federal Times",
+  "was": "https://news.google.com/rss/search?q=site:federaltimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.federaltimes.com/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "Follow The Money",
+  "was": "https://followthemoneyng.org/feed/",
+  "now": "https://followthemoneyng.org/feed/",
+  "items": 10,
+  "own_domain_links": 12
  },
  {
   "name": "Foreign Affairs",
@@ -77,6 +231,27 @@
   "own_domain_links": 23
  },
  {
+  "name": "High Country News",
+  "was": "https://www.hcn.org/feed",
+  "now": "https://www.hcn.org/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "Honolulu Star-Advertiser",
+  "was": "https://news.google.com/rss/search?q=site:staradvertiser.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.staradvertiser.com/feed/",
+  "items": 40,
+  "own_domain_links": 41
+ },
+ {
+  "name": "IEEE Spectrum",
+  "was": "https://spectrum.ieee.org/feeds/feed.rss",
+  "now": "https://spectrum.ieee.org/feeds/feed.rss",
+  "items": 30,
+  "own_domain_links": 29
+ },
+ {
   "name": "IOL (South Africa)",
   "was": "https://news.google.com/rss/search?q=site:iol.co.za+when:24h&ceid=US:en&hl=en-US&gl=US",
   "now": "https://iol.co.za/rss/",
@@ -84,11 +259,39 @@
   "own_domain_links": 32
  },
  {
+  "name": "ISEAS Yusof Ishak Institute",
+  "was": "https://www.iseas.edu.sg/medias/commentaries/feed/",
+  "now": "https://www.iseas.edu.sg/?feed=rss2",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "Inside Higher Ed",
+  "was": "https://www.insidehighered.com/rss/feed",
+  "now": "https://www.insidehighered.com/rss.xml",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "Iran International",
+  "was": "https://news.google.com/rss/search?q=site:iranintl.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.iranintl.com/feed",
+  "items": 50,
+  "own_domain_links": 52
+ },
+ {
   "name": "Iraqi News",
   "was": "https://news.google.com/rss/search?q=site:iraqinews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
   "now": "https://www.iraqinews.com/feed/",
   "items": 10,
   "own_domain_links": 12
+ },
+ {
+  "name": "Jamaica Observer",
+  "was": "https://news.google.com/rss/search?q=site:jamaicaobserver.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.jamaicaobserver.com/feed/",
+  "items": 37,
+  "own_domain_links": 38
  },
  {
   "name": "Just Security",
@@ -105,6 +308,27 @@
   "own_domain_links": 21
  },
  {
+  "name": "Kashmir Observer",
+  "was": "https://news.google.com/rss/search?q=site:kashmirobserver.net+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://kashmirobserver.net/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "Khaleej Times",
+  "was": "https://news.google.com/rss/search?q=site:khaleejtimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.khaleejtimes.com/api/v1/collections/top-section.rss",
+  "items": 20,
+  "own_domain_links": 21
+ },
+ {
+  "name": "Korea Herald",
+  "was": "https://news.google.com/rss/search?q=site:koreaherald.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.koreaherald.com/rss/newsAll",
+  "items": 50,
+  "own_domain_links": 51
+ },
+ {
   "name": "LRT English",
   "was": "https://www.lrt.lt/en/news-in-english/rss",
   "now": "https://www.lrt.lt/en/news-in-english?rss",
@@ -112,11 +336,53 @@
   "own_domain_links": 102
  },
  {
-  "name": "MSNBC",
-  "was": "https://news.google.com/rss/search?q=site:msnbc.com+when:24h&ceid=US:en&hl=en-US&gl=US",
-  "now": "https://www.ms.now/feed",
+  "name": "La Jornada",
+  "was": "https://news.google.com/rss/search?q=site:jornada.com.mx+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.jornada.com.mx/feeds/all.atom.xml",
+  "items": 258,
+  "own_domain_links": 259
+ },
+ {
+  "name": "Labor Notes",
+  "was": "https://labornotes.org/rss.xml",
+  "now": "https://labornotes.org/feed",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "Latino Rebels",
+  "was": "https://www.latinorebels.com/feed/",
+  "now": "https://www.latinorebels.com/feed/",
   "items": 10,
   "own_domain_links": 12
+ },
+ {
+  "name": "Law & Liberty",
+  "was": "https://lawliberty.org/feed/",
+  "now": "https://lawliberty.org/feed/",
+  "items": 20,
+  "own_domain_links": 22
+ },
+ {
+  "name": "Lighthouse Reports",
+  "was": "https://www.lighthousereports.com/feed/",
+  "now": "https://www.lighthousereports.com/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "Logically",
+  "was": "https://news.google.com/rss/search?q=site:logically.ai+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://logically.ai/feed.xml",
+  "items": 14,
+  "own_domain_links": 16
+ },
+ {
+  "name": "Lowy Institute",
+  "was": "https://www.lowyinstitute.org/the-interpreter/rss",
+  "now": "https://www.lowyinstitute.org/the-interpreter/rss.xml",
+  "items": 50,
+  "own_domain_links": 52
  },
  {
   "name": "Mail & Guardian",
@@ -133,6 +399,48 @@
   "own_domain_links": 51
  },
  {
+  "name": "Military Times",
+  "was": "https://news.google.com/rss/search?q=site:militarytimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.militarytimes.com/arc/outboundfeeds/rss/",
+  "items": 25,
+  "own_domain_links": 26
+ },
+ {
+  "name": "Military.com",
+  "was": "https://news.google.com/rss/search?q=site:military.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.military.com/feed/",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "Missoulian",
+  "was": "https://news.google.com/rss/search?q=site:missoulian.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://missoulian.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "Moneycontrol",
+  "was": "https://news.google.com/rss/search?q=site:moneycontrol.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.moneycontrol.com/rss/latestnews.xml",
+  "items": 15,
+  "own_domain_links": 17
+ },
+ {
+  "name": "Morning Star",
+  "was": "https://morningstaronline.co.uk/feed",
+  "now": "https://morningstaronline.co.uk/rss.xml",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "MyNation",
+  "was": "https://news.google.com/rss/search?q=site:mynation.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.mynation.com/rss/news",
+  "items": 20,
+  "own_domain_links": 22
+ },
+ {
   "name": "NTD News",
   "was": "https://news.google.com/rss/search?q=site:ntd.com+when:24h&ceid=US:en&hl=en-US&gl=US",
   "now": "https://api.ntd.com/feed",
@@ -147,11 +455,60 @@
   "own_domain_links": 12
  },
  {
+  "name": "Nigerian Tribune",
+  "was": "https://news.google.com/rss/search?q=site:tribuneonlineng.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://tribuneonlineng.com/feed/",
+  "items": 20,
+  "own_domain_links": 22
+ },
+ {
+  "name": "Northeast Now",
+  "was": "https://news.google.com/rss/search?q=site:nenow.in+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://nenow.in/feed",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "Omaha World-Herald",
+  "was": "https://news.google.com/rss/search?q=site:omaha.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://omaha.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "People's Democracy",
+  "was": "https://peoplesdemocracy.in/feed",
+  "now": "https://peoplesdemocracy.in/rss.xml",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
   "name": "Phnom Penh Post",
   "was": "https://www.phnompenhpost.com/rss.xml",
   "now": "https://phnompenhpost.com/feed/",
   "items": 10,
   "own_domain_links": 12
+ },
+ {
+  "name": "PinkNews",
+  "was": "https://news.google.com/rss/search?q=site:thepinknews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.thepinknews.com/feed/",
+  "items": 30,
+  "own_domain_links": 32
+ },
+ {
+  "name": "Pittsburgh Post-Gazette",
+  "was": "https://www.post-gazette.com/rss/headlines-news",
+  "now": "https://www.post-gazette.com/rss",
+  "items": 20,
+  "own_domain_links": 21
+ },
+ {
+  "name": "Platformer",
+  "was": "https://news.google.com/rss/search?q=site:platformer.news+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.platformer.news/rss/",
+  "items": 15,
+  "own_domain_links": 17
  },
  {
   "name": "PolitiFact",
@@ -161,11 +518,53 @@
   "own_domain_links": 12
  },
  {
+  "name": "PoliticsHome",
+  "was": "https://www.politicshome.com/rss",
+  "now": "https://www.politicshome.com/news/rss",
+  "items": 30,
+  "own_domain_links": 31
+ },
+ {
   "name": "Quillette",
   "was": "https://quillette.com/feed/",
   "now": "https://quillette.com/blog/rss/",
   "items": 15,
   "own_domain_links": 17
+ },
+ {
+  "name": "RUSI Commentary",
+  "was": "https://www.rusi.org/rss.xml",
+  "now": "https://www.rusi.org/rss/latest-commentary.xml",
+  "items": 20,
+  "own_domain_links": 21
+ },
+ {
+  "name": "Radio Free Europe / Radio Liberty",
+  "was": "https://news.google.com/rss/search?q=site:rferl.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.rferl.org/api/",
+  "items": 20,
+  "own_domain_links": 22
+ },
+ {
+  "name": "RealClearDefense",
+  "was": "https://news.google.com/rss/search?q=site:realcleardefense.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.realcleardefense.com/index.xml",
+  "items": 126,
+  "own_domain_links": 203
+ },
+ {
+  "name": "RealClearEnergy",
+  "was": "https://news.google.com/rss/search?q=site:realclearenergy.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.realclearenergy.org/index.xml",
+  "items": 77,
+  "own_domain_links": 125
+ },
+ {
+  "name": "Republica (Nepal)",
+  "was": "https://news.google.com/rss/search?q=site:myrepublica.nagariknetwork.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://myrepublica.nagariknetwork.com/feeds",
+  "items": 30,
+  "own_domain_links": 31
  },
  {
   "name": "Reveal (Center for Investigative Reporting)",
@@ -175,11 +574,130 @@
   "own_domain_links": 12
  },
  {
+  "name": "SABC News",
+  "was": "https://news.google.com/rss/search?q=site:sabcnews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.sabcnews.com/sabcnews/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "Sahara Reporters",
+  "was": "https://saharareporters.com/feed",
+  "now": "https://saharareporters.com/rss.xml",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "SchengenVisaInfo",
+  "was": "https://www.schengenvisainfo.com/news/feed/",
+  "now": "https://schengenvisainfo.com/news/feed/",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "Scientific American",
+  "was": "https://rss.sciam.com/ScientificAmerican-Global",
+  "now": "https://www.scientificamerican.com/platform/syndication/rss/",
+  "items": 50,
+  "own_domain_links": 51
+ },
+ {
+  "name": "South Asia Monitor",
+  "was": "https://news.google.com/rss/search?q=site:southasiamonitor.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.southasiamonitor.org/rss.xml",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "Spiked",
+  "was": "https://news.google.com/rss/search?q=site:spiked-online.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.spiked-online.com/feed/",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "SpyTalk",
+  "was": "https://news.google.com/rss/search?q=site:spytalk.co+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.spytalk.co/feed",
+  "items": 20,
+  "own_domain_links": 22
+ },
+ {
+  "name": "Syria Direct",
+  "was": "https://news.google.com/rss/search?q=site:syriadirect.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://syriadirect.org/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "The American Spectator",
+  "was": "https://news.google.com/rss/search?q=site:spectator.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://spectator.org/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "The Blaze",
+  "was": "https://news.google.com/rss/search?q=site:theblaze.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.theblaze.com/feeds/feed.rss",
+  "items": 30,
+  "own_domain_links": 32
+ },
+ {
+  "name": "The Buffalo News",
+  "was": "https://news.google.com/rss/search?q=site:buffalonews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://buffalonews.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "The Center Square",
+  "was": "https://news.google.com/rss/search?q=site:thecentersquare.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.thecentersquare.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
   "name": "The Citizen Tanzania",
   "was": "https://www.thecitizen.co.tz/feed",
   "now": "https://www.thecitizen.co.tz/rss.xml",
   "items": 40,
   "own_domain_links": 41
+ },
+ {
+  "name": "The Costa Rica Star",
+  "was": "https://news.co.cr/feed/",
+  "now": "https://news.co.cr/feed/",
+  "items": 40,
+  "own_domain_links": 41
+ },
+ {
+  "name": "The Daily Caller News Foundation",
+  "was": "https://news.google.com/rss/search?q=site:dailycallernewsfoundation.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://dailycallernewsfoundation.org/feed/",
+  "items": 15,
+  "own_domain_links": 17
+ },
+ {
+  "name": "The Daily Upside",
+  "was": "https://news.google.com/rss/search?q=site:thedailyupside.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.thedailyupside.com/feed/",
+  "items": 50,
+  "own_domain_links": 52
+ },
+ {
+  "name": "The Federal",
+  "was": "https://news.google.com/rss/search?q=site:thefederal.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://thefederal.com/google_feeds.xml",
+  "items": 60,
+  "own_domain_links": 62
+ },
+ {
+  "name": "The Hechinger Report",
+  "was": "https://hechingerreport.org/feed/",
+  "now": "https://hechingerreport.org/feed/",
+  "items": 10,
+  "own_domain_links": 12
  },
  {
   "name": "The Indian Express",
@@ -189,11 +707,39 @@
   "own_domain_links": 202
  },
  {
+  "name": "The Information",
+  "was": "https://news.google.com/rss/search?q=site:theinformation.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.theinformation.com/feed",
+  "items": 20,
+  "own_domain_links": 22
+ },
+ {
   "name": "The Irish Times",
   "was": "https://www.irishtimes.com/feed/",
   "now": "https://www.irishtimes.com/arc/outboundfeeds/rss/",
   "items": 100,
   "own_domain_links": 101
+ },
+ {
+  "name": "The Kathmandu Post",
+  "was": "https://news.google.com/rss/search?q=site:kathmandupost.com+when:24h&ceid=NP:en&hl=en&gl=NP",
+  "now": "https://kathmandupost.com/rss",
+  "items": 40,
+  "own_domain_links": 41
+ },
+ {
+  "name": "The Kyiv Independent",
+  "was": "https://news.google.com/rss/search?q=site:kyivindependent.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://kyivindependent.com/news-archive/rss/",
+  "items": 15,
+  "own_domain_links": 17
+ },
+ {
+  "name": "The Maldives Times",
+  "was": "https://news.google.com/rss/search?q=site:maldivestimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://maldivestimes.com/feed/",
+  "items": 10,
+  "own_domain_links": 12
  },
  {
   "name": "The Markup",
@@ -217,11 +763,32 @@
   "own_domain_links": 12
  },
  {
+  "name": "The National Pulse",
+  "was": "https://news.google.com/rss/search?q=site:thenationalpulse.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://thenationalpulse.com/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
   "name": "The New Humanitarian",
   "was": "https://www.thenewhumanitarian.org/rss.xml",
   "now": "https://www.thenewhumanitarian.org/rss.xml",
   "items": 10,
   "own_domain_links": 11
+ },
+ {
+  "name": "The Plain Dealer / Cleveland.com",
+  "was": "https://news.google.com/rss/search?q=site:cleveland.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.cleveland.com/arc/outboundfeeds/rss/",
+  "items": 50,
+  "own_domain_links": 51
+ },
+ {
+  "name": "The Portugal News",
+  "was": "https://www.theportugalnews.com/feed/",
+  "now": "https://www.theportugalnews.com/rss",
+  "items": 50,
+  "own_domain_links": 51
  },
  {
   "name": "The Progressive",
@@ -231,11 +798,95 @@
   "own_domain_links": 31
  },
  {
+  "name": "The Real Deal",
+  "was": "https://therealdeal.com/feed/",
+  "now": "https://therealdeal.com/new-york/feed/",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "The Root",
+  "was": "https://www.theroot.com/rss",
+  "now": "https://www.theroot.com/feed",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "The Salt Lake Tribune",
+  "was": "https://www.sltrib.com/feed/",
+  "now": "https://www.sltrib.com/arc/outboundfeeds/rss/?outputType=xml",
+  "items": 34,
+  "own_domain_links": 35
+ },
+ {
+  "name": "The Seattle Times",
+  "was": "https://www.seattletimes.com/feed/",
+  "now": "https://www.seattletimes.com/feed/",
+  "items": 34,
+  "own_domain_links": 35
+ },
+ {
+  "name": "The Sunday Guardian",
+  "was": "https://news.google.com/rss/search?q=site:sundayguardianlive.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://sundayguardianlive.com/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "The Trace",
+  "was": "https://www.thetrace.org/feed/",
+  "now": "https://www.thetrace.org/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
+  "name": "ThisDay",
+  "was": "https://news.google.com/rss/search?q=site:thisdaylive.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.thisdaylive.com/feed/",
+  "items": 25,
+  "own_domain_links": 26
+ },
+ {
+  "name": "Traverse City Record-Eagle",
+  "was": "https://news.google.com/rss/search?q=site:record-eagle.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.record-eagle.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "Tulsa World",
+  "was": "https://news.google.com/rss/search?q=site:tulsaworld.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://tulsaworld.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "items": 10,
+  "own_domain_links": 11
+ },
+ {
+  "name": "Undark",
+  "was": "https://undark.org/feed/",
+  "now": "https://undark.org/feed/",
+  "items": 10,
+  "own_domain_links": 12
+ },
+ {
   "name": "Voice of America",
   "was": "https://news.google.com/rss/search?q=site:voanews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
   "now": "https://www.voanews.com/api/",
   "items": 20,
   "own_domain_links": 22
+ },
+ {
+  "name": "Yahoo Finance",
+  "was": "https://news.google.com/rss/search?q=site:finance.yahoo.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://finance.yahoo.com/rss/",
+  "items": 50,
+  "own_domain_links": 51
+ },
+ {
+  "name": "Zambia Daily Mail",
+  "was": "https://news.google.com/rss/search?q=site:daily-mail.co.zm+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.daily-mail.co.zm/feed/",
+  "items": 10,
+  "own_domain_links": 12
  },
  {
   "name": "bne IntelliNews",

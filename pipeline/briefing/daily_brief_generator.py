@@ -251,8 +251,25 @@ def _brief_calls_remaining() -> int:
 # ---------------------------------------------------------------------------
 # System instruction — WHO you are (~300 words). HOW is in the user prompt.
 # ---------------------------------------------------------------------------
-_SYSTEM_INSTRUCTION = """\
-You are the editorial voice of Void News, a news platform that scores 1,016 \
+# The roster's size, read from the roster. It used to be written into the
+# system instruction as "1,016 sources", which is a number the model is TOLD is
+# true and may repeat in a brief a reader sees, so it is the one place a stale
+# count becomes a published factual error rather than stale marketing copy.
+def _roster_size() -> str:
+    """The curated roster's size, grouped, or a durable phrase if unreadable."""
+    try:
+        import json as _json
+        path = Path(__file__).resolve().parents[2] / "data" / "sources.json"
+        return f"{len(_json.loads(path.read_text(encoding='utf-8'))):,}"
+    except Exception:
+        # Never let a prompt carry a guess. "over a thousand" is true of every
+        # roster this product has had and goes stale at no particular moment.
+        return "over a thousand"
+
+
+_SYSTEM_INSTRUCTION = f"""\
+You are the editorial voice of Void News, a news platform that scores \
+{_roster_size()} \
 sources across six bias axes. You have the full picture. Your job: what \
 actually changed today, and the patterns connecting it.
 

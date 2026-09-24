@@ -3,6 +3,7 @@ import HomeContent from "./components/HomeContent";
 import { fetchInitialFeed } from "./lib/serverFeed";
 import { pageMetadata, SITE_URL } from "./lib/siteMeta";
 import { FEED_DISPLAYED } from "./lib/feedConfig";
+import { ROSTER_SOURCES_TEXT } from "./lib/rosterConfig";
 
 /* ---------------------------------------------------------------------------
    Front page — PRERENDERED at build time (static export).
@@ -21,7 +22,7 @@ import { FEED_DISPLAYED } from "./lib/feedConfig";
 export const metadata: Metadata = pageMetadata({
   title: "Void News. See through the void.",
   description:
-    "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No feed tuned to you. Just the news, dissected.",
+    `An experimental newsroom: free per-article bias analysis across ${ROSTER_SOURCES_TEXT} sources. Six axes. No paywall. No feed tuned to you. Just the news, dissected.`,
   path: "/",
 });
 

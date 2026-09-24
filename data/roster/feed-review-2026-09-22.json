@@ -1,44 +1,120 @@
-[
- {
-  "name": "BOOM",
-  "was": "https://news.google.com/rss/search?q=site:boomlive.in+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
-  "now": "https://www.boomlive.in/google_feeds.xml",
-  "items": 6,
-  "own_domain_links": 8
- },
- {
-  "name": "MercoPress",
-  "was": "https://en.mercopress.com/rss.xml",
-  "now": "https://en.mercopress.com/rss/",
-  "items": 10,
-  "own_domain_links": 2
- },
- {
-  "name": "Quartz",
-  "was": "https://news.google.com/rss/search?q=site:qz.com+when:24h&ceid=US:en&hl=en-US&gl=US",
-  "now": "https://qz.com/rss",
-  "items": 5,
-  "own_domain_links": 6
- },
- {
-  "name": "TRT World",
-  "was": "https://www.trtworld.com/rss",
-  "now": "https://www.trtworld.com/feed/rss.xml",
-  "items": 100,
-  "own_domain_links": 1
- },
- {
-  "name": "The Daily Star",
-  "was": "https://www.thedailystar.net/rss.xml",
-  "now": "https://www.thedailystar.net/rss.xml",
-  "items": 8,
-  "own_domain_links": 9
- },
- {
-  "name": "The Quint",
-  "was": "https://www.thequint.com/quintlab/rss-feeds/the-quint-rss-feed.xml",
-  "now": "https://www.thequint.com/stories.rss",
-  "items": 2,
-  "own_domain_links": 3
- }
-]
+{
+ "native_language_feed": [
+  {
+   "name": "Aftenposten (English)",
+   "was": "https://news.google.com/rss/search?q=site:aftenposten.no+when:24h&ceid=US:en&hl=en-US&gl=US",
+   "now": "https://www.aftenposten.no/rss",
+   "items": 25,
+   "own_domain_links": 26
+  },
+  {
+   "name": "Agencia Brasil (English)",
+   "was": "https://news.google.com/rss/search?q=site:agenciabrasil.ebc.com.br+when:24h&ceid=US:en&hl=en-US&gl=US",
+   "now": "https://agenciabrasil.ebc.com.br/rss.xml",
+   "items": 10,
+   "own_domain_links": 11
+  },
+  {
+   "name": "Der Standard (English)",
+   "was": "https://news.google.com/rss/search?q=site:derstandard.at+when:24h&ceid=US:en&hl=en-US&gl=US",
+   "now": "https://www.derstandard.at/rss",
+   "items": 160,
+   "own_domain_links": 161
+  },
+  {
+   "name": "El Universal (English)",
+   "was": "https://news.google.com/rss/search?q=site:eluniversal.com.mx+when:24h&ceid=US:en&hl=en-US&gl=US",
+   "now": "https://www.eluniversal.com.mx/arc/outboundfeeds/rss/",
+   "items": 100,
+   "own_domain_links": 101
+  },
+  {
+   "name": "RPP Noticias (English)",
+   "was": "https://news.google.com/rss/search?q=site:rpp.pe+when:24h&ceid=US:en&hl=en-US&gl=US",
+   "now": "https://rpp.pe/rss",
+   "items": 60,
+   "own_domain_links": 61
+  },
+  {
+   "name": "SVT Nyheter (English)",
+   "was": "https://news.google.com/rss/search?q=site:svt.se+when:24h&ceid=US:en&hl=en-US&gl=US",
+   "now": "https://www.svt.se/rss.xml",
+   "items": 100,
+   "own_domain_links": 101
+  }
+ ],
+ "failed_domain_check": [
+  {
+   "name": "Botswana Guardian",
+   "was": "https://news.google.com/rss/search?q=site:botswanaguardian.co.bw+when:24h&ceid=US:en&hl=en-US&gl=US",
+   "now": "https://bettingbotswana.com/feed/",
+   "items": 10,
+   "own_domain_links": 11,
+   "why": 200,
+   "sample": "https://bettingbotswana.com/atlante-fc-vs-monterrey-26-09-2026/"
+  },
+  {
+   "name": "MSNBC",
+   "was": "https://news.google.com/rss/search?q=site:msnbc.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+   "now": "https://www.ms.now/feed",
+   "items": 10,
+   "own_domain_links": 12,
+   "why": 200,
+   "sample": "https://www.ms.now/news/judge-dismisses-defamation-suit-cassidy-hutchinsons-lawyer-brought-against-ms-now-analyst"
+  },
+  {
+   "name": "Novinite",
+   "was": "https://news.google.com/rss/search?q=site:novinite.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+   "now": "https://www.novinite.com/services/news_rdf.php",
+   "items": 24,
+   "own_domain_links": 25,
+   "why": 200,
+   "sample": "https://www.novinite.com/view_news.php?id=240715"
+  },
+  {
+   "name": "Rapid City Journal",
+   "was": "https://news.google.com/rss/search?q=site:rapidcityjournal.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+   "now": "https://rapidcityjournal.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+   "items": 10,
+   "own_domain_links": 11,
+   "why": 429,
+   "sample": null
+  },
+  {
+   "name": "St. Louis Post-Dispatch",
+   "was": "https://news.google.com/rss/search?q=site:stltoday.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+   "now": "https://www.stltoday.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+   "items": 10,
+   "own_domain_links": 11,
+   "why": 429,
+   "sample": null
+  },
+  {
+   "name": "The Santiago Times",
+   "was": "https://news.google.com/rss/search?q=site:santiagotimes.cl+when:24h&ceid=US:en&hl=en-US&gl=US",
+   "now": "https://santiagotimes.com/feed/",
+   "items": 10,
+   "own_domain_links": 11,
+   "why": 200,
+   "sample": "https://santiagotimes.com/2023/02/10/evacuations-ordered-in-chile-as-wildfires-run-amok/"
+  },
+  {
+   "name": "The Texan",
+   "was": "https://thetexan.news/feed/",
+   "now": "https://thetexan.news/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+   "items": 10,
+   "own_domain_links": 11,
+   "why": 429,
+   "sample": null
+  },
+  {
+   "name": "The War Zone",
+   "was": "https://www.thedrive.com/feeds/rss/war-zone",
+   "now": "https://www.twz.com/feed",
+   "items": 40,
+   "own_domain_links": 41,
+   "why": 200,
+   "sample": "https://www.twz.com/sea/chinese-next-generation-submarine-developments-spotted-in-new-satellite-imagery"
+  }
+ ]
+}

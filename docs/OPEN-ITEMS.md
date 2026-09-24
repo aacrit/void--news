@@ -93,7 +93,8 @@ claims about its own confidence. It needs a decision, not a tweak.
 **The largest measured defect in the product.** Full write-up in
 `docs/proposals/OUTLET-BASELINE-PROGRAMME-2026-09-22.md` section 0.
 
-540 of 1,016 sources (53%) are fed by Google News search queries. Across 78,328
+540 of the 1,016 sources on the roster as measured on 2026-09-22 (53%) are fed
+by Google News search queries. Across 78,328
 archived articles:
 
 | feed type | articles | median word count | share >= 150 words |
@@ -149,33 +150,153 @@ language. Run Gentzkow-Shapiro chi-squared per market against it. Outlet labels
 may derive candidate features; they may never evaluate, or the result is an
 outlet classifier that scores well and measures nothing.
 
-### `source_topic_lean` is a closed loop in code (latent, not yet biting)
+### `source_topic_lean` was a closed loop (CUT 2026-09-22)
 
-`political_lean.py:955` blends the EMA into the prior at 0.7/0.3;
+FIXED. `political_lean.py` blended the EMA into the prior at 0.7/0.3;
 `topic_outlet_tracker.py:88` builds that EMA from `political_lean`, the
-engine's published OUTPUT, defaulting a missing key to 50. Output becomes input.
+engine's published OUTPUT, defaulting a missing key to 50. Output became input,
+and no outside evidence entered anywhere in the cycle, so it could not correct
+an error, only compound one.
 
-Measured 2026-09-22, it is **not** currently the cause of the centre pull: mean
+Measured before cutting, it was **not** the cause of the centre pull: mean
 |published - label| for rated non-centre outlets is 5.45 across all rows and
 **0.74** once default-tuple rows are excluded. The apparent compression is
-6,256 unmeasured rows. Cut the loop before wiring in any learned offset.
+6,256 unmeasured rows. It was cut anyway because the outlet-baseline programme
+wires a LEARNED per-outlet offset into the same prior, and a self-fed term
+beside a learned one corrupts the thing being learned.
 
-### Publisher prose is committed to git
+`topic_lean_data` is still accepted and discarded, so the four call sites need
+no edit and Axis 6 keeps writing the table for its own reporting.
+`tests/test_lean_prior_is_not_self_fed.py` asserts the parameter is inert at
+four text lengths across four outlet ratings, that the reported
+`source_baseline` is the outlet's own, and (the part that stops it coming back)
+that the scorer names no field of its own output table and the tracker does not
+import the scorer. Restoring the blend fails 18 of its 19 checks.
 
-`pipeline/editorial/grounding.py:31` sets `PER_ARTICLE_CHARS = 24_000`.
-`frontend/build-data/grounding/` holds 35 files, 975 records, **519,041
-characters of source article text**, longest record 10,003 chars, committed
-2026-09-21 and therefore in history permanently. The daily pipeline truncates
-`full_text` to 300 chars at `main.py:4180` for exactly this reason, so the
-throwaway state DB is protected and the public repo leaks.
+**Not measured:** how many rows `source_topic_lean` actually held. The table is
+in `migration/schema_pipeline.sql` and written every run, so the loop was wired
+at both ends in production; the row count needs the state database, which is
+gitignored and not present here.
+
+### The pipeline commits to main with no gate (FIXED 2026-09-23)
+
+`pipeline.yml` pushed `frontend/build-data`, `frontend/public/data` and the audio
+straight to main and ran **zero tests** first. Every control lives in
+`auto-merge-claude.yml`, which only runs when a `claude/*` branch merges, so the
+daily production path could commit anything to a public repository and nothing
+could catch it.
+
+It did, on 2026-09-22. Run `d2520a39` checked out main before the grounding fix
+had merged and wrote 35 format-1 records carrying **439,244 characters of
+publisher prose**, against `docs/IP-COMPLIANCE.md`'s top control. The check that
+forbids exactly that had been written the day before and could not fire.
+Converted in place by `scripts/migrate_grounding_index.py`; the tree is clean
+again at 70 records, all format 2.
+
+`test_grounding.py` and `test_bias_defaults_gate.py` now run in `pipeline.yml`
+immediately before its `git add`. Kept to those two on purpose: this is the daily
+production path, and the right checks there are the ones that read what the run
+just wrote.
+
+**The general lesson, worth more than the fix:** a gate that cannot run on the
+path that writes is not a gate. Worth auditing the other workflows that commit.
+
+### Publisher prose in git history (the working tree is clean)
+
+FIXED IN THE TREE 2026-09-22, still in history.
+
+`frontend/build-data/grounding/` held 35 files, 975 records, **519,041
+characters of source article text**, longest record 10,003 chars, because
+`grounding.py` stored the prose E-13 and E-14 read and the repo commits
+`build-data/`. The daily pipeline truncates `full_text` to 300 chars at
+`main.py` step 10 for exactly this reason, so the throwaway state DB was
+protected and the permanent public repo leaked.
 `docs/IP-COMPLIANCE.md` names this as its single highest-priority control.
 
-### robots.txt fails open, and wire attribution matches 5 of 40
+A record is now a verification index rather than prose: the set of numbers, and
+a Bloom filter of 4-word shingles that answers membership and cannot be
+inverted. All 35 committed records were converted in place by
+`scripts/migrate_grounding_index.py` with no loss of audit power (501/501
+numbers, 5,826/5,826 within-article 8-word spans still verify; 700/700 shuffled
+spans still rejected). `tests/test_grounding.py` now fails on any committed
+record that is format 1 or carries a string over 12 words.
 
-`web_scraper.py:230-252` returns `True` when robots.txt is unreachable AND on
-any non-200, and checks `rp.can_fetch("*", url)` rather than our own UA token,
-so a site disallowing only named bots reads as open. A documented tradeoff at
-daily volume; a finding at harvest volume.
+**What is left is a decision, not a task.** The prose committed on 2026-09-21
+is in git history permanently unless the history is rewritten. A rewrite of a
+pushed public branch changes every downstream clone's hashes and is the CEO's
+call, not a maintenance action. Until it is taken, the tree is compliant and
+the history is not.
+
+### 22 major outlets still absent, and why each class of them is
+
+Added 48 on 2026-09-22 (roster 1,061; 216 of 238 targets covered, was 147). Full
+record in `docs/CHANGELOG.md` rev 80 and
+`data/roster/majors-added-2026-09-22.json`. The 22 that remain are not a
+backlog of the same work; they fall into classes that need different answers:
+
+- **A bot wall.** Reuters returns 401 and AP a Cloudflare 403 to any
+  non-browser client, and several majors now serve RSS only behind one. These
+  cannot be migrated by a fetcher and need a decision: accept that they are
+  scored on headlines and say so on the page, or drop them.
+- **RSS discontinued.** Some majors no longer publish a public feed at all
+  (10 of the 70 returned 404 on every candidate path, 7 returned 403).
+- **Paywalled at the feed.** A feed whose items carry a teaser and whose
+  article the scraper cannot read is a Google-News-grade 11-word item wearing
+  a direct feed's URL.
+
+Still absent: Ahram Online, Asahi Shimbun, Diario de Noticias, Die Zeit, Duvar English, El Mostrador, El Tiempo, Expresso, GhanaWeb, Il Foglio, L'Express, Le Figaro, Le Soir, Les Echos, Mediapart, Publico, Publico (Portugal), Sueddeutsche Zeitung, Svenska Dagbladet, Tages-Anzeiger, The Daily Star (Lebanon), taz.
+
+**The added rows carry a provisional baseline, not a measurement.** The
+intended side is mapped inward (L to `center-left`, C to `center`, R to
+`center-right`) and every row's notes say so. The outlet-baseline programme
+measures them; until it does, the roster understates rather than overstates,
+and `unrated` was rejected because it would have dropped all 48 out of the lean
+aggregate and off the spectrum.
+
+**Their market verdicts read `pending`, not covered.** The healthy-sides column
+in `scripts/roster/audit_majors.py` reads a tiers snapshot built from the
+41-day archive, which a row verified today cannot be in. Such a row is tier
+`N`, and a side whose only evidence is an N row says "added today, no archive
+yet". Rebuild `data/roster/tiers-<date>.json` after these outlets have
+published for a few weeks to resolve them.
+
+**Two feeds are held on a 429 from this runner's IP**, not on their merits: St.
+Louis Post-Dispatch and Rapid City Journal, both Lee Enterprises. St. Louis
+measured 50 items / 50 on-domain / 50 article-shaped once in the same session,
+which is one observation and not two, so it is recorded rather than applied
+(`data/roster/rejection-corrections-2026-09-22.json`). Re-run from an
+unthrottled IP.
+
+### robots.txt: statuses FIXED, the UA token is a product decision
+
+The fail-open half is fixed (2026-09-22). `_check_robots_txt` returned `True`
+for every non-200 and every network error, so a 403 on robots.txt, a 503 and a
+429 all read as consent, on the one file whose job is to say no. The error ran
+one way: it never refused a site that had allowed us, it only scraped sites
+whose answer we had failed to obtain. Now split per RFC 9309 section 2.3.1:
+404/410 and other 2xx allow (no restrictions exist), 401/403 deny
+("unauthorized", access completely disallowed), 429/5xx and network errors deny
+for the run. `robots_verdict_for_status` is a pure function so
+`tests/test_robots_compliance.py` can assert it with no network, which is the
+point: the old behaviour was untestable except against real sites, so it was
+never tested.
+
+**The cost was measured, not assumed.** Sampled 70 random roster domains on
+2026-09-22: 60 served robots.txt (200), 5 returned 403, 1 returned 429, and 4
+failed at the transport (2 read timeouts, 1 proxy error, 1 TLS error, at least
+two of them this container's network rather than the site's). So the split
+denies 14.3% of domains, of which 7% are an outright refusal we should always
+have honoured. Because most of the rest is noise rather than a decision, a
+transient failure now gets ONE retry before it denies; a 401, 403 or 404 is a
+real answer and is not retried.
+
+**Still open, and it is a product decision, not a defect.** We send a browser
+User-Agent, so we present no product token and the applicable group is `*`.
+That is the correct robots reading for an unnamed agent, and it is also why a
+site disallowing only named crawlers reads as open to us. Declaring our own
+token would fix the reading and would also change what a great many sites serve
+us, which is a CEO call. Wire attribution, the other half of this entry, was
+fixed the same day: see `tests/test_wire_attribution.py`.
 
 `CANONICAL_WIRE_SLUGS` matches **5 of the 40** outlets carrying
 `"type": "wire"` (ap-news, reuters, upi, afp, ians), missing
@@ -187,13 +308,74 @@ Cheap fix: key on `type == "wire"` from the roster.
 
 
 
+### The lexicon cannot be derived from the surviving corpus (2026-09-22)
+
+Tried and measured, full write-up in `docs/audits/LEAN-SIGNAL-2026-09-22.md`.
+
+`lexicon_derive.py` reached **rho +0.226 on 119 held-out outlets, scoring 100% of
+them**, against the hand-written lexicon's +0.201 on 54%. It also rediscovered **zero
+of the 318** hand-written political phrases, and its top entries were `getty images`,
+`continue`, `follow`, `photo`, `this article` and `sep`.
+
+It was fingerprinting CMS templates. Outlets on a side often share a publishing
+platform, and `full_text` is truncated to 300 chars after analysis, so the surviving
+corpus is titles, RSS summaries and leads: largely boilerplate. **Nothing was
+promoted.**
+
+**The unblock is `pipeline/analyzers/phrase_counts.py`**, which accumulates per-outlet
+phrase counts from full article bodies before the truncation. Counts, never text, on
+the grounding index's argument. **It is written and gated but NOT yet wired into
+`pipeline/main.py`**: the call belongs in the analysis step, before step 10 truncates
+`full_text`, and that is the next action here. Until it runs for a few weeks there is
+no corpus a real lexicon can come from.
+
+### Deriving the baselines: measured 2026-09-22, and the lever is not more data
+
+Full write-up in `docs/audits/LEAN-SIGNAL-2026-09-22.md`, reproducible with
+`scripts/roster/measure_lean_signal.py` against a state snapshot.
+
+**The signal is real.** Spearman rho between an outlet's mean TEXT-ONLY score
+(`rationale.lean.keyword_score`, which never sees the outlet, so this is not
+the cut loop reopened) and its label's baseline is **+0.479 across 129
+outlets**, +0.515 US, **+0.428 non-US**. This project's own literature review
+put the realistic ceiling at 0.5 to 0.7 over 50+ articles per outlet. We are
+there on 8.
+
+It also qualifies the entry above about the lexicon being flat outside US
+politics: it fires LESS often there and is still directionally right.
+
+**Two numbers say why it cannot be published as a baseline yet.** The lexicon
+fires on **26.4%** of the articles the scorer could fully read, so 73.6% of
+usable articles say nothing about their outlet; and the text scores span **29
+points against the ladder's 80**, a 3x compression.
+
+**A correction to this file's own earlier claim.** It reported "229 outlets,
+median 31, 116 at n >= 30, the core already has the sample size". That counted
+USABLE articles. The count that governs a per-outlet estimate is
+SIGNAL-BEARING, which is median **8**, with only **20** outlets at n >= 25 and
+8 at n >= 50. The "no harvest needed" conclusion survives; the reasoning under
+it did not.
+
+**So waiting is the wrong lever.** Doubling n moves rho by roughly nothing,
+because rho is already at its ceiling and the constraint is coverage. Firing on
+50% of articles instead of 26% would take the median outlet from 8 to ~16 and
+put ~80 outlets over n=25 instead of 20, at once, with no waiting. Per-market
+lexicon coverage is the long pole, and it is linguistic work.
+
+**Publishable now:** rho = +0.48 over 129 outlets belongs on
+`/sources#methodology`, said in the same sentence as the fact that it is
+measured against our own curated labels rather than an independent panel.
+**Blocked on that independence:** raising `_TEXT_DELTA_MAX`. On a signal
+spanning 29 points it would let noise move a published score.
+
 ### The outlet baselines have no resolution, and the learning table would make it worse
 
 Measured 2026-09-22, full write-up in
 `docs/audits/OUTLET-BASELINE-DATA-2026-09-22.md`.
 
 `political_lean_baseline` is a string label mapped to seven integers, so
-**636 of 1,016 outlets (63%) resolve to exactly 50.000** and AP, Reuters,
+**636 of the 1,016 outlets on the roster that day (63%) resolve to exactly
+50.000** and AP, Reuters,
 Bloomberg, DW and 346 others are numerically identical. The article layer does
 not rescue it: mean absolute `text_shift` is **1.93 points**. The published
 lean is the label, plus or minus two. That is the whole of the "everything
@@ -363,11 +545,34 @@ treatment `history/data.ts` got in rev 69 before the 301 comes off.
 
 ---
 
-## The roster's `state_affiliated` flag is not applied consistently (CEO call)
+## The roster's `state_affiliated` flag: SETTLED 2026-09-23 (CEO)
 
-Found 2026-09-21 while answering "why can't we score the unscored". **Not
-acted on**, because acting on it either way changes how ~25 major outlets are
-scored and that is an editorial decision about what Void asserts.
+Found 2026-09-21 while answering "why can't we score the unscored", and left
+unacted for two days because acting either way changes how ~25 major outlets are
+scored, which is an editorial decision about what Void asserts rather than a
+defect to fix by inference.
+
+**The answer: `state_affiliated` means state-ALIGNED editorial control, not
+state-funded.** The CEO's reading, and the one the roster's own majority already
+followed: the BBC is publicly funded like PBS, and that is a different thing from
+RT. So the seven democratic public broadcasters that carried the flag lost it
+(SVT, NRK, Tagesschau, RTP, Lusa, SABC, Agencia Brasil) and 41 outlets whose
+government alignment IS the dominant editorial signal keep it. Zero flagged
+outlets now sit in a democracy.
+
+**Magnitude, stated precisely because an earlier note of mine got it wrong:** all
+seven are labelled `center`, which `_is_unrated_source` treats as a FINDING and
+not the absence of one, so they were never on the 24-point unrated budget.
+Unflagging moves them from **8 points to 10**. It widens what their own words may
+say about them by two points; it changes no baseline, tier or placement.
+
+**The gate is deliberately not "no democracy may be flagged",** because a public
+broadcaster captured by its government is a real case and a blanket rule would
+force a wrong answer the day one appears. `check_public_broadcasters_are_one_class`
+names its twelve peers and fails if they are not flagged alike, so a future
+divergence has to be argued rather than drift in.
+
+The record of what was wrong, kept because it is the reason this took two days:
 
 `tests/test_source_roster.py` reports the split every run:
 

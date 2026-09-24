@@ -80,6 +80,10 @@ export default function DeepDiveSpectrum({
           tier: s.tier,
           politicalLean: s.politicalLean,
           headline: s.headline,
+          /* Carried through, not dropped. This component declared `confidence`
+             on its props and never read it, so a mark placed from a headline
+             and one read off a full article drew identically. */
+          confidence: s.confidence,
         })),
     [allSources],
   );

@@ -59,10 +59,24 @@ ok("no component restates the feed size in prose",
    stale.length === 0, stale.map((p) => p.replace(ROOT, "")).join(", "));
 
 // 2. The source and country counts the copy states must match the roster.
+//
+//    Two widenings, 2026-09-22. The pattern was /1,?0\d\d/, which matches only
+//    1000-1099 and would have SILENTLY STOPPED MATCHING the day the roster
+//    passed 1,099: a gate that quietly stops asserting is worse than no gate.
+//    And the scan covered app/ only, while frontend/public/manifest.json is
+//    SERVED and carries the same sentence, so the count a browser installs the
+//    app with was never checked. Both fixed here.
 const countries = new Set(sourceRows.map((s) => s.country).filter(Boolean));
-for (const p of files) {
-  const txt = read(p);
-  for (const m of txt.matchAll(/\b(1,?0\d\d)\s+sources\b/g)) {
+const MANIFEST = join(ROOT, "public/manifest.json");
+const scanned = [...files, MANIFEST];
+for (const p of scanned) {
+  //  Comments are stripped, as in check 1 and for the same reason: a stale
+  //  comment lies to the next engineer, not to a reader. Two files quote
+  //  "1,016 sources" on purpose, to record why the number stopped being
+  //  written out (lib/ogCard.tsx and lib/rosterConfig.ts), and a gate that
+  //  fails on its own explanation teaches people to delete explanations.
+  const txt = uncommented(read(p));
+  for (const m of txt.matchAll(/\b(\d{1,2},?\d{3})\s+sources\b/g)) {
     ok(`${p.replace(ROOT, "")} source count`,
        Number(m[1].replace(",", "")) === sourceRows.length,
        `copy says ${m[1]}, roster holds ${sourceRows.length}`);

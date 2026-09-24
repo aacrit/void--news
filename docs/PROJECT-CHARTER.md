@@ -21,14 +21,14 @@ A free, transparent news aggregation platform delivering World, US, Europe, and 
 |---------|---------------------|---------------------|
 | One label for a whole outlet | Tools label an entire outlet "left" or "right", the same for everything it publishes | Multi-axis NLP that weighs BOTH the outlet's track record and each individual article's own words |
 | Bias features are paywalled | Full insights require subscriptions | All bias data free and central |
-| Aggregators include untrusted sources | Low-credibility outlets mixed in | 1,016 curated, vetted sources only |
+| Aggregators include untrusted sources | Low-credibility outlets mixed in | curated, vetted sources only (count in `frontend/config/roster.json`) |
 | Left/right is too simplistic | Single-axis spectrum | 6-axis analysis + 7-point lean spectrum (far-left → far-right) |
 
 ## 3. Scope
 
 ### In Scope (MVP)
 - World, US, Europe, and South Asia editions (4 editions)
-- 1,016 curated sources across 3 tiers (43 us_major, 373 international, 597 independent); 7-point political lean spectrum; 158 countries
+- curated sources across 3 tiers, 7-point political lean spectrum, 158 countries. The live counts are generated into `frontend/config/roster.json`; as of 2026-05-18 this read 1,016 (43 us_major, 373 international, 597 independent)
 - 4x daily automated pipeline (GitHub Actions)
 - Rule-based NLP bias engine (6 axes, $0 cost)
 - Gemini Flash: cluster summarization + editorial importance + reasoning (~116 RPD, free tier)
@@ -53,7 +53,7 @@ A free, transparent news aggregation platform delivering World, US, Europe, and 
 
 | Metric | Target |
 |--------|--------|
-| Sources at launch | 1,016 (43 us_major + 373 international + 597 independent) |
+| Sources at launch | 1,016 (43 us_major + 373 international + 597 independent), as of 2026-05-18 |
 | Pipeline reliability | 95%+ successful runs |
 | Pipeline completion time | < 6 minutes per run |
 | Bias scoring coverage | 100% of articles scored on all 6 axes |

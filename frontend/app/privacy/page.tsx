@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "../styles/prose-page.css";
 import "./privacy.css";
+import { ROSTER_SOURCES_TEXT } from "../lib/rosterConfig";
 
 export const metadata: Metadata = {
   title: "Privacy | Void News",
@@ -56,7 +57,7 @@ export default function PrivacyPage() {
       <section>
         <h2>From article sources: public content only.</h2>
         <p>
-          The pipeline reads RSS feeds and public article URLs from the 1,016
+          The pipeline reads RSS feeds and public article URLs from the {ROSTER_SOURCES_TEXT}
           sources listed at <Link href="/sources">/sources</Link>. We store
           article text, publish timestamps, the source name, and our
           rule-based bias scores. We do not scrape paywalled content. We do

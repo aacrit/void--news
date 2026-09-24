@@ -7,6 +7,7 @@ import CopyButton from "./CopyButton";
 import "../styles/prose-page.css";
 import "../privacy/privacy.css";
 import "./press.css";
+import { ROSTER_SOURCES_TEXT, ROSTER_COUNTRIES } from "../lib/rosterConfig";
 
 export const metadata: Metadata = {
   title: "Press | Void News",
@@ -32,10 +33,10 @@ function numberWord(n: number): string {
 }
 
 const BOILER_SHORT =
-  `Void News is an independent daily news reader that shows the political lean and editorial character of every story. It gathers reporting from 1,016 sources across 158 countries into one shared edition of ${FEED_DISPLAYED} stories, ranked once a day, the same for every reader.`;
+  `Void News is an independent daily news reader that shows the political lean and editorial character of every story. It gathers reporting from ${ROSTER_SOURCES_TEXT} sources across ${ROSTER_COUNTRIES} countries into one shared edition of ${FEED_DISPLAYED} stories, ranked once a day, the same for every reader.`;
 
 const BOILER_LONG =
-  `Void News is an independent daily news reader. Each day it gathers reporting from more than a thousand outlets across 158 countries, groups the coverage of each event together, and scores every story on six axes: political lean, sensationalism, opinion versus reporting, factual rigor, framing, and how an outlet has covered a subject over time. Every score is produced by a documented, transparent method and carries a written explanation, so a reader sees not only where a story sits but why.\n\nThere are no accounts, no trackers, and no personalized feed. The ${numberWord(FEED_DISPLAYED)} most important stories are ranked once a day, in the same order for everyone, on the principle that a shared set of facts matters more than an engaging one. Void News is an independent product of Void, with no outside investors, published at news.voidvision.org.`;
+  `Void News is an independent daily news reader. Each day it gathers reporting from more than a thousand outlets across ${ROSTER_COUNTRIES} countries, groups the coverage of each event together, and scores every story on six axes: political lean, sensationalism, opinion versus reporting, factual rigor, framing, and how an outlet has covered a subject over time. Every score is produced by a documented, transparent method and carries a written explanation, so a reader sees not only where a story sits but why.\n\nThere are no accounts, no trackers, and no personalized feed. The ${numberWord(FEED_DISPLAYED)} most important stories are ranked once a day, in the same order for everyone, on the principle that a shared set of facts matters more than an engaging one. Void News is an independent product of Void, with no outside investors, published at news.voidvision.org.`;
 
 /* The three programmes. Feed addresses are absolute because they are meant
    to be pasted into a podcast app. The cadence and the shape of each show
@@ -116,7 +117,7 @@ export default function PressPage() {
         </h2>
         <div className="press-ledger" aria-label="Void News at a glance">
           <div className="press-stat">
-            <div className="press-stat__n">1,016</div>
+            <div className="press-stat__n">{ROSTER_SOURCES_TEXT}</div>
             <div className="press-stat__l">Sources, across three credibility tiers</div>
           </div>
           <div className="press-stat">
@@ -194,8 +195,8 @@ export default function PressPage() {
             subject over time.
           </li>
           <li>
-            A published source roster of 1,016 outlets across three credibility
-            tiers and 158 countries. See{" "}
+            A published source roster of {ROSTER_SOURCES_TEXT} outlets across three
+            credibility tiers and {ROSTER_COUNTRIES} countries. See{" "}
             <Link href="/sources">/sources</Link>.
           </li>
           <li>
@@ -530,7 +531,7 @@ export default function PressPage() {
             </Link>
           </li>
           <li className="press-kit__item">
-            <span className="press-kit__name">Source list, all 1,016 outlets</span>
+            <span className="press-kit__name">Source list, all {ROSTER_SOURCES_TEXT} outlets</span>
             <Link className="press-kit__dl" href="/sources">
               /sources
             </Link>

@@ -652,12 +652,12 @@ def _numbers(text: str) -> set[str]:
     return out
 
 
-def e13_numbers_are_sourced(title: str, summary: str, sources: str) -> list[Finding]:
+def e13_numbers_are_sourced(title: str, summary: str, sources) -> list[Finding]:
     """Every multi-digit number in the card appears in its source articles."""
-    grounded = _numbers(sources)
+    ev = _evidence(sources)
     findings: list[Finding] = []
     for field, text in (("headline", title), ("summary", summary)):
-        for n in sorted(_numbers(text) - grounded, key=int):
+        for n in sorted((n for n in _numbers(text) if not ev.has_number(n)), key=int):
             findings.append(Finding(
                 "E-13",
                 f"{field} states {n}, which appears in none of the source articles: "
@@ -696,9 +696,9 @@ def _fold_quote(text: str) -> str:
     return re.sub(r"\s+", " ", t).strip()
 
 
-def e14_quotes_are_verbatim(title: str, summary: str, sources: str) -> list[Finding]:
+def e14_quotes_are_verbatim(title: str, summary: str, sources) -> list[Finding]:
     """Every quotation of four words or more appears verbatim in the sources."""
-    haystack = _fold_quote(sources)
+    ev = _evidence(sources)
     findings: list[Finding] = []
     for field, text in (("headline", title), ("summary", summary)):
         for raw in _QUOTE_RE.findall(text or ""):
@@ -707,8 +707,7 @@ def e14_quotes_are_verbatim(title: str, summary: str, sources: str) -> list[Find
             segments = [seg for seg in _ELLIPSIS_RE.split(raw) if len(seg.split()) >= 3]
             if not segments:
                 segments = [raw]
-            missing = [seg for seg in segments
-                       if _fold_quote(seg).strip(" ,.;:!?-") not in haystack]
+            missing = [seg for seg in segments if not ev.has_span(seg)]
             if missing:
                 shown = _fold_quote(missing[0])[:70]
                 findings.append(Finding(
@@ -717,6 +716,55 @@ def e14_quotes_are_verbatim(title: str, summary: str, sources: str) -> list[Find
                     f"source articles: quote it as written or paraphrase it",
                 ))
     return findings
+
+
+# ---------------------------------------------------------------------------
+# What the grounded rules read
+# ---------------------------------------------------------------------------
+# E-13 and E-14 need two answers about the source articles and nothing else:
+# is this number in them, is this span of words in them. They used to take the
+# articles' text and answer both by substring, which worked only while the text
+# was to hand.
+#
+# It cannot be kept to hand. `articles.full_text` lives in the gitignored state
+# database and dies with the Actions cache, and the permanent record that used
+# to hold it, `frontend/build-data/grounding/`, is committed to a public repo,
+# which put 519,041 characters of publisher prose in its history against the
+# top-priority control in `docs/IP-COMPLIANCE.md`. So the after-the-fact
+# evidence is now a verification index (`editorial/grounding.Verifier`): the
+# set of numbers, and a Bloom filter of word shingles that answers membership
+# and cannot be read back as journalism.
+#
+# Both backings are accepted here, behind one interface, so E-13 and E-14 stay
+# ONE implementation. Two rules, one at write time over text and one at audit
+# time over an index, would be two rules that drift.
+class _TextEvidence:
+    """The interface over source text the caller still holds in memory."""
+
+    __slots__ = ("_nums", "_folded", "truncated", "present")
+
+    def __init__(self, text: str):
+        self._nums = _numbers(text)
+        self._folded = _fold_quote(text)
+        self.truncated = False
+        self.present = bool(self._folded)
+
+    def has_number(self, n: str) -> bool:
+        return str(n) in self._nums
+
+    def has_span(self, text: str) -> bool:
+        return _fold_quote(text).strip(" ,.;:!?-") in self._folded
+
+
+def _evidence(sources):
+    """`sources` as something that answers the two grounded questions.
+
+    A str is the write-time case. Anything already carrying `has_number` is a
+    Verifier, or a stand-in for one, and is used as given.
+    """
+    if hasattr(sources, "has_number"):
+        return sources
+    return _TextEvidence(sources or "")
 
 
 class Validator(NamedTuple):
@@ -780,10 +828,17 @@ def validate_candidate(candidate: dict, include_advisory: bool = True) -> list[F
     title = candidate.get("title") or ""
     summary = candidate.get("summary") or ""
     href = candidate.get("href")
-    # The text the card was written from. Absent when the caller has no source
-    # text to hand, in which case the grounded rules skip rather than fail: a
-    # rule that cannot see the evidence must not claim the card is wrong.
-    sources = candidate.get("source_text")
+    # The evidence the card was written from: either the source text, under
+    # `source_text`, or a `grounding.Verifier` over the persisted index, under
+    # `source_index`. Absent when the caller has neither, in which case the
+    # grounded rules skip rather than fail: a rule that cannot see the evidence
+    # must not claim the card is wrong.
+    raw_sources = candidate.get("source_index") or candidate.get("source_text")
+    # A Verifier object is truthy even when it holds no record, so presence is
+    # asked of the evidence rather than inferred from the key being set. An
+    # empty index would otherwise read as "this number is in no source" and
+    # accuse every card in the feed.
+    sources = _evidence(raw_sources) if raw_sources else None
     out: list[Finding] = []
     for v in VALIDATORS:
         if v.status == ADVISORY and not include_advisory:
@@ -798,7 +853,7 @@ def validate_candidate(candidate: dict, include_advisory: bool = True) -> list[F
         elif v.scope == "text":
             out.extend(v.fn(f"{title} {summary}"))
         elif v.scope == "grounded":
-            if sources:
+            if sources is not None and sources.present:
                 out.extend(v.fn(title, summary, sources))
     return out
 
