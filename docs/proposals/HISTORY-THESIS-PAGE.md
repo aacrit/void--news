@@ -731,6 +731,15 @@ and both are tested.
 
 ## 13. Decisions for the CEO
 
+**Decided by the CEO, 2026-09-24.** All eleven recommendations adopted, with
+one change to decision 1: the 188 wrong or dead identifiers are **stripped
+from their entries, not deleted with them**. The entry keeps its author and
+title and is marked unverified until the ledger rebuild resolves it, so
+nothing false stays linked and no real work is lost. Stock media: all 242
+removed now. Extracts: 150 words, 5 per work, in the public repo. Pilot: all
+three events, Srebrenica first; the 78-event rollout is decided on the
+pilot's measured cost. Standing constraint: **$0, always**.
+
 Each with a recommendation.
 
 1. **Approve the ledger rebuild as the prerequisite**, knowing 72% of today's
