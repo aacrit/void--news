@@ -95,9 +95,31 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
           cache-dependency-path: pipeline/requirements.txt
+      # THE MODEL, not just the package. `test_lean_prior_is_not_self_fed`
+      # asserts the retired blend parameter is inert by actually scoring four
+      # articles, and `analyze_political_lean` reaches `_entity_sentiment_score`
+      # which reaches `get_nlp()`. With spaCy installed but no model,
+      # `nlp_shared` raises ModelUnavailable, correctly: it refuses to fall
+      # back to an English parser for text it cannot parse, which is what
+      # `test_nlp_languages` exists to enforce. `test_nlp_languages` also skips
+      # its parse checks without the model, so without this step it would sit
+      # in CI reporting a skip forever.
+      #
+      # Same cache and key as editorial-stage, validate-bias and
+      # validate-clustering below, so the download happens once across all four.
+      - name: Install the pipeline's environment
+        run: pip install --quiet -r pipeline/requirements.txt
+      - name: Cache spaCy model
+        id: spacy-cache-gates
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
+          key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
+      - name: Download spaCy model
+        if: steps.spacy-cache-gates.outputs.cache-hit != 'true'
+        run: python -m spacy download en_core_web_sm
       - name: Gate self-test + feed-config consistency
         run: |
-          pip install --quiet -r pipeline/requirements.txt
           python tests/test_verify_gate.py
           python tests/test_feed_config.py
           python tests/test_editorial_standard.py
