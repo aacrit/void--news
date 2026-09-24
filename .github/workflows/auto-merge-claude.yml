@@ -145,6 +145,7 @@ jobs:
           python tests/test_history_copy.py          # the dash ban, speaker shape
           python tests/test_history_scripts_export.py # accounts resolve one to one
           python tests/test_history_export_parity.py  # the served JSON matches the record
+          python tests/test_history_thesis.py        # T-01..T-20: a thesis cites the ledger, the ledger holds the extract, the served thesis matches
           python tests/test_grounding.py             # the evidence outlives the run
           python tests/test_feed_buildable.py        # the feed can fill the front page
           python tests/test_truncation_lint.py       # no cap published as a count
