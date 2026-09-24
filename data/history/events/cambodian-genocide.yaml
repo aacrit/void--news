@@ -245,7 +245,7 @@ perspectives:
     author: Roland Joffe (director)
     year: '1984'
     type: film
-    doi: 10.1017/9781780687094
+    verified: false
   - title: Prevalence of trauma and mental illness among Cambodians in the United States
     author: Harvard Program in Refugee Trauma
     year: '2005'
@@ -328,7 +328,6 @@ perspectives:
     author: Gary Klintworth
     year: '1989'
     type: book
-    doi: 10.2307/2759949
     openlibrary: OL11026096M
     archive_url: https://archive.org/details/vietnamsinterven0000gary
   notable_quotes:
@@ -487,12 +486,12 @@ perspectives:
     year: '1986'
     type: book
     openlibrary: OL2552862M
-    archive_url: https://archive.org/details/brotherenemywar000chan
+    verified: false
   - title: 'After the Killing Fields: Lessons from the Cambodian Genocide'
     author: Craig Etcheson
     year: '2005'
     type: book
-    doi: 10.5860/choice.43-2697
+    verified: false
   - title: 'How Pol Pot Came to Power: Colonialism, Nationalism, and Communism in Cambodia, 1930-1975'
     author: Ben Kiernan
     year: '2004'
@@ -544,62 +543,6 @@ media:
   license: public-domain
   creator: Vann Nath
   creation_date: c. 1980
-- media_type: photograph
-  title: a car driving past a tall building with a sign on it
-  description: Landscape orientation, 4000x3000px
-  source_url: https://unsplash.com/photos/a-car-driving-past-a-tall-building-with-a-sign-on-it-NoThJusBagc
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/cambodian-genocide/unsplash_1.jpg
-  attribution: Photo by Kimism on Unsplash
-  license: unsplash-license
-  creator: Kimism
-- media_type: photograph
-  title: a large building with palm trees in front of it
-  description: Landscape orientation, 4320x3240px
-  source_url: https://unsplash.com/photos/a-large-building-with-palm-trees-in-front-of-it-RmzZmcTp8Os
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/cambodian-genocide/unsplash_2.jpg
-  attribution: Photo by Adam PENN on Unsplash
-  license: unsplash-license
-  creator: Adam PENN
-- media_type: photograph
-  title: a large building with a lot of trees around it
-  description: Landscape orientation, 5640x3398px
-  source_url: https://unsplash.com/photos/a-large-building-with-a-lot-of-trees-around-it-K8-1T1TDb2Q
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/cambodian-genocide/unsplash_3.jpg
-  attribution: Photo by Somoun Bo on Unsplash
-  license: unsplash-license
-  creator: Somoun Bo
-- media_type: photograph
-  title: a large tree in front of a very old building
-  description: Landscape orientation, 6000x4000px
-  source_url: https://unsplash.com/photos/a-large-tree-in-front-of-a-very-old-building-yoLyIFf6280
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/cambodian-genocide/unsplash_4.jpg
-  attribution: Photo by Somoun Bo on Unsplash
-  license: unsplash-license
-  creator: Somoun Bo
-- media_type: photograph
-  title: Explore the ancient ruins of the Angkor Wat complex in Cambodia, showcasing historical architecture.
-  description: Landscape orientation, 2560x1707px
-  source_url: https://www.pexels.com/photo/ruins-at-the-angkor-wat-temple-complex-siem-reap-cambodia-15890901/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/cambodian-genocide/pexels_1.jpg
-  attribution: Photo by Serg Alesenko on Pexels
-  license: pexels-license
-  creator: Serg Alesenko
-- media_type: photograph
-  title: Silhouette of Angkor Wat temple at dusk with dramatic sky.
-  description: Landscape orientation, 8192x5464px
-  source_url: https://www.pexels.com/photo/silhouette-of-angkor-wat-temple-at-dusk-19142378/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/cambodian-genocide/pexels_2.jpg
-  attribution: Photo by Kelly on Pexels
-  license: pexels-license
-  creator: Kelly
-- media_type: photograph
-  title: Focused view of an open book with vibrant red edges on a dark background, enhancing readability.
-  description: Landscape orientation, 5184x3456px
-  source_url: https://www.pexels.com/photo/an-opened-khmer-bible-13005745/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/cambodian-genocide/pexels_3.jpg
-  attribution: Photo by TEP  RO on Pexels
-  license: pexels-license
-  creator: TEP  RO
 connections:
 - target_slug: rwandan-genocide
   connection_type: parallel

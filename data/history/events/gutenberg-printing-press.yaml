@@ -539,38 +539,6 @@ media:
   creator: Unknown
   creation_date: '1377'
   supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/gutenberg-printing-press/wiki_3.jpg
-- media_type: photograph
-  title: a large building with a glass front
-  description: Landscape orientation, 5528x4160px
-  source_url: https://unsplash.com/photos/a-large-building-with-a-glass-front-mFHjIptEPqQ
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/gutenberg-printing-press/unsplash_1.jpg
-  attribution: Photo by Hiba Ghouich on Unsplash
-  license: unsplash-license
-  creator: Hiba Ghouich
-- media_type: photograph
-  title: Detailed view of an industrial printing press with precise mechanics.
-  description: Landscape orientation, 5472x3648px
-  source_url: https://www.pexels.com/photo/green-and-black-industrial-machine-1440504/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/gutenberg-printing-press/pexels_1.jpg
-  attribution: Photo by Wendelin Jacober on Pexels
-  license: pexels-license
-  creator: Wendelin Jacober
-- media_type: photograph
-  title: Top view old fashioned wooden cabinet drawers filled with vintage letterpress in light printing hous
-  description: Landscape orientation, 5461x3641px
-  source_url: https://www.pexels.com/photo/old-cabinet-drawers-with-retro-letterpress-4140919/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/gutenberg-printing-press/pexels_2.jpg
-  attribution: Photo by Erik Mclean on Pexels
-  license: pexels-license
-  creator: Erik Mclean
-- media_type: photograph
-  title: Majestic view of Ghazanchetsots Cathedral under a bright blue sky.
-  description: Landscape orientation, 7360x4912px
-  source_url: https://www.pexels.com/photo/facade-of-ghazanchetsots-cathedral-in-shusha-azerbaijan-against-blue-sky-17124758/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/gutenberg-printing-press/pexels_3.jpg
-  attribution: Photo by Argishti Margarian on Pexels
-  license: pexels-license
-  creator: Argishti Margarian
 connections:
 - target_slug: french-revolution
   connection_type: influenced

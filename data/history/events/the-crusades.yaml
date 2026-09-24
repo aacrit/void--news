@@ -13,8 +13,8 @@ death_toll: '1-3 million estimated across all campaigns; Jerusalem 1099: 40,000-
 affected_population: 'Populations of the Levant, Anatolia, Egypt, Byzantine Empire; hundreds of thousands of European soldiers and settlers; Jewish communities massacred en route in the Rhineland (1096:
   800-1,000 killed in Mainz, Worms, Cologne, Speyer)'
 duration: 196 years (Council of Clermont 1095 to Fall of Acre 1291)
-hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/the-crusades/pexels_1.jpg
-hero_image_attribution: Emile Signol, 1847, public domain via Wikimedia Commons
+hero_image_url: https://commons.wikimedia.org/wiki/File:Counquest_of_Jeruslam_%281099%29.jpg
+hero_image_attribution: Emile Signol, 1847, public domain
 summary: 'On November 27, 1095, Pope Urban II stood before a crowd at the Council of Clermont in central France and called on Christendom to march east. The Holy Sepulchre in Jerusalem, he declared, was
   in the hands of the Seljuk Turks. The crowd''s response, "Deus vult!" ("God wills it!"), launched two centuries of war across three continents.
 
@@ -180,7 +180,6 @@ perspectives:
     author: Christopher Tyerman
     year: '2006'
     type: book
-    doi: 10.1177/096834450100800206
     archive_url: https://archive.org/details/godswarnewhistor0000tyer_o2a6
   notable_quotes:
   - text: Whoever for devotion alone, not to gain honour or money, goes to Jerusalem to liberate the Church of God can substitute this journey for all penance.
@@ -490,12 +489,12 @@ perspectives:
     author: Solomon bar Simson
     year: c. 1140
     type: primary
-    archive_url: https://archive.org/details/jewsandcrusaders00eide
+    verified: false
   - title: The Itinerary of Benjamin of Tudela
     author: Benjamin of Tudela
     year: 1165-1173
     type: primary
-    archive_url: https://archive.org/details/itineraryofbenja00benj
+    verified: false
   - title: 'The Jews and the Crusaders: The Hebrew Chronicles of the First and Second Crusades'
     author: Shlomo Eidelberg (ed.)
     year: '1977'
@@ -552,30 +551,6 @@ media:
   license: public-domain
   creator: Eugene Delacroix
   creation_date: '1840'
-- media_type: photograph
-  title: Low angle shot of a historic stone fortress under a clear blue sky at dusk, with the moon visible.
-  description: Landscape orientation, 3939x2954px
-  source_url: https://www.pexels.com/photo/jaffa-gate-in-redbrick-city-wall-5951184/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/the-crusades/pexels_1.jpg
-  attribution: Photo by Aqsawii on Pexels
-  license: pexels-license
-  creator: Aqsawii
-- media_type: photograph
-  title: Israeli flag waving at the historic Western Wall, a significant religious site in Jerusalem.
-  description: Landscape orientation, 4608x3456px
-  source_url: https://www.pexels.com/photo/flag-of-israel-by-wailing-wall-15880780/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/the-crusades/pexels_2.jpg
-  attribution: Photo by David Rado on Pexels
-  license: pexels-license
-  creator: David Rado
-- media_type: photograph
-  title: Explore the ancient Byblos Castle in Lebanon, showcasing stunning architecture and scenic views.
-  description: Landscape orientation, 4000x2388px
-  source_url: https://www.pexels.com/photo/historic-byblos-castle-under-bright-sky-34042951/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/the-crusades/pexels_3.jpg
-  attribution: Photo by Soly Moses on Pexels
-  license: pexels-license
-  creator: Soly Moses
 connections:
 - target_slug: creation-of-israel-nakba
   connection_type: influenced

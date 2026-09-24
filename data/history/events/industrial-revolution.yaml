@@ -218,7 +218,7 @@ perspectives:
     author: Robert Fogel
     year: '2004'
     type: book
-    doi: 10.1017/CBO9781139627016
+    verified: false
   - title: 'The Industrial Revolution 1760-1830'
     author: T.S. Ashton
     year: '1948'
@@ -305,7 +305,7 @@ perspectives:
     author: J.L. Hammond and Barbara Hammond
     year: '1911'
     type: book
-    archive_url: https://archive.org/details/villagelabourers00hammuoft
+    verified: false
   - title: The Condition of the Working Class in England
     author: Friedrich Engels
     year: '1845'
@@ -315,7 +315,7 @@ perspectives:
     author: J.L. Hammond and Barbara Hammond
     year: '1917'
     type: book
-    archive_url: https://archive.org/details/townlabourer176000hamm
+    verified: false
   notable_quotes:
   - text: I am seeking to rescue the poor stockinger, the Luddite cropper, the 'obsolete' hand-loom weaver, the 'utopian'
       artisan, and even the deluded follower of Joanna Southcott, from the enormous condescension of posterity.
@@ -402,12 +402,12 @@ perspectives:
     author: Sven Beckert
     year: '2014'
     type: book
-    archive_url: https://archive.org/details/empireofcottongo0000beck
+    verified: false
   - title: 'Capitalism and Slavery'
     author: Eric Williams
     year: '1944'
     type: book
-    archive_url: https://archive.org/details/capitalismandsla0000will
+    verified: false
   notable_quotes:
   - text: The Great Divergence between the economies of western Europe and east Asia is in fact a surprisingly recent
       phenomenon, largely post-dating 1750.
@@ -478,13 +478,12 @@ perspectives:
     author: Andreas Malm
     year: '2016'
     type: book
-    doi: 10.1080/13563467.2017.1348372
     archive_url: https://archive.org/details/fossilcapitalris0000malm
   - title: 'Capitalism in the Web of Life: Ecology and the Accumulation of Capital'
     author: Jason W. Moore
     year: '2015'
     type: book
-    doi: 10.1080/03066150.2016.1235036
+    verified: false
   - title: 'Climate Change 2021: The Physical Science Basis (Sixth Assessment Report)'
     author: IPCC Working Group I
     year: '2021'
@@ -572,7 +571,7 @@ perspectives:
     author: Dadabhai Naoroji
     year: '1901'
     type: book
-    archive_url: https://archive.org/details/povertyunbritish00naorrich
+    verified: false
   - title: 'Why Europe Grew Rich and Asia Did Not: Global Economic Divergence, 1600-1850'
     author: Prasannan Parthasarathi
     year: '2011'
@@ -582,17 +581,17 @@ perspectives:
     author: Utsa Patnaik (chapter)
     year: '2017'
     type: book
-    doi: 10.7312/columbia/9780231187312.003.0013
+    verified: false
   - title: 'Empire of Cotton: A Global History'
     author: Sven Beckert
     year: '2014'
     type: book
-    archive_url: https://archive.org/details/empireofcottongo0000beck
+    verified: false
   - title: 'Considerations on the State of the Currency in Bengal'
     author: William Bolts
     year: '1772'
     type: book
-    archive_url: https://archive.org/details/considerationson00bolt
+    verified: false
   notable_quotes:
   - text: The misery hardly finds a parallel in the history of commerce. The bones of the cotton-weavers are bleaching the
       plains of India.

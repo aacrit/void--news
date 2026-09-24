@@ -312,7 +312,9 @@ An event may switch to the thesis page only when its ledger holds:
   the record section why none could be found free;
 - at least **3 exhibits** with full provenance, none stock;
 - every contested figure in the thesis body expressed as the range the ledger
-  supports.
+  supports;
+- a verdict on every position, and at least **1 finding** with a stored,
+  recomputable derivation (6b).
 
 Srebrenica clears the Tier A bar with the documents it already names.
 Partition clears nothing until its identifiers are rebuilt.
@@ -357,6 +359,12 @@ rests on (ledger ids), the claim in one sentence, what it omits, and the
 contested claims it shares with another position. Add positions the YAML
 lacks where the ledger now supports one; drop none.
 
+**Stage 3b, adjudication and analysis (history-curator).** Test every
+position against the Tier A extracts and record its verdict in the ledger;
+then derive the findings, each as an `analyses/` file with rows, method,
+confidence and the evidence against, and run `ledger.py recompute` until it
+is silent. This is the historian's stage (6b).
+
 **Stage 4, writing (narrative-engineer).** The thesis in the grammar of
 section 8, every sentence cited, register per section 8, numerals, no dash.
 Then the episode marks: which script chapters the page quotes and where.
@@ -396,6 +404,160 @@ thesis. The Hearing keeps running for the event until then.
 
 ---
 
+## 6b. The engine is a historian
+
+Added 2026-09-24 on the CEO's direction: "this page is drafted by a
+historian, or it is one. It should not just quote other historians, but
+evaluate that against the artifacts and ensure they are true, and further
+yet come up with fact based research and analysis of its own. The engine is
+a historian." Everything before this section described a compiler with a
+citation discipline. This section makes it a historian, and the anatomy,
+data model, checks, voice decision and register sample below are revised to
+match.
+
+A historian does two things a compiler does not. First, when a scholar
+says something, the historian goes to the artifact and reports whether the
+artifact bears it out. Second, the historian looks at the primary record and
+finds things in it that no scholar in the bibliography has stated, by
+counting, tabulating, dating and comparing document against document. Both
+are done in the open, with the working shown, and neither ever produces a
+new fact asserted on the historian's authority.
+
+### 6b.1 Adjudication: every position is tested against the artifacts
+
+Each position in the historiography carries a verdict, and the verdict is
+the historian's, not the position's own. The vocabulary has four words and
+no others:
+
+| Verdict | Means | Must cite |
+|---|---|---|
+| **Supported** | A Tier A artifact in the ledger says what the position says it says | the extract, with locator |
+| **Contradicted** | A Tier A artifact in the ledger says otherwise | the extract, printed beside the claim |
+| **Qualified** | The artifacts bear out part of the claim and are silent or contrary on the rest; the verdict says which part | the extract for the supported part, the extract or the gap for the rest |
+| **Untestable from the free record** | No admissible artifact that could be read free bears on the claim | the record section's statement of what could not be read, by name |
+
+Three rules follow. **The page never repeats a scholar as settled.** A
+position's claim is always printed as that position's claim, in that
+position's name, with its verdict beside it; a claim that has earned
+Supported is still printed as the position's claim with the artifact under
+it, because the artifact is the authority and the scholar is the reader of
+it. **A contradiction shows the artifact beside the claim.** Not a note, not
+a link: the extract itself, in the exhibit frame, in the same block as the
+sentence it contradicts, so the reader sees the two together. **Untestable
+is a finding, not a shrug.** It is the most common verdict the free record
+will yield, and each one names the artifact that would settle it and where
+that artifact sits behind a paywall or in a closed archive. That list is
+the reading list for the next pass.
+
+Adjudication also runs on the thesis's own three claims from section 2 of
+the page. A claim the artifacts do not support is not a claim the thesis
+makes.
+
+### 6b.2 Original analysis: findings from the primary record
+
+A finding is a statement the historian derives from Tier A extracts by a
+stated method, where no source in the ledger states it. The allowed methods
+are the ones whose working can be stored and re-run:
+
+- **a count**: how many documents in the record do X (how many of the
+  eleven Srebrenica execution sites named in the ICTY judgment appear in
+  the Dutch battalion's own reports);
+- **a cross-tabulation**: two properties of the same set of extracts against
+  each other (which positions cite which decades of scholarship; which
+  sources are in the event's own language);
+- **a reconstructed timeline**: dates carried by the extracts put in order,
+  with the intervals computed (the gap between a boundary's announcement
+  and its publication);
+- **a document-against-document comparison**: two artifacts on the same
+  event set side by side, with the points where they agree, differ and are
+  silent listed.
+
+A finding is not a claim about the world beyond the arithmetic. "The line
+was published fifteen days before the only neutral force was disbanded" is a
+finding. "The state abandoned the Punjab" is not; it is an interpretation
+and it takes the `{i}` mark, sits beside the finding, and carries no
+number the finding does not.
+
+Every finding is stored in the ledger as a derivation, so it recomputes:
+
+```yaml
+# data/history/evidence/partition-of-india/analyses/f-01-line-and-force.yaml
+id: f-01
+title: The line, the force and the interval between them
+method: timeline          # count | crosstab | timeline | comparison
+rows:
+  - { date: 1947-06-03, event: partition announced,            from: src-summary ¶1 }
+  - { date: 1947-08-15, event: independence,                   from: src-summary ¶2 }
+  - { date: 1947-08-17, event: Radcliffe Line published,       from: src-summary ¶2 }
+  - { date: 1947-09-01, event: Punjab Boundary Force disbanded, from: src-summary ¶4 }
+derive:
+  - { name: notice_days,           expr: "days(1947-06-03, 1947-08-15)", value: 73 }
+  - { name: line_to_disbanding,    expr: "days(1947-08-17, 1947-09-01)", value: 15 }
+confidence: high          # high | moderate | low, with the reason
+confidence_reason: date arithmetic on dates the record states as days
+against:
+  - text: The force reported to the Joint Defence Council, not to either dominion, and both governments accused it of bias, so its end is not explained by the interval alone
+    from: src-perspective-british ¶4
+statement: >
+  The boundary was published two days after independence and fifteen days
+  before the one neutral force in the Punjab was disbanded.
+```
+
+`ledger.py recompute <slug>` re-evaluates every `derive` line from the rows
+and fails when a stored `value` disagrees, and every `from` must be an
+extract id that resolves. A finding whose rows cannot all be traced does not
+exist.
+
+### 6b.3 How this squares with Rule 1
+
+Rule 1 says every factual claim traces to a source and silence beats a
+plausible reconstruction. An adjudication or a finding is not a new fact; it
+is the historian's reading of facts that already trace, and the page treats
+it as exactly that:
+
+- **The working is shown.** A verdict prints its extract; a finding prints
+  its rows and its arithmetic, in an expandable method block, and the
+  ledger holds the derivation that CI recomputes.
+- **Confidence is stated**, in words the reader can weigh: high for
+  arithmetic on dated documents, moderate where an extract is a translation
+  or a secondhand report, low where the rows are few. A low-confidence
+  finding may print; a finding with no stated confidence may not.
+- **The evidence against it is printed**, in the same block, before the
+  reader can scroll past. A finding with an empty `against` list must say
+  in that field that the historian looked and found none, and name where.
+- **It is marked as the thesis's own analysis**, never as a sourced fact.
+  A finding's statement carries no citation marker; it carries the finding
+  id, and the register sets it apart (6b.5). Nothing in the argument may
+  cite a finding as if it were a source.
+- **Silence beats an unsupported inference.** An inference the artifacts do
+  not carry is cut, not hedged into place. The `{i}` mark is for the one
+  sentence that draws the reader's eye to what the evidence shows; it is
+  not a licence to say what the evidence does not.
+
+### 6b.4 Who does it
+
+Stage 3b of the workflow in section 5, between positions and writing, done
+by history-curator (the chief researcher role) with historiographic-auditor
+checking every verdict against its extract in Stage 5. No LLM call at
+runtime; the arithmetic runs in `ledger.py`.
+
+### 6b.5 How the page presents it
+
+- **A verdict marker on every position**: a Barlow eyebrow in the
+  position's block, "Verdict: Contradicted", followed by one sentence in
+  the historian's voice and the artifact in an exhibit frame directly
+  under it. Untestable prints the named artifact that would settle it.
+- **An analysis block** for each finding: the statement in Inter with a
+  brass rule and the eyebrow "Finding 2 · Timeline · Confidence high", then
+  a native `<details>` labelled "Method" holding the rows as a table with a
+  note per row, the derived values, and the "Against" paragraph. Open by
+  default in print.
+- **A Findings part of the anatomy** (section 7, item 5) that gathers the
+  findings after the argument and before the historiography, so the reader
+  meets what the record shows before meeting what the scholars claim of it.
+
+---
+
 ## 7. Anatomy of the page
 
 Top to bottom. Heading levels in brackets.
@@ -414,27 +576,32 @@ Top to bottom. Heading levels in brackets.
    numerals, full dates, every sentence carrying a note. Exhibits inline
    where the argument reaches them. One "From the episode" excerpt at most
    per section.
-5. **Exhibits** (figure, numbered across the page). A document: the extract
+5. **Findings** (h2). The thesis's own analysis, one block per finding
+   (6b.2): the statement, its confidence, an expandable method with the rows
+   traced to extracts, and the evidence against it. At least one, or the
+   event does not publish (T-17).
+6. **Exhibits** (figure, numbered across the page). A document: the extract
    in Plex Mono on deep paper, attribution first, locator, link to the free
    copy. An image or map: the item, then the provenance line and the "shows /
    does not show" line. A table: a real `<table>` with the source per row.
-6. **The historiography** (h2). Positions 1 to n (h3), each: holders, rests
-   on, claims, omits. Then **Where the record disagrees** (h3): each
+7. **The historiography** (h2). Positions 1 to n (h3), each: holders, rests
+   on, claims, omits, and **the verdict** (6b.1) with the artifact it rests
+   on printed under it. Then **Where the record disagrees** (h3): each
    contested claim as a ruled block, one row per position, its figure or
-   claim, its source. The thesis body never states a contested figure as one
-   number; it points here.
-7. **What the record omits** (h2). Statements about the ledger, not about
+   claim, its source, its verdict. The thesis body never states a contested
+   figure as one number; it points here.
+8. **What the record omits** (h2). Statements about the ledger, not about
    the world: no source in this record is by a Dalit refugee; no source dates
    the Gurdaspur decision. Each is attached to the position it cuts against.
-8. **From the episode** (aside): the close, with the play glyph, before the
+9. **From the episode** (aside): the close, with the play glyph, before the
    end matter.
-9. **Notes** (h2): the footnotes, numbered, short form with locator, each
-   linking to its source below and to its exhibit where one exists.
-10. **Sources** (h2): the ledger rendered as a bibliography by tier, full
+10. **Notes** (h2): the footnotes, numbered, short form with locator, each
+    linking to its source below and to its exhibit where one exists.
+11. **Sources** (h2): the ledger rendered as a bibliography by tier, full
     citation, the free-copy link, the verification date. Only verified
     entries print. Unverified entries do not print as "further reading";
     they do not print.
-11. **The record** end matter, kept from the Hearing: key figures, threads,
+12. **The record** end matter, kept from the Hearing: key figures, threads,
     next event.
 
 `significance` and `legacy_points` are not rendered, for the reason the prior
@@ -509,6 +676,46 @@ counter-position.
 > No position in the record cites a document for the award itself.{i}
 > Radcliffe burned his papers and did not return to India.[21]
 >
+> **Verdicts.** The record's Tier A artifacts are four quotations: Nehru
+> on August 14, 1947, Radcliffe's private line as Read and Fisher quote it,
+> Gandhi at a Calcutta prayer meeting, and Jinnah on August 11, 1947.[22]
+> None bears on Gurdaspur. *British administrative: untestable from the
+> free record.* The artifact that would test it is the Punjab Boundary
+> Commission's report and Radcliffe's award, in Mansergh's Transfer of
+> Power, volume XII, which this record names and does not hold.[16]
+> *Indian nationalist: untestable*, for the same artifact. *Pakistani
+> nationalist: qualified.* Its plebiscite claim rests on UN Security
+> Council Resolution 47 of 1948, a public document this record names but
+> does not hold;[19] its duress claim is stated in the record only as "in
+> the Pakistani telling", which is the position describing itself.[19]
+> The verdict on all three moves the day the ledger holds the award and the
+> resolution, and not before.
+>
+> **Finding 1 · Timeline · Confidence high.** The boundary was published
+> two days after independence and fifteen days before the one neutral force
+> in the Punjab was disbanded. {f-01}
+> *Method.* Four dated events the record states as days: partition
+> announced June 3, 1947;[7] independence August 15, 1947;[2] the
+> Radcliffe Line published August 17, 1947;[2] the Punjab Boundary Force
+> disbanded September 1, 1947.[12] Derived: notice, 73 days (the record
+> states the same figure);[7] line to disbanding, 15 days. No source in the
+> record states the second interval.
+> *Against.* The force reported to the Joint Defence Council, not to either
+> dominion, and both governments accused it of bias,[13] so the interval
+> alone does not explain its end. The record gives "overwhelmed by the scale
+> of killing" as the reason for disbanding.[12]
+>
+> **Finding 2 · Count · Confidence moderate.** One neutral soldier for every
+> 1.5 square miles of the zone the force was asked to hold. {f-02}
+> *Method.* 25,000 troops[11] across 38,000 square miles,[11] both from the
+> British account's own narrative; 38,000 divided by 25,000 is 1.52.
+> Moderate, because both figures sit in a position's narrative rather than
+> in an artifact this record holds, and the zone's boundaries are not
+> stated.
+> *Against.* The British Indian Army had 55,000 troops in the Punjab at the
+> same time,[10] so the neutral force was not the only armed presence; the
+> record says half of those were themselves being reassigned.[10]
+>
 > **Notes.** [1] summary ¶1. [2] summary ¶2. [3] summary ¶3. [4] summary ¶5.
 > [5] summary ¶4. [6] summary ¶4, quoting Mountbatten as the record quotes
 > him. [7] summary ¶1. [8] perspectives[0].narrative ¶2. [9]
@@ -518,13 +725,21 @@ counter-position.
 > perspectives[0].narrative ¶3. [16] perspectives[0].sources. [17]
 > perspectives[1].narrative ¶4. [18] perspectives[1].sources. [19]
 > perspectives[2].narrative ¶6. [20] perspectives[2].sources. [21]
-> perspectives[0].narrative ¶3.
+> perspectives[0].narrative ¶3. [22] primary_source_excerpts[0..3].
 
-Two things the sample shows on purpose. The `{i}` mark: an interpretive
+Four things the sample shows on purpose. The `{i}` mark: an interpretive
 sentence, the historian's own, allowed only where it carries no numeral and
-no quotation and sits in a paragraph that has cited sentences. And the
-"Omits" column is written as what the position's own sources do not address,
-which is checkable against the ledger, not as an accusation.
+no quotation and sits in a paragraph that has cited sentences. The "Omits"
+column is written as what the position's own sources do not address, which
+is checkable against the ledger, not as an accusation. The verdicts are
+mostly *untestable*, which is the honest result of a record that holds four
+quotations and no award, and each untestable names the artifact that would
+change it. And the two findings say nothing the arithmetic does not: the
+first is date subtraction, the second a division, each with its rows, its
+confidence and the record's own evidence against it, and neither is cited
+anywhere in the argument as a fact. In the real thesis the rows would trace
+to extract ids and `ledger.py recompute` would re-derive 73, 15 and 1.52
+in CI; here they trace to YAML fields, so the sample stays unpublishable.
 
 ---
 
@@ -532,9 +747,22 @@ which is checkable against the ledger, not as an accusation.
 
 ```
 data/history/evidence/<slug>/
-  ledger.yaml            # entries per 4c, plus positions[] and contested[]
+  ledger.yaml            # entries per 4c, plus positions[] (each with a verdict) and contested[]
   extracts/<src-id>.<locator>.txt
+  analyses/<f-id>.yaml   # one derivation per finding, per 6b.2: rows, derive, confidence, against
 data/history/theses/<slug>.md
+```
+
+A position record in `ledger.yaml` carries its verdict as data, not prose:
+
+```yaml
+positions:
+  - id: british-administrative
+    claim: The award was made under constraints the record states
+    verdict: untestable         # supported | contradicted | qualified | untestable
+    rests_on: [src-menon-1957, src-mansergh-1970]
+    tested_against: []          # extract ids; required for every verdict but untestable
+    would_settle: src-mansergh-1970 vol. XII   # required for untestable
 ```
 
 The thesis is Markdown with a strict front matter and four extensions the
@@ -561,13 +789,19 @@ The Security Council declared Srebrenica a safe area on April 16, 1993.[^src-un-
 ::: exhibit src-un-res-819 ¶1
 ::: episode chapter=4
 The record carries no order from Zagreb to Potocari that day.{i}
+## Findings
+::: finding f-01
+The interval is the record's, not the scholars'.{i}
 ## Historiography
 ::: position bosniak-legal
 ::: contested death-toll
 ```
 
 `[^id locator]` is the citation marker; `::: exhibit` pulls an extract into
-a numbered figure; `::: position` and `::: contested` render ledger records;
+a numbered figure; `::: position` renders a ledger position with its verdict
+and, for a contradiction, the extract beside the claim; `::: finding`
+renders an analysis file with its method block; `::: contested` renders a
+contested record;
 `::: episode` pulls a chapter's lines from the script export that already
 exists (`frontend/build-data/history-scripts/<slug>.json`). The exporter
 (`export_thesis.py`) resolves every marker, numbers the notes, and writes
@@ -606,6 +840,9 @@ copies, and rewrites `verified_at`.
 | T-12 | a source entry from an excluded domain or kind (wiki, blog, AI, review-as-book), or a Tier C or D entry cited on a number or a quote | the wrong tier on the wrong claim |
 | T-13 | an event marked `published` below the bar in 4e (counts per tier, extracts, positions, regional entries, exhibits) | a thin thesis shipped as a full one |
 | T-14 | the served JSON differing from the thesis (a port of `test_history_export_parity.py`) | a correction that never reached the page |
+| T-15 | a position with no verdict, a verdict outside the four words, a Supported, Contradicted or Qualified verdict whose `tested_against` names no Tier A extract, an Untestable with no `would_settle`, or a Contradicted position rendered without its extract in the same block | a scholar repeated as settled; a contradiction the reader cannot see |
+| T-16 | a finding with no `method`, a row whose `from` resolves to no extract, a `derive` value that `ledger.py recompute` does not reproduce, no `confidence`, an empty `against` with no statement of where the historian looked, or a finding id cited as a source anywhere in the argument | analysis that cannot be re-run; an inference dressed as a fact |
+| T-17 | an event marked `published` with no finding, or with a finding whose statement carries a numeral absent from its own `derive` and `rows` | a thesis that only compiles; a number the working does not produce |
 
 Served, in `scripts/verify_sections.py`, **TH-01..TH-04** on a sampled
 thesis page: one h1 and the question text present (not a shell); note count
@@ -726,6 +963,9 @@ and both are tested.
 - A "further reading" list of unverified works.
 - A page that needs the episode to make sense, or an episode that needs the
   page.
+- A scholar's claim printed without a verdict, or a verdict without its
+  artifact.
+- A finding without its rows, its confidence and the evidence against it.
 
 ---
 
@@ -753,9 +993,14 @@ Each with a recommendation.
    says otherwise, hold extracts in build-data only and print the locator.*
 4. **Remove all Unsplash and Pexels media from History**, 242 items, which
    thins galleries on the Hearing today. *Recommend yes, immediately.*
-5. **The thesis voice**: impersonal and institutional ("this thesis argues"),
-   authored as Void News, no historian byline. *Recommend impersonal; a named
-   author would be a claim the record cannot support.*
+5. **The thesis voice**: impersonal, authored as Void News, no historian
+   byline; but a historian's voice that argues, adjudicates and finds, not
+   a compiler's that lists. *Amended 2026-09-24 on the CEO's direction that
+   the engine is a historian (6b). The page tests each scholar against the
+   artifacts and states a verdict; it derives its own findings from the
+   primary record with the working shown; it still never asserts a fact on
+   its own authority, and a named author would be a claim the record cannot
+   support.*
 6. **Positions replace the five perspectives on thesis pages**, with the
    YAML kept for the Hearing and the script until the last switch.
    *Recommend yes.*
@@ -850,7 +1095,17 @@ gates**, in this order:
    DOCUMENT marker gains its extract id. A line the ledger cannot carry is
    cut, not softened. The four over-length episodes are trimmed to 15.0 in
    the same pass.
-3. Kokoro re-renders the episode, the promo is re-stitched, the manifest
+3. The historian's work feeds the cut (6b). A finding may be spoken, in
+   narration, only in the form the page states it and with its confidence
+   said aloud ("by the record's own dates, fifteen days"), and the script
+   marks it with the finding id so T-17's numeral rule applies to the
+   spoken line as well. The turn gains the verdicts: where the page finds
+   a position contradicted by an artifact, the turn says so and the
+   document voice reads the artifact; where the page finds it untestable,
+   the turn says the record does not hold what would settle it. An account
+   still gets its case uninterrupted; the verdict comes after all five, as
+   the turn always has.
+4. Kokoro re-renders the episode, the promo is re-stitched, the manifest
    fingerprint changes, `tests/test_history_audio.py` re-verifies the served
    file, and the page's episode marks are re-aligned to the new chapters.
 

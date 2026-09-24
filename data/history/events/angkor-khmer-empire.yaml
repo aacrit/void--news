@@ -293,7 +293,7 @@ perspectives:
     year: '1864'
     type: book
     openlibrary: OL6918285M
-    archive_url: https://archive.org/details/travelsincentral01mouhuoft
+    verified: false
   - title: Inscriptions du Cambodge (8 volumes)
     author: George Coedes
     year: 1937-1966
@@ -303,7 +303,7 @@ perspectives:
     year: '1963'
     type: book
     openlibrary: OL5901979M
-    archive_url: https://archive.org/details/angkorintroducti0000coed
+    verified: false
   notable_quotes:
   - text: 'One of these temples -- a rival to that of Solomon, and erected by some ancient Michelangelo -- might take an honourable
       place beside our most beautiful buildings. It is grander than anything left to us by Greece or Rome, and presents a sad
@@ -378,7 +378,7 @@ perspectives:
     year: '1999'
     type: book
     openlibrary: OL362137M
-    archive_url: https://archive.org/details/brothernumberone00chan
+    verified: false
   - title: 'Case Concerning the Temple of Preah Vihear (Cambodia v. Thailand), Judgment'
     author: International Court of Justice
     year: '1962'
@@ -539,7 +539,7 @@ perspectives:
     author: Brendan M. Buckley, et al.
     year: '2010'
     type: journal
-    doi: 10.1016/j.quascirev.2010.04.024
+    verified: false
   - title: 'The Hydraulic City: Water and the Infrastructures of Citizenship in Angkor'
     author: Mary Beth Day
     year: '2012'
@@ -548,7 +548,7 @@ perspectives:
     author: Roland Fletcher
     year: '2012'
     type: journal
-    doi: 10.5334/bha.22111
+    verified: false
   notable_quotes:
   - text: 'The survey results confirm that the urban complex of Greater Angkor is the most extensive settlement system of the
       pre-industrial world.'

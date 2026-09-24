@@ -165,7 +165,7 @@ perspectives:
     author: Ata-Malik Juvayni
     year: c. 1260
     type: primary-source
-    doi: 10.2307/1845462
+    verified: false
   - title: Jami al-Tawarikh (Compendium of Chronicles)
     author: Rashid al-Din Hamadani
     year: c. 1307
@@ -465,13 +465,12 @@ perspectives:
     author: Ibn Khaldun
     year: '1377'
     type: primary-source
-    doi: 10.1515/9781400847334
-    archive_url: https://archive.org/details/TheMuslimHistorianIbnKhaldun
+    verified: false
   - title: 'Islam, Science, and the Challenge of History'
     author: Ahmad Dallal
     year: '2010'
     type: book
-    doi: 10.12987/yale/9780300159110.001.0001
+    verified: false
   - title: 'The Mongols and the Islamic World: From Conquest to Conversion'
     author: Peter Jackson
     year: '2017'
@@ -524,22 +523,6 @@ media:
   license: cc-by-sa
   creator: Taisir Mahdi
   creation_date: '2016'
-- media_type: photograph
-  title: A grand mosque in Erbil, Kurdistan, Iraq, showcasing its magnificent architecture and towering minar
-  description: Landscape orientation, 4545x3010px
-  source_url: https://www.pexels.com/photo/brown-and-white-concrete-building-2789762/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/mongol-conquest-baghdad/pexels_2.jpg
-  attribution: Photo by Hisham Yahya on Pexels
-  license: pexels-license
-  creator: Hisham Yahya
-- media_type: photograph
-  title: Street sign labeled 'Nizami 77' on stone facade in Baku, Azerbaijan.
-  description: Landscape orientation, 6000x4000px
-  source_url: https://www.pexels.com/photo/street-sign-on-nizami-street-baku-35404576/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/mongol-conquest-baghdad/pexels_3.jpg
-  attribution: Photo by Zulfugar Karimov on Pexels
-  license: pexels-license
-  creator: Zulfugar Karimov
 connections:
 - target_slug: transatlantic-slave-trade
   connection_type: influenced

@@ -232,7 +232,7 @@ perspectives:
     author: Michael Lind
     year: '1999'
     type: book
-    archive_url: https://archive.org/details/vietnamnecessaryw0000lind
+    verified: false
   - title: "America's Longest War: The United States and Vietnam, 1950-1975"
     author: George C. Herring
     year: '1979'
@@ -242,7 +242,7 @@ perspectives:
     author: David Halberstam
     year: '1972'
     type: book
-    archive_url: https://archive.org/details/bestbrightestdav00halb
+    verified: false
   - title: "Dereliction of Duty: Lyndon Johnson, Robert McNamara, the Joint Chiefs of Staff, and the Lies That Led to Vietnam"
     author: H.R. McMaster
     year: '1997'
@@ -322,7 +322,7 @@ perspectives:
     author: William Duiker
     year: '2000'
     type: book
-    archive_url: https://archive.org/details/hochiminhlife0000duik
+    verified: false
   - title: 'Vietnam: A History'
     author: Stanley Karnow
     year: '1983'
@@ -332,7 +332,7 @@ perspectives:
     author: Duong Van Mai Elliott
     year: '1999'
     type: book
-    archive_url: https://archive.org/details/sacredwillowfour0000duon
+    verified: false
   - title: 'Mandate from Heaven: Divine Command and the Natural Order in the Execution of the Laws of Vietnam'
     author: David G. Marr
     year: '1981'
@@ -419,7 +419,7 @@ perspectives:
     author: Robert S. McNamara
     year: '1995'
     type: book
-    archive_url: https://archive.org/details/inretrospecttra000mcna
+    verified: false
   - title: My Lai 4 — A Report on the Massacre and Its Aftermath
     author: Seymour Hersh
     year: '1970'
@@ -429,7 +429,7 @@ perspectives:
     author: Senator Mike Gravel, ed.
     year: '1971'
     type: government-document
-    archive_url: https://archive.org/details/pentagonpapers00grav
+    verified: false
   notable_quotes:
   - text: Only a free and unrestrained press can effectively expose deception in government.
     speaker: Justice Hugo Black
@@ -509,7 +509,7 @@ perspectives:
     author: Fred Branfman
     year: '1972'
     type: book
-    archive_url: https://archive.org/details/voicesfromplaino0000bran
+    verified: false
   - title: Legacies of War — UXO Survivor Testimonies
     author: Legacies of War
     year: '2023'
@@ -601,12 +601,12 @@ perspectives:
     author: Christian Appy
     year: '2003'
     type: book
-    archive_url: https://archive.org/details/patriotsvietnamy0000appy
+    verified: false
   - title: 'The Vietnam Wars, 1945-1990'
     author: Marilyn Young
     year: '1991'
     type: book
-    archive_url: https://archive.org/details/vietnamwars19451900youn
+    verified: false
   notable_quotes:
   - text: 'Create two, three, many Vietnams — that is the watchword.'
     speaker: Che Guevara

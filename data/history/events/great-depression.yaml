@@ -228,7 +228,7 @@ perspectives:
     author: Frederick Lewis Allen
     year: '1940'
     type: book
-    archive_url: https://archive.org/details/sinceyesterday0000alle
+    verified: false
   notable_quotes:
   - text: I'd get up at five in the morning and head for the waterfront. Only the man who's in it knows what it's like. It got worse and worse.
     speaker: Anonymous testimony
@@ -265,12 +265,12 @@ perspectives:
     author: Rosemary Thorp (editor)
     year: '1984'
     type: book
-    archive_url: https://archive.org/details/latinamericain1900thor
+    verified: false
   - title: 'Golden Fetters: The Gold Standard and the Great Depression, 1919-1939'
     author: Barry Eichengreen
     year: '1992'
     type: book
-    archive_url: https://archive.org/details/goldenfettersgol0000eich
+    verified: false
   - title: 'Saving Indian Villages: British Empire, the Great Depression and Gandhi''s Civil Disobedience Movement'
     author: Alok Oak
     year: '2022'

@@ -241,7 +241,6 @@ perspectives:
     author: Susan Southard
     year: '2015'
     type: book
-    doi: 10.1080/02690055.2020.1721019
     archive_url: https://archive.org/details/nagasakilifeafte0000sout
   notable_quotes:
   - text: I want you to understand that it is not merely a picture. It is my body.
@@ -454,17 +453,17 @@ perspectives:
     author: Naoko Wake
     year: '2014'
     type: book
-    doi: 10.1215/9780822376699
+    verified: false
   - title: 'Hiroshima Traces: Time, Space, and the Dialectics of Memory'
     author: Lisa Yoneyama
     year: '1999'
     type: book
-    doi: 10.2307/2659211
+    verified: false
   - title: 'Korea''s Grievous War'
     author: Su-kyoung Hwang
     year: '2016'
     type: book
-    doi: 10.9783/9780812292312
+    verified: false
   notable_quotes:
   - text: The Korean victims were given no choice but to come to Hiroshima, where they were subjected to the atomic bombing. They died nameless, their spirits unable to return home.
     speaker: Inscription on the Cenotaph for Korean Victims
@@ -518,62 +517,6 @@ media:
   license: public-domain
   creator: U.S. Strategic Bombing Survey
   creation_date: '1946'
-- media_type: photograph
-  title: a building with a dome on top
-  description: Landscape orientation, 6000x4000px
-  source_url: https://unsplash.com/photos/a-building-with-a-dome-on-top-DO_UCDkM94U
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/hiroshima-nagasaki/unsplash_1.jpg
-  attribution: Photo by Björn on Unsplash
-  license: unsplash-license
-  creator: Björn
-- media_type: photograph
-  title: an old building with a dome on top of it
-  description: Landscape orientation, 6192x4128px
-  source_url: https://unsplash.com/photos/an-old-building-with-a-dome-on-top-of-it-DZLVMVbnNm4
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/hiroshima-nagasaki/unsplash_2.jpg
-  attribution: Photo by Dmitry Romanoff on Unsplash
-  license: unsplash-license
-  creator: Dmitry Romanoff
-- media_type: photograph
-  title: people sitting on water fountain during daytime
-  description: Landscape orientation, 4497x2998px
-  source_url: https://unsplash.com/photos/people-sitting-on-water-fountain-during-daytime-dInMEZGUBmQ
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/hiroshima-nagasaki/unsplash_3.jpg
-  attribution: Photo by Tayawee Supan on Unsplash
-  license: unsplash-license
-  creator: Tayawee Supan
-- media_type: photograph
-  title: man riding horse statue during daytime
-  description: Landscape orientation, 4716x3144px
-  source_url: https://unsplash.com/photos/man-riding-horse-statue-during-daytime-OA7pHiZwda0
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/hiroshima-nagasaki/unsplash_4.jpg
-  attribution: Photo by Tayawee Supan on Unsplash
-  license: unsplash-license
-  creator: Tayawee Supan
-- media_type: photograph
-  title: Beautiful view of the Hiroshima Peace Memorial Park featuring the Cenotaph, symbolizing peace and re
-  description: Landscape orientation, 6000x4000px
-  source_url: https://www.pexels.com/photo/a-large-concrete-structure-with-a-large-arch-in-the-middle-28080211/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/hiroshima-nagasaki/pexels_1.jpg
-  attribution: Photo by Mauricio Ortiz on Pexels
-  license: pexels-license
-  creator: Mauricio Ortiz
-- media_type: photograph
-  title: View of Hiroshima Memorial and Atomic Bomb Dome through arch in Peace Park.
-  description: Landscape orientation, 6960x4640px
-  source_url: https://www.pexels.com/photo/hiroshima-peace-memorial-park-with-atomic-dome-31295175/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/hiroshima-nagasaki/pexels_2.jpg
-  attribution: Photo by Andrea Orfino on Pexels
-  license: pexels-license
-  creator: Andrea Orfino
-- media_type: photograph
-  title: Young girl touching the waves on a pebble beach in Nagasaki, Japan.
-  description: Landscape orientation, 4500x3000px
-  source_url: https://www.pexels.com/photo/japanese-girl-on-nagasaki-pebble-beach-36026833/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/hiroshima-nagasaki/pexels_3.jpg
-  attribution: Photo by じいじ on Pexels
-  license: pexels-license
-  creator: じいじ
 - media_type: video
   title: "Trinity Test: first nuclear detonation, July 16, 1945"
   description: "The world's first nuclear explosion at the Trinity site in New Mexico. Filmed by the U.S. Army at 10,000 frames per second. The blast yielded 21 kilotons, equivalent to 21,000 tons of TNT."

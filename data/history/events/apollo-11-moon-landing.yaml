@@ -215,12 +215,12 @@ perspectives:
     author: Asif A. Siddiqi
     year: '2000'
     type: book
-    archive_url: https://archive.org/details/challengetoapoll0000sidd
+    verified: false
   - title: 'Korolev: How One Man Masterminded the Soviet Drive to Beat America to the Moon'
     author: James Harford
     year: '1997'
     type: book
-    archive_url: https://archive.org/details/korolevhowonemna0000harf
+    verified: false
   - title: 'Red Moon Rising: Sputnik and the Hidden Rivalries That Ignited the Space Age'
     author: Matthew Brzezinski
     year: '2007'
@@ -327,7 +327,7 @@ perspectives:
     author: David A. Mindell
     year: '2008'
     type: book
-    archive_url: https://archive.org/details/digitalapollohum0000mind
+    verified: false
   - title: 'The Apollo Guidance Computer: Architecture and Operation'
     author: Frank O'Brien
     year: '2010'

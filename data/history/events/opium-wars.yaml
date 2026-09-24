@@ -306,7 +306,6 @@ perspectives:
     author: Frank Dikotter
     year: '1992'
     type: book
-    doi: 10.2307/2761148
     openlibrary: OL18789911M
     archive_url: https://archive.org/details/the-discourse-of-race-in-modern-china-2015-frank-dikotter
   - title: 'China''s War with Japan, 1937-1945: The Struggle for Survival'
@@ -449,12 +448,12 @@ perspectives:
     author: Amar Farooqui
     year: '2005'
     type: book
-    doi: 10.1017/S0026749X07003356
+    verified: false
   - title: The Peasant Production of Opium in Nineteenth-Century India
     author: Rolf Bauer
     year: '2019'
     type: book
-    doi: 10.1163/9789004390508
+    verified: false
   - title: 'Opium, Empire and the Global Political Economy: A Study of the Asian Opium Trade, 1750-1950'
     author: Carl A. Trocki
     year: '1999'
@@ -507,62 +506,6 @@ media:
   creator: John Platt
   creation_date: c. 1846
   supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/opium-wars/wiki_2.jpg
-- media_type: photograph
-  title: a sign on a wall that says mong kok
-  description: Landscape orientation, 6252x3516px
-  source_url: https://unsplash.com/photos/a-sign-on-a-wall-that-says-mong-kok-K6XLkDUXy24
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/opium-wars/unsplash_1.jpg
-  attribution: Photo by Chromatograph on Unsplash
-  license: unsplash-license
-  creator: Chromatograph
-- media_type: photograph
-  title: A large building sitting on the side of a river
-  description: Landscape orientation, 3888x2592px
-  source_url: https://unsplash.com/photos/a-large-building-sitting-on-the-side-of-a-river-XRg_82u9tCU
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/opium-wars/unsplash_2.jpg
-  attribution: Photo by Taso Katsionis on Unsplash
-  license: unsplash-license
-  creator: Taso Katsionis
-- media_type: photograph
-  title: Shipping containers on a train at a port.
-  description: Landscape orientation, 5804x3265px
-  source_url: https://unsplash.com/photos/shipping-containers-on-a-train-at-a-port-ed3Hegs7k04
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/opium-wars/unsplash_3.jpg
-  attribution: Photo by Wolfgang Weiser on Unsplash
-  license: unsplash-license
-  creator: Wolfgang Weiser
-- media_type: photograph
-  title: Ships and harbor seen from a scenic overlook
-  description: Landscape orientation, 5891x3682px
-  source_url: https://unsplash.com/photos/ships-and-harbor-seen-from-a-scenic-overlook-KihO59Fa2_M
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/opium-wars/unsplash_4.jpg
-  attribution: Photo by Zheng XUE on Unsplash
-  license: unsplash-license
-  creator: Zheng XUE
-- media_type: photograph
-  title: Colorful boats in Hong Kong harbor with towering modern skyscrapers in the background.
-  description: Landscape orientation, 5580x3772px
-  source_url: https://www.pexels.com/photo/vibrant-hong-kong-harbor-with-skyscrapers-36891701/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/opium-wars/pexels_1.jpg
-  attribution: Photo by pierre matile on Pexels
-  license: pexels-license
-  creator: pierre matile
-- media_type: photograph
-  title: A foggy morning view of boats docked at Bergen Harbor with historic Nordic buildings.
-  description: Landscape orientation, 6048x4024px
-  source_url: https://www.pexels.com/photo/misty-morning-at-historic-bergen-harbor-33895839/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/opium-wars/pexels_2.jpg
-  attribution: Photo by Nguyen Ngoc Tien on Pexels
-  license: pexels-license
-  creator: Nguyen Ngoc Tien
-- media_type: photograph
-  title: A blend of historical and modern architecture in Guangzhou, China, featuring a traditional temple an
-  description: Landscape orientation, 5263x3947px
-  source_url: https://www.pexels.com/photo/traditional-temple-in-guangzhou-amidst-modern-high-rises-35272169/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/opium-wars/pexels_3.jpg
-  attribution: Photo by Bingqian Li on Pexels
-  license: pexels-license
-  creator: Bingqian Li
 connections:
 - target_slug: scramble-for-africa
   connection_type: parallel

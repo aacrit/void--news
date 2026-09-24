@@ -341,7 +341,7 @@ perspectives:
     author: Richard Foltz
     year: '2010'
     type: book
-    archive_url: https://archive.org/details/religionsofsil00folt
+    verified: false
   notable_quotes:
   - text: I would rather die going to the west than live by going back to the east.
     speaker: Xuanzang
@@ -413,7 +413,7 @@ perspectives:
     author: S.D. Goitein
     year: 1967-1993
     type: book
-    archive_url: https://archive.org/details/mediterraneansoc0006goit
+    verified: false
   - title: 'The House of Wisdom: How Arabic Science Saved Ancient Knowledge and Gave Us the Renaissance'
     author: Jim Al-Khalili
     year: '2011'
@@ -489,7 +489,7 @@ perspectives:
     author: William H. McNeill
     year: '1976'
     type: book
-    archive_url: https://archive.org/details/plaguespeople00mcne
+    verified: false
   - title: 'The Black Death 1346-1353: The Complete History'
     author: Ole J. Benedictow
     year: '2004'
@@ -554,62 +554,6 @@ media:
   creator: Willard84
   creation_date: '2005'
   supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/silk-road/wiki_3.jpg
-- media_type: photograph
-  title: People walk around registan square in samarkand, uzbekistan.
-  description: Landscape orientation, 5765x3848px
-  source_url: https://unsplash.com/photos/people-walk-around-registan-square-in-samarkand-uzbekistan-pQMkpG36644
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/silk-road/unsplash_1.jpg
-  attribution: Photo by LKHTK on Unsplash
-  license: unsplash-license
-  creator: LKHTK
-- media_type: photograph
-  title: People gathered in a grand plaza with historic buildings.
-  description: Landscape orientation, 6240x4160px
-  source_url: https://unsplash.com/photos/people-gathered-in-a-grand-plaza-with-historic-buildings-OAs-rDSY_p4
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/silk-road/unsplash_2.jpg
-  attribution: Photo by Eunsong Jo on Unsplash
-  license: unsplash-license
-  creator: Eunsong Jo
-- media_type: photograph
-  title: a road sign on the side of a road
-  description: Landscape orientation, 4364x2909px
-  source_url: https://unsplash.com/photos/a-road-sign-on-the-side-of-a-road-6kirhAaQzw4
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/silk-road/unsplash_3.jpg
-  attribution: Photo by Galen Crout on Unsplash
-  license: unsplash-license
-  creator: Galen Crout
-- media_type: photograph
-  title: Dirt road leads to a calm blue lake with mountains.
-  description: Landscape orientation, 5232x3904px
-  source_url: https://unsplash.com/photos/dirt-road-leads-to-a-calm-blue-lake-with-mountains-RNUJ0hQps94
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/silk-road/unsplash_4.jpg
-  attribution: Photo by kai muro on Unsplash
-  license: unsplash-license
-  creator: kai muro
-- media_type: photograph
-  title: Capture of the historic Registan Mosque in Samarkand, Uzbekistan under a clear blue sky.
-  description: Landscape orientation, 3617x2520px
-  source_url: https://www.pexels.com/photo/stunning-view-of-samarkand-registan-mosque-35220191/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/silk-road/pexels_1.jpg
-  attribution: Photo by Rüveyda Akkaya on Pexels
-  license: pexels-license
-  creator: Rüveyda Akkaya
-- media_type: photograph
-  title: Crowded Registan Square in Samarkand with ancient madrasahs under a clear sky.
-  description: Landscape orientation, 6219x4146px
-  source_url: https://www.pexels.com/photo/historical-architecture-at-registan-square-samarkand-32493981/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/silk-road/pexels_2.jpg
-  attribution: Photo by Yaşar Başkurt on Pexels
-  license: pexels-license
-  creator: Yaşar Başkurt
-- media_type: photograph
-  title: View of the historic Mogao Caves, a UNESCO site in Dunhuang, China.
-  description: Landscape orientation, 6240x4160px
-  source_url: https://www.pexels.com/photo/view-of-the-mogao-caves-dunhuang-china-25974825/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/silk-road/pexels_3.jpg
-  attribution: Photo by Manta paopao on Pexels
-  license: pexels-license
-  creator: Manta paopao
 connections:
 - target_slug: mongol-conquest-baghdad
   connection_type: influenced

@@ -230,7 +230,7 @@ perspectives:
     author: Asef Bayat
     year: '2017'
     type: book
-    doi: 10.1515/9780804799027
+    verified: false
   - title: 'Revolution 2.0: The Power of the People Is Greater Than the People in Power'
     author: Wael Ghonim
     year: '2012'
@@ -241,7 +241,6 @@ perspectives:
     author: Eugene Rogan
     year: '2009'
     type: book
-    doi: 10.1017/S0020743812000761
     openlibrary: OL24117025M
     archive_url: https://archive.org/details/arabshistory0000roga
   notable_quotes:
@@ -320,13 +319,12 @@ perspectives:
     author: Marc Lynch
     year: '2016'
     type: book
-    doi: 10.1353/jod.2016.0067
     openlibrary: OL26860505M
+    verified: false
   - title: 'Soldiers, Spies, and Statesmen: Egypt''s Road to Revolt'
     author: Hazem Kandil
     year: '2012'
     type: book
-    doi: 10.1017/S0020743814000853
     openlibrary: OL25428244M
     archive_url: https://archive.org/details/soldiersspiessta0000kand
   - title: 'All In: The Spread of Conflict in the International System'
@@ -408,20 +406,20 @@ perspectives:
     author: Shadi Hamid
     year: '2016'
     type: book
-    doi: 10.1353/jod.2017.0010
     openlibrary: OL26363771M
+    verified: false
   - title: 'Temptations of Power: Islamists and Illiberal Democracy in a New Middle East'
     author: Shadi Hamid
     year: '2014'
     type: book
-    doi: 10.1093/acprof:oso/9780199314058.001.0001
     openlibrary: OL27148920M
+    verified: false
   - title: 'The Muslim Brotherhood: Evolution of an Islamist Movement'
     author: Carrie Rosefsky Wickham
     year: '2013'
     type: book
-    doi: 10.1515/9781400848577
     openlibrary: OL26363771M
+    verified: false
   notable_quotes:
   - text: We do not want anything from the revolution. We want what the people want.
     speaker: Mohammed Morsi
@@ -494,19 +492,19 @@ perspectives:
     author: Marc Lynch
     year: '2016'
     type: book
-    doi: 10.1353/jod.2016.0067
     openlibrary: OL26860505M
+    verified: false
   - title: 'The Internationalization of the Arab Spring: Regional Powers and the Diffusion of Revolution'
     author: F. Gregory Gause III
     year: '2014'
     type: article
-    doi: 10.1017/S0020818313000459
+    verified: false
   - title: 'The Syrian Jihad: Al-Qaeda, the Islamic State and the Evolution of an Insurgency'
     author: Charles R. Lister
     year: '2015'
     type: book
-    doi: 10.1093/acprof:oso/9780190462475.001.0001
     openlibrary: OL27068073M
+    verified: false
   notable_quotes:
   - text: We came, we saw, he died.
     speaker: Hillary Clinton
@@ -580,13 +578,13 @@ perspectives:
     author: Lina Khatib
     year: '2013'
     type: article
-    doi: 10.1177/0888325413496814
+    verified: false
   - title: 'A Quiet Revolution: The Veil''s Resurgence from the Middle East to America'
     author: Leila Ahmed
     year: '2011'
     type: book
-    doi: 10.2307/j.ctt1np6dm
     openlibrary: OL25027012M
+    verified: false
   - title: 'Headscarves and Hymens: Why the Middle East Needs a Sexual Revolution'
     author: Mona Eltahawy
     year: '2015'

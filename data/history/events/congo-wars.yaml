@@ -174,7 +174,7 @@ perspectives:
     author: Philip Gourevitch
     year: '1998'
     type: book
-    archive_url: https://archive.org/details/wewishtoinforyou00gour
+    verified: false
   - title: Report of the Mapping Exercise (DRC, 1993-2003)
     author: UN Office of the High Commissioner for Human Rights
     year: '2010'
@@ -252,7 +252,7 @@ perspectives:
     author: Georges Nzongola-Ntalaja
     year: '2002'
     type: book
-    archive_url: https://archive.org/details/congofromleopold0000nzon
+    verified: false
   - title: Final Report of the Panel of Experts on the Illegal Exploitation of Natural Resources and Other Forms of Wealth of the Democratic Republic of the Congo
     author: UN Security Council
     year: '2002'

@@ -207,7 +207,7 @@ perspectives:
     author: E. Sylvia Pankhurst
     year: '1911'
     type: book
-    archive_url: https://archive.org/details/suffragettehistor00pank
+    verified: false
   - title: 'Rise Up, Women! The Remarkable Lives of the Suffragettes'
     author: Andrew Rosen
     year: '1974'
@@ -284,7 +284,7 @@ perspectives:
     author: Alexandra Kollontai
     year: '1909'
     type: book
-    archive_url: https://archive.org/details/socialbasisofwom00koll
+    verified: false
   - title: 'Women, the State and Revolution: Soviet Family Policy and Social Life, 1917-1936'
     author: Wendy Z. Goldman
     year: '1993'
