@@ -249,6 +249,7 @@ class Exporter:
             "color": self.position_color.get(pid, "a"),
             "holders": list(pos.get("holders") or []), "restsOn": rests,
             "claim": pos.get("claim"), "omits": pos.get("omits"),
+            "describedBy": [self.extract_ref(r) for r in (pos.get("described_by") or [])],
             "adjudications": adjs,
         }
 
@@ -292,7 +293,7 @@ class Exporter:
             "t": "analysis", "id": aid, "title": a.get("title"), "method": a.get("method"),
             "finding": a.get("finding"), "confidence": a.get("confidence"),
             "against": a.get("against"), "result": a.get("result"),
-            "compute": how, "columns": cols, "rows": rows,
+            "compute": how, "columns": cols, "rows": rows, "rowCount": len(rows),
         }
 
     def section(self, sec) -> dict:

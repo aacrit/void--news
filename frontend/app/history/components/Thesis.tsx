@@ -283,7 +283,7 @@ function Analysis({ block, doc }: { block: ThesisAnalysisBlock; doc: ThesisDoc }
           </tbody>
         </table>
       </div>
-      <p className="hist-th-analysis__result"><span className="hist-th-label">Computed</span> {block.compute}; result {resultText}</p>
+      <p className="hist-th-analysis__result"><span className="hist-th-label">Computed</span> over {block.rowCount} rows, {block.compute}; result {resultText}</p>
       <p className="hist-th-analysis__finding">{block.finding}</p>
       <p className="hist-th-analysis__confidence">
         <span className="hist-th-label">Confidence</span> {block.confidence}.{" "}
@@ -377,6 +377,22 @@ function Position({ block }: { block: ThesisPositionBlock }) {
           <dt>Omits</dt>
           <dd>{block.omits}</dd>
         </div>
+        {block.describedBy.length > 0 && (
+          <div>
+            <dt>As described by</dt>
+            <dd>
+              <ul className="hist-th-position__sources">
+                {block.describedBy.map((x, i) => (
+                  <li key={i}>
+                    {x.freeCopy ? <a href={x.freeCopy} rel="noopener noreferrer" target="_blank">{x.short}</a> : x.short}
+                    <span className="hist-th-position__tag">{x.locatorLabel}{x.exhibit ? `, exhibit ${x.exhibit}` : ""}</span>
+                    <ExtractText x={x} />
+                  </li>
+                ))}
+              </ul>
+            </dd>
+          </div>
+        )}
       </dl>
       {block.adjudications.length > 0 && (
         <div className="hist-th-tested">
@@ -528,6 +544,9 @@ function Section({ section, doc, audio }: { section: ThesisSection; doc: ThesisD
       return (
         <section id="question" className="hist-th-section hist-th-question" aria-labelledby="question-h">
           <h2 id="question-h" className="hist-th-h2">{section.title}</h2>
+          {/* The one question the thesis asks, from its front matter, before
+              the paragraphs that earn it. TH-01 asserts it is on the page. */}
+          <p className="hist-th-question__ask">{doc.question}</p>
           <Blocks blocks={section.blocks} doc={doc} audio={audio} paraClass="hist-th-para--editorial" />
           {doc.claims.length > 0 && (
             <ol className="hist-th-claims" aria-label="The claims this thesis makes">

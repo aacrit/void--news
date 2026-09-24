@@ -922,19 +922,16 @@ H-05 (no dash in the served text or any accessible name) and H-06 (one `<h1>`,
 at least 60 event card links), added 2026-09-21 when the landing became a
 prerendered page. `verify_production.py` itself still reads only `/`.
 
-## History thesis pilot (2026-09-24): Srebrenica at draft, two pilots not started
+## History thesis pilot (2026-09-24): Srebrenica published, two pilots not started
 
-Phase 1 of `docs/proposals/HISTORY-THESIS-PAGE.md`. The tooling, the
-Srebrenica ledger (`data/history/evidence/srebrenica-genocide/`) and the
-thesis (`data/history/theses/srebrenica-genocide.md`) are committed and pass
-T-01..T-20. What is unfinished:
+Phase 1 of `docs/proposals/HISTORY-THESIS-PAGE.md`. The Srebrenica ledger
+(`data/history/evidence/srebrenica-genocide/`) and thesis
+(`data/history/theses/srebrenica-genocide.md`) passed an independent Stage 5
+audit in two passes and are `published`: the route renders the Thesis and the
+served JSON is committed under `frontend/build-data/history-theses/`. A
+correction is re-exported with `python3 -m pipeline.history.export_thesis`;
+T-14 fails on drift. What is unfinished:
 
-- **The Stage 5 audit.** T-13 refuses `published` without `audited_by` and
-  `audited_at`, and no auditor has read the thesis. Until one does, the route
-  renders the Hearing and the thesis is reachable only by a preview build
-  (`python3 -m pipeline.history.export_thesis --include-drafts`, then
-  `NEXT_PUBLIC_HISTORY_DRAFTS=1 npm run build`). Never commit the draft JSON
-  under `frontend/build-data/history-theses/`: T-14 fails on it.
 - **The ICJ judgment of 26 February 2007** could not be fetched (the ICJ site
   answers every PDF request with a Cloudflare challenge; the mirror answered
   403). The thesis reaches the finding only through A/RES/78/282's recital of

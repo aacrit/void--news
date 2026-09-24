@@ -98,6 +98,7 @@ def fixture_ledger() -> dict:
                                 "reasoning": "One producer, the secretariat, so the verdict is capped at qualified."}]},
             {"id": "critical", "name": "The critical account", "holders": ["Scholar 3", "Partisan, P."],
              "rests_on": ["src-scholar-3", "src-partisan"],
+             "described_by": ["src-scholar-3.p30"],
              "claim": "The numbers are inflated.", "omits": "The forensic record.",
              "adjudications": [{"claim": "The numbers are inflated.", "verdict": "contradicted",
                                 "basis": "presence", "rests_on": ["src-court-tj.para84", "src-sg-report.para503"],
@@ -126,7 +127,7 @@ def fixture_ledger() -> dict:
              "url": "https://example.org/council/100.pdf", "source": "src-council-res", "locator": "op1"},
         ],
         "analyses": [
-            {"id": "an-crowd", "title": "Four counts of one crowd",
+            {"id": "an-crowd", "title": "Two counts of one crowd",
              "method": "Every figure the record gives for the crowd, by document and date.",
              "finding": "The counts run from 17,500 to 25,000.",
              "confidence": "high: both figures are in one court extract",
@@ -482,6 +483,38 @@ def test_t17_rule_a_one_sided_verdict():
                     e["producer"] = None
         found = ids(pathlib.Path(t), ledger=mutated(no_producer))
         assert "L-01" in found and "L-13" in found, found
+
+
+def test_l16_tier_d_position_described_by_a_or_b():
+    """§4a: a Tier D position enters only when a Tier A or B source is cited
+    for what the position is."""
+    with tempfile.TemporaryDirectory() as t:
+        def undescribed(d):
+            d["positions"][2].pop("described_by")
+        assert "L-16" in ids(pathlib.Path(t), ledger=mutated(undescribed))
+        def described_by_itself(d):
+            d["positions"][2]["described_by"] = ["src-partisan.p1"]
+        assert "L-16" in ids(pathlib.Path(t), ledger=mutated(described_by_itself))
+        def dangling(d):
+            d["positions"][2]["described_by"] = ["src-scholar-3.p99"]
+        assert "L-16" in ids(pathlib.Path(t), ledger=mutated(dangling))
+        # a position with no Tier D source needs no description
+        def no_d(d):
+            d["positions"][0].pop("described_by", None)
+        assert "L-16" not in ids(pathlib.Path(t), ledger=mutated(no_d))
+
+
+def test_l17_analysis_counts_its_own_rows():
+    with tempfile.TemporaryDirectory() as t:
+        def six(d):
+            d["analyses"][0]["title"] = "One crowd, six counts"
+        assert "L-17" in ids(pathlib.Path(t), ledger=mutated(six))
+        def nine(d):
+            d["analyses"][0]["confidence"] = "high: the extreme of nine figures held"
+        assert "L-17" in ids(pathlib.Path(t), ledger=mutated(nine))
+        def right(d):
+            d["analyses"][0]["title"] = "One crowd, two counts"
+        assert "L-17" not in ids(pathlib.Path(t), ledger=mutated(right))
 
 
 def test_t18_rule_b_absence_and_gaps():
