@@ -286,10 +286,8 @@ function Analysis({ block, doc }: { block: ThesisAnalysisBlock; doc: ThesisDoc }
       <p className="hist-th-analysis__result"><span className="hist-th-label">Computed</span> {block.compute}; result {resultText}</p>
       <p className="hist-th-analysis__finding">{block.finding}</p>
       <p className="hist-th-analysis__confidence">
-        {block.confidence === "entailed"
-          ? "Entailed by the rows above; nothing is asserted that the rows do not carry."
-          : `An inference, confidence ${block.confidence}.`}
-        {block.against && ` Against it: ${block.against}`}
+        <span className="hist-th-label">Confidence</span> {block.confidence}.{" "}
+        <span className="hist-th-label">Against it</span> {block.against}
       </p>
       <span className="sr-only">{doc.slug}</span>
     </section>

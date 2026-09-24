@@ -627,8 +627,21 @@ def validate_ledger(ledger: Ledger) -> list[Finding]:
         got, how = compute_analysis(a)
         if not result_matches(a.get("result"), got):
             fail("L-11", aid, f"stated result {a.get('result')!r} does not recompute: {how}")
-        if not a.get("against") and str(a.get("confidence")).lower() != "entailed":
-            fail("L-10", aid, "an inference that is not entailed must state the evidence against it")
+        # Proposal §6b.3: the evidence against is printed, always ("none found"
+        # must say where the search looked), and confidence is high, moderate
+        # or low with a reason. "entailed" was accepted as a waiver until the
+        # 2026-09-24 audit; a finding with nothing against it is a finding
+        # nobody looked for a counter-example to.
+        against = str(a.get("against") or "").strip()
+        if not against:
+            fail("L-10", aid, "no evidence against stated (write 'none found in ...' naming what was searched)")
+        elif against.lower().startswith("none found") and len(against.split()) < 6:
+            fail("L-10", aid, "'none found' must say where the search looked")
+        conf = str(a.get("confidence") or "").strip()
+        if not re.match(r"^(high|moderate|low)\b", conf, re.I):
+            fail("L-10", aid, f"confidence {conf!r} must be high, moderate or low")
+        elif len(conf.split()) < 4:
+            fail("L-10", aid, "confidence must carry its reason")
 
     return out
 

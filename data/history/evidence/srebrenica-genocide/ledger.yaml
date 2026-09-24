@@ -707,8 +707,8 @@ positions:
       - claim: "About 350 male refugees were inside the compound on 13 July 1995."
         verdict: qualified
         basis: presence
-        rests_on: [src-nl-hr-2019.sec5, src-icty-krstic-tj.para37]
-        reasoning: "The tribunal's witnesses put at least 300 men inside the perimeter of the compound on the evening of 11 July and 600 to 900 in the crowd outside; the Dutch court's approximately 350 on 13 July is of the same order and from a different producer. The two counts are not of the same day, so they agree without confirming each other."
+        rests_on: [src-nl-hr-2019.sec4, src-icty-krstic-tj.para37]
+        reasoning: "The tribunal's witnesses put at least 300 men inside the perimeter of the compound on the evening of 11 July and 600 to 900 in the crowd outside; the Dutch court's approximately 350 male refugees still in the compound on 13 July is of the same order and from a different producer. The two counts are not of the same day, so they agree without confirming each other."
       - claim: "The United Nations' immunity from Dutch jurisdiction served a legitimate purpose and was not disproportionate."
         verdict: qualified
         basis: presence
@@ -728,31 +728,31 @@ positions:
         reasoning: "The Supreme Court's judgment builds its established facts on the NIOD report and cites it by page, so the report's authority in the Dutch record is documented; but the judgment is one producer and the report itself could not be read, so the verdict is capped at qualified."
   - id: serbian-denial
     name: Denial in Serbia and Republika Srpska
-    holders: ["Atlagić and Martinović (2021)", "the Republika Srpska government's bureau report of 2002, as Manojlović Pintar describes it"]
+    holders: ["Atlagić and Martinović (2021)"]
     rests_on: [src-atlagic-2021]
-    claim: "No genocide occurred; the real number of Muslim victims was between 800 and 1,200; the figure of 8,000 was constructed for propaganda by the United States and the Bosnian leadership."
+    claim: "No genocide occurred, because no statement by a Republika Srpska official wanting the Muslim population destroyed can be found; the real number of Muslim victims was between 800 and 1,200; the figure of 8,000 was constructed for propaganda by the United States and the Bosnian leadership."
     omits: "The forensic record of blindfolds, ligatures and reburied graves that the tribunal set out, and the count of bodies exhumed, which the position's own abstract does not mention."
     adjudications:
       - claim: "The real number of Muslim victims is between 800 and 1,200, and the figure of 8,000 is exaggerated."
         verdict: contradicted
         basis: presence
         rests_on: [src-icty-krstic-tj.para80, src-icty-krstic-tj.para84, src-un-ares78282.whole]
-        reasoning: "By 2000 the prosecution's exhumations had established a minimum of 2,028 bodies in the graves examined, above the position's ceiling of 1,200 before a single unexhumed grave is counted; the tribunal's range is 7,000 to 8,000 and the General Assembly's count is at least 8,372. Two producers, the tribunal and the General Assembly, contradict the figure."
-      - claim: "The killers had no intent to destroy the Muslim population, so there was no genocide."
+        reasoning: "By 2000 the prosecution's exhumations had established a minimum of 2,028 bodies in the graves examined, above the position's ceiling of 1,200 before a single unexhumed grave is counted; the tribunal's range is 7,000 to 8,000, and the General Assembly's resolution recites at least 8,372 lives lost, a recital of a figure and not a count of its own. Two producers, the tribunal and the General Assembly, contradict the figure."
+      - claim: "No statement by a Republika Srpska official wanting the Muslim population destroyed can be found, so there was no intent and no genocide."
         verdict: contradicted
         basis: presence
-        rests_on: [src-icty-krstic-tj.para598, src-icty-krstic-aj.para37, src-icty-mladic-tj.para5214, src-un-ares78282.whole]
-        reasoning: "The Trial Chamber found the intent to kill all the military-aged men to be an intent to destroy the group in part; the Appeals Chamber affirmed the name genocide; the Mladić chamber convicted on the genocide count; the General Assembly recites eight genocide verdicts and the ICJ's 2007 determination. Two producers."
+        rests_on: [src-atlagic-2021.p16, src-icty-krstic-tj.para598, src-icty-krstic-aj.para37, src-icty-mladic-tj.para5214, src-un-ares78282.whole]
+        reasoning: "The position's strongest line is that its authors could not find a statement of intent. The tribunal did not infer intent from a statement: the Trial Chamber found the intent to kill all the military-aged men to be, in itself, an intent to destroy the group in part, and the Appeals Chamber affirmed that the forces deliberately and methodically killed the male prisoners solely on the basis of their identity and called the crime genocide; the Mladić chamber convicted on the Srebrenica genocide count; the General Assembly recites eight genocide verdicts and the ICJ's 2007 determination. The absence the position relies on is not the test the courts applied, and two producers carry the finding."
       - claim: "The United States asked the Bosnian leadership to have 5,000 Muslims killed to justify bombing the Serbs."
         verdict: untestable
         basis: absence
-        rests_on: [src-atlagic-2021.abstract]
-        reasoning: "No document in the free record carries this conversation or anything about it, and a claim about a private conversation cannot be tested against artifacts that do not mention it. It is published here as the position's own words and nothing more."
+        rests_on: [src-atlagic-2021.p16, src-atlagic-2021.abstract]
+        reasoning: "No document in the free record carries this conversation or anything about it, and a claim about a private conversation cannot be tested against artifacts that do not mention it. It is published here as the position's own words, in the article's own English summary, and nothing more."
   - id: serbian-critical
     name: Serbian critical historiography
     holders: ["Manojlović Pintar (Institute for Recent History of Serbia, 2024)"]
     rests_on: [src-pintar-2024]
-    claim: "Republika Srpska's official reading of Srebrenica moved from concealment, through a period of alignment with the international courts, to organised denial, and three official reports of 2002, 2004 and 2021 reached conflicting conclusions."
+    claim: "Three official reports on Srebrenica, of 2002, 2004 and 2021, reached conflicting conclusions, and they reflect shifts in Republika Srpska's official political discourse."
     omits: "The reports themselves, which the free record does not hold, so what they concluded is known here only as this scholarship summarises them."
     adjudications:
       - claim: "Both the International Court of Justice and the tribunal classified the crime as genocide."
@@ -910,10 +910,10 @@ analyses:
   - id: an-crowd-counts
     title: One crowd, six counts
     method: "Every figure the fetched primary documents give for the number of people who gathered at Potočari on 11 to 13 July 1995, one row per figure, with the document and the moment it counts. The result is the range of the column."
-    finding: "The record counts the crowd at Potočari at between 15,000 and 25,000, and the two lowest figures are the two the battalion commander wrote on the day."
-    confidence: entailed
-    against: null
-    result: [15000, 25000]
+    finding: "The record counts the crowd at Potočari at between 15,000 and 30,000, and the two lowest figures are the two the battalion commander wrote on the day."
+    confidence: "high for the range, which is the extreme of nine figures in two producers' documents; the figures count different moments over three days, so the range is a spread of counts, not a change in the crowd"
+    against: "the tribunal's own paragraph 34 gives 20,000 to 30,000 as the number who had fled to the compound and surrounding areas, a wider upper bound than paragraph 37's 25,000 from the same producer; it is included as the last two rows rather than resolved"
+    result: [15000, 30000]
     derivation:
       compute: range
       column: count
@@ -927,12 +927,14 @@ analyses:
         - {document: "Krstić Trial Judgement, paragraph 37, high", moment: "evening of 11 July", count: 25000, extract: src-icty-krstic-tj.para37}
         - {document: "UN military observers, report at 1600 hours (A/54/549, paragraph 308)", moment: "1600 hours, 11 July", count: 20000, extract: src-un-a54549.para308}
         - {document: "Karremans, message after meeting Mladić (A/54/549, paragraph 315)", moment: "12 July", count: 15000, extract: src-un-a54549.para315}
+        - {document: "Krstić Trial Judgement, paragraph 34, low", moment: "when the air strikes were abandoned, 11 July", count: 20000, extract: src-icty-krstic-tj.para34}
+        - {document: "Krstić Trial Judgement, paragraph 34, high", moment: "when the air strikes were abandoned, 11 July", count: 30000, extract: src-icty-krstic-tj.para34}
   - id: an-execution-sites
     title: The execution sites in the tribunal's own table of contents
     method: "The mass execution sites are listed as the sub-headings (a) to (i) of the Krstić Trial Judgement's section on the Drina Corps' involvement, each with the date the chamber gave it. One row per sub-heading; the result is the count."
-    finding: "The chamber's own table of contents lists nine mass execution sites, dated from 13 July to 16 July 1995, with four of them dated 13 July."
-    confidence: entailed
-    against: null
+    finding: "The chamber's own table of contents lists nine mass execution sites: eight dated from 13 to 16 July 1995, four of them on 13 July, and the ninth, Kozluk, undated in its heading."
+    confidence: "high: the count is of headings in a document held whole, and a heading is either present or not"
+    against: "none found in the Krstić trial judgment's table of contents, which is the only list of sites in the free record; heading (j) covers smaller-scale executions the count leaves out, so nine is the chamber's count of mass execution sites, not of all killings"
     result: 9
     derivation:
       compute: count
@@ -952,8 +954,8 @@ analyses:
     title: How many of the primary graves were dug up
     method: "From the tribunal's summary of the prosecution's exhumations to 2000: the number of primary gravesites and the number of them later disturbed. The result is the share, disturbed over primary."
     finding: "Of the 14 primary gravesites the prosecution had exhumed by 2000, 8 had been dug up and their bodies moved: 4 in every 7."
-    confidence: entailed
-    against: null
+    confidence: "high: both figures are in one sentence of the judgment, and the share is arithmetic"
+    against: "none found in the Krstić trial judgment, the Secretary-General's report or the Mladić judgment volume held; the share is of the graves exhumed by 2000, not of all graves, and the judgment itself says the graves are still being found"
     result: 0.5714
     derivation:
       compute: ratio
@@ -966,8 +968,8 @@ analyses:
     title: The afternoon of 11 July 1995 on two clocks
     method: "Every clock time the two fetched records give for the afternoon of 11 July 1995, one row per time, with the event it times and the producer. The result is the range of the column."
     finding: "Four clock times from two records run from 1407 to 1600: the Serb flag over the town at 1407 and the only NATO strike at 1440 in the Secretariat's account, the strike at around 1430 in the tribunal's, and the observers' report of upwards of 20,000 people converging on Potočari at 1600."
-    confidence: entailed
-    against: null
+    confidence: "moderate: the two producers put the one strike ten minutes apart, and the tribunal's 'around 1430' is an approximation the Secretariat's 'approximately 1440' does not confirm"
+    against: "the two records disagree by ten minutes on the strike, and neither gives a time for Mladić's entry into the town, so the table cannot say whether the strike came before or after it"
     result: [1407, 1600]
     derivation:
       compute: range

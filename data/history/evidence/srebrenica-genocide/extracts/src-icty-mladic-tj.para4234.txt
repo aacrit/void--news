@@ -1,0 +1,7 @@
+source: src-icty-mladic-tj
+locator: para4234
+url: https://www.icty.org/x/cases/mladic/tjug/en/171122-4of5_1.pdf
+read: 2026-09-24
+note: the chamber's own spelling 'substanial' kept
+
+4234. The Trial Chamber recalls its findings in chapter 8 that the physical perpetrators in the Count 1 municipalities did not have the intent to destroy a substanial part of the Bosnian-Muslim and Bosnian-Croat protected groups in Bosnian-Herzegovina when they committed the underlying prohibited acts.
