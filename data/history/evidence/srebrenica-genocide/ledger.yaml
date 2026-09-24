@@ -625,7 +625,7 @@ gaps:
     status: "paywalled; no open chapter found"
   - entry: src-mulaj-2017
     what: "Mulaj on remembrance and denial"
-    tried: ["http://link.springer.com/content/pdf/10.1007/s10611-017-9690-6.pdf"]
+    tried: ["https://link.springer.com/content/pdf/10.1007/s10611-017-9690-6.pdf"]
     status: "paywalled; the publisher's PDF link answers a challenge page"
   - entry: src-vukusic-2018
     what: "Vukušić on the Scorpions execution video"

@@ -922,6 +922,43 @@ H-05 (no dash in the served text or any accessible name) and H-06 (one `<h1>`,
 at least 60 event card links), added 2026-09-21 when the landing became a
 prerendered page. `verify_production.py` itself still reads only `/`.
 
+## History thesis pilot (2026-09-24): Srebrenica at draft, two pilots not started
+
+Phase 1 of `docs/proposals/HISTORY-THESIS-PAGE.md`. The tooling, the
+Srebrenica ledger (`data/history/evidence/srebrenica-genocide/`) and the
+thesis (`data/history/theses/srebrenica-genocide.md`) are committed and pass
+T-01..T-20. What is unfinished:
+
+- **The Stage 5 audit.** T-13 refuses `published` without `audited_by` and
+  `audited_at`, and no auditor has read the thesis. Until one does, the route
+  renders the Hearing and the thesis is reachable only by a preview build
+  (`python3 -m pipeline.history.export_thesis --include-drafts`, then
+  `NEXT_PUBLIC_HISTORY_DRAFTS=1 npm run build`). Never commit the draft JSON
+  under `frontend/build-data/history-theses/`: T-14 fails on it.
+- **The ICJ judgment of 26 February 2007** could not be fetched (the ICJ site
+  answers every PDF request with a Cloudflare challenge; the mirror answered
+  403). The thesis reaches the finding only through A/RES/78/282's recital of
+  it and says so in its gaps. A session with a browser that can pass the
+  challenge should fetch it, pin it and re-cut the three sentences that lean
+  on the recital.
+- **The NIOD report, the Republika Srpska reports of 2002 and 2004, and the
+  IRMCT appeal judgments** are gaps for the same reason (host unreachable,
+  no open archive found, guessed paths 404). Each is listed in the ledger's
+  `gaps` with what was tried.
+- **The Erdemović quotation in the event YAML and the script** ("if I felt
+  sorry for them, I should line up with them so they could kill me too") is
+  not what the sentencing judgment prints ("If you're sorry for them, stand up,
+  line up with them and we will kill you too", ¶10). H-01 passes because the
+  script matches the YAML. CEO decision 10: the page never waits on the audio;
+  the episode is flagged for a re-cut against the ledger, and the YAML excerpt
+  should be corrected by the Phase 0 owner (this branch did not touch the YAML).
+- **Partition of India and Mongol Baghdad** were not started: Srebrenica took
+  the session. The path is worn now; each should be a shorter run.
+- **Wikimedia's API answers HTTP 429 to this container**, so the two exhibit
+  images' provenance was read from the file pages' HTML, not the API. The
+  ledger records Commons' own dates (the Katzenberger photograph is dated
+  11 July 2010 on its file page; the event YAML dates it 2007).
+
 ## Weekly: no scheduled run has produced The Argument
 
 The format works and the episode is live, but it got there by manual
