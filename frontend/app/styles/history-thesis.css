@@ -330,6 +330,12 @@
   display: block;
   width: 100%;
   height: auto;
+  /* The box is reserved before the image arrives. A lazy image with no
+     intrinsic size grows from 0 as it loads, and on a 2,500-word page that
+     reflow landed mid-scroll and carried a note jump past its note (CI,
+     2026-09-24). Contain keeps any photograph whole inside the frame. */
+  aspect-ratio: 3 / 2;
+  object-fit: contain;
   filter: var(--img-grade-history);
 }
 .hist-th-exhibit__prov {
