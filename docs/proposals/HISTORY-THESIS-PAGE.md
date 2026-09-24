@@ -1,0 +1,867 @@
+# History event page: the thesis
+
+Proposal, 2026-09-24. Nothing here is implemented. It supersedes the core
+premise of `docs/proposals/HISTORY-PAGE-REVAMP.md` (2026-09-20), which built
+the page as the episode read off the screen. The CEO's brief:
+
+> "Why shouldn't our written history page just be different than audio except
+> it covers the same topics. The audio is a dramatized/summarized version of
+> the page. They are two independent products that talk to each other. We
+> should give the story but with a lot more detail and rigor. Come up with
+> that design, the page should read like a well gathered set of artifacts and
+> counter opinions. Think of it as a historian's thesis."
+
+Two constraints were added while this was written and bind every section
+below. **Sources: "we need only credible top notch sources that can be cited
+in thesis materials."** **Cost: "$0 always."** No paid database, no purchased
+book, no paid API, no LLM call on the Gemini cap. Agent work runs on the Claude
+Max CLI, which is already paid for.
+
+Everything measured below was measured against the repo on 2026-09-24: 78
+event records, 78 scripts, 1,261 bibliography entries, 239 distinct DOIs
+resolved through doi.org and Crossref, 384 distinct archive.org links fetched.
+
+---
+
+## 1. Verdict
+
+**The page should be a thesis, and the thesis cannot be written from what the
+repo holds today.** Not because the record is short (it is one and a half
+times the script) but because nothing in it is traced. There is no claim-level
+citation anywhere in 78 events. No source carries a page number. No quotation
+carries a locator. No source text is stored, so no quote can be checked
+against anything but itself. And the bibliography's own identifiers fail at a
+rate that means they were written from memory rather than resolved: of 239
+distinct DOIs, 106 point at the work they claim, 50 point at a different work,
+and 83 resolve to nothing. Of 384 archive.org links, 90 are dead.
+
+Rule 1 sets the shape of the answer. A thesis cannot be longer than its
+evidence, and silence beats a plausible reconstruction. So this design is
+mostly a research product with a page on the end of it: an evidence ledger per
+event, built from free and open sources only, verified by fetching rather
+than by recall, and a thesis that may not contain a sentence the ledger does
+not carry. The page is the rendering of that ledger. The audio stays what it
+is, a dramatisation, and both products cite the same ledger.
+
+The consequence the CEO should hear first: **the current 78 pages stay as the
+Hearing until an event's thesis passes its gates, one event at a time**, and
+the first three will take longer than the next thirty.
+
+---
+
+## 2. What exists, measured
+
+### 2a. Across all 78 events
+
+| Measure | Value |
+|---|---|
+| Record prose per event (`summary` + `significance` + five `narrative`) | 2,068 to 4,160 words, median 3,126 |
+| Script per event | 1,704 to 2,318 words, median 2,115 |
+| Record to script ratio | median 1.46 |
+| Perspectives | 5 each; types across the catalogue: vanquished 108, victor 79, revisionist 68, academic 60, bystander 60, indigenous 15 |
+| `primary_source_excerpts` | 297 (3 to 6 per event); every one carries author, work and date; **12 carry a URL** (11 events); 0 carry a page; 48 are institutional or legal documents (UN resolutions, judgments, edicts, reports) |
+| `notable_quotes` | 772; every one has a `context` string; **0 carry a page or locator**; 27 speakers are anonymous or unnamed; 66 duplicate a primary excerpt; 8 are duplicated across two perspectives of the same event |
+| Bibliography (`perspectives[].sources`) | 1,261 entries, 14 to 21 per event; 1,053 typed `book`, 50 `journal`, 48 `document`, 44 `archive`, 21 `report`, 11 `legal`; **0 carry a publisher, edition or page field** |
+| Identifiers | 258 DOI fields (239 distinct), 415 archive.org links (384 distinct), 173 Open Library ids; 690 entries carry nothing at all |
+| DOI resolution | 202 resolve, 36 return 404; **Crossref title match: 106 correct, 50 a different work, 83 no record.** 19 of the 81 JSTOR-prefixed DOIs land on Taylor and Francis, which means a book review, not the book |
+| archive.org links | 293 live, 90 dead (23%) |
+| Verifiable entries (DOI matches the claimed title, or a live archive copy) | **350 of 1,261 (28%)**; 188 carry a broken identifier; median 3.5 per event; **29 events have zero** |
+| Wikipedia inside a source entry | 0 (key figures carry Wikipedia links, which is fine as a locator) |
+| Key figures | 548, 399 with a Wikidata id |
+| Media | 506 items; **242 are Unsplash or Pexels stock (48%)**; 252 are Wikimedia Commons; 180 public domain, 69 CC BY-SA, 6 fair use; 2 events have no media, 11 no hero image |
+| Numerals in record prose | 39 to 244 per event, median 114, 8,963 in all; none is traced to a source |
+| Script reuse of the record | scripts quote 226 of the 297 excerpts and 364 distinct notable quotes |
+
+One further finding from reading the pair below: the Partition script says
+Radcliffe had "census data from nineteen forty one, six years out of date";
+the YAML says his maps "had not been resurveyed since 1931" and nowhere
+contains 1941. H-10 did not fire because it matches capitalised words. A
+number the record does not carry is in a published episode. This is the
+class of defect the ledger exists to make impossible.
+
+### 2b. Two events, closely
+
+**Partition of India** (`partition-of-india.yaml`): 2,914 words of record
+prose against a 2,196-word script. Four excerpts, none with a URL, one
+secondhand (Radcliffe "quoted in Read and Fisher"). Sixteen sources, twelve
+with an identifier, ten with a DOI: the DOI on *Freedom at Midnight* lands on
+a Taylor and Francis page (a review); the entry titled "The struggle for
+Pakistan: a Muslim homeland and global politics, by Ayesha Jalal" is authored
+by Ishtiaq Ahmed, which is a review of Jalal's book cited as if it were the
+book, and its DOI returns 404; a Routledge DOI on *Partitioned Lives* returns
+404. Eleven media items, seven of them stock photographs of modern India with
+no bearing on 1947. Ten quotes, seven figures. **Rich prose, and not one
+sentence of it could pass a citation gate today.**
+
+**Srebrenica** (`srebrenica-genocide.yaml`): the thinnest record by prose,
+2,068 words, and the best evidence base in the catalogue by kind. Its five
+excerpts are UN Security Council Resolution 819, Mladic's filmed statement (an
+ICTY exhibit), Erdemovic's ICTY testimony, the Secretary-General's report
+A/54/549, and the ICJ's 2007 judgment. Its seventeen sources include four
+judgments and reports that are public documents. None carries an identifier
+or a URL, so all seventeen count as unverifiable today, but every one of the
+legal and UN documents can be fetched in full, for free, and held verbatim.
+**Thin words, thick evidence.** Srebrenica is a better first pilot than
+Partition.
+
+The pair says what the ledger has to do: Partition needs its identifiers
+rebuilt and its stock imagery removed; Srebrenica needs its documents fetched
+and pinned. Neither needs more prose first.
+
+---
+
+## 3. The premise: two products, one ledger
+
+Three things per event, in a strict order of authority:
+
+1. **The evidence ledger** (`data/history/evidence/<slug>/`) is canonical.
+   It holds every source the event may cite, each source's verification
+   record, and the verbatim extracts that claims are pinned to. Nothing may
+   be published about the event that the ledger does not carry.
+2. **The thesis** (`data/history/theses/<slug>.md`) is the written product.
+   Every factual sentence cites a ledger entry and, where the claim is a
+   quote or a number, a stored extract.
+3. **The script** (`data/history/scripts/<slug>.txt`) is the dramatised
+   product. It is written for the ear, keeps its spelled numbers and its
+   breath marks, and cites the same ledger: a DOCUMENT segment names the
+   extract it reads, and H-01 moves from "is this quote in the YAML" to "is
+   this quote in the ledger".
+
+The two products talk to each other in two directions and depend on each
+other in none:
+
+- **The page carries the drama as marked excerpts.** Three to five "From the
+  episode" moments per thesis: the cold open under the hero, one inside an
+  argument section where the script's scene covers the same ground, the close
+  before the bibliography. Each is the script's own lines, verbatim and
+  spelled as spoken, set in the editorial voice with a play glyph that seeks
+  the shared player to that chapter (`playHistory` and `seekTo` exist on
+  `useAudio()` today). They are quotations of the programme and are labelled
+  as such, so a spoken "nineteen forty seven" inside one is honest. Outside
+  them the page writes 1947.
+- **The episode points at the exhibits.** The player's chapter list already
+  carries titles; a DOCUMENT chapter gains the exhibit number, so a listener
+  on `/audio` can open Exhibit 4 while it is being read.
+- **Neither is required by the other.** A thesis renders whole with no
+  script (the fifteen events that had no episode in September proved the page
+  cannot wait on audio). A script renders with no thesis, as all 78 do now.
+  A gate asserts the thesis has no empty section caused by a missing
+  episode.
+
+The five YAML perspectives do not disappear. They become the first draft of
+the historiography (section 8) and stay in the YAML for the Hearing and the
+script until each event switches.
+
+---
+
+## 4. Source admissibility
+
+This section is the standard. Everything after it (data model, checks,
+workflow) enforces it.
+
+### 4a. Tiers
+
+| Tier | What | Carries |
+|---|---|---|
+| **A. Primary record** | Documents contemporaneous with the event or produced by its institutions: archival papers, statutes, treaties, court judgments and testimony, official reports, resolutions, edicts, chronicles in scholarly translation, letters and diaries in a named repository, oral testimony with an archive accession, datasets from the body that collected them | A quote, a number, a dated fact. The tier a thesis is built on |
+| **B. Peer-reviewed scholarship** | Monographs and edited volumes from university presses and scholarly publishers; articles in peer-reviewed journals; scholarly translations and critical editions | A claim, a number, an interpretation, when pinned to a page the researcher read |
+| **C. Reference** | Established reference works and handbooks (Oxford, Cambridge, Brill, Encyclopaedia of Islam, Dictionary of National Biography and their peers) | A date, a name, a definition. Never the load-bearing source for an argument |
+| **D. Positional** | Memoirs, party histories, state histories, advocacy scholarship, denialist literature, hagiography | Only as a labelled position in the historiography ("the X account holds"), never as fact, and only when a Tier A or B source is cited for what the position is |
+
+**Excluded as a citation, on any claim:** Wikipedia and any wiki (a lead to a
+Tier A or B source, and a locator for a person's dates, never cited);
+blogs; popular history websites; lecture notes; AI output of any kind;
+journalism that does not itself cite or witness (a reporter's eyewitness
+dispatch is Tier A, a retrospective feature is not); advocacy material
+presented as scholarship; a book review cited as the book; a source the
+researcher has not opened.
+
+**Partisan and contested scholarship** enters at Tier D by default. It rises
+to Tier B only when it is peer reviewed and its claim is cited for what it
+argues, in the historiography, with the counter-position beside it. Dodik's
+"fabricated myth" line is in the Srebrenica record today as a quote; under
+this standard it stays, as the denialist position's own words, cited to a
+dated statement, beside the ICJ finding it denies. That is Rule 1's "publish
+the disagreement", and it is also what stops the page from laundering a
+position into a fact.
+
+### 4b. The $0 rule and the free-readability rule
+
+Every source is discovered, resolved and read through free and open
+resources: Crossref and doi.org, OpenAlex, open-access journals and
+repositories (DOAJ, university repositories, SSRN and arXiv where a field
+uses them), Internet Archive and Open Library (including controlled lending),
+HathiTrust public-domain full text, Google Books where the cited page is
+visible in preview, JSTOR's open and early-journal content, national and
+government archives (LOC, NARA, TNA, Gallica, Bundesarchiv, the National
+Archives of India's Abhilekh Patal, and their peers), the Avalon Project,
+FRUS, UN ODS and the ICTY, ICTR and ICJ document databases, and Wikimedia
+Commons for media rights. No paid database, no purchased book, no paid API.
+
+The rule this produces, stated once and put behind a check (T-05):
+
+> **A claim may only cite a passage that a reader can read for free.** A
+> paywalled monograph may be listed in the historiography as the work a
+> position rests on. It may not carry a pinned quote or a page-level claim
+> unless that passage was read from a free source (an Internet Archive loan,
+> a HathiTrust or Google Books page, an open-access chapter, the author's
+> deposited manuscript) and the ledger records where.
+
+This costs coverage. Some of the best scholarship on some events is behind a
+paywall with no preview. The thesis then says so in its section on the record
+("the two standard monographs on the boundary award could not be read; the
+positions below are taken from reviews and from the authors' open articles")
+and argues from what it can show. That sentence is worth more to the reader
+than a page number nobody can follow.
+
+### 4c. The citation record
+
+Every ledger entry carries, or fails validation:
+
+```yaml
+id: src-mansergh-1970                 # stable, cited from thesis and script
+tier: A                                # A, B, C or D
+kind: edited-documents                 # primary-document | judgment | testimony |
+                                       # monograph | journal-article | edition |
+                                       # reference | memoir | dataset | image | map
+author: Nicholas Mansergh (ed.)
+title: The Transfer of Power 1942-47
+container: null                        # journal or volume title for an article or chapter
+publisher: Her Majesty's Stationery Office
+place: London
+year: 1970
+edition: 1st, 12 volumes
+volume: XII
+identifiers:
+  isbn: ...
+  doi: null
+  archive_org: transferofpower12mans   # an item id, not a search URL
+  hathitrust: null
+  url: null                            # only a stable URL: a repository record, not a search
+access:
+  free_copy: https://archive.org/details/...   # where the cited pages were READ
+  verified_at: 2026-10-03
+  verified_by: crossref-title-match | archive-item-fetch | repository-record | manual-page-read
+  verified_title: "..."                # the title the resolver returned
+language: en
+region_of_authorship: europe           # for the balance check
+position: british-administrative       # for Tier D and B-in-historiography only
+```
+
+A claim is pinned by a **locator** on the citation marker: a page, a
+paragraph number, a document number in an edited series, an article of a
+treaty, a paragraph of a judgment, a timestamp in a recording. Locators are
+required on Tier A and B citations and on every quote and number.
+
+Verbatim text is stored as **extracts**, one file per pinned passage:
+
+```
+data/history/evidence/partition-of-india/extracts/src-un-res-47.p1.txt
+```
+
+with a four-line header (source id, locator, the URL it was read at, the
+read date) and then the passage as printed. Public-domain and official
+documents may be held whole. A copyrighted work is held only as the passage
+cited, capped at 150 words per extract and 5 extracts per work; the cap is a
+fair-dealing judgement and is a CEO decision (section 13). A quote in the
+thesis must be a substring of an extract under the same normalisation H-01
+uses (`script_format._norm`), and a number in a cited sentence must appear in
+the cited extract as that digit string.
+
+### 4d. Today's sources against the standard
+
+Measured, not estimated, per section 2:
+
+- **350 of 1,261 entries (28%) would pass verification** as pointing at the
+  work they name, and none of those has a page, so **0 of 1,261 can carry a
+  pinned claim today**.
+- **188 carry an identifier that is wrong or dead**, which is worse than none:
+  a wrong DOI is a factual error on the page.
+- **690 carry no identifier at all.**
+- By tier, roughly: the 48 legal and institutional excerpts and the 44
+  `archive` plus 48 `document` plus 11 `legal` entries are Tier A in kind
+  (about 150); the 1,053 books and 50 journal entries are Tier B in kind if
+  they exist as named; the 11 `article`, 1 `film`, 1 `documentary`, 1
+  `encyclopedia` and 1 `other` need reclassifying or removal.
+- **Thinnest**: 29 events have zero verifiable sources. Twelve have fifteen
+  entries and none verifiable, including `alexanders-conquests`,
+  `assassination-of-caesar`, `black-death`, `civil-rights-movement`,
+  `fall-of-tenochtitlan`, `inca-conquest-peru`, `iran-iraq-war` and
+  `kingdom-of-kongo` (which also has no media). The ancient and medieval
+  events cluster here because their sources are chronicles in translation
+  with no DOI, which is exactly where the free-readability rule helps:
+  Arrian, Suetonius, Bernal Diaz and the Florentine Codex are public domain
+  and held whole on Internet Archive and Perseus.
+- **Richest**: `cambodian-genocide` (13 verifiable of 17), `peloponnesian-war`,
+  `armenian-genocide`, `scramble-for-africa` and `global-financial-crisis-2008`
+  (12 each).
+- **Media**: 242 stock items (48%) fail the standard outright. They are not
+  evidence of anything. They leave every thesis page.
+
+### 4e. The minimum evidence bar
+
+An event may switch to the thesis page only when its ledger holds:
+
+- at least **6 Tier A** entries, each with a stored extract;
+- at least **8 Tier B** entries verified to exist as named, of which at least
+  **4 carry a pinned, free-readable page**;
+- at least **3 positions** in the historiography, each resting on at least
+  one verified source authored by a holder of that position, not a critic;
+- at least **2 sources from the event's own region or in its own language**
+  (a translation counts when the original is named), or a stated reason in
+  the record section why none could be found free;
+- at least **3 exhibits** with full provenance, none stock;
+- every contested figure in the thesis body expressed as the range the ledger
+  supports.
+
+Srebrenica clears the Tier A bar with the documents it already names.
+Partition clears nothing until its identifiers are rebuilt.
+
+---
+
+## 5. The expansion workflow
+
+The agents exist; the sequence and the tooling do not. Workflow
+`/history-thesis <slug>`, five stages, every write reviewed by the next stage.
+
+**Stage 0, ledger bootstrap (script, no agent).** `pipeline/history/ledger.py`
+reads the event YAML and writes a first `ledger.yaml`: one entry per source
+and per excerpt, tier guessed from `type`, every identifier resolved live
+(doi.org plus Crossref title match, Open Library, archive.org item fetch,
+HathiTrust catalogue), `verified_by` stamped or `unverified` written. It
+prints the event's standing against the bar in section 4e. This is section 2
+of this document made permanent.
+
+**Stage 1, discovery (history-curator).** For each position and each argument
+the event needs, search OpenAlex and Crossref by topic and by the cited
+authors; search Internet Archive, HathiTrust, Gallica, LOC, the Avalon
+Project, FRUS, UN ODS and the tribunal databases for primary documents;
+search the event's own region (the National Archives of India, the Pakistan
+National Archives' online holdings, JACAR for Japan, the Bundesarchiv,
+Memorial's archive for the Soviet events, university repositories in the
+region). Output: candidate entries with the URL where each can be read free.
+No entry is written from memory: **a candidate with no fetched record is not
+a candidate.**
+
+**Stage 2, reading and pinning (history-curator for text, media-archaeologist
+for documents, images, maps).** Open each free copy, read the passage the
+claim needs, store the extract with its header. For an image or map: creator,
+date, repository, accession, licence, and one line on what the image shows
+and what it does not (a 2009 photograph of the Potocari memorial is evidence
+of the memorial, not of 1995). This is the slow stage and the only one that
+produces rigor.
+
+**Stage 3, positions (perspective-analyst).** Turn the five YAML perspectives
+into the historiography: named positions, each with its holders, the works it
+rests on (ledger ids), the claim in one sentence, what it omits, and the
+contested claims it shares with another position. Add positions the YAML
+lacks where the ledger now supports one; drop none.
+
+**Stage 4, writing (narrative-engineer).** The thesis in the grammar of
+section 8, every sentence cited, register per section 8, numerals, no dash.
+Then the episode marks: which script chapters the page quotes and where.
+
+**Stage 5, audit (historiographic-auditor, read-only).** The ten dimensions
+it already checks, plus the bar in section 4e and the balance rules in T-07
+and T-08. Its verdict is recorded in the thesis front matter with a date;
+the page cannot switch without it.
+
+**Balance across regions and schools** is a ledger property, so it is
+checked, not hoped for: `region_of_authorship` and `language` on every entry,
+and T-07 fails an event where every Tier B source is from one region or every
+position rests on Anglophone scholarship alone. Where the free-readability
+rule leaves a regional literature out (a Persian monograph with no open copy),
+the record section says so, in the page, by name.
+
+**Cost.** Every catalogue above is free without a key or with a free key
+(Europeana, DPLA, Smithsonian). Agent sessions run on the Claude Max CLI. The
+Gemini daily cap is not touched: nothing here calls a model at runtime.
+
+---
+
+## 6. Where rigor comes from, and what a thin event gets
+
+Rigor comes from Stage 2 and nowhere else: a person or agent opening a free
+copy of a source and storing what it says beside where it says it. Everything
+else is bookkeeping around that act.
+
+A thin event (a ledger that clears the bar with little to spare) gets a
+shorter thesis. Not a padded one. The page has no minimum length; the gate
+has a maximum (8,000 words) and a rule that every section be present. A thin
+thesis for Kingdom of Kongo might run 1,800 words with three exhibits, two of
+them the Kongo kings' own letters to Lisbon (public domain, held on Internet
+Archive in translation), and a record section that says plainly which
+literatures could not be read free. That page is honest and it is still a
+thesis. The Hearing keeps running for the event until then.
+
+---
+
+## 7. Anatomy of the page
+
+Top to bottom. Heading levels in brackets.
+
+1. **Hero** (h1). Kept: image (an exhibit, never stock), date, title,
+   subtitle, Listen. Under it, "From the episode": the cold open, three or
+   four lines, play glyph.
+2. **The question** (h2). 100 to 150 words: what the thesis asks, in one
+   question, and the three claims it will make, numbered. Playfair, measure
+   40ch.
+3. **The record** (h2). What evidence this thesis is built on and what it
+   is not: counts by tier, the documents held whole, what could not be read
+   free, what the record does not contain at all (the state that could not
+   count its dead). Written from the ledger, so it cannot flatter.
+4. **The argument** (h2), sections 1 to n (h3). Formal prose, Inter, 65ch,
+   numerals, full dates, every sentence carrying a note. Exhibits inline
+   where the argument reaches them. One "From the episode" excerpt at most
+   per section.
+5. **Exhibits** (figure, numbered across the page). A document: the extract
+   in Plex Mono on deep paper, attribution first, locator, link to the free
+   copy. An image or map: the item, then the provenance line and the "shows /
+   does not show" line. A table: a real `<table>` with the source per row.
+6. **The historiography** (h2). Positions 1 to n (h3), each: holders, rests
+   on, claims, omits. Then **Where the record disagrees** (h3): each
+   contested claim as a ruled block, one row per position, its figure or
+   claim, its source. The thesis body never states a contested figure as one
+   number; it points here.
+7. **What the record omits** (h2). Statements about the ledger, not about
+   the world: no source in this record is by a Dalit refugee; no source dates
+   the Gurdaspur decision. Each is attached to the position it cuts against.
+8. **From the episode** (aside): the close, with the play glyph, before the
+   end matter.
+9. **Notes** (h2): the footnotes, numbered, short form with locator, each
+   linking to its source below and to its exhibit where one exists.
+10. **Sources** (h2): the ledger rendered as a bibliography by tier, full
+    citation, the free-copy link, the verification date. Only verified
+    entries print. Unverified entries do not print as "further reading";
+    they do not print.
+11. **The record** end matter, kept from the Hearing: key figures, threads,
+    next event.
+
+`significance` and `legacy_points` are not rendered, for the reason the prior
+proposal gave: they are the moral, and a thesis earns its conclusion inside
+the argument.
+
+### 7a. Register sample (Partition of India)
+
+**This is a register sample, not publishable copy.** Its citations are to
+fields of `data/history/events/partition-of-india.yaml`, because no ledger
+exists yet; the YAML is itself uncited, so every note below would fail T-05
+today. It exists to show the voice, the note discipline and the shape of a
+counter-position.
+
+> ### The question
+>
+> Sir Cyril Radcliffe, a barrister who had never visited India, drew the
+> boundary between the two dominions in five weeks.[1] The line was published
+> on August 17, 1947, two days after the independence ceremonies in Karachi
+> and Delhi.[2] Between August and November 1947 an estimated 14 to 15
+> million people crossed it.[3] The dead are counted between 200,000 and 2
+> million, and the record says why the range is that wide: most deaths were
+> never registered.[4]
+>
+> This thesis asks whether the speed of the transfer caused the killing or
+> answered it. It makes three claims. First, that the date was chosen in
+> London and Delhi for reasons the record states. Second, that the force
+> meant to hold the Punjab was never large enough to do so. Third, that the
+> one boundary decision every account contests, Gurdaspur, is the one for
+> which the record holds no document.
+>
+> ### 1. The date
+>
+> The transfer had been scheduled for June 1948.[5] Mountbatten moved it
+> forward to August 1947 and later said the reason was to preserve
+> "momentum".[6] The announcement came on June 3, 1947, with 73 days'
+> notice.[7] The British account holds that the alternative was worse: by
+> spring 1947 British district officers in the Punjab were reporting that
+> they could not guarantee security beyond the monsoon.[8] The Indian
+> nationalist account reads the same decision as reckless, driven by the
+> Attlee government's wish to bring troops home.[9] The record carries both
+> readings and no document that settles them.{i}
+>
+> The army that was to hold the province was being divided as the province
+> burned. Of the 55,000 troops in the Punjab, roughly half were being
+> reassigned to Pakistan.[10] The Punjab Boundary Force, 25,000 men under
+> Major General Rees, covered a zone of 38,000 square miles[11] and was
+> disbanded on September 1, 1947, after less than a month.[12] Nehru accused
+> it of failing to protect Hindus and Sikhs; Jinnah charged it with
+> anti-Muslim bias.[13]
+>
+> **Exhibit 1. Radcliffe on his own work, 1947.**
+> "The division of India is, in my opinion, the greatest blunder in the whole
+> history of the British Empire."[14]
+> *Provenance:* private correspondence, quoted in Read and Fisher, *The
+> Proudest Day*. Secondhand: the record holds the line as those historians
+> quote it, not from the letter. *Ledger status:* unverified. This exhibit
+> would not print until the passage is read in a free copy of *The Proudest
+> Day* and pinned to its page.
+>
+> ### Where the record disagrees: the Gurdaspur award
+>
+> Radcliffe allocated Gurdaspur district to India. That gave India its only
+> road link to Kashmir.[15]
+>
+> | Position | Holds | Rests on | Omits |
+> |---|---|---|---|
+> | British administrative | Radcliffe worked under five weeks, four deadlocked judges and maps not resurveyed since 1931; the award has been contested by Pakistani historians since[15] | Menon, Mansergh (ed.)[16] | Why Gurdaspur, of all districts, went the way it did |
+> | Indian nationalist | The award was a minimal correction to an otherwise anti-Indian boundary[17] | Nehru, Azad, Guha[18] | That the link it created is the one the first war was fought over |
+> | Pakistani nationalist | Kashmir was 77% Muslim under a Hindu ruler; its accession on October 26, 1947 was signed under duress; UN Resolution 47 (1948) called for a plebiscite India has never held[19] | Jalal, the Quaid-e-Azam speeches[20] | That the Lahore Resolution's logic of Muslim-majority areas did not name Kashmir |
+>
+> No position in the record cites a document for the award itself.{i}
+> Radcliffe burned his papers and did not return to India.[21]
+>
+> **Notes.** [1] summary ¶1. [2] summary ¶2. [3] summary ¶3. [4] summary ¶5.
+> [5] summary ¶4. [6] summary ¶4, quoting Mountbatten as the record quotes
+> him. [7] summary ¶1. [8] perspectives[0].narrative ¶2. [9]
+> perspectives[1].narrative ¶4. [10] summary ¶4. [11]
+> perspectives[0].narrative ¶4. [12] summary ¶4. [13]
+> perspectives[0].narrative ¶4. [14] primary_source_excerpts[1]. [15]
+> perspectives[0].narrative ¶3. [16] perspectives[0].sources. [17]
+> perspectives[1].narrative ¶4. [18] perspectives[1].sources. [19]
+> perspectives[2].narrative ¶6. [20] perspectives[2].sources. [21]
+> perspectives[0].narrative ¶3.
+
+Two things the sample shows on purpose. The `{i}` mark: an interpretive
+sentence, the historian's own, allowed only where it carries no numeral and
+no quotation and sits in a paragraph that has cited sentences. And the
+"Omits" column is written as what the position's own sources do not address,
+which is checkable against the ledger, not as an accusation.
+
+---
+
+## 8. Data model
+
+```
+data/history/evidence/<slug>/
+  ledger.yaml            # entries per 4c, plus positions[] and contested[]
+  extracts/<src-id>.<locator>.txt
+data/history/theses/<slug>.md
+```
+
+The thesis is Markdown with a strict front matter and four extensions the
+parser (`pipeline/history/thesis_format.py`, a sibling of `script_format.py`)
+recognises:
+
+```markdown
+---
+slug: srebrenica-genocide
+status: draft | audited | published
+audited_by: historiographic-auditor
+audited_at: 2026-10-14
+question: ...
+claims: [..., ..., ...]
+episode_marks:
+  - { chapter: 0, where: hero }
+  - { chapter: 4, where: argument-2 }
+  - { chapter: 14, where: close }
+---
+## The record
+...
+## 1. The safe area
+The Security Council declared Srebrenica a safe area on April 16, 1993.[^src-un-res-819 ¶1]
+::: exhibit src-un-res-819 ¶1
+::: episode chapter=4
+The record carries no order from Zagreb to Potocari that day.{i}
+## Historiography
+::: position bosniak-legal
+::: contested death-toll
+```
+
+`[^id locator]` is the citation marker; `::: exhibit` pulls an extract into
+a numbered figure; `::: position` and `::: contested` render ledger records;
+`::: episode` pulls a chapter's lines from the script export that already
+exists (`frontend/build-data/history-scripts/<slug>.json`). The exporter
+(`export_thesis.py`) resolves every marker, numbers the notes, and writes
+`frontend/build-data/history-theses/<slug>.json`; a thesis whose front
+matter is not `published` is not exported, and the route renders the Hearing.
+
+The script's DOCUMENT marker gains an optional extract id as a fourth field.
+During transition H-01 accepts either the YAML excerpt or a ledger extract;
+after the pilot it accepts only the ledger. The five YAML perspectives are
+imported into `ledger.yaml` `positions[]` by Stage 3 and remain in the YAML
+until the last event switches; parity between the two is a check, not a hope.
+
+---
+
+## 9. Rigor controls
+
+New file `tests/test_history_thesis.py`, prefix **T** (the H prefix is taken
+twice already, by the script gates and by `verify_sections.py`). All run in
+`auto-merge-claude.yml` offline; T-05's network half runs in a new weekly
+`history-ledger-verify.yml` that re-resolves identifiers and re-fetches free
+copies, and rewrites `verified_at`.
+
+| Check | Fails on | Prevents |
+|---|---|---|
+| T-01 | a citation marker whose id is not in the ledger, or whose locator names no stored extract when the sentence holds a quote or a number | a note that leads nowhere |
+| T-02 | a sentence in The record, The argument, Historiography or Omits with no marker and no `{i}`; an `{i}` sentence carrying a numeral or a quotation; a paragraph that is all `{i}` | an unsourced fact dressed as narrative |
+| T-03 | a numeral in a cited sentence absent from every cited extract as that digit string (each end of a range checked) | a wrong number (E-13's rule) |
+| T-04 | a quoted span not a substring, under `_norm`, of a cited extract | an invented or improved quotation (H-01, E-14) |
+| T-05 | a cited entry with `verified_by` empty, `verified_title` not matching, or a pinned locator on an entry with no `free_copy` | citing memory; citing what nobody can read |
+| T-06 | a spelled-out year or cardinal outside a quotation or an episode block; an em or en dash; a kill-list word; the time-relative and hedge shapes `test_history_copy.py` already gates | transcript register; the dash ban; a stale count |
+| T-07 | fewer than 3 positions; a position with no verified source by a holder; any position over twice the words of the shortest; every Tier B source from one region; every position resting on one language | tokenism, the victor's page |
+| T-08 | a contested claim with fewer than 2 positions, or two positions sharing a source; a contested figure appearing in the body as a single value | false precision |
+| T-09 | an exhibit missing creator or repository, date or "undated", licence, or locator; a stock domain (Unsplash, Pexels, Pixabay) anywhere in a thesis page's media | a photograph of the wrong century |
+| T-10 | an episode mark whose chapter is not in the manifest or whose lines are not verbatim in the script; a section whose only content is an episode block | a seek to the wrong place; a page that needs the audio |
+| T-11 | an Omits statement that names a source id the ledger holds | an omission that is not one |
+| T-12 | a source entry from an excluded domain or kind (wiki, blog, AI, review-as-book), or a Tier C or D entry cited on a number or a quote | the wrong tier on the wrong claim |
+| T-13 | an event marked `published` below the bar in 4e (counts per tier, extracts, positions, regional entries, exhibits) | a thin thesis shipped as a full one |
+| T-14 | the served JSON differing from the thesis (a port of `test_history_export_parity.py`) | a correction that never reached the page |
+
+Served, in `scripts/verify_sections.py`, **TH-01..TH-04** on a sampled
+thesis page: one h1 and the question text present (not a shell); note count
+in the HTML equals the marker count in the source and every note anchor
+resolves; every exhibit carries a provenance line; every source link is
+absolute and no dash anywhere in text or accessible names. `verify-headless`
+gains one journey: a note, its sidenote, its source, the play glyph.
+
+---
+
+## 10. Visual and interaction design
+
+Within the History skin: paper `#F2EDE0`, ink `#2C2418`, umber accent, aged
+brass, the four voices, `--hist-measure: 36rem`.
+
+**1440.** The named-line grid the Hearing already uses (`[rail] [text]
+[rail]`), with the right rail given a job: sidenotes. A citation number in
+the text (`<sup><a>`) is mirrored by its note in the right column, Inter at
+`--text-sm`, the number in Barlow, aligned to the line that cites it,
+hairline brass rule to the left. The left rail is `SpineRail` with thesis
+stations: Question, Record, 1..n, Historiography, Disagreements, Omits, Notes,
+Sources. Exhibits break to the full grid width inside a frame: 1px brass
+border, Barlow eyebrow "Exhibit 3 · Judgment · ICJ, 26 February 2007",
+document text in Plex Mono on `--hist-paper-deep`, provenance in Inter
+`--text-xs` under a hairline. Contested blocks are tables with a hairline per
+row and the position name in that position's `--hist-persp-*` colour beside
+the name, never instead of it. Episode blocks: Playfair italic, brass left
+rule, play glyph (44px, labelled "Listen from Scene 4, 4:12"), the reveal
+pattern already in `history.css`.
+
+**375.** One column, 16px gutters, no horizontal scroll. Sidenotes become
+footnotes under Notes; the citation number links down, the note links back
+with a labelled "return" link; tapping a number also opens the note inline as
+a native `<details>` under the paragraph, so the reader is never sent to the
+end and back. Exhibits keep the frame, lose the inset; a table scrolls inside
+its frame, not the page. The rail becomes the 3px strip and readout the
+Hearing already renders. Episode blocks are full width with the glyph above
+the text.
+
+**Print.** The sheet `brand.css` already defines: chrome gone, white paper,
+`PrintMast` with the page's address. Sidenotes collapse to footnotes; every
+source prints its free-copy URL in Plex Mono; exhibits keep their frames;
+episode blocks print without the glyph, with "Episode, Scene 4" in the
+eyebrow.
+
+**Accessibility.** Heading order as in section 7. Notes are `<a
+href="#n12" aria-describedby>` with `<sup>`; sidenotes `role="note"`; exhibits
+`<figure>` with `<figcaption>` holding the provenance; contested blocks are
+real `<table>` elements with `<th scope>`; the rail is `<nav aria-label>`;
+the play glyph is a button with a text label; colour is never the only
+carrier (every position is named). Focus rings from the system tokens. Reduced
+motion: reveals instant, no scrolling on the reader's behalf.
+
+**Reuse.** `SpineRail`, `HeroListen`, `Lightbox`, `PrintMast`, the Quote block
+from `Hearing.tsx` (becomes the document exhibit), the end-matter Record block.
+`PrimarySourceBlock` is the exhibit frame's ancestor and is absorbed.
+`OmissionsPanel`'s hollow-bullet language survives in Omits.
+`PerspectiveComparison` and `RedactedDossier` stay unmounted.
+
+---
+
+## 11. Production plan
+
+**Phase 0, one session.** `ledger.py` bootstrap and its report over all 78,
+committed as `docs/data/history-ledger.csv`. This turns section 2 into a
+standing register. Also: strip the 242 stock media items from every event
+(they fail the Hearing's own H-03 spirit too) and delete the 188 broken
+identifiers rather than leave a wrong DOI on a live page. That is a Rule 1
+fix on the current pages and does not wait for the thesis.
+
+**Phase 1, pilot, three events.** `srebrenica-genocide` (Tier A documents
+fetchable whole; tests the legal-document path), `partition-of-india`
+(rich prose, broken identifiers; tests the monograph and free-readability
+path), `mongol-conquest-baghdad` (a chronicle event whose record and script
+already disagree on one line, per the 09-21 audit; tests translated primary
+sources and the ancient-medieval thinness). Honest estimate per pilot event:
+Stage 1 discovery one session, Stage 2 reading and pinning two to three
+sessions, Stage 3 and 4 two sessions, Stage 5 one. Six to seven sessions
+each; the tooling (parser, exporter, checks, page components, CSS) another
+six alongside. **Roughly 25 to 30 agent sessions to the first three published
+theses.**
+
+**Phase 2, rollout.** Batches of six by era, richest ledgers first (the five
+in section 4d), thinnest last. Expect three to four sessions per event once
+the path is worn, so **78 events is on the order of 250 to 300 sessions**.
+At one session a day that is most of a year; with parallel agents in the
+workflow, a quarter. This is the number the CEO is deciding on.
+
+**Transition.** Per-event switch on `status: published` in the thesis front
+matter, read by the route at build. An event below that renders the Hearing
+exactly as today. The masthead, hero, rail, player and end matter are shared,
+so the two page kinds sit in one catalogue without a seam. `verify_sections`
+samples both kinds. Nothing is deleted from the Hearing until the last event
+switches; the class-parity test the open items already call for goes in
+before any CSS is removed.
+
+**Risks.** The free-readability rule will exclude some standard works and the
+page must say so rather than cite around it. Fair-dealing exposure from
+stored extracts (capped, cited, in a public repo) is a legal judgement, not
+an engineering one. Reading and pinning is slow and is the only step that
+cannot be automated; the temptation to let an agent "recall" a page number
+is the exact failure the ledger exists to prevent, and T-05's `free_copy`
+requirement is the only structural defence. The script and the ledger will
+disagree on some lines (the 1941 census line already does); each disagreement
+is a re-cut, and the episode mark for that chapter is withheld until it is
+cut. Page length triples; the rail and the notes are what make it navigable,
+and both are tested.
+
+---
+
+## 12. What I would refuse to build
+
+- A thesis sentence with a fact and no note, however famous the fact.
+- A citation to a work nobody on the team opened.
+- A page number recalled rather than read.
+- A stock photograph on a page that calls itself evidence.
+- A single figure for a contested count.
+- A "further reading" list of unverified works.
+- A page that needs the episode to make sense, or an episode that needs the
+  page.
+
+---
+
+## 13. Decisions for the CEO
+
+Each with a recommendation.
+
+1. **Approve the ledger rebuild as the prerequisite**, knowing 72% of today's
+   bibliography fails verification and 188 identifiers are wrong on live
+   pages. *Recommend yes, and do Phase 0's deletions now, thesis or not.*
+2. **Adopt the admissibility tiers and the free-readability rule as
+   written**, accepting that some standard monographs will appear only in
+   the historiography, unpinned. *Recommend yes; the page states the gap.*
+3. **Extract storage for copyrighted works**: 150 words per extract, 5 per
+   work, cited and locatored, in the public repo. *Recommend yes; if counsel
+   says otherwise, hold extracts in build-data only and print the locator.*
+4. **Remove all Unsplash and Pexels media from History**, 242 items, which
+   thins galleries on the Hearing today. *Recommend yes, immediately.*
+5. **The thesis voice**: impersonal and institutional ("this thesis argues"),
+   authored as Void News, no historian byline. *Recommend impersonal; a named
+   author would be a claim the record cannot support.*
+6. **Positions replace the five perspectives on thesis pages**, with the
+   YAML kept for the Hearing and the script until the last switch.
+   *Recommend yes.*
+7. **The pilot three**: Srebrenica, Partition, Mongol Baghdad. *Recommend
+   as listed; Srebrenica first.*
+8. **The pace**: 25 to 30 sessions to three published theses, 250 to 300 to
+   78. *Recommend approving the pilot only, and deciding the rollout on the
+   pilot's measured cost.*
+9. **H-01 moves to the ledger** after the pilot, so the audio is gated on the
+   same evidence as the page. *Recommend yes.*
+10. **When the ledger contradicts a live episode** (as with the 1941 line),
+    the thesis ships and the episode is flagged for a re-cut. *Recommend the
+    page never waits on the audio.*
+11. **The 78 episodes: keep, revise or redo** (section 14). *Recommend keep
+    the format and the scripts, and re-cut each episode once, after its
+    thesis passes, against the ledger. No full redo.*
+
+---
+
+## 14. Do the episodes need a revamp, or a redo?
+
+Judged against the admissibility standard above, on the scripts as
+committed, the manifest as served, and the gaps `docs/HISTORY-AUDIO.md` and
+the episode register already record.
+
+### 14a. What the scripts trace to
+
+**Quotes.** Every line read in the document voice (536 across 78 scripts)
+passes H-01, which means it exists in the event YAML. That is the whole
+chain. The YAML's excerpts carry a URL in 12 of 297 cases and a page in none,
+so **536 of 536 read-aloud quotes trace to the record and 0 trace to an
+admissible, freely readable source with a locator.** They are not known to be
+wrong. They are unverifiable in the sense section 4 defines, and T-04 plus
+T-05 would fail all 78 scripts on their first run.
+
+**Numbers.** A coarse converter (spelled cardinals and years back to digits,
+accepting "6 million" as well as "6,000,000") checked 3,890 spoken numbers in
+narrator lines against the digits each event's YAML carries: **158 (4.1%)
+are not in the record, across 52 scripts.** Some of the residue is the
+converter's ("a hundred years"), some is the year 2026 spoken in six scripts
+as "still contested in twenty twenty six", which the 09-21 audit cut from the
+YAML and never from the scripts, and some is real: Partition's "four hundred
+million" people and its "census data from nineteen forty one" have no digit
+behind them in the record. H-10 matches capitalised words and cannot see any
+of this. Under T-03 the residue would be a hard failure, so a thesis-grade
+audio gate needs a number check the scripts have never had.
+
+**Structure and the known gaps.** All 78 pass H-01 to H-09; 39 predate
+H-11 and were never checked against it; four rendered episodes run over the
+15.0 minute ceiling (under the 15.5 gate); two have never been ear-checked;
+the Mongol Baghdad script still carries the "some sources say" line the YAML
+lost. None of this is a format failure. All of it is a script that was
+written before a rule and never re-read under it.
+
+### 14b. Is the drama any good
+
+Yes, and this is the reason not to redo. Three scripts read whole for this
+section (Partition, Srebrenica, the Black Death) do what the brief asks: a
+cold open that refuses the received version with a particular ("A resolution
+is a sentence. It cannot stop a bulldozer."), scenes that arrive late, a
+document read in another voice with its speaker named first, a rest where a
+lesser script would explain, five accounts each given its own case, and a
+turn that names what each leaves out without averaging them. The Black
+Death's turn ends on the Mongol account being "the widest and the least
+certain", and says why. The register is consistent across the catalogue
+because H-05, H-06 and H-09 make it structural. Rewriting 78 of these to
+gain rigor would throw away the thing that took the longest to get right and
+that the thesis page is not trying to be.
+
+### 14c. Does the format still fit when the page is canonical
+
+It fits better. Today the script is the only long form the event has, so it
+carries a weight it was not built for: the numbers, the estimates, the
+historiographic caveats. Once the thesis exists, the episode can be the
+dramatisation the CEO named and nothing else, and every DOCUMENT it reads
+points at an exhibit the listener can open. The one structural change the
+new arrangement asks for is the fourth field on the DOCUMENT marker (the
+extract id) and a number gate; the grammar, the voices, the rests and the
+turn stay.
+
+### 14d. Verdict: keep the format and the scripts, re-cut each episode once
+
+Not a redo. Not a bulk revision either, because a revision against the YAML
+would be a revision against the thing that is being replaced. **Targeted
+re-cut, one episode at a time, only after that event's thesis passes its
+gates**, in this order:
+
+1. The thesis is published; its ledger holds the extracts.
+2. The script is re-read against the ledger under T-03 (numbers), T-04 and
+   T-05 (quotes to a held, free-readable extract), H-11 (the 39 that predate
+   it), and the time-relative gate (the six that speak a present year). Each
+   DOCUMENT marker gains its extract id. A line the ledger cannot carry is
+   cut, not softened. The four over-length episodes are trimmed to 15.0 in
+   the same pass.
+3. Kokoro re-renders the episode, the promo is re-stitched, the manifest
+   fingerprint changes, `tests/test_history_audio.py` re-verifies the served
+   file, and the page's episode marks are re-aligned to the new chapters.
+
+Expected change per script: a handful of lines, not a rewrite. The Partition
+script loses or re-sources two numbers and gains four extract ids. Scripts
+whose events fail the evidence bar are not touched at all: their episodes
+keep running against the YAML, exactly as now, with the Hearing beside them.
+
+**Cost, all $0.** Authoring: one agent session per episode for the re-read
+and the cut, folded into Stage 4 of the thesis workflow, so it adds roughly
+78 sessions across the rollout rather than a separate programme. Rendering:
+`render-history-audio.yml` already fans the catalogue over a ten-wide matrix
+at about ninety minutes for all 78 and roughly ten minutes for one, on
+GitHub-hosted CPU; a re-cut episode is one manual dispatch. No paid voice,
+no API.
+
+**What the listener gains.** Every quote they hear can be opened on the page
+at the passage it was read from. Every number they hear is a number the
+record holds as digits. The six episodes that say "twenty twenty six" stop
+ageing. The 39 pre-H-11 scripts say aloud which of their witnesses are
+paraphrased or secondhand. And the chapter list names the exhibit, so a
+listener on `/audio` can go from the voice to the document in one tap. What
+they do not lose is the thing they came for: the drama is left alone.
