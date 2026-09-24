@@ -1,0 +1,52 @@
+{
+ "version": "1.2.0",
+ "title": "On Air · Thursday 24 September 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Headlines",
+   "endTime": 35.154
+  },
+  {
+   "startTime": 35.154,
+   "title": "Netanyahu's U-N Visit",
+   "endTime": 102.906
+  },
+  {
+   "startTime": 102.906,
+   "title": "A-I Agent Hack",
+   "endTime": 191.331
+  },
+  {
+   "startTime": 191.331,
+   "title": "Ethiopia Conflict",
+   "endTime": 261.857
+  },
+  {
+   "startTime": 261.857,
+   "title": "Republicans and Iran War",
+   "endTime": 342.004
+  },
+  {
+   "startTime": 342.004,
+   "title": "Also today",
+   "endTime": 416.01
+  },
+  {
+   "startTime": 416.01,
+   "title": "Boxing Match Confirmed",
+   "endTime": 442.787
+  },
+  {
+   "startTime": 442.787,
+   "title": "Opinion",
+   "endTime": 670.783
+  },
+  {
+   "startTime": 670.783,
+   "endTime": 683.883,
+   "title": "Also from Void"
+  }
+ ]
+}
