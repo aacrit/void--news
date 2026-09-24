@@ -319,6 +319,126 @@ An event may switch to the thesis page only when its ledger holds:
 Srebrenica clears the Tier A bar with the documents it already names.
 Partition clears nothing until its identifiers are rebuilt.
 
+### 4f. Non-English free sources
+
+Added 2026-09-24. The CEO asked whether "the translation thing we did
+earlier" can be reused. That is `scripts/roster/anchor_pairs.py` (commit
+315bd19), and it is not a translator: it matches the same news article
+across languages by the names, numbers and dates the two texts share,
+scoring shared capitalised tokens at 2, their five-character prefixes at 1
+(so Zelensky and Selenskyj count), shared digit strings at 2 and shared
+long words at 1, and it was measured at 100% precision on the pairs scoring
+18 or more. The idea worth reusing is the invariant underneath it: **a
+faithful rendering of a text preserves every name, number and date in it.**
+That invariant is mechanically checkable, and it is what makes non-English
+sources admissible without trusting a translation.
+
+**1. Admission.** A non-English Tier A or B source enters the ledger on the
+same terms as an English one, with `language` set. Its extract is stored
+verbatim in the original language and script, with the original's locator.
+Beside it the ledger may hold one English rendering, and the rendering is
+labelled as exactly one of two things:
+
+- **an official parallel translation**: the same document as issued by its
+  own institution in English. UN documents exist in six official languages
+  and ODS serves each; ICTY and IRMCT records exist in English, French and
+  BCS; the ICJ issues in English and French; EU and League of Nations
+  material likewise. Where one exists it is preferred, it is stored as its
+  own extract with its own locator, and it may carry a pinned English
+  quote;
+- **a Void translation**: made by the agent at $0, stored with `rendering:
+  void`, the agent's session and date, and never passed off as a quotation
+  of a published English text. A Void translation may be exhibited beside
+  the original and paraphrased in the argument; a quotation in the thesis
+  from a Void translation prints the original first and the rendering
+  under it, labelled, and the citation marker pins the original.
+
+A published scholarly translation (Loeb, a critical edition, a translated
+monograph) is a Tier B source in its own right, cited as the translator's
+work, and is neither of the above.
+
+**2. The parity check (T-20).** Every rendering must preserve every name,
+number and date in the original. `ledger.py` extracts three sets from each
+side: digit strings (with a locale pass so 1.500 and 1,500 and ١٥٠٠ are
+one number), dates (with month names mapped per language and calendar
+conversion flagged rather than done), and proper names as `anchor_pairs`
+finds them, plus a transliteration table per script so that Jinnah and
+جناح and Джинна match by a registered pairing, not by luck. A rendering
+that drops or adds a member of any set fails; a rendering that changes a
+number fails hard. Where an official parallel version exists, the Void
+translation is checked against it as well, sentence count and entity set,
+and the official version is what the page quotes. This is the anchor idea
+turned from a matcher into a gate: the score is not a threshold to pass but
+a set difference that must be empty.
+
+**3. The catalogue, probed from this container on 2026-09-24.** Each entry
+was fetched with a search or a document request; "reachable" means a real
+response came back, not a challenge page. None of the candidates is paid.
+
+| Repository | Languages | Result | Note |
+|---|---|---|---|
+| Gallica (BnF) | French, colonial-era print | reachable | SRU search API answered |
+| Persée | French scholarship | reachable | search answered |
+| Europeana | European archives, many languages | reachable | API answered on the demo key; a free key is required for volume |
+| Deutsche Digitale Bibliothek | German | reachable | |
+| SciELO | Spanish, Portuguese scholarship | reachable for articles | scielo.br serves pages; the search endpoint returns 403 to this container, so discovery goes through Redalyc or Crossref |
+| Redalyc | Spanish, Portuguese scholarship | reachable | |
+| CyberLeninka | Russian, Ukrainian scholarship | reachable | article pages served |
+| J-STAGE | Japanese scholarship | reachable | search answered |
+| National Diet Library Search and Digital | Japanese | reachable | OpenSearch API returned XML; dl.ndl.go.jp answered |
+| JACAR | Japanese state records | reachable | home answered; the database paths need the real query form |
+| Chinese Text Project | Classical Chinese | reachable | JSON API answered; rate limited, free |
+| National Digital Library of India | Indian languages, English | reachable | some items need a free login |
+| UN ODS | six official languages | reachable | S/RES/819 (1993) came back as a 116 KB PDF |
+| ICTY case pages (icty.org) | English, French, BCS | reachable | the Krstic trial judgment came back as a 702 KB PDF |
+| ICTY/IRMCT Court Records (ucr.irmct.org) | English, French, BCS | reachable, free registration | exhibits and transcripts sit behind a free account |
+| Perseus | Greek, Latin, with parallel English | reachable | |
+| The Latin Library | Latin | reachable | |
+| Wikisource (per language) | many | reachable | a transcription, cited only with the scan it transcribes |
+| Internet Archive | many | reachable | |
+| Qatar Digital Library | Arabic, Gulf and India Office records | **blocked** | 403 on every path from this container |
+| HathiTrust | many | **blocked** | 403 on catalog and full text from this container; usable by hand, not by CI. Section 4b's mention stands for a person, not for the checker |
+| ICJ (icj-cij.org) | English, French | **blocked** | 403; ICJ judgments are reached through UN ODS where issued as UN documents, otherwise by hand |
+| UN Digital Library | six | **blocked** | challenge page; ODS covers the same symbols |
+| Abhilekh Patal (National Archives of India) | English, Indian languages | **blocked** | empty 202 and 404 from this container |
+
+Blocked means blocked from the CI container today; a person can still read
+those archives, and an extract read by hand carries `free_copy` as usual
+with `read_by: hand`. The weekly ledger job re-probes the catalogue and
+flips a row when access changes, so this table is data, not a promise.
+
+**4. What it makes achievable.** T-07 fails an event where every Tier B
+source is from one region or every position rests on one language, and the
+bar in 4e asks for 2 sources from the event's own region or language. With
+this catalogue those are met from Gallica for the Algerian War, from
+CyberLeninka and the Ukrainian record for the Holodomor, from J-STAGE and
+the NDL for Meiji, from Redalyc and SciELO for the Bolivarian revolutions,
+from ICTY's BCS records for Srebrenica, from the Chinese Text Project for
+the Mongol conquest as the Chinese sources saw it. The record section names
+the language of every source it rests on, so the reader can see when an
+event about India has been argued from London's papers.
+
+**5. The limits.** The agent translates reliably enough for the parity gate
+to be the only extra control in French, German, Spanish, Portuguese,
+Italian, Dutch, Russian, Ukrainian, Polish, Bosnian, Croatian and Serbian,
+and in classical Latin and Greek where Perseus supplies a printed parallel
+to check against. It is weaker, and the parity gate plus a stated
+`confidence: moderate` on the rendering is required, in Chinese, Japanese,
+Arabic, Persian, Turkish, Hindi, Urdu, Bengali and Punjabi, where scripts,
+calendars and transliteration make entity parity itself fallible. It is
+not reliable in Khmer, Kinyarwanda, Amharic, te reo Maori, Quechua,
+Nahuatl, Kongo, and in any language read from a poor scan (Fraktur,
+nastaliq, early print). For those, and for any language the agent flags as
+uncertain, a **second-pass back-translation** is required: a separate
+session renders the English back into the original with no sight of the
+source, and the ledger stores the back-translation and its parity result
+against the original; a back-translation that loses an entity or a number
+fails the rendering. Where no official parallel exists and the language is
+in the unreliable list, the extract may be exhibited in the original with a
+Void rendering labelled "unverified translation", and the thesis may cite
+the original for what it names and dates but may not quote the rendering
+in English. Silence beats a plausible translation.
+
 ---
 
 ## 5. The expansion workflow
@@ -452,6 +572,32 @@ the reading list for the next pass.
 Adjudication also runs on the thesis's own three claims from section 2 of
 the page. A claim the artifacts do not support is not a claim the thesis
 makes.
+
+Two further rules, approved by the CEO on 2026-09-24, because a Tier A
+document is evidence of what its author recorded and not neutral truth.
+
+**Rule A, whose record.** Every verdict names who produced the documents it
+rests on: the colonial administration, the tribunal, survivor testimony,
+the perpetrator state, the victorious party's press. The ledger carries
+this as `record_of` on every Tier A entry, and the verdict marker prints
+it ("Contradicted by the tribunal's own record" reads differently from
+"Contradicted by the ministry that ordered it"). When every document
+behind a verdict comes from one side of the event, the verdict is capped at
+**Qualified**, never Contradicted, and the page says why in the verdict
+sentence: "the only documents this record holds on the point are the
+administration's own". A position can be found wanting by its own side's
+papers, and often is; it cannot be found wanting by the other side's papers
+alone. Check T-18.
+
+**Rule B, a gap is published, not treated as disproof.** When the free
+record is thin for one side, the page states the gap by name ("no open
+archive holds the Muslim League's district correspondence for 1947") in the
+record section and in the verdict, instead of letting the missing documents
+read as the account being wrong. Absence of evidence never moves a verdict
+to Contradicted: a Contradicted verdict must cite an artifact that says
+otherwise, not the lack of one that says so. A position whose evidence
+would sit in a closed or paywalled archive is Untestable, with `would_settle`
+naming the archive, and that sentence is printed. Check T-19.
 
 ### 6b.2 Original analysis: findings from the primary record
 
@@ -679,6 +825,9 @@ counter-position.
 > **Verdicts.** The record's Tier A artifacts are four quotations: Nehru
 > on August 14, 1947, Radcliffe's private line as Read and Fisher quote it,
 > Gandhi at a Calcutta prayer meeting, and Jinnah on August 11, 1947.[22]
+> All four are the words of the leaders of the three parties to the
+> decision; none is an administrative record, a survivor's account or a
+> district file, and this record holds no document from the Punjab itself.
 > None bears on Gurdaspur. *British administrative: untestable from the
 > free record.* The artifact that would test it is the Punjab Boundary
 > Commission's report and Radcliffe's award, in Mansergh's Transfer of
@@ -763,7 +912,16 @@ positions:
     rests_on: [src-menon-1957, src-mansergh-1970]
     tested_against: []          # extract ids; required for every verdict but untestable
     would_settle: src-mansergh-1970 vol. XII   # required for untestable
+    gap: no open archive holds the Boundary Commission's working papers   # Rule B, printed
 ```
+
+Every Tier A entry carries `record_of` (Rule A): who produced it, from a
+short controlled list per event (`colonial-administration`, `tribunal`,
+`survivor-testimony`, `perpetrator-state`, `victor-press`, `neutral-body`,
+and so on), and a verdict prints the `record_of` of every extract it rests
+on. A non-English extract carries `language`, and any rendering beside it
+carries `rendering: official | void`, its own locator or session and date,
+and its parity result (4f).
 
 The thesis is Markdown with a strict front matter and four extensions the
 parser (`pipeline/history/thesis_format.py`, a sibling of `script_format.py`)
@@ -843,6 +1001,9 @@ copies, and rewrites `verified_at`.
 | T-15 | a position with no verdict, a verdict outside the four words, a Supported, Contradicted or Qualified verdict whose `tested_against` names no Tier A extract, an Untestable with no `would_settle`, or a Contradicted position rendered without its extract in the same block | a scholar repeated as settled; a contradiction the reader cannot see |
 | T-16 | a finding with no `method`, a row whose `from` resolves to no extract, a `derive` value that `ledger.py recompute` does not reproduce, no `confidence`, an empty `against` with no statement of where the historian looked, or a finding id cited as a source anywhere in the argument | analysis that cannot be re-run; an inference dressed as a fact |
 | T-17 | an event marked `published` with no finding, or with a finding whose statement carries a numeral absent from its own `derive` and `rows` | a thesis that only compiles; a number the working does not produce |
+| T-18 | a Tier A entry with no `record_of`; a verdict whose marker does not print the producers of its `tested_against` extracts; a Contradicted verdict whose `tested_against` extracts all share one `record_of` side | one side's papers read as neutral truth (Rule A) |
+| T-19 | a Contradicted verdict with an empty `tested_against`, or one whose sentence contains no artifact and only a statement of absence ("no document records", "the record holds nothing"); an Untestable verdict with no `would_settle`; a record section that does not name every `gap` the ledger lists | a gap read as disproof (Rule B) |
+| T-20 | a non-English extract with no `language`; a rendering not labelled `official` or `void`; a `void` rendering whose set of names, numbers or dates is not exactly the original's (any member dropped, added or changed); a `void` rendering where an `official` parallel exists; a low-resource-language rendering with no stored back-translation and parity result; an English quotation in the thesis pinned to a `void` rendering rather than to the original | a translation passed off as a quotation; a number lost in translation |
 
 Served, in `scripts/verify_sections.py`, **TH-01..TH-04** on a sampled
 thesis page: one h1 and the question text present (not a shell); note count
@@ -965,6 +1126,9 @@ and both are tested.
   page.
 - A scholar's claim printed without a verdict, or a verdict without its
   artifact.
+- A position contradicted by the other side's papers alone, or by the
+  absence of papers.
+- A Void translation quoted as if a published English text said it.
 - A finding without its rows, its confidence and the evidence against it.
 
 ---
