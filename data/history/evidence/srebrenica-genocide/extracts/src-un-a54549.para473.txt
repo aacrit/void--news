@@ -1,0 +1,6 @@
+source: src-un-a54549
+locator: para473
+url: https://documents.un.org/doc/undoc/gen/n99/348/76/pdf/n9934876.pdf
+read: 2026-09-24
+
+473. As concerns the second criticism, it is easy to say with the benefit of hindsight and the knowledge of what followed that the Netherlands battalion did not do enough to protect those who sought refuge in its compound. Perhaps the soldiers should have allowed everyone into the compound and then offered themselves as human shields to protect them. This might have slowed down the Serbs and bought time for higher-level negotiations to take effect. At the same time, it is also possible that the Serb forces would then have shelled the compound, killing thousands in the process, as they had threatened to do. Ultimately, it is not possible to say with any certainty that stronger actions by Dutchbat would have saved lives, and it is even possible that such efforts could have done more harm than good.

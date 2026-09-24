@@ -1,0 +1,79 @@
+Event,Slug,Sources,Kind A,Kind B,Kind C,Kind D,With identifier,DOIs,DOI resolves,DOI title matches,DOI other work,Archive links,Archive live,Broken identifiers,Verifiable,Excerpts,Excerpts with URL,Media,Stock media,Ledger,Ledger entries,Tier A pinned,Tier B verified,Tier B pinned,Positions,Regional,Exhibits,Analyses,Extracts,Bar A,Bar B,Bar positions,Bar regional,Bar exhibits,Bar analyses,Thesis,Report date
+The Conquests of Alexander,alexanders-conquests,15,0,15,0,0,0,0,0,0,0,0,0,0,0,3,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Algerian War of Independence,algerian-war,18,1,17,0,0,1,0,0,0,0,1,1,0,1,4,0,2,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Khmer Empire,angkor-khmer-empire,16,1,15,0,0,6,1,1,1,0,0,0,0,1,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+Apartheid and Its End,apartheid,15,1,14,0,0,5,0,0,0,0,4,4,0,4,3,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+Apollo 11 and the Space Race,apollo-11-moon-landing,15,3,9,0,3,3,0,0,0,0,3,3,0,3,4,0,2,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Arab Spring,arab-spring,16,1,13,0,2,11,0,0,0,0,3,3,0,3,4,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Armenian Genocide,armenian-genocide,18,2,16,0,0,12,6,6,6,0,10,10,0,11,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+Ashoka and the Maurya Empire,ashoka-maurya-empire,15,2,13,0,0,9,3,3,3,0,6,6,0,7,3,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Assassination of Julius Caesar,assassination-of-caesar,15,0,15,0,0,0,0,0,0,0,0,0,0,0,3,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Bandung Conference,bandung-conference,17,0,15,0,2,0,0,0,0,0,0,0,0,0,3,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Black Death,black-death,15,2,13,0,0,0,0,0,0,0,0,0,0,0,3,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Bolivarian Revolutions,bolivarian-revolutions,15,1,14,0,0,9,3,3,3,0,8,8,0,9,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Cambodian Genocide,cambodian-genocide,17,0,16,0,1,14,6,6,6,0,12,12,0,13,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Chernobyl Disaster,chernobyl-disaster,16,9,7,0,0,8,0,0,0,0,7,5,2,5,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Chinese Civil War and the Founding of the People's Republic,chinese-civil-war,15,2,13,0,0,1,0,0,0,0,1,1,0,1,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Chinese Cultural Revolution,chinese-cultural-revolution,15,4,11,0,0,0,0,0,0,0,0,0,0,0,4,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The American Civil Rights Movement,civil-rights-movement,15,0,15,0,0,0,0,0,0,0,0,0,0,0,3,0,5,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+Columbus and the Columbian Exchange,columbian-exchange,20,1,15,0,4,0,0,0,0,0,0,0,0,0,3,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Congo Free State,congo-free-state,16,1,15,0,0,10,6,6,3,3,6,6,3,6,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Congo Wars,congo-wars,18,9,9,0,0,6,4,4,1,3,2,2,3,3,3,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Creation of Israel and the Nakba,creation-of-israel-nakba,15,0,15,0,0,12,7,7,5,2,9,9,2,11,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Cuban Missile Crisis,cuban-missile-crisis,17,3,14,0,0,0,0,0,0,0,0,0,0,0,4,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Cuban Revolution,cuban-revolution,16,5,11,0,0,10,0,0,0,0,10,10,0,10,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Cyrus Cylinder,cyrus-cylinder,18,1,16,1,0,1,0,0,0,0,0,0,0,0,4,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Fall of the Berlin Wall,fall-of-berlin-wall,15,0,15,0,0,8,3,3,3,0,8,8,0,8,4,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Fall of Constantinople,fall-of-constantinople,15,1,14,0,0,12,0,0,0,0,6,6,0,6,4,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+Fall of the Western Roman Empire,fall-of-rome,16,1,15,0,0,12,5,5,5,0,9,9,0,11,3,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Fall of Tenochtitlan,fall-of-tenochtitlan,15,3,12,0,0,0,0,0,0,0,0,0,0,0,3,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The French Revolution,french-revolution,15,0,15,0,0,13,11,10,10,0,11,11,1,12,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The 2008 Global Financial Crisis,global-financial-crisis-2008,20,3,17,0,0,12,0,0,0,0,12,11,1,11,5,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Great Depression,great-depression,15,0,15,0,0,11,2,2,2,0,9,9,0,11,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Great Leap Forward and the Great Chinese Famine,great-leap-forward,14,2,12,0,0,6,1,1,0,1,5,5,1,5,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Gutenberg Revolution,gutenberg-printing-press,15,0,15,0,0,0,0,0,0,0,0,0,0,0,3,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Haitian Revolution,haitian-revolution,16,0,16,0,0,11,8,8,8,0,8,8,0,11,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Atomic Bombings of Hiroshima and Nagasaki,hiroshima-nagasaki,15,1,14,0,0,9,4,4,4,0,9,8,1,8,4,0,5,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Holodomor,holodomor,18,3,15,0,0,7,3,3,3,0,5,5,0,6,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Inca Empire and the Spanish Conquest,inca-conquest-peru,15,1,14,0,0,0,0,0,0,0,0,0,0,0,3,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Indian Independence Movement,indian-independence-movement,15,1,14,0,0,0,0,0,0,0,0,0,0,0,4,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Industrial Revolution,industrial-revolution,21,1,20,0,0,11,5,5,3,2,7,7,2,10,4,0,5,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Iran-Iraq War,iran-iraq-war,15,2,13,0,0,0,0,0,0,0,0,0,0,0,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Iranian Revolution,iranian-revolution,17,1,16,0,0,0,0,0,0,0,0,0,0,0,4,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Kingdom of Kongo,kingdom-of-kongo,15,0,15,0,0,5,0,0,0,0,0,0,0,0,3,0,0,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Korean War,korean-war,20,2,18,0,0,5,0,0,0,0,5,5,0,5,4,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Mali Empire and Mansa Musa's Pilgrimage,mali-empire-mansa-musa,15,0,15,0,0,6,4,4,3,1,4,4,1,5,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Meiji Restoration,meiji-restoration,17,3,14,0,0,11,4,4,3,1,8,8,1,9,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Mongol Conquest of Baghdad,mongol-conquest-baghdad,16,6,10,0,0,9,6,6,6,0,8,8,0,9,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Mongol Empire,mongol-empire,15,0,15,0,0,0,0,0,0,0,0,0,0,0,3,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Mughal Empire,mughal-empire,17,2,15,0,0,2,1,1,0,1,1,1,1,1,5,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Nanjing Massacre,nanjing-massacre,17,5,12,0,0,0,0,0,0,0,0,0,0,0,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Opium Wars,opium-wars,16,1,15,0,0,9,4,4,3,1,8,8,1,8,3,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Ottoman Empire,ottoman-empire,16,3,13,0,0,11,0,0,0,0,3,3,0,3,3,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Partition of India,partition-of-india,16,3,13,0,0,10,6,6,6,0,9,9,0,10,4,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Peloponnesian War,peloponnesian-war,17,1,16,0,0,13,9,9,9,0,10,10,0,12,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Rise of Islam,rise-of-islam,15,0,15,0,0,4,0,0,0,0,0,0,0,0,4,0,0,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Russian Revolution,russian-revolution,15,0,15,0,0,0,0,0,0,0,0,0,0,0,4,0,5,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Rwandan Genocide,rwandan-genocide,17,6,11,0,0,10,8,8,8,0,7,7,0,10,4,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Scramble for Africa,scramble-for-africa,18,0,18,0,0,13,8,8,8,0,11,11,0,12,5,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+September 11 and the War on Terror,september-11-attacks,18,3,15,0,0,0,0,0,0,0,0,0,0,0,3,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Silk Road,silk-road,15,1,14,0,0,0,0,0,0,0,0,0,0,0,3,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Six-Day War,six-day-war,16,3,12,1,0,7,1,1,0,1,6,6,1,6,5,0,2,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Collapse of the Soviet Union,soviet-union-collapse,16,1,15,0,0,0,0,0,0,0,0,0,0,0,4,0,2,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Spanish Civil War,spanish-civil-war,20,0,20,0,0,0,0,0,0,0,0,0,0,0,4,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The 1918 Influenza Pandemic,spanish-flu-1918,17,2,15,0,0,13,10,10,10,0,3,3,0,13,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Srebrenica Genocide and the Bosnian War,srebrenica-genocide,17,7,10,0,0,0,0,0,0,0,0,0,0,0,5,0,2,0,yes,28,9,16,5,7,20,5,4,59,ok,ok,ok,ok,ok,ok,draft,2026-09-24
+The Suez Crisis,suez-crisis,15,1,14,0,0,0,0,0,0,0,0,0,0,0,4,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Sykes-Picot Agreement,sykes-picot-agreement,15,0,15,0,0,11,0,0,0,0,11,11,0,11,6,0,2,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Taiping Rebellion,taiping-rebellion,15,0,15,0,0,0,0,0,0,0,0,0,0,0,3,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Crusades,the-crusades,16,2,13,0,1,9,3,3,3,0,5,5,0,6,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Holocaust,the-holocaust,15,1,14,0,0,0,0,0,0,0,0,0,0,0,3,0,5,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Protestant Reformation,the-reformation,16,2,14,0,0,0,0,0,0,0,0,0,0,0,4,0,5,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+"Tiananmen Square, 1989",tiananmen-square,17,0,16,0,1,8,3,3,3,0,8,8,0,8,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Trail of Tears,trail-of-tears,16,4,12,0,0,10,5,5,5,0,6,6,0,7,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Transatlantic Slave Trade,transatlantic-slave-trade,15,1,14,0,0,10,7,7,7,0,7,7,0,9,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Treaty of Waitangi and the New Zealand Wars,treaty-of-waitangi,15,2,13,0,0,8,3,3,3,0,4,4,0,7,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Vietnam War,vietnam-war,20,1,18,0,1,9,0,0,0,0,9,9,0,9,4,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Pentagon Papers and Watergate,watergate,15,4,11,0,0,10,0,0,0,0,10,10,0,10,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+The Global Struggle for Women's Suffrage,womens-suffrage,15,0,15,0,0,3,0,0,0,0,3,2,1,2,3,0,4,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24
+World War I,world-war-i,15,0,15,0,0,3,0,0,0,0,3,3,0,3,4,0,3,0,none,0,0,0,0,0,0,0,0,0,,,,,,,none,2026-09-24

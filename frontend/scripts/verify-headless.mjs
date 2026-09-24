@@ -1021,6 +1021,71 @@ async function brandChecks(browser) {
     const back = await page.evaluate(() => ({ y: window.scrollY, compact: document.querySelector(".nav-header").getAttribute("data-scroll-compact"), navH: Math.round(document.querySelector(".nav-header").getBoundingClientRect().height), mainTop: Math.round(document.querySelector("main").getBoundingClientRect().top) }));
     assert(back.y === 0 && back.compact !== "true" && back.mainTop >= back.navH - 1, "navigation-back-uncompacts", `/: scrollY ${back.y}, compact ${back.compact}, masthead ${back.navH}px, main top ${back.mainTop}`);
   });
+  /* The Thesis: a note, its sidenote, its source, the play glyph. The route
+     comes from the served index the exporter writes (data/history-theses.json
+     lists published theses only), or from --thesis=<slug> for a local draft
+     export built with NEXT_PUBLIC_HISTORY_DRAFTS=1. With neither, the journey
+     is skipped and says so: a thesis that is not published has no page. */
+  {
+    const thesisArg = process.argv.find((a) => a.startsWith("--thesis="))?.slice("--thesis=".length) ?? null;
+    let thesisSlug = thesisArg;
+    if (!thesisSlug) {
+      try {
+        const idx = JSON.parse(readFileSync(join(OUT, "data/history-theses.json"), "utf8"));
+        thesisSlug = idx?.theses?.[0]?.slug ?? null;
+      } catch { thesisSlug = null; }
+    }
+    if (!thesisSlug || !existsSync(join(OUT, "history", thesisSlug, "index.html"))) {
+      ctx("/history/", 1440, "dark"); console.log(`\nscenario: thesis-notes`);
+      skip("thesis-notes", "no published thesis in this export");
+    } else {
+      for (const width of [1440, 390]) {
+        await withPage(browser, { width, route: `/history/${thesisSlug}/` }, `thesis-notes @${width}`, async (page) => {
+          assert(await page.locator(".hist-thesis-page").count() === 1, "thesis-page", "the route renders the Thesis, not the Hearing");
+          const ref = page.locator("sup.hist-th-sup a.hist-th-ref").first();
+          assert(await ref.count() === 1, "thesis-ref", "a citation number in the text");
+          const n = (await ref.textContent())?.trim();
+          const noteVisible = await page.locator(`#n${n}`).count();
+          assert(noteVisible === 1, "thesis-note-target", `note ${n} exists in the Notes section`);
+          if (width >= 1024) {
+            const side = page.locator(`#sn${n}`);
+            assert(await side.count() === 1 && await side.isVisible(), "thesis-sidenote", `sidenote ${n} beside the paragraph at ${width}`);
+            assert(await page.locator(".hist-th-inline").first().isVisible() === false, "thesis-inline-hidden", "the inline disclosure yields to the sidenote");
+          } else {
+            const det = page.locator(".hist-th-inline").first();
+            assert(await det.isVisible(), "thesis-inline", "the inline note disclosure is the phone's sidenote");
+            await det.locator("summary").click();
+            await page.waitForTimeout(200);
+            assert(await det.evaluate((el) => el.open), "thesis-inline-opens", "tapping the summary opens the notes under the paragraph");
+            assert(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1), "thesis-no-overflow", "no horizontal scroll at phone width");
+          }
+          await ref.click();
+          /* The page scrolls smoothly (globals.css), and the Notes sit at the
+             foot of a 2,500-word page, so the jump is polled until it settles
+             rather than sampled once. */
+          let landed = false;
+          for (let i = 0; i < 12 && !landed; i++) {
+            await page.waitForTimeout(250);
+            landed = await page.evaluate((id) => {
+              const el = document.getElementById(id); if (!el) return false;
+              const r = el.getBoundingClientRect();
+              return location.hash === `#${id}` && r.top >= -1 && r.top < window.innerHeight;
+            }, `n${n}`);
+          }
+          assert(landed, "thesis-note-jump", `clicking ${n} lands on note ${n}`);
+          const src = page.locator("#sources .hist-th-source__link").first();
+          assert(await src.count() === 1 && /^https:\/\//.test((await src.getAttribute("href")) ?? ""), "thesis-source-link", "the first source link is absolute");
+          const glyph = page.locator(".hist-th-episode__play").first();
+          if (await glyph.count() === 0) { skip("thesis-play-glyph", "no episode in the manifest for this event"); return; }
+          const label = await glyph.getAttribute("aria-label");
+          assert(!!label && /^Listen from /.test(label), "thesis-play-glyph", `the play glyph is labelled: ${label}`);
+          const exhibits = await page.locator(".hist-th-exhibit").count();
+          const provs = await page.locator(".hist-th-exhibit .hist-th-exhibit__prov").count();
+          assert(exhibits > 0 && exhibits === provs, "thesis-exhibit-provenance", `${provs} of ${exhibits} exhibits carry a provenance line`);
+        });
+      }
+    }
+  }
   /* The Audio section: every programme, one place, each loading into the one
      shared player. */
   await withPage(browser, { width: 1440, route: "/audio/" }, "audio-hub", async (page) => {

@@ -105,9 +105,17 @@ import sys
 import yaml
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 EVENTS = sorted(glob.glob(str(ROOT / "data/history/events/*.yaml")))
 
-EM, EN = "—", "–"
+# The regexes live in pipeline/history/copy_rules.py since 2026-09-24, because
+# the thesis gates (T-06 in pipeline/history/thesis_checks.py) apply the same
+# rules to the thesis Markdown and two copies of a regex drift. The reasoning
+# behind each shape stays in this docstring; the shapes themselves are imported.
+from pipeline.history.copy_rules import (  # noqa: E402
+    EM, EN, HEDGED_ATTRIBUTION, NAMED, QUOTED_SPAN as _QUOTED_SPAN, TIME_RELATIVE,
+    outside_quotations, sentence_around,
+)
 
 # Keys holding someone's actual words, or a published title. Exempt from the
 # dash gate; see the module docstring.
@@ -115,22 +123,6 @@ EM, EN = "—", "–"
 # diary is called "The Critical Moment - Li Peng June Fourth Diary" and the
 # dash is the publisher's, not ours.
 VERBATIM_KEYS = {"quote", "text", "excerpt", "title", "work", "caption_original"}
-
-# A quoted span ANYWHERE is also exempt, not only a field named "quote". The
-# reason quotations are spared is that the words are as the source printed
-# them, and that reason does not care which field holds them.
-#
-# ashoka-maurya-empire quotes Rock Edict XIII inside a perspective narrative:
-# "those who are well cared for in the conquered country - the friends,
-# acquaintances, companions, and relatives". Keyed on the field name alone this
-# gate would have demanded someone repunctuate a 3rd-century BCE edict to
-# satisfy a house style rule, which is precisely the inversion Rule 1 forbids.
-_QUOTED_SPAN = re.compile(r"[\u201c\"]([^\u201c\u201d\"]{2,600})[\u201d\"]")
-
-
-def outside_quotations(text: str) -> str:
-    """The text with every quoted span blanked, so only our own prose is judged."""
-    return _QUOTED_SPAN.sub(lambda m: " " * len(m.group(0)), text or "")
 
 # A speaker that is not a bare name is acceptable when the entry points
 # somewhere a reader could go, OR discloses its own mediation out loud. Both
@@ -172,61 +164,6 @@ def holds_a_sentence(speaker: str) -> bool:
     # Or a finite reporting verb, which a name never contains.
     return bool(re.search(r"\b(said|told|wrote|argued|claimed|noted|explained|"
                           r"insisted|replied)\b", stripped, re.IGNORECASE))
-
-
-# ------------------------------------------------------ time-relative gate
-# Every entry measures from the moment somebody reads the page. The module
-# docstring carries the rewrite each one asks for, and why the two look-ahead
-# carve-outs are there.
-TIME_RELATIVE = [
-    # "as of 2026", "in 2026", "since 2025": the writing year used as the
-    # present. An inflation conversion is exempt; its base year never moves.
-    ("a near year used as now",
-     re.compile(r"\b(?:in|as of|since) 20(?:2[4-9]|3\d)\b"
-                r"(?!\s+(?:dollars|values|prices|terms|money))", re.I)),
-    ("to this day", re.compile(r"\bto this day\b", re.I)),
-    ("a state asserted as continuing",
-     re.compile(r"\bstill (?:open|governs|leads|stands|in force|the)\b", re.I)),
-    # "remains in force", "persists today", "remains the world's most unequal".
-    ("a state asserted as still holding",
-     re.compile(r"\b(?:remains?|persists?)\b[^.!?]*?"
-                r"\b(?:in force|today|the (?:most|largest|only|world's))\b",
-                re.I)),
-    # "sixty-five years on", "9,000 years ago", "80 years later". Spared:
-    # "forty years later in 1988", and "years on" used as a preposition.
-    ("an interval measured from now",
-     re.compile(r"\b\w+(?:-\w+)? years "
-                r"(?:ago\b|later\b|on\b(?=\s*[,.;:]|$))"
-                r"(?!\s+in\s+\d{4})", re.I)),
-    ("the present decade", re.compile(r"\bin the 2020s\b", re.I)),
-    ("currently", re.compile(r"\bcurrently\b", re.I)),
-    ("today", re.compile(r"\btoday\b", re.I)),
-]
-
-# ------------------------------------------------- prose-attribution gate
-# A hedge noun standing where a name belongs.
-HEDGED_ATTRIBUTION = re.compile(
-    r"\b(?:analysts|experts|critics|observers|some|many|sources) "
-    r"(?:say|says|said|argue|argues|argued|believe|believes|believed"
-    r"|note|notes|noted)\b", re.I)
-
-# What rescues it: a full name, or an institution that can hold a position.
-# One capitalised word is not enough, because the subject of the claim is
-# usually capitalised ("Some argue that Eisenhower's coercion...") and naming
-# whom the claim is ABOUT is not naming who makes it.
-NAMED = re.compile(
-    r"\b[A-Z][a-z]+(?:\s+(?:de|van|von|al|ibn|bin|da|di|of|the))?"
-    r"\s+[A-Z][\w'’-]+|\b[A-Z]{2,}\b")
-
-_SENTENCE = re.compile(r"[^.!?]*[.!?]|[^.!?]+$")
-
-
-def sentence_around(text: str, index: int) -> str:
-    """The sentence containing `index`, or the whole text if it has none."""
-    for m in _SENTENCE.finditer(text):
-        if m.start() <= index < m.end():
-            return m.group(0)
-    return text
 
 
 def reader_prose(ev):

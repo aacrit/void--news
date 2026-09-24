@@ -1,0 +1,7 @@
+source: src-icty-krstic-tj
+locator: para31
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+
+31. The VRS offensive on Srebrenica began in earnest on 6 July 1995.54 In the following days, the five UNPROFOR observation posts, in the southern part of the enclave, fell one by one in the face of the Bosnian Serb forces advance. Some of the Dutch soldiers retreated into the enclave after their posts were attacked, but the crews of the other observation posts surrendered into Bosnian Serb custody.55

@@ -5,7 +5,7 @@ import type { HistoricalEvent, ConnectionType } from "../types";
 import type { Hearing as HearingModel, HearingBlock, HearingSection } from "../hearing";
 import { HOOKS, CTAS } from "../hooks";
 import { deriveStats } from "../stats";
-import HeroListen from "./HeroListen";
+import EventHero, { HERO_ID } from "./EventHero";
 import SpineRail from "./SpineRail";
 import MediaGallery from "./MediaGallery";
 
@@ -47,8 +47,6 @@ const CONNECTION_GLYPH: Record<ConnectionType, string> = {
   influenced: "·",
   parallel: "·",
 };
-
-const HERO_ID = "hearing-hero";
 
 /* --------------------------------------------------------------------------
    Blocks
@@ -362,55 +360,8 @@ export default function Hearing({ event, hearing, nextEvent }: HearingProps) {
   return (
     <div className="hist-event-detail hist-hearing-page">
       <PrintMast path={`/history/${event.slug}/`} />
-      {/* ── HERO — kept as it was: image, date, title, subtitle, Listen ── */}
-      <section className="hist-stage hist-stage--scene" id={HERO_ID}>
-        <div
-          className="hist-stage__hero"
-          style={event.heroImage ? { backgroundImage: `url(${event.heroImage})` } : undefined}
-        >
-          {!event.heroImage && <div className="hist-stage__hero-fallback" />}
-          <div className="hist-stage__hero-overlay" />
-          <div className="hist-stage__hero-content">
-            <span className="hist-stage__date">{event.datePrimary}</span>
-            <h1 className="hist-stage__title">{event.title}</h1>
-            {event.subtitle && <p className="hist-stage__subtitle">{event.subtitle}</p>}
-            {event.audioUrl ? (
-              <HeroListen
-                id={event.id}
-                title={event.title}
-                subtitle={event.subtitle}
-                audioUrl={event.audioUrl}
-                durationSeconds={event.audioDuration ?? 0}
-                chapters={event.audioChapters ?? null}
-                accountCount={event.perspectives.length}
-              />
-            ) : (
-              <p className="hist-hero-pending">
-                <svg
-                  width="14"
-                  height="10"
-                  viewBox="0 0 14 10"
-                  aria-hidden="true"
-                  focusable="false"
-                  className="hist-hero-pending__icon"
-                >
-                  <g fill="currentColor">
-                    <rect x="0" y="4" width="1.5" height="2" rx="0.75" />
-                    <rect x="3" y="3" width="1.5" height="4" rx="0.75" />
-                    <rect x="6" y="4" width="1.5" height="2" rx="0.75" />
-                    <rect x="9" y="3" width="1.5" height="4" rx="0.75" />
-                    <rect x="12" y="4" width="1.5" height="2" rx="0.75" />
-                  </g>
-                </svg>
-                <span>Audio edition in production</span>
-              </p>
-            )}
-          </div>
-          {event.heroAttribution && (
-            <span className="hist-stage__attribution">{event.heroAttribution}</span>
-          )}
-        </div>
-      </section>
+      {/* ── HERO — image, date, title, subtitle, Listen; shared with the Thesis ── */}
+      <EventHero event={event} />
 
       {/* ── THE SPINE ── */}
       <div className="hist-hearing">
