@@ -518,30 +518,6 @@ media:
   license: cc-by-sa
   creator: Unknown
   creation_date: Unknown
-- media_type: photograph
-  title: Stunning aerial view of a mosque in Kaduna, showcasing architectural beauty and surrounding area.
-  description: Landscape orientation, 8064x6048px
-  source_url: https://www.pexels.com/photo/aerial-view-of-central-mosque-in-kaduna-nigeria-31619957/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/mali-empire-mansa-musa/pexels_1.jpg
-  attribution: Photo by Abdulrahman Abubakar on Pexels
-  license: pexels-license
-  creator: Abdulrahman Abubakar
-- media_type: photograph
-  title: Aerial view of a mosque and congregation during prayer in Kaduna, Nigeria.
-  description: Landscape orientation, 4156x3000px
-  source_url: https://www.pexels.com/photo/aerial-view-of-mosque-in-kaduna-nigeria-34150021/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/mali-empire-mansa-musa/pexels_2.jpg
-  attribution: Photo by Abdulrahman Abubakar on Pexels
-  license: pexels-license
-  creator: Abdulrahman Abubakar
-- media_type: photograph
-  title: A cozy setup of coffee, book, and string lights for a relaxing reading experience.
-  description: Landscape orientation, 4032x2895px
-  source_url: https://www.pexels.com/photo/person-holding-cup-of-coffee-3622632/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/mali-empire-mansa-musa/pexels_3.jpg
-  attribution: Photo by Ena Marinkovic on Pexels
-  license: pexels-license
-  creator: Ena Marinkovic
 connections:
 - target_slug: transatlantic-slave-trade
   connection_type: consequence

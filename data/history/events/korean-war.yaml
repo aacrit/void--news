@@ -232,12 +232,12 @@ perspectives:
     author: Bruce Cumings
     year: '2010'
     type: book
-    archive_url: https://archive.org/details/koreanwarhistory00cumi
+    verified: false
   - title: 'This Kind of War: The Classic Korean War History'
     author: T.R. Fehrenbach
     year: '1963'
     type: book
-    archive_url: https://archive.org/details/thiskindofwar00fehr
+    verified: false
   - title: 'Truman and MacArthur: Policy, Politics, and the Hunger for Honor and Renown'
     author: Michael Pearlman
     year: '2008'
@@ -415,17 +415,17 @@ perspectives:
     author: Bruce Cumings
     year: '2010'
     type: book
-    archive_url: https://archive.org/details/koreanwarhistory00cumi
+    verified: false
   - title: 'Korea''s Grievous War'
     author: Su-kyoung Hwang
     year: '2016'
     type: book
-    doi: 10.9783/9780812292312
+    verified: false
   - title: 'The Bridge at No Gun Ri: A Hidden Nightmare from the Korean War'
     author: Charles J. Hanley, Sang-Hun Choe, and Martha Mendoza
     year: '2001'
     type: book
-    archive_url: https://archive.org/details/bridgeatnogunrih0000hanl
+    verified: false
   - title: 'Korea''s Place in the Sun: A Modern History'
     author: Bruce Cumings
     year: '2005'
@@ -612,7 +612,7 @@ perspectives:
     author: Su-kyoung Hwang
     year: '2016'
     type: book
-    doi: 10.9783/9780812292312
+    verified: false
   - title: 'Finding Dispersed Families (broadcast archive)'
     author: Korean Broadcasting System (KBS)
     year: '1983'

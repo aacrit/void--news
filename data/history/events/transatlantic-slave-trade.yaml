@@ -12,8 +12,8 @@ severity: catastrophic
 death_toll: 1.8 million died during the Middle Passage; total deaths from capture, march, and crossing estimated at 4-6 million
 affected_population: 12.5 million Africans embarked; 10.7 million arrived in the Americas; demographic impact on Africa estimated in the tens of millions including indirect deaths and population stagnation
 duration: ~370 years
-hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/transatlantic-slave-trade/unsplash_1.jpg
-hero_image_attribution: Broadside of the slave ship Brookes, 1788, public domain via Wikimedia Commons
+hero_image_url: https://commons.wikimedia.org/wiki/File:Slaveshipposter.jpg
+hero_image_attribution: Society for Effecting the Abolition of the Slave Trade, 1788, public domain
 summary: 'Between approximately 1500 and 1870, European ships transported an estimated 12.5 million enslaved Africans across the Atlantic Ocean to the Americas. The Trans-Atlantic Slave Trade Database,
   compiled by David Eltis and David Richardson at Emory University, has documented 36,000 individual voyages. Of the 12.5 million who embarked, approximately 10.7 million survived the crossing, the Middle
   Passage. The remaining 1.8 million died at sea of disease, dehydration, suicide, and violence.
@@ -392,7 +392,7 @@ perspectives:
     author: Catherine Hall et al.
     year: 2013-present
     type: archive
-    doi: 10.1093/acrefore/9780199366439.013.962
+    verified: false
   - title: The Interesting Narrative of the Life of Olaudah Equiano
     author: Olaudah Equiano
     year: '1789'
@@ -468,7 +468,7 @@ perspectives:
     author: Paul Lovejoy
     year: '1983'
     type: book
-    doi: 10.1017/CBO9781139170505
+    verified: false
   - title: 'Africa and Africans in the Making of the Atlantic World, 1400-1800'
     author: John Thornton
     year: '1992'
@@ -521,62 +521,6 @@ media:
   creator: Josiah Wedgwood
   creation_date: '1787'
   supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/transatlantic-slave-trade/wiki_2.jpg
-- media_type: photograph
-  title: A statue of a person chained to a chain
-  description: Landscape orientation, 6000x4000px
-  source_url: https://unsplash.com/photos/a-statue-of-a-person-chained-to-a-chain-v5bOEzl1ggg
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/transatlantic-slave-trade/unsplash_1.jpg
-  attribution: Photo by Polly Sadler on Unsplash
-  license: unsplash-license
-  creator: Polly Sadler
-- media_type: photograph
-  title: Rusty pier structure on a sandy beach with ocean waves.
-  description: Landscape orientation, 3753x2681px
-  source_url: https://unsplash.com/photos/rusty-pier-structure-on-a-sandy-beach-with-ocean-waves-NwTYSQm0rOg
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/transatlantic-slave-trade/unsplash_2.jpg
-  attribution: Photo by Henry Lawani on Unsplash
-  license: unsplash-license
-  creator: Henry Lawani
-- media_type: photograph
-  title: a beach with a lighthouse
-  description: Landscape orientation, 4128x3096px
-  source_url: https://unsplash.com/photos/a-beach-with-a-lighthouse-xB_6jCXUa34
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/transatlantic-slave-trade/unsplash_3.jpg
-  attribution: Photo by Andrew Molo on Unsplash
-  license: unsplash-license
-  creator: Andrew Molo
-- media_type: photograph
-  title: A view of a beach from a high point of view
-  description: Landscape orientation, 5769x3845px
-  source_url: https://unsplash.com/photos/a-view-of-a-beach-from-a-high-point-of-view-97HDPCuHv-E
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/transatlantic-slave-trade/unsplash_4.jpg
-  attribution: Photo by Omoniyi David on Unsplash
-  license: unsplash-license
-  creator: Omoniyi David
-- media_type: photograph
-  title: Tranquil coastal scene at sunset in Cape Town with rocky shoreline and calm seas.
-  description: Landscape orientation, 5422x3615px
-  source_url: https://www.pexels.com/photo/serene-cape-town-coastal-sunset-view-34783055/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/transatlantic-slave-trade/pexels_1.jpg
-  attribution: Photo by Andrew Harvard on Pexels
-  license: pexels-license
-  creator: Andrew Harvard
-- media_type: photograph
-  title: Top view of a book, coffee, and cookies on a bed with white roses.
-  description: Landscape orientation, 5184x3456px
-  source_url: https://www.pexels.com/photo/book-coffee-cookies-and-flowers-20318502/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/transatlantic-slave-trade/pexels_2.jpg
-  attribution: Photo by Şehâdet Yoldaç on Pexels
-  license: pexels-license
-  creator: Şehâdet Yoldaç
-- media_type: photograph
-  title: Explore the powerful stone figures at Anse Cafard Slave Memorial in Martinique.
-  description: Landscape orientation, 5152x3864px
-  source_url: https://www.pexels.com/photo/monochrome-photo-of-memorial-cap-110-12197143/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/transatlantic-slave-trade/pexels_3.jpg
-  attribution: Photo by Ana  Stroffek on Pexels
-  license: pexels-license
-  creator: Ana  Stroffek
 connections:
 - target_slug: french-revolution
   connection_type: influenced

@@ -289,7 +289,7 @@ perspectives:
     author: Mary Elise Sarotte
     year: '2021'
     type: book
-    doi: 10.1093/ia/iiac089
+    verified: false
   - title: 'Gorbachev: His Life and Times'
     author: William Taubman
     year: '2017'
@@ -436,20 +436,17 @@ perspectives:
     author: Vijay Prashad
     year: '2007'
     type: book
-    doi: 10.2307/20455169
-    archive_url: https://archive.org/details/darkernationspe000pras
+    verified: false
   - title: 'Globalization and Its Discontents'
     author: Joseph Stiglitz
     year: '2002'
     type: book
-    doi: 10.1023/B:Dam.0000009338.23400.3d
     openlibrary: OL3955389M
     archive_url: https://archive.org/details/globalizationits00stig
   - title: 'The End of History and the Last Man'
     author: Francis Fukuyama
     year: '1992'
     type: book
-    doi: 10.2307/20045108
     archive_url: https://archive.org/details/endofhistorylast00fuku
   notable_quotes:
   - text: The Cold War had been a cage, but it had also been a shelter. When the cage opened, the shelter vanished.
@@ -498,62 +495,6 @@ media:
   license: cc-by-sa
   creator: Raphael Thiemard
   creation_date: November 1989
-- media_type: photograph
-  title: a group of people standing next to a metal fence
-  description: Landscape orientation, 4752x3168px
-  source_url: https://unsplash.com/photos/a-group-of-people-standing-next-to-a-metal-fence-kDOkE_Spa8I
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/fall-of-berlin-wall/unsplash_1.jpg
-  attribution: Photo by Ben Kupke on Unsplash
-  license: unsplash-license
-  creator: Ben Kupke
-- media_type: photograph
-  title: a wall that has some graffiti on it
-  description: Landscape orientation, 4752x3168px
-  source_url: https://unsplash.com/photos/a-wall-that-has-some-graffiti-on-it-3QY-IGB_is8
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/fall-of-berlin-wall/unsplash_2.jpg
-  attribution: Photo by Ben Kupke on Unsplash
-  license: unsplash-license
-  creator: Ben Kupke
-- media_type: photograph
-  title: brown concrete building during daytime
-  description: Landscape orientation, 5107x3405px
-  source_url: https://unsplash.com/photos/brown-concrete-building-during-daytime-uFGi0_YciE0
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/fall-of-berlin-wall/unsplash_3.jpg
-  attribution: Photo by Florian Wehde on Unsplash
-  license: unsplash-license
-  creator: Florian Wehde
-- media_type: photograph
-  title: a large stone building with columns and statues on top with Brandenburg Gate in the background
-  description: Landscape orientation, 4032x2268px
-  source_url: https://unsplash.com/photos/a-large-stone-building-with-columns-and-statues-on-top-with-brandenburg-gate-in-the-background-C-gm12fkTwc
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/fall-of-berlin-wall/unsplash_4.jpg
-  attribution: Photo by Femi Oyekoya on Unsplash
-  license: unsplash-license
-  creator: Femi Oyekoya
-- media_type: photograph
-  title: Silhouette of a street artist spray painting graffiti on a wall in Berlin, Germany.
-  description: Landscape orientation, 6240x4160px
-  source_url: https://www.pexels.com/photo/street-artist-creating-graffiti-in-berlin-34743352/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/fall-of-berlin-wall/pexels_1.jpg
-  attribution: Photo by Tommy K on Pexels
-  license: pexels-license
-  creator: Tommy K
-- media_type: photograph
-  title: Dynamic street art and graffiti on an urban wall in Berlin, showcasing bold colors and artistic styl
-  description: Landscape orientation, 4733x3188px
-  source_url: https://www.pexels.com/photo/stencil-art-of-woman-on-wall-near-door-shutter-with-graffiti-1128410/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/fall-of-berlin-wall/pexels_2.jpg
-  attribution: Photo by Niki Nagy on Pexels
-  license: pexels-license
-  creator: Niki Nagy
-- media_type: photograph
-  title: Iconic Brandenburg Gate in Berlin, an emblematic historic monument captured in daylight.
-  description: Landscape orientation, 4000x2250px
-  source_url: https://www.pexels.com/photo/brandenburg-gate-in-berlin-on-a-cloudy-day-32848467/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/fall-of-berlin-wall/pexels_3.jpg
-  attribution: Photo by Paul Schärf on Pexels
-  license: pexels-license
-  creator: Paul Schärf
 - media_type: video
   title: "The Berlin Wall: 28 years of division, U.S. Army footage"
   description: "American military footage of the Berlin Wall during the Cold War. The death strip, watchtowers, and concrete barrier that divided a city for 28 years. Filmed from the Western side."

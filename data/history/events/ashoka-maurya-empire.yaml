@@ -12,8 +12,8 @@ severity: major
 death_toll: ~100,000 Kalingan dead; 150,000 deported (Ashoka's own Rock Edict XIII)
 affected_population: Kalinga's entire population subjugated; Maurya Empire governed ~50 million people across the Indian subcontinent
 duration: 'Ashoka''s reign: 268-232 BCE (36 years); Kalinga War: c. 261 BCE'
-hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/ashoka-maurya-empire/pexels_1.jpg
-hero_image_attribution: Photograph of Ashoka Pillar at Vaishali, Bihar, public domain via Wikimedia Commons
+hero_image_url: https://commons.wikimedia.org/wiki/File:Ashoka_Pillar_at_Vaishali,_Bihar,_India.jpg
+hero_image_attribution: Wikimedia Commons, public domain
 summary: 'In 261 BCE, Ashoka Maurya''s army rolled through Kalinga (a kingdom on India''s eastern coast, roughly modern Odisha) and killed 100,000 people. Another 150,000 were deported. These are not
   external estimates. Ashoka carved the numbers himself onto Rock Edict XIII, a massive stone inscription erected across his empire: "A hundred and fifty thousand people were deported, a hundred thousand
   were killed, and many times that number perished."
@@ -227,7 +227,7 @@ perspectives:
     author: Translated by N.A. Nikam and Richard McKeon
     year: '1959'
     type: book
-    doi: 10.2307/3035135
+    verified: false
   notable_quotes:
   - text: A hundred and fifty thousand people were deported, a hundred thousand were killed, and many times that number perished.
     speaker: Ashoka
@@ -440,13 +440,13 @@ perspectives:
     author: R. Champakalakshmi
     year: '1996'
     type: book
-    doi: 10.1093/acprof:oso/9780195643367.001.0001
+    verified: false
   - title: 'A History of South India: From Prehistoric Times to the Fall of Vijayanagar'
     author: K.A. Nilakanta Sastri
     year: '1955'
     type: book
     openlibrary: OL6208937M
-    archive_url: https://archive.org/details/historyofsouthin0000kani
+    verified: false
   notable_quotes:
   - text: The Beloved of the Gods considers victory by dhamma to be the foremost victory. And it has been won here, on the borders, even six hundred yojanas away.
     speaker: Ashoka
@@ -493,30 +493,6 @@ media:
   license: public-domain
   creator: Wikimedia contributors
   creation_date: '2008'
-- media_type: photograph
-  title: Explore the historic Great Stupa at Sanchi, a UNESCO World Heritage Site known for its stunning arch
-  description: Landscape orientation, 6000x4000px
-  source_url: https://www.pexels.com/photo/majestic-view-of-the-great-stupa-at-sanchi-36588603/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/ashoka-maurya-empire/pexels_1.jpg
-  attribution: Photo by Mohit  Khare on Pexels
-  license: pexels-license
-  creator: Mohit  Khare
-- media_type: photograph
-  title: The Great Stupa at Sanchi, a UNESCO site, showcasing ancient Indian architecture.
-  description: Landscape orientation, 6000x4000px
-  source_url: https://www.pexels.com/photo/historic-great-stupa-under-clear-blue-sky-36588602/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/ashoka-maurya-empire/pexels_2.jpg
-  attribution: Photo by Mohit  Khare on Pexels
-  license: pexels-license
-  creator: Mohit  Khare
-- media_type: photograph
-  title: Ashoka Pillar in Sarnath amidst lush trees, a historical landmark in India.
-  description: Landscape orientation, 3999x2666px
-  source_url: https://www.pexels.com/photo/ashoka-pillar-in-sarnath-12111355/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/ashoka-maurya-empire/pexels_3.jpg
-  attribution: Photo by Markus Winkler on Pexels
-  license: pexels-license
-  creator: Markus Winkler
 connections:
 - target_slug: trail-of-tears
   connection_type: parallel

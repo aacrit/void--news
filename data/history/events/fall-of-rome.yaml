@@ -491,9 +491,8 @@ perspectives:
     author: Peter Brown
     year: '1967'
     type: book
-    doi: 10.1525/9780520957756
     openlibrary: OL5534948M
-    archive_url: https://archive.org/details/augustineofhippo0000brow
+    verified: false
   notable_quotes:
   - text: Rome is sacked, and the world groans — but Rome is not the world. The City of God stands.
     speaker: Augustine of Hippo
@@ -542,30 +541,6 @@ media:
   license: cc-by-sa
   creator: Wikimedia contributors
   creation_date: '2006'
-- media_type: photograph
-  title: Stunning daylight view of the ancient Colosseum in Rome, Italy.
-  description: Landscape orientation, 6000x4000px
-  source_url: https://www.pexels.com/photo/majestic-view-of-the-colosseum-in-rome-33009008/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/fall-of-rome/pexels_1.jpg
-  attribution: Photo by AXP Photography on Pexels
-  license: pexels-license
-  creator: AXP Photography
-- media_type: photograph
-  title: Discover the majestic Colosseum in Rome, a symbol of ancient Roman engineering and iconic architectu
-  description: Landscape orientation, 6720x4480px
-  source_url: https://www.pexels.com/photo/iconic-colosseum-in-rome-ancient-roman-architecture-32472809/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/fall-of-rome/pexels_2.jpg
-  attribution: Photo by Ryan Klaus on Pexels
-  license: pexels-license
-  creator: Ryan Klaus
-- media_type: photograph
-  title: Captivating view of the Roman Forum ruins, showcasing historic architecture and weathered inscriptio
-  description: Landscape orientation, 8105x5406px
-  source_url: https://www.pexels.com/photo/ancient-roman-forum-ruins-in-rome-italy-36240400/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/fall-of-rome/pexels_3.jpg
-  attribution: Photo by Magda Ehlers on Pexels
-  license: pexels-license
-  creator: Magda Ehlers
 connections:
 - target_slug: french-revolution
   connection_type: influenced

@@ -104,6 +104,36 @@ for path in EVENTS:
             check(f"{slug}/{fig.get('name')}: credited with an act after death",
                   int(year) <= died, f"died {died}, role cites {year}")
 
+    # A stock photograph is not evidence of anything. 242 Unsplash and Pexels
+    # items (48% of the catalogue's media) were removed on 2026-09-24, Phase 0
+    # of docs/proposals/HISTORY-THESIS-PAGE.md; the exporter had been silently
+    # dropping them from the served page, which is how nobody noticed a
+    # photograph of the wrong century sitting in the record for months.
+    STOCK_HOSTS = ("unsplash.com", "pexels.com", "pixabay.com")
+    for i, m in enumerate(ev.get("media") or []):
+        blob = " ".join(str(m.get(k) or "") for k in ("source_url", "supabase_url", "license", "attribution")).lower()
+        check(f"{slug}/media[{i}]: not a stock photograph",
+              not any(h in blob for h in STOCK_HOSTS) and "unsplash" not in blob and "pexels" not in blob,
+              str(m.get("source_url"))[:80])
+    hero = str(ev.get("hero_image_url") or "").lower()
+    check(f"{slug}: hero is not a stock photograph",
+          "unsplash" not in hero and "pexels" not in hero, hero[:80])
+
+    # A wrong identifier is worse than none. On 2026-09-24, 188 bibliography
+    # entries carried a DOI that 404s or names a different work (a review of
+    # the book, mostly), or an archive.org link that is gone. Each lost the bad
+    # identifier and kept its title, and an entry with no identifier left is
+    # marked `verified: false` (docs/audits/HISTORY-IDENTIFIERS-2026-09-24.md).
+    # The marker means exactly that: nothing on this entry has been resolved.
+    # An identifier added back without clearing the marker is the lie the
+    # marker exists to prevent, and it fails here.
+    for pi, p in enumerate(ev.get("perspectives") or []):
+        for si, s in enumerate(p.get("sources") or []):
+            if s.get("verified") is False:
+                check(f"{slug}/perspectives[{pi}].sources[{si}]: an unverified entry carries no identifier",
+                      not any(s.get(k) for k in ("doi", "archive_url", "url")),
+                      str(s.get("title"))[:60])
+
 if failures:
     print("\n".join(f"FAIL  {f}" for f in failures))
     print(f"\n{len(failures)} History data failure(s)")

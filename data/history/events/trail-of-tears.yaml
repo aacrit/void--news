@@ -12,8 +12,8 @@ severity: catastrophic
 death_toll: ~15,000 across the Five Civilized Tribes
 affected_population: ~60,000 Cherokee, Chickasaw, Choctaw, Creek (Muscogee), and Seminole removed from ancestral lands
 duration: 1830-1838 (Indian Removal Act to final Cherokee removal)
-hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/trail-of-tears/unsplash_1.jpg
-hero_image_attribution: Nikater, public domain via Wikimedia Commons
+hero_image_url: https://commons.wikimedia.org/wiki/File:John_Ross_(Cherokee_chief).jpg
+hero_image_attribution: Public domain, National Archives
 summary: 'On May 28, 1830, President Andrew Jackson signed the Indian Removal Act, authorizing the federal government to negotiate treaties exchanging Native lands east of the Mississippi for territory
   in present-day Oklahoma. The word "negotiate" was a legal fiction. The act gave the president power to override any tribe that refused, and the treaties that followed were signed under duress, by unrepresentative
   factions, or at the point of a bayonet.
@@ -247,7 +247,6 @@ perspectives:
     author: John Ehle
     year: '1988'
     type: book
-    doi: 10.1007/978-3-319-51902-9_4
     archive_url: https://archive.org/details/trailoftearsrise0000ehle
   - title: 'Cherokee Removal: The William Penn Essays and Other Writings'
     author: Jeremiah Evarts
@@ -259,7 +258,6 @@ perspectives:
     author: Theda Perdue and Michael D. Green
     year: '2007'
     type: book
-    doi: 10.1353/jowh.2010.0030
     openlibrary: OL29578442M
     archive_url: https://archive.org/details/the-cherokee-nation-and-the-trail-of-tears-2007-theda-perdue
   notable_quotes:
@@ -331,8 +329,8 @@ perspectives:
     author: Roxanne Dunbar-Ortiz
     year: '2014'
     type: book
-    doi: 10.36019/9780813550336-009
     openlibrary: OL26246061M
+    verified: false
   - title: 'Arabic Translation: Settler Colonialism and the Elimination of the Native (2006)'
     author: Patrick Wolfe
     year: '2006'
@@ -488,8 +486,7 @@ perspectives:
     author: Sean Wilentz
     year: '2005'
     type: book
-    doi: 10.1353/rah.2006.0088
-    archive_url: https://archive.org/details/riseofamericande00wile
+    verified: false
   - title: 'Jacksonland: President Andrew Jackson, Cherokee Chief John Ross, and a Great American Land Grab'
     author: Steve Inskeep
     year: '2015'
@@ -539,62 +536,6 @@ media:
   creator: Unknown
   creation_date: c. 1845
   supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/trail-of-tears/wiki_2.jpg
-- media_type: photograph
-  title: brown painted house
-  description: Landscape orientation, 5312x2988px
-  source_url: https://unsplash.com/photos/brown-painted-house-rfw542cJVSc
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/trail-of-tears/unsplash_1.jpg
-  attribution: Photo by Vicki Gordon on Unsplash
-  license: unsplash-license
-  creator: Vicki Gordon
-- media_type: photograph
-  title: brown and gray wooden house near green trees during daytime
-  description: Landscape orientation, 4928x3264px
-  source_url: https://unsplash.com/photos/brown-and-gray-wooden-house-near-green-trees-during-daytime-5hzOOQTO8yo
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/trail-of-tears/unsplash_2.jpg
-  attribution: Photo by Roger Starnes Sr on Unsplash
-  license: unsplash-license
-  creator: Roger Starnes Sr
-- media_type: photograph
-  title: brown wooden house near green grass field during daytime
-  description: Landscape orientation, 5456x3632px
-  source_url: https://unsplash.com/photos/brown-wooden-house-near-green-grass-field-during-daytime-tUTlanfcuMw
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/trail-of-tears/unsplash_3.jpg
-  attribution: Photo by Simon Maage on Unsplash
-  license: unsplash-license
-  creator: Simon Maage
-- media_type: photograph
-  title: a view of a bridge over a body of water
-  description: Landscape orientation, 6000x4000px
-  source_url: https://unsplash.com/photos/a-view-of-a-bridge-over-a-body-of-water-oCs18sxubLE
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/trail-of-tears/unsplash_4.jpg
-  attribution: Photo by Asiel Garcia on Unsplash
-  license: unsplash-license
-  creator: Asiel Garcia
-- media_type: photograph
-  title: Woman in traditional feathered headdress at outdoor cultural festival.
-  description: Landscape orientation, 6000x4000px
-  source_url: https://www.pexels.com/photo/colorful-traditional-headdress-at-cultural-event-33714341/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/trail-of-tears/pexels_1.jpg
-  attribution: Photo by Michelle Gurubel on Pexels
-  license: pexels-license
-  creator: Michelle Gurubel
-- media_type: photograph
-  title: Aerial view of lush green mountains and river in Reliance, Tennessee, USA, under a clear blue sky.
-  description: Landscape orientation, 5160x2899px
-  source_url: https://www.pexels.com/photo/view-of-a-river-27033647/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/trail-of-tears/pexels_2.jpg
-  attribution: Photo by Kelly on Pexels
-  license: pexels-license
-  creator: Kelly
-- media_type: photograph
-  title: Group of adults performing a traditional dance outdoors in colorful, cultural attire. Celebration at
-  description: Landscape orientation, 5520x3680px
-  source_url: https://www.pexels.com/photo/traditional-ceremonial-dance-in-vibrant-costumes-36890742/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/trail-of-tears/pexels_3.jpg
-  attribution: Photo by Sóc Năng Động on Pexels
-  license: pexels-license
-  creator: Sóc Năng Động
 connections:
 - target_slug: transatlantic-slave-trade
   connection_type: parallel

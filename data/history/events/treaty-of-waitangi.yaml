@@ -12,8 +12,8 @@ severity: major
 death_toll: ~2,100 Maori; ~740 British soldiers and settlers during the New Zealand Wars (1845-1872)
 affected_population: ~80,000 Maori at the time of signing; ~2,000 European settlers in 1840, growing to ~250,000 by 1870
 duration: 1840-1872 (Treaty signing through the end of the New Zealand Wars); Treaty jurisprudence ongoing
-hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/treaty-of-waitangi/unsplash_1.jpg
-hero_image_attribution: Archives New Zealand, public domain via Wikimedia Commons
+hero_image_url: https://commons.wikimedia.org/wiki/File:Treatyofwaitangi.jpg
+hero_image_attribution: Archives New Zealand, public domain
 summary: 'On the morning of February 6, 1840, approximately 500 Maori chiefs gathered at the house of the British Resident, James Busby, at Waitangi in the Bay of Islands. Captain William Hobson, representing
   the British Crown, presented a document that he said would protect Maori rights while establishing British authority over New Zealand. The missionary Henry Williams and his son Edward translated the text
   into Te Reo Maori overnight. By the end of the day, 43 chiefs had signed. Over the following months, the treaty was carried around the country; eventually, over 500 chiefs signed. Some refused. Some were
@@ -239,7 +239,6 @@ perspectives:
     author: James Belich
     year: '1986'
     type: book
-    doi: 10.2307/2760517
     openlibrary: OL6808293M
     archive_url: https://archive.org/details/victorianinterpr0000beli
   notable_quotes:
@@ -459,7 +458,7 @@ perspectives:
     author: William Pember Reeves
     year: '1898'
     type: book
-    archive_url: https://archive.org/details/longwhitecloudao00reev
+    verified: false
   - title: 'Fatal Necessity: British Intervention in New Zealand, 1830-1847'
     author: Peter Adams
     year: '1977'
@@ -511,46 +510,6 @@ media:
   license: public-domain
   creator: Unknown
   creation_date: '1864'
-- media_type: photograph
-  title: body of water between gray rock formation during daytime
-  description: Landscape orientation, 3888x2592px
-  source_url: https://unsplash.com/photos/body-of-water-between-gray-rock-formation-during-daytime--Y4O7iBMAtU
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/treaty-of-waitangi/unsplash_1.jpg
-  attribution: Photo by Callum Parker on Unsplash
-  license: unsplash-license
-  creator: Callum Parker
-- media_type: photograph
-  title: Wooden maori carving stands in lush green landscape
-  description: Landscape orientation, 4912x3264px
-  source_url: https://unsplash.com/photos/wooden-maori-carving-stands-in-lush-green-landscape-NSd9oC37zHw
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/treaty-of-waitangi/unsplash_2.jpg
-  attribution: Photo by Tomi Adamchevski on Unsplash
-  license: unsplash-license
-  creator: Tomi Adamchevski
-- media_type: photograph
-  title: An energetic Maori performer with a painted face during a tribal festival in daylight.
-  description: Landscape orientation, 5616x3744px
-  source_url: https://www.pexels.com/photo/man-with-painted-face-9276647/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/treaty-of-waitangi/pexels_1.jpg
-  attribution: Photo by Robert  Stokoe on Pexels
-  license: pexels-license
-  creator: Robert  Stokoe
-- media_type: photograph
-  title: Joyful group at a cultural dance parade in New York, featuring traditional costumes and festive spir
-  description: Landscape orientation, 5472x3648px
-  source_url: https://www.pexels.com/photo/a-group-of-children-in-costumes-12256850/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/treaty-of-waitangi/pexels_2.jpg
-  attribution: Photo by Following NYC on Pexels
-  license: pexels-license
-  creator: Following NYC
-- media_type: photograph
-  title: Vietnamese book cover shot in a flat lay showing elegant modern design on wooden backdrop.
-  description: Landscape orientation, 6016x4016px
-  source_url: https://www.pexels.com/photo/literary-flat-lay-with-vietnamese-book-cover-31461812/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/treaty-of-waitangi/pexels_3.jpg
-  attribution: Photo by Đậu Photograph on Pexels
-  license: pexels-license
-  creator: Đậu Photograph
 connections:
 - target_slug: trail-of-tears
   connection_type: parallel

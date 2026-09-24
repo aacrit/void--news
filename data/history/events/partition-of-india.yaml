@@ -161,14 +161,13 @@ perspectives:
     author: Larry Collins and Dominique Lapierre
     year: '1975'
     type: book
-    doi: 10.2307/2756705
     openlibrary: OL9213693M
     archive_url: https://archive.org/details/freedomatmidnigh00larr_0
   - title: The Transfer of Power, 1942-47 (12 volumes)
     author: Nicholas Mansergh (ed.)
     year: 1970-1983
     type: archive
-    doi: 10.2307/2756706
+    verified: false
   notable_quotes:
   - text: The date is fixed. And I have to tell you that I think it is the greatest gamble in history.
     speaker: Lord Mountbatten
@@ -305,7 +304,6 @@ perspectives:
     author: Ayesha Jalal
     year: '1985'
     type: book
-    doi: 10.2307/2758176
     archive_url: https://archive.org/details/solespokesmanjin0000jala
   - title: 'The struggle for Pakistan: a Muslim homeland and global politics, by Ayesha Jalal'
     author: Ishtiaq Ahmed
@@ -461,7 +459,7 @@ perspectives:
     author: Anjali Gera Roy
     year: '2012'
     type: book
-    doi: 10.4324/9780321377548
+    verified: false
   notable_quotes:
   - text: You think you are saving us? You are tearing us apart again.
     speaker: Anonymous recovered woman
@@ -513,62 +511,6 @@ media:
   license: public-domain
   creator: Government of India
   creation_date: August 14, 1947
-- media_type: photograph
-  title: a group of people standing around a man on a horse
-  description: Landscape orientation, 2861x2219px
-  source_url: https://unsplash.com/photos/a-group-of-people-standing-around-a-man-on-a-horse-DKc4bxH2RLQ
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/partition-of-india/unsplash_1.jpg
-  attribution: Photo by Abhay Patel on Unsplash
-  license: unsplash-license
-  creator: Abhay Patel
-- media_type: photograph
-  title: People and cycle rickshaws on a busy street.
-  description: Landscape orientation, 2966x2087px
-  source_url: https://unsplash.com/photos/people-and-cycle-rickshaws-on-a-busy-street-zgiVOczUFdc
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/partition-of-india/unsplash_2.jpg
-  attribution: Photo by Matt Johnson on Unsplash
-  license: unsplash-license
-  creator: Matt Johnson
-- media_type: photograph
-  title: a crowd of people watching a race
-  description: Landscape orientation, 4032x3024px
-  source_url: https://unsplash.com/photos/a-crowd-of-people-watching-a-race-iVryRdPMsXU
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/partition-of-india/unsplash_3.jpg
-  attribution: Photo by Abhinav Sharma on Unsplash
-  license: unsplash-license
-  creator: Abhinav Sharma
-- media_type: photograph
-  title: a large white building with a checkered walkway in front of it
-  description: Landscape orientation, 3712x2652px
-  source_url: https://unsplash.com/photos/a-large-white-building-with-a-checkered-walkway-in-front-of-it-_oSbjoWj4Oo
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/partition-of-india/unsplash_4.jpg
-  attribution: Photo by Kashish Kumar on Unsplash
-  license: unsplash-license
-  creator: Kashish Kumar
-- media_type: photograph
-  title: View of a barbed wire border wall structure alongside a dirt road under a clear blue sky.
-  description: Landscape orientation, 8640x5760px
-  source_url: https://www.pexels.com/photo/photo-of-a-dirt-road-11679656/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/partition-of-india/pexels_1.jpg
-  attribution: Photo by Mark Stebnicki on Pexels
-  license: pexels-license
-  creator: Mark Stebnicki
-- media_type: photograph
-  title: Panoramic view of snowy mountains at Khunjerab Pass on the China-Pakistan border.
-  description: Landscape orientation, 12000x9000px
-  source_url: https://www.pexels.com/photo/snowy-mountains-at-khunjerab-pass-border-29890322/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/partition-of-india/pexels_2.jpg
-  attribution: Photo by ERO SANZA on Pexels
-  license: pexels-license
-  creator: ERO SANZA
-- media_type: photograph
-  title: Close-up of the detailed stone engravings of the Konark Sun Temple's wheel in India.
-  description: Landscape orientation, 5927x3950px
-  source_url: https://www.pexels.com/photo/engraving-of-a-chariot-wheel-at-the-konark-sun-temple-20371109/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/partition-of-india/pexels_3.jpg
-  attribution: Photo by Debendra Das on Pexels
-  license: pexels-license
-  creator: Debendra Das
 connections:
 - target_slug: creation-of-israel-nakba
   connection_type: parallel

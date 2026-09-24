@@ -156,13 +156,12 @@ perspectives:
     author: Michael B. Oren
     year: '2002'
     type: book
-    doi: 10.1093/oso/9780195151749.001.0001
     archive_url: https://archive.org/details/sixdaysofwarjune0000oren
   - title: An Autobiography
     author: Abba Eban
     year: '1977'
     type: book
-    archive_url: https://archive.org/details/abbaeban00abba
+    verified: false
   - title: 'The Six-Day War: Background and Overview'
     author: Jewish Virtual Library
     year: '2017'
@@ -215,12 +214,12 @@ perspectives:
     author: Mohamed Hassanein Heikal
     year: '1973'
     type: book
-    archive_url: https://archive.org/details/cairodocumentsin0000heik
+    verified: false
   - title: 'Making the Arab World: Nasser, Qutb, and the Clash That Shaped the Middle East'
     author: Fawaz A. Gerges
     year: '2018'
     type: book
-    doi: 10.2307/j.ctvc775xx
+    verified: false
   - title: Rethinking Nasserism, Revolution and Historical Memory in Modern Egypt
     author: Elie Podeh and Onn Winckler (eds.)
     year: '2004'
@@ -277,7 +276,7 @@ perspectives:
     author: Nur Masalha
     year: '2012'
     type: book
-    archive_url: https://archive.org/details/palestinenakbade0000masa
+    verified: false
   - title: 'The 1967 Palestinian Exodus and the Displaced of the 1967 War'
     author: BADIL Resource Center for Palestinian Residency and Refugee Rights
     year: '2007'
@@ -343,7 +342,7 @@ perspectives:
     author: Roland Popp
     year: '2006'
     type: journal
-    doi: 10.3751/60.2.14
+    verified: false
   notable_quotes:
   - text: The Egyptian army concentrations in the Sinai approaches did not prove that Nasser was really about to attack us. We decided to attack him.
     speaker: Menachem Begin

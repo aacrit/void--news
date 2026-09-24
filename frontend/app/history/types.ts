@@ -59,6 +59,9 @@ export interface PerspectiveSource {
   doi?: string;
   openlibrary?: string;
   archive_url?: string;
+  /** False when the entry's identifiers were stripped as wrong or dead and
+   *  nothing has been resolved since (docs/audits/HISTORY-IDENTIFIERS-2026-09-24.md). */
+  verified?: boolean;
 }
 
 export interface Perspective {

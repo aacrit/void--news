@@ -449,19 +449,18 @@ perspectives:
     author: Laurent Dubois
     year: '2004'
     type: book
-    doi: 10.2307/3185360
     archive_url: https://archive.org/details/avengersofnewwor0000dubo
   - title: 'A Colony of Citizens: Revolution & Slave Emancipation in the French Caribbean, 1787-1804'
     author: Laurent Dubois
     year: '2004'
     type: book
-    doi: 10.5149/9780807861592_dubois
+    verified: false
   - title: 'The Black Jacobins: Toussaint L''Ouverture and the San Domingo Revolution'
     author: C.L.R. James
     year: '1938'
     type: book
     openlibrary: OL24955382M
-    archive_url: https://archive.org/details/blackjacobinstou0000jame_h9v8
+    verified: false
   notable_quotes:
   - text: The slaves of San Domingo took the revolutionary slogans — liberty, equality, fraternity — and gave them a meaning that the makers of the slogans never dreamed of.
     speaker: C.L.R. James
@@ -510,62 +509,6 @@ media:
   creator: Jean-Jacques-Francois Le Barbier
   creation_date: '1789'
   supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/french-revolution/wiki_2.jpg
-- media_type: photograph
-  title: gold-colored angel statue
-  description: Landscape orientation, 5184x3456px
-  source_url: https://unsplash.com/photos/gold-colored-angel-statue-uYzai2VOTiY
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/french-revolution/unsplash_1.jpg
-  attribution: Photo by VENUS MAJOR on Unsplash
-  license: unsplash-license
-  creator: VENUS MAJOR
-- media_type: photograph
-  title: a man riding a skateboard up the side of a ramp
-  description: Landscape orientation, 4918x3688px
-  source_url: https://unsplash.com/photos/a-man-riding-a-skateboard-up-the-side-of-a-ramp-gop-6keFmp4
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/french-revolution/unsplash_2.jpg
-  attribution: Photo by Kyle Hinkson on Unsplash
-  license: unsplash-license
-  creator: Kyle Hinkson
-- media_type: photograph
-  title: People admire liberty leading the people painting
-  description: Landscape orientation, 3984x2656px
-  source_url: https://unsplash.com/photos/people-admire-liberty-leading-the-people-painting-0g83lIU_mGc
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/french-revolution/unsplash_3.jpg
-  attribution: Photo by Nathan Cima on Unsplash
-  license: unsplash-license
-  creator: Nathan Cima
-- media_type: photograph
-  title: People observe a large painting in a museum gallery.
-  description: Landscape orientation, 3984x2656px
-  source_url: https://unsplash.com/photos/people-observe-a-large-painting-in-a-museum-gallery-GvEU50VzSW8
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/french-revolution/unsplash_4.jpg
-  attribution: Photo by Nathan Cima on Unsplash
-  license: unsplash-license
-  creator: Nathan Cima
-- media_type: photograph
-  title: Nighttime view of a beautifully lit street in Paris, showcasing festive holiday decorations and vibr
-  description: Landscape orientation, 12000x8000px
-  source_url: https://www.pexels.com/photo/xmas-light-over-street-in-city-15886607/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/french-revolution/pexels_1.jpg
-  attribution: Photo by amine photographe on Pexels
-  license: pexels-license
-  creator: amine photographe
-- media_type: photograph
-  title: Vibrant cutout letters spelling 'liefde' with love theme on a black background.
-  description: Landscape orientation, 5024x3420px
-  source_url: https://www.pexels.com/photo/black-background-with-liefde-text-overlay-1337383/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/french-revolution/pexels_2.jpg
-  attribution: Photo by Magda Ehlers on Pexels
-  license: pexels-license
-  creator: Magda Ehlers
-- media_type: photograph
-  title: Stunning view of the Palace of Versailles at sunset, highlighting its architectural grandeur.
-  description: Landscape orientation, 6494x4329px
-  source_url: https://www.pexels.com/photo/versailles-palace-in-paris-15546889/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/french-revolution/pexels_3.jpg
-  attribution: Photo by Denitsa Kireva on Pexels
-  license: pexels-license
-  creator: Denitsa Kireva
 connections:
 - target_slug: transatlantic-slave-trade
   connection_type: influenced

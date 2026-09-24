@@ -12,8 +12,8 @@ severity: catastrophic
 death_toll: '3.5-7.5 million (most widely cited scholarly estimate: 3.9 million)'
 affected_population: Entire rural population of Soviet Ukraine, approximately 23 million in 1933; Kazakh famine of the same period killed an estimated 1.5 million (38% of the Kazakh population)
 duration: 'Peak famine: November 1932 - July 1933; collectivization and grain requisitioning: 1929-1933'
-hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/holodomor/unsplash_1.jpg
-hero_image_attribution: Photograph taken during Gareth Jones's visit to Soviet Ukraine, 1933, public domain via Wikimedia Commons
+hero_image_url: https://commons.wikimedia.org/wiki/File:Holodomor_Kharkiv.jpg
+hero_image_attribution: Alexander Wienerberger, 1933, public domain via Wikimedia Commons
 summary: 'On March 29, 1933, a 27-year-old Welsh journalist named Gareth Jones walked out of Berlin''s Tempelhof Airport, called a press conference, and stated that he had just returned from a walking tour
   of Soviet Ukraine where he had seen mass starvation. He had entered the Soviet Union using credentials from his previous role as foreign affairs adviser to David Lloyd George. He had left the official
   press train in Kharkov on March 10 and walked through Ukrainian villages for three days. He ate nothing but the black bread and a few frozen potatoes he carried. The peasants he met told him the same
@@ -348,7 +348,6 @@ perspectives:
     author: Malcolm Muggeridge
     year: '1934'
     type: book
-    doi: 10.2307/2750764
     openlibrary: OL9363861M
     archive_url: https://archive.org/details/winter-in-moscow-malcolm-muggeridge
   notable_quotes:
@@ -515,18 +514,18 @@ perspectives:
     author: R.W. Davies and Stephen Wheatcroft
     year: '2004'
     type: book
-    doi: 10.1057/9780230523753
+    verified: false
   - title: 'The Harvest of Sorrow: Soviet Collectivization and the Terror-Famine'
     author: Robert Conquest
     year: '1986'
     type: book
     openlibrary: OL2539163M
-    archive_url: https://archive.org/details/harvestofsorrow00conq
+    verified: false
   - title: 'The Soviet 1931-1933 Famines and the Ukrainian Holodomor: Is a New Interpretation Possible, and What Would Its Consequences Be?'
     author: Andrea Graziosi
     year: '2009'
     type: journal
-    doi: 10.1093/hwj/dbp013
+    verified: false
   notable_quotes:
   - text: The question is not whether millions died. The question is whether the Soviet leadership intended to destroy Ukrainians as a national group, or whether it pursued policies whose catastrophic effects
       it accepted without specifically targeting Ukraine.
@@ -573,62 +572,6 @@ media:
   license: public-domain
   creator: Walter Duranty
   creation_date: '1933'
-- media_type: photograph
-  title: a field of wheat under a cloudy blue sky
-  description: Landscape orientation, 5114x3408px
-  source_url: https://unsplash.com/photos/a-field-of-wheat-under-a-cloudy-blue-sky-qjLCrB2AJjo
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/holodomor/unsplash_1.jpg
-  attribution: Photo by Олександр К on Unsplash
-  license: unsplash-license
-  creator: Олександр К
-- media_type: photograph
-  title: a field of wheat under a cloudy blue sky
-  description: Landscape orientation, 5184x3456px
-  source_url: https://unsplash.com/photos/a-field-of-wheat-under-a-cloudy-blue-sky-mgsocRfXzaU
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/holodomor/unsplash_2.jpg
-  attribution: Photo by Олександр К on Unsplash
-  license: unsplash-license
-  creator: Олександр К
-- media_type: photograph
-  title: a monument with a statue on top of it
-  description: Landscape orientation, 6000x4000px
-  source_url: https://unsplash.com/photos/a-monument-with-a-statue-on-top-of-it-jWq2_-1r2O4
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/holodomor/unsplash_3.jpg
-  attribution: Photo by Kostiantyn Vierkieiev on Unsplash
-  license: unsplash-license
-  creator: Kostiantyn Vierkieiev
-- media_type: photograph
-  title: a large building with a large sign
-  description: Landscape orientation, 6774x4492px
-  source_url: https://unsplash.com/photos/a-large-building-with-a-large-sign-Zd7a18fLTcM
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/holodomor/unsplash_4.jpg
-  attribution: Photo by Maksym Pozniak-Haraburda on Unsplash
-  license: unsplash-license
-  creator: Maksym Pozniak-Haraburda
-- media_type: photograph
-  title: A vibrant wheat field in Ukraine at sunrise, showcasing nature's beauty and agriculture.
-  description: Landscape orientation, 4256x2832px
-  source_url: https://www.pexels.com/photo/green-field-during-sunset-1172241/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/holodomor/pexels_1.jpg
-  attribution: Photo by Atlantic Ambience on Pexels
-  license: pexels-license
-  creator: Atlantic Ambience
-- media_type: photograph
-  title: A detailed view of a ripe wheat field in Kyiv, showcasing the golden stalks swaying in the summer br
-  description: Landscape orientation, 4896x3264px
-  source_url: https://www.pexels.com/photo/brown-wheat-field-in-close-up-photography-12573320/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/holodomor/pexels_2.jpg
-  attribution: Photo by Bohdan K. on Pexels
-  license: pexels-license
-  creator: Bohdan K.
-- media_type: photograph
-  title: Drone capture of Motherland Monument, featuring Kyiv's cityscape in the background on a clear day
-  description: Landscape orientation, 2500x1874px
-  source_url: https://www.pexels.com/photo/drone-shot-of-motherland-monument-and-the-city-of-kyiv-9955064/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/holodomor/pexels_3.jpg
-  attribution: Photo by Petkevich Evgeniy on Pexels
-  license: pexels-license
-  creator: Petkevich Evgeniy
 connections:
 - target_slug: rwandan-genocide
   connection_type: parallel

@@ -410,8 +410,8 @@ perspectives:
     author: Isidore Ndaywel e Nziem
     year: '1998'
     type: book
-    doi: 10.14375/np.9782871066514
     openlibrary: OL490724M
+    verified: false
   - title: 'A Nervous State: Violence, Remedies, and Reverie in Colonial Congo'
     author: Nancy Rose Hunt
     year: '2016'
@@ -488,13 +488,12 @@ perspectives:
     author: Georges Nzongola-Ntalaja
     year: '2002'
     type: book
-    doi: 10.5860/choice.40-5625
-    archive_url: https://archive.org/details/congofromleopold0000nzon
+    verified: false
   - title: William Sheppard — Congo's African-American Livingstone
     author: Pagan Kennedy
     year: '2002'
     type: book
-    archive_url: https://archive.org/details/blacklivingstons0000kenn
+    verified: false
   notable_quotes:
   - text: The Congo was not a failed state. It was a successful extraction machine. It did exactly what it was designed to do.
     speaker: Georges Nzongola-Ntalaja
@@ -541,62 +540,6 @@ media:
   license: public-domain
   creator: Mark Twain
   creation_date: '1905'
-- media_type: photograph
-  title: Village nestled in lush green jungle by calm water
-  description: Landscape orientation, 6000x4000px
-  source_url: https://unsplash.com/photos/village-nestled-in-lush-green-jungle-by-calm-water-2jSfnj3Ji38
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/congo-free-state/unsplash_1.jpg
-  attribution: Photo by Toza Productions on Unsplash
-  license: unsplash-license
-  creator: Toza Productions
-- media_type: photograph
-  title: Village on the riverbank surrounded by lush green forest.
-  description: Landscape orientation, 6000x4000px
-  source_url: https://unsplash.com/photos/village-on-the-riverbank-surrounded-by-lush-green-forest-HvLFeqCN38A
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/congo-free-state/unsplash_2.jpg
-  attribution: Photo by Toza Productions on Unsplash
-  license: unsplash-license
-  creator: Toza Productions
-- media_type: photograph
-  title: a group of people standing on top of a bridge
-  description: Landscape orientation, 5184x3456px
-  source_url: https://unsplash.com/photos/a-group-of-people-standing-on-top-of-a-bridge-uFMxtV1fPI0
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/congo-free-state/unsplash_3.jpg
-  attribution: Photo by Johnnathan Tshibangu on Unsplash
-  license: unsplash-license
-  creator: Johnnathan Tshibangu
-- media_type: photograph
-  title: a crowd of people standing around each other
-  description: Landscape orientation, 5184x3456px
-  source_url: https://unsplash.com/photos/a-crowd-of-people-standing-around-each-other-li-yjmQW7Bg
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/congo-free-state/unsplash_4.jpg
-  attribution: Photo by Johnnathan Tshibangu on Unsplash
-  license: unsplash-license
-  creator: Johnnathan Tshibangu
-- media_type: photograph
-  title: Top view of a book, coffee, and cookies on a bed with white roses.
-  description: Landscape orientation, 5184x3456px
-  source_url: https://www.pexels.com/photo/book-coffee-cookies-and-flowers-20318502/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/congo-free-state/pexels_1.jpg
-  attribution: Photo by Şehâdet Yoldaç on Pexels
-  license: pexels-license
-  creator: Şehâdet Yoldaç
-- media_type: photograph
-  title: A bearded man in a suit gazes over the Brazzaville skyline with confidence and style.
-  description: Landscape orientation, 5760x3840px
-  source_url: https://www.pexels.com/photo/a-man-in-a-suit-looking-sideways-6426811/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/congo-free-state/pexels_2.jpg
-  attribution: Photo by Rimiscky Tayuna on Pexels
-  license: pexels-license
-  creator: Rimiscky Tayuna
-- media_type: photograph
-  title: Aerial view of city under a bright blue sky with scattered clouds.
-  description: Landscape orientation, 6016x4000px
-  source_url: https://www.pexels.com/photo/panoramic-view-of-cityscape-with-blue-sky-35841083/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/congo-free-state/pexels_3.jpg
-  attribution: Photo by Vika Glitter on Pexels
-  license: pexels-license
-  creator: Vika Glitter
 connections:
 - target_slug: scramble-for-africa
   connection_type: consequence

@@ -301,7 +301,6 @@ perspectives:
     author: Gerald Horne
     year: '2018'
     type: book
-    doi: 10.18574/9781479899852
     archive_url: https://archive.org/details/facing-the-rising-sun
   - title: 'Japan Rising: The Iwakura Embassy to the USA and Europe 1871-1873'
     author: Kume Kunitake (ed. Chushichi Tsuzuki and R. Jules Young)
@@ -372,7 +371,6 @@ perspectives:
     author: E.H. Norman
     year: '1940'
     type: book
-    doi: 10.2307/4127210
     archive_url: https://archive.org/details/japansemergencea0000eher
   - title: Korea Between Empires, 1895-1919
     author: Andre Schmid
@@ -462,7 +460,7 @@ perspectives:
     author: Alexis Dudden
     year: '2005'
     type: book
-    doi: 10.21313/hawaii/9780824828165.001.0001
+    verified: false
   - title: Korea Between Empires, 1895-1919
     author: Andre Schmid
     year: '2002'
@@ -472,7 +470,7 @@ perspectives:
     author: Yoshimi Yoshiaki
     year: '1995'
     type: book
-    doi: 10.7312/yosh13532
+    verified: false
   notable_quotes:
   - text: I am not afraid of death. I came here to fight for Korean independence and for peace in Asia.
     speaker: An Jung-geun
@@ -519,62 +517,6 @@ media:
   license: public-domain
   creator: Imperial Court of Japan
   creation_date: April 6, 1868
-- media_type: photograph
-  title: A bird's eye view of a park with a river running through it
-  description: Landscape orientation, 3997x2997px
-  source_url: https://unsplash.com/photos/a-birds-eye-view-of-a-park-with-a-river-running-through-it-QM4URQvujlg
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/meiji-restoration/unsplash_1.jpg
-  attribution: Photo by Daniel Beauchamp on Unsplash
-  license: unsplash-license
-  creator: Daniel Beauchamp
-- media_type: photograph
-  title: a large building with a lot of windows on it
-  description: Landscape orientation, 5915x3942px
-  source_url: https://unsplash.com/photos/a-large-building-with-a-lot-of-windows-on-it-7T2vdlq_xus
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/meiji-restoration/unsplash_2.jpg
-  attribution: Photo by Geoff Oliver on Unsplash
-  license: unsplash-license
-  creator: Geoff Oliver
-- media_type: photograph
-  title: a building with a stone wall and trees in the background
-  description: Landscape orientation, 2500x2000px
-  source_url: https://unsplash.com/photos/a-building-with-a-stone-wall-and-trees-in-the-background-phmzXXw0Zlg
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/meiji-restoration/unsplash_3.jpg
-  attribution: Photo by Douglas Lima on Unsplash
-  license: unsplash-license
-  creator: Douglas Lima
-- media_type: photograph
-  title: a bridge over a body of water with a building in the background
-  description: Landscape orientation, 6112x4073px
-  source_url: https://unsplash.com/photos/a-bridge-over-a-body-of-water-with-a-building-in-the-background-oKPOZuKNp3U
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/meiji-restoration/unsplash_4.jpg
-  attribution: Photo by Michael Heise on Unsplash
-  license: unsplash-license
-  creator: Michael Heise
-- media_type: photograph
-  title: A historic Japanese timber building surrounded by lush greenery in a tranquil garden.
-  description: Landscape orientation, 4032x3024px
-  source_url: https://www.pexels.com/photo/traditional-japanese-building-in-serene-garden-setting-33083212/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/meiji-restoration/pexels_1.jpg
-  attribution: Photo by Jimmy Espana on Pexels
-  license: pexels-license
-  creator: Jimmy Espana
-- media_type: photograph
-  title: Stunning view of Tokyo's Imperial Palace and famous bridge at sunset.
-  description: Landscape orientation, 5859x3296px
-  source_url: https://www.pexels.com/photo/concrete-bridge-2389171/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/meiji-restoration/pexels_2.jpg
-  attribution: Photo by Pierre Blaché on Pexels
-  license: pexels-license
-  creator: Pierre Blaché
-- media_type: photograph
-  title: Stunning view of traditional Japanese architecture in Kyoto, showcasing historic design.
-  description: Landscape orientation, 6741x4476px
-  source_url: https://www.pexels.com/photo/traditional-japanese-architecture-in-kyoto-29537612/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/meiji-restoration/pexels_3.jpg
-  attribution: Photo by G N on Pexels
-  license: pexels-license
-  creator: G N
 connections:
 - target_slug: opium-wars
   connection_type: influenced

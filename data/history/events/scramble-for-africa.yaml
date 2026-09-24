@@ -12,8 +12,8 @@ severity: catastrophic
 death_toll: 'Millions; Congo Free State alone: 1-10 million estimated; German South-West Africa (Herero/Nama): 65,000-100,000'
 affected_population: Entire African continent, approximately 110 million people in 1885 brought under European colonial rule
 duration: Berlin Conference (1884-1885) through World War I (1914)
-hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/scramble-for-africa/unsplash_1.jpg
-hero_image_attribution: Adalbert von Rosler, 1884, public domain via Wikimedia Commons
+hero_image_url: https://commons.wikimedia.org/wiki/File:Afrikakonferenz.jpg
+hero_image_attribution: Adalbert von Rosler, 1884, public domain
 summary: 'On November 15, 1884, representatives of fourteen nations (Germany, France, Britain, Portugal, Spain, Italy, Belgium, the Netherlands, Denmark, Sweden-Norway, Austria-Hungary, the Ottoman Empire,
   Russia, and the United States) gathered at Otto von Bismarck''s official residence in Berlin to settle European claims to African territory. No African ruler, diplomat, or representative was present.
   Over 104 days, the Berlin Conference established the rules by which European powers could claim African land: "effective occupation" (meaning a flag, a garrison, and the establishment of administrative
@@ -272,8 +272,8 @@ perspectives:
     author: A. Adu Boahen
     year: '2003'
     type: book
-    doi: 10.3368/gs.3.1.111
     openlibrary: OL3739414M
+    verified: false
   notable_quotes:
   - text: When the missionaries came to Africa, they had the Bible and we had the land. They said 'Let us pray.' We closed our eyes. When we opened them, we had the Bible and they had the land.
     speaker: Attributed to Desmond Tutu (variant attributions)
@@ -507,7 +507,7 @@ perspectives:
     author: P.M. Holt
     year: '1958'
     type: book
-    archive_url: https://archive.org/details/mahdiststateInsu0000holt
+    verified: false
   - title: 'A Savage War of Peace: Algeria 1954-1962'
     author: Alistair Horne
     year: '1977'
@@ -521,7 +521,7 @@ perspectives:
     author: E.E. Evans-Pritchard (on the Senussi) and Italian colonial archives
     year: '1949'
     type: book
-    archive_url: https://archive.org/details/sanusiofcyrenaica0000evan
+    verified: false
   notable_quotes:
   - text: We shall not surrender. We shall win or we shall die.
     speaker: Omar al-Mukhtar
@@ -570,62 +570,6 @@ media:
   creator: Alice Harris
   creation_date: c. 1904
   supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/scramble-for-africa/wiki_2.jpg
-- media_type: photograph
-  title: An old map shows colonial territories in africa.
-  description: Landscape orientation, 4187x3218px
-  source_url: https://unsplash.com/photos/an-old-map-shows-colonial-territories-in-africa-AE0bPGfhYNA
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/scramble-for-africa/unsplash_1.jpg
-  attribution: Photo by Europeana on Unsplash
-  license: unsplash-license
-  creator: Europeana
-- media_type: photograph
-  title: a close up of a map of africa
-  description: Landscape orientation, 5804x3664px
-  source_url: https://unsplash.com/photos/a-close-up-of-a-map-of-africa-pDU95uBp5Uw
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/scramble-for-africa/unsplash_2.jpg
-  attribution: Photo by Road Ahead on Unsplash
-  license: unsplash-license
-  creator: Road Ahead
-- media_type: photograph
-  title: Village nestled in lush green jungle by calm water
-  description: Landscape orientation, 6000x4000px
-  source_url: https://unsplash.com/photos/village-nestled-in-lush-green-jungle-by-calm-water-2jSfnj3Ji38
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/scramble-for-africa/unsplash_3.jpg
-  attribution: Photo by Toza Productions on Unsplash
-  license: unsplash-license
-  creator: Toza Productions
-- media_type: photograph
-  title: Village on the riverbank surrounded by lush green forest.
-  description: Landscape orientation, 6000x4000px
-  source_url: https://unsplash.com/photos/village-on-the-riverbank-surrounded-by-lush-green-forest-HvLFeqCN38A
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/scramble-for-africa/unsplash_4.jpg
-  attribution: Photo by Toza Productions on Unsplash
-  license: unsplash-license
-  creator: Toza Productions
-- media_type: photograph
-  title: Exterior view of Balme Library at University of Ghana with palm trees and a clear sky.
-  description: Landscape orientation, 4032x3024px
-  source_url: https://www.pexels.com/photo/university-of-ghana-balme-library-tower-36079524/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/scramble-for-africa/pexels_1.jpg
-  attribution: Photo by Maxx Sas on Pexels
-  license: pexels-license
-  creator: Maxx Sas
-- media_type: photograph
-  title: Beautiful vintage facade with balconies and plants in Tangier, Morocco.
-  description: Landscape orientation, 4215x3161px
-  source_url: https://www.pexels.com/photo/green-plants-near-window-2369056/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/scramble-for-africa/pexels_2.jpg
-  attribution: Photo by adib faklani on Pexels
-  license: pexels-license
-  creator: adib faklani
-- media_type: photograph
-  title: Stunning view of Independence Arch against a clear blue sky in Accra, Ghana.
-  description: Landscape orientation, 5760x3840px
-  source_url: https://www.pexels.com/photo/independence-arch-in-accra-ghana-20131678/
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/scramble-for-africa/pexels_3.jpg
-  attribution: Photo by Axel Dagrou on Pexels
-  license: pexels-license
-  creator: Axel Dagrou
 connections:
 - target_slug: rwandan-genocide
   connection_type: influenced
