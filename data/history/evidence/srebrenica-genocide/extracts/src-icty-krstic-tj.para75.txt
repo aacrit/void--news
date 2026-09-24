@@ -1,0 +1,8 @@
+source: src-icty-krstic-tj
+locator: para75
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+note: the paragraph crosses a page; the footnote block between the two spans is omitted
+
+75. The results of the forensic investigations suggest that the majority of bodies exhumed were not killed in combat; they were killed in mass executions. Investigators discovered at least 448 blindfolds on or with the bodies uncovered during the exhumations at ten separate sites.151 423 ligatures were located during exhumations at 13 separate sites.152 Some of the ligatures were made of cloth and string, but predominately they were made of wire.153 These ligatures and blindfolds are inconsistent with combat casualties. The Prosecution also relied on forensic evidence that the overwhelming majority of victims located in the graves, for who a cause of death could be determined, were killed by gunshot wounds.154 The exhumations also revealed that some of the victims were severely handicapped and, for that reason, unlikely to have been combatants.155

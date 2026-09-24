@@ -1,0 +1,7 @@
+source: src-brouwer-2003
+locator: p1
+url: https://bmgn-lchr.nl/article/download/URN%3ANBN%3ANL%3AUI%3A10-1-106748/4308/4386
+read: 2026-09-24
+note: line-break hyphenation in the PDF text layer (Сре- бреници) rejoined; nothing else changed
+
+Het uiteindelijke rapport heeft stellig voldaan aan de wensen van de Tweede Kamer. De loftuiting in de unaniem aanvaarde motie-Melkert van 17 april 2002 was misschien voorbarig, omdat moeilijk kan worden aangenomen dat de Kamerleden de omvangrijke studie een week na publicatie al hadden kunnen bestuderen. Het oordeel van de Parlementaire Enquêtecommissie Srebrenica in januari 2003 was echter wèl maatgevend: de commissie bevestigde nadrukkelijk de in de motie-Melkert vastgelegde uitspraak 'dat het NIOD een gedegen en evenwichtig onderzoek heeft verricht.'2

@@ -1,0 +1,8 @@
+source: src-pintar-2024
+locator: p32
+url: https://tokovi.istorije.rs/lat/uploaded/1%202024/Tokovi%20istorije%201%202024%20MANOJLOVIC%20PINTAR.pdf
+read: 2026-09-24
+note: line-break hyphenation in the PDF text layer (Сре- бреници) rejoined; nothing else changed
+note: one sentence of the article's Serbian summary
+
+У чланку су приказани супротстављени закључци три извештаја о Сребреници: Бироа владе Републике Српске за односе са Хашким трибуналом владе Републике Српске (2002), Комисије за истраживање догађаја у и око Сребренице од 10. до 19. јула 1995. године (2004) и Независне међународне комисије за истраживање страдања свих народа у сребреничкој регији у периоду 1992–1995. године (2021).

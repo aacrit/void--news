@@ -1,0 +1,6 @@
+source: src-un-a54549
+locator: para472
+url: https://documents.un.org/doc/undoc/gen/n99/348/76/pdf/n9934876.pdf
+read: 2026-09-24
+
+472. It is true that the UNPROFOR troops in Srebrenica never fired at the attacking Serbs. They fired warning shots over the Serbs’ heads and their mortars fired flares, but they never fired directly on any Serb units. Had they engaged the attacking Serbs directly it is possible that events would have unfolded differently. At the same time, it must be recognized that the 150 fighting men of Dutchbat were lightly armed and in indefensible positions, and were faced with 2,000 Serbs advancing with the support of armour and artillery.

@@ -1,0 +1,9 @@
+source: src-pintar-2024
+locator: p37
+url: https://tokovi.istorije.rs/lat/uploaded/1%202024/Tokovi%20istorije%201%202024%20MANOJLOVIC%20PINTAR.pdf
+read: 2026-09-24
+note: ligatures split in the PDF text layer (Th e, confl icting) rejoined; nothing else changed
+note: line-break hyphenation in the PDF text layer (Сре- бреници) rejoined; nothing else changed
+note: one sentence of the article's English summary
+
+The conflicting conclusions of three reports on Srebrenica—issued by the Bureau of the RS Government for Relations with the Hague Tribunal of the Government of Republika Srpska (2002), the Commission for the Investigation of Events in and around Srebrenica from July 10 to 19, 1995 (2004), and the Independent International Commission for Research on the Suffering of All Peoples in the Srebrenica Region in the Period 1992–1995 (2021) — illustrate the ongoing initiatives of local communities to memorialize the 1992–1995 war and reflect shifts in official political discourse.
