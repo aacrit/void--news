@@ -12,7 +12,7 @@ entries:
     tier: A
     kind: judgment
     author: Extraordinary Chambers in the Courts of Cambodia, Trial Chamber
-    title: "Case 001, Judgement (Kaing Guek Eav alias Duch)"
+    title: "Case 001 Judgement, 26 July 2010 (Kaing Guek Eav alias Duch)"
     container: null
     publisher: ECCC
     place: Phnom Penh
@@ -36,7 +36,7 @@ entries:
     tier: A
     kind: judgment
     author: Extraordinary Chambers in the Courts of Cambodia, Supreme Court Chamber
-    title: "Case 001, Appeal Judgement (Kaing Guek Eav alias Duch)"
+    title: "Case 001 Appeal Judgement, 3 February 2012 (Kaing Guek Eav alias Duch)"
     container: null
     publisher: ECCC
     place: Phnom Penh
@@ -49,7 +49,7 @@ entries:
       free_copy: "https://www.d.dccam.org/Archives/Chronology/Case_001_Appeal_Judgement_FINAL_EN.pdf"
       verified_at: 2026-09-25
       verified_by: document-fetch
-      verified_title: "Appeal Judgement, Case File/Dossier No. 001/18-07-2007-ECCC/SC, 3 February 2012"
+      verified_title: "Appeal Judgement, 3 February 2012, Case File/Dossier No. 001/18-07-2007-ECCC/SC"
     language: en
     region_of_authorship: southeast-asia
     producer: eccc
@@ -60,7 +60,7 @@ entries:
     tier: A
     kind: judgment
     author: Extraordinary Chambers in the Courts of Cambodia, Trial Chamber
-    title: "Case 002/01, Judgement (Nuon Chea and Khieu Samphan)"
+    title: "Case 002/01 Judgement, 7 August 2014 (Nuon Chea and Khieu Samphan)"
     container: null
     publisher: ECCC
     place: Phnom Penh
@@ -73,7 +73,7 @@ entries:
       free_copy: "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/2014-08-07%2017:04/E313_Trial%20Chamber%20Judgement%20Case%20002_01_ENG.pdf"
       verified_at: 2026-09-25
       verified_by: document-fetch
-      verified_title: "Case 002/01, Judgement, 7 August 2014, Case File No. 002/19-09-2007/ECCC/TC (E313)"
+      verified_title: "Case 002/01, Judgement, 7 August 2014 - Public (E313)"
     language: en
     region_of_authorship: southeast-asia
     producer: eccc
@@ -84,7 +84,7 @@ entries:
     tier: A
     kind: judgment
     author: Extraordinary Chambers in the Courts of Cambodia, Trial Chamber
-    title: "Case 002/02, Judgement (Nuon Chea and Khieu Samphan)"
+    title: "Case 002/02 Judgement, 16 November 2018 (Nuon Chea and Khieu Samphan)"
     container: null
     publisher: ECCC
     place: Phnom Penh
@@ -97,7 +97,7 @@ entries:
       free_copy: "https://www.legal-tools.org/doc/8v76lk/pdf/"
       verified_at: 2026-09-25
       verified_by: document-fetch
-      verified_title: "Case 002/02, Judgement, 16 November 2018, Case File No. 002/19-09-2007/ECCC/TC (E465)"
+      verified_title: "Case 002/02, Judgement, 16 November 2018 - Public (E465)"
     language: en
     region_of_authorship: southeast-asia
     producer: eccc
@@ -156,7 +156,7 @@ entries:
     tier: A
     kind: judgment
     author: Extraordinary Chambers in the Courts of Cambodia, Supreme Court Chamber
-    title: "Case 002/02, Appeal Judgment (Khieu Samphan)"
+    title: "Case 002/02 Appeal Judgment, 23 December 2022 (Khieu Samphan)"
     container: null
     publisher: ECCC
     place: Phnom Penh
@@ -1193,7 +1193,7 @@ contested:
         locator: secforeword
       - position: tribunal-record
         holds: "Estimates range from 600,000 to 3 million; experts accept 1.5 to 2 million excess deaths as the most accurate; the one estimate under a million, 740,800, heavily underestimated the killing."
-        figures: ["600000", "740800"]
+        figures: []
         source: src-eccc-002-01-tj
         locator: para174
       - position: united-nations
