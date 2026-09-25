@@ -14,6 +14,23 @@
    and muted: the same grammar, never a link.
    =========================================================================== */
 
+import insecure from "../../../config/insecure-origins.json";
+
+/* Hosts that serve a free copy only over http (frontend/config/insecure-origins.json,
+   checked and dated there; tests/test_insecure_origins.py keeps the list to the
+   hosts it names). A link to one is still offered, marked as an insecure origin,
+   because the page it opens is the only free copy the ledger could read. */
+const INSECURE_HOSTS = new Set(insecure.hosts.map((h) => h.host));
+
+export function isInsecureOrigin(href: string): boolean {
+  try {
+    const u = new URL(href);
+    return u.protocol === "http:" && INSECURE_HOSTS.has(u.hostname);
+  } catch {
+    return false;
+  }
+}
+
 function PageGlyph({ struck }: { struck?: boolean }) {
   return (
     <svg
@@ -57,14 +74,16 @@ interface FreeCopyLinkProps {
 
 export function FreeCopyLink({ href, name, label, className }: FreeCopyLinkProps) {
   const accessible = label ?? `Open the free copy of ${name}`;
+  const plain = isInsecureOrigin(href);
   return (
     <a
       href={href}
-      className={`hist-th-srcmark hist-th-srcmark--link${className ? ` ${className}` : ""}`}
+      className={`hist-th-srcmark hist-th-srcmark--link${plain ? " hist-th-srcmark--insecure" : ""}${className ? ` ${className}` : ""}`}
       rel="noopener noreferrer"
       target="_blank"
       aria-label={`${accessible} (opens in a new tab)`}
-      title={label ?? "Open the free copy (new tab)"}
+      title={`${label ?? "Open the free copy (new tab)"}${plain ? "; this archive serves only over http" : ""}`}
+      data-origin={plain ? "insecure" : undefined}
     >
       <PageGlyph />
     </a>

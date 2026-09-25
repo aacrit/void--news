@@ -1105,8 +1105,13 @@ async function brandChecks(browser) {
           assert(topState.mode === "top" && topState.label === "Back to the top of the page", "thesis-return-top", `at the foot: mode ${topState.mode}, "${topState.label}"`);
           /* Every source mark is an icon with a name that says what it opens,
              and the words FREE COPY are no longer printed as a label. */
-          const marks = await page.evaluate(() => [...document.querySelectorAll("a.hist-th-srcmark")].map((a) => ({ label: a.getAttribute("aria-label") ?? "", title: a.getAttribute("title") ?? "", href: a.getAttribute("href") ?? "", svg: !!a.querySelector("svg") })));
-          const badMarks = marks.filter((m) => !/^Open the (free copy|file page) of \S.+ \(opens in a new tab\)$/.test(m.label) || !m.title || !m.svg || !/^https:\/\//.test(m.href));
+          const marks = await page.evaluate(() => [...document.querySelectorAll("a.hist-th-srcmark")].map((a) => ({ label: a.getAttribute("aria-label") ?? "", title: a.getAttribute("title") ?? "", href: a.getAttribute("href") ?? "", svg: !!a.querySelector("svg"), insecure: a.getAttribute("data-origin") ?? "" })));
+          /* An http link is allowed only to a host in frontend/config/insecure-origins.json
+             (a free copy served over http alone, checked and dated there), and
+             the page must mark it data-origin="insecure". */
+          const insecureHosts = new Set(JSON.parse(readFileSync(join(OUT, "..", "config/insecure-origins.json"), "utf8")).hosts.map((h) => h.host));
+          const absolute = (m) => /^https:\/\//.test(m.href) || (/^http:\/\//.test(m.href) && insecureHosts.has(new URL(m.href).hostname) && m.insecure === "insecure");
+          const badMarks = marks.filter((m) => !/^Open the (free copy|file page) of \S.+ \(opens in a new tab\)$/.test(m.label) || !m.title || !m.svg || !absolute(m));
           assert(marks.length > 0 && badMarks.length === 0, "thesis-source-marks", `${marks.length} source marks, ${badMarks.length} without a proper name, tooltip, glyph or absolute address${badMarks[0] ? `: ${JSON.stringify(badMarks[0]).slice(0, 160)}` : ""}`);
           const printed = await page.evaluate(() => [...document.querySelectorAll(".hist-th-cite__meta, .hist-th-exhibit__prov")].filter((el) => /\bfree copy\b/i.test(el.innerText)).length
             + [...document.querySelectorAll(".hist-th-notes a")].filter((a) => /^\s*return\s*$/i.test(a.textContent ?? "")).length);
