@@ -1,6 +1,7 @@
 """Export a History thesis to the JSON the event page reads at build time.
 
     python3 -m pipeline.history.export_thesis [slug ...] [--include-drafts]
+    VOID_EXPORT_BUILD_DIR=<dir> python3 -m pipeline.history.export_thesis <slug> --draft
 
 Reads `data/history/theses/<slug>.md` and `data/history/evidence/<slug>/`,
 resolves every marker, numbers the notes and the exhibits, pulls episode
@@ -13,6 +14,13 @@ export cannot reach the served site by accident.
 
 The exporter validates first and refuses to write a thesis with a failing
 check. The served JSON is therefore never ahead of the gates.
+
+`--draft` exports `data/history/theses/drafts/<slug>.md` against the ledger
+with its draft overlay (`evidence/<slug>/draft/`, §15e), for a local preview of
+a draft that will replace a published thesis. It refuses to run unless
+VOID_EXPORT_BUILD_DIR is set explicitly, it never writes the served index,
+and a drafts file whose status is `published` is refused: a draft is
+promoted by moving it over the published file, never by exporting it.
 
 Honours VOID_EXPORT_BUILD_DIR, as tests/test_history_export_parity.py expects
 of the script exporter.
@@ -32,7 +40,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from pipeline.history.ledger import (  # noqa: E402
-    EVENTS, EVIDENCE, THESES, Ledger, compute_analysis, entry_is_verified,
+    EVENTS, EVIDENCE, THESES, THESES_DRAFTS, Ledger, compute_analysis, entry_is_verified,
     load_ledger, locator_label, standing,
 )
 from pipeline.history.thesis_format import (  # noqa: E402
@@ -53,10 +61,14 @@ VERDICT_LABEL = {"supported": "Supported", "contradicted": "Contradicted",
                  "qualified": "Qualified", "untestable": "Cannot be tested from the free record"}
 
 
-def load_inputs(slug: str):
+def load_inputs(slug: str, draft: bool = False):
+    """The inputs of one thesis. `draft=True` reads the drafts path and the
+    ledger with its draft overlay (§15e); the published path never sees
+    either."""
     event = yaml.safe_load((EVENTS / f"{slug}.yaml").read_text(encoding="utf-8"))
-    ledger = load_ledger(slug)
-    thesis = parse_thesis((THESES / f"{slug}.md").read_text(encoding="utf-8"), slug)
+    ledger = load_ledger(slug, draft=draft)
+    path = (THESES_DRAFTS if draft else THESES) / f"{slug}.md"
+    thesis = parse_thesis(path.read_text(encoding="utf-8"), slug)
     script = None
     sp = SCRIPTS / f"{slug}.json"
     if sp.exists():
@@ -376,7 +388,9 @@ class Exporter:
             for b in sec["blocks"]:
                 if b["t"] == "episode":
                     marks.append({"chapter": b["chapter"], "where": sec["id"], "startTime": b["startTime"]})
+        holistic = {"scope": th.scope, "coverage": th.front.get("coverage")} if th.scope == "holistic" else {}
         return {
+            **holistic,
             "slug": self.slug,
             "status": th.status,
             "auditedBy": th.front.get("audited_by"),
@@ -396,21 +410,36 @@ class Exporter:
         }
 
 
-def export(slug: str) -> tuple[dict, list]:
-    event, ledger, thesis, script, episode = load_inputs(slug)
+def export(slug: str, draft: bool = False) -> tuple[dict, list]:
+    event, ledger, thesis, script, episode = load_inputs(slug, draft=draft)
     findings = [f for f in validate_thesis(thesis, ledger, event, script, episode) if f.level == "fail"]
     blob = Exporter(slug, event, ledger, thesis, script, episode).run()
     return blob, findings
 
 
 def main(argv: list[str]) -> int:
-    include_drafts = "--include-drafts" in argv
-    slugs = [a for a in argv if not a.startswith("--")] or sorted(p.stem for p in THESES.glob("*.md"))
+    draft = "--draft" in argv
+    include_drafts = "--include-drafts" in argv or draft
+    slugs = [a for a in argv if not a.startswith("--")]
+    if draft:
+        if not os.environ.get("VOID_EXPORT_BUILD_DIR"):
+            print("--draft needs VOID_EXPORT_BUILD_DIR set explicitly: a draft export is a preview, "
+                  "never the committed build-data")
+            return 2
+        if not slugs:
+            print("--draft needs the slug(s) of the draft(s) to preview")
+            return 2
+    slugs = slugs or sorted(p.stem for p in THESES.glob("*.md"))
     OUT.mkdir(parents=True, exist_ok=True)
     rc = 0
     written = 0
     for slug in slugs:
-        blob, findings = export(slug)
+        blob, findings = export(slug, draft=draft)
+        if draft and blob["status"] == "published":
+            print(f"{slug}: the drafts file says `published`; a draft is promoted by moving it over "
+                  f"data/history/theses/{slug}.md, not by exporting it")
+            rc = 1
+            continue
         if findings:
             print(f"{slug}: {len(findings)} failing check(s); not exported")
             for f in findings[:40]:
@@ -429,6 +458,9 @@ def main(argv: list[str]) -> int:
         written += 1
         print(f"{slug}: {blob['status']}, {len(blob['notes'])} notes, {len(blob['exhibits'])} exhibits, "
               f"{blob['words']} words -> {OUT / (slug + '.json')}")
+    if draft:
+        print(f"history-theses/: {written} draft preview(s) in {OUT}; the served index is not touched")
+        return rc
     # The served index: which events are theses, with the counts the served
     # gates (scripts/verify_sections.py TH-01..TH-04) check the page against.
     index = []

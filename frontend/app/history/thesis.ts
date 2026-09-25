@@ -217,7 +217,29 @@ export interface ThesisGap {
   status: string;
 }
 
+/** §15: a holistic thesis says which sections carry which strand of the
+ *  event, and which position answers each perspective the event record holds.
+ *  T-21 checks the map; the page prints it under the question. */
+export interface ThesisCoverageStrand {
+  sections: string[];
+  terms?: string[];
+  min?: number;
+}
+
+export interface ThesisCoverage {
+  causes?: ThesisCoverageStrand;
+  course?: ThesisCoverageStrand;
+  actors?: ThesisCoverageStrand;
+  regions?: ThesisCoverageStrand;
+  consequences?: ThesisCoverageStrand;
+  legacy?: ThesisCoverageStrand;
+  perspectives?: Record<string, { position: string; sections: string[] }>;
+}
+
 export interface ThesisDoc {
+  /** Present only on a holistic thesis (§15); absent means one question argued. */
+  scope?: "holistic";
+  coverage?: ThesisCoverage;
   slug: string;
   status: "draft" | "audited" | "published";
   auditedBy: string | null;
