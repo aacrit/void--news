@@ -1,0 +1,16 @@
+source: src-top-xii
+locator: item428
+url: https://archive.org/download/indiatransferofp12nich/indiatransferofp12nich_djvu.txt
+read: 2026-09-25
+note: item n is the document number in the volume: No. 428, Lord Ismay to Mr Liaquat Ali Khan, 11 August 1947, pages 662 to 663; the passage runs across the page head, which is dropped
+note: the OCR layer's double spaces are collapsed and its soft hyphens rejoined; nothing else changed
+
+(1) Gurdaspur or a large portion of it has been given to East Punjab by the award of the Boundary Commission. The report is that this is a political decision, and not a judicial one:
+
+(2) If this is so, it is a grave injustice which will amount to a breach of faith on the part of the British.
+
+Before giving you my comments on these points, let me state the background as I see it.
+
+(1) The Viceroy has from the outset made it absolutely clear that he himself must have nothing to do either with arbitration of any kind or with the Boundary Commissions.
+
+(2) The Indian leaders themselves selected all the Boundary Commissions, drafted their terms of reference and undertook to implement the award, whatever it might be.

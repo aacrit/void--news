@@ -1,0 +1,7 @@
+source: src-cad-19470814
+locator: sec53612
+url: https://www.constitutionofindia.net/debates/14-aug-1947/
+read: 2026-09-25
+note: sec53612 is the site's paragraph number 5.36.12; Jawaharlal Nehru, moving the pledge, in English
+
+Long years ago we made a tryst with destiny, and now the time comes when we shall redeem our pledge, not wholly or in full measure, but very substantially. At the stroke of the midnight hour, when the world sleeps, India will awake to life and freedom. A moment comes, which comes but rarely in history, when we step out from the old to the new, when an age ends, and when the soul of a nation, long suppressed, finds utterance. It is fitting that at this solemn moment we take the pledge of dedication to the service of India and her people and to the still larger cause of humanity.

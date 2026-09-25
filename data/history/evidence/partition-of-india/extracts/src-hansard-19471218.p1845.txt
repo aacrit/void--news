@@ -1,0 +1,7 @@
+source: src-hansard-19471218
+locator: p1845
+url: https://api.parliament.uk/historic-hansard/commons/1947/dec/18/india-and-pakistan-refugees-relief
+read: 2026-09-25
+note: p is the Hansard column; HC Deb 18 December 1947 vol 445 cc1844-5; the answer of Mr P. Noel-Baker, Secretary of State for Commonwealth Relations
+
+No, Sir. The total number of refugees who have moved from the East Punjab to the West Punjab and vice versa is 8,500,000 or thereabouts. Large numbers of them have been resettled in towns, villages and farms in the new countries to which they have gone. The Governments have made a very great effort to deal with this matter, but I have no details.

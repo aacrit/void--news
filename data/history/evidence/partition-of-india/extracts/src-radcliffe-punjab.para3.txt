@@ -1,0 +1,10 @@
+source: src-radcliffe-punjab
+locator: para3
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+
+3. The terms of reference of the Commission, as set out in the announcement, were as follows:—
+
+“The Boundary Commission is instructed to demarcate the boundaries of the two parts of the Punjab on the basis of ascertaining the contiguous majority areas of Muslims and non-Muslims. In doing so, it will also take into account other factors.”
+
+We were desired to arrive at a decision as soon as possible before the 15th of August.

@@ -1,0 +1,8 @@
+source: src-top-xi
+locator: item59
+url: https://archive.org/download/constitutionalre06nich/constitutionalre06nich_djvu.txt
+read: 2026-09-25
+note: item n is the document number in the volume: No. 59, the Viceroy's press conference of 4 June 1947, page 112
+note: the OCR layer's double spaces are collapsed and its soft hyphens rejoined; nothing else changed
+
+I found that it was mainly at the request of the Sikh community that Congress had put forward the Resolution on the partition of the Punjab,7 and you will remember that in the words of that Resolution they wished the Punjab to be divided between predominantly Muslim and non-Muslim areas. It was therefore on that Resolution, which the Sikhs themselves sponsored, that this division has been provided for. I was not aware of all the details when this suggestion was made but when I sent for the map and studied the distribution of the Sikh population under this proposal, I must say that I was astounded to find that the plan which they had produced divided their community into two almost equal parts.

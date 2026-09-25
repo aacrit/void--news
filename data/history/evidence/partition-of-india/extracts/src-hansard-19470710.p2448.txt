@@ -1,0 +1,7 @@
+source: src-hansard-19470710
+locator: p2448
+url: https://api.parliament.uk/historic-hansard/commons/1947/jul/10/indian-independence-bill
+read: 2026-09-25
+note: p is the Hansard column; HC Deb 10 July 1947 vol 439 cc2441-550; the record spells the chairman's name Radliffe
+
+Clauses 2, 3 and 4 give effect to the methods which I described to the House last month, whereby the Indian people, through their own representatives, were given the opportunity of deciding on the division of territory. A decision has already been come to that Bengal and the Punjab should be divided, and in the North-West Frontier province and in Sylhet voting is taking place to decide the future of those areas. We must expect, therefore, that in a few days the broad division will have been made. But it will have been noted that, in accordance with what I indicated to the House, the detailed delimitation of boundaries will be done by two Commissions. These Commissions will be starting work forthwith. Hindus, Muslims, and, in the case of the Punjab, Sikhs, will be members. I am glad to say that Sir Cyril Radliffe, K.C., has accepted the request made to him by all parties in the Government of India to be chairman of both Commissions.

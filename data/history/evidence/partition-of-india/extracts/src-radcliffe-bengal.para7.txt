@@ -1,0 +1,6 @@
+source: src-radcliffe-bengal
+locator: para7
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+
+7. The question of drawing a satisfactory boundary line under our terms of reference between East and West Bengal was one to which the parties concerned propounded the most diverse solutions. The province offers few, if any, satisfactory natural boundaries, and its development has been on lines that do not well accord with a division by contiguous majority areas of Muslim and non-Muslim majorities.
