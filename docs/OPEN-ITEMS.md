@@ -936,8 +936,15 @@ under `frontend/build-data/history-theses/`. A correction is re-exported with
 `python3 -m pipeline.history.export_thesis`; T-14 fails on drift.
 
 **Partition: errors in the event YAML and the episode script, found while
-building the ledger and NOT yet corrected** (the thesis reports them; a sweep
-should fix the YAML, the script and the MP3 together, with a check for each):
+building the ledger.** The YAML and the script were corrected on 2026-09-25
+(every item below; the script is re-cut against the ledger, every spoken
+quotation is a ledger extract, and it carries inert `# CLIP:` / `# MOOD:`
+slots per `docs/proposals/HISTORY-AUDIO-ARCHIVAL.md`). **The served MP3
+still carries the old script**: it must be re-rendered (one
+`render-history-audio.yml` dispatch), after which the thesis's episode marks
+are re-aligned to the new chapters. Until then chapter 5 keeps the manifest's
+title "The force that was supposed to hold" so T-10 resolves. The list, as
+found:
 
 - `data/history/events/partition-of-india.yaml` says the maps Radcliffe worked
   from were "not resurveyed since 1931"; no document supports it. The 3 June
