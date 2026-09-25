@@ -1,0 +1,8 @@
+source: src-verite-1916
+locator: sectitle
+url: https://archive.org/download/vritsurlemou00hlebuoft/vritsurlemou00hlebuoft_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer; the item binds the 1916 pamphlet with two Russian officers' notes of 1919, and only the pamphlet is cited; hyphens rejoined, spacing collapsed
+note: the title page
+
+Mouvement Révolutionnaire arménien ET les mesures gouvernementales 1916 CONSTANTINOPLE

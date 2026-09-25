@@ -1,0 +1,7 @@
+source: src-morgenthau-1918
+locator: p337-338
+url: https://archive.org/download/ambassadormorgen00morguoft/ambassadormorgen00morguoft_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer of the 1919 printing; hyphens rejoined, spacing collapsed, running heads between pages removed, glyph errors kept
+
+"It is no use for you to argue," Talaat answered, "we have already disposed of three quarters of the Armenians; there are none at all left in Bitlis, Van, and Erzeroum. The hatred between the Turks and the Armenians is now so intense that we have got to finish with them. If we don't, they will plan their revenge."

@@ -1,0 +1,2386 @@
+# The evidence ledger for armenian-genocide (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Every entry was resolved or fetched on 2026-09-25 from the URL it names; every
+# extract under extracts/ was sliced from the fetched copy by a builder script
+# (start marker to end marker), never retyped. Nothing here was written from
+# memory. An entry the free record could not reach is listed under `gaps`, by
+# name, with what was tried. `producer` is Rule A's record_of.
+slug: armenian-genocide
+bootstrapped: '2026-09-25'
+entries:
+- id: src-frus-d1398
+  tier: A
+  kind: primary-document
+  author: United States Department of State (ed.)
+  title: 'Document 1398: The Ambassador in France (Sharp) to the Secretary of State, transmitting the Allied declaration of 24 May 1915, May 28, 1915'
+  container: Papers Relating to the Foreign Relations of the United States, 1915, Supplement, The World War
+  publisher: Government Printing Office (Office of the Historian)
+  place: Washington
+  year: 1928
+  edition: null
+  volume: null
+  document_number: File No. 867.4016/67
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://history.state.gov/historicaldocuments/frus1915Supp/d1398
+  access:
+    free_copy: https://history.state.gov/historicaldocuments/frus1915Supp/d1398
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 'Document 1398: The Ambassador in France (Sharp) to the Secretary of State, transmitting the Allied declaration of 24 May 1915, May 28, 1915'
+  language: en
+  region_of_authorship: americas
+  producer: us-government
+  position: null
+  rights: public
+- id: src-frus-d1399
+  tier: A
+  kind: primary-document
+  author: United States Department of State (ed.)
+  title: 'Document 1399: The Ambassador in Turkey (Morgenthau) to the Secretary of State, June 18, 1915'
+  container: Papers Relating to the Foreign Relations of the United States, 1915, Supplement, The World War
+  publisher: Government Printing Office (Office of the Historian)
+  place: Washington
+  year: 1928
+  edition: null
+  volume: null
+  document_number: File No. 867.4016/70
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://history.state.gov/historicaldocuments/frus1915Supp/d1399
+  access:
+    free_copy: https://history.state.gov/historicaldocuments/frus1915Supp/d1399
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 'Document 1399: The Ambassador in Turkey (Morgenthau) to the Secretary of State, June 18, 1915'
+  language: en
+  region_of_authorship: americas
+  producer: us-government
+  position: null
+  rights: public
+- id: src-frus-d1400
+  tier: A
+  kind: primary-document
+  author: United States Department of State (ed.)
+  title: 'Document 1400: The Ambassador in Turkey (Morgenthau) to the Secretary of State, July 10, 1915'
+  container: Papers Relating to the Foreign Relations of the United States, 1915, Supplement, The World War
+  publisher: Government Printing Office (Office of the Historian)
+  place: Washington
+  year: 1928
+  edition: null
+  volume: null
+  document_number: File No. 867.4016/74
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://history.state.gov/historicaldocuments/frus1915Supp/d1400
+  access:
+    free_copy: https://history.state.gov/historicaldocuments/frus1915Supp/d1400
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 'Document 1400: The Ambassador in Turkey (Morgenthau) to the Secretary of State, July 10, 1915'
+  language: en
+  region_of_authorship: americas
+  producer: us-government
+  position: null
+  rights: public
+- id: src-frus-d1406
+  tier: A
+  kind: primary-document
+  author: United States Department of State (ed.)
+  title: 'Document 1406: The Ambassador in Turkey (Morgenthau) to the Secretary of State, August 11, 1915'
+  container: Papers Relating to the Foreign Relations of the United States, 1915, Supplement, The World War
+  publisher: Government Printing Office (Office of the Historian)
+  place: Washington
+  year: 1928
+  edition: null
+  volume: null
+  document_number: File No. 867.4016/90
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://history.state.gov/historicaldocuments/frus1915Supp/d1406
+  access:
+    free_copy: https://history.state.gov/historicaldocuments/frus1915Supp/d1406
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 'Document 1406: The Ambassador in Turkey (Morgenthau) to the Secretary of State, August 11, 1915'
+  language: en
+  region_of_authorship: americas
+  producer: us-government
+  position: null
+  rights: public
+- id: src-frus-d1408
+  tier: A
+  kind: primary-document
+  author: United States Department of State (ed.)
+  title: 'Document 1408: The Ambassador in Turkey (Morgenthau) to the Secretary of State, August 18, 1915'
+  container: Papers Relating to the Foreign Relations of the United States, 1915, Supplement, The World War
+  publisher: Government Printing Office (Office of the Historian)
+  place: Washington
+  year: 1928
+  edition: null
+  volume: null
+  document_number: File No. 867.4016/99
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://history.state.gov/historicaldocuments/frus1915Supp/d1408
+  access:
+    free_copy: https://history.state.gov/historicaldocuments/frus1915Supp/d1408
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 'Document 1408: The Ambassador in Turkey (Morgenthau) to the Secretary of State, August 18, 1915'
+  language: en
+  region_of_authorship: americas
+  producer: us-government
+  position: null
+  rights: public
+- id: src-frus-d1410
+  tier: A
+  kind: primary-document
+  author: United States Department of State (ed.)
+  title: 'Document 1410: The Ambassador in Turkey (Morgenthau) to the Secretary of State, September 3, 1915'
+  container: Papers Relating to the Foreign Relations of the United States, 1915, Supplement, The World War
+  publisher: Government Printing Office (Office of the Historian)
+  place: Washington
+  year: 1928
+  edition: null
+  volume: null
+  document_number: File No. 867.4016/117
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://history.state.gov/historicaldocuments/frus1915Supp/d1410
+  access:
+    free_copy: https://history.state.gov/historicaldocuments/frus1915Supp/d1410
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 'Document 1410: The Ambassador in Turkey (Morgenthau) to the Secretary of State, September 3, 1915'
+  language: en
+  region_of_authorship: americas
+  producer: us-government
+  position: null
+  rights: public
+- id: src-frus-d1416
+  tier: A
+  kind: primary-document
+  author: United States Department of State (ed.)
+  title: 'Document 1416: The German Ambassador (Bernstorff) to the Secretary of State, enclosing the German Embassy''s memorandum to the Porte of 9 August 1915, October 8, 1915'
+  container: Papers Relating to the Foreign Relations of the United States, 1915, Supplement, The World War
+  publisher: Government Printing Office (Office of the Historian)
+  place: Washington
+  year: 1928
+  edition: null
+  volume: null
+  document_number: File No. 867.4016/173
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://history.state.gov/historicaldocuments/frus1915Supp/d1416
+  access:
+    free_copy: https://history.state.gov/historicaldocuments/frus1915Supp/d1416
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 'Document 1416: The German Ambassador (Bernstorff) to the Secretary of State, enclosing the German Embassy''s memorandum to the Porte of 9 August 1915, October 8, 1915'
+  language: en
+  region_of_authorship: americas
+  producer: us-government
+  position: null
+  rights: public
+- id: src-morgenthau-19150716
+  tier: A
+  kind: primary-document
+  author: Henry Morgenthau, American Ambassador at Constantinople
+  title: Telegram 858 to the Secretary of State, July 16, 1915 (NARA RG 59, 867.4016/76)
+  container: null
+  publisher: National Archives and Records Administration, Record Group 59
+  place: Washington
+  year: 1915
+  edition: null
+  volume: null
+  document_number: 867.4016/76
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.armenian-genocide.org/us-7-16-15-text.html
+  access:
+    free_copy: https://www.armenian-genocide.org/us-7-16-15-text.html
+    verified_at: '2026-09-25'
+    verified_by: manual-page-read
+    verified_title: Telegram 858 to the Secretary of State, July 16, 1915 (NARA RG 59, 867.4016/76)
+  language: en
+  region_of_authorship: americas
+  producer: us-government
+  position: null
+  rights: public
+  notes: the record is the State Department's file copy; it was read in the facsimile image and the transcription that the Armenian National Institute's page serves beside it, the only free copy reached; the telegram is not printed in the FRUS 1915 Supplement
+- id: src-bryce-1916
+  tier: A
+  kind: report
+  author: Arnold J. Toynbee (ed.), with a preface by Viscount Bryce
+  title: 'The Treatment of Armenians in the Ottoman Empire, 1915-16: Documents presented to Viscount Grey of Fallodon'
+  container: null
+  publisher: His Majesty's Stationery Office (Miscellaneous No. 31, 1916)
+  place: London
+  year: 1916
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: treatmentofarmen00grea
+    hathitrust: null
+    url: https://archive.org/download/treatmentofarmen00grea/treatmentofarmen00grea_djvu.txt
+  access:
+    free_copy: https://archive.org/download/treatmentofarmen00grea/treatmentofarmen00grea_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: 'The treatment of Armenians in the Ottoman Empire, 1915-16 :  documents presented to Viscount Grey of Fallodon, secretary of state for foreign affairs'
+  language: en
+  region_of_authorship: europe
+  producer: uk-government
+  position: null
+  rights: public
+  notes: 'a belligerent government''s compilation: its documents are American, Armenian, German and Swiss witnesses'' statements, its historical summary is Toynbee''s own'
+- id: src-talat-1917
+  tier: A
+  kind: edited-documents
+  author: Talaat Pasha (Ottoman Ministry of the Interior); Ara Sarafian (ed.)
+  title: Talaat Pasha's Report on the Armenian Genocide
+  container: null
+  publisher: Gomidas Institute
+  place: London
+  year: 2011
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.gomidas.org/uploads/Talaat%20Pashas%20Report%20on%20the%20Armenian%20Genocide.pdf
+  access:
+    free_copy: https://www.gomidas.org/uploads/Talaat%20Pashas%20Report%20on%20the%20Armenian%20Genocide.pdf
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: Talaat Pasha's Report on the Armenian Genocide
+  language: en
+  region_of_authorship: middle-east
+  producer: ottoman-interior-ministry
+  position: null
+  rights: null
+  notes: the interior minister's own tally of 1917, in the editor's English rendering; the original is held in the Bardakçı edition of Talaat's papers, not reached free; a copyrighted edition, held as five passages at most
+- id: src-verite-1916
+  tier: A
+  kind: report
+  author: Imperial Ottoman Government
+  title: Vérité sur le mouvement révolutionnaire arménien et les mesures gouvernementales
+  container: null
+  publisher: null
+  place: Constantinople
+  year: 1916
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: vritsurlemou00hlebuoft
+    hathitrust: null
+    url: https://archive.org/download/vritsurlemou00hlebuoft/vritsurlemou00hlebuoft_djvu.txt
+  access:
+    free_copy: https://archive.org/download/vritsurlemou00hlebuoft/vritsurlemou00hlebuoft_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: Vérité sur le mouvement révolutionnaire arménien et les mesures gouvernementales, 1916, Constantinople.
+  language: fr
+  region_of_authorship: middle-east
+  producer: ottoman-government
+  position: ottoman-turkish-state
+  rights: public
+  notes: the state's own case, published while the deportations ran; the Internet Archive item binds it with two Russian officers' notes of 1919, which are not cited
+- id: src-de-19150531
+  tier: A
+  kind: primary-document
+  author: Hans von Wangenheim, Ambassador at Constantinople, to the Foreign Office
+  title: Telegraphic report No. 1268, Pera, 31 May 1915
+  container: 'Politisches Archiv des Auswärtigen Amts, Berlin, as transcribed in the online edition The Armenian Genocide during the First World War: Documents from State Archives (Wolfgang and Sigrid Gust, eds.)'
+  publisher: www.armenocide.net
+  place: null
+  year: 1915
+  edition: null
+  volume: null
+  document_number: PA-AA R14086; edition document 1915-05-31-DE-001
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-05-31-DE-001
+  access:
+    free_copy: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-05-31-DE-001
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 1915-05-31-DE-001
+  language: de
+  region_of_authorship: europe
+  producer: german-foreign-office
+  position: null
+  rights: public
+  notes: the German original as the edition transcribes the file; the same edition's English translation is a separate Tier B entry
+- id: src-de-19150617
+  tier: A
+  kind: primary-document
+  author: Hans von Wangenheim, Ambassador at Constantinople, to the Reichskanzler (Bethmann Hollweg)
+  title: Report No. 372, Pera, 17 June 1915
+  container: 'Politisches Archiv des Auswärtigen Amts, Berlin, as transcribed in the online edition The Armenian Genocide during the First World War: Documents from State Archives (Wolfgang and Sigrid Gust, eds.)'
+  publisher: www.armenocide.net
+  place: null
+  year: 1915
+  edition: null
+  volume: null
+  document_number: PA-AA R14086; edition document 1915-06-17-DE-003
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-06-17-DE-003
+  access:
+    free_copy: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-06-17-DE-003
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 1915-06-17-DE-003
+  language: de
+  region_of_authorship: europe
+  producer: german-foreign-office
+  position: null
+  rights: public
+  notes: the German original as the edition transcribes the file; the same edition's English translation is a separate Tier B entry
+- id: src-de-19150707
+  tier: A
+  kind: primary-document
+  author: Hans von Wangenheim, Ambassador at Constantinople, to the Reichskanzler (Bethmann Hollweg)
+  title: Report No. 433, Pera, 7 July 1915, with the memorandum handed to the Grand Vizier on 4 July
+  container: 'Politisches Archiv des Auswärtigen Amts, Berlin, as transcribed in the online edition The Armenian Genocide during the First World War: Documents from State Archives (Wolfgang and Sigrid Gust, eds.)'
+  publisher: www.armenocide.net
+  place: null
+  year: 1915
+  edition: null
+  volume: null
+  document_number: PA-AA R14086; edition document 1915-07-07-DE-001
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-07-07-DE-001
+  access:
+    free_copy: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-07-07-DE-001
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 1915-07-07-DE-001
+  language: de
+  region_of_authorship: europe
+  producer: german-foreign-office
+  position: null
+  rights: public
+  notes: the German original as the edition transcribes the file; the same edition's English translation is a separate Tier B entry
+- id: src-de-19150716
+  tier: A
+  kind: primary-document
+  author: Hans von Wangenheim, Ambassador at Constantinople, to the Reichskanzler, enclosing Vice-Consul Kuckhoff's report from Samsun of 4 July 1915
+  title: Report No. 449, Pera, 16 July 1915
+  container: 'Politisches Archiv des Auswärtigen Amts, Berlin, as transcribed in the online edition The Armenian Genocide during the First World War: Documents from State Archives (Wolfgang and Sigrid Gust, eds.)'
+  publisher: www.armenocide.net
+  place: null
+  year: 1915
+  edition: null
+  volume: null
+  document_number: PA-AA R14086; edition document 1915-07-16-DE-003
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-07-16-DE-003
+  access:
+    free_copy: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-07-16-DE-003
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 1915-07-16-DE-003
+  language: de
+  region_of_authorship: europe
+  producer: german-foreign-office
+  position: null
+  rights: public
+  notes: the German original as the edition transcribes the file; the same edition's English translation is a separate Tier B entry
+- id: src-de-19150727
+  tier: A
+  kind: primary-document
+  author: Walter Rössler, Consul at Aleppo, to the Reichskanzler (Bethmann Hollweg)
+  title: Report K. No. 81 / B. No. 1645, Aleppo, 27 July 1915
+  container: 'Politisches Archiv des Auswärtigen Amts, Berlin, as transcribed in the online edition The Armenian Genocide during the First World War: Documents from State Archives (Wolfgang and Sigrid Gust, eds.)'
+  publisher: www.armenocide.net
+  place: null
+  year: 1915
+  edition: null
+  volume: null
+  document_number: PA-AA R14087; edition document 1915-07-27-DE-001
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-07-27-DE-001
+  access:
+    free_copy: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-07-27-DE-001
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 1915-07-27-DE-001
+  language: de
+  region_of_authorship: europe
+  producer: german-foreign-office
+  position: null
+  rights: public
+  notes: the German original as the edition transcribes the file; the same edition's English translation is a separate Tier B entry
+- id: src-de-19150805
+  tier: A
+  kind: primary-document
+  author: Max Erwin von Scheubner-Richter, Administrator of the Consulate at Erzurum, to the Ambassador on Extraordinary Mission (Hohenlohe-Langenburg)
+  title: Secret report No. 23, Erzurum, 5 August 1915
+  container: 'Politisches Archiv des Auswärtigen Amts, Berlin, as transcribed in the online edition The Armenian Genocide during the First World War: Documents from State Archives (Wolfgang and Sigrid Gust, eds.)'
+  publisher: www.armenocide.net
+  place: null
+  year: 1915
+  edition: null
+  volume: null
+  document_number: PA-AA R14088; edition document 1915-08-05-DE-002
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-08-05-DE-002
+  access:
+    free_copy: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-08-05-DE-002
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 1915-08-05-DE-002
+  language: de
+  region_of_authorship: europe
+  producer: german-foreign-office
+  position: null
+  rights: public
+  notes: the German original as the edition transcribes the file; the same edition's English translation is a separate Tier B entry
+- id: src-de-19161204
+  tier: A
+  kind: primary-document
+  author: Max Erwin von Scheubner-Richter to the Reichskanzler (Bethmann Hollweg)
+  title: Report Tgb. Z. 243, Munich, 4 December 1916
+  container: 'Politisches Archiv des Auswärtigen Amts, Berlin, as transcribed in the online edition The Armenian Genocide during the First World War: Documents from State Archives (Wolfgang and Sigrid Gust, eds.)'
+  publisher: www.armenocide.net
+  place: null
+  year: 1916
+  edition: null
+  volume: null
+  document_number: PA-AA R14094; edition document 1916-12-04-DE-001
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1916-12-04-DE-001
+  access:
+    free_copy: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1916-12-04-DE-001
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 1916-12-04-DE-001
+  language: de
+  region_of_authorship: europe
+  producer: german-foreign-office
+  position: null
+  rights: public
+  notes: the German original as the edition transcribes the file; the same edition's English translation is a separate Tier B entry
+- id: src-lepsius-1919
+  tier: A
+  kind: edited-documents
+  author: Johannes Lepsius (ed.)
+  title: 'Deutschland und Armenien 1914-1918: Sammlung diplomatischer Aktenstücke'
+  container: null
+  publisher: Der Tempelverlag
+  place: Potsdam
+  year: 1919
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: deutschlandundar00leps
+    hathitrust: null
+    url: https://archive.org/download/deutschlandundar00leps/deutschlandundar00leps_djvu.txt
+  access:
+    free_copy: https://archive.org/download/deutschlandundar00leps/deutschlandundar00leps_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: 'Deutschland und Armenien, 1914-1918 : Sammlung diplomatischer Aktenstücke'
+  language: de
+  region_of_authorship: europe
+  producer: lepsius
+  position: international-witness
+  rights: public
+  notes: the documents are the German Foreign Office's; the introduction cited here is the editor's own, a German witness and advocate who wrote for the Armenians
+- id: src-sevres-1920
+  tier: A
+  kind: treaty
+  author: The Allied Powers and Turkey
+  title: Treaty of Peace with Turkey, signed at Sèvres, August 10, 1920 (Treaty Series No. 11, 1920)
+  container: null
+  publisher: His Majesty's Stationery Office
+  place: London
+  year: 1920
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: india.history.resource.74790
+    hathitrust: null
+    url: https://archive.org/download/india.history.resource.74790/74790_djvu.txt
+  access:
+    free_copy: https://archive.org/download/india.history.resource.74790/74790_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: Treaty of Peace with Turkey signed at Sevres, August 10, 1920 (Treaty Series No. 11, 1920)
+  language: en
+  region_of_authorship: europe
+  producer: allied-powers
+  position: null
+  rights: public
+- id: src-un-convention-1948
+  tier: A
+  kind: treaty
+  author: United Nations General Assembly
+  title: Convention on the Prevention and Punishment of the Crime of Genocide, adopted 9 December 1948
+  container: United Nations Treaty Series, vol. 78, No. 1021, p. 277
+  publisher: United Nations
+  place: New York
+  year: 1948
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://treaties.un.org/doc/Publication/UNTS/Volume%2078/volume-78-I-1021-English.pdf
+  access:
+    free_copy: https://treaties.un.org/doc/Publication/UNTS/Volume%2078/volume-78-I-1021-English.pdf
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: Convention on the Prevention and Punishment of the Crime of Genocide. Adopted by the General Assembly of the United Nations on 9 December 1948
+  language: en
+  region_of_authorship: global
+  producer: united-nations
+  position: law-and-recognition
+  rights: public
+- id: src-ep-1987
+  tier: A
+  kind: resolution
+  author: European Parliament
+  title: Resolution on a political solution to the Armenian question (Doc. A2-33/87), 18 June 1987
+  container: Official Journal of the European Communities, C 190, 20 July 1987, pp. 119-121
+  publisher: Office for Official Publications of the European Communities
+  place: Luxembourg
+  year: 1987
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:C:1987:190:FULL
+  access:
+    free_copy: https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:C:1987:190:FULL
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: Resolution on a political solution to the Armenian question
+  language: en
+  region_of_authorship: europe
+  producer: european-parliament
+  position: law-and-recognition
+  rights: public
+- id: src-bundestag-2016
+  tier: A
+  kind: resolution
+  author: Deutscher Bundestag (CDU/CSU, SPD and Bündnis 90/Die Grünen)
+  title: Erinnerung und Gedenken an den Völkermord an den Armeniern und anderen christlichen Minderheiten in den Jahren 1915 und 1916 (Drucksache 18/8613)
+  container: null
+  publisher: Deutscher Bundestag
+  place: Berlin
+  year: 2016
+  edition: null
+  volume: null
+  document_number: Drucksache 18/8613, 31 May 2016
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://dserver.bundestag.de/btd/18/086/1808613.pdf
+  access:
+    free_copy: https://dserver.bundestag.de/btd/18/086/1808613.pdf
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: Erinnerung und Gedenken an den Völkermord an den Armeniern und anderen christlichen Minderheiten in den Jahren 1915 und 1916
+  language: de
+  region_of_authorship: europe
+  producer: german-bundestag
+  position: law-and-recognition
+  rights: public
+- id: src-biden-2021
+  tier: A
+  kind: primary-document
+  author: Joseph R. Biden, President of the United States
+  title: Statement by President Joe Biden on Armenian Remembrance Day, April 24, 2021
+  container: null
+  publisher: The White House
+  place: Washington
+  year: 2021
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2021/04/24/statement-by-president-joe-biden-on-armenian-remembrance-day/
+  access:
+    free_copy: https://bidenwhitehouse.archives.gov/briefing-room/statements-releases/2021/04/24/statement-by-president-joe-biden-on-armenian-remembrance-day/
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: Statement by President Joe Biden on Armenian Remembrance Day
+  language: en
+  region_of_authorship: americas
+  producer: us-government
+  position: law-and-recognition
+  rights: public
+- id: src-armenia-decl-1990
+  tier: A
+  kind: primary-document
+  author: Supreme Council of the Armenian SSR
+  title: Անկախության հռչակագիր (Declaration of Independence of Armenia)
+  container: null
+  publisher: Government of the Republic of Armenia
+  place: Yerevan
+  year: 1990
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.gov.am/am/independence/
+  access:
+    free_copy: https://www.gov.am/am/independence/
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: Անկախության հռչակագիր (Declaration of Independence of Armenia)
+  language: hy
+  region_of_authorship: caucasus
+  producer: republic-of-armenia
+  position: armenian-account
+  rights: public
+  notes: 'the official English version on gov.am/en answered a bot-manager captcha, so the rendering beside the Armenian is Void''s, at moderate confidence, with a back-translation made in a separate pass: ''Հայաստանի Հանրապետությունը սատար է կանգնում 1915 թվականին Օսմանյան Թուրքիայում և Արևմտյան Հայաստանում հայոց ցեղասպանության միջազգային ճանաչման գործին'', which keeps the three names and both numbers of the original and adds nothing'
+- id: src-nca-vii-1946
+  tier: A
+  kind: edited-documents
+  author: Office of United States Chief of Counsel for Prosecution of Axis Criminality
+  title: 'Nazi Conspiracy and Aggression, volume VII: Document L-3'
+  container: null
+  publisher: United States Government Printing Office
+  place: Washington
+  year: 1946
+  edition: null
+  volume: VII
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: naziconspiracyag07unit
+    hathitrust: null
+    url: https://archive.org/download/naziconspiracyag07unit/naziconspiracyag07unit_djvu.txt
+  access:
+    free_copy: https://archive.org/download/naziconspiracyag07unit/naziconspiracyag07unit_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: Nazi conspiracy and aggression
+  language: en
+  region_of_authorship: americas
+  producer: us-prosecution-nuremberg
+  position: null
+  rights: public
+  notes: the prosecution's translation of a document whose authorship and standing the volume does not discuss on the page held; this record says only what the printed page says
+- id: src-un-whitaker-1985
+  tier: A
+  kind: report
+  author: Benjamin Whitaker, Special Rapporteur, UN Sub-Commission on Prevention of Discrimination and Protection of Minorities
+  title: Revised and updated report on the question of the prevention and punishment of the crime of genocide (E/CN.4/Sub.2/1985/6)
+  container: null
+  publisher: null
+  place: null
+  year: 1985
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: null
+  access:
+    free_copy: null
+    verified_at: null
+    verified_by: null
+    verified_title: null
+  language: en
+  region_of_authorship: global
+  producer: united-nations
+  position: null
+  rights: public
+- id: src-echr-perincek-2015
+  tier: A
+  kind: judgment
+  author: European Court of Human Rights, Grand Chamber
+  title: Perinçek v. Switzerland, Judgment (Application no. 27510/08), 15 October 2015
+  container: null
+  publisher: null
+  place: null
+  year: 2015
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: null
+  access:
+    free_copy: null
+    verified_at: null
+    verified_by: null
+    verified_title: null
+  language: en
+  region_of_authorship: europe
+  producer: echr
+  position: null
+  rights: public
+- id: src-fr-law-2001
+  tier: A
+  kind: primary-document
+  author: République française
+  title: Loi n° 2001-70 du 29 janvier 2001 relative à la reconnaissance du génocide arménien de 1915
+  container: null
+  publisher: null
+  place: null
+  year: 2001
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: null
+  access:
+    free_copy: null
+    verified_at: null
+    verified_by: null
+    verified_title: null
+  language: fr
+  region_of_authorship: europe
+  producer: french-republic
+  position: null
+  rights: public
+- id: src-takvim-1919
+  tier: A
+  kind: judgment
+  author: Ottoman Extraordinary Court-Martial
+  title: Verdict of 5 July 1919 in the trial of the Committee of Union and Progress leaders, published in Takvîm-i Vekayi No. 3604, 22 July 1919
+  container: null
+  publisher: null
+  place: null
+  year: 1919
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: null
+  access:
+    free_copy: null
+    verified_at: null
+    verified_by: null
+    verified_title: null
+  language: ota
+  region_of_authorship: middle-east
+  producer: ottoman-court-martial
+  position: null
+  rights: public
+- id: src-tehlirian-1921
+  tier: A
+  kind: testimony
+  author: Landgericht Berlin III
+  title: 'Der Prozeß Talaat Pascha: stenographischer Bericht (Berlin, 2 and 3 June 1921)'
+  container: null
+  publisher: null
+  place: null
+  year: 1921
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: null
+  access:
+    free_copy: null
+    verified_at: null
+    verified_by: null
+    verified_title: null
+  language: de
+  region_of_authorship: europe
+  producer: german-court
+  position: null
+  rights: public
+- id: src-gust-19150617-en
+  tier: B
+  kind: edition
+  author: Wolfgang Gust and Sigrid Gust (eds.), translated by Linda Struck (translation sponsored by the Zoryan Institute)
+  title: From the Ambassador in Constantinople (Wangenheim) to the Reichskanzler (Bethmann Hollweg), Report No. 372, 17 June 1915 (English translation)
+  container: 'The Armenian Genocide during the First World War: Documents from State Archives (www.armenocide.net), edition Genocide 1915/16'
+  publisher: www.armenocide.net
+  place: null
+  year: 2012
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-06-17-DE-003
+  access:
+    free_copy: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-06-17-DE-003
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 1915-06-17-DE-003
+  language: en
+  region_of_authorship: europe
+  producer: scholarship
+  position: null
+  rights: null
+  notes: a published translation, cited as the translators' work (proposal 4f); held at most 150 words a passage
+- id: src-gust-19150707-en
+  tier: B
+  kind: edition
+  author: Wolfgang Gust and Sigrid Gust (eds.), translated by Linda Struck (translation sponsored by the Zoryan Institute)
+  title: From the Ambassador in Constantinople (Wangenheim) to the Reichskanzler (Bethmann Hollweg), Report No. 433, 7 July 1915 (English translation)
+  container: 'The Armenian Genocide during the First World War: Documents from State Archives (www.armenocide.net), edition Genocide 1915/16'
+  publisher: www.armenocide.net
+  place: null
+  year: 2012
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-07-07-DE-001
+  access:
+    free_copy: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-07-07-DE-001
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 1915-07-07-DE-001
+  language: en
+  region_of_authorship: europe
+  producer: scholarship
+  position: null
+  rights: null
+  notes: a published translation, cited as the translators' work (proposal 4f); held at most 150 words a passage
+- id: src-gust-19150716-en
+  tier: B
+  kind: edition
+  author: Wolfgang Gust and Sigrid Gust (eds.), translated by Linda Struck (translation sponsored by the Zoryan Institute)
+  title: From the Ambassador in Constantinople (Wangenheim) to the Reichskanzler (Bethmann Hollweg), Report No. 449, 16 July 1915, with Kuckhoff's report from Samsun (English translation)
+  container: 'The Armenian Genocide during the First World War: Documents from State Archives (www.armenocide.net), edition Genocide 1915/16'
+  publisher: www.armenocide.net
+  place: null
+  year: 2012
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-07-16-DE-003
+  access:
+    free_copy: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-07-16-DE-003
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 1915-07-16-DE-003
+  language: en
+  region_of_authorship: europe
+  producer: scholarship
+  position: null
+  rights: null
+  notes: a published translation, cited as the translators' work (proposal 4f); held at most 150 words a passage
+- id: src-gust-19150727-en
+  tier: B
+  kind: edition
+  author: Wolfgang Gust and Sigrid Gust (eds.), translated by Linda Struck (translation sponsored by the Zoryan Institute)
+  title: From the Consul in Aleppo (Roessler) to the Reichskanzler (Bethmann Hollweg), 27 July 1915 (English translation)
+  container: 'The Armenian Genocide during the First World War: Documents from State Archives (www.armenocide.net), edition Genocide 1915/16'
+  publisher: www.armenocide.net
+  place: null
+  year: 2012
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-07-27-DE-001
+  access:
+    free_copy: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-07-27-DE-001
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 1915-07-27-DE-001
+  language: en
+  region_of_authorship: europe
+  producer: scholarship
+  position: null
+  rights: null
+  notes: a published translation, cited as the translators' work (proposal 4f); held at most 150 words a passage
+- id: src-gust-19150805-en
+  tier: B
+  kind: edition
+  author: Wolfgang Gust and Sigrid Gust (eds.), translated by Vera Draack (translation sponsored by the Zoryan Institute)
+  title: From the Administrator in Erzurum (Scheubner-Richter) to the Ambassador on Extraordinary Mission in Constantinople (Hohenlohe-Langenburg), 5 August 1915 (English translation)
+  container: 'The Armenian Genocide during the First World War: Documents from State Archives (www.armenocide.net), edition Genocide 1915/16'
+  publisher: www.armenocide.net
+  place: null
+  year: 2012
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-08-05-DE-002
+  access:
+    free_copy: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-08-05-DE-002
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 1915-08-05-DE-002
+  language: en
+  region_of_authorship: europe
+  producer: scholarship
+  position: null
+  rights: null
+  notes: a published translation, cited as the translators' work (proposal 4f); held at most 150 words a passage
+- id: src-gust-19161204-en
+  tier: B
+  kind: edition
+  author: Wolfgang Gust and Sigrid Gust (eds.), translated by Vera Draack (translation sponsored by the Zoryan Institute)
+  title: Max Erwin von Scheubner-Richter to the Reichskanzler (Bethmann Hollweg), 4 December 1916 (English translation)
+  container: 'The Armenian Genocide during the First World War: Documents from State Archives (www.armenocide.net), edition Genocide 1915/16'
+  publisher: www.armenocide.net
+  place: null
+  year: 2012
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1916-12-04-DE-001
+  access:
+    free_copy: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1916-12-04-DE-001
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 1916-12-04-DE-001
+  language: en
+  region_of_authorship: europe
+  producer: scholarship
+  position: null
+  rights: null
+  notes: a published translation, cited as the translators' work (proposal 4f); held at most 150 words a passage
+- id: src-kevorkian-2013
+  tier: B
+  kind: journal-article
+  author: Raymond H. Kévorkian
+  title: 'Un bref tour d''horizon des recherches historiques sur le génocide des Arméniens : sources, méthodes, acquis et perspectives'
+  container: Études arméniennes contemporaines
+  publisher: Bibliothèque Nubar de l'UGAB
+  place: Paris
+  year: 2013
+  edition: null
+  volume: 1, 61-74
+  identifiers:
+    isbn: null
+    doi: 10.4000/eac.347
+    archive_org: null
+    hathitrust: null
+    url: https://journals.openedition.org/eac/347
+  access:
+    free_copy: https://journals.openedition.org/eac/347
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 'Un bref tour d’horizon des recherches historiques sur le génocide des Arméniens : sources, méthodes, acquis et perspectives'
+  language: fr
+  region_of_authorship: europe
+  producer: scholarship
+  position: genocide-scholarship
+  rights: null
+- id: src-kurt-2016
+  tier: B
+  kind: journal-article
+  author: Ümit Kurt
+  title: 'Cultural Erasure: The Absorption and Forced Conversion of Armenian Women and Children, 1915-1916'
+  container: Études arméniennes contemporaines
+  publisher: Bibliothèque Nubar de l'UGAB
+  place: Paris
+  year: 2016
+  edition: null
+  volume: '7'
+  identifiers:
+    isbn: null
+    doi: 10.4000/eac.997
+    archive_org: null
+    hathitrust: null
+    url: https://journals.openedition.org/eac/997
+  access:
+    free_copy: https://journals.openedition.org/eac/997
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 'Cultural Erasure: The Absorption and Forced Conversion of Armenian Women and Children, 1915-1916'
+  language: en
+  region_of_authorship: middle-east
+  producer: scholarship
+  position: genocide-scholarship
+  rights: null
+  notes: the author is a scholar from Turkey writing from Ottoman archival material
+- id: src-tatoyan-2020
+  tier: B
+  kind: journal-article
+  author: Robert Tatoyan
+  title: WWI Armenian Refugees Census Data as a Source for Ottoman Armenian Population Numbers on the Eve of the Armenian Genocide
+  container: International Journal of Armenian Genocide Studies
+  publisher: Armenian Genocide Museum-Institute Foundation
+  place: Yerevan
+  year: 2020
+  edition: null
+  volume: 5(1), 54-65
+  identifiers:
+    isbn: null
+    doi: 10.51442/ijags.0008
+    archive_org: null
+    hathitrust: null
+    url: https://agmipublications.am/index.php/ijags/article/download/26/24
+  access:
+    free_copy: https://agmipublications.am/index.php/ijags/article/download/26/24
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: WWI Armenian Refugees Census Data as a Source for Ottoman Armenian Population Numbers on the Eve of the Armenian Genocide
+  language: en
+  region_of_authorship: caucasus
+  producer: scholarship
+  position: armenian-account
+  rights: null
+- id: src-anumyan-2025
+  tier: B
+  kind: journal-article
+  author: Meline Anumyan
+  title: 'The Modern-Day Significance of the Young Turks'' Trials: 1919-1921'
+  container: Armenian Folia Anglistika
+  publisher: Yerevan State University
+  place: Yerevan
+  year: 2025
+  edition: null
+  volume: SI-1, 28-45
+  identifiers:
+    isbn: null
+    doi: 10.46991/AFA/2025.SI-1.28
+    archive_org: null
+    hathitrust: null
+    url: https://journals.ysu.am/arm-fol-angl/article/download/12906/pdf
+  access:
+    free_copy: https://journals.ysu.am/arm-fol-angl/article/download/12906/pdf
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 'THE MODERN-DAY SIGNIFICANCE OF THE YOUNG TURKS’ TRIALS: 1919-1921'
+  language: en
+  region_of_authorship: caucasus
+  producer: scholarship
+  position: armenian-account
+  rights: null
+- id: src-genc-2020
+  tier: B
+  kind: journal-article
+  author: Sabit Genç
+  title: 'Ermeni Tehcirinin Nüfus ve Ekonomi Üzerindeki Etkileri: Merzifon Örneği'
+  container: Journal of Universal History Studies
+  publisher: DergiPark
+  place: Amasya
+  year: 2020
+  edition: null
+  volume: 3(2), 293-317
+  identifiers:
+    isbn: null
+    doi: 10.38000/juhis.773850
+    archive_org: null
+    hathitrust: null
+    url: https://dergipark.org.tr/tr/download/article-file/1216061
+  access:
+    free_copy: https://dergipark.org.tr/tr/download/article-file/1216061
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 'Ermeni Tehcirinin Nüfus ve Ekonomi Üzerindeki Etkileri: Merzifon Örneği'
+  language: tr
+  region_of_authorship: middle-east
+  producer: scholarship
+  position: ottoman-turkish-state
+  rights: null
+  notes: Turkish archival scholarship that carries the state's reading of the deportation as an internal-security measure; cited for that position
+- id: src-masseret-2001
+  tier: B
+  kind: journal-article
+  author: Olivier Masseret
+  title: 'La reconnaissance du génocide arménien de 1915 par le Parlement français : brève histoire politico-diplomatique d''une loi atypique'
+  container: CEMOTI, Cahiers d'études sur la Méditerranée orientale et le monde turco-iranien
+  publisher: Persée
+  place: Paris
+  year: 2001
+  edition: null
+  volume: 31, 113-140
+  identifiers:
+    isbn: null
+    doi: 10.3406/cemot.2001.1574
+    archive_org: null
+    hathitrust: null
+    url: https://www.persee.fr/doc/cemot_0764-9878_2001_num_31_1_1574
+  access:
+    free_copy: https://www.persee.fr/doc/cemot_0764-9878_2001_num_31_1_1574
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: La reconnaissance du génocide arménien de 1915 par le Parlement français Brève histoire politico-diplomatique d'une loi atypique
+  language: fr
+  region_of_authorship: europe
+  producer: scholarship
+  position: law-and-recognition
+  rights: null
+  notes: only the first page is served free; the PDF answered an altcha wall
+- id: src-wevelsiep-2015
+  tier: B
+  kind: journal-article
+  author: Christian Wevelsiep
+  title: Umstrittene Geschichte. Der Völkermord an den Armeniern im Spannungsfeld der Erinnerungspolitik
+  container: theologie.geschichte
+  publisher: Universität des Saarlandes
+  place: Saarbrücken
+  year: 2015
+  edition: null
+  volume: '10'
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://theologie-geschichte.de/ojs2/index.php/tg/article/download/746/791
+  access:
+    free_copy: https://theologie-geschichte.de/ojs2/index.php/tg/article/download/746/791
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: Umstrittene Geschichte. Der Völkermord an den Armeniern im Spannungsfeld der Erinnerungspolitik
+  language: de
+  region_of_authorship: europe
+  producer: scholarship
+  position: genocide-scholarship
+  rights: null
+  notes: the journal's open peer-review preprint, as the galley says
+- id: src-suny-2015
+  tier: B
+  kind: monograph
+  author: Ronald Grigor Suny
+  title: '"They Can Live in the Desert but Nowhere Else": A History of the Armenian Genocide'
+  container: null
+  publisher: null
+  place: null
+  year: 2015
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: 10.1515/9781400865581
+    archive_org: null
+    hathitrust: null
+    url: https://doi.org/10.1515/9781400865581
+  access:
+    free_copy: null
+    verified_at: '2026-09-25'
+    verified_by: crossref-title-match
+    verified_title: '"They Can Live in the Desert but Nowhere Else": A History of the Armenian Genocide'
+  language: en
+  region_of_authorship: americas
+  producer: scholarship
+  position: genocide-scholarship
+  rights: null
+- id: src-akcam-2012
+  tier: B
+  kind: monograph
+  author: Taner Akçam
+  title: 'The Young Turks'' Crime against Humanity: The Armenian Genocide and Ethnic Cleansing in the Ottoman Empire'
+  container: null
+  publisher: null
+  place: null
+  year: 2012
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: 10.23943/princeton/9780691153339.001.0001
+    archive_org: null
+    hathitrust: null
+    url: https://doi.org/10.23943/princeton/9780691153339.001.0001
+  access:
+    free_copy: null
+    verified_at: '2026-09-25'
+    verified_by: crossref-title-match
+    verified_title: The Young Turks' Crime against Humanity
+  language: en
+  region_of_authorship: americas
+  producer: scholarship
+  position: genocide-scholarship
+  rights: null
+- id: src-akcam-2018
+  tier: B
+  kind: monograph
+  author: Taner Akçam
+  title: 'Killing Orders: Talat Pasha''s Telegrams and the Armenian Genocide'
+  container: null
+  publisher: null
+  place: null
+  year: 2018
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: 10.1007/978-3-319-69787-1
+    archive_org: null
+    hathitrust: null
+    url: https://doi.org/10.1007/978-3-319-69787-1
+  access:
+    free_copy: null
+    verified_at: '2026-09-25'
+    verified_by: crossref-title-match
+    verified_title: Killing Orders
+  language: en
+  region_of_authorship: americas
+  producer: scholarship
+  position: genocide-scholarship
+  rights: null
+- id: src-bloxham-2005
+  tier: B
+  kind: monograph
+  author: Donald Bloxham
+  title: 'The Great Game of Genocide: Imperialism, Nationalism, and the Destruction of the Ottoman Armenians'
+  container: null
+  publisher: null
+  place: null
+  year: 2005
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: 10.1093/acprof:oso/9780199273560.001.0001
+    archive_org: null
+    hathitrust: null
+    url: https://doi.org/10.1093/acprof:oso/9780199273560.001.0001
+  access:
+    free_copy: null
+    verified_at: '2026-09-25'
+    verified_by: crossref-title-match
+    verified_title: The Great Game of Genocide
+  language: en
+  region_of_authorship: europe
+  producer: scholarship
+  position: genocide-scholarship
+  rights: null
+- id: src-dundar-2010
+  tier: B
+  kind: monograph
+  author: Fuat Dündar
+  title: 'Crime of Numbers: The Role of Statistics in the Armenian Question (1878-1918)'
+  container: null
+  publisher: null
+  place: null
+  year: 2010
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: 10.4324/9780203794395
+    archive_org: null
+    hathitrust: null
+    url: https://doi.org/10.4324/9780203794395
+  access:
+    free_copy: null
+    verified_at: '2026-09-25'
+    verified_by: crossref-title-match
+    verified_title: Crime of Numbers
+  language: en
+  region_of_authorship: middle-east
+  producer: scholarship
+  position: genocide-scholarship
+  rights: null
+- id: src-gocek-2014
+  tier: B
+  kind: monograph
+  author: Fatma Müge Göçek
+  title: 'Denial of Violence: Ottoman Past, Turkish Present, and Collective Violence against the Armenians, 1789-2009'
+  container: null
+  publisher: null
+  place: null
+  year: 2014
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: 10.1093/acprof:oso/9780199334209.001.0001
+    archive_org: null
+    hathitrust: null
+    url: https://doi.org/10.1093/acprof:oso/9780199334209.001.0001
+  access:
+    free_copy: null
+    verified_at: '2026-09-25'
+    verified_by: crossref-title-match
+    verified_title: Denial of Violence
+  language: en
+  region_of_authorship: americas
+  producer: scholarship
+  position: genocide-scholarship
+  rights: null
+- id: src-kieser-2018
+  tier: B
+  kind: monograph
+  author: Hans-Lukas Kieser
+  title: 'Talaat Pasha: Father of Modern Turkey, Architect of Genocide'
+  container: null
+  publisher: null
+  place: null
+  year: 2018
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: 10.23943/9781400889631
+    archive_org: null
+    hathitrust: null
+    url: https://doi.org/10.23943/9781400889631
+  access:
+    free_copy: null
+    verified_at: '2026-09-25'
+    verified_by: crossref-title-match
+    verified_title: Talaat Pasha
+  language: en
+  region_of_authorship: europe
+  producer: scholarship
+  position: genocide-scholarship
+  rights: null
+- id: src-dadrian-akcam-2011
+  tier: B
+  kind: monograph
+  author: Vahakn N. Dadrian and Taner Akçam
+  title: 'Judgment at Istanbul: The Armenian Genocide Trials'
+  container: null
+  publisher: null
+  place: null
+  year: 2011
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: 10.2307/j.ctt9qd55m
+    archive_org: null
+    hathitrust: null
+    url: https://doi.org/10.2307/j.ctt9qd55m
+  access:
+    free_copy: null
+    verified_at: '2026-09-25'
+    verified_by: crossref-title-match
+    verified_title: Judgment At Istanbul
+  language: en
+  region_of_authorship: americas
+  producer: scholarship
+  position: genocide-scholarship
+  rights: null
+- id: src-lewy-2005
+  tier: B
+  kind: monograph
+  author: Guenter Lewy
+  title: 'The Armenian Massacres in Ottoman Turkey: A Disputed Genocide'
+  container: null
+  publisher: null
+  place: null
+  year: 2005
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: 10.1353/book41440
+    archive_org: null
+    hathitrust: null
+    url: https://doi.org/10.1353/book41440
+  access:
+    free_copy: null
+    verified_at: '2026-09-25'
+    verified_by: crossref-title-match
+    verified_title: 'The Armenian Massacres in Ottoman Turkey: A Disputed Genocide'
+  language: en
+  region_of_authorship: americas
+  producer: scholarship
+  position: ottoman-turkish-state
+  rights: null
+- id: src-mccarthy-2006
+  tier: B
+  kind: monograph
+  author: Justin McCarthy, Esat Arslan, Cemalettin Taşkıran and Ömer Turan
+  title: The Armenian Rebellion at Van
+  container: null
+  publisher: null
+  place: null
+  year: 2006
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: 10.1353/book41441
+    archive_org: null
+    hathitrust: null
+    url: https://doi.org/10.1353/book41441
+  access:
+    free_copy: null
+    verified_at: '2026-09-25'
+    verified_by: crossref-title-match
+    verified_title: The Armenian Rebellion at Van
+  language: en
+  region_of_authorship: americas
+  producer: scholarship
+  position: ottoman-turkish-state
+  rights: null
+- id: src-dixon-2018
+  tier: B
+  kind: monograph
+  author: Jennifer M. Dixon
+  title: 'Dark Pasts: Changing the State''s Story in Turkey and Japan'
+  container: null
+  publisher: null
+  place: null
+  year: 2018
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: 10.7591/cornell/9781501730245.001.0001
+    archive_org: null
+    hathitrust: null
+    url: https://doi.org/10.7591/cornell/9781501730245.001.0001
+  access:
+    free_copy: null
+    verified_at: '2026-09-25'
+    verified_by: crossref-title-match
+    verified_title: Dark Pasts
+  language: en
+  region_of_authorship: americas
+  producer: scholarship
+  position: law-and-recognition
+  rights: null
+- id: src-lemkin-1944
+  tier: B
+  kind: monograph
+  author: Raphael Lemkin
+  title: 'Axis Rule in Occupied Europe: Laws of Occupation, Analysis of Government, Proposals for Redress'
+  container: null
+  publisher: Carnegie Endowment for International Peace
+  place: Washington
+  year: 1944
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: AxisRuleInOccupiedEuropeRaphaelLemkin
+    hathitrust: null
+    url: https://archive.org/details/AxisRuleInOccupiedEuropeRaphaelLemkin
+  access:
+    free_copy: null
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: Axis Rule In Occupied Europe Raphael Lemkin
+  language: en
+  region_of_authorship: americas
+  producer: scholarship
+  position: law-and-recognition
+  rights: null
+- id: src-mfa-tr
+  tier: D
+  kind: state-history
+  author: Republic of Türkiye, Ministry of Foreign Affairs
+  title: 'The Events of 1915 and the Turkish-Armenian Controversy over History: An Overview'
+  container: null
+  publisher: Ministry of Foreign Affairs
+  place: Ankara
+  year: undated
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.mfa.gov.tr/the-events-of-1915-and-the-turkish-armenian-controversy-over-history_-an-overview.en.mfa
+  access:
+    free_copy: https://www.mfa.gov.tr/the-events-of-1915-and-the-turkish-armenian-controversy-over-history_-an-overview.en.mfa
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 'The Events of 1915 and the Turkish-Armenian Controversy over History: An Overview'
+  language: en
+  region_of_authorship: middle-east
+  producer: turkish-state
+  position: ottoman-turkish-state
+  rights: null
+  notes: the state's position in its own words, undated on the page; held at most 150 words a passage
+- id: src-rustem-1918
+  tier: D
+  kind: advocacy
+  author: Ahmed Rüstem Bey, formerly Ottoman Ambassador at Washington
+  title: La guerre mondiale et la question turco-arménienne
+  container: null
+  publisher: Imprimerie Staempfli
+  place: Berne
+  year: 1918
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: laguerremondiale00ahmeuoft
+    hathitrust: null
+    url: https://archive.org/download/laguerremondiale00ahmeuoft/laguerremondiale00ahmeuoft_djvu.txt
+  access:
+    free_copy: https://archive.org/download/laguerremondiale00ahmeuoft/laguerremondiale00ahmeuoft_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: La guerre mondiale et la question turcoarménienne
+  language: fr
+  region_of_authorship: middle-east
+  producer: ottoman-official
+  position: ottoman-turkish-state
+  rights: public
+- id: src-morgenthau-1918
+  tier: D
+  kind: memoir
+  author: Henry Morgenthau
+  title: Ambassador Morgenthau's Story
+  container: null
+  publisher: Doubleday, Page
+  place: Garden City, N.Y.
+  year: 1918
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: ambassadormorgen00morguoft
+    hathitrust: null
+    url: https://archive.org/download/ambassadormorgen00morguoft/ambassadormorgen00morguoft_djvu.txt
+  access:
+    free_copy: https://archive.org/download/ambassadormorgen00morguoft/ambassadormorgen00morguoft_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: Ambassador Morgenthau's story
+  language: en
+  region_of_authorship: americas
+  producer: morgenthau
+  position: international-witness
+  rights: public
+  notes: read in the 1919 printing, whose text layer is cleaner at the pages cited; a memoir written after the fact with a collaborator; the ambassador's telegrams of 1915 are the Tier A record, the memoir a position's own words
+- id: src-mardiganian-1918
+  tier: D
+  kind: memoir
+  author: Aurora Mardiganian, as told to H. L. Gates
+  title: 'Ravished Armenia: The Story of Aurora Mardiganian, the Christian Girl, Who Lived Through the Great Massacres'
+  container: null
+  publisher: Kingfield Press
+  place: New York
+  year: 1918
+  edition: null
+  volume: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: ravishedarmenias00mard
+    hathitrust: null
+    url: https://archive.org/download/ravishedarmenias00mard/ravishedarmenias00mard_djvu.txt
+  access:
+    free_copy: https://archive.org/download/ravishedarmenias00mard/ravishedarmenias00mard_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: Ravished Armenia; the story of Aurora Mardiganian, the Christian girl, who lived through the great massacres
+  language: en
+  region_of_authorship: americas
+  producer: survivor-memoir
+  position: armenian-account
+  rights: public
+  notes: a survivor's account written up by an American journalist for an American readership
+gaps:
+- entry: src-un-whitaker-1985
+  what: The Whitaker report of 1985, paragraph 24 of which names the Armenian case
+  tried:
+  - https://documents.un.org/doc/undoc/gen/g85/123/45/pdf/g8512345.pdf
+  - https://digitallibrary.un.org/record/108352/files/E_CN.4_Sub.2_1985_6-EN.pdf
+  status: ODS served the PDF as a scan with no text layer and no OCR tool is available in this container; the Digital Library answered an empty 202; the report is named here and not quoted
+- entry: src-echr-perincek-2015
+  what: The Grand Chamber judgment in Perinçek v. Switzerland, which describes both governments' submissions on the events of 1915
+  tried:
+  - https://hudoc.echr.coe.int/eng?i=001-158235
+  - https://hudoc.echr.coe.int/app/conversion/pdf/?library=ECHR&id=001-158235
+  - https://hudoc.echr.coe.int/app/conversion/docx/html/body?library=ECHR&id=001-158235
+  - https://www.echr.coe.int/documents/d/echr/Perincek_v_Switzerland_judgment_2015
+  status: every HUDOC and echr.coe.int path answered a Cloudflare challenge page (HTTP 403)
+- entry: src-fr-law-2001
+  what: The French law of 29 January 2001
+  tried:
+  - https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000403928
+  status: Légifrance answered a Cloudflare challenge page (HTTP 403); the law's adoption is known here from Masseret's article, whose first page Persée serves free
+- entry: src-takvim-1919
+  what: The court-martial verdict of 5 July 1919 as gazetted
+  tried:
+  - https://archive.org/advancedsearch.php?q=%28takvim+vekayi%29
+  status: no open copy of Takvîm-i Vekayi No. 3604 found; Dadrian and Akçam's edition is paywalled; the verdict is known here as Anumyan summarises it from the gazette
+- entry: src-tehlirian-1921
+  what: The stenographic record of the Tehlirian trial
+  tried:
+  - https://archive.org/advancedsearch.php?q=talaat+pascha+prozess
+  - https://archive.org/advancedsearch.php?q=%28tehlirian%29+AND+mediatype%3Atexts
+  status: the only Internet Archive item under the title is a 2001 radio play; no open scan of the 1921 printing found
+- entry: src-suny-2015
+  what: Suny's history of the genocide
+  tried:
+  - https://doi.org/10.1515/9781400865581
+  status: the publisher answered an empty HTTP 202 bot check
+- entry: src-akcam-2012
+  what: Akçam's study from Ottoman documents
+  tried:
+  - https://doi.org/10.23943/princeton/9780691153339.001.0001
+  status: the DOI resolves to a Crossref chooser page; no open chapter found
+- entry: src-akcam-2018
+  what: Akçam on the authenticity of Talat's telegrams
+  tried:
+  - https://doi.org/10.1007/978-3-319-69787-1
+  status: paywalled at Springer
+- entry: src-bloxham-2005
+  what: Bloxham's structural reading
+  tried:
+  - https://doi.org/10.1093/acprof:oso/9780199273560.001.0001
+  status: Oxford Academic answered a Cloudflare challenge page (HTTP 403)
+- entry: src-dundar-2010
+  what: Dündar on the Ottoman statistics
+  tried:
+  - https://doi.org/10.4324/9780203794395
+  status: Taylor and Francis answered a Cloudflare challenge page (HTTP 403)
+- entry: src-gocek-2014
+  what: Göçek on denial
+  tried:
+  - https://doi.org/10.1093/acprof:oso/9780199334209.001.0001
+  status: Oxford Academic answered a Cloudflare challenge page (HTTP 403)
+- entry: src-kieser-2018
+  what: Kieser's biography of Talat
+  tried:
+  - https://doi.org/10.23943/9781400889631
+  status: the DOI resolves to a Crossref chooser page; no open chapter found
+- entry: src-dadrian-akcam-2011
+  what: The court-martial documents in translation
+  tried:
+  - https://doi.org/10.2307/j.ctt9qd55m
+  status: the DOI resolves to a Crossref chooser page; JSTOR is paywalled
+- entry: src-lewy-2005
+  what: Lewy's case for a disputed genocide
+  tried:
+  - https://doi.org/10.1353/book41440
+  status: Project MUSE serves the catalogue page only; no open chapter
+- entry: src-mccarthy-2006
+  what: McCarthy and his co-authors on Van
+  tried:
+  - https://doi.org/10.1353/book41441
+  status: Project MUSE serves the catalogue page only; no open chapter
+- entry: src-dixon-2018
+  what: Dixon on the Turkish state's changing story
+  tried:
+  - https://doi.org/10.7591/cornell/9781501730245.001.0001
+  status: the DOI resolves to a Crossref chooser page; no open chapter found
+- entry: src-lemkin-1944
+  what: Lemkin's page 79, where the word was coined
+  tried:
+  - https://archive.org/download/AxisRuleInOccupiedEuropeRaphaelLemkin/Axis_rule_in_occupied_Europe_Raphael_Lemkin_djvu.txt
+  - https://archive.org/download/axisruleinoccupi0000raph/axisruleinoccupi0000raph_djvu.txt
+  status: both Internet Archive copies are lending-only and answered HTTP 401 and 403 to the text
+- what: The Ottoman archives (Başbakanlık Osmanlı Arşivi), in particular the Interior Ministry's ciphered telegrams and the state's own published selection Osmanlı Belgelerinde Ermeniler (1915-1920)
+  tried:
+  - https://www.devletarsivleri.gov.tr/
+  - https://www.devletarsivleri.gov.tr/Sayfalar/Yayinlar/Yayinlar.aspx
+  status: the archive's pages answered but no free copy of the publication was found on them; the Turkish state's case here rests on its 1916 pamphlet, the interior minister's 1917 tally in an English edition and the foreign ministry's page
+- what: The American consul at Aleppo's dispatches of 1915 (Jesse B. Jackson) and the ambassador's dispatch of 16 July 1915 as printed in a scholarly edition
+  tried:
+  - https://history.state.gov/historicaldocuments/frus1915Supp/ch31
+  status: FRUS prints seven of the embassy's telegrams and none of the Aleppo consul's; the 16 July telegram was read only in the facsimile the Armenian National Institute serves
+- what: The Turkish Historical Society's journal Belleten and DergiPark's search
+  tried:
+  - https://belleten.gov.tr/
+  - https://dergipark.org.tr/tr/search?q=Ermeni+tehciri+1915&section=articles
+  status: Belleten's host did not answer; DergiPark's search demands a human-verification page, so Turkish articles were reached through the DOAJ index and DergiPark's direct file links
+- what: The Near East Relief record of 1930 (The Story of Near East Relief), the source of the orphans photograph
+  tried:
+  - https://babel.hathitrust.org/cgi/pt?id=uc1.b3939683
+  status: HathiTrust answered HTTP 403 from this container
+- what: The official English text of Armenia's declaration of independence
+  tried:
+  - https://www.gov.am/en/independence/
+  status: answered a Radware bot-manager captcha; the Armenian text on the same site was served and is held with a Void rendering
+positions:
+- id: ottoman-turkish-state
+  name: The Ottoman government's case and the Turkish state's
+  holders:
+  - The Imperial Ottoman Government (1916)
+  - Ahmed Rüstem Bey (1918)
+  - Ministry of Foreign Affairs of Türkiye
+  - Genç (2020)
+  - Lewy (2005)
+  - McCarthy and others (2006)
+  rests_on:
+  - src-verite-1916
+  - src-rustem-1918
+  - src-mfa-tr
+  - src-genc-2020
+  - src-lewy-2005
+  - src-mccarthy-2006
+  described_by:
+  - src-ep-1987.p119
+  claim: The Armenians of the war zone were relocated as a security measure after risings and collaboration with the Russian army; deaths came from wartime conditions, banditry and local revenge, not from a premeditated plan; more Turks died in the same years; and the word genocide is legally unfounded for it.
+  omits: The provinces far from any front that the measures reached, which its ally's ambassador and the neutral ambassador both recorded, and any count of its own of the Armenians who died, which the ministry's 1917 tally does not give.
+  adjudications:
+  - claim: The relocation was ordered for the Armenian population residing in or near the war zone, away from the supply routes of the army.
+    verdict: contradicted
+    basis: presence
+    rests_on:
+    - src-de-19150707.para2
+    - src-gust-19150707-en.para2
+    - src-frus-d1400.whole
+    - src-frus-d1406.whole
+    - src-de-19150716.para13
+    - src-mfa-tr.para6
+    reasoning: The German ambassador reported on 7 July 1915 that the Porte had extended the measure to Trebizond, Mamuret-ul-Aziz and Sivas although those provinces were threatened by no enemy invasion; the American ambassador reported on 10 July that the deportations were directed from Constantinople often in districts where no military operations were likely, and on 11 August that Ada Bazar, Izmid and Bardizag, some 50 miles from the capital, were being cleared; the consul at Samsun on the Black Sea reported the expulsion of every Armenian there. Two producers, the Ottoman Empire's ally and a neutral, record the same extension. The foreign ministry's own page concedes that some Armenians living away from the front were included, and this record holds the extension as the rule of the summer of 1915, not an exception.
+  - claim: No authentic evidence exists to support the claim that there was a premeditated plan by the Ottoman Government to kill off Armenians.
+    verdict: qualified
+    basis: presence
+    rests_on:
+    - src-de-19150617.para4
+    - src-gust-19150617-en.para4
+    - src-de-19150707.para3
+    - src-frus-d1400.whole
+    - src-mfa-tr.para7
+    reasoning: The free record holds no Ottoman order to kill and no Ottoman archival file; the Ottoman archives, the interior ministry's ciphered telegrams and the 1919 court-martial verdict could not be read free, and that gap is stated in the record. What it holds is the German ambassador's report of the interior minister's own words to an embassy official, that the Porte meant to use the war to make a clean sweep of its internal enemies, and the two ambassadors' independent readings of measures directed from the capital with the eradication of the Armenians as their purpose. That is evidence of intent recorded by the ally and by a neutral, not the plan itself; the position's word authentic goes to documents this record does not hold, so the verdict stops at qualified.
+  - claim: Greater numbers of Turks died or were killed in the years leading to and during the War.
+    verdict: untestable
+    basis: absence
+    rests_on:
+    - src-mfa-tr.para4
+    would_settle: the Ottoman and Turkish demographic literature, of which McCarthy's work is paywalled, and the Ottoman archives
+    gap: no document in the free record counts the Muslim dead of the eastern provinces
+    reasoning: No document in the free record counts the Muslim dead of the war. The German consul at Samsun and the Ottoman pamphlet both record Muslims killed at Van and Şebinkarahisar, so the claim's premise is not empty, but its comparison of two counts cannot be tested against artifacts that count neither.
+- id: armenian-account
+  name: The survivors, the Republic and Armenian scholarship
+  holders:
+  - The deported woman of the Moush district (1915)
+  - Aurora Mardiganian (1918)
+  - The Republic of Armenia (1990)
+  - Tatoyan (2020)
+  - Anumyan (2025)
+  rests_on:
+  - src-mardiganian-1918
+  - src-armenia-decl-1990
+  - src-tatoyan-2020
+  - src-anumyan-2025
+  described_by:
+  - src-ep-1987.p119
+  claim: 'The deportation was the means of killing: the columns were robbed, raped and cut down on the road by design, the state''s own figures for the Armenian population were kept low on purpose, and the Ottoman court-martial of 1919 itself sentenced the leaders to death for it; the events are the genocide the Republic seeks recognised.'
+  omits: The Armenian volunteer units on the Russian side and the risings at Van and elsewhere, which the German consular record and the Ottoman pamphlet both describe and which the survivors' accounts do not weigh.
+  adjudications:
+  - claim: 'The deportation was a means of killing, not a relocation: the columns were attacked on the road and the destination could not sustain life.'
+    verdict: supported
+    basis: presence
+    rests_on:
+    - src-de-19150707.para6
+    - src-gust-19150707-en.para6
+    - src-frus-d1406.whole
+    - src-de-19150805.para5
+    - src-bryce-1916.p92
+    reasoning: The German ambassador wrote that the transport to a destination many hundreds of kilometres away, without means of transport, through country offering neither shelter nor food and infested with typhus, was bound to claim numerous victims, and that from Erzincan the deportees were left to run the gauntlet of Kurdish bands; the American ambassador wrote that those herded into the arid and hostile wastes of the interior would doubtless perish by murder or slow starvation; the German administrator at Erzurum counted between 10 and 20,000 killed on the road to Erzincan against the government's 3 to 4,000; and the deported woman's own narrative from Moush records the company of 8,000 to 10,000 diminished by half. Three producers, the ally, a neutral and the survivors as a British ministry printed them, carry the claim.
+  - claim: Some 100,000 to 200,000 Armenian women and girls were taken into Muslim households.
+    verdict: untestable
+    basis: absence
+    rests_on:
+    - src-kurt-2016.para1
+    - src-de-19150727.para5
+    would_settle: the Ottoman Interior Ministry's directives on conversion that Kurt cites, and Sarafian's edition of the American records
+    gap: no document in the free record counts the women and children absorbed into Muslim households
+    reasoning: The German consul at Aleppo recorded girls of 8 to 12 sold at Tel Abiad and women dragged off by Bedouins between Mardin and Ras-ul-Ain, and Kurt describes conversion and absorption as a bureaucratic process from Ottoman directives; no document held here counts them, so the figure stands as the diaspora's estimate and cannot be tested.
+  - claim: The Ottoman court-martial pronounced death sentences on Talât, Enver, Cemal and Nazım on 5 July 1919.
+    verdict: untestable
+    basis: absence
+    rests_on:
+    - src-anumyan-2025.p38
+    would_settle: Takvîm-i Vekayi No. 3604 of 22 July 1919, or the Dadrian and Akçam edition of the verdicts
+    gap: no open copy of the gazetted verdict was reached
+    reasoning: The verdict is known here only as an Armenian scholar summarises it from the gazette; the Treaty of Sèvres, which this record holds, obliges Turkey to hand over those responsible for the massacres to an Allied tribunal but does not recite the Ottoman sentences, so nothing in the Tier A record can test the claim.
+- id: international-witness
+  name: 'The witnesses: the neutral ambassador, the British compilers and the German pastor'
+  holders:
+  - Henry Morgenthau (1918)
+  - Toynbee and Bryce (1916)
+  - Lepsius (1919)
+  rests_on:
+  - src-morgenthau-1918
+  - src-bryce-1916
+  - src-lepsius-1919
+  described_by:
+  - src-bundestag-2016.p1
+  - src-kevorkian-2013.para2
+  claim: The deportation was a death warrant to a whole race, understood as such by the ministers who ordered it, carried out under a pretext of military necessity beyond any war zone, and known in Berlin and Washington while it ran; the numbers can be estimated only from neutral witnesses, and Toynbee put the dead at about a third of the Armenians in Turkey.
+  omits: The Armenian risings and the Muslim dead that the German consuls and the Ottoman government both recorded, which the memoir passes over and the British compilation treats as the government's pretext.
+  adjudications:
+  - claim: The Ottoman ministers made no particular attempt to conceal, in their conversations with the ambassador, that the deportation was the death warrant of a race.
+    verdict: qualified
+    basis: presence
+    rests_on:
+    - src-frus-d1399.whole
+    - src-frus-d1400.whole
+    - src-de-19150617.para4
+    - src-morgenthau-1918.p309
+    reasoning: 'The ambassador''s own telegrams of 1915 record the Grand Vizier resenting foreign interference and the ministers justifying the measures on the ground of military necessity, which is concealment rather than candour; the German record carries the interior minister''s blunt words to an embassy official, that the Porte would use the war to make a clean sweep of its internal enemies. The memoir''s claim is borne out by the German file and not by the ambassador''s own contemporaneous file, so the verdict is qualified: candour to the German embassy, pretext to the American.'
+  - claim: Germany, the Ottoman Empire's ally, protested and did not stop the deportations.
+    verdict: supported
+    basis: presence
+    rests_on:
+    - src-frus-d1416.whole
+    - src-frus-d1400.whole
+    - src-de-19150707.para10
+    - src-de-19161204.para22
+    - src-bundestag-2016.p1
+    reasoning: The German embassy's memoranda of 4 July and 9 August 1915 are in the American file, sent by the German ambassador in Washington; the German ambassador at Constantinople wrote that he handed the first to the Grand Vizier to answer later accusations of complicity; by December 1916 his own consul reported the Turkish Armenians as good as wiped out outside the large cities; and the Bundestag's resolution of 2016 states that the Reich did not try to stop it. Three producers, the German files, the American file and the German parliament, agree.
+- id: genocide-scholarship
+  name: Genocide scholarship
+  holders:
+  - Kévorkian (2013)
+  - Kurt (2016)
+  - Wevelsiep (2015)
+  - Suny (2015)
+  - Akçam (2012, 2018)
+  - Bloxham (2005)
+  - Dündar (2010)
+  - Göçek (2014)
+  - Kieser (2018)
+  rests_on:
+  - src-kevorkian-2013
+  - src-kurt-2016
+  - src-wevelsiep-2015
+  - src-suny-2015
+  - src-akcam-2012
+  - src-akcam-2018
+  - src-bloxham-2005
+  - src-dundar-2010
+  - src-gocek-2014
+  - src-kieser-2018
+  - src-dadrian-akcam-2011
+  claim: Mass murder, deportation and forced assimilation were three faces of one process of destruction organised by the Young Turk regime, documented from the German, American and Ottoman archives; the estimates of the dead run from 800,000 to 1,500,000; the open question is timing and mechanism, a pre-war design against a wartime radicalisation.
+  omits: The books that carry the argument in full, none of which could be read free, so the position is held here through three open articles and a German preprint, with the monographs listed and unpinned.
+  adjudications:
+  - claim: Mass murder, deportation and forced assimilation were three faces of the same process of destruction.
+    verdict: supported
+    basis: presence
+    rests_on:
+    - src-de-19161204.para22
+    - src-gust-19161204-en.para22
+    - src-frus-d1410.whole
+    - src-de-19150716.para13
+    - src-de-19150805.para17
+    - src-bryce-1916.p650
+    reasoning: The consul at Samsun in July 1915 described the measures as nothing less than the destruction or forced Islamisation of a whole people; the administrator at Erzurum in August called the expulsion a campaign of revenge, destruction and robbery; the same man in December 1916 wrote that his fear that evacuation would be tantamount to annihilation had come true; the American ambassador in September 1915 telegraphed that the destruction of the Armenian race was progressing rapidly; and the British compilation's convoy figures show columns of 18,000 reduced to 150. Three producers carry the three faces the scholarship names.
+  - claim: The decision was a pre-war design of the Committee, or was reached in the spring of 1915 under the pressure of the war.
+    verdict: untestable
+    basis: absence
+    rests_on:
+    - src-kevorkian-2013.para3
+    - src-de-19161204.para26
+    would_settle: the fonds of the Interior Ministry's Second Bureau opened in 2005, which Kévorkian names, and the monographs of Akçam, Bloxham and Suny, all unreached
+    gap: no Ottoman central-committee record is in the free record
+    reasoning: The one contemporaneous statement of a programme held here is Scheubner-Richter's report of December 1916, that a large part of the Committee held the empire should rest on a purely Muslim basis and that the first item was the Armenians; it is one German officer's summary and undated as to when the programme was adopted, so it cannot settle timing, and the archival fonds that could is unreached.
+- id: law-and-recognition
+  name: The law and the parliaments
+  holders:
+  - United Nations General Assembly (1948)
+  - European Parliament (1987)
+  - Deutscher Bundestag (2016)
+  - President Biden (2021)
+  - Masseret (2001)
+  - Lemkin (1944)
+  - Dixon (2018)
+  rests_on:
+  - src-un-convention-1948
+  - src-ep-1987
+  - src-bundestag-2016
+  - src-biden-2021
+  - src-masseret-2001
+  - src-lemkin-1944
+  - src-dixon-2018
+  claim: The events of 1915 to 1917 are genocide within the meaning of the Convention of 1948, as the European Parliament, the Bundestag and the President of the United States have each stated, with the qualification the Parliament added, that no claim against present-day Turkey follows from the finding.
+  omits: That no court of competent jurisdiction has ruled on the characterisation, which the Convention reserves to tribunals; the one judgment that touched it, at Strasbourg in 2015, is behind a challenge wall and is not held.
+  adjudications:
+  - claim: The tragic events in 1915-1917 involving the Armenians living in the territory of the Ottoman Empire constitute genocide within the meaning of the Convention.
+    verdict: qualified
+    basis: presence
+    rests_on:
+    - src-un-convention-1948.art2
+    - src-de-19150707.para3
+    - src-frus-d1400.whole
+    - src-de-19150716.para13
+    - src-ep-1987.p120
+    reasoning: 'Article II names killing members of a group and deliberately inflicting conditions of life calculated to bring about its physical destruction, with intent to destroy the group as such; the German and American files of 1915 record measures whose purpose the ambassadors read as the eradication of the Armenian race and whose conditions they read as fatal by design. Two producers carry the acts and the purpose in the Convention''s own terms. What the record does not hold is a judgment: the Convention gives the characterisation to a competent tribunal, none has ruled on these events in the free record, and a parliament''s resolution is a political finding, which the Parliament''s own text calls recognition. Supported in substance by the artifacts, qualified because the claim is a legal one and the tribunal is absent.'
+  - claim: The French Parliament adopted, on 18 January 2001, the bill recognising the Armenian genocide of 1915.
+    verdict: untestable
+    basis: absence
+    rests_on:
+    - src-masseret-2001.p113
+    would_settle: Loi n° 2001-70 of 29 January 2001 on Légifrance
+    gap: Légifrance answered a challenge page, so the law's text is not held
+    reasoning: The adoption is stated in a French political scientist's article, whose first page Persée serves; the law itself could not be read, so the claim rests on scholarship and is untestable here.
+contested:
+- id: the-count-of-the-dead
+  claim: How many Armenians died
+  rows:
+  - position: international-witness
+    holds: About an equal number escaped, perished and survived deportation in 1915, each category in round numbers 600,000; the American Committee's bulletin of May 1916 computed the deaths at between 450,000 and 850,000 and called 600,000 safe.
+    figures:
+    - '600000'
+    - '450000'
+    - '850000'
+    source: src-bryce-1916
+    locator: p651
+  - position: law-and-recognition
+    holds: One and a half million Armenians were deported, massacred, or marched to their deaths, in the President's statement of 2021; over a million, in the Bundestag's resolution of 2016.
+    figures: []
+    source: src-biden-2021
+    locator: para1
+  - position: genocide-scholarship
+    holds: The estimates vary from 800,000 to 1.5 million killed.
+    figures:
+    - '800000'
+    source: src-wevelsiep-2015
+    locator: para2
+  - position: ottoman-turkish-state
+    holds: Hundreds of thousands of Ottoman Armenians still exist, so there was no extermination; whether 800,000 or 1,500,000 or 10,000,000 are massacred is all one as to the odium incurred (Rüstem, 1918). The foreign ministry gives no count and holds that greater numbers of Turks died.
+    figures: []
+    source: src-rustem-1918
+    locator: p88-89
+- id: the-population-before-1915
+  claim: How many Armenians lived in the Ottoman Empire before the deportations
+  rows:
+  - position: ottoman-turkish-state
+    holds: 1,187,818 Gregorian and 63,967 Catholic Armenians in the 1914 census, 1,256,403 together, which the interior minister's own report of 1917 says should be around 1,500,000 because the data were incomplete.
+    figures:
+    - '1256403'
+    - '1500000'
+    source: src-talat-1917
+    locator: p20
+  - position: armenian-account
+    holds: 2,026,700 by the Patriarchate's count of 1913 to 1914 against 1,294,851 in the Ottoman government's figures for 1914, about 1.57 times higher; the refugee censuses of 1915 to 1916 run about 70% above the Ottoman figures for the same districts.
+    figures:
+    - '2026700'
+    - '1294851'
+    source: src-tatoyan-2020
+    locator: p56
+  - position: international-witness
+    holds: The Patriarchate's 2,100,000 of 1912 against the Ottoman returns' 1,100,000; Toynbee took 1,600,000 provisionally, with the true figure between that and 2,000,000; the American Committee put the Armenians in January 1915 at between 1,600,000 and 2,000,000.
+    figures:
+    - '2100000'
+    - '1100000'
+    source: src-bryce-1916
+    locator: p648-649
+- id: the-word-genocide
+  claim: Whether the events are genocide
+  rows:
+  - position: ottoman-turkish-state
+    holds: It is factually problematic, morally unsound and legally unfounded to call this episode a genocide; parliaments should not take the place of courts.
+    figures: []
+    source: src-mfa-tr
+    locator: para7
+  - position: law-and-recognition
+    holds: The events constitute genocide within the meaning of the Convention of 9 December 1948, and present-day Turkey cannot be held responsible for them.
+    figures: []
+    source: src-ep-1987
+    locator: p120
+  - position: armenian-account
+    holds: The Republic stands in support of the international recognition of the 1915 genocide of the Armenians in Ottoman Turkey and Western Armenia.
+    figures: []
+    source: src-armenia-decl-1990
+    locator: item11
+  - position: genocide-scholarship
+    holds: Mass murder, deportation and forced assimilation were three faces of the same process of destruction organised by the Young Turk regime, in Lemkin's sense of the word.
+    figures: []
+    source: src-kurt-2016
+    locator: para1
+- id: why-the-deportation
+  claim: Why the Armenians were deported
+  rows:
+  - position: ottoman-turkish-state
+    holds: The commander of the Imperial Army, finding the Armenians making common cause with the enemy, was forced to order the transfer southward of the Armenian element in localities considered military zones, to secure the rear of his troops.
+    figures: []
+    source: src-verite-1916
+    locator: p11
+  - position: international-witness
+    holds: 'The banishment was not motivated by military considerations alone: the interior minister told an embassy official that the Porte meant to use the war to make a clean sweep of its internal enemies, the native Christians, undisturbed by foreign intervention.'
+    figures: []
+    source: src-de-19150617
+    locator: para4
+  - position: genocide-scholarship
+    holds: 'The Interior Ministry''s fonds opened in 2005 show a programme of demographic engineering: the administrative planning of the deportations and the will to transform the composition of Asia Minor, eradicating the groups in the way if need be.'
+    figures: []
+    source: src-kevorkian-2013
+    locator: para3
+exhibits:
+- id: ex-frus-1398
+  kind: document
+  title: The Allied declaration of 24 May 1915, as the American ambassador in Paris transmitted it
+  creator: William G. Sharp, American Ambassador in France
+  date: 28 May 1915
+  repository: Office of the Historian, United States Department of State (FRUS 1915 Supplement)
+  accession: File No. 867.4016/67, Document 1398
+  licence: US government work, public
+  url: https://history.state.gov/historicaldocuments/frus1915Supp/d1398
+  source: src-frus-d1398
+  locator: whole
+- id: ex-wangenheim-433
+  kind: document
+  title: The German ambassador's report No. 433 of 7 July 1915, second paragraph
+  creator: Hans von Wangenheim
+  date: 7 July 1915
+  repository: Politisches Archiv des Auswärtigen Amts, Berlin, in the online edition www.armenocide.net
+  accession: PA-AA R14086; edition document 1915-07-07-DE-001
+  licence: state record, transcription published by the edition
+  url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-07-07-DE-001
+  source: src-de-19150707
+  locator: para3
+- id: ex-talat-summary
+  kind: document
+  title: The opening summary page of the interior minister's report of 1917, the totals
+  creator: Talaat Pasha, Ottoman Ministry of the Interior; edited by Ara Sarafian
+  date: 1917 (edition 2011)
+  repository: Gomidas Institute, London
+  accession: Talaat Pasha's Report on the Armenian Genocide, p. 21
+  licence: copyrighted edition, quoted within the ledger's cap
+  url: https://www.gomidas.org/uploads/Talaat%20Pashas%20Report%20on%20the%20Armenian%20Genocide.pdf
+  source: src-talat-1917
+  locator: p21
+- id: ex-march-1915
+  kind: image
+  title: Armenian men led away under guard, captioned as Harput, May 1915
+  creator: Armin T. Wegner, as the file page attributes it
+  date: May 1915, as the caption dates it; the file was uploaded on 17 September 2013
+  repository: Wikimedia Commons, from the Center for Holocaust and Genocide Studies, University of Minnesota
+  accession: File:Armenians_marched_by_Ottoman_soldiers,_1915.png
+  licence: public domain (the file page cites Turkish copyright law, article 27)
+  url: https://commons.wikimedia.org/wiki/File:Armenians_marched_by_Turkish_soldiers,_1915.png
+  image: https://upload.wikimedia.org/wikipedia/commons/4/4e/Armenians_marched_by_Ottoman_soldiers%2C_1915.png
+  shows: a column of men walking between armed guards on open ground; the caption the uploading repository gave it names Harput and May 1915 and says the educated and influential of the city were selected to be massacred nearby
+  does_not_show: the place, the date or the photographer on the image itself; all three are the caption's, taken from a university web page the file page cites, and nothing in this ledger's documents confirms them
+- id: ex-orphans-1920
+  kind: image
+  title: Children waiting in the snow for admission to the Orphan City
+  creator: unknown photographer, Near East Relief
+  date: circa 1920, as the 1930 book dates it
+  repository: Wikimedia Commons, from The Story of Near East Relief (1930), p. 124
+  accession: File:Armenian_orphans.png
+  licence: public domain (published in the United States, copyright not renewed)
+  url: https://commons.wikimedia.org/wiki/File:Armenian_orphans.png
+  image: https://upload.wikimedia.org/wikipedia/commons/6/6f/Armenian_orphans.png
+  shows: children in a crowd in snow, captioned in the 1930 book as waiting daily for admission to the relief organisation's Orphan City
+  does_not_show: 1915 or the deportations; the place is not named on the file page and the book it comes from could not be read, because HathiTrust refused this container
+analyses:
+- id: an-prewar-counts
+  title: One people, 9 counts
+  method: Every figure the fetched documents give for the number of Armenians in the Ottoman Empire before the deportations, one row per figure, with the producer of the figure and the document it is read in. The result is the range of the column.
+  finding: The record holds 9 figures for the Armenians of the Ottoman Empire before 1915, from 1,100,000 to 2,100,000; the lowest is the Ottoman government's and the highest the Patriarchate's, both as a British compiler reported them in 1916, and the interior minister's own report of 1917 gives the census as 1,256,403 and says it should be around 1,500,000.
+  confidence: 'moderate: the range is the extreme of 9 stated figures from 4 documents, but the two extremes are figures of 1912 and of the government''s returns as Toynbee reports them, not read in the returns themselves, and the Ottoman census and the Patriarchate''s count are of different years'
+  against: Tatoyan's like-for-like comparison of the two official series gives 1,294,851 against 2,026,700, a ratio of 1.57, so the two extremes here overstate the gap between the parties; and the interior minister's own note says the census figure undercounts
+  result:
+  - 1100000
+  - 2100000
+  derivation:
+    compute: range
+    column: count
+    columns:
+    - producer
+    - figure_of
+    - count
+    rows:
+    - producer: Ottoman government, latest official returns as Toynbee reports them
+      figure_of: before the deportations
+      count: 1100000
+      extract: src-bryce-1916.p648-649
+    - producer: Ottoman Interior Ministry, the 1914 census as its report of 1917 states it
+      figure_of: '1914'
+      count: 1256403
+      extract: src-talat-1917.p20
+    - producer: Ottoman Interior Ministry, its own correction of that census
+      figure_of: '1914'
+      count: 1500000
+      extract: src-talat-1917.p20
+    - producer: Ottoman government figures of 1914 as Tatoyan tabulates them
+      figure_of: '1914'
+      count: 1294851
+      extract: src-tatoyan-2020.p56
+    - producer: Armenian Patriarchate of Constantinople, enquiry of 1912, as Toynbee reports it
+      figure_of: '1912'
+      count: 2100000
+      extract: src-bryce-1916.p648-649
+    - producer: Armenian Patriarchate, count of 1913 to 1914 as Tatoyan tabulates it
+      figure_of: 1913 to 1914
+      count: 2026700
+      extract: src-tatoyan-2020.p56
+    - producer: Toynbee, provisional figure
+      figure_of: before the deportations
+      count: 1600000
+      extract: src-bryce-1916.p648-649
+    - producer: American Committee for Armenian and Syrian Relief, low
+      figure_of: January 1915
+      count: 1600000
+      extract: src-bryce-1916.p664
+    - producer: American Committee for Armenian and Syrian Relief, high
+      figure_of: January 1915
+      count: 2000000
+      extract: src-bryce-1916.p664
+- id: an-ministry-ledger
+  title: The interior ministry's own ledger, 1914 against 1917
+  method: 'From the notes to the opening summary page of the interior minister''s report of 1917: the total the report gives for the 1914 census of Gregorian and Catholic Armenians, and the total it counts as present in 1917, natives and outsiders together. The result is the ratio, the 1917 count over the 1914 census.'
+  finding: 'On the interior minister''s own summary page, the Armenians counted in 1917 were 284,157 against a 1914 census total of 1,256,403: fewer than a quarter remained on the ministry''s own books.'
+  confidence: 'moderate: the arithmetic is on a pair of figures in one note of one document, but the document is read in an English edition and its figures are read from one note, the report''s own note calls the census incomplete and would raise the 1917 count by 30 percent, and the editor notes that provinces with Armenian populations are missing from the report'
+  against: the same note says the true 1914 figure should be around 1,500,000 and the 1917 count around 350,000 to 400,000, which gives a similar share but not this one; the report counts survivors present, not the dead, and deportees in Syria and Mesopotamia are counted where they were found
+  result: 0.2262
+  derivation:
+    compute: ratio
+    column: counted_1917
+    over: census_1914
+    columns:
+    - document
+    - counted_1917
+    - census_1914
+    rows:
+    - document: Talaat Pasha's report, notes to the opening summary page
+      counted_1917: 284157
+      census_1914: 1256403
+      extract: src-talat-1917.p20
+- id: an-words-for-the-aim
+  title: What the dispatches called it, June 1915 to December 1916
+  method: Every contemporaneous document this record holds from the war years, written by an official of a government other than the Ottoman, that names the destruction of the Armenians as a people as the aim or the result of the measures; one row per document, with the date, the producer and the word used. The result is the count.
+  finding: 'Of the wartime documents held here, 11 name the destruction of the Armenians as a people as the aim or the result of the measures: 6 from the German Foreign Office''s files (2 of them reporting the words of the interior minister and of the Armenian Patriarch), 4 telegrams of the American ambassador and his consul, and the British compiler''s preface of 1916.'
+  confidence: high for the count, which is of held documents and each row quotes the word; the corpus is what this ledger reached, not a sample of all dispatches, and the pair that report the words of others are the German embassy's record of them
+  against: the same German files carry the ambassador's approval of the deportation insofar as military considerations demanded it and the consul at Samsun's statement that a great Armenian conspiracy did exist; the Ottoman government's own pamphlet of 1916 calls the measure a transfer for the security of the army's rear, so the aim was contested at the time by the state that ordered it
+  result: 11
+  derivation:
+    compute: count
+    column: document
+    columns:
+    - date
+    - document
+    - producer
+    - word
+    rows:
+    - date: '1915-06-17'
+      document: Wangenheim reporting the interior minister's words to Mordtmann
+      producer: german-foreign-office
+      word: gründlich aufzuräumen
+      extract: src-de-19150617.para4
+    - date: '1915-06-17'
+      document: Wangenheim reporting the Armenian Patriarch
+      producer: german-foreign-office
+      word: Ausrottung
+      extract: src-de-19150617.para5
+    - date: '1915-07-04'
+      document: Kuckhoff, Samsun, enclosed by Wangenheim
+      producer: german-foreign-office
+      word: Vernichtung oder gewaltsame Islamisierung eines ganzen Volkes
+      extract: src-de-19150716.para13
+    - date: '1915-07-07'
+      document: Wangenheim, report No. 433
+      producer: german-foreign-office
+      word: die armenische Rasse im türkischen Reiche zu vernichten
+      extract: src-de-19150707.para3
+    - date: '1915-07-10'
+      document: Morgenthau, telegram 841, with Consul Davis of Harput
+      producer: us-government
+      word: systematic plan to crush the Armenian race
+      extract: src-frus-d1400.whole
+    - date: '1915-07-16'
+      document: Morgenthau, telegram 858
+      producer: us-government
+      word: campaign of race extermination
+      extract: src-morgenthau-19150716.whole
+    - date: '1915-08-05'
+      document: Scheubner-Richter, Erzurum, secret report No. 23
+      producer: german-foreign-office
+      word: Rache-, Vernichtungs- und Raubfeldzug; Ausrottungspolitik
+      extract: src-de-19150805.para17
+    - date: '1915-08-11'
+      document: Morgenthau, telegram 924
+      producer: us-government
+      word: attempt to exterminate a race
+      extract: src-frus-d1406.whole
+    - date: '1915-09-03'
+      document: Morgenthau, telegram 1005
+      producer: us-government
+      word: Destruction of Armenian race in Turkey is progressing rapidly
+      extract: src-frus-d1410.whole
+    - date: '1916-12-04'
+      document: Scheubner-Richter, Munich
+      producer: german-foreign-office
+      word: so gut wie ausgerottet
+      extract: src-de-19161204.para22
+    - date: '1916'
+      document: Bryce's preface to the British compilation
+      producer: uk-government
+      word: an effort to exterminate a whole nation
+      extract: src-bryce-1916.secpreface
+- id: an-two-ambassadors
+  title: Two ambassadors, 3 days apart
+  method: The German ambassador's report of 7 July 1915 and the American ambassador's telegram of 10 July 1915 set side by side on 7 points, one row per document per point, each row marked same where the two documents make the same reading and differs where they do not. The result is the share of rows marked same.
+  finding: 'On 6 of 7 points the ally''s ambassador and the neutral''s, writing 3 days apart, read the measures the same way: extended beyond any war zone, decided in the capital, aimed at the destruction of the Armenians, justified by the Porte on military grounds, provoked in part by Armenian risings, and answered by a German memorandum that both describe as made for the record against later charges of complicity; they part only on whether a military ground existed at all.'
+  confidence: 'moderate: the pairing of passages is the historian''s, another reader could pair them otherwise, and the German is read in the original with the edition''s translation beside it'
+  against: the two documents are not of one kind, a report to a chancellor and a telegram to a secretary of state; the German memorandum's own text in French is held only inside the German report and is not paired here; and the American ambassador's expectation that the German protest would be for the record is an inference about an ally he had not seen act
+  result: 0.8571
+  derivation:
+    compute: share
+    column: reading
+    of: same
+    columns:
+    - point
+    - document
+    - words
+    - reading
+    rows:
+    - point: scope beyond the war zone
+      document: Wangenheim, 7 July
+      words: obwohl diese Landesteile vorläufig von keiner feindlichen Invasion bedroht sind
+      reading: same
+      extract: src-de-19150707.para2
+    - point: scope beyond the war zone
+      document: Morgenthau, 10 July
+      words: often in districts where no military operations are likely to take place
+      reading: same
+      extract: src-frus-d1400.whole
+    - point: decided in the capital
+      document: Wangenheim, 7 July
+      words: hat die Pforte beschlossen
+      reading: same
+      extract: src-de-19150707.para2
+    - point: decided in the capital
+      document: Morgenthau, 10 July
+      words: purely arbitrary and directed from Constantinople
+      reading: same
+      extract: src-frus-d1400.whole
+    - point: the aim
+      document: Wangenheim, 7 July
+      words: die armenische Rasse im türkischen Reiche zu vernichten
+      reading: same
+      extract: src-de-19150707.para3
+    - point: the aim
+      document: Morgenthau, 10 July
+      words: systematic attempt to uproot peaceful Armenian populations
+      reading: same
+      extract: src-frus-d1400.whole
+    - point: the Porte's stated ground
+      document: Wangenheim, 7 July
+      words: durch militärische Rücksichten geboten
+      reading: same
+      extract: src-de-19150707.para10
+    - point: the Porte's stated ground
+      document: Morgenthau, 10 July
+      words: in the name of military necessity
+      reading: same
+      extract: src-frus-d1400.whole
+    - point: Armenian risings as part of the cause
+      document: Wangenheim, 7 July
+      words: zur Sicherung gegen Aufstände dient
+      reading: same
+      extract: src-de-19150707.para10
+    - point: Armenian risings as part of the cause
+      document: Morgenthau, 10 July
+      words: some have been implicated in armed revolutionary movements
+      reading: same
+      extract: src-frus-d1400.whole
+    - point: the German memorandum is for the record
+      document: Wangenheim, 7 July
+      words: Um eventuellen späteren Invektiven unserer Feinde, als seien wir mitschuldig
+      reading: same
+      extract: src-de-19150707.para10
+    - point: the German memorandum is for the record
+      document: Morgenthau, 10 July
+      words: a formal protest probably intended for record and to cover itself from future responsibility
+      reading: same
+      extract: src-frus-d1400.whole
+    - point: whether a military ground exists
+      document: Wangenheim, 7 July
+      words: nur insofern billigen, als sie durch militärische Rücksichten geboten ist
+      reading: differs
+      extract: src-de-19150707.para10
+    - point: whether a military ground exists
+      document: Morgenthau, 10 July
+      words: Most of the sufferers are innocent and have been loyal to Ottoman Government
+      reading: differs
+      extract: src-frus-d1400.whole

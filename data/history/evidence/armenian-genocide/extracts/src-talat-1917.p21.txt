@@ -1,0 +1,7 @@
+source: src-talat-1917
+locator: p21
+url: https://www.gomidas.org/uploads/Talaat%20Pashas%20Report%20on%20the%20Armenian%20Genocide.pdf
+read: 2026-09-25
+note: the totals rows of the summary table as the PDF text layer orders them: natives 1917 in province, outsiders, in other provinces, in 1914; then outsiders and the 1917 total
+
+[Opening Summary Page: Data and Calculations] [Natives 1917] 177,247 106,910 94,206 1,112,614 ** [Outsiders 1917] 106,910 ---------- [Total 1917] 284,157
