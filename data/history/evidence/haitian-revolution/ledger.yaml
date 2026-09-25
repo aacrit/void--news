@@ -81,7 +81,7 @@ entries:
     producer: french-civil-commission
     position: french-republican-scholarship
     rights: public
-    notes: "the French column of the same proclamation (src-commissaires-17930702-fr) is the official parallel text; the Void rendering beside the Creole extract is checked against it. Haitian Creole is not on the proposal's reliable list, so the rendering carries a stated moderate confidence and a back-translation was made in a separate pass: 'Non, pays cila li pas lé mouri: li pas lé jamais connin roi encore, ni connin maîtres qui méchans; li va sorti de cendres à li, et li va plus brillante que jamais; li va semblé en France, qui astor terre à liberté et terre à l'égalité, et république française la va trouver encore petites à li qui va servi li ben.' The back-translation keeps the one name (France) and carries no number, as the original carries none"
+    notes: "the French broadside of the same date (src-commissaires-17930702-fr) is the official parallel text; the Void rendering beside the Creole extract is checked against it. Haitian Creole is not on the proposal's reliable list, so the rendering carries a stated moderate confidence and a back-translation was made in a separate pass: 'Non, pays cila li pas lé mouri: li pas lé jamais connin roi encore, ni connin maîtres qui méchans; li va sorti de cendres à li, et li va plus brillante que jamais; li va semblé en France, qui astor terre à liberté et terre à l'égalité, et république française la va trouver encore petites à li qui va servi li ben.' The back-translation keeps the one name (France) and carries no number, as the original carries none"
 
   - id: src-toussaint-const-1801
     tier: A
@@ -154,7 +154,7 @@ entries:
     producer: toussaint-louverture
     position: null
     rights: public
-    notes: "the prisoner's own statement, addressed to Bonaparte; it is the one document in this ledger written by a formerly enslaved man in his own hand"
+    notes: "the prisoner's own statement, addressed to Bonaparte; it is the one document in this ledger written by a formerly enslaved man in his own words, held in an 1853 print"
 
   - id: src-napoleon-corr-7
     tier: A
@@ -1224,7 +1224,7 @@ positions:
     name: The Haitian national account
     holders: ["Dessalines and the generals, in the proclamation and the Act of 1 January 1804 and the proclamation of April 1804 as Madiou prints them", "the Chamber of Representatives of 1826", "Madiou (1847 to 1848)", "Saint-Rémy (1853)", "Joachim (1975)", "Mezilas (2009)"]
     rests_on: [src-madiou-1847-t1, src-madiou-1847-t2, src-madiou-1848-t3, src-saint-remy-1853, src-haiti-loi-18260226, src-haiti-adresse-18260510, src-joachim-1975, src-mezilas-2009]
-    claim: "The people of Saint-Domingue freed themselves, declared independence at Gonaïves by an oath of the generals, avenged the cruelties of the French, abolished slavery for ever in their constitution, and were made to pay France for a recognition that France imposed with a squadron."
+    claim: "The people of Saint-Domingue freed themselves, declared independence at Gonaïves by an oath of the generals, avenged the cruelties of the French, abolished slavery for ever in their constitution, and were made to pay France for a recognition that France imposed by ordinance."
     omits: "The date and place of the ceremony of August 1791, which Madiou tells as a meeting at Lenormand and not as a sacrifice; the killing of the French civilians of 1804, which Madiou counts and defends; and the text of the treaties of 1838."
     adjudications:
       - claim: "On 1 January 1804 the general in chief and the assembled generals swore at Gonaïves to renounce France for ever, and the Act carries their names."
@@ -1282,7 +1282,7 @@ positions:
     claim: "The revolution's founding texts and their afterlife are the subject: the name Haiti taken from an Amerindian past, the declaration read in translation, the ceremony read as history and as myth, and the insurgency read from Africa as the precursor of the acts of emancipation."
     omits: "The French and Haitian primary record in its own language, which this school reads in translation; and the counting of the dead, on which none of its holders in this ledger offers a figure."
     adjudications:
-      - claim: "The United States suspended commerce with the parts of the island not under France in 1806 and did not authorise diplomatic representatives to Haiti until 1862."
+      - claim: "The United States suspended commerce with the parts of the island not under France in 1806 and authorised diplomatic representatives to Haiti in 1862."
         verdict: qualified
         basis: presence
         rests_on: [src-us-act-18060228.sec1, src-us-act-18620605.whole]
@@ -1310,7 +1310,7 @@ contested:
         source: src-dalmas-1814
         locator: p117-118
       - position: haitian-national
-        holds: "In the night of the meeting at Lenormand, 200 delegates of the workshops of the North read a supposed decree of the king granting three days of liberty a week and decided the insurrection would be general on the 22nd; no sacrifice is told."
+        holds: "In the night of 14 August 1791, which the layer prints as 44 Août 1794, 200 delegates of the workshops of the North read a supposed decree of the king granting three days of liberty a week and decided the insurrection would be general on the 22nd; no sacrifice is told."
         figures: []
         source: src-madiou-1847-t1
         locator: seclenormand
@@ -1323,7 +1323,7 @@ contested:
     claim: "On what day Toussaint Louverture died at the fort de Joux"
     rows:
       - position: haitian-national
-        holds: "Towards the middle of April the governor left for four days, and when he returned Toussaint had ceased to live; Madiou gives no day."
+        holds: "Towards the middle of April the governor left for four days, and when he returned Toussaint had ceased to live; Madiou gives no day, and writes: Le gouverneur l'avait laissé mourir de faim pendant ses quatre jours d'absence."
         figures: []
         source: src-madiou-1847-t2
         locator: p213-214
@@ -1343,7 +1343,7 @@ contested:
         source: src-lacroix-1819
         locator: p203-204
   - id: the-dead-of-1791
-    claim: "How many died and how much was destroyed in the first weeks of the rising"
+    claim: "How many died and how much was destroyed in the first weeks of the rising of 1791, and how many in the killings of 1804"
     rows:
       - position: colonist-and-claimant
         holds: "Within two months of the revolt, upwards of two thousand white persons massacred, one hundred and eighty sugar plantations and about nine hundred coffee, cotton and indigo settlements destroyed, twelve hundred families reduced to charity; of the insurgents, upwards of ten thousand perished by the sword or by famine, and some hundreds by the executioner."
@@ -1356,7 +1356,7 @@ contested:
         source: src-garran-1797-t1
         locator: p212-213
       - position: haitian-national
-        holds: "The victims of the killings of 1804, men, women and children, came to about three thousand."
+        holds: "The victims of the killings of 1804, men, women and children, came to about three thousand, in Madiou's own count and not the proclamation's."
         figures: []
         source: src-madiou-1848-t3
         locator: p141
@@ -1378,6 +1378,11 @@ contested:
         figures: []
         source: src-ordonnance-18250417
         locator: p258-259
+      - position: the-indemnity-accountants
+        holds: "The held title dates the indemnity Haiti paid to 1825 to 1883, and the abstract separates that indemnity from the loans Haiti later placed on the Paris market to balance its finances."
+        figures: []
+        source: src-blancpain-2003
+        locator: abstract
 
 exhibits:
   - id: ex-sonthonax-art2
@@ -1552,9 +1557,9 @@ analyses:
   - id: an-slavery-documents
     title: What the acts of state in this ledger say about slavery in Saint-Domingue, 1793 to 1805
     method: "Every act of state this ledger holds that speaks to the status of the enslaved of Saint-Domingue, one row per act, in date order, with the producer and what the act says of Saint-Domingue: free where it declares the enslaved free or slavery abolished there, silent where it maintains slavery elsewhere and does not name the colony. The result is the share of rows that say free."
-    finding: "Of the 6 acts of state held here that speak to slavery between 1793 and 1805, 5 declare the people of Saint-Domingue free, 2 of them issued by Bonaparte in November 1801; the 1 that maintains slavery, the law of 30 floréal an X, names the colonies restored by the treaty of Amiens and those beyond the Cape of Good Hope and does not name Saint-Domingue."
+    finding: "Of the 6 acts of state held here that speak to slavery between 1793 and 1805, 5 declare the people of Saint-Domingue free, the first of them the enslaved of the province of the North only, and 2 of them issued by Bonaparte in November 1801; the 1 that maintains slavery, the law of 30 floréal an X, names the colonies restored by the treaty of Amiens and those beyond the Cape of Good Hope and does not name Saint-Domingue."
     confidence: "high for what each document says, which is read from its own text; the set is the ledger's, not the archive's, and the decree of 16 pluviôse an II is a gap"
-    against: "the note to Talleyrand of 13 November 1801, held here, states the aim of annihilating the government of the blacks at Saint-Domingue in the same fortnight as the two documents that guarantee their liberty, so the count of what the acts say is not a count of what the government intended; and Sonthonax's freedom binds the freed to the plantations by its own article IX"
+    against: "the note to Talleyrand of 13 November 1801, held here, states the aim of annihilating the government of the blacks at Saint-Domingue in the same fortnight as the two documents that guarantee their liberty, so the count of what the acts say is not a count of what the government intended; Sonthonax's freedom binds the freed to the plantations by its own article IX and is ordered for the province of the North; and the law of 30 floréal an X, in its article IV, submits the regime of the colonies for ten years to regulations the Government will make, which leaves the colony it does not name to the Government's regulation"
     result: 0.8333
     derivation:
       compute: share
@@ -1562,7 +1567,7 @@ analyses:
       of: free
       columns: [date, act, producer, saint_domingue]
       rows:
-        - {date: "1793-08-29", act: "Sonthonax's proclamation, article II", producer: french-civil-commission, saint_domingue: free, extract: src-sonthonax-17930829.art2}
+        - {date: "1793-08-29", act: "Sonthonax's proclamation for the province of the North, article II", producer: french-civil-commission, saint_domingue: free, extract: src-sonthonax-17930829.art2}
         - {date: "1801", act: "Constitution of Saint-Domingue, article 3", producer: toussaint-government, saint_domingue: free, extract: src-toussaint-const-1801.art3}
         - {date: "1801-11-08", act: "Bonaparte's proclamation to the inhabitants of Saint-Domingue", producer: french-consulate, saint_domingue: free, extract: src-napoleon-corr-7.item5859}
         - {date: "1801-11-22", act: "Exposé de la situation de la République", producer: french-consulate, saint_domingue: free, extract: src-napoleon-corr-7.item5874}
@@ -1570,7 +1575,7 @@ analyses:
         - {date: "1805-05-20", act: "Constitution of Haiti, article 2", producer: haitian-state, saint_domingue: free, extract: src-madiou-1848-t3.p471}
   - id: an-expedition-ships
     title: The ships of the line Bonaparte told London were sailing
-    method: "The letter to Talleyrand of 30 October 1801 (No. 5845) lists, port by port, the ships of the line and frigates that were to sail for Saint-Domingue; one row per port, ships_of_line as the letter counts them in words (six, cinq and huit, un, trois, trois); the Spanish ships of Brest are one row and the French ships of Brest another. The result is the sum. Frigates are not summed, because the letter adds quelques frégates at Brest without a number."
+    method: "The letter to Talleyrand of 30 October 1801 (No. 5845) lists, port by port, the ships of the line and frigates that were to sail for Saint-Domingue; one row per port, ships_of_line as the letter counts them in words (six, cinq and huit, un, trois, trois); the Spanish ships of Brest are one row and the French ships of Brest another; the trois vaisseaux of Flushing are read as bataves, which the layer prints as battues. The result is the sum. Frigates are not summed, because the letter adds quelques frégates at Brest without a number."
     finding: "The letter counts 26 ships of the line in the squadrons it told the British cabinet were sailing for Saint-Domingue, from 6 ports, with 18 frigates named by number and some at Brest not numbered, carrying à peu près 20,000 hommes de débarquement under Leclerc."
     confidence: "high for the arithmetic, which is the letter's own words summed; the letter is a diplomatic communication to London and states what was to sail, not what sailed"
     against: "the same letter says the Brest squadron carried quelques frégates beyond the four it numbers elsewhere, so the frigate count is a floor; the letter is a communication meant to reassure a foreign cabinet, and this ledger holds no embarkation return against which to check it, Leclerc's letters being a gap"
