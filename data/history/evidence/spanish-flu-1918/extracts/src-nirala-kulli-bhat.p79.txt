@@ -1,0 +1,7 @@
+source: src-nirala-kulli-bhat
+locator: p79
+url: https://archive.org/download/dli.ernet.525743/525743-Kulli%20Bhat_djvu.txt
+read: 2026-09-25
+note: the page before; checked against the page scan (leaf 79) on 2026-09-25 and stored as the page prints it: इनफ्लुएंजा का for the text layer's इनफलुपंजा फा, स्त्री सख़्त बीमार for त्री सरूत बीसार, मुलाकात for मुल्ता- कात, छोड़ने for जोड़ने, मृत्यु for झत्यु, मालूम for माल्म, लाशों का ही जैसे प्रवाह हो for ज्ाशों का दी जैसे प्रवाह दो; one word, printed after मृत्यु की, is not legible enough in the scan to correct and is stored as the text layer prints it, सर्यफरता
+
+इसी समय इनफ्लुएंजा का प्रकोप हुआ । पिताजी एक साल पहले गुज़र चुके थे । इसीलिये नौकरी की थी । नहीं तो हर लड़के की तरह दुनिया को सुखमय देखते रहने के स्वप्न लिए रहता ; कम-से-कम लिए रहूँगा, यही सोचता था। तार आया—“तुम्हारी स्त्री सख़्त बीमार है, अंतिम मुलाकात के लिये आओ ।” मेरी उम्र तब बाईस साल थी। स्त्री का प्यार उसी समय मालूम दिया, जब वह स्त्रीत्व छोड़ने को थी। अखबारों से मृत्यु की सर्यफरता मालूम हो चुकी थी । गंगा के किनारे आकर प्रत्यक्ष की । गंगा में लाशों का ही जैसे प्रवाह हो ।
