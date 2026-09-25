@@ -29,7 +29,7 @@ entries:
     free_copy: https://history.state.gov/historicaldocuments/frus1915Supp/d1398
     verified_at: '2026-09-25'
     verified_by: document-fetch
-    verified_title: Papers Relating to the Foreign Relations of the United States, 1915, Supplement, The World War, Document 1398
+    verified_title: 'Document 1398: The Ambassador in France (Sharp) to the Secretary of State, transmitting the Allied declaration of 24 May 1915, May 28, 1915'
   language: en
   region_of_authorship: americas
   producer: us-government
@@ -57,7 +57,7 @@ entries:
     free_copy: https://history.state.gov/historicaldocuments/frus1915Supp/d1399
     verified_at: '2026-09-25'
     verified_by: document-fetch
-    verified_title: Papers Relating to the Foreign Relations of the United States, 1915, Supplement, The World War, Document 1399
+    verified_title: 'Document 1399: The Ambassador in Turkey (Morgenthau) to the Secretary of State, June 18, 1915'
   language: en
   region_of_authorship: americas
   producer: us-government
@@ -85,7 +85,7 @@ entries:
     free_copy: https://history.state.gov/historicaldocuments/frus1915Supp/d1400
     verified_at: '2026-09-25'
     verified_by: document-fetch
-    verified_title: Papers Relating to the Foreign Relations of the United States, 1915, Supplement, The World War, Document 1400
+    verified_title: 'Document 1400: The Ambassador in Turkey (Morgenthau) to the Secretary of State, July 10, 1915'
   language: en
   region_of_authorship: americas
   producer: us-government
@@ -113,7 +113,7 @@ entries:
     free_copy: https://history.state.gov/historicaldocuments/frus1915Supp/d1406
     verified_at: '2026-09-25'
     verified_by: document-fetch
-    verified_title: Papers Relating to the Foreign Relations of the United States, 1915, Supplement, The World War, Document 1406
+    verified_title: 'Document 1406: The Ambassador in Turkey (Morgenthau) to the Secretary of State, August 11, 1915'
   language: en
   region_of_authorship: americas
   producer: us-government
@@ -141,7 +141,7 @@ entries:
     free_copy: https://history.state.gov/historicaldocuments/frus1915Supp/d1408
     verified_at: '2026-09-25'
     verified_by: document-fetch
-    verified_title: Papers Relating to the Foreign Relations of the United States, 1915, Supplement, The World War, Document 1408
+    verified_title: 'Document 1408: The Ambassador in Turkey (Morgenthau) to the Secretary of State, August 18, 1915'
   language: en
   region_of_authorship: americas
   producer: us-government
@@ -169,7 +169,7 @@ entries:
     free_copy: https://history.state.gov/historicaldocuments/frus1915Supp/d1410
     verified_at: '2026-09-25'
     verified_by: document-fetch
-    verified_title: Papers Relating to the Foreign Relations of the United States, 1915, Supplement, The World War, Document 1410
+    verified_title: 'Document 1410: The Ambassador in Turkey (Morgenthau) to the Secretary of State, September 3, 1915'
   language: en
   region_of_authorship: americas
   producer: us-government
@@ -197,7 +197,7 @@ entries:
     free_copy: https://history.state.gov/historicaldocuments/frus1915Supp/d1416
     verified_at: '2026-09-25'
     verified_by: document-fetch
-    verified_title: Papers Relating to the Foreign Relations of the United States, 1915, Supplement, The World War, Document 1416
+    verified_title: 'Document 1416: The German Ambassador (Bernstorff) to the Secretary of State, enclosing the German Embassy''s memorandum to the Porte of 9 August 1915, October 8, 1915'
   language: en
   region_of_authorship: americas
   producer: us-government
@@ -225,7 +225,7 @@ entries:
     free_copy: https://www.armenian-genocide.org/us-7-16-15-text.html
     verified_at: '2026-09-25'
     verified_by: manual-page-read
-    verified_title: Report that Ottoman Turkey is seeking to exterminate the Armenian nation, July 16, 1915
+    verified_title: Telegram 858 to the Secretary of State, July 16, 1915 (NARA RG 59, 867.4016/76)
   language: en
   region_of_authorship: americas
   producer: us-government
@@ -704,7 +704,7 @@ entries:
     free_copy: https://www.gov.am/am/independence/
     verified_at: '2026-09-25'
     verified_by: document-fetch
-    verified_title: Անկախության հռչակագիր
+    verified_title: Անկախության հռչակագիր (Declaration of Independence of Armenia)
   language: hy
   region_of_authorship: caucasus
   producer: republic-of-armenia
@@ -1628,11 +1628,11 @@ entries:
   identifiers:
     isbn: null
     doi: null
-    archive_org: cu31924027831092
+    archive_org: ambassadormorgen00morguoft
     hathitrust: null
-    url: https://archive.org/download/cu31924027831092/cu31924027831092_djvu.txt
+    url: https://archive.org/download/ambassadormorgen00morguoft/ambassadormorgen00morguoft_djvu.txt
   access:
-    free_copy: https://archive.org/download/cu31924027831092/cu31924027831092_djvu.txt
+    free_copy: https://archive.org/download/ambassadormorgen00morguoft/ambassadormorgen00morguoft_djvu.txt
     verified_at: '2026-09-25'
     verified_by: archive-item-fetch
     verified_title: Ambassador Morgenthau's story
@@ -1641,7 +1641,7 @@ entries:
   producer: morgenthau
   position: international-witness
   rights: public
-  notes: a memoir written after the fact with a collaborator; the ambassador's telegrams of 1915 are the Tier A record, the memoir a position's own words
+  notes: read in the 1919 printing, whose text layer is cleaner at the pages cited; a memoir written after the fact with a collaborator; the ambassador's telegrams of 1915 are the Tier A record, the memoir a position's own words
 - id: src-mardiganian-1918
   tier: D
   kind: memoir

@@ -1,7 +1,7 @@
 source: src-morgenthau-1918
 locator: p339
-url: https://archive.org/download/cu31924027831092/cu31924027831092_djvu.txt
+url: https://archive.org/download/ambassadormorgen00morguoft/ambassadormorgen00morguoft_djvu.txt
 read: 2026-09-25
-note: Internet Archive OCR text layer of the 1918 printing; hyphens rejoined, spacing collapsed, running heads between pages removed, glyph errors kept
+note: Internet Archive OCR text layer of the 1919 printing; hyphens rejoined, spacing collapsed, running heads between pages removed, glyph errors kept
 
-One day Talaat made what was perhaps the most astonishing request I had ever heard. The New York Life Insurance Company and the Equitable Life of New York had for years done considerable business among the Armenians. The extent to which this people insured their lives was merely another indication of their thrifty habits. "I wish," Talaat now said, "that you would get the American life insurance companies to send us a complete list of their Armenian pblicy holders. They are practically all dead now and have left no heirs to collect the money. It of course all escheats to the State. The Government is the beneficiary now. Will you do so?"
+One day Talaat made what was perhaps the most astonishing request I had ever heard. The New York Life Insurance Company and the Equitable Life of New York had for years done considerable business among the Armenians. The extent to which this people insured their Hves was merely another mdication of their thrifty habits. "I wish," Talaat now said, "that you would get the | <uu^ American Ufe insurance companies to send us a com-jLx<^^^t plete list of their Armenian policy holders. They are' j ' practically all dead now and have left no heirs toj collect the money. It of course all escheats to the// State. The Government is the beneficiary now. Will you do so?"
