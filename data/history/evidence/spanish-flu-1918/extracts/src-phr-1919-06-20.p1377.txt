@@ -1,0 +1,7 @@
+source: src-phr-1919-06-20
+locator: p1377
+url: https://archive.org/download/jstor-4575203/4575203_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+In a recent Arizona case * the supreme court of that State decided that a local board of health can order the schools to be closed during an epidemic to prevent the spread of the disease. The board of school trustees of the city of Globe sought to enjoin the enforcement of regulations of the city board of health closing the schools during the epidemic of influenza. It was contended that it was beyond the power of the health board to take such action. The regulations in question declared certain things to be nuisances, among these being holding sessions of schools during the influenza epidemic, and prohibited the same. The court treats very fully of i Globe School Dist. No. 1, of Globe, Gila County, v. Board of Health of City of Globe, 179 Pao. 55. 1377 June 20, 1919. the powers of local boards of health and declares that the action of the health board, in so far as defining and declaring what were nuisances, was void, as being an exercise of the legislative power. The power of the board of health, however, to close the schools daring the epidemic was conceded.

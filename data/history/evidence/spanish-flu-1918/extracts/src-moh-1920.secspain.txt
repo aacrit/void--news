@@ -1,0 +1,7 @@
+source: src-moh-1920
+locator: secspain
+url: https://archive.org/download/pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920/PandemicofInfluenzaHMSO_entire_book_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+The Spanish authorities strongly maintain that the first epidemic wave of influenza that swept over Spain in May and June 1918, was due to infection introduced from France. The French authorities on the other hand as stoutly contend that France received its infection from Spain. Other experts attributed the origin of the infection of Spain to the Levant, while others again contend that influenza was in the early months of 1918 already epidemic in Central Europe. The first wave of the influenza epidemic of 1918 in Spain was comparatively mild, but very widespread ; one estimate is that some eight millions of persons were attacked during May and June. One of the places that suffered much from this first epidemic wave was the city of Madrid (population 648,760) where it is asserted some 30 per cent, of the population suffered, including King Alfonso and a number of his Cabinet Ministers. The effects of the epidemic were felt severely among the public officials, and some Government Offices had in consequence to be closed, and the municipal tram services suspended.

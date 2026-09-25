@@ -1,0 +1,7 @@
+source: src-phr-1918-12-27
+locator: p2306
+url: https://archive.org/download/jstor-4574973/4574973_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+Were there any necessity for demonstrating the utter inadequacy and lack of uniformity of morbidity reporting in the United States, such a demonstration would be fully available in the experience afforded during the present epidemic. The shortcomings of morbidity statistics already are so well known that it is unnecessary to refer to them in detail. Their chief fault — incompleteness— was immeasurably increased by the unusual circumstances that prevailed. Among these circumstances were the magnitude of the epidemic in a large number of localities, the congestion of cases at and near the peak of the epidemic, the tendency to cease reporting toward the end of the epidemic, the breakdown of the more or less elaborate S3^stem of individual card reports which called for unessential as well as essential data, and the depletion of the reporting personnel — the practicing physicians — by service in the armed forces and by the disease itself. In addition to these unusual conditions was the fact that in practically no State or locality had influenza been a reportable disease prior to the 1918 epidemic, and that in perhaps a very large proportion of localities it was not made a reportable disease until the epidemic was well under way.

@@ -1,0 +1,8 @@
+source: src-phr-1919-10-17-samoa
+locator: p2303
+url: https://archive.org/download/jstor-4575351/4575351_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+note: the text layer prints the men's loss as 3,285 and the children's Upolu percentage as 11 027; both were read from the page scan (page 2 of the JSTOR PDF) on 2026-09-25 and are stored as printed, 3,265 and 11.027; the table's cells run together in the text layer and are stored in the text layer's order: men, women, children, total for the three rows, then the percentages
+
+A report compiled by the Department of Native Affairs, Apia, Samoa, shows the decrease of the population in the islands of Upola and Savaii during the three months ended December 31, 1918, the period of the epidemic of influenza. The figures are startling. The following tables are taken from the report: Decrease of population in the islands of Upola and Savaii, Samoa. Population before epidemic. Population after epidemie Total loss in population Men. 10,988 7,723 3,265 12,327 9,623 2,704 Children. 14,863 13,290 1,573 38, 178 30,636 7,542 Percentages of deailis of men, women, and children, respectively, to the number of each class in the population. December quarter, 1918. Men. Women. Children. 30.448 28.609 29.478 22. Oil 21.803 21.907 11.027

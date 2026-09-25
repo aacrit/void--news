@@ -1,0 +1,7 @@
+source: src-almudever-2025
+locator: abstract
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12160415/fullTextXML
+read: 2026-09-25
+note: the Results paragraph of the article's Spanish abstract
+
+Resultados: Los periódicos analizados informaron del número de personas que enfermaron y murieron a consecuencia de la epidemia de gripe. Se publicaron un total de 3.601 ejemplares, destacando un incremento durante el segundo brote de la epidemia, siendo el periódico ABC el que más informaciones publicó acerca de la mortalidad.

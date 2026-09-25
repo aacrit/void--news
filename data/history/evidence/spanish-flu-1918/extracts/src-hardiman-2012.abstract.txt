@@ -1,0 +1,7 @@
+source: src-hardiman-2012
+locator: abstract
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A34191896&resultType=core&format=json
+read: 2026-09-25
+note: the abstract as the Europe PMC record carries it, read from the REST endpoint named above; cut at a sentence end to stay within the 150-word cap where the abstract is longer
+
+The influenza epidemic of 1918 was the single worst outbreak of this disease known in history. This article examines an area of western India that was affected very badly-that of a tract inhabited by impoverished indigenous peoples, who are known in India as adivasis . The reasons for this are discussed. Some oral accounts help to bring out the enduring memory of that terrible time. The general health of the adivasis and the existing medical facilities in this area are examined. Attempts to check and treat the disease by the colonial government and its doctors, as well as missionary doctors and other non-governmental agencies, are considered to see why they had so little overall impact. Some comparisons are made with the fate of indigenous people in other parts of the world during the epidemic, in particular with the Inuits of Alaska.

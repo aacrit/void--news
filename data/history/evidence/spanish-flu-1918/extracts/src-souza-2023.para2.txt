@@ -1,0 +1,6 @@
+source: src-souza-2023
+locator: para2
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10395612/fullTextXML
+read: 2026-09-25
+
+Essa doença, alcunhada de “gripe espanhola”,2 teve entre suas manifestações clínicas letais a extrema cianose, que corresponde a pele e mucosas de coloração azul escura por má oxigenação, traduzindo falência dos pulmões infectados em transferir oxigênio para a corrente sanguínea, acompanhada de tosse e pneumonia (Abreu Jr., 2018, p.42). O exato número de óbitos causados pela epidemia de gripe de 1918 segue desconhecido, porque muitos locais afetados não possuíam registros de estatísticas de mortalidade ( Kolata, 2002 , p.17), mas estima-se que o número total de vítimas esteja entre vinte e cem milhões de pessoas.

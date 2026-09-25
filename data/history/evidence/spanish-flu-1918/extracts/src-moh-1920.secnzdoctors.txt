@@ -1,0 +1,7 @@
+source: src-moh-1920
+locator: secnzdoctors
+url: https://archive.org/download/pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920/PandemicofInfluenzaHMSO_entire_book_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+At the commencement of the epidemic no fewer than 228 doctors were absent from New Zealand on military duty, and of those whose services were available many contracted the disease.
