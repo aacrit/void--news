@@ -1,0 +1,7 @@
+source: src-de-19150727
+locator: secdate
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-07-27-DE-001
+read: 2026-09-25
+note: the dateline of the document as the page prints it
+
+Aleppo, den 27. Juli 1915

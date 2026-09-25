@@ -1,0 +1,7 @@
+source: src-de-19161204
+locator: para26
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1916-12-04-DE-001
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+
+Ein grosser Teil des Jungtürkischen Komités steht auf dem Standpunkt, dass das Türkische Reich nur auf rein mohamedanischer, pantürkistischer Grundlage aufgebaut werden muss. Die nicht mohamedanischen und nicht türkischen Bewohner desselben, müssen gewaltsam mohamedanisiert und türkisiert, wo das nicht angängig, vernichtet werden.

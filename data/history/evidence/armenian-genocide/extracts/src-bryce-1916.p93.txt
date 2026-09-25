@@ -1,0 +1,8 @@
+source: src-bryce-1916
+locator: p93
+url: https://archive.org/download/treatmentofarmen00grea/treatmentofarmen00grea_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer of the HMSO printing; end-of-line hyphens rejoined, spacing collapsed, the layer's glyph errors otherwise kept
+note: Document 24, p. 93
+
+We heard on our way from the Kurds that Kurdish Chettis (bands of robbers) had collected all the inhabitants of Kurdmeidan and Shekhlan, about 500 women and children, and burnt them by the order of Rashid Eliendi, the head of the Chettis. “ When we reached the Khozmo Pass, our guards changed their southerly direction and turned west, in the direction of the Euphrates. When we reached the boundary of the Ginj district our guards were changed, the new ones being more brutal. By this time our number was diminished by half. When we reached the boundary of D j abaghchour we passed through a narrow valley ; here our guards ordered us to sit down by the river and take a rest. We were very thankful for this respite and ran towards the river to get a drink of water. “ After half-an-hour we saw a crowd of Kurds coming towards us from Dj abaghchour. They surrounded us and ordered us to cross the river, and many obeyed.
