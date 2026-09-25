@@ -1,0 +1,7 @@
+source: src-sherman-gould-ansari-2010
+locator: p2
+url: http://eprints.lse.ac.uk/32790/7/From_subjects_to_citizen_society.pdf
+read: 2026-09-25
+note: page 2 of the published version as LSE Research Online serves it; the footnote cue 3 is the text layer's
+
+Secondly, the papers that follow pose new questions about the nature of the state in early postcolonial South Asia. A small number of recent historical works concerning India and Pakistan in the immediate aftermath of independence have begun to bridge the gap between the study of ‘high’ and ‘low’ politics in South Asia by examining low-level state programmes such as refugee rehabilitation and the recovery of abducted women.3

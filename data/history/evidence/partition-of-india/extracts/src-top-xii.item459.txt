@@ -1,0 +1,8 @@
+source: src-top-xii
+locator: item459
+url: https://archive.org/download/indiatransferofp12nich/indiatransferofp12nich_djvu.txt
+read: 2026-09-25
+note: item n is the document number in the volume: No. 459, Sir E. Jenkins (Punjab) to Viscount Mountbatten, letter No. 704 of 13 August 1947, paragraph 5, page 702
+note: the OCR layer's double spaces are collapsed and its soft hyphens rejoined; nothing else changed
+
+5. The Commander, Punjab Boundary Force, has a most difficult task. The population of the twelve districts in which he is operating is close on 14.5 million, and this population is distributed over 17,932 inhabited towns and villages. When the possibility of the enforcement of a Boundary award was first discussed, I estimated that we should need at least two Divisions of full strength and on a War footing — i.e. a minimum of about 20,000 effective fighting men. The effective strength of the P.B.F. is at present about 7,500, or including static troops and training centres about 9,000. Now that the Police are definitely unreliable in Lahore and Amritsar, the troops have a rapidly increasing responsibility. Neither the railways nor the main roads are safe, and the village raiding is quite impossible to control without a very great display of force. Fire power is really less important than numbers.

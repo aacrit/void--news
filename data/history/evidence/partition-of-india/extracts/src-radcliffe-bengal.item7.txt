@@ -1,0 +1,7 @@
+source: src-radcliffe-bengal
+locator: item7
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: item n is paragraph n of Annexure A, the schedule of the Bengal award
+
+7. From this point the boundary between East and West Bengal shall run along the boundaries between the Thanas of Daulatpur and Karimpur; Gangani and Karimpur; Meherpur and Karimpur; Meherpur and Teliatta; Meherpur and Chapra; Damurhuda and Chapra; Damurhuda and Krishnaganj; Chuadanga and Krishnaganj; Jibannagar and Krishnaganj; Jibarinagar and Hanskhali; Maheshpur and Hanskhali; Maheshpur and Ranaghat; Maheshpur and Bongaon; Jhikargacha and Bongaon; Sarsa and Bongaon; Sarsa and Gaighata; Gaighata and Kalaroa; to the point where the boundary between those thanas meets the boundary between the districts of Khulna and 24-Parganas.

@@ -1,0 +1,33 @@
+source: src-dinmohammad-1947
+locator: p383-385
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: the page is the volume's, read from the scan's running numbers, which the OCR layer prints between pages: the passage lies between the two numbers given
+note: the community table is kept line by line as the OCR layer prints it, with its glyph substitutions (§ for 5, = for a column rule); the OCR layer prints 51,14 and 2,28 for 51.14 and 2.28
+
+Itremains now to examine the statistics of the district of Gurdaspur. It is not disputed
+by the Indian National Congress that on the basis of 1941 census the percentage of the |
+Muslims is 51,14 and that of the non-Muslims 48.86. The difference, therefore, is not .8 as
+was stated by His Excellency the Viceroy in the Press Conference but 2,28 and this obviously
+is not negligible:
+This district is divided into four Tehsils, i.c., Gurdaspur, Batala, Shakargarh and
+Pathankot, and the community wise population of the district is as follows:-
+Community Gurdaspur Gurdaspur Batala . Shakagarh Pathankot
+Tehsil Tehsil Tehsil Tehsil Tehsil
+Hindus in- 283,192 59,970 33,433 116,553 376,227
+cluding S.C. .
+Sikhs 221,261 76,695 116,413 20,573 7,580
+Christians 51,528 . 23,323 20,753. 4,779 2,673
+Ad-Dharmis 7,582 302. 177 ---- 7,103
+Jains 25 22 o- wooe 3
+Muslims _ §89,923 171,498 =. 209,277 149,600 59,548
+Total 1,153,511 328,819 380,053 291,505 153,134
+(en on os 0 0 00 wa 0 OE SP Fe HY OO A Ak OF 8 8 > Om AH CR PU We DR OS HH
+The percentage of Muslim population in the four tehsils is as stated below:-
+Per cent
+Gurdaspur Tehsil , 52.1
+Batala Tehsil . 55.06
+Shakargarh Tehsil 51.3
+Pathankot Tehsil 38.8
+The Muslims, therefore, though in majority in the district as a whole are in minority in the
+tehsil of Pathankot.

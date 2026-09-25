@@ -1,0 +1,24 @@
+source: src-sikh-note-1942
+locator: p7
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: the page is the volume's, read from the scan's running numbers, which the OCR layer prints between pages: the passage lies between the two numbers given
+note: the table is kept line by line as the OCR layer prints it, with its damaged entries
+
+District wise Percentage of Muslim Population (1931)
+Jullundur Division:
+1 Kangra : 5.5
+,2. Simla
+3. Hoshiarpur a 31.8
+4, Jullundur . 44,5
+5. Ludhiana 35.1
+6. Ferozepur 44.6
+Ambala Division:
+7. Hissar 28.3
+8. Rohtak 17.1
+9. Gurgaon . o2et
+10. Karnal 30.5
+‘li. Ambala 31.0
+Lahore Division:
+12. Amritsar — 47.0
+13. Gurdaspur 50.8

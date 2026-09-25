@@ -1,0 +1,7 @@
+source: src-schofield-2022
+locator: p17
+url: https://strategicstudies.org.pk/index.php/strategic_studies/article/download/138/103
+read: 2026-09-25
+note: the abstract, page 17
+
+Since 1947 the expectation that the fate of the disputed former princely state of Jammu and Kashmir would be decided by a plebiscite has been part of the narrative of the state’s history. 75 years later, the plebiscite has never been held, the state remaining de facto divided between India and Pakistan, both accusing each other of illegally occupying the territory the other controls, while a significant proportion of the inhabitants of the state maintain that they have never been allowed their ‘right of self-determination.’ This paper examines the reasoning behind holding a plebiscite, the challenges of holding a unitary plebiscite in a state where the inhabitants of the major regions of the state have differing allegiances and aspirations and the reasons why the plebiscite was not held.

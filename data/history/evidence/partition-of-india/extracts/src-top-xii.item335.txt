@@ -1,0 +1,7 @@
+source: src-top-xii
+locator: item335
+url: https://archive.org/download/indiatransferofp12nich/indiatransferofp12nich_djvu.txt
+read: 2026-09-25
+note: item n is the document number in the volume: No. 335, Record of Interview between Viscount Mountbatten and the Nawab of Bhopal and the Maharaja of Indore, 4 August 1947, page 509; the OCR layer prints the speaker's name in lower case
+
+the viceroy went on to say that he fully realised the difficulties peculiar to Bhopal. They arose also in the cases of Kashmir and Hyderabad, though not so seriously with Kashmir, which was so placed geographically that it could join either Dominion, provided part of Gurdaspur were put into East Punjab by the Boundary Commission.
