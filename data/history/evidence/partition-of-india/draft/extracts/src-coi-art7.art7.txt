@@ -2,6 +2,6 @@ source: src-coi-art7
 locator: art7
 url: https://www.constitutionofindia.net/articles/article-7-rights-of-citizenship-of-certain-migrants-to-pakistan/
 read: 2026-09-25
-note: the text of 1950 as the site prints it under 'Version 1', the article's first sentence
+note: the text of 1950 as the site prints it under 'Version 1', from its heading line to the end of the article's first sentence
 
-Notwithstanding anything in articles 5 and 6, a person who has after the first day of March, 1947, migrated from the territory of India to the territory now included in Pakistan shall not be deemed to be a citizen of India:
+Article 7, Constitution of India 1950 Notwithstanding anything in articles 5 and 6, a person who has after the first day of March, 1947, migrated from the territory of India to the territory now included in Pakistan shall not be deemed to be a citizen of India:
