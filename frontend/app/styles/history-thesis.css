@@ -637,6 +637,11 @@
   color: var(--hist-brass-ink);
   border-bottom: 1px solid var(--hist-border);
 }
+/* A cell holding an identifier (a producer's slug) never breaks at its
+   hyphen: "un-secretariat" set as "un-" over "secretariat" read as two words. */
+.hist-th-table__id {
+  white-space: nowrap;
+}
 .hist-th-table tbody th {
   font-weight: 600;
   color: var(--hist-ink);
@@ -1046,9 +1051,19 @@
   line-height: 1.7;
 }
 
-/* ── 1024px and up: the section takes the text and the right rail, the
-      paragraph becomes a two-column grid, and the notes sit beside it ── */
+/* ── 1280px and up: the section takes the text and the right rail, the
+      paragraph becomes a two-column grid, and the notes sit beside it.
+      From 1024 to 1279 the margin is 17ch, about 150px: a citation set that
+      narrow ran to five or six lines a note, the notes outgrew their
+      paragraph, and the grid row stretched to them, leaving 160px of empty
+      column between paragraphs (Partition at 1024, 2026-09-25). Below
+      1280 the notes stay in the inline disclosure, as on a tablet. ── */
 @media (min-width: 1024px) {
+  .hist-th-exhibit {
+    padding: var(--space-5) var(--space-6);
+  }
+}
+@media (min-width: 1280px) {
   .hist-th > .hist-th-section {
     grid-column: text-start / rail-end;
   }
@@ -1079,9 +1094,6 @@
   }
   .hist-th-inline {
     display: none;
-  }
-  .hist-th-exhibit {
-    padding: var(--space-5) var(--space-6);
   }
 }
 
