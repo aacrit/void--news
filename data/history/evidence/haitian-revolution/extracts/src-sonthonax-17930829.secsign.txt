@@ -1,0 +1,8 @@
+source: src-sonthonax-17930829
+locator: secsign
+url: https://archive.org/download/proclamationauno00sont/proclamationauno00sont_djvu.txt
+read: 2026-09-25
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: the dateline and signatures at the foot of the broadside
+
+Au Cap, le 29 août 1793 , l'an deux de la République Françaife. SONTHONAX. Par le Commiitaire civil de la République. GaULT , Sicràaire adjoint di la Commijfion Civile.

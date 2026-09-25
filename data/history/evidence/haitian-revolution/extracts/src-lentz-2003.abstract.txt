@@ -1,0 +1,8 @@
+source: src-lentz-2003
+locator: abstract
+url: https://www.persee.fr/doc/outre_1631-0438_2003_num_90_340_4042
+read: 2026-09-25
+note: the French abstract as the Persée record prints it
+note: held as the first 150 words of the abstract, under the cap on a copyrighted work
+
+Cette étude propose un panorama d'ensemble de la politique coloniale du Consulat, peu connue mais qui ne peut se réduire à la seule question de l'esclavage aux Antilles. Un tableau est d'abord dressé de l'état de la question à l'issue de la décennie révolutionnaire ; puis sont évoqués les choix, désastreux retenus pour ramener les Antilles dans la sphère française : expédition à Saint-Domingue contre les projets autonomistes de Toussaint Louverture, décision de rétablir l'esclavage qui provoqua d'abord la répression et les massacres en Guadeloupe, puis la rupture irréversible avec Saint-Domingue, proclamé indépendant le 1er janvier 1804. Sont ensuite abordés les autres aspects du vaste projet colonial de Bonaparte, tous voués à des échecs rapides, faute, notamment, d'une flotte capable de rivaliser avec l'Angleterre : l'Egypte, l'Inde, la Louisiane, l'Australie même. En 1804, l'échec était patent sur tous les fronts coloniaux. En ce domaine le nouveau régime avait délibérément rompu

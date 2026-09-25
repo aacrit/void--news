@@ -1,0 +1,7 @@
+source: src-yakubu-opondo-2025
+locator: p166
+url: https://jceeas.bdi.uni-obuda.hu/index.php/jceeas/article/download/347/428
+read: 2026-09-25
+note: page 166, the first paragraph of the introduction
+
+Introduction The abolition of slavery in the 19th century had its roots in slave revolts which took place in the Dutch colony of Berbice (modern Guyana) in 1773, and the French territory of St. Dominique (Haiti) between 1791 and 1804. Throughout slavery, the Caribbean and Guianas declared the abolition of slavery in the colonies as their main objective. Though the Guyana revolt was unsuccessful as it lasted for only 10 months, it significantly, like the successful Haiti insurgency, played a major role in the abolition and/or emancipation processes. While the former protest was short-lived, the latter soared on to serve as an impetus for the freedom of black slaves across the globe [Poppe-Hennessy, J., 1967].

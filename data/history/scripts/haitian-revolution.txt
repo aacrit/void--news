@@ -31,11 +31,11 @@ N: In seventeen eighty eight a planter named Le Jeune was tried for torturing tw
 N: The revolt found its general in a man who had been freed about fifteen years before it started, and who was in his late forties when it began.
 N: Toussaint Louverture turned a rising into an army. He fought the French, then the Spanish, then the British, and at various points allied with each of them against the others. He drove the British out after five years and around twenty thousand of their dead.
 N: By eighteen hundred he governed the colony in all but name. In eighteen oh one he wrote a constitution that abolished slavery permanently and named himself governor for life, and sent it to Paris as a fact rather than a request.
-N: Napoleon sent his brother-in-law and thirty thousand men. Toussaint was invited to negotiate, arrested, and shipped to a fortress in the French Alps, where he died of cold and neglect within a year.
+N: Napoleon sent his brother-in-law and an army. Toussaint was invited to negotiate, arrested, and shipped to a fortress in the French Alps, where he died of cold and neglect within a year.
 
-## DOCUMENT | Toussaint Louverture | spoken to his French captors upon deportation | June 1802
-N: What Toussaint Louverture said as they took him aboard has outlived everyone who was on that ship.
-M: In overthrowing me, you have done no more than cut down the trunk of the tree of black liberty in Saint-Domingue. It will spring back from the roots.
+## DOCUMENT | Toussaint Louverture | Words to Captain Savary aboard the Heros, as reported by General Pamphile de Lacroix in his memoir (1819), in Void's translation from the French | June 1802
+N: What Toussaint Louverture said as they took him aboard survives secondhand. A French general, Pamphile de Lacroix, wrote it down in his memoir seventeen years later, in French. In our translation:
+M: In overthrowing me, they have cut down at Saint-Domingue only the trunk of the tree of the liberty of the blacks; it will grow back from the roots, because they are deep and many.
 
 ## REST
 

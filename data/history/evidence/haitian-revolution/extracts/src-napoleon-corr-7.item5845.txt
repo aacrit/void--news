@@ -1,0 +1,9 @@
+source: src-napoleon-corr-7
+locator: item5845
+url: https://archive.org/download/correspondancede07napouoft/correspondancede07napouoft_djvu.txt
+read: 2026-09-25
+note: No. 5845, to Talleyrand, 8 brumaire an X (30 October 1801); the page header between the two spans (308 CORRESPONDANCE ...) removed
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+58 45.— AU CITOYEN TALLEYRAXD, MINISTRE DES RELATIONS EXTERIEURES. Paris, 8 brumaire an X (30 octobre 1 s: ! 1 . Vous expédierez, Citoyen Ministre, un courrier au citoyen Otto; vous lui ferez connaître qu'il peut confidentiellement dire au cabinet anglais, et en échange de la communication qu'il nous a faite de l'envoi de cinq vaisseaux à la Jamaïque, que six vaisseaux et quatre frégates de l'escadre de Rocbefort, cinq vaisseaux espagnols et buii français de l'escadre de Brest, avec quelques frégates, un vaisseau et quatre frégates de Lorient, doivent partir dans la dernière décade de brumaire pour se rendre à Saint-Domingue; que quatre frégates du Havre, trois vaisseaux battues et deux frégates françaises de Flessingue doivent partir à peu près dans le même temps, avec trois vaisseaux et quatre frégates de Cadix, pour se rendre à Saint-Domingue; le tout portant à peu près 20,000 bommes de débarquement, sous les ordres du général Leclerc. Je désire que le Gouvernement britannique donne des ordres à la Jamaïque pour qu'on lui fournisse tous les vivres dont il pourra avoir besoin , l'intérêt de la civilisation étant de détruire la nouvelle Alger qui s'organisait au milieu de l'Amérique . Bonaparte.
