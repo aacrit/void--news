@@ -2,4 +2,4 @@ rendering: void-translation
 of: src-wevelsiep-2015.para2
 names: Istanbul=Istanbul; Osmanischen Reich=Ottoman Empire
 
-Accordingly, on 24 April 1915 the Young Turk rulers in the Ottoman Empire had 200 Armenian nationalists arrested in Istanbul and later murdered, Christian Armenians were suspected of collaboration with the Russians and officially deported from the east of the country. In the course of these deportations one of the greatest crimes of the dawning 20th century took place, a number of persons, whose estimates vary from 800,000 to 1.5 million, were killed
+Accordingly, on 24 April 1915 the Young Turk rulers in the Ottoman Empire had 200 Armenian nationalists arrested in Istanbul and later murdered, Christian Armenians were suspected of collaboration with the Russians and officially deported from the east of the country. In the course of these deportations one of the greatest crimes of the dawning 20th century took place, a number of persons, whose estimates vary from 800,000 to 1,5 million (1.5 million), were killed
