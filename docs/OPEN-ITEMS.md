@@ -993,8 +993,29 @@ What is unfinished on Srebrenica:
   in the court's English), the narration no longer says the words were about
   "the ones who tried to refuse" (they were about his own refusal), and
   Resolution 819 gets back its silently cut "and others concerned".
-  `tests/test_history_quote_ledger.py` fails either divergence. The MP3 still
-  carries the old lines until the episode is re-rendered.
+  `tests/test_history_quote_ledger.py` fails either divergence.
+  **Fixed text-side 2026-09-25: the whole script re-cut against the ledger.**
+  Every spoken claim now traces to an extract or the thesis. Cut as
+  unsourced: the Mladic "revenge" quotation (the film is a ledger gap), the
+  ICJ quotation (a gap), Dodik, Munira Subasic, the Bassiouni definition,
+  Nuhanovic, the Sarajevo siege figures, the forest march, the Scorpions
+  video, the RS report revoked in 2018, Omarska/Visegrad/Foca, "boys judged by
+  height", "eight men doing the shooting". Corrected: "did not fire a shot"
+  (they fired warning shots, never directly: A/54/549 paras 304, 472), "a
+  handful of bombs" (two, para 305), "roughly eight thousand" (now the
+  tribunal's 7,000 to 8,000 and the General Assembly's recital of 8,372,
+  kept apart), the battalion (no more than 600 per the tribunal, 150 fighting
+  men per the Secretariat; only the besieging force is agreed), Kozluk
+  undated, Kravica 1,000 to 1,500 at about 18.00. Added: Witness K at
+  Kravica (Krstic TJ para 206) as the survivors' own witness, the denial
+  position in its strongest form (Atlagic and Martinovic, p16 and their
+  English summary), the Dutch Supreme Court's para 5.1. The event YAML's
+  ledger-contradicted fields were corrected with it (death toll, summary,
+  significance, the 2019 Karadzic appeal as the Mechanism's, the Riad context,
+  the Katzenberger photograph dated 2010, the photographer Michael Büker), and
+  every spoken quotation is now in `primary_source_excerpts` and pinned
+  verbatim to an extract. **The MP3 still carries the old script and awaits a
+  re-render**; the thesis page's episode blocks already show the new lines.
 - **Mongol Baghdad** is not started. Partition's gaps that a browser could
   close: Munir's report (in the Kirpal Singh collection, pp. 409-444, fetched
   but not sliced), the Punjab volume of the 1941 census, the two Security
@@ -1004,7 +1025,8 @@ What is unfinished on Srebrenica:
 - **Wikimedia's API answers HTTP 429 to this container**, so the two exhibit
   images' provenance was read from the file pages' HTML, not the API. The
   ledger records Commons' own dates (the Katzenberger photograph is dated
-  11 July 2010 on its file page; the event YAML dates it 2007).
+  11 July 2010 on its file page; the event YAML dated it 2007, fixed
+  2026-09-25).
 
 ## Weekly: no scheduled run has produced The Argument
 
