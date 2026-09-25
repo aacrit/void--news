@@ -89,9 +89,9 @@ primary_source_excerpts:
   work: Declaration of Independence of Haiti
   date: January 1, 1804
   doi: 10.1215/9781478007609-006
-- text: In overthrowing me, you have done no more than cut down the trunk of the tree of black liberty in Saint-Domingue. It will spring back from the roots, for they are numerous and deep.
+- text: In overthrowing me, they have cut down at Saint-Domingue only the trunk of the tree of the liberty of the blacks; it will grow back from the roots, because they are deep and many.
   author: Toussaint Louverture
-  work: Spoken to his French captors upon deportation
+  work: Words to Captain Savary aboard the Heros, as reported by General Pamphile de Lacroix in his memoir (1819), in Void's translation from the French
   date: June 1802
 - text: Listen to the voice of liberty that speaks in the hearts of all.
   author: Boukman Dutty
@@ -170,9 +170,9 @@ perspectives:
     doi: 10.2307/2952745
     archive_url: https://archive.org/details/michel-rolph-trouillot-silencing-the-past-power-and-the-production-of-history-beacon-press-1995
   notable_quotes:
-  - text: In overthrowing me, you have done no more than cut down the trunk of the tree of black liberty in Saint-Domingue. It will spring back from the roots, for they are numerous and deep.
+  - text: In overthrowing me, they have cut down at Saint-Domingue only the trunk of the tree of the liberty of the blacks; it will grow back from the roots, because they are deep and many.
     speaker: Toussaint Louverture
-    context: Spoken to French captors during his deportation, June 1802
+    context: Reported secondhand by General Pamphile de Lacroix (1819), in Void's translation from the French; spoken aboard the Heros, June 1802
   - text: We have dared to be free. Let us dare to be so by ourselves and for ourselves.
     speaker: Jean-Jacques Dessalines
     context: Haitian Declaration of Independence, January 1, 1804
