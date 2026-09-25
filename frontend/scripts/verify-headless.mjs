@@ -1021,24 +1021,27 @@ async function brandChecks(browser) {
     const back = await page.evaluate(() => ({ y: window.scrollY, compact: document.querySelector(".nav-header").getAttribute("data-scroll-compact"), navH: Math.round(document.querySelector(".nav-header").getBoundingClientRect().height), mainTop: Math.round(document.querySelector("main").getBoundingClientRect().top) }));
     assert(back.y === 0 && back.compact !== "true" && back.mainTop >= back.navH - 1, "navigation-back-uncompacts", `/: scrollY ${back.y}, compact ${back.compact}, masthead ${back.navH}px, main top ${back.mainTop}`);
   });
-  /* The Thesis: a note, its sidenote, its source, the play glyph. The route
-     comes from the served index the exporter writes (data/history-theses.json
-     lists published theses only), or from --thesis=<slug> for a local draft
-     export built with NEXT_PUBLIC_HISTORY_DRAFTS=1. With neither, the journey
-     is skipped and says so: a thesis that is not published has no page. */
+  /* The Thesis: a note, its sidenote, its source, the play glyph, the source
+     marks and the one way back. The routes come from the served index the
+     exporter writes (data/history-theses.json lists published theses only;
+     EVERY published thesis is walked, not the first), or from
+     --thesis=<slug> for a local draft export built with
+     NEXT_PUBLIC_HISTORY_DRAFTS=1. With neither, the journey is skipped and
+     says so: a thesis that is not published has no page. */
   {
     const thesisArg = process.argv.find((a) => a.startsWith("--thesis="))?.slice("--thesis=".length) ?? null;
-    let thesisSlug = thesisArg;
-    if (!thesisSlug) {
+    let thesisSlugs = thesisArg ? [thesisArg] : [];
+    if (!thesisArg) {
       try {
         const idx = JSON.parse(readFileSync(join(OUT, "data/history-theses.json"), "utf8"));
-        thesisSlug = idx?.theses?.[0]?.slug ?? null;
-      } catch { thesisSlug = null; }
+        thesisSlugs = (idx?.theses ?? []).map((t) => t.slug).filter(Boolean);
+      } catch { thesisSlugs = []; }
     }
-    if (!thesisSlug || !existsSync(join(OUT, "history", thesisSlug, "index.html"))) {
+    thesisSlugs = thesisSlugs.filter((slug) => existsSync(join(OUT, "history", slug, "index.html")));
+    if (thesisSlugs.length === 0) {
       ctx("/history/", 1440, "dark"); console.log(`\nscenario: thesis-notes`);
       skip("thesis-notes", "no published thesis in this export");
-    } else {
+    } else for (const thesisSlug of thesisSlugs) {
       for (const width of [1440, 390]) {
         await withPage(browser, { width, route: `/history/${thesisSlug}/` }, `thesis-notes @${width}`, async (page) => {
           assert(await page.locator(".hist-thesis-page").count() === 1, "thesis-page", "the route renders the Thesis, not the Hearing");
@@ -1073,6 +1076,43 @@ async function brandChecks(browser) {
             }, `n${n}`);
           }
           assert(landed, "thesis-note-jump", `clicking ${n} lands on note ${n}`);
+          /* The one way back (2026-09-25). There is no RETURN link on any
+             note any more: a single fixed control offers the way back after a
+             jump, names the note it returns to, and puts the reader back on
+             the citation they left with focus on it. */
+          assert(await page.locator(".hist-th-note__back").count() === 0, "thesis-no-per-note-return", "no note carries its own Return link");
+          const ret = page.locator(".hist-th-return");
+          assert(await ret.count() === 1, "thesis-return-single", `${await ret.count()} return control(s) on the page`);
+          const retState = await ret.evaluate((el) => ({ mode: el.getAttribute("data-mode"), label: el.getAttribute("aria-label"), vis: getComputedStyle(el).visibility, pos: getComputedStyle(el).position, r: el.getBoundingClientRect().toJSON(), vw: window.innerWidth, vh: window.innerHeight }));
+          assert(retState.mode === "return" && retState.vis === "visible" && retState.label === `Back to the text at note ${n}`, "thesis-return-offered", `after the jump: mode ${retState.mode}, ${retState.vis}, "${retState.label}"`);
+          assert(retState.pos === "fixed" && retState.r.right <= retState.vw && retState.r.bottom <= retState.vh && retState.r.left > retState.vw / 2 && retState.r.height >= 44, "thesis-return-placed", `fixed at ${Math.round(retState.r.left)},${Math.round(retState.r.top)} ${Math.round(retState.r.width)}x${Math.round(retState.r.height)} in ${retState.vw}x${retState.vh}, right half`);
+          await ret.click();
+          let back = null;
+          for (let i = 0; i < 12; i++) {
+            await page.waitForTimeout(250);
+            back = await page.evaluate((id) => {
+              const el = document.getElementById(id); if (!el) return null;
+              const r = el.getBoundingClientRect();
+              return { inView: r.top >= 0 && r.bottom <= window.innerHeight, focused: document.activeElement === el, mode: document.querySelector(".hist-th-return")?.getAttribute("data-mode") };
+            }, `ref${n}`);
+            if (back?.inView && back?.focused) break;
+          }
+          assert(!!back?.inView && !!back?.focused && back?.mode !== "return", "thesis-return-lands", `the control returns to citation ${n}: in view ${back?.inView}, focused ${back?.focused}, mode now ${back?.mode}`);
+          /* Deep in the page with no jump pending the same control is "Top". */
+          await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+          await page.waitForTimeout(400);
+          const topState = await ret.evaluate((el) => ({ mode: el.getAttribute("data-mode"), label: el.getAttribute("aria-label") }));
+          assert(topState.mode === "top" && topState.label === "Back to the top of the page", "thesis-return-top", `at the foot: mode ${topState.mode}, "${topState.label}"`);
+          /* Every source mark is an icon with a name that says what it opens,
+             and the words FREE COPY are no longer printed as a label. */
+          const marks = await page.evaluate(() => [...document.querySelectorAll("a.hist-th-srcmark")].map((a) => ({ label: a.getAttribute("aria-label") ?? "", title: a.getAttribute("title") ?? "", href: a.getAttribute("href") ?? "", svg: !!a.querySelector("svg") })));
+          const badMarks = marks.filter((m) => !/^Open the (free copy|file page) of \S.+ \(opens in a new tab\)$/.test(m.label) || !m.title || !m.svg || !/^https:\/\//.test(m.href));
+          assert(marks.length > 0 && badMarks.length === 0, "thesis-source-marks", `${marks.length} source marks, ${badMarks.length} without a proper name, tooltip, glyph or absolute address${badMarks[0] ? `: ${JSON.stringify(badMarks[0]).slice(0, 160)}` : ""}`);
+          const printed = await page.evaluate(() => [...document.querySelectorAll(".hist-th-cite__meta, .hist-th-exhibit__prov")].filter((el) => /\bfree copy\b/i.test(el.innerText)).length
+            + [...document.querySelectorAll(".hist-th-notes a")].filter((a) => /^\s*return\s*$/i.test(a.textContent ?? "")).length);
+          assert(printed === 0, "thesis-no-label-text", `${printed} note, source or exhibit row still prints FREE COPY or RETURN as text`);
+          const struck = await page.evaluate(() => [...document.querySelectorAll(".hist-th-srcmark--none:not([aria-hidden])")].filter((el) => el.getAttribute("role") !== "img" || el.getAttribute("aria-label") !== "No free copy").length);
+          assert(struck === 0, "thesis-no-free-copy-mark", `${struck} "no free copy" marks without their accessible name`);
           const src = page.locator("#sources .hist-th-source__link").first();
           assert(await src.count() === 1 && /^https:\/\//.test((await src.getAttribute("href")) ?? ""), "thesis-source-link", "the first source link is absolute");
           const glyph = page.locator(".hist-th-episode__play").first();
