@@ -1,154 +1,205 @@
+# Re-cut 2026-09-25 against the evidence ledger (data/history/evidence/partition-of-india/).
+# Every line the document voice reads is verbatim from a stored extract, and the
+# extract id follows the DOCUMENT marker in a comment. Lines beginning with "#" are
+# inert: today's parser skips them (pipeline/history/script_format.py::parse_script).
+# "# MOOD:" and "# CLIP:" are the directives designed in
+# docs/proposals/HISTORY-AUDIO-ARCHIVAL.md and do nothing until the producer reads them.
+# A CLIP slot names a candidate archival recording; none is downloaded, licensed or
+# verified yet, and a slot at status=candidate renders as the DOCUMENT read below it.
+
 ## OPEN
-N: There is a border in South Asia that two nuclear armed states have fought four wars across, and are still contesting today.
+# MOOD: dread
+N: There is a border in South Asia that two nuclear armed states have fought four wars across, and are still contesting.
 N: You would assume a line like that was drawn carefully. Over years. By people who knew the ground.
-N: It was drawn in five weeks, by a man who had never been to India, working from maps that were six years out of date.
+N: It was drawn in five weeks, by a man who had never been to India, from the figures of one census, six years old.
 
 ## TITLE
 N: The Partition of India. August, nineteen forty seven.
 
-## SCENE 1 | The bungalow in Delhi
-N: July, nineteen forty seven. A guarded bungalow in Delhi, with the curtains drawn.
-N: Inside, a British barrister named Cyril Radcliffe is working from maps. He landed in India on the eighth of July. He has been given until the fifteenth of August.
-N: That is five weeks to divide a hundred and seventy five thousand square miles.
-N: He has census data from nineteen forty one, six years out of date. He has survey maps that do not show where the irrigation canals run.
-N: He does not visit the Punjab. He does not visit Bengal. He has been told that impartiality requires him to know nothing about the place. So he knows nothing about the place.
-N: The line he is drawing will cut through villages, through farms, through the canal system that waters the Punjab, and through the railways that connect it.
+## SCENE 1 | The count
+# MOOD: procedure
+N: The third of June, nineteen forty seven. The House of Commons. The Prime Minister is reading a statement about India, and one sentence in it decides what the map will be made of.
 
-## DOCUMENT | Sir Cyril Radcliffe | private correspondence, quoted by the historians Read and Fisher | 1947
-N: Radcliffe wrote about the job privately, that same year.
-M: The division of India is, in my opinion, the greatest blunder in the whole history of the British Empire.
+## DOCUMENT | Clement Attlee | statement to the House of Commons | June 3, 1947
+# extract: src-hansard-19470603.p36
+# MOOD: procedure
+N: Clement Attlee, to the Commons.
+M: For the purpose of determining the population of districts, the 1941 census figures will be taken as authoritative.
 
 ## ASIDE
-N: He was not describing someone else's decision. He was describing his own work, while he was doing it.
+N: A wartime census, six years old. When the Punjab commission's secretaries asked for a map, the record notes that George Abell sent none: any map, read with those figures, would suffice.
 
-## SCENE 2 | Seventy three days
-N: The deadline had not always been August. The transfer of power was scheduled for June, nineteen forty eight. Lord Mountbatten, the last Viceroy, moved it forward by ten months.
-N: He said later that the reason was momentum.
-N: Seventy three days. That was the notice given to four hundred million people that their country was about to become two countries.
-N: And they were not told which one they lived in. The line was not published on the fifteenth of August. It was published on the seventeenth.
-N: Independence came first. The border came two days later.
+N: Cyril Radcliffe, a British barrister who had never been to India, was given until the fifteenth of August, and four judges on each of two commissions, deadlocked on every contested district. The award he signed is the only document in the record in his own voice.
+
+## DOCUMENT | Sir Cyril Radcliffe | the Punjab award, paragraph ten | August 12, 1947
+# extract: src-radcliffe-punjab.para10
+# MOOD: procedure
+N: Cyril Radcliffe, in the award.
+M: I have hesitated long over those not inconsiderable areas east of the Sutlej River and in the angle of the Beas and Sutlej Rivers in which Muslim majorities are found.
+
+## ASIDE
+N: He hesitated long. He had five weeks.
+
+## REST | short
+
+## SCENE 2 | Midnight
+# MOOD: rupture
+N: The fourteenth of August, Delhi. The Constituent Assembly, Rajendra Prasad presiding. Towards midnight Jawaharlal Nehru rises to move the pledge. Before the English everyone remembers, he spoke in Hindustani, and said that big cities not far from Delhi were ablaze, and that their heat was reaching them there.
 
 ## DOCUMENT | Jawaharlal Nehru | Tryst with Destiny, to the Constituent Assembly | August 14, 1947
-N: On the night of the fourteenth, in Delhi, Jawaharlal Nehru spoke.
-M: At the stroke of the midnight hour, when the world sleeps, India will awake to life and freedom.
+# extract: src-cad-19470814.sec53612
+# CLIP: id=clip-nehru-tryst-19470814 replaces=document status=candidate source=https://archive.org/details/HindSwaraj-Speech-03-1 licence=CC0-as-stated origin="All India Radio" max=45s
+# MOOD: rupture
+N: Then, in English. Nehru, to the assembly.
+M: Long years ago we made a tryst with destiny, and now the time comes when we shall redeem our pledge, not wholly or in full measure, but very substantially. At the stroke of the midnight hour, when the world sleeps, India will awake to life and freedom.
 
 ## ASIDE
-N: In the Punjab, people were also awake. They did not yet know which country they were standing in.
-
-## SCENE 3 | The columns
-N: What followed was the largest migration in human history, and it took about four months.
-N: Fourteen to fifteen million people crossed the new borders. Hindus and Sikhs moved east. Muslims moved west.
-N: On some roads the columns stretched fifty miles. People walked in a hundred and ten degree heat. Cholera moved through the columns, and so did dysentery. Thousands who survived the violence died of thirst.
-N: In Lahore, fires burned for weeks. In Amritsar, mobs blocked the roads against the refugee columns. Armed bands attacked the trains, in both directions.
-N: Some trains reached their destinations carrying no living passengers at all.
-N: The railway staff at Wagah had a term for those, and they wrote it in the log. Ghost trains.
+N: In the Punjab, people were also awake. The line had been signed two days earlier. It would not be published for three more.
 
 ## REST
 
-## SCENE 4 | The wells
-N: The violence was not only on the roads. It was inside villages where nothing had changed except the information.
-N: In border districts, neighbours who had shared wells for generations turned on each other within hours of learning which side of the line they had fallen on.
-N: Nothing else had moved. The fields were the same. The houses were the same. What arrived was a fact about a map, and it was enough.
+## SCENE 3 | Gurdaspur
+# MOOD: reckoning
+N: One district explains why the line is still argued about. Gurdaspur. Every count of its people puts the Muslim share a little over half; the disagreement is over which count should rule.
+N: The Viceroy gave it as fifty point four per cent Muslim. The League's judge, Din Muhammad, put it at fifty one point one four. The Congress judge, Mehr Chand Mahajan, answered from the electoral rolls, where non-Muslim voters were ahead.
+N: The award gave three of its four tehsils to India. Its stated grounds are a canal and a hydro-electric scheme. It does not mention Kashmir. One document does, before the award: the Viceroy's staff's record of his interview with the Nawab of Bhopal, on the fourth of August.
 
-## DOCUMENT | Muhammad Ali Jinnah | address to the Constituent Assembly of Pakistan | August 11, 1947
-N: Three days before independence, in Karachi, Muhammad Ali Jinnah addressed the assembly of the country he had spent a decade arguing into existence.
-M: Pakistan is a dream that has come true.
+## DOCUMENT | Record of an interview between Lord Mountbatten and the Nawab of Bhopal, by the Viceroy's staff | The Transfer of Power, volume XII, number 335 | August 4, 1947
+# extract: src-top-xii.item335
+# CLIP: id=clip-mountbatten-broadcast-19470603 replaces=none status=candidate source=https://cdn.nationalarchives.gov.uk/documents/education/mountbatten-radio-broadcast.mp3 licence=OGL-v3-except-where-stated origin="UK National Archives education resource" max=40s note="a clip of the 3 June broadcast belongs at the top of SCENE 1, as the plan's own announcement; not usable until the page naming it, the occasion and the transcript are verified"
+# MOOD: reckoning
+N: The staff record has him saying this.
+M: Kashmir, which was so placed geographically that it could join either Dominion, provided part of Gurdaspur were put into East Punjab by the Boundary Commission.
 
 ## ASIDE
-N: He said that on the eleventh. The Punjab was already burning. He died of tuberculosis thirteen months later.
+N: When Liaquat Ali Khan protested that the award was political, Lord Ismay wrote back that the Viceroy had made it clear from the outset that he must have nothing to do with the commissions. Nothing in the record shows the Viceroy's sentence reaching Radcliffe, and this episode stops where the record stops.
+
+## REST
+
+## SCENE 4 | How many
+# MOOD: grief
+N: Nobody knows how many people died. The honest answer is a set of counts that do not agree, each with a name on it. The Government of India's Fact Finding Organisation examined nearly fifteen thousand witnesses. Its report, by G. D. Khosla, says the nineteen forty one census was not accurate even when it was compiled, so no count can be made from it.
+
+## DOCUMENT | G. D. Khosla, Fact Finding Organisation report | Stern Reckoning | 1949
+# extract: src-khosla-1949.p299
+# MOOD: grief
+N: Khosla, for the Fact Finding Organisation.
+M: Taking these factors into consideration the loss of non-Muslim life has been estimated at a figure between 200,000 and 250,000. It is believed that an equal number of Muslims perished in the course of the riots in India.
+
+## ASIDE
+N: One producer, counting one side and believing the other. The Sikh compilation of nineteen fifty put the killed at about a million; the economists Bharadwaj and Mirza say nearly a million, by many accounts.
+N: The migration has the same shape. The Commons was told in December that eight and a half million had moved between the two Punjabs; the economists count fourteen and a half million displaced within four years, across both borders. Not the same count.
+N: The figure you will see elsewhere, one to two million dead, is in no document this programme could read. So it is not said here.
+
+## REST
 
 ## SCENE 5 | The force that was supposed to hold
-N: The army that was meant to prevent this was being divided at the same time it was needed.
-N: Of the fifty five thousand troops in the Punjab, roughly half were being transferred to the new Pakistani military.
-N: A neutral force was created to hold the province. The Punjab Boundary Force. Twenty five thousand men, under Major General Rees.
-N: It was disbanded on the first of September, after less than a month. The reason given was that it had been overwhelmed.
+# MOOD: dread
+N: A force had been assigned to prevent this. Go back a week. The Punjab Boundary Force, under Major General Rees, was to hold the twelve districts the line would cut. On the eighth of August the Governor, Sir Evan Jenkins, telegraphed the Viceroy with the count.
 
-## SCENE 6 | How many
-N: Nobody knows how many people died.
-N: The early British figures said two hundred thousand. Later scholarship, by historians including Gyanendra Pandey and Urvashi Butalia, put it closer to two million.
-N: That is not a small disagreement. It is a factor of ten, inside living memory, about one of the largest killings of the twentieth century.
-N: The reason is simple and it is bleak. Most of these deaths were never registered. There was no state on either side of the line with the capacity to count, because the state itself was what had just been divided.
-N: Mass graves found in the Punjab and in Bengal, decades afterwards, have kept revising the number upward.
-N: So the figure you will see, one to two million, is not a measurement. It is an estimate of an absence of records.
+## DOCUMENT | Sir Evan Jenkins, Governor of the Punjab | telegram to the Viceroy | August 8, 1947
+# extract: src-top-xii.item382
+# MOOD: dread
+N: Evan Jenkins, to Mountbatten.
+M: This means that in addition to police we have a strength of say 7500 effective rifles to control 12 districts with a population of no less than 12 million.
+
+## ASIDE
+N: One rifle for every sixteen hundred people, by his own arithmetic. Five days later, the day after the award was signed, he wrote that he had asked for twenty thousand men and had about nine thousand.
 
 ## REST
 
-## DOCUMENT | Mahatma Gandhi | prayer meeting address, Calcutta | August 1947
-N: In Calcutta that month, Gandhi was fasting against the killing. At a prayer meeting, he said this.
-M: I do not agree with what my Muslim friends say, that we cannot live together.
+## SCENE 6 | The drum
+# MOOD: testimony
+N: Sarla Dutta was thirteen. Her father was killed on the road. She and two or three other girls were taken by a group of men; she was converted and renamed. Months later, soldiers came looking for abducted girls, and the man who held her put her inside his seed drum.
+
+## DOCUMENT | Sarla Dutta | oral history, The 1947 Partition Archive | 2024
+# extract: src-pa-sarla-dutta.para6
+# MOOD: testimony
+N: Sarla Dutta, in her own words.
+F: I slid my hand through an opening in the drum and screamed to make myself noticed.
 
 ## ASIDE
-N: He was assassinated five months later, by a Hindu nationalist who believed he had conceded too much.
+N: That December the two governments agreed that abducted persons were to be restored to their own Dominion even against their wishes. In April the liaison officers' report on Sheikhupura counted about a hundred women still to be recovered, and sixteen recovered in a month.
 
 ## REST
 
 ## TURN | Five accounts
-N: Here is the part that does not resolve.
-N: There are five standard accounts of what happened here. They mostly agree about the facts. They disagree about which facts are the story.
-N: Each one is going to be given its own case, in its own words, before anything is said against it.
+# MOOD: reckoning
+N: Here is the part that does not resolve. Five accounts of what happened here mostly agree about the documents, and disagree about which documents are the story. Each gets its own case first.
 
 ## PERSPECTIVE | British Imperial | victor
-N: The British account is administrative. Both Congress and the Muslim League accepted partition. The deadlock between them was real, and Radcliffe worked inside constraints that Indian politics had set, not Britain.
-N: On the accelerated timeline, the argument is uncomfortable but serious. Administrative collapse was already underway, and a slower handover might have killed more people, not fewer.
-N: Clement Attlee, the Prime Minister who ordered it, summarised his own role in retirement.
-M: I gave them their freedom.
-
-## ASIDE
-N: Mountbatten was less composed in private. After fixing the August date, he told his staff this.
-M: The date is fixed. And I have to tell you that I think it is the greatest gamble in history.
+# MOOD: procedure
+N: The British account is administrative. Both Congress and the Muslim League accepted the plan. The Indian leaders chose the commissions and drafted their terms. The Viceroy kept out of the award; Ismay's letter says so.
+N: On the speed, the argument is uncomfortable but serious. Administrative collapse was already under way, and a slower handover might have killed more people. Attlee told the Commons they were constrained by urgency.
 
 ## PERSPECTIVE | Indian Nationalist | victor
-N: The Indian nationalist account holds that Congress never wanted partition, and accepted it only to stop independence itself being delayed indefinitely.
-N: On this reading, British haste served London, which wanted out of an empire it could no longer afford, and not India, which needed time.
-N: It also points at something the violence tends to bury. In the same period, India integrated five hundred and sixty two princely states into a single country, and built a secular democracy that has held.
-N: Maulana Abul Kalam Azad, the Congress president who opposed partition to the end, wrote this.
-M: It is for India that I have worked all my life, and it is for India's freedom that I have gone to prison again and again.
+# MOOD: reckoning
+N: The Indian nationalist account holds that Congress never wanted partition and accepted it only to stop independence itself being delayed indefinitely. Freedom came with a partition, not because of one.
+N: It points at what the violence tends to bury: five hundred and sixty two princely states integrated, a secular constitution written, and the dead counted in hundreds of thousands, from witnesses.
 
 ## PERSPECTIVE | Pakistani Nationalist | victor
-N: The Pakistani account begins with an election. In nineteen forty six, the Muslim League won four hundred and forty six of the four hundred and ninety five seats reserved for Muslim voters.
-N: That is close to a mandate, and it is the strongest fact in this case. After Congress took power in nineteen thirty seven and governed without the League, the argument that Muslims would be permanently outvoted in a united India stopped being hypothetical.
-N: Pakistan then built a state from almost no inherited infrastructure. The civil service, the army command, the treasury, were all on the other side of the line.
-N: And on what that state was supposed to be, Jinnah said this, three days before it existed.
+# MOOD: reckoning
+N: The Pakistani account begins with an election. In nineteen forty six, the Muslim League won four hundred and forty six of the four hundred and ninety five seats reserved for Muslim voters. That is close to a mandate, and it is the strongest fact in this case. On the state, Jinnah addressed its assembly three days before it existed.
+
+## DOCUMENT | Muhammad Ali Jinnah | presidential address to the Constituent Assembly of Pakistan, Karachi | August 11, 1947
+# extract: src-jinnah-19470811.whole
+# MOOD: reckoning
+N: Jinnah, to the assembly.
+M: On both sides, in Hindustan and Pakistan, there are sections of people who may not agree with it, who may not like it, but in my judgment there was no other solution and I am sure future history will record its verdict in favour of it.
+N: And on what the state was to be.
 M: You are free; you are free to go to your temples, you are free to go to your mosques or to any other places of worship in this State of Pakistan.
 
 ## PERSPECTIVE | Subaltern and displacement | vanquished
-N: The fourth account is not about states at all, and it is impatient with the other three.
-N: Its argument is that national narratives erase fourteen million people. That constitutional achievements are not the story from inside a refugee column. That caste hierarchies were rebuilt inside the rehabilitation camps. That Bengal's partition was not an event but a slow decades long unmaking, which is why it gets less attention than Punjab's sudden break.
-N: From the Partition Archive, an oral history recorded in twenty thirteen, sixty six years afterwards.
-F: I still dream of the house. The courtyard, the neem tree. I am an old woman now, but in my dreams I am always going back.
+# MOOD: testimony
+N: The fourth account is not about states at all. Its argument is that national narratives erase the people who walked.
+N: Khushi Muhammad Jut was seven, in a village in Ludhiana district that the line left in India. The Partition Archive's summary of his interview recounts what his elders said.
 
-## REST | short
+## DOCUMENT | The elders of Aloona Tola, as recounted by Khushi Muhammad Jut | The 1947 Partition Archive, the Archive's summary of his interview | 1947
+# extract: src-pa-khushi-muhammad.para8
+N: His elders, as he recounted them.
+M: For generations we have been living here, how can we leave our homes?
+N: They left. His father hid the family in a field on another man's land.
 
 ## PERSPECTIVE | Women's history | vanquished
-N: The fifth account is about the seventy five thousand to a hundred thousand women who were abducted, raped, forcibly converted and married during the violence.
-N: Then it is about what the two new governments did next. The Abducted Persons Act of nineteen forty nine recovered women across the border on the basis of religion, without asking the women. Some were returned to families who would not take them back. Some were moved twice.
-N: At Thoa Khalsa, women died in a mass suicide that is still commemorated as an act of honour. They were not consulted about that either.
-N: One woman, being recovered by the state, said this to the people recovering her.
-F: You think you are saving us? You are tearing us apart again.
+# MOOD: grief
+N: The fifth account is about what was done to women, and then about what the two states did next: a recovery that moved women across the border by religion, even against their wishes. It cannot count them. The figure of seventy five thousand that the books carry could not be read in the free record, so it is not repeated here.
+N: Its witness is a poem. Amrita Pritam called to the eighteenth century poet Waris Shah. What follows is Void's own translation from the Punjabi.
+
+## DOCUMENT | Amrita Pritam (Void translation from the Punjabi) | Ajj Aakhaan Waris Shah Nu, rendered by Void from the Punjabi | 1949
+# extract: src-amrita-pritam-1949.sec1.en
+# MOOD: grief
+N: Amrita Pritam, rendered by Void from the Punjabi.
+F: today lakhs of daughters weep, and say to you, Waris Shah; rise, you who felt for the grieving, rise and look at your own Punjab
+
+## REST
 
 ## TURN | The shape of the disagreement
+# MOOD: reckoning
 N: None of those five is a lie. Each is a true account, and each has a hole in it.
-N: The British account leaves out how arbitrary the line was, and a hundred and ninety years in which British administration hardened Hindu and Muslim into census categories and separate electorates.
-N: The Indian account leaves out Congress's own failure to accommodate the League between nineteen thirty seven and nineteen forty six, and Hindu violence against Muslims in Delhi and Bihar.
-N: The Pakistani account leaves out how thin the League's organisation was before nineteen forty, and it leaves out Direct Action Day.
-N: The subaltern account leaves out the state building, the institutions, the Cold War pressure the new governments were under.
-N: The women's account, the most recent of the five, leaves out male victims, who were also killed and mutilated in enormous numbers.
-N: The holes are not random. Each account omits the thing that would cost its own side the most.
-N: That is not a reason to discard any of them. It is the reason to hear all five.
+N: The British account leaves out what the Viceroy's own staff wrote about Gurdaspur before the award, and the strength at which the Governor found the Force. The Indian account leaves out the Muslim dead of the east, carried in its own count only as an equal number, believed. The Pakistani account leaves out the award's two stated grounds, and the Sikh note of nineteen forty two that called Gurdaspur balanced by an older census.
+N: The subaltern account leaves out the state building, the institutions, the treasury on the other side of the line. The women's account leaves out the recovered women who wished to return, and the men killed in the same columns.
+N: And none of the five is a Sikh account, though the Viceroy said on the fourth of June that the plan divided that community into two almost equal parts.
+N: The holes are not random. Each account omits the thing that would cost its own side the most. That is the reason to hear all five, and to say which is missing.
 
 ## REST
 
 ## CLOSE
-N: The Radcliffe Line left a hundred and sixty two enclaves stranded on the wrong side of the border with what became Bangladesh. Villages inside a country they did not touch.
-N: They were not resolved until the Land Boundary Agreement of twenty fifteen. Sixty eight years.
-N: And the division did not stop dividing. In nineteen seventy one, Pakistan itself broke along the contradiction it had been founded on, and Bangladesh became a third country born from the first partition.
-N: The Punjabi poet Amrita Pritam wrote the lines that the north still remembers Partition by. She addressed them to a poet who had been dead for two hundred years, and asked him to speak. She did not write about politics. She wrote about the rivers.
+# MOOD: grief
+N: The Radcliffe Line left a hundred and sixty two enclaves stranded on the wrong side of the border with what became Bangladesh. They were not resolved until twenty fifteen. In nineteen seventy one, Pakistan itself broke, and Bangladesh became a third country born from the first partition.
 N: Both states hold nuclear weapons now. They have fought four wars. Kashmir is still contested.
-N: A hundred and seventy five thousand square miles. Six year old maps. Five weeks.
+N: One census, taken in wartime. Any map, read with it. Five weeks.
 
 ## SAY
 Radcliffe = RAD-kliff
 Jinnah = JIN-ah
-Amritsar = um-RIT-sur
-Wagah = WAH-gah
-jathas = JUT-haz
+Gurdaspur = gur-DAHS-poor
+Sutlej = SUT-lej
+Beas = bee-AHS
+Ismay = IZ-may
+Liaquat = lee-AH-kut
+Khosla = KOHS-la
+Sheikhupura = shay-koo-POOR-ah
+Aloona Tola = ah-LOO-nah TOH-lah
+Waris Shah = WAH-ris SHAH
+Amrita Pritam = um-REE-tah PREE-tum
+Mahajan = mah-HAH-jun
