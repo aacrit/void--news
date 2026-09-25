@@ -13,7 +13,7 @@ import EventHero, { HERO_ID } from "./EventHero";
 import SpineRail from "./SpineRail";
 import ThesisEpisode from "./ThesisEpisode";
 import ThesisReturn from "./ThesisReturn";
-import { FreeCopyLink, NoFreeCopy, SourceMark } from "./ThesisSourceLink";
+import { FreeCopyLink, NoFreeCopy, SourceMark, isInsecureOrigin } from "./ThesisSourceLink";
 
 /* ===========================================================================
    The Thesis — the History event page once its ledger clears the bar.
@@ -380,7 +380,7 @@ function Position({ block }: { block: ThesisPositionBlock }) {
               {block.restsOn.map((r) => (
                 <li key={r.source}>
                   {r.freeCopy ? (
-                    <a href={r.freeCopy} rel="noopener noreferrer" target="_blank">{r.short}</a>
+                    <a href={r.freeCopy} rel="noopener noreferrer" target="_blank" data-origin={isInsecureOrigin(r.freeCopy) ? "insecure" : undefined}>{r.short}</a>
                   ) : (
                     r.short
                   )}
@@ -405,7 +405,7 @@ function Position({ block }: { block: ThesisPositionBlock }) {
               <ul className="hist-th-position__sources">
                 {block.describedBy.map((x, i) => (
                   <li key={i}>
-                    {x.freeCopy ? <a href={x.freeCopy} rel="noopener noreferrer" target="_blank">{x.short}</a> : x.short}
+                    {x.freeCopy ? <a href={x.freeCopy} rel="noopener noreferrer" target="_blank" data-origin={isInsecureOrigin(x.freeCopy) ? "insecure" : undefined}>{x.short}</a> : x.short}
                     <span className="hist-th-position__tag">{x.locatorLabel}{x.exhibit ? `, exhibit ${x.exhibit}` : ""}</span>
                     <ExtractText x={x} />
                   </li>
