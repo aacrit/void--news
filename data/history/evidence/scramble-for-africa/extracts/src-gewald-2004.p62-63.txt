@@ -4,6 +4,7 @@ url: https://scholarlypublications.universiteitleiden.nl/access/item:2888838/vie
 read: 2026-09-25
 note: sliced from the PDF's text layer; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed
 note: the end of von Estorff as Gewald translates him, and Gewald's next paragraph
+note: the repository's text layer prints 'hè' for 'he' and 'mto' for 'into'; left as the layer prints them
 
 ally feil into our hands [unsere Gewalt kamen]; sections of the people escaped
 now and later through the Sandveld into English territory [present-day Botswana]. It was a policy as gruesome as it was senseless, to hammer the people

@@ -692,6 +692,15 @@ def check_paper(base: str) -> None:
            if not found else f"still serving: {found}")
 
 
+def _insecure_hosts() -> set[str]:
+    """The http-only hosts a ledger may cite, from frontend/config/insecure-origins.json."""
+    cfg = Path(__file__).resolve().parents[1] / "frontend/config/insecure-origins.json"
+    try:
+        return {str(h.get("host")) for h in json.loads(cfg.read_text(encoding="utf-8")).get("hosts", [])}
+    except (OSError, ValueError):
+        return set()
+
+
 def check_thesis(base: str) -> None:
     """TH-01..TH-04 — a served thesis page (docs/proposals/HISTORY-THESIS-PAGE.md §9).
 
@@ -767,7 +776,13 @@ def check_thesis(base: str) -> None:
 
     src_block = re.search(r'<section id="sources".*?</section>', body, re.S)
     src_links = re.findall(r'href="([^"]*)"', src_block.group(0)) if src_block else []
-    relative = [u for u in src_links if not u.startswith("https://") and not u.startswith("#")]
+    # Hosts that serve a free copy only over http are allowed as plain http
+    # links, from frontend/config/insecure-origins.json (each with the reason
+    # and the date it was checked; tests/test_insecure_origins.py keeps the
+    # list to the hosts it names). Everything else must be https or an anchor.
+    insecure_hosts = _insecure_hosts()
+    relative = [u for u in src_links if not u.startswith("https://") and not u.startswith("#")
+                and not (u.startswith("http://") and u.split("/")[2] in insecure_hosts)]
     prose = re.sub(r"<blockquote\b.*?</blockquote>", " ", body, flags=re.S)
     visible = unescape(re.sub(r"<[^>]+>", " ", prose))
     dashes = visible.count("—") + visible.count("–")

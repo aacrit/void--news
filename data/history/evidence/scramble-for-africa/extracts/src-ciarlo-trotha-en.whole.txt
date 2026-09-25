@@ -3,6 +3,7 @@ locator: whole
 url: https://germanhistorydocs.org/en/wilhelmine-germany-and-the-first-world-war-1890-1918/lothar-von-trothas-extermination-order-october-2-1904
 read: 2026-09-25
 note: GHDI's published English translation (David Ciarlo), sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: the opening paragraph between the dateline and 'Any Herero' is omitted for the cap
 
 Osombo-Windhuk, Oct. 2, 1904
 Any Herero found within the German frontier, with or without a

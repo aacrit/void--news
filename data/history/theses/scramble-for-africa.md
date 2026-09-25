@@ -1,11 +1,11 @@
 ---
 slug: scramble-for-africa
-status: draft
-audited_by: null
-audited_at: null
+status: published
+audited_by: historiographic-auditor (independent Stage 5, two passes)
+audited_at: 2026-09-25
 question: What did the General Act of Berlin actually allocate, what did the rules it laid down cost the people on the coasts and in the Congo basin, and what does the free record settle about the counts?
 claims:
-  - The Act signed at Berlin allocates no territory, names no border and no Power's possession; its 2 articles on occupation set rules for future acts on the coasts, and the British government said, five days into the conference, that territorial claims were not on its agenda.
+  - The Act signed at Berlin allocates no territory, names no border and no Power's possession; its 2 articles on occupation set rules for future acts on the coasts, and the British government said, with the conference sitting, that territorial claims were not on its agenda.
   - The rulers whose land the rules reached speak in this record in their own words, and each of them, Witbooi, Lobengula and Menelik, refuses to let a European text stand for his consent.
   - The Congo's rubber system and the Herero war are in the record from both sides, and on the deaths the record holds counts of unlike things that this thesis states as counts, never as one number.
 episode_marks:
@@ -18,7 +18,7 @@ regional_sources_note: null
 
 ::: episode chapter=0
 
-The General Act of the Conference of Berlin was signed at Berlin on 26 February 1885.[^src-berlin-act-1885 sec128] Its preamble says the sovereigns met “to regulate the conditions most favourable to the development of trade and civilization in certain regions of Africa”, and to obviate the disputes “which might in future arise from new acts of occupation” on the coast.[^src-berlin-act-1885 pre1] Five days into the conference, on 20 November 1884, the Under-Secretary of State for Foreign Affairs told the Commons that “the decision of territorial claims is not among the bases of the Conference”.[^src-hansard-18841120 whole] The historian Uzoigwe, writing in the UNESCO General History, holds that the view that the conference did not partition Africa “is correct only in the most technical sense”.[^src-uzoigwe-1985 p30]
+The General Act of the Conference of Berlin was signed at Berlin on 26 February 1885.[^src-berlin-act-1885 sec128] Its preamble says the sovereigns met “to regulate the conditions most favourable to the development of trade and civilization in certain regions of Africa”, and to obviate the disputes “which might in future arise from new acts of occupation” on the coast.[^src-berlin-act-1885 pre1] With the conference sitting, on 20 November 1884, the Under-Secretary of State for Foreign Affairs told the Commons that “the decision of territorial claims is not among the bases of the Conference”.[^src-hansard-18841120 whole] The historian Uzoigwe, writing in the UNESCO General History, holds that the view that the conference did not partition Africa “is correct only in the most technical sense”.[^src-uzoigwe-1985 p30]
 
 This thesis asks what the Act allocated, what the rules it laid down cost the people they reached, and what the free record settles about the counts. It makes three claims. First, that the Act allocates no territory and names no border, and that its articles on occupation are rules for future acts on the coasts. Second, that the rulers whose land those rules reached speak in this record in their own words, and that each refuses to let a European text stand for his consent. Third, that the Congo's rubber system and the Herero war are in the record from both sides, and that on the deaths the record holds counts of unlike things, which this thesis states as counts and never as one number.
 

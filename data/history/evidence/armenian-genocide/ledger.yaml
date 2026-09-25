@@ -710,7 +710,7 @@ entries:
   producer: republic-of-armenia
   position: armenian-account
   rights: public
-  notes: 'the official English version on gov.am/en answered a bot-manager captcha, so the rendering beside the Armenian is Void''s, at moderate confidence, with a back-translation made in a separate pass: ''Հայաստանի Հանրապետությունը սատար է կանգնում 1915 թվականին Օսմանյան Թուրքիայում և Արևմտյան Հայաստանում հայոց ցեղասպանության միջազգային ճանաչման գործին'', which keeps the three names and both numbers of the original and adds nothing'
+  notes: 'the official English version on gov.am/en answered a bot-manager captcha, so the rendering beside the Armenian is Void''s, at moderate confidence; a back-translation made in a separate pass from the English alone is stored at back-translations/src-armenia-decl-1990.item11.hy.txt with its parity result: it keeps the three names and both numbers of the original, adds nothing, and differs in two inflections'
 - id: src-nca-vii-1946
   tier: A
   kind: edited-documents
@@ -1806,7 +1806,7 @@ positions:
   claim: The Armenians of the war zone were relocated as a security measure after risings and collaboration with the Russian army; deaths came from wartime conditions, banditry and local revenge, not from a premeditated plan; more Turks died in the same years; and the word genocide is legally unfounded for it.
   omits: The provinces far from any front that the measures reached, which its ally's ambassador and the neutral ambassador both recorded, and any count of its own of the Armenians who died, which the ministry's 1917 tally does not give.
   adjudications:
-  - claim: The relocation was ordered for the Armenian population residing in or near the war zone, away from the supply routes of the army.
+  - claim: The relocation was ordered for the Armenian population residing in or near the war zone, away from the supply routes and army transport lines, and some Armenians living away from the front who were reported or suspected of collaboration were also included.
     verdict: contradicted
     basis: presence
     rests_on:
@@ -1815,8 +1815,11 @@ positions:
     - src-frus-d1400.whole
     - src-frus-d1406.whole
     - src-de-19150716.para13
+    - src-gust-19150716-en.para13
+    - src-frus-d1416.whole
     - src-mfa-tr.para6
-    reasoning: The German ambassador reported on 7 July 1915 that the Porte had extended the measure to Trebizond, Mamuret-ul-Aziz and Sivas although those provinces were threatened by no enemy invasion; the American ambassador reported on 10 July that the deportations were directed from Constantinople often in districts where no military operations were likely, and on 11 August that Ada Bazar, Izmid and Bardizag, some 50 miles from the capital, were being cleared; the consul at Samsun on the Black Sea reported the expulsion of every Armenian there. Two producers, the Ottoman Empire's ally and a neutral, record the same extension. The foreign ministry's own page concedes that some Armenians living away from the front were included, and this record holds the extension as the rule of the summer of 1915, not an exception.
+    reasoning: The German ambassador reported on 7 July 1915 that the Porte had extended the measure to Trebizond, Mamuret-ul-Aziz and Sivas although those provinces were threatened by no enemy invasion; the American ambassador reported on 10 July that the deportations were directed from Constantinople often in districts where no military operations were likely, and on 11 August that Ada Bazar, Izmid and Bardizag, some 50 miles from the capital, were being cleared; the consul at Samsun on the Black Sea reported countermeasures apparently valid for all Anatolian Vilayets and the expulsion of every Armenian there; and the German embassy's own memorandum of 9 August told the Porte it had extended the banishment order to the other provinces of Asia Minor and emptied the Armenian villages of the Izmid district. The position, stated in full, allows for some Armenians away from the front, suspected of collaboration, being included; what the ally and the neutral record is a wholesale extension to
+      provinces and towns far from any front, not a selection of suspects. Two producers contradict the claim on that point.
   - claim: No authentic evidence exists to support the claim that there was a premeditated plan by the Ottoman Government to kill off Armenians.
     verdict: qualified
     basis: presence
@@ -1834,7 +1837,7 @@ positions:
     - src-mfa-tr.para4
     would_settle: the Ottoman and Turkish demographic literature, of which McCarthy's work is paywalled, and the Ottoman archives
     gap: no document in the free record counts the Muslim dead of the eastern provinces
-    reasoning: No document in the free record counts the Muslim dead of the war. The German consul at Samsun and the Ottoman pamphlet both record Muslims killed at Van and Şebinkarahisar, so the claim's premise is not empty, but its comparison of two counts cannot be tested against artifacts that count neither.
+    reasoning: No document in the free record counts the Muslim dead of the war, so the claim's comparison of two counts cannot be tested against artifacts that count neither.
 - id: armenian-account
   name: The survivors, the Republic and Armenian scholarship
   holders:
@@ -1894,7 +1897,7 @@ positions:
   - src-bundestag-2016.p1
   - src-kevorkian-2013.para2
   claim: The deportation was a death warrant to a whole race, understood as such by the ministers who ordered it, carried out under a pretext of military necessity beyond any war zone, and known in Berlin and Washington while it ran; the numbers can be estimated only from neutral witnesses, and Toynbee put the dead at about a third of the Armenians in Turkey.
-  omits: The Armenian risings and the Muslim dead that the German consuls and the Ottoman government both recorded, which the memoir passes over and the British compilation treats as the government's pretext.
+  omits: The Armenian conspiracy the German consul at Samsun called a fact and the risings the Ottoman government's pamphlet describes, which the memoir passes over and the British compilation treats as the government's pretext.
   adjudications:
   - claim: The Ottoman ministers made no particular attempt to conceal, in their conversations with the ambassador, that the deportation was the death warrant of a race.
     verdict: qualified
@@ -2033,10 +2036,11 @@ contested:
   claim: How many Armenians lived in the Ottoman Empire before the deportations
   rows:
   - position: ottoman-turkish-state
-    holds: 1,187,818 Gregorian and 63,967 Catholic Armenians in the 1914 census, 1,256,403 together, which the interior minister's own report of 1917 says should be around 1,500,000 because the data were incomplete.
+    holds: 1,187,818 Gregorian and 63,967 Catholic Armenians in the 1914 census, printed as 1,256,403 together, a total the editor marks sic and the two figures do not make (they add to 1,251,785); the report says the true figure should be around 1,500,000, and its own summary column for 1914 totals 1,112,614.
     figures:
     - '1256403'
     - '1500000'
+    - '1112614'
     source: src-talat-1917
     locator: p20
   - position: armenian-account
@@ -2136,7 +2140,7 @@ exhibits:
   repository: Wikimedia Commons, from the Center for Holocaust and Genocide Studies, University of Minnesota
   accession: File:Armenians_marched_by_Ottoman_soldiers,_1915.png
   licence: public domain (the file page cites Turkish copyright law, article 27)
-  url: https://commons.wikimedia.org/wiki/File:Armenians_marched_by_Turkish_soldiers,_1915.png
+  url: https://commons.wikimedia.org/wiki/File:Armenians_marched_by_Ottoman_soldiers,_1915.png
   image: https://upload.wikimedia.org/wikipedia/commons/4/4e/Armenians_marched_by_Ottoman_soldiers%2C_1915.png
   shows: a column of men walking between armed guards on open ground; the caption the uploading repository gave it names Harput and May 1915 and says the educated and influential of the city were selected to be massacred nearby
   does_not_show: the place, the date or the photographer on the image itself; all three are the caption's, taken from a university web page the file page cites, and nothing in this ledger's documents confirms them
@@ -2158,7 +2162,7 @@ analyses:
   method: Every figure the fetched documents give for the number of Armenians in the Ottoman Empire before the deportations, one row per figure, with the producer of the figure and the document it is read in. The result is the range of the column.
   finding: The record holds 9 figures for the Armenians of the Ottoman Empire before 1915, from 1,100,000 to 2,100,000; the lowest is the Ottoman government's and the highest the Patriarchate's, both as a British compiler reported them in 1916, and the interior minister's own report of 1917 gives the census as 1,256,403 and says it should be around 1,500,000.
   confidence: 'moderate: the range is the extreme of 9 stated figures from 4 documents, but the two extremes are figures of 1912 and of the government''s returns as Toynbee reports them, not read in the returns themselves, and the Ottoman census and the Patriarchate''s count are of different years'
-  against: Tatoyan's like-for-like comparison of the two official series gives 1,294,851 against 2,026,700, a ratio of 1.57, so the two extremes here overstate the gap between the parties; and the interior minister's own note says the census figure undercounts
+  against: Tatoyan's like-for-like comparison of the two official series gives 1,294,851 against 2,026,700, a ratio of 1.57, so the two extremes here overstate the gap between the parties; the interior minister's own note says the census figure undercounts; and that note's two figures, 1,187,818 and 63,967, add to 1,251,785, not to the 1,256,403 it prints, which the editor marks sic, so the row carries the printed total and this discrepancy beside it
   result:
   - 1100000
   - 2100000
@@ -2208,31 +2212,31 @@ analyses:
       extract: src-bryce-1916.p664
 - id: an-ministry-ledger
   title: The interior ministry's own ledger, 1914 against 1917
-  method: 'From the notes to the opening summary page of the interior minister''s report of 1917: the total the report gives for the 1914 census of Gregorian and Catholic Armenians, and the total it counts as present in 1917, natives and outsiders together. The result is the ratio, the 1917 count over the 1914 census.'
-  finding: 'On the interior minister''s own summary page, the Armenians counted in 1917 were 284,157 against a 1914 census total of 1,256,403: fewer than a quarter remained on the ministry''s own books.'
-  confidence: 'moderate: the arithmetic is on a pair of figures in one note of one document, but the document is read in an English edition and its figures are read from one note, the report''s own note calls the census incomplete and would raise the 1917 count by 30 percent, and the editor notes that provinces with Armenian populations are missing from the report'
-  against: the same note says the true 1914 figure should be around 1,500,000 and the 1917 count around 350,000 to 400,000, which gives a similar share but not this one; the report counts survivors present, not the dead, and deportees in Syria and Mesopotamia are counted where they were found
-  result: 0.2262
+  method: 'From the opening summary page of the interior minister''s report of 1917: the total its own 1914 column gives, natives and Constantinople together, and the total it counts as present in 1917, natives and outsiders together. The result is the ratio, the 1917 count over the report''s own 1914 column. The notes to the same page give a second 1914 figure, the census total of 1,256,403; that pairing, 284,157 over 1,256,403, is 0.2262, and it is stated here as the mismatched pair, not as the result.'
+  finding: 'On the interior minister''s own summary page, the Armenians counted in 1917 were 284,157 against the page''s own 1914 column of 1,112,614: about a quarter remained on the ministry''s own books, and fewer than a quarter if the census total in the page''s notes, 1,256,403, is the base.'
+  confidence: 'moderate: the arithmetic is on a pair of figures in one document, but the document is read in an English edition, the report''s own note calls the census incomplete and would raise the 1917 count by 30 percent, and the editor notes that provinces with Armenian populations are missing from the report'
+  against: the same note says the true 1914 figure should be around 1,500,000 and the 1917 count around 350,000 to 400,000, which gives a similar share but not this one; the report counts survivors present, not the dead, and deportees in Syria and Mesopotamia are counted where they were found; the census total the notes print does not equal the sum of its own two parts
+  result: 0.2554
   derivation:
     compute: ratio
     column: counted_1917
-    over: census_1914
+    over: column_1914
     columns:
     - document
     - counted_1917
-    - census_1914
+    - column_1914
     rows:
-    - document: Talaat Pasha's report, notes to the opening summary page
+    - document: Talaat Pasha's report, opening summary page, the totals rows
       counted_1917: 284157
-      census_1914: 1256403
-      extract: src-talat-1917.p20
+      column_1914: 1112614
+      extract: src-talat-1917.p21
 - id: an-words-for-the-aim
   title: What the dispatches called it, June 1915 to December 1916
   method: Every contemporaneous document this record holds from the war years, written by an official of a government other than the Ottoman, that names the destruction of the Armenians as a people as the aim or the result of the measures; one row per document, with the date, the producer and the word used. The result is the count.
-  finding: 'Of the wartime documents held here, 11 name the destruction of the Armenians as a people as the aim or the result of the measures: 6 from the German Foreign Office''s files (2 of them reporting the words of the interior minister and of the Armenian Patriarch), 4 telegrams of the American ambassador and his consul, and the British compiler''s preface of 1916.'
-  confidence: high for the count, which is of held documents and each row quotes the word; the corpus is what this ledger reached, not a sample of all dispatches, and the pair that report the words of others are the German embassy's record of them
+  finding: 'Of the wartime documents held here, 10 name the destruction of the Armenians as a people as the aim or the result of the measures: 5 from the German Foreign Office''s files (1 of them reporting the words of the Armenian Patriarch), 4 telegrams of the American ambassador and his consul, and the British compiler''s preface of 1916.'
+  confidence: high for the count, which is of held documents and each row quotes the word; the corpus is what this ledger reached, not a sample of all dispatches, and the row that reports the Patriarch's words is the German embassy's record of them; the interior minister's own phrase to the embassy, a clean sweep of internal enemies, is left out because it does not name the Armenians as a people
   against: the same German files carry the ambassador's approval of the deportation insofar as military considerations demanded it and the consul at Samsun's statement that a great Armenian conspiracy did exist; the Ottoman government's own pamphlet of 1916 calls the measure a transfer for the security of the army's rear, so the aim was contested at the time by the state that ordered it
-  result: 11
+  result: 10
   derivation:
     compute: count
     column: document
@@ -2242,11 +2246,6 @@ analyses:
     - producer
     - word
     rows:
-    - date: '1915-06-17'
-      document: Wangenheim reporting the interior minister's words to Mordtmann
-      producer: german-foreign-office
-      word: gründlich aufzuräumen
-      extract: src-de-19150617.para4
     - date: '1915-06-17'
       document: Wangenheim reporting the Armenian Patriarch
       producer: german-foreign-office
@@ -2299,11 +2298,11 @@ analyses:
       extract: src-bryce-1916.secpreface
 - id: an-two-ambassadors
   title: Two ambassadors, 3 days apart
-  method: The German ambassador's report of 7 July 1915 and the American ambassador's telegram of 10 July 1915 set side by side on 7 points, one row per document per point, each row marked same where the two documents make the same reading and differs where they do not. The result is the share of rows marked same.
-  finding: 'On 6 of 7 points the ally''s ambassador and the neutral''s, writing 3 days apart, read the measures the same way: extended beyond any war zone, decided in the capital, aimed at the destruction of the Armenians, justified by the Porte on military grounds, provoked in part by Armenian risings, and answered by a German memorandum that both describe as made for the record against later charges of complicity; they part only on whether a military ground existed at all.'
+  method: The German ambassador's report of 7 July 1915 and the American ambassador's telegram of 10 July 1915 set side by side on 6 points, one row per document per point, each row quoting the words on which the reading rests, marked same where the two documents say the same thing on that point and differs where they do not. The result is the share of rows marked same.
+  finding: 'On 5 of 6 points the ally''s ambassador and the neutral''s, writing 3 days apart, say the same thing: the measures reach provinces with no enemy near, the decision is the Porte''s in the capital, the aim is the destruction of the Armenians, the road will kill, and the German memorandum of 4 July was written for the record against later charges of complicity; they part on whether the deportation is justified at all, which the German approves insofar as military and the American calls purely arbitrary.'
   confidence: 'moderate: the pairing of passages is the historian''s, another reader could pair them otherwise, and the German is read in the original with the edition''s translation beside it'
-  against: the two documents are not of one kind, a report to a chancellor and a telegram to a secretary of state; the German memorandum's own text in French is held only inside the German report and is not paired here; and the American ambassador's expectation that the German protest would be for the record is an inference about an ally he had not seen act
-  result: 0.8571
+  against: the two documents are not of one kind, a report to a chancellor and a telegram to a secretary of state; 2 of the 6 points rest on the German report's paragraph on its own memorandum, which states the embassy's condition of approval rather than an observation; the memorandum's own text in French is held only inside the German report and is not paired here; and the American ambassador's reading of the German protest's purpose is an inference about an ally he had not seen act
+  result: 0.8333
   derivation:
     compute: share
     column: reading
@@ -2314,54 +2313,44 @@ analyses:
     - words
     - reading
     rows:
-    - point: scope beyond the war zone
+    - point: the measures reach provinces with no enemy near
       document: Wangenheim, 7 July
       words: obwohl diese Landesteile vorläufig von keiner feindlichen Invasion bedroht sind
       reading: same
       extract: src-de-19150707.para2
-    - point: scope beyond the war zone
+    - point: the measures reach provinces with no enemy near
       document: Morgenthau, 10 July
       words: often in districts where no military operations are likely to take place
       reading: same
       extract: src-frus-d1400.whole
-    - point: decided in the capital
+    - point: the decision is the Porte's, in the capital
       document: Wangenheim, 7 July
       words: hat die Pforte beschlossen
       reading: same
       extract: src-de-19150707.para2
-    - point: decided in the capital
+    - point: the decision is the Porte's, in the capital
       document: Morgenthau, 10 July
       words: purely arbitrary and directed from Constantinople
       reading: same
       extract: src-frus-d1400.whole
-    - point: the aim
+    - point: the aim is the destruction of the Armenians
       document: Wangenheim, 7 July
-      words: die armenische Rasse im türkischen Reiche zu vernichten
+      words: den Zweck verfolgt, die armenische Rasse im türkischen Reiche zu vernichten
       reading: same
       extract: src-de-19150707.para3
-    - point: the aim
+    - point: the aim is the destruction of the Armenians
       document: Morgenthau, 10 July
-      words: systematic attempt to uproot peaceful Armenian populations
+      words: to bring destruction and destitution on them
       reading: same
       extract: src-frus-d1400.whole
-    - point: the Porte's stated ground
+    - point: the road will kill
       document: Wangenheim, 7 July
-      words: durch militärische Rücksichten geboten
+      words: dürfte besonders unter Frauen und Kindern zahlreiche Opfer fordern
       reading: same
-      extract: src-de-19150707.para10
-    - point: the Porte's stated ground
+      extract: src-de-19150707.para6
+    - point: the road will kill
       document: Morgenthau, 10 July
-      words: in the name of military necessity
-      reading: same
-      extract: src-frus-d1400.whole
-    - point: Armenian risings as part of the cause
-      document: Wangenheim, 7 July
-      words: zur Sicherung gegen Aufstände dient
-      reading: same
-      extract: src-de-19150707.para10
-    - point: Armenian risings as part of the cause
-      document: Morgenthau, 10 July
-      words: some have been implicated in armed revolutionary movements
+      words: Untold misery, disease, Starvation, and loss of life will go on unchecked
       reading: same
       extract: src-frus-d1400.whole
     - point: the German memorandum is for the record
@@ -2374,13 +2363,13 @@ analyses:
       words: a formal protest probably intended for record and to cover itself from future responsibility
       reading: same
       extract: src-frus-d1400.whole
-    - point: whether a military ground exists
+    - point: whether the deportation is justified at all
       document: Wangenheim, 7 July
       words: nur insofern billigen, als sie durch militärische Rücksichten geboten ist
       reading: differs
       extract: src-de-19150707.para10
-    - point: whether a military ground exists
+    - point: whether the deportation is justified at all
       document: Morgenthau, 10 July
-      words: Most of the sufferers are innocent and have been loyal to Ottoman Government
+      words: purely arbitrary; Most of the sufferers are innocent and have been loyal to Ottoman Government
       reading: differs
       extract: src-frus-d1400.whole
