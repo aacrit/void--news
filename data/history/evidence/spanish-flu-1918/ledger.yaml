@@ -373,7 +373,7 @@ entries:
     tier: A
     kind: letter
     author: "G. R., a nurse in North Dakota (letter to the editor)"
-    title: "Experiences during the Influenza Epidemic"
+    title: "Experiences during the Influenza Epidemic, letters to the editor, The American Journal of Nursing, December 1918, Vol 19 Iss 3"
     container: The American Journal of Nursing
     publisher: Lippincott Williams and Wilkins
     place: Philadelphia
@@ -896,8 +896,8 @@ entries:
     tier: B
     kind: journal-article
     author: Ramon Feliphe Souza
-    title: "The train and the \"Spanish señorita\": the flu epidemic in Diamantina, 1918"
-    original_title: "O trem e a \"senhorita espanhola\": a epidemia de gripe em Diamantina, 1918"
+    title: "O trem e a \"senhorita espanhola\": a epidemia de gripe em Diamantina, 1918"
+    title_en: "The train and the \"Spanish señorita\": the flu epidemic in Diamantina, 1918"
     container: "História, Ciências, Saúde-Manguinhos"
     publisher: Casa de Oswaldo Cruz, Fiocruz
     place: Rio de Janeiro
@@ -1153,7 +1153,7 @@ positions:
       - claim: "The global toll of 1918 and 1919 together was about 17.4 million."
         verdict: untestable
         basis: absence
-        rests_on: [src-spreeuwenberg-2018.abstract, src-rg-1920.sectotal]
+        rests_on: [src-spreeuwenberg-2018.para22, src-rg-1920.sectotal]
         would_settle: "the vital records of the countries outside the 14 in the sample, which the position itself says it lacks"
         gap: "no document in the free record counts the world; the one national total here that is built the same way, the Registrar-General's 200,000, is one of the position's own inputs"
         reasoning: "A model's output cannot be tested against artifacts that are its inputs, and no independent count of the world exists in this record; the figure is published as the position's, beside the others."
@@ -1373,10 +1373,10 @@ contested:
         source: src-taubenberger-morens-2006
         locator: para2
       - position: mortality-sceptics
-        holds: "15 million deaths in 1918 and 2.5 million in 1919, 17.4 million together; totals above 25 million are not realistic on the underlying rates."
-        figures: ["15", "2.5", "17.4", "25"]
+        holds: "A total of 15 million deaths in 1918, 17.4 million for 1918 and 1919 combined; a true total above 25 million is very unlikely on the underlying rates."
+        figures: ["15", "17.4", "25"]
         source: src-spreeuwenberg-2018
-        locator: abstract
+        locator: para22
       - position: latin-america
         holds: "The exact number remains unknown because many places kept no mortality statistics; the total is estimated at between twenty and a hundred million."
         figures: []
@@ -1585,10 +1585,10 @@ analyses:
   - id: an-global-figures
     title: Every figure for the world's dead that this record holds
     method: "One row per figure for the pandemic's worldwide dead that a fetched document states or recites, with the producer of the figure, the document it is read in, and the period the figure covers where the document says. Each end of a stated range is its own row. The result is the count of rows."
-    finding: "The record holds 10 figures for the world's dead, made or recited by 6 producers, from 15 million for 1918 alone to 100 million; they are counts of unlike periods by unlike methods, and this thesis does not average them or run them together as one range."
+    finding: "The record holds 11 figures for the world's dead, in 4 sources, from 15 million for 1918 alone to 100 million; they are counts of unlike periods by unlike methods, and this thesis does not average them or run them together as one range."
     confidence: "high for the count, which is of rows in documents held; the figures themselves are each their producer's and are not tested here"
     against: "none found beyond the figures themselves: every document that gives a figure also says the true number is uncertain, Johnson and Mueller calling theirs an understatement and Spreeuwenberg and colleagues calling totals above 25 million unrealistic, so the list is a list of disagreements and not of measurements"
-    result: 10
+    result: 11
     derivation:
       compute: count
       column: figure_millions
@@ -1601,9 +1601,10 @@ analyses:
         - {producer: "Johnson and Mueller (2002)", figure_millions: 50, period: "1918 to 1920", read_in: "their abstract", extract: src-johnson-mueller-2002.abstract}
         - {producer: "Taubenberger and Morens (2006), estimate", figure_millions: 50, period: "1918 to 1919", read_in: "their article", extract: src-taubenberger-morens-2006.para2}
         - {producer: "Taubenberger and Morens (2006), upper", figure_millions: 100, period: "1918 to 1919", read_in: "their article", extract: src-taubenberger-morens-2006.para2}
-        - {producer: "Spreeuwenberg, Kroneman and Paget (2018), 1918 only", figure_millions: 15, period: "1918", read_in: "their abstract", extract: src-spreeuwenberg-2018.abstract}
-        - {producer: "Spreeuwenberg, Kroneman and Paget (2018), total", figure_millions: 17.4, period: "1918 and 1919", read_in: "their abstract", extract: src-spreeuwenberg-2018.abstract}
-        - {producer: "Souza (2023), as recited, low and high", figure_millions: "vinte e cem", period: "the pandemic", read_in: "his article", extract: src-souza-2023.para2}
+        - {producer: "Spreeuwenberg, Kroneman and Paget (2018), 1918 only", figure_millions: 15, period: "1918", read_in: "their conclusion", extract: src-spreeuwenberg-2018.para22}
+        - {producer: "Spreeuwenberg, Kroneman and Paget (2018), total", figure_millions: 17.4, period: "1918 and 1919", read_in: "their conclusion", extract: src-spreeuwenberg-2018.para22}
+        - {producer: "Souza (2023), low, as recited", figure_millions: "vinte", period: "the pandemic", read_in: "his article", extract: src-souza-2023.para2}
+        - {producer: "Souza (2023), high, as recited", figure_millions: "cem", period: "the pandemic", read_in: "his article", extract: src-souza-2023.para2}
   - id: an-official-rates
     title: The official death rates this record holds, side by side
     method: "One row per death rate per 1,000 of population that an official document held here states for a named population, with the producer and the period the document gives. The result is the highest rate in the column. The rows for England and Wales and for the Punjab are converted from the document's own unit: the Registrar-General prints 3,129 and 4,774 per million, stored as 3.129 and 4.774 per 1,000, and the Punjab report prints 4.77 per cent, stored as 47.7; every other rate is stored as printed."
