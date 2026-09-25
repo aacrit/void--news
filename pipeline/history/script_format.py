@@ -10,6 +10,12 @@ contract between that prose and the renderer.
     D: document line (only inside a DOCUMENT segment)
     ## SAY
     Radcliffe = RAD-kliff
+    # MOOD: dread            production directives, inside a segment
+    # CLIP: id=... replaces=document
+
+Directive lines are comments to everything but the producer: `Segment.lines`,
+the exporter and H-01..H-11 never see them (tests/test_history_clips.py
+asserts it). docs/proposals/HISTORY-AUDIO-ARCHIVAL.md §4b, §5a.
 
 The validators exist because one failure in a history programme is
 unrecoverable: a quotation the source never said. H-01 makes that
@@ -121,6 +127,40 @@ class Line:
     text: str
 
 
+# Production directives (docs/proposals/HISTORY-AUDIO-ARCHIVAL.md §4b, §5a).
+# They are comment lines, `# KEY: value`, so every consumer that predates them
+# reads past them: the exporter builds its rows from named fields, the H-rules
+# read `lines`, and the Hearing and thesis pages read the export. Only the
+# producer reads `directives`. A comment whose key is not listed here stays a
+# comment, so a note that happens to contain a colon never becomes an
+# instruction.
+DIRECTIVE_KEYS = ("MOOD", "CLIP", "DRY", "AMBIENCE", "extract")
+_DIRECTIVE_RE = re.compile(r"^#\s*(MOOD|CLIP|DRY|AMBIENCE|extract)\s*(?::\s*(.*))?$")
+_ARG_RE = re.compile(r'([A-Za-z_][A-Za-z0-9_-]*)=("([^"]*)"|\S+)')
+
+
+@dataclass
+class Directive:
+    key: str              # one of DIRECTIVE_KEYS, as written
+    value: str            # everything after the colon, stripped
+    args: dict[str, str] = field(default_factory=dict)   # key=value pairs, quotes removed
+
+    @property
+    def head(self) -> str:
+        """The bare first token: the mood name, or the extract ref."""
+        return (self.value.split() or [""])[0]
+
+
+def parse_directive(line: str) -> Directive | None:
+    m = _DIRECTIVE_RE.match(line.strip())
+    if not m:
+        return None
+    value = (m.group(2) or "").strip()
+    args = {k: (q if q is not None and raw.startswith('"') else raw)
+            for k, raw, q in _ARG_RE.findall(value)}
+    return Directive(key=m.group(1), value=value, args=args)
+
+
 @dataclass
 class Segment:
     kind: str
@@ -129,10 +169,18 @@ class Segment:
     work: str | None = None
     date: str | None = None
     lines: list[Line] = field(default_factory=list)
+    # Read by the producer only. Never exported, never validated by H-01..H-11.
+    directives: list[Directive] = field(default_factory=list)
 
     @property
     def words(self) -> int:
         return sum(len(l.text.split()) for l in self.lines)
+
+    def directive(self, key: str) -> Directive | None:
+        return next((d for d in self.directives if d.key == key), None)
+
+    def directives_of(self, key: str) -> list[Directive]:
+        return [d for d in self.directives if d.key == key]
 
 
 @dataclass
@@ -185,6 +233,11 @@ def parse_script(raw: str, slug: str = "") -> Script:
         if in_say and "=" in line:
             k, v = line.split("=", 1)
             script.say[k.strip()] = v.strip()
+            continue
+        if line.startswith("#"):
+            d = parse_directive(line)
+            if d is not None and cur is not None and not in_say:
+                cur.directives.append(d)
             continue
         if not line or ":" not in line:
             continue

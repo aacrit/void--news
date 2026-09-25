@@ -2,7 +2,8 @@
 everything the event may publish (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
 
     data/history/evidence/<slug>/
-      ledger.yaml            entries[], positions[], contested[], exhibits[], analyses[]
+      ledger.yaml            entries[], positions[], contested[], exhibits[], analyses[],
+                             recordings[] (archival audio, read by the producer only)
       extracts/<src-id>.<locator>.txt
 
 An ENTRY is a source the event may cite. It carries the citation record of
@@ -169,6 +170,11 @@ class Ledger:
     raw: dict
     renderings: dict[str, Rendering] = field(default_factory=dict)
     gaps: list[dict] = field(default_factory=list)
+    # Archival audio artifacts (`kind: audio`, HISTORY-AUDIO-ARCHIVAL.md §4a).
+    # Read by the History producer and its H-12..H-17 gates
+    # (pipeline/history/clips.py). Deliberately NOT exhibits: the thesis page
+    # and T-09 are untouched until the page's audio exhibit is built.
+    recordings: dict[str, dict] = field(default_factory=dict)
 
     def entry(self, src: str) -> dict | None:
         return self.entries.get(src)
@@ -349,6 +355,7 @@ def load_ledger(slug: str, evidence_dir: pathlib.Path | None = None) -> Ledger:
         raw=raw,
         renderings=renderings,
         gaps=[g for g in (raw.get("gaps") or []) if isinstance(g, dict)],
+        recordings=keyed(raw.get("recordings"), "recording"),
     )
 
 

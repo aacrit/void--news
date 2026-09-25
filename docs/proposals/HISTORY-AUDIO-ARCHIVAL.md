@@ -1,5 +1,10 @@
 # History audio: archival recordings as artifacts, and a mood-aware production
 
+**Implemented 2026-09-25** (see `docs/HISTORY-AUDIO.md` "Moods and archival clips"): the
+directive parser, the ledger `recordings:` section, `verify_clip.py`, the
+mood-aware producer and History score, and H-12..H-17 with fixtures. No clip
+is signed. The text below is the design as proposed.
+
 Status: PROPOSAL, 2026-09-25. Design and one script only. Nothing here is
 implemented in the producer, nothing is downloaded, and no clip is licensed.
 The Partition of India script (`data/history/scripts/partition-of-india.txt`)
