@@ -1768,8 +1768,9 @@ recordings:
     observed: "The file opens on 'Long years ago'. After 'freedom' (about 27.9 s) the source carries about five seconds of unpitched, broadband sound (28.1 to 32.8 s: no voiced pitch, spectral flatness 0.11 to 0.18) that this check could not identify, then 'A moment comes' at 33.7 s. The excerpt ends at 28.05 s, before that sound, so the clip claims nothing about it."
     shows: "Nehru's voice, in English, from 'Long years ago' to 'life and freedom', the two sentences the episode's document voice otherwise reads"
     does_not_show: "the Hindustani speech the Debates record before it; the rest of the English passage; and where it was recorded: the item gives a date and 'All India Radio' and nothing else, and the audio carries no sound this check could identify as the hall"
-    signed_by: null
-    signed_at: null
+    signed_by: CEO
+    signed_at: 2026-09-25
+    signed_basis: "Policy B: CC0 1.0 as stated on the Internet Archive item, origin All India Radio as stated; excerpt 0.000 to 28.050 s only; credited as a recording, with no claim about where it was recorded"
 
   - id: clip-mountbatten-broadcast-19470603
     kind: audio

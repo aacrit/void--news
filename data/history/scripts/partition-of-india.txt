@@ -48,9 +48,9 @@ N: The fourteenth of August, Delhi. The Constituent Assembly, Rajendra Prasad pr
 
 ## DOCUMENT | Jawaharlal Nehru | Tryst with Destiny, to the Constituent Assembly | August 14, 1947
 # extract: src-cad-19470814.sec53612
-# CLIP: id=clip-nehru-tryst-19470814 replaces=document status=candidate source=https://archive.org/details/HindSwaraj-Speech-03-1 licence=CC0-as-stated origin="All India Radio" max=45s
+# CLIP: id=clip-nehru-tryst-19470814 replaces=document status=signed source=https://archive.org/details/HindSwaraj-Speech-03-1 licence=CC0-as-stated origin="All India Radio" max=45s
 # MOOD: rupture
-N: Then, in English. Nehru, to the assembly.
+N: Then, in English. A recording of Nehru, from All India Radio, via the Internet Archive.
 M: Long years ago we made a tryst with destiny, and now the time comes when we shall redeem our pledge, not wholly or in full measure, but very substantially. At the stroke of the midnight hour, when the world sleeps, India will awake to life and freedom.
 
 ## ASIDE
