@@ -88,6 +88,39 @@ claims about its own confidence. It needs a decision, not a tweak.
 
 ## Known defects, not yet fixed
 
+### The cambodian-genocide event YAML carries errors the thesis ledger refuted (2026-09-25)
+
+Found while settling the record for the thesis; the YAML and the script were
+not edited (parallel-work rule). Each item names what the fetched record says.
+
+- `primary_source_excerpts` and the survivor perspective attribute a quotation
+  to Dith Pran as "Testimony to the ECCC, 2009". The YAML's own `key_figures`
+  row has him dead in 2008. Impossible; no ECCC transcript carries him.
+- `hero_image_attribution` and the media rows name Commons files that do not
+  exist: `File:Tuol_Sleng_Genocide_Museum.jpg` and `File:Vann_Nath_Painting.jpg`
+  both answer 404. `File:Choeungek2.JPG` exists but is Adam Carr, February 2005,
+  released to the public domain, not "Bong Vat, CC BY-SA 3.0, 2007".
+- Subtitle and legacy points: "14,000 faces, 7 survivors" and "14,000-17,000
+  prisoners; between 7 and 12 survived". The Case 001 Judgement's floor is
+  12,273 detained and 12,272 executed, and it says only "a very small number"
+  survived; no held record counts the survivors.
+- "Nuon Chea and Khieu Samphan, both convicted of genocide": Khieu Samphan was
+  convicted for the Vietnamese only and found not responsible for the Cham
+  (Case 002/02 summary paragraph 62).
+- The Ba Chuc massacre is dated "April 1978" in one perspective and "April 30,
+  1977" in another; neither date is in any held record.
+- "Mark Harmon resigned in 2019": the ECCC's own notice has Harmon resigning
+  in 2015 and Bohlander in 2019 (search only; not held as an extract).
+- Bibliography identifiers: `10.2307/20045600` and `10.2307/20034330` are
+  Foreign Affairs reviews, `10.5860/choice.*` are Choice reviews and
+  `10.1355/cs36-2h` is a Contemporary Southeast Asia review, none of them the
+  books they are attached to; Chanda's `OL2552862M` resolves to "The business
+  of shipping"; Mertha's archive item is a libgen upload, not a lawful copy.
+- The Duch quotation "I am not a violent man. I was simply doing my duty..."
+  is not in the ECCC's compilation of his statements of apology.
+- "$337 million over 16 years" is press reporting; the ECCC's own 2014 sheet
+  gives $204.6 million for 2006 to 2013 and no total.
+
 ### 62% of article volume is scored on eleven words (2026-09-22)
 
 **The largest measured defect in the product.** Full write-up in
