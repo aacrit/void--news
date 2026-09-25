@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-toussaint-const-1801.art3
+names: français=French
+
+Title II. Of its inhabitants. 3. Slaves are not permitted in this territory; slavery is abolished for ever. All men born in this country live and die free men and French.
