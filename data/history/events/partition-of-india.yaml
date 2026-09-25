@@ -9,13 +9,14 @@ region: south-asia
 country: India
 category: independence
 severity: catastrophic
-death_toll: 1-2 million
-affected_population: 14-15 million displaced
+death_toll: 200,000 to about 1 million (contested)
+affected_population: 8.5 to 14.5 million displaced (contested)
 duration: August-November 1947 (peak violence)
-hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/partition-of-india/Emergency_trains_crowded_with_desperate_refugees.jpg
+hero_image_url: https://upload.wikimedia.org/wikipedia/commons/3/39/Emergency_trains_crowded_with_desperate_refugees.jpg
 hero_image_attribution: Unknown photographer, 1947, public domain via Wikimedia Commons
 summary: 'On June 3, 1947, Lord Mountbatten announced that British India would be divided into two independent dominions in 73 days. The actual boundary line was drawn by Sir Cyril Radcliffe, a British
-  barrister who had never visited India, working from outdated census maps and incomplete survey data in a five-week sprint. He partitioned Bengal in the east and Punjab in the west, splitting villages,
+  barrister who had never visited India, in a five-week sprint. The commissions worked from the 1941 census, which the June 3 statement made authoritative; Sir George Abell told the Punjab
+  commission''s secretaries that any map read with the 1941 figures would suffice. He partitioned Bengal in the east and Punjab in the west, splitting villages,
   irrigation canals, and railway lines.
 
 
@@ -24,22 +25,26 @@ summary: 'On June 3, 1947, Lord Mountbatten announced that British India would b
   Railway staff at Wagah logged them as "ghost trains."
 
 
-  Between August and November 1947, an estimated 14 to 15 million people crossed the new borders. Hindus and Sikhs moved east; Muslims moved west. The columns stretched 50 miles on some roads. Women and
+  The counts of the migration disagree. The House of Commons was told on December 18, 1947 that 8,500,000 people had moved between East Punjab and West Punjab; the economists Bharadwaj and Mirza put
+  the displaced at 14.5 million within four years. Hindus and Sikhs moved east; Muslims moved west. The columns stretched 50 miles on some roads. Women and
   children traveled on foot in 110-degree heat. Cholera, dysentery, and dehydration killed thousands who survived the communal violence. In many border villages, neighbors who had shared wells for generations
   turned on each other within hours of learning which side of the line they fell on.
 
 
-  The British Indian Army, itself in the process of being split, could not maintain order. Of the 55,000 troops in Punjab, roughly half were being reassigned to the Pakistani military. The Punjab Boundary
-  Force, a 25,000-strong neutral unit under Major General Rees, was disbanded on September 1 after less than a month, overwhelmed by the scale of killing. Mountbatten himself later admitted the date had
-  been moved forward from June 1948 to August 1947 to preserve "momentum."
+  The British Indian Army, itself in the process of being split, could not maintain order. The Punjab Boundary Force under Major General Rees was to hold twelve districts of at least 12 million people.
+  The Governor of the Punjab, Sir Evan Jenkins, telegraphed the Viceroy on August 8, 1947 that its commander counted 7,500 effective rifles, 9,000 with static troops and training centres; on August 13
+  he wrote that he had estimated a minimum of 20,000 effective fighting men. The Force was disbanded on September 1. The date had been moved forward from June 1948 to August 1947; on June 17 Mountbatten
+  wrote that he was "trying to keep up the momentum of our good start."
 
 
-  The death toll remains disputed. Estimates range from 200,000 (early British figures) to 2 million (later scholarship by Gyanendra Pandey and Urvashi Butalia). Exact counts are impossible because many
-  deaths were never registered. Mass graves discovered decades later in Punjab and Bengal continue to revise the figure upward.
+  The death toll is contested. India''s Fact Finding Organisation, which examined nearly 15,000 witnesses, in G. D. Khosla''s Stern Reckoning (1949) estimated the loss of non-Muslim life at 200,000 to 250,000 and believed an equal number
+  of Muslims perished in India; the Shiromani Gurdwara Parbandhak Committee''s compilation (Talib, 1950) and the economists Bharadwaj and Mirza (2019) each put the dead at about a million. Khosla''s
+  own report says the 1941 census was not accurate even when compiled, so no count can be made from population figures, and most deaths were never registered.
 
   '
-significance: 'Partition created two states that are now both nuclear-armed, locked in four wars (1947, 1965, 1971, 1999), and contesting a Kashmir neither has conceded. Between August and November 1947, 14-15
-  million people crossed the new borders, 1-2 million died, and 75,000 women were abducted. The same logic of religious partition recurred in Palestine (1948), Cyprus (1974), and Yugoslavia (1990s). In
+significance: 'Partition created two states that are now both nuclear-armed, locked in four wars (1947, 1965, 1971, 1999), and contesting a Kashmir neither has conceded. The House of Commons was told that 8,500,000 people had
+  moved between the two Punjabs by December 1947; economists count 14.5 million displaced within four years; the dead are counted from the Fact Finding Organisation''s 200,000 to 250,000 non-Muslims plus
+  an equal number of Muslims up to the SGPC''s and the economists'' about a million. No count of abducted women could be read in the free record. The same logic of religious partition recurred in Palestine (1948), Cyprus (1974), and Yugoslavia (1990s). In
   1971, Pakistan itself fractured along the lines of its founding contradiction, and Bangladesh became a third nation born from the original division. The Radcliffe Line left 162 enclaves stranded on the
   wrong side of the India-Bangladesh border; they were not resolved until the Land Boundary Agreement of 2015 -- 68 years after a British barrister drew the line in five weeks.
 
@@ -84,28 +89,102 @@ key_figures:
   died: 2005
   wikipedia: https://en.wikipedia.org/wiki/Amrita_Pritam
 legacy_points:
-- Created the world's largest mass migration of 14-15 million people in under four months
+- Set off a migration counted at 8.5 million between the two Punjabs by December 1947 and 14.5 million displaced within four years
 - 'Established the India-Pakistan rivalry: four wars, nuclear standoff, unresolved Kashmir'
-- Radcliffe Line divided 175,000 sq miles in five weeks using outdated maps
+- Radcliffe Line divided 175,000 sq miles in five weeks, working from the 1941 census figures the June 3 plan made authoritative
 - Triggered the 1971 Bangladesh Liberation War and a third nation's birth
 - Produced an intergenerational oral history of displacement preserved by the 1947 Partition Archive
 primary_source_excerpts:
-- text: At the stroke of the midnight hour, when the world sleeps, India will awake to life and freedom.
-  author: Jawaharlal Nehru
-  work: Tryst with Destiny speech, Constituent Assembly
-  date: August 14, 1947
-- text: The division of India is, in my opinion, the greatest blunder in the whole history of the British Empire.
+- text: For the purpose of determining the population of districts, the 1941 census figures will be taken as authoritative.
+  author: Clement Attlee
+  work: Statement on the transfer of power, House of Commons (Hansard, HC Deb vol 438 col 36)
+  date: June 3, 1947
+  url: https://api.parliament.uk/historic-hansard/commons/1947/jun/03/india-transfer-of-power
+- text: With a difference of 0.8 per cent you will see at once that it is unlikely that the Boundary Commission will throw the whole of the district into the Muslim majority areas.
+  author: Lord Louis Mountbatten
+  work: Press conference, New Delhi, in Select Documents on Partition of Punjab 1947 (Kirpal Singh, ed.), pp. 99-100
+  date: June 4, 1947
+  url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
+- text: He did not attach the map but suggested that any map if read with the population statistics in the 1941 census would suffice for the purpose.
+  author: The editors of The Transfer of Power, volume XII (note 2 to document 196)
+  work: The Transfer of Power 1942-7, vol. XII, No. 196, note 2
+  date: July 23, 1947
+  url: https://archive.org/details/indiatransferofp12nich
+- text: Kashmir, which was so placed geographically that it could join either Dominion, provided part of Gurdaspur were put into East Punjab by the Boundary Commission.
+  author: Record of an interview between Lord Mountbatten and the Nawab of Bhopal, by the Viceroy's staff
+  work: The Transfer of Power 1942-7, vol. XII, No. 335
+  date: August 4, 1947
+  url: https://archive.org/details/indiatransferofp12nich
+- text: I have hesitated long over those not inconsiderable areas east of the Sutlej River and in the angle of the Beas and Sutlej Rivers in which Muslim majorities are found.
   author: Sir Cyril Radcliffe
-  work: Private correspondence, quoted in Read and Fisher, The Proudest Day
-  date: '1947'
-- text: I do not agree with what my Muslim friends say — that we cannot live together.
-  author: Mahatma Gandhi
-  work: Prayer meeting address, Calcutta
-  date: August 1947
-- text: Pakistan is a dream that has come true.
-  author: Muhammad Ali Jinnah
-  work: Address to Constituent Assembly of Pakistan
+  work: Report of the Punjab Boundary Commission (the Radcliffe award), paragraph 10
+  date: August 12, 1947
+  url: https://archive.org/details/dli.csl.1040
+- text: This means that in addition to police we have a strength of say 7500 effective rifles to control 12 districts with a population of no less than 12 million.
+  author: Sir Evan Jenkins, Governor of the Punjab
+  work: Telegram to the Viceroy, The Transfer of Power 1942-7, vol. XII, No. 382
+  date: August 8, 1947
+  url: https://archive.org/details/indiatransferofp12nich
+- text: Neither the railways nor the main roads are safe, and the village raiding is quite impossible to control without a very great display of force. Fire power is really less important than numbers.
+  author: Sir Evan Jenkins, Governor of the Punjab
+  work: Letter to the Viceroy, The Transfer of Power 1942-7, vol. XII, No. 459
+  date: August 13, 1947
+  url: https://archive.org/details/indiatransferofp12nich
+- text: The Viceroy has from the outset made it absolutely clear that he himself must have nothing to do either with arbitration of any kind or with the Boundary Commissions.
+  author: Lord Ismay
+  work: Letter to Liaquat Ali Khan, The Transfer of Power 1942-7, vol. XII, No. 428
   date: August 11, 1947
+  url: https://archive.org/details/indiatransferofp12nich
+- text: You are free; you are free to go to your temples, you are free to go to your mosques or to any other places of worship in this State of Pakistan.
+  author: Muhammad Ali Jinnah
+  work: Presidential address to the Constituent Assembly of Pakistan, Karachi
+  date: August 11, 1947
+  url: https://na.gov.pk/en/content.php?id=74
+- text: On both sides, in Hindustan and Pakistan, there are sections of people who may not agree with it, who may not like it, but in my judgment there was no other solution and I am sure future history will record its verdict in favour of it.
+  author: Muhammad Ali Jinnah
+  work: Presidential address to the Constituent Assembly of Pakistan, Karachi
+  date: August 11, 1947
+  url: https://na.gov.pk/en/content.php?id=74
+- text: Long years ago we made a tryst with destiny, and now the time comes when we shall redeem our pledge, not wholly or in full measure, but very substantially. At the stroke of the midnight hour, when the world sleeps, India will awake to life and freedom.
+  author: Jawaharlal Nehru
+  work: Tryst with Destiny speech, Constituent Assembly of India (Constituent Assembly Debates, 14 August 1947, 5.36.12)
+  date: August 14, 1947
+  url: https://www.constitutionofindia.net/debates/14-aug-1947/
+- text: Not far from Delhi, big cities are ablaze and its heat is reaching us here. Our happiness cannot be complete.
+  author: Jawaharlal Nehru (the Constituent Assembly Debates site's English translation of his Hindustani speech)
+  work: Speech in Hindustani before the pledge, Constituent Assembly of India (Constituent Assembly Debates, 14 August 1947, 5.36.10), in translation
+  date: August 14, 1947
+  url: https://www.constitutionofindia.net/debates/14-aug-1947/
+- text: The jubilant parties ought to restrain themselves, as the aggrieved ones should accept the Award with perfect resignation.
+  author: Mahatma Gandhi (as reported by Harijan, in the third person)
+  work: Prayer meeting speech, Calcutta, as reported by Harijan, 7 September 1947 (Collected Works vol. 89, No. 103, p. 84)
+  date: August 24, 1947
+  url: https://archive.org/details/Swaraj-Gandhi-1947-08-24
+- text: Taking these factors into consideration the loss of non-Muslim life has been estimated at a figure between 200,000 and 250,000. It is believed that an equal number of Muslims perished in the course of the riots in India.
+  author: G. D. Khosla, Fact Finding Organisation report
+  work: Stern Reckoning, p. 299
+  date: '1949'
+  url: https://archive.org/details/stern-reckoning
+- text: The total number of refugees who have moved from the East Punjab to the West Punjab and vice versa is 8,500,000 or thereabouts.
+  author: Philip Noel-Baker, Secretary of State for Commonwealth Relations
+  work: Oral answer, House of Commons (Hansard, HC Deb vol 445 col 1845)
+  date: December 18, 1947
+  url: https://api.parliament.uk/historic-hansard/commons/1947/dec/18/india-and-pakistan-refugees-relief
+- text: I slid my hand through an opening in the drum and screamed to make myself noticed.
+  author: Sarla Dutta
+  work: Oral history, The 1947 Partition Archive story page, interviewed by Sruti Lodha
+  date: '2024'
+  url: https://www.1947partitionarchive.org/sarla-dutta/
+- text: For generations we have been living here, how can we leave our homes?
+  author: The elders of Aloona Tola, as recounted by Khushi Muhammad Jut
+  work: Oral history, The 1947 Partition Archive story page (the Archive's summary of the interview)
+  date: '1947'
+  url: https://www.1947partitionarchive.org/khushi-muhammad-jut/
+- text: today lakhs of daughters weep, and say to you, Waris Shah; rise, you who felt for the grieving, rise and look at your own Punjab
+  author: Amrita Pritam (Void translation from the Punjabi)
+  work: Ajj Aakhaan Waris Shah Nu, rendered by Void from the Punjabi
+  date: '1949'
+  url: https://www.punjabi-kavita.com/Lammian-Vatan-Amrita-Pritam.php
 coordinates:
   lat: 28.6139
   lng: 77.209
@@ -127,15 +206,19 @@ perspectives:
     starkly: partition now with some order, or partition later with none.
 
 
-    Radcliffe''s boundary commissions operated under extreme constraints. He had five weeks, four judges (two from each side, deadlocked on every contested district), and maps that had not been resurveyed
-    since 1931. He allocated Gurdaspur district to India. That decision gave India its only road link to Kashmir and has been contested by Pakistani historians ever since, because without Gurdaspur,
-    India would have had no overland access to the princely state whose accession triggered the first India-Pakistan war. Radcliffe received a knighthood and 40,000 pounds for his work; he burned his papers
+    Radcliffe''s boundary commissions operated under extreme constraints. He had five weeks, four judges (two from each side, deadlocked on every contested district), and the 1941 census figures, which the June 3
+    statement made authoritative; Sir George Abell told the commission''s secretaries that any map read with those figures would suffice. He allocated three of Gurdaspur district''s four tehsils to
+    India. At his press conference on June 4, 1947 Mountbatten had given Gurdaspur as 50.4 per cent Muslim and 49.6 per cent non-Muslim. Pakistani historians have contested the award ever since as
+    political rather than judicial. The award''s stated grounds are the Upper Bari Doab Canal and the Mandi hydro-electric
+    scheme; the one document before the award that ties Gurdaspur to Kashmir is the Viceroy''s staff''s record of his interview with the Nawab of Bhopal on August 4, 1947, and Lord Ismay denied to
+    Liaquat Ali Khan on August 11 that the Viceroy had anything to do with the commissions. Radcliffe received a knighthood and 40,000 pounds for his work; he burned his papers
     and never returned to India.
 
 
-    The Punjab Boundary Force, commanded by Major General Rees, attempted to maintain order with 25,000 troops across a zone of 38,000 square miles. Rees reported to the Joint Defence Council, not to either
+    The Punjab Boundary Force, commanded by Major General Rees, was to hold twelve districts of close on 14.5 million people; the Governor, Sir Evan Jenkins, counted its effective strength at about
+    7,500 rifles on August 13, 1947, about 9,000 with static troops, against the 20,000 effective fighting men he had estimated as the minimum: by his own figures of August 8, one effective rifle for every 1,600 people before the police were counted. Rees reported to the Joint Defence Council, not to either
     dominion government, a command structure that satisfied neither side. Nehru accused the force of failing to protect Hindus and Sikhs; Jinnah charged it with anti-Muslim bias. The force was dissolved
-    on September 1, 1947. Mountbatten himself acknowledged in later years that the speed of the transfer was "the biggest gamble in history," but maintained it was preferable to the alternative: a civil
+    on September 1, 1947. Mountbatten maintained that the speed of the transfer was preferable to the alternative: a civil
     war with British troops still on the ground.
 
 
@@ -169,12 +252,12 @@ perspectives:
     type: archive
     verified: false
   notable_quotes:
-  - text: The date is fixed. And I have to tell you that I think it is the greatest gamble in history.
-    speaker: Lord Mountbatten
-    context: Private remark to staff after announcing August 15 date
-  - text: I gave them their freedom.
+  - text: I agree that the time given is not commensurate with its great importance. But we are really constrained by the urgency of the matter.
     speaker: Clement Attlee
-    context: Reflecting on Indian independence in retirement
+    context: Indian Independence Bill, second reading, House of Commons, July 10, 1947 (Hansard, HC Deb vol 439 col 2447)
+  - text: I must say that I was astounded to find that the plan which they had produced divided their community into two almost equal parts.
+    speaker: Lord Louis Mountbatten
+    context: Press conference of June 4, 1947, on the Sikh community (The Transfer of Power vol. XI, No. 59)
   emphasized:
   - Orderly administrative handover under extreme time pressure
   - Democratic self-determination through negotiation with elected leaders
@@ -196,7 +279,7 @@ perspectives:
     leader, dissented to the end, warning that partition would not solve the communal problem but merely transfer it to a smaller arena.
 
 
-    The Indian narrative emphasizes that Congress built a secular, democratic republic out of the wreckage. The Constituent Assembly, chaired by B.R. Ambedkar, produced a constitution by January 1950 that
+    The Indian narrative emphasizes that Congress built a secular, democratic republic out of the wreckage. The Constituent Assembly, over which Rajendra Prasad presided on the night of August 14, 1947, produced a constitution by January 1950 that
     guaranteed fundamental rights regardless of religion. Nehru''s "Tryst with Destiny" speech, delivered at midnight on August 14-15, became the founding text of Indian nationhood, a deliberate framing
     of independence as a universal human achievement rather than a sectarian victory.
 
@@ -225,14 +308,12 @@ perspectives:
     author: Jawaharlal Nehru
     year: '1946'
     type: book
-    doi: 10.2307/40194131
     openlibrary: OL1946487M
     archive_url: https://archive.org/details/discoveryofindia0000nehr
   - title: India Wins Freedom
     author: Maulana Abul Kalam Azad
     year: '1959'
     type: book
-    doi: 10.2307/1569475
     openlibrary: OL5798203M
     archive_url: https://archive.org/details/india-wins-freedom
   - title: India After Gandhi
@@ -285,7 +366,8 @@ perspectives:
     and that it vindicated Jinnah''s warning: without a separate state, Muslims would be a permanent minority subject to majoritarian rule.
 
 
-    Kashmir occupies the center of Pakistan''s partition grievance. The state''s population was 77% Muslim, its ruler a Hindu Dogra maharaja. Under the partition logic of Muslim-majority areas going to
+    Before the award, Din Muhammad, the League-nominated judge on the Punjab commission, put Gurdaspur at 51.14 per cent Muslim by the 1941 census, three of its four tehsils Muslim-majority; the Sikh All Parties Committee''s note of 1942 had tabled the district at 50.8 per cent Muslim by the 1931 census
+    and called it balanced; Mehr Chand Mahajan, the Congress-nominated judge, answered from the electoral rolls, 81,525 non-Muslim voters to 74,790 Muslim. Kashmir occupies the center of Pakistan''s partition grievance. The state''s population was 77% Muslim, its ruler a Hindu Dogra maharaja. Under the partition logic of Muslim-majority areas going to
     Pakistan, Kashmiris belonged with Pakistan. Maharaja Hari Singh''s accession to India on October 26, 1947 (signed under duress, in the Pakistani telling, as tribal fighters neared Srinagar) is viewed
     as an illegitimate act that the international community, through UN Resolution 47 (1948), sought to remedy with a plebiscite that India has never held.
 
@@ -305,11 +387,6 @@ perspectives:
     year: '1985'
     type: book
     archive_url: https://archive.org/details/solespokesmanjin0000jala
-  - title: 'The struggle for Pakistan: a Muslim homeland and global politics, by Ayesha Jalal'
-    author: Ishtiaq Ahmed
-    year: '2017'
-    type: book
-    doi: 10.1080/10357823.2018.1524259
   notable_quotes:
   - text: You are free; you are free to go to your temples, you are free to go to your mosques or to any other places of worship in this State of Pakistan.
     speaker: Muhammad Ali Jinnah
@@ -332,12 +409,13 @@ perspectives:
     stories of those for whom independence was not a "tryst with destiny" but the destruction of everything familiar: the house, the lane, the well, the neighbor.
 
 
-    The scale was beyond any administrative capacity. In Punjab alone, 12 million people moved between August and December 1947. Refugee columns on the Grand Trunk Road stretched 50 miles. At Wagah, the
+    The scale was beyond any administrative capacity. The House of Commons was told that 8,500,000 people had moved between the two Punjabs by December 18, 1947. Refugee columns on the Grand Trunk Road stretched 50 miles. At Wagah, the
     single road crossing between Lahore and Amritsar, traffic moved in both directions simultaneously, Muslims heading west, Hindus and Sikhs heading east. Nothing separated them but a few soldiers.
 
 
-    Women bore a specific burden. Historians Ritu Menon and Kamla Bhasin documented in Borders and Boundaries (1998) how an estimated 75,000 women were abducted during partition, taken by men of the other
-    community, forcibly converted, married, and absorbed. The Indian and Pakistani governments later ran "recovery operations" that re-abducted many of these women from homes where they had, in some cases,
+    Women bore a specific burden. Historians Ritu Menon and Kamla Bhasin documented in Borders and Boundaries (1998) how women were abducted during partition, taken by men of the other community, forcibly
+    converted, married, and absorbed; their estimate of 75,000 could not be read in the free record, which holds only district counts, such as the Chief Liaison Officer''s report of April 1948 that
+    about 100 women were still to be recovered in Sheikhupura and about 100 in Sargodha, and that from April 1 to April 25, 1948 only 16 women and 10 children had been recovered in Sheikhupura. The Indian and Pakistani governments later ran "recovery operations" that re-abducted many of these women from homes where they had, in some cases,
     built new lives and had children. The women themselves were rarely consulted. Menon and Bhasin quote one recovered woman: "You think you are saving us? You are tearing us apart again."
 
 
@@ -358,7 +436,8 @@ perspectives:
 
 
     The subaltern perspective does not assign blame to one side. It holds all three parties (Britain, Congress, and the League) responsible for a decision made over the heads of the people who paid for
-    it. 14 million displaced. 1-2 million dead. 75,000 women abducted. These were not policy outcomes. They were people.
+    it. Millions displaced. Hundreds of thousands dead by the lowest count, about a million by others. Women abducted in numbers the free record does not hold. These were not policy outcomes. They were
+    people.
 
     '
   key_arguments:
@@ -390,9 +469,9 @@ perspectives:
   - text: You think you are saving us? You are tearing us apart again.
     speaker: Anonymous recovered woman
     context: Quoted in Menon and Bhasin, Borders and Boundaries
-  - text: I still dream of the house. The courtyard, the neem tree. I am an old woman now, but in my dreams I am always going back.
-    speaker: Anonymous Partition Archive testimony
-    context: 1947 Partition Archive, recorded 2013
+  - text: For generations we have been living here, how can we leave our homes?
+    speaker: The elders of Aloona Tola, as recounted by Khushi Muhammad Jut
+    context: The 1947 Partition Archive story page, the Archive's summary of his interview
   emphasized:
   - Human cost in individual and family terms, not state-level abstractions
   - Gendered violence and the instrumentalization of women's bodies
@@ -417,8 +496,9 @@ perspectives:
     or wishes. Menon and Bhasin quote one recovered woman: "You think you are saving us? You are tearing us apart again."
 
 
-    The violence against women during partition was not incidental. It was systematic and purposeful. An estimated 75,000 to 100,000 women were abducted, raped, forcibly converted, and married across the
-    communal divide. Women''s bodies became territory: the sites on which communal honor was inscribed, violated, and reclaimed. In Punjab, Sikh jathas attacked Muslim women in refugee columns; Muslim
+    The violence against women during partition was not incidental. It was systematic and purposeful. Women were abducted, raped, forcibly converted, and married across the communal divide; the count is not in the free record, and the
+    estimate of 75,000 in Menon and Bhasin could not be read there. What the record holds is the two governments'' decision of December 6, 1947 that conversions after March 1, 1947 were not to be
+    recognised and that abducted persons were to be restored even against the wishes of the persons concerned, and the liaison officers'' district counts of April 1948. Women''s bodies became territory: the sites on which communal honor was inscribed, violated, and reclaimed. In Punjab, Sikh jathas attacked Muslim women in refugee columns; Muslim
     militias attacked Hindu and Sikh women in theirs. The patterns were symmetrical. Men from each community stripped, branded, and mutilated women of the other community, carving religious symbols into
     their skin, amputating breasts, parading them naked through villages. The violence was public, witnessed, and intended as humiliation of the other community through its women.
 
@@ -440,7 +520,7 @@ perspectives:
 
     '
   key_arguments:
-  - An estimated 75,000-100,000 women were abducted, raped, forcibly converted, and married during partition violence
+  - Women were abducted, raped, forcibly converted, and married during partition violence, in numbers the free record does not count
   - The Abducted Persons Act (1949) "recovered" women across borders based on religion, without consulting the women themselves
   - Women's bodies were treated as communal territory (sites of honor, violation, and state-directed restoration)
   - 'Honor killings and mass suicides (Thoa Khalsa) reveal a patriarchal calculus in which death was preferable to dishonor; women had no voice in this equation'
@@ -464,9 +544,9 @@ perspectives:
   - text: You think you are saving us? You are tearing us apart again.
     speaker: Anonymous recovered woman
     context: Quoted in Menon and Bhasin, Borders and Boundaries, 1998
-  - text: Today, every daughter of Punjab weeps / And calls out to you, Waris Shah.
-    speaker: Amrita Pritam
-    context: Ajj Aakhaan Waris Shah Nu, written on a train fleeing Lahore, August 1947
+  - text: today lakhs of daughters weep, and say to you, Waris Shah; rise, you who felt for the grieving, rise and look at your own Punjab
+    speaker: Amrita Pritam (Void translation from the Punjabi)
+    context: Ajj Aakhaan Waris Shah Nu, 1949, rendered by Void from the Punjabi
   emphasized:
   - Systematic sexual violence as a weapon of communal conflict, not incidental but purposeful
   - State recovery operations that treated women as objects to be sorted by religion
@@ -498,11 +578,10 @@ media:
   title: The Radcliffe Line, Punjab and Bengal boundaries
   description: Map showing the boundary lines drawn by Sir Cyril Radcliffe dividing Punjab in the west and Bengal in the east. The line was published on August 17, 1947, two days after independence.
   source_url: https://commons.wikimedia.org/wiki/File:Partition_of_India_1947_en.svg
-  attribution: Wikimedia Commons, CC BY-SA 3.0
+  attribution: Wikimedia Commons contributor RaviC, CC BY-SA 4.0
   license: cc-by-sa
-  creator: Wikimedia contributors
-  creation_date: '2007'
-  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/partition-of-india/wiki_2.jpg
+  creator: RaviC (Wikimedia Commons)
+  creation_date: '2017'
 - media_type: photograph
   title: Nehru delivering 'Tryst with Destiny' speech, August 14, 1947
   description: Jawaharlal Nehru addresses the Constituent Assembly at midnight on August 14-15, 1947, delivering the speech that became independent India's founding text.
