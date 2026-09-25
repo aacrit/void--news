@@ -1,0 +1,12 @@
+source: src-witbooi-1929
+locator: p105
+url: https://archive.org/download/diedagboekvanhen00witb/diedagboekvanhen00witb_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: from the letter to the Rev. R. Duncan of 28 June 1891
+
+op deze grond van ons rooi menschen, en ik kan niet
+verstaan, wat de eigenlyke voornemens is van de
+Duitschters hy zeg tot de hoofden van deze land,
+dat zy met hem vriendschap maken, omdat de andere
+sterke naties hunne grond zal vatten, maar het lyk

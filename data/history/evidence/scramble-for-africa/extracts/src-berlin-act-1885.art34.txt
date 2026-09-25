@@ -1,0 +1,14 @@
+source: src-berlin-act-1885
+locator: art34
+url: https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: Hertslet's footnote mark after the article number left as printed
+
+Art. XXXIV.f — Any Power which henceforth takes possession
+of a tract of land on the coasts of the African Continent outside of its
+present possessions, or which, being hitherto without such possessions,
+shall acquire them, as well as the Power which assumes a Protectorate
+there, shall accompany the respective act with a notification thereof,
+addressed to the other Signatory Powers of the present Act, in order to
+enable them, if need be, to make good any claims of their own.

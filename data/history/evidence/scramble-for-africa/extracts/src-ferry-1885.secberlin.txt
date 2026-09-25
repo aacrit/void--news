@@ -1,0 +1,7 @@
+source: src-ferry-1885
+locator: secberlin
+url: https://www2.assemblee-nationale.fr/decouvrir-l-assemblee/histoire/grands-discours-parlementaires/jules-ferry-28-juillet-1885
+read: 2026-09-25
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+
+M. Jules Ferry . Est-ce qu'il est possible de nier que ce soit une bonne fortune pour ces malheureuses populations de l'Afrique équatoriale de tomber sous le protectorat de la nation française ou de la nation anglaise ? Est-ce que notre premier devoir, la première règle que la France s'est imposée, que l'Angleterre a fait pénétrer dans le droit coutumier des nations européennes et que la conférence de Berlin vient de traduire le droit positif, en obligation sanctionnée par la signature de tous les gouvernements, n'est pas de combattre la traite des nègres, cet horrible trafic, et l'esclavage, cette infamie. ( Vives marques d'approbation sur divers bancs .)
