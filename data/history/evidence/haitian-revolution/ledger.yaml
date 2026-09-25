@@ -831,9 +831,9 @@ entries:
     year: 2009
     edition: "vol. 11, no. 2, pp. 31-42, on SciELO Argentina"
     volume: "11"
-    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "http://www.scielo.org.ar/scielo.php?script=sci_arttext&pid=S1851-94902009000200004"}
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.scielo.org.ar/scielo.php?script=sci_arttext&pid=S1851-94902009000200004"}
     access:
-      free_copy: "http://www.scielo.org.ar/pdf/efphi/v11n2/v11n2a04.pdf"
+      free_copy: "https://www.scielo.org.ar/pdf/efphi/v11n2/v11n2a04.pdf"
       verified_at: 2026-09-25
       verified_by: repository-record
       verified_title: "La revolución haitiana de 1804 y sus impactos políticos sobre América Latina"

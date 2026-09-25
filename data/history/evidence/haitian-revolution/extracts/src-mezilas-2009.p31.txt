@@ -1,6 +1,6 @@
 source: src-mezilas-2009
 locator: p31
-url: http://www.scielo.org.ar/pdf/efphi/v11n2/v11n2a04.pdf
+url: https://www.scielo.org.ar/pdf/efphi/v11n2/v11n2a04.pdf
 read: 2026-09-25
 note: page 31, the Spanish abstract
 
