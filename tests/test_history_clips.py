@@ -122,7 +122,7 @@ from pipeline.history.ledger import load_ledger  # noqa: E402
 
 NEHRU = "clip-nehru-tryst-19470814"
 CREDIT_OLD = "N: Then, in English. Nehru, to the assembly.\n"
-CREDIT_NEW = "N: Then, in English. Nehru, to the assembly, in the All India Radio recording.\n"
+CREDIT_NEW = "N: Then, in English. A recording of Nehru, from All India Radio, via the Internet Archive.\n"
 # What faster-whisper base.en heard, recorded by verify_clip on 2026-09-25
 # (tests hold TEXT only; no audio is committed and CI runs no ASR).
 HEARD_WINDOW = ("Long years ago, we made a twist with destiny, and now the time comes when we shall "
@@ -141,7 +141,7 @@ HEARD_OVERRUN = HEARD_WINDOW + (" A movement comes, which comes but rarely in hi
 HEARD_SHORT = ("Long years ago, we made a twist with destiny, and now the time comes when we shall redeem "
                "our pledge, not only or in full measure, but very substantially. At the stroke of")
 
-assert CREDIT_OLD in RAW, "the pilot's credit line moved; update the fixture"
+assert CREDIT_NEW in RAW, "the pilot's credit line moved; update the fixture"
 
 
 def fixture(mutate_rec=None, mutate_ver=None, script_edit=None, signed: bool = True):
@@ -152,6 +152,8 @@ def fixture(mutate_rec=None, mutate_ver=None, script_edit=None, signed: bool = T
     rec = next(r for r in raw["recordings"] if r["id"] == NEHRU)
     if signed:
         rec["signed_by"], rec["signed_at"] = "TEST FIXTURE", "2026-09-25"
+    else:
+        rec["signed_by"], rec["signed_at"] = None, None
     if mutate_rec:
         mutate_rec(rec)
     led.write_text(yaml.safe_dump(raw, sort_keys=False, allow_unicode=True), encoding="utf-8")
@@ -160,7 +162,7 @@ def fixture(mutate_rec=None, mutate_ver=None, script_edit=None, signed: bool = T
         ver = json.loads(vp.read_text(encoding="utf-8"))
         mutate_ver(ver)
         vp.write_text(json.dumps(ver), encoding="utf-8")
-    text = RAW.replace(CREDIT_OLD, CREDIT_NEW)
+    text = RAW
     if script_edit:
         text = script_edit(text)
     sc = parse_script(text, SLUG)
@@ -185,14 +187,15 @@ def test_pilot_as_committed() -> None:
     slots, findings = cl.evaluate(sc, ledger, SLUG)
     check("pilot: no clip gate FAILS on the committed script", not [f for f in findings if f.level == "fail"],
           str([(f.id, f.detail) for f in findings if f.level == "fail"]))
-    check("pilot: nothing is admitted while unsigned", not any(s.admitted for s in slots))
     nehru = next(s for s in slots if s.clip_id == NEHRU)
-    got = {f.id for f in nehru.findings}
-    # Unsigned, and the script says "to the assembly" until it is signed
-    # (§4b): those two, and nothing about provenance or the words.
-    check("pilot: Nehru is blocked only by the signature and the credit", got == {"H-12", "H-15"}, str(got))
-    check("pilot: Nehru is not signed in the committed ledger",
-          not cl.is_signed(ledger.recordings[NEHRU]))
+    # Signed by the CEO 2026-09-25 (policy B), credited as a recording with no
+    # claim about the hall: admitted, with nothing against it.
+    check("pilot: the signed Nehru clip is admitted", nehru.admitted,
+          str([(f.id, f.detail) for f in nehru.findings]))
+    check("pilot: no finding on the signed Nehru clip", not nehru.findings,
+          str([(f.id, f.detail) for f in nehru.findings]))
+    check("pilot: Nehru is signed in the committed ledger", cl.is_signed(ledger.recordings[NEHRU]))
+    check("pilot: the credit does not claim the Assembly hall", "assembly" not in CREDIT_NEW.lower())
     ver = cl.load_verification(SLUG, ledger.recordings[NEHRU])
     check("pilot: the Nehru verification record passed", bool(ver and ver.get("pass")))
     check("pilot: the Nehru window is 45 s or less", ver and ver["window"]["seconds"] <= 45.0)
@@ -275,7 +278,7 @@ def test_h15_credit() -> None:
     _, _, f, n = fixture(script_edit=lambda t: t.replace(
         CREDIT_NEW, "N: Then, in English. Prasad, in the All India Radio recording.\n"))
     check("H-15 fires when the credit names someone else", "H-15" in {x.id for x in n.findings})
-    ok_line = "N: Then, in English. Nehru, to the assembly, in the All India Radio broadcast.\n"
+    ok_line = "N: Then, in English. Nehru, in the All India Radio broadcast.\n"
     _, _, f, n = fixture(script_edit=lambda t: t.replace(CREDIT_NEW, ok_line))
     check("H-15 accepts broadcast", "H-15" not in {x.id for x in n.findings})
 
@@ -320,7 +323,7 @@ def _score():
 def synth_timeline(with_clip: bool = True):
     from pydub import AudioSegment
     from history import history_producer as hp
-    sc = parse_script(RAW.replace(CREDIT_OLD, CREDIT_NEW), SLUG)
+    sc = parse_script(RAW, SLUG)
     sub = hp.subset(sc, ["OPEN", "SCENE 2", "SCENE 3"])
     moods, dry = md.segment_moods(sub), md.dry_segments(sub)
     admitted = {}
