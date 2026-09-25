@@ -1156,7 +1156,7 @@ positions:
         verdict: contradicted
         basis: presence
         rests_on: [src-eccc-002-01-tj.fn523, src-eccc-002-01-tj.para174, src-un-goe-1999.para35]
-        reasoning: "The tribunal's own survey records the figure beside Ponchaud's 800,000 and the embassies' 1 million at the bottom of its list, and reports the court's demographers' finding that the earlier estimates heavily underestimated the scale of the killing; it accepts 1.5 to 2 million as most accurate. The United Nations' experts put the scholars' figures at 1.5 million and nearly 1.7 million. Two producers say otherwise, and the position's figure is known here only as the first of them reports it."
+        reasoning: "The tribunal's own survey records the figure beside Ponchaud's 800,000 and the embassies' 1 million as the lowest point estimates in its list, below Heuveline's at least 600,000, and reports the court's demographers' finding that the earlier estimates heavily underestimated the scale of the killing; it accepts 1.5 to 2 million as most accurate. The United Nations' experts put the scholars' figures at 1.5 million and nearly 1.7 million. Two producers say otherwise, and the position's figure is known here only as the first of them reports it."
   - id: transitional-justice-scholarship
     name: The transitional-justice scholarship
     holders: ["Sperfeldt (2023)", "Williams and Jessee (2024)"]
@@ -1190,9 +1190,9 @@ contested:
         holds: "The prosecution charged that about 3 million innocent people had been killed, on a survey of Phnom Penh's former residents, one commune in Siem Reap and a journalist's figures from three provinces; the foreword of the 1990 edition, by a group of jurists, puts it at more than three million."
         figures: []
         source: src-prt-1979
-        locator: secforeword
+        locator: secprosecution
       - position: tribunal-record
-        holds: "Estimates range from 600,000 to 3 million; experts accept 1.5 to 2 million excess deaths as the most accurate; the survey's lowest estimates are Vickery's 740,800, Ponchaud's 800,000 and the embassies' 1 million, and the court's demographers found the earlier estimates heavily underestimated the killing."
+        holds: "Estimates range from 600,000 to 3 million; experts accept 1.5 to 2 million excess deaths as the most accurate; the survey's lowest point estimates are Vickery's 740,800, Ponchaud's 800,000 and the embassies' 1 million, with Heuveline's at least 600,000 as its floor, and the court's demographers found the earlier estimates heavily underestimated the killing."
         figures: []
         source: src-eccc-002-01-tj
         locator: para174
