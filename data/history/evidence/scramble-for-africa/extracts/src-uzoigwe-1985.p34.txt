@@ -1,0 +1,16 @@
+source: src-uzoigwe-1985
+locator: p34
+url: https://archive.org/download/unesco_general_history_africa_vii/general_history_africa_vii_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: footnote numbers glued to words by the text layer are left as printed
+
+notorious for its evocation of the principle of ‘manifest destiny’ and the
+wild claims made on its behalf. Both doctrines, in short, had no legitimacy
+in international law.54 ‘The modern doctrine of Hinterland’, Salisbury
+observed in 1896, ‘with its inevitable contradictions, indicates the uninformed and unstable condition of international law as applied to territorial
+claims resting on constructive occupation or control.’55 In other words,
+‘a claim of sovereignty in Africa can only be maintained by real occupation
+of the territory claimed’.’® And since the notion of effective occupation —
+with which the vast majority of the African states were unfamiliar — and
+the African notion of the real meaning of these treaty relations with Europeans were in fundamental contradiction with one another, the situation

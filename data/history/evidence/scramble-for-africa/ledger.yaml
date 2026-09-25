@@ -1,0 +1,1237 @@
+# The evidence ledger for scramble-for-africa (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Every entry was resolved or fetched on 2026-09-25 from the URL it names; every
+# extract under extracts/ was sliced from the fetched copy by a builder script
+# (line ranges of the fetched text), never retyped. Nothing here was written
+# from memory. An entry the free record could not reach is listed under `gaps`,
+# by name, with what was tried. Where a scan's OCR layer is the free copy, the
+# extract keeps the layer's glyphs and says so in a note. Non-English extracts
+# are held in the original with a rendering beside them (§4f): the Trotha order
+# carries GHDI's own English as an official parallel; the Cape Dutch, French and
+# German passages carry Void translations, which the page never quotes as text.
+slug: scramble-for-africa
+bootstrapped: 2026-09-25
+
+entries:
+  # ----------------------------------------------------------- Tier A: primary record
+  - id: src-berlin-act-1885
+    tier: A
+    kind: treaty
+    author: The Plenipotentiaries of Great Britain, Austria-Hungary, Belgium, Denmark, France, Germany, Italy, the Netherlands, Portugal, Russia, Spain, Sweden and Norway, Turkey and the United States
+    title: "General Act of the Conference of Berlin, signed at Berlin, 26 February 1885"
+    container: "Sir E. Hertslet, The Map of Africa by Treaty, 3rd edition, vol. II, No. 128"
+    publisher: Harrison and Sons for His Majesty's Stationery Office
+    place: London
+    year: 1885
+    edition: "the Foreign Office's English translation as Hertslet's third edition (1909) prints it, read from the Internet Archive scan; the original is in French"
+    volume: "II"
+    document_number: "Hertslet No. 128, pp. 468 to 486"
+    identifiers: {isbn: null, doi: null, archive_org: "mapofafricabytre02hert", hathitrust: null, url: "https://archive.org/details/mapofafricabytre02hert"}
+    access:
+      free_copy: "https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "The map of Africa by treaty"
+    language: en
+    region_of_authorship: europe
+    producer: signatory-powers
+    position: null
+    rights: public
+    notes: "a translation of a treaty; the French text is authentic and was not fetched. Held article by article, with the Act's own list of the six documents it combines (toc) and its preamble (pre1)"
+
+  - id: src-hertslet-charter-1889
+    tier: A
+    kind: primary-document
+    author: Queen Victoria in Council (the Charter); Sir E. Hertslet (the footnote)
+    title: "Charter of Incorporation of the British South Africa Company, 29 October 1889, with Hertslet's footnote on Lobengula's agreements of 1888"
+    container: "Sir E. Hertslet, The Map of Africa by Treaty, 3rd edition, vol. I, No. 37"
+    publisher: Harrison and Sons for His Majesty's Stationery Office
+    place: London
+    year: 1889
+    edition: "Hertslet's third edition (1909), read from the Internet Archive scan"
+    volume: "I"
+    document_number: "Hertslet No. 37; London Gazette, 20 December 1889"
+    identifiers: {isbn: null, doi: null, archive_org: "mapofafricabytre01hert", hathitrust: null, url: "https://archive.org/details/mapofafricabytre01hert"}
+    access:
+      free_copy: "https://archive.org/download/mapofafricabytre01hert/mapofafricabytre01hert_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "The map of Africa by treaty"
+    language: en
+    region_of_authorship: europe
+    producer: british-crown
+    position: european-diplomatic
+    rights: public
+    notes: "the extract is the editor's footnote, which states the Moffat agreement of 11 February 1888 and dates the concession of 30 October 1888; the concession's own text is not in Hertslet and is a gap"
+
+  - id: src-menelik-1897
+    tier: A
+    kind: letter
+    author: Menelik II, King of Kings of Ethiopia, to James Rennell Rodd
+    title: "Letter to Mr. Rodd on the Amharic and English versions of the Treaty of 14 May 1897"
+    container: "Sir E. Hertslet, The Map of Africa by Treaty, 3rd edition, vol. II, No. 99, Annex 2"
+    publisher: Harrison and Sons for His Majesty's Stationery Office
+    place: London
+    year: 1897
+    edition: "the Foreign Office translation as Hertslet's third edition (1909) prints it, read from the Internet Archive scan"
+    volume: "II"
+    document_number: "Hertslet No. 99, Annex 2, p. 425"
+    identifiers: {isbn: null, doi: null, archive_org: "mapofafricabytre02hert", hathitrust: null, url: "https://archive.org/details/mapofafricabytre02hert"}
+    access:
+      free_copy: "https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "The map of Africa by treaty"
+    language: en
+    region_of_authorship: africa
+    producer: ethiopian-emperor
+    position: african-rulers
+    rights: public
+    notes: "a translation; the Amharic original is not held. The letter is the emperor's own word on which language governs a treaty, and it is the only Ethiopian document this record reached free"
+
+  - id: src-hansard-18841120
+    tier: A
+    kind: primary-document
+    author: Lord Edmond Fitzmaurice, Under-Secretary of State for Foreign Affairs, answering Jacob Bright, Arthur Arnold and Sir Herbert Maxwell in the House of Commons
+    title: "The West African Conference (Action of the English Representative): questions of 20 November 1884"
+    container: "Hansard, HC Deb 20 November 1884 vol 294 cc57-8"
+    publisher: UK Parliament (Historic Hansard)
+    place: London
+    year: 1884
+    edition: null
+    volume: "294"
+    document_number: "HC Deb 20 November 1884 vol 294 cc57-8"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://api.parliament.uk/historic-hansard/commons/1884/nov/20/the-west-african-conference-action-of"}
+    access:
+      free_copy: "https://api.parliament.uk/historic-hansard/commons/1884/nov/20/the-west-african-conference-action-of"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "THE WEST AFRICAN CONFERENCE—ACTION OF THE ENGLISH REPRESENTATIVE. (Hansard, 20 November 1884)"
+    language: en
+    region_of_authorship: europe
+    producer: uk-government
+    position: european-diplomatic
+    rights: public
+
+  - id: src-hansard-18931109
+    tier: A
+    kind: primary-document
+    author: Henry Labouchere in the House of Commons, reading Lobengula's letters of 1889 and Lord Knutsford's replies
+    title: "Motion for Adjournment (Matabeleland), 9 November 1893"
+    container: "Hansard, HC Deb 09 November 1893 vol 18 cc543-627"
+    publisher: UK Parliament (Historic Hansard)
+    place: London
+    year: 1893
+    edition: null
+    volume: "18"
+    document_number: "HC Deb 09 November 1893 vol 18 cc543-627"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://api.parliament.uk/historic-hansard/commons/1893/nov/09/motion-for-adjournment"}
+    access:
+      free_copy: "https://api.parliament.uk/historic-hansard/commons/1893/nov/09/motion-for-adjournment"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "MOTION FOR ADJOURNMENT. (Hansard, 9 November 1893)"
+    language: en
+    region_of_authorship: europe
+    producer: uk-parliament
+    position: african-rulers
+    rights: public
+    notes: "Lobengula's letters are known here as a Member of Parliament read them from the Blue Book of 1890 (C. 5918), which no open archive reached; the letters are the king's words in a British record, and Rule A treats them so"
+
+  - id: src-hansard-19030520
+    tier: A
+    kind: primary-document
+    author: Herbert Samuel, Sir John Gorst and the House of Commons
+    title: "Congo Free State: motion and resolution of 20 May 1903"
+    container: "Hansard, HC Deb 20 May 1903 vol 122 cc1289-332"
+    publisher: UK Parliament (Historic Hansard)
+    place: London
+    year: 1903
+    edition: null
+    volume: "122"
+    document_number: "HC Deb 20 May 1903 vol 122 cc1289-332"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://api.parliament.uk/historic-hansard/commons/1903/may/20/congo-free-state"}
+    access:
+      free_copy: "https://api.parliament.uk/historic-hansard/commons/1903/may/20/congo-free-state"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "CONGO FREE STATE. (Hansard, 20 May 1903)"
+    language: en
+    region_of_authorship: europe
+    producer: uk-parliament
+    position: congo-reform
+    rights: public
+
+  - id: src-casement-1904
+    tier: A
+    kind: report
+    author: Roger Casement, His Majesty's Consul at Boma
+    title: "Correspondence and Report from His Majesty's Consul at Boma respecting the Administration of the Independent State of the Congo"
+    container: "Africa No. 1 (1904), Cd. 1933, presented to both Houses of Parliament, February 1904"
+    publisher: His Majesty's Stationery Office
+    place: London
+    year: 1904
+    edition: "read from the Internet Archive scan"
+    volume: null
+    document_number: "Cd. 1933"
+    identifiers: {isbn: null, doi: null, archive_org: "CasementReport", hathitrust: null, url: "https://archive.org/details/CasementReport"}
+    access:
+      free_copy: "https://archive.org/download/CasementReport/CasementReportSmall_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Casement Report"
+    language: en
+    region_of_authorship: europe
+    producer: uk-consul
+    position: congo-reform
+    rights: public
+    notes: "the Blue Book prints place-names and personal names as asterisks and letter pairs (T 7, V V), which the extracts keep; the Congolese witnesses are known here only as the consul recorded them, and Rule A treats their statements as the consul's record"
+
+  - id: src-congo-commission-1906
+    tier: A
+    kind: report
+    author: The Commission of Enquiry appointed by the Congo Free State Government (Janssens, Nisco, de Schumacher)
+    title: "The Congo: A Report of the Commission of Enquiry appointed by the Congo Free State Government, a complete and accurate translation"
+    container: null
+    publisher: G. P. Putnam's Sons
+    place: New York and London
+    year: 1906
+    edition: "the English edition of 1906, read from the Internet Archive scan; the French original appeared in the Bulletin officiel de l'Etat Indépendant du Congo, 1905, and was not fetched"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "congoreportofcom00cong", hathitrust: null, url: "https://archive.org/details/congoreportofcom00cong"}
+    access:
+      free_copy: "https://archive.org/download/congoreportofcom00cong/congoreportofcom00cong_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "The Congo; a report of the Commission of enquiry appointed by the Congo Free State government;"
+    language: en
+    region_of_authorship: europe
+    producer: congo-free-state
+    position: free-state-defence
+    rights: public
+    notes: "the Free State's own inquiry into its own administration: under Rule A it is the perpetrator state's record, and it is the only document here written from that side"
+
+  - id: src-trotha-1904
+    tier: A
+    kind: primary-document
+    author: Lothar von Trotha, Kommandeur der Kaiserlichen Schutztruppe
+    title: "Proklamation an das Volk der Herero und Zusatzbefehl an die Schutztruppe (the Vernichtungsbefehl), Osombo-Windhuk, 2 October 1904"
+    container: "German History in Documents and Images (GHDI), Wilhelminisches Kaiserreich, Internationale Beziehungen, document 5478"
+    publisher: Deutsches Historisches Institut Washington
+    place: Washington
+    year: 1904
+    edition: "GHDI's transcription of the handwritten copy in the Bundesarchiv, with GHDI's own English translation (David Ciarlo) on the parallel page"
+    volume: null
+    document_number: "Abschrift, Kommando der Schutztruppe, J. Nr. 3737; Bundesarchiv Potsdam, Akten des Reichskolonialamtes, RKA 10.01 2089, Bl. 23"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://germanhistorydocs.org/de/das-wilhelminische-kaiserreich-und-der-erste-weltkrieg-1890-1918/lothar-von-trothas-vernichtungsbefehl-2-oktober-1904"}
+    access:
+      free_copy: "https://germanhistorydocs.org/de/das-wilhelminische-kaiserreich-und-der-erste-weltkrieg-1890-1918/lothar-von-trothas-vernichtungsbefehl-2-oktober-1904"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Lothar von Trothas Vernichtungsbefehl (2. Oktober 1904) | German History in Documents and Images"
+    language: de
+    region_of_authorship: europe
+    producer: german-army
+    position: null
+    rights: public
+    notes: "a 1904 military order; the extract is the German as GHDI transcribes it and the rendering is GHDI's published English, so the page quotes the English as an official parallel and pins the German"
+
+  - id: src-bluebook-1918
+    tier: A
+    kind: report
+    author: The Administrator's Office, Windhuk (Union of South Africa military administration), for the Union Government
+    title: "Report on the Natives of South-West Africa and their Treatment by Germany"
+    container: "Cd. 9146, presented to Parliament, August 1918"
+    publisher: His Majesty's Stationery Office
+    place: London
+    year: 1918
+    edition: "read from the Wellcome Collection scan on the Internet Archive"
+    volume: null
+    document_number: "Cd. 9146"
+    identifiers: {isbn: null, doi: null, archive_org: "b32172266", hathitrust: null, url: "https://archive.org/details/b32172266"}
+    access:
+      free_copy: "https://archive.org/download/b32172266/b32172266_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Report on the natives of South-west Africa and their treatment by Germany"
+    language: en
+    region_of_authorship: africa
+    producer: union-administration-swa
+    position: herero-genocide
+    rights: public
+    notes: "a British government publication of 1918, compiled at Windhuk by the occupying administration during the war against Germany; the affidavits of Daniel Kariko, Gottlob Kamatoto and Gerard Kamaheke are Herero statements sworn before that administration, and Rule A treats them as a record made by Germany's enemy from Herero witnesses. The Internet Archive item carries a rights statement that copyright may subsist; the report is a Crown publication of 1918 and is held as passages"
+
+  - id: src-witbooi-1929
+    tier: A
+    kind: letter
+    author: Hendrik Witbooi, kaptein of the Witbooi Nama, Hornkrans
+    title: "Die Dagboek van Hendrik Witbooi, kaptein van die Witbooi-Hottentotte, 1884-1905: letters to Maharero of 30 May 1890 and to the Rev. R. Duncan of 28 June 1891"
+    original_title: "Die Dagboek van Hendrik Witbooi"
+    container: "Van Riebeeck Society, first series, No. 9, edited from the documents in the Regeringsargief, Windhoek"
+    publisher: Van Riebeeck Society
+    place: Cape Town
+    year: 1890
+    edition: "the 1929 edition, read from the Internet Archive scan; the letters are printed in Witbooi's Cape Dutch with the editor's Afrikaans footnotes"
+    volume: null
+    document_number: "Dagboek pp. 77 to 79 and 105"
+    identifiers: {isbn: null, doi: null, archive_org: "diedagboekvanhen00witb", hathitrust: null, url: "https://archive.org/details/diedagboekvanhen00witb"}
+    access:
+      free_copy: "https://archive.org/download/diedagboekvanhen00witb/diedagboekvanhen00witb_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Die Dagboek van Hendrik Witbooi : kaptein van die Witbooi-Hottentotte, 1884-1905"
+    language: nl
+    region_of_authorship: africa
+    producer: nama-chief
+    position: african-rulers
+    rights: public
+    notes: "the letters are Witbooi's own (he died in 1905) and are held as passages; the editor's 1929 apparatus is not held. The renderings beside them are Void translations and the page never quotes them as text; Cape Dutch is close enough to Dutch for the parity gate to be the control, and the pairs of names are declared in each rendering"
+
+  - id: src-ferry-1885
+    tier: A
+    kind: primary-document
+    author: Jules Ferry, in the Chambre des députés, with the interruptions of Jules Maigne, de Guilloutet, Raoul Duval, Georges Périn and others
+    title: "Discours du 28 juillet 1885 sur la politique coloniale"
+    container: "Assemblée nationale, Histoire, Grands discours parlementaires"
+    publisher: Assemblée nationale
+    place: Paris
+    year: 1885
+    edition: "the extract of the Journal officiel debate as the Assemblée nationale's site publishes it"
+    volume: null
+    document_number: "Chambre des députés, séance du 28 juillet 1885"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www2.assemblee-nationale.fr/decouvrir-l-assemblee/histoire/grands-discours-parlementaires/jules-ferry-28-juillet-1885"}
+    access:
+      free_copy: "https://www2.assemblee-nationale.fr/decouvrir-l-assemblee/histoire/grands-discours-parlementaires/jules-ferry-28-juillet-1885"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Jules Ferry (28 juillet 1885) - Assemblée nationale"
+    language: fr
+    region_of_authorship: europe
+    producer: french-government
+    position: european-diplomatic
+    rights: official
+    notes: "the Assemblée's edition marks its own cuts with bracketed ellipses; the renderings are Void translations, never quoted as text"
+
+  - id: src-bundestag-2004
+    tier: A
+    kind: report
+    author: Wissenschaftliche Dienste des Deutschen Bundestages, Fachbereich XI (Geschichte, Zeitgeschichte und Politik)
+    title: "Die Niederschlagung des Hereroaufstandes 1903-1907"
+    container: "Ausarbeitung WD 1 - 080/04, Abschluss der Arbeit 13. Oktober 2004"
+    publisher: Deutscher Bundestag
+    place: Berlin
+    year: 2004
+    edition: "the PDF as the Bundestag serves it"
+    volume: null
+    document_number: "WD 1 - 080/04"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.bundestag.de/resource/blob/594462/19e7006b4e99355d020d3b7fb4df4145/WD-1-080-04-pdf-data.pdf"}
+    access:
+      free_copy: "https://www.bundestag.de/resource/blob/594462/19e7006b4e99355d020d3b7fb4df4145/WD-1-080-04-pdf-data.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Die Niederschlagung des Hereroaufstandes 1903-1907"
+    language: de
+    region_of_authorship: europe
+    producer: german-parliament-research-service
+    position: german-record
+    rights: official
+    notes: "an official research paper of the German federal parliament, written for a Member in 2004; it states on its first page that it does not speak for the Bundestag. It is the German state's own reading of the war's counts and of the genocide question, and Rule A treats it as the successor state's record. The renderings are Void translations"
+
+  # ----------------------------------------------------------- Tier B: peer-reviewed scholarship
+  - id: src-uzoigwe-1985
+    tier: B
+    kind: chapter
+    author: G. N. Uzoigwe
+    title: "European partition and conquest of Africa: an overview"
+    container: "A. Adu Boahen (ed.), General History of Africa VII: Africa under Colonial Domination 1880-1935, chapter 2"
+    publisher: UNESCO and Heinemann
+    place: Paris and London
+    year: 1985
+    edition: "read from the Internet Archive scan of the 1985 edition"
+    volume: "VII"
+    identifiers: {isbn: null, doi: null, archive_org: "unesco_general_history_africa_vii", hathitrust: null, url: "https://archive.org/details/unesco_general_history_africa_vii"}
+    access:
+      free_copy: "https://archive.org/download/unesco_general_history_africa_vii/general_history_africa_vii_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "General History of Africa VII- Africa under Colonial Domination 1880-1935"
+    language: en
+    region_of_authorship: africa
+    producer: scholarship
+    position: african-historiography
+    notes: "the UNESCO General History, written and edited by African historians under an international scientific committee; UNESCO's unesdoc copy answered a Cloudflare challenge from this container, so the Internet Archive scan is the copy read. Held as at most five passages"
+
+  - id: src-boahen-1985
+    tier: B
+    kind: chapter
+    author: A. Adu Boahen
+    title: "Africa and the colonial challenge"
+    container: "A. Adu Boahen (ed.), General History of Africa VII: Africa under Colonial Domination 1880-1935, chapter 1"
+    publisher: UNESCO and Heinemann
+    place: Paris and London
+    year: 1985
+    edition: "read from the Internet Archive scan of the 1985 edition"
+    volume: "VII"
+    identifiers: {isbn: null, doi: null, archive_org: "unesco_general_history_africa_vii", hathitrust: null, url: "https://archive.org/details/unesco_general_history_africa_vii"}
+    access:
+      free_copy: "https://archive.org/download/unesco_general_history_africa_vii/general_history_africa_vii_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "General History of Africa VII- Africa under Colonial Domination 1880-1935"
+    language: en
+    region_of_authorship: africa
+    producer: scholarship
+    position: african-historiography
+    notes: "held as one passage; the page is inferred from the running numbers printed around it, since pages 7 to 9 of the scan carry plates"
+
+  - id: src-roes-2010
+    tier: B
+    kind: journal-article
+    author: Aldwin Roes
+    title: "Towards a History of Mass Violence in the Etat Indépendant du Congo, 1885-1908"
+    container: South African Historical Journal
+    publisher: Taylor and Francis
+    place: null
+    year: 2010
+    edition: "author's accepted manuscript, White Rose Research Online (University of Sheffield); its page numbers are the manuscript's"
+    volume: "62(4), 634-670"
+    identifiers: {isbn: null, doi: "10.1080/02582473.2010.519937", archive_org: null, hathitrust: null, url: "https://eprints.whiterose.ac.uk/id/eprint/74340/"}
+    access:
+      free_copy: "https://eprints.whiterose.ac.uk/id/eprint/74340/2/roesAW2.pdf"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Towards a History of Mass Violence in the Etat Indépendant du Congo, 1885–1908"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: congo-violence-historians
+
+  - id: src-gewald-2004
+    tier: B
+    kind: chapter
+    author: Jan-Bart Gewald
+    title: "Imperial Germany and the Herero of Southern Africa: Genocide and the Quest for Recompense"
+    container: "Adam Jones (ed.), Genocide, War Crimes and the West: History and Complicity, pp. 59-77"
+    publisher: Zed Books
+    place: London
+    year: 2004
+    edition: "the author's copy in the Leiden University repository, which prints two book pages per PDF page; the locators are the book's"
+    volume: null
+    identifiers: {isbn: null, doi: "10.5040/9781350220324.ch-003", archive_org: null, hathitrust: null, url: "https://hdl.handle.net/1887/4853"}
+    access:
+      free_copy: "https://scholarlypublications.universiteitleiden.nl/access/item:2888838/view"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Imperial Germany and the Herero of Southern Africa: Genocide and the Quest for Recompense"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: herero-genocide
+
+  - id: src-waktola-2024
+    tier: B
+    kind: journal-article
+    author: Daniel K. Waktola
+    title: "Challenging the Myth of Ethiopian Terrain Advantage: An Exploration of the Battle of Adwa"
+    container: Ethiopian Journal of the Social Sciences and Humanities (EJOSSAH)
+    publisher: Addis Ababa University, College of Social Sciences
+    place: Addis Ababa
+    year: 2024
+    edition: "the PDF as African Journals Online serves it"
+    volume: "19(1)"
+    identifiers: {isbn: null, doi: "10.4314/ejossah.v19i1.5", archive_org: null, hathitrust: null, url: "https://www.ajol.info/index.php/ejossah/article/view/263344"}
+    access:
+      free_copy: "https://www.ajol.info/index.php/ejossah/article/download/263344/248589"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Challenging the Myth of Ethiopian Terrain Advantage: An Exploration of the Battle of Adwa"
+    language: en
+    region_of_authorship: africa
+    producer: scholarship
+    position: african-historiography
+    notes: "an Ethiopian journal; the author writes from Austin Community College"
+
+  - id: src-adhikari-2008
+    tier: B
+    kind: journal-article
+    author: Mohamed Adhikari
+    title: "'Streams of blood and streams of money': new perspectives on the annihilation of the Herero and Nama peoples of Namibia, 1904-1908"
+    container: Kronos (Southern African Histories)
+    publisher: University of the Western Cape
+    place: Bellville
+    year: 2008
+    edition: "the SciELO South Africa HTML, which carries no page numbers; the locator names the section quoted"
+    volume: "34(1), 303-320"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://scielo.org.za/scielo.php?script=sci_arttext&pid=S0259-01902008000100014"}
+    access:
+      free_copy: "https://scielo.org.za/scielo.php?script=sci_arttext&pid=S0259-01902008000100014"
+      verified_at: 2026-09-25
+      verified_by: repository-record
+      verified_title: "'Streams of blood and streams of money': new perspectives on the annihilation of the Herero and Nama peoples of Namibia, 1904-1908"
+    language: en
+    region_of_authorship: africa
+    producer: scholarship
+    position: herero-genocide
+    notes: "a review article in a peer-reviewed South African journal, cited for its own statements on the Blue Book's history, never for the books it reviews"
+
+  - id: src-craven-2015
+    tier: B
+    kind: journal-article
+    author: Matthew Craven
+    title: "Between law and history: the Berlin Conference of 1884-1885 and the logic of free trade"
+    container: London Review of International Law
+    publisher: Oxford University Press
+    place: null
+    year: 2015
+    edition: null
+    volume: "3(1), 31-59"
+    identifiers: {isbn: null, doi: "10.1093/lril/lrv002", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "Between law and history: the Berlin Conference of 1884-1885 and the logic of free trade"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: berlin-not-partition
+
+  - id: src-katzenellenbogen-1996
+    tier: B
+    kind: chapter
+    author: Simon Katzenellenbogen
+    title: "It Didn't Happen at Berlin: Politics, Economics and Ignorance in the Setting of Africa's Colonial Boundaries"
+    container: "Paul Nugent and A. I. Asiwaju (eds.), African Boundaries: Barriers, Conduits and Opportunities, pp. 21-34"
+    publisher: Pinter
+    place: London
+    year: 1996
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://openlibrary.org/works/OL19434813W", openlibrary: "OL8993692M"}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: openlibrary-record, verified_title: "African boundaries"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: berlin-not-partition
+    notes: "verified as the volume that carries the chapter (Open Library work OL19434813W, Nugent and Asiwaju, 1996); Crossref holds no record of the chapter"
+
+  - id: src-makamu-tekila-2025
+    tier: B
+    kind: journal-article
+    author: Thomas Makamu Ngangula Mbela and Venant Tekila Kapamba-Zay
+    title: "Y a-t-il réellement eu « partage » de l'Afrique à Berlin ? Une relecture de l'Acte général de la Conférence de Berlin signé le 26 février 1885"
+    container: Congo-Afrique
+    publisher: Centre d'études pour l'action sociale (CEPAS)
+    place: Kinshasa
+    year: 2025
+    edition: null
+    volume: "61(555), 440-453"
+    identifiers: {isbn: null, doi: "10.64065/congo-afrique.2025.61.555.386", archive_org: null, hathitrust: null, url: "https://congoafrique.cd/article/386"}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "Y A-T-IL RÉELLEMENT EU « PARTAGE » DE L’AFRIQUE À BERLIN ? UNE RELECTURE DE L’ACTE GÉNÉRAL DE LA CONFÉRENCE DE BERLIN SIGNÉ LE 26 FÉVRIER 1885"}
+    language: fr
+    region_of_authorship: africa
+    producer: scholarship
+    position: berlin-not-partition
+    notes: "a Congolese journal indexed in DOAJ; the article page shows the title, the authors and the first sentence of the résumé and sells the text for 2 US dollars, so the argument could not be read and only the question its title asks is cited"
+
+  - id: src-wesseling-1996
+    tier: B
+    kind: monograph
+    author: H. L. Wesseling
+    title: "Divide and Rule: The Partition of Africa, 1880-1914"
+    container: null
+    publisher: Praeger
+    place: Westport
+    year: 1996
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://openlibrary.org/works/OL693755W", openlibrary: "OL801857M"}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: openlibrary-record, verified_title: "Divide and rule"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: european-diplomatic
+
+  - id: src-robinson-gallagher-1961
+    tier: B
+    kind: monograph
+    author: Ronald Robinson and John Gallagher, with Alice Denny
+    title: "Africa and the Victorians: The Official Mind of Imperialism"
+    container: null
+    publisher: Macmillan
+    place: London
+    year: 1961
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: "africavictorians00robi_0", hathitrust: null, url: "https://openlibrary.org/works/OL4524325W", openlibrary: "OL58544844M"}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: openlibrary-record, verified_title: "Africa and the Victorians"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: european-diplomatic
+
+  - id: src-pakenham-1991
+    tier: B
+    kind: monograph
+    author: Thomas Pakenham
+    title: "The Scramble for Africa, 1876-1912"
+    container: null
+    publisher: Weidenfeld and Nicolson
+    place: London
+    year: 1991
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: "scrambleforafric00pake", hathitrust: null, url: "https://openlibrary.org/works/OL1940566W", openlibrary: "OL48135463M"}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: openlibrary-record, verified_title: "The scramble for Africa, 1876-1912"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: european-diplomatic
+
+  - id: src-hochschild-1998
+    tier: B
+    kind: monograph
+    author: Adam Hochschild
+    title: "King Leopold's Ghost: A Story of Greed, Terror, and Heroism in Colonial Africa"
+    container: null
+    publisher: Houghton Mifflin
+    place: Boston
+    year: 1998
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://openlibrary.org/works/OL1869541W", openlibrary: "OL47130466M"}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: openlibrary-record, verified_title: "King Leopold's ghost"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: congo-reform
+
+  - id: src-rodney-1972
+    tier: B
+    kind: monograph
+    author: Walter Rodney
+    title: "How Europe Underdeveloped Africa"
+    container: null
+    publisher: Bogle-L'Ouverture Publications and Tanzania Publishing House
+    place: London and Dar es Salaam
+    year: 1972
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: "howeuropeunderde00rodn", hathitrust: null, url: "https://archive.org/details/howeuropeunderde00rodn"}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: archive-item-fetch, verified_title: "How Europe underdeveloped Africa"}
+    language: en
+    region_of_authorship: africa
+    producer: scholarship
+    position: african-historiography
+    notes: "verified as a live Internet Archive item; the item is a controlled lending copy this container cannot open, so it is a gap and the position rests on it only as the work named"
+
+  - id: src-brunschwig-1971
+    tier: B
+    kind: monograph
+    author: Henri Brunschwig
+    title: "Le partage de l'Afrique noire"
+    container: null
+    publisher: Flammarion
+    place: Paris
+    year: 1971
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: "lepartagedelafri0000brun", hathitrust: null, url: "https://openlibrary.org/works/OL3094582W", openlibrary: "OL870836M"}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: openlibrary-record, verified_title: "Le partage de l'Afrique noire"}
+    language: fr
+    region_of_authorship: europe
+    producer: scholarship
+    position: european-diplomatic
+
+  - id: src-tessieres-1972
+    tier: B
+    kind: journal-article
+    author: Yves de Tessières
+    title: "Un épisode du partage de l'Afrique : la mission Monteil de 1890-1892"
+    container: Revue française d'histoire d'outre-mer
+    publisher: Société française d'histoire d'outre-mer
+    place: Paris
+    year: 1972
+    edition: null
+    volume: "59(216), 345-410"
+    identifiers: {isbn: null, doi: "10.3406/outre.1972.1610", archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/outre_0300-9513_1972_num_59_216_1610"}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "Un épisode du partage de l'Afrique : la mission Monteil de 1890-1892"}
+    language: fr
+    region_of_authorship: europe
+    producer: scholarship
+    position: european-diplomatic
+
+  - id: src-dedering-1993
+    tier: B
+    kind: journal-article
+    author: Tilman Dedering
+    title: "The German-Herero War of 1904: Revisionism of Genocide or Imaginary Historiography?"
+    container: Journal of Southern African Studies
+    publisher: Taylor and Francis
+    place: null
+    year: 1993
+    edition: null
+    volume: "19(1), 80-88"
+    identifiers: {isbn: null, doi: "10.1080/03057079308708348", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "The German‐Herero war of 1904: revisionism of genocide or imaginary historiography?"}
+    language: en
+    region_of_authorship: africa
+    producer: scholarship
+    position: herero-genocide
+    notes: "written at the University of South Africa"
+
+  - id: src-zimmerer-zeller-2008
+    tier: B
+    kind: monograph
+    author: Jürgen Zimmerer and Joachim Zeller (eds.), translated by E. J. Neather
+    title: "Genocide in German South-West Africa: The Colonial War of 1904-1908 in Namibia and its Aftermath"
+    container: null
+    publisher: Merlin Press
+    place: Monmouth
+    year: 2008
+    edition: "the English translation of Völkermord in Deutsch-Südwestafrika (2003)"
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://openlibrary.org/works/OL26730195W", openlibrary: "OL11592296M"}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: openlibrary-record, verified_title: "Genocide in German South-West Africa"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: herero-genocide
+
+  # ----------------------------------------------------------- Tier D: positional
+  - id: src-lugard-1922
+    tier: D
+    kind: advocacy
+    author: Sir F. D. Lugard
+    title: "The Dual Mandate in British Tropical Africa"
+    container: null
+    publisher: William Blackwood and Sons
+    place: Edinburgh and London
+    year: 1922
+    edition: "read from the Internet Archive scan"
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: "dualmandateinbri00luga", hathitrust: null, url: "https://archive.org/details/dualmandateinbri00luga"}
+    access:
+      free_copy: "https://archive.org/download/dualmandateinbri00luga/dualmandateinbri00luga_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "The dual mandate in British tropical Africa"
+    language: en
+    region_of_authorship: europe
+    producer: colonial-administrator
+    position: european-diplomatic
+    rights: public
+    notes: "a governor's treatise in defence of colonial rule, published after the period; held as the position's own words and quoted only in the historiography"
+
+  - id: src-morel-1906
+    tier: D
+    kind: advocacy
+    author: E. D. Morel
+    title: "Red Rubber: The Story of the Rubber Slave Trade Flourishing on the Congo in the Year of Grace 1906"
+    container: null
+    publisher: T. Fisher Unwin
+    place: London
+    year: 1906
+    edition: "read from the Internet Archive scan"
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: "redrubberstoryof00more_0", hathitrust: null, url: "https://archive.org/details/redrubberstoryof00more_0"}
+    access:
+      free_copy: "https://archive.org/download/redrubberstoryof00more_0/redrubberstoryof00more_0_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Red rubber :  the story of the rubber slave trade flourishing on the Congo in the year of grace 1906"
+    language: en
+    region_of_authorship: europe
+    producer: congo-reform-association
+    position: congo-reform
+    rights: public
+    notes: "the campaign's own book; the passage held is Morel's summary and quotation of the Swedish missionary Sjoblom's statements of 1897"
+
+# ------------------------------------------------------------- what the free record could not reach
+gaps:
+  - entry: src-craven-2015
+    what: "Craven's argument that the Act's importance lies in its logic of free trade rather than in a partition"
+    tried: ["https://academic.oup.com/lril/article-abstract/3/1/31/2413101", "https://eprints.soas.ac.uk/19478/", "https://soas-repository.worktribe.com/output/431741/"]
+    status: "paywalled at the publisher; the SOAS repository was refused by the container's egress policy and its worktribe mirror answered a Cloudflare challenge. The position rests on the work as named"
+  - entry: src-katzenellenbogen-1996
+    what: "the chapter whose title gives the position its name"
+    tried: ["https://api.crossref.org/works?query.bibliographic=Katzenellenbogen+It+didn%27t+happen+at+Berlin", "https://openlibrary.org/search.json?title=African+boundaries&author=Nugent"]
+    status: "no free copy found; the volume is verified through Open Library and the chapter is known here by its title and its pages alone"
+  - entry: src-makamu-tekila-2025
+    what: "the Congolese rereading of the General Act that asks in its title whether a partage took place at Berlin"
+    tried: ["https://doi.org/10.64065/congo-afrique.2025.61.555.386"]
+    status: "the journal sells the article for 2 US dollars; the title, the authors, the volume and the first sentence of the résumé are the only text served free, so no claim from the argument is published here"
+  - entry: src-wesseling-1996
+    what: "Wesseling's account of the partition as a European diplomatic settlement"
+    tried: ["https://openlibrary.org/search.json?title=Divide+and+rule&author=Wesseling"]
+    status: "no open copy found; the position rests on the work as named"
+  - entry: src-robinson-gallagher-1961
+    what: "the official-mind thesis and its reading of the conference"
+    tried: ["https://archive.org/details/africavictorians00robi_0"]
+    status: "the Internet Archive item is a controlled lending copy (encrypted PDF) this container cannot open"
+  - entry: src-pakenham-1991
+    what: "the narrative the event YAML cites for the conference and for Leopold"
+    tried: ["https://archive.org/details/scrambleforafric00pake"]
+    status: "controlled lending copy, not openable from this container"
+  - entry: src-hochschild-1998
+    what: "the death-toll estimate and the passages on Morel and Casement the event YAML draws on"
+    tried: ["https://openlibrary.org/search.json?title=King+Leopold%27s+Ghost&author=Hochschild"]
+    status: "no open copy found; Roes's article (held) states the 10 million figure as Hochschild's, and the figure is published here only as Roes reports it"
+  - entry: src-rodney-1972
+    what: "Rodney's argument that colonialism underdeveloped Africa"
+    tried: ["https://archive.org/details/howeuropeunderde00rodn"]
+    status: "controlled lending copy, not openable from this container; the event YAML's quotation from the book could not be read and is not published here"
+  - entry: src-brunschwig-1971
+    what: "the French school's account of the partition"
+    tried: ["https://archive.org/details/lepartagedelafri0000brun", "https://www.persee.fr/doc/ahess_0395-2649_1974_num_29_2_293471_t1_0305_0000_003"]
+    status: "controlled lending copy, not openable; Persée holds reviews of it, not the book"
+  - entry: src-tessieres-1972
+    what: "the French treaty-making expedition of 1890 to 1892 as a French journal describes it"
+    tried: ["https://www.persee.fr/doc/outre_0300-9513_1972_num_59_216_1610", "https://www.persee.fr/docAsPDF/outre_0300-9513_1972_num_59_216_1610.pdf"]
+    status: "Persée serves the document page but its PDF and full text sit behind an altcha challenge this container cannot answer; readable by a person, not by this checker"
+  - entry: src-dedering-1993
+    what: "the refutation of the revisionist reading of the Herero war"
+    tried: ["https://doi.org/10.1080/03057079308708348"]
+    status: "paywalled; no open copy found"
+  - entry: src-zimmerer-zeller-2008
+    what: "the German scholarship on the war and the camps in translation"
+    tried: ["https://openlibrary.org/search.json?title=Genocide+in+German+South-West+Africa&author=Zimmerer"]
+    status: "no open copy found; the German scholarship is known here through the Bundestag paper's citations of Zimmerer and through Adhikari's review"
+  - entry: src-lugard-1922
+    what: "the whole of Lugard's treatise beyond the passage on the dual mandate"
+    tried: ["https://archive.org/download/dualmandateinbri00luga/dualmandateinbri00luga_djvu.txt"]
+    status: "fetched whole and public domain; only the one passage is held, because the work is a position's own statement and not evidence of the events"
+  - what: "The French text of the General Act, the Protocols of the conference (Africa No. 4, 1885) and Bismarck's opening speech of 15 November 1884"
+    tried: ["https://archive.org/advancedsearch.php?q=title%3A%28protocols%29+west+african+conference+1885", "https://gallica.bnf.fr/SRU?operation=searchRetrieve&version=1.2&query=%28gallica%20all%20%22conf%C3%A9rence%20de%20Berlin%22%29"]
+    status: "no Internet Archive item found for the protocols; Gallica answered 403 and then reset the connection from this container. The Act is held in the Foreign Office's English translation as Hertslet prints it, and what was said at the table is not held at all"
+  - what: "The Rudd Concession of 30 October 1888 in its own words, and the Blue Book of 1890 (C. 5918) that carries Lobengula's letters"
+    tried: ["https://archive.org/advancedsearch.php?q=title%3A%28matabeleland%29+1889+correspondence", "https://archive.org/advancedsearch.php?q=rudd+concession+lobengula+1888", "https://archive.org/download/downfalloflobeng00will/downfalloflobeng00will_djvu.txt"]
+    status: "no open copy of the concession's text was found in a source this record admits; the Wills and Collingridge volume of 1894 was fetched but describes the concession rather than printing it. Lobengula's letters are held as Labouchere read them to the Commons in 1893"
+  - what: "Menelik II's circular letter to the European powers of 10 April 1891, which the event's own sources treat as the emperor's statement of Ethiopia's borders"
+    tried: ["https://archive.org/advancedsearch.php?q=%22christian+island+in+a+sea+of+pagans%22", "https://archive.org/advancedsearch.php?q=%22indifferent+spectator%22+menelik", "https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt"]
+    status: "the letter sits in Foreign Office records (FO 403) and no open archive prints it; Hertslet does not carry it. The Ethiopian voice held here is the emperor's letter to Rodd of 14 May 1897"
+  - what: "Samuel Maharero's letter to Governor Leutwein of 6 March 1904 on the causes of the rising"
+    tried: ["https://germanhistorydocs.org/de/das-wilhelminische-kaiserreich-und-der-erste-weltkrieg-1890-1918/schreiben-des-oberhauptlings-samuel-maharero-an-gouverneur-theodor-leutwein-uber-die-ursachen-des-aufstandes-6-marz-1904"]
+    status: "GHDI serves the letter as an image with no transcription in either language, so nothing could be sliced; the Herero causes are held here from the affidavits in the 1918 Blue Book"
+  - what: "The Reichstag debates of January and March 1904 on the Herero war (Bebel's speeches) and Leutwein's memoir Elf Jahre Gouverneur (1906)"
+    tried: ["https://www.reichstagsprotokolle.de/Gesamt_bsb00002814_001115", "https://archive.org/download/elfjahregouvern00leutgoog/elfjahregouvern00leutgoog_djvu.txt"]
+    status: "reichstagsprotokolle.de answered an Anubis challenge and then Access Denied; Leutwein's memoir was fetched whole but its Fraktur OCR is too damaged to slice a passage with confidence, so the governor's own defence is not held. Under Rule B the German colonial account of 1904 speaks here only through Trotha's order and through the critics the Bundestag paper summarises"
+  - what: "The Bundesarchiv's own online gallery on the war and the German original of the Trotha order in the archive's own hand"
+    tried: ["https://www.bundesarchiv.de/DE/Content/Virtuelle-Ausstellungen/Der-Krieg-Gegen-Die-Herero-1904/der-krieg-gegen-die-herero-1904.html"]
+    status: "the gallery page redirected to the archive's index and carries no transcription; the order is held from GHDI's transcription, which cites the Bundesarchiv file"
+  - what: "Leopold II's letter to Baron Solvyns of 17 November 1877 ('a slice of this magnificent African cake'), which the event YAML dates 1876"
+    tried: ["https://archive.org/advancedsearch.php?q=title%3A%28echiquier+congolais%29"]
+    status: "the letter is printed in Pierre van Zuylen, L'échiquier congolais (1959), which no open archive holds; the quotation and its date are not published here"
+  - what: "Cecil Rhodes's speech of 1887 in the Cape House of Assembly ('the native is to be treated as a child')"
+    tried: ["https://archive.org/advancedsearch.php?q=rhodes+1887+cape+house+of+assembly+native+franchise"]
+    status: "the Cape Hansard for 1887 was not found in any open archive; the quotation circulates in secondary web sources only and is not published here"
+  - what: "Yaa Asantewaa's words to the Asante chiefs in 1900, Casement's private letter, the Mahdi's words on Gordon's death and Omar al-Mukhtar's words at his interrogation, all quoted in the event YAML"
+    tried: ["https://archive.org/advancedsearch.php?q=yaa+asantewaa+1900", "https://www.gutenberg.org/files/50573/50573-h/50573-h.htm"]
+    status: "no primary record of any of the four was found free; none is published here"
+  - what: "A Portuguese-language or Portuguese-authored account of the conference and of the 1884 Anglo-Portuguese treaty it displaced"
+    tried: ["https://search.scielo.org/?q=Confer%C3%AAncia+de+Berlim&lang=pt", "https://repositorio.ul.pt/discover?query=%22Confer%C3%AAncia+de+Berlim%22"]
+    status: "the SciELO search endpoint answered a bunny-shield challenge and the Lisbon repository reset the connection; no Portuguese source is held"
+  - what: "Open-access scholarship from the Congo on the Free State's demography beyond the Congo-Afrique article, and the Belgian demographic scholarship (Sanderson, Population, 2000)"
+    tried: ["https://www.persee.fr/doc/pop_0032-4663_2000_num_55_2_7119", "https://www.persee.fr/doc/outre_0300-9513_1980_num_67_248_2260"]
+    status: "Persée serves only the first page of each article as an image to this container; neither could be read as text"
+  - what: "UNESCO's own open copy of the General History of Africa, volume VII"
+    tried: ["https://unesdoc.unesco.org/ark:/48223/pf0000184296"]
+    status: "answered a Cloudflare challenge from this container; the volume was read from the Internet Archive scan instead"
+  - what: "The Berlin Conference painting the event YAML attributes to Adalbert von Rossler, and the photograph it attributes to Alice Harris"
+    tried: ["https://commons.wikimedia.org/wiki/File:Afrikakonferenz.jpg", "https://commons.wikimedia.org/wiki/File:MutilatedChildrenFromCongo.jpg"]
+    status: "the Commons file pages carry no author for either: the first is sourced to Die Gartenlaube of 1884 and the second to the 1905 edition of Twain's King Leopold's Soliloquy. Both attributions in the YAML are unsupported by the file pages and neither is repeated here"
+
+# ------------------------------------------------------------- positions and their adjudication
+positions:
+  - id: european-diplomatic
+    name: The European diplomatic account
+    holders: ["Fitzmaurice for the British government (Commons, 20 November 1884)", "Ferry (Chambre des députés, 28 July 1885)", "the Crown's Charter to the British South Africa Company (1889)", "Lugard (1922)", "Robinson and Gallagher (1961)", "Brunschwig (1971)", "de Tessières (1972)", "Wesseling (1996)", "Pakenham (1991)"]
+    rests_on: [src-hansard-18841120, src-ferry-1885, src-hertslet-charter-1889, src-lugard-1922, src-robinson-gallagher-1961, src-brunschwig-1971, src-tessieres-1972, src-wesseling-1996, src-pakenham-1991]
+    described_by: [src-uzoigwe-1985.p28]
+    claim: "The conference settled rules between European states, not territory; the partition that followed was made by treaties, charters and conquest, justified in Paris as a duty of the superior races and in Britain as a mandate for the benefit of both Europe and Africa."
+    omits: "What the rules did to the peoples on the coasts they named, and the African rulers whose agreements the charters and treaties were built on."
+    adjudications:
+      - claim: "The decision of territorial claims was not among the bases of the conference."
+        verdict: supported
+        basis: presence
+        rests_on: [src-hansard-18841120.whole, src-berlin-act-1885.toc, src-berlin-act-1885.art34, src-berlin-act-1885.art35]
+        reasoning: "The Under-Secretary told the Commons on 20 November 1884 that the decision of territorial claims was not among the bases of the conference, and the Act the fourteen plenipotentiaries signed lists six documents, none of which assigns a territory to a Power; Articles 34 and 35 speak only of future acts of possession on the coasts and of notifying the other signatories. Two producers, the British government and the signatory powers, and the Act is the parties' own text."
+      - claim: "The occupation was a work of civilisation carried out for the mutual benefit of Europe and of the native races."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-ferry-1885.secraces, src-berlin-act-1885.art6, src-casement-1904.p34, src-congo-commission-1906.p67]
+        reasoning: "Ferry said it and Article VI of the Act binds the Powers in the Congo basin to watch over the preservation of the native tribes; the Free State's own commission found women held as hostages for rubber and the British consul recorded hands cut off by government soldiers in the same basin. The words are in the record from the European side and the practice is in the record from the same side, so the claim is borne out as a statement of intent and contradicted as a description of the Congo; qualified."
+
+  - id: berlin-not-partition
+    name: The it-did-not-happen-at-Berlin account
+    holders: ["Katzenellenbogen (1996)", "Craven (2015)", "Makamu Ngangula Mbela and Tekila Kapamba-Zay (Kinshasa, 2025), who ask the question in their title"]
+    rests_on: [src-craven-2015, src-katzenellenbogen-1996, src-makamu-tekila-2025]
+    claim: "The conference drew no border and allocated no territory; the boundaries of Africa were set later, in bilateral treaties made in ignorance of the ground; the Act's real subject was free trade and navigation, and the picture of a partition at the table is a later myth."
+    omits: "That the Act's rules for the coasts and its recognition of a free-trade basin defined by watersheds were themselves a claim on land whose owners were not consulted, as the African historians read it."
+    adjudications:
+      - claim: "The General Act allocated no territory to any Power and drew no border."
+        verdict: supported
+        basis: presence
+        rests_on: [src-berlin-act-1885.toc, src-berlin-act-1885.art34, src-berlin-act-1885.art35, src-hansard-18841120.whole]
+        reasoning: "The Act's own list of its six documents and its Articles 34 and 35 name no Power's possession and no line; the British government told the Commons before the conference opened that territorial claims were not among its bases. Two producers. The only line the Act draws is in Article I, the watershed and parallels that bound the free-trade basin, which is a limit on where a rule applies, not a grant of the land to anyone; the adjudication of the African account below carries that."
+      - claim: "The borders were set by later bilateral treaties."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-uzoigwe-1985.p30]
+        reasoning: "No delimitation treaty after 1885 is held as an extract in this record; Uzoigwe's chapter states that the treaties did the work, but that is a Tier B statement and the treaties themselves would settle it."
+        would_settle: "the Anglo-German agreements of 1885, 1886 and 1890 and the Anglo-French conventions of 1890 and 1898, all printed in Hertslet's vol. III, which was fetched whole and not sliced in this pass"
+      - claim: "The Act's importance is symbolic and legal, not territorial."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-berlin-act-1885.toc]
+        reasoning: "Craven's argument could not be read and the Kinshasa article is paywalled; the Act's text bears on what it allocated, not on what it came to mean."
+        would_settle: "Craven's article at Oxford Academic or the SOAS repository, and the Congo-Afrique article behind its 2 dollar paywall"
+
+  - id: african-historiography
+    name: The African historians' account (the UNESCO General History)
+    holders: ["Uzoigwe (1985)", "Boahen (1985)", "Rodney (1972)", "Waktola (Addis Ababa, 2024)"]
+    rests_on: [src-uzoigwe-1985, src-boahen-1985, src-rodney-1972, src-waktola-2024]
+    claim: "To all intents and purposes the appropriation of territory took place at the conference; Articles 34 and 35 became the doctrine of effective occupation that made the conquest murderous; and the great majority of African rulers chose to defend their sovereignty, some of them, at Adwa, successfully."
+    omits: "The Act's own silence on any territory, which the same chapter concedes in the words 'in the most technical sense', and the treaties Africans signed with the Europeans, which the account reads as misunderstood without holding the treaties."
+    adjudications:
+      - claim: "To all intents and purposes the appropriation of territory took place at the conference."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-berlin-act-1885.toc, src-berlin-act-1885.art34, src-berlin-act-1885.art35, src-berlin-act-1885.art1, src-hansard-18841120.whole]
+        reasoning: "The Act names no Power's territory and the British government said territorial claims were not on its agenda, so the claim is contradicted as a matter of text; but Article I bounds a basin by watersheds and parallels in which the Powers' rules run, and Articles 34 and 35 lay down how future possessions on the coasts will be recognised, which is what Uzoigwe means by the appropriation being implied. Two producers, both European: qualified, and the position's own 'in the most technical sense' concedes the text."
+      - claim: "Article 35's requirement of authority sufficient to protect existing rights was the doctrine of effective occupation."
+        verdict: supported
+        basis: presence
+        rests_on: [src-berlin-act-1885.art35, src-berlin-act-1885.art34, src-hansard-18841120.whole]
+        reasoning: "Article 35 says what Uzoigwe quotes it as saying, and Article 34 confines it to the coasts; the British government's answer of 20 November 1884 shows the conference was understood in London as rule-making. Two producers."
+      - claim: "The great majority of African rulers chose to defend their sovereignty."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-witbooi-1929.p79, src-hansard-18931109.p547, src-menelik-1897.p425, src-bluebook-1918.p54-55]
+        reasoning: "Three rulers speak in this record and all three defend a sovereignty: Witbooi tells Maharero he has given his land and his right of government into the hands of the white people, Lobengula tells the Queen he has not given away the whole country, Menelik binds a treaty to a French text because he cannot compare the English with the Amharic; Daniel Kariko's affidavit says the Herero chose war. Three rulers and one under-chief are not the majority the claim counts, so the claim is borne out for every ruler this record holds and untested for the rest: qualified. Four producers on three sides."
+
+  - id: african-rulers
+    name: The rulers' own record
+    holders: ["Hendrik Witbooi (letters of 1890 and 1891)", "Lobengula (letters to Queen Victoria of 1889, as read to the Commons)", "Menelik II (letter to Rodd, 1897)"]
+    rests_on: [src-witbooi-1929, src-hansard-18931109, src-menelik-1897]
+    claim: "Each chief is a sovereign answerable to God alone; the Germans say they protect the chiefs against other nations but it is the Germans who want the land; a paper signed was not the paper read out; and where two languages disagree the emperor names the version that governs."
+    omits: "The wars the rulers fought with one another, which Witbooi's own letter to Maharero is about, and the rulers who did make the treaties the Europeans held."
+    adjudications:
+      - claim: "The concession Lobengula signed was read to him as containing his words and gave away more than he had granted."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-hansard-18931109.p546, src-hansard-18931109.p547, src-hertslet-charter-1889.p174]
+        reasoning: "The king's two letters say so, and the Crown's editor records that a concession was granted on 30 October 1888 and that the Company was chartered to use it 'so far as they are valid'. The letters and the footnote are both British records of the exchange, so under Rule A the verdict is capped at qualified: the papers show a king who denied the paper and a Crown that reserved the question of validity, and the concession itself is not held."
+      - claim: "The German protection Maharero accepted in 1890 would cost him his land and his right of government."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-witbooi-1929.p79, src-witbooi-1929.p105, src-trotha-1904.whole, src-bluebook-1918.p54-55]
+        reasoning: "Witbooi wrote it in May 1890 and repeated in June 1891 that the Germans said they protected the chiefs against other nations but seemed to be the man who wanted the land; fourteen years later the German commander's order told the Herero to leave the country, and a Herero under-chief swore that their people had been compelled to work on farms and flogged. The order is the German army's own record, the affidavit is a British one, the letters the chief's own: three producers agree, but the order and the affidavit describe 1904, not the terms of 1890, so the prediction is borne out by what followed rather than tested against the protection treaty itself, which is not held: qualified."
+
+  - id: congo-reform
+    name: The Congo reform account
+    holders: ["Casement (report of 1903, presented 1904)", "Samuel and Gorst (Commons, 20 May 1903)", "Morel (Red Rubber, 1906)", "Hochschild (1998)"]
+    rests_on: [src-casement-1904, src-hansard-19030520, src-morel-1906, src-hochschild-1998]
+    described_by: [src-roes-2010.p15]
+    claim: "The Free State ran a rubber system enforced by armed sentries, hostages and mutilation, in breach of the guarantees of humanity and free trade given at Berlin; whole districts were emptied, and the Powers that signed the Act had the right and the duty to intervene."
+    omits: "The share of the depopulation the consul himself assigned to sleeping sickness, and the years after 1908 when the reform association's own estimate of ten million became a figure historians argue over."
+    adjudications:
+      - claim: "The rubber system took women as hostages and was enforced by armed sentries who killed."
+        verdict: supported
+        basis: presence
+        rests_on: [src-congo-commission-1906.p67, src-congo-commission-1906.p70, src-casement-1904.p34, src-hansard-19030520.p1332]
+        reasoning: "The Free State's own commission found that when the prestations were not forthcoming the chiefs were arrested and 'often the women were held as hostages', that the State had forbidden the practice and been unable to suppress it, and that the sentries detailed to villages were 'by far the worst sort'; the consul saw two mutilated people at Lake Mantumba and was told of many more; the Commons resolved that the guarantees had been given. Three producers, one of them the perpetrator state."
+      - claim: "Whole districts were emptied by the system."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-casement-1904.p22, src-casement-1904.p27, src-casement-1904.p21, src-congo-commission-1906.p115, src-congo-commission-1906.p117]
+        reasoning: "The consul counted Bolobo down from fully 40,000 to 7,000 or 8,000 and the south shore of Stanley Pool from fully 5,000 Bateke to fewer than 100 at Leopoldville; the commission agreed that a large part of the river population had disappeared and that some fled the impositions to the French bank. But the consul himself gave sleeping sickness a prominent place among the causes, and the commission put smallpox and sleeping sickness above every other cause. Two producers on opposite sides agree on the emptying and disagree on the cause: qualified."
+
+  - id: free-state-defence
+    name: The Free State's own account (the Commission of Enquiry, 1905)
+    holders: ["the Commission of Enquiry appointed by the Congo Free State Government (Janssens, Nisco, de Schumacher)"]
+    rests_on: [src-congo-commission-1906]
+    claim: "The impositions were lawful and the abuses were the work of native sentries and of practices the State had forbidden; the river population was scattered rather than destroyed, and the ravages of smallpox and sleeping sickness dwarfed every other cause of depopulation."
+    omits: "Who armed the sentries and set the quotas the commission calls prestations, and any count of the people it says had disappeared."
+    adjudications:
+      - claim: "The causes of depopulation other than disease are secondary in importance."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-congo-commission-1906.p117, src-casement-1904.p21, src-casement-1904.p22, src-congo-commission-1906.p115]
+        reasoning: "The commission wrote it, and the consul gave the disease a prominent place too; but the consul also recorded that the people themselves attributed their decrease principally to other causes, and that the Bateke of Stanley Pool crossed to the French shore in one night, while the commission's own chapter says the river people fled the impositions. Two producers, and they divide on the weight of the causes: qualified."
+      - claim: "The State had long forbidden the taking of women as hostages."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-congo-commission-1906.p67, src-morel-1906.p46-47]
+        reasoning: "The commission says so and says in the same sentence that the State had been unable to suppress it; Morel's summary of the missionary Sjoblom describes sentries bringing hands to the Commissioner in 1897. The prohibition is stated by the State alone, so under Rule A the verdict cannot rise above qualified, and the same document records the practice continuing."
+
+  - id: congo-violence-historians
+    name: The historians of Congo violence
+    holders: ["Roes (2010)", "Stengers and Vansina, Vellut, Ndaywel, Nzongola-Ntalaja, as Roes cites them"]
+    rests_on: [src-roes-2010]
+    claim: "The violence was systemic, multi-causal and inexcusable; its demographic cost is contested between a maximalist position that puts the dead at roughly half the population and agnostics who call the data too thin, and no firm count is possible."
+    omits: "Any figure of its own, which is the position's point; and the testimony of the people counted, which it reaches only through the reform campaign's records."
+    adjudications:
+      - claim: "The maximalist estimate of roughly fifty per cent, or ten million, rests on data the agnostics call shaky, and no firm estimate is possible."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-casement-1904.p27, src-casement-1904.p22, src-congo-commission-1906.p115, src-bluebook-1918.p67]
+        reasoning: "The two contemporary counts this record holds are local: Bolobo, from fully 40,000 to 7,000 or 8,000, and the south shore of Stanley Pool, from fully 5,000 to under 100 at Leopoldville; the commission counted nothing and said the banks were almost deserted. Nothing in the primary record holds a figure for the whole territory, so the position's statement that no firm count exists is borne out by the absence of one, which under Rule B cannot be more than qualified; the local counts show the direction, not the total. Two producers."
+
+  - id: herero-genocide
+    name: The genocide account
+    holders: ["the 1918 Blue Book", "Gewald (2004)", "Dedering (1993)", "Zimmerer and Zeller (2008)", "Adhikari (Cape Town, 2008)"]
+    rests_on: [src-bluebook-1918, src-gewald-2004, src-dedering-1993, src-zimmerer-zeller-2008, src-adhikari-2008]
+    claim: "The German commander's order of 2 October 1904 declared that every Herero within the German frontier would be shot; the people were driven into the Omaheke and its wells held against them; the survivors were put in camps where thousands died; no fewer than 80 per cent of the Herero were lost, and the policy was conscious."
+    omits: "The order's own addendum that told the troops to shoot over the heads of women and children, and the range of the counts, which the German state's own research paper puts at anything between 29 and 86 per cent."
+    adjudications:
+      - claim: "The order of 2 October 1904 declared that every Herero within the German frontier, with or without a gun, with or without cattle, would be shot, and that no women or children would be taken in."
+        verdict: supported
+        basis: presence
+        rests_on: [src-trotha-1904.whole, src-bluebook-1918.p59, src-gewald-2004.p62-63]
+        reasoning: "The German army's own copy of the order says it; the British administration's report and Gewald's translation of von Estorff describe the campaign that followed. The perpetrator's record and its enemy's record agree: supported, two producers."
+      - claim: "Herero leaders who came in to make peace were shot."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-bluebook-1918.p59, src-bluebook-1918.p59-60]
+        reasoning: "Two Herero witnesses swore it before the British administration in 1917 and 1918, thirteen years after the event, and the report that prints them was compiled by Germany's enemy in wartime; no German record of Ombakaha is held. One producer's record of two witnesses: qualified."
+      - claim: "No fewer than 80 per cent of the Herero lost their lives."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-gewald-2004.p60-61, src-bluebook-1918.p67, src-bundestag-2004.p19-20]
+        reasoning: "Gewald states the share; the Blue Book counted about 15,000 alive at the end of 1905 out of 80,000 to 90,000; the Bundestag's research service reports pre-war estimates from 35,000 to 100,000 and post-war from 14,000 to 25,000, which it says yields loss rates from 29 to 86 per cent. The share is inside every range the record holds and is the top of none but the Blue Book's; three producers, and they do not agree on a number: qualified."
+
+  - id: german-record
+    name: The German state's account (the Bundestag's research service, 2004)
+    holders: ["Wissenschaftliche Dienste des Deutschen Bundestages (WD 1 - 080/04)"]
+    rests_on: [src-bundestag-2004]
+    claim: "The losses were very heavy and cannot be counted: 7682 prisoners died in the camps between October 1904 and March 1907, a death rate of 30 to 50 per cent; estimates of the whole people run from 35,000 to 100,000 before the war and 14,000 to 25,000 after, and the genocide question divides historians, whose critics call the camps humanitarian and the counts inflated."
+    omits: "Its own verdict on the genocide question, which it leaves to the historians it summarises, and the Herero witnesses, whom it does not quote."
+    adjudications:
+      - claim: "Between October 1904 and March 1907 a total of 7682 prisoners died in the camps."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-bundestag-2004.p19, src-bluebook-1918.p102-103, src-gewald-2004.p62-63]
+        reasoning: "The German paper states the count, citing Zimmerer; the British report prints the amnesty proclamation of 1 December 1905 that called the survivors in and says thousands then died in the camps; Gewald puts 8,800 Herero in camps by late 1905. The count is one producer's, the German state's, and the other two producers give no figure that tests it: qualified under Rule A."
+      - claim: "The critics of the genocide thesis hold that the camps were set up on humanitarian grounds and that the counts are inflated."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-bundestag-2004.p25, src-trotha-1904.whole, src-bluebook-1918.p102-103]
+        reasoning: "The paper describes the critics' position; the order the critics must read around told the troops to take no more male prisoners, and the amnesty proclamation that filled the camps promised the survivors food, clothing and just treatment. The order is the German army's record and the proclamation is reproduced by the British; the critics' claim is described, not tested, and the documents cut both ways: qualified."
+
+# ------------------------------------------------------------- where the record disagrees
+contested:
+  - id: partition-at-berlin
+    claim: "Whether Africa was partitioned at the Berlin conference"
+    rows:
+      - position: african-historiography
+        holds: "The view that the conference did not partition Africa is correct only in the most technical sense; to all intents and purposes the appropriation of territory took place there, and by 1885 the broad lines of the final partition had been drawn."
+        figures: []
+        source: src-uzoigwe-1985
+        locator: p30
+      - position: berlin-not-partition
+        holds: "The conference's importance for the partition has been overstated; the Act's logic was free trade. The argument itself is behind a paywall, so it is held here only by its title."
+        figures: []
+        source: src-craven-2015
+        locator: null
+      - position: european-diplomatic
+        holds: "The decision of territorial claims is not among the bases of the Conference, and a pledge of secrecy covered its proceedings."
+        figures: []
+        source: src-hansard-18841120
+        locator: whole
+  - id: congo-toll
+    claim: "How many people the Free State's rubber system cost, and of what they died"
+    rows:
+      - position: congo-reform
+        holds: "Bolobo's population, fully 40,000 in the early days of civilised rule, was believed to be not more than 7,000 or 8,000; the south shore of Stanley Pool, once fully 5,000 Bateke, had not 100 of the original people left at Leopoldville."
+        figures: ["40,000", "7,000", "8,000", "5,000", "100"]
+        source: src-casement-1904
+        locator: p27
+      - position: free-state-defence
+        holds: "All causes of depopulation other than the ravages of smallpox and the sleeping sickness are secondary in importance; the river population was scattered rather than destroyed."
+        figures: []
+        source: src-congo-commission-1906
+        locator: p117
+      - position: congo-violence-historians
+        holds: "A maximalist position puts the dead at roughly fifty per cent of the population, an estimated 10 million forwarded by Morel, Hochschild and others; the agnostics call the data unreliable and rudimentary; a firm estimate must remain elusive."
+        figures: ["10"]
+        source: src-roes-2010
+        locator: p15
+  - id: herero-toll
+    claim: "How many Herero died in the war and the camps of 1904 to 1908"
+    rows:
+      - position: herero-genocide
+        holds: "Out of between 80,000 and 90,000 souls only about 15,000 starving and fugitive Hereros were alive at the end of 1905."
+        figures: ["80,000", "90,000", "15,000"]
+        source: src-bluebook-1918
+        locator: p67
+      - position: herero-genocide
+        holds: "No fewer than 80 per cent of the Herero had lost their lives; the Nama lost at least 30 per cent."
+        figures: ["80", "30"]
+        source: src-gewald-2004
+        locator: p60-61
+      - position: german-record
+        holds: "Estimates for the whole Herero people before the war run from 35,000 to 100,000 and after it from 14,000 to 25,000, which at the extremes gives loss rates of between 29 and 86 per cent; 7682 prisoners died in the camps between October 1904 and March 1907, a death rate of 30 to 50 per cent."
+        figures: ["35,000", "100,000", "14,000", "25,000", "29", "86", "7682"]
+        source: src-bundestag-2004
+        locator: p19-20
+  - id: the-treaties
+    claim: "Whether the treaties and concessions African rulers signed were what they were told they signed"
+    rows:
+      - position: african-rulers
+        holds: "A document was read to Lobengula as containing his words and the white men's; three months later he learned he had given the right to all the minerals in his country, and his indunas would not recognise the paper."
+        figures: []
+        source: src-hansard-18931109
+        locator: p546
+      - position: european-diplomatic
+        holds: "On 30 October 1888 a concession was granted by Lobengula to the representatives of the British South Africa Company, and the Charter empowered the Company to use such concessions so far as they are valid."
+        figures: []
+        source: src-hertslet-charter-1889
+        locator: p174
+      - position: african-historiography
+        holds: "The European notion of effective occupation, with which the vast majority of African states were unfamiliar, and the African notion of the real meaning of these treaty relations were in fundamental contradiction."
+        figures: []
+        source: src-uzoigwe-1985
+        locator: p34
+
+# ------------------------------------------------------------- exhibits
+exhibits:
+  - id: ex-act-art34
+    kind: document
+    title: "The General Act of Berlin, Article 34: the rule for future occupations on the coasts"
+    creator: The plenipotentiaries of fourteen states, as the Foreign Office translated them
+    date: "26 February 1885"
+    repository: Internet Archive (Hertslet, The Map of Africa by Treaty, 3rd edition, vol. II, No. 128)
+    accession: "mapofafricabytre02hert"
+    licence: A treaty text in a Crown publication of 1909, public domain
+    url: "https://archive.org/details/mapofafricabytre02hert"
+    source: src-berlin-act-1885
+    locator: art34
+  - id: ex-trotha-order
+    kind: document
+    title: "Trotha's proclamation to the Herero and his addendum to the troops, 2 October 1904"
+    creator: Lothar von Trotha
+    date: "2 October 1904"
+    repository: German History in Documents and Images (Deutsches Historisches Institut Washington), from Bundesarchiv RKA 10.01 2089, Bl. 23
+    accession: "ghdi:document-5478"
+    licence: A 1904 military order, public domain; GHDI's transcription and translation cited as the edition
+    url: "https://germanhistorydocs.org/de/das-wilhelminische-kaiserreich-und-der-erste-weltkrieg-1890-1918/lothar-von-trothas-vernichtungsbefehl-2-oktober-1904"
+    source: src-trotha-1904
+    locator: whole
+  - id: ex-lobengula-letter
+    kind: document
+    title: "Lobengula to Queen Victoria, 1889, as Labouchere read it to the Commons"
+    creator: Lobengula, King of Matabeleland, in a British record
+    date: "letter of 23 April 1889, read on 9 November 1893"
+    repository: UK Parliament, Historic Hansard
+    accession: "HC Deb 09 November 1893 vol 18 c546"
+    licence: Parliamentary record, public
+    url: "https://api.parliament.uk/historic-hansard/commons/1893/nov/09/motion-for-adjournment"
+    source: src-hansard-18931109
+    locator: p546
+  - id: ex-witbooi-letter
+    kind: document
+    title: "Hendrik Witbooi to Maharero, 30 May 1890, on German protection"
+    creator: Hendrik Witbooi
+    date: "30 May 1890"
+    repository: Internet Archive (Die Dagboek van Hendrik Witbooi, Van Riebeeck Society, 1929, from the Regeringsargief, Windhoek)
+    accession: "diedagboekvanhen00witb"
+    licence: The chief's own letter of 1890, public domain, with a Void translation beside it
+    url: "https://archive.org/details/diedagboekvanhen00witb"
+    source: src-witbooi-1929
+    locator: p79
+  - id: ex-casement-t7
+    kind: document
+    title: "T 7's statement, as the British consul recorded it in 1903"
+    creator: A Congolese girl the Blue Book calls T 7, recorded by Roger Casement
+    date: "1903, printed February 1904"
+    repository: Internet Archive (Africa No. 1, 1904, Cd. 1933)
+    accession: "CasementReport"
+    licence: Parliamentary paper of 1904, public domain
+    url: "https://archive.org/details/CasementReport"
+    source: src-casement-1904
+    locator: p75
+  - id: ex-afrikakonferenz
+    kind: image
+    title: "The Berlin conference in session, an engraving of 1884"
+    creator: "Unknown; the file page carries no author and sources the image to Die Gartenlaube, 1884"
+    date: "1884"
+    repository: Wikimedia Commons
+    accession: "File:Afrikakonferenz.jpg"
+    licence: Public domain (Creative Commons Public Domain Mark on the file page)
+    url: "https://commons.wikimedia.org/wiki/File:Afrikakonferenz.jpg"
+    image: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Afrikakonferenz.jpg"
+    shows: "a room of seated and standing men in frock coats around a long table, with a wall map behind them, as an illustrated weekly of 1884 drew the conference; the file page gives no artist"
+    does_not_show: "any African delegate, because none attended; nor a border being drawn, which the Act's text does not contain; the event YAML's attribution to Adalbert von Rossler is not on the file page"
+  - id: ex-map-1913
+    kind: map
+    title: "Colonial Africa in 1913, drawn in 2007 with modern borders"
+    creator: "Eric Gaba (Wikimedia Commons user Sting)"
+    date: "June 2007, corrected July 2011"
+    repository: Wikimedia Commons
+    accession: "File:Colonial_Africa_1913_map.svg"
+    licence: CC BY-SA 3.0 (also GFDL and CC BY-SA 2.5, as the file page lists)
+    url: "https://commons.wikimedia.org/wiki/File:Colonial_Africa_1913_map.svg"
+    image: "https://upload.wikimedia.org/wikipedia/commons/e/e5/Colonial_Africa_1913_map.svg"
+    shows: "the areas of European control in 1913 as a contributor drew them from four reference atlases, laid over modern borders"
+    does_not_show: "the map of 1885 or of 1913 as any treaty printed it; its own note says the limits of the areas of control may not be perfectly accurate, and no line on it is a document"
+  - id: ex-mutilated
+    kind: image
+    title: "Mutilated Congolese, a photograph reproduced in 1905"
+    creator: "Unknown; the file page carries no photographer and sources the image to the second edition of Twain's King Leopold's Soliloquy, Boston, 1905"
+    date: "before 1905"
+    repository: Wikimedia Commons
+    accession: "File:MutilatedChildrenFromCongo.jpg"
+    licence: Public domain in the United States, published before 1931 (the file page's tag)
+    url: "https://commons.wikimedia.org/wiki/File:MutilatedChildrenFromCongo.jpg"
+    image: "https://upload.wikimedia.org/wikipedia/commons/e/ec/MutilatedChildrenFromCongo.jpg"
+    shows: "people the file page describes as mutilated Congolese children and adults, photographed before 1905 and printed in a pamphlet of the reform campaign"
+    does_not_show: "who they are, where or when the photograph was taken, or who took it; the event YAML's caption, that a man looks at the hand and foot of his daughter, and its attribution to Alice Harris, are not on the file page and are not repeated here"
+
+# ------------------------------------------------------------- the thesis's own analysis
+analyses:
+  - id: an-act-chapters
+    title: What the General Act allocates, chapter by chapter
+    method: "The Act's seven chapters, one row per chapter, read in the Act's own text: the articles each chapter holds, the subject the chapter heading gives, and whether any article in it assigns a territory, a border or a place to a named Power. allocates is yes or no, read from the chapter's articles; allocates_n is 1 for yes and 0 for no. The result is the sum of allocates_n."
+    finding: "Of the Act's 7 chapters, 0 allocate a territory, a border or a place to any Power. The 2 articles on occupation, 34 and 35, set rules for future acts of possession on the coasts and the authority a Power must establish there, and name no Power, no border and no place. The one line the Act draws, in Article 1, bounds the basin in which its free-trade rules run, by watersheds and parallels, and gives that basin to no one."
+    confidence: "high: the rows are read from the Act's own articles in a public document, and the result is a sum of 0 and 1"
+    against: "Uzoigwe reads the same articles as an appropriation 'to all intents and purposes' and the recognition of the Congo Free State as disposing of territory (p28, p30); the protocol of the conference in which the Powers recognised the flag of the International Association of the Congo (Hertslet No. 129) is not held here, and Article 1's basin, though given to no Power, was a claim that the Powers' rules ran over land whose rulers were not asked"
+    result: 0
+    derivation:
+      compute: sum
+      column: allocates_n
+      columns: [chapter, articles, subject, allocates, allocates_n]
+      rows:
+        - {chapter: 1, articles: "1 to 8", subject: "freedom of trade in the basin of the Congo", allocates: "no", allocates_n: 0, extract: src-berlin-act-1885.art1}
+        - {chapter: 2, articles: "9", subject: "the slave trade", allocates: "no", allocates_n: 0, extract: src-berlin-act-1885.art9}
+        - {chapter: 3, articles: "10 to 12", subject: "neutrality of the territories in the conventional basin of the Congo", allocates: "no", allocates_n: 0, extract: src-berlin-act-1885.art10}
+        - {chapter: 4, articles: "13 to 25", subject: "navigation of the Congo", allocates: "no", allocates_n: 0, extract: src-berlin-act-1885.art13}
+        - {chapter: 5, articles: "26 to 33", subject: "navigation of the Niger", allocates: "no", allocates_n: 0, extract: src-berlin-act-1885.art26}
+        - {chapter: 6, articles: "34 to 35", subject: "future occupations on the coasts of the African continent", allocates: "no", allocates_n: 0, extract: src-berlin-act-1885.art34}
+        - {chapter: 7, articles: "36 to 38", subject: "general dispositions", allocates: "no", allocates_n: 0, extract: src-berlin-act-1885.art36}
+  - id: an-herero-counts
+    title: Every count of the Herero in the record
+    method: "Every figure a fetched document gives for the Herero people before and after the war of 1904, one row per figure, with the document, its producer, and the before, after and share as the document states them; where a document gives only a share the counts are blank, and where it gives a range the range is kept. No range is taken across the rows, because the rows do not count the same thing: two are estimates of a whole people, one is a share, one is a prisoner count. The result is the number of rows."
+    finding: "The record holds four counts of the Herero from three producers, and they do not agree: the British administration's 80,000 to 90,000 reduced to about 15,000; a missionary-quoting historian's no fewer than 80 per cent; a British campaigner of 1949, as the same historian quotes him, at all but 15,000 of 90,000; and the German parliament's research service, which reports 35,000 to 100,000 before and 14,000 to 25,000 after, and 7682 prisoners dead in the camps. Every count is a reconstruction after the fact, and the German paper says why: no census of the Herero exists for before or after the war."
+    confidence: "high for the count of rows; low for any share, which the rows do not agree on and which the German paper puts anywhere between 29 and 86 per cent"
+    against: "the Blue Book was compiled in wartime by Germany's enemy and Adhikari calls it a work of propaganda that is nonetheless remarkably accurate; the Bundestag paper warns that its own ranges rest on missionaries' estimates before the war and on prisoner counts by the German military after it, and that no calculation allows for natural change in the population; Gewald's 80 per cent is stated without a base"
+    result: 4
+    derivation:
+      compute: count
+      columns: [document, producer, before, after, share]
+      rows:
+        - {document: "Report on the Natives of South-West Africa (1918), p. 67", producer: "Union administration, Windhuk", before: "80,000 to 90,000", after: "about 15,000 at the end of 1905", share: "", extract: src-bluebook-1918.p67}
+        - {document: "Gewald (2004), pp. 60-61", producer: "historian", before: "", after: "", share: "no fewer than 80 per cent lost", extract: src-gewald-2004.p60-61}
+        - {document: "Michael Scott (1949), as Gewald quotes him, pp. 68-69", producer: "British campaigner, quoted by a historian", before: "90,000", after: "15,000", share: "", extract: src-gewald-2004.p68-69}
+        - {document: "Bundestag research service (2004), pp. 19-20", producer: "German parliament's research service", before: "35,000 to 100,000", after: "14,000 to 25,000", share: "29 to 86 per cent lost, at the extremes", extract: src-bundestag-2004.p19-20}
+  - id: an-congo-counts
+    title: Every count of the Congo's people in the record
+    method: "Every figure a fetched document gives for a population of the Congo Free State or for its dead, one row per figure, with the document, what the figure counts, and the before and after or the total as the document states them. The consul's counts are of named places; the historian's are of the whole territory as others estimated it. No range is taken across the rows, because a town's people and a territory's dead are not the same quantity. The result is the number of rows."
+    finding: "The record holds four counts of four different things: one town, Bolobo, from fully 40,000 to 7,000 or 8,000; one shore of Stanley Pool, from fully 5,000 to not 100 at Leopoldville; the maximalist historians' roughly fifty per cent of the whole population; and the reform campaign's estimated 10 million, which Roes reports as Morel's and Hochschild's figure and the agnostics dispute. The two contemporary counts are the consul's, of places he had known before; the two totals are twentieth-century estimates that the one Tier B source held calls contested. Nothing in the primary record counts the whole."
+    confidence: "moderate: the count of rows is exact, but two of the four figures are estimates reported at second hand by a historian describing a controversy, and the consul's counts are his own recollection of places against a missionary's belief"
+    against: "the consul assigned a prominent place among the causes of the decrease to sleeping sickness (p21), and the Free State's commission put smallpox and sleeping sickness above every other cause (p117), so the counts measure a fall and not a cause; the commission also recorded that the Bateke crossed to the French bank, which is emigration, not death"
+    result: 4
+    derivation:
+      compute: count
+      columns: [document, counts, before, after]
+      rows:
+        - {document: "Casement, Africa No. 1 (1904), p. 27", counts: "the population of Bolobo, chiefly Bohangi", before: "fully 40,000 in the early days of civilised rule", after: "not more than 7,000 or 8,000, as believed in 1903", extract: src-casement-1904.p27}
+        - {document: "Casement, Africa No. 1 (1904), p. 22", counts: "the Bateke of the south shore of Stanley Pool", before: "fully 5,000", after: "not 100 of the original natives at Leopoldville", extract: src-casement-1904.p22}
+        - {document: "Roes (2010), AAM pp. 12-13", counts: "the whole African population of the Free State, the maximalist position", before: "", after: "roughly fifty per cent perished", extract: src-roes-2010.p12-13}
+        - {document: "Roes (2010), AAM p. 15", counts: "the dead of the whole territory, as Morel, Hochschild and others estimated", before: "", after: "an estimated 10 million victims", extract: src-roes-2010.p15}
