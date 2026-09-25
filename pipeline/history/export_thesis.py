@@ -36,7 +36,7 @@ from pipeline.history.ledger import (  # noqa: E402
     load_ledger, locator_label, standing,
 )
 from pipeline.history.thesis_format import (  # noqa: E402
-    Directive, Paragraph, Thesis, chapter_segments, parse_thesis,
+    Directive, Paragraph, Thesis, chapter_segments, segment_chapters, parse_thesis,
 )
 from pipeline.history.thesis_checks import validate_thesis  # noqa: E402
 
@@ -213,7 +213,7 @@ class Exporter:
         lines = [l for l in seg.get("lines") or [] if (l.get("text") or "").strip()]
         a, b = d.args.get("lines", (1, len(lines)))
         chosen = lines[a - 1:b]
-        manifest = (self.episode or {}).get("chapters") or []
+        manifest = segment_chapters(self.episode)
         start = manifest[n]["startTime"] if n < len(manifest) else None
         title = seg.get("title") or {"OPEN": "Opening", "TURN": "The disagreement",
                                      "CLOSE": "Legacy"}.get(seg.get("kind"), "")

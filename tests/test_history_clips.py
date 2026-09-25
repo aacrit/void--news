@@ -486,9 +486,35 @@ def test_score() -> None:
     check("score: On Air's theme is bit-identical under the new defaults", np.array_equal(committed, now))
 
 
+def test_clip_chapter_keeps_thesis_marks() -> None:
+    """A recording gets a chapter of its own that the script export has no
+    segment for. On 2026-09-25 that shifted every later chapter by one and a
+    thesis mark to chapter 5 pointed at chapter 6 ("How many"); the export
+    refused it. segment_chapters drops the clip chapters, so script chapter n
+    and served chapter n are the same again."""
+    from pipeline.history.thesis_format import chapter_segments, segment_chapters
+    served = json.loads((ROOT / "frontend/public/data/history-audio.json").read_text(encoding="utf-8"))
+    ep = (served.get("episodes") or {}).get(SLUG) or {}
+    if not ep.get("clips"):
+        return
+    script = json.loads((ROOT / "frontend/build-data/history-scripts" / f"{SLUG}.json").read_text(encoding="utf-8"))
+    segs, chs = chapter_segments(script), segment_chapters(ep)
+    check("clip chapters: the served manifest carries one more chapter than the script per clip",
+          len(ep["chapters"]) == len(chs) + len(ep["clips"]), f"{len(ep['chapters'])} vs {len(chs)}+{len(ep['clips'])}")
+    # The house promo adds one trailing chapter of its own, after the script's.
+    check("clip chapters: without them, the served chapters are the script's, one for one",
+          len(segs) <= len(chs) and all(not s.get("title") or s["title"].strip() == c["title"].strip()
+                                        for s, c in zip(segs, chs)),
+          str([(s.get("title"), c["title"]) for s, c in zip(segs, chs)]))
+    planted = dict(ep, clips=[])
+    check("clip chapters: ignoring the clip list shifts them (the 2026-09-25 defect)",
+          [c["title"] for c in segment_chapters(planted)] != [c["title"] for c in chs])
+
+
 TESTS = [test_directives_parsed, test_directives_inert, test_pilot_as_committed, test_clean_fixture_admits,
          test_h12_rights, test_h13_provenance, test_h14_transcript, test_h15_credit, test_h16_caps,
-         test_h17_timeline, test_h17_bus, test_moods, test_legacy_path, test_score]
+         test_h17_timeline, test_h17_bus, test_moods, test_legacy_path, test_score,
+         test_clip_chapter_keeps_thesis_marks]
 
 
 def main() -> int:

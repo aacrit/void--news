@@ -53,7 +53,7 @@ from pipeline.history.ledger import (  # noqa: E402
     _title_match, entry_is_verified, norm, standing, validate_ledger,
 )
 from pipeline.history.thesis_format import (  # noqa: E402
-    Directive, Paragraph, Section, Thesis, chapter_segments, strip_inline,
+    Directive, Paragraph, Section, Thesis, chapter_segments, segment_chapters, strip_inline,
 )
 from pipeline.history.copy_rules import (  # noqa: E402
     EM, EN, hedge_hits, outside_quotations, time_relative_hits,
@@ -296,7 +296,7 @@ def check_exhibits(th: Thesis, ledger: Ledger, event: dict, out: list[Finding]) 
 def check_episode(th: Thesis, script: dict | None, episode: dict | None, out: list[Finding]) -> None:
     """T-10."""
     chapters = chapter_segments(script) if script else []
-    manifest = (episode or {}).get("chapters") or []
+    manifest = segment_chapters(episode)
     for sec in th.sections:
         ds = sec.directives
         if ds and all(d.kind == "episode" for d in ds) and not sec.paragraphs:
