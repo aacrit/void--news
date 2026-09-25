@@ -3,7 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 import PrintMast from "../../components/PrintMast";
 import type { HistoricalEvent, ConnectionType } from "../types";
 import type {
-  ThesisAdjudication, ThesisAnalysisBlock, ThesisBlock, ThesisContestedBlock, ThesisDoc,
+  ThesisAdjudication, ThesisAnalysisBlock, ThesisBlock, ThesisContestedBlock, ThesisCoverage, ThesisDoc,
   ThesisExhibitBlock, ThesisExtractRef, ThesisListBlock, ThesisParaBlock, ThesisPositionBlock,
   ThesisSection, ThesisSentence,
 } from "../thesis";
@@ -559,6 +559,43 @@ function Record({ section, doc, audio }: { section: ThesisSection; doc: ThesisDo
   );
 }
 
+/* §15: the page says where it covers each strand of the event. The map is the
+   front matter T-21 checks, so the reader sees the same claim the gate tests:
+   each strand links to the sections that carry it. */
+const STRANDS: [keyof Omit<ThesisCoverage, "perspectives">, string][] = [
+  ["causes", "Causes"], ["course", "Course"], ["actors", "Actors"],
+  ["regions", "Regions"], ["consequences", "Consequences"], ["legacy", "Legacy"],
+];
+
+function sectionLabel(doc: ThesisDoc, id: string): string {
+  const s = doc.sections.find((x) => x.id === id);
+  if (!s) return id;
+  const t = s.title.replace(/^\d+\.\s*/, "");
+  return s.number !== null ? `${s.number}. ${t}` : t;
+}
+
+function CoverageMap({ doc }: { doc: ThesisDoc }) {
+  const cov = doc.coverage;
+  if (!cov) return null;
+  return (
+    <dl className="hist-th-coverage" aria-label="Where this page covers each part of the event">
+      {STRANDS.filter(([k]) => cov[k]).map(([k, label]) => (
+        <div key={k} className="hist-th-coverage__row">
+          <dt>{label}</dt>
+          <dd>
+            {cov[k]!.sections.map((id, i) => (
+              <span key={id}>
+                {i > 0 && "; "}
+                <a href={`#${id}`} className="hist-th-coverage__link">{sectionLabel(doc, id)}</a>
+              </span>
+            ))}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
 function Section({ section, doc, audio }: { section: ThesisSection; doc: ThesisDoc; audio: AudioBits }) {
   switch (section.kind) {
     case "question":
@@ -579,9 +616,27 @@ function Section({ section, doc, audio }: { section: ThesisSection; doc: ThesisD
               ))}
             </ol>
           )}
+          <CoverageMap doc={doc} />
           <p className="hist-th-key">
             <span className="hist-th-key__item"><span className="hist-th-i hist-th-key__swatch">Shaded</span> sentences are the reading of this thesis</span>
           </p>
+        </section>
+      );
+    case "event":
+      return (
+        <section id="event" className="hist-th-section hist-th-argument-head hist-th-event-head" aria-labelledby="event-h">
+          <h2 id="event-h" className="hist-th-h2">{section.title}</h2>
+          <Blocks blocks={section.blocks} doc={doc} audio={audio} />
+        </section>
+      );
+    case "event-section":
+      return (
+        <section id={section.id} className="hist-th-section hist-th-argument hist-th-event" aria-labelledby={`${section.id}-h`}>
+          <h3 id={`${section.id}-h`} className="hist-th-h3">
+            <span className="hist-th-h3__num">{section.number}</span>
+            <span className="hist-th-h3__title">{section.title.replace(/^\d+\.\s*/, "")}</span>
+          </h3>
+          <Blocks blocks={section.blocks} doc={doc} audio={audio} />
         </section>
       );
     case "record":
@@ -649,9 +704,19 @@ interface ThesisProps {
 
 export function thesisStations(doc: ThesisDoc): Station[] {
   const out: Station[] = [];
+  /* A holistic thesis (§15) has two numbered runs: the event's sections carry
+     the scene numbers, and the contested questions take the diamond the turn
+     wears, so the rail never shows two stations numbered 1. */
+  const holistic = doc.sections.some((s) => s.kind === "event-section");
   for (const s of doc.sections) {
     if (s.kind === "question") out.push({ id: "question", label: "The question", glyph: "tick" });
+    else if (s.kind === "event") out.push({ id: "event", label: s.title, glyph: "tick" });
+    else if (s.kind === "event-section" && s.number !== null)
+      out.push({ id: s.id, label: s.title.replace(/^\d+\.\s*/, ""), glyph: "scene", number: s.number });
     else if (s.kind === "record") out.push({ id: "record", label: "The record", glyph: "tick" });
+    else if (s.kind === "argument" && holistic) out.push({ id: "argument", label: s.title, glyph: "tick" });
+    else if (s.kind === "argument-section" && s.number !== null && holistic)
+      out.push({ id: s.id, label: s.title.replace(/^\d+\.\s*/, ""), glyph: "diamond" });
     else if (s.kind === "argument-section" && s.number !== null)
       out.push({ id: s.id, label: s.title.replace(/^\d+\.\s*/, ""), glyph: "scene", number: s.number });
     else if (s.kind === "historiography") out.push({ id: "historiography", label: "The historiography", glyph: "tick" });

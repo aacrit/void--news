@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The History thesis gates, T-01..T-20, each against a planted defect.
+"""The History thesis gates, T-01..T-21, each against a planted defect.
 
 A rule that has only ever been run against clean copy is a comment, not a
 gate (tests/test_history_script.py says the same about H-01..H-11). So this
@@ -238,6 +238,71 @@ EPISODE = {"url": "/audio/history/fixture.mp3", "durationSeconds": 60.0, "chapte
 ]}
 EVENT = {"slug": SLUG, "title": "The Harbour", "region": "europe",
          "hero_image_url": "https://upload.wikimedia.org/x/hero.jpg", "media": []}
+
+
+# ------------------------------------------------ the holistic fixture (§15, T-21)
+#
+# The same event argued whole: a `## The event` narrative in five numbered
+# sections before the record, the argument titled "The contested questions",
+# and a coverage map that says which sections carry which strand and which
+# perspective. It is clean; each T-21 test below breaks one thing.
+
+EVENT_H = {**EVENT, "perspectives": [{"viewpoint": "The Court"}, {"viewpoint": "The Institutions"},
+                                     {"viewpoint": "The Critics"}]}
+
+COVERAGE_H = """scope: holistic
+coverage:
+  causes: {sections: [event-1, event-2]}
+  course: {sections: [event-2, event-3]}
+  actors: {sections: [event-1, event-3, event-4], terms: [council, secretariat, court]}
+  regions: {sections: [event-1, event-3], terms: [harbour, posts, attack]}
+  consequences: {sections: [event-4, event-5]}
+  legacy: {sections: [event-4, event-5]}
+  perspectives:
+    the-court: {position: court-record, sections: [event-4]}
+    the-institutions: {position: institutional, sections: [event-1, event-5]}
+    the-critics: {position: critical, sections: [event-5]}
+"""
+
+EVENT_SECTIONS_H = """## The event
+
+### 1. The council
+
+The council declared the harbour a safe area.[^src-council-res op1] It demanded that all parties treat the area as free from attack.[^src-council-res op1] The secretariat later reported on the fall of the harbour.[^src-sg-report para503]
+
+### 2. The battalion
+
+The ministry reported on the battalion it sent.[^src-ministry p12] The battalion held observation posts.[^src-ministry p12] A Dutch study counted the same battalion.[^src-scholar-2 p20]
+
+### 3. The fall
+
+The posts fell.[^src-scholar-4 p40] The court found that men were executed after the fall.[^src-court-tj para84] A witness testified before the court.[^src-witness p9]
+
+### 4. The judgments
+
+The trial chamber gave judgment.[^src-court-tj para84] The appeals chamber named the crime.[^src-court-aj para37] A scholar wrote that the judgment settled the count.[^src-scholar-1 p10]
+
+### 5. What followed
+
+The critical school holds the count inflated.[^src-scholar-3 p30] Its account is set out in a study of the school.[^src-scholar-3 p30] The secretariat wrote that it had failed to do its part.[^src-sg-report para503]
+
+"""
+
+THESIS_H = (THESIS
+            .replace("episode_marks: []\n", "episode_marks: []\n" + COVERAGE_H)
+            .replace("## The record\n", EVENT_SECTIONS_H + "## The record\n")
+            .replace("## The argument\n", "## The contested questions\n")
+            .replace("## The historiography\n", "### 3. The posts\n\nThe battalion's posts fell.[^src-scholar-4 p40]\n\n## The historiography\n"))
+
+
+def ids_h(tmp, thesis: str | None = None, event: dict | None = None, **kw) -> list[str]:
+    th, led = build(tmp, thesis=thesis or THESIS_H, **kw)
+    return sorted({f.id for f in validate_thesis(th, led, event or EVENT_H, SCRIPT, EPISODE) if f.level == "fail"})
+
+
+def details_h(tmp, thesis: str) -> list[str]:
+    th, led = build(tmp, thesis=thesis)
+    return [f"{f.where}: {f.detail}" for f in validate_thesis(th, led, EVENT_H, SCRIPT, EPISODE) if f.id == "T-21"]
 
 
 def build(tmp: pathlib.Path, ledger: dict | None = None, thesis: str | None = None,
@@ -541,6 +606,114 @@ def test_t20_void_translation_is_not_a_quotation():
                                                                     "The Dutch study “counted 600 soldiers in Potočari”.[^src-scholar-2 p20]"))
 
 
+def test_holistic_fixture_is_clean():
+    with tempfile.TemporaryDirectory() as t:
+        th, _ = build(pathlib.Path(t), thesis=THESIS_H)
+        assert th.scope == "holistic" and [s.id for s in th.event_sections()] == [f"event-{n}" for n in range(1, 6)]
+        assert th.section("argument").title == "The contested questions"
+        found = ids_h(pathlib.Path(t))
+        assert found == [], (found, details_h(pathlib.Path(t), THESIS_H))
+
+
+def test_t21_coverage():
+    with tempfile.TemporaryDirectory() as t:
+        tp = pathlib.Path(t)
+        # a required strand dropped from the map
+        assert "T-21" in ids_h(tp, thesis=THESIS_H.replace("  legacy: {sections: [event-4, event-5]}\n", ""))
+        # a strand naming a section the thesis does not have
+        assert "T-21" in ids_h(tp, thesis=THESIS_H.replace("causes: {sections: [event-1, event-2]}", "causes: {sections: [event-1, event-9]}"))
+        # a strand argued only in the questions, never narrated
+        assert "T-21" in ids_h(tp, thesis=THESIS_H.replace("legacy: {sections: [event-4, event-5]}", "legacy: {sections: [argument-1, argument-2]}"))
+        # a strand below the floor of sourced sentences
+        assert "T-21" in ids_h(tp, thesis=THESIS_H.replace("legacy: {sections: [event-4, event-5]}", "legacy: {sections: [event-5]}"))
+        # ... and a floor may be raised, never lowered
+        assert "T-21" in ids_h(tp, thesis=THESIS_H.replace("legacy: {sections: [event-4, event-5]}", "legacy: {sections: [event-5], min: 3}"))
+        # a listed section that says nothing: its sentences are all the historian's own
+        padded = THESIS_H.replace("The posts fell.[^src-scholar-4 p40] The court found that men were executed after the fall.[^src-court-tj para84] A witness testified before the court.[^src-witness p9]",
+                                  "The posts fell.[^src-scholar-4 p40]")
+        assert any("carries no sourced sentence" in d or "floor" in d for d in details_h(tp, padded.replace("The posts fell.[^src-scholar-4 p40]", "Nothing held.{i} The posts fell.[^src-scholar-4 p40]")))
+        # an actor the strand names and no sourced sentence carries
+        assert "T-21" in ids_h(tp, thesis=THESIS_H.replace("terms: [council, secretariat, court]", "terms: [council, secretariat, court, admiral]"))
+        # actors and regions must name at least three
+        assert "T-21" in ids_h(tp, thesis=THESIS_H.replace("terms: [harbour, posts, attack]", "terms: [harbour]"))
+        # a perspective the event record holds and the map does not answer
+        assert "T-21" in ids_h(tp, thesis=THESIS_H.replace("    the-critics: {position: critical, sections: [event-5]}\n", ""))
+        # a perspective answered by a position the page does not render
+        assert "T-21" in ids_h(tp, thesis=THESIS_H.replace("::: position critical\n", ""))
+        # a perspective whose own sources are heard fewer than twice in its sections
+        assert "T-21" in ids_h(tp, thesis=THESIS_H.replace("the-court: {position: court-record, sections: [event-4]}", "the-court: {position: court-record, sections: [event-1]}"))
+        # an event section no strand claims
+        orphan = THESIS_H.replace("## The record\n", "### 6. Aftermath\n\nThe trial chamber gave judgment.[^src-court-tj para84]\n\n## The record\n")
+        assert any("no strand claims" in d for d in details_h(tp, orphan))
+        # too few event sections, and too few contested questions
+        assert "T-21" in ids_h(tp, thesis=THESIS_H.replace("### 5. What followed\n", ""))
+        assert "T-21" in ids_h(tp, thesis=THESIS_H.replace("### 3. The posts\n\nThe battalion's posts fell.[^src-scholar-4 p40]\n\n", ""))
+        # holistic with no event narrative at all
+        no_event = THESIS_H.replace(EVENT_SECTIONS_H, "")
+        assert "T-21" in ids_h(tp, thesis=no_event)
+        # a scope the rule does not know
+        assert "T-21" in ids_h(tp, thesis=THESIS_H.replace("scope: holistic", "scope: sweeping"))
+        # the pilot model is untouched: no scope, no T-21
+        assert "T-21" not in ids(tp)
+
+
+def test_draft_overlay():
+    """§15e: a draft thesis reads the ledger plus its draft overlay; the
+    published reading of the same ledger never sees the overlay."""
+    from pipeline.history.ledger import load_ledger as _load
+    with tempfile.TemporaryDirectory() as t:
+        tp = pathlib.Path(t)
+        build(tp)
+        d = tp / SLUG / "draft"
+        (d / "extracts").mkdir(parents=True)
+        new = _entry("src-new-doc", "A", "report", "The Registry", "Registry Report", 2003,
+                     "the-registry", "https://example.org/registry.pdf", rights="public")
+        changed = copy.deepcopy(entry(fixture_ledger(), "src-ministry"))
+        changed["title"] = "Ministry Report on the Harbour, revised"
+        changed["access"]["verified_title"] = changed["title"]
+        (d / "ledger.yaml").write_text(yaml.safe_dump({
+            "entries": [new, changed],
+            "gaps": [{"what": "The registry's annex", "tried": ["https://example.org/annex"], "status": "not found"}],
+        }, sort_keys=False), encoding="utf-8")
+        (d / "extracts" / "src-new-doc.p1.txt").write_text(
+            f"source: src-new-doc\nlocator: p1\nurl: https://example.org/registry.pdf\nread: {TODAY}\n\nThe registry counted 12 files.\n",
+            encoding="utf-8")
+        base = _load(SLUG, evidence_dir=tp)
+        over = _load(SLUG, evidence_dir=tp, draft=True)
+        assert "src-new-doc" not in base.entries and base.extract("src-new-doc", "p1") is None
+        assert "src-new-doc" in over.entries and over.extract("src-new-doc", "p1") is not None
+        assert over.entries["src-ministry"]["title"].endswith("revised")
+        assert base.entries["src-ministry"]["title"] == "Ministry Report on the Harbour"
+        assert any(g.get("what") == "The registry's annex" for g in over.gaps)
+        assert validate_ledger(over) == [], validate_ledger(over)
+        # a gap retired by the overlay while the source is still unread is caught (RULE B)
+        delta = yaml.safe_load((d / "ledger.yaml").read_text(encoding="utf-8"))
+        delta["drop_gaps"] = ["src-scholar-5"]
+        (d / "ledger.yaml").write_text(yaml.safe_dump(delta, sort_keys=False), encoding="utf-8")
+        dropped = _load(SLUG, evidence_dir=tp, draft=True)
+        assert not any(g.get("entry") == "src-scholar-5" for g in dropped.gaps)
+        assert "L-14" in {f.id for f in validate_ledger(dropped)}
+        # an overlay extract for an entry neither ledger holds is caught
+        (d / "extracts" / "src-ghost.p1.txt").write_text(
+            f"source: src-ghost\nlocator: p1\nurl: https://example.org/ghost.pdf\nread: {TODAY}\n\nNothing.\n", encoding="utf-8")
+        assert "L-03" in {f.id for f in validate_ledger(_load(SLUG, evidence_dir=tp, draft=True))}
+
+
+def test_drafts_are_drafts():
+    """A drafts file is never published from the drafts path: it is promoted by
+    moving it over the published file, in the commit that folds its ledger
+    overlay into the base. The exporter refuses a --draft run without an
+    explicit build directory, so a preview cannot land in the committed tree."""
+    drafts = ROOT / "data/history/theses/drafts"
+    for path in sorted(drafts.glob("*.md")) if drafts.exists() else []:
+        front = parse_thesis(path.read_text(encoding="utf-8"), path.stem).front
+        assert str(front.get("status") or "draft") != "published", f"{path.name} is published from the drafts path"
+    env = {k: v for k, v in os.environ.items() if k != "VOID_EXPORT_BUILD_DIR"}
+    run = subprocess.run([sys.executable, "-m", "pipeline.history.export_thesis", "fixture-event", "--draft"],
+                         cwd=ROOT, env=env, capture_output=True, text=True)
+    assert run.returncode == 2 and "VOID_EXPORT_BUILD_DIR" in run.stdout, run.stdout + run.stderr
+
+
 def test_real_theses():
     """Every committed thesis passes every check, draft or not: a draft that
     fails is still a draft with a known defect, and it is fixed before it is
@@ -551,6 +724,12 @@ def test_real_theses():
         event, ledger, thesis, script, episode = load_inputs(path.stem)
         fails = [f for f in validate_thesis(thesis, ledger, event, script, episode) if f.level == "fail"]
         assert not fails, f"{path.stem}: " + "; ".join(f"{f.id} {f.where}: {f.detail}" for f in fails[:12])
+    # A draft that will replace a published thesis (§15e) is gated the same
+    # way, against the ledger with its draft overlay.
+    for path in sorted((ROOT / "data/history/theses/drafts").glob("*.md")):
+        event, ledger, thesis, script, episode = load_inputs(path.stem, draft=True)
+        fails = [f for f in validate_thesis(thesis, ledger, event, script, episode) if f.level == "fail"]
+        assert not fails, f"drafts/{path.stem}: " + "; ".join(f"{f.id} {f.where}: {f.detail}" for f in fails[:12])
 
 
 def test_t14_served_json_matches_the_thesis():

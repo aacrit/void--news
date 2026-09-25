@@ -8,8 +8,10 @@ A thesis is Markdown with a strict front matter and five extensions:
     ...
     ---
     ## The question
+    ## The event                 (scope: holistic only; docs/proposals/HISTORY-THESIS-PAGE.md §15)
+    ### 1. The road to the safe area
     ## The record
-    ## The argument
+    ## The argument              (a holistic thesis may title it "The contested questions")
     ### 1. The safe area
     The Council declared Srebrenica a safe area on April 16, 1993.[^src-un-sres-819 op1]
     The record carries no order from Zagreb that day.{i}
@@ -52,8 +54,13 @@ _ABBREV = {"mr", "mrs", "ms", "dr", "prof", "gen", "col", "lt", "st", "no", "vol
 
 SECTION_KINDS = {
     "the question": "question",
+    "the event": "event",
     "the record": "record",
     "the argument": "argument",
+    # A holistic thesis (§15) argues several contested questions after the
+    # event's narrative; the section is the argument by another title, so every
+    # check and the page treat it exactly as the argument.
+    "the contested questions": "argument",
     "the historiography": "historiography",
     "where the record disagrees": "contested",
     "what the record omits": "omits",
@@ -100,7 +107,7 @@ Block = Paragraph | Directive
 class Section:
     level: int                     # 2 or 3
     title: str
-    kind: str                      # question | record | argument | historiography | contested | omits | argument-section | other
+    kind: str                      # question | event | event-section | record | argument | argument-section | historiography | contested | omits | other
     number: int | None
     blocks: list[Block] = field(default_factory=list)
     line: int = 0
@@ -110,7 +117,9 @@ class Section:
     def id(self) -> str:
         if self.kind == "argument-section" and self.number is not None:
             return f"argument-{self.number}"
-        return {"question": "question", "record": "record", "argument": "argument",
+        if self.kind == "event-section" and self.number is not None:
+            return f"event-{self.number}"
+        return {"question": "question", "event": "event", "record": "record", "argument": "argument",
                 "historiography": "historiography", "contested": "disagreements",
                 "omits": "omits"}.get(self.kind, slugify(self.title))
 
@@ -139,6 +148,15 @@ class Thesis:
 
     def argument_sections(self) -> list[Section]:
         return [s for s in self.sections if s.kind == "argument-section"]
+
+    def event_sections(self) -> list[Section]:
+        return [s for s in self.sections if s.kind == "event-section"]
+
+    @property
+    def scope(self) -> str:
+        """`question` (one question argued, the pilot model) unless the front
+        matter says `holistic` (the whole event argued, §15)."""
+        return str(self.front.get("scope") or "question")
 
     @property
     def all_sentences(self) -> list[tuple[Section, Paragraph, Sentence]]:
@@ -335,6 +353,9 @@ def parse_thesis(raw: str, slug: str = "") -> Thesis:
                     kind = "argument-section"
                     number = int(mm.group(1))
                     title = title
+                elif parent_h2 is not None and parent_h2.kind == "event" and mm:
+                    kind = "event-section"
+                    number = int(mm.group(1))
                 else:
                     kind = "other"
                 sec = Section(level=3, title=title, kind=kind, number=number, line=lineno, parent=parent_h2)

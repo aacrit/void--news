@@ -1004,6 +1004,7 @@ copies, and rewrites `verified_at`.
 | T-18 | a Tier A entry with no `record_of`; a verdict whose marker does not print the producers of its `tested_against` extracts; a Contradicted verdict whose `tested_against` extracts all share one `record_of` side | one side's papers read as neutral truth (Rule A) |
 | T-19 | a Contradicted verdict with an empty `tested_against`, or one whose sentence contains no artifact and only a statement of absence ("no document records", "the record holds nothing"); an Untestable verdict with no `would_settle`; a record section that does not name every `gap` the ledger lists | a gap read as disproof (Rule B) |
 | T-20 | a non-English extract with no `language`; a rendering not labelled `official` or `void`; a `void` rendering whose set of names, numbers or dates is not exactly the original's (any member dropped, added or changed); a `void` rendering where an `official` parallel exists; a low-resource-language rendering with no stored back-translation and parity result; an English quotation in the thesis pinned to a `void` rendering rather than to the original | a translation passed off as a quotation; a number lost in translation |
+| T-21 | on a thesis whose front matter says `scope: holistic` (§15): a coverage map missing a required strand, a strand with no section in The event, a strand below 6 sourced sentences or with a listed section that carries none, an actor or region the strand names that no sourced sentence in its sections carries, an event-YAML perspective the map does not answer or answers with a position that is not on the page or whose own sources are cited fewer than twice in its sections, an event section no strand claims, fewer than 5 event sections or 3 contested questions, an unknown scope | "holistic" drifting back into one question; a strand covered by a heading |
 
 Served, in `scripts/verify_sections.py`, **TH-01..TH-04** on a sampled
 thesis page: one h1 and the question text present (not a shell); note count
@@ -1293,3 +1294,153 @@ ageing. The 39 pre-H-11 scripts say aloud which of their witnesses are
 paraphrased or secondhand. And the chapter list names the exhibit, so a
 listener on `/audio` can go from the voice to the document in one tap. What
 they do not lose is the thing they came for: the drama is left alone.
+
+---
+
+## 15. Holistic scope, CEO 2026-09-25
+
+The CEO's original direction (§6b) was a page that gives the story "with a
+lot more detail and rigour", reads "like a well gathered set of artifacts and
+counter opinions", and is "a historian's thesis". The design above narrowed
+each page to one question. For Partition that question was the commissions'
+inputs, Gurdaspur, the Boundary Force and the dead and displaced, and the
+page left out the road to Partition (the Cabinet Mission of 1946, Direct
+Action Day and the Calcutta killings, Noakhali and Bihar, the politics of the
+3 June plan), Bengal beyond a mention, the migration as a whole, Kashmir
+after the award, resettlement and rehabilitation, and the legacy. The
+correction: **the page is detailed AND holistic, the whole event argued, with
+the rigour intact.** "Let's pilot Partition and perfect it first."
+
+### 15a. The page model
+
+A thesis declares its scope in the front matter. `scope: question` (or no
+scope) is the model of §7 and every published thesis before this section. A
+`scope: holistic` thesis has this shape, top to bottom:
+
+1. **The question** (h2). Kept, and shorter: what the page argues about the
+   whole event, the claims it makes, and the coverage map (15b) printed as a
+   table of which sections carry which strand.
+2. **The event** (h2), sections 1 to n (h3, ids `event-1`..). The full,
+   sourced narrative: causes, course, actors and regions, consequences,
+   legacy, in the order they happened. Every factual sentence carries a note
+   to a stored extract; contested figures are stated as the disagreement
+   (T-08 now reads this section too), never as one number; an episode block
+   may sit in a section as anywhere else. The narrative states what the
+   documents say and who produced them; it does not adjudicate. That is the
+   next part's job.
+3. **The record** (h2). Unchanged: what the page is built on and what the
+   free record could not reach, by name.
+4. **The contested questions** (h2), questions 1 to n (h3, ids
+   `argument-1`..). The argument of §7 by another title, several questions
+   instead of one, each adjudicated against documents. The one-question
+   arguments of the pilot become some of these. The parser treats the
+   heading as the argument, so every check and the page apply unchanged.
+5. **The historiography** and **Where the record disagrees**, unchanged.
+6. **What the record omits**, unchanged.
+
+The ceiling on a holistic thesis is 12,000 words (8,000 for one question):
+the page covers more, and the rail, the sidenotes and the coverage map are
+what keep it navigable. There is still no floor on length; the coverage rule
+is the floor on breadth.
+
+### 15b. The coverage rule (T-21)
+
+"Holistic" is a claim, so it is checked. The front matter carries a map:
+
+```yaml
+scope: holistic
+coverage:
+  causes:       {sections: [event-1, event-2]}
+  course:       {sections: [event-3, event-4, event-5]}
+  actors:       {sections: [event-1, event-3, event-4], terms: [Jinnah, Nehru, Mountbatten]}
+  regions:      {sections: [event-2, event-5, event-6], terms: [Punjab, Bengal, Kashmir]}
+  consequences: {sections: [event-5, event-7]}
+  legacy:       {sections: [event-8]}
+  perspectives:                       # one row per perspective in the event YAML
+    british-imperial: {position: british-administrative, sections: [event-3, event-4]}
+```
+
+T-21 fails the thesis, draft or published, when any of these is false:
+
+- all six strands are present: causes, course, actors, regions,
+  consequences, legacy; no other key is used;
+- every section a strand names exists, and at least one of them is in The
+  event (a strand argued only in the contested questions is not narrated);
+- a strand's sections hold at least **6 sourced sentences** between them (a
+  sentence with a marker and no `{i}`); a strand may raise its `min`, never
+  lower it; and every section a strand lists carries at least one sourced
+  sentence, so a section cannot be named to pad a strand;
+- `actors` and `regions` name at least 3 terms each, and every term
+  appears, as a word, in a sourced sentence of the strand's sections;
+- every perspective in the event YAML (`slugify(viewpoint)`) has a row;
+  its `position` is a ledger position with a `::: position` block on the
+  page; and its sections hold at least **2 sourced sentences that cite a
+  source of that position** (one it rests on, or one whose `position` is
+  it), so each account is heard in the narrative, not only in its box;
+- every event section is claimed by at least one strand;
+- the thesis has at least **5 event sections** and **3 contested
+  questions**.
+
+The numbers are floors, stated in `thesis_checks.py` beside the check, with
+a planted-defect fixture for every clause in `tests/test_history_thesis.py`
+(the holistic fixture, clean, and one mutation per clause).
+
+### 15c. What does not change
+
+Every rule above binds the holistic page exactly as it binds the pilot:
+Rule 1; Rule A (whose record) and Rule B (a gap is published, not read as
+disproof); the free-readability rule; the 150-word, 5-per-work extract cap
+on a copyrighted work; no em or en dash in prose; T-02 (no number and no
+quotation in an `{i}` sentence, no paragraph that is all `{i}`); T-08 (a
+contested figure never stated alone, now in The event as well); show,
+don't tell; the kill list; the bar of §4e and the audit stamp before
+`published`. Breadth is bought with more documents, never with fewer notes.
+
+### 15d. Where the new strands' evidence comes from
+
+The road to Partition and its aftermath are better served by the free record
+than the award was: the Cabinet Mission's statement and the Prime
+Minister's of 20 February 1947 are in Historic Hansard; the Commons debate
+of 12 December 1946 carries the government's own figures for Calcutta,
+Noakhali and Bihar; Kirpal Singh's documentary collection (public domain
+mark, Internet Archive) prints the Lahore Resolution, the Congress
+Working Committee's Punjab resolution, the A.I.C.C.'s acceptance of the 3
+June plan, the Joint Defence Council's minutes that ended the Boundary
+Force and the joint evacuation plan; the Constitution of India's
+citizenship articles, the Indus Waters Treaty (UN Treaty Series) and
+Security Council resolution 91 (1951) are official texts; the East Punjab
+rehabilitation administration's own account of resettlement is on the
+Internet Archive. What cannot be read free is recorded as a gap under Rule
+B, as before.
+
+### 15e. A draft over a published thesis
+
+A holistic rewrite of a published thesis must not change the live page until
+the CEO approves it and an independent Stage 5 audit passes. So:
+
+- the draft is `data/history/theses/drafts/<slug>.md`, `status: draft`
+  (a drafts file that says `published` fails the gates);
+- the evidence it adds is a **draft overlay**,
+  `data/history/evidence/<slug>/draft/ledger.yaml` plus
+  `draft/extracts/`: a keyed row there replaces the base row with the same
+  id, a new id is appended, `gaps` are appended and `drop_gaps` retires a
+  base gap. Only `load_ledger(slug, draft=True)` reads it, so the published
+  export, the audio gates, the quote ledger and the register never see it;
+- `tests/test_history_thesis.py` gates every drafts file against the merged
+  ledger with the full T-01..T-21 set, and T-14 keeps the served JSON equal
+  to the published thesis, so a commit can carry the draft and its overlay
+  without moving the live page;
+- a preview is `VOID_EXPORT_BUILD_DIR=<dir> python3 -m
+  pipeline.history.export_thesis <slug> --draft`; the flag refuses to run
+  without an explicit build directory and never writes the served index;
+- **promotion** is one commit: fold the overlay into `ledger.yaml` and
+  `extracts/`, move the drafts file over the published one with the audit
+  stamp and `status: published`, re-export, and let T-14 and TH-01..TH-05
+  confirm the served page.
+
+### 15f. The Partition pilot
+
+`data/history/theses/drafts/partition-of-india.md` is the first holistic
+thesis. Its section list, word counts, coverage map, the sources its overlay
+adds and the gaps it records are reported with the draft; the published
+Partition page is untouched until the CEO decides.

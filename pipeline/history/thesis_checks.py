@@ -1,4 +1,4 @@
-"""The rigor controls on a History thesis: T-01..T-20 (proposal §9, CEO rules
+"""The rigor controls on a History thesis: T-01..T-21 (proposal §9, CEO rules
 of 2026-09-24). Each returns Findings; `validate_thesis` runs them all, the
 ledger's own L-xx checks included, because a thesis is only as sound as the
 ledger it cites.
@@ -37,6 +37,16 @@ ledger it cites.
         (L-12, L-14, RULE B)
   T-19  a rendering that loses a number or a name of its original (L-15)
   T-20  a Void translation presented as a published quotation (in T-04)
+  T-21  a holistic thesis (front matter `scope: holistic`, §15) whose
+        coverage map does not hold: a required strand (causes, course,
+        actors, regions, consequences, legacy) missing, a strand with no
+        section in The event, a strand below its floor of sourced sentences,
+        a listed section that contributes none, an actor or region the
+        strand names that no sourced sentence in its sections carries, an
+        event-YAML perspective with no entry, a perspective whose position
+        is not on the page or whose own sources are heard fewer than twice in
+        its sections, an event section no strand claims, too few event
+        sections or contested questions, an unknown scope
 """
 from __future__ import annotations
 
@@ -53,15 +63,30 @@ from pipeline.history.ledger import (  # noqa: E402
     _title_match, entry_is_verified, norm, standing, validate_ledger,
 )
 from pipeline.history.thesis_format import (  # noqa: E402
-    Directive, Paragraph, Section, Thesis, chapter_segments, segment_chapters, strip_inline,
+    Directive, Paragraph, Section, Thesis, chapter_segments, segment_chapters, slugify, strip_inline,
 )
 from pipeline.history.copy_rules import (  # noqa: E402
     EM, EN, hedge_hits, outside_quotations, time_relative_hits,
 )
 from pipeline.utils.prohibited_terms import find_prohibited  # noqa: E402
 
-CITED_KINDS = ("record", "argument-section", "historiography", "contested", "other")
-BODY_KINDS = ("question", "record", "argument-section")
+CITED_KINDS = ("event", "event-section", "record", "argument-section", "historiography", "contested", "other")
+BODY_KINDS = ("question", "event", "event-section", "record", "argument-section")
+
+# §15, the holistic scope (CEO 2026-09-25). The numbers are floors, not
+# targets: a strand that clears six sourced sentences in two sections is
+# covered; one that names a section to look covered and says nothing there
+# is not.
+SCOPES = ("question", "holistic")
+HOLISTIC_STRANDS = ("causes", "course", "actors", "regions", "consequences", "legacy")
+TERM_STRANDS = ("actors", "regions")
+COVERAGE_MIN_SENTENCES = 6
+COVERAGE_MIN_TERMS = 3
+PERSPECTIVE_MIN_SENTENCES = 2
+HOLISTIC_MIN_EVENT_SECTIONS = 5
+HOLISTIC_MIN_QUESTIONS = 3
+WORD_CEILING = 8000
+WORD_CEILING_HOLISTIC = 12000
 
 _WORD_NUMBER = re.compile(
     r"\b(?:ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|"
@@ -373,9 +398,126 @@ def check_bar(th: Thesis, ledger: Ledger, event: dict, out: list[Finding]) -> No
             _fail(out, "T-13", th.slug, f"published without a {kind} section")
     if not th.argument_sections():
         _fail(out, "T-13", th.slug, "published with no argument sections")
+    if th.scope == "holistic" and th.section("event") is None:
+        _fail(out, "T-13", th.slug, "published holistic without an event section")
     words = sum(len(sen.text.split()) for _, _, sen in th.all_sentences)
-    if words > 8000:
-        _fail(out, "T-13", th.slug, f"{words} words; the ceiling is 8,000")
+    ceiling = WORD_CEILING_HOLISTIC if th.scope == "holistic" else WORD_CEILING
+    if words > ceiling:
+        _fail(out, "T-13", th.slug, f"{words} words; the ceiling is {ceiling:,}")
+
+
+def _sourced(sen) -> bool:
+    """A sentence that carries a fact: at least one marker, and not the
+    historian's own reading. The coverage rule counts only these."""
+    return bool(sen.markers) and not sen.interpretive
+
+
+def check_coverage(th: Thesis, ledger: Ledger, event: dict, out: list[Finding]) -> None:
+    """T-21: a holistic thesis covers the whole event, and says where (§15).
+
+    The front matter's `coverage` map names, for each required strand, the
+    sections that carry it; for each perspective the event YAML holds, the
+    ledger position that answers it and the sections where its own sources
+    are heard. The check counts sourced sentences, so a strand cannot be
+    covered by a heading, an {i} sentence or a section that says nothing."""
+    scope = th.front.get("scope")
+    if scope is None:
+        return                      # the pilot model: one question, T-21 silent
+    if scope not in SCOPES:
+        _fail(out, "T-21", th.slug, f"scope {scope!r} is not one of {SCOPES}")
+        return
+    if scope != "holistic":
+        return
+    cov = th.front.get("coverage")
+    if not isinstance(cov, dict):
+        _fail(out, "T-21", th.slug, "scope holistic with no coverage map in the front matter")
+        return
+    by_id = {s.id: s for s in th.sections}
+    event_ids = {s.id for s in th.sections if s.kind in ("event", "event-section")}
+    ev_secs = th.event_sections()
+    if th.section("event") is None:
+        _fail(out, "T-21", th.slug, "scope holistic with no `## The event` section")
+    if len(ev_secs) < HOLISTIC_MIN_EVENT_SECTIONS:
+        _fail(out, "T-21", "event", f"{len(ev_secs)} numbered event section(s); the floor is {HOLISTIC_MIN_EVENT_SECTIONS}")
+    if len(th.argument_sections()) < HOLISTIC_MIN_QUESTIONS:
+        _fail(out, "T-21", "argument", f"{len(th.argument_sections())} contested question(s); the floor is {HOLISTIC_MIN_QUESTIONS}")
+
+    def sourced_in(sid: str) -> list:
+        sec = by_id.get(sid)
+        return [sen for p in (sec.paragraphs if sec else []) for sen in p.sentences if _sourced(sen)]
+
+    claimed: set[str] = set()
+    for strand in HOLISTIC_STRANDS:
+        spec = cov.get(strand)
+        where = f"coverage.{strand}"
+        if not isinstance(spec, dict) or not spec.get("sections"):
+            _fail(out, "T-21", where, "a required strand with no sections")
+            continue
+        sids = [str(x) for x in spec.get("sections") or []]
+        unknown = [x for x in sids if x not in by_id]
+        for x in unknown:
+            _fail(out, "T-21", where, f"names section {x!r}, which the thesis does not have")
+        sids = [x for x in sids if x in by_id]
+        claimed.update(sids)
+        if not any(x in event_ids for x in sids):
+            _fail(out, "T-21", where, "no section in The event carries it; a strand argued only in the questions is not narrated")
+        floor = spec.get("min", COVERAGE_MIN_SENTENCES)
+        if not isinstance(floor, int) or floor < COVERAGE_MIN_SENTENCES:
+            _fail(out, "T-21", where, f"min {floor!r} is below the floor of {COVERAGE_MIN_SENTENCES}")
+            floor = COVERAGE_MIN_SENTENCES
+        sents = []
+        for x in sids:
+            here = sourced_in(x)
+            if not here:
+                _fail(out, "T-21", where, f"section {x} is listed and carries no sourced sentence")
+            sents.extend(here)
+        if len(sents) < floor:
+            _fail(out, "T-21", where, f"{len(sents)} sourced sentence(s) across {sids}; the floor is {floor}")
+        terms = [str(t) for t in spec.get("terms") or []]
+        if strand in TERM_STRANDS and len(terms) < COVERAGE_MIN_TERMS:
+            _fail(out, "T-21", where, f"{len(terms)} term(s); {strand} must name at least {COVERAGE_MIN_TERMS}")
+        for t in terms:
+            rx = re.compile(r"(?<!\w)" + re.escape(t) + r"(?!\w)")
+            if not any(rx.search(sen.text) for sen in sents):
+                _fail(out, "T-21", where, f"{t!r} is named and no sourced sentence in {sids} carries it")
+    extra = [k for k in cov if k not in HOLISTIC_STRANDS and k != "perspectives"]
+    for k in extra:
+        _fail(out, "T-21", f"coverage.{k}", "not a strand this rule knows; §15 lists them")
+
+    persp = cov.get("perspectives") or {}
+    if not isinstance(persp, dict):
+        _fail(out, "T-21", "coverage.perspectives", "must map each event-YAML perspective to a position and sections")
+        persp = {}
+    rendered = {d.args["id"] for s in th.sections for d in s.directives if d.kind == "position"}
+    wanted = [slugify(str(p.get("viewpoint") or p.get("name") or "")) for p in (event or {}).get("perspectives") or []]
+    for key in wanted:
+        spec = persp.get(key)
+        where = f"coverage.perspectives.{key}"
+        if not isinstance(spec, dict):
+            _fail(out, "T-21", where, "a perspective the event record holds is not answered")
+            continue
+        pid = str(spec.get("position") or "")
+        pos = ledger.positions.get(pid)
+        if pos is None:
+            _fail(out, "T-21", where, f"position {pid!r} is not in the ledger")
+            continue
+        if pid not in rendered:
+            _fail(out, "T-21", where, f"position {pid} has no `::: position` block on the page")
+        own = set(pos.get("rests_on") or []) | {src for src, e in ledger.entries.items()
+                                                 if str(e.get("position") or "") == pid}
+        sids = [str(x) for x in spec.get("sections") or []]
+        for x in sids:
+            if x not in by_id:
+                _fail(out, "T-21", where, f"names section {x!r}, which the thesis does not have")
+        heard = [sen for x in sids for sen in sourced_in(x) if any(src in own for src, _ in sen.markers)]
+        if len(heard) < PERSPECTIVE_MIN_SENTENCES:
+            _fail(out, "T-21", where, f"its own sources are cited in {len(heard)} sourced sentence(s) of {sids}; the floor is {PERSPECTIVE_MIN_SENTENCES}")
+    for key in persp:
+        if key not in wanted:
+            _fail(out, "T-21", f"coverage.perspectives.{key}", "names a perspective the event record does not hold")
+    for s in ev_secs:
+        if s.id not in claimed:
+            _fail(out, "T-21", s.id, "an event section no strand claims")
 
 
 def validate_thesis(th: Thesis, ledger: Ledger, event: dict,
@@ -394,4 +536,5 @@ def validate_thesis(th: Thesis, ledger: Ledger, event: dict,
     check_omits(th, ledger, out)
     check_analyses(th, ledger, out)
     check_bar(th, ledger, event, out)
+    check_coverage(th, ledger, event, out)
     return out

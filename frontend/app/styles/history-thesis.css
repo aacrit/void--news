@@ -881,6 +881,46 @@
 }
 
 /* ── The record's standing and its gaps ── */
+/* ── §15 the coverage map: which sections carry which strand of the event,
+      under the claims. Same frame as the record's standing, one row a strand ── */
+.hist-th-coverage {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--space-1) var(--space-4);
+  margin: var(--space-5) 0 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--hist-border-subtle);
+  background: var(--hist-bg-card);
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--hist-ink-secondary);
+}
+.hist-th-coverage__row {
+  display: contents;
+}
+.hist-th-coverage dt {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  font-size: var(--text-xxs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hist-brass-ink);
+  padding-top: 0.2em;
+}
+.hist-th-coverage dd {
+  margin: 0;
+  min-width: 0;
+}
+.hist-th-coverage__link {
+  color: var(--hist-ink);
+  text-decoration-color: var(--hist-border-subtle);
+  text-underline-offset: 0.2em;
+}
+.hist-th-coverage__link:hover {
+  text-decoration-color: currentColor;
+}
+
 .hist-th-standing {
   display: grid;
   grid-template-columns: 1fr max-content;

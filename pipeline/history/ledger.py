@@ -64,6 +64,10 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 EVENTS = ROOT / "data/history/events"
 EVIDENCE = ROOT / "data/history/evidence"
 THESES = ROOT / "data/history/theses"
+# A draft that would replace a published thesis is written here, not over it,
+# so the published page and its served JSON stay put until the CEO approves
+# (§15e). Nothing but an explicit `--draft` export and the thesis gates reads it.
+THESES_DRAFTS = THESES / "drafts"
 REPORT = ROOT / "docs/data/history-ledger.csv"
 
 TIERS = ("A", "B", "C", "D")
@@ -321,9 +325,56 @@ def read_rendering(path: pathlib.Path) -> Rendering:
                      checked_against=fields.get("checked_against", ""), path=path)
 
 
-def load_ledger(slug: str, evidence_dir: pathlib.Path | None = None) -> Ledger:
+# A draft overlay (docs/proposals/HISTORY-THESIS-PAGE.md §15e): the evidence a
+# draft thesis needs before the CEO approves it, kept beside the canonical
+# ledger so the published page cannot change while the draft is written.
+#
+#     data/history/evidence/<slug>/draft/ledger.yaml   the delta
+#     data/history/evidence/<slug>/draft/extracts/     its extracts
+#
+# In the delta, a keyed row (entry, position, contested, exhibit, analysis,
+# recording) whose id the base holds REPLACES that row; a new id is appended;
+# `gaps` are appended; `drop_gaps` lists base gaps (by entry id, or by the
+# start of `what`) that the delta retires because it now holds the source.
+# Only load_ledger(..., draft=True) reads it: the published export, the audio
+# gates and the ledger report never do. Promotion is a fold of the delta into
+# the base, in the same commit that publishes the draft thesis.
+DRAFT_DIR = "draft"
+_KEYED = ("entries", "positions", "contested", "exhibits", "analyses", "recordings")
+
+
+def _merge_draft(raw: dict, delta: dict) -> dict:
+    out = dict(raw)
+    for k in _KEYED:
+        rows = list(raw.get(k) or [])
+        index = {str(r.get("id")): i for i, r in enumerate(rows) if isinstance(r, dict)}
+        for r in delta.get(k) or []:
+            rid = str((r or {}).get("id"))
+            if rid in index:
+                rows[index[rid]] = r
+            else:
+                index[rid] = len(rows)
+                rows.append(r)
+        out[k] = rows
+    drops = [str(d) for d in delta.get("drop_gaps") or []]
+    gaps = [g for g in raw.get("gaps") or []
+            if not any(str(g.get("entry") or "") == d or str(g.get("what") or "").startswith(d) for d in drops)]
+    out["gaps"] = gaps + list(delta.get("gaps") or [])
+    return out
+
+
+def has_draft(slug: str, evidence_dir: pathlib.Path | None = None) -> bool:
+    return ((evidence_dir or EVIDENCE) / slug / DRAFT_DIR / "ledger.yaml").exists()
+
+
+def load_ledger(slug: str, evidence_dir: pathlib.Path | None = None, draft: bool = False) -> Ledger:
     base = (evidence_dir or EVIDENCE) / slug
     raw = yaml.safe_load((base / "ledger.yaml").read_text(encoding="utf-8")) or {}
+    exdirs = [base / "extracts"]
+    if draft and (base / DRAFT_DIR / "ledger.yaml").exists():
+        delta = yaml.safe_load((base / DRAFT_DIR / "ledger.yaml").read_text(encoding="utf-8")) or {}
+        raw = _merge_draft(raw, delta)
+        exdirs.append(base / DRAFT_DIR / "extracts")
 
     def keyed(items, what):
         out: dict[str, dict] = {}
@@ -335,8 +386,9 @@ def load_ledger(slug: str, evidence_dir: pathlib.Path | None = None) -> Ledger:
 
     extracts: dict[str, Extract] = {}
     renderings: dict[str, Rendering] = {}
-    exdir = base / "extracts"
-    if exdir.exists():
+    for exdir in exdirs:
+        if not exdir.exists():
+            continue
         for p in sorted(exdir.glob("*.txt")):
             if p.name.endswith(".en.txt"):
                 r = read_rendering(p)
