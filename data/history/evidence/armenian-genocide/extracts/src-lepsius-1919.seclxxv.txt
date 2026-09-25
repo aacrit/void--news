@@ -1,0 +1,8 @@
+source: src-lepsius-1919
+locator: seclxxv
+url: https://archive.org/download/deutschlandundar00leps/deutschlandundar00leps_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer; hyphens rejoined, spacing collapsed, the layer's glyph errors (a comma for a full stop after 27, ** for a closing quotation mark) kept
+note: the editor's introduction, p. LXXV
+
+Die ,, Rachgier der aufkochenden muhammedanischen Volksseele'* hat als Motiv für die Massakers ebenso versagt, wie die „militärischen Notwendigkeiten" für die Deportation. Die Beschlüsse des Komitees hatten einen anderen Grund, der die Maßregel der allgemeinen Deportation, die grausame Methode ihrer Durchführung, die Vernichtung von mehr als zwei Dritteln der Deportierten und die Islamisierung der Restes allein zureichend erklärt.

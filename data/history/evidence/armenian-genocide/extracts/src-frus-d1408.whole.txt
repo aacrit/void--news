@@ -1,0 +1,7 @@
+source: src-frus-d1408
+locator: whole
+url: https://history.state.gov/historicaldocuments/frus1915Supp/d1408
+read: 2026-09-25
+note: the document as the Office of the Historian's page prints it, page-break markers removed, footnote text kept at the end
+
+File No. 867.4016/99 The Ambassador in Turkey ( Morgenthau ) to the Secretary of State [Telegram] Constantinople , August 18, 1915, 8 p. m. [ Received August 21, 3 p. m. ] 940. Minister of the Interior informed me that orders were telegraphed to provinces exempting from deportation all Protestant and Catholic Armenians. Although a large number have already been deported, many of whom were murdered, yet these orders if properly executed will save many Armenians connected with the American missions. Protestants and Catholics are about 10 per cent of Armenians, 90 per cent being Gregorian. I have requested the exemption of all Armenian professors, teachers, students, inmates, nurses, etc., connected with American institutions. Both Ministers of War and Interior seem inclined to grant my request. Have secured exemption for Armenian employees of our consulates. Morgenthau

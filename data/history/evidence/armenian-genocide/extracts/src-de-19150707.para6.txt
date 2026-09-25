@@ -1,0 +1,7 @@
+source: src-de-19150707
+locator: para6
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-07-07-DE-001
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+
+Im Ganzen werden allein im Vilajet Trapezunt rund 30000 Personen betroffen, die über Erzindschan nach Mesopotamien abgeschoben werden sollen. Ein solcher Massentransport nach einem viele hunderte Kilometer entfernten Bestimmungsorte, ohne genügende Transportmittel, durch Gegenden, die weder Unterkunft noch Nahrung bieten und von epidemischen Krankheiten, namentlich vom Flecktyphus, verseucht sind, dürfte besonders unter Frauen und Kindern zahlreiche Opfer fordern. Außerdem führt der Weg der Umgesiedelten durch die kurdischen Distrikte von Dersim, und der Vali von Trapezunt erklärte offen dem Konsul, der ihm auf diesseitige Weisung hin darüber Vorstellungen machte, daß er nur bis Erzindschan für die Sicherheit des Transportes garantieren könnte. Von da ab läßt man die Auswanderer durch die Banden der Kurden und anderer Wegelagerer förmlich Spießruten laufen. So sind zum Beispiel die aus der Ebene von Erzerum ausgetriebenen Armenier auf dem Wege nach Charput angefallen worden, wobei die Männer und Kinder niedergemacht und die Frauen geraubt wurden. Der Kaiserliche Konsul in Erzerum gibt die Zahl der bei dieser Gelegenheit umgekommenen Armenier auf 3000 an.

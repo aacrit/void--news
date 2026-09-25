@@ -1,0 +1,7 @@
+source: src-sevres-1920
+locator: art142
+url: https://archive.org/download/india.history.resource.74790/74790_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer of the Treaty Series printing; spacing collapsed, glyph errors kept
+
+Whereas, in view of the terrorist régime which -has existed in Turkey since November 1, 1914, conversions to Islam could not take place under normal conditions, no conversions since that date are recognised and all persons who were nou-Moslems before November 1, 1914, will be considered as still remaining such, unless, after regaining their liberty, they voluntarily perform the necessary formalities for embracing the Islamic faith. In order to repair so far as possible the wrongs inflicted on individuals in the course of the massacres perpetrated in Turkey during the war, the Turkish Government undertakes to afford all the assistance in its power or in that of the Turkish authorities in the search for and deliverance of all persons, of whatever race or religion, who have disappeared, been carried off, interned or placed in captivity since November 1, 1914.

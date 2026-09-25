@@ -1,0 +1,8 @@
+source: src-gust-19150805-en
+locator: para19
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-08-05-DE-002
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+note: the translation is the online edition's own (sponsored by the Zoryan Institute), held here as the edition prints it, at most 150 words
+
+It would be taking things too far to go into the causes of the Armenian unrests here and to examine whether these could have been avoided by effective disciplinary action and negotiations on the part of the government. As far as I know, nothing along this line was done in time. Furthermore, it is a matter of course that in those cases where rebellions took place at the instigation of the Armenian revolutionary committees and Russian emissaries, severe disciplinary action should be taken against the guilty parties. In fact, I would have expected and wished for much stricter immediate preventive action by the government and the military authorities at all the threatened points; not, though, as usually happened, that retaliatory measures were taken afterwards. However, in my opinion there is absolutely no evidence for a generally planned and prepared Armenian rebellion.

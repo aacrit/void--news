@@ -1,0 +1,7 @@
+source: src-de-19150707
+locator: para3
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-07-07-DE-001
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+
+Dieser Umstand und die Art, wie die Umsiedelung durchgeführt wird, zeigen, daß die Regierung tatsächlich den Zweck verfolgt, die armenische Rasse im türkischen Reiche zu vernichten.

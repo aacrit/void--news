@@ -1020,7 +1020,7 @@ positions:
         verdict: qualified
         basis: presence
         rests_on: [src-eccc-002-02-summary.para30, src-eccc-002-02-summary.para34, src-eccc-002-02-tj.para3993, src-un-goe-1999.para63]
-        reasoning: "The finding is the court's, entered in Khmer and English in 2018 and carried to appeal for the Vietnamese; the United Nations' experts had found in 1999 that the two groups qualify as protected groups and that intent had support in the evidence, and asked a tribunal to investigate. Two producers, but the second asked the question the first answered, so the verdict is qualified rather than supported."
+        reasoning: "The finding is the court's, entered in Khmer and English in 2018; the United Nations' experts had found in 1999 that the two groups qualify as protected groups and that intent had support in the evidence, and asked a tribunal to investigate. Two producers, but the second asked the question the first answered, so the verdict is qualified rather than supported."
       - claim: "Estimates of the dead range from 600,000 to 3 million, and experts accept 1.5 to 2 million as the most accurate."
         verdict: supported
         basis: presence
@@ -1037,7 +1037,7 @@ positions:
         verdict: qualified
         basis: presence
         rests_on: [src-un-goe-1999.para63, src-un-goe-1999.para64, src-eccc-002-02-summary.para30, src-eccc-002-02-summary.para34, src-eccc-002-02-tj.para3228]
-        reasoning: "The tribunal, a second producer, found genocide against the Cham and the Vietnamese and found that the party targeted the Cham as an ethnic and religious group throughout the period. On the monkhood the court's genocide findings are silent: the Buddhists were charged as persecution, not genocide, so the third group in the experts' list is not carried by the artifacts, and the verdict is qualified."
+        reasoning: "The tribunal, a second producer, found genocide against the Cham and the Vietnamese and found that the party targeted the Cham as an ethnic and religious group throughout the period. On the monkhood the held extracts are silent, so the third group in the experts' list is not carried by the artifacts, and the verdict is qualified."
       - claim: "The dead were approximately 20 per cent of the April 1975 population of 7.3 to 7.9 million, and the 2 to 3 million figure is rejected by historians."
         verdict: qualified
         basis: presence
@@ -1059,7 +1059,7 @@ positions:
         verdict: contradicted
         basis: presence
         rests_on: [src-prt-1979.secprosecution, src-prt-1979.secconsequences, src-un-goe-1999.para35, src-eccc-002-01-tj.para174]
-        reasoning: "The tribunal of 1979 built its 3 million on a survey of Phnom Penh's former residents, one commune in Siem Reap and a journalist's figures from three provinces, by its own account. The United Nations' experts record that historians reject the 2 to 3 million used by the governments in Cambodia since 1979, and the ECCC places the accepted band at 1.5 to 2 million with 3 million as the outer edge of every estimate ever made. Two producers, the experts and the court, say otherwise."
+        reasoning: "The prosecution of 1979 charged 3 million on the strength of a survey of Phnom Penh's former residents, one commune in Siem Reap and a journalist's figures from three provinces, by its own account. The United Nations' experts record that historians reject the 2 to 3 million used by the governments in Cambodia since 1979, and the ECCC places the accepted band at 1.5 to 2 million with 3 million as the outer edge of every estimate ever made. Two producers, the experts and the court, say otherwise."
       - claim: "The Pol Pot-Ieng Sary clique started the border war immediately after 1975 and massed 19 of the army's 23 divisions on the frontier."
         verdict: qualified
         basis: presence
@@ -1156,12 +1156,12 @@ positions:
         verdict: contradicted
         basis: presence
         rests_on: [src-eccc-002-01-tj.fn523, src-eccc-002-01-tj.para174, src-un-goe-1999.para35]
-        reasoning: "The tribunal's own survey records the figure as the one estimate under a million and reports the court's demographers' finding that the earlier estimates heavily underestimated the scale of the killing; it accepts 1.5 to 2 million as most accurate. The United Nations' experts put the scholars' figures at 1.5 million and nearly 1.7 million. Two producers say otherwise, and the position's figure is known here only as the first of them reports it."
+        reasoning: "The tribunal's own survey records the figure beside Ponchaud's 800,000 and the embassies' 1 million at the bottom of its list, and reports the court's demographers' finding that the earlier estimates heavily underestimated the scale of the killing; it accepts 1.5 to 2 million as most accurate. The United Nations' experts put the scholars' figures at 1.5 million and nearly 1.7 million. Two producers say otherwise, and the position's figure is known here only as the first of them reports it."
   - id: transitional-justice-scholarship
     name: The transitional-justice scholarship
     holders: ["Sperfeldt (2023)", "Williams and Jessee (2024)"]
     rests_on: [src-sperfeldt-2023, src-williams-jessee-2024]
-    claim: "The court's genocide label reached the Cham and the Vietnamese only, and Khieu Samphan was convicted of genocide for the Vietnamese alone; the ethnic Vietnamese were expelled and then killed, and their survivors remain without nationality; former Khmer Rouge cadres' claims to victim status have been largely accepted."
+    claim: "The court's genocide label reached the Cham and the Vietnamese only, and Khieu Samphan was found guilty of genocide against the Vietnamese but not the Cham; the ethnic Vietnamese were expelled and then killed, and many of those in Cambodia are stateless or at risk of it; former Khmer Rouge cadres' claims to victim status have been largely accepted."
     omits: "The victims' own reading of the label: neither article asks Khmer survivors whether the word genocide, reserved by the court for two minorities, describes what was done to them."
     adjudications:
       - claim: "The court's genocide convictions cover the Cham and the Vietnamese only, and Khieu Samphan's covers the Vietnamese alone."
@@ -1187,12 +1187,12 @@ contested:
     claim: "How many people died under Democratic Kampuchea"
     rows:
       - position: vietnam-prk-account
-        holds: "More than three million innocent people were brutally massacred, on the tribunal's survey of Phnom Penh's former residents, one commune in Siem Reap and a journalist's figures from three provinces."
+        holds: "The prosecution charged that about 3 million innocent people had been killed, on a survey of Phnom Penh's former residents, one commune in Siem Reap and a journalist's figures from three provinces; the foreword of the 1990 edition, by a group of jurists, puts it at more than three million."
         figures: []
         source: src-prt-1979
         locator: secforeword
       - position: tribunal-record
-        holds: "Estimates range from 600,000 to 3 million; experts accept 1.5 to 2 million excess deaths as the most accurate; the one estimate under a million, 740,800, heavily underestimated the killing."
+        holds: "Estimates range from 600,000 to 3 million; experts accept 1.5 to 2 million excess deaths as the most accurate; the survey's lowest estimates are Vickery's 740,800, Ponchaud's 800,000 and the embassies' 1 million, and the court's demographers found the earlier estimates heavily underestimated the killing."
         figures: []
         source: src-eccc-002-01-tj
         locator: para174
@@ -1335,9 +1335,9 @@ analyses:
   - id: an-toll-counts
     title: Every count of the dead the record carries
     method: "One row per figure that a fetched Tier A document or open Tier B study gives for the number who died under the regime, with the producer, the year of the count and the document; a range stated in a source is entered as a low row and a high row, and a figure the source prints in words is entered as digits. The result is the range of the column."
-    finding: "The counts run from 600,000 to 3,000,000; the two producers that put the figure at 3,000,000 as a count rather than a ceiling are the tribunal of 1979 and the Soviet delegate of the same month, and the one count under a million is Vickery's as the court reports it."
-    confidence: "high for the range, which is the extreme of the column; the rows count unlike things, excess deaths, killings and remains, over unlike periods, so the range is a spread of counts, not a measurement"
-    against: "the demographers' medians, 1,900,000 in the 2015 reconstruction, and the court's own accepted band of 1,500,000 to 2,000,000, both sit well inside the range, so the extremes are the least supported figures in the column; the Case 002/02 Judgement warns that the absence of reliable statistical data makes every count uncertain, and the 1979 tribunal's 3,000,000 is entered as it was asserted, not as it was measured"
+    finding: "The 37 rows run from 600,000 to 3,000,000, and the ends coincide across producers: 3,000,000 is the 1979 prosecution's charge, the Soviet delegate's ceiling in January 1979, seven months before the tribunal sat, and the court's ceiling of all estimates, and 600,000 is both the court's floor and the floor of Heuveline's 1998 reconstruction as the court reports it; the counts under a million are Vickery's 740,800 and Ponchaud's 800,000, each known here as the court reports it, and the embassies' count sits at 1,000,000."
+    confidence: "high for the range, which is the extreme of the column; the rows count unlike things, excess deaths, killings, charges and reconstructions, over unlike periods, so the range is a spread of counts, not a measurement"
+    against: "the demographers' medians, 1,900,000 in the 2015 reconstruction, and the court's own accepted band of 1,500,000 to 2,000,000, both sit well inside the range, so the extremes are the least supported figures in the column; the Case 002/02 Judgement warns that the absence of reliable statistical data makes every count uncertain, and the 1979 prosecution's 3,000,000 is entered as it was charged, not as it was measured"
     result: [600000, 3000000]
     derivation:
       compute: range
@@ -1359,14 +1359,26 @@ analyses:
         - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, CIA as reported (1.4 million)", count: 1400000, extract: src-eccc-002-01-tj.fn523}
         - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Tabeau and Kheam 2009 as reported, low (1.747 million)", count: 1747000, extract: src-eccc-002-01-tj.fn523}
         - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Tabeau and Kheam 2009 as reported, high (2.2 million)", count: 2200000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Sharp as reported, low (1.747 million)", count: 1747000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Sharp as reported, midpoint (2.12 million)", count: 2120000, extract: src-eccc-002-01-tj.fn523}
         - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Sharp as reported, high (2.459 million)", count: 2459000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Chandler's testimony as reported, low (1.5 million)", count: 1500000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Chandler's testimony as reported, high (3 million)", count: 3000000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, other embassies as reported (1 million)", count: 1000000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Heuveline 1998 (Unbearable Certainty) as reported, low (1.5 million)", count: 1500000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Heuveline 1998 (Unbearable Certainty) as reported, high (2.5 million)", count: 2500000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Heuveline 1998 (Between One and Three Million) as reported, low (1.5 million)", count: 1500000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Heuveline 1998 (Between One and Three Million) as reported, high (2 million)", count: 2000000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Heuveline 1998 unaccounted deaths as reported, low (at least 600,000)", count: 600000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Heuveline 1998 unaccounted deaths as reported, high (possibly 2 million)", count: 2000000, extract: src-eccc-002-01-tj.fn523}
         - {producer: eccc, year: 2014, document: "ECCC at a Glance, page 1 (at least 1.7 million)", count: 1700000, extract: src-eccc-glance-2014.p1}
-        - {producer: eccc, year: 2018, document: "Case 002/02 Judgement, paragraph 297, DC-Cam's remains identified by 2008 (1.3 million)", count: 1300000, extract: src-eccc-002-02-tj.para297}
         - {producer: eccc, year: 2022, document: "Case 002/02 Appeal Judgment, paragraph 1980 (over a million)", count: 1000000, extract: src-eccc-002-02-aj.para1980}
         - {producer: accused-testimony, year: 2009, document: "Duch before the Trial Chamber, 17 June 2009 (more than 1 million)", count: 1000000, extract: src-eccc-duch-apology.p7}
         - {producer: demographers, year: 2015, document: "Heuveline 2015, 95 per cent simulation interval, low (1.2 million)", count: 1200000, extract: src-heuveline-2015.abstract}
         - {producer: demographers, year: 2015, document: "Heuveline 2015, 95 per cent simulation interval, high (2.8 million)", count: 2800000, extract: src-heuveline-2015.abstract}
         - {producer: demographers, year: 2015, document: "Heuveline 2015, median (1.9 million)", count: 1900000, extract: src-heuveline-2015.abstract}
+        - {producer: demographers, year: 2015, document: "Heuveline 2015, narrowed range of existing estimates, low (1.0 million)", count: 1000000, extract: src-heuveline-2015.secdiscussion}
+        - {producer: demographers, year: 2015, document: "Heuveline 2015, narrowed range of existing estimates, high (2.1 million)", count: 2100000, extract: src-heuveline-2015.secdiscussion}
         - {producer: scholarship, year: 2024, document: "Williams and Jessee 2024, low (1.7 million)", count: 1700000, extract: src-williams-jessee-2024.p4}
         - {producer: scholarship, year: 2024, document: "Williams and Jessee 2024, high (2.2 million)", count: 2200000, extract: src-williams-jessee-2024.p4}
   - id: an-s21-list
@@ -1387,7 +1399,7 @@ analyses:
   - id: an-vietnamese-share
     title: The Vietnamese on the S-21 list
     method: "The Vietnamese entries on the revised S-21 list, as the Case 001 Judgement counts them by category, summed and divided by the list's total. The result is the ratio."
-    finding: "The 345 Vietnamese entries, 122 soldiers, 144 spies and 79 with no description, are 2.8 per cent of the 12,273 on the list, and every one of them was executed."
+    finding: "The 345 Vietnamese entries, 122 soldiers, 144 spies and 79 with no description, are 2.8 per cent of the 12,273 on the list."
     confidence: "high for the ratio, which is arithmetic on one paragraph; the judgment itself says the spies were so labelled on order and were in fact civilians or combatants, so the three categories are the prison's, not the court's"
     against: "the tribunal's finding of genocide against the Vietnamese rests on killings across the country, at Svay Rieng, on the waters, in Kampong Chhnang, at Wat Khsach and in Kratie, so a share of the S-21 list measures the prison, not the group's fate; and a list that leaves 4,492 entries without a sex may leave Vietnamese unlabelled too"
     result: 0.0281

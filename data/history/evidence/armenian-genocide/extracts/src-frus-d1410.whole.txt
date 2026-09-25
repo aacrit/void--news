@@ -1,0 +1,7 @@
+source: src-frus-d1410
+locator: whole
+url: https://history.state.gov/historicaldocuments/frus1915Supp/d1410
+read: 2026-09-25
+note: the document as the Office of the Historian's page prints it, page-break markers removed, footnote text kept at the end
+
+File No. 867.4016/117 The Ambassador in Turkey ( Morgenthau ) to the Secretary of State [Telegram] Constantinople , September 3, 1915, 9 a. m. [ Received September 6, 9 a. m. ] 1005. Minister of War has promised to permit departure of such Armenians to the United States whose emigration I vouch for as bona fide . Destruction of Armenian race in Turkey is progressing rapidly. Massacre reported at Angora and Brusa. Will you suggest to Cleveland Dodge , Charles Crane , John R. Mott , Stephen Wise , and others to form committee to raise funds and provide means to save some of the Armenians and assist the poorer ones to emigrate, and perhaps to enlist California, Oregon, and Washington to transport some of these people direct to their shores via Panama Canal? Morgenthau

@@ -1,0 +1,7 @@
+source: src-de-19150805
+locator: para21
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-08-05-DE-002
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+
+So sind z.B. im Vilajet Erserum weder Waffen noch kompromittierende Schriftstücke gefunden worden. Wäre hier ein Aufstand geplant gewesen, so war dafür die günstigste Gelegenheit im Januar, als die Russen 35 km vor Erserum standen und die Garnison Erserums nur aus einigen hundert Mann Gendarmerie bestand, während sich in Erserum in den Arbeiter-Bataillonen allein 3 - 4000 Armenier befanden.

@@ -1,0 +1,7 @@
+source: src-sevres-1920
+locator: art88
+url: https://archive.org/download/india.history.resource.74790/74790_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer of the Treaty Series printing; spacing collapsed, glyph errors kept
+
+Turkey, in accordance with the action already taken by the Allied Powers, hereby ' recognises Armenia as a free and independent State.
