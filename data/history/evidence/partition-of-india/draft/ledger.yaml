@@ -1,0 +1,1212 @@
+# The draft overlay for partition-of-india (docs/proposals/HISTORY-THESIS-PAGE.md §15e).
+# Read only by load_ledger(..., draft=True): the published thesis, its served
+# JSON, the audio gates and the ledger register never see it. A keyed row here
+# replaces the base row with the same id (the positions, contested records and
+# the migration analysis below are the base rows with additions); a new id is
+# appended; gaps are appended. Every entry was fetched on 2026-09-25 from the
+# URL it names and every extract under draft/extracts/ was sliced from that
+# copy by a builder script, start marker to end marker, never retyped.
+# Promotion folds this file into ledger.yaml and draft/extracts/ into
+# extracts/ in the commit that publishes the draft thesis.
+entries:
+- id: src-hansard-lords-19460516
+  tier: A
+  kind: primary-document
+  author: The Cabinet Mission and the Viceroy, read to the House of Lords by Viscount Addison, Secretary of State for Dominion Affairs
+  title: 'India: Statement by the Cabinet Mission, 16 May 1946'
+  container: Hansard, HL Deb 16 May 1946 vol 141 cc271-87
+  publisher: UK Parliament (Historic Hansard)
+  place: London
+  year: 1946
+  edition: null
+  volume: '141'
+  document_number: Hansard, HL Deb 16 May 1946 vol 141 cc271-87
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://api.parliament.uk/historic-hansard/lords/1946/may/16/india-statement-by-the-cabinet-mission
+  access:
+    free_copy: https://api.parliament.uk/historic-hansard/lords/1946/may/16/india-statement-by-the-cabinet-mission
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 'INDIA: STATEMENT BY THE CABINET MISSION. (Hansard, 16 May 1946)'
+  language: en
+  region_of_authorship: europe
+  producer: uk-government
+  position: british-administrative
+  rights: public
+- id: src-hansard-lords-19470220
+  tier: A
+  kind: primary-document
+  author: His Majesty's Government, read to the House of Lords by Lord Pethick-Lawrence, Secretary of State for India and Burma
+  title: 'Indian Policy: statement of 20 February 1947'
+  container: Hansard, HL Deb 20 February 1947 vol 145 cc835-41
+  publisher: UK Parliament (Historic Hansard)
+  place: London
+  year: 1947
+  edition: null
+  volume: '145'
+  document_number: Hansard, HL Deb 20 February 1947 vol 145 cc835-41
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://api.parliament.uk/historic-hansard/lords/1947/feb/20/indian-policy
+  access:
+    free_copy: https://api.parliament.uk/historic-hansard/lords/1947/feb/20/indian-policy
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: INDIAN POLICY. (Hansard, 20 February 1947)
+  language: en
+  region_of_authorship: europe
+  producer: uk-government
+  position: british-administrative
+  rights: public
+  notes: the same statement the Prime Minister made in the Commons that day; Historic Hansard's Commons sitting index for 20 February 1947 lists no India item, so the Lords reading is the text held
+- id: src-hansard-19461212
+  tier: A
+  kind: primary-document
+  author: Sir Stafford Cripps, President of the Board of Trade, moving the motion in the House of Commons
+  title: 'India (Constitution): debate of 12 December 1946'
+  container: Hansard, HC Deb 12 December 1946 vol 431 cc1346-452
+  publisher: UK Parliament (Historic Hansard)
+  place: London
+  year: 1946
+  edition: null
+  volume: '431'
+  document_number: Hansard, HC Deb 12 December 1946 vol 431 cc1346-452
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://api.parliament.uk/historic-hansard/commons/1946/dec/12/india-constitution
+  access:
+    free_copy: https://api.parliament.uk/historic-hansard/commons/1946/dec/12/india-constitution
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: INDIA (CONSTITUTION) (Hansard, 12 December 1946)
+  language: en
+  region_of_authorship: europe
+  producer: uk-government
+  position: british-administrative
+  rights: public
+  notes: Cripps had been a member of the Cabinet Mission; the figures for Calcutta, Eastern Bengal, Bihar, the United Provinces and Bombay are the government's as he gave them
+- id: src-lahore-resolution-1940
+  tier: A
+  kind: primary-document
+  author: All-India Muslim League, Lahore session
+  title: Resolution of the Lahore Session of the All-India Muslim League, 23rd March 1940
+  container: 'Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 1'
+  publisher: National Book Shop
+  place: Delhi
+  year: 1940
+  edition: 2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is the Indian Annual Register 1940, vol. I, pp. 311-12
+  volume: null
+  document_number: Kirpal Singh, Document 1
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: select-documents-on-partition-of-punjab-1947
+    hathitrust: null
+    url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
+  access:
+    free_copy: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: Resolution of the Lahore Session of the All-India Muslim League
+  language: en
+  region_of_authorship: south-asia
+  producer: muslim-league
+  position: pakistani-nationalist
+  rights: public
+  notes: the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+- id: src-cwc-19470308
+  tier: A
+  kind: primary-document
+  author: Congress Working Committee
+  title: 'Demand for Partition of Punjab: Resolution of the Congress Working Committee on 8th March, 1947'
+  container: 'Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 13'
+  publisher: National Book Shop
+  place: Delhi
+  year: 1947
+  edition: 2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is the Annual Register 1947, vol. I, p. 158
+  volume: null
+  document_number: Kirpal Singh, Document 13
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: select-documents-on-partition-of-punjab-1947
+    hathitrust: null
+    url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
+  access:
+    free_copy: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: Demand for Partition of Punjab
+  language: en
+  region_of_authorship: south-asia
+  producer: indian-national-congress
+  position: indian-nationalist
+  rights: public
+  notes: the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+- id: src-jenkins-19470326
+  tier: A
+  kind: primary-document
+  author: Evan Jenkins, Governor of the Punjab
+  title: Sir E. Jenkins to Lord Mountbatten, No. 660/P, 26 March 1947
+  container: 'Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 19'
+  publisher: National Book Shop
+  place: Delhi
+  year: 1947
+  edition: 2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is I.O.R. MB 124
+  volume: null
+  document_number: Kirpal Singh, Document 19
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: select-documents-on-partition-of-punjab-1947
+    hathitrust: null
+    url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
+  access:
+    free_copy: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: Sir E. Jenkins to Lord Mountbatten
+  language: en
+  region_of_authorship: south-asia
+  producer: punjab-governor
+  position: british-administrative
+  rights: public
+  notes: the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+- id: src-panthic-19470614
+  tier: A
+  kind: primary-document
+  author: The Panthic Assembly Party, the Working Committee of the Shiromani Akali Dal and the Panthic Pratinidhi Board, as reported by the Civil and Military Gazette
+  title: 'Sikhs Demand Transfer of Population and Property: resolution of 14 June 1947'
+  container: 'Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 61'
+  publisher: National Book Shop
+  place: Delhi
+  year: 1947
+  edition: 2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is the Civil and Military Gazette, Lahore, 15 June 1947
+  volume: null
+  document_number: Kirpal Singh, Document 61
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: select-documents-on-partition-of-punjab-1947
+    hathitrust: null
+    url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
+  access:
+    free_copy: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: Sikhs Demand Transfer of Population and Property
+  language: en
+  region_of_authorship: south-asia
+  producer: sikh-panthic-bodies
+  position: sikh-panthic
+  rights: public
+  notes: a party resolution known here as a newspaper printed it; the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+- id: src-aicc-19470615
+  tier: A
+  kind: primary-document
+  author: All-India Congress Committee
+  title: 'Indian National Congress Acceptance of 3rd June Plan: Resolution of the All-India Congress Committee, 15th June 1947'
+  container: 'Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 62'
+  publisher: National Book Shop
+  place: Delhi
+  year: 1947
+  edition: 2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is the Encyclopaedia of Indian National Congress, vol. 10, pp. 110-112
+  volume: null
+  document_number: Kirpal Singh, Document 62
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: select-documents-on-partition-of-punjab-1947
+    hathitrust: null
+    url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
+  access:
+    free_copy: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: Indian National Congress Acceptance of 3rd June Plan
+  language: en
+  region_of_authorship: south-asia
+  producer: indian-national-congress
+  position: indian-nationalist
+  rights: public
+  notes: the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+- id: src-hc-lahore-19470827
+  tier: A
+  kind: primary-document
+  author: High Commissioner for India, Camp Lahore
+  title: Telegram from the High Commissioner for India, Camp Lahore, to Foreign, New Delhi, for Pandit Jawaharlal Nehru, 27 August 1947
+  container: 'Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 160'
+  publisher: National Book Shop
+  place: Delhi
+  year: 1947
+  edition: 2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is File D/268, Broadland Archives
+  volume: null
+  document_number: Kirpal Singh, Document 160
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: select-documents-on-partition-of-punjab-1947
+    hathitrust: null
+    url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
+  access:
+    free_copy: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: 'From: High Commissioner for India Camp Lahore'
+  language: en
+  region_of_authorship: south-asia
+  producer: india-high-commission
+  position: indian-nationalist
+  rights: public
+  notes: the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+- id: src-jdc-19470829
+  tier: A
+  kind: primary-document
+  author: Joint Defence Council (the Governors-General and Prime Ministers of India and Pakistan, the two Commanders-in-Chief and the Supreme Commander)
+  title: Minutes of the sixth meeting of the Joint Defence Council held at Government House, Lahore, on 29th August, 1947
+  container: 'Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 161'
+  publisher: National Book Shop
+  place: Delhi
+  year: 1947
+  edition: 2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is File D/268, Broadland Archives
+  volume: null
+  document_number: Kirpal Singh, Document 161
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: select-documents-on-partition-of-punjab-1947
+    hathitrust: null
+    url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
+  access:
+    free_copy: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: Minutes of the sixth meeting of the Joint Defence Council
+  language: en
+  region_of_authorship: south-asia
+  producer: joint-defence-council
+  position: null
+  rights: public
+  notes: the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+- id: src-joint-evacuation-plan-19471020
+  tier: A
+  kind: primary-document
+  author: The Military Evacuation Organisations of India and Pakistan
+  title: Joint Evacuation Movement Plan, 20th October 1947
+  container: 'Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 186'
+  publisher: National Book Shop
+  place: Delhi
+  year: 1947
+  edition: 2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is Brigadier Rajendra Singh, Military Evacuation Organisation, Appendix 16, p. 184
+  volume: null
+  document_number: Kirpal Singh, Document 186
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: select-documents-on-partition-of-punjab-1947
+    hathitrust: null
+    url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
+  access:
+    free_copy: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: Joint Evacuation Movement Plan
+  language: en
+  region_of_authorship: south-asia
+  producer: joint-evacuation-organisations
+  position: the-displaced
+  rights: public
+  notes: the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+- id: src-abell-19470808
+  tier: A
+  kind: primary-document
+  author: Sir George Abell, Private Secretary to the Viceroy
+  title: Sir G. Abell to Mr. S. Abbott, 8 August 1947
+  container: 'Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 139'
+  publisher: National Book Shop
+  place: Delhi
+  year: 1947
+  edition: 2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is I.O.R. R/3/1/157 f 255
+  volume: null
+  document_number: Kirpal Singh, Document 139
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: select-documents-on-partition-of-punjab-1947
+    hathitrust: null
+    url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
+  access:
+    free_copy: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: Sir G. Abell to Mr. S. Abbott
+  language: en
+  region_of_authorship: south-asia
+  producer: british-viceroy-staff
+  position: british-administrative
+  rights: public
+  notes: the map and Christopher Beaumont's note the letter encloses are not in the collection; the editor notes they were published in Lahore in 1983; the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+- id: src-mountbatten-19480319
+  tier: A
+  kind: primary-document
+  author: Lord Mountbatten, Governor-General of India
+  title: Lord Mountbatten to Lord Ismay, 19th March 1948, enclosing his letter to Sir Evan Jenkins
+  container: 'Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 236'
+  publisher: National Book Shop
+  place: Delhi
+  year: 1948
+  edition: 2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is the Mountbatten papers
+  volume: null
+  document_number: Kirpal Singh, Document 236
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: select-documents-on-partition-of-punjab-1947
+    hathitrust: null
+    url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
+  access:
+    free_copy: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: Lord Mountbatten to Lord Ismay
+  language: en
+  region_of_authorship: south-asia
+  producer: british-viceroy-staff
+  position: british-administrative
+  rights: public
+  notes: the postscript reports what Liaquat Ali Khan said at the Joint Defence Council, secondhand; the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+- id: src-jenkins-19480407
+  tier: A
+  kind: primary-document
+  author: Sir Evan Jenkins, formerly Governor of the Punjab, in a letter Lord Ismay telegraphed to Lord Mountbatten
+  title: 'From Lord Ismay to Lord Mountbatten: telegram No. 1153 of 7th April 1948, the text of Sir Evan Jenkins''s letter'
+  container: 'Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 238'
+  publisher: National Book Shop
+  place: Delhi
+  year: 1948
+  edition: 2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is I.O.R. P&J/10/119
+  volume: null
+  document_number: Kirpal Singh, Document 238
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: select-documents-on-partition-of-punjab-1947
+    hathitrust: null
+    url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
+  access:
+    free_copy: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: From Lord Ismay to Lord Mountbatten
+  language: en
+  region_of_authorship: south-asia
+  producer: punjab-governor
+  position: british-administrative
+  rights: public
+  notes: Jenkins's account written eight months after the event; he says himself that it is not easy to be absolutely accurate about dates; the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+- id: src-randhawa-1954
+  tier: A
+  kind: report
+  author: M. S. Randhawa, Director General of Rural Rehabilitation, East Punjab, with a foreword by Ujjal Singh, Minister for Finance and Rehabilitation, Punjab
+  title: 'Out of the Ashes: An Account of the Rehabilitation of Refugees from West Pakistan in Rural Areas of East Punjab'
+  container: null
+  publisher: New Jack Printing Works (printer)
+  place: Bombay
+  year: 1954
+  edition: read from the Digital Library of India scan on the Internet Archive
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: dli.csl.8772
+    hathitrust: null
+    url: https://archive.org/details/dli.csl.8772
+  access:
+    free_copy: https://archive.org/download/dli.csl.8772/8772_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: 'Out of the ashes : an account of the rehabilitation of refugees from West Pakistan in rural areas of East Punjab'
+  language: en
+  region_of_authorship: south-asia
+  producer: east-punjab-rehabilitation
+  position: the-displaced
+  rights: null
+  notes: 'the account of the officer who ran the resettlement of refugee farmers in East Punjab from 1949, with the administration''s own figures; the Minister''s foreword says the views are the author''s and not necessarily the Punjab Government''s. Held as the passages cited, under the cap. Rule A: the resettling administration''s own record'
+- id: src-jinnah-papers-xiv
+  tier: A
+  kind: edited-documents
+  author: Z. H. Zaidi (ed.), Quaid-i-Azam Papers Wing, Government of Pakistan
+  title: 'Quaid-i-Azam Mohammad Ali Jinnah Papers, Second Series, Volume XIV: League-Congress Deadlock, 1 August 1946 to 19 February 1947'
+  container: null
+  publisher: Quaid-i-Azam Papers Wing, Culture Division, Government of Pakistan
+  place: Islamabad
+  year: 2006
+  edition: 1st edition, read from the Internet Archive scan
+  volume: XIV
+  document_number: 'cited by page: Appendix II.1 (Jinnah''s interview on Calcutta, 17 August 1946) and II.2 (Jinnah''s statement of 11 November 1946)'
+  identifiers:
+    isbn: 969-8156-21-6
+    doi: null
+    archive_org: jinnah-papers-volume-14
+    hathitrust: null
+    url: https://archive.org/details/jinnah-papers-volume-14
+  access:
+    free_copy: https://archive.org/download/jinnah-papers-volume-14/Jinnah%20Papers%2C%20Volume%2014_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: Jinnah Papers, Volume 14
+  language: en
+  region_of_authorship: south-asia
+  producer: muslim-league
+  position: pakistani-nationalist
+  rights: null
+  notes: copyright the Quaid-i-Azam Papers Wing, 2006; the Internet Archive item states CC BY-NC-ND 4.0, the uploader's statement. Held only as the passages cited, under the cap. The documents cited are Jinnah's own words as League president, as the Government of Pakistan's edition prints them from Waheed Ahmad's The Nation's Voice
+- id: src-jinnah-papers-v-intro
+  tier: D
+  kind: state-history
+  author: Z. H. Zaidi (ed.), Quaid-i-Azam Papers Project, National Archives of Pakistan
+  title: 'Introduction, Jinnah Papers, Volume V: Pakistan, Pangs of Birth, 15 August to 30 September 1947'
+  container: Quaid-i-Azam Mohammad Ali Jinnah Papers, First Series, Volume V
+  publisher: Quaid-i-Azam Papers Project, Cabinet Division, Government of Pakistan
+  place: Islamabad
+  year: 2000
+  edition: read from the Internet Archive scan
+  volume: V
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: 05-pakistan-pangs-of-birth-19470815-19470930
+    hathitrust: null
+    url: https://archive.org/details/05-pakistan-pangs-of-birth-19470815-19470930
+  access:
+    free_copy: https://archive.org/download/05-pakistan-pangs-of-birth-19470815-19470930/05%20Pakistan%20-%20Pangs%20of%20Birth%20%2819470815%20-%2019470930%29_djvu.txt
+    verified_at: '2026-09-25'
+    verified_by: archive-item-fetch
+    verified_title: 'Jinnah Papers 05: Pakistan - Pangs of Birth (19470815 19470930)'
+  language: en
+  region_of_authorship: south-asia
+  producer: pakistan-state-edition
+  position: pakistani-nationalist
+  rights: null
+  notes: the editors' introduction to a state documentary edition, which argues a position; Tier D, cited only for what the Pakistani state's edition holds, never as fact, and held as one passage under the cap
+- id: src-abbas-2020
+  tier: B
+  kind: journal-article
+  author: Muhammad Wasim Abbas, Aftab Gillani and Imran Ahmad
+  title: A Study of Settlement of Refugees in the Thal Desert (1947-1969)
+  container: Pakistan Social Sciences Review
+  publisher: Pakistan Social Sciences Review
+  place: Bahawalpur
+  year: 2020
+  edition: null
+  volume: 4(2), 164-176
+  identifiers:
+    isbn: null
+    doi: 10.35484/pssr.2020(4-ii)14
+    archive_org: null
+    hathitrust: null
+    url: https://pssr.org.pk/issues/v4/2/a-study-of-settlement-of-refugees-in-the-thal-desert-1947-1969.pdf
+  access:
+    free_copy: https://pssr.org.pk/issues/v4/2/a-study-of-settlement-of-refugees-in-the-thal-desert-1947-1969.pdf
+    verified_at: '2026-09-25'
+    verified_by: crossref-title-match
+    verified_title: A Study of Settlement of Refugees in the Thal Desert (1947-1969)
+  language: en
+  region_of_authorship: south-asia
+  producer: scholarship
+  position: the-displaced
+  notes: all three authors at the Pakistan Studies Department, Islamia University Bahawalpur; the Census of Pakistan 1951 figure is theirs, citing p. 3 of the census, which this record does not hold
+- id: src-un-sres91
+  tier: A
+  kind: resolution
+  author: United Nations Security Council
+  title: Resolution 91 (1951) of 30 March 1951
+  container: Resolutions adopted and decisions taken by the Security Council in 1951
+  publisher: United Nations
+  place: New York
+  year: 1951
+  edition: null
+  volume: null
+  document_number: S/2017/Rev.1
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://documents.un.org/doc/resolution/gen/nr0/072/10/pdf/nr007210.pdf
+  access:
+    free_copy: https://documents.un.org/doc/resolution/gen/nr0/072/10/pdf/nr007210.pdf
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 91 (1951). Resolution of 30 March 1951 [S/2017/Rev.1]
+  language: en
+  region_of_authorship: global
+  producer: un-security-council
+  position: null
+  rights: public
+  notes: the official printing is bilingual, English and French; the English column is held
+- id: src-indus-waters-treaty-1960
+  tier: A
+  kind: treaty
+  author: The Government of India, the Government of Pakistan and the International Bank for Reconstruction and Development
+  title: The Indus Waters Treaty 1960, signed at Karachi on 19 September 1960
+  container: United Nations Treaty Series, vol. 419, No. 6032
+  publisher: United Nations
+  place: New York
+  year: 1960
+  edition: the UNTS printing of 1962, registered by India on 16 January 1962
+  volume: '419'
+  document_number: UNTS No. 6032
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://treaties.un.org/doc/Publication/UNTS/Volume%20419/volume-419-I-6032-English.pdf
+  access:
+    free_copy: https://treaties.un.org/doc/Publication/UNTS/Volume%20419/volume-419-I-6032-English.pdf
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: The Indus Waters Treaty 1960 (with annexes). Signed at Karachi, on 19 September 1960
+  language: en
+  region_of_authorship: south-asia
+  producer: governments-of-india-and-pakistan
+  position: null
+  rights: public
+- id: src-coi-art6
+  tier: A
+  kind: primary-document
+  author: Constituent Assembly of India
+  title: 'Constitution of India, 1950, Article 6: Rights of citizenship of certain persons who have migrated to India from Pakistan'
+  container: Constitution of India, Part II (Citizenship)
+  publisher: Constitution of India (Centre for Law and Policy Research), the text of 1950 as the site prints it under 'Version 1'
+  place: New Delhi
+  year: 1950
+  edition: the original text of 1950
+  volume: null
+  document_number: Article 6
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.constitutionofindia.net/articles/article-6-rights-of-citizenship-of-certain-persons-who-have-migrated-to-india-from-pakistan/
+  access:
+    free_copy: https://www.constitutionofindia.net/articles/article-6-rights-of-citizenship-of-certain-persons-who-have-migrated-to-india-from-pakistan/
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 'Article 6: Rights of citizenship of certain persons who have migrated to India from Pakistan'
+  language: en
+  region_of_authorship: south-asia
+  producer: constituent-assembly-of-india
+  position: indian-nationalist
+  rights: public
+  notes: the same site the ledger's Constituent Assembly Debates are read from; the Constitution's official Hindi text could not be fetched (see gaps)
+- id: src-coi-art7
+  tier: A
+  kind: primary-document
+  author: Constituent Assembly of India
+  title: 'Constitution of India, 1950, Article 7: Rights of citizenship of certain migrants to Pakistan'
+  container: Constitution of India, Part II (Citizenship)
+  publisher: Constitution of India (Centre for Law and Policy Research), the text of 1950 as the site prints it under 'Version 1'
+  place: New Delhi
+  year: 1950
+  edition: the original text of 1950
+  volume: null
+  document_number: Article 7
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.constitutionofindia.net/articles/article-7-rights-of-citizenship-of-certain-migrants-to-pakistan/
+  access:
+    free_copy: https://www.constitutionofindia.net/articles/article-7-rights-of-citizenship-of-certain-migrants-to-pakistan/
+    verified_at: '2026-09-25'
+    verified_by: document-fetch
+    verified_title: 'Article 7: Rights of citizenship of certain migrants to Pakistan'
+  language: en
+  region_of_authorship: south-asia
+  producer: constituent-assembly-of-india
+  position: indian-nationalist
+  rights: public
+  notes: the same site the ledger's Constituent Assembly Debates are read from; the Constitution's official Hindi text could not be fetched (see gaps)
+positions:
+- id: british-administrative
+  name: The British administrative account
+  holders:
+  - Attlee (Commons, 3 June and 10 July 1947)
+  - Listowel (Lords, 16 July 1947)
+  - Mountbatten and his staff (Transfer of Power, vols. XI and XII)
+  - Jenkins, Governor of the Punjab
+  - Talbot (2019)
+  - Cripps (Commons, 12 December 1946)
+  rests_on:
+  - src-hansard-19470603
+  - src-hansard-19470710
+  - src-hansard-lords-19470716
+  - src-top-xi
+  - src-top-xii
+  - src-jenkins-punjab-problem-1947
+  - src-mountbatten-press-19470604
+  - src-talbot-2019
+  - src-hansard-lords-19460516
+  - src-hansard-lords-19470220
+  - src-hansard-19461212
+  - src-jenkins-19470326
+  - src-abell-19470808
+  - src-jenkins-19480407
+  claim: Partition was the Indian parties' choice and the notional division, the commissions and their terms were theirs; the Viceroy kept out of the award; haste was the price of a divided government.
+  omits: What the Viceroy's own staff wrote about Gurdaspur and Kashmir before the award, and the strength at which the Governor found the Boundary Force the day after the award was signed.
+  adjudications:
+  - claim: The 1941 census figures were to be taken as authoritative for the notional division, and the Boundary Commissions were to work from contiguous majority areas plus other factors.
+    verdict: supported
+    basis: presence
+    rests_on:
+    - src-hansard-19470603.p36
+    - src-hansard-19470603.p37
+    - src-radcliffe-punjab.para3
+    - src-dinmohammad-1947.p383-385
+    - src-mahajan-1947.p327-328
+    reasoning: The statement read to the Commons on 3 June 1947 says the 1941 figures would be authoritative; the award reproduces the terms of reference; and both the League-nominated and the Congress-nominated judges argue Gurdaspur from the 1941 census. Four producers carry the same basis.
+  - claim: The Viceroy had nothing to do with the award and kept clear of the Boundary Commissions.
+    verdict: qualified
+    basis: presence
+    rests_on:
+    - src-top-xii.item428
+    - src-top-xii.item335
+    - src-mountbatten-press-19470604.p99-100
+    reasoning: 'Ismay''s letter says so, and Liaquat''s message is what it answers; but the Viceroy''s own interview record of 4 August has him saying Kashmir could join either Dominion ''provided part of Gurdaspur were put into East Punjab by the Boundary Commission'', and on 4 June he had told the press it was unlikely the commission would place the whole district in the Muslim majority area. Every document here is the Viceroy''s staff''s own, so under Rule A the verdict is capped at qualified: the papers show a Viceroy who had a view of Gurdaspur''s fate, not one who conveyed it to Radcliffe.'
+  - claim: 'The British government did not propose the partition of the Punjab and Bengal: its Cabinet Mission rejected it in 1946, and the Congress asked for the division of the Punjab before the plan of 3 June 1947.'
+    verdict: supported
+    basis: presence
+    rests_on:
+    - src-hansard-lords-19460516.p274
+    - src-hansard-lords-19460516.p275
+    - src-cwc-19470308.p23
+    - src-aicc-19470615.p109
+    reasoning: 'The Cabinet Mission''s statement of 16 May 1946 says that any solution involving a radical partition of the Punjab and Bengal would be contrary to the wishes and interests of a very large proportion of their inhabitants, and that the Mission could not advise handing power to two entirely separate sovereign states. On 8 March 1947 the Congress Working Committee resolved that the Punjab be divided so that the predominantly Muslim part might be separated from the predominantly non-Muslim part; on 15 June the A.I.C.C. accepted the 3 June proposals. Two producers, each on the part it wrote: the British government on its 1946 position, the Congress on its 1947 demand. What London decided between March and June is not in these documents.'
+  - claim: The award was not altered after the Viceroy's staff learned where the line would run.
+    verdict: qualified
+    basis: presence
+    rests_on:
+    - src-abell-19470808.p456
+    - src-jenkins-19480407.p706-707
+    - src-jenkins-19480407.p707
+    - src-mountbatten-19480319.p703
+    reasoning: Abell's letter of 8 August 1947 sent the Governor of the Punjab a map of the boundary Radcliffe proposed to demarcate and said there would not be any great changes from it. The Governor's account of April 1948 says the enclosures showed a salient in Ferozepur District enclosing the Ferozepur and Zira tehsils in Pakistan, and that about 10 or 11 August a message from Viceroy's House said 'Eliminate salient'; the award placed Ferozepur in East Punjab. Mountbatten's postscript records Liaquat Ali Khan making the same point about Ferozepur and Zira. So the line did change after the forecast, in Ferozepur, not Gurdaspur; no document here says who decided the change or why, and every one of them is British, so the claim is qualified on the account's own side's papers.
+- id: indian-nationalist
+  name: The Indian nationalist account
+  holders:
+  - Nehru (Constituent Assembly, 14 August 1947)
+  - Mahajan (Boundary Commission report, 3 August 1947)
+  - Khosla, for the Fact Finding Organisation (1949)
+  - Gandhi (Calcutta, 24 August 1947)
+  - the Congress Working Committee and the A.I.C.C. (1947)
+  rests_on:
+  - src-cad-19470814
+  - src-mahajan-1947
+  - src-khosla-1949
+  - src-gandhi-19470824
+  - src-cwc-19470308
+  - src-aicc-19470615
+  - src-coi-art6
+  - src-coi-art7
+  claim: Freedom came with a partition Congress accepted; the 1941 census on which Gurdaspur's majority rests was unreliable and the district's electors were non-Muslim in majority; the dead were counted by an official body at hundreds of thousands, not millions.
+  omits: The Muslim victims of the eastern districts, whom the fact-finding body counts only as 'an equal number', and the League's case that a census cannot be replaced by a voters' roll.
+  adjudications:
+  - claim: On the electoral rolls Gurdaspur's non-Muslim voters outnumbered its Muslim voters, 81,525 to 74,790.
+    verdict: qualified
+    basis: presence
+    rests_on:
+    - src-mahajan-1947.p328-329
+    - src-dinmohammad-1947.p383-385
+    reasoning: The Congress-nominated judge's report carries the roll figures; the League-nominated judge's report, the only other producer on the point, argues from the 1941 population figures and does not mention the rolls in the passage held here. The rolls are one side's evidence, so the verdict is qualified.
+  - claim: The fact-finding body's count is between 200,000 and 250,000 non-Muslims killed, with an equal number of Muslims believed killed in India.
+    verdict: qualified
+    basis: presence
+    rests_on:
+    - src-khosla-1949.p299
+    - src-khosla-1949.p298
+    reasoning: 'The count is the body''s own, from nearly fifteen thousand witnesses and 2,094 of 19,914 villages in West Punjab by its own footnote, and the Muslim figure is a belief, not a count. One producer, and the producer says its own method is approximate: qualified.'
+  - claim: The Congress accepted the 3 June plan because the Muslim League refused the Cabinet Mission's plan of 16 May 1946.
+    verdict: qualified
+    basis: presence
+    rests_on:
+    - src-aicc-19470615.p109
+    - src-hansard-19461212.p1348
+    - src-hansard-19461212.p1353
+    reasoning: The A.I.C.C.'s resolution of 15 June 1947 gives the League's refusal of the plan of 16 May as its reason for accepting the 3 June proposals. The British government's account to the Commons in December 1946 confirms that the League withdrew its acceptance on 29 July 1946, and records that the Mission, the government and the League read the plan's grouping procedure one way and the Congress the other. The documents bear out the withdrawal; they also show a dispute over the plan to which the Congress was a party, and which the resolution does not mention. Qualified.
+- id: pakistani-nationalist
+  name: The Pakistani nationalist account
+  holders:
+  - Jinnah (Constituent Assembly of Pakistan, 11 August 1947)
+  - the Muslim League (memorandum to the Punjab Boundary Commission)
+  - Din Mohammad (Boundary Commission report, 5 August 1947)
+  - Liaquat Ali Khan (message of 11 August 1947)
+  - Hanif (2020)
+  - Jalal (1985)
+  rests_on:
+  - src-jinnah-19470811
+  - src-league-memo-1947
+  - src-dinmohammad-1947
+  - src-hanif-2020
+  - src-jalal-1985
+  - src-lahore-resolution-1940
+  - src-jinnah-papers-xiv
+  - src-jinnah-papers-v-intro
+  claim: Division was the only solution; Gurdaspur was a Muslim-majority district by the census the plan itself made authoritative, and its award to India was a political decision; Kashmir's accession is to be decided by a plebiscite the Security Council called for.
+  omits: The award's two stated grounds that name Gurdaspur or its tahsils, the Upper Bari Doab Canal from Madhopur in Pathankot and the Mandi hydro-electric scheme; and the 1942 Sikh note listing Gurdaspur at 50.8 per cent by the 1931 census.
+  adjudications:
+  - claim: 'Gurdaspur had a Muslim majority by the 1941 census: 51.14 per cent, with three of its four tehsils Muslim-majority.'
+    verdict: supported
+    basis: presence
+    rests_on:
+    - src-dinmohammad-1947.p383-385
+    - src-mahajan-1947.p327-328
+    - src-mountbatten-press-19470604.p99-100
+    - src-top-xi.item45
+    reasoning: The League-nominated judge prints the tehsil table; the Congress-nominated judge gives the same district figures, 589,923 Muslims of 1,153,511, and concedes the majority while disputing its size; the Viceroy's press conference and the 3 June appendix list the district as Muslim-majority. Three producers, on both sides, agree on the majority.
+  - claim: The allocation of Gurdaspur to East Punjab was a political decision, not a judicial one.
+    verdict: qualified
+    basis: presence
+    rests_on:
+    - src-top-xii.item335
+    - src-top-xii.item428
+    - src-radcliffe-punjab.para9
+    - src-radcliffe-punjab.para11
+    - src-radcliffe-punjab.item1
+    reasoning: The Viceroy's staff recorded him, on 4 August, treating part of Gurdaspur's transfer to East Punjab as the condition of Kashmir's freedom to join either Dominion, eight days before the award; Ismay's reply to Liaquat denies any influence. The award's reasons say nothing of Kashmir; the two stated grounds that name Gurdaspur or its tahsils are the Upper Bari Doab Canal from Madhopur in Pathankot and the Mandi hydro-electric scheme, and the schedule names the State of Kashmir only as where the Ujh enters the Punjab. The papers show the motive existed on the Viceroy's side; no document in this record shows it reached Radcliffe, so the claim is qualified, not supported.
+  - claim: The Security Council resolved that the accession of Jammu and Kashmir should be decided by a free and impartial plebiscite.
+    verdict: supported
+    basis: presence
+    rests_on:
+    - src-un-sres47.pre3
+    - src-un-sres47.op1
+    - src-hansard-19471030.p1086
+    reasoning: Resolution 47 notes that both governments desire the question decided by plebiscite and recommends measures to create the conditions for one; the Commons was told on 30 October 1947 that India accepted the accession 'subject to a reference to the people of Kashmir'. Two producers.
+  - claim: The League's demand of 1940 was that the Muslim-majority zones of the north-west and east be grouped as independent states.
+    verdict: supported
+    basis: presence
+    rests_on:
+    - src-lahore-resolution-1940.p1
+    - src-hansard-lords-19460516.p273
+    reasoning: The Lahore resolution asks that areas in which the Muslims are numerically in a majority, as in the North-Western and Eastern zones, be grouped to constitute 'Independent States'. The Cabinet Mission's statement of 1946 describes the League's claim as a separate sovereign state of Pakistan in two areas, the provinces of the north-west and of the north-east. The League's own text and the British reading of it agree on the zones; they differ on the plural, which the resolution prints and the Mission's statement does not.
+  - claim: The Muslim League did not plan the Calcutta killings of August 1946, and Muslims were among their worst sufferers.
+    verdict: qualified
+    basis: presence
+    rests_on:
+    - src-jinnah-papers-xiv.p642
+    - src-khosla-1949.p66
+    - src-hansard-19461212.p1348
+    reasoning: Jinnah's interview of 17 August 1946 condemns the violence, says any Leaguer who used it broke the League's instructions, and says he did not know who was responsible. The Indian fact-finding body's own reading of the hospital returns is that the Muslims fared almost as badly as the Hindus. The League's resolution of 29 July, as Cripps read it to the Commons, called for direct action to achieve Pakistan and did not say what the action would be. The record supports the second half of the claim from a hostile source; on the first half it holds the League's denial and its resolution, and no investigation of either, so the verdict is qualified.
+  described_by:
+  - src-mountbatten-19480319.p703
+  - src-top-xii.item428
+- id: sikh-panthic
+  name: The Sikh and Punjabi account
+  holders:
+  - the Sikh All Parties Committee (1942 note)
+  - Teja Singh (Boundary Commission report, 4 August 1947)
+  - the Shiromani Gurdwara Parbandhak Committee (Talib, 1950)
+  - Amrita Pritam (Ajj Aakhaan Waris Shah Nu, 1949)
+  rests_on:
+  - src-sikh-note-1942
+  - src-tejasingh-1947
+  - src-talib-1950
+  - src-amrita-pritam-1949
+  - src-panthic-19470614
+  described_by:
+  - src-top-xi.item59
+  - src-tejasingh-1947.p353-354
+  claim: Any partition on Muslim-majority districts cuts the Sikhs in two and leaves their shrines and canal colonies in the west; the migration ran to more than twelve million and the dead to about a million; the Punjab's central districts were balanced, not Muslim; and the Punjab itself, in its poet's lament, had its five waters poisoned.
+  omits: The Muslim majorities of the tehsils east of the Ravi that its own judge's report concedes, and the Muslim dead of the eastern districts after 15 August.
+  adjudications:
+  - claim: The plan of 3 June divided the Sikh community into two almost equal parts.
+    verdict: qualified
+    basis: presence
+    rests_on:
+    - src-top-xi.item59
+    - src-tejasingh-1947.p353-354
+    reasoning: The Viceroy said so at his press conference; the Sikh member's own report counts 3,767,401 Sikhs by the 1941 census, of whom 1,683,855 lived in the seventeen notional western districts and 2,073,546 in the east. Two producers agree on the division; the Sikh judge's own figures make it 45 to 55 rather than equal, so the claim is qualified by the position's own count.
+  - claim: Gurdaspur, Amritsar and Lahore were districts of balanced population, not Muslim-majority districts.
+    verdict: qualified
+    basis: presence
+    rests_on:
+    - src-sikh-note-1942.p7
+    - src-dinmohammad-1947.p383-385
+    - src-top-xi.item45
+    reasoning: 'The 1942 note''s own 1931 table puts Gurdaspur at 50.8 and Amritsar at 47.0 per cent Muslim, and the 1941 table the League''s judge prints puts Gurdaspur at 51.14; the 3 June appendix lists Gurdaspur and Lahore, not Amritsar, as Muslim-majority. Balanced is true of the margins and false of the label the plan used: qualified.'
+  - claim: The Sikh bodies asked, before the award, that the partition carry a transfer of population and property.
+    verdict: qualified
+    basis: presence
+    rests_on:
+    - src-panthic-19470614.p108
+    - src-hc-lahore-19470827.p502-503
+    reasoning: 'The resolution of 14 June 1947, as the Civil and Military Gazette printed it, asks that the Boundary Commission be directed to recommend the transfer of Hindu and Sikh population and property from the western to the eastern Punjab. On 27 August the Indian High Commissioner in Lahore reported that a conference at Government House felt a transfer of population should take place. The second document shows the demand''s outcome reached after the killing had begun, not the Sikh bodies'' part in reaching it, and the demand itself is known only as a newspaper printed it: qualified.'
+- id: the-displaced
+  name: The refugee and resettlement account
+  holders:
+  - Randhawa, Director General of Rural Rehabilitation, East Punjab (1954)
+  - Abbas, Gillani and Ahmad, Islamia University Bahawalpur (2020)
+  - the survivors heard by The 1947 Partition Archive
+  rests_on:
+  - src-randhawa-1954
+  - src-abbas-2020
+  - src-joint-evacuation-plan-19471020
+  - src-pa-khushi-muhammad
+  - src-pa-niamat-ali
+  - src-pa-bhagwant-singh
+  claim: 'The partition''s longest work was resettlement: the two states moved the Punjab''s minorities in convoys and trains, held them in camps, and settled them on land and in houses the other community had left, on less than they had lost, and then made them citizens by date.'
+  omits: The dead of the convoys and the camps, whom the resettlement records do not count, and the migrants of Bengal, who crossed for two decades and are not in either Punjab's scheme.
+  adjudications:
+  - claim: The refugee farmers of East Punjab were resettled on less land than they had left.
+    verdict: qualified
+    basis: presence
+    rests_on:
+    - src-randhawa-1954.p93
+    reasoning: Randhawa, who ran the resettlement, records 67 lakh acres abandoned by Hindu and Sikh landholders in West Pakistan against 47 lakh acres available in East Punjab and Pepsu, a gap of 38 per cent, and 43 lakh irrigated acres left against 13 lakh. The figures are the resettling administration's own, and this record holds no Pakistani count of the land Muslim evacuees left or received, so under Rule A the verdict is capped at qualified.
+- id: bengal-long-partition
+  name: The Bengal and Bangladeshi account
+  holders:
+  - Chatterji (2007)
+  - Mahbub and Saba (BRAC University, 2018)
+  - Rabbani (Asiatic Society of Bangladesh, 2024)
+  - Rahman and van Schendel (2003)
+  rests_on:
+  - src-chatterji-2007
+  - src-mahbub-saba-2018
+  - src-rabbani-2024
+  - src-rahman-vanschendel-2003
+  claim: In the east the partition was not an event but a decades-long migration, at least 6 million Hindus leaving by 1967, and a boundary whose enclaves were not exchanged until 2015.
+  omits: The award's own reasons for Calcutta, Khulna and Murshidabad, and the Muslim migration into East Bengal, which its stories carry and its counts do not.
+  adjudications:
+  - claim: The award placed Khulna, a district the 3 June plan did not list as Muslim-majority, in East Bengal, and Murshidabad, which it did list, in West Bengal.
+    verdict: supported
+    basis: presence
+    rests_on:
+    - src-radcliffe-bengal.item5
+    - src-radcliffe-bengal.item8
+    - src-top-xi.item45
+    - src-gandhi-19470824.para6
+    reasoning: The schedule runs the line along the Malda-Murshidabad and Rajshahi-Murshidabad district boundaries, leaving Murshidabad west of it, and southwards along the Khulna and 24-Parganas boundary, leaving Khulna east of it; the appendix lists Murshidabad and not Khulna; Gandhi's speech of 24 August deplores Khulna celebrating its entry into Pakistan. Three producers.
+  - claim: Between 1947 and 1967 at least 6 million Hindu refugees crossed from East Bengal into West Bengal.
+    verdict: untestable
+    basis: absence
+    rests_on:
+    - src-chatterji-2007.p1-2
+    reasoning: No census or government count for Bengal is held in this record; the figure stands as the scholarship's.
+    would_settle: the Census of India 1951 and 1961 displaced-persons tables for West Bengal, which no open archive reached from this container holds
+  - claim: The partition of Bengal was carried by the votes of its western members against those of its eastern.
+    verdict: qualified
+    basis: presence
+    rests_on:
+    - src-top-xi.item278
+    reasoning: The Governor of Bengal's telegram of 20 June 1947 reports the members from the western districts voting 58 to 21 that the province be partitioned, and the members from the eastern districts voting by 106 votes that it should not. It is the one record of the vote this ledger holds, and it is the Viceroy's correspondence, so qualified.
+contested:
+- id: death-toll
+  claim: How many people died in the partition violence
+  rows:
+  - position: indian-nationalist
+    holds: Between 200,000 and 250,000 non-Muslims killed, with an equal number of Muslims believed killed in India, from the evidence of nearly fifteen thousand witnesses.
+    figures:
+    - '200000'
+    - '250000'
+    source: src-khosla-1949
+    locator: p299
+  - position: sikh-panthic
+    holds: The butchering of about a million, as the SGPC compilation puts it.
+    figures: []
+    source: src-talib-1950
+    locator: p43
+  - position: the-counters
+    holds: Nearly a million deaths due to the riots, 'by many accounts'.
+    figures: []
+    source: src-bharadwaj-mirza-2019
+    locator: p1
+  - position: the-displaced
+    holds: The death of 0.5 million, as the authors cite William (1953), beside a migration of almost 15 million.
+    figures:
+    - '0.5'
+    source: src-abbas-2020
+    locator: p164
+- id: the-migration
+  claim: How many people were displaced, over what period, and across which border
+  rows:
+  - position: british-administrative
+    holds: 8,500,000 or thereabouts had moved between East Punjab and West Punjab, both ways, by 18 December 1947.
+    figures:
+    - '8500000'
+    source: src-hansard-19471218
+    locator: p1845
+  - position: the-counters
+    holds: Nearly 17 million transferred; 14.5 million displaced within four years; 7.3 million displaced persons enumerated in India in 1951.
+    figures:
+    - '17'
+    - '14.5'
+    source: src-bharadwaj-mirza-2019
+    locator: p5
+  - position: sikh-panthic
+    holds: The uprooting of over twelve millions.
+    figures: []
+    source: src-talib-1950
+    locator: p43
+  - position: bengal-long-partition
+    holds: At least 6 million Hindu refugees from East Bengal into West Bengal between 1947 and 1967, a migration that did not end in 1947.
+    figures: []
+    source: src-chatterji-2007
+    locator: p1-2
+  - position: the-displaced
+    holds: 7.15 million migrated from India to Pakistan by the census of Pakistan of 1951, as the authors cite it, 4.8 million of them into the Punjab.
+    figures:
+    - '7.15'
+    - '4.8'
+    source: src-abbas-2020
+    locator: p164
+- id: calcutta-1946
+  claim: How many died in Calcutta after Direct Action Day, August 1946, and who began it
+  rows:
+  - position: british-administrative
+    holds: Some 4,000 deaths and 10,000 injured, as the government told the Commons in December 1946, the riots breaking out after the League set aside 16 August as Direct Action Day.
+    figures:
+    - '4000'
+    - '10000'
+    source: src-hansard-19461212
+    locator: p1350-1351
+  - position: indian-nationalist
+    holds: 570 dead in the hospital returns and an estimate of more than five thousand killed; the League's leaders and press, it records, blamed the supporters of the Congress for starting the riot.
+    figures:
+    - '570'
+    source: src-khosla-1949
+    locator: p66
+  - position: pakistani-nationalist
+    holds: Jinnah condemned the violence, said he did not know who was responsible, and said any Leaguer who used violence had broken the League's instructions.
+    figures: []
+    source: src-jinnah-papers-xiv
+    locator: p642
+- id: the-ferozepur-salient
+  claim: Whether the Punjab award was changed after the Viceroy's staff forecast it
+  rows:
+  - position: british-administrative
+    holds: The forecast of 8 August showed a salient enclosing the Ferozepur and Zira tehsils in Pakistan; about 10 or 11 August a message from Viceroy's House said to eliminate it; the Governor records the change without saying who made it.
+    figures: []
+    source: src-jenkins-19480407
+    locator: p707
+  - position: pakistani-nationalist
+    holds: The award was finalised about a week before partition and then gerrymandered in India's favour, as the Pakistani state's edition of Jinnah's papers holds.
+    figures: []
+    source: src-jinnah-papers-v-intro
+    locator: secxiii
+exhibits:
+- id: ex-lahore-1940
+  kind: document
+  title: The Lahore Resolution of the All-India Muslim League, 23 March 1940
+  creator: All-India Muslim League
+  date: 23 March 1940
+  repository: Internet Archive (Kirpal Singh, Select Documents on Partition of Punjab 1947, Document 1)
+  accession: select-documents-on-partition-of-punjab-1947
+  licence: Public domain mark on the Internet Archive item
+  url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
+  source: src-lahore-resolution-1940
+  locator: p1
+- id: ex-cabinet-mission-11
+  kind: document
+  title: The Cabinet Mission's statement of 16 May 1946, paragraph 11
+  creator: The Cabinet Mission and the Viceroy
+  date: 16 May 1946
+  repository: UK Parliament, Historic Hansard (HL Deb 16 May 1946 vol 141)
+  accession: HL Deb 16 May 1946 vol 141 c275
+  licence: Open Parliament Licence
+  url: https://api.parliament.uk/historic-hansard/lords/1946/may/16/india-statement-by-the-cabinet-mission
+  source: src-hansard-lords-19460516
+  locator: p275
+- id: ex-eliminate-salient
+  kind: document
+  title: The Governor of the Punjab on the forecast line and the message that changed it
+  creator: Sir Evan Jenkins
+  date: April 1948, of events of 8 to 11 August 1947
+  repository: Internet Archive (Kirpal Singh, Select Documents on Partition of Punjab 1947, Document 238)
+  accession: select-documents-on-partition-of-punjab-1947
+  licence: Public domain mark on the Internet Archive item
+  url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
+  source: src-jenkins-19480407
+  locator: p707
+- id: ex-jdc-29aug
+  kind: document
+  title: The Joint Defence Council ends the Punjab Boundary Force, 29 August 1947
+  creator: Joint Defence Council
+  date: 29 August 1947
+  repository: Internet Archive (Kirpal Singh, Select Documents on Partition of Punjab 1947, Document 161)
+  accession: select-documents-on-partition-of-punjab-1947
+  licence: Public domain mark on the Internet Archive item
+  url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
+  source: src-jdc-19470829
+  locator: p504
+analyses:
+- id: an-migration-counts
+  title: One migration, six counts
+  method: Every figure the fetched documents give for the number of people displaced by the partition, one row per figure, in millions as the document states it, with the border, the period and the direction each figure counts. The result is the number of rows. No range is taken across them, because they do not count the same thing.
+  finding: 'The record holds six counts of six different things: one border by December 1947 (8.5 million), one direction into India by 1951 (7.3 million), one direction into Pakistan by 1951 (7.15 million), both borders over four years (14.5 million), the whole transfer (nearly 17 million), and one province over twenty years (at least 6 million). The only two that count the whole transfer are the economists'' own, 14.5 to 17 million, both from Bharadwaj and Mirza, the first citing Bharadwaj, Khwaja and Mian.'
+  confidence: high for the count of rows; the 14.5 to 17 span is one producer's, and the other four are not comparable with it or with each other
+  against: the SGPC compilation's 'over twelve millions' and the Indian fact-finding body's warning that refugee estimates 'do not give a true picture' are both in the record and neither is a digit this table can hold; the Hansard figure is 'or thereabouts' and covers the Punjab only
+  result: 6
+  derivation:
+    compute: count
+    columns:
+    - document
+    - counts
+    - period
+    - millions
+    rows:
+    - document: Noel-Baker, Commons, 18 December 1947
+      counts: moved between East and West Punjab, both ways
+      period: to December 1947
+      millions: 8.5
+      extract: src-hansard-19471218.p1845
+    - document: Bharadwaj and Mirza 2019, p. 40, citing the 1951 Census of India
+      counts: displaced persons enumerated in India
+      period: to March 1951
+      millions: 7.3
+      extract: src-bharadwaj-mirza-2019.p40
+    - document: Abbas, Gillani and Ahmad 2020, p. 164, citing the Census of Pakistan 1951
+      counts: people who migrated from India to Pakistan
+      period: to 1951
+      millions: 7.15
+      extract: src-abbas-2020.p164
+    - document: Bharadwaj and Mirza 2019, p. 5, citing Bharadwaj, Khwaja and Mian 2008
+      counts: displaced across both borders
+      period: four years after partition
+      millions: 14.5
+      extract: src-bharadwaj-mirza-2019.p5
+    - document: Bharadwaj and Mirza 2019, p. 1
+      counts: the population transfer, 'nearly'
+      period: 1947 onward
+      millions: 17
+      extract: src-bharadwaj-mirza-2019.p1
+    - document: Chatterji 2007, introduction
+      counts: Hindu refugees from East Bengal into West Bengal, 'at least'
+      period: 1947 to 1967
+      millions: 6
+      extract: src-chatterji-2007.p1-2
+- id: an-calcutta-counts
+  title: Calcutta's dead, eight figures
+  method: 'Every figure a fetched document gives for the dead of the Calcutta killings of August 1946, one row per figure, with the document and the kind of count it is: a newspaper''s running total as the Indian fact-finding body reports it, bodies collected, deaths in the hospital returns, or an estimate given to Parliament. A range the newspaper printed is entered as its lower and its upper bound, each on its own row. The result is the range of the column.'
+  finding: 'Eight figures for Calcutta''s dead run from 170 to 4,000, and they count four different things: a newspaper''s running total, which rose from over 170 killed on 18 August to 3,468 bodies accounted for on 28 August; 3,173 bodies collected and disposed of; 570 deaths in the hospital returns; and 4,000, the round figure the British government gave the Commons. The Indian fact-finding body''s own estimate, more than five thousand killed, is above every count it prints.'
+  confidence: 'moderate: the running totals are the Statesman''s as the fact-finding body reports them, not read from the newspaper, and every count but the Commons figure comes from one producer''s pages'
+  against: the fact-finding body says the body count does not represent the total number of deaths and that hospital figures undercount the Hindu dead, whose bodies it says were burnt or destroyed; the League's leaders and press, as the same body reports them, said the riot was started by the Congress's supporters, which bears on who died and not only how many
+  result:
+  - 170
+  - 4000
+  derivation:
+    compute: range
+    column: dead
+    columns:
+    - document
+    - kind
+    - dead
+    rows:
+    - document: The Statesman, 18 August 1946, as reported
+      kind: running total, killed
+      dead: 170
+      extract: src-khosla-1949.p78
+    - document: The Statesman, 19 August 1946, as reported
+      kind: running total, killed
+      dead: 270
+      extract: src-khosla-1949.p78
+    - document: The Statesman, 20 August 1946, lower bound
+      kind: running total, death roll
+      dead: 2000
+      extract: src-khosla-1949.p78
+    - document: The Statesman, 20 August 1946, upper bound
+      kind: running total, death roll
+      dead: 3000
+      extract: src-khosla-1949.p78
+    - document: The Statesman, 28 August 1946, as reported
+      kind: bodies accounted for
+      dead: 3468
+      extract: src-khosla-1949.p78
+    - document: Stern Reckoning, table of bodies collected and disposed of
+      kind: bodies collected
+      dead: 3173
+      extract: src-khosla-1949.p65
+    - document: Stern Reckoning, the Surgeon-General's hospital returns
+      kind: hospital deaths
+      dead: 570
+      extract: src-khosla-1949.p66
+    - document: Cripps, Commons, 12 December 1946
+      kind: government estimate
+      dead: 4000
+      extract: src-hansard-19461212.p1350-1351
+- id: an-two-censuses
+  title: Two censuses, one migration
+  method: The census each country took in 1951 counted the people who had crossed into it. Each figure is taken as the scholarship that cites it states it, in millions, one row per census; the result is their sum.
+  finding: 'The two censuses of 1951, as the scholarship cites them, together count 14.45 million people who had crossed: 7.3 million into India and 7.15 million into Pakistan. The sum sits within a rounding of the 14.5 million the economists give as displaced within four years.'
+  confidence: 'moderate: neither census volume is held here, both figures are read through the scholarship that cites them, and the two censuses need not have defined a migrant alike'
+  against: Bharadwaj and Mirza's 14.5 million cites Bharadwaj, Khwaja and Mian, which may rest on these same two censuses, so the agreement may be one count seen twice; Chatterji's migration from East Bengal ran to 1967, after both censuses; the Commons' 8,500,000 by December 1947 counts the Punjab alone
+  result: 14.45
+  derivation:
+    compute: sum
+    column: millions
+    columns:
+    - census
+    - counts
+    - millions
+    rows:
+    - census: Census of India 1951, as Bharadwaj and Mirza cite it
+      counts: displaced persons enumerated in India, from West and East Pakistan
+      millions: 7.3
+      extract: src-bharadwaj-mirza-2019.p40
+    - census: Census of Pakistan 1951, as Abbas, Gillani and Ahmad cite it
+      counts: people who migrated from India to Pakistan
+      millions: 7.15
+      extract: src-abbas-2020.p164
+gaps:
+- what: The Muslim League's own account of Direct Action Day in Calcutta beyond Jinnah's statements, and any count by the Government of Bengal of the dead of August 1946
+  tried:
+  - https://archive.org/advancedsearch.php?q=%22direct+action+day%22+AND+1946
+  - https://api.crossref.org/works?query.bibliographic=Direct+Action+Day+Calcutta+1946+Muslim+League
+  status: the League's case is held here as Jinnah's interview of 17 August 1946 and his statement of 11 November, both in the Government of Pakistan's edition of his papers; the Bengal government's report and the League's press are known only as the British government and the Indian fact-finding body describe them, and the scholarship on the riot that Crossref lists is paywalled
+- what: A count of the dead of Bihar, October and November 1946, by the Bihar government or by the League
+  tried:
+  - https://api.parliament.uk/historic-hansard/commons/1946/dec/12/india-constitution
+  - https://archive.org/advancedsearch.php?q=bihar+riots+1946
+  status: the only figure held is the British government's estimate of 5,000, which Cripps said could not be given with any accuracy; the League's statement of 11 November 1946 gives no figure
+- what: The resolutions of the United Nations Commission for India and Pakistan of 13 August 1948 and 5 January 1949 (S/1100, para. 75; S/1196) and the Karachi Agreement of 27 July 1949 (S/1430, annex)
+  tried:
+  - https://documents.un.org/doc/undoc/der/nl4/811/00/pdf/nl481100.pdf
+  - https://documents.un.org/doc/undoc/gen/nl4/914/30/pdf/nl491430.pdf
+  status: both were fetched from ODS, but their text layers are OCR noise, so nothing can be pinned; the two resolutions are known here as Security Council resolution 91 (1951) recites them, and the ceasefire and the Karachi Agreement as Schofield describes them
+- what: The Census of Pakistan 1951 volume that counts the migrants from India
+  tried:
+  - https://archive.org/advancedsearch.php?q=title%3A%28census%29+AND+title%3A%28pakistan%29+AND+date%3A%5B1950-01-01+TO+1956-12-31%5D
+  status: no copy found in any open archive; the figure of 7.15 million is known here only as Abbas, Gillani and Ahmad cite it
+- what: The Agreement between India and Pakistan on minorities of 8 April 1950
+  tried:
+  - https://www.mea.gov.in/bilateral-documents.htm?dtl/5947/Agreement+between+India+and+Pakistan+on+the+Minorities
+  status: the Ministry of External Affairs' bilateral-documents address tried served a different agreement, and no other free official copy was located, so the agreement is not described here
+- what: The Constitution of India's official Hindi text, and an Urdu text of Jinnah's address of 11 August 1947
+  tried:
+  - https://legislative.gov.in/constitution-of-india/
+  - https://na.gov.pk/ur/content.php?id=74
+  - https://archive.org/advancedsearch.php?q=title%3A%28%E0%A4%AD%E0%A4%BE%E0%A4%B0%E0%A4%A4+%E0%A4%95%E0%A4%BE+%E0%A4%B8%E0%A4%82%E0%A4%B5%E0%A4%BF%E0%A4%A7%E0%A4%BE%E0%A4%A8%29
+  status: the Legislative Department's page is rendered by script and served no document to this container; the National Assembly of Pakistan's Urdu address answered HTTP 404; the Hindi copies on the Internet Archive are uploaders' copies with no stated source. The citizenship articles are cited in English, an authoritative text of the Constitution, and the address in the English the National Assembly publishes
+- what: Millions on the Move (Publications Division, Government of India) and Brigadier Rajendra Singh's history of the Military Evacuee Organisation, which Kirpal Singh cites
+  tried:
+  - https://archive.org/advancedsearch.php?q=title%3A%28millions+on+the+move%29
+  status: neither was found in an open archive; the evacuation is known here through the joint plan of 20 October 1947 that Kirpal Singh reprints from Rajendra Singh's appendix
+- what: The map and Christopher Beaumont's note that Abell's letter of 8 August 1947 enclosed
+  tried:
+  - https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+  status: Kirpal Singh's collection prints the letter and says the enclosures were published in The Partition of the Punjab 1947, vol. I (Lahore, 1983), pp. 245-247, which no open archive reached from this container holds; the forecast line is known here as the Governor of the Punjab described it in April 1948

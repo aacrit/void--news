@@ -699,6 +699,16 @@ def test_draft_overlay():
         assert "L-03" in {f.id for f in validate_ledger(_load(SLUG, evidence_dir=tp, draft=True))}
 
 
+def test_draft_overlays_validate():
+    """Every committed draft overlay (§15e) passes the ledger's own checks
+    merged with its base, whether or not its draft thesis exists yet."""
+    from pipeline.history.ledger import EVIDENCE, load_ledger as _load
+    for d in sorted(EVIDENCE.glob("*/draft/ledger.yaml")):
+        slug = d.parent.parent.name
+        fails = [f for f in validate_ledger(_load(slug, draft=True)) if f.level == "fail"]
+        assert not fails, f"{slug}/draft: " + "; ".join(f"{f.id} {f.where}: {f.detail}" for f in fails[:12])
+
+
 def test_drafts_are_drafts():
     """A drafts file is never published from the drafts path: it is promoted by
     moving it over the published file, in the commit that folds its ledger
