@@ -1379,7 +1379,12 @@ contested:
         source: src-ordonnance-18250417
         locator: p258-259
       - position: the-indemnity-accountants
-        holds: "The held title dates the indemnity Haiti paid to 1825 to 1883, and the abstract separates that indemnity from the loans Haiti later placed on the Paris market to balance its finances."
+        holds: "The article's title dates the indemnity Haiti paid to 1825 to 1883."
+        figures: []
+        source: src-blancpain-2003
+        locator: sectitle
+      - position: the-indemnity-accountants
+        holds: "The abstract separates that indemnity from the loans Haiti later placed on the Paris market to balance its finances."
         figures: []
         source: src-blancpain-2003
         locator: abstract
