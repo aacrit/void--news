@@ -1724,3 +1724,78 @@ analyses:
         - {document: "Bharadwaj and Mirza 2019, p. 5, citing Bharadwaj, Khwaja and Mian 2008", counts: "displaced across both borders", period: "four years after partition", millions: 14.5, extract: src-bharadwaj-mirza-2019.p5}
         - {document: "Bharadwaj and Mirza 2019, p. 1", counts: "the population transfer, 'nearly'", period: "1947 onward", millions: 17, extract: src-bharadwaj-mirza-2019.p1}
         - {document: "Chatterji 2007, introduction", counts: "Hindu refugees from East Bengal into West Bengal, 'at least'", period: "1947 to 1967", millions: 6, extract: src-chatterji-2007.p1-2}
+
+# ------------------------------------------------------------- recordings
+# Archival audio artifacts (docs/proposals/HISTORY-AUDIO-ARCHIVAL.md §4a).
+# A recording is a factual claim four times over: this speaker, this
+# occasion, this date, these words. Every `*_as_stated` field is copied from
+# the repository's own item page or metadata API as fetched on `fetched_at`,
+# never from memory. `transcript` is verbatim from the ledger extract named in
+# `transcript_extract` (tests/test_history_clips.py asserts it is a substring).
+# `verification` names the record pipeline/history/verify_clip.py wrote; its
+# WER, coverage, excerpt sha256 and verified_at are the check's, never
+# hand-typed. `signed_by` / `signed_at` are the CEO's, per clip, and nothing
+# plays in an episode until both are set (policy B, §2). These rows are read
+# by the History producer only; the thesis page does not render them yet.
+recordings:
+  - id: clip-nehru-tryst-19470814
+    kind: audio
+    title: "Jawaharlal Nehru, Tryst with Destiny, the English passage, in the All India Radio recording"
+    speaker: Jawaharlal Nehru
+    occasion: "Moving the pledge in the Constituent Assembly of India, as the item dates it"
+    date: "1947-08-14"
+    date_as_stated: "1947-08-14 (the item's `date` field)"
+    repository: Internet Archive
+    accession: "HindSwaraj-Speech-03-1"
+    url: "https://archive.org/details/HindSwaraj-Speech-03-1"
+    file: "https://archive.org/download/HindSwaraj-Speech-03-1/tryst.aiff"
+    file_md5: "49220a9c793c8201c761cd6ca2c16c8b"
+    file_md5_as_stated: "the item's metadata API lists this md5 for tryst.aiff (AIFF, 280.94 s, 49,557,412 bytes); the downloaded file matched it on 2026-09-25"
+    title_as_stated: "A Tryst with destiny"
+    creator_as_stated: "Pandit Jawaharlal Nehru"
+    origin_as_stated: "Audio Source: All India Radio (the item's description reads 'Historical Speeches / A Tryst with destiny / Pandit Jawaharlal Nehru / Audio Source: All India Radio')"
+    uploader_as_stated: "carl@media.org, public date 2016-05-04 20:44:29; collections HindSwaraj, JaiGyan"
+    licence_as_stated: "CC0 1.0 (the item's licenseurl is http://creativecommons.org/publicdomain/zero/1.0/)"
+    licence_url: "http://creativecommons.org/publicdomain/zero/1.0/"
+    rights_basis: cc0-as-stated
+    rights_reading: "Government of India work, 60-year term run in India (2007); URAA-restored in the US on the strict reading, to 2043; the CC0 is the uploader's dedication of whatever rights the uploader holds. Admissible under policy B only with the CEO's signature, the basis printed beside the exhibit"
+    fetched_at: 2026-09-25
+    duration_s: 280.94
+    excerpt: {in: "00:00:00.000", out: "00:00:28.050"}
+    transcript_extract: src-cad-19470814.sec53612
+    transcript: "Long years ago we made a tryst with destiny, and now the time comes when we shall redeem our pledge, not wholly or in full measure, but very substantially. At the stroke of the midnight hour, when the world sleeps, India will awake to life and freedom."
+    verification: recordings/clip-nehru-tryst-19470814.verification.json
+    observed: "The file opens on 'Long years ago'. After 'freedom' (about 27.9 s) the source carries about five seconds of unpitched, broadband sound (28.1 to 32.8 s: no voiced pitch, spectral flatness 0.11 to 0.18) that this check could not identify, then 'A moment comes' at 33.7 s. The excerpt ends at 28.05 s, before that sound, so the clip claims nothing about it."
+    shows: "Nehru's voice, in English, from 'Long years ago' to 'life and freedom', the two sentences the episode's document voice otherwise reads"
+    does_not_show: "the Hindustani speech the Debates record before it; the rest of the English passage; and where it was recorded: the item gives a date and 'All India Radio' and nothing else, and the audio carries no sound this check could identify as the hall"
+    signed_by: null
+    signed_at: null
+
+  - id: clip-mountbatten-broadcast-19470603
+    kind: audio
+    title: "Lord Mountbatten, a radio broadcast (occasion and date not verified)"
+    speaker: Lord Mountbatten
+    occasion: null
+    date: null
+    date_as_stated: null
+    repository: "The National Archives (UK), education resources CDN"
+    accession: "documents/education/mountbatten-radio-broadcast.mp3"
+    url: "https://cdn.nationalarchives.gov.uk/documents/education/mountbatten-radio-broadcast.mp3"
+    file: "https://cdn.nationalarchives.gov.uk/documents/education/mountbatten-radio-broadcast.mp3"
+    file_md5: null
+    file_md5_as_stated: "HTTP 200, audio/mpeg, content-length 8,385,096, last-modified 2021-09-15 (a HEAD request, 2026-09-25); no checksum published"
+    origin_as_stated: null
+    licence_as_stated: "site-wide 'Open Government Licence v3.0, except where otherwise stated'; the copyright page excludes material identified as the copyright of a third party"
+    licence_url: "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+    rights_basis: ogl-site-wide-unconfirmed
+    rights_reading: "a broadcast recording is BBC or AIR material, not the Crown's, and nothing found names OGL for this file. Fails policy B until a page naming the licence for this file is found"
+    fetched_at: 2026-09-25
+    duration_s: null
+    excerpt: null
+    transcript_extract: null
+    transcript: null
+    verification: null
+    shows: null
+    does_not_show: null
+    signed_by: null
+    signed_at: null
