@@ -3,11 +3,7 @@ name: Database Quality Audit
 permissions: {}
 
 on:
-  schedule:
-    # Run once after the single daily pipeline (11:00 UTC, finishes ~11:30).
-    # The old 19:30/01:30 crons audited a 3x/day cadence that no longer
-    # exists -- two of three runs re-audited identical data.
-    - cron: '30 12 * * *'     # ~1h after the 11:00 UTC pipeline (7:30 AM Chicago)
+  # Schedule removed 2026-09-24: it audits Supabase, decommissioned 2026-09-01, and failed daily from 2026-09-21. Manual dispatch kept.
   workflow_dispatch:
     inputs:
       verbose:

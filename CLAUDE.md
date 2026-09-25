@@ -278,9 +278,9 @@ Do NOT "fix" a failure here by reconnecting Supabase:
 
 | Job | Cron | Reality |
 |---|---|---|
-| `feed-snapshot.yml` | 16:00 | Commits EMPTY snapshots (73 bytes, `count: 0`) |
+| `feed-snapshot.yml` | none (unscheduled 2026-09-24) | Committed EMPTY snapshots, then failed daily from 09-21; manual only |
 | `db-cleanup.yml` | 09:00 | Prunes a database nothing reads |
-| `audit-db.yml` | 12:30 | Audits the dead DB |
+| `audit-db.yml` | none (unscheduled 2026-09-24) | Audits the dead DB; failed daily from 09-21; manual only |
 | `freshness-check.yml` | 15:00 | Repointed rev 66 — reads `feed.json.builtAt`, no Supabase |
 | `curate-ship.yml` | manual | Targets `ship_requests`, which lives in D1 now |
 | `refresh-brief`, `editorial`, `eval`, `ig-*`, history/revolt loaders | manual | Supabase env, no `VOID_SQLITE_PATH` |
