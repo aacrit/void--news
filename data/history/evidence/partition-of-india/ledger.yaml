@@ -499,6 +499,31 @@ entries:
     rights: public
     notes: "a 1948 government record; the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it"
 
+  - id: src-kirpal-intro-recovery
+    tier: B
+    kind: edited-documents
+    author: Kirpal Singh
+    title: "Introduction, Recovery of Abducted Women: the decisions of the Governments of India and Pakistan of 6 December 1947"
+    container: "Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, editor's introduction"
+    publisher: National Book Shop
+    place: Delhi
+    year: 2005
+    edition: "2nd edition of the collection, 2005 (1st 1991), read from the Internet Archive scan"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "select-documents-on-partition-of-punjab-1947", hathitrust: null, url: "https://archive.org/details/select-documents-on-partition-of-punjab-1947"}
+    access:
+      free_copy: "https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Recovery of Abducted Women"
+    language: en
+    region_of_authorship: south-asia
+    producer: historian-editor
+    position: null
+    rights: quoted-under-cap
+    notes: "the editor's own summary of the three decisions of the Inter-Dominion meeting of 6 December 1947, held as one passage under the cap; the agreement's own text is not in the collection as a document, so the decisions are known here as the editor states them; verified_title is the section heading as the fetched text prints it"
+
   - id: src-sikh-note-1942
     tier: A
     kind: primary-document
@@ -770,7 +795,7 @@ entries:
     producer: punjabi-poet
     position: sikh-panthic
     rights: null
-    notes: "a copyrighted poem, held only as the eight lines cited. The rendering beside it is a Void translation; Punjabi is on the proposal's weaker list, so the rendering carries a stated moderate confidence and a back-translation was made in a separate pass: 'ਅੱਜ ਮੈਂ ਵਾਰਸ ਸ਼ਾਹ ਨੂੰ ਆਖਦੀ ਹਾਂ, ਆਪਣੀ ਕਬਰ ਵਿੱਚੋਂ ਕਿਤੋਂ ਬੋਲ, ਤੇ ਅੱਜ ਇਸ਼ਕ ਦੀ ਕਿਤਾਬ ਦਾ ਕੋਈ ਅਗਲਾ ਵਰਕਾ ਖੋਲ੍ਹ। ਪੰਜਾਬ ਦੀ ਇੱਕ ਧੀ ਰੋਈ ਸੀ ਤੇ ਤੂੰ ਉਸ ਦੇ ਵੈਣ ਲਿਖਦਾ ਰਿਹਾ; ਅੱਜ ਲੱਖਾਂ ਧੀਆਂ ਰੋਂਦੀਆਂ ਤੈਨੂੰ ਵਾਰਸ ਸ਼ਾਹ ਨੂੰ ਆਖਦੀਆਂ ਹਨ: ਉੱਠ, ਦੁਖੀਆਂ ਦੇ ਦਰਦੀ, ਉੱਠ ਤੇ ਆਪਣਾ ਪੰਜਾਬ ਵੇਖ; ਅੱਜ ਬੇਲਿਆਂ ਵਿੱਚ ਲਾਸ਼ਾਂ ਵਿਛੀਆਂ ਹਨ ਤੇ ਚਨਾਬ ਲਹੂ ਨਾਲ ਭਰਿਆ ਹੈ। ਕਿਸੇ ਨੇ ਪੰਜਾਂ ਪਾਣੀਆਂ ਵਿੱਚ ਜ਼ਹਿਰ ਰਲਾ ਦਿੱਤਾ, ਤੇ ਉਨ੍ਹਾਂ ਹੀ ਪਾਣੀਆਂ ਨੇ ਧਰਤੀ ਨੂੰ ਸਿੰਜਿਆ।' The back-translation keeps every name (Waris Shah, Punjab, Chenab) and the one count (lakhs); it loses nothing the original carries and adds nothing"
+    notes: "a copyrighted poem, held only as the eight lines cited. The rendering beside it is a Void translation; Punjabi is on the proposal's weaker list, so the rendering carries a stated moderate confidence and a back-translation was made in a separate pass: 'ਅੱਜ ਮੈਂ ਵਾਰਸ ਸ਼ਾਹ ਨੂੰ ਆਖਦੀ ਹਾਂ, ਕਬਰਾਂ ਵਿੱਚੋਂ ਕਿਤੋਂ ਬੋਲ, ਤੇ ਅੱਜ ਇਸ਼ਕ ਦੀ ਕਿਤਾਬ ਦਾ ਕੋਈ ਅਗਲਾ ਵਰਕਾ ਖੋਲ੍ਹ। ਪੰਜਾਬ ਦੀ ਇੱਕ ਧੀ ਰੋਈ ਸੀ ਤੇ ਤੂੰ ਉਸ ਦੇ ਵੈਣ ਲਿਖਦਾ ਰਿਹਾ; ਅੱਜ ਲੱਖਾਂ ਧੀਆਂ ਰੋਂਦੀਆਂ ਤੈਨੂੰ ਵਾਰਸ ਸ਼ਾਹ ਨੂੰ ਆਖਦੀਆਂ ਹਨ: ਉੱਠ, ਦੁਖੀਆਂ ਦੇ ਦਰਦੀ, ਉੱਠ ਤੇ ਆਪਣਾ ਪੰਜਾਬ ਵੇਖ; ਅੱਜ ਬੇਲਿਆਂ ਵਿੱਚ ਲਾਸ਼ਾਂ ਵਿਛੀਆਂ ਹਨ ਤੇ ਚਨਾਬ ਲਹੂ ਨਾਲ ਭਰਿਆ ਹੈ। ਕਿਸੇ ਨੇ ਪੰਜਾਂ ਪਾਣੀਆਂ ਵਿੱਚ ਜ਼ਹਿਰ ਰਲਾ ਦਿੱਤਾ, ਤੇ ਉਨ੍ਹਾਂ ਹੀ ਪਾਣੀਆਂ ਨੇ ਧਰਤੀ ਨੂੰ ਸਿੰਜਿਆ।' The back-translation keeps every name (Waris Shah, Punjab, Chenab) and the one count (lakhs); it loses nothing the original carries and adds nothing"
 
   # ----------------------------------------------------------- Tier B: peer-reviewed scholarship
   - id: src-bharadwaj-mirza-2019
@@ -1272,6 +1297,15 @@ gaps:
   - what: "The Transfer of Power volumes beyond the five extracts the cap allows from each: Mountbatten's Personal Report No. 17 of 16 August 1947 (vol. XII, No. 489), which is his own account of withholding the awards until after 15 August, and the Punjab Boundary Force's establishment and reinforcement"
     tried: ["https://archive.org/download/indiatransferofp12nich/indiatransferofp12nich_djvu.txt"]
     status: "fetched whole, but Crown copyright, so held only as five passages; the volume's introduction says the awards were 'not published till 16 August' and this thesis states the publication date only as that"
+  - what: "The report of Mr. Justice Muhammad Munir of 6 August 1947, the second of the two League-nominated members of the Punjab Boundary Commission"
+    tried: ["https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt"]
+    status: "the collection carries it at pages 409 to 444 and it was fetched with the rest, but it was not sliced or read against the thesis in this pass; the League's case before the commission is therefore held from Din Mohammad alone, and under Rule B the Pakistani judges' reasoning rests on one of its two authors"
+  - what: "A Bengali survivor's testimony of the eastern partition, in any language"
+    tried: ["https://www.1947partitionarchive.org/", "https://api.openalex.org/works?filter=language:bn,open_access.is_oa:true,default.search:1947"]
+    status: "the four testimonies held are all of the Punjab; no free, readable first-person account from Bengal was found, so the eastern partition is known here through scholarship and the award"
+  - what: "A Dalit voice on the partition, or on caste inside the migration and the camps"
+    tried: ["https://doi.org/10.1093/acprof:oso/9780195683776.001.0001"]
+    status: "Kaur's chapter on caste inside the rehabilitation of Punjabi migrants is paywalled, and no testimony in this record names caste; the record holds no Dalit voice"
   - what: "Census of India 1941, Volume VI, Punjab, with the district and tehsil tables by community that the Boundary Commission's parties argued from"
     tried: ["https://archive.org/advancedsearch.php?q=census+of+india+1941+punjab", "https://archive.org/details/in.ernet.dli.2015.547583"]
     status: "the Internet Archive holds the Punjab age tables only (in.ernet.dli.2015.547583); the community tables by district are known here as the commission's own members reproduce them"
@@ -1304,7 +1338,7 @@ positions:
     holders: ["Attlee (Commons, 3 June and 10 July 1947)", "Listowel (Lords, 16 July 1947)", "Mountbatten and his staff (Transfer of Power, vols. XI and XII)", "Jenkins, Governor of the Punjab", "Talbot (2019)"]
     rests_on: [src-hansard-19470603, src-hansard-19470710, src-hansard-lords-19470716, src-top-xi, src-top-xii, src-jenkins-punjab-problem-1947, src-mountbatten-press-19470604, src-talbot-2019]
     claim: "Partition was the Indian parties' choice and the notional division, the commissions and their terms were theirs; the Viceroy kept out of the award; haste was the price of a divided government."
-    omits: "What the Viceroy's own staff wrote about Gurdaspur and Kashmir before the award, and the strength at which the Governor found the Boundary Force on the day the award was signed."
+    omits: "What the Viceroy's own staff wrote about Gurdaspur and Kashmir before the award, and the strength at which the Governor found the Boundary Force the day after the award was signed."
     adjudications:
       - claim: "The 1941 census figures were to be taken as authoritative for the notional division, and the Boundary Commissions were to work from contiguous majority areas plus other factors."
         verdict: supported
@@ -1338,7 +1372,7 @@ positions:
     holders: ["Jinnah (Constituent Assembly of Pakistan, 11 August 1947)", "the Muslim League (memorandum to the Punjab Boundary Commission)", "Din Mohammad (Boundary Commission report, 5 August 1947)", "Liaquat Ali Khan (message of 11 August 1947)", "Hanif (2020)", "Jalal (1985)"]
     rests_on: [src-jinnah-19470811, src-league-memo-1947, src-dinmohammad-1947, src-hanif-2020, src-jalal-1985]
     claim: "Division was the only solution; Gurdaspur was a Muslim-majority district by the census the plan itself made authoritative, and its award to India was a political decision; Kashmir's accession is to be decided by a plebiscite the Security Council called for."
-    omits: "The award's own stated reasons, which are canals, railways and the Sutlej, and the 1942 Sikh note that had already listed Gurdaspur at 50.8 per cent by the 1931 census."
+    omits: "The award's one stated ground touching Gurdaspur by name, the Upper Bari Doab Canal from Madhopur in Pathankot; and the 1942 Sikh note listing Gurdaspur at 50.8 per cent by the 1931 census."
     adjudications:
       - claim: "Gurdaspur had a Muslim majority by the 1941 census: 51.14 per cent, with three of its four tehsils Muslim-majority."
         verdict: supported
@@ -1348,8 +1382,8 @@ positions:
       - claim: "The allocation of Gurdaspur to East Punjab was a political decision, not a judicial one."
         verdict: qualified
         basis: presence
-        rests_on: [src-top-xii.item335, src-top-xii.item428, src-radcliffe-punjab.para9, src-radcliffe-punjab.para11]
-        reasoning: "The Viceroy's staff recorded him, on 4 August, treating part of Gurdaspur's transfer to East Punjab as the condition of Kashmir's freedom to join either Dominion, eight days before the award; Ismay's reply to Liaquat denies any influence. The award itself gives canals, railways and the Ravi as the reasons and says nothing of Kashmir. The papers show the motive existed on the Viceroy's side; no document in this record shows it reached Radcliffe, so the claim is qualified, not supported."
+        rests_on: [src-top-xii.item335, src-top-xii.item428, src-radcliffe-punjab.para9, src-radcliffe-punjab.para11, src-radcliffe-punjab.item1]
+        reasoning: "The Viceroy's staff recorded him, on 4 August, treating part of Gurdaspur's transfer to East Punjab as the condition of Kashmir's freedom to join either Dominion, eight days before the award; Ismay's reply to Liaquat denies any influence. The award's reasons say nothing of Kashmir; the one ground it states that touches Gurdaspur by name is the Upper Bari Doab Canal from Madhopur in the Pathankot Tahsil, and the schedule names the State of Kashmir only as where the Ujh enters the Punjab. The papers show the motive existed on the Viceroy's side; no document in this record shows it reached Radcliffe, so the claim is qualified, not supported."
       - claim: "The Security Council resolved that the accession of Jammu and Kashmir should be decided by a free and impartial plebiscite."
         verdict: supported
         basis: presence
@@ -1393,16 +1427,16 @@ positions:
         would_settle: "the Census of India 1951 and 1961 displaced-persons tables for West Bengal, which no open archive reached from this container holds"
   - id: women-and-recovery
     name: The feminist and subaltern account
-    holders: ["Butalia (1998)", "Menon and Bhasin (1998)", "Pandey (2001)", "Kaur (2007)", "Dey (2018)"]
-    rests_on: [src-dey-2018, src-butalia-1998, src-menon-bhasin-1998, src-pandey-2001, src-kaur-2007]
+    holders: ["Butalia (1998)", "Menon and Bhasin (1998)", "Pandey (2001)", "Kaur (2007)", "Dey (2018)", "the Inter-Dominion decisions of 6 December 1947, as Kirpal Singh summarises them"]
+    rests_on: [src-dey-2018, src-butalia-1998, src-menon-bhasin-1998, src-pandey-2001, src-kaur-2007, src-kirpal-intro-recovery]
     claim: "The violence was done on women's bodies as a message between communities, and the two states' recovery of abducted women, decided on 6 December 1947 'even against the wishes of persons concerned', abducted them a second time."
     omits: "The recovered women who wished to return, whom the liaison reports count without naming, and the men killed in the same columns."
     adjudications:
       - claim: "Recovery was slow, contested by the courts, and done against the recovered women's stated wishes."
         verdict: qualified
         basis: presence
-        rests_on: [src-clo-19480429.p610-611, src-pa-sarla-dutta.para6]
-        reasoning: "The Chief Liaison Officer's letter of April 1948 counts 16 women and 10 children recovered in Sheikhupura in a month against about 100 still to find, and 'clues' held for 47; Sarla Dutta's account has an army search reach her abductor's house and her own scream from inside a seed drum bring her out. An official record and a survivor agree that recovery was slow and contested; on consent they point opposite ways, so the verdict is qualified."
+        rests_on: [src-clo-19480429.p610-611, src-pa-sarla-dutta.para6, src-kirpal-intro-recovery.secxxxi]
+        reasoning: "The two governments' decision of 6 December 1947, as the editor summarises it, was that all persons abducted after March 1947 were to be restored 'even against the wishes of persons concerned'. The Chief Liaison Officer's letter of April 1948 counts 16 women and 10 children recovered in Sheikhupura in a month against about 100 still to find, and 'clues' held for 47; Sarla Dutta's account has an army search reach her abductor's house and her own scream from inside a seed drum bring her out. An official record and a survivor agree that recovery was slow and contested; on consent they point opposite ways, so the verdict is qualified."
       - claim: "About 75,000 women were abducted."
         verdict: untestable
         basis: absence
@@ -1469,7 +1503,7 @@ contested:
     claim: "Why Gurdaspur went to India"
     rows:
       - position: british-administrative
-        holds: "The district's Muslim share was 50.4 per cent against 49.6, a difference of 0.8, so it was unlikely the commission would place the whole district in the Muslim majority area; the award was Radcliffe's alone."
+        holds: "The district's Muslim share was 50.4 per cent against 49.6, a difference of 0.8, so it was unlikely the commission would place the whole district in the Muslim majority area."
         figures: ["50.4", "49.6", "0.8"]
         source: src-mountbatten-press-19470604
         locator: p99-100
@@ -1593,63 +1627,62 @@ exhibits:
 analyses:
   - id: an-notional-vs-award
     title: The notional line against the award, district by district
-    method: "Every district the award's schedules name or place, one row per district, read against the Appendix to the Statement of 3 June 1947 (src-top-xi.item45), which lists the Muslim-majority districts by the 1941 census. The listed column is read from the appendix; the award column from the schedule paragraph the row cites, the districts west of the Bengal line and the remainder rule for the rest; crossed is yes where the award put a listed district wholly or mostly on the non-Muslim side or an unlisted district on the Muslim side, part where the schedule divides the district along thana lines, and no otherwise. The result is the share of rows crossed."
+    method: "Every district the award's schedules name or place, one row per district, read against the Appendix to the Statement of 3 June 1947 (src-top-xi.item45), which lists the Muslim-majority districts by the 1941 census. The listed column is read from the appendix; the award column from the schedule paragraph the row cites, the districts west of the Bengal line and the remainder rule for the rest; crossed is yes where the award put a listed district wholly or mostly on the non-Muslim side or an unlisted district on the Muslim side, part where the schedule divides the district along thana lines, and no otherwise; crossed_n is 1 for yes and 0 otherwise. The result is the sum of crossed_n, the number of districts the award put across the line. No share is given, because the schedules place every other district of both provinces by remainder and the two documents let this thesis name only the 40 rows below."
     finding: "Of the 40 districts the two documents let this thesis place, the award put 4 across the notional line: Murshidabad, Khulna and the Chittagong Hill Tracts in Bengal, and Gurdaspur, three of whose four tehsils went east, in the Punjab; 5 more it divided along thana lines. The other 31 fell where the 3 June list had put them."
     confidence: "high for the whole districts, whose side the schedule states in words; moderate for the divided ones, where which part is larger is this thesis's reading of the thana list"
     against: "the Bengal report itself says the parties propounded the most diverse solutions and that the province offers few satisfactory natural boundaries, so a count of crossings measures the award against the notional list, not against any alternative line; the Sylhet transfer, decided by referendum and a separate report, is outside the count"
-    result: 0.1
+    result: 4
     derivation:
-      compute: share
-      column: crossed
-      of: "yes"
-      columns: [province, district, listed, award, crossed]
+      compute: sum
+      column: crossed_n
+      columns: [province, district, listed, award, crossed, crossed_n]
       rows:
-        - {province: Bengal, district: Chittagong, listed: "yes", award: East Bengal, crossed: "no", extract: src-radcliffe-bengal.item2}
-        - {province: Bengal, district: Noakhali, listed: "yes", award: East Bengal, crossed: "no", extract: src-radcliffe-bengal.item2}
-        - {province: Bengal, district: Tippera, listed: "yes", award: East Bengal, crossed: "no", extract: src-radcliffe-bengal.item2}
-        - {province: Bengal, district: Bakarganj, listed: "yes", award: East Bengal, crossed: "no", extract: src-radcliffe-bengal.item2}
-        - {province: Bengal, district: Dacca, listed: "yes", award: East Bengal, crossed: "no", extract: src-radcliffe-bengal.item2}
-        - {province: Bengal, district: Faridpur, listed: "yes", award: East Bengal, crossed: "no", extract: src-radcliffe-bengal.item2}
-        - {province: Bengal, district: Mymensingh, listed: "yes", award: East Bengal, crossed: "no", extract: src-radcliffe-bengal.item2}
-        - {province: Bengal, district: Bogra, listed: "yes", award: East Bengal, crossed: "no", extract: src-radcliffe-bengal.item2}
-        - {province: Bengal, district: Pabna, listed: "yes", award: East Bengal, crossed: "no", extract: src-radcliffe-bengal.item2}
-        - {province: Bengal, district: Rajshahi, listed: "yes", award: East Bengal, crossed: "no", extract: src-radcliffe-bengal.item5}
-        - {province: Bengal, district: Rangpur, listed: "yes", award: East Bengal, crossed: "no", extract: src-radcliffe-bengal.item2}
-        - {province: Bengal, district: Dinajpur, listed: "yes", award: divided along thana boundaries, crossed: part, extract: src-radcliffe-bengal.item3}
-        - {province: Bengal, district: Malda, listed: "yes", award: divided along thana boundaries, crossed: part, extract: src-radcliffe-bengal.item4}
-        - {province: Bengal, district: Murshidabad, listed: "yes", award: West Bengal, crossed: "yes", extract: src-radcliffe-bengal.item5}
-        - {province: Bengal, district: Nadia, listed: "yes", award: divided along thana boundaries, crossed: part, extract: src-radcliffe-bengal.item7}
-        - {province: Bengal, district: Jessore, listed: "yes", award: divided along thana boundaries, crossed: part, extract: src-radcliffe-bengal.item7}
-        - {province: Bengal, district: Khulna, listed: "no", award: East Bengal, crossed: "yes", extract: src-radcliffe-bengal.item8}
-        - {province: Bengal, district: 24-Parganas, listed: "no", award: West Bengal, crossed: "no", extract: src-radcliffe-bengal.item8}
-        - {province: Bengal, district: Darjeeling, listed: "no", award: West Bengal, crossed: "no", extract: src-radcliffe-bengal.item1}
-        - {province: Bengal, district: Jalpaiguri, listed: "no", award: divided along thana boundaries, crossed: part, extract: src-radcliffe-bengal.item1}
-        - {province: Bengal, district: Chittagong Hill Tracts, listed: "no", award: East Bengal, crossed: "yes", extract: src-radcliffe-bengal.item2}
-        - {province: Punjab, district: Gurdaspur, listed: "yes", award: East Punjab except the Shakargarh tahsil, crossed: "yes", extract: src-radcliffe-punjab.item2}
-        - {province: Punjab, district: Lahore, listed: "yes", award: West Punjab, crossed: "no", extract: src-radcliffe-punjab.item2}
-        - {province: Punjab, district: Sialkot, listed: "yes", award: West Punjab, crossed: "no", extract: src-radcliffe-punjab.item2}
-        - {province: Punjab, district: Gujranwala, listed: "yes", award: West Punjab, crossed: "no", extract: src-radcliffe-punjab.item6}
-        - {province: Punjab, district: Sheikhupura, listed: "yes", award: West Punjab, crossed: "no", extract: src-radcliffe-punjab.item6}
-        - {province: Punjab, district: Attock, listed: "yes", award: West Punjab, crossed: "no", extract: src-radcliffe-punjab.item6}
-        - {province: Punjab, district: Gujrat, listed: "yes", award: West Punjab, crossed: "no", extract: src-radcliffe-punjab.item6}
-        - {province: Punjab, district: Jhelum, listed: "yes", award: West Punjab, crossed: "no", extract: src-radcliffe-punjab.item6}
-        - {province: Punjab, district: Mianwali, listed: "yes", award: West Punjab, crossed: "no", extract: src-radcliffe-punjab.item6}
-        - {province: Punjab, district: Rawalpindi, listed: "yes", award: West Punjab, crossed: "no", extract: src-radcliffe-punjab.item6}
-        - {province: Punjab, district: Shahpur, listed: "yes", award: West Punjab, crossed: "no", extract: src-radcliffe-punjab.item6}
-        - {province: Punjab, district: Dera Ghazi Khan, listed: "yes", award: West Punjab, crossed: "no", extract: src-radcliffe-punjab.item6}
-        - {province: Punjab, district: Jhang, listed: "yes", award: West Punjab, crossed: "no", extract: src-radcliffe-punjab.item6}
-        - {province: Punjab, district: Lyallpur, listed: "yes", award: West Punjab, crossed: "no", extract: src-radcliffe-punjab.item6}
-        - {province: Punjab, district: Montgomery, listed: "yes", award: West Punjab, crossed: "no", extract: src-radcliffe-punjab.item4}
-        - {province: Punjab, district: Multan, listed: "yes", award: West Punjab, crossed: "no", extract: src-radcliffe-punjab.item6}
-        - {province: Punjab, district: Muzaffargarh, listed: "yes", award: West Punjab, crossed: "no", extract: src-radcliffe-punjab.item6}
-        - {province: Punjab, district: Amritsar, listed: "no", award: East Punjab, crossed: "no", extract: src-radcliffe-punjab.item2}
-        - {province: Punjab, district: Ferozepore, listed: "no", award: East Punjab, crossed: "no", extract: src-radcliffe-punjab.item4}
+        - {province: Bengal, district: Chittagong, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Noakhali, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Tippera, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Bakarganj, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Dacca, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Faridpur, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Mymensingh, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Bogra, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Pabna, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Rajshahi, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item5}
+        - {province: Bengal, district: Rangpur, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Dinajpur, listed: "yes", award: divided along thana boundaries, crossed: part, crossed_n: 0, extract: src-radcliffe-bengal.item3}
+        - {province: Bengal, district: Malda, listed: "yes", award: divided along thana boundaries, crossed: part, crossed_n: 0, extract: src-radcliffe-bengal.item4}
+        - {province: Bengal, district: Murshidabad, listed: "yes", award: West Bengal, crossed: "yes", crossed_n: 1, extract: src-radcliffe-bengal.item5}
+        - {province: Bengal, district: Nadia, listed: "yes", award: divided along thana boundaries, crossed: part, crossed_n: 0, extract: src-radcliffe-bengal.item7}
+        - {province: Bengal, district: Jessore, listed: "yes", award: divided along thana boundaries, crossed: part, crossed_n: 0, extract: src-radcliffe-bengal.item7}
+        - {province: Bengal, district: Khulna, listed: "no", award: East Bengal, crossed: "yes", crossed_n: 1, extract: src-radcliffe-bengal.item8}
+        - {province: Bengal, district: 24-Parganas, listed: "no", award: West Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item8}
+        - {province: Bengal, district: Darjeeling, listed: "no", award: West Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item1}
+        - {province: Bengal, district: Jalpaiguri, listed: "no", award: divided along thana boundaries, crossed: part, crossed_n: 0, extract: src-radcliffe-bengal.item1}
+        - {province: Bengal, district: Chittagong Hill Tracts, listed: "no", award: East Bengal, crossed: "yes", crossed_n: 1, extract: src-radcliffe-bengal.item2}
+        - {province: Punjab, district: Gurdaspur, listed: "yes", award: East Punjab except the Shakargarh tahsil, crossed: "yes", crossed_n: 1, extract: src-radcliffe-punjab.item2}
+        - {province: Punjab, district: Lahore, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item2}
+        - {province: Punjab, district: Sialkot, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item2}
+        - {province: Punjab, district: Gujranwala, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Sheikhupura, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Attock, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Gujrat, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Jhelum, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Mianwali, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Rawalpindi, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Shahpur, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Dera Ghazi Khan, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Jhang, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Lyallpur, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Montgomery, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item4}
+        - {province: Punjab, district: Multan, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Muzaffargarh, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Amritsar, listed: "no", award: East Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item2}
+        - {province: Punjab, district: Ferozepore, listed: "no", award: East Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item4}
   - id: an-rifles-per-head
-    title: One rifle for every 1,600 people
+    title: One rifle for at least 1,600 people
     method: "The Governor of the Punjab's telegram of 8 August 1947 gives the Boundary Force's strength as 5 brigade groups averaging 1,500 effective rifles, 7,500 in all, for 12 districts with a population of no less than 12 million. One row; the result is the population divided by the rifles."
-    finding: "By the Governor's own figures on the day the commission adjourned to Simla, the Boundary Force had one effective rifle for every 1,600 people in the 12 districts it was to hold."
+    finding: "By the Governor's telegram of 8 August 1947, the Boundary Force had, in addition to police, one effective rifle for at least 1,600 people in the 12 districts it was to hold: the telegram says 'no less than 12 million', so the ratio is a floor."
     confidence: "high: both figures sit in one sentence of one telegram, and the result is a division"
-    against: "the same Governor's letter of 13 August gives 14.5 million people and about 9,000 including static troops and training centres, which is one rifle to about 1,611, and 17,932 inhabited towns and villages; and he had estimated the need at a minimum of about 20,000 effective fighting men, so the ratio measures the force he had, not the force the task needed"
+    against: "the strength is 'in addition to police', whose numbers the telegram does not give, so the ratio counts the Force alone; the same Governor's letter of 13 August gives 14.5 million people and about 9,000 including static troops and training centres, which is one rifle to about 1,611, and 17,932 inhabited towns and villages; and he had estimated the need at a minimum of about 20,000 effective fighting men, so the ratio measures the force he had, not the force the task needed"
     result: 1600
     derivation:
       compute: ratio
@@ -1660,30 +1693,30 @@ analyses:
         - {document: "Jenkins to Mountbatten, telegram No. 219-G, 8 August 1947, paragraph 4", population: 12000000, rifles: 7500, extract: src-top-xii.item382}
   - id: an-gurdaspur-counts
     title: Every count of Gurdaspur in the record
-    method: "Every figure a fetched document gives for the Muslim share of Gurdaspur district's population, one row per figure, with the document, its census year and the side it was written from. The result is the range of the column."
-    finding: "Four documents from four sides put the Muslim share of Gurdaspur between 50.4 and 51.14 per cent, and no document in the record puts it below half; the one count that runs the other way is not of people but of voters."
-    confidence: "high for the range, which is the extreme of four figures from four documents; the figures rest on two censuses, so the range spans 1931 and 1941 rather than one count"
+    method: "Every figure a fetched document gives for the Muslim share of Gurdaspur district's people, one row per figure, with the document, its census year and the side it was written from; where the document gives counts rather than a share (the Governor's 590,000 Muslims and 560,000 non-Muslims), the share is the Muslim count over the two, to one decimal. The result is the range of the column."
+    finding: "Five documents from five sides put the Muslim share of Gurdaspur's people between 50.4 and 51.3 per cent, and no count of its people in the record puts it below half; the one count that runs the other way is of voters, 74,790 Muslim to 81,525 non-Muslim, which is 47.8 per cent."
+    confidence: "high for the range, which is the extreme of five figures from five documents; the figures rest on two censuses, so the range spans 1931 and 1941 rather than one count"
     against: "the Congress-nominated judge's report carries an affidavit that reduces the 1941 majority from 26,435 to about 20,000 and electoral rolls with 81,525 non-Muslim voters to 74,790 Muslim; the Viceroy's 50.4 is described by the League's judge as an error, and the Viceroy himself said 'I think' when he gave it"
-    result: [50.4, 51.14]
+    result: [50.4, 51.3]
     derivation:
       compute: range
       column: muslim_share
       columns: [document, census, side, muslim_share]
       rows:
         - {document: "Note on the Sikhs' Position, 1942, district table", census: 1931, side: "Sikh All Parties Committee", muslim_share: 50.8, extract: src-sikh-note-1942.p7}
+        - {document: "Jenkins, The Punjab Problem, 7 March 1947 (590,000 Muslims, 560,000 non-Muslims)", census: 1941, side: "Governor of the Punjab", muslim_share: 51.3, extract: src-jenkins-punjab-problem-1947.p19-20}
         - {document: "Mountbatten, press conference of 4 June 1947", census: 1941, side: "the Viceroy", muslim_share: 50.4, extract: src-mountbatten-press-19470604.p99-100}
         - {document: "Din Mohammad, report of 5 August 1947", census: 1941, side: "League-nominated judge", muslim_share: 51.14, extract: src-dinmohammad-1947.p383-385}
         - {document: "Mahajan, report of 3 August 1947", census: 1941, side: "Congress-nominated judge", muslim_share: 51.14, extract: src-mahajan-1947.p327-328}
   - id: an-migration-counts
     title: One migration, five counts
-    method: "Every figure the fetched documents give for the number of people displaced by the partition, one row per figure, in millions as the document states it, with the border, the period and the direction each figure counts. The result is the range of the column."
-    finding: "The record counts the displaced at between 6 and 17 million, and the five figures count five different things: one border by December 1947, one direction by 1951, both borders over four years, the whole transfer, and one province over twenty years."
-    confidence: "moderate: the range is the extreme of five figures from three documents of two producers, but the figures do not count the same population or the same years, so the range is a spread of definitions before it is a spread of estimates"
+    method: "Every figure the fetched documents give for the number of people displaced by the partition, one row per figure, in millions as the document states it, with the border, the period and the direction each figure counts. The result is the number of rows. No range is taken across them, because they do not count the same thing."
+    finding: "The record holds five counts of five different things: one border by December 1947 (8.5 million), one direction by 1951 (7.3 million), both borders over four years (14.5 million), the whole transfer (nearly 17 million), and one province over twenty years (at least 6 million). The only two that count the whole transfer are the economists' own, 14.5 to 17 million, both from Bharadwaj and Mirza, the first citing Bharadwaj, Khwaja and Mian."
+    confidence: "high for the count of rows; the 14.5 to 17 span is one producer's, and the other three are not comparable with it or with each other"
     against: "the SGPC compilation's 'over twelve millions' and the Indian fact-finding body's warning that refugee estimates 'do not give a true picture' are both in the record and neither is a digit this table can hold; the Hansard figure is 'or thereabouts' and covers the Punjab only"
-    result: [6, 17]
+    result: 5
     derivation:
-      compute: range
-      column: millions
+      compute: count
       columns: [document, counts, period, millions]
       rows:
         - {document: "Noel-Baker, Commons, 18 December 1947", counts: "moved between East and West Punjab, both ways", period: "to December 1947", millions: 8.5, extract: src-hansard-19471218.p1845}
