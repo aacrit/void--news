@@ -30,7 +30,7 @@ entries:
       free_copy: "https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt"
       verified_at: 2026-09-25
       verified_by: archive-item-fetch
-      verified_title: "The map of Africa by treaty"
+      verified_title: "GENERAL ACT of the Conference of Berlin"
     language: en
     region_of_authorship: europe
     producer: signatory-powers
@@ -55,7 +55,7 @@ entries:
       free_copy: "https://archive.org/download/mapofafricabytre01hert/mapofafricabytre01hert_djvu.txt"
       verified_at: 2026-09-25
       verified_by: archive-item-fetch
-      verified_title: "The map of Africa by treaty"
+      verified_title: "BRITISH SOUTH AFRICA CO. [Charter.]"
     language: en
     region_of_authorship: europe
     producer: british-crown
@@ -67,7 +67,7 @@ entries:
     tier: A
     kind: letter
     author: Menelik II, King of Kings of Ethiopia, to James Rennell Rodd
-    title: "Letter to Mr. Rodd on the Amharic and English versions of the Treaty of 14 May 1897"
+    title: "The Emperor Menelek to Mr. Rodd: letter on the Amharic and English versions of the Treaty, 14 May 1897"
     container: "Sir E. Hertslet, The Map of Africa by Treaty, 3rd edition, vol. II, No. 99, Annex 2"
     publisher: Harrison and Sons for His Majesty's Stationery Office
     place: London
@@ -80,7 +80,7 @@ entries:
       free_copy: "https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt"
       verified_at: 2026-09-25
       verified_by: archive-item-fetch
-      verified_title: "The map of Africa by treaty"
+      verified_title: "The Emperor Menelek to Mr. Rodd"
     language: en
     region_of_authorship: africa
     producer: ethiopian-emperor
@@ -215,7 +215,7 @@ entries:
     tier: A
     kind: primary-document
     author: Lothar von Trotha, Kommandeur der Kaiserlichen Schutztruppe
-    title: "Proklamation an das Volk der Herero und Zusatzbefehl an die Schutztruppe (the Vernichtungsbefehl), Osombo-Windhuk, 2 October 1904"
+    title: "Lothar von Trothas Vernichtungsbefehl (2. Oktober 1904): Proklamation an das Volk der Herero und Zusatzbefehl an die Schutztruppe"
     container: "German History in Documents and Images (GHDI), Wilhelminisches Kaiserreich, Internationale Beziehungen, document 5478"
     publisher: Deutsches Historisches Institut Washington
     place: Washington
@@ -291,7 +291,7 @@ entries:
     tier: A
     kind: primary-document
     author: Jules Ferry, in the Chambre des députés, with the interruptions of Jules Maigne, de Guilloutet, Raoul Duval, Georges Périn and others
-    title: "Discours du 28 juillet 1885 sur la politique coloniale"
+    title: "Jules Ferry, discours du 28 juillet 1885 sur la politique coloniale (Assemblée nationale, grands discours parlementaires)"
     container: "Assemblée nationale, Histoire, Grands discours parlementaires"
     publisher: Assemblée nationale
     place: Paris
@@ -354,12 +354,12 @@ entries:
       free_copy: "https://archive.org/download/unesco_general_history_africa_vii/general_history_africa_vii_djvu.txt"
       verified_at: 2026-09-25
       verified_by: archive-item-fetch
-      verified_title: "General History of Africa VII- Africa under Colonial Domination 1880-1935"
+      verified_title: "European partition and conquest of Africa: an overview"
     language: en
     region_of_authorship: africa
     producer: scholarship
     position: african-historiography
-    notes: "the UNESCO General History, written and edited by African historians under an international scientific committee; UNESCO's unesdoc copy answered a Cloudflare challenge from this container, so the Internet Archive scan is the copy read. Held as at most five passages"
+    notes: "verified_title is the chapter heading as the fetched text prints it; the archive item is titled General History of Africa VII- Africa under Colonial Domination 1880-1935. The UNESCO General History, written and edited by African historians under an international scientific committee; UNESCO's unesdoc copy answered a Cloudflare challenge from this container, so the Internet Archive scan is the copy read. Held as at most five passages"
 
   - id: src-boahen-1985
     tier: B
@@ -377,12 +377,12 @@ entries:
       free_copy: "https://archive.org/download/unesco_general_history_africa_vii/general_history_africa_vii_djvu.txt"
       verified_at: 2026-09-25
       verified_by: archive-item-fetch
-      verified_title: "General History of Africa VII- Africa under Colonial Domination 1880-1935"
+      verified_title: "Africa and the colonial challenge"
     language: en
     region_of_authorship: africa
     producer: scholarship
     position: african-historiography
-    notes: "held as one passage; the page is inferred from the running numbers printed around it, since pages 7 to 9 of the scan carry plates"
+    notes: "verified_title is the chapter heading as the fetched text prints it; held as one passage; the page is inferred from the running numbers printed around it, since pages 7 to 9 of the scan carry plates"
 
   - id: src-roes-2010
     tier: B
@@ -1063,7 +1063,7 @@ contested:
         locator: p67
       - position: herero-genocide
         holds: "No fewer than 80 per cent of the Herero had lost their lives; the Nama lost at least 30 per cent."
-        figures: ["80", "30"]
+        figures: ["80"]
         source: src-gewald-2004
         locator: p60-61
       - position: german-record
