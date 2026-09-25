@@ -1,0 +1,9 @@
+source: src-madiou-1847-t1
+locator: seclenormand
+url: https://archive.org/download/histoiredhaiti01madi/histoiredhaiti01madi_djvu.txt
+read: 2026-09-25
+note: tome I, the chapter on 1791: the meeting at Lenormand and the night of the 22nd; the layer misprints the date of the meeting (44 Août 1794 for 14 Août 1791) and the page header is removed
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+du Nord se réunirent sur l’habitation Lenormand. Là, un homme de couleur leur donna lecture d'un prétendu décret, par lequel le roi leur aecordait trois jours de liberté par semaine. Il y fut décidé .que le 22» du même mois l'insurrection serait générale. | + Au jour fixé, à dix heures du soir, des tourbillons de flammes sortant du quartier de PAcul et s’élançant dang l'espace, dons Yrént le signal de riéitisénhn Les esclaves mirent à leur tête Jean François qui eut pour lieutenants Boukman et Flaville. Ils les portèrent en triomphe au son d'une musique africaine qui répandit partout la terreur. Toute la plaine du Nord fut à feu ct à sang; él dans les campagnes , les blancs de tous les partis tombèrent sous

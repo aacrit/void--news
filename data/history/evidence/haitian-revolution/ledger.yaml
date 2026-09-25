@@ -1,0 +1,1589 @@
+# The evidence ledger for haitian-revolution (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Every entry was resolved or fetched on 2026-09-25 from the URL it names; every
+# extract under extracts/ was sliced from the fetched copy by a builder script
+# (start line to end line of the text layer), never retyped. Nothing here was
+# written from memory. An entry the free record could not reach is listed under
+# `gaps`, by name, with what was tried. Where a scan's OCR layer is the free
+# copy, the extract keeps the layer's glyphs and says so in a note.
+slug: haitian-revolution
+bootstrapped: 2026-09-25
+
+entries:
+  # ----------------------------------------------------------- Tier A: primary record
+  - id: src-sonthonax-17930829
+    tier: A
+    kind: primary-document
+    author: Léger-Félicité Sonthonax, civil commissioner of the Republic
+    title: "Proclamation. Au nom de la République. Nous Léger-Félicité Sonthonax, commissaire civil de la République: the general emancipation of the North province, 29 August 1793"
+    container: null
+    publisher: "Imprimerie de P. Catineau, Cap-Français"
+    place: Cap-Français
+    year: 1793
+    edition: "the John Carter Brown Library's copy, read from the Internet Archive scan"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "proclamationauno00sont", hathitrust: null, url: "https://archive.org/details/proclamationauno00sont"}
+    access:
+      free_copy: "https://archive.org/download/proclamationauno00sont/proclamationauno00sont_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Proclamation. Au nom de la République. : Nous Léger-Félicité Sonthonax, commissaire civil de la République, délégué aux Iles françaises de l'Amérique sous le vent, pour y rétablir l'ordre & la tranquillité publique"
+    language: fr
+    region_of_authorship: americas
+    producer: french-civil-commission
+    position: french-republican-scholarship
+    rights: public
+
+  - id: src-commissaires-17930702-fr
+    tier: A
+    kind: primary-document
+    author: Étienne Polverel and Léger-Félicité Sonthonax, civil commissioners of the Republic
+    title: "Proclamation nous, Étienne Polverel et Léger-Félicité Sonthonax, commissaires civils de la République: Haut-du-Cap, 2 July 1793 (French text)"
+    container: null
+    publisher: null
+    place: Cap-Français
+    year: 1793
+    edition: "the John Carter Brown Library's copy, read from the Internet Archive scan"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "proclamation10sain", hathitrust: null, url: "https://archive.org/details/proclamation10sain"}
+    access:
+      free_copy: "https://archive.org/download/proclamation10sain/proclamation10sain_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Proclamation nous, Étienne Polverel & Léger-Félicité Sonthonax, commissaires civils de la République, délégués aux iles françaises de l'Amérique sous le vent, pour y rétablir l'ordre & la tranquillité publique"
+    language: fr
+    region_of_authorship: americas
+    producer: french-civil-commission
+    position: french-republican-scholarship
+    rights: public
+
+  - id: src-commissaires-17930702-ht
+    tier: A
+    kind: primary-document
+    author: Étienne Polverel and Léger-Félicité Sonthonax, civil commissioners of the Republic
+    title: "Proclamation nous, Étienne Polverel et Léger Félicité Sonthonax, commissaires civils, que nation française voyé dans pays-ci: Haut-du-Cap, 2 July 1793 (Creole text)"
+    container: null
+    publisher: null
+    place: Cap-Français
+    year: 1793
+    edition: "the John Carter Brown Library's copy, read from the Internet Archive scan; the library's record calls it an exceedingly rare translation, printed mostly in Creole, of the French proclamation of the same date"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "proclamation09sain", hathitrust: null, url: "https://archive.org/details/proclamation09sain"}
+    access:
+      free_copy: "https://archive.org/download/proclamation09sain/proclamation09sain_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Proclamation nous, Étienne Polverel & Léger Félicité Sonthonax, commissaires civils, que nation française voyé dans pays-ci, pour mettre l'ordre et la tranquillité tout par-tout"
+    language: ht
+    region_of_authorship: americas
+    producer: french-civil-commission
+    position: french-republican-scholarship
+    rights: public
+    notes: "the French column of the same proclamation (src-commissaires-17930702-fr) is the official parallel text; the Void rendering beside the Creole extract is checked against it. Haitian Creole is not on the proposal's reliable list, so the rendering carries a stated moderate confidence and a back-translation was made in a separate pass: 'Non, pays cila li pas lé mouri: li pas lé jamais connin roi encore, ni connin maîtres qui méchans; li va sorti de cendres à li, et li va plus brillante que jamais; li va semblé en France, qui astor terre à liberté et terre à l'égalité, et république française la va trouver encore petites à li qui va servi li ben.' The back-translation keeps the one name (France) and carries no number, as the original carries none"
+
+  - id: src-toussaint-const-1801
+    tier: A
+    kind: primary-document
+    author: Toussaint Louverture and the central assembly of Saint-Domingue
+    title: "Constitution française des colonies de Saint-Domingue, en soixante-dix-sept articles (the constitution of 1801)"
+    container: null
+    publisher: null
+    place: null
+    year: 1801
+    edition: "the John Carter Brown Library's copy, read from the Internet Archive scan"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "constitutionfran00sain", hathitrust: null, url: "https://archive.org/details/constitutionfran00sain"}
+    access:
+      free_copy: "https://archive.org/download/constitutionfran00sain/constitutionfran00sain_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Constitution française des colonies de Saint-Domingue, en soixante-dix-sept articles"
+    language: fr
+    region_of_authorship: americas
+    producer: toussaint-government
+    position: null
+    rights: public
+
+  - id: src-toussaint-procl-17970829
+    tier: A
+    kind: primary-document
+    author: Toussaint Louverture, general in chief of the army of Saint-Domingue
+    title: "Proclamation, Toussaint Louverture, général en chef de l'armée de Saint-Domingue, à ses concitoyens: 12 fructidor an V (29 August 1797)"
+    container: null
+    publisher: "P. Roux, printer to the Commission, Cap-Français"
+    place: Cap-Français
+    year: 1797
+    edition: "the John Carter Brown Library's copy, read from the Internet Archive scan"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "proclamationtous00tous", hathitrust: null, url: "https://archive.org/details/proclamationtous00tous"}
+    access:
+      free_copy: "https://archive.org/download/proclamationtous00tous/proclamationtous00tous_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Proclamation, Toussaint Louverture, : général en chef, de l'armée de Saint-Domingue, a ses concitoyens"
+    language: fr
+    region_of_authorship: americas
+    producer: toussaint-government
+    position: null
+    rights: public
+
+  - id: src-toussaint-memoire
+    tier: A
+    kind: testimony
+    author: Toussaint Louverture
+    title: "Mémoires du général Toussaint-L'Ouverture écrits par lui-même (the memoir written at the fort de Joux, 1802)"
+    container: "Mémoires du général Toussaint-L'Ouverture écrits par lui-même, pouvant servir à l'histoire de sa vie, ed. Saint-Rémy"
+    publisher: Pagnerre
+    place: Paris
+    year: 1802
+    edition: "Saint-Rémy's edition of 1853, read from the Internet Archive scan; the memoir's own pages are cited, the editor's notes under src-saint-remy-1853"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "mmoiresdugn00tous", hathitrust: null, url: "https://archive.org/details/mmoiresdugn00tous"}
+    access:
+      free_copy: "https://archive.org/download/mmoiresdugn00tous/mmoiresdugn00tous_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Mémoires du Général Toussaint-L'Ouverture écrits par lui-même, pouvant servir à l'histoire de sa vie"
+    language: fr
+    region_of_authorship: americas
+    producer: toussaint-louverture
+    position: null
+    rights: public
+    notes: "the prisoner's own statement, addressed to Bonaparte; it is the one document in this ledger written by a formerly enslaved man in his own hand"
+
+  - id: src-napoleon-corr-7
+    tier: A
+    kind: edited-documents
+    author: Napoléon Bonaparte, First Consul
+    title: "Correspondance de Napoléon Ier, publiée par ordre de l'empereur Napoléon III, tome VII (an IX to an X)"
+    container: null
+    publisher: Imprimerie impériale
+    place: Paris
+    year: 1858
+    edition: "read from the Internet Archive scan"
+    volume: "VII"
+    document_number: "cited by item number: 5845 (to Talleyrand, 30 October 1801), 5859 (proclamation, 8 November 1801), 5863 (to Talleyrand, 13 November 1801), 5867 (to Toussaint Louverture, 18 November 1801), 5874 (Exposé de la situation de la République, 22 November 1801)"
+    identifiers: {isbn: null, doi: null, archive_org: "correspondancede07napouoft", hathitrust: null, url: "https://archive.org/details/correspondancede07napouoft"}
+    access:
+      free_copy: "https://archive.org/download/correspondancede07napouoft/correspondancede07napouoft_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Correspondance de Napoléon Ier; publiée par ordre de l'empereur Napoléon III"
+    language: fr
+    region_of_authorship: europe
+    producer: french-consulate
+    position: french-imperial
+    rights: public
+
+  - id: src-loi-30-floreal-anx
+    tier: A
+    kind: primary-document
+    author: The Corps législatif of the French Republic, promulgated by Bonaparte, First Consul
+    title: "Loi relative à la traite des noirs et au régime des colonies, 30 floréal an X (20 May 1802)"
+    container: null
+    publisher: Imprimerie de la République
+    place: Paris
+    year: 1802
+    edition: "read from the Internet Archive scan"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "LoiTraiteNoirRgimeColonies1802", hathitrust: null, url: "https://archive.org/details/LoiTraiteNoirRgimeColonies1802"}
+    access:
+      free_copy: "https://archive.org/download/LoiTraiteNoirRgimeColonies1802/LoiRelativeLaTraiteDesNoirsEtAuRgimeDesColonies1802_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Loi relative la traite des noirs et au régime des colonies, 1802"
+    language: fr
+    region_of_authorship: europe
+    producer: french-legislature
+    position: french-imperial
+    rights: public
+
+  - id: src-garran-1797-t1
+    tier: A
+    kind: report
+    author: Jean-Philippe Garran de Coulon, for the Commission des colonies of the Convention nationale
+    title: "Rapport sur les troubles de Saint-Domingue, tome I"
+    container: null
+    publisher: Imprimerie nationale
+    place: Paris
+    year: 1797
+    edition: "the John Carter Brown Library's copy, read from the Internet Archive scan"
+    volume: "I"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "rapportsurlestro01fran", hathitrust: null, url: "https://archive.org/details/rapportsurlestro01fran"}
+    access:
+      free_copy: "https://archive.org/download/rapportsurlestro01fran/rapportsurlestro01fran_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Rapport sur les troubles de Saint-Domingue, fait au nom de la Commission des colonies, des Comités de salut publique, de législation et de marine, réunis, par J. Ph. Garran"
+    language: fr
+    region_of_authorship: europe
+    producer: french-convention-commission
+    position: french-republican-scholarship
+    rights: public
+
+  - id: src-edwards-1797
+    tier: A
+    kind: chronicle
+    author: Bryan Edwards
+    title: "An historical survey of the French colony in the island of St. Domingo"
+    container: null
+    publisher: John Stockdale
+    place: London
+    year: 1797
+    edition: "read from the Internet Archive scan"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "historicalsurvey00edwa", hathitrust: null, url: "https://archive.org/details/historicalsurvey00edwa"}
+    access:
+      free_copy: "https://archive.org/download/historicalsurvey00edwa/historicalsurvey00edwa_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "An historical survey of the French colony in the island of St. Domingo: comprehending a short account of its ancient government, political state, population, productions, and exports"
+    language: en
+    region_of_authorship: europe
+    producer: british-planter-witness
+    position: colonist-and-claimant
+    rights: public
+    notes: "a Jamaica planter and member of Parliament who was at Cap-Français in September 1791 and says so in his footnote; a contemporary account and a partisan one, which is why its counts sit in the disagreements and its claim in the historiography"
+
+  - id: src-us-act-18060228
+    tier: A
+    kind: primary-document
+    author: Congress of the United States
+    title: "An Act to suspend the commercial intercourse between the United States, and certain parts of the island of St. Domingo, 28 February 1806"
+    container: "The Public Statutes at Large of the United States of America, vol. 2"
+    publisher: Little, Brown
+    place: Boston
+    year: 1806
+    edition: "2 Stat. 351, chapter 9, read from the Statutes at Large page image's text layer served by GovTrack"
+    volume: "2"
+    document_number: "2 Stat. 351, ch. 9"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://govtrackus.s3.amazonaws.com/legislink/pdf/stat/2/STATUTE-2-Pg351.pdf"}
+    access:
+      free_copy: "https://govtrackus.s3.amazonaws.com/legislink/pdf/stat/2/STATUTE-2-Pg351.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "An Act to suspend the commercial intercourse between the United States, and certain parts of the island of St. Domingo"
+    language: en
+    region_of_authorship: americas
+    producer: us-congress
+    position: null
+    rights: public
+
+  - id: src-us-act-18620605
+    tier: A
+    kind: primary-document
+    author: Congress of the United States
+    title: "An Act to authorize the President of the United States to appoint Diplomatic Representatives to the Republics of Hayti and Liberia, respectively, 5 June 1862"
+    container: "The Statutes at Large of the United States of America, vol. 12"
+    publisher: Little, Brown
+    place: Boston
+    year: 1862
+    edition: "12 Stat. 421, chapter 96, read from the Statutes at Large page image's text layer served by GovTrack"
+    volume: "12"
+    document_number: "12 Stat. 421, ch. 96"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://govtrackus.s3.amazonaws.com/legislink/pdf/stat/12/STATUTE-12-Pg421.pdf"}
+    access:
+      free_copy: "https://govtrackus.s3.amazonaws.com/legislink/pdf/stat/12/STATUTE-12-Pg421.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "An Act to authorize the President of the United States to appoint Diplomatic Representatives to the Republics of Hayti and Liberia, respectively"
+    language: en
+    region_of_authorship: americas
+    producer: us-congress
+    position: null
+    rights: public
+
+  - id: src-ordonnance-18250417
+    tier: A
+    kind: edict
+    author: Charles X, King of France
+    title: "Charles, par la grâce de Dieu, Roi de France et de Navarre: the ordonnance of 17 April 1825 conceding the independence of the French part of Saint-Domingue against an indemnity"
+    container: "Recueil général des lois et actes du gouvernement d'Haïti, tome IV, No. 962 (the President's message of 10 July 1825, which prints the ordinance in a footnote)"
+    publisher: Auguste Durand
+    place: Paris
+    year: 1825
+    edition: "as the Haitian Recueil of 1851 reprints it, read from the Internet Archive scan; the Bulletin des lois printing on Gallica could not be read from this container"
+    volume: "IV"
+    document_number: "Recueil, No. 962, pages 258 to 259"
+    identifiers: {isbn: null, doi: null, archive_org: "recueilgnral04hait", hathitrust: null, url: "https://archive.org/details/recueilgnral04hait"}
+    access:
+      free_copy: "https://archive.org/download/recueilgnral04hait/recueilgnral04hait_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Charles, par la grâce de Dieu, Roi de France et de Navarre, à tous présents et à venir, Salut"
+    language: fr
+    region_of_authorship: europe
+    producer: french-crown
+    position: colonist-and-claimant
+    rights: public
+    notes: "verified_title is the ordinance's own opening as the fetched text prints it"
+
+  - id: src-haiti-loi-18260226
+    tier: A
+    kind: primary-document
+    author: Chamber of Representatives of the communes, Republic of Haiti
+    title: "Loi qui déclare dette nationale l'indemnité de 150,000,000 francs accordée à la France, 26 February 1826"
+    container: "Recueil général des lois et actes du gouvernement d'Haïti, tome IV, No. 1003"
+    publisher: Auguste Durand
+    place: Paris
+    year: 1826
+    edition: "the Recueil of 1851, read from the Internet Archive scan"
+    volume: "IV"
+    document_number: "Recueil, No. 1003, page 353"
+    identifiers: {isbn: null, doi: null, archive_org: "recueilgnral04hait", hathitrust: null, url: "https://archive.org/details/recueilgnral04hait"}
+    access:
+      free_copy: "https://archive.org/download/recueilgnral04hait/recueilgnral04hait_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Loi qui declare dette nationale l'indemnité de 150,000,000 francs accordée à la France, pour la reconnaissance de l'indépendance d'Haïti"
+    language: fr
+    region_of_authorship: americas
+    producer: haitian-legislature
+    position: haitian-national
+    rights: public
+    notes: "verified_title is the Recueil's table-of-contents heading as the fetched text prints it"
+
+  - id: src-haiti-adresse-18260510
+    tier: A
+    kind: primary-document
+    author: Chamber of Representatives of the communes, Republic of Haiti
+    title: "Adresse de la Chambre des Représentants des communes aux Haïtiens, à la clôture de ses travaux, 10 May 1826"
+    container: "Recueil général des lois et actes du gouvernement d'Haïti, tome IV, No. 1034"
+    publisher: Auguste Durand
+    place: Paris
+    year: 1826
+    edition: "the Recueil of 1851, read from the Internet Archive scan"
+    volume: "IV"
+    document_number: "Recueil, No. 1034, pages 456 to 457"
+    identifiers: {isbn: null, doi: null, archive_org: "recueilgnral04hait", hathitrust: null, url: "https://archive.org/details/recueilgnral04hait"}
+    access:
+      free_copy: "https://archive.org/download/recueilgnral04hait/recueilgnral04hait_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Adresse de la Chambre des Représentants des communes, aux Haïtiens, à la clôture de ses travaux"
+    language: fr
+    region_of_authorship: americas
+    producer: haitian-legislature
+    position: haitian-national
+    rights: public
+
+  - id: src-barbe-marbois-1826
+    tier: A
+    kind: primary-document
+    author: François, marquis de Barbé-Marbois, in the Chambre des Pairs
+    title: "Opinion sur le projet de loi relatif à la répartition de l'indemnité stipulée en faveur des colons de Saint-Domingue, séance du 19 avril 1826"
+    container: null
+    publisher: null
+    place: Paris
+    year: 1826
+    edition: "the John Carter Brown Library's copy, read from the Internet Archive scan"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "opiniondemlemarq00barb", hathitrust: null, url: "https://archive.org/details/opiniondemlemarq00barb"}
+    access:
+      free_copy: "https://archive.org/download/opiniondemlemarq00barb/opiniondemlemarq00barb_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Opinion de M. le marquis de Barbé-Marbois, sur le projet de loi relatif à la repartition de l'indemnité stipulée en faveur des colons de Saint-Domingue"
+    language: fr
+    region_of_authorship: europe
+    producer: french-peer
+    position: colonist-and-claimant
+    rights: public
+
+  # ----------------------------------------------------------- Tier B: scholarship and editions
+  - id: src-madiou-1847-t1
+    tier: B
+    kind: monograph
+    author: Thomas Madiou
+    title: "Histoire d'Haïti, tome I"
+    container: null
+    publisher: Imprimerie de Joseph Courtois
+    place: Port-au-Prince
+    year: 1847
+    edition: "read from the Internet Archive scan"
+    volume: "I"
+    identifiers: {isbn: null, doi: null, archive_org: "histoiredhaiti01madi", hathitrust: null, url: "https://archive.org/details/histoiredhaiti01madi"}
+    access:
+      free_copy: "https://archive.org/download/histoiredhaiti01madi/histoiredhaiti01madi_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Histoire d'Haiti"
+    language: fr
+    region_of_authorship: americas
+    producer: haitian-historian
+    position: haitian-national
+    rights: public
+
+  - id: src-madiou-1847-t2
+    tier: B
+    kind: monograph
+    author: Thomas Madiou
+    title: "Histoire d'Haïti, tome II"
+    container: null
+    publisher: Imprimerie de Joseph Courtois
+    place: Port-au-Prince
+    year: 1847
+    edition: "read from the Internet Archive scan"
+    volume: "II"
+    identifiers: {isbn: null, doi: null, archive_org: "histoiredhaiti02madi", hathitrust: null, url: "https://archive.org/details/histoiredhaiti02madi"}
+    access:
+      free_copy: "https://archive.org/download/histoiredhaiti02madi/histoiredhaiti02madi_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Histoire d'Haiti"
+    language: fr
+    region_of_authorship: americas
+    producer: haitian-historian
+    position: haitian-national
+    rights: public
+
+  - id: src-madiou-1848-t3
+    tier: B
+    kind: monograph
+    author: Thomas Madiou
+    title: "Histoire d'Haïti, tome III"
+    container: null
+    publisher: Imprimerie de Joseph Courtois
+    place: Port-au-Prince
+    year: 1848
+    edition: "read from the Internet Archive scan"
+    volume: "III"
+    identifiers: {isbn: null, doi: null, archive_org: "histoiredhaiti03madi", hathitrust: null, url: "https://archive.org/details/histoiredhaiti03madi"}
+    access:
+      free_copy: "https://archive.org/download/histoiredhaiti03madi/histoiredhaiti03madi_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Histoire d'Haiti"
+    language: fr
+    region_of_authorship: americas
+    producer: haitian-historian
+    position: haitian-national
+    rights: public
+    notes: "the tome prints the proclamation and the Act of 1 January 1804, the proclamation of April 1804 and the Constitution of 1805 in full; this ledger holds those as Madiou prints them, because the National Archives' original of the Act could not be fetched (see gaps)"
+
+  - id: src-saint-remy-1853
+    tier: B
+    kind: edition
+    author: Joseph Saint-Rémy (ed.)
+    title: "Editor's notes to the Mémoires du général Toussaint-L'Ouverture écrits par lui-même"
+    container: "Mémoires du général Toussaint-L'Ouverture écrits par lui-même, pouvant servir à l'histoire de sa vie"
+    publisher: Pagnerre
+    place: Paris
+    year: 1853
+    edition: "read from the Internet Archive scan"
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: "mmoiresdugn00tous", hathitrust: null, url: "https://archive.org/details/mmoiresdugn00tous"}
+    access:
+      free_copy: "https://archive.org/download/mmoiresdugn00tous/mmoiresdugn00tous_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Mémoires du Général Toussaint-L'Ouverture écrits par lui-même, pouvant servir à l'histoire de sa vie"
+    language: fr
+    region_of_authorship: americas
+    producer: haitian-historian
+    position: haitian-national
+    rights: public
+
+  - id: src-beard-1863
+    tier: B
+    kind: monograph
+    author: John Relly Beard
+    title: "Toussaint L'Ouverture: a biography and autobiography"
+    container: null
+    publisher: James Redpath
+    place: Boston
+    year: 1863
+    edition: "read from the Internet Archive scan"
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: "toussaintlouvert00bear_0", hathitrust: null, url: "https://archive.org/details/toussaintlouvert00bear_0"}
+    access:
+      free_copy: "https://archive.org/download/toussaintlouvert00bear_0/toussaintlouvert00bear_0_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Toussaint L'Ouverture : a biography and autobiography"
+    language: en
+    region_of_authorship: europe
+    producer: british-historian
+    position: anglophone-academic
+    rights: public
+
+  - id: src-dubois-garrigus-2006
+    tier: B
+    kind: edition
+    author: Laurent Dubois and John D. Garrigus (trans.)
+    title: "The Haitian Declaration of Independence, 1804 (translation)"
+    container: "Slave Revolution in the Caribbean, 1789-1804: A Brief History with Documents, as reproduced on Duke University's Rediscovering Haiti's Declaration of Independence pages"
+    publisher: Bedford/St. Martin's
+    place: Boston
+    year: 2006
+    edition: "the translation as Duke University's page prints it"
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://today.duke.edu/showcase/haitideclaration/declarationstext.html"}
+    access:
+      free_copy: "https://today.duke.edu/showcase/haitideclaration/declarationstext.html"
+      verified_at: 2026-09-25
+      verified_by: repository-record
+      verified_title: "Rediscovering Haiti's Declaration of Independence | The Declaration's Text (in Translation)"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: anglophone-academic
+    rights: quoted-under-cap
+
+  - id: src-schneider-2002
+    tier: B
+    kind: journal-article
+    author: Christian Schneider
+    title: "Le colonel Vincent, officier du Génie à Saint-Domingue"
+    container: Annales historiques de la Révolution française
+    publisher: Armand Colin
+    place: Paris
+    year: 2002
+    edition: "no. 329, pp. 101-122, on Persée"
+    volume: "329"
+    identifiers: {isbn: null, doi: "10.3406/ahrf.2002.2600", archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/ahrf_0003-4436_2002_num_329_1_2600"}
+    access:
+      free_copy: "https://www.persee.fr/doc/ahrf_0003-4436_2002_num_329_1_2600"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Le colonel Vincent, officier du Génie à Saint-Domingue"
+    language: fr
+    region_of_authorship: europe
+    producer: scholarship
+    position: french-republican-scholarship
+    rights: quoted-under-cap
+
+  - id: src-gainot-mace-2003
+    tier: B
+    kind: journal-article
+    author: Bernard Gainot and Mayeul Macé
+    title: "Fin de campagne à Saint-Domingue, novembre 1802-novembre 1803"
+    container: Outre-Mers. Revue d'histoire
+    publisher: Société française d'histoire d'outre-mer
+    place: Paris
+    year: 2003
+    edition: "vol. 90, no. 340-341, pp. 15-40, on Persée"
+    volume: "90"
+    identifiers: {isbn: null, doi: "10.3406/outre.2003.4041", archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/outre_1631-0438_2003_num_90_340_4041"}
+    access:
+      free_copy: "https://www.persee.fr/doc/outre_1631-0438_2003_num_90_340_4041"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Fin de campagne à Saint-Domingue, novembre 1802-novembre 1803"
+    language: fr
+    region_of_authorship: europe
+    producer: scholarship
+    position: french-republican-scholarship
+    rights: quoted-under-cap
+
+  - id: src-lentz-2003
+    tier: B
+    kind: journal-article
+    author: Thierry Lentz
+    title: "Bonaparte, Haïti et l'échec colonial du régime consulaire"
+    container: Outre-Mers. Revue d'histoire
+    publisher: Société française d'histoire d'outre-mer
+    place: Paris
+    year: 2003
+    edition: "vol. 90, no. 340-341, pp. 41-60, on Persée"
+    volume: "90"
+    identifiers: {isbn: null, doi: "10.3406/outre.2003.4042", archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/outre_1631-0438_2003_num_90_340_4042"}
+    access:
+      free_copy: "https://www.persee.fr/doc/outre_1631-0438_2003_num_90_340_4042"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Bonaparte, Haïti et l'échec colonial du régime consulaire"
+    language: fr
+    region_of_authorship: europe
+    producer: scholarship
+    position: french-republican-scholarship
+    rights: quoted-under-cap
+
+  - id: src-eugene-2003
+    tier: B
+    kind: journal-article
+    author: Itazienne Eugène
+    title: "La normalisation des relations franco-haïtiennes (1825-1838)"
+    container: Outre-Mers. Revue d'histoire
+    publisher: Société française d'histoire d'outre-mer
+    place: Paris
+    year: 2003
+    edition: "vol. 90, no. 340-341, pp. 139-154, on Persée"
+    volume: "90"
+    identifiers: {isbn: null, doi: "10.3406/outre.2003.4049", archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/outre_1631-0438_2003_num_90_340_4049"}
+    access:
+      free_copy: "https://www.persee.fr/doc/outre_1631-0438_2003_num_90_340_4049"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "La normalisation des relations franco-haïtiennes (1825-1838)"
+    language: fr
+    region_of_authorship: europe
+    producer: scholarship
+    position: the-indemnity-accountants
+    rights: quoted-under-cap
+
+  - id: src-blancpain-2003
+    tier: B
+    kind: journal-article
+    author: François Blancpain
+    title: "Note sur les « dettes » de l'esclavage : le cas de l'indemnité payée par Haïti (1825-1883)"
+    container: Outre-Mers. Revue d'histoire
+    publisher: Société française d'histoire d'outre-mer
+    place: Paris
+    year: 2003
+    edition: "vol. 90, no. 340-341, pp. 241-245, on Persée"
+    volume: "90"
+    identifiers: {isbn: null, doi: "10.3406/outre.2003.4054", archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/outre_1631-0438_2003_num_90_340_4054"}
+    access:
+      free_copy: "https://www.persee.fr/doc/outre_1631-0438_2003_num_90_340_4054"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Note sur les « dettes » de l'esclavage : le cas de l'indemnité payée par Haïti (1825-1883)"
+    language: fr
+    region_of_authorship: europe
+    producer: scholarship
+    position: the-indemnity-accountants
+    rights: quoted-under-cap
+
+  - id: src-joachim-1975
+    tier: B
+    kind: journal-article
+    author: Benoît Joachim
+    title: "La reconnaissance d'Haïti par la France (1825) : naissance d'un nouveau type de rapports internationaux"
+    container: Revue d'histoire moderne et contemporaine
+    publisher: Société d'histoire moderne et contemporaine
+    place: Paris
+    year: 1975
+    edition: "vol. 22, no. 3, pp. 369-396, on Persée"
+    volume: "22"
+    identifiers: {isbn: null, doi: "10.3406/rhmc.1975.2324", archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/rhmc_0048-8003_1975_num_22_3_2324"}
+    access:
+      free_copy: "https://www.persee.fr/doc/rhmc_0048-8003_1975_num_22_3_2324"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "La reconnaissance d'Haïti par la France (1825) : naissance d'un nouveau type de rapports internationaux"
+    language: fr
+    region_of_authorship: americas
+    producer: scholarship
+    position: haitian-national
+    rights: quoted-under-cap
+    notes: "a Haitian historian writing in a French journal; the record carries no abstract and the page images are behind a challenge from this container, so the entry is verified and unpinned"
+
+  - id: src-nicholls-1978
+    tier: B
+    kind: journal-article
+    author: David Nicholls
+    title: "Race, couleur et indépendance en Haïti (1804-1825)"
+    container: Revue d'histoire moderne et contemporaine
+    publisher: Société d'histoire moderne et contemporaine
+    place: Paris
+    year: 1978
+    edition: "vol. 25, no. 2, pp. 177-212, on Persée"
+    volume: "25"
+    identifiers: {isbn: null, doi: "10.3406/rhmc.1978.1015", archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/rhmc_0048-8003_1978_num_25_2_1015"}
+    access:
+      free_copy: "https://www.persee.fr/doc/rhmc_0048-8003_1978_num_25_2_1015"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Race, couleur et indépendance en Haïti (1804-1825)"
+    language: fr
+    region_of_authorship: europe
+    producer: scholarship
+    position: anglophone-academic
+    rights: quoted-under-cap
+    notes: "verified and unpinned: no abstract on the record and the page images are behind a challenge from this container"
+
+  - id: src-dorigny-2003
+    tier: B
+    kind: journal-article
+    author: Marcel Dorigny
+    title: "De Saint-Domingue à Haïti : une nation issue de l'esclavage"
+    container: Outre-Mers. Revue d'histoire
+    publisher: Société française d'histoire d'outre-mer
+    place: Paris
+    year: 2003
+    edition: "vol. 90, no. 340-341, pp. 5-13, on Persée"
+    volume: "90"
+    identifiers: {isbn: null, doi: "10.3406/outre.2003.4039", archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/outre_1631-0438_2003_num_90_340_4039"}
+    access:
+      free_copy: "https://www.persee.fr/doc/outre_1631-0438_2003_num_90_340_4039"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "De Saint-Domingue à Haïti : une nation issue de l'esclavage"
+    language: fr
+    region_of_authorship: europe
+    producer: scholarship
+    position: french-republican-scholarship
+    rights: quoted-under-cap
+    notes: "verified and unpinned: no abstract on the record"
+
+  - id: src-hoffmann-1990
+    tier: B
+    kind: journal-article
+    author: Léon-François Hoffmann
+    title: "Histoire, mythe et idéologie : la cérémonie du Bois-Caïman"
+    container: Études créoles
+    publisher: Comité international des études créoles
+    place: Montréal
+    year: 1990
+    edition: "vol. 13, no. 1, pp. 9-34, on Persée"
+    volume: "13"
+    identifiers: {isbn: null, doi: "10.3406/ecreo.1990.1307", archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/ecreo_0708-2398_1990_num_13_1_1307"}
+    access:
+      free_copy: "https://www.persee.fr/doc/ecreo_0708-2398_1990_num_13_1_1307"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Histoire, mythe et idéologie : la cérémonie du Bois-Caïman"
+    language: fr
+    region_of_authorship: americas
+    producer: scholarship
+    position: anglophone-academic
+    rights: quoted-under-cap
+    notes: "verified and unpinned: the argument on the ceremony could not be read from this container; the page images are behind a challenge"
+
+  - id: src-pluchon-1992
+    tier: B
+    kind: journal-article
+    author: Pierre Pluchon
+    title: "Toussaint Louverture défie Bonaparte. L'adresse inédite du 20 décembre 1801"
+    container: Revue française d'histoire d'outre-mer
+    publisher: Société française d'histoire d'outre-mer
+    place: Paris
+    year: 1992
+    edition: "vol. 79, no. 296, pp. 383-389, on Persée"
+    volume: "79"
+    identifiers: {isbn: null, doi: "10.3406/outre.1992.3021", archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/outre_0300-9513_1992_num_79_296_3021"}
+    access:
+      free_copy: "https://www.persee.fr/doc/outre_0300-9513_1992_num_79_296_3021"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Toussaint Louverture défie Bonaparte. L'adresse inédite du 20 décembre 1801"
+    language: fr
+    region_of_authorship: europe
+    producer: scholarship
+    position: french-republican-scholarship
+    rights: quoted-under-cap
+    notes: "verified and unpinned: no abstract on the record"
+
+  - id: src-geggus-1997
+    tier: B
+    kind: journal-article
+    author: David Geggus
+    title: "The naming of Haiti"
+    container: New West Indian Guide / Nieuwe West-Indische Gids
+    publisher: Brill
+    place: Leiden
+    year: 1997
+    edition: "vol. 71, no. 1-2, pp. 43-68, open access on Brill"
+    volume: "71"
+    identifiers: {isbn: null, doi: "10.1163/13822373-90002615", archive_org: null, hathitrust: null, url: "https://brill.com/view/journals/nwig/71/1-2/article-p43_3.xml"}
+    access:
+      free_copy: "https://brill.com/view/journals/nwig/71/1-2/article-p43_3.xml"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "The naming of Haiti"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: anglophone-academic
+    rights: quoted-under-cap
+
+  - id: src-yakubu-opondo-2025
+    tier: B
+    kind: journal-article
+    author: Moses Joseph Yakubu and Paul Abiero Opondo
+    title: "The Haitian Revolution, 1791-1804: Slave Insurgency as a Background to the Abolition of Slavery"
+    container: Journal of Central and Eastern European African Studies
+    publisher: Óbuda University
+    place: Budapest
+    year: 2025
+    edition: "vol. 5, no. 1, pp. 165-178, open access"
+    volume: "5"
+    identifiers: {isbn: null, doi: "10.12700/jceeas.2025.5.1.347", archive_org: null, hathitrust: null, url: "https://jceeas.bdi.uni-obuda.hu/index.php/jceeas/article/view/347"}
+    access:
+      free_copy: "https://jceeas.bdi.uni-obuda.hu/index.php/jceeas/article/download/347/428"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "The Haitian Revolution, 1791-1804: Slave Insurgency as a Background to the Abolition of Slavery"
+    language: en
+    region_of_authorship: africa
+    producer: scholarship
+    position: anglophone-academic
+    rights: quoted-under-cap
+
+  - id: src-mezilas-2009
+    tier: B
+    kind: journal-article
+    author: Glodel Mezilas
+    title: "La revolución haitiana de 1804 y sus impactos políticos sobre América Latina"
+    container: Estudios de Filosofía Práctica e Historia de las Ideas
+    publisher: INCIHUSA, CONICET
+    place: Mendoza
+    year: 2009
+    edition: "vol. 11, no. 2, pp. 31-42, on SciELO Argentina"
+    volume: "11"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.scielo.org.ar/scielo.php?script=sci_arttext&pid=S1851-94902009000200004"}
+    access:
+      free_copy: "https://www.scielo.org.ar/pdf/efphi/v11n2/v11n2a04.pdf"
+      verified_at: 2026-09-25
+      verified_by: repository-record
+      verified_title: "La revolución haitiana de 1804 y sus impactos políticos sobre América Latina"
+    language: es
+    region_of_authorship: americas
+    producer: scholarship
+    position: haitian-national
+    rights: quoted-under-cap
+    notes: "the author is a Haitian diplomat and scholar, secretary of Haiti's embassy in Mexico as the article's byline states"
+
+  # ----------------------------------------------------------- Tier D: positional
+  - id: src-lacroix-1819
+    tier: D
+    kind: memoir
+    author: Pamphile de Lacroix, lieutenant-general
+    title: "Mémoires pour servir à l'histoire de la révolution de Saint-Domingue, tome II"
+    container: null
+    publisher: Pillet aîné
+    place: Paris
+    year: 1819
+    edition: "read from the Internet Archive scan"
+    volume: "II"
+    identifiers: {isbn: null, doi: null, archive_org: "mmoirespourser02lacr", hathitrust: null, url: "https://archive.org/details/mmoirespourser02lacr"}
+    access:
+      free_copy: "https://archive.org/download/mmoirespourser02lacr/mmoirespourser02lacr_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Mémoires pour servir à l'histoire de la révolution de Saint-Domingue. Par le lieutenant-général baron Pamphile de Lacroix"
+    language: fr
+    region_of_authorship: europe
+    producer: french-general-memoir
+    position: french-imperial
+    rights: public
+    notes: "the memoir of an officer of the Leclerc expedition; the only source in this ledger for the words attributed to Toussaint on the Héros, which is why they are quoted in the historiography and nowhere else"
+
+  - id: src-dalmas-1814
+    tier: D
+    kind: memoir
+    author: Antoine Dalmas
+    title: "Histoire de la révolution de Saint-Domingue, tome I"
+    container: null
+    publisher: Mame frères
+    place: Paris
+    year: 1814
+    edition: "read from the Internet Archive scan of the John Carter Brown Library's copy"
+    volume: "I"
+    identifiers: {isbn: null, doi: null, archive_org: "histoiredelarv00dalm", hathitrust: null, url: "https://archive.org/details/histoiredelarv00dalm"}
+    access:
+      free_copy: "https://archive.org/download/histoiredelarv00dalm/histoiredelarv00dalm_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Histoire de la révolution de Saint-Domingue, : depuis le commencement des troubles, jusqu'à la prise de Jérémie et du Môle S. Nicolas par les Anglais"
+    language: fr
+    region_of_authorship: europe
+    producer: french-colonist-memoir
+    position: colonist-and-claimant
+    rights: public
+    notes: "a colonist's account written from the planters' side and published under the Restoration; the earliest printed account of the ceremony at the Caïman wood, which is why it is held, and a positional one, which is why it is Tier D"
+
+  # ----------------------------------------------------------- Not reached free: listed under gaps
+  - id: src-tna-declaration-1804
+    tier: A
+    kind: primary-document
+    author: Jean-Jacques Dessalines and the generals of the native army; Louis Boisrond-Tonnerre, secretary
+    title: "The Haitian Declaration and Act of Independence, 1 January 1804 (the manuscript in the UK National Archives, CO 137/111)"
+    container: null
+    publisher: null
+    place: null
+    year: 1804
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nationalarchives.gov.uk/"}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: unverified
+    language: fr
+    region_of_authorship: americas
+    producer: haitian-state
+    position: null
+    rights: null
+    notes: "not read from this container; see gaps"
+
+  - id: src-constitution-1805-gallica
+    tier: A
+    kind: primary-document
+    author: Jean-Jacques Dessalines, Emperor, and the generals
+    title: "Constitution d'Haïti, 20 May 1805 (the printing Gallica holds)"
+    container: null
+    publisher: null
+    place: null
+    year: 1805
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://gallica.bnf.fr/ark:/12148/bpt6k316887c"}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: unverified
+    language: fr
+    region_of_authorship: americas
+    producer: haitian-state
+    position: null
+    rights: null
+    notes: "not read from this container; see gaps"
+
+  - id: src-decret-16-pluviose-anii
+    tier: A
+    kind: primary-document
+    author: Convention nationale
+    title: "Décret de la Convention nationale du 16 pluviôse an II qui abolit l'esclavage dans les colonies"
+    container: null
+    publisher: null
+    place: null
+    year: 1794
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: unverified
+    language: fr
+    region_of_authorship: europe
+    producer: french-convention
+    position: null
+    rights: null
+    notes: "not read from this container; see gaps"
+
+  - id: src-traites-1838
+    tier: A
+    kind: treaty
+    author: France and the Republic of Haiti
+    title: "The two treaties of 12 February 1838 between France and Haiti"
+    container: null
+    publisher: null
+    place: null
+    year: 1838
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: unverified
+    language: fr
+    region_of_authorship: europe
+    producer: french-crown
+    position: null
+    rights: null
+    notes: "not read from this container; see gaps"
+
+  - id: src-roussier-1937
+    tier: A
+    kind: edited-documents
+    author: Charles Victoire Emmanuel Leclerc, ed. Paul Roussier
+    title: "Lettres du général Leclerc, commandant en chef de l'armée de Saint-Domingue en 1802"
+    container: "Publications de la Société française d'histoire des outre-mers"
+    publisher: null
+    place: null
+    year: 1937
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/sfhom_1961-8166_1937_edc_6_1"}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: unverified
+    language: fr
+    region_of_authorship: europe
+    producer: french-expedition-command
+    position: french-imperial
+    rights: null
+    notes: "not read from this container; see gaps"
+
+  - id: src-louis-2019
+    tier: B
+    kind: journal-article
+    author: Bertin M. Louis Jr.
+    title: "Haiti's Pact with the Devil?: Bwa Kayiman, Haitian Protestant Views of Vodou, and the Future of Haiti"
+    container: "Religions"
+    publisher: null
+    place: null
+    year: 2019
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.mdpi.com/2077-1444/10/8/464"}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: unverified
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: anglophone-academic
+    rights: null
+    notes: "not read from this container; see gaps"
+
+  - id: src-bandau-2013
+    tier: B
+    kind: journal-article
+    author: Anja Bandau
+    title: "The Narrations of the Destruction of Saint-Domingue in the Late 18th Century and their Reinterpretations"
+    container: "L'Ordinaire des Amériques"
+    publisher: null
+    place: null
+    year: 2013
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://journals.openedition.org/orda/688"}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: unverified
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: anglophone-academic
+    rights: null
+    notes: "not read from this container; see gaps"
+
+  - id: src-james-1938
+    tier: B
+    kind: monograph
+    author: C. L. R. James
+    title: "The Black Jacobins: Toussaint L'Ouverture and the San Domingo Revolution"
+    container: null
+    publisher: null
+    place: null
+    year: 1938
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://archive.org/details/blackjacobinstou0000jame"}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: unverified
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: anglophone-academic
+    rights: null
+    notes: "not read from this container; see gaps"
+
+  - id: src-fick-1990
+    tier: B
+    kind: monograph
+    author: Carolyn E. Fick
+    title: "The Making of Haiti: the Saint Domingue revolution from below"
+    container: null
+    publisher: null
+    place: null
+    year: 1990
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://archive.org/details/makingofhaitisai0000fick"}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: unverified
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: anglophone-academic
+    rights: null
+    notes: "not read from this container; see gaps"
+
+  - id: src-dubois-2004
+    tier: B
+    kind: monograph
+    author: Laurent Dubois
+    title: "Avengers of the New World: the story of the Haitian Revolution"
+    container: null
+    publisher: null
+    place: null
+    year: 2004
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://archive.org/details/avengersofnewwor00"}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: unverified
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: anglophone-academic
+    rights: null
+    notes: "not read from this container; see gaps"
+
+  - id: src-trouillot-1995
+    tier: B
+    kind: monograph
+    author: Michel-Rolph Trouillot
+    title: "Silencing the Past: power and the production of history"
+    container: null
+    publisher: null
+    place: null
+    year: 1995
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: unverified
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: haitian-national
+    rights: null
+    notes: "not read from this container; see gaps"
+
+gaps:
+  - entry: src-tna-declaration-1804
+    what: "the manuscript Declaration and Act of Independence in the UK National Archives (CO 137/111), the only known original; the French text is held here as Madiou prints it and in the Dubois and Garrigus translation"
+    tried: ["http://www.nationalarchives.gov.uk/documentsonline/haiti.asp", "https://www.nationalarchives.gov.uk/education/resources/haiti-declaration-independence/", "https://www.nationalarchives.gov.uk/search/results?_q=Haiti+declaration+of+independence+1804"]
+    status: "the Duke page's link to the National Archives is a retired DocumentsOnline address; the education page answered 404 and the catalogue search page carried no link to the images. The signatures are counted from Madiou's print and the count says so"
+  - entry: src-constitution-1805-gallica
+    what: "the Constitution of 20 May 1805 as Gallica holds the printing; held here as Madiou prints it"
+    tried: ["https://gallica.bnf.fr/ark:/12148/bpt6k316887c/texteBrut", "https://gallica.bnf.fr/ark:/12148/bpt6k316887c/f1.texteBrut"]
+    status: "Gallica's text service answered with a security-check page (altcha) on the first try and reset the connection on the second; a person can read it"
+  - entry: src-decret-16-pluviose-anii
+    what: "the decree of the Convention nationale of 16 pluviôse an II (4 February 1794) abolishing slavery in the colonies, the metropolitan act that ratified Sonthonax's proclamation"
+    tried: ["https://gallica.bnf.fr/SRU?operation=searchRetrieve&version=1.2&query=(gallica all \"16 pluviôse\" and gallica all \"esclavage\")", "https://gallica.bnf.fr/SRU?operation=searchRetrieve&version=1.2&query=(dc.title all \"pluviôse\" and dc.title all \"esclavage\")", "https://archive.org/advancedsearch.php?q=title:(décret) AND (esclavage OR esclaves) AND date:[1794-01-01 TO 1794-12-31]"]
+    status: "no printing of the decree itself was found free: Gallica's search returned Chaumette's speech of 30 pluviôse and the Internet Archive's returned nothing. The thesis argues the 1794 abolition from what Sonthonax's proclamation and Bonaparte's own documents say, and does not quote the decree"
+  - entry: src-traites-1838
+    what: "the two treaties of 12 February 1838 between France and Haiti, which Eugène's abstract describes as separating recognition from the payment of the debt, and which carry the reduced balance the event record calls 90 million francs"
+    tried: ["https://archive.org/download/recueilgnral05hait/recueilgnral05hait_djvu.txt", "https://archive.org/download/recueilgnral06hait/recueilgnral06hait_djvu.txt"]
+    status: "tomes V and VI of the Recueil were fetched and searched for 1838, soixante millions and traité; neither carries the treaties' text as the layer prints it. The reduced sum is therefore not stated in this thesis; the 1838 treaties are known here only through Eugène's abstract"
+  - entry: src-roussier-1937
+    what: "Lettres du général Leclerc, commandant en chef de l'armée de Saint-Domingue en 1802, ed. Paul Roussier: the expedition commander's own letters to Bonaparte, including his reports of the epidemic and his last letters"
+    tried: ["https://www.persee.fr/doc/sfhom_1961-8166_1937_edc_6_1", "https://www.persee.fr/docAsPDF/sfhom_1961-8166_1937_edc_6_1_894.pdf"]
+    status: "on Persée, whose page images and PDF are behind an altcha challenge from this container (HTTP 403 on the PDF); a person can read it. Leclerc's own account of the campaign is therefore absent from this ledger, and the French side of 1802 is known here through Bonaparte's correspondence and Lacroix's memoir"
+  - entry: src-hoffmann-1990
+    what: "Hoffmann's argument on the ceremony at Bois-Caïman as history, myth and ideology"
+    tried: ["https://www.persee.fr/doc/ecreo_0708-2398_1990_num_13_1_1307", "https://www.persee.fr/docAsPDF/ecreo_0708-2398_1990_num_13_1_1307.pdf"]
+    status: "the record's metadata was read and the DOI resolves; the page images and the PDF are behind an altcha challenge from this container, so the argument is not quoted and the entry is unpinned"
+  - entry: src-louis-2019
+    what: "Bertin M. Louis Jr., Haiti's Pact with the Devil?: Bwa Kayiman, Haitian Protestant Views of Vodou, and the Future of Haiti (Religions, 2019), the one open-access article found on the ceremony's afterlife in Haiti"
+    tried: ["https://www.mdpi.com/2077-1444/10/8/464/htm", "https://www.mdpi.com/2077-1444/10/8/464/pdf"]
+    status: "HTTP 403 on the page and on the PDF from this container; the DOI 10.3390/rel10080464 resolves through Crossref. Not admitted, because nothing of it could be read"
+  - entry: src-bandau-2013
+    what: "Anja Bandau, The Narrations of the Destruction of Saint-Domingue in the Late 18th Century (L'Ordinaire des Amériques, 2013), on the colonist narratives this ledger holds as Tier D"
+    tried: ["https://journals.openedition.org/orda/688", "https://journals.openedition.org/orda/pdf/688"]
+    status: "OpenEdition answered both requests with an Anubis bot-wall challenge page; the DOI 10.4000/orda.688 resolves through Crossref. Not admitted"
+  - entry: src-james-1938
+    what: "C. L. R. James, The Black Jacobins, which the event record cites for a quotation"
+    tried: ["https://archive.org/metadata/blackjacobinstou0000jame"]
+    status: "the Internet Archive item the event record names is a 1989 printing in a controlled-lending collection (access-restricted-item true), which this container cannot open; the DOI the record gives (10.2307/2507494) resolves to a 1940 review in the Hispanic American Historical Review, not to the book. The quotation is therefore not published here"
+  - entry: src-fick-1990
+    what: "Carolyn Fick, The Making of Haiti: the Saint Domingue revolution from below"
+    tried: ["https://archive.org/metadata/makingofhaitisai0000fick"]
+    status: "controlled lending copy, not openable from this container; the DOI the record gives (10.2307/2165920) resolves to a 1992 review in the American Historical Review, not to the book"
+  - entry: src-dubois-2004
+    what: "Laurent Dubois, Avengers of the New World"
+    tried: ["https://archive.org/metadata/avengersofnewwor00"]
+    status: "controlled lending copy, not openable from this container; the DOI the record gives (10.2307/4129048) resolves to a 2004 review in the International Journal of African Historical Studies, not to the book"
+  - entry: src-trouillot-1995
+    what: "Michel-Rolph Trouillot, Silencing the Past, the Haitian scholar's account of the revolution as unthinkable"
+    tried: ["https://archive.org/metadata/michel-rolph-trouillot-silencing-the-past-power-and-the-production-of-history-beacon-press-1995"]
+    status: "the Internet Archive item the event record names is a community upload of a copyrighted book, which this ledger does not cite; the DOI the record gives (10.2307/2952745) resolves to a 1997 review in the Journal of American History. The one Haitian scholar the event record leans on most is therefore absent from this ledger, and the record section says so"
+
+positions:
+  - id: haitian-national
+    name: The Haitian national account
+    holders: ["Dessalines and the generals, in the proclamation and the Act of 1 January 1804 and the proclamation of April 1804 as Madiou prints them", "the Chamber of Representatives of 1826", "Madiou (1847 to 1848)", "Saint-Rémy (1853)", "Joachim (1975)", "Mezilas (2009)"]
+    rests_on: [src-madiou-1847-t1, src-madiou-1847-t2, src-madiou-1848-t3, src-saint-remy-1853, src-haiti-loi-18260226, src-haiti-adresse-18260510, src-joachim-1975, src-mezilas-2009]
+    claim: "The people of Saint-Domingue freed themselves, declared independence at Gonaïves by an oath of the generals, avenged the cruelties of the French, abolished slavery for ever in their constitution, and were made to pay France for a recognition that France imposed with a squadron."
+    omits: "The date and place of the ceremony of August 1791, which Madiou tells as a meeting at Lenormand and not as a sacrifice; the killing of the French civilians of 1804, which Madiou counts and defends; and the text of the treaties of 1838."
+    adjudications:
+      - claim: "On 1 January 1804 the general in chief and the assembled generals swore at Gonaïves to renounce France for ever, and the Act carries their names."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-madiou-1848-t3.p117, src-dubois-garrigus-2006.sec21, src-us-act-18060228.sec1, src-lentz-2003.abstract]
+        reasoning: "The Act and its signatures are held here only as Madiou prints them and as Dubois and Garrigus translate them; the one Tier A artifact on the point is the United States statute of 1806, which speaks of parts of the island not in possession of France and does not name the Act. The National Archives' original was not fetched, so the verdict is qualified."
+      - claim: "France imposed the indemnity by an ordinance, and Haiti's legislature declared 150,000,000 francs a national debt."
+        verdict: supported
+        basis: presence
+        rests_on: [src-ordonnance-18250417.p258-259, src-haiti-loi-18260226.p353, src-haiti-adresse-18260510.p456-457]
+        reasoning: "The ordinance's own text, as the Haitian Recueil reprints it, concedes independence on the condition of the payment; the law of 26 February 1826 and the Chamber's address of 10 May 1826 declare the sum a national debt and vote a contribution to pay it. Two producers, the French crown and the Haitian legislature, agree on the terms."
+  - id: french-imperial
+    name: The French imperial account
+    holders: ["Bonaparte, in the correspondence of October and November 1801", "the Corps législatif of 30 floréal an X", "Lacroix (1819)"]
+    rests_on: [src-napoleon-corr-7, src-loi-30-floreal-anx, src-lacroix-1819]
+    described_by: [src-saint-remy-1853.p83, src-lentz-2003.abstract]
+    claim: "The expedition went to restore the sovereignty of the French people over a colony whose governor had made his own constitution; the liberty of the blacks was guaranteed by proclamation, and the government of the blacks, not their liberty, was what had to be annihilated."
+    omits: "The law of 30 floréal an X, which maintained slavery where Amiens restored it and left Saint-Domingue unnamed; and what Leclerc wrote from the colony, which this ledger could not read."
+    adjudications:
+      - claim: "The expedition's purpose was to restore French sovereignty, and the liberty of the blacks was guaranteed."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-napoleon-corr-7.item5859, src-napoleon-corr-7.item5863, src-napoleon-corr-7.item5874, src-loi-30-floreal-anx.whole]
+        reasoning: "The proclamation of 8 November 1801 says the Republic gave the blacks their liberty and will not let it be taken; the note to Talleyrand of 13 November says the course taken is to annihilate the government of the blacks at Saint-Domingue and that their liberty, recognised, would be a point of support for the Republic; the Exposé of 22 November says there are no more slaves at Saint-Domingue and all will stay free, while Martinique keeps slavery. The law of 30 floréal an X then maintains slavery in the colonies restored by Amiens and beyond the Cape, and does not name Saint-Domingue. Every document here is the French state's own, so under Rule A the verdict is capped at qualified: the papers show a guarantee of liberty and an intention to destroy the black government stated in the same fortnight, and a law that restores slavery elsewhere without naming the colony."
+  - id: colonist-and-claimant
+    name: The colonists' and claimants' account
+    holders: ["Dalmas (1814)", "Edwards (1797)", "Barbé-Marbois, in the Chambre des Pairs (1826)", "the ordinance of 17 April 1825, which names the former colonists as the indemnity's object"]
+    rests_on: [src-dalmas-1814, src-edwards-1797, src-barbe-marbois-1826, src-ordonnance-18250417]
+    described_by: [src-eugene-2003.abstract, src-garran-1797-t1.p212-213]
+    claim: "The rising of 1791 was planned by the slaves' chiefs and sealed by a blood sacrifice; it destroyed the plantations and killed the whites; the colonists' property was lost, and the indemnity of 1825 was owed to them for it."
+    omits: "The regime of the plantations that the rising answered, which Dalmas and Edwards describe as their own losses; and who paid the indemnity."
+    adjudications:
+      - claim: "The rising of August 1791 was planned days ahead at Lenormand and preceded by a sacrifice at the Caïman wood on the Choiseul plantation."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-garran-1797-t1.p212-213, src-dalmas-1814.p117-118, src-madiou-1847-t1.seclenormand]
+        reasoning: "The Convention's commission reports the rumour of three days a week, the slaves of Turpin and Flaville fetching those of Clément at ten in the evening, the chiefs Boukmans and Auguste, and the fire beginning towards midnight; it reports no ceremony. Madiou reports a meeting of delegates at Lenormand that fixed the night of the 22nd, and no sacrifice. Dalmas alone carries the sacrifice, and he places it after the plan was fixed at Le Normand and before it was carried out, without a date. One Tier A producer, the commission, on the plan; the ceremony rests on a colonist's memoir alone: qualified."
+  - id: french-republican-scholarship
+    name: The French republican account and its scholarship
+    holders: ["Sonthonax and Polverel, in the proclamations of 1793", "Garran de Coulon, for the Convention's commission (1797)", "Dorigny (2003)", "Gainot and Macé (2003)", "Lentz (2003)", "Schneider (2002)", "Pluchon (1992)"]
+    rests_on: [src-sonthonax-17930829, src-commissaires-17930702-fr, src-commissaires-17930702-ht, src-garran-1797-t1, src-dorigny-2003, src-gainot-mace-2003, src-lentz-2003, src-schneider-2002, src-pluchon-1992]
+    claim: "The Republic's commissioners freed the enslaved of the North in August 1793 under a labour regime; the Consulate's choices of 1801 and 1802 were disastrous and broke with the revolutionary legacy; the defeat of 1803 was the colonial authorities' own doing more than the fever's."
+    omits: "That the commissioners' freedom bound the freed to their former masters' plantations by its own articles; and the voices of the freed themselves, whom the proclamations address and do not quote."
+    adjudications:
+      - claim: "The civil commissioner declared the enslaved of the North free on 29 August 1793, with a labour regime attached to the grant."
+        verdict: supported
+        basis: presence
+        rests_on: [src-sonthonax-17930829.art2, src-sonthonax-17930829.art9, src-sonthonax-17930829.secsign, src-toussaint-procl-17970829.sec3]
+        reasoning: "Article II declares all the negroes and people of mixed blood then in slavery free, article IX keeps those attached to the plantations of their former masters on them, and the broadside is dated at the Cap, 29 August 1793. Toussaint Louverture's proclamation of 1797 tells the cultivators of the inestimable gift of the liberty France gave them. Two producers, the commission and the general who had fought against it, on the grant."
+  - id: anglophone-academic
+    name: The anglophone and Atlantic account
+    holders: ["Beard (1863)", "Nicholls (1978)", "Hoffmann (1990)", "Geggus (1997)", "Dubois and Garrigus, as translators of the declaration (2006)", "Yakubu and Opondo (2025)"]
+    rests_on: [src-beard-1863, src-nicholls-1978, src-hoffmann-1990, src-geggus-1997, src-dubois-garrigus-2006, src-yakubu-opondo-2025]
+    claim: "The revolution's founding texts and their afterlife are the subject: the name Haiti taken from an Amerindian past, the declaration read in translation, the ceremony read as history and as myth, and the insurgency read from Africa as the precursor of the acts of emancipation."
+    omits: "The French and Haitian primary record in its own language, which this school reads in translation; and the counting of the dead, on which none of its holders in this ledger offers a figure."
+    adjudications:
+      - claim: "The United States suspended commerce with the parts of the island not under France in 1806 and did not authorise diplomatic representatives to Haiti until 1862."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-us-act-18060228.sec1, src-us-act-18620605.whole]
+        reasoning: "The act of 28 February 1806 prohibits commercial intercourse with any part of the island of St. Domingo not in possession of France; the act of 5 June 1862 authorises the President to appoint diplomatic representatives to the republics of Hayti and Liberia. Both are the same producer's record, the Congress, so the verdict is capped at qualified."
+  - id: the-indemnity-accountants
+    name: The accountants of the indemnity
+    holders: ["Eugène (2003)", "Blancpain (2003)"]
+    rests_on: [src-eugene-2003, src-blancpain-2003]
+    claim: "The ordinance of 1825 fixed the indemnity at cent cinquante millions de francs or, imposed in form though accepted in principle by Boyer; two treaties of 1838 separated recognition from the debt; and the sum paid, and later the loans, belong to their historical frames rather than to a claim of slavery's debts."
+    omits: "The Haitian legislature's own acts of 1826, which declared the sum a national debt and voted the contribution, and which neither abstract mentions."
+    adjudications:
+      - claim: "The ordinance of 17 April 1825 fixed 150,000,000 francs in five equal annual terms, halved the duties for French ships, and conceded independence on those conditions."
+        verdict: supported
+        basis: presence
+        rests_on: [src-ordonnance-18250417.p258-259, src-haiti-loi-18260226.p353, src-haiti-adresse-18260510.p456-457]
+        reasoning: "The ordinance's article 2 sets the payment in five equal annual terms and its article 1 halves the duties for the French flag; the Haitian law of 26 February 1826 and the Chamber's address of 10 May 1826 state the sum as 150,000,000 francs. Two producers, the French crown and the Haitian legislature. The 1838 treaties are a gap, and the reduced balance is not stated here."
+
+contested:
+  - id: bois-caiman
+    claim: "What happened before the rising of August 1791, where, and on what night"
+    rows:
+      - position: colonist-and-claimant
+        holds: "The plan was fixed among the chiefs at Le Normand, at Morne Rouge, some days before; before carrying it out they held a feast or sacrifice in a wooded, uncultivated ground of the Choiseul plantation called the Caïman, where a black pig was the offering and its blood was drunk. The footnote dates the meeting, not the sacrifice."
+        figures: []
+        source: src-dalmas-1814
+        locator: p117-118
+      - position: haitian-national
+        holds: "In the night of the meeting at Lenormand, 200 delegates of the workshops of the North read a supposed decree of the king granting three days of liberty a week and decided the insurrection would be general on the 22nd; no sacrifice is told."
+        figures: []
+        source: src-madiou-1847-t1
+        locator: seclenormand
+      - position: french-republican-scholarship
+        holds: "The insurrection began in the night of the 22nd, the slaves of Turpin and Flaville fetching those of Clément at ten in the evening; the workshops chose Boukmans and Auguste as chiefs; by the morning of the 23rd, 37 proprietors, attorneys and refiners were counted killed; no ceremony is reported."
+        figures: []
+        source: src-garran-1797-t1
+        locator: p212-213
+  - id: toussaint-death
+    claim: "On what day Toussaint Louverture died at the fort de Joux"
+    rows:
+      - position: haitian-national
+        holds: "Towards the middle of April the governor left for four days, and when he returned Toussaint had ceased to live; Madiou gives no day."
+        figures: []
+        source: src-madiou-1847-t2
+        locator: p213-214
+      - position: haitian-national
+        holds: "He died in a dungeon on 7 floréal an XI, which the editor renders as 27 April 1803, nine months and fifteen days after his arrival in France."
+        figures: ["27"]
+        source: src-saint-remy-1853
+        locator: p101
+      - position: anglophone-academic
+        holds: "In the beginning of April, in the year 1803."
+        figures: []
+        source: src-beard-1863
+        locator: p286
+      - position: french-imperial
+        holds: "Cramped by the cold and gnawed by his regrets, he died at the fort de Joux after ten months of captivity."
+        figures: []
+        source: src-lacroix-1819
+        locator: p203-204
+  - id: the-dead-of-1791
+    claim: "How many died and how much was destroyed in the first weeks of the rising"
+    rows:
+      - position: colonist-and-claimant
+        holds: "Within two months of the revolt, upwards of two thousand white persons massacred, one hundred and eighty sugar plantations and about nine hundred coffee, cotton and indigo settlements destroyed, twelve hundred families reduced to charity; of the insurgents, upwards of ten thousand perished by the sword or by famine, and some hundreds by the executioner."
+        figures: []
+        source: src-edwards-1797
+        locator: p75-76
+      - position: french-republican-scholarship
+        holds: "By the morning of the 23rd, 37 proprietors, attorneys and refiners counted assassinated; a few days later eight neighbouring parishes."
+        figures: []
+        source: src-garran-1797-t1
+        locator: p212-213
+      - position: haitian-national
+        holds: "The victims of the killings of 1804, men, women and children, came to about three thousand."
+        figures: []
+        source: src-madiou-1848-t3
+        locator: p141
+  - id: the-indemnity
+    claim: "What the indemnity was, who accepted it, and how long and to whom Haiti paid"
+    rows:
+      - position: haitian-national
+        holds: "The legislature declared the indemnity of 150,000,000 francs consented to France a national debt and voted an extraordinary contribution of 30 millions de gourdes payable in ten years."
+        figures: []
+        source: src-haiti-adresse-18260510
+        locator: p456-457
+      - position: the-indemnity-accountants
+        holds: "Fixed unilaterally at cent cinquante millions de francs or, an act of authority in form though Boyer had accepted the principle; reconsidered by Louis-Philippe's government in 1838 by a double treaty that separated recognition from the debt."
+        figures: []
+        source: src-eugene-2003
+        locator: abstract
+      - position: colonist-and-claimant
+        holds: "Five equal annual terms paid to the Caisse des dépôts et consignations, to compensate the former colonists who would claim an indemnity, and the French flag's duties halved."
+        figures: []
+        source: src-ordonnance-18250417
+        locator: p258-259
+
+exhibits:
+  - id: ex-sonthonax-art2
+    kind: document
+    title: "Sonthonax's proclamation of 29 August 1793, article II"
+    creator: Léger-Félicité Sonthonax
+    date: "29 August 1793"
+    repository: John Carter Brown Library, on the Internet Archive
+    accession: "proclamationauno00sont"
+    licence: a 1793 public act, public domain
+    url: "https://archive.org/details/proclamationauno00sont"
+    source: src-sonthonax-17930829
+    locator: art2
+  - id: ex-creole-1793
+    kind: document
+    title: "The commissioners' proclamation of 2 July 1793 in Creole: the country will not die"
+    creator: Étienne Polverel and Léger-Félicité Sonthonax
+    date: "2 July 1793"
+    repository: John Carter Brown Library, on the Internet Archive
+    accession: "proclamation09sain"
+    licence: a 1793 public act, public domain, with a Void translation beside it
+    url: "https://archive.org/details/proclamation09sain"
+    source: src-commissaires-17930702-ht
+    locator: sec1
+  - id: ex-const-1801-art3
+    kind: document
+    title: "The constitution of 1801, title II, article 3"
+    creator: Toussaint Louverture and the central assembly of Saint-Domingue
+    date: "1801"
+    repository: John Carter Brown Library, on the Internet Archive
+    accession: "constitutionfran00sain"
+    licence: an 1801 public act, public domain, with a Void translation beside it
+    url: "https://archive.org/details/constitutionfran00sain"
+    source: src-toussaint-const-1801
+    locator: art3
+  - id: ex-napoleon-5863
+    kind: document
+    title: "Bonaparte to Talleyrand, 13 November 1801: the government of the blacks"
+    creator: Napoléon Bonaparte
+    date: "13 November 1801"
+    repository: Internet Archive (Correspondance de Napoléon Ier, tome VII, No. 5863)
+    accession: "correspondancede07napouoft"
+    licence: an 1858 state edition, public domain, with a Void translation beside it
+    url: "https://archive.org/details/correspondancede07napouoft"
+    source: src-napoleon-corr-7
+    locator: item5863
+  - id: ex-toussaint-arrest
+    kind: document
+    title: "Toussaint Louverture's memoir: the arrest and the embarkation"
+    creator: Toussaint Louverture
+    date: "1802, printed 1853"
+    repository: Internet Archive (Saint-Rémy's edition of 1853)
+    accession: "mmoiresdugn00tous"
+    licence: an 1802 document in an 1853 edition, public domain, with a Void translation beside it
+    url: "https://archive.org/details/mmoiresdugn00tous"
+    source: src-toussaint-memoire
+    locator: p83
+  - id: ex-act-signatures
+    kind: document
+    title: "The Act of Independence with its signatures, as Madiou prints it"
+    creator: Jean-Jacques Dessalines and the generals of the native army; printed by Thomas Madiou
+    date: "1 January 1804, printed 1848"
+    repository: Internet Archive (Histoire d'Haïti, tome III, page 117)
+    accession: "histoiredhaiti03madi"
+    licence: an 1848 printing, public domain
+    url: "https://archive.org/details/histoiredhaiti03madi"
+    source: src-madiou-1848-t3
+    locator: p117
+  - id: ex-ordonnance-1825
+    kind: document
+    title: "The ordinance of 17 April 1825, as the Haitian Recueil reprints it"
+    creator: Charles X
+    date: "17 April 1825, printed 1851"
+    repository: Internet Archive (Recueil général des lois et actes du gouvernement d'Haïti, tome IV, No. 962)
+    accession: "recueilgnral04hait"
+    licence: an 1825 public act in an 1851 official compilation, public domain
+    url: "https://archive.org/details/recueilgnral04hait"
+    source: src-ordonnance-18250417
+    locator: p258-259
+  - id: ex-us-act-1806
+    kind: document
+    title: "The Act of 28 February 1806 suspending commerce with the parts of St. Domingo not under France"
+    creator: Congress of the United States
+    date: "28 February 1806"
+    repository: United States Statutes at Large, vol. 2, page 351, served by GovTrack
+    accession: "2 Stat. 351, ch. 9"
+    licence: a United States statute, public domain
+    url: "https://govtrackus.s3.amazonaws.com/legislink/pdf/stat/2/STATUTE-2-Pg351.pdf"
+    source: src-us-act-18060228
+    locator: sec1
+
+analyses:
+  - id: an-act-signatories
+    title: The names on the Act of Independence, as Madiou prints it
+    method: "Every name printed under Signé at the foot of the Acte de l'Indépendance in Madiou's tome III, page 117, one row per name, with the rank the print groups it under. Magloire Ambroise is counted as one name, because the second act on page 118 prints him as one; the print of page 117 sets a comma between the two words. The result is the count of rows."
+    finding: "The Act as Madiou prints it carries 37 names: the general in chief, 6 generals of division, 12 generals of brigade, 5 adjudants-généraux, 2 chefs de brigade, 10 officers of the army and the secretary."
+    confidence: "moderate: the rows are read from an 1848 print through a scan's text layer, the original in the National Archives was not fetched, and one name (Magloire Ambroise) is set with a comma that could make it two"
+    against: "the second act of the same day, page 118, prints Magloira Ambroise as one name, which is the reading taken here; if the comma on page 117 is Madiou's, the count is 38; the layer's misprint of the year (4804) is on the same page and shows what the layer can do to a name"
+    result: 37
+    derivation:
+      compute: count
+      columns: [name, rank]
+      rows:
+        - {name: "Dessalines", rank: "général en chef", extract: src-madiou-1848-t3.p117}
+        - {name: "Christophe", rank: "général de division", extract: src-madiou-1848-t3.p117}
+        - {name: "Pétion", rank: "général de division", extract: src-madiou-1848-t3.p117}
+        - {name: "Clervaux", rank: "général de division", extract: src-madiou-1848-t3.p117}
+        - {name: "Geffrard", rank: "général de division", extract: src-madiou-1848-t3.p117}
+        - {name: "Vernet", rank: "général de division", extract: src-madiou-1848-t3.p117}
+        - {name: "Gabart", rank: "général de division", extract: src-madiou-1848-t3.p117}
+        - {name: "P. Romain", rank: "général de brigade", extract: src-madiou-1848-t3.p117}
+        - {name: "E. Gérin", rank: "général de brigade", extract: src-madiou-1848-t3.p117}
+        - {name: "F. Capoix", rank: "général de brigade", extract: src-madiou-1848-t3.p117}
+        - {name: "Daut", rank: "général de brigade", extract: src-madiou-1848-t3.p117}
+        - {name: "J. L. François", rank: "général de brigade", extract: src-madiou-1848-t3.p117}
+        - {name: "Férou", rank: "général de brigade", extract: src-madiou-1848-t3.p117}
+        - {name: "Cangé", rank: "général de brigade", extract: src-madiou-1848-t3.p117}
+        - {name: "L. Bazelais", rank: "général de brigade", extract: src-madiou-1848-t3.p117}
+        - {name: "Magloire Ambroise", rank: "général de brigade", extract: src-madiou-1848-t3.p117}
+        - {name: "J. J. Herne", rank: "général de brigade", extract: src-madiou-1848-t3.p117}
+        - {name: "Toussaint Brave", rank: "général de brigade", extract: src-madiou-1848-t3.p117}
+        - {name: "Yayou", rank: "général de brigade", extract: src-madiou-1848-t3.p117}
+        - {name: "Bonnet", rank: "adjudant-général", extract: src-madiou-1848-t3.p117}
+        - {name: "F. Papalier", rank: "adjudant-général", extract: src-madiou-1848-t3.p117}
+        - {name: "Morrelly", rank: "adjudant-général", extract: src-madiou-1848-t3.p117}
+        - {name: "Chevalier", rank: "adjudant-général", extract: src-madiou-1848-t3.p117}
+        - {name: "Marion", rank: "adjudant-général", extract: src-madiou-1848-t3.p117}
+        - {name: "Magny", rank: "chef de brigade", extract: src-madiou-1848-t3.p117}
+        - {name: "Roux", rank: "chef de brigade", extract: src-madiou-1848-t3.p117}
+        - {name: "Chareron", rank: "officier de l'armée", extract: src-madiou-1848-t3.p117}
+        - {name: "B. Loret", rank: "officier de l'armée", extract: src-madiou-1848-t3.p117}
+        - {name: "Quene", rank: "officier de l'armée", extract: src-madiou-1848-t3.p117}
+        - {name: "Makajoux", rank: "officier de l'armée", extract: src-madiou-1848-t3.p117}
+        - {name: "Dupui", rank: "officier de l'armée", extract: src-madiou-1848-t3.p117}
+        - {name: "Carbonne", rank: "officier de l'armée", extract: src-madiou-1848-t3.p117}
+        - {name: "Diaquoi aîné", rank: "officier de l'armée", extract: src-madiou-1848-t3.p117}
+        - {name: "Raphaël", rank: "officier de l'armée", extract: src-madiou-1848-t3.p117}
+        - {name: "Malet", rank: "officier de l'armée", extract: src-madiou-1848-t3.p117}
+        - {name: "Derenoncourt", rank: "officier de l'armée", extract: src-madiou-1848-t3.p117}
+        - {name: "Boisrond Tonnère", rank: "secrétaire", extract: src-madiou-1848-t3.p117}
+  - id: an-two-acts
+    title: The generals who signed both acts of 1 January 1804
+    method: "The 18 generals (6 of division, 12 of brigade) printed under the Act of Independence on page 117 of Madiou's tome III, one row each, read against the signatures printed under the act of the same day naming Dessalines governor-general for life on page 118; signed_second is yes where the name is printed under the second act and no otherwise. The result is the share of rows with yes."
+    finding: "Of the 18 generals whose names Madiou prints under the Act of Independence, 17 are printed again under the act of the same day that made Dessalines governor-general for life with the right to make peace and war and to name his successor; the one who is not is Daut."
+    confidence: "moderate: both lists are read from an 1848 print through a scan's text layer, and the second list prints J. L. François as J. EL, François and Magloire Ambroise as Magloira Ambroise, which are read here as the same men"
+    against: "the second act's list is a list of generals only, so the 19 other names on the Act (adjudants, chefs de brigade, officers, the secretary) are not tested; Madiou says the generals drew up and signed the second act at the palace after the ceremony, so its signers were those present there, and absence from it need not be dissent"
+    result: 0.9444
+    derivation:
+      compute: share
+      column: signed_second
+      of: "yes"
+      columns: [name, rank, signed_second]
+      rows:
+        - {name: "Christophe", rank: "général de division", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+        - {name: "Pétion", rank: "général de division", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+        - {name: "Clervaux", rank: "général de division", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+        - {name: "Geffrard", rank: "général de division", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+        - {name: "Vernet", rank: "général de division", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+        - {name: "Gabart", rank: "général de division", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+        - {name: "P. Romain", rank: "général de brigade", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+        - {name: "E. Gérin", rank: "général de brigade", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+        - {name: "Capoix", rank: "général de brigade", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+        - {name: "Daut", rank: "général de brigade", signed_second: "no", extract: src-madiou-1848-t3.p117}
+        - {name: "J. L. François", rank: "général de brigade", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+        - {name: "Férou", rank: "général de brigade", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+        - {name: "Cangé", rank: "général de brigade", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+        - {name: "L. Bazelais", rank: "général de brigade", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+        - {name: "Magloire Ambroise", rank: "général de brigade", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+        - {name: "J. J. Herne", rank: "général de brigade", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+        - {name: "Toussaint Brave", rank: "général de brigade", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+        - {name: "Yayou", rank: "général de brigade", signed_second: "yes", extract: src-madiou-1848-t3.p118}
+  - id: an-slavery-documents
+    title: What the acts of state in this ledger say about slavery in Saint-Domingue, 1793 to 1805
+    method: "Every act of state this ledger holds that speaks to the status of the enslaved of Saint-Domingue, one row per act, in date order, with the producer and what the act says of Saint-Domingue: free where it declares the enslaved free or slavery abolished there, silent where it maintains slavery elsewhere and does not name the colony. The result is the share of rows that say free."
+    finding: "Of the 6 acts of state held here that speak to slavery between 1793 and 1805, 5 declare the people of Saint-Domingue free, 2 of them issued by Bonaparte in November 1801; the 1 that maintains slavery, the law of 30 floréal an X, names the colonies restored by the treaty of Amiens and those beyond the Cape of Good Hope and does not name Saint-Domingue."
+    confidence: "high for what each document says, which is read from its own text; the set is the ledger's, not the archive's, and the decree of 16 pluviôse an II is a gap"
+    against: "the note to Talleyrand of 13 November 1801, held here, states the aim of annihilating the government of the blacks at Saint-Domingue in the same fortnight as the two documents that guarantee their liberty, so the count of what the acts say is not a count of what the government intended; and Sonthonax's freedom binds the freed to the plantations by its own article IX"
+    result: 0.8333
+    derivation:
+      compute: share
+      column: saint_domingue
+      of: free
+      columns: [date, act, producer, saint_domingue]
+      rows:
+        - {date: "1793-08-29", act: "Sonthonax's proclamation, article II", producer: french-civil-commission, saint_domingue: free, extract: src-sonthonax-17930829.art2}
+        - {date: "1801", act: "Constitution of Saint-Domingue, article 3", producer: toussaint-government, saint_domingue: free, extract: src-toussaint-const-1801.art3}
+        - {date: "1801-11-08", act: "Bonaparte's proclamation to the inhabitants of Saint-Domingue", producer: french-consulate, saint_domingue: free, extract: src-napoleon-corr-7.item5859}
+        - {date: "1801-11-22", act: "Exposé de la situation de la République", producer: french-consulate, saint_domingue: free, extract: src-napoleon-corr-7.item5874}
+        - {date: "1802-05-20", act: "Law of 30 floréal an X, articles I and II", producer: french-legislature, saint_domingue: silent, extract: src-loi-30-floreal-anx.whole}
+        - {date: "1805-05-20", act: "Constitution of Haiti, article 2", producer: haitian-state, saint_domingue: free, extract: src-madiou-1848-t3.p471}
+  - id: an-expedition-ships
+    title: The ships of the line Bonaparte told London were sailing
+    method: "The letter to Talleyrand of 30 October 1801 (No. 5845) lists, port by port, the ships of the line and frigates that were to sail for Saint-Domingue; one row per port, ships_of_line as the letter counts them in words (six, cinq and huit, un, trois, trois); the Spanish ships of Brest are one row and the French ships of Brest another. The result is the sum. Frigates are not summed, because the letter adds quelques frégates at Brest without a number."
+    finding: "The letter counts 26 ships of the line in the squadrons it told the British cabinet were sailing for Saint-Domingue, from 6 ports, with 18 frigates named by number and some at Brest not numbered, carrying à peu près 20,000 hommes de débarquement under Leclerc."
+    confidence: "high for the arithmetic, which is the letter's own words summed; the letter is a diplomatic communication to London and states what was to sail, not what sailed"
+    against: "the same letter says the Brest squadron carried quelques frégates beyond the four it numbers elsewhere, so the frigate count is a floor; the letter is a communication meant to reassure a foreign cabinet, and this ledger holds no embarkation return against which to check it, Leclerc's letters being a gap"
+    result: 26
+    derivation:
+      compute: sum
+      column: ships_of_line
+      columns: [port, ships_of_line, frigates_numbered]
+      rows:
+        - {port: "Rochefort", ships_of_line: 6, frigates_numbered: 4, extract: src-napoleon-corr-7.item5845}
+        - {port: "Brest (Spanish)", ships_of_line: 5, frigates_numbered: 0, extract: src-napoleon-corr-7.item5845}
+        - {port: "Brest (French)", ships_of_line: 8, frigates_numbered: 0, extract: src-napoleon-corr-7.item5845}
+        - {port: "Lorient", ships_of_line: 1, frigates_numbered: 4, extract: src-napoleon-corr-7.item5845}
+        - {port: "Le Havre", ships_of_line: 0, frigates_numbered: 4, extract: src-napoleon-corr-7.item5845}
+        - {port: "Flushing (Batavian)", ships_of_line: 3, frigates_numbered: 2, extract: src-napoleon-corr-7.item5845}
+        - {port: "Cadiz", ships_of_line: 3, frigates_numbered: 4, extract: src-napoleon-corr-7.item5845}

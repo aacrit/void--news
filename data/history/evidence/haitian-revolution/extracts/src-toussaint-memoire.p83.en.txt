@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-toussaint-memoire.p83
+names: Cap=Cap; Leclerc=Leclerc; Créole=Créole; Héros=Héros; France=France
+
+When I was arrested, I had no other clothes than those I wore. I wrote to my wife to ask her to send me the things I most urgently needed to the Cap, where I hoped I was to be taken. This note was handed to General Leclerc's aide-de-camp with a request to pass it on; but it never reached its destination, and I received nothing. As soon as I was aboard the frigate Créole, sail was set and I was taken four leagues from the Cap, where the ship Héros lay, and I was made to board it. The next day my wife, together with my children who had been arrested with her, arrived there too. Sail was set at once for France. After a crossing of thirty-two days, during which I suffered not only the greatest fatigues but discomforts such as it is impossible to imagine without having been
