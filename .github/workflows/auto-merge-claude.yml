@@ -136,6 +136,7 @@ jobs:
           python tests/test_weekly_assembly.py
           python tests/test_history_meta.py
           python tests/test_history_script.py
+          python tests/test_history_clips.py         # H-12..H-17: an archival clip is signed, sourced, verified, credited, capped and dry
           python tests/test_house_promos.py
 
           # The rule-1 controls. Each of these was written the day a real
