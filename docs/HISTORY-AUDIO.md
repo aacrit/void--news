@@ -168,6 +168,51 @@ by the `era` field, so a classical episode and a contemporary one are audibly
 the same programme in different light. All synthesised in-repo by
 `generate_assets`, no licensed material, per the originality rule.
 
+### Moods and archival clips (built 2026-09-25)
+
+The design is `docs/proposals/HISTORY-AUDIO-ARCHIVAL.md`; policy B on rights
+is the CEO's. Both layers are driven by comment directives in the script,
+which only the producer reads (`Segment.directives`; the exporter, the pages
+and H-01..H-11 see the script unchanged, and `tests/test_history_clips.py`
+asserts it byte for byte on the export).
+
+- **`# MOOD:`** (`pipeline/history/mood.py`): dread, procedure, rupture,
+  grief, testimony, reckoning. A mood sets Kokoro speed per turn (floor
+  0.88), the silence grammar (line gaps, into and out of a document read, the
+  REST that follows), the bed and its duck depth, and the transition into the
+  segment. Testimony and rupture are dry; rupture's one entry lands on the
+  last word of its read. The score is the History parameter set of the house
+  motif (`generate_assets.history_cues`: a fifth down, in G, a 1.6 s pulse,
+  era as the reverb room), rendered in memory, never committed. **A script
+  with no moods renders exactly as before** (compared on all 78).
+- **`# CLIP:`** (`pipeline/history/clips.py`): a real recording in place of a
+  document read, from the ledger's `recordings:` section. It plays only if
+  H-12 (policy B basis and the CEO's `signed_by`/`signed_at`), H-13
+  (provenance), H-14 (transcript verbatim from its extract, and a passing
+  verification record for this window of this file), H-15 (the narrator's
+  credit names the speaker and says recording or broadcast) and H-16 (45 s,
+  two per episode, never the OPEN) all hold; otherwise the document read
+  renders. H-17 keeps music and designed sound off a real voice, on the plan
+  and on the rendered buses. A clip is mono, centred, dry, framed by 900 and
+  1,200 ms of silence, normalised on its own and trimmed after mastering
+  toward -19 LUFS; the master stays -16 LUFS / -1 dBTP.
+- **Verification** (`pipeline/history/verify_clip.py`): fetch to a cache
+  outside the repo against the repository's md5, cut the window, faster-whisper
+  `base.en` int8 on CPU, align against the stored transcript (coverage floor
+  0.70, edges on the transcript's edges), write the record the ledger row
+  names. The render workflow re-runs it (`--check`) for every signed clip and
+  is the only job that installs the ASR. It never signs.
+- **Pilot**: Partition. Nehru, Tryst with Destiny (Internet Archive
+  `HindSwaraj-Speech-03-1`), 0.000 to 28.050 s against
+  `src-cad-19470814.sec53612`: WER 0.043, coverage 0.957, pass. Unsigned, and
+  the script's credit does not yet say "recording", so the document read
+  plays. Signing it means setting `signed_by`/`signed_at` on the row AND
+  changing that one narrator line.
+- **Ambience** (`# AMBIENCE:` + ledger `sounds:`, CC0 or public domain as
+  stated, `designed: true`): the mechanism exists; no sound has been sourced.
+- **Listening subset**: `history_producer.py <slug> --only "OPEN,SCENE 2"`
+  renders only those segments (never published).
+
 ## Why the scripts are not generated
 
 `gemini-2.5-flash` is capped at **20 requests per day** on the free tier. 78

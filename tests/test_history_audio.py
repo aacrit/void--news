@@ -156,6 +156,37 @@ def main() -> int:
         check(f"{slug}: chapters are documentary segments",
               all(c.get("kind") == "segment" for c in chapters))
 
+        # An archival clip the row says the episode carries (§4c.7 of
+        # HISTORY-AUDIO-ARCHIVAL.md) must be a signed ledger recording whose
+        # verification record hashed exactly this excerpt, and must sit on
+        # its own chapter inside the episode.
+        for clip in ep.get("clips") or []:
+            cid = clip.get("id")
+            led_path = ROOT / "data/history/evidence" / slug / "ledger.yaml"
+            rec = None
+            try:
+                import yaml as _y
+                rows = (_y.safe_load(led_path.read_text(encoding="utf-8")) or {}).get("recordings") or []
+                rec = next((r for r in rows if r.get("id") == cid), None)
+            except Exception as e:  # noqa: BLE001
+                check(f"{slug}: clip {cid}: ledger readable", False, str(e))
+            check(f"{slug}: clip {cid} is a ledger recording", rec is not None)
+            if rec is None:
+                continue
+            check(f"{slug}: clip {cid} is signed", bool(rec.get("signed_by")) and bool(rec.get("signed_at")))
+            vpath = ROOT / "data/history/evidence" / slug / str(rec.get("verification") or "missing")
+            ver = json.loads(vpath.read_text(encoding="utf-8")) if vpath.exists() else {}
+            check(f"{slug}: clip {cid} verification passed", bool(ver.get("pass")))
+            check(f"{slug}: clip {cid} sha256 is the verified excerpt",
+                  clip.get("sha256") and clip.get("sha256") == ver.get("excerpt_sha256"),
+                  f"{clip.get('sha256')} vs {ver.get('excerpt_sha256')}")
+            s, e = clip.get("startTime"), clip.get("endTime")
+            check(f"{slug}: clip {cid} plays inside the episode",
+                  isinstance(s, (int, float)) and isinstance(e, (int, float)) and 0 < s < e
+                  and (not isinstance(claimed, (int, float)) or e <= claimed), f"{s}-{e}")
+            check(f"{slug}: clip {cid} has its own chapter",
+                  any(abs((c.get("startTime") or -1) - (s or -2)) < 0.01 for c in chapters))
+
         # A stitched episode carries the house promo under its outro. The
         # manifest says which one; the chapters, the file and the pool must
         # agree with it, and the promo must never be a History promo.

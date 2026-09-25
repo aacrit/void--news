@@ -100,3 +100,7 @@ void_local.db
 # reader still fetches them same-origin from news.voidvision.org.
 # See pipeline/history/release_store.py.
 frontend/public/audio/history/*.mp3
+
+# The History score written out for listening (generate_assets.py --history); the
+# producer renders it in memory, so it is never committed.
+pipeline/briefing/assets/history/
