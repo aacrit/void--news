@@ -8,8 +8,7 @@ name: Daily Feed Snapshot
 # deploy.
 
 on:
-  schedule:
-    - cron: "0 16 * * *"
+  # Schedule removed 2026-09-24: it reads Supabase, decommissioned 2026-09-01; it committed empty snapshots, then failed daily from 2026-09-21. Manual dispatch kept.
   workflow_dispatch:
 
 concurrency:
