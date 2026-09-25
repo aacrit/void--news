@@ -1,0 +1,7 @@
+source: src-hansard-lords-19470220
+locator: p837
+url: https://api.parliament.uk/historic-hansard/lords/1947/feb/20/indian-policy
+read: 2026-09-25
+note: p is the Hansard column; HL Deb 20 February 1947 vol 145 cc835-41, the Government's statement as Lord Pethick-Lawrence read it to the Lords
+
+10. After months of hard work by the Cabinet Mission a great measure of agreement was obtained as to the method by which a Constitution should be worked out. This was embodied in their statements of May last. His Majesty's Government there agreed to recommend to Parliament a Constitution worked out, in accordance with the proposals made therein, by a fully representative Constituent Assembly. But if it should appear that such a Constitution will not have been worked out by a fully representative Assembly before the time mentioned in paragraph 7, His Majesty's Government will have to consider to whom the powers of the Central Government in British India should be handed over, on the same date, whether as a whole to some form of Central Government for British India or in some areas to the existing Provincial Governments, or in such other way as may seem most reasonable and in the best interests of the Indian people.

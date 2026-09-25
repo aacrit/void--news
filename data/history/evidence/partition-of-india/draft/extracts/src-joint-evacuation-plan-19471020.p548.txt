@@ -1,0 +1,8 @@
+source: src-joint-evacuation-plan-19471020
+locator: p548
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: p is the page of Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947 (2nd ed., 2005), read from the Internet Archive text layer; line breaks are joined and the layer's soft hyphens rejoined
+note: Document 186, the Joint Evacuation Movement Plan of 20 October 1947, from Brigadier Rajendra Singh, Military Evacuation Organisation, Appendix 16; the layer's leading '~' is kept
+
+~ 1. The Muslim population of the East Punjab and the Punjab States now within the Dominion of India, according to the 1941 Census, was about 53 lakhs, the non-Muslim population of the West Punjab was 38 lakhs of which 15 lakhs were Sikhs and 23 lakhs Hindus. 2. It is estimated that 21 lakhs of Muslim refugees have moved into the West Punjab since Ist August 1947 and that during the same period 20 lakhs of non-Muslims have left for the East Punjab. The balance to be moved is therefore about 32 lakhs Muslims and 18 lakhs non-Muslims.

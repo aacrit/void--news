@@ -1,0 +1,8 @@
+source: src-jenkins-19480407
+locator: p707
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: p is the page of Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947 (2nd ed., 2005), read from the Internet Archive text layer; line breaks are joined and the layer's soft hyphens rejoined
+note: Document 238, as above; 'salienthad' and 'appraised' are the layer's
+
+About the 10th or 11th August, when we were still expecting the award on 13th August at latest, I received a secraphone message from Viceroy’s House containing the words “Eliminate salient”. Those informed under the arrangements described ‘in (4) above of the expected boundary were appraised of this change. So also was Mudie. The change caused some surprise, not because the Ferozepur salienthad been regarded as inevitable or even probable, but because it seemed odd that any advance information had been given by the Commission if the award was not substantially complete.

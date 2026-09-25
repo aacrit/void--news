@@ -1,0 +1,9 @@
+source: src-lahore-resolution-1940
+locator: p1
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: p is the page of Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947 (2nd ed., 2005), read from the Internet Archive text layer; line breaks are joined and the layer's soft hyphens rejoined
+note: Document 1, from the Indian Annual Register 1940; the scan prints no number on this page and the next numbered page is 3, so the page is 1
+note: the layer's 'thatitis' and the stray hyphen before 'Resolved' are kept as printed
+
+- Resolved thatitis the considered view of this Session of the All-India Muslim League that no constitutional plan would be workable in this country or acceptable to the Muslims unless it is designed on the following basic principles, viz., that geographically contiguous units are demarcated into regions which should be so constituted, with such territorial readjustments as may be necessary, that the areas in which the Muslims are numerically in a majority as in the North-Western and Eastern zones of India should be grouped to constitute ‘Independent States’ in which the constituent units shall be autonomous and sovereign.
