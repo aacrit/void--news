@@ -190,6 +190,16 @@
   );
 }
 
+/* The event pages (the Hearing and the Thesis) carry no page vignette. The
+   layer is fixed at the viewport's size, so on a long read it shaded the
+   corners of whatever text sat at the screen's edge, and in any full-page
+   capture or print it stopped in a hard line one viewport down, through the
+   first section. The hero has its own overlay; the reading column needs
+   none. */
+:root:has(.hist-hearing-page) .hist-vignette {
+  display: none;
+}
+
 /* Halved vignette opacity when .hist-page--clean is active */
 .hist-page--clean .hist-vignette {
   opacity: 0.5;

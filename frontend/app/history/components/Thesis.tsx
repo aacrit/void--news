@@ -294,7 +294,7 @@ function Analysis({ block, doc }: { block: ThesisAnalysisBlock; doc: ThesisDoc }
             {block.rows.map((r, i) => (
               <tr key={i}>
                 {block.columns.map((c) => (
-                  <td key={c}>{r.cells[c] === null || r.cells[c] === undefined ? "" : String(r.cells[c])}</td>
+                  <td key={c} className={c === "producer" ? "hist-th-table__id" : undefined}>{r.cells[c] === null || r.cells[c] === undefined ? "" : String(r.cells[c])}</td>
                 ))}
                 <td>
                   <a href={`#${noteId(r.note)}`} className="hist-th-ref hist-th-ref--cell" aria-label={`Note ${r.note}: ${r.short}, ${r.locatorLabel}`}>
