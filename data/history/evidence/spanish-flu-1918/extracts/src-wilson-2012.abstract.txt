@@ -1,0 +1,6 @@
+source: src-wilson-2012
+locator: abstract
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3310086/fullTextXML
+read: 2026-09-25
+
+Evidence suggests that indigenous populations have suffered disproportionately from past influenza pandemics. To examine any such patterns for Māori in New Zealand, we searched the literature and performed new analyses by using additional datasets. The Māori death rate in the 1918 pandemic (4,230/100,000 population) was 7.3× the European rate. In the 1957 pandemic, the Māori death rate (40/100,000) was 6.2× the European rate. In the 2009 pandemic, the Māori rate was higher than the European rate (rate ratio 2.6, 95% confidence interval 1.3–5.3). These findings suggest some decline in pandemic-related ethnic inequalities in death rates over the past century. Nevertheless, the persistent excess in adverse outcomes for Māori, and for Pacific persons residing in New Zealand, highlights the need for improved public health responses.

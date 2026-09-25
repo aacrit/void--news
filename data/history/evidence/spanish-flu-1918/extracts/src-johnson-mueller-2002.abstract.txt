@@ -1,0 +1,7 @@
+source: src-johnson-mueller-2002
+locator: abstract
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A11875246&resultType=core&format=json
+read: 2026-09-25
+note: the abstract as the Europe PMC record carries it, read from the REST endpoint named above; cut at a sentence end to stay within the 150-word cap where the abstract is longer
+
+The influenza pandemic of 1918-20 is recognized as having generally taken place in three waves, starting in the northern spring and summer of 1918. This pattern of three waves, however, was not universal: in some locations influenza seems to have persisted into or returned in 1920. The recorded statistics of influenza morbidity and mortality are likely to be a significant understatement. Limitations of these data can include nonregistration, missing records, misdiagnosis, and nonmedical certification, and may also vary greatly between locations. Further research has seen the consistent upward revision of the estimated global mortality of the pandemic, which a 1920s calculation put in the vicinity of 21.5 million. A 1991 paper revised the mortality as being in the range 24.7-39.3 million. This paper suggests that it was of the order of 50 million.

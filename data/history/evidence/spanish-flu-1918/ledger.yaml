@@ -1,0 +1,1658 @@
+# The evidence ledger for spanish-flu-1918 (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Every entry was resolved or fetched on 2026-09-25 from the URL it names; every
+# extract under extracts/ was sliced from the fetched copy, never retyped, except
+# where a header note says a figure or a conjunct was checked against the page
+# scan of the same item. Nothing here was written from memory. An entry the free
+# record could not reach is listed under `gaps`, by name, with what was tried.
+slug: spanish-flu-1918
+bootstrapped: 2026-09-25
+
+entries:
+  # ----------------------------------------------------------- Tier A: primary record
+  - id: src-moh-1920
+    tier: A
+    kind: report
+    author: Great Britain, Ministry of Health (Major Greenwood, Thomas Carnwath, R. Bruce Low, S. P. James and others)
+    title: "Reports on Public Health and Medical Subjects, No. 4: Report on the Pandemic of Influenza, 1918-19"
+    container: null
+    publisher: His Majesty's Stationery Office
+    place: London
+    year: 1920
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: "pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920", hathitrust: null, url: "https://archive.org/details/pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920"}
+    access:
+      free_copy: "https://archive.org/download/pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920/PandemicofInfluenzaHMSO_entire_book_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Ministry of Health, Reports on Public Health and Medical Subjects, No. 4: The Report on the Pandemic of Influenza, 1918-19 (London: HMSO, 1920)"
+    language: en
+    region_of_authorship: europe
+    producer: uk-ministry-of-health
+    record_of: uk-ministry-of-health
+    position: official-contemporary
+    rights: public
+
+  - id: src-rg-1920
+    tier: A
+    kind: report
+    author: Registrar-General for England and Wales
+    title: "Supplement to the Eighty-First Annual Report of the Registrar-General: Report on the Mortality from Influenza in England and Wales during the Epidemic of 1918-19"
+    container: null
+    publisher: His Majesty's Stationery Office
+    place: London
+    year: 1920
+    edition: "Cmd. 700; the Internet Archive record dates the volume 1919"
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: "sid14156800", hathitrust: null, url: "https://archive.org/details/sid14156800"}
+    access:
+      free_copy: "https://archive.org/download/sid14156800/sid14156800_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Annual report of the Registrar-General of births, deaths, and marriages in England and Wales. Supplement to Eighty-First Report: Report on the mortality from influenza in England and Wales during the epidemic of 1918-1919, 1919."
+    language: en
+    region_of_authorship: europe
+    producer: uk-registrar-general
+    record_of: uk-registrar-general
+    position: official-contemporary
+    rights: public
+
+  - id: src-sancom-1918
+    tier: A
+    kind: report
+    author: Sanitary Commissioner with the Government of India
+    title: "Annual Report of the Sanitary Commissioner with the Government of India for 1918"
+    container: null
+    publisher: Superintendent of Government Printing
+    place: Calcutta
+    year: 1920
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: "b31492551", hathitrust: null, url: "https://archive.org/details/b31492551"}
+    access:
+      free_copy: "https://archive.org/download/b31492551/b31492551_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Annual report of the Sanitary Commissioner with the Government of India"
+    language: en
+    region_of_authorship: south-asia
+    producer: government-of-india
+    record_of: colonial-administration
+    position: official-contemporary
+    rights: public
+
+  - id: src-census-1921
+    tier: A
+    kind: report
+    author: J. T. Marten, Census Commissioner for India
+    title: "Census of India, 1921, Volume I: India, Part I, Report"
+    container: null
+    publisher: Superintendent Government Printing
+    place: Calcutta
+    year: 1924
+    edition: null
+    volume: I
+    identifiers: {isbn: null, doi: null, archive_org: "india.history.resource.92353", hathitrust: null, url: "https://archive.org/details/india.history.resource.92353"}
+    access:
+      free_copy: "https://archive.org/download/india.history.resource.92353/92353_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Census of India, 1921, Vol. I; India; Part I.- Report"
+    language: en
+    region_of_authorship: south-asia
+    producer: government-of-india
+    record_of: colonial-administration
+    position: official-contemporary
+    rights: public
+
+  - id: src-phr-1918-06-21
+    tier: A
+    kind: report
+    author: United States Public Health Service
+    title: "Influenza a Probable Cause of Fever of Undetermined Nature in Southern States"
+    container: Public Health Reports
+    publisher: Government Printing Office
+    place: Washington
+    year: 1918
+    edition: null
+    volume: "33(25), 21 June 1918, 1003"
+    identifiers: {isbn: null, doi: null, archive_org: "jstor-4574823", hathitrust: null, url: "https://archive.org/details/jstor-4574823"}
+    access:
+      free_copy: "https://archive.org/download/jstor-4574823/4574823_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Influenza a Probable Cause of Fever of Undetermined Nature in Southern States"
+    language: en
+    region_of_authorship: americas
+    producer: us-public-health-service
+    record_of: us-public-health-service
+    position: official-contemporary
+    rights: public
+
+  - id: src-phr-1918-09-13
+    tier: A
+    kind: report
+    author: United States Public Health Service (circular signed Rupert Blue, Surgeon General)
+    title: "Measures for the Prevention of the Introduction of Epidemic Influenza"
+    container: Public Health Reports
+    publisher: Government Printing Office
+    place: Washington
+    year: 1918
+    edition: null
+    volume: "33(37), 13 September 1918, 1540-1543"
+    identifiers: {isbn: null, doi: null, archive_org: "jstor-4574883", hathitrust: null, url: "https://archive.org/details/jstor-4574883"}
+    access:
+      free_copy: "https://archive.org/download/jstor-4574883/4574883_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Measures for the Prevention of the Introduction of Epidemic Influenza"
+    language: en
+    region_of_authorship: americas
+    producer: us-public-health-service
+    record_of: us-public-health-service
+    position: official-contemporary
+    rights: public
+
+  - id: src-phr-1918-09-27
+    tier: A
+    kind: report
+    author: United States Public Health Service
+    title: "Epidemic Influenza (\"Spanish Influenza\"): Prevalence in the United States"
+    container: Public Health Reports
+    publisher: Government Printing Office
+    place: Washington
+    year: 1918
+    edition: null
+    volume: "33(39), 27 September 1918, 1625-1626"
+    identifiers: {isbn: null, doi: null, archive_org: "jstor-4574893", hathitrust: null, url: "https://archive.org/details/jstor-4574893"}
+    access:
+      free_copy: "https://archive.org/download/jstor-4574893/4574893_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Epidemic Influenza (\"Spanish Influenza\"): Prevalence in the United States"
+    language: en
+    region_of_authorship: americas
+    producer: us-public-health-service
+    record_of: us-public-health-service
+    position: official-contemporary
+    rights: public
+
+  - id: src-phr-1918-12-27
+    tier: A
+    kind: report
+    author: Edgar Sydenstricker, Public Health Statistician, United States Public Health Service
+    title: "Preliminary Statistics of the Influenza Epidemic"
+    container: Public Health Reports
+    publisher: Government Printing Office
+    place: Washington
+    year: 1918
+    edition: null
+    volume: "33(52), 27 December 1918, 2305-2321"
+    identifiers: {isbn: null, doi: null, archive_org: "jstor-4574973", hathitrust: null, url: "https://archive.org/details/jstor-4574973"}
+    access:
+      free_copy: "https://archive.org/download/jstor-4574973/4574973_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Preliminary Statistics of the Influenza Epidemic"
+    language: en
+    region_of_authorship: americas
+    producer: us-public-health-service
+    record_of: us-public-health-service
+    position: official-contemporary
+    rights: public
+
+  - id: src-phr-1919-04-18
+    tier: A
+    kind: report
+    author: United States Public Health Service
+    title: "Influenza in South Africa"
+    container: Public Health Reports
+    publisher: Government Printing Office
+    place: Washington
+    year: 1919
+    edition: null
+    volume: "34(16), 18 April 1919, 775"
+    identifiers: {isbn: null, doi: null, archive_org: "jstor-4575115", hathitrust: null, url: "https://archive.org/details/jstor-4575115"}
+    access:
+      free_copy: "https://archive.org/download/jstor-4575115/4575115_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Influenza in South Africa"
+    language: en
+    region_of_authorship: americas
+    producer: us-public-health-service
+    record_of: us-public-health-service
+    position: official-contemporary
+    rights: public
+
+  - id: src-phr-1919-06-20
+    tier: A
+    kind: report
+    author: United States Public Health Service
+    title: "Closing of Schools and Theaters during Influenza Epidemic: Arizona Supreme Court Decides That Local Boards of Health Can Order Such Closing"
+    container: Public Health Reports
+    publisher: Government Printing Office
+    place: Washington
+    year: 1919
+    edition: "the item also carries the tail of the preceding article, Table X on the Union of South Africa"
+    volume: "34(25), 20 June 1919, 1376-1377"
+    identifiers: {isbn: null, doi: null, archive_org: "jstor-4575203", hathitrust: null, url: "https://archive.org/details/jstor-4575203"}
+    access:
+      free_copy: "https://archive.org/download/jstor-4575203/4575203_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Closing of Schools and Theaters during Influenza Epidemic: Arizona Supreme Court Decides That Local Boards of Health Can Order Such Closing"
+    language: en
+    region_of_authorship: americas
+    producer: us-public-health-service
+    record_of: us-public-health-service
+    position: official-contemporary
+    rights: public
+
+  - id: src-phr-1919-07-25
+    tier: A
+    kind: report
+    author: United States Public Health Service, from the preliminary report of Major Norman White, Sanitary Commissioner with the Government of India
+    title: "Influenza in India, 1918"
+    container: Public Health Reports
+    publisher: Government Printing Office
+    place: Washington
+    year: 1919
+    edition: null
+    volume: "34(30), 25 July 1919, 1624-1625"
+    identifiers: {isbn: null, doi: null, archive_org: "jstor-4575250", hathitrust: null, url: "https://archive.org/details/jstor-4575250"}
+    access:
+      free_copy: "https://archive.org/download/jstor-4575250/4575250_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Influenza in India, 1918"
+    language: en
+    region_of_authorship: americas
+    producer: us-public-health-service
+    record_of: us-public-health-service
+    position: official-contemporary
+    rights: public
+
+  - id: src-phr-1919-10-17-samoa
+    tier: A
+    kind: report
+    author: United States Public Health Service, from a report of the Department of Native Affairs, Apia
+    title: "Influenza Mortality in Samoa, September to December, 1918"
+    container: Public Health Reports
+    publisher: Government Printing Office
+    place: Washington
+    year: 1919
+    edition: null
+    volume: "34(42), 17 October 1919, 2303"
+    identifiers: {isbn: null, doi: null, archive_org: "jstor-4575351", hathitrust: null, url: "https://archive.org/details/jstor-4575351"}
+    access:
+      free_copy: "https://archive.org/download/jstor-4575351/4575351_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Influenza Mortality in Samoa, September to December, 1918"
+    language: en
+    region_of_authorship: americas
+    producer: us-public-health-service
+    record_of: us-public-health-service
+    position: official-contemporary
+    rights: public
+
+  - id: src-phr-1919-10-17-india
+    tier: A
+    kind: report
+    author: United States Public Health Service, from the reports of the sanitary commissioners of Assam and the Punjab for 1918
+    title: "Influenza in India, 1918 (Assam and Punjab)"
+    container: Public Health Reports
+    publisher: Government Printing Office
+    place: Washington
+    year: 1919
+    edition: null
+    volume: "34(42), 17 October 1919, 2300-2302"
+    identifiers: {isbn: null, doi: null, archive_org: "jstor-4575350", hathitrust: null, url: "https://archive.org/details/jstor-4575350"}
+    access:
+      free_copy: "https://archive.org/download/jstor-4575350/4575350_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Influenza in India, 1918"
+    language: en
+    region_of_authorship: americas
+    producer: us-public-health-service
+    record_of: us-public-health-service
+    position: official-contemporary
+    rights: public
+
+  - id: src-alaska-1919
+    tier: A
+    kind: primary-document
+    author: United States Senate, Committee on Appropriations (testimony of Governor Thomas Riggs and Commissioner P. P. Claxton, with telegrams from Nome)
+    title: "Influenza in Alaska: Hearings before the Committee on Appropriations, United States Senate, Sixty-fifth Congress, third session"
+    container: null
+    publisher: Government Printing Office
+    place: Washington
+    year: 1919
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: "influenzainalas00apprgoog", hathitrust: null, url: "https://archive.org/details/influenzainalas00apprgoog"}
+    access:
+      free_copy: "https://archive.org/download/influenzainalas00apprgoog/influenzainalas00apprgoog_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Influenza in Alaska: Hearings Before the Committee on Appropriations, United ..."
+    language: en
+    region_of_authorship: americas
+    producer: us-federal-government
+    record_of: us-federal-government
+    position: official-contemporary
+    rights: public
+
+  - id: src-sar-1919
+    tier: A
+    kind: report
+    author: South African Railways and Harbours, General Manager
+    title: "Report of the General Manager of Railways and Harbours for the year ended 31st March, 1919, section Influenza Epidemic (U.G. 59-'19)"
+    container: null
+    publisher: Government Printing and Stationery Office
+    place: Pretoria
+    year: 1919
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: "sar-influenza-epidemic-of-1918-gmar-1919", hathitrust: null, url: "https://archive.org/details/sar-influenza-epidemic-of-1918-gmar-1919"}
+    access:
+      free_copy: "https://archive.org/download/sar-influenza-epidemic-of-1918-gmar-1919/Influenza%20Epidemic%20of%201918_GMAR1919_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "SAR Influenza Epidemic Report 1918"
+    language: en
+    region_of_authorship: africa
+    producer: south-african-railways
+    record_of: colonial-administration
+    position: official-contemporary
+    rights: public
+
+  - id: src-ajn-1918-12
+    tier: A
+    kind: letter
+    author: "G. R., a nurse in North Dakota (letter to the editor)"
+    title: "Experiences during the Influenza Epidemic, letters to the editor, The American Journal of Nursing, December 1918, Vol 19 Iss 3"
+    container: The American Journal of Nursing
+    publisher: Lippincott Williams and Wilkins
+    place: Philadelphia
+    year: 1918
+    edition: null
+    volume: "19(3), December 1918, 203-205"
+    identifiers: {isbn: null, doi: null, archive_org: "sim_american-journal-of-nursing_1918-12_19_3", hathitrust: null, url: "https://archive.org/details/sim_american-journal-of-nursing_1918-12_19_3"}
+    access:
+      free_copy: "https://archive.org/download/sim_american-journal-of-nursing_1918-12_19_3/sim_american-journal-of-nursing_1918-12_19_3_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "The American Journal of Nursing 1918-12: Vol 19 Iss 3"
+    language: en
+    region_of_authorship: americas
+    producer: nurse-letter
+    record_of: nurse-testimony
+    position: null
+    rights: public
+
+  # ----------------------------------------------------------- Tier B: peer-reviewed scholarship
+  - id: src-johnson-mueller-2002
+    tier: B
+    kind: journal-article
+    author: Niall P. A. S. Johnson and Juergen Mueller
+    title: "Updating the Accounts: Global Mortality of the 1918-1920 \"Spanish\" Influenza Pandemic"
+    container: Bulletin of the History of Medicine
+    publisher: Johns Hopkins University Press
+    place: Baltimore
+    year: 2002
+    edition: null
+    volume: "76(1), 105-115"
+    identifiers: {isbn: null, doi: "10.1353/bhm.2002.0022", archive_org: null, hathitrust: null, url: "https://europepmc.org/article/MED/11875246"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A11875246&resultType=core&format=json"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Updating the Accounts: Global Mortality of the 1918-1920 \"Spanish\" Influenza Pandemic"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: mortality-revisionists
+
+  - id: src-taubenberger-morens-2006
+    tier: B
+    kind: journal-article
+    author: Jeffery K. Taubenberger and David M. Morens
+    title: "1918 Influenza: the Mother of All Pandemics"
+    container: Emerging Infectious Diseases
+    publisher: Centers for Disease Control and Prevention
+    place: Atlanta
+    year: 2006
+    edition: null
+    volume: "12(1), 15-22"
+    identifiers: {isbn: null, doi: "10.3201/eid1201.050979", archive_org: null, hathitrust: null, url: "https://wwwnc.cdc.gov/eid/article/12/1/05-0979_article"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3291398/fullTextXML"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "1918 Influenza: the Mother of All Pandemics"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: mortality-revisionists
+    rights: public
+
+  - id: src-chandra-2013-indonesia
+    tier: B
+    kind: journal-article
+    author: Siddharth Chandra
+    title: "Mortality from the influenza pandemic of 1918-19 in Indonesia"
+    container: Population Studies
+    publisher: Taylor and Francis
+    place: null
+    year: 2013
+    edition: null
+    volume: "67(2), 185-193"
+    identifiers: {isbn: null, doi: "10.1080/00324728.2012.754486", archive_org: null, hathitrust: null, url: "https://europepmc.org/article/PMC/PMC3687026"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3687026/fullTextXML"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Mortality from the influenza pandemic of 1918–19 in Indonesia"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: mortality-revisionists
+
+  - id: src-spreeuwenberg-2018
+    tier: B
+    kind: journal-article
+    author: Peter Spreeuwenberg, Madelon Kroneman and John Paget
+    title: "Reassessing the Global Mortality Burden of the 1918 Influenza Pandemic"
+    container: American Journal of Epidemiology
+    publisher: Oxford University Press
+    place: null
+    year: 2018
+    edition: null
+    volume: "187(12), 2561-2567"
+    identifiers: {isbn: null, doi: "10.1093/aje/kwy191", archive_org: null, hathitrust: null, url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC7314216/"}
+    access:
+      free_copy: "https://pmc.ncbi.nlm.nih.gov/articles/PMC7314216/"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Reassessing the Global Mortality Burden of the 1918 Influenza Pandemic"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: mortality-sceptics
+
+  - id: src-chandra-2012-india
+    tier: B
+    kind: journal-article
+    author: Siddharth Chandra, Goran Kuljanin and Jennifer Wray
+    title: "Mortality From the Influenza Pandemic of 1918-1919: The Case of India"
+    container: Demography
+    publisher: Duke University Press
+    place: null
+    year: 2012
+    edition: null
+    volume: "49(3), 857-865"
+    identifiers: {isbn: null, doi: "10.1007/s13524-012-0116-x", archive_org: null, hathitrust: null, url: "https://link.springer.com/article/10.1007/s13524-012-0116-x"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A22661303&resultType=core&format=json"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Mortality From the Influenza Pandemic of 1918–1919: The Case of India"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: mortality-sceptics
+
+  - id: src-barry-2004
+    tier: B
+    kind: journal-article
+    author: John M. Barry
+    title: "The site of origin of the 1918 influenza pandemic and its public health implications"
+    container: Journal of Translational Medicine
+    publisher: BioMed Central
+    place: null
+    year: 2004
+    edition: null
+    volume: "2, 3"
+    identifiers: {isbn: null, doi: "10.1186/1479-5876-2-3", archive_org: null, hathitrust: null, url: "https://europepmc.org/article/PMC/PMC340389"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC340389/fullTextXML"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "The site of origin of the 1918 influenza pandemic and its public health implications"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: origin-america
+
+  - id: src-dicke-2015
+    tier: B
+    kind: journal-article
+    author: Tom Dicke
+    title: "Waiting for the Flu: Cognitive Inertia and the Spanish Influenza Pandemic of 1918-19"
+    container: Journal of the History of Medicine and Allied Sciences
+    publisher: Oxford University Press
+    place: null
+    year: 2015
+    edition: null
+    volume: "70(2), 195-217"
+    identifiers: {isbn: null, doi: "10.1093/jhmas/jru019", archive_org: null, hathitrust: null, url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC7313928/"}
+    access:
+      free_copy: "https://pmc.ncbi.nlm.nih.gov/articles/PMC7313928/"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Waiting for the Flu: Cognitive Inertia and the Spanish Influenza Pandemic of 1918-19"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: origin-america
+
+  - id: src-gill-oxford-2026
+    tier: B
+    kind: journal-article
+    author: Douglas Gill and John Oxford
+    title: "The 'Spanish' influenza pandemic: new evidence for influenza outbreaks in England and France prior to 1918"
+    container: Medical History
+    publisher: Cambridge University Press
+    place: Cambridge
+    year: 2026
+    edition: null
+    volume: "70(3), 429-448"
+    identifiers: {isbn: null, doi: "10.1017/mdh.2025.10053", archive_org: null, hathitrust: null, url: "https://europepmc.org/article/PMC/PMC13311354"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13311354/fullTextXML"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "The ‘Spanish’ influenza pandemic: new evidence for influenza outbreaks in England and France prior to 1918"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: origin-france
+
+  - id: src-oxford-2001
+    tier: B
+    kind: journal-article
+    author: J. S. Oxford
+    title: "The so-called Great Spanish Influenza Pandemic of 1918 may have originated in France in 1916"
+    container: "Philosophical Transactions of the Royal Society of London, Series B"
+    publisher: The Royal Society
+    place: London
+    year: 2001
+    edition: null
+    volume: "356(1416), 1857-1859"
+    identifiers: {isbn: null, doi: "10.1098/rstb.2001.1012", archive_org: null, hathitrust: null, url: "https://europepmc.org/article/MED/11779384"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A11779384&resultType=core&format=json"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "The so-called Great Spanish Influenza Pandemic of 1918 may have originated in France in 1916"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: origin-france
+
+  - id: src-honigsbaum-2013
+    tier: B
+    kind: journal-article
+    author: Mark Honigsbaum
+    title: "Regulating the 1918-19 Pandemic: Flu, Stoicism and the Northcliffe Press"
+    container: Medical History
+    publisher: Cambridge University Press
+    place: Cambridge
+    year: 2013
+    edition: null
+    volume: "57(2), 165-185"
+    identifiers: {isbn: null, doi: "10.1017/mdh.2012.101", archive_org: null, hathitrust: null, url: "https://europepmc.org/article/PMC/PMC3867839"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3867839/fullTextXML"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Regulating the 1918–19 Pandemic: Flu, Stoicism and the Northcliffe Press"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: naming-censorship
+
+  - id: src-trilla-2008
+    tier: B
+    kind: journal-article
+    author: Antoni Trilla, Guillem Trilla and Carolyn Daer
+    title: "The 1918 \"Spanish Flu\" in Spain"
+    container: Clinical Infectious Diseases
+    publisher: Oxford University Press
+    place: null
+    year: 2008
+    edition: null
+    volume: "47(5), 668-673"
+    identifiers: {isbn: null, doi: "10.1086/590567", archive_org: null, hathitrust: null, url: "https://europepmc.org/article/MED/18652556"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A18652556&resultType=core&format=json"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "The 1918 “Spanish Flu” in Spain"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: naming-censorship
+
+  - id: src-almudever-2025
+    tier: B
+    kind: journal-article
+    author: Laura Almudéver Campo and Ramón E. Camaño Puig
+    title: "The demographic impact of the 1918 flu epidemic through the Spanish press"
+    original_title: "Impacto demográfico de la epidemia de gripe de 1918 a través de la prensa española"
+    container: Revista Española de Salud Pública
+    publisher: Ministerio de Sanidad
+    place: Madrid
+    year: 2025
+    edition: null
+    volume: "99, e202506027"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://europepmc.org/article/PMC/PMC12160415"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12160415/fullTextXML"
+      verified_at: 2026-09-25
+      verified_by: repository-record
+      verified_title: "[The demographic impact of the 1918 flu epidemic through the spanish press]."
+    language: es
+    region_of_authorship: europe
+    producer: scholarship
+    position: naming-censorship
+
+  - id: src-arnold-2019
+    tier: B
+    kind: journal-article
+    author: David Arnold
+    title: "Death and the Modern Empire: the 1918-19 Influenza Epidemic in India"
+    container: Transactions of the Royal Historical Society
+    publisher: Cambridge University Press
+    place: Cambridge
+    year: 2019
+    edition: null
+    volume: "29, 181-200"
+    identifiers: {isbn: null, doi: "10.1017/S0080440119000082", archive_org: null, hathitrust: null, url: "https://doi.org/10.1017/S0080440119000082"}
+    access:
+      free_copy: "https://doi.org/10.1017/S0080440119000082"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "DEATH AND THE MODERN EMPIRE: THE 1918–19 INFLUENZA EPIDEMIC IN INDIA"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: india-historians
+
+  - id: src-hardiman-2012
+    tier: B
+    kind: journal-article
+    author: David Hardiman
+    title: "The Influenza Epidemic of 1918 and the Adivasis of Western India"
+    container: Social History of Medicine
+    publisher: Oxford University Press
+    place: null
+    year: 2012
+    edition: null
+    volume: "25(3), 644-664"
+    identifiers: {isbn: null, doi: "10.1093/shm/hks015", archive_org: null, hathitrust: null, url: "https://europepmc.org/article/MED/34191896"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A34191896&resultType=core&format=json"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "The Influenza Epidemic of 1918 and the Adivasis of Western India: Fig. 1"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: india-historians
+
+  - id: src-mills-1986
+    tier: B
+    kind: journal-article
+    author: I. D. Mills
+    title: "The 1918-1919 Influenza Pandemic: The Indian Experience"
+    container: The Indian Economic and Social History Review
+    publisher: SAGE Publications
+    place: New Delhi
+    year: 1986
+    edition: null
+    volume: "23(1), 1-40"
+    identifiers: {isbn: null, doi: "10.1177/001946468602300102", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "The 1918-1919 Influenza Pandemic— The Indian Experience"}
+    language: en
+    region_of_authorship: south-asia
+    producer: scholarship
+    position: india-historians
+
+  - id: src-wilson-2012
+    tier: B
+    kind: journal-article
+    author: Nick Wilson, Lucy Telfar Barnard, Jennifer A. Summers, G. Dennis Shanks and Michael G. Baker
+    title: "Differential Mortality Rates by Ethnicity in 3 Influenza Pandemics Over a Century, New Zealand"
+    container: Emerging Infectious Diseases
+    publisher: Centers for Disease Control and Prevention
+    place: Atlanta
+    year: 2012
+    edition: null
+    volume: "18(1), 71-77"
+    identifiers: {isbn: null, doi: "10.3201/eid1801.110035", archive_org: null, hathitrust: null, url: "https://europepmc.org/article/PMC/PMC3310086"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3310086/fullTextXML"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Differential Mortality Rates by Ethnicity in 3 Influenza Pandemics Over a Century, New Zealand"
+    language: en
+    region_of_authorship: oceania
+    producer: scholarship
+    position: pacific-indigenous
+    rights: public
+
+  - id: src-shanks-2018
+    tier: B
+    kind: journal-article
+    author: G. Dennis Shanks
+    title: "The 'Influenza' Vaccine Used during the Samoan Pandemic of 1918"
+    container: Tropical Medicine and Infectious Disease
+    publisher: MDPI
+    place: Basel
+    year: 2018
+    edition: null
+    volume: "3(1), 17"
+    identifiers: {isbn: null, doi: "10.3390/tropicalmed3010017", archive_org: null, hathitrust: null, url: "https://europepmc.org/article/PMC/PMC6136635"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6136635/fullTextXML"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "The ‘Influenza’ Vaccine Used during the Samoan Pandemic of 1918"
+    language: en
+    region_of_authorship: oceania
+    producer: scholarship
+    position: pacific-indigenous
+
+  - id: src-shanks-wilson-2018
+    tier: B
+    kind: journal-article
+    author: G. Dennis Shanks, Nick Wilson, Rebecca Kippen and John F. Brundage
+    title: "The unusually diverse mortality patterns in the Pacific region during the 1918-21 influenza pandemic: reflections at the pandemic's centenary"
+    container: The Lancet Infectious Diseases
+    publisher: Elsevier
+    place: null
+    year: 2018
+    edition: null
+    volume: "18(10), e323-e332"
+    identifiers: {isbn: null, doi: "10.1016/S1473-3099(18)30178-6", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "The unusually diverse mortality patterns in the Pacific region during the 1918–21 influenza pandemic: reflections at the pandemic's centenary"}
+    language: en
+    region_of_authorship: oceania
+    producer: scholarship
+    position: pacific-indigenous
+
+  - id: src-tomkins-1992
+    tier: B
+    kind: journal-article
+    author: Sandra M. Tomkins
+    title: "The influenza epidemic of 1918-19 in Western Samoa"
+    container: The Journal of Pacific History
+    publisher: Taylor and Francis
+    place: null
+    year: 1992
+    edition: null
+    volume: "27(2), 181-197"
+    identifiers: {isbn: null, doi: "10.1080/00223349208572706", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "The influenza epidemic of 1918–19 in Western Samoa"}
+    language: en
+    region_of_authorship: oceania
+    producer: scholarship
+    position: pacific-indigenous
+
+  - id: src-hatchett-2007
+    tier: B
+    kind: journal-article
+    author: Richard J. Hatchett, Carter E. Mecher and Marc Lipsitch
+    title: "Public health interventions and epidemic intensity during the 1918 influenza pandemic"
+    container: Proceedings of the National Academy of Sciences
+    publisher: National Academy of Sciences
+    place: Washington
+    year: 2007
+    edition: null
+    volume: "104(18), 7582-7587"
+    identifiers: {isbn: null, doi: "10.1073/pnas.0610941104", archive_org: null, hathitrust: null, url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC1849867/"}
+    access:
+      free_copy: "https://pmc.ncbi.nlm.nih.gov/articles/PMC1849867/"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Public health interventions and epidemic intensity during the 1918 influenza pandemic"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: npi-evidence
+
+  - id: src-markel-2007
+    tier: B
+    kind: journal-article
+    author: Howard Markel, Harvey B. Lipman, J. Alexander Navarro, Alexandra Sloan, Joseph R. Michalsen, Alexandra Minna Stern and Martin S. Cetron
+    title: "Nonpharmaceutical Interventions Implemented by US Cities During the 1918-1919 Influenza Pandemic"
+    container: JAMA
+    publisher: American Medical Association
+    place: Chicago
+    year: 2007
+    edition: null
+    volume: "298(6), 644-654"
+    identifiers: {isbn: null, doi: "10.1001/jama.298.6.644", archive_org: null, hathitrust: null, url: "https://europepmc.org/article/MED/17684187"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A17684187&resultType=core&format=json"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Nonpharmaceutical Interventions Implemented by US Cities During the 1918-1919 Influenza Pandemic"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: npi-evidence
+
+  - id: src-khakurel-2025
+    tier: B
+    kind: journal-article
+    author: Uddhav Khakurel, Lisa Sattenspiel and Svenn-Erik Mamelund
+    title: "Role of Nonpharmaceutical Interventions during 1918-1920 Influenza Pandemic, Alaska, USA"
+    container: Emerging Infectious Diseases
+    publisher: Centers for Disease Control and Prevention
+    place: Atlanta
+    year: 2025
+    edition: null
+    volume: "31(7)"
+    identifiers: {isbn: null, doi: "10.3201/eid3107.241048", archive_org: null, hathitrust: null, url: "https://europepmc.org/article/PMC/PMC12205443"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12205443/fullTextXML"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Role of Nonpharmaceutical Interventions during 1918–1920 Influenza Pandemic, Alaska, USA"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: npi-evidence
+    rights: public
+
+  - id: src-wever-2014
+    tier: B
+    kind: journal-article
+    author: Peter C. Wever and Leo van Bergen
+    title: "Death from 1918 pandemic influenza during the First World War: a perspective from personal and anecdotal evidence"
+    container: Influenza and Other Respiratory Viruses
+    publisher: Wiley
+    place: null
+    year: 2014
+    edition: null
+    volume: "8(5), 538-546"
+    identifiers: {isbn: null, doi: "10.1111/irv.12267", archive_org: null, hathitrust: null, url: "https://europepmc.org/article/PMC/PMC4181817"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4181817/fullTextXML"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Death from 1918 pandemic influenza during the First World War: a perspective from personal and anecdotal evidence"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: physicians-memory
+
+  - id: src-souza-2023
+    tier: B
+    kind: journal-article
+    author: Ramon Feliphe Souza
+    title: "O trem e a \"senhorita espanhola\": a epidemia de gripe em Diamantina, 1918"
+    title_en: "The train and the \"Spanish señorita\": the flu epidemic in Diamantina, 1918"
+    container: "História, Ciências, Saúde-Manguinhos"
+    publisher: Casa de Oswaldo Cruz, Fiocruz
+    place: Rio de Janeiro
+    year: 2023
+    edition: null
+    volume: "30, e2023024"
+    identifiers: {isbn: null, doi: "10.1590/s0104-59702023000100024", archive_org: null, hathitrust: null, url: "https://europepmc.org/article/PMC/PMC10395612"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10395612/fullTextXML"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "O trem e a “senhorita espanhola”: a epidemia de gripe em Diamantina, 1918"
+    language: pt
+    region_of_authorship: americas
+    producer: scholarship
+    position: latin-america
+
+  - id: src-afkhami-2003
+    tier: B
+    kind: journal-article
+    author: Amir Afkhami
+    title: "Compromised Constitutions: The Iranian Experience with the 1918 Influenza Pandemic"
+    container: Bulletin of the History of Medicine
+    publisher: Johns Hopkins University Press
+    place: Baltimore
+    year: 2003
+    edition: null
+    volume: "77(2), 367-392"
+    identifiers: {isbn: null, doi: "10.1353/bhm.2003.0049", archive_org: null, hathitrust: null, url: "https://europepmc.org/article/MED/12955964"}
+    access:
+      free_copy: "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A12955964&resultType=core&format=json"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Compromised Constitutions: The Iranian Experience with the 1918 Influenza Pandemic"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: iran-scholarship
+
+  - id: src-patterson-pyle-1991
+    tier: B
+    kind: journal-article
+    author: K. David Patterson and Gerald F. Pyle
+    title: "The geography and mortality of the 1918 influenza pandemic"
+    container: Bulletin of the History of Medicine
+    publisher: Johns Hopkins University Press
+    place: Baltimore
+    year: 1991
+    edition: null
+    volume: "65(1), 4-21"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://europepmc.org/article/MED/2021692"}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: repository-record, verified_title: "The geography and mortality of the 1918 influenza pandemic."}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: mortality-revisionists
+
+  # ----------------------------------------------------------- Tier D: positional (memoirs)
+  - id: src-vaughan-1926
+    tier: D
+    kind: memoir
+    author: Victor C. Vaughan
+    title: "A Doctor's Memories"
+    container: null
+    publisher: The Bobbs-Merrill Company
+    place: Indianapolis
+    year: 1926
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: "doctorsmemories013852mbp", hathitrust: null, url: "https://archive.org/details/doctorsmemories013852mbp"}
+    access:
+      free_copy: "https://archive.org/download/doctorsmemories013852mbp/doctorsmemories013852mbp_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "A Doctor's Memories"
+    language: en
+    region_of_authorship: americas
+    producer: physician-memoir
+    position: physicians-memory
+
+  - id: src-nirala-kulli-bhat
+    tier: D
+    kind: memoir
+    author: Suryakant Tripathi 'Nirala'
+    title: "Kulli Bhat"
+    original_title: "कुल्ली भाट"
+    container: null
+    publisher: Ganga-granthagar
+    place: Lucknow
+    year: "undated in the scanned copy"
+    edition: "the Digital Library of India scan, from the Durga Shah Municipal Public Library, Nainital"
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: "dli.ernet.525743", hathitrust: null, url: "https://archive.org/details/dli.ernet.525743"}
+    access:
+      free_copy: "https://archive.org/download/dli.ernet.525743/525743-Kulli%20Bhat_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Kulli Bhat"
+    language: hi
+    region_of_authorship: south-asia
+    producer: survivor-memoir
+    position: indian-memory
+
+# ------------------------------------------------------------- renderings: what the parity gate cannot see
+renderings_review:
+  - of: src-nirala-kulli-bhat.p80
+    language: hi
+    confidence: moderate
+    reason: "Hindi is on the proposal's weaker list (§4f.5); the passage carries no digit and one name, and the checks were done by hand"
+    reading_notes: "दादा is the memoirist's elder brother (the page before names him दादाजाद बड़े भाई); प्रयाण किया is a euphemism for dying, read from the sentence that follows, in which the cart carries corpses"
+    back_translation: "मेरे बड़े भाई के गुज़रने के तीसरे दिन मेरी भाभी गुज़र गईं। उनकी दूध पीती बेटी बीमार थी। रात को मैं उसे साथ लेकर सोया। एक बिल्ली रात भर परेशान करती रही। सुबह उसके प्राण निकल गए। मैं उसे नदी के किनारे ले जाकर गाड़ आया। फिर चाचाजी चल बसे। गाड़ी गंगा तक मानो लाशें ही ढोती रही। भाभी के तीन बेटे बीमार पड़े। सेवा-सुश्रूषा से किसी तरह अच्छे हो गए। इस समय का अनुभव मेरे जीवन का विचित्र अनुभव है।"
+    back_translation_parity: "names: गंगा present in original, rendering and back-translation; numbers: none in any of the three; the back-translation was written from the English alone on 2026-09-25 and differs from the original in wording only (चल बसे for प्रयाण किया, बेटे for लड़के)"
+  - of: src-nirala-kulli-bhat.sec80b
+    language: hi
+    confidence: moderate
+    reason: "as above"
+    back_translation: "हर दिन मैं गंगा देखने जाता था। एक ऊँचे टीले पर बैठकर मैं लाशों का दृश्य देखता था। मेरे मन की दशा बयान से परे थी।"
+    back_translation_parity: "names: गंगा in all three; numbers: none; wording differs only in दशा for अवस्था and परे for बाहर"
+  - of: src-almudever-2025.abstract
+    language: es
+    confidence: high
+    reason: "an official parallel exists (the article's own English abstract) and is stored as the rendering; the Spanish extract is the article's Results paragraph, the English is the same paragraph of the English abstract"
+  - of: src-souza-2023.abstract
+    language: pt
+    confidence: high
+    reason: "an official parallel exists (the article's own English abstract) and is stored as the rendering"
+  - of: src-almudever-2025.sec105
+    language: es
+    confidence: high
+    reason: "no rendering is stored; the thesis cites the original for its figures only (T-03 reads the digit strings) and paraphrases it"
+  - of: src-souza-2023.para2
+    language: pt
+    confidence: high
+    reason: "no rendering is stored; the thesis cites the original and paraphrases; the two figures are spelled out in Portuguese (vinte, cem) and are not quoted in English"
+
+# ------------------------------------------------------------- what the free record could not reach
+gaps:
+  - entry: src-mills-1986
+    what: "Mills's demographic study of India, the position's own best count"
+    tried: ["https://doi.org/10.1177/001946468602300102", "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI%3A10.1177%2F001946468602300102&resultType=core&format=json"]
+    status: "paywalled at SAGE; the Europe PMC record carries no abstract; the work is known here through Arnold's citation of it"
+  - entry: src-tomkins-1992
+    what: "Tomkins on Western Samoa, the source behind the event record's SS Talune, Logan and Poyer narrative"
+    tried: ["https://doi.org/10.1080/00223349208572706", "https://paperspast.natlib.govt.nz/parliamentary/AJHR1919-I.2.3.2.39", "https://atojs.natlib.govt.nz/cgi-bin/atojs?a=q&r=1&hs=1&e=-------10--1------0--&q=samoan+epidemic+commission"]
+    status: "paywalled at Taylor and Francis; the Samoan Epidemic Commission's report itself sits on Papers Past and AtoJs, both of which answered this container with an Incapsula challenge page; the commission is known here as the Ministry of Health summarised it in 1920"
+  - entry: src-shanks-wilson-2018
+    what: "The Pacific mortality survey the event record cites"
+    tried: ["https://doi.org/10.1016/S1473-3099(18)30178-6"]
+    status: "paywalled at Elsevier; Crossref resolves the title; the same authors' open article of 2012 in Emerging Infectious Diseases is held instead"
+  - entry: src-patterson-pyle-1991
+    what: "Patterson and Pyle's 1991 estimate of 24.7 to 39.3 million"
+    tried: ["https://api.crossref.org/works/10.1353/bhm.1991.0002", "https://europepmc.org/abstract/MED/2021692"]
+    status: "the DOI the literature gives answers 404 at Crossref and the Europe PMC record carries no abstract; the figure is held here only as Johnson and Mueller's abstract and Spreeuwenberg and colleagues recite it"
+  - what: "Jordan, Epidemic Influenza: A Survey (Chicago, 1927), the 21.6 million estimate"
+    tried: ["https://archive.org/advancedsearch.php?q=creator%3A%28jordan%29%20AND%20title%3A%28epidemic%20influenza%29"]
+    status: "no copy on the Internet Archive; the figure is held as Spreeuwenberg and colleagues and Johnson and Mueller recite it (21.6 and 21.5 million respectively)"
+  - what: "The full texts of Johnson and Mueller (2002), Afkhami (2003), Chandra, Kuljanin and Wray (2012), Markel and colleagues (2007), Trilla and colleagues (2008), Hardiman (2012), Oxford (2001) and Arnold (2019)"
+    tried: ["https://muse.jhu.edu/article/4826", "https://link.springer.com/article/10.1007/s13524-012-0116-x", "https://academic.oup.com/cid/article/47/5/668/296225", "https://pmc.ncbi.nlm.nih.gov/articles/PMC7313811/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC1088561/", "https://www.cambridge.org/core/journals/transactions-of-the-royal-historical-society"]
+    status: "Project MUSE answered a verification page, Springer and Cambridge serve the abstract and footnotes only, Oxford University Press answered 403, and the PubMed Central pages for Hardiman and Oxford came back as page shells; each is pinned here only on its abstract, and Arnold also on the footnotes Cambridge serves free"
+  - what: "Cheng and Leung, What happened in China during the 1918 influenza pandemic? (2007)"
+    tried: ["https://www.ijidonline.com/article/S1201-9712(06)00174-5/fulltext"]
+    status: "the publisher answered 403; its abstract, which asserts 100 million deaths worldwide and a mild course in China, was read at Europe PMC but the paper is not entered because nothing in it could be pinned beyond that sentence"
+  - what: "The Public Health Reports issues of 1918 as PubMed Central serves them, including the 5 April 1918 issue that carries the Haskell County note Barry describes"
+    tried: ["https://pmc.ncbi.nlm.nih.gov/articles/PMC1999792/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC1999805/", "https://pmc.ncbi.nlm.nih.gov/articles/PMC1999808/"]
+    status: "every PubMed Central page for the scanned 1918 issues answered a reCAPTCHA page; the issues held here were read instead from JSTOR's Early Journal Content on the Internet Archive, which holds the articles as separate items and does not hold the Haskell note"
+  - what: "The Spanish official statistics of 1918 (Movimiento natural de la población) and the Madrid press of May 1918 (ABC of 22 May 1918)"
+    tried: ["https://www.boe.es/datos/pdfs/BOE/1918/", "https://hemerotecadigital.bne.es/hd/es/results?q=gripe&d=1918"]
+    status: "the Boletín Oficial del Estado's historical archive and the Biblioteca Nacional's Hemeroteca Digital both answered 403; Spain's counts are held as Trilla and colleagues and Almudéver Campo and Camaño Puig recite them"
+  - what: "A French contemporary source: the Gallica copy of Considérations cliniques sur l'épidémie de grippe (1918), ark bpt6k9799472n"
+    tried: ["https://gallica.bnf.fr/ark:/12148/bpt6k9799472n/texteBrut", "https://gallica.bnf.fr/SRU?operation=searchRetrieve&version=1.2&query=%28gallica%20all%20%22grippe%20espagnole%22%29%20and%20%28dc.date%20all%20%221918%22%29"]
+    status: "the SRU search answered and listed the item, but every text and record request answered a security-verification page; the French side of the naming dispute is held only as the Ministry of Health reports it"
+  - what: "The Japanese Home Ministry's report Ryūkōsei kanbō (内務省衛生局『流行性感冒』, 1922), NDL Digital Collections pid 985202"
+    tried: ["https://ndlsearch.ndl.go.jp/books/R100000002-I000000600999", "https://dl.ndl.go.jp/pid/985202"]
+    status: "the catalogue record answered and names the item, but the viewer page is a script shell with no text layer reachable from this container; Japan is not argued here"
+  - what: "Brazilian scholarship on SciELO (Goulart 2005, Bertucci) and the Diamantina parish register Souza cites"
+    tried: ["https://www.scielo.br/j/hcsm/a/8dmnCg5xyyYbpfQMvxCB4Wp/?lang=pt"]
+    status: "scielo.br answered 403, as the proposal's catalogue records; Souza's article was read through Europe PMC instead, and no Brazilian register is held"
+  - what: "Crosby, Epidemic and Peace, 1918 (1976) and its 2003 reissue, and Rice, Black November (1988)"
+    tried: ["https://archive.org/metadata/epidemicpeace1910000cros", "https://archive.org/metadata/americasforgotte0000cros_x1u0"]
+    status: "both Crosby items are lending copies marked access-restricted and could not be read from this container; Rice's book has no open copy; Crosby's title is known here as Honigsbaum quotes it and Rice's Māori rate as Wilson and colleagues recite it"
+  - what: "Phillips, Black October (1984 thesis, 1990 book) on South Africa"
+    tried: ["https://open.uct.ac.za/discover?query=%22Black+October%22+influenza"]
+    status: "the University of Cape Town repository did not answer; South Africa is held here through the Union commission's figures as the Public Health Service and the Ministry of Health reproduce them and through the Railways' own report"
+  - what: "The Camp Devens letter of 29 September 1918 as printed (Grist, BMJ, 22-29 December 1979)"
+    tried: ["https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=%22Letter%20from%20Camp%20Devens%22&format=json"]
+    status: "not indexed under that title; the letter is held here as Wever and van Bergen reproduce it, and is cited as their reproduction"
+  - what: "The Sanitary Commissioner's provincial reports for 1918 (Punjab, United Provinces, Bombay) and the passage the event record attributes to the Sanitary Commissioner (hospitals so choked, burning ghats swamped with corpses)"
+    tried: ["https://archive.org/advancedsearch.php?q=title%3A%28influenza%29%20AND%20%28punjab%20OR%20bombay%20OR%20madras%20OR%20bengal%29%20AND%20year%3A%5B1918%20TO%201925%5D"]
+    status: "no provincial report is on the Internet Archive; the Government of India's report for 1918 is held whole and the passage is not in it"
+  - what: "Nirala's memoir in English (A Life Misspent, 2016) and a dated first edition of Kulli Bhat"
+    tried: ["https://archive.org/metadata/dli.ernet.525743", "https://archive.org/metadata/in.ernet.dli.2015.403047"]
+    status: "the translation is in copyright and has no open copy; the two Digital Library of India scans are undated and dated 1958, and the undated scan, which has the better text layer, is the one read"
+
+# ------------------------------------------------------------- positions and their adjudication
+positions:
+  - id: official-contemporary
+    name: The official record's own account
+    holders: ["Ministry of Health (1920)", "Registrar-General (1920)", "Sanitary Commissioner with the Government of India (1920)", "Census Commissioner for India (1924)", "United States Public Health Service (1918 to 1919)"]
+    rests_on: [src-moh-1920, src-rg-1920, src-sancom-1918, src-census-1921, src-phr-1918-12-27, src-phr-1919-10-17-samoa]
+    claim: "No death from influenza could be counted directly; every official total is an estimate of the excess over normal mortality, stated with its method, and the officials who made it said so."
+    omits: "The dead outside registration: British India's figure is built on registered deaths, the native states are a guess in the Ministry's summary, and no report here counts Africa's interior."
+    adjudications:
+      - claim: "In British India no method exists to count the deaths actually due to influenza, and the figure of 7,089,694 is the mean of three excess-mortality estimates."
+        verdict: supported
+        basis: presence
+        rests_on: [src-sancom-1918.p56, src-sancom-1918.p57, src-moh-1920.secindia]
+        reasoning: "The Sanitary Commissioner's report states the method and the mean in its own words, and the Ministry of Health's summary, from a second producer, carries the same approximately seven millions and says that in India anything other than approximations is impossible to obtain."
+      - claim: "England and Wales lost about 200,000 people to the epidemic."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-rg-1920.sectotal, src-rg-1920.secestimate, src-moh-1920.para2]
+        reasoning: "The Registrar-General's 200,000 is a round figure reached by adding deaths allocated to other causes to the 151,446 allocated to influenza; the Ministry of Health, in the same year, puts the loss at upwards of 150,000, which is the allocated count. Two producers, one quantity, two conventions, so the claim holds only with its method attached."
+      - claim: "The pandemic destroyed more lives in the whole world than the European war in five years."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-moh-1920.para17]
+        would_settle: "a count of the war's dead and a count of the pandemic's, neither of which this record holds"
+        gap: "no document here counts the war dead, and no document counts the pandemic's dead across the world"
+        reasoning: "The Ministry asserts the comparison and offers no figure for either side; nothing in the free record here can test it, and it is published as the Ministry's judgment."
+
+  - id: mortality-revisionists
+    name: The upward revision of the global count
+    holders: ["Johnson and Mueller (2002)", "Taubenberger and Morens (2006)", "Chandra (2013)", "Patterson and Pyle (1991)"]
+    rests_on: [src-johnson-mueller-2002, src-taubenberger-morens-2006, src-chandra-2013-indonesia, src-patterson-pyle-1991]
+    claim: "The recorded statistics understate the dead; each re-examination has raised the global figure, from 21.5 million to the order of 50 million, and national counts such as Java's rise when census loss replaces registration."
+    omits: "What a global figure is a figure of: the position sums national estimates made by unlike methods over unlike periods, and its own abstract calls the result an understatement of unknown size."
+    adjudications:
+      - claim: "The recorded statistics of influenza mortality are a significant understatement."
+        verdict: supported
+        basis: presence
+        rests_on: [src-sancom-1918.p56, src-rg-1920.secestimate, src-phr-1918-12-27.p2306]
+        reasoning: "Three producers say so of their own returns: the Sanitary Commissioner that there is no method by which the deaths actually due to influenza can be calculated, the Registrar-General that the mortality attributed to the disease does not represent the whole of that caused by it, and the Public Health Service statistician that in practically no locality can complete reports of cases be assumed."
+      - claim: "Global deaths were of the order of 50 million and arguably as high as 100 million."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-taubenberger-morens-2006.para2, src-johnson-mueller-2002.abstract, src-moh-1920.para17]
+        would_settle: "the national series Johnson and Mueller compiled, behind Project MUSE, and a count for the countries no series covers"
+        gap: "no document in the free record sums the world; the Ministry of Health's own world comparison names no figure"
+        reasoning: "No artifact here counts the world's dead, and a total built from national estimates cannot be tested against national records that themselves call their counts approximations. The figures stand as their producers' and are set beside the others in the disagreements."
+
+  - id: mortality-sceptics
+    name: The downward revision
+    holders: ["Spreeuwenberg, Kroneman and Paget (2018)", "Chandra, Kuljanin and Wray (2012)"]
+    rests_on: [src-spreeuwenberg-2018, src-chandra-2012-india]
+    claim: "Estimates above 25 million are not realistic on the mortality rates the vital records support; the world lost about 17.4 million in 1918 and 1919, and Davis's Indian figure is overstated by at least 24 per cent."
+    omits: "Countries with no vital registration, which the Human Mortality Database does not hold; the position extrapolates from 13 countries and British India."
+    adjudications:
+      - claim: "British India's excess mortality is an outlier at the high end, the hardest-hit country in the sample."
+        verdict: supported
+        basis: presence
+        rests_on: [src-moh-1920.secindia, src-sancom-1918.sec57table, src-spreeuwenberg-2018.para20]
+        reasoning: "The Ministry of Health wrote in 1920 that no part of the world suffered as severely as India, and the Government of India's own table carries 7,089,694 deaths for 1918; two producers agree with the position on the point it uses India for."
+      - claim: "The global toll of 1918 and 1919 together was about 17.4 million."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-spreeuwenberg-2018.para22, src-rg-1920.sectotal]
+        would_settle: "the vital records of the countries outside the 14 in the sample, which the position itself says it lacks"
+        gap: "no document in the free record counts the world; the one national total here that is built the same way, the Registrar-General's 200,000, is one of the position's own inputs"
+        reasoning: "A model's output cannot be tested against artifacts that are its inputs, and no independent count of the world exists in this record; the figure is published as the position's, beside the others."
+
+  - id: origin-america
+    name: The Kansas origin
+    holders: ["Barry (2004)", "Dicke (2015)"]
+    rests_on: [src-barry-2004, src-dicke-2015]
+    claim: "The pandemic most likely began in Haskell County, Kansas, in January 1918, travelled to Camp Funston with recruits in late February, and from there to other camps and to France."
+    omits: "The purulent bronchitis of 1916 and 1917 in France and England that the position's opponents describe, and any record from China; the position's own author calls the question impossible to answer with certainty."
+    adjudications:
+      - claim: "Loring Miner's Haskell County warning was the only reference to influenza in Public Health Reports in the first six months of 1918."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-barry-2004.para26, src-phr-1918-06-21.p1003]
+        reasoning: "The journal's issue of 21 June 1918 reports fevers of April and May from Norfolk to Louisiana that its physicians believed were mainly influenza of mild type, a second reference inside the six months. The Haskell note itself is not held here, and the journal is one producer, so under Rule A the finding is capped at qualified: the claim fails on the journal's own text, but this record holds only one side of the comparison."
+      - claim: "The American spring wave began at Camp Funston in March 1918, where more than 1,100 men were hospitalised within three weeks."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-barry-2004.para30, src-dicke-2015.para18b, src-moh-1920.para16, src-taubenberger-morens-2006.para5]
+        reasoning: "The Ministry of Health dates the mild American epidemic to April and May 1918, Taubenberger and Morens to March 1918; the Funston figures rest on the two scholars and no camp record is held. One Tier A producer, and it does not name the camp, so the date is borne out only in the season."
+
+  - id: origin-france
+    name: The French origin
+    holders: ["Gill and Oxford (2026)", "Oxford (2001)"]
+    rests_on: [src-gill-oxford-2026, src-oxford-2001]
+    claim: "A fatal purulent bronchitis seen at Etaples from December 1916 and at Aldershot in 1917 was the pandemic's first form, and the virus moved eastward from Europe to China rather than the reverse."
+    omits: "Why an outbreak of 1916 and 1917 produced no world pandemic until 1918, which the position's necropsy counts do not answer."
+    adjudications:
+      - claim: "Purulent bronchitis with heliotrope cyanosis in the military camps of 1916 and 1917 was probably the same malady as the autumn wave of 1918."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-gill-oxford-2026.para9, src-moh-1920.secclinical]
+        reasoning: "The Ministry of Health's clinicians wrote in 1920 that the minor epidemics of purulent bronchitis with heliotrope cyanosis in camps in America, England and France in 1916 and 1917 were probably the same malady under a different name; one producer, so capped at qualified, and probably is the Ministry's word."
+      - claim: "The virus spread eastwards to China from Europe."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-oxford-2001.abstract, src-phr-1918-09-13.p1540]
+        would_settle: "Chinese records of 1918, and Cheng and Leung's paper, which the publisher refused"
+        gap: "the only Chinese datum here is the Public Health Service's line of September 1918 that a mild form had been reported in Canton"
+        reasoning: "One line in a September 1918 circular reports influenza in Canton without a date of onset; it neither bears out nor contradicts a direction of spread."
+
+  - id: naming-censorship
+    name: The name and the censors
+    holders: ["Honigsbaum (2013)", "Trilla, Trilla and Daer (2008)", "Almudéver Campo and Camaño Puig (2025)"]
+    rests_on: [src-honigsbaum-2013, src-trilla-2008, src-almudever-2025]
+    claim: "The disease became Spanish in June 1918 because Spain's press reported an epidemic that belligerent censors kept out of their own papers; the virus most likely reached Spain from France, and Spain's official 147,114 deaths of 1918 understate its dead."
+    omits: "Any censorship order: the position documents the press's silences and The Times's withheld bulletins, not an instruction, and it does not weigh the concealment the Ministry of Health records on the neutral side."
+    adjudications:
+      - claim: "The disease was named for Spain because the epidemic was first recognised there, not because it began there."
+        verdict: supported
+        basis: presence
+        rests_on: [src-moh-1920.secnaming, src-phr-1918-09-13.p1540, src-moh-1920.secspaincommission]
+        reasoning: "The Ministry of Health writes that the source was attributed to Spain and the disease termed Spanish on that account, and that it cannot be admitted that the European epidemic began in Spain; the Public Health Service's circular of September 1918 already writes so-called Spanish influenza. Two producers."
+      - claim: "Belligerent governments censored reporting of the epidemic to protect morale."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-honigsbaum-2013.para14b, src-honigsbaum-2013.para15, src-moh-1920.secspain]
+        reasoning: "The Tier A record here holds no censor's order. It does hold concealment: the Ministry of Health records the allegation that San Sebastian's municipal authorities hid the epidemic to save the summer season, on the neutral side, and that Spain and France each blamed the other. Honigsbaum documents The Times withholding the Prime Minister's bulletins and military censors holding back army sickness rates, which is the position's own evidence. One Tier A producer, and it shows the silence was not only the belligerents'."
+      - claim: "Spain's official count was 147,114 influenza deaths in 1918."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-trilla-2008.abstract, src-almudever-2025.sec105, src-moh-1920.secspain]
+        would_settle: "the Movimiento natural de la población for 1918, behind the Boletín Oficial's and the Hemeroteca's refusals"
+        gap: "the Ministry of Health tabulates seven Spanish cities and gives no national count; the Spanish statistical series was not reachable"
+        reasoning: "Two scholarly sources recite the same official figure and a third estimate above it; no official Spanish document is held, so the figure is published as theirs."
+
+  - id: india-historians
+    name: India's historians
+    holders: ["Arnold (2019)", "Hardiman (2012)", "Mills (1986)"]
+    rests_on: [src-arnold-2019, src-hardiman-2012, src-mills-1986]
+    claim: "India lost at least 12 million people, more than any country, and the epidemic left almost no contemporary testimony because plague, recruitment, war and near-famine crowded it out of official and private record."
+    omits: "How the position's 12 million relates to the Sanitary Commissioner's 7,089,694; the position rests on later demographic reconstruction and does not print the contemporary count beside its own."
+    adjudications:
+      - claim: "In the Punjab 962,937 deaths were attributed to influenza between 1 October and 31 December 1918."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-arnold-2019.fn4, src-phr-1919-10-17-india.p2300, src-sancom-1918.sec57table, src-sancom-1918.p57]
+        reasoning: "The Public Health Service, quoting the Punjab sanitary commissioner's report, carries the same 962,937; the Government of India's own table carries 898,947 for the Punjab and says its figures differ slightly from those given in the provincial sanitary reports. Two producers, two figures for the province, and the Government of India explains the difference as its own recalculation."
+      - claim: "India lost at least 12 million lives, more than any other country."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-moh-1920.secindia, src-sancom-1918.sec57table, src-census-1921.secnatural]
+        reasoning: "That no country suffered as severely is the Ministry of Health's own sentence and the Government of India's tables bear the scale; the count itself is another matter. The contemporary official figure is 7,089,694 registered-excess deaths for 1918 in British India, the Census of 1921 describes the loss in words and by province and gives no all-India total, and the position's 12 million is a later reconstruction of a different quantity, the whole population loss of 1918 and 1919 including the states. Two producers carry the lower figure; neither disproves the higher, so the verdict is qualified and the two are set out in the disagreements."
+      - claim: "Gandhi's illness of 1918 was dysentery and exhaustion, not influenza."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-arnold-2019.fn82]
+        would_settle: "Gandhi's letters of November 1918 and January 1919 in the Collected Works, volume 17, which Arnold cites"
+        gap: "no document by or about Gandhi is held here"
+        reasoning: "The claim is Arnold's reading of Gandhi's own assertion; nothing in this record carries the assertion, so it is published as the position's."
+
+  - id: pacific-indigenous
+    name: The Pacific and Māori record
+    holders: ["Wilson, Barnard, Summers, Shanks and Baker (2012)", "Shanks (2018)", "Shanks, Wilson, Kippen and Brundage (2018)", "Tomkins (1992)"]
+    rests_on: [src-wilson-2012, src-shanks-2018, src-shanks-wilson-2018, src-tomkins-1992]
+    claim: "Māori died at 7.3 times the European rate in New Zealand, and the SS Talune carried the virus from Auckland to Fiji, Tonga and Samoa in November 1918 under a captain who denied knowing influenza was infectious."
+    omits: "The New Zealand commission's own lower Māori rate, which the position's ratio does not reconcile with the contemporary count, and American Samoa's escape by quarantine."
+    adjudications:
+      - claim: "The Māori death rate in 1918, 4,230 per 100,000, was 7.3 times the European rate."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-wilson-2012.para14, src-moh-1920.secnz]
+        reasoning: "The New Zealand commission's figures as the Ministry of Health carries them are 1,130 Māori deaths from 1 October to 31 December 1918, 22.6 per 1,000, against European deaths of about 5 per 1,000 for the year: a ratio near 4.5, not 7.3, on a shorter period and a count the position itself calls an underestimate. Both agree the disease was more fatal to Māori; they disagree on how much, and one Tier A producer caps the verdict."
+      - claim: "The SS Talune brought pneumonic influenza to Western Samoa on 7 November 1918."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-shanks-2018.para2, src-moh-1920.secsamoa]
+        reasoning: "The New Zealand commission, as the Ministry of Health summarises it, found no doubt whatever that the Talune introduced the disease on 7 November 1918; that is one producer, and the commission's own report could not be read, so the verdict is capped at qualified."
+      - claim: "Western Samoa's dead of the epidemic numbered 7,542."
+        verdict: supported
+        basis: presence
+        rests_on: [src-moh-1920.secsamoa, src-phr-1919-10-17-samoa.p2303, src-shanks-2018.para2]
+        reasoning: "The Ministry of Health, from the commission, and the Public Health Service, from the Department of Native Affairs at Apia, both carry 7,542 deaths to 31 December 1918. Two producers, one count; they differ on the population it is a share of, 30,738 against 38,178, and that difference is a finding below."
+
+  - id: npi-evidence
+    name: The closures as evidence
+    holders: ["Hatchett, Mecher and Lipsitch (2007)", "Markel and colleagues (2007)", "Khakurel, Sattenspiel and Mamelund (2025)"]
+    rests_on: [src-hatchett-2007, src-markel-2007, src-khakurel-2025]
+    claim: "Cities that closed schools, churches and theatres early had peak death rates about half those of cities that acted late, Philadelphia against St Louis being the sharpest contrast, and in Alaska eight local units escaped the first wave by sequestration."
+    omits: "The contemporary statistician's refusal to draw that comparison in December 1918, and the case-fatality differences between populations that the position itself names as its main limitation."
+    adjudications:
+      - claim: "Philadelphia's authorities allowed a city-wide parade on 28 September 1918 and did not close schools until 3 October."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-hatchett-2007.para4a, src-phr-1918-09-27.p1625]
+        would_settle: "the Philadelphia Bureau of Health's records and the city press of September 1918, which the position's data derive from"
+        gap: "the Public Health Service's report of 27 September 1918 records comparatively few civilian cases in Pennsylvania and does not mention the city's measures"
+        reasoning: "No artifact here records the parade or the closure order; the one contemporary document on Pennsylvania in that week counts cases, not decisions."
+      - claim: "Early, layered closures were associated with peak death rates about 50 per cent lower."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-hatchett-2007.abstract, src-phr-1918-12-27.p2309, src-phr-1919-06-20.p1377]
+        would_settle: "the Bureau of the Census weekly mortality tables for 1918 to 1919 by city, with each city's dated orders"
+        gap: "the Public Health Service statistician wrote in December 1918 that the data were not accurate or complete enough to correlate epidemic curves with the methods employed to control the epidemic; the record holds the courts contesting the closures, not their effect"
+        reasoning: "The comparison is a later reconstruction from weekly returns this record does not hold in usable form; the contemporary record shows the closures existed and were fought over, and its own statistician declined the correlation. Absence of a contemporary test is not disproof, so the finding stands as the position's."
+      - claim: "In Alaska some local units escaped the first wave by travel restrictions and quarantine, while communities the virus entered lost most of their people."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-khakurel-2025.para6, src-alaska-1919.p5, src-alaska-1919.p40]
+        reasoning: "The Senate record carries the Bureau of Education's telegram of 2 January 1919 from Nome, three villages wiped out entirely and others averaging 85 per cent deaths, and its table of approximately 2,000 deaths, so the second half of the claim is borne out by the federal record; the escapes rest on the scholars' newspaper work, and one producer caps the verdict."
+
+  - id: latin-america
+    name: The Latin American case study
+    holders: ["Souza (2023)"]
+    rests_on: [src-souza-2023]
+    claim: "In Brazil the railway carried the disease inland to towns whose elites thought their climate protected them, and local officials called the epidemic benign while the parish register filled."
+    omits: "Any national count of the dead, and the rest of Latin America, which the position's single case study does not reach."
+    adjudications:
+      - claim: "In Brazil the authorities first announced that the epidemic was mild, and many deaths followed."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-souza-2023.para23, src-moh-1920.secbrazil, src-moh-1920.secbrazilcount]
+        reasoning: "The Ministry of Health's Brazil section says of Rio de Janeiro that the authorities at first announced the type of the malady was mild, that many deaths occurred, and that the official returns for October and November give smaller figures than the city's estimate of 15,000; that is Rio, not Diamantina, and one producer, so the pattern the position describes is borne out for the capital and capped at qualified."
+
+  - id: iran-scholarship
+    name: The Iranian account
+    holders: ["Afkhami (2003)"]
+    rests_on: [src-afkhami-2003]
+    claim: "Iran was among the regions hit hardest, its rural districts more than its towns, and famine, opium, malaria and anaemia rather than youth and health explain the mortality."
+    omits: "Any count: the position's abstract gives no figure, and its full text is behind a paywall."
+    adjudications:
+      - claim: "Influenza reached Persia in 1918 and found a population already weakened by typhus, relapsing fever and two failed harvests."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-afkhami-2003.abstract, src-moh-1920.secpersia]
+        reasoning: "The Ministry of Health's notes from Dr Neligan of the Tehran legation say exactly this: epidemics of typhus and relapsing fever in the winter and spring before, and the dry years 1916 and 1917 with crops failed. One producer, capped at qualified."
+      - claim: "Iran's mortality was among the highest in the world."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-afkhami-2003.abstract]
+        would_settle: "Afkhami's full text and the Persian and legation records it draws on"
+        gap: "the Ministry of Health's Persia section, the only Tier A document here on Iran, gives routes and dates and no death rate"
+        reasoning: "No document here counts Iran's dead; the claim is published as the position's."
+
+  - id: physicians-memory
+    name: The physicians' memory of Camp Devens
+    holders: ["Vaughan (1926)", "Wever and van Bergen (2014)"]
+    rests_on: [src-vaughan-1926, src-wever-2014]
+    described_by: [src-wever-2014.para45]
+    claim: "At Camp Devens in September 1918 the dead were stacked about the morgue like cord wood and the epidemic flaunted its red flag in the face of science: the physicians who saw it remembered it as medicine's defeat."
+    omits: "Numbers: the memoir gives none, and the letters it stands beside give a day's deaths, not the camp's total."
+    adjudications:
+      - claim: "At Camp Devens in late September 1918 deaths ran at about 100 a day."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-wever-2014.para45, src-wever-2014.para35, src-phr-1918-09-27.p1625]
+        reasoning: "Two letters the same article reproduces give about 20 deaths a day on 24 September and about 100 a day on 29 September; the Public Health Service's report of 27 September records the disease in Massachusetts from August and 333 influenza deaths in Boston in the week of 16 to 23 September, and does not count the camp. The witnesses agree on the direction and differ by the day; one Tier A producer, and it is silent on the camp."
+
+  - id: indian-memory
+    name: A survivor's memory of the Ganges
+    holders: ["Suryakant Tripathi 'Nirala' (Kulli Bhat)"]
+    rests_on: [src-nirala-kulli-bhat]
+    described_by: [src-arnold-2019.abstract]
+    claim: "In a family the disease emptied within days, the poet buried an infant by the river, watched from a high mound as the Ganges carried the dead, and found the state of his mind beyond telling."
+    omits: "A date or a count: the memoir names the epidemic and the river, not the year or the town's dead."
+    adjudications:
+      - claim: "The epidemic fell on the United Provinces along the Ganges with a severity the official record confirms."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-nirala-kulli-bhat.p80, src-sancom-1918.sec57table, src-census-1921.secnatural]
+        reasoning: "The Government of India's table gives the United Provinces 2,034,257 deaths, the largest provincial count, at 43.4 per 1,000, and the Census of 1921 says the population of the United Provinces was substantially reduced; the memoir's scene is undated and counts nothing. One producer, so qualified: the province's dead are in the record, the poet's family is not."
+
+# ------------------------------------------------------------- where the record disagrees
+contested:
+  - id: global-death-toll
+    claim: "How many people the pandemic killed across the world"
+    rows:
+      - position: mortality-revisionists
+        holds: "Of the order of 50 million, after a 1920s calculation of 21.5 million and a 1991 range of 24.7 to 39.3 million; the abstract calls even this an understatement."
+        figures: ["50", "21.5", "24.7", "39.3"]
+        source: src-johnson-mueller-2002
+        locator: abstract
+      - position: mortality-revisionists
+        holds: "Total deaths estimated at about 50 million and arguably as high as 100 million; about one third of the world's population, some 500 million people, infected."
+        figures: ["50", "100", "500"]
+        source: src-taubenberger-morens-2006
+        locator: para2
+      - position: mortality-sceptics
+        holds: "A total of 15 million deaths in 1918, 17.4 million for 1918 and 1919 combined; a true total above 25 million is very unlikely on the underlying rates."
+        figures: ["15", "17.4", "25"]
+        source: src-spreeuwenberg-2018
+        locator: para22
+      - position: latin-america
+        holds: "The exact number remains unknown because many places kept no mortality statistics; the total is estimated at between twenty and a hundred million."
+        figures: []
+        source: src-souza-2023
+        locator: para2
+      - position: official-contemporary
+        holds: "The epidemic destroyed more lives in the whole world than the European war in five years; no figure is given."
+        figures: []
+        source: src-moh-1920
+        locator: para17
+  - id: india-death-toll
+    claim: "How many died in India"
+    rows:
+      - position: official-contemporary
+        holds: "7,089,694 deaths in British India in 1918, the mean of three excess-mortality figures, without any claim to accuracy; a fourth figure, 7,718,307, set aside as an overestimate."
+        figures: ["7,089,694", "7,718,307"]
+        source: src-sancom-1918
+        locator: p56
+      - position: official-contemporary
+        holds: "No fewer than five million deaths to the end of November 1918 in British India, over one million in the native states, and an excess over the quinquennial mean of approximately seven millions from 1 June to 31 December."
+        figures: []
+        source: src-moh-1920
+        locator: secindia
+      - position: india-historians
+        holds: "At least twelve million lives, more than in any other country."
+        figures: []
+        source: src-arnold-2019
+        locator: abstract
+      - position: mortality-sceptics
+        holds: "At most 13.88 million for the districts in the sample, against 17.21 million on Davis's assumptions; Davis's figure overstated by at least 24 per cent."
+        figures: ["13.88", "17.21", "24"]
+        source: src-chandra-2012-india
+        locator: abstract
+  - id: where-it-began
+    claim: "Where the pandemic began"
+    rows:
+      - position: origin-america
+        holds: "Most likely Haskell County, Kansas, in January 1918; the author says the question cannot be answered with absolute certainty."
+        figures: []
+        source: src-barry-2004
+        locator: para7
+      - position: origin-france
+        holds: "A fatal purulent bronchitis at Etaples in the winter of 1916 to 1917, among the 156 men and one woman who died there of causes other than wounds between 1 February and 19 March 1917."
+        figures: ["156"]
+        source: src-gill-oxford-2026
+        locator: para21
+      - position: official-contemporary
+        holds: "It cannot be admitted that the European epidemic began in Spain; an American report is quoted that its earliest appearance was probably in Eastern Europe."
+        figures: []
+        source: src-moh-1920
+        locator: secnaming
+      - position: mortality-revisionists
+        holds: "Historical and epidemiologic data are inadequate to identify the geographic origin, and the viral genome does not place it in any geographic context."
+        figures: []
+        source: src-taubenberger-morens-2006
+        locator: para5
+  - id: why-spanish
+    claim: "Why the disease was called Spanish"
+    rows:
+      - position: naming-censorship
+        holds: "The first Britons knew of the flu was in late May 1918, when the Daily Express and the Daily Mail reported a mysterious epidemic in Spain; in the autumn The Times censored the Prime Minister's medical bulletins and army sickness rates did not pass the military censors."
+        figures: []
+        source: src-honigsbaum-2013
+        locator: para12
+      - position: naming-censorship
+        holds: "On 22 May 1918 the epidemic was a headline in Madrid's ABC; the virus most likely reached Spain from France; the pandemic will always be known as the Spanish flu."
+        figures: []
+        source: src-trilla-2008
+        locator: abstract
+      - position: official-contemporary
+        holds: "The source was attributed to Spain when the spread over Europe was first recognised, and the disease was termed Spanish on that account; outbreaks were occurring at the same time in France, Germany and the Russian war zones, so it cannot be admitted that the European epidemic began in Spain."
+        figures: []
+        source: src-moh-1920
+        locator: secnaming
+      - position: official-contemporary
+        holds: "The Surgeon General's circular of September 1918 speaks of the so-called Spanish influenza and says the bureau has no authoritative information as to the nature of the disease or its prevalence, owing to disordered conditions in European countries."
+        figures: []
+        source: src-phr-1918-09-13
+        locator: p1540
+  - id: samoa-and-maori
+    claim: "How unequally the Pacific died"
+    rows:
+      - position: pacific-indigenous
+        holds: "The Māori death rate, 4,230 per 100,000, was 7.3 times the European rate, and Rice, whose count it is, considered it an underestimate."
+        figures: ["4,230", "7.3"]
+        source: src-wilson-2012
+        locator: para14
+      - position: official-contemporary
+        holds: "European deaths recorded as due to influenza in 1918 numbered 5,559, about 5 per 1,000; among Natives 1,130 deaths, 22.6 per 1,000, from 1 October to 31 December."
+        figures: ["5,559", "1,130", "22.6"]
+        source: src-moh-1920
+        locator: secnz
+      - position: official-contemporary
+        holds: "Samoa's population fell from 38,178 before the epidemic to 30,636 after, a loss of 7,542 in the December quarter of 1918; the Ministry of Health carries the same 7,542 against a population of 30,738."
+        figures: ["38,178", "30,636", "7,542"]
+        source: src-phr-1919-10-17-samoa
+        locator: p2303
+      - position: pacific-indigenous
+        holds: "The SS Talune brought influenza and mass mortality from Auckland to Fiji, Tonga and Samoa, with a captain who denied knowing that influenza was infectious."
+        figures: []
+        source: src-shanks-2018
+        locator: para2
+
+# ------------------------------------------------------------- exhibits
+exhibits:
+  - id: ex-sancom-p56
+    kind: document
+    title: "The Sanitary Commissioner's four figures for India, 1918"
+    creator: Sanitary Commissioner with the Government of India
+    date: "1920"
+    repository: Wellcome Collection, digitised on the Internet Archive
+    accession: "b31492551, page 56"
+    licence: Public Domain Mark
+    url: "https://archive.org/details/b31492551"
+    source: src-sancom-1918
+    locator: p56
+  - id: ex-samoa-table
+    kind: document
+    title: "Samoa's population before and after, as the Department of Native Affairs at Apia counted it"
+    creator: United States Public Health Service, from the Department of Native Affairs, Apia
+    date: "17 October 1919"
+    repository: JSTOR Early Journal Content on the Internet Archive
+    accession: "jstor-4575351, Public Health Reports 34(42), 2303"
+    licence: United States government work, public domain
+    url: "https://archive.org/details/jstor-4575351"
+    source: src-phr-1919-10-17-samoa
+    locator: p2303
+  - id: ex-rg-total
+    kind: document
+    title: "The Registrar-General's round figure for England and Wales"
+    creator: Registrar-General for England and Wales
+    date: "1920"
+    repository: Internet Archive
+    accession: "sid14156800, page 7"
+    licence: Crown copyright expired, public domain
+    url: "https://archive.org/details/sid14156800"
+    source: src-rg-1920
+    locator: sectotal
+  - id: ex-moh-naming
+    kind: document
+    title: "R. Bruce Low on the name, 1920"
+    creator: Great Britain, Ministry of Health
+    date: "1920"
+    repository: FluWeb Historical Influenza Database copy on the Internet Archive
+    accession: "pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920, Part II, introduction"
+    licence: Public Domain Mark
+    url: "https://archive.org/details/pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920"
+    source: src-moh-1920
+    locator: secnaming
+  - id: ex-nirala-p80
+    kind: document
+    title: "Nirala, Kulli Bhat, page 80"
+    creator: Suryakant Tripathi 'Nirala'
+    date: "undated scan; the memoir is a work of the author's lifetime, 1896 to 1961"
+    repository: Digital Library of India copy on the Internet Archive
+    accession: "dli.ernet.525743, leaf 80"
+    licence: "in copyright where the author's death year plus the local term has not run; held as a passage under the extract cap"
+    url: "https://archive.org/details/dli.ernet.525743"
+    source: src-nirala-kulli-bhat
+    locator: p80
+  - id: ex-funston-1918
+    kind: image
+    title: "Emergency hospital during the influenza epidemic, Camp Funston, Kansas"
+    creator: Otis Historical Archives, National Museum of Health and Medicine (NCP 1603)
+    date: "circa 1918, as the museum dates it"
+    repository: Wikimedia Commons, from the National Museum of Health and Medicine
+    accession: "File:Emergency_hospital_during_Influenza_epidemic,_Camp_Funston,_Kansas_-_NCP_1603.jpg"
+    licence: Public domain
+    url: "https://commons.wikimedia.org/wiki/File:Emergency_hospital_during_Influenza_epidemic,_Camp_Funston,_Kansas_-_NCP_1603.jpg"
+    image: "https://upload.wikimedia.org/wikipedia/commons/2/20/Emergency_hospital_during_Influenza_epidemic%2C_Camp_Funston%2C_Kansas_-_NCP_1603.jpg"
+    shows: "rows of patients on cots in an emergency ward at Camp Funston, Kansas, as the museum captions it; the museum dates the photograph circa 1918 and does not say which wave"
+    does_not_show: "the spring outbreak of March 1918 as such, or Haskell County; nothing in the frame dates it to a month, and the file page's date is the museum's approximation"
+
+# ------------------------------------------------------------- the thesis's own analysis
+analyses:
+  - id: an-india-mean
+    title: The Sanitary Commissioner's mean, recomputed
+    method: "The Government of India's report for 1918 gives four estimates of the deaths directly and indirectly due to influenza, sets the first aside as an overestimate, and takes the mean of the other three as its figure. One row per figure the mean is taken over, each with a weight of 1; the result is the sum of the figures over the sum of the weights, which is the mean the report prints."
+    finding: "The report's 7,089,694 is the mean of its own three figures, 6,812,633, 7,304,478 and 7,151,971, and it recomputes exactly; the fourth figure, 7,718,307, is the one the report calls an overestimate and leaves out."
+    confidence: "high: arithmetic on four numbers printed in one paragraph of a document held whole, the third of them checked against the page scan because the text layer garbled a digit"
+    against: "none found in the Government of India's report or the Ministry of Health's summary of it; the mean is of three estimates the report itself makes without any claim to accuracy, so the arithmetic is exact and the quantity is not"
+    result: 7089694
+    derivation:
+      compute: ratio
+      column: figure
+      over: weight
+      columns: [method, figure, weight]
+      rows:
+        - {method: "excess of all-cause deaths, 1 June to 31 December 1918, over the five-year mean", figure: 6812633, weight: 1, extract: src-sancom-1918.p56}
+        - {method: "all-cause deaths less plague, cholera and smallpox, against the previous quinquennium", figure: 7304478, weight: 1, extract: src-sancom-1918.p56}
+        - {method: "excess of deaths from fevers and respiratory diseases over the five-year average", figure: 7151971, weight: 1, extract: src-sancom-1918.p56}
+  - id: an-samoa-share
+    title: Samoa's loss as a share of its people, on the commission's own denominator
+    method: "The Department of Native Affairs' table, as the Public Health Service printed it, gives the population of Upolu and Savaii before and after the epidemic and the loss. The result is the loss over the population before."
+    finding: "Samoa lost 7,542 of 38,178 people in the December quarter of 1918, 19.75 per cent, on the table's own figures; the Ministry of Health's summary carries the same 7,542 against a population of 30,738, which would make the share 24.5 per cent."
+    confidence: "high for the share on the table's denominator, which is one document's arithmetic; the two official denominators disagree, and the table's own men's-loss cell, 3,265, is the difference of its before and after cells while the text layer had misread it as 3,285"
+    against: "the Ministry of Health's summary of the New Zealand commission gives the population as 30,738, a figure 102 above the table's population after the epidemic and 7,440 below its population before, so one of the two official summaries carries a wrong denominator; the loss is the same in both and the share is not"
+    result: 0.19755
+    derivation:
+      compute: ratio
+      column: lost
+      over: before
+      columns: [population, before, after, lost]
+      rows:
+        - {population: "Upolu and Savaii, men, women and children", before: 38178, after: 30636, lost: 7542, extract: src-phr-1919-10-17-samoa.p2303}
+  - id: an-global-figures
+    title: Every figure for the world's dead that this record holds
+    method: "One row per figure for the pandemic's worldwide dead that a fetched document states or recites, with the producer of the figure, the document it is read in, and the period the figure covers where the document says. Each end of a stated range is its own row. The result is the count of rows."
+    finding: "The record holds 11 figures for the world's dead, in 4 sources, from 15 million for 1918 alone to 100 million; they are counts of unlike periods by unlike methods, and this thesis does not average them or run them together as one range."
+    confidence: "high for the count, which is of rows in documents held; the figures themselves are each their producer's and are not tested here"
+    against: "none found beyond the figures themselves: every document that gives a figure also says the true number is uncertain, Johnson and Mueller calling theirs an understatement and Spreeuwenberg and colleagues calling totals above 25 million unrealistic, so the list is a list of disagreements and not of measurements"
+    result: 11
+    derivation:
+      compute: count
+      column: figure_millions
+      columns: [producer, figure_millions, period, read_in]
+      rows:
+        - {producer: "Jordan (1927), as recited", figure_millions: 21.6, period: "the pandemic", read_in: "Spreeuwenberg and colleagues", extract: src-spreeuwenberg-2018.para2}
+        - {producer: "a 1920s calculation, as recited", figure_millions: 21.5, period: "the pandemic", read_in: "Johnson and Mueller", extract: src-johnson-mueller-2002.abstract}
+        - {producer: "Patterson and Pyle (1991), low, as recited", figure_millions: 24.7, period: "the pandemic", read_in: "Johnson and Mueller", extract: src-johnson-mueller-2002.abstract}
+        - {producer: "Patterson and Pyle (1991), high, as recited", figure_millions: 39.3, period: "the pandemic", read_in: "Johnson and Mueller", extract: src-johnson-mueller-2002.abstract}
+        - {producer: "Johnson and Mueller (2002)", figure_millions: 50, period: "1918 to 1920", read_in: "their abstract", extract: src-johnson-mueller-2002.abstract}
+        - {producer: "Taubenberger and Morens (2006), estimate", figure_millions: 50, period: "1918 to 1919", read_in: "their article", extract: src-taubenberger-morens-2006.para2}
+        - {producer: "Taubenberger and Morens (2006), upper", figure_millions: 100, period: "1918 to 1919", read_in: "their article", extract: src-taubenberger-morens-2006.para2}
+        - {producer: "Spreeuwenberg, Kroneman and Paget (2018), 1918 only", figure_millions: 15, period: "1918", read_in: "their conclusion", extract: src-spreeuwenberg-2018.para22}
+        - {producer: "Spreeuwenberg, Kroneman and Paget (2018), total", figure_millions: 17.4, period: "1918 and 1919", read_in: "their conclusion", extract: src-spreeuwenberg-2018.para22}
+        - {producer: "Souza (2023), low, as recited", figure_millions: "vinte", period: "the pandemic", read_in: "his article", extract: src-souza-2023.para2}
+        - {producer: "Souza (2023), high, as recited", figure_millions: "cem", period: "the pandemic", read_in: "his article", extract: src-souza-2023.para2}
+  - id: an-official-rates
+    title: The official death rates this record holds, side by side
+    method: "One row per death rate per 1,000 of population that an official document held here states for a named population, with the producer and the period the document gives. The result is the highest rate in the column. The rows for England and Wales and for the Punjab are converted from the document's own unit: the Registrar-General prints 3,129 and 4,774 per million, stored as 3.129 and 4.774 per 1,000, and the Punjab report prints 4.77 per cent, stored as 47.7; every other rate is stored as printed."
+    finding: "Of 26 official death rates in this record, the highest is 66.4 per 1,000 for the Central Provinces and Berar in 1918 and the lowest is 3.129 for civilians in England and Wales in the same year; the Union of South Africa's rate for those other than European, 27.19, is more than three times its European rate, 8.26, and New Zealand's Māori rate, 22.6, is more than four times its European rate."
+    confidence: "moderate: the rates are each a document's own and the periods differ (England and Wales for the calendar year 1918, India for 1918, New Zealand's Māori for October to December 1918, South Africa for 1 August to 30 November 1918), so the column compares official arithmetic, not one measurement"
+    against: "the Sanitary Commissioner's provincial rates are built on registered deaths in a country whose registration the report itself calls unreliable, and the Registrar-General's rate is of deaths allocated to influenza, not of the 200,000 he estimates, so the two ends of the column are the ends of two conventions as much as of two countries; the Ministry of Health gives New Zealand's European rate only as about 5"
+    result: 66.4
+    derivation:
+      compute: max
+      column: rate_per_1000
+      columns: [population, rate_per_1000, period, producer]
+      rows:
+        - {population: "England and Wales, civilians", rate_per_1000: 3.129, period: "1918", producer: "Registrar-General (printed as 3,129 per million)", extract: src-rg-1920.secestimate}
+        - {population: "Delhi", rate_per_1000: 56.6, period: "1918", producer: "Government of India", extract: src-sancom-1918.sec57table}
+        - {population: "Bengal", rate_per_1000: 8.5, period: "1918", producer: "Government of India", extract: src-sancom-1918.sec57table}
+        - {population: "Bihar and Orissa", rate_per_1000: 20.5, period: "1918", producer: "Government of India", extract: src-sancom-1918.sec57table}
+        - {population: "Assam", rate_per_1000: 18.6, period: "1918", producer: "Government of India", extract: src-sancom-1918.sec57table}
+        - {population: "United Provinces of Agra and Oudh", rate_per_1000: 43.4, period: "1918", producer: "Government of India", extract: src-sancom-1918.sec57table}
+        - {population: "Punjab", rate_per_1000: 45.4, period: "1918", producer: "Government of India", extract: src-sancom-1918.sec57table}
+        - {population: "North-West Frontier Province", rate_per_1000: 43.6, period: "1918", producer: "Government of India", extract: src-sancom-1918.sec57table}
+        - {population: "Central Provinces and Berar", rate_per_1000: 66.4, period: "1918", producer: "Government of India", extract: src-sancom-1918.sec57table}
+        - {population: "Madras", rate_per_1000: 16.7, period: "1918", producer: "Government of India", extract: src-sancom-1918.sec57table}
+        - {population: "Coorg", rate_per_1000: 11.5, period: "1918", producer: "Government of India", extract: src-sancom-1918.sec57table}
+        - {population: "Bombay", rate_per_1000: 54.9, period: "1918", producer: "Government of India", extract: src-sancom-1918.sec57table}
+        - {population: "Burma", rate_per_1000: 13.9, period: "1918", producer: "Government of India", extract: src-sancom-1918.sec57table}
+        - {population: "Ajmer-Merwara", rate_per_1000: 59.5, period: "1918", producer: "Government of India", extract: src-sancom-1918.sec57table}
+        - {population: "Assam, as its sanitary commissioner estimated", rate_per_1000: 17.04, period: "1918", producer: "Public Health Service, from the Assam report", extract: src-phr-1919-10-17-india.p2300}
+        - {population: "New Zealand, Natives (Māori)", rate_per_1000: 22.6, period: "1 October to 31 December 1918", producer: "Ministry of Health, from the New Zealand commission", extract: src-moh-1920.secnz}
+        - {population: "New Zealand, Europeans", rate_per_1000: 5, period: "1918", producer: "Ministry of Health, from the New Zealand commission (about 5)", extract: src-moh-1920.secnz}
+        - {population: "Union of South Africa, European", rate_per_1000: 8.26, period: "1 August to 30 November 1918", producer: "Public Health Service, from the Union commission", extract: src-phr-1919-06-20.p1376}
+        - {population: "Union of South Africa, other than European", rate_per_1000: 27.19, period: "1 August to 30 November 1918", producer: "Public Health Service, from the Union commission", extract: src-phr-1919-06-20.p1376}
+        - {population: "Union of South Africa, total", rate_per_1000: 22.80, period: "1 August to 30 November 1918", producer: "Public Health Service, from the Union commission", extract: src-phr-1919-06-20.p1376}
+        - {population: "Cape Province", rate_per_1000: 33.5, period: "the four months of the epidemic", producer: "Public Health Service, from the Union Blue Book", extract: src-phr-1919-04-18.p775}
+        - {population: "Orange Free State", rate_per_1000: 18.21, period: "the four months of the epidemic", producer: "Public Health Service, from the Union Blue Book", extract: src-phr-1919-04-18.p775}
+        - {population: "Transvaal", rate_per_1000: 16.24, period: "the four months of the epidemic", producer: "Public Health Service, from the Union Blue Book", extract: src-phr-1919-04-18.p775}
+        - {population: "Natal", rate_per_1000: 11.47, period: "the four months of the epidemic", producer: "Public Health Service, from the Union Blue Book", extract: src-phr-1919-04-18.p775}
+        - {population: "Punjab, as its sanitary commissioner estimated (4.77 per cent)", rate_per_1000: 47.7, period: "1918", producer: "Public Health Service, from the Punjab report (printed as 4.77 per cent)", extract: src-phr-1919-10-17-india.p2300}
+        - {population: "England and Wales, civilians, 46 weeks at an annual rate", rate_per_1000: 4.774, period: "23 June 1918 to 10 May 1919", producer: "Registrar-General (printed as 4,774 per million)", extract: src-rg-1920.secestimate}
+  - id: an-phr-first-half-1918
+    title: Influenza in the journal's first half of 1918, as held here
+    method: "One row per issue of Public Health Reports dated between 1 January and 30 June 1918 held in this record whose text mentions influenza, with the date and what it reports. The result is the count."
+    finding: "This record holds 1 issue of Public Health Reports from the first half of 1918 that reports influenza, dated 21 June 1918, on fevers of April and May from Norfolk to Louisiana believed to be mainly influenza of mild type; it is not the Haskell County note of April that Barry calls the journal's only reference to influenza in those six months."
+    confidence: "low: the count is of one row, and the journal's other issues of the half-year were not reached, so the record shows one further reference and cannot say how many there were"
+    against: "the Haskell note itself is not held, because PubMed Central answered every 1918 issue page with a reCAPTCHA page and JSTOR's Early Journal Content holds articles rather than issues; Barry's sentence could still be true of references to a named outbreak abroad, which the June issue is not, though it says anywhere in the world"
+    result: 1
+    derivation:
+      compute: count
+      column: issue
+      columns: [issue, date, reports]
+      rows:
+        - {issue: "Public Health Reports 33(25)", date: "1918-06-21", reports: "fevers of undetermined nature in April and May at points from Norfolk to Louisiana, believed to be mainly influenza of mild type", extract: src-phr-1918-06-21.p1003}
