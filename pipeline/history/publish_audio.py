@@ -131,6 +131,20 @@ def build_entry(slug: str, src_dir: Path, existing: dict | None = None, *,
     }
     if promo:
         entry["promo"] = {k: promo[k] for k in ("id", "sha", "voice", "startTime") if k in promo}
+    # Archival clips the episode carries (HISTORY-AUDIO-ARCHIVAL.md §4c.7):
+    # id, where it plays, and the sha256 of the excerpt that was verified, so
+    # tests/test_history_audio.py can hold the row to its ledger record.
+    clips_file = src_dir / f"{slug}.clips.json"
+    if clips_file.exists():
+        try:
+            clips = json.loads(clips_file.read_text())
+        except json.JSONDecodeError:
+            clips = None
+        if clips:
+            entry["clips"] = [{k: c[k] for k in ("id", "startTime", "endTime", "sha256") if k in c}
+                              for c in clips]
+    elif restitch and existing.get("clips"):
+        entry["clips"] = existing["clips"]
     return entry
 
 

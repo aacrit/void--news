@@ -1333,12 +1333,32 @@ def generate_radio_room_tone():
 # uses until licensed tracks are supplied through VOID_RADIO_MUSIC_DIR. They
 # are still original and still synthesised here, so the repo stays clean.
 
-def _pulse(t, period_s: float, notes, decay_tau: float = 0.28, max_beats: int | None = None):
+def _note_hz(name: str, transpose: int = 0, invert_about: str | None = None) -> float:
+    """A note of the house palette, optionally mirrored and transposed.
+
+    `invert_about` mirrors the interval about a tonic in log-frequency (a
+    fifth above becomes a fifth below), which is the one new operation the
+    History score needs (HISTORY-AUDIO-ARCHIVAL.md §5b). With neither set the
+    value is `_NOTE[name]` exactly, so every existing cue is bit-identical.
+    """
+    f = _NOTE[name]
+    if invert_about is not None:
+        tonic = _NOTE[invert_about]
+        f = tonic * tonic / f
+    if transpose:
+        f = f * (2.0 ** (transpose / 12.0))
+    return f
+
+
+def _pulse(t, period_s: float, notes, decay_tau: float = 0.28, max_beats: int | None = None,
+           transpose: int = 0, invert_about: str | None = None, attack_tau: float = 0.004,
+           first_beat: int = 0):
     """A repeating plucked figure: the spine of every track below.
 
     `max_beats` stops the figure after N plucks instead of filling the buffer,
     which is how a cue resolves on its root and then lets the tail ring rather
-    than starting the cell again.
+    than starting the cell again. `first_beat` starts the cell part-way, so a
+    cue can play only a figure's LAST beats (the History rupture entry).
     """
     sig = np.zeros_like(t)
     n = int(np.ceil(t[-1] / period_s)) + 1
@@ -1346,8 +1366,9 @@ def _pulse(t, period_s: float, notes, decay_tau: float = 0.28, max_beats: int | 
         n = min(n, max_beats)
     for i in range(n):
         onset = i * period_s
-        freq = _NOTE[notes[i % len(notes)]]
-        env = _pluck(t, onset, 0.004, decay_tau)
+        name = notes[(i + first_beat) % len(notes)]
+        freq = _NOTE[name] if not (transpose or invert_about) else _note_hz(name, transpose, invert_about)
+        env = _pluck(t, onset, attack_tau, decay_tau)
         sig += env * (_tone(t, freq) + 0.30 * _tone(t, freq * 2.0)
                       + 0.10 * _tone(t, freq * 3.0))
     return sig
@@ -1377,17 +1398,27 @@ def _theme_figure(t, *, period_s: float = THEME_PULSE_S, cell=THEME_CELL,
                   bass=THEME_BASS, pad=THEME_PAD, pulse_amp: float = 0.42,
                   bass_amp: float = 0.20, pulse_decay: float = 0.30,
                   bass_decay: float = 0.55, max_beats: int | None = None,
-                  bass_beats: int | None = None, pad_env=None):
+                  bass_beats: int | None = None, pad_env=None,
+                  transpose: int = 0, invert_about: str | None = None,
+                  attack_tau: float = 0.004, first_beat: int = 0, lock_s: float | None = None):
     """The motif: plucked cell over a half-time bass under a breathing pad.
 
     `pad_env` multiplies the pad only, so a cue can let the pad bloom and thin
-    out while the pulse runs underneath.
+    out while the pulse runs underneath. `transpose`, `invert_about`,
+    `attack_tau` and `first_beat` are the History parameter set (§5b); their
+    defaults leave On Air's and Weekly's cues exactly as they were. `lock_s`
+    snaps the pad partials to a loop length, for a bed.
     """
-    sig = pulse_amp * _pulse(t, period_s, cell, pulse_decay, max_beats)
-    sig += bass_amp * _pulse(t, period_s * 2.0, bass, bass_decay, bass_beats)
+    sig = 0.0 if not pulse_amp else pulse_amp * _pulse(
+        t, period_s, cell, pulse_decay, max_beats, transpose, invert_about, attack_tau, first_beat)
+    sig = sig + bass_amp * _pulse(t, period_s * 2.0, bass, bass_decay, bass_beats,
+                                  transpose, None, max(attack_tau, 0.004))
     pad_sig = np.zeros_like(t)
     for note, amp, rate, depth, phase in pad:
-        pad_sig += amp * _breath(t, rate, depth, phase) * _tone(t, _NOTE[note], phase)
+        f = _NOTE[note] if not (transpose or invert_about) else _note_hz(note, transpose, invert_about)
+        if lock_s:
+            f, rate = _lock(f, lock_s), _lock(rate, lock_s)
+        pad_sig += amp * _breath(t, rate, depth, phase) * _tone(t, f, phase)
     return sig + (pad_sig * pad_env if pad_env is not None else pad_sig)
 
 
@@ -1795,11 +1826,285 @@ def generate_radio_promo_bed():
 
 
 # ---------------------------------------------------------------------------
+# The History score — a third parameter set on `_theme_figure`
+#
+# docs/proposals/HISTORY-AUDIO-ARCHIVAL.md §5b. On Air is the motif at 120 bpm
+# in D; The Argument is the motif at 60 bpm on the suspended fourth; History is
+# the motif a fifth DOWN, in G, with a 1.6 s pulse, played on pad partials with
+# a slow attack rather than the radio's bells. One house, three rooms.
+#
+# The moods are parameter sets inside it, never new material:
+#   dread      the bass and the low pad only, held, no pulse
+#   procedure  the figure once, dry, plucked
+#   rupture    nothing, then the figure's LAST TWO beats, entering on a word
+#   grief      the figure inverted about the tonic, up an octave, thin
+#   testimony  nothing at all: no score under a person's own words
+#   reckoning  the pulse alone on the root, no melody, the thinnest bed
+#
+# The only new operation is the inversion (`_note_hz(invert_about=)`). Era is a
+# room, not a tune: the same cues through a wider or tighter reverb by `era`.
+# Rendered in memory by the producer at render time (history_cues), so nothing
+# here is committed as audio; `generate_assets.py --history` writes the set out
+# for listening.
+# ---------------------------------------------------------------------------
+HISTORY_PULSE_S = 1.60
+HISTORY_TRANSPOSE = -7                                  # down a fifth: D -> G
+HISTORY_CELL = THEME_CELL
+HISTORY_BASS = THEME_BASS
+HISTORY_PAD = (("D3", 0.22, 0.06, 0.30, 0.0),
+               ("A3", 0.14, 0.05, 0.35, 2.2),
+               ("F#4", 0.06, 0.07, 0.45, 4.1))
+HISTORY_BED_S = 25.6                                    # 16 pulses: loops on the grid
+HISTORY_MOODS = ("dread", "procedure", "rupture", "grief", "testimony", "reckoning")
+# Era is the room: (reverb wet, IR decay seconds, IR low-pass Hz).
+HISTORY_ERA_ROOM = {
+    "contemporary": (0.10, 0.25, 3600.0),
+    "modern":       (0.14, 0.32, 3200.0),
+    "early-modern": (0.18, 0.42, 2800.0),
+    "medieval":     (0.22, 0.52, 2500.0),
+    "classical":    (0.28, 0.66, 2200.0),
+    "ancient":      (0.26, 0.60, 2000.0),
+}
+# Bed loudness by mood (RMS dBFS before the producer's bed gain). Reckoning is
+# the thinnest, as the spec asks: a pulse, well under the others.
+HISTORY_BED_RMS = {"dread": -39.0, "procedure": -40.0, "grief": -41.0, "reckoning": -45.0}
+
+
+def _fft_convolve(x, ir, circular: bool = False):
+    """Convolution by FFT. `circular` wraps the tail onto the head, which is
+    what a loop-locked bed needs: the reverb of the last beat rings into the
+    first, exactly as it would on the next pass."""
+    n = len(x) if circular else len(x) + len(ir) - 1
+    size = 1 << int(np.ceil(np.log2(max(n, len(ir)))))
+    if circular:
+        size = len(x)
+        irc = np.zeros(size)
+        m = min(len(ir), size)
+        irc[:m] = ir[:m]
+        return np.fft.irfft(np.fft.rfft(x) * np.fft.rfft(irc), size)
+    y = np.fft.irfft(np.fft.rfft(x, size) * np.fft.rfft(ir, size), size)
+    return y[:len(x)]
+
+
+def _history_room(x, era: str, circular: bool = False, wet_scale: float = 1.0):
+    wet, decay, lp = HISTORY_ERA_ROOM.get(era or "", HISTORY_ERA_ROOM["modern"])
+    ir = _reverb_ir(max(0.6, decay * 3.0), decay, lp, seed=1947)
+    tail = _fft_convolve(x, ir, circular=circular)
+    peak = float(np.max(np.abs(tail))) or 1.0
+    tail = tail * (float(np.max(np.abs(x))) / peak)
+    w = wet * wet_scale
+    return (1.0 - w) * x + w * tail
+
+
+def _folded(render, dur: float):
+    """Render onsets in [0, dur) into a 2*dur buffer and fold the second half
+    back onto the first, so every decay that crosses the seam lands at the
+    head of the loop: sample-exact repetition with no crossfade."""
+    n = int(round(dur * SAMPLE_RATE))
+    t2 = _time(2 * dur)
+    x = render(t2)
+    return x[:n] + x[n:2 * n]
+
+
+def _history_figure(t, **kw):
+    kw.setdefault("period_s", HISTORY_PULSE_S)
+    kw.setdefault("cell", HISTORY_CELL)
+    kw.setdefault("bass", HISTORY_BASS)
+    kw.setdefault("pad", HISTORY_PAD)
+    kw.setdefault("transpose", HISTORY_TRANSPOSE)
+    kw.setdefault("attack_tau", 0.035)          # pad partials, not bells
+    kw.setdefault("pulse_decay", 0.95)
+    kw.setdefault("bass_decay", 1.60)
+    return _theme_figure(t, **kw)
+
+
+def history_bed(mood: str, era: str = "modern"):
+    """A 25.6 s loop-locked bed for one mood, or None for a mood with no bed."""
+    dur = HISTORY_BED_S
+    beats = int(round(dur / HISTORY_PULSE_S))
+    if mood == "dread":
+        # The low register only, held: the bass figure at half time with a
+        # long decay, under the two lowest pad partials. No pulse.
+        def render(t):
+            return _history_figure(t, pulse_amp=0.0, bass_amp=0.34, bass_decay=2.6,
+                                   bass_beats=beats // 2, pad=HISTORY_PAD[:2], lock_s=dur)
+    elif mood == "procedure":
+        # The figure ONCE per loop, dry and plucked, over a single thin partial.
+        def render(t):
+            return _history_figure(t, max_beats=4, attack_tau=0.006, pulse_decay=0.55,
+                                   bass_amp=0.0, pad=HISTORY_PAD[:1], lock_s=dur)
+    elif mood == "grief":
+        # Inverted about the tonic, an octave up: the fifth above becomes the
+        # fifth below and the major third a minor one. Thin, slow, breathing.
+        def render(t):
+            pad = (("D3", 0.16, 0.05, 0.40, 0.0), ("A3", 0.08, 0.04, 0.40, 2.2))
+            return _history_figure(t, period_s=HISTORY_PULSE_S * 2.0, transpose=HISTORY_TRANSPOSE + 12,
+                                   invert_about="D3", pulse_amp=0.30, max_beats=beats // 2,
+                                   bass_amp=0.0, pad=pad, lock_s=dur)
+    elif mood == "reckoning":
+        # The pulse alone, on the root. No melody, no pad.
+        def render(t):
+            return _history_figure(t, cell=("D3",), pulse_amp=0.40, attack_tau=0.008, pulse_decay=0.45,
+                                   max_beats=beats, bass_amp=0.0, pad=())
+    else:
+        return None
+    x = _folded(render, dur)
+    x = _history_room(x, era, circular=True, wet_scale=0.6)
+    return _norm_rms(x, HISTORY_BED_RMS[mood])
+
+
+def history_transition(mood: str, era: str = "modern"):
+    """The seam INTO a scene or the turn, in the clear, in the incoming
+    segment's mood. None for rupture (withheld) and testimony (dry)."""
+    p = HISTORY_PULSE_S / 2.0
+    if mood == "dread":
+        dur = 3.8
+        t = _time(dur)
+        x = _history_figure(t, period_s=p, pulse_amp=0.0, bass_amp=0.40, bass_decay=1.4,
+                            bass_beats=2, pad=())
+        for note, amp, dec in (("D2", 0.44, 1.7), ("A2", 0.28, 1.5), ("D3", 0.16, 1.3)):
+            x = x + amp * _pluck(t, 1.6, 0.040, dec) * _tone(t, _note_hz(note, HISTORY_TRANSPOSE))
+    elif mood == "procedure":
+        dur = 4.0
+        t = _time(dur)
+        x = _history_figure(t, period_s=p, max_beats=4, attack_tau=0.006, pulse_decay=0.45,
+                            bass_amp=0.0, pad=())
+        x = x + 0.40 * _pluck(t, 3.2, 0.006, 0.55) * _tone(t, _note_hz("D3", HISTORY_TRANSPOSE))
+    elif mood == "grief":
+        dur = 4.4
+        t = _time(dur)
+        x = _history_figure(t, period_s=p, transpose=HISTORY_TRANSPOSE + 12, invert_about="D3",
+                            max_beats=4, pulse_decay=0.9, bass_amp=0.0,
+                            pad=(("D3", 0.12, 0.2, 0.4, 0.0),))
+    elif mood == "reckoning":
+        dur = 3.4
+        t = _time(dur)
+        x = _history_figure(t, period_s=p, cell=("D3",), max_beats=4, attack_tau=0.008,
+                            pulse_decay=0.35, bass_amp=0.18, bass_beats=2, pad=())
+    else:
+        return None
+    x = x * _swell(t, 0.0, 0.03, dur - 1.0, 0.95)
+    x = _history_room(x, era)
+    x = _edge_fade(x, 3.0, 60.0)
+    return _norm_peak(x, -14.0)
+
+
+def history_rupture_entry(era: str = "modern"):
+    """The figure's last two beats, then the tonic chord blooming and held:
+    the score's one entry in a rupture scene, landing on its last word."""
+    dur = 6.0
+    t = _time(dur)
+    x = _history_figure(t, period_s=HISTORY_PULSE_S / 2.0, first_beat=2, max_beats=2,
+                        pulse_decay=1.1, bass_amp=0.0, pad=())
+    for note, amp, dec in (("D2", 0.40, 2.6), ("A2", 0.26, 2.3), ("D3", 0.20, 2.1), ("F#3", 0.12, 1.9)):
+        x = x + amp * _pluck(t, 1.6, 0.060, dec) * _tone(t, _note_hz(note, HISTORY_TRANSPOSE))
+    x = x * _swell(t, 0.0, 0.05, 3.2, 2.6)
+    x = _history_room(x, era, wet_scale=1.4)
+    x = _edge_fade(x, 3.0, 80.0)
+    return _norm_peak(x, -15.0)
+
+
+def history_theme(era: str = "modern"):
+    """10.4 s open: the motif in G at the History pulse, the pad blooming, and
+    an open fifth held for the first line to start over."""
+    dur = 10.4
+    t = _time(dur)
+    pad_env = _swell(t, 0.0, 1.2, 6.0, 3.0)
+    x = _history_figure(t, max_beats=5, bass_beats=3, pad_env=pad_env)
+    for note, amp, dec in (("D2", 0.50, 2.4), ("A2", 0.30, 2.1), ("D3", 0.18, 1.8)):
+        x = x + amp * _pluck(t, 6.4, 0.040, dec) * _tone(t, _note_hz(note, HISTORY_TRANSPOSE))
+    x = x * _swell(t, 0.0, 0.6, dur - 3.8, 3.2)
+    x = _history_room(x, era)
+    x = _edge_fade(x, 4.0, 60.0)
+    return _norm_peak(x, -13.0)
+
+
+def history_outro(era: str = "modern"):
+    """12.8 s close: the figure once more, resolving on the tonic major, to
+    true digital silence (asserted, the house rule for every outro)."""
+    dur = 12.8
+    t = _time(dur)
+    x = _history_figure(t, max_beats=4, bass_beats=2)
+    for note, amp, dec in (("D2", 0.56, 2.6), ("F#3", 0.30, 2.0), ("A3", 0.22, 1.9)):
+        x = x + amp * _pluck(t, 6.4, 0.030, dec) * _tone(t, _note_hz(note, HISTORY_TRANSPOSE))
+    x = _history_room(x, era)
+    x = x * _swell(t, 0.0, 0.40, 6.4, 5.8)
+    x = _edge_fade(x, 3.0, 0.0)
+    x = _norm_peak(x, -13.0)
+    if _rms_dbfs(x[-int(0.2 * SAMPLE_RATE):]) > -80.0:
+        raise AssertionError("history outro does not end in silence")
+    return x
+
+
+def history_sting(kind: str, era: str = "modern"):
+    """to_document: one low partial, 400 ms, for the change of voice.
+    from_clip: a two-partial swell that begins only after a real recording's
+    trailing silence, so the music returns to a room the clip has left."""
+    if kind == "to_document":
+        dur = 0.4
+        t = _time(dur)
+        x = _pluck(t, 0.0, 0.030, 0.16) * _tone(t, _note_hz("D2", HISTORY_TRANSPOSE))
+        x = _edge_fade(x, 3.0, 40.0)
+        return _norm_peak(x, -22.0)
+    if kind == "from_clip":
+        dur = 2.4
+        t = _time(dur)
+        x = _swell(t, 0.0, 0.9, 0.3, 1.2) * (0.6 * _tone(t, _note_hz("D3", HISTORY_TRANSPOSE))
+                                             + 0.35 * _tone(t, _note_hz("A3", HISTORY_TRANSPOSE)))
+        x = _history_room(x, era)
+        x = _edge_fade(x, 3.0, 60.0)
+        return _norm_peak(x, -20.0)
+    raise ValueError(kind)
+
+
+def history_cues(era: str = "modern") -> dict:
+    """Every History cue for one era, as mono float arrays at SAMPLE_RATE.
+
+    Keys: theme, outro, rupture_entry, sting:to_document, sting:from_clip,
+    bed:<mood>, transition:<mood>. A mood with no bed or no transition is
+    simply absent, which is how the producer knows to leave it dry."""
+    if np is None:  # pragma: no cover
+        raise RuntimeError("numpy is required to render the History score")
+    out = {"theme": history_theme(era), "outro": history_outro(era),
+           "rupture_entry": history_rupture_entry(era),
+           "sting:to_document": history_sting("to_document", era),
+           "sting:from_clip": history_sting("from_clip", era)}
+    for mood in HISTORY_MOODS:
+        b = history_bed(mood, era)
+        if b is not None:
+            out[f"bed:{mood}"] = b
+        tr = history_transition(mood, era)
+        if tr is not None:
+            out[f"transition:{mood}"] = tr
+    return out
+
+
+def render_history_assets(era: str = "contemporary"):
+    """Write the History set to ASSETS_DIR/history/ for listening. Not
+    committed: the producer renders the same arrays in memory."""
+    global ASSETS_DIR
+    keep = ASSETS_DIR
+    ASSETS_DIR = keep / "history"
+    ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+    try:
+        print(f"Generating the History score ({era}):")
+        for k, x in history_cues(era).items():
+            _write_radio_wav(f"history_{k.replace(':', '_')}.wav", x, k, loopable=k.startswith("bed:"))
+    finally:
+        ASSETS_DIR = keep
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
     ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+    if "--history" in sys.argv:
+        # The History score, written out for listening. The producer renders
+        # it in memory at render time, so these files are never committed.
+        render_history_assets()
+        raise SystemExit(0)
     if "--promo-bed" in sys.argv:
         # The promo bed alone. The rest of the set is never regenerated by
         # this path: an episode must carry the same music as the show beside
