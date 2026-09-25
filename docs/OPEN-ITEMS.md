@@ -922,15 +922,67 @@ H-05 (no dash in the served text or any accessible name) and H-06 (one `<h1>`,
 at least 60 event card links), added 2026-09-21 when the landing became a
 prerendered page. `verify_production.py` itself still reads only `/`.
 
-## History thesis pilot (2026-09-24): Srebrenica published, two pilots not started
+## History theses (2026-09-25): Srebrenica and Partition published, Mongol Baghdad not started
 
 Phase 1 of `docs/proposals/HISTORY-THESIS-PAGE.md`. The Srebrenica ledger
 (`data/history/evidence/srebrenica-genocide/`) and thesis
 (`data/history/theses/srebrenica-genocide.md`) passed an independent Stage 5
-audit in two passes and are `published`: the route renders the Thesis and the
-served JSON is committed under `frontend/build-data/history-theses/`. A
-correction is re-exported with `python3 -m pipeline.history.export_thesis`;
-T-14 fails on drift. What is unfinished:
+audit in two passes on 2026-09-24, and the Partition of India ledger
+(`data/history/evidence/partition-of-india/`, 54 entries, 91 extracts, 7
+positions, 4 analyses, 25 gaps) and thesis
+(`data/history/theses/partition-of-india.md`) on 2026-09-25; both are
+`published`: the route renders the Thesis and the served JSON is committed
+under `frontend/build-data/history-theses/`. A correction is re-exported with
+`python3 -m pipeline.history.export_thesis`; T-14 fails on drift.
+
+**Partition: errors in the event YAML and the episode script, found while
+building the ledger.** The YAML and the script were corrected on 2026-09-25
+(every item below; the script is re-cut against the ledger, every spoken
+quotation is a ledger extract, and it carries inert `# CLIP:` / `# MOOD:`
+slots per `docs/proposals/HISTORY-AUDIO-ARCHIVAL.md`). **The served MP3
+still carries the old script**: it must be re-rendered (one
+`render-history-audio.yml` dispatch), after which the thesis's episode marks
+are re-aligned to the new chapters. Until then chapter 5 keeps the manifest's
+title "The force that was supposed to hold" so T-10 resolves. The list, as
+found:
+
+- `data/history/events/partition-of-india.yaml` says the maps Radcliffe worked
+  from were "not resurveyed since 1931"; no document supports it. The 3 June
+  statement made the 1941 census authoritative, Abell told the commission's
+  secretaries any map read with the 1941 statistics would suffice (ToP XII
+  No. 196 n. 2), and both Punjab judges argue from the 1941 census. The
+  episode's "census data from nineteen forty one" is right; the YAML is wrong.
+- The Punjab Boundary Force as "25,000-strong" over "38,000 sq mi": the
+  Governor's own telegram of 8 August gives 7,500 effective rifles (9,000
+  with static troops) for 12 districts of at least 12 million people, and his
+  letter of 13 August says he had asked for about 20,000. Neither figure in
+  the YAML has a document behind it.
+- The bibliography entry "The struggle for Pakistan ... by Ayesha Jalal" is
+  authored by Ishtiaq Ahmed: it is an Asian Studies Review review of Jalal
+  (DOI 10.1080/10357823.2018.1524259). DOIs 10.2307/40194131, 10.2307/1569475
+  and 10.2307/20050025 also resolve to reviews (International Journal, Die
+  Welt des Islams, Foreign Affairs), not to the works named.
+- "Only road link to Kashmir" for Gurdaspur is a position, not a fact: the one
+  pre-award document tying Gurdaspur to Kashmir is Mountbatten's interview of
+  4 August 1947 (ToP XII No. 335), the award's own grounds are the Upper Bari
+  Doab Canal and the Mandi scheme, and the Pakistani charge (No. 428) and
+  Ismay's denial are both in the ledger.
+- The death toll "200,000 to 2 million" attributes the upper figure to Pandey
+  and Butalia, neither of which could be read; the free record holds Khosla's
+  200,000 to 250,000 non-Muslims plus "an equal number" of Muslims, and the
+  SGPC's and the economists' "about a million". "75,000 women abducted"
+  (Menon and Bhasin) could not be read either.
+- Quotations not found in any reachable source: Jinnah "Pakistan is a dream
+  that has come true" (not in the 11 August address); Gandhi "Muslim friends"
+  (not in the two Calcutta speeches reached); Radcliffe "blunder", Attlee "I
+  gave them their freedom", Mountbatten "greatest gamble" (none in ToP XI or
+  XII). `tests/test_history_quote_ledger.py` reports the three that touch a
+  ledger source as unpinned.
+- "Constituent Assembly chaired by B.R. Ambedkar": the record of 14 August
+  1947 shows the President (Rajendra Prasad) presiding.
+- `hero_image_url` points at the decommissioned Supabase storage.
+
+What is unfinished on Srebrenica:
 
 - **The ICJ judgment of 26 February 2007** could not be fetched (the ICJ site
   answers every PDF request with a Cloudflare challenge; the mirror answered
@@ -948,14 +1000,40 @@ T-14 fails on drift. What is unfinished:
   in the court's English), the narration no longer says the words were about
   "the ones who tried to refuse" (they were about his own refusal), and
   Resolution 819 gets back its silently cut "and others concerned".
-  `tests/test_history_quote_ledger.py` fails either divergence. The MP3 still
-  carries the old lines until the episode is re-rendered.
-- **Partition of India and Mongol Baghdad** were not started: Srebrenica took
-  the session. The path is worn now; each should be a shorter run.
+  `tests/test_history_quote_ledger.py` fails either divergence.
+  **Fixed text-side 2026-09-25: the whole script re-cut against the ledger.**
+  Every spoken claim now traces to an extract or the thesis. Cut as
+  unsourced: the Mladic "revenge" quotation (the film is a ledger gap), the
+  ICJ quotation (a gap), Dodik, Munira Subasic, the Bassiouni definition,
+  Nuhanovic, the Sarajevo siege figures, the forest march, the Scorpions
+  video, the RS report revoked in 2018, Omarska/Visegrad/Foca, "boys judged by
+  height", "eight men doing the shooting". Corrected: "did not fire a shot"
+  (they fired warning shots, never directly: A/54/549 paras 304, 472), "a
+  handful of bombs" (two, para 305), "roughly eight thousand" (now the
+  tribunal's 7,000 to 8,000 and the General Assembly's recital of 8,372,
+  kept apart), the battalion (no more than 600 per the tribunal, 150 fighting
+  men per the Secretariat; only the besieging force is agreed), Kozluk
+  undated, Kravica 1,000 to 1,500 at about 18.00. Added: Witness K at
+  Kravica (Krstic TJ para 206) as the survivors' own witness, the denial
+  position in its strongest form (Atlagic and Martinovic, p16 and their
+  English summary), the Dutch Supreme Court's para 5.1. The event YAML's
+  ledger-contradicted fields were corrected with it (death toll, summary,
+  significance, the 2019 Karadzic appeal as the Mechanism's, the Riad context,
+  the Katzenberger photograph dated 2010, the photographer Michael Büker), and
+  every spoken quotation is now in `primary_source_excerpts` and pinned
+  verbatim to an extract. **The MP3 still carries the old script and awaits a
+  re-render**; the thesis page's episode blocks already show the new lines.
+- **Mongol Baghdad** is not started. Partition's gaps that a browser could
+  close: Munir's report (in the Kirpal Singh collection, pp. 409-444, fetched
+  but not sliced), the Punjab volume of the 1941 census, the two Security
+  Council submissions S/628 and S/646 (ODS text layers unreadable), Hill et
+  al. 2008 (paywalled), Moon's Divide and Quit, and any Urdu, Hindi or
+  Bengali source readable as text.
 - **Wikimedia's API answers HTTP 429 to this container**, so the two exhibit
   images' provenance was read from the file pages' HTML, not the API. The
   ledger records Commons' own dates (the Katzenberger photograph is dated
-  11 July 2010 on its file page; the event YAML dates it 2007).
+  11 July 2010 on its file page; the event YAML dated it 2007, fixed
+  2026-09-25).
 
 ## Weekly: no scheduled run has produced The Argument
 

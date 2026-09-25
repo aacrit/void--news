@@ -501,7 +501,7 @@ entries:
 
   - id: src-kirpal-intro-recovery
     tier: B
-    kind: edited-documents
+    kind: edition
     author: Kirpal Singh
     title: "Introduction, Recovery of Abducted Women: the decisions of the Governments of India and Pakistan of 6 December 1947"
     container: "Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, editor's introduction"
@@ -986,9 +986,9 @@ entries:
     year: 2011
     edition: "published version, LSE Research Online"
     volume: "45(1), 1-6"
-    identifiers: {isbn: null, doi: "10.1017/S0026749X10000247", archive_org: null, hathitrust: null, url: "http://eprints.lse.ac.uk/32790/7/From_subjects_to_citizen_society.pdf"}
+    identifiers: {isbn: null, doi: "10.1017/S0026749X10000247", archive_org: null, hathitrust: null, url: "https://eprints.lse.ac.uk/id/eprint/32790/7/From_subjects_to_citizen_society.pdf"}
     access:
-      free_copy: "http://eprints.lse.ac.uk/32790/7/From_subjects_to_citizen_society.pdf"
+      free_copy: "https://eprints.lse.ac.uk/id/eprint/32790/7/From_subjects_to_citizen_society.pdf"
       verified_at: 2026-09-25
       verified_by: repository-record
       verified_title: "From subjects to citizens: society and the everyday state in India and Pakistan, 1947-1970"
@@ -1372,7 +1372,7 @@ positions:
     holders: ["Jinnah (Constituent Assembly of Pakistan, 11 August 1947)", "the Muslim League (memorandum to the Punjab Boundary Commission)", "Din Mohammad (Boundary Commission report, 5 August 1947)", "Liaquat Ali Khan (message of 11 August 1947)", "Hanif (2020)", "Jalal (1985)"]
     rests_on: [src-jinnah-19470811, src-league-memo-1947, src-dinmohammad-1947, src-hanif-2020, src-jalal-1985]
     claim: "Division was the only solution; Gurdaspur was a Muslim-majority district by the census the plan itself made authoritative, and its award to India was a political decision; Kashmir's accession is to be decided by a plebiscite the Security Council called for."
-    omits: "The award's one stated ground touching Gurdaspur by name, the Upper Bari Doab Canal from Madhopur in Pathankot; and the 1942 Sikh note listing Gurdaspur at 50.8 per cent by the 1931 census."
+    omits: "The award's two stated grounds that name Gurdaspur or its tahsils, the Upper Bari Doab Canal from Madhopur in Pathankot and the Mandi hydro-electric scheme; and the 1942 Sikh note listing Gurdaspur at 50.8 per cent by the 1931 census."
     adjudications:
       - claim: "Gurdaspur had a Muslim majority by the 1941 census: 51.14 per cent, with three of its four tehsils Muslim-majority."
         verdict: supported
@@ -1383,7 +1383,7 @@ positions:
         verdict: qualified
         basis: presence
         rests_on: [src-top-xii.item335, src-top-xii.item428, src-radcliffe-punjab.para9, src-radcliffe-punjab.para11, src-radcliffe-punjab.item1]
-        reasoning: "The Viceroy's staff recorded him, on 4 August, treating part of Gurdaspur's transfer to East Punjab as the condition of Kashmir's freedom to join either Dominion, eight days before the award; Ismay's reply to Liaquat denies any influence. The award's reasons say nothing of Kashmir; the one ground it states that touches Gurdaspur by name is the Upper Bari Doab Canal from Madhopur in the Pathankot Tahsil, and the schedule names the State of Kashmir only as where the Ujh enters the Punjab. The papers show the motive existed on the Viceroy's side; no document in this record shows it reached Radcliffe, so the claim is qualified, not supported."
+        reasoning: "The Viceroy's staff recorded him, on 4 August, treating part of Gurdaspur's transfer to East Punjab as the condition of Kashmir's freedom to join either Dominion, eight days before the award; Ismay's reply to Liaquat denies any influence. The award's reasons say nothing of Kashmir; the two stated grounds that name Gurdaspur or its tahsils are the Upper Bari Doab Canal from Madhopur in Pathankot and the Mandi hydro-electric scheme, and the schedule names the State of Kashmir only as where the Ujh enters the Punjab. The papers show the motive existed on the Viceroy's side; no document in this record shows it reached Radcliffe, so the claim is qualified, not supported."
       - claim: "The Security Council resolved that the accession of Jammu and Kashmir should be decided by a free and impartial plebiscite."
         verdict: supported
         basis: presence
@@ -1427,7 +1427,7 @@ positions:
         would_settle: "the Census of India 1951 and 1961 displaced-persons tables for West Bengal, which no open archive reached from this container holds"
   - id: women-and-recovery
     name: The feminist and subaltern account
-    holders: ["Butalia (1998)", "Menon and Bhasin (1998)", "Pandey (2001)", "Kaur (2007)", "Dey (2018)", "the Inter-Dominion decisions of 6 December 1947, as Kirpal Singh summarises them"]
+    holders: ["Butalia (1998)", "Menon and Bhasin (1998)", "Pandey (2001)", "Kaur (2007)", "Dey (2018)"]
     rests_on: [src-dey-2018, src-butalia-1998, src-menon-bhasin-1998, src-pandey-2001, src-kaur-2007, src-kirpal-intro-recovery]
     claim: "The violence was done on women's bodies as a message between communities, and the two states' recovery of abducted women, decided on 6 December 1947 'even against the wishes of persons concerned', abducted them a second time."
     omits: "The recovered women who wished to return, whom the liaison reports count without naming, and the men killed in the same columns."
@@ -1628,7 +1628,7 @@ analyses:
   - id: an-notional-vs-award
     title: The notional line against the award, district by district
     method: "Every district the award's schedules name or place, one row per district, read against the Appendix to the Statement of 3 June 1947 (src-top-xi.item45), which lists the Muslim-majority districts by the 1941 census. The listed column is read from the appendix; the award column from the schedule paragraph the row cites, the districts west of the Bengal line and the remainder rule for the rest; crossed is yes where the award put a listed district wholly or mostly on the non-Muslim side or an unlisted district on the Muslim side, part where the schedule divides the district along thana lines, and no otherwise; crossed_n is 1 for yes and 0 otherwise. The result is the sum of crossed_n, the number of districts the award put across the line. No share is given, because the schedules place every other district of both provinces by remainder and the two documents let this thesis name only the 40 rows below."
-    finding: "Of the 40 districts the two documents let this thesis place, the award put 4 across the notional line: Murshidabad, Khulna and the Chittagong Hill Tracts in Bengal, and Gurdaspur, three of whose four tehsils went east, in the Punjab; 5 more it divided along thana lines. The other 31 fell where the 3 June list had put them."
+    finding: "Of the 40 districts the appendix lists or the schedules name, the award put 4 across the notional line: Murshidabad, Khulna and the Chittagong Hill Tracts in Bengal, and Gurdaspur, three of whose four tehsils went east, in the Punjab; 5 more it divided along thana lines. The other 31 fell where the 3 June list had put them."
     confidence: "high for the whole districts, whose side the schedule states in words; moderate for the divided ones, where which part is larger is this thesis's reading of the thana list"
     against: "the Bengal report itself says the parties propounded the most diverse solutions and that the province offers few satisfactory natural boundaries, so a count of crossings measures the award against the notional list, not against any alternative line; the Sylhet transfer, decided by referendum and a separate report, is outside the count"
     result: 4
@@ -1694,8 +1694,8 @@ analyses:
   - id: an-gurdaspur-counts
     title: Every count of Gurdaspur in the record
     method: "Every figure a fetched document gives for the Muslim share of Gurdaspur district's people, one row per figure, with the document, its census year and the side it was written from; where the document gives counts rather than a share (the Governor's 590,000 Muslims and 560,000 non-Muslims), the share is the Muslim count over the two, to one decimal. The result is the range of the column."
-    finding: "Five documents from five sides put the Muslim share of Gurdaspur's people between 50.4 and 51.3 per cent, and no count of its people in the record puts it below half; the one count that runs the other way is of voters, 74,790 Muslim to 81,525 non-Muslim, which is 47.8 per cent."
-    confidence: "high for the range, which is the extreme of five figures from five documents; the figures rest on two censuses, so the range spans 1931 and 1941 rather than one count"
+    finding: "Five documents from four sides put the Muslim share of Gurdaspur's people between 50.4 and 51.3 per cent, and no count of its people in the record puts it below half; the one count that runs the other way is of voters, 74,790 Muslim to 81,525 non-Muslim, which is 47.8 per cent."
+    confidence: "high for the range, which is the extreme of five figures from five documents of four sides; the figures rest on two censuses, so the range spans 1931 and 1941 rather than one count"
     against: "the Congress-nominated judge's report carries an affidavit that reduces the 1941 majority from 26,435 to about 20,000 and electoral rolls with 81,525 non-Muslim voters to 74,790 Muslim; the Viceroy's 50.4 is described by the League's judge as an error, and the Viceroy himself said 'I think' when he gave it"
     result: [50.4, 51.3]
     derivation:
