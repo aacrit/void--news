@@ -40,9 +40,9 @@ N: By nineteen twenty, a population estimated at fifteen to thirty million in ei
 N: German South West Africa, October the second, nineteen oh four. The Herero and the Nama have risen against colonial rule. General Lothar von Trotha has an answer.
 N: Von Trotha drives the Herero into the Omaheke Desert and has the waterholes poisoned and guarded.
 
-## DOCUMENT | General Lothar von Trotha | Vernichtungsbefehl (Extermination Order) | October 2, 1904
-N: Von Trotha puts it in writing, an order he calls the Vernichtungsbefehl, the extermination order.
-M: Within the German borders, every Herero, with or without a gun, with or without cattle, will be shot. I shall no longer receive any women or children.
+## DOCUMENT | General Lothar von Trotha | Vernichtungsbefehl (Extermination Order), in the English translation published by German History in Documents and Images | October 2, 1904
+N: Von Trotha puts it in writing, an order he calls the Vernichtungsbefehl, the extermination order. In an English translation:
+M: Any Herero found within the German frontier, with or without a gun, with or without cattle, will be shot.
 
 ## ASIDE
 N: Of an estimated eighty thousand Herero, sixty five thousand die. Survivors go into camps at Shark Island and at Swakopmund, where more than forty five in every hundred do not survive the camp either.
