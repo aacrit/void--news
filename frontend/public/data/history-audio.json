@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-25T04:24:10+00:00",
+ "generatedAt": "2026-09-25T19:55:25+00:00",
  "episodes": {
   "alexanders-conquests": {
    "url": "/audio/history/alexanders-conquests.mp3?v=ab0c51b6",
@@ -5381,117 +5381,131 @@
    }
   },
   "partition-of-india": {
-   "url": "/audio/history/partition-of-india.mp3?v=91a34886",
-   "chaptersUrl": "/audio/history/partition-of-india.chapters.json?v=91a34886",
+   "url": "/audio/history/partition-of-india.mp3?v=4b052cd1",
+   "chaptersUrl": "/audio/history/partition-of-india.chapters.json?v=4b052cd1",
    "title": "The Partition of India",
-   "durationSeconds": 813.845,
-   "bytes": 13037805,
+   "durationSeconds": 800.679,
+   "bytes": 12827194,
    "chapters": [
     {
      "startTime": 0.0,
      "title": "Opening",
      "kind": "segment",
-     "endTime": 38.418
+     "endTime": 42.672
     },
     {
-     "startTime": 38.418,
+     "startTime": 42.672,
      "title": "The count",
      "kind": "segment",
-     "endTime": 119.974
+     "endTime": 119.859
     },
     {
-     "startTime": 119.974,
+     "startTime": 119.859,
      "title": "Midnight",
      "kind": "segment",
-     "endTime": 178.94
+     "endTime": 148.833
     },
     {
-     "startTime": 178.94,
+     "startTime": 148.833,
+     "title": "Jawaharlal Nehru, Tryst with Destiny, the English passage, in the All India Radio recording",
+     "kind": "segment",
+     "endTime": 189.64
+    },
+    {
+     "startTime": 189.64,
      "title": "Gurdaspur",
      "kind": "segment",
-     "endTime": 270.939
+     "endTime": 273.382
     },
     {
-     "startTime": 270.939,
+     "startTime": 273.382,
      "title": "How many",
      "kind": "segment",
-     "endTime": 365.626
+     "endTime": 368.737
     },
     {
-     "startTime": 365.626,
+     "startTime": 368.737,
      "title": "The force that was supposed to hold",
      "kind": "segment",
-     "endTime": 421.414
+     "endTime": 422.036
     },
     {
-     "startTime": 421.414,
+     "startTime": 422.036,
      "title": "The drum",
      "kind": "segment",
-     "endTime": 474.749
+     "endTime": 472.792
     },
     {
-     "startTime": 474.749,
+     "startTime": 472.792,
      "title": "Five accounts",
      "kind": "segment",
-     "endTime": 489.066
+     "endTime": 486.747
     },
     {
-     "startTime": 489.066,
+     "startTime": 486.747,
      "title": "British Imperial",
      "kind": "segment",
-     "endTime": 519.931
+     "endTime": 516.633
     },
     {
-     "startTime": 519.931,
+     "startTime": 516.633,
      "title": "Indian Nationalist",
      "kind": "segment",
-     "endTime": 548.599
+     "endTime": 544.367
     },
     {
-     "startTime": 548.599,
+     "startTime": 544.367,
      "title": "Pakistani Nationalist",
      "kind": "segment",
-     "endTime": 605.146
+     "endTime": 599.495
     },
     {
-     "startTime": 605.146,
+     "startTime": 599.495,
      "title": "Subaltern and displacement",
      "kind": "segment",
-     "endTime": 641.788
+     "endTime": 637.183
     },
     {
-     "startTime": 641.788,
+     "startTime": 637.183,
      "title": "Women's history",
      "kind": "segment",
-     "endTime": 694.398
+     "endTime": 688.429
     },
     {
-     "startTime": 694.398,
+     "startTime": 688.429,
      "title": "The shape of the disagreement",
      "kind": "segment",
-     "endTime": 769.001
+     "endTime": 755.44
     },
     {
-     "startTime": 769.001,
+     "startTime": 755.44,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 800.708
+     "endTime": 788.727
     },
     {
-     "startTime": 800.708,
+     "startTime": 788.727,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 813.808
+     "endTime": 800.627
     }
    ],
-   "renderedAt": "2026-09-25T04:24:10+00:00",
-   "publishedAt": "2026-09-25T04:24:10+00:00",
+   "renderedAt": "2026-09-25T19:55:25+00:00",
+   "publishedAt": "2026-09-25T19:55:25+00:00",
    "promo": {
     "id": "weekly-06-week-in-bias",
     "sha": "5d3bb7b7d195",
     "voice": "af_kore",
-    "startTime": 800.708
-   }
+    "startTime": 788.727
+   },
+   "clips": [
+    {
+     "id": "clip-nehru-tryst-19470814",
+     "startTime": 148.833,
+     "endTime": 176.883,
+     "sha256": "13133847f145943d49a74703f1e24fb3433ad5e923aed4cf4e94d3b41219f8ee"
+    }
+   ]
   },
   "peloponnesian-war": {
    "url": "/audio/history/peloponnesian-war.mp3?v=9c9c07fb",

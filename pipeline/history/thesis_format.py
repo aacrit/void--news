@@ -375,6 +375,18 @@ def strip_inline(text: str) -> str:
     return re.sub(r"\*{1,2}([^*]+)\*{1,2}", r"\1", text)
 
 
+def segment_chapters(episode: dict | None) -> list[dict]:
+    """The served manifest's chapters that are script segments, in order.
+
+    The producer also gives every admitted archival recording a chapter of its
+    own (§4c.6), which has no segment in the script export; the manifest's
+    `clips` list names where each one starts. Dropping those keeps chapter n
+    in `chapter_segments` and chapter n here the same chapter."""
+    manifest = (episode or {}).get("chapters") or []
+    starts = {round(float(c.get("startTime") or 0), 3) for c in (episode or {}).get("clips") or []}
+    return [c for c in manifest if round(float(c.get("startTime") or 0), 3) not in starts]
+
+
 def chapter_segments(script: dict) -> list[dict]:
     """The script export's segments that are chapters, in chapter order: the
     same rule history_producer.chapters() applies (no ASIDE, DOCUMENT, TITLE,

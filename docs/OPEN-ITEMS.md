@@ -88,6 +88,14 @@ claims about its own confidence. It needs a decision, not a tweak.
 
 ## Known defects, not yet fixed
 
+### Partition audio: the Nehru chapter title and three quiet-mood chapters (2026-09-25)
+
+The re-render with the signed Nehru clip (run 36181105314) admitted it at
+-19.3 LUFS. Left: H-10 warns that "Radio" is spoken but appears only in the
+ledger, not the event data; the chapter title is the ledger row's full title;
+"How many", "The force that was supposed to hold", "Women's history" and
+"Legacy" master 2 to 3 LU above their mood targets.
+
 ### The cambodian-genocide event YAML carries errors the thesis ledger refuted (2026-09-25)
 
 Found while settling the record for the thesis; the YAML and the script were
@@ -120,6 +128,29 @@ not edited (parallel-work rule). Each item names what the fetched record says.
   is not in the ECCC's compilation of his statements of apology.
 - "$337 million over 16 years" is press reporting; the ECCC's own 2014 sheet
   gives $204.6 million for 2006 to 2013 and no total.
+
+### Four more event YAMLs carry errors their thesis ledgers refuted (2026-09-25)
+
+Found during the Stage 5 audits of the 2026-09-25 theses. The theses are
+correct; the Hearing data and the audio scripts are not yet. Fix each during
+that event's audio pilot, and run `tests/test_history_quote_ledger.py` after.
+
+- **scramble-for-africa**: Leopold's "cake" letter is 1877, not 1876; the
+  Rhodes, Casement, Yaa Asantewaa, Mahdi and Omar Mukhtar quotations are not
+  in any held source; Morel's "smoked hands"; "104 days"; Adwa "6,000"; a dash
+  in the Kipling line; several attributions.
+- **spanish-flu-1918**: Samoa "8,500 / 22%" against the held 7,542 / 19.8%;
+  "revised upward by every study" is false; "21 million"; the Sanitary
+  Commissioner, Vaughan and other quotations are unsourced; Gandhi's 1918
+  illness was dysentery; the Pacific studies name the wrong authors; the
+  Funston cook detail is unsourced.
+- **armenian-genocide**: the Biden and Hitler quotations are misworded; the
+  Mardiganian, Scheubner-Richter and Morgenthau quotations are not in their
+  texts; "235 arrests"; the death_toll floor omits the 450,000 figure.
+- **haitian-revolution**: "I have avenged America" is from Dessalines's April
+  1804 proclamation; the Boukman prayer is not in Dalmas; "until 1947"
+  conflates the indemnity with the loans; review DOIs attached as books; the
+  7 April 1803 death date is unsupported by the held record.
 
 ### 62% of article volume is scored on eleven words (2026-09-22)
 
