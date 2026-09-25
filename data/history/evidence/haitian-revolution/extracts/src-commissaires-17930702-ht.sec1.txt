@@ -1,0 +1,9 @@
+source: src-commissaires-17930702-ht
+locator: sec1
+url: https://archive.org/download/proclamation09sain/proclamation09sain_djvu.txt
+read: 2026-09-25
+note: the free copy is the scan's OCR text layer of a broadside set in the Creole orthography of 1793; the layer misreads long s and several letters (mouiir, furtir, fcmblé), and is held as it prints
+note: the same paragraph as the French column's Non, la Colonie ne périra pas (src-commissaires-17930702-fr.sec1), which is the official parallel text
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+Non, pays cila li pas lé mouiir : H pai lé jamais quine i roi encore, ni quine j maîtres qui niéchans i li va furtir de cendres â li, et li \a plus brillante que jamais ^ U va fcmblé en France , qui aftor terre i liberté et terre i l'égalité , et républîqu*: fianeaife U va trouver tncotc petites a li qui va fcrvi li ben.

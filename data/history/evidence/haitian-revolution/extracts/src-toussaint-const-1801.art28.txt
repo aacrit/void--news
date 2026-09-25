@@ -1,0 +1,9 @@
+source: src-toussaint-const-1801
+locator: art28
+url: https://archive.org/download/constitutionfran00sain/constitutionfran00sain_djvu.txt
+read: 2026-09-25
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: article 28
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+28: La constitution nomme comme gouverneur , le citoyen Toussaintîpuveriure général en ch;f de l'armée de St-Domingue ; et en considér itio'n des importans services rendus par ce général à la colonie dans les circonstances les plus critiques de la révolution et ayant agi à la satisfaction du peuple reconnaissant , les rênes du gouvernement lui sont confiées pour tout le tem* de sa vie glorieuse.

@@ -1,0 +1,8 @@
+source: src-saint-remy-1853
+locator: p101
+url: https://archive.org/download/mmoiresdugn00tous/mmoiresdugn00tous_djvu.txt
+read: 2026-09-25
+note: the editor's footnote 1 on page 101
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+1 Toussaint L'Ouverture (François-Dominique), mourut au château de Joux, dans un cachot, le 7 floréal an XI (27 avril 1803), neuf mois et quinze jours après son arrivée en France, à l'âge de 60 ans moins un mois et sept jours. Malgré le haut rang qu'il avait occupé dans le monde nouveau, il fut enterré comme un obscur prisonnier au cimetière du village de Saint-Pierre, qui se trouve au pied du château. Aujourd'hui les ossements de L'Ouverture sont mêlés à ceux des plus humbles paysans, car il ne reste sur les lieux nul vestige de son inhumation, tant il est vrai que la mort confond tous les rêves de la grandeur humaine.
