@@ -1,6 +1,6 @@
 source: src-sherman-gould-ansari-2010
 locator: p2
-url: http://eprints.lse.ac.uk/32790/7/From_subjects_to_citizen_society.pdf
+url: https://eprints.lse.ac.uk/id/eprint/32790/7/From_subjects_to_citizen_society.pdf
 read: 2026-09-25
 note: page 2 of the published version as LSE Research Online serves it; the footnote cue 3 is the text layer's
 
