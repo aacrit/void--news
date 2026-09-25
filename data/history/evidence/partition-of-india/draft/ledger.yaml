@@ -643,6 +643,35 @@ entries:
   position: indian-nationalist
   rights: public
   notes: the same site the ledger's Constituent Assembly Debates are read from; the Constitution's official Hindi text could not be fetched (see gaps)
+- id: src-top-xi
+  tier: A
+  kind: edited-documents
+  author: Nicholas Mansergh and Penderel Moon (eds.)
+  title: 'Constitutional Relations between Britain and India: The Transfer of Power 1942-7, Volume XI, The Mountbatten Viceroyalty, Announcement and Reception of the 3 June Plan, 31 May-7 July 1947'
+  container: null
+  publisher: Her Majesty's Stationery Office
+  place: London
+  year: 1982
+  edition: null
+  volume: XI
+  document_number: 'cited by document number: No. 45 (the Statement of 3 June 1947 and its Appendix), No. 59 (the Viceroy''s press conference of 4 June 1947), No. 155 (R. A. Butler to Mountbatten, with the editors'' note quoting the reply of 17 June), No. 130 (Sardar Patel to Mountbatten, 10 June 1947, on the resolution of the Council of the All-India Muslim League of 9 June), No. 278 (Sir F. Burrows, Governor of Bengal, to Mountbatten, telegram of 20 June 1947)'
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: constitutionalre06nich
+    hathitrust: null
+    url: https://archive.org/details/constitutionalre06nich
+  access:
+    free_copy: https://archive.org/download/constitutionalre06nich/constitutionalre06nich_djvu.txt
+    verified_at: 2026-09-25
+    verified_by: archive-item-fetch
+    verified_title: 'India: The Transfer of Power, 1942-47, Vol. 11'
+  language: en
+  region_of_authorship: europe
+  producer: british-viceroy-staff
+  position: british-administrative
+  rights: null
+  notes: 'Crown copyright; held only as the passages cited, at most 150 words each and 5 in all. The draft thesis holds all five: Nos. 45, 59, 130, 155 and 278'
 positions:
 - id: british-administrative
   name: The British administrative account
@@ -811,7 +840,7 @@ positions:
     - src-jinnah-papers-xiv.p642
     - src-khosla-1949.p66
     - src-hansard-19461212.p1348
-    reasoning: Jinnah's interview of 17 August 1946 condemns the violence, says any Leaguer who used it broke the League's instructions, and says he did not know who was responsible. The Indian fact-finding body's own reading of the hospital returns is that the Muslims fared almost as badly as the Hindus. The League's resolution of 29 July, as Cripps read it to the Commons, called for direct action to achieve Pakistan and did not say what the action would be. The record supports the second half of the claim from a hostile source; on the first half it holds the League's denial and its resolution, and no investigation of either, so the verdict is qualified.
+    reasoning: Jinnah's interview of 17 August 1946 condemns the violence, says any Leaguer who used it broke the League's instructions, and says he did not know who was responsible. The Indian fact-finding body wrote that, if the hospital returns were accepted as a basis for the ratio, the Muslims fared almost as badly as the Hindus. The words of the League's resolution of 29 July that Cripps read to the Commons resolve on direct action to achieve Pakistan and do not say what form it would take. The record supports the second half of the claim, conditionally, from a hostile source; on the first half it holds the League's denial and its resolution, and no investigation of either, so the verdict is qualified.
   described_by:
   - src-mountbatten-19480319.p703
   - src-top-xii.item428
@@ -869,7 +898,7 @@ positions:
   - src-pa-khushi-muhammad
   - src-pa-niamat-ali
   - src-pa-bhagwant-singh
-  claim: 'The partition''s longest work was resettlement: the two states moved the Punjab''s minorities in convoys and trains, held them in camps, and settled them on land and in houses the other community had left, on less than they had lost, and then made them citizens by date.'
+  claim: 'The partition''s longest work was resettlement: the two states moved the Punjab''s minorities in convoys and trains, held them in camps, and settled them on land and in houses the other community had left, on less than they had lost.'
   omits: The dead of the convoys and the camps, whom the resettlement records do not count, and the migrants of Bengal, who crossed for two decades and are not in either Punjab's scheme.
   adjudications:
   - claim: The refugee farmers of East Punjab were resettled on less land than they had left.
@@ -1103,7 +1132,7 @@ analyses:
 - id: an-calcutta-counts
   title: Calcutta's dead, eight figures
   method: 'Every figure a fetched document gives for the dead of the Calcutta killings of August 1946, one row per figure, with the document and the kind of count it is: a newspaper''s running total as the Indian fact-finding body reports it, bodies collected, deaths in the hospital returns, or an estimate given to Parliament. A range the newspaper printed is entered as its lower and its upper bound, each on its own row. The result is the range of the column.'
-  finding: 'Eight figures for Calcutta''s dead run from 170 to 4,000, and they count four different things: a newspaper''s running total, which rose from over 170 killed on 18 August to 3,468 bodies accounted for on 28 August; 3,173 bodies collected and disposed of; 570 deaths in the hospital returns; and 4,000, the round figure the British government gave the Commons. The Indian fact-finding body''s own estimate, more than five thousand killed, is above every count it prints.'
+  finding: 'Eight figures for Calcutta''s dead run from 170 to 4,000, and they count four different things: a newspaper''s running total, which rose from over 170 killed on 18 August to 3,468 bodies accounted for on 28 August; 3,173 bodies collected and disposed of; 570 deaths in the hospital returns; and “some 4,000”, the figure the British government gave the Commons. The estimate the Indian fact-finding body reports, more than five thousand killed, is above every count it prints.'
   confidence: 'moderate: the running totals are the Statesman''s as the fact-finding body reports them, not read from the newspaper, and every count but the Commons figure comes from one producer''s pages'
   against: the fact-finding body says the body count does not represent the total number of deaths and that hospital figures undercount the Hindu dead, whose bodies it says were burnt or destroyed; the League's leaders and press, as the same body reports them, said the riot was started by the Congress's supporters, which bears on who died and not only how many
   result:

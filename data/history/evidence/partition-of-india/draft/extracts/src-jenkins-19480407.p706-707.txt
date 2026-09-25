@@ -3,6 +3,6 @@ locator: p706-707
 url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
 read: 2026-09-25
 note: p is the page of Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947 (2nd ed., 2005), read from the Internet Archive text layer; line breaks are joined and the layer's soft hyphens rejoined
-note: Document 238, Sir Evan Jenkins's account of April 1948 as Lord Ismay telegraphed it to Mountbatten on 7 April 1948; the passage begins mid-sentence after 'The enclosures'; the page number between pp. 706 and 707 is dropped; 'Pakistan.a' and 'Zia' (for Zira) are the layer's
+note: Document 238, Sir Evan Jenkins's account as Lord Ismay telegraphed it to Mountbatten on 7 April 1948; 'Abell’ s' and 'Abbottof' are the layer's; the page number between pp. 706 and 707 is dropped; 'Pakistan.a' and 'Zia' (for Zira) are the layer's
 
-were a schedule (I think typed) and a section of a printed map with a line drawn thereon, together showing a Boundary which included in Pakistan.a sharp salient in the Ferozepur District. This salient enclosed the whole of the Ferozepur and Zia Tehsils.
+The result was Abell’ s letter to Abbottof 8th August, which you quote. The enclosures were a schedule (I think typed) and a section of a printed map with a line drawn thereon, together showing a Boundary which included in Pakistan.a sharp salient in the Ferozepur District. This salient enclosed the whole of the Ferozepur and Zia Tehsils.

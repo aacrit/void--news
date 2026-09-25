@@ -2,6 +2,6 @@ source: src-jinnah-papers-xiv
 locator: p643
 url: https://archive.org/download/jinnah-papers-volume-14/Jinnah%20Papers%2C%20Volume%2014_djvu.txt
 read: 2026-09-25
-note: p is the page of Jinnah Papers, vol. XIV, Appendix II.2, Jinnah's statement at New Delhi, 11 November 1946; line breaks joined
+note: p is the page of Jinnah Papers, vol. XIV, Appendix II.2, the second paragraph of Jinnah's statement dated New Delhi, 11 November 1946 on the page before; line breaks joined
 
 I know that the Musalmans have suffered heavily and are suffering, but the tragedy of Bihar has eclipsed what are mere specks elsewhere. I condemn brutality in any shape or form, but the Bihar tragedy has no parallel or precedent in this record of cold-blooded butchery of the Muslim minority in various parts of the country committed by the majority Hindu community.

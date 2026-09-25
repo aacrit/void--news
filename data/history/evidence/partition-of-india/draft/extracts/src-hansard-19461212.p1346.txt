@@ -1,0 +1,8 @@
+source: src-hansard-19461212
+locator: p1346
+url: https://api.parliament.uk/historic-hansard/commons/1946/dec/12/india-constitution
+read: 2026-09-25
+note: p is the Hansard column; HC Deb 12 December 1946 vol 431 cc1346-452, Sir Stafford Cripps moving the motion
+note: the page's heading line and Cripps's motion; 'nth' (for 11th) and 'will he' are the page's; the column marker is dropped
+
+HC Deb 12 December 1946 vol 431 cc1346-452 § 3.52 p.m. § The President of the Board of Trade (Sir Stafford Cripps) I beg to move, That this House takes note of the statement on India made on nth December by the Prime Minister and expresses its hope that a settlement of the present difficulties between Indian Parties will he forthcoming.
