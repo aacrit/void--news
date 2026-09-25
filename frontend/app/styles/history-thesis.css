@@ -744,8 +744,17 @@
   color: var(--hist-ink-muted);
   font-size: var(--text-xs);
 }
+/* The hosts a gap tried are each nowrap, and the markup puts no space between
+   them, so a gap that tried six hosts was one 590px line at 390px (Partition,
+   2026-09-25). A wrapping row gives every host its own break. */
+.hist-th-gap__tried {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-2);
+}
 .hist-th-gap__url {
-  margin-left: var(--space-2);
+  margin-left: 0;
 }
 
 /* ── Sources ── */
