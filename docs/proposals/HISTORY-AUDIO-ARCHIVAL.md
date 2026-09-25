@@ -64,6 +64,8 @@ the thing itself.
 
 ## 2. Rights policy (the CEO's decision)
 
+**Decided by the CEO, 2026-09-25: Option B.** Every clip is still signed per clip by the CEO before it renders, and the page prints the rights basis beside the exhibit.
+
 Every option is stated with its real exposure. The recommendation follows.
 
 ### Option A: strict
