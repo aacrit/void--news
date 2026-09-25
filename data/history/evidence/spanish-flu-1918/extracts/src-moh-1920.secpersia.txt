@@ -4,4 +4,4 @@ url: https://archive.org/download/pandemic-of-influenza-1918-1919_UK-MinistryofH
 read: 2026-09-25
 note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
 
-When influenza appeared in Persia during 1918 it found the population already much weakened by two previous epidemics of typhus and relapsing fever which ravaged the country in the winter of 1917-1918 and the spring of 1918 respectively. Moreover, the years 1916 and 1917 had been unusually dry, so that crops failed and there was a food shortage. The epidemic is said to have invaded Persia at several points.
+The following notes are extracted from a report by Dr. A. R. Neligan, Physician to His Majesty's Legation, Tehran. When influenza appeared in Persia during 1918 it found the population already much weakened by two previous epidemics of typhus and relapsing fever which ravaged the country in the winter of 1917-1918 and the spring of 1918 respectively. Moreover, the years 1916 and 1917 had been unusually dry, so that crops failed and there was a food shortage. The epidemic is said to have invaded Persia at several points.

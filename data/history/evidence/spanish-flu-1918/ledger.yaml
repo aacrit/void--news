@@ -1007,9 +1007,15 @@ renderings_review:
     language: hi
     confidence: moderate
     reason: "Hindi is on the proposal's weaker list (§4f.5); the passage carries no digit and one name, and the checks were done by hand"
-    reading_notes: "दादा is the memoirist's elder brother (the page before names him दादाजाद बड़े भाई); प्रयाण किया is a euphemism for dying, read from the sentence that follows, in which the cart carries corpses"
-    back_translation: "मेरे बड़े भाई के गुज़रने के तीसरे दिन मेरी भाभी गुज़र गईं। उनकी दूध पीती बेटी बीमार थी। रात को मैं उसे साथ लेकर सोया। एक बिल्ली रात भर परेशान करती रही। सुबह उसके प्राण निकल गए। मैं उसे नदी के किनारे ले जाकर गाड़ आया। फिर चाचाजी चल बसे। गाड़ी गंगा तक मानो लाशें ही ढोती रही। भाभी के तीन बेटे बीमार पड़े। सेवा-सुश्रूषा से किसी तरह अच्छे हो गए। इस समय का अनुभव मेरे जीवन का विचित्र अनुभव है।"
-    back_translation_parity: "names: गंगा present in original, rendering and back-translation; numbers: none in any of the three; the back-translation was written from the English alone on 2026-09-25 and differs from the original in wording only (चल बसे for प्रयाण किया, बेटे for लड़के)"
+    reading_notes: "दादा is the memoirist's elder cousin (the page before names him दादाज़ाद बड़े भाई, a paternal cousin); प्रयाण किया is a euphemism for dying, read from the sentence that follows; जैसे ... ही is rendered as if ... nothing but"
+    back_translation: "मेरे बड़े चचेरे भाई के गुज़रने के तीसरे दिन मेरी भाभी गुज़र गईं। उनकी दूध पीती बेटी बीमार थी। रात को मैं उसे साथ लेकर सोया। एक बिल्ली रात भर परेशान करती रही। सुबह उसके प्राण निकल गए। मैं उसे नदी के किनारे ले जाकर गाड़ आया। फिर चाचाजी चल बसे। मानो गाड़ी गंगा तक लाशों के सिवा कुछ न ढोती हो। भाभी के तीन बेटे बीमार पड़े। सेवा-सुश्रूषा से किसी तरह अच्छे हो गए। इस समय का अनुभव मेरे जीवन का विचित्र अनुभव है।"
+    back_translation_parity: "names: गंगा present in original, rendering and back-translation; numbers: none in any of the three; the back-translation was written from the English alone on 2026-09-25 and differs from the original in wording only (चचेरे भाई for दादा, चल बसे for प्रयाण किया, बेटे for लड़के)"
+  - of: src-nirala-kulli-bhat.p79
+    language: hi
+    confidence: moderate
+    reason: "Hindi is on the proposal's weaker list (§4f.5); the passage carries no digit and one name; one word after मृत्यु की is not legible in the scan and is rendered by its context as death's reach"
+    back_translation: "इसी समय इन्फ्लुएंज़ा फैला। पिताजी एक साल पहले गुज़र चुके थे। इसीलिये मैंने नौकरी की थी; नहीं तो हर लड़के की तरह दुनिया को सुखी देखने का सपना लिये रहता; कम से कम उसे थामे रहता, यही सोचता था। तार आया: “तुम्हारी पत्नी सख़्त बीमार है, अंतिम भेंट के लिये आओ।” तब मेरी उम्र बाईस साल थी। स्त्री का प्रेम उसी क्षण जाना जब वह अपना स्त्रीत्व छोड़ने को थी। अख़बारों से मृत्यु की पहुँच मालूम हो चुकी थी। गंगा के किनारे आकर अपनी आँखों से देखा। गंगा में मानो लाशों के सिवा कुछ न बहता हो।"
+    back_translation_parity: "names: गंगा in all three; numbers: none (बाईस spelled in all three); wording differs in पत्नी for स्त्री, भेंट for मुलाकात, फैला for प्रकोप हुआ"
   - of: src-nirala-kulli-bhat.sec80b
     language: hi
     confidence: moderate
@@ -1125,7 +1131,7 @@ positions:
     claim: "The recorded statistics understate the dead; each re-examination has raised the global figure, from 21.5 million to the order of 50 million, and national counts such as Java's rise when census loss replaces registration."
     omits: "What a global figure is a figure of: the position sums national estimates made by unlike methods over unlike periods, and its own abstract calls the result an understatement of unknown size."
     adjudications:
-      - claim: "The recorded statistics of influenza mortality are a significant understatement."
+      - claim: "The recorded statistics of influenza morbidity and mortality are a significant understatement."
         verdict: supported
         basis: presence
         rests_on: [src-sancom-1918.p56, src-rg-1920.secestimate, src-phr-1918-12-27.p2306]
@@ -1174,13 +1180,14 @@ positions:
         verdict: qualified
         basis: presence
         rests_on: [src-barry-2004.para30, src-dicke-2015.para18b, src-moh-1920.para16, src-taubenberger-morens-2006.para5]
-        reasoning: "The Ministry of Health dates the mild American epidemic to April and May 1918, Taubenberger and Morens to March 1918; the Funston figures rest on the two scholars and no camp record is held. One Tier A producer, and it does not name the camp, so the date is borne out only in the season."
+        reasoning: "The Ministry of Health dates the mild American epidemic to April and May 1918, Taubenberger and Morens to March 1918; the Funston figures rest on the two scholars and no camp record is held, and the two scholars disagree on the camp's strength, Barry giving an average of 56,222 troops and Dicke roughly twenty-six thousand. One Tier A producer, and it does not name the camp, so the date is borne out only in the season."
 
   - id: origin-france
     name: The French origin
     holders: ["Gill and Oxford (2026)", "Oxford (2001)"]
     rests_on: [src-gill-oxford-2026, src-oxford-2001]
-    claim: "A fatal purulent bronchitis seen at Etaples from December 1916 and at Aldershot in 1917 was the pandemic's first form, and the virus moved eastward from Europe to China rather than the reverse."
+    aldershot_pin: src-gill-oxford-2026.para15
+    claim: "A fatal purulent bronchitis seen at Etaples in the winter of 1916 to 1917 and at Aldershot in the spring of 1917 was the pandemic's first form, and the virus moved eastward from Europe to China rather than the reverse."
     omits: "Why an outbreak of 1916 and 1917 produced no world pandemic until 1918, which the position's necropsy counts do not answer."
     adjudications:
       - claim: "Purulent bronchitis with heliotrope cyanosis in the military camps of 1916 and 1917 was probably the same malady as the autumn wave of 1918."
@@ -1200,14 +1207,14 @@ positions:
     name: The name and the censors
     holders: ["Honigsbaum (2013)", "Trilla, Trilla and Daer (2008)", "Almudéver Campo and Camaño Puig (2025)"]
     rests_on: [src-honigsbaum-2013, src-trilla-2008, src-almudever-2025]
-    claim: "The disease became Spanish in June 1918 because Spain's press reported an epidemic that belligerent censors kept out of their own papers; the virus most likely reached Spain from France, and Spain's official 147,114 deaths of 1918 understate its dead."
+    claim: "The disease became Spanish because Spain's press reported an epidemic that belligerent censors kept out of their own papers; the virus most likely reached Spain from France, and Spain's official 147,114 deaths of 1918 understate its dead."
     omits: "Any censorship order: the position documents the press's silences and The Times's withheld bulletins, not an instruction, and it does not weigh the concealment the Ministry of Health records on the neutral side."
     adjudications:
-      - claim: "The disease was named for Spain because the epidemic was first recognised there, not because it began there."
-        verdict: supported
+      - claim: "The disease was named for Spain because the epidemic was attributed to Spain when its spread over Europe was first recognised, not because it began there."
+        verdict: qualified
         basis: presence
         rests_on: [src-moh-1920.secnaming, src-phr-1918-09-13.p1540, src-moh-1920.secspaincommission]
-        reasoning: "The Ministry of Health writes that the source was attributed to Spain and the disease termed Spanish on that account, and that it cannot be admitted that the European epidemic began in Spain; the Public Health Service's circular of September 1918 already writes so-called Spanish influenza. Two producers."
+        reasoning: "The Ministry of Health writes that the source was attributed to Spain and the disease termed Spanish on that account, and that it cannot be admitted that the European epidemic began in Spain; the Public Health Service's circular of September 1918 already writes so-called Spanish influenza. Both bear out the name and the doubt about the origin; neither says who attributed it or why, so the position's mechanism, the press, is not in the artifacts, and the verdict is qualified."
       - claim: "Belligerent governments censored reporting of the epidemic to protect morale."
         verdict: qualified
         basis: presence
@@ -1225,7 +1232,7 @@ positions:
     name: India's historians
     holders: ["Arnold (2019)", "Hardiman (2012)", "Mills (1986)"]
     rests_on: [src-arnold-2019, src-hardiman-2012, src-mills-1986]
-    claim: "India lost at least 12 million people, more than any country, and the epidemic left almost no contemporary testimony because plague, recruitment, war and near-famine crowded it out of official and private record."
+    claim: "India lost at least 12 million people, more than any country, and the epidemic left almost no contemporary testimony, overshadowed by plague, by recruitment and the war, and by food shortages that pushed India to the brink of famine."
     omits: "How the position's 12 million relates to the Sanitary Commissioner's 7,089,694; the position rests on later demographic reconstruction and does not print the contemporary count beside its own."
     adjudications:
       - claim: "In the Punjab 962,937 deaths were attributed to influenza between 1 October and 31 December 1918."
@@ -1293,8 +1300,9 @@ positions:
       - claim: "In Alaska some local units escaped the first wave by travel restrictions and quarantine, while communities the virus entered lost most of their people."
         verdict: qualified
         basis: presence
-        rests_on: [src-khakurel-2025.para6, src-alaska-1919.p5, src-alaska-1919.p40]
-        reasoning: "The Senate record carries the Bureau of Education's telegram of 2 January 1919 from Nome, three villages wiped out entirely and others averaging 85 per cent deaths, and its table of approximately 2,000 deaths, so the second half of the claim is borne out by the federal record; the escapes rest on the scholars' newspaper work, and one producer caps the verdict."
+        rests_on: [src-khakurel-2025.abstract, src-khakurel-2025.para6, src-alaska-1919.p5, src-alaska-1919.p40]
+        rests_on_note: "the escapes are the abstract's 8 local units (src-khakurel-2025.abstract); the paragraph cited for the rates says the territory's interventions did not prevent introduction"
+        reasoning: "The Senate record carries the Bureau of Education's telegram of 2 January 1919 from Nome, three villages wiped out entirely and others averaging 85 per cent deaths, and its table of approximately 2,000 deaths, so the second half of the claim is borne out by the federal record; the escapes, 8 local units in the scholars' abstract, rest on their newspaper work, and one producer caps the verdict."
 
   - id: latin-america
     name: The Latin American case study
@@ -1340,22 +1348,22 @@ positions:
       - claim: "At Camp Devens in late September 1918 deaths ran at about 100 a day."
         verdict: qualified
         basis: presence
-        rests_on: [src-wever-2014.para45, src-wever-2014.para35, src-phr-1918-09-27.p1625]
+        rests_on: [src-wever-2014.para45, src-wever-2014.para45b, src-wever-2014.para35, src-phr-1918-09-27.p1625]
         reasoning: "Two letters the same article reproduces give about 20 deaths a day on 24 September and about 100 a day on 29 September; the Public Health Service's report of 27 September records the disease in Massachusetts from August and 333 influenza deaths in Boston in the week of 16 to 23 September, and does not count the camp. The witnesses agree on the direction and differ by the day; one Tier A producer, and it is silent on the camp."
 
   - id: indian-memory
     name: A survivor's memory of the Ganges
     holders: ["Suryakant Tripathi 'Nirala' (Kulli Bhat)"]
     rests_on: [src-nirala-kulli-bhat]
-    described_by: [src-arnold-2019.abstract]
-    claim: "In a family the disease emptied within days, the poet buried an infant by the river, watched from a high mound as the Ganges carried the dead, and found the state of his mind beyond telling."
-    omits: "A date or a count: the memoir names the epidemic and the river, not the year or the town's dead."
+    described_by: [src-arnold-2019.fn89]
+    claim: "When the influenza broke out the poet lost his wife, his elder cousin, his uncle and an infant niece within days while three nephews recovered; a cart carried corpses to the Ganges, and from a high mound he watched the river carry them, in a state of mind beyond telling."
+    omits: "A year, a place-name for the scene, or a count: the memoir names the influenza and the river and gives no date, and the year is the biographers', not the page's."
     adjudications:
       - claim: "The epidemic fell on the United Provinces along the Ganges with a severity the official record confirms."
         verdict: qualified
         basis: presence
-        rests_on: [src-nirala-kulli-bhat.p80, src-sancom-1918.sec57table, src-census-1921.secnatural]
-        reasoning: "The Government of India's table gives the United Provinces 2,034,257 deaths, the largest provincial count, at 43.4 per 1,000, and the Census of 1921 says the population of the United Provinces was substantially reduced; the memoir's scene is undated and counts nothing. One producer, so qualified: the province's dead are in the record, the poet's family is not."
+        rests_on: [src-nirala-kulli-bhat.p79, src-nirala-kulli-bhat.p80, src-sancom-1918.sec57table, src-census-1921.secnatural]
+        reasoning: "The memoir names the influenza and the Ganges and no year; the Government of India's table gives the United Provinces 2,034,257 deaths, the largest provincial count, at 43.4 per 1,000, and the Census of 1921 says the population of the United Provinces was substantially reduced. One producer, so qualified: the province's dead are in the record, the poet's family is not, and the year of his scene is the biographers'."
 
 # ------------------------------------------------------------- where the record disagrees
 contested:
@@ -1573,7 +1581,7 @@ analyses:
     method: "The Department of Native Affairs' table, as the Public Health Service printed it, gives the population of Upolu and Savaii before and after the epidemic and the loss. The result is the loss over the population before."
     finding: "Samoa lost 7,542 of 38,178 people in the December quarter of 1918, 19.75 per cent, on the table's own figures; the Ministry of Health's summary carries the same 7,542 against a population of 30,738, which would make the share 24.5 per cent."
     confidence: "high for the share on the table's denominator, which is one document's arithmetic; the two official denominators disagree, and the table's own men's-loss cell, 3,265, is the difference of its before and after cells while the text layer had misread it as 3,285"
-    against: "the Ministry of Health's summary of the New Zealand commission gives the population as 30,738, a figure 102 above the table's population after the epidemic and 7,440 below its population before, so one of the two official summaries carries a wrong denominator; the loss is the same in both and the share is not"
+    against: "the Ministry of Health's summary of the New Zealand commission gives the population as 30,738, a figure 102 above the table's population after the epidemic and 7,440 below its population before; the two cannot both be the pre-epidemic population, the loss is the same in both, and the share is not"
     result: 0.19755
     derivation:
       compute: ratio
@@ -1584,27 +1592,32 @@ analyses:
         - {population: "Upolu and Savaii, men, women and children", before: 38178, after: 30636, lost: 7542, extract: src-phr-1919-10-17-samoa.p2303}
   - id: an-global-figures
     title: Every figure for the world's dead that this record holds
-    method: "One row per figure for the pandemic's worldwide dead that a fetched document states or recites, with the producer of the figure, the document it is read in, and the period the figure covers where the document says. Each end of a stated range is its own row. The result is the count of rows."
-    finding: "The record holds 11 figures for the world's dead, in 4 sources, from 15 million for 1918 alone to 100 million; they are counts of unlike periods by unlike methods, and this thesis does not average them or run them together as one range."
+    method: "One row per figure for the pandemic's worldwide dead that a fetched document states or recites, with the producer of the figure, the document it is read in, and the period the figure covers where the document says; each end of a stated range is its own row, and a figure recited by a second document is a second row, marked as a recital. Jordan's estimate is entered once, as Spreeuwenberg and colleagues recite it (Johnson and Mueller recite the same 1920s calculation as 21.5). The result is the count of rows."
+    finding: "The record holds 16 figures for the world's dead in 6 sources, 7 of them originating estimates and 9 recitals of those; the originating estimates are Jordan's 21.6, Patterson and Pyle's 24.7 to 39.3, Johnson and Mueller's 50, Taubenberger and Morens's 50 to 100, and Spreeuwenberg, Kroneman and Paget's 15 for 1918 alone and 17.4 for 1918 and 1919; like for like, whole pandemic against whole pandemic, the low end is 17.4 and not 15, and this thesis does not average the column or run it together as one range."
     confidence: "high for the count, which is of rows in documents held; the figures themselves are each their producer's and are not tested here"
-    against: "none found beyond the figures themselves: every document that gives a figure also says the true number is uncertain, Johnson and Mueller calling theirs an understatement and Spreeuwenberg and colleagues calling totals above 25 million unrealistic, so the list is a list of disagreements and not of measurements"
-    result: 11
+    against: "none found beyond the figures themselves: every document that gives a figure also says the true number is uncertain, Johnson and Mueller calling theirs an understatement and Spreeuwenberg and colleagues calling totals above 25 million unrealistic, so the list is a list of disagreements and not of measurements; Spreeuwenberg and colleagues recite Patterson and Pyle as 30 with a range, where Johnson and Mueller recite only the range"
+    result: 16
     derivation:
       compute: count
       column: figure_millions
-      columns: [producer, figure_millions, period, read_in]
+      columns: [producer, figure_millions, period, kind, read_in]
       rows:
-        - {producer: "Jordan (1927), as recited", figure_millions: 21.6, period: "the pandemic", read_in: "Spreeuwenberg and colleagues", extract: src-spreeuwenberg-2018.para2}
-        - {producer: "a 1920s calculation, as recited", figure_millions: 21.5, period: "the pandemic", read_in: "Johnson and Mueller", extract: src-johnson-mueller-2002.abstract}
-        - {producer: "Patterson and Pyle (1991), low, as recited", figure_millions: 24.7, period: "the pandemic", read_in: "Johnson and Mueller", extract: src-johnson-mueller-2002.abstract}
-        - {producer: "Patterson and Pyle (1991), high, as recited", figure_millions: 39.3, period: "the pandemic", read_in: "Johnson and Mueller", extract: src-johnson-mueller-2002.abstract}
-        - {producer: "Johnson and Mueller (2002)", figure_millions: 50, period: "1918 to 1920", read_in: "their abstract", extract: src-johnson-mueller-2002.abstract}
-        - {producer: "Taubenberger and Morens (2006), estimate", figure_millions: 50, period: "1918 to 1919", read_in: "their article", extract: src-taubenberger-morens-2006.para2}
-        - {producer: "Taubenberger and Morens (2006), upper", figure_millions: 100, period: "1918 to 1919", read_in: "their article", extract: src-taubenberger-morens-2006.para2}
-        - {producer: "Spreeuwenberg, Kroneman and Paget (2018), 1918 only", figure_millions: 15, period: "1918", read_in: "their conclusion", extract: src-spreeuwenberg-2018.para22}
-        - {producer: "Spreeuwenberg, Kroneman and Paget (2018), total", figure_millions: 17.4, period: "1918 and 1919", read_in: "their conclusion", extract: src-spreeuwenberg-2018.para22}
-        - {producer: "Souza (2023), low, as recited", figure_millions: "vinte", period: "the pandemic", read_in: "his article", extract: src-souza-2023.para2}
-        - {producer: "Souza (2023), high, as recited", figure_millions: "cem", period: "the pandemic", read_in: "his article", extract: src-souza-2023.para2}
+        - {producer: "Jordan (1927)", figure_millions: 21.6, period: "the pandemic", kind: originating, read_in: "Spreeuwenberg and colleagues", extract: src-spreeuwenberg-2018.para2}
+        - {producer: "Patterson and Pyle (1991), low", figure_millions: 24.7, period: "the pandemic", kind: originating, read_in: "Johnson and Mueller", extract: src-johnson-mueller-2002.abstract}
+        - {producer: "Patterson and Pyle (1991), high", figure_millions: 39.3, period: "the pandemic", kind: originating, read_in: "Johnson and Mueller", extract: src-johnson-mueller-2002.abstract}
+        - {producer: "Patterson and Pyle (1991), central", figure_millions: 30, period: "the pandemic", kind: recital, read_in: "Spreeuwenberg and colleagues", extract: src-spreeuwenberg-2018.para2}
+        - {producer: "Johnson and Mueller (2002)", figure_millions: 50, period: "1918 to 1920", kind: originating, read_in: "their abstract", extract: src-johnson-mueller-2002.abstract}
+        - {producer: "Johnson and Mueller (2002), low, as recited", figure_millions: 50, period: "1918 to 1920", kind: recital, read_in: "Spreeuwenberg and colleagues", extract: src-spreeuwenberg-2018.para2}
+        - {producer: "Johnson and Mueller (2002), high, as recited", figure_millions: 100, period: "1918 to 1920", kind: recital, read_in: "Spreeuwenberg and colleagues", extract: src-spreeuwenberg-2018.para2}
+        - {producer: "Taubenberger and Morens (2006), estimate", figure_millions: 50, period: "1918 to 1919", kind: originating, read_in: "their article", extract: src-taubenberger-morens-2006.para2}
+        - {producer: "Taubenberger and Morens (2006), upper", figure_millions: 100, period: "1918 to 1919", kind: originating, read_in: "their article", extract: src-taubenberger-morens-2006.para2}
+        - {producer: "Spreeuwenberg, Kroneman and Paget (2018), 1918 only", figure_millions: 15, period: "1918", kind: originating, read_in: "their conclusion", extract: src-spreeuwenberg-2018.para22}
+        - {producer: "Spreeuwenberg, Kroneman and Paget (2018), total", figure_millions: 17.4, period: "1918 and 1919", kind: originating, read_in: "their conclusion", extract: src-spreeuwenberg-2018.para22}
+        - {producer: "the literature's low end, as recited", figure_millions: 15, period: "the pandemic", kind: recital, read_in: "Chandra, Kuljanin and Wray", extract: src-chandra-2012-india.abstract}
+        - {producer: "the literature's high end, as recited", figure_millions: 100, period: "the pandemic", kind: recital, read_in: "Chandra, Kuljanin and Wray", extract: src-chandra-2012-india.abstract}
+        - {producer: "at least 50, as recited", figure_millions: 50, period: "1918 to 1920", kind: recital, read_in: "Khakurel, Sattenspiel and Mamelund", extract: src-khakurel-2025.para6}
+        - {producer: "Souza (2023), low, as recited", figure_millions: "vinte", period: "the pandemic", kind: recital, read_in: "his article", extract: src-souza-2023.para2}
+        - {producer: "Souza (2023), high, as recited", figure_millions: "cem", period: "the pandemic", kind: recital, read_in: "his article", extract: src-souza-2023.para2}
   - id: an-official-rates
     title: The official death rates this record holds, side by side
     method: "One row per death rate per 1,000 of population that an official document held here states for a named population, with the producer and the period the document gives. The result is the highest rate in the column. The rows for England and Wales and for the Punjab are converted from the document's own unit: the Registrar-General prints 3,129 and 4,774 per million, stored as 3.129 and 4.774 per 1,000, and the Punjab report prints 4.77 per cent, stored as 47.7; every other rate is stored as printed."
