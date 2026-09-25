@@ -1,0 +1,6 @@
+source: src-dicke-2015
+locator: para18
+url: https://pmc.ncbi.nlm.nih.gov/articles/PMC7313928/
+read: 2026-09-25
+
+It is impossible to know when and where the Spanish flu began, but plausible evidence suggests it originated in January 1918 when an epidemic of influenza struck Haskell County, Kansas, hard. Like the second wave of the Spanish flu, this one was extremely contagious and it killed more young, previously healthy adults than a typical flu. Even more compelling, Haskell County was isolated with no reports of influenza entering the area from the outside, so this new strain seems to have begun there.

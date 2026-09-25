@@ -1,0 +1,10 @@
+source: src-hansard-19030520
+locator: p1332
+url: https://api.parliament.uk/historic-hansard/commons/1903/may/20/congo-free-state
+read: 2026-09-25
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: the amendment and the resolution as agreed
+
+Motion amended—
+By leaving out the words 'and both these guarantees having been constantly violated.'
+Resolved, "That the Government of the Congo Free State having, at its inception, guaranteed to the Powers that its Native subjects should be governed with humanity, and that no trading monopoly or privilege should be permitted within its dominions, this House requests His Majesty's Government to confer with the other Powers, signatories of the Berlin General Act by virtue of which the Congo Free State exists, in order that measures may be adopted to abate the evils prevalent in that State."

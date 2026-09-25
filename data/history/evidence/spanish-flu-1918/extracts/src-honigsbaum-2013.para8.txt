@@ -1,0 +1,6 @@
+source: src-honigsbaum-2013
+locator: para8
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3867839/fullTextXML
+read: 2026-09-25
+
+While these casual attitudes to the Spanish flu were understandable during the initial, mild summer wave of the pandemic, by the autumn of 1918 the flu had mutated into a far deadlier infection. Indeed, in Britain, it is estimated that sixty-four per cent of the estimated 228,000 deaths from the pandemic occurred in the last three months of 1918.

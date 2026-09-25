@@ -1,0 +1,12 @@
+source: src-berlin-act-1885
+locator: art26
+url: https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+
+Art. XXVI.* — The navigation of the Niger, without excepting any
+of its branches and outlets, is and shall remain entirely free for the
+merchant ships of all nations equally, whether with cargo or in ballast,
+for the transportation of goods and passengers. It shall be regulated
+by the provision of this Act of Navigation, and by the Rules to be made
+in pursuance of this Act.

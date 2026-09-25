@@ -1,0 +1,37 @@
+source: src-casement-1904
+locator: secinc4
+url: https://archive.org/download/CasementReport/CasementReportSmall_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: Inclosure 4 in No. 3, the notes on V V; the heading lines, the sentence naming the mission station and a badly damaged final line are dropped
+
+Aotes in the Case of V V, a Native of LL* in the Mantumba District, both of whose /lands have been
+hacked or beaten off, and with reference to other similar cases of Mutilation in that District.
+been kept by the missionaries for some years, since the day when. a party of native teachers had
+found him in his own town, situated in the forest some miles away from Q *. In answer to my
+inouiry as to how he came to lose his hands, V V's statement was as follows:—
+" State soldiers came from P *, and attacked the R R * towns, which they burned, killing
+people. They then attacked a town called A B * and burned it, killing people there also. From
+that they went on to L L *. The L L* people fled into the forest, leaving some few of their
+number behind with food to offer to the soldiers— among whom was V Y. The soldiers came
+to L L * under the command ot a European officer, whose native name was T U. The soldiers
+took prisoner all the men left in the town, and tied them up. Their hands were tied very tight
+with native rope, and they were tied up outside in the open ; and as it was raining very hard,
+and they were in the rain all the time and all the night, their hands swelled, because the thongs
+contracted. His ("V V's) hands had swollen terribly in the morning, and the thongs had cut into
+the boue. The soldiers, when they came to L L *, had only one native a prisoner with them ; he
+was killed during the night. At L L * itself eight people, including himself (V V) were taken
+prisoners; all were men; two were killed during the night. Six only were taken down in the
+morning to Y Y * The white man ordered four of the prisoners to be released ; the fifth was a
+Chief, named RRR. This Chief had come back to L L * in the night to trv secretlv to get some
+fire to take bank into the forest, where the fugitives were hiding. His wife had become sick during
+the heavy rain in the forest, and the Chief wanted the fire for her ; but the soldiers caught him, and
+he was taken along with the rest. This Chief was taken to P*, but he believes that on the
+way. at 7. 'I*, he tried to escape, and weis killed. V V's hands were so swollen that they
+were .quite useless." . The soldiers seeing this, and , that the thongs had cut into the bone, beat his
+hands, against a tree with their rifles, and he was released. He does not know why they
+beat Iris hands._ The white man, TO, was not far off, and could see what -they were doing.
+T P was drinking palm-wine while the soldiers beat his hands with their rifle-butts against
+the .tree. His hands subsequently fell off (or sloughed away), . When the soldiers left him by the
+TVaterside, he got back to . L L *, and when his own people returned from the forest :they found
+him there. Afterwards some boys— one of whom was a relation— name to.L L'*f and they found

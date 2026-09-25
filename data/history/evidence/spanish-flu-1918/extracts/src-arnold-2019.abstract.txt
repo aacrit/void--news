@@ -1,0 +1,7 @@
+source: src-arnold-2019
+locator: abstract
+url: https://doi.org/10.1017/S0080440119000082
+read: 2026-09-25
+note: the opening of the abstract, within the extract cap
+
+In India the 1918–19 influenza pandemic cost at least twelve million lives, more than in any other country; it caused widespread suffering and disrupted the economy and infrastructure. Yet, despite this, and in contrast to the growing literature on recovering the ‘forgotten’ pandemic in other countries, remarkably little was recorded about the epidemic in India at the time or has appeared in the subsequent historiography. An absence of visual evidence is indicative of a more general paucity of contemporary material and first-hand testimony.

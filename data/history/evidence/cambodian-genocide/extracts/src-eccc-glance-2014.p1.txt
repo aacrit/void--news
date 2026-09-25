@@ -1,0 +1,6 @@
+source: src-eccc-glance-2014
+locator: p1
+url: https://www.eccc.gov.kh/sites/default/files/ECCC%20at%20a%20Glance%20-%20EN%20-%20April%202014_FINAL.pdf
+read: 2026-09-25
+
+The Extraordinary Chambers in the Courts of Cambodia (ECCC) was set up in 2006 to bring to trial senior leaders and those most responsible for crimes committed during the time of Democratic Kampuchea, also known as the Khmer Rouge re- gime, which lasted from 17 April 1975 to 6 January 1979. During that period, at least 1.7 million people are believed to have died from starvation, torture, execu- tion and forced labour.

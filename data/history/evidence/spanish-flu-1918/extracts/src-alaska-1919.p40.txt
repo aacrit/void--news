@@ -1,0 +1,7 @@
+source: src-alaska-1919
+locator: p40
+url: https://archive.org/download/influenzainalas00apprgoog/influenzainalas00apprgoog_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+Approximately 2,000 deaths in all. Solomon, Teller, and Mary Igloo-wiped out.

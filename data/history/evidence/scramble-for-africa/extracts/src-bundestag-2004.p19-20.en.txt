@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-bundestag-2004.p19-20
+names: Herero=Herero
+
+the range of the data presented in each case is very great. Thus the figures for the whole Herero population before the war fluctuate between 35,000 and 100,000 persons, the post-war population is put at 14,000 to 25,000 persons, which, taking the respective extreme values into account, amounts to loss rates of between 29 and 86 per cent.

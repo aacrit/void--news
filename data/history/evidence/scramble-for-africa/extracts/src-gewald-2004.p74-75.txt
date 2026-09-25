@@ -1,0 +1,10 @@
+source: src-gewald-2004
+locator: p74-75
+url: https://scholarlypublications.universiteitleiden.nl/access/item:2888838/view
+read: 2026-09-25
+note: sliced from the PDF's text layer; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed
+note: endnote 12
+
+torily referred to m the past as Hottentots, and are presently known as Nama. In the
+wars of 1904—08, the Nama lost virtually all of their land and at least 30 per cent of
+their population. For a detailed, and as yet unsurpassed, overview of the German Nama
