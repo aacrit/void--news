@@ -12,6 +12,8 @@ import { HOOKS, CTAS } from "../hooks";
 import EventHero, { HERO_ID } from "./EventHero";
 import SpineRail from "./SpineRail";
 import ThesisEpisode from "./ThesisEpisode";
+import ThesisReturn from "./ThesisReturn";
+import { FreeCopyLink, NoFreeCopy, SourceMark } from "./ThesisSourceLink";
 
 /* ===========================================================================
    The Thesis — the History event page once its ledger clears the bar.
@@ -106,27 +108,43 @@ function Sentence({ s, doc }: { s: ThesisSentence; doc: ThesisDoc }) {
   );
 }
 
-function NoteBody({ n, doc, back }: { n: number; doc: ThesisDoc; back: boolean }) {
+/* A note's short form is "<work>, <locator>". The two are set apart on the
+   page (the work, then the locator in the data voice), so the split is taken
+   back off the short form only when the locator really is its tail. */
+function splitCite(short: string, locator: string | null): [string, string | null] {
+  if (locator && short.endsWith(`, ${locator}`)) return [short.slice(0, -(locator.length + 2)), locator];
+  return [short, locator];
+}
+
+/* One citation, one structure everywhere it is printed: the work, then a row
+   holding the locator and the actions (the exhibit, the free copy). */
+function Cite({ short, locator, exhibit, freeCopy }: {
+  short: string; locator: string | null; exhibit: number | null; freeCopy: string | null;
+}) {
+  const [title, loc] = splitCite(short, locator);
+  return (
+    <span className="hist-th-cite">
+      <span className="hist-th-cite__title">{title}</span>
+      <span className="hist-th-cite__meta">
+        {loc && <span className="hist-th-cite__loc">{loc}</span>}
+        {exhibit && (
+          <a href={`#exhibit-${exhibit}`} className="hist-th-note__link">
+            Exhibit {exhibit}
+          </a>
+        )}
+        {freeCopy ? <FreeCopyLink href={freeCopy} name={title} /> : <NoFreeCopy />}
+      </span>
+    </span>
+  );
+}
+
+function NoteBody({ n, doc }: { n: number; doc: ThesisDoc }) {
   const note = doc.notes[n - 1];
   if (!note) return null;
   return (
     <>
-      <span className="hist-th-note__short">{note.short}</span>
-      {note.exhibit && (
-        <a href={`#exhibit-${note.exhibit}`} className="hist-th-note__link">
-          Exhibit {note.exhibit}
-        </a>
-      )}
-      {note.freeCopy && (
-        <a href={note.freeCopy} className="hist-th-note__link" rel="noopener noreferrer" target="_blank">
-          Free copy
-        </a>
-      )}
-      {back && note.inText && (
-        <a href={`#${refId(n)}`} className="hist-th-note__back" aria-label={`Back to the text at note ${n}`}>
-          Return
-        </a>
-      )}
+      <span className="hist-th-num">{n}</span>
+      <Cite short={note.short} locator={note.locatorLabel} exhibit={note.exhibit} freeCopy={note.freeCopy} />
     </>
   );
 }
@@ -147,7 +165,7 @@ function Para({ block, doc, className }: { block: ThesisParaBlock; doc: ThesisDo
             <ol className="hist-th-sidenotes__list" start={notes[0]}>
               {notes.map((n) => (
                 <li key={n} id={sidenoteId(n)} className="hist-th-sidenote" value={n}>
-                  <NoteBody n={n} doc={doc} back={false} />
+                  <NoteBody n={n} doc={doc} />
                 </li>
               ))}
             </ol>
@@ -160,7 +178,7 @@ function Para({ block, doc, className }: { block: ThesisParaBlock; doc: ThesisDo
             <ol className="hist-th-inline__list" start={notes[0]}>
               {notes.map((n) => (
                 <li key={n} className="hist-th-inline__note" value={n}>
-                  <NoteBody n={n} doc={doc} back={false} />
+                  <NoteBody n={n} doc={doc} />
                 </li>
               ))}
             </ol>
@@ -230,10 +248,15 @@ function Exhibit({ block }: { block: ThesisExhibitBlock }) {
             <div><dt>Text layer</dt><dd>{block.notes.join("; ")}</dd></div>
           )}
         </dl>
-        {block.url && (
-          <a className="hist-th-exhibit__link" href={block.url} rel="noopener noreferrer" target="_blank">
-            {isDoc ? "Read the free copy" : "Open the file page"}
-          </a>
+        {block.url ? (
+          <FreeCopyLink
+            href={block.url}
+            name={`Exhibit ${block.n}, ${block.title}`}
+            label={isDoc ? undefined : `Open the file page of Exhibit ${block.n}, ${block.title}`}
+            className="hist-th-exhibit__link"
+          />
+        ) : (
+          isDoc && <NoFreeCopy />
         )}
       </div>
     </figure>
@@ -321,9 +344,7 @@ function Adjudication({ a, k }: { a: ThesisAdjudication; k: number }) {
             {a.restsOn.map((x, i) => (
               <li key={`${k}-${i}`} className="hist-th-verdict__item">
                 <p className="hist-th-verdict__cite">
-                  {x.short}, {x.locatorLabel}
-                  {x.exhibit && <a href={`#exhibit-${x.exhibit}`} className="hist-th-note__link">Exhibit {x.exhibit}</a>}
-                  {x.freeCopy && <a href={x.freeCopy} className="hist-th-note__link" rel="noopener noreferrer" target="_blank">Free copy</a>}
+                  <Cite short={x.short} locator={x.locatorLabel} exhibit={x.exhibit} freeCopy={x.freeCopy} />
                 </p>
                 <ExtractText x={x} />
               </li>
@@ -523,7 +544,7 @@ function Record({ section, doc, audio }: { section: ThesisSection; doc: ThesisDo
                 <span className="hist-th-gap__status">{g.status}</span>
                 {g.tried.length > 0 && (
                   <span className="hist-th-gap__tried">
-                    Tried:{" "}
+                    <span className="hist-th-label">Tried</span>
                     {g.tried.map((u, j) => (
                       <a key={j} href={u} rel="noopener noreferrer" target="_blank" className="hist-th-gap__url">{new URL(u).hostname}</a>
                     ))}
@@ -551,10 +572,16 @@ function Section({ section, doc, audio }: { section: ThesisSection; doc: ThesisD
           {doc.claims.length > 0 && (
             <ol className="hist-th-claims" aria-label="The claims this thesis makes">
               {doc.claims.map((c, i) => (
-                <li key={i} className="hist-th-claim">{c}</li>
+                <li key={i} className="hist-th-claim">
+                  <span className="hist-th-num">{i + 1}</span>
+                  <span className="hist-th-claim__text">{c}</span>
+                </li>
               ))}
             </ol>
           )}
+          <p className="hist-th-key">
+            <span className="hist-th-key__item"><span className="hist-th-i hist-th-key__swatch">Shaded</span> sentences are the reading of this thesis</span>
+          </p>
         </section>
       );
     case "record":
@@ -668,7 +695,7 @@ export default function Thesis({ event, doc, nextEvent }: ThesisProps) {
           <ol className="hist-th-notes__list">
             {doc.notes.map((n) => (
               <li key={n.n} id={noteId(n.n)} className="hist-th-note" value={n.n}>
-                <NoteBody n={n.n} doc={doc} back />
+                <NoteBody n={n.n} doc={doc} />
               </li>
             ))}
           </ol>
@@ -678,6 +705,10 @@ export default function Thesis({ event, doc, nextEvent }: ThesisProps) {
         <section id="sources" className="hist-th-section hist-th-sources" aria-labelledby="sources-h">
           <h2 id="sources-h" className="hist-th-h2">Sources</h2>
           <p className="hist-th-p hist-th-p--quiet">Only entries verified to exist as named are printed. An entry with a free copy links to it; an entry read at that copy is marked as held.</p>
+          <p className="hist-th-key">
+            <span className="hist-th-key__item"><SourceMark /> opens the free copy in a new tab</span>
+            <span className="hist-th-key__item"><SourceMark struck /> no free copy was found</span>
+          </p>
           {doc.sources.map((tier) => (
             <div key={tier.tier} className="hist-th-tier">
               <h3 className="hist-th-h3 hist-th-h3--plain">
@@ -687,15 +718,15 @@ export default function Thesis({ event, doc, nextEvent }: ThesisProps) {
                 {tier.entries.map((e) => (
                   <li key={e.id} id={`src-${e.id}`} className="hist-th-source">
                     <span className="hist-th-source__cite">{e.citation}</span>
-                    <span className="hist-th-source__meta">
+                    <span className="hist-th-cite__meta hist-th-source__meta">
                       {e.language !== "en" && <span>In {e.language.toUpperCase()}</span>}
-                      {e.freeCopy ? (
-                        <a href={e.freeCopy} rel="noopener noreferrer" target="_blank" className="hist-th-source__link">Free copy</a>
-                      ) : (
-                        <span>No free copy</span>
-                      )}
                       {e.pinned && <span>Held as extracts</span>}
                       {e.verifiedAt && <span>Verified {e.verifiedAt}</span>}
+                      {e.freeCopy ? (
+                        <FreeCopyLink href={e.freeCopy} name={e.citation} className="hist-th-source__link" />
+                      ) : (
+                        <NoFreeCopy />
+                      )}
                     </span>
                   </li>
                 ))}
@@ -749,6 +780,7 @@ export default function Thesis({ event, doc, nextEvent }: ThesisProps) {
           </div>
         </section>
       </div>
+      <ThesisReturn />
     </div>
   );
 }

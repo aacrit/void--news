@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-25T04:09:53+00:00",
+ "generatedAt": "2026-09-25T04:24:10+00:00",
  "episodes": {
   "alexanders-conquests": {
    "url": "/audio/history/alexanders-conquests.mp3?v=ab0c51b6",
@@ -5381,116 +5381,116 @@
    }
   },
   "partition-of-india": {
-   "url": "/audio/history/partition-of-india.mp3?v=6b9ce4cd",
-   "chaptersUrl": "/audio/history/partition-of-india.chapters.json?v=6b9ce4cd",
+   "url": "/audio/history/partition-of-india.mp3?v=91a34886",
+   "chaptersUrl": "/audio/history/partition-of-india.chapters.json?v=91a34886",
    "title": "The Partition of India",
-   "durationSeconds": 842.005,
-   "bytes": 13488866,
+   "durationSeconds": 813.845,
+   "bytes": 13037805,
    "chapters": [
     {
      "startTime": 0.0,
      "title": "Opening",
      "kind": "segment",
-     "endTime": 38.822
+     "endTime": 38.418
     },
     {
-     "startTime": 38.822,
-     "title": "The bungalow in Delhi",
+     "startTime": 38.418,
+     "title": "The count",
      "kind": "segment",
-     "endTime": 116.687
+     "endTime": 119.974
     },
     {
-     "startTime": 116.687,
-     "title": "Seventy three days",
+     "startTime": 119.974,
+     "title": "Midnight",
      "kind": "segment",
-     "endTime": 177.918
+     "endTime": 178.94
     },
     {
-     "startTime": 177.918,
-     "title": "The columns",
+     "startTime": 178.94,
+     "title": "Gurdaspur",
      "kind": "segment",
-     "endTime": 236.429
+     "endTime": 270.939
     },
     {
-     "startTime": 236.429,
-     "title": "The wells",
-     "kind": "segment",
-     "endTime": 292.064
-    },
-    {
-     "startTime": 292.064,
-     "title": "The force that was supposed to hold",
-     "kind": "segment",
-     "endTime": 327.899
-    },
-    {
-     "startTime": 327.899,
+     "startTime": 270.939,
      "title": "How many",
      "kind": "segment",
-     "endTime": 415.553
+     "endTime": 365.626
     },
     {
-     "startTime": 415.553,
+     "startTime": 365.626,
+     "title": "The force that was supposed to hold",
+     "kind": "segment",
+     "endTime": 421.414
+    },
+    {
+     "startTime": 421.414,
+     "title": "The drum",
+     "kind": "segment",
+     "endTime": 474.749
+    },
+    {
+     "startTime": 474.749,
      "title": "Five accounts",
      "kind": "segment",
-     "endTime": 435.553
+     "endTime": 489.066
     },
     {
-     "startTime": 435.553,
+     "startTime": 489.066,
      "title": "British Imperial",
      "kind": "segment",
-     "endTime": 486.646
+     "endTime": 519.931
     },
     {
-     "startTime": 486.646,
+     "startTime": 519.931,
      "title": "Indian Nationalist",
      "kind": "segment",
-     "endTime": 536.904
+     "endTime": 548.599
     },
     {
-     "startTime": 536.904,
+     "startTime": 548.599,
      "title": "Pakistani Nationalist",
      "kind": "segment",
-     "endTime": 594.16
+     "endTime": 605.146
     },
     {
-     "startTime": 594.16,
+     "startTime": 605.146,
      "title": "Subaltern and displacement",
      "kind": "segment",
-     "endTime": 643.7
+     "endTime": 641.788
     },
     {
-     "startTime": 643.7,
+     "startTime": 641.788,
      "title": "Women's history",
      "kind": "segment",
-     "endTime": 691.143
+     "endTime": 694.398
     },
     {
-     "startTime": 691.143,
+     "startTime": 694.398,
      "title": "The shape of the disagreement",
      "kind": "segment",
-     "endTime": 768.116
+     "endTime": 769.001
     },
     {
-     "startTime": 768.116,
+     "startTime": 769.001,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 828.858
+     "endTime": 800.708
     },
     {
-     "startTime": 828.858,
+     "startTime": 800.708,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 841.958
+     "endTime": 813.808
     }
    ],
-   "renderedAt": "2026-09-19T23:09:20+00:00",
-   "publishedAt": "2026-09-21T01:39:14+00:00",
+   "renderedAt": "2026-09-25T04:24:10+00:00",
+   "publishedAt": "2026-09-25T04:24:10+00:00",
    "promo": {
     "id": "weekly-06-week-in-bias",
     "sha": "5d3bb7b7d195",
     "voice": "af_kore",
-    "startTime": 828.858
+    "startTime": 800.708
    }
   },
   "peloponnesian-war": {

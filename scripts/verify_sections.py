@@ -708,6 +708,11 @@ def check_thesis(base: str) -> None:
            own prose or in any accessible name. Verbatim extracts are quotations
            (<blockquote>) and keep the dashes their documents print, exactly as
            W-10 spares a columnist quoting a source.
+    TH-05  the controls: every source mark is a link with a name that says what
+           it opens ("Open the free copy of ..."), no note prints its own
+           RETURN link, and the page carries exactly one return control
+           (2026-09-25: FREE COPY and RETURN were printed as text on every
+           note, a hundred times each on Srebrenica).
     """
     import os
     sample = os.environ.get("VOID_THESIS_SAMPLE")
@@ -719,12 +724,12 @@ def check_thesis(base: str) -> None:
             index = json.loads(raw) or {}
         except Exception as e:
             report("TH-01", False, f"could not read data/history-theses.json: {type(e).__name__}: {e}")
-            for code in ("TH-02", "TH-03", "TH-04"):
+            for code in ("TH-02", "TH-03", "TH-04", "TH-05"):
                 report(code, False, "skipped (no index)")
             return
         theses = index.get("theses") or []
         if not theses:
-            for code in ("TH-01", "TH-02", "TH-03", "TH-04"):
+            for code in ("TH-01", "TH-02", "TH-03", "TH-04", "TH-05"):
                 report(code, True, "no thesis published yet; every event still renders the Hearing")
             return
         sample = theses[0]["slug"]
@@ -734,7 +739,7 @@ def check_thesis(base: str) -> None:
         status, final, page = fetch(f"{base}/history/{sample}/")
     except Exception as e:
         report("TH-01", False, f"/history/{sample}/ failed: {type(e).__name__}: {e}")
-        for code in ("TH-02", "TH-03", "TH-04"):
+        for code in ("TH-02", "TH-03", "TH-04", "TH-05"):
             report(code, False, "skipped (no page)")
         return
     body = strip_chrome(page)
@@ -774,6 +779,21 @@ def check_thesis(base: str) -> None:
            else f"{len(relative)} relative source link(s) {relative[:2]}; {dashes} dash(es) in prose"
                 + (f": ...{m.group().replace(chr(10), ' ')}" if m else "")
                 + (f"; {len(labels)} dashed aria-label(s)" if labels else ""))
+
+    ok5, detail5 = _thesis_controls(page)
+    report("TH-05", ok5, detail5)
+
+
+def _thesis_controls(page):
+    """TH-05 on one served page. Returns (ok, detail)."""
+    marks = re.findall(r'<a\b[^>]*class="hist-th-srcmark hist-th-srcmark--link[^"]*"[^>]*>', page)
+    unnamed = [m for m in marks
+               if not re.search(r'aria-label="Open the (?:free copy|file page) of [^"]+"', m)]
+    backs = len(re.findall(r'class="hist-th-note__back"', page))
+    returns = len(re.findall(r'class="hist-th-return"', page))
+    ok = bool(marks) and not unnamed and backs == 0 and returns == 1
+    return ok, (f"{len(marks)} source marks, {len(unnamed)} unnamed; "
+                f"{backs} per-note return link(s); {returns} return control(s)")
 
 
 def html_escape_variants(text):
