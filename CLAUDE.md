@@ -100,6 +100,7 @@ impossible, not a note asking people to be careful:
 | `tests/test_weekly_audio_served.py` | an MP3 that is not what its own row says it is |
 | `tests/test_weekly_killlist.py` | a kill-list term in a committed Weekly issue, caught before deploy rather than by W-10 on the served page (Issues #26 and #23 carried 41 between them, 2026-09-24) |
 | `tests/test_history_quote_ledger.py` | a History quotation that diverges from a ledger extract we hold (Srebrenica carried two, 2026-09-24) |
+| `tests/test_history_clips.py` (H-12..H-17) + `pipeline/history/verify_clip.py` | an archival recording in a History episode without a rights basis on the allowlist, provenance, a transcript that the free local ASR matches against the ledger extract, the CEO's signature, a spoken credit, or its caps; and designed sound (bed, ambience) within 3 s of a real voice. `# MOOD:` / `# CLIP:` script directives are inert to every other consumer |
 | `tests/test_docs_facts.py` | this file's own numbers, against disk |
 | `frontend/scripts/verify-responsive.mjs` | content past the viewport, and sticky that does not stick |
 | `scripts/verify_production.py` | what the live page actually serves, and that `/command-center`, `/admin`, `/pipeline` are not served at all |
