@@ -1,0 +1,7 @@
+source: src-un-spv2108
+locator: para18
+url: https://documents.un.org/doc/undoc/gen/nl7/900/05/pdf/nl790005.pdf
+read: 2026-09-25
+note: the ODS scan's text layer is optical character recognition of a 1979 print; misreads (thii for this, Sat-y for Sary) are stored as the layer prints them
+
+18. The ironclad fact is that, with Soviet support, Viet Nam has carried out a large-scale naked armed aggression against Democratic Kampuchea, seriously violating the independence, sovereignty and territorial integrity of Democratic Kampuchea and gravely violating and menacing peace and security in South-East Asia, the whole of Asia and the world at large. How can thii be described as a “civil war” in Kampuchea?

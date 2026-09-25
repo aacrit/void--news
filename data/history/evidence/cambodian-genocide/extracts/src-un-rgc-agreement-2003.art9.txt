@@ -1,0 +1,7 @@
+source: src-un-rgc-agreement-2003
+locator: art9
+url: https://www.eccc.gov.kh/sites/default/files/legal-documents/Agreement_between_UN_and_RGC.pdf
+read: 2026-09-25
+note: the article's closing words on the crimes' definition run on to the next page and are not held
+
+Article 9 Crimes falling within the jurisdiction of the Extraordinary Chambers The subject-matter jurisdiction of the Extraordinary Chambers shall be the crime of genocide as defined in the 1948 Convention on the Prevention and Punishment of the Crime of Genocide, crimes against humanity as defined in the 1998 Rome Statute of the International Criminal Court and grave breaches of the 1949 Geneva Conventions and such

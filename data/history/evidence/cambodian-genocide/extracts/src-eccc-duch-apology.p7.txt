@@ -1,0 +1,7 @@
+source: src-eccc-duch-apology
+locator: p7
+url: https://www.eccc.gov.kh/sites/default/files/publications/Case001Apology_En_low_res.pdf
+read: 2026-09-25
+note: the compilation reproduces the Khmer transcript of 17 June 2009, p. 67, lines 2 to 9, in the ECCC's English
+
+[p. 67 Lines 2-9]7 In conclusion, if you look at the photo of me taken in those days when I was training cadres, it seems like I was quite a person with my heightened class consciousness, but as I look at it carefully now, I find the photo shameful. It is shocking and upsetting to see that picture of me, I who killed more than 12,300 people. I am accountable for all the crimes committed at S-21. At the same time, as a member of the Party, I am appalled by the fact that more than 1 million Cambodians lost their lives. I am morally responsible for the loss of more than one million lives, now and forever.
