@@ -986,6 +986,30 @@ H-05 (no dash in the served text or any accessible name) and H-06 (one `<h1>`,
 at least 60 event card links), added 2026-09-21 when the landing became a
 prerendered page. `verify_production.py` itself still reads only `/`.
 
+## History: PARKED by the CEO 2026-09-26, holistic Partition approved but not promoted
+
+The holistic Partition thesis (`data/history/theses/drafts/partition-of-india.md`,
+overlay `data/history/evidence/partition-of-india/draft/`) passed its Stage 5
+audit in two passes (2026-09-26) and the CEO approved it; all History work was
+then parked before the promotion commit landed. The live page is still the
+single-question thesis. To resume, promote per `docs/proposals/HISTORY-THESIS-PAGE.md`
+§15e: fold the overlay into the base ledger, move the drafts file over the
+published one with `status: published`, `audited_by: historiographic-auditor
+(independent Stage 5, two passes)`, `audited_at: 2026-09-26`, re-export, run
+every gate plus TH-01..TH-05 on a production build.
+
+Rights decision already taken (CEO, 2026-09-26): every Kirpal Singh collection
+entry goes under the 150-word cap with `rights: null`, including
+`src-jenkins-punjab-problem-1947` (162 words, on the LIVE page today, marked
+public), `src-mountbatten-press-19470604`, `src-league-memo-1947`,
+`src-mahajan-1947`, `src-tejasingh-1947`, `src-dinmohammad-1947` (184 to 228
+words) and `src-sikh-note-1942`; re-slice verbatim keeping every cited figure.
+
+Also parked: the other six theses in the holistic model; audio pilots for
+Cambodia, Scramble, 1918 flu, Armenia, Haiti (their event-YAML errors are
+listed under Known defects); the sentence splitter ends a sentence at a single
+initial such as "E." (`_is_abbrev` in `pipeline/history/thesis_format.py`).
+
 ## History theses (2026-09-25): Srebrenica and Partition published, Mongol Baghdad not started
 
 Phase 1 of `docs/proposals/HISTORY-THESIS-PAGE.md`. The Srebrenica ledger
