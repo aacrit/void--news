@@ -50,6 +50,14 @@ def main() -> int:
         ok = False
     else:
         print("PASS: broken fixture rejected")
+    # The card's printed lean word and its aria-label come from one rule
+    # (storyShapeLabel, 2026-09-26). The broken fixture plants a card that
+    # prints "Leans right" while announcing "Not measured".
+    if "card prints \"Leans right\" but its aria-label says \"Not measured\"" not in broken.stdout:
+        print("FAIL: a card whose aria-label disagrees with its printed word was not named")
+        ok = False
+    else:
+        print("PASS: aria-label disagreeing with the printed lean word rejected by the check that names it")
 
     # Each of these plants ONE defect and must be rejected BY THE CHECK NAMED.
     # Asserting on the message is what proves the new assertion works: the
