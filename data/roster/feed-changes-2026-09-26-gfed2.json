@@ -1,0 +1,114 @@
+[
+ {
+  "name": "Antigua Observer",
+  "id": "antigua-observer",
+  "was": "https://news.google.com/rss/search?q=site:antiguaobserver.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://antiguaobserver.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "antiguaobserver.com",
+   "title": "Antigua Observer Newspaper",
+   "sample": "https://antiguaobserver.com/antigua-moves-to-raise-passenger-tax-as-air-traffic-falls/"
+  }
+ },
+ {
+  "name": "Arab News Pakistan",
+  "id": "arab-news-pk",
+  "was": "https://news.google.com/rss/search?q=site:arabnews.pk+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.arabnews.pk/rss.xml",
+  "evidence": {
+   "items": 50,
+   "on_expected": 50,
+   "articles": 50,
+   "expected_domain": "arabnews.pk",
+   "title": "Arab News Pakistan",
+   "sample": "https://www.arabnews.pk/middle-east/houthis-forcing-children-to-fight-on-yemens-battlefields-civil-society-groups-warn-3002435"
+  }
+ },
+ {
+  "name": "The Ghanaian Chronicle",
+  "id": "chronicle-ghana",
+  "was": "https://news.google.com/rss/search?q=site:thechronicle.com.gh+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://thechronicle.com.gh/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "thechronicle.com.gh",
+   "title": "The Ghanaian Chronicle",
+   "sample": "https://thechronicle.com.gh/122472-2/"
+  }
+ },
+ {
+  "name": "Capital Brief",
+  "id": "every-news",
+  "was": "https://news.google.com/rss/search?q=site:capitalbrief.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.capitalbrief.com/feed/latest.xml",
+  "evidence": {
+   "items": 18,
+   "on_expected": 18,
+   "articles": 18,
+   "expected_domain": "capitalbrief.com",
+   "title": "Capital Brief — Business news built for the people shaping Australia",
+   "sample": "https://www.capitalbrief.com/briefing/openai-concedes-agents-accessed-us-government-websites-5ad07f2a-5fd1-4c43-aafb-02235671f5b8/"
+  }
+ },
+ {
+  "name": "Haiti Libre",
+  "id": "haiti-libre",
+  "was": "https://news.google.com/rss/search?q=site:haitilibre.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.haitilibre.com/rss-flash-en.php",
+  "evidence": {
+   "items": 15,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "haitilibre.com",
+   "title": "Haitilibre.com / Flash infos",
+   "sample": "https://www.haitilibre.com/en/news-48531-haiti-news-zapping.html"
+  }
+ },
+ {
+  "name": "24.kg English",
+  "id": "kyrgyz-akipress-2",
+  "was": "https://news.google.com/rss/search?q=site:24.kg/english+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://24.kg/english/rss/",
+  "evidence": {
+   "items": 50,
+   "on_expected": 50,
+   "articles": 50,
+   "expected_domain": "24.kg",
+   "title": "English",
+   "sample": "https://24.kg/english/390811_Kulubaev_Kallas_discuss_EU_sanctions_policy_against_Kyrgyzstan/"
+  }
+ },
+ {
+  "name": "Lesotho Times",
+  "id": "lesotho-times",
+  "was": "https://news.google.com/rss/search?q=site:lestimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://lestimes.com/?feed=rss2",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "lestimes.com",
+   "title": "Lesotho Times",
+   "sample": "https://lestimes.com/?p=91671"
+  }
+ },
+ {
+  "name": "Eye Radio (South Sudan)",
+  "id": "south-sudan-monitor",
+  "was": "https://news.google.com/rss/search?q=site:eyeradio.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://eyeradio.org/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "eyeradio.org",
+   "title": "Eye Radio",
+   "sample": "https://eyeradio.org/we-will-track-down-stolen-public-funds-and-sanction-those-responsible-uk-envoy/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=we-will-track-down-stolen-public-funds-and-sanction-those-responsible-uk-envoy"
+  }
+ }
+]

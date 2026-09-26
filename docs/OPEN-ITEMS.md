@@ -164,8 +164,17 @@ words; 58.5% of the run was under 150 words and never reached the text
 analyzer. The check this entry asked for exists (`tests/test_engine_health.py
 --floors`, after the data commit), keyed on the DIRECT share because that is
 the class that can regress. The roster still carries 340 Google News rows.
-Re-running `discover_feeds.py` over all 340 from the sandbox: see the Google
-News entry under "Watch on the next run" for the result and what was applied.
+Re-ran `discover_feeds.py` over all 340 (2026-09-26): 52 returned a candidate
+feed, the rest 404 / 403 / 402 / not a feed (some 403s may be the sandbox's
+datacenter IP, so a re-run from a runner is worth one try). `verify_feeds.py` +
+`apply_feeds.py` applied **8** (`data/roster/feed-changes-2026-09-26-gfed2.json`)
+and held 44 with reasons (`feed-review-2026-09-26-gfed2.json`). The bar gained
+two holds on the way, because it passed 24.kg English's Russian elections
+section (last updated for the 2021 vote), Ecuador Times (newest item 820 days
+old) and CMC (23 days): a feed's newest item must be under 14 days old, and an
+outlet listed by an edition path (`/english/`) must get that edition. 332
+Google News rows remain, and most of them cannot be migrated: they are
+declared on `/sources` instead.
 
 540 of the 1,016 sources on the roster as measured on 2026-09-22 (53%) are fed
 by Google News search queries. Across 78,328
