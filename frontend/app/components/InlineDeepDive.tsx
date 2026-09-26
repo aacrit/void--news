@@ -645,7 +645,12 @@ export default function InlineDeepDive({
             down (right where the spectrum will appear), never blanking what is
             already on screen. */}
 
-        {/* ---- The Story — summary in a reading-measure column ---- */}
+        {/* ---- The Story, with what the sources agree on and where they split
+            as its sidebar. The story keeps its reading measure; on a wide
+            screen the sidebar takes the column beside it instead of leaving
+            it empty (2026-09-26), and on a narrow one it follows the story.
+            SpreadDisagreement self-omits when the pipeline supplied neither. */}
+        <div className="dd-lede-grid">
         <section className={`inline-dd__story anim-dd-section dd-cascade-1${contentVisible ? " anim-dd-section--visible" : ""}`}>
           <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h3>
           <DeepDiveSummary
@@ -653,6 +658,11 @@ export default function InlineDeepDive({
             disputed={deepDive?.claimConsensus?.disputed_details}
           />
         </section>
+        <SpreadDisagreement
+          consensus={deepDive?.consensus}
+          divergence={deepDive?.divergence}
+        />
+        </div>
 
         {/* ---- The Spread — source-lean spectrum as a full-width band. The slot
             is reserved from the first frame (rendered while the Supabase source
@@ -683,15 +693,6 @@ export default function InlineDeepDive({
             </div>
           </section>
         )}
-
-        {/* ---- Agree / Dispute — the promoted centerpiece, right after the
-            spectrum. Pulled up from the old buried ComparativeView disclosure.
-            The component self-omits (renders nothing) when the pipeline supplied
-            no consensus/divergence, so it is mounted unconditionally. ---- */}
-        <SpreadDisagreement
-          consensus={deepDive?.consensus}
-          divergence={deepDive?.divergence}
-        />
 
         {/* ---- The coverage: every source's article, open by default, on the
             Bench's seven rungs (audit 2026-09-26, finding 8). ---- */}

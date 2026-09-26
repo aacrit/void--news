@@ -744,66 +744,77 @@
   .spread-disagree { animation: none; }
 }
 
-.spread-disagree__rule {
-  margin: var(--space-4) 0;
+.spread-disagree__track + .spread-disagree__track {
+  margin-top: var(--space-5);
 }
 
-.spread-disagree__track {
-  /* per-track color for the point ticks */
-  --point-mark: var(--fg-tertiary);
-}
+/* The track's one colour: a short hairline under its label. */
 .spread-disagree__track--agree { --point-mark: var(--sense-low); }
 .spread-disagree__track--split { --point-mark: var(--sense-high); }
 
-.spread-disagree__head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-2);
-}
-
-.spread-disagree__mark {
-  flex-shrink: 0;
-  display: block;
-}
-
 .spread-disagree__label {
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--fg-secondary);
+  margin: 0 0 var(--space-3);
+  padding-bottom: var(--space-2);
+  background:
+    linear-gradient(var(--point-mark), var(--point-mark)) left bottom / 24px 2px no-repeat;
 }
 
 .spread-disagree__list {
   list-style: none;
+  counter-reset: point;
   margin: 0;
   padding: 0;
 }
 
 .spread-disagree__point {
+  counter-increment: point;
   position: relative;
-  /* The tick is 9px from space-1; the text starts a clear 10px after it.
-     space-4 alone left about 3px on phones ("-The US Senate"). */
-  padding: var(--space-2) 0 var(--space-2) calc(var(--space-1) + 9px + 10px);
+  padding-left: 1.75em;
   font-family: var(--font-structural);
-  font-size: var(--text-base);
-  line-height: 1.55;
-  color: var(--fg-primary);
-  border-bottom: var(--rule-thin);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--fg-secondary);
 }
-.spread-disagree__point:last-child { border-bottom: none; }
 
-/* Leading colored tick — a short hairline dash in the track's semantic color. */
+.spread-disagree__point + .spread-disagree__point {
+  margin-top: var(--space-3);
+}
+
+/* Hanging numerals in the margin, in the data face, muted. */
 .spread-disagree__point::before {
-  content: "";
+  content: counter(point);
   position: absolute;
-  left: var(--space-1);
-  top: calc(var(--space-2) + 0.72em);
-  width: 9px;
-  height: 0;
-  border-top: 2px solid var(--point-mark);
-  border-radius: var(--radius-sm);
-  opacity: 0.9;
+  left: 0;
+  top: 0.1em;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+}
+
+/* ---- The Story and its sidebar ------------------------------------------
+   The story keeps its reading measure; from 1100px the sidebar takes the
+   column beside it instead of leaving the right half of the Deep Dive
+   empty. Below that it follows the story, full width. */
+.dd-lede-grid {
+  display: block;
+}
+
+@media (min-width: 1100px) {
+  .dd-lede-grid {
+    display: grid;
+    grid-template-columns: minmax(0, var(--measure-read)) minmax(16rem, 1fr);
+    column-gap: var(--space-6, 48px);
+    align-items: start;
+  }
+
+  .dd-lede-grid > .spread-disagree {
+    margin: 0;
+    padding-left: var(--space-5);
+    border-left: var(--rule-thin);
+    /* Aligns with the story's first line, under the same label height. */
+    padding-top: 0;
+  }
 }
 
 /* ===========================================================================
