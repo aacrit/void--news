@@ -1,0 +1,1449 @@
+# Void News — Revision History
+
+Every rev entry that used to live at the top of `CLAUDE.md`, verbatim, newest
+first. It was moved here on 2026-09-20 because it had grown to 117 KB (~29,000
+tokens) and was re-read into context at the start of **every** session, whether
+or not any of it was relevant.
+
+Nothing is summarised or dropped. Grep this file when you need the reasoning
+behind a decision, the root cause of a past defect, or why a thing that looks
+wrong is deliberate:
+
+    grep -n "rev 65" docs/CHANGELOG.md
+    grep -in "week_offset\|MODAL_MIN_STEMS" docs/CHANGELOG.md
+
+**Add new entries here, at the top**, not to `CLAUDE.md`. `CLAUDE.md` carries
+only the current state and the rules in force; the record of how it got there
+lives in this file.
+
+---
+
+## rev 82: the engine's input measured, its words' reach published, and a lexicon corpus that can run daily (2026-09-26)
+
+Scope set by the CEO: the spectrum's data and the bias engine only (the Deep
+Dive UI redesign is in another session). Five items approved; every number
+below is from the state snapshot of run #379 (2026-09-25) or a replay through
+the real code, not from an earlier document.
+
+### 1. What the engine reads, per run: `engine.json` and a floor
+
+`validation/engine_health.py` measures the latest run and `export_static.py`
+writes `frontend/build-data/engine.json`. On run #379:
+
+| | sources | articles | median words | 150+ words |
+|---|---|---|---|---|
+| direct feeds | 483 | 6,804 | 428 | 70.8% |
+| Google News | 251 | 4,809 | 11 | 0.0% |
+
+58.5% of the run's articles were under 150 words, and `main.py`'s word-count
+gate sends every one of those to its outlet's baseline without running the text
+analyzer. Across 3,635 full articles from rated outlets, the words moved the
+score a mean of 1.54 points and left 61.1% exactly on the baseline (range
+-10 to +10, the `_TEXT_DELTA_MAX` clamp).
+
+The floor came from the same snapshot. On 2026-09-19..23 the direct-feed
+full-body share was 45.0-47.8%; on 09-24/25 it was 69.4% and 70.8%. On the bad
+days about 2,500 direct articles a day carry a `word_count` equal to the word
+count of their stored text, the signature of the RSS-summary fallback. No
+commit in `pipeline/` explains the recovery and the scrape budget did not bind
+(run #377 scraped 11,451 in twelve minutes). `FULL_SHARE_FLOOR = 0.55` sits
+between the regimes. `tests/test_engine_health.py --floors` runs in
+`pipeline.yml` AFTER the data commit: a scraping collapse ships the paper and
+turns the run red, rather than freezing the site.
+
+### 2. The copy said what the architecture intends, not what it does
+
+`/sources` opened by contrasting Void with tools that "assign one fixed score
+to an entire outlet", then said "Void News looks at two things instead". For
+the 58.5% of articles under 150 words, one fixed score per outlet is exactly
+what Void does. It also said a reputation "never overrides one that reads
+against type", which a 10-point clamp does. `/about` said "a full article leans
+on its words" (`AboutPipeline`) and "its words carry more" (`BeatSigil`).
+
+Rewritten to state the bounds (10 points for a rated outlet, 24 unrated, not
+read under 150 words) from `app/lib/leanBounds.ts`, whose values
+`test_engine_health.py` asserts against `political_lean.py` and `main.py`. The
+day's measured numbers are printed on `/sources` from `engine.json` and dated
+by the run; no component restates them.
+
+Reading the built HTML found a live defect nobody had seen: `/about` served
+"Every score on all 6axes". JSX text that opens with a space after an
+expression and carries an HTML entity later in the same run loses the space in
+compiled output (`6<!-- -->axes`). The same shape broke the new `/sources` copy
+("150words") and a Games string. All three now write `{" "}`, and
+`copy-facts.test.mjs` fails on the pattern.
+
+### 3. Phrase counts run daily, which took four designs
+
+`phrase_counts.py` was written and gated but never called. Wired as step 9e,
+before truncation, to its own file (`VOID_PHRASE_DB`, own cache key, own
+90-day artifact), never the state DB. Called as written it would have stored
+every phrase: a day's handful of articles per outlet never reaches the harvest
+band's denominator. Each fix below was measured by replaying real news
+(CC-News, real domains as outlets) through the code into a real SQLite file:
+
+1. Derivation-shaped writes (full bodies only, only phrases
+   `lexicon_derive.phrases()` can emit) plus age/spread pruning: 671,858 rows
+   on day one at the 22 Sep audit's volume, ceiling tripped on day ten.
+2. + a Bloom admission gate (CEO: counted from a phrase's third sighting; the
+   cost is the first two of at least fifty uses, falling on whoever coined it).
+   But the real volume is 4,816 bodies a day, not ~900: 7.3M rows by day seven.
+3. + compact storage (phrase and outlet stored once, three-integer counts,
+   views keep the derivation's `outlet_phrase_counts` shape): 26 bytes a row
+   against 107.
+4. + a cap of 3 bodies per rated outlet per day, chosen by URL hash (CEO):
+   ~750 bodies a day, 1.8M rows and 105 MB at day ten, prunes firing from day
+   nine. The corpus ran out at sixteen days (2.7M rows); the steady state past
+   that is not measured, and `DAILY_MAX_ROWS` halts recording, never prunes to
+   fit.
+
+### 4. The pair test is collecting
+
+`scripts/roster/pair_test.py` and `pair-test.yml` (twice daily) collect
+same-event pairs from four CEO-chosen pairs: Daily Mail x The Mirror,
+Jerusalem Post x Haaretz, India Today x The Hindu, Daily Sabah x Nordic
+Monitor. URLs and headlines only. `score` re-fetches bodies, takes the engine's
+outlet-blind `text_score`, and reports AUC against the proposal's gate (0.75
+proceed, 0.65 stop). The CEO chose the automated half only, so the ground truth
+is the roster's own labels. The first collection matched 3 of 4 correctly at
+the inherited bar of 18; the miss (score 20) was shared-topic,
+different-subject. India Today's feed returned 403 from the sandbox.
+
+### 5. Google News: most of the remaining 340 cannot be migrated
+
+See `docs/OPEN-ITEMS.md`.
+
+---
+
+## rev 81: the lean ladder ran leftward, the card printed a mean over a bimodal roster, and the Deep Dive drew a curve over seven spikes (2026-09-21)
+
+Three defects in the same display layer, found while answering one question:
+if the engine is measuring lean correctly (rev 80 established that it is), why
+does the product look like it never finds one?
+
+### 1. The ladder was asymmetric, and it ran leftward
+
+`leanToBucket` cut 0-100 at `<=20 / <=35 / <=45 / <=55 / <=65 / <=80`. Those
+bands put four of the seven outlet baselines on an upper EDGE: the `left`
+baseline is 20, which fell in FAR LEFT, and the `center_left` baseline is 35,
+which fell in LEFT. The right-hand rungs (65, 80, 90) landed correctly. So an
+outlet the roster rates `left`, publishing copy with nothing remarkable in it,
+was displayed one rung more extreme than its own rating, and its mirror image
+on the right was not.
+
+Rebinned to the midpoints between the baselines (15, 27.5, 42.5, 57.5, 72.5,
+85), with a score exactly on a boundary taking the rung nearer the CENTRE.
+That tie rule is not cosmetic: resolving ties upward in score, which the first
+draft did, put 15 in `left` but 85 in `far-right`, recreating the same
+asymmetry in the other direction. The symmetry assertion caught it.
+
+23.4% of the measured articles on the 2026-09-21 feed change bucket. An
+earlier estimate of 4.6% in this session was computed against assumed bin
+edges rather than the real ones and is wrong.
+
+`pipeline/utils/bias_aggregation.py` carries the same bins for
+`bias_diversity.lean_buckets`, and `tests/test_bias_bins.py` now sweeps 0..100
+in both languages and fails if they ever disagree. `leanLabelAbbr` held a
+THIRD copy of the thresholds; all three now derive from `leanToBucket`.
+
+### 2. The card printed a point estimate it had to keep withholding
+
+The Sigil's caption was a confidence-gated mean. On the 2026-09-21 feed the
+gate suppressed it on 20 of 35 stories: the product's differentiator silent on
+more than half the paper. And where it spoke, it was often the wrong summary,
+because the real distributions are frequently bimodal and a mean returns their
+empty middle. 7 left / 2 centre / 8 right and 0 left / 11 centre / 2 right
+both average to about 50, so a hollow centre and a genuine consensus printed
+the same figure.
+
+A distribution never has to be withheld. The card now carries **the register**
+(`components/RosterStrip.tsx`): seven hairline strokes, one per rung, height
+normalised inside a strip whose overall height comes from the sample size, and
+an empty bucket keeps a faint tick so absence reads as absence. Under it,
+**the roster's shape** (`leanShape` in `lib/biasColors.ts`): Leans left, Leans
+right, Split, Balanced, Consensus, or the article count.
+
+Every word is earned by the evidence that supports THAT word. Consensus is a
+claim about the centre and needs centre mass; Leans and Split are claims about
+the wings and need wing evidence. The first draft fell through to "Balanced"
+and would have called a story with 3 left, 4 centre and ZERO right-of-centre
+articles balanced, which is the exact class of lie the rest of this work
+removes. Measured: the card speaks on 30 of 35 stories against 15, and the
+five it stays quiet on have between 1 and 7 articles.
+
+The Sigil reads the register too. Four states from its existing geometry: a
+tilted beam for `leans`, two opposed arms around a hollow marker for `split`,
+level for `balanced` and `consensus`, dashed and still for `thin`.
+
+`leanShareTilt`'s denominator was fixed in the same pass. It divided by every
+analyzed article, so 40 centre wire items diluted a 14-to-5 split down to
+0.153 against a 0.20 threshold while a nearly identical 16-to-6 story passed.
+It now divides by the wings, with `LABEL_MIN_WING_ARTICLES = 5` as the floor:
+without that floor, one left article out of six reads as a fully lopsided
+roster, which was the shape of five clusters on the 2026-09-20 feed.
+
+### 3. The Deep Dive drew a smoothed curve over a distribution that is spikes
+
+`DeepDiveSpectrum` was a kernel density estimate over the 0-100 axis, drawn as
+an ink wave with favicon pins on a strip beneath it and an amber plumb line at
+the tier-weighted mean. Three things were wrong with it.
+
+The distribution is not continuous. The engine anchors an article on its
+outlet's baseline and moves it by what the text does, so **74% of measured
+articles land exactly on one of the seven baselines and 87% within two
+points**. A curve over seven spikes paints hills nothing stands on.
+
+The plumb line answered the wrong question, for the reason in section 2. And
+the pins were a second, disagreeing view of the same numbers: continuous
+positions under a smoothed shape, so no part of the panel was a count.
+
+Replaced by **the Bench** (`components/Bench.tsx`): seven strict columns, one
+per rung, one circular mark per source, stacked off the rule, so the height of
+a column is the count in that bucket. A mark names its source on hover or tap,
+with its tier, lean label, score and the article's own headline; its siblings
+rack-focus back. Circles, not squares, because a square in a row of squares
+reads as a bar segment and the bar here is the column.
+
+**The mark size is chosen from the data**, which is the whole of the design
+decision and lives in `lib/bench.ts`. The busiest bucket in a story runs 2 to
+40 with a median of 11 (2026-09-21 feed, one entry per source name, unscored
+rows excluded), so a fixed 20px mark in a single file would need 880px of
+height for the worst story and any cap low enough to fit would bite on 22 of
+the 35. `packBench` walks `perRow` up from 1 and takes the largest mark that
+fits at the first width that works.
+
+The first draft took the WIDEST sub-row the column allowed, and that broke the
+only claim the Bench makes: a bucket of 4 and a bucket of 5 each packed into
+one row, so counts 1 through 5 all drew a column one mark high. `perRow` is
+the histogram's resolution, so it is minimised and the mark shrinks first.
+Half the feed packs at `perRow` 1, a true single file. Below 13px a mark drops
+its favicon and draws as a plain lean-coloured disc rather than pretending to
+carry a logo.
+
+The archived story page was carrying a quieter version of the same lie:
+`archiveMembersToSpectrumSources` DISCARDED unscored members, so a permalink
+reported a smaller roster than the live Deep Dive. They are carried now and
+the Bench says out loud how many it is holding back.
+
+### What the same pass turned up on the way
+
+`.sigil__lean-label` inside a card headline faded to `opacity: 0.75`. The bias
+tokens are tuned to clear AA at full strength and nothing more
+(`--bias-far-right` is 4.7:1 on the dark paper), so the fade spent the whole
+margin: `--bias-right` rendered as #C75F52, 4.28:1. It had shipped that way,
+and only surfaced when the register started speaking on 30 stories instead of
+15 and axe happened to sample a card carrying it. The fade is gone, and
+`lean-label-contrast` in the headless sweep now measures every label on the
+feed in both schemes rather than waiting for axe to land on the bad one.
+
+Deleting the KDE view left 44 dead CSS class selectors, which the class-parity
+gate caught the moment they went dead, including `.deep-dive-panel` and its
+110 lines of modal geometry: nothing had rendered that class since the Deep
+Dive became `.dd-page`, and the only reference keeping it alive was a comment
+in the file this rev rewrote.
+
+### Controls, in the same commits
+
+| Check | Catches |
+|---|---|
+| `tests/test_bias_bins.py` | the pipeline's bins and the frontend's disagreeing on any score 0..100, a baseline outside its own rung, an asymmetric ladder |
+| `frontend/test/labels.test.mjs` | the three copies of the thresholds drifting apart; the shape rule calling a story with one empty wing balanced |
+| `frontend/test/bench.test.mjs` | a pack that overflows its box; the height no longer being the count; a source dropped without a `+N` |
+| `tests/bench_corpus.py` | regenerates that test's corpus from the committed exports |
+| `bench` scenario, `verify-headless.mjs` | the served Bench at 1440 and 390: seven columns, nothing dropped, the busiest bucket the tallest column, one mark size, circles, a card that names the mark it came from and stays on screen |
+| `lean-label-contrast` scenario | any lean label on the feed under 4.5:1, in both schemes |
+
+---
+
+## rev 80: the first post-fix run, and a threshold that was asserting the wrong thing (2026-09-21)
+
+Run #375 committed the first export carrying the step 6b fix, which turned on
+the committed-export check written hours earlier in rev 78. It failed, and it
+was right to fail and wrong about why.
+
+**What the run actually produced**, whole-tuple default rows and lean at 50:
+
+| | 2026-09-20 | run #375 |
+|---|---|---|
+| whole default tuple | 540/737 (73.3%) | 186/975 (19.1%) |
+| `political_lean` at exactly 50 | 610/737 (82.8%) | 522/975 (53.5%) |
+
+19.1% against a 10% cap. The obvious readings were that the threshold was too
+tight or that 6b was still broken. Both wrong, and the measurement that
+settles it is one a share can never express:
+
+**All 186 default rows are published 2026-09-20. Not one of the 534 articles
+published 2026-09-21 is a default.** Today's scoring was clean, end to end.
+The residue is the previous day's damage, loaded out of the state DB by step
+6b's own 36h lookback and written back faithfully by
+`existing.get("political_lean", 50)`. It clears itself as those articles leave
+the window, so a share threshold would have failed CI for two days over rows
+that were already handled, and taught everyone to override it.
+
+Corroborating the diagnosis rather than assuming it: the 186 carry the old 6b
+signature exactly, four default axes with a real varying `framing` and a
+framing-only rationale. 135 of them are from RATED outlets, including nine
+Newsmax rows at lean 50 against a `far-right` baseline of 90, which the
+analyzer's own contract makes impossible for anything that was measured.
+
+**So the check now asserts the invariant that protects the reader instead of a
+share: no default-tuple row may be UNMARKED.** A row carrying `lean_unscored`
+is out of the cluster aggregate, off the Deep Dive spectrum and labelled
+Unscored, so its presence in the JSON misleads nobody. An unmarked one is read
+as a measured 50 by every consumer. The share is printed every run, and only a
+run that measured almost nothing (>60%) still fails on it.
+
+The exemption became self-detecting in the same pass. It used to compare
+`feed.json`'s `builtAt` against the 6b fix date, which is a date to maintain;
+it now checks whether any row carries a `lean_unscored` key at all. Run #375
+ran on `adc05f4`, before the field was carried out of the database, so no row
+does and there is nothing to assert about marks. The first export from current
+code turns the assertion on with no edit. Verified by planting the field on
+every row and leaving exactly one default unmarked: one finding, naming the
+count and the consequence.
+
+**The run's own counters, read off the log afterwards, confirm it:**
+
+    Articles analyzed: 10029/10029
+    Lookback articles needing stored scores: 2845; bias rows loaded: 2845
+    Framing re-scored: 7193 articles (7193 DB rows updated in batches)
+    bias defaults: 186/975 per-article rows are the default tuple (19.1%)
+
+Every fetched article was scored. The lookback preload hit 2845 of 2845, so it
+has no gap. And there is no "Framing update skipped" line at all, so
+`framing_no_scores` was 0: not one row was written from defaults. 6b did
+exactly its job, which is to preserve what is stored, and what was stored for
+those 186 was the previous day's default tuple. The `gate fails above 50%` in
+that line is the old cap, which is why the export shipped.
+
+`PER_AXIS_MAX_SHARE` was deliberately not retuned against this run. Lean at 50
+came in at 53.5% against a 40% cap, but that population still contains the
+residue, so fitting the caps to it would be calibrating against contaminated
+data, which is the mistake this pass exists to undo.
+
+Prediction on the record, to be checked against the run of 2026-09-23: near
+zero default rows. If not, something is writing defaults again, and the mark
+assertion will name it.
+
+**Label coverage, re-read on the same export, and the binding gate is not the
+one anybody assumed.** Of 35 clusters: 20 "Not measured", 7 Balanced, 5 a
+direction, 3 Contested; on the front page's twenty, 9 / 4 / 4 / 3. So the
+denominator fix took informative labels from 2 of 35 to 8 of 35, while "Not
+measured" barely moved, 18 to 20.
+
+Of the 20 failures, **14 bind on `aggregate_confidence < 0.5`** and only 2 on
+the measured count this was expected to be about. It is not a small-sample
+problem: the suppressed clusters include the best-covered stories in the feed,
+54 sources and 53 measured articles at confidence 0.43, 46/52 at 0.42, 37/32
+at 0.46. The metric runs min 0.40, median 0.51, max 0.71 across all 35, so the
+threshold sits within a hundredth of its own median and suppresses about half
+the feed by construction; two clusters fail it at 0.499.
+
+Nothing was changed. Moving a threshold that sits on the median of its own
+metric is the CEO decision OPEN-ITEMS already describes, and the honest fix may
+be to the metric rather than the cut point. The numbers are recorded for it.
+
+---
+
+## rev 79: why the unscored are unscored, and the eight that should not have been (2026-09-21)
+
+**CEO: "when we say unscored, why can't we score them?"**
+
+Because `political_lean.py:1057` requires two things to be absent AT ONCE: the
+outlet has no left/right placement, and the article's own words carry no signal
+(2 or fewer distinct partisan terms, all three shifts under 2.0). It is not
+that a number cannot be computed. It is that `baseline 50 + shift 0 = 50`
+computed from two empty inputs is an invention wearing a measurement's
+clothes, which is the Rule 1 line and the difference from Ground News, which
+assigns everything a lean.
+
+**Why both inputs fail together: the axis is US-shaped, and so is everything
+that feeds it.**
+
+- **All 294 unrated outlets were non-anglosphere.** Zero US/UK/CA/AU/NZ/IE
+  outlets lacked a rating, so the roster was not a backlog. There is no
+  AllSides for Pakistan or Kenya.
+- **The 340-term lexicon is US discourse** even where it is not US-referential
+  by name. Only 12 terms name a US institution, but the "universal" vocabulary
+  is `systemic racism`, `intersectionality`, `white privilege`, `build the
+  wall`, `anchor baby`, `catch and release`. An article in Dawn about Pakistani
+  politics has framing, in a vocabulary this lexicon has never heard of.
+
+Measured share: 194 of 737 rows (26.3%) come from unrated outlets. That is a
+CEILING, not the unscored figure: it still contains step-6b-damaged rows that
+cannot be separated on this export.
+
+**Eight outlets were unscored because the roster disagreed with itself.** Not
+a limit of the engine. Tagesschau (Germany, ARD, public broadcaster) carried
+`center`; Deutsche Welle (Germany, federal-tax-funded public international
+broadcaster) carried `unrated`. Likewise NRK against Swissinfo, RTP against
+Radio Prague, and Ghana News Agency against two Ghanaian state-owned dailies
+in the same country. Now placed at `center`: Deutsche Welle, DW Europe,
+France 24, SWI Swissinfo.ch, Radio Prague International, Radio Free Europe /
+Radio Liberty, Ghanaian Times, Daily Graphic. 25 of 737 rows (3.4%) on the
+measured export, and 294 unplaced falls to 286.
+
+3.4%, not the 8% estimated before measuring: that estimate counted every
+Europe/international-broadcaster row, including Straits Times ("operates within
+Singapore's press framework"), SCMP ("editorial independence under scrutiny")
+and Cyprus Mail, which are deliberately NOT placed. Filing those at centre to
+reduce a count would be the invention this whole pass removes.
+
+**A refutation worth keeping, because it was nearly shipped.** The roster check
+was first written to assert that any outlet its notes describe as publicly
+funded must carry `state_affiliated`. It ran, and flagged 25 outlets including
+the BBC, CBC, NPR, Yle, AFP and Voice of America. Following it would have
+changed how the BBC is scored on an inference nobody had checked.
+
+Reading the rows instead of guessing: the roster's dominant convention is that
+state-FUNDED but editorially independent gets a real baseline and NO flag.
+Voice of America, note and all ("US federal government international
+broadcaster operated by USAGM"), is `center` with no flag; so are the BBC,
+CBC, Yle, NPR, AFP, DPA. The flag is for state media whose alignment is the
+dominant editorial signal, plus six democratic public broadcasters (SVT, NRK,
+RTP, Tagesschau, SABC, Agencia Brasil) that sit on the wrong side of that line.
+
+So the assertion was downgraded to a report, and the inconsistency went to
+`docs/OPEN-ITEMS.md` as a CEO decision: does the flag mean state-funded (the
+BBC needs it) or state-aligned (SVT should lose it)? It is not cosmetic;
+`_delta_max_for` gives a flagged outlet a text delta of 8 instead of the
+default, and `unscored` excludes a state-affiliated outlet outright. Of the
+eight placed above, only the two Ghanaian state-OWNED dailies took the flag,
+matching Ghana News Agency in the same country.
+
+**The control:** `tests/test_source_roster.py`, in CI. An outlet its own notes
+call state-owned or a public broadcaster may not sit at `unrated`; nothing
+carries the flag without a placement; every baseline is a rung `BASELINE_MAP`
+knows (a typo resolves to 50 silently, indistinguishable from assessed
+centrism); and the remaining 286 unplaced rows are asserted to be the axis's
+edge rather than a backlog, by requiring that no outlet in a country whose
+politics runs on this axis is left unplaced. Verified to fail by returning
+Deutsche Welle to `unrated`.
+
+**Still open**, and both were authorised but not started here: per-market
+English lexicons (Indian, Pakistani, Nigerian and Kenyan English political
+discourse is highly placeable, and the trap is documented in the code, where
+`fossil fuel`, `diversity`, `equity` and `housing crisis` were all REMOVED for
+firing on neutral reporting), and a second axis for politics that does not run
+left/right at all (India's cleavage is secular/Hindutva, Kenya's is
+ethnic-regional; no lexicon fixes a category error, and the 6-axis model is a
+locked decision).
+
+---
+
+## rev 78: the bias engine was not the problem (2026-09-21)
+
+**CEO: "do we need to recalibrate the bias scores for the outlets? And do we
+need to change the bias scoring at the article level? Or do we want to keep the
+article level [scoring] (removes one of the stand out features of void compared
+to competitors we have been claiming)"**
+
+Answer, measured before anything was changed: **neither.** The article-level
+score is the differentiator and it is working. `docs/OPEN-ITEMS.md` had the
+wrong hypothesis written down, and acting on it would have introduced error
+while claiming to remove it.
+
+**What the file said.** That `pipeline/main.py:2469`,
+`source_map.get(source_slug, {"political_lean_baseline": "center"})`, was
+silently anchoring articles to centre on a slug miss, and that the roster or
+the analyzer might need recalibrating.
+
+**Refuted on the 2026-09-20 export, 737 rows across 35 clusters:**
+
+| Measurement | Result |
+|---|---|
+| Export source names with no match in `sources.json` | **0** of 737 rows |
+| Baseline ladder on the genuinely measured rows | far-left 30.0, left 35.0, centre-left 46.2, centre 50.0, centre-right 52.5, right 57.9, far-right 61.0 |
+| Those rows' distribution | stdev **21.2**, range 10..97, only 10.6% at exactly 50 |
+| Rows carrying the whole default tuple | 540 (73.3%) |
+| Rows at `political_lean` exactly 50 | 610 (82.8%) |
+
+A mass slug miss would have shown up in the first row and did not. The anchor
+reaches the score, monotonically, and where the engine actually ran it produced
+a real spread. The entire "80% of sources read as centre" figure was rows that
+were never scored: the step 6b overwrite, fixed the same morning in `1484db4`.
+
+So the outlet baselines and `pipeline/analyzers/political_lean.py` were left
+alone. What changed is the plumbing that let an unscored row read as measured
+centrism, and the controls.
+
+**`lean_unscored` is exported.** It has existed since the analyzer was written
+and already excluded a row from the cluster aggregate, but it **stopped at the
+database**. The page therefore kept plotting the article's pin at 50, and 540
+pins piled on dead centre is the whole of the visual impression the CEO was
+asking about. It is now carried on the live path (`export_static.py`) and the
+archive path (`archive/print_archive.py`), and withheld by `DeepDiveSpectrum`,
+`fetchSourceLeans` and `archiveMembersToSpectrumSources`. On the damaged export
+that is 540 pins removed and 197 measured ones plotted. The article keeps its
+place in the roster, the source count and the tier breakdown, because it really
+did cover the story; only its position on a scale it was never placed on is
+withheld.
+
+**The gate degrades, it does not block (CEO's call).** A default-tuple row is
+stamped unscored at export time, unconditionally, per row: one bad row is
+handled as honestly as six hundred, and there is no threshold under which a
+non-measurement becomes a measurement. Blocking the daily export would have
+cost readers the newspaper to protect one axis of one panel.
+
+**The share moved from the export to CI.** `DEFAULT_TUPLE_MAX_SHARE` 0.5 to
+0.10 (0.5 would have let half a feed ship unmeasured while the gate read
+clean), plus `PER_AXIS_MAX_SHARE`, asserted against the **committed** export so
+a regression fails a merge instead of the newspaper. The per-axis half exists
+because the three counts differ: 540 rows match all five keys of the tuple, 595
+match the four score axes, and 610 sit at lean 50. A whole-tuple check clears
+70 rows whose lean was never measured because one other axis moved.
+`VOID_BIAS_DEFAULTS_GATE=warn` is deleted; it existed only because the export
+used to refuse such a run.
+
+The committed-export check carries one self-clearing exemption: while
+`feed.json`'s `builtAt` predates the 6b fix, it prints the real numbers and
+passes, because failing on the known-damaged snapshot would only restate
+OPEN-ITEMS. It was verified to fail (5 findings) with `builtAt` moved one day
+forward, so it starts biting on the first post-fix feed with no edit.
+
+**`leanShareTilt` divides by the wings.** Separately from the unscored rows, the
+reader-facing suppression gate was silencing the label on 12 of 20 cards on
+09-09. The denominator was left + center + right, so neutral wire volume
+diluted a real split out of existence: a story carried 14 left to 5 right
+landed at 0.153 against a 0.20 threshold purely because 40 centre articles sat
+in the denominator, while a nearly identical 16:6 story passed.
+
+The naive fix is worse, which the measurement caught: on a wings-only
+denominator a cluster with ONE left article out of six reads as a fully
+lopsided roster (tilt -1.0), and five clusters on the 2026-09-20 feed had
+exactly that shape. Hence `LABEL_MIN_WING_ARTICLES = 5`, and
+`LABEL_MIN_SHARE_TILT` re-derived from 0.20 to 0.33 rather than carried over,
+because on the new denominator 0.20 would call a 3:2 split lopsided.
+
+The old denominator was in fact failing in both directions at once: it diluted
+a real 14:5 split, and it also cleared 0.20 on two left articles out of nine.
+Measured end to end against the feed, the pair of changes moves **2 of 35
+cards**, both from Balanced to a direction, and both are real: 12 left vs 5
+right across 72 sources, and 0 left vs 6 right across 24.
+
+**What is deliberately still open**, in OPEN-ITEMS: the per-axis caps were set
+from the damaged export plus judgement, so they want tightening against the
+first healthy run (`sensationalism` at 86.4% against a 60% cap is the loose
+one); and 18 of 35 cards read "Not measured" for want of `LABEL_MIN_MEASURED`
+articles, a count dominated by the 6b damage, so label coverage needs re-reading
+on a post-fix export before anyone touches `LABEL_MIN_SOURCES`,
+`LABEL_MIN_CONFIDENCE` or `LABEL_MIN_MEASURED`.
+
+**Verified, not assumed.** Both new gates were made to fail before they were
+committed: reverting the denominator produces 11 failures in
+`frontend/test/labels.test.mjs`, and moving `builtAt` one day forward produces
+5 in `tests/test_bias_defaults_gate.py`. The export was run end to end against
+the harness DB: it printed both summary lines, marked 540 rows and shipped.
+`tests/test_editorial_stage.py` was already failing `re-rank wrote 0 of 0 rows`
+on `main` before this change and still is; it is not this rev's.
+
+---
+
+## rev 80: the majors, and the four bugs that nearly lost them (2026-09-22)
+
+The CEO asked that the major outlets across the globe be covered, the US and
+Europe especially. What that produced is worth reading for the corrections
+rather than the additions: the audit answering the question was wrong twice,
+and the tooling doing the work was wrong four times. Every one of those was
+found by an outlet the system wrongly rejected, which is the only reason any of
+them is in this entry rather than in production.
+
+### The audit was wrong twice, in opposite directions
+
+**False positives first.** Fuzzy name matching had the UK *Daily Telegraph*
+matching the Australian one, *The Observer* matching *Observer Uganda*, and
+India's *The Wire* matching *The Wire China*. Fixed with exact matching plus an
+explicit alias table, and the absent count went 28 to 101.
+
+**Then false negatives, which were the dangerous ones.** Checking each target's
+homepage HOST against the roster's found **20 targets already on the roster
+under a different masthead**: The Telegraph, Kathimerini English, Punch
+Nigeria, Vanguard Nigeria, Nation Africa, Folha de Sao Paulo (English), ABC
+Australia, RNZ News, Times of Israel, Global Times (China), VnExpress
+International, Premium Times Nigeria, IOL (South Africa), The Brazilian Report,
+Republic TV, The Japan News, The Wire (India), Balkan Insight (BIRN) and
+Handelsblatt Global. An accent-folded scan found a 21st, The Chosun Ilbo.
+
+Adding those would have created 21 duplicate outlets, each double-counting its
+own copy on the Bench, which is precisely the syndication double-count this
+roster work exists to remove. The reported figure went 101 to 91 to **70**.
+`find()` also tries the "(English)" and "English" suffixes as a RULE now, which
+is what recovered Le Monde, El Pais and eight others.
+
+The lesson is not "check twice". It is that a name audit's two failure modes
+have opposite costs. A false positive leaves a market uncovered, which is
+visible. A false negative creates a duplicate that inflates the Bench, which
+is not.
+
+### Four bugs in the tooling, each named by its victim
+
+| Bug | Found by | What it did |
+|---|---|---|
+| **CDATA** | eldiario.es, Rzeczpospolita | `<link><![CDATA[https://...]]></link>` is invisible to a regex whose class is `[^<]`, because the content opens with `<`. Both feeds were reported as having ZERO links on their own domain, which is the verdict these tools give a Google News proxy. A Spanish left major and a Polish right major were one step from being dropped over a choice of XML escaping. Re-probed: 198 and 42 own-domain links |
+| **Registrable domain** | Hankyoreh | `reg()` took a host's last two labels, so `english.hani.co.kr` became `co.kr` and the expected-domain test asked whether a link was on any `.co.kr` site. That is the same vacuity that let Botswana Guardian's hijacked `bettingbotswana.com` pass the FIRST version of this pass. Six added outlets sit on a two-label suffix |
+| **Encoding** | Hankyoreh | `requests` falls back to ISO-8859-1 when a response declares no charset, which is most RSS, so a Korean title arrived as mojibake and the check asking whether a title names its outlet was asking it of garbage |
+| **Accents** | Pagina 12 | The name check folded to `[a-z0-9]`, which DELETES an accented letter rather than mapping it: "Página" became "pgina", so the token "pagina" did not match and Pagina 12's own feed was rejected for not naming Pagina 12 |
+
+The registrable-domain fix earned itself within a minute of landing:
+BusinessDay's feed serves articles on `businessday.co.za`, not the
+`businesslive.co.za` homepage used for discovery, and the corrected check
+caught the mismatch. Left uncaught, every article that row published would have
+failed the own-domain test for the life of the row.
+
+### 48 added, at a bar that then held nothing back
+
+10+ items, 10+ links on the outlet's own registrable domain, 10+
+article-shaped, and a feed title that names the outlet. Where a feed titles
+itself with the outlet's own brand instead, the brand is declared per outlet in
+`data/roster/majors-metadata-2026-09-22.json` rather than by loosening the
+check: FAZ.NET, EWmagazine.nl, www.rp.pl, and Hankyoreh's Korean masthead. An
+alias stated in a reviewable file can be argued with; a loosened regex cannot.
+
+| | before | after |
+|---|---|---|
+| Targets on the roster | 147 | **216** of 238 |
+| Absent | 91 | **22** |
+| Roster size | 1,016 | **1,061** |
+| Google-fed rows | 475 | 473 |
+
+### The baselines are not measured, and every row says so
+
+Decided by the CEO. The intended side from `majors_target.py` is mapped
+conservatively INWARD (L to `center-left`, C to `center`, R to
+`center-right`), and each row's `credibility_notes` ends with the sentence
+naming it a provisional placement pending the outlet-baseline programme.
+
+`unrated` was the alternative and is worse, not safer: `political_lean.py`
+drops every article from an unrated outlet out of the lean aggregate and off
+the Deep Dive spectrum, so 48 new majors would have been invisible exactly
+where they were added to be seen. All-`center` was rejected too, because
+putting Le Figaro and Liberation both at 50 asserts they are identical, which
+is the flattening this whole sequence of revisions has been removing.
+
+### The audit tells the truth about a row with no history
+
+The healthy-sides column reads `data/roster/tiers-2026-09-22.json`, built from
+the 41-day archive. An outlet verified today cannot be in it, so `tier_of`
+returned "?" and the table went on printing "no right" for France AFTER Le
+Point was added with a working direct feed.
+
+Both available readings were dishonest. Saying the wings are covered claims an
+archive record that does not exist; saying nothing changed ignores 48 verified
+feeds. So a row newer than the snapshot is tier **N**, in its own column, and a
+side whose only evidence is an N row reads `pending: added today, no archive
+yet`. The next tiers rebuild resolves each N on its own evidence.
+
+### The alias table was hiding rows it was meant to find
+
+Two more instances of the same false-negative class, both found the day
+`tests/test_roster_config.py` was written, which is the argument for writing
+the gate rather than reading the table.
+
+`add_sources.py` deliberately disambiguates a generic masthead when it writes a
+row: the target "ABC" becomes "ABC (Spain)", "Focus" becomes "Focus
+(Germany)", "Stuff" becomes "Stuff (NZ)". The audit looks up the TARGET name,
+so the first run after the additions reported 31 absent while **12 of the 31
+had just been added** under those names. Fixed by reading the mapping out of
+the metadata file that created it, instead of hand-copying twelve entries into
+`ALIAS`: one file to update on the next round rather than two.
+
+Then the hand table itself, which wins over that mapping and should:
+
+- `"BusinessDay (SA)": "BusinessDay"` pointed at a row that does not exist, so
+  once the real row was written as "BusinessDay (South Africa)" the stale hand
+  entry overrode the correct mapping and the audit reported an outlet it had
+  just added as absent.
+- `"The Telegraph India": "The Telegraph (India)"` was worse than dangling. The
+  roster row is named "The Telegraph India" exactly, so the alias redirected a
+  match that already worked to a name that does not exist. That outlet had been
+  reported absent by its own alias, and would have been added a second time.
+- Three aspirational entries pointed at rows nobody has added
+  (Süddeutsche Zeitung, Publico, an identity alias for Lebanon's Daily Star).
+
+The gate now fails on an alias that contradicts the metadata and on one
+pointing at a row that does not exist. A stale alias beats the file that knows,
+which makes it worse than a missing one.
+
+Coverage after all of it: **216 of 238**, absent 22.
+
+### Five outlets a false rejection had stranded
+
+The earlier feed pass put 8 rows in `failed_domain_check`, described as failing
+a hijacked-domain test. Re-measured with the corrected tooling, **three of the
+eight were real**:
+
+- Botswana Guardian, a genuine hijack: feed on `bettingbotswana.com`, titled
+  "Betting Botswana", sample link a football betting page. This is the case the
+  check exists for.
+- The Santiago Times, not hijacked but abandoned: feed on `.com` where the
+  roster has `.cl`, newest item dated 2023.
+- The Texan: 0 items.
+
+The other five were not. MSNBC (to `ms.now`) and The War Zone (to `twz.com`)
+are REBRANDS. Novinite and St. Louis Post-Dispatch were **our own heuristics**:
+Novinite serves every article as `view_news.php?id=240715` and `looks_article`
+dropped the query string, scoring 0 of 24 real articles, while St. Louis titles
+its feed "www.stltoday.com - RSS Results of type article...". Rapid City
+Journal was a 429.
+
+So the cost of those false rejections was five outlets left on a Google News
+search feed, which carries a median of 11 words and cannot be scored on its
+text at all. The check meant to protect the roster caused five instances of the
+exact defect the roster work exists to fix. Three are migrated; the two Lee
+Enterprises papers are held on a 429 from this runner's IP, with
+`data/roster/rejection-corrections-2026-09-22.json` recording what was and was
+not observed (St. Louis measured 50/50/50 once, which is one observation, not
+two).
+
+### Four rows were one outlet twice, and a gate found three of them
+
+Written as an afterthought to `tests/test_roster_config.py`: no two rows may
+share a name, an id, or a feed url. It failed on the spot.
+
+**Two rows shared a name.** "The Conversation" was two real editions, US
+(`the-conversation`) and global (`the-conversation-global`), each with its own
+working feed. Both belong on the roster; two rows a reader cannot tell apart do
+not, because on the Bench and in the source picker they collapse into one
+outlet and a story carried by both is drawn as one source or two depending on
+which row a lookup by name happens to hit. Renamed, both kept.
+
+"Ukrainska Pravda (English)" was one outlet twice, on the SAME url. The
+duplicate was the worse row on both axes that matter: Google-fed, so
+unscoreable on its text at a median of 11 words, and `unrated`, so dropped from
+the lean aggregate and off the spectrum. Its articles were being counted as a
+second, independent, unmeasurable source for the same reporting. Removed.
+
+**Two more shared a FEED**, which is the check nobody had thought to write:
+`arkansas-democrat-gazette` / `little-rock-democrat-gazette` and
+`the-state-newspaper` / `columbia-state`. Each pair is one paper entered twice
+under two ids pointing at one Google News feed, so every article it published
+was drawn twice on the Bench as two independent sources. Merged, with the
+removed row's notes folded into the survivor.
+
+Roster 1,064 to **1,061**, and four phantom sources off the Bench. The count
+moving twice in one session is itself the argument for the section above: every
+literal would have had to be edited twice.
+
+### The roster's size now comes from the roster
+
+"1,016 sources" was hand-written in **nine files** under `frontend/app/`, plus
+the SERVED `manifest.json`, four docs, two pipeline modules and two tests. The
+three credibility tiers were literals too (43 / 373 / 600), printed as exact
+counts on `/about` and `/sources`, so adding 48 international outlets would
+have left three served pages asserting 373 against a roster holding 421. A
+breakdown that does not sum to its own total is an error a reader can check
+without leaving the page.
+
+`frontend/config/feed.json` read through `app/lib/feedConfig.ts` had already
+solved this for the feed size, and that file's header says in as many words
+"never restate these numbers as literals in a component". The prose restated
+them anyway, which is how the site said "50 stories" for two weeks after the
+feed became 20. Rule 1 calls a number that goes stale a future error wherever a
+durable formulation exists.
+
+So `frontend/config/roster.json` is generated from `data/sources.json` by
+`scripts/roster/emit_roster_config.py`, which runs INSIDE
+`add_sources.py --apply` so the two cannot be updated separately, and is read
+through `app/lib/rosterConfig.ts`. The daily brief's system instruction reads
+it too, and that one matters most: a stale number in a PROMPT is a number the
+model is told is true and may repeat to a reader, which makes it a published
+factual error rather than stale marketing copy. Its fallback is "over a
+thousand", true of every roster this product has had.
+
+Dated figures keep their date rather than being bumped. PROJECT-CHARTER's
+"Sources at launch" row and OPEN-ITEMS' measurements ("540 of 1,016 are
+Google-fed", "636 of 1,016 resolve to exactly 50") are observations on a
+1,016-row roster; rewriting a denominator restates someone else's measurement.
+
+### Gates, per Rule 1
+
+`tests/test_roster_config.py` asserts the config matches the roster, that the
+tiers sum to the total, that every key `rosterConfig.ts` imports exists (or the
+build prints `undefined` into page copy), and that no component writes a count
+out again. That last one is matched only NEAR a word that makes it a roster
+claim, because 600 is both the independent-tier count and a timeout in four
+Games components.
+
+`frontend/test/copy-facts.test.mjs` gains two widenings. Its pattern was
+`/1,?0\d\d/`, which matches 1000-1099 only and **would have silently stopped
+asserting** the day the roster passed 1,099: a gate that quietly stops
+asserting is worse than no gate, because its PASS is read as evidence. And its
+scan covered `app/` only, while `public/manifest.json` is served and carries
+the same sentence, so the count a browser installs the app with was never
+checked.
+
+---
+
+## rev 79: the lean prior stops reading its own output (2026-09-22)
+
+`analyze_political_lean` blended the Axis 6 per-topic EMA into the outlet prior
+at 0.7 baseline / 0.3 topic. `topic_outlet_tracker.update_source_topic_lean`
+builds that EMA by averaging `political_lean` over each batch, which is this
+engine's own PUBLISHED OUTPUT, with a missing key defaulting to 50. The score
+wrote the table and the table moved the score.
+
+The problem is not that the loop is positive feedback, it is that **no outside
+evidence enters it anywhere**. The only input is a number the engine already
+emitted, so the cycle cannot correct an error, only carry it forward, and its
+fixed point is the mean of what it has already said. For the 63% of the roster
+that resolves to exactly 50, that fixed point is 50.
+
+**Measured before cutting, because a plausible mechanism is not a cause.** This
+is NOT what pulls the feed to the centre. Mean |published lean minus label
+baseline| for rated non-centre outlets is 5.45 across all rows and **0.74** once
+default-tuple rows are excluded. The apparent compression is 6,256 rows that
+were never measured, which is a different defect with a different fix
+(`tests/test_bias_defaults_gate.py` and the feed repairs). The loop was real and
+latent.
+
+It is cut now anyway, and the reason is sequencing: the outlet-baseline
+programme wires a LEARNED per-outlet offset into this same prior. A self-fed
+term sitting beside a learned one does not merely add noise, it corrupts the
+thing being learned, and it would do so invisibly because the rationale reported
+`source_baseline` AFTER the blend had already overwritten it. That is how a
+0.7/0.3 blend on every scored article stayed unnoticed through every audit of
+this file.
+
+`topic_lean_data` is still accepted and discarded (`del`), so the four call
+sites need no edit and Axis 6 keeps writing its table for its own reporting. It
+is read by nothing that scores.
+
+**The gate, per Rule 1.** `tests/test_lean_prior_is_not_self_fed.py` asserts two
+properties. The first is behavioural and length-aware, because `confidence` is
+`min(1, words/150)` and a blend that survived only on short items would be
+invisible in a single-length test: five probe values (0, 10, 50, 90, 100) must
+move the score by zero on empty text, an 11-word wire snippet, a 60-word item
+and a 400-word article, across a rated left, centre, right and an unrated
+outlet, and the reported `source_baseline` must still be the outlet's own. The
+second is structural, and it is the one that stops the loop being reintroduced
+by someone reading the old docstring: the scorer may name no string literal
+naming a field of its own output table (an AST walk, so a comment is fine and a
+literal the code reads is not), and the tracker may not import the scorer,
+which would close the cycle from the other side. Restoring the blend fails 18 of
+its 19 checks, which is how I know the gate is real and not a tautology.
+
+**Not measured, and stated rather than assumed:** how many rows
+`source_topic_lean` actually held. The table is in
+`migration/schema_pipeline.sql` and written every run at `main.py` step 8's
+tracking call, so the loop was wired at both ends in production, but the row
+count needs the gitignored state database and I did not have it. The cut is
+correct either way; what I cannot tell you is the magnitude it was already
+costing.
+
+---
+
+## rev 78: the evidence, without the article (2026-09-22)
+
+**The audit's own record was the leak.** E-13 and E-14 are the two editorial
+rules that read a card against the articles it was written from, and they are
+the reason the 2026-09-20 mosque fabrication ("Kills 31" against 23 mentions of
+16 and none of 31) cannot ship again. Both need the sources to still exist.
+`articles.full_text` lives in the gitignored state database and dies with the
+Actions cache, and `deepdive/<id>.json` keeps only an RSS snippet, so
+`pipeline/editorial/grounding.py` was built to persist the evidence at export
+time.
+
+It persisted the prose. Up to 24,000 characters of each source article, into
+`frontend/build-data/grounding/`, which the repo commits, and the repo keeps
+every commit forever. Measured on the committed tree, not estimated:
+
+| | |
+|---|---|
+| Files | 35 |
+| Records | 975 |
+| Publisher article text | **519,041 characters** |
+| Longest single record | 10,003 characters |
+| First committed | 2026-09-21 (`dacfde45`) |
+
+`docs/IP-COMPLIANCE.md` names as its single highest-priority control: do not
+store `full_text` permanently, truncate it, store the derived scores and not the
+source text. The daily pipeline obeys that at `main.py` step 10, cutting
+`full_text` to 300 characters after analysis. So **the protection was pointing
+the wrong way**: the throwaway database was guarded and the permanent public
+repository was not. Nobody had counted the second retention path, because it
+was added for a correctness reason and reviewed as a correctness change.
+
+**Deleting the record was the quick fix and was refused.** An audit with no
+evidence is not an audit, and the 2026-09-21 feed is the only feed whose sources
+still exist anywhere. Rule 1 does not get traded against a compliance control;
+both have to hold.
+
+**What is stored now is a verification index.** The two rules ask exactly two
+questions, and neither needs the text:
+
+| Rule | Asks | Stored |
+|---|---|---|
+| E-13 | is this multi-digit number in any source? | the SET of numbers. A list of integers is not expressive content. |
+| E-14 | is this span of four or more words verbatim in any source? | a Bloom filter of the sources' overlapping 4-word shingles. It answers membership and **cannot be inverted**: it is a bit array, the words are gone. |
+
+The trade is a false-positive rate, and the direction is why it is acceptable. A
+Bloom filter never reports absent-when-present, so E-14 can never gain a false
+accusation from this; the dangerous direction is present-when-absent, letting a
+fabricated quote through. So the rate is 0.001 per shingle AND a quotation is
+cleared only when EVERY one of its consecutive shingles is present: for k
+shingles the error compounds to 0.001 ** k, about 1e-12 on a ten-word quote. The
+shortest span E-14 inspects is four words, which is one shingle, and carries the
+bare 0.001.
+
+Four words per shingle is not a tuning choice. It is E-14's own floor for what
+counts as a quotation, so the shortest inspectable quote maps to exactly one
+shingle and nothing E-14 looks at falls between the resolution of the index.
+
+**One rule, two backings.** `standard._evidence` takes either the source text
+(write time, when the pipeline has the articles) or a `grounding.Verifier`
+(audit time, when only the index survives), and E-13 and E-14 read the
+interface. Two rules, one per backing, would be two rules that drift;
+`tests/test_grounding.py` asserts they reach the same verdict on the same card.
+
+**A measured bug, kept in the record because the naive version of this would
+ship broken.** The first end-to-end run had E-13 perfect (16 true, 21 true, 31
+FALSE, 1200 true) and E-14 returning false on a **verbatim** quotation. Cause:
+source words carry attached punctuation (`"we`, `responsible,"`) where a
+quotation carries bare words, and E-14's old substring test tolerated that
+because a substring does not care about token edges. A word-shingle index does.
+Fixed by stripping edge punctuation at index time and at query time
+(`grounding.words_of`), and the widening that buys is stated in the docstring
+rather than hidden: a shingle can now straddle a sentence boundary, so a span
+appearing only as "... he said. The minister ..." would be cleared as though
+contiguous. The realistic failure E-14 exists to catch is a quotation that
+appears NOWHERE in the sources, which is unaffected; keeping the punctuation
+fails every genuine quotation instead, which is far worse.
+
+**The 35 committed records were converted, not deleted.**
+`scripts/migrate_grounding_index.py` builds each index from that record's own
+prose, then drops the prose. 519,041 characters of article text out, 449,069
+characters of index in. Verified before applying, against the real records
+rather than a fixture:
+
+| | |
+|---|---|
+| Numbers still verifying | 501 / 501 |
+| Within-article 8-word spans still verifying | 5,826 / 5,826 |
+| Shuffled spans still rejected | 700 / 700 |
+
+The 59 apparent losses in the first pass were a fault in the test, not the
+index: the probe concatenated all of a cluster's articles and drew windows
+across the joins, so those spans were verbatim in no single source and
+rejecting them was correct. Re-measured per article, zero losses. A Bloom filter
+cannot produce a false negative, so a real loss would have meant the folding
+disagreed, and that is worth distinguishing from a bad probe rather than
+explaining away.
+
+**The check that would have caught it.** Per Rule 1 the fix is not complete
+without one, and the defect was never in the module's API, it was in what the
+repo was carrying, so the assertion is made against the repo:
+`tests/test_grounding.py` (already in `auto-merge-claude.yml`) now fails on any
+committed record that is format 1, or that holds a string longer than 12 words
+in any field at any nesting, the Bloom blob excepted by name. It also asserts
+that no source sentence survives serialisation at all, that the index catches
+the 2026-09-20 fabrication, that an ABSENT index accuses nobody (a `Verifier` is
+truthy even when it holds no record, so presence is asked of the evidence rather
+than inferred from the key being set, or an empty index reads as "this number is
+in no source" and accuses every card in the feed), and that
+`grounding.numbers_in`/`fold` agree with `standard._numbers`/`_fold_quote`,
+which are deliberately duplicated because the export must not import the
+validator graph.
+
+**What this does not fix, and it is a decision rather than a task.** The prose
+committed on 2026-09-21 is in git history permanently unless the history is
+rewritten. Rewriting a pushed public branch changes every downstream clone's
+hashes, so it is the CEO's call. Until it is taken the working tree is compliant
+and the history is not, and `docs/OPEN-ITEMS.md` says so in those words rather
+than marking the item closed.
+
+---
+
+## rev 77: one episode, one truth, one press (2026-09-21)
+
+**CEO: "Check consistency on the on air system. It should always be in sync
+with the page it's on, the floating as well as the sidebar should be in sync
+always. One play button should work universally. Explore opening the side bar
+instead of a fresh page for on air."**
+
+It was not in sync. Six reader-visible defects, measured in a browser against
+the built export before anything was changed, not inferred from reading code:
+
+| What a reader does | What actually happened |
+|---|---|
+| Plays the brief on `/`, opens Weekly | The brief is paused mid-sentence and the element's source swapped to the issue, with no gesture |
+| Loads the Weekly or a History episode, then opens `/onair` | The page reads "ON AIR", "World Edition", "23 min" over the Weekly's cover headline, or over "The Fall of Constantinople" |
+| Plays a documentary, clicks the wordmark home | The documentary is paused and detached; the pill relabels to On Air |
+| Presses Play on a History episode on `/audio` | The episode loads and nothing plays |
+| Loses audio to a call, a Bluetooth drop or the OS | The pill keeps its pause icon, the tab bar keeps its live dot, the wordmark's beam keeps rocking |
+| Backgrounds the tab on `/weekly` and returns | The source is swapped back to the daily MP3 and stopped, while every surface still says Weekly, playing |
+
+One root cause under all six: **`brief` was a single slot that three
+programmes wrote into**, and every consumer read it as if it were always the
+daily edition. `contentType` recorded who owned the slot, but `OnAirPage`,
+`MobileBriefPill`, `SkyboxBanner` and the Media Session never read it, and
+ownership was only ever restored by mounting `HomeContent`, so `/` was the one
+route that could make the player daily again. Two faults compounded it: there
+were no `play`/`pause` listeners on the element, so `isPlaying` was an
+optimistic guess set beside the call; and the transport was implemented twice,
+in `FloatingPlayer`'s broadcast view and again in `OnAirPage`'s portal, which
+`onair.css:5` admitted in its own header ("mirrors `.fp__broadcast`").
+
+**Two slots.** `dailyBrief` is today's edition and only the daily fetch writes
+it. `nowPlaying: Episode | null` is what is in the element, and the `<audio>`
+element's `src` comes from it, which is what makes the tab-resume defect
+disappear structurally rather than by a guard: a background refetch of today's
+brief now has nowhere to reach the element from. `contentType` is derived from
+`nowPlaying.kind` instead of kept as a second copy that could disagree.
+
+**`app/lib/episode.ts`** is the pure core: one `Episode` shape per programme,
+`sameEpisode` (compared on the URL as well as the id, because the archive rows
+carry a brief id a later refetch can reissue, which is how a play button lost
+track of its own episode), `decidePress` (toggle what is already loaded, else
+load and play) and `mayTakeOver` (a page that merely renders may offer its
+programme to an idle player and may never interrupt one that is playing). No
+React, no DOM, no fetch, which is what lets `frontend/test/episode.test.mjs`
+assert the press rule with no browser.
+
+**Element truth.** `play`, `playing`, `pause` and `ended` listeners are the
+only writers of `isPlaying`. Nothing sets it optimistically, so a pause from
+the OS clears every live indicator at once rather than leaving three surfaces
+claiming to play.
+
+**One press.** The hub's three buttons, the pill, the History hero and the
+event page all call `play(ep)`. The History button that loaded an episode and
+played nothing now plays it.
+
+**The panel (CEO's third question).** `OnAirPanel` is the console opened where
+the reader is: right-anchored from 1024px at `--onair-pane-w`
+(`clamp(360px, 30vw, 480px)`), a modal bottom sheet below that, full screen on
+a phone. `/onair` keeps its URL, metadata, `<h1>` and sitemap entry, and the
+tab bar's On Air tab opens the panel instead of pushing the route.
+
+Three refutations recorded, because each looked like the obvious move:
+
+- **The two mounts are not the same component with a prop.** The plan called
+  for one `Broadcast.tsx` under `variant: "panel" | "page"`. They do not share
+  a subject: the PAGE is about today's broadcast whoever owns the element, and
+  the PANEL is about what is playing. Collapsing them would either make the
+  page rename itself after a documentary (the defect this rev removes) or make
+  the panel lie about a History episode. The console's markup is shared
+  through the `fp fp--broadcast` classes and `broadcast/VuMeter.tsx`; the
+  subject is supplied by each mount.
+- **`aria-modal` is not a property of the panel.** It is a property of the
+  form. At 1024px and up the page behind stays visible and scrollable, so the
+  pane asserts no `aria-modal`, draws no scrim, locks no scroll and does not
+  trap Tab. Only the sheet does all four.
+- **The old pane width was not responsive.** `calc(100vw - 1400px - 80px)`
+  resolves below its own 320px floor at every viewport under 1800px: the pane
+  was 320px at 1440 and only reached 480px past 1960px. A calculation that can
+  only produce its own floor is a constant.
+
+**The player lost a tier.** `FloatingPlayer` carried three: the pill, a
+compact bar, and the console. With the console moved out into the panel the
+bar had neither a way in nor a purpose, so it went too; the file fell from 813
+lines to 158 and is the pill and nothing else. `css-parity` flagged six
+classes dead the moment the branch could no longer render, which is what
+stopped the markup from being deleted and the stylesheet left behind.
+
+**The dash gate had a hole, and three dashes had gone through it.** The kill
+list checked the literal characters `—` and `–`. `"\u2013"` (the chapter-rail
+placeholder in three player surfaces) and `&mdash;` (ComparativeView's wire
+separator) render as those characters and were never checked. Both are fixed
+at the source: the rail now reads "12 chapters" between chapters rather than
+drawing a dash for the missing index, and the wire separator is a 1px rule,
+which is what a newspaper draws there anyway. `copy-facts.test.mjs` names
+every escape form now, and the widening was proved to bite before it was
+committed.
+
+**Gates, one per measured defect** (`verify-headless.mjs`): `one-play-button`
+(all three programmes audibly playing and toggling; a History MP3 lives in a
+GitHub release rather than the repo, so the scenario stands a real file in for
+it, which is exactly where the silent History button hid),
+`audio-survives-navigation`, `weekly-does-not-seize`,
+`tab-resume-keeps-its-programme`, `onair-tells-the-truth`,
+`play-state-cannot-lie` (pauses the element outside React and asserts no
+surface still claims to play), `no-double-transport`, `onair-panel` at 1440
+and 390. Plus `frontend/test/episode.test.mjs` in `npm test`. Two existing
+checks were asserting the old behaviour and were corrected with their reason:
+the floating player is now expected ABSENT on `/onair`, and the pill names the
+programme ("The Argument"), not the section ("Weekly").
+
+---
+
+## rev 76: the product in a browser, and the layer under the chrome (2026-09-21)
+
+**CEO: "let us perform headless playwright testing holistically and beyond
+these changes (if perfectly implemented), take this above and beyond with an
+oomph of subtle branding"; then "make sure all elements and user stories are
+played through".** The decision this rev rests on: correctness is judged in a
+browser, not only in a file. Every earlier gate read something (served HTML,
+source, stylesheets, five pages for width). None could see a console error, a
+hydration mismatch, a dangling link, an unnamed control, a status bar the
+wrong colour or a drawer that lets focus out.
+
+**What shipped, by gate.** `frontend/scripts/verify-headless.mjs`: every
+route family (thirteen static routes, one sample per dynamic family read from
+the export, the 404) at 390/768/1024/1440 in dark and light, per page: no
+console or page error, no hydration text, no same-origin 4xx or failed
+request, the stylesheet proven loaded, no overflow, one `h1`, the title
+grammar, one masthead and footer carrying the URL's section and the right
+`aria-current`, every internal link resolving in `out/` (a `_redirects`
+prefix counts as the 301 it is), alt on every image, a name on every control,
+no dash in title, attributes or chrome, no text painted in its own
+background, the skip link first in Tab order with a visible ring, axe-core at
+WCAG 2.1 AA. Then the scenarios: Deep Dive inline and full page with Back,
+search by Ctrl+K, the masthead button and `/`, the theme toggle and both
+`theme-color` metas, the drawer's focus trap and Escape, the Sigil's popup and
+`aria-controls`, the shortcuts overlay and `j`/`k`, the banner on the second
+visit only, the player per route, Paper's twenty in order, and the brand
+layer. `--quick` runs in `auto-merge-claude.yml` after the responsive gate;
+the full grid is by hand. `scripts/lib/headless.mjs` is the one harness under
+both browser gates; `verify-responsive.mjs` is imports and two loops now, and
+its sticky check looks for the masthead that exists. CSS: the dead-selector
+purge (1,168 of 3,109 class selectors, 48,569 to 36,378 lines) behind
+`css-parity.test.mjs`; then tokens and motion behind `css-lint.mjs`
+(stylelint, three rules): 60 raw curves became fifteen named easings, 251
+duration slots became the six `--dur-*`, five duplicated keyframes are one
+each, fifteen per-file reduced-motion blocks became one global one, 118
+literal radii became tokens with `--radius-pill` and `--radius-sheet` added,
+138 dead global tokens deleted with the derivation committed
+(`css-tokens-purge.txt`). Screenshots identical on 22 of 26 captures; the
+other four are the reduced-motion scroll rule that had never applied.
+
+**What the sweep found, all fixed.** Round one (quick): the dateline's time
+and "as of" sat at opacity 0.7 and 0.8 over `--fg-muted`, tuned to exactly
+4.5:1, so the compound read 3.5 and 2.7; the player clock was teal at 65%
+(3.5 dark, 2.1 light at full strength) and its chapter title the accent at
+80%; the History nameplate read 4.0 at 14px in dark; the long-view toggle 4.1
+under its paper label; the player pill was `role="button"` with the play
+button inside it; the History year ribbon was `aria-hidden` with nine
+focusable buttons; the phone Deep Dive mounted a second NavBar under the one
+the layout mounts; the 404 had no `h1`, the site title and no way into a
+section; four `theme-color` metas (the viewport export and a hand-written
+pair); the shortcuts overlay omitted `O`, which always worked, and `/` did
+nothing; and the lead Sigil's popup closed a quarter-second after it opened,
+because the hover shift on `.lead-headline` made the h2 a stacking context
+with z-index auto, under the card's stretched link at z-index 2. Round two
+(full grid): the Weekly archive had no `h1`; every Sources axis button showed
+an em dash for a missing score; the About Sigil demo was `aria-hidden` with
+a focusable child; the dark red lean ramp (`--bias-center-right`,
+`--bias-right`, `--bias-far-right`) read 4.4, 3.6 and 2.7 on the dark paper
+while its comments claimed AA, because on a dark ground the extreme must get
+brighter, not deeper; `getLeanColor` returned a hex computed on the server
+from the LIGHT palette, so the About demo shipped rgb(17,54,121) on a dark
+ground (1.5:1); it returns a `color-mix()` of the tokens now, the same
+string on both sides, painted in the mode's colours; the spectrum was
+`role="img"` with buttons inside; and a dozen small-text uses of an accent
+(the teal, the news umber, the warm brass, History's brass and green, About's
+card accents) in light mode, each moved to the text-safe token that already
+existed (`--fg-accent`, `--palette-news-ink`, `--voice-ink`) or a new one
+(`--hist-brass-ink`), or pulled toward the ink with `color-mix`.
+
+**The brand layer**, `app/styles/brand.css`, six touches a reader feels
+rather than notices, each asserted by the sweep: the status bar wears the
+section's paper (History and Weekly layouts export their own `viewport`;
+`ThemeToggle` rewrites both metas from `--nav-paper`, the custom property the
+masthead is painted with, which does not transition); the scrollbar and the
+selection take the section accent; the nameplate draws its rule in on hover,
+focus and `aria-current`; a long read carries a 2px brass reading rule under
+the masthead on a scroll timeline, no script, nothing under reduced motion;
+while audio plays the wordmark's beam rocks three degrees in brass; a Deep
+Dive or a History event prints as a sheet with `PrintMast` and its own
+address. Skipped with reasons: the skeleton's ink doodle, cross-document view
+transitions.
+
+**Refutations and corrections recorded.** The Phase 1 report's one
+"unexplained" screenshot diff on the home page was not `.feed-expand__btn`
+changing face: two fresh captures of the merged tree were pixel-identical to
+the pre-purge baseline, and the diff was a Sigil caught mid draw-in. The
+Sources page's "1,220px overflow" at 390 was the gate's own un-clipping: a
+flex item's `min-width: auto` is 0 while its container clips and min-content
+once it does not; the harness pins the children now. Cmd+K was bound all
+along. The existing `sigil-word-sweep` cycles the lean palette, so the on-air
+beam does not reuse it. The plan said the nameplate is current on History and
+Weekly only; Paper's is current on `/paper/` too, and the sweep follows the
+code. The wordmark's own letters fail axe's contrast rule by design and are
+allowlisted as a logotype (WCAG 1.4.3), with the reason in the file. The
+History render's first attempt (run 35557957513) rendered five good episodes
+and then failed 78 promo checks in publish for want of `pyyaml`; the fix is
+one line in the workflow and the second run published all five.
+
+**Same day, on the CEO's next three questions.** *"Should History and
+Weekly in the navigation at least get their accent/italics?"* Colour at rest,
+no: chrome stays neutral and the sub-brand shows the moment you arrive
+(nameplate, paper). Accent on reach, yes: each section link draws its own
+accent in on hover and focus, the nameplate's device; italics skipped (at nav
+size an italic reads as emphasis). *"Why are On Air and Listen separate? Make
+Audio its own horizontal channel."* Agreed: they were two links for one
+section, and Listen was a page of feed addresses. `/audio/` is the section
+that holds every programme: today's On Air, this week's Argument, the latest
+six History episodes, each with a play button that loads the SHARED player
+the way its own page does (setEdition for the daily flow, playWeekly,
+playHistory; nothing autoplays), and the three feeds with copy buttons. One
+masthead link, Audio, replaces two; On Air keeps its page inside the section
+and wears the Audio nameplate; `/listen` 301s. *"The canvas size keeps
+changing when navigating back to news."* Root cause measured, not guessed:
+after any client-side navigation the page landed at scrollY 51, not 0,
+because Next scrolls the new segment's first element into view and the
+sticky masthead is 51px tall when compact; the page's first 51px sat under
+the bar and the bar, which un-compacts only below 40px, stayed compact, so a
+fresh load showed a 57px bar and a click a 51px one. Two changes: the
+compact state no longer changes the bar's height (it dropped `.nav-inner`'s
+padding by 6px; the logo scale and the tagline fade carry the state now), so
+the browser's scroll anchoring has nothing to compensate for when the bar
+un-compacts at the top of a new page; and `html { scroll-padding-top }`
+lands every navigation at 0 and puts in-page anchors below the bar. The
+sweep asserts both (navigation-lands-at-top, navigation-back-uncompacts). *"Weekly is laid out oddly, either full width or only
+the middle column: intentional or a bug?"* Both. The magazine grid (rev 71)
+is intentional: one measure for the long things, full width for the short
+ones, rails for numbers, timeline and pull-quote. The bug was that both rails
+rendered AFTER the body, so a long essay ran alone at 40% of a 1440 canvas
+with two empty margins. The rails are placed before the body in the markup
+now, so auto-placement seats numbers in the left rail and the timeline in
+the right beside the essay (sticky under the masthead), and the measure is
+40rem at 1280 and up. *"Are we back to most sources being centre?"* Measured
+on the 09-20 export: 610 of 737 served per-article rows (83%) carry political
+lean exactly 50, the commonest full tuple is four defaults plus a varying
+framing, and 57 of 77 rows from outlets the roster rates right sit at
+exactly 50, which the analyzer's own contract makes impossible unless it was
+handed "center". Not a UI defect and not changed here; the numbers, the
+first place to look (`main.py:2469` defaults a missed slug to centre) and the
+per-axis gate that would catch it are in OPEN-ITEMS for the pipeline owner.
+
+**Left open (in OPEN-ITEMS):** the centre collapse above; 74 (now 77) markup
+classes with no rule; two History episodes nobody has ear-checked.
+
+## rev 75 — one Void, applied everywhere (2026-09-21)
+
+**CEO: a third-party product and brand audit of the whole ecosystem, then
+"go ahead with the remaining" (Instagram automation excluded).** The audit is
+`docs/audits/BRAND-AUDIT-2026-09-21.md` (six appendices, every finding with a
+root cause, a file:line and a fix). Six decisions taken the same day: sections
+with named programmes rather than sub-brands; fix step 6b; hide `/pipeline`
+with the other operator routes; the experimental banner below the masthead
+from the second visit; Paper back as the printable twenty; a three-state lean
+label shown everywhere.
+
+**What shipped, by the audit's own sections.** *Facts:* step 6b no longer
+overwrites measured bias rows with defaults (540 of 737 rows on 09-20 were the
+default tuple); the export now fails above a 50% default share. The three
+podcast covers are rendered from the house lockup (the old one read `void
+--onair`, `WORLD BRIEF`, `409 sources` under all three shows) and the weekly
+channel is "Void News: The Argument". The press kit derives its story count
+from config (it said fifty). The masthead never shows the viewer's clock as
+"as of". Every production prompt carries the grounding sentence, asserted by
+`tests/test_prompt_grounding.py`; the Opinion and Weekly editorial prompts
+forbid historical parallels not in the sources. One shared kill list
+(`prohibited_terms.py`) serves the feed, Weekly, Opinion, promos and the served
+page (W-10); a Weekly section that still carries slop after one regeneration is
+dropped, not shipped. R-14 grounded attribution and R-15 no unattributed
+statement of law on the rundown (the Waltz pair); R-02 hard. E-15 hedge is not
+attribution (advisory). 149 time-bound History claims dated or dropped, with a
+gate; five "analysts argue" hedges named or cut. *Consistency:* NavBar and
+Footer are mounted once in the root layout; History and Weekly lost their
+private topbars and gained the site's nine destinations (History had none);
+sections skin the shared bar by `:root:has(.section)`; VOID HISTORY and VOID
+WEEKLY lockups are gone from the site, the cards and the covers; one title
+grammar (`sectionTitle`); one share-card composer with the Sigil, and per-story
+cards for the latest edition. The lean label says Balanced, Not measured,
+Contested or a direction, on desktop and phone alike, and the Sigil tilts only
+on a confident read. *Journey:* the two `HISTORY_HIDDEN` flags flipped; `/about`
+and `/press` name every section; Listen in the drawer; the History landing is
+prerendered with an `<h1>` and links its era, region and thread routes; the
+wheel hijack is gone. `/command-center`, `/admin`, `/pipeline`, `/ig` are
+301-hidden and disallowed, with a gate. *Paper:* live as the printable twenty
+(P-01..P-04). *Bloat:* `about.css` (1,102 dead lines), ten unimported
+components, `lib/mockData.ts`, the Pillow OG renderer, legacy logo files and
+`qrcode` deleted (~13,000 lines); `motion` stays (the audit's "0 imports" was
+wrong: `about/useMotion.ts` loads it dynamically). *Docs:* VOICE-BRAND rev 2
+describes the product that exists; 26 Supabase-era docs carry a Historical
+banner; DESIGN-SYSTEM still needs its rewrite (open item).
+
+**Refutations and corrections recorded:** `motion` is live; R-12/R-13 and W-09
+already existed, so the new gates took R-14/R-15/W-10 and the press check
+PR-01; the audit's suggested rewrite "In 2024 the embargo entered its
+sixty-fourth year" fails its own regex, so the History gate spares `by <year>`
+and adjectival years and the rewrites use those forms.
+
+**Left open (in OPEN-ITEMS):** the token collapse and the dead-CSS purge behind
+class-parity tests; DESIGN-SYSTEM.md rewrite; the five History episodes to
+re-render; `verify_production.py` reads only `/`; older story permalinks keep
+the site card.
+
+## rev 74 — the rule-1 pass (2026-09-20 / 09-21)
+
+Rule 1 was written into `CLAUDE.md` today: nothing Void publishes may contain a
+factual error, and every class of error found in production gets a check that
+makes it structurally impossible. Its first test was a failure. What follows is
+the record of WHY, which is what this file is for.
+
+**Its first test.** A live card headlined "Suicide Attack Kills 31 at Pakistan
+Mosque". Across its 22 source articles there were 23 mentions of 16, two of 21
+and none of 31, and the summary said "Other reports state at least 21 people
+died" a sentence later: it knew the sources disagreed and asserted a third
+number anyway. Nothing caught it and nothing could have, because all sixteen
+validators read the card alone. **E-13** now reads the card against its sources
+and is the standard's first grounded rule; **E-14** does the same for
+quotations, making L-02 deterministic at write time.
+
+**Persistence was a prerequisite for both.** `articles.full_text` dies with the
+Actions cache and `deepdive/<id>.json` keeps only an RSS snippet, so the audit
+could not resolve two of its findings either way. No audit can confirm or refute
+a claim against evidence nobody kept. `grounding.py` writes it down.
+
+**The Weekly published a cap as a measurement.** `_fetch_week_clusters` ended in
+a bare `.limit(500)`; both archived issues landed on 500 exactly, and
+`total_articles` was summed over those same capped rows, so BOTH figures on the
+colophon were floors printed as counts.
+
+**The Weekly audio row lied about its own file.** The published row said "Three
+voices" and `kokoro:...` over a file measuring 24000 Hz, 1 channel, 96 kb/s,
+1002 s at -20.5 LUFS while claiming 1349.7 s. `_produce_argument` fell back to
+the legacy read on six distinct failures, silently, and had done so on every
+scheduled run since the format shipped. The root cause was arithmetic: the
+prompt's word budget ignored `MUSIC_MINUTES`, so a rundown could obey the prompt
+and still fail W-07. The fallback is deleted.
+
+**How it was nearly missed, twice, and the lesson that generalises.** The first
+measurement of the served MP3 was right; a check of the live *metadata* then
+said Kokoro, so it was "corrected" and the correction was wrong. Only measuring
+the served audio settled it. A metadata field that describes an artifact is not
+the artifact. Later the same shape recurred: `git add -A` after a conflicted
+merge marked every path resolved regardless of content, committing conflict
+markers into `history/[slug]/page.tsx`, and the verification used was
+`git diff --diff-filter=U`, a list that `git add` had just emptied. **Seven
+consecutive auto-merge runs failed on those markers and nothing from the day
+reached production until they were removed.**
+
+**Ten fabricated quotations** were published under a Primary sources heading,
+among them Watergate's "Follow the money" (written for the 1976 film) and a
+Stalin line whose own speaker field said "apocryphal". Deleting them from the
+YAML did not reach readers: the section serves committed JSON and `history.json`
+still carried all ten. `test_history_export_parity` now asserts the served file
+matches the record.
+
+**Roughly 45 "Anonymous X" entries were REFUTED**, not fixed. They name the
+Casement Report, the Florentine Codex, the Kigali Memorial, the Weishu. Deleting
+them would have stripped nearly every Congolese, Nahua, Tibetan, Laotian,
+Rwandan, Kurdish and Chinese voice while leaving every named Western statesman
+standing. Anonymity disclosed against a named archive is the rule working.
+
+**1,668 em dashes** rewritten by hand across 57 events. Six survive on purpose,
+all inside someone's actual words. Two corrections were to the GATE rather than
+the data: a quoted span is exempt anywhere, not only in a field named `quote`
+(Rock Edict XIII is quoted inside a narrative), and `work` holds a published
+title exactly as `title` does (Li Peng's *The Critical Moment - Li Peng June
+Fourth Diary*).
+
+**The History page became The Hearing**: a server component rendering the
+episode's own structure, three client islands, and `omitted` reaching the DOM in
+exactly one place, the turn.
+
+**Two layout defects that no amount of reading could find.** `position: sticky`
+had never held on any History page, because `overflow-x: hidden` on four
+ancestors establishes a scroll container; the rail measured y = -3130. And the
+spine overflowed by exactly four column gaps at phone widths, cropping the rest
+image rather than scrolling, because the text track is
+`min(--hist-measure, 100%)` and below the measure it claims the whole content
+box. Both were found by measuring in a browser, and both were invisible because
+something clipped them.
+
+**Nine gates existed that CI never ran.** Every one had been written the day a
+real defect shipped. A rule nobody can fail is not enforced, which is the
+sentence the controls table opens with, and the controls were sitting outside
+the thing that enforces.
+
+**Not fixed, and recorded rather than rushed:** 49 over-escaped apostrophes that
+reach the served JSON. The diagnosis is certain; the fix needs a
+formatting-preserving parser, and a line-based attempt broke four files before a
+revert-if-it-will-not-re-parse guard caught it.
+
+---
+
+Last updated: 2026-09-20 (rev 73, house-promos-and-podcast-channel. **CEO: stitch two-sentence cross-promos into Void's audio, and see whether it can be a podcast channel.** No clustering, ranking or bias code is touched; the only change to `pipeline/main.py` is a guarded History-feed call inside the existing audio try/except. **(1) The pool is written, not generated.** `data/promos/house.yaml`: 24 promos, 6 each for On Air, Weekly, History and the site, each playing everywhere but the section it advertises (18 eligible per section). Rule 1 applies to advertising: no digits, no source/country/episode counts, and every number word is tied to a constant in the code by `tests/test_house_promos.py` ("four" to `DEEP_STORIES`, "fifteen" to A-04's 840 s, "five weeks" to the Partition script, "twenty" to `feed.json`, which fails the day the feed size changes). Claims wanted and dropped: "fifteen million crossed" (contested figure), "no app" (a PWA and two shells exist), "every outlet on one line" (294 are deliberately not placed), any count. **(2) Placement is a producer decision, not a marker.** Every format has a closed marker set and a validator that fails on an unknown one (W-05), and every format ends on a designed beat, so the promo goes AFTER the tag / the open question / the particular, in the house voice (`af_kore`, cast nowhere else), UNDER the outro's held bars with the music dipped 8 dB. Appending after the outro would have breached every duration gate: A-04 caps On Air at 840 s and the longest live History episode sits 6 s under the 15.5 minute gate. Under the outro the length does not change, and the outro's own fall still closes the file. `pipeline/briefing/house_promos.py`: `validate` (P-01..P-10), `select` (sha256 of `onair:<edition>:<date>:<slot>` / `weekly:<edition>:<week_start>` / `history:<slug>` into the sorted eligible pool, so a re-render carries the same promo), `render_all` (one Kokoro batch, raw WAVs committed under `data/promos/rendered/` with a manifest naming the text sha each was made from; a stale render is refused), `stitch_post_roll` (raised-cosine duck, overlay, `PromoDoesNotFit` past `outro_at + 12250 ms`), `append_promo_chapter`. Hooks in `radio_producer.py`, `weekly_producer.py`, `history_producer.py` before loudnorm; a missing render or `VOID_HOUSE_PROMOS=0` ships the programme byte-for-byte as before. The chapter is kind `promo` ("Also from Void", subtitle the promoted section; `chapters.ts` labels it) and, for History, kind `segment` titled "Also from Void News", because the rail badges any other kind. **(3) The 73 episodes are retrofitted without TTS.** `pipeline/history/stitch_promos.py` fetches the master from the release, decodes, stitches, re-encodes once at 128k, rewrites ID3 + sidecar + manifest, marks the file with `TXXX VOID_PROMO=<id>@<sha>`, and replaces the release asset; the un-stitched master is parked under a new tag `history-audio-clean` so a copy change re-stitches from the original. Guards measured per episode: integrated loudness within 1 LU, TP at or below -0.8 dBTP, promo window within 3 dB of the last 8 s of speech, last 300 ms below -50 dBFS, outro tail byte-identical. Measured on the real 09-20 On Air master with a slice of its own speech as the stand-in: integrated -16.44 to -16.42 LUFS, promo window -16.5 against speech -16.1, TP -1.3, tail identical. `publish_audio.publish` is factored into `build_entry` and **the `?v=` fingerprint now hashes the whole file**: it hashed the first 1 KB, the ID3 head, so a re-encode could keep the old fingerprint and the CDN would serve stale bytes under new chapters for its cache life. `renderedAt` is added and the staleness test compares the script against it, so a stitch cannot mask a stale episode. `release_store` gains `tag`, `has_asset`, per-slug `fetch` and `replace=False`. Workflow `.github/workflows/stitch-promos.yml` (render job on the TTS venv, stitch job on ffmpeg, one actor on the release). **(4) Gates.** `tests/test_house_promos.py` (pool rules with a planted defect per rule, determinism, spread, house voice cast nowhere, the number-word ties, chapter contiguity, render manifest vs pool); `tests/test_history_audio.py` (a `promo` entry must match the pool, be the deterministic pick, be the last chapter, start under the outro, run to the end, carry the marker, and the file must still end in silence); `tests/test_radio_assembly.py` (fake render: length unchanged, dip measured, 12 s refused, last chapter `promo`, opinion found by kind not position). **(5) Podcast channel.** The feeds existed and were undiscoverable: no link anywhere on the site, the weekly generator had no caller, no History feed ("too few episodes" at 73), `AUTHOR "void --news"` and a US feed pointing at the dead Supabase host, and **7 of the 9 enclosures in the served world feed returned 404** because audio retention keeps two dated MP3s. Now: `generate_history_podcast_feed()` (73 items, guid `history:<slug>`, enclosures at the Pages URL, chapters), the weekly feed wired into `weekly-digest.yml`, feeds filtered to MP3s that exist, names fixed, `alternates.types` in `layout.tsx`, `/listen` with the three feed addresses, weekly and history covers as SVG, `docs/PODCAST-DISTRIBUTION.md`. Submission to Apple and Spotify is the CEO's, by hand. `podcast-us.xml` is left in the tree for the CEO to delete or re-point. **(6) Not touched, on purpose:** the step-6b bias overwrite documented in `docs/proposals/NEXT-LEVEL-2026-09-20.md` stays a proposal; nothing in clustering, ranking or scoring changed in this rev.)
+Last updated: 2026-09-20 (rev 73, house-promos-and-podcast-channel. **CEO: stitch two-sentence cross-promos into Void's audio, and see whether it can be a podcast channel.** No clustering, ranking or bias code is touched; the only change to `pipeline/main.py` is a guarded History-feed call inside the existing audio try/except. **(1) The pool is written, not generated.** `data/promos/house.yaml`: 24 promos, 6 each for On Air, Weekly, History and the site, each playing everywhere but the section it advertises (18 eligible per section). Rule 1 applies to advertising: no digits, no source/country/episode counts, and every number word is tied to a constant in the code by `tests/test_house_promos.py` ("four" to `DEEP_STORIES`, "fifteen" to A-04's 840 s, "five weeks" to the Partition script, "twenty" to `feed.json`, which fails the day the feed size changes). Claims wanted and dropped: "fifteen million crossed" (contested figure), "no app" (a PWA and two shells exist), "every outlet on one line" (294 are deliberately not placed), any count. **(2) Placement is a producer decision, not a marker.** Every format has a closed marker set and a validator that fails on an unknown one (W-05), and every format ends on a designed beat, so the promo goes AFTER the tag / the open question / the particular, in the house voice (`af_kore`, cast nowhere else), UNDER the outro's held bars with the music dipped 8 dB. Appending after the outro would have breached every duration gate: A-04 caps On Air at 840 s and the longest live History episode sits 6 s under the 15.5 minute gate. Under the outro the length does not change, and the outro's own fall still closes the file. `pipeline/briefing/house_promos.py`: `validate` (P-01..P-10), `select` (sha256 of `onair:<edition>:<date>:<slot>` / `weekly:<edition>:<week_start>` / `history:<slug>` into the sorted eligible pool, so a re-render carries the same promo), `render_all` (one Kokoro batch, raw WAVs committed under `data/promos/rendered/` with a manifest naming the text sha each was made from; a stale render is refused), `stitch_post_roll` (raised-cosine duck, overlay, `PromoDoesNotFit` past `outro_at + 12250 ms`), `append_promo_chapter`. Hooks in `radio_producer.py`, `weekly_producer.py`, `history_producer.py` before loudnorm; a missing render or `VOID_HOUSE_PROMOS=0` ships the programme byte-for-byte as before. The chapter is kind `promo` ("Also from Void", subtitle the promoted section; `chapters.ts` labels it) and, for History, kind `segment` titled "Also from Void News", because the rail badges any other kind. **(3) The 73 episodes are retrofitted without TTS.** `pipeline/history/stitch_promos.py` fetches the master from the release, decodes, stitches, re-encodes once at 128k, rewrites ID3 + sidecar + manifest, marks the file with `TXXX VOID_PROMO=<id>@<sha>`, and replaces the release asset; the un-stitched master is parked under a new tag `history-audio-clean` so a copy change re-stitches from the original. Guards measured per episode: integrated loudness within 1 LU, TP at or below -0.8 dBTP, promo window within 3 dB of the last 8 s of speech, last 300 ms below -50 dBFS, outro tail byte-identical. Measured on the real 09-20 On Air master with a slice of its own speech as the stand-in: integrated -16.44 to -16.42 LUFS, promo window -16.5 against speech -16.1, TP -1.3, tail identical. `publish_audio.publish` is factored into `build_entry` and **the `?v=` fingerprint now hashes the whole file**: it hashed the first 1 KB, the ID3 head, so a re-encode could keep the old fingerprint and the CDN would serve stale bytes under new chapters for its cache life. `renderedAt` is added and the staleness test compares the script against it, so a stitch cannot mask a stale episode. `release_store` gains `tag`, `has_asset`, per-slug `fetch` and `replace=False`. Workflow `.github/workflows/stitch-promos.yml` (render job on the TTS venv, stitch job on ffmpeg, one actor on the release). **(4) Gates.** `tests/test_house_promos.py` (pool rules with a planted defect per rule, determinism, spread, house voice cast nowhere, the number-word ties, chapter contiguity, render manifest vs pool); `tests/test_history_audio.py` (a `promo` entry must match the pool, be the deterministic pick, be the last chapter, start under the outro, run to the end, carry the marker, and the file must still end in silence); `tests/test_radio_assembly.py` (fake render: length unchanged, dip measured, 12 s refused, last chapter `promo`, opinion found by kind not position). **(5) Podcast channel.** The feeds existed and were undiscoverable: no link anywhere on the site, the weekly generator had no caller, no History feed ("too few episodes" at 73), `AUTHOR "void --news"` and a US feed pointing at the dead Supabase host, and **7 of the 9 enclosures in the served world feed returned 404** because audio retention keeps two dated MP3s. Now: `generate_history_podcast_feed()` (73 items, guid `history:<slug>`, enclosures at the Pages URL, chapters), the weekly feed wired into `weekly-digest.yml`, feeds filtered to MP3s that exist, names fixed, `alternates.types` in `layout.tsx`, `/listen` with the three feed addresses, weekly and history covers as SVG, `docs/PODCAST-DISTRIBUTION.md`. Submission to Apple and Spotify is the CEO's, by hand. `podcast-us.xml` is left in the tree for the CEO to delete or re-point. **(5b) Second pass, same day (CEO: "slow it down, add more dramatic music, add Visit news.voidvision.org to check out X").** House speed 0.95 to 0.86 and the window widened to 5-10 s; every second sentence is now "Visit news.voidvision.org to check out <section>." and P-08 enforces the form; a new `radio_promo_bed.wav` (`generate_assets.py --promo-bed`, rendered alone so the rest of the set stays byte-identical: the motif at the Sunday tempo in its minor shading over a low D drone, a filtered-noise riser to 8.0 s and the outro's own low-D landing, RMS -34 dBFS, silent from 12.5 s) swells in 1.2 s before the first word at +4 dB while the outro is pulled 12 dB down, and its fall hands the ending back to the outro. **(6) Not touched, on purpose:** the step-6b bias overwrite documented in `docs/proposals/NEXT-LEVEL-2026-09-20.md` stays a proposal; nothing in clustering, ranking or scoring changed in this rev.)
+
+Previous: 2026-09-20 (rev 72, weekly-polish-enforcement-audio. **CEO: "Conduct independent UI/UX headless testing and polish the weekly page. Also I want an agent to do a complete audit holistically... Also has weekly audio production been designed yet? If not, similar to daily and history, let's create our weekly audio show. This has to be different and unique."** Three deliverables, all shipped. **(1) Five UI P0s, none visible in a screenshot.** `.wk-page` carried `overflow-x: hidden`, and a non-visible value on one axis forces the other to compute as `auto`, which makes the element a SCROLL CONTAINER — so `position: sticky` resolved against it rather than the viewport and **the topbar has never stuck** (measured `top = -2165` after scrolling 3000px at 1440, -2167 at 375). `overflow-x: clip` clips without creating a scroll container. **A broken image kept its credit**: every weekly image detected failure with React's `onError`, which never fires for a server-rendered image because the browser requests it during HTML parse and the failure is over before hydration attaches the handler; blocking `upload.wikimedia.org` left the cover in its image variant, near-white furniture over a scrim covering nothing, under an attribution for a photograph that was not on the page. NEW `useImageStatus()` also reads `complete && naturalWidth === 0`. **With JS off the whole issue was blank** (`app/history/layout.tsx` has shipped the `<noscript>` reveal since it was built; weekly never inherited it). **Two h1s and the document started at h2** — `CoverOpening` hard-coded `<h1>` and renders once per cover feature, the cover headline was a `<p>`, the polarized label an `<h4>` under an `<h2>`. And **a contents row for a section that did not render**: `hasArgument` was `opinions.some(o => o.paired) || opinions.length >= 2`, true on length alone, so a snapshot without `pair_id` spent a row and a folio and then `findPair()` returned null — a dead anchor with every later folio off by one; it asks the same `findPair()` now. Also: `.wk-back` was a 12x44 tap target below 419px, `RevealFlourish` ran eight observers per page toggling a class matching no rule, the `filter:` compositing the whole 164 KB issue every scroll frame is gone, a print stylesheet (which appeared exactly once in the entire project, and not here), and a utility strip with reading time, share and prev/next — an issue had a permalink, an OG card and no way to send it to anyone. **(2) The editorial spec is enforced, not asserted.** Every prompt CLAIMED enforcement; the check existed at exactly ONE of six generation sites, so the live page carried nine banned terms and seven dashes against two cardinal rules (covers 623/700 against a 800-1200 spec; opinions 366-486 against 400-600). `enforce`/`banned_terms`/`strip_dashes`/`retry_suffix` live in `weekly_parse`, the pure core, and all six generators now measure, regenerate once NAMING the findings, and ship the cleaner attempt; flash regenerations draw on a budget of two, since flash has a shared 20-RPD cap the daily pipeline already spends ~13 of. **THE WEEK IN BRIEF CONTAINED NO WEEK**: `clusters[:10]` off a `headline_rank DESC` query returned ten items that all matched daily-feed headlines from ONE date. `_spread_over_week` goes round-robin by day. Three more things computed and discarded: `daily_appearances`/`cumulative_sources` (the standfirst stat a weekly can print and a daily cannot; `CoverOpening`'s slot was summing timeline counts, double-counting an outlet that covered the story twice), `cluster_id` on a brief item, and department art. `repair_weekly_snapshot` was only fixing `weekly.json`, which no component has imported since /weekly became a server component — it walks the deploy tree now, and found Issue #23 shipping `cover_timelines`/`cover_numbers` as raw JSON strings. Banned terms are deliberately NOT rewritten and the tool says so. **Verified: 0 dashes in the rendered prose of both issues, against 7.** **(3) "The Argument" — weekly audio, which had never been designed.** It was the last thing in the product on the 2026-06 stack: one Gemini call writing free `A:`/`B:` dialogue, two voices every edition uses, **unmastered mono**, no chapters, no sidecar, not in the podcast feed, no validators. Four parts were INERT: `_WEEKLY_TTS_PREAMBLE` (23 lines of pacing) is read only by the parked Gemini TTS path; `WEEKLY_VOICE_PAIR` is a label over an identical signal chain; the prompt FORBADE segment markers, which is the single line that made a timeline impossible; and "a full beat of silence" rendered as 60 ms. It was also one good week from dropping the editorial silently at 93.7% of a 12 MB cap while running 40% UNDER target. The show: the generator already writes two columns on the SAME story, each told the other exists, and nothing had staged them. **THE MOAT IS W-01** — every `L:`/`R:` line must exist in that column's published text by word overlap, so the script SELECTS rather than paraphrases and the core content is unfabricatable; `_bench_columns` mirrors `findPair` exactly so the programme and the page cannot disagree. **W-04 was rewritten on measurement**: overlap does not work because the two columns argue the same story (a one-sided turn scores 0.76 against the other column, a balanced one 0.84), but DISTINCTIVE vocabulary separates cleanly (36/0 against 21/24). Two decisions define the sound: **the argument is DRY** (beds under OPEN/CONTENTS/NUMBERS/EDITORIAL/CLOSE only, so the bed returning for the editorial IS the opinion entrance) and **the bench is RATE-MATCHED** (am_michael 160, af_heart 162, Editor bm_lewis 172 — two voices at different rates give one side more airtime for the same words, which is fairness, not aesthetics). The Sunday cue family is a PARAMETER SET off `_theme_figure`: the same motif at 60 bpm, opening on the suspended fourth and resolving only at the outro; re-rendering the three radio beds after the helper rename produced byte-identical files. The sonified spectrum under The Week in Bias carries mean lean as pitch and spread as detuning width — the Sigil's divergence fan, in the medium where a fan cannot be drawn. Cap 22 MiB with On Air's rule that the editorial is never dropped; a failed rundown renders NOTHING and falls back, because an essay forty words long is worth shipping and a bench line the column does not contain is words in a columnist's mouth. `VOID_WEEKLY_AUDIO_FORMAT=0` rolls back. Full definition: `docs/WEEKLY-AUDIO.md`. **(4) Gates.** `tests/test_weekly.py` gains W-T08 (one h1, no heading below h3, every contents anchor real), W-T09 (enforcement, each assertion a defect taken verbatim from the published columns) and W-T10 (the week spread); NEW `tests/test_weekly_script.py` builds its clean fixture FROM the real Issue #26 and plants one defect per validator; NEW `tests/test_weekly_assembly.py` asserts against a fake segment what an ear cannot check twice — the spine at exactly 2,400 ms, no cue over speech, the dry argument, chapter offsets exact by construction. Both run with pydub and numpy blocked. `verify_sections` gains W-08 (no dash in served prose outside the head) and W-09 (the chapter sidecar exists and the rail is ordered from zero); W-08 correctly FAILS against the live site today and passes against this branch's build. **(5) Stage D: the six things an issue could print and did not**, every one already paid for (figures stored on the row and rendered nowhere, or fetched as prompt context and discarded): a COLOPHON ("Assembled from 2,637 articles in 500 story clusters. 13 model calls, 3m 04s"); WEEK OVER WEEK, the one measurement only a weekly can make, which never says "last week" because the archive has gaps and a move under a point prints as "level" rather than earning an arrow; THE WEEK DAY BY DAY from the `daily_briefs` rows `_fetch_daily_opinions` was throwing away (the query now also selects `tldr_headline`: one query, two consumers); a CORRECTIONS box that renders EVEN WHEN EMPTY, hand-maintained in `build-data/weekly-corrections.json` and deliberately NOT read from /feedback, because a correction is an editorial act and publishing unvetted reader text under the masthead would be worse than printing nothing; a COMPOSED SHARE CARD (`next/og` DOES run under `output: export` given `dynamic = "force-static"`, verified with 1200x630 PNGs for both issues, so no rasteriser dependency) replacing the hotlinked cover photograph, which is a second cross-origin fetch that can 404 and carries no headline; and an ISSUE INDEX at `/weekly/archive/`, since /weekly is the current issue and the back catalogue had no stable URL. The card exposed a defect nothing else would have: Next emits the PNG at an EXTENSIONLESS path, Pages infers Content-Type from the extension, and the global `nosniff` then forbids every scraper from treating it as an image, so `_headers` pins `image/png` for both card routes. **A REAL BUG caught by extending the fixture: `audio_chapters` was written to the row as a Python LIST instead of a JSON string** — a TEXT column the SQLite shim binds directly, so the first run that rendered an audio edition would have failed its upsert and taken the whole issue with it. W-T05 skipped it because the fixture had no chapters; it carries a rendered episode now, and W-T11 asserts the TYPE directly because an empty list parses as valid JSON. New `week_days` column (guarded ALTER + schema + exporter + reader mirror). **Known: the first episode is UNHEARD** — the workflow now carries the Kokoro venv and model cache, but nothing has run it; Monday's run is the first. Barlow and Plex Mono stay unpreloaded because the loader is global and the existing `preload: false` protects the front page's FCP.)
+
+Previous: 2026-09-20 (rev 71, weekly-magazine. **CEO: "void weekly has been left alone for a while. Conduct a full audit and come up with a refreshed, truly magazine like design and look."** The audit found that the two biggest problems were not CSS: **two whole departments are written every week and thrown in the bin** (`_generate_tech_brief` + `_generate_sports`, ~1,000 words and 2 Gemini calls, and the row dict had only the comment `# Tech + Sports (store in cover_text JSON alongside covers)` where the write should have been), and **the deliberate editorial structure was destroyed on the way to the page** (the generator writes essays 1 and 2 as opposing columns on the SAME cover story, each told in its prompt the other exists; the backend bucketed by lean so center-left + center + center-right collapsed into `opinion_center`, and the page read `[0]` of each of three buckets, rendered three essays on unrelated topics and dropped two on the floor). CEO decisions: full-stack; keep the full-screen cover but make the page below a real non-repeating spread; carry all four new departments; multi-column magazine setting. **(1) Two live P0s fixed in the published snapshot AND in the code that produces it.** `_parse_essay` took the first non-empty LINE as the headline with no sanity check, so when Gemini opened a feature straight into prose its whole lede became the headline and the essay LOST that paragraph: Issue #26 shipped a 698-character paragraph set as a display-size red `<h2>` and as coverline #1. `COVER_SYSTEM:341` does explicitly demand "Line 1: the headline only" — a model is free to ignore an instruction, so the PARSER is the fix. NEW `looks_like_headline` rejects >120 chars, >18 words, or an INTERIOR sentence boundary (a trailing period is allowed); on rejection the parser takes the single-block branch that already existed and callers name the piece from the cluster title. And the cover image was an AFP TOPSHOT hotlinked off a Nigerian newspaper's CDN with `cover_image_source: "og_image"` — `verify_sections` W-03 had been RED in production. **(2) NEW `pipeline/briefing/weekly_parse.py` is the pure core** (parsing, week math, row assembly) importing `re`/`json`/`datetime` and nothing else. This matters: the generator imports `utils.supabase_client`, which raises `EnvironmentError` without `VOID_SQLITE_PATH`, so the module could not be imported in CI AT ALL and every pure function in it was untestable. **That import wall, not neglect, is why the weekly had zero tests while the `week_offset` sign bug served Issue #23 for three weeks.** **(3) Two new columns, `departments` and `opinions`** (guarded ALTER in `supabase_client._ADDITIVE_COLUMNS` + `schema_pipeline.sql`; the ALTER is the one that matters, since CREATE TABLE IF NOT EXISTS is a no-op against the cached DB CI restores). One ordered `departments` array, not a column per department, because front-of-book order is editorial data and because adding a column costs five edits in five files and this table had already lost two of them. `opinions` carries an explicit `pair_id`; the three lean buckets are still written as a PARTITION of it for back-compat, and `tests/test_weekly.py` asserts that partition — the assertion that catches a refactor silently dropping an essay. **(4) Prompt specs that were themselves the bug.** `RECAP_SYSTEM` asked for 150-200 word recaps and the model obeyed exactly, which is why "Week in Brief" items ran ~1,000 characters; now 55-75 words. `COVER_SYSTEM` never specified the NUMBERS block and `_gen_essay` was called without `want_numbers=True`, so `cover_numbers` was structurally always `[]`. Brief items now carry their cluster's `category` as a kicker (`types.ts` declared `section` all along and nothing ever copied it across), and brief thumbnails moved off the retired `cached_image_url` to a freely-licensed lookup for the top 3 only. **(5) `total_scored` was a `.limit(3000)` reported as a count** and Issue #26 landed on exactly 3000 — a truncated query published as a measurement, in the one section whose job is honest measurement. The query pages now and a `truncated` flag makes the page say "more than". **(6) The browser payload drops 60,162 -> 44,712 bytes while carrying MORE**: `audio_script` (11.8 KB) and `opinion_audio_script` are TTS source rendered nowhere, `opinion_headlines` is derivable, and the three lean buckets are dropped once `opinions` is present. `cover_timelines` and `cover_numbers` are finally PARSED rather than shipped as JSON strings — they were missing from the exporter's `pjson` list AND its mirror in `supabase.ts`, and nothing compared the two. **(7) The archive's root cause is not `LIMIT 1`.** `weekly-digest.yml` uses `actions/cache/restore@v4` and has NO `cache/save`, deliberately (the daily pipeline is usually still running at 12:00 UTC and a save would lose a day), so the weekly row is written into a database discarded when the job ends. Raising the exporter's LIMIT would yield one row forever. **The deploy tree is the archive of record**, exactly as `printed_stories` -> `build-data/archive.json` -> prerendered `/story/<id>` already is on the daily side: `build-data/weekly-issues.json` (append-merged on `(edition, week_start)`) + `public/data/weekly-archive.json`. The commit glob in the workflow is widened accordingly — anything emitted outside it is generated in CI and thrown away. NEW `backfill_weekly_archive.py` seeds it from git history, which yields exactly **2** issues; the archive accrues forward. **(8) The section is prerendered.** `/weekly` fetched weekly.json in a useEffect, so the served HTML had no issue content and all eight issues shared one OG card. NEW `lib/weeklyIssues.ts` mirrors `lib/archive.ts` (one memoized read; latest missing THROWS like `serverFeed`, archive missing returns `[]` because an empty back catalogue is a legitimate cold start). `/weekly/[edition]` is DELETED and replaced by `/weekly/[week]` — forced, not chosen: Next cannot have two differently-named params at one segment. The slug is `week_start`, not the issue number, because `weeklyDisplayNo` subtracts `WEEKLY_LAUNCH_ISSUE` and every issue-number URL would 404 if that constant moved. **(9) The running order** (Cover, Contents, Feature 1, The Argument, Feature 2, Other Lenses, Technology, Sports & Culture, The Editorial, The Week in Bias, Week in Brief, Back Issues), each section opening with a DEPARTMENT PLATE carrying a folio. The cover and the opening spread are different objects now; the 7-second auto-scroll is gone. **(10) Type setting: measure the long things, column the short ones.** The cover essay set as JUSTIFIED Inter across `min(92vw,1600px)` — ~200 characters a line against the design system's own 65ch rule. `column-count: 2` is the wrong instinct on a scrolling page (read to the bottom of column one, scroll back UP). Features get ONE measure-bound column (576px measured); the 400-700 word departments get two; Week in Brief flows as real columns. The width that used to hold more text is the MARGIN SYSTEM: a named-line grid (`full`/`rail`/`text`) where art breaks full-bleed and the pull-quote, figures and timeline rails sit in the margin. **This answers the objection that killed the last attempt**: `weekly.css` recorded that a 2-col cover zone was reverted because it "left a blank column beside the editorial", which is a property of FLOAT; a grid cannot reproduce it, because the outer tracks are `1fr` and have no height when nothing is placed in them. **(11) `WeeklyDigest.tsx` (1,019 lines, one file) is decomposed** into `app/weekly/{types,format,hooks,issueMeta}.ts` + 11 components, mirroring `app/history/`; `lib/types.ts` re-exports the weekly types so `AudioProvider` and `DailyBrief` are untouched. `weekly.css` is rewritten: **73 of its classes had no markup left** (a masthead, a timeline UI, an inline audio player, each deleted with its CSS abandoned) while **all 8 `.wk-contested__*` classes had markup and NO CSS** — a section that could never render, since `contested_stories` is not a column in any schema. **(12) Gates.** `tests/test_weekly.py` (7 groups: the headline guard with the live 698-char paragraph committed as a fixture; the week/issue math with `now` injected across 52 Mondays; a static comparison of the exporter's `pjson` list against the frontend reader's; the committed snapshot; `build_weekly_row`'s persistence contract; **CSS class parity in both directions**, which would have caught both halves of the dead-code problem automatically; and archive integrity), wired into auto-merge. `verify_sections` gains W-04 (the served `/weekly` carries its cover headline — the check that proves it is not a client shell), W-05/W-06 (archive populated, a back issue genuinely reachable), W-07 (no TTS source, no raw JSON strings), and W-01 now also fails a cover headline longer than a headline. **Verified against the real build**: 1,737 pages, both issues prerendered, all seven W-checks green against served output, light and dark, 390/1440. **Known, a timing artefact rather than a defect: Issue #26's brief items are still ~170 words with no kickers and its `departments` array is empty — those are generator fixes and land with Monday's run.** `tests/test_editorial_stage.py` still exits non-zero exactly as it does on a clean tree, unrelated to this rev.)
+
+Previous: 2026-09-20 (rev 70, history-audio-edition. **Every History event becomes a produced audio documentary; the first episodes are live on news.voidvision.org, landing the same day rev 69 brought the section back.** CEO: revamp all 78, voices cast by the mood of the event, scripts redesigned, "premium grade, just like we did here on air", mixing NPR and NYT with the storytelling of Conflicted, plus MKBHD, Veritasium, Vsauce, Ken Burns prose and screenplay structure. **(1) Seven references, seven jobs.** Averaged together those names produce mush, because they disagree, so each owns a STRUCTURAL ROLE and nothing else: Veritasium the cold-open misconception, screenplay the scenes, Ken Burns the spine and the primary sources READ ALOUD, MKBHD the aside after a scene, Conflicted the register, Vsauce the late zoom-out, NPR/NYT the sound and the close. The one that matters mechanically is Ken Burns: a different voice reads the documents, which is why the format is three voices and not one. **(2) Scripts are authored, not generated.** `gemini-2.5-flash` is capped at 20 requests a DAY, so 78 premium scripts is four days of budget, and a generated script would need the same validator-and-retry apparatus On Air needs. They are written in session and committed as `data/history/scripts/<slug>.txt` in a marked-up format (`## OPEN / TITLE / SCENE n / DOCUMENT | author | work | date / ASIDE / PERSPECTIVE | name | type / TURN / REST / CLOSE / SAY`; `N:` narrator, `M:`/`F:` document voices). Zero Gemini spend, better prose, re-renderable forever. **(3) EVERY SIDE GETS ITS OWN CASE, and it is enforced.** The first Partition draft summarised all five perspectives in ~280 words and characterised each BY WHAT IT OMITS, which is a debunking format wearing a balance costume; it left out the strongest fact in the Pakistani case (446 of 495 Muslim seats in 1946) while calling that account incomplete. A `PERSPECTIVE` segment now gives each account its argument in its own terms, its strongest fact and its own witness, and only then does a closing TURN name what each leaves out, including the most recent and most sympathetic one. `H-09` makes that structural: the event data names the sides, so an episode that quietly drops one does not render. **(4) Nine validators, each with a planted defect** (`pipeline/history/script_format.py`, `tests/test_history_script.py`): H-01 every quote exists in the event's own `primary_source_excerpts` by word overlap (trimming for the ear allowed, inventing not), H-02 the document voice speaks only where a quote belongs, H-04 the narration NAMES the speaker before the read (looked up from the data by matching the quote, so it also catches a misattribution), H-06 a TURN exists, H-07 length inside 8-15 minutes, H-09 every account heard. **H-04 shipped weak and was caught by inspection**: it matched the name as a RAW SUBSTRING, and "king" is inside "striking", so a civil rights script that never named Martin Luther King passed on the phrase "without striking back". Now word-matched with a leading-edge allowance for possessives; re-running all 15 committed scripts against the tightened rule found exactly that one defect. The validators had NO test file until this rev, which is how a rule gets weakened by accident. **(5) Casting is deterministic, from `severity` + `category`** (`pipeline/history/casting.py`): narrator from `am_michael` (28 of 78), `bm_lewis` (25), `bm_george` (22), `bm_daniel` (3); document voices fixed per narrator to contrast, and SEX-MATCHED to the speaker (the CEO heard Nehru read in a female voice and said it sounded odd; Ken Burns matches sex, so `D:` became `M:`/`F:`). Pace is a casting decision, never a stretch. **(6) `history_producer.py` reuses On Air wherever it is format-agnostic** (synthesis, voice buses, ffmpeg chain, duck, loudnorm, encode, ID3 chapters, sidecar) and implements its own timeline, because `build_timeline` hard-codes the radio segment kinds. Its silence grammar is slower throughout (line 420 ms, to_document 900, from_document 1400, scene 1600, to_perspective 2200, to_turn 2400) and a `REST` is a held pause with the bed alone in it, placed by the writer where the listener needs somewhere to put what they just heard. The CEO's note on the first cut was "i did not hear too many breaks"; there are now six or seven rests an episode. **(7) Delivery, which is a separate problem from rendering.** `publish_audio.py <slug> --from DIR` copies the MP3 and its sidecar into `frontend/public/audio/history/` and records it in `frontend/public/data/history-audio.json`; `frontend/app/history/audio.ts` imports that manifest at BUILD time and is the ONLY module that knows where audio lives; `withHistoryAudio()` fills `audioUrl`/`audioDuration`/`audioChapters` in the row mapper and the mock fallback alike, so it survives rev 69's swap of `data.ts` to static JSON. `playHistory` stops passing `audio_chapters: null`, so a History episode gets the same chapter rail as On Air, with `kind: "segment"` (title only, no "No. 3" badge; the rail already guarded on an empty label). **Storage is the Pages CDN, not R2**: R2 is still right for all 78 (~750 MB cannot be un-committed from git) but the bucket is not provisioned, and holding finished episodes for it would have left the page silent on the day History came back. Every consumer reads the manifest's `url`, so the move is one change to the strings `publish_audio.py` writes. **Do it before stage 4.** **(8) Throughput solved.** `.github/workflows/render-history-audio.yml` renders one slug per matrix shard, ten at a time, with artifacts folded into the site by ONE publish job (ten jobs committing to one branch is a race, and the manifest is one file). Measured 8m40s end to end for a 1,584-word episode with the Kokoro venv and model files cached, so the catalogue is ~90 minutes at ten wide instead of ~15 hours in a straight line. `publish_audio.py --pending N` answers "what is left to make" from the manifest, so the workflow cannot drift from what has shipped, and the publish job runs on `always()` so nine good episodes do not wait on a tenth that failed. **(9) Gates:** `tests/test_history_script.py` (H-01..H-09 against planted defects, plus every committed script) and `tests/test_history_audio.py` (manifest vs the files actually committed: byte count, duration, the 25 MiB Cloudflare Pages per-file limit, chapters ordered from zero, and no MP3 in the deploy tree that no page serves), both wired into auto-merge. Full definition: `docs/HISTORY-AUDIO.md`.)
+
+Previous: 2026-09-19 (rev 69, history-weekly-restored. **CEO: "Bring back History and Weekly. End to end. Make sure this week's weekly pipeline has run."** Both had been 301-hidden since the 2026-08-05 launch trim, and the Supabase decommission then broke their data paths UNDERNEATH the redirects, so unhiding alone would have shipped a History archive serving ten mock events and a Weekly frozen on Issue #23. **(1) History reads static JSON.** NEW `pipeline/history/export_history.py` reads the 78 curated `data/history/events/*.yaml` into `frontend/public/data/history.json` in the SAME row shape PostgREST returned, relations nested, so `history/data.ts` keeps `mapEventWithRelations` and only swaps its source; ids are slug-derived, connections are emitted on BOTH endpoints (the old path ran a forward AND a reverse query). Media URLs come from `source_url`, NEVER the 318 `supabase_url` re-hosted copies: that bucket is deleted, while the Wikimedia originals hotlink fine (verified 301 -> upload.wikimedia.org) and are exactly what the rev-60 copyright decision called for. `export_static.py` emits it every run. **No R2 involved and none needed** — the dependency was the DATABASE, not storage. **(2) The weekly job ran against nothing.** `weekly-digest.yml` had no `VOID_SQLITE_PATH`, so it read an empty DB, wrote its row where the site could not see it, ran no export and committed nothing. It now restores the state DB, generates against it, emits `VOID_EXPORT_ONLY=weekly` and commits. It deliberately does NOT save the DB back to the cache: the daily pipeline is usually still running at 12:00 UTC and a save would push a pre-run copy under a newer key and lose a day. Safe because `issue_number` is derived from the week's date, not from stored rows. **(3) `week_offset` counted FORWARD.** Offset 0 resolved to the week CONTAINING today, so the Monday cron generated the week that had just STARTED, off ~12 hours of coverage, while the cron comment and the CLI help both claimed it covered the week that had just ended. Issue #23 (week of 2026-08-24, generated 2026-08-24 12:48) is the last one that shipped that way. 0 now means the completed week, -1 the current partial one. **(4) `VOID_EXPORT_ONLY`** (`feed|brief|weekly|archive|methodology|history`, default all) so a job restoring yesterday's state cannot rewrite today's feed and archive; an unknown section exits non-zero. **(5) Four frontend defects.** The masthead and the restored spinoff wordmarks OVERLAPPED at exactly 768px: the tablet-band rules toggled `.nav-logo-desktop/-tablet/-mobile`, which stopped existing when the three logo copies became one responsive mark, so `.nav-left` was shrunk to a 106px box around 134px of glyphs; fixed with `flex-shrink:0` + a `.nav-spinoff-mark` that drops 14px -> 11px in the band. The mobile drawer rendered `MAIN_ITEMS[0..3]` by HARDCODED INDEX, so inserting History and Weekly silently dropped Sources and Feedback; it maps over the list now and the cascade group travels with the item. `history/[slug]` carried a hand-maintained 78-slug array and resolved metadata against `MOCK_EVENTS`, so 68 of 78 events prerendered with a slug-derived title and a generic description; both now read NEW `lib/historyCatalog.ts`. History audio had no static write path unlike the daily brief. **(6) Unhidden + indexed.** `_redirects` 301s removed, `.nav-spinoffs` restored (768px+), footer + mobile drawer rows added, sitemap gains `/history/`, `/weekly/` and all 78 event URLs. `deploy-cloudflare.yml` gains "Weekly Digest" in its `workflow_run` list (a GITHUB_TOKEN push fires no `push` event). The weekly job's `checkout` also pinned `ref: main`, so a dispatch from a branch ran that branch's WORKFLOW against main's CODE and then pushed to main; it follows the triggering ref now. **Verified against the built site**: 78 events on the landing page, real narrative + live Wikimedia images on event pages, nav clean at 768/900/1200/1440 with no overflow or hydration errors, all six drawer rows at 390px. **Known, pre-existing, NOT caused by this rev: `tests/test_same_event_merge.py` fails 1 of 8 coherence fixtures ("afd win, real over-trim") and `tests/test_editorial_stage.py` exits non-zero — both fail identically on a clean tree.** Revolt is still on the dead browser-Supabase path and still serves MOCK data; it stays 301-hidden and needs the same static-JSON treatment before it can be un-hidden.)
+
+Previous: 2026-09-19 (rev 68, on-air-scored-production. **CEO heard the first scored cut and asked for a production pass: keep the entry theme, make the story transitions "the same musical theme as the intro" (they were an unrelated three-note pluck he heard as "a digital ding"), add a break "to let the broadcast breathe halfway into the news", give the opinion "a similar entry music" instead of a 0.7 s stab, end with "music fading to oblivion", call it Opinion not editorial, and slow to 10-12 minutes.** **(1) One motif.** `generate_assets._theme_figure` now holds the theme's content (120 bpm, cell D3-A3-D3-F#3 over a half-time D2 bass); `radio_transition` (2.9 s), NEW `radio_break` (9 s), NEW `radio_opinion_theme` (6.5 s, B2 minor shading, dotted 0.75 s pulse, ends on an open fifth) and `radio_outro` (14 s, falling to TRUE silence, asserted < -80 dBFS over the last 200 ms) are all calls to it. The theme itself is byte-identical after the refactor (sha256-verified). `radio_editorial_stab.wav` deleted; `radio_editorial_bed` -> `radio_opinion_bed`; `radio_close_bed` 12 s -> 24 s. **(2) Music has ARCS, and the timeline RESERVES room for every cue.** `build_timeline(turns, audio, CueLengths)` decides and records every cue position (`transition_at_ms`, `break_at_ms`, `opinion_theme_at_ms`), so transitions play in the clear instead of under the first words; the break replaces the transition at its seam (two cues resolving on the root back to back is two endings). Beds enter per segment, hold ~11 s, and leave, covering ~33 % of the news block, not 96 %; `weave_end` snaps every fade-out to complete UNDER a sentence (~45 % in), which is what makes music feel woven rather than stitched. **(3) No spoken throw.** `THROW_LINE` deleted: the published `opinion_audio_script` already opens "Now, void opinion.", so voice A saying "Next, the editorial." was two names for one segment. Chapter kind `opinion`, title `Opinion`, starting at the ENTRANCE MUSIC; the frontend accepts `editorial` as the legacy alias so the episodes already on the CDN keep their jump. **(4) Four engineering defects fixed:** the sign-on was overlapping the 2.4 s ident while the 8 s theme played, so it talked over six seconds of theme un-ducked (`theme_overlap` now measures the opener that actually plays); `_loop_to` crossfaded 400 ms and shortened every seam-locked bed cycle (24.0 s -> 23.6 s, drifting the pulse grid) so locked loops now repeat sample-exactly; the close bed was looped although it is a one-shot falling to silence; the voice pan attenuated one channel instead of a constant-power tilt. Beds are now also DARKER under speech (`apply_duck(dark=)`, 12 dB/oct at 2.4 kHz), not merely quieter, so they stop competing where consonants live. **(5) Master.** The limiter sat in front of `loudnorm` on an un-normalised mix and never engaged (TP -3.97 was crest factor, not limiting); it is now anchored to the measured gain, and `normalization_type` is logged because opening the compression can silently flip loudnorm into DYNAMIC mode and re-flatten the programme. Voice chain 3:1/120 ms -> 2.5:1/320 ms. Measured: I -15.92, TP **-1.44**, LRA 3.50, linear mode. **(6) Cast + pace.** A = `am_puck`, B = `af_bella` (replaced `af_nova`, which was C-grade AND the roster's fastest at 205 wpm, so it carried the largest speed correction and was the voice the CEO heard as artificial), C = `af_heart`. Pace is a CASTING decision: a voice whose natural rate is wrong is recast, never stretched. One uniform house pace of 0.95. Budgets raised to 950-1250 news words; modelled against the measured 148 wpm and 63 s of music, the show lands 10.2-12.2 min. **(7) The prompt's word budgets were typed by hand while the validator read `WORD_BUDGETS`** and had already drifted, so the model was asked for one length and marked against another; both now render from the same constants and a test asserts it. `audio_voice` = `kokoro:am_puck+af_bella+af_heart`.)
+
+Previous: 2026-09-18 (rev 67, on-air-radio-format. **CEO: "On Air should follow realistic radio news reading methods... a truly premium feeling radio production", distinct from NPR/BBC, no copyright risk, ending in a finished episode of today's news.** The audio brief is no longer a by-product of the text TL;DR. **(1) A separate radio rundown.** NEW `pipeline/briefing/radio_script_generator.py`: one extra Gemini flash call over the published top 20 writes a plain-text rundown with segment markers (`## OPEN / MENU / STORY n | <title> / BRIEFS / FINALLY | <feed rank> | <title> / CLOSE / SAY`; story ids are bound from the feed by rank, since the first real run showed Gemini mis-copies UUIDs by a hex digit), written for the EAR (one idea per sentence, present tense, attribution before the claim, numbers as words, no quotation marks read aloud, no a.m./p.m., no datelines). Menu of 5, ranks 1-4 in depth, ranks 5-12 one line each, a lighter kicker suppressed when the lead's `disaster_severity >= 0.6`, then the existing opinion script as the signposted editorial. 13 deterministic validators (R-01..R-13, stable ids) with one regeneration naming the findings, then fallback to the legacy audio path so a show always ships. Void's own lines only ("From Void News, this is On Air." / "On the desk today." / "Also on the desk." / "Next, the editorial." / "That's On Air from Void News." + "Every source, every story, at Void News."); the borrowed catchphrases ("Up first", "First the headlines", "And finally", "Stay with us"...) and AI-podcast tells (host names, thanks, reactions) FAIL the script. `spoken_text.py` normalises every line before synthesis (`$4 billion` -> "four billion dollars", `3.75%` -> "three point seven five percent", `US` -> "U-S", `## SAY` respellings). **(2) Kokoro-82M is the production voice (CEO decision).** Apache-2.0, trained on permissive audio, explicit commercial blessing, CPU-only; runs in its own venv (`.venv-tts`, numpy 2 vs the pipeline's numpy 1.26) as a worker subprocess (`tts_kokoro_worker.py`), model files sha256-pinned in `kokoro.lock.json` and cached by the workflows. THREE roles (CEO 2026-09-19): A = `am_puck` 0.92 anchors (light American, 112 Hz, cast from a 12-voice sampler; the one voice that hits the worker's -1 dBFS clamp), B = `af_nova` 0.82 takes alternate stories, C = `af_heart` 0.93 reads ONLY the editorial (centred, so the opinion firewall is audible). **ONE PACE, ~156 wpm** (CEO 2026-09-19, "should sound natural, calm"): the three voices do not read at three speeds, and 156 is a calm read rather than the brisk 160-170 wire band the first build shipped. Each speed is the SMALLEST correction that voice needs to reach it (at 1.0 the roster reads am_puck 164, af_heart 162, af_nova 181, so af_nova needs by far the largest; if it drags, the answer is a calmer B voice, not a smaller correction). Calibrated on the four long turns of `tests/fixtures/radio_bench_turns.json`, because absolute wpm swings ~30 % with the passage; `radio_script_generator.SPEECH_WPM` carries the same number so length estimates are honest. `af_jadzia` is NOT in the model: it appears in third-party sample repos but no hexgrad release or published embedding has it. edge-tts (Andrew/Ava) is ONLY the automatic fallback: research found a documented commercial ToS risk on its unofficial endpoint plus prior outages. Measured rtf 1.4 on a 4-core sandbox; worker deadline 1500 s; CI bench `tts_bench.py` fails above rtf 2.0. **(3) NPR-sparse sound, all original.** `generate_assets.py` gained a numpy "radio set": `radio_ident.wav` (2.4 s, -14 dBFS), `radio_menu_bed.wav` (20 s exact loop, -40 dBFS RMS), `radio_close_bed.wav`, `radio_editorial_stab.wav` (0.7 s page-turn), `radio_outro.wav`, `radio_room_tone.wav` (-57 dBFS, under the whole programme so TTS silence never reads as digital). Bed under the menu and the sign-off ONLY; dry voice through stories, briefs and the editorial (the CEO had rejected per-story chimes). No samples, no pips, no fanfare shapes: the originality rule is in the file. **(4) Assembly + mastering.** NEW `radio_producer.py`: per-line synthesis, a single gap table (`RADIO_GAPS`) so chapter offsets are exact by construction, per-voice ffmpeg chain (HPF 80, presence +2.5 dB @ 4k, de-esser, 3:1, +-7 % pan), limiter, two-pass loudnorm to -16 LUFS / -1 dBTP, 128k CBR stereo (ladder 96k stereo -> 96k mono under the 12 MB cap; the editorial is never dropped), ID3v2 CHAP/CTOC via mutagen + a Podcasting 2.0 `<stem>.chapters.json` sidecar next to the MP3 (`_write_audio_static(..., sidecars=)`). **(5) Chapters end to end.** `daily_briefs.audio_chapters` (JSON) + `news_start_seconds` (guarded `ALTER TABLE ADD COLUMN` in `supabase_client.py`, since the cached DB never gets new columns from CREATE IF NOT EXISTS), exported into `brief.json`; the player (`app/lib/chapters.ts`, AudioProvider, OnAirPage, FloatingPlayer, MobileMiniPlayer) renders a chapter rail, "3 / 8", an Editorial jump, mediaSession per chapter; legacy unchaptered episodes keep the old News/Opinion tabs; the fabricated 60 % opinion mark and the `HOSTS` persona map are deleted; `audio_voice` is now an engine string (`kokoro:am_puck+af_nova+af_heart`), `audio_voice_label` "Three voices". `podcast_feed_generator.py`: `SITE_URL` -> news.voidvision.org, absolute enclosures, `<podcast:chapters>`, and the XML is finally `git add`ed by both workflows (it had been regenerated every run and committed by nothing). **(6) Gates.** `tests/test_radio_script.py` (clean fixture + one planted defect per validator + normaliser table), `tests/test_radio_assembly.py` (fake engine: every gap, chapter, bed placement, ID3, sidecar, loudness within 1.5 LU), `frontend/test/chapters.test.mjs`, a `radio-audio` CI job (assembly harness + real Kokoro bench) required by auto-merge, and `scripts/verify_audio.py` (A-01..A-05) in `verify-production.yml`. `refresh-brief.yml` gained modes `radio` and `radio-dry-run`; `refresh_brief.py --radio-only --rundown-file --render-dir` renders a fixture offline. Rollback: `VOID_RADIO_FORMAT=0` (legacy path) or `VOID_TTS_ENGINE=edge`. Full definition: `docs/ON-AIR-RADIO.md`. The fixture `tests/fixtures/radio_rundown_2026-09-18.txt` is a hand-authored rundown of the 2026-09-18 feed, used for the offline preview and the tests.)
+
+Previous: 2026-09-18 (rev 66, pipeline-hang + editorial-harness-determinism + freshness-repoint. **CEO: "site did not get refreshed today." Root-caused and fixed; all four commits on main, every CI gate green.** **(1) P0 — the pipeline hung on exit and never committed.** The 2026-09-17 11:00 run did ALL its work (final summary `Errors: 0 fetch, 0 pipeline` at 17:21 UTC) but `python pipeline/main.py` never returned: the Playwright/headless-Chromium scrape phase left an orphan child/driver thread (a `headless_shell` orphan was terminated in job cleanup) that blocks interpreter shutdown. The "Run pipeline" step hung ~2h until GitHub killed it at the 4h cap, so **"Export static snapshots" and "Commit refreshed static data" never ran** and the site stayed on the 2026-09-16 data. Nondeterministic (the browser closed cleanly 09-06..09-16; lingered on 09-17). Fix (`main.py`): after `main()` returns, flush stdout/stderr and `os._exit(0)` — reaching that line means every stage finished, so a hard exit that no hung child/thread can block is safe. **(2) Editorial-stage CI false-fail (was blocking ALL auto-merges to main).** `tests/test_editorial_stage.py` failed on "N displayed cards have no permalink" / "only N displayable stories". Production was never affected (committed feed on main has full top-20 permalink coverage). TWO harness bugs: **(a)** the test computed its "displayed" window with `filter_displayable(feed, DISPLAYED)` and NO ghost guard, while serverFeed and the print archive both drop ghost clusters (stale source_count, all `cluster_articles` cascade-dropped) via `with_articles` — so it kept ghosts and demanded permalinks the archive correctly never wrote. Now passes the post-run membership (`after`) as `with_articles`, mirroring serverFeed/archive exactly. **(b, the real root cause — a date-dependent test)** `tests/build_test_db.py` builds its bench from the committed `feed.json` snapshot, whose article `published_at` ages in wall-clock; the ranker scores recency from those timestamps and an ARTICLELESS cluster gets a FIXED 15.0 recency floor (`importance_ranker._recency_score`). While the daily pipeline refreshes the snapshot the bench is <24h old and outranks that floor, so the synthesized ghost tail stays below the display window; once the 09-17 hang left the data 40h stale the bench recency decayed BELOW 15.0, ghosts reranked into the top-20, and the assertions flipped. The test was silently a function of the calendar. Fix: `_rebase_article_times()` shifts every article `published_at` so the newest is ~3h before now (preserving relative spacing) on build, making the bench reliably fresh and the harness deterministic + date-independent (verified 20/20 displayable, all permalinks, stable across `PYTHONHASHSEED`, green on CI Linux/py3.11). **(3) Site Freshness Check was a permanent false alarm.** `.github/workflows/freshness-check.yml` queried Supabase `story_clusters`, frozen at 2026-08-25 since the Cloudflare decommission, so it reported "STALE" every day regardless of the real site. Repointed to read `feed.json.builtAt` (pipeline_runs.completed_at from the last export = when the site actually last refreshed) from the committed static data on main; no Supabase. Correctly flagged STALE on 09-17 (the hung run) and returns green once a run refreshes `builtAt`.)
+
+Previous: 2026-09-09 (rev 65, first-production-run-audit. **Rev 64's restructure ran in production for the first time on 09-07/08/09 and the run itself is clean: `14208/14208 clusters re-ranked`, `Errors: 0 fetch, 0 pipeline`, bench of 35, 35 summarized, `Editorial: 33/35 candidates clean`, 20 printed, brief with `top_cluster_ids` populated, verify-production green after every deploy. The DEFECTS were in what the new passes did, not whether they ran.** Audited across 8 dimensions with adversarial verification (50 agents); 4 P0 and 10 P1 survived, 4 findings were refuted as stale or overstated.
+
+**(1) P0: the coherence pass was deleting real coverage.** 55 members removed across 17 clusters and 17 of them were the same story in different words, including "War in the Middle East: Iran attacks US base in Jordan" dropped from the Iran strike cluster and "Trump hails 'really big night' for populists in German elections" dropped from a cluster titled "Trump hails AfD win in Germany's Saxony-Anhalt". **`modal_vocabulary` SHRINKS as a cluster grows**: it keeps stems carried by 30% of member headlines, and a large cluster covering one event from many angles has enormous phrasing diversity, so rank 1 (62 members, 57 sources) produced exactly 3 modal stems `{destroy, oil, tanker}` and rank 7 (75 members) produced `{arabia, houthi, saudi}`. The biggest stories got the weakest test. `MODAL_MIN_STEMS = 3` was the guard against this and large clusters land at 3 to 6, squeaking past it. Removal now needs TWO independent signals: no modal stem AND no stem shared with the cluster's own headline, which does not shrink with size. Re-running the 55 keeps all 17 real ones and still removes all 38 contaminants.
+
+**(2) P0: the critique pass was told to require article proof for judgments about the card.** It read 35 cards and returned 2 findings. The prompt carried one instruction over all seven L-rules: "report a rule ONLY when the source articles prove the break". Right for L-02/L-05/L-06, which ask whether the card matches its sources; wrong for L-01/L-03/L-04/L-07, which are judgments about the card. **No article can prove a card is a beauty roundup rather than news, so demanding corroboration silenced the check.** The prompt now states the two kinds separately. A deterministic L-03 (split the headline on a semicolon, flag when the halves share no subject) was tried and REJECTED on measurement: it flags 84 of the 96 semicolon headlines in the archive, because "development; consequence" is ordinary headline grammar. That negative result is recorded in the standard so it is not retried.
+
+**(3) P0: a card reversed a senator's position.** Rank 18, headlined "Ted Cruz Defends Trump's 9/11 Claims", said "Cruz responded that he had every doubt that what he's conveying there is what he experienced". Every source has Cruz defending Trump; the idiom is "every confidence". L-05 now names the headline as part of the card and flags attributed positions as the highest-risk case. Rank 16's headline clipped "My career is over" to `"Career Over"` inside quote marks, so L-02 now names headline quotation marks explicitly.
+
+**(4) P0: a beauty listicle, an affiliate-commerce page and a photo gallery were a news card.** Rank 17 was five members joined on the word "hair": a Daily Mail service guide, an NBC Select page at `/select/shopping/`, a Page Six gallery. Its summary quoted a cosmetic clinic advising the reader how to groom. The filter now sees commerce URL sections, service-guide headline shapes and photo galleries; three of the five drop at ingestion, which puts the cluster below the 3-source minimum so the card cannot form. Swept over all 955 real article titles behind that feed it drops 5, none of them reporting.
+
+**(5) The merge gate was reading the wrong titles.** "Merged 0 pair(s) of 595 examined", then the near-dup guard demoted the day's one real duplicate and threw its 9 sources away. The gate ran at 8c.7 on raw outlet headlines while 8d overwrites every title with the LLM headline. Replaying the UNCHANGED gate on the 8d titles gives exactly 1 merge and 0 false positives, and it is that pair. **Merging moved to 8d.15, after the title clean.** No threshold moved. The survivor's summary is now invalidated on merge so the 8d.6 floor rewrites it from the merged article set in the same run.
+
+**(6) Two more of my own defects from rev 64.** The 8d.5 bench lift was measured from the near-dup NEGATIVE sentinel: floor 46.04, low -1.0, lift 48.04 instead of 0.32, which carried the cluster the guard had just REMOVED to +47.04, above all 65 non-candidates, and shipped it into feed.json as row 35. A lift meant to preserve an invariant inverted one. And `export_static` now emitting the 35-cluster bench rather than the 100-cluster pool starved the offline harness of non-candidates, so the lift path silently stopped being covered; `build_test_db` synthesizes a 20-cluster tail and the harness fails loudly without it.
+
+**(7) Shared-tokenizer and detector blind spots.** `"Germany's"` stemmed to `germany'` and never matched `German`, so every possessive proper noun failed to match its bare form. This is the same defect the daily brief's continuing-story matcher had in rev 57, fixed there and reintroduced here, which is the argument for one tokenizer rather than three. `E-03` was written with a straight ASCII apostrophe while summaries carry U+2019, so it matched nothing in real copy and the gate printed `[ ok ]` over a first-person sentence. And the pronoun scrubber half-converted: it rewrites we/our/us/my and has no rule for "I", so it left one sentence in two voices. It now leaves a segment it cannot fully convert ALONE, which is safer and louder, since E-03 then fails the card into regeneration. **Block 5a is more urgent than it was: on this feed the scrubber turned Ted Cruz's "a traumatic experience for all of us" into "for all of them".**
+
+**(8) The mass-casualty signal was blind to epidemics.** "Bangladesh Measles Outbreak Kills Over 1,000 Children Since March" scored `disaster_severity 0.0` and got no lift, landing at slot 14 below a TV network denying a cancellation rumour. `_DISASTER_NOUNS` had 40 hazard nouns and no disease term. Also widened the death-toll pattern from a 25-character gap to 60, because real wire phrasing is longer. Two gaps documented rather than papered over: Ebola *cases* correctly score zero (cases are not deaths), and a spelled-out number ("Kills Two") still scores zero pending its own false-positive sweep.
+
+**(9) Refuted, and worth recording.** The feed-snapshot emptiness corrupts no evidence base (`replay_ordering` reads `feed.json` out of git history, nothing reads `data/feed-snapshots/`). verify-production IS running (runs #79/#81/#83 after each deploy). And the summary cache being dead is NOT caused by 8b ordering, missing columns, or the coherence invalidation: `_content_hash` includes `n=len(articles)`, so any cluster that gained coverage is a miss by construction, which is correct behaviour and costs ~6 flash requests of a 20/day cap.
+
+Previous: 2026-09-07 (rev 64, feed-to-20 + two-stage-pipeline. **CEO brief after the 2026-09-06 feed: the top 10 was defect-free for the first time and every remaining defect sat in the tail. The displayed feed drops 50 to 20 and the pipeline is restructured around the cap.** Full reports in `docs/FEED-20-REPORT-2026-09-06.md` (findings + ranking replay + lean-stability derivation) and `docs/EDITORIAL-STANDARD.md` (the positive definition); Block 5 proposals await a CEO decision in `docs/proposals/EDITORIAL-VOICE-2026-09.md`.
+
+**(0) Four defects found outside the brief, all fixed first.** **A1: the holistic re-rank (step 8c) wrote ZERO rows** since roughly 2026-08-11. `rerank.py` upserts partial rows and the SQLite shim's `_exec_upsert` issued `INSERT ... ON CONFLICT DO UPDATE`, so SQLite checked `title NOT NULL` before the conflict arbiter and every chunk failed; the run still printed `Errors: 0` because that line counted RSS fetch errors only. Proven twice over (the log lines, and the identity `headline_rank == round(5 + 0.95*importance_score, 2)` holding on all 500 rows of five snapshots). The shim now does PostgREST merge semantics: look the row up on the conflict columns, UPDATE only the supplied columns, else INSERT. `created_at` is no longer reset on every upsert, which 8b dedup, the cross-run purge and brief ordering all read. **A2: Phase 7 same-event merge was enabled** despite this file saying it was disabled (`82c240c` disabled it, `436ec8d` re-enabled it 1h49m later). It fused IDF strikes on Hezbollah with Russian drone strikes on the SBU, Iran War Day 189 with gas prices, a Tesla Cybercab probe with the US Open, and it updated `articles`/`source_count` without ever updating `article_ids`, so 4 of 100 clusters shipped a source_count their link table could not support. Now off by default, with a tripwire at insert. **A3: the served-output gate had not run since 09-04** (it triggers on `workflow_run` of the deploy, and every deploy since was the scheduled backstop). Schedules plus an in-deploy step added. **A4: the two-model tier was already gone** and flash's limit is 20 REQUESTS per day, not 20 stories.
+
+**(1) Feed size, one source of truth.** `frontend/config/feed.json` (`displayed: 20, candidates: 35, pool: 100, archiveCap: 20`) is read by `pipeline/utils/feed_config.py` and `frontend/app/lib/feedConfig.ts`; `tests/test_feed_config.py` asserts the two agree and greps for stray literals. NEW `pipeline/utils/display_window.py` is the ONE definition of "which clusters the homepage shows", mirroring `feedMapping.clusterHasRealSummary` exactly; four Python predicates used to approximate it and each differed. **The tail-URL bug (ranks 48-50 rendering `/?story=<uuid>`) was a window-drift bug, not a link bug**: step 8f printed the edition, then retention and the ghost sweep deleted clusters after step 10, then `export_static.py` ran, so each printed slot spent on a deleted cluster pushed one displayed card off the permalink map. Retention now runs at step 8c.1, BEFORE the display window is chosen, and `serverFeed` throws rather than falling back. The gate gained `check_card_anchor_coverage` (anchor count == card count, every href a full match on `^(?:/void--news)?/story/<uuid>/$`) and a planted-defect fixture.
+
+**(2) Ranking is a precondition, not a follow-up.** Replay of `apply_feed_ordering` over six committed snapshots found the category cap was never the threat at 20 slots; the two same-event caps were, demoting about two top-20 stories per run on word collisions (`"pla"` matching "downplays", "plan", "plane"; a generic "crash"/"kill"/"order" anchoring the dynamic cap). Word-boundary event matching, incident nouns barred from anchoring, `DYN_EVENT_MIN_SHARED = 2`, and the re-tuned constants take gate displacements from 12 to 1 across the six runs (the survivor is a real near-duplicate). Signal weights are deliberately UNCHANGED: they must not be tuned against a baseline where the re-rank was dead.
+
+**(3) The pipeline is two stages.** Stage 1 is cheap and broad (fetch, scrape, bias, cluster on the full corpus). Stage 2 is `pipeline/editorial/stage2.py`, called by BOTH the daily run and `--editorial-only`, which used to be a second copy that had already drifted: 8c.5 bench -> 8c.6 coherence -> 8c.7 same-event merge -> 8d summarize -> 8d.1 titles -> 8d.2 critique -> 8d.3 validate -> 8d.5 order -> 8d.6 floor -> 7d brief -> 8f print. **Step 7b is DELETED**: it summarized a pre-rerank top 30 on flash-lite in 30 sequential calls whose rows 8d never cache-hit (0 hits on 09-06), so a story is now written once, by the better model, over the set that can still reach the page. Two supporting fixes without which that would ship a defect: step 8 seeds `summary_article_hash` for every cluster, and step 8b carries the WHOLE editorial payload across the dedup row swap rather than just the tier (carrying the tier alone stamps `flash` on a rule-based excerpt). **8d.5 orders the bench and then lifts it clear of every non-candidate**, which is what makes "displayed is a subset of what Stage 2 examined" true by construction. `reconcile_flash_top10` and `flash_top_n` are gone (there is no tier band any more); `summary_tier` survives to answer the one question that is still load-bearing: did a model write this, or did the floor. The daily brief moved AFTER Stage 2 and reads the published feed, so `top_cluster_ids` is populated at generation instead of backfilled. Net: about 45 counted Gemini calls a run to about 15.
+
+**(4) Same-event merge and coherence, in Stage 2.** Phase 7 did not reject the Nepal (46/9) and Pentagon (12/8) pairs on a branch: both pass all three of its conjuncts. Its candidate set is the top 50 clusters BY SOURCE_COUNT out of the whole corpus, and the partners have 9 and 8 sources. The Stage 2 bench is chosen by RANK, so the small half is present. `pipeline/editorial/same_event.py` merges on two shared specific title stems within 48 hours with an anchor surviving three exclusions: the generic same-day vocabulary, outlet MASTHEADS (the Pentagon pair's only shared entities were `new york` and `york`), and words that are proper nouns in one headline and common verbs in another (Regulators OPEN a probe; Alcaraz into the US OPEN). No numeric branch, no cosine, and never `topic_coherence`. Bias is never averaged: the merge writes the unioned membership, recounts DISTINCT sources (12 + 8 = 19, not 20) and re-runs the pipeline's own aggregation. The coherence pass judges a member against the cluster's MODAL vocabulary, not its title (a title-based rule flagged four differently-worded reports of the same Putin ceasefire), and abstains when a cluster has fewer than three modal stems. It runs BEFORE the merge: run after, it removed six of the eight the merge had just absorbed. 11 merge + 5 coherence fixtures, all from real pairs. Desk furniture ("Morning recap", "Saturday's Final Word", TV listings) is now dropped at INGESTION, which touches no clustering threshold.
+
+**(5) One value, one code path.** **The lean ladder existed three times** (`leanToBucket`/`leanLabel` at 20/35/45/55/65/80, `tiltLabel` at 29/46/53/72, `sigilLabelInfo` at 20/46/80), so a story at lean 60 read "Right" on the card, "Right Tilt" in the popup and "Center-Right" in the Deep Dive, and on 09-06 every confidently-labelled story disagreed with itself. One `storyLeanLabel()` now applies the gate AND the ladder together; `tiltLabel`/`tiltLabelAbbr`/`sigilLabelInfo` are deleted. **Block 4b** lands in the same gate: `LABEL_MIN_MEASURED = 10` derived from sd 12.5 and a 10-point band. Also collapsed: the story permalink (six constructions to one `storyHref`), `compute_confidence` (rescore carried a stale fork that never received the 2026-05-13 recalibration), and `divergence_score` (the enrichment computed an obsolete formula into the same column the ranker owns; harmless only because 8c overwrote it, which stopped being true once the merge passes started calling the enrichment after 8c). `printed_stories.mean_lean/polarization/lean_spread/aggregate_confidence` were copies of `bias_diversity` keys, equal on all 1,297 rows and read by nothing: dropped.
+
+**(6) The standard and the validators.** `docs/EDITORIAL-STANDARD.md` is the positive definition; `pipeline/editorial/standard.py` implements 13 deterministic validators with stable IDs, stdlib-only so `verify_production.py` imports the same module. **One definition, two consumers**: Stage 2 runs them at 8d.3 (regenerate once with the findings named, drop on a second failure) and the gate runs them against served HTML. E-07 (contested terminology) and E-08 (unattributed passive evaluation) are ADVISORY pending the Block 5 decision. `llm_metrics["editorial"]` and the run summary carry the pass rate, regenerations, drops and worst rules.
+
+**(7) Tests that did not exist.** `tests/test_editorial_stage.py` runs 8c through the static export against a synthetic state DB built from committed snapshots, with no LLM key: the editorial half of the pipeline had never been runnable offline, which is how a dead re-rank went unnoticed for weeks. `frontend/test/labels.test.mjs` is the frontend's first unit test (no new dependency; it compiles with the installed `typescript`). All suites run in `auto-merge-claude.yml`, which previously ran none of `tests/`.
+
+Previous: 2026-09-03 (rev 63, cloudflare-sqlite-migration + served-output-gates + brief-paragraphs. **The stack moved off Supabase entirely, and CLAUDE.md had not been updated since rev 62 — everything below the changelog is rewritten to the current reality.** **(1) Supabase is decommissioned (M1-M3, 2026-08-29..09-01).** Supabase hit `exceed_egress_quota` and restricted the whole project (REST returned 402), taking the live feed and brief down for days. The fix was to leave, not to pay. **M1** (`7b5e6b0`) cut the READ path off Supabase: front page, brief, deep dive, weekly and archive are now static JSON on the Pages CDN. **M2** (`e4703b4`, `d9a2aa3`) put the pipeline on a local SQLite working DB behind `VOID_SQLITE_PATH`, emitting static JSON at the end of each run. **M3** (`9542b74`) moved the only live user-write path (ship board + feedback) to a Cloudflare Worker in front of D1 (`worker/`, binding `DB` -> `void-live`). `188caa3` moved the brief MP3 off Supabase Storage into `frontend/public/audio/<edition>/`, committed with the other static data and served from the CDN. `e7e8af3` made the run decommission-ready. **Persistence:** `pipeline_state.db` is restored from the Actions cache (`void-state-v1-`), falling back to the gzipped `void-state-snapshot` artifact each prior run uploads; the legacy Supabase `pg_dump` path is a cold-bootstrap-only fallback. **`migration/PORT_NOTES.md` is the authoritative record** of what Postgres did that SQLite cannot (all RLS, 13 functions/RPCs, 8 triggers, 3 views, realtime, storage buckets — dropped or moved into the Worker). `supabase/migrations/001-079` is now HISTORICAL; nothing applies it. **(2) Served-output quality gates (NEW).** A run of front-page defects shipped while every unit gate stayed green (a summary about the wrong story, orphan quotes, `TheThe`, first-person voice, cards with no href). `scripts/verify_production.py` + `.github/workflows/verify-production.yml` now fetch the LIVE page after each deploy and assert ~22 checks against what production actually serves: quote balance, doubled words, title/summary consistency, summary length + terminal punctuation, orphan subordinate clauses, first-person-outside-quotes, duplicate headlines, every-card-has-href + href shape, card/Sigil lean-label agreement, confidence-not-proxy, wordmark and Top-Story-badge counts, dateline, card-count match. It does NOT roll back (an older broken page is worse); it opens/refreshes a tracking issue. `tests/test_verify_gate.py` covers the checkers. **(3) Editorial hygiene + correctness fixes.** Batch summaries guarded against cross-assignment (the "Sailor's Father" card shipped the Paramount/Warner summary verbatim); daily brief now binds quotes and roles to the same person (an 08-22 brief put Bessent's quote in Kamala Harris's mouth and named her sitting VP); defamation filter drops verification-vouched smears about relatives; dominant op-eds no longer run as news cards when the MEAN opinion score averages them down; near-dup scan widened 50 -> 80; printed edition capped at 50 and mirrored to the display filters, archiving the full top-100 so every displayed card gets a canonical `/story/<uuid>/` permalink. **Clustering Phase 7 (late-stage same-event merge) is DISABLED** (`82c240c`) after it fused unrelated events into one 73-source cluster on the 08-23 live feed; a re-tightened strict conjunctive gate landed but the numeric-metric branch is removed. **(4) On Air + brief.** Male news voice moved Brian -> Andrew (Ava's counterpart in the same Multilingual Neural pair; Brian survives only in `pipeline/revolt/generate_audio.py`). Opinion lens rotation moved from `day_of_year % 3` to a period-6 weekday-drifting cycle so no two days a multiple of 3 apart share a lens. **TL;DR now renders one story per paragraph** and the On Air daily brief alternates two voices per STORY with short orienting hand-offs — see the rev-63 brief entry below. **(5) Bias engine.** Migrations 076-079 (confidence + histogram, cluster disaster severity, lean `unscored`, sources unrated baseline) landed; the confidence read path is locked to a single source (`bias_diversity` JSONB) across every frontend surface. **(6) Deploy.** `deploy-cloudflare.yml` gained a positively-gated 15:00 UTC backstop because the `workflow_run` trigger on the pipeline is known to lag or silently drop.
+
+Previous: 2026-09-03 (rev 63a, brief-paragraphs + two-voice-onair. Written TL;DR and On Air daily brief, committed `6c664d8`. **Gemini was already marking story boundaries with blank lines in BOTH the TL;DR and the audio script**, despite `_USER_PROMPT_TEMPLATE` demanding one sentence per line; the structure was real but unenforced and mostly discarded. **(1) Written TL;DR:** prompt now states the contract the model already follows (one story per paragraph, blank line between), and `_build_retry_suffix` no longer contradicts it (it asked for "16-20 separate lines" against the main prompt's 24-30). `_ensure_sentence_lines` -> `_ensure_paragraph_structure`: the old version keyed off a raw newline count and STRIPPED blank lines while repairing, so the first brief returning <=5 newlines would have flattened the paragraphs permanently; blank-line presence is now the explicit no-op test and the last-resort repair groups sentences 4-per-paragraph. Quality gate counted lines as a proxy for sentences, which breaks once a line is a whole story: it now measures sentences and paragraphs separately and warns on zero paragraph breaks. **(2) Frontend:** only `SkyboxBanner` honored the breaks; `MobileBriefPill`, `OnAirPage`, `FloatingPlayer` and `PaperContent` each interpolated the raw string into a single `<p>`, so HTML collapsed all 9 breaks into one ~4,200-char wall (this was the visible bug on mobile). NEW `app/lib/briefText.ts` (`splitBriefParagraphs`) is shared by all five, with `p + p` spacing per surface; the mobile teaser now comes from the first paragraph (the lead story) instead of the first three sentences. **(3) On Air:** audio prompt moved from per-LINE A/B ping-pong to per-STORY turns (one host holds a story 3-5 lines; the other adds at most one line, and only with a new fact), each story opening with a short orienting bridge with editorializing bridges banned by example; target 950-1150 words. `_script_to_dialogue` PRESERVES blank lines as story boundaries (it was dropping them, so boundaries never reached the synthesizer); `_synthesize_edge_tts` places a 350ms pause at a hand-off vs the 60ms within-story beat, with boundary flags tracked against successfully synthesized segments so a failed TTS turn cannot slide every later pause onto the wrong seam. The daily brief left `news_single_voice` for two voices via the new opt-in `news_voice_b_from_opinion`: A anchors, B takes alternate stories AND reads the opinion; weekly/revolt/history keep their current behavior. **Known follow-up: the 8 MB export gate in `audio_producer.py:1160` still reads `# 8MB Supabase limit`** — audio goes to Pages static now, so the number tracks no real destination limit, but the gate is live and can still drop the Opinion segment and null `opinion_start_seconds` at the new word target.)
+
+Previous: 2026-08-09 (rev 62, frontend-prerender + seo + shareable-deep-dive-routes. **The front page is no longer an empty client-fetched shell. Six frontend/SEO changes shipped to `claude/launch-scaffolding`; `next build` clean.** **(1) Front page + /sources + /about prerender at build time.** `app/page.tsx` is now an async Server Component that fetches the top-50 at build via `app/lib/serverFeed.ts` (build-env Supabase, UTC-deterministic dateline/timestamp computed ONCE, fail-loud `throw` when fewer than 20 displayable `>=3`-source stories come back so a blank front page can never deploy) and passes them to the client `HomeContent` as `initialStories` props. HomeContent no longer refetches the feed on mount, so first paint is byte-identical to the server render (kills the old React #418 hydration risk). `app/lib/feedMapping.ts` holds the shared cluster->Story mapping (`mapClustersToStories`, `FEED_ENRICHED_FIELDS`/`FEED_BASE_FIELDS`) used by BOTH build and client. `/sources` is a server `page.tsx` that reads `data/sources.json` via fs at build + a client `SourcesClient.tsx` (keeps filter/hover/search, revalidates from Supabase after mount); `/about` is a thin server wrapper exporting metadata over the client `AboutExperience`. Served HTML now ships the real feed (was an empty ~33KB shell). **(2) SEO.** Per-route metadata via `app/lib/siteMeta.ts` (`pageMetadata()` -> distinct title/description + absolute trailing-slash canonical for /, /sources, /about, /onair, /ship; `SITE_URL=https://news.voidvision.org`). `/paper` + `/games` are 301-hidden and intentionally excluded. `meta keywords` removed. NEW `app/sitemap.ts` (force-static; the 5 live routes + every archived `/story/<id>/`, latest edition decayed daily/0.6 vs older monthly/0.3) and `app/robots.ts` (allow-all + sitemap + host). JSON-LD: `ItemList` on / (top 30 displayable; items still point at the `?story=` inline deep link, a documented follow-up to swap for `/story/` canonicals), `NewsArticle` per story page. **(3) Shareable Deep Dive routes.** NEW `app/story/[id]/page.tsx` prerenders the WHOLE `printed_stories` archive (migration 075) via `generateStaticParams` (`force-static`, `dynamicParams=false`; empty archive emits one `__no_archive__` 404 sentinel so an empty archive never fails the build); the permanent permalink = `printed_stories.id`. `app/lib/archive.ts` is a module-level single-fetch cache + archive-row->Story / members->sources mappers, shared by the page, its metadata, and the sitemap (no N+1). `app/components/StandaloneDeepDive.tsx` renders a one-page Deep Dive (own NavBar masthead, "Go to today's feed", share copies the canonical permalink); `app/components/SourceLeanColumns.tsx` is the shared Left/Center/Right source roster. `Story.permalink` added to types; `serverFeed` attaches each card's permalink from the latest printed edition (`getLatestPermalinkMap`, keyed cluster.id == printed_stories.source_cluster_id, archive miss just leaves it undefined). Feed cards (`StoryCard`/`LeadStory`/`MobileStoryCard`) are now crawlable `<a href="${BASE_PATH}/story/...">` when archived, with the in-app inline (desktop) / full-page (mobile) view preserved on plain click. Desktop opens a shared/archived story as this standalone page, NOT inline. **(4) Deep Dive UX split (earlier this session):** desktop = `InlineDeepDive` inline-expand; mobile = full-page `DeepDive.tsx` (Void masthead, compact Story/Spread segmented switch, back-to-feed, prev/next). Mobile Spread shows spectrum-aligned Left/Center/Right scrollable source columns (via `leanToBucket`) instead of a flat roster; the loading skeleton shows only while genuinely fetching; the dd-cascade stagger was removed. **(5) CI.** auto-merge `build-check` now runs the DATA-BACKED build with `NEXT_PUBLIC_SUPABASE_URL`/`ANON_KEY` in the env (fail-loud serverFeed would otherwise throw); `deploy-cloudflare.yml` gains a `workflow_run` trigger on the "News Pipeline" workflow (guarded `conclusion=='success'`) so the prerendered feed + archive pages redeploy after each daily 11:00 UTC run instead of going stale. **(6) Service worker.** `sw.js` cache bumped to v5, navigation handler is network-first with `fetch(cache:'reload')` (bypasses the browser HTTP cache so an old deploy can't stick); `/sw.js` + `/manifest.json` served `no-cache, must-revalidate` in `_headers`; SW registered with `updateViaCache:'none'` in `app/layout.tsx` (the custom-domain Cloudflare zone rewrites `.js` to a 4h TTL that `_headers` can't override). **Open follow-up:** per-story build-time OG images (each share currently inherits the static site OG image; `/story` og:image intentionally omitted for now).)
+
+Previous: 2026-08-06 (rev 61, killed-run-coverage + junk-ingestion-filter + overmerge-split-2 + near-dup-widen. Four fixes committed today to `claude/launch-scaffolding`; all validated offline (`py_compile` clean) and all take effect on the NEXT daily run (11:00 UTC), not the currently-displayed feed. **(1) Summaries: coverage survives a killed run** (`cluster_summarizer.py`). Today's over-budget run was watchdog-killed mid-floor at 131 min, leaving 6/50 cards `tier=None` (incl. FDA #4, Crockett) because rev-60's `ensure_top50_summary_floor` tried the SLOW LLM first per card. Restructured into two passes: **Pass 1 (NO LLM)** gives every displayed top-50 null card an instant on-topic rule-based summary (`_generate_cluster_summary` + `normalize_headline`, `summary_tier='rule_based'`, headline fallback when no article text) so non-null coverage is guaranteed in seconds before any slow work; **Pass 2 (upgrade, budget-permitting)** re-visits the rule_based cards in rank order, one Gemini attempt each while `calls_remaining()>0`. A kill mid-pass-2 leaves every remaining card with its clean pass-1 summary; `still_null` is now structurally 0 for any card with a title; content-hash cache key unchanged. **This corrects rev-60's 8d.6 description — the floor is now rule-based-FIRST, not LLM-first.** pipeline.yml timeout is already 150 min (no budget change needed). **(2) Feed: evergreen/junk ingestion filter** (`categorizer/newsworthiness.py`, NEW; wired into `main.py` as step 3c, after the 3b URL filter, before step 4 scrape). Scored rule-based `drop_evergreen_junk()` drops guides/how-tos, loyalty-program promo (MileagePlus etc.), live market-ticker index pages, horoscopes, puzzles, lottery results. Drops at score>=3; a hard news-event verb/casualty signal raises the bar to >=6 (so "Sensex crashes 2,000 points" is KEPT, the "Sensex/Nifty ... Live" ticker page is dropped). $0, deterministic, fail-open on missing title, no-op on `--recluster-only`. Only stops NEW junk at ingestion (rows already in the 36h clustering window untouched). **(3) Clustering: residual over-merge bags** (`story_cluster.py`, Phase 5). The Aug-5 gross force-split (`n>=45 AND entity_conv<0.40 AND title_jac<0.12`) missed subtler bags. New pure helper `_overmerge_split_reason()` returns `gross|title-minority|feed-dump|None` with two new coherence-gated triggers — title-vs-content coverage (via the ranker's `topic_coherence`) and single-source dominance (`dominant_publisher_share` / source ratio) — plus a coherent-single-event OVERRIDE that runs FIRST (`entity>=0.80 AND title-representative>=0.50` -> never split). `MEGA_OVERMERGE_ARTICLE_FLOOR` lowered 45 -> 30 (split still never fires on size alone; all triggers coherence-gated; the stricter-TF-IDF collapse-to-1 backstop still returns a coherent pile whole). validate-clustering unchanged at 36 CORRECT / 0 ACCEPTABLE / 3 WRONG / 0 CATASTROPHIC, zero new regressions (the 3 WRONG remain the documented obsolete section-classification fixtures). **(4) Ranker: near-dup guard widened** (`feed_ranker.py`, section 3.6). Today's top-50 shipped Michigan primary (#7/#29) and Ukraine refinery (#1/#44) as unmerged same-event duplicate pairs. Adds a SPECIFIC-stem rule: a pair sharing >=3 raw stems collapses when >=2 are SPECIFIC (high-IDF entity/topic stems, via `_salient_title_stems` minus a new `_COMMON_ACTION_WORDS` set), gated by an elective-office-conflict guard (`_contest_anchor_conflict`) that keeps distinct same-state races separate (Senate vs Governor primary). Existing HARD (>=4) and SOFT (>=3 +65% containment) raw-stem rules unchanged.)
+
+Previous: 2026-08-05 (rev 60, launch-rebrand + history-78 + coverage-floor + clustering-overmerge-split. **Branding: the 2026-08-03 rebrand from terminal-style `void --X` naming to old-school newspaper naming is now reflected in this doc's LIVING sections. Master brand of the app = Void News (title case); sections use PLAIN names (Weekly, History, On Air, Opinion, Sources, Ship, Deep Dive, Games, Revolt, The Brief — the old "void --tl;dr"; short tag "TL;DR" kept). Void is the parent/umbrella brand; Void News is a product; Void Vision (CEO's YouTube channel) is a coming sibling product; Weekly/History/On Air/etc. are SECTIONS of Void News. Only user-facing text changed: internal identifiers left verbatim (routes `/weekly` `/history`, `.void--news` classes, `void-news-*` storage keys, `/void--news` BASE_PATH default, the `voidnews.org` domain). The dense rev-46-through-59 changelog below is a dated historical record and keeps its original `void --X` wording.** **(1) History batch 3 (2026-08-05):** 10 events added (the-reformation, watergate, chernobyl-disaster, spanish-civil-war, suez-crisis, algerian-war, chinese-civil-war, great-leap-forward, iran-iraq-war, cuban-revolution) → catalog now **78 events** (was 68; batch 1 took 58→68 in ~2026-07/08). Same flow as prior batches: opus-authored w/ cited sources → historiographic-auditor balance pass → cross-linked → media-archaeologist public-domain Wikimedia hero+gallery → slugs added to `YAML_SLUGS` in `frontend/app/history/[slug]/page.tsx` → `load-history-content.yml` workflow_dispatch → verified 200, all 10 live rendering real content. **(2) Clustering Phase-5 over-merge force-split** (`story_cluster.py`): today's run had systemic over-merge into ~50-article wire-desk "bags" (8 mis-titled bags in the top-50). Fix: oversize clusters (`n_articles>=45`) with `entity_convergence<0.40 AND avg_title_jaccard<0.12` are force-split, source-count-INDEPENDENT so a coherent large single-event cluster (e.g. a 112-article Iran-Hormuz story) stays whole while an incoherent 50-article bag splits; new `MEGA_OVERMERGE_ENTITY_CONV_FLOOR` / `MEGA_OVERMERGE_TITLE_JACCARD_FLOOR`, masthead publisher stop-tokens, and a doubled-masthead "X - X" garbage-title pattern. validate-clustering CI green (36/0/3/0, zero new regressions; the 3 WRONG remain the documented obsolete section-classification fixtures). Takes effect on the NEXT daily run (11:00 UTC), not the currently-displayed feed. **(3) Summaries: GENUINE 100% top-50 coverage** (`main.py`, `cluster_summarizer.py`, migration 071, frontend guard). The 2026-08-05 run measured only ~70% coverage (15/50 top cards `tier=None` raw scraped excerpts with title↔summary mismatch) because the summary + floor passes ran BEFORE the final ordering, so cards promoted into view shipped raw excerpts. **This corrects the earlier "top-50 coverage 100%" claim, which was aspirational until this rev.** Reordered: 8d.1 is now a lightweight pre-order title-clean; NEW **8d.6** runs the full coverage floor AFTER 8d.5's final ordering (catches promoted cards); NEW **8d.7** reconciles the flash tier to the FINAL top-10. `ensure_top50_summary_floor` gains a `title_only` mode + a headline fallback so `still_null` is structurally impossible; rule-based summaries are stamped `summary_tier='rule_based'` (migration 071 widened the CHECK). Frontend `summaryHygiene.ts` (`isRawExcerpt`/`cleanFeedSummary`) applied in HomeContent so a raw scraped excerpt never renders. **(4) Ship + nav polish:** /ship hides empty board columns on desktop; the Known Observations collapsed-row overflow was fixed (padding moved off the animated grid child so the 0fr accordion closes to true zero); History/Weekly nav links gained an accent-underline + Sigil lean-sweep hover (kept as internal routes, no external-link cue — CEO decided against subdomains for now). **(5) Social/IG pipeline: auto-posting PARKED, generate-only for manual upload:** the new Void social accounts (IG voidvision.media / X voidvisionx / Bluesky voidvisionmedia) get NO auto-posting. `ig-pipeline.yml` crons removed (workflow_dispatch only, default `mode=generate`); `ig-metrics.yml` / `ig-token-refresh.yml` crons commented out; `ig_publisher.py` / `cross_post.py` kept but parked (manual `mode=publish` only). NEW `pipeline/social/ig_export.py` bundles a generate run into `social_out/<date>/<news|weekly|history>/<NN-slug>/` (rendered slide PNGs + `caption-instagram/x/bluesky.txt` + `intent.txt`) with a self-contained `index.html` preview, uploaded as a downloadable workflow artifact. `ig_caption.py` now also emits `caption_x` (<=280) / `caption_bluesky` (<=300) / a one-sentence `intent` (director's note) from the same Gemini call (migration 074 adds the three `ig_posts` columns; code degrades gracefully until applied). The 3 `*-social` skills rewritten to the download-artifact-then-upload-by-hand flow. **(6) Launch-light trim + scraped-image copyright fix (later 2026-08-05):** For a lighter launch, **History and Weekly are HIDDEN** (nav links removed from NavBar spinoffs / Footer / MobileTabBar [now Home/On Air/Menu] / MobileSidePanel; `_redirects` 301s `/history*` + `/weekly*` -> `/`; routes/components/`data/history`/CSS all kept intact behind the redirects, reversible when released as features), and **`/ship` reverts from the transparency board to the simple `FeedbackForm`** (same `/ship` URL + `ship_requests` write path with honeypot + rate limit; `ShipBoard.tsx` kept but uninvoked; nav label -> "Feedback"). **Copyright:** the `cluster_image_cacher` (which downloaded, WebP-re-encoded [stripping EXIF/IPTC copyright-management info], and re-hosted scraped news-publisher og:images into Supabase Storage = reproduction + a DMCA 1202(b) exposure per image, wire photos highest-risk) is **RETIRED** (main.py step 8e no longer invokes it; code kept in `media/cluster_image_cacher.py`). The News feed already rendered text-only; Weekly was the only live consumer of `cached_image_url` and is now hidden. One-off `pipeline/admin/purge_cluster_images.py` + `.github/workflows/purge-cluster-images.yml` emptied the `cluster-images` bucket (812 objects) and nulled `cached_image_url`. When Weekly returns as a feature it will use public-domain Wikimedia (hotlinked + attributed), like History, not this cacher. **Live launch surface now: News (text-only) + Feedback + Sources + About + On Air**; History / Weekly / the Ship board are hidden and reversible.)
+
+Previous: 2026-07-05 (rev 59, editorial-rank-integrity. **CEO-reported: 26-source ei=5 Brooklyn-Bridge spectacle led the feed over the 69-source Khamenei funeral (12 us_major + 51 intl outlets — the day's most-covered story, at #5) and the same SCOTUS transgender ruling sat at #3 AND #4. Root causes + 4 fixes, all in feed_ranker (single owner) and replay-verified against the real 07-05 top-15:** **(1) Editorial-importance nudge:** Gemini's per-cluster `editorial_importance` (1-10) now multiplies rank_world at ±3%/point around pivot 6, clamped [0.88, 1.12] — a nudge that reorders near-ties (ei=8 SCOTUS over ei=5 spectacle) but can't bury broad coverage; rerank threads the field through its update dicts. **(2) Near-duplicate story guard:** among the top 25, two titles sharing >=4 Porter-stemmed content words (or >=3 covering >=65% of the shorter set — reuses clustering's `_title_word_stems` via lazy import) are the SAME story; the lower-sourced cluster decays to leader×0.72 and logs `_near_dup_of`. The same-event cap (2 per event, kept) can't catch these: it permits two ANGLES; this kills literal re-tellings (the real SCOTUS pair shares exactly 4 stems → demoted #4→#8 in replay). **(3) Lead-breadth gate:** slot #1 requires source_count >= 0.45× the top-10 max — the front page demands verification breadth; a high-velocity spectacle waits at #2+ until coverage builds (promotes the highest-ranked top-5 story with breadth). **(4) Step 8d.5 (main.py, NEW):** rerank (8c) applied feed ordering with YESTERDAY'S story_type/ei/titles — 8d then rewrote all three for the top-50, so gates judged stale data (an 8d-tagged `incremental_update` sat ungated at #2 all day). After 8d, re-fetch the top-80 and re-run `apply_feed_ordering` on the fresh metadata, writing changed rank_world back (headline_rank is stored UNGATED since rev 56, so re-initializing re-applies every gate exactly once); runs BEFORE the image cache so the top-15 images match the final order. Replay of the real 07-05 rows: SCOTUS (ei=8) #1, bridge #2, funeral #3, dup SCOTUS demoted to #8 flagged near-dup, crypto incremental finally gated 65.2→50.4, strictly-decreasing verified; boundary harnesses (no-ei promotion, broad-lead no-op, small-pool skip) clean. `py_compile` clean.)
+
+Previous: 2026-07-05 (rev 58, run-verified-2 + mobile-full-bleed. **07-05 run verified rev-57 live: title dedup removed 48 old clusters (FIRST time the feature ever fired since rev 47), TL;DR shipped 19 real lines (re-split fallback + prompt fix holding), top-50 coverage 100% (28 new + 22 cached, cache trending up), 0 errors.** Residuals fixed: **(1)** continuing-story matching STILL logged 0 despite the Khamenei-son continuation sitting at 7d-pool #4 — possessive tokens never matched bare forms ("iran's"/"leader's" vs "iran"/"leader"); `_brief_title_keywords` now strips 's/apostrophes before stemming (verified against the real 07-05 titles; negatives stay clean) and "amidst" joined the stopwords. **(2)** archive retention hit its second consecutive 57014 statement timeout (DB 413 MB, 82% of free cap): the single-statement DELETE (which also made PostgREST return every deleted row) replaced with id-paged batches of 500, hard-bounded at 100k rows/run. **(3) Mobile full-bleed (CEO-reported iPhone PWA dead margins):** `--canvas-max: min(92vw,1600px)` was designed for wide monitors but on a 390px phone burned ~31px of margin BEFORE the 16px container gutters — 16% of screen width unused. New `@media (max-width:767px){ :root{ --canvas-max:100% } }` in tokens.css makes every route (nav/feed/footer/weekly/ship/history all consume the token) full-bleed on phones with the 16px padding as the only gutter; tablet/desktop keep 92vw. Verified via local static build + Playwright at 375/390/412/430/768 (page-main/nav/footer widths = viewport on phones, 92vw resumes at 768; live-data feed cards 16px-gutter-exact; zero horizontal scroll on / weekly history sources about paper ship). Safe-area insets already correct (nav top, tab-bar bottom; manifest locks portrait). Known cosmetic: /about layout-viewport reads 400 on a 390 emulator (Chromium auto-fit quirk, no element >390px, invisible). Deferred: summit-pair rewire (07-04/05 both showed live funeral-cluster fragmentation), 7d-brief pre-rerank story selection diverging from the post-rerank homepage top-10 (brief describes a different mix than the displayed feed; structural, needs a 7d-after-8c redesign), DB size trajectory.)
+
+Previous: 2026-07-04 (rev 57, run-verified-gap-fixes. **Rev-56 verified against the 2026-07-04 production run (0 errors; top-50 coverage 100%, 31 new + 19 cached — the upgrade-aware cache now hits; fresh plain-text brief shipped, no JSON failure; word-boundary opinion gate + detailed hard-gate logging confirmed live). Three gaps found in the run log, fixed:** **(1)** main.py 8b title-based cross-run dedup imported `_title_words`, a name that NEVER existed in story_cluster — the ImportError was swallowed by the outer try every run since rev 47, leaving title dedup permanently inert; now aliases the real `_title_word_stems`. **(2)** The plain-text TL;DR shipped as ONE line (the JSON-era "separated by \\n" instruction confused the model; the retry made it worse, 5→1 lines): prompt rewritten (headline/body/audio labels no longer reference JSON field names; FORMAT demands one sentence per line as real line breaks; retry suffix repeats the three-section contract), plus a deterministic `_ensure_sentence_lines` fallback (abbreviation-safe sentence splitter, no-op when already structured) applied before BOTH the quality gate and storage, and `_parse_brief_sections` normalizes literal backslash-n artifacts. **(3)** Continuing-story matching logged "10 new, 0 continuing" despite an obvious heatwave continuation: the AND-only rule (2 shared words AND containment>=0.5) missed real cases ({europe, heatwave} = 2 of 5 → 0.4); now shared>=3 matches outright, shared>=2 needs containment>=0.5, and the previous-title fetch logs how many titles it actually got (was silently swallowed). Offline harnesses: sentence-splitter (U.S./E.U./Gen. abbreviations), literal-\\n parser case, heatwave-continuation + no-false-positive matching, full mock brief (paragraph in → 17 lines out). Run-log residuals noted, not code: DB at 411 MB (82% of free cap), archive-retention RPC statement timeout, opinion audio 356w < 450 target (soft-accepted by design).)
+
+Previous: 2026-07-04 (rev 56, four-subsystem-audit-fixes. **Full audit of clustering / summarization / ranking / daily brief; 20 verified defects fixed across 6 files.** **Ranking (single-owner gates):** rerank.py now threads `story_type` into the update dicts so `STORY_TYPE_GATES` actually applies in the FINAL rank_world write (the entertainment gate NEVER reached the DB before; incremental/ceremonial were pre-applied to headline_rank instead) and the duplicate pre-gate is deleted; main.py triage no longer multiplies headline_rank ×0.75 itself (was compounding with feed_ranker's gate to 0.5625×) and only sets the flag; main.py's dead pre-triage story-type block and its SECOND divergent same-event cap (max-3/0.75-floor vs feed_ranker's max-2/0.80-decay) are deleted; feed_ranker owns gates + caps, applied exactly once. **Summarization (8d premium quality):** step 8d now backfills `source_name`+`tier` onto articles (prompts were degrading to "mixed sources"/"Source N"; the flash top-10 got POORER prompts than throwaway 7b); the claims-task field-count `str.replace` needle contained a literal backslash+newline and NEVER matched (prompt said "exactly seven fields" while TASK 8 demanded ten), fixed to the rendered text; consensus/divergence points now pass through `sanitize_editorial_text` (em dashes reached the Deep Dive); one failed article batch no longer aborts the whole 8d pass; the flash band is now a `premium_used` counter over SUMMARIZABLE clusters (op-eds/thin rows no longer burn flash slots); 8d over-fetches limit+20 and mirrors the frontend's source_count>=3 window so the displayed tail is covered; step 8b carries `summary_tier` forward across the dedup row-swap when `summary_article_hash` matches (the cross-run premium cache could never hit before; every run re-burned ~10 flash calls). **Clustering:** `_TITLE_STOPWORDS` was defined TWICE; the rich O4/O9 content-stopword set was silently shadowed by Phase 3's small set (renamed `_HEADLINE_CONTENT_STOPWORDS`); the garbage-title list regex `{2,}`→`{3,}` (it force-split real 3-item headlines like "Britain, France, Germany Trigger Sanctions"; the Spans-pattern gained Oxford-comma support to keep true mash-ups caught); Phase 5's O3 over-merge flag now enforces `MEGA_COHESION_MIN_SOURCES=40` (defined-but-unused; wire-amplified 48-art/12-src real stories were eating the 0.65× penalty) and finally receives `source_map` via the `_source_map` stash so `tier_concentration` is measured (was pinned 1.0, deflating every cohesion score 15pts); module + cluster_stories docstrings now tell the truth (production = phases 1,2,3,4,5; 2.5/2.55/2.6 parked; **known gap: `_SUMMIT_PAIRS` Trump-Xi fragmentation protection has NO live replacement**). **Daily brief (rev-54 pattern ported):** TL;DR + opinion now generate PLAIN TEXT (`_smart_generate_text` on flash + `_parse_brief_sections`: headline line / body / `===AUDIO SCRIPT===` delimiter with A:-line fallback); the daily was the last long-prose-in-JSON consumer, where one unescaped quote silently shipped YESTERDAY'S brief with today's timestamp; quality-gate retries now stash the attempt-0 output and accept-with-warnings if the retry call fails (was discarding a usable brief for carry-forward / rule-based stub); written fields (`tldr_headline/tldr_text/opinion_headline/opinion_text`) are deterministically sanitized per-line (em-dash ban enforced, audio scripts exempt); the opinion prohibited-terms check uses word boundaries (quoted "extremely" no longer burns a flash retry); [NEW]/[CONTINUING] tagging works during pipeline runs via previous-brief TITLE matching (was _db_id-only, which is empty pre-insert so everything read [NEW] and repeat-deprioritization was dead); main.py's empty-feed carry-forward filters `tldr_headline NOT NULL` (could resurrect a stub as today's brief); refresh_brief.py's insert-failure fallback NO LONGER deletes the edition's entire brief history (one bad dispatch could blank the homepage brief) and partial modes carry `tldr_headline`. rerank's 48h article window documented as coupled to the 2-day retention. `py_compile` all 6 files + offline harnesses (prompt-needle render test, section parser 6 cases, sanitizer multiline, garbage-regex legit/garbage suites, cohesion tier plumbing, O3 floor, brief+opinion mock end-to-end incl. stash rescue) clean. Deferred: summit-pair rewire (needs fixture-backed design), dedup cosine-confirmation tautology (harmless).)
+
+Previous: 2026-06-28 (rev 55, weekly-editorial-unify. **Three weekly polish items.** **(1) One editorial.** The page had two overlapping editorial elements: rev-53's short ~130w "Editor's Note" in the cover rail and rev-52's ~450w argued "void --Editorial" column after Perspectives. Unified to ONE: the argued column (`opinion_text`/`opinion_headline`/`opinion_lean`) now renders italic in the cover rail (`RailEditorial`, label "void --Editorial", muted lens line), and the standalone `EditorialOpinionSection` + the short `EditorNote` are removed. Renders from existing Issue #14 data (no regen needed). Backend `_generate_editor_note`/`EDITOR_NOTE_SYSTEM` + its call + the `editor_note` upsert key deleted (Sunday flash −1 call; `editor_note` DB column left nullable). Audio path (`_generate_weekly_opinion`) unchanged. **(2) Pull-quotes full width.** `.wk-pullquote` changed from a floated ~48% sidebar to a full-width centered block break across the cover essay column (top/bottom hairline rules, larger italic). **(3) "By the Numbers" killed.** `NumbersCallout` + `.wk-numbers*` removed; cover generation no longer requests a NUMBERS block (`COVER_SYSTEM` trailing-NUMBERS instruction + `want_numbers` dropped together so nothing leaks into the essay). `editor_note`/`cover_numbers` trimmed from `fetchWeeklyDigest` cols + `WeeklyDigestData`. Rail widened `minmax(200,260)`→`minmax(240,300)`. `py_compile` + `tsc` + `next build` clean.)
+
+Previous: 2026-06-28 (rev 54, weekly-essay-plaintext. **Weekly essays hardened against Gemini JSON-parse fragility.** The cover/opinion/tech/sports/recap generators asked for JSON, but long prose with an unescaped quote, stray newline, or truncation broke `json.loads` (`Unterminated string`, `Expecting ',' delimiter`) → the section dropped to a stub (covers fell back to the raw cluster summary; opinions were silently skipped). **(1)** New plain-text path in `weekly_digest_generator.py`: `_parse_essay` (first non-empty line = headline, rest = body, optional trailing `NUMBERS` block of `value | context` lines → `{stat,context}`), `_gen_essay` (wraps `_smart_generate_text`), and `_parse_recap` (`###`-delimited story blocks → `{stories:[{headline,summary}]}`). Cover/opinion/tech/sports/recap now generate PLAIN TEXT and parse out the same keys callers already consume — the pattern already used for the audio script + editor's note. No JSON, no added LLM calls (Sunday flash unchanged ~18/20). `_clean_headline` only strips a `HEADLINE:`/`TITLE:` label when a colon follows, so a real headline like "Headline inflation" survives. **(2)** Conservative shared safety net in `gemini_client.generate_json`: on `JSONDecodeError`, retry once on the outermost `{...}` substring (catches wrapper-prose / extra-data cases) before returning None; never corrupts a valid parse, no extra API call. Helps the remaining JSON callers (rev-52 weekly opinion editorial + the daily pipeline). `_smart_generate` (JSON router) kept for the rev-52 editorial. `import re` added. `py_compile` + offline parser harness (embedded quotes/em-dash/NUMBERS block/missing-headline/`###` recap all asserted) + brace-extraction unit test + `next build` clean.)
+
+Previous: 2026-06-28 (rev 53, weekly-magazine-layout. **void --weekly redesigned to read like a magazine.** Built on top of rev 52 (weekly-editorial-opinion); coexists with that branch's `void --Editorial` argued column (after Perspectives) — this rev's **Editor's Note** is a distinct short magazine note in the cover rail, not the argued opinion. **(1) Cover zone** is now a 2-col grid (`.wk-cover-zone`): the two cover features stacked in the wide column beside a thinner sticky **Editor's Note** rail that flows alongside both (drops below on mobile). **(2) Editor's Note** is a NEW generated field: migration `065_weekly_editor_note.sql` adds `editor_note TEXT` (renamed from 064 to avoid collision with rev 52's `064` opinion migration); `_generate_editor_note` (flagship-flash, `model=_FLASH_MODEL`, ~130-word italic editorial, prose-only/no-em-dash) wired into `generate_weekly_digest` + upsert (Sunday flash now ~5: 2 cover + 1 recap + 1 note + 1 rev-52 opinion ≈18/20 RPD). Rendered italic in the rail (`EditorNote`); rule-based fallback "" so layout degrades. **(3) By the Numbers** callout (`NumbersCallout`) renders the previously-orphaned `cover_numbers`, normalizing both key shapes (`value??stat`/`label??context`). **(4) Pull-quotes**: `pickPullQuote` floats one italic quote per cover essay (from existing text, no gen). **(5) Perspectives** now 3-up side-by-side (Progressive | Pragmatic | Conservative) at ≥768px with neutral column rules, stacking on mobile. **(6) Earlier same-rev cleanups:** hero headline forced to accent red (`--wk-accent`) all modes/resolutions; embedded `**TIMELINE**` essay block killed (COVER_SYSTEM rewritten prose-only + frontend `stripTimelineFromText`); masthead de-reddened to ink-on-paper. Week in Brief unchanged. `editor_note` added to `WeeklyDigestData` + `fetchWeeklyDigest` cols. `py_compile` + `next build` clean. Regenerate Issue #14 via `workflow_dispatch` to populate `editor_note`.)
+
+Previous: 2026-06-28 (rev 52, weekly-editorial-opinion. **void --weekly gains a single ARGUED editorial, mirroring the daily void --opinion.** The weekly already shipped a three-lens "Perspectives" trio + a two-voice news broadcast, but no one argued column. **(1) Generator** (`weekly_digest_generator.py`): new `_generate_weekly_opinion()` runs after the week recap, before audio. Two Gemini calls — the opinion `{headline, text 450-650w}` as **flash** JSON (`model=_FLASH_MODEL`, the flagship tier alongside covers + recap), and the spoken monologue (600-800w) as **flash-lite** plain text via `_smart_generate_text` (plain text dodges the `json.loads` fragility of a long em-dash/quote-heavy script — the same failure fixed earlier for the weekly news script; falls back to text+bookends if the call returns nothing). New `_fetch_daily_opinions()` pulls the week's daily columns from `daily_briefs`; the prompt feeds them in and FORBIDS restating them, so the weekly argues the week-length through-line no single day could see. Lean rotates by `issue_number % 3` (`_get_week_lean`). Prompt mirrors the daily's rigor: show-don't-tell, kill-scaffolding, NO em dashes in prose, institutional "we", lean lens; banned-term retry reuses the file's `PROHIBITED_TERMS`. **(2) Audio** (`produce_audio` already supported the opinion path): weekly `voices["opinion"]` flipped from host_a (Sadaltager→Brian male) → host_b (Achernar→**Ava female**), matching the daily TL;DR-male / opinion-female split; the monologue is appended after the news read and `opinion_start_seconds` captured so the shared player's News/Opinion seek tab lights up for weekly. **(3) Migration 064** adds 7 nullable cols to `weekly_digests` (`opinion_text`/`opinion_headline`/`opinion_lean` [CHECK left|center|right] / `opinion_audio_script` / `opinion_start_seconds` + `audio_voice`/`audio_voice_label`) — DISTINCT from the existing `opinion_left/center/right` "Perspectives". **(4) Frontend:** `WeeklyDigestData` + `fetchWeeklyDigest` carry the 6 client cols; `AudioProvider.playWeekly` threads them into the brief (was 6 hardcoded nulls), lighting the Opinion seek tab; new `EditorialOpinionSection` in `WeeklyDigest.tsx` renders "void --Editorial" (lens tag + headline + body) after Perspectives, before Week in Brief; `.wk-editorial*` styles in `weekly.css` (lean-colored side rule). Net Sunday LLM cost +1 flash, +1 flash-lite (~17/20 documented flash cap; real flash RPD ~250). `py_compile` + offline generator dry-run (flash/flash-lite routing, banned-term retry, bookend fallback all asserted) + `tsc` + `next build` (`/weekly` + `/weekly/world` prerender) clean.)
+
+Previous: 2026-06-26 (rev 51, weekly-page-restore. **void --weekly un-archived.** The page, component (`WeeklyDigest.tsx`), CSS (`styles/weekly.css`), types, and Supabase fetchers (`fetchWeeklyDigest`/`fetchWeeklyArchive`) were always intact — the archive was (a) nav links commented out (CEO 2026-05-15) and (b) the Sunday cron disabled. **(1) Nav restored:** re-added the `/weekly` link in `NavBar.tsx` (nav-spinoffs, beside History), `Footer.tsx` (footer-products), and `MobileSidePanel.tsx` (Read section). `next build` clean, `/weekly` + `/weekly/world` prerender. **(2) Flagship-only flash routing.** The weekly makes ~11 Gemini calls/run, all silently on flash-lite before (`_smart_generate` never passed a `model`). `gemini-2.5-flash` free tier = 20 req/DAY shared per key, and the daily pipeline (`cron '0 11 * * *'`, runs Sunday too) already burns ~13 flash/day, leaving ~7 slots. So full-flash weekly (11) would blow the cap. Fix: `_smart_generate` gained a `model` param threaded into `gemini_generate_json`; only the 2 cover essays (`_generate_cover_stories`) + the week recap (`_generate_week_recap`) pass `model=_FLASH_MODEL` (~3 flash calls → Sunday ≈16/20 RPD), opinions/tech/sports/audio stay flash-lite. The returned `gen` label is now honest (`gemini-flash` vs `gemini-flash-lite`) instead of always `gemini-flash`. **(3) Schedule still manual:** cron in `weekly-digest.yml` left commented; first issue generated via `workflow_dispatch` and verified before re-enabling. **Out of scope (follow-up):** "Most Contested" still never renders — `fetchWeeklyDigest` doesn't select `contested_stories` and migrations 034/035 don't define that column (needs a generator + migration, not just a select). `py_compile` clean; `_FLASH_MODEL` import resolves.)
+
+Previous: 2026-06-24 (rev 50, drop-groq-top50-coverage. **Groq removed entirely (CEO: unreliable) + summarization realigned to the displayed feed.** **(1) Groq retired.** Deleted `groq_client.py`, dropped `groq` from `requirements.txt`, stripped every Groq branch/import from the three routers (`cluster_summarizer._smart_generate_json`, `daily_brief_generator._smart_generate_json`, `weekly_digest_generator._smart_generate`) + their `is_available`/`calls_remaining`, and removed `GROQ_API_KEY`/`GROQ_MODEL` from `pipeline.yml` (both steps), `refresh-brief.yml`, `weekly-digest.yml`, `.env.example`. Gemini is now the SOLE LLM: fallback chains are flash → flash-lite (premium) and flash-lite only (no further net; a failed slot keeps its prior/rule-based summary rather than risk bad output). **Root-cause win:** `summarize_clusters_batch` defaulted to `prefer_provider="groq"`, so step 7b's top-30 summaries hit GROQ first; its failures were a primary source of the raw-excerpt (`tier=None`) cards. Default flipped to `"gemini"`, so 7b now summarizes on flash-lite. **(2) Summarized set == displayed set.** Homepage renders the top 50 by `rank_world` (`HomeContent`: FETCH_LIMIT=100, EDITION_FEED_SIZE=50), but step 8d summarized only the post-rerank top-10 (`limit=10, flash_top_n=5`) while 7b's top-30 were chosen by a DIFFERENT pre-rerank order, so ~33/50 cards showed raw article excerpts. 8d now covers the full displayed 50 post-rerank in `rank_world` order (`limit=50`), self-caching across runs (it writes the hash it later reads). **(3) Two-model split (CEO):** top-10 highest-impact stories → `gemini-2.5-flash` (`flash_top_n=10`); ranks 11-50 → `gemini-2.5-flash-lite`; daily brief TL;DR + opinion stay on flash. flash budget ≈10 stories + ~3 brief ≈13/day, under flash's hard 20-requests/DAY cap (CEO picked top-10 over top-15 for headroom). **(4) Cache-correctness fix:** step 7b stamped its flash-lite output as tier `'flash'`, which made 8d cache-hit the post-rerank top-10 and NEVER upgrade them to real flash; 7b now stamps the accurate tier by generator label so 8d upgrades flash-lite → flash for the top-10. **(5)** Gemini per-run cap 70→90 (`gemini_client._MAX_CALLS_PER_RUN`) so 7b(≤30) + 8d(≤50) full coverage isn't truncated on a low-cache day (flash-lite's high RPD absorbs it). Claude stays retired (imports kept, parked). `py_compile` + routing smoke tests clean; no live `groq_*` refs remain. NOTE: migration 063's column-comment still reads 'Groq fallback', left as immutable applied-migration history.)
+
+Previous: 2026-06-22 (rev 49, bias-tilt-sensitivity. **Problem:** top stories visually bunch at center because the displayed lean is a rigor-weighted MEAN — wires (AP/Reuters≈50) + genuinely two-sided coverage average to ~50, and far-left coverage cancels far-right, so a *contested* story reads identically to a *consensus-centrist* one. Two-part fix, honest (never moves the mean or relabels a side). **(1) Perceptual scale expansion (display position only).** `biasColors.ts` adds `leanToDisplayPos(lean, confidence)` + `leanToDisplayAngle`: `50 + 50·tanh(k·d)/tanh(k)`, `k = DISPLAY_GAIN(3.2)·clamp(confidence,0.4,1)`. High gain near center (a real 3-pt tilt → ~10-pt visual offset), saturates at the wings, strictly monotonic + side-preserving, extremes pinned (0→0, 50→50, 100→100). Confidence-damped so thin clusters near 50 don't swing on noise. The Sigil drives BOTH its beam angle AND its color from the expanded position — the critical fix: coloring the RAW lean left `getLeanColor`'s solid green band (46-55) swallowing every center-left/center-right story, so the feed looked uniformly green; coloring `leanToDisplayPos` shrinks green to raw lean ~49-51, painting 46-48 center-left blue and 52-54 center-right red. The numeric score + label stay 100% true (glanceable surfaces exaggerate for legibility; the Deep Dive KDE remains the true-distribution view). **Color ramp redesigned** (`getLeanColor` + `GREEN_HALF=3`): green is now reserved for STRICTLY balanced only (50±3 in the space passed in; via expanded displayPos that is raw lean ~49.4-50.6), with a continuous light→dark ramp on each side — center-left→left→far-left (light steel blue→navy) and center-right→right→far-right (coral→dark red); tilt magnitude drives darkness. **Agreed-vs-divergent visual:** the Sigil beam now renders a divergence FAN — two faded arms at ±coneHalf around the main beam, where coneHalf scales with `leanSpread` (stddev≥10 opens the fan, 10→40 maps 5°→22°). Agreed stories keep a single crisp beam; divergent ones fan out, and because each arm is colored by its own fanned position a balanced-but-contested story shows a blue (left) and a red (right) arm — visibly contested even at mean 50. **Green = consensus only** (`getSigilLeanColor` + `DIVERGENT_SPREAD_MIN=10`): green now means balanced AND agreed; a balanced-but-divergent standoff drops the green for a neutral slate center beam (`var(--fg-secondary)`) flanked by the blue/red fan arms, so green never gives false "consensus" comfort to a contested story. Color stays one channel = lean (tilts keep their blue/red hue regardless of spread; divergence rides the fan, not the hue). Applied to the Sigil mark, popup, and label. **(2) Polarization / contestedness (reveals the split the mean hides).** `main.py` bias aggregation now computes a per-cluster 7-bucket lean histogram + 3-segment L/C/R counts + a `polarization` index (`100·2·min(L,R)/n`: 0 = one-sided/all-center, 100 = perfect L/R split) and stores them in the existing `bias_diversity` JSONB (no migration). New `LeanCoverageBar.tsx` renders a blue/green/red segmented coverage bar + a "Contested" tag (polarization≥50), shown only when BOTH wings are present (`left>0 && right>0 && total≥3`) — exactly the false-center case; one-sided/all-center stories skip it (the Sigil tilt suffices). Rendered on `StoryCard` (feed) + `BiasSnapshot` (Deep Dive, inline+rail). `BiasSpread` type + HomeContent mapping extended with `polarization`/`leanLeftCount`/`leanCenterCount`/`leanRightCount`. Verified: Jacobin+Breitbart (mean 50) → polarization 100, split bar; all-center (mean 50) → polarization 0, no bar. `tsc` clean, `next build` 98/98.)
+
+Previous: 2026-06-22 (rev 48, gemini-primary-llm + tldr-loading-fix. **Two headline issues.** **(1) Frontend P0 — TL;DR + opinion never loaded.** `AudioProvider` gated the daily-brief DATA fetch behind the void --onair audio kill switch (`if (!AUDIO_ENABLED) return;` before `fetchDailyBrief`). Since `NEXT_PUBLIC_DISABLE_AUDIO` defaults to `"1"` pre-launch, the brief was never fetched, leaving `SkyboxBanner` (desktop) stuck on "Loading today's brief…" and `MobileBriefPill` on its placeholder. TL;DR + opinion are editorial TEXT, not audio. Decoupled: the brief text always fetches; only the audio playback layer (`fetchPreviousEpisodes` + the `<audio>` mount) stays gated by `AUDIO_ENABLED`. `tsc` clean, `next build` 98/98. **(2) LLM stack — Claude retired, Gemini sole primary, two-model quality hierarchy.** Claude was already hard-disabled at the source (`claude_client.is_available()` returns `False` since 2026-06-20) but both routers still listed it first and imported it. Removed the dead Claude branches/imports from `cluster_summarizer._smart_generate_json` + `daily_brief_generator._smart_generate_json` and their `is_available`/`calls_remaining`. **Gemini is now the explicit sole primary, split by workload:** `gemini_client.generate_json` gained a `model` param; `_FLASH_MODEL = "gemini-2.5-flash"` added alongside `_MODEL = "gemini-2.5-flash-lite"`. Daily brief (TL;DR + opinion) → **flash** (low volume, a few calls/day, under flash's 20-requests/DAY free cap). Story summaries: **top-5 highest-impact stories (post-rerank rank order) → flash; ranks 6+ → flash-lite.** Groq (`gpt-oss-20b`) is the $0 fallback. **Fallback chains:** premium slot = flash → flash-lite → Groq; flash-lite slot = flash-lite → Groq (a high-impact story never silently drops to the unreliable provider before exhausting Gemini). `summarize_top50_after_rerank` gained `flash_top_n=5`; `main.py` callsite (post-rerank top-10) passes it. **Migration 063:** `summary_tier` CHECK widened to ('sonnet','flash','flash-lite') so the tier distinguishes premium flash from flash-lite. **Cache fix (latent P1, surfaced by retiring Claude):** the step-8d cache only skipped when `summary_tier=='sonnet'`; with Claude gone every tier was 'flash', so the gate never hit and forced a full re-summarize of all ~50 clusters every run. Now upgrade-aware: a flash-lite slot accepts any prior tier; a flash (premium) slot rejects a 'flash-lite' row so a story rising into the top-5 is UPGRADED to flash, and accepts 'sonnet'/'flash'. **Misc:** brief edition default `["world","us","india"]`→`["world"]` (rev 46 collapse-editions); stale "Groq preferred" comments corrected (`refresh-brief.yml`, `gemini_client.py` header, `claude_client.is_available`). Routing unit-tested: brief→`gemini-2.5-flash`, summaries top-5→`gemini-2.5-flash`, rest→`gemini-2.5-flash-lite`, flash→flash-lite→Groq fallback all verified.)
+
+Previous: 2026-06-11 (rev 47, review-fix-wave. Full independent review (`docs/INDEPENDENT-REVIEW-2026-06-11.md`) found, and this rev fixes, every issue. **P0s:** `section_val` NameError crashed the daily run whenever the recency gate fired (no enclosing try); weekly digest's LLM-fallback branch referenced undefined `cluster` (crashed exactly when the kill switch should degrade); `/paper` selected 061-dropped rank columns (42703, blank page). **Security (migration 062):** RLS enabled on `article_claims`/`source_claim_accuracy` (041 shipped none: anon read/WRITE), `weekly_digests` write policy was `USING(true)` (anon-writable), dead `sandbox_runs` anon INSERT/UPDATE policies dropped (diag UI never shipped; free-tier DB-fill DoS), `_migrations` RLS, `summary_tier` CHECK widened to ('sonnet','flash') (was sonnet-only, so every cluster insert during a Gemini-fallback run violated it), `sync_ship_votes()` SECURITY DEFINER recount RPC (anon vote UPDATE was RLS-blocked; counter frozen since launch). **Workflows:** auto-merge build gate no longer `|| echo`-passes failing builds and now requires bias + clustering validation jobs before merging; migration application moved INTO auto-merge-claude.yml as a post-merge job (GITHUB_TOKEN pushes can't trigger migrate.yml) and migrate.yml's push trigger scoped to main (unmerged branches can no longer mutate prod schema); concurrency + timeout-minutes on pipeline/auto-merge/migrate; generate-history-audio inputs routed via env vars (shell-injection); audit-db trimmed to the real 1x/day cadence. **P1s:** step 8 now writes `cluster["_db_id"]`/`["id"]` back after insert, un-deadening the WebP image cache (was 0 images cached every run), step-8d summary sync, cross-run title dedup, and the memory engine; daily-brief linkage backfilled post-store via `_top_cluster_refs`/`_opinion_cluster_ref` (step 7d runs pre-insert, so `top_cluster_ids` was always `[]`); `rerank.py`, `source_topic_lean`, and the dedup query paginated past PostgREST's 1,000-row cap; `feed_ranker` now ENCODES the topic-diversity partition + mid-feed category cap into strictly-decreasing rank_world (both were no-ops; main.py's duplicate block deleted, feed_ranker is sole owner); weekly `EDITIONS=["world"]`; `_fetch_brief_signals` selects `top_cluster_ids`; PWA root-canonical for CF Pages (manifest/sw.js/layout icons, SW cache v2 + offline.html fallback, `_redirects` catch-all 301); dead `/world` nav link removed; `excerpt`→`summary`, ig_generator `lean_label/lean_score`→`political_lean_baseline` + 7-point→score map, pipeline_health `generated_at`→`created_at`. **P2s:** per-result `summary_tier` stamping (Gemini fallback output no longer cache-frozen as "sonnet"); `_build_articles_block` sorts before slicing (prompt inputs now match `_content_hash`); 36h-lookback select carries `is_wire_copy`/`wire_origin_publisher_id`; `MERGE_HARD_CEILING` made transitive via `_ceiling_union_find` accumulated-root-load tracking across all 4 merge phases; `pipeline_runs.errors` merge-appends everywhere (`_merge_run_errors` + `append_pipeline_run_errors`); claims/memory mapping uses `_db_id` instead of index-zipping (memory now sorted by rank_world so the recorded top story matches homepage #1); `_rule_based_opinion` UUID-guards `opinion_cluster_id` (str(id(c)) placeholder could poison the brief upsert); article_claims delete-then-insert (the old `on_conflict="id"` never fired, accumulating duplicates); parked Gemini-TTS globals defined in audio_producer (instant NameError on re-enable before); RSS global timeout budgeted per wave plan, `max(120, FEED_TIMEOUT*(waves+2))` (was 30s flat — a slow tail could mass-stamp healthy feeds "timeout" toward 5-strike quarantine); migration 003's invalid `ADD CONSTRAINT IF NOT EXISTS` rewritten as a guarded DO-block (fresh-DB bootstrap previously halted at 003, never applying 004+); `.playwright-mcp/` untracked + gitignored. **Frontend details** in rev-47 commit (17 files): ship voting returns the authoritative RPC count; Sigil non-integer-lean modulo guarded; DeepDive handleShare stale closure fixed; Methodology rendered at `/sources#methodology` (both inbound anchors were dead); AudioProvider fully inert under the audio kill switch. Clustering snapshot refreshed to the rev-46 baseline. **Validation post-fix:** bias 207 CORRECT / 8 ACCEPTABLE / 0 WRONG / 0 CATASTROPHIC (215 checks); clustering 33/2/3/0 with zero regression vs snapshot (the 3 WRONG remain the documented obsolete section-classification fixtures); `next build` 98/98 pages.)
+
+Previous: 2026-06-02 (rev 46, collapse-editions. **One daily feed, one route, one ranking signal.** Removed the multi-edition data plane that had been latent under `ACTIVE_EDITIONS=["world"]` since launch. **Pipeline:** `edition_ranker.py` (553 LOC) replaced with `feed_ranker.py` (~190 LOC) that computes `rank_world = headline_rank × STORY_TYPE_GATES × topic-diversity × same-event cap × feed-lead gate`. Dropped: `EDITIONS`, `COUNTRY_EDITION_MAP`, `REGIONAL_KEYWORDS`, `LOCAL_EXCLUSIVE_BOOST`, `LOCAL_CROSSLIST_BOOST`, `CROSS_DEMOTION`, `GLOBAL_SIG_DEMOTION`, `WORLD_MULTI_ED_BOOST`, claimed_ids orchestration, `BACKFILL_*`, regional affinity boost. **main.py:** per-section editorial triage / topic diversity / recency loops collapsed to single passes; section assignment frozen to `"world"`; step 8c.5 world-tag reconciliation deleted; `--editions` CLI arg deleted; `rank_us/europe/south_asia` writes deleted. **rerank.py:** import `apply_feed_ordering`; deleted `_cluster_in_section` + `rank_us/europe/south_asia` writes. **clustering/story_cluster.py:** `_determine_section()` always returns `"world"`. **utils/editions.py:** `ACTIVE_EDITIONS = ALL_EDITIONS = ["world"]`. **Frontend:** deleted `[edition]/page.tsx`, `world/page.tsx`, `WorldPageContent.tsx`, `WorldDivider.tsx`, `EditionIcon.tsx`. Stripped `activeEdition` state from `HomeContent.tsx` + `NavBar.tsx`; removed `EDITION_STORAGE_KEY`, edition transitions, whip-pan, URL push, mobile edition pills. `getEditionTimeOfDay()` / `getEditionTimestamp()` now UTC-only. **DB:** migration 061 drops `story_clusters.rank_us / rank_europe / rank_south_asia` + their partial indexes. `section`/`sections` kept as defensive constants (`"world"` / `["world"]`). **Public-facing:** manifest.json single "Today's feed" shortcut, `_redirects` 301s old `/world|/us|/europe|/south-asia` URLs to `/`, about page CTA "Read today's feed". **Workflows:** removed `editions:` input from `pipeline.yml`, `refresh-brief.yml`, `weekly-digest.yml`. Clustering validation: 33 CORRECT / 2 ACCEPTABLE / 3 WRONG / 0 CATASTROPHIC (2 of 3 WRONG are now-obsolete section-classification fixtures that expected `section="us"` for Trump-Xi or the 15-way overflow cohort). See `/home/aacrit/.claude/plans/i-think-the-editions-iterative-abelson.md`.)

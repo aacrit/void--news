@@ -1,0 +1,7 @@
+source: src-ajn-1918-12
+locator: p204
+url: https://archive.org/download/sim_american-journal-of-nursing_1918-12_19_3/sim_american-journal-of-nursing_1918-12_19_3_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+The wildness and confusion of that first night were awful. The willing but untrained help, who left the bedside of the delirious upon any sign on their part of wishing to get up, the kind attendant whose sole concern was the croupy boy, the smoky furnace, and the multitudinous orders, and no one but myself capable of carrying them out,— are pictures that my seven years’ hospital experience cannot equal. Twenty-four hours of continuous duty brought us to a place where a practical nurse released me for a little rest. All told, we took in thirteen patients and had two deaths.

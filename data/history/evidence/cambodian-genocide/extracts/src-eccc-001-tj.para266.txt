@@ -1,0 +1,7 @@
+source: src-eccc-001-tj
+locator: para266
+url: https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/20100726_Judgement_Case_001_ENG_PUBLIC.pdf
+read: 2026-09-25
+note: the quotation runs across a page break (pp. 93 to 94); the page furniture and the footnotes between the two halves are removed
+
+266. Former detainees and S-21 survivors Witness VANN Nath and Civil Parties CHUM Mey and BOU Meng described the harsh conditions endured by all detainees and how they were treated like “animals.”496 Civil Party CHUM Mey provided the following account of being held in an individual cell: “[W]hen I entered that room and cell I could not expect that I would survive. At that time I only lay down on my back waiting just to be killed. It was the first time that I lay down directly on the floor, first time in my life, and it was the first time in my life that I was hosed with water when I was detained there. Even if you raise a pig you have to give food to the pig, but for me I only got a spoonful of very thin gruel.”497

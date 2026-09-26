@@ -1,0 +1,30 @@
+source: src-menelik-1897
+locator: p425
+url: https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: Annex 2 to No. 99, the Foreign Office translation as Hertslet prints it
+
+The Emperor Menelek to Mr. Rodd.
+
+(Translation.)
+
+From Menelek II, by the grace of God, King of Kings of Ethiopia,
+Conquering Lion of the tribe of Judah.
+
+May this reach James Rennell Rodd.
+
+Peace be unto you.
+
+With reference to the Treaty which we have written in the Amharic
+and English languages at Adis Abbaba, as I have no interpreter with
+me who understands the English language well enough to compare the
+English and Amharic versions, if by any possibility in the future there
+should ever be found any misunderstanding between the Amharic
+and English versions in any of the Articles of this Treaty, let this translation, which is written in the French language, and which I enclose in
+this letter, be the witness between us, and if you accept this proposal,
+send me word of your acceptance by letter.
+
+Dated 7th Genbot, 1899 (14th May, 1897).
+
+(Seal of His Majesty the Emperor Menelek II.)

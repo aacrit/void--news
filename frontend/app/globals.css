@@ -3,14 +3,33 @@
    "Press & Precision" — newspaper heritage meets modern data density
    ========================================================================== */
 
-/* ---- CSS Cascade (load order matters) ---------------------------------- */
+/* ---- CSS Cascade (load order matters) ----------------------------------
+   Route-scoped stylesheets (games, weekly, ship, film, history, onair)
+   are imported from per-route layout.tsx files so they ship only on the
+   routes that use them.  Keeps the homepage CSS bundle focused on feed +
+   deep-dive surfaces. */
 @import url("./styles/tokens.css");
 @import url("./styles/layout.css");
 @import url("./styles/typography.css");
 @import url("./styles/components.css");
 @import url("./styles/animations.css");
-@import url("./styles/spectrum.css");
+@import url("./styles/mobile-feed.css");
+@import url("./styles/desktop-feed.css");
+@import url("./styles/layout-zones.css");
+@import url("./styles/skybox-banner.css");
+@import url("./styles/floating-player.css");
+@import url("./styles/mobile-nav.css");
 @import url("./styles/responsive.css");
+@import url("./styles/onboarding.css");
+@import url("./styles/brand.css");
+/* spectrum.css → imported by /sources/page.tsx AND
+                  components/DeepDiveSpectrum.tsx (Deep Dive routes).
+                  Stays out of globals.css so it doesn't ship on the
+                  homepage feed bundle.
+   verify.css   → imported by components/DeepDive.tsx (lazy-loads with
+                  Deep Dive chunk).
+   Together these keep ~3,690 lines (~250KB raw / ~50KB gzipped) off the
+   homepage feed bundle while ensuring every consumer route loads them. */
 
 /* --------------------------------------------------------------------------
    CSS Reset — Minimal, opinionated
@@ -46,6 +65,10 @@ canvas,
 svg {
   display: block;
   max-width: 100%;
+}
+
+audio {
+  display: none;
 }
 
 input,
@@ -162,29 +185,7 @@ h1, h2, h3 {
   outline-offset: 2px;
 }
 
-/* --------------------------------------------------------------------------
-   Selection
-   -------------------------------------------------------------------------- */
-::selection {
-  background-color: var(--fg-primary);
-  color: var(--bg-primary);
-}
-
-/* --------------------------------------------------------------------------
-   Scrollbar (subtle)
-   -------------------------------------------------------------------------- */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 3px;
-}
+/* Selection and scrollbar: styles/brand.css (the section-aware versions). */
 
 /* --------------------------------------------------------------------------
    Dark Mode Transition
@@ -194,30 +195,4 @@ h1, h2, h3 {
   transition:
     color var(--dur-morph) var(--ease-out),
     background-color var(--dur-morph) var(--ease-out);
-}
-
-/* --------------------------------------------------------------------------
-   System Dark Mode Preference — Auto-detect on first visit
-   -------------------------------------------------------------------------- */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-mode="light"]):not([data-mode="dark"]) {
-    --bg-primary:    #1C1A17;
-    --bg-secondary:  #252320;
-    --bg-card:       #2A2725;
-    --bg-elevated:   #333028;
-    --fg-primary:    #EDE8E0;
-    --fg-secondary:  #B8B0A5;
-    --fg-tertiary:   #8A8278;
-    --fg-muted:      #5A5550;
-    --border-subtle: #3A3530;
-    --border-strong: #4A4540;
-    --divider:       #403B35;
-    --shadow-e0: none;
-    --shadow-e1: 0 1px 3px rgba(0, 0, 0, 0.2);
-    --shadow-e2: 0 4px 12px rgba(0, 0, 0, 0.3);
-    --shadow-e3: 0 8px 24px rgba(0, 0, 0, 0.4);
-    --accent: #EDE8E0;
-    --accent-hover: #D4CCC2;
-    --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
-  }
 }

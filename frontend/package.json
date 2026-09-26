@@ -6,13 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node test/labels.test.mjs && node test/chapters.test.mjs && node test/episode.test.mjs && node test/bench.test.mjs && node test/text-authority.test.mjs && node test/bench-curve.test.mjs && node test/summary-paragraphs.test.mjs && node test/volume.test.mjs && node test/copy-facts.test.mjs && node test/css-parity.test.mjs && node test/css-lint.mjs"
   },
   "dependencies": {
+    "@capacitor/android": "^8.3.1",
+    "@capacitor/cli": "^8.3.1",
+    "@capacitor/core": "^8.3.1",
+    "@capacitor/ios": "^8.3.1",
     "@phosphor-icons/react": "^2.1.10",
     "@supabase/supabase-js": "^2.99.2",
-    "html2canvas": "^1.4.1",
-    "next": "16.1.7",
+    "motion": "^12.41.0",
+    "next": "^16.2.4",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
@@ -21,8 +26,13 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "axe-core": "^4.13.0",
     "eslint": "^9",
-    "eslint-config-next": "16.1.7",
+    "eslint-config-next": "^16.2.4",
+    "stylelint": "^17.15.0",
     "typescript": "^5"
+  },
+  "overrides": {
+    "postcss": "^8.5.10"
   }
 }

@@ -1,0 +1,8 @@
+/* /privacy + /press: the parts of the press kit that are not prose.
+
+   The container, the measure, the h1/h2/p/ul/a/code ramp and the header rule
+   moved to app/styles/prose-page.css on 2026-09-21, so Listen, Press and
+   Privacy share one measure and one ramp instead of three sets of literals.
+   What is left here is the kit furniture the press room needs. */
+
+

@@ -1,0 +1,6 @@
+source: src-honigsbaum-2013
+locator: para12
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3867839/fullTextXML
+read: 2026-09-25
+
+The first Britons knew of the flu was in late May when the Daily Express and the Daily Mail ran brief reports about a ‘mysterious epidemic’ in Spain.

@@ -1,0 +1,1084 @@
+/* ==========================================================================
+   void --verify — Claim Consensus Styles
+   Cross-source factual verification components.
+
+   Components:
+     ConsensusBadge  (.consensus-badge)
+     ClaimMark       (.claim-mark)
+     ClaimConsensus  (.cc-section)
+     CredibilityArc  (.cred-arc)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Verify Palette — NOT bias colors (Dot Matrix Rule)
+   -------------------------------------------------------------------------- */
+
+:root {
+  --verify-corroborated: #4A9B6E;
+  --verify-disputed: var(--cin-amber);
+  --verify-single: var(--fg-tertiary);
+  --verify-contradicted: #C75B5B;
+}
+
+:root[data-mode="dark"] {
+  --verify-corroborated: #5CB87A;
+  --verify-contradicted: #E07070;
+}
+
+/* --------------------------------------------------------------------------
+   ConsensusBadge — compact ratio indicator on story cards
+   -------------------------------------------------------------------------- */
+
+
+/* [C-P1] Viewport entrance — subtle translateY fade-in */
+
+
+/* Lightning pulse on first viewport entry */
+
+
+/* --------------------------------------------------------------------------
+   ClaimMark — inline contradiction highlight
+   -------------------------------------------------------------------------- */
+
+.claim-mark {
+  text-decoration: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: var(--cin-amber-muted);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  filter: var(--cin-haze-mid);
+  cursor: pointer;
+  transition:
+    text-decoration-color var(--rack-focus-dur) var(--rack-focus-ease),
+    filter var(--rack-focus-dur) var(--rack-focus-ease),
+    background-color var(--rack-focus-dur) var(--rack-focus-ease);
+  border-radius: var(--radius-md);
+  padding: 0 1px;
+  position: relative;
+}
+
+.claim-mark:hover,
+.claim-mark:focus-visible,
+.claim-mark--focused {
+  filter: none;
+  text-decoration-color: var(--cin-amber);
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--cin-amber) 12%, transparent) 0%,
+    transparent 60%
+  );
+}
+
+.claim-mark:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* [C-P0] Rack focus pull — sibling text dims when a mark is focused */
+.dd-summary:has(.claim-mark--focused) {
+  color: var(--fg-tertiary);
+  transition: color var(--rack-focus-dur) var(--ease-rack);
+}
+
+.claim-mark--focused {
+  color: var(--fg-primary);
+  position: relative;
+  z-index: 1;
+}
+
+/* ── ClaimMark Popover ──────────────────────────────────────────────────── */
+
+.claim-mark__popover {
+  z-index: var(--z-popup);
+  width: clamp(240px, 40vw, 360px);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  /* [V06] border-radius 8px -> 2px */
+  border-radius: var(--radius-md);
+  /* [C-P0] Practical amber glow + cinematic dramatic shadow */
+  box-shadow: 0 0 20px color-mix(in srgb, var(--cin-amber) 15%, transparent),
+              var(--shadow-cinematic-dramatic);
+  /* [V17] Spring physics approximation with overshoot */
+  animation: claimReveal var(--dur-morph) var(--ease-cinematic) both;
+}
+
+.claim-mark__label {
+  display: block;
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--cin-amber);
+  margin-bottom: var(--space-2);
+}
+
+.claim-mark__version {
+  padding: var(--space-2) 0;
+}
+
+.claim-mark__text {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-primary);
+  line-height: 1.5;
+  margin-bottom: var(--space-1);
+}
+
+.claim-mark__sources {
+  display: block;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  letter-spacing: 0.01em;
+}
+
+.claim-mark__vs {
+  display: block;
+  text-align: center;
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--fg-tertiary);
+  padding: var(--space-1) 0;
+  opacity: 0.6;
+}
+
+/* --------------------------------------------------------------------------
+   ClaimConsensusSection — full breakdown in Deep Dive
+   -------------------------------------------------------------------------- */
+
+/* [V16] Section dolly-in entrance — ONE motion for the whole section.
+   Continuity (2026-08-11): the old per-child 80ms stagger stretched the reveal
+   to ~880ms of sequential beats after the section mounted; the section now
+   arrives as a single 400ms dolly-in. */
+.cc-section {
+  padding-top: var(--space-3);
+  opacity: 0;
+  transform: translateY(8px);
+  animation: ccSectionReveal var(--dur-morph) var(--ease-cinematic) forwards;
+}
+
+.cc-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.cc-header__title {
+  /* Inherits .dd-section-label styles via shared class */
+  margin: 0;
+}
+
+.cc-header__ratio {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ── Consensus Bar ────────────────────────────────────────────────────────── */
+
+.cc-bar {
+  margin-bottom: var(--space-3);
+}
+
+.cc-bar__track {
+  display: flex;
+  height: 6px;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+
+.cc-bar__segment {
+  height: 100%;
+  transition: width 800ms var(--ease-cinematic);
+  /* [C-P1] ConsensusBar light emission — amber glow on fill */
+  box-shadow: inset 0 0 4px color-mix(in srgb, var(--cin-amber) 10%, transparent);
+}
+
+/* [V07] --sense-low replaced with --verify-corroborated */
+.cc-bar__segment--corroborated {
+  background: var(--verify-corroborated);
+  opacity: 0.8;
+}
+
+.cc-bar__segment--disputed {
+  background: var(--cin-amber);
+  opacity: 0.8;
+}
+
+.cc-bar__segment--single {
+  background: var(--verify-single);
+  opacity: 0.3;
+}
+
+.cc-bar__legend {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.cc-bar__legend-item {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* [V15] Legend dots -> small squares (remove border-radius: 50%) */
+.cc-bar__legend-item::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+/* [V07] Legend uses verify palette */
+.cc-bar__legend-item--corroborated::before {
+  background: var(--verify-corroborated);
+  opacity: 0.8;
+}
+
+.cc-bar__legend-item--disputed::before {
+  background: var(--cin-amber);
+  opacity: 0.8;
+}
+
+.cc-bar__legend-item--single::before {
+  background: var(--verify-single);
+  opacity: 0.3;
+}
+
+/* ── Summary ──────────────────────────────────────────────────────────────── */
+
+.cc-summary {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+  line-height: 1.55;
+  margin-bottom: var(--space-4);
+}
+
+/* ── Claims Lists ─────────────────────────────────────────────────────────── */
+
+.cc-claims {
+  margin-bottom: var(--space-3);
+}
+
+.cc-claims__heading {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-tertiary);
+  margin-bottom: var(--space-2);
+}
+
+.cc-claims__heading--disputed {
+  color: var(--cin-amber);
+}
+
+.cc-claims__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* ── Collapsible single-source list ── */
+
+.cc-claims__list--collapsible {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-height var(--dur-normal) var(--ease-rack),
+    opacity var(--dur-normal) var(--ease-rack);
+}
+
+/* [V09] max-height 600px -> 2000px to prevent clipping */
+.cc-claims__list--expanded {
+  max-height: 2000px;
+  opacity: 1;
+}
+
+/* ── Individual Claim ─────────────────────────────────────────────────────── */
+
+.cc-claim {
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid transparent;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
+  border-radius: 0 4px 4px 0;
+}
+
+/* [V07] --sense-low replaced with --verify-corroborated */
+.cc-claim--corroborated {
+  border-left-color: var(--verify-corroborated);
+  background: color-mix(in srgb, var(--verify-corroborated) 4%, transparent);
+}
+
+.cc-claim--disputed {
+  border-left-color: var(--cin-amber);
+  background: color-mix(in srgb, var(--cin-amber) 4%, transparent);
+  animation: claimReveal var(--dur-morph) var(--ease-cinematic) both;
+}
+
+.cc-claim--single {
+  border-left-color: var(--border-subtle);
+  opacity: 0.7;
+}
+
+.cc-claim__text {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-primary);
+  line-height: 1.5;
+  margin-bottom: var(--space-1);
+}
+
+.cc-claim__meta {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+}
+
+.cc-claim__source-list {
+  opacity: 0.7;
+}
+
+/* ── Dispute Row ──────────────────────────────────────────────────────────── */
+
+.cc-dispute {
+  padding: var(--space-3);
+  border-left: 3px solid var(--cin-amber);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
+  border-radius: 0 4px 4px 0;
+  background: color-mix(in srgb, var(--cin-amber) 3%, transparent);
+  animation: claimReveal var(--dur-morph) var(--ease-cinematic) both;
+}
+
+.cc-dispute__topic {
+  display: block;
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cin-amber);
+  margin-bottom: var(--space-2);
+}
+
+.cc-dispute__versions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.cc-dispute__version {
+  padding: var(--space-2) 0;
+}
+
+.cc-dispute__text {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-primary);
+  line-height: 1.5;
+  margin-bottom: var(--space-1);
+}
+
+.cc-dispute__sources {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+}
+
+.cc-dispute__vs {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--fg-tertiary);
+  text-align: center;
+  opacity: 0.6;
+  padding: var(--space-1) 0;
+}
+
+/* ── Expand/Collapse Toggle ───────────────────────────────────────────────── */
+
+.cc-expand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--fg-tertiary);
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: color 200ms var(--ease-cinematic);
+  min-height: 44px;
+}
+
+.cc-expand:hover {
+  color: var(--fg-secondary);
+}
+
+.cc-expand:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+.cc-expand__caret {
+  display: inline-block;
+  font-size: 0.75em;
+  transition: transform var(--dur-normal) var(--ease-rack);
+}
+
+.cc-expand__caret--open {
+  transform: rotate(90deg);
+}
+
+/* --------------------------------------------------------------------------
+   CredibilityArc — source accuracy for Sources page
+   -------------------------------------------------------------------------- */
+
+.cred-arc {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.cred-arc__header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.cred-arc__name {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--fg-primary);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cred-arc__rate {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--fg-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.cred-arc__trend {
+  font-size: var(--text-xs);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* [V07] --sense-low/--sense-high replaced with verify palette */
+.cred-arc__trend--improving {
+  color: var(--verify-corroborated);
+}
+
+.cred-arc__trend--stable {
+  color: var(--fg-tertiary);
+}
+
+.cred-arc__trend--declining {
+  color: var(--verify-contradicted);
+}
+
+/* ── Accuracy Bar ─────────────────────────────────────────────────────────── */
+
+.cred-arc__bar {
+  margin-bottom: var(--space-2);
+}
+
+.cred-arc__bar-track {
+  display: flex;
+  height: 4px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+
+.cred-arc__bar-segment {
+  height: 100%;
+  transition: width 1200ms var(--ease-cinematic);
+}
+
+/* [V07] verify palette */
+.cred-arc__bar-segment--corroborated {
+  background: var(--verify-corroborated);
+  opacity: 0.8;
+}
+
+.cred-arc__bar-segment--contradicted {
+  background: var(--verify-contradicted);
+  opacity: 0.8;
+}
+
+.cred-arc__bar-segment--unverified {
+  background: var(--fg-tertiary);
+  opacity: 0.2;
+}
+
+/* ── Stats Line ───────────────────────────────────────────────────────────── */
+
+.cred-arc__stats {
+  display: flex;
+  gap: var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  flex-wrap: wrap;
+}
+
+.cred-arc__stat-sep {
+  opacity: 0.3;
+}
+
+/* --------------------------------------------------------------------------
+   Weekly Contested Section — wk-contested-*
+   -------------------------------------------------------------------------- */
+
+
+/* --------------------------------------------------------------------------
+   Animations
+   -------------------------------------------------------------------------- */
+
+@keyframes consensusPulse {
+  0%   { transform: scale(1);   opacity: 1; }
+  40%  { transform: scale(1.4); opacity: 0.7; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+/* [V10] filter: blur() removed — GPU-only (transform + opacity)
+   [V17] Spring physics approximation with overshoot */
+@keyframes claimReveal {
+  0%  { opacity: 0; transform: translateY(6px) scale(0.97); }
+  70% { opacity: 1; transform: translateY(-2px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes consensusBarFill {
+  from { width: 0%; }
+}
+
+/* [C-P1] ConsensusBadge viewport entrance */
+@keyframes badgeReveal {
+  to { opacity: 0.7; transform: translateY(0); }
+}
+
+/* [V16] Section dolly-in entrance stagger */
+@keyframes ccSectionReveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* [C-P3] Lightning spring flare — glow on pulse */
+@keyframes lightningFlare {
+  0%   { filter: drop-shadow(0 0 0 transparent); }
+  40%  { filter: drop-shadow(0 0 4px var(--cin-amber-glow)); }
+  100% { filter: drop-shadow(0 0 0 transparent); }
+}
+
+
+/* --------------------------------------------------------------------------
+   Dark Mode — [data-mode="dark"]
+   -------------------------------------------------------------------------- */
+
+
+:root[data-mode="dark"] .claim-mark {
+  text-decoration-color: var(--cin-amber-muted);
+}
+
+:root[data-mode="dark"] .claim-mark:hover,
+:root[data-mode="dark"] .claim-mark:focus-visible,
+:root[data-mode="dark"] .claim-mark--focused {
+  text-decoration-color: var(--cin-amber);
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--cin-amber) 10%, transparent) 0%,
+    transparent 60%
+  );
+}
+
+:root[data-mode="dark"] .claim-mark__popover {
+  background: var(--bg-card);
+  border-color: var(--border-strong);
+}
+
+/* [V07] verify palette in dark mode */
+:root[data-mode="dark"] .cc-claim--corroborated {
+  background: color-mix(in srgb, var(--verify-corroborated) 6%, transparent);
+}
+
+:root[data-mode="dark"] .cc-claim--disputed,
+:root[data-mode="dark"] .cc-dispute {
+  background: color-mix(in srgb, var(--cin-amber) 5%, transparent);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive — [V08]
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .cc-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .claim-mark__popover {
+    width: calc(100vw - 2rem) !important;
+    left: 1rem !important;
+    transform: none !important;
+  }
+
+  .cc-bar__legend {
+    flex-wrap: wrap;
+  }
+
+  .cred-arc__stats {
+    flex-wrap: wrap;
+  }
+
+}
+
+/* --------------------------------------------------------------------------
+   Reduced Motion
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+
+  .claim-mark {
+    transition-duration: 0ms;
+  }
+
+  .claim-mark__popover {
+    animation: none;
+    opacity: 1;
+  }
+
+  .cc-bar__segment {
+    transition-duration: 0ms;
+  }
+
+  .cc-section {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .cc-claims__list--collapsible {
+    transition-duration: 0ms;
+  }
+
+  .cc-expand__caret {
+    transition-duration: 0ms;
+  }
+
+  .cc-claim--disputed,
+  .cc-dispute {
+    animation: none;
+  }
+
+  .cred-arc__bar-segment {
+    transition-duration: 0ms;
+  }
+}
+
+/* ===========================================================================
+   SpreadDisagreement (.spread-disagree) — the promoted "agree vs split" panel.
+
+   Sits right after the spectrum, before Six Lenses. Two editorial tracks
+   (agree / split) with a hairline ink rule between them; each point is a short
+   editorial line with a leading colored tick (agree = calm sense-low, split =
+   alert sense-high, semantic not decorative). Barlow small-caps labels, Inter
+   body, hairline dividers for newspaper rhythm. Light + dark via existing vars.
+   Shared by all three Deep Dive shells (they all import verify.css).
+   =========================================================================== */
+.spread-disagree {
+  margin: var(--space-5) 0;
+  /* The panel self-omits until the cluster fetch resolves, so it can mount
+     seconds after the Deep Dive opened. One short fade makes that async
+     arrival a smooth crossfade instead of a pop (continuity, 2026-08-11).
+     `backwards`: it ends at the panel's own opacity, and a forwards fill
+     would hold a composited layer for as long as the Deep Dive is open. */
+  animation: spreadDisagreeIn 240ms var(--ease-cinematic) backwards;
+}
+
+@keyframes spreadDisagreeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spread-disagree { animation: none; }
+}
+
+.spread-disagree__track + .spread-disagree__track {
+  margin-top: var(--space-5);
+}
+
+/* The track's one colour: a short hairline under its label. */
+.spread-disagree__track--agree { --point-mark: var(--sense-low); }
+.spread-disagree__track--split { --point-mark: var(--sense-high); }
+
+.spread-disagree__label {
+  margin: 0 0 var(--space-3);
+  padding-bottom: var(--space-2);
+  background:
+    linear-gradient(var(--point-mark), var(--point-mark)) left bottom / 24px 2px no-repeat;
+}
+
+.spread-disagree__list {
+  list-style: none;
+  counter-reset: point;
+  margin: 0;
+  padding: 0;
+}
+
+.spread-disagree__point {
+  counter-increment: point;
+  position: relative;
+  padding-left: 1.75em;
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--fg-secondary);
+}
+
+.spread-disagree__point + .spread-disagree__point {
+  margin-top: var(--space-3);
+}
+
+/* Hanging numerals in the margin, in the data face, muted. */
+.spread-disagree__point::before {
+  content: counter(point);
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+}
+
+/* ---- The Story and its sidebar ------------------------------------------
+   The story keeps its reading measure; from 1100px the sidebar takes the
+   column beside it instead of leaving the right half of the Deep Dive
+   empty. Below that it follows the story, full width. */
+.dd-lede-grid {
+  display: block;
+}
+
+@media (min-width: 1100px) {
+  .dd-lede-grid {
+    display: grid;
+    grid-template-columns: minmax(0, var(--measure-read)) minmax(16rem, 1fr);
+    column-gap: var(--space-6, 48px);
+    align-items: start;
+  }
+
+  .dd-lede-grid > .spread-disagree {
+    margin: 0;
+    padding-left: var(--space-5);
+    border-left: var(--rule-thin);
+    /* Aligns with the story's first line, under the same label height. */
+    padding-top: 0;
+  }
+}
+
+/* ===========================================================================
+   DeepDiveNext: the end of a Deep Dive (components/DeepDiveNext.tsx)
+   The next story by name, where the reader is in the edition, and after the
+   last story the ways out. Same in all three shells.
+   =========================================================================== */
+.dd-next {
+  margin-top: var(--space-6, 48px);
+  padding-top: var(--space-4);
+  border-top: var(--rule-strong, 2px solid var(--fg-primary));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 68ch;
+}
+
+.dd-next__kicker {
+  margin: 0;
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+}
+
+.dd-next__where {
+  margin-left: var(--space-2);
+  font-family: var(--font-data);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--fg-muted);
+}
+
+.dd-next__headline {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: var(--space-1) 0;
+  margin: 0;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-editorial);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--fg-primary);
+  text-decoration: none;
+  min-height: 44px;
+}
+
+.dd-next__headline:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+
+.dd-next__arrow {
+  margin-left: var(--space-2);
+  color: var(--accent-warm);
+}
+
+.dd-next__prev {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: var(--space-2) 0;
+  margin: 0;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+  text-decoration: none;
+  min-height: 44px;
+}
+
+.dd-next__prev:hover {
+  color: var(--fg-primary);
+}
+
+.dd-next__headline:focus-visible,
+.dd-next__prev:focus-visible,
+.dd-next__out:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 3px;
+}
+
+.dd-next__end-line {
+  margin: 0;
+  font-family: var(--font-editorial);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--fg-primary);
+}
+
+.dd-next__outs {
+  list-style: none;
+  margin: var(--space-1) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+}
+
+.dd-next__out {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: var(--space-2) 0;
+  cursor: pointer;
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  color: var(--fg-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+  min-height: 44px;
+}
+
+/* A Deep Dive section heading with the lean legend's info button beside it. */
+.dd-section-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.dd-section-head .dd-section-label {
+  margin: 0;
+}
+
+/* ===========================================================================
+   CoverageList: the original coverage, up front (components/CoverageList.tsx)
+   One row per source: its rung in words with a small mark, the outlet, and
+   its headline linking to the publisher. Rows read far left to far right on
+   the Bench's seven rungs; unmeasured sources last, under their own label.
+   =========================================================================== */
+.coverage {
+  margin-top: var(--space-5);
+}
+
+.coverage .ink-rule {
+  margin-bottom: var(--space-4);
+}
+
+.coverage__heading {
+  margin: 0 0 var(--space-3);
+}
+
+.coverage__count {
+  margin-left: var(--space-2);
+  font-family: var(--font-data);
+  text-transform: none;
+  letter-spacing: 0.02em;
+  color: var(--fg-muted);
+}
+
+.coverage__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.coverage__row {
+  display: grid;
+  grid-template-columns: 9.5rem 11rem minmax(0, 1fr);
+  column-gap: var(--space-3);
+  align-items: baseline;
+  padding: var(--space-2) 0;
+  border-bottom: var(--rule-thin);
+}
+
+.coverage__row:last-child {
+  border-bottom: none;
+}
+
+.coverage__group {
+  grid-column: 1 / -1;
+  margin: var(--space-3) 0 var(--space-2);
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+}
+
+.coverage__rung {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  white-space: nowrap;
+}
+
+.coverage__mark {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.coverage__mark--none {
+  background: transparent;
+  border: 1px dashed var(--fg-muted);
+}
+
+.coverage__outlet {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--fg-primary);
+  overflow-wrap: anywhere;
+}
+
+.coverage__headline {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--fg-secondary);
+  text-decoration: none;
+  min-width: 0;
+}
+
+a.coverage__headline:hover {
+  color: var(--fg-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+
+a.coverage__headline:focus-visible,
+.coverage__more:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+.coverage__more {
+  appearance: none;
+  margin-top: var(--space-3);
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-primary);
+  cursor: pointer;
+}
+
+.coverage__more:hover {
+  border-color: var(--fg-secondary);
+}
+
+/* Phones: rung and outlet on one line, the headline under them. */
+@media (max-width: 767px) {
+  .coverage__row {
+    grid-template-columns: auto minmax(0, 1fr);
+    row-gap: 2px;
+  }
+
+  .coverage__headline {
+    grid-column: 1 / -1;
+  }
+}

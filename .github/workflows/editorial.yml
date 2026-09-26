@@ -1,0 +1,73 @@
+name: Editorial Stage
+
+# Standalone Stage-B re-run (2026-08-11, from the pipeline-split design):
+# re-rank + re-summarize + re-order + re-archive the CURRENT day's ingested
+# data WITHOUT re-running the slow ingest half (fetch/scrape/bias/cluster).
+# Everything after step 8b reads exclusively from Supabase, so this runs
+# against whatever the last full pipeline run wrote.
+#
+# Use case: a summarizer-prompt or ranking change should not cost a 107-min
+# full pipeline run to reach the live feed. This completes in ~15-25 min.
+#
+# The daily brief is NOT regenerated here — dispatch pipeline.yml with
+# brief_only, or refresh-brief.yml, for that. Retention/cleanup stays with
+# the daily run.
+
+permissions: {}
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_resummarize:
+        description: 'Bypass the summary cache — regenerate every displayed top-50 summary'
+        type: boolean
+        required: false
+        default: true
+
+# Shares the pipeline's concurrency group: an editorial re-run overlapping
+# the daily cron (or another dispatch) would double-write rank_world +
+# summaries against the same rows.
+concurrency:
+  group: news-pipeline
+  cancel-in-progress: false
+
+jobs:
+  editorial:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: pipeline/requirements.txt
+      - name: Install dependencies
+        run: pip install -r pipeline/requirements.txt
+      - name: Cache spaCy model
+        id: spacy-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
+          key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
+      - name: Download spaCy model
+        if: ${{ steps.spacy-cache.outputs.cache-hit != 'true' }}
+        run: python -m spacy download en_core_web_sm
+      - name: Run editorial stage
+        env:
+          PYTHONUNBUFFERED: "1"
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DISABLE_GEMINI_REASONING: "1"
+          DISABLE_EDITORIAL_TRIAGE: "1"
+          DISABLE_AUDIO: "1"   # no brief/audio in the editorial stage
+          DISABLE_ANTHROPIC: "1"
+        run: |
+          ARGS="--editorial-only"
+          if [ "${{ inputs.force_resummarize }}" = "true" ]; then
+            ARGS="$ARGS --force-resummarize"
+          fi
+          echo "Running EDITORIAL stage: $ARGS"
+          python pipeline/main.py $ARGS

@@ -1,0 +1,148 @@
+## OPEN
+N: You think you know how this one ends. A lawyer put down his suit, wrapped himself in homespun cloth, and walked to the sea to pick up salt. An empire cracked. That part is true. It is not the whole story.
+N: In the same decades, a twenty three year old threw a bomb built to make noise, not kill, and was hanged for it. A famine killed three million people. A navy mutinied. A war left the empire unable to pay its own debts.
+N: Independence had more than one author, and some of them never renounced violence.
+
+## TITLE
+N: The Indian Independence Movement. Ninety years, eighteen fifty seven to nineteen forty seven.
+
+## SCENE 2 | Amritsar, April 1919
+N: April thirteenth, nineteen nineteen. An enclosed garden in Amritsar called Jallianwala Bagh. Fifteen to twenty thousand unarmed people have gathered inside it.
+N: Brigadier General Reginald Dyer marches fifty soldiers in. He gives no warning.
+N: His men fire for ten minutes. They expend one thousand six hundred fifty rounds.
+N: The official inquiry counts three hundred seventy nine dead and twelve hundred wounded. Indian estimates put the toll past a thousand.
+N: Dyer told the Hunter Commission afterward that he meant to produce, in his own words, a sufficient moral effect on the Punjab.
+N: The walls of Jallianwala Bagh still carry the bullet holes.
+
+## REST
+
+## SCENE 3 | Non-cooperation, 1920 to 1922
+N: In nineteen twenty, Gandhi launched Non-Cooperation. He asked Indians to boycott British courts, British schools, British textiles, British titles.
+N: Millions complied. Lawyers gave up their practices. Students walked out of government colleges. The value of imported British cloth dropped by half.
+N: Then, in February nineteen twenty two, a mob at Chauri Chaura burned twenty two policemen alive.
+N: Gandhi halted the entire movement overnight. The decision baffled his own allies and enraged the revolutionaries who wanted to keep fighting. He was arrested anyway.
+
+## SCENE 4 | The road to Dandi, 1930
+N: March twelfth, nineteen thirty. Gandhi sets out from Sabarmati Ashram with seventy eight followers, walking toward the coast.
+
+## DOCUMENT | Mohandas K. Gandhi | Statement before the Salt March, Sabarmati Ashram | March 12, 1930
+N: Before he left, Gandhi told his followers what he wanted from the walk.
+M: I want world sympathy in this battle of right against might.
+
+## SCENE 5 | Dandi and Dharasana
+N: By the time Gandhi reaches the coast on April sixth and picks up a lump of natural salt, the march has swelled to thousands.
+N: Within weeks, sixty thousand Indians are arrested for making or selling salt.
+N: On May twenty first, at the Dharasana Salt Works, twenty five hundred volunteers walk into police clubs without raising their hands.
+
+## DOCUMENT | Webb Miller | United Press International dispatch from Dharasana Salt Works | May 21, 1930
+N: Webb Miller of United Press International watched it happen and filed a dispatch that ran in thirteen hundred fifty newspapers.
+M: Not one of the marchers even raised an arm to fend off the blows.
+
+## REST
+
+## SCENE 6 | The other track
+N: While Gandhi organized crowds, a parallel movement was arming itself.
+N: On April eighth, nineteen twenty nine, Bhagat Singh, twenty three years old, threw a bomb into the Central Legislative Assembly. It was built to make noise, not to kill anyone.
+
+## DOCUMENT | Bhagat Singh | Leaflet thrown in Central Legislative Assembly | April 8, 1929
+N: Bhagat Singh threw leaflets down after the bomb, and they read like this.
+M: It takes a loud voice to make the deaf hear.
+
+## SCENE 7 | Berlin, Tokyo, and the mutiny
+N: Subhas Chandra Bose was elected Congress president twice. In nineteen thirty nine he broke with Gandhi and escaped British surveillance, reaching first Berlin, then Tokyo.
+N: He raised the Indian National Army from forty five thousand Indian prisoners of war held by Japan, and invaded northeast India in nineteen forty four. The invasion failed.
+N: But when the British put its officers on trial, the sympathy it produced across India did not fail. In February nineteen forty six, the Royal Indian Navy mutinied.
+
+## REST
+
+## SCENE 8 | The famine and the reckoning
+N: In nineteen forty three, the Bengal Famine killed an estimated three million people while Churchill diverted food supplies to European stockpiles. Informed of the famine, Churchill asked why Gandhi had not yet died.
+N: In August nineteen forty two, Quit India brought the largest mass arrests in Indian history. Over one hundred thousand were detained, including the entire Congress leadership. Britain could not govern India without Indian consent, and this proved it.
+N: By nineteen forty six the Army and Navy were unreliable, the Civil Service was depleted, and London concluded that withdrawal was inevitable.
+N: On August fifteenth, nineteen forty seven, India became independent. The cost of the transition was Partition.
+
+## REST
+
+## TURN | Five accounts
+N: Here is what does not resolve, no matter which year you stop the story in.
+N: There are five standard accounts of how this ended, and they agree on most of the facts. They disagree about which facts are the story.
+N: Each one gets its own case, in its own words, before anything is said against it.
+
+## PERSPECTIVE | Gandhian / Indian National Congress | victor
+N: The Congress account holds that Gandhi returned from South Africa in nineteen fifteen carrying a method twenty one years in the making, tested against discriminatory laws in the Transvaal and Natal.
+N: Non-Cooperation brought Hindus and Muslims into the same campaign through the Khilafat alliance, a unity that did not happen again.
+N: Its strongest fact is the Salt March itself. Two hundred forty miles, a tax on the poorest Indians broken in public, and a raid at Dharasana that damaged British prestige beyond recovery.
+N: On what nonviolent discipline meant to him, Gandhi put it simply.
+M: In a gentle way, you can shake the world.
+N: The British did not leave because they were defeated in battle. Congress made governing India impossible without ever firing a shot.
+
+## PERSPECTIVE | Revolutionary / Armed Resistance | revisionist
+N: The revolutionary account says nonviolence alone is a luxury for those who can afford to wait.
+N: It runs through the Anushilan and Jugantar groups in Bengal, the Ghadar Party founded by Punjabi immigrants in San Francisco, and Bhagat Singh, who held a hunger strike of one hundred sixteen days before he was hanged.
+N: Its strongest fact is the calendar. Singh went to the gallows while Gandhi was negotiating with the Viceroy in Delhi, and Congress made no serious effort to save him.
+N: Subhas Chandra Bose put the case for arms to the soldiers he recruited.
+M: Give me blood, and I shall give you freedom.
+N: Gandhi provided the moral narrative. The revolutionaries provided the fear, and the Naval Mutiny of nineteen forty six is the proof that the fear worked.
+
+## REST | short
+
+## PERSPECTIVE | British Colonial | vanquished
+N: The British account begins with the state India did not have in eighteen fifty eight. No national railway, no unified legal code, a literacy rate under five percent.
+N: By nineteen forty seven, India had forty thousand miles of railway, a judiciary built on English common law, and twenty three universities, built through decades of reform that expanded Indian participation stage by stage.
+N: Its strongest fact is arithmetic, not sentiment. India supplied two and a half million soldiers, and by nineteen forty five Britain owed India one point three billion pounds it could not pay. The empire did not choose to leave. It could no longer afford to stay.
+N: Even Churchill, no friend of the movement, said what continued rule would cost.
+M: The loss of India would mark and consummate the downfall of the British Empire.
+
+## PERSPECTIVE | Dalit / Ambedkarite | indigenous
+N: B.R. Ambedkar was born into a caste designated untouchable, and as a child was made to sit outside the classroom on a sack because he could not touch the communal water tap.
+N: His account holds that caste was older and deeper than colonialism, and that an independent India run by upper caste Hindus would simply replace one ruler with another.
+N: Its strongest fact is the Poona Pact. Gandhi fasted in Yerwada Jail until Ambedkar gave up separate Dalit electorates for reserved seats instead, a concession Ambedkar made to save Gandhi's life and never forgave.
+N: Ambedkar went on to chair the committee that drafted India's constitution, and he said this about the document he had just written.
+M: However good a constitution may be, if those who are implementing it are not good, it will prove to be bad.
+N: Sixty million people, in his telling, traded a distant ruler for a nearer one.
+
+## REST | short
+
+## PERSPECTIVE | Muslim League | bystander
+N: The League's account starts with a number. In the elections of nineteen thirty seven, Congress won seven hundred seven of fifteen hundred eighty five seats and refused the League's offer of a coalition in the United Provinces.
+N: Its strongest fact is the mandate that followed. By nineteen forty six, the League had swept four hundred forty six of the four hundred ninety five Muslim seats, an outcome it read as an unambiguous demand for a separate state, for a hundred million Muslims who would not be a permanent minority inside a Hindu majority.
+N: Muhammad Ali Jinnah described what he believed that country was for.
+M: We are a nation with our own distinctive culture and civilization, language and literature, names and nomenclature, sense of values and proportion.
+N: Three days before Pakistan existed, Jinnah told its new assembly that its people were free to go to their temples and free to go to their mosques. That country is where the story of Partition begins.
+
+## TURN | What each one leaves out
+N: None of those five is a lie. Each is true, and each has a gap.
+N: Congress leaves out Bhagat Singh and Bose, and Gandhi's own conflicts with Ambedkar.
+N: The revolutionaries leave out how many people the Congress method actually moved, and that Bose's invasion of India failed on the battlefield.
+N: The British leave out Jallianwala Bagh, and a famine that killed three million while food went to the war effort.
+N: The Dalit account leaves out the anti colonial unity the wider movement did achieve, and the reservations Ambedkar's own committee work produced.
+N: The League leaves out how small its organized base was before nineteen forty, and the communal violence its later campaign would help set off.
+N: Each account omits the fact that would cost its own side the most.
+
+## REST
+
+## CLOSE
+N: Ambedkar chaired the committee that wrote India's constitution. It was adopted on January twenty sixth, nineteen fifty.
+N: Six weeks before his death, in October nineteen fifty six, he converted to Buddhism at Deekshabhoomi in Nagpur, along with six hundred thousand followers. The largest mass religious conversion in recorded history.
+N: He was not converting away from a foreign ruler. There had not been one in his country for nine years.
+
+## SAY
+Amritsar = um-RIT-sur
+Jallianwala Bagh = jul-yan-WAH-lah BAHG
+Dyer = DY-er
+Sabarmati = sah-bar-MAH-tee
+Dandi = DUN-dee
+Dharasana = dah-rah-SAH-nah
+Chauri Chaura = CHOW-ree CHOW-rah
+Bhagat = BUH-gut
+Subhas Chandra Bose = soo-BHASH CHUN-drah BOSE
+Ambedkar = am-BED-kar
+Yerwada = yer-WAH-dah
+Deekshabhoomi = deek-shah-BHOO-mee
+Nagpur = NAHG-poor
+Ghadar = guh-DAR
+Anushilan = ah-noo-SHEE-lan
+Jugantar = joo-GUN-tar
+Jinnah = JIN-ah
+Khilafat = khih-LAH-fut
+Poona = POO-nah

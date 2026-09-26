@@ -1,0 +1,133 @@
+## OPEN
+N: You think this began with a bad harvest.
+N: It began with a steel target. In May of nineteen fifty eight, Mao Zedong told the party that China would overtake Britain in steel output within fifteen years. Then he cut the timeline to three.
+N: The nineteen fifty seven target of five point three five million tonnes became ten point seven million tonnes. About one million backyard furnaces went up across the countryside. Peasants melted their woks, their hoes, their door hinges into iron.
+N: A tonne from one of those furnaces cost roughly twice a tonne from a modern mill, and most of what came out of them was brittle and unusable. The villagers who fed those fires were pulled off the harvest to do it.
+
+## TITLE
+N: The Great Leap Forward and the Great Chinese Famine. Nineteen fifty eight to nineteen sixty two.
+
+## SCENE 1 | The commune
+N: Autumn of nineteen fifty eight, in a newly formed people's commune.
+N: Seven hundred fifty thousand collectives have just been merged into about twenty five thousand of these, each one averaging five thousand households. By the end of that year, something like six hundred million rural Chinese have been folded into communes like it. Private plots are gone. Private kitchens are gone. Even the cooking pot goes to the commune now.
+N: For a few months, in the mess hall, the food is free and there is as much of it as anyone wants. Cadres tell people to eat their fill, because the collective will always provide.
+N: That same year, the state also declares war on sparrows. Villagers bang pots until the birds drop from exhaustion in the air. With the sparrows gone, locusts and insects multiply and strip the fields bare.
+
+## SCENE 2 | The ledger
+N: The numbers on paper stop matching the grain in the ground. Local cadres compete to report the largest harvest, and are afraid to report the smallest.
+N: Some claim ten thousand catties per mu, on land that yields a few hundred. The state sets its procurement quota against those invented figures.
+N: When the real harvest cannot meet the fictional one, work teams go from house to house. They search homes, dig up floors, and beat peasants to find grain that does not exist.
+
+## DOCUMENT | Mao Zedong | Remark at a Shanghai party conference | March 1959
+N: In March of nineteen fifty nine, Mao Zedong told a party conference in Shanghai what the shortage meant to him. The remark survives as quoted in Dikotter's history of the famine, not as a transcript.
+M: When there is not enough to eat, people starve to death. It is better to let half of the people die so that the other half can eat their fill.
+
+## ASIDE
+N: The famine ran two more years after that remark. Grain requisitioning continued at the same pace, from villages that had already given up their reserves.
+
+## REST
+
+## SCENE 3 | Xinyang
+N: Xinyang prefecture, Henan province. On January the thirteenth, nineteen sixty one, the district reports its own death count for the year before: one million seventy thousand three hundred twenty one people, dead between November of nineteen fifty nine and October of nineteen sixty, thirteen point two percent of everyone who lived there.
+N: Investigators sent in afterward find the granaries still holding grain. They also find evidence of cannibalism, and a deliberate cover up.
+
+## SCENE 4 | Lushan
+N: July the fourteenth, nineteen fifty nine, a party conference at the mountain resort of Lushan. Defense Minister Peng Dehuai hands Mao a private letter, cataloguing the waste and the exaggeration he has seen touring his home province.
+N: On July the twenty third, Mao circulates that letter to the whole conference. Peng is denounced as the head of an anti party clique, alongside Huang Kecheng, Zhang Wentian, and Zhou Xiaozhou, and stripped of his post. The Anti Right Deviation campaign that follows purges officials who told the truth, and the same policies that are killing people run for two more years.
+
+## REST
+
+## SCENE 5 | Yang Jisheng's father
+N: Nineteen fifty nine. A message reaches a young reporter at the Xinhua News Agency: his father is starving, back home in the Hubei countryside.
+N: Yang Jisheng goes home. He finds the old man too weak to eat. His father dies days later.
+N: For decades Yang believes the official account of natural disasters. Then, with the access of a senior journalist, he spends years inside provincial archives and party records.
+
+## DOCUMENT | Yang Jisheng | Tombstone, The Great Chinese Famine 1958-1962 | 2008
+N: What Yang Jisheng found became a book, published in Hong Kong in two thousand eight. He titled it Tombstone, and said why.
+M: I named the book Tombstone. It is a tombstone for my father who died of hunger in nineteen fifty nine, for the thirty six million Chinese who died of hunger, for the system that caused their deaths, and perhaps for myself for writing this book.
+
+## ASIDE
+N: The book is banned on the mainland to this day. Its estimate of thirty six million dead sits inside a much wider argument that is still not settled.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts, and the argument here is not whether people died. It is about why, who is to blame, and how many. The lowest estimate on record is eleven point five million. The highest is forty five million. Both numbers describe the same famine.
+
+## PERSPECTIVE | The Party's Own Account | victor
+N: The party's case rests on two words: natural disaster. Drought and flood struck large parts of the country, and after Moscow withdrew its advisers in nineteen sixty, the debt owed to the Soviet Union added its own pressure. On this account the leadership made errors of enthusiasm, not a crime of policy.
+N: In nineteen eighty one, under Deng Xiaoping, the party did revise its own story. It retired the phrase Three Years of Natural Disasters for Three Years of Difficulty, and it named Mao responsible for leftist errors, while preserving his standing.
+M: Comrade Mao Zedong's contributions to the Chinese revolution far outweigh his mistakes. His merits are primary and his errors secondary.
+N: That resolution is still the party's last word. The exact death toll remains a state secret, and county mortality records stay classified. The figure most often attached to the party's own account, when one is given at all, sits near fifteen million.
+
+## PERSPECTIVE | The Historians' Verdict | academic
+N: The historians who worked the archives reject both official excuses. Weather records do not explain a catastrophe of this size and spread. And the debt explanation collapses against the trade figures: China exported grain throughout, four point one six million tonnes in nineteen fifty nine alone, the deadliest year.
+N: One county level study found that nineteen sixty excess deaths would have been about twelve percent lower, had the nineteen fifty nine exports simply matched the nineteen fifty seven level.
+N: Frank Dikotter's provincial archive research reframed the famine as more than starvation.
+M: Coercion, terror and systematic violence were the foundation of the Great Leap Forward.
+N: He documented that many deaths came from beatings and deliberate deprivation, not hunger alone. People caught stealing a handful of grain were buried alive or worked to death. The lie about the harvest, in this account, became the warrant to seize the food.
+
+## PERSPECTIVE | The Peasants Who Starved | vanquished
+N: The commune took the cooking pot first, and for one season the mess hall gave people more food than they had ever eaten. By the spring of nineteen fifty nine it was serving thin gruel, then leaves, then nothing, and no household had a private pot or a private plot left to fall back on.
+N: The grain that was harvested left the village anyway. When the sacks a village could produce fell short of the inflated quota, the shortfall was called hoarding.
+N: An account from Xinyang prefecture, unnamed in the record, described what the search teams found there.
+F: The granaries were full and the people were dying at the doors.
+N: Villagers caught gleaning fallen grain, or trying to flee, were labeled thieves. A family's survival could depend on the temper of one local official.
+
+## PERSPECTIVE | The Contested Toll | revisionist
+N: Almost no one was counted at the time, so every figure is a reconstruction, built on an assumed normal death rate subtracted from what the records show later. A different baseline moves the number by tens of millions.
+N: The demographers converge near thirty million. Ansley Coale found about sixteen point five million. Basil Ashton and colleagues found about thirty million. Judith Banister found about the same. Cao Shuji's county gazetteer study reached thirty two point five million. Former official Chen Yizi's own investigation concluded about forty three million. Yang Jisheng and Frank Dikotter go higher again.
+N: The economist Utsa Patnaik disputes the whole exercise.
+F: The estimate of thirty million deaths depends on a benchmark death rate lower than that prevailing in India at the same time.
+N: She and others put the excess closer to eleven point five million. Mainstream historians answer that county archives independently confirm mass death, whatever baseline is chosen.
+
+## PERSPECTIVE | The Purged Reformers | vanquished
+N: Peng Dehuai had commanded Chinese forces in Korea. When he toured his home province and saw the mess halls failing, he wrote to Mao rather than staying silent.
+N: In a line attributed to him, on the reasoning behind that letter:
+M: Putting politics in command is no substitute for economic principles.
+N: Mao read the letter as a challenge, not a warning, and inverted the conference into a purge. The correction the letter asked for became an escalation, and the famine ran two more years past Lushan.
+N: Liu Shaoqi delivered, in nineteen sixty two, the reckoning Peng had been destroyed for attempting three years earlier.
+
+## REST | short
+
+## TURN | What each one leaves out
+N: What each account cannot see from where it stands.
+N: The party calls the deaths a natural disaster while it keeps the county mortality records classified, as if nature needed sealing away.
+N: The historians, so careful about the mechanism, say less about the peasants who enforced the quotas out of their own fear, not just cruelty.
+N: The peasants' account has the least reason to lie, and it says nothing about the debates in Beijing that set the quota in the first place.
+N: The revisionists, so careful about the baseline, spend little time on the archival evidence that the low estimates have to explain away.
+N: And the purged reformers' account, about two men punished for telling the truth, says almost nothing about the tens of millions who never got the chance to speak at all.
+
+## REST
+
+## DOCUMENT | Liu Shaoqi | Speech to the Seven Thousand Cadres Conference, Beijing | January 1962
+N: In January of nineteen sixty two, at a conference of seven thousand cadres, head of state Liu Shaoqi told the party what he had heard in Hunan.
+M: In Hunan, the people say that three parts were natural calamity and seven parts were man-made disaster.
+
+## ASIDE
+N: Mao heard it as an accusation, not an admission. Four years later he launched the Cultural Revolution. Both Peng Dehuai and Liu Shaoqi died in its custody.
+
+## CLOSE
+N: Tombstone was published in Hong Kong in two thousand eight. It has never been printed on the mainland.
+N: When Yang Jisheng was invited abroad to accept a journalism prize for writing it, the government would not let him travel.
+
+## SAY
+Zedong = zuh-DUNG
+Xinyang = shin-YAHNG
+Henan = huh-NAHN
+Lushan = loo-SHAHN
+Dehuai = duh-HWY
+Xiaoping = shyow-PING
+Jisheng = jee-SHUNG
+Dikotter = dih-KUR-ter
+Shaoqi = shaow-CHEE
+Hunan = hoo-NAHN
+Hubei = hoo-BAY
+Xinhua = shin-HWAH
+Kecheng = kuh-CHUNG
+Wentian = wun-tyen
+Xiaozhou = shyow-JOH
+Patnaik = PUT-nyk
+Shuji = SHOO-jee
+Yizi = YEE-dzuh
+Catties = KAT-eez

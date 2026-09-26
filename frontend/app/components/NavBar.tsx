@@ -1,209 +1,281 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import type { Edition, Category } from "../lib/types";
-import { EDITIONS } from "../lib/types";
+import { usePathname } from "next/navigation";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
-import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
-import EditionIcon from "./EditionIcon";
-import { getEditionTimestamp } from "../lib/utils";
-import type { LeanChip } from "./FilterBar";
-import { hapticMicro } from "../lib/haptics";
-
-const ALL_CATEGORIES: ("All" | Category)[] = [
-  "All", "Politics", "Economy", "Science", "Health", "Culture",
-];
-
-interface NavBarProps {
-  activeEdition: Edition;
-  /** Filter props — when provided, renders the compact filter row */
-  activeCategory?: "All" | Category;
-  onCategoryChange?: (category: "All" | Category) => void;
-  activeLean?: LeanChip;
-  onLeanChange?: (lean: LeanChip) => void;
-}
+import ExperimentalBadge from "./ExperimentalBadge";
+import { useAudio } from "./AudioProvider";
+import { BASE_PATH, getEditionTimestampLocal, getEditionDatelineUTC } from "../lib/utils";
 
 /* ---------------------------------------------------------------------------
-   NavBar — Newspaper masthead with integrated compact filter row
+   NavBar: the one masthead, mounted once in the root layout.
 
-   Row 1: Logo | dateline | Sources | Theme
-   Row 2: [World US India] · [L C R] · [Topics ▾] [×badge]
+   Every route wears the same bar. A section (History, Weekly, Paper) does not
+   get its own topbar any more; it gets a nameplate beside the wordmark and an
+   accent, the way the floating player is skinned per section by swapping one
+   variable. The section is read from the pathname on the server and on the
+   client alike, so the served HTML already carries the right nameplate and
+   the right aria-current, with no flash.
 
-   Everything in one sticky header. No separate filter bar, no bottom nav.
+   Row: wordmark [+ nameplate | tagline] | dateline | sections | pages | search | theme
+
+   The search button renders only on the front page. It raises a DOM event
+   (SEARCH_EVENT) that HomeContent listens for, so the masthead does not need
+   to know about the feed's state.
    --------------------------------------------------------------------------- */
 
-function formatDateCompact(): string {
-  return new Date().toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+export const SEARCH_EVENT = "void:search";
+
+export type Section =
+  | "news"
+  | "history"
+  | "weekly"
+  | "paper"
+  | "onair"
+  | "audio"
+  | "sources"
+  | "ship"
+  | "about"
+  | "press"
+  | "privacy"
+  | "story"
+  | "other";
+
+/** Section for a route path (BASE_PATH already stripped). */
+export function sectionForPath(path: string): Section {
+  const p = path || "/";
+  if (p === "/") return "news";
+  const head = p.split("/").filter(Boolean)[0];
+  switch (head) {
+    case "history": return "history";
+    case "weekly": return "weekly";
+    case "paper": return "paper";
+    case "onair": return "onair";
+    /* /listen 301s to /audio at the edge; the section is the same either way. */
+    case "audio":
+    case "listen": return "audio";
+    case "sources": return "sources";
+    case "ship":
+    case "feedback": return "ship";
+    case "about": return "about";
+    case "press": return "press";
+    case "privacy": return "privacy";
+    case "story": return "story";
+    default: return "other";
+  }
 }
 
-function getEditionHref(slug: Edition): string {
-  if (slug === "world") return "/";
-  return `/${slug}`;
+/** Sections that carry a nameplate beside the wordmark. */
+const NAMEPLATES: Partial<Record<Section, { href: string; label: string }>> = {
+  history: { href: "/history", label: "History" },
+  weekly: { href: "/weekly", label: "Weekly" },
+  paper: { href: "/paper", label: "Paper" },
+  /* On Air is a programme inside the Audio section, so its page wears the
+     section's nameplate; the nameplate links to the section, not to itself. */
+  audio: { href: "/audio", label: "Audio" },
+  onair: { href: "/audio", label: "Audio" },
+};
+
+/** The section links. Order is the reading order of the product: the
+ *  programmes, then the two slower sections. Audio replaced On Air and Listen
+ *  on 2026-09-21: On Air is the daily programme's page and Listen was a page
+ *  of feed addresses, two links for one section. */
+const SECTION_LINKS: { href: string; label: string; section: Section }[] = [
+  { href: "/audio", label: "Audio", section: "audio" },
+  { href: "/history", label: "History", section: "history" },
+  { href: "/weekly", label: "Weekly", section: "weekly" },
+];
+
+/** A section link is current on its own routes and on the routes of the
+ *  programmes it holds: Audio is current on /onair. */
+const HELD_BY: Partial<Record<Section, Section>> = { onair: "audio" };
+
+const PAGE_LINKS: { href: string; label: string; section: Section; title: string }[] = [
+  { href: "/sources", label: "Sources", section: "sources", title: "Every outlet Void News reads" },
+  { href: "/ship", label: "Feedback", section: "ship", title: "Tell us what to build or fix" },
+  { href: "/about", label: "About", section: "about", title: "About Void News" },
+];
+
+/** Sections whose masthead shows the daily edition dateline. The others are
+ *  not daily, so a daily date beside their nameplate would be a false signal. */
+const DATED_SECTIONS: ReadonlySet<Section> = new Set(["news", "onair", "sources", "story"]);
+
+interface NavBarProps {
+  onSearchClick?: () => void;
+  /** Edition build time (pipeline completed_at, ISO). Drives the masthead
+      "as of" time, rendered in the viewer's local zone after mount. */
+  editionBuiltAt?: string | null;
+  /** Deterministic, preformatted edition DATE, computed once at build time in
+      UTC. Renders byte-identically on server and client. When absent the
+      masthead shows no date rather than the viewer's clock: a date the build
+      did not supply is not a fact the masthead may claim. */
+  editionDateline?: string;
+  /** Explicit literal override for the "as of" TIME node. Pass "" to
+      suppress the time entirely. */
+  editionTimestamp?: string;
 }
 
 export default function NavBar({
-  activeEdition,
-  activeCategory = "All",
-  onCategoryChange,
-  activeLean = "All",
-  onLeanChange,
+  onSearchClick,
+  editionBuiltAt,
+  editionDateline,
+  editionTimestamp,
 }: NavBarProps) {
-  const [topicOpen, setTopicOpen] = useState(false);
-  const topicRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname() || "/";
+  const route = pathname.replace(BASE_PATH, "") || "/";
+  const section = sectionForPath(route);
+  const nameplate = NAMEPLATES[section];
+  const dated = DATED_SECTIONS.has(section);
 
-  const handleLeanTap = (lean: LeanChip) => {
-    hapticMicro();
-    onLeanChange?.(lean === activeLean ? "All" : lean);
-  };
+  const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setMounted(true); }, []);
 
-  const handleTopicTap = (cat: "All" | Category) => {
-    hapticMicro();
-    onCategoryChange?.(cat);
-    setTopicOpen(false);
-  };
+  // DATE: the build-time UTC string wins. Without it, the masthead shows the
+  // date only once the build time is known on the client; it never shows
+  // "now". (The old fallback to the viewer's clock put "Sep 21 · as of 2:00
+  // AM" above a card dated September 20.)
+  const dateline = editionDateline ?? (mounted && editionBuiltAt ? getEditionDatelineUTC(editionBuiltAt) : "");
+  const timestamp =
+    editionTimestamp !== undefined
+      ? editionTimestamp
+      : mounted && editionBuiltAt
+        ? getEditionTimestampLocal(editionBuiltAt)
+        : "";
 
-  // Close topic dropdown on outside click
+  /* Scroll-compact masthead: data-scroll-compact past 80px, off at 40px. */
+  const [scrollCompact, setScrollCompact] = useState(false);
   useEffect(() => {
-    if (!topicOpen) return;
-    const close = (e: MouseEvent) => {
-      if (topicRef.current && !topicRef.current.contains(e.target as Node)) {
-        setTopicOpen(false);
-      }
+    let ticking = false;
+    let compact = false;
+    const update = () => {
+      ticking = false;
+      const y = window.scrollY;
+      if (!compact && y > 80) { compact = true; setScrollCompact(true); }
+      else if (compact && y <= 40) { compact = false; setScrollCompact(false); }
     };
-    document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
-  }, [topicOpen]);
+    const onScroll = () => {
+      if (!ticking) { ticking = true; window.requestAnimationFrame(update); }
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-  const hasFilters = !!onLeanChange;
+  /* The masthead's live height, published as --masthead-h on :root, so a bar
+     that sticks under it (the Deep Dive's) sits exactly below it at every
+     width and compact state. Two stickies both at top: 0 put the Deep Dive
+     bar UNDER the masthead, where it read as gone (2026-09-26). A
+     ResizeObserver reports only on change, so this costs nothing per scroll. */
+  const headerRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const root = document.documentElement;
+    const ro = new ResizeObserver(() => {
+      root.style.setProperty("--masthead-h", `${Math.round(el.getBoundingClientRect().height)}px`);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const openSearch = () => {
+    if (onSearchClick) onSearchClick();
+    else window.dispatchEvent(new CustomEvent(SEARCH_EVENT));
+  };
+
+  /* While the shared player is playing, the wordmark's beam rocks in brass
+     (brand.css, "On air"). The attribute is the only thing the bar does with
+     audio; the player owns the rest. */
+  const { isPlaying } = useAudio();
 
   return (
-    <header className="nav-header">
-      {/* ── Row 1: Masthead ── */}
+    <header
+      ref={headerRef}
+      className="nav-header anim-cold-open-nav"
+      data-section={section}
+      data-scroll-compact={scrollCompact ? "true" : undefined}
+      data-playing={isPlaying ? "true" : undefined}
+    >
       <nav className="nav-inner" aria-label="Main navigation">
         <div className="nav-left">
-          <Link href="/" aria-label="void --news — home" className="nav-logo si-hoverable">
-            <span className="nav-logo-desktop">
-              <LogoFull height={32} />
-            </span>
-            <span className="nav-logo-mobile">
-              <LogoFull height={22} />
-            </span>
+          <Link href="/" aria-label="Void News home" className="nav-logo si-hoverable">
+            <LogoFull responsive className="nav-logo-mark" />
           </Link>
+          {nameplate ? (
+            <Link
+              href={nameplate.href}
+              className="nav-nameplate"
+              aria-current={route === nameplate.href || route === `${nameplate.href}/` ? "page" : undefined}
+            >
+              {nameplate.label}
+            </Link>
+          ) : (
+            <>
+              <ExperimentalBadge />
+              <span className="nav-tagline" aria-hidden="true">See through the void.</span>
+            </>
+          )}
         </div>
 
-        <span className="nav-dateline-inline" aria-hidden="true">
-          {formatDateCompact()}
-          <span className="nav-dateline-inline__sep">&middot;</span>
-          <span className="nav-dateline-inline__time">{getEditionTimestamp(activeEdition)}</span>
-        </span>
-        <span className="nav-dateline-mobile" aria-hidden="true">
-          {formatDateCompact()}
-        </span>
+        {dated && (
+          <span className="nav-dateline-line" aria-hidden="true" suppressHydrationWarning>
+            <span className="nav-dateline-line__date">{dateline}</span>
+            {timestamp && (
+              <>
+                <span className="nav-dateline-line__sep">&middot;</span>
+                <span className="nav-dateline-line__time"><span className="nav-asof">as of </span>{timestamp}</span>
+              </>
+            )}
+          </span>
+        )}
 
         <div className="nav-right">
-          <PageToggle activePage="feed" />
+          <nav className="nav-sections" aria-label="Sections">
+            {SECTION_LINKS.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="nav-page"
+                data-section={l.section}
+                aria-current={section === l.section || HELD_BY[section] === l.section ? "page" : undefined}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+          <nav className="nav-pages" aria-label="Pages">
+            {PAGE_LINKS.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="nav-page"
+                title={l.title}
+                aria-current={section === l.section ? "page" : undefined}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+
+          {section === "news" && (
+            <button
+              type="button"
+              className="nav-search-btn"
+              onClick={openSearch}
+              aria-label="Search stories (Ctrl+K)"
+              title="Search (Ctrl+K)"
+            >
+              <MagnifyingGlass size={18} weight="regular" aria-hidden="true" />
+            </button>
+          )}
+
           <ThemeToggle />
         </div>
       </nav>
-
-      {/* ── Row 2: Compact filters (editions + lean + topic) ── */}
-      {hasFilters && (
-        <div className="nav-filters">
-          {/* Edition pills */}
-          <div className="nav-filters__group" role="tablist" aria-label="Edition">
-            {EDITIONS.map((ed) => (
-              <Link
-                key={ed.slug}
-                href={getEditionHref(ed.slug)}
-                role="tab"
-                aria-selected={activeEdition === ed.slug}
-                className={`nav-filters__ed${activeEdition === ed.slug ? " nav-filters__ed--active" : ""}`}
-              >
-                <EditionIcon slug={ed.slug} size={11} />
-                <span>{ed.label}</span>
-              </Link>
-            ))}
-          </div>
-
-          <div className="nav-filters__sep" aria-hidden="true" />
-
-          {/* Lean chips */}
-          <div className="nav-filters__group" role="tablist" aria-label="Political perspective">
-            {(["Left", "Center", "Right"] as LeanChip[]).map((lean) => (
-              <button
-                key={lean}
-                role="tab"
-                aria-selected={activeLean === lean}
-                onClick={() => handleLeanTap(lean)}
-                className={`nav-filters__lean nav-filters__lean--${lean.toLowerCase()}${activeLean === lean ? " nav-filters__lean--active" : ""}`}
-              >
-                <span className="nav-filters__lean-dot" aria-hidden="true" />
-                {lean}
-              </button>
-            ))}
-          </div>
-
-          <div className="nav-filters__sep" aria-hidden="true" />
-
-          {/* Topic dropdown */}
-          <div
-            ref={topicRef}
-            className={`nav-filters__topics${topicOpen ? " nav-filters__topics--open" : ""}`}
-          >
-            <button
-              className="nav-filters__topic-trigger"
-              onClick={() => setTopicOpen((v) => !v)}
-              onMouseEnter={() => setTopicOpen(true)}
-              aria-expanded={topicOpen}
-              aria-label="Filter by topic"
-            >
-              {activeCategory === "All" ? "Topics" : activeCategory}
-              <span className={`nav-filters__topic-caret${topicOpen ? " nav-filters__topic-caret--open" : ""}`} aria-hidden="true">&#9662;</span>
-            </button>
-
-            {topicOpen && (
-              <div
-                className="nav-filters__topic-panel"
-                role="listbox"
-                aria-label="Topics"
-                onMouseLeave={() => setTopicOpen(false)}
-              >
-                {ALL_CATEGORIES.map((cat) => (
-                  <button
-                    key={cat}
-                    role="option"
-                    aria-selected={activeCategory === cat}
-                    onClick={() => handleTopicTap(cat)}
-                    className={`nav-filters__topic-opt${activeCategory === cat ? " nav-filters__topic-opt--active" : ""}`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Active lean badge */}
-          {activeLean !== "All" && (
-            <div className="nav-filters__badge" role="status" aria-live="polite">
-              <span>{activeLean}</span>
-              <button
-                className="nav-filters__badge-x"
-                onClick={() => { hapticMicro(); onLeanChange?.("All"); }}
-                aria-label={`Clear ${activeLean} filter`}
-              >
-                &times;
-              </button>
-            </div>
-          )}
-        </div>
-      )}
     </header>
   );
 }

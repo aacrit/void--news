@@ -1,0 +1,76 @@
+# Nightly production database backup — launch safety-net (Workstream B).
+#
+# void --news runs on a SINGLE shared Supabase Postgres (no dev/prod DB split;
+# migrations auto-apply to prod). Before opening the product to real users this
+# nightly pg_dump is the cheap insurance against a bad migration or accidental
+# data loss. The dump is stored as a GitHub Actions artifact (retention below),
+# so it costs $0 (no external object storage) and is downloadable from the run.
+#
+# RESTORE (into a fresh Supabase project or a recovered DB):
+#   1. Download the `db-backup-<date>` artifact from the workflow run and unzip.
+#   2. gunzip -c backup-<date>.sql.gz | psql \
+#        "postgresql://postgres.<SUPABASE_PROJECT_REF>:<SUPABASE_DB_PASSWORD>@aws-0-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require"
+#   The dump uses --no-owner --no-privileges so it restores cleanly under a
+#   different role (e.g. a brand-new project's postgres user).
+#
+# Secrets used (already configured in the repo, same as migrate.yml):
+#   SUPABASE_PROJECT_REF   — Supabase project ref (pooler username suffix)
+#   SUPABASE_DB_PASSWORD   — database password
+
+name: Weekly DB Backup
+
+on:
+  # Schedule DISABLED (2026-08-31, Cloudflare migration): the live DB is now the
+  # SQLite state file, and the pipeline uploads a durable gzipped snapshot
+  # (void-state-snapshot artifact) every run — that is the DR backup now. This
+  # workflow pg_dumps Supabase, which is frozen/being decommissioned, so a
+  # scheduled run would just back up stale data. Kept as manual-only so a final
+  # Supabase dump can be taken by hand before the project is cancelled.
+  # - cron: '0 6 * * 0'
+  workflow_dispatch:
+
+permissions: {}
+
+# Never let two backups stack up; a slow dump should not overlap the next night.
+concurrency:
+  group: backup-db-prod
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PostgreSQL 16 client
+        # ubuntu-latest ships an older client by default; pg_dump must be >= the
+        # server major version or it refuses to run. Pull client 16 from PGDG.
+        run: |
+          sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-17
+          pg_dump --version
+
+      - name: Dump database (compressed)
+        env:
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+          DATE="$(date +%F)"
+          echo "backup_file=backup-${DATE}.sql.gz" >> "$GITHUB_ENV"
+          CONN="postgresql://postgres.${SUPABASE_PROJECT_REF}:${SUPABASE_DB_PASSWORD}@aws-0-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require"
+          # -Fp plain SQL for portability; --no-owner/--no-privileges so a restore
+          # into a fresh project (different roles) succeeds.
+          pg_dump "$CONN" -Fp --no-owner --no-privileges | gzip > "backup-${DATE}.sql.gz"
+          ls -lh "backup-${DATE}.sql.gz"
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ github.run_id }}
+          path: ${{ env.backup_file }}
+          retention-days: 14
+          if-no-files-found: error

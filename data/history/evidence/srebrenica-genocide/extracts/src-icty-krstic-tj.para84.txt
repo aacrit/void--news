@@ -1,0 +1,7 @@
+source: src-icty-krstic-tj
+locator: para84
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+
+84. The Trial Chamber is satisfied that, in July 1995, following the take-over of Srebrenica, Bosnian Serb forces executed several thousand Bosnian Muslim men. The total number is likely to be within the range of 7,000 -8,000 men.

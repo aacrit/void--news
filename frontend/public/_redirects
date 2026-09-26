@@ -1,0 +1,63 @@
+# 2026-06-02 — void --news collapsed to a single daily feed.
+# Old multi-edition URLs (/world, /us, /europe, /south-asia) 301-redirect
+# to the homepage. Cloudflare Pages honors this file at the edge before
+# any HTML is served.
+/world      /  301
+/world/*    /  301
+/us         /  301
+/us/*       /  301
+/europe     /  301
+/europe/*   /  301
+/south-asia /  301
+/south-asia/*  /  301
+
+# 2026-09-19 — History and Weekly are live again. The launch-hiding 301s that
+# sat here (/history*, /weekly* -> /) are removed; the per-edition /weekly
+# variants below still resolve, and they must stay BELOW this line so the
+# catch-all wildcard never shadows the real routes.
+
+# 2026-08 — void --weekly is a single (world) issue now; the per-edition
+# variants were never generated. 301 stray /weekly/europe + /weekly/south-asia
+# links (and trailing-slash forms) to the current weekly instead of a 404.
+/weekly/europe        /weekly  301
+/weekly/europe/       /weekly  301
+/weekly/south-asia    /weekly  301
+/weekly/south-asia/   /weekly  301
+
+# 2026-08 — void --ship is the full transparency board again (submit + Kanban).
+# The board contains the submit form, so the old /feedback URL now lands on it.
+/feedback    /ship                 301
+/feedback/   /ship                 301
+
+# 2026-08-03 — Revolt removed from prod (temporarily). 301 all /revolt* to home.
+/revolt      /  301
+/revolt/*    /  301
+
+# 2026-09-21 - Internal tooling is no longer served publicly. The command
+# center (a client-side password gate whose hash shipped in the bundle), the
+# pipeline diagram, the IG admin surface and the IG render route were all
+# reachable at 200 with no link and no robots rule. 301 them to home; the
+# /ig render templates stay in the build for manual social exports only.
+/command-center    /  301
+/command-center/*  /  301
+/admin             /  301
+/admin/*           /  301
+/pipeline          /  301
+/pipeline/*        /  301
+/ig                /  301
+/ig/*              /  301
+
+# 2026-09-21. Listen (three feed addresses) folded into the Audio section,
+# which holds every programme and the feeds in one place.
+/listen      /audio  301
+/listen/     /audio  301
+
+# 2026-08-03. Games is hidden from prod (temporarily). 301 to home.
+# Paper returned 2026-09-21 as the printable twenty; its 301 is gone.
+/games       /  301
+/games/*     /  301
+
+# Legacy GitHub Pages project-path. CF Pages serves at root, so 301 any
+# stray /void--news/* deep link to the equivalent root path. Placed last:
+# first match wins, so the specific edition rules above take precedence.
+/void--news/*  /:splat  301

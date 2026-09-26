@@ -1,0 +1,8 @@
+source: src-hansard-19461212
+locator: p1353
+url: https://api.parliament.uk/historic-hansard/commons/1946/dec/12/india-constitution
+read: 2026-09-25
+note: p is the Hansard column; HC Deb 12 December 1946 vol 431 cc1346-452, Sir Stafford Cripps moving the motion
+note: 'suported' is the page's
+
+Could a Province vote itself out of a grouping, and thus determine its own Constitution for the Province, or were both these matters to be decided by a simple majority vote of the sections? The latter view is clearly the correct one, in the opinion of the Cabinet Mission, His Majesty's Government and their legal advisers. This view was suported by the Muslim League. Congress took the contrary view, on the basis that words in paragraph 15, which dealt with the objectives of the Constitution, overrode the explicit words in paragraph 19, which dealt with procedure.

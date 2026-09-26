@@ -1,0 +1,68 @@
+name: Generate void --revolt audio
+
+# Deterministic two-voice narration (edge-tts, $0) per revolution -> MP3 in
+# Supabase Storage (audio-briefs/revolt/<slug>.mp3) + audio_url on revolt_events.
+# Manual only; commits the manifest + script cache back to the repo.
+on:
+  workflow_dispatch:
+    inputs:
+      slugs:
+        description: "Space-separated slugs (empty = batch/all)"
+        required: false
+        default: ""
+      batch_size:
+        description: "Batch size (0 = all)"
+        required: false
+        default: "0"
+      offset:
+        description: "Batch offset"
+        required: false
+        default: "0"
+      force:
+        description: "Regenerate ignoring the manifest"
+        required: false
+        default: "false"
+      voices_only:
+        description: "Reuse cached script, re-run TTS only"
+        required: false
+        default: "false"
+
+concurrency:
+  group: generate-revolt-audio
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  audio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Install deps
+        run: pip install edge-tts pydub supabase python-dotenv pyyaml
+      - name: Generate audio
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          SLUGS="${{ inputs.slugs }}"
+          FLAGS="${{ inputs.force == 'true' && ' --force' || '' }}${{ inputs.voices_only == 'true' && ' --voices-only' || '' }}"
+          if [ -n "$SLUGS" ]; then
+            python -m pipeline.revolt.generate_audio --slugs $SLUGS$FLAGS
+          else
+            python -m pipeline.revolt.generate_audio --batch-size "${{ inputs.batch_size }}" --offset "${{ inputs.offset }}"$FLAGS
+          fi
+      - name: Commit manifest + scripts
+        run: |
+          git config user.name "void-pipeline[bot]"
+          git config user.email "void-pipeline[bot]@users.noreply.github.com"
+          git add data/revolt/audio-manifest.json data/revolt/scripts/ || true
+          git commit -m "chore: revolt audio manifest + scripts [skip ci]" || echo "nothing to commit"
+          git push || echo "nothing to push"

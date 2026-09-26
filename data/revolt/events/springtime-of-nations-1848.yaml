@@ -1,0 +1,233 @@
+slug: springtime-of-nations-1848
+title: The Springtime of Nations
+subtitle: A continent rises in a single season and is put down within a year
+date_display: 1848-1849
+date_start: 1848
+date_end: 1849
+date_precision: year
+era: springtime
+region: europe
+country: France, the German and Italian states, and the Austrian Empire
+revolt_type: democratic-uprising
+status: concluded
+summary: Bread riots in Paris toppled a king in three days in February 1848, and within weeks Berlin, Vienna, Milan, and Budapest had their own barricades. Liberal parliaments met, constitutions were promised, and by the summer of 1849 nearly every gain had been reversed by force, often with foreign troops doing the reversing.
+significance: The first genuinely continental revolutionary wave, spreading from capital to capital by newspaper and rail faster than any government could contain it, and the clearest historical case of a revolution succeeding everywhere at first and surviving almost nowhere.
+grievances:
+  - kind: Economic crisis and food prices
+    intensity: 78
+    evidence: The 1845-46 potato blight and a poor 1846-47 grain harvest doubled bread prices across much of Europe, driving urban unemployment before a single barricade went up.
+  - kind: Absence of constitutional representation
+    intensity: 82
+    evidence: Louis Philippe's France, the Austrian Empire, and most German states in 1848 had no elected national parliament with real budgetary power over the monarch.
+  - kind: Suppressed national aspiration
+    intensity: 74
+    evidence: Germans, Italians, Hungarians, and Czechs each lived divided across multiple dynastic states or under Habsburg rule with no unified national government of their own.
+actors:
+  - actor_type: students-youth
+    name: Parisian and Berlin students
+    description: University students who organized early banquets and demonstrations before the crowds turned into workers and shopkeepers.
+    role_in_arc: Provided the first street confrontations that forced Louis Philippe's abdication and the Prussian king's initial concessions.
+    defected: false
+  - actor_type: organized-labor
+    name: Parisian workers
+    description: Skilled and unskilled laborers hit hardest by the 1846-47 economic downturn.
+    role_in_arc: Drove the June Days uprising in Paris after the new republic closed the National Workshops jobs program, and were crushed by the army in four days of street fighting.
+    defected: false
+  - actor_type: old-regime
+    name: Klemens von Metternich
+    description: Austrian chancellor and chief architect of the post-1815 conservative order.
+    role_in_arc: Fled Vienna in disguise on March 13, 1848, ending 38 years running the continental system built to prevent exactly this kind of upheaval.
+    defected: false
+  - actor_type: vanguard
+    name: The Frankfurt Parliament
+    description: An elected all-German assembly that met in 1848 to draft a liberal constitution for a unified Germany.
+    role_in_arc: Debated for a year, offered the imperial crown to the Prussian king in 1849, and was refused and then dispersed by troops.
+    defected: false
+  - actor_type: military-defectors
+    name: Piedmont-Sardinia's army
+    description: The one Italian state whose king backed the 1848 revolts with force against Austria.
+    role_in_arc: Declared war on Austria to support Milan's uprising, was defeated at Custoza in July 1848 and again at Novara in March 1849.
+    defected: false
+tactics:
+  - tactic_type: mass-demonstration
+    description: The February 1848 Paris banquet campaign and street crowds forced Louis Philippe's abdication within three days.
+    prominence: primary
+  - tactic_type: urban-uprising
+    description: Barricade fighting in Berlin, Vienna, and Milan in March 1848 forced immediate concessions from monarchs unwilling to risk prolonged street war.
+    prominence: primary
+  - tactic_type: parallel-institutions
+    description: The Frankfurt Parliament assembled as a rival national authority to the German princes, though it never controlled an army of its own.
+    prominence: secondary
+resistance_type: hybrid
+phases:
+  - phase: old-regime-crisis
+    label: Famine and stagnation
+    t_start: 0
+    t_end: 0.12
+    intensity: 40
+    reached: true
+    summary: Potato blight and grain shortfalls compound years of political stagnation across the German and Italian states and the Austrian Empire.
+    key_events:
+      - Potato blight reaches continental Europe, 1845
+      - Poor grain harvest, 1846-47
+  - phase: the-spark
+    label: Paris falls in three days
+    date_start: '1848-02-22'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 85
+    reached: true
+    summary: A banned reform banquet triggers street fighting in Paris; Louis Philippe abdicates within three days and the news reaches Vienna and Berlin within weeks.
+    key_events:
+      - February Revolution begins in Paris, February 22, 1848
+      - Louis Philippe abdicates, February 24, 1848
+      - Metternich flees Vienna, March 13, 1848
+  - phase: moderate-phase
+    label: Constitutions promised
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 65
+    reached: true
+    summary: Frightened monarchs across the German states grant liberal constitutions and the Frankfurt Parliament convenes to draft a unified German charter.
+    key_events:
+      - Frankfurt Parliament convenes, May 1848
+      - Austrian Emperor Ferdinand grants a constitution, April 1848
+  - phase: dual-power
+    label: Parliaments without armies
+    t_start: 0.48
+    t_end: 0.6
+    intensity: 55
+    reached: true
+    summary: Elected liberal assemblies claim national authority while the old monarchies quietly retain command of the armies that will eventually be turned against them.
+    key_events:
+      - Piedmont declares war on Austria, March 1848
+      - Prague uprising suppressed by Windischgratz, June 1848
+  - phase: radical-phase
+    label: June Days
+    date_start: '1848-06-23'
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 80
+    reached: true
+    summary: Paris workers, radicalized by the closure of the National Workshops jobs program, rise against the new republic itself and are crushed by General Cavaignac's army.
+    key_events:
+      - National Workshops closed, June 21, 1848
+      - June Days uprising crushed, June 23-26, 1848
+  - phase: thermidor
+    label: The reaction
+    t_start: 0.84
+    t_end: 0.92
+    intensity: 60
+    reached: true
+    summary: Austrian and allied forces retake Vienna, Prague, Milan, and finally Hungary, the last holdout, with direct Russian military intervention in 1849.
+    key_events:
+      - Vienna retaken by imperial troops, October 1848
+      - Battle of Novara, March 1849
+      - Russian intervention crushes Hungary, August 1849
+outcome: failed-suppressed
+peak_participation_pct: null
+peak_participation_display: Tens of thousands in the street crowds of Paris, Berlin, and Vienna at peak in March 1848, though no reliable continental total exists
+crossed_participation_threshold: null
+military_defection: partial
+foreign_intervention: direct-military
+duration_days: 540
+death_toll: Several thousand killed across the combined uprisings and their suppression, with Hungary's 1849 defeat alone costing an estimated 50,000 lives in the fighting and reprisals that followed.
+death_toll_low: 10000
+death_toll_high: 60000
+regime_before: monarchy
+regime_after: monarchy
+democratization_delta: -1
+success_factors:
+  - factor_key: no-security-defection
+    label: Without security force defection, street victories do not hold
+    framework: chenoweth
+    status: contradicted
+    direction: favors-regime
+    base_rate: Movements that fail to secure defection from the army or police see their initial gains reversed at far higher rates than those that do
+    rationale: Austrian, Prussian, and Russian armies stayed loyal to their monarchs throughout; every liberal parliament that lacked its own army was eventually dispersed by one that had never changed sides.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: foreign-counter-intervention
+    label: Foreign intervention against a movement reverses its gains
+    framework: chenoweth
+    status: confirmed
+    direction: favors-regime
+    base_rate: Direct foreign military intervention on behalf of an incumbent regime correlates with reversal of an otherwise successful uprising
+    rationale: Russia's 1849 invasion crushed the Hungarian revolution after it had defeated Austria's own forces in the field, a case study in how a neighboring power's army can undo a domestic victory.
+    sources:
+      - 'Goldstone, Revolutions: A Very Short Introduction (2014)'
+  - factor_key: elite-fracture-absent
+    label: Without elite fracture, monarchies can wait out a revolutionary wave
+    framework: skocpol
+    status: confirmed
+    direction: favors-regime
+    base_rate: Skocpol's model finds regime survival likely where the aristocracy, officer corps, and monarchy remain aligned even under mass pressure
+    rationale: Unlike 1688 or 1789, the officer corps of Austria, Prussia, and Russia never split from their monarchs, giving each regime a coercive instrument the revolutions never captured.
+    sources:
+      - Skocpol, States and Social Revolutions (1979)
+key_figures:
+  - name: Louis Philippe
+    role: Deposed King of the French
+  - name: Klemens von Metternich
+    role: Austrian chancellor, fled Vienna March 1848
+    born: 1773
+    died: 1859
+  - name: Lajos Kossuth
+    role: Leader of the Hungarian revolutionary government
+    born: 1802
+    died: 1894
+  - name: Giuseppe Mazzini
+    role: Italian nationalist, head of the short-lived Roman Republic
+    born: 1805
+    died: 1872
+legacy_points:
+  - Nearly every constitutional gain of 1848 was formally revoked within eighteen months, yet the ideas of national unification and constitutional rule did not disappear with the barricades.
+  - Karl Marx and Friedrich Engels published the Communist Manifesto in February 1848, days before the Paris uprising, linking the revolutions permanently to socialist thought.
+  - German and Italian unification came within a generation, but under conservative architects, Bismarck and Cavour, rather than the liberal parliaments of 1848.
+  - A generation of failed 1848 revolutionaries emigrated to Britain and the United States, carrying constitutional and nationalist ideas into new political movements abroad.
+related_revolt_slugs:
+  - french-revolution
+  - arab-spring
+related_history_slugs: []
+is_published: true
+perspectives:
+  - viewpoint: Liberal nationalist retrospective
+    viewpoint_type: revolutionary
+    region_origin: central Europe
+    narrative: 1848 was the moment Europe's peoples first tried to govern themselves by written constitution and national self-determination rather than dynastic inheritance, and its defeat only delayed rather than disproved the idea.
+    key_arguments:
+      - The Frankfurt Parliament's draft constitution anticipated rights later written into German and Austrian law
+      - National unification eventually happened, proving the underlying demand was real
+      - Popular participation across dozens of cities in a single year had no earlier precedent in Europe
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - the speed and breadth of the 1848 uprisings
+      - the constitutional texts the parliaments produced
+    omitted:
+      - the June Days massacre of Parisian workers by the same republic the revolution created
+      - the movement's failure to secure any army of its own
+  - viewpoint: Conservative monarchist view
+    viewpoint_type: counter-revolutionary
+    region_origin: Austria
+    narrative: The uprisings were a dangerous but ultimately manageable disorder; restraint and, where necessary, allied military force restored the legitimate order that alone could guarantee stability across such a diverse empire.
+    key_arguments:
+      - The Habsburg monarchy held together despite simultaneous revolts in Vienna, Prague, Milan, and Budapest
+      - Russian intervention in Hungary prevented a wider collapse of the European balance
+      - Constitutions granted under street pressure lacked lasting legitimacy and were reasonably withdrawn once order returned
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - the empire's survival
+      - the restoration of order by 1849
+    omitted:
+      - the scale of the death toll in Hungary's suppression
+      - the economic grievances that triggered the uprisings in the first place
+media: []
+connections:
+  - target_slug: french-revolution
+    connection_type: inspired
+    description: 1848's Parisian rising consciously invoked 1789's language and symbols, even naming its new government the Second Republic.
+  - target_slug: arab-spring
+    connection_type: parallel
+    description: Both were continent-scale contagion waves that toppled or shook multiple regimes within months, and both saw most individual uprisings reversed rather than consolidated into lasting democracies.

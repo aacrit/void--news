@@ -1,0 +1,6 @@
+source: src-souza-2023
+locator: para23
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10395612/fullTextXML
+read: 2026-09-25
+
+A lentidão e a negação do estado de doença não é um fenômeno neutro ( Goulart, 2005 , p.104-105). Alves do Couto procurou amenizar as manifestações da epidemia na cidade destacando a doença como de caráter benigno e o clima local como salubre, visto que o reconhecimento do estado epidêmico poderia contrastar com a imagem regional historicamente ostentada acerca da salubridade de seu clima. Essa questão parecia tão cara que, no final de seu discurso, Alves do Couto afirmou que, por conta de seu clima, Diamantina deveria ser aconselhada pelos médicos como refúgio de pessoas doentes vindas de outras partes do país.

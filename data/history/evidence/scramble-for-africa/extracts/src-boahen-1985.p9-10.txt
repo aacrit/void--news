@@ -1,0 +1,20 @@
+source: src-boahen-1985
+locator: p9-10
+url: https://archive.org/download/unesco_general_history_africa_vii/general_history_africa_vii_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: the page is inferred from the running numbers 6 and 10 printed around it; pages 7 to 9 carry plates
+
+two options, either to readily surrender their sovereignty and independence,
+or to defend them at all costs. It is most significant that the great majority
+of them, as will be amply demonstrated in this volume; irrespective of
+the political and socio-economic structures of their states and in the face
+of all the odds against them, did decide to defend their sovereignty and
+independence. The weight of the odds against them on the one hand and
+the strength of the determination to resist at any price on the other are
+both captured by the relief reproduced on the jacket of this volume. This
+relief, painted on one of the walls of the palace of the kings of Dahomey
+in Abomey, depicts an African armed with only a bow and arrow defiantly
+and squarely facing a European armed with a gun.
+
+John D. Hargreaves, for instance, poses this interesting question. Given

@@ -1,0 +1,7 @@
+source: src-icty-krstic-tj
+locator: para34
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+
+34. On the morning of 10 July 1995, the situation in Srebrenica town was tense. Residents, some armed, crowded the streets. Colonel Karremans sent urgent requests for NATO air support to defend the town, but no assistance was forthcoming until around 1430 hours on 11 July 1995, when NATO bombed VRS tanks advancing towards the town. NATO planes also attempted to bomb VRS artillery positions overlooking the town, but had to abort the operation due to poor visibility. NATO plans to continue the air strikes were abandoned following VRS threats to kill Dutch troops being held in the custody of the VRS, as well as threats to shell the UN Poto~ari compound on the outside of the town, and surrounding areas, where 20,000 to 30,000 civilians had fled.58

@@ -1,105 +1,354 @@
 name: News Pipeline
+
+# Cloudflare migration (2026-08-30): the pipeline runs against a local SQLite
+# state DB (persisted in the Actions cache, bootstrapped from the latest DB
+# backup on a cache miss) via the PostgREST-compatible shim, NOT Supabase. It
+# then emits the frontend static-JSON snapshots and commits them to main; the
+# existing deploy-cloudflare.yml (workflow_run on this workflow's success) builds
+# and deploys. No Supabase, no metered egress.
+
+permissions:
+  contents: write   # commit the refreshed static data to main
+  actions: read     # download the backup artifact on a cold cache
+
 on:
   schedule:
-    # 4x daily, every 6 hours — all editions each run.
-    # Covers morning + evening for US, India, and EU simultaneously.
-    - cron: '0 0 * * *'      # 00:00 UTC — US evening (7 PM ET), India morning (5:30 AM IST)
-    - cron: '0 6 * * *'      # 06:00 UTC — EU morning (7 AM CET), India midday (11:30 AM IST)
-    - cron: '0 12 * * *'     # 12:00 UTC — US morning (7 AM ET), India evening (5:30 PM IST)
-    - cron: '0 18 * * *'     # 18:00 UTC — US afternoon (1 PM ET), EU evening (7 PM CET)
+    - cron: '0 11 * * *'     # 11:00 UTC — 6 AM Chicago
   workflow_dispatch:
     inputs:
-      editions:
-        description: 'Edition filter (comma-separated: us,india,world). Empty = all.'
-        required: false
-        default: ''
-      brief_only:
-        description: 'Regenerate daily brief only (skip full pipeline)'
+      recluster_only:
+        description: 'Skip fetch+scrape+bias. Recluster + rerank existing articles only'
         type: boolean
         required: false
         default: false
-      no_audio:
-        description: 'Skip audio synthesis (brief_only mode)'
+      engine_only:
+        description: 'Fresh run with ALL LLMs disabled ($0)'
         type: boolean
         required: false
         default: false
 
+concurrency:
+  group: news-pipeline
+  cancel-in-progress: false
+
 jobs:
   run-pipeline:
     runs-on: ubuntu-latest
+    timeout-minutes: 240
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
           cache-dependency-path: pipeline/requirements.txt
       - name: Install system dependencies
-        if: ${{ !inputs.brief_only }}
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
-      - name: Install system dependencies (brief only)
-        if: ${{ inputs.brief_only }}
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg espeak-ng
       - name: Install dependencies
         run: pip install -r pipeline/requirements.txt
+      # ── On Air voices: Kokoro-82M in its own venv (numpy 2) + pinned model files ──
+      - name: Cache Kokoro model files
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/void-kokoro
+          key: kokoro-${{ hashFiles('pipeline/briefing/kokoro.lock.json') }}
+      - name: Cache TTS venv
+        id: tts-venv
+        uses: actions/cache@v4
+        with:
+          path: .venv-tts
+          key: venv-tts-py3.11-${{ hashFiles('pipeline/requirements-tts.txt') }}
+      - name: Build TTS venv (cache miss)
+        if: steps.tts-venv.outputs.cache-hit != 'true'
+        run: python -m venv .venv-tts && .venv-tts/bin/pip install -q -r pipeline/requirements-tts.txt
+      - name: Fetch Kokoro model files (verified against kokoro.lock.json)
+        run: python pipeline/briefing/kokoro_assets.py
       - name: Install Playwright browser
-        if: ${{ !inputs.brief_only }}
         run: playwright install chromium --with-deps
       - name: Cache spaCy model
-        if: ${{ !inputs.brief_only }}
         id: spacy-cache
         uses: actions/cache@v4
         with:
           path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
           key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
       - name: Download spaCy model
-        if: ${{ !inputs.brief_only && steps.spacy-cache.outputs.cache-hit != 'true' }}
+        if: steps.spacy-cache.outputs.cache-hit != 'true'
         run: python -m spacy download en_core_web_sm
-      - name: Determine editions from schedule
-        id: editions
+
+      # ── Pipeline state DB (SQLite) — restored from cache, else bootstrapped ──
+      - name: Restore pipeline state DB
+        id: state
+        uses: actions/cache/restore@v4
+        with:
+          path: pipeline_state.db
+          key: void-state-v1-${{ github.run_id }}
+          restore-keys: |
+            void-state-v1-
+      - name: Bootstrap state DB (cold cache — durable snapshot, else legacy backup)
+        if: hashFiles('pipeline_state.db') == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          if [ -n "${{ inputs.editions }}" ]; then
-            echo "filter=${{ inputs.editions }}" >> $GITHUB_OUTPUT
+          set -e
+          echo "No cached state DB; restoring from the latest durable state snapshot."
+          restored=""
+          # Primary (Supabase-free): the gzipped SQLite state each prior run uploads.
+          for rid in $(gh run list --workflow=pipeline.yml --status success -L 12 \
+                         --json databaseId --jq '.[].databaseId'); do
+            if gh run download "$rid" -n void-state-snapshot --dir _snap 2>/dev/null; then
+              echo "Restored state snapshot from pipeline run $rid"; restored=1; break
+            fi
+          done
+          if [ -n "$restored" ] && [ -f _snap/pipeline_state.db.gz ]; then
+            gunzip -c _snap/pipeline_state.db.gz > pipeline_state.db
+            rm -rf _snap
           else
-            # All editions run on every scheduled trigger (4x daily)
-            echo "filter=" >> $GITHUB_OUTPUT
+            # Legacy one-time fallback: the Supabase pg_dump backup. Only reachable
+            # before the first snapshot exists; delete once snapshots are flowing
+            # (and required for Supabase decommission).
+            echo "No state snapshot yet; falling back to the legacy Supabase DB backup."
+            BID=$(gh run list --workflow=backup-db.yml --status success \
+                    --json databaseId --jq '.[0].databaseId')
+            if [ -z "$BID" ]; then echo "No snapshot and no backup found"; exit 1; fi
+            gh run download "$BID" --dir _bootstrap
+            GZ=$(find _bootstrap -name '*.sql.gz' | head -1)
+            if [ -z "$GZ" ]; then echo "No .sql.gz in backup"; exit 1; fi
+            python migration/stage_dump.py "$GZ" void_local.db
+            python migration/create_state_db.py migration/schema_pipeline.sql void_local.db pipeline_state.db
+            rm -rf _bootstrap void_local.db
           fi
-      - name: Setup Google Cloud TTS credentials
-        if: env.GOOGLE_CLOUD_TTS_KEY != ''
+
+      # ── Phrase counts (lexicon corpus) — its OWN file, cache and artifact ──
+      # Per-outlet phrase counts from full bodies (pipeline step 9e). Kept out of
+      # pipeline_state.db so it can never bloat or endanger the state snapshot.
+      # Losing it costs accumulated counts, not the product: a cold start with
+      # no artifact simply begins empty.
+      - name: Restore phrase counts DB
+        uses: actions/cache/restore@v4
+        with:
+          path: phrase_counts.db
+          key: void-phrases-v1-${{ github.run_id }}
+          restore-keys: |
+            void-phrases-v1-
+      - name: Bootstrap phrase counts DB (cold cache)
+        if: hashFiles('phrase_counts.db') == ''
         env:
-          GOOGLE_CLOUD_TTS_KEY: ${{ secrets.GOOGLE_CLOUD_TTS_KEY }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          echo "$GOOGLE_CLOUD_TTS_KEY" > /tmp/gcloud-tts-sa.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcloud-tts-sa.json" >> $GITHUB_ENV
-      - name: Regenerate daily brief only
-        if: ${{ inputs.brief_only }}
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          EDITIONS="${{ steps.editions.outputs.filter }}"
-          ARGS=""
-          if [ -n "$EDITIONS" ]; then
-            ARGS="--editions $EDITIONS"
-          fi
-          if [ "${{ inputs.no_audio }}" = "true" ]; then
-            ARGS="$ARGS --no-audio"
-          fi
-          echo "Regenerating daily brief: $ARGS"
-          python pipeline/refresh_brief.py $ARGS
+          for rid in $(gh run list --workflow=pipeline.yml --status success -L 12 \
+                         --json databaseId --jq '.[].databaseId'); do
+            if gh run download "$rid" -n void-phrase-snapshot --dir _psnap 2>/dev/null \
+               && [ -f _psnap/phrase_counts.db.gz ]; then
+              gunzip -c _psnap/phrase_counts.db.gz > phrase_counts.db
+              echo "Restored phrase counts from pipeline run $rid"; break
+            fi
+          done
+          rm -rf _psnap
+          [ -f phrase_counts.db ] || echo "No phrase snapshot yet; starting empty."
+
       - name: Run pipeline
-        if: ${{ !inputs.brief_only }}
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          PYTHONUNBUFFERED: "1"
+          VOID_SQLITE_PATH: pipeline_state.db
+          VOID_PHRASE_DB: phrase_counts.db
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DISABLE_GEMINI_REASONING: "1"
+          DISABLE_EDITORIAL_TRIAGE: "1"
+          # Audio ON: edge-tts synthesizes the brief, written to the static site
+          # (frontend/public/audio, served from the Pages CDN) via
+          # audio_producer._write_audio_static. Set to "1" to re-park.
+          DISABLE_AUDIO: "0"
+          DISABLE_ANTHROPIC: "1"
+          # On Air radio show (2026-09-18): Kokoro voices via the worker venv,
+          # edge-tts only as automatic fallback. VOID_RADIO_FORMAT=0 restores
+          # the legacy single-script edge-tts path; VOID_TTS_ENGINE=edge keeps
+          # the radio format on edge-tts.
+          VOID_RADIO_FORMAT: "1"
+          VOID_TTS_ENGINE: kokoro
+          VOID_KOKORO_PYTHON: .venv-tts/bin/python
+          VOID_TTS_DEADLINE_SECONDS: "1500"
         run: |
-          EDITIONS="${{ steps.editions.outputs.filter }}"
-          if [ -n "$EDITIONS" ]; then
-            echo "Running pipeline for editions: $EDITIONS"
-            python pipeline/main.py --editions "$EDITIONS"
+          ARGS=""
+          if [ "${{ inputs.recluster_only }}" = "true" ]; then
+            ARGS="--recluster-only"
+            echo "Running RECLUSTER-ONLY"
+          elif [ "${{ inputs.engine_only }}" = "true" ]; then
+            ARGS="--engine-only"
+            echo "Running ENGINE-ONLY (LLMs disabled)"
           else
-            echo "Running full pipeline (all editions)"
-            python pipeline/main.py
+            echo "Running full pipeline (SQLite backend)"
           fi
+          python pipeline/main.py $ARGS
+
+      - name: Export static snapshots
+        env:
+          VOID_SQLITE_PATH: pipeline_state.db
+          # EVERY SECTION EXCEPT WEEKLY. export_static's own comment states the
+          # rule ("a job that owns only one surface narrows this so it cannot
+          # overwrite another's output from a state DB that may be a day
+          # behind") and the weekly job obeys it; this one did not, and it is
+          # the job holding the stale weekly row.
+          #
+          # The weekly job restores the state cache and NEVER saves it back, so
+          # this pipeline's DB carries whatever weekly row it last happened to
+          # see. Running the weekly export from here regenerated weekly.json,
+          # weekly-issues.json and weekly-archive.json from those stale rows and
+          # committed them over the published issue. On 2026-09-20 it reverted
+          # Vol. I, No. 1 from nine illustrations and the three-voice Kokoro
+          # episode back to no images and the legacy edge-tts read, eleven
+          # minutes after they merged.
+          #
+          # It also silently undid every in-place repair tool: the deploy tree
+          # is the weekly's archive of record, and repair_weekly_snapshot and
+          # backfill_weekly_images both write there and nowhere else.
+          # `engine` (build-data/engine.json) was missing from this list on the
+          # first run after rev 82, so the file was never rewritten and the floor
+          # check below re-read the previous day's numbers and passed.
+          VOID_EXPORT_ONLY: feed,brief,archive,methodology,history,engine
+        run: python pipeline/export_static.py
+
+      # The data commit goes STRAIGHT TO MAIN and skipped every gate until
+      # 2026-09-23, because the controls live in auto-merge-claude.yml, which
+      # only runs when a claude/* branch merges. So this job could commit
+      # anything to a public repo and nothing could catch it.
+      #
+      # It did. Run 2026-09-22 (d2520a39) checked out main before the grounding
+      # fix landed and wrote 35 format-1 records carrying 439,244 characters of
+      # publisher prose, against docs/IP-COMPLIANCE.md's top control. The check
+      # that forbids exactly that already existed and could not fire, which is
+      # the whole argument for this step: a gate that cannot run on the path
+      # that writes is not a gate.
+      #
+      # Kept narrow on purpose. This is the daily production path, so it runs
+      # the checks that read what THIS run just wrote, not the whole suite.
+      - name: Gate the emitted data before committing it
+        run: |
+          set -e
+          python tests/test_grounding.py        # no publisher prose in build-data
+          python tests/test_bias_defaults_gate.py   # no unmarked default bias row
+          # A feed the front page cannot render must not reach main. The
+          # 2026-09-22 run emitted 14 displayable stories against 20 required,
+          # committed it here, and froze the site AND every branch's build-check
+          # for a day. Failing the run leaves the previous day's data in place,
+          # which is a bad day rather than an outage.
+          python tests/test_feed_buildable.py
+
+      - name: Commit refreshed static data to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add frontend/build-data frontend/public/data frontend/public/audio frontend/public/podcast-*.xml
+          if git diff --cached --quiet; then
+            echo "No static-data changes to commit."
+            exit 0
+          fi
+          git commit -m "Pipeline: refresh static feed data ($(date -u +%F))"
+          # The run leaves incidental unstaged edits to other tracked files (not
+          # part of the emitted feed data); discard them so the rebase below has a
+          # clean working tree. Only the committed data dirs matter; untracked
+          # files (pipeline_state.db) are left alone and do not block rebase.
+          git checkout -- . 2>/dev/null || true
+          # Generated data has no merge semantics. Two runs that both export
+          # it will always conflict on a rebase, and the right resolution is
+          # never a merge: it is "whichever run produced this from the newest
+          # state wins". Today's daily run died exactly here, on
+          # weekly.json and weekly-issues.json, because a parallel commit had
+          # touched the same generated files. The comment this replaces
+          # claimed the data commit "never conflicts with code merges", which
+          # was true and beside the point.
+          #
+          # Mid-rebase, --theirs is the commit being REPLAYED, i.e. this run's
+          # fresh export; --ours would be the older copy already on the
+          # branch. A conflict outside the paths this job owns is a real one
+          # and still aborts.
+          resolve_generated() {
+            local conflicted f
+            conflicted=$(git diff --name-only --diff-filter=U)
+            [ -n "$conflicted" ] || return 1
+            while IFS= read -r f; do
+              [ -n "$f" ] || continue
+              case "$f" in
+                frontend/build-data/*|frontend/public/data/*|frontend/public/audio/*) ;;
+                *) echo "conflict outside generated data: $f"; return 1 ;;
+              esac
+            done <<< "$conflicted"
+            while IFS= read -r f; do
+              [ -n "$f" ] || continue
+              git checkout --theirs -- "$f" 2>/dev/null || git rm -q -- "$f" 2>/dev/null || true
+              git add -- "$f" 2>/dev/null || true
+            done <<< "$conflicted"
+            echo "resolved $(echo "$conflicted" | wc -l) generated file(s) in favour of this run"
+            GIT_EDITOR=true git rebase --continue
+          }
+          # main can advance (an auto-merge landing) during the ~1h run, so a
+          # plain push would be a non-fast-forward reject. Rebase onto the
+          # latest main and retry.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git rebase origin/main || resolve_generated || {
+              git rebase --abort 2>/dev/null || true; echo "rebase failed"; exit 1; }
+            if git push origin HEAD:main; then echo "pushed on attempt $attempt"; exit 0; fi
+            echo "push rejected (attempt $attempt); refetching and retrying"
+            sleep 5
+          done
+          echo "could not push refreshed data after 5 attempts"; exit 1
+
+      - name: Save pipeline state DB to cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: pipeline_state.db
+          key: void-state-v1-${{ github.run_id }}
+
+      # Durable, Supabase-free backup of the whole state (schema + all data,
+      # including the permanent printed_stories archive). The Actions cache is the
+      # fast primary; this artifact is the resilience floor the cold-cache
+      # bootstrap restores from, replacing the Supabase pg_dump. Gzipped ~40 MB.
+      - name: Snapshot state DB
+        if: always()
+        run: |
+          if [ -f pipeline_state.db ]; then
+            gzip -c pipeline_state.db > pipeline_state.db.gz
+            ls -lh pipeline_state.db.gz
+          fi
+      - name: Upload state snapshot
+        if: always() && hashFiles('pipeline_state.db.gz') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: void-state-snapshot
+          path: pipeline_state.db.gz
+          retention-days: 90
+          if-no-files-found: warn
+
+      - name: Save phrase counts DB to cache
+        if: always() && hashFiles('phrase_counts.db') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: phrase_counts.db
+          key: void-phrases-v1-${{ github.run_id }}
+      - name: Snapshot phrase counts DB
+        if: always() && hashFiles('phrase_counts.db') != ''
+        run: |
+          gzip -c phrase_counts.db > phrase_counts.db.gz
+          ls -lh phrase_counts.db phrase_counts.db.gz
+      - name: Upload phrase counts snapshot
+        if: always() && hashFiles('phrase_counts.db.gz') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: void-phrase-snapshot
+          path: phrase_counts.db.gz
+          retention-days: 90
+          if-no-files-found: warn
+
+      # LAST, and after the data commit on purpose: a scraping collapse must not
+      # cost readers the paper, so the data ships and the run goes red instead.
+      # 2026-09-19..23 ran at a 45-48% direct full-body share (RSS-summary
+      # fallback) against 69-71% healthy, and nothing noticed.
+      - name: Engine health floor (direct-feed bodies)
+        env:
+          # The floor also refuses an engine.json that does not describe THIS
+          # run's newest article, which it can only know from the state DB.
+          VOID_SQLITE_PATH: pipeline_state.db
+        run: python tests/test_engine_health.py --floors

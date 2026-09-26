@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-sonthonax-17930829.art2
+names: citoyen=citizen
+
+II. All the negroes and people of mixed blood now in slavery are declared free, to enjoy all the rights attached to the quality of French citizen; they will however be subject to a regime whose provisions are contained in the following articles.

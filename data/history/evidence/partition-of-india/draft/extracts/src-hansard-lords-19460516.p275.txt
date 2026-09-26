@@ -1,0 +1,7 @@
+source: src-hansard-lords-19460516
+locator: p275
+url: https://api.parliament.uk/historic-hansard/lords/1946/may/16/india-statement-by-the-cabinet-mission
+read: 2026-09-25
+note: p is the Hansard column; HL Deb 16 May 1946 vol 141 cc271-87, the Cabinet Mission's statement as Viscount Addison read it to the Lords
+
+11. We are therefore unable to advise the British Government that the power which at present resides in British hands should be handed over to two entirely separate sovereign states.

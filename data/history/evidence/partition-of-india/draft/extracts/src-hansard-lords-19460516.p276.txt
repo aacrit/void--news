@@ -1,0 +1,7 @@
+source: src-hansard-lords-19460516
+locator: p276
+url: https://api.parliament.uk/historic-hansard/lords/1946/may/16/india-statement-by-the-cabinet-mission
+read: 2026-09-25
+note: p is the Hansard column; HL Deb 16 May 1946 vol 141 cc271-87, the Cabinet Mission's statement as Viscount Addison read it to the Lords
+
+(1) There should be a Union of India, embracing both British India and the States, which should deal with the following subjects: foreign affairs, defence, and communications; and should have the powers necessary to raise the finances required for the above subjects. (2) The Union should have an executive and a legislature constituted from British Indian and States representatives. Any question raising a major communal issue in the legislature should require for its decision a majority of the representatives present and voting of each of the two major communities as well as a majority of all the members present and voting. (3) All subjects other than the Union subjects and all residuary powers should vest in the provinces.

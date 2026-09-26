@@ -1,0 +1,7 @@
+source: src-nl-hr-2019
+locator: sec4
+url: https://data.rechtspraak.nl/uitspraken/content?id=ECLI:NL:HR:2019:1284
+read: 2026-09-24
+note: the English translation the Supreme Court published; paragraph 4.6.5, on the Court of Appeal's paragraph 63.4
+
+4.6.5 Part 3.4.2 complains about the Court of Appeal's opinion (in para. 63.4) that the State has insufficiently substantiated the argument that the living conditions in the compound were such that it was impossible to keep the approx. 350 male refugees behind in the compound.

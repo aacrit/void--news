@@ -1,0 +1,6 @@
+source: src-taubenberger-morens-2006
+locator: para12
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3291398/fullTextXML
+read: 2026-09-25
+
+The curve of influenza deaths by age at death has historically, for at least 150 years, been U-shaped (Figure 2), exhibiting mortality peaks in the very young and the very old, with a comparatively low frequency of deaths at all ages in between. In contrast, age-specific death rates in the 1918 pandemic exhibited a distinct pattern that has not been documented before or since: a "W-shaped" curve, similar to the familiar U-shaped curve but with the addition of a third (middle) distinct peak of deaths in young adults ≈20–40 years of age. Influenza and pneumonia death rates for those 15–34 years of age in 1918–1919, for example, were >20 times higher than in previous years (35). Overall, nearly half of the influenza-related deaths in the 1918 pandemic were in young adults 20–40 years of age, a phenomenon unique to that pandemic year.

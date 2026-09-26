@@ -1,0 +1,7 @@
+source: src-icty-krstic-tj
+locator: para21
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+
+21. Generally, the Bosnian Serb forces surrounding the enclave were considered well disciplined and well armed.23 The VRS was organised on a geographic basis and Srebrenica fell within the domain of the Drina Corps. Between 1,000 and 2,000 soldiers from three Drina Corps Brigades were deployed around the enclave.24 These Bosnian Serb forces were equipped with tanks, armoured vehicles, artillery and mortars. The unit of the ABiH that remained in the enclave – the 28th Division - was not well organised or well equipped. A firm command structure and communications system was lacking,25 some ABiH soldiers carried old hunting rifles or no weapons at all and few had proper uniforms.26 However, the Trial Chamber also heard evidence that the 28th Division was not as weak as they have been portrayed in some quarters.27

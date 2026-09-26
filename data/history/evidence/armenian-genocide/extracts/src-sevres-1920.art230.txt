@@ -1,0 +1,7 @@
+source: src-sevres-1920
+locator: art230
+url: https://archive.org/download/india.history.resource.74790/74790_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer of the Treaty Series printing; spacing collapsed, glyph errors kept
+
+The Turkish Government undertakes to hand over to the Allied Powers the persons whose surrender may be required by the latter as being responsible for the massacres committed during the continuance of the state of war on territory which formed part of the Turkish Empire on August 1, 1914. The Allied Powers reserve to themselves the right to designate the tribunal which shall try the persons so accused, and the Turkish Government undertakes to recognise such tribunal. In the event of the League of Nations having created in sufficient time a tribunal competent to deal with the said massacres, the Allied Powers reserve to themselves the right to bring the accused persons mentioned above before such tribunal, and the Turkish Government undertakes equally to recognise such tribunal.

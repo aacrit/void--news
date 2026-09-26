@@ -1,0 +1,8 @@
+source: src-toussaint-procl-17970829
+locator: secsign
+url: https://archive.org/download/proclamationtous00tous/proclamationtous00tous_djvu.txt
+read: 2026-09-25
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: the dateline and signature
+
+Fait au Cap, le 12 Fructidor , l'an cinquième de la République française, une et indivisible, Signé TOUSSAINT LOUVERTURE. Au Cap-Francçais, chez P. Roux, imprimeur de la Commission.

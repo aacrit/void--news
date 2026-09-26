@@ -1,0 +1,7 @@
+source: src-heuveline-2015
+locator: secresults
+url: https://www.ncbi.nlm.nih.gov/research/bionlp/RESTful/pmcoa.cgi/BioC_json/PMC4562795/unicode
+read: 2026-09-25
+note: the second paragraph of the Results section
+
+Table 3 focuses on the demographic estimates of the PPR period. The median estimate of the number of violent deaths is 1.09 million, over 80% of these deaths being male (884,000). With a SD of 186,000, the 95% SI spreads from 728,000 to 1.455 million. As regards the total PPR death-toll, the median estimate is 1.90 million excess deaths, two thirds of these excess deaths being male (1.27 million). The corresponding SD is 374,000, and the 95% SI spreads from 1.20 to 2.76 million. Both median values are thus within the range of plausible existing estimates reviewed in Table 1.

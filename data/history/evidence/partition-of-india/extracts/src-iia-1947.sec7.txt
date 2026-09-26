@@ -1,0 +1,7 @@
+source: src-iia-1947
+locator: sec7
+url: https://www.legislation.gov.uk/ukpga/Geo6/10-11/30/data.xht?view=snippet&wrap=true
+read: 2026-09-25
+note: section 7(1)(a) and (b); the sub-paragraph letters are set on their own lines in the source
+
+As from the appointed day— (a) His Majesty’s Government in the United Kingdom have no responsibility as respects the government of any of the territories which, immediately before that day, were included in British India; (b) the suzerainty of His Majesty over the Indian States lapses, and with it, all treaties and agreements in force at the date of the passing of this Act between His Majesty and the rulers of Indian States, all functions exercisable by His Majesty at that date with respect to Indian States, all obligations of His Majesty existing at that date towards Indian States or the rulers thereof, and all powers, rights, authority or jurisdiction exercisable by His Majesty at that date in or in relation to Indian States by treaty, grant, usage, sufferance or otherwise; and

@@ -1,0 +1,8 @@
+source: src-randhawa-1954
+locator: p30
+url: https://archive.org/download/dli.csl.8772/8772_djvu.txt
+read: 2026-09-25
+note: the text layer's line breaks are joined, its soft hyphens (¬) rejoined and a hyphen at a line break kept without the break; its doubled spaces are single
+note: the passage quotes the Punjab Government's own account (the opening quotation mark is the book's)
+
+By the end of November, 1947, the total camp population shot up to 7,20,000. “It had originally been planned to have one big camp, of capacity up to five lakhs, at Kurukshetra, and a second line of camps at Amritsar, Gurdaspur, Jullundur, Ludhiana and Ambala.

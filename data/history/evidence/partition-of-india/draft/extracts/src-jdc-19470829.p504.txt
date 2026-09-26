@@ -1,0 +1,8 @@
+source: src-jdc-19470829
+locator: p504
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: p is the page of Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947 (2nd ed., 2005), read from the Internet Archive text layer; line breaks are joined and the layer's soft hyphens rejoined
+note: Document 161, minutes of the sixth meeting of the Joint Defence Council, Government House, Lahore, 29 August 1947, from File D/268, Broadland Archives, the Supreme Commander's statement and the first two agreed points; the layer's '/Ist', 'toapprove' and '{i)' are kept as printed
+
+The SUPREME COMMANDER stated that the Punjab Boundary Force could be | disbanded, and the new arrangements brought into effect, from midnight 31st August /Ist September. The process of splitting mixed units could also be carried out to a very great extent by then. IT WAS AGREED:- {i) toapprove the proposals in the Supreme Commander’s paper on the future of the Punjab Boundary Force. (ii) that the new arrangements detailed in this paper should come into effect from midnight 31st August/Ist September;

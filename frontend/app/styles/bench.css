@@ -1,0 +1,650 @@
+/* ===========================================================================
+   Bench — the Deep Dive's lean panel.
+
+   Seven strict columns, one per rung of the lean ladder, far left to far
+   right. One circular mark per source, stacked from the rule upward, so the
+   height of a column is the count in that bucket and nothing has to be read
+   off a curve.
+
+   The mark size is chosen in `app/lib/bench.ts` from the busiest bucket and
+   the measured width, and arrives here as an inline width/height. Everything
+   in this file is the frame around that: the rule, the tallies, the anchors,
+   the rack focus and the card.
+   =========================================================================== */
+
+.bench {
+  display: block;
+  width: 100%;
+  /* The mark size is bound by the HEIGHT budget, not the width, so past this
+     the extra width buys nothing and the seven columns drift apart into seven
+     unrelated towers. Head, grid, rule and anchors all sit inside it so they
+     stay one object. */
+  --bench-max: 760px;
+}
+
+/* ---- Head: the shape word and the roster it was read from ---------------- */
+
+.bench__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  max-width: var(--bench-max);
+  margin: 0 auto var(--space-3);
+  flex-wrap: wrap;
+}
+
+.bench__shape {
+  font-family: var(--font-editorial);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--fg-primary);
+  line-height: 1.1;
+}
+
+.bench__count {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  color: var(--fg-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.bench__unscored {
+  color: var(--fg-muted);
+}
+
+/* ---- The spectrum line, and the room it leaves ---------------------------
+   THE LINE rides the top of every column. It is a hairline and a wash, not a
+   chart: the columns under it are the measurement and it must never look like
+   a second, smoother opinion of them. `lib/benchCurve.ts` builds it so it
+   cannot draw a peak between two columns, which is the defect the KDE wave
+   was removed for; the styling keeps it subordinate so it cannot LOOK like
+   one either.
+
+   It takes its colour from `leanShapeColor` through `currentcolor`, which is
+   the same rule the shape word, the card's register and the mark obey. One
+   rule, four surfaces: the word, its colour, the silhouette and the mark can
+   never disagree about a story. */
+
+.bench__grid {
+  position: relative;
+}
+
+.bench__curve {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: var(--bench-box);
+  width: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* INK, NOT A CHART. The stroke is a filled ribbon whose width follows the
+   count, laid down in the two passes the house already uses under a lean
+   label (`InkUnderline`): a blurred bleed feathering into the paper, then the
+   pen on top of it.
+
+   THE WASH THAT WAS HERE IS GONE. A flat tint under a curve is a data-viz
+   convention, it was the one element on this panel that was not ink, and on
+   the Bench it was redundant besides: the area under the curve is already
+   filled, with the source marks themselves. Pressure says what the tint was
+   saying, on the line instead of behind it. */
+
+.bench__curve-ink {
+  fill: currentcolor;
+  stroke: none;
+  /* The marks are the measurement and must stay the loudest thing here. */
+  opacity: 0.56;
+}
+
+/* Filled from the axis ramp in the markup, not from currentcolor: the pen
+   carries the story's verdict and the bleed carries the axis it sits on. A
+   shade more presence than the plain bleed had, because a saturated ramp at
+   0.1 under a blur is not perceptible at either end. */
+.bench__curve-bleed {
+  stroke: none;
+  opacity: 0.3;
+  filter: blur(2px);
+}
+
+/* The stroke is laid down once, left to right, the way a pen crosses a page.
+   The bleed follows it rather than arriving with it, so the line is read
+   before the paper takes it.
+
+   Every entrance in this file fills `backwards`, not `both`. Each one ends
+   on its element's own resting style (no clip, opacity 0.3, 0.9, 1, no
+   transform), so the last frame and the rest are the same pixels; but a
+   forwards fill keeps the animation in effect for as long as the Deep Dive
+   is open, and Chrome keeps a composited layer for it: up to ten inside
+   the graded .page-main, which has to re-render all of them on every frame
+   the page scrolls. Measured on the inline Deep Dive at 1440. */
+.bench--drawn .bench__curve-ink {
+  animation: bench-trace var(--dur-slow, 700ms) var(--ease-cinematic) backwards;
+}
+
+.bench--drawn .bench__curve-bleed {
+  animation: bench-bleed var(--dur-slow, 700ms) var(--ease-out) 180ms backwards;
+}
+
+@keyframes bench-trace {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes bench-bleed {
+  from { opacity: 0; }
+  to   { opacity: 0.3; }
+}
+
+/* THE ROOM. Centred on the widest run of low columns, which is where the
+   coverage is not. Behind the marks, never over them. */
+.bench__room {
+  position: absolute;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* The mark itself. The beam is the reading and carries the shape colour; the
+   void is the room it sits in and is held right back, because at this size a
+   full-strength ring would read as a target over the distribution. */
+.bsig__ring {
+  stroke: var(--fg-muted);
+  /* Held back, but not to nothing: the pen stroke over the columns carries
+     real weight now, and at 0.16 the void read as a smudge beside it. */
+  opacity: 0.24;
+}
+
+.bsig__beam line,
+.bsig__split line {
+  transition: transform var(--dur-slow, 700ms) var(--spring);
+}
+
+.bsig__hollow {
+  stroke: var(--divider);
+  opacity: 0.55;
+}
+
+.bench--drawn .bsig {
+  animation: bsig-settle var(--dur-slow, 700ms) var(--ease-cinematic) 120ms backwards;
+}
+
+@keyframes bsig-settle {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 0.9; transform: none; }
+}
+
+.bsig {
+  opacity: 0.9;
+  overflow: visible;
+}
+
+/* The mark that stands in the head when the Bench has no room for one. */
+.bench__mark-inline {
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+/* The shape word, once the shape is drawn. Still in the accessibility tree,
+   where the silhouette is nothing at all. */
+
+@media (prefers-reduced-motion: reduce) {
+  .bench--drawn .bench__curve-ink,
+  .bench--drawn .bench__curve-bleed,
+  .bench--drawn .bsig {
+    animation: none;
+  }
+  .bsig__beam line,
+  .bsig__split line {
+    transition: none;
+  }
+}
+
+/* ---- The seven columns --------------------------------------------------- */
+
+.bench__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--bench-gap, 8px);
+  align-items: end;
+  width: 100%;
+  max-width: var(--bench-max);
+  margin: 0 auto;
+}
+
+.bench__col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  /* Above the silhouette and the mark: they are the picture, these are the
+     measurement and the hit targets. */
+  position: relative;
+  z-index: 1;
+}
+
+.bench__stack {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  /* The row pitch packBench solved for is mark + gap, so the gap has to be
+     here too. Without it the drawn column was shorter than the arithmetic
+     said and the sub-row count no longer matched the box. */
+  gap: var(--bench-gap-marks, 2px);
+  height: var(--bench-box, 176px);
+  width: 100%;
+}
+
+.bench__row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* ---- One mark ------------------------------------------------------------ */
+
+.bench__mark {
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  line-height: 0;
+  border-radius: 50%;
+  transition:
+    opacity var(--dur-fast) var(--ease-rack),
+    filter var(--dur-fast) var(--ease-rack),
+    transform var(--dur-fast) var(--ease-cinematic);
+}
+
+.bench__disc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--bg-card);
+  box-shadow: inset 0 0 0 1px currentcolor;
+  flex-shrink: 0;
+  /* An image is a hit target of its own in some engines and swallows the
+     pointer before the anchor sees it, which left marks that never raised a
+     card. The anchor is the only thing that listens. */
+  pointer-events: none;
+}
+
+.bench__disc-img {
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.bench__disc-letter {
+  font-family: var(--font-data);
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+  color: currentcolor;
+}
+
+.bench__disc[data-lean="far-left"]     { color: var(--bias-far-left); }
+.bench__disc[data-lean="left"]         { color: var(--bias-left); }
+.bench__disc[data-lean="center-left"]  { color: var(--bias-center-left); }
+.bench__disc[data-lean="center"]       { color: var(--bias-center); }
+.bench__disc[data-lean="center-right"] { color: var(--bias-center-right); }
+.bench__disc[data-lean="right"]        { color: var(--bias-right); }
+.bench__disc[data-lean="far-right"]    { color: var(--bias-far-right); }
+
+/* ---- A score read off the article, against one placed on the baseline ----
+   The mark keeps its colour and its column: the lean reading does not change,
+   only the claim about where that reading came from. So the ring changes
+   character rather than hue. A solid rule is asserted, a dashed rule is
+   provisional, which is the same convention a drafting table uses and does not
+   spend a colour that means something else here.
+
+   `outline` rather than `border`, because the disc's width and height are set
+   inline by the packing arithmetic and a border would eat into the mark while
+   an outline sits on it. `outline-offset: -1px` keeps it inside the circle.
+   `box-shadow: none` removes the solid ring it replaces, so the two states are
+   one ring in two characters rather than two rings. */
+.bench__disc[data-authority="headline"] {
+  box-shadow: none;
+  outline: 1px dashed currentcolor;
+  outline-offset: -1px;
+}
+
+/* A dashed hairline is the one thing here that a coarse screen can lose
+   entirely, so below the favicon threshold the mark also gives up its fill. */
+.bench__disc[data-authority="headline"] .bench__disc-img,
+.bench__disc[data-authority="headline"] .bench__disc-letter {
+  opacity: 0.75;
+}
+
+@media (prefers-contrast: more) {
+  .bench__disc[data-authority="headline"] {
+    outline-width: 2px;
+  }
+}
+
+/* ---- Rack focus: the named mark holds, its neighbours recede ------------- */
+
+.bench--focused .bench__mark {
+  opacity: 0.32;
+  filter: blur(0.5px);
+}
+
+.bench--focused .bench__mark[data-focused="true"] {
+  opacity: 1;
+  filter: none;
+  transform: scale(1.25);
+}
+
+.bench__mark:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* ---- Overflow chip ------------------------------------------------------- */
+
+.bench__more {
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  line-height: 1;
+  margin-bottom: 3px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Tally, rule, anchors ------------------------------------------------ */
+
+.bench__tally {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  margin-top: 6px;
+  color: var(--fg-secondary);
+}
+
+.bench__tally[data-zero="true"] {
+  color: var(--fg-muted);
+  opacity: 0.5;
+}
+
+/* The counts are the content; the marks are the drawing of them. A screen
+   reader gets the counts per rung and never has to walk 40 marks. */
+.bench__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.bench__rule {
+  height: 1px;
+  width: 100%;
+  max-width: var(--bench-max);
+  margin-inline: auto;
+  margin-top: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--bias-far-left) 0%,
+    var(--bias-left) 16%,
+    var(--bias-center-left) 32%,
+    var(--bias-center) 50%,
+    var(--bias-center-right) 68%,
+    var(--bias-right) 84%,
+    var(--bias-far-right) 100%
+  );
+  opacity: 0.55;
+}
+
+.bench__anchors {
+  display: flex;
+  justify-content: space-between;
+  max-width: var(--bench-max);
+  margin: 5px auto 0;
+}
+
+.bench__anchor {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.bench__anchor--center {
+  color: var(--fg-tertiary);
+}
+
+/* ---- Toggle -------------------------------------------------------------- */
+
+.bench__toggle {
+  display: block;
+  margin: var(--space-3) auto 0;
+  padding: 4px 10px;
+  background: none;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-cinematic),
+    border-color var(--dur-fast) var(--ease-cinematic);
+}
+
+.bench__toggle:hover {
+  color: var(--fg-primary);
+  border-color: var(--border-strong);
+}
+
+/* ---- Empty --------------------------------------------------------------- */
+
+.bench--empty {
+  padding: var(--space-4) 0;
+}
+
+.bench__empty {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  text-align: center;
+}
+
+/* ---- The card that names a mark ----------------------------------------- */
+
+.bench__card {
+  position: fixed;
+  transform: translate(-50%, calc(-100% - 10px));
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-e2);
+  padding: var(--space-2) var(--space-3);
+  pointer-events: none;
+  z-index: var(--z-tooltip);
+  min-width: 160px;
+  max-width: 260px;
+  animation: benchCardIn var(--dur-normal) var(--ease-cinematic) both;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* No room above the mark: sit under it instead, same offset. */
+.bench__card[data-below="true"] {
+  transform: translate(-50%, calc(100% + 10px));
+  animation-name: benchCardInBelow;
+}
+
+@keyframes benchCardInBelow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(100% + 4px));
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, calc(100% + 10px));
+  }
+}
+
+@keyframes benchCardIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 4px));
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, calc(-100% - 10px));
+  }
+}
+
+.bench__card-name {
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--fg-primary);
+  margin-bottom: 2px;
+}
+
+.bench__card-lean {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.bench__card-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bench__card-score {
+  margin-left: auto;
+  color: var(--fg-tertiary);
+}
+
+.bench__card-tier {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  margin-top: 1px;
+}
+
+.bench__card-headline {
+  font-family: var(--font-editorial);
+  font-size: var(--text-xs);
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--fg-secondary);
+  margin-top: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* The card's one sentence of provenance. Sits under the headline because it is
+   about that headline: it is the whole of what we were served. */
+.bench__card-headline-only {
+  margin-top: var(--space-1);
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  color: var(--fg-tertiary);
+  border-top: 1px dashed var(--divider);
+  padding-top: var(--space-1);
+}
+
+.bench__card-hint {
+  margin-top: 6px;
+}
+
+.bench__card-link {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--accent-warm);
+  text-decoration: none;
+  pointer-events: auto;
+}
+
+.bench__card-link:hover {
+  text-decoration: underline;
+}
+
+/* ---- Entrance: the columns rise off the rule, left to right -------------- */
+
+.bench__col {
+  opacity: 0;
+}
+
+.bench--drawn .bench__col {
+  /* The rest the rise ends on, so the fill can be `backwards` (see the note
+     on the curve above): hidden through its delay, risen after it. */
+  opacity: 1;
+  animation: benchRise var(--dur-slow) var(--ease-cinematic) backwards;
+  animation-delay: var(--bench-delay, 0ms);
+}
+
+@keyframes benchRise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bench__col,
+  .bench--drawn .bench__col {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .bench__card {
+    animation: none;
+  }
+
+  .bench__mark,
+  .bench--focused .bench__mark,
+  .bench--focused .bench__mark[data-focused="true"] {
+    transition: none;
+    filter: none;
+    transform: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .bench__shape {
+    font-size: var(--text-base);
+  }
+
+  .bench__card {
+    max-width: 220px;
+  }
+}

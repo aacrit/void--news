@@ -1,0 +1,647 @@
+"use client";
+
+import {
+  useState, useMemo, useRef, useEffect, useLayoutEffect, useCallback, useId,
+} from "react";
+import { createPortal } from "react-dom";
+import {
+  LEAN_BASELINES,
+  leanToBucket,
+  leanLabel,
+  leanShapeLabel,
+  leanShapeColor,
+  type LeanCategory,
+  type WingCounts,
+} from "../lib/biasColors";
+import { sourceLogoUrl } from "../lib/sourceLogos";
+import {
+  textAuthority,
+  authorityNote,
+  headlineOnlyCount,
+} from "../lib/textAuthority";
+import {
+  packBench,
+  benchRows,
+  BENCH_FAVICON_MIN,
+  BENCH_GAP,
+  type BenchPack,
+} from "../lib/bench";
+import { envelope, inkRibbon, whitespace, type BenchGeometry } from "../lib/benchCurve";
+import BenchSigil from "./BenchSigil";
+
+/* ---------------------------------------------------------------------------
+   Bench — who is sitting where, left to right.
+
+   Replaces the KDE wave (2026-09-21). The wave was a smoothed density over a
+   distribution that is not continuous: 74% of measured articles sit EXACTLY on
+   one of the seven outlet baselines and 87% within two points of one, so the
+   curve drew hills between spikes that nothing stands on, and a reader could
+   not count anything off it. It also needed a mean plumb line to say which way
+   the story went, and a mean returns the empty middle of a bimodal roster.
+
+   The Bench is the same seven rungs the card's register uses, at full size:
+   one column per rung, one mark per source, the column's height IS the count.
+   Nothing is smoothed, nothing is interpolated, and every mark is a source you
+   can name by pointing at it.
+
+   The marks are circles because a circle has no direction of its own: a square
+   in a row of squares reads as a bar segment, and the bar is the column, not
+   the source.
+   --------------------------------------------------------------------------- */
+
+export interface BenchSource {
+  name: string;
+  articleUrl: string;
+  tier: string;
+  politicalLean: number;
+  /** The article's own headline, where the surface has one. */
+  headline?: string;
+  /** `bias_scores.confidence`, 0-1: the share of the text's movement budget
+   *  this article was long enough to earn. Below `AUTHORITY_CUT` the published
+   *  score is the outlet's baseline, and the mark says so rather than drawing
+   *  identically to one read off a full article. */
+  confidence?: number;
+}
+
+const BUCKET_TOKEN: Record<LeanCategory, string> = {
+  "far-left": "--bias-far-left",
+  left: "--bias-left",
+  "center-left": "--bias-center-left",
+  center: "--bias-center",
+  "center-right": "--bias-center-right",
+  right: "--bias-right",
+  "far-right": "--bias-far-right",
+};
+
+const BUCKET_ORDER = LEAN_BASELINES.map(([name]) => name);
+
+/** The axis ramp, at the positions `.bench__rule` already draws it. Held here
+ *  rather than in the stylesheet because the gradient needs an SVG element and
+ *  a per-mount id; the stops themselves stay the CSS tokens, so a theme change
+ *  still reaches them. */
+const AXIS_RAMP: readonly (readonly [number, string])[] = [
+  [0, "--bias-far-left"], [16, "--bias-left"], [32, "--bias-center-left"],
+  [50, "--bias-center"], [68, "--bias-center-right"], [84, "--bias-right"],
+  [100, "--bias-far-right"],
+];
+
+const BUCKET_NAME: Record<LeanCategory, string> = {
+  "far-left": "far left",
+  left: "left",
+  "center-left": "centre left",
+  center: "centre",
+  "center-right": "centre right",
+  right: "right",
+  "far-right": "far right",
+};
+
+const TIER_RANK: Record<string, number> = {
+  us_major: 0,
+  international: 1,
+  independent: 2,
+};
+
+function tierLabel(tier: string): string {
+  if (tier === "us_major") return "US Major";
+  if (tier === "international") return "International";
+  return "Independent";
+}
+
+/* The stack's height budget, and the taller one the toggle re-packs against.
+   Both are the height of the MARKS only: the rule, counts and anchors sit
+   under them. */
+const BOX_H = 176;
+const BOX_H_NARROW = 132;
+const BOX_H_EXPANDED = 440;
+const COL_GAP = 8;
+const COL_GAP_NARROW = 4;
+
+/* ── The card that names a mark ─────────────────────────────────────────── */
+
+interface CardData {
+  source: BenchSource;
+  x: number;
+  y: number;
+}
+
+function BenchCard({ data }: { data: CardData }) {
+  const ref = useRef<HTMLDivElement>(null);
+  /* The card is centred on its mark and sits above it, which puts it off the
+     left edge for a mark in the far-left column on a phone and off the top for
+     a mark near the masthead. Measure once it is up and nudge it back inside,
+     rather than guessing from a max-width that changes with the breakpoint. */
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.left = `${data.x}px`;
+    el.style.top = `${data.y}px`;
+    el.removeAttribute("data-below");
+    const r = el.getBoundingClientRect();
+    const M = 6;
+    let dx = 0;
+    if (r.left < M) dx = M - r.left;
+    else if (r.right > window.innerWidth - M) dx = window.innerWidth - M - r.right;
+    if (dx) el.style.left = `${data.x + dx}px`;
+    if (r.top < M) el.setAttribute("data-below", "true");
+  }, [data.x, data.y, data.source.name]);
+
+  if (typeof document === "undefined") return null;
+  const s = data.source;
+  return createPortal(
+    <div
+      ref={ref}
+      className="bench__card"
+      style={{ left: `${data.x}px`, top: `${data.y}px` }}
+      role="tooltip"
+    >
+      <p className="bench__card-name">{s.name}</p>
+      <p className="bench__card-lean">
+        <span
+          className="bench__card-dot"
+          style={{ background: `var(${BUCKET_TOKEN[leanToBucket(s.politicalLean)]})` }}
+          aria-hidden="true"
+        />
+        {leanLabel(s.politicalLean)}
+        <span className="bench__card-score">{Math.round(s.politicalLean)}</span>
+      </p>
+      <p className="bench__card-tier">{tierLabel(s.tier)}</p>
+      {s.headline && <p className="bench__card-headline">{s.headline}</p>}
+      {authorityNote(s.confidence) && (
+        <p className="bench__card-headline-only">{authorityNote(s.confidence)}</p>
+      )}
+      <p className="bench__card-hint">
+        <a
+          href={s.articleUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bench__card-link"
+          onClick={(e) => e.stopPropagation()}
+        >
+          &#x2197; Open article
+        </a>
+      </p>
+    </div>,
+    document.body,
+  );
+}
+
+/* ── One mark ───────────────────────────────────────────────────────────── */
+
+function Mark({ source, size }: { source: BenchSource; size: number }) {
+  const [failed, setFailed] = useState(false);
+  const url = size >= BENCH_FAVICON_MIN ? sourceLogoUrl(source.name) : "";
+  const bucket = leanToBucket(source.politicalLean);
+  /* A hollow ring, not a second colour: the column a mark sits in is its lean
+     and that reading must not change. Fill state is the same double encoding
+     the dot matrix already uses, and it degrades to "an outline" rather than
+     to "a different politics" for a reader who cannot separate the hues. */
+  const authority = textAuthority(source.confidence);
+  return (
+    <span
+      className="bench__disc"
+      data-lean={bucket}
+      data-authority={authority}
+      style={{ width: size, height: size }}
+      aria-hidden="true"
+    >
+      {!failed && url ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={url}
+          alt=""
+          width={size - 4}
+          height={size - 4}
+          onError={() => setFailed(true)}
+          className="bench__disc-img"
+        />
+      ) : size >= BENCH_FAVICON_MIN ? (
+        <span className="bench__disc-letter">{source.name.charAt(0).toUpperCase()}</span>
+      ) : null}
+    </span>
+  );
+}
+
+/* ── The Bench ──────────────────────────────────────────────────────────── */
+
+export interface BenchProps {
+  /** Sources with a MEASURED lean. The caller does the filtering. */
+  sources: BenchSource[];
+  /** Sources that covered the story but whose lean was never measured. */
+  unscoredCount?: number;
+  /** Mount already drawn: the parent owns the one opening motion. */
+  settled?: boolean;
+}
+
+export default function Bench({ sources, unscoredCount = 0, settled = false }: BenchProps) {
+  /* Said out loud in the head, not only on hover: 13 us_major outlets serve us
+     no article text, so on a wire-heavy story most of the bench can be sitting
+     on its outlets' baselines and every mark used to look the same. */
+  const headlineOnly = useMemo(() => headlineOnlyCount(sources), [sources]);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
+  const [coarse, setCoarse] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [card, setCard] = useState<CardData | null>(null);
+  const [pinned, setPinned] = useState<string | null>(null);
+  const [drawn, setDrawn] = useState(settled);
+  const rampId = `bench-ramp-${useId().replace(/:/g, "")}`;
+
+  /* Own width, because the mark size is chosen from it. Falls back to a
+     desktop-ish default before the first measurement so the server render and
+     the first paint are not empty. */
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      const w = entries[0]?.contentRect.width ?? 0;
+      if (w > 0) setWidth(w);
+    });
+    ro.observe(el);
+    setWidth(el.getBoundingClientRect().width);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(pointer: coarse)");
+    setCoarse(mq.matches);
+    const h = (e: MediaQueryListEvent) => setCoarse(e.matches);
+    mq.addEventListener("change", h);
+    return () => mq.removeEventListener("change", h);
+  }, []);
+
+  useEffect(() => {
+    if (settled) return;
+    const t = setTimeout(() => setDrawn(true), 40);
+    return () => clearTimeout(t);
+  }, [settled]);
+
+  /* Seven columns of marks, each sorted so the heaviest tier sits at the
+     bottom of its stack. */
+  const columns = useMemo(() => {
+    const by: Record<string, BenchSource[]> = {};
+    for (const name of BUCKET_ORDER) by[name] = [];
+    for (const s of sources) by[leanToBucket(s.politicalLean)].push(s);
+    for (const name of BUCKET_ORDER) {
+      by[name].sort(
+        (a, b) =>
+          (TIER_RANK[a.tier] ?? 3) - (TIER_RANK[b.tier] ?? 3) ||
+          a.name.localeCompare(b.name),
+      );
+    }
+    return BUCKET_ORDER.map((name) => ({ bucket: name, items: by[name] }));
+  }, [sources]);
+
+  const counts = useMemo(() => columns.map((c) => c.items.length), [columns]);
+  const total = counts.reduce((a, b) => a + b, 0);
+  const tallest = counts.length ? Math.max(...counts) : 0;
+
+  /* The same L/C/R split the card's register reads, derived from the same
+     seven buckets, so the Bench and the card can never print different words
+     about one story. */
+  const spread: WingCounts = useMemo(
+    () => ({
+      leanBuckets: counts,
+      leanLeftCount: counts[0] + counts[1] + counts[2],
+      leanCenterCount: counts[3],
+      leanRightCount: counts[4] + counts[5] + counts[6],
+      leanMeasuredCount: total,
+    }),
+    [counts, total],
+  );
+
+  const narrow = width > 0 && width < 560;
+  const colGap = narrow ? COL_GAP_NARROW : COL_GAP;
+  const measured = width > 0 ? width : 640;
+  const colWidth = (measured - colGap * 6) / 7;
+  const collapsedH = narrow ? BOX_H_NARROW : BOX_H;
+  const boxH = expanded ? BOX_H_EXPANDED : collapsedH;
+
+  const pack: BenchPack = useMemo(
+    () => packBench({ colWidth, maxHeight: boxH, tallest }),
+    [colWidth, boxH, tallest],
+  );
+
+  /* The silhouette over the columns, and the room the columns leave. Both are
+     pure and live in lib/benchCurve.ts, which is where the argument for them
+     is: the line is built so that it CANNOT draw a peak between two columns,
+     which is the exact defect the KDE wave was removed for. */
+  const geom: BenchGeometry = useMemo(
+    () => ({
+      counts,
+      mark: pack.mark,
+      perRow: pack.perRow,
+      gap: BENCH_GAP,
+      cap: pack.capPerColumn,
+      colWidth,
+      colGap,
+      boxH,
+    }),
+    [counts, pack, colWidth, colGap, boxH],
+  );
+  const curve = useMemo(() => envelope(geom), [geom]);
+  /* Drawn as a pen stroke, not a stroked line with a tint under it. The
+     width follows the count, so the ink is heavy over the buckets that carry
+     the story and tapers to a hairline where nothing stands. */
+  const ink = useMemo(
+    () => (curve ? inkRibbon(curve, counts, { minHalf: 0.4, maxHalf: 2.4 }) : null),
+    [curve, counts],
+  );
+  /* The bleed is a WIDER ribbon, not the same one at a lower opacity. That is
+     the relationship `InkUnderline` already has (stroke 3 under a pen of 1.8):
+     ink spreads into paper past the nib, so it has to show AROUND the stroke.
+     Drawn at the same width it sits entirely behind the pen and the axis
+     colour it carries never reaches the page, which is exactly what the first
+     attempt did. */
+  const bleed = useMemo(
+    () => (curve ? inkRibbon(curve, counts, { minHalf: 1.5, maxHalf: 4.4 }) : null),
+    [curve, counts],
+  );
+  /* The mark wants a square it can breathe in. Below that the head keeps it,
+     which is what a flat distribution gets. */
+  const room = useMemo(
+    () => whitespace(geom, { minSide: narrow ? 40 : 52 }),
+    [geom, narrow],
+  );
+  const markSide = room
+    ? Math.round(Math.min(room.width, room.height, narrow ? 64 : 92))
+    : 0;
+
+  /* The toggle is offered on whether the COLLAPSED box cuts anything, not on
+     whether the current one does. Read off `pack` it would vanish the moment
+     it worked, leaving the reader inside an expanded Bench with no way back. */
+  const collapsed: BenchPack = useMemo(
+    () => packBench({ colWidth, maxHeight: collapsedH, tallest }),
+    [colWidth, collapsedH, tallest],
+  );
+  const capped = collapsed.capPerColumn !== Infinity && tallest > collapsed.capPerColumn;
+
+  /* Dismiss a pinned card on an outside press or Escape (coarse pointers). */
+  useEffect(() => {
+    if (!pinned) return;
+    const onDown = (e: PointerEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t && (t.closest(".bench__mark") || t.closest(".bench__card"))) return;
+      setPinned(null);
+      setCard(null);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setPinned(null);
+        setCard(null);
+      }
+    };
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [pinned]);
+
+  const show = useCallback((el: HTMLElement, source: BenchSource) => {
+    const r = el.getBoundingClientRect();
+    setCard({ source, x: r.left + r.width / 2, y: r.top });
+  }, []);
+
+  if (total === 0) {
+    return (
+      <div className="bench bench--empty" role="img" aria-label="No measured sources">
+        <p className="bench__empty">
+          {unscoredCount > 0
+            ? `${unscoredCount} ${unscoredCount === 1 ? "source" : "sources"}, none measured`
+            : "No sources"}
+        </p>
+      </div>
+    );
+  }
+
+  const focusName = card?.source.name ?? null;
+
+  return (
+    <div
+      className={[
+        "bench",
+        drawn ? "bench--drawn" : "",
+        focusName ? "bench--focused" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      <div className="bench__head">
+        {/* The word is always printed. When the Bench has room it also DRAWS
+            the mark over the columns; before 2026-09-26 the word was then
+            hidden for sighted readers, which left a ring floating in the
+            whitespace with nothing saying what it meant. Where there is no
+            room, the word takes the small mark beside it instead. */}
+        <p className="bench__shape">{leanShapeLabel(spread)}</p>
+        {!room && (
+          <BenchSigil spread={spread} size={28} className="bench__mark-inline" />
+        )}
+        <p className="bench__count">
+          {total} {total === 1 ? "source" : "sources"} placed
+          {headlineOnly > 0 && (
+            <span className="bench__unscored">
+              {" "}&middot; {headlineOnly} from headlines only
+            </span>
+          )}
+          {unscoredCount > 0 && (
+            <span className="bench__unscored"> &middot; {unscoredCount} not measured</span>
+          )}
+        </p>
+      </div>
+
+      <div
+        ref={wrapRef}
+        className="bench__grid"
+        style={
+          {
+            "--bench-gap": `${colGap}px`,
+            "--bench-gap-marks": `${BENCH_GAP}px`,
+            "--bench-box": `${boxH}px`,
+          } as React.CSSProperties
+        }
+        role="group"
+        aria-label="Sources by political lean, far left to far right"
+      >
+        {/* THE SPECTRUM LINE. Rides the top of every column, so seven counts
+            read as one silhouette. Decoration to a screen reader and to the
+            pointer: the marks under it are the content and the hit targets. */}
+        {curve && (
+          <svg
+            className="bench__curve"
+            viewBox={`0 0 ${curve.width} ${boxH}`}
+            preserveAspectRatio="none"
+            aria-hidden="true"
+            focusable="false"
+            style={{ color: leanShapeColor(spread) }}
+          >
+            {/* TWO INKS, TWO DIFFERENT THINGS SAID.
+
+                The PEN carries `leanShapeColor`, which is this story's
+                verdict and the same rule the word under the card's register
+                obeys: red end to end where the roster leans right, blue where
+                it leans left, and plain ink on a Split, which is the one shape
+                with no direction to name. Colouring the pen by position would
+                trade that verdict for a restatement of the axis, and give a
+                divided room a confident sweep it has not earned.
+
+                The BLEED carries the axis instead. It is ink feathering into
+                paper, blurred and barely there, so the far left of the stroke
+                warms to blue and the far right to red without the pen saying
+                anything it should not. The stops are the ones `.bench__rule`
+                already uses under the columns, in user space, so the ramp
+                lands on the same positions the rule does rather than merely
+                near them. */}
+            <defs>
+              <linearGradient
+                id={rampId}
+                gradientUnits="userSpaceOnUse"
+                x1={0} y1={0} x2={curve.width} y2={0}
+              >
+                {AXIS_RAMP.map(([at, token]) => (
+                  <stop key={token} offset={`${at}%`}
+                    style={{ stopColor: `var(${token})` }} />
+                ))}
+              </linearGradient>
+            </defs>
+            <path
+              className="bench__curve-bleed"
+              d={bleed ?? curve.line}
+              fill={`url(#${rampId})`}
+            />
+            <path className="bench__curve-ink" d={ink ?? curve.line} />
+          </svg>
+        )}
+
+        {/* The mark, in the room the distribution leaves. Its POSITION is part
+            of the reading: on a right-leaning roster it stands out on the
+            left, over nothing, with the weight to its right. */}
+        {room && markSide > 0 && (
+          <div
+            className="bench__room"
+            aria-hidden="true"
+            style={{
+              left: `${room.x + room.width / 2}px`,
+              top: `${Math.max(2, (room.height - markSide) / 2)}px`,
+              width: `${markSide}px`,
+              height: `${markSide}px`,
+            }}
+          >
+            <BenchSigil spread={spread} size={markSide} />
+          </div>
+        )}
+
+        {columns.map(({ bucket, items }, ci) => {
+          const drawnItems =
+            pack.capPerColumn === Infinity ? items : items.slice(0, pack.capPerColumn);
+          const hidden = items.length - drawnItems.length;
+          const rows = benchRows(drawnItems, pack.perRow);
+          return (
+            <div
+              className="bench__col"
+              key={bucket}
+              style={{ "--bench-delay": `${ci * 40}ms` } as React.CSSProperties}
+            >
+              <div className="bench__stack">
+                {hidden > 0 && (
+                  <span className="bench__more" aria-hidden="true">
+                    +{hidden}
+                  </span>
+                )}
+                {[...rows].reverse().map((row, ri) => (
+                  <div
+                    className="bench__row"
+                    key={ri}
+                    style={{ gap: `${BENCH_GAP}px` }}
+                  >
+                    {row.map((s) =>
+                      coarse ? (
+                        <button
+                          key={s.name}
+                          type="button"
+                          className="bench__mark"
+                          data-focused={focusName === s.name ? "true" : undefined}
+                          aria-label={`${s.name}, ${leanLabel(s.politicalLean)}${
+                            textAuthority(s.confidence) === "headline"
+                              ? ", scored from the headline"
+                              : ""
+                          }. Show details.`}
+                          aria-expanded={pinned === s.name}
+                          onClick={(e) => {
+                            if (pinned === s.name) {
+                              setPinned(null);
+                              setCard(null);
+                            } else {
+                              setPinned(s.name);
+                              show(e.currentTarget, s);
+                            }
+                          }}
+                        >
+                          <Mark source={s} size={pack.mark} />
+                        </button>
+                      ) : (
+                        <a
+                          key={s.name}
+                          href={s.articleUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bench__mark"
+                          data-focused={focusName === s.name ? "true" : undefined}
+                          aria-label={`${s.name}, ${leanLabel(s.politicalLean)}${
+                            textAuthority(s.confidence) === "headline"
+                              ? ", scored from the headline"
+                              : ""
+                          }`}
+                          onPointerEnter={(e) => show(e.currentTarget, s)}
+                          onPointerLeave={() => setCard(null)}
+                          onFocus={(e) => show(e.currentTarget, s)}
+                          onBlur={() => setCard(null)}
+                        >
+                          <Mark source={s} size={pack.mark} />
+                        </a>
+                      ),
+                    )}
+                  </div>
+                ))}
+              </div>
+              <span
+                className="bench__tally"
+                data-zero={items.length === 0 ? "true" : undefined}
+                style={{ color: items.length ? `var(${BUCKET_TOKEN[bucket]})` : undefined }}
+              >
+                {items.length || "0"}
+              </span>
+              <span className="bench__sr">
+                {items.length} {BUCKET_NAME[bucket]}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="bench__rule" aria-hidden="true" />
+      <div className="bench__anchors" aria-hidden="true">
+        <span className="bench__anchor bench__anchor--left">Left</span>
+        <span className="bench__anchor bench__anchor--center">Centre</span>
+        <span className="bench__anchor bench__anchor--right">Right</span>
+      </div>
+
+      {capped && (
+        <button
+          type="button"
+          className="bench__toggle"
+          aria-expanded={expanded}
+          onClick={() => {
+            setPinned(null);
+            setCard(null);
+            setExpanded((v) => !v);
+          }}
+        >
+          {expanded ? "Show fewer" : `Show all ${total} sources`}
+        </button>
+      )}
+
+      {card && <BenchCard data={card} />}
+    </div>
+  );
+}

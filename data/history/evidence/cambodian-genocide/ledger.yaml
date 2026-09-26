@@ -1,0 +1,1434 @@
+# The evidence ledger for cambodian-genocide (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Every entry was resolved or fetched on 2026-09-25 from the URL it names; every
+# extract under extracts/ was sliced from the fetched copy by line range, never
+# retyped. Nothing here was written from memory. An entry the free record could
+# not reach is listed under `gaps`, by name, with what was tried.
+slug: cambodian-genocide
+bootstrapped: 2026-09-25
+
+entries:
+  # ----------------------------------------------------------- Tier A: primary record
+  - id: src-eccc-001-tj
+    tier: A
+    kind: judgment
+    author: Extraordinary Chambers in the Courts of Cambodia, Trial Chamber
+    title: "Case 001 Judgement, 26 July 2010 (Kaing Guek Eav alias Duch)"
+    container: null
+    publisher: ECCC
+    place: Phnom Penh
+    year: 2010
+    edition: null
+    volume: null
+    document_number: "Case File 001/18-07-2007/ECCC/TC, E188, 26 July 2010"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/20100726_Judgement_Case_001_ENG_PUBLIC.pdf"}
+    access:
+      free_copy: "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/20100726_Judgement_Case_001_ENG_PUBLIC.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "KAING Guek Eav alias Duch, Judgement, 26 July 2010, Case File 001/18-07-2007/ECCC/TC (E188)"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: eccc
+    position: tribunal-record
+    rights: public
+
+  - id: src-eccc-001-aj
+    tier: A
+    kind: judgment
+    author: Extraordinary Chambers in the Courts of Cambodia, Supreme Court Chamber
+    title: "Case 001 Appeal Judgement, 3 February 2012 (Kaing Guek Eav alias Duch)"
+    container: null
+    publisher: ECCC
+    place: Phnom Penh
+    year: 2012
+    edition: null
+    volume: null
+    document_number: "Case File 001/18-07-2007-ECCC/SC, F28, 3 February 2012"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.d.dccam.org/Archives/Chronology/Case_001_Appeal_Judgement_FINAL_EN.pdf"}
+    access:
+      free_copy: "https://www.d.dccam.org/Archives/Chronology/Case_001_Appeal_Judgement_FINAL_EN.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Appeal Judgement, 3 February 2012, Case File/Dossier No. 001/18-07-2007-ECCC/SC"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: eccc
+    position: tribunal-record
+    rights: public
+
+  - id: src-eccc-002-01-tj
+    tier: A
+    kind: judgment
+    author: Extraordinary Chambers in the Courts of Cambodia, Trial Chamber
+    title: "Case 002/01 Judgement, 7 August 2014 (Nuon Chea and Khieu Samphan)"
+    container: null
+    publisher: ECCC
+    place: Phnom Penh
+    year: 2014
+    edition: null
+    volume: null
+    document_number: "Case File 002/19-09-2007/ECCC/TC, E313, 7 August 2014"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/2014-08-07%2017:04/E313_Trial%20Chamber%20Judgement%20Case%20002_01_ENG.pdf"}
+    access:
+      free_copy: "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/2014-08-07%2017:04/E313_Trial%20Chamber%20Judgement%20Case%20002_01_ENG.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Case 002/01, Judgement, 7 August 2014 - Public (E313)"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: eccc
+    position: tribunal-record
+    rights: public
+
+  - id: src-eccc-002-02-tj
+    tier: A
+    kind: judgment
+    author: Extraordinary Chambers in the Courts of Cambodia, Trial Chamber
+    title: "Case 002/02 Judgement, 16 November 2018 (Nuon Chea and Khieu Samphan)"
+    container: null
+    publisher: ECCC
+    place: Phnom Penh
+    year: 2018
+    edition: null
+    volume: null
+    document_number: "Case File 002/19-09-2007/ECCC/TC, E465, 16 November 2018 (reasons notified 28 March 2019)"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.legal-tools.org/doc/8v76lk/pdf/"}
+    access:
+      free_copy: "https://www.legal-tools.org/doc/8v76lk/pdf/"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Case 002/02, Judgement, 16 November 2018 - Public (E465)"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: eccc
+    position: tribunal-record
+    rights: public
+
+  - id: src-eccc-002-02-summary
+    tier: A
+    kind: judgment
+    author: Extraordinary Chambers in the Courts of Cambodia, Trial Chamber
+    title: "Case 002/02, Summary of Judgement"
+    container: null
+    publisher: ECCC
+    place: Phnom Penh
+    year: 2018
+    edition: null
+    volume: null
+    document_number: "Case File 002/19-09-2007/ECCC/TC, 16 November 2018"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/%5Bdate-in-tz%5D/20181119%20Summary%20of%20Judgement%20Case%20002-02%20ENG_checked%20against%20delivery_amended%20a.pdf"}
+    access:
+      free_copy: "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/%5Bdate-in-tz%5D/20181119%20Summary%20of%20Judgement%20Case%20002-02%20ENG_checked%20against%20delivery_amended%20a.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Trial Chamber Summary of Judgement Case 002/02, 16 November 2018"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: eccc
+    position: tribunal-record
+    rights: public
+
+  - id: src-eccc-002-02-summary-km
+    tier: A
+    kind: judgment
+    author: អង្គជំនុំជម្រះសាលាដំបូង នៃអង្គជំនុំជម្រះវិសាមញ្ញក្នុងតុលាការកម្ពុជា (Trial Chamber, Extraordinary Chambers in the Courts of Cambodia)
+    title: "សេចក្តីសង្ខេបសាលក្រម សំណុំរឿង ០០២/០២ (Summary of Judgement, Case 002/02, Khmer text)"
+    container: null
+    publisher: ECCC
+    place: Phnom Penh
+    year: 2018
+    edition: null
+    volume: null
+    document_number: "សំណុំរឿងលេខ ០០២/១៩ កញ្ញា ២០០៧/អវតក/អជសដ, 16 November 2018"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://d.dccam.org/Archives/Chronology/pdf/Summary_of_Judgement_Case_002-02_KH.pdf"}
+    access:
+      free_copy: "https://d.dccam.org/Archives/Chronology/pdf/Summary_of_Judgement_Case_002-02_KH.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "សេចក្តីសង្ខេបសាលក្រម សំណុំរឿង ០០២/០២ ថ្ងៃទី១៦ ខែវិច្ឆិកា ឆ្នាំ២០១៨ (Trial Chamber Summary of Judgement Case 002/02)"
+    language: km
+    region_of_authorship: southeast-asia
+    producer: eccc
+    position: tribunal-record
+    rights: public
+
+  - id: src-eccc-002-02-aj
+    tier: A
+    kind: judgment
+    author: Extraordinary Chambers in the Courts of Cambodia, Supreme Court Chamber
+    title: "Case 002/02 Appeal Judgment, 23 December 2022 (Khieu Samphan)"
+    container: null
+    publisher: ECCC
+    place: Phnom Penh
+    year: 2022
+    edition: null
+    volume: null
+    document_number: "Case File 002/19-09-2007/SC, F76, 23 December 2022 (pronounced 22 September 2022)"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/%5Bdate-in-tz%5D/F76_EN.pdf"}
+    access:
+      free_copy: "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/%5Bdate-in-tz%5D/F76_EN.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Appeal Judgment, 23 December 2022, Case File/Dossier No. 002/19-09-2007/SC, Doc. No. F76"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: eccc
+    position: tribunal-record
+    rights: public
+
+  - id: src-un-goe-1999
+    tier: A
+    kind: report
+    author: Group of Experts for Cambodia (Ninian Stephen, Rajsoomer Lallah, Steven R. Ratner), transmitted by the Secretary-General
+    title: "Report of the Group of Experts for Cambodia established pursuant to General Assembly resolution 52/135"
+    container: null
+    publisher: United Nations
+    place: New York
+    year: 1999
+    edition: null
+    volume: null
+    document_number: "A/53/850, S/1999/231, 16 March 1999"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://documents.un.org/doc/undoc/gen/n99/059/72/pdf/n9905972.pdf"}
+    access:
+      free_copy: "https://documents.un.org/doc/undoc/gen/n99/059/72/pdf/n9905972.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Identical letters dated 15 March 1999 from the Secretary-General ... Report of the Group of Experts for Cambodia established pursuant to General Assembly resolution 52/135, A/53/850, S/1999/231"
+    language: en
+    region_of_authorship: global
+    producer: un-experts
+    position: united-nations
+    rights: public
+
+  - id: src-un-spv2108
+    tier: A
+    kind: primary-document
+    author: United Nations Security Council
+    title: "Security Council Official Records, thirty-fourth year, 2108th meeting, 11 January 1979"
+    container: null
+    publisher: United Nations
+    place: New York
+    year: 1979
+    edition: null
+    volume: null
+    document_number: "S/PV.2108"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://documents.un.org/doc/undoc/gen/nl7/900/05/pdf/nl790005.pdf"}
+    access:
+      free_copy: "https://documents.un.org/doc/undoc/gen/nl7/900/05/pdf/nl790005.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "United Nations Security Council Official Records, Thirty-fourth year, 2108th meeting, 11 January 1979, New York (S/PV.2108)"
+    language: en
+    region_of_authorship: global
+    producer: un-council
+    position: null
+    rights: public
+
+  - id: src-prt-1979
+    tier: A
+    kind: edited-documents
+    author: People's Revolutionary Tribunal of the People's Republic of Kampuchea; edited by a group of Cambodian jurists
+    title: "People's Revolutionary Tribunal Held in Phnom Penh for the Trial of the Genocide Crime of the Pol Pot-Ieng Sary Clique (August 1979): Documents"
+    container: null
+    publisher: A group of Cambodian jurists
+    place: Phnom Penh
+    year: 1990
+    edition: "English edition of the 1979 proceedings"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: revtribunalpolpot, hathitrust: null, url: "https://archive.org/details/revtribunalpolpot"}
+    access:
+      free_copy: "https://archive.org/download/revtribunalpolpot/revtribunalpolpot_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "People's Revolutionary Tribunal Held in Phnom Penh for the Trial of the Genocide Crime of the Pol Pot - Ieng Sary Clique (August - 1979): Documents"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: prk-state
+    position: vietnam-prk-account
+    rights: null
+
+  - id: src-eccc-tr-20090629
+    tier: A
+    kind: testimony
+    author: Vann Nath, witness before the Trial Chamber (transcript of trial proceedings, Case 001, trial day 35)
+    title: "Transcript of Trial Proceedings, Kaing Guek Eav alias Duch, 29 June 2009"
+    container: null
+    publisher: ECCC
+    place: Phnom Penh
+    year: 2009
+    edition: null
+    volume: null
+    document_number: "Case No. 001/18-07-2007-ECCC/TC, E1/39.1, 29 June 2009"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/E1_39.1_TR001_20090629_Final_EN_Pub.pdf"}
+    access:
+      free_copy: "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/E1_39.1_TR001_20090629_Final_EN_Pub.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Transcript of Trial Proceedings, Kaing Guek Eav, Trial Day 35, 29/6/2009, Case No. 001/18-07-2007-ECCC/TC (E1/39.1)"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: survivor-testimony
+    position: survivors
+    rights: public
+
+  - id: src-eccc-tr-20090630
+    tier: A
+    kind: testimony
+    author: Chum Mey, civil party before the Trial Chamber (transcript of trial proceedings, Case 001, trial day 36)
+    title: "Transcript of Trial Proceedings, Kaing Guek Eav alias Duch, 30 June 2009"
+    container: null
+    publisher: ECCC
+    place: Phnom Penh
+    year: 2009
+    edition: null
+    volume: null
+    document_number: "Case No. 001/18-07-2007-ECCC/TC, E1/40.1, 30 June 2009"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/E1_40.1_TR001_20090630_Final_EN_Pub.pdf"}
+    access:
+      free_copy: "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/E1_40.1_TR001_20090630_Final_EN_Pub.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Transcript of Trial Proceedings, Kaing Guek Eav, Trial Day 36, 30/6/2009, Case No. 001/18-07-2007-ECCC/TC (E1/40.1)"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: survivor-testimony
+    position: survivors
+    rights: public
+
+  - id: src-eccc-duch-apology
+    tier: A
+    kind: testimony
+    author: Kaing Guek Eav alias Duch, statements before the Trial Chamber and the Supreme Court Chamber, compiled by the ECCC
+    title: "Compilation of statements of apology made by Kaing Guek Eav alias Duch during the proceedings"
+    container: null
+    publisher: ECCC
+    place: Phnom Penh
+    year: 2012
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.eccc.gov.kh/sites/default/files/publications/Case001Apology_En_low_res.pdf"}
+    access:
+      free_copy: "https://www.eccc.gov.kh/sites/default/files/publications/Case001Apology_En_low_res.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Compilation of statements of apology made by Kaing Guek Eav alias Duch during the proceedings"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: accused-testimony
+    position: null
+    rights: public
+
+  - id: src-eccc-law-2004
+    tier: A
+    kind: primary-document
+    author: Kingdom of Cambodia, National Assembly
+    title: "Law on the Establishment of Extraordinary Chambers in the Courts of Cambodia for the Prosecution of Crimes Committed during the Period of Democratic Kampuchea, with amendments as promulgated on 27 October 2004"
+    container: null
+    publisher: ECCC (unofficial translation by the Council of Jurists and the Secretariat of the Task Force)
+    place: Phnom Penh
+    year: 2004
+    edition: "revised 26 August 2007"
+    volume: null
+    document_number: "NS/RKM/1004/006"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.eccc.gov.kh/sites/default/files/legal-documents/KR_Law_as_amended_27_Oct_2004_Eng.pdf"}
+    access:
+      free_copy: "https://www.eccc.gov.kh/sites/default/files/legal-documents/KR_Law_as_amended_27_Oct_2004_Eng.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Law on the Establishment of the Extraordinary Chambers, with inclusion of amendments as promulgated on 27 October 2004 (NS/RKM/1004/006)"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: cambodian-state
+    position: tribunal-record
+    rights: public
+
+  - id: src-un-rgc-agreement-2003
+    tier: A
+    kind: treaty
+    author: United Nations and Royal Government of Cambodia
+    title: "Agreement between the United Nations and the Royal Government of Cambodia concerning the Prosecution under Cambodian Law of Crimes Committed during the Period of Democratic Kampuchea"
+    container: null
+    publisher: ECCC
+    place: Phnom Penh
+    year: 2003
+    edition: null
+    volume: null
+    document_number: "signed 6 June 2003"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.eccc.gov.kh/sites/default/files/legal-documents/Agreement_between_UN_and_RGC.pdf"}
+    access:
+      free_copy: "https://www.eccc.gov.kh/sites/default/files/legal-documents/Agreement_between_UN_and_RGC.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Agreement between the United Nations and the Royal Government of Cambodia concerning the Prosecution under Cambodian Law of Crimes Committed during the Period of Democratic Kampuchea"
+    language: en
+    region_of_authorship: global
+    producer: un-and-cambodia
+    position: tribunal-record
+    rights: public
+
+  - id: src-dccam-mapping
+    tier: A
+    kind: dataset
+    author: Documentation Center of Cambodia (DC-Cam), Mapping Project
+    title: "Mapping the Killing Fields, 1995 to 2007"
+    container: null
+    publisher: Documentation Center of Cambodia
+    place: Phnom Penh
+    year: 2007
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://d.dccam.org/Projects/Maps/MappingKillingField.htm"}
+    access:
+      free_copy: "https://d.dccam.org/Projects/Maps/MappingKillingField.htm"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Documentation Center of Cambodia (DC-Cam): Mapping the Killing Fields"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: dc-cam
+    position: null
+    rights: null
+
+  - id: src-eccc-glance-2014
+    tier: A
+    kind: report
+    author: Extraordinary Chambers in the Courts of Cambodia, Public Affairs Section
+    title: "ECCC at a Glance, April 2014"
+    container: null
+    publisher: ECCC
+    place: Phnom Penh
+    year: 2014
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.eccc.gov.kh/sites/default/files/ECCC%20at%20a%20Glance%20-%20EN%20-%20April%202014_FINAL.pdf"}
+    access:
+      free_copy: "https://www.eccc.gov.kh/sites/default/files/ECCC%20at%20a%20Glance%20-%20EN%20-%20April%202014_FINAL.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "ECCC at a Glance, April 2014"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: eccc
+    position: null
+    rights: public
+
+  # ------------------------------------------------- Tier B: peer-reviewed scholarship
+  - id: src-heuveline-2015
+    tier: B
+    kind: journal-article
+    author: Patrick Heuveline
+    title: "The boundaries of genocide: Quantifying the uncertainty of the death toll during the Pol Pot regime in Cambodia (1975-79)"
+    container: Population Studies
+    publisher: Taylor and Francis
+    place: London
+    year: 2015
+    edition: null
+    volume: "69 (2)"
+    document_number: null
+    identifiers: {isbn: null, doi: "10.1080/00324728.2015.1045546", archive_org: null, hathitrust: null, url: "https://europepmc.org/article/PMC/PMC4562795"}
+    access:
+      free_copy: "https://www.ncbi.nlm.nih.gov/research/bionlp/RESTful/pmcoa.cgi/BioC_json/PMC4562795/unicode"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "The boundaries of genocide: Quantifying the uncertainty of the death toll during the Pol Pot regime in Cambodia (1975–79)"
+    language: en
+    region_of_authorship: north-america
+    producer: scholarship
+    position: demographers
+    rights: null
+
+  - id: src-dewalque-2004
+    tier: B
+    kind: report
+    author: Damien de Walque
+    title: "The Long-Term Legacy of the Khmer Rouge Period in Cambodia"
+    container: World Bank Policy Research Working Paper 3446
+    publisher: World Bank
+    place: Washington
+    year: 2004
+    edition: null
+    volume: null
+    document_number: "WPS 3446"
+    identifiers: {isbn: null, doi: "10.1596/1813-9450-3446", archive_org: null, hathitrust: null, url: "https://documents1.worldbank.org/curated/en/924261468743657099/pdf/wps3446.pdf"}
+    access:
+      free_copy: "https://documents1.worldbank.org/curated/en/924261468743657099/pdf/wps3446.pdf"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "The Long-Term Legacy of the Khmer Rouge Period in Cambodia"
+    language: en
+    region_of_authorship: north-america
+    producer: scholarship
+    position: demographers
+    rights: null
+
+  - id: src-sperfeldt-2023
+    tier: B
+    kind: journal-article
+    author: Christoph Sperfeldt
+    title: "Nationality as Reparation? The Case 002/02 Trial Judgment at the Extraordinary Chambers in the Courts of Cambodia"
+    container: Statelessness and Citizenship Review
+    publisher: Peter McMullin Centre on Statelessness, University of Melbourne
+    place: Melbourne
+    year: 2023
+    edition: null
+    volume: "5 (1), 118-126"
+    document_number: null
+    identifiers: {isbn: null, doi: "10.35715/scr5001.1111", archive_org: null, hathitrust: null, url: "https://statelessnessandcitizenshipreview.com/index.php/journal/article/download/503/283/"}
+    access:
+      free_copy: "https://statelessnessandcitizenshipreview.com/index.php/journal/article/download/503/283/"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Nationality as Reparation? The Case 002/02 Trial Judgment at the Extraordinary Chambers in the Courts of Cambodia"
+    language: en
+    region_of_authorship: oceania
+    producer: scholarship
+    position: transitional-justice-scholarship
+    rights: null
+
+  - id: src-williams-jessee-2024
+    tier: B
+    kind: journal-article
+    author: Timothy Williams and Erin Jessee
+    title: "Perpetrators as Victims? Inclusivity and Proximity in Post-Genocide Cambodia and Rwanda"
+    container: Journal of Genocide Research
+    publisher: Taylor and Francis
+    place: London
+    year: 2024
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: "10.1080/14623528.2024.2411879", archive_org: null, hathitrust: null, url: "https://eprints.gla.ac.uk/337189/1/337189.pdf"}
+    access:
+      free_copy: "https://eprints.gla.ac.uk/337189/1/337189.pdf"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Perpetrators as Victims? Inclusivity and Proximity in Post-Genocide Cambodia and Rwanda"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: transitional-justice-scholarship
+    rights: null
+
+  - id: src-tabeau-kheam-2009
+    tier: B
+    kind: report
+    author: Ewa Tabeau and They Kheam
+    title: "Demographic Expert Report: Khmer Rouge Victims in Cambodia, April 1975-January 1979: A Critical Assessment of Major Estimates"
+    container: null
+    publisher: ECCC, Office of the Co-Investigating Judges
+    place: Phnom Penh
+    year: 2009
+    edition: null
+    volume: null
+    document_number: "D140/1/1 and E3/2413, 30 September 2009"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/D140_1_1_Public_Redacted_EN.PDF"}
+    access:
+      free_copy: null
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Demographic Expert Report: Khmer Rouge Victims in Cambodia, April 1975-January 1979: A Critical Assessment of Major Estimates, E3/2413, 30 September 2009"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: scholarship
+    position: demographers
+    rights: null
+
+  - id: src-heuveline-1998
+    tier: B
+    kind: journal-article
+    author: Patrick Heuveline
+    title: "'Between One and Three Million': Towards the Demographic Reconstruction of a Decade of Cambodian History (1970-79)"
+    container: Population Studies
+    publisher: Taylor and Francis
+    place: London
+    year: 1998
+    edition: null
+    volume: "52 (1), 49-65"
+    document_number: null
+    identifiers: {isbn: null, doi: "10.1080/0032472031000150176", archive_org: null, hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "'Between One and Three Million': Towards the Demographic Reconstruction of a Decade of Cambodian History (1970–79)"
+    language: en
+    region_of_authorship: north-america
+    producer: scholarship
+    position: demographers
+    rights: null
+
+  - id: src-kiernan-2003
+    tier: B
+    kind: journal-article
+    author: Ben Kiernan
+    title: "The Demography of Genocide in Southeast Asia: The Death Tolls in Cambodia, 1975-79, and East Timor, 1975-80"
+    container: Critical Asian Studies
+    publisher: Taylor and Francis
+    place: London
+    year: 2003
+    edition: null
+    volume: "35 (4), 585-597"
+    document_number: null
+    identifiers: {isbn: null, doi: "10.1080/1467271032000147041", archive_org: null, hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "The Demography of Genocide in Southeast Asia: The Death Tolls in Cambodia, 1975-79, and East Timor, 1975-80"
+    language: en
+    region_of_authorship: north-america
+    producer: scholarship
+    position: race-genocide-scholarship
+    rights: null
+
+  - id: src-locard-2005
+    tier: B
+    kind: journal-article
+    author: Henri Locard
+    title: "State Violence in Democratic Kampuchea (1975-1979) and Retribution (1979-2004)"
+    container: "European Review of History: Revue européenne d'histoire"
+    publisher: Taylor and Francis
+    place: London
+    year: 2005
+    edition: null
+    volume: "12 (1)"
+    document_number: null
+    identifiers: {isbn: null, doi: "10.1080/13507480500047811", archive_org: null, hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "State Violence in Democratic Kampuchea (1975–1979) and Retribution (1979–2004)"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+    rights: null
+
+  - id: src-vairon-2004
+    tier: B
+    kind: journal-article
+    author: Lionel Vairon
+    title: "Les intellectuels cambodgiens face au régime khmer rouge, 1975-1979"
+    container: Aséanie
+    publisher: Persée
+    place: Paris
+    year: 2004
+    edition: null
+    volume: "13, 47-61"
+    document_number: null
+    identifiers: {isbn: null, doi: "10.3406/asean.2004.1810", archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/asean_0859-9009_2004_num_13_1_1810"}
+    access:
+      free_copy: null
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Les intellectuels cambodgiens face au régime khmer rouge, 1975-1979"
+    language: fr
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+    rights: null
+
+  - id: src-vickery-1984
+    tier: B
+    kind: monograph
+    author: Michael Vickery
+    title: "Cambodia, 1975-1982"
+    container: null
+    publisher: South End Press
+    place: Boston
+    year: 1984
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: cambodia1975198200mich, hathitrust: null, url: "https://archive.org/details/cambodia1975198200mich"}
+    access:
+      free_copy: null
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Cambodia, 1975-1982"
+    language: en
+    region_of_authorship: oceania
+    producer: scholarship
+    position: revisionist
+    rights: null
+
+  - id: src-kiernan-1996
+    tier: B
+    kind: monograph
+    author: Ben Kiernan
+    title: "The Pol Pot Regime: Race, Power, and Genocide in Cambodia under the Khmer Rouge, 1975-79"
+    container: null
+    publisher: Yale University Press
+    place: New Haven
+    year: 1996
+    edition: "2nd ed. 2002; Silkworm Books Southeast Asia edition 2005 (the archive copy)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: polpotregimerace0000kier_a7v9, hathitrust: null, url: "https://archive.org/details/polpotregimerace0000kier_a7v9"}
+    access:
+      free_copy: null
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "The Pol Pot regime : race, power, and genocide in Cambodia under the Khmer Rouge, 1975-79"
+    language: en
+    region_of_authorship: north-america
+    producer: scholarship
+    position: race-genocide-scholarship
+    rights: null
+
+  - id: src-kiernan-1985
+    tier: B
+    kind: monograph
+    author: Ben Kiernan
+    title: "How Pol Pot Came to Power: A History of Communism in Kampuchea, 1930-1975"
+    container: null
+    publisher: Verso
+    place: London
+    year: 1985
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: howpolpotcametop0000kier, hathitrust: null, url: "https://archive.org/details/howpolpotcametop0000kier"}
+    access:
+      free_copy: null
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "How Pol Pot came to power : a history of communism in Kampuchea, 1930-1975"
+    language: en
+    region_of_authorship: north-america
+    producer: scholarship
+    position: race-genocide-scholarship
+    rights: null
+
+  - id: src-chandler-1999
+    tier: B
+    kind: monograph
+    author: David P. Chandler
+    title: "Voices from S-21: Terror and History in Pol Pot's Secret Prison"
+    container: null
+    publisher: University of California Press
+    place: Berkeley
+    year: 1999
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: voicesfroms2100davi, hathitrust: null, url: "https://archive.org/details/voicesfroms2100davi"}
+    access:
+      free_copy: null
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Voices from S-21 [electronic resource] : terror and history in Pol Pot's secret prison"
+    language: en
+    region_of_authorship: oceania
+    producer: scholarship
+    position: null
+    rights: null
+
+  - id: src-chandler-1992
+    tier: B
+    kind: monograph
+    author: David P. Chandler
+    title: "Brother Number One: A Political Biography of Pol Pot"
+    container: null
+    publisher: Westview Press
+    place: Boulder
+    year: 1992
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: brothernumberone0000chan_j6y0, hathitrust: null, url: "https://archive.org/details/brothernumberone0000chan_j6y0"}
+    access:
+      free_copy: null
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Brother Number One : a political biography of Pol Pot"
+    language: en
+    region_of_authorship: oceania
+    producer: scholarship
+    position: null
+    rights: null
+
+  - id: src-chandler-2008
+    tier: B
+    kind: monograph
+    author: David Chandler
+    title: "A History of Cambodia"
+    container: null
+    publisher: Westview Press
+    place: Boulder
+    year: 2008
+    edition: "4th ed."
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: historyofcambodi0000chan_g1n7, hathitrust: null, url: "https://archive.org/details/historyofcambodi0000chan_g1n7"}
+    access:
+      free_copy: null
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "A history of Cambodia"
+    language: en
+    region_of_authorship: oceania
+    producer: scholarship
+    position: null
+    rights: null
+
+  - id: src-short-2004
+    tier: B
+    kind: monograph
+    author: Philip Short
+    title: "Pol Pot: Anatomy of a Nightmare"
+    container: null
+    publisher: Henry Holt
+    place: New York
+    year: 2004
+    edition: "the archive copy is the 2006 printing"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: polpot00phil, hathitrust: null, url: "https://archive.org/details/polpot00phil"}
+    access:
+      free_copy: null
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Pol Pot : anatomy of a nightmare"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+    rights: null
+
+  - id: src-etcheson-2005
+    tier: B
+    kind: monograph
+    author: Craig Etcheson
+    title: "After the Killing Fields: Lessons from the Cambodian Genocide"
+    container: null
+    publisher: Praeger
+    place: Westport
+    year: 2005
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: afterkillingfiel0000etch, hathitrust: null, url: "https://archive.org/details/afterkillingfiel0000etch"}
+    access:
+      free_copy: null
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "After the killing fields : lessons from the Cambodian genocide"
+    language: en
+    region_of_authorship: north-america
+    producer: scholarship
+    position: null
+    rights: null
+
+  - id: src-hinton-2005
+    tier: B
+    kind: monograph
+    author: Alexander Laban Hinton
+    title: "Why Did They Kill? Cambodia in the Shadow of Genocide"
+    container: null
+    publisher: University of California Press
+    place: Berkeley
+    year: 2005
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, openlibrary: OL26798096M, url: "https://openlibrary.org/books/OL26798096M"}
+    access:
+      free_copy: null
+      verified_at: 2026-09-25
+      verified_by: openlibrary-record
+      verified_title: "Why Did They Kill?: Cambodia in the Shadow of Genocide (California Series in Public Anthropology Book 11)"
+    language: en
+    region_of_authorship: north-america
+    producer: scholarship
+    position: null
+    rights: null
+
+  # ------------------------------------------------------------ Tier D: positional
+  - id: src-thayer-1997
+    tier: D
+    kind: testimony
+    author: Pol Pot, interviewed by Nate Thayer
+    title: "Pol Pot: Unrepentant. An Exclusive Interview by Nate Thayer"
+    container: Far Eastern Economic Review
+    publisher: Review Publishing
+    place: Hong Kong
+    year: 1997
+    edition: "30 October 1997"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.bannedthought.net/Cambodia/PolPot/NateThayerInterviewWithPolPot-971030.pdf"}
+    access:
+      free_copy: "https://www.bannedthought.net/Cambodia/PolPot/NateThayerInterviewWithPolPot-971030.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "POL POT: UNREPENTANT, An Exclusive Interview By Nate Thayer, Far Eastern Economic Review October 30, 1997"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: khmer-rouge-leadership
+    position: khmer-rouge-account
+    rights: null
+
+  - id: src-ung-2000
+    tier: D
+    kind: memoir
+    author: Loung Ung
+    title: "First They Killed My Father: A Daughter of Cambodia Remembers"
+    container: null
+    publisher: HarperCollins
+    place: New York
+    year: 2000
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: firsttheykilledm0000ungl, hathitrust: null, openlibrary: OL9237892M, url: "https://archive.org/details/firsttheykilledm0000ungl"}
+    access:
+      free_copy: null
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "First they killed my father : a daughter of Cambodia remembers"
+    language: en
+    region_of_authorship: north-america
+    producer: survivor-memoir
+    position: survivors
+    rights: null
+
+  - id: src-ngor-1987
+    tier: D
+    kind: memoir
+    author: Haing Ngor, with Roger Warner
+    title: "Survival in the Killing Fields"
+    container: null
+    publisher: Carroll and Graf
+    place: New York
+    year: 1987
+    edition: "the archive copy is the 2003 printing"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: survivalinkillin0000ngor, hathitrust: null, openlibrary: OL8141275M, url: "https://archive.org/details/survivalinkillin0000ngor"}
+    access:
+      free_copy: null
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Survival in the killing fields"
+    language: en
+    region_of_authorship: north-america
+    producer: survivor-memoir
+    position: survivors
+    rights: null
+
+# ------------------------------------------------------------- what the free record could not reach
+gaps:
+  - entry: src-tabeau-kheam-2009
+    what: "The demographic expert report filed in Case 002, the court's own critical assessment of the death-toll estimates"
+    tried: ["https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/D140_1_1_Public_Redacted_EN.PDF", "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/E3_2413_EN.PDF"]
+    status: "both ECCC copies were fetched (2.6 MB and 19 MB) and are scanned images with no text layer, so no passage could be sliced from them; the report is known here as the Case 002/01 Judgement's footnotes 522 and 523 describe it"
+  - entry: src-heuveline-1998
+    what: "Heuveline's first demographic reconstruction, cited by the tribunal"
+    tried: ["https://doi.org/10.1080/0032472031000150176", "https://api.semanticscholar.org/graph/v1/paper/DOI:10.1080/0032472031000150176?fields=openAccessPdf"]
+    status: "paywalled; the open-access index returns CLOSED; the article is known here as the Case 002/01 Judgement's footnote 523 summarises it"
+  - entry: src-kiernan-2003
+    what: "Kiernan's article on the death tolls in Cambodia and East Timor"
+    tried: ["https://www.tandfonline.com/doi/abs/10.1080/1467271032000147041"]
+    status: "paywalled; the publisher answered HTTP 403 and no deposited copy was found"
+  - entry: src-locard-2005
+    what: "Locard on state violence in Democratic Kampuchea and the retribution after it"
+    tried: ["https://doi.org/10.1080/13507480500047811", "https://api.semanticscholar.org/graph/v1/paper/DOI:10.1080/13507480500047811?fields=openAccessPdf"]
+    status: "paywalled; the open-access index answered HTTP 429 twice; no deposited copy was found"
+  - entry: src-vairon-2004
+    what: "Vairon's French article on Cambodian intellectuals under the Khmer Rouge"
+    tried: ["https://www.persee.fr/doc/asean_0859-9009_2004_num_13_1_1810", "https://www.persee.fr/docAsPDF/asean_0859-9009_2004_num_13_1_1810.pdf"]
+    status: "Persée's article page served only the first page of text and its PDF endpoint answered HTTP 403 to this container, so nothing beyond the opening paragraph could be read"
+  - entry: src-vickery-1984
+    what: "Vickery's count of 740,800 deaths, the lowest scholarly figure"
+    tried: ["https://archive.org/details/cambodia1975198200mich"]
+    status: "the Internet Archive holds the book for controlled lending only (access-restricted-item true), which cannot be opened from this container; the figure is known here as the Case 002/01 Judgement's footnote 523 reports it"
+  - entry: src-kiernan-1996
+    what: "Kiernan's monograph, the standard account of the regime's ethnic targeting"
+    tried: ["https://archive.org/details/polpotregimerace0000kier_a7v9"]
+    status: "controlled lending only; not readable from this container; its death-rate table is known here as the Group of Experts' note 5 reproduces it"
+  - entry: src-kiernan-1985
+    what: "Kiernan's history of the party before 1975"
+    tried: ["https://archive.org/details/howpolpotcametop0000kier"]
+    status: "controlled lending only; not readable from this container"
+  - entry: src-chandler-1999
+    what: "Chandler's study of the S-21 archive"
+    tried: ["https://archive.org/details/voicesfroms2100davi"]
+    status: "controlled lending only; not readable from this container"
+  - entry: src-chandler-1992
+    what: "Chandler's biography of Pol Pot"
+    tried: ["https://archive.org/details/brothernumberone0000chan_j6y0"]
+    status: "controlled lending only; not readable from this container"
+  - entry: src-chandler-2008
+    what: "Chandler's general history"
+    tried: ["https://archive.org/details/historyofcambodi0000chan_g1n7"]
+    status: "controlled lending only; not readable from this container"
+  - entry: src-short-2004
+    what: "Short's biography of Pol Pot"
+    tried: ["https://archive.org/details/polpot00phil"]
+    status: "controlled lending only; not readable from this container"
+  - entry: src-etcheson-2005
+    what: "Etcheson on the aftermath and the mapping of the graves"
+    tried: ["https://archive.org/details/afterkillingfiel0000etch"]
+    status: "controlled lending only; not readable from this container"
+  - entry: src-hinton-2005
+    what: "Hinton's anthropology of the perpetrators"
+    tried: ["https://openlibrary.org/books/OL26798096M"]
+    status: "the Open Library record exists; no free copy was found"
+  - what: "Pol Pot's speech of 29 September 1977 proclaiming the party, the regime's own statement of its purpose"
+    tried: ["https://cambodiatokampuchea.files.wordpress.com/2018/02/1977-17-cpk_anniversry.pdf", "https://archive.org/download/LongLiveThe17thAnniversaryOfTheCommunistPartyOfKampucheaSpeech/CPK.pdf", "https://archive.org/download/LongLiveThe17thAnniversaryOfTheCommunistPartyOfKampucheaSpeech/CPK_djvu.txt"]
+    status: "the only complete copy that answered sits on a wordpress.com host, which the standard excludes; the Internet Archive item's text endpoint answered HTTP 500 and its 147 MB scan timed out at 8.9 MB, so the regime's own words are held here only as the Security Council record and the 1997 interview carry them"
+  - what: "The Khmer text of the Case 001 Judgement, the Case 002/01 and 002/02 Judgements, the ECCC Law and the Vann Nath transcript"
+    tried: ["https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/20100726_Judgement_Case_001_KHM_PUBLIC.pdf", "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/E1_39.1_TR001_20090629_Final_KH_Pub.pdf", "https://www.eccc.gov.kh/sites/default/files/legal-documents/KR_Law_as_amended_27_Oct_2004_Kh__Combination__0.pdf"]
+    status: "the guessed Khmer judgment paths answered HTTP 404 and the court's document index is rendered by script that this container cannot search; the Khmer ECCC Law was fetched but its text layer is a legacy font encoding that cannot be stored as Khmer script; the Khmer record is held here as the Khmer summary of the Case 002/02 Judgement, the one Khmer court text with a readable layer"
+  - what: "The full Case 002/02 Judgement (E465) on the court's own site"
+    tried: ["https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/%5Bdate-in-tz%5D/E465_EN.pdf", "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/%5Bdate-in-tz%5D/E465_EN.PDF"]
+    status: "the court's paths answered HTTP 404; the judgment was read from the ICC Legal Tools Database copy, which is where its entry points"
+  - what: "Any Vietnamese-language record of the border war and the 1979 intervention, and any Vietnamese scholarship on the ethnic Vietnamese killed in Cambodia"
+    tried: ["https://digitallibrary.un.org/record/1664/files/S_PV-2108-EN.pdf"]
+    status: "no open Vietnamese-language archive or journal article was found by search; the UN Digital Library answered a challenge page; the Vietnamese state's account is held here in English as the Security Council record of 11 January 1979 prints it, and the Vietnamese victims are known through the tribunal and the Melbourne article"
+  - what: "Cambodian scholarship on the Cham under the regime (Ysa Osman, The Cham Rebellion, DC-Cam 2006; Farina So, The Hijab of Cambodia, DC-Cam 2011)"
+    tried: ["https://www.dccam.org/healing/publication/the-cham-rebellion-survivors-stories-from-the-villages-ysa-osman-2006/", "https://d.dccam.org/Publication/Monographs/Cham_Rebellion.htm"]
+    status: "DC-Cam's publication page holds no file; no free copy was found; the Cham are known here through the tribunal's findings and the 1979 tribunal's witnesses"
+  - what: "Open-access articles in Genocide Studies and Prevention on Cambodia (Woolford and others 2021, Lambourne 2014, Fleischman)"
+    tried: ["https://digitalcommons.usf.edu/cgi/viewcontent.cgi?article=1706&context=gsp", "https://digitalcommons.usf.edu/cgi/viewcontent.cgi?article=1042&context=gsp", "https://digitalcommons.usf.edu/context/gsp/article/1411/viewcontent/10.2_Fleischman_MS1411_FINAL.pdf"]
+    status: "the open-access repository answered HTTP 403 to every PDF"
+  - what: "The Case 001 Appeal Judgement on the court's own site, and de Walque's peer-reviewed version (Population and Development Review, 2005)"
+    tried: ["https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/Case%20001AppealJudgementEn.pdf", "https://onlinelibrary.wiley.com/doi/10.1111/j.1728-4457.2005.00069.x"]
+    status: "the court's copy reset the connection twice, so the appeal judgement was read from the Documentation Center of Cambodia's mirror; the journal answered HTTP 403, so de Walque is held as the World Bank working paper that preceded it"
+
+# ------------------------------------------------------------- positions and their adjudication
+positions:
+  - id: tribunal-record
+    name: The tribunal's findings
+    holders: ["ECCC Trial Chamber (Case 001, 2010)", "ECCC Supreme Court Chamber (Case 001, 2012)", "ECCC Trial Chamber (Case 002/01, 2014; Case 002/02, 2018)", "ECCC Supreme Court Chamber (Case 002/02, 2022)"]
+    rests_on: [src-eccc-001-tj, src-eccc-001-aj, src-eccc-002-01-tj, src-eccc-002-02-tj, src-eccc-002-02-summary, src-eccc-002-02-summary-km, src-eccc-002-02-aj, src-eccc-law-2004, src-un-rgc-agreement-2003]
+    claim: "No fewer than 12,273 people were detained at S-21 and no fewer than 12,272 executed; between 600,000 and 3 million died under the regime, with 1.5 to 2 million the most accurate band; genocide was committed against the Cham and the Vietnamese, and the killing of Khmer was charged as crimes against humanity."
+    omits: "Why genocide was charged for two minorities only: the Closing Order did not explain it, and the one judge who asked the question wrote a separate opinion rather than a finding."
+    adjudications:
+      - claim: "No fewer than 12,273 people were detained at S-21, and no fewer than 12,272 were executed."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-eccc-001-tj.para141, src-eccc-001-tj.fn240, src-eccc-001-tj.para597, src-eccc-duch-apology.p7]
+        reasoning: "The count is the tribunal's revised list, built by the Co-Prosecutors from lists DC-Cam compiled out of S-21's own prisoner registers and execution logs, and the accused put his own figure at more than 12,300 killed. The registers are the perpetrators' record read through the court, and the court itself says certain entries carry minimal information; a floor carried by the prison's own books and its commandant's admission is not an independent count, so the verdict is capped at qualified."
+      - claim: "The crime of genocide was committed against the Cham and against the Vietnamese."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-eccc-002-02-summary.para30, src-eccc-002-02-summary.para34, src-eccc-002-02-tj.para3993, src-un-goe-1999.para63]
+        reasoning: "The finding is the court's, entered in Khmer and English in 2018; the United Nations' experts had found in 1999 that the two groups qualify as protected groups and that intent had support in the evidence, and asked a tribunal to investigate. Two producers, but the second asked the question the first answered, so the verdict is qualified rather than supported."
+      - claim: "Estimates of the dead range from 600,000 to 3 million, and experts accept 1.5 to 2 million as the most accurate."
+        verdict: supported
+        basis: presence
+        rests_on: [src-eccc-002-01-tj.para174, src-eccc-002-01-tj.fn523, src-un-goe-1999.para35]
+        reasoning: "The tribunal's own survey lists every estimate from 740,800 to the 2 to 3 million used by governments; the United Nations' experts, a second producer, put the scholars' figures at 1.5 million and nearly 1.7 million, about 20 per cent of a population of 7.3 to 7.9 million, and record that historians reject 2 to 3 million. The experts' figures sit inside the tribunal's band and their rejection matches its edge."
+  - id: united-nations
+    name: The United Nations' experts and Council
+    holders: ["Group of Experts for Cambodia (Stephen, Lallah, Ratner, 1999)", "The Security Council's record of 11 January 1979"]
+    rests_on: [src-un-goe-1999, src-un-spv2108]
+    claim: "The evidence justifies investigating genocide against the Cham, the Vietnamese and the Buddhist monkhood; whether the Khmer national group was a victim of genocide is an open question for a tribunal; the dead were about 20 per cent of a population of 7.3 to 7.9 million, and the figure of 2 to 3 million is rejected."
+    omits: "What the Council did with the accounts it heard in January 1979: the record holds the statements, not a resolution, and the experts' report leaves the Council's inaction outside its scope."
+    adjudications:
+      - claim: "The Khmer Rouge subjected the Cham, the Vietnamese and the Buddhist monkhood to the acts in the Convention with intent, so a tribunal should investigate genocide against them."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-un-goe-1999.para63, src-un-goe-1999.para64, src-eccc-002-02-summary.para30, src-eccc-002-02-summary.para34, src-eccc-002-02-tj.para3228]
+        reasoning: "The tribunal, a second producer, found genocide against the Cham and the Vietnamese and found that the party targeted the Cham as an ethnic and religious group throughout the period. On the monkhood the held extracts are silent, so the third group in the experts' list is not carried by the artifacts, and the verdict is qualified."
+      - claim: "The dead were approximately 20 per cent of the April 1975 population of 7.3 to 7.9 million, and the 2 to 3 million figure is rejected by historians."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-un-goe-1999.para35, src-eccc-002-01-tj.para174, src-eccc-002-02-tj.para297]
+        reasoning: "The tribunal accepts 1.5 to 2 million as most probable, a band whose lower end is the experts' 20 per cent and whose upper end is above it, and whose stated ceiling still reaches 3 million; two producers agree on the floor and on the implausibility of 3 million as a count, and differ on how far above 1.7 million the truth may lie."
+      - claim: "By 1977 Cambodia had escalated a low-intensity border war into raids that massacred hundreds of Vietnamese in border villages."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-un-goe-1999.para37, src-eccc-002-02-summary.para34, src-un-spv2108.para115]
+        reasoning: "The tribunal dates an international armed conflict between Vietnam and Democratic Kampuchea from May 1975, and Vietnam's own delegate told the Council the border war was started by Phnom Penh; both agree there was a war and that it did not begin in Hanoi. Neither artifact counts the dead in the border villages, so the massacres rest on the experts alone."
+  - id: vietnam-prk-account
+    name: Viet Nam and the People's Republic of Kampuchea
+    holders: ["Ha Van Lau, for the Socialist Republic of Viet Nam (Security Council, 1979)", "People's Revolutionary Tribunal, Phnom Penh (August 1979)"]
+    rests_on: [src-prt-1979, src-un-spv2108]
+    claim: "The Pol Pot-Ieng Sary clique committed genocide against the whole Kampuchean people, killing about 3 million; it started the border war against Viet Nam immediately after 1975 and massed 19 of its 23 divisions on the frontier; the war that ended it was the Kampuchean people's own."
+    omits: "Viet Nam's own army, which entered Phnom Penh: the delegate's two wars leave no room for a third, the one Viet Nam fought, and the tribunal's documents name Vietnamese witnesses only as victims."
+    adjudications:
+      - claim: "About 3 million innocent people were killed by the Pol Pot-Ieng Sary clique."
+        verdict: contradicted
+        basis: presence
+        rests_on: [src-prt-1979.secprosecution, src-prt-1979.secconsequences, src-un-goe-1999.para35, src-eccc-002-01-tj.para174]
+        reasoning: "The prosecution of 1979 charged 3 million on the strength of a survey of Phnom Penh's former residents, one commune in Siem Reap and a journalist's figures from three provinces, by its own account. The United Nations' experts record that historians reject the 2 to 3 million used by the governments in Cambodia since 1979, and the ECCC places the accepted band at 1.5 to 2 million with 3 million as the outer edge of every estimate ever made. Two producers, the experts and the court, say otherwise."
+      - claim: "The Pol Pot-Ieng Sary clique started the border war immediately after 1975 and massed 19 of the army's 23 divisions on the frontier."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-un-spv2108.para115, src-un-spv2108.para120, src-un-goe-1999.para37, src-eccc-002-02-summary.para34]
+        reasoning: "The experts date a low-intensity border war from 1975 and Cambodia's escalation to 1977, and the tribunal dates the international armed conflict from May 1975; both carry the war and its early start. The count of 19 divisions in 23 is Viet Nam's own and nothing else in the record carries it."
+      - claim: "The regime abolished Islam, killed its leaders and forced believers to eat pork at gunpoint."
+        verdict: supported
+        basis: presence
+        rests_on: [src-prt-1979.secislam, src-eccc-002-02-tj.para3228, src-un-goe-1999.para64]
+        reasoning: "The ECCC found that the party restricted the Cham's cultural and religious practices, executed the leaders of their rebellions and ordered purges of all Cham in 1977 and 1978; the United Nations' experts found intent evidenced by the total prohibition of the group's distinctive traits and the execution of its leadership. Two producers carry the abolition and the killing of the leaders; the pork is the 1979 witnesses' detail and is not tested here."
+  - id: khmer-rouge-account
+    name: The Khmer Rouge leadership's own account
+    holders: ["Pol Pot (interview of October 1997)", "Prince Norodom Sihanouk, for Democratic Kampuchea (Security Council, January 1979)"]
+    rests_on: [src-thayer-1997, src-un-spv2108]
+    described_by: [src-williams-jessee-2024.p11, src-eccc-002-02-tj.para3228]
+    claim: "The movement came to carry out the struggle, not to kill people; to say that millions died is too much; Tuol Sleng was a Vietnamese exhibition; the regime had no choice but to defend itself against a Viet Nam that meant to swallow Cambodia."
+    omits: "The prison's own registers, which the tribunal read, and the commandant's admission of more than 12,300 killed; and the ethnic Vietnamese inside Cambodia, whom the account never mentions."
+    adjudications:
+      - claim: "To say that millions died is too much."
+        verdict: contradicted
+        basis: presence
+        rests_on: [src-thayer-1997.p4, src-eccc-002-01-tj.para174, src-un-goe-1999.para35, src-eccc-duch-apology.p7]
+        reasoning: "Every count the record carries from a producer other than the leadership itself exceeds a million: the tribunal's accepted band is 1.5 to 2 million, the United Nations' experts put the scholars' figures at 1.5 million and nearly 1.7 million, and the commandant of S-21 told the court he was morally responsible for the loss of more than one million lives. Three producers say otherwise."
+      - claim: "Tuol Sleng was a Vietnamese exhibition set up for propaganda after the invasion."
+        verdict: contradicted
+        basis: presence
+        rests_on: [src-thayer-1997.p4, src-eccc-001-tj.para141, src-eccc-001-tj.fn240, src-eccc-duch-apology.p7]
+        reasoning: "The tribunal's count of 12,273 detainees is built from S-21's own prisoner lists and execution logs, and the prison's commandant, in his own words before the court, said he killed more than 12,300 people there. The perpetrators' registers and the perpetrator's admission are two producers, and neither is Vietnamese."
+      - claim: "The regime had no choice but to defend itself against Viet Nam."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-thayer-1997.p3, src-eccc-002-02-summary.para34, src-un-goe-1999.para37]
+        reasoning: "The record holds an international armed conflict from May 1975 in the tribunal's finding, and the experts' account of a border war that Cambodia escalated in 1977 into raids massacring hundreds of Vietnamese villagers. Two producers carry the war; both place the escalation on Phnom Penh's side, which is the part of the claim they do not bear out."
+  - id: survivors
+    name: The survivors' testimony
+    holders: ["Vann Nath (witness, Case 001, 29 June 2009)", "Chum Mey (civil party, Case 001, 30 June 2009)"]
+    rests_on: [src-eccc-tr-20090629, src-eccc-tr-20090630, src-ung-2000, src-ngor-1987]
+    described_by: [src-eccc-001-tj.para266, src-eccc-002-02-tj.para4447]
+    claim: "Prisoners were photographed on arrival, shackled in rows of 20 or 30 and stripped; a painter lived because a colour portrait could please Angkar; a mechanic had his fingers broken, his toenails pulled and a live wire put to him; about 13 people walked out of the prison on the last day, and the children left at the cooperatives died."
+    omits: "The years before arrest and the killing outside the prison, which two men who survived S-21 saw only from inside it; and the Cham, the Vietnamese and the base people, none of whom testified in these two days."
+    adjudications:
+      - claim: "Prisoners were photographed on arrival at S-21 and only a few survived it."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-eccc-tr-20090629.p20, src-eccc-tr-20090629.p52, src-eccc-001-tj.para598, src-eccc-002-02-tj.para2083]
+        reasoning: "The tribunal found that only a very small number of those detained survived, and in 2018 tested one survivor's account against the list Ung Pech gave the 1979 tribunal and against the photographs, and found the absence from both inconclusive. The witness's about 13 on the last morning and the court's very small number are two producers agreeing on the order of magnitude, not on a count, so the verdict is qualified."
+      - claim: "Chum Mey's fingers were broken, his toenails removed and he was electrocuted during interrogation."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-eccc-tr-20090630.p11, src-eccc-tr-20090630.p12, src-eccc-002-02-tj.para4447]
+        reasoning: "The Case 002/02 Judgement records the same torture as a finding: beaten for 12 days and nights, electrocuted twice until he lost consciousness, two toenails removed. The court's finding rests on the same man's testimony in a later trial, so it is one producer heard twice, and the verdict is capped at qualified."
+  - id: demographers
+    name: The demographers
+    holders: ["Heuveline (1998, 2015)", "de Walque (2004)", "Tabeau and They Kheam (2009)"]
+    rests_on: [src-heuveline-2015, src-dewalque-2004, src-heuveline-1998, src-tabeau-kheam-2009]
+    claim: "The death toll is a distribution, not a number: a 95 per cent simulation interval of 1.2 to 2.8 million excess deaths with a median of 1.9 million; adult men, the urban and the educated were the most likely to die."
+    omits: "Who killed whom and why: a reconstruction from censuses and electoral lists yields a count of the missing, not a cause of death or a perpetrator, and it cannot separate the Cham or the Vietnamese from the total."
+    adjudications:
+      - claim: "The 95 per cent simulation interval for excess deaths runs from 1.2 to 2.8 million, with a median of 1.9 million."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-eccc-002-01-tj.para174, src-eccc-002-01-tj.fn523, src-un-goe-1999.para35]
+        reasoning: "Every figure the primary record carries from the tribunal and the experts, 1.5 million, 1.7 million, the 1.5 to 2 million band, sits inside the interval, and the median sits inside the tribunal's band; but no Tier A artifact states the interval or the median, so the verdict is qualified: consistent with the record, not carried by it."
+      - claim: "Adult men, the urban and the educated were the most likely to die."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-un-goe-1999.para35, src-prt-1979.secconsequences, src-eccc-002-01-tj.para170]
+        reasoning: "The experts reproduce a death rate of 25 per cent for the urban and rural new people against 15 per cent for the rural base people, and the 1979 tribunal charged the killing of the quasi totality of intellectuals, scientists and technicians; two producers carry the urban and the educated. Neither counts men against women, so that part of the claim is not tested here."
+  - id: race-genocide-scholarship
+    name: The race-centred scholarship
+    holders: ["Ben Kiernan (1985, 1996, 2003)"]
+    rests_on: [src-kiernan-1996, src-kiernan-2003, src-kiernan-1985]
+    claim: "The regime targeted ethnic minorities as such, with death rates the scholarship puts near 100 per cent for the ethnic Vietnamese, 50 per cent for the Chinese and 36 per cent for the Cham, against 25 per cent for the Khmer new people and 15 per cent for the base people."
+    omits: "The tribunal's reasons for not charging genocide of the Khmer majority, and the question the experts left open; the scholarship's rates for the Chinese and the Thai have no artifact behind them in this record."
+    adjudications:
+      - claim: "The death rates by group were close to 100 per cent for the ethnic Vietnamese, 50 per cent for the Chinese, 36 per cent for the Cham, 25 per cent for the new people and 15 per cent for the base people."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-un-goe-1999.para35, src-un-goe-1999.fn5, src-eccc-002-02-summary.para32]
+        reasoning: "The experts reproduce these rates from the scholarship's own table, so the recital is the position's data read back, not a second measurement; the tribunal found that the Vietnamese were expelled until late 1976 and targeted for destruction from April 1977, which carries the direction of the Vietnamese rate and nothing of the others. The verdict is qualified: the direction is carried for one group, the percentages for none."
+      - claim: "The regime's violence against the Cham was directed at them as an ethnic and religious group, as such."
+        verdict: supported
+        basis: presence
+        rests_on: [src-eccc-002-02-tj.para3228, src-eccc-002-02-tj.para3993, src-un-goe-1999.para64]
+        reasoning: "The tribunal found that the party targeted the Cham as an ethnic and religious group throughout the period and that its policy had their physical destruction as such as its primary objective; the United Nations' experts found the intent to destroy the Cham evidenced by the announced policy of homogenization and the execution of their leadership. Two producers carry the claim."
+  - id: revisionist
+    name: The revisionist count
+    holders: ["Michael Vickery (1984)"]
+    rests_on: [src-vickery-1984]
+    claim: "About 740,800 deaths were caused by the special conditions of Democratic Kampuchea, more than half by hunger, exhaustion and illness, about 300,000 by execution; a figure of 1 to 2 million executions could not be projected from the data available in 1984."
+    omits: "Everything counted after 1984: the mapping of 19,733 burial pits, the S-21 registers read by a court, and the demographic reconstructions from the 1992 electoral lists and the 1998 census."
+    adjudications:
+      - claim: "About 740,800 people died as a result of the regime, about 300,000 of them executed."
+        verdict: contradicted
+        basis: presence
+        rests_on: [src-eccc-002-01-tj.fn523, src-eccc-002-01-tj.para174, src-un-goe-1999.para35]
+        reasoning: "The tribunal's own survey records the figure beside Ponchaud's 800,000 and the embassies' 1 million as the lowest point estimates in its list, below Heuveline's at least 600,000, and reports the court's demographers' finding that the earlier estimates heavily underestimated the scale of the killing; it accepts 1.5 to 2 million as most accurate. The United Nations' experts put the scholars' figures at 1.5 million and nearly 1.7 million. Two producers say otherwise, and the position's figure is known here only as the first of them reports it."
+  - id: transitional-justice-scholarship
+    name: The transitional-justice scholarship
+    holders: ["Sperfeldt (2023)", "Williams and Jessee (2024)"]
+    rests_on: [src-sperfeldt-2023, src-williams-jessee-2024]
+    claim: "The court's genocide label reached the Cham and the Vietnamese only, and Khieu Samphan was found guilty of genocide against the Vietnamese but not the Cham; the ethnic Vietnamese were expelled and then killed, and many of those in Cambodia are stateless or at risk of it; former Khmer Rouge cadres' claims to victim status have been largely accepted."
+    omits: "The victims' own reading of the label: neither article asks Khmer survivors whether the word genocide, reserved by the court for two minorities, describes what was done to them."
+    adjudications:
+      - claim: "The court's genocide convictions cover the Cham and the Vietnamese only, and Khieu Samphan's covers the Vietnamese alone."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-eccc-002-02-summary.para30, src-eccc-002-02-summary.para34, src-eccc-002-02-summary.para62, src-eccc-002-02-tj.para4468]
+        reasoning: "The court's own summary enters genocide for the Cham and for the Vietnamese, finds Khieu Samphan not responsible for the Cham, and its separate opinion states that the case focused exclusively on those two groups. Only the court's record can carry what the court decided, so the verdict is one producer's and is capped at qualified, by the rule and not by any doubt."
+      - claim: "The Khmer Rouge expelled the ethnic Vietnamese and then killed those who stayed, so that by late 1978 the minority had disappeared."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-eccc-002-02-summary.para32, src-eccc-001-tj.para425]
+        reasoning: "The tribunal found a policy of expulsion until late 1976 and of destruction as such from April 1977, with killings on a massive scale, and a floor of 345 Vietnamese prisoners of war and civilians at S-21 alone. The record carries the sequence; it does not carry the article's counts of 150,000 to 170,000 expelled and 20,000 killed, which rest on the demographic report this record could not read."
+      - claim: "Former Khmer Rouge cadres' claims to victim status have been largely accepted in Cambodia."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-williams-jessee-2024.p4]
+        reasoning: "No court record or United Nations document in the free record measures how Cambodians receive former cadres; the claim rests on the authors' interviews with 58 former cadres and cannot be tested against artifacts that do not speak to it."
+        would_settle: "DC-Cam's interview archive and the ECCC's civil-party admissions of former cadres, neither of which is served free"
+
+# ------------------------------------------------------------- where the record disagrees
+contested:
+  - id: death-toll
+    claim: "How many people died under Democratic Kampuchea"
+    rows:
+      - position: vietnam-prk-account
+        holds: "The prosecution charged that about 3 million innocent people had been killed, on a survey of Phnom Penh's former residents, one commune in Siem Reap and a journalist's figures from three provinces; the foreword of the 1990 edition, by a group of jurists, puts it at more than three million."
+        figures: []
+        source: src-prt-1979
+        locator: secprosecution
+      - position: tribunal-record
+        holds: "Estimates range from 600,000 to 3 million; experts accept 1.5 to 2 million excess deaths as the most accurate; the survey's lowest point estimates are Vickery's 740,800, Ponchaud's 800,000 and the embassies' 1 million, with Heuveline's at least 600,000 as its floor, and the court's demographers found the earlier estimates heavily underestimated the killing."
+        figures: []
+        source: src-eccc-002-01-tj
+        locator: para174
+      - position: united-nations
+        holds: "Scholars have arrived at 1.5 million and nearly 1.7 million, about 20 per cent of a population of 7.3 to 7.9 million; historians reject the 2 to 3 million used by the governments in Cambodia since 1979."
+        figures: ["7.3", "7.9"]
+        source: src-un-goe-1999
+        locator: para35
+      - position: demographers
+        holds: "A 95 per cent simulation interval of 1.2 to 2.8 million excess deaths, median 1.9 million, 21 per cent of the population at risk."
+        figures: ["1.2", "2.8", "1.9"]
+        source: src-heuveline-2015
+        locator: abstract
+      - position: khmer-rouge-account
+        holds: "To say that millions died is too much; the rice was there and Vietnamese agents did not give it to the population."
+        figures: []
+        source: src-thayer-1997
+        locator: p4
+  - id: the-word-genocide
+    claim: "Who the genocide's victims were"
+    rows:
+      - position: vietnam-prk-account
+        holds: "Genocide against the whole people, defined by the 1979 decree-law as planned mass killing, forced evacuation, concentration and forced labour, the abolition of religion and the destruction of economic, cultural and family structures."
+        figures: []
+        source: src-prt-1979
+        locator: secjudgment
+      - position: united-nations
+        holds: "Genocide against the Cham, the Vietnamese and the Buddhist monkhood should be investigated; whether the Khmer national group was a victim of genocide turns on the regime's intent towards its non-minority victims, and the experts take no position."
+        figures: []
+        source: src-un-goe-1999
+        locator: para65
+      - position: tribunal-record
+        holds: "Genocide was committed against the Cham and against the Vietnamese; the case focused exclusively on those two groups, and the Closing Order did not explain why."
+        figures: []
+        source: src-eccc-002-02-tj
+        locator: para4468
+      - position: khmer-rouge-account
+        holds: "The movement came to carry out the struggle, not to kill people; Tuol Sleng was a Vietnamese exhibition."
+        figures: []
+        source: src-thayer-1997
+        locator: p4
+  - id: the-war-with-viet-nam
+    claim: "Who started the war that ended the regime"
+    rows:
+      - position: vietnam-prk-account
+        holds: "Two wars: a border war the Pol Pot-Ieng Sary clique started against Viet Nam immediately after 1975, and the Kampuchean people's revolutionary war against the clique."
+        figures: []
+        source: src-un-spv2108
+        locator: para115
+      - position: khmer-rouge-account
+        holds: "We had no other choice; the Vietnamese wanted to assassinate me because without me they could easily swallow up Cambodia."
+        figures: []
+        source: src-thayer-1997
+        locator: p3
+      - position: united-nations
+        holds: "A low-intensity border war from 1975 to 1977, escalated by Cambodia into raids that massacred hundreds of Vietnamese in border villages; Viet Nam sent troops in December 1977."
+        figures: []
+        source: src-un-goe-1999
+        locator: para37
+      - position: tribunal-record
+        holds: "An international armed conflict between Vietnam and Democratic Kampuchea from May 1975, during which the Vietnamese were targeted for expulsion until late 1976 and for destruction from April 1977."
+        figures: []
+        source: src-eccc-002-02-summary
+        locator: para34
+
+# ------------------------------------------------------------- exhibits
+exhibits:
+  - id: ex-e188-141
+    kind: document
+    title: "Case 001 Judgement, paragraph 141: the revised S-21 prisoner list"
+    creator: ECCC Trial Chamber
+    date: "26 July 2010"
+    repository: ECCC court records
+    accession: "E188"
+    licence: court record, public
+    url: "https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/20100726_Judgement_Case_001_ENG_PUBLIC.pdf"
+    source: src-eccc-001-tj
+    locator: para141
+  - id: ex-goe-65
+    kind: document
+    title: "Report of the Group of Experts for Cambodia, paragraph 65"
+    creator: Group of Experts for Cambodia
+    date: "18 February 1999"
+    repository: United Nations Official Document System
+    accession: "A/53/850, S/1999/231"
+    licence: UN document, public
+    url: "https://documents.un.org/doc/undoc/gen/n99/059/72/pdf/n9905972.pdf"
+    source: src-un-goe-1999
+    locator: para65
+  - id: ex-prt-foreword
+    kind: document
+    title: "The 1979 tribunal's documents, foreword of the 1990 edition"
+    creator: A group of Cambodian jurists
+    date: "1990"
+    repository: Internet Archive
+    accession: "revtribunalpolpot"
+    licence: as published; held here as a passage
+    url: "https://archive.org/details/revtribunalpolpot"
+    source: src-prt-1979
+    locator: secforeword
+  - id: ex-s21-cellblock
+    kind: image
+    title: "The upper-level cellblock of Tuol Sleng, the former S-21"
+    creator: Adam Jones
+    date: "14 July 2009"
+    repository: Wikimedia Commons
+    accession: "File:Tuol_Sleng_-_S21_-_Phnom_Penh_-_07.JPG"
+    licence: CC BY-SA 3.0
+    url: "https://commons.wikimedia.org/wiki/File:Tuol_Sleng_-_S21_-_Phnom_Penh_-_07.JPG"
+    image: "https://upload.wikimedia.org/wikipedia/commons/7/77/Tuol_Sleng_-_S21_-_Phnom_Penh_-_07.JPG"
+    shows: "the upper-level cellblock of the museum in July 2009, where the file page says prisoners were kept in narrow wood-partitioned cubicles"
+    does_not_show: "the prison in operation; the photograph is of a museum thirty years after the last prisoner, and the partitions are as the museum keeps them"
+  - id: ex-choeung-ek
+    kind: image
+    title: "The memorial stupa at Choeung Ek"
+    creator: Adam Carr
+    date: "February 2005"
+    repository: Wikimedia Commons
+    accession: "File:Choeungek2.JPG"
+    licence: public domain (released by the photographer)
+    url: "https://commons.wikimedia.org/wiki/File:Choeungek2.JPG"
+    image: "https://upload.wikimedia.org/wikipedia/commons/8/8c/Choeungek2.JPG"
+    shows: "skulls arranged behind glass in the memorial stupa at Choeung Ek as it stood in February 2005"
+    does_not_show: "the execution site as it was used; the skulls are exhumed remains arranged by the memorial, and the file page does not count them"
+  - id: ex-survivors-2012
+    kind: image
+    title: "Vann Nath, photographed by the court's Public Affairs Section"
+    creator: Extraordinary Chambers in the Courts of Cambodia, Public Affairs Section (cropped by FishInWater)
+    date: "26 April 2012 (upload of the cropped file)"
+    repository: Wikimedia Commons
+    accession: "File:Vann_Nath.jpg"
+    licence: CC BY 2.0
+    url: "https://commons.wikimedia.org/wiki/File:Vann_Nath.jpg"
+    image: "https://upload.wikimedia.org/wikipedia/commons/c/cf/Vann_Nath.jpg"
+    shows: "the painter Vann Nath, one of the S-21 survivors who testified in Case 001, in a photograph the court took while distributing copies of the Case 001 judgement"
+    does_not_show: "the prison or the trial; the file page's own caption, which counts the detainees at 12,273 and says Vann Nath, Bou Meng and Chum Mey are three of a handful of survivors, is the court's caption and not this thesis's finding"
+
+# ------------------------------------------------------------- the thesis's own analysis
+analyses:
+  - id: an-toll-counts
+    title: Every count of the dead the record carries
+    method: "One row per figure that a fetched Tier A document or open Tier B study gives for the number who died under the regime, with the producer, the year of the count and the document; a range stated in a source is entered as a low row and a high row, and a figure the source prints in words is entered as digits. The result is the range of the column."
+    finding: "The 37 rows run from 600,000 to 3,000,000, and the ends coincide across producers: 3,000,000 is the 1979 prosecution's charge, the Soviet delegate's ceiling in January 1979, seven months before the tribunal sat, and the court's ceiling of all estimates, and 600,000 is both the court's floor and the floor of Heuveline's 1998 reconstruction as the court reports it; the counts under a million are Vickery's 740,800 and Ponchaud's 800,000, each known here as the court reports it, and the embassies' count sits at 1,000,000."
+    confidence: "high for the range, which is the extreme of the column; the rows count unlike things, excess deaths, killings, charges and reconstructions, over unlike periods, so the range is a spread of counts, not a measurement"
+    against: "the demographers' medians, 1,900,000 in the 2015 reconstruction, and the court's own accepted band of 1,500,000 to 2,000,000, both sit well inside the range, so the extremes are the least supported figures in the column; the Case 002/02 Judgement warns that the absence of reliable statistical data makes every count uncertain, and the 1979 prosecution's 3,000,000 is entered as it was charged, not as it was measured"
+    result: [600000, 3000000]
+    derivation:
+      compute: range
+      column: count
+      columns: [producer, year, document, count]
+      rows:
+        - {producer: prk-state, year: 1979, document: "People's Revolutionary Tribunal, foreword (more than three million)", count: 3000000, extract: src-prt-1979.secforeword}
+        - {producer: prk-state, year: 1979, document: "Act of Prosecution (about 3 million)", count: 3000000, extract: src-prt-1979.secprosecution}
+        - {producer: un-council, year: 1979, document: "S/PV.2108, Soviet delegate, low (2 to 3 million)", count: 2000000, extract: src-un-spv2108.para149}
+        - {producer: un-council, year: 1979, document: "S/PV.2108, Soviet delegate, high (2 to 3 million)", count: 3000000, extract: src-un-spv2108.para149}
+        - {producer: un-experts, year: 1999, document: "Group of Experts, paragraph 35, low (1.5 million)", count: 1500000, extract: src-un-goe-1999.para35}
+        - {producer: un-experts, year: 1999, document: "Group of Experts, paragraph 35, high (nearly 1.7 million)", count: 1700000, extract: src-un-goe-1999.para35}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, paragraph 174, floor of all estimates (600,000)", count: 600000, extract: src-eccc-002-01-tj.para174}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, paragraph 174, ceiling of all estimates (3 million)", count: 3000000, extract: src-eccc-002-01-tj.para174}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, paragraph 174, accepted band, low (1.5 million)", count: 1500000, extract: src-eccc-002-01-tj.para174}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, paragraph 174, accepted band, high (2 million)", count: 2000000, extract: src-eccc-002-01-tj.para174}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Vickery 1984 as reported (740,800)", count: 740800, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Ponchaud 1986 as reported (800,000)", count: 800000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, CIA as reported (1.4 million)", count: 1400000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Tabeau and Kheam 2009 as reported, low (1.747 million)", count: 1747000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Tabeau and Kheam 2009 as reported, high (2.2 million)", count: 2200000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Sharp as reported, low (1.747 million)", count: 1747000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Sharp as reported, midpoint (2.12 million)", count: 2120000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Sharp as reported, high (2.459 million)", count: 2459000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Chandler's testimony as reported, low (1.5 million)", count: 1500000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Chandler's testimony as reported, high (3 million)", count: 3000000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, other embassies as reported (1 million)", count: 1000000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Heuveline 1998 (Unbearable Certainty) as reported, low (1.5 million)", count: 1500000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Heuveline 1998 (Unbearable Certainty) as reported, high (2.5 million)", count: 2500000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Heuveline 1998 (Between One and Three Million) as reported, low (1.5 million)", count: 1500000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Heuveline 1998 (Between One and Three Million) as reported, high (2 million)", count: 2000000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Heuveline 1998 unaccounted deaths as reported, low (at least 600,000)", count: 600000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "Case 002/01 Judgement, note 523, Heuveline 1998 unaccounted deaths as reported, high (possibly 2 million)", count: 2000000, extract: src-eccc-002-01-tj.fn523}
+        - {producer: eccc, year: 2014, document: "ECCC at a Glance, page 1 (at least 1.7 million)", count: 1700000, extract: src-eccc-glance-2014.p1}
+        - {producer: eccc, year: 2022, document: "Case 002/02 Appeal Judgment, paragraph 1980 (over a million)", count: 1000000, extract: src-eccc-002-02-aj.para1980}
+        - {producer: accused-testimony, year: 2009, document: "Duch before the Trial Chamber, 17 June 2009 (more than 1 million)", count: 1000000, extract: src-eccc-duch-apology.p7}
+        - {producer: demographers, year: 2015, document: "Heuveline 2015, 95 per cent simulation interval, low (1.2 million)", count: 1200000, extract: src-heuveline-2015.abstract}
+        - {producer: demographers, year: 2015, document: "Heuveline 2015, 95 per cent simulation interval, high (2.8 million)", count: 2800000, extract: src-heuveline-2015.abstract}
+        - {producer: demographers, year: 2015, document: "Heuveline 2015, median (1.9 million)", count: 1900000, extract: src-heuveline-2015.abstract}
+        - {producer: demographers, year: 2015, document: "Heuveline 2015, narrowed range of existing estimates, low (1.0 million)", count: 1000000, extract: src-heuveline-2015.secdiscussion}
+        - {producer: demographers, year: 2015, document: "Heuveline 2015, narrowed range of existing estimates, high (2.1 million)", count: 2100000, extract: src-heuveline-2015.secdiscussion}
+        - {producer: scholarship, year: 2024, document: "Williams and Jessee 2024, low (1.7 million)", count: 1700000, extract: src-williams-jessee-2024.p4}
+        - {producer: scholarship, year: 2024, document: "Williams and Jessee 2024, high (2.2 million)", count: 2200000, extract: src-williams-jessee-2024.p4}
+  - id: an-s21-list
+    title: What the revised S-21 list records and what it leaves blank
+    method: "From paragraph 141 of the Case 001 Judgement: the entries the revised list records as men, as women and as children, one row each, summed. The result is the sum, to be read against the list's total of 12,273 entries."
+    finding: "Of the 12,273 entries on the revised list, 7,781 are recorded as a man, a woman or a child, so the sex or age of 4,492 people on the tribunal's own list is not recorded; 89 entries are children."
+    confidence: "high: the three figures and the total are in one paragraph of the judgment, and the sum is arithmetic"
+    against: "the judgment says certain entries contain minimal information, which is the gap this sum measures rather than a challenge to it; the same paragraph's other breakdowns (5,609 soldiers, 4,371 cadres, 1,751 neither) overlap this one, so the blank 4,492 cannot be read as unregistered people, only as entries without a sex or an age"
+    result: 7781
+    derivation:
+      compute: sum
+      column: entries
+      columns: [recorded_as, entries, of_total]
+      rows:
+        - {recorded_as: men, entries: 5994, of_total: 12273, extract: src-eccc-001-tj.para141}
+        - {recorded_as: women, entries: 1698, of_total: 12273, extract: src-eccc-001-tj.para141}
+        - {recorded_as: children, entries: 89, of_total: 12273, extract: src-eccc-001-tj.para141}
+  - id: an-vietnamese-share
+    title: The Vietnamese on the S-21 list
+    method: "The Vietnamese entries on the revised S-21 list, as the Case 001 Judgement counts them by category, summed and divided by the list's total. The result is the ratio."
+    finding: "The 345 Vietnamese entries, 122 soldiers, 144 spies and 79 with no description, are 2.8 per cent of the 12,273 on the list."
+    confidence: "high for the ratio, which is arithmetic on one paragraph; the judgment itself says the spies were so labelled on order and were in fact civilians or combatants, so the three categories are the prison's, not the court's"
+    against: "the tribunal's finding of genocide against the Vietnamese rests on killings across the country, at Svay Rieng, on the waters, in Kampong Chhnang, at Wat Khsach and in Kratie, so a share of the S-21 list measures the prison, not the group's fate; and a list that leaves 4,492 entries without a sex may leave Vietnamese unlabelled too"
+    result: 0.0281
+    derivation:
+      compute: ratio
+      column: vietnamese
+      over: listed
+      columns: [category, vietnamese, listed]
+      rows:
+        - {category: "soldiers", vietnamese: 122, listed: 0, extract: src-eccc-001-tj.para425}
+        - {category: "spies", vietnamese: 144, listed: 0, extract: src-eccc-001-tj.para425}
+        - {category: "no description", vietnamese: 79, listed: 12273, extract: src-eccc-001-tj.para141}
+  - id: an-genocide-answers
+    title: Three producers, three lists of the genocide's victims
+    method: "One row per group that a Tier A producer named when it said who the genocide's victims were, with the producer, the year and what it held; the result is the number of distinct producers. The producers are the 1979 tribunal, the United Nations' experts and the ECCC."
+    finding: "The 1979 tribunal named the whole people; the experts of 1999 named the Cham, the Vietnamese and the Buddhist monkhood and left the Khmer national group open; the court of 2018 found genocide against the Cham and the Vietnamese only, and one of its judges wrote that the narrow charge was never explained."
+    confidence: "high: each row is a group named in a held extract, and a name is either there or not; what the count cannot say is which producer is right"
+    against: "the three answers are not on one question: the 1979 decree-law defined genocide to include evacuation, forced labour and the abolition of religion, the experts applied the 1948 Convention's groups, and the court answered only the charges the Closing Order brought, so the lists differ partly because the definitions did"
+    result: 3
+    derivation:
+      compute: distinct
+      column: producer
+      columns: [producer, year, group, held]
+      rows:
+        - {producer: prk-state, year: 1979, group: "the whole people, all social strata", held: "genocide under Decree-Law No 1 of 15 July 1979", extract: src-prt-1979.secjudgment}
+        - {producer: un-experts, year: 1999, group: "the Cham", held: "a protected group; genocide to be investigated", extract: src-un-goe-1999.para63}
+        - {producer: un-experts, year: 1999, group: "the Vietnamese", held: "a protected group; genocide to be investigated", extract: src-un-goe-1999.para63}
+        - {producer: un-experts, year: 1999, group: "the Buddhist monkhood", held: "a protected group; genocide to be investigated", extract: src-un-goe-1999.para63}
+        - {producer: un-experts, year: 1999, group: "the Khmer national group", held: "a national group; the question left to a tribunal", extract: src-un-goe-1999.para65}
+        - {producer: eccc, year: 2018, group: "the Cham", held: "genocide by killing, found", extract: src-eccc-002-02-summary.para30}
+        - {producer: eccc, year: 2018, group: "the Vietnamese", held: "genocide, found", extract: src-eccc-002-02-summary.para34}
+        - {producer: eccc, year: 2018, group: "the Khmer national group", held: "not charged; the narrow focus never explained (separate opinion)", extract: src-eccc-002-02-tj.para4468}

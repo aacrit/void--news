@@ -1,0 +1,7 @@
+source: src-un-a54549
+locator: para230
+url: https://documents.un.org/doc/undoc/gen/n99/348/76/pdf/n9934876.pdf
+read: 2026-09-24
+note: the paragraph's last sentence, cut at a page break in the text layer, is omitted
+
+230. In contrast to the lightly armed Netherlands peacekeepers, the Serbs were prepared for war. They used 1,000 to 2,000 well-equipped soldiers from three brigades of the BSA Fifth “Drina” Corps to maintain the siege around the enclave. Additional units, including reconnaissance and special forces, could be brought in from other areas when needed. The Serbs were armed with tanks, tracked armoured vehicles, artillery and mortars. They had a well-developed system of command, control and communications, as well as superior capabilities in basic intelligence, information and psychological operations. The Serbs were also well supplied, and officers were paid with funds provided by the Yugoslav Army. Combined with their control of the most important strategic positions, the BSA was assessed to enjoy an overwhelming military advantage over the Bosnian Government forces in the enclave. Although the Bosniacs were numerically superior (3,000 to 4,000 men in the Twenty-eighth Division), they had no heavy weapons, with the exception of a small number of anti-tank missiles that had been smuggled in (but which, it turned out, they did not know how to operate), and some light mortars.

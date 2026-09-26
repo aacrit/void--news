@@ -1,0 +1,468 @@
+"""Emit the static-JSON snapshots the frontend reads, from the pipeline SQLite.
+
+Runs at the END of a pipeline run (Cloudflare migration): the browser and the
+`next build` never touch a database, they read these files. Splits output into:
+
+  frontend/build-data/  (read via fs at build, NOT shipped to the client)
+      feed.json         {clusters:[...the Stage 2 bench, by rank_world...], builtAt}
+      archive.json      all printed_stories rows (generateStaticParams + /story)
+      archiveMap.json   {source_cluster_id: "/story/<id>/"} latest edition
+      engine.json       what the bias engine read and did on the latest run
+                        (validation/engine_health.py; /sources reads it)
+
+  frontend/public/data/ (fetched by the browser from the CDN)
+      brief.json        latest daily_briefs row (world)
+      weekly.json       latest weekly_digests row
+      methodology.json  10 recent bias-scored articles
+      history.json      curated History events (from data/history/events/*.yaml)
+      deepdive/<id>.json  per displayed cluster: fetchDeepDiveData shape
+
+Shapes mirror exactly what PostgREST returned so the frontend mapping is
+unchanged. Reads directly with sqlite3 (typed state DB from schema_pipeline.sql,
+so JSONB columns are TEXT holding JSON, booleans are 1/0). Deterministic.
+"""
+import json
+import os
+import sqlite3
+import sys
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parents[1]
+if str(REPO / "pipeline") not in sys.path:
+    sys.path.insert(0, str(REPO / "pipeline"))
+from utils.feed_config import CANDIDATES, MIN_DISPLAYABLE  # noqa: E402
+from utils.display_window import is_displayable  # noqa: E402
+from editorial import grounding  # noqa: E402
+DB = (
+    sys.argv[1]
+    if len(sys.argv) > 1
+    else os.environ.get("VOID_SQLITE_PATH", str(REPO / "pipeline_state.db"))
+)
+# Output roots. Overridable so a test can export a synthetic run without
+# overwriting the committed production snapshots (tests/test_editorial_stage.py).
+BUILD_DIR = Path(os.environ.get("VOID_EXPORT_BUILD_DIR")
+                 or REPO / "frontend" / "build-data")
+PUBLIC_DIR = Path(os.environ.get("VOID_EXPORT_PUBLIC_DIR")
+                  or REPO / "frontend" / "public" / "data")
+BUILD_DIR.mkdir(parents=True, exist_ok=True)
+_DD = PUBLIC_DIR / "deepdive"
+
+# Which snapshots to emit. Default is all of them (the daily pipeline). A job
+# that owns only one surface narrows this so it cannot overwrite another's
+# output from a state DB that may be a day behind: the weekly digest runs
+# VOID_EXPORT_ONLY=weekly, because it restores yesterday's cached state and
+# would otherwise rewrite today's feed and archive from stale rows.
+_ALL = ("feed", "brief", "weekly", "archive", "methodology", "history", "engine")
+_ONLY = {x.strip() for x in os.environ.get("VOID_EXPORT_ONLY", "").split(",") if x.strip()}
+if _ONLY - set(_ALL):
+    sys.exit(f"VOID_EXPORT_ONLY: unknown section(s) {sorted(_ONLY - set(_ALL))}; known: {_ALL}")
+
+
+def want(section: str) -> bool:
+    return not _ONLY or section in _ONLY
+
+
+if want("feed"):
+    _DD.mkdir(parents=True, exist_ok=True)
+    # Clear stale per-cluster deep-dive files first: each run's displayed clusters
+    # differ, so without this the directory accumulates yesterday's orphans forever.
+    for _f in _DD.glob("*.json"):
+        _f.unlink()
+
+c = sqlite3.connect(DB)
+c.row_factory = sqlite3.Row
+
+
+def pbool(v):
+    if v is None:
+        return None
+    return v in (1, "1", "t", True)
+
+
+def pnum(v):
+    if v is None or v == "":
+        return None
+    try:
+        f = float(v)
+        return int(f) if f.is_integer() else f
+    except (ValueError, TypeError):
+        return None
+
+
+def pjson(v):
+    if v is None or v == "":
+        return None
+    if isinstance(v, (dict, list)):
+        return v
+    try:
+        return json.loads(v)
+    except (ValueError, TypeError):
+        return None
+
+
+def parr(v):
+    """Parse a pg array literal {a,b} OR a JSON array into a list of strings."""
+    if v is None or v == "":
+        return []
+    if isinstance(v, list):
+        return v
+    s = str(v).strip()
+    if not (s.startswith("{") and s.endswith("}")):
+        j = pjson(s)
+        return j if isinstance(j, list) else []
+    s = s[1:-1]
+    if not s:
+        return []
+    out, cur, i, n, inq = [], [], 0, len(s), False
+    while i < n:
+        ch = s[i]
+        if ch == '"':
+            inq = not inq
+        elif ch == "," and not inq:
+            out.append("".join(cur))
+            cur = []
+        elif ch == "\\" and i + 1 < n:
+            cur.append(s[i + 1])
+            i += 2
+            continue
+        else:
+            cur.append(ch)
+        i += 1
+    out.append("".join(cur))
+    return out
+
+
+def wj(path, obj):
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(obj, fh, ensure_ascii=False)
+
+
+if want("feed"):
+    # ── feed.json ──
+    FEED_COLS = [
+        "id", "title", "summary", "summary_tier", "category", "section",
+        "importance_score", "source_count", "first_published", "last_updated",
+        "divergence_score", "headline_rank", "coverage_velocity", "rank_world",
+        "cached_image_url", "is_international", "is_headline", "headline_confidence",
+        # 2026-09-06: content_type + disaster_severity make each snapshot a
+        # self-contained input for evals/replay_ordering.py (apply_feed_ordering
+        # reads both; without them an offline replay guesses).
+        "content_type", "disaster_severity",
+    ]
+    # The bench, not the pool. Stage 2 summarizes, critiques and validates exactly
+    # CANDIDATES clusters and step 8d.5 lifts them clear of everything below, so
+    # emitting the top CANDIDATES is emitting the set that was examined. Exporting
+    # the top 100 shipped 65 rows a reader could never see, any of which the
+    # frontend would have rendered had the ordering shifted under it.
+    rows = c.execute(
+        "SELECT * FROM story_clusters WHERE sections LIKE '%world%' "
+        f"ORDER BY CAST(rank_world AS REAL) DESC LIMIT {int(CANDIDATES)}"
+    ).fetchall()
+    clusters = []
+    for r in rows:
+        keys = r.keys()
+        d = {k: (r[k] if k in keys else None) for k in FEED_COLS}
+        for k in ("importance_score", "source_count", "divergence_score",
+                  "headline_rank", "coverage_velocity", "rank_world",
+                  "headline_confidence", "disaster_severity"):
+            d[k] = pnum(r[k]) if k in keys else None
+        d["is_international"] = pbool(r["is_international"]) if "is_international" in keys else None
+        d["is_headline"] = pbool(r["is_headline"]) if "is_headline" in keys else None
+        d["sections"] = parr(r["sections"]) if "sections" in keys else ["world"]
+        d["bias_diversity"] = pjson(r["bias_diversity"]) if "bias_diversity" in keys else None
+        d["consensus_points"] = pjson(r["consensus_points"]) if "consensus_points" in keys else []
+        d["consensus_points"] = d["consensus_points"] or []
+        d["divergence_points"] = pjson(r["divergence_points"]) if "divergence_points" in keys else []
+        d["divergence_points"] = d["divergence_points"] or []
+        d["claim_consensus"] = pjson(r["claim_consensus"]) if "claim_consensus" in keys else None
+        clusters.append(d)
+
+    built = c.execute(
+        "SELECT completed_at FROM pipeline_runs WHERE status='completed' "
+        "AND completed_at IS NOT NULL ORDER BY completed_at DESC LIMIT 1"
+    ).fetchone()
+    built_at = built["completed_at"] if built else None
+    if built_at:
+        built_at = str(built_at).replace(" ", "T")
+        if "+" in built_at:
+            built_at = built_at.split("+")[0] + "Z"
+        elif not built_at.endswith("Z"):
+            built_at = built_at + "Z"
+    wj(BUILD_DIR / "feed.json", {"clusters": clusters, "builtAt": built_at})
+    print(f"feed.json: {len(clusters)} clusters, builtAt={built_at}")
+
+if want("brief"):
+    # ── brief.json ──
+    b = c.execute(
+        "SELECT * FROM daily_briefs WHERE edition='world' ORDER BY created_at DESC LIMIT 1"
+    ).fetchone() or c.execute(
+        "SELECT * FROM daily_briefs ORDER BY created_at DESC LIMIT 1"
+    ).fetchone()
+    brief = None
+    if b:
+        brief = {k: b[k] for k in b.keys()}
+        for k in ("audio_duration_seconds", "opinion_start_seconds", "news_start_seconds"):
+            if k in brief:
+                brief[k] = pnum(b[k])
+        if "top_cluster_ids" in brief:
+            brief["top_cluster_ids"] = parr(b["top_cluster_ids"])
+        if "audio_chapters" in brief:
+            brief["audio_chapters"] = pjson(b["audio_chapters"])
+    wj(PUBLIC_DIR / "brief.json", brief)
+    print(f"brief.json: {'ok' if brief else 'MISSING'}")
+
+if want("weekly"):
+    # ── weekly.json ──
+    w = c.execute("SELECT * FROM weekly_digests ORDER BY created_at DESC LIMIT 1").fetchone()
+    weekly = None
+    if w:
+        weekly = {k: w[k] for k in w.keys()}
+        # Every JSON column must be parsed here AND in the frontend reader's
+        # mirror list (frontend/app/lib/supabase.ts). The two drifted apart and
+        # nothing compared them, which is why `cover_timelines` and
+        # `cover_numbers` shipped to browsers as raw JSON strings.
+        # tests/test_weekly.py W-T03 now asserts the two lists are identical.
+        for k in ("cover_text", "cover_timelines", "cover_numbers", "recap_stories",
+                  "departments", "opinions", "audio_chapters", "week_days",
+                  "opinion_left", "opinion_center", "opinion_right",
+                  "bias_report_data"):
+            if k in weekly:
+                weekly[k] = pjson(w[k])
+        for k in ("audio_duration_seconds", "opinion_start_seconds", "issue_number",
+                  "total_articles", "total_clusters", "gemini_calls_used",
+                  "generation_duration_seconds"):
+            if k in weekly:
+                weekly[k] = pnum(w[k])
+        # TTS source, rendered nowhere: ~15 KB on every /weekly page load.
+        # AudioProvider explicitly nulls audio_script when mapping a weekly
+        # digest, so nothing downstream loses anything. `opinion_headlines` is
+        # derivable from `opinions` and was never rendered.
+        for k in ("audio_script", "opinion_audio_script", "opinion_headlines"):
+            weekly.pop(k, None)
+        # `opinions` is the real shape and the three lean buckets are a lossy
+        # partition of it, so shipping both duplicates every essay's text. The
+        # DB keeps all four; a browser needs one. Snapshots written before
+        # `opinions` existed still carry the buckets, and the frontend falls
+        # back to them, so both vintages render.
+        if weekly.get("opinions"):
+            for k in ("opinion_left", "opinion_center", "opinion_right"):
+                weekly.pop(k, None)
+    wj(PUBLIC_DIR / "weekly.json", weekly)
+    print(f"weekly.json: {'ok' if weekly else 'MISSING'}")
+
+    # ── The back-issue archive ──
+    # The weekly job restores the Actions cache and NEVER saves it back, on
+    # purpose: the daily pipeline is usually still running at 12:00 UTC and a
+    # save would push a pre-run copy under a newer key and lose a day. So the
+    # weekly row is written to a database that is discarded when the job ends,
+    # and next week's job restores a cache that never contained it. Raising the
+    # SELECT's LIMIT would yield one row forever.
+    #
+    # The deploy tree is therefore the archive of record, exactly as it already
+    # is for the daily side (printed_stories -> build-data/archive.json ->
+    # lib/archive.ts -> prerendered /story/<id>). This merge is append-only on
+    # (edition, week_start): a re-run of the same week replaces its own entry
+    # and every other issue survives.
+    if weekly:
+        issues_path = BUILD_DIR / "weekly-issues.json"
+        existing = []
+        if issues_path.exists():
+            try:
+                existing = json.loads(issues_path.read_text(encoding="utf-8")) or []
+            except ValueError:
+                existing = []
+        key = (weekly.get("edition"), weekly.get("week_start"))
+        merged = [i for i in existing if (i.get("edition"), i.get("week_start")) != key]
+        merged.append(weekly)
+        merged.sort(key=lambda i: str(i.get("week_start") or ""), reverse=True)
+        wj(issues_path, merged)
+
+        # A slim index for the browser: enough to list the back issues and fill
+        # the audio playlist, without shipping every past issue's prose.
+        INDEX_COLS = ("id", "issue_number", "edition", "week_start", "week_end",
+                      "cover_headline", "cover_image_url", "audio_url",
+                      "audio_duration_seconds", "created_at")
+        wj(PUBLIC_DIR / "weekly-archive.json",
+           [{k: i.get(k) for k in INDEX_COLS} for i in merged])
+        print(f"weekly-issues.json: {len(merged)} issue(s)")
+
+if want("archive"):
+    # ── archive.json + archiveMap.json ──
+    prows = c.execute(
+        "SELECT * FROM printed_stories ORDER BY printed_on DESC, CAST(edition_position AS INT) ASC"
+    ).fetchall()
+    archive = []
+    for r in prows:
+        d = {k: r[k] for k in r.keys()}
+        for k in ("consensus_points", "divergence_points", "claim_consensus",
+                  "bias_diversity", "members", "title_keywords", "search_terms"):
+            if k in d and d[k] is not None and str(d[k]).lstrip()[:1] in ("{", "["):
+                d[k] = pjson(r[k])
+        for k in ("edition_position", "editorial_importance", "rank_world",
+                  "headline_rank", "source_count", "divergence_score", "member_count"):
+            if k in d:
+                d[k] = pnum(r[k])
+        archive.append(d)
+    wj(BUILD_DIR / "archive.json", archive)
+
+    latest = c.execute("SELECT printed_on FROM printed_stories ORDER BY printed_on DESC LIMIT 1").fetchone()
+    amap = {}
+    if latest:
+        for r in c.execute(
+            "SELECT id, source_cluster_id FROM printed_stories WHERE printed_on = ?",
+            (latest["printed_on"],),
+        ).fetchall():
+            if r["source_cluster_id"] and r["source_cluster_id"] not in amap:
+                amap[r["source_cluster_id"]] = f"/story/{r['id']}/"
+    wj(BUILD_DIR / "archiveMap.json", amap)
+    print(f"archive.json: {len(archive)} rows; archiveMap.json: {len(amap)} permalinks")
+
+if want("feed"):
+    # ── deepdive/<cluster>.json for displayed clusters (typed DB is indexed -> fast) ──
+    # See pipeline/validation/bias_defaults.py. Imported before the loop
+    # because the unscored stamp is applied per row as the rows are built.
+    from validation.bias_defaults import (  # noqa: E402
+        default_share, format_per_axis, format_summary,
+        is_default_tuple as _is_default_tuple, per_axis_default_share,
+    )
+
+    dd = 0
+    gr = 0
+    exported_bias_rows = []  # every per-article bias row the deepdive files carry
+    for cid in [d["id"] for d in clusters]:
+        links = c.execute("SELECT article_id FROM cluster_articles WHERE cluster_id=?", (cid,)).fetchall()
+        out_rows = []
+        # The text the card was written from, kept so E-13 and E-14 can still
+        # be run against it after the run's database is gone. Not served.
+        grounding_rows = []
+        for lk in links:
+            a = c.execute(
+                "SELECT id,title,url,summary,published_at,image_url,source_id,full_text "
+                "FROM articles WHERE id=?",
+                (lk["article_id"],),
+            ).fetchone()
+            if not a:
+                continue
+            src = None
+            if a["source_id"]:
+                s = c.execute("SELECT name,tier,url FROM sources WHERE id=?", (a["source_id"],)).fetchone()
+                if s:
+                    src = {"name": s["name"], "tier": s["tier"], "url": s["url"]}
+            bs = c.execute(
+                "SELECT political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence,rationale,lean_unscored "
+                "FROM bias_scores WHERE article_id=?",
+                (a["id"],),
+            ).fetchone()
+            bias = None
+            if bs:
+                bias = {
+                    "political_lean": pnum(bs["political_lean"]),
+                    "sensationalism": pnum(bs["sensationalism"]),
+                    "opinion_fact": pnum(bs["opinion_fact"]),
+                    "factual_rigor": pnum(bs["factual_rigor"]),
+                    "framing": pnum(bs["framing"]),
+                    "confidence": pnum(bs["confidence"]),
+                    "rationale": pjson(bs["rationale"]) if (bs["rationale"] and str(bs["rationale"]).lstrip()[:1] == "{") else bs["rationale"],
+                }
+                # The analyzer's own verdict that this article's lean was not
+                # measurable (an unrated outlet whose copy carried no textual
+                # signal). It has always excluded the row from the cluster
+                # aggregate; until 2026-09-21 it stopped at the database, so
+                # the page plotted the article's dot at 50 as if measured.
+                if bs["lean_unscored"]:
+                    bias["lean_unscored"] = True
+                # A row carrying the whole default tuple is not a measurement
+                # whatever the database says, so it is marked here, before this
+                # cluster's file is written. Marked per row and unconditionally:
+                # the export degrades rather than blocking, so one bad row is
+                # handled exactly as honestly as six hundred.
+                if _is_default_tuple(bias):
+                    bias["lean_unscored"] = True
+                exported_bias_rows.append(bias)
+            grounding_rows.append({
+                "id": a["id"], "url": a["url"], "title": a["title"],
+                "summary": a["summary"], "full_text": a["full_text"],
+            })
+            out_rows.append({
+                "article": {
+                    "id": a["id"], "title": a["title"], "url": a["url"],
+                    "summary": a["summary"], "published_at": a["published_at"],
+                    "image_url": a["image_url"], "source": src,
+                    "bias_scores": [bias] if bias else [],
+                }
+            })
+        if out_rows:
+            wj(PUBLIC_DIR / "deepdive" / f"{cid}.json", out_rows)
+            dd += 1
+        if grounding_rows:
+            grounding.write_record(
+                BUILD_DIR, grounding.build_record(cid, grounding_rows))
+            gr += 1
+    print(f"deepdive/: {dd} cluster files")
+    print(f"grounding/: {gr} cluster files (build-data, not served)")
+
+    # What the run measured, and what it did not. Every row that carried the
+    # default tuple was marked unscored above, so it is already out of the
+    # cluster aggregate and off the spectrum; these two lines are the record,
+    # and the numbers CI asserts against the committed export
+    # (tests/test_bias_defaults_gate.py). The export itself never raises here:
+    # blocking the daily run would cost readers the newspaper to protect one
+    # axis of one panel, and the degradation has already done the protecting
+    # (CEO, 2026-09-21).
+    print(format_summary(*default_share(exported_bias_rows)))
+    print(format_per_axis(per_axis_default_share(exported_bias_rows)))
+
+if want("methodology"):
+    # ── methodology.json ──
+    meth = []
+    for a in c.execute(
+        "SELECT a.id,a.title,a.published_at,a.summary,a.source_id FROM articles a "
+        "JOIN bias_scores b ON b.article_id=a.id ORDER BY a.published_at DESC LIMIT 10"
+    ).fetchall():
+        s = c.execute("SELECT name,slug,url FROM sources WHERE id=?", (a["source_id"],)).fetchone() if a["source_id"] else None
+        bs = c.execute(
+            "SELECT political_lean,sensationalism,opinion_fact,factual_rigor,framing,rationale "
+            "FROM bias_scores WHERE article_id=? LIMIT 1", (a["id"],)
+        ).fetchone()
+        meth.append({
+            "id": a["id"], "title": a["title"], "published_at": a["published_at"], "summary": a["summary"],
+            "source": {"name": s["name"], "slug": s["slug"], "url": s["url"]} if s else None,
+            "bias_scores": [{
+                "political_lean": pnum(bs["political_lean"]), "sensationalism": pnum(bs["sensationalism"]),
+                "opinion_fact": pnum(bs["opinion_fact"]), "factual_rigor": pnum(bs["factual_rigor"]),
+                "framing": pnum(bs["framing"]),
+                "rationale": pjson(bs["rationale"]) if (bs["rationale"] and str(bs["rationale"]).lstrip()[:1] == "{") else bs["rationale"],
+            }] if bs else [],
+        })
+    wj(PUBLIC_DIR / "methodology.json", meth)
+    print(f"methodology.json: {len(meth)} articles")
+
+if want("engine"):
+    # ── engine.json ──
+    # Measured facts about the engine's input and output on the latest run: body
+    # length by feed class, how much was scored on the outlet alone, and how far
+    # the words actually moved rated outlets' scores. /sources prints these
+    # numbers instead of prose, and tests/test_engine_health.py gates them.
+    from validation import engine_health
+    _eh = engine_health.compute(c)
+    wj(BUILD_DIR / "engine.json", _eh)
+    print(engine_health.format_summary(_eh))
+
+if want("history"):
+    # ── history.json ──
+    # History content is curated YAML, not pipeline state, so this reads no DB. It
+    # runs here so every pipeline run re-emits the snapshot the /history routes read
+    # and the commit step picks up a content change automatically.
+    from history.export_history import build_rows, load_events  # noqa: E402
+
+    _hist = build_rows(load_events())
+    wj(PUBLIC_DIR / "history.json", _hist)
+    print(f"history.json: {len(_hist)} events")
+
+if want("feed"):
+    # Fail loud if the feed is too thin to ship (mirrors serverFeed's guard).
+    displayable = sum(1 for d in clusters if is_displayable(d))
+    print(f"displayable (frontend rule, utils.display_window): {displayable}")
+    if displayable < MIN_DISPLAYABLE:
+        print(f"WARNING: fewer than {MIN_DISPLAYABLE} displayable stories; serverFeed will fail the build.")
+c.close()

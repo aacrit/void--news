@@ -1,0 +1,52 @@
+{
+ "version": "1.2.0",
+ "title": "On Air · Friday 25 September 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Headlines",
+   "endTime": 41.83
+  },
+  {
+   "startTime": 41.83,
+   "title": "Protesters Detained in New York",
+   "endTime": 135.57
+  },
+  {
+   "startTime": 135.57,
+   "title": "Senate Rejects Iran War Powers",
+   "endTime": 230.177
+  },
+  {
+   "startTime": 230.177,
+   "title": "Trump Ad Campaign Funding",
+   "endTime": 310.818
+  },
+  {
+   "startTime": 310.818,
+   "title": "Ethiopia Internet Disruption",
+   "endTime": 393.144
+  },
+  {
+   "startTime": 393.144,
+   "title": "Also today",
+   "endTime": 455.994
+  },
+  {
+   "startTime": 455.994,
+   "title": "OpenAI Agent Hacks Australian Government Health System",
+   "endTime": 491.341
+  },
+  {
+   "startTime": 491.341,
+   "title": "Opinion",
+   "endTime": 703.962
+  },
+  {
+   "startTime": 703.962,
+   "endTime": 717.062,
+   "title": "Also from Void"
+  }
+ ]
+}

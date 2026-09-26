@@ -1,0 +1,63 @@
+name: Deploy Staging Preview
+
+# Frontend preview lane for the launch (Workstream B). Pushing to the long-lived
+# `staging` branch builds the site and publishes it to a Cloudflare Pages PREVIEW
+# deployment (branch alias), so UI changes can be seen on a hosted URL
+# (https://staging.void-news.pages.dev) before they are promoted to production
+# on `main`. Per the launch decision this points at the SAME single Supabase DB
+# as production (no separate staging database).
+#
+# This does NOT touch production: `--branch=staging` is a preview deploy, and
+# CF only serves the production alias from `--branch=main` (see deploy-cloudflare.yml).
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: cloudflare-pages-staging
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: staging
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: cd frontend && npm ci
+
+      - name: Build (Cloudflare preview target — no basePath)
+        env:
+          NEXT_PUBLIC_BASE_PATH: ""
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_DISABLE_AUDIO: "0"
+        run: cd frontend && npm run build
+
+      - name: Ensure Cloudflare Pages project exists
+        continue-on-error: true
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages project create void-news --production-branch main
+
+      - name: Deploy staging preview to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy frontend/out --project-name=void-news --branch=staging --commit-dirty=true

@@ -1,0 +1,138 @@
+name: Verify Production Output
+
+# Post-deploy served-output gate. Runs AFTER the Cloudflare Pages deploy finishes,
+# fetches the live URL, and fails loudly on known-bad rendered output (doubled
+# Top story badge, "U. S." / decimal corruption, duplicate headlines, truncated
+# summaries, count mismatch). This closes the loop that let those ship while every
+# unit gate stayed green: correctness is now judged against what production serves.
+#
+# It does NOT roll back. A rollback would leave an older broken page live, which is
+# worse. On failure it opens/refreshes a tracking issue so the break is actionable.
+
+on:
+  workflow_run:
+    workflows: ["Deploy to Cloudflare Pages"]
+    types: [completed]
+  # Scheduled backstops (2026-09-06). The Actions history showed that no verify
+  # run followed any of the five scheduled 15:00/17:00 UTC backstop deploys
+  # between 09-04 and 09-06: the workflow_run chain only fired after push-driven
+  # deploys, so the gate went blind for the exact deploys that carry each day's
+  # pipeline data. These run 30 minutes after each backstop deploy slot.
+  schedule:
+    - cron: '30 15 * * *'
+    - cron: '30 17 * * *'
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "URL to verify (defaults to production)"
+        required: false
+        default: "https://news.voidvision.org/"
+
+concurrency:
+  group: verify-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  verify:
+    # Only verify a deploy that actually succeeded (or a manual dispatch).
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install nltk (Porter stemmer, matches the ranker)
+        run: pip install --quiet nltk
+
+      # A BLIND SLEEP IS THE WRONG SHAPE, and 20 seconds was not enough.
+      # Measured 2026-09-24: the deploy workflow reported success at 03:25:58
+      # and this job started at 03:26:00, so verification hit the CDN about 22
+      # seconds after a Cloudflare Pages deployment was uploaded, before the
+      # edge had propagated it. The gate failed, opened a tracking issue, and
+      # turned main red. Re-run by hand minutes later: every check passed.
+      #
+      # That is worse than no gate. A false red trains everyone to ignore the
+      # one signal that says production is broken, and under branch protection
+      # it blocks merges for a non-problem.
+      #
+      # So the verification RETRIES instead. A single failure during
+      # propagation is not a red main; a failure that persists across three
+      # attempts two minutes apart is. The first attempt still passes
+      # immediately on a healthy deploy, so a good run costs nothing extra.
+      - name: Verify served output
+        id: verify
+        run: |
+          URL="${{ github.event.inputs.url || 'https://news.voidvision.org/' }}"
+          attempt=0
+          max=3
+          while : ; do
+            attempt=$((attempt + 1))
+            : > verify_output.txt
+            bash scripts/verify-production.sh "$URL" | tee verify_output.txt
+            page_exit=${PIPESTATUS[0]}
+            # On Air served-audio gate (2026-09-18): the MP3 resolves, chapters are
+            # real and monotonic, the sidecar matches, the sign-on is Void's own.
+            echo "--- On Air audio ---" | tee -a verify_output.txt
+            python scripts/verify_audio.py "${{ github.event.inputs.url || 'https://news.voidvision.org/' }}" | tee -a verify_output.txt
+            audio_exit=${PIPESTATUS[0]}
+            # History + Weekly served gate (2026-09-19): both sections degrade
+            # SILENTLY. History falls back to ten mock events when its catalog
+            # fetch returns nothing, and Weekly served Issue #23 for three weeks
+            # while its job wrote to a decommissioned database. Neither turned
+            # anything red.
+            echo "--- History + Weekly ---" | tee -a verify_output.txt
+            python scripts/verify_sections.py "${{ github.event.inputs.url || 'https://news.voidvision.org/' }}" | tee -a verify_output.txt
+            sections_exit=${PIPESTATUS[0]}
+            if [ "$page_exit" = "0" ] && [ "$audio_exit" = "0" ] && [ "$sections_exit" = "0" ]; then
+              echo "exit=0" >> "$GITHUB_OUTPUT"
+              echo "verification passed on attempt $attempt"
+              break
+            fi
+            if [ "$attempt" -ge "$max" ]; then
+              echo "exit=1" >> "$GITHUB_OUTPUT"
+              echo "verification FAILED on all $max attempts; this is not propagation lag"
+              break
+            fi
+            echo "attempt $attempt failed; the CDN may still be propagating. Retrying in 120s."
+            sleep 120
+          done
+
+      - name: Open / refresh tracking issue on failure
+        if: ${{ steps.verify.outputs.exit != '0' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('verify_output.txt', 'utf8').slice(0, 60000);
+            const title = 'Production verification gate FAILED';
+            const marker = '<!-- verify-production-gate -->';
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'verify-gate',
+            });
+            const bodyText = `${marker}\nServed output failed verification.\n\n\`\`\`\n${body}\n\`\`\``;
+            if (issues.data.length) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issues.data[0].number, body: bodyText,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, labels: ['verify-gate'], body: bodyText,
+              });
+            }
+
+      - name: Fail the workflow if the gate failed
+        if: ${{ steps.verify.outputs.exit != '0' }}
+        run: |
+          echo "::error::Production served-output verification failed. See job log / tracking issue."
+          exit 1

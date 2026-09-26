@@ -1,0 +1,10 @@
+{
+  "_comment": "Hosts a History ledger may cite as a free copy although they serve the page only over http. TH-04 (scripts/verify_sections.py), the headless source-mark check (frontend/scripts/verify-headless.mjs) and ThesisSourceLink.tsx read this list; tests/test_insecure_origins.py asserts it holds only the hosts named here, each with the reason and the date checked. Add a host only after trying https on the document path itself and recording what answered.",
+  "hosts": [
+    {
+      "host": "www.armenocide.de",
+      "reason": "The Gust edition of the German Foreign Office files serves its document pages only over http: https://www.armenocide.de resets the connection, and http://www.armenocide.net redirects to https://www.armenocide.net, whose document paths answer 404.",
+      "checked": "2026-09-25"
+    }
+  ]
+}

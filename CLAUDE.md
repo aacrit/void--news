@@ -1,564 +1,447 @@
-# void --news
+# Void News
 
-Last updated: 2026-03-23 (rev 13)
+News aggregation with 6-axis rule-based NLP bias analysis. 1,061 sources,
+158 countries. **Live: https://news.voidvision.org** (Cloudflare Pages).
 
-> **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
+**This file is the current state and the rules in force.** The record of how it
+got here is `docs/CHANGELOG.md` (29 rev entries, verbatim) — grep it when you
+need the reasoning behind a decision or the root cause of a past defect. What
+is unfinished is `docs/OPEN-ITEMS.md`. Keep this file short: it is re-read at
+the start of every session, so anything that does not change what you do today
+belongs in one of those two.
 
-A modern news aggregation platform with per-article, 6-axis rule-based NLP bias analysis. Every source is curated for credibility. Covers World, US, and India editions.
+---
 
 ## Architecture
 
 ```
-GitHub Actions (4x daily cron) → Python Pipeline → Supabase (PostgreSQL) ← Next.js Static Site (GitHub Pages)
+GitHub Actions (daily 11:00 UTC)
+  → pipeline → pipeline_state.db (SQLite, VOID_SQLITE_PATH)
+  → static JSON + MP3 committed to the repo
+  → Next.js static export → Cloudflare Pages
+  → verify-production.yml asserts ~22 checks on the LIVE served HTML
+
+Live user writes (ship board, feedback) → Cloudflare Worker → D1 (void-live)
 ```
 
-- **No backend server.** Fully serverless.
-- **Python pipeline** runs on GitHub Actions, handles ingestion, NLP analysis, writes to Supabase.
-- **Next.js frontend** is statically exported, hosted on GitHub Pages, reads Supabase client-side.
-- **Supabase** is the single data layer: articles, bias scores, source metadata, story clusters.
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|------------|
-| Ingestion | Python, feedparser, BeautifulSoup/Scrapy |
-| NLP/Bias Engine | Python, spaCy, NLTK, TextBlob |
-| Summarization | Gemini 2.5 Flash (free tier, google-genai SDK) |
-| Audio | Gemini 2.5 Flash TTS (native multi-speaker, free tier, $0), pydub |
-| Database | Supabase (PostgreSQL) |
-| Frontend | Next.js 16 (App Router), React 19, TypeScript |
-| Animation | Motion One v11 (spring physics, ~6.5KB CDN) |
-| Styling | CSS custom properties, mobile-first, clamp() |
-| Fonts | Playfair Display (editorial), Inter (structural), Barlow Condensed (meta), IBM Plex Mono (data) |
-| Hosting | GitHub Pages (frontend), GitHub Actions (pipeline) |
-
-## Core Principles
-
-### Show, Don't Tell — The Cardinal Rule
-
-Every piece of generated text in void --news — summaries, TL;DR, opinion, audio scripts — MUST embody show-don't-tell writing. This is non-negotiable and applies to all prompts, all output, all future development.
-
-**What this means:**
-- Never assert significance. Show the evidence that makes significance self-evident.
-- Never say "this is important" — place facts side by side so the reader realizes it themselves.
-- Never use "notable," "significant," "it should be noted," "interestingly," "crucially" — these are crutch words that TELL instead of SHOW.
-- Juxtapose concrete facts to reveal patterns. "Three central banks moved in the same direction. Two did so despite domestic pressure. The third didn't have a choice." — the reader sees the pattern without being told.
-- Use specific numbers, names, dates, actions. Abstraction is the enemy of show-don't-tell.
-- The opinion section shows hidden patterns by placing facts next to each other — never by declaring a conclusion.
-
-**BAD:** "It is worth noting that tensions are rising significantly between the two nations."
-**GOOD:** "Both countries recalled their ambassadors within 48 hours. Neither has done that since 1979."
-
-This principle applies to: `cluster_summarizer.py` prompts, `daily_brief_generator.py` prompts, `claude_brief_generator.py` prompts, and any future content generation. When reviewing or modifying prompts, enforce this standard.
-
-### Product Family Branding
-
-CLI-style naming convention — every feature is a command the user runs. Transparent, no mystery.
-
-| Brand | English Subtitle | Purpose |
-|-------|-----------------|---------|
-| `void --news` | — | The platform |
-| `void --tl;dr` | The Daily Brief | Top stories, editorially weighed |
-| `void --onair` | Audio Broadcast | Two-voice BBC-style news conversation |
-| `void --opinion` | The Board | Observational editorial judgment |
-| `void --sources` | Source Spectrum | 370 outlets on one axis |
-| `void --deep-dive` | Story Analysis | Per-story bias breakdown |
-| `void --paper` | Broadsheet Edition | E-paper reading experience |
-
-English subtitles appear on first encounter (sessionStorage) then fade. The CLI aesthetic signals transparency and anti-marketing — users are querying, not passively consuming. Extended branding should follow this pattern for any new feature.
-
-### Zero Operational Cost
-- No paid APIs. All bias analysis is rule-based NLP running locally.
-- Gemini 2.5 Flash free tier: ~116 RPD used (7.7% of 1500 RPD limit). 4x daily runs × ~26 cluster calls + 3 brief calls per run.
-- Gemini 2.5 Flash TTS: free tier ($0), same GEMINI_API_KEY as summarization. LLM-native multi-speaker dialogue synthesis in a single API call. No per-turn stitching needed.
-- GitHub Actions, Supabase, GitHub Pages — all free tier.
-- Motion One via CDN importmap (no npm install needed).
-
-### Bias Analysis — The Differentiator
-Per-article analysis across 6 axes. Axes 1-5 return score (0-100) + structured rationale dict (JSONB) for frontend hover display. Axis 6 tracks longitudinal trends per source per topic.
-
-1. **Political Lean** — keyword lexicons (90+ terms per side), entity sentiment (spaCy NER + TextBlob), framing phrases, length-adaptive + sparsity-weighted source baseline blending. Blending: `<50w → 0.50/0.50`, `50-150w → 0.70/0.30`, `150-500w → 0.85/0.15`, `500+w → 0.90/0.10`. Sparsity override: when ≤3 distinct keywords found, baseline weight increases further (up to 0.8× of available slack) — a Fox article with zero keyword hits scores ~75 not 53. Short-article divergence guard: when `<150w` and text diverges `>30pts` from baseline, baseline weight floors at 0.60. State-affiliated outlets (RT, CGTN, Sputnik, CGTN): baseline weight floors at 0.30 regardless of length. Optional `topic_lean_data` from Axis 6 EMA blends into prior: `source_baseline = baseline×0.7 + topic_avg×0.3`. Figures added to entity lists: Trump/Soros/Musk (RIGHT), Biden/Sanders/AOC/Harris (LEFT). "critics say"/"some argue"/"many believe" framing weights: 0.05 each (reduced from 0.3/0.1/0.1). "crisis at the border" moved from LEFT to RIGHT framing. Rationale: top left/right keywords, framing phrases, entity sentiments.
-2. **Sensationalism** — headline clickbait patterns, superlative/urgency density (word-boundary regex, no substring hits), TextBlob extremity, short-sentence ratio, partisan attack phrase density (capped at 30pts, was 50pts), measured-phrase inverse. Rationale: headline_score, body_score, clickbait_signals, partisan_attack_density.
-3. **Opinion vs. Reporting** — first-person pronouns (excludes all-caps "US" country code), TextBlob subjectivity (weight 0.18, reduced from 0.22), modal language, hedging, attribution density (includes 14 investigative sourcing patterns: "a review of", "obtained by", "documents show", etc.), absolutist assertion density (state-media correction), value judgment score (weight 0.06, restored from 0.02; denominator is total_judgments not sentence count), metadata markers, rhetorical questions. Rationale: 8 sub-scores, classification label, dominant signals.
-4. **Factual Rigor** — named source counting (spaCy NER near attribution verbs, ±120 char window), organization citations (requires ORG_CITATION_PATTERNS or verb within 80 chars; normalizes "the " prefix), data patterns, direct quotes, attribution specificity (SPECIFIC_ATTRIBUTION regex requires verb within ±150 chars — prevents biographical mentions), 8 vague-source phrases added, direct vague-source penalty up to -15pts. Tier baselines: `us_major=65`, `international=55`, `independent=50`. LOW_CREDIBILITY_US_MAJOR frozenset (22 slugs: Breitbart, Newsmax, Daily Wire, Daily Caller, Gateway Pundit, Infowars, OANN, NY Post, Daily Mail, Occupy Democrats, Palmer Report, Daily Kos, Raw Story, etc.) receives baseline 35 instead of 65. Rationale: named_sources_count, data_points_count, direct_quotes_count, vague_sources_count, specificity_ratio.
-5. **Framing Analysis** — connotation analysis, charged synonym detection (50+ pairs; word-boundary regex for single-word terms), omission detection (one-sided sourcing + cross-article entity comparison; cluster entity cache excludes current article's own entities), headline-body divergence, passive voice ratio (capped at 30, was ~80). "killed" intensity 3→1, "invasion" intensity 3→1 (AP wire false positive fixes). Rationale: 5 sub-scores + has_cluster_context flag.
-6. **Per-Topic Per-Outlet Tracking** — Adaptive EMA: alpha=0.3 for new series (<10 articles), alpha=0.15 for established series (≥10 articles). Category normalized to lowercase before grouping. Wired to `analyze_political_lean` via `topic_lean_data` parameter but dormant until categorization moves before step 5. Stored in `source_topic_lean`. Updated at step 9c.
-
-No LLM API calls for scoring. Confidence computed per-article: text length + availability + signal strength.
-
-### Bias Engine Validation Framework (`pipeline/validation/`)
-
-Ground-truth test suite for regression-safe bias engine development.
-
-| File | Purpose |
-|------|---------|
-| `fixtures.py` | 26 ground-truth articles across 8 categories (wire, opinion, investigative, partisan_left, partisan_right, state_media, breaking, analysis) with expected score ranges + rationale |
-| `signal_tracker.py` | Per-signal decomposition — `decompose_lean`, `decompose_sensationalism`, `decompose_opinion`, `decompose_rigor`, `decompose_framing`, `detect_dead_signals` |
-| `source_profiles.py` | AllSides cross-reference alignment — maps AllSides ratings to expected lean ranges per article |
-| `runner.py` | Validation runner; distribution health checks, directional invariants, regression snapshots; 96.9% accuracy on first run |
-| `snapshot.json` | Regression baseline snapshot |
-
-**Run it:**
-```bash
-cd /home/aacrit/projects/void-news
-python pipeline/validation/runner.py              # Full validation
-python pipeline/validation/runner.py --quick      # Skip distribution checks
-python pipeline/validation/runner.py --verbose    # Per-signal decomposition
-python pipeline/validation/runner.py --json       # JSON output for CI
-python pipeline/validation/runner.py --update-snapshot  # Refresh regression baseline
-python pipeline/validation/runner.py --category wire    # Single category
-```
-
-Requires `spaCy en_core_web_sm`. Designed for CI integration (exits non-zero on regression); CI gate via `.github/workflows/validate-bias.yml`. Run after any bias engine change.
-
-### Importance Ranking — v5.1
-
-**Ranking is BIAS-BLIND.** Bias analysis belongs in the display layer, not story selection.
-
-10-signal formula in `pipeline/ranker/importance_ranker.py`. Deterministic weights sum to 1.0 (0.88 when Gemini editorial importance available):
-
-| Signal | Weight | Notes |
-|--------|--------|-------|
-| Source coverage breadth | 20% | Tier-weighted: independent 1.5x, international 1.2x, us_major 1.0x |
-| Story maturity | 16% | recency × log2(1 + source_count); rewards "recent AND thoroughly reported" |
-| Tier diversity | 13% | Composition-aware; us_major presence explicitly rewarded |
-| Consequentiality | 10% | Outcome/action verbs + high-authority phrase floor (70+) |
-| Institutional authority | 8% | Heads of state, supreme courts, central banks, UN Security Council |
-| Factual density | 8% | Avg factual rigor; gate: <30 → 0.88x |
-| Divergence | 7% | Framing-weighted (50% framing, 30% sensationalism, 20% lean); US-only → 0.85x damper |
-| Perspective diversity | 6% | Editorial viewpoint spread; bias-blind |
-| Geographic impact | 6% | G20/P5 nations score 3x |
-| Coverage velocity | 6% | Sources added in last 6h; diminishing returns |
-
-**Gemini editorial importance** (v5.0): When available, 1-10 editorial score adds 12% weight; deterministic signals scale to 88%.
-
-**v5.1 additions**: US-only divergence damper (0.85x); cross-spectrum interest bonus (+2.5 pts max when genuine left-right split across 3+ articles, non-US clusters only).
-
-Tier diversity scoring:
-
-| Tier combination | Score |
-|-----------------|-------|
-| all 3 tiers | 100 |
-| us_major + international | 80 |
-| us_major + independent | 70 |
-| us_major alone | 50 |
-| international + independent | 50 |
-| international alone | 30 |
-| independent alone | 15 |
-
-Gates and modifiers:
-- **Confidence multiplier**: `0.65 + 0.35 * conf` (soft curve)
-- **Consequentiality gate**: consequentiality < 5 → 0.82x
-- **Soft-news gate**: sports/entertainment/culture/lifestyle → 0.78x
-- **Low factual rigor gate**: avg factual_rigor < 30 → 0.88x
-- **Lead eligibility gate**: top 10 per-section require 3+ sources; exception: independent investigative exclusives (factual_rigor > 70)
-- **Topic diversity re-rank**: max 2 per hard-news category, max 1 per soft-news in top 10 per section pool
-- **Cross-edition demotion**: top-5 in primary section demoted below pos 5 in secondary sections
-- **Same-event cap**: max 3 per event (Iran/Ukraine/Gaza/Taiwan)
-- **Deliberation dampener**: 0.7x for "considers"/"weighs"/"discusses"
-- **Tier concentration penalty**: 0.85x when >70% same tier
-
-`pipeline/rerank.py` — standalone re-ranker without full pipeline run. Source map keyed by slug + db_id (UUID).
-
-### Cluster Summarization (Gemini Flash)
-3+-source clusters only, processed descending source-count. Hard cap: **25 API calls per run** (4 runs/day = 100 RPD for cluster summaries + reasoning budget). Summaries: 250-350 words. `max_output_tokens=8192`. Falls back to rule-based when unavailable or cap reached.
-
-**Gemini Voice** (`cluster_summarizer.py`): `_SYSTEM_INSTRUCTION` (editorial role) + `_USER_PROMPT_TEMPLATE` per cluster. `_PROHIBITED_TERMS` frozenset (26 terms) + `_check_quality()` validator enforce output. Source names used directly (not tier labels — per feedback). `generate_json()` in `gemini_client.py` accepts optional `system_instruction` (backward-compatible).
-
-**Op-eds** (opinion_fact > 50): No clustering, no Gemini. Single-article clusters using original text/headline. Author/pub shown only if available.
-
-### Daily Brief — "void --onair"
-One world-focused brief generated per run, drawing from the top 20 clusters globally (all editions). Stored in `daily_briefs` table; old briefs pruned to keep latest per edition.
-
-**TL;DR** (`tldr_text`): 8-12 sentences as a flowing editorial paragraph (150-220 words). Written as a joint editorial board voice — expert writers from left, center, and right. Opinionated about significance, neutral on partisanship. Writes about the world, never about coverage patterns or media behavior. Displayed between FilterBar and Lead Section on homepage. Fetched as "world" brief regardless of active edition.
-
-**Opinion** (`opinion_text`): 3-5 sentences (80-120 words) from "The Board." Genuinely opinionated editorial judgment in first person plural ("we"). Where the TL;DR says what happened, the opinion says what the board thinks about it. Italic Playfair Display, fg-primary color, text-md size. Separated from TL;DR by 2px dotted editorial firewall rule. Desktop: always visible. Mobile: hidden behind "Read more · The Board" toggle (3-line clamp). Same Gemini API call as TL;DR — $0 extra cost.
-
-**Audio broadcast** (`audio_script` + `audio_url`): BBC World Service 1970s two-host radio format. Host A (anchor) delivers facts; Host B (analyst) adds context/divergence. Script uses `[MARKER]` structural delimiters + `A:`/`B:` speaker tags. **Gemini 2.5 Flash TTS** (`gemini-2.5-flash-preview-tts`) generates both speakers in a single API call with LLM-native prosody, natural turn-taking, and conversational rhythm — no per-turn synthesis or stitching needed. Script converted to `One:`/`Two:` dialogue format, artifacts stripped. PCM 24kHz output → pydub post-processing (Glass & Gravity sonic identity: D major 9th bloom intro, glass-bell story transitions, resolving outro; no background bed) → MP3 192k mono → Supabase Storage `audio-briefs` bucket (`{edition}/latest.mp3`).
-
-**Voice pairs** (`pipeline/briefing/voice_rotation.py`): Gemini prebuilt voices. world=Charon/Aoede, us=Enceladus/Kore, india=Puck/Leda. Roles swap on alternate days (UTC day-of-year parity). 30 voices available.
-
-**Gemini budget**: 3 calls/run (one per edition requested, currently world-only). Uses `count_call=False` — does not consume 25-call cluster summarization cap. Falls back to rule-based TL;DR (top 5 cluster titles) when Gemini unavailable. No audio without Gemini script.
-
-**Claude CLI premium scripts** (`pipeline/briefing/claude_brief_generator.py`): Optional manual 1x/day generation via `python -m pipeline.briefing.claude_brief_generator --edition world --model sonnet`. Uses Claude Max (Sonnet/Opus) for higher-quality conversational dialogue. Enhanced disfluency prompt addendum for natural speech patterns. Stores to Supabase, overwrites current brief for edition.
-
-**Audio cadence**: currently always-on (testing mode). Production target: 2x/day (morning + evening UTC).
-
-### Source Curation
-370 vetted sources in three tiers:
-- **Major US (49)** — AP, Reuters, NYT, WSJ, WaPo, Fox, CNN, NPR, PBS, Bloomberg, Breitbart, Newsmax, Daily Wire, etc.
-- **International (154)** — BBC, Al Jazeera, DW, France24, The Guardian, NHK, Yonhap, TRT World, RT, CGTN, etc.
-- **Independent/Nonprofit (167)** — ProPublica, The Intercept, Bellingcat, The Markup, RealClearPolitics, The Free Press, Epoch Times, etc.
-
-7-point lean spectrum: far-left, left, center-left, center, center-right, right, far-right. Left:Right ratio 1.91:1 (113 left : 59 right : 198 center).
-
-**Editions**: world (default), us, india. Source country determines edition (IN→india, US→us, else→world). Source counts: US=150, World=200, India=20.
-
-## Pipeline Flow (4x Daily)
-
-```
- 1.  LOAD SOURCES  — 370 sources from data/sources.json, sync to Supabase
- 2.  PIPELINE RUN  — Create pipeline_runs record
- 3.  FETCH         — RSS feeds from 370 sources (parallel)
- 4.  SCRAPE        — Full text via web scraper (15 workers), RSS summary fallback
- 4b. DEDUPLICATE   — TF-IDF + cosine similarity (threshold 0.80), Union-Find grouping
- 5.  ANALYZE       — 5-axis bias scoring (all return score + rationale)
- 6.  CLUSTER       — Phase 1: TF-IDF agglomerative (threshold 0.2, doc length 500 words)
-                     Phase 2: entity-overlap merge pass (2+ shared entities, 72h window)
- 6b. RE-FRAME      — Framing re-run with cluster context (omission detection)
-     ORPHANS       — Unclustered articles wrapped as single-article clusters
- 6c. GEMINI REASON — Contextual score adjustments on low-confidence/high-divergence clusters (25-call budget); mutates article_bias_map
- 7b. SUMMARIZE     — Gemini: 250-350 word briefings + consensus/divergence + editorial_importance (1-10); 3+-source clusters, 25-call cap
- 7.  CATEGORIZE & RANK — Topic tagging (3-article majority vote) + v5.1 ranking (10 signals + optional Gemini importance); topic diversity re-rank
- 7c. EDITORIAL TRIAGE  — Gemini reorders top 10 per section using editorial_importance when available
- 7d. DAILY BRIEF   — Gemini generates 1 world-focused TL;DR (5-7 sentences) + two-host BBC-style audio script (3-call budget, separate from 25-call cap); Gemini 2.5 Flash TTS synthesizes native multi-speaker dialogue in single API call; pydub post-processing (Glass & Gravity: bloom intro, glass-bell transitions, resolving outro) → MP3 192k mono; uploaded to Supabase Storage `audio-briefs`; stored in `daily_briefs` table. Non-audio runs (00:00, 12:00 UTC) carry forward audio fields (audio_url, audio_script, audio_duration) from the previous brief so audio is never buried by text-only updates.
- 8.  STORE         — Write clusters; sections[] array from all editions covered
- 8b. DEDUP CLUSTERS — Delete old clusters whose articles overlap any new cluster (any shared article → old cluster is stale); prevents duplicate story clusters across pipeline runs
- 9.  ENRICH        — Cluster-level bias aggregation, consensus/divergence points
- 9b. ARTICLE CATS  — Populate article_categories junction table
- 9c. TOPIC TRACK   — Axis 6 EMA update (source_topic_lean)
-10.  TRUNCATE      — full_text → 300-char excerpts (IP compliance)
-     CLEANUP       — cleanup_stale_clusters + cleanup_stuck_pipeline_runs RPCs; old daily_briefs (keep latest per edition)
-```
-
-## Frontend Design
-
-### Design Philosophy — "Press & Precision"
-Modern newspaper aesthetic. Serif headlines, editorial layout sensibility. **Clean on arrival, data-dense on interaction.** Progressive disclosure is the core interaction pattern. 1920s low-tech aesthetic: space-efficient, enriched only on user interaction.
-
-Adapted from DondeAI's "Ink & Momentum": spring physics for user-initiated actions, ease-out for system reveals.
-
-### Four Voices of Type
-
-| Voice | Font | Use For |
-|-------|------|---------|
-| Editorial | Playfair Display | Headlines, story titles, section headers |
-| Structural | Inter | Body text, labels, navigation, buttons |
-| Meta | Barlow Condensed | Category tags, source counts, timestamps, edition metadata (Franklin Gothic / News Gothic newspaper tradition) |
-| Data | IBM Plex Mono | Bias scores, numeric data (humanist monospace; institutional warmth, not a coding font) |
-
-CSS variable: `--font-meta` (Barlow Condensed). IBM Plex Mono replaces JetBrains Mono for data display.
-
-### Responsive Strategy — One Project, Two Layouts
-
-| Aspect | Desktop | Mobile |
-|--------|---------|--------|
-| Layout | Multi-column newspaper grid | Single-column feed, bottom sheet |
-| Story cards | Horizontal, inline bias indicators | Vertical stack, indicators below headline |
-| Deep Dive | 55% side panel (min 560px), backdrop blur 6px | Full-screen bottom sheet, blur 2px |
-| Navigation | Top nav bar | Bottom nav bar (thumb-reachable) |
-| Data density | High — more metrics at a glance | Progressive — tap to reveal |
-
-Shared: component logic, Supabase queries, animation system, color system, accessibility (WCAG 2.1 AA).
-
-Mobile rules:
-- Edge padding: `--space-5` (~16px) on `.page-main`, `.nav-inner`, `.site-footer`
-- `overflow-wrap: break-word` on all headline elements
-- `.section-header` and Deep Dive source rows: `flex-wrap: wrap`
-- Touch targets ≥ 44×44px
-
-### Two Core Views
-
-#### 1. Homepage — News Feed
-- Importance-ranked story flow. Auto-generated category tags for filtering.
-- Each card: headline, source count, key bias indicators (BiasLens).
-- "Last updated" timestamp + Refresh button (confirmation dialog).
-- Sections: World / US / India.
-- **Daily Brief** (`DailyBriefText`): displayed between FilterBar and Lead Section. Full-width, on-canvas. TL;DR in Inter regular with blockquote left-border (newspaper editorial aside tradition), justified text, top/bottom rules. Opinion ("The Board") always visible on desktop; separated by 2px dotted editorial firewall rule; italic Playfair Display. "void --onair" pill (right-aligned) with ScaleIcon (analyzing animation when playing); progress bar fills as audio plays. Mobile: body collapses to 3 lines with "Read more · The Board" toggle (opinion hidden). Always fetches world brief regardless of active edition.
-
-#### 2. Deep Dive Dashboard
-- Slide-in panel (desktop 55% width from right; mobile full-screen from bottom).
-- **Summary as lede**: no "What happened" heading; flows as article lede. Viewport-responsive height (`clamp(12em, 25vh, 22em)`); "Read more" overflow detected via ResizeObserver (not character count). Gradient overlay hidden when content fits (`dd-collapsible--fits` class).
-- **`dd-analysis-row`**: Sigil + `DeepDiveSpectrum` (7-zone gradient bar, logos positioned continuously at their exact lean %, nearby sources use 3-row algorithm for dense clusters, no max-height cap, "+N more" expand button when >6 sources) + "Press Analysis ▶" trigger in one flex row (desktop); stacked vertically (mobile). Zone labels smaller font on mobile.
-- **Press Analysis**: collapsed behind ▶ trigger; expands via `grid-template-rows 0fr→1fr`; opens `BiasInspectorInline` (4-axis scorecard: Lean, Sensationalism, Factual Rigor, Framing; each axis collapsible with Gemini reasoning text). Expand panel: max-height 60vh with overflow-y scroll.
-- **Source Perspectives**: Agreement | Divergence in 2-column grid (desktop); single column (mobile). Green left borders = agree, red = diverge.
-- Action buttons: WCAG 44×44px touch targets.
-- **Panel open animation**: `var(--spring-bouncy)` 500ms with genuine overshoot. **Close**: `var(--spring-snappy)` 380ms. Asymmetric: slow open, fast close.
-- Slot-machine cascade: `translateY(12px) → 0`. Desktop: content reveal 180ms delay (was 400ms). Mobile: `opacity 150ms ease-out, transform 250ms ease-out` (no spring), reveal delay 30ms. rAF snap uses `setTimeout(0)` for 90/120Hz reliability.
-- Panel flash prevention: CSS `opacity:0` on `.deep-dive-panel` + JS asymmetric opacity transition; fallback 200ms opacity ramp.
-- iOS bottom-sheet: `border-radius: 16px 16px 0 0`, drag indicator, momentum scroll, safe-area insets.
-
-### Interaction Model
-- **On arrival**: clean, minimal, newspaper-like.
-- **On interaction**: rich data layers reveal via hover/click/tap.
-- Progressive disclosure throughout. Unified interaction: Press Analysis and lean spectrum details use the same system.
-
-## Animation System
-
-**Motion One v11** via CDN importmap (~6.5KB).
-
-### Spring Presets
-
-| Preset | Stiffness | Damping | Mass | Use Case |
-|--------|-----------|---------|------|----------|
-| snappy | 600 | 35 | 1 | Buttons, toggles, filter chips; Deep Dive close (380ms) |
-| smooth | 280 | 22 | 1 | Cards, panels, story expansion |
-| gentle | 150 | 12 | 1.2 | Page transitions, view switches |
-| bouncy | — | — | — | Deep Dive open (500ms, genuine overshoot); `--spring-bouncy` token |
-
-### Duration Tokens
-
-```css
---dur-instant: 0ms; --dur-fast: 150ms; --dur-normal: 300ms;
---dur-morph: 400ms; --dur-step: 450ms; --dur-slow: 600ms;
-```
-
-### Easing Curves
-
-```css
---ease-out: cubic-bezier(0.16, 1, 0.3, 1);  /* Apple-sharp deceleration */
---ease-in:  cubic-bezier(0.4, 0, 1, 1);     /* Use sparingly */
-/* --spring: linear(/* damped oscillation */) — defined in tokens.css */
-```
-
-### Rules
-- GPU-only: animate transform + opacity only.
-- Accessible: all → 0ms under `prefers-reduced-motion`.
-- Asymmetric for panels: open uses `--spring-bouncy` (500ms, overshoot), close uses `--spring-snappy` (380ms, tight). Symmetric for micro-interactions (chips, toggles).
-- Interruptible: no animation locks.
-- Max 3 simultaneous springs, 60fps target. rAF snap via `setTimeout(0)` for 90/120Hz reliability.
-
-## CSS Architecture
-
-Load order: `reset.css → tokens.css → layout.css → typography.css → components.css → animations.css → responsive.css` (split into `frontend/app/styles/`; `globals.css` is the entry point via `@import`).
-
-- CSS custom properties only (no Sass/LESS). BEM-like naming. Mobile-first `min-width` queries.
-- `clamp()` for all fluid scaling. No `!important`.
-- Body text (story summaries, lead story, Daily Brief): `text-align: justify; hyphens: auto` — newspaper norm.
-- Sticky `.filter-row` uses `background-color: var(--bg-primary)` (opaque) to prevent text bleed-through on scroll.
-- `overflow-x: hidden` on `.page-container`; `min-width: 0` on all CSS Grid children to prevent blowout from long headlines.
-
-Breakpoints: 375px (mobile), 768px (tablet), 1024px (desktop), 1440px (wide).
-
-## Data Model (Supabase)
-
-### Key Tables
-- `sources` — outlet metadata, RSS/scrape config, tier, slug, 7-point lean baseline
-- `articles` — 300-char excerpt (truncated post-analysis), metadata, source_id, publish_date, url, section, updated_at
-- `bias_scores` — per-article multi-axis scores + rationale JSONB
-- `story_clusters` — event groups; bias_diversity JSONB, consensus_points JSONB, divergence_points JSONB, divergence_score, headline_rank, coverage_velocity, updated_at, `sections text[]` (GIN-indexed)
-- `cluster_articles` — junction: articles ↔ clusters
-- `categories` + `article_categories` — topic tags + junction (populated by pipeline)
-- `source_topic_lean` — EMA lean/sensationalism/opinion per source per topic (Axis 6)
-- `pipeline_runs` — execution history
-- `daily_briefs` — per-edition TL;DR text + audio script + audio metadata (url, duration_seconds, file_size, voice); unique on (edition, pipeline_run_id); public read RLS
-
-Frontend filters by edition: `.contains("sections", [edition])` (PostgREST array containment). Cross-listed clusters appear in all matching edition feeds.
-
-### Key Views & Functions
-- `cluster_bias_summary` — weighted bias averages/spreads per cluster
-- `refresh_cluster_enrichment(p_cluster_id)` — computes divergence_score, bias_diversity, coverage_score, tier_breakdown
-- `update_updated_at_column()` — auto-trigger on articles + story_clusters
-- `cleanup_stale_clusters()` + `cleanup_stuck_pipeline_runs()` — maintenance RPCs
-
-Migrations: `supabase/migrations/` (001-017).
-
-## Skills (`.claude/skills/`)
-
-| Skill | Purpose | Trigger |
-|-------|---------|---------|
-| `/pressdesign` | Press & Precision design enforcement — anti-slop, typography, motion grammar, newspaper layout, responsive strategy | Auto on UI tasks |
-
-## Agent Team (19 Agents, 8 Divisions)
-
-> Full structure, R&R, cycles: `docs/AGENT-TEAM.md`
-
-```
-CEO (Aacrit)
-  ├── Quality ————————— analytics-expert, bias-auditor, bias-calibrator, pipeline-tester, bug-fixer
-  ├── Infrastructure ——— perf-optimizer, db-reviewer, update-docs
-  ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
-  ├── Pipeline ————————— feed-intelligence, nlp-engineer, source-curator
-  ├── Audio ———————————— audio-engineer
-  ├── Security ————————— void-ciso
-  ├── Product —————————— ceo-advisor
-  └── Branding ————————— logo-designer
-```
-
-**$0 Cost — Claude Max CLI Only.** No Anthropic API keys. No OpenAI. No paid inference. Gemini Flash free tier only (capped per run).
-
-### Agent Routing Rules
-
-| Task Pattern | Agent |
+**There is no Supabase.** Decommissioned 2026-09-01 after an egress lockout
+returned 402 on every REST call. Every read is static JSON on the CDN; the only
+live database is D1, behind the Worker. `supabase/migrations/001-079` is
+historical and applied by nothing.
+
+**The switch:** `pipeline/utils/supabase_client.py` binds `supabase` to a
+PostgREST-compatible SQLite shim (`pipeline/utils/pgrest_sqlite.py`) when `VOID_SQLITE_PATH`
+is set, so ~40 call sites keep their imports unchanged. Without that env var it
+raises `EnvironmentError` — which is why importing a pipeline module in CI can
+fail for reasons that have nothing to do with your change.
+
+**Phrase counts** (the lexicon corpus) live in `phrase_counts.db`, a separate file with its own cache key (`void-phrases-v1-`) and artifact (`void-phrase-snapshot`), so the corpus can never bloat or endanger the state. Losing it costs accumulated counts, not the product.
+
+**State** lives in `pipeline_state.db` (gitignored), restored from the Actions
+cache (`void-state-v1-`), falling back to the gzipped `void-state-snapshot`
+artifact (90-day retention). **There is no R2 sync** — several in-repo comments
+claim one; it was never implemented. That artifact window plus the cache is the
+entire durability floor for the `printed_stories` archive.
+
+**The Worker is deployed BY HAND** (`npm run deploy` in `worker/`). No CI
+deploys it.
+
+**Stack:** Python 3.11+/spaCy/NLTK (rule-based NLP, no LLM in bias scoring),
+Gemini 2.5 via google-genai, Kokoro-82M TTS (Apache-2.0, CPU, own venv
+`.venv-tts`), Next.js 16/React 19/TypeScript, native CSS + Web Animations API.
+
+---
+
+## Rules in force
+
+### Rule 1: zero factual error
+
+**Nothing Void publishes may contain a factual error. This outranks every
+other rule in this file.** If show-don't-tell, the dash ban, a word budget or a
+deadline conflicts with getting a fact right, the fact wins and the other rule
+yields.
+
+This is a standard, not a hope, so it is stated as behaviour:
+
+- **Every factual claim traces to a source in the data.** Not to model
+  knowledge, however certain. If the source does not carry it, it does not
+  ship. This is already enforced for History scripts by H-01 and H-10, and for
+  every LLM prompt by the grounding line.
+- **Silence beats a plausible reconstruction.** A claim that cannot be sourced
+  is cut, not softened, not hedged into place. Where a quote is attributed,
+  paraphrased or secondhand, say so out loud or do not use it.
+- **Where two sources genuinely disagree, publish the disagreement.** Do not
+  pick one and present it as settled, and do not average them. An unreconciled
+  range is honest; a false precision is not.
+- **A number that goes stale is a future error.** Do not publish a count that
+  changes with time ("ten presidents", "sixty-five years on") when a durable
+  formulation exists.
+- **Check the convention before calling something a defect.** Two reported
+  errors in the 2026-09-20 audit were refutations: a population figure another
+  field licensed, and a sort year that seventeen events share. Acting on an
+  unverified finding introduces an error while claiming to remove one.
+- **Verify, then report.** Never state that something is fixed, committed or
+  passing without reading back the thing itself. A chained command that echoes
+  success is not evidence.
+
+**Controls, because a rule nobody can fail is not enforced.** Every class of
+factual error found in production gets a check that makes it structurally
+impossible, not a note asking people to be careful:
+
+| Check | Catches |
 |---|---|
-| RSS health, article collection, deduplication, cluster summaries, content quality | `feed-intelligence` |
-| Bias score accuracy, calibration, benchmarking | `analytics-expert` |
-| Ground-truth validation, known-outlet comparison | `bias-auditor` |
-| Bias score regression, validation suite, weight tuning | `bias-calibrator` |
-| Pipeline output validation, clustering quality | `pipeline-tester` |
-| Post-test bug fixing | `bug-fixer` |
-| Pipeline runtime, frontend load, Lighthouse | `perf-optimizer` |
-| Article/cluster data quality, NULL audits | `db-reviewer` |
-| Sync docs with codebase | `update-docs` |
-| Build UI components, new features | `frontend-builder` |
-| Fix UI bugs, layout breaks, a11y gaps | `frontend-fixer` |
-| Desktop/mobile layout, responsive issues | `responsive-specialist` |
-| UI/UX audit, user-lens testing, journey validation | `uat-tester` |
-| spaCy models, bias scoring, NER | `nlp-engineer` |
-| Broadcast audio, sonic branding, TTS voice, audio post-processing | `audio-engineer` |
-| Source vetting, RSS config, credibility | `source-curator` |
-| Security audit, secrets scan, RLS, OWASP | `void-ciso` |
-| Strategic advice, roadmap, priorities | `ceo-advisor` |
-| Logo, favicon, brand identity | `logo-designer` |
+| `tests/test_history_data.py` | figure identity against its own link, impossible lifespans, malformed attribution |
+| `tests/test_history_script.py` (H-01..H-11) | a quote not in the sources, a hedge not said aloud, a speaker not named |
+| `tests/test_history_audio.py` | audio that no longer matches its corrected script |
+| `pipeline/editorial/standard.py` | the daily feed's editorial rules, run at write time and against served HTML. **E-13** a number not in the sources, **E-14** a quotation not in the sources |
+| `tests/test_grounding.py` | a card's evidence not outliving the run that wrote it, and **publisher prose in the committed tree**: `pipeline/editorial/grounding.py` keeps a verification INDEX of what a card was written from (the set of numbers, a Bloom filter of 4-word shingles), never the articles, so E-13 and E-14 can still be run after the run without the repo carrying the text. It used to carry the text: 519,041 characters of it, committed, against `docs/IP-COMPLIANCE.md`'s top control. The gate fails on any committed record that is format 1 or holds a string over 12 words |
+| `tests/test_history_copy.py` | an em dash in page-facing prose, a speaker that is a description with nothing behind it |
+| `tests/test_history_export_parity.py` | a correction that never reached the served JSON |
+| `tests/test_history_thesis.py` (T-01..T-20) + `pipeline/history/thesis_checks.py` | a History **thesis** sentence with no note, a note whose locator holds no stored extract, a number or a quotation not in the cited extract, a spelled-out number or a dash in the prose, a position never tested against a Tier A extract, a verdict of `contradicted` or `supported` on ONE producer's documents (capped at qualified), a verdict resting on absence read as contradiction, a gap left unsaid, an analysis whose result does not recompute from its rows, a Void translation presented as a quotation, a rendering that loses a number or a name, a thesis `published` below the bar of proposal §4e or without its audit stamp, and the served JSON drifting from the thesis. Every check has a planted-defect fixture. The ledger is canonical (`data/history/evidence/<slug>/`), the thesis cites it (`data/history/theses/<slug>.md`), and `export_thesis.py` refuses to write a thesis that fails any check |
+| `tests/test_truncation_lint.py` | a query cap published as an exact count |
+| `tests/test_engine_health.py` + `pipeline/validation/engine_health.py` | the engine's input collapsing unseen, and copy that quotes the engine from memory. Every run writes `build-data/engine.json` (body length by feed class, the share scored on the outlet alone, how far words moved rated outlets). `--floors` runs in `pipeline.yml` AFTER the data commit and fails the run when the direct-feed full-body share drops under 55% (healthy 69-71%; 45-48% on 2026-09-19..23, when ~2,500 direct articles a day fell back to their RSS summary and nothing noticed). Asserts `app/lib/leanBounds.ts` equals `political_lean.py` and `main.py`, and that `/sources` prints measured numbers only from the export |
+| `tests/test_phrase_counts_daily.py` | the daily lexicon corpus outgrowing its file, or storing prose. Step 9e writes to `VOID_PHRASE_DB` (its own cache and artifact, never the state DB): full bodies only, 3 per rated outlet per day by URL hash, a phrase counted from its third sighting (Bloom gate), pruned unless it spreads, compact integer storage, and a ceiling that halts rather than prunes to fit |
+| `tests/test_pair_test.py` | the pair test's AUC gate (0.75 proceed, 0.65 stop) being wrong arithmetic, or its corpus holding article text |
+| `tests/test_weekly_audio_served.py` | an MP3 that is not what its own row says it is |
+| `tests/test_weekly_killlist.py` | a kill-list term in a committed Weekly issue, caught before deploy rather than by W-10 on the served page (Issues #26 and #23 carried 41 between them, 2026-09-24) |
+| `tests/test_history_quote_ledger.py` | a History quotation that diverges from a ledger extract we hold (Srebrenica carried two, 2026-09-24) |
+| `tests/test_history_clips.py` (H-12..H-17) + `pipeline/history/verify_clip.py` | an archival recording in a History episode without a rights basis on the allowlist, provenance, a transcript that the free local ASR matches against the ledger extract, the CEO's signature, a spoken credit, or its caps; and designed sound (bed, ambience) within 3 s of a real voice. `# MOOD:` / `# CLIP:` script directives are inert to every other consumer |
+| `tests/test_docs_facts.py` | this file's own numbers, against disk |
+| `frontend/scripts/verify-responsive.mjs` | content past the viewport, and sticky that does not stick |
+| `scripts/verify_production.py` | what the live page actually serves, and that `/command-center`, `/admin`, `/pipeline` are not served at all |
+| `scripts/verify_sections.py` | served History (H-01..H-06), Weekly (W-01..W-10, W-10 is the kill list on the page), Paper (P-01..P-04: the front page's twenty, in order, no dash, no retired claim) and Press (PR-01: the feed size it quotes) |
+| `tests/test_prompt_grounding.py` | a production prompt without the grounding sentence, or one that still calls the product `void --x` |
+| `tests/test_bias_bins.py` | the lean ladder drifting between its two implementations, or a rung leaving its own baseline. The bins were `<=20, <=35, <=45, <=55, <=65, <=80` until 2026-09-21, which put four of the seven outlet baselines on a bucket's upper EDGE. On the right that lands correctly by luck; on the left the upper edge is the LEAST extreme end, so a `left` outlet (baseline 20) was shown as **Far Left** and a `center-left` outlet (35) as **Left**, while the right-hand rungs were right. The error ran one way. Both sides now bin on the baselines, nearest wins, ties toward the centre |
+| `tests/test_robots_compliance.py` | a refusal on robots.txt being read as permission. `_check_robots_txt` returned True for every non-200 and every network error, so a 403, a 503 and a 429 all read as consent on the one file whose job is to say no, and the error ran one way: it never refused a site that had allowed us. Split per RFC 9309 2.3.1 (404/410 and 2xx allow, 401/403 deny, 429/5xx and transport failures deny for the run, after ONE retry because a timeout is noise and 4 of 70 sampled domains failed at the transport). Measured cost: 14.3% of 70 roster domains would be denied, 7% of them an outright 403 |
+| `tests/test_wire_attribution.py` | a wire's own copy being tagged the duplicate of a subscriber's. `deduplicator`'s hand-written slug set matched **5 of the 40** outlets the roster marks `"type": "wire"`, missing `dpa-international`, `kyodo-news`, `pti-india`, `tass-english` and 31 others through near-miss slugs, so the origin of a syndicate group was usually picked by publish time and a wire that files late lost to its own subscribers. A `tier == "wire"` branch sat above it and matched zero rows, because `tier` only ever holds independent / international / us_major. The set is derived from the roster now; the gate asserts all 40 are covered and that each one wins its own group |
+| `tests/test_apply_feeds.py` | a "dry run" with side effects, and a roster record replaced in silence. `apply_feeds.py --dry-run` printed "data/sources.json untouched" and meant it, while writing both record files UNCONDITIONALLY before reading the flag: two guard tests against an unrelated input overwrote the committed 2026-09-22 record in place, turning 129 applied feed changes into 35 and flattening the review file's two named groups. The flag was checked at the dangerous action rather than at every side effect. A dry run now writes nothing, a real run refuses to replace an existing record (`--label` writes beside it, `--force` replaces it), and the script takes `VOID_ROSTER_DATA` so it can be exercised against a throwaway tree at all, which it could not be before. Also holds a feed whose newest item is over 14 days old, and one from another section of the domain when the roster lists an edition path (it passed 24.kg English's Russian elections feed, last updated in 2021) |
+| `tests/test_roster_config.py` | the roster's size going stale in page copy. "1,016 sources" was hand-written in nine files under `frontend/app/` plus the SERVED `manifest.json`, four docs, two pipeline modules and two tests, and the three tiers were literals too (43/373/600) printed as exact counts on `/about` and `/sources`, so adding 48 international outlets would have left the site asserting 373 against a roster of 421. `frontend/config/roster.json` is generated from `data/sources.json` by `scripts/roster/emit_roster_config.py`, which runs inside `add_sources.py --apply`, and is read through `app/lib/rosterConfig.ts` exactly as `feedConfig.ts` reads `feed.json`. The gate asserts the config matches the roster, that the tiers sum to the total, that every key the reader imports exists, and that no component writes a count out again |
+| `tests/test_source_roster.py` | the roster disagreeing with itself. **The public-broadcaster class split in two**: PBS, NPR, BBC, CBC and Voice of America carried a real baseline and no `state_affiliated` flag while seven identical peers (SVT, NRK, Tagesschau, RTP, Lusa, SABC, Agencia Brasil) carried it, and nothing in the data distinguished them. The flag costs an article 2 points of movement (8 against 10). Settled by the CEO 2026-09-23 in favour of the majority reading, so the seven are unflagged and 41 outlets whose government alignment IS the editorial signal keep it. The gate names its twelve peers and fails if they are not flagged alike; it deliberately is NOT "no democracy may be flagged", because a captured public broadcaster is a real case. Also: an outlet its own notes call state-owned or a public broadcaster left at `unrated`, which silently drops every article it publishes from the lean aggregate and the spectrum (Deutsche Welle was, while Tagesschau was rated `center`). Asserts the 286 still-unplaced rows are the axis's edge, not a backlog: **no** outlet in a country whose politics runs on this axis may be unplaced |
+| `tests/test_bias_defaults_gate.py` + `pipeline/validation/bias_defaults.py` | a bias row that was never measured being drawn as a measurement. The export **degrades, it does not block** (CEO 2026-09-21): a default-tuple row is stamped `lean_unscored`, so it leaves the cluster aggregate, its pin leaves the Deep Dive spectrum and its label reads Unscored. CI asserts the invariant that protects the reader, not a share: against the **committed** export, **no default-tuple row may be unmarked**. A marked row misleads nobody; an unmarked one is read as a measured 50 everywhere. The share and a per-axis breakdown are printed every run, and only a run that measured almost nothing (>60%) fails on the share. A share cap was tried at 10% and removed: run #375 came in at 19.1%, but all 186 of those rows were published the previous day and none of that day's 534 articles was a default, so they were the prior day's damage carried in by 6b's own 36h lookback and clearing itself |
+| `tests/test_podcast_feed.py` | a podcast cover that is missing or carries retired text, a channel title outside "Void News: <programme>", an item title that disagrees with the page |
+| `tests/test_paper.py` | Paper drifting from the front page, a dash or a retired claim in its source |
+| `frontend/test/copy-facts.test.mjs` | a stale story count in page copy, and any dash or kill-list word in a frontend string literal or JSX text, **including one spelled as an escape** (`\u2013`, `&mdash;`, `&#8212;`): three rendered dashes shipped past the literal-character check. Also a number glued to the next word: JSX text opening with a space after `{expr}` and holding an entity loses the space when compiled (`/about` served "all 6axes"); write `{" "}` |
+| `frontend/test/episode.test.mjs` | the pure core of the audio system: an episode wearing another programme's edition, a play button that loads and does not play, a page that seizes a playing element |
+| `frontend/test/labels.test.mjs` | the one lean ladder, and the shape rule calling a story with one empty wing "Balanced"; asserts the word "Flat" is gone |
+| `tests/test_bias_bins.py` | the pipeline's lean bins and the frontend's disagreeing on any score 0..100, a baseline outside its own rung, an asymmetric ladder |
+| `tests/test_lexicon_derive.py` | a lexicon derivation grading its own homework, and a phrase table growing into a corpus. Phrases derived from outlet labels and validated against outlet labels is a mirror, so the split is by OUTLET, never by article (two articles from one outlet share its vocabulary, so an article split measures memorisation). The gate asserts the sets are disjoint, that a planted RATE difference is recovered and a no-signal corpus yields nothing, and that an outlet's own masthead cannot become a political phrase. It also pins `phrase_counts`: no stored row may exceed 3 words even when a caller hands `persist()` a whole sentence, and the table carries no article id, so rows cannot be re-associated into prose |
+| `tests/test_lean_prior_is_not_self_fed.py` | the lean prior being fed by the lean it publishes. `political_lean` blended the Axis 6 EMA into the outlet prior at 0.7/0.3, and `topic_outlet_tracker` builds that EMA from `political_lean`'s own output: no outside evidence entered the cycle, so it could not correct an error, only compound one. Cut 2026-09-22 (it was measured first and was NOT the centre pull: 0.74pt, not 5.45, once unmeasured rows are excluded; it was cut because a learned per-outlet offset is going into the same prior). The gate asserts the parameter is inert at four text lengths, that the scorer names no field of its own output table, and that the tracker does not import the scorer |
+| `frontend/test/bench.test.mjs` + `tests/bench_corpus.py` | a Bench pack that overflows its box, a column height that is no longer the count, a source dropped with no `+N` |
+| `frontend/test/css-parity.test.mjs` | a class selector nothing in `app/` references (1,168 of 3,109 were dead on 2026-09-21); prints the reverse direction too |
+| `frontend/test/css-lint.mjs` + `.stylelintrc.json` | a raw `cubic-bezier(` outside `tokens.css`, a `font-family` off the four semantic tokens, a literal radius without a disable and its reason |
+| `frontend/scripts/verify-headless.mjs` | the product in a browser: console and hydration errors, a link to a page the export does not carry, a second `h1` or masthead, a title outside the grammar, a masthead that disagrees with the URL, a control with no name, a dash in chrome, a focus ring that is not there, axe WCAG 2.1 AA; and the journeys (search to a result and into the story, Deep Dive share to the clipboard, theme, drawer, Sigil, shortcuts, banner, the player per route, the Audio hub's play buttons, History's long-view toggle and Listen island, Weekly's Argument loading, the Sources picker and axis dots, the About demo's sliders, an empty feedback submit refused in the page, navigation landing at the top, Paper parity, the podcast feeds and manifest, the brand layer); and the On Air system, one scenario per measured desync (`one-play-button` on all three programmes, `audio-survives-navigation`, `weekly-does-not-seize`, `tab-resume-keeps-its-programme`, `onair-tells-the-truth`, `play-state-cannot-lie`, `no-double-transport`, `onair-panel` at both widths); and the lean display (`bench` at 1440 and 390: seven columns, nothing dropped, the busiest bucket the tallest column, one mark size, circles, a card that names the mark it came from and stays on screen; `lean-label-contrast` measures every label on the feed in both schemes rather than waiting for axe to sample the failing one). `--quick` in CI, the full grid by hand |
 
-### Sequential Cycles
+Every one of these runs in `auto-merge-claude.yml`. **Two of them also run in `pipeline.yml`, before its data commit** (`test_grounding`, `test_bias_defaults_gate`), because that job pushes STRAIGHT TO MAIN and skipped every gate until 2026-09-23. It committed 439,244 characters of publisher prose on 2026-09-22 by checking out main before the grounding fix landed, and the check that forbids exactly that already existed and could not fire. A gate that cannot run on the path that writes is not a gate. Nine of them did not until
+2026-09-21, which is the whole reason the line above this table is worth
+repeating: a rule nobody can fail is not enforced.
+
+When a factual error reaches production, the fix is not complete until a check
+exists that would have caught it. Add the check in the same commit.
+
+### Show, don't tell
+Never assert significance. Juxtapose concrete facts so the reader sees the
+pattern. Banned: "notable", "significant", "it should be noted",
+"interestingly", "crucially".
+
+> **BAD:** "It is worth noting that tensions are rising significantly."
+> **GOOD:** "Both countries recalled their ambassadors within 48 hours. Neither
+> has done that since 1979."
+
+### Arrive late, leave early
+Enter at the last possible moment, exit before the conclusion is spelled out.
+
+> **BAD:** "The Partition of India was a complex historical process that began
+> with British colonial rule and eventually led to the creation of two nations."
+> **GOOD:** "A lawyer who'd never been to India drew the border in five weeks.
+> 15 million crossed it."
+
+### No em dashes
+`—` and `–` are banned in all written editorial output: summaries, headlines,
+TL;DR, opinion, weekly, history copy, CTAs, frontend microcopy. Rewrite as two
+sentences, or use a comma, semicolon, colon or parentheses. Hyphens in compound
+words are fine.
+
+**Exception:** audio scripts (`audio_script`, `opinion_audio_script`) keep them
+as TTS breath marks.
+
+### Grounding
+Every LLM prompt carries: "Every fact MUST appear in the provided articles. Do
+not supplement with prior knowledge."
+
+### No personalization (LOCKED)
+Newspaper principle. Same stories, same order, for everyone. No accounts, no
+recommendation algorithms.
+
+### Bias scoring weighs BOTH outlet and text
+Not one or the other. Public copy on `/about` and `/sources#methodology` must
+lead with "both", never "words not the outlet" (it does, and carries no ratio).
+
+**It is not a weighted blend, and this file used to say it was.** The claim
+"~50/50 on a short wire item, ~90/10 text-weighted on a full article" was
+wrong in structure and inverted in magnitude. The engine is
+baseline-anchored with a BOUNDED deviation:
+
+    score = baseline + clamp((text_score - 50) * 1.0, ±delta_max) * confidence
+    confidence = min(1.0, words / 150)          # LENGTH, not certainty
+
+So `delta_max` is the whole of the text's authority, and it is small.
+Measured 2026-09-22 by driving a 600-word article to each extreme of the
+lexicon:
+
+| Outlet | baseline | most a max-left article reaches | most a max-right article reaches |
+|---|---|---|---|
+| rated `left` | 20 | 10 | 30 |
+| rated `center` | 50 | 40 | 60 |
+| rated `right` | 80 | 70 | 90 |
+| `unrated`/`varies` | 50 | 26 | 74 |
+| state-affiliated | its own | ±8 | ±8 |
+
+**Measured per run, not claimed** (`build-data/engine.json`, printed on
+`/sources`). Run #379 (2026-09-25): 58.5% of articles were under 150 words and
+never reached the text analyzer; across 3,635 full articles from rated outlets
+the words moved the score a mean of 1.54 points and left 61.1% exactly on the
+baseline.
+
+A rated outlet's article can move **10 points, never more**, however long it is
+and whatever it says. Length only decides how much of that 10 it earns. So on a
+full article the outlet dominates roughly 5 to 1, which is the opposite of
+"90/10 text-weighted", and the ONLY row with real text authority is the unrated
+one at ±24.
+
+That is a capability limit, not a dishonesty: the architecture is built to grant
+more, and `docs/proposals/OUTLET-BASELINE-PROGRAMME-2026-09-22.md` is the work
+to earn it. Do not quote a blend ratio for this engine anywhere; quote
+`delta_max`.
+
+---
+
+## Locked decisions (CEO)
+
+Cinematic Press design · 6-axis bias model · Cloudflare stack · static export ·
+1,061 sources (3 tiers, 7-point lean) · no personalization · $0/mo LLM cost ·
+1×/day pipeline · **top-20 homepage feed** (moved from 50 on 2026-09-07 — the
+one locked decision that has ever changed) · Claude Max CLI for agent work.
+
+---
+
+## Git & dev
+
+### main is production. One branch at a time.
+
+`deploy-cloudflare.yml` serves the site from `main` and nothing else
+(`on: push: branches: [main]`, plus `workflow_run` after auto-merge and the
+pipeline). So **a commit that is not on main is not live**, however finished it
+looks, and a red `main` freezes the whole product.
+
+Two rules follow, and both were learned the expensive way on 2026-09-23, when
+the site served two-day-old data while 35 commits waited behind a red
+build-check and 279 stale `claude/*` branches sat on the remote:
+
+1. **Finish a branch before starting another.** One live `claude/*` branch at a
+   time. A second branch opened while the first is unmerged inherits the
+   first's problems (every branch carries main's data, so main's breakage is
+   every branch's breakage) and doubles the surface that has to go green.
+   Delete the branch once auto-merge has taken it.
+2. **A red main is the first thing fixed, before any new work.** Not after the
+   current task. The pipeline pushes data straight to main with no build behind
+   it, so main can go red without anyone touching code: on 2026-09-22 a run
+   committed a feed carrying 14 displayable stories against the 20
+   `frontend/config/feed.json` requires, `serverFeed.ts` threw as designed, and
+   every branch's build-check failed for a day. `tests/test_feed_buildable.py`
+   now refuses that commit at the source, but the rule stands for the next
+   thing that gets past a gate.
+
+**Check before assuming a branch shipped:** `git log --oneline -1 origin/main`,
+and the live page. Thirty-five commits described as done were not live.
+
+- **Always push to `claude/*` branches.** Auto-merge to main.
+- **Always commit AND push after every task.** Never wait to be asked.
+- **Sync before push:** `git fetch origin main && git merge origin/main --no-edit`
+- Pipeline runtime is **~1.5-2h** (dominated by RSS fetch/scrape), not the
+  "25-35 min" some older docs claim. Actions `timeout-minutes: 240`; the scrape
+  phase is capped by `SCRAPE_BUDGET_SECONDS` (40 min).
+- `pipeline/main.py` ends with `os._exit(0)` deliberately. Reaching that line means every
+  stage finished; a lingering Playwright/Chromium child can otherwise block
+  interpreter shutdown and skip the commit step (this hung the 09-17 run).
+- **The repo carries the site's data.** Each run commits
+  `frontend/public/data`, `frontend/build-data`, `frontend/public/audio`.
+- **Correctness is judged against the served page.** Add a check to
+  `scripts/verify_production.py` when a defect reaches production.
+
+---
+
+## LLM budget: $0/day, all free tier
+
+| Model | Cap | Spends on |
+|---|---|---|
+| `gemini-2.5-flash` | **20 requests/DAY** | daily brief (~2-4) + candidate summaries (~10) ≈ 13/day |
+| `gemini-2.5-flash-lite` | high RPD | Stage 2 critique pass, history/weekly support calls |
+
+The flash day-cap is the binding constraint on anything new. Claude retired
+2026-06-22 (`claude_client.is_available()` hard-returns `False`), Groq deleted
+2026-06-24. Rule-based is the only fallback. Op-eds bypass all LLM.
+
+---
+
+## Gotchas that waste a session
+
+**Jobs that still run against the dead Supabase** (all in `.github/workflows/`). Their output is meaningless.
+Do NOT "fix" a failure here by reconnecting Supabase:
+
+| Job | Cron | Reality |
+|---|---|---|
+| `feed-snapshot.yml` | none (unscheduled 2026-09-24) | Committed EMPTY snapshots, then failed daily from 09-21; manual only |
+| `db-cleanup.yml` | 09:00 | Prunes a database nothing reads |
+| `audit-db.yml` | none (unscheduled 2026-09-24) | Audits the dead DB; failed daily from 09-21; manual only |
+| `freshness-check.yml` | 15:00 | Repointed rev 66 — reads `feed.json.builtAt`, no Supabase |
+| `curate-ship.yml` | manual | Targets `ship_requests`, which lives in D1 now |
+| `refresh-brief`, `editorial`, `eval`, `ig-*`, history/revolt loaders | manual | Supabase env, no `VOID_SQLITE_PATH` |
+
+**Comments and docs that lie.** `.env.example` still lists five `SUPABASE_*`
+vars and no `VOID_SQLITE_PATH`. `frontend/app/lib/serverFeed.ts` and `archive.ts` headers
+describe Supabase reads that are now `readFileSync`. `pipeline/main.py` prints a
+"500 MB Free-Plan cap" warning computed from a local file size.
+`frontend/app/components/HomeContent.tsx` carries a dead Supabase feed query that can never fire.
+`docs/DEPLOYMENT.md` and `docs/PIPELINE-BRAIN.md` both predate the migration.
+
+**`.github/workflows/weekly-digest.yml` restores the state cache and never saves it back.**
+The weekly row therefore dies with the container, which is why the back-issue
+archive lives in the deploy tree (`build-data/weekly-issues.json`) instead. On
+the old Monday 12:00 slot restore-only was a hard requirement, because the
+daily pipeline was usually still running and a save would have pushed a pre-run
+copy of the state under a newer key. The cron is now **Sunday 18:00**, after the
+daily has finished, so that race is gone; restore-only stays because the weekly
+adds nothing to the state that anything reads back.
+
+---
+
+## Quick reference
+
+| Working on | Read |
+|---|---|
+| Frontend, CSS, animation | `docs/DESIGN-SYSTEM.md` |
+| Pipeline flow, ranker, bias axes | `docs/PIPELINE-BRAIN.md` ⚠ predates rev 64 restructure |
+| Editorial rules (18 validators incl. E-15 hedge-is-not-attribution, one impl, two consumers) | `docs/EDITORIAL-STANDARD.md`, `pipeline/editorial/standard.py` |
+| Voice and brand | `docs/VOICE-BRAND.md` |
+| Stage 2 (bench → coherence → summarize → merge → critique → validate → order) | `pipeline/editorial/stage2.py` |
+| Clustering (5 live phases; 2.5/2.55/2.6 parked, no prod caller; `MERGE_HARD_CEILING=120`) | `pipeline/clustering/story_cluster.py` |
+| Bias engine (6 axes, all rule-based, deterministic rationales) | `pipeline/analyzers/`, fixtures in `pipeline/validation/` |
+| Run the editorial half offline, no LLM key | `tests/test_editorial_stage.py` + `tests/build_test_db.py` |
+| Feed size (one source of truth) | `frontend/config/feed.json` |
+| The display window (one definition) | `pipeline/utils/display_window.py` |
+| Lean labels, the one ladder, the roster's shape. Seven rungs **on the outlet baselines** (10/20/35/50/65/80/90), nearest wins, a tie goes to the rung nearer the centre. 74% of measured articles sit exactly on a baseline, so the ladder is seven spikes rather than a spread. `leanLabel` and `leanLabelAbbr` both derive from `leanToBucket`, and `tests/test_bias_bins.py` asserts the pipeline agrees on every score 0..100. **The card reads the roster, not a mean**: `leanShape` returns Leans / Split / Balanced / Consensus / thin, every word earned by the evidence for THAT word (Consensus needs centre mass, Leans and Split need wing evidence, and the fall-through states the count rather than calling a one-winged story balanced). `leanShapeColor` is the same rule, so the word and its colour can never disagree, and it uses five flat AA-tuned tokens because a `color-mix` down the ramp is not AA at every step. `leanShareTilt` divides by the **wing** coverage (left + right), never by every analyzed article, and needs `LABEL_MIN_WING_ARTICLES` (5) before it reads anything | `frontend/app/lib/biasColors.ts` (`leanShape`, `leanShapeLabel`, `leanShapeColor`, `leanToBucket`) |
+| **The register and the Bench**: the same seven rungs at two sizes. On a card, seven hairline strokes under the Sigil (`RosterStrip`). In the Deep Dive, seven strict columns of circular source marks, so **the height of a column is the count in that bucket** (`Bench`). The mark size is chosen from the data in `lib/bench.ts`: `perRow` is the histogram's resolution, so it is minimised and the mark shrinks first | `frontend/app/components/RosterStrip.tsx`, `Bench.tsx`, `app/lib/bench.ts`, `frontend/test/bench.test.mjs` |
+| **The one masthead and footer**: mounted once in `app/layout.tsx`, section read from the pathname, skinned per section via `:root:has(.hist-page)` / `:has(.wk-page)` / `:has(.np-root)` (section palettes live on `:root` while mounted). No section renders its own topbar | `frontend/app/components/NavBar.tsx`, `Footer.tsx`, `styles/components.css` "Section skins" |
+| **The audio state machine**: two slots, never one. `dailyBrief` is today's edition and only the daily fetch writes it; `nowPlaying: Episode \| null` is what is in the element and the `<audio>` src comes from it. `play(ep)` toggles what it owns and loads then plays what it does not; `load(ep)` offers and refuses to interrupt. `isPlaying` is written only by element events | `frontend/app/lib/episode.ts`, `app/components/AudioProvider.tsx`, `frontend/test/episode.test.mjs` |
+| **One transport, two mounts**: `/onair` is a page whose subject is TODAY'S broadcast whoever owns the element; `OnAirPanel` is chrome whose subject is what is playing. The panel is right-anchored from 1024px (`--onair-pane-w`), a modal sheet below. The pill stands down on `/onair` and while the panel is open | `frontend/app/components/OnAirPanel.tsx`, `OnAirPage.tsx`, `FloatingPlayer.tsx` |
+| **Share cards**: one composer draws every card (Sigil, VOID NEWS, section nameplate, content); `og-image.png` is rendered by `node brand/ci/render_og.mjs`, never hand-edited; per-story cards for the latest edition only | `frontend/app/lib/ogCard.tsx`, `app/story/[id]/ogCard.tsx` |
+| **Paper** (the printable twenty) | `frontend/app/paper/`, `scripts/verify_sections.py` P-01..P-04, `tests/test_paper.py` |
+| Shared kill list (significance + AI slop), one regex for feed, Weekly, Opinion, promos, served pages | `pipeline/utils/prohibited_terms.py` (`find_prohibited`, `strip_significance`) |
+| Served-output gates | `scripts/verify_production.py` |
+| **On Air** radio: rundown grammar, R-01..R-15 (R-14 grounded attribution, R-15 no unattributed statement of law), voices, mastering | `docs/ON-AIR-RADIO.md` |
+| **Weekly audio** "The Argument": W-01..W-12, the moat, the dry argument | `docs/WEEKLY-AUDIO.md` |
+| **History audio**: format, casting, H-01..H-11 | `docs/HISTORY-AUDIO.md`, `docs/HISTORY-SCRIPT-BRIEF.md` |
+| **The Hearing**: `/history/[slug]`, a SERVER component. Three client islands (rail, Listen, lightbox). `omitted` appears in the turn and nowhere else | `frontend/app/history/components/Hearing.tsx`, `hearing.ts`, `docs/proposals/HISTORY-PAGE-REVAMP.md` |
+| **The Thesis**: the same route once an event's thesis is `published`; the ledger is canonical, the thesis cites it by extract, the page renders the JSON `export_thesis.py` wrote (sidenotes from 1280px, inline `<details>` below, exhibits with provenance first, positions with their adjudication, analyses with their rows, contested claims as tables). Draft theses are exported only with `--include-drafts` and rendered only under `NEXT_PUBLIC_HISTORY_DRAFTS=1`. Register of every event's standing against the bar: `docs/data/history-ledger.csv` (`python3 -m pipeline.history.ledger report`) | `docs/proposals/HISTORY-THESIS-PAGE.md`, `pipeline/history/{ledger,thesis_format,thesis_checks,export_thesis}.py`, `frontend/app/history/components/Thesis.tsx`, `app/styles/history-thesis.css`, `scripts/verify_sections.py` TH-01..TH-05 |
+| **House promos** (post-roll under every outro; pool, rules, retrofit) | `data/promos/house.yaml`, `pipeline/briefing/house_promos.py`, `docs/VOICE-BRAND.md` "House Promos" |
+| **Podcast feeds** (On Air, The Argument, History) and directory submission | `pipeline/briefing/podcast_feed_generator.py`, `docs/PODCAST-DISTRIBUTION.md`, `/audio` |
+| Weekly magazine: running order, the measure, the grid | `frontend/app/weekly/`, `frontend/app/styles/weekly.css` |
+| Weekly's pure core (testable with no key) | `pipeline/briefing/weekly_parse.py` |
+| Weekly end matter (colophon, week-over-week, day-by-day, corrections, OG card, issue index) | `frontend/app/weekly/components/{Colophon,WeekDelta,WeekRail,Corrections}.tsx`, `app/weekly/ogCard.tsx` |
+| What Postgres did that SQLite cannot | `migration/PORT_NOTES.md` (authoritative) |
+| Agents, workflows, slash commands | `docs/AGENT-TEAM.md` |
+| **Why a thing is the way it is** | `docs/CHANGELOG.md` |
+| **What is unfinished** | `docs/OPEN-ITEMS.md` |
+
+---
+
+## Section state
+
+| Section | State |
+|---|---|
+| **News** (daily feed) | Live. Top 20, two-stage pipeline, 35-cluster bench. |
+| **On Air** (daily radio) | Live. Kokoro three voices, chapters, mastered to -16 LUFS. |
+| **The Brief** (TL;DR + Opinion) | Live. One story per paragraph. |
+| **Weekly** | Live. **Vol. I, No. 1 published 2026-09-20**, the first issue on the Sunday cadence and the first ever to carry departments. Aug 24-30 is kept as the pilot. |
+| **Weekly audio** ("The Argument") | Live. Three Kokoro anchors, 11 chapters, mastered to -16 LUFS, verified against the served file. Rendered by **manual `audio-only` dispatch**; no scheduled run has produced one yet. There is no fallback: a failed render ships no audio rather than a quiet legacy substitute. |
+| **History** | Live, 78 events, static JSON since rev 69. Landing prerendered with an `<h1>` and every card (2026-09-21); era, region and thread browse routes linked and in the sitemap; native scroll, no wheel hijack. 149 time-bound claims dated or dropped 2026-09-21 (`docs/audits/HISTORY-DATA-2026-09-21.md`). **Seven published theses** (Srebrenica 2026-09-24; Partition, Cambodian genocide, Scramble for Africa, 1918 influenza, Armenian genocide, Haitian Revolution 2026-09-25), each after an independent Stage 5 audit in two passes, stamped in the front matter; the other 71 events render the Hearing. `armenocide.de` is the one host allowed as an http source link (`tests/test_insecure_origins.py`). |
+| **History audio** | **78/78 scripts written, 78/78 rendered**, each carrying a house promo under its outro. Register: `docs/data/history-episodes.csv`, regenerate with `python3 pipeline/history/episode_report.py`. |
+| **Revolt** | 301-hidden, serves MOCK data. Cannot be un-hidden until it reads static JSON. |
+| **Ship / Feedback** | Live on the Worker + D1. |
+| **Podcast feeds** | Generated: `podcast-world.xml`, `podcast-weekly.xml`, `podcast-history.xml` (78). Linked from `/audio` (the section that holds every programme and its play buttons) and `layout.tsx`. **Not yet submitted** to Apple or Spotify. Three covers rendered 2026-09-21 from the house lockup (`podcast-cover-{world,weekly,history}.jpg`); `tests/test_podcast_feed.py` gates them. |
+| **House promos** | Live. 24 promos, `af_kore` at speed 0.86 over `radio_promo_bed.wav`. **All 78 History episodes stitched 2026-09-21**; On Air and Weekly pick one up on their next render. |
+| **Paper** | **Live 2026-09-21** as the printable twenty: the same 20 stories as the front page, in the same order, read from `build-data/feed.json`, every headline a link to its Deep Dive, print stylesheet, no classifieds, no datelines, no edition route. Gated by P-01..P-04. |
+| **Games** | 301-hidden. |
+
+---
+
+## Kill switches
+
+| Feature | Gate |
+|---|---|
+| Gemini bias reasoning | `DISABLE_GEMINI_REASONING=1` (`.github/workflows/pipeline.yml`) |
+| Editorial triage | `DISABLE_EDITORIAL_TRIAGE=1` (same file) |
+| All audio | `DISABLE_AUDIO` + `NEXT_PUBLIC_DISABLE_AUDIO` — flip together |
+| On Air radio format | `VOID_RADIO_FORMAT=0` → legacy path |
+| Weekly audio format | `VOID_WEEKLY_AUDIO_FORMAT=0` |
+| TTS engine | `VOID_TTS_ENGINE=edge` → edge-tts fallback |
+| Export scope | `VOID_EXPORT_ONLY=feed\|brief\|weekly\|archive\|methodology\|history` |
+| Claude API | Retired at source; no env var can re-enable a paid call |
+
+---
+
+## Brand
+
+**Void** is the parent brand. **Void News** (this app) is a product; **Void
+Vision** is a coming sibling. Everything else is a SECTION of Void News, in
+title case with plain names: The Brief (tag "TL;DR"), Audio, History, Weekly,
+Paper, Sources, Deep Dive, Opinion, Ship, Games, Revolt. **Audio** (2026-09-21)
+is the section that holds the three programmes; On Air is the daily
+programme's page inside it, The Argument plays from Weekly and from Audio,
+History audio from the event page and from Audio. `/listen` 301s to `/audio`.
+
+**The one-line rule for every surface (CEO, 2026-09-21): `VOID NEWS` is the
+only word that gets a lockup; a section gets a nameplate in its accent; a
+programme (On Air, The Argument, History audio) gets a title.** There is no
+VOID HISTORY or VOID WEEKLY lockup on the site, the cards or the podcast
+covers; the masthead reads VOID NEWS · History. Podcast channels are all
+"Void News: <programme>". Page titles are `Page | Void News` for a landing
+and `Page | Section | Void News` for a leaf (`sectionTitle()` in
+`lib/siteMeta.ts`). Themes stay: History keeps its archival paper and umber,
+Weekly its magazine red; a section overrides at most an accent ramp, its
+paper, its card surface and its grain. The browser wears the section too,
+quietly: the status bar is the section's paper (never its accent), the
+scrollbar and the selection take its accent, the nameplate draws its rule in,
+a long read carries a brass reading rule under the masthead, the wordmark's
+beam rocks while audio plays, and a Deep Dive or a History event prints as a
+sheet with its own address. All of it is `app/styles/brand.css` plus one
+attribute, and every touch is asserted by the headless sweep.
+
+Internal identifiers were deliberately NOT renamed in the 2026-08-03 rebrand:
+routes (`/weekly`, `/history`), `.void--news` classes, `void-news-*` storage
+keys, `com.void.news` appId, the `/void--news` BASE_PATH default. Leave them.
+
+---
+
+## Layout
+
 ```
-Pipeline Quality:  pipeline-tester → bug-fixer → pipeline-tester
-Bias Audit:        analytics-expert → bias-auditor → nlp-engineer → pipeline-tester
-Bias Calibration:  nlp-engineer → bias-calibrator → bias-auditor → pipeline-tester
-Frontend Build:    frontend-builder → responsive-specialist → uat-tester → frontend-fixer
-Audio Quality:     audio-engineer → pipeline-tester → bug-fixer
+pipeline/
+  fetchers/ analyzers/ clustering/ categorizer/ ranker/ validation/ memory/
+  summarizer/   gemini_client (sole LLM), cluster_summarizer
+  editorial/    standard.py, stage2.py, same_event.py
+  briefing/     daily brief, radio_*, weekly_*, audio, podcast feed
+  history/      export_history, casting, script_format, *_producer, episode_report
+  utils/        supabase_client (the switch), pgrest_sqlite (the shim)
+  main.py  export_static.py  rerank.py
+frontend/
+  app/          components/ history/ weekly/ story/[id]/ lib/ styles/ games/
+  build-data/   build-time JSON the server components read
+  public/data/  emitted static JSON, committed each run
+  public/audio/ MP3s on the CDN, committed each run
+worker/         Cloudflare Worker + D1 — the ONLY live database
+migration/      PORT_NOTES.md is authoritative
+data/           sources.json · history/events (78) · history/scripts (78)
+tests/          editorial stage, weekly, radio, history script + audio, gates
+docs/           CHANGELOG.md · OPEN-ITEMS.md · 45 reference docs
 ```
-
-### Locked Decisions (Require CEO Approval)
-- Press & Precision design system (3-voice type, BiasLens Three Lenses, newspaper grid)
-- 6-axis bias scoring model + confidence
-- Supabase as single data layer
-- Static export (Next.js → GitHub Pages)
-- 370-source curated list (3 tiers); 7-point political lean spectrum
-- $0 operational cost constraint
-- Claude Max CLI for all AI work
-
-## Project Structure
-
-```
-void-news/
-├── CLAUDE.md
-├── docs/
-│   ├── PROJECT-CHARTER.md         # Project charter and scope
-│   ├── DESIGN-SYSTEM.md           # Press & Precision design system (component inventory, layout diagrams)
-│   ├── IMPLEMENTATION-PLAN.md     # Phased implementation roadmap
-│   ├── GEMINI-VOICE-PLAN.md       # Gemini voice architecture, prompt templates, anti-bias guardrails
-│   └── PERF-REPORT-2026-03-22.md  # Vol I: pipeline + frontend performance analysis
-├── pipeline/
-│   ├── fetchers/
-│   │   ├── rss_fetcher.py         # Parallel RSS fetch; global as_completed TimeoutError caught gracefully — hung feeds logged and skipped without crashing pipeline
-│   │   └── web_scraper.py
-│   ├── analyzers/
-│   │   ├── political_lean.py      # Length-adaptive + sparsity-weighted blending; entity lists include key political figures
-│   │   ├── sensationalism.py      # Word-boundary regex for superlatives; partisan_attack cap 30pts
-│   │   ├── opinion_detector.py    # Adaptive EMA alpha; 14 investigative attribution patterns; value_judgment weight 0.06
-│   │   ├── factual_rigor.py       # SPECIFIC_ATTRIBUTION verb-proximity gate; LOW_CREDIBILITY_US_MAJOR baseline 35
-│   │   ├── framing.py             # Cluster-aware omission detection; passive voice ratio capped at 30
-│   │   ├── gemini_reasoning.py    # Step 6c: contextual score adjustments; mutates article_bias_map; reasoning strings capped at 300 chars
-│   │   └── topic_outlet_tracker.py # Axis 6: adaptive EMA (0.3 new / 0.15 established); category normalized to lowercase
-│   ├── clustering/
-│   │   ├── deduplicator.py        # TF-IDF + cosine dedup
-│   │   └── story_cluster.py       # Two-phase: TF-IDF agglomerative + entity-overlap merge
-│   ├── summarizer/
-│   │   ├── gemini_client.py       # Rate limiting, call caps, optional system_instruction
-│   │   └── cluster_summarizer.py  # Headline/summary/consensus/divergence + editorial_importance
-│   ├── briefing/
-│   │   ├── daily_brief_generator.py # Gemini: TL;DR (5-7 sentences) + two-host audio script; 3-call budget; rule-based fallback
-│   │   ├── audio_producer.py      # Gemini 2.5 Flash TTS: native multi-speaker dialogue synthesis, PCM→MP3 via pydub, Supabase Storage upload
-│   │   ├── claude_brief_generator.py # Claude CLI premium script generator (manual 1x/day, Claude Max)
-│   │   ├── voice_rotation.py      # Neural voice pairs per edition; roles swap daily
-│   │   ├── generate_assets.py     # Glass & Gravity sonic identity: bloom intro, glass-bell transition, resolving outro
-│   │   └── assets/                # ident.wav, transition.wav, outro.wav (generated)
-│   ├── categorizer/
-│   ├── ranker/                    # v5.1: 10 signals + confidence curve + Gemini editorial importance
-│   ├── validation/                # Bias engine test suite: 26 ground-truth articles, signal_tracker, AllSides cross-ref, runner (96.9% accuracy), snapshot
-│   ├── utils/                     # Supabase client, nlp_shared
-│   ├── main.py                    # Orchestrator (12 steps + cleanup)
-│   ├── rerank.py                  # Standalone re-ranker
-│   └── refresh_audio.py           # Standalone audio brief refresh — regenerates TTS from current DB without full pipeline run (~60-90s)
-├── frontend/
-│   ├── app/
-│   │   ├── components/
-│   │   │   ├── BiasInspector.tsx  # "Press Analysis" 4-axis scorecard; BiasInspectorInline (Deep Dive inline), BiasInspectorTrigger + BiasInspectorPanel (legacy); each axis collapsible with Gemini reasoning
-│   │   │   ├── BiasLens.tsx       # Three Lenses: Needle, Ring, Prism
-│   │   │   ├── DeepDive.tsx       # Slide-in panel: FLIP morph open/close, lede, DeepDiveSpectrum, Press Analysis ▶, Source Perspectives
-│   │   │   ├── DeepDiveSpectrum.tsx # Continuous lean spectrum: 7-zone gradient bar + logos at exact politicalLean %, nearby sources alternate rows, each logo links to source article, tooltip on hover
-│   │   │   ├── HomeContent.tsx    # Feed container: edition switching, lean filter, story grid; progressive batch reveal (BATCH_SIZE=8, visibleCount); desktop "Continue reading" link; mobile infinite scroll via IntersectionObserver sentinel; Supabase limit 500
-│   │   │   ├── LeadStory.tsx      # Hero story card
-│   │   │   ├── OpEdPage.tsx       # SHELVED — commented out, pending redesign
-│   │   │   ├── OpinionCard.tsx    # SHELVED — commented out, pending redesign
-│   │   │   ├── StoryCard.tsx      # Standard story card
-│   │   │   ├── NavBar.tsx         # World/US/India nav; dateline row with edition badge pills, time-of-day badge, regional timestamps (US: "9 AM ET", World: HH:MM UTC, India: HH:MM IST); India: Ashoka Chakra SVG icon
-│   │   │   ├── FilterBar.tsx
-│   │   │   ├── RefreshButton.tsx
-│   │   │   ├── ThemeToggle.tsx
-│   │   │   ├── LoadingSkeleton.tsx
-│   │   │   ├── ErrorBoundary.tsx
-│   │   │   ├── Footer.tsx
-│   │   │   ├── LogoFull.tsx       # Combo mark: void circle + scale beam + wordmark (SVG, Direction 5)
-│   │   │   ├── LogoIcon.tsx       # Icon-only wrapper around ScaleIcon
-│   │   │   ├── LogoWordmark.tsx   # Text-only "void --news" SVG, hollow-O
-│   │   │   ├── ScaleIcon.tsx      # Void Circle + Scale Beam; 8 animation states (idle/loading/hover/analyzing/balanced/pulse/draw/none)
-│   │   │   ├── PageToggle.tsx     # Feed / Sources view switcher
-│   │   │   ├── SpectrumChart.tsx  # /sources political spectrum: gradient bar + all sources below in 7 lean zone columns (mixed tiers), logos overlap with -3px margin / fan out on hover, zone counts below, single "Show all" expand button, each zone scrollable at 60vh when expanded
-│   │   │   ├── Sigil.tsx          # Compact bias sigil (SigilData type)
-│   │   │   └── DailyBrief.tsx     # useDailyBrief() hook + DailyBriefText; "void --onair" pill + ScaleIcon; progress bar; TL;DR in Inter regular with blockquote left-border; text-align justify; mobile 4-line collapse
-│   │   ├── lib/
-│   │   │   ├── supabase.ts        # Supabase client, fetchDeepDiveData, fetchLastPipelineRun
-│   │   │   ├── types.ts           # BiasScores, ThreeLensData, Story, etc.
-│   │   │   ├── mockData.ts        # Fallback mock data
-│   │   │   └── utils.ts           # timeAgo, etc.
-│   │   ├── page.tsx               # Homepage: live Supabase queries
-│   │   ├── sources/page.tsx       # /sources: SpectrumChart + source list with favicons
-│   │   ├── layout.tsx             # Root layout: fonts, metadata
-│   │   ├── globals.css            # Style entry point: @imports from ./styles/
-│   │   └── styles/                # tokens.css, layout.css, typography.css, components.css, animations.css, responsive.css, spectrum.css
-│   ├── public/
-│   ├── package.json               # Next.js 16.1.7, React 19.2.3
-│   └── next.config.ts
-├── .claude/
-│   ├── agents/                    # 18 agent definitions
-│   └── skills/                    # pressdesign skill
-├── .github/workflows/
-│   ├── pipeline.yml               # 4x daily cron
-│   ├── deploy.yml                 # Build + deploy to GitHub Pages
-│   ├── migrate.yml                # Supabase migration runner
-│   └── validate-bias.yml          # CI gate: bias engine regression on every push
-├── data/sources.json              # 370 curated sources (7-point lean spectrum)
-└── supabase/migrations/           # 001-017
-```
-
-## MVP Scope
-
-### Phase 1 — Foundation -- COMPLETE
-- [x] Project scaffolding, 370 sources (expanded from 222), Supabase schema (migrations 001-017), RSS fetcher, web scraper, GitHub Actions cron, pipeline orchestrator.
-
-### Phase 2 — Analysis Engine -- COMPLETE
-- [x] Content dedup (TF-IDF, threshold 0.80, Union-Find), story clustering (two-phase), 5-axis bias scoring (all with rationale), auto-categorization (3-article majority vote), ranking v5.1 (10 signals + Gemini), multi-section cross-listing (sections[]), confidence scoring, consensus/divergence, IP truncation, Axis 6 EMA tracking, Gemini reasoning (step 6c), editorial triage (step 7c), Daily Brief (step 7d: TL;DR + two-host BBC-style audio via Gemini 2.5 Flash TTS), cluster dedup (step 8b), RSS fetch global timeout handling.
-
-### Phase 3 — Frontend MVP -- COMPLETE
-- [x] Next.js 16 App Router, design token system, desktop + mobile layouts, StoryCard + LeadStory, news feed (headline_rank), "Why This Story" tooltip, category filtering, BiasLens Three Lenses, RefreshButton, light/dark mode, DailyBrief ("void --onair" TL;DR + audio player).
-- [ ] Animation system (Motion One spring presets, utilities) — pending.
-- [ ] GitHub Pages deployment — pending.
-
-### Phase 4 — Deep Dive Dashboard -- IN PROGRESS
-- [x] Slide-in panel (desktop 55% / mobile full-screen), per-source BiasLens, tier breakdown bars, Source Perspectives (Agreement/Divergence), Press Analysis inline (BiasInspectorInline), lean spectrum above/below track.
-- [ ] Detailed framing comparison view.
-- [ ] Source credibility context panels.
-
-### SHELVED — Op-Ed / Opinion Page
-Removed from frontend. Pipeline still computes opinion_fact (Axis 3). `OpEdPage.tsx` and `OpinionCard.tsx` commented out for reference. Future redesign needs: dedicated curation, distinct visual treatment, author-first display, no Gemini, no clustering.
-
-### Phase 5 — Polish & Launch
-- [ ] WCAG 2.1 AA accessibility audit
-- [ ] Lighthouse 90+ performance
-- [ ] Animation polish
-- [ ] Cross-browser testing
-- [ ] Mobile touch gesture refinement
-- [ ] Launch
-
-## Git Workflow
-
-- **Always push to `claude/*` branches.** Never push directly to `main`.
-- GitHub auto-merge is enabled — pushing to `claude/*` auto-creates a PR and merges.
-- **After every completed change:** commit, push to `claude/*`, and confirm deployment succeeds (`gh run watch`). Do not consider work done until the deploy workflow passes.
-
-## Development Notes
-
-- Python 3.11+, Node 18+, TypeScript for all frontend.
-- All bias analysis must be rule-based (no external API dependencies).
-- Pipeline runtime: realistic target is **25-35 min** for normal incremental runs (after perf optimizations). Fresh DB run (Vol I, 2026-03-22) took 108 min. The 6-min GitHub Actions soft limit does not apply — pipeline runs to completion.
-- Frontend is fully static (next export). Supabase client-side reads only.
-- Animation adapted from DondeAI (`/home/aacrit/projects/dondeAI/js/spring.js`, `motion.js`).
-- CSS adapted from DondeAI (`/home/aacrit/projects/dondeAI/css/tokens.css`).
-
-### perf-optimizer: Applied Optimizations
-- TextBlob text limit: 50K → 5K chars (`sensationalism.py`; sentiment signal saturates within ~1000 words)
-- RSS entry cap: 30 per feed (`rss_fetcher.py`; reduces fetch + parse time)
-- Bias analysis workers: 4 → 8 (`main.py`; parallel analyzer threads)

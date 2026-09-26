@@ -1,0 +1,170 @@
+## OPEN
+N: You know the story. Two men, a map, a ruler, the modern Middle East drawn in an afternoon.
+N: Here is what the record says instead. That line was never implemented. Mosul, given to France, ended up in British Iraq. Palestine, meant as an international zone, became a British mandate outright.
+N: The borders on the map today were drawn later, by conferences those two men were never invited to.
+N: A century afterward, a militia bulldozed a border and named the video after a map that had already stopped being the map.
+
+## TITLE
+N: The Sykes-Picot Agreement. May sixteenth, nineteen sixteen.
+
+## SCENE 1 | The finger on the map
+N: December nineteen fifteen, the British War Committee. Sir Mark Sykes is thirty six, has traveled the Ottoman Arab provinces as a tourist and an amateur, and now puts his finger down on a map.
+
+## DOCUMENT | Sir Mark Sykes | Statement to the British War Committee, Downing Street | December 1915
+N: Sykes tells the committee exactly where he wants the empire cut.
+M: I should like to draw a line from the 'e' in Acre to the last 'k' in Kirkuk.
+N: Lord Kitchener corrects his geography on the spot. The line stays anyway.
+
+## ASIDE
+N: A tourist has just proposed dividing several million people, on the strength of two letters of the alphabet.
+
+## REST
+
+## SCENE 2 | Coloring the map
+N: For five weeks Sykes meets Francois Georges-Picot, a French diplomat whose family has pressed France's claims in Syria for a generation. Together they color a map.
+N: A blue zone of direct French control runs along the Syrian and Lebanese coast into Cilicia. A red zone of direct British control takes Basra, Baghdad, and the ports of Haifa and Acre. Between the colors, an Area A and an Area B cover the interior as French and British spheres.
+
+## DOCUMENT | Mark Sykes and Francois Georges-Picot | The Sykes-Picot Agreement, Article One | May 16, 1916
+N: Sykes and Picot's Article One makes the agreement's one promise to the people who live there.
+M: France and Great Britain are prepared to recognize and protect an independent Arab State or a Confederation of Arab States in the areas A and B marked on the annexed map, under the suzerainty of an Arab chief.
+N: Paul Cambon sends the terms to Sir Edward Grey on May ninth. Grey confirms them on May sixteenth.
+
+## ASIDE
+N: An independent Arab state, under an Arab chief, inside a zone France and Britain had already colored their own. Signed by the same two men, on the same page.
+
+## SCENE 3 | The same land, promised twice
+N: A year earlier, in letters running from July nineteen fifteen to January nineteen sixteen, Sir Henry McMahon had already told Sharif Hussein of Mecca that Britain was prepared to recognize and support the independence of the Arabs, if the Arabs rose against the Ottomans.
+
+## DOCUMENT | Sir Henry McMahon | Letter to Sharif Hussein of Mecca | October 24, 1915
+N: McMahon's own letter carves out an exception.
+M: The two districts of Mersina and Alexandretta and portions of Syria lying to the west of the districts of Damascus, Homs, Hama and Aleppo cannot be said to be purely Arab, and should be excluded from the limits demanded.
+N: Hussein's sons launch the Arab Revolt in June nineteen sixteen, one month after Sykes and Picot finished dividing that reward away.
+
+## ASIDE
+N: Damascus, Homs, Hama, and Aleppo, the four cities McMahon's letter treats as Arab, sit inside or beside the zone Sykes and Picot had already colored French.
+
+## REST
+
+## SCENE 4 | A third promise
+N: On November second, nineteen seventeen, Arthur James Balfour adds a third claimant to the same territory.
+
+## DOCUMENT | Arthur James Balfour | The Balfour Declaration, letter to Lord Rothschild | November 2, 1917
+N: Balfour writes to Lord Rothschild, on behalf of his government.
+M: His Majesty's Government view with favour the establishment in Palestine of a national home for the Jewish people, and will use their best endeavours to facilitate the achievement of this object, it being clearly understood that nothing shall be done which may prejudice the civil and religious rights of existing non-Jewish communities in Palestine.
+N: Independence to the Arabs. Partition between France and Britain. A national home for the Jewish people. One piece of land, three governments' worth of promises, inside two years.
+
+## SCENE 5 | The secret breaks
+N: The secret holds eighteen months. In November nineteen seventeen the Bolsheviks find the treaty and publish it. The Manchester Guardian prints it on November twenty sixth.
+N: The Ottomans relay the text to Hussein, to prove his allies had betrayed him.
+
+## DOCUMENT | T.E. Lawrence | Seven Pillars of Wisdom | 1926
+N: T.E. Lawrence had ridden with the Arab Revolt. A decade later he wrote about it.
+M: In our two years' partnership under fire they grew accustomed to believing me and to think my Government, like myself, sincere. In this hope they performed some fine things, but, of course, instead of being proud of what we did together, I was continually and bitterly ashamed.
+
+## ASIDE
+N: Lawrence had ridden beside the men making that promise. He is not describing someone else's betrayal.
+
+## REST
+
+## SCENE 6 | The map redrawn, worse
+N: In March nineteen twenty the Syrian National Congress crowns Faisal king of an independent Arab Syria. The San Remo Conference meets that April and hands the zones to France and Britain as League of Nations mandates.
+N: French troops march on Damascus. On July twenty fourth they crush Faisal's army at Maysalun. War Minister Yusuf al-Azma dies on the field, leading men he already knows will lose.
+
+## DOCUMENT | Abu Bakr al-Baghdadi | Audio statement announcing the Islamic State caliphate | July 2014
+N: A century after two men colored a map in five weeks, a militia bulldozes the earthen berm between Iraq and Syria and titles the video "The End of Sykes-Picot." Its leader, Abu Bakr al-Baghdadi, explains why.
+M: This blessed advance will not stop until we hit the last nail in the coffin of the Sykes-Picot conspiracy.
+
+## ASIDE
+N: The border in that video was never the line Sykes and Picot agreed to. Palestine was to be international. It became a British mandate instead.
+
+## REST
+
+## TURN | Five accounts
+N: One document, three broken promises, and five accounts of who was actually owed this land. Each one gets its own case first.
+
+## PERSPECTIVE | British and French Imperial | victor
+N: From London and Paris this was wartime statecraft, not conspiracy. The Ottoman Empire had entered the war on Germany's side, and Britain and France meant to divide its collapse without turning on each other the way they nearly had at Fashoda in eighteen ninety eight.
+N: Britain's core interest was the route to India, the Suez Canal and the oilfields of Mesopotamia. France held historic claims dating to the Crusades and a colonial lobby that regarded Syria as a French birthright.
+N: The mandate that followed was framed as a sacred trust of civilisation, tutelage toward a readiness the two governments alone would judge. Balfour set that framework down for Lord Curzon.
+M: In Palestine we do not propose even to go through the form of consulting the wishes of the present inhabitants of the country.
+N: Later defenders note the map itself barely survived. San Remo, Sevres, and Lausanne replaced its zones with mandates nobody had drawn in nineteen sixteen.
+
+## PERSPECTIVE | Arab Nationalist / The Betrayal | vanquished
+N: To Arabs, this was the founding betrayal of the modern era. Sharif Hussein did not rise against four centuries of Ottoman rule for a slogan. He negotiated, and in writing, Britain committed to recognize and support the independence of the Arabs in the regions the Sherif of Mecca had named.
+N: More than five thousand Arab casualties bought that promise. Arab fighters cut the Hejaz railway and took Aqaba and Damascus, fighting to liberate a homeland Sykes and Picot had already finished dividing a month before the revolt began.
+N: Damascus, Homs, Hama, and Aleppo, the same cities McMahon's own letter had called Arab, sat beside the zone the two diplomats had colored French.
+N: George Antonius, the movement's first great historian, gave the agreement a name.
+M: A shocking document. It is not only the product of greed at its worst, that is to say, of greed allied to suspicion and so leading to stupidity: it also stands out as a startling piece of double-dealing.
+N: Hussein learned the treaty existed from his own enemy's press, and kept fighting anyway.
+
+## PERSPECTIVE | Zionist | victor
+N: For the Zionist movement the decisive document was not the secret map but the public letter that followed it. Sykes-Picot had consigned Palestine to a murky international zone that gave the Jewish national project nothing.
+N: Chaim Weizmann, a chemist whose acetone process had aided the British war effort, spent years cultivating ministers and editors, arguing that a Jewish Palestine would answer nearly two thousand years of exile.
+N: In January nineteen nineteen, Faisal and Weizmann signed an agreement pledging cooperation, Faisal adding a handwritten condition: that Arab independence come first.
+M: We will wish the Jews a most hearty welcome home.
+N: That condition was never met, and the agreement collapsed with it. But to Zionists it still showed the two movements were not fated to collide, and that Britain betrayed the Jewish national home too, restricting immigration in the nineteen thirty nine White Paper exactly when European Jews needed refuge most.
+
+## PERSPECTIVE | Peoples of the Levant and Mesopotamia | vanquished
+N: Beneath the argument between Arab kings, French generals, and Zionist diplomats were the people who actually lived on the land, and for most of them the new borders were an act of erasure.
+N: The Kurds fared worst. Promised a state at Sevres, denied one at Lausanne, they were split among Turkey, Syria, Iraq, and Iran, and became the largest stateless nation on earth.
+N: The Druze of the Hawran had governed their own mountain for generations. Under French mandate rule they rose in nineteen twenty five behind Sultan al-Atrash.
+M: To arms! The enemy has struck at our national honor, at our very existence as a free people.
+N: France answered with aircraft and colonial troops, and shelled Damascus itself. At least six thousand rebels were killed. Iraq was assembled from three Ottoman provinces that had never been governed as one, and handed to a king imported from the Hejaz.
+
+## REST | short
+
+## PERSPECTIVE | Later Scholarship / The Myth and the Line | academic
+N: A century on, scholars are divided over how much this one agreement actually explains. David Fromkin's telling made the popular case.
+M: The European powers introduced an artificial state system into the Middle East that has made it into a region of countries that have not become nations even today.
+N: A revisionist current pushes back. The map was never implemented as drawn. Mosul, assigned to France, ended up in British Iraq. Palestine, meant to be international, became a British mandate instead.
+N: To call Arab states uniquely artificial, these historians argue, is to imply Arabs are uniquely incapable of building nations. Iraq's tensions were governed and exploited for a century by Iraqis themselves, not by a line on a map.
+N: The lasting damage, in this reading, was the mandate system: the denial of self-determination, rule by sectarian division, and a pattern of promising one thing and delivering another.
+
+## REST
+
+## TURN | What each one leaves out
+N: And here is what none of the five will say for itself.
+N: The Imperial case says nothing about Britain writing three incompatible promises inside two years, and letting the Arabs learn of one from a Bolshevik newspaper.
+N: The Arab Nationalist case says less about the ambiguities in McMahon's own wording that Britain later leaned on.
+N: The Zionist case says nothing about the ninety percent of Palestine's population that commitment was made without asking.
+N: The case for the peoples of the Levant says less about the local elites who collaborated with the mandates for their own advantage.
+N: And the revisionist case, fluent in how the map was redrawn twice before anyone lived under it, has almost nothing to say about how much force that symbol still carries: a militia bulldozing a border in twenty fourteen was not citing footnotes.
+
+## REST
+
+## CLOSE
+N: Faisal had led the Arab Revolt, been crowned king of an independent Syria, and watched Maysalun burn that kingdom down. Britain installed him instead as king of Iraq: a country assembled from three Ottoman provinces, whose borders he had not drawn and whose peoples he barely knew.
+
+## SAY
+Mark Sykes = mark syks
+Francois Georges-Picot = frahn-SWAH zhorzh pee-KOH
+Acre = AY-ker
+Kirkuk = keer-KOOK
+Kitchener = KICH-en-er
+Cilicia = sih-LISH-ee-ah
+Mesopotamia = mess-oh-poh-TAY-mee-ah
+Cambon = kahm-BOHN
+Sharif Hussein bin Ali = shah-REEF hoo-SAYN bin AH-lee
+McMahon = mik-MAH-un
+Mersina = mer-SEE-nah
+Alexandretta = al-eks-an-DRET-ah
+Hejaz = heh-JAHZ
+Aqaba = AH-kah-bah
+Balfour = BAL-for
+Rothschild = ROTHS-cheeld
+Faisal = FY-sal
+Yusuf al-Azma = YOO-suf al-AHZ-mah
+Maysalun = my-sah-LOON
+Abu Bakr al-Baghdadi = AH-boo BAH-kur al-bahg-DAH-dee
+Fashoda = fah-SHOH-dah
+Levantine = LEV-an-teen
+Curzon = KUR-zun
+Weizmann = VYTES-mahn
+Antonius = an-TOH-nee-us
+Druze = DROOZ
+Hawran = HOW-rahn
+Sultan al-Atrash = sool-TAHN al-AT-rash
+Fromkin = FRAHM-kin
+Sevres = SEV-ruh
+Lausanne = loh-ZAN
+Mosul = moh-SOOL

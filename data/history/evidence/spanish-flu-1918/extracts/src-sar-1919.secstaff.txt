@@ -1,0 +1,7 @@
+source: src-sar-1919
+locator: secstaff
+url: https://archive.org/download/sar-influenza-epidemic-of-1918-gmar-1919/Influenza%20Epidemic%20of%201918_GMAR1919_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+The disease developed with alarming rapidity and it was extremely diffieult to maintain an organization to move essential traffic, In little more than six weeks 34,800 members of the stafi—approximately 47 per cent. of the total establishment—contracted the disease. Owing to the difficulty of obtaining medical advice and nurses, many who escaped the disease had to remain at home to attend their families. The strain upon the remainder of the staff in keeping railway communication open, in tending the sick, burying the dead, and affording relief in outlying centres was, therefore, considerable.

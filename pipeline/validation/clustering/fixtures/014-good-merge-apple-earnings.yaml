@@ -1,0 +1,89 @@
+id: apple-q2-earnings-good-merge-2026-04
+name: "Apple Q2 earnings beat — known-good merge across 5 sources"
+failure_date: "2026-04-30"
+failure_kind: known-good-merge
+articles:
+  - id: aapl-1
+    title: "Apple Q2 earnings beat: revenue 91 billion, Vision Pro mainstreams"
+    summary: "Apple reported Q2 revenue of 91 billion dollars Thursday, a 7 percent year-over-year beat driven by Vision Pro mainstream adoption."
+    full_text: >
+      Apple reported Q2 revenue of 91 billion dollars on Thursday afternoon, a 7 percent
+      year-over-year beat driven by Vision Pro mainstream adoption and a strong Services
+      quarter. CEO Tim Cook said on the earnings call that Vision Pro adoption "has
+      crossed the chasm" and that the install base now exceeds 7 million units. Earnings
+      per share came in at 1.78 dollars, beating consensus by 6 cents. Services revenue
+      grew 14 percent year-over-year, the segment's fastest growth in eight quarters.
+      iPhone revenue grew 3 percent. China revenue contracted 2 percent, the smallest
+      contraction in five quarters. Apple raised its quarterly dividend to 26 cents and
+      authorized an additional 90-billion-dollar share repurchase. Shares rose 4 percent
+      after-hours.
+    source: { slug: cnbc, country: US, tier: international }
+    published_at: "2026-04-30T20:30Z"
+  - id: aapl-2
+    title: "AAPL beats: revenue 91B, Vision Pro install base tops 7 million"
+    summary: "Apple beat Q2 expectations with 91 billion in revenue, with Vision Pro install base topping 7 million units, the company said Thursday."
+    full_text: >
+      Apple beat Q2 expectations with 91 billion in revenue Thursday, with the Vision
+      Pro install base topping 7 million units, the company said. Bloomberg's Mark
+      Gurman said the Vision Pro number "validates the multi-year bet" Cupertino made on
+      mixed reality. Services revenue jumped 14 percent. China was a relative bright
+      spot, contracting only 2 percent versus a 5 percent street estimate. Apple
+      announced an additional 90-billion-dollar share-repurchase authorization. The
+      after-hours rally added roughly 110 billion dollars to the company's market
+      capitalization.
+    source: { slug: bloomberg, country: US, tier: international }
+    published_at: "2026-04-30T20:45Z"
+  - id: aapl-3
+    title: "Apple smashes Q2 estimates as Vision Pro hits 7M install base"
+    summary: "Apple smashed Q2 estimates as the Vision Pro install base hit 7 million units, the company said in its earnings release Thursday."
+    full_text: >
+      Apple smashed Q2 estimates as the Vision Pro install base hit 7 million units,
+      the company said in its earnings release Thursday afternoon. Reuters confirmed
+      Apple's quarterly revenue of 91 billion dollars beat consensus by roughly 1.5
+      billion. The Wall Street Journal noted that the Services beat continues to
+      validate Apple's transition to a recurring-revenue business model. Operating
+      margin expanded 80 basis points year-over-year. CFO Luca Maestri guided next
+      quarter to "low single-digit revenue growth." Apple's stock price rose 4 percent
+      in extended trading. The Eight-K filing is expected before market open Friday.
+    source: { slug: reuters, country: US, tier: wire }
+    published_at: "2026-04-30T21:00Z"
+  - id: aapl-4
+    title: "Vision Pro and Services power Apple's Q2 beat"
+    summary: "Vision Pro and Services powered Apple's Q2 beat, with the company posting 91 billion in revenue and 1.78 EPS Thursday afternoon."
+    full_text: >
+      Vision Pro and Services powered Apple's Q2 beat, with the company posting 91
+      billion dollars in revenue and 1.78 dollars in earnings per share Thursday
+      afternoon. The Financial Times noted that Cook's "crossed the chasm" framing was
+      the most bullish on Vision Pro since launch. Services revenue benefited from
+      strong subscription gains in Apple Music and iCloud+. China weakness was less
+      than feared. Apple raised the quarterly dividend by one cent and announced an
+      additional 90-billion-dollar share-repurchase program. The after-hours rally
+      pushed Apple's market cap above 4.1 trillion dollars.
+    source: { slug: ft, country: GB, tier: international }
+    published_at: "2026-04-30T21:15Z"
+  - id: aapl-5
+    title: "Apple Q2: 91B revenue, Vision Pro hits 7M units, share buyback raised"
+    summary: "Apple Q2: 91 billion revenue, Vision Pro hits 7 million units, share buyback raised by 90 billion. The company beat Wall Street expectations."
+    full_text: >
+      Apple Q2: 91 billion dollars revenue, Vision Pro hits 7 million units, share
+      buyback raised by an additional 90 billion. The company beat Wall Street
+      expectations Thursday afternoon, the AP reports. Services led the upside surprise
+      at 14-percent growth. iPhone revenue grew 3 percent. Wearables, Home and
+      Accessories grew 9 percent thanks to Vision Pro contribution. CFO Luca Maestri
+      said the company's installed base "reached an all-time high across all major
+      product categories." Operating margin expanded 80 basis points. Forward guidance
+      was modestly above consensus.
+    source: { slug: ap-news, country: US, tier: wire }
+    published_at: "2026-04-30T21:30Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [aapl-1, aapl-2, aapl-3, aapl-4, aapl-5]
+  min_clusters: 1
+  max_clusters: 1
+  min_source_count: 4
+rationale: |
+  Known-good baseline. Earnings coverage from five financial outlets all
+  describing the same release shares dense vocabulary (Apple, Vision
+  Pro, revenue, services, Q2) plus the 91-billion-dollar number. Phase-1
+  TF-IDF picks them up at threshold 0.2 with high overlap. Regression-
+  detection fixture for the rewrite.

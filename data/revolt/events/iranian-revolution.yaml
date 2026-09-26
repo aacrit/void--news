@@ -1,0 +1,226 @@
+slug: iranian-revolution
+title: The Iranian Revolution
+subtitle: A monarch with the region's fifth-largest army fled without firing his forces
+date_display: January 1978 to April 1979
+date_start: 1978
+date_end: 1979
+date_precision: year
+era: people-power
+region: middle-east
+country: Iran
+revolt_type: religious-theocratic
+status: concluded
+summary: A planted newspaper article insulting exiled cleric Ruhollah Khomeini in January 1978 set off a cycle of protest and mourning marches that repeated every 40 days under Shia mourning custom, each round larger than the last. By September 1978 over a million marched in Tehran. Strikes shut down the oil industry in December. The Shah left the country on January 16, 1979; Khomeini returned from exile on February 1 to a crowd estimated near 3 million and the monarchy's remaining army command declared neutrality within two weeks.
+significance: The only 20th-century revolution to replace a monarchy with a clerical theocracy, and the event that made political Islam an organizing template for opposition movements across the Muslim world.
+analytical_outlook: A broad secular-religious coalition that overthrew the monarchy together, after which the best-organized faction, Khomeini's clergy, out-maneuvered its former allies within roughly two years.
+grievances:
+  - kind: Political repression
+    intensity: 85
+    evidence: SAVAK, the Shah's secret police, was widely documented by Amnesty International in the 1970s for torture and the detention of thousands of political prisoners.
+  - kind: Rapid Westernization and secularization
+    intensity: 75
+    evidence: The Shah's White Revolution land reforms and 1976 replacement of the Islamic calendar with an imperial calendar angered both clergy and traditional bazaar merchants.
+  - kind: Economic dislocation
+    intensity: 70
+    evidence: Oil-boom inflation ran near 25 percent by 1977 while rural migrants crowded into Tehran shantytowns without matching wage growth.
+  - kind: Perceived foreign domination
+    intensity: 65
+    evidence: The 1953 Anglo-American-backed coup that restored the Shah after he fled Mossadegh's nationalist government remained a live grievance a quarter-century later.
+actors:
+  - actor_type: religious-clergy
+    name: Ayatollah Ruhollah Khomeini
+    description: Shia cleric exiled since 1964, directing the movement from Najaf and then Paris via cassette-taped sermons smuggled into Iran.
+    role_in_arc: Became the unifying symbol and eventual leader of the post-revolutionary state
+    defected: false
+  - actor_type: old-regime
+    name: Mohammad Reza Pahlavi
+    description: Shah of Iran since 1941, commanded one of the largest militaries in the Middle East.
+    role_in_arc: Left Iran on January 16, 1979 and died in exile in 1980
+    defected: false
+  - actor_type: masses
+    name: National Front and Islamic-secular coalition
+    description: Liberal nationalist, leftist, and bazaar merchant groups that joined the anti-Shah marches alongside religious networks.
+    role_in_arc: Provided early organizational and street numbers before being marginalized after 1979
+    defected: false
+  - actor_type: military-defectors
+    name: Imperial Iranian Army
+    description: Roughly 400,000 strong, US-equipped, the Shah's primary instrument of control.
+    role_in_arc: Declared neutrality on February 11, 1979, ending the monarchy's last means of resistance
+    defected: true
+  - actor_type: religious-clergy
+    name: Shia mosque and seminary network
+    description: Existing religious infrastructure across Iran's cities used to organize mourning marches and distribute Khomeini's messages.
+    role_in_arc: Supplied the organizational backbone that outlasted the secular coalition
+    defected: false
+tactics:
+  - tactic_type: mass-demonstration
+    description: Marches every 40 days observing Shia mourning rites for prior protest deaths, each cycle drawing larger crowds through 1978.
+    prominence: primary
+  - tactic_type: general-strike
+    description: Oil workers struck in October and December 1978, cutting production from 6 million to under 1 million barrels a day and crippling state revenue.
+    prominence: primary
+  - tactic_type: digital-mobilization
+    description: Khomeini's speeches recorded on cassette tape in Paris were smuggled into Iran and copied for mosque distribution, bypassing state media.
+    prominence: secondary
+resistance_type: hybrid
+phases:
+  - phase: old-regime-crisis
+    label: SAVAK Repression and Inflation
+    t_start: 0
+    t_end: 0.12
+    intensity: 35
+    reached: true
+    summary: Political repression and oil-boom inflation build resentment across secular and religious opposition alike.
+    key_events:
+      - SAVAK arrests documented by Amnesty International through the mid-1970s
+      - Inflation near 25 percent by 1977
+  - phase: the-spark
+    label: Qom Protests and the 40-Day Cycle
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 55
+    reached: true
+    summary: A state-planted newspaper attack on Khomeini triggers protests in Qom; the 40-day Shia mourning cycle turns each crackdown into the next protest's cause.
+    key_events:
+      - Qom protests, January 1978
+      - Black Friday shootings in Tehran's Jaleh Square, September 8, 1978
+  - phase: moderate-phase
+    label: General Strikes
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 65
+    reached: true
+    summary: Oil workers and civil servants strike nationwide, paralyzing the state's revenue and administration.
+    key_events:
+      - Oil worker strikes begin October 1978
+      - Oil production falls below 1 million barrels/day by December 1978
+  - phase: dual-power
+    label: The Shah Departs, Khomeini Returns
+    t_start: 0.48
+    t_end: 0.6
+    intensity: 75
+    reached: true
+    summary: The Shah appoints a caretaker government and leaves the country; Khomeini returns to a welcome of millions, and within two weeks the military high command declares neutrality.
+    key_events:
+      - Shah departs Iran, January 16, 1979
+      - Khomeini returns to Tehran, February 1, 1979
+      - Military declares neutrality, February 11, 1979
+  - phase: radical-phase
+    label: Consolidation of Clerical Rule
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 75
+    reached: true
+    summary: Khomeini's faction sidelines secular and leftist former allies, culminating in a referendum establishing the Islamic Republic.
+    key_events:
+      - Islamic Republic referendum, March 30-31, 1979, reported 98 percent in favor
+      - New constitution establishing the Supreme Leader adopted December 1979
+ate_its_children: true
+outcome: consolidated-autocracy
+peak_participation_pct: null
+peak_participation_display: over 2 million marchers in Tehran on Ashura, December 10-11, 1978
+crossed_participation_threshold: true
+military_defection: partial
+foreign_intervention: diplomatic
+duration_days: 455
+death_toll: estimates of deaths during the uprising itself range roughly 500 to 2,000; post-revolutionary tribunal executions add further thousands through 1979-1981
+death_toll_low: 500
+death_toll_high: 2000
+regime_before: monarchy
+regime_after: theocracy
+democratization_delta: -1
+success_factors:
+  - factor_key: participation-threshold
+    label: 3.5 percent participation rule
+    framework: chenoweth
+    status: Tehran marches alone drew crowds estimated near 2 to 3 percent of Iran's roughly 37 million population on peak days in December 1978 and February 1979
+    direction: favors-movement
+    base_rate: Chenoweth's research finds no campaign that achieved active participation from 3.5 percent of a population has failed to achieve its aims
+    rationale: The December 1978 Ashura marches and Khomeini's February 1979 return drew crowds in the low millions nationwide, plausibly crossing or approaching the 3.5 percent threshold when combined with the general strikes' broader participation.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: military-defection
+    label: Security force defection
+    framework: chenoweth
+    status: The Imperial Army's high command declared neutrality on February 11, 1979 rather than defend the provisional government
+    direction: favors-movement
+    base_rate: Security force defection or non-cooperation is the strongest single predictor of movement success across the historical record
+    rationale: The Shah's roughly 400,000-strong military did not mutiny outright, but its refusal to fire on crowds and its final neutrality declaration removed the regime's last coercive option within two weeks of the Shah's departure.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: elite-fracture
+    label: Elite fracture and state breakdown
+    framework: goldstone
+    status: Oil revenue collapse from the December 1978 strikes broke the state's fiscal capacity within weeks
+    direction: favors-movement
+    base_rate: Goldstone's state-breakdown model identifies fiscal crisis combined with elite defection as the structural precondition that converts protest into revolution
+    rationale: The strike wave did not just express grievance, it removed the state's ability to pay its own security forces and bureaucracy, a mechanism Goldstone identifies across early modern and 20th-century revolutions alike.
+    sources:
+      - Goldstone, Revolution and Rebellion in the Early Modern World (1991)
+key_figures:
+  - name: Ruhollah Khomeini
+    role: Exiled Shia cleric, became Supreme Leader of the Islamic Republic
+    born: 1902
+    died: 1989
+    wikipedia: https://en.wikipedia.org/wiki/Ruhollah_Khomeini
+  - name: Mohammad Reza Pahlavi
+    role: Shah of Iran, deposed 1979
+    born: 1919
+    died: 1980
+    wikipedia: https://en.wikipedia.org/wiki/Mohammad_Reza_Pahlavi
+  - name: Mehdi Bazargan
+    role: First prime minister of the Islamic Republic's provisional government, resigned November 1979
+    born: 1907
+    died: 1995
+    wikipedia: https://en.wikipedia.org/wiki/Mehdi_Bazargan
+legacy_points:
+  - Established the Islamic Republic of Iran, the first modern state to formally place clerical authority (velayat-e faqih) above elected government.
+  - The November 1979 US embassy hostage crisis that followed reshaped US-Iran relations for the subsequent four decades.
+  - Became a reference model for Islamist opposition movements across the Muslim world through the 1980s and beyond.
+  - The secular and leftist coalition partners who helped topple the Shah were largely purged or suppressed within two to three years, a widely cited case of revolutionary coalition fracture.
+related_revolt_slugs:
+  - russian-revolution
+  - iran-woman-life-freedom
+related_history_slugs:
+  - iranian-revolution
+is_published: true
+perspectives:
+  - viewpoint: Revolutionary clergy
+    viewpoint_type: revolutionary
+    region_origin: middle-east
+    narrative: To Khomeini's supporters, the revolution restored Islamic governance after decades of a foreign-installed monarchy that had suppressed religious life and sold Iran's resources to Western interests. The clergy's leadership reflected genuine popular consensus, confirmed by the March 1979 referendum.
+    key_arguments:
+      - The Shah's 1953 restoration by a foreign-backed coup delegitimized the monarchy from the outset
+      - Clerical networks were the only institutions with the reach and trust to organize a nationwide movement
+    sources: []
+    notable_quotes:
+      - text: We did not send our young people to the battlefronts to establish democracy
+        speaker: Ruhollah Khomeini
+        context: Widely cited remark reflecting the post-revolutionary marginalization of secular democratic demands
+    emphasized:
+      - SAVAK repression and the 1953 coup's lasting grievance
+      - The scale of the referendum result
+    omitted:
+      - The extent of secular, leftist, and Marxist organizational contribution to the 1978 protests and strikes
+  - viewpoint: Secular and leftist coalition member
+    viewpoint_type: diaspora
+    region_origin: middle-east
+    narrative: Many secular nationalists and leftists who marched against the Shah in 1978 later described the revolution as stolen from a broader coalition. They argue the anti-Shah movement had genuinely plural goals, constitutional government, land reform, free press, that clerical authorities abandoned once the monarchy fell.
+    key_arguments:
+      - The 1978 coalition included nationalist, leftist, and secular liberal currents with democratic rather than theocratic aims
+      - Post-1979 suppression of former allies, including the 1981 crackdown on the Mujahedin-e Khalq, reveals the theocratic outcome was not the coalition's shared goal
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - Bazaar merchant and student organizing prior to clerical dominance
+      - The narrowing of political space after 1979
+    omitted:
+      - The comparative organizational weakness of secular factions relative to the mosque network by late 1978
+media: []
+connections:
+  - target_slug: russian-revolution
+    connection_type: parallel
+    description: Both saw a broad anti-monarchist coalition splinter after victory, with the most disciplined ideological faction consolidating sole power within roughly two years.
+  - target_slug: iran-woman-life-freedom
+    connection_type: provoked-backlash
+    description: The 2022 uprising arose in direct opposition to enforcement mechanisms, including mandatory hijab law, established by the state this revolution created.

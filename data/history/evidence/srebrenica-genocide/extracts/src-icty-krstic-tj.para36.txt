@@ -1,0 +1,7 @@
+source: src-icty-krstic-tj
+locator: para36
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+
+36. Late in the afternoon of 11 July 1995, General Mladic, accompanied by General @ivanovi} (then Commander of the Drina Corps), General Krstic (then Deputy Commander and Chief of Staff of the Drina Corps) and other VRS officers, took a triumphant walk through the empty streets of Srebrenica town. The moment was captured on film by Serbian journalist, Zoran Petrovi}. 62

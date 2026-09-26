@@ -1,0 +1,7 @@
+source: src-hansard-lords-19470220
+locator: p836
+url: https://api.parliament.uk/historic-hansard/lords/1947/feb/20/indian-policy
+read: 2026-09-25
+note: p is the Hansard column; HL Deb 20 February 1947 vol 145 cc835-41, the Government's statement as Lord Pethick-Lawrence read it to the Lords
+
+7. His Majesty's Government desire to hand over their responsibility to authorities established by a Constitution approved by all Parties in India in accordance with the Cabinet Mission's plan, but unfortunately there is at present no clear prospect that such a Constitution and such authorities will emerge. The present state of uncertainty is fraught with danger and cannot be indefinitely prolonged. His Majesty's Government wish to make it clear that it is their definite intention to take the necessary steps to effect the transference of power into responsible Indian hands by a date not later than June, 1948.

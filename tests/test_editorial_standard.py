@@ -1,0 +1,327 @@
+#!/usr/bin/env python3
+"""One planted defect per rule in docs/EDITORIAL-STANDARD.md.
+
+A validator that has never rejected anything is not a validator. Each case
+below plants exactly ONE defect and asserts the rule with that ID fires, and a
+clean control asserts none of them fires on good prose. The clean control is
+the half that catches an over-eager regex: E-10's first draft flagged
+"Mudslides Kill Dozens" as a headline whose location the summary omitted, which
+is why that rule is now model-checked (L-07) instead of a regex.
+
+Run: python tests/test_editorial_standard.py
+"""
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+from pipeline.editorial import standard as std  # noqa: E402
+
+CLEAN_SUMMARY = (
+    "The central bank raised its benchmark rate by half a point on Tuesday, the "
+    "third increase this quarter. Governor Adeyemi said the decision was "
+    "unanimous and that the committee would meet again in November. Mortgage "
+    "applications fell 12 percent in the week after the announcement, according "
+    "to the national lenders association. Two of the five largest banks passed "
+    "the increase to savers within a day."
+)
+CLEAN_TITLE = "Central Bank Raises Rate Half a Point in Third Increase This Quarter"
+
+# (id, candidate, what was planted)
+CASES = [
+    ("S-01", {"title": CLEAN_TITLE, "summary": CLEAN_SUMMARY,
+              "href": "/?story=1f4d8c2a-9b31-4e57-8a0d-6c2f5b7e91a4"},
+     "archive-miss homepage query link"),
+    ("S-02", {"title": CLEAN_TITLE, "summary": "The rate rose. Markets reacted."},
+     "two-sentence summary (the satire-as-news shape)"),
+    ("S-03", {"title": CLEAN_TITLE, "summary": CLEAN_SUMMARY.rstrip(".") + " and the"},
+     "summary cut off mid-sentence"),
+    ("S-04", {"title": CLEAN_TITLE,
+              "summary": CLEAN_SUMMARY + ' Adeyemi called it "a necessary correction.'},
+     "unbalanced quotation mark"),
+    ("S-05", {"title": "Bank Raises Rate", "summary": "TheThe committee met on Tuesday. " + CLEAN_SUMMARY},
+     "doubled capitalized word"),
+    ("S-06", {"title": CLEAN_TITLE, "summary": "The U. S. central bank moved first. " + CLEAN_SUMMARY},
+     "broken abbreviation spacing"),
+    ("E-03", {"title": CLEAN_TITLE, "summary": "The decision affects our borrowers directly. " + CLEAN_SUMMARY},
+     "first-person pronoun outside quotes"),
+    ("E-04", {"title": CLEAN_TITLE, "summary": CLEAN_SUMMARY + " although the committee was unanimous."},
+     "orphan subordinate clause"),
+    ("E-05", {"title": CLEAN_TITLE,
+              "summary": CLEAN_SUMMARY + " Adeyemi was charged with fraud in 2019."},
+     "criminal allegation with no attribution"),
+    # The live defect of 2026-09-21: "Defense Department staffers reportedly
+    # likened Jennifer to Yoko Ono" satisfied E-05, because "reportedly" was
+    # in its attribution cues, while attributing the claim to no one (brand
+    # audit F-14). A hedge names nobody. Advisory until the numbers are in.
+    ("E-15", {"title": CLEAN_TITLE,
+              "summary": CLEAN_SUMMARY + " Adeyemi was reportedly charged with fraud in 2019."},
+     "a hedge standing in for attribution on a criminal claim"),
+    ("E-07", {"title": CLEAN_TITLE,
+              "summary": CLEAN_SUMMARY + " The funds were traced to the Iranian terror regime."},
+     "contested terminology in Void's voice"),
+    ("E-08", {"title": CLEAN_TITLE,
+              "summary": CLEAN_SUMMARY + " The committee is described as the most hawkish in a decade."},
+     "unattributed passive evaluation"),
+    ("E-09", {"title": "Army Base Blasts Leave Two Dead",
+              "summary": (
+                  "Two people died and 14 are missing after explosions at an army base. "
+                  "The exact cause of the explosions remains under investigation. "
+                  "Details of the unit involved have not been immediately released. "
+                  "The number of dead and missing is based on initial reports from the scene. "
+                  "Investigations are ongoing to determine the sequence of events. "
+                  "The full extent of the damage is still being evaluated.")},
+     "a card that is mostly absence of information"),
+    # Verbatim from the 2026-09-10 feed, third report of this shape.
+    ("S-07", {"title": "Russia Foils Ukrainian Plot Against British Ambassador",
+              "summary": CLEAN_SUMMARY + " The FSB said it had foiled an Ukrainian plot "
+                                         "against the ambassador."},
+     "\"an\" before a consonant sound"),
+    ("E-11", {"title": CLEAN_TITLE,
+              "summary": CLEAN_SUMMARY + " Adeyemi told the committee to keep your projections conservative."},
+     "second-person pronoun outside quotes"),
+    # Verbatim from the 2026-09-10 Colombia gun-permit card, where this
+    # sentence sat between a Rubio quote and the request for comment.
+    # The live defect of 2026-09-20: a headline death toll no source contained.
+    # 22 source articles carried 23 mentions of 16, two of 21, and no 31.
+    ("E-13", {"title": "Funerals Held After Suicide Attack Kills 31 at Pakistan Mosque",
+              "summary": (
+                  "Funerals are underway in Kohat, Pakistan, following a suicide attack "
+                  "on Friday that killed at least 31 people. A suicide attacker rammed an "
+                  "explosives-laden car into a mosque near a police compound as seven "
+                  "gunmen attempted to enter the facility. Other reports state at least "
+                  "21 people died, while some outlets reported 16 fatalities. Five police "
+                  "officers were among those killed. The attack also injured 57 people. "
+                  "The incident occurred during Friday prayers, with officers and their "
+                  "families inside the mosque near police headquarters."),
+              "source_text": (
+                  "16 killed in twin suicide attack in NW Pakistan. At least 16 killed in "
+                  "Pakistan car bomb attack near mosque. Suicide attack kills 16 near "
+                  "mosque in northwest Pakistan police compound. Pakistan mosque bombing "
+                  "kills 16, wounds 57. Some outlets put the toll at 21.")},
+     "a death toll in the headline that appears in none of the sources"),
+    ("E-12", {"title": "Colombian President Lifts Gun Carry Ban",
+              "summary": (
+                  "Colombian President Abelardo de la Espriella signed an order on Tuesday "
+                  "ending regulations that prohibited law-abiding citizens from carrying "
+                  "legally-owned firearms. "
+                  "The decree reversed a ban set in place in 2015 by then-President Juan "
+                  "Manuel Santos and renewed annually by his successors. "
+                  "The decree was signed while US Secretary of State Marco Rubio was "
+                  "visiting Colombia. "
+                  "Rubio stressed the need for security across the region. "
+                  "The judge ruled the images could be harmful to minors. "
+                  "The Colombian embassy did not respond to a request for comment about "
+                  "the gun law change.")},
+     "a sentence that belongs to a different story"),
+    # L-02 has said "every quotation is verbatim" since the standard was
+    # written, but only an LLM ever judged it, and the critique pass is capped
+    # at 20 flash requests a day. A quotation is the one thing a reader may
+    # treat as literal. E-14 checks it deterministically, at write time.
+    ("E-14", {"title": "Minister Rejects Findings of Water Safety Review",
+              "summary": (
+                  "Environment Minister Dela Whitcombe rejected the review's findings on "
+                  "Thursday, telling reporters outside the ministry, \u201cThis report was "
+                  "written by people who have never set foot in the catchment and it is "
+                  "worthless.\u201d The review found lead concentrations above the national "
+                  "limit at 11 of 40 sampling points. The ministry has not said whether it "
+                  "will commission a second review, and the minister declined to take "
+                  "further questions on the testing programme itself."),
+              "source_text": (
+                  "Environment Minister Dela Whitcombe dismissed the review on Thursday. "
+                  "\u201cI have real questions about the methodology here,\u201d she told "
+                  "reporters outside the ministry. The review found lead above the national "
+                  "limit at 11 of 40 sampling points.")},
+     "a quotation the source never contains"),
+]
+
+
+S07_MUST_STAY_QUIET = [
+    "Turkey is a NATO ally and hosted the talks.",
+    "A FIFA spokesperson confirmed the schedule on Monday.",
+    "The vote followed a MAGA incumbent's defeat in the primary.",
+    "Crews reached the site within an hour of the collapse.",
+    "She called it an honest account of what happened.",
+    "Protesters carried an umbrella against the rain.",
+    "The council approved a unanimous resolution.",
+]
+
+
+def main() -> int:
+    ok = True
+
+    # S-07 must stay silent on correct English. An onset-letter rule for
+    # letter-named acronyms flagged the first three of these over the archive
+    # and caught nothing real, so it was removed rather than tuned.
+    for line in S07_MUST_STAY_QUIET:
+        found = std.s07_article_agreement(line)
+        if found:
+            print(f"FAIL: S-07 fired on correct English: {line!r} -> {found}")
+            ok = False
+    if ok:
+        print(f"PASS: S-07 quiet on {len(S07_MUST_STAY_QUIET)} correct constructions")
+
+    # E-15 must stay quiet where the hedge is not the only cover: the same
+    # claim attributed to prosecutors is E-05-clean and E-15-clean alike.
+    hedged_and_named = std.validate_candidate({
+        "title": CLEAN_TITLE,
+        "summary": CLEAN_SUMMARY + " Adeyemi was reportedly charged with fraud in 2019, prosecutors said.",
+    })
+    if any(f.id in ("E-05", "E-15") for f in hedged_and_named):
+        print(f"FAIL: E-15 fired beside a real attribution: {[str(f) for f in hedged_and_named]}")
+        ok = False
+    else:
+        print("PASS: E-15 quiet when the claim is also attributed")
+
+    # Clean control: a good card trips nothing.
+    clean = std.validate_candidate({
+        "title": CLEAN_TITLE, "summary": CLEAN_SUMMARY,
+        "href": "/story/1f4d8c2a-9b31-4e57-8a0d-6c2f5b7e91a4/",
+    })
+    if clean:
+        print(f"FAIL: clean control tripped {[str(f) for f in clean]}")
+        ok = False
+    else:
+        print("PASS: clean control trips no rule")
+
+    for rule_id, candidate, planted in CASES:
+        findings = std.validate_candidate(candidate)
+        ids = {f.id for f in findings}
+        if rule_id not in ids:
+            print(f"FAIL: {rule_id} did not fire on {planted}; got {sorted(ids) or 'nothing'}")
+            ok = False
+        else:
+            extra = ids - {rule_id}
+            note = f" (also {sorted(extra)})" if extra else ""
+            print(f"PASS: {rule_id} fired on {planted}{note}")
+
+    # Feed-level rules.
+    dupes = std.f02_duplicate_headlines([
+        "Senate Passes Border Funding Bill After Overnight Session",
+        "Border Funding Bill Passes Senate in Overnight Session",
+        "Wildfire Forces Evacuation of Three Coastal Towns",
+    ])
+    if not any(f.id == "F-02" for f in dupes):
+        print("FAIL: F-02 did not fire on two headlines of the same story")
+        ok = False
+    else:
+        print("PASS: F-02 fired on two headlines of the same story")
+
+    if std.f02_duplicate_headlines([
+        "Wildfire Forces Evacuation of Three Coastal Towns",
+        "Central Bank Raises Rate Half a Point in Third Increase",
+    ]):
+        print("FAIL: F-02 fired on two unrelated headlines")
+        ok = False
+    else:
+        print("PASS: F-02 quiet on unrelated headlines")
+
+    counts = std.f04_count_match(header_count=12, rendered=12, expected=20)
+    if not any("configured feed size" in f.message for f in counts):
+        print("FAIL: F-04 did not fire on a self-consistent short render")
+        ok = False
+    else:
+        print("PASS: F-04 fired on a self-consistent short render")
+
+    # Every ID in the registry must have a case or be model-checked.
+    covered = {c[0] for c in CASES} | {"F-02", "F-04"}
+    missing = [v.id for v in std.VALIDATORS if v.id not in covered]
+    if missing:
+        print(f"FAIL: no planted defect for {missing}")
+        ok = False
+    else:
+        print(f"PASS: every one of the {len(std.VALIDATORS)} validators has a planted defect")
+
+    return 0 if ok else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+
+
+def test_e13_catches_a_fabricated_number():
+    """A number in the card that no source article contains.
+
+    Taken verbatim from the live feed of 2026-09-20. The card headlined
+    "Suicide Attack Kills 31 at Pakistan Mosque"; across its 22 sources there
+    were 23 mentions of 16, two of 21, and none of 31. The summary said "Other
+    reports state at least 21 people died" one sentence later, so the card knew
+    the sources disagreed and asserted a third number anyway.
+
+    Every other rule in the standard reads the card alone. This is the first
+    that reads it against what it was written from.
+    """
+    import sys, pathlib
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "pipeline"))
+    from editorial.standard import validate_candidate
+
+    sources = ("16 killed in twin suicide attack in NW Pakistan. At least 16 killed in "
+               "Pakistan car bomb attack near mosque. Pakistan mosque bombing kills 16, "
+               "wounds 57. Some reports put the toll at 21.")
+
+    bad = {"title": "Funerals Held After Suicide Attack Kills 31 at Pakistan Mosque",
+           "summary": "Funerals are underway in Kohat following an attack that killed at "
+                      "least 31 people. Other reports state at least 21 people died, "
+                      "while some outlets reported 16 fatalities. " + "Filler. " * 40,
+           "source_text": sources}
+    ids = [f.id for f in validate_candidate(bad)]
+    assert "E-13" in ids, f"fabricated number not caught: {ids}"
+
+    good = dict(bad,
+                title="Funerals Held After Suicide Attack at Pakistan Mosque Kills 16",
+                summary="Most outlets report 16 killed; some report at least 21. "
+                        "Reported injuries reach 57. " + "Filler. " * 40)
+    assert "E-13" not in [f.id for f in validate_candidate(good)], "correct card failed"
+
+    # 21 and 57 are in the sources and must not fire; nor may a one-digit number.
+    assert "E-13" not in [f.id for f in validate_candidate(
+        dict(good, summary="Five officers died; 21 hurt, 57 wounded. " + "Filler. " * 40))]
+
+    # No source text: skip rather than accuse. A rule that cannot see the
+    # evidence must not claim the card is wrong.
+    assert "E-13" not in [f.id for f in validate_candidate(
+        {"title": "Kills 31", "summary": "31 died. " + "Filler. " * 40})]
+    print("PASS  E-13 catches a fabricated number and spares a sourced one")
+
+
+def test_e14_catches_an_invented_quotation() -> None:
+    """A quotation must be in the sources; scare quotes and elisions must not fire."""
+    sources = (
+        "Environment Minister Dela Whitcombe dismissed the review on Thursday. "
+        "\u201cI have real questions about the methodology here, and I have said so to "
+        "the department,\u201d she told reporters outside the ministry. She called the "
+        "sampling regime a \u201cwork in progress\u201d."
+    )
+    filler = "Filler sentence for length. " * 20
+
+    bad = {"title": "Minister Rejects Water Review",
+           "summary": ('She said, "This report was written by people who have never set '
+                       'foot in the catchment." ') + filler,
+           "source_text": sources}
+    assert "E-14" in [f.id for f in validate_candidate(bad)], "invented quotation not caught"
+
+    # Verbatim, with the curly quotes the summarizer straightens on the way out.
+    good = dict(bad, summary=('She said, "I have real questions about the methodology '
+                              'here, and I have said so to the department." ') + filler)
+    assert "E-14" not in [f.id for f in validate_candidate(good)], "verbatim quote failed"
+
+    # An elided quote is checked around the ellipsis, which no source contains.
+    assert "E-14" not in [f.id for f in validate_candidate(
+        dict(bad, summary='She said, "I have real questions about the methodology ... '
+                          'I have said so to the department." ' + filler))]
+
+    # Three words or fewer is a scare quote or a title, not a quotation.
+    assert "E-14" not in [f.id for f in validate_candidate(
+        dict(bad, summary='She called it a "work in progress" and left. ' + filler))]
+
+    # No source text: skip rather than accuse, exactly as E-13 does.
+    assert "E-14" not in [f.id for f in validate_candidate(
+        {"title": "Minister Rejects Water Review",
+         "summary": 'She said, "Nobody in this ministry believes that number." ' + filler})]
+    print("PASS  E-14 catches an invented quotation and spares a verbatim one")
+
+
+if __name__ == "__main__":
+    test_e13_catches_a_fabricated_number()
+    test_e14_catches_an_invented_quotation()

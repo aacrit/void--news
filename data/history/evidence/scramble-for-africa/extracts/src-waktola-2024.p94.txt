@@ -1,0 +1,10 @@
+source: src-waktola-2024
+locator: p94
+url: https://www.ajol.info/index.php/ejossah/article/download/263344/248589
+read: 2026-09-25
+note: sliced from the PDF's text layer; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed
+
+On March 1, 1896, the Battle of Adwa marked a crucial event in Ethiopian and
+Italian history. This violent conflict saw both sides suffer greatly, with 11,000
+casualties in total, and nearly 43% of the Italian forces killed, wounded, or missing
+(Pankhurst, 1963). Emperor Menelik's battlefield tactics during the battle have

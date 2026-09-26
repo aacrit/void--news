@@ -1,0 +1,81 @@
+name: "History: sync audio to the store"
+
+# Moves the History audio out of git and into the release that backs it.
+#
+# The catalogue is 78 finished documentaries, about 900 MB of MP3. Git keeps
+# every byte of every re-render forever, and this repository's entire history
+# before the audio edition was 167 MB. So the episodes live in a GitHub
+# Release and the deploy workflow pulls them into the publish directory.
+#
+# They are NOT served from the release: GitHub hands those assets over as
+# application/octet-stream behind a signed redirect that expires in an hour,
+# which plays in Chrome and fails in iOS Safari. Readers keep fetching
+# /audio/history/<slug>.mp3 from news.voidvision.org.
+#
+#   sync    upload every committed MP3 to the release (safe to re-run)
+#   untrack sync, then git rm --cached them so git stops carrying them
+#
+# untrack is the one-way step. Run sync first and check the release.
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'sync (upload only) or untrack (upload, then stop tracking)'
+        required: true
+        default: 'sync'
+        type: choice
+        options: [sync, untrack]
+
+concurrency:
+  group: history-audio-store
+  cancel-in-progress: false
+
+jobs:
+  store:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Upload every episode to the release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          ls frontend/public/audio/history/*.mp3 >/dev/null 2>&1 || {
+            echo "no MP3s in the tree: nothing to sync"; exit 0; }
+          python pipeline/history/release_store.py upload frontend/public/audio/history/*.mp3
+
+      # Prove the store can serve what the manifest claims BEFORE git stops
+      # carrying it. This fetches every episode from the release into a
+      # scratch directory and fails if any is missing or truncated.
+      - name: Verify the store round-trips
+        run: |
+          rm -rf /tmp/store-check
+          python pipeline/history/release_store.py fetch --out /tmp/store-check
+          echo "store holds $(ls /tmp/store-check/*.mp3 | wc -l) episode(s)"
+
+      - name: Stop tracking the audio in git
+        if: inputs.mode == 'untrack'
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git rm --cached -q frontend/public/audio/history/*.mp3
+          if git diff --cached --quiet; then echo "already untracked"; exit 0; fi
+          git commit -m "History: move the audio out of git and into the store" \
+                     -m "The MP3s are now in the history-audio release and the deploy workflow pulls them into frontend/out. Readers still fetch them same-origin. See pipeline/history/release_store.py."
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${{ github.ref_name }}" && \
+              git push origin HEAD:"${{ github.ref_name }}" && break
+            sleep $((2 ** i))
+          done

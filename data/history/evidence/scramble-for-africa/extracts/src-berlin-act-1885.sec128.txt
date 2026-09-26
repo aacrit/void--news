@@ -1,0 +1,12 @@
+source: src-berlin-act-1885
+locator: sec128
+url: https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: Hertslet's heading to No. 128, with the date of signature
+
+Ho. 128. — GENERAL ACT of the Conference of Berlin , relative to the
+Development of Trade and Civilization in Africa ; the free Navigation
+of the Rivers Congo , Niger , &c. ; the Suppression of the Slave Trade
+by Sea and Land ; the occupation of Territory on the African Coasts ,
+&c. Signed at Berlin , 26th February , 1885.*

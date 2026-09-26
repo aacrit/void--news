@@ -1,0 +1,14 @@
+source: src-kirpal-intro-recovery
+locator: secxxxi
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: the editor's introduction, section headed Recovery of Abducted Women, pages xxxi to xxxii of the collection (the scan's running number XXXii follows the passage)
+note: the OCR layer's 'Ist March' for 1st March is kept as printed
+
+The Governments of India and Pakistan in their meeting held on the 6th December, 1947 took the following decisions regarding the recovery of abducted women and children:
+
+1. Conversion of persons abducted after the Ist March 1947 was not to be recognized and all such persons were to be restored to their respective Dominions even against the wishes of persons concerned.
+
+2. The primary responsibility for the recovery of abducted persons was to rest with the local police. .
+
+3. Social workers were to be associated actively with the scheme. The D.L.Os. were to supply information regarding abducted persons to be recovered.

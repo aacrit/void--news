@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The Cambodian Genocide",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 54.077
+  },
+  {
+   "startTime": 54.077,
+   "title": "Forty eight hours",
+   "endTime": 133.686
+  },
+  {
+   "startTime": 133.686,
+   "title": "A dam with no engineers",
+   "endTime": 194.703
+  },
+  {
+   "startTime": 194.703,
+   "title": "Fourteen thousand faces",
+   "endTime": 250.558
+  },
+  {
+   "startTime": 250.558,
+   "title": "Thirteen days",
+   "endTime": 303.865
+  },
+  {
+   "startTime": 303.865,
+   "title": "Five accounts",
+   "endTime": 314.044
+  },
+  {
+   "startTime": 314.044,
+   "title": "The Khmer Rouge",
+   "endTime": 399.015
+  },
+  {
+   "startTime": 399.015,
+   "title": "The Survivors",
+   "endTime": 472.712
+  },
+  {
+   "startTime": 472.712,
+   "title": "Vietnamese Liberation",
+   "endTime": 556.794
+  },
+  {
+   "startTime": 556.794,
+   "title": "The Tribunal",
+   "endTime": 638.122
+  },
+  {
+   "startTime": 638.122,
+   "title": "Regional Intervention",
+   "endTime": 722.441
+  },
+  {
+   "startTime": 722.441,
+   "title": "What each one leaves out",
+   "endTime": 789.08
+  },
+  {
+   "startTime": 789.08,
+   "title": "Legacy",
+   "endTime": 805.391
+  },
+  {
+   "startTime": 805.391,
+   "endTime": 818.491,
+   "title": "Also from Void News"
+  }
+ ]
+}

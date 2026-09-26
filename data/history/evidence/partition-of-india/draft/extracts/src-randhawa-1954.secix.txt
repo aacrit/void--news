@@ -1,0 +1,8 @@
+source: src-randhawa-1954
+locator: secix
+url: https://archive.org/download/dli.csl.8772/8772_djvu.txt
+read: 2026-09-25
+note: the text layer's line breaks are joined, its soft hyphens (¬) rejoined and a hyphen at a line break kept without the break; its doubled spaces are single
+note: the Preface, page ix (sec is the preface page in roman numerals)
+
+Within a week after the 15th August, 1947 about 11 lakh Hindu and Sikh refugees had crossed over from West to East Punjab and in the following week another 25 lakhs had collected in concentration camps in West Punjab.

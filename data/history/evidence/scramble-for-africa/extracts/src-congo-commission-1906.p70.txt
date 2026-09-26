@@ -1,0 +1,28 @@
+source: src-congo-commission-1906
+locator: p70
+url: https://archive.org/download/congoreportofcom00cong/congoreportofcom00cong_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+
+2. The Sentries
+
+One means by sentries ( sentili , native word,
+taken from the English) the black overseers, armed
+with a muzzle-loading gun, who have the official
+duty of directing the work of the natives in the forest and of preventing the devastation of the same by
+the cutting of the rubber vines, but whose labours
+for the greater part of their time, are limited to calling to the minds of the natives their obligations,
+seeing to it that they go to the forest and accompany the gatherers when they come to the post.
+
+Two kinds of sentries can be distinguished.
+
+Amongst the overseers, some, who belong to the
+personnel of the post and who are nearly always
+strangers to the region, patrol the villages at the
+time when the natives should be at work, and report
+to the whites those who instead of being at work
+are staying at home. Very often, in order to exercise a more complete control, they are detailed to a
+special village where they permanently establish
+themselves. These are the sentilis , strictly speaking. They are by far the worst sort. In their
+quality as strangers, they are not interested in the
+blacks with whom they deal.

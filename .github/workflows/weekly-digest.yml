@@ -1,0 +1,297 @@
+name: Weekly Digest
+
+# Cloudflare migration follow-up (2026-09-19). This job was left on the
+# decommissioned Supabase stack: it ran the generator with SUPABASE_* env and no
+# VOID_SQLITE_PATH, so it read an empty database, wrote its row nowhere the site
+# could see, and committed nothing. export_static.py reads weekly_digests from
+# the SQLite state DB, so /weekly served whatever the last pre-migration run had
+# left behind: Issue #23, week of 2026-08-24.
+#
+# It now mirrors the daily pipeline: restore the SQLite state DB, generate
+# against it, emit ONLY the weekly snapshot, commit it so the Pages CDN serves
+# it. The state DB is deliberately NOT saved back to the cache (see below).
+
+permissions:
+  contents: write   # commit the refreshed weekly snapshot to main
+  actions: read     # download the state snapshot artifact on a cold cache
+
+on:
+  schedule:
+    # SUNDAY 18:00 UTC. Void Weekly is a Sunday magazine: the issue covers the
+    # week the reader has just lived through, Monday to that same Sunday, which
+    # is what --week-offset 0 means since `weekly_window` started counting
+    # Sunday as inside its own week.
+    #
+    # 18:00 is chosen against the daily pipeline rather than arbitrarily. The
+    # daily cron is 11:00 but GitHub's scheduler lags badly: the 2026-09-20 run
+    # STARTED at 14:37 and finished at 15:51. 18:00 leaves the state DB written
+    # and cached before this job restores it.
+    #
+    # Sharing a day with the daily pipeline costs flash budget, which is the
+    # real constraint: 20 requests a DAY, shared, and the daily spends ~13. The
+    # weekly's flagship work is the two cover essays plus the editorial; the
+    # week recap moved to flash-lite for exactly this reason, so a Sunday lands
+    # near 16-17 of 20 rather than 19.
+    - cron: '0 18 * * 0'
+  workflow_dispatch:
+    inputs:
+      week_offset:
+        description: 'Weeks back from the week that closes this Sunday. 0=this week (Mon to Sun), 1=the week before, -1=the week still running'
+        required: false
+        default: '0'
+      mode:
+        description: 'full = generate the issue and its audio. audio-only = re-render The Argument from the COMMITTED script and the PUBLISHED issue, with no Gemini call at all.'
+        required: false
+        default: 'full'
+        type: choice
+        options: [full, audio-only, image-probe, backfill-images]
+
+concurrency:
+  group: weekly-digest
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    # Sized to the audio path, which is the long pole: the synthesis deadline
+    # alone is 39 minutes (the 22-minute band at the measured Kokoro rtf, with
+    # headroom), plus venv restore, ffmpeg install and mastering. 60 would fit
+    # a normal run and kill a slow one after it had done all the work.
+    timeout-minutes: 90
+    steps:
+      # No explicit ref: check out whatever triggered this run. The scheduled
+      # run resolves to the default branch; a workflow_dispatch from a branch
+      # checks out THAT branch, so a change to the generator can be exercised
+      # before it lands. Pinning ref: main here would have run main's code under
+      # this branch's workflow file, which is how a dispatch silently tests
+      # nothing.
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: pipeline/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+          pip install -r pipeline/requirements.txt
+          python -m spacy download en_core_web_sm
+
+      # ── The Argument: three Kokoro voices in their own venv (numpy 2) ──
+      # This job installed ffmpeg and nothing else, which is why the weekly was
+      # the last edition still on edge-tts. Same cache keys as the daily
+      # pipeline, so the model files and the venv are usually already warm.
+      - name: Cache Kokoro model files
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/void-kokoro
+          key: kokoro-${{ hashFiles('pipeline/briefing/kokoro.lock.json') }}
+      - name: Cache TTS venv
+        id: tts-venv
+        uses: actions/cache@v4
+        with:
+          path: .venv-tts
+          key: venv-tts-py3.11-${{ hashFiles('pipeline/requirements-tts.txt') }}
+      - name: Build TTS venv (cache miss)
+        if: steps.tts-venv.outputs.cache-hit != 'true'
+        run: python -m venv .venv-tts && .venv-tts/bin/pip install -q -r pipeline/requirements-tts.txt
+      - name: Fetch Kokoro model files (verified against kokoro.lock.json)
+        run: python pipeline/briefing/kokoro_assets.py
+
+      # ── Pipeline state DB (SQLite) — RESTORE ONLY ──
+      # The weekly reads the week's clusters, bias scores and daily briefs out of
+      # the same state DB the daily pipeline writes. It restores the newest
+      # cached copy and never saves one back.
+      #
+      # On the old Monday 12:00 slot that was a hard requirement: the daily was
+      # usually still running, and a save would have pushed a pre-run copy of
+      # the state under a newer cache key and lost a day of work. At Sunday
+      # 18:00 the daily has finished, so that race is gone. Restore-only stays
+      # anyway, because the weekly adds nothing to the state that anything
+      # reads back: the issue is made durable by the deploy tree
+      # (build-data/weekly-issues.json), and issue_number is derived from the
+      # week's date rather than from the rows already stored.
+      - name: Restore pipeline state DB
+        uses: actions/cache/restore@v4
+        with:
+          path: pipeline_state.db
+          key: void-state-v1-weekly-${{ github.run_id }}
+          restore-keys: |
+            void-state-v1-
+
+      - name: Bootstrap state DB (cold cache — durable snapshot)
+        if: hashFiles('pipeline_state.db') == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          echo "No cached state DB; restoring from the latest durable state snapshot."
+          for rid in $(gh run list --workflow=pipeline.yml --status success -L 12 \
+                         --json databaseId --jq '.[].databaseId'); do
+            if gh run download "$rid" -n void-state-snapshot --dir _snap 2>/dev/null; then
+              echo "Restored state snapshot from pipeline run $rid"; break
+            fi
+          done
+          if [ -f _snap/pipeline_state.db.gz ]; then
+            gunzip -c _snap/pipeline_state.db.gz > pipeline_state.db
+            rm -rf _snap
+          else
+            echo "No state snapshot available; cannot generate a weekly digest."
+            exit 1
+          fi
+
+      # ── audio-only: re-render the show, spend nothing ──
+      # flash is capped at 20 requests a DAY and the daily pipeline spends ~13,
+      # so re-running the generator to fix the SHOW would rewrite every essay
+      # that was already correct, at full cost, to change nothing a reader
+      # sees. The rundown is AUTHORED and committed (as History's scripts are,
+      # for the same reason), so the audio has its own entry point.
+      # Reports how much of the PUBLISHED issue the image lookup can
+      # illustrate, running from a clean IP. Wikimedia rate-limits shared
+      # developer egress hard enough that a local run measures the proxy
+      # rather than the code, which is why this exists as a job. No Gemini
+      # call, no database write, nothing committed.
+      - name: Probe image coverage for the published issue
+        if: inputs.mode == 'image-probe'
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python -m pipeline.media.probe_issue_images
+
+      # Illustrates the ALREADY PUBLISHED issue in place. Images are attached
+      # at generation time, so fixing the lookup does nothing for an issue
+      # that has shipped; this is the same move repair_weekly_snapshot makes
+      # for prose. No Gemini call, no regeneration, and only images that
+      # passed the overlap guard, the licence allowlist and the size floor.
+      - name: Backfill images into the published issue
+        if: inputs.mode == 'backfill-images'
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python -m pipeline.briefing.backfill_weekly_images
+
+      - name: Render The Argument from the committed script
+        if: inputs.mode == 'audio-only'
+        env:
+          PYTHONUNBUFFERED: "1"
+          VOID_SQLITE_PATH: pipeline_state.db
+          VOID_TTS_ENGINE: kokoro
+          VOID_KOKORO_PYTHON: .venv-tts/bin/python
+        run: python -m pipeline.briefing.render_weekly_audio
+
+      - name: Generate weekly digest
+        # inputs.mode is EMPTY on the schedule event (defaults apply to
+        # workflow_dispatch only), so this must be written as exclusions: an
+        # equality test against 'full' skips generation on every Sunday cron.
+        if: inputs.mode != 'audio-only' && inputs.mode != 'image-probe' && inputs.mode != 'backfill-images'
+        env:
+          PYTHONUNBUFFERED: "1"
+          VOID_SQLITE_PATH: pipeline_state.db
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # $0 posture: Gemini Flash handles the digest (Groq retired); Claude off.
+          DISABLE_ANTHROPIC: "1"
+          # "The Argument" (2026-09-20): three Kokoro voices, a validated
+          # rundown, a scored timeline and a chapter rail. With VOID_SQLITE_PATH
+          # set, the MP3 and its sidecar are written into frontend/public/audio/
+          # for the Pages CDN. "1" re-parks audio entirely;
+          # VOID_WEEKLY_AUDIO_FORMAT=0 keeps audio but falls back to the legacy
+          # two-voice edge-tts read; VOID_TTS_ENGINE=edge keeps the new format
+          # on edge voices.
+          DISABLE_AUDIO: "0"
+          VOID_TTS_ENGINE: kokoro
+          VOID_KOKORO_PYTHON: .venv-tts/bin/python
+        run: |
+          OFFSET="${{ inputs.week_offset }}"
+          python -m pipeline.briefing.weekly_digest_generator \
+            --week-offset "${OFFSET:-0}"
+
+      # ONLY the weekly snapshot. The restored state DB can be a day behind main
+      # (the daily pipeline commits its own export at ~13:00), so a full export
+      # here would rewrite feed.json and archive.json from stale rows and the
+      # commit below would publish yesterday's front page.
+      - name: Export weekly snapshot
+        if: inputs.mode != 'audio-only' && inputs.mode != 'image-probe' && inputs.mode != 'backfill-images'
+        env:
+          VOID_SQLITE_PATH: pipeline_state.db
+          VOID_EXPORT_ONLY: weekly
+        run: python pipeline/export_static.py
+
+      # The Sunday podcast feed. Built from build-data/weekly-issues.json, the
+      # same archive of record the export above just refreshed, and only from
+      # issues whose MP3 is in the working tree, so no enclosure can 404. No
+      # database, no Gemini call.
+      - name: Generate weekly podcast feed
+        if: inputs.mode != 'image-probe'
+        run: python3 pipeline/briefing/podcast_feed_generator.py --weekly
+
+      # image-probe is READ ONLY. Left unguarded the export above would
+      # regenerate weekly.json from the restored state DB and this step would
+      # commit it, so a job whose whole purpose is to measure the published
+      # issue would have replaced it.
+      - name: Commit refreshed weekly data
+        if: inputs.mode != 'image-probe'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Scoped deliberately: this job owns the weekly snapshot, the weekly
+          # back-issue archive and the weekly audio, nothing else.
+          #
+          # The archive files are NOT optional. This job restores the Actions
+          # cache and never saves it back (see the restore step's comment), so
+          # the row it writes dies with the container and the deploy tree is the
+          # only durable record a past issue has. Anything export_static emits
+          # outside this glob is generated in CI and thrown away.
+          git add frontend/public/data/weekly.json \
+                  frontend/public/data/weekly-archive.json \
+                  frontend/build-data/weekly-issues.json \
+                  frontend/public/audio/weekly-* \
+                  frontend/public/podcast-weekly.xml || true
+          if git diff --cached --quiet; then
+            echo "No weekly changes to commit."
+            exit 0
+          fi
+          git commit -m "Weekly: refresh digest snapshot ($(date -u +%F))"
+          git checkout -- . 2>/dev/null || true
+          # Commit back to the branch this run checked out, never unconditionally
+          # to main: a dispatch from a feature branch must not push that branch's
+          # unreviewed commits onto the default branch.
+          BRANCH="${{ github.ref_name }}"
+          echo "committing to $BRANCH"
+          # Generated data has no merge semantics: two runs that both export it
+          # will conflict on a rebase, and the right resolution is never a
+          # merge but "whichever run produced this from the newest state
+          # wins". The daily pipeline died exactly here on 2026-09-20, on
+          # weekly.json and weekly-issues.json, because a parallel commit had
+          # touched the same generated files.
+          #
+          # Mid-rebase, --theirs is the commit being REPLAYED, i.e. this run's
+          # fresh issue; --ours would be the older copy already on the branch.
+          # A conflict outside the paths this job owns is a real one and still
+          # aborts.
+          resolve_generated() {
+            local conflicted f
+            conflicted=$(git diff --name-only --diff-filter=U)
+            [ -n "$conflicted" ] || return 1
+            while IFS= read -r f; do
+              [ -n "$f" ] || continue
+              case "$f" in
+                frontend/public/data/weekly*.json|frontend/build-data/weekly-issues.json|frontend/public/audio/weekly-*|frontend/public/podcast-weekly.xml) ;;
+                *) echo "conflict outside the weekly data: $f"; return 1 ;;
+              esac
+            done <<< "$conflicted"
+            while IFS= read -r f; do
+              [ -n "$f" ] || continue
+              git checkout --theirs -- "$f" 2>/dev/null || git rm -q -- "$f" 2>/dev/null || true
+              git add -- "$f" 2>/dev/null || true
+            done <<< "$conflicted"
+            echo "resolved $(echo "$conflicted" | wc -l) generated file(s) in favour of this run"
+            GIT_EDITOR=true git rebase --continue
+          }
+          for attempt in 1 2 3 4 5; do
+            git fetch origin "$BRANCH"
+            git rebase "origin/$BRANCH" || resolve_generated || {
+              git rebase --abort 2>/dev/null || true; echo "rebase failed"; exit 1; }
+            if git push origin "HEAD:$BRANCH"; then echo "pushed on attempt $attempt"; exit 0; fi
+            echo "push rejected (attempt $attempt); refetching and retrying"
+            sleep 5
+          done
+          echo "could not push refreshed weekly data after 5 attempts"; exit 1

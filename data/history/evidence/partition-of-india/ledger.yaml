@@ -1,0 +1,1802 @@
+# The evidence ledger for partition-of-india (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Every entry was resolved or fetched on 2026-09-25 from the URL it names; every
+# extract under extracts/ was sliced from the fetched copy by a builder script
+# (start marker to end marker), never retyped. Nothing here was written from
+# memory. An entry the free record could not reach is listed under `gaps`, by
+# name, with what was tried. Where a scan's OCR layer is the free copy, the
+# extract keeps the layer's glyphs and says so in a note.
+slug: partition-of-india
+bootstrapped: 2026-09-25
+
+entries:
+  # ----------------------------------------------------------- Tier A: primary record
+  - id: src-iia-1947
+    tier: A
+    kind: primary-document
+    author: Parliament of the United Kingdom
+    title: "Indian Independence Act 1947"
+    container: null
+    publisher: legislation.gov.uk (The National Archives)
+    place: London
+    year: 1947
+    edition: "enacted text, with the repeals of 1957, 1976 and 1993 marked"
+    volume: null
+    document_number: "1947 c. 30 (10 and 11 Geo. 6), Royal Assent 18 July 1947"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.legislation.gov.uk/ukpga/Geo6/10-11/30"}
+    access:
+      free_copy: "https://www.legislation.gov.uk/ukpga/Geo6/10-11/30/data.xht?view=snippet&wrap=true"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Indian Independence Act 1947 (c. 30)"
+    language: en
+    region_of_authorship: europe
+    producer: uk-parliament
+    position: null
+    rights: public
+
+  - id: src-hansard-19470603
+    tier: A
+    kind: primary-document
+    author: Clement Attlee, Prime Minister, in the House of Commons
+    title: "India (Transfer of Power): statement of 3 June 1947"
+    container: "Hansard, HC Deb 03 June 1947 vol 438 cc35-46"
+    publisher: UK Parliament (Historic Hansard)
+    place: London
+    year: 1947
+    edition: null
+    volume: "438"
+    document_number: "HC Deb 03 June 1947 vol 438 cc35-46"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://api.parliament.uk/historic-hansard/commons/1947/jun/03/india-transfer-of-power"}
+    access:
+      free_copy: "https://api.parliament.uk/historic-hansard/commons/1947/jun/03/india-transfer-of-power"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "INDIA (TRANSFER OF POWER) (Hansard, 3 June 1947)"
+    language: en
+    region_of_authorship: europe
+    producer: uk-government
+    position: british-administrative
+    rights: public
+
+  - id: src-hansard-19470710
+    tier: A
+    kind: primary-document
+    author: Clement Attlee, Prime Minister, in the House of Commons
+    title: "Indian Independence Bill, second reading, 10 July 1947"
+    container: "Hansard, HC Deb 10 July 1947 vol 439 cc2441-550"
+    publisher: UK Parliament (Historic Hansard)
+    place: London
+    year: 1947
+    edition: null
+    volume: "439"
+    document_number: "HC Deb 10 July 1947 vol 439 cc2441-550"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://api.parliament.uk/historic-hansard/commons/1947/jul/10/indian-independence-bill"}
+    access:
+      free_copy: "https://api.parliament.uk/historic-hansard/commons/1947/jul/10/indian-independence-bill"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "INDIAN INDEPENDENCE BILL (Hansard, 10 July 1947)"
+    language: en
+    region_of_authorship: europe
+    producer: uk-government
+    position: british-administrative
+    rights: public
+
+  - id: src-hansard-lords-19470716
+    tier: A
+    kind: primary-document
+    author: The Earl of Listowel, Secretary of State for India and Burma, in the House of Lords
+    title: "Indian Independence Bill, second reading in the Lords, 16 July 1947"
+    container: "Hansard, HL Deb 16 July 1947 vol 150 cc802-74"
+    publisher: UK Parliament (Historic Hansard)
+    place: London
+    year: 1947
+    edition: null
+    volume: "150"
+    document_number: "HL Deb 16 July 1947 vol 150 cc802-74"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://api.parliament.uk/historic-hansard/lords/1947/jul/16/indian-independence-bill"}
+    access:
+      free_copy: "https://api.parliament.uk/historic-hansard/lords/1947/jul/16/indian-independence-bill"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "INDIAN INDEPENDENCE BILL. (Hansard, 16 July 1947)"
+    language: en
+    region_of_authorship: europe
+    producer: uk-government
+    position: british-administrative
+    rights: public
+
+  - id: src-hansard-19471218
+    tier: A
+    kind: primary-document
+    author: Philip Noel-Baker, Secretary of State for Commonwealth Relations, in the House of Commons
+    title: "India and Pakistan (Refugees, Relief): oral answer of 18 December 1947"
+    container: "Hansard, HC Deb 18 December 1947 vol 445 cc1844-5"
+    publisher: UK Parliament (Historic Hansard)
+    place: London
+    year: 1947
+    edition: null
+    volume: "445"
+    document_number: "HC Deb 18 December 1947 vol 445 cc1844-5"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://api.parliament.uk/historic-hansard/commons/1947/dec/18/india-and-pakistan-refugees-relief"}
+    access:
+      free_copy: "https://api.parliament.uk/historic-hansard/commons/1947/dec/18/india-and-pakistan-refugees-relief"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "INDIA AND PAKISTAN (REFUGEES, RELIEF) (Hansard, 18 December 1947)"
+    language: en
+    region_of_authorship: europe
+    producer: uk-government
+    position: british-administrative
+    rights: public
+
+  - id: src-hansard-19471030
+    tier: A
+    kind: primary-document
+    author: Philip Noel-Baker, Secretary of State for Commonwealth Relations, in the House of Commons
+    title: "Kashmir (Situation): statement of 30 October 1947"
+    container: "Hansard, HC Deb 30 October 1947 vol 443 cc1086-7"
+    publisher: UK Parliament (Historic Hansard)
+    place: London
+    year: 1947
+    edition: null
+    volume: "443"
+    document_number: "HC Deb 30 October 1947 vol 443 cc1086-7"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://api.parliament.uk/historic-hansard/commons/1947/oct/30/kashmir-situation"}
+    access:
+      free_copy: "https://api.parliament.uk/historic-hansard/commons/1947/oct/30/kashmir-situation"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "KASHMIR (SITUATION) (Hansard, 30 October 1947)"
+    language: en
+    region_of_authorship: europe
+    producer: uk-government
+    position: british-administrative
+    rights: public
+
+  - id: src-cad-19470814
+    tier: A
+    kind: primary-document
+    author: Constituent Assembly of India
+    title: "Constitution of India: Constituent Assembly Debates, 14 Aug 1947 (the midnight session)"
+    container: "Constituent Assembly Debates, Volume V"
+    publisher: "Constitution of India (Centre for Law and Policy Research), digitised and paragraph-numbered edition"
+    place: New Delhi
+    year: 1947
+    edition: "site edition, paragraph-numbered 5.36.x"
+    volume: "V"
+    document_number: "sitting of 14 August 1947"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.constitutionofindia.net/debates/14-aug-1947/"}
+    access:
+      free_copy: "https://www.constitutionofindia.net/debates/14-aug-1947/"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "14 Aug 1947 Archives - Constitution of India"
+    language: en
+    region_of_authorship: south-asia
+    producer: constituent-assembly-of-india
+    position: indian-nationalist
+    rights: public
+
+  - id: src-jinnah-19470811
+    tier: A
+    kind: primary-document
+    author: Muhammad Ali Jinnah, President of the Constituent Assembly of Pakistan
+    title: "Address to the first Constituent Assembly of Pakistan, 11 August 1947"
+    container: null
+    publisher: National Assembly of Pakistan
+    place: Islamabad
+    year: 1947
+    edition: "the text as the National Assembly's website publishes it"
+    volume: null
+    document_number: "Address of the Founder of Pakistan Quaid-e-Azam Muhammad Ali Jinnah on 11th August, 1947 to 1st Constituent Assembly"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://na.gov.pk/en/content.php?id=74"}
+    access:
+      free_copy: "https://na.gov.pk/en/content.php?id=74"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "Address of the Founder of Pakistan Quaid-e-Azam Muhammad Ali Jinnah on 11th August, 1947 to 1st Constituent Assembly"
+    language: en
+    region_of_authorship: south-asia
+    producer: constituent-assembly-of-pakistan
+    position: pakistani-nationalist
+    rights: official
+
+  - id: src-radcliffe-punjab
+    tier: A
+    kind: report
+    author: Cyril Radcliffe, Chairman of the Punjab Boundary Commission
+    title: "Report of the Punjab Boundary Commission (the Punjab award), 12 August 1947"
+    container: "Reports of the Bengal Boundary Commission and Punjab Boundary Commission (Radcliffe Awards)"
+    publisher: Government of India Press
+    place: New Delhi
+    year: 1947
+    edition: "Government of India reprint of 1958, read from the Digital Library of India scan on the Internet Archive"
+    volume: null
+    document_number: "D.S. 419, P III/54; dated New Delhi, 12 August 1947"
+    identifiers: {isbn: null, doi: null, archive_org: "dli.csl.1040", hathitrust: null, url: "https://archive.org/details/dli.csl.1040"}
+    access:
+      free_copy: "https://archive.org/download/dli.csl.1040/1040_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "REPORT OF THE PUNJAB BOUNDARY COMMISSION"
+    language: en
+    region_of_authorship: south-asia
+    producer: boundary-commission-chairman
+    position: null
+    rights: public
+
+  - id: src-radcliffe-bengal
+    tier: A
+    kind: report
+    author: Cyril Radcliffe, Chairman of the Bengal Boundary Commission
+    title: "Report of the Bengal Boundary Commission (the Bengal award), 12 August 1947"
+    container: "Reports of the Bengal Boundary Commission and Punjab Boundary Commission (Radcliffe Awards)"
+    publisher: Government of India Press
+    place: New Delhi
+    year: 1947
+    edition: "Government of India reprint of 1958, read from the Digital Library of India scan on the Internet Archive"
+    volume: null
+    document_number: "D.S. 419, P III/54; dated New Delhi, 12 August 1947"
+    identifiers: {isbn: null, doi: null, archive_org: "dli.csl.1040", hathitrust: null, url: "https://archive.org/details/dli.csl.1040"}
+    access:
+      free_copy: "https://archive.org/download/dli.csl.1040/1040_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "REPORT OF THE BENGAL BOUNDARY COMMISSION"
+    language: en
+    region_of_authorship: south-asia
+    producer: boundary-commission-chairman
+    position: null
+    rights: public
+
+  - id: src-radcliffe-sylhet
+    tier: A
+    kind: report
+    author: Cyril Radcliffe, Chairman of the Bengal Boundary Commission
+    title: "Report of the Bengal Boundary Commission (Sylhet District), 13 August 1947"
+    container: "Reports of the Bengal Boundary Commission and Punjab Boundary Commission (Radcliffe Awards)"
+    publisher: Government of India Press
+    place: New Delhi
+    year: 1947
+    edition: "Government of India reprint of 1958, read from the Digital Library of India scan on the Internet Archive"
+    volume: null
+    document_number: "D.S. 419, P III/54; dated New Delhi, 13 August 1947"
+    identifiers: {isbn: null, doi: null, archive_org: "dli.csl.1040", hathitrust: null, url: "https://archive.org/details/dli.csl.1040"}
+    access:
+      free_copy: "https://archive.org/download/dli.csl.1040/1040_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "REPORT OF THE BENGAL BOUNDARY COMMISSION (SYLHET DISTRICT)"
+    language: en
+    region_of_authorship: south-asia
+    producer: boundary-commission-chairman
+    position: null
+    rights: public
+
+  - id: src-top-xi
+    tier: A
+    kind: edited-documents
+    author: Nicholas Mansergh and Penderel Moon (eds.)
+    title: "Constitutional Relations between Britain and India: The Transfer of Power 1942-7, Volume XI, The Mountbatten Viceroyalty, Announcement and Reception of the 3 June Plan, 31 May-7 July 1947"
+    container: null
+    publisher: Her Majesty's Stationery Office
+    place: London
+    year: 1982
+    edition: null
+    volume: "XI"
+    document_number: "cited by document number: No. 45 (the Statement of 3 June 1947 and its Appendix), No. 59 (the Viceroy's press conference of 4 June 1947), No. 155 (R. A. Butler to Mountbatten, with the editors' note quoting the reply of 17 June)"
+    identifiers: {isbn: null, doi: null, archive_org: "constitutionalre06nich", hathitrust: null, url: "https://archive.org/details/constitutionalre06nich"}
+    access:
+      free_copy: "https://archive.org/download/constitutionalre06nich/constitutionalre06nich_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "India: The Transfer of Power, 1942-47, Vol. 11"
+    language: en
+    region_of_authorship: europe
+    producer: british-viceroy-staff
+    position: british-administrative
+    rights: null
+    notes: "Crown copyright; held only as the passages cited, at most 150 words each and 5 in all"
+
+  - id: src-top-xii
+    tier: A
+    kind: edited-documents
+    author: Nicholas Mansergh and Penderel Moon (eds.)
+    title: "Constitutional Relations between Britain and India: The Transfer of Power 1942-7, Volume XII, The Mountbatten Viceroyalty, Princes, Partition and Independence, 8 July-15 August 1947"
+    container: null
+    publisher: Her Majesty's Stationery Office
+    place: London
+    year: 1983
+    edition: null
+    volume: "XII"
+    document_number: "cited by document number: No. 196 note 2 (Abell's reply of 23 July), No. 335 (Viceroy's interview of 4 August), No. 382 (Jenkins' telegram of 8 August), No. 428 (Ismay to Liaquat Ali Khan, 11 August), No. 459 (Jenkins' letter of 13 August)"
+    identifiers: {isbn: null, doi: null, archive_org: "indiatransferofp12nich", hathitrust: null, url: "https://archive.org/details/indiatransferofp12nich"}
+    access:
+      free_copy: "https://archive.org/download/indiatransferofp12nich/indiatransferofp12nich_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "India: The Transfer of Power, 1942-47, Vol. 12"
+    language: en
+    region_of_authorship: europe
+    producer: british-viceroy-staff
+    position: british-administrative
+    rights: null
+    notes: "Crown copyright; held only as the passages cited, at most 150 words each and 5 in all. The volume's index says the awards were 'not published till 16 August' and that Mountbatten's own account is No. 489, which the cap leaves unpinned"
+
+  - id: src-jenkins-punjab-problem-1947
+    tier: A
+    kind: primary-document
+    author: Evan Jenkins, Governor of the Punjab
+    title: "The Punjab Problem, enclosure to letter No. 653 to Lord Wavell, 7 March 1947"
+    container: "Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 12 and enclosure"
+    publisher: National Book Shop
+    place: Delhi
+    year: 1947
+    edition: "2nd edition of the collection, 2005 (1st 1991), read from the Internet Archive scan"
+    volume: null
+    document_number: "Kirpal Singh, Document 12, enclosure, from IOR R/3/1/89"
+    identifiers: {isbn: null, doi: null, archive_org: "select-documents-on-partition-of-punjab-1947", hathitrust: null, url: "https://archive.org/details/select-documents-on-partition-of-punjab-1947"}
+    access:
+      free_copy: "https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "The Punjab Problem"
+    language: en
+    region_of_authorship: south-asia
+    producer: punjab-governor
+    position: british-administrative
+    rights: public
+    notes: "a 1947 government record; the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it"
+
+  - id: src-mountbatten-press-19470604
+    tier: A
+    kind: primary-document
+    author: Lord Mountbatten, Viceroy, at his press conference of 4 June 1947
+    title: "Reproduction of some answers given at the press conference held by Lord Mountbatten on June 4, 1947"
+    container: "Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 55"
+    publisher: National Book Shop
+    place: Delhi
+    year: 1947
+    edition: "2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is The Partition of the Punjab 1947, vol. I (Lahore, 1983), pp. 17-25"
+    volume: null
+    document_number: "Kirpal Singh, Document 55"
+    identifiers: {isbn: null, doi: null, archive_org: "select-documents-on-partition-of-punjab-1947", hathitrust: null, url: "https://archive.org/details/select-documents-on-partition-of-punjab-1947"}
+    access:
+      free_copy: "https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Press Conference By Lord Mountbatten"
+    language: en
+    region_of_authorship: south-asia
+    producer: british-viceroy-staff
+    position: british-administrative
+    rights: public
+    notes: "a 1947 public statement; the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it"
+
+  - id: src-league-memo-1947
+    tier: A
+    kind: primary-document
+    author: All-India Muslim League
+    title: "Memorandum submitted to the Punjab Boundary Commission on behalf of the Muslim League, July 1947"
+    container: "Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 102"
+    publisher: National Book Shop
+    place: Delhi
+    year: 1947
+    edition: "2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is The Partition of the Punjab 1947, vol. I (Lahore, 1983), pp. 281-96"
+    volume: null
+    document_number: "Kirpal Singh, Document 102"
+    identifiers: {isbn: null, doi: null, archive_org: "select-documents-on-partition-of-punjab-1947", hathitrust: null, url: "https://archive.org/details/select-documents-on-partition-of-punjab-1947"}
+    access:
+      free_copy: "https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Memorandum Submitted to the Punjab Boundary Commission on behalf of the Muslim League"
+    language: en
+    region_of_authorship: south-asia
+    producer: muslim-league
+    position: pakistani-nationalist
+    rights: public
+    notes: "a 1947 party submission to a public commission; the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it"
+
+  - id: src-mahajan-1947
+    tier: A
+    kind: report
+    author: Mehr Chand Mahajan, member of the Punjab Boundary Commission (nominated by the Congress)
+    title: "Report of Mr. Justice Meher Chand Mahajan, 3 August 1947"
+    container: "Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 128"
+    publisher: National Book Shop
+    place: Delhi
+    year: 1947
+    edition: "2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is Partition Proceedings, vol. VI, pp. 162-192"
+    volume: null
+    document_number: "Kirpal Singh, Document 128"
+    identifiers: {isbn: null, doi: null, archive_org: "select-documents-on-partition-of-punjab-1947", hathitrust: null, url: "https://archive.org/details/select-documents-on-partition-of-punjab-1947"}
+    access:
+      free_copy: "https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Report of Mr. Justice Meher Chand Mahajan"
+    language: en
+    region_of_authorship: south-asia
+    producer: commission-member-congress
+    position: indian-nationalist
+    rights: public
+    notes: "a 1947 official report; the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it"
+
+  - id: src-tejasingh-1947
+    tier: A
+    kind: report
+    author: Teja Singh, member of the Punjab Boundary Commission (nominated by the Congress for the Sikhs)
+    title: "Report of Mr. Justice Teja Singh, 4 August 1947"
+    container: "Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 130"
+    publisher: National Book Shop
+    place: Delhi
+    year: 1947
+    edition: "2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is Partition Proceedings, vol. VI, pp. 193-216"
+    volume: null
+    document_number: "Kirpal Singh, Document 130"
+    identifiers: {isbn: null, doi: null, archive_org: "select-documents-on-partition-of-punjab-1947", hathitrust: null, url: "https://archive.org/details/select-documents-on-partition-of-punjab-1947"}
+    access:
+      free_copy: "https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Report of Mr. Justice Teja Singh"
+    language: en
+    region_of_authorship: south-asia
+    producer: commission-member-sikh
+    position: sikh-panthic
+    rights: public
+    notes: "a 1947 official report; the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it"
+
+  - id: src-dinmohammad-1947
+    tier: A
+    kind: report
+    author: Din Mohammad, member of the Punjab Boundary Commission (nominated by the Muslim League)
+    title: "Report of Mr. Justice Din Mohammad, 5 August 1947"
+    container: "Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 133"
+    publisher: National Book Shop
+    place: Delhi
+    year: 1947
+    edition: "2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is Partition Proceedings, vol. VI, pp. 235-263"
+    volume: null
+    document_number: "Kirpal Singh, Document 133"
+    identifiers: {isbn: null, doi: null, archive_org: "select-documents-on-partition-of-punjab-1947", hathitrust: null, url: "https://archive.org/details/select-documents-on-partition-of-punjab-1947"}
+    access:
+      free_copy: "https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Report of Mr. Justice Din Mohammad"
+    language: en
+    region_of_authorship: south-asia
+    producer: commission-member-league
+    position: pakistani-nationalist
+    rights: public
+    notes: "a 1947 official report; the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it"
+
+  - id: src-clo-19480429
+    tier: A
+    kind: report
+    author: Chief Liaison Officer (India), East Punjab Liaison Agency, Lahore
+    title: "Demi-official letter No. 27581/CLO to the Chief Secretary, East Punjab, 29 April 1948, on evacuation and the recovery of abducted women"
+    container: "Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 219"
+    publisher: National Book Shop
+    place: Delhi
+    year: 1948
+    edition: "2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is P.B.R.F. 218-ER-48C, pp. 1-10"
+    volume: null
+    document_number: "Kirpal Singh, Document 219"
+    identifiers: {isbn: null, doi: null, archive_org: "select-documents-on-partition-of-punjab-1947", hathitrust: null, url: "https://archive.org/details/select-documents-on-partition-of-punjab-1947"}
+    access:
+      free_copy: "https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Chief Liaison Officer (India) to Chief Secretary, East Punjab"
+    language: en
+    region_of_authorship: south-asia
+    producer: east-punjab-liaison-agency
+    position: null
+    rights: public
+    notes: "a 1948 government record; the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it"
+
+  - id: src-kirpal-intro-recovery
+    tier: B
+    kind: edition
+    author: Kirpal Singh
+    title: "Introduction, Recovery of Abducted Women: the decisions of the Governments of India and Pakistan of 6 December 1947"
+    container: "Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, editor's introduction"
+    publisher: National Book Shop
+    place: Delhi
+    year: 2005
+    edition: "2nd edition of the collection, 2005 (1st 1991), read from the Internet Archive scan"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "select-documents-on-partition-of-punjab-1947", hathitrust: null, url: "https://archive.org/details/select-documents-on-partition-of-punjab-1947"}
+    access:
+      free_copy: "https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Recovery of Abducted Women"
+    language: en
+    region_of_authorship: south-asia
+    producer: historian-editor
+    position: null
+    rights: quoted-under-cap
+    notes: "the editor's own summary of the three decisions of the Inter-Dominion meeting of 6 December 1947, held as one passage under the cap; the agreement's own text is not in the collection as a document, so the decisions are known here as the editor states them; verified_title is the section heading as the fetched text prints it"
+
+  - id: src-sikh-note-1942
+    tier: A
+    kind: primary-document
+    author: Sikh All Parties Committee, Amritsar
+    title: "Note on the Sikhs' Position, appended to the memorandum handed to Sir Stafford Cripps on 31 March 1942"
+    container: "Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 3 and note"
+    publisher: National Book Shop
+    place: Delhi
+    year: 1942
+    edition: "2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is the records of the S.G.P.C., Amritsar"
+    volume: null
+    document_number: "Kirpal Singh, Document 3, Note on the Sikhs' Position"
+    identifiers: {isbn: null, doi: null, archive_org: "select-documents-on-partition-of-punjab-1947", hathitrust: null, url: "https://archive.org/details/select-documents-on-partition-of-punjab-1947"}
+    access:
+      free_copy: "https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "NOTE ON THE SIKHS' POSITION"
+    language: en
+    region_of_authorship: south-asia
+    producer: sikh-all-parties-committee
+    position: sikh-panthic
+    rights: public
+    notes: "a 1942 political memorandum; the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it"
+
+  - id: src-census-1941-vol1
+    tier: A
+    kind: dataset
+    author: M. W. M. Yeatts, Census Commissioner for India
+    title: "Census of India 1941, Volume I, India, Part I, Tables"
+    container: null
+    publisher: Manager of Publications
+    place: Delhi
+    year: 1943
+    edition: "read from the Internet Archive scan"
+    volume: "I"
+    document_number: "Table I, Area, Houses and Population"
+    identifiers: {isbn: null, doi: null, archive_org: "21325-1941-tab", hathitrust: null, url: "https://archive.org/details/21325-1941-tab"}
+    access:
+      free_copy: "https://archive.org/download/21325-1941-tab/21325_1941_TAB_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Census of India 1941"
+    language: en
+    region_of_authorship: south-asia
+    producer: census-of-india
+    position: null
+    rights: public
+
+  - id: src-khosla-1949
+    tier: A
+    kind: report
+    author: Gopal Das Khosla, for the Fact Finding Organisation of the Government of India
+    title: "Stern Reckoning: A Survey of the Events Leading up to and Following the Partition of India"
+    container: null
+    publisher: Bhawnani and Sons
+    place: New Delhi
+    year: 1949
+    edition: "read from the Internet Archive scan"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "stern-reckoning", hathitrust: null, url: "https://archive.org/details/stern-reckoning"}
+    access:
+      free_copy: "https://archive.org/download/stern-reckoning/Stern%20Reckoning_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Stern Reckoning"
+    language: en
+    region_of_authorship: south-asia
+    producer: india-fact-finding-organisation
+    position: indian-nationalist
+    rights: public
+    notes: "the survey of an official fact-finding body, written by a judge of the East Punjab High Court from its evidence; the Internet Archive item carries a public domain mark. It is Tier A as the record of what that body found and a party's record under Rule A"
+
+  - id: src-un-sres47
+    tier: A
+    kind: resolution
+    author: United Nations Security Council
+    title: "Resolution 47 (1948) of 21 April 1948"
+    container: null
+    publisher: United Nations
+    place: New York
+    year: 1948
+    edition: null
+    volume: null
+    document_number: "S/726, adopted at the 286th meeting"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://documents.un.org/doc/resolution/gen/nr0/047/72/pdf/nr004772.pdf"}
+    access:
+      free_copy: "https://documents.un.org/doc/resolution/gen/nr0/047/72/pdf/nr004772.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "47 (1948). Resolution of 21 April 1948 [S/726]"
+    language: en
+    region_of_authorship: global
+    producer: un-security-council
+    position: null
+    rights: public
+
+  - id: src-un-sres39
+    tier: A
+    kind: resolution
+    author: United Nations Security Council
+    title: "Resolution 39 (1948) of 20 January 1948"
+    container: null
+    publisher: United Nations
+    place: New York
+    year: 1948
+    edition: null
+    volume: null
+    document_number: "S/654, adopted at the 230th meeting"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://documents.un.org/doc/resolution/gen/nr0/047/64/pdf/nr004764.pdf"}
+    access:
+      free_copy: "https://documents.un.org/doc/resolution/gen/nr0/047/64/pdf/nr004764.pdf"
+      verified_at: 2026-09-25
+      verified_by: document-fetch
+      verified_title: "39 (1948). Resolution of 20 January 1948 [S/654]"
+    language: en
+    region_of_authorship: global
+    producer: un-security-council
+    position: null
+    rights: public
+
+  - id: src-gandhi-19470824
+    tier: A
+    kind: primary-document
+    author: M. K. Gandhi, speech at a prayer meeting, Calcutta, 24 August 1947, as reported in Harijan
+    title: "Speech at prayer meeting, Calcutta, 24 August 1947"
+    container: "The Collected Works of Mahatma Gandhi, vol. 89, No. 103, p. 84 (from Harijan, 7 September 1947), as reproduced in the archive.org item's annotation"
+    publisher: Publications Division, Government of India
+    place: New Delhi
+    year: 1947
+    edition: "the archive.org item Swaraj-Gandhi-1947-08-24, which holds the Hindi audio and reproduces the Collected Works' English report in its description"
+    volume: "89"
+    document_number: "CWMG vol. 89, No. 103"
+    identifiers: {isbn: null, doi: null, archive_org: "Swaraj-Gandhi-1947-08-24", hathitrust: null, url: "https://archive.org/details/Swaraj-Gandhi-1947-08-24"}
+    access:
+      free_copy: "https://archive.org/details/Swaraj-Gandhi-1947-08-24"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Post Prayer Speech 1947-08-24"
+    language: en
+    region_of_authorship: south-asia
+    producer: gandhi
+    position: indian-nationalist
+    rights: null
+    notes: "the speech was given in Hindi and the item's audio is Hindi; the extract is the Collected Works' English report, in the third person, held to the extract cap"
+
+  - id: src-pa-sarla-dutta
+    tier: A
+    kind: testimony
+    author: Sarla Dutta, interviewed by Sruti Lodha for The 1947 Partition Archive
+    title: "Sarla Dutta (oral history, first-person story page)"
+    container: "The 1947 Partition Archive, story pages"
+    publisher: The 1947 Partition Archive
+    place: Berkeley
+    year: 2024
+    edition: "story page published 20 June 2024"
+    volume: null
+    document_number: "https://www.1947partitionarchive.org/sarla-dutta/"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.1947partitionarchive.org/sarla-dutta/"}
+    access:
+      free_copy: "https://www.1947partitionarchive.org/sarla-dutta/"
+      verified_at: 2026-09-25
+      verified_by: repository-record
+      verified_title: "Sarla Dutta"
+    language: en
+    region_of_authorship: south-asia
+    producer: survivor-testimony
+    position: null
+    rights: null
+    notes: "a survivor of abduction from Mirpur, aged 13 in 1947; the page is in her own voice. The interview date and place are blank on the page"
+
+  - id: src-pa-khushi-muhammad
+    tier: A
+    kind: testimony
+    author: Khushi Muhammad Jut, interviewed for The 1947 Partition Archive
+    title: "Khushi Muhammad Jut (oral history, story page)"
+    container: "The 1947 Partition Archive, story pages"
+    publisher: The 1947 Partition Archive
+    place: Berkeley
+    year: 2024
+    edition: "story page published 11 June 2024"
+    volume: null
+    document_number: "https://www.1947partitionarchive.org/khushi-muhammad-jut/"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.1947partitionarchive.org/khushi-muhammad-jut/"}
+    access:
+      free_copy: "https://www.1947partitionarchive.org/khushi-muhammad-jut/"
+      verified_at: 2026-09-25
+      verified_by: repository-record
+      verified_title: "Khushi Muhammad Jut"
+    language: en
+    region_of_authorship: south-asia
+    producer: survivor-testimony
+    position: null
+    rights: null
+    notes: "a Muslim boy of seven in 1947, from Aloona Tola in Ludhiana district, who migrated to Chak 302 GB; the page is the Archive's third-person summary of the interview"
+
+  - id: src-pa-niamat-ali
+    tier: A
+    kind: testimony
+    author: Niamat Ali Malak, interviewed for The 1947 Partition Archive
+    title: "Niamat Ali Malak (oral history, story page)"
+    container: "The 1947 Partition Archive, story pages"
+    publisher: The 1947 Partition Archive
+    place: Berkeley
+    year: 2024
+    edition: "story page published 11 June 2024"
+    volume: null
+    document_number: "https://www.1947partitionarchive.org/niamat-ali-malak/"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.1947partitionarchive.org/niamat-ali-malak/"}
+    access:
+      free_copy: "https://www.1947partitionarchive.org/niamat-ali-malak/"
+      verified_at: 2026-09-25
+      verified_by: repository-record
+      verified_title: "Niamat Ali Malak"
+    language: en
+    region_of_authorship: south-asia
+    producer: survivor-testimony
+    position: null
+    rights: null
+    notes: "a Muslim of eighteen or more in 1947, from Lasoi in Patiala State, who settled at Chak 361 GB Daudpur; the page is the Archive's third-person summary of the interview"
+
+  - id: src-pa-bhagwant-singh
+    tier: A
+    kind: testimony
+    author: Bhagwant Singh Jawanda, interviewed for The 1947 Partition Archive
+    title: "Bhagwant Singh Jawanda (oral history, story page)"
+    container: "The 1947 Partition Archive, story pages"
+    publisher: The 1947 Partition Archive
+    place: Berkeley
+    year: 2024
+    edition: "story page published 11 June 2024"
+    volume: null
+    document_number: "https://www.1947partitionarchive.org/bhagwant-singh-jawanda/"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.1947partitionarchive.org/bhagwant-singh-jawanda/"}
+    access:
+      free_copy: "https://www.1947partitionarchive.org/bhagwant-singh-jawanda/"
+      verified_at: 2026-09-25
+      verified_by: repository-record
+      verified_title: "Bhagwant Singh Jawanda"
+    language: en
+    region_of_authorship: south-asia
+    producer: survivor-testimony
+    position: null
+    rights: null
+    notes: "a Sikh student at the Sikh National College, Lahore, in 1947, born 1924 at Shanker, Ludhiana district; the page is the Archive's third-person summary of the interview"
+
+  - id: src-amrita-pritam-1949
+    tier: A
+    kind: primary-document
+    author: Amrita Pritam
+    title: "Ajj Aakhaan Waris Shah Nu (Today I call to Waris Shah), in Lammian Vaataan"
+    original_title: "ਅੱਜ ਆਖਾਂ ਵਾਰਸ ਸ਼ਾਹ ਨੂੰ"
+    container: "Lammian Vaataan (ਲੰਮੀਆਂ ਵਾਟਾਂ), as punjabi-kavita.com prints the collection; the page's heading is Lammian Vaataan : Amrita Pritam"
+    publisher: punjabi-kavita.com
+    place: null
+    year: 1949
+    edition: "the poem as the site prints it in Gurmukhi; the site dates the collection 1949 and the neighbouring poem 4 March to 15 August 1947"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.punjabi-kavita.com/Lammian-Vatan-Amrita-Pritam.php"}
+    access:
+      free_copy: "https://www.punjabi-kavita.com/Lammian-Vatan-Amrita-Pritam.php"
+      verified_at: 2026-09-25
+      verified_by: repository-record
+      verified_title: "Lammian Vaataan : Amrita Pritam"
+    language: pa
+    region_of_authorship: south-asia
+    producer: punjabi-poet
+    position: sikh-panthic
+    rights: null
+    notes: "a copyrighted poem, held only as the eight lines cited. The rendering beside it is a Void translation; Punjabi is on the proposal's weaker list, so the rendering carries a stated moderate confidence and a back-translation was made in a separate pass: 'ਅੱਜ ਮੈਂ ਵਾਰਸ ਸ਼ਾਹ ਨੂੰ ਆਖਦੀ ਹਾਂ, ਕਬਰਾਂ ਵਿੱਚੋਂ ਕਿਤੋਂ ਬੋਲ, ਤੇ ਅੱਜ ਇਸ਼ਕ ਦੀ ਕਿਤਾਬ ਦਾ ਕੋਈ ਅਗਲਾ ਵਰਕਾ ਖੋਲ੍ਹ। ਪੰਜਾਬ ਦੀ ਇੱਕ ਧੀ ਰੋਈ ਸੀ ਤੇ ਤੂੰ ਉਸ ਦੇ ਵੈਣ ਲਿਖਦਾ ਰਿਹਾ; ਅੱਜ ਲੱਖਾਂ ਧੀਆਂ ਰੋਂਦੀਆਂ ਤੈਨੂੰ ਵਾਰਸ ਸ਼ਾਹ ਨੂੰ ਆਖਦੀਆਂ ਹਨ: ਉੱਠ, ਦੁਖੀਆਂ ਦੇ ਦਰਦੀ, ਉੱਠ ਤੇ ਆਪਣਾ ਪੰਜਾਬ ਵੇਖ; ਅੱਜ ਬੇਲਿਆਂ ਵਿੱਚ ਲਾਸ਼ਾਂ ਵਿਛੀਆਂ ਹਨ ਤੇ ਚਨਾਬ ਲਹੂ ਨਾਲ ਭਰਿਆ ਹੈ। ਕਿਸੇ ਨੇ ਪੰਜਾਂ ਪਾਣੀਆਂ ਵਿੱਚ ਜ਼ਹਿਰ ਰਲਾ ਦਿੱਤਾ, ਤੇ ਉਨ੍ਹਾਂ ਹੀ ਪਾਣੀਆਂ ਨੇ ਧਰਤੀ ਨੂੰ ਸਿੰਜਿਆ।' The back-translation keeps every name (Waris Shah, Punjab, Chenab) and the one count (lakhs); it loses nothing the original carries and adds nothing"
+
+  # ----------------------------------------------------------- Tier B: peer-reviewed scholarship
+  - id: src-bharadwaj-mirza-2019
+    tier: B
+    kind: journal-article
+    author: Prashant Bharadwaj and Rinchan Ali Mirza
+    title: "Displacement and development: Long term impacts of population transfer in India"
+    container: Explorations in Economic History
+    publisher: Elsevier
+    place: null
+    year: 2019
+    edition: "author accepted manuscript, Kent Academic Repository"
+    volume: "73, 101273"
+    identifiers: {isbn: null, doi: "10.1016/j.eeh.2019.05.001", archive_org: null, hathitrust: null, url: "https://kar.kent.ac.uk/77719/1/author_accepted_EEH.pdf"}
+    access:
+      free_copy: "https://kar.kent.ac.uk/77719/1/author_accepted_EEH.pdf"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Displacement and development: Long term impacts of population transfer in India"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: the-counters
+
+  - id: src-chatterji-2007
+    tier: B
+    kind: monograph
+    author: Joya Chatterji
+    title: "The Spoils of Partition: Bengal and India, 1947-1967"
+    container: null
+    publisher: Cambridge University Press
+    place: Cambridge
+    year: 2007
+    edition: "the introduction, which the publisher serves free"
+    volume: null
+    identifiers: {isbn: null, doi: "10.1017/CBO9780511497384", archive_org: null, hathitrust: null, url: "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/6363F4902DA5D4F82FA351F5F0B3CFEC/9780511497384int_p1-16_CBO.pdf/introduction.pdf"}
+    access:
+      free_copy: "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/6363F4902DA5D4F82FA351F5F0B3CFEC/9780511497384int_p1-16_CBO.pdf/introduction.pdf"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "The Spoils of Partition"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: bengal-long-partition
+
+  - id: src-mahbub-saba-2018
+    tier: B
+    kind: journal-article
+    author: Rifat Mahbub and Anika Saba
+    title: "Homed, Unhomed and Rehomed in Partition Stories of East Bengal/East Pakistan"
+    container: "Asiatic: IIUM Journal of English Language and Literature"
+    publisher: IIUM Press
+    place: Kuala Lumpur
+    year: 2018
+    edition: null
+    volume: "12(1), 108-125"
+    identifiers: {isbn: null, doi: "10.31436/asiatic.v12i1.1212", archive_org: null, hathitrust: null, url: "https://journals.iium.edu.my/asiatic/index.php/ajell/article/download/1212/801"}
+    access:
+      free_copy: "https://journals.iium.edu.my/asiatic/index.php/ajell/article/download/1212/801"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Homed, Unhomed and Rehomed in Partition Stories of East Bengal/East Pakistan"
+    language: en
+    region_of_authorship: south-asia
+    producer: scholarship
+    position: bengal-long-partition
+    notes: "both authors at BRAC University, Bangladesh"
+
+  - id: src-rabbani-2024
+    tier: B
+    kind: journal-article
+    author: M. G. Rabbani
+    title: "Bangladesh-India Land Boundary Agreements, 1974-2015: Context, Correlations and Compromises"
+    container: "Journal of the Asiatic Society of Bangladesh (Humanities)"
+    publisher: Asiatic Society of Bangladesh
+    place: Dhaka
+    year: 2024
+    edition: null
+    volume: "69(1), 89-106"
+    identifiers: {isbn: null, doi: "10.3329/jasbh.v69i1.74464", archive_org: null, hathitrust: null, url: "https://www.banglajol.info/index.php/JASBH/article/download/74464/49393"}
+    access:
+      free_copy: "https://www.banglajol.info/index.php/JASBH/article/download/74464/49393"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Bangladesh-India Land Boundary Agreements, 1974-2015: Context, Correlations and Compromises"
+    language: en
+    region_of_authorship: south-asia
+    producer: scholarship
+    position: bengal-long-partition
+
+  - id: src-hanif-2020
+    tier: B
+    kind: journal-article
+    author: Kalsoom Hanif
+    title: "State, Religion and Religious Minorities in Pakistan: Remembering the Participation of Christians in Punjab Legislative Assembly 1947-55"
+    container: Pakistan Social Sciences Review
+    publisher: Fatima Gohar Educational and Welfare Society
+    place: Lahore
+    year: 2020
+    edition: null
+    volume: "4(2), 842-851"
+    identifiers: {isbn: null, doi: "10.35484/pssr.2020(4-II)68", archive_org: null, hathitrust: null, url: "https://pssr.org.pk/issues/v4/2/state-religion-and-religious-minorities-in-pakistan-remembering-the-participation-of-christians-in-punjab-legislative-assembly-1947-55.pdf"}
+    access:
+      free_copy: "https://pssr.org.pk/issues/v4/2/state-religion-and-religious-minorities-in-pakistan-remembering-the-participation-of-christians-in-punjab-legislative-assembly-1947-55.pdf"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "State, Religion and Religious Minorities in Pakistan: Remembering the Participation of Christians in Punjab Legislative Assembly 1947-55"
+    language: en
+    region_of_authorship: south-asia
+    producer: scholarship
+    position: pakistani-nationalist
+
+  - id: src-schofield-2022
+    tier: B
+    kind: journal-article
+    author: Victoria Schofield
+    title: "Plebiscite Conundrum in Jammu and Kashmir (1947 to the Present Day)"
+    container: Strategic Studies
+    publisher: Institute of Strategic Studies Islamabad
+    place: Islamabad
+    year: 2022
+    edition: null
+    volume: "42(1), 17-39"
+    identifiers: {isbn: null, doi: "10.53532/ss.042.01.00138", archive_org: null, hathitrust: null, url: "https://strategicstudies.org.pk/index.php/strategic_studies/article/download/138/103"}
+    access:
+      free_copy: "https://strategicstudies.org.pk/index.php/strategic_studies/article/download/138/103"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Plebiscite Conundrum in Jammu and Kashmir"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+
+  - id: src-gilmartin-2024
+    tier: B
+    kind: journal-article
+    author: David Gilmartin
+    title: "Nation and Region in the Post-Partition Remaking of the Indus River Basin"
+    container: Critical Pakistan Studies
+    publisher: Cambridge University Press
+    place: null
+    year: 2024
+    edition: null
+    volume: "2(1), 85-110"
+    identifiers: {isbn: null, doi: "10.1017/cps.2025.10005", archive_org: null, hathitrust: null, url: "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/7D95557A7DDB36ACC283C672F341B275/S2753271225100059a.pdf/div-class-title-nation-and-region-in-the-post-partition-remaking-of-the-indus-river-basin-div.pdf"}
+    access:
+      free_copy: "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/7D95557A7DDB36ACC283C672F341B275/S2753271225100059a.pdf/div-class-title-nation-and-region-in-the-post-partition-remaking-of-the-indus-river-basin-div.pdf"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "Nation and Region in the Post-Partition Remaking of the Indus River Basin"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+
+  - id: src-dey-2018
+    tier: B
+    kind: journal-article
+    author: Arunima Dey
+    title: "The Female Body as the Site of Male Violence during the Partition of India in Bapsi Sidhwa's Ice-Candy-Man"
+    container: Complutense Journal of English Studies
+    publisher: Universidad Complutense de Madrid
+    place: Madrid
+    year: 2018
+    edition: null
+    volume: "26, 27-45"
+    identifiers: {isbn: null, doi: "10.5209/cjes.54661", archive_org: null, hathitrust: null, url: "https://revistas.ucm.es/index.php/CJES/article/download/54661/4564456549112"}
+    access:
+      free_copy: "https://revistas.ucm.es/index.php/CJES/article/download/54661/4564456549112"
+      verified_at: 2026-09-25
+      verified_by: crossref-title-match
+      verified_title: "The Female Body as the Site of Male Violence during the Partition of India in Bapsi Sidhwa’s Ice-Candy-Man"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: women-and-recovery
+
+  - id: src-sherman-gould-ansari-2010
+    tier: B
+    kind: journal-article
+    author: Taylor C. Sherman, William Gould and Sarah Ansari
+    title: "From Subjects to Citizens: Society and the Everyday State in India and Pakistan, 1947-1970"
+    container: Modern Asian Studies
+    publisher: Cambridge University Press
+    place: null
+    year: 2011
+    edition: "published version, LSE Research Online"
+    volume: "45(1), 1-6"
+    identifiers: {isbn: null, doi: "10.1017/S0026749X10000247", archive_org: null, hathitrust: null, url: "https://eprints.lse.ac.uk/id/eprint/32790/7/From_subjects_to_citizen_society.pdf"}
+    access:
+      free_copy: "https://eprints.lse.ac.uk/id/eprint/32790/7/From_subjects_to_citizen_society.pdf"
+      verified_at: 2026-09-25
+      verified_by: repository-record
+      verified_title: "From subjects to citizens: society and the everyday state in India and Pakistan, 1947-1970"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+
+  - id: src-jalal-1985
+    tier: B
+    kind: monograph
+    author: Ayesha Jalal
+    title: "The Sole Spokesman: Jinnah, the Muslim League and the Demand for Pakistan"
+    container: null
+    publisher: Cambridge University Press
+    place: Cambridge
+    year: 1985
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: "10.1017/cbo9780511558856", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "The Sole Spokesman"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: pakistani-nationalist
+
+  - id: src-pandey-2001
+    tier: B
+    kind: monograph
+    author: Gyanendra Pandey
+    title: "Remembering Partition: Violence, Nationalism and History in India"
+    container: null
+    publisher: Cambridge University Press
+    place: Cambridge
+    year: 2001
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: "10.1017/cbo9780511613173", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "Remembering Partition"}
+    language: en
+    region_of_authorship: south-asia
+    producer: scholarship
+    position: women-and-recovery
+
+  - id: src-khan-2007
+    tier: B
+    kind: monograph
+    author: Yasmin Khan
+    title: "The Great Partition: The Making of India and Pakistan"
+    container: null
+    publisher: Yale University Press
+    place: New Haven
+    year: 2007
+    edition: "the Crossref record is the 2017 edition"
+    volume: null
+    identifiers: {isbn: null, doi: "10.2307/j.ctv1bzfp93", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "The Great Partition"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+
+  - id: src-hill-2008
+    tier: B
+    kind: journal-article
+    author: Kenneth Hill, William Seltzer, J. Leaning, S. J. Malik and Selim Russell
+    title: "The demographic impact of Partition in the Punjab in 1947"
+    container: Population Studies
+    publisher: Taylor and Francis
+    place: null
+    year: 2008
+    edition: null
+    volume: "62(2), 155-170"
+    identifiers: {isbn: null, doi: "10.1080/00324720801955206", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "The demographic impact of Partition in the Punjab in 1947"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: the-counters
+
+  - id: src-chester-2009
+    tier: B
+    kind: monograph
+    author: Lucy P. Chester
+    title: "Borders and Conflict in South Asia: The Radcliffe Boundary Commission and the Partition of Punjab"
+    container: null
+    publisher: Manchester University Press
+    place: Manchester
+    year: 2009
+    edition: "the Crossref record is the 2017 online edition"
+    volume: null
+    identifiers: {isbn: null, doi: "10.7765/9781526117632", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "Borders and conflict in South Asia"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+
+  - id: src-talbot-2019
+    tier: B
+    kind: journal-article
+    author: Ian Talbot
+    title: "Legacies of Partition for India and Pakistan"
+    container: Politeja
+    publisher: Ksiegarnia Akademicka
+    place: Krakow
+    year: 2019
+    edition: null
+    volume: "16(2), 7-25"
+    identifiers: {isbn: null, doi: "10.12797/politeja.16.2019.59.01", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "Legacies of Partition for India and Pakistan"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: british-administrative
+
+  - id: src-leake-haines-2017
+    tier: B
+    kind: journal-article
+    author: Elisabeth Leake and Daniel Haines
+    title: "Lines of (In)Convenience: Sovereignty and Border-Making in Postcolonial South Asia, 1947-1965"
+    container: The Journal of Asian Studies
+    publisher: Cambridge University Press
+    place: null
+    year: 2017
+    edition: null
+    volume: "76(4), 963-985"
+    identifiers: {isbn: null, doi: "10.1017/s0021911817000808", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "Lines of (In)Convenience: Sovereignty and Border-Making in Postcolonial South Asia, 1947–1965"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+
+  - id: src-fitzpatrick-2019
+    tier: B
+    kind: journal-article
+    author: Hannah Fitzpatrick
+    title: "Imagining and mapping the end of an empire: Oskar Spate and the partition of India and Pakistan"
+    container: Journal of Historical Geography
+    publisher: Elsevier
+    place: null
+    year: 2019
+    edition: null
+    volume: "66, 43-54"
+    identifiers: {isbn: null, doi: "10.1016/j.jhg.2019.07.005", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "Imagining and mapping the end of an empire: Oskar Spate and the partition of India and Pakistan"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+
+  - id: src-rahman-vanschendel-2003
+    tier: B
+    kind: journal-article
+    author: Md. Mahbubar Rahman and Willem van Schendel
+    title: "'I Am Not a Refugee': Rethinking Partition Migration"
+    container: Modern Asian Studies
+    publisher: Cambridge University Press
+    place: null
+    year: 2003
+    edition: null
+    volume: "37(3), 551-584"
+    identifiers: {isbn: null, doi: "10.1017/s0026749x03003020", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "‘I Am Not a Refugee’: Rethinking Partition Migration"}
+    language: en
+    region_of_authorship: south-asia
+    producer: scholarship
+    position: bengal-long-partition
+
+  - id: src-kaur-2007
+    tier: B
+    kind: monograph
+    author: Ravinder Kaur
+    title: "Since 1947: Partition Narratives among Punjabi Migrants of Delhi"
+    container: null
+    publisher: Oxford University Press
+    place: New Delhi
+    year: 2007
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: "10.1093/acprof:oso/9780195683776.001.0001", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-25, verified_by: crossref-title-match, verified_title: "Since 1947"}
+    language: en
+    region_of_authorship: south-asia
+    producer: scholarship
+    position: women-and-recovery
+
+  - id: src-butalia-1998
+    tier: B
+    kind: monograph
+    author: Urvashi Butalia
+    title: "The Other Side of Silence: Voices from the Partition of India"
+    container: null
+    publisher: Penguin Books India
+    place: New Delhi
+    year: 1998
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null}
+    language: en
+    region_of_authorship: south-asia
+    producer: scholarship
+    position: women-and-recovery
+    notes: "no DOI names the book: the only Crossref record under this title is a Foreign Affairs review (10.2307/20050025), which the event YAML cites as if it were the book"
+
+  - id: src-menon-bhasin-1998
+    tier: B
+    kind: monograph
+    author: Ritu Menon and Kamla Bhasin
+    title: "Borders and Boundaries: Women in India's Partition"
+    container: null
+    publisher: Rutgers University Press
+    place: New Brunswick
+    year: 1998
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null}
+    language: en
+    region_of_authorship: south-asia
+    producer: scholarship
+    position: women-and-recovery
+    notes: "no Crossref record under this title"
+
+  # ----------------------------------------------------------- Tier D: positional
+  - id: src-talib-1950
+    tier: D
+    kind: party-history
+    author: Gurbachan Singh Talib, for the Shiromani Gurdwara Parbandhak Committee
+    title: "Muslim League Attack on Sikhs and Hindus in the Punjab 1947"
+    container: null
+    publisher: Shiromani Gurdwara Parbandhak Committee
+    place: Amritsar
+    year: 1950
+    edition: "read from the Internet Archive scan"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "GurbachanSinghTalib1950", hathitrust: null, url: "https://archive.org/details/GurbachanSinghTalib1950"}
+    access:
+      free_copy: "https://archive.org/download/GurbachanSinghTalib1950/5.%20Muslim%20League%20Attack%20Sikhs%20And%20Hindus%20In%20The%20Punjab%20in%201947_djvu.txt"
+      verified_at: 2026-09-25
+      verified_by: archive-item-fetch
+      verified_title: "Muslim League Attack on Sikhs and Hindus in the Punjab 1947"
+    language: en
+    region_of_authorship: south-asia
+    producer: sgpc
+    position: sikh-panthic
+    rights: null
+
+# ------------------------------------------------------------- what the free record could not reach
+gaps:
+  - entry: src-jalal-1985
+    what: "Jalal's argument that Pakistan was a bargaining counter, and her reading of the League's demand"
+    tried: ["https://archive.org/details/solespokesmanjin0000jala"]
+    status: "the Internet Archive item the event YAML names is a controlled lending copy that this container cannot open; no open chapter found. The position rests on the work as named and on Jinnah's own address"
+  - entry: src-pandey-2001
+    what: "Pandey's account of the violence and of the count of the dead"
+    tried: ["https://doi.org/10.1017/cbo9780511613173"]
+    status: "paywalled; no open chapter found. The event YAML attributes a figure of 2 million to Pandey and Butalia; neither passage could be read, so the figure is not published here"
+  - entry: src-khan-2007
+    what: "Khan's narrative of the summer of 1947"
+    tried: ["https://archive.org/details/greatpartitionma00khan"]
+    status: "controlled lending copy, not openable from this container"
+  - entry: src-hill-2008
+    what: "the demographic estimate of the Punjab's dead and missing from the 1931, 1941 and 1951 censuses"
+    tried: ["https://doi.org/10.1080/00324720801955206"]
+    status: "paywalled (Taylor and Francis); OpenAlex lists no open copy. The one peer-reviewed count of the Punjab's dead could not be read, so the range below carries the fact-finding body, the Sikh account and the economists, not the demographers"
+  - entry: src-chester-2009
+    what: "the standard monograph on the Radcliffe Commission, including the chapter on water as 'the key' that Gilmartin cites"
+    tried: ["https://doi.org/10.7765/9781526117632", "https://americandiplomacy.web.unc.edu/2002/02/the-1947-partition-drawing-the-indo-pakistani-boundary/"]
+    status: "paywalled; the author's 2002 article in American Diplomacy was fetched but that journal is editor-reviewed, not peer-reviewed, so it is not admitted as Tier B and is not cited"
+  - entry: src-talbot-2019
+    what: "Talbot's open-access survey of the legacies of Partition"
+    tried: ["https://journals.akademicka.pl/politeja/article/download/1134/977", "https://journals.akademicka.pl/politeja/article/download/1134/977/2464"]
+    status: "the journal's PDF endpoint answered HTTP 500 twice and 404 on the galley path; the article is open access and could not be read from this container"
+  - entry: src-leake-haines-2017
+    what: "Leake and Haines on border-making 1947 to 1965"
+    tried: ["https://www.cambridge.org/core/services/aop-cambridge-core/content/view/F73D9923936444B81C02B6DD310BAF33/S0021911817000808a.pdf/div-class-title-lines-of-in-convenience-sovereignty-and-border-making-in-postcolonial-south-asia-1947-1965-div.pdf"]
+    status: "the open-access PDF answered a Cambridge Core page saying access was suspended under 'additional assurance measures'; not readable from this container"
+  - entry: src-fitzpatrick-2019
+    what: "Fitzpatrick on Spate and the maps of the partition"
+    tried: ["https://www.research.ed.ac.uk/files/104690810/104690760._Fitzpatrick._AAM.pdf"]
+    status: "the Edinburgh repository answered HTTP 403 with a JavaScript challenge"
+  - entry: src-rahman-vanschendel-2003
+    what: "Rahman and van Schendel on migration across the Bengal border as the migrants describe it"
+    tried: ["https://www.cambridge.org/core/services/aop-cambridge-core/content/view/006FEE62F5A995550A89DD5AB51E46AB/S0026749X03003020a.pdf/div-class-title-i-am-span-class-italic-not-span-a-refugee-rethinking-partition-migration-div.pdf"]
+    status: "the open-access PDF answered the same Cambridge Core suspension page"
+  - entry: src-kaur-2007
+    what: "Kaur on caste inside the rehabilitation of Punjabi migrants in Delhi"
+    tried: ["https://doi.org/10.1093/acprof:oso/9780195683776.001.0001"]
+    status: "paywalled; no open chapter found"
+  - entry: src-butalia-1998
+    what: "Butalia's interviews with abducted and recovered women, and the passage the event YAML quotes"
+    tried: ["https://archive.org/details/the-other-side-of-silence-urvashi-butalia"]
+    status: "the Internet Archive item the event YAML names is a controlled lending copy; not openable from this container. The YAML's quotation 'You think you are saving us? You are tearing us apart again' is attributed to Menon and Bhasin and could not be read in either book; it is not published here"
+  - entry: src-menon-bhasin-1998
+    what: "the count of about 75,000 abducted women and the recovery figures the event YAML attributes to this book"
+    tried: ["https://api.crossref.org/works?query.bibliographic=Borders+and+Boundaries+Women+in+India%27s+Partition"]
+    status: "no Crossref record and no open copy; the figures are not published here as fact"
+  - entry: src-talib-1950
+    what: "the appendices of witness statements the SGPC compilation carries"
+    tried: ["https://archive.org/download/GurbachanSinghTalib1950/5.%20Muslim%20League%20Attack%20Sikhs%20And%20Hindus%20In%20The%20Punjab%20in%201947_djvu.txt"]
+    status: "readable, but a Tier D compilation, so its statements are held only as the position's own count and not as testimony"
+  - what: "The Transfer of Power volumes beyond the five extracts the cap allows from each: Mountbatten's Personal Report No. 17 of 16 August 1947 (vol. XII, No. 489), which is his own account of withholding the awards until after 15 August, and the Punjab Boundary Force's establishment and reinforcement"
+    tried: ["https://archive.org/download/indiatransferofp12nich/indiatransferofp12nich_djvu.txt"]
+    status: "fetched whole, but Crown copyright, so held only as five passages; the volume's introduction says the awards were 'not published till 16 August' and this thesis states the publication date only as that"
+  - what: "The report of Mr. Justice Muhammad Munir of 6 August 1947, the second of the two League-nominated members of the Punjab Boundary Commission"
+    tried: ["https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt"]
+    status: "the collection carries it at pages 409 to 444 and it was fetched with the rest, but it was not sliced or read against the thesis in this pass; the League's case before the commission is therefore held from Din Mohammad alone, and under Rule B the Pakistani judges' reasoning rests on one of its two authors"
+  - what: "A Bengali survivor's testimony of the eastern partition, in any language"
+    tried: ["https://www.1947partitionarchive.org/", "https://api.openalex.org/works?filter=language:bn,open_access.is_oa:true,default.search:1947"]
+    status: "the four testimonies held are all of the Punjab; no free, readable first-person account from Bengal was found, so the eastern partition is known here through scholarship and the award"
+  - what: "A Dalit voice on the partition, or on caste inside the migration and the camps"
+    tried: ["https://doi.org/10.1093/acprof:oso/9780195683776.001.0001"]
+    status: "Kaur's chapter on caste inside the rehabilitation of Punjabi migrants is paywalled, and no testimony in this record names caste; the record holds no Dalit voice"
+  - what: "Census of India 1941, Volume VI, Punjab, with the district and tehsil tables by community that the Boundary Commission's parties argued from"
+    tried: ["https://archive.org/advancedsearch.php?q=census+of+india+1941+punjab", "https://archive.org/details/in.ernet.dli.2015.547583"]
+    status: "the Internet Archive holds the Punjab age tables only (in.ernet.dli.2015.547583); the community tables by district are known here as the commission's own members reproduce them"
+  - what: "Census of India 1941, Volume IV, Bengal Tables, Table XIII (community by district)"
+    tried: ["https://archive.org/download/in.ernet.dli.2015.116052/2015.116052.Census-Of-India-1941-Vol-Iv-Bengal_djvu.txt"]
+    status: "fetched, but the OCR text layer of the community table is too damaged to read a district row with confidence; the Bengal comparison below therefore uses the 3 June appendix's list, not the census figures"
+  - what: "The complaint of India to the Security Council of 1 January 1948 (S/628) and Pakistan's reply of 15 January 1948 (S/646), which carry the two governments' accounts of the accession of Jammu and Kashmir"
+    tried: ["https://documents.un.org/doc/UNDOC/GEN/NL4/706/28/PDF/NL470628.PDF", "https://documents.un.org/doc/UNDOC/GEN/NL4/806/46/PDF/NL480646.PDF"]
+    status: "both PDFs were fetched from ODS, but their text layers are OCR garbage (every third word broken), so nothing can be pinned; the accession is cited here only as the Commons was told of it on 30 October 1947 and as resolution 47 frames it"
+  - what: "The Instrument of Accession of Jammu and Kashmir, 26 October 1947"
+    tried: ["https://www.mea.gov.in/Images/pdf/InstrumentofAccession.pdf"]
+    status: "HTTP 404 at the Ministry of External Affairs; no other free official copy found"
+  - what: "Major-General Rees's report on the Punjab Boundary Force, and the Force's nominal strength"
+    tried: ["https://archive.org/advancedsearch.php?q=punjab+boundary+force+rees"]
+    status: "not found in any open archive; the Force is known here only at the strengths the Governor of the Punjab reported on 8 and 13 August 1947, and the event YAML's 25,000 has no document behind it in this record"
+  - what: "The source of the estimate of 200,000 dead that the event record calls 'early British figures'"
+    tried: ["https://archive.org/advancedsearch.php?q=divide+and+quit+moon"]
+    status: "Penderel Moon's Divide and Quit (1961), the usual source, is not in any open archive; the lowest figure this record holds is the Indian fact-finding body's"
+  - what: "Amrita Pritam's poem in a scholarly edition, and any Urdu, Hindi or Bengali source that could be read as text"
+    tried: ["https://tufs.repo.nii.ac.jp/record/9498/files/13224.pdf", "http://www.journal.alqalamjournalpu.com/index.php/Al-Qalam/article/view/456", "https://www.rekhta.org/search?q=subh-e-azadi", "https://www.gandhiheritageportal.org/", "https://api.openalex.org/works?filter=language:bn,open_access.is_oa:true,default.search:1947"]
+    status: "the Tokyo University of Foreign Studies repository holds a 1947 Urdu pamphlet (Musalmanon ki duain) as an image scan with no text layer; the Al-Qalam journal's host does not resolve; Rekhta's search pages are rendered by script and the Faiz nazm could not be reached by URL; the Gandhi Heritage Portal is script-rendered; OpenAlex lists no open-access Bengali work on 1947. The archive.org item holding Gandhi's Calcutta prayer speeches carries the Hindi audio but no Hindi transcript. The one non-English source this record holds is the Punjabi poem"
+  - what: "Testimony and scholarship that was found and refused"
+    tried: ["https://migrationaffairs.com/wp-content/uploads/2022/02/1-sayeed-ferdous-article-migration-affairs-sept-2021.pdf", "https://doi.org/10.46521/pjws.027.01.0038", "http://rhpsnet.com/journals/rhps/Vol_6_No_2_December_2018/4.pdf", "https://ir.ide.go.jp/record/37595/files/IDP000590_001.pdf", "https://doi.org/10.5281/zenodo.21441331", "https://papers.ssrn.com/sol3/Delivery.cfm?abstractid=1124093"]
+    status: "Ferdous 2021 and Sharma and Mathur Velath 2021 (Journal of Migration Affairs) and Aslam 2020 (Pakistan Journal of Women's Studies) resolve to hijacked domains serving gambling pages; Jamil 2018 sits behind a JavaScript wall and its publisher is not admitted as peer-reviewed; Shonchoy and Tsubota 2016 is a discussion paper, not peer-reviewed; the Hindi article on Haryana's refugees (Zenodo, 2026) is self-deposited in a journal this record cannot verify as peer-reviewed; Bharadwaj, Khwaja and Mian 2008 on SSRN answered HTTP 403"
+
+# ------------------------------------------------------------- positions and their adjudication
+positions:
+  - id: british-administrative
+    name: The British administrative account
+    holders: ["Attlee (Commons, 3 June and 10 July 1947)", "Listowel (Lords, 16 July 1947)", "Mountbatten and his staff (Transfer of Power, vols. XI and XII)", "Jenkins, Governor of the Punjab", "Talbot (2019)"]
+    rests_on: [src-hansard-19470603, src-hansard-19470710, src-hansard-lords-19470716, src-top-xi, src-top-xii, src-jenkins-punjab-problem-1947, src-mountbatten-press-19470604, src-talbot-2019]
+    claim: "Partition was the Indian parties' choice and the notional division, the commissions and their terms were theirs; the Viceroy kept out of the award; haste was the price of a divided government."
+    omits: "What the Viceroy's own staff wrote about Gurdaspur and Kashmir before the award, and the strength at which the Governor found the Boundary Force the day after the award was signed."
+    adjudications:
+      - claim: "The 1941 census figures were to be taken as authoritative for the notional division, and the Boundary Commissions were to work from contiguous majority areas plus other factors."
+        verdict: supported
+        basis: presence
+        rests_on: [src-hansard-19470603.p36, src-hansard-19470603.p37, src-radcliffe-punjab.para3, src-dinmohammad-1947.p383-385, src-mahajan-1947.p327-328]
+        reasoning: "The statement read to the Commons on 3 June 1947 says the 1941 figures would be authoritative; the award reproduces the terms of reference; and both the League-nominated and the Congress-nominated judges argue Gurdaspur from the 1941 census. Four producers carry the same basis."
+      - claim: "The Viceroy had nothing to do with the award and kept clear of the Boundary Commissions."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-top-xii.item428, src-top-xii.item335, src-mountbatten-press-19470604.p99-100]
+        reasoning: "Ismay's letter says so, and Liaquat's message is what it answers; but the Viceroy's own interview record of 4 August has him saying Kashmir could join either Dominion 'provided part of Gurdaspur were put into East Punjab by the Boundary Commission', and on 4 June he had told the press it was unlikely the commission would place the whole district in the Muslim majority area. Every document here is the Viceroy's staff's own, so under Rule A the verdict is capped at qualified: the papers show a Viceroy who had a view of Gurdaspur's fate, not one who conveyed it to Radcliffe."
+  - id: indian-nationalist
+    name: The Indian nationalist account
+    holders: ["Nehru (Constituent Assembly, 14 August 1947)", "Mahajan (Boundary Commission report, 3 August 1947)", "Khosla, for the Fact Finding Organisation (1949)", "Gandhi (Calcutta, 24 August 1947)"]
+    rests_on: [src-cad-19470814, src-mahajan-1947, src-khosla-1949, src-gandhi-19470824]
+    claim: "Freedom came with a partition Congress accepted; the 1941 census on which Gurdaspur's majority rests was unreliable and the district's electors were non-Muslim in majority; the dead were counted by an official body at hundreds of thousands, not millions."
+    omits: "The Muslim victims of the eastern districts, whom the fact-finding body counts only as 'an equal number', and the League's case that a census cannot be replaced by a voters' roll."
+    adjudications:
+      - claim: "On the electoral rolls Gurdaspur's non-Muslim voters outnumbered its Muslim voters, 81,525 to 74,790."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-mahajan-1947.p328-329, src-dinmohammad-1947.p383-385]
+        reasoning: "The Congress-nominated judge's report carries the roll figures; the League-nominated judge's report, the only other producer on the point, argues from the 1941 population figures and does not mention the rolls in the passage held here. The rolls are one side's evidence, so the verdict is qualified."
+      - claim: "The fact-finding body's count is between 200,000 and 250,000 non-Muslims killed, with an equal number of Muslims believed killed in India."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-khosla-1949.p299, src-khosla-1949.p298]
+        reasoning: "The count is the body's own, from nearly fifteen thousand witnesses and 2,094 of 19,914 villages in West Punjab by its own footnote, and the Muslim figure is a belief, not a count. One producer, and the producer says its own method is approximate: qualified."
+  - id: pakistani-nationalist
+    name: The Pakistani nationalist account
+    holders: ["Jinnah (Constituent Assembly of Pakistan, 11 August 1947)", "the Muslim League (memorandum to the Punjab Boundary Commission)", "Din Mohammad (Boundary Commission report, 5 August 1947)", "Liaquat Ali Khan (message of 11 August 1947)", "Hanif (2020)", "Jalal (1985)"]
+    rests_on: [src-jinnah-19470811, src-league-memo-1947, src-dinmohammad-1947, src-hanif-2020, src-jalal-1985]
+    claim: "Division was the only solution; Gurdaspur was a Muslim-majority district by the census the plan itself made authoritative, and its award to India was a political decision; Kashmir's accession is to be decided by a plebiscite the Security Council called for."
+    omits: "The award's two stated grounds that name Gurdaspur or its tahsils, the Upper Bari Doab Canal from Madhopur in Pathankot and the Mandi hydro-electric scheme; and the 1942 Sikh note listing Gurdaspur at 50.8 per cent by the 1931 census."
+    adjudications:
+      - claim: "Gurdaspur had a Muslim majority by the 1941 census: 51.14 per cent, with three of its four tehsils Muslim-majority."
+        verdict: supported
+        basis: presence
+        rests_on: [src-dinmohammad-1947.p383-385, src-mahajan-1947.p327-328, src-mountbatten-press-19470604.p99-100, src-top-xi.item45]
+        reasoning: "The League-nominated judge prints the tehsil table; the Congress-nominated judge gives the same district figures, 589,923 Muslims of 1,153,511, and concedes the majority while disputing its size; the Viceroy's press conference and the 3 June appendix list the district as Muslim-majority. Three producers, on both sides, agree on the majority."
+      - claim: "The allocation of Gurdaspur to East Punjab was a political decision, not a judicial one."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-top-xii.item335, src-top-xii.item428, src-radcliffe-punjab.para9, src-radcliffe-punjab.para11, src-radcliffe-punjab.item1]
+        reasoning: "The Viceroy's staff recorded him, on 4 August, treating part of Gurdaspur's transfer to East Punjab as the condition of Kashmir's freedom to join either Dominion, eight days before the award; Ismay's reply to Liaquat denies any influence. The award's reasons say nothing of Kashmir; the two stated grounds that name Gurdaspur or its tahsils are the Upper Bari Doab Canal from Madhopur in Pathankot and the Mandi hydro-electric scheme, and the schedule names the State of Kashmir only as where the Ujh enters the Punjab. The papers show the motive existed on the Viceroy's side; no document in this record shows it reached Radcliffe, so the claim is qualified, not supported."
+      - claim: "The Security Council resolved that the accession of Jammu and Kashmir should be decided by a free and impartial plebiscite."
+        verdict: supported
+        basis: presence
+        rests_on: [src-un-sres47.pre3, src-un-sres47.op1, src-hansard-19471030.p1086]
+        reasoning: "Resolution 47 notes that both governments desire the question decided by plebiscite and recommends measures to create the conditions for one; the Commons was told on 30 October 1947 that India accepted the accession 'subject to a reference to the people of Kashmir'. Two producers."
+  - id: sikh-panthic
+    name: The Sikh and Punjabi account
+    holders: ["the Sikh All Parties Committee (1942 note)", "Teja Singh (Boundary Commission report, 4 August 1947)", "the Shiromani Gurdwara Parbandhak Committee (Talib, 1950)", "Amrita Pritam (Ajj Aakhaan Waris Shah Nu, 1949)"]
+    rests_on: [src-sikh-note-1942, src-tejasingh-1947, src-talib-1950, src-amrita-pritam-1949]
+    described_by: [src-top-xi.item59, src-tejasingh-1947.p353-354]
+    claim: "Any partition on Muslim-majority districts cuts the Sikhs in two and leaves their shrines and canal colonies in the west; the migration ran to more than twelve million and the dead to about a million; the Punjab's central districts were balanced, not Muslim; and the Punjab itself, in its poet's lament, had its five waters poisoned."
+    omits: "The Muslim majorities of the tehsils east of the Ravi that its own judge's report concedes, and the Muslim dead of the eastern districts after 15 August."
+    adjudications:
+      - claim: "The plan of 3 June divided the Sikh community into two almost equal parts."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-top-xi.item59, src-tejasingh-1947.p353-354]
+        reasoning: "The Viceroy said so at his press conference; the Sikh member's own report counts 3,767,401 Sikhs by the 1941 census, of whom 1,683,855 lived in the seventeen notional western districts and 2,073,546 in the east. Two producers agree on the division; the Sikh judge's own figures make it 45 to 55 rather than equal, so the claim is qualified by the position's own count."
+      - claim: "Gurdaspur, Amritsar and Lahore were districts of balanced population, not Muslim-majority districts."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-sikh-note-1942.p7, src-dinmohammad-1947.p383-385, src-top-xi.item45]
+        reasoning: "The 1942 note's own 1931 table puts Gurdaspur at 50.8 and Amritsar at 47.0 per cent Muslim, and the 1941 table the League's judge prints puts Gurdaspur at 51.14; the 3 June appendix lists Gurdaspur and Lahore, not Amritsar, as Muslim-majority. Balanced is true of the margins and false of the label the plan used: qualified."
+  - id: bengal-long-partition
+    name: The Bengal and Bangladeshi account
+    holders: ["Chatterji (2007)", "Mahbub and Saba (BRAC University, 2018)", "Rabbani (Asiatic Society of Bangladesh, 2024)", "Rahman and van Schendel (2003)"]
+    rests_on: [src-chatterji-2007, src-mahbub-saba-2018, src-rabbani-2024, src-rahman-vanschendel-2003]
+    claim: "In the east the partition was not an event but a decades-long migration, at least 6 million Hindus leaving by 1967, and a boundary whose enclaves were not exchanged until 2015."
+    omits: "The award's own reasons for Calcutta, Khulna and Murshidabad, and the Muslim migration into East Bengal, which its stories carry and its counts do not."
+    adjudications:
+      - claim: "The award placed Khulna, a district the 3 June plan did not list as Muslim-majority, in East Bengal, and Murshidabad, which it did list, in West Bengal."
+        verdict: supported
+        basis: presence
+        rests_on: [src-radcliffe-bengal.item5, src-radcliffe-bengal.item8, src-top-xi.item45, src-gandhi-19470824.para6]
+        reasoning: "The schedule runs the line along the Malda-Murshidabad and Rajshahi-Murshidabad district boundaries, leaving Murshidabad west of it, and southwards along the Khulna and 24-Parganas boundary, leaving Khulna east of it; the appendix lists Murshidabad and not Khulna; Gandhi's speech of 24 August deplores Khulna celebrating its entry into Pakistan. Three producers."
+      - claim: "Between 1947 and 1967 at least 6 million Hindu refugees crossed from East Bengal into West Bengal."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-chatterji-2007.p1-2]
+        reasoning: "No census or government count for Bengal is held in this record; the figure stands as the scholarship's."
+        would_settle: "the Census of India 1951 and 1961 displaced-persons tables for West Bengal, which no open archive reached from this container holds"
+  - id: women-and-recovery
+    name: The feminist and subaltern account
+    holders: ["Butalia (1998)", "Menon and Bhasin (1998)", "Pandey (2001)", "Kaur (2007)", "Dey (2018)"]
+    rests_on: [src-dey-2018, src-butalia-1998, src-menon-bhasin-1998, src-pandey-2001, src-kaur-2007, src-kirpal-intro-recovery]
+    claim: "The violence was done on women's bodies as a message between communities, and the two states' recovery of abducted women, decided on 6 December 1947 'even against the wishes of persons concerned', abducted them a second time."
+    omits: "The recovered women who wished to return, whom the liaison reports count without naming, and the men killed in the same columns."
+    adjudications:
+      - claim: "Recovery was slow, contested by the courts, and done against the recovered women's stated wishes."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-clo-19480429.p610-611, src-pa-sarla-dutta.para6, src-kirpal-intro-recovery.secxxxi]
+        reasoning: "The two governments' decision of 6 December 1947, as the editor summarises it, was that all persons abducted after March 1947 were to be restored 'even against the wishes of persons concerned'. The Chief Liaison Officer's letter of April 1948 counts 16 women and 10 children recovered in Sheikhupura in a month against about 100 still to find, and 'clues' held for 47; Sarla Dutta's account has an army search reach her abductor's house and her own scream from inside a seed drum bring her out. An official record and a survivor agree that recovery was slow and contested; on consent they point opposite ways, so the verdict is qualified."
+      - claim: "About 75,000 women were abducted."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-clo-19480429.p610-611]
+        reasoning: "No count of abductions is held in this record; the liaison letter counts districts, not the whole, and the books that carry the figure could not be read."
+        would_settle: "the Ministry of External Affairs' recovery returns under the Abducted Persons (Recovery and Restoration) Act 1949, which Kirpal Singh cites and no open archive holds"
+  - id: the-counters
+    name: The demographers and economists
+    holders: ["Bharadwaj and Mirza (2019)", "Hill, Seltzer, Leaning, Malik and Russell (2008)"]
+    rests_on: [src-bharadwaj-mirza-2019, src-hill-2008]
+    claim: "Nearly 17 million people were transferred and nearly a million died; 14.5 million were displaced within four years; India's 1951 census enumerated 7.3 million displaced persons."
+    omits: "The direction and timing of the counts it combines, which the British Government's own figure of December 1947 and the Bengal scholarship split apart."
+    adjudications:
+      - claim: "About 8.5 million people had moved between the two Punjabs by December 1947."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-hansard-19471218.p1845, src-bharadwaj-mirza-2019.p5]
+        reasoning: "The Commons was told 8,500,000 'or thereabouts' had moved between East and West Punjab by 18 December 1947; the economists put 14.5 million displaced across both borders in four years. The two are not the same count, so they agree without confirming each other."
+
+# ------------------------------------------------------------- where the record disagrees
+contested:
+  - id: death-toll
+    claim: "How many people died in the partition violence"
+    rows:
+      - position: indian-nationalist
+        holds: "Between 200,000 and 250,000 non-Muslims killed, with an equal number of Muslims believed killed in India, from the evidence of nearly fifteen thousand witnesses."
+        figures: ["200000", "250000"]
+        source: src-khosla-1949
+        locator: p299
+      - position: sikh-panthic
+        holds: "The butchering of about a million, as the SGPC compilation puts it."
+        figures: []
+        source: src-talib-1950
+        locator: p43
+      - position: the-counters
+        holds: "Nearly a million deaths due to the riots, 'by many accounts'."
+        figures: []
+        source: src-bharadwaj-mirza-2019
+        locator: p1
+  - id: the-migration
+    claim: "How many people were displaced, over what period, and across which border"
+    rows:
+      - position: british-administrative
+        holds: "8,500,000 or thereabouts had moved between East Punjab and West Punjab, both ways, by 18 December 1947."
+        figures: ["8500000"]
+        source: src-hansard-19471218
+        locator: p1845
+      - position: the-counters
+        holds: "Nearly 17 million transferred; 14.5 million displaced within four years; 7.3 million displaced persons enumerated in India in 1951."
+        figures: ["17", "14.5"]
+        source: src-bharadwaj-mirza-2019
+        locator: p5
+      - position: sikh-panthic
+        holds: "The uprooting of over twelve millions."
+        figures: []
+        source: src-talib-1950
+        locator: p43
+      - position: bengal-long-partition
+        holds: "At least 6 million Hindu refugees from East Bengal into West Bengal between 1947 and 1967, a migration that did not end in 1947."
+        figures: []
+        source: src-chatterji-2007
+        locator: p1-2
+  - id: gurdaspur
+    claim: "Why Gurdaspur went to India"
+    rows:
+      - position: british-administrative
+        holds: "The district's Muslim share was 50.4 per cent against 49.6, a difference of 0.8, so it was unlikely the commission would place the whole district in the Muslim majority area."
+        figures: ["50.4", "49.6", "0.8"]
+        source: src-mountbatten-press-19470604
+        locator: p99-100
+      - position: pakistani-nationalist
+        holds: "51.14 per cent Muslim by the 1941 census, three tehsils of four Muslim-majority; the award of a large part of it to East Punjab was a political decision."
+        figures: ["51.14", "48.86", "52.1", "55.06", "51.3", "38.8"]
+        source: src-dinmohammad-1947
+        locator: p383-385
+      - position: indian-nationalist
+        holds: "A majority of 26,000 that an affidavit on an error in the Shakargarh register reduces to about 20,000, against electoral rolls of 81,525 non-Muslims to 74,790 Muslims."
+        figures: ["81525", "74790"]
+        source: src-mahajan-1947
+        locator: p328-329
+      - position: sikh-panthic
+        holds: "A balanced district, 50.8 per cent Muslim by the 1931 census, that belongs with Amritsar and Lahore to the non-Muslim province."
+        figures: ["50.8", "1931"]
+        source: src-sikh-note-1942
+        locator: p7
+  - id: the-1941-census
+    claim: "Whether the 1941 census could bear the boundary"
+    rows:
+      - position: british-administrative
+        holds: "For the purpose of determining the population of districts, the 1941 census figures will be taken as authoritative."
+        figures: []
+        source: src-hansard-19470603
+        locator: p36
+      - position: pakistani-nationalist
+        holds: "It is not disputed by the Congress that on the basis of the 1941 census Gurdaspur is 51.14 per cent Muslim; the figures are the basis the plan itself laid down."
+        figures: []
+        source: src-dinmohammad-1947
+        locator: p383-385
+      - position: indian-nationalist
+        holds: "The census returns of 1941 were not accurate even at the time they were compiled, and were hopelessly wrong six years later."
+        figures: []
+        source: src-khosla-1949
+        locator: p298
+
+# ------------------------------------------------------------- exhibits
+exhibits:
+  - id: ex-award-punjab-9
+    kind: document
+    title: "The Punjab award, paragraph 9: the debatable ground"
+    creator: Cyril Radcliffe
+    date: "12 August 1947"
+    repository: Internet Archive, Digital Library of India collection (Government of India Press reprint, 1958)
+    accession: "dli.csl.1040"
+    licence: Government of India publication of 1958, public domain
+    url: "https://archive.org/details/dli.csl.1040"
+    source: src-radcliffe-punjab
+    locator: para9
+  - id: ex-appendix-3june
+    kind: document
+    title: "The Appendix to the Statement of 3 June 1947: the Muslim-majority districts by the 1941 census"
+    creator: His Majesty's Government
+    date: "3 June 1947"
+    repository: Internet Archive (The Transfer of Power, vol. XI, No. 45)
+    accession: "constitutionalre06nich"
+    licence: Crown copyright, held as the passage cited
+    url: "https://archive.org/details/constitutionalre06nich"
+    source: src-top-xi
+    locator: item45
+  - id: ex-jenkins-13aug
+    kind: document
+    title: "The Governor of the Punjab on the Boundary Force, 13 August 1947"
+    creator: Evan Jenkins
+    date: "13 August 1947"
+    repository: Internet Archive (The Transfer of Power, vol. XII, No. 459)
+    accession: "indiatransferofp12nich"
+    licence: Crown copyright, held as the passage cited
+    url: "https://archive.org/details/indiatransferofp12nich"
+    source: src-top-xii
+    locator: item459
+  - id: ex-sarla-dutta
+    kind: document
+    title: "Sarla Dutta, abducted at 13 from Mirpur, on the search that found her"
+    creator: Sarla Dutta, interviewed by Sruti Lodha
+    date: "story page of 20 June 2024"
+    repository: The 1947 Partition Archive
+    accession: "https://www.1947partitionarchive.org/sarla-dutta/"
+    licence: Copyright The 1947 Partition Archive, held as the passage cited
+    url: "https://www.1947partitionarchive.org/sarla-dutta/"
+    source: src-pa-sarla-dutta
+    locator: para6
+  - id: ex-waris-shah
+    kind: document
+    title: "Amrita Pritam, Ajj Aakhaan Waris Shah Nu, the first eight lines"
+    creator: Amrita Pritam
+    date: "1947 to 1948, published 1949"
+    repository: punjabi-kavita.com
+    accession: "Lammian-Vatan-Amrita-Pritam.php"
+    licence: Copyright, held as the passage cited, with a Void translation beside it
+    url: "https://www.punjabi-kavita.com/Lammian-Vatan-Amrita-Pritam.php"
+    source: src-amrita-pritam-1949
+    locator: sec1
+  - id: ex-refugee-train
+    kind: image
+    title: "A train crowded with refugees, Punjab, 1947"
+    creator: Unknown photographer
+    date: "between 1947 and 1953, as the file page dates it"
+    repository: Wikimedia Commons
+    accession: "File:Emergency_trains_crowded_with_desperate_refugees.jpg"
+    licence: Public domain in India (the file page's tag), sourced by the uploader from a Columbia University teaching page and The Hindu
+    url: "https://commons.wikimedia.org/wiki/File:Emergency_trains_crowded_with_desperate_refugees.jpg"
+    image: "https://upload.wikimedia.org/wikipedia/commons/3/39/Emergency_trains_crowded_with_desperate_refugees.jpg"
+    shows: "a train with passengers on its roof and in its doorways, which the file page captions as refugees; the file page gives no place, no date closer than 1947 to 1953 and no photographer"
+    does_not_show: "which direction the train was going, which community its passengers belonged to, or that it is one of the trains attacked; the file page's caption is the uploader's"
+  - id: ex-partition-map
+    kind: map
+    title: "Map of the partition of India, 1947"
+    creator: "Wikimedia Commons contributor RaviC, derived from earlier Commons maps, with later translations by Jordi escarre"
+    date: "11 February 2017, revised to 17 January 2025"
+    repository: Wikimedia Commons
+    accession: "File:Partition_of_India_1947_en.svg"
+    licence: CC BY-SA 4.0
+    url: "https://commons.wikimedia.org/wiki/File:Partition_of_India_1947_en.svg"
+    image: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Partition_of_India_1947_en.svg"
+    shows: "a modern map of the two Dominions as its author drew them in 2017, with the princely states that did not accede drawn as parts of India and Pakistan, as its own note says"
+    does_not_show: "the Radcliffe line as the award describes it thana by thana and village by village, nor the boundary of 1947 as surveyed; it is a contributor's drawing, not a document of 1947"
+
+# ------------------------------------------------------------- the thesis's own analysis
+analyses:
+  - id: an-notional-vs-award
+    title: The notional line against the award, district by district
+    method: "Every district the award's schedules name or place, one row per district, read against the Appendix to the Statement of 3 June 1947 (src-top-xi.item45), which lists the Muslim-majority districts by the 1941 census. The listed column is read from the appendix; the award column from the schedule paragraph the row cites, the districts west of the Bengal line and the remainder rule for the rest; crossed is yes where the award put a listed district wholly or mostly on the non-Muslim side or an unlisted district on the Muslim side, part where the schedule divides the district along thana lines, and no otherwise; crossed_n is 1 for yes and 0 otherwise. The result is the sum of crossed_n, the number of districts the award put across the line. No share is given, because the schedules place every other district of both provinces by remainder and the two documents let this thesis name only the 40 rows below."
+    finding: "Of the 40 districts the appendix lists or the schedules name, the award put 4 across the notional line: Murshidabad, Khulna and the Chittagong Hill Tracts in Bengal, and Gurdaspur, three of whose four tehsils went east, in the Punjab; 5 more it divided along thana lines. The other 31 fell where the 3 June list had put them."
+    confidence: "high for the whole districts, whose side the schedule states in words; moderate for the divided ones, where which part is larger is this thesis's reading of the thana list"
+    against: "the Bengal report itself says the parties propounded the most diverse solutions and that the province offers few satisfactory natural boundaries, so a count of crossings measures the award against the notional list, not against any alternative line; the Sylhet transfer, decided by referendum and a separate report, is outside the count"
+    result: 4
+    derivation:
+      compute: sum
+      column: crossed_n
+      columns: [province, district, listed, award, crossed, crossed_n]
+      rows:
+        - {province: Bengal, district: Chittagong, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Noakhali, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Tippera, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Bakarganj, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Dacca, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Faridpur, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Mymensingh, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Bogra, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Pabna, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Rajshahi, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item5}
+        - {province: Bengal, district: Rangpur, listed: "yes", award: East Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item2}
+        - {province: Bengal, district: Dinajpur, listed: "yes", award: divided along thana boundaries, crossed: part, crossed_n: 0, extract: src-radcliffe-bengal.item3}
+        - {province: Bengal, district: Malda, listed: "yes", award: divided along thana boundaries, crossed: part, crossed_n: 0, extract: src-radcliffe-bengal.item4}
+        - {province: Bengal, district: Murshidabad, listed: "yes", award: West Bengal, crossed: "yes", crossed_n: 1, extract: src-radcliffe-bengal.item5}
+        - {province: Bengal, district: Nadia, listed: "yes", award: divided along thana boundaries, crossed: part, crossed_n: 0, extract: src-radcliffe-bengal.item7}
+        - {province: Bengal, district: Jessore, listed: "yes", award: divided along thana boundaries, crossed: part, crossed_n: 0, extract: src-radcliffe-bengal.item7}
+        - {province: Bengal, district: Khulna, listed: "no", award: East Bengal, crossed: "yes", crossed_n: 1, extract: src-radcliffe-bengal.item8}
+        - {province: Bengal, district: 24-Parganas, listed: "no", award: West Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item8}
+        - {province: Bengal, district: Darjeeling, listed: "no", award: West Bengal, crossed: "no", crossed_n: 0, extract: src-radcliffe-bengal.item1}
+        - {province: Bengal, district: Jalpaiguri, listed: "no", award: divided along thana boundaries, crossed: part, crossed_n: 0, extract: src-radcliffe-bengal.item1}
+        - {province: Bengal, district: Chittagong Hill Tracts, listed: "no", award: East Bengal, crossed: "yes", crossed_n: 1, extract: src-radcliffe-bengal.item2}
+        - {province: Punjab, district: Gurdaspur, listed: "yes", award: East Punjab except the Shakargarh tahsil, crossed: "yes", crossed_n: 1, extract: src-radcliffe-punjab.item2}
+        - {province: Punjab, district: Lahore, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item2}
+        - {province: Punjab, district: Sialkot, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item2}
+        - {province: Punjab, district: Gujranwala, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Sheikhupura, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Attock, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Gujrat, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Jhelum, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Mianwali, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Rawalpindi, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Shahpur, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Dera Ghazi Khan, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Jhang, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Lyallpur, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Montgomery, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item4}
+        - {province: Punjab, district: Multan, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Muzaffargarh, listed: "yes", award: West Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item6}
+        - {province: Punjab, district: Amritsar, listed: "no", award: East Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item2}
+        - {province: Punjab, district: Ferozepore, listed: "no", award: East Punjab, crossed: "no", crossed_n: 0, extract: src-radcliffe-punjab.item4}
+  - id: an-rifles-per-head
+    title: One rifle for at least 1,600 people
+    method: "The Governor of the Punjab's telegram of 8 August 1947 gives the Boundary Force's strength as 5 brigade groups averaging 1,500 effective rifles, 7,500 in all, for 12 districts with a population of no less than 12 million. One row; the result is the population divided by the rifles."
+    finding: "By the Governor's telegram of 8 August 1947, the Boundary Force had, in addition to police, one effective rifle for at least 1,600 people in the 12 districts it was to hold: the telegram says 'no less than 12 million', so the ratio is a floor."
+    confidence: "high: both figures sit in one sentence of one telegram, and the result is a division"
+    against: "the strength is 'in addition to police', whose numbers the telegram does not give, so the ratio counts the Force alone; the same Governor's letter of 13 August gives 14.5 million people and about 9,000 including static troops and training centres, which is one rifle to about 1,611, and 17,932 inhabited towns and villages; and he had estimated the need at a minimum of about 20,000 effective fighting men, so the ratio measures the force he had, not the force the task needed"
+    result: 1600
+    derivation:
+      compute: ratio
+      column: population
+      over: rifles
+      columns: [document, population, rifles]
+      rows:
+        - {document: "Jenkins to Mountbatten, telegram No. 219-G, 8 August 1947, paragraph 4", population: 12000000, rifles: 7500, extract: src-top-xii.item382}
+  - id: an-gurdaspur-counts
+    title: Every count of Gurdaspur in the record
+    method: "Every figure a fetched document gives for the Muslim share of Gurdaspur district's people, one row per figure, with the document, its census year and the side it was written from; where the document gives counts rather than a share (the Governor's 590,000 Muslims and 560,000 non-Muslims), the share is the Muslim count over the two, to one decimal. The result is the range of the column."
+    finding: "Five documents from four sides put the Muslim share of Gurdaspur's people between 50.4 and 51.3 per cent, and no count of its people in the record puts it below half; the one count that runs the other way is of voters, 74,790 Muslim to 81,525 non-Muslim, which is 47.8 per cent."
+    confidence: "high for the range, which is the extreme of five figures from five documents of four sides; the figures rest on two censuses, so the range spans 1931 and 1941 rather than one count"
+    against: "the Congress-nominated judge's report carries an affidavit that reduces the 1941 majority from 26,435 to about 20,000 and electoral rolls with 81,525 non-Muslim voters to 74,790 Muslim; the Viceroy's 50.4 is described by the League's judge as an error, and the Viceroy himself said 'I think' when he gave it"
+    result: [50.4, 51.3]
+    derivation:
+      compute: range
+      column: muslim_share
+      columns: [document, census, side, muslim_share]
+      rows:
+        - {document: "Note on the Sikhs' Position, 1942, district table", census: 1931, side: "Sikh All Parties Committee", muslim_share: 50.8, extract: src-sikh-note-1942.p7}
+        - {document: "Jenkins, The Punjab Problem, 7 March 1947 (590,000 Muslims, 560,000 non-Muslims)", census: 1941, side: "Governor of the Punjab", muslim_share: 51.3, extract: src-jenkins-punjab-problem-1947.p19-20}
+        - {document: "Mountbatten, press conference of 4 June 1947", census: 1941, side: "the Viceroy", muslim_share: 50.4, extract: src-mountbatten-press-19470604.p99-100}
+        - {document: "Din Mohammad, report of 5 August 1947", census: 1941, side: "League-nominated judge", muslim_share: 51.14, extract: src-dinmohammad-1947.p383-385}
+        - {document: "Mahajan, report of 3 August 1947", census: 1941, side: "Congress-nominated judge", muslim_share: 51.14, extract: src-mahajan-1947.p327-328}
+  - id: an-migration-counts
+    title: One migration, five counts
+    method: "Every figure the fetched documents give for the number of people displaced by the partition, one row per figure, in millions as the document states it, with the border, the period and the direction each figure counts. The result is the number of rows. No range is taken across them, because they do not count the same thing."
+    finding: "The record holds five counts of five different things: one border by December 1947 (8.5 million), one direction by 1951 (7.3 million), both borders over four years (14.5 million), the whole transfer (nearly 17 million), and one province over twenty years (at least 6 million). The only two that count the whole transfer are the economists' own, 14.5 to 17 million, both from Bharadwaj and Mirza, the first citing Bharadwaj, Khwaja and Mian."
+    confidence: "high for the count of rows; the 14.5 to 17 span is one producer's, and the other three are not comparable with it or with each other"
+    against: "the SGPC compilation's 'over twelve millions' and the Indian fact-finding body's warning that refugee estimates 'do not give a true picture' are both in the record and neither is a digit this table can hold; the Hansard figure is 'or thereabouts' and covers the Punjab only"
+    result: 5
+    derivation:
+      compute: count
+      columns: [document, counts, period, millions]
+      rows:
+        - {document: "Noel-Baker, Commons, 18 December 1947", counts: "moved between East and West Punjab, both ways", period: "to December 1947", millions: 8.5, extract: src-hansard-19471218.p1845}
+        - {document: "Bharadwaj and Mirza 2019, p. 40, citing the 1951 Census of India", counts: "displaced persons enumerated in India", period: "to March 1951", millions: 7.3, extract: src-bharadwaj-mirza-2019.p40}
+        - {document: "Bharadwaj and Mirza 2019, p. 5, citing Bharadwaj, Khwaja and Mian 2008", counts: "displaced across both borders", period: "four years after partition", millions: 14.5, extract: src-bharadwaj-mirza-2019.p5}
+        - {document: "Bharadwaj and Mirza 2019, p. 1", counts: "the population transfer, 'nearly'", period: "1947 onward", millions: 17, extract: src-bharadwaj-mirza-2019.p1}
+        - {document: "Chatterji 2007, introduction", counts: "Hindu refugees from East Bengal into West Bengal, 'at least'", period: "1947 to 1967", millions: 6, extract: src-chatterji-2007.p1-2}
+
+# ------------------------------------------------------------- recordings
+# Archival audio artifacts (docs/proposals/HISTORY-AUDIO-ARCHIVAL.md §4a).
+# A recording is a factual claim four times over: this speaker, this
+# occasion, this date, these words. Every `*_as_stated` field is copied from
+# the repository's own item page or metadata API as fetched on `fetched_at`,
+# never from memory. `transcript` is verbatim from the ledger extract named in
+# `transcript_extract` (tests/test_history_clips.py asserts it is a substring).
+# `verification` names the record pipeline/history/verify_clip.py wrote; its
+# WER, coverage, excerpt sha256 and verified_at are the check's, never
+# hand-typed. `signed_by` / `signed_at` are the CEO's, per clip, and nothing
+# plays in an episode until both are set (policy B, §2). These rows are read
+# by the History producer only; the thesis page does not render them yet.
+recordings:
+  - id: clip-nehru-tryst-19470814
+    kind: audio
+    title: "Jawaharlal Nehru, Tryst with Destiny, the English passage, in the All India Radio recording"
+    speaker: Jawaharlal Nehru
+    occasion: "Moving the pledge in the Constituent Assembly of India, as the item dates it"
+    date: "1947-08-14"
+    date_as_stated: "1947-08-14 (the item's `date` field)"
+    repository: Internet Archive
+    accession: "HindSwaraj-Speech-03-1"
+    url: "https://archive.org/details/HindSwaraj-Speech-03-1"
+    file: "https://archive.org/download/HindSwaraj-Speech-03-1/tryst.aiff"
+    file_md5: "49220a9c793c8201c761cd6ca2c16c8b"
+    file_md5_as_stated: "the item's metadata API lists this md5 for tryst.aiff (AIFF, 280.94 s, 49,557,412 bytes); the downloaded file matched it on 2026-09-25"
+    title_as_stated: "A Tryst with destiny"
+    creator_as_stated: "Pandit Jawaharlal Nehru"
+    origin_as_stated: "Audio Source: All India Radio (the item's description reads 'Historical Speeches / A Tryst with destiny / Pandit Jawaharlal Nehru / Audio Source: All India Radio')"
+    uploader_as_stated: "carl@media.org, public date 2016-05-04 20:44:29; collections HindSwaraj, JaiGyan"
+    licence_as_stated: "CC0 1.0 (the item's licenseurl is http://creativecommons.org/publicdomain/zero/1.0/)"
+    licence_url: "http://creativecommons.org/publicdomain/zero/1.0/"
+    rights_basis: cc0-as-stated
+    rights_reading: "Government of India work, 60-year term run in India (2007); URAA-restored in the US on the strict reading, to 2043; the CC0 is the uploader's dedication of whatever rights the uploader holds. Admissible under policy B only with the CEO's signature, the basis printed beside the exhibit"
+    fetched_at: 2026-09-25
+    duration_s: 280.94
+    excerpt: {in: "00:00:00.000", out: "00:00:28.050"}
+    transcript_extract: src-cad-19470814.sec53612
+    transcript: "Long years ago we made a tryst with destiny, and now the time comes when we shall redeem our pledge, not wholly or in full measure, but very substantially. At the stroke of the midnight hour, when the world sleeps, India will awake to life and freedom."
+    verification: recordings/clip-nehru-tryst-19470814.verification.json
+    observed: "The file opens on 'Long years ago'. After 'freedom' (about 27.9 s) the source carries about five seconds of unpitched, broadband sound (28.1 to 32.8 s: no voiced pitch, spectral flatness 0.11 to 0.18) that this check could not identify, then 'A moment comes' at 33.7 s. The excerpt ends at 28.05 s, before that sound, so the clip claims nothing about it."
+    shows: "Nehru's voice, in English, from 'Long years ago' to 'life and freedom', the two sentences the episode's document voice otherwise reads"
+    does_not_show: "the Hindustani speech the Debates record before it; the rest of the English passage; and where it was recorded: the item gives a date and 'All India Radio' and nothing else, and the audio carries no sound this check could identify as the hall"
+    signed_by: CEO
+    signed_at: 2026-09-25
+    signed_basis: "Policy B: CC0 1.0 as stated on the Internet Archive item, origin All India Radio as stated; excerpt 0.000 to 28.050 s only; credited as a recording, with no claim about where it was recorded"
+
+  - id: clip-mountbatten-broadcast-19470603
+    kind: audio
+    title: "Lord Mountbatten, a radio broadcast (occasion and date not verified)"
+    speaker: Lord Mountbatten
+    occasion: null
+    date: null
+    date_as_stated: null
+    repository: "The National Archives (UK), education resources CDN"
+    accession: "documents/education/mountbatten-radio-broadcast.mp3"
+    url: "https://cdn.nationalarchives.gov.uk/documents/education/mountbatten-radio-broadcast.mp3"
+    file: "https://cdn.nationalarchives.gov.uk/documents/education/mountbatten-radio-broadcast.mp3"
+    file_md5: null
+    file_md5_as_stated: "HTTP 200, audio/mpeg, content-length 8,385,096, last-modified 2021-09-15 (a HEAD request, 2026-09-25); no checksum published"
+    origin_as_stated: null
+    licence_as_stated: "site-wide 'Open Government Licence v3.0, except where otherwise stated'; the copyright page excludes material identified as the copyright of a third party"
+    licence_url: "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+    rights_basis: ogl-site-wide-unconfirmed
+    rights_reading: "a broadcast recording is BBC or AIR material, not the Crown's, and nothing found names OGL for this file. Fails policy B until a page naming the licence for this file is found"
+    fetched_at: 2026-09-25
+    duration_s: null
+    excerpt: null
+    transcript_extract: null
+    transcript: null
+    verification: null
+    shows: null
+    does_not_show: null
+    signed_by: null
+    signed_at: null

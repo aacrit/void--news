@@ -1,0 +1,7 @@
+source: src-hansard-19471030
+locator: p1086
+url: https://api.parliament.uk/historic-hansard/commons/1947/oct/30/kashmir-situation
+read: 2026-09-25
+note: p is the Hansard column; HC Deb 30 October 1947 vol 443 cc1086-7; the statement of Mr P. Noel-Baker
+
+According to the information I have received, some 2,000 armed raiders entered Kashmir, on or about the 22nd October; they took the Jhelum Valley road leading to Srinagar. It is alleged that they came in reprisal for attacks on Moslems in some parts of Kashmir reported by refugees. On 26th October, the Maharajah appealed to the Government of India for help, and asked for leave to accede to that Dominion. On 27th October His Highness was informed by the Governor General of India that his accession was accepted, subject to a reference to the people of Kashmir, when law and order had been restored. He was also informed that the Indian Government had decided to send Indian Army troops to assist in defence of the territory and people of Kashmir. I am not informed as to the exact strength or composition of the Indian forces which have in fact been sent to Kashmir.

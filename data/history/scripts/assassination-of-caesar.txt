@@ -1,0 +1,154 @@
+## OPEN
+N: Say the assassination of Julius Caesar and one line comes to mind before any fact does. "Et tu, Brute." You too, Brutus.
+N: Caesar never said that. Suetonius, writing more than a century later, records that he made no reply at all, just a groan, and that only "certain writers" claim he spoke two Greek words to Brutus: "You too, child."
+N: Forty days before the killing, the Senate had voted Caesar dictator for life. Forty days later, twenty three senators voted with knives.
+N: The killing did not save the Republic they said they were saving. It ended it.
+
+## TITLE
+N: The Assassination of Julius Caesar. The Ides of March, forty four BCE.
+
+## SCENE 1 | The Theatre of Pompey, the fifteenth of March
+N: Caesar takes his seat. Senator Tillius Cimber approaches with a petition, and Caesar waves him off.
+N: Cimber grabs Caesar's toga and pulls it off his shoulder. That is the signal.
+N: Publius Servilius Casca strikes first, stabbing Caesar in the neck from behind. Caesar seizes Casca's arm and stabs him back with his stylus.
+N: Then the others close in: Gaius Cassius Longinus, Decimus Brutus, Marcus Brutus, and at least nineteen more.
+N: Caesar falls at the base of a statue of Pompey, the man he had defeated in a civil war four years earlier, in a building that carries Pompey's name.
+
+## DOCUMENT | Suetonius | The Twelve Caesars, Life of Julius Caesar, Chapter 82 | c. 121 CE
+N: Suetonius wrote this more than a century and a half after the killing, compiling accounts from people who were not there either.
+M: He was stabbed with twenty-three wounds. He said nothing, but merely groaned at the first blow, though certain writers have related that when Marcus Brutus rushed at him, he said in Greek, "You too, child?"
+
+## ASIDE
+N: Twenty three senators stabbed Caesar. The physician who examined the body afterward found that only one of those wounds, the second one, actually killed him.
+N: Every other blow was a man proving he had taken part.
+
+## REST
+
+## SCENE 2 | The Forum, minutes later
+N: The killers call themselves the Liberatores, the liberators, and they expect the Senate to rally to the Republic they believe they have just saved.
+N: Instead, the Senate flees. The conspirators march to the Capitol carrying their bloody daggers and find the Forum empty.
+N: Marcus Brutus is the conspiracy's moral figurehead, a descendant of the Lucius Junius Brutus who overthrew Rome's last king five hundred nine years before. Gaius Cassius Longinus is the organizer, a veteran commander who resents Caesar's monopoly on power and patronage.
+
+## DOCUMENT | Cassius Dio | Roman History, Book 44, paraphrased | c. 229 CE
+N: Cassius Dio was writing two hundred seventy years later, about men Caesar had personally pardoned turning on him. He gives Caesar this line as a paraphrase, attributed to him rather than transcribed from anyone who heard him say it.
+M: I have killed many a man in many lands, as a general does on the battlefield, but I have never before spared an enemy and then been betrayed by the one I spared.
+
+## ASIDE
+N: Twenty three of the men who killed Caesar had been pardoned by him. Sulla, the dictator before him, had simply killed nine thousand men rather than take that risk.
+N: Caesar chose mercy. Mercy is what killed him.
+
+## REST
+
+## SCENE 3 | The Forum, the twentieth of March
+N: Mark Antony, Caesar's co consul, reads the dictator's will aloud at the funeral. Caesar has left his gardens across the Tiber to the people of Rome, and seventy five denarii, about three months' wages for a laborer, to every citizen.
+N: Antony displays Caesar's toga: slashed, blood soaked, pierced with twenty three rents.
+
+## DOCUMENT | Appian | Civil Wars | second century CE
+N: Antony did speak that day. Plutarch says so but records no text of the speech at all. A century later, Appian gives Antony this line, though no source any closer to the day confirms he actually said it.
+M: Here was a man. When comes such another?
+
+## ASIDE
+N: The crowd already has the will; it needs no convincing. They burn the body on a pyre in the Forum itself, then grab burning branches and run for the houses of Brutus and Cassius.
+N: A poet named Helvius Cinna, no relation to the conspirator Cornelius Cinna, is caught by the mob anyway. They kill him and carry his head through the streets on a spear.
+
+## REST
+
+## SCENE 4 | Rome, forty three BCE
+N: Caesar's eighteen year old grandnephew and heir, Gaius Octavius, arrives from Apollonia in April to claim his inheritance.
+N: By November, Octavian, Antony, and Lepidus form the Second Triumvirate and proscribe three hundred senators and two thousand equestrians.
+N: Cicero, who had publicly celebrated the killing, is put to death by Antony's soldiers on the seventh of December, forty three BCE. His head and hands are nailed to the Rostra, where he had denounced Antony.
+N: Brutus and Cassius raise armies in the east and are defeated at Philippi in October, forty two BCE. Cassius dies by suicide after the first engagement, Brutus after the second.
+
+## SCENE 5 | Actium, the second of September, thirty one BCE
+N: Octavian and Antony turn on each other next. Octavian destroys Antony's fleet at Actium. Antony and Cleopatra flee to Alexandria, where both die by suicide.
+N: In twenty seven BCE, the Senate grants Octavian the title Augustus. He will rule for forty one years. The Republic the Liberatores killed a dictator to save no longer exists.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts survive the killing of Julius Caesar, and one of them is not about Rome at all. It is about a play written sixteen centuries later that replaced the history it was based on.
+
+## PERSPECTIVE | Republican: The Last Defenders of Libertas | victor
+N: Brutus minted coins after the killing. His own portrait on one side. On the other, a cap of freedom between two daggers, and beneath it, the words EID MAR: the Ides of March.
+N: Rome had expelled its last king five hundred nine years earlier and built a Republic on one principle: no one person holds permanent, unchecked power, not even for six months at a time.
+N: Caesar broke that. He held the consulship continuously from forty eight BCE, and in February of forty four accepted the title dictator perpetuo, dictator for life, then put his own face on coins while he was still alive.
+N: Cicero called killing a tyrant civic duty, not murder. Brutus, in a letter to Cicero the following year, put the case in his own words.
+M: What we did was done not out of ambition, but out of a love for the freedom of the Republic.
+N: The plan failed. Caesar had already made the Republic's old constraints impossible to restore.
+
+## PERSPECTIVE | Caesarian: The Reformer and His Oligarchs | victor
+N: A century before Caesar crossed the Rubicon, the Republic was already killing itself. Sulla marched on Rome twice and proscribed thousands. Catiline attempted a coup in sixty three BCE.
+N: Caesar redistributed land to eighty thousand veterans and urban poor who had gone landless for decades while a few hundred senatorial families held vast estates. He fixed a calendar that had drifted ninety days out of alignment with the sun, and the fix stayed in use for sixteen hundred years.
+N: The Liberatores were defending a Senate of six hundred men from a handful of families, not the Roman people. Brutus himself lent money to Salamis in Cyprus at forty eight percent interest and sent Roman soldiers to collect it.
+N: Caesar pardoned Brutus, Cassius, and Decimus Brutus after the civil war; Sulla, before him, had simply killed nine thousand men rather than take that risk.
+M: Let this be our new method of conquering: to fortify ourselves with mercy and generosity.
+N: Twenty three of the men who stabbed him had been pardoned by that policy. The lesson every Roman leader after him drew was the opposite one.
+
+## PERSPECTIVE | Roman Plebeian: The People's Grief | bystander
+N: The crowd at the funeral did not need a speech to convince them. They had already heard the will: gardens across the Tiber turned into a public park, and cash for every citizen.
+N: Rome's urban poor, something like seven hundred fifty thousand people, had a transactional relationship with Caesar that was entirely real. His grain dole fed as many as three hundred twenty thousand citizens.
+N: When the Senate talked about liberty, the plebs heard a different word. Senatorial liberty meant six hundred families keeping the wealth of an empire to themselves.
+N: The record does not give this crowd a name. Appian preserves one line from the plebeian reaction at the funeral, from a Roman citizen he never identifies.
+F: They killed him who was voted sacred and inviolable, and the very man whom they called Father of his Country.
+N: Two years later the Senate declared Caesar a god. The temple built where the plebs had burned his body stood for centuries after they lit that fire.
+
+## REST | short
+
+## PERSPECTIVE | Provincial: The Conquered Peoples | vanquished
+N: Caesar kept his own count. At Avaricum in fifty two BCE, his legions killed the entire population of the town, forty thousand men, women, and children, by his own tally. Eight hundred survived.
+N: Plutarch put Caesar's nine year campaign in Gaul at one million dead and another million enslaved. Even conservative modern estimates place the dead at several hundred thousand, in a population of five to seven million.
+N: This was not defense. Caesar's opening pretext, a tribe moving within Gaul in fifty eight BCE, was never authorized by the Senate.
+M: Of all the Gauls, the Belgae are the bravest, because they are farthest from the civilization and refinement of the Province.
+N: The gold looted from Gaul was so abundant that its price in Rome dropped twenty five percent. That wealth paid for the civil war and the seventy five denarii in Caesar's will. It had been extracted from Gallic skulls.
+N: Caesar's death changed nothing for the provinces. Rome had extracted tribute under the Republic too, and it kept doing that after him.
+
+## PERSPECTIVE | Shakespeare vs. History: The Play That Shaped Political Imagination | academic
+N: William Shakespeare wrote Julius Caesar in fifteen ninety nine, drawing on Thomas North's translation of Plutarch, and staged it at the Globe while an aging, unmarried Elizabeth the First presided over an anxious succession crisis.
+N: In Plutarch, Brutus is one figure among many conspirators. Shakespeare makes him the tragic hero, tortured by conscience, killing from principle rather than ambition. This is a line the playwright gives his own invented Brutus, addressing the plebeians right after the killing, and no Roman source records the historical Brutus saying anything like it.
+M: Not that I loved Caesar less, but that I loved Rome more.
+N: Antony's whole funeral speech in the play, "Friends, Romans, countrymen, lend me your ears," is Shakespeare's invention too.
+N: "Et tu, Brute" is not historical either. It compresses what Suetonius says may have been two words in Greek into three words of Latin, and the compression won. The play shaped the French Revolution's own imagery and the American founders' idea of themselves.
+
+## REST
+
+## TURN | What each one leaves out
+N: Each account leaves out exactly what would complicate it.
+N: The Republican case explains the constitutional violation and says far less about the land Caesar redistributed or the clemency he showed the very men who killed him.
+N: The Caesarian case counts a century of Republican dysfunction and says almost nothing about the million dead and million enslaved in Gaul that funded the reforms it praises.
+N: The plebeian account counts the grain and the land and says nothing about the power that came with them.
+N: The provincial account, which names the dead in Gaul in the most detail, still passes over the reforms Caesar extended to conquered peoples in his own lifetime.
+N: And the academic account, tracing exactly how a play replaced a history, spends its four centuries on Shakespeare's Rome and none on Cleopatra's Egypt, waiting outside the frame entirely.
+
+## REST
+
+## CLOSE
+N: In November eighteen sixty four, the three Booth brothers performed Julius Caesar together on a New York stage.
+N: Five months later, one of them, John Wilkes Booth, assassinated Abraham Lincoln, shouting "Sic semper tyrannis."
+
+## SAY
+Tillius Cimber = TIL-ee-us SIM-ber
+Publius Servilius Casca = PUB-lee-us ser-VIL-ee-us KAS-kuh
+Gaius Cassius Longinus = GY-us KASH-us lon-JY-nus
+Decimus Brutus = DES-ih-mus BROO-tus
+Liberatores = lib-er-uh-TOR-eez
+Suetonius = swee-TOH-nee-us
+Lucius Junius Brutus = LOO-shus JOO-nee-us BROO-tus
+Cassius Dio = KASH-us DEE-oh
+denarii = duh-NAIR-ee-eye
+Rostra = ROSS-truh
+Philippi = fih-LIP-eye
+Gaius Octavius = GY-us ok-TAY-vee-us
+Octavian = ok-TAY-vee-un
+Lepidus = LEP-ih-dus
+Apollonia = ap-oh-LOH-nee-uh
+Actium = AK-tee-um
+Cleopatra = klee-oh-PAT-ruh
+Appian = AP-ee-un
+Helvius Cinna = HEL-vee-us SIN-uh
+Cornelius Cinna = kor-NEEL-yus SIN-uh
+Catiline = KAT-ih-line
+Salamis = SAL-uh-mis
+Avaricum = uh-VAIR-ih-kum
+Belgae = BEL-jy
+Elizabeth = eh-LIZ-uh-beth
+EID MAR = EED MAR
