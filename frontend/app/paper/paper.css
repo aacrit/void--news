@@ -368,7 +368,7 @@ html:has(.np-root) body { background: transparent; }
   color: var(--np-ink);
 }
 
-/* --- The lean caption. One ladder, from storyLeanLabel. --- */
+/* --- The lean caption. The card's word, from storyShapeLabel. --- */
 .np-article__meta {
   font-family: var(--np-font-label);
   font-size: 0.5rem;

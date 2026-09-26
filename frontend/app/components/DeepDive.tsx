@@ -569,7 +569,11 @@ export default function DeepDive({
               <hr className="ink-rule" style={{ margin: "var(--space-5) 0 var(--space-4)" }} aria-hidden="true" />
               <h2 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>The Spread</h2>
 
-              {story.sigilData && (
+              {/* The Bench carries the shape's mark and word once sources are
+                  placed; this Sigil stood above it and printed the same word a
+                  second time ("Split", then "Split"). It stays only as the
+                  fallback while no source can be placed. */}
+              {story.sigilData && spectrumSources.length === 0 && (
                 <div className="dd-analysis-block__sigil">
                   <Sigil data={story.sigilData} size="xl" storyId={story.id} />
                 </div>

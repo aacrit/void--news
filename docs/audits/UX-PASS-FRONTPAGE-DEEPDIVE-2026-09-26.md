@@ -130,13 +130,16 @@ lead visible above it.
   pressing Back went to `about:blank`. Back is the most common "close" gesture.
 - **Esc closes the Deep Dive but drops focus to `<body>`.** A keyboard user is
   thrown back to the top of the document, not returned to the card they opened.
-- The container is `role="dialog"` with `aria-modal="false"`, yet Tab walks
-  straight out of it into the feed.
+- ~~The container is `role="dialog"` with `aria-modal="false"`.~~
+  **Corrected 2026-09-26:** the inline Deep Dive is an `<article>`. The
+  `role="dialog"` the probe found is the always-mounted Menu drawer
+  (`MobileSidePanel.tsx`), which reads `aria-modal="false"` while closed.
+  Tab leaving the Deep Dive is correct for an inline region.
 
 **Fix:** push `?story=<id>` (or the `/story/<id>` path) with `history.pushState`
 on open, close on `popstate`, set the title to `Headline | Void News`, and
-return focus to the originating card on close. Either make it a real modal
-(trap focus) or drop `role="dialog"`, since inline content is a region.
+return focus to the originating card on close. Keep it an inline region
+with no focus trap.
 
 ### 6. No next-story path; the Deep Dive is a dead end
 
@@ -279,3 +282,14 @@ and use it everywhere.
 3. Findings 4, 5 and 6 (Deep Dive navigation model): one piece of work.
 4. Findings 7, 8 and 9 (reading comfort, sources up front, legend from one source).
 5. The P2 list as one polish pass.
+
+---
+
+## Status (2026-09-26, same day)
+
+- Findings 1, 2, 3 and the P2 list (11 to 20) are fixed on
+  `claude/dreamy-einstein-22owl7`, each factual fix with a control: headless
+  `lean-word-one-rule`, `drawer-edition-time`, `no-js-cards-visible`, and
+  `verify_production.py` "card lean word == its aria-label".
+- Findings 4 to 10 have a research and build plan:
+  `docs/proposals/DEEP-DIVE-REDESIGN-2026-09-26.md`.

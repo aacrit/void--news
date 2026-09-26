@@ -45,10 +45,14 @@ const EDITION_MONTHS = [
  * The raw ISO input is the single source of truth; every surface (front-page
  * masthead, Deep Dive masthead, Menu drawer, /onair, /sources) formats the
  * SAME pipeline completed_at through THIS one helper so they never diverge.
- * With no (or an invalid) argument it falls back to the current hour.
+ * With no (or an invalid) argument it returns "": a missing edition time
+ * prints nothing, never the reader's clock. The old fallback to the current
+ * hour put "Edition as of 2:00 AM UTC" in the Menu drawer under a masthead
+ * reading "as of 6:00 PM UTC" (2026-09-26).
  */
 export function getEditionTimestampLocal(builtAtISO?: string | null): string {
-  const src = builtAtISO ? new Date(builtAtISO) : new Date();
+  if (!builtAtISO) return "";
+  const src = new Date(builtAtISO);
   if (isNaN(src.getTime())) return "";
   // Round to the nearest hour in the viewer's LOCAL zone. >= 30 min rounds up.
   const d = new Date(src.getTime());
@@ -130,4 +134,37 @@ export function whyThisStory(opts: {
   // Sort by weight descending, take top 3
   reasons.sort((a, b) => b.weight - a.weight);
   return reasons.slice(0, 3).map((r) => r.text);
+}
+
+/**
+ * A card summary split at a sentence boundary: [shown, rest].
+ *
+ * Cards clamp their summary with CSS, and the clamp's ellipsis lands wherever
+ * the box ends. When that was just after a full stop the card printed
+ * "on Thursday.…" (a period and an ellipsis, 2026-09-26). The card shows
+ * `shown` (whole sentences that fit its box) and keeps `rest` in the page,
+ * hidden, so the served text is the full summary: S-02 in
+ * verify_production.py measures it, and a reader without styles gets all of
+ * it. With whole sentences in the box the clamp usually has nothing to cut.
+ *
+ * The first sentence is always shown, even when longer than `maxChars`; the
+ * clamp then cuts it mid-sentence, which reads as a cut. A full stop after a
+ * short capitalised token ("U.S.", "Dr.", "Lt.") is not a sentence end, so a
+ * card never stops at "addressed the U.S.".
+ */
+export function splitSummaryForCard(text: string | null | undefined, maxChars: number): [string, string] {
+  const t = (text ?? "").trim();
+  if (t.length <= maxChars) return [t, ""];
+  const re = /[.!?]["\u201D\u2019)]?(?=\s+["\u201C\u2018(]?[A-Z0-9])/g;
+  let cut = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(t)) !== null) {
+    const before = t.slice(0, m.index).match(/(\S+)$/)?.[1] ?? "";
+    if (/^(?:[A-Z][a-z]{0,2}|(?:[A-Za-z]\.)+[A-Za-z]|No|Nos|vs|etc)$/.test(before)) continue;
+    const end = m.index + m[0].length;
+    if (end > maxChars) break;
+    cut = end;
+  }
+  if (cut === 0) return [t, ""];
+  return [t.slice(0, cut), t.slice(cut)];
 }

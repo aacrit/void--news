@@ -6,6 +6,7 @@ import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
 import { BASE_PATH } from "../lib/utils";
+import CardSummary from "./CardSummary";
 import { useInView } from "../lib/sharedObserver";
 
 interface StoryCardProps {
@@ -125,7 +126,7 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
       </h3>
 
       {/* Summary — hidden when empty (Gemini pending or failed) */}
-      {story.summary?.trim() && <p className="story-card__summary">{story.summary}</p>}
+      {story.summary?.trim() && <p className="story-card__summary"><CardSummary text={story.summary} max={170} /></p>}
       {!story.summary?.trim() && (
         <p className="story-card__summary story-card__summary--pending">
           {story.source.count} source{story.source.count !== 1 ? 's' : ''} reporting

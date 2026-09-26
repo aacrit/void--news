@@ -6,6 +6,7 @@ import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
 import { BASE_PATH } from "../lib/utils";
+import CardSummary from "./CardSummary";
 
 interface LeadStoryProps {
   story: Story;
@@ -66,7 +67,7 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, t
       </HeadingTag>
 
       {story.summary?.trim() && (
-        <p className={useSplit ? "lead-summary" : "lead-story__summary"}>{story.summary}</p>
+        <p className={useSplit ? "lead-summary" : "lead-story__summary"}><CardSummary text={story.summary} max={useSplit ? 240 : 400} /></p>
       )}
       {!story.summary?.trim() && (
         <p className={`${useSplit ? "lead-summary" : "lead-story__summary"} lead-story__summary--pending`}>

@@ -137,6 +137,26 @@
   animation-play-state: running;
 }
 
+/* The hidden state above is only safe while a script is there to lift it.
+   Without one (scripting off) or when the app never hydrates (a failed
+   chunk, a blocked script: layout.tsx sets data-no-hydrate after 4s), every
+   card is shown as it stands. Before this, 18 of the 20 front-page stories
+   stayed at opacity 0 on a page whose JavaScript did not load (2026-09-26). */
+@media (scripting: none) {
+  .anim-stagger,
+  .msc.anim-stagger {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+:root[data-no-hydrate] .anim-stagger,
+:root[data-no-hydrate] .msc.anim-stagger {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
 /* Filter-change card entrance — fires immediately (not paused).
    Applied to card wrappers when lean/category filter changes.
    animationDelay is set via inline style for per-card stagger (max 50ms gap).

@@ -780,7 +780,9 @@
 
 .spread-disagree__point {
   position: relative;
-  padding: var(--space-2) 0 var(--space-2) var(--space-4);
+  /* The tick is 9px from space-1; the text starts a clear 10px after it.
+     space-4 alone left about 3px on phones ("-The US Senate"). */
+  padding: var(--space-2) 0 var(--space-2) calc(var(--space-1) + 9px + 10px);
   font-family: var(--font-structural);
   font-size: var(--text-base);
   line-height: 1.55;

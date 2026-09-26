@@ -90,11 +90,12 @@
 /* The caption under the Sigil is shown on phones too (2026-09-21): the ring
    colour alone cannot say "Balanced" or "Not measured", and a label that
    exists on desktop and not on the phone is the same card saying two
-   things. Floored at 9px, nowrap, allowed to run wider than the mark. */
+   things. Floored at 10px (9px until 2026-09-26), nowrap, allowed to run
+   wider than the mark. */
 .msc__headline--hero .sigil__lean-label,
 .msc__headline--compact .sigil__lean-label {
   display: block;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.02em;
   white-space: nowrap;
   max-width: 72px;
@@ -954,7 +955,7 @@
 
 .mbp__ep-badge {
   font-family: var(--font-meta);
-  font-size: 7px;
+  font-size: 9px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;

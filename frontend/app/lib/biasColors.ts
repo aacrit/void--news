@@ -478,6 +478,47 @@ export function leanShapeLabel(spread?: WingCounts | null): string {
     : shape === "consensus" ? "Consensus" : "Balanced";
 }
 
+/** The shape word, its colour and its state, for every surface that names a
+ *  story's coverage: the card's printed line, the Sigil's aria-label and
+ *  popup, the Deep Dive masthead and Paper.
+ *
+ *  Before this, the printed word came from `leanShapeLabel` while the
+ *  aria-label, the popup heading and the Deep Dive chip came from
+ *  `storyLeanLabel`, the gated MEAN. On the 2026-09-25 edition that put
+ *  "Leans left" on a card whose screen-reader label said "Not measured" and
+ *  whose popup said "Not measured", "Balanced coverage" and "measured from 8
+ *  of 12" in one box. A reader who hovered got a different answer from a
+ *  reader who looked. One rule now feeds every one of them. */
+export interface StoryShapeLabel {
+  text: string;
+  color: string;
+  shape: LeanShape | "unscored";
+}
+
+export function storyShapeLabel(
+  spread?: WingCounts | null,
+  unscored = false,
+): StoryShapeLabel {
+  if (unscored) return { text: "Unscored", color: "var(--fg-muted)", shape: "unscored" };
+  return { text: leanShapeLabel(spread), color: leanShapeColor(spread), shape: leanShape(spread) };
+}
+
+/** One sentence under the shape word in the Sigil popup. Counts, not a
+ *  reading of the mean, so it cannot contradict the word above it. */
+export function leanShapeDescriptor(spread?: WingCounts | null): string {
+  const left = spread?.leanLeftCount ?? 0;
+  const center = spread?.leanCenterCount ?? 0;
+  const right = spread?.leanRightCount ?? 0;
+  const counts = `${left} left of centre, ${center} centre, ${right} right of centre`;
+  switch (leanShape(spread)) {
+    case "consensus": return `Three quarters of the coverage sits in the centre: ${counts}`;
+    case "balanced": return `Both sides covered this and neither outweighs the other: ${counts}`;
+    case "split": return `Both sides covered this and the centre does not hold: ${counts}`;
+    case "leans": return `One side carried most of the coverage: ${counts}`;
+    default: return "Too few measured articles to read the coverage";
+  }
+}
+
 /**
  * Decide how a story's lean LABEL should render:
  *   "confident"      well-supported tilt, shown either by the mean's magnitude

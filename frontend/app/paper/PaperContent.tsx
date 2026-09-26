@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Story } from "../lib/types";
-import { storyLeanLabel } from "../lib/biasColors";
+import { storyShapeLabel } from "../lib/biasColors";
 import { splitBriefParagraphs } from "../lib/briefText";
 import {
   type ArticleTier,
@@ -44,12 +44,9 @@ export interface PaperContentProps {
 function Article({ story, tier }: { story: Story; tier: ArticleTier }) {
   const { decks, body } = splitDecks(story.summary, tier);
   const sigil = story.sigilData;
-  const lean = storyLeanLabel(
-    sigil.politicalLean,
-    sigil.biasSpread,
-    sigil.sourceCount,
-    !!sigil.unscored,
-  );
+  // The front page's own word for this story (storyShapeLabel), so the
+  // printed twenty cannot caption a story differently from its card.
+  const lean = storyShapeLabel(sigil.biasSpread, !!sigil.unscored);
   const count = story.source?.count ?? sigil.sourceCount ?? 0;
   const href = story.permalink ?? `/?story=${encodeURIComponent(story.id)}`;
 

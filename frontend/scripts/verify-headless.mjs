@@ -721,6 +721,58 @@ async function scenarios(browser) {
       assert(await page.evaluate(() => localStorage.getItem("void-news-theme")) === "light", "theme-persists", "localStorage carries the choice");
     });
   }
+  /* One lean word per story (2026-09-26). The card printed the roster's word
+     while its aria-label and popup heading read the gated mean, so a card
+     showing "Leans left" was announced as "Not measured". All three must be
+     the same word on every card. */
+  await withPage(browser, { width: 1440, route: "/" }, "lean-word-one-rule", async (page) => {
+    const rows = await page.evaluate(() => [...document.querySelectorAll(".sigil[role='button']")].map((el) => ({
+      aria: (el.getAttribute("aria-label") ?? "").match(/^Coverage: (.+?)\. \d+ sources?\./)?.[1] ?? `(unparsed) ${el.getAttribute("aria-label")}`,
+      printed: el.querySelector(".sigil__lean-label")?.textContent?.trim() ?? "",
+    })));
+    if (!assert(rows.length > 0, "lean-word-present", "the feed carries Sigils")) return;
+    const bad = rows.filter((r) => r.aria !== r.printed);
+    assert(bad.length === 0, "lean-word-aria", bad.length
+      ? bad.slice(0, 4).map((r) => `printed "${r.printed}" but aria says "${r.aria}"`).join("; ")
+      : `${rows.length} Sigils, aria-label = printed word`);
+    const popupBad = [];
+    for (let i = 0; i < Math.min(4, rows.length); i++) {
+      await page.locator(".sigil[role='button']").nth(i).hover();
+      await page.waitForSelector(".sigil-popup__label", { timeout: 2000 }).catch(() => {});
+      const heading = (await page.locator(".sigil-popup__label").first().textContent().catch(() => ""))?.trim();
+      if (heading !== rows[i].printed) popupBad.push(`card ${i}: printed "${rows[i].printed}", popup "${heading}"`);
+      await page.mouse.move(2, 2);
+      await page.waitForTimeout(250);
+    }
+    assert(popupBad.length === 0, "lean-word-popup", popupBad.length ? popupBad.join("; ") : "popup heading = printed word on the first four cards");
+  });
+  /* The Menu drawer's edition time is the masthead's (2026-09-26). It fell
+     back to the reader's clock and printed "Edition as of 2:00 AM" under a
+     masthead reading "as of 6:00 PM". */
+  await withPage(browser, { width: 390, route: "/" }, "drawer-edition-time", async (page) => {
+    const mast = (await page.locator(".nav-dateline-line__time").first().textContent().catch(() => ""))?.replace(/^\s*as of\s*/i, "").trim();
+    await page.locator("button[aria-label='Menu']").first().click();
+    await page.waitForSelector(".msp--open", { timeout: 3000 }).catch(() => {});
+    const line = (await page.locator(".msp__info-line").first().textContent().catch(() => ""))?.trim() ?? "";
+    const drawer = line.replace(/^Edition as of\s*/i, "").trim();
+    assert(!!mast && drawer === mast, "drawer-edition-time", `masthead "${mast}", drawer "${line}"`);
+  });
+  /* Without JavaScript every story is still on the page (2026-09-26). Cards
+     enter at opacity 0 and a client hook lifts them; with no script 18 of 20
+     stayed invisible. */
+  {
+    ctx("/", 1440, "light");
+    console.log(`\nscenario: no-js-cards-visible (${current})`);
+    const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, javaScriptEnabled: false });
+    const page = await context.newPage();
+    try {
+      await page.goto(`${ORIGIN}${BASE}/`, { waitUntil: "load", timeout: 60_000 });
+      const ops = await page.evaluate(() => [...document.querySelectorAll("article")].map((a) => Number(getComputedStyle(a).opacity)));
+      const hidden = ops.filter((o) => o < 0.99).length;
+      assert(ops.length > 0 && hidden === 0, "no-js-cards-visible", `${ops.length - hidden} of ${ops.length} cards visible with scripting off`);
+    } catch (e) { fail("exception", `no-js-cards-visible: ${String(e?.message ?? e).slice(0, 300)}`); }
+    finally { await context.close(); }
+  }
   /* The drawer traps focus and gives it back. */
   await withPage(browser, { width: 390, route: "/" }, "drawer", async (page) => {
     const btn = page.locator("button[aria-label='Menu']").first();
@@ -1387,6 +1439,10 @@ async function brandChecks(browser) {
       const opener = width >= 768 ? ".fp__info" : ".mtb__tab--onair";
       if (await page.locator(opener).count() === 0) { skip("onair-panel", `no ${opener} at ${width}`); return; }
       const urlBefore = page.url();
+      /* Below 1700px the desktop pill rests folded to its mark and unfolds
+         under the pointer (floating-player.css F11), so a reader hovers it
+         before the title is there to press. */
+      if (width >= 768) await page.locator(".fp__pill").hover();
       await page.locator(opener).click();
       await page.waitForTimeout(700);
       const o = await page.evaluate(() => {

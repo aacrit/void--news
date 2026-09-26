@@ -8,11 +8,10 @@ import {
   getLeanColor as leanColor,
   getSigilLeanColor,
   DIVERGENT_SPREAD_MIN,
-  tiltDescriptor,
-  storyLeanLabel,
+  storyShapeLabel,
+  leanShapeDescriptor,
+  leanShapeDirection,
   leanShape,
-  leanShapeColor,
-  leanShapeLabel,
   leanToDisplayPos,
   lerpColor as lerp,
 } from "../lib/biasColors";
@@ -140,7 +139,13 @@ function DataMark({ data, size, mounted }: {
     : shape === "leans" ? "confident"
     : shape === "split" ? "contested" : "balanced";
   const measured = shape !== "thin";
-  const beamAngle = shape === "leans" ? ((displayLean - 50) / 50) * 24 : 0;
+  /* The beam tilts the way the WORD says. Its magnitude still comes from the
+     mean, but its sign comes from the roster: a "Leans left" roster whose mean
+     sat a point right of 50 used to draw a beam tipped right under the word
+     "left". A minimum of 6 degrees keeps an earned lean visible. */
+  const beamAngle = shape === "leans"
+    ? leanShapeDirection(data.biasSpread) * Math.max(6, Math.abs(((displayLean - 50) / 50) * 24))
+    : 0;
   /* Split draws its own arms from the wing counts, so the stdev-driven fan
      stands down there and the two cannot contradict each other. */
   const wingL = data.biasSpread?.leanLeftCount ?? 0;
@@ -161,7 +166,11 @@ function DataMark({ data, size, mounted }: {
   const beamCol = !measured
     ? "var(--fg-muted)"
     : gate === "confident"
-      ? getSigilLeanColor(lean, leanSpread, conf)
+      /* Clamped to the side the roster names, so the beam's hue cannot
+         contradict its tilt or the word under it. */
+      ? getSigilLeanColor(
+          leanShapeDirection(data.biasSpread) > 0 ? Math.max(lean, 56) : Math.min(lean, 44),
+          leanSpread, conf)
       : getSigilLeanColor(50, leanSpread, conf);
 
   // Divergence fan — agreed vs divergent, shown in the mark itself. The beam
@@ -387,12 +396,11 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
   const popupUnscored = !!data.unscored;
   /* The popup states the roster, so it needs the same shape the mark does. */
   const shape = popupUnscored ? "thin" : leanShape(data.biasSpread);
-  // False-center band suppression: inside [48,52] a confident lean label + score
-  // overstate the signal. "Contested" when both wings are present, else "No clear
-  // lean" (and the numeric score is withheld). Outside the band, behavior is
-  // unchanged. The KDE spectrum below still plots the true distribution.
-  const popupInfo = storyLeanLabel(lean, data.biasSpread, data.sourceCount, popupUnscored);
-  const popupSuppressed = popupInfo.suppressed;
+  // The popup heading is the card's own word, from the same rule (see
+  // storyShapeLabel). The raw mean is not printed beside it: the card stopped
+  // printing it because a mean over a bimodal roster reads as a position no
+  // outlet holds, and a popup that printed it would disagree with the card.
+  const popupInfo = storyShapeLabel(data.biasSpread, popupUnscored);
   const lc = popupInfo.color;
   const ll = popupInfo.text;
   const full = isFullDetail(size);
@@ -505,21 +513,11 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
         {/* Label row */}
         <div className="sigil-popup__header">
           <span className="sigil-popup__label" style={{ color: lc }}>{ll}</span>
-          {/* No confident numeric lean beside a suppressed label. */}
-          {!popupSuppressed && <CountScore target={lean} color={lc} active={stage >= 2} />}
         </div>
         {/* Contextual descriptor — explains what the score means */}
         {stage >= 2 && (
           <p className="sigil-popup__descriptor">
-            {shape === "consensus"
-              ? "Three quarters of the coverage framed this the same way"
-              : shape === "balanced"
-              ? "Both sides covered this, and neither outweighs the other"
-              : shape === "split"
-                ? "Both sides covered this and the centre does not hold"
-                : shape === "thin"
-                  ? "Too few measured articles to read the coverage"
-                  : tiltDescriptor(lean)}
+            {popupUnscored ? "Too few measured articles to read the coverage" : leanShapeDescriptor(data.biasSpread)}
           </p>
         )}
         {/* Measurement coverage. Most outlets in the roster are not placed on
@@ -609,11 +607,6 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
 
 /* ── Count-up helpers for popup ────────────────────────────────────────── */
 
-function CountScore({ target, color, active }: { target: number; color: string; active: boolean }) {
-  const v = useCountUp(target, 500, active);
-  return <span className="sigil-popup__score" style={{ color }}>{v}</span>;
-}
-
 function CountText({ target, active }: { target: number; active: boolean }) {
   const v = useCountUp(target, 400, active);
   return <>{v}</>;
@@ -678,34 +671,16 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
   const tooltipId = `sigil-${useId()}`;
 
   const unscored = !!data.unscored;
-  // One label, one code path. The card, the popup and the Deep Dive all read
-  // storyLeanLabel, so a story cannot be "Right" here, "Right Tilt" in the
-  // popup and "Center-Right" in the Deep Dive, which is what it was.
-  const info = storyLeanLabel(data.politicalLean, data.biasSpread,
-                              data.sourceCount, unscored);
-  // Divergence is the card's own annotation ON that label, not a second
-  // ladder: a confident direction gains a Split / Agreed suffix, and a
-  // suppressed label ("Contested", "Balanced", "Not measured") already says what divergence
-  // would have said, so it gains nothing.
-  const suffix = info.suppressed
-    ? ""
-    : data.divergenceFlag === "divergent"
-      ? " · Split"
-      : data.divergenceFlag === "consensus"
-        ? " · Agreed"
-        : "";
-  const labelState = info.state;
-  const displayLabel = { text: `${info.text}${suffix}`, color: info.color };
-  const lc = unscored ? "var(--fg-muted)" : getSigilLeanColor(data.politicalLean, data.biasSpread?.leanSpread ?? 0, data.biasSpread?.aggregateConfidence ?? 1);
+  // One word, one rule. The printed line, the aria-label, the popup and the
+  // Deep Dive chip all read storyShapeLabel. The aria-label used to read the
+  // gated mean (storyLeanLabel) while the card printed the roster's word, so
+  // "Leans left" was announced as "Not measured" (2026-09-25 edition).
+  const info = storyShapeLabel(data.biasSpread, unscored);
   const full = isFullDetail(size);
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t); }, []);
 
-  const aria = unscored
-    ? `Coverage tilt: Unscored (insufficient signal). ${data.sourceCount} sources. Press Enter for details.`
-    : labelState !== "confident"
-      ? `Coverage tilt: ${displayLabel.text}. ${data.sourceCount} sources. Press Enter for details.`
-      : `Coverage tilt: ${displayLabel.text} (${data.politicalLean}). ${data.sourceCount} sources. Press Enter for details.`;
+  const aria = `Coverage: ${info.text}. ${data.sourceCount} sources. Press Enter for details.`;
 
   const ringClass = data.divergenceFlag === "divergent"
     ? " sigil--divergent"
@@ -747,10 +722,10 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
         /* The register's word and the register's colour, one rule. See
            leanShapeColor: displayLabel.color is the old gated ramp, and it
            disagreed with the word printed over it. */
-        color: unscored ? "var(--fg-muted)" : leanShapeColor(data.biasSpread),
+        color: info.color,
         opacity: mounted ? 1 : 0,
       }}>
-        {leanShapeLabel(data.biasSpread)}
+        {info.text}
         {data.divergenceFlag === "divergent" && (
           <InkUnderline variant={(Math.round(Number(data.politicalLean)) || 0) % 3} color="var(--sense-high)" />
         )}

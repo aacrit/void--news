@@ -32,14 +32,6 @@
 
 /* ---- Tablet (768px+) --------------------------------------------------- */
 
-@media (min-width: 768px) {
-  /* F01: 4-line clamp on multi-column grid — more room for long headlines.
-     Applies at every desktop/tablet width (kept unbounded so 1024/1440 keep
-     the 4-line measure). */
-  .story-card__headline-text {
-    -webkit-line-clamp: 4;
-  }
-}
 
 /* ---- Feed column rules: 2-col (768-1023) ------------------------------
    Broadsheet column separators are per-item border-rights. Each breakpoint's
@@ -64,6 +56,11 @@
     border-right: none;
     padding-right: 0;
   }
+
+  /* No orphan row: an odd card out takes the full row. */
+  .feed-grid__item:nth-child(2n+1):last-child {
+    grid-column: 1 / -1;
+  }
 }
 
 /* ---- Tablet film grain -------------------------------------------------- */
@@ -84,13 +81,26 @@
    the first-in-row (3n+1) drops its left padding to sit flush at the canvas
    edge; the last-in-row (3n) and the final card drop the right border/padding
    so the column rule never dangles. No leaked 2-col compensation needed. */
+/* A card that takes a wider share of a short last row keeps a reading
+   measure rather than running its summary the full width. */
+@media (min-width: 768px) {
+  .story-card__summary { max-width: 68ch; }
+}
+
+/* NO ORPHAN ROW (2026-09-26). The 3- and 4-column bands lay the cards on a
+   6- and 12-track grid, so a short last row can share the full width out
+   instead of leaving it empty: 2 plus 18 cards at 1440 left two cards alone
+   under a blank half-row, with the column rules stopping at two heights.
+   Tracks and gaps are chosen so a normal card is exactly as wide as before
+   (3 of 12 tracks plus their 2 inner gaps is a quarter of the row). */
 @media (min-width: 1024px) and (max-width: 1439px) {
   .feed-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 0 var(--space-5);
   }
 
   .feed-grid__item {
+    grid-column: span 2;
     border-right: var(--rule-thin);
     padding-left: var(--space-5);
     padding-right: var(--space-5);
@@ -105,6 +115,15 @@
     border-right: none;
     padding-right: 0;
   }
+
+  /* Last row of 2: each takes half. Last row of 1: the whole row. */
+  .feed-grid__item:nth-child(3n+1):nth-last-child(2),
+  .feed-grid__item:nth-child(3n+1):nth-last-child(2) + .feed-grid__item {
+    grid-column: span 3;
+  }
+  .feed-grid__item:nth-child(3n+1):last-child {
+    grid-column: 1 / -1;
+  }
 }
 
 /* ---- Feed column rules: 4-col (1440+) ---------------------------------
@@ -114,11 +133,12 @@
    4-col gutters (the prior cause of uneven column padding at 1440). */
 @media (min-width: 1440px) {
   .feed-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: 0 var(--space-5);
   }
 
   .feed-grid__item {
+    grid-column: span 3;
     border-right: var(--rule-thin);
     padding-left: var(--space-5);
     padding-right: var(--space-5);
@@ -132,6 +152,19 @@
   .feed-grid__item:last-child {
     border-right: none;
     padding-right: 0;
+  }
+
+  /* Last row of 3: thirds. Of 2: halves. Of 1: the whole row. */
+  .feed-grid__item:nth-child(4n+1):nth-last-child(3),
+  .feed-grid__item:nth-child(4n+1):nth-last-child(3) ~ .feed-grid__item {
+    grid-column: span 4;
+  }
+  .feed-grid__item:nth-child(4n+1):nth-last-child(2),
+  .feed-grid__item:nth-child(4n+1):nth-last-child(2) + .feed-grid__item {
+    grid-column: span 6;
+  }
+  .feed-grid__item:nth-child(4n+1):last-child {
+    grid-column: 1 / -1;
   }
 }
 

@@ -475,16 +475,20 @@
    every card rather than waiting for axe to sample the failing one. */
 .story-card__headline .sigil__lean-label,
 .lead-story__headline .sigil__lean-label {
-  font-size: 8px;
+  /* 10px, up from 8px (2026-09-26): the smallest size a mono label stays a
+     word at. The label may be wider than the mark; it is centred under it. */
+  font-size: 10px;
   letter-spacing: 0.04em;
 }
 
+/* A headline is never cut. It used to clamp at 3 (4 from 768px) lines and
+   end in an ellipsis ("Fighting in Ethiopia'…", "Calls for UN…"), which a
+   newspaper does not do to its own heads. The summary clamps instead. */
 .story-card__headline-text {
+  display: block; /* block, so the hover translate below applies */
   flex: 1;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  min-width: 0;
+  overflow-wrap: break-word;
   /* v6.2 (2026-05-14): subtle page-catch on hover — the headline gently
      slides 2px right when the cursor is over the card, like a broadsheet
      headline catching against a reading hand. 280ms ease so the motion
@@ -568,6 +572,12 @@
     opacity: 0.45;
     transition: opacity 240ms ease;
   }
+}
+
+/* The part of a card summary past its last whole sentence that fits. Kept in
+   the served page (the full summary is the text), not drawn on the card. */
+.card-summary__rest {
+  display: none;
 }
 
 .story-card__summary {
@@ -743,11 +753,9 @@
 }
 
 .lead-story__headline-text {
+  display: block;
   flex: 1;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  min-width: 0;
   overflow-wrap: break-word;
   /* Same page-catch behavior as .story-card__headline-text. See comment there. */
   transition: transform 280ms var(--ease-cinematic);
@@ -2423,8 +2431,9 @@ button:focus-visible .sigil-word__beam {
 /* ---- Column header ---- */
 .comp-view__col-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  gap: var(--space-2);
+  gap: 0 var(--space-2);
   margin-bottom: var(--space-3);
   padding-bottom: var(--space-2);
   border-bottom: 1px solid var(--border-subtle);
@@ -2458,6 +2467,19 @@ button:focus-visible .sigil-word__beam {
   font-feature-settings: "tnum" 1;
 }
 
+/* Which of the Bench's seven rungs this column folds. */
+.comp-view__range {
+  flex-basis: 100%;
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+}
+
+.comp-view__unmeasured {
+  margin-top: var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+}
+
 /* Key framing terms — shows vocabulary each lean side emphasizes.
    Compact inline pills below column header. Subtle, not dominant. */
 
@@ -2483,21 +2505,31 @@ button:focus-visible .sigil-word__beam {
   padding: 3px 0;
 }
 
-/* Wire link: inline flow wrapping to max 2 lines */
+/* Wire link: the outlet on one line, its headline under it, the arrow on
+   the right. It was one wrapping inline row with a 10px rule between name and
+   headline, and the rule floated mid-line whenever the headline wrapped. */
 .comp-view__wire-link {
-  display: inline-flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 0 4px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--space-2);
+  align-items: start;
   text-decoration: none;
   color: inherit;
-  line-height: 1.5;
-  /* Clamp to 2 lines max */
-  max-height: calc(1.5em * 2);
-  overflow: hidden;
+  line-height: 1.45;
   min-height: 28px;
   padding: 2px 0;
   transition: color var(--dur-fast) var(--ease-cinematic);
+}
+
+.comp-view__wire-link > .comp-view__source-name,
+.comp-view__wire-link > .comp-view__wire-title {
+  grid-column: 1;
+}
+
+.comp-view__wire-link > .comp-view__wire-arrow {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
 }
 
 .comp-view__wire-link:hover {
@@ -2513,31 +2545,20 @@ button:focus-visible .sigil-word__beam {
   cursor: default;
 }
 
-/* The wire separator between a source name and its headline. It used to be an
-   em dash written as &mdash;, which is a banned character reaching the reader
-   through an HTML entity. A 1px rule is what a newspaper draws here anyway,
-   and it cannot be mistaken for punctuation. */
-.comp-view__wire-sep {
-  flex-shrink: 0;
-  width: 10px;
-  height: 1px;
-  align-self: center;
-  background: var(--fg-muted);
-  opacity: 0.6;
-}
-
 .comp-view__wire-title {
   font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  line-height: 1.5;
-  color: var(--fg-tertiary);
-  /* Allow title to fill remaining space and wrap */
-  flex: 1 1 0%;
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--fg-secondary);
   min-width: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .comp-view__wire-link:hover .comp-view__wire-title {
-  color: var(--fg-secondary);
+  color: var(--fg-primary);
 }
 
 .comp-view__wire-arrow {

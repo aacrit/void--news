@@ -428,13 +428,12 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
         .join(" ")}
     >
       <div className="bench__head">
-        {/* The shape is DRAWN now, over the columns, in the space they leave.
-            The word stays here for a screen reader, for which a silhouette is
-            nothing at all, and comes back into view only where there is no
-            room on the Bench to draw it in. */}
-        <p className={room ? "bench__shape bench__shape--sr" : "bench__shape"}>
-          {leanShapeLabel(spread)}
-        </p>
+        {/* The word is always printed. When the Bench has room it also DRAWS
+            the mark over the columns; before 2026-09-26 the word was then
+            hidden for sighted readers, which left a ring floating in the
+            whitespace with nothing saying what it meant. Where there is no
+            room, the word takes the small mark beside it instead. */}
+        <p className="bench__shape">{leanShapeLabel(spread)}</p>
         {!room && (
           <BenchSigil spread={spread} size={28} className="bench__mark-inline" />
         )}

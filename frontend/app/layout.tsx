@@ -217,6 +217,13 @@ export default async function RootLayout({
                 } catch(e) {}
                 var m = window.matchMedia('(max-width: 767px)').matches;
                 document.documentElement.setAttribute('data-viewport', m ? 'mobile' : 'desktop');
+                // Cards enter hidden and a client hook reveals them. If the
+                // app never hydrates (a failed chunk, a blocked script), say
+                // so on <html> and styles/animations.css shows every card.
+                setTimeout(function() {
+                  var h = document.documentElement;
+                  if (!h.hasAttribute('data-hydrated')) h.setAttribute('data-no-hydrate', '');
+                }, 4000);
               })();
               if ('serviceWorker' in navigator) {
                 // updateViaCache:'none' forces the browser to bypass the HTTP
@@ -257,7 +264,7 @@ export default async function RootLayout({
           <ExperimentalBanner />
           {children}
           <Footer />
-          <MobileNav />
+          <MobileNav editionBuiltAt={feed?.builtAt ?? null} />
         </AudioProvider>
       </body>
     </html>

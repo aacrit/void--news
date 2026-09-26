@@ -35,7 +35,11 @@ const OnAirPanel = dynamic(() => import("./OnAirPanel"), { ssr: false });
    how MobileSidePanel was retired.
    --------------------------------------------------------------------------- */
 
-export default function MobileNav() {
+/** The edition build time (feed.builtAt), threaded from layout.tsx exactly as
+ *  NavBar receives it, so the Menu drawer and the masthead format the SAME
+ *  value. The drawer used to fetch it from a stub that always returned null
+ *  and then print the reader's current hour as the edition time. */
+export default function MobileNav({ editionBuiltAt = null }: { editionBuiltAt?: string | null } = {}) {
   const [moreSheetOpen, setMoreSheetOpen] = useState(false);
   const pathname = usePathname();
   const { contentType } = useAudio();
@@ -67,7 +71,7 @@ export default function MobileNav() {
       {AUDIO_ENABLED && !onShip && !suppressNewsChrome && <FloatingPlayer />}
       {AUDIO_ENABLED && !onShip && <OnAirPanel />}
       <MobileTabBar onMoreTap={handleMoreTap} moreOpen={moreSheetOpen} />
-      <MobileSidePanel open={moreSheetOpen} onClose={handleMoreSheetClose} />
+      <MobileSidePanel open={moreSheetOpen} onClose={handleMoreSheetClose} editionBuiltAt={editionBuiltAt} />
     </>
   );
 }

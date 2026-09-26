@@ -2,10 +2,16 @@
 
 import { useMemo, useState } from "react";
 import type { StorySource } from "../lib/types";
+import { leanToBucket } from "../lib/biasColors";
 
 /* ---------------------------------------------------------------------------
    ComparativeView — "Read All Sides"
-   Groups sources into Left / Center / Right buckets.
+   Groups sources into Left / Center / Right buckets. The three columns are
+   the Bench's seven rungs folded (leanToBucket), so a source can never sit
+   in a different place here than it does in the chart above it: Left used to
+   be "lean <= 40", which put a centre-left outlet under Left in this list
+   and in the centre-left column of the Bench. Unmeasured articles carry a
+   stored 50 and are held out, as the Bench holds them out.
    Clean layout: source logo + first 2 headlines per bucket.
    --------------------------------------------------------------------------- */
 
@@ -23,15 +29,27 @@ interface ComparativeViewProps {
 interface LeanBucket {
   label: "Left" | "Center" | "Right";
   cssClass: string;
-  min: number;
-  max: number;
+  /** The rungs this column folds, printed under its label. */
+  range: string;
 }
 
 const BUCKETS: LeanBucket[] = [
-  { label: "Left",   cssClass: "comp-view__col--left",   min: 0,  max: 40  },
-  { label: "Center", cssClass: "comp-view__col--center", min: 41, max: 60  },
-  { label: "Right",  cssClass: "comp-view__col--right",  min: 61, max: 100 },
+  { label: "Left",   cssClass: "comp-view__col--left",   range: "Far left to center-left" },
+  { label: "Center", cssClass: "comp-view__col--center", range: "Center only" },
+  { label: "Right",  cssClass: "comp-view__col--right",  range: "Center-right to far right" },
 ];
+
+/** A syndicated headline often ends with its own masthead ("... - Outlook
+ *  India"). The row already names the outlet, so the suffix is dropped when,
+ *  and only when, it is that outlet's name. */
+function stripOutletSuffix(title: string, outlet: string): string {
+  const t = title.trim();
+  const o = outlet.trim().toLowerCase();
+  if (!o) return t;
+  const m = t.match(/^(.*\S)\s+[-|:]\s+([^-|:]+)$/);
+  if (m && m[2].trim().toLowerCase() === o) return m[1];
+  return t;
+}
 
 function getFaviconUrl(_url: string): string {
   // Privacy: never call an external favicon service. Fetching a third-party
@@ -64,15 +82,18 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
   const [expandedBuckets, setExpandedBuckets] = useState<Record<string, boolean>>({});
   const [showInsights, setShowInsights] = useState(false);
 
-  const buckets: Record<string, StorySource[]> = useMemo(() => {
+  const { buckets, unmeasured } = useMemo(() => {
     const result: Record<string, StorySource[]> = { Left: [], Center: [], Right: [] };
+    let held = 0;
     for (const src of sources) {
-      const lean = src.biasScores?.politicalLean ?? 50;
-      if (lean <= 40) result.Left.push(src);
-      else if (lean <= 60) result.Center.push(src);
+      const lean = src.biasScores?.politicalLean;
+      if (src.leanUnscored || typeof lean !== "number") { held++; continue; }
+      const rung = leanToBucket(lean);
+      if (rung === "center") result.Center.push(src);
+      else if (rung.endsWith("left")) result.Left.push(src);
       else result.Right.push(src);
     }
-    return result;
+    return { buckets: result, unmeasured: held };
   }, [sources]);
 
   const activeBuckets = BUCKETS.filter((b) => buckets[b.label].length > 0);
@@ -109,13 +130,14 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
                 <span className="comp-view__source-count text-data">
                   {items.length} {items.length === 1 ? "source" : "sources"}
                 </span>
+                <span className="comp-view__range text-data">{bucket.range}</span>
               </div>
 
               {/* Source list — compact wire-ticker: logo + name + summary + arrow, all inline */}
               <div className="comp-view__items">
                 {visibleItems.map((source, i) => {
                   const favicon = getFaviconUrl(source.url);
-                  const title = source.articleTitle || source.name;
+                  const title = stripOutletSuffix(source.articleTitle || source.name, source.name);
 
                   return (
                     <article key={`${source.name}-${i}`} className="comp-view__item comp-view__item--wire">
@@ -145,7 +167,6 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
                             </span>
                           )}
                           <span className="comp-view__source-name text-data">{source.name}</span>
-                          <span className="comp-view__wire-sep" aria-hidden="true" />
                           <span className="comp-view__wire-title">{title}</span>
                           <span className="comp-view__wire-arrow" aria-hidden="true">&#8250;</span>
                         </a>
@@ -169,7 +190,6 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
                             </span>
                           )}
                           <span className="comp-view__source-name text-data">{source.name}</span>
-                          <span className="comp-view__wire-sep" aria-hidden="true" />
                           <span className="comp-view__wire-title">{title}</span>
                         </span>
                       )}
@@ -193,6 +213,11 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
           );
         })}
       </div>
+      {unmeasured > 0 && (
+        <p className="comp-view__unmeasured text-data">
+          {unmeasured} {unmeasured === 1 ? "source" : "sources"} not measured, so not placed
+        </p>
+      )}
 
       {/* Convergence & Divergence — collapsed by default, below the grid.
           Suppressed when the SpreadDisagreement panel already shows this up top. */}

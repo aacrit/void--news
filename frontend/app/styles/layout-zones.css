@@ -260,11 +260,6 @@
   font-weight: 500;
 }
 
-.bias-snapshot__sources {
-  font-family: var(--font-data);
-  color: var(--fg-secondary);
-}
-
 /* ---- Rail variant — Deep Dive right column ------------------------- */
 
 .bias-snapshot--rail {

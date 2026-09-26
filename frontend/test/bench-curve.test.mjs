@@ -191,8 +191,8 @@ check("the Bench's mark is decoration to a screen reader",
   /aria-hidden="true"/.test(bsig));
 
 const bench = readFileSync(join(ROOT, "app/components/Bench.tsx"), "utf8");
-check("the shape word survives for a screen reader when the mark takes over",
-  /bench__shape--sr/.test(bench) && /leanShapeLabel\(spread\)/.test(bench));
+check("the shape word is printed for every reader, whether or not the mark is drawn",
+  /<p className="bench__shape">\{leanShapeLabel\(spread\)\}<\/p>/.test(bench) && !/bench__shape--sr/.test(bench));
 check("the line is decoration, not a second chart",
   /className="bench__curve"[\s\S]{0,220}aria-hidden="true"/.test(bench));
 
@@ -201,8 +201,8 @@ check("the line cannot swallow a pointer event",
   /\.bench__curve\s*\{[^}]*pointer-events:\s*none/.test(css));
 check("the marks sit above the line",
   /\.bench__col\s*\{[^}]*z-index:\s*1/.test(css));
-check("the shape word is hidden visually, not removed",
-  /\.bench__shape--sr\s*\{[^}]*clip-path/.test(css));
+check("no rule hides the shape word from sighted readers",
+  !/\.bench__shape--sr/.test(css));
 /* TWO INKS, AND THEY MUST NOT SWAP. The pen is the story's verdict and the
    bleed is the axis it sits on. If the pen ever took the ramp, a Split story,
    whose whole finding is that the room has no direction, would be drawn with a
