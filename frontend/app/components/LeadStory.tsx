@@ -20,6 +20,8 @@ interface LeadStoryProps {
       down one notch (--type-twin-headline) and the card wears a modifier
       class so layout-zones.css can apply twin-only styles. */
   twin?: boolean;
+  /** This lead's Deep Dive is open below the lead block. */
+  open?: boolean;
 }
 
 /* ---------------------------------------------------------------------------
@@ -29,7 +31,7 @@ interface LeadStoryProps {
    typography carry the editorial moment; no photograph.
    --------------------------------------------------------------------------- */
 
-export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, twin = false }: LeadStoryProps) {
+export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, twin = false, open = false }: LeadStoryProps) {
   const cardRef = useRef<HTMLElement>(null);
 
   // Twin and solo top-story rank-0 layouts both use the full-canvas .lead-split
@@ -82,6 +84,9 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, t
     <article
       ref={cardRef}
       data-story-id={story.id}
+      /* J/K reach the two leads too; the grid starts at 2. */
+      data-story-index={rank}
+      data-open={open ? "true" : undefined}
       className={`lead-story${useSplit ? " lead-split" : ""}${twin ? " lead-story--twin" : ""} ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}`}
     >
       {/* Stretched link — covers the article for click + a11y. Progressive

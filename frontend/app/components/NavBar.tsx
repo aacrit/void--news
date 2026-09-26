@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MagnifyingGlass } from "@phosphor-icons/react";
@@ -165,6 +165,23 @@ export default function NavBar({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  /* The masthead's live height, published as --masthead-h on :root, so a bar
+     that sticks under it (the Deep Dive's) sits exactly below it at every
+     width and compact state. Two stickies both at top: 0 put the Deep Dive
+     bar UNDER the masthead, where it read as gone (2026-09-26). A
+     ResizeObserver reports only on change, so this costs nothing per scroll. */
+  const headerRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const root = document.documentElement;
+    const ro = new ResizeObserver(() => {
+      root.style.setProperty("--masthead-h", `${Math.round(el.getBoundingClientRect().height)}px`);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   const openSearch = () => {
     if (onSearchClick) onSearchClick();
     else window.dispatchEvent(new CustomEvent(SEARCH_EVENT));
@@ -177,6 +194,7 @@ export default function NavBar({
 
   return (
     <header
+      ref={headerRef}
       className="nav-header anim-cold-open-nav"
       data-section={section}
       data-scroll-compact={scrollCompact ? "true" : undefined}

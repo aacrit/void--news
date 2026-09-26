@@ -10,7 +10,7 @@ import "../styles/verify.css";
 import "../styles/inline-dd.css";
 
 import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
-import { X, ShareNetwork } from "@phosphor-icons/react";
+import { X, ShareNetwork, CaretLeft, CaretRight } from "@phosphor-icons/react";
 import type {
   Story,
   StorySource,
@@ -31,6 +31,7 @@ import ClaimConsensusSection from "./ClaimConsensusSection";
 import SummaryWithContradictions from "./SummaryWithContradictions";
 import { findHistoryContext } from "../lib/historyContext";
 import LazyOnView from "./LazyOnView";
+import DeepDiveNext from "./DeepDiveNext";
 
 /* ---------------------------------------------------------------------------
    InlineDeepDive — Cinematic Inline Deep Dive (stage 1: STATIC).
@@ -104,9 +105,31 @@ function HistoryContextLink({
 interface InlineDeepDiveProps {
   story: Story;
   onCollapse: () => void;
+  /** Walk to the previous / next story in the edition, in place. */
+  onNavigate?: (direction: "prev" | "next") => void;
+  /** 0-based position of this story in the feed. */
+  storyIndex?: number;
+  totalStories?: number;
+  prevStory?: Story | null;
+  nextStory?: Story | null;
+  /** After the last story: walk back to the first. */
+  onFirst?: () => void;
+  /** False when the reader walked here from the previous story: the block
+      swaps in place instead of replaying the accordion open. */
+  animate?: boolean;
 }
 
-export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProps) {
+export default function InlineDeepDive({
+  story,
+  onCollapse,
+  onNavigate,
+  storyIndex = -1,
+  totalStories = 0,
+  prevStory = null,
+  nextStory = null,
+  onFirst,
+  animate = true,
+}: InlineDeepDiveProps) {
   /* ---- Content visibility — true from first paint so every section appears at
      once (2026-08-09: the staggered .dd-cascade reveal was removed; it read as
      slowness). The accordion height-expand below is the only open animation. --- */
@@ -362,7 +385,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
      .anim-dd-section sections fade in just after the grow starts (an L-cut).
      prefers-reduced-motion: skip the height tween and reveal instantly. */
   const articleRef = useRef<HTMLElement>(null);
-  const headlineRef = useRef<HTMLButtonElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
   /* Disarm hook for the open animation: if the reader collapses while the open
      transition is still running, the open's own release (height:auto on the
      height transitionend) must never fire mid-collapse — it would snap the
@@ -386,7 +409,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
     const reduce =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
+    if (reduce || !animate) {
       scrollHeadlineToTop("auto");
       return;
     }
@@ -494,13 +517,18 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
     fallback = window.setTimeout(finish, 520); // tight safety net if transitionend misses
   }, [onCollapse]);
 
-  /* Esc collapses the inline block (parity with the modal's Escape-to-close). */
+  /* Esc collapses the inline block, unless it belongs to something above it:
+     a handler that already took it, an open modal (search, shortcuts), the
+     On Air panel, or a Sigil popup. It used to collapse the Deep Dive on
+     every Escape in the document. */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        handleCollapse();
-      }
+      if (e.key !== "Escape" || e.defaultPrevented) return;
+      if (document.querySelector('[aria-modal="true"], .sigil-popup')) return;
+      const t = e.target as HTMLElement | null;
+      if (t?.closest(".search-overlay, .kbd-overlay, .oap, .lean-legend")) return;
+      e.preventDefault();
+      handleCollapse();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
@@ -542,41 +570,65 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
   }, [story.title, story.permalink]);
 
   return (
-    <article ref={articleRef} className="inline-dd" aria-label={`Deep dive: ${story.title}`}>
-      {/* ---- Masthead: share + close toolbar, then headline (also a toggle) -- */}
-      <header className="inline-dd__header">
-        <div className="inline-dd__toolbar">
-          <button
-            type="button"
-            className="inline-dd__action"
-            aria-label="Share this story"
-            onClick={handleShare}
-          >
-            <ShareNetwork size={17} weight="regular" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            className="inline-dd__action"
-            aria-label={`Close deep dive: ${story.title}`}
-            onClick={handleCollapse}
-          >
-            <X size={17} weight="bold" aria-hidden="true" />
-          </button>
-          {shareToast && (
-            <span className="inline-dd__share-toast" role="status">Link copied</span>
-          )}
-        </div>
-
+    <article ref={articleRef} className="inline-dd" aria-labelledby={`inline-dd-title-${story.id}`}>
+      {/* ---- Masthead: the bar (where you are, prev/next, share, close) sticks
+          under the site masthead for the whole read, then the headline. ---- */}
+      {/* Direct child of the article so it can stick for the whole read
+          (a sticky element is held inside its parent's box). */}
+      <div className="inline-dd__toolbar">
+        {onNavigate && totalStories > 1 && storyIndex >= 0 && (
+          <div className="inline-dd__pager">
+            <button
+              type="button"
+              className="inline-dd__action"
+              aria-label="Previous story"
+              disabled={!prevStory}
+              onClick={() => { hapticLight(); onNavigate("prev"); }}
+            >
+              <CaretLeft size={17} weight="regular" aria-hidden="true" />
+            </button>
+            <span className="inline-dd__count" aria-label={`Story ${storyIndex + 1} of ${totalStories}`}>
+              {storyIndex + 1}/{totalStories}
+            </span>
+            <button
+              type="button"
+              className="inline-dd__action"
+              aria-label="Next story"
+              disabled={!nextStory}
+              onClick={() => { hapticLight(); onNavigate("next"); }}
+            >
+              <CaretRight size={17} weight="regular" aria-hidden="true" />
+            </button>
+          </div>
+        )}
         <button
-          ref={headlineRef}
           type="button"
-          className="inline-dd__headline"
-          aria-expanded={true}
-          aria-label={`Collapse deep dive: ${story.title}`}
+          className="inline-dd__action"
+          aria-label="Share this story"
+          onClick={handleShare}
+        >
+          <ShareNetwork size={17} weight="regular" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          className="inline-dd__action"
+          aria-label={`Close deep dive: ${story.title}`}
           onClick={handleCollapse}
         >
-          <span className="inline-dd__headline-text">{story.title}</span>
+          <X size={17} weight="bold" aria-hidden="true" />
         </button>
+        {shareToast && (
+          <span className="inline-dd__share-toast" role="status">Link copied</span>
+        )}
+      </div>
+      <header className="inline-dd__header">
+        {/* The story's heading. It was a button that collapsed the block, so
+            the Deep Dive had no heading at all and a stray click on the
+            title closed it. Close is the X in the bar. Focus lands here on
+            open (tabIndex -1: focusable by script, not a tab stop). */}
+        <h2 ref={headlineRef} tabIndex={-1} className="inline-dd__headline">
+          <span className="inline-dd__headline-text" id={`inline-dd-title-${story.id}`}>{story.title}</span>
+        </h2>
 
         <div className="deep-dive-meta inline-dd__meta">
           <span className="category-tag">{story.category}</span>
@@ -735,6 +787,17 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
               Check back after the next pipeline run.
             </p>
           </div>
+        )}
+        {/* ---- The end: the next story by name, or the end of the edition. */}
+        {onNavigate && storyIndex >= 0 && totalStories > 0 && (
+          <DeepDiveNext
+            position={storyIndex + 1}
+            total={totalStories}
+            prev={prevStory ? { title: prevStory.title } : null}
+            next={nextStory ? { title: nextStory.title } : null}
+            onNavigate={onNavigate}
+            onFirst={onFirst}
+          />
         )}
       </div>
     </article>

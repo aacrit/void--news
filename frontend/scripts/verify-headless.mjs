@@ -721,6 +721,143 @@ async function scenarios(browser) {
       assert(await page.evaluate(() => localStorage.getItem("void-news-theme")) === "light", "theme-persists", "localStorage carries the choice");
     });
   }
+  /* THE DEEP DIVE HAS AN ADDRESS, AND THE FEED STAYS (2026-09-26, audit
+     findings 4 to 6; docs/proposals/DEEP-DIVE-REDESIGN-2026-09-26.md). */
+  await withPage(browser, { width: 1440, route: "/" }, "deep-dive-keeps-lead", async (page) => {
+    await page.locator(".lead-story").nth(1).locator(".story-card__stretch-link").click();
+    await page.locator(".inline-dd").first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+    const r = await page.evaluate(() => {
+      const dd = document.querySelector(".inline-dd");
+      const twin = document.querySelector(".lead-twin");
+      return {
+        leads: document.querySelectorAll(".lead-story").length,
+        h1: document.querySelectorAll("h1").length,
+        cards: document.querySelectorAll("article[data-story-id]").length,
+        after: !!(dd && twin && (twin.compareDocumentPosition(dd) & Node.DOCUMENT_POSITION_FOLLOWING)),
+      };
+    });
+    assert(r.leads === 2 && r.h1 === 1 && r.after, "deep-dive-keeps-lead",
+      `${r.leads} leads, ${r.h1} h1, Deep Dive after the lead block: ${r.after}`);
+    assert(r.cards >= 20, "deep-dive-keeps-cards", `${r.cards} story cards still on the page`);
+  });
+  for (const width of [1440, 1024]) {
+    await withPage(browser, { width, route: "/" }, `deep-dive-row @${width}`, async (page) => {
+      const target = page.locator(".feed-grid__item").nth(5);
+      const id = await target.locator("[data-story-id]").getAttribute("data-story-id");
+      const rowTop = await target.evaluate((el) => el.getBoundingClientRect().top + scrollY);
+      const rowIds = await page.evaluate((top) => [...document.querySelectorAll(".feed-grid__item")]
+        .filter((el) => Math.abs(el.getBoundingClientRect().top + scrollY - top) < 2)
+        .map((el) => el.querySelector("[data-story-id]")?.getAttribute("data-story-id")), rowTop);
+      await target.locator(".story-card__stretch-link").click();
+      await page.locator(".inline-dd").first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+      const bad = await page.evaluate((ids) => {
+        const dd = document.querySelector(".inline-dd");
+        return ids.filter((sid) => {
+          const el = document.querySelector(`[data-story-id="${sid}"]`);
+          return !el || !(el.compareDocumentPosition(dd) & Node.DOCUMENT_POSITION_FOLLOWING);
+        });
+      }, rowIds);
+      const open = await page.locator(`.feed-grid__item[data-open="true"] [data-story-id="${id}"]`).count();
+      assert(bad.length === 0 && open === 1, "deep-dive-row",
+        `row of ${rowIds.length} stays above the Deep Dive${bad.length ? `; missing or below: ${bad.join(",")}` : ""}; opened card marked: ${open === 1}`);
+    });
+  }
+  for (const width of [1440, 390]) {
+    await withPage(browser, { width, route: "/" }, `deep-dive-address @${width}`, async (page) => {
+      const feedTitle = await page.title();
+      const link = page.locator("article[data-story-id] a.story-card__stretch-link").nth(3);
+      const href = await link.getAttribute("href");
+      const head = await link.evaluate((a) => a.closest("article").querySelector(".story-card__headline-text, .lead-headline__text, .msc__headline > span")?.textContent?.trim() ?? "");
+      await link.click();
+      await page.waitForTimeout(900);
+      const open = await page.evaluate(() => ({ path: location.pathname, title: document.title }));
+      assert(open.path === new URL(href, ORIGIN).pathname, "deep-dive-address-url", `opened at ${open.path}`);
+      assert(open.title === `${head} | Void News`, "deep-dive-address-title", `title "${open.title}"`);
+      await page.goBack();
+      await page.waitForTimeout(900);
+      const back = await page.evaluate(() => ({
+        path: location.pathname, title: document.title,
+        open: !!document.querySelector(".inline-dd, .dd-page"),
+        cards: document.querySelectorAll("article[data-story-id]").length,
+      }));
+      assert(back.path === `${BASE}/` && !back.open && back.cards >= 20 && back.title === feedTitle,
+        "deep-dive-back", `Back: ${back.path}, open=${back.open}, ${back.cards} cards, title "${back.title}"`);
+      await page.goForward();
+      await page.waitForTimeout(900);
+      assert(await page.locator(".inline-dd, .dd-page").count() > 0, "deep-dive-forward", "Forward reopens the story");
+    });
+  }
+  await withPage(browser, { width: 1440, route: "/" }, "deep-dive-escape-focus", async (page) => {
+    const link = page.locator(".feed-grid__item .story-card__stretch-link").nth(2);
+    await link.focus();
+    await page.keyboard.press("Enter");
+    await page.locator(".inline-dd").first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+    await page.waitForTimeout(600);
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(1200);
+    const r = await page.evaluate(() => ({
+      open: !!document.querySelector(".inline-dd"),
+      onLink: document.activeElement?.classList.contains("story-card__stretch-link") ?? false,
+      tag: document.activeElement?.tagName,
+    }));
+    assert(!r.open && r.onLink, "deep-dive-escape-focus", `closed=${!r.open}, focus on ${r.onLink ? "the card's link" : r.tag}`);
+  });
+  await withPage(browser, { width: 1440, route: "/" }, "deep-dive-keys", async (page) => {
+    await page.locator(".feed-grid__item .story-card__stretch-link").nth(0).click();
+    await page.locator(".inline-dd").first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+    await page.waitForTimeout(600);
+    const len0 = await page.evaluate(() => history.length);
+    const at = () => page.evaluate(() => document.querySelector(".inline-dd__count")?.textContent?.trim());
+    const start = await at();
+    await page.keyboard.press("j"); await page.waitForTimeout(500);
+    const j = await at();
+    await page.keyboard.press("ArrowRight"); await page.waitForTimeout(500);
+    const right = await at();
+    await page.keyboard.press("k"); await page.waitForTimeout(500);
+    const k = await at();
+    const len1 = await page.evaluate(() => history.length);
+    const n = (x) => Number(String(x).split("/")[0]);
+    assert(n(j) === n(start) + 1 && n(right) === n(start) + 2 && n(k) === n(start) + 1 && len1 === len0,
+      "deep-dive-keys", `${start} -> j ${j} -> right ${right} -> k ${k}; history ${len0} -> ${len1}`);
+  });
+  for (const width of [1440, 390]) {
+    await withPage(browser, { width, route: "/" }, `deep-dive-bar-visible @${width}`, async (page) => {
+      await page.locator("article[data-story-id] .story-card__stretch-link").nth(2).click();
+      const bar = width >= 768 ? ".inline-dd__toolbar" : ".dd-page__bar";
+      await page.locator(bar).first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+      await page.waitForTimeout(700);
+      await page.evaluate(() => window.scrollBy(0, 1400));
+      await page.waitForTimeout(500);
+      const r = await page.evaluate((sel) => {
+        const b = document.querySelector(sel);
+        const m = document.querySelector(".nav-header");
+        if (!b || !m) return null;
+        const br = b.getBoundingClientRect();
+        const mr = m.getBoundingClientRect();
+        const hit = document.elementFromPoint(br.left + br.width / 2, br.top + br.height / 2);
+        return { top: Math.round(br.top), mastBottom: Math.round(mr.bottom), onScreen: br.bottom > 0 && br.top < innerHeight, mine: !!hit && b.contains(hit) };
+      }, bar);
+      assert(!!r && r.onScreen && r.top >= r.mastBottom - 1 && r.mine, "deep-dive-bar-visible",
+        r ? `bar top ${r.top}, masthead bottom ${r.mastBottom}, uncovered ${r.mine}` : "no bar");
+    });
+  }
+  await withPage(browser, { width: 1440, route: "/" }, "deep-dive-walk", async (page) => {
+    const order = await page.evaluate(() => [...document.querySelectorAll("article[data-story-id]")].map((a) => a.getAttribute("data-story-id")));
+    await page.locator(".lead-story").nth(0).locator(".story-card__stretch-link").click();
+    await page.locator(".inline-dd").first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+    const seen = [];
+    for (let i = 0; i < order.length; i++) {
+      await page.waitForTimeout(350);
+      seen.push(await page.evaluate(() => (history.state?.voidStory ?? null)));
+      const next = page.locator(".dd-next__headline");
+      if (await next.count() === 0) break;
+      await next.click();
+    }
+    const end = await page.locator(".dd-next--end").count();
+    const same = seen.length === order.length && seen.every((id, i) => id === order[i]);
+    assert(same && end === 1, "deep-dive-walk",
+      `${seen.length} of ${order.length} stories walked in feed order: ${same}; end of edition shown: ${end === 1}`);
+  });
   /* One lean word per story (2026-09-26). The card printed the roster's word
      while its aria-label and popup heading read the gated mean, so a card
      showing "Leans left" was announced as "Not measured". All three must be

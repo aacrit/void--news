@@ -803,3 +803,121 @@
   border-radius: var(--radius-sm);
   opacity: 0.9;
 }
+
+/* ===========================================================================
+   DeepDiveNext: the end of a Deep Dive (components/DeepDiveNext.tsx)
+   The next story by name, where the reader is in the edition, and after the
+   last story the ways out. Same in all three shells.
+   =========================================================================== */
+.dd-next {
+  margin-top: var(--space-6, 48px);
+  padding-top: var(--space-4);
+  border-top: var(--rule-strong, 2px solid var(--fg-primary));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 68ch;
+}
+
+.dd-next__kicker {
+  margin: 0;
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+}
+
+.dd-next__where {
+  margin-left: var(--space-2);
+  font-family: var(--font-data);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--fg-muted);
+}
+
+.dd-next__headline {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: var(--space-1) 0;
+  margin: 0;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-editorial);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--fg-primary);
+  text-decoration: none;
+  min-height: 44px;
+}
+
+.dd-next__headline:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+
+.dd-next__arrow {
+  margin-left: var(--space-2);
+  color: var(--accent-warm);
+}
+
+.dd-next__prev {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: var(--space-2) 0;
+  margin: 0;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+  text-decoration: none;
+  min-height: 44px;
+}
+
+.dd-next__prev:hover {
+  color: var(--fg-primary);
+}
+
+.dd-next__headline:focus-visible,
+.dd-next__prev:focus-visible,
+.dd-next__out:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 3px;
+}
+
+.dd-next__end-line {
+  margin: 0;
+  font-family: var(--font-editorial);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--fg-primary);
+}
+
+.dd-next__outs {
+  list-style: none;
+  margin: var(--space-1) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+}
+
+.dd-next__out {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: var(--space-2) 0;
+  cursor: pointer;
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  color: var(--fg-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+  min-height: 44px;
+}

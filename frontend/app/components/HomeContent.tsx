@@ -9,6 +9,8 @@ import { supabase, supabaseError } from "../lib/supabase";
 import { cacheGet, cacheSet } from "../lib/feedCache";
 import { cleanFeedSummary } from "../lib/summaryHygiene";
 import { BASE_PATH } from "../lib/utils";
+import { pushDeepDive, replaceDeepDive, closeDeepDive, currentDeepDiveId, deepDiveTitle, restoreFeedTitle } from "../lib/deepDiveHistory";
+import { useGridColumns } from "../lib/useGridColumns";
 import LogoIcon from "./LogoIcon";
 import { SEARCH_EVENT } from "./NavBar";
 import LeadStory from "./LeadStory";
@@ -137,11 +139,17 @@ function HomeContentInner({
   // page reload — gives users a clean retry path from the error state.
   const [retryKey, setRetryKey] = useState(0);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
+  // False while the reader walks story to story inside an open Deep Dive, so
+  // the inline block swaps in place instead of replaying the accordion.
+  const [ddAnimate, setDdAnimate] = useState(true);
   // Neither Deep Dive mode uses a FLIP morph anymore: desktop expands inline
   // (InlineDeepDive accordion) and mobile pushes a full page, so the click-time
   // DOMRect is no longer captured.
   // Scroll position before the Deep Dive opened — restored on close.
   const scrollBeforeDeepDive = useRef<number>(0);
+  // The control that opened the Deep Dive, so closing it gives focus back
+  // there instead of dropping it on <body> (audit 2026-09-26, finding 5).
+  const deepDiveOpener = useRef<string | null>(null);
   // Live mirror of the visible feed order — lets the (stable) Deep Dive prev/next
   // handler read the current list without a stale closure or churny deps.
   const visibleStoriesRef = useRef<Story[]>([]);
@@ -237,51 +245,128 @@ function HomeContentInner({
   // while DailyBriefText renders in the content area
   const dailyBriefState = useDailyBrief(activeEdition);
 
-  // Open a story's Deep Dive. Records the scroll position so it can be restored
-  // on close. The click-time rect is accepted for call-site compatibility (cards
-  // still pass it) but is no longer needed: neither Deep Dive mode morphs.
+  // Open a story's Deep Dive. Records the scroll position and the opener, and
+  // gives the open story its address (lib/deepDiveHistory): the permalink goes
+  // on the history stack, so Back closes it, a reload lands on the story's
+  // page and the title is the story's. The click-time rect is accepted for
+  // call-site compatibility and unused.
   const handleStoryClick = useCallback((story: Story, _rect: DOMRect) => {
     void _rect;
+    // Remember WHICH card, not the element: closing re-renders the grid (the
+    // split halves become one section), so the element that was clicked is
+    // gone by the time focus goes back. The card is found again by its id.
+    const active = document.activeElement as HTMLElement | null;
+    const card = active?.closest<HTMLElement>("[data-story-id]");
+    deepDiveOpener.current = card?.getAttribute("data-story-id") ?? story.id;
     scrollBeforeDeepDive.current = window.scrollY;
+    pushDeepDive(story);
+    setDdAnimate(true);
     setSelectedStory(story);
   }, []);
 
-  // Close the mobile full-page Deep Dive. Clears the open story and restores the
-  // feed's pre-open scroll position after the page unmounts.
-  const handleDeepDiveClose = useCallback(() => {
-    setSelectedStory(null);
-    window.scrollTo(0, scrollBeforeDeepDive.current);
-  }, []);
-
-  // Collapse the desktop InlineDeepDive — clear the open story and glide back to
-  // where the reader was when they opened it. The inline block is in the document
-  // flow, so removing it changes scroll height; restore after the DOM updates
-  // (double rAF) so we land on the original feed position, not a clamped spot.
-  const handleInlineCollapse = useCallback(() => {
+  // The one place a Deep Dive actually closes. Reached from popstate (Back,
+  // or a Close control that went back) and, when the entry is not ours, from
+  // the control directly. Restores the feed's title, scroll and focus.
+  const finishClose = useCallback(() => {
     const restore = scrollBeforeDeepDive.current;
+    const openerId = deepDiveOpener.current;
     setSelectedStory(null);
+    restoreFeedTitle();
     // CSS `scroll-behavior` reduced-motion overrides do not apply to
-    // JS-initiated smooth scrolls — honor the preference explicitly.
+    // JS-initiated smooth scrolls; honor the preference explicitly.
     const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     requestAnimationFrame(() =>
-      requestAnimationFrame(() =>
-        window.scrollTo({ top: restore, behavior: smooth ? "smooth" : "auto" }),
-      ),
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: restore, behavior: smooth ? "smooth" : "auto" });
+        if (openerId) {
+          document
+            .querySelector<HTMLElement>(`[data-story-id="${CSS.escape(openerId)}"] .story-card__stretch-link`)
+            ?.focus({ preventScroll: true });
+        }
+      }),
     );
   }, []);
 
-  // Prev/Next inter-story navigation inside the open Deep Dive — walks the
-  // visible feed order without closing the modal.
+  // Close from a control (Close, Back to feed, Esc). Our entry goes back and
+  // the popstate below finishes the close; anything else closes in place.
+  const requestClose = useCallback(() => {
+    if (!closeDeepDive()) finishClose();
+  }, [finishClose]);
+
+  // Close the mobile full-page Deep Dive, and collapse the desktop inline one.
+  // Both route through history so Back and Close are the same act.
+  const handleDeepDiveClose = requestClose;
+  const handleInlineCollapse = requestClose;
+
+  // Back / Forward. An entry carrying voidStory opens that story (Forward, or
+  // a Back into an earlier open); any other entry means the reader left the
+  // Deep Dive, so it closes.
+  const selectedIdRef = useRef<string | null>(null);
+  selectedIdRef.current = selectedStory?.id ?? null;
+  useEffect(() => {
+    const onPop = () => {
+      const id = currentDeepDiveId();
+      if (id) {
+        const story = visibleStoriesRef.current.find((s) => s.id === id);
+        if (story) {
+          if (selectedIdRef.current === null) scrollBeforeDeepDive.current = window.scrollY;
+          setDdAnimate(selectedIdRef.current === null);
+          setSelectedStory(story);
+          document.title = deepDiveTitle(story);
+        }
+        return;
+      }
+      if (selectedIdRef.current !== null) finishClose();
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [finishClose]);
+
+  // Prev/Next inside the open Deep Dive: walks the visible feed order without
+  // closing, and REPLACES the address so one Back still returns to the feed.
   const handleDeepDiveNav = useCallback((direction: "prev" | "next") => {
-    setSelectedStory((current) => {
-      if (!current) return current;
-      const idx = visibleStoriesRef.current.findIndex((s) => s.id === current.id);
-      if (idx < 0) return current;
-      const newIdx = direction === "prev" ? idx - 1 : idx + 1;
-      if (newIdx < 0 || newIdx >= visibleStoriesRef.current.length) return current;
-      return visibleStoriesRef.current[newIdx];
-    });
+    const list = visibleStoriesRef.current;
+    const current = selectedIdRef.current;
+    if (!current) return;
+    const idx = list.findIndex((s) => s.id === current);
+    if (idx < 0) return;
+    const next = list[direction === "prev" ? idx - 1 : idx + 1];
+    if (!next) return;
+    replaceDeepDive(next);
+    setDdAnimate(false);
+    setSelectedStory(next);
   }, []);
+
+  // After the last story: back to the first, in place.
+  const handleDeepDiveFirst = useCallback(() => {
+    const first = visibleStoriesRef.current[0];
+    if (!first) return;
+    replaceDeepDive(first);
+    setDdAnimate(false);
+    setSelectedStory(first);
+  }, []);
+
+  // While a Deep Dive is open: J or ArrowRight walks to the next story, K or
+  // ArrowLeft to the previous. The feed's own J/K stand down while it is open
+  // (useStoryKeyboardNav's disabled flag), so the keys have one meaning each.
+  useEffect(() => {
+    if (!selectedStory) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      if (document.querySelector('[aria-modal="true"]')) return;
+      const k = e.key;
+      if (k === "j" || k === "J" || k === "ArrowRight") { e.preventDefault(); handleDeepDiveNav("next"); }
+      else if (k === "k" || k === "K" || k === "ArrowLeft") { e.preventDefault(); handleDeepDiveNav("prev"); }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [selectedStory, handleDeepDiveNav]);
+
+  // Leaving the page with a story open (a masthead link) must not strand the
+  // story's title on the next route.
+  useEffect(() => () => restoreFeedTitle(), []);
 
   // Detect mobile for feed layout — responsive to viewport changes.
   // F5: keep React state AND the documentElement `data-viewport` attribute in
@@ -675,14 +760,16 @@ function HomeContentInner({
     if (!id) { deepLinkHandled.current = true; return; }
     const story = filteredStories.find((s) => s.id === id);
     deepLinkHandled.current = true;
+    // The feed's own address goes back first, so the Deep Dive's entry is
+    // pushed on top of "/" and Back returns to the feed.
+    const url = new URL(window.location.href);
+    url.searchParams.delete("story");
+    window.history.replaceState(window.history.state, "", url.toString());
     if (!story) return;
     handleStoryClick(story, new DOMRect());
     requestAnimationFrame(() => {
       document.querySelector(`[data-story-id="${id}"]`)?.scrollIntoView({ block: "start" });
     });
-    const url = new URL(window.location.href);
-    url.searchParams.delete("story");
-    window.history.replaceState({}, "", url.toString());
   }, [filteredStories, handleStoryClick]);
 
   // All curated stories render at once (see FEED_DISPLAYED). Lightweight text cards, so
@@ -719,10 +806,19 @@ function HomeContentInner({
   const inlineIndex = inlineActive
     ? mainStories.findIndex((s) => s.id === selectedStory!.id)
     : -1;
-  // Open story is one of the two twin leads (replaces the whole twin block).
+  // Open story is one of the two twin leads: the Deep Dive goes under the
+  // lead block, and both leads stay (the first is the page's h1).
   const inlineInLead = inlineActive && inlineIndex >= 0 && inlineIndex < 2;
-  // Open story is in the grid — split position within gridStories.
-  const inlineGridSplit = inlineActive && inlineIndex >= 2 ? inlineIndex - 2 : -1;
+  // Open story is in the grid: the Deep Dive goes after the END of its
+  // visual row, so the opened card and its row-mates stay where they were.
+  // It used to split at the card itself, removing it and pushing the rest of
+  // its row below the Deep Dive (audit 2026-09-26, finding 4). The column
+  // count is the grid's own (responsive.css bands), read from the viewport.
+  const gridCols = useGridColumns();
+  const inlineGridSplit = inlineActive && inlineIndex >= 2
+    ? Math.min(gridStories.length - 1, Math.floor((inlineIndex - 2) / gridCols) * gridCols + gridCols - 1)
+    : -1;
+  const openGridIndex = inlineActive && inlineIndex >= 2 ? inlineIndex - 2 : -1;
 
   // Lead hero image removed 2026-05-13 — text-only newspaper composition.
 
@@ -764,7 +860,7 @@ function HomeContentInner({
       const variant: "digest" | "wire" = idx < 8 ? "digest" : "wire";
       const family = storyFamilies.get(story.id);
       return (
-        <div key={story.id} className="feed-grid__item">
+        <div key={story.id} className="feed-grid__item" data-open={idx === openGridIndex ? "true" : undefined}>
           <StoryCard
             story={story}
             index={idx + 2}
@@ -777,7 +873,7 @@ function HomeContentInner({
         </div>
       );
     },
-    [storyFamilies, handleStoryClick, kbdFocusIndex],
+    [storyFamilies, handleStoryClick, kbdFocusIndex, openGridIndex],
   );
 
   // Search: when a result is selected, open its Deep Dive
@@ -800,8 +896,11 @@ function HomeContentInner({
           story={selectedStory}
           onClose={handleDeepDiveClose}
           onNavigate={handleDeepDiveNav}
+          onFirst={handleDeepDiveFirst}
           storyIndex={visibleStories.findIndex((s) => s.id === selectedStory.id)}
           totalStories={visibleStories.length}
+          prevStory={visibleStories[visibleStories.findIndex((s) => s.id === selectedStory.id) - 1] ?? null}
+          nextStory={visibleStories[visibleStories.findIndex((s) => s.id === selectedStory.id) + 1] ?? null}
           editionBuiltAt={lastUpdated}
         />
       </DeepDiveErrorBoundary>
@@ -929,23 +1028,23 @@ function HomeContentInner({
                       <1024px). Both wear the badge. v3 2026-05-14.
                       Inline mode: when one of the twin leads is open, the whole
                       twin block is replaced by the full-width InlineDeepDive. */}
-                  {inlineInLead ? (
-                    <InlineDeepDive key={selectedStory!.id} story={selectedStory!} onCollapse={handleInlineCollapse} />
-                  ) : (
-                    twinLeads.length > 0 && (
-                      <div key={filterKey} className={`lead-twin hero-slot${inlineActive ? " lead-twin--recede" : ""}`}>
-                        {twinLeads.map((story, idx) => (
-                          <LeadStory
-                            key={story.id}
-                            story={story}
-                            rank={idx}
-                            twin={twinLeads.length === 2}
-                            onStoryClick={handleStoryClick}
-                            kbdFocused={kbdFocusIndex === idx}
-                          />
-                        ))}
-                      </div>
-                    )
+                  {twinLeads.length > 0 && (
+                    <div key={filterKey} className={`lead-twin hero-slot${inlineActive ? " lead-twin--recede" : ""}`}>
+                      {twinLeads.map((story, idx) => (
+                        <LeadStory
+                          key={story.id}
+                          story={story}
+                          rank={idx}
+                          twin={twinLeads.length === 2}
+                          onStoryClick={handleStoryClick}
+                          kbdFocused={kbdFocusIndex === idx}
+                          open={inlineInLead && inlineIndex === idx}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  {inlineInLead && (
+                    <InlineDeepDive key={selectedStory!.id} story={selectedStory!} onCollapse={handleInlineCollapse} onNavigate={handleDeepDiveNav} onFirst={handleDeepDiveFirst} animate={ddAnimate} storyIndex={inlineIndex} totalStories={visibleStories.length} nextStory={visibleStories[inlineIndex + 1] ?? null} prevStory={visibleStories[inlineIndex - 1] ?? null} />
                   )}
 
                   {/* Grid below twin leads. The first 8 grid cards render as
@@ -960,14 +1059,12 @@ function HomeContentInner({
                   {gridStories.length > 0 && (
                     inlineGridSplit >= 0 ? (
                       <React.Fragment key={`grid-split-${filterKey}`}>
-                        {inlineGridSplit > 0 && (
-                          <section aria-label="Stories" className="feed-grid feed-grid--recede">
-                            {gridStories.slice(0, inlineGridSplit).map((story, idx) =>
-                              renderGridCard(story, idx),
-                            )}
-                          </section>
-                        )}
-                        <InlineDeepDive key={selectedStory!.id} story={selectedStory!} onCollapse={handleInlineCollapse} />
+                        <section aria-label="Stories" className="feed-grid feed-grid--recede">
+                          {gridStories.slice(0, inlineGridSplit + 1).map((story, idx) =>
+                            renderGridCard(story, idx),
+                          )}
+                        </section>
+                        <InlineDeepDive key={selectedStory!.id} story={selectedStory!} onCollapse={handleInlineCollapse} onNavigate={handleDeepDiveNav} onFirst={handleDeepDiveFirst} animate={ddAnimate} storyIndex={inlineIndex} totalStories={visibleStories.length} nextStory={visibleStories[inlineIndex + 1] ?? null} prevStory={visibleStories[inlineIndex - 1] ?? null} />
                         {inlineGridSplit < gridStories.length - 1 && (
                           <section aria-label="Stories" className="feed-grid feed-grid--recede">
                             {gridStories.slice(inlineGridSplit + 1).map((story, sIdx) =>

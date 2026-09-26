@@ -20,6 +20,7 @@ import { SITE_URL } from "../lib/siteMeta";
 import { hapticLight } from "../lib/haptics";
 import { findHistoryContext } from "../lib/historyContext";
 import Sigil from "./Sigil";
+import DeepDiveNext from "./DeepDiveNext";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
 import BiasSnapshot from "./BiasSnapshot";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
@@ -63,6 +64,10 @@ interface DeepDiveProps {
   storyIndex?: number;
   /** Total stories in the visible feed. */
   totalStories?: number;
+  prevStory?: Story | null;
+  nextStory?: Story | null;
+  /** After the last story: walk back to the first. */
+  onFirst?: () => void;
   /** Accepted for call-site compatibility; the masthead in app/layout.tsx owns the dateline. */
   editionBuiltAt?: string | null;
   /** Accepted for call-site compatibility (desktop FLIP origin). Unused here. */
@@ -165,6 +170,9 @@ export default function DeepDive({
   onNavigate,
   storyIndex = -1,
   totalStories = 0,
+  prevStory = null,
+  nextStory = null,
+  onFirst,
 }: DeepDiveProps) {
   const [liveData, setLiveData] = useState<DeepDiveData | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(false);
@@ -415,36 +423,27 @@ export default function DeepDive({
     window.scrollTo(0, 0);
   }, [story.id]);
 
-  /* ---- History integration: push a state entry on open so the hardware /
-     browser Back button returns to the feed instead of leaving the site. --- */
-  useEffect(() => {
-    window.history.pushState({ voidDeepDive: true }, "");
-    const onPop = () => { onCloseRef.current(); };
-    window.addEventListener("popstate", onPop);
-    return () => window.removeEventListener("popstate", onPop);
-    // mount-only: one entry per open (prev/next keeps the same entry).
-  }, []);
-
+  /* History is owned by HomeContent (lib/deepDiveHistory): it pushed this
+     story's permalink as the entry when the page opened, and its popstate
+     listener closes the page. Back to feed therefore just goes back. */
   /* Back to feed — pop the pushed entry (fires popstate -> onClose). */
   const handleBack = useCallback(() => {
     hapticLight();
-    window.history.back();
+    onCloseRef.current();
   }, []);
 
   /* Keyboard: Escape returns to feed, arrows walk stories. */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      /* Arrows and J/K walk stories from HomeContent's one key handler. */
+      if (e.key === "Escape" && !e.defaultPrevented) {
         e.preventDefault();
         handleBack();
-      } else if (onNavigate && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
-        e.preventDefault();
-        onNavigate(e.key === "ArrowLeft" ? "prev" : "next");
       }
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [handleBack, onNavigate]);
+  }, [handleBack]);
 
   /* Share — native sheet, clipboard fallback with a brief toast. */
   const handleShare = useCallback(async () => {
@@ -641,6 +640,18 @@ export default function DeepDive({
                 Retry
               </button>
             </div>
+          )}
+
+          {/* ---- The end: the next story by name, or the end of the edition. */}
+          {onNavigate && storyIndex >= 0 && totalStories > 0 && (
+            <DeepDiveNext
+              position={storyIndex + 1}
+              total={totalStories}
+              prev={prevStory ? { title: prevStory.title } : null}
+              next={nextStory ? { title: nextStory.title } : null}
+              onNavigate={onNavigate}
+              onFirst={onFirst}
+            />
           )}
         </div>
       </main>
