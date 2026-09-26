@@ -157,6 +157,45 @@ def item_links(xml: str) -> list[str]:
     return out
 
 
+def newest_age_days(xml: str) -> float | None:
+    """Age in days of the newest dated item, or None when no item is dated.
+
+    Added 2026-09-26: 24.kg's discovered feed was its Russian ELECTIONS section,
+    last updated for the 2021 vote. Fifty items, all on the right domain, all
+    article-shaped, and it cleared every part of the bar. A feed that stopped
+    years ago is not a daily feed however well-formed it is.
+    """
+    import datetime as _dt
+    import email.utils as _eu
+    newest = None
+    for m in re.finditer(r"<(pubDate|published|updated|dc:date)>\s*([^<]+?)\s*</\1>",
+                         uncdata(xml)):
+        raw = m.group(2)
+        when = None
+        try:
+            when = _eu.parsedate_to_datetime(raw)
+        except (TypeError, ValueError):
+            try:
+                when = _dt.datetime.fromisoformat(raw.replace("Z", "+00:00"))
+            except ValueError:
+                continue
+        if when.tzinfo is None:
+            when = when.replace(tzinfo=_dt.timezone.utc)
+        if newest is None or when > newest:
+            newest = when
+    if newest is None:
+        return None
+    return round((_dt.datetime.now(_dt.timezone.utc) - newest).total_seconds() / 86400, 1)
+
+
+def expected_path(url: str) -> str:
+    """The roster URL's path prefix, e.g. '/english' for https://24.kg/english/.
+    Empty for a homepage. An outlet listed by an edition's path is that edition,
+    and a feed from another section of the same domain is the wrong edition."""
+    path = urllib.parse.urlparse(url or "").path.rstrip("/")
+    return path.lower()
+
+
 def channel_title(xml: str) -> str:
     """The feed's own title: the first <title> before any item."""
     head = re.split(r"<(?:item|entry)[ >]", xml, maxsplit=1)[0]
@@ -286,8 +325,14 @@ def main() -> int:
             on_exp = [l for l in links
                       if reg(urllib.parse.urlparse(l).netloc) == expected]
             arts = [l for l in on_exp if looks_article(l)]
+            prefix = expected_path(c.get("url"))
+            on_path = ([l for l in on_exp
+                        if urllib.parse.urlparse(l).path.lower().startswith(prefix + "/")]
+                       if prefix else on_exp)
             rec.update(status=r.status_code, items=len(links),
                        on_expected=len(on_exp), articles=len(arts),
+                       expected_path=prefix, on_path=len(on_path),
+                       newest_age_days=newest_age_days(xml),
                        title=title[:120],
                        named=named(c["name"], title, expected),
                        sample=(arts[0] if arts else

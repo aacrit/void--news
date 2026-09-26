@@ -60,7 +60,8 @@ VERIFIED = [
     {"id": "probe-daily", "name": "Probe Daily", "url": "https://probe.example",
      "feed": "https://probe.example/feed", "expected_domain": "probe.example",
      "status": 200, "items": 25, "on_expected": 25, "articles": 25,
-     "title": "Probe Daily", "named": True,
+     "title": "Probe Daily", "named": True, "newest_age_days": 0.4,
+     "expected_path": "", "on_path": 25,
      "sample": "https://probe.example/2026/09/a-story-here"},
     {"id": "thin-weekly", "name": "Thin Weekly", "url": "https://thin.example",
      "feed": "https://thin.example/feed", "expected_domain": "thin.example",
@@ -276,6 +277,24 @@ if TOKENS.exists():
     check("the file says why each undeclared outlet was NOT declared",
           all(isinstance(v, str) and len(v) > 40 for v in holds.values()),
           "a hold with no reason teaches nobody anything")
+
+# The two holds added 2026-09-26, each against its planted defect. 24.kg English
+# cleared the old bar with its Russian elections section, last updated for the
+# 2021 vote; Ecuador Times (820 days) and CMC (23 days) cleared it too.
+import importlib.util as _ilu  # noqa: E402
+_spec = _ilu.spec_from_file_location("apply_feeds_mod", ROOT / "scripts" / "roster" / "apply_feeds.py")
+_af = _ilu.module_from_spec(_spec)
+_spec.loader.exec_module(_af)
+_ok = dict(VERIFIED[0])
+check("a healthy, current feed clears the bar", _af.why_not(_ok) is None, str(_af.why_not(_ok)))
+check("a feed whose newest item is 820 days old is held",
+      "days old" in (_af.why_not({**_ok, "newest_age_days": 819.8}) or ""))
+check("a feed with no dated item is held",
+      "no dated item" in (_af.why_not({**_ok, "newest_age_days": None}) or ""))
+check("another section of the domain is held when the roster lists an edition",
+      "under /english/" in (_af.why_not({**_ok, "expected_path": "/english", "on_path": 0}) or ""))
+check("the edition's own feed clears", _af.why_not({**_ok, "expected_path": "/english",
+                                                     "on_path": 50}) is None)
 
 if failures:
     print(f"\nFAIL  {len(failures)} apply-feeds check(s)")

@@ -53,6 +53,10 @@ import json, re, sys, os, datetime
 MIN_ITEMS = 10          # a feed of three stories is not a daily feed
 MIN_ON_EXPECTED = 10    # links must be on the outlet's OWN registered domain
 MIN_ARTICLES = 10       # and must look like articles, not section fronts
+# 2026-09-26: 24.kg English cleared every test above with its Russian elections
+# section, last updated in 2021. So the newest item must be recent, and an outlet
+# listed by an edition's path (https://24.kg/english/) must get that edition.
+MAX_NEWEST_AGE_DAYS = 14
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Overridable so this script can be exercised against a throwaway tree.
 # It was not testable before, which is why a dry run that wrote two files went
@@ -125,6 +129,14 @@ def why_not(v: dict) -> str | None:
                 f"on-domain links look like articles")
     if not named_ok(v):
         return f"channel title does not name the outlet: {v.get('title', '')!r}"
+    age = v.get("newest_age_days")
+    if age is None:
+        return "no dated item: cannot tell whether the feed is still published"
+    if age > MAX_NEWEST_AGE_DAYS:
+        return f"newest item is {age:g} days old: a feed that stopped is not a daily feed"
+    if v.get("expected_path") and v.get("on_path", 0) < MIN_ON_EXPECTED:
+        return (f"only {v.get('on_path', 0)} items under {v['expected_path']}/: the roster "
+                f"lists this edition, and the feed is another section of the domain")
     return None
 
 

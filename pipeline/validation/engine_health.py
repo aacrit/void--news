@@ -136,6 +136,20 @@ def problems(health: dict) -> list[str]:
     return out
 
 
+def stale(health: dict, db_newest: str | None) -> list[str]:
+    """engine.json must describe the newest article in the state DB. A floor
+    that reads yesterday's file cannot fail, and on the first run after rev 82
+    it did exactly that: the export skipped the section and the check passed."""
+    have = ((health or {}).get("run") or {}).get("newest_fetch")
+    if not db_newest:
+        return []
+    if have != db_newest:
+        return [f"engine.json describes the run whose newest article is {have}, "
+                f"but the state DB's newest is {db_newest}: the export did not "
+                f"rewrite it (is `engine` in VOID_EXPORT_ONLY?)"]
+    return []
+
+
 def format_summary(health: dict) -> str:
     f = health.get("feeds", {})
     d, g = f.get("direct", {}), f.get("google_news", {})
