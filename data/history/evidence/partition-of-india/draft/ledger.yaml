@@ -643,6 +643,35 @@ entries:
   position: indian-nationalist
   rights: public
   notes: the same site the ledger's Constituent Assembly Debates are read from; the Constitution's official Hindi text could not be fetched (see gaps)
+- id: src-clo-19480429
+  tier: A
+  kind: report
+  author: Chief Liaison Officer (India), East Punjab Liaison Agency, Lahore
+  title: Demi-official letter No. 27581/CLO to the Chief Secretary, East Punjab, 29 April 1948, on evacuation and the recovery of abducted women
+  container: 'Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947: India and Pakistan, Document 219'
+  publisher: National Book Shop
+  place: Delhi
+  year: 1948
+  edition: 2nd edition of the collection, 2005, read from the Internet Archive scan; the editor's source is P.B.R.F. 218-ER-48C, pp. 1-10
+  volume: null
+  document_number: Kirpal Singh, Document 219
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: select-documents-on-partition-of-punjab-1947
+    hathitrust: null
+    url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
+  access:
+    free_copy: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+    verified_at: 2026-09-25
+    verified_by: archive-item-fetch
+    verified_title: Chief Liaison Officer (India) to Chief Secretary, East Punjab
+  language: en
+  region_of_authorship: south-asia
+  producer: east-punjab-liaison-agency
+  position: null
+  rights: null
+  notes: a 1948 government record; for the draft it is treated as copyright and held under the cap, as the two trimmed passages in draft/extracts
 - id: src-top-xi
   tier: A
   kind: edited-documents
@@ -834,7 +863,7 @@ positions:
     - src-jinnah-papers-xiv.p642
     - src-khosla-1949.p66
     - src-hansard-19461212.p1348
-    reasoning: Jinnah's interview of 17 August 1946 condemns the violence, says any Leaguer who used it broke the League's instructions, and says he did not know who was responsible. The Indian fact-finding body wrote that, if the hospital returns were accepted as a basis for the ratio, the Muslims fared almost as badly as the Hindus. The words of the League's resolution of 29 July that Cripps read to the Commons resolve on direct action to achieve Pakistan and do not say what form it would take. The record holds the disavowal in Jinnah's own words and the charge against the Congress only as the hostile fact-finding body reports it, and no document that investigates how the riot began, so the verdict is qualified.
+    reasoning: Jinnah's interview of 17 August 1946 condemns the violence, says any Leaguer who used it broke the League's instructions, and says he did not know who was responsible. The Indian fact-finding body wrote that, if the hospital returns were accepted as a basis for the ratio, the Muslims fared almost as badly as the Hindus. The words held here of the League's resolution of 29 July, as Cripps read them to the Commons, resolve on direct action to achieve Pakistan and do not describe the action. The record holds the disavowal in Jinnah's own words and the charge against the Congress only as the hostile fact-finding body reports it, and no document that investigates how the riot began, so the verdict is qualified.
   - claim: The Punjab award was finalised by Radcliffe about a week before partition and then gerrymandered in favour of India, Mountbatten and Radcliffe acting in league with the Congress leadership.
     verdict: qualified
     basis: presence
@@ -910,7 +939,7 @@ positions:
     basis: presence
     rests_on:
     - src-randhawa-1954.p93
-    reasoning: By the resettlement officer's own figures, Randhawa records 67 lakh acres abandoned by Hindu and Sikh landholders in West Pakistan against 47 lakh acres available in East Punjab and Pepsu, a gap of 20 lakh acres which he gives as 38 per cent of the area abandoned, measured in standard acres, and 43 lakh irrigated acres left against 13 lakh. The foreword says the views are the author's. The figures are the resettling administration's own, and this record holds no Pakistani count of the land Muslim evacuees left or received, so under Rule A the verdict is capped at qualified.
+    reasoning: By the resettling administration's own figures, as Randhawa records them, 67 lakh acres abandoned by Hindu and Sikh landholders in West Pakistan against 47 lakh acres available in East Punjab and Pepsu, a gap of 20 lakh acres which he gives as 38 per cent of the area abandoned, measured in standard acres, and 43 lakh irrigated acres left against 13 lakh. The foreword says the views are the author's. The figures are the resettling administration's own, and this record holds no Pakistani count of the land Muslim evacuees left or received, so under Rule A the verdict is capped at qualified.
 - id: bengal-long-partition
   name: The Bengal and Bangladeshi account
   holders:
