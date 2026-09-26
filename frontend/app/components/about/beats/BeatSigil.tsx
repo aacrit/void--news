@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import Sigil from "../../Sigil";
 import { demoSigil } from "../demoSigil";
 import { BEATS, SIX_AXES } from "../../../film/data";
 import { leanLabel } from "../../../lib/biasColors";
+import { RATED_DELTA_MAX, FULL_TEXT_WORDS } from "../../../lib/leanBounds";
 
 /* ---------------------------------------------------------------------------
    Beat 2 — "One mark reads the bias."
@@ -99,8 +101,10 @@ export default function BeatSigil() {
         </ul>
         <p className="beat__more-note">
           Every score reads two things: what the outlet has published before, and what this article
-          actually says. A short wire item gives little text to read, so the outlet&rsquo;s track record
-          carries more of the score. A full article gives more, so its words carry more. All rule-based
+          actually says. On political lean the track record sets the anchor. An article under{" "}
+          {FULL_TEXT_WORDS} words is scored on the record alone; a full article from a rated outlet can move{" "}
+          {RATED_DELTA_MAX} points off it at most.{" "}
+          <Link href="/sources#methodology">How far they moved on the latest run</Link>. All rule-based
           NLP, no LLM, and the same text always gives the same result. Every score shows how it was reached.
         </p>
       </details>

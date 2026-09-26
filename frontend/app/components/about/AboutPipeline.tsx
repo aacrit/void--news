@@ -2,6 +2,7 @@
 
 import { FEED_DISPLAYED } from "../../lib/feedConfig";
 import { useReveal } from "./useReveal";
+import { RATED_DELTA_MAX, FULL_TEXT_WORDS } from "../../lib/leanBounds";
 import { SOURCE_TIERS, RANKING_SIGNALS, RANKING_SIGNAL_COUNT, SIX_AXES } from "../../film/data";
 
 /* ---------------------------------------------------------------------------
@@ -29,7 +30,7 @@ const STEPS = [
   {
     n: "03",
     verb: "Measure",
-    detail: `Each article is scored on ${SIX_AXES.length} bias axes from two things: the outlet's track record and the article's own words. Rule-based language analysis, no AI opinion. A short item leans on the record; a full article leans on its words.`,
+    detail: `Each article is scored on ${SIX_AXES.length} bias axes from two things: the outlet's track record and the article's own words. Rule-based language analysis, no AI opinion. On political lean the record sets the anchor: an article under ${FULL_TEXT_WORDS} words is scored on the record alone, and a full article from a rated outlet can move ${RATED_DELTA_MAX} points off it at most.`,
   },
   {
     n: "04",

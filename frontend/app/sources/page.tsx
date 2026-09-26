@@ -6,6 +6,7 @@ import { pageMetadata } from "../lib/siteMeta";
 import SourcesClient from "./SourcesClient";
 import { SOURCE_TIERS } from "../film/data";
 import { ROSTER_SOURCES_TEXT, ROSTER_COUNTRIES } from "../lib/rosterConfig";
+import type { EngineStats } from "../lib/engineStats";
 
 /* ---------------------------------------------------------------------------
    /sources — PRERENDERED source list (static export).
@@ -63,6 +64,20 @@ function loadSources(): SpectrumSource[] {
   }
 }
 
+/** What the engine read and did on the latest run (pipeline export). The
+ *  methodology copy prints its measured numbers from this, never from prose.
+ *  Missing or unreadable: the copy omits the measured paragraph rather than
+ *  guess at it. */
+function loadEngine(): EngineStats | null {
+  try {
+    return JSON.parse(
+      readFileSync(join(process.cwd(), "build-data", "engine.json"), "utf-8"),
+    ) as EngineStats;
+  } catch {
+    return null;
+  }
+}
+
 export default function SourcesPage() {
-  return <SourcesClient initialSources={loadSources()} />;
+  return <SourcesClient initialSources={loadSources()} engine={loadEngine()} />;
 }
