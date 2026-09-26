@@ -219,7 +219,8 @@ export interface ThesisGap {
 
 /** §15: a holistic thesis says which sections carry which strand of the
  *  event, and which position answers each perspective the event record holds.
- *  T-21 checks the map; the page prints it under the question. */
+ *  T-21 checks the map. It is carried in the JSON and not printed: the reader
+ *  navigates by the rail, and the map is the gate's input, not the page's. */
 export interface ThesisCoverageStrand {
   sections: string[];
   terms?: string[];
@@ -256,4 +257,8 @@ export interface ThesisDoc {
   gaps: ThesisGap[];
   episodeMarks: { chapter: number; where: string; startTime: number | null }[];
   words: number;
+  /** The reader's name for each ledger producer id the page prints (a
+   *  verdict's producers, an analysis's producer column), from
+   *  data/history/producers.yaml. */
+  producerLabels?: Record<string, string>;
 }

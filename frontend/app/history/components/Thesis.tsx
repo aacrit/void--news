@@ -3,7 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 import PrintMast from "../../components/PrintMast";
 import type { HistoricalEvent, ConnectionType } from "../types";
 import type {
-  ThesisAdjudication, ThesisAnalysisBlock, ThesisBlock, ThesisContestedBlock, ThesisCoverage, ThesisDoc,
+  ThesisAdjudication, ThesisAnalysisBlock, ThesisBlock, ThesisContestedBlock, ThesisDoc,
   ThesisExhibitBlock, ThesisExtractRef, ThesisListBlock, ThesisParaBlock, ThesisPositionBlock,
   ThesisSection, ThesisSentence,
 } from "../thesis";
@@ -43,22 +43,12 @@ const CONNECTION_GLYPH: Record<ConnectionType, string> = {
   caused: "↓", consequence: "↑", "response-to": "↑", influenced: "·", parallel: "·",
 };
 
-const PRODUCER_LABEL: Record<string, string> = {
-  icty: "the tribunal (ICTY)",
-  icj: "the International Court of Justice",
-  "un-secretariat": "the UN Secretariat",
-  "un-security-council": "the Security Council",
-  "un-general-assembly": "the General Assembly",
-  echr: "the European Court of Human Rights",
-  "dutch-supreme-court": "the Supreme Court of the Netherlands",
-  niod: "the Netherlands Institute for War Documentation",
-  scholarship: "peer-reviewed scholarship",
-  "serbian-denial-literature": "the Serbian denial literature",
-  "rs-authorities": "the Republika Srpska authorities",
-  "survivor-testimony": "survivor testimony",
-  vrs: "the Bosnian Serb army's own orders",
-};
-const producerName = (p: string) => PRODUCER_LABEL[p] ?? p;
+/* A ledger names a producing body by an id (`uk-government`); the reader gets
+   its name, which the exporter carries in `producerLabels` from
+   data/history/producers.yaml. tests/test_history_thesis.py fails when a
+   ledger uses an id with no label, so the fallback to the id is a guard, not
+   a path a committed page takes. */
+const producerName = (doc: ThesisDoc, p: string) => doc.producerLabels?.[p] ?? p;
 
 const RENDERING_LABEL = {
   "official-parallel": "Official parallel text",
@@ -153,37 +143,42 @@ function Para({ block, doc, className }: { block: ThesisParaBlock; doc: ThesisDo
   const notes = block.sentences.flatMap((s) => s.notes);
   return (
     <div className={`hist-th-para${className ? ` ${className}` : ""}`}>
+      {/* Desktop: the notes in the right margin, from the paragraph's first
+          line. The aside comes BEFORE the text because it is a float: a float
+          starts where it sits in the flow, so this is what puts it level with
+          the paragraph, and a float is out of the flow, so a long run of notes
+          runs on beside the next paragraphs instead of holding them down
+          (history-thesis.css, "1280px and up"). */}
+      {notes.length > 0 && (
+        <aside className="hist-th-sidenotes" role="note" aria-label={`Notes ${notes[0]}${notes.length > 1 ? ` to ${notes[notes.length - 1]}` : ""}`}>
+          <ol className="hist-th-sidenotes__list" start={notes[0]}>
+            {notes.map((n) => (
+              <li key={n} id={sidenoteId(n)} className="hist-th-sidenote" value={n}>
+                <NoteBody n={n} doc={doc} />
+              </li>
+            ))}
+          </ol>
+        </aside>
+      )}
       <p className="hist-th-p">
         {block.sentences.map((s, i) => (
           <Sentence key={i} s={s} doc={doc} />
         ))}
       </p>
       {notes.length > 0 && (
-        <>
-          {/* Desktop: the notes beside the paragraph in the right rail. */}
-          <aside className="hist-th-sidenotes" role="note" aria-label={`Notes ${notes[0]}${notes.length > 1 ? ` to ${notes[notes.length - 1]}` : ""}`}>
-            <ol className="hist-th-sidenotes__list" start={notes[0]}>
-              {notes.map((n) => (
-                <li key={n} id={sidenoteId(n)} className="hist-th-sidenote" value={n}>
-                  <NoteBody n={n} doc={doc} />
-                </li>
-              ))}
-            </ol>
-          </aside>
-          {/* Phone: the same notes, inline, under the paragraph, as a native disclosure. */}
-          <details className="hist-th-inline">
-            <summary className="hist-th-inline__summary">
-              {notes.length === 1 ? `Note ${notes[0]}` : `Notes ${notes[0]} to ${notes[notes.length - 1]}`}
-            </summary>
-            <ol className="hist-th-inline__list" start={notes[0]}>
-              {notes.map((n) => (
-                <li key={n} className="hist-th-inline__note" value={n}>
-                  <NoteBody n={n} doc={doc} />
-                </li>
-              ))}
-            </ol>
-          </details>
-        </>
+        /* Phone: the same notes, inline, under the paragraph, as a native disclosure. */
+        <details className="hist-th-inline">
+          <summary className="hist-th-inline__summary">
+            {notes.length === 1 ? `Note ${notes[0]}` : `Notes ${notes[0]} to ${notes[notes.length - 1]}`}
+          </summary>
+          <ol className="hist-th-inline__list" start={notes[0]}>
+            {notes.map((n) => (
+              <li key={n} className="hist-th-inline__note" value={n}>
+                <NoteBody n={n} doc={doc} />
+              </li>
+            ))}
+          </ol>
+        </details>
       )}
     </div>
   );
@@ -293,9 +288,13 @@ function Analysis({ block, doc }: { block: ThesisAnalysisBlock; doc: ThesisDoc }
           <tbody>
             {block.rows.map((r, i) => (
               <tr key={i}>
-                {block.columns.map((c) => (
-                  <td key={c} className={c === "producer" ? "hist-th-table__id" : undefined}>{r.cells[c] === null || r.cells[c] === undefined ? "" : String(r.cells[c])}</td>
-                ))}
+                {block.columns.map((c) => {
+                  const v = r.cells[c] === null || r.cells[c] === undefined ? "" : String(r.cells[c]);
+                  const label = c === "producer" ? doc.producerLabels?.[v] : undefined;
+                  return (
+                    <td key={c} className={c === "producer" && !label ? "hist-th-table__id" : undefined}>{label ?? v}</td>
+                  );
+                })}
                 <td>
                   <a href={`#${noteId(r.note)}`} className="hist-th-ref hist-th-ref--cell" aria-label={`Note ${r.note}: ${r.short}, ${r.locatorLabel}`}>
                     {r.note}
@@ -321,7 +320,7 @@ function Analysis({ block, doc }: { block: ThesisAnalysisBlock; doc: ThesisDoc }
    Positions and their adjudication
    -------------------------------------------------------------------------- */
 
-function Adjudication({ a, k }: { a: ThesisAdjudication; k: number }) {
+function Adjudication({ a, k, doc }: { a: ThesisAdjudication; k: number; doc: ThesisDoc }) {
   return (
     <li className="hist-th-verdict" data-verdict={a.verdict}>
       <p className="hist-th-verdict__claim">
@@ -330,7 +329,7 @@ function Adjudication({ a, k }: { a: ThesisAdjudication; k: number }) {
       </p>
       <p className="hist-th-verdict__basis">
         {a.basis === "absence" ? "Rests on an absence in the free record" : "Rests on documents from"}
-        {a.basis === "presence" && a.producers.length > 0 && `: ${a.producers.map(producerName).join("; ")}`}
+        {a.basis === "presence" && a.producers.length > 0 && `: ${a.producers.map((p) => producerName(doc, p)).join("; ")}`}
         {a.oneSided && a.basis === "presence" && ". One producer, so the verdict is capped at qualified"}
         .
       </p>
@@ -356,7 +355,7 @@ function Adjudication({ a, k }: { a: ThesisAdjudication; k: number }) {
   );
 }
 
-function Position({ block }: { block: ThesisPositionBlock }) {
+function Position({ block, doc }: { block: ThesisPositionBlock; doc: ThesisDoc }) {
   return (
     <article
       className="hist-th-position"
@@ -420,7 +419,7 @@ function Position({ block }: { block: ThesisPositionBlock }) {
           <p className="hist-th-tested__label">Tested against the primary record</p>
           <ol className="hist-th-tested__list">
             {block.adjudications.map((a, i) => (
-              <Adjudication key={i} a={a} k={i} />
+              <Adjudication key={i} a={a} k={i} doc={doc} />
             ))}
           </ol>
         </div>
@@ -508,7 +507,7 @@ function Blocks({ blocks, doc, audio, paraClass }: { blocks: ThesisBlock[]; doc:
             <ThesisEpisode key={i} chapter={b.chapter} title={b.title} kind={b.kind} startTime={b.startTime} lines={b.lines} event={audio} />
           );
           case "analysis": return <Analysis key={i} block={b} doc={doc} />;
-          case "position": return <Position key={i} block={b} />;
+          case "position": return <Position key={i} block={b} doc={doc} />;
           case "contested": return <Contested key={i} block={b} />;
           default: return null;
         }
@@ -559,43 +558,6 @@ function Record({ section, doc, audio }: { section: ThesisSection; doc: ThesisDo
   );
 }
 
-/* §15: the page says where it covers each strand of the event. The map is the
-   front matter T-21 checks, so the reader sees the same claim the gate tests:
-   each strand links to the sections that carry it. */
-const STRANDS: [keyof Omit<ThesisCoverage, "perspectives">, string][] = [
-  ["causes", "Causes"], ["course", "Course"], ["actors", "Actors"],
-  ["regions", "Regions"], ["consequences", "Consequences"], ["legacy", "Legacy"],
-];
-
-function sectionLabel(doc: ThesisDoc, id: string): string {
-  const s = doc.sections.find((x) => x.id === id);
-  if (!s) return id;
-  const t = s.title.replace(/^\d+\.\s*/, "");
-  return s.number !== null ? `${s.number}. ${t}` : t;
-}
-
-function CoverageMap({ doc }: { doc: ThesisDoc }) {
-  const cov = doc.coverage;
-  if (!cov) return null;
-  return (
-    <dl className="hist-th-coverage" aria-label="Where this page covers each part of the event">
-      {STRANDS.filter(([k]) => cov[k]).map(([k, label]) => (
-        <div key={k} className="hist-th-coverage__row">
-          <dt>{label}</dt>
-          <dd>
-            {cov[k]!.sections.map((id, i) => (
-              <span key={id}>
-                {i > 0 && "; "}
-                <a href={`#${id}`} className="hist-th-coverage__link">{sectionLabel(doc, id)}</a>
-              </span>
-            ))}
-          </dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
 function Section({ section, doc, audio }: { section: ThesisSection; doc: ThesisDoc; audio: AudioBits }) {
   switch (section.kind) {
     case "question":
@@ -616,7 +578,6 @@ function Section({ section, doc, audio }: { section: ThesisSection; doc: ThesisD
               ))}
             </ol>
           )}
-          <CoverageMap doc={doc} />
           <p className="hist-th-key">
             <span className="hist-th-key__item"><span className="hist-th-i hist-th-key__swatch">Shaded</span> sentences are the reading of this thesis</span>
           </p>
@@ -737,8 +698,10 @@ export default function Thesis({ event, doc, nextEvent }: ThesisProps) {
   const threads = [...event.connections]
     .sort((a, b) => (CONNECTION_PRIORITY[b.type] ?? 0) - (CONNECTION_PRIORITY[a.type] ?? 0))
     .slice(0, 3);
-  /* Grid children of the spine: every section, notes, sources, the end matter. */
-  const rows = doc.sections.length + 3;
+  /* Grid children of the spine: the body (every section of the thesis, in
+     one box so a run of sidenotes can carry on past a section's end), notes,
+     sources, the end matter. */
+  const rows = 4;
 
   return (
     <div className="hist-event-detail hist-hearing-page hist-thesis-page" data-thesis={doc.status}>
@@ -750,9 +713,11 @@ export default function Thesis({ event, doc, nextEvent }: ThesisProps) {
           <SpineRail stations={stations} heroId={HERO_ID} />
         </div>
 
-        {doc.sections.map((s) => (
-          <Section key={s.id} section={s} doc={doc} audio={audio} />
-        ))}
+        <div className="hist-th-body">
+          {doc.sections.map((s) => (
+            <Section key={s.id} section={s} doc={doc} audio={audio} />
+          ))}
+        </div>
 
         {/* ── NOTES ── */}
         <section id="notes" className="hist-th-section hist-th-notes" aria-labelledby="notes-h">

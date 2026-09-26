@@ -1024,7 +1024,13 @@ brass, the four voices, `--hist-measure: 36rem`.
 [rail]`), with the right rail given a job: sidenotes. A citation number in
 the text (`<sup><a>`) is mirrored by its note in the right column, Inter at
 `--text-sm`, the number in Barlow, aligned to the line that cites it,
-hairline brass rule to the left. The left rail is `SpineRail` with thesis
+hairline brass rule to the left. As built (from 1280px), a paragraph's notes
+float in the margin from its first line and stack under the notes before them,
+so a long run of notes carries on beside the following paragraphs, across a
+section's end if it must, instead of holding the text down; every section sits
+in one `.hist-th-body` box that contains them before the Notes. A verdict's
+producers print by name, from `data/history/producers.yaml`, never as the
+ledger id. The left rail is `SpineRail` with thesis
 stations: Question, Record, 1..n, Historiography, Disagreements, Omits, Notes,
 Sources. Exhibits break to the full grid width inside a frame: 1px brass
 border, Barlow eyebrow "Exhibit 3 · Judgment · ICJ, 26 February 2007",
@@ -1318,8 +1324,9 @@ scope) is the model of §7 and every published thesis before this section. A
 `scope: holistic` thesis has this shape, top to bottom:
 
 1. **The question** (h2). Kept, and shorter: what the page argues about the
-   whole event, the claims it makes, and the coverage map (15b) printed as a
-   table of which sections carry which strand.
+   whole event and the claims it makes. The coverage map (15b) stays in the
+   front matter, where T-21 checks it, and is not printed: the rail is how the
+   reader finds a strand (removed from the page 2026-09-26).
 2. **The event** (h2), sections 1 to n (h3, ids `event-1`..). The full,
    sourced narrative: causes, course, actors and regions, consequences,
    legacy, in the order they happened. Every factual sentence carries a note
@@ -1339,8 +1346,8 @@ scope) is the model of §7 and every published thesis before this section. A
 6. **What the record omits**, unchanged.
 
 The ceiling on a holistic thesis is 12,000 words (8,000 for one question):
-the page covers more, and the rail, the sidenotes and the coverage map are
-what keep it navigable. There is still no floor on length; the coverage rule
+the page covers more, and the rail and the sidenotes are what keep it
+navigable. There is still no floor on length; the coverage rule
 is the floor on breadth.
 
 ### 15b. The coverage rule (T-21)
