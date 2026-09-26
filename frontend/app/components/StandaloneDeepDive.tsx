@@ -164,7 +164,9 @@ export default function StandaloneDeepDive({
             />
           )}
 
-          {/* ---- The Story — summary + claim consensus ---- */}
+          {/* ---- The Story, with what the sources agree on and where they
+              split as its sidebar (beside it when the page is wide). ---- */}
+          <div className="dd-lede-grid">
           <section className="story-page__section" aria-label="The story">
             <h2 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h2>
             <DeepDiveSummary
@@ -179,6 +181,8 @@ export default function StandaloneDeepDive({
               </div>
             )}
           </section>
+          <SpreadDisagreement consensus={consensus} divergence={divergence} />
+          </div>
 
           {/* ---- The Spread — Sigil + spectrum. The spectrum's positioned logos
               ARE the source display now (hover a logo for its name); the
@@ -206,16 +210,6 @@ export default function StandaloneDeepDive({
               )}
             </section>
           )}
-
-          {/* ---- Agree / Dispute — the promoted centerpiece, right after the
-              spectrum. Self-omits when the archive row carries no
-              consensus/divergence points. ---- */}
-          {(consensus?.length || divergence?.length) ? (
-            <section className="story-page__section" aria-label="What sources agree on and where they split">
-              <hr className="ink-rule" style={{ margin: "var(--space-5) 0 var(--space-4)" }} aria-hidden="true" />
-              <SpreadDisagreement consensus={consensus} divergence={divergence} />
-            </section>
-          ) : null}
 
           {/* Six Lenses callout removed 2026-08-11 (CEO) — kept clean; the
               spectrum + agree/dispute panel carry the primary bias signal. */}

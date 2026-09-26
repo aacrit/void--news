@@ -15,9 +15,17 @@ import "../styles/verify.css";
    as the centerpiece: the reader sees the shared facts and the contested ones
    without a click.
 
-   Two editorial tracks separated by a hairline ink rule:
-     - WHAT THEY AGREE ON   (deepDive.consensus)  with a converging mark
-     - WHERE THEY SPLIT     (deepDive.divergence)  with a diverging mark
+   Two editorial tracks, set as the story's sidebar (beside it on a wide
+   screen, after it on a narrow one):
+     - What they agree on   (deepDive.consensus)
+     - Where they split     (deepDive.divergence)
+   In the Deep Dive's own voice (2026-09-26): the same small mono label as
+   The Story and The Spread, hanging numerals in the margin, secondary ink
+   at the sidebar size, space between points rather than a rule under each.
+   It used to wear bold sans capitals, arrow glyphs and bright green and red
+   dash bullets, a design language nothing else on the page spoke. The only
+   colour left is a short hairline under each label: green for agree, red for
+   split.
 
    An empty track is omitted entirely (never fabricated). If BOTH are empty the
    component renders nothing, so callers can mount it unconditionally.
@@ -26,44 +34,6 @@ import "../styles/verify.css";
    /story archive page so the vocabulary lives in exactly one place.
    Styles: `.spread-disagree*` in verify.css.
    --------------------------------------------------------------------------- */
-
-/* Converging mark — two strokes meeting at a point: sources arriving at the
-   same account. Calm (sense-low) tone. */
-function ConvergeMark() {
-  return (
-    <svg
-      className="spread-disagree__mark"
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path d="M2 4 L11 9" stroke="var(--sense-low)" strokeWidth="1.5" strokeLinecap="round" opacity="0.85" />
-      <path d="M2 14 L11 9" stroke="var(--sense-low)" strokeWidth="1.5" strokeLinecap="round" opacity="0.85" />
-      <circle cx="13" cy="9" r="2" fill="var(--sense-low)" />
-    </svg>
-  );
-}
-
-/* Diverging mark — one origin splitting into two: sources parting ways. Alert
-   (sense-high) tone. */
-function DivergeMark() {
-  return (
-    <svg
-      className="spread-disagree__mark"
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      aria-hidden="true"
-    >
-      <circle cx="5" cy="9" r="2" fill="var(--sense-high)" />
-      <path d="M7 9 L16 4" stroke="var(--sense-high)" strokeWidth="1.5" strokeLinecap="round" opacity="0.85" />
-      <path d="M7 9 L16 14" stroke="var(--sense-high)" strokeWidth="1.5" strokeLinecap="round" opacity="0.85" />
-    </svg>
-  );
-}
 
 interface SpreadDisagreementProps {
   consensus?: string[];
@@ -78,48 +48,33 @@ export default function SpreadDisagreement({ consensus, divergence }: SpreadDisa
   if (agree.length === 0 && split.length === 0) return null;
 
   return (
-    <div
-      className="spread-disagree"
-      role="group"
-      aria-label="What sources agree on and where they split"
-    >
+    <aside className="spread-disagree" aria-label="What sources agree on and where they split">
       {agree.length > 0 && (
         <section
           className="spread-disagree__track spread-disagree__track--agree"
-          aria-label="What sources agree on"
+          aria-labelledby="spread-disagree-agree"
         >
-          <div className="spread-disagree__head">
-            <ConvergeMark />
-            <h3 className="spread-disagree__label text-meta">What they agree on</h3>
-          </div>
-          <ul className="spread-disagree__list" role="list">
+          <h3 id="spread-disagree-agree" className="dd-section-label spread-disagree__label">What they agree on</h3>
+          <ol className="spread-disagree__list">
             {agree.map((pt, i) => (
               <li key={`agree-${i}`} className="spread-disagree__point">{pt}</li>
             ))}
-          </ul>
+          </ol>
         </section>
       )}
-
-      {agree.length > 0 && split.length > 0 && (
-        <hr className="spread-disagree__rule ink-rule" aria-hidden="true" />
-      )}
-
       {split.length > 0 && (
         <section
           className="spread-disagree__track spread-disagree__track--split"
-          aria-label="Where sources split"
+          aria-labelledby="spread-disagree-split"
         >
-          <div className="spread-disagree__head">
-            <DivergeMark />
-            <h3 className="spread-disagree__label text-meta">Where they split</h3>
-          </div>
-          <ul className="spread-disagree__list" role="list">
+          <h3 id="spread-disagree-split" className="dd-section-label spread-disagree__label">Where they split</h3>
+          <ol className="spread-disagree__list">
             {split.map((pt, i) => (
               <li key={`split-${i}`} className="spread-disagree__point">{pt}</li>
             ))}
-          </ul>
+          </ol>
         </section>
       )}
-    </div>
+    </aside>
   );
 }
