@@ -1160,8 +1160,10 @@ button:focus-visible .sigil-word__beam {
 /* Shown only once the row is wide enough to carry the wordmark + badge +
    tagline + dateline + spinoffs + pages without squeezing the dateline off.
    Below this the dateline (functional) keeps the space; the tagline is
-   decorative branding and degrades gracefully by hiding. */
-@media (min-width: 1440px) {
+   decorative branding and degrades gracefully by hiding. 1600px since the
+   chrome's type floor rose to 11 to 12px (2026-09-26): at 1440 the tagline
+   pushed "as of 6:00 PM UTC" into an ellipsis. */
+@media (min-width: 1600px) {
   .nav-tagline {
     display: inline-block;
   }
