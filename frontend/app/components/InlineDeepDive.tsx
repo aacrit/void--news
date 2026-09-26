@@ -1,7 +1,7 @@
 "use client";
 
 // Route-scoped CSS — verify.css carries the Claim Consensus / source-grid
-// styles that ClaimConsensusSection + ComparativeView depend on. The rest of
+// styles that ClaimConsensusSection + CoverageList depend on. The rest of
 // the Deep Dive vocabulary (.dd-lede*, .dd-headline, .dd-collapsible,
 // .anim-dd-section, .dd-cascade-*) lives in the globally-imported
 // components.css / animations.css / layout-zones.css. inline-dd.css adds the
@@ -10,7 +10,7 @@ import "../styles/verify.css";
 import "../styles/inline-dd.css";
 
 import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
-import { X, ShareNetwork } from "@phosphor-icons/react";
+import { X, ShareNetwork, CaretLeft, CaretRight } from "@phosphor-icons/react";
 import type {
   Story,
   StorySource,
@@ -25,12 +25,14 @@ import { hapticLight } from "../lib/haptics";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
 import BiasSnapshot from "./BiasSnapshot";
-import ComparativeView from "./ComparativeView";
+import CoverageList from "./CoverageList";
 import SpreadDisagreement from "./SpreadDisagreement";
 import ClaimConsensusSection from "./ClaimConsensusSection";
-import SummaryWithContradictions from "./SummaryWithContradictions";
 import { findHistoryContext } from "../lib/historyContext";
 import LazyOnView from "./LazyOnView";
+import DeepDiveNext from "./DeepDiveNext";
+import DeepDiveSummary from "./DeepDiveSummary";
+import LeanLabelLegend from "./LeanLabelLegend";
 
 /* ---------------------------------------------------------------------------
    InlineDeepDive — Cinematic Inline Deep Dive (stage 1: STATIC).
@@ -43,7 +45,7 @@ import LazyOnView from "./LazyOnView";
    The data-fetch + derived-data pattern (liveData / spectrumSources /
    hasCrossLeanSources) and the lede block are intentionally duplicated from
    DeepDive.tsx so the legacy modal stays byte-identical. The shared
-   sub-components (Sigil, DeepDiveSpectrum, BiasSnapshot, ComparativeView,
+   sub-components (Sigil, DeepDiveSpectrum, BiasSnapshot, CoverageList,
    ClaimConsensusSection) are reused directly.
 
    The cascade classes (.anim-dd-section / .dd-cascade-*) are wired now but
@@ -104,9 +106,31 @@ function HistoryContextLink({
 interface InlineDeepDiveProps {
   story: Story;
   onCollapse: () => void;
+  /** Walk to the previous / next story in the edition, in place. */
+  onNavigate?: (direction: "prev" | "next") => void;
+  /** 0-based position of this story in the feed. */
+  storyIndex?: number;
+  totalStories?: number;
+  prevStory?: Story | null;
+  nextStory?: Story | null;
+  /** After the last story: walk back to the first. */
+  onFirst?: () => void;
+  /** False when the reader walked here from the previous story: the block
+      swaps in place instead of replaying the accordion open. */
+  animate?: boolean;
 }
 
-export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProps) {
+export default function InlineDeepDive({
+  story,
+  onCollapse,
+  onNavigate,
+  storyIndex = -1,
+  totalStories = 0,
+  prevStory = null,
+  nextStory = null,
+  onFirst,
+  animate = true,
+}: InlineDeepDiveProps) {
   /* ---- Content visibility — true from first paint so every section appears at
      once (2026-08-09: the staggered .dd-cascade reveal was removed; it read as
      slowness). The accordion height-expand below is the only open animation. --- */
@@ -118,15 +142,6 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [fetchError, setFetchError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
-
-  /* ---- Progressive disclosure: source breakdown (Perspectives + lazy) --- */
-  const [analysisExpanded, setAnalysisExpanded] = useState(false);
-
-  /* ---- Reset transient state when the parent swaps to a different story
-     without unmounting (one-open-at-a-time, selecting another card). ----- */
-  useEffect(() => {
-    setAnalysisExpanded(false);
-  }, [story.id]);
 
   const deepDive: DeepDiveData | undefined = liveData ?? story.deepDive;
 
@@ -152,17 +167,6 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
   );
 
   /* ---- Sources span 2+ lean buckets? (Source Perspectives gate) -------- */
-  const hasCrossLeanSources = useMemo(() => {
-    const buckets = new Set<string>();
-    for (const src of sources) {
-      const lean = src.biasScores?.politicalLean ?? 50;
-      if (lean <= 40) buckets.add("left");
-      else if (lean <= 60) buckets.add("center");
-      else buckets.add("right");
-      if (buckets.size >= 2) return true;
-    }
-    return false;
-  }, [sources]);
 
   /* ---- Fetch live data from Supabase (copied pattern from DeepDive.tsx) - */
   useEffect(() => {
@@ -362,7 +366,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
      .anim-dd-section sections fade in just after the grow starts (an L-cut).
      prefers-reduced-motion: skip the height tween and reveal instantly. */
   const articleRef = useRef<HTMLElement>(null);
-  const headlineRef = useRef<HTMLButtonElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
   /* Disarm hook for the open animation: if the reader collapses while the open
      transition is still running, the open's own release (height:auto on the
      height transitionend) must never fire mid-collapse — it would snap the
@@ -386,7 +390,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
     const reduce =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
+    if (reduce || !animate) {
       scrollHeadlineToTop("auto");
       return;
     }
@@ -494,13 +498,18 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
     fallback = window.setTimeout(finish, 520); // tight safety net if transitionend misses
   }, [onCollapse]);
 
-  /* Esc collapses the inline block (parity with the modal's Escape-to-close). */
+  /* Esc collapses the inline block, unless it belongs to something above it:
+     a handler that already took it, an open modal (search, shortcuts), the
+     On Air panel, or a Sigil popup. It used to collapse the Deep Dive on
+     every Escape in the document. */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        handleCollapse();
-      }
+      if (e.key !== "Escape" || e.defaultPrevented) return;
+      if (document.querySelector('[aria-modal="true"], .sigil-popup')) return;
+      const t = e.target as HTMLElement | null;
+      if (t?.closest(".search-overlay, .kbd-overlay, .oap, .lean-legend")) return;
+      e.preventDefault();
+      handleCollapse();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
@@ -542,41 +551,65 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
   }, [story.title, story.permalink]);
 
   return (
-    <article ref={articleRef} className="inline-dd" aria-label={`Deep dive: ${story.title}`}>
-      {/* ---- Masthead: share + close toolbar, then headline (also a toggle) -- */}
-      <header className="inline-dd__header">
-        <div className="inline-dd__toolbar">
-          <button
-            type="button"
-            className="inline-dd__action"
-            aria-label="Share this story"
-            onClick={handleShare}
-          >
-            <ShareNetwork size={17} weight="regular" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            className="inline-dd__action"
-            aria-label={`Close deep dive: ${story.title}`}
-            onClick={handleCollapse}
-          >
-            <X size={17} weight="bold" aria-hidden="true" />
-          </button>
-          {shareToast && (
-            <span className="inline-dd__share-toast" role="status">Link copied</span>
-          )}
-        </div>
-
+    <article ref={articleRef} className="inline-dd" aria-labelledby={`inline-dd-title-${story.id}`}>
+      {/* ---- Masthead: the bar (where you are, prev/next, share, close) sticks
+          under the site masthead for the whole read, then the headline. ---- */}
+      {/* Direct child of the article so it can stick for the whole read
+          (a sticky element is held inside its parent's box). */}
+      <div className="inline-dd__toolbar">
+        {onNavigate && totalStories > 1 && storyIndex >= 0 && (
+          <div className="inline-dd__pager">
+            <button
+              type="button"
+              className="inline-dd__action"
+              aria-label="Previous story"
+              disabled={!prevStory}
+              onClick={() => { hapticLight(); onNavigate("prev"); }}
+            >
+              <CaretLeft size={17} weight="regular" aria-hidden="true" />
+            </button>
+            <span className="inline-dd__count" aria-label={`Story ${storyIndex + 1} of ${totalStories}`}>
+              {storyIndex + 1}/{totalStories}
+            </span>
+            <button
+              type="button"
+              className="inline-dd__action"
+              aria-label="Next story"
+              disabled={!nextStory}
+              onClick={() => { hapticLight(); onNavigate("next"); }}
+            >
+              <CaretRight size={17} weight="regular" aria-hidden="true" />
+            </button>
+          </div>
+        )}
         <button
-          ref={headlineRef}
           type="button"
-          className="inline-dd__headline"
-          aria-expanded={true}
-          aria-label={`Collapse deep dive: ${story.title}`}
+          className="inline-dd__action"
+          aria-label="Share this story"
+          onClick={handleShare}
+        >
+          <ShareNetwork size={17} weight="regular" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          className="inline-dd__action"
+          aria-label={`Close deep dive: ${story.title}`}
           onClick={handleCollapse}
         >
-          <span className="inline-dd__headline-text">{story.title}</span>
+          <X size={17} weight="bold" aria-hidden="true" />
         </button>
+        {shareToast && (
+          <span className="inline-dd__share-toast" role="status">Link copied</span>
+        )}
+      </div>
+      <header className="inline-dd__header">
+        {/* The story's heading. It was a button that collapsed the block, so
+            the Deep Dive had no heading at all and a stray click on the
+            title closed it. Close is the X in the bar. Focus lands here on
+            open (tabIndex -1: focusable by script, not a tab stop). */}
+        <h2 ref={headlineRef} tabIndex={-1} className="inline-dd__headline">
+          <span className="inline-dd__headline-text" id={`inline-dd-title-${story.id}`}>{story.title}</span>
+        </h2>
 
         <div className="deep-dive-meta inline-dd__meta">
           <span className="category-tag">{story.category}</span>
@@ -615,12 +648,10 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
         {/* ---- The Story — summary in a reading-measure column ---- */}
         <section className={`inline-dd__story anim-dd-section dd-cascade-1${contentVisible ? " anim-dd-section--visible" : ""}`}>
           <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h3>
-          <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
-            <SummaryWithContradictions
-              summary={story.summary}
-              disputed={deepDive?.claimConsensus?.disputed_details}
-            />
-          </p>
+          <DeepDiveSummary
+            summary={story.summary}
+            disputed={deepDive?.claimConsensus?.disputed_details}
+          />
         </section>
 
         {/* ---- The Spread — source-lean spectrum as a full-width band. The slot
@@ -637,7 +668,10 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
             className={`inline-dd__spread anim-dd-section dd-cascade-2${contentVisible ? " anim-dd-section--visible" : ""}`}
           >
             <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
-            <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>The Spread</h3>
+            <div className="dd-section-head">
+              <h3 className="dd-section-label text-meta">The Spread</h3>
+              <LeanLabelLegend />
+            </div>
             <div className="inline-dd__spectrum">
               {spectrumSources.length > 0 ? (
                 <DeepDiveSpectrum sources={spectrumSources} settled />
@@ -659,6 +693,10 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
           divergence={deepDive?.divergence}
         />
 
+        {/* ---- The coverage: every source's article, open by default, on the
+            Bench's seven rungs (audit 2026-09-26, finding 8). ---- */}
+        <CoverageList key={story.id} sources={sources} headingLevel={3} />
+
         {/* Six Lenses callout removed 2026-08-11 (CEO): the 6-axis breakdown is
             a secondary stat; the Deep Dive stays clean (spectrum + agree/dispute
             carry the primary bias signal). */}
@@ -673,36 +711,6 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
             <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
             <LazyOnView rootMargin="300px 0px" minHeight={120}>
               <ClaimConsensusSection consensus={deepDive.claimConsensus} />
-            </LazyOnView>
-          </section>
-        )}
-
-        {/* ---- Progressive disclosure trigger (Source Perspectives) ------ */}
-        {hasCrossLeanSources && !analysisExpanded && (
-          <button
-            className={`dd-read-more dd-analysis-trigger anim-dd-section dd-cascade-trigger${contentVisible ? " anim-dd-section--visible" : ""}`}
-            onClick={() => { hapticLight(); setAnalysisExpanded(true); }}
-          >
-            Show source breakdown
-          </button>
-        )}
-
-        {/* ---- Source Perspectives (collapsed by default, lazy) --------- */}
-        {analysisExpanded && hasCrossLeanSources && (
-          <section
-            aria-label="Source Perspectives"
-            className={`anim-dd-section dd-cascade-3${contentVisible ? " anim-dd-section--visible" : ""}`}
-            style={{ marginBottom: "var(--space-5)" }}
-          >
-            <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
-            <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Source Perspectives</h3>
-            <LazyOnView rootMargin="400px 0px" minHeight={200}>
-              <ComparativeView
-                sources={sources}
-                consensusPoints={deepDive?.consensus}
-                divergencePoints={deepDive?.divergence}
-                hideInsights
-              />
             </LazyOnView>
           </section>
         )}
@@ -735,6 +743,17 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
               Check back after the next pipeline run.
             </p>
           </div>
+        )}
+        {/* ---- The end: the next story by name, or the end of the edition. */}
+        {onNavigate && storyIndex >= 0 && totalStories > 0 && (
+          <DeepDiveNext
+            position={storyIndex + 1}
+            total={totalStories}
+            prev={prevStory ? { title: prevStory.title } : null}
+            next={nextStory ? { title: nextStory.title } : null}
+            onNavigate={onNavigate}
+            onFirst={onFirst}
+          />
         )}
       </div>
     </article>

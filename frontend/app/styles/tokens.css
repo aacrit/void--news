@@ -544,7 +544,10 @@
      mobile readability. Used by edition meta, dotted-meta rows, and small
      labels — all of which were sub-WCAG-AA on mobile. */
   --text-xxs:   clamp(0.625rem, 0.55rem + 0.25vw, 0.75rem);
-  --text-xs:    clamp(0.5625rem, 0.5rem + 0.25vw, 0.625rem);
+  /* 11 to 12px (2026-09-26). It was 9 to 10px, smaller than --text-xxs,
+     and it sets the masthead and footer links, the edition meta and most
+     data labels, which put the whole chrome under a legible floor. */
+  --text-xs:    clamp(0.6875rem, 0.64rem + 0.15vw, 0.75rem);
   --text-sm:    clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
   --text-base:  clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
   --text-lg:    clamp(1.0625rem, 0.95rem + 0.4vw, 1.3rem);
@@ -708,6 +711,11 @@
   /* Approximate height of .nav-header on tablet/desktop:
      padding-top --space-3 (~8px) + content (~36px) + padding-bottom --space-3 (~8px)
      + border-bottom (1px) = 53px. Used as sticky top offset for .filter-row. */
+  /* The reading measure for running prose: the Deep Dive's story and the
+     Brief. 58ch, not 68: a ch is the width of "0", wider than the average
+     letter, and 68ch measured about 87 characters a line. 58ch is about 72,
+     inside the classic 60 to 75 (verify-headless deep-dive-measure). */
+  --measure-read: 58ch;
   --nav-height: 53px;
 
   /* Height of the mobile bottom navigation bar (single row).

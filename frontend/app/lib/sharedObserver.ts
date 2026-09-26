@@ -71,6 +71,8 @@ export function useInView<T extends HTMLElement = HTMLElement>(
   const threshold = options?.earlyThreshold ?? 100;
 
   useEffect(() => {
+    // The app hydrated: the no-hydrate fallback in layout.tsx stands down.
+    document.documentElement.setAttribute("data-hydrated", "");
     const el = ref.current;
     if (!el) return;
 

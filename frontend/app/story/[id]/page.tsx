@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import {
   getArchiveRows,
   getArchiveRowById,
@@ -153,6 +155,27 @@ export async function generateMetadata(
   };
 }
 
+/** Article headlines by URL from the live per-story file, read at build.
+ *  Only a displayed story has one (public/data/deepdive/<cluster>.json); an
+ *  older story's list shows outlet names, which is what the archive holds.
+ *  Headlines only: the file's publisher summaries are never read here. */
+function readHeadlines(clusterId: string | null | undefined): Map<string, string> | undefined {
+  if (!clusterId || !/^[0-9a-f-]{36}$/.test(clusterId)) return undefined;
+  const file = join(process.cwd(), "public", "data", "deepdive", `${clusterId}.json`);
+  if (!existsSync(file)) return undefined;
+  try {
+    const rows = JSON.parse(readFileSync(file, "utf8")) as Array<{ article?: { url?: string; title?: string } }>;
+    const map = new Map<string, string>();
+    for (const r of rows) {
+      const a = r?.article;
+      if (a?.url && typeof a.title === "string" && a.title.trim()) map.set(a.url, a.title.trim());
+    }
+    return map;
+  } catch {
+    return undefined;
+  }
+}
+
 export default async function StoryPage(
   { params }: { params: Promise<{ id: string }> },
 ) {
@@ -162,8 +185,26 @@ export default async function StoryPage(
 
   const story = archiveRowToStory(row);
   const spectrumSources = archiveMembersToSpectrumSources(row.members);
-  const columnSources = archiveMembersToStorySources(row.members);
+  const columnSources = archiveMembersToStorySources(row.members, readHeadlines(row.source_cluster_id));
   const hasBiasData = rowHasBiasData(row);
+
+  /* Previous / next within THIS story's own edition, in its printed order
+     (edition_position), which is the front page's order for that day. An
+     older story's neighbours are its own day's, never today's. */
+  const rows = await getArchiveRows();
+  const edition = rows
+    .filter((r) => r.printed_on === row.printed_on)
+    .sort((a, b) => (a.edition_position ?? 0) - (b.edition_position ?? 0));
+  const at = edition.findIndex((r) => r.id === row.id);
+  const latest = rows.reduce((m, r) => (r.printed_on > m ? r.printed_on : m), "");
+  const neighbour = (r?: typeof row) => (r ? { title: r.title, href: storyHref(r.id) } : null);
+  const editionNav = at >= 0 ? {
+    position: at + 1,
+    total: edition.length,
+    prev: neighbour(edition[at - 1]),
+    next: neighbour(edition[at + 1]),
+    editionLabel: row.printed_on === latest ? undefined : `the ${formatDatelineUTC(`${row.printed_on}T12:00:00Z`)} edition`,
+  } : null;
 
   const iso = publishedIso(row);
   // The DISPLAYED dateline reflects the most recent article in the cluster, not
@@ -208,6 +249,7 @@ export default async function StoryPage(
         spectrumSources={spectrumSources}
         columnSources={columnSources}
         hasBiasData={hasBiasData}
+        editionNav={editionNav}
         builtAt={displayIso}
         datelineLabel={datelineLabel}
         shareUrl={url}

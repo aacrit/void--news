@@ -95,10 +95,10 @@ def main() -> int:
     content = (PAPER_DIR / "PaperContent.tsx").read_text()
     check("T-05",
           "np-article__headline-link" in content
-          and "storyLeanLabel" in content
+          and "storyShapeLabel" in content
           and "permalink" in content,
-          "headlines link to their Deep Dive and the lean caption is storyLeanLabel"
-          if "np-article__headline-link" in content and "storyLeanLabel" in content
+          "headlines link to their Deep Dive and the lean caption is the card's storyShapeLabel"
+          if "np-article__headline-link" in content and "storyShapeLabel" in content
           else "PaperContent is missing the headline link or the canonical lean label")
 
     # T-06 — the local export, when there is one: the same headlines in the

@@ -9,7 +9,6 @@ import ThemeToggle from "./ThemeToggle";
 import ScaleIcon from "./ScaleIcon";
 import { hapticLight } from "../lib/haptics";
 import { BASE_PATH, getEditionTimestampLocal } from "../lib/utils";
-import { fetchLastPipelineRun } from "../lib/supabase";
 import { ROSTER_SOURCES_TEXT, ROSTER_COUNTRIES } from "../lib/rosterConfig";
 
 /* ---------------------------------------------------------------------------
@@ -55,6 +54,8 @@ import { ROSTER_SOURCES_TEXT, ROSTER_COUNTRIES } from "../lib/rosterConfig";
 interface MobileSidePanelProps {
   open: boolean;
   onClose: () => void;
+  /** feed.builtAt, the same value the masthead formats. */
+  editionBuiltAt?: string | null;
 }
 
 type NavIcon = "feed" | "onair" | "history" | "weekly" | "paper" | "listen" | "sources" | "feedback";
@@ -169,7 +170,7 @@ function NavGlyph({ icon }: { icon: NavIcon }) {
   );
 }
 
-export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps) {
+export default function MobileSidePanel({ open, onClose, editionBuiltAt = null }: MobileSidePanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const touchStartRef = useRef<{ x: number } | null>(null);
@@ -191,19 +192,6 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
   const [mounted, setMounted] = useState(false);
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); }, []);
-
-  // Edition build time (pipeline completed_at) for the info bar, formatted in
-  // the reader's local zone and rounded to the hour like the desktop masthead.
-  const [editionBuiltAt, setEditionBuiltAt] = useState<string | null>(null);
-  useEffect(() => {
-    let cancelled = false;
-    fetchLastPipelineRun()
-      .then((run) => {
-        if (!cancelled && run?.completed_at) setEditionBuiltAt(run.completed_at as string);
-      })
-      .catch(() => {});
-    return () => { cancelled = true; };
-  }, []);
 
   // Close on Escape.
   useEffect(() => {

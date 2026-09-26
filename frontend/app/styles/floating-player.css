@@ -1892,3 +1892,30 @@ body:has(.mms--open) .fp {
     backdrop-filter: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   F11 — the pill folds to its mark where it would cover the page
+   The compact pill is about 220px wide and sits 16px from the left edge. The
+   page canvas starts about 110px in at 1440, so the pill sat on top of the
+   first column's text on every scroll position of the feed and the Deep Dive
+   (2026-09-26). Below 1700px, where the side margin is narrower than the
+   pill, it rests as the mark and the play button (about 90px, inside the
+   margin) and unfolds under the pointer or keyboard focus. The play button
+   and the panel are one tap away as before.
+   --------------------------------------------------------------------------- */
+@media (min-width: 768px) and (max-width: 1699px) {
+  /* Folded visually, never removed: the panel hands focus back to this
+     button when it closes, and a display:none target drops focus to <body>.
+     Focus on it unfolds the pill through :focus-within. */
+  .fp--compact:not(:hover):not(:focus-within) .fp__info {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .fp--compact:not(:hover):not(:focus-within) .fp__time {
+    display: none;
+  }
+}

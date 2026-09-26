@@ -467,15 +467,130 @@ export function leanShapeColor(spread?: WingCounts | null): string {
 export function leanShapeLabel(spread?: WingCounts | null): string {
   const shape = leanShape(spread);
   if (shape === "thin") {
+    /* "9 measured", not "9 articles": the card's source count (outlets
+       covering) and this number (articles whose lean was measured) are two
+       different quantities, and "articles" beside a count of sources read as
+       one number disagreeing with another (audit 2026-09-26, finding 10). */
     const n = (spread?.leanLeftCount ?? 0) + (spread?.leanCenterCount ?? 0)
       + (spread?.leanRightCount ?? 0);
-    return `${n} ${n === 1 ? "article" : "articles"}`;
+    return `${n} measured`;
   }
   if (shape === "leans") {
     return leanShapeDirection(spread) > 0 ? "Leans right" : "Leans left";
   }
   return shape === "split" ? "Split"
     : shape === "consensus" ? "Consensus" : "Balanced";
+}
+
+/* ── The legend, from the same rule ────────────────────────────────────────
+   The "What the coverage labels mean" popover was hand-written copy for the
+   retired ladder (Contested, Not measured, Aligned) while the cards printed
+   Leans left, Split and "9 articles" (audit 2026-09-26, finding 9). It is now
+   this table, and the definitions are built from the constants leanShape
+   uses, so a threshold cannot change without its explanation changing. */
+export interface LeanLegendTerm {
+  shape: LeanShape | "unscored";
+  term: string;
+  definition: string;
+}
+
+const TILT_RATIO = ((1 + LABEL_MIN_SHARE_TILT) / (1 - LABEL_MIN_SHARE_TILT));
+
+export const LEAN_SHAPE_LEGEND: LeanLegendTerm[] = [
+  {
+    shape: "leans",
+    term: "Leans left / Leans right",
+    /* One template literal per definition, never two joined with +: the
+       production minifier folded `a ${x} b ` + `c` into "a xc" and shipped
+       "At least 5outnumbers" (caught on the built page, 2026-09-26). */
+    definition: [
+      "At least", String(SHAPE_MIN_WINGS), "articles came from outlets left or right of centre,",
+      "and one side outnumbers the other by about", TILT_RATIO.toFixed(0), "to 1.",
+    ].join(" "),
+  },
+  {
+    shape: "split",
+    term: "Split",
+    definition:
+      "Both sides covered it, at least 2 articles each and roughly evenly, " +
+      "and fewer than half of the articles came from the centre.",
+  },
+  {
+    shape: "balanced",
+    term: "Balanced",
+    definition:
+      "Both sides covered it, at least 2 articles each and roughly evenly, " +
+      "and at least half of the articles came from the centre.",
+  },
+  {
+    shape: "consensus",
+    term: "Consensus",
+    definition: [
+      "At least", `${Math.round(SHAPE_CONSENSUS_SHARE * 100)}%`,
+      "of 8 or more measured articles came from centre outlets.",
+    ].join(" "),
+  },
+  {
+    shape: "thin",
+    term: "N measured",
+    definition: [
+      "Too little to read a shape: fewer than", String(SHAPE_MIN_TOTAL), "measured articles, or fewer than",
+      String(SHAPE_MIN_WINGS), "from outlets left or right of centre. The card states how many were measured.",
+    ].join(" "),
+  },
+  {
+    shape: "unscored",
+    term: "Unscored",
+    definition: "No article in the story had a measurable lean.",
+  },
+];
+
+/** The legend entry a printed card label belongs to. */
+export function legendTermFor(label: string): LeanLegendTerm | undefined {
+  if (/^\d+ measured$/.test(label)) return LEAN_SHAPE_LEGEND.find((t) => t.shape === "thin");
+  if (label === "Leans left" || label === "Leans right") return LEAN_SHAPE_LEGEND.find((t) => t.shape === "leans");
+  return LEAN_SHAPE_LEGEND.find((t) => t.term === label);
+}
+
+/** The shape word, its colour and its state, for every surface that names a
+ *  story's coverage: the card's printed line, the Sigil's aria-label and
+ *  popup, the Deep Dive masthead and Paper.
+ *
+ *  Before this, the printed word came from `leanShapeLabel` while the
+ *  aria-label, the popup heading and the Deep Dive chip came from
+ *  `storyLeanLabel`, the gated MEAN. On the 2026-09-25 edition that put
+ *  "Leans left" on a card whose screen-reader label said "Not measured" and
+ *  whose popup said "Not measured", "Balanced coverage" and "measured from 8
+ *  of 12" in one box. A reader who hovered got a different answer from a
+ *  reader who looked. One rule now feeds every one of them. */
+export interface StoryShapeLabel {
+  text: string;
+  color: string;
+  shape: LeanShape | "unscored";
+}
+
+export function storyShapeLabel(
+  spread?: WingCounts | null,
+  unscored = false,
+): StoryShapeLabel {
+  if (unscored) return { text: "Unscored", color: "var(--fg-muted)", shape: "unscored" };
+  return { text: leanShapeLabel(spread), color: leanShapeColor(spread), shape: leanShape(spread) };
+}
+
+/** One sentence under the shape word in the Sigil popup. Counts, not a
+ *  reading of the mean, so it cannot contradict the word above it. */
+export function leanShapeDescriptor(spread?: WingCounts | null): string {
+  const left = spread?.leanLeftCount ?? 0;
+  const center = spread?.leanCenterCount ?? 0;
+  const right = spread?.leanRightCount ?? 0;
+  const counts = `${left} left of centre, ${center} centre, ${right} right of centre`;
+  switch (leanShape(spread)) {
+    case "consensus": return `Three quarters of the coverage sits in the centre: ${counts}`;
+    case "balanced": return `Both sides covered this and neither outweighs the other: ${counts}`;
+    case "split": return `Both sides covered this and the centre does not hold: ${counts}`;
+    case "leans": return `One side carried most of the coverage: ${counts}`;
+    default: return "Too few measured articles to read the coverage";
+  }
 }
 
 /**

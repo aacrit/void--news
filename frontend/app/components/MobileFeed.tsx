@@ -4,6 +4,7 @@ import type { Story, EditionMeta } from "../lib/types";
 import type { DailyBriefState } from "./DailyBrief";
 import MobileStoryCard from "./MobileStoryCard";
 import MobileBriefPill from "./MobileBriefPill";
+import LeanLabelLegend from "./LeanLabelLegend";
 
 // Deep Dive is a global modal (centered card / full-screen bottom sheet) rendered
 // by HomeContent, so the mobile feed no longer expands anything in place — it is
@@ -85,8 +86,13 @@ export default function MobileFeed({
 
       {/* Boundary line — marks where the brief ("about the day") ends and the
           story feed ("the day") begins. Main feed only; overflow has no brief. */}
+      {/* The legend on phones too: it was desktop-only, so a phone reader
+          saw "Split" or "9 measured" with nothing to say what it meant. */}
       {!isOverflow && (
-        <div className="feed-start" aria-hidden="true">Today&rsquo;s Top Stories</div>
+        <div className="feed-start">
+          <span aria-hidden="true">Today&rsquo;s Top Stories</span>
+          <LeanLabelLegend />
+        </div>
       )}
 
       {/* Twin top stories — main feed only. Overflow has no leads. */}

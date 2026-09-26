@@ -485,8 +485,10 @@
   font-size: clamp(0.9375rem, 0.85rem + 0.35vw, 1.0625rem);
   line-height: 1.75;
   color: var(--fg-secondary);
-  text-align: justify;
-  text-align-last: left;
+  /* Left-aligned at the reading measure. Justified at the full banner width
+     it ran about 160 characters a line and opened rivers (2026-09-26). */
+  text-align: left;
+  max-width: var(--measure-read);
 }
 
 .skb__section-body--tldr p + p {
@@ -500,8 +502,10 @@
   line-height: 1.7;
   letter-spacing: 0.005em;
   color: var(--fg-tertiary);
-  text-align: justify;
-  text-align-last: left;
+  /* Left-aligned at the reading measure. Justified at the full banner width
+     it ran about 160 characters a line and opened rivers (2026-09-26). */
+  text-align: left;
+  max-width: var(--measure-read);
 }
 
 .skb__section-body--opinion p + p {

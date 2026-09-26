@@ -6,6 +6,7 @@ import Sigil from "./Sigil";
 import MobilePerspectivePeek from "./MobilePerspectivePeek";
 import { hapticLight, hapticMedium } from "../lib/haptics";
 import { BASE_PATH } from "../lib/utils";
+import CardSummary from "./CardSummary";
 import { useInView } from "../lib/sharedObserver";
 
 interface MobileStoryCardProps {
@@ -146,7 +147,7 @@ export default function MobileStoryCard({
               </div>
             </h2>
           )}
-          {story.summary?.trim() && <p className="msc__summary">{story.summary}</p>}
+          {story.summary?.trim() && <p className="msc__summary"><CardSummary text={story.summary} max={140} /></p>}
           {!story.summary?.trim() && (
             <p className="msc__summary msc__summary--pending">
               {story.source.count} source{story.source.count !== 1 ? 's' : ''} covering this story
@@ -189,7 +190,7 @@ export default function MobileStoryCard({
                  removed in 2026-05-15 redesign — no client-side filtering.) */}
             </div>
           )}
-          {story.summary?.trim() && <p className="msc__summary msc__summary--compact">{story.summary}</p>}
+          {story.summary?.trim() && <p className="msc__summary msc__summary--compact"><CardSummary text={story.summary} max={95} /></p>}
         </>
       )}
 

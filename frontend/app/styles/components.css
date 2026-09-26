@@ -186,13 +186,23 @@
   /* 120ms delay (was 450ms): the lean label is the product's signature
      signal — `both` fill kept it invisible for nearly half a second on
      every card mount. The beam-settle → stamp L-cut survives at 120ms. */
-  animation: tiltLabelStamp 250ms var(--spring-snappy) 120ms both;
+  /* backwards, not both: the stamp holds its first frame through the delay
+     and then lets go, so the label stops occupying a compositor layer once it
+     has landed (about 20 of them on the feed). It could only switch once
+     Sigil.tsx stopped server-rendering the label at an inline opacity: 0,
+     which `both` was covering for (perf sweep 2026-09-26). */
+  animation: tiltLabelStamp 250ms var(--spring-snappy) 120ms backwards;
   transition: color var(--dur-morph) var(--ease-cinematic);
 }
 
-/* Unscored beam: dashed stroke + idle pulse */
+/* Unscored beam: dashed stroke, one breath, then at rest. The pulse used to
+   loop forever, and any endless animation under the desktop page grade
+   re-renders the whole graded viewport every frame: forced onto one card it
+   took the resting page from 23 to about 970 ms of CPU per second
+   (perf sweep 2026-09-26). It now plays once and rests at its low point. */
 .sigil--unscored .sigil__beam-group {
-  animation: beamUnscoredIdle 6s var(--ease-rack) infinite;
+  opacity: 0.3;
+  animation: beamUnscoredIdle 6s var(--ease-rack) 1;
 }
 
 .sigil--unscored .sigil__beam-group path,
@@ -216,7 +226,6 @@
   from { opacity: 0; transform: translateY(calc(-100% + 4px)); }
   to   { opacity: 0.85; transform: translateY(-100%); }
 }
-
 
 /* ---- Sigil Popup — extracted from inline styles (F13) ----------------- */
 .sigil-popup__header {
@@ -475,16 +484,39 @@
    every card rather than waiting for axe to sample the failing one. */
 .story-card__headline .sigil__lean-label,
 .lead-story__headline .sigil__lean-label {
-  font-size: 8px;
+  /* 10px, up from 8px (2026-09-26): the smallest size a mono label stays a
+     word at. The label may be wider than the mark; it is centred under it. */
+  font-size: 10px;
   letter-spacing: 0.04em;
 }
 
+/* The source count, under the word (it used to sit inside the dial at 6px
+   and read as a score). Secondary ink, same size as the word on cards. */
+.sigil__count {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--fg-secondary);
+  text-align: center;
+}
+
+.story-card__headline .sigil__count,
+.lead-story__headline .sigil__count,
+.msc__headline .sigil__count {
+  font-size: 10px;
+}
+
+/* A headline is never cut. It used to clamp at 3 (4 from 768px) lines and
+   end in an ellipsis ("Fighting in Ethiopia'…", "Calls for UN…"), which a
+   newspaper does not do to its own heads. The summary clamps instead. */
 .story-card__headline-text {
+  display: block; /* block, so the hover translate below applies */
   flex: 1;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  min-width: 0;
+  overflow-wrap: break-word;
   /* v6.2 (2026-05-14): subtle page-catch on hover — the headline gently
      slides 2px right when the cursor is over the card, like a broadsheet
      headline catching against a reading hand. 280ms ease so the motion
@@ -570,6 +602,12 @@
   }
 }
 
+/* The part of a card summary past its last whole sentence that fits. Kept in
+   the served page (the full summary is the text), not drawn on the card. */
+.card-summary__rest {
+  display: none;
+}
+
 .story-card__summary {
   font-family: var(--font-structural);
   font-size: var(--text-base);
@@ -644,7 +682,6 @@
 /* Compact (inline Deep Dive header): keep the "Coverage"/"Contested" label so
    the L/C/R split reads as a labeled meta item, not a floating "13·40·16". */
 
-
 /* ---- Lead Story -------------------------------------------------------- */
 /*
  * Same paper-on-desk physics as .story-card but more dramatic:
@@ -717,7 +754,6 @@
 
 /* Ink stamp circle behind badge text */
 
-
 /* Why-top-story subtitle — derived signals explain what pushed this to #1.
    Examples: "broad coverage · cross-spectrum · fast-developing" */
 
@@ -743,11 +779,9 @@
 }
 
 .lead-story__headline-text {
+  display: block;
   flex: 1;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  min-width: 0;
   overflow-wrap: break-word;
   /* Same page-catch behavior as .story-card__headline-text. See comment there. */
   transition: transform 280ms var(--ease-cinematic);
@@ -780,9 +814,7 @@
 
 /* .filter-toggle:hover removed — toggle state change is sufficient affordance */
 
-
 /* Active state — a non-"All" category is selected */
-
 
 /* ---- Filter Bar Wrapper — stacks lean bar + topic bar ---- */
 
@@ -793,15 +825,11 @@
  * Active segment: colored tint + bold text.
  */
 
-
 /* .lean-bar__seg:hover removed — active state already communicates selection */
-
 
 /* Active segment — colored tint background */
 
-
 /* Colored dot — 8px, matches segment's lean color */
-
 
 /* Spectrum gradient underline — visual link to bias system */
 
@@ -813,14 +841,11 @@
 
 /* Desktop trigger — small muted text label */
 
-
 /* Chips — hidden on desktop, revealed on hover/open */
-
 
 /* Individual topic chip — compact, subtle */
 
 /* .topic-bar__chip:hover removed — active state already communicates selection */
-
 
 /* ---- Filter row — legacy layout wrapper (FilterBar removed) ----------- */
 
@@ -855,7 +880,6 @@
 
 /* Legacy: Thin vertical rule between filter bar and lean filter. */
 
-
 /* ---- Lean Filter — Political lean range selector ----------------------- */
 
 /*
@@ -876,7 +900,6 @@
 
 /* ---- Collapsed pill — matches .filter-chip sizing exactly ---- */
 
-
 /* Active pill — matches .filter-chip--active */
 
 /* Prevent pill-label text from causing overflow */
@@ -886,7 +909,6 @@
  * Dots stay clearly colored (blue / gray / red) whether the pill is active or not.
  * They provide the spectrum identity without making the pill shout.
  */
-
 
 /* One-time idle wave: left→center→right on page load — runs once, leaves dots at rest */
 
@@ -923,7 +945,6 @@
 
 /* ---- Caret arrow ---- */
 
-
 /* ---- Expanded panel — grid-template-rows collapse (no max-height jank) ---- */
 /*
  * The grid-template-rows 0fr → 1fr technique avoids the max-height easing
@@ -931,7 +952,6 @@
  * wrapper (lean-filter__panel-overflow) clips the content during collapse.
  * Fallback: opacity transition still works if grid-rows isn't supported.
  */
-
 
 /* Overflow wrapper — required for the 0fr→1fr trick */
 
@@ -966,21 +986,17 @@
 
 /* Drag: slightly smaller scale (feels physically grabbed), stronger glow */
 
-
 /* Dark mode thumb border is handled by --thumb-border token (dark: var(--bg-secondary)) */
 
 /* ---- Ruler labels — zone shortcuts positioned at midpoints below the track ---- */
 
-
 /* ---- Reset button — text pill, appears only when filter is active ---- */
-
 
 /* .lean-filter-empty block deleted 2026-05-15 — no client-side filtering, no "no matches" state. */
 
 /* ---- Mobile: full-width layout ---- */
 
 /* ---- Reduced motion: instant transitions + no animations ---- */
-
 
 /* ---- NavBar ------------------------------------------------------------ */
 .nav-header {
@@ -1152,8 +1168,10 @@ button:focus-visible .sigil-word__beam {
 /* Shown only once the row is wide enough to carry the wordmark + badge +
    tagline + dateline + spinoffs + pages without squeezing the dateline off.
    Below this the dateline (functional) keeps the space; the tagline is
-   decorative branding and degrades gracefully by hiding. */
-@media (min-width: 1440px) {
+   decorative branding and degrades gracefully by hiding. 1600px since the
+   chrome's type floor rose to 11 to 12px (2026-09-26): at 1440 the tagline
+   pushed "as of 6:00 PM UTC" into an ellipsis. */
+@media (min-width: 1600px) {
   .nav-tagline {
     display: inline-block;
   }
@@ -1208,7 +1226,6 @@ button:focus-visible .sigil-word__beam {
 }
 
 /* ── Mobile: search icon + overflow menu (hidden on desktop) ── */
-
 
 .nav-page {
   font-family: var(--font-structural);
@@ -1295,7 +1312,6 @@ button:focus-visible .sigil-word__beam {
   }
 }
 
-
 /* nav-lens__sep / nav-lens__search blocks deleted 2026-05-15 — Row 2 lens
    removed in redesign. Search now lives as an icon-only button (.nav-search-btn)
    in Row 1; the expandable bar pattern was retired. */
@@ -1348,7 +1364,6 @@ button:focus-visible .sigil-word__beam {
   min-width: 44px;
   min-height: 44px;
 }
-
 
 /* ── Single responsive wordmark (.nav-logo-mark) ──────────────────────────
    Replaces the former three CSS-toggled copies (30 / 22 / 18). The wordmark
@@ -1409,7 +1424,6 @@ button:focus-visible .sigil-word__beam {
    truncates to a meaningless "A…" orphan, so it is hidden below that (the
    mobile masthead has its own compact date/time; see .nav-dateline-mobile).  */
 
-
 /* "as of" — small label prefix clarifying the time is the edition build time,
    not a live clock. */
 .nav-asof {
@@ -1421,7 +1435,6 @@ button:focus-visible .sigil-word__beam {
 /* Mobile dateline — compact time (with optional date), hidden on desktop.
    The time is the priority freshness signal; the date shows only when the row
    is wide enough (>=400px, see responsive.css). */
-
 
 /* nav-search-btn restored to Row 1 as icon-only button (2026-05-15 redesign);
    .nav-lens__search expandable bar was retired with the rest of Row 2. */
@@ -1438,7 +1451,6 @@ button:focus-visible .sigil-word__beam {
    server-side ranker. */
 
 /* ── Mobile edition tabs — horizontal scroll strip below logo ── */
-
 
 /* ---- Theme Toggle ------------------------------------------------------ */
 .theme-toggle {
@@ -1495,7 +1507,6 @@ button:focus-visible .sigil-word__beam {
   transform: rotate(-45deg) scale(0.5);
 }
 
-
 /* ---- Feed Continuation — newspaper section continuation --------------- */
 /* Editorial "Continue reading" link with gradient fade hint above.
    Desktop: text link with slide-in underline (dd-read-more pattern).
@@ -1509,7 +1520,6 @@ button:focus-visible .sigil-word__beam {
 }
 
 /* ---- Buttons (shared) -------------------------------------------------- */
-
 
 .btn-primary {
   font-family: var(--font-structural);
@@ -1549,9 +1559,7 @@ button:focus-visible .sigil-word__beam {
 
 /* ---- Bias Row (used inside expanded tooltip) --------------------------- */
 
-
 /* ---- Progress Bar ------------------------------------------------------ */
-
 
 /* ---- Type Badge -------------------------------------------------------- */
 
@@ -1569,14 +1577,11 @@ button:focus-visible .sigil-word__beam {
 
 /* ---- Source Link -------------------------------------------------------- */
 
-
 /* ---- External Link Icon ------------------------------------------------ */
-
 
 /* Brand label — subtle monospace tag in header bar */
 
 /* ---- Deep Dive Share Button -------------------------------------------- */
-
 
 /* Toast that appears on clipboard copy */
 
@@ -1605,7 +1610,6 @@ button:focus-visible .sigil-word__beam {
  * descendant of .page-main, so no ancestor-level --cin-grade compounds with
  * this filter.
  */
-
 
 /* Gradient overlay — heavy bottom fade into panel surface */
 
@@ -1652,7 +1656,6 @@ button:focus-visible .sigil-word__beam {
 
 /* ---- Deep Dive Source Icons --------------------------------------------- */
 
-
 /* ---- Deep Dive: Source Spectrum (above / track / below) ------------------ */
 /* ---- Deep Dive: Collapsible sections ------------------------------------ */
 /* Dynamic height: scales with viewport — shows more on tall screens, less on
@@ -1666,7 +1669,6 @@ button:focus-visible .sigil-word__beam {
   position: relative;
 }
 
-
 .dd-collapsible::after {
   content: "";
   position: absolute;
@@ -1678,7 +1680,6 @@ button:focus-visible .sigil-word__beam {
   pointer-events: none;
   transition: opacity var(--dur-fast) var(--ease-cinematic);
 }
-
 
 /* Content fits within container — no clamp, no gradient */
 
@@ -1725,10 +1726,6 @@ button:focus-visible .sigil-word__beam {
 }
 
 /* Progressive disclosure trigger — "Show full analysis" button */
-.dd-analysis-trigger {
-  display: block;
-  margin-bottom: var(--space-4);
-}
 
 /* Deep Dive section labels — Barlow Condensed meta voice */
 .dd-section-label {
@@ -1742,7 +1739,6 @@ button:focus-visible .sigil-word__beam {
 
 /* ---- Footer ------------------------------------------------------------ */
 
-
 .footer-tagline {
   font-family: var(--font-structural);
   font-size: var(--text-sm);
@@ -1750,9 +1746,7 @@ button:focus-visible .sigil-word__beam {
   line-height: 1.5;
 }
 
-
 /* Product family row in footer */
-
 
 .footer-built {
   font-family: var(--font-structural);
@@ -1786,7 +1780,6 @@ button:focus-visible .sigil-word__beam {
   color: var(--fg-muted);
   opacity: 0.55;
 }
-
 
 /* Keyboard shortcut hint */
 .footer-kbd-hint {
@@ -1845,15 +1838,11 @@ button:focus-visible .sigil-word__beam {
 
 /* Zone 1: Asymmetric lead — mobile stacks, desktop 2fr|1fr */
 
-
 /* Zone 2: Digest rows — headline-only single-line placeholders */
-
 
 /* Zone 3: Wire grid — 4-col compact cards (mobile: 2-col) */
 
-
 /* ---- Mobile skeleton (single-column, matches MobileFeed) ---- */
-
 
 /* ---- Mobile skeleton v2 — BEM, matches MobileFeed structure ---- */
 .skeleton-mobile {
@@ -1886,7 +1875,6 @@ button:focus-visible .sigil-word__beam {
 }
 
 /* Legacy skeleton classes — kept for backward compat */
-
 
 /* ---- Empty State Enhancements ----------------------------------------- */
 .empty-state {
@@ -1950,7 +1938,6 @@ button:focus-visible .sigil-word__beam {
 
 /* ---- Consensus/Divergence Lists ---------------------------------------- */
 
-
 /* ---- Empty State Icon -------------------------------------------------- */
 
 /* ---- Rationale Pending — fallback state when JSONB rationale is null --- */
@@ -1960,12 +1947,9 @@ button:focus-visible .sigil-word__beam {
    Shared popup for the Three Lenses hover/tap tooltips.
    ========================================================================== */
 
-
 /* ---- BiasLens Popup — extracted from inline styles (F13) -------------- */
 
-
 /* ---- BiasLens — base layout (F13) ------------------------------------- */
-
 
 /* Lens inner — shared container for needle/ring visual elements */
 
@@ -1981,58 +1965,44 @@ button:focus-visible .sigil-word__beam {
 
 /* ---- Container --------------------------------------------------------- */
 
-
 /* ---- Source selector — horizontal scrolling tab row ------------------- */
-
 
 /* ---- Scorecard — vertical list of axis rows ---------------------------- */
 
 /* ---- Axis row ---------------------------------------------------------- */
 
-
 /* Compact axis — single flat row: name · dots · score · label · caret
    All children are direct flex items (no __left / __score-row wrappers) */
 
-
 /* .bi-axis__header:hover removed — accordion expand is the interaction, not a bg shift */
-
 
 /* Axis content — collapsible, height-animated */
 
-
 /* ---- Dot scale — 5-dot progress indicator ----------------------------- */
-
 
 /* Auto-generated 1-line summary when Gemini reasoning isn't available */
 
 /* ---- Keyword signals — plain-text left/right keyword rows (Lean axis) -- */
-
 
 /* ---- Entity sentiments — bidirectional bar chart for key figures ------- */
 /* Shows how sources collectively feel about political figures.
    Positive sentiment extends right from center, negative extends left.
    Data was already computed via mergeEntitySentiments but never rendered. */
 
-
 /* Tone label — plain language instead of opaque ±float */
 
-
 /* ---- Confidence badge — 3-state: strong / moderate / pending ----------- */
-
 
 /* ---- Gemini reasoning — per-axis AI analysis text --------------------- */
 /* Primary content in expanded axis sections. Structural voice (Inter), not
    editorial — this is analysis. Left rule accent uses --border-subtle per
    the Dot Matrix Rule. Promoted to text-sm + fg-secondary for prominence. */
 
-
 /* ---- Axis row layout update — left column (name + gradient bar) -------- */
 
 /* ---- Gradient bar (Tier 1 axis summary) --------------------------------- */
 
-
 /* ---- Press Analysis trigger button -------------------------------------- */
-
 
 /* ---- Pop-out panel: backdrop ------------------------------------------- */
 
@@ -2047,42 +2017,71 @@ button:focus-visible .sigil-word__beam {
   Mobile: slides up from bottom as a sheet (85vh, full-width).
 */
 
-
 /* Desktop: overlays the Deep Dive panel from the right.
    DD panel is right: 0; width: 50vw. The drawer sits inside that space. */
 
 /* ---- Panel header ------------------------------------------------------- */
 
-
 /* ---- Panel close button ------------------------------------------------- */
-
 
 /* ---- Panel body (scrollable content) ------------------------------------ */
 
 /* ---- Stagger entrance animation for panel content ----------------------- */
 
-
 /* ---- Reduced motion overrides ----------------------------------------- */
 
-/* ---- Deep Dive: Summary text — editorial lede style -------------------- */
-.dd-summary-text {
+/* ---- Deep Dive: The Story (components/DeepDiveSummary.tsx) --------------
+   A lede and paragraphs at a reading measure, left-aligned under the
+   headline. It was one <p> running the full 68rem column, about 150
+   characters a line (audit 2026-09-26, finding 7). The Spread and the lists
+   below keep the full width. */
+.dd-summary {
+  max-width: var(--measure-read);
   color: var(--fg-secondary);
   font-family: var(--font-structural);
+  font-size: var(--text-base);
+  line-height: 1.75;
   text-align: left;
   hyphens: auto;
 }
 
-/* Drop cap — newspaper premium. First letter of the lede spans 3 lines.
-   Only applies when summary is the first visible text (after action bar). */
-.dd-summary-text::first-letter {
+.dd-summary p {
+  margin: 0 0 var(--space-3);
+}
+
+.dd-summary p:last-child {
+  margin-bottom: 0;
+}
+
+.dd-summary__lede {
+  font-size: var(--text-lg);
+  line-height: 1.6;
+  color: var(--fg-primary);
+}
+
+/* Drop cap on the lede only, two lines deep (the lede is two or three lines
+   at this measure; the old cap was sized for three and sat on a two-line
+   box). initial-letter where it is supported, a sized float where not. */
+.dd-summary__lede::first-letter {
   float: left;
   font-family: var(--font-editorial);
-  font-size: 3.2em;
-  line-height: 0.8;
+  font-size: 2.9em;
+  line-height: 0.82;
   font-weight: 700;
   color: var(--fg-primary);
   padding-right: 0.08em;
-  padding-top: 0.06em;
+  padding-top: 0.08em;
+}
+
+@supports (initial-letter: 2) or (-webkit-initial-letter: 2) {
+  .dd-summary__lede::first-letter {
+    float: none;
+    font-size: 1em;
+    line-height: inherit;
+    padding: 0 0.1em 0 0;
+    -webkit-initial-letter: 2;
+    initial-letter: 2;
+  }
 }
 
 /* ---- Deep Dive: Analysis Section — vertical stack ---------------------- */
@@ -2113,27 +2112,21 @@ button:focus-visible .sigil-word__beam {
 
 /* Action buttons — pill style, compact */
 
-
 /* ---- Deep Dive: Tab bar ---- */
-
 
 /* ---- Deep Dive: Press Analysis expand trigger — typographic ornament ---- */
 /* Centered below the compact spectrum. */
-
 
 /* After user has seen the bounce once, suppress on subsequent panel opens */
 
 /* ---- Deep Dive: Press Analysis inline expand (grid-template-rows trick) - */
 /* TRUE dynamic height — content determines height. */
 
-
 /* ---- BiasInspectorInline — inline scorecard in Deep Dive content ------- */
 
 /* ---- Bias Inspector: lean hero + inline confidence ---------------------- */
 
-
 /* ---- Bias Inspector: secondary axes disclosure -------------------------- */
-
 
 @keyframes dd-methodology-reveal {
   from {
@@ -2146,30 +2139,18 @@ button:focus-visible .sigil-word__beam {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .comp-view__insights-content {
-    animation: none;
-  }
-}
-
 /* ---- Inline methodology hint (near spectrum in Deep Dive) --------------- */
 
-
 /* ---- Scoring Methodology — used on /sources page ----------------------- */
-
 
 /* ---- Deep Dive: Source Perspectives (compact agree/diverge) ------------- */
 /* Two-column grid on desktop: Agreement left, Divergence right */
 
-
 /* Grid column — child of dd-perspectives-grid, relies on auto-placement */
-
 
 /* ---- Deep Dive: Six Lenses — ink-stamp 6-axis bias scores --------------- */
 
-
 /* Rack focus when one stamp is active */
-
 
 @keyframes ddLensIn {
   from { opacity: 0; transform: translateY(8px); }
@@ -2186,19 +2167,15 @@ button:focus-visible .sigil-word__beam {
 
 /* Active stamp gets accent ink */
 
-
 /* Stamp content — score number */
 
 /* Dot strip — 5 pips showing filled proportion */
 
-
 /* Arc arrangement — outer pips dip slightly */
-
 
 /* Axis label */
 
 /* "How we score" link below the stamps */
-
 
 /* Secondary axes container — max-height transition controlled by inline style */
 
@@ -2208,12 +2185,9 @@ button:focus-visible .sigil-word__beam {
    clutter on Deep Dive by aligning with "less attention grabbers" goal.
    ────────────────────────────────────────────────────────────────────────── */
 
-
 /* Collapsible container — smooth max-height + opacity for soft reveal */
 
-
 /* Expand button for mobile compact mode */
-
 
 /* Reduced motion — show instantly, no hover lift */
 
@@ -2354,228 +2328,35 @@ button:focus-visible .sigil-word__beam {
 
 /* ---- Read All Sides trigger button ---- */
 
-
 /* ---- ComparativeView container ---- */
-.comp-view {
-  padding-top: var(--space-3);
-}
-
-.comp-view--empty {
-  padding: var(--space-4) 0;
-}
-
-.comp-view__empty-text {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  color: var(--fg-tertiary);
-  text-align: center;
-}
 
 /* ---- Three-column grid ---- */
 /* Mobile-first: stack vertically. Desktop: 3 equal columns with thin rules. */
-.comp-view__grid {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-@media (min-width: 768px) {
-  .comp-view__grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0;
-  }
-}
 
 /* ---- Column ---- */
-.comp-view__col {
-  padding: var(--space-3) 0;
-}
-
-@media (min-width: 768px) {
-  .comp-view__col {
-    padding: 0 var(--space-3);
-    border-right: 1px solid var(--border-subtle);
-  }
-
-  .comp-view__col:first-child {
-    padding-left: 0;
-  }
-
-  .comp-view__col:last-child {
-    padding-right: 0;
-    border-right: none;
-  }
-}
 
 /* Mobile: hairline bottom rule between stacked columns */
-@media (max-width: 767px) {
-  .comp-view__col {
-    border-bottom: 1px solid var(--border-subtle);
-    padding-bottom: var(--space-4);
-  }
-
-  .comp-view__col:last-child {
-    border-bottom: none;
-  }
-}
 
 /* ---- Column header ---- */
-.comp-view__col-header {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  margin-bottom: var(--space-3);
-  padding-bottom: var(--space-2);
-  border-bottom: 1px solid var(--border-subtle);
-}
 
 /* Lean label: data voice, lean-colored dot encoded via modifier */
-.comp-view__lean-label {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--fg-secondary);
-}
 
-.comp-view__col--left .comp-view__lean-label {
-  color: var(--bias-left);
-}
-
-.comp-view__col--right .comp-view__lean-label {
-  color: var(--bias-right);
-}
-
-.comp-view__col--center .comp-view__lean-label {
-  color: var(--bias-center);
-}
-
-.comp-view__source-count {
-  font-size: var(--text-xs);
-  color: var(--fg-muted);
-  font-feature-settings: "tnum" 1;
-}
+/* Which of the Bench's seven rungs this column folds. */
 
 /* Key framing terms — shows vocabulary each lean side emphasizes.
    Compact inline pills below column header. Subtle, not dominant. */
 
-
 /* ---- Article items inside a column ---- */
-.comp-view__items {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.comp-view__item {
-  padding: var(--space-1) 0;
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-.comp-view__item:last-child {
-  border-bottom: none;
-}
 
 /* Wire-ticker compact variant: everything on one line */
-.comp-view__item--wire {
-  padding: 3px 0;
-}
 
-/* Wire link: inline flow wrapping to max 2 lines */
-.comp-view__wire-link {
-  display: inline-flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 0 4px;
-  text-decoration: none;
-  color: inherit;
-  line-height: 1.5;
-  /* Clamp to 2 lines max */
-  max-height: calc(1.5em * 2);
-  overflow: hidden;
-  min-height: 28px;
-  padding: 2px 0;
-  transition: color var(--dur-fast) var(--ease-cinematic);
-}
-
-.comp-view__wire-link:hover {
-  color: var(--fg-primary);
-}
-
-.comp-view__wire-link:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-}
-
-.comp-view__wire-link--static {
-  cursor: default;
-}
-
-/* The wire separator between a source name and its headline. It used to be an
-   em dash written as &mdash;, which is a banned character reaching the reader
-   through an HTML entity. A 1px rule is what a newspaper draws here anyway,
-   and it cannot be mistaken for punctuation. */
-.comp-view__wire-sep {
-  flex-shrink: 0;
-  width: 10px;
-  height: 1px;
-  align-self: center;
-  background: var(--fg-muted);
-  opacity: 0.6;
-}
-
-.comp-view__wire-title {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  line-height: 1.5;
-  color: var(--fg-tertiary);
-  /* Allow title to fill remaining space and wrap */
-  flex: 1 1 0%;
-  min-width: 0;
-}
-
-.comp-view__wire-link:hover .comp-view__wire-title {
-  color: var(--fg-secondary);
-}
-
-.comp-view__wire-arrow {
-  color: var(--fg-muted);
-  font-size: var(--text-sm);
-  flex-shrink: 0;
-  line-height: 1;
-  transition: color var(--dur-fast) var(--ease-cinematic), transform var(--dur-fast) var(--ease-cinematic);
-}
-
-.comp-view__wire-link:hover .comp-view__wire-arrow {
-  color: var(--fg-primary);
-  transform: translateX(1px);
-}
+/* Wire link: the outlet on one line, its headline under it, the arrow on
+   the right. It was one wrapping inline row with a 10px rule between name and
+   headline, and the rule floated mid-line whenever the headline wrapped. */
 
 /* Source row: favicon + name (legacy layout, kept for non-wire items) */
 
 /* Legacy alias */
-
-.comp-view__favicon-wrap {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.comp-view__favicon {
-  border-radius: var(--radius-md);
-  flex-shrink: 0;
-}
-
-.comp-view__source-name {
-  font-size: var(--text-xs);
-  color: var(--fg-secondary);
-  font-weight: 600;
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
 
 /* Source headline — single line, clean (legacy, kept for non-wire items) */
 
@@ -2583,9 +2364,7 @@ button:focus-visible .sigil-word__beam {
 
 /* Type badge: Reporting / Analysis / Opinion / Editorial */
 
-
 /* Factual rigor micro-bar */
-
 
 /* Sensationalism warning icon */
 
@@ -2593,145 +2372,15 @@ button:focus-visible .sigil-word__beam {
 
 /* ---- Word-level diff marks (Dot Matrix Rule: bias colors for bias data) ---- */
 
-
 /* ---- Read article link (legacy, kept for non-wire items) ---- */
-
 
 /* ---- Colour key ---- */
 
-
-.comp-view__expand-btn {
-  display: block;
-  width: 100%;
-  padding: var(--space-2) 0;
-  margin-top: var(--space-2);
-  background: none;
-  border: none;
-  border-top: 1px solid var(--border-subtle);
-  cursor: pointer;
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  color: var(--fg-tertiary);
-  text-align: center;
-  transition: color var(--dur-fast) var(--ease-cinematic);
-}
-
-.comp-view__expand-btn:hover {
-  color: var(--fg-primary);
-}
-
 /* ---- Convergence/Divergence — collapsible disclosure below grid ---- */
-
-.comp-view__insights-disclosure {
-  border-top: 1px solid var(--border-subtle);
-  margin-top: var(--space-4);
-  padding-top: var(--space-3);
-}
-
-.comp-view__insights-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35em;
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--fg-muted);
-  cursor: pointer;
-  min-height: 44px;
-  transition: color var(--dur-fast) var(--ease-cinematic);
-}
-
-.comp-view__insights-trigger:hover {
-  color: var(--fg-secondary);
-}
-
-.comp-view__insights-trigger:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
-}
-
-.comp-view__insights-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding-top: var(--space-3);
-  animation: dd-methodology-reveal var(--dur-normal) var(--spring-gentle) both;
-}
-
-.comp-view__insight-item {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-2);
-}
-
-.comp-view__insight-item > svg {
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.comp-view__insight-label {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--fg-tertiary);
-  margin-bottom: var(--space-1);
-}
-
-.comp-view__insight-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.comp-view__insight-list li {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  line-height: 1.5;
-  color: var(--fg-secondary);
-  padding-left: var(--space-3);
-  position: relative;
-  overflow-wrap: break-word;
-  word-break: break-word;
-}
-
-.comp-view__insight-list li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 8px;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background-color: var(--fg-muted);
-}
 
 /* ---- Story Meta — SVG micro-indicators ---- */
 
-
 /* ---- Mobile wire-ticker adjustments ---- */
-@media (max-width: 767px) {
-  .comp-view__wire-link {
-    min-height: 36px;
-    padding: 3px 0;
-  }
-
-  .comp-view__item--wire {
-    padding: 2px 0;
-  }
-}
 
 /* ==========================================================================
    Feature 2 (CSS): DeepDive Spectrum — Trust Score Dots
@@ -2742,7 +2391,6 @@ button:focus-visible .sigil-word__beam {
 
 /* Inline variant — used inside tooltip */
 
-
 /* ---- Trust tooltip additions ---- */
 
 /* Lean dot inside tooltip */
@@ -2751,7 +2399,6 @@ button:focus-visible .sigil-word__beam {
 
 /* ---- Trust list — below Source Perspectives, above Read All Sides ---- */
 
-
 /* ==========================================================================
    DivergenceAlerts — REMOVED from homepage (redundant with deep dive).
    CSS kept commented out for reference.
@@ -2759,19 +2406,15 @@ button:focus-visible .sigil-word__beam {
    Newspaper-style: thin rule, structural font, clean cards.
    ========================================================================== */
 
-
 /* Thin editorial rule above the section */
 
 /* Section heading — structural voice, not data */
 
 /* Card row — horizontal scroll on mobile, 3-col grid on desktop */
 
-
 /* ---- Alert card — clean, no colored borders ---- */
 
-
 /* .div-alert-card:hover removed — container, not a button */
-
 
 /* Headline — editorial voice, 2-line clamp */
 
@@ -2780,7 +2423,6 @@ button:focus-visible .sigil-word__beam {
 /* Source meta — data font */
 
 /* ---- Blind Spot — subtle editorial aside ---- */
-
 
 /* ==========================================================================
    Cinematic Intro — Premium spring-physics onboarding
@@ -2799,7 +2441,6 @@ button:focus-visible .sigil-word__beam {
   justify-content: center;
   animation: introFadeIn 800ms var(--ease-cinematic) both;
 }
-
 
 @keyframes introFadeIn {
   from { opacity: 0; }
@@ -2822,7 +2463,6 @@ button:focus-visible .sigil-word__beam {
 /* Paper grain overlay — newsprint texture on the card */
 
 /* Dark mode paper */
-
 
 @keyframes introStageIn {
   from { opacity: 0; transform: scale(0.92) translateY(20px); }
@@ -2853,11 +2493,9 @@ button:focus-visible .sigil-word__beam {
 
 /* ---- Progress bar — luminous glass edge ---- */
 
-
 /* ---- Skip button ---- */
 
 /* ---- Visual area — recessed paper inset ---- */
-
 
 /* ---- Text area (spring entrance per phase) ---- */
 
@@ -2866,15 +2504,11 @@ button:focus-visible .sigil-word__beam {
   to { opacity: 1; transform: translateY(0); }
 }
 
-
 /* ---- Phase dots ---- */
-
 
 /* ---- Action buttons ---- */
 
-
 /* .intro__btn--primary:hover lift/shadow removed — button color + cursor is enough */
-
 
 /* Old intro-scale/intro-beam/intro-ring/etc. CSS removed — replaced by .pro-* Prologue classes below.
    ~240 lines of dead CSS deleted. */
@@ -2895,27 +2529,21 @@ button:focus-visible .sigil-word__beam {
    Feature 5a (CSS): Skeleton Spectrum — placeholder while DD loads
    ========================================================================== */
 
-
 /* Gradient bar — same shape as dd-spectrum__bar but muted */
 
 /* Single indicator dot at story's cluster lean position */
-
 
 /* ==========================================================================
    Deep Dive Loading Skeleton — structured placeholders while data loads
    ========================================================================== */
 
-
 /* Spectrum bar placeholder — full width, rounded, matching real bar height */
 
 /* Generic text line placeholder */
 
-
 /* Source perspective card placeholders — grid of three rectangles */
 
-
 /* Bias inspector score placeholders — row of four small blocks */
-
 
 /* Mobile: stack perspective cards vertically */
 
@@ -3124,7 +2752,6 @@ button:focus-visible .sigil-word__beam {
   }
 }
 
-
 /* MobileBottomNav block deleted 2026-05-15 — filter UI removed in redesign.
    Server-side ranker is authoritative on topic diversity; client-side
    filters (lean chips + topics) were eliminated. The mobile feed scrolls
@@ -3172,18 +2799,19 @@ button:focus-visible .sigil-word__beam {
    - Fine: baseFrequency 0.75 (tighter than 0.65, closer to 500T native)
    - Rich: numOctaves 4 (one more octave for finer micro-detail)
    - Warm: colorMatrix biases highlights warm, leaves shadows neutral
-   - Living: cin-grain-drift at 8s period, steps(4) for 0.25fps gate
+   - Static: the drift was retired 2026-08-11 (see the animation note below)
 
-   Light mode: mix-blend-mode overlay (grain bites into mid-tones and
-   highlights — the natural behavior of film grain on a bright exposure).
-   Dark mode: mix-blend-mode soft-light (gentler compositing on dark
-   surfaces — overlay is too harsh when the base luminance is low, creating
-   visible banding. Soft-light preserves shadow detail while still adding
-   the organic texture feel of underexposed negative stock).
+   Normal blending in both modes (2026-09-26). It was overlay in light and
+   soft-light in dark. A blend mode on a fixed, full-viewport layer makes the
+   compositor re-read and re-blend everything beneath it on every frame the
+   page moves, and here that is the graded .page-main. Measured headless at
+   1440x900 (4x CPU): wheel-scrolling the feed dropped a median 44 frames
+   with the blend and 16 without. The pixels do not change in any way a
+   reader can see: at --cin-grain-opacity over a tile drawn at 0.15, the
+   layer moves a channel by 0.09 of one level on average (max 3 of 255) in
+   either mode, and the blended and normal renders differ by exactly that.
 
-   will-change is NOT set at rest (saves VRAM on long feeds) — it is
-   only promoted during animation via the keyframe transform property.
-   The browser will auto-promote during cin-grain-drift animation. */
+   No will-change: as a fixed layer it is composited already. */
 .page-container::after {
   content: "";
   position: fixed;
@@ -3191,18 +2819,12 @@ button:focus-visible .sigil-word__beam {
   z-index: var(--z-cinematic);
   pointer-events: none;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.36 0.34 0.28 0 0.010 0.34 0.34 0.28 0 0.006 0.28 0.28 0.32 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.15'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
   /* Cold-open: grain fades in at 700ms.
      cinGrainEntrance sets final opacity to --cin-grain-opacity via `both`.
      The perpetual cin-grain-drift was removed 2026-08-11: steps(4) over 8s
      of sub-0.5px movement is imperceptible, but each step forced the
      compositor to re-blend the full viewport. Static grain, same look. */
   animation: cinGrainEntrance 500ms var(--ease-cinematic) 700ms both;
-}
-
-/* Dark mode: soft-light blend for gentler grain on dark surfaces */
-:root[data-mode="dark"] .page-container::after {
-  mix-blend-mode: soft-light;
 }
 
 /* ── Page Warmth During Audio Playback — RETIRED 2026-08-11 ──
@@ -3358,7 +2980,6 @@ button:focus-visible .sigil-word__beam {
     filter: none;
   }
 }
-
 
 /* ==========================================================================
    FirstVisitTooltips — Spotlight Tour
@@ -3642,25 +3263,6 @@ button:focus-visible .sigil-word__beam {
  *
  * No background tint. No shadow. No card transform.
  */
-@media (hover: hover) and (pointer: fine) {
-  /* Page-catch — headline + summary translate together as one editorial
-     block. Lead-split (rank 0 top story) uses .lead-headline + .lead-summary
-     class names instead of __ variants — covered here too. */
-  .story-card:hover .story-card__headline-text,
-  .story-card:hover .story-card__summary,
-  .lead-story:hover .lead-story__headline-text,
-  .lead-story:hover .lead-story__summary,
-  .lead-story:hover .lead-headline__text,
-  .lead-story:hover .lead-summary {
-    transform: translateX(2px);
-  }
-  /* The shift is on the TEXT span, never on .lead-headline itself: the Sigil
-     lives inside that h2, and a transform there makes it a stacking context
-     with z-index auto, which paints under the card's stretched link
-     (z-index 2). Hovering the lead Sigil then opened its popup and lost the
-     pointer to the link a frame later, closing it after 240ms. Caught by
-     scripts/verify-headless.mjs, 2026-09-21. */
-}
 
 /* ---- Reduced motion — collapse all Tier 2 additions -------------------- */
 @media (prefers-reduced-motion: reduce) {
@@ -3728,11 +3330,9 @@ button:focus-visible .sigil-word__beam {
    provides keyboard-jumpable anchor links into the sections below.
    --------------------------------------------------------------------------- */
 
-
 /* Hover: subtle color lift only — no fill, no underline. Keyboard focus
    keeps the dotted underline so a11y is preserved without making the
    pointer interaction visually loud. */
-
 
 /* Touch-device tap-target promotion block deleted 2026-05-15 — the
    .nav-lens__trigger / .nav-lens__lean selectors it targeted were removed
@@ -3793,7 +3393,6 @@ button:focus-visible .sigil-word__beam {
    either side, italic caption. No globe glyph, no badge, no decoration.
    Used inline on the homepage and standalone on /world.
    ========================================================================== */
-
 
 /* Standalone /world variant — give a little more vertical breathing room
    since the divider is the whole page header (no main feed above it). */

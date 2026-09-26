@@ -176,6 +176,10 @@ export default function AudioProvider({
   initialBrief?: DailyBriefData | null;
 }) {
   const [edition, setEditionState] = useState<string>("world");
+  /* Mounted on every route, so this is the app saying it hydrated. The
+     inline script in layout.tsx waits for it before deciding the page is
+     script-less and revealing every entrance-hidden card. */
+  useEffect(() => { document.documentElement.setAttribute("data-hydrated", ""); }, []);
   /* TODAY'S EDITION. Only the daily fetch writes this. */
   const [dailyBrief, setDailyBrief] = useState<DailyBriefData | null>(initialBrief);
   /* WHAT IS PLAYING. Seeded from the daily brief when the player is idle. */

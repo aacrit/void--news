@@ -15,14 +15,17 @@ import ClaimMark from "./ClaimMark";
    components.css (unchanged).
    =========================================================================== */
 
-export default function SummaryWithContradictions({
-  summary,
-  disputed,
-}: {
-  summary: string;
-  disputed?: DisputedClaim[];
-}): React.ReactNode {
-  if (!disputed?.length || !summary) return summary;
+export interface DisputeMatch {
+  start: number;
+  end: number;
+  dispute: DisputedClaim;
+  text: string;
+}
+
+/** Where each disputed claim's phrase sits in the summary, first match only,
+ *  no overlaps, sorted. Offsets are into `summary` as given. */
+export function findDisputeMatches(summary: string, disputed?: DisputedClaim[]): DisputeMatch[] {
+  if (!disputed?.length || !summary) return [];
 
   const targets: { phrase: string; dispute: DisputedClaim }[] = [];
   for (const d of disputed) {
@@ -42,9 +45,7 @@ export default function SummaryWithContradictions({
     }
   }
 
-  if (targets.length === 0) return summary;
-
-  const matches: { start: number; end: number; dispute: DisputedClaim; text: string }[] = [];
+  const matches: DisputeMatch[] = [];
   const lower = summary.toLowerCase();
   for (const { phrase, dispute } of targets) {
     const idx = lower.indexOf(phrase.toLowerCase());
@@ -57,18 +58,32 @@ export default function SummaryWithContradictions({
       }
     }
   }
+  return matches.sort((a, b) => a.start - b.start);
+}
 
-  if (matches.length === 0) return summary;
-  matches.sort((a, b) => a.start - b.start);
-
+/** The text between `from` and `to` of `summary`, with every match inside it
+ *  wrapped in a ClaimMark. */
+export function markRange(summary: string, matches: DisputeMatch[], from: number, to: number, keyPrefix = ""): React.ReactNode[] {
   const nodes: React.ReactNode[] = [];
-  let cursor = 0;
-  for (let i = 0; i < matches.length; i++) {
-    const m = matches[i];
+  let cursor = from;
+  matches.forEach((m, i) => {
+    if (m.start < from || m.end > to) return;
     if (cursor < m.start) nodes.push(summary.slice(cursor, m.start));
-    nodes.push(<ClaimMark key={`cm-${i}`} text={m.text} disputed={m.dispute} />);
+    nodes.push(<ClaimMark key={`cm-${keyPrefix}${i}`} text={m.text} disputed={m.dispute} />);
     cursor = m.end;
-  }
-  if (cursor < summary.length) nodes.push(summary.slice(cursor));
-  return <>{nodes}</>;
+  });
+  if (cursor < to) nodes.push(summary.slice(cursor, to));
+  return nodes;
+}
+
+export default function SummaryWithContradictions({
+  summary,
+  disputed,
+}: {
+  summary: string;
+  disputed?: DisputedClaim[];
+}): React.ReactNode {
+  const matches = findDisputeMatches(summary, disputed);
+  if (matches.length === 0) return summary;
+  return <>{markRange(summary, matches, 0, summary.length)}</>;
 }

@@ -200,9 +200,9 @@ for (const [L, C, R, want, why] of [
   [14, 39, 9, "Balanced", "centre holds the mass and the wings are even"],
   /* The fall-through cases. A first draft of this rule called the next one
      Balanced, on a story with NO right-of-centre coverage at all. */
-  [3, 4, 0, "7 articles", "zero right-of-centre coverage is not balance"],
-  [1, 5, 0, "6 articles", "one wing article is not a roster"],
-  [2, 0, 1, "3 articles", "too little coverage to say anything"],
+  [3, 4, 0, "7 measured", "zero right-of-centre coverage is not balance"],
+  [1, 5, 0, "6 measured", "one wing article is not a roster"],
+  [2, 0, 1, "3 measured", "too little coverage to say anything"],
 ]) {
   check(`roster ${L}/${C}/${R} reads "${want}" (${why})`, shape(L, C, R) === want,
     `got "${shape(L, C, R)}"`);

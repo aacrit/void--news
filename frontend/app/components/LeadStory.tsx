@@ -6,6 +6,7 @@ import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
 import { BASE_PATH } from "../lib/utils";
+import CardSummary from "./CardSummary";
 
 interface LeadStoryProps {
   story: Story;
@@ -19,6 +20,8 @@ interface LeadStoryProps {
       down one notch (--type-twin-headline) and the card wears a modifier
       class so layout-zones.css can apply twin-only styles. */
   twin?: boolean;
+  /** This lead's Deep Dive is open below the lead block. */
+  open?: boolean;
 }
 
 /* ---------------------------------------------------------------------------
@@ -28,7 +31,7 @@ interface LeadStoryProps {
    typography carry the editorial moment; no photograph.
    --------------------------------------------------------------------------- */
 
-export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, twin = false }: LeadStoryProps) {
+export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, twin = false, open = false }: LeadStoryProps) {
   const cardRef = useRef<HTMLElement>(null);
 
   // Twin and solo top-story rank-0 layouts both use the full-canvas .lead-split
@@ -66,7 +69,7 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, t
       </HeadingTag>
 
       {story.summary?.trim() && (
-        <p className={useSplit ? "lead-summary" : "lead-story__summary"}>{story.summary}</p>
+        <p className={useSplit ? "lead-summary" : "lead-story__summary"}><CardSummary text={story.summary} max={useSplit ? 240 : 400} /></p>
       )}
       {!story.summary?.trim() && (
         <p className={`${useSplit ? "lead-summary" : "lead-story__summary"} lead-story__summary--pending`}>
@@ -81,6 +84,9 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, t
     <article
       ref={cardRef}
       data-story-id={story.id}
+      /* J/K reach the two leads too; the grid starts at 2. */
+      data-story-index={rank}
+      data-open={open ? "true" : undefined}
       className={`lead-story${useSplit ? " lead-split" : ""}${twin ? " lead-story--twin" : ""} ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}`}
     >
       {/* Stretched link — covers the article for click + a11y. Progressive

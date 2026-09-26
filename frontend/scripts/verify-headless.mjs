@@ -721,6 +721,278 @@ async function scenarios(browser) {
       assert(await page.evaluate(() => localStorage.getItem("void-news-theme")) === "light", "theme-persists", "localStorage carries the choice");
     });
   }
+  /* THE DEEP DIVE HAS AN ADDRESS, AND THE FEED STAYS (2026-09-26, audit
+     findings 4 to 6; docs/proposals/DEEP-DIVE-REDESIGN-2026-09-26.md). */
+  await withPage(browser, { width: 1440, route: "/" }, "deep-dive-keeps-lead", async (page) => {
+    await page.locator(".lead-story").nth(1).locator(".story-card__stretch-link").click();
+    await page.locator(".inline-dd").first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+    const r = await page.evaluate(() => {
+      const dd = document.querySelector(".inline-dd");
+      const twin = document.querySelector(".lead-twin");
+      return {
+        leads: document.querySelectorAll(".lead-story").length,
+        h1: document.querySelectorAll("h1").length,
+        cards: document.querySelectorAll("article[data-story-id]").length,
+        after: !!(dd && twin && (twin.compareDocumentPosition(dd) & Node.DOCUMENT_POSITION_FOLLOWING)),
+      };
+    });
+    assert(r.leads === 2 && r.h1 === 1 && r.after, "deep-dive-keeps-lead",
+      `${r.leads} leads, ${r.h1} h1, Deep Dive after the lead block: ${r.after}`);
+    assert(r.cards >= 20, "deep-dive-keeps-cards", `${r.cards} story cards still on the page`);
+  });
+  for (const width of [1440, 1024]) {
+    await withPage(browser, { width, route: "/" }, `deep-dive-row @${width}`, async (page) => {
+      const target = page.locator(".feed-grid__item").nth(5);
+      const id = await target.locator("[data-story-id]").getAttribute("data-story-id");
+      const rowTop = await target.evaluate((el) => el.getBoundingClientRect().top + scrollY);
+      const rowIds = await page.evaluate((top) => [...document.querySelectorAll(".feed-grid__item")]
+        .filter((el) => Math.abs(el.getBoundingClientRect().top + scrollY - top) < 2)
+        .map((el) => el.querySelector("[data-story-id]")?.getAttribute("data-story-id")), rowTop);
+      await target.locator(".story-card__stretch-link").click();
+      await page.locator(".inline-dd").first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+      const bad = await page.evaluate((ids) => {
+        const dd = document.querySelector(".inline-dd");
+        return ids.filter((sid) => {
+          const el = document.querySelector(`[data-story-id="${sid}"]`);
+          return !el || !(el.compareDocumentPosition(dd) & Node.DOCUMENT_POSITION_FOLLOWING);
+        });
+      }, rowIds);
+      const open = await page.locator(`.feed-grid__item[data-open="true"] [data-story-id="${id}"]`).count();
+      assert(bad.length === 0 && open === 1, "deep-dive-row",
+        `row of ${rowIds.length} stays above the Deep Dive${bad.length ? `; missing or below: ${bad.join(",")}` : ""}; opened card marked: ${open === 1}`);
+    });
+  }
+  for (const width of [1440, 390]) {
+    await withPage(browser, { width, route: "/" }, `deep-dive-address @${width}`, async (page) => {
+      const feedTitle = await page.title();
+      const link = page.locator("article[data-story-id] a.story-card__stretch-link").nth(3);
+      const href = await link.getAttribute("href");
+      const head = await link.evaluate((a) => a.closest("article").querySelector(".story-card__headline-text, .lead-headline__text, .msc__headline > span")?.textContent?.trim() ?? "");
+      await link.click();
+      await page.waitForTimeout(900);
+      const open = await page.evaluate(() => ({ path: location.pathname, title: document.title }));
+      assert(open.path === new URL(href, ORIGIN).pathname, "deep-dive-address-url", `opened at ${open.path}`);
+      assert(open.title === `${head} | Void News`, "deep-dive-address-title", `title "${open.title}"`);
+      await page.goBack();
+      await page.waitForTimeout(900);
+      const back = await page.evaluate(() => ({
+        path: location.pathname, title: document.title,
+        open: !!document.querySelector(".inline-dd, .dd-page"),
+        cards: document.querySelectorAll("article[data-story-id]").length,
+      }));
+      assert(back.path === `${BASE}/` && !back.open && back.cards >= 20 && back.title === feedTitle,
+        "deep-dive-back", `Back: ${back.path}, open=${back.open}, ${back.cards} cards, title "${back.title}"`);
+      await page.goForward();
+      await page.waitForTimeout(900);
+      assert(await page.locator(".inline-dd, .dd-page").count() > 0, "deep-dive-forward", "Forward reopens the story");
+    });
+  }
+  await withPage(browser, { width: 1440, route: "/" }, "deep-dive-escape-focus", async (page) => {
+    const link = page.locator(".feed-grid__item .story-card__stretch-link").nth(2);
+    await link.focus();
+    await page.keyboard.press("Enter");
+    await page.locator(".inline-dd").first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+    await page.waitForTimeout(600);
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(1200);
+    const r = await page.evaluate(() => ({
+      open: !!document.querySelector(".inline-dd"),
+      onLink: document.activeElement?.classList.contains("story-card__stretch-link") ?? false,
+      tag: document.activeElement?.tagName,
+    }));
+    assert(!r.open && r.onLink, "deep-dive-escape-focus", `closed=${!r.open}, focus on ${r.onLink ? "the card's link" : r.tag}`);
+  });
+  await withPage(browser, { width: 1440, route: "/" }, "deep-dive-keys", async (page) => {
+    await page.locator(".feed-grid__item .story-card__stretch-link").nth(0).click();
+    await page.locator(".inline-dd").first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+    await page.waitForTimeout(600);
+    const len0 = await page.evaluate(() => history.length);
+    const at = () => page.evaluate(() => document.querySelector(".inline-dd__count")?.textContent?.trim());
+    const start = await at();
+    await page.keyboard.press("j"); await page.waitForTimeout(500);
+    const j = await at();
+    await page.keyboard.press("ArrowRight"); await page.waitForTimeout(500);
+    const right = await at();
+    await page.keyboard.press("k"); await page.waitForTimeout(500);
+    const k = await at();
+    const len1 = await page.evaluate(() => history.length);
+    const n = (x) => Number(String(x).split("/")[0]);
+    assert(n(j) === n(start) + 1 && n(right) === n(start) + 2 && n(k) === n(start) + 1 && len1 === len0,
+      "deep-dive-keys", `${start} -> j ${j} -> right ${right} -> k ${k}; history ${len0} -> ${len1}`);
+  });
+  for (const width of [1440, 390]) {
+    await withPage(browser, { width, route: "/" }, `deep-dive-bar-visible @${width}`, async (page) => {
+      await page.locator("article[data-story-id] .story-card__stretch-link").nth(2).click();
+      const bar = width >= 768 ? ".inline-dd__toolbar" : ".dd-page__bar";
+      await page.locator(bar).first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+      await page.waitForTimeout(700);
+      await page.evaluate(() => window.scrollBy(0, 1400));
+      await page.waitForTimeout(500);
+      const r = await page.evaluate((sel) => {
+        const b = document.querySelector(sel);
+        const m = document.querySelector(".nav-header");
+        if (!b || !m) return null;
+        const br = b.getBoundingClientRect();
+        const mr = m.getBoundingClientRect();
+        const hit = document.elementFromPoint(br.left + br.width / 2, br.top + br.height / 2);
+        return { top: Math.round(br.top), mastBottom: Math.round(mr.bottom), onScreen: br.bottom > 0 && br.top < innerHeight, mine: !!hit && b.contains(hit) };
+      }, bar);
+      assert(!!r && r.onScreen && r.top >= r.mastBottom - 1 && r.mine, "deep-dive-bar-visible",
+        r ? `bar top ${r.top}, masthead bottom ${r.mastBottom}, uncovered ${r.mine}` : "no bar");
+    });
+  }
+  await withPage(browser, { width: 1440, route: "/" }, "deep-dive-walk", async (page) => {
+    const order = await page.evaluate(() => [...document.querySelectorAll("article[data-story-id]")].map((a) => a.getAttribute("data-story-id")));
+    await page.locator(".lead-story").nth(0).locator(".story-card__stretch-link").click();
+    await page.locator(".inline-dd").first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+    const seen = [];
+    for (let i = 0; i < order.length; i++) {
+      await page.waitForTimeout(350);
+      seen.push(await page.evaluate(() => (history.state?.voidStory ?? null)));
+      const next = page.locator(".dd-next__headline");
+      if (await next.count() === 0) break;
+      await next.click();
+    }
+    const end = await page.locator(".dd-next--end").count();
+    const same = seen.length === order.length && seen.every((id, i) => id === order[i]);
+    assert(same && end === 1, "deep-dive-walk",
+      `${seen.length} of ${order.length} stories walked in feed order: ${same}; end of edition shown: ${end === 1}`);
+  });
+  /* Reading measure (audit finding 7): the story is paragraphs, no line runs
+     past 80 characters, and the Brief is not justified. */
+  for (const width of [1440, 1024, 390]) {
+    await withPage(browser, { width, route: "/" }, `deep-dive-measure @${width}`, async (page) => {
+      await page.locator("article[data-story-id] .story-card__stretch-link").nth(1).click();
+      await page.locator(".dd-summary").first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+      const r = await page.evaluate(() => {
+        const ps = [...document.querySelectorAll(".dd-summary p")];
+        const worst = ps.map((p) => {
+          const range = document.createRange();
+          range.selectNodeContents(p);
+          const lines = new Set([...range.getClientRects()].map((q) => Math.round(q.top))).size || 1;
+          return Math.round(p.textContent.length / lines);
+        });
+        const words = ps.map((p) => p.textContent).join(" ").split(/\s+/).length;
+        return { paras: ps.length, words, max: Math.max(0, ...worst) };
+      });
+      assert(r.paras > 0 && r.max <= 80 && (r.words <= 120 || r.paras >= 2), "deep-dive-measure",
+        `${r.paras} paragraph(s) for ${r.words} words, longest line about ${r.max} characters`);
+    });
+  }
+  await withPage(browser, { width: 1440, route: "/" }, "brief-not-justified", async (page) => {
+    await page.locator("[aria-label='Expand news brief']").first().click().catch(() => {});
+    await page.waitForSelector(".skb__section-body--tldr", { timeout: 3000 }).catch(() => {});
+    const align = await page.evaluate(() => [...document.querySelectorAll(".skb__section-body--tldr, .skb__section-body--opinion")].map((e) => getComputedStyle(e).textAlign));
+    assert(align.length > 0 && !align.includes("justify"), "brief-not-justified", align.join(", ") || "no Brief body");
+  });
+  /* The coverage, up front (audit finding 8): visible without a click, one
+     row per source the meta line counts, links out, and no unmeasured
+     source placed on a rung. */
+  for (const width of [1440, 390]) {
+    await withPage(browser, { width, route: "/" }, `coverage-list @${width}`, async (page) => {
+      await page.locator("article[data-story-id] .story-card__stretch-link").nth(0).click();
+      await page.locator(".coverage").first().waitFor({ state: "visible", timeout: 8000 }).catch(() => {});
+      if (!assert(await page.locator(".coverage").count() === 1, "coverage-visible", "the coverage list is open without a click")) return;
+      const more = page.locator(".coverage__more");
+      if (await more.count()) await more.click();
+      const r = await page.evaluate(() => {
+        const rows = [...document.querySelectorAll(".coverage__row")];
+        const meta = document.querySelector(".dd-meta-sources")?.textContent?.match(/\d+/)?.[0];
+        const heading = document.querySelector(".coverage__count")?.textContent?.match(/\d+/)?.[0];
+        const links = [...document.querySelectorAll("a.coverage__headline")];
+        const external = links.every((a) => a.target === "_blank" && /noopener/.test(a.rel) && !a.href.includes(location.host));
+        const group = rows.findIndex((r) => r.querySelector(".coverage__group"));
+        const misplaced = rows.filter((r, i) => r.querySelector(".coverage__mark--none") && (group < 0 || i < group)).length;
+        return { rows: rows.length, meta: Number(meta), heading: Number(heading), external, misplaced };
+      });
+      assert(r.rows === r.heading && r.rows === r.meta, "coverage-count", `${r.rows} rows, heading ${r.heading}, meta ${r.meta}`);
+      assert(r.external, "coverage-links", "every headline links out to the publisher");
+      assert(r.misplaced === 0, "coverage-unmeasured", `${r.misplaced} unmeasured source(s) above the "Not placed" group`);
+    });
+  }
+  /* The legend defines every word the cards print (audit finding 9). */
+  for (const width of [1440, 390]) {
+    await withPage(browser, { width, route: "/" }, `legend-matches-cards @${width}`, async (page) => {
+      const printed = await page.evaluate(() => [...new Set([...document.querySelectorAll("article .sigil__lean-label")].map((e) => e.textContent.trim()))]);
+      await page.locator(".feed-start .lean-legend__btn").first().click();
+      await page.waitForSelector(".lean-legend__panel", { timeout: 3000 }).catch(() => {});
+      const terms = await page.evaluate(() => [...document.querySelectorAll(".lean-legend__panel dt")].map((e) => e.textContent.trim()));
+      const covered = (w) => terms.some((t) => t === w || t.split(" / ").includes(w) || (t === "N measured" && /^\d+ measured$/.test(w)));
+      const missing = printed.filter((w) => !covered(w));
+      assert(terms.length > 0 && missing.length === 0, "legend-matches-cards",
+        missing.length ? `cards print ${missing.join(", ")} but the legend does not define it` : `${printed.length} printed word(s), all defined`);
+      /* The minifier once folded two joined template strings and shipped
+         "At least 5outnumbers": a digit run straight into a word. */
+      const glued = await page.evaluate(() => [...document.querySelectorAll(".lean-legend__panel dd")]
+        .map((d) => d.textContent).filter((t) => /\d[A-Za-z]{2}/.test(t)));
+      assert(glued.length === 0, "legend-text-whole", glued.length ? glued[0] : "every definition reads whole");
+      const box = await page.locator(".lean-legend__panel").first().boundingBox();
+      const vw = await page.evaluate(() => innerWidth);
+      assert(!!box && box.x >= 0 && box.x + box.width <= vw, "legend-on-screen", box ? `panel ${Math.round(box.x)}..${Math.round(box.x + box.width)} of ${vw}` : "no panel");
+    });
+  }
+  /* No number in the dial (audit finding 10); the count is named under it. */
+  await withPage(browser, { width: 1440, route: "/" }, "sigil-no-score", async (page) => {
+    const r = await page.evaluate(() => ({
+      numbers: [...document.querySelectorAll("article .sigil svg text")].filter((t) => /^\s*\d+\s*$/.test(t.textContent)).length,
+      counts: [...document.querySelectorAll("article .sigil__count")].map((e) => e.textContent.trim()),
+      sigils: document.querySelectorAll("article .sigil[role='button']").length,
+    }));
+    assert(r.numbers === 0 && r.counts.length === r.sigils && r.counts.every((c) => /^\d+ sources?$/.test(c)),
+      "sigil-no-score", `${r.numbers} number(s) in dials; ${r.counts.length} of ${r.sigils} Sigils name their count ("${r.counts[0]}")`);
+  });
+  /* One lean word per story (2026-09-26). The card printed the roster's word
+     while its aria-label and popup heading read the gated mean, so a card
+     showing "Leans left" was announced as "Not measured". All three must be
+     the same word on every card. */
+  await withPage(browser, { width: 1440, route: "/" }, "lean-word-one-rule", async (page) => {
+    const rows = await page.evaluate(() => [...document.querySelectorAll(".sigil[role='button']")].map((el) => ({
+      aria: (el.getAttribute("aria-label") ?? "").match(/^Coverage: (.+?)\. \d+ sources?\./)?.[1] ?? `(unparsed) ${el.getAttribute("aria-label")}`,
+      printed: el.querySelector(".sigil__lean-label")?.textContent?.trim() ?? "",
+    })));
+    if (!assert(rows.length > 0, "lean-word-present", "the feed carries Sigils")) return;
+    const bad = rows.filter((r) => r.aria !== r.printed);
+    assert(bad.length === 0, "lean-word-aria", bad.length
+      ? bad.slice(0, 4).map((r) => `printed "${r.printed}" but aria says "${r.aria}"`).join("; ")
+      : `${rows.length} Sigils, aria-label = printed word`);
+    const popupBad = [];
+    for (let i = 0; i < Math.min(4, rows.length); i++) {
+      await page.locator(".sigil[role='button']").nth(i).hover();
+      await page.waitForSelector(".sigil-popup__label", { timeout: 2000 }).catch(() => {});
+      const heading = (await page.locator(".sigil-popup__label").first().textContent().catch(() => ""))?.trim();
+      if (heading !== rows[i].printed) popupBad.push(`card ${i}: printed "${rows[i].printed}", popup "${heading}"`);
+      await page.mouse.move(2, 2);
+      await page.waitForTimeout(250);
+    }
+    assert(popupBad.length === 0, "lean-word-popup", popupBad.length ? popupBad.join("; ") : "popup heading = printed word on the first four cards");
+  });
+  /* The Menu drawer's edition time is the masthead's (2026-09-26). It fell
+     back to the reader's clock and printed "Edition as of 2:00 AM" under a
+     masthead reading "as of 6:00 PM". */
+  await withPage(browser, { width: 390, route: "/" }, "drawer-edition-time", async (page) => {
+    const mast = (await page.locator(".nav-dateline-line__time").first().textContent().catch(() => ""))?.replace(/^\s*as of\s*/i, "").trim();
+    await page.locator("button[aria-label='Menu']").first().click();
+    await page.waitForSelector(".msp--open", { timeout: 3000 }).catch(() => {});
+    const line = (await page.locator(".msp__info-line").first().textContent().catch(() => ""))?.trim() ?? "";
+    const drawer = line.replace(/^Edition as of\s*/i, "").trim();
+    assert(!!mast && drawer === mast, "drawer-edition-time", `masthead "${mast}", drawer "${line}"`);
+  });
+  /* Without JavaScript every story is still on the page (2026-09-26). Cards
+     enter at opacity 0 and a client hook lifts them; with no script 18 of 20
+     stayed invisible. */
+  {
+    ctx("/", 1440, "light");
+    console.log(`\nscenario: no-js-cards-visible (${current})`);
+    const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, javaScriptEnabled: false });
+    const page = await context.newPage();
+    try {
+      await page.goto(`${ORIGIN}${BASE}/`, { waitUntil: "load", timeout: 60_000 });
+      const ops = await page.evaluate(() => [...document.querySelectorAll("article")].map((a) => Number(getComputedStyle(a).opacity)));
+      const hidden = ops.filter((o) => o < 0.99).length;
+      assert(ops.length > 0 && hidden === 0, "no-js-cards-visible", `${ops.length - hidden} of ${ops.length} cards visible with scripting off`);
+    } catch (e) { fail("exception", `no-js-cards-visible: ${String(e?.message ?? e).slice(0, 300)}`); }
+    finally { await context.close(); }
+  }
   /* The drawer traps focus and gives it back. */
   await withPage(browser, { width: 390, route: "/" }, "drawer", async (page) => {
     const btn = page.locator("button[aria-label='Menu']").first();
@@ -1387,6 +1659,10 @@ async function brandChecks(browser) {
       const opener = width >= 768 ? ".fp__info" : ".mtb__tab--onair";
       if (await page.locator(opener).count() === 0) { skip("onair-panel", `no ${opener} at ${width}`); return; }
       const urlBefore = page.url();
+      /* Below 1700px the desktop pill rests folded to its mark and unfolds
+         under the pointer (floating-player.css F11), so a reader hovers it
+         before the title is there to press. */
+      if (width >= 768) await page.locator(".fp__pill").hover();
       await page.locator(opener).click();
       await page.waitForTimeout(700);
       const o = await page.evaluate(() => {

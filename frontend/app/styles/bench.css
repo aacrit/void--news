@@ -111,13 +111,21 @@
 
 /* The stroke is laid down once, left to right, the way a pen crosses a page.
    The bleed follows it rather than arriving with it, so the line is read
-   before the paper takes it. */
+   before the paper takes it.
+
+   Every entrance in this file fills `backwards`, not `both`. Each one ends
+   on its element's own resting style (no clip, opacity 0.3, 0.9, 1, no
+   transform), so the last frame and the rest are the same pixels; but a
+   forwards fill keeps the animation in effect for as long as the Deep Dive
+   is open, and Chrome keeps a composited layer for it: up to ten inside
+   the graded .page-main, which has to re-render all of them on every frame
+   the page scrolls. Measured on the inline Deep Dive at 1440. */
 .bench--drawn .bench__curve-ink {
-  animation: bench-trace var(--dur-slow, 700ms) var(--ease-cinematic) both;
+  animation: bench-trace var(--dur-slow, 700ms) var(--ease-cinematic) backwards;
 }
 
 .bench--drawn .bench__curve-bleed {
-  animation: bench-bleed var(--dur-slow, 700ms) var(--ease-out) 180ms both;
+  animation: bench-bleed var(--dur-slow, 700ms) var(--ease-out) 180ms backwards;
 }
 
 @keyframes bench-trace {
@@ -162,7 +170,7 @@
 }
 
 .bench--drawn .bsig {
-  animation: bsig-settle var(--dur-slow, 700ms) var(--ease-cinematic) 120ms both;
+  animation: bsig-settle var(--dur-slow, 700ms) var(--ease-cinematic) 120ms backwards;
 }
 
 @keyframes bsig-settle {
@@ -183,17 +191,6 @@
 
 /* The shape word, once the shape is drawn. Still in the accessibility tree,
    where the silhouette is nothing at all. */
-.bench__shape--sr {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
-}
 
 @media (prefers-reduced-motion: reduce) {
   .bench--drawn .bench__curve-ink,
@@ -355,7 +352,7 @@
 
 .bench__more {
   font-family: var(--font-data);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.04em;
   color: var(--fg-muted);
@@ -603,7 +600,10 @@
 }
 
 .bench--drawn .bench__col {
-  animation: benchRise var(--dur-slow) var(--ease-cinematic) both;
+  /* The rest the rise ends on, so the fill can be `backwards` (see the note
+     on the curve above): hidden through its delay, risen after it. */
+  opacity: 1;
+  animation: benchRise var(--dur-slow) var(--ease-cinematic) backwards;
   animation-delay: var(--bench-delay, 0ms);
 }
 

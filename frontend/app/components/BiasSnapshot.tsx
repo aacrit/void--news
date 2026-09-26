@@ -1,7 +1,7 @@
 "use client";
 
 import type { SigilData } from "../lib/types";
-import { storyLeanLabel } from "../lib/biasColors";
+import { storyShapeLabel } from "../lib/biasColors";
 import LeanCoverageBar from "./LeanCoverageBar";
 
 interface BiasSnapshotProps {
@@ -28,11 +28,9 @@ interface BiasSnapshotProps {
    --------------------------------------------------------------------------- */
 
 export default function BiasSnapshot({ data, sourceCount, variant = "inline", hideCoverageBar = false }: BiasSnapshotProps) {
-  // One label, one code path: storyLeanLabel applies the suppression gate and
-  // the ladder together, so this surface cannot name a band the feed card and
-  // the Sigil popup do not also name.
-  const leanInfo = storyLeanLabel(data.politicalLean, data.biasSpread,
-                                  sourceCount, data.unscored);
+  // The card's own word (storyShapeLabel). This chip used to read the gated
+  // mean and print "Contested" under a card that said "Split".
+  const leanInfo = storyShapeLabel(data.biasSpread, data.unscored);
   const leanColor = leanInfo.color;
   const lean = leanInfo.text;
   const opinion = data.opinionLabel;
@@ -84,7 +82,10 @@ export default function BiasSnapshot({ data, sourceCount, variant = "inline", hi
         <span className="bias-snapshot__bar bias-snapshot__bar--inline" aria-hidden="true">
           <span className="bias-snapshot__bar-fill" style={{ width: `${rigor}%` }} />
         </span>
-        <span className="bias-snapshot__value">Rigor {rigor}</span>
+        <span className="bias-snapshot__value"
+              title="Factual rigor: named sources, data and direct quotes, scored 0 to 100">
+          Factual rigor {rigor}/100
+        </span>
       </span>
       {showOpinion && (
         <>
@@ -92,8 +93,8 @@ export default function BiasSnapshot({ data, sourceCount, variant = "inline", hi
           <span className="bias-snapshot__pill">{opinion}</span>
         </>
       )}
-      <span className="bias-snapshot__sep" aria-hidden="true">·</span>
-      <span className="bias-snapshot__sources">{sourceCount} {sourceCount === 1 ? "source" : "sources"}</span>
+      {/* No source count here: every Deep Dive prints it in the meta line
+          directly above, and the strip repeated it ("24 sources" twice). */}
       {!hideCoverageBar && <LeanCoverageBar spread={data.biasSpread} compact />}
     </div>
   );

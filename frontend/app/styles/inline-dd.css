@@ -37,14 +37,42 @@
 }
 
 /* Masthead toolbar — share + close, right-aligned above the headline. */
+/* The bar sticks under the site masthead for the whole read: where you are
+   in the edition, previous / next, share, close. --masthead-h is the
+   masthead's live height (NavBar publishes it). */
 .inline-dd__toolbar {
-  position: relative;
+  position: sticky;
+  top: var(--masthead-h, var(--nav-height, 53px));
+  z-index: 3;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: var(--space-1);
   width: 100%;
   margin-bottom: var(--space-1);
+  padding-block: var(--space-1);
+  background: var(--bg-primary);
+}
+
+.inline-dd__pager {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-right: auto;
+}
+
+.inline-dd__count {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  font-variant-numeric: tabular-nums;
+  min-width: 3.5ch;
+  text-align: center;
+}
+
+.inline-dd__action:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
 .inline-dd__action {
@@ -101,22 +129,19 @@
 
 /* Headline IS the collapse toggle — a reset button styled like .dd-headline. */
 .inline-dd__headline {
-  /* button reset */
-  appearance: none;
-  -webkit-appearance: none;
-  background: transparent;
-  border: none;
   margin: 0;
   padding: 0;
-
   display: flex;
   align-items: baseline;
   gap: var(--space-3);
   width: 100%;
   text-align: left;
-  cursor: pointer;
   color: var(--fg-primary);
-  -webkit-tap-highlight-color: transparent;
+  font-weight: inherit;
+}
+
+.inline-dd__headline:focus {
+  outline: none;
 }
 
 .inline-dd__headline-text {
@@ -172,18 +197,10 @@
    cramped). The modal keeps the .dd-lede float untouched.
    ========================================================================== */
 
-/* The summary flows in a comfortable reading measure rather than the full
-   desktop column width (which produced an unreadable wall of text). ~46rem is
-   the classic 60-75ch line length. The Spread band below is a separate
-   full-width section, so this does not affect the 2-col spectrum layout. */
-.inline-dd__story .dd-summary-text {
-  /* 2026-08-10: the summary now fills the full story column (max-width:none),
-     matching the headline and the section rules above/below it. A capped
-     measure (46rem, then 60rem) still ended short of the canvas edge, which
-     read as a truncated summary next to the full-width headline + rules. The
-     feed canvas itself is capped (--canvas-max), so this stays bounded. */
-  max-width: none;
-}
+/* The summary's measure is .dd-summary's (--measure-read, components.css).
+   2026-08-10 removed a cap here because a short column "read as a truncated
+   summary"; paragraphs and a lede answer that, where a 150-character line
+   did not. */
 
 /* The spectrum spans the full content column as a landscape band. Its slot is
    reserved from the first frame (min-height below) even while the Supabase
@@ -208,7 +225,9 @@
    shift, so it reads as a calm settle rather than a pop-in beat. The Bench
    mounts already-drawn via the `settled` prop; this fade is the sole motion. */
 .inline-dd__spectrum > .bench {
-  animation: fadeIn 200ms var(--ease-cinematic) both;
+  /* `backwards`: the fade ends at the Bench's own opacity, and a forwards
+     fill would hold it as a composited layer while the Deep Dive is open. */
+  animation: fadeIn 200ms var(--ease-cinematic) backwards;
 }
 
 /* Calm placeholder occupying the reserved band while the source fetch runs. */
@@ -258,4 +277,26 @@
   .lead-twin--recede {
     opacity: 0.6;                /* gentler dim, no motion */
   }
+}
+
+/* The card whose Deep Dive is open stays in its place, undimmed, with a
+   hairline in the accent, so the reader sees where the Deep Dive came from.
+   It used to be removed from the page (audit 2026-09-26, finding 4). */
+.feed-grid--recede .feed-grid__item[data-open="true"],
+.lead-twin--recede .lead-story[data-open="true"] {
+  opacity: 1;
+}
+
+.lead-twin--recede {
+  opacity: 1;
+}
+
+.lead-twin--recede .lead-story:not([data-open="true"]) {
+  opacity: 0.4;
+  transition: opacity var(--dur-normal) var(--ease-rack, ease);
+}
+
+.feed-grid__item[data-open="true"] .story-card,
+.lead-story[data-open="true"] {
+  box-shadow: inset 0 -2px 0 var(--accent-warm);
 }

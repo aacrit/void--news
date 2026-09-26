@@ -125,8 +125,14 @@ def _decode(s: str) -> str:
 # Document-order scan of the four feed text classes (both lead + card variants),
 # used to pair each headline with its own summary (Page.card_pairs).
 _PAIR_SCAN_RE = re.compile(
-    r'class="(lead-headline__text|story-card__headline-text|lead-summary|story-card__summary)"[^>]*>([^<]*)<'
+    r'class="(lead-headline__text|story-card__headline-text|lead-summary|story-card__summary)"[^>]*>(.*?)</(?:span|p)>',
+    re.DOTALL,
 )
+
+
+def _strip_inline(html: str) -> str:
+    """Text of an element's inner HTML: comments and tags removed."""
+    return re.sub(r'<[^>]+>', '', re.sub(r'<!--.*?-->', '', html, flags=re.DOTALL))
 
 
 def _extract(pattern: str, doc: str) -> list[str]:
@@ -140,9 +146,14 @@ class Page:
         # Without it the count check is only self-consistent: a page that
         # rendered 12 of 20 cards and said "12 stories loaded" passed.
         self.expect_count = expect_count
-        # Rendered story text nodes (text-only until the closing tag).
-        self.card_summaries = _extract(r'class="story-card__summary"[^>]*>([^<]*)<', doc)
-        self.lead_summaries = _extract(r'class="lead-summary"[^>]*>([^<]*)<', doc)
+        # Rendered story text nodes. A card summary is its whole <p>, inline
+        # tags stripped: the card shows its last whole sentence that fits and
+        # keeps the rest in a hidden span (components/CardSummary.tsx), so
+        # reading only up to the first tag would measure a fragment.
+        # Tags go before entities are decoded, so an escaped "<" in the text
+        # can never be read as a tag.
+        self.card_summaries = [_decode(_strip_inline(x)) for x in re.findall(r'class="story-card__summary"[^>]*>(.*?)</p>', doc, re.DOTALL)]
+        self.lead_summaries = [_decode(_strip_inline(x)) for x in re.findall(r'class="lead-summary"[^>]*>(.*?)</p>', doc, re.DOTALL)]
         self.card_headlines = _extract(r'class="story-card__headline-text"[^>]*>([^<]*)<', doc)
         # The real lead headline text is in the __text span; the lead-headline
         # element itself opens with an sr-only "Top story." span we must skip.
@@ -160,7 +171,12 @@ class Page:
         pairs: list[tuple[str, str]] = []
         pending: str | None = None
         for m in _PAIR_SCAN_RE.finditer(self.raw):
-            cls, text = m.group(1), _decode(m.group(2))
+            cls = m.group(1)
+            # A summary's hidden remainder is an inner span; the lazy match
+            # stops at its close, so strip tags to read the whole text.
+            text = _decode(_strip_inline(m.group(2)))
+            if "summary" in cls and "<span" in m.group(2) and "</span>" not in m.group(2):
+                text = _decode(_strip_inline(m.group(2) + self.raw[m.end():].split("</p>", 1)[0]))
             if "headline" in cls:
                 pending = text
             elif "summary" in cls and pending is not None:
@@ -608,12 +624,18 @@ def check_count_match(p: Page) -> list[str]:
     return out
 
 
-# The Sigil aria-label is the feed card's ONLY lean label ("Coverage tilt:
-# <label> (<raw lean>). N sources."). Its extreme tiers must agree with the
-# canonical raw-lean bands leanLabel/BiasSnapshot use elsewhere: "Far Right"
-# requires raw >= 81, "Far Left" requires raw <= 20. A card that says "Far Right"
-# for raw 73-80 while the Deep Dive says "Right" is the card-vs-Sigil split (P0-6).
-_SIGIL_ARIA_RE = re.compile(r'aria-label="Coverage tilt:\s*([^"(]+?)\s*\((\d+)\)')
+# The Sigil carries the story's lean word twice: its aria-label ("Coverage:
+# <word>. N sources.") and the printed line under the mark (.sigil__lean-label).
+# They came from two different rules until 2026-09-26, so the page printed
+# "Leans left" on cards it announced as "Not measured" or "Center (46)". Both
+# now read storyShapeLabel; this asserts they agree in the served HTML, card by
+# card. The aria-label precedes its printed line inside the same Sigil.
+_SIGIL_PAIR_RE = re.compile(
+    r'aria-label="Coverage: ([^".]+)\. \d+ sources?\.[^"]*"'
+    r'.*?class="sigil__lean-label"[^>]*>([^<]+)<',
+    re.S,
+)
+_SIGIL_OLD_ARIA_RE = re.compile(r'aria-label="Coverage tilt:')
 
 
 # Every story card's stretch-link must be a crawlable <a href> pointing at the
@@ -682,14 +704,14 @@ def check_confidence_not_proxy(p: Page) -> list[str]:
 
 def check_card_sigil_label(p: Page) -> list[str]:
     out = []
-    for m in _SIGIL_ARIA_RE.finditer(p.raw):
-        label = m.group(1).strip()
-        low = label.lower()
-        val = int(m.group(2))
-        if "far right" in low and val < 81:
-            out.append(f'card/Sigil "{label}" but raw lean {val} is canonical Right (Far Right needs >= 81)')
-        elif "far left" in low and val > 20:
-            out.append(f'card/Sigil "{label}" but raw lean {val} is canonical Left (Far Left needs <= 20)')
+    if _SIGIL_OLD_ARIA_RE.search(p.raw):
+        out.append('a Sigil still carries the retired "Coverage tilt:" aria-label (the gated mean)')
+    pairs = _SIGIL_PAIR_RE.findall(p.raw)
+    if p.rendered_card_count and not pairs:
+        out.append('no Sigil aria-label / printed lean word pair found; the check cannot run')
+    for aria, printed in pairs:
+        if aria.strip() != printed.strip():
+            out.append(f'card prints "{printed.strip()}" but its aria-label says "{aria.strip()}"')
     return out[:8]
 
 
@@ -769,7 +791,7 @@ CHECKS = [
     ("consistency: summary matches its headline", check_title_summary_consistency),
     ("voice: no first-person pronoun outside quotes (E-03)", check_first_person_outside_quotes),
     ("count: header matches rendered", check_count_match),
-    ("consistency: card lean label == canonical (Sigil)", check_card_sigil_label),
+    ("consistency: card lean word == its aria-label (Sigil)", check_card_sigil_label),
     ("structural: every card links to /story/<uuid>/", check_card_anchor_coverage),
     ("integrity: confidence is real (not COUNT/5 proxy)", check_confidence_not_proxy),
     ("exposure: internal tooling routes are not served", check_internal_routes_hidden),

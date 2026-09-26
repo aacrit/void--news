@@ -8,12 +8,16 @@ import { useState, useEffect, useCallback, useRef } from "react";
    Escape closes it, arrow keys navigate between stories in Deep Dive.
    --------------------------------------------------------------------------- */
 
+/* Every row says what the key does, and every row is true: the arrows used
+   to be listed as "Prev/next story" while only the phone Deep Dive handled
+   them (2026-09-26). In a Deep Dive, J / K and the arrows walk the stories
+   and the address follows; on the feed, J / K move the focus. */
 const SHORTCUTS = [
-  { keys: ["J"], action: "Next story" },
-  { keys: ["K"], action: "Previous story" },
+  { keys: ["J"], action: "Next story (in a Deep Dive, open the next one)" },
+  { keys: ["K"], action: "Previous story (in a Deep Dive, open the previous one)" },
   { keys: ["Enter", "O"], action: "Open Deep Dive" },
-  { keys: ["Esc"], action: "Close panel" },
-  { keys: ["\u2190", "\u2192"], action: "Prev/next story" },
+  { keys: ["Esc"], action: "Close the Deep Dive or panel" },
+  { keys: ["\u2190", "\u2192"], action: "In a Deep Dive: previous / next story" },
   { keys: ["\u2318", "K"], action: "Search stories" },
   { keys: ["/"], action: "Search stories" },
   { keys: ["?"], action: "Toggle this overlay" },

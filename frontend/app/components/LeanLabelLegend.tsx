@@ -2,15 +2,17 @@
 
 import { useState, useRef, useEffect, useId } from "react";
 import { Info } from "@phosphor-icons/react";
+import { LEAN_SHAPE_LEGEND } from "../lib/biasColors";
 
 /* ---------------------------------------------------------------------------
    LeanLabelLegend — a small info affordance next to the feed header that
    defines the coverage descriptors shown under each headline.
 
-   Readers see tags like "Right", "Balanced", "Not measured", "Contested", "Split" but nothing
-   tells them which read the LEAN (which way coverage tilts) and which read the
-   SPREAD (how much sources agree). This popover names both groups once, at the
-   top of the feed. Accessible: a labelled toggle button (aria-expanded /
+   Readers see the card's register (seven strokes) and one word under it:
+   Leans left, Split, Balanced, Consensus, "9 measured". This popover defines
+   exactly those words, from LEAN_SHAPE_LEGEND in lib/biasColors.ts, which is
+   built from the same constants the card's rule uses (2026-09-26: it used to
+   define the retired ladder's words, which no card printed). Accessible: a labelled toggle button (aria-expanded /
    aria-controls) reveals a labelled region; Escape and outside-click dismiss.
    --------------------------------------------------------------------------- */
 
@@ -52,41 +54,25 @@ export default function LeanLabelLegend() {
       {open && (
         <div id={panelId} role="region" aria-label="Coverage label guide" className="lean-legend__panel">
           <p className="lean-legend__intro">
-            The tag under each headline reads the coverage two ways: which way it
-            leans, and how much the sources agree.
+            Under each headline, seven short strokes show how many articles came
+            from each point on the lean scale, far left to far right. The word
+            under them reads that shape.
           </p>
 
-          <p className="lean-legend__group-title">Lean</p>
           <dl className="lean-legend__list">
-            <div className="lean-legend__row">
-              <dt>Left / Right</dt>
-              <dd>The aggregated coverage clearly leans that way (Far for the strongest tilt).</dd>
-            </div>
-            <div className="lean-legend__row">
-              <dt>Balanced</dt>
-              <dd>Measured, and the coverage sits at the center.</dd>
-            </div>
-            <div className="lean-legend__row">
-              <dt>Not measured</dt>
-              <dd>Too few measured articles, or too little confidence, to read a lean. The mark stays level and grey.</dd>
-            </div>
+            {LEAN_SHAPE_LEGEND.map((t) => (
+              <div className="lean-legend__row" key={t.shape}>
+                <dt>{t.term}</dt>
+                <dd>{t.definition}</dd>
+              </div>
+            ))}
           </dl>
 
-          <p className="lean-legend__group-title">Agreement</p>
-          <dl className="lean-legend__list">
-            <div className="lean-legend__row">
-              <dt>Contested</dt>
-              <dd>Left and right sources both cover it and genuinely disagree.</dd>
-            </div>
-            <div className="lean-legend__row">
-              <dt>Split / Divergent</dt>
-              <dd>Sources frame the same story very differently.</dd>
-            </div>
-            <div className="lean-legend__row">
-              <dt>Aligned</dt>
-              <dd>Sources tell it largely the same way.</dd>
-            </div>
-          </dl>
+          <p className="lean-legend__note">
+            An underline in red marks a story whose sources frame it very
+            differently; in green, one they frame alike. The number of sources
+            is the count of outlets that covered the story.
+          </p>
         </div>
       )}
     </span>
