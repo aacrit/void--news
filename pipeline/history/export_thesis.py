@@ -53,6 +53,18 @@ OUT = BUILD_DIR / "history-theses"
 PUBLIC_DIR = pathlib.Path(os.environ.get("VOID_EXPORT_PUBLIC_DIR") or (ROOT / "frontend/public/data"))
 SCRIPTS = ROOT / "frontend/build-data/history-scripts"
 MANIFEST = ROOT / "frontend/public/data/history-audio.json"
+# The reader's name for every ledger `producer` id (data/history/producers.yaml).
+# The page prints these, never the raw id; tests/test_history_thesis.py
+# (test_producer_labels) fails when a ledger uses an id with no label here.
+PRODUCERS = ROOT / "data/history/producers.yaml"
+
+
+def producer_labels() -> dict[str, str]:
+    if not PRODUCERS.exists():
+        return {}
+    raw = yaml.safe_load(PRODUCERS.read_text(encoding="utf-8")) or {}
+    return {str(k): str(v["label"]) for k, v in (raw.get("producers") or {}).items()
+            if isinstance(v, dict) and v.get("label")}
 
 POSITION_COLORS = ["a", "b", "c", "d", "e", "f"]
 TIER_NAMES = {"A": "Primary record", "B": "Peer-reviewed scholarship",
@@ -389,6 +401,18 @@ class Exporter:
                 if b["t"] == "episode":
                     marks.append({"chapter": b["chapter"], "where": sec["id"], "startTime": b["startTime"]})
         holistic = {"scope": th.scope, "coverage": th.front.get("coverage")} if th.scope == "holistic" else {}
+        # The producers the page prints: every producer a verdict rests on,
+        # and every analysis cell in a `producer` column that is a ledger id.
+        labels = producer_labels()
+        used: set[str] = set()
+        for sec in sections:
+            for b in sec["blocks"]:
+                if b["t"] == "position":
+                    for a in b["adjudications"]:
+                        used.update(a["producers"])
+                elif b["t"] == "analysis":
+                    used.update(str(r["cells"]["producer"]) for r in b["rows"]
+                                if r["cells"].get("producer") is not None)
         return {
             **holistic,
             "slug": self.slug,
@@ -407,6 +431,7 @@ class Exporter:
             "gaps": gaps,
             "episodeMarks": marks,
             "words": sum(len(sen.text.split()) for _, _, sen in th.all_sentences),
+            "producerLabels": {p: labels[p] for p in sorted(used) if p in labels},
         }
 
 

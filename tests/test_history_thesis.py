@@ -774,6 +774,99 @@ def test_t14_served_json_matches_the_thesis():
         assert canon(fresh[name]) == canon(have[name]), f"{name} has drifted; run python3 -m pipeline.history.export_thesis"
 
 
+# ------------------------------------------------ producer labels
+# A verdict prints the bodies whose documents it rests on, and an analysis may
+# print a producer column. The ledger names a body by an id (`uk-government`),
+# and until 2026-09-26 the page printed that id raw wherever a hand-written
+# table in Thesis.tsx had no entry for it: 20 verdict lines on the Partition
+# draft read "Rests on documents from: boundary-commission-chairman;
+# commission-member-congress; ...". The labels are data now
+# (data/history/producers.yaml), each taken from the author or publisher of a
+# named ledger entry that carries the id.
+
+def _is_id(v: str) -> bool:
+    import re as _re
+    return bool(_re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)+", v))
+
+
+def producer_label_problems(labels: dict, ledgers: list) -> list[str]:
+    """`labels` is producers.yaml's `producers` map; `ledgers` the loaded
+    ledgers. Returns every way the page could print a raw id, or a label with
+    no provenance."""
+    probs: list[str] = []
+    used: dict[str, str] = {}
+    carriers: dict[str, set] = {}
+    for name, led in ledgers:
+        for e in led.entries.values():
+            pid = e.get("producer")
+            if pid:
+                used.setdefault(str(pid), f"{name} {e['id']}")
+                carriers.setdefault(str(e["id"]), set()).add(str(pid))
+        entry_ids = {str(e.get("producer")) for e in led.entries.values() if e.get("producer")}
+        for aid, a in led.analyses.items():
+            for r in (a.get("derivation") or {}).get("rows") or []:
+                v = r.get("producer")
+                if isinstance(v, str) and (v in entry_ids or _is_id(v)):
+                    used.setdefault(v, f"{name} analysis {aid}")
+    for pid, where in sorted(used.items()):
+        v = labels.get(pid)
+        if not isinstance(v, dict) or not str(v.get("label") or "").strip():
+            probs.append(f"producer `{pid}` ({where}) has no label in data/history/producers.yaml")
+            continue
+        lab = str(v["label"])
+        if lab == pid or _is_id(lab):
+            probs.append(f"producer `{pid}`: the label is the id")
+        if "\u2014" in lab or "\u2013" in lab:
+            probs.append(f"producer `{pid}`: a dash in the label")
+        src = str(v.get("from") or "")
+        if pid not in carriers.get(src, set()):
+            probs.append(f"producer `{pid}`: `from: {src or '(none)'}` is not a ledger entry carrying that producer")
+    for pid in sorted(set(labels) - set(used)):
+        probs.append(f"producer `{pid}` is labelled but no ledger uses it")
+    return probs
+
+
+def _all_ledgers() -> list:
+    from pipeline.history.ledger import EVIDENCE, has_draft, load_ledger as _load
+    out = []
+    for d in sorted(EVIDENCE.glob("*/ledger.yaml")):
+        slug = d.parent.name
+        out.append((slug, _load(slug)))
+        if has_draft(slug):
+            out.append((f"{slug}/draft", _load(slug, draft=True)))
+    return out
+
+
+def test_producer_labels():
+    """Every producer id any committed ledger or draft overlay uses has a
+    readable label with provenance, and the export carries it to the page."""
+    labels = (yaml.safe_load((ROOT / "data/history/producers.yaml").read_text(encoding="utf-8")) or {})["producers"]
+    ledgers = _all_ledgers()
+    probs = producer_label_problems(labels, ledgers)
+    assert not probs, "; ".join(probs[:12])
+    # Planted: an id with no label, a label with no provenance, an orphan.
+    missing = {k: v for k, v in labels.items() if k != "uk-government"}
+    assert any("`uk-government`" in p and "no label" in p for p in producer_label_problems(missing, ledgers))
+    unsourced = dict(labels, **{"uk-government": {"label": "UK government", "from": "src-no-such-entry"}})
+    assert any("`uk-government`" in p and "from:" in p for p in producer_label_problems(unsourced, ledgers))
+    orphan = dict(labels, **{"no-such-body": {"label": "Nobody", "from": "src-x"}})
+    assert any("`no-such-body`" in p and "no ledger" in p for p in producer_label_problems(orphan, ledgers))
+    # The committed export names every producer its page prints.
+    for path in sorted((ROOT / "frontend/build-data/history-theses").glob("*.json")):
+        blob = json.loads(path.read_text(encoding="utf-8"))
+        have = blob.get("producerLabels") or {}
+        for sec in blob["sections"]:
+            for b in sec["blocks"]:
+                ids = []
+                if b["t"] == "position":
+                    ids = [p for a in b["adjudications"] for p in a["producers"]]
+                elif b["t"] == "analysis":
+                    ids = [str(r["cells"]["producer"]) for r in b["rows"]
+                           if isinstance(r["cells"].get("producer"), str) and r["cells"]["producer"] in labels]
+                for pid in ids:
+                    assert pid in have, f"{path.name}: `{pid}` is printed with no label in producerLabels"
+
+
 TESTS = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
 
 if __name__ == "__main__":

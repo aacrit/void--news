@@ -4,7 +4,7 @@
    Within the History skin: the same paper, ink, umber and brass, the four
    voices, the Hearing's named-line grid (`.hist-hearing`) and its rail. This
    sheet adds only what the thesis needs on top of history.css: sidenotes in
-   the right rail from 1024px, inline note disclosures below it, exhibit
+   the right margin from 1280px, inline note disclosures below it, exhibit
    frames, ruled contested tables, verdict chips, analysis tables and the
    episode block. Nothing here introduces a colour: every value is a token,
    and a position's colour is `--hist-account-color`, never its only carrier.
@@ -62,9 +62,23 @@
     grid-column: text-start / rail-end;
   }
 }
+.hist-th > .hist-th-body,
 .hist-th > .hist-th-section,
 .hist-th > .hist-th-endmatter {
   min-width: 0;
+}
+/* The body holds every section of the thesis in ONE grid item, so the
+   sections share one block formatting context and a run of sidenotes can
+   carry on beside the next section (see "1280px and up"). A grid item would
+   have kept its sections' margins apart; in a block they would collapse, so
+   each section starts with a transparent hairline that its -1px margin pays
+   back, and the spacing is what it was when every section was its own grid
+   row. A station jump lands a section clear of the topbar, as it did when the
+   section took `.hist-hearing > *` itself. */
+.hist-th-body > .hist-th-section {
+  border-top: 1px solid transparent;
+  margin-top: -1px;
+  scroll-margin-top: inherit;
 }
 .hist-th-section > * {
   max-width: min(var(--hist-measure), 100%);
@@ -82,7 +96,7 @@
   padding-bottom: var(--space-2);
   border-bottom: 1px solid var(--hist-border-subtle);
 }
-.hist-th-section:first-of-type .hist-th-h2 {
+.hist-th-body > .hist-th-section:first-child .hist-th-h2 {
   margin-top: var(--space-5);
 }
 .hist-th-h3 {
@@ -881,46 +895,6 @@
 }
 
 /* ── The record's standing and its gaps ── */
-/* ── §15 the coverage map: which sections carry which strand of the event,
-      under the claims. Same frame as the record's standing, one row a strand ── */
-.hist-th-coverage {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  gap: var(--space-1) var(--space-4);
-  margin: var(--space-5) 0 0;
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--hist-border-subtle);
-  background: var(--hist-bg-card);
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  line-height: 1.5;
-  color: var(--hist-ink-secondary);
-}
-.hist-th-coverage__row {
-  display: contents;
-}
-.hist-th-coverage dt {
-  font-family: var(--font-meta);
-  font-weight: 600;
-  font-size: var(--text-xxs);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--hist-brass-ink);
-  padding-top: 0.2em;
-}
-.hist-th-coverage dd {
-  margin: 0;
-  min-width: 0;
-}
-.hist-th-coverage__link {
-  color: var(--hist-ink);
-  text-decoration-color: var(--hist-border-subtle);
-  text-underline-offset: 0.2em;
-}
-.hist-th-coverage__link:hover {
-  text-decoration-color: currentColor;
-}
-
 .hist-th-standing {
   display: grid;
   grid-template-columns: 1fr max-content;
@@ -1091,34 +1065,52 @@
   line-height: 1.7;
 }
 
-/* ── 1280px and up: the section takes the text and the right rail, the
-      paragraph becomes a two-column grid, and the notes sit beside it.
+/* ── 1280px and up: the section takes the text and the right rail, and a
+      paragraph's notes float in the margin beside it.
       From 1024 to 1279 the margin is 17ch, about 150px: a citation set that
-      narrow ran to five or six lines a note, the notes outgrew their
-      paragraph, and the grid row stretched to them, leaving 160px of empty
-      column between paragraphs (Partition at 1024, 2026-09-25). Below
-      1280 the notes stay in the inline disclosure, as on a tablet. ── */
+      narrow ran to five or six lines a note, so below 1280 the notes stay in
+      the inline disclosure, as on a tablet.
+
+      The notes are a FLOAT, not a grid cell. Until 2026-09-26 the paragraph
+      was a two-column grid of text and notes, so its row was as tall as the
+      taller of the two: a paragraph with five citations waited for its notes,
+      and the body text broke off in holes of up to 220px (Partition, "Direct
+      action, 1946", at 1440). A float leaves the flow, so the text column runs
+      on unbroken and a long run of notes continues beside the paragraphs that
+      follow. `clear: right` stacks each paragraph's notes under the ones
+      before, so notes never overlap one another and a note never starts above
+      its own paragraph (it starts level with it, or lower when the margin
+      above is still full). Every section sits in `.hist-th-body`, one grid
+      item and so one block formatting context: notes run on across a
+      section's end (beside a heading, whose text keeps the measure), and the
+      body contains its floats, so no note reaches the Notes, the Sources or
+      the footer. When each section was its own grid item, each contained its
+      own notes and the holes moved to the section ends (up to 480px, 2026-09-26).
+      No script measures anything, so the page is the same height before and
+      after it hydrates. ── */
 @media (min-width: 1024px) {
   .hist-th-exhibit {
     padding: var(--space-5) var(--space-6);
   }
 }
 @media (min-width: 1280px) {
+  .hist-th > .hist-th-body,
   .hist-th > .hist-th-section {
     grid-column: text-start / rail-end;
   }
-  /* The paragraph is the text column plus its margin. The sidenotes start
-     one gap past the measure and at the paragraph's first line, numbered
-     as the citations are, in the order they are cited. */
+  /* The paragraph spans the text and the margin; its text keeps the measure,
+     and the notes take what is left past one gap. */
   .hist-th-para {
-    display: grid;
-    grid-template-columns: min(var(--hist-measure), 100%) minmax(0, 1fr);
-    column-gap: var(--space-5);
-    align-items: start;
     max-width: none;
+  }
+  .hist-th-para > .hist-th-p {
+    max-width: min(var(--hist-measure), 100%);
   }
   .hist-th-sidenotes {
     display: block;
+    float: right;
+    clear: right;
+    width: calc(100% - min(var(--hist-measure), 100%) - var(--space-5));
     padding-top: 0.3em;
   }
   .hist-th-sidenote {
