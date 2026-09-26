@@ -3,7 +3,7 @@
 
    The archive Deep Dive is a real PAGE (not the in-feed overlay): masthead on
    top, a centered max-width reading column on desktop, full-page on mobile. It
-   reuses the shared dd-* content vocabulary (dd-headline, dd-summary-text,
+   reuses the shared dd-* content vocabulary (dd-headline, dd-summary,
    dd-src-cols, dd-section-label, dd-page__bar/back/share) from
    deep-dive-page.css + components.css; this file only adds the centered wrapper
    and a few standalone-specific rhythm rules.

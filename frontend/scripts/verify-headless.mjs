@@ -858,6 +858,89 @@ async function scenarios(browser) {
     assert(same && end === 1, "deep-dive-walk",
       `${seen.length} of ${order.length} stories walked in feed order: ${same}; end of edition shown: ${end === 1}`);
   });
+  /* Reading measure (audit finding 7): the story is paragraphs, no line runs
+     past 80 characters, and the Brief is not justified. */
+  for (const width of [1440, 1024, 390]) {
+    await withPage(browser, { width, route: "/" }, `deep-dive-measure @${width}`, async (page) => {
+      await page.locator("article[data-story-id] .story-card__stretch-link").nth(1).click();
+      await page.locator(".dd-summary").first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+      const r = await page.evaluate(() => {
+        const ps = [...document.querySelectorAll(".dd-summary p")];
+        const worst = ps.map((p) => {
+          const range = document.createRange();
+          range.selectNodeContents(p);
+          const lines = new Set([...range.getClientRects()].map((q) => Math.round(q.top))).size || 1;
+          return Math.round(p.textContent.length / lines);
+        });
+        const words = ps.map((p) => p.textContent).join(" ").split(/\s+/).length;
+        return { paras: ps.length, words, max: Math.max(0, ...worst) };
+      });
+      assert(r.paras > 0 && r.max <= 80 && (r.words <= 120 || r.paras >= 2), "deep-dive-measure",
+        `${r.paras} paragraph(s) for ${r.words} words, longest line about ${r.max} characters`);
+    });
+  }
+  await withPage(browser, { width: 1440, route: "/" }, "brief-not-justified", async (page) => {
+    await page.locator("[aria-label='Expand news brief']").first().click().catch(() => {});
+    await page.waitForSelector(".skb__section-body--tldr", { timeout: 3000 }).catch(() => {});
+    const align = await page.evaluate(() => [...document.querySelectorAll(".skb__section-body--tldr, .skb__section-body--opinion")].map((e) => getComputedStyle(e).textAlign));
+    assert(align.length > 0 && !align.includes("justify"), "brief-not-justified", align.join(", ") || "no Brief body");
+  });
+  /* The coverage, up front (audit finding 8): visible without a click, one
+     row per source the meta line counts, links out, and no unmeasured
+     source placed on a rung. */
+  for (const width of [1440, 390]) {
+    await withPage(browser, { width, route: "/" }, `coverage-list @${width}`, async (page) => {
+      await page.locator("article[data-story-id] .story-card__stretch-link").nth(0).click();
+      await page.locator(".coverage").first().waitFor({ state: "visible", timeout: 8000 }).catch(() => {});
+      if (!assert(await page.locator(".coverage").count() === 1, "coverage-visible", "the coverage list is open without a click")) return;
+      const more = page.locator(".coverage__more");
+      if (await more.count()) await more.click();
+      const r = await page.evaluate(() => {
+        const rows = [...document.querySelectorAll(".coverage__row")];
+        const meta = document.querySelector(".dd-meta-sources")?.textContent?.match(/\d+/)?.[0];
+        const heading = document.querySelector(".coverage__count")?.textContent?.match(/\d+/)?.[0];
+        const links = [...document.querySelectorAll("a.coverage__headline")];
+        const external = links.every((a) => a.target === "_blank" && /noopener/.test(a.rel) && !a.href.includes(location.host));
+        const group = rows.findIndex((r) => r.querySelector(".coverage__group"));
+        const misplaced = rows.filter((r, i) => r.querySelector(".coverage__mark--none") && (group < 0 || i < group)).length;
+        return { rows: rows.length, meta: Number(meta), heading: Number(heading), external, misplaced };
+      });
+      assert(r.rows === r.heading && r.rows === r.meta, "coverage-count", `${r.rows} rows, heading ${r.heading}, meta ${r.meta}`);
+      assert(r.external, "coverage-links", "every headline links out to the publisher");
+      assert(r.misplaced === 0, "coverage-unmeasured", `${r.misplaced} unmeasured source(s) above the "Not placed" group`);
+    });
+  }
+  /* The legend defines every word the cards print (audit finding 9). */
+  for (const width of [1440, 390]) {
+    await withPage(browser, { width, route: "/" }, `legend-matches-cards @${width}`, async (page) => {
+      const printed = await page.evaluate(() => [...new Set([...document.querySelectorAll("article .sigil__lean-label")].map((e) => e.textContent.trim()))]);
+      await page.locator(".feed-start .lean-legend__btn").first().click();
+      await page.waitForSelector(".lean-legend__panel", { timeout: 3000 }).catch(() => {});
+      const terms = await page.evaluate(() => [...document.querySelectorAll(".lean-legend__panel dt")].map((e) => e.textContent.trim()));
+      const covered = (w) => terms.some((t) => t === w || t.split(" / ").includes(w) || (t === "N measured" && /^\d+ measured$/.test(w)));
+      const missing = printed.filter((w) => !covered(w));
+      assert(terms.length > 0 && missing.length === 0, "legend-matches-cards",
+        missing.length ? `cards print ${missing.join(", ")} but the legend does not define it` : `${printed.length} printed word(s), all defined`);
+      /* The minifier once folded two joined template strings and shipped
+         "At least 5outnumbers": a digit run straight into a word. */
+      const glued = await page.evaluate(() => [...document.querySelectorAll(".lean-legend__panel dd")]
+        .map((d) => d.textContent).filter((t) => /\d[A-Za-z]{2}/.test(t)));
+      assert(glued.length === 0, "legend-text-whole", glued.length ? glued[0] : "every definition reads whole");
+      const box = await page.locator(".lean-legend__panel").first().boundingBox();
+      const vw = await page.evaluate(() => innerWidth);
+      assert(!!box && box.x >= 0 && box.x + box.width <= vw, "legend-on-screen", box ? `panel ${Math.round(box.x)}..${Math.round(box.x + box.width)} of ${vw}` : "no panel");
+    });
+  }
+  /* No number in the dial (audit finding 10); the count is named under it. */
+  await withPage(browser, { width: 1440, route: "/" }, "sigil-no-score", async (page) => {
+    const r = await page.evaluate(() => ({
+      numbers: [...document.querySelectorAll("article .sigil svg text")].filter((t) => /^\s*\d+\s*$/.test(t.textContent)).length,
+      counts: [...document.querySelectorAll("article .sigil__count")].map((e) => e.textContent.trim()),
+      sigils: document.querySelectorAll("article .sigil[role='button']").length,
+    }));
+    assert(r.numbers === 0 && r.counts.length === r.sigils && r.counts.every((c) => /^\d+ sources?$/.test(c)),
+      "sigil-no-score", `${r.numbers} number(s) in dials; ${r.counts.length} of ${r.sigils} Sigils name their count ("${r.counts[0]}")`);
+  });
   /* One lean word per story (2026-09-26). The card printed the roster's word
      while its aria-label and popup heading read the gated mean, so a card
      showing "Leans left" was announced as "Not measured". All three must be

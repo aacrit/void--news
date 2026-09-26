@@ -2,6 +2,20 @@
 
 # Deep Dive redesign plan: audit findings 4 to 10
 
+> **Status, 2026-09-26: built** on `claude/dreamy-einstein-22owl7`. PR 1
+> (address, lead kept, row split, focus, Esc, keys), PR 2 (sticky bar, the
+> ending on all three shells, the static page walking its own edition), PR 3
+> (paragraphs, measure, drop cap, the Brief), PR 4 (CoverageList, ComparativeView
+> and its CSS deleted, `leanUnscored` and headlines carried to `/story/`), PR 5
+> (legend from `LEAN_SHAPE_LEGEND`, on phones and in the Deep Dive) and PR 6
+> (no number in the dial, "N measured") shipped together, each with the headless
+> scenarios in section E. **Not done:** C5's internal extraction
+> (`DeepDiveBody`, `lib/deepDiveSources.ts`); the three shells still carry
+> their own fetch-and-map and body markup, now sharing `DeepDiveSummary`,
+> `CoverageList` and `DeepDiveNext`. R2 (pipeline paragraphs) and rung filter
+> tabs stay deferred as planned. Finding A.3 (publisher summaries in
+> `public/data/deepdive/`) is open and needs an owner.
+
 Scope: `docs/audits/UX-PASS-FRONTPAGE-DEEPDIVE-2026-09-26.md` findings 4 to 10 only. Not covered here, because another engineer is on them: `Sigil.tsx`, `MobileSidePanel.tsx`, `app/lib/utils.ts`, `StoryCard.tsx`/`animations.css` (the no-JS fix), and polish items 11 to 20. Where this plan has to touch or overlap their files, section H says so.
 
 Paths are relative to `/home/user/void--news/frontend` unless shown as absolute. Line numbers are from HEAD `6e2921d`.

@@ -349,19 +349,9 @@ function DataMark({ data, size, mounted }: {
       </g>
       )}
 
-      {/* Source count — lower semi-circle.
-          r=11, cy=14: chord at y=20 = 18.4 viewBox units, inner ≈ 14.8.
-          font-size 6 × 3 digits × 0.60 aspect = 10.8 units — 4 units breathing room. */}
-      <text x="16" y="20" textAnchor="middle" dominantBaseline="central"
-        style={{
-          fontFamily: "var(--font-data)", fontSize: 6, fontWeight: 700,
-          fill: "var(--fg-secondary)",
-          opacity: mounted ? 0.85 : 0,
-          transition: "opacity 400ms var(--ease-out) 300ms",
-        }}
-      >
-        {data.sourceCount}
-      </text>
+      {/* No number in the dial. It printed the source count at 6px where a
+          reader of a left/right gauge expects a score (audit 2026-09-26,
+          finding 10). The count is the caption under the word instead. */}
 
       {/* Center post — from circle bottom (y=25) to base */}
       <line x1="16" y1="25" x2="16" y2="29"
@@ -719,11 +709,10 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
 
       {/* The one line under it. The roster's own word, not a gated mean. */}
       <span className="sigil__lean-label" style={{
-        /* The register's word and the register's colour, one rule. See
-           leanShapeColor: displayLabel.color is the old gated ramp, and it
-           disagreed with the word printed over it. */
+        /* The card's word and its colour, from one rule (storyShapeLabel). */
         color: info.color,
-        opacity: mounted ? 1 : 0,
+        /* No mount gate on opacity: the label is server-rendered visible and
+           the CSS stamp animates it in. */
       }}>
         {info.text}
         {data.divergenceFlag === "divergent" && (
@@ -732,6 +721,12 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
         {data.divergenceFlag === "consensus" && (
           <InkUnderline variant={((Math.round(Number(data.politicalLean)) || 0) + 1) % 3} color="var(--sense-low)" />
         )}
+      </span>
+
+      {/* The count, named: outlets that covered the story. Decoration to a
+          screen reader, whose aria-label above already says it. */}
+      <span className="sigil__count" aria-hidden="true">
+        {data.sourceCount} {data.sourceCount === 1 ? "source" : "sources"}
       </span>
 
       {/* Consensus X/Y stays in deep dive (void --verify) where it has context */}

@@ -417,24 +417,6 @@
 
   /* Press expand: faster transition on mobile */
 
-  /* Perspectives: single column on mobile */
-
-  /* Convergence/divergence — horizontal scroll-snap tabs on mobile */
-  .comp-view__insights-content {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    gap: 0;
-  }
-  .comp-view__insights-content::-webkit-scrollbar { display: none; }
-  .comp-view__insight-item {
-    flex: 0 0 100%;
-    scroll-snap-align: start;
-    min-width: 0;
-  }
-
   /* [ENHANCEMENT-5] Source rows — better stacking on narrow screens */
 
   /* Simpler, faster section animations on mobile — ease-out instead of spring

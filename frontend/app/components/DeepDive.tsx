@@ -1,6 +1,6 @@
 "use client";
 
-// Route-scoped CSS. verify.css carries the Claim Consensus / ComparativeView
+// Route-scoped CSS. verify.css carries the Claim Consensus / CoverageList
 // styles; deep-dive-page.css adds the mobile full-page shell (masthead bar,
 // compact segmented switch). Bundled with the lazy Deep Dive chunk.
 import "../styles/verify.css";
@@ -13,7 +13,7 @@ import {
   CaretRight,
   ShareNetwork,
 } from "@phosphor-icons/react";
-import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel, DisputedClaim } from "../lib/types";
+import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel } from "../lib/types";
 import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
 import { SITE_URL } from "../lib/siteMeta";
@@ -21,13 +21,14 @@ import { hapticLight } from "../lib/haptics";
 import { findHistoryContext } from "../lib/historyContext";
 import Sigil from "./Sigil";
 import DeepDiveNext from "./DeepDiveNext";
+import DeepDiveSummary from "./DeepDiveSummary";
+import LeanLabelLegend from "./LeanLabelLegend";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
 import BiasSnapshot from "./BiasSnapshot";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
-import ComparativeView from "./ComparativeView";
+import CoverageList from "./CoverageList";
 import SpreadDisagreement from "./SpreadDisagreement";
 import ClaimConsensusSection from "./ClaimConsensusSection";
-import ClaimMark from "./ClaimMark";
 import LazyOnView from "./LazyOnView";
 
 /* ---------------------------------------------------------------------------
@@ -105,62 +106,6 @@ function HistoryContextLink({ title, summary }: { title: string; summary: string
   );
 }
 
-/* --- Inline contradiction highlight helper -------------------------------- */
-
-function renderSummaryWithContradictions(
-  summary: string,
-  disputedDetails?: DisputedClaim[],
-): React.ReactNode {
-  if (!disputedDetails?.length || !summary) return summary;
-
-  const targets: { phrase: string; dispute: DisputedClaim }[] = [];
-  for (const d of disputedDetails) {
-    for (const version of [d.version_a, d.version_b]) {
-      if (!version) continue;
-      const phrases = version.split(/[.!?]+/).map((s) => s.trim()).filter((s) => s.length >= 12);
-      for (const phrase of phrases) {
-        if (summary.toLowerCase().includes(phrase.toLowerCase())) {
-          targets.push({ phrase, dispute: d });
-        }
-      }
-    }
-    if (d.topic && d.topic.length >= 8 && summary.toLowerCase().includes(d.topic.toLowerCase())) {
-      if (!targets.some((t) => t.dispute === d)) {
-        targets.push({ phrase: d.topic, dispute: d });
-      }
-    }
-  }
-
-  if (targets.length === 0) return summary;
-
-  const matches: { start: number; end: number; dispute: DisputedClaim; text: string }[] = [];
-  const lower = summary.toLowerCase();
-  for (const { phrase, dispute } of targets) {
-    const idx = lower.indexOf(phrase.toLowerCase());
-    if (idx >= 0) {
-      const overlaps = matches.some(
-        (m) => (idx >= m.start && idx < m.end) || (idx + phrase.length > m.start && idx + phrase.length <= m.end),
-      );
-      if (!overlaps) {
-        matches.push({ start: idx, end: idx + phrase.length, dispute, text: summary.slice(idx, idx + phrase.length) });
-      }
-    }
-  }
-
-  if (matches.length === 0) return summary;
-  matches.sort((a, b) => a.start - b.start);
-
-  const nodes: React.ReactNode[] = [];
-  let cursor = 0;
-  for (let i = 0; i < matches.length; i++) {
-    const m = matches[i];
-    if (cursor < m.start) nodes.push(summary.slice(cursor, m.start));
-    nodes.push(<ClaimMark key={`cm-${i}`} text={m.text} disputed={m.dispute} />);
-    cursor = m.end;
-  }
-  if (cursor < summary.length) nodes.push(summary.slice(cursor));
-  return <>{nodes}</>;
-}
 
 /* --- Main DeepDive component (mobile full-page) --------------------------- */
 
@@ -178,7 +123,6 @@ export default function DeepDive({
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [fetchError, setFetchError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
-  const [analysisExpanded, setAnalysisExpanded] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   const shareTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -210,17 +154,6 @@ export default function DeepDive({
   /* Spread page makes sense only when there is a Sigil or scored sources. */
   const hasLedeSpectrum = Boolean(story.sigilData) || spectrumSources.length > 0;
 
-  const hasCrossLeanSources = useMemo(() => {
-    const buckets = new Set<string>();
-    for (const src of sources) {
-      const lean = src.biasScores?.politicalLean ?? 50;
-      if (lean <= 40) buckets.add("left");
-      else if (lean <= 60) buckets.add("center");
-      else buckets.add("right");
-      if (buckets.size >= 2) return true;
-    }
-    return false;
-  }, [sources]);
 
   /* Genuinely-waiting flag: the summary + Sigil are already on the story and
      render immediately; only the full source roster / spectrum are still being
@@ -417,7 +350,6 @@ export default function DeepDive({
      (prev/next does NOT remount — HomeContent renders this without a per-story
      key so the page persists and just re-fetches). ------------------------ */
   useEffect(() => {
-    setAnalysisExpanded(false);
     setShareCopied(false);
     if (shareTimer.current) clearTimeout(shareTimer.current);
     window.scrollTo(0, 0);
@@ -551,9 +483,10 @@ export default function DeepDive({
           {/* ---- The Story — summary in a reading-measure column ---- */}
           <section className="dd-page__panel" aria-label="The story">
             <h2 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h2>
-            <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
-              {renderSummaryWithContradictions(story.summary, deepDive?.claimConsensus?.disputed_details)}
-            </p>
+            <DeepDiveSummary
+              summary={story.summary}
+              disputed={deepDive?.claimConsensus?.disputed_details}
+            />
           </section>
 
           {/* Subtle inline loading — only while the full source spread is still
@@ -566,7 +499,10 @@ export default function DeepDive({
           {hasLedeSpectrum && (
             <section className="dd-page__panel dd-page__section" aria-label="The spread">
               <hr className="ink-rule" style={{ margin: "var(--space-5) 0 var(--space-4)" }} aria-hidden="true" />
-              <h2 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>The Spread</h2>
+              <div className="dd-section-head">
+                <h2 className="dd-section-label text-meta">The Spread</h2>
+                <LeanLabelLegend />
+              </div>
 
               {/* The Bench carries the shape's mark and word once sources are
                   placed; this Sigil stood above it and printed the same word a
@@ -593,36 +529,15 @@ export default function DeepDive({
             divergence={deepDive?.divergence}
           />
 
+          {/* ---- The coverage: every source's article, open by default. ---- */}
+          <CoverageList key={story.id} sources={sources} headingLevel={2} />
+
           {/* ---- Claim Consensus — cross-source verification (lazy) ---- */}
           {deepDive?.claimConsensus && (
             <section className="dd-page__section" aria-label="Claim Consensus verification">
               <hr className="ink-rule" style={{ margin: "var(--space-5) 0 var(--space-4)" }} aria-hidden="true" />
               <LazyOnView rootMargin="300px 0px" minHeight={120}>
                 <ClaimConsensusSection consensus={deepDive.claimConsensus} />
-              </LazyOnView>
-            </section>
-          )}
-
-          {/* ---- Source Perspectives — progressive disclosure (lazy) ---- */}
-          {hasCrossLeanSources && !analysisExpanded && (
-            <button
-              className="dd-read-more dd-analysis-trigger"
-              onClick={() => { hapticLight(); setAnalysisExpanded(true); }}
-            >
-              Show source breakdown
-            </button>
-          )}
-          {analysisExpanded && hasCrossLeanSources && (
-            <section className="dd-page__section" aria-label="Source Perspectives" style={{ marginTop: "var(--space-4)" }}>
-              <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
-              <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Source Perspectives</h3>
-              <LazyOnView rootMargin="400px 0px" minHeight={200}>
-                <ComparativeView
-                  sources={sources}
-                  consensusPoints={deepDive?.consensus}
-                  divergencePoints={deepDive?.divergence}
-                  hideInsights
-                />
               </LazyOnView>
             </section>
           )}

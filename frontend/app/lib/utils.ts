@@ -1,3 +1,4 @@
+import { sentenceEnds } from "./summaryParagraphs";
 /**
  * Base path for the deployed site — must match next.config.ts basePath.
  *
@@ -155,13 +156,8 @@ export function whyThisStory(opts: {
 export function splitSummaryForCard(text: string | null | undefined, maxChars: number): [string, string] {
   const t = (text ?? "").trim();
   if (t.length <= maxChars) return [t, ""];
-  const re = /[.!?]["\u201D\u2019)]?(?=\s+["\u201C\u2018(]?[A-Z0-9])/g;
   let cut = 0;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(t)) !== null) {
-    const before = t.slice(0, m.index).match(/(\S+)$/)?.[1] ?? "";
-    if (/^(?:[A-Z][a-z]{0,2}|(?:[A-Za-z]\.)+[A-Za-z]|No|Nos|vs|etc)$/.test(before)) continue;
-    const end = m.index + m[0].length;
+  for (const end of sentenceEnds(t)) {
     if (end > maxChars) break;
     cut = end;
   }

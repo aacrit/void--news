@@ -451,7 +451,7 @@
   top: calc(100% + 8px);
   right: 0;
   z-index: 40;
-  width: min(320px, 84vw);
+  width: min(380px, 90vw);
   padding: var(--space-4);
   background: var(--bg-elevated, var(--bg-primary));
   border: 1px solid var(--border-subtle);
@@ -475,18 +475,12 @@
   color: var(--fg-secondary);
 }
 
-.lean-legend__group-title {
-  margin: var(--space-3) 0 var(--space-1);
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--palette-news-ink);
-}
-
-.lean-legend__group-title:first-of-type {
-  margin-top: 0;
+.lean-legend__note {
+  margin: var(--space-3) 0 0;
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  color: var(--fg-secondary);
 }
 
 .lean-legend__list {
@@ -495,7 +489,7 @@
 
 .lean-legend__row {
   display: grid;
-  grid-template-columns: 92px 1fr;
+  grid-template-columns: 110px 1fr;
   gap: var(--space-2);
   margin: 0 0 var(--space-1);
   font-size: var(--text-xxs);
@@ -523,5 +517,24 @@
   }
   .lead-twin > .lead-story:nth-child(2) .lead-headline {
     font-size: clamp(1.25rem, 0.95rem + 1vw, 1.8rem);
+  }
+}
+
+/* The legend also sits at the left of a Deep Dive heading and in the middle of
+   the phone's feed-start line; its panel must open onto the page there. */
+.dd-section-head .lean-legend__panel {
+  left: 0;
+  right: auto;
+}
+
+@media (max-width: 767px) {
+  .lean-legend__panel {
+    position: fixed;
+    top: calc(var(--masthead-h, var(--nav-height, 53px)) + 12px);
+    left: 16px;
+    right: 16px;
+    width: auto;
+    max-height: calc(100dvh - var(--masthead-h, 53px) - 96px);
+    overflow-y: auto;
   }
 }

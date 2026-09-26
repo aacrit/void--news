@@ -1,6 +1,6 @@
 "use client";
 
-// Route-scoped CSS. verify.css carries Claim Consensus + ComparativeView;
+// Route-scoped CSS. verify.css carries Claim Consensus + CoverageList;
 // deep-dive-page.css carries the dd-src-cols source-column vocabulary;
 // story-page.css adds the standalone centered reading shell. spectrum.css is
 // imported by DeepDiveSpectrum itself.
@@ -19,9 +19,11 @@ import NavBar from "./NavBar";
 import Sigil from "./Sigil";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
 import BiasSnapshot from "./BiasSnapshot";
-import SummaryWithContradictions from "./SummaryWithContradictions";
+import DeepDiveSummary from "./DeepDiveSummary";
 import ClaimConsensusSection from "./ClaimConsensusSection";
-import ComparativeView from "./ComparativeView";
+import CoverageList from "./CoverageList";
+import DeepDiveNext from "./DeepDiveNext";
+import LeanLabelLegend from "./LeanLabelLegend";
 import SpreadDisagreement from "./SpreadDisagreement";
 
 /* ---------------------------------------------------------------------------
@@ -52,6 +54,14 @@ interface StandaloneDeepDiveProps {
   datelineLabel: string;
   /** Canonical absolute URL to copy on Share. */
   shareUrl: string;
+  /** Where this story sits in its own edition, for the ending. */
+  editionNav?: {
+    position: number;
+    total: number;
+    prev: { title: string; href: string } | null;
+    next: { title: string; href: string } | null;
+    editionLabel?: string;
+  } | null;
 }
 
 export default function StandaloneDeepDive({
@@ -61,26 +71,16 @@ export default function StandaloneDeepDive({
   hasBiasData,
   datelineLabel,
   shareUrl,
+  editionNav = null,
 }: StandaloneDeepDiveProps) {
   const [shareCopied, setShareCopied] = useState(false);
   const shareTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const sourceCount = story.source.count;
+  // One count for the meta line and the coverage list: the rows the list
+  // shows, falling back to the stored count only when no rows are carried.
+  const sourceCount = columnSources.length > 0 ? columnSources.length : story.source.count;
   const hasSpread = hasBiasData || spectrumSources.length > 0;
 
-  // Cross-lean sources gate the ComparativeView (Source Perspectives), exactly
-  // as the live Deep Dive does.
-  const hasCrossLeanSources = (() => {
-    const buckets = new Set<string>();
-    for (const src of columnSources) {
-      const lean = src.biasScores?.politicalLean ?? 50;
-      if (lean <= 40) buckets.add("left");
-      else if (lean <= 60) buckets.add("center");
-      else buckets.add("right");
-      if (buckets.size >= 2) return true;
-    }
-    return false;
-  })();
 
   const consensus = story.deepDive?.consensus;
   const divergence = story.deepDive?.divergence;
@@ -167,12 +167,10 @@ export default function StandaloneDeepDive({
           {/* ---- The Story — summary + claim consensus ---- */}
           <section className="story-page__section" aria-label="The story">
             <h2 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h2>
-            <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
-              <SummaryWithContradictions
-                summary={story.summary}
-                disputed={claimConsensus?.disputed_details}
-              />
-            </p>
+            <DeepDiveSummary
+              summary={story.summary}
+              disputed={claimConsensus?.disputed_details}
+            />
 
             {claimConsensus && (
               <div className="story-page__block" aria-label="Claim Consensus verification">
@@ -188,9 +186,14 @@ export default function StandaloneDeepDive({
           {hasSpread && (
             <section className="story-page__section" aria-label="The spread">
               <hr className="ink-rule" style={{ margin: "var(--space-5) 0 var(--space-4)" }} aria-hidden="true" />
-              <h2 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>The Spread</h2>
+              <div className="dd-section-head">
+                <h2 className="dd-section-label text-meta">The Spread</h2>
+                <LeanLabelLegend />
+              </div>
 
-              {story.sigilData && (
+              {/* The Bench carries the mark and word once sources are placed;
+                  the Sigil is only the fallback (as in the feed shells). */}
+              {story.sigilData && spectrumSources.length === 0 && (
                 <div className="dd-analysis-block__sigil story-page__sigil">
                   <Sigil data={story.sigilData} size="xl" storyId={story.id} />
                 </div>
@@ -217,20 +220,18 @@ export default function StandaloneDeepDive({
           {/* Six Lenses callout removed 2026-08-11 (CEO) — kept clean; the
               spectrum + agree/dispute panel carry the primary bias signal. */}
 
-          {/* ---- Source Perspectives — consensus/divergence + read-all-sides.
-              Reuses ComparativeView, gated on cross-lean sources exactly like
-              the live Deep Dive. Absent points are omitted (never fabricated). */}
-          {hasCrossLeanSources && (
-            <section className="story-page__section" aria-label="Source Perspectives">
-              <hr className="ink-rule" style={{ margin: "var(--space-5) 0 var(--space-4)" }} aria-hidden="true" />
-              <h2 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Source Perspectives</h2>
-              <ComparativeView
-                sources={columnSources}
-                consensusPoints={consensus}
-                divergencePoints={divergence}
-                hideInsights
-              />
-            </section>
+          {/* ---- The coverage: every source, open, on the Bench's seven rungs. */}
+          <CoverageList sources={columnSources} headingLevel={2} />
+
+          {/* ---- The end: the next story in this story's own edition. ---- */}
+          {editionNav && (
+            <DeepDiveNext
+              position={editionNav.position}
+              total={editionNav.total}
+              prev={editionNav.prev}
+              next={editionNav.next}
+              editionLabel={editionNav.editionLabel}
+            />
           )}
         </div>
       </main>

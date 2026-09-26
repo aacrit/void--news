@@ -291,5 +291,5 @@ and use it everywhere.
   `claude/dreamy-einstein-22owl7`, each factual fix with a control: headless
   `lean-word-one-rule`, `drawer-edition-time`, `no-js-cards-visible`, and
   `verify_production.py` "card lean word == its aria-label".
-- Findings 4 to 10 have a research and build plan:
-  `docs/proposals/DEEP-DIVE-REDESIGN-2026-09-26.md`.
+- Findings 4 to 10 are built from the plan in
+  `docs/proposals/DEEP-DIVE-REDESIGN-2026-09-26.md` (see its status note).

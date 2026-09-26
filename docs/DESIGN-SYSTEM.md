@@ -439,38 +439,40 @@ One grid definition for the feed, the lead split and the Deep Dive body.
 
 ## 7. The feed: cards, the lean label, the skybox
 
-### The one lean ladder
+### The one lean word
 
-`frontend/app/lib/biasColors.ts` owns the question "what does this story's
-lean say", and every surface that names it calls `storyLeanLabel()`. Before
-it, three functions answered the same question three ways from one number, and
-a card could read as a confident direction while the Deep Dive called the same
-story flat.
+A story's card, its Sigil's `aria-label` and popup, the Deep Dive chip and
+Paper's caption all name its coverage with ONE rule, `storyShapeLabel()` in
+`frontend/app/lib/biasColors.ts`, which reads the roster's shape
+(`leanShape()`), never a gated mean. Until 2026-09-26 the printed word came
+from the shape while the `aria-label`, popup and chip came from the older
+`storyLeanLabel()` mean ladder, so a card printing "Leans left" was announced
+as "Not measured". `storyLeanLabel()` still exists for tests of the ladder and
+names no story on any surface.
 
-`leanLabelState()` returns one of four states, and a card says three of them
-out loud:
-
-| State | The card reads | When |
+| Shape | The card reads | When (constants in `biasColors.ts`) |
 |---|---|---|
-| `confident` | a direction, plus the score | The mean is clearly off centre, or the coverage roster is lopsided and the mean agrees in sign |
-| `balanced` | **Balanced** | Measured, supported, not split, mean at the centre. The score is withheld |
-| `contested` | **Contested** | The support gate failed but both wings are present and polarization is high |
-| `unmeasured` | **Not measured** | Too few measured articles, outlets or confidence for the engine to have a read |
+| `leans` | **Leans left** / **Leans right** | At least `SHAPE_MIN_WINGS` (5) wing articles and one wing outnumbers the other by about 2 to 1 (`LABEL_MIN_SHARE_TILT`) |
+| `split` | **Split** | Both wings at least 2, roughly even, under half of the roster in the centre |
+| `balanced` | **Balanced** | Both wings at least 2, roughly even, at least half in the centre |
+| `consensus` | **Consensus** | At least 75% (`SHAPE_CONSENSUS_SHARE`) of 8 or more measured articles in the centre |
+| `thin` | **N measured** | Fewer than 6 measured articles, or fewer than 5 on the wings; the card states the count |
+| (unscored) | **Unscored** | No measured article |
 
-The word "Flat" is gone, and `frontend/test/labels.test.mjs` asserts it stays
-gone.
+The legend ("What the coverage labels mean") renders `LEAN_SHAPE_LEGEND`, whose
+definitions are built from those constants, and `legend-matches-cards` in
+`verify-headless.mjs` asserts every printed word is defined.
 
-**The Sigil tilts only on a confident read.** `components/Sigil.tsx` runs the
-same gate as the caption: a suppressed label gets a level beam in muted ink,
-because a beam that tilted under a withheld label hinted at a direction the
-caption had just declined to state. The beam angle is
-`((displayLean - 50) / 50) * 24` degrees through the perceptual expansion
-curve, and it rides `--spring-beam` over `--beam-tilt-dur`.
+**The beam tilts the way the word says.** Its sign comes from the roster
+(`leanShapeDirection`), its magnitude from the mean through the perceptual
+expansion, with a 6 degree floor, and its hue is clamped to that side.
 
-**The caption shows on phones too** (`styles/mobile-feed.css`). The ring
-colour alone cannot say "Balanced" or "Not measured", and a label that exists
-on desktop and not on a phone is one card saying two things. Floored at 9px,
-nowrap, allowed to run wider than the mark.
+**No number in the dial.** The source count is a caption under the word
+("33 sources"): outlets that covered the story. "N measured" is the other
+quantity, articles whose lean was measured.
+
+**The caption shows on phones too** (`styles/mobile-feed.css`), at 10px, nowrap,
+allowed to run wider than the mark.
 
 ### The skybox is one object
 
@@ -485,24 +487,47 @@ headline moves up a row.
 
 ## 8. Deep Dive
 
-Two implementations, split by device.
+Three shells, one reading order (redesign 2026-09-26,
+`docs/proposals/DEEP-DIVE-REDESIGN-2026-09-26.md`).
 
-**Desktop: `components/InlineDeepDive.tsx`.** An in-flow, full-width block
-inside the feed that pushes later cards down. No fixed positioning, no
-backdrop, no body scroll lock, no focus trap. Adds `inline-dd.css` for the
-in-flow chrome.
+**Desktop: `components/InlineDeepDive.tsx`.** An in-flow block inside the feed,
+opened AFTER the end of the opened card's visual row (`lib/useGridColumns.ts`
+mirrors the grid bands), or under the lead block for a lead. The opened card
+stays, undimmed, marked `data-open`. No backdrop, no scroll lock, no focus
+trap; it is an `<article>` labelled by its `h2`, never `role="dialog"`.
 
-**Phones: `components/DeepDive.tsx`.** Not a modal and not a bottom sheet: it
-fills the viewport as its own page and replaces the feed, mounts the shared
-masthead at the top exactly as `/onair` does, pushes a history entry so the
-hardware back button returns to the feed, and offers prev and next walkers.
-One scrollable page; the old Story and Spread segmented switch is gone.
+**Phones: `components/DeepDive.tsx`.** Its own page, replacing the feed, under
+the one masthead.
 
-Shared between them: `Sigil`, `DeepDiveSpectrum`, `BiasSnapshot`,
-`ComparativeView`, `SpreadDisagreement`, `ClaimConsensusSection`,
-`SummaryWithContradictions`, and `LazyOnView` (an IntersectionObserver wrapper
-that defers the heavy sections). `verify.css` and `deep-dive-page.css` ship
-with the lazy chunk rather than globally.
+**The static page: `/story/<id>/`** (`StandaloneDeepDive.tsx`), prerendered
+for every printed story.
+
+**An open story has an address** (`lib/deepDiveHistory.ts`). Opening pushes the
+story's permalink as a shallow entry and sets the title that page serves; Next's
+patched `pushState` keeps the feed mounted. Back closes, Forward reopens, a
+reload lands on the static page. Previous/next REPLACE the entry, so one Back
+always returns to the feed. Close gives focus back to the opening card. Esc
+stands down for an open modal, the On Air panel or a Sigil popup.
+
+**Walking the edition.** A bar sticks under the masthead (`--masthead-h`,
+published by `NavBar`): n/20, previous, next, share, close. J / K and the arrows
+walk stories while a Deep Dive is open. Every shell ends in `DeepDiveNext`: the
+next story by name and its place, or after the last, the end of the edition.
+The static page walks its OWN edition (`edition_position`), labelled with its
+date when it is not today's.
+
+**Reading order:** the headline, the meta line (one source count), the chip
+(the card's word, factual rigor N/100), **The Story** (`DeepDiveSummary`: a lede
+and paragraphs at `--measure-read`, split in the renderer by
+`lib/summaryParagraphs.ts`, which never changes the text and never splits a
+disputed-claim mark), **The Spread** (the Bench, with the legend beside its
+heading), what they agree on and where they split, **The coverage**
+(`CoverageList`: every source, open by default, on the Bench's seven rungs,
+unmeasured sources last and never under Center, headline links out), the claim
+check, the history link, and the ending.
+
+`verify.css` and `deep-dive-page.css` ship with the lazy chunk rather than
+globally.
 
 ### The Bench (2026-09-21)
 

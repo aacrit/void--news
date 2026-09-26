@@ -197,18 +197,10 @@
    cramped). The modal keeps the .dd-lede float untouched.
    ========================================================================== */
 
-/* The summary flows in a comfortable reading measure rather than the full
-   desktop column width (which produced an unreadable wall of text). ~46rem is
-   the classic 60-75ch line length. The Spread band below is a separate
-   full-width section, so this does not affect the 2-col spectrum layout. */
-.inline-dd__story .dd-summary-text {
-  /* 2026-08-10: the summary now fills the full story column (max-width:none),
-     matching the headline and the section rules above/below it. A capped
-     measure (46rem, then 60rem) still ended short of the canvas edge, which
-     read as a truncated summary next to the full-width headline + rules. The
-     feed canvas itself is capped (--canvas-max), so this stays bounded. */
-  max-width: none;
-}
+/* The summary's measure is .dd-summary's (--measure-read, components.css).
+   2026-08-10 removed a cap here because a short column "read as a truncated
+   summary"; paragraphs and a lede answer that, where a 150-character line
+   did not. */
 
 /* The spectrum spans the full content column as a landscape band. Its slot is
    reserved from the first frame (min-height below) even while the Supabase

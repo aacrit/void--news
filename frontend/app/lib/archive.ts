@@ -226,10 +226,13 @@ export function archiveMembersToSpectrumSources(
 
 /**
  * Build `StorySource[]` from the archive members. Same source-lean data as the
- * spectrum, in the shape the shared source components (ComparativeView) consume.
+ * spectrum, in the shape the shared source components (CoverageList) consume.
  */
 export function archiveMembersToStorySources(
   members: PrintedMember[] | null,
+  /** Article headlines by article URL, where the build has them (the live
+   *  per-story file for a displayed story). Rows without one show the outlet. */
+  titlesByUrl?: Map<string, string>,
 ): StorySource[] {
   if (!Array.isArray(members)) return [];
   const seen = new Set<string>();
@@ -254,6 +257,10 @@ export function archiveMembersToStorySources(
         framing: 40,
       },
       confidence: typeof m.confidence === "number" ? m.confidence : undefined,
+      articleTitle: m.url ? titlesByUrl?.get(m.url) : undefined,
+      /* Carried, not dropped: without it an unmeasured article's stored 50
+         was filed under Center in the source list (audit 2026-09-26). */
+      leanUnscored: m.lean_unscored === true || typeof m.lean !== "number" || Number.isNaN(m.lean),
     });
   }
   return out;

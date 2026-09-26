@@ -711,6 +711,11 @@
   /* Approximate height of .nav-header on tablet/desktop:
      padding-top --space-3 (~8px) + content (~36px) + padding-bottom --space-3 (~8px)
      + border-bottom (1px) = 53px. Used as sticky top offset for .filter-row. */
+  /* The reading measure for running prose: the Deep Dive's story and the
+     Brief. 58ch, not 68: a ch is the width of "0", wider than the average
+     letter, and 68ch measured about 87 characters a line. 58ch is about 72,
+     inside the classic 60 to 75 (verify-headless deep-dive-measure). */
+  --measure-read: 58ch;
   --nav-height: 53px;
 
   /* Height of the mobile bottom navigation bar (single row).

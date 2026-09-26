@@ -44,7 +44,10 @@ export default function DeepDiveNext({
   onFirst,
   editionLabel,
 }: DeepDiveNextProps) {
-  const where = editionLabel ? `${position} of ${total} in ${editionLabel}` : `${position} of ${total}`;
+  /* The number names what it sits beside: the next story's place when it
+     offers the next story ("Next story 9 of 20"), this story's at the end. */
+  const of = (n: number) => (editionLabel ? `${n} of ${total} in ${editionLabel}` : `${n} of ${total}`);
+  const where = of(next ? position + 1 : position);
 
   if (!next) {
     return (

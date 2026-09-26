@@ -1,7 +1,7 @@
 "use client";
 
 // Route-scoped CSS — verify.css carries the Claim Consensus / source-grid
-// styles that ClaimConsensusSection + ComparativeView depend on. The rest of
+// styles that ClaimConsensusSection + CoverageList depend on. The rest of
 // the Deep Dive vocabulary (.dd-lede*, .dd-headline, .dd-collapsible,
 // .anim-dd-section, .dd-cascade-*) lives in the globally-imported
 // components.css / animations.css / layout-zones.css. inline-dd.css adds the
@@ -25,13 +25,14 @@ import { hapticLight } from "../lib/haptics";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
 import BiasSnapshot from "./BiasSnapshot";
-import ComparativeView from "./ComparativeView";
+import CoverageList from "./CoverageList";
 import SpreadDisagreement from "./SpreadDisagreement";
 import ClaimConsensusSection from "./ClaimConsensusSection";
-import SummaryWithContradictions from "./SummaryWithContradictions";
 import { findHistoryContext } from "../lib/historyContext";
 import LazyOnView from "./LazyOnView";
 import DeepDiveNext from "./DeepDiveNext";
+import DeepDiveSummary from "./DeepDiveSummary";
+import LeanLabelLegend from "./LeanLabelLegend";
 
 /* ---------------------------------------------------------------------------
    InlineDeepDive — Cinematic Inline Deep Dive (stage 1: STATIC).
@@ -44,7 +45,7 @@ import DeepDiveNext from "./DeepDiveNext";
    The data-fetch + derived-data pattern (liveData / spectrumSources /
    hasCrossLeanSources) and the lede block are intentionally duplicated from
    DeepDive.tsx so the legacy modal stays byte-identical. The shared
-   sub-components (Sigil, DeepDiveSpectrum, BiasSnapshot, ComparativeView,
+   sub-components (Sigil, DeepDiveSpectrum, BiasSnapshot, CoverageList,
    ClaimConsensusSection) are reused directly.
 
    The cascade classes (.anim-dd-section / .dd-cascade-*) are wired now but
@@ -142,15 +143,6 @@ export default function InlineDeepDive({
   const [fetchError, setFetchError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
 
-  /* ---- Progressive disclosure: source breakdown (Perspectives + lazy) --- */
-  const [analysisExpanded, setAnalysisExpanded] = useState(false);
-
-  /* ---- Reset transient state when the parent swaps to a different story
-     without unmounting (one-open-at-a-time, selecting another card). ----- */
-  useEffect(() => {
-    setAnalysisExpanded(false);
-  }, [story.id]);
-
   const deepDive: DeepDiveData | undefined = liveData ?? story.deepDive;
 
   const sources = useMemo(() => deepDive?.sources ?? [], [deepDive]);
@@ -175,17 +167,6 @@ export default function InlineDeepDive({
   );
 
   /* ---- Sources span 2+ lean buckets? (Source Perspectives gate) -------- */
-  const hasCrossLeanSources = useMemo(() => {
-    const buckets = new Set<string>();
-    for (const src of sources) {
-      const lean = src.biasScores?.politicalLean ?? 50;
-      if (lean <= 40) buckets.add("left");
-      else if (lean <= 60) buckets.add("center");
-      else buckets.add("right");
-      if (buckets.size >= 2) return true;
-    }
-    return false;
-  }, [sources]);
 
   /* ---- Fetch live data from Supabase (copied pattern from DeepDive.tsx) - */
   useEffect(() => {
@@ -667,12 +648,10 @@ export default function InlineDeepDive({
         {/* ---- The Story — summary in a reading-measure column ---- */}
         <section className={`inline-dd__story anim-dd-section dd-cascade-1${contentVisible ? " anim-dd-section--visible" : ""}`}>
           <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h3>
-          <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
-            <SummaryWithContradictions
-              summary={story.summary}
-              disputed={deepDive?.claimConsensus?.disputed_details}
-            />
-          </p>
+          <DeepDiveSummary
+            summary={story.summary}
+            disputed={deepDive?.claimConsensus?.disputed_details}
+          />
         </section>
 
         {/* ---- The Spread — source-lean spectrum as a full-width band. The slot
@@ -689,7 +668,10 @@ export default function InlineDeepDive({
             className={`inline-dd__spread anim-dd-section dd-cascade-2${contentVisible ? " anim-dd-section--visible" : ""}`}
           >
             <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
-            <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>The Spread</h3>
+            <div className="dd-section-head">
+              <h3 className="dd-section-label text-meta">The Spread</h3>
+              <LeanLabelLegend />
+            </div>
             <div className="inline-dd__spectrum">
               {spectrumSources.length > 0 ? (
                 <DeepDiveSpectrum sources={spectrumSources} settled />
@@ -711,6 +693,10 @@ export default function InlineDeepDive({
           divergence={deepDive?.divergence}
         />
 
+        {/* ---- The coverage: every source's article, open by default, on the
+            Bench's seven rungs (audit 2026-09-26, finding 8). ---- */}
+        <CoverageList key={story.id} sources={sources} headingLevel={3} />
+
         {/* Six Lenses callout removed 2026-08-11 (CEO): the 6-axis breakdown is
             a secondary stat; the Deep Dive stays clean (spectrum + agree/dispute
             carry the primary bias signal). */}
@@ -725,36 +711,6 @@ export default function InlineDeepDive({
             <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
             <LazyOnView rootMargin="300px 0px" minHeight={120}>
               <ClaimConsensusSection consensus={deepDive.claimConsensus} />
-            </LazyOnView>
-          </section>
-        )}
-
-        {/* ---- Progressive disclosure trigger (Source Perspectives) ------ */}
-        {hasCrossLeanSources && !analysisExpanded && (
-          <button
-            className={`dd-read-more dd-analysis-trigger anim-dd-section dd-cascade-trigger${contentVisible ? " anim-dd-section--visible" : ""}`}
-            onClick={() => { hapticLight(); setAnalysisExpanded(true); }}
-          >
-            Show source breakdown
-          </button>
-        )}
-
-        {/* ---- Source Perspectives (collapsed by default, lazy) --------- */}
-        {analysisExpanded && hasCrossLeanSources && (
-          <section
-            aria-label="Source Perspectives"
-            className={`anim-dd-section dd-cascade-3${contentVisible ? " anim-dd-section--visible" : ""}`}
-            style={{ marginBottom: "var(--space-5)" }}
-          >
-            <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
-            <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Source Perspectives</h3>
-            <LazyOnView rootMargin="400px 0px" minHeight={200}>
-              <ComparativeView
-                sources={sources}
-                consensusPoints={deepDive?.consensus}
-                divergencePoints={deepDive?.divergence}
-                hideInsights
-              />
             </LazyOnView>
           </section>
         )}
