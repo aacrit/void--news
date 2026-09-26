@@ -180,8 +180,8 @@ entries:
   region_of_authorship: south-asia
   producer: punjab-governor
   position: british-administrative
-  rights: public
-  notes: the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+  rights: null
+  notes: a record from I.O.R. MB 124 as Kirpal Singh reprints it; whatever the Internet Archive item's public domain mark, an India Office or Broadlands paper is treated as copyright and held only as the passages cited, under the 150-word, 5-extract cap
 - id: src-panthic-19470614
   tier: A
   kind: primary-document
@@ -267,8 +267,8 @@ entries:
   region_of_authorship: south-asia
   producer: india-high-commission
   position: indian-nationalist
-  rights: public
-  notes: the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+  rights: null
+  notes: a record from File D/268, Broadland Archives as Kirpal Singh reprints it; whatever the Internet Archive item's public domain mark, an India Office or Broadlands paper is treated as copyright and held only as the passages cited, under the 150-word, 5-extract cap
 - id: src-jdc-19470829
   tier: A
   kind: primary-document
@@ -296,8 +296,8 @@ entries:
   region_of_authorship: south-asia
   producer: joint-defence-council
   position: null
-  rights: public
-  notes: the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+  rights: null
+  notes: a record from File D/268, Broadland Archives as Kirpal Singh reprints it; whatever the Internet Archive item's public domain mark, an India Office or Broadlands paper is treated as copyright and held only as the passages cited, under the 150-word, 5-extract cap
 - id: src-joint-evacuation-plan-19471020
   tier: A
   kind: primary-document
@@ -354,8 +354,8 @@ entries:
   region_of_authorship: south-asia
   producer: british-viceroy-staff
   position: british-administrative
-  rights: public
-  notes: the map and Christopher Beaumont's note the letter encloses are not in the collection; the editor notes they were published in Lahore in 1983; the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+  rights: null
+  notes: a record from I.O.R. R/3/1/157 as Kirpal Singh reprints it; whatever the Internet Archive item's public domain mark, an India Office or Broadlands paper is treated as copyright and held only as the passages cited, under the 150-word, 5-extract cap; the map and Christopher Beaumont's note the letter encloses are not in the collection; the editor notes they were published in Lahore in 1983
 - id: src-mountbatten-19480319
   tier: A
   kind: primary-document
@@ -383,8 +383,8 @@ entries:
   region_of_authorship: south-asia
   producer: british-viceroy-staff
   position: british-administrative
-  rights: public
-  notes: the postscript reports what Liaquat Ali Khan said at the Joint Defence Council, secondhand; the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+  rights: null
+  notes: a record from the Mountbatten papers (Broadlands) as Kirpal Singh reprints it; whatever the Internet Archive item's public domain mark, an India Office or Broadlands paper is treated as copyright and held only as the passages cited, under the 150-word, 5-extract cap; the postscript reports what Liaquat Ali Khan said at the Joint Defence Council, secondhand
 - id: src-jenkins-19480407
   tier: A
   kind: primary-document
@@ -412,8 +412,8 @@ entries:
   region_of_authorship: south-asia
   producer: punjab-governor
   position: british-administrative
-  rights: public
-  notes: Jenkins's account written eight months after the event; he says himself that it is not easy to be absolutely accurate about dates; the Internet Archive item (Select Documents on Partition of Punjab 1947) carries a public domain mark; verified_title is the document heading as the fetched text prints it
+  rights: null
+  notes: a record from I.O.R. P&J/10/119 as Kirpal Singh reprints it; whatever the Internet Archive item's public domain mark, an India Office or Broadlands paper is treated as copyright and held only as the passages cited, under the 150-word, 5-extract cap; Jenkins's account written eight months after the event; he says himself that it is not easy to be absolutely accurate about dates
 - id: src-randhawa-1954
   tier: A
   kind: report
@@ -717,7 +717,10 @@ positions:
     - src-top-xii.item428
     - src-top-xii.item335
     - src-mountbatten-press-19470604.p99-100
-    reasoning: 'Ismay''s letter says so, and Liaquat''s message is what it answers; but the Viceroy''s own interview record of 4 August has him saying Kashmir could join either Dominion ''provided part of Gurdaspur were put into East Punjab by the Boundary Commission'', and on 4 June he had told the press it was unlikely the commission would place the whole district in the Muslim majority area. Every document here is the Viceroy''s staff''s own, so under Rule A the verdict is capped at qualified: the papers show a Viceroy who had a view of Gurdaspur''s fate, not one who conveyed it to Radcliffe.'
+    - src-abell-19470808.p456
+    - src-jenkins-19480407.p706-707
+    - src-jenkins-19480407.p707
+    reasoning: 'Ismay''s letter says so, and Liaquat''s message is what it answers; but the Viceroy''s own interview record of 4 August has him saying Kashmir could join either Dominion ''provided part of Gurdaspur were put into East Punjab by the Boundary Commission'', and on 4 June he had told the press it was unlikely the commission would place the whole district in the Muslim majority area. Every document here is the Viceroy''s staff''s own, so under Rule A the verdict is capped at qualified: the papers show a Viceroy who had a view of Gurdaspur''s fate, not one who conveyed it to Radcliffe. The Ferozepur papers add to this without settling it: Abell''s letter of 8 August 1947 sent a map of the boundary Radcliffe proposed to demarcate, and the Governor of the Punjab''s account of April 1948 records that about 10 or 11 August a message from Viceroy''s House containing the words ''Eliminate salient'' reached him, after which those told of the forecast were apprised of a change. They show the Viceroy''s house carrying word of the line and of a change to it; no document here says who decided the change.'
   - claim: 'The British government did not propose the partition of the Punjab and Bengal: its Cabinet Mission rejected it in 1946, and the Congress asked for the division of the Punjab before the plan of 3 June 1947.'
     verdict: supported
     basis: presence
@@ -727,15 +730,6 @@ positions:
     - src-cwc-19470308.p23
     - src-aicc-19470615.p109
     reasoning: 'The Cabinet Mission''s statement of 16 May 1946 says that any solution involving a radical partition of the Punjab and Bengal would be contrary to the wishes and interests of a very large proportion of their inhabitants, and that the Mission could not advise handing power to two entirely separate sovereign states. On 8 March 1947 the Congress Working Committee resolved that the Punjab be divided so that the predominantly Muslim part might be separated from the predominantly non-Muslim part; on 15 June the A.I.C.C. accepted the 3 June proposals. Two producers, each on the part it wrote: the British government on its 1946 position, the Congress on its 1947 demand. What London decided between March and June is not in these documents.'
-  - claim: The award was not altered after the Viceroy's staff learned where the line would run.
-    verdict: qualified
-    basis: presence
-    rests_on:
-    - src-abell-19470808.p456
-    - src-jenkins-19480407.p706-707
-    - src-jenkins-19480407.p707
-    - src-mountbatten-19480319.p703
-    reasoning: Abell's letter of 8 August 1947 sent the Governor of the Punjab a map of the boundary Radcliffe proposed to demarcate and said there would not be any great changes from it. The Governor's account of April 1948 says the enclosures showed a salient in Ferozepur District enclosing the Ferozepur and Zira tehsils in Pakistan, and that about 10 or 11 August a message from Viceroy's House said 'Eliminate salient'; the award placed Ferozepur in East Punjab. Mountbatten's postscript records Liaquat Ali Khan making the same point about Ferozepur and Zira. So the line did change after the forecast, in Ferozepur, not Gurdaspur; no document here says who decided the change or why, and every one of them is British, so the claim is qualified on the account's own side's papers.
 - id: indian-nationalist
   name: The Indian nationalist account
   holders:
@@ -770,14 +764,14 @@ positions:
     - src-khosla-1949.p299
     - src-khosla-1949.p298
     reasoning: 'The count is the body''s own, from nearly fifteen thousand witnesses and 2,094 of 19,914 villages in West Punjab by its own footnote, and the Muslim figure is a belief, not a count. One producer, and the producer says its own method is approximate: qualified.'
-  - claim: The Congress accepted the 3 June plan because the Muslim League refused the Cabinet Mission's plan of 16 May 1946.
+  - claim: The Congress accepted the 3 June plan because the Muslim League refused the Cabinet Mission's plan of 16 May 1946 and would not join the Constituent Assembly, and because the Congress would not compel any territorial unit to remain in the Indian Union against its declared will.
     verdict: qualified
     basis: presence
     rests_on:
     - src-aicc-19470615.p109
     - src-hansard-19461212.p1348
     - src-hansard-19461212.p1353
-    reasoning: The A.I.C.C.'s resolution of 15 June 1947 gives the League's refusal of the plan of 16 May as its reason for accepting the 3 June proposals. The British government's account to the Commons in December 1946 confirms that the League withdrew its acceptance on 29 July 1946, and records that the Mission, the government and the League read the plan's grouping procedure one way and the Congress the other. The documents bear out the withdrawal; they also show a dispute over the plan to which the Congress was a party, and which the resolution does not mention. Qualified.
+    reasoning: 'The A.I.C.C.''s resolution of 15 June 1947 gives two reasons for accepting the 3 June proposals: the League''s refusal to accept the plan of 16 May and to participate in the Constituent Assembly, and the Congress''s own policy that it could not think of compelling the people of any territorial unit to remain in an Indian Union against their declared and established will. The British government''s account to the Commons in December 1946 confirms that the League withdrew its acceptance on 29 July 1946, and records that the Mission, the government and the League read the plan''s grouping procedure one way and the Congress the other. The documents bear out the withdrawal; they also show a dispute over the plan to which the Congress was a party, and which the resolution does not mention. Qualified.'
 - id: pakistani-nationalist
   name: The Pakistani nationalist account
   holders:
@@ -833,14 +827,24 @@ positions:
     - src-lahore-resolution-1940.p1
     - src-hansard-lords-19460516.p273
     reasoning: The Lahore resolution asks that areas in which the Muslims are numerically in a majority, as in the North-Western and Eastern zones, be grouped to constitute 'Independent States'. The Cabinet Mission's statement of 1946 describes the League's claim as a separate sovereign state of Pakistan in two areas, the provinces of the north-west and of the north-east. The League's own text and the British reading of it agree on the zones; they differ on the plural, which the resolution prints and the Mission's statement does not.
-  - claim: The Muslim League did not plan the Calcutta killings of August 1946, and Muslims were among their worst sufferers.
+  - claim: The League's leaders disowned the Calcutta violence of August 1946, and its leaders and press said the riot had been started by the supporters of the Congress.
     verdict: qualified
     basis: presence
     rests_on:
     - src-jinnah-papers-xiv.p642
     - src-khosla-1949.p66
     - src-hansard-19461212.p1348
-    reasoning: Jinnah's interview of 17 August 1946 condemns the violence, says any Leaguer who used it broke the League's instructions, and says he did not know who was responsible. The Indian fact-finding body wrote that, if the hospital returns were accepted as a basis for the ratio, the Muslims fared almost as badly as the Hindus. The words of the League's resolution of 29 July that Cripps read to the Commons resolve on direct action to achieve Pakistan and do not say what form it would take. The record supports the second half of the claim, conditionally, from a hostile source; on the first half it holds the League's denial and its resolution, and no investigation of either, so the verdict is qualified.
+    reasoning: Jinnah's interview of 17 August 1946 condemns the violence, says any Leaguer who used it broke the League's instructions, and says he did not know who was responsible. The Indian fact-finding body wrote that, if the hospital returns were accepted as a basis for the ratio, the Muslims fared almost as badly as the Hindus. The words of the League's resolution of 29 July that Cripps read to the Commons resolve on direct action to achieve Pakistan and do not say what form it would take. The record holds the disavowal in Jinnah's own words and the charge against the Congress only as the hostile fact-finding body reports it, and no document that investigates how the riot began, so the verdict is qualified.
+  - claim: The Punjab award was finalised by Radcliffe about a week before partition and then gerrymandered in favour of India, Mountbatten and Radcliffe acting in league with the Congress leadership.
+    verdict: qualified
+    basis: presence
+    rests_on:
+    - src-abell-19470808.p456
+    - src-jenkins-19480407.p706-707
+    - src-jenkins-19480407.p707
+    - src-mountbatten-19480319.p703
+    - src-radcliffe-punjab.item4
+    reasoning: 'British documents bear out part of the first half: Abell''s letter of 8 August 1947 sent a map of the boundary Radcliffe proposed to demarcate, the Governor of the Punjab recalled that it showed a salient enclosing the Ferozepur and Zira tehsils in Pakistan and that after a message from Viceroy''s House about 10 or 11 August those told of it were apprised of a change, and the award runs the line along the Lahore and Ferozepore district boundary, leaving Ferozepore east. Mountbatten records Liaquat Ali Khan making the same point. No document held says who decided the change or why, and none bears on intent, or on the collusion between Mountbatten, Radcliffe and the Congress leadership that the Pakistani state''s edition asserts, which this record can neither confirm nor test. Every document is British: under Rule A the verdict is capped at qualified in any case.'
   described_by:
   - src-mountbatten-19480319.p703
   - src-top-xii.item428
@@ -906,7 +910,7 @@ positions:
     basis: presence
     rests_on:
     - src-randhawa-1954.p93
-    reasoning: Randhawa, who ran the resettlement, records 67 lakh acres abandoned by Hindu and Sikh landholders in West Pakistan against 47 lakh acres available in East Punjab and Pepsu, a gap of 38 per cent, and 43 lakh irrigated acres left against 13 lakh. The figures are the resettling administration's own, and this record holds no Pakistani count of the land Muslim evacuees left or received, so under Rule A the verdict is capped at qualified.
+    reasoning: By the resettlement officer's own figures, Randhawa records 67 lakh acres abandoned by Hindu and Sikh landholders in West Pakistan against 47 lakh acres available in East Punjab and Pepsu, a gap of 20 lakh acres which he gives as 38 per cent of the area abandoned, measured in standard acres, and 43 lakh irrigated acres left against 13 lakh. The foreword says the views are the author's. The figures are the resettling administration's own, and this record holds no Pakistani count of the land Muslim evacuees left or received, so under Rule A the verdict is capped at qualified.
 - id: bengal-long-partition
   name: The Bengal and Bangladeshi account
   holders:
@@ -1015,7 +1019,7 @@ contested:
     source: src-hansard-19461212
     locator: p1350-1351
   - position: indian-nationalist
-    holds: 570 dead in the hospital returns and an estimate of more than five thousand killed; the League's leaders and press, it records, blamed the supporters of the Congress for starting the riot.
+    holds: 570 dead in the hospital figures and a reported estimate of more than five thousand killed; the League's leaders and press, it records, blamed the supporters of the Congress for starting the riot.
     figures:
     - '570'
     source: src-khosla-1949
@@ -1068,7 +1072,7 @@ exhibits:
   date: April 1948, of events of 8 to 11 August 1947
   repository: Internet Archive (Kirpal Singh, Select Documents on Partition of Punjab 1947, Document 238)
   accession: select-documents-on-partition-of-punjab-1947
-  licence: Public domain mark on the Internet Archive item
+  licence: An India Office paper as Kirpal Singh reprints it, treated as copyright and held as the passage cited
   url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
   source: src-jenkins-19480407
   locator: p707
@@ -1079,7 +1083,7 @@ exhibits:
   date: 29 August 1947
   repository: Internet Archive (Kirpal Singh, Select Documents on Partition of Punjab 1947, Document 161)
   accession: select-documents-on-partition-of-punjab-1947
-  licence: Public domain mark on the Internet Archive item
+  licence: A Broadlands paper as Kirpal Singh reprints it, treated as copyright and held as the passage cited
   url: https://archive.org/details/select-documents-on-partition-of-punjab-1947
   source: src-jdc-19470829
   locator: p504
@@ -1087,7 +1091,7 @@ analyses:
 - id: an-migration-counts
   title: One migration, six counts
   method: Every figure the fetched documents give for the number of people displaced by the partition, one row per figure, in millions as the document states it, with the border, the period and the direction each figure counts. The result is the number of rows. No range is taken across them, because they do not count the same thing.
-  finding: 'The record holds six counts of six different things: one border by December 1947 (8.5 million), one direction into India by 1951 (7.3 million), one direction into Pakistan by 1951 (7.15 million), both borders over four years (14.5 million), the whole transfer (nearly 17 million), and one province over twenty years (at least 6 million). The only two that count the whole transfer are the economists'' own, 14.5 to 17 million, both from Bharadwaj and Mirza, the first citing Bharadwaj, Khwaja and Mian.'
+  finding: 'The record holds six counts of six different things: one border by December 1947 (8.5 million), one direction into India by 1951 (7.3 million), one direction into Pakistan by 1951 (7.15 million), both borders over four years (14.5 million), the whole transfer (nearly 17 million), and one province over twenty years (at least 6 million). The only two that count the whole transfer are the economists'' own, 14.5 to 17 million, both from Bharadwaj and Mirza, the first citing Bharadwaj, Khwaja and Mian; the two census counts, one per country, can be added, but that sum is this thesis''s arithmetic (Two censuses, one migration), not a count.'
   confidence: high for the count of rows; the 14.5 to 17 span is one producer's, and the other four are not comparable with it or with each other
   against: the SGPC compilation's 'over twelve millions' and the Indian fact-finding body's warning that refugee estimates 'do not give a true picture' are both in the record and neither is a digit this table can hold; the Hansard figure is 'or thereabouts' and covers the Punjab only
   result: 6
@@ -1130,60 +1134,53 @@ analyses:
       millions: 6
       extract: src-chatterji-2007.p1-2
 - id: an-calcutta-counts
-  title: Calcutta's dead, eight figures
-  method: 'Every figure a fetched document gives for the dead of the Calcutta killings of August 1946, one row per figure, with the document and the kind of count it is: a newspaper''s running total as the Indian fact-finding body reports it, bodies collected, deaths in the hospital returns, or an estimate given to Parliament. A range the newspaper printed is entered as its lower and its upper bound, each on its own row. The result is the range of the column.'
-  finding: 'Eight figures for Calcutta''s dead run from 170 to 4,000, and they count four different things: a newspaper''s running total, which rose from over 170 killed on 18 August to 3,468 bodies accounted for on 28 August; 3,173 bodies collected and disposed of; 570 deaths in the hospital returns; and “some 4,000”, the figure the British government gave the Commons. The estimate the Indian fact-finding body reports, more than five thousand killed, is above every count it prints.'
-  confidence: 'moderate: the running totals are the Statesman''s as the fact-finding body reports them, not read from the newspaper, and every count but the Commons figure comes from one producer''s pages'
-  against: the fact-finding body says the body count does not represent the total number of deaths and that hospital figures undercount the Hindu dead, whose bodies it says were burnt or destroyed; the League's leaders and press, as the same body reports them, said the riot was started by the Congress's supporters, which bears on who died and not only how many
-  result:
-  - 170
-  - 4000
+  title: Calcutta's dead, seven figures of four kinds
+  method: 'Every figure a fetched document gives for the dead of the Calcutta killings of August 1946, one row per figure as the document prints it, with the document and the kind of count it is: a newspaper''s running total as the Indian fact-finding body reports it, bodies collected by three organisations, the hospital figures, or an estimate given to Parliament. No range is taken across the rows, because they do not count the same thing; the result is the number of rows.'
+  finding: 'The record holds seven figures for Calcutta''s dead and they are four kinds of count: a newspaper''s running total, from over 170 killed on 18 August to between 2,000 and 3,000 on 20 August and 3,468 bodies accounted for on 28 August; 3,173 bodies collected and disposed of by three organisations, which the fact-finding body says does not represent the total number of deaths; 570 dead in the hospital figures; and some 4,000 deaths, the figure the British government gave the Commons. None of them is a count of the same thing as another, and the estimate the fact-finding body reports, more than five thousand killed, is higher than any of them.'
+  confidence: 'moderate: the running totals are the Statesman''s as the fact-finding body reports them, not read from the newspaper, and every figure but the Commons one comes from that one body''s pages'
+  against: the League's leaders and press, as the same body reports them, said the riot was started by the Congress's supporters, which bears on who died and not only on how many; the Commons figure is given as 'some 4,000' with no stated basis
+  result: 7
   derivation:
-    compute: range
-    column: dead
+    compute: count
     columns:
     - document
     - kind
-    - dead
+    - figure
     rows:
     - document: The Statesman, 18 August 1946, as reported
       kind: running total, killed
-      dead: 170
+      figure: over 170
       extract: src-khosla-1949.p78
     - document: The Statesman, 19 August 1946, as reported
       kind: running total, killed
-      dead: 270
+      figure: '270'
       extract: src-khosla-1949.p78
-    - document: The Statesman, 20 August 1946, lower bound
+    - document: The Statesman, 20 August 1946, as reported
       kind: running total, death roll
-      dead: 2000
-      extract: src-khosla-1949.p78
-    - document: The Statesman, 20 August 1946, upper bound
-      kind: running total, death roll
-      dead: 3000
+      figure: between 2,000 and 3,000
       extract: src-khosla-1949.p78
     - document: The Statesman, 28 August 1946, as reported
-      kind: bodies accounted for
-      dead: 3468
+      kind: running total, bodies accounted for
+      figure: 3,468
       extract: src-khosla-1949.p78
-    - document: Stern Reckoning, table of bodies collected and disposed of
+    - document: Stern Reckoning, bodies collected and disposed of by three organisations
       kind: bodies collected
-      dead: 3173
+      figure: 3,173
       extract: src-khosla-1949.p65
-    - document: Stern Reckoning, the Surgeon-General's hospital returns
-      kind: hospital deaths
-      dead: 570
+    - document: Stern Reckoning, the hospital figures
+      kind: hospital figures
+      figure: '570'
       extract: src-khosla-1949.p66
     - document: Cripps, Commons, 12 December 1946
       kind: government estimate
-      dead: 4000
+      figure: some 4,000
       extract: src-hansard-19461212.p1350-1351
 - id: an-two-censuses
   title: Two censuses, one migration
   method: The census each country took in 1951 counted the people who had crossed into it. Each figure is taken as the scholarship that cites it states it, in millions, one row per census; the result is their sum.
-  finding: 'The two censuses of 1951, as the scholarship cites them, together count 14.45 million people who had crossed: 7.3 million into India and 7.15 million into Pakistan. The sum sits within a rounding of the 14.5 million the economists give as displaced within four years.'
-  confidence: 'moderate: neither census volume is held here, both figures are read through the scholarship that cites them, and the two censuses need not have defined a migrant alike'
-  against: Bharadwaj and Mirza's 14.5 million cites Bharadwaj, Khwaja and Mian, which may rest on these same two censuses, so the agreement may be one count seen twice; Chatterji's migration from East Bengal ran to 1967, after both censuses; the Commons' 8,500,000 by December 1947 counts the Punjab alone
+  finding: The two censuses of 1951, as the scholarship cites them, count 7.3 million people who had crossed into India and 7.15 million into Pakistan; added, 14.45 million. That sum is this thesis's arithmetic, not a count, and the economists' 14.5 million displaced within four years may rest on the same two censuses, so the closeness of the two is not a corroboration.
+  confidence: 'low: neither census volume is held here, both figures are read through the scholarship that cites them, the two censuses need not have defined a migrant alike, and the Pakistani figure is not consistent with its own parts in the passage that gives it'
+  against: Abbas, Gillani and Ahmad give 4.8 million in the Punjab as 68.22 per cent of the refugees, which implies about 7.04 million in all, not 7.15; Bharadwaj and Mirza's 14.5 million cites Bharadwaj, Khwaja and Mian, which may rest on these same two censuses, so the agreement may be one count seen twice; Chatterji's migration from East Bengal ran to 1967, after both censuses; the Commons' 8,500,000 by December 1947 counts the Punjab alone
   result: 14.45
   derivation:
     compute: sum
@@ -1239,3 +1236,16 @@ gaps:
   tried:
   - https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
   status: Kirpal Singh's collection prints the letter and says the enclosures were published in The Partition of the Punjab 1947, vol. I (Lahore, 1983), pp. 245-247, which no open archive reached from this container holds; the forecast line is known here as the Governor of the Punjab described it in April 1948
+- what: The text of the resolution of the Council of the All-India Muslim League of 9 June 1947 on the 3 June plan
+  tried:
+  - https://archive.org/download/constitutionalre06nich/constitutionalre06nich_djvu.txt
+  - https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+  status: the Transfer of Power volume prints it only as Sardar Patel describes it in his letter of 10 June (No. 130, held) and in an Intelligence Bureau report of the meeting, which the cap on that volume leaves unpinned; the League's acceptance is known here only through its opponent's reading of it (Rule B)
+- what: The accession of Hyderabad and of Junagadh, 1947 and 1948
+  tried:
+  - https://archive.org/advancedsearch.php?q=title%3A%28jinnah+papers%29
+  status: the Government of Pakistan's volume on the States (Jinnah Papers IX) is on the Internet Archive but was not read or sliced in this pass, and no other held source bears on the two states; the page says nothing of them
+- what: The war of 1971 and the separation of East Pakistan as Bangladesh
+  tried:
+  - https://strategicstudies.org.pk/index.php/strategic_studies/article/download/138/103
+  status: the only held passage is Schofield's single clause on Pakistan's loss of its eastern wing before the Simla agreement; no primary document of 1971 is held, so the page gives no more than that clause

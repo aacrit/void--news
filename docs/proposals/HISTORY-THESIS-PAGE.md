@@ -1406,7 +1406,9 @@ Noakhali and Bihar; Kirpal Singh's documentary collection (public domain
 mark, Internet Archive) prints the Lahore Resolution, the Congress
 Working Committee's Punjab resolution, the A.I.C.C.'s acceptance of the 3
 June plan, the Joint Defence Council's minutes that ended the Boundary
-Force and the joint evacuation plan; the Constitution of India's
+Force and the joint evacuation plan (an India Office or Broadlands paper
+that the collection reprints is treated as copyright and held only under the
+cap, whatever the Internet Archive item's mark); the Constitution of India's
 citizenship articles, the Indus Waters Treaty (UN Treaty Series) and
 Security Council resolution 91 (1951) are official texts; the East Punjab
 rehabilitation administration's own account of resettlement is on the
