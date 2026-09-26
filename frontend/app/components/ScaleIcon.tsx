@@ -123,9 +123,19 @@ const STYLES = `
 
 /* === Animation classes: beam pivots around the ring center (50,50) === */
 
+/* idle is ONE settle on mount, then the mark rests level (the header's own
+   contract: "At rest the mark is LEVEL and static"). It used to repeat
+   forever. At the sizes it renders (16px skybox, 16px pill, 22px footer) the
+   1.2deg tip moves the beam end by under 0.2px, so the loop was invisible,
+   but it was a composited animation inside .page-main, whose colour grade is
+   a filter: every tick re-rendered the whole graded page. Measured headless
+   at 1440x900, the resting front page burned 1,000ms of CPU per second with
+   the loop and 23ms without it. No fill mode, so once it ends the element
+   leaves the compositor. Loading, analyzing and broadcast still loop: they
+   are states, and they end. */
 .si-beam--idle {
   transform-origin: 50px 40px;
-  animation: si-idle 5.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  animation: si-idle 5.5s cubic-bezier(0.22, 1, 0.36, 1) 1;
 }
 
 .si-beam--loading {

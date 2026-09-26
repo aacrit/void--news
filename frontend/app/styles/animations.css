@@ -463,7 +463,8 @@
 
 /* Film grain drift removed 2026-08-11 — the sub-0.5px "living grain" was
    below conscious perception but each step re-blended the whole viewport
-   (the grain layer is mix-blend-mode overlay). Grain is now static. */
+   (the grain layer was mix-blend-mode overlay until 2026-09-26; it blends
+   normally now, see components.css). Grain is now static. */
 
 /* ── Anamorphic Flare ── */
 @keyframes cin-flare-in {

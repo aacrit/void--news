@@ -233,7 +233,9 @@
    shift, so it reads as a calm settle rather than a pop-in beat. The Bench
    mounts already-drawn via the `settled` prop; this fade is the sole motion. */
 .inline-dd__spectrum > .bench {
-  animation: fadeIn 200ms var(--ease-cinematic) both;
+  /* `backwards`: the fade ends at the Bench's own opacity, and a forwards
+     fill would hold it as a composited layer while the Deep Dive is open. */
+  animation: fadeIn 200ms var(--ease-cinematic) backwards;
 }
 
 /* Calm placeholder occupying the reserved band while the source fetch runs. */

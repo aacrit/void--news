@@ -3195,18 +3195,19 @@ button:focus-visible .sigil-word__beam {
    - Fine: baseFrequency 0.75 (tighter than 0.65, closer to 500T native)
    - Rich: numOctaves 4 (one more octave for finer micro-detail)
    - Warm: colorMatrix biases highlights warm, leaves shadows neutral
-   - Living: cin-grain-drift at 8s period, steps(4) for 0.25fps gate
+   - Static: the drift was retired 2026-08-11 (see the animation note below)
 
-   Light mode: mix-blend-mode overlay (grain bites into mid-tones and
-   highlights — the natural behavior of film grain on a bright exposure).
-   Dark mode: mix-blend-mode soft-light (gentler compositing on dark
-   surfaces — overlay is too harsh when the base luminance is low, creating
-   visible banding. Soft-light preserves shadow detail while still adding
-   the organic texture feel of underexposed negative stock).
+   Normal blending in both modes (2026-09-26). It was overlay in light and
+   soft-light in dark. A blend mode on a fixed, full-viewport layer makes the
+   compositor re-read and re-blend everything beneath it on every frame the
+   page moves, and here that is the graded .page-main. Measured headless at
+   1440x900 (4x CPU): wheel-scrolling the feed dropped a median 44 frames
+   with the blend and 16 without. The pixels do not change in any way a
+   reader can see: at --cin-grain-opacity over a tile drawn at 0.15, the
+   layer moves a channel by 0.09 of one level on average (max 3 of 255) in
+   either mode, and the blended and normal renders differ by exactly that.
 
-   will-change is NOT set at rest (saves VRAM on long feeds) — it is
-   only promoted during animation via the keyframe transform property.
-   The browser will auto-promote during cin-grain-drift animation. */
+   No will-change: as a fixed layer it is composited already. */
 .page-container::after {
   content: "";
   position: fixed;
@@ -3214,18 +3215,12 @@ button:focus-visible .sigil-word__beam {
   z-index: var(--z-cinematic);
   pointer-events: none;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.36 0.34 0.28 0 0.010 0.34 0.34 0.28 0 0.006 0.28 0.28 0.32 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.15'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
   /* Cold-open: grain fades in at 700ms.
      cinGrainEntrance sets final opacity to --cin-grain-opacity via `both`.
      The perpetual cin-grain-drift was removed 2026-08-11: steps(4) over 8s
      of sub-0.5px movement is imperceptible, but each step forced the
      compositor to re-blend the full viewport. Static grain, same look. */
   animation: cinGrainEntrance 500ms var(--ease-cinematic) 700ms both;
-}
-
-/* Dark mode: soft-light blend for gentler grain on dark surfaces */
-:root[data-mode="dark"] .page-container::after {
-  mix-blend-mode: soft-light;
 }
 
 /* ── Page Warmth During Audio Playback — RETIRED 2026-08-11 ──

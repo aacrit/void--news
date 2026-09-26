@@ -168,7 +168,7 @@ Consumed tokens, all of which adapt between modes:
 |---|---|---|
 | Amber | `--cin-amber` (`#946B15`) and its bright, dim, ghost, glow variants | Warm accent, rim light, hover |
 | Ash and paper | `--cin-ash*`, `--cin-paper-highlight`, `--cin-paper-shadow` | Neutral tones, paper texture shifts |
-| Grain | `--cin-grain-opacity` (0.035 light, lower in dark) | SVG `feTurbulence` overlay on `.page-container::after`; overlay blend in light, soft-light in dark |
+| Grain | `--cin-grain-opacity` (0.035 light, lower in dark) | SVG `feTurbulence` overlay on `.page-container::after`, normal blending in both modes (a blend mode on a fixed full-viewport layer re-blends the page every frame it moves); hidden below 768px |
 | Vignette | `--cin-vignette-color` | Edge darkening on `.page-container::before`, one stop above the grain |
 | Grade | `--cin-grade`, `--cin-grade-editorial` | Page-level filter chain (contrast, saturate, sepia) |
 | Image grade | `--img-grade-feed \| deepdive \| weekly \| epaper \| history` | Per-surface variants applied to `img` |
