@@ -48,6 +48,18 @@ if "--floors" in sys.argv:
     health = json.loads(ENGINE_JSON.read_text(encoding="utf-8"))
     print(eh.format_summary(health))
     probs = eh.problems(health)
+    # A floor that reads a stale file cannot fail. On the first run after rev 82
+    # the export never rewrote engine.json (the workflow's VOID_EXPORT_ONLY list
+    # omitted `engine`) and this check passed on the previous day's numbers.
+    import os
+    db = os.environ.get("VOID_SQLITE_PATH")
+    if db and pathlib.Path(db).exists():
+        newest = sqlite3.connect(db).execute(
+            "select max(fetched_at) from articles").fetchone()[0]
+        probs += eh.stale(health, newest)
+    else:
+        probs.append("VOID_SQLITE_PATH not set: cannot tell whether engine.json "
+                     "describes this run")
     for p in probs:
         print(f"  FAIL  {p}")
     sys.exit(1 if probs else 0)
@@ -174,6 +186,19 @@ retired = {
 for path, phrase in retired.items():
     check(f"retired claim is gone: '{phrase}'",
           phrase not in (ROOT / path).read_text(encoding="utf-8"))
+
+# --- 4b. The export the pipeline runs actually writes engine.json -------------
+check("a stale engine.json is refused by the floor",
+      eh.stale({"run": {"newest_fetch": "2026-09-25 16:12:17"}}, "2026-09-26 15:17:45") != [])
+check("a current engine.json is accepted",
+      eh.stale({"run": {"newest_fetch": "2026-09-26 15:17:45"}}, "2026-09-26 15:17:45") == [])
+_wf = (ROOT / ".github" / "workflows" / "pipeline.yml").read_text(encoding="utf-8")
+_only = re.findall(r"VOID_EXPORT_ONLY:\s*([\w,]+)", _wf)
+check("every VOID_EXPORT_ONLY list in pipeline.yml includes engine",
+      _only and all("engine" in x.split(",") for x in _only), str(_only))
+check("the floor step has the state DB, so it can detect a stale file",
+      re.search(r"Engine health floor.*?VOID_SQLITE_PATH: pipeline_state\.db.*?--floors",
+                _wf, re.S) is not None)
 
 # --- 5. The pipeline runs the floor after it commits, not before ---------------
 wf = (ROOT / ".github" / "workflows" / "pipeline.yml").read_text(encoding="utf-8")

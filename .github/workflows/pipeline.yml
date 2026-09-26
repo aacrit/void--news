@@ -203,7 +203,10 @@ jobs:
           # It also silently undid every in-place repair tool: the deploy tree
           # is the weekly's archive of record, and repair_weekly_snapshot and
           # backfill_weekly_images both write there and nowhere else.
-          VOID_EXPORT_ONLY: feed,brief,archive,methodology,history
+          # `engine` (build-data/engine.json) was missing from this list on the
+          # first run after rev 82, so the file was never rewritten and the floor
+          # check below re-read the previous day's numbers and passed.
+          VOID_EXPORT_ONLY: feed,brief,archive,methodology,history,engine
         run: python pipeline/export_static.py
 
       # The data commit goes STRAIGHT TO MAIN and skipped every gate until
@@ -344,4 +347,8 @@ jobs:
       # 2026-09-19..23 ran at a 45-48% direct full-body share (RSS-summary
       # fallback) against 69-71% healthy, and nothing noticed.
       - name: Engine health floor (direct-feed bodies)
+        env:
+          # The floor also refuses an engine.json that does not describe THIS
+          # run's newest article, which it can only know from the state DB.
+          VOID_SQLITE_PATH: pipeline_state.db
         run: python tests/test_engine_health.py --floors
