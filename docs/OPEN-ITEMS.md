@@ -699,6 +699,18 @@ claiming to remove one.
 
 ## Watch on the next run
 
+**On Air: a failed rundown ships audio the production gate always rejects
+(2026-09-26, run #380).** Both radio attempts failed their gates (attempt 1:
+no CLOSE, banned "significant", briefs 24 words; attempt 2: R-14, a brief kept
+26% of what Wadephul was reported to have said). The pipeline then used the
+legacy script (`no usable rundown ... legacy audio script will be used`), and
+`verify_production` failed A-02..A-05 on it: no chapters file, no sign-on.
+edge-tts also dropped 2 of 23 turns. main went red on Verify Production
+Output. Left for the next scheduled run by CEO decision; it should clear if
+that run's rundown passes. The structural question for the audio owner: the
+fallback path produces an artifact the gate is built to reject, so any
+failed rundown turns main red.
+
 **Phrase counts, step 9e (rev 82): the steady state is NOT measured past sixteen
 days.** The replay ran out of corpus at 2.7M rows (123 MB, part of it filters
 since shrunk), still growing close to linearly, with the 7-day prune firing and
