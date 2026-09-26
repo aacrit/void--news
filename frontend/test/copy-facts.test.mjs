@@ -227,6 +227,22 @@ for (const p of scanFiles(join(ROOT, "app"))) {
 ok("no dash or kill-list word in frontend source copy", dirty.length === 0,
    "\n      " + dirty.slice(0, 12).join("\n      "));
 
+// N. A number glued to the next word in the served HTML. JSX text that opens
+//    with a space right after an expression AND carries an HTML entity later in
+//    the same run loses that leading space in the compiled output: /about served
+//    "Every score on all 6axes" and /sources "under 150words" (2026-09-26, found
+//    by reading the built HTML: `6<!-- -->axes`). Write the space as {" "}.
+const glued = files.flatMap((p) => {
+  const t = read(p);
+  const out = [];
+  const re = /\}( [A-Za-z0-9][^{}<>]*?&[a-z]+;)/g;
+  let m;
+  while ((m = re.exec(t))) out.push(`${p.replace(ROOT, "")}:${t.slice(0, m.index).split("\n").length}`);
+  return out;
+});
+ok("no JSX text run opens with a bare space after an expression and holds an entity",
+   glued.length === 0, glued.join(", "));
+
 if (fail.length) {
   console.error("\n" + fail.map((f) => `FAIL  ${f}`).join("\n"));
   console.error(`\n${fail.length} copy-fact failure(s)`);

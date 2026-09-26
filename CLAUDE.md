@@ -4,7 +4,7 @@ News aggregation with 6-axis rule-based NLP bias analysis. 1,061 sources,
 158 countries. **Live: https://news.voidvision.org** (Cloudflare Pages).
 
 **This file is the current state and the rules in force.** The record of how it
-got here is `docs/CHANGELOG.md` (28 rev entries, verbatim) — grep it when you
+got here is `docs/CHANGELOG.md` (29 rev entries, verbatim) — grep it when you
 need the reasoning behind a decision or the root cause of a past defect. What
 is unfinished is `docs/OPEN-ITEMS.md`. Keep this file short: it is re-read at
 the start of every session, so anything that does not change what you do today
@@ -34,6 +34,8 @@ PostgREST-compatible SQLite shim (`pipeline/utils/pgrest_sqlite.py`) when `VOID_
 is set, so ~40 call sites keep their imports unchanged. Without that env var it
 raises `EnvironmentError` — which is why importing a pipeline module in CI can
 fail for reasons that have nothing to do with your change.
+
+**Phrase counts** (the lexicon corpus) live in `phrase_counts.db`, a separate file with its own cache key (`void-phrases-v1-`) and artifact (`void-phrase-snapshot`), so the corpus can never bloat or endanger the state. Losing it costs accumulated counts, not the product.
 
 **State** lives in `pipeline_state.db` (gitignored), restored from the Actions
 cache (`void-state-v1-`), falling back to the gzipped `void-state-snapshot`
@@ -97,6 +99,9 @@ impossible, not a note asking people to be careful:
 | `tests/test_history_export_parity.py` | a correction that never reached the served JSON |
 | `tests/test_history_thesis.py` (T-01..T-20) + `pipeline/history/thesis_checks.py` | a History **thesis** sentence with no note, a note whose locator holds no stored extract, a number or a quotation not in the cited extract, a spelled-out number or a dash in the prose, a position never tested against a Tier A extract, a verdict of `contradicted` or `supported` on ONE producer's documents (capped at qualified), a verdict resting on absence read as contradiction, a gap left unsaid, an analysis whose result does not recompute from its rows, a Void translation presented as a quotation, a rendering that loses a number or a name, a thesis `published` below the bar of proposal §4e or without its audit stamp, and the served JSON drifting from the thesis. Every check has a planted-defect fixture. The ledger is canonical (`data/history/evidence/<slug>/`), the thesis cites it (`data/history/theses/<slug>.md`), and `export_thesis.py` refuses to write a thesis that fails any check |
 | `tests/test_truncation_lint.py` | a query cap published as an exact count |
+| `tests/test_engine_health.py` + `pipeline/validation/engine_health.py` | the engine's input collapsing unseen, and copy that quotes the engine from memory. Every run writes `build-data/engine.json` (body length by feed class, the share scored on the outlet alone, how far words moved rated outlets). `--floors` runs in `pipeline.yml` AFTER the data commit and fails the run when the direct-feed full-body share drops under 55% (healthy 69-71%; 45-48% on 2026-09-19..23, when ~2,500 direct articles a day fell back to their RSS summary and nothing noticed). Asserts `app/lib/leanBounds.ts` equals `political_lean.py` and `main.py`, and that `/sources` prints measured numbers only from the export |
+| `tests/test_phrase_counts_daily.py` | the daily lexicon corpus outgrowing its file, or storing prose. Step 9e writes to `VOID_PHRASE_DB` (its own cache and artifact, never the state DB): full bodies only, 3 per rated outlet per day by URL hash, a phrase counted from its third sighting (Bloom gate), pruned unless it spreads, compact integer storage, and a ceiling that halts rather than prunes to fit |
+| `tests/test_pair_test.py` | the pair test's AUC gate (0.75 proceed, 0.65 stop) being wrong arithmetic, or its corpus holding article text |
 | `tests/test_weekly_audio_served.py` | an MP3 that is not what its own row says it is |
 | `tests/test_weekly_killlist.py` | a kill-list term in a committed Weekly issue, caught before deploy rather than by W-10 on the served page (Issues #26 and #23 carried 41 between them, 2026-09-24) |
 | `tests/test_history_quote_ledger.py` | a History quotation that diverges from a ledger extract we hold (Srebrenica carried two, 2026-09-24) |
@@ -115,7 +120,7 @@ impossible, not a note asking people to be careful:
 | `tests/test_bias_defaults_gate.py` + `pipeline/validation/bias_defaults.py` | a bias row that was never measured being drawn as a measurement. The export **degrades, it does not block** (CEO 2026-09-21): a default-tuple row is stamped `lean_unscored`, so it leaves the cluster aggregate, its pin leaves the Deep Dive spectrum and its label reads Unscored. CI asserts the invariant that protects the reader, not a share: against the **committed** export, **no default-tuple row may be unmarked**. A marked row misleads nobody; an unmarked one is read as a measured 50 everywhere. The share and a per-axis breakdown are printed every run, and only a run that measured almost nothing (>60%) fails on the share. A share cap was tried at 10% and removed: run #375 came in at 19.1%, but all 186 of those rows were published the previous day and none of that day's 534 articles was a default, so they were the prior day's damage carried in by 6b's own 36h lookback and clearing itself |
 | `tests/test_podcast_feed.py` | a podcast cover that is missing or carries retired text, a channel title outside "Void News: <programme>", an item title that disagrees with the page |
 | `tests/test_paper.py` | Paper drifting from the front page, a dash or a retired claim in its source |
-| `frontend/test/copy-facts.test.mjs` | a stale story count in page copy, and any dash or kill-list word in a frontend string literal or JSX text, **including one spelled as an escape** (`\u2013`, `&mdash;`, `&#8212;`): three rendered dashes shipped past the literal-character check |
+| `frontend/test/copy-facts.test.mjs` | a stale story count in page copy, and any dash or kill-list word in a frontend string literal or JSX text, **including one spelled as an escape** (`\u2013`, `&mdash;`, `&#8212;`): three rendered dashes shipped past the literal-character check. Also a number glued to the next word: JSX text opening with a space after `{expr}` and holding an entity loses the space when compiled (`/about` served "all 6axes"); write `{" "}` |
 | `frontend/test/episode.test.mjs` | the pure core of the audio system: an episode wearing another programme's edition, a play button that loads and does not play, a page that seizes a playing element |
 | `frontend/test/labels.test.mjs` | the one lean ladder, and the shape rule calling a story with one empty wing "Balanced"; asserts the word "Flat" is gone |
 | `tests/test_bias_bins.py` | the pipeline's lean bins and the frontend's disagreeing on any score 0..100, a baseline outside its own rung, an asymmetric ladder |
@@ -190,6 +195,12 @@ lexicon:
 | rated `right` | 80 | 70 | 90 |
 | `unrated`/`varies` | 50 | 26 | 74 |
 | state-affiliated | its own | ±8 | ±8 |
+
+**Measured per run, not claimed** (`build-data/engine.json`, printed on
+`/sources`). Run #379 (2026-09-25): 58.5% of articles were under 150 words and
+never reached the text analyzer; across 3,635 full articles from rated outlets
+the words moved the score a mean of 1.54 points and left 61.1% exactly on the
+baseline.
 
 A rated outlet's article can move **10 points, never more**, however long it is
 and whatever it says. Length only decides how much of that 10 it earns. So on a

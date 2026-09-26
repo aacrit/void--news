@@ -4177,6 +4177,49 @@ def main():
     else:
         print("\n[9d] Skipping source track record (module not available)")
 
+    # Step 9e: per-outlet phrase COUNTS from full bodies, the last moment the body
+    # exists. Counts only, no article id (see analyzers/phrase_counts.py for the IP
+    # argument and the retention rules). Written to its own file, never the state
+    # DB, so it can neither bloat nor endanger the durability snapshot. Unset
+    # VOID_PHRASE_DB (local and test runs) and the step is skipped.
+    _phrase_db = os.environ.get("VOID_PHRASE_DB")
+    if _phrase_db and not recluster_only:
+        print("\n[9e] Recording per-outlet phrase counts (lexicon corpus)...")
+        try:
+            import sqlite3 as _sqlite3
+            from analyzers import phrase_counts as _pc
+            # Rated outlets only: the derivation's roster needs a baseline.
+            _slug_to_db = {slug: s.get("db_id") for slug, s in source_map.items()
+                           if s.get("db_id") and str(s.get("political_lean_baseline")
+                                                     or "unrated").lower()
+                           not in ("unrated", "varies")}
+            _db_ids = set(_slug_to_db.values())
+            _pc_rows = []
+            for art in stored_articles:
+                sid = _slug_to_db.get(art.get("source_slug", ""))
+                if not sid and art.get("source_id") in _db_ids:
+                    sid = art.get("source_id")
+                if sid:
+                    _pc_rows.append({"source_id": sid, "url": art.get("url") or "",
+                                     "full_text": art.get("full_text") or ""})
+            _pc_conn = _sqlite3.connect(_phrase_db)
+            try:
+                rep = _pc.record_daily(
+                    _pc_conn, _pc_rows,
+                    datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))
+            finally:
+                _pc_conn.close()
+            if not rep["halted"]:
+                print(f"  {rep['articles']} full bodies from {rep['outlets']} outlets "
+                      f"({rep['skipped_short']} under "
+                      f"{_pc.DAILY_MIN_BODY_WORDS} words skipped, {rep['capped']} over the "
+                      f"{_pc.DAILY_PER_OUTLET_CAP}-per-outlet cap); "
+                      f"{rep['written']:,} rows merged, {rep['pruned']:,} pruned; "
+                      f"table {rep['rows_before']:,} -> {rep['rows_after']:,} rows, "
+                      f"{os.path.getsize(_phrase_db) / 1e6:.0f} MB")
+        except Exception as e:
+            print(f"  [warn] Phrase counts failed (non-fatal): {e}")
+
     # Step 10: Truncate full_text for IP compliance
     # Full article text is used only for NLP analysis (transformative use).
     # After analysis, truncate to a short excerpt to avoid storing copyrighted

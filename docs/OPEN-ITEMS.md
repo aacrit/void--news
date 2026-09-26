@@ -157,6 +157,16 @@ that event's audio pilot, and run `tests/test_history_quote_ledger.py` after.
 **The largest measured defect in the product.** Full write-up in
 `docs/proposals/OUTLET-BASELINE-PROGRAMME-2026-09-22.md` section 0.
 
+**Update 2026-09-26 (rev 82).** Now measured every run in
+`frontend/build-data/engine.json` and printed on `/sources`, dated. Run #379:
+251 Google News sources delivered 4,809 of 11,613 articles at a median of 11
+words; 58.5% of the run was under 150 words and never reached the text
+analyzer. The check this entry asked for exists (`tests/test_engine_health.py
+--floors`, after the data commit), keyed on the DIRECT share because that is
+the class that can regress. The roster still carries 340 Google News rows.
+Re-running `discover_feeds.py` over all 340 from the sandbox: see the Google
+News entry under "Watch on the next run" for the result and what was applied.
+
 540 of the 1,016 sources on the roster as measured on 2026-09-22 (53%) are fed
 by Google News search queries. Across 78,328
 archived articles:
@@ -373,6 +383,12 @@ Cheap fix: key on `type == "wire"` from the roster.
 
 
 ### The lexicon cannot be derived from the surviving corpus (2026-09-22)
+
+**Update 2026-09-26 (rev 82): `phrase_counts` now runs daily** as step 9e, to its
+own file, capped at 3 bodies per rated outlet per day. The corpus a derivation
+can use starts accumulating from the first run after merge; the median outlet
+reaches n=25 in about nine days. Run the derivation with
+`lexicon_derive.py --counts phrase_counts.db --roster pipeline_state.db`.
 
 Tried and measured, full write-up in `docs/audits/LEAN-SIGNAL-2026-09-22.md`.
 
@@ -673,6 +689,34 @@ claiming to remove one.
 ---
 
 ## Watch on the next run
+
+**Phrase counts, step 9e (rev 82): the steady state is NOT measured past sixteen
+days.** The replay ran out of corpus at 2.7M rows (123 MB, part of it filters
+since shrunk), still growing close to linearly, with the 7-day prune firing and
+the 28-day one not yet reached. Read the `[9e]` line each day: rows before and
+after, pruned, capped, file size. `DAILY_MAX_ROWS` (8M) halts recording loudly
+and never prunes to fit. If rows are still climbing ~200k a day after day 30,
+the late rule needs tightening before the ceiling is reached, and the cache
+cost (`void-phrases-v1-`, one entry per run) wants checking against the
+repository's 10 GB cache budget, where it sits beside the state cache.
+
+**Direct-feed scrape success doubled on 2026-09-24 with no code change.** The
+direct full-body share was 45.0-47.8% on 09-19..23 and 69.4-70.8% on 09-24/25
+(state snapshot of run #379). On the bad days ~2,500 direct articles a day carry
+a `word_count` equal to the word count of their stored text, the RSS-summary
+fallback. No commit in `pipeline/` lands between; run #377's scrape finished
+11,451 URLs in twelve minutes, so the 40-minute budget did not bind. Cause
+unknown. The engine-health floor (55%) would have failed all five bad days; it
+now fails the run on the next one, and the log above that is where to start.
+
+**Pair test (rev 82): score it after about a week of collection.** `pair-test.yml`
+collects twice a day. Then `python3 scripts/roster/pair_test.py score --out
+pair-test-result.json` (needs spaCy and network). Before trusting the default
+bar of 18, eyeball the stored headlines: the first collection matched 3 of 4 at
+that bar. India Today's feed returned 403 from the sandbox; check the Actions
+log for whether it does from GitHub's runners. The verdict is against the
+roster's own labels (CEO chose no human raters), so a high AUC means "agrees
+with our labels", while a low one is a real negative.
 
 **Bias defaults after the step 6b fix: MEASURED 2026-09-21, and the fix works.**
 Run #375 (built 2026-09-21T18:18, the first scheduled run carrying the fix)

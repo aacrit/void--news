@@ -120,10 +120,39 @@ jobs:
             rm -rf _bootstrap void_local.db
           fi
 
+      # ── Phrase counts (lexicon corpus) — its OWN file, cache and artifact ──
+      # Per-outlet phrase counts from full bodies (pipeline step 9e). Kept out of
+      # pipeline_state.db so it can never bloat or endanger the state snapshot.
+      # Losing it costs accumulated counts, not the product: a cold start with
+      # no artifact simply begins empty.
+      - name: Restore phrase counts DB
+        uses: actions/cache/restore@v4
+        with:
+          path: phrase_counts.db
+          key: void-phrases-v1-${{ github.run_id }}
+          restore-keys: |
+            void-phrases-v1-
+      - name: Bootstrap phrase counts DB (cold cache)
+        if: hashFiles('phrase_counts.db') == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for rid in $(gh run list --workflow=pipeline.yml --status success -L 12 \
+                         --json databaseId --jq '.[].databaseId'); do
+            if gh run download "$rid" -n void-phrase-snapshot --dir _psnap 2>/dev/null \
+               && [ -f _psnap/phrase_counts.db.gz ]; then
+              gunzip -c _psnap/phrase_counts.db.gz > phrase_counts.db
+              echo "Restored phrase counts from pipeline run $rid"; break
+            fi
+          done
+          rm -rf _psnap
+          [ -f phrase_counts.db ] || echo "No phrase snapshot yet; starting empty."
+
       - name: Run pipeline
         env:
           PYTHONUNBUFFERED: "1"
           VOID_SQLITE_PATH: pipeline_state.db
+          VOID_PHRASE_DB: phrase_counts.db
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DISABLE_GEMINI_REASONING: "1"
           DISABLE_EDITORIAL_TRIAGE: "1"
@@ -289,3 +318,30 @@ jobs:
           path: pipeline_state.db.gz
           retention-days: 90
           if-no-files-found: warn
+
+      - name: Save phrase counts DB to cache
+        if: always() && hashFiles('phrase_counts.db') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: phrase_counts.db
+          key: void-phrases-v1-${{ github.run_id }}
+      - name: Snapshot phrase counts DB
+        if: always() && hashFiles('phrase_counts.db') != ''
+        run: |
+          gzip -c phrase_counts.db > phrase_counts.db.gz
+          ls -lh phrase_counts.db phrase_counts.db.gz
+      - name: Upload phrase counts snapshot
+        if: always() && hashFiles('phrase_counts.db.gz') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: void-phrase-snapshot
+          path: phrase_counts.db.gz
+          retention-days: 90
+          if-no-files-found: warn
+
+      # LAST, and after the data commit on purpose: a scraping collapse must not
+      # cost readers the paper, so the data ships and the run goes red instead.
+      # 2026-09-19..23 ran at a 45-48% direct full-body share (RSS-summary
+      # fallback) against 69-71% healthy, and nothing noticed.
+      - name: Engine health floor (direct-feed bodies)
+        run: python tests/test_engine_health.py --floors

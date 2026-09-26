@@ -19,6 +19,8 @@ import LogoIcon from "../components/LogoIcon";
 // drift apart (F9). Live DB row count can include inactive/duplicate rows.
 import { SOURCE_TIERS } from "../film/data";
 import ErrorBoundary from "../components/ErrorBoundary";
+import { RATED_DELTA_MAX, UNRATED_DELTA_MAX, FULL_TEXT_WORDS } from "../lib/leanBounds";
+import { type EngineStats, engineComplete, engineRunDate, googleNewsHeadlineOnly, pct } from "../lib/engineStats";
 import { useInView } from "../lib/sharedObserver";
 
 /* ---------------------------------------------------------------------------
@@ -457,7 +459,7 @@ function RationaleTree({ axisId, rationale }: { axisId: string; rationale: Recor
    Methodology — "The Scoring Stage"
    --------------------------------------------------------------------------- */
 
-function Methodology({ sources }: { sources: SpectrumSource[] }) {
+function Methodology({ sources, engine }: { sources: SpectrumSource[]; engine: EngineStats | null }) {
   /* Scene 1: Dot grid state */
   const [dotRef, dotVisible] = useInView<HTMLDivElement>();
 
@@ -562,18 +564,36 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
         <div className="meth-scene__callout">
           <h3 className="meth-scene__heading">Two Things, Six Lenses</h3>
           <p className="meth__body">
-            Most bias tools assign one fixed score to an entire outlet, as if
-            every article from it leaned the same way. Void News looks at two
-            things instead: what the outlet has published before, and what this
-            specific article actually says. Both, across six axes, by rule-based
-            NLP. No LLM calls. The same text always produces the same scores.
-            On political lean the track record sets the anchor and the words
-            move the score from there, within bounds, so an outlet&rsquo;s
-            reputation is never erased by a single calm article and never
-            overrides one that reads against type. A short wire item has little
-            text to move it, so it sits close to the record.
-            Sensationalism, opinion, and framing are read from the words of a
-            full article. Every score discloses how it was reached.
+            Void News reads two things: what the outlet has published before,
+            and what this specific article actually says. Both, across six
+            axes, by rule-based NLP. No LLM calls. The same text always produces
+            the same scores. On political lean the track record sets the anchor
+            and the words move the score from there, within bounds: {RATED_DELTA_MAX}{" "}
+            points at most for an outlet we have rated, {UNRATED_DELTA_MAX} for one
+            we have not. An article under {FULL_TEXT_WORDS}{" "}
+            words is not read for
+            lean at all; it takes its outlet&rsquo;s placement, and if the outlet
+            has none it does not vote. Sensationalism, opinion, and framing are
+            read from the words of a full article. Every score discloses how it
+            was reached.
+            {engineComplete(engine) && (
+              <>
+                <br /><br />
+                What that came to on the run of {engineRunDate(engine)}: of{" "}
+                {engine.run.articles.toLocaleString("en-US")} articles collected,{" "}
+                {pct(engine.scoring.outlet_only_share)} were under {FULL_TEXT_WORDS}{" "}
+                words and were not read for lean.{" "}
+                {googleNewsHeadlineOnly(engine).toLocaleString("en-US")} of them came
+                from the {engine.feeds.google_news.sources.toLocaleString("en-US")}{" "}
+                sources that reach us through Google News, which delivers a
+                headline and nothing more. Across{" "}
+                {engine.text_movement_rated.articles.toLocaleString("en-US")} full
+                articles from rated outlets, the words moved the score{" "}
+                {engine.text_movement_rated.mean_abs.toFixed(1)} points on average
+                and left {pct(engine.text_movement_rated.zero_share)} of them exactly
+                on the record.
+              </>
+            )}
             <br /><br />
             Not every outlet is placed on a left-right axis. It describes
             American and British politics well and describes much of the world
@@ -796,7 +816,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
   );
 }
 
-function SourcesPageInner({ initialSources }: { initialSources: SpectrumSource[] }) {
+function SourcesPageInner({ initialSources, engine }: { initialSources: SpectrumSource[]; engine: EngineStats | null }) {
   // Seed from the build-time list (data/sources.json) so the served HTML ships
   // the full source list for SEO + instant paint. The effect below still
   // revalidates from Supabase (live credibility notes / claim accuracy) but
@@ -946,17 +966,17 @@ function SourcesPageInner({ initialSources }: { initialSources: SpectrumSource[]
             so cold deep links and crawlers found no anchor in the static
             HTML. The component takes sources for its live examples
             but its prose + anchor must exist before any fetch resolves. */}
-        <Methodology sources={sources} />
+        <Methodology sources={sources} engine={engine} />
       </main>
 
     </div>
   );
 }
 
-export default function SourcesClient({ initialSources }: { initialSources: SpectrumSource[] }) {
+export default function SourcesClient({ initialSources, engine = null }: { initialSources: SpectrumSource[]; engine?: EngineStats | null }) {
   return (
     <ErrorBoundary>
-      <SourcesPageInner initialSources={initialSources} />
+      <SourcesPageInner initialSources={initialSources} engine={engine} />
     </ErrorBoundary>
   );
 }
