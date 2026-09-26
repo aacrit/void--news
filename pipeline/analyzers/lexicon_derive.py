@@ -454,7 +454,7 @@ def main() -> int:
     return 0
 
 
-def main_counts(db_path: str) -> int:
+def main_counts(db_path: str, roster_db: str | None = None) -> int:
     """Run the derivation over harvested COUNTS and report the gate.
 
     `derive_from_counts` had no caller anywhere in the repo: the rediscovery check,
@@ -464,10 +464,17 @@ def main_counts(db_path: str) -> int:
     printed by it.
 
         python3 pipeline/analyzers/lexicon_derive.py --counts <state.db>
+
+    The daily pipeline writes counts to their own file (`phrase_counts.db`), which
+    has no `sources` table, so the roster is read from the state DB:
+
+        python3 pipeline/analyzers/lexicon_derive.py --counts phrase_counts.db \
+            --roster pipeline_state.db
     """
     conn = sqlite3.connect(db_path)
     roster = {}
-    for sid, name, lean in conn.execute(
+    rconn = sqlite3.connect(roster_db) if roster_db else conn
+    for sid, name, lean in rconn.execute(
             "select id, name, political_lean_baseline from sources"):
         if lean in BASELINE:
             roster[sid] = {"base": BASELINE[lean], "name": name}
@@ -693,5 +700,7 @@ def derive_from_counts(conn, roster: dict) -> list[dict]:
 
 if __name__ == "__main__":
     if "--counts" in sys.argv:
-        raise SystemExit(main_counts(sys.argv[sys.argv.index("--counts") + 1]))
+        _roster = (sys.argv[sys.argv.index("--roster") + 1]
+                   if "--roster" in sys.argv else None)
+        raise SystemExit(main_counts(sys.argv[sys.argv.index("--counts") + 1], _roster))
     raise SystemExit(main())

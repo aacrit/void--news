@@ -1,0 +1,78 @@
+# Collect same-event article pairs from editorially opposed outlets (the pair test).
+#
+# WHY A SCHEDULED JOB. The pair test (scripts/roster/pair_test.py; CEO-authorised
+# 2026-09-26) asks whether the engine's text-only score separates two outlets the
+# roster calls opposed when they cover the SAME event. The pairs come from RSS,
+# a sliding window, so a week of pairs is a week of collection. Nothing recovers
+# a window we did not collect.
+#
+# It writes data/roster/pair-test/<stamp>.json (URLs, headlines and match scores;
+# no article text) and commits. It touches no other path, reads no database,
+# needs no secrets and scores nothing: scoring is a manual step once enough pairs
+# exist (`python3 scripts/roster/pair_test.py score`), because it fetches every
+# body again and should run once, not twice a day.
+name: Pair Test
+
+on:
+  schedule:
+    # Twice daily, offset from the 11:00 pipeline and from Anchor Pairs (07:30,
+    # 19:30) so none of them contend for the commit.
+    - cron: '45 8 * * *'
+    - cron: '45 20 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pair-test
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install requests
+        run: pip install --quiet requests
+
+      - name: Collect pairs
+        run: python3 scripts/roster/pair_test.py collect
+
+      - name: Report the running total
+        run: |
+          python3 - <<'PY'
+          import glob, json
+          seen, by = set(), {}
+          for f in sorted(glob.glob('data/roster/pair-test/*.json')):
+              for pid, rec in json.load(open(f, encoding='utf-8'))['pairs'].items():
+                  for m in rec['matches']:
+                      k = (m['right']['url'], m['left']['url'])
+                      if k not in seen:
+                          seen.add(k); by[pid] = by.get(pid, 0) + 1
+          print(f"distinct matched pairs to date: {len(seen)}")
+          for k, n in sorted(by.items(), key=lambda x: -x[1]):
+              print(f"  {n:>5}  {k}")
+          PY
+
+      - name: Commit
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/roster/pair-test
+          if git diff --staged --quiet; then
+            echo "no new pairs this run"
+            exit 0
+          fi
+          git commit -m "pair test: same-event pairs $(date -u +%Y-%m-%d\ %H:%MZ)"
+          for i in 1 2 3 4; do
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push && exit 0
+            sleep $((2 ** i))
+          done
+          echo "push failed after retries"; exit 1

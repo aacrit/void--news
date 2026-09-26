@@ -18,6 +18,103 @@ lives in this file.
 
 ---
 
+## rev 82: the engine's input measured, its words' reach published, and a lexicon corpus that can run daily (2026-09-26)
+
+Scope set by the CEO: the spectrum's data and the bias engine only (the Deep
+Dive UI redesign is in another session). Five items approved; every number
+below is from the state snapshot of run #379 (2026-09-25) or a replay through
+the real code, not from an earlier document.
+
+### 1. What the engine reads, per run: `engine.json` and a floor
+
+`validation/engine_health.py` measures the latest run and `export_static.py`
+writes `frontend/build-data/engine.json`. On run #379:
+
+| | sources | articles | median words | 150+ words |
+|---|---|---|---|---|
+| direct feeds | 483 | 6,804 | 428 | 70.8% |
+| Google News | 251 | 4,809 | 11 | 0.0% |
+
+58.5% of the run's articles were under 150 words, and `main.py`'s word-count
+gate sends every one of those to its outlet's baseline without running the text
+analyzer. Across 3,635 full articles from rated outlets, the words moved the
+score a mean of 1.54 points and left 61.1% exactly on the baseline (range
+-10 to +10, the `_TEXT_DELTA_MAX` clamp).
+
+The floor came from the same snapshot. On 2026-09-19..23 the direct-feed
+full-body share was 45.0-47.8%; on 09-24/25 it was 69.4% and 70.8%. On the bad
+days about 2,500 direct articles a day carry a `word_count` equal to the word
+count of their stored text, the signature of the RSS-summary fallback. No
+commit in `pipeline/` explains the recovery and the scrape budget did not bind
+(run #377 scraped 11,451 in twelve minutes). `FULL_SHARE_FLOOR = 0.55` sits
+between the regimes. `tests/test_engine_health.py --floors` runs in
+`pipeline.yml` AFTER the data commit: a scraping collapse ships the paper and
+turns the run red, rather than freezing the site.
+
+### 2. The copy said what the architecture intends, not what it does
+
+`/sources` opened by contrasting Void with tools that "assign one fixed score
+to an entire outlet", then said "Void News looks at two things instead". For
+the 58.5% of articles under 150 words, one fixed score per outlet is exactly
+what Void does. It also said a reputation "never overrides one that reads
+against type", which a 10-point clamp does. `/about` said "a full article leans
+on its words" (`AboutPipeline`) and "its words carry more" (`BeatSigil`).
+
+Rewritten to state the bounds (10 points for a rated outlet, 24 unrated, not
+read under 150 words) from `app/lib/leanBounds.ts`, whose values
+`test_engine_health.py` asserts against `political_lean.py` and `main.py`. The
+day's measured numbers are printed on `/sources` from `engine.json` and dated
+by the run; no component restates them.
+
+Reading the built HTML found a live defect nobody had seen: `/about` served
+"Every score on all 6axes". JSX text that opens with a space after an
+expression and carries an HTML entity later in the same run loses the space in
+compiled output (`6<!-- -->axes`). The same shape broke the new `/sources` copy
+("150words") and a Games string. All three now write `{" "}`, and
+`copy-facts.test.mjs` fails on the pattern.
+
+### 3. Phrase counts run daily, which took four designs
+
+`phrase_counts.py` was written and gated but never called. Wired as step 9e,
+before truncation, to its own file (`VOID_PHRASE_DB`, own cache key, own
+90-day artifact), never the state DB. Called as written it would have stored
+every phrase: a day's handful of articles per outlet never reaches the harvest
+band's denominator. Each fix below was measured by replaying real news
+(CC-News, real domains as outlets) through the code into a real SQLite file:
+
+1. Derivation-shaped writes (full bodies only, only phrases
+   `lexicon_derive.phrases()` can emit) plus age/spread pruning: 671,858 rows
+   on day one at the 22 Sep audit's volume, ceiling tripped on day ten.
+2. + a Bloom admission gate (CEO: counted from a phrase's third sighting; the
+   cost is the first two of at least fifty uses, falling on whoever coined it).
+   But the real volume is 4,816 bodies a day, not ~900: 7.3M rows by day seven.
+3. + compact storage (phrase and outlet stored once, three-integer counts,
+   views keep the derivation's `outlet_phrase_counts` shape): 26 bytes a row
+   against 107.
+4. + a cap of 3 bodies per rated outlet per day, chosen by URL hash (CEO):
+   ~750 bodies a day, 1.8M rows and 105 MB at day ten, prunes firing from day
+   nine. The corpus ran out at sixteen days (2.7M rows); the steady state past
+   that is not measured, and `DAILY_MAX_ROWS` halts recording, never prunes to
+   fit.
+
+### 4. The pair test is collecting
+
+`scripts/roster/pair_test.py` and `pair-test.yml` (twice daily) collect
+same-event pairs from four CEO-chosen pairs: Daily Mail x The Mirror,
+Jerusalem Post x Haaretz, India Today x The Hindu, Daily Sabah x Nordic
+Monitor. URLs and headlines only. `score` re-fetches bodies, takes the engine's
+outlet-blind `text_score`, and reports AUC against the proposal's gate (0.75
+proceed, 0.65 stop). The CEO chose the automated half only, so the ground truth
+is the roster's own labels. The first collection matched 3 of 4 correctly at
+the inherited bar of 18; the miss (score 20) was shared-topic,
+different-subject. India Today's feed returned 403 from the sandbox.
+
+### 5. Google News: most of the remaining 340 cannot be migrated
+
+See `docs/OPEN-ITEMS.md`.
+
+---
+
 ## rev 81: the lean ladder ran leftward, the card printed a mean over a bimodal roster, and the Deep Dive drew a curve over seven spikes (2026-09-21)
 
 Three defects in the same display layer, found while answering one question:

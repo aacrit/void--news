@@ -88,6 +88,8 @@ mobile-dd-check.png
 # Cloudflare migration: local SQLite pipeline state (persisted via Actions cache/artifact, never committed)
 pipeline_state.db
 pipeline_state.db-*
+phrase_counts.db
+phrase_counts.db.gz
 void_local.db
 *.sql.gz
 
@@ -104,3 +106,4 @@ frontend/public/audio/history/*.mp3
 # The History score written out for listening (generate_assets.py --history); the
 # producer renders it in memory, so it is never committed.
 pipeline/briefing/assets/history/
+.pair_test_scratch.db*

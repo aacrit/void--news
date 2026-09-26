@@ -7,6 +7,8 @@ Runs at the END of a pipeline run (Cloudflare migration): the browser and the
       feed.json         {clusters:[...the Stage 2 bench, by rank_world...], builtAt}
       archive.json      all printed_stories rows (generateStaticParams + /story)
       archiveMap.json   {source_cluster_id: "/story/<id>/"} latest edition
+      engine.json       what the bias engine read and did on the latest run
+                        (validation/engine_health.py; /sources reads it)
 
   frontend/public/data/ (fetched by the browser from the CDN)
       brief.json        latest daily_briefs row (world)
@@ -50,7 +52,7 @@ _DD = PUBLIC_DIR / "deepdive"
 # output from a state DB that may be a day behind: the weekly digest runs
 # VOID_EXPORT_ONLY=weekly, because it restores yesterday's cached state and
 # would otherwise rewrite today's feed and archive from stale rows.
-_ALL = ("feed", "brief", "weekly", "archive", "methodology", "history")
+_ALL = ("feed", "brief", "weekly", "archive", "methodology", "history", "engine")
 _ONLY = {x.strip() for x in os.environ.get("VOID_EXPORT_ONLY", "").split(",") if x.strip()}
 if _ONLY - set(_ALL):
     sys.exit(f"VOID_EXPORT_ONLY: unknown section(s) {sorted(_ONLY - set(_ALL))}; known: {_ALL}")
@@ -434,6 +436,17 @@ if want("methodology"):
         })
     wj(PUBLIC_DIR / "methodology.json", meth)
     print(f"methodology.json: {len(meth)} articles")
+
+if want("engine"):
+    # ── engine.json ──
+    # Measured facts about the engine's input and output on the latest run: body
+    # length by feed class, how much was scored on the outlet alone, and how far
+    # the words actually moved rated outlets' scores. /sources prints these
+    # numbers instead of prose, and tests/test_engine_health.py gates them.
+    from validation import engine_health
+    _eh = engine_health.compute(c)
+    wj(BUILD_DIR / "engine.json", _eh)
+    print(engine_health.format_summary(_eh))
 
 if want("history"):
     # ── history.json ──

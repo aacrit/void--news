@@ -494,7 +494,7 @@ export default function GamesHub() {
         {/* Transmission counter */}
         <div className="games-hub__transmission" aria-hidden="true">
           <p className="games-hub__transmission-text" suppressHydrationWarning>
-            TRANSMISSION RECEIVED &middot; {ACTIVE_GAMES.length} GAMES ACTIVE &middot; DAILY RESET IN {resetCountdown || "--h --m"}
+            TRANSMISSION RECEIVED &middot; {ACTIVE_GAMES.length}{" "}GAMES ACTIVE &middot; DAILY RESET IN {resetCountdown || "--h --m"}
           </p>
         </div>
 
