@@ -941,6 +941,24 @@ async function scenarios(browser) {
     assert(r.numbers === 0 && r.counts.length === r.sigils && r.counts.every((c) => /^\d+ sources?$/.test(c)),
       "sigil-no-score", `${r.numbers} number(s) in dials; ${r.counts.length} of ${r.sigils} Sigils name their count ("${r.counts[0]}")`);
   });
+  /* The On Air pane takes width from the feed, so the grid drops a column
+     while it is open (2026-09-27: four columns in ~960px broke headlines
+     inside words). */
+  await withPage(browser, { width: 1440, route: "/" }, "onair-pane-grid", async (page) => {
+    const cols = () => page.evaluate(() => {
+      const items = [...document.querySelectorAll(".feed-grid__item")].slice(0, 6);
+      const top = items[0]?.getBoundingClientRect().top;
+      return items.filter((e) => Math.abs(e.getBoundingClientRect().top - top) < 2).length;
+    });
+    const before = await cols();
+    await page.locator(".fp__pill").hover().catch(() => {});
+    await page.locator(".fp__info").click().catch(() => {});
+    await page.waitForTimeout(900);
+    const pane = await page.evaluate(() => document.documentElement.hasAttribute("data-onair-pane"));
+    if (!pane) { skip("onair-pane-grid", "the pane did not open as a desktop pane"); return; }
+    const after = await cols();
+    assert(before === 4 && after === 3, "onair-pane-grid", `${before} columns closed, ${after} with the pane open`);
+  });
   /* One lean word per story (2026-09-26). The card printed the roster's word
      while its aria-label and popup heading read the gated mean, so a card
      showing "Leans left" was announced as "Not measured". All three must be

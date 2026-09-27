@@ -720,3 +720,71 @@
   from { opacity: 0; transform: translateX(8px); }
 }
 
+
+/* ---- The On Air pane is open: the grid loses a column --------------------
+   The desktop pane pushes the canvas left by --onair-pane-w (layout.css), but
+   the grid picks its column count from the VIEWPORT, so at 1440 with the pane
+   open four columns ran in about 960px and headlines broke inside words
+   ("Palestin-ian", "Govern-ment", 2026-09-27). With the pane open the grid
+   drops one band: three columns from 1440, two below. The rules are the
+   bands' own, re-stated under html[data-onair-pane] (which outranks the
+   plain nth-child rules), and lib/useGridColumns.ts reads the same attribute
+   so the Deep Dive still opens after the end of the opened card's row. */
+@media (min-width: 1440px) {
+  html[data-onair-pane] .feed-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  html[data-onair-pane] .feed-grid__item {
+    grid-column: span 2;
+    border-right: var(--rule-thin);
+    padding-left: var(--space-5);
+    padding-right: var(--space-5);
+  }
+
+  html[data-onair-pane] .feed-grid__item:nth-child(3n+1) {
+    padding-left: 0;
+  }
+
+  html[data-onair-pane] .feed-grid__item:nth-child(3n),
+  html[data-onair-pane] .feed-grid__item:last-child {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  html[data-onair-pane] .feed-grid__item:nth-child(3n+1):nth-last-child(2),
+  html[data-onair-pane] .feed-grid__item:nth-child(3n+1):nth-last-child(2) + .feed-grid__item {
+    grid-column: span 3;
+  }
+
+  html[data-onair-pane] .feed-grid__item:nth-child(3n+1):last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+  html[data-onair-pane] .feed-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  html[data-onair-pane] .feed-grid__item {
+    grid-column: auto;
+    border-right: var(--rule-thin);
+    padding-left: var(--space-5);
+    padding-right: var(--space-5);
+  }
+
+  html[data-onair-pane] .feed-grid__item:nth-child(2n+1) {
+    padding-left: 0;
+  }
+
+  html[data-onair-pane] .feed-grid__item:nth-child(2n),
+  html[data-onair-pane] .feed-grid__item:last-child {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  html[data-onair-pane] .feed-grid__item:nth-child(2n+1):last-child {
+    grid-column: 1 / -1;
+  }
+}
