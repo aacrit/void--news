@@ -1611,11 +1611,18 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                             brief_row["audio_duration_seconds"] = audio_result["duration_seconds"]
                             brief_row["audio_file_size"] = audio_result["file_size"]
                             brief_row["opinion_start_seconds"] = audio_result.get("opinion_start_seconds")
-                            has_opinion = bool(brief.get("opinion_audio_script"))
-                            brief_row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}" + (
-                                f"+{voices['opinion']['id']}" if has_opinion else ""
+                            # Label from the voices that READ the file, not the
+                            # Gemini roster: the 2026-09-26 fallback said
+                            # "Orus+Achernar+Sulafat" / "Three voices" over two
+                            # edge-tts voices. A legacy show has no chapters;
+                            # say so rather than inherit any.
+                            used = audio_result.get("voices_used") or []
+                            brief_row["audio_voice"] = "edge:" + "+".join(used) if used else None
+                            brief_row["audio_voice_label"] = (
+                                {1: "One voice", 2: "Two voices", 3: "Three voices"}.get(len(used)) if used else None
                             )
-                            brief_row["audio_voice_label"] = "Three voices" if has_opinion else "Two voices"
+                            brief_row["audio_chapters"] = None
+                            brief_row["news_start_seconds"] = None
                         else:
                             # TTS failed — carry forward previous audio so
                             # frontend always has something to play.

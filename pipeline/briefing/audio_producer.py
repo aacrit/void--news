@@ -763,6 +763,11 @@ def _fresh_supabase_client():
     return create_client(url, key)
 
 
+# The deploy tree's audio root. A module constant so tests/test_onair_sidecar.py
+# can point the writer at a throwaway directory.
+_STATIC_AUDIO_ROOT = Path(__file__).resolve().parents[2] / "frontend" / "public" / "audio"
+
+
 def _write_audio_static(audio_bytes: bytes, edition: str,
                         sidecars: dict[str, bytes] | None = None) -> Optional[str]:
     """Cloudflare stack: write the MP3 into the deployed static site instead of
@@ -781,7 +786,7 @@ def _write_audio_static(audio_bytes: bytes, edition: str,
     try:
         now = datetime.now(timezone.utc)
         slot = "am" if now.hour < 12 else "pm"
-        out_dir = Path(__file__).resolve().parents[2] / "frontend" / "public" / "audio" / edition
+        out_dir = _STATIC_AUDIO_ROOT / edition
         out_dir.mkdir(parents=True, exist_ok=True)
         # Rotate: keep only the last 2 date-stamped files (bounds the working tree;
         # the web player uses latest.mp3, so the back-catalogue is not needed here).
@@ -804,6 +809,29 @@ def _write_audio_static(audio_bytes: bytes, edition: str,
                     pass
             (out_dir / f"{stem}{suffix}").write_bytes(data)
             (out_dir / f"latest{suffix}").write_bytes(data)
+        # A latest.* sidecar describes latest.mp3, so one this episode did not
+        # supply belongs to an older episode and must go. The legacy (edge-tts,
+        # unchaptered) fallback passes no sidecars; before this it left the
+        # previous radio show's latest.chapters.json beside a new latest.mp3
+        # (2026-09-26: Sept 25 chapter titles served next to the Sept 26 show).
+        # Silence beats a plausible wrong chapter list.
+        for stale in out_dir.glob("latest.*"):
+            if stale.name == "latest.mp3" or stale.name[len("latest"):] in (sidecars or {}):
+                continue
+            try:
+                stale.unlink()
+                print(f"  [audio] removed stale /audio/{edition}/{stale.name} (not this episode's)")
+            except OSError:
+                pass
+        # A dated sidecar whose MP3 the rotation removed describes nothing served.
+        for side in out_dir.glob("20??-??-??-??.*"):
+            if side.suffix == ".mp3":
+                continue
+            if not (out_dir / (side.name.split(".", 1)[0] + ".mp3")).exists():
+                try:
+                    side.unlink()
+                except OSError:
+                    pass
         fp = hashlib.md5(audio_bytes[:1024]).hexdigest()[:8]
         print(f"  [audio] wrote static /audio/{edition}/{fname} ({len(audio_bytes)//1024} KB)")
         return f"/audio/{edition}/{fname}?v={fp}"
@@ -1308,11 +1336,21 @@ def produce_audio(
 
     print(f"  [audio] Uploaded: {public_url}")
     opinion_start_seconds = round(opinion_start_ms / 1000.0, 1) if opinion_start_ms else None
+    # The voices that actually read this file, in order of first use. The
+    # caller used to label the row from the Gemini roster ("Orus+Achernar+
+    # Sulafat", "Three voices") while two edge-tts voices read it, B doubling
+    # as the opinion voice: the served page said three voices over a
+    # two-voice show (2026-09-26).
+    voices_used: list[str] = []
+    for v in (voice_a_edge, voice_b_edge) + ((opinion_voice_edge,) if has_opinion else ()):
+        if v not in voices_used:
+            voices_used.append(v)
     return {
         "audio_url": public_url,
         "duration_seconds": duration_seconds,
         "file_size": file_size,
         "opinion_start_seconds": opinion_start_seconds,
+        "voices_used": voices_used,
     }
 
 
