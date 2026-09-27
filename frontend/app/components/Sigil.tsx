@@ -15,12 +15,8 @@ import {
   leanToDisplayPos,
   lerpColor as lerp,
 } from "../lib/biasColors";
-import MicroSpectrum from "./MicroSpectrum";
 import RosterStrip from "./RosterStrip";
-import { fetchSourceLeans } from "../lib/supabase";
 
-/** Session-level cache: storyId → lean values. Avoids re-fetching on re-hover. */
-const leanCache = new Map<string, number[]>();
 
 /* ==========================================================================
    Sigil — The Brand Mark AS the Bias Indicator
@@ -409,25 +405,6 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
       ? `Lean measured from ${measured} of ${measuredTotal} analyzed articles`
       : null;
 
-  /** Real per-source lean values — loaded on first popup open, cached by storyId */
-  const [sourceLeans, setSourceLeans] = useState<number[] | null>(null);
-
-  useEffect(() => {
-    if (!isOpen || !storyId) return;
-    // Serve from cache immediately if available
-    if (leanCache.has(storyId)) {
-      setSourceLeans(leanCache.get(storyId)!);
-      return;
-    }
-    // Fetch lean values — lightweight query, only political_lean column
-    fetchSourceLeans(storyId).then((leans) => {
-      if (leans.length > 0) {
-        leanCache.set(storyId, leans);
-        setSourceLeans(leans);
-      }
-    });
-  }, [isOpen, storyId]);
-
   useEffect(() => {
     if (!isOpen || !triggerRef.current) { setStage(0); return; }
     const mobile = window.innerWidth < 768;
@@ -518,24 +495,12 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
         {stage >= 2 && measuredNote && (
           <p className="sigil-popup__measured">{measuredNote}</p>
         )}
-        {/* KDE spectrum — real shape when source leans are loaded, Gaussian fallback */}
-        <div className="sigil-popup__spectrum">
-          <div className="sigil-popup__spectrum-tick sigil-popup__spectrum-tick--left" />
-          <div className="sigil-popup__spectrum-tick sigil-popup__spectrum-tick--right" />
-          <MicroSpectrum
-            mean={lean}
-            spread={data.biasSpread?.leanSpread ?? 12}
-            leans={sourceLeans ?? undefined}
-            height={40}
-            showMarker={true}
-            strokeWidth={1.4}
-            className="sigil-popup__spectrum-curve"
-          />
-        </div>
-        {/* Tick labels */}
-        <div className="sigil-popup__spectrum-labels">
-          <span>Left</span><span>Center</span><span>Right</span>
-        </div>
+        {/* The same seven-rung register the card and the Deep Dive's Bench
+            draw, at popup size, with each rung's count under it. It was a
+            smooth density curve (MicroSpectrum), the retired KDE the Bench
+            replaced, so the popup drew the one distribution a third way
+            (2026-09-27). */}
+        <PopupRegister spread={data.biasSpread} />
       </div>
 
       {full ? (
@@ -592,6 +557,37 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
     </div>
     </>,
     document.body,
+  );
+}
+
+/* ── The popup's register ─────────────────────────────────────────────── */
+
+const RUNG_SHORT = ["FL", "L", "CL", "C", "CR", "R", "FR"] as const;
+
+/** RosterStrip at popup width, the counts under their strokes, and the axis
+ *  ends named. The strip's own geometry (7 strokes at a 12px pitch in a 74px
+ *  box) places the counts, so a number always sits under its own stroke. */
+function PopupRegister({ spread }: { spread?: SigilData["biasSpread"] }) {
+  const counts = spread?.leanBuckets && spread.leanBuckets.length === 7
+    ? spread.leanBuckets.map((n) => Math.max(0, Math.round(n)))
+    : null;
+  if (!counts || counts.reduce((a, b) => a + b, 0) === 0) {
+    return <p className="sigil-popup__register-empty">No measured articles to place</p>;
+  }
+  const PITCH = 12, WIDTH = 74;
+  return (
+    <div className="sigil-popup__register">
+      <RosterStrip spread={spread} weight={2} className="sigil-popup__register-strip" />
+      <div className="sigil-popup__register-counts" aria-hidden="true">
+        {counts.map((n, i) => (
+          <span key={i} style={{ left: `${((i * PITCH + 1) / WIDTH) * 100}%` }}
+            title={RUNG_SHORT[i]}>{n || ""}</span>
+        ))}
+      </div>
+      <div className="sigil-popup__spectrum-labels">
+        <span>Left</span><span>Center</span><span>Right</span>
+      </div>
+    </div>
   );
 }
 

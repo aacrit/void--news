@@ -234,6 +234,11 @@ jobs:
           # for a day. Failing the run leaves the previous day's data in place,
           # which is a bad day rather than an outage.
           python tests/test_feed_buildable.py
+          # The chapters beside latest.mp3 must be that episode's. On
+          # 2026-09-26 the legacy fallback left Sept 25's latest.chapters.json
+          # beside Sept 26's show and labelled two edge-tts voices with three
+          # Gemini roster names.
+          python tests/test_onair_sidecar.py
 
       - name: Commit refreshed static data to main
         run: |

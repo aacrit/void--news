@@ -186,6 +186,12 @@ exported into `brief.json`, embedded as ID3v2 `CHAP`/`CTOC` frames in the MP3
 `<date>-<slot>.chapters.json` + `latest.chapters.json` next to the MP3,
 referenced by `<podcast:chapters>` in `podcast-world.xml`.
 
+The legacy fallback has no chapters, so when it ships `latest.mp3` the writer
+removes any `latest.chapters.json` left by an older show, and brief.json carries
+`audio_chapters: null` and a voice label naming the edge-tts voices that read
+it. `tests/test_onair_sidecar.py` gates this in `pipeline.yml` before the data
+commit (2026-09-26: Sept 25's chapters sat beside Sept 26's legacy show).
+
 ## House promo (post-roll)
 
 After the sign-off tag, a beat into the outro, a two-sentence house promo for

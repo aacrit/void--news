@@ -129,6 +129,7 @@ jobs:
           python tests/test_summary_hygiene_parity.py
           python pipeline/validation/test_disaster_severity.py
           python tests/test_radio_script.py
+          python tests/test_onair_sidecar.py         # the chapters served beside On Air are that episode's; the voice label names who read it
           python tests/test_history_audio.py
           python tests/test_weekly.py
           python tests/test_weekly_killlist.py      # the kill list in the committed issues, before W-10 can see it served

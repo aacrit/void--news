@@ -171,9 +171,23 @@ def _stem(word: str) -> str:
     return w
 
 
+# A letter-spelled initialism ("F-B-I", "U-S", "N-A-T-O") is the SAME word as
+# the written one the story carries ("FBI", "US", "NATO"). The rundown prompt
+# asks for the spelled form, so without this every attributed clause naming an
+# initialism "added a word the story never used" and R-14 failed the show:
+# run 36250153830 (2026-09-26) rejected "Wadephul says ... N-A-T-O ..." against
+# a summary reading "NATO member countries", and On Air fell back to the legacy
+# path with no chapters.
+_SPELLED_INITIALISM_RE = re.compile(r"\b[A-Za-z](?:-[A-Za-z])+\b")
+
+
+def _collapse_initialisms(text: str) -> str:
+    return _SPELLED_INITIALISM_RE.sub(lambda m: m.group(0).replace("-", ""), text or "")
+
+
 def _content_stems(text: str) -> set[str]:
     out = set()
-    for tok in re.findall(r"[A-Za-z][\w'\u2019-]*", text or ""):
+    for tok in re.findall(r"[A-Za-z][\w'\u2019-]*", _collapse_initialisms(text)):
         low = tok.lower()
         if low in _STOP_WORDS or len(low) < 3:
             continue
