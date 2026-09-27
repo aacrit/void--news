@@ -268,38 +268,39 @@
   font-weight: 700;
 }
 
-/* Spectrum in popup — taller to let the KDE shape breathe */
-.sigil-popup__spectrum {
-  position: relative;
-  height: 40px;
-  margin-bottom: 4px;
+/* The register in the popup: the card's seven strokes at popup width, with
+   each rung's count under its stroke (Sigil.tsx PopupRegister). */
+.sigil-popup__register {
+  margin: var(--space-2) 0 4px;
 }
 
-.sigil-popup__spectrum-tick {
-  position: absolute;
-  top: 4px;
-  width: 2px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  opacity: 0.4;
-}
-
-.sigil-popup__spectrum-tick--left {
-  left: 0;
-  background-color: var(--bias-left);
-}
-
-.sigil-popup__spectrum-tick--right {
-  right: 0;
-  background-color: var(--bias-right);
-}
-
-/* KDE sparkline — fills spectrum container, ticks overlay on top */
-.sigil-popup__spectrum-curve {
-  position: absolute;
-  inset: 0;
+.sigil-popup__register-strip {
   display: block;
-  pointer-events: none;
+  width: 100%;
+  height: auto;
+}
+
+.sigil-popup__register-counts {
+  position: relative;
+  height: 14px;
+  margin: 2px 0 4px;
+}
+
+.sigil-popup__register-counts span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-secondary);
+}
+
+.sigil-popup__register-empty {
+  margin: var(--space-2) 0;
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
 }
 
 .sigil-popup__spectrum-labels {

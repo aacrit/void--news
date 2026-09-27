@@ -161,6 +161,10 @@ export function splitSummaryForCard(text: string | null | undefined, maxChars: n
     if (end > maxChars) break;
     cut = end;
   }
-  if (cut === 0) return [t, ""];
+  /* Whole sentences only when they fill most of the box. When the sentence
+     that fits is short and the next is long, cutting there left the card
+     half empty (the lead showed one line under three of space, 2026-09-27);
+     then the full text runs and the clamp ends it. */
+  if (cut < maxChars * 0.75) return [t, ""];
   return [t.slice(0, cut), t.slice(cut)];
 }
