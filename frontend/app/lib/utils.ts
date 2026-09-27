@@ -157,8 +157,11 @@ export function splitSummaryForCard(text: string | null | undefined, maxChars: n
   const t = (text ?? "").trim();
   if (t.length <= maxChars) return [t, ""];
   let cut = 0;
+  /* A sentence may run 10% past the box: a first sentence of 146 characters
+     in a 140-character box otherwise fell through to the clamp, which cut it
+     just after its full stop and printed "collapse...." (2026-09-27). */
   for (const end of sentenceEnds(t)) {
-    if (end > maxChars) break;
+    if (end > maxChars * 1.1) break;
     cut = end;
   }
   /* Whole sentences only when they fill most of the box. When the sentence
