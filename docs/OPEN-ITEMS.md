@@ -88,6 +88,15 @@ claims about its own confidence. It needs a decision, not a tweak.
 
 ## Known defects, not yet fixed
 
+**The spoken brief has no per-story grounding check on its OUTPUT.**
+2026-09-30 aired another story's judge and date inside the Christa Pike item.
+The input is now guarded (`tests/test_brief_inputs.py`), but E-13/E-14 judge
+a number or quote against the whole brief's sources, so a fact moved between
+stories still passes. The control this needs: map each script paragraph to
+its cluster and require its names and dates to appear in THAT cluster's text.
+The radio rundown has this for attributed claims (R-14), the legacy script
+has nothing.
+
 ### Partition audio: the Nehru chapter title and three quiet-mood chapters (2026-09-25)
 
 The re-render with the signed Nehru clip (run 36181105314) admitted it at

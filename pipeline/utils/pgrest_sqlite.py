@@ -52,6 +52,7 @@ import json
 import os
 import re
 import sqlite3
+import threading
 import uuid
 from datetime import datetime, timezone
 from typing import Any, Iterable
@@ -155,11 +156,25 @@ def _encode_for_storage(value: Any) -> Any:
     return value
 
 
+# Columns that hold publisher or Void prose and are never jsonb/array typed.
+# _maybe_parse_json decodes by SHAPE, so a body scraped as a JSON-LD blob
+# ("[{...}]") or a headline in braces ("{Unknown}") came back as a list, and
+# on 2026-09-28 clustering died on it ("'list' object has no attribute
+# 'split'"): every article became a singleton and the feed gate refused the
+# day. Prose is returned exactly as stored.
+_PROSE_COLUMNS = frozenset({
+    "title", "summary", "full_text", "author", "url", "headline",
+    "tldr_text", "tldr_headline", "opinion_text", "opinion_headline",
+    "audio_script", "opinion_audio_script",
+})
+
+
 def _decode_row(row: sqlite3.Row) -> dict:
     """Turn a sqlite3.Row into a plain dict, JSON-decoding jsonb-ish text."""
     out: dict[str, Any] = {}
     for key in row.keys():
-        out[key] = _maybe_parse_json(row[key])
+        v = row[key]
+        out[key] = v if key in _PROSE_COLUMNS else _maybe_parse_json(v)
     return out
 
 
@@ -481,6 +496,15 @@ class _QueryBuilder:
 
     # -- terminal ----------------------------------------------------------
     def execute(self) -> _Result:
+        # One sqlite3 connection serves every thread (check_same_thread=False),
+        # and a connection is not safe to interleave: Step 9 enriches with 4
+        # workers, and without this lock 265 of 13,631 cluster writes on
+        # 2026-09-30 died with "cannot commit - no transaction is active",
+        # "another row available", "error return without exception set".
+        with self._client._lock:
+            return self._execute_locked()
+
+    def _execute_locked(self) -> _Result:
         op = self._op or "select"
         if op == "select":
             return self._exec_select()
@@ -718,7 +742,8 @@ class _QueryBuilder:
             if got:
                 return _decode_row(got)
         # No id: reconstruct from prepared values (decode json-ish).
-        return {k: _maybe_parse_json(v) for k, v in prepared.items()}
+        return {k: v if k in _PROSE_COLUMNS else _maybe_parse_json(v)
+                for k, v in prepared.items()}
 
     # -- UPDATE ------------------------------------------------------------
     def _exec_update(self) -> _Result:
@@ -834,7 +859,8 @@ class _QueryBuilder:
             got = cur.fetchone()
             if got:
                 return _decode_row(got)
-        return {k: _maybe_parse_json(v) for k, v in prepared.items()}
+        return {k: v if k in _PROSE_COLUMNS else _maybe_parse_json(v)
+                for k, v in prepared.items()}
 
     # -- DELETE ------------------------------------------------------------
     def _exec_delete(self) -> _Result:
@@ -963,6 +989,10 @@ class SqliteClient:
     def __init__(self, db_path: str, storage_root: str | None = None):
         self._db_path = db_path
         self._conn = sqlite3.connect(db_path, check_same_thread=False)
+        # Serialises every statement on the shared connection; see
+        # _QueryBuilder.execute. Re-entrant because an RPC handler may run a
+        # builder query while holding it.
+        self._lock = threading.RLock()
         self._conn.row_factory = sqlite3.Row
         try:
             self._conn.execute("PRAGMA foreign_keys = ON")
@@ -1026,7 +1056,8 @@ class _RpcCall:
             raise SqliteRestError(
                 f"function {self._name}(...) does not exist"
             )
-        return handler(self._client, self._params)
+        with self._client._lock:
+            return handler(self._client, self._params)
 
 
 # ---------------------------------------------------------------------------

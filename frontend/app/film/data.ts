@@ -139,8 +139,8 @@ export const RANKING_SIGNAL_COUNT = 10;
 
 export const NUMBERS = [
   { value: ROSTER_SOURCES_TEXT, label: "sources" },
-  { value: "158", label: "countries" },
-  { value: "50", label: "top stories" },
+  { value: String(ROSTER_COUNTRIES), label: "countries" },
+  { value: String(FEED_DISPLAYED), label: "top stories" },
   { value: "1×", label: "a day" },
   { value: "6", label: "bias axes" },
   { value: "$0", label: "to read" },

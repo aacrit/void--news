@@ -113,6 +113,17 @@ BANNED_PHRASES: tuple[str, ...] = (
     # that deletes these words is skipped for audio (brand audit F-13).
     "significant", "significantly", "notable", "importantly", "marks a",
 )
+# The tells of a narrator, never of a newsmaker: these fail wherever they
+# appear, reported speech included. Every other BANNED_PHRASE is host chatter
+# ("welcome back", "thank you,", "absolutely"), and a newsmaker may say it:
+# run 36746374777 (2026-09-30) lost the show because "President Macron said
+# in English welcome back" was read as the host greeting the listener.
+_NARRATOR_TELLS: frozenset[str] = frozenset({
+    "perhaps most significantly", "in a troubling development", "this next one matters",
+    "which brings us to", "in a sign of things to come", "it should be noted",
+    "interestingly", "crucially", "notably",
+    "significant", "significantly", "notable", "importantly", "marks a",
+})
 
 
 # ---------------------------------------------------------------------------
@@ -185,6 +196,24 @@ def _collapse_initialisms(text: str) -> str:
     return _SPELLED_INITIALISM_RE.sub(lambda m: m.group(0).replace("-", ""), text or "")
 
 
+def banned_phrase_in(text: str) -> str | None:
+    """The first BANNED_PHRASE this line speaks in Void's own voice, or None.
+
+    A narrator tell fails anywhere. Host chatter is exempt only inside
+    reported speech: after an attribution verb in the same sentence ("Macron
+    said in English welcome back")."""
+    for sent in _sentences(text) or [text]:
+        low = sent.lower()
+        for phrase in BANNED_PHRASES:
+            m = re.search(r"(?<![\w'])" + re.escape(phrase) + r"(?![\w])", low)
+            if not m:
+                continue
+            if phrase not in _NARRATOR_TELLS and _ATTRIBUTION_ANY_RE.search(sent[:m.start()]):
+                continue
+            return phrase
+    return None
+
+
 def _content_stems(text: str) -> set[str]:
     out = set()
     for tok in re.findall(r"[A-Za-z][\w'\u2019-]*", _collapse_initialisms(text)):
@@ -229,7 +258,9 @@ def attribution_grounding(who: str, clause: str, rows: list[dict]) -> tuple[floa
     with_summary = [row for row in rows if (row.get("summary") or "").strip()]
     if not with_summary:
         return None
-    tokens = who.split()
+    # "The I-R-G-C says" names the IRGC the story carries (run 36329995350,
+    # 2026-09-27, failed the show on exactly this).
+    tokens = _collapse_initialisms(who).split()
     if not tokens or tokens[0].lower() in _PRONOUN_SUBJECTS:
         return None
     surname = tokens[-1].strip("'\u2019.,")
@@ -643,11 +674,8 @@ def validate_rundown(r: RadioRundown, ctx: RundownContext) -> ValidationReport:
             if _DATELINE_RE.match(t.text):
                 fail("R-04", label, f"print dateline has no spoken form: {t.text[:40]!r}")
             # R-05 banned phrases and host addressing
-            low = t.text.lower()
-            for phrase in BANNED_PHRASES:
-                if re.search(r"(?<![\w'])" + re.escape(phrase) + r"(?![\w])", low):
-                    fail("R-05", label, f"banned phrase {phrase!r}: {t.text[:70]!r}")
-                    break
+            if banned_phrase_in(t.text):
+                fail("R-05", label, f"banned phrase {banned_phrase_in(t.text)!r}: {t.text[:70]!r}")
             if _HOST_NAME_ADDRESS_RE.search(t.text):
                 fail("R-05", label, f"hosts are never addressed by name or thanked: {t.text[:70]!r}")
             # R-07 attribution after the claim, R-11 sentence length (per sentence)
@@ -878,7 +906,10 @@ def build_stories_block(top20: list[dict]) -> str:
     lines: list[str] = []
     for i, c in enumerate(top20, 1):
         title = (c.get("title") or "").strip()
-        summary = (c.get("summary") or "").strip()
+        summary = c.get("summary") or ""
+        if isinstance(summary, list):
+            summary = " ".join(str(x) for x in summary)
+        summary = str(summary).strip()
         if len(summary) > 700:
             summary = summary[:697] + "..."
         consensus = c.get("consensus_points") or []
@@ -890,6 +921,10 @@ def build_stories_block(top20: list[dict]) -> str:
         lines.append(f"[{i}] ({c.get('source_count', 0)} sources, {cat}, severity {float(sev):.1f}) {tier}: {title}")
         if summary:
             lines.append(f"    Summary: {summary}")
+        else:
+            # 2026-09-30: a bare headline was padded with another story's
+            # judge and date, and it aired. Say what there is, nothing more.
+            lines.append("    No summary: say only what the headline says, and nothing from any other story.")
         if consensus and isinstance(consensus, list) and i <= BRIEF_RANKS[1]:
             lines.append(f"    Consensus: {'; '.join(str(x) for x in consensus[:3])}")
         if divergence and isinstance(divergence, list) and i <= DEEP_STORIES:
@@ -986,11 +1021,16 @@ def generate_radio_rundown(
             return None, None, "none"
 
         def generate_fn(system: str, user: str) -> str | None:  # noqa: E306
+            # 2.5 Flash spends its thinking out of this same budget. At 8192 a
+            # retry (a longer prompt) came back cut off mid-rundown on three
+            # of four days, 2026-09-26..30 ("211 words, 3 segments", "missing
+            # CLOSE"). Requests are what the free tier caps, not tokens.
             return generate_text(user, system_instruction=system, count_call=False,
-                                 max_output_tokens=8192, model=flash_model)
+                                 max_output_tokens=24576, model=flash_model)
 
     findings = ""
     best: tuple[RadioRundown, ValidationReport] | None = None
+    best_raw = ""
     for attempt in range(max_attempts):
         system, user = build_radio_prompt(top20, date_spoken, has_editorial=has_editorial,
                                           previous_menu=previous_menu, retry_findings=findings,
@@ -1010,7 +1050,16 @@ def generate_radio_rundown(
             return rundown, report, "gemini-flash"
         if best is None or n_fail < len(best[1].failures):
             best = (rundown, report)
-        findings = "\n".join(f"- {f.id} [{f.segment}] {f.detail}" for f in report.failures)
+            best_raw = raw
+        # Repair the best draft rather than roll the dice again: a from-scratch
+        # retry fixed the one failure and broke the structure on 2026-09-26,
+        # 27, 29 and 30, and the show fell back to the legacy path each time.
+        findings = (
+            "\n".join(f"- {f.id} [{f.segment}] {f.detail}" for f in best[1].failures)
+            + "\n\nYOUR PREVIOUS RUNDOWN follows. Repair it, do not rewrite it: change only the "
+              "lines these checks name, keep every other line exactly as written, and keep every "
+              "segment, the CLOSE included.\n\n" + best_raw.strip() + "\n"
+        )
 
     if best is not None:
         rundown, report = best

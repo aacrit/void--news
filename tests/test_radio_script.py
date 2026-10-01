@@ -20,6 +20,7 @@ sys.path.insert(0, str(ROOT / "pipeline"))
 from briefing.radio_script_generator import (  # noqa: E402
     RundownContext, parse_rundown, validate_rundown, build_radio_prompt,
     generate_radio_rundown, SIGN_ON_PREFIX, CLOSE_PREFIX, WORD_BUDGETS, TOTAL_BUDGET,
+    banned_phrase_in, attribution_grounding,
 )
 from briefing.spoken_text import (  # noqa: E402
     normalize_for_speech, spoken_numbers, expand_initialisms, apply_say, spoken_date,
@@ -217,6 +218,23 @@ def test_grounded_attribution(raw: str) -> None:
     check("R-14" not in fired and "R-15" in fired, f"without summaries R-14 abstains and R-15 still fires (fired {sorted(fired)})")
 
 
+def test_banned_phrases_in_reported_speech() -> None:
+    # 2026-09-30: Macron's own words cost the show.
+    check(banned_phrase_in("Speaking in Madrid, President Macron said in English welcome back.") is None,
+          "a newsmaker's 'welcome back', after an attribution verb, is reported speech")
+    check(banned_phrase_in("Welcome back. The Senate voted overnight.") == "welcome back",
+          "the host saying 'welcome back' still fails R-05")
+    check(banned_phrase_in("The minister said the vote was significant.") == "significant",
+          "a narrator tell fails even inside reported speech")
+    check(banned_phrase_in("Absolutely, he said, the plan stands.") == "absolutely",
+          "chatter BEFORE the attribution is the host's, and fails")
+    # 2026-09-27: "The I-R-G-C says" against a story naming the IRGC.
+    rows = [{"id": "x", "title": "IRGC examines vessel",
+             "summary": "The IRGC says it is examining the seized tanker in the Strait of Hormuz."}]
+    v = attribution_grounding("The I-R-G-C", "it is examining the seized tanker", rows)
+    check(v is None or v[0] >= 0.6, f"a spelled initialism names the speaker the story carries ({v})")
+
+
 def test_parser_tolerance() -> None:
     messy = """Some preamble the model added.
 ### OPEN:
@@ -300,6 +318,11 @@ def test_prompt_and_generation() -> None:
                                            generate_fn=fake)
     check(r is not None and rep.passed and label == "gemini-flash", "retry recovers a fixable script")
     check(len(calls) == 2 and "R-04" in calls[1], "retry prompt names the failed rule")
+    # The retry repairs the draft rather than rolling again: the previous
+    # rundown rides in the prompt (2026-09-26..30 lost the show to from-scratch
+    # retries that fixed one line and dropped the CLOSE).
+    check(len(calls) == 2 and "4 p.m. Thursday" in calls[1] and "Repair it, do not rewrite it" in calls[1],
+          "retry prompt carries the previous rundown to repair")
 
     r, rep, label = generate_radio_rundown(rows, date=datetime.datetime(2026, 9, 18, tzinfo=datetime.timezone.utc),
                                            generate_fn=lambda s, u: "nonsense with no markers")
@@ -327,6 +350,7 @@ if __name__ == "__main__":
     raw = test_clean_fixture()
     test_planted_defects(raw)
     test_grounded_attribution(raw)
+    test_banned_phrases_in_reported_speech()
     test_parser_tolerance()
     test_spoken_text()
     test_prompt_and_generation()

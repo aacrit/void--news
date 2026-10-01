@@ -128,14 +128,36 @@ def report(code: str, passed: bool, detail: str) -> None:
     print(f"[{'ok  ' if passed else 'FAIL'}] {code}: {detail}")
 
 
+# A 429 says "later", not "broken". The CDN rate-limits this sweep once it
+# has fetched a few dozen pages, and from 2026-09-28 every scheduled run of
+# verify-production went red on P-02 and TH-01..TH-05 for that reason alone,
+# with the pages themselves serving fine. A 429 or 503 is retried with
+# backoff (Retry-After honoured, capped); any other status fails at once.
+_RETRY_STATUSES = (429, 503)
+_RETRY_DELAYS = (5, 15, 30)
+
+
 def fetch(url: str, head: bool = False):
-    req = urllib.request.Request(
-        url,
-        method="HEAD" if head else "GET",
-        headers={"User-Agent": "void-verify-sections/1.0", "Cache-Control": "no-cache"},
-    )
-    with urllib.request.urlopen(req, timeout=60) as r:
-        return r.status, r.geturl(), (b"" if head else r.read().decode("utf-8", "replace"))
+    import time
+
+    for attempt in range(len(_RETRY_DELAYS) + 1):
+        req = urllib.request.Request(
+            url,
+            method="HEAD" if head else "GET",
+            headers={"User-Agent": "void-verify-sections/1.0", "Cache-Control": "no-cache"},
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                return r.status, r.geturl(), (b"" if head else r.read().decode("utf-8", "replace"))
+        except urllib.error.HTTPError as e:
+            if e.code not in _RETRY_STATUSES or attempt == len(_RETRY_DELAYS):
+                raise
+            delay = _RETRY_DELAYS[attempt]
+            try:
+                delay = min(60, max(delay, int(e.headers.get("Retry-After") or 0)))
+            except (TypeError, ValueError):
+                pass
+            time.sleep(delay)
 
 
 def history_body(html: str) -> str:

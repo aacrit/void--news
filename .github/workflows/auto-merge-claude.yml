@@ -129,6 +129,7 @@ jobs:
           python tests/test_summary_hygiene_parity.py
           python pipeline/validation/test_disaster_severity.py
           python tests/test_radio_script.py
+          python tests/test_brief_inputs.py           # the brief writer is never handed a story with no summary
           python tests/test_onair_sidecar.py         # the chapters served beside On Air are that episode's; the voice label names who read it
           python tests/test_history_audio.py
           python tests/test_weekly.py
@@ -151,6 +152,7 @@ jobs:
           python tests/test_history_thesis.py        # T-01..T-20: a thesis cites the ledger, the ledger holds the extract, the served thesis matches
           python tests/test_history_quote_ledger.py  # a Hearing quotation that diverges from a ledger extract we hold
           python tests/test_grounding.py             # the evidence outlives the run
+          python tests/test_pgrest_sqlite_threads.py # one connection, many workers: statements never interleave
           python tests/test_feed_buildable.py        # the feed can fill the front page
           python tests/test_truncation_lint.py       # no cap published as a count
           python tests/test_docs_facts.py            # CLAUDE.md's own numbers

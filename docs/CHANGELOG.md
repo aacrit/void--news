@@ -18,6 +18,80 @@ lives in this file.
 
 ---
 
+## rev 83: a red main from four causes, one of them silent for a week (2026-10-01)
+
+Verify Production had been red on every scheduled run since 2026-09-28 and
+the pipeline failed outright on 09-28. Four defects, each with a gate.
+
+1. **The SQLite shim decoded prose by its shape.** `_maybe_parse_json` turns
+   any text that starts with `{` or `[` into a dict or list, so a headline in
+   braces or a body scraped as a JSON-LD blob came back as a list. On 09-28
+   clustering died on it (`'list' object has no attribute 'split'`), every
+   article became a singleton, 6 stories qualified against 20, and
+   `test_feed_buildable` (correctly) refused to commit the day. Prose columns
+   are now returned as stored, and a clustering failure prints its traceback.
+   The same defect killed the scheduled Weekly of 09-27 in the Sports page
+   (`_term_hits`: `'list' object has no attribute 'lower'` on a cluster
+   summary), so no issue was published for the week of 09-21.
+2. **One sqlite3 connection, four threads, no lock.** Step 9 enriches with 4
+   workers over the shared client; 205 to 416 cluster writes a day failed
+   with "cannot commit - no transaction is active" / "another row
+   available", each leaving a cluster without its bias rollup. Every
+   statement and RPC now runs under an `RLock`.
+   Gate for both: `tests/test_pgrest_sqlite_threads.py`.
+3. **On Air shipped the legacy two-voice fallback four days running**
+   (09-26, 27, 29, 30), so the served episode had no chapters and A-02..A-05
+   failed. Attempt 1 failed on one rule each day; the from-scratch retry then
+   came back cut off (211 words, no CLOSE). Fixes: R-05 no longer reads a
+   newsmaker's own "welcome back" after an attribution verb as host chatter
+   (narrator tells such as "significant" still fail anywhere); R-14 collapses a
+   spelled initialism in the SPEAKER ("The I-R-G-C says") as it already did in
+   the clause; the retry repairs the best draft with it in the prompt instead
+   of regenerating; the output ceiling is 24,576 tokens because 2.5 Flash
+   thinks out of the same budget. Gate: `tests/test_radio_script.py`.
+4. **HTTP 429 from the CDN read as a failure.** `verify_sections.py` now
+   retries 429/503 with backoff, honouring Retry-After.
+5. **A factual error aired (Rule 1).** The 09-30 On Air legacy script said
+   Christa Pike's stay "follows a February 25, 2026, order from U.S. District
+   Judge Brian Murphy". Murphy's order belongs to the deportation story; the
+   Pike cluster reached the brief writer with an EMPTY summary, and the writer
+   padded the bare headline from the story above it. A summary-less story no
+   longer enters the brief prompt, and the radio rundown marks one as
+   headline-only. Gate: `tests/test_brief_inputs.py`. The episode stays live
+   until the next run replaces it.
+6. **`/about` said "50 top stories"** from a value literal in
+   `app/film/data.ts` that the prose check could not see. It and "158"
+   countries now read the config; `copy-facts.test.mjs` fails on a count
+   written as a `value:` literal beside its label. Also "Copy the The
+   Argument feed address" on `/audio`. (Weekly's corrections link to the
+   `/feedback/` redirect was reported too and left alone: `test_weekly.py`
+   asserts it, the redirect is the stable public address.)
+7. **The Weekly read a week it did not have.** `story_clusters` is pruned to
+   two days by step 8c.1, so the Sunday issue saw Friday and Saturday plus
+   what Stage 2 had rejected: the 09-27 run's second cover was a Spanish
+   local crime cluster of 127 "sources" that never ran on the front page.
+   Covers, opinions and the recap now read `printed_stories`, the week as
+   printed (every row through Stage 2, ten days kept). Threads are linked by
+   text only and deliberately NOT by the archive's `story_thread_id`, which
+   filed the Xi state visit under the White House media-ban story; the cover
+   writer is handed every member as a dated timeline, so a wrong join states
+   a false connection. Tech, sports and the bias counts keep the full pool.
+   The essay prompts also named 8 banned words while the drop rule used 30;
+   3 of 5 opinions were dropped on 09-27 for words the writer was never told.
+   `SLOP_PROMPT_WORDS` is now appended to every essay prompt. Gates: WG-07,
+   WG-08 in `tests/test_weekly_generator.py`.
+8. **A Weekly run could publish nothing, or the wrong thing.** A run three
+   days late skipped on 0 clusters before reading the printed record, and
+   the export step then re-wrote the published Issue #26 from a stale DB row
+   (reverted on the branch before it shipped). The CLI now exits 1 when no
+   issue is stored, so nothing is exported. The next run wrote a full issue
+   and threw it away because The Argument ran 16.4 min against an 18-22 band:
+   the code raised where its own comment said "ships without audio". It now
+   ships without audio under an Actions error annotation, and a content floor
+   (one written cover, plus a column or the recap) stops a no-model run from
+   re-printing the daily summaries as a Weekly. Gates WG-09..WG-11.
+---
+
 ## rev 82: the engine's input measured, its words' reach published, and a lexicon corpus that can run daily (2026-09-26)
 
 Scope set by the CEO: the spectrum's data and the bias engine only (the Deep

@@ -1138,6 +1138,14 @@ def _get_previous_brief_opening(edition: str) -> str:
     return ""
 
 
+def _summary_text(c: dict) -> str:
+    """The cluster's summary as a string, or "" when it has none."""
+    summary = c.get("summary")
+    if isinstance(summary, list):
+        summary = " ".join(str(x) for x in summary)
+    return (summary or "").strip() if isinstance(summary, str) else ""
+
+
 def _build_stories_block(clusters: list[dict], edition: str, max_stories: int = 10) -> tuple[list[dict], str]:
     """
     Build the stories context block for the prompt.
@@ -1158,6 +1166,13 @@ def _build_stories_block(clusters: list[dict], edition: str, max_stories: int = 
     edition_clusters = []
     for c in clusters:
         sections = c.get("sections") or [c.get("section", "world")]
+        # A story with no summary is a headline and nothing to ground a
+        # sentence on. Handed one on 2026-09-30, the writer padded the Christa
+        # Pike item with "a February 25, 2026, order from U.S. District Judge
+        # Brian Murphy", lifted from the deportation story above it, and it
+        # aired. Rule 1: a story the writer cannot source does not ship.
+        if not _summary_text(c):
+            continue
         if edition in sections:
             edition_clusters.append(c)
 
@@ -1191,7 +1206,7 @@ def _build_stories_block(clusters: list[dict], edition: str, max_stories: int = 
     lines = []
     for i, c in enumerate(top, 1):
         title = (c.get("title", "") or "").strip()
-        summary = (c.get("summary", "") or "").strip()
+        summary = _summary_text(c)
         if len(summary) > 500:
             summary = summary[:497] + "..."
         source_count = c.get("source_count", 1)

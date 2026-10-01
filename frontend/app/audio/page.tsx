@@ -187,7 +187,7 @@ export default function AudioPage() {
                 </span>
                 <span className="audio-feed__row">
                   <code className="audio-feed__url">{f.feed}</code>
-                  <CopyButton text={f.feed} label={`Copy the ${f.title} feed address`} />
+                  <CopyButton text={f.feed} label={`Copy the feed address for ${f.title}`} />
                 </span>
               </li>
             ))}
