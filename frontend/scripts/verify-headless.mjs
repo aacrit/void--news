@@ -462,6 +462,12 @@ async function auditPage(browser, route, width, scheme, axeSource) {
 }
 
 /* ── Scenarios ──────────────────────────────────────────────────────────── */
+/* Does the served Weekly issue carry audio? Read once from the export; the
+   Weekly journeys assert the page agrees with it in both directions. */
+const weeklyHasAudio = (() => {
+  try { return !!JSON.parse(readFileSync(join(OUT, "data/weekly.json"), "utf8")).audio_url; } catch { return true; }
+})();
+
 async function withPage(browser, opts, name, fn) {
   ctx(opts.route ?? "/", opts.width, opts.scheme ?? "dark");
   console.log(`\nscenario: ${name} (${current})`);
@@ -1174,10 +1180,17 @@ async function journeys(browser) {
   /* Weekly offers The Argument to an idle player on arrival, and the player
      names the PROGRAMME. It used to read "Weekly", the section, because the
      label was a constant picked from which slot had been written last. */
+  /* An issue whose audio was withdrawn (Issue 26, by a correction on
+     2026-10-01) must offer NO Argument: the assertion follows the data, both
+     ways, so a withdrawn episode cannot creep back onto the page either. */
   await withPage(browser, { width: 1440, route: "/weekly/" }, "weekly-argument", async (page) => {
     await page.waitForTimeout(1200);
     const title = await page.evaluate(() => document.querySelector(".fp__title")?.textContent?.trim() ?? null);
-    assert(title === "The Argument", "weekly-argument-loaded", `player title on the issue: ${title}`);
+    if (weeklyHasAudio) {
+      assert(title === "The Argument", "weekly-argument-loaded", `player title on the issue: ${title}`);
+    } else {
+      assert(title !== "The Argument", "weekly-argument-withheld", `this issue has no audio; player title: ${title}`);
+    }
   });
   /* Sources: the picker and the six-axis dots. */
   await withPage(browser, { width: 1440, route: "/sources/" }, "sources-picker", async (page) => {
@@ -1425,7 +1438,8 @@ async function brandChecks(browser) {
      shared player. */
   await withPage(browser, { width: 1440, route: "/audio/" }, "audio-hub", async (page) => {
     const kinds = await page.evaluate(() => [...document.querySelectorAll(".audio-play")].map((b) => b.getAttribute("data-kind")));
-    assert(kinds.includes("daily") && kinds.includes("weekly") && kinds.includes("history"), "audio-hub-programmes", `play buttons: ${kinds.join(", ")}`);
+    assert(kinds.includes("daily") && kinds.includes("history") && kinds.includes("weekly") === weeklyHasAudio,
+      "audio-hub-programmes", `play buttons: ${kinds.join(", ")} (weekly audio ${weeklyHasAudio ? "published" : "withheld"})`);
     assert(await page.locator(".nav-nameplate[aria-current='page']").count() === 1, "audio-hub-nameplate", "the Audio nameplate is current");
     assert((await page.locator(".audio-feed__url").allTextContents()).filter((t) => /podcast-(world|weekly|history)\.xml$/.test(t)).length === 3, "audio-hub-feeds", "three feed addresses");
     await page.locator(".audio-play[data-kind='history']").first().click();
