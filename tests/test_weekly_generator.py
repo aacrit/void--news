@@ -350,6 +350,31 @@ def main():
     check("the CLI fails when no issue was stored",
           "if not generate_weekly_digest(" in src and "sys.exit(1)" in src)
 
+    # ── WG-10  A failed render ships the issue without audio ───────────────
+    print("\nWG-10  The Argument failing does not discard the issue")
+    src = (ROOT / "pipeline" / "briefing" / "weekly_digest_generator.py").read_text()
+    body = src[src.index("        if not argument:"):src.index("        # A floor under what gets published")]
+    check("no exception is raised when The Argument does not render",
+          "raise" not in body, body.strip()[:80])
+    check("the failure is still an Actions error annotation", "::error" in body)
+
+    # ── WG-11  With no model, nothing is published ─────────────────────────
+    print("\nWG-11  a run with no model stores no issue")
+    import os as _os
+    _os.environ["DISABLE_GEMINI"] = "1"
+    _os.environ["DISABLE_AUDIO"] = "1"
+    g._produce_argument = lambda *a, **k: (None, 0)
+    g.find_cover_image_for_cluster = lambda *a, **k: None
+    g.time.sleep = lambda *_: None
+    real_window = g.weekly_window
+    g.weekly_window = lambda now, off: (datetime(2026, 9, 21, tzinfo=timezone.utc),
+                                        datetime(2026, 9, 27, 23, 59, 59, tzinfo=timezone.utc), 27)
+    try:
+        stored = g.generate_weekly_digest(editions=["world"], week_offset=0)
+    finally:
+        g.weekly_window = real_window
+    check("summaries re-printed under a Weekly masthead are not stored", stored == 0, f"{stored}")
+
     print()
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))

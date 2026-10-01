@@ -80,6 +80,16 @@ the pipeline failed outright on 09-28. Four defects, each with a gate.
    3 of 5 opinions were dropped on 09-27 for words the writer was never told.
    `SLOP_PROMPT_WORDS` is now appended to every essay prompt. Gates: WG-07,
    WG-08 in `tests/test_weekly_generator.py`.
+8. **A Weekly run could publish nothing, or the wrong thing.** A run three
+   days late skipped on 0 clusters before reading the printed record, and
+   the export step then re-wrote the published Issue #26 from a stale DB row
+   (reverted on the branch before it shipped). The CLI now exits 1 when no
+   issue is stored, so nothing is exported. The next run wrote a full issue
+   and threw it away because The Argument ran 16.4 min against an 18-22 band:
+   the code raised where its own comment said "ships without audio". It now
+   ships without audio under an Actions error annotation, and a content floor
+   (one written cover, plus a column or the recap) stops a no-model run from
+   re-printing the daily summaries as a Weekly. Gates WG-09..WG-11.
 ---
 
 ## rev 82: the engine's input measured, its words' reach published, and a lexicon corpus that can run daily (2026-09-26)

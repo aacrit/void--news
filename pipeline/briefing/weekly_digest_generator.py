@@ -776,7 +776,7 @@ def _generate_cover_stories(threads, edition):
             for e in timeline
         )
         related_ctx = "\n".join(
-            f"  [{c.get('first_published', '')[:10]}] {c.get('title', '')} "
+            f"  [{(c.get('printed_on') or c.get('first_published') or '')[:10]}] {c.get('title', '')} "
             f"({c.get('source_count', 0)} sources)"
             for c in thread["clusters"]
         )
@@ -838,6 +838,7 @@ def _generate_cover_stories(threads, edition):
                 "numbers": [],
                 "cluster_id": lead.get("id"),
                 "cluster_title": lead.get("title", ""),
+                "_fallback": True,
             })
         time.sleep(3)
 
@@ -2452,13 +2453,31 @@ def generate_weekly_digest(editions=None, week_offset=0):
         #
         # VOID_WEEKLY_AUDIO_FORMAT=0 is now the only way to get the legacy
         # read, and it parks audio rather than substituting for it.
+        #
+        # "Ships without audio" is what this comment always said; the code
+        # raised instead, so a rundown 1.6 minutes under its band (W-07,
+        # 2026-10-01) threw away a finished issue: two covers, four columns,
+        # a seven-day recap and the editorial, with nothing stored. W-09 on the
+        # served page already accepts an issue with no audio. The failure
+        # stays loud: an Actions error annotation, and the row carries no
+        # audio fields at all, so nothing claims a voice that never read it.
         if not argument:
-            raise RuntimeError(
-                "The Argument did not render, and there is no fallback. The "
-                "cause is the [weekly-audio] line above. Fix the rundown, or "
-                "render from a committed script with "
-                "`python -m pipeline.briefing.render_weekly_audio`."
-            )
+            print("::error title=The Argument did not render::The Weekly ships "
+                  "WITHOUT audio this week. The cause is the [weekly-audio] line "
+                  "above; re-render once fixed with mode=audio-only.")
+
+        # A floor under what gets published. The audio raise used to stop a
+        # run with no model at all, by accident; with the issue now allowed to
+        # ship without audio, that has to be said on purpose. Without a single
+        # written cover and at least one written column or recap, this is the
+        # daily summaries re-printed under a Weekly masthead: store nothing.
+        written_covers = [c for c in covers if not c.get("_fallback")]
+        if not written_covers or not (opinions or (recap or {}).get("stories")):
+            print(f"  [weekly:{edition}] NOT STORED: {len(written_covers)} written cover(s), "
+                  f"{len(opinions)} column(s), {len((recap or {}).get('stories') or [])} recap item(s)")
+            continue
+        for c in covers:
+            c.pop("_fallback", None)
 
         # Store
         elapsed = time.time() - t0
