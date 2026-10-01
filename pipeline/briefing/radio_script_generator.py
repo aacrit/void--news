@@ -906,7 +906,10 @@ def build_stories_block(top20: list[dict]) -> str:
     lines: list[str] = []
     for i, c in enumerate(top20, 1):
         title = (c.get("title") or "").strip()
-        summary = (c.get("summary") or "").strip()
+        summary = c.get("summary") or ""
+        if isinstance(summary, list):
+            summary = " ".join(str(x) for x in summary)
+        summary = str(summary).strip()
         if len(summary) > 700:
             summary = summary[:697] + "..."
         consensus = c.get("consensus_points") or []
@@ -918,6 +921,10 @@ def build_stories_block(top20: list[dict]) -> str:
         lines.append(f"[{i}] ({c.get('source_count', 0)} sources, {cat}, severity {float(sev):.1f}) {tier}: {title}")
         if summary:
             lines.append(f"    Summary: {summary}")
+        else:
+            # 2026-09-30: a bare headline was padded with another story's
+            # judge and date, and it aired. Say what there is, nothing more.
+            lines.append("    No summary: say only what the headline says, and nothing from any other story.")
         if consensus and isinstance(consensus, list) and i <= BRIEF_RANKS[1]:
             lines.append(f"    Consensus: {'; '.join(str(x) for x in consensus[:3])}")
         if divergence and isinstance(divergence, list) and i <= DEEP_STORIES:

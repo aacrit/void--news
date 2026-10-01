@@ -49,6 +49,20 @@ the pipeline failed outright on 09-28. Four defects, each with a gate.
    the clause; the retry repairs the best draft with it in the prompt instead
    of regenerating; the output ceiling is 24,576 tokens because 2.5 Flash
    thinks out of the same budget. Gate: `tests/test_radio_script.py`.
+5. **A factual error aired (Rule 1).** The 09-30 On Air legacy script said
+   Christa Pike's stay "follows a February 25, 2026, order from U.S. District
+   Judge Brian Murphy". Murphy's order belongs to the deportation story; the
+   Pike cluster reached the brief writer with an EMPTY summary, and the writer
+   padded the bare headline from the story above it. A summary-less story no
+   longer enters the brief prompt, and the radio rundown marks one as
+   headline-only. Gate: `tests/test_brief_inputs.py`. The episode stays live
+   until the next run replaces it.
+6. **`/about` said "50 top stories"** from a value literal in
+   `app/film/data.ts` that the prose check could not see. It and "158"
+   countries now read the config; `copy-facts.test.mjs` fails on a count
+   written as a `value:` literal beside its label. Also "Copy the The
+   Argument feed address" on `/audio`, and Weekly's corrections link pointed
+   at the `/feedback` redirect rather than `/ship/`.
 4. **HTTP 429 from the CDN read as a failure.** `verify_sections.py` now
    retries 429/503 with backoff, honouring Retry-After.
 

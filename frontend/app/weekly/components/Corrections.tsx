@@ -48,7 +48,7 @@ export default function Corrections({ entries }: { entries: WeeklyCorrection[] }
       {entries.length === 0 ? (
         <p className="wk-corrections__none">
           Nothing corrected in this issue.{" "}
-          <a className="wk-corrections__link" href={`${BASE_PATH}/feedback/`}>
+          <a className="wk-corrections__link" href={`${BASE_PATH}/ship/`}>
             Tell us if we got something wrong.
           </a>
         </p>

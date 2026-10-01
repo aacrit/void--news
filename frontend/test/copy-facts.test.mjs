@@ -227,6 +227,23 @@ for (const p of scanFiles(join(ROOT, "app"))) {
 ok("no dash or kill-list word in frontend source copy", dirty.length === 0,
    "\n      " + dirty.slice(0, 12).join("\n      "));
 
+// N-1. A count written as a quoted literal beside its label in a data object.
+//    /about's numbers strip served "50 top stories" for weeks after the feed
+//    moved to 20, from `{ value: "50", label: "top stories" }` in film/data.ts:
+//    check 1 reads prose, and a value and its label in separate fields are
+//    not prose. A value literal next to a story, source or country label must
+//    come from the config.
+const literalCounts = files.flatMap((p) => {
+  const t = uncommented(read(p));
+  const out = [];
+  const re = /value:\s*["'`](\d[\d,]*)["'`]\s*,\s*label:\s*["'`][^"'`]*\b(stor(?:y|ies)|sources?|countr(?:y|ies))\b/gi;
+  let m;
+  while ((m = re.exec(t))) out.push(`${p.replace(ROOT, "")}:${t.slice(0, m.index).split("\n").length} "${m[1]}" ${m[2]}`);
+  return out;
+});
+ok("no count of stories, sources or countries is a hand-written value literal",
+   literalCounts.length === 0, literalCounts.join(", "));
+
 // N. A number glued to the next word in the served HTML. JSX text that opens
 //    with a space right after an expression AND carries an HTML entity later in
 //    the same run loses that leading space in the compiled output: /about served
