@@ -253,13 +253,18 @@ def test_committed_scripts():
         if not issue:
             continue
         script = parse_script(path.read_text(encoding="utf-8"))
-        findings = validate_script(script, issue)
+        # The renderer's own cast, not the blended 163 wpm: on 2026-10-01 this
+        # gate passed the corrected Issue 26 script at 18.3 min while
+        # render_weekly_audio, timing it with the real voices, refused it at
+        # 17.6. A gate that is kinder than the thing it guards is not one.
+        from briefing.weekly_producer import VOICES
+        findings = validate_script(script, issue, VOICES)
         fails = [f for f in findings if f.level == "fail"]
         for f in fails:
             print(f"         {f.id} [{f.segment}] {f.detail[:100]}")
         check(f"{week}: renders clean", not fails,
               "; ".join(f"{f.id}" for f in fails))
-        minutes, wpm = estimated_minutes(script)
+        minutes, wpm = estimated_minutes(script, VOICES)
         lo, hi = TARGET_MINUTES
         check(f"{week}: inside the band", lo <= minutes <= hi,
               f"{minutes:.1f} min, {script.words} words")

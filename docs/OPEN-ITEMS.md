@@ -88,6 +88,17 @@ claims about its own confidence. It needs a decision, not a tweak.
 
 ## Known defects, not yet fixed
 
+**Weekly Issue #26 still carries claims this session could not verify.** It
+was written from cluster rows that are now pruned, so two quotations rendered
+as direct quotes (Trump on "the security of Greenland, and the United States
+of America"; Rasmussen's "binding agreement") and a statement credited to
+Greenland Prime Minister Jens-Frederik Nielsen (the printed stories give a
+similar line to Mette Frederiksen) cannot be checked. Left as published by the
+CEO's call on 2026-10-01; the audio is withdrawn. To restore it, the draft at
+`data/weekly/scripts/drafts/2026-09-14.txt` needs about 300 more SOURCED words
+(17.6 min against 18-22), then move it back to `data/weekly/scripts/` and run
+`weekly-digest.yml` with `mode=audio-only`.
+
 **The spoken brief has no per-story grounding check on its OUTPUT.**
 2026-09-30 aired another story's judge and date inside the Christa Pike item.
 The input is now guarded (`tests/test_brief_inputs.py`), but E-13/E-14 judge

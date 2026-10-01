@@ -263,7 +263,13 @@ def test_descriptions():
     print("\nP-T06  Every item description ends a sentence (F-12)")
     for edition, xml, channel in feeds():
         items = channel.findall("item")
-        check(f"{xml.name}: carries at least one item", bool(items), str(len(items)))
+        # The weekly feed is legitimately empty exactly when no archive issue
+        # carries audio (P-T07 asserts that pairing); every other feed is not.
+        weekly_silent = xml.name == "podcast-weekly.xml" and ISSUES_JSON.exists() and not any(
+            isinstance(r, dict) and r.get("audio_url")
+            for r in json.loads(ISSUES_JSON.read_text(encoding="utf-8")))
+        if not weekly_silent:
+            check(f"{xml.name}: carries at least one item", bool(items), str(len(items)))
         bad = []
         for item in items:
             for tag in ("description", f"{ITUNES}summary"):
@@ -290,12 +296,16 @@ def test_weekly_feed_matches_archive():
     rows = [r for r in json.loads(ISSUES_JSON.read_text(encoding="utf-8"))
             if isinstance(r, dict) and r.get("audio_url")]
     rows.sort(key=lambda r: r.get("week_start") or "", reverse=True)
-    if not rows:
-        check("an archive issue carries audio", False)
-        return
-    newest = rows[0]
     channel = ET.parse(xml).getroot().find("channel")
     items = channel.findall("item")
+    if not rows:
+        # No issue carries audio (Issue 26's was withdrawn by a correction on
+        # 2026-10-01). Then the feed must carry nothing either: an item here
+        # would be an episode the page no longer stands behind.
+        check("no archive issue carries audio, and the feed carries no episode",
+              not items, f"{len(items)} item(s) still in the feed")
+        return
+    newest = rows[0]
     if not items:
         check("weekly feed carries an item", False)
         return
