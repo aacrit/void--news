@@ -18,6 +18,39 @@ lives in this file.
 
 ---
 
+## rev 83: a red main from four causes, one of them silent for a week (2026-10-01)
+
+Verify Production had been red on every scheduled run since 2026-09-28 and
+the pipeline failed outright on 09-28. Four defects, each with a gate.
+
+1. **The SQLite shim decoded prose by its shape.** `_maybe_parse_json` turns
+   any text that starts with `{` or `[` into a dict or list, so a headline in
+   braces or a body scraped as a JSON-LD blob came back as a list. On 09-28
+   clustering died on it (`'list' object has no attribute 'split'`), every
+   article became a singleton, 6 stories qualified against 20, and
+   `test_feed_buildable` (correctly) refused to commit the day. Prose columns
+   are now returned as stored, and a clustering failure prints its traceback.
+2. **One sqlite3 connection, four threads, no lock.** Step 9 enriches with 4
+   workers over the shared client; 205 to 416 cluster writes a day failed
+   with "cannot commit - no transaction is active" / "another row
+   available", each leaving a cluster without its bias rollup. Every
+   statement and RPC now runs under an `RLock`.
+   Gate for both: `tests/test_pgrest_sqlite_threads.py`.
+3. **On Air shipped the legacy two-voice fallback four days running**
+   (09-26, 27, 29, 30), so the served episode had no chapters and A-02..A-05
+   failed. Attempt 1 failed on one rule each day; the from-scratch retry then
+   came back cut off (211 words, no CLOSE). Fixes: R-05 no longer reads a
+   newsmaker's own "welcome back" after an attribution verb as host chatter
+   (narrator tells such as "significant" still fail anywhere); R-14 collapses a
+   spelled initialism in the SPEAKER ("The I-R-G-C says") as it already did in
+   the clause; the retry repairs the best draft with it in the prompt instead
+   of regenerating; the output ceiling is 24,576 tokens because 2.5 Flash
+   thinks out of the same budget. Gate: `tests/test_radio_script.py`.
+4. **HTTP 429 from the CDN read as a failure.** `verify_sections.py` now
+   retries 429/503 with backoff, honouring Retry-After.
+
+---
+
 ## rev 82: the engine's input measured, its words' reach published, and a lexicon corpus that can run daily (2026-09-26)
 
 Scope set by the CEO: the spectrum's data and the bias engine only (the Deep

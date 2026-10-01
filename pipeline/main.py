@@ -2626,6 +2626,10 @@ def main():
             print(f"  Clusters formed: {len(clusters)}")
         except Exception as e:
             print(f"  [error] Clustering failed: {e}")
+            # 2026-09-28 failed here with one line and no location; the
+            # cause (a prose column decoded to a list) took a day to find.
+            import traceback as _tb
+            _tb.print_exc()
 
         # Step 6 post-process: orphan wrapping.
         # Articles that didn't cluster with any other source get kept as

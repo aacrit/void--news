@@ -151,6 +151,7 @@ jobs:
           python tests/test_history_thesis.py        # T-01..T-20: a thesis cites the ledger, the ledger holds the extract, the served thesis matches
           python tests/test_history_quote_ledger.py  # a Hearing quotation that diverges from a ledger extract we hold
           python tests/test_grounding.py             # the evidence outlives the run
+          python tests/test_pgrest_sqlite_threads.py # one connection, many workers: statements never interleave
           python tests/test_feed_buildable.py        # the feed can fill the front page
           python tests/test_truncation_lint.py       # no cap published as a count
           python tests/test_docs_facts.py            # CLAUDE.md's own numbers
