@@ -223,6 +223,9 @@ def _gen_essay(prompt, system, model=None, max_output_tokens=4096,
     """
     spec = spec or {}
     best, best_findings, calls = None, None, 0
+    # The words that DROP a piece, told to the writer before it writes, not
+    # after (every prompt above names only its own short list).
+    system = (system or "") + _SLOP_PROMPT_LINE
 
     for attempt in range(2):
         raw = _smart_generate_text(
@@ -265,6 +268,15 @@ def _gen_essay(prompt, system, model=None, max_output_tokens=4096,
         if best_findings:
             print(f"    [{label}] shipped with {len(best_findings)} finding(s): {'; '.join(best_findings)}")
     return best, calls
+
+
+# Defined here, inside the slice tests/test_weekly.py execs, so the function
+# and the list it appends travel together.
+from utils.prohibited_terms import SLOP_PROMPT_WORDS  # noqa: E402
+_SLOP_PROMPT_LINE = (
+    "\n\nNEVER USE these words or phrases in any form; a piece that carries one is "
+    "dropped from the issue: " + ", ".join(f'"{w}"' for w in SLOP_PROMPT_WORDS) + "."
+)
 
 
 _parse_recap = parse_recap
@@ -318,6 +330,73 @@ def _fetch_week_clusters(edition, week_start, week_end):
         # A read that died part-way is a floor, not a count. Only an empty
         # result is honestly empty.
         return clusters, bool(clusters)
+
+
+def _fetch_week_printed(week_start, week_end):
+    """The week as Void printed it: every day's front page, from the record.
+
+    `story_clusters` is pruned to two days by step 8c.1, so a Sunday read of
+    it held Friday and Saturday plus whatever junk survived the purge. The
+    09-27 issue led its second cover with a Spanish local crime cluster of
+    127 "sources" that never reached the front page, and its recap could only
+    ever span one or two dates. `printed_stories` is the permanent top-20 of
+    each day, every row through Stage 2 with its summary, and it keeps ten
+    days, so a Sunday (or a backfill a few days late) sees the whole week.
+
+    Rows are returned in the cluster shape the rest of this module reads, with
+    `id` the source cluster id (what daily briefs list in top_cluster_ids)
+    and `printed_on` the day it ran.
+    """
+    lo = week_start.strftime("%Y-%m-%d") if hasattr(week_start, "strftime") else str(week_start)[:10]
+    hi = week_end.strftime("%Y-%m-%d") if hasattr(week_end, "strftime") else str(week_end)[:10]
+    try:
+        rows = (
+            supabase.table("printed_stories")
+            .select("*")
+            .gte("printed_on", lo)
+            .lte("printed_on", hi)
+            .order("printed_on")
+            .execute()
+        ).data or []
+    except Exception as e:
+        print(f"  [weekly] printed_stories read failed: {e}")
+        return []
+    out = []
+    for r in rows:
+        summary = r.get("summary")
+        if not isinstance(summary, str) or not summary.strip():
+            continue  # nothing to ground a sentence on
+        out.append({
+            "id": r.get("source_cluster_id") or r.get("id"),
+            "title": r.get("title") or "",
+            "summary": summary,
+            "consensus_points": r.get("consensus_points") or [],
+            "divergence_points": r.get("divergence_points") or [],
+            "category": r.get("category"),
+            "source_count": r.get("source_count") or 0,
+            # rank_world is the score the front page was ordered by
+            "headline_rank": r.get("rank_world") or r.get("headline_rank") or 0,
+            "divergence_score": r.get("divergence_score") or 0,
+            "bias_diversity": r.get("bias_diversity") or {},
+            "sections": ["world"],
+            "created_at": r.get("created_at"),
+            "first_published": r.get("first_published"),
+            "last_updated": r.get("printed_on"),
+            "printed_on": r.get("printed_on"),
+            "story_thread_id": r.get("story_thread_id"),
+            "edition_position": r.get("edition_position"),
+        })
+    return out
+
+
+def _one_per_thread(rows):
+    """The printed rows with one row per story thread: its best-covered day."""
+    best = {}
+    for r in rows:
+        key = r.get("story_thread_id") or r.get("id")
+        if key not in best or (r.get("source_count") or 0) > (best[key].get("source_count") or 0):
+            best[key] = r
+    return sorted(best.values(), key=lambda r: r.get("headline_rank") or 0, reverse=True)
 
 
 # The Week in Bias prints `total_scored` as a COUNT, so it has to be one. A
@@ -474,6 +553,11 @@ def _link_threads_tfidf(clusters):
     for i, label in enumerate(labels):
         groups.setdefault(label, []).append(clusters[i])
 
+    # Deliberately NOT joined on printed_stories.story_thread_id: on the week
+    # of 2026-09-21 the daily threader filed "Trump Hails 'Great Friendship'
+    # With Xi Jinping" under the White House media-ban story, and the cover
+    # writer is handed every member as a dated timeline. A thread split in two
+    # understates a story; a thread joined wrongly states a false connection.
     return _build_threads(groups)
 
 
@@ -508,7 +592,9 @@ def _build_threads(groups):
         days = set()
         editions = set()
         for c in thread_clusters:
-            fp = c.get("first_published") or c.get("created_at")
+            # A printed row counts the day it RAN; first_published is when
+            # the earliest article appeared, which a three-day story shares.
+            fp = c.get("printed_on") or c.get("first_published") or c.get("created_at")
             if fp:
                 days.add(fp[:10])
             for s in (c.get("sections") or []):
@@ -1175,7 +1261,7 @@ def _spread_over_week(clusters, count):
     """
     by_day = {}
     for c in clusters:
-        day = (c.get("first_published") or c.get("created_at") or "")[:10]
+        day = (c.get("printed_on") or c.get("first_published") or c.get("created_at") or "")[:10]
         by_day.setdefault(day, []).append(c)
     if len(by_day) <= 1:
         return clusters[:count]
@@ -1204,7 +1290,7 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
     if not remaining:
         return None, 0
 
-    days = sorted({(c.get("first_published") or c.get("created_at") or "")[:10]
+    days = sorted({(c.get("printed_on") or c.get("first_published") or c.get("created_at") or "")[:10]
                    for c in remaining} - {""})
     print(f"    [brief] {len(remaining)} stories across {len(days)} day(s) of the week")
 
@@ -2199,10 +2285,21 @@ def generate_weekly_digest(editions=None, week_offset=0):
         # Track used cluster IDs to avoid repetition in recap
         used_ids = set()
 
+        # The week's stories come from what Void printed, not from the raw
+        # cluster table (pruned to two days, and full of what Stage 2
+        # rejected). The cluster pool still feeds tech, sports and the bias
+        # counts, which look past the front page by design.
+        printed = _fetch_week_printed(week_start, week_end)
+        printed_days = sorted({r["printed_on"] for r in printed if r.get("printed_on")})
+        print(f"  Printed: {len(printed)} front-page rows over {len(printed_days)} day(s)")
+        story_pool = printed if len(printed_days) >= 3 else clusters
+        if story_pool is clusters:
+            print(f"  [warn] fewer than 3 printed days in the week; covers read the cluster table")
+
         # Link clusters into story threads
         print(f"  Linking story threads...")
-        threads = _link_story_threads(clusters)
-        print(f"  Threads: {len(threads)} (from {len(clusters)} clusters)")
+        threads = _link_story_threads(story_pool)
+        print(f"  Threads: {len(threads)} (from {len(story_pool)} stories)")
 
         # Fetch daily brief signals
         brief_signals = _fetch_brief_signals(edition, week_start, week_end)
@@ -2222,6 +2319,9 @@ def generate_weekly_digest(editions=None, week_offset=0):
         for c in covers:
             if c.get("cluster_id"):
                 used_ids.add(c["cluster_id"])
+        # Every day of a cover thread is the cover's, not the recap's.
+        for t in top_threads[:len(covers)]:
+            used_ids.update(c.get("id") for c in t["clusters"] if c.get("id"))
 
         # Cover image: freely licensed sources only (Wikimedia Commons first).
         cover_image = None
@@ -2275,7 +2375,14 @@ def generate_weekly_digest(editions=None, week_offset=0):
 
         # Section 6: Week in brief (remaining stories)
         print(f"\n  ── WEEK IN BRIEF ──")
-        recap, calls = _generate_week_recap(clusters, edition, skip_ids=used_ids)
+        if story_pool is printed:
+            # Skip a thread when ANY of its days went to a section above.
+            used_threads = {r.get("story_thread_id") for r in printed if r.get("id") in used_ids}
+            recap_pool = [r for r in _one_per_thread(printed)
+                          if r.get("story_thread_id") not in used_threads]
+        else:
+            recap_pool = clusters
+        recap, calls = _generate_week_recap(recap_pool, edition, skip_ids=used_ids)
         total_calls += calls
         recap_count = len(recap.get("stories", [])) if recap else 0
         print(f"    {recap_count} stories")

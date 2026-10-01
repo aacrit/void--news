@@ -263,6 +263,21 @@ SLOP_PATTERN = (
 )
 _SLOP_RE = _re.compile(SLOP_PATTERN, _re.IGNORECASE)
 
+# SLOP_PATTERN in words a prompt can carry. The weekly's prompts named eight
+# banned words while this pattern dropped pieces for thirty: on 2026-09-27
+# three of five opinion columns were dropped for "robust", "underscore" and
+# "multifaceted", words no prompt had told the writer to avoid. Every entry
+# must match SLOP_PATTERN (tests/test_weekly.py asserts it).
+SLOP_PROMPT_WORDS = (
+    "underscore", "robust", "navigate", "nuanced", "pivotal", "delve",
+    "multifaceted", "tapestry", "paves the way", "sends a clear message",
+    "a testament to", "sheds light on", "marks a pivotal moment",
+    "complex interplay", "this isn't just about", "game-changing",
+    "should chill", "in conclusion", "to summarize", "all things considered",
+    "noteworthy", "what you need to know", "here's what", "let's dive",
+    "it bears mentioning", "it should be noted", "it is worth noting",
+)
+
 
 def find_slop(text: str) -> list[str]:
     """Kill-list verbs, nouns and scaffolding present in ``text``.

@@ -63,8 +63,23 @@ the pipeline failed outright on 09-28. Four defects, each with a gate.
    `app/film/data.ts` that the prose check could not see. It and "158"
    countries now read the config; `copy-facts.test.mjs` fails on a count
    written as a `value:` literal beside its label. Also "Copy the The
-   Argument feed address" on `/audio`, and Weekly's corrections link pointed
-   at the `/feedback` redirect rather than `/ship/`.
+   Argument feed address" on `/audio`. (Weekly's corrections link to the
+   `/feedback/` redirect was reported too and left alone: `test_weekly.py`
+   asserts it, the redirect is the stable public address.)
+7. **The Weekly read a week it did not have.** `story_clusters` is pruned to
+   two days by step 8c.1, so the Sunday issue saw Friday and Saturday plus
+   what Stage 2 had rejected: the 09-27 run's second cover was a Spanish
+   local crime cluster of 127 "sources" that never ran on the front page.
+   Covers, opinions and the recap now read `printed_stories`, the week as
+   printed (every row through Stage 2, ten days kept). Threads are linked by
+   text only and deliberately NOT by the archive's `story_thread_id`, which
+   filed the Xi state visit under the White House media-ban story; the cover
+   writer is handed every member as a dated timeline, so a wrong join states
+   a false connection. Tech, sports and the bias counts keep the full pool.
+   The essay prompts also named 8 banned words while the drop rule used 30;
+   3 of 5 opinions were dropped on 09-27 for words the writer was never told.
+   `SLOP_PROMPT_WORDS` is now appended to every essay prompt. Gates: WG-07,
+   WG-08 in `tests/test_weekly_generator.py`.
 ---
 
 ## rev 82: the engine's input measured, its words' reach published, and a lexicon corpus that can run daily (2026-09-26)

@@ -265,6 +265,83 @@ def main():
     check("an unlabelled sports cluster is still reachable",
           g._is_sport_or_culture(unlabelled_sport) is True)
 
+    # ── WG-07  The week is read from what Void printed ─────────────────────
+    # The 2026-09-27 issue read story_clusters, which step 8c.1 prunes to two
+    # days: its covers saw Friday and Saturday, its second cover was a Spanish
+    # local crime cluster that never reached the front page, and the run died
+    # on a summary decoded to a list. printed_stories keeps every day's top 20.
+    print("\nWG-07  the week comes from the printed record, every day of it")
+    from datetime import datetime, timezone
+    conn = g.supabase._conn
+    days = [f"2026-09-{d}" for d in range(21, 28)]
+    for d in days:
+        conn.execute("INSERT OR IGNORE INTO printed_days (printed_on) VALUES (?)", (d,))
+
+    def put(pid, day, pos, title, summary, thread, src=20, rank=50.0):
+        conn.execute(
+            "INSERT INTO printed_stories (id, printed_on, edition_position, source_cluster_id,"
+            " title, summary, rank_world, source_count, story_thread_id)"
+            " VALUES (?,?,?,?,?,?,?,?,?)",
+            (pid, day, pos, "c-" + pid, title, summary, rank, src, thread))
+
+    hormuz = "Iran offers to reopen the Strait of Hormuz if the US lifts its naval blockade of Iranian ports."
+    for i, d in enumerate(days[:5]):
+        put(f"h{i}", d, 1, f"Iran Offers to Reopen Strait of Hormuz, Day {i}", hormuz, "t-hormuz", 40, 90.0)
+    ban = "A federal judge ordered the White House to end its ban on network television reporters."
+    for i, d in enumerate(days[1:4]):
+        put(f"b{i}", d, 2, "White House Media Ban Ordered Lifted by Judge", ban, "t-ban", 30, 80.0)
+    # Misfiled by the daily threader under the media-ban thread (as on 09-24).
+    put("x0", days[3], 3, "Trump Hails Friendship With Xi Jinping During State Visit",
+        "Chinese President Xi Jinping met President Trump in Washington on a state visit.",
+        "t-ban", 20, 99.0)
+    for i, d in enumerate(days):
+        put(f"o{i}", d, 5, f"Flooding Displaces Families in Region {i}",
+            f"Floods in region {i} displaced families and closed roads, officials said.", f"t-o{i}", 8, 30.0)
+    put("e0", days[6], 6, "A Headline With No Summary", "", "t-empty", 50, 95.0)
+    put("j0", days[6], 7, "{Unknown}", "[1, 2]", "t-json", 5, 10.0)  # prose shaped like JSON
+    conn.commit()
+
+    ws = datetime(2026, 9, 21, tzinfo=timezone.utc)
+    we = datetime(2026, 9, 27, 23, 59, 59, tzinfo=timezone.utc)
+    printed = g._fetch_week_printed(ws, we)
+    check("the printed read spans the whole week",
+          sorted({r["printed_on"] for r in printed}) == days)
+    check("a printed row with no summary is not a story",
+          not any(r["title"] == "A Headline With No Summary" for r in printed))
+    check("prose shaped like JSON comes back as text",
+          all(isinstance(r["title"], str) and isinstance(r["summary"], str) for r in printed))
+    threads = g._link_story_threads(printed)
+    hz = [t for t in threads if "Hormuz" in t["title"]]
+    check("a story printed five days is one five-day thread",
+          len(hz) == 1 and hz[0]["daily_appearances"] == 5,
+          f"{[(t['title'], t['daily_appearances']) for t in hz]}")
+    check("a row the daily threader misfiled is not joined to that thread",
+          not any("Xi" in c["title"] and any("Media Ban" in o["title"] for o in t["clusters"])
+                  for t in threads for c in t["clusters"]))
+    top = g._score_weekly_threads(threads, [], "world")
+    check("the lead cover is the story the week printed most",
+          bool(top) and "Hormuz" in top[0]["title"], top[0]["title"] if top else "none")
+    recap = g._spread_over_week(g._one_per_thread(printed), 10)
+    check("the recap spans the week, not one day",
+          len({r["printed_on"] for r in recap}) >= 5,
+          f"{sorted({r['printed_on'] for r in recap})}")
+
+    # ── WG-08  The writer is told the words that drop its piece ────────────
+    print("\nWG-08  the drop list reaches the prompt, and agrees with the rule")
+    from utils.prohibited_terms import SLOP_PROMPT_WORDS, find_slop
+    unmatched = [w for w in SLOP_PROMPT_WORDS if not find_slop(f"They {w} here.")]
+    check("every word the prompt bans is one the rule drops", not unmatched, f"{unmatched}")
+    seen = []
+    real = g._smart_generate_text
+    g._smart_generate_text = lambda prompt, system_instruction=None, **kw: (
+        seen.append(system_instruction) or "Headline\n\nBody text.")
+    try:
+        g._gen_essay("p", "SYSTEM", label="probe")
+    finally:
+        g._smart_generate_text = real
+    check("an essay prompt carries the drop list",
+          bool(seen) and all(w in seen[0] for w in ("robust", "underscore", "multifaceted")))
+
     print()
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))
