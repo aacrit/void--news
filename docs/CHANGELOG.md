@@ -92,6 +92,40 @@ the pipeline failed outright on 09-28. Four defects, each with a gate.
    re-printing the daily summaries as a Weekly. Gates WG-09..WG-11.
 ---
 
+## rev 84: the Weekly reached past its sources, so it gets a second reader (2026-10-01)
+
+A sentence-level audit of the generated Issue #27 against the week's printed
+stories found about eleven claims the week never carried (the JCPOA
+withdrawal as Hormuz background, "a substantial portion of the world's
+seaborne oil", an editorial line that the Xi talks "avoided the broader
+issues" when the printed stories list Taiwan, Iran and Ukraine). The
+published Issue #26 carried seventeen in its Greenland cover alone.
+
+- `weekly_parse.ground_text` cuts a sentence carrying a number or a
+  multi-word proper name the sources do not hold (W-T20). Deterministic,
+  narrow: on Issue #27 it cut exactly the JCPOA sentence and nothing else.
+- `weekly_source_check`: flash-lite reads every sentence of every piece
+  against the week and names the unsupported or contradicted ones; code cuts
+  them. Fails CLOSED: a piece it cannot read does not ship, and a piece more
+  than half unsupported is dropped (W-T21). The daily feed had this pass; the
+  Weekly had none.
+- Issue #27 held off main; regenerated through the check.
+- Issue #26 corrected in place: the announcement date (it said Saturday,
+  September 19; it was late on Friday, September 18), the Arctic geopolitics
+  paragraph, the World War II / 1950s treaty / Thule passages, Greenland's
+  constitutional status, the "1950s" stat and the 1950s sentence in two
+  columns. Two entries in `weekly-corrections.json`. Its audio spoke the
+  removed passages and is withdrawn; the corrected script is in
+  `data/weekly/scripts/drafts/` because it now runs 17.6 min against the
+  18-22 band.
+- `test_weekly_script` timed scripts at a blended 163 wpm while the renderer
+  times the real cast: it passed the corrected script at 18.3 min that the
+  renderer refused at 17.6. It uses the renderer's voices now.
+- The weekly podcast feed is written with no episodes when no issue carries
+  audio, instead of skipping and leaving a withdrawn episode playing.
+
+---
+
 ## rev 82: the engine's input measured, its words' reach published, and a lexicon corpus that can run daily (2026-09-26)
 
 Scope set by the CEO: the spectrum's data and the bias engine only (the Deep

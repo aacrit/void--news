@@ -1,6 +1,6 @@
 ## OPEN
-E: A lawyer in Washington posts to a social network on a Friday evening. He uses the word forever, in capital letters, about an island of fifty six thousand people that his country does not own.
-E: Eight hundred miles away, in Nuuk, the prime minister of that island tells his public the same agreement recognises their interests.
+E: A lawyer in Washington posts to a social network on a Friday evening. He uses the word forever, in capital letters, about an island his country does not own.
+E: In Nuuk, the prime minister of that island tells his public the same agreement recognises their interests.
 E: Both men are describing the same document. Neither has published it.
 E: From Void News, this is The Argument. The week of September fourteenth to the twentieth, two thousand and twenty six.
 
@@ -28,16 +28,11 @@ E: Sixteen sources carried those two statements. So the arithmetic of the week i
 E: Saturday. Fifty seven sources.
 
 ## COVER
-E: Here is what is not new. The American military already maintains extensive access to Greenland, under a treaty signed in the nineteen fifties.
-E: That Cold War framework permitted operations from Thule Air Base, a component of North American aerospace defence and early warning. American forces have been on that island, lawfully, for seventy years.
-E: What is new is a stated intent to broaden the footprint, and to explicitly block third party military or economic engagement.
+E: The agreement states an intent to broaden the American footprint, and to explicitly block third party military or economic engagement.
 E: And here is what has not been made public. The scale of the planned build up. Whether formal authority over foreign policy and resources will be ceded to Washington. And what the phrase sensitive investments actually covers.
-E: That last gap is wider than it sounds. Greenland controls its own natural resources and its internal affairs. Foreign policy and defence sit with Copenhagen. If sensitive investments reaches past military installations into mining, infrastructure or research, then a clause about security has quietly become a clause about the island's economy.
-E: The Arctic has drawn this attention for a reason. Melting ice is opening shipping routes and access to resources. Russia has reactivated Cold War bases in the High North. China has declared itself a near Arctic state and pursued scientific and economic ventures there.
-E: None of this is the first time. During the Second World War the United States established bases on Greenland to protect shipping lanes and watch German activity. The nineteen fifties treaty formalised what the war had made habitual.
-E: So the pattern is eighty years old. What has changed is the currency. The competition for influence in the Arctic now runs through economic leverage and resource control as much as through military hardware, which is exactly why an undefined phrase about sensitive investments is not a drafting detail.
+E: That last gap is wider than it sounds. If sensitive investments reaches past military installations into mining, infrastructure or research, then a clause about security has quietly become a clause about the island's economy.
 E: On Sunday, September twentieth, a single source reported Denmark repeating that the deal respects sovereignty, and is good for NATO and Europe. One source. The same message, on a quieter day.
-E: The formal signing is expected during the United Nations General Assembly this coming week. The text will likely be published then. Everything argued below was argued without it.
+E: The formal signing is expected during the United Nations General Assembly this coming week. Everything argued below was argued without it.
 
 ## TOPIC
 E: So. An agreement nobody outside the room has read, described by one signatory as permanent control and by the other two as respect for sovereignty.
@@ -61,7 +56,6 @@ R: The bedrock of international relations, as history has repeatedly shown, rest
 R: Nations, large and small, must be secure in their territorial integrity and their right to self governance.
 R: Denmark's affirmation that its sovereignty over Greenland remains inviolate is not merely diplomatic posturing; it is a necessary assertion of a fundamental right that has long served as a bulwark against instability.
 R: This language, while perhaps intended to convey strength, risks overstepping the established norms of international partnership.
-R: The United States already possesses significant access to Greenland under a treaty from the 1950s, a testament to a long standing security cooperation.
 R: Security partnerships are most robust when they are built on mutual respect and clearly defined boundaries, not on unilateral assertions of perpetual control.
 R: The potential for adversary nations to establish bases or make sensitive investments in Greenland is a legitimate concern, one that a cooperative security framework can address.
 R: However, the details of this expanded presence, including the scale of the build up and any potential cession of authority, remain undisclosed. This opacity is concerning, as it leaves room for misinterpretation and potential challenges to Danish and Greenlandic self determination.

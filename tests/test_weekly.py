@@ -1078,6 +1078,61 @@ def test_archive_is_derived():
               f"{str(newest.get('created_at'))[:19]}")
 
 
+def test_grounding_cut():
+    """W-T20  a sentence naming what the week never printed is cut (Rule 1).
+
+    Issue #27's first draft carried "the U.S. withdrawal from the Joint
+    Comprehensive Plan of Action"; Issue #26 carried "the High North" and
+    "Cold War-era" bases. None were in that week's record. The false-cut cases
+    are the ones the first version of this check got wrong on the real issue:
+    "X and Y" read as one name, a possessive, a sentence opener.
+    """
+    print("\nW-T20  ground_text cuts unsourced names and numbers, and only those")
+    from briefing.weekly_parse import ground_text
+    src = ("President Donald Trump rejected Iran's plan. The United States and Iran remain at odds. "
+           "Uzma Khan and Noreen Niazi were detained. Xi Jinping arrived for his first state visit "
+           "to Washington since 2015. 58 sources covered it.")
+    text = ("United States President Donald Trump rejected the plan. Pressure grew after the "
+            "U.S. withdrawal from the Joint Comprehensive Plan of Action. Outside Xi's motorcade, "
+            "58 outlets covered it.\n\nRussia reactivated Cold War-era bases in the High North "
+            "in 1951. Uzma and Noreen were detained; the United States and Iran did not move.")
+    kept, cut = ground_text(text, src)
+    cut_s = " | ".join(c[0] for c in cut)
+    check("an unsourced treaty name is cut", "Joint Comprehensive" in cut_s)
+    check("an unsourced region, era and year are cut", "High North" in cut_s)
+    check("a paraphrase of a sourced title and name is kept", "United States President Donald Trump" in kept)
+    check("a possessive and a sourced number are kept", "Outside Xi's motorcade, 58 outlets" in kept)
+    check("'X and Y' is two names, not one", "Uzma and Noreen were detained" in kept, cut_s)
+    check("exactly two sentences cut", len(cut) == 2, f"{len(cut)}: {cut_s}")
+
+
+def test_source_check():
+    """W-T21  the Weekly's source check cuts what the model names, and fails closed."""
+    print("\nW-T21  source check: cuts by sentence number, fails closed, drops fragments")
+    import re as _re
+    from briefing.weekly_source_check import check_texts, check_piece
+
+    def fake(prompt, **kw):
+        bad = [{"n": int(m.group(1)), "claim": "not in sources"}
+               for m in _re.finditer(r"\[(\d+)\] ([^\n]*)", prompt)
+               if "seaborne oil" in m.group(2) or "avoided" in m.group(2)]
+        return {"unsupported": bad}
+
+    cover = ("Trump rejected the plan on Saturday. The strait carries a substantial portion of "
+             "the world's seaborne oil.\n\nIran said it would wait.")
+    txt, cuts = check_piece(cover, "src", fake, label="cover")
+    check("an unsupported background sentence is cut", "seaborne" not in (txt or ""), txt)
+    check("the supported sentences and paragraphs survive",
+          txt == "Trump rejected the plan on Saturday.\n\nIran said it would wait.", repr(txt))
+    outs, _ = check_texts(["One fact. Two facts.", "The talks avoided Taiwan."], "src", fake, label="recap")
+    check("a recap item cut whole does not ship; its neighbour does",
+          outs == ["One fact. Two facts.", None], repr(outs))
+    txt, _ = check_piece(cover, "src", lambda p, **k: None, label="cover")
+    check("a piece the check cannot read does not ship", txt is None)
+    txt, _ = check_piece(cover, "src", lambda p, **k: {"unsupported": [{"n": 99}]}, label="cover")
+    check("an out-of-range sentence number cuts nothing", txt == cover.replace("\n\n", "\n\n"), repr(txt))
+
+
 def main():
     print("void --weekly gates")
     test_headline_guard()
@@ -1097,6 +1152,8 @@ def main():
     test_archive()
     test_no_cap_published_as_count()
     test_archive_is_derived()
+    test_grounding_cut()
+    test_source_check()
     print()
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))

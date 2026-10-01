@@ -39,7 +39,7 @@ from briefing.weekly_parse import (  # pure: no DB, no LLM, no network
     build_weekly_row, clean_headline, parse_essay, parse_recap,
     looks_like_headline, weekly_window,
     banned_terms, drop_terms, enforce, enforce_recap, retry_suffix, strip_dashes,
-    word_count,
+    word_count, ground_text,
 )
 from utils.prohibited_terms import strip_significance
 from summarizer.gemini_client import (
@@ -2409,6 +2409,100 @@ def generate_weekly_digest(editions=None, week_offset=0):
             week_lean, week_label, edition,
         )
         total_calls += calls
+
+        # Grounding, before anything is spoken or stored. Every sentence that
+        # carries a number or a multi-word name the week's sources do not is
+        # cut (CLAUDE.md Rule 1: cut, not softened). Issue #27's first draft
+        # said Iran's economic pressure "intensified since the U.S. withdrawal
+        # from the Joint Comprehensive Plan of Action"; nothing printed that
+        # week said so. The corpus is exactly what the writers were handed:
+        # the story pool, the timelines' source counts and the daily columns.
+        corpus = " ".join(
+            (v if isinstance(v, str) else json.dumps(v, ensure_ascii=False))
+            for r in story_pool
+            for v in (r.get("title") or "", r.get("summary") or "",
+                      r.get("consensus_points") or "", r.get("divergence_points") or "",
+                      str(r.get("source_count") or ""), str(r.get("printed_on") or ""))
+        ) + " " + " ".join(
+            f"{t.get('cumulative_sources', '')} {t.get('daily_appearances', '')}" for t in top_threads
+        ) + " " + " ".join(str(d.get("opinion_text") or "") for d in (daily_rows or []))
+
+        def _ground(label, text):
+            kept, cut = ground_text(text, corpus)
+            for sent, miss in cut:
+                print(f"    [ground] {label}: cut {miss}: {sent[:120]}")
+            return kept
+
+        for i, c in enumerate(covers):
+            c["text"] = _ground(f"cover {i + 1}", c.get("text") or "")
+        for i, o in enumerate(opinions):
+            o["text"] = _ground(f"opinion {i + 1}", o.get("text") or "")
+        for i, st in enumerate((recap or {}).get("stories") or []):
+            st["summary"] = _ground(f"recap {i + 1}", st.get("summary") or "")
+        if weekly_opinion and weekly_opinion.get("opinion_text"):
+            weekly_opinion["opinion_text"] = _ground("editorial", weekly_opinion["opinion_text"])
+
+        # The source check: flash-lite reads every sentence against the week
+        # (weekly_source_check). The deterministic cut above catches only an
+        # unsourced number or name; this catches the unnamed background
+        # ("a substantial portion of the world's seaborne oil") and the claim
+        # the week contradicts. A piece it cannot read does not ship.
+        print(f"\n  ── SOURCE CHECK ──")
+        from briefing.weekly_source_check import check_piece, check_texts, source_text
+        week_sources = source_text(story_pool) + "\n\n" + "\n\n".join(
+            f"DAILY COLUMN: {d.get('opinion_text')}" for d in (daily_rows or []) if d.get("opinion_text"))
+
+        def _lite_json(prompt, **kw):
+            time.sleep(8)  # flash-lite TPM: each request carries the whole week
+            return gemini_generate_json(prompt, count_call=False, model=None, **kw)
+
+        kept_covers = []
+        for i, c in enumerate(covers):
+            txt, _ = check_piece(c.get("text") or "", week_sources, _lite_json, label=f"cover {i + 1}")
+            if txt:
+                c["text"] = txt
+                kept_covers.append(c)
+        covers = kept_covers
+        kept_ops = []
+        for i, o in enumerate(opinions):
+            txt, _ = check_piece(o.get("text") or "", week_sources, _lite_json, label=f"opinion {i + 1}")
+            if txt:
+                o["text"] = txt
+                kept_ops.append(o)
+        opinions = kept_ops
+        if recap and recap.get("stories"):
+            outs, _ = check_texts([st.get("summary") or "" for st in recap["stories"]],
+                                  week_sources, _lite_json, label="recap")
+            recap["stories"] = [dict(st, summary=t) for st, t in zip(recap["stories"], outs) if t]
+        if weekly_opinion and weekly_opinion.get("opinion_text"):
+            txt, _ = check_piece(weekly_opinion["opinion_text"], week_sources, _lite_json,
+                                 label="editorial")
+            if txt:
+                if txt != weekly_opinion["opinion_text"]:
+                    # The monologue was written from the uncut text.
+                    weekly_opinion["opinion_audio_script"] = None
+                weekly_opinion["opinion_text"] = txt
+            else:
+                weekly_opinion = None
+        # Tech and sports are written from the full cluster pool, not the
+        # printed week, so each is read against its own cluster as well.
+        by_id = {c.get("id"): c for c in clusters}
+        for name in ("tech", "sports"):
+            piece = tech if name == "tech" else sports
+            if not piece or not piece.get("text"):
+                continue
+            own = [by_id[piece["cluster_id"]]] if piece.get("cluster_id") in by_id else []
+            txt, _ = check_piece(piece["text"], source_text(own) + "\n\n" + week_sources,
+                                 _lite_json, label=name)
+            if txt:
+                piece["text"] = txt
+            elif name == "tech":
+                tech = None
+            else:
+                sports = None
+        print(f"    {len(covers)} cover(s), {len(opinions)} column(s), "
+              f"{len((recap or {}).get('stories') or [])} recap item(s), "
+              f"editorial {'kept' if weekly_opinion else 'dropped'} after the check")
 
         # Section 7: Audio.
         print(f"\n  ── AUDIO ──")

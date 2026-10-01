@@ -507,8 +507,15 @@ def generate_weekly_podcast_feed() -> str | None:
         return None
     issues = [r for r in rows if isinstance(r, dict) and r.get("audio_url")]
     if not issues:
-        print("  [podcast] no weekly issue carries audio yet, skipping")
-        return None
+        # Write the channel with no items rather than skip. Skipping left the
+        # last feed in place, so an episode WITHDRAWN from the page (Issue 26's,
+        # 2026-10-01, which spoke passages a correction removed) went on
+        # playing in every podcast app.
+        PUBLIC_DIR.mkdir(parents=True, exist_ok=True)
+        out = PUBLIC_DIR / "podcast-weekly.xml"
+        out.write_bytes(_build_feed("weekly", []))
+        print("  [podcast] weekly: no issue carries audio; feed written with no episodes")
+        return str(out)
     issues.sort(key=lambda r: r.get("week_start") or "", reverse=True)
     episodes = _playable([_weekly_episode(i) for i in issues[:EPISODES_PER_FEED]],
                          "weekly")
