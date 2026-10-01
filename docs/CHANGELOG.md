@@ -30,6 +30,9 @@ the pipeline failed outright on 09-28. Four defects, each with a gate.
    article became a singleton, 6 stories qualified against 20, and
    `test_feed_buildable` (correctly) refused to commit the day. Prose columns
    are now returned as stored, and a clustering failure prints its traceback.
+   The same defect killed the scheduled Weekly of 09-27 in the Sports page
+   (`_term_hits`: `'list' object has no attribute 'lower'` on a cluster
+   summary), so no issue was published for the week of 09-21.
 2. **One sqlite3 connection, four threads, no lock.** Step 9 enriches with 4
    workers over the shared client; 205 to 416 cluster writes a day failed
    with "cannot commit - no transaction is active" / "another row
