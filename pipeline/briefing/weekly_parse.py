@@ -295,6 +295,92 @@ def enforce_recap(items, *, min_words, max_words):
     return findings
 
 
+# ---------------------------------------------------------------------------
+# Grounding: a sentence that names what the week never printed is cut.
+#
+# CLAUDE.md Rule 1: every fact traces to a source in the data; a claim that
+# cannot be sourced is cut, not softened. The writer is handed only the week's
+# printed stories, and still reached past them: Issue #26's cover carried "the
+# High North", "Cold War-era military bases" and China as "a near-Arctic
+# state", and Issue #27's carried "the U.S. withdrawal from the Joint
+# Comprehensive Plan of Action". None of it was in that week's record.
+#
+# The check is deliberately narrow, because a false cut costs a sentence and
+# a false pass costs a fact: a sentence goes when it carries a NUMBER or a
+# MULTI-WORD PROPER NAME the sources do not. A name passes when the sources
+# hold its last two capitalised words as a phrase and every capitalised word
+# on its own ("United States President Donald Trump" against a record that
+# says "President Donald Trump" and "United States"). Unnamed background
+# ("melting ice caps") is not caught here; the prompt's grounding line is the
+# control for that.
+# ---------------------------------------------------------------------------
+_G_SENT_RE = re.compile(r"(?:(?<=[.!?])|(?<=[.!?][\"\u201d']))\s+(?=[\"\u201c']?[A-Z0-9])")
+_G_NUM_RE = re.compile(r"\d[\d,.]*\d|\d")
+_G_CAP = r"[A-Z][\w'\u2019.-]*"
+_G_NAME_RE = re.compile(_G_CAP + r"(?:\s+(?:of|the|de|al|bin)\s+" + _G_CAP + r"|\s+" + _G_CAP + r")+")
+_G_OPENERS = frozenset("""The A An In On But And This That These Those For As At By With When While If Its His
+Her Their It He She They We After Before Since Until Over Under From Into Across Such Both Each Many Most Some
+Every Yet Still So Then Now Here There What Why How Where Who Which Meanwhile However Although Though Outside
+Inside Despite During Against Within Without Under Among Between Following Last Next""".split())
+
+
+def _g_norm(text):
+    return re.sub(r"\s+", " ", (text or "").replace("\u2019", "'")).lower()
+
+
+def _g_num(n):
+    return n.replace(",", "").rstrip(".")
+
+
+def unsourced_terms(sentence, source_text, source_nums=None):
+    """The numbers and multi-word names in `sentence` the sources do not hold."""
+    src = _g_norm(source_text)
+    nums = source_nums if source_nums is not None else {_g_num(n) for n in _G_NUM_RE.findall(source_text or "")}
+    missing = []
+    for n in _G_NUM_RE.findall(sentence):
+        if _g_num(n) not in nums:
+            missing.append(n)
+    for m in _G_NAME_RE.finditer(sentence):
+        name = re.sub(r"['\u2019]s$", "", m.group(0).rstrip("."))
+        caps = [re.sub(r"['\u2019]s$", "", c) for c in re.findall(_G_CAP, name)]
+        while caps and caps[0] in _G_OPENERS:
+            caps = caps[1:]
+        if len(caps) < 2:
+            continue
+        if _g_norm(name) in src:
+            continue
+        tail = name[name.rfind(caps[-2]):]
+        if _g_norm(tail) in src and all(re.search(r"\b" + re.escape(c.lower().rstrip(".")) + r"\b", src) for c in caps):
+            continue
+        missing.append(name)
+    return missing
+
+
+def ground_text(text, source_text):
+    """`text` with every sentence carrying an unsourced number or name cut.
+
+    Returns (kept_text, cut) where `cut` lists (sentence, missing_terms).
+    Paragraph breaks are kept; a paragraph emptied by the cut is dropped.
+    """
+    if not text:
+        return text, []
+    nums = {_g_num(n) for n in _G_NUM_RE.findall(source_text or "")}
+    cut, paras = [], []
+    for para in text.split("\n\n"):
+        kept = []
+        for sent in _G_SENT_RE.split(para.strip()):
+            if not sent:
+                continue
+            miss = unsourced_terms(sent, source_text, nums)
+            if miss:
+                cut.append((sent, miss))
+            else:
+                kept.append(sent)
+        if kept:
+            paras.append(" ".join(kept))
+    return "\n\n".join(paras), cut
+
+
 def retry_suffix(findings):
     """The findings, named, appended to the original prompt for one retry.
 

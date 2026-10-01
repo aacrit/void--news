@@ -1078,6 +1078,34 @@ def test_archive_is_derived():
               f"{str(newest.get('created_at'))[:19]}")
 
 
+def test_grounding_cut():
+    """W-T20  a sentence naming what the week never printed is cut (Rule 1).
+
+    Issue #27's first draft carried "the U.S. withdrawal from the Joint
+    Comprehensive Plan of Action"; Issue #26 carried "the High North" and
+    "Cold War-era" bases. None were in that week's record. The false-cut cases
+    are the ones the first version of this check got wrong on the real issue:
+    "X and Y" read as one name, a possessive, a sentence opener.
+    """
+    print("\nW-T20  ground_text cuts unsourced names and numbers, and only those")
+    from briefing.weekly_parse import ground_text
+    src = ("President Donald Trump rejected Iran's plan. The United States and Iran remain at odds. "
+           "Uzma Khan and Noreen Niazi were detained. Xi Jinping arrived for his first state visit "
+           "to Washington since 2015. 58 sources covered it.")
+    text = ("United States President Donald Trump rejected the plan. Pressure grew after the "
+            "U.S. withdrawal from the Joint Comprehensive Plan of Action. Outside Xi's motorcade, "
+            "58 outlets covered it.\n\nRussia reactivated Cold War-era bases in the High North "
+            "in 1951. Uzma and Noreen were detained; the United States and Iran did not move.")
+    kept, cut = ground_text(text, src)
+    cut_s = " | ".join(c[0] for c in cut)
+    check("an unsourced treaty name is cut", "Joint Comprehensive" in cut_s)
+    check("an unsourced region, era and year are cut", "High North" in cut_s)
+    check("a paraphrase of a sourced title and name is kept", "United States President Donald Trump" in kept)
+    check("a possessive and a sourced number are kept", "Outside Xi's motorcade, 58 outlets" in kept)
+    check("'X and Y' is two names, not one", "Uzma and Noreen were detained" in kept, cut_s)
+    check("exactly two sentences cut", len(cut) == 2, f"{len(cut)}: {cut_s}")
+
+
 def main():
     print("void --weekly gates")
     test_headline_guard()
@@ -1097,6 +1125,7 @@ def main():
     test_archive()
     test_no_cap_published_as_count()
     test_archive_is_derived()
+    test_grounding_cut()
     print()
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))

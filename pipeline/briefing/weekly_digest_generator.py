@@ -39,7 +39,7 @@ from briefing.weekly_parse import (  # pure: no DB, no LLM, no network
     build_weekly_row, clean_headline, parse_essay, parse_recap,
     looks_like_headline, weekly_window,
     banned_terms, drop_terms, enforce, enforce_recap, retry_suffix, strip_dashes,
-    word_count,
+    word_count, ground_text,
 )
 from utils.prohibited_terms import strip_significance
 from summarizer.gemini_client import (
@@ -2409,6 +2409,38 @@ def generate_weekly_digest(editions=None, week_offset=0):
             week_lean, week_label, edition,
         )
         total_calls += calls
+
+        # Grounding, before anything is spoken or stored. Every sentence that
+        # carries a number or a multi-word name the week's sources do not is
+        # cut (CLAUDE.md Rule 1: cut, not softened). Issue #27's first draft
+        # said Iran's economic pressure "intensified since the U.S. withdrawal
+        # from the Joint Comprehensive Plan of Action"; nothing printed that
+        # week said so. The corpus is exactly what the writers were handed:
+        # the story pool, the timelines' source counts and the daily columns.
+        corpus = " ".join(
+            (v if isinstance(v, str) else json.dumps(v, ensure_ascii=False))
+            for r in story_pool
+            for v in (r.get("title") or "", r.get("summary") or "",
+                      r.get("consensus_points") or "", r.get("divergence_points") or "",
+                      str(r.get("source_count") or ""), str(r.get("printed_on") or ""))
+        ) + " " + " ".join(
+            f"{t.get('cumulative_sources', '')} {t.get('daily_appearances', '')}" for t in top_threads
+        ) + " " + " ".join(str(d.get("opinion_text") or "") for d in (daily_rows or []))
+
+        def _ground(label, text):
+            kept, cut = ground_text(text, corpus)
+            for sent, miss in cut:
+                print(f"    [ground] {label}: cut {miss}: {sent[:120]}")
+            return kept
+
+        for i, c in enumerate(covers):
+            c["text"] = _ground(f"cover {i + 1}", c.get("text") or "")
+        for i, o in enumerate(opinions):
+            o["text"] = _ground(f"opinion {i + 1}", o.get("text") or "")
+        for i, st in enumerate((recap or {}).get("stories") or []):
+            st["summary"] = _ground(f"recap {i + 1}", st.get("summary") or "")
+        if weekly_opinion and weekly_opinion.get("opinion_text"):
+            weekly_opinion["opinion_text"] = _ground("editorial", weekly_opinion["opinion_text"])
 
         # Section 7: Audio.
         print(f"\n  ── AUDIO ──")
