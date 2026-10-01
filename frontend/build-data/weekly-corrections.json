@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "week_start": "2026-09-14",
+    "corrected_on": "2026-10-01",
+    "section": "The Cover",
+    "text": "The cover gave the date of the Greenland announcement as Saturday, September 19. It was announced late on Friday, September 18. We also removed passages on Arctic geopolitics, Greenland's history in World War II and Cold War basing, and Greenland's constitutional status: none of it came from the reporting this issue was written from, and Void prints only what its sources carry. The audio edition is withdrawn until it is re-recorded from the corrected text."
+  },
+  {
+    "week_start": "2026-09-14",
+    "corrected_on": "2026-10-01",
+    "section": "Opinion",
+    "text": "Two columns stated that the United States holds access to Greenland under a treaty from the 1950s. The reporting this issue was written from does not carry that, so the sentence was removed from both."
+  }
+]

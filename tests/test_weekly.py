@@ -1106,6 +1106,33 @@ def test_grounding_cut():
     check("exactly two sentences cut", len(cut) == 2, f"{len(cut)}: {cut_s}")
 
 
+def test_source_check():
+    """W-T21  the Weekly's source check cuts what the model names, and fails closed."""
+    print("\nW-T21  source check: cuts by sentence number, fails closed, drops fragments")
+    import re as _re
+    from briefing.weekly_source_check import check_texts, check_piece
+
+    def fake(prompt, **kw):
+        bad = [{"n": int(m.group(1)), "claim": "not in sources"}
+               for m in _re.finditer(r"\[(\d+)\] ([^\n]*)", prompt)
+               if "seaborne oil" in m.group(2) or "avoided" in m.group(2)]
+        return {"unsupported": bad}
+
+    cover = ("Trump rejected the plan on Saturday. The strait carries a substantial portion of "
+             "the world's seaborne oil.\n\nIran said it would wait.")
+    txt, cuts = check_piece(cover, "src", fake, label="cover")
+    check("an unsupported background sentence is cut", "seaborne" not in (txt or ""), txt)
+    check("the supported sentences and paragraphs survive",
+          txt == "Trump rejected the plan on Saturday.\n\nIran said it would wait.", repr(txt))
+    outs, _ = check_texts(["One fact. Two facts.", "The talks avoided Taiwan."], "src", fake, label="recap")
+    check("a recap item cut whole does not ship; its neighbour does",
+          outs == ["One fact. Two facts.", None], repr(outs))
+    txt, _ = check_piece(cover, "src", lambda p, **k: None, label="cover")
+    check("a piece the check cannot read does not ship", txt is None)
+    txt, _ = check_piece(cover, "src", lambda p, **k: {"unsupported": [{"n": 99}]}, label="cover")
+    check("an out-of-range sentence number cuts nothing", txt == cover.replace("\n\n", "\n\n"), repr(txt))
+
+
 def main():
     print("void --weekly gates")
     test_headline_guard()
@@ -1126,6 +1153,7 @@ def main():
     test_no_cap_published_as_count()
     test_archive_is_derived()
     test_grounding_cut()
+    test_source_check()
     print()
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))
