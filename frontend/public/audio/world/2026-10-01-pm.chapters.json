@@ -1,0 +1,52 @@
+{
+ "version": "1.2.0",
+ "title": "On Air · Thursday 01 October 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Headlines",
+   "endTime": 38.736
+  },
+  {
+   "startTime": 38.736,
+   "title": "Russia Warns NATO",
+   "endTime": 121.821
+  },
+  {
+   "startTime": 121.821,
+   "title": "Pentagon Leadership Changes",
+   "endTime": 209.776
+  },
+  {
+   "startTime": 209.776,
+   "title": "UK Terror Plot Arrest",
+   "endTime": 290.258
+  },
+  {
+   "startTime": 290.258,
+   "title": "US Threatens Diesel Ban",
+   "endTime": 373.093
+  },
+  {
+   "startTime": 373.093,
+   "title": "Also today",
+   "endTime": 436.049
+  },
+  {
+   "startTime": 436.049,
+   "title": "SpaceX Launches Crew-13",
+   "endTime": 476.538
+  },
+  {
+   "startTime": 476.538,
+   "title": "Opinion",
+   "endTime": 687.777
+  },
+  {
+   "startTime": 687.777,
+   "endTime": 700.877,
+   "title": "Also from Void"
+  }
+ ]
+}
