@@ -2265,6 +2265,7 @@ def generate_weekly_digest(editions=None, week_offset=0):
     print(f"  Editions: {', '.join(editions)}")
     print("=" * 60)
 
+    stored = 0
     for edition in editions:
         t0 = time.time()
         total_calls = 0
@@ -2275,7 +2276,13 @@ def generate_weekly_digest(editions=None, week_offset=0):
         # Fetch data
         clusters, clusters_truncated = _fetch_week_clusters(edition, week_start, week_end)
         print(f"  Clusters: {'more than ' if clusters_truncated else ''}{len(clusters)}")
-        if len(clusters) < 3:
+        # The printed record is read before deciding there is nothing to say:
+        # a run a few days late finds the cluster table already pruned (0 rows
+        # for Sep 21-27 on 2026-10-01) while every printed day is still there.
+        printed = _fetch_week_printed(week_start, week_end)
+        printed_days = sorted({r["printed_on"] for r in printed if r.get("printed_on")})
+        print(f"  Printed: {len(printed)} front-page rows over {len(printed_days)} day(s)")
+        if len(clusters) < 3 and len(printed_days) < 3:
             print(f"  Insufficient data — skipping")
             continue
 
@@ -2289,9 +2296,6 @@ def generate_weekly_digest(editions=None, week_offset=0):
         # cluster table (pruned to two days, and full of what Stage 2
         # rejected). The cluster pool still feeds tech, sports and the bias
         # counts, which look past the front page by design.
-        printed = _fetch_week_printed(week_start, week_end)
-        printed_days = sorted({r["printed_on"] for r in printed if r.get("printed_on")})
-        print(f"  Printed: {len(printed)} front-page rows over {len(printed_days)} day(s)")
         story_pool = printed if len(printed_days) >= 3 else clusters
         if story_pool is clusters:
             print(f"  [warn] fewer than 3 printed days in the week; covers read the cluster table")
@@ -2519,11 +2523,13 @@ def generate_weekly_digest(editions=None, week_offset=0):
                 row, on_conflict="edition,week_start"
             ).execute()
             print(f"\n  ✓ Issue #{issue_number} stored ({total_calls} calls, {elapsed:.0f}s)")
+            stored += 1
         except Exception as e:
             print(f"\n  ✗ Storage failed: {e}")
 
     print(f"\n{'=' * 60}")
     print(f"void --weekly complete.")
+    return stored
 
 
 if __name__ == "__main__":
@@ -2537,4 +2543,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     editions = [e.strip() for e in args.editions.split(",") if e.strip()] if args.editions else None
-    generate_weekly_digest(editions=editions, week_offset=args.week_offset)
+    # No issue stored means the workflow must stop HERE. Its export step reads
+    # the newest weekly row in the restored DB, which on 2026-10-01 was a stale
+    # copy of the PREVIOUS issue: it re-wrote the published Issue #26 without
+    # its audio chapters or images and committed it.
+    if not generate_weekly_digest(editions=editions, week_offset=args.week_offset):
+        print("No issue was stored; failing so nothing is exported or committed.")
+        sys.exit(1)

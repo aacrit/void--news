@@ -342,6 +342,14 @@ def main():
     check("an essay prompt carries the drop list",
           bool(seen) and all(w in seen[0] for w in ("robust", "underscore", "multifaceted")))
 
+    # ── WG-09  A week with nothing in it stores nothing, and says so ───────
+    print("\nWG-09  an empty week reports zero issues stored")
+    stored = g.generate_weekly_digest(editions=["world"], week_offset=60)
+    check("an empty week stores no issue, so the CLI exits non-zero", stored == 0, f"{stored}")
+    src = (ROOT / "pipeline" / "briefing" / "weekly_digest_generator.py").read_text()
+    check("the CLI fails when no issue was stored",
+          "if not generate_weekly_digest(" in src and "sys.exit(1)" in src)
+
     print()
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))
