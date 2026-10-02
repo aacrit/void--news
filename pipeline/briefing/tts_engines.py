@@ -160,18 +160,26 @@ def _available_mb() -> int | None:
 
 def default_kokoro_workers(cpu: int | None = None, mem_mb: int | None = None,
                            env: dict | None = None) -> int:
-    """4 on a 4-core runner with room for four sessions, else 2. Env wins."""
+    """2, unless VOID_KOKORO_WORKERS says otherwise.
+
+    Four workers on a four-core runner was the default for one production
+    run (2026-10-02, run #386), and that run's runner died about 90 minutes
+    in with no log, the signature of the runner running out of memory. The
+    1,500 MB per worker behind the switch was an estimate, never measured on
+    a runner that also holds the pipeline's own process. Four stays available
+    by env once a run has measured it; until then the default is the two that
+    every earlier run used. `cpu` and `mem_mb` still cap an explicit request.
+    """
     raw = (env if env is not None else os.environ).get("VOID_KOKORO_WORKERS", "").strip()
-    if raw:
-        try:
-            return max(1, int(raw))
-        except ValueError:
-            pass
+    try:
+        asked = max(1, int(raw)) if raw else 2
+    except ValueError:
+        asked = 2
     cpu = cpu if cpu is not None else (os.cpu_count() or 2)
     mem_mb = mem_mb if mem_mb is not None else _available_mb()
-    if cpu >= 4 and (mem_mb is None or mem_mb >= 4 * KOKORO_WORKER_MB):
-        return 4
-    return 2
+    if asked > 2 and (cpu < asked or (mem_mb is not None and mem_mb < asked * KOKORO_WORKER_MB)):
+        return 2
+    return asked
 
 
 class KokoroEngine:
