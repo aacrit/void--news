@@ -32,7 +32,7 @@ outside the repo (listed under "CEO actions"). An open box carries what is left.
 - [ ] P0-4 thesis audio contradicting corrected scripts (Haitian Revolution, Scramble for Africa): script SHA-256 in the manifest, gate on any clone; re-render (code and gate DONE: `script_sha256` in the manifest, both episodes withdrawn until re-rendered; LEFT: dispatch `render-history-audio.yml` for haitian-revolution,scramble-for-africa once on main, then `export_thesis`)
 - [x] P0-8 four broken exhibit image hashes; URL derived from MD5; T-21
 - [ ] P2-9 four episodes over 15:00; four time-bound claims; over-ceiling list derived by script (time-bound claims fixed, list derived by script; LEFT: re-cut the four scripts over 15:00)
-- [ ] P2-11 40 junk media credits; em dash in a source title; self-host Commons images (credits cleaned and gated, dash fixed; LEFT: self-hosting Commons images)
+- [ ] P2-11 40 junk media credits; em dash in a source title; self-host Commons images (credits cleaned and gated, dash fixed; LEFT: self-hosting Commons images as WebP, the only route to /history's 2.5 MB image target at 375px: CI measured 3,586 KB after the thumbnail fix, budget held at 3,800 until then)
 - [x] Audit 4 LOW feed item title "US Exits Iraq.:"; duration rounding parity between `/audio` and feeds
 
 ## WS-C Rule 1 grounding (owner: nlp-engineer)

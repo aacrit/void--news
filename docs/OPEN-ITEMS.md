@@ -1272,3 +1272,10 @@ make it produce one. **Watch the first scheduled run.**
 - **CLAUDE.md** quotes "18 validators incl. E-15"; the registry now holds 21
   (E-16 enforced, E-17 and E-18 advisory).
 
+## /history image weight at 375px (2026-10-02)
+
+CI measured 3,586 KB of images on `/history` at 375px after unscaled Commons
+originals got thumbnails; the target is 2,500 KB and the headless budget is
+held at 3,800 KB until it is met. ~70 timeline cards load, each photo is the
+full card width, and those files weigh 2,873 KB at the 330px step, so srcset
+cannot reach the target. Self-host the hero images as WebP (P2-11).

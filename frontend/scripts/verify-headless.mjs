@@ -2008,9 +2008,14 @@ async function brandChecks(browser) {
        prefetched every section on load, 1,203 KB of it in route payloads).
        Fonts are 221 KB of the 624. */
     { route: "/", what: "all", budgetKB: 700, targetKB: 600 },
-    /* Not measurable in the sandbox (no route to Wikimedia); the target is
-       the budget, and CI measures it. */
-    { route: "/history/", what: "image", budgetKB: 2500, targetKB: 2500 },
+    /* Measured by CI 2026-10-02 (the sandbox has no route to Wikimedia):
+       3,997 KB, then 3,586 KB once unscaled originals got Commons thumbnails
+       (commonsImage.ts). The scroll loads every one of ~70 timeline cards,
+       each photo is the full card width (~319px, so the 330px step is the
+       honest size), and those 70 files weigh 2,873 KB by HEAD request: 2.5 MB
+       is not reachable by srcset alone. The way to the target is self-hosted
+       WebP (OPEN-ITEMS, P2-11). */
+    { route: "/history/", what: "image", budgetKB: 3800, targetKB: 2500 },
   ];
   for (const b of BUDGETS) {
     await withPage(browser, { width: 375 }, `transfer-budget ${b.route}`, async (page) => {
