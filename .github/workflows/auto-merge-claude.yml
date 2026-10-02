@@ -114,7 +114,7 @@ jobs:
       # widths, and a `position: sticky` rail that had never once held.
       # Chromium is cached, so a warm run costs seconds.
       - name: Cache Playwright browsers
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('frontend/package-lock.json') }}
@@ -176,7 +176,7 @@ jobs:
         run: pip install --quiet -r pipeline/requirements.txt
       - name: Cache spaCy model
         id: spacy-cache-gates
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
           key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
@@ -275,7 +275,7 @@ jobs:
         run: pip install -r pipeline/requirements.txt
       - name: Cache spaCy model
         id: spacy-cache
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
           key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
@@ -321,13 +321,13 @@ jobs:
         run: pip install --quiet "numpy~=1.26.4" pydub mutagen pyyaml "edge-tts>=6.1.0"
       # ── On Air voices: Kokoro-82M in its own venv (numpy 2) + pinned model files ──
       - name: Cache Kokoro model files
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/void-kokoro
           key: kokoro-${{ hashFiles('pipeline/briefing/kokoro.lock.json') }}
       - name: Cache TTS venv
         id: tts-venv
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .venv-tts
           key: venv-tts-py3.11-${{ hashFiles('pipeline/requirements-tts.txt') }}
@@ -371,7 +371,7 @@ jobs:
         run: pip install -r pipeline/requirements.txt
       - name: Cache spaCy model
         id: spacy-cache
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
           key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
@@ -406,7 +406,7 @@ jobs:
         run: pip install -r pipeline/requirements.txt
       - name: Cache spaCy model
         id: spacy-cache
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
           key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
