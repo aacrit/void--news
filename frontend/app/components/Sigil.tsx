@@ -10,6 +10,7 @@ import {
   DIVERGENT_SPREAD_MIN,
   storyShapeLabel,
   leanShapeDescriptor,
+  leanShapeCount,
   leanShapeDirection,
   leanShape,
   leanToDisplayPos,
@@ -495,6 +496,16 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
         {stage >= 2 && measuredNote && (
           <p className="sigil-popup__measured">{measuredNote}</p>
         )}
+        {/* CEO decision 1: state-affiliated outlets are set apart, not
+            counted, and the reader is told so rather than left to wonder why
+            the counts do not reach the source total. */}
+        {stage >= 2 && (data.biasSpread?.leanStateCount ?? 0) > 0 && (
+          <p className="sigil-popup__measured">
+            {`${data.biasSpread?.leanStateCount} state-affiliated ${
+              data.biasSpread?.leanStateCount === 1 ? "outlet" : "outlets"
+            } set apart, not counted on either side`}
+          </p>
+        )}
         {/* The same seven-rung register the card and the Deep Dive's Bench
             draw, at popup size, with each rung's count under it. It was a
             smooth density curve (MicroSpectrum), the retired KDE the Bench
@@ -666,7 +677,14 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t); }, []);
 
-  const aria = `Coverage: ${info.text}. ${data.sourceCount} sources. Press Enter for details.`;
+  /* The evidence for the word, from the same three counts (CEO decision 2). */
+  const tally = unscored ? null : leanShapeCount(data.biasSpread);
+
+  /* The word stays first and the source count second: the headless sweep
+     reads the word back out of this label by that shape. */
+  const aria = `Coverage: ${info.text}. ${data.sourceCount} sources.${
+    tally ? ` ${tally.full}.` : ""
+  } Press Enter for details.`;
 
   const ringClass = data.divergenceFlag === "divergent"
     ? " sigil--divergent"
@@ -718,6 +736,13 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
           <InkUnderline variant={((Math.round(Number(data.politicalLean)) || 0) + 1) % 3} color="var(--sense-low)" />
         )}
       </span>
+
+      {/* The count behind the word (CEO decision 2, 2026-10-02): "15 of 22
+          right" under "Leans right". Same face and size as the source count
+          below it; the full sentence is in the aria-label above. */}
+      {tally && (
+        <span className="sigil__tally" aria-hidden="true">{tally.short}</span>
+      )}
 
       {/* The count, named: outlets that covered the story. Decoration to a
           screen reader, whose aria-label above already says it. */}

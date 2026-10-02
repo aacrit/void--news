@@ -594,6 +594,58 @@ async function scenarios(browser) {
       }
     });
   }
+  /* Every score shows its work (P1-13, 2026-10-02). /about says it; the Deep
+     Dive built each article's lean rationale and rendered none of it. A mark's
+     card must now carry the working: outlet baseline and the points the words
+     moved it, and those two must add up to the article's score, or say that
+     the article sat on its outlet's record alone. */
+  await withPage(browser, { width: 1440, route: "/" }, "bench-mark-shows-work", async (page) => {
+    await page.locator("[data-story-index='0'] .story-card__stretch-link, .lead-story a.story-card__stretch-link, .story-card__stretch-link").first().click();
+    await page.locator(".bench").first().waitFor({ state: "visible", timeout: 8000 }).catch(() => {});
+    if (!assert(await page.locator(".bench__mark").count() > 0, "bench-mark-shows-work", "the Deep Dive draws marks")) return;
+    await page.waitForTimeout(800);
+    const n = Math.min(6, await page.locator(".bench__col .bench__mark").count());
+    const bad = [];
+    let read = 0, outletOnly = 0;
+    for (let i = 0; i < n; i++) {
+      const mark = page.locator(".bench__col .bench__mark").nth(i);
+      await mark.scrollIntoViewIfNeeded();
+      await mark.hover();
+      await page.waitForTimeout(250);
+      const w = await page.evaluate(() => {
+        const c = document.querySelector(".bench__card");
+        if (!c) return null;
+        const work = c.querySelector(".bench__card-work");
+        const row = (label) => [...c.querySelectorAll(".bench__card-work-list > div")]
+          .find((d) => d.querySelector("dt")?.textContent === label)?.querySelector("dd")?.textContent ?? null;
+        return {
+          name: c.querySelector(".bench__card-name")?.textContent ?? "",
+          kind: work?.getAttribute("data-work") ?? null,
+          text: work?.textContent ?? "",
+          score: row("This article") ?? c.querySelector(".bench__card-score")?.textContent ?? null,
+          baseline: row("Outlet baseline"),
+          moved: row("Words moved it"),
+        };
+      });
+      await page.mouse.move(2, 2);
+      await page.waitForTimeout(150);
+      if (!w) { bad.push(`mark ${i}: no card`); continue; }
+      if (w.kind === "outlet-only") { outletOnly += 1; continue; }
+      if (w.kind !== "read" || w.baseline == null || w.moved == null) {
+        bad.push(`${w.name}: no working ("${w.text.slice(0, 60)}")`); continue;
+      }
+      read += 1;
+      const base = Number(w.baseline);
+      const mv = w.moved.match(/^([\d.]+)( left| right)?/);
+      const shift = mv ? Number(mv[1]) * (mv[2] === " left" ? -1 : 1) : NaN;
+      /* score = round(baseline + shift): the working adds up, to the rounding. */
+      if (!(Math.abs(Number(w.score) - (base + shift)) <= 0.55)) {
+        bad.push(`${w.name}: ${base} + ${shift} is not ${w.score}`);
+      }
+    }
+    assert(bad.length === 0 && read + outletOnly === n, "bench-mark-shows-work",
+      bad.length ? bad.slice(0, 3).join("; ") : `${n} marks: ${read} show baseline plus shift, ${outletOnly} placed from the outlet alone`);
+  });
   /* Every lean label on the feed clears AA against the paper it sits on.
      The bias tokens are tuned to clear it at FULL strength and nothing more
      (--bias-far-right is 4.7:1 on the dark paper), so any opacity fade on the
@@ -923,7 +975,7 @@ async function scenarios(browser) {
       await page.locator(".feed-start .lean-legend__btn").first().click();
       await page.waitForSelector(".lean-legend__panel", { timeout: 3000 }).catch(() => {});
       const terms = await page.evaluate(() => [...document.querySelectorAll(".lean-legend__panel dt")].map((e) => e.textContent.trim()));
-      const covered = (w) => terms.some((t) => t === w || t.split(" / ").includes(w) || (t === "N measured" && /^\d+ measured$/.test(w)));
+      const covered = (w) => terms.some((t) => t === w || t.split(" / ").includes(w) || (t === "N placed" && /^\d+ placed$/.test(w)));
       const missing = printed.filter((w) => !covered(w));
       assert(terms.length > 0 && missing.length === 0, "legend-matches-cards",
         missing.length ? `cards print ${missing.join(", ")} but the legend does not define it` : `${printed.length} printed word(s), all defined`);

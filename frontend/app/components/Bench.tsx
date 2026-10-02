@@ -28,6 +28,7 @@ import {
 } from "../lib/bench";
 import { envelope, inkRibbon, whitespace, type BenchGeometry } from "../lib/benchCurve";
 import BenchSigil from "./BenchSigil";
+import type { LeanRationale } from "../lib/types";
 
 /* ---------------------------------------------------------------------------
    Bench — who is sitting where, left to right.
@@ -61,6 +62,20 @@ export interface BenchSource {
    *  score is the outlet's baseline, and the mark says so rather than drawing
    *  identically to one read off a full article. */
   confidence?: number;
+  /** Measured articles this outlet's position is the mean of. One mark per
+   *  OUTLET (CEO decision 3): ten articles from one outlet are one view. */
+  articles?: number;
+  /** A state-affiliated outlet (`state_affiliated` in data/sources.json). It
+   *  sits on its own rung under the ladder, never in a column (CEO decision
+   *  1): a government's line is not a position on a domestic left/right axis. */
+  state?: boolean;
+  /** THE WORKING (P1-13). The linked article's own score, and how the engine
+   *  reached it: score = outlet baseline + text shift. */
+  articleLean?: number;
+  leanRationale?: LeanRationale;
+  /** False: no text reading is stored, so the article sits on the outlet's
+   *  record alone. Undefined: this surface does not carry the working. */
+  leanRead?: boolean;
 }
 
 const BUCKET_TOKEN: Record<LeanCategory, string> = {
@@ -116,6 +131,66 @@ const BOX_H_EXPANDED = 440;
 const COL_GAP = 8;
 const COL_GAP_NARROW = 4;
 
+/* ── The working behind a mark (P1-13, 2026-10-02) ──────────────────────────
+   "Every score shows how it was reached" was printed on /about while the Deep
+   Dive built each article's lean rationale and rendered none of it. The card
+   now prints the engine's own arithmetic, score = outlet baseline + the
+   points the words moved it, with the cap on that movement and the words that
+   did the moving. An article with no stored text reading sat on its outlet's
+   record alone, and the card says so instead of implying a reading. */
+
+const fmtPts = (x: number) => (Number.isInteger(x) ? String(x) : x.toFixed(1));
+
+function BenchWork({ source: s }: { source: BenchSource }) {
+  if (s.state) return null;
+  const r = s.leanRationale;
+  const many = (s.articles ?? 1) > 1;
+  const mean = many ? (
+    <p className="bench__card-work-note">
+      {`Placed at the mean of ${s.articles} articles from this outlet. The working is the linked one's.`}
+    </p>
+  ) : null;
+  if (!r) {
+    if (s.leanRead !== false) return mean;
+    return (
+      <div className="bench__card-work" data-work="outlet-only">
+        {mean}
+        <p className="bench__card-work-note">
+          Placed from the outlet&apos;s record alone. No reading of this article&apos;s words is stored.
+        </p>
+      </div>
+    );
+  }
+  const shift = typeof r.textShift === "number" ? r.textShift : null;
+  const dir = shift === null || Math.abs(shift) < 0.05 ? "" : shift < 0 ? " left" : " right";
+  const left = (r.topLeftKeywords ?? []).slice(0, 3);
+  const right = (r.topRightKeywords ?? []).slice(0, 3);
+  return (
+    <div className="bench__card-work" data-work="read">
+      {mean}
+      <dl className="bench__card-work-list">
+        {many && typeof s.articleLean === "number" && (
+          <div><dt>This article</dt><dd>{fmtPts(Math.round(s.articleLean))}</dd></div>
+        )}
+        <div><dt>Outlet baseline</dt><dd>{fmtPts(r.sourceBaseline)}</dd></div>
+        {shift !== null && (
+          <div>
+            <dt>Words moved it</dt>
+            <dd>
+              {`${fmtPts(Math.abs(shift))}${dir}`}
+              {typeof r.deltaMax === "number" && (
+                <span className="bench__card-work-cap">{` of ${r.deltaMax} at most`}</span>
+              )}
+            </dd>
+          </div>
+        )}
+        {left.length > 0 && <div><dt>Left terms</dt><dd>{left.join(", ")}</dd></div>}
+        {right.length > 0 && <div><dt>Right terms</dt><dd>{right.join(", ")}</dd></div>}
+      </dl>
+    </div>
+  );
+}
+
 /* ── The card that names a mark ─────────────────────────────────────────── */
 
 interface CardData {
@@ -155,17 +230,25 @@ function BenchCard({ data }: { data: CardData }) {
       role="tooltip"
     >
       <p className="bench__card-name">{s.name}</p>
-      <p className="bench__card-lean">
-        <span
-          className="bench__card-dot"
-          style={{ background: `var(${BUCKET_TOKEN[leanToBucket(s.politicalLean)]})` }}
-          aria-hidden="true"
-        />
-        {leanLabel(s.politicalLean)}
-        <span className="bench__card-score">{Math.round(s.politicalLean)}</span>
-      </p>
+      {s.state ? (
+        <p className="bench__card-lean">
+          <span className="bench__card-dot bench__card-dot--state" aria-hidden="true" />
+          State-affiliated; not placed on the ladder
+        </p>
+      ) : (
+        <p className="bench__card-lean">
+          <span
+            className="bench__card-dot"
+            style={{ background: `var(${BUCKET_TOKEN[leanToBucket(s.politicalLean)]})` }}
+            aria-hidden="true"
+          />
+          {leanLabel(s.politicalLean)}
+          <span className="bench__card-score">{Math.round(s.politicalLean)}</span>
+        </p>
+      )}
       <p className="bench__card-tier">{tierLabel(s.tier)}</p>
       {s.headline && <p className="bench__card-headline">{s.headline}</p>}
+      <BenchWork source={s} />
       {authorityNote(s.confidence) && (
         <p className="bench__card-headline-only">{authorityNote(s.confidence)}</p>
       )}
@@ -199,7 +282,8 @@ function Mark({ source, size }: { source: BenchSource; size: number }) {
   return (
     <span
       className="bench__disc"
-      data-lean={bucket}
+      data-lean={source.state ? undefined : bucket}
+      data-state={source.state ? "true" : undefined}
       data-authority={authority}
       style={{ width: size, height: size }}
       aria-hidden="true"
@@ -224,15 +308,23 @@ function Mark({ source, size }: { source: BenchSource; size: number }) {
 /* ── The Bench ──────────────────────────────────────────────────────────── */
 
 export interface BenchProps {
-  /** Sources with a MEASURED lean. The caller does the filtering. */
+  /** One entry per OUTLET with a measured lean, already voted
+   *  (lib/outletVotes.ts). The caller does the filtering. */
   sources: BenchSource[];
-  /** Sources that covered the story but whose lean was never measured. */
+  /** Outlets that covered the story but whose lean was never measured. */
   unscoredCount?: number;
+  /** State-affiliated outlets, drawn on their own rung under the ladder. */
+  stateSources?: BenchSource[];
+  /** The story's per-outlet histogram, the one its card prints from. When
+   *  given, the word and its colour come from it. */
+  storySpread?: WingCounts | null;
   /** Mount already drawn: the parent owns the one opening motion. */
   settled?: boolean;
 }
 
-export default function Bench({ sources, unscoredCount = 0, settled = false }: BenchProps) {
+export default function Bench({
+  sources, unscoredCount = 0, stateSources = [], storySpread = null, settled = false,
+}: BenchProps) {
   /* Said out loud in the head, not only on hover: 13 us_major outlets serve us
      no article text, so on a wire-heavy story most of the bench can be sitting
      on its outlets' baselines and every mark used to look the same. */
@@ -295,18 +387,25 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
   const total = counts.reduce((a, b) => a + b, 0);
   const tallest = counts.length ? Math.max(...counts) : 0;
 
-  /* The same L/C/R split the card's register reads, derived from the same
-     seven buckets, so the Bench and the card can never print different words
-     about one story. */
+  /* The word. This comment used to say the Bench and the card "can never
+     print different words about one story", and on 2026-10-01 three of the
+     twenty did: the card counted ARTICLES in the pipeline, this counted the
+     first article per outlet here. Now both count OUTLETS by one rule
+     (`compute_outlet_lean_histogram`, mirrored in lib/outletVotes.ts), the
+     word is read from the story's own histogram when it carries one, and
+     `test/labels.test.mjs` plus `tests/test_bias_bins.py` assert, on every
+     story in the committed export, that these columns re-derive that
+     histogram. The local count is the fallback for a payload written before
+     the change (an archived story), whose card counted articles. */
   const spread: WingCounts = useMemo(
-    () => ({
+    () => storySpread ?? {
       leanBuckets: counts,
       leanLeftCount: counts[0] + counts[1] + counts[2],
       leanCenterCount: counts[3],
       leanRightCount: counts[4] + counts[5] + counts[6],
       leanMeasuredCount: total,
-    }),
-    [counts, total],
+    },
+    [counts, total, storySpread],
   );
 
   const narrow = width > 0 && width < 560;
@@ -409,13 +508,60 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
         <p className="bench__empty">
           {unscoredCount > 0
             ? `${unscoredCount} ${unscoredCount === 1 ? "source" : "sources"}, none measured`
-            : "No sources"}
+            : stateSources.length > 0 ? "" : "No sources"}
+          {stateSources.length > 0
+            && `${unscoredCount > 0 ? "; " : ""}${stateSources.length} state-affiliated, not placed on the ladder`}
         </p>
       </div>
     );
   }
 
   const focusName = card?.source.name ?? null;
+
+  /* One mark, as a link on a fine pointer and a toggle on a coarse one. Used
+     by the seven columns and by the state rung under them. */
+  const markEl = (s: BenchSource, size: number) => {
+    const said = `${s.name}, ${s.state ? "state-affiliated, outside the ladder" : leanLabel(s.politicalLean)}${
+      textAuthority(s.confidence) === "headline" ? ", scored from the headline" : ""
+    }`;
+    return coarse ? (
+      <button
+        key={s.name}
+        type="button"
+        className="bench__mark"
+        data-focused={focusName === s.name ? "true" : undefined}
+        aria-label={`${said}. Show details.`}
+        aria-expanded={pinned === s.name}
+        onClick={(e) => {
+          if (pinned === s.name) {
+            setPinned(null);
+            setCard(null);
+          } else {
+            setPinned(s.name);
+            show(e.currentTarget, s);
+          }
+        }}
+      >
+        <Mark source={s} size={size} />
+      </button>
+    ) : (
+      <a
+        key={s.name}
+        href={s.articleUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="bench__mark"
+        data-focused={focusName === s.name ? "true" : undefined}
+        aria-label={said}
+        onPointerEnter={(e) => show(e.currentTarget, s)}
+        onPointerLeave={() => setCard(null)}
+        onFocus={(e) => show(e.currentTarget, s)}
+        onBlur={() => setCard(null)}
+      >
+        <Mark source={s} size={size} />
+      </a>
+    );
+  };
 
   return (
     <div
@@ -446,6 +592,9 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
           )}
           {unscoredCount > 0 && (
             <span className="bench__unscored"> &middot; {unscoredCount} not measured</span>
+          )}
+          {stateSources.length > 0 && (
+            <span className="bench__unscored"> &middot; {stateSources.length} state-affiliated</span>
           )}
         </p>
       </div>
@@ -554,53 +703,7 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
                     key={ri}
                     style={{ gap: `${BENCH_GAP}px` }}
                   >
-                    {row.map((s) =>
-                      coarse ? (
-                        <button
-                          key={s.name}
-                          type="button"
-                          className="bench__mark"
-                          data-focused={focusName === s.name ? "true" : undefined}
-                          aria-label={`${s.name}, ${leanLabel(s.politicalLean)}${
-                            textAuthority(s.confidence) === "headline"
-                              ? ", scored from the headline"
-                              : ""
-                          }. Show details.`}
-                          aria-expanded={pinned === s.name}
-                          onClick={(e) => {
-                            if (pinned === s.name) {
-                              setPinned(null);
-                              setCard(null);
-                            } else {
-                              setPinned(s.name);
-                              show(e.currentTarget, s);
-                            }
-                          }}
-                        >
-                          <Mark source={s} size={pack.mark} />
-                        </button>
-                      ) : (
-                        <a
-                          key={s.name}
-                          href={s.articleUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bench__mark"
-                          data-focused={focusName === s.name ? "true" : undefined}
-                          aria-label={`${s.name}, ${leanLabel(s.politicalLean)}${
-                            textAuthority(s.confidence) === "headline"
-                              ? ", scored from the headline"
-                              : ""
-                          }`}
-                          onPointerEnter={(e) => show(e.currentTarget, s)}
-                          onPointerLeave={() => setCard(null)}
-                          onFocus={(e) => show(e.currentTarget, s)}
-                          onBlur={() => setCard(null)}
-                        >
-                          <Mark source={s} size={pack.mark} />
-                        </a>
-                      ),
-                    )}
+                    {row.map((s) => markEl(s, pack.mark))}
                   </div>
                 ))}
               </div>
@@ -625,6 +728,29 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
         <span className="bench__anchor bench__anchor--center">Centre</span>
         <span className="bench__anchor bench__anchor--right">Right</span>
       </div>
+
+      {/* THE STATE RUNG (CEO decision 1, 2026-10-02). Outlets the roster
+          flags `state_affiliated` sit here, under the ladder and outside it,
+          in a square mark rather than a circle. Their roster baselines run
+          from far left to far right with nothing domestic behind them, so a
+          column would claim a position the outlet does not hold, and on the
+          2026-10-01 front page they cast 12 wing votes. They are not in the
+          word, the counts or any column. */}
+      {stateSources.length > 0 && (
+        <div
+          className="bench__state"
+          role="group"
+          aria-label={`${stateSources.length} state-affiliated ${
+            stateSources.length === 1 ? "outlet" : "outlets"
+          }, not placed on the left to right ladder`}
+        >
+          <span className="bench__state-label">State-affiliated</span>
+          <span className="bench__state-marks">
+            {stateSources.map((s) => markEl(s, pack.mark))}
+          </span>
+          <span className="bench__state-count">{stateSources.length}</span>
+        </div>
+      )}
 
       {capped && (
         <button

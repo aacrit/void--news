@@ -178,6 +178,24 @@ check("/sources prints the measured movement from engine.json",
       and "engine.scoring.outlet_only_share" in src_client)
 check("/sources restates no measured movement as a literal",
       not re.search(r"\d+(\.\d+)?\s+points on average", src_client))
+# /press (P1-10, 2026-10-02). Its method callout said "on a full feature, the
+# article's own words lead" against a 10 point cap and a measured mean near
+# 1.4. It now reads engine.json and leanBounds exactly as /sources does, and
+# may not write an engine number by hand where either provides one.
+press = (ROOT / "frontend" / "app" / "press" / "page.tsx").read_text(encoding="utf-8")
+press_code = re.sub(r"/\*[\s\S]*?\*/", "", press)
+check("/press prints the measured movement from engine.json",
+      "engine.text_movement_rated.mean_abs" in press_code
+      and "engine.text_movement_rated.zero_share" in press_code
+      and 'join(process.cwd(), "build-data", "engine.json")' in press_code)
+check("/press quotes delta_max from leanBounds, not a literal",
+      "{RATED_DELTA_MAX}" in press_code and "{FULL_TEXT_WORDS}" in press_code)
+check("/press restates no engine number as a literal",
+      not re.search(r"\d+(\.\d+)?\s+points\b|\b\d+%\s+of them|\bunder \d+ words",
+                    press_code), "a hand-written points, share or word-count figure")
+check("/press no longer says the words lead",
+      not re.search(r"own words\s+lead", press_code))
+
 retired = {
     "frontend/app/components/about/AboutPipeline.tsx": "a full article leans on its words",
     "frontend/app/components/about/beats/BeatSigil.tsx": "so its words carry more",

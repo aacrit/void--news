@@ -510,6 +510,27 @@
   font-size: 10px;
 }
 
+/* The count behind the word (CEO decision 2, 2026-10-02): "15 of 22 right"
+   under "Leans right". The source count's face, size and ink, one line above
+   it, so the card reads word, evidence, coverage. */
+.sigil__tally {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--fg-secondary);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.story-card__headline .sigil__tally,
+.lead-story__headline .sigil__tally,
+.msc__headline .sigil__tally {
+  font-size: 10px;
+}
+
 /* A headline is never cut. It used to clamp at 3 (4 from 768px) lines and
    end in an ellipsis ("Fighting in Ethiopia'…", "Calls for UN…"), which a
    newspaper does not do to its own heads. The summary clamps instead. */

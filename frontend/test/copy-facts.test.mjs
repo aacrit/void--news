@@ -244,6 +244,26 @@ const literalCounts = files.flatMap((p) => {
 ok("no count of stories, sources or countries is a hand-written value literal",
    literalCounts.length === 0, literalCounts.join(", "));
 
+// 3. "Blend" in methodology copy (P1-10, 2026-10-02). The engine is not a
+//    weighted blend of outlet and words: it is the outlet's baseline plus a
+//    BOUNDED shift, 10 points at most on a rated outlet (CLAUDE.md, "Bias
+//    scoring weighs BOTH outlet and text"). /about said "length-adaptive blend
+//    of the article's words with the outlet's historical baseline" and
+//    /sources "blended with each outlet's historical baseline" after that was
+//    corrected everywhere else. On the pages that describe the method, the
+//    word may not appear at all, in any form.
+const METHOD_COPY = [...SELF_DESCRIBING, join(ROOT, "app/film"), join(ROOT, "app/sources")];
+const blended = files.flatMap((p) => {
+  if (!METHOD_COPY.some((d) => p === d || p.startsWith(d + "/"))) return [];
+  const t = uncommented(read(p));
+  const out = [];
+  const re = /\bblend(?:ed|s|ing)?\b/gi;
+  let m;
+  while ((m = re.exec(t))) out.push(`${p.replace(ROOT, "")}:${t.slice(0, m.index).split("\n").length} "${m[0]}"`);
+  return out;
+});
+ok("no methodology copy calls the lean score a blend", blended.length === 0, blended.join(", "));
+
 // N. A number glued to the next word in the served HTML. JSX text that opens
 //    with a space right after an expression AND carries an HTML entity later in
 //    the same run loses that leading space in the compiled output: /about served

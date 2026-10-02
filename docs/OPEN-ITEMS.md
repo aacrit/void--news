@@ -19,14 +19,16 @@ first person outside quotation marks is cut whole, by E-03's own rule
 (`cluster_summarizer._cut_first_person_sentences`). `E-07` and `E-08` still ship
 ADVISORY; whether to promote them is now a separate, unblocked question.
 
-**The lean gate: the CARD no longer depends on it (2026-09-21), but the gate
-still runs and the threshold below is still unreviewed.** The feed card and
-the Sigil now read the roster's SHAPE (`leanShape`), not the gated mean, so
-`LABEL_MIN_CONFIDENCE` no longer decides whether a story says anything: the
-card speaks on 30 of 35 stories against 15. `storyLeanLabel` and
-`leanLabelState` are still live for the Deep Dive's own label and the share
-card, which is where the decision below still bites. Read what follows as
-scoped to those two surfaces, not to the feed.
+**The lean gate drives no surface (rescoped 2026-10-02, rev 85 WS-E).** The
+feed card and the Sigil moved to the roster's SHAPE (`leanShape`) on
+2026-09-21; the Deep Dive chip (`BiasSnapshot`), Paper and the Sigil popup
+already read `storyShapeLabel`; and the share card, the last caller of
+`leanLabelState`, follows `leanShape` too from CEO decision 4. So
+`storyLeanLabel`, `leanLabelState` and `LABEL_MIN_CONFIDENCE` are exercised by
+`test/labels.test.mjs` and by nothing a reader sees. What is open is only
+whether to delete them, and whether `aggregate_confidence` (min 0.43, median
+0.53 on the 2026-10-01 twenty) means anything worth printing. The record below
+is kept because it is the evidence for that call, not because the gate bites.
 
 **The lean gate: the dilution is FIXED 2026-09-21, the thresholds still want a
 read on a post-fix feed.** `leanShareTilt` now divides by the wing coverage
