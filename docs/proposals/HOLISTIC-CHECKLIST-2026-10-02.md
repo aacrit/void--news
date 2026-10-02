@@ -5,12 +5,12 @@ and the audit reports it cites), grouped into eight workstreams that touch
 separate files, so they can run in parallel. Each workstream is built in its own
 worktree and merged one branch at a time (CLAUDE.md: one live `claude/*` branch).
 
-CEO decisions are taken at the plan's recommendation unless overruled before the
-branch that implements them merges: 1(b) state media get their own rung outside
+CEO decisions, answered 2026-10-02: 1(b) state media get their own rung outside
 the wings; 2(b) the card prints its count; 3(a) one vote per outlet; 4(a) the
 share card follows `leanShape`; 5(b) Weekly drops tech and sports until each has
 a sourced corpus; 6(b) the audio band floats with sourced words, floor 14 min;
-7(b) Games stay hidden this month; 8(b) the pronoun scrubber is retired.
+7(a) **Games are un-hidden now** (overriding the recommendation); 8(b) the
+pronoun scrubber is retired.
 
 Legend: [ ] open, [x] done and on main, [~] done in code, needs a CEO action
 outside the repo (listed under "CEO actions").
@@ -92,6 +92,9 @@ outside the repo (listed under "CEO actions").
 - [ ] P2-3 state DB and phrase_counts growth: retention sweep, prune check
 - [ ] P2-6 quarantined sources reviewed per cause; gate
 - [ ] P2-12 flash call meter in `engine.json`; gate over 18
+
+## WS-I Games (owner: frontend-fixer, game-content-writer)
+- [ ] Decision 7 un-hide Games: remove the 301s, refresh content banks, nav and sitemap entries, headless scenarios, copy gates
 
 ## CEO actions (outside the repo)
 - [ ] Cloudflare: exempt `/_next/static/*`, `/logos/*`, `/brand/*`, `/audio/*` from the rate-limit rule (P0-6)
