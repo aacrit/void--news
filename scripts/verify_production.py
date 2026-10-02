@@ -24,7 +24,9 @@ One exception to the no-I/O rule, added 2026-09-21: `check_internal_routes_hidde
 issues three HEAD requests, because "is /command-center still served?" cannot be
 answered from the homepage's bytes. It reads its origin out of the page's own
 canonical link, so it needs no new plumbing, and it never fails on a network
-error: only a live 200 is a defect.
+error: only a live 200 is a defect. A second, 2026-10-02:
+`check_first_party_assets_not_rate_limited` GETs `/` and the page's own
+`/_next/static` assets, paced, and fails only on a 429.
 """
 
 from __future__ import annotations
@@ -770,6 +772,56 @@ def check_internal_routes_hidden(p: Page) -> list[str]:
     return out
 
 
+# P0-6 (2026-10-02): Cloudflare's rate-limit rule returned 429 on /_next/static
+# chunks during ONE calm load of /, and the page twice fell to Next's bare error
+# screen; /sources got 284 of 406 logo requests refused. The exemption lives in
+# the Cloudflare dashboard, not this repo (docs/DEPLOYMENT.md, "Rate limiting"),
+# so only the served behaviour can show it is in place. This loads the page's
+# own first-party assets the way one browser would, paced, and fails on any 429.
+_STATIC_ASSET_RE = re.compile(r'(?:src|href)="(/_next/static/[^"?#]+)')
+_ASSET_PACE_SECONDS = 0.15
+_ASSET_MAX = 80
+
+
+def _get_status(url: str, timeout: float = 15.0) -> int | None:
+    """Status of a GET with the body drained. None => could not ask."""
+    import urllib.error
+    import urllib.request
+
+    req = urllib.request.Request(url, headers={"User-Agent": "VoidNews-verify/1.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            resp.read()
+            return resp.status
+    except urllib.error.HTTPError as e:
+        return e.code
+    except Exception:
+        return None
+
+
+def check_first_party_assets_not_rate_limited(p: Page) -> list[str]:
+    import time
+
+    m = _CANONICAL_RE.search(p.raw)
+    if not m:
+        return []
+    origin = (m.group(1) or m.group(2)).rstrip("/")
+    assets = list(dict.fromkeys(_STATIC_ASSET_RE.findall(p.raw)))[:_ASSET_MAX]
+    limited = []
+    for path in ["/"] + assets:
+        if _get_status(f"{origin}{path}") == 429:
+            limited.append(path)
+        time.sleep(_ASSET_PACE_SECONDS)
+    if not limited:
+        return []
+    return [
+        f"{len(limited)} of {len(assets) + 1} first-party requests got HTTP 429 at "
+        f"{origin} (e.g. {', '.join(limited[:4])}): the Cloudflare rate-limit "
+        f"rule must exempt /_next/static/*, /logos/*, /brand/*, /audio/* "
+        f"(docs/DEPLOYMENT.md)"
+    ]
+
+
 CHECKS = [
     ("structural: single Top story", check_top_story),
     ("structural: wordmark not doubled", check_wordmark),
@@ -795,6 +847,8 @@ CHECKS = [
     ("structural: every card links to /story/<uuid>/", check_card_anchor_coverage),
     ("integrity: confidence is real (not COUNT/5 proxy)", check_confidence_not_proxy),
     ("exposure: internal tooling routes are not served", check_internal_routes_hidden),
+    ("availability: first-party assets are not rate-limited (P0-6)",
+     check_first_party_assets_not_rate_limited),
 ]
 
 # Reported on every run, promoted to hard failures by --strict once the
