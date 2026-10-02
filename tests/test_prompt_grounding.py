@@ -22,12 +22,15 @@ stdlib only, no key, no network.
 """
 from __future__ import annotations
 
+import ast
 import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PIPE = ROOT / "pipeline"
+sys.path.insert(0, str(PIPE))
+from utils.prohibited_terms import find_prohibited  # noqa: E402
 
 GROUNDING = ("Every fact MUST appear in the provided articles. "
              "Do not supplement with prior knowledge.")
@@ -78,6 +81,100 @@ NO_TERMINAL_NAME = [
     "summarizer/cluster_summarizer.py",
     "history/audio_script_generator.py",
 ]
+
+
+# ---------------------------------------------------------------------------
+# Kill-list words in copy the CODE writes (P1-6, audit 1 item 13).
+#
+# The rule-based fallbacks in pipeline/main.py wrote "Sources show significant
+# differences in political framing", "notably more sensational" and
+# "Single-source coverage \u2014 no cross-source comparison" into
+# divergence_points, and those strings were served on archived Deep Dives. No
+# model wrote them, so no output sanitizer ever read them. This scans every
+# string literal a reader could be served from pipeline/main.py and
+# pipeline/briefing/*.py.
+#
+# Not copy, and skipped: docstrings and bare string statements, arguments to
+# print/log/regex/argparse/exception calls, constants whose NAME says they are
+# instructions to a model or a term list (prompts quote the banned words in
+# order to ban them), set literals, comparison operands, and tuples or lists
+# made wholly of short terms (a ban list). Everything else is held to the kill
+# list. Dashes are held in pipeline/main.py and in the named published
+# fallbacks only, because the audio-script literals in briefing/ keep their
+# dashes as TTS breath marks (CLAUDE.md, "No em dashes", exception).
+# ---------------------------------------------------------------------------
+_NOT_COPY_NAME = re.compile(
+    r"(SYSTEM|PROMPT|INSTRUCTION|TERMS|WORDS|BANNED|BORROWED|_RE$|PATTERN|SLOP|"
+    r"KILL|RULES|GUIDE|TEMPLATE|EXAMPLE|PROFILE|PERSONA|VOICE|FOCUS|SCENE|"
+    r"STYLE|DIRECTION|SUFFIX)", re.I)
+_NOT_COPY_CALL = frozenset({
+    "print", "write", "warn", "warning", "info", "debug", "error", "exception",
+    "add_argument", "ArgumentParser", "compile", "search", "sub", "match",
+    "findall", "finditer", "fullmatch", "split", "replace", "_log", "log",
+    "exit", "RuntimeError", "ValueError", "Exception", "SystemExit",
+    "KeyError", "TypeError", "join", "startswith", "endswith", "strip",
+    "rstrip", "lstrip", "count", "find", "rfind", "index",
+})
+
+
+def _is_term_list(node) -> bool:
+    elts = getattr(node, "elts", None) or []
+    return bool(elts) and all(
+        isinstance(e, ast.Constant) and isinstance(e.value, str)
+        and len(e.value.split()) <= 5 for e in elts)
+
+
+def copy_literals(src: str):
+    """(lineno, text) for every string literal that can reach a reader."""
+    out: list[tuple[int, str]] = []
+
+    def visit(node, assigned: str = "") -> None:
+        if isinstance(node, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef,
+                             ast.ClassDef)):
+            body = list(node.body)
+            if (body and isinstance(body[0], ast.Expr)
+                    and isinstance(body[0].value, ast.Constant)
+                    and isinstance(body[0].value.value, str)):
+                body = body[1:]
+            for child in ast.iter_child_nodes(node):
+                if child in node.body and child not in body:
+                    continue
+                visit(child)
+            return
+        if isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant):
+            return
+        if isinstance(node, ast.Call):
+            f = node.func
+            name = (f.id if isinstance(f, ast.Name)
+                    else f.attr if isinstance(f, ast.Attribute) else "")
+            if name in _NOT_COPY_CALL:
+                return
+        if isinstance(node, (ast.Assign, ast.AnnAssign)):
+            targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+            names = [t.id if isinstance(t, ast.Name)
+                     else t.attr if isinstance(t, ast.Attribute) else ""
+                     for t in targets]
+            if any(_NOT_COPY_NAME.search(n or "") for n in names):
+                return
+        if isinstance(node, (ast.Set, ast.Compare)):
+            return
+        if isinstance(node, (ast.Tuple, ast.List)) and _is_term_list(node):
+            return
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            out.append((node.lineno, node.value))
+            return
+        for child in ast.iter_child_nodes(node):
+            visit(child)
+
+    visit(ast.parse(src))
+    return out
+
+
+COPY_FILES = [PIPE / "main.py"] + sorted((PIPE / "briefing").glob("*.py"))
+DASH_FILES = {PIPE / "main.py"}
+# Published fallbacks outside main.py that must carry no dash either.
+DASH_NAMED = [("briefing/daily_brief_generator.py", "Daily brief unavailable")]
+_DASH = re.compile("[\u2014\u2013]")
 
 failures: list[str] = []
 
@@ -136,6 +233,23 @@ def main() -> int:
         check(not hits, f"{rel}: no prompt string says 'void --'"
               + (f" (first: {hits[0]!r})" if hits else ""))
 
+    print("\nkill list in code-written copy (main.py, briefing/*.py)")
+    for path in COPY_FILES:
+        rel = path.relative_to(PIPE)
+        lits = copy_literals(path.read_text(encoding="utf-8"))
+        hits = [(n, t) for n, t in lits if find_prohibited(t)]
+        check(not hits, f"{rel}: no kill-list word in a copy literal"
+              + (f" (line {hits[0][0]}: {find_prohibited(hits[0][1])} in "
+                 f"{hits[0][1][:60]!r})" if hits else ""))
+        if path in DASH_FILES:
+            dashes = [(n, t) for n, t in lits if _DASH.search(t)]
+            check(not dashes, f"{rel}: no dash in a copy literal"
+                  + (f" (line {dashes[0][0]}: {dashes[0][1][:60]!r})" if dashes else ""))
+    for rel, needle in DASH_NAMED:
+        lits = copy_literals((PIPE / rel).read_text(encoding="utf-8"))
+        bad = [t for _, t in lits if needle in t and _DASH.search(t)]
+        check(not bad, f"{rel}: the published fallback {needle!r} carries no dash")
+
     print("\nthe check itself")
     # Planted defects: a prompt without the sentence, and one with the old name.
     planted = 'X = """You are the editorial voice of void --news.\nWrite well.\n"""\n'
@@ -146,6 +260,21 @@ def main() -> int:
     check(not any("void --" in line for line in prompt_text_lines(
         '"""Module for void --news."""\n# void --news comment\nprint("void --news")\n')),
           "docstrings, comments and prints are not prompts")
+    planted_copy = (
+        '"""Docstring: significant is allowed here."""\n'
+        'X_PROMPT = "Never write significant."\n'
+        'def f():\n'
+        '    print("significant in a log line")\n'
+        '    return ["Sources show significant differences in framing",\n'
+        '            "Single-source coverage \u2014 nothing to compare"]\n')
+    lits = copy_literals(planted_copy)
+    check(any(find_prohibited(t) for _, t in lits),
+          "a kill-list word in a returned fallback string is caught")
+    check(any(_DASH.search(t) for _, t in lits),
+          "a dash in a returned fallback string is caught")
+    check(not any("Docstring" in t or "Never write" in t or "log line" in t
+                  for _, t in lits),
+          "docstrings, prompts and log lines are not copy")
 
     if failures:
         print(f"\n{len(failures)} FAILED")

@@ -1882,7 +1882,7 @@ def _build_stub_brief(top_ids: list[str], reason: str = "generator_failure") -> 
     Frontend already handles null audio_url; tldr_text is the safety net."""
     return {
         "tldr_headline": None,
-        "tldr_text": "Daily brief unavailable — see top stories.",
+        "tldr_text": "Daily brief unavailable. See top stories.",
         "opinion_text": None,
         "opinion_headline": None,
         "opinion_lean": None,

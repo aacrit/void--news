@@ -712,7 +712,7 @@ def _generate_consensus_divergence(
     """
     if count < 2:
         return (
-            ["Single-source coverage — no cross-source comparison available"],
+            ["Single-source coverage; no cross-source comparison available"],
             [],
         )
 
@@ -729,8 +729,8 @@ def _generate_consensus_divergence(
             consensus.append("Sources show similar centrist political framing")
     elif lean_range > 30:
         divergence.append(
-            f"Sources show significant differences in political framing "
-            f"(lean spread: {int(lean_range)} points)"
+            f"Sources differ in political framing by {int(lean_range)} points "
+            f"of lean"
         )
     elif lean_spread > 15:
         divergence.append("Sources show moderate differences in political framing")
@@ -742,7 +742,7 @@ def _generate_consensus_divergence(
         consensus.append("Sources use a similarly elevated tone in their coverage")
     elif sensationalism_spread > 15:
         divergence.append(
-            "Some sources use notably more sensational language than others"
+            "Some sources use more sensational language than others"
         )
 
     # --- Opinion vs. Fact ---
@@ -1742,7 +1742,7 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                         "edition": edition,
                         "pipeline_run_id": run_id,
                         "tldr_headline": None,
-                        "tldr_text": "Daily brief unavailable — see top stories.",
+                        "tldr_text": "Daily brief unavailable. See top stories.",
                         "opinion_text": None,
                         "opinion_headline": None,
                         "opinion_lean": None,
