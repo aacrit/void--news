@@ -239,6 +239,15 @@ jobs:
           python tests/test_podcast_feed.py          # covers exist and carry no stale text; titles agree
           python tests/test_prompt_grounding.py      # every production prompt carries the grounding line
           python tests/test_paper.py                 # Paper prints the front page's twenty, in order, with no retired claim
+          # Rev 85 (holistic fixes): the eight gates the workstreams added.
+          python tests/test_games_content.py         # every Games bank: no dash, no kill-list term, no date, THE FRAME stays out
+          python tests/test_brief_grounding.py       # TL;DR, Opinion and On Air cut what the sources do not carry
+          python tests/test_stuck_runs.py            # a running pipeline run is never failed by its own cleanup
+          python tests/test_rerank_pool.py           # 8c ranks only pool-eligible clusters; the feed does not move
+          python tests/test_pipeline_runtime.py      # one metered Gemini call site, phase timings, Kokoro workers
+          python tests/test_state_retention.py       # undated rows are swept; printed_stories is never touched
+          python tests/test_quarantine_causes.py     # every quarantined feed names its cause
+          python tests/test_audio_store.py           # MP3s that leave git come back hash-checked
 
           # Rev 85 (P2-8): the two gates no workflow ran, and the two that
           # keep the inventory honest.
