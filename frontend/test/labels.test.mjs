@@ -427,6 +427,34 @@ if (existsSync(FEED)) {
   check("the committed export has stories to compare", compared > 0, `${compared} compared`);
 }
 
+/* ---- the /about demos carry a roster (P1-12) --------------------------- */
+/*
+   demoSigil passed no wing counts, so the real Sigil on /about printed
+   "0 measured" beside "Lean Center-Left" and "In agreement". Every demo
+   setting the sliders can reach, and the three archetypes, must now print a
+   nonzero count under any word, and the counts must be the demo's sources.
+*/
+{
+  const bad = [];
+  const settings = [];
+  for (let lean = 0; lean <= 100; lean += 5)
+    for (let spread = 0; spread <= 40; spread += 4)
+      for (let n = 1; n <= 15; n += 2) settings.push([lean, spread, n]);
+  settings.push([28, 16, 12], [50, 3, 14], [78, 6, 3], [38, 20, 9]); // BeatVerdict + BeatSigil defaults
+  for (const [lean, spread, n] of settings) {
+    const s = demo.demoSigil(lean, spread, n).biasSpread;
+    const placed = (s.leanLeftCount ?? 0) + (s.leanCenterCount ?? 0) + (s.leanRightCount ?? 0);
+    const word = bias.leanShapeLabel(s);
+    if (placed !== n || /^0 /.test(word) || (s.leanBuckets ?? []).reduce((a, b) => a + b, 0) !== n) {
+      bad.push(`${lean}/${spread}/${n}: "${word}", ${placed} placed of ${n}`);
+    }
+  }
+  check("every /about demo prints a real count under its word", bad.length === 0, bad.slice(0, 3).join("; "));
+  check("the consensus archetype reads Consensus",
+    bias.leanShapeLabel(demo.demoSigil(50, 3, 14).biasSpread) === "Consensus",
+    bias.leanShapeLabel(demo.demoSigil(50, 3, 14).biasSpread));
+}
+
 /* ---- the share card says what the card says (CEO decision 4) ---------- */
 /*
    `story/[id]/ogCard.tsx` gated on `leanLabelState`, the confidence-gated
