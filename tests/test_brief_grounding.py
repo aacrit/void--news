@@ -212,6 +212,32 @@ def main() -> int:
     except ImportError as e:  # pragma: no cover
         check(False, f"radio generator importable ({e})")
 
+    print("\nthe pronoun scrubber is retired (CEO Decision 8, Block 5a)")
+    # It turned Ted Cruz's "a traumatic experience for all of us" into "for
+    # all of them" on the live 09-09 feed. A sentence in the first person
+    # outside quotation marks is now cut whole (E-03), never rewritten.
+    src = (ROOT / "pipeline" / "summarizer" / "cluster_summarizer.py").read_text(
+        encoding="utf-8")
+    check("_convert_first_person_outside_quotes" not in src
+          and "_FIRST_PERSON_SUBS" not in src,
+          "no pronoun-rewriting table or converter is left in the summarizer")
+    check("s = _cut_first_person_sentences(s)" in src,
+          "the post-check chain cuts first-person sentences instead")
+    try:
+        from summarizer import cluster_summarizer as cs
+        cruz = ("Senator Ted Cruz said the hearing was a traumatic experience for "
+                "all of us. The committee adjourned on Tuesday.")
+        out = cs._cut_first_person_sentences(cruz)
+        check("all of them" not in out and "all of us" not in out
+              and out == "The committee adjourned on Tuesday.",
+              f"the Cruz sentence is cut, not rewritten ({out!r})")
+        quoted = ("Cruz called it “a traumatic experience for all of us.” "
+                  "The committee adjourned.")
+        check(cs._cut_first_person_sentences(quoted) == quoted,
+              "a first-person pronoun inside a quotation is left alone")
+    except ImportError as e:  # the summarizer needs google-genai
+        print(f"  [skip] summarizer not importable here ({e}); source checks above hold")
+
     if failures:
         print(f"\n{len(failures)} FAILED")
         return 1
