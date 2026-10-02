@@ -16,7 +16,9 @@ import { LEAN_SHAPE_LEGEND } from "../lib/biasColors";
    aria-controls) reveals a labelled region; Escape and outside-click dismiss.
    --------------------------------------------------------------------------- */
 
-export default function LeanLabelLegend() {
+/** `trigger`: a text label for the toggle in place of the icon, for a place
+ *  that names the legend in a sentence (the first-visit note). */
+export default function LeanLabelLegend({ trigger }: { trigger?: string } = {}) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLSpanElement>(null);
   const rawId = useId();
@@ -42,13 +44,13 @@ export default function LeanLabelLegend() {
     <span className="lean-legend" ref={wrapRef}>
       <button
         type="button"
-        className="lean-legend__btn"
+        className={trigger ? "lean-legend__btn lean-legend__btn--text" : "lean-legend__btn"}
         aria-expanded={open}
         aria-controls={open ? panelId : undefined}
-        aria-label="What the coverage labels mean"
+        aria-label={trigger ? undefined : "What the coverage labels mean"}
         onClick={() => setOpen((v) => !v)}
       >
-        <Info size={14} weight="bold" aria-hidden="true" />
+        {trigger ?? <Info size={14} weight="bold" aria-hidden="true" />}
       </button>
 
       {open && (
