@@ -1,0 +1,96 @@
+{
+ "corrections": [
+  {
+   "cluster": "cd6ea179-0ffc-4a45-b116-65d3297cf888",
+   "date": "2026-10-02",
+   "reason": "4,419 is the U.S. military death toll over the 23 years from 2003 (LiveMint: '23 years, 4,419 military deaths'), not Operation Inherent Resolve's, to which the sentence attached it. Audit 1 item 3.",
+   "edits": [
+    {
+     "field": "summary",
+     "find": "The Pentagon reported 4,419 U.S. military deaths during the operation. ",
+     "replace": ""
+    }
+   ]
+  },
+  {
+   "cluster": "bf16e44c-0173-47f7-abd1-5a1536a79fd1",
+   "date": "2026-10-02",
+   "reason": "Quotation altered: the source's ellipsis between the two phrases had become a full stop (audit 1 item 6). 'Ideology-heavy speech' was The Independent's characterisation in Void's voice (E-07 class).",
+   "edits": [
+    {
+     "field": "summary",
+     "find": "those who “clung to the 'woke department'. No longer work here,”",
+     "replace": "those who “clung to the 'woke department' ... no longer work here,”"
+    },
+    {
+     "field": "summary",
+     "find": "during an ideology-heavy speech at Marine Corps Base Quantico",
+     "replace": "during a speech at Marine Corps Base Quantico"
+    }
+   ]
+  },
+  {
+   "cluster": "7cfd4407-2bc8-4266-927e-1a4e71a9aa82",
+   "date": "2026-10-02",
+   "reason": "Cluster contamination: a Kanye West concert story rode in on 'Russia' (audit 1 item 8). Garble 'Q&An' (item 12).",
+   "edits": [
+    {
+     "field": "summary",
+     "find": "Separately, two sold-out concerts by Kanye West in St. Petersburg, scheduled for October 10 and 11, were officially canceled. Gazprom Arena stated it never signed a rental agreement with the promoter, Say Agency. ",
+     "replace": ""
+    },
+    {
+     "field": "summary",
+     "find": "during a Q&An after",
+     "replace": "during a Q&A after"
+    },
+    {
+     "field": "consensus_points",
+     "remove": "Kanye West"
+    },
+    {
+     "field": "divergence_points",
+     "remove": "Kanye West"
+    }
+   ]
+  },
+  {
+   "cluster": "1b9b716e-a185-4ae6-b67b-e69f135dc7af",
+   "date": "2026-10-02",
+   "reason": "Cluster contamination: the RAF Fairford incident and EU rejoining are separate stories with their own cards (audit 1 item 8).",
+   "edits": [
+    {
+     "field": "summary",
+     "find": " Separately, an incident at an RAF base was reported by the Prime Minister to be tied to Iran. The Prime Minister also confirmed he is considering rejoining the EU and blamed Brexit for a surge in migration.",
+     "replace": ""
+    },
+    {
+     "field": "divergence_points",
+     "remove": "RAF base incident"
+    }
+   ]
+  },
+  {
+   "cluster": "*",
+   "date": "2026-10-02",
+   "reason": "Retired rule-based fallback copy: a kill-list word or a dash written by code, not by a model (audit 1 item 13).",
+   "edits": [
+    {
+     "field": "divergence_points",
+     "regex": "Sources show significant differences in political framing \\(lean spread: (\\d+) points\\)",
+     "replace": "Sources differ in political framing by \\1 points of lean"
+    },
+    {
+     "field": "divergence_points",
+     "regex": "Some sources use notably more sensational language than others",
+     "replace": "Some sources use more sensational language than others"
+    },
+    {
+     "field": "consensus_points",
+     "regex": "Single-source coverage — no cross-source comparison available",
+     "replace": "Single-source coverage; no cross-source comparison available"
+    }
+   ]
+  }
+ ]
+}
