@@ -489,7 +489,11 @@ perspectives:
     year: '2002'
     type: book
     verified: false
-  - title: William Sheppard — Congo's African-American Livingstone
+  # REVIEW (2026-10-02): this title is unverified and is not in any ledger.
+  # It served with an em dash; the dash is now a colon, nothing else changed.
+  # Kennedy's 2002 book may be "Black Livingstone"; confirm against a
+  # catalogue record before changing the words.
+  - title: "William Sheppard: Congo's African-American Livingstone"
     author: Pagan Kennedy
     year: '2002'
     type: book

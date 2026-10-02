@@ -516,6 +516,48 @@ for line in ("N: The book was banned on the mainland.",
 print(f"note  {sum(1 for *_x, k in SCRIPT_TIME_BOUND_KNOWN if k == 'review')} script line(s) "
       f"await a dated rewrite at their next re-render (SCRIPT_TIME_BOUND_KNOWN)")
 
+# ------------------------------------------------- the image-credit gate
+# Every picture's credit line is a licence condition, and on 2026-10-02 49 of
+# them served Commons template residue: "Unknown authorUnknown author",
+# "unknown, please edit with correct data.", "Harris &amp; Ewing", "(talk)",
+# footnote markers. export_history.clean_artist() normalises the field; this
+# holds the SERVED file to it, and holds the normaliser to planted cases.
+import json  # noqa: E402
+
+from pipeline.history.export_history import clean_artist  # noqa: E402
+
+CREDIT_JUNK = re.compile(
+    r"(?i)(unknown author){2}|[a-z]unknown author|please edit|correct data|&(?:amp|quot|lt|gt|#\d+);"
+    r"|\(talk\)|\[\d+\]|https?://|[–—]")
+served_path = ROOT / "frontend/public/data/history.json"
+if served_path.exists():
+    served = json.loads(served_path.read_text(encoding="utf-8"))
+    served = served if isinstance(served, list) else served.get("events", [])
+    credit_hits = 0
+    for ev in served:
+        credits = [("hero", ev.get("hero_image_attribution"))] + \
+                  [(f"media[{i}]", m.get("attribution")) for i, m in enumerate(ev.get("media") or [])]
+        for where, credit in credits:
+            if credit and CREDIT_JUNK.search(credit):
+                credit_hits += 1
+                check(f"{ev.get('slug')} {where} credit", False,
+                      f"scraped residue in an image credit: {credit[:90]!r}")
+for raw, want in [
+    ("Unknown authorUnknown author", "Unknown author"),
+    ("AnonymousUnknown author", "Anonymous"),
+    ("Unknown authorUnknown author or not provided", "Unknown author"),
+    ("unknown, please edit with correct data.", "Unknown author"),
+    ("Harris &amp; Ewing", "Harris & Ewing"),
+    ("Ford & West Lith.", "Ford & West Lith."),
+    ("derivative work: Ingsoc (talk) Brutus.jpg: Unknown", "derivative work: Ingsoc Brutus.jpg: Unknown"),
+    ("Eduardo Chiossone (1833–98)[3]", "Eduardo Chiossone (1833-98)"),
+]:
+    got = clean_artist(raw)
+    check(f"credit normaliser: {raw[:40]!r}", got == want, f"{got!r}, wanted {want!r}")
+    check(f"credit gate rejects the raw form: {raw[:40]!r}",
+          raw == want or bool(CREDIT_JUNK.search(raw)) or raw.endswith(".") or "(talk)" in raw,
+          "the gate would pass this residue")
+
 PLANTED_HEDGE = [
     "Many analysts argue the treaty was doomed from the first draft.",
     "Some sources say he was forced to watch his sons killed first.",
