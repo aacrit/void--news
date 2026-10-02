@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import LogoIcon from "../LogoIcon";
+import "../../styles/onboarding.css";
 import { PRODUCT_FAMILY, TRANSPARENCY_TOOLS } from "../../film/data";
 import type { ProductWorld } from "../../film/data";
 import BeatVoid from "./beats/BeatVoid";

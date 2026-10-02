@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import Link from "next/link";
+import ChromeLink from "./ChromeLink";
 import { usePathname } from "next/navigation";
 import { hapticMicro, hapticMedium } from "../lib/haptics";
 import { BASE_PATH } from "../lib/utils";
@@ -92,7 +92,7 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
       </button>
 
       {/* ── Home (center, raised brand anchor) ── */}
-      <Link
+      <ChromeLink
         href="/"
         className={`mtb__home${homeActive ? " mtb__home--active" : ""}`}
         aria-label="Home"
@@ -109,7 +109,7 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
           />
         </span>
         <span className="mtb__label mtb__label--home">Home</span>
-      </Link>
+      </ChromeLink>
 
       {/* ── Menu (right, hamburger drawer trigger) ── */}
       <button
