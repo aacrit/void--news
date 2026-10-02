@@ -88,6 +88,11 @@ def load_inputs(slug: str, draft: bool = False):
     episode = None
     if MANIFEST.exists():
         episode = (json.loads(MANIFEST.read_text(encoding="utf-8")).get("episodes") or {}).get(slug)
+        # A withdrawn episode (its audio contradicts the corrected script) is
+        # not served, so no episode mark may point a listener into it: the
+        # excerpt still prints from the script, with no start time.
+        if isinstance(episode, dict) and episode.get("audio_withdrawn"):
+            episode = None
     return event, ledger, thesis, script, episode
 
 

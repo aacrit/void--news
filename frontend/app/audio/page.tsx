@@ -47,6 +47,7 @@ interface HistoryEpisode {
   durationSeconds: number;
   publishedAt?: string | null;
   chapters?: AudioChapter[] | null;
+  audio_withdrawn?: boolean;
 }
 
 function readJson<T>(rel: string): T | null {
@@ -57,8 +58,12 @@ function readJson<T>(rel: string): T | null {
   }
 }
 
+/* Whole seconds, truncated: the rule the player, the History pages and the
+   podcast feeds (`_itunes_duration`) all use, so one episode never reads
+   11:41 here and 11:40 in a podcast app. tests/test_podcast_feed.py runs
+   this function against the feed's on the same durations. */
 function clock(seconds: number): string {
-  const s = Math.max(0, Math.round(seconds));
+  const s = Math.max(0, Math.floor(seconds));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 }
 
@@ -84,11 +89,14 @@ export default function AudioPage() {
   const weekly = getWeeklyIssues().find((i) => i.audio_url) ?? null;
 
   const manifest = readJson<{ episodes: Record<string, HistoryEpisode> }>("public/data/history-audio.json");
-  const episodes = Object.entries(manifest?.episodes ?? {})
-    .filter(([, e]) => e && e.url && e.durationSeconds > 0)
+  // A withdrawn episode (its script was corrected after the render) is not
+  // offered here, as on its own page and in the feed.
+  const served = Object.entries(manifest?.episodes ?? {})
+    .filter(([, e]) => e && e.url && e.durationSeconds > 0 && !e.audio_withdrawn);
+  const episodes = [...served]
     .sort((a, b) => (b[1].publishedAt ?? "").localeCompare(a[1].publishedAt ?? ""))
     .slice(0, 6);
-  const historyCount = Object.keys(manifest?.episodes ?? {}).length;
+  const historyCount = served.length;
 
   return (
     <div className="audio-page">
