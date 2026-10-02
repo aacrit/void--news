@@ -26,6 +26,10 @@
 --   uuid -> TEXT; timestamptz -> TEXT/CURRENT_TIMESTAMP; boolean n/a here;
 --   varchar(n) -> TEXT; char_length(...) CHECK -> length(...) CHECK.
 --   Enable FKs per connection with:  PRAGMA foreign_keys = ON;
+--
+-- This file is the BASELINE. Later changes live in worker/migrations/ and are
+-- applied after it (`npm run db:migrate`). 0001 adds ip_hash to ship_votes
+-- and ship_replies, with UNIQUE(request_id, ip_hash) on votes.
 -- ============================================================================
 
 -- ─────────────────────────────────────────────────────────────────────────

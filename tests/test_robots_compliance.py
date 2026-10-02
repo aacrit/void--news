@@ -86,6 +86,30 @@ check("a parsed robots.txt still refuses a disallowed path",
       ws._check_robots_txt("https://example.test/premium/1") is False)
 ws._robots_cache.clear()
 
+# --- an honest agent (rev 85 WS-D, Sec L1) ------------------------------------
+# The scraper sent a spoofed Chrome string and read robots.txt as `*`, so a
+# site that disallowed named crawlers read as open to us. It names itself now,
+# and both our group and `*` must allow.
+check("the scraper names itself, with a contact URL",
+      ws.USER_AGENT.startswith(ws.ROBOTS_TOKEN + "/")
+      and "+https://" in ws.USER_AGENT
+      and "Mozilla" not in ws.USER_AGENT and "Chrome" not in ws.USER_AGENT,
+      ws.USER_AGENT)
+for lines, path, expect, label in (
+    (["User-agent: VoidNewsBot", "Disallow: /", "", "User-agent: *", "Allow: /"],
+     "/story/1", False, "a group naming VoidNewsBot refuses us even when * allows"),
+    (["User-agent: VoidNewsBot", "Allow: /", "", "User-agent: *", "Disallow: /"],
+     "/story/1", False, "a * disallow still refuses us under a lenient named group"),
+    (["User-agent: GPTBot", "Disallow: /", "", "User-agent: *", "Allow: /"],
+     "/story/1", True, "another bot's group does not apply to us"),
+):
+    rp = urllib.robotparser.RobotFileParser()
+    rp.parse(lines)
+    ws._robots_cache.clear()
+    ws._robots_cache[DOMAIN] = rp
+    check(label, ws._check_robots_txt("https://example.test" + path) is expect)
+ws._robots_cache.clear()
+
 # --- the retry, because the split denies on transient failures --------------
 # Measured on 70 roster domains (2026-09-22): 60 served robots.txt, 5 returned
 # 403, 1 returned 429, 4 failed at the transport. A refusal is a decision and

@@ -10,11 +10,23 @@
  * Routes (all under /api/ship):
  *   GET  /api/ship/requests            list requests (privileged cols omitted)
  *   POST /api/ship/requests            submit (forces status/votes; ip rate-limit)
- *   POST /api/ship/vote                {request_id, fingerprint} -> new count
+ *   POST /api/ship/vote                {request_id} -> new count
  *   GET  /api/ship/replies?request_id  list replies for a request
- *   POST /api/ship/reply               {request_id, body, fingerprint} rate-limited
+ *   POST /api/ship/reply               {request_id, body} rate-limited
  *   GET  /api/ship/stats               counts by status
  *   GET  /api/health                   ok
+ *
+ * Identity (rev 85 WS-D, audit 5 H1/H2): every write is keyed on the SERVER's
+ * salted hash of CF-Connecting-IP, never on a client-supplied string. The old
+ * `fingerprint` field is accepted and ignored; the legacy NOT NULL
+ * `fingerprint` column is filled with the same ip hash so its old
+ * UNIQUE(request_id, fingerprint) agrees with the new UNIQUE(request_id,
+ * ip_hash) from migrations/0001. Rotating the client fingerprint therefore
+ * buys nothing.
+ *
+ * IP_SALT must be a real secret (`wrangler secret put IP_SALT`). With it
+ * missing or still the old placeholder, every write returns 503 and logs why:
+ * a guessable salt makes the IPv4 space brute-forceable from the hash.
  */
 
 export interface Env {
@@ -28,6 +40,23 @@ const REQUEST_PUBLIC_COLS =
   "id,title,description,category,area,edition_context,status,priority,votes," +
   "ceo_response,claude_branch,shipped_commit,shipped_diff_summary,created_at," +
   "triaged_at,shipped_at,updated_at";
+
+/** The literal that used to be committed in wrangler.toml [vars]. */
+export const PLACEHOLDER_SALTS = new Set(["void-news-dev-salt-change-me", "change-me", ""]);
+const MIN_SALT_LENGTH = 16;
+
+/** Per-IP and global hourly caps. The globals are backstops only, set far
+ *  above any honest day, so one client can no longer lock everyone out. */
+export const LIMITS = {
+  submitsPerIp: 5,
+  submitsGlobal: 1000,
+  votesPerIp: 30,
+  votesGlobal: 5000,
+  repliesPerIp: 15,
+  repliesGlobal: 2000,
+  /** GET /api/ship/requests page size (Sec L5: it was unbounded). */
+  listLimit: 200,
+} as const;
 
 const CATEGORIES = new Set(["bug", "feature", "enhancement"]);
 const AREAS = new Set(["frontend", "pipeline", "bias", "audio", "design", "other"]);
@@ -50,6 +79,23 @@ function json(body: unknown, status: number, headers: Record<string, string>): R
     status,
     headers: { "Content-Type": "application/json", ...headers },
   });
+}
+
+/** Device classes the feedback form may send; see FeedbackForm.tsx. */
+const DEVICE_CLASS_RE =
+  /^(mobile|tablet|desktop)(?: (chrome|safari|firefox|edge|opera|samsung|other))?$/;
+
+export function coarseDevice(raw: unknown): string | null {
+  if (raw == null) return null;
+  const v = String(raw).trim().toLowerCase();
+  return DEVICE_CLASS_RE.test(v) ? v : null;
+}
+
+/** The salt, or null when it is missing or a known placeholder. */
+export function usableSalt(env: Env): string | null {
+  const salt = (env.IP_SALT ?? "").trim();
+  if (PLACEHOLDER_SALTS.has(salt) || salt.length < MIN_SALT_LENGTH) return null;
+  return salt;
 }
 
 async function ipHash(req: Request, salt: string): Promise<string> {
@@ -101,11 +147,26 @@ export default {
       // ── GET /api/health ──
       if (path === "/api/health") return json({ ok: true }, 200, cors);
 
+      // Every write hashes the IP, so every write needs a real salt.
+      let salt: string | null = null;
+      if (request.method === "POST") {
+        salt = usableSalt(env);
+        if (salt === null) {
+          console.error(
+            "void-api: IP_SALT is missing or a placeholder; refusing writes. " +
+              "Run `wrangler secret put IP_SALT` with a long random value.",
+          );
+          return json({ error: "Writes are paused. Try again later." }, 503, cors);
+        }
+      }
+
       // ── GET /api/ship/requests ──
       if (path === "/api/ship/requests" && request.method === "GET") {
         const { results } = await env.DB.prepare(
-          `SELECT ${REQUEST_PUBLIC_COLS} FROM ship_requests ORDER BY created_at DESC`,
-        ).all();
+          `SELECT ${REQUEST_PUBLIC_COLS} FROM ship_requests ORDER BY created_at DESC LIMIT ?`,
+        )
+          .bind(LIMITS.listLimit)
+          .all();
         return json(results ?? [], 200, cors);
       }
 
@@ -130,18 +191,19 @@ export default {
         if (edition !== null && !EDITIONS.has(edition))
           return json({ error: "Unknown edition." }, 400, cors);
 
-        const iph = await ipHash(request, env.IP_SALT);
+        const iph = await ipHash(request, salt!);
 
-        // Rate limit (migration 068): >=5/hr per ip_hash, or >=120/hr global.
-        if ((await countLastHour(env, "ship_requests", "ip_hash", iph)) >= 5)
+        // Rate limit: per ip_hash, plus a high global backstop.
+        if ((await countLastHour(env, "ship_requests", "ip_hash", iph)) >= LIMITS.submitsPerIp)
           return json({ error: "Too many submissions from here. Try again later." }, 429, cors);
-        if ((await countLastHour(env, "ship_requests")) >= 120)
+        if ((await countLastHour(env, "ship_requests")) >= LIMITS.submitsGlobal)
           return json({ error: "The board is busy right now. Try again shortly." }, 429, cors);
 
         const id = uuid();
         const ts = nowIso();
-        const deviceInfo =
-          body.device_info == null ? null : String(body.device_info).slice(0, 200);
+        // Only a coarse device class is stored ("mobile safari"). Anything else,
+        // such as a full user agent from an old cached page, is dropped.
+        const deviceInfo = coarseDevice(body.device_info);
         // Privileged columns are set server-side; client input for them is ignored.
         await env.DB.prepare(
           `INSERT INTO ship_requests
@@ -160,20 +222,33 @@ export default {
         return json(row, 201, cors);
       }
 
-      // ── POST /api/ship/vote (insert + recount = sync_ship_votes) ──
+      // ── POST /api/ship/vote (parent check, cap, insert, recount) ──
       if (path === "/api/ship/vote" && request.method === "POST") {
         const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
         const requestId = String(body?.request_id ?? "");
-        const fingerprint = String(body?.fingerprint ?? "").slice(0, 64);
-        if (!requestId || !fingerprint)
-          return json({ error: "request_id and fingerprint are required." }, 400, cors);
+        if (!requestId) return json({ error: "request_id is required." }, 400, cors);
 
-        // Insert the vote; UNIQUE(request_id,fingerprint) makes a repeat a no-op.
+        // Parent first: a vote on a missing request is a clean 404, never an
+        // FK failure surfacing as a 500.
+        const parent = await env.DB.prepare(`SELECT 1 AS x FROM ship_requests WHERE id = ?`)
+          .bind(requestId)
+          .first();
+        if (!parent) return json({ error: "Unknown request." }, 404, cors);
+
+        const iph = await ipHash(request, salt!);
+        if ((await countLastHour(env, "ship_votes", "ip_hash", iph)) >= LIMITS.votesPerIp)
+          return json({ error: "Too many votes from here. Try again later." }, 429, cors);
+        if ((await countLastHour(env, "ship_votes")) >= LIMITS.votesGlobal)
+          return json({ error: "The board is busy right now. Try again shortly." }, 429, cors);
+
+        // UNIQUE(request_id, ip_hash) makes a repeat from the same IP a no-op,
+        // whatever fingerprint the client claims. The legacy fingerprint
+        // column carries the ip hash too (see the header).
         try {
           await env.DB.prepare(
-            `INSERT INTO ship_votes (id,request_id,fingerprint,created_at) VALUES (?,?,?,?)`,
+            `INSERT INTO ship_votes (id,request_id,fingerprint,ip_hash,created_at) VALUES (?,?,?,?,?)`,
           )
-            .bind(uuid(), requestId, fingerprint, nowIso())
+            .bind(uuid(), requestId, iph, iph, nowIso())
             .run();
         } catch (e) {
           const msg = String(e);
@@ -214,16 +289,9 @@ export default {
         const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
         const requestId = String(body?.request_id ?? "");
         const text = String(body?.body ?? "").trim();
-        const fingerprint = String(body?.fingerprint ?? "").slice(0, 64);
-        if (!requestId || !text || !fingerprint)
-          return json({ error: "request_id, body and fingerprint are required." }, 400, cors);
+        if (!requestId || !text)
+          return json({ error: "request_id and body are required." }, 400, cors);
         if (text.length > 280) return json({ error: "Reply must be 280 characters or fewer." }, 400, cors);
-
-        // Rate limit (068 per-fingerprint 15/hr, 070 global 200/hr).
-        if ((await countLastHour(env, "ship_replies", "fingerprint", fingerprint)) >= 15)
-          return json({ error: "You are replying too fast. Try again later." }, 429, cors);
-        if ((await countLastHour(env, "ship_replies")) >= 200)
-          return json({ error: "The board is busy right now. Try again shortly." }, 429, cors);
 
         // Parent must exist (FK is enforced, but return a clean 404).
         const parent = await env.DB.prepare(`SELECT 1 AS x FROM ship_requests WHERE id = ?`)
@@ -231,12 +299,18 @@ export default {
           .first();
         if (!parent) return json({ error: "Unknown request." }, 404, cors);
 
+        const iph = await ipHash(request, salt!);
+        if ((await countLastHour(env, "ship_replies", "ip_hash", iph)) >= LIMITS.repliesPerIp)
+          return json({ error: "You are replying too fast. Try again later." }, 429, cors);
+        if ((await countLastHour(env, "ship_replies")) >= LIMITS.repliesGlobal)
+          return json({ error: "The board is busy right now. Try again shortly." }, 429, cors);
+
         const id = uuid();
         const ts = nowIso();
         await env.DB.prepare(
-          `INSERT INTO ship_replies (id,request_id,body,fingerprint,created_at) VALUES (?,?,?,?,?)`,
+          `INSERT INTO ship_replies (id,request_id,body,fingerprint,ip_hash,created_at) VALUES (?,?,?,?,?,?)`,
         )
-          .bind(id, requestId, text, fingerprint, ts)
+          .bind(id, requestId, text, iph, iph, ts)
           .run();
         return json({ id, request_id: requestId, body: text, created_at: ts }, 201, cors);
       }
@@ -255,7 +329,9 @@ export default {
 
       return json({ error: "Not found." }, 404, cors);
     } catch (e) {
-      return json({ error: "Server error.", detail: String(e) }, 500, cors);
+      // Log the cause for `wrangler tail`; never echo it to the client.
+      console.error("void-api: unhandled error", e);
+      return json({ error: "Server error." }, 500, cors);
     }
   },
 };
