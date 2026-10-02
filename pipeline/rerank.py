@@ -26,6 +26,54 @@ from categorizer.auto_categorize import categorize_article, map_to_desk
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
 DRY_RUN = "--dry-run" in sys.argv
+# `--all` re-ranks every cluster the old way (orphans included). Kept for audits
+# that want to compare the two paths on a real state DB; production never uses it.
+RANK_ALL = "--all" in sys.argv
+
+# ---------------------------------------------------------------------------
+# WHICH CLUSTERS ARE WORTH RANKING (P2-1, rev 85)
+# ---------------------------------------------------------------------------
+# Step 8c re-ranked every cluster in the table: 15,566 on run #385, in 637 s,
+# of which about 11,800 were one- or two-source orphans. Nothing downstream can
+# show an orphan. The candidate bench (`display_window.select_candidates`) and
+# the display predicate (`is_displayable`) both refuse any row under
+# MIN_SOURCES, so an orphan's rank only ever decided ONE thing: whether it sat
+# among the top POOL rows by rank_world and pushed a candidate out of the pool.
+#
+# So the pool-eligible clusters are ranked exactly as before, and every orphan is
+# parked at ORPHAN_RANK_FLOOR, below every rank the feed ranker can produce (its
+# own removal sentinel is -1.0 and the strictly decreasing encoding steps by 0.1).
+# Orphans keep their headline_rank and every other column as they are.
+#
+# What this can change, stated rather than hoped: apply_feed_ordering's
+# same-event cap and its two top-80 scans used to see orphans too, so an orphan
+# that out-ranked a displayable cluster could take one of an event's two kept
+# slots or a place in the scan window. That interaction let a row that can never
+# be shown decay one that can. Without orphans the eligible clusters are ordered
+# on their own merits, and the pool can no longer be crowded by rows the bench
+# then throws away. tests/test_rerank_pool.py asserts the candidate bench is
+# identical on a synthetic day where orphans rank below the displayable set
+# (the normal case: the single-source gate is 0.65x) and that the floor holds.
+try:
+    from utils.display_window import MIN_SOURCES as POOL_MIN_SOURCES
+except ImportError:  # imported as pipeline.rerank
+    from pipeline.utils.display_window import MIN_SOURCES as POOL_MIN_SOURCES
+
+ORPHAN_RANK_FLOOR = -100.0
+
+
+def parking_floor(ranked_rows: list[dict]) -> float:
+    """The rank_world an orphan is parked at: below every ranked row."""
+    lowest = min((float(r.get("rank_world") or 0) for r in ranked_rows), default=0.0)
+    return round(min(ORPHAN_RANK_FLOOR, lowest - 1.0), 2)
+
+
+def is_pool_eligible(row: dict) -> bool:
+    """True when a cluster can reach the candidate bench (source_count >= 3)."""
+    try:
+        return int(float(row.get("source_count") or 0)) >= POOL_MIN_SOURCES
+    except (TypeError, ValueError):
+        return False
 
 
 def load_sources() -> list[dict]:
@@ -46,7 +94,7 @@ def sync_source_ids(sources: list[dict]) -> list[dict]:
 
 
 def rerank_all_clusters(sources: list[dict], dry_run: bool = False,
-                        run_id: str | None = None) -> int:
+                        run_id: str | None = None, pool_only: bool = True) -> int:
     """
     Re-rank ALL clusters in Supabase with the current ranking engine.
 
@@ -62,6 +110,9 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False,
     Args:
         sources: Full sources list with id, db_id, tier, etc.
         dry_run: If True, compute scores but don't write to DB.
+        pool_only: rank only clusters that can reach the candidate bench and
+            park the rest at ORPHAN_RANK_FLOOR (see the note above
+            is_pool_eligible). False is the pre-rev-85 path, for audits.
 
     Returns:
         Number of clusters re-ranked.
@@ -94,7 +145,7 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False,
             # (2026-08-10 deterministic-ranking): nothing in the ranking path
             # reads them anymore.
             "id,title,category,section,sections,content_type,headline_rank,source_count,"
-            "mega_cluster_capped,first_published"
+            "mega_cluster_capped,first_published,rank_world"
         )
     except Exception:
         try:
@@ -111,6 +162,18 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False,
     if not clusters:
         print("  No clusters to re-rank.")
         return 0
+
+    # Orphans are parked, not ranked (see is_pool_eligible). Every cluster still
+    # contributes its articles to the corpus-size count below, so the adaptive
+    # is_headline band sees exactly the corpus it saw before.
+    all_clusters = clusters
+    if pool_only:
+        orphans = [c for c in clusters if not is_pool_eligible(c)]
+        clusters = [c for c in clusters if is_pool_eligible(c)]
+        print(f"  {len(clusters)} pool-eligible (source_count >= {POOL_MIN_SOURCES}) "
+              f"ranked; {len(orphans)} orphans parked at {ORPHAN_RANK_FLOOR}")
+    else:
+        orphans = []
 
     # 3. Bulk-fetch all cluster_articles, articles, and bias_scores upfront.
     # Previously: 3 queries per cluster = 25,941 HTTP calls for 8,647 clusters.
@@ -214,7 +277,7 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False,
     # come from the caller via `clusters` and is a small list (<5K), so we
     # use an IN-list filter on cluster_id to skip unrelated cluster_articles
     # rows (which could be 50K+ if the table accumulated history).
-    _cluster_ids = [c["id"] for c in clusters if c.get("id")]
+    _cluster_ids = [c["id"] for c in all_clusters if c.get("id")]
     ca_rows = _paginated_fetch(
         "cluster_articles", "cluster_id,article_id",
         in_column="cluster_id", in_values=_cluster_ids,
@@ -229,7 +292,9 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False,
     # 48h floor as defence in depth so we never pull anything older.
     # Wire fields (is_wire_copy, wire_origin_publisher_id) are required for
     # the ranker's wire-syndication voice collapse.
-    _needed_article_ids = list({row["article_id"] for row in ca_rows})
+    _ranked_ids = {c["id"] for c in clusters if c.get("id")}
+    _needed_article_ids = list({row["article_id"] for row in ca_rows
+                                if row["cluster_id"] in _ranked_ids})
     art_rows = _paginated_fetch(
         "articles",
         "id,source_id,title,summary,full_text,published_at,word_count,"
@@ -238,9 +303,24 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False,
         in_column="id", in_values=_needed_article_ids,
     )
     articles_by_id: dict[str, dict] = {r["id"]: r for r in art_rows}
+    # Articles that belong ONLY to parked orphans: id and published_at, which is
+    # all the corpus-size count below reads. No bodies, no bias rows.
+    _needed_set = set(_needed_article_ids)
+    _orphan_only_ids = list({row["article_id"] for row in ca_rows} - _needed_set)
+    corpus_published: dict[str, str] = {
+        r["id"]: (r.get("published_at") or "") for r in art_rows}
+    if _orphan_only_ids:
+        for r in _paginated_fetch(
+            "articles", "id,published_at",
+            gte_column="published_at", gte_value=_window_cutoff_iso,
+            in_column="id", in_values=_orphan_only_ids,
+        ):
+            corpus_published[r["id"]] = r.get("published_at") or ""
     print(
         f"  articles: {len(articles_by_id)} rows fetched "
         f"(from {len(_needed_article_ids)} cluster-linked ids, 48h window)"
+        + (f"; {len(corpus_published) - len(articles_by_id)} orphan-only ids "
+           f"read for the corpus count" if _orphan_only_ids else "")
     )
 
     # 3c. Fetch bias_scores ONLY for the articles we loaded. Same IN-list
@@ -269,11 +349,10 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False,
     from datetime import datetime, timezone, timedelta
     _cutoff = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
     corpus_articles_window = sum(
-        1 for r in articles_by_id.values()
-        if (r.get("published_at") or "") >= _cutoff
+        1 for pub in corpus_published.values() if pub >= _cutoff
     )
     print(f"  Corpus window (last 48h): {corpus_articles_window} articles "
-          f"(of {len(articles_by_id)} total in DB)")
+          f"(of {len(corpus_published)} total in DB)")
 
     for i, cluster in enumerate(clusters):
         cid = cluster["id"]
@@ -565,6 +644,30 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False,
     for chunk in write_chunks:
         written_ids.update(_upsert_chunk(chunk))
 
+    # Park the orphans. Only rank_world moves (headline_rank and the rest stay
+    # as clustering and step 7 left them), and only on rows not already parked,
+    # so a day's write is this run's new orphans rather than all of them.
+    #
+    # The floor is ORPHAN_RANK_FLOOR or one point under the lowest rank written
+    # above, whichever is lower, so no eligible row can ever sit beneath an orphan
+    # (the strictly decreasing encoding can walk a long clamped tail downwards).
+    floor = parking_floor(write_rows)
+    _park = [c["id"] for c in orphans if c.get("id") and (
+        c.get("rank_world") is None
+        or float(c.get("rank_world") or 0) > floor)]
+    parked = 0
+    for i in range(0, len(_park), 500):
+        batch = _park[i:i + 500]
+        try:
+            supabase.table("story_clusters").update(
+                {"rank_world": floor}).in_("id", batch).execute()
+            parked += len(batch)
+        except Exception as e:
+            print(f"  [err] parking {len(batch)} orphans failed: {e}")
+    if orphans:
+        print(f"  Parked {parked} of {len(_park)} orphans at {floor} "
+              f"({len(orphans) - len(_park)} already there)")
+
     written = len(written_ids)
     missing_ids = intended_ids - written_ids
     chunk_failures = len(missing_ids)
@@ -614,7 +717,7 @@ def main():
     matched = sum(1 for s in sources if s.get("db_id"))
     print(f"  {len(sources)} sources loaded, {matched} matched to DB")
 
-    rerank_all_clusters(sources, dry_run=DRY_RUN)
+    rerank_all_clusters(sources, dry_run=DRY_RUN, pool_only=not RANK_ALL)
 
 
 if __name__ == "__main__":
