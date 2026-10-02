@@ -1,51 +1,51 @@
 {
  "version": "1.2.0",
- "title": "On Air · Thursday 01 October 2026",
+ "title": "On Air · Friday 02 October 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Headlines",
-   "endTime": 38.736
+   "endTime": 39.419
   },
   {
-   "startTime": 38.736,
-   "title": "Russia Warns NATO",
-   "endTime": 121.821
+   "startTime": 39.419,
+   "title": "French Protests",
+   "endTime": 125.811
   },
   {
-   "startTime": 121.821,
-   "title": "Pentagon Leadership Changes",
-   "endTime": 209.776
+   "startTime": 125.811,
+   "title": "G7 Oil Release",
+   "endTime": 203.1
   },
   {
-   "startTime": 209.776,
-   "title": "UK Terror Plot Arrest",
-   "endTime": 290.258
+   "startTime": 203.1,
+   "title": "U-S Iran Escalation",
+   "endTime": 279.236
   },
   {
-   "startTime": 290.258,
-   "title": "US Threatens Diesel Ban",
-   "endTime": 373.093
+   "startTime": 279.236,
+   "title": "New York Loophole",
+   "endTime": 360.641
   },
   {
-   "startTime": 373.093,
+   "startTime": 360.641,
    "title": "Also today",
-   "endTime": 436.049
+   "endTime": 415.337
   },
   {
-   "startTime": 436.049,
-   "title": "SpaceX Launches Crew-13",
-   "endTime": 476.538
+   "startTime": 415.337,
+   "title": "Elon Musk Partner Breakup",
+   "endTime": 454.78
   },
   {
-   "startTime": 476.538,
+   "startTime": 454.78,
    "title": "Opinion",
-   "endTime": 687.777
+   "endTime": 645.481
   },
   {
-   "startTime": 687.777,
-   "endTime": 700.877,
+   "startTime": 645.481,
+   "endTime": 658.581,
    "title": "Also from Void"
   }
  ]
