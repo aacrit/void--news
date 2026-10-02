@@ -324,6 +324,71 @@ engine number by hand); headless `bench-mark-shows-work`. Not run here:
 `next build` and the headless sweep (Google Fonts are blocked in this
 sandbox). Older archived stories keep their per-article histograms; their
 Bench falls back to its own count.
+## rev 85 WS-F: a first visit that explains itself, a player in reach everywhere, and lighter pages (2026-10-02)
+
+From audit 2 (UX) and the holistic plan, items P1-14 to P1-17, P2-4 and UX
+F8 to F11. Every item has a headless scenario in `frontend/scripts/verify-headless.mjs`.
+
+1. **First visit (P1-14).** A reader who had never been here was not told
+   what Void is: "bias" first appeared 8,581 characters in, the legend sat
+   behind a 14px icon, and the tour waited 120 s or three card clicks.
+   `FirstVisitNote.tsx` puts one sentence under the dateline, with the label
+   legend (a text toggle on `LeanLabelLegend`) and /about beside it. It is
+   prerendered, and the bootstrap in `layout.tsx` sets `html[data-fv-seen]`
+   before first paint for a returning reader (key `void-news-first-visit`,
+   twelve hours or dismissed), so it never flashes or shifts. The tour
+   (`UnifiedOnboarding`) is offered on arrival, recorded as offered the
+   moment it shows, and never offered again whatever the answer; it no
+   longer takes focus. Scenario `first-visit-explainer` at 375 and 1440.
+2. **The player is in reach wherever audio plays (P1-15, WCAG 1.4.2).**
+   `MobileNav` stood the pill down on every History route unless History
+   audio was loaded, so On Air started on /audio played on with no control.
+   On History it now mounts once anything has been started (playing, paused
+   part way, or History's own audio); an idle edition nobody pressed still
+   does not sit over the archive. On the landing the pill takes the bottom
+   right, the browse plate's corner being the bottom left. Scenario
+   `audio-controllable-everywhere` at 1440 and 390.
+3. **The Argument's withdrawal is said where it matters (P1-16).** /audio
+   said "No issue has been recorded yet" over an issue recorded and then
+   withdrawn by a correction. `lib/weeklyAudio.ts` reads the withdrawal from
+   `build-data/weekly-corrections.json` (an `audio: "withdrawn"` field, or
+   the correction's own words) for /audio and the issue alike; each prints
+   one line linking to the correction (`#corrections`). A podcast feed
+   address is offered only while its committed XML carries an item, so
+   `podcast-weekly.xml` is hidden; `audio-hub-feeds` follows the same files.
+4. **No empty marks on /sources (P1-17).** The roster is prerendered, so a
+   logo that failed before hydration fired its error before React listened,
+   and the swap to a letter never ran: the right-hand columns read as empty.
+   `LogoMark` keeps the letter in the box always and lets the image cover it
+   only once drawn, with a mount check for images that broke early; lazy
+   and async decoding throughout. No sprite: the 922 PNGs stay separate.
+   Scenario `sources-no-empty-marks` aborts every logo request.
+5. **Weight (P2-4).** Masthead, footer and tab bar links (`ChromeLink`) now
+   prefetch on pointer or focus rather than on sight: on sight, the router
+   preloaded every linked route's CSS, which is where the "preloaded but not
+   used" warnings came from (seven on /about, none after). `onboarding.css`
+   (28 KB raw) moved from `globals.css` to its two consumers. History cards
+   carry a Commons `srcset` (330, 500, 960, 1280; `lib/commonsImage.ts`) and
+   `sizes`, so a 319px card no longer downloads the 1280px file. The phone
+   drawer's links take the same intent prefetch. Scenario `transfer-budget`
+   at 375, same origin bytes gzipped: the front page measured 624 KB
+   (1,961 KB while the drawer still prefetched every section), so its budget
+   is 700 KB against the 600 KB target; /history's images are budgeted at the
+   2.5 MB target and are measured in CI (the sandbox has no route to
+   Wikimedia).
+6. **Layout and targets (F8 to F11).** IBM Plex Mono is preloaded: it sets
+   the masthead dateline and badge from 768px up, and its late swap resized
+   the masthead row. The /history landing's page rises above the footer, which
+   had covered the browse plate at the foot of the page. Footer links,
+   the On Air seek bar and speed control, and Bench marks (a pseudo element
+   hit area, no mark moves) reach 24px, and 44px under a coarse pointer. On a
+   phone a card is one tab stop: the Sigil leaves the Tab order and the card
+   link names its coverage word and source count. The wordmark's letters are
+   generated content inside its `role="img"`, so the logo's terracotta is no
+   longer read as body text by a contrast checker.
+
+Not done here: a weekly cover shift of about 0.08 at hydration
+(`CinematicCover`), found while measuring; it belongs to the Weekly page.
 
 ## rev 83: a red main from four causes, one of them silent for a week (2026-10-01)
 

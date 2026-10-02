@@ -406,6 +406,76 @@
   );
 }
 
+/* ── First-visit note (components/FirstVisitNote.tsx, P1-14) ───────────────
+   One sentence under the dateline on a first visit. Prerendered; a returning
+   reader's browser sets html[data-fv-seen] before first paint (app/layout.tsx
+   bootstrap), so it is hidden without a flash or a reflow.                  */
+.fv-note {
+  margin: var(--space-3) 0 var(--space-2);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--fg-secondary);
+}
+html[data-fv-seen] .fv-note {
+  display: none;
+}
+.fv-note__text {
+  margin: 0;
+  max-width: 68ch;
+}
+.fv-note__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-5);
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.fv-note__link,
+.fv-note__close {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  color: var(--palette-news-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.fv-note__close {
+  appearance: none;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--fg-tertiary);
+  cursor: pointer;
+}
+.fv-note .lean-legend__panel {
+  left: 0;
+  right: auto;
+}
+@media (pointer: coarse) {
+  .fv-note__link,
+  .fv-note__close {
+    min-height: 44px;
+  }
+}
+@media (max-width: 767px) {
+  .fv-note {
+    margin: var(--space-2) var(--space-4);
+    font-size: var(--text-xs);
+  }
+}
+
 /* ── Lean-label legend — info affordance in the feed header ────────────────
    A small "i" button beside "Today's Top Stories" that opens a popover
    defining the coverage descriptors (Lean vs Agreement). Kept quiet: it does
@@ -444,6 +514,30 @@
 .lean-legend__btn:focus-visible {
   color: var(--palette-news-ink);
   background: var(--bg-subtle, rgba(127, 127, 127, 0.1));
+}
+
+/* The legend named in a sentence (the first-visit note): a text toggle. */
+.lean-legend__btn--text {
+  width: auto;
+  height: auto;
+  min-height: 24px;
+  padding: 0;
+  border-radius: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--palette-news-ink);
+  border-bottom: 1px solid currentColor;
+}
+@media (pointer: coarse) {
+  .lean-legend__btn--text {
+    width: auto;
+    height: auto;
+    min-height: 44px;
+    border-bottom: 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
 }
 
 .lean-legend__panel {

@@ -42,8 +42,8 @@ const inter = localFont({
   display: "swap",
 });
 
-// Secondary families (meta labels, mono data): not on the critical render
-// path, so don't preload them — keeps Playfair + Inter uncontended at FCP.
+// Barlow Condensed (meta labels) is not on the critical render
+// path, so don't preload it — keeps Playfair + Inter uncontended at FCP.
 const barlowCondensed = localFont({
   src: [
     { path: "./fonts/barlow-condensed-400-latin.woff2", weight: "400", style: "normal" },
@@ -55,11 +55,17 @@ const barlowCondensed = localFont({
   preload: false,
 });
 
+// IBM Plex Mono IS on the critical path from 768px up: the masthead's
+// dateline and the experimental badge are set in it, and its late swap
+// resized the masthead row and moved the right-hand nav: the
+// likeliest source of the layout shift of 0.02 to 0.047 at 768 and wider on
+// every route (audit 2 F8; reproduced locally with fonts delayed). One weight, latin
+// only, so the preload is one small file.
 const ibmPlexMono = localFont({
   src: [{ path: "./fonts/ibm-plex-mono-400-latin.woff2", weight: "400", style: "normal" }],
   variable: "--font-ibm-mono",
   display: "swap",
-  preload: false,
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -216,6 +222,16 @@ export default async function RootLayout({
                     document.documentElement.setAttribute('data-mode', 'light');
                   } else if (!stored && window.matchMedia('(prefers-color-scheme: light)').matches) {
                     document.documentElement.setAttribute('data-mode', 'light');
+                  }
+                } catch(e) {}
+                // The first-visit note (components/FirstVisitNote.tsx) is in
+                // the prerendered page; a returning reader's browser hides it
+                // here, before first paint, so it never flashes or reflows.
+                // Seen 12h ago or dismissed: hidden.
+                try {
+                  var fv = localStorage.getItem('void-news-first-visit');
+                  if (fv && (fv === 'dismissed' || !(Date.now() - Number(fv) <= 43200000))) {
+                    document.documentElement.setAttribute('data-fv-seen', '');
                   }
                 } catch(e) {}
                 var m = window.matchMedia('(max-width: 767px)').matches;

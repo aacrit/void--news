@@ -2,7 +2,7 @@
 
 import { FEED_DISPLAYED } from "../lib/feedConfig";
 import { useState, useEffect, useRef, useCallback } from "react";
-import Link from "next/link";
+import ChromeLink from "./ChromeLink";
 import { usePathname } from "next/navigation";
 import LogoWordmark from "./LogoWordmark";
 import ThemeToggle from "./ThemeToggle";
@@ -342,7 +342,7 @@ export default function MobileSidePanel({ open, onClose, editionBuiltAt = null }
   const renderItem = (item: NavItem, cascade: number) => {
     const active = isActive(item.href);
     return (
-      <Link
+      <ChromeLink
         key={item.href}
         href={item.href}
         className={`msp__link${active ? " msp__link--active" : ""}`}
@@ -358,7 +358,7 @@ export default function MobileSidePanel({ open, onClose, editionBuiltAt = null }
           <span className="msp__link-cmd">{item.label}</span>
           <span className="msp__link-desc">{item.desc}</span>
         </span>
-      </Link>
+      </ChromeLink>
     );
   };
 
@@ -402,32 +402,32 @@ export default function MobileSidePanel({ open, onClose, editionBuiltAt = null }
 
           {/* About Void News — quieter utility trio, subordinate to the rows above */}
           <div className="msp__util" data-msp-cascade="4">
-            <Link
+            <ChromeLink
               href="/about"
               className={`msp__util-link${isActive("/about") ? " msp__util-link--active" : ""}`}
               aria-current={isActive("/about") ? "page" : undefined}
               onClick={handleLinkClick}
             >
               About
-            </Link>
+            </ChromeLink>
             <span className="msp__util-sep" aria-hidden="true">&middot;</span>
-            <Link
+            <ChromeLink
               href="/press"
               className={`msp__util-link${isActive("/press") ? " msp__util-link--active" : ""}`}
               aria-current={isActive("/press") ? "page" : undefined}
               onClick={handleLinkClick}
             >
               Press
-            </Link>
+            </ChromeLink>
             <span className="msp__util-sep" aria-hidden="true">&middot;</span>
-            <Link
+            <ChromeLink
               href="/privacy"
               className={`msp__util-link${isActive("/privacy") ? " msp__util-link--active" : ""}`}
               aria-current={isActive("/privacy") ? "page" : undefined}
               onClick={handleLinkClick}
             >
               Privacy
-            </Link>
+            </ChromeLink>
           </div>
         </nav>
 

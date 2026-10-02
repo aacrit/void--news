@@ -41,6 +41,7 @@ export default function Corrections({ entries }: { entries: WeeklyCorrection[] }
   return (
     <aside
       ref={ref as React.RefObject<HTMLElement>}
+      id="corrections"
       className={`wk-corrections wk-reveal${visible ? " wk-reveal--visible" : ""}`}
       aria-label="Corrections"
     >

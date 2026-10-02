@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Story } from "../lib/types";
 import Sigil from "./Sigil";
+import { storyShapeLabel } from "../lib/biasColors";
 import MobilePerspectivePeek from "./MobilePerspectivePeek";
 import { hapticLight, hapticMedium } from "../lib/haptics";
 import { BASE_PATH } from "../lib/utils";
@@ -41,6 +42,14 @@ export default function MobileStoryCard({
 
   const isHero = variant === "hero";
 
+  /* One tab stop per card (audit 2 F10). The Sigil leaves the Tab order, so
+     the link says what the Sigil would have: the card's coverage word and its
+     source count, from the same rule the Sigil prints (storyShapeLabel). The
+     Deep Dive it opens carries the full reading; the label legend sits in
+     the feed header. */
+  const coverage = storyShapeLabel(story.sigilData.biasSpread, !!story.sigilData.unscored);
+  const linkName = `Open deep dive for: ${story.title}. Coverage: ${coverage.text}. ${story.sigilData.sourceCount} sources.`;
+
   const handleSigilPointerDown = () => {
     const timer = setTimeout(() => {
       hapticMedium();
@@ -73,7 +82,7 @@ export default function MobileStoryCard({
         <a
           href={`${BASE_PATH}${story.permalink}`}
           className="story-card__stretch-link"
-          aria-label={`Open deep dive for: ${story.title}`}
+          aria-label={linkName}
           onClick={(e) => {
             if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
             e.preventDefault();
@@ -92,7 +101,7 @@ export default function MobileStoryCard({
         <button
           type="button"
           className="story-card__stretch-link"
-          aria-label={`Open deep dive for: ${story.title}`}
+          aria-label={linkName}
           onClick={() => {
             if (cardRef.current && onStoryClick) {
               hapticLight();
@@ -131,7 +140,7 @@ export default function MobileStoryCard({
                 onPointerUp={handleSigilPointerUp}
                 onPointerLeave={handleSigilPointerUp}
               >
-                <Sigil data={story.sigilData} size="xl" instant />
+                <Sigil data={story.sigilData} size="xl" instant tabbable={false} />
               </div>
             </h1>
           ) : (
@@ -143,7 +152,7 @@ export default function MobileStoryCard({
                 onPointerUp={handleSigilPointerUp}
                 onPointerLeave={handleSigilPointerUp}
               >
-                <Sigil data={story.sigilData} size="xl" instant />
+                <Sigil data={story.sigilData} size="xl" instant tabbable={false} />
               </div>
             </h2>
           )}
@@ -170,7 +179,7 @@ export default function MobileStoryCard({
               onPointerUp={handleSigilPointerUp}
               onPointerLeave={handleSigilPointerUp}
             >
-              <Sigil data={story.sigilData} size="sm" instant />
+              <Sigil data={story.sigilData} size="sm" instant tabbable={false} />
             </div>
           </h3>
           {(story.sigilData.unscored || story.category) && (

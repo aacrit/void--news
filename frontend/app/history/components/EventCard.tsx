@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { HistoricalEvent } from "../types";
+import { commonsSrcSet } from "../../lib/commonsImage";
 import { ERAS, REGIONS } from "../types";
 
 /* ===========================================================================
@@ -27,8 +28,11 @@ export default function EventCard({ event }: EventCardProps) {
         {event.heroImage ? (
           <img
             src={event.heroImage}
+            srcSet={commonsSrcSet(event.heroImage)}
+            sizes="(max-width: 767px) calc(100vw - 32px), 360px"
             alt={event.heroCaption ?? event.title}
             loading="lazy"
+            decoding="async"
           />
         ) : (
           <div

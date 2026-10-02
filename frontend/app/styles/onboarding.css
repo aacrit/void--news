@@ -28,6 +28,13 @@
   transition: transform 520ms var(--spring), opacity 320ms ease;
 }
 .onb-invite--visible { transform: translate(-50%, 0); opacity: 1; }
+/* Phones: sit above the tab bar, never on it (the card is offered on arrival
+   now, while the tab bar is the reader's first control). */
+@media (max-width: 767px) {
+  .onb-invite {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + var(--tab-bar-height) + var(--space-3));
+  }
+}
 .onb-invite__grain { display: none; }
 .onb-invite__content { display: flex; align-items: center; gap: var(--space-4); flex: 1; flex-wrap: wrap; }
 .onb-invite__text {

@@ -42,6 +42,11 @@ interface SigilProps {
   instant?: boolean;
   /** Story cluster ID — enables real KDE in the popup spectrum (matches DeepDive shape) */
   storyId?: string;
+  /** False takes the mark out of the Tab order (tabIndex -1) where the card's
+   *  own link already carries its coverage in its name, so a card is one tab
+   *  stop rather than two (mobile feed, audit 2 F10). It stays a button that
+   *  a pointer, a tap and a screen reader's browse mode reach. */
+  tabbable?: boolean;
 }
 
 /** Feed-level sizes (sm) get simplified popup + no InkUnderline.
@@ -661,7 +666,7 @@ function InkUnderline({ variant, color }: { variant: number; color: string }) {
 
 /* ── Main Sigil ────────────────────────────────────────────────────────── */
 
-export default function Sigil({ data, size = "sm", mode = "facts", instant = false, storyId }: SigilProps) {
+export default function Sigil({ data, size = "sm", mode = "facts", instant = false, storyId, tabbable = true }: SigilProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { open, show, hide, toggle, onKey, keep } = useHover();
   const [mounted, setMounted] = useState(false);
@@ -704,7 +709,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
     <div ref={ref} className={`sigil${ringClass}${sizeClass}${unscored ? " sigil--unscored" : ""}`} title={ringTitle}
       onMouseEnter={show} onFocus={show} onMouseLeave={hide} onBlur={hide}
       onClick={toggle} onKeyDown={onKey}
-      tabIndex={0} role="button" aria-expanded={open} aria-label={aria}
+      tabIndex={tabbable ? 0 : -1} role="button" aria-expanded={open} aria-label={aria}
       aria-controls={open ? tooltipId : undefined}
       aria-describedby={open ? tooltipId : undefined}
       style={{

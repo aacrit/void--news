@@ -30,13 +30,14 @@
    =========================================================================== */
 import { readFileSync, existsSync, readdirSync, statSync, mkdirSync, writeFileSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
+import { gzipSync } from "node:zlib";
 import { OUT, readBasePath, serve, launchChromium, isStyled, measureOverflow } from "./lib/headless.mjs";
 
 const args = process.argv.slice(2);
 const QUICK = args.includes("--quick");
 const ONLY = args.find((a) => a.startsWith("--route="))?.slice("--route=".length);
 const BASE = await readBasePath();
-const PORT = 8898;
+const PORT = Number(process.env.VOID_HEADLESS_PORT) || 8898;
 const ORIGIN = `http://localhost:${PORT}`;
 const SITE = "https://news.voidvision.org";
 const TAGLINE_TITLE = "Void News. See through the void.";
@@ -468,7 +469,30 @@ const weeklyHasAudio = (() => {
   try { return !!JSON.parse(readFileSync(join(OUT, "data/weekly.json"), "utf8")).audio_url; } catch { return true; }
 })();
 
+/* Feeds that carry at least one episode. /audio offers only these (P1-16):
+   an address a podcast app would subscribe to and find empty is not offered,
+   so the count of addresses follows the committed XML, not a constant. */
+const FEEDS_WITH_ITEMS = ["podcast-world.xml", "podcast-weekly.xml", "podcast-history.xml"].filter((f) => {
+  try { return /<item[\s>]/.test(readFileSync(join(OUT, f), "utf8")); } catch { return false; }
+});
+/* The latest Weekly issue's recording, withdrawn by a correction? Read the
+   same file the page reads (build-data/weekly-corrections.json), by the same
+   rule (app/lib/weeklyAudio.ts). */
+const weeklyAudioWithdrawn = (() => {
+  try {
+    const issue = JSON.parse(readFileSync(join(OUT, "data/weekly.json"), "utf8"));
+    if (issue.audio_url) return false;
+    const rows = JSON.parse(readFileSync(join(OUT, "..", "build-data/weekly-corrections.json"), "utf8"));
+    return rows.some((c) => c.week_start === issue.week_start
+      && (c.audio === "withdrawn" || /\b(audio|recording)\b[^.]*\bwithdrawn\b/i.test(c.text ?? "")));
+  } catch { return false; }
+})();
+
+/* --scenario=<text>: run only the scenarios whose name contains it, and no
+   route audits (for working on one scenario; CI never passes it). */
+const SCENARIO = args.find((a) => a.startsWith("--scenario="))?.slice("--scenario=".length);
 async function withPage(browser, opts, name, fn) {
+  if (SCENARIO && !name.includes(SCENARIO)) return;
   ctx(opts.route ?? "/", opts.width, opts.scheme ?? "dark");
   console.log(`\nscenario: ${name} (${current})`);
   const { context, page, log } = await openPage(browser, { scheme: "dark", ...opts });
@@ -1493,7 +1517,17 @@ async function brandChecks(browser) {
     assert(kinds.includes("daily") && kinds.includes("history") && kinds.includes("weekly") === weeklyHasAudio,
       "audio-hub-programmes", `play buttons: ${kinds.join(", ")} (weekly audio ${weeklyHasAudio ? "published" : "withheld"})`);
     assert(await page.locator(".nav-nameplate[aria-current='page']").count() === 1, "audio-hub-nameplate", "the Audio nameplate is current");
-    assert((await page.locator(".audio-feed__url").allTextContents()).filter((t) => /podcast-(world|weekly|history)\.xml$/.test(t)).length === 3, "audio-hub-feeds", "three feed addresses");
+    const addresses = (await page.locator(".audio-feed__url").allTextContents()).filter((t) => /podcast-(world|weekly|history)\.xml$/.test(t));
+    assert(addresses.length === FEEDS_WITH_ITEMS.length && FEEDS_WITH_ITEMS.every((f) => addresses.some((a) => a.endsWith(f))),
+      "audio-hub-feeds", `${addresses.length} feed address(es) offered, ${FEEDS_WITH_ITEMS.length} feed(s) carry an episode (${FEEDS_WITH_ITEMS.join(", ")})`);
+    /* The Argument tells the truth about its recording (P1-16): a withdrawn
+       recording is named as withdrawn, never as one that was never made. */
+    const argument = (await page.locator(".audio-prog--argument").textContent()) ?? "";
+    assert(!/No issue has been recorded yet/.test(argument), "audio-hub-argument-not-unrecorded", "the retired claim is gone");
+    if (weeklyAudioWithdrawn) {
+      assert(await page.locator(".audio-prog--argument [data-weekly-audio='withdrawn']").count() === 1,
+        "audio-hub-argument-withdrawn", `withdrawal line: ${JSON.stringify(argument.replace(/\s+/g, " ").trim().slice(0, 160))}`);
+    }
     await page.locator(".audio-play[data-kind='history']").first().click();
     await page.waitForTimeout(1200);
     const fp = await page.evaluate(() => ({ title: document.querySelector(".fp__title")?.textContent?.trim() ?? null, state: document.querySelector(".audio-play[data-kind='history']")?.getAttribute("data-state") }));
@@ -1794,6 +1828,225 @@ async function brandChecks(browser) {
         `focus landed on ${c.focusOnOpener ? opener : c.focusTag}`);
     });
   }
+  /* AUDIO IS CONTROLLABLE EVERYWHERE (P1-15, WCAG 1.4.2). On Air started on
+     /audio used to keep playing on /history with no control in reach: the
+     pill stood down on every History route unless History audio played. A
+     reader walks there by link, and a pause must be one press away: the pill
+     at 1440, the tab bar's On Air and the panel's Pause at 390. */
+  for (const width of [1440, 390]) {
+    await withPage(browser, { width, route: "/audio/" }, `audio-controllable-everywhere @${width}`, async (page) => {
+      const btn = page.locator(".audio-play[data-kind='daily']").first();
+      if (await btn.count() === 0) { skip("audio-controllable-everywhere", "no daily programme in this export"); return; }
+      await btn.click();
+      await page.waitForTimeout(1500);
+      if (!assert((await page.evaluate(REPORT)).paused === false, "audio-controllable-starts", "the daily programme plays")) return;
+      /* A client navigation, the way a reader walks (clickTo lives inside the
+         On Air block's try and is not in scope here). Phones reach the
+         sections through the drawer, so the link is followed by its href. */
+      const follow = async (href) => {
+        const link = page.locator(`a[href$="${href}"]:visible`).first();
+        if (await link.count() === 0) {
+          await page.evaluate((h) => { const a = [...document.querySelectorAll("a")].find((x) => x.getAttribute("href")?.endsWith(h)); a?.click(); }, href);
+        } else {
+          await link.click();
+        }
+        await page.waitForURL((u) => u.pathname.endsWith(href), { timeout: 10_000 }).catch(() => {});
+        await page.waitForTimeout(1200);
+        return page.url().endsWith(href);
+      };
+      for (const href of ["/history/", "/weekly/", "/sources/"]) {
+        if (!(await follow(href))) {
+          await page.goto(`${ORIGIN}${BASE}/audio/`, { waitUntil: "networkidle" });
+          skip(`audio-controllable-everywhere ${href}`, "no link to this route");
+          continue;
+        }
+        if (width >= 768) {
+          const pause = page.locator(".fp .fp__play[aria-label='Pause']");
+          if (!assert(await pause.count() === 1 && await pause.isVisible(), `audio-controllable-everywhere ${href}`, `pill with Pause on ${href}: ${await pause.count()}`)) continue;
+          await pause.click();
+        } else {
+          const tab = page.locator(".mtb__tab--onair");
+          if (!assert(await tab.count() === 1 && await tab.isVisible(), `audio-controllable-everywhere ${href}`, `On Air tab on ${href}: ${await tab.count()}`)) continue;
+          await tab.click();
+          await page.waitForTimeout(600);
+          const pause = page.locator(".oap button[aria-label='Pause']").first();
+          if (!assert(await pause.count() === 1, `audio-controllable-everywhere ${href}`, "the panel offers Pause")) continue;
+          await pause.click();
+        }
+        await page.waitForTimeout(500);
+        assert((await page.evaluate(REPORT)).paused === true, `audio-controllable-pauses ${href}`, "one press paused the element");
+        /* Resume for the next route, from wherever the control is. */
+        if (width >= 768) await page.locator(".fp .fp__play").click();
+        else {
+          await page.locator(".oap button[aria-label='Play']").first().click();
+          await page.keyboard.press("Escape");
+        }
+        await page.waitForTimeout(600);
+      }
+    });
+  }
+
+  /* THE WEEKLY SAYS ITS RECORDING WAS WITHDRAWN (P1-16), where the player
+     would sit, not 24,000px down in Corrections. */
+  if (weeklyAudioWithdrawn) {
+    await withPage(browser, { width: 390, route: "/weekly/" }, "weekly-audio-withdrawn", async (page) => {
+      const note = page.locator(".wk-audio-note[data-weekly-audio='withdrawn']");
+      if (!assert(await note.count() === 1, "weekly-audio-withdrawn", "one withdrawal line on the issue")) return;
+      const y = await note.evaluate((el) => el.getBoundingClientRect().top + scrollY);
+      const total = await page.evaluate(() => document.documentElement.scrollHeight);
+      assert(y < total * 0.25, "weekly-audio-withdrawn-near-top", `line at ${Math.round(y)}px of ${total}px`);
+      assert(await page.locator("#corrections").count() === 1, "weekly-audio-withdrawn-links", "the line's anchor exists");
+    });
+  }
+
+  /* NO EMPTY MARKS ON /sources (P1-17). Every logo request is refused, the
+     way a rate limit refused 582 of 1,610 on the live page, and every roster
+     mark must still name its outlet with a letter. */
+  for (const width of [1440, 390]) {
+    await withPage(browser, { width }, `sources-no-empty-marks @${width}`, async (page) => {
+      await page.route("**/logos/**", (r) => r.abort());
+      await page.goto(`${ORIGIN}${BASE}/sources/`, { waitUntil: "networkidle", timeout: 60_000 });
+      await page.waitForTimeout(800);
+      const r = await page.evaluate(() => {
+        const marks = [...document.querySelectorAll(".spectrum-logo")];
+        /* An image covers the letter only once it is drawn (opacity 1); a
+           covering image must have loaded, and an uncovered letter must say
+           something. */
+        const empty = marks.filter((m) => {
+          const img = m.querySelector("img");
+          const covers = !!img && getComputedStyle(img).display !== "none" && getComputedStyle(img).opacity !== "0";
+          const loaded = !!img && img.complete && img.naturalWidth > 0;
+          const letter = m.querySelector(".logo-mark__letter");
+          const says = !!letter && letter.textContent.trim().length > 0 && getComputedStyle(letter).display !== "none";
+          return covers ? !loaded : !says;
+        });
+        const lazy = [...document.querySelectorAll(".spectrum-logo img")].filter((i) => i.loading !== "lazy" || i.decoding !== "async").length;
+        return { marks: marks.length, empty: empty.length, sample: empty.slice(0, 3).map((m) => m.getAttribute("aria-label")), lazy };
+      });
+      if (!assert(r.marks > 0, "sources-no-empty-marks-renders", `${r.marks} roster marks`)) return;
+      assert(r.empty === 0, "sources-no-empty-marks", `${r.empty} of ${r.marks} marks show neither a logo nor a letter: ${r.sample.join("; ")}`);
+      assert(r.lazy === 0, "sources-marks-lazy", `${r.lazy} roster images not lazy with async decoding`);
+    });
+  }
+
+  /* FIRST VISIT (P1-14). A reader who has never been here is told, under the
+     dateline, what Void is and how to read a card, with the legend and
+     /about one press away, and is offered the tour once. Dismissed, neither
+     comes back. Same sentence, same stories, for everyone. */
+  for (const width of [375, 1440]) {
+    await withPage(browser, { width, route: "/" }, `first-visit-explainer @${width}`, async (page) => {
+      const note = page.locator(".fv-note");
+      if (!assert(await note.count() === 1 && await note.isVisible(), "first-visit-explainer", "the note is on the page for a first visit")) return;
+      const r = await note.evaluate((el) => {
+        const b = el.getBoundingClientRect();
+        return { top: Math.round(b.top), vh: innerHeight, text: el.textContent ?? "",
+          about: !!el.querySelector("a[href$='/about'], a[href$='/about/']"),
+          legend: !!el.querySelector(".lean-legend__btn") };
+      });
+      assert(r.top < r.vh * 0.6, "first-visit-explainer-above-the-fold", `note at ${r.top}px of a ${r.vh}px viewport`);
+      assert(!DASH.test(r.text), "first-visit-explainer-no-dash", "no dash in the note");
+      assert(/\bheadline\b/.test(r.text) && /far left/.test(r.text), "first-visit-explainer-says-how-to-read", "names the strokes under each headline, far left to far right");
+      assert(r.about && r.legend, "first-visit-explainer-links", `about ${r.about}, legend ${r.legend}`);
+      /* The tour is offered on arrival, not after two minutes. Answered
+         first: Escape (used below to close the legend) also dismisses it. */
+      await page.locator(".onb-invite--visible").waitFor({ state: "visible", timeout: 6000 }).catch(() => {});
+      assert(await page.locator(".onb-invite--visible").count() === 1, "first-visit-tour-offered", "the tour invitation appears on arrival");
+      if (await page.locator(".onb-invite--visible .onb-invite__btn--skip").count()) {
+        await page.locator(".onb-invite--visible .onb-invite__btn--skip").click();
+        await page.waitForTimeout(500);
+      }
+      await page.locator(".fv-note .lean-legend__btn").click();
+      await page.waitForTimeout(300);
+      const panel = page.locator(".fv-note .lean-legend__panel");
+      assert(await panel.count() === 1 && await panel.isVisible(), "first-visit-explainer-legend-opens", "the legend opens from the note");
+      if (await panel.count()) {
+        const box = await panel.boundingBox();
+        assert(!!box && box.x >= 0 && box.x + box.width <= width + 1, "first-visit-explainer-legend-on-screen", `panel ${box ? Math.round(box.x) + ".." + Math.round(box.x + box.width) : "none"} in ${width}px`);
+      }
+      await page.keyboard.press("Escape");
+      await page.locator(".fv-note__close").click();
+      await page.waitForTimeout(300);
+      assert(await page.locator(".fv-note").count() === 0 || !(await page.locator(".fv-note").isVisible()), "first-visit-explainer-dismisses", "gone on Dismiss");
+      await page.reload({ waitUntil: "networkidle" });
+      await page.waitForTimeout(2500);
+      const again = await page.evaluate(() => ({
+        note: [...document.querySelectorAll(".fv-note")].some((e) => getComputedStyle(e).display !== "none"),
+        tour: document.querySelectorAll(".onb-invite").length,
+      }));
+      assert(!again.note && again.tour === 0, "first-visit-never-returns", `after a reload: note ${again.note}, tour ${again.tour}`);
+    });
+  }
+
+  /* ONE TAB STOP PER CARD ON A PHONE (audit 2 F10). The stretch link and the
+     Sigil were two stops per card, forty for the twenty. The link now carries
+     the coverage word in its name, and the Sigil leaves the Tab order. */
+  await withPage(browser, { width: 390, route: "/" }, "one-tab-stop-per-card", async (page) => {
+    const r = await page.evaluate(() => {
+      const cards = [...document.querySelectorAll("article.msc")];
+      const stops = cards.map((c) => [...c.querySelectorAll("a[href], button, [tabindex]")]
+        .filter((e) => e.tabIndex >= 0 && !e.hasAttribute("disabled") && getComputedStyle(e).visibility !== "hidden").length);
+      const named = cards.filter((c) => /Coverage: /.test(c.querySelector(".story-card__stretch-link")?.getAttribute("aria-label") ?? "")).length;
+      return { cards: cards.length, stops, named };
+    });
+    if (!assert(r.cards > 0, "one-tab-stop-per-card-renders", `${r.cards} mobile cards`)) return;
+    const extra = r.stops.filter((n) => n !== 1).length;
+    assert(extra === 0, "one-tab-stop-per-card", `${extra} card(s) with other than one stop: ${r.stops.join(",")}`);
+    assert(r.named === r.cards, "one-tab-stop-card-names-coverage", `${r.named} of ${r.cards} links name the coverage`);
+  });
+
+  /* TRANSFER BUDGETS (P2-4), on a 375 phone, first visit. Same-origin bytes
+     are counted gzipped (the CDN compresses them; brotli does a little
+     better, so this is the cautious figure); images from other hosts are
+     counted as served. The targets are the plan's: the front page under
+     600 KB and /history's images under 2.5 MB. Where a target is not met
+     yet the budget is the measured figure plus a margin, written down beside
+     the target, so the number can only go down. */
+  const BUDGETS = [
+    /* Measured 624 KB on 2026-10-02 (1,961 KB while the phone drawer still
+       prefetched every section on load, 1,203 KB of it in route payloads).
+       Fonts are 221 KB of the 624. */
+    { route: "/", what: "all", budgetKB: 700, targetKB: 600 },
+    /* Not measurable in the sandbox (no route to Wikimedia); the target is
+       the budget, and CI measures it. */
+    { route: "/history/", what: "image", budgetKB: 2500, targetKB: 2500 },
+  ];
+  for (const b of BUDGETS) {
+    await withPage(browser, { width: 375 }, `transfer-budget ${b.route}`, async (page) => {
+      const pending = [];
+      page.on("requestfinished", (req) => pending.push((async () => {
+        const res = await req.response();
+        if (!res) return null;
+        const type = req.resourceType();
+        const same = req.url().startsWith(ORIGIN);
+        if (same) {
+          const body = await res.body().catch(() => null);
+          return { type, same, bytes: body ? (/(image|font|media)/.test(type) ? body.length : gzipSync(body).length) : 0 };
+        }
+        const s = await req.sizes().catch(() => null);
+        return { type, same, bytes: s ? s.responseBodySize : 0 };
+      })().catch(() => null)));
+      await page.goto(`${ORIGIN}${BASE}${b.route}`, { waitUntil: "networkidle", timeout: 90_000 });
+      /* Scroll the way a reader would, so lazy images below the fold count. */
+      for (let i = 0; i < 6; i++) {
+        await page.mouse.wheel(0, 900);
+        await page.waitForTimeout(250);
+      }
+      await page.waitForLoadState("networkidle").catch(() => {});
+      const rows = (await Promise.all(pending)).filter(Boolean);
+      const pick = b.what === "image" ? rows.filter((r) => r.type === "image") : rows;
+      const kb = Math.round(pick.reduce((a, r) => a + r.bytes, 0) / 1024);
+      const byType = {};
+      for (const r of rows) byType[r.type] = (byType[r.type] ?? 0) + r.bytes;
+      const breakdown = Object.entries(byType).map(([k, v]) => `${k} ${Math.round(v / 1024)}`).join(", ");
+      if (b.what === "image" && !rows.some((r) => r.type === "image" && !r.same && r.bytes > 0)) {
+        warn(`transfer-budget ${b.route}`, `no image from another host loaded (network?); cannot measure. ${breakdown}`);
+        return;
+      }
+      assert(kb <= b.budgetKB, `transfer-budget ${b.route}`,
+        `${kb} KB ${b.what === "image" ? "of images" : "transferred"} at 375 (budget ${b.budgetKB} KB, target ${b.targetKB} KB; ${breakdown})`);
+    });
+  }
+
   /* Reading progress on long reads: a brass rule under the masthead that
      tracks the scroll, with no JavaScript. */
   const longRead = dynamicRoutes().find((r) => r.startsWith("/story/")) ?? null;
@@ -1900,7 +2153,7 @@ const axeSource = existsSync(axePath) ? readFileSync(axePath, "utf8") : null;
 if (!axeSource) console.log("[warn] axe-core not installed; accessibility rules skipped");
 
 console.log(`verify-headless: ${ROUTES.length} route(s) x ${WIDTHS.length} width(s) x ${SCHEMES.join("+")} ${QUICK ? "(quick)" : "(full)"}, base path "${BASE}"`);
-for (const route of ROUTES) {
+for (const route of SCENARIO ? [] : ROUTES) {
   for (const scheme of SCHEMES) {
     for (const width of WIDTHS) {
       await auditPage(browser, route, width, scheme, axeSource);

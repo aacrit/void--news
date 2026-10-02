@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import ChromeLink from "./ChromeLink";
 import { usePathname } from "next/navigation";
 import { MagnifyingGlass } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
@@ -202,17 +202,17 @@ export default function NavBar({
     >
       <nav className="nav-inner" aria-label="Main navigation">
         <div className="nav-left">
-          <Link href="/" aria-label="Void News home" className="nav-logo si-hoverable">
+          <ChromeLink href="/" aria-label="Void News home" className="nav-logo si-hoverable">
             <LogoFull responsive className="nav-logo-mark" />
-          </Link>
+          </ChromeLink>
           {nameplate ? (
-            <Link
+            <ChromeLink
               href={nameplate.href}
               className="nav-nameplate"
               aria-current={route === nameplate.href || route === `${nameplate.href}/` ? "page" : undefined}
             >
               {nameplate.label}
-            </Link>
+            </ChromeLink>
           ) : (
             <>
               <ExperimentalBadge />
@@ -236,7 +236,7 @@ export default function NavBar({
         <div className="nav-right">
           <nav className="nav-sections" aria-label="Sections">
             {SECTION_LINKS.map((l) => (
-              <Link
+              <ChromeLink
                 key={l.href}
                 href={l.href}
                 className="nav-page"
@@ -244,12 +244,12 @@ export default function NavBar({
                 aria-current={section === l.section || HELD_BY[section] === l.section ? "page" : undefined}
               >
                 {l.label}
-              </Link>
+              </ChromeLink>
             ))}
           </nav>
           <nav className="nav-pages" aria-label="Pages">
             {PAGE_LINKS.map((l) => (
-              <Link
+              <ChromeLink
                 key={l.href}
                 href={l.href}
                 className="nav-page"
@@ -257,7 +257,7 @@ export default function NavBar({
                 aria-current={section === l.section ? "page" : undefined}
               >
                 {l.label}
-              </Link>
+              </ChromeLink>
             ))}
           </nav>
 

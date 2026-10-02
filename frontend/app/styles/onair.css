@@ -544,7 +544,18 @@
 
 .onair__seek {
   position: relative;
-  height: 20px;
+  /* The input fills this box, so its height IS the hit target: 20px until
+     2026-10-02 (audit 2 F9). The 5px bar stays centred in it. */
+  height: 24px;
+}
+@media (pointer: coarse) {
+  .onair__seek {
+    height: 44px;
+  }
+  .onair__speed {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 .onair__seek-bar {
   position: absolute;
