@@ -43,7 +43,7 @@ function compile(files) {
 
 // biasColors reads CSS variables through getColors(); under Node there is no
 // document, so it falls back to the SSR palette. No stub needed.
-compile(["app/lib/biasColors.ts", "app/lib/summaryHygiene.ts", "app/lib/outletVotes.ts",
+compile(["app/lib/biasColors.ts", "app/lib/summaryHygiene.ts", "app/lib/outletVotes.ts", "app/lib/feedMapping.ts",
   "app/components/about/demoSigil.ts"]);
 
 /* tsc anchors output at the common root of what it compiled and emits import
@@ -425,6 +425,53 @@ if (existsSync(FEED)) {
       `card "${bias.leanShapeLabel(card)}" vs Bench "${bias.leanShapeLabel(bench)}"`);
   }
   check("the committed export has stories to compare", compared > 0, `${compared} compared`);
+}
+
+/* ---- the share card says what the card says (CEO decision 4) ---------- */
+/*
+   `story/[id]/ogCard.tsx` gated on `leanLabelState`, the confidence-gated
+   mean, a third rule: audit 6 found a card printing "Leans right" whose
+   share card would print no lean at 0.463 confidence. It now prints
+   `storyShapeLabel` from the archive row, so the gate is twofold: the file
+   uses the card's rule, and on every story of the latest edition the archive
+   row the share card reads gives the word the feed card gives. The synthetic
+   cluster below is `archiveRowToStory`'s, field for field.
+*/
+{
+  const og = readFileSync(join(ROOT, "app/story/[id]/ogCard.tsx"), "utf8");
+  check("the share card prints the card's word (storyShapeLabel)", /storyShapeLabel\(/.test(og));
+  check("the share card no longer reads the confidence gate", !/leanLabelState\s*\(/.test(og));
+  const ARCH = join(ROOT, "build-data/archive.json");
+  if (existsSync(FEED) && existsSync(ARCH)) {
+    const fm = await load("feedMapping.js");
+    const feed = JSON.parse(readFileSync(FEED, "utf8"));
+    const byId = new Map((feed.clusters ?? []).map((c) => [c.id, c]));
+    const rows = JSON.parse(readFileSync(ARCH, "utf8"));
+    const latest = rows.reduce((m, r) => (r.printed_on > m ? r.printed_on : m), "");
+    let shared = 0;
+    for (const row of rows.filter((r) => r.printed_on === latest)) {
+      const c = byId.get(row.source_cluster_id);
+      if (!c) continue;
+      const [fromArchive] = fm.mapClustersToStories([{
+        id: row.id, title: row.title, summary: row.summary, category: row.category,
+        section: "world", sections: ["world"], importance_score: row.rank_world,
+        source_count: row.source_count, first_published: row.first_published,
+        last_updated: row.first_published, divergence_score: row.divergence_score,
+        headline_rank: row.headline_rank, coverage_velocity: 0,
+        bias_diversity: row.bias_diversity, consensus_points: row.consensus_points,
+        divergence_points: row.divergence_points, rank_world: row.rank_world,
+        claim_consensus: row.claim_consensus, cached_image_url: null, is_international: false,
+      }], true);
+      const [fromFeed] = fm.mapClustersToStories([c], true);
+      if (!fromArchive || !fromFeed) continue;
+      shared += 1;
+      const ogWord = bias.storyShapeLabel(fromArchive.biasSpread, !!fromArchive.sigilData.unscored).text;
+      const cardWord = bias.storyShapeLabel(fromFeed.sigilData.biasSpread, !!fromFeed.sigilData.unscored).text;
+      check(`${row.id.slice(0, 8)}: share card word = card word`, ogWord === cardWord,
+        `share "${ogWord}" vs card "${cardWord}"`);
+    }
+    check("the latest edition has share cards to compare", shared > 0, `${shared} compared`);
+  }
 }
 
 /* ---- 2. summary hygiene parity ---------------------------------------- */
