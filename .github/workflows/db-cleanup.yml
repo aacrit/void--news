@@ -7,13 +7,11 @@ permissions: {}
 # and stale articles. Runs independently of the main pipeline so cleanup
 # happens even on days the pipeline.yml cron fails or is skipped.
 #
-# Cadence: daily at 09:00 UTC (4 AM Chicago) — two hours before the main
-# pipeline cron at 11:00 UTC, so retention happens before the next batch
-# of inserts.
+# UNSCHEDULED (rev 85). It ran daily at 09:00 against the decommissioned
+# Supabase project, pruning a database nothing reads (CLAUDE.md, "Jobs that
+# still run against the dead Supabase"). Manual dispatch only.
 
 on:
-  schedule:
-    - cron: '0 9 * * *'
   workflow_dispatch:
     inputs:
       snapshot_days:
@@ -29,8 +27,8 @@ jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.11'
       - name: Install minimal dependencies

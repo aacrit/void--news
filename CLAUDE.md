@@ -15,9 +15,10 @@ belongs in one of those two.
 ## Architecture
 
 ```
-GitHub Actions (daily 11:00 UTC)
+GitHub Actions (daily 10:07 UTC cron; no cron on minute 0 or 30)
   → pipeline → pipeline_state.db (SQLite, VOID_SQLITE_PATH)
   → static JSON + MP3 committed to the repo
+  → pipeline.yml dispatches deploy-cloudflare.yml (workflow_run kept as a 2nd path)
   → Next.js static export → Cloudflare Pages
   → verify-production.yml asserts ~22 checks on the LIVE served HTML
 
@@ -108,6 +109,8 @@ impossible, not a note asking people to be careful:
 | `tests/test_history_quote_ledger.py` | a History quotation that diverges from a ledger extract we hold (Srebrenica carried two, 2026-09-24) |
 | `tests/test_history_clips.py` (H-12..H-17) + `pipeline/history/verify_clip.py` | an archival recording in a History episode without a rights basis on the allowlist, provenance, a transcript that the free local ASR matches against the ledger extract, the CEO's signature, a spoken credit, or its caps; and designed sound (bed, ambience) within 3 s of a real voice. `# MOOD:` / `# CLIP:` script directives are inert to every other consumer |
 | `tests/test_docs_facts.py` | this file's own numbers, against disk |
+| `tests/test_workflow_hygiene.py` | a cron on minute 0 or 30, a branch that changes `.github/` auto-merging (the refusal script is executed both ways), a branch name or commit text pasted into a `run:` script, a workflow without `permissions:`, a test file no workflow runs, a pushing workflow without the four pre-commit gates, the pipeline not dispatching its own deploy, an action not pinned to a SHA |
+| `tests/test_session_start_hook.py` | the session hook printing green over an older failure hidden under newer skipped or cancelled runs |
 | `frontend/scripts/verify-responsive.mjs` | content past the viewport, and sticky that does not stick |
 | `scripts/verify_production.py` | what the live page actually serves, and that `/command-center`, `/admin`, `/pipeline` are not served at all |
 | `scripts/verify_sections.py` | served History (H-01..H-06), Weekly (W-01..W-10, W-10 is the kill list on the page), Paper (P-01..P-04: the front page's twenty, in order, no dash, no retired claim) and Press (PR-01: the feed size it quotes) |
@@ -293,9 +296,9 @@ Do NOT "fix" a failure here by reconnecting Supabase:
 | Job | Cron | Reality |
 |---|---|---|
 | `feed-snapshot.yml` | none (unscheduled 2026-09-24) | Committed EMPTY snapshots, then failed daily from 09-21; manual only |
-| `db-cleanup.yml` | 09:00 | Prunes a database nothing reads |
+| `db-cleanup.yml` | none (unscheduled rev 85) | Prunes a database nothing reads; manual only |
 | `audit-db.yml` | none (unscheduled 2026-09-24) | Audits the dead DB; failed daily from 09-21; manual only |
-| `freshness-check.yml` | 15:00 | Repointed rev 66 — reads `feed.json.builtAt`, no Supabase |
+| `freshness-check.yml` | 15:19 + after each pipeline | Repointed rev 66 — reads `feed.json.builtAt`, no Supabase; since rev 85 also asserts the LIVE `/paper/` edition matches main within 20 min of the data commit |
 | `curate-ship.yml` | manual | Targets `ship_requests`, which lives in D1 now |
 | `refresh-brief`, `editorial`, `eval`, `ig-*`, history/revolt loaders | manual | Supabase env, no `VOID_SQLITE_PATH` |
 
@@ -311,7 +314,7 @@ The weekly row therefore dies with the container, which is why the back-issue
 archive lives in the deploy tree (`build-data/weekly-issues.json`) instead. On
 the old Monday 12:00 slot restore-only was a hard requirement, because the
 daily pipeline was usually still running and a save would have pushed a pre-run
-copy of the state under a newer key. The cron is now **Sunday 18:00**, after the
+copy of the state under a newer key. The cron is now **Sunday 18:07**, after the
 daily has finished, so that race is gone; restore-only stays because the weekly
 adds nothing to the state that anything reads back.
 

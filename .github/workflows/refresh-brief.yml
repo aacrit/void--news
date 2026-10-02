@@ -38,8 +38,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -52,14 +52,14 @@ jobs:
       # ── On Air voices: Kokoro-82M in its own venv (numpy 2) + pinned model files ──
       - name: Cache Kokoro model files
         if: inputs.mode == 'full' || inputs.mode == 'radio' || inputs.mode == 'radio-revoice'
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.cache/void-kokoro
           key: kokoro-${{ hashFiles('pipeline/briefing/kokoro.lock.json') }}
       - name: Cache TTS venv
         if: inputs.mode == 'full' || inputs.mode == 'radio' || inputs.mode == 'radio-revoice'
         id: tts-venv
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: .venv-tts
           key: venv-tts-py3.11-${{ hashFiles('pipeline/requirements-tts.txt') }}
@@ -72,7 +72,7 @@ jobs:
       # ── Pipeline state DB (SQLite) — same restore path as pipeline.yml ──
       - name: Restore pipeline state DB
         id: state
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: pipeline_state.db
           key: void-state-v1-${{ github.run_id }}
@@ -152,6 +152,17 @@ jobs:
         env:
           VOID_SQLITE_PATH: pipeline_state.db
         run: python pipeline/export_static.py
+
+      # Rev 85 (P2-8): the same four gates pipeline.yml runs before ITS data
+      # commit. This job also pushes straight to main, and a gate that cannot
+      # run on the path that writes is not a gate (CLAUDE.md, Rule 1 controls).
+      - name: Gate the emitted data before committing it
+        run: |
+          set -e
+          python tests/test_grounding.py
+          python tests/test_bias_defaults_gate.py
+          python tests/test_feed_buildable.py
+          python tests/test_onair_sidecar.py
 
       - name: Commit refreshed brief
         run: |

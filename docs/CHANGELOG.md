@@ -18,6 +18,60 @@ lives in this file.
 
 ---
 
+## rev 85 WS-A: the deploy follows the data, and the merge gate cannot rewrite itself (2026-10-02)
+
+Infra and CI half of the holistic plan (`docs/proposals/HOLISTIC-PLAN-2026-10-02.md`).
+Every item ships with a check; `tests/test_workflow_hygiene.py` (W-01..W-09)
+holds most of them.
+
+1. **The deploy never followed a scheduled run** (P0-1). Run #385 committed at
+   19:22 on 2026-10-01 and nothing deployed until a manual dispatch at 19:49;
+   the `workflow_run` path had dropped before on 08-10, 08-14 and 08-21, and it
+   never fires when the engine floor turns the run red after the data shipped.
+   `pipeline.yml` now ends by dispatching `deploy-cloudflare.yml` whenever its
+   data commit reached main. `freshness-check.yml` runs after the pipeline and
+   asserts the LIVE `/paper/` edition (its `<time dateTime>` is `feed.builtAt`)
+   equals main's within 20 minutes of the commit that wrote `feed.json`, and
+   names the side that is behind and the deploys that ran when it does not.
+2. **Crons on minute 0 and 30 started hours late** (P0-2). The 11:00 pipeline
+   began 14:55 to 18:32 on runs #380 to #385. Every cron moved: pipeline 10:07,
+   weekly Sunday 18:07, deploy backstops 15:13 and 17:13, verify 15:37 and
+   17:37, freshness 15:19. `test_docs_facts` fails a cron on either minute and
+   ties CLAUDE.md's stated daily time to the cron.
+3. **A claude/* push could rewrite its own merge gate** (P0-7, audit 5 H3). A
+   first job, `merge-scope`, refuses any branch that changes `.github/` and
+   tells a human to merge it by hand; the merge job needs it and checks again
+   before merging. The merge takes `GITHUB_SHA`, the commit the gates judged.
+   Branch names reach shell through `env:`, quoted, in all five workflows that
+   pasted `${{ github.ref_name }}` into a script. `.github/CODEOWNERS` names
+   the owner. The refusal only binds once required checks and code owner
+   review are enabled on main, which is a settings change.
+4. **The scrape ran beside a write token** (audit 5 M1). Splitting the
+   Playwright scrape into its own job is BLOCKED: it runs inside
+   `pipeline/main.py`'s one process between the state DB filter (step 3b) and
+   the batch insert (step 4), so a split is a refactor of the pipeline, not of
+   the workflow. The minimum shipped: the pipeline checkout persists no
+   credentials, so the token is no longer in `.git/config` while Chromium
+   runs; the commit step passes it per command. `GEMINI_API_KEY` stays in that
+   step's environment. The Playwright bump is in WS-D's dependency work.
+5. **Dependencies** (P2-5, CI half). A `dependency-audit` job runs `npm audit
+   --omit=dev --audit-level=high` and `pip-audit`, `continue-on-error` until
+   WS-D's bumps land. `.github/dependabot.yml` covers npm (frontend, worker),
+   pip and github-actions weekly. Every action is pinned to a commit SHA with
+   its tag in a comment.
+6. **The SessionStart hook printed green over a failure** (P2-7). One call per
+   workflow, JSON on stdin to `.claude/hooks/ci_status.py`, verdict from the
+   newest completed run that was not skipped or cancelled, and PyYAML pinned
+   over the Debian copy. `tests/test_session_start_hook.py` plants a failure
+   under in-progress, skipped and cancelled runs and requires NOT GREEN.
+7. **Gate inventory** (P2-8). W-05 fails any `tests/test_*.py` no workflow
+   runs; `test_insecure_origins` and `test_lean_suite_discriminates` now run in
+   build-check. `weekly-digest.yml` and `refresh-brief.yml` run the four gates
+   `pipeline.yml` runs before they push. `db-cleanup.yml` is unscheduled.
+8. **Least privilege** (audit 5 L4): `permissions: contents: read` on
+   curate-ship, load-history-content, load-revolt-content and
+   purge-cluster-images. **Collectors** (audit 3 opt 6): Pair Test and Anchor
+   Pairs run once a day.
 ## rev 85 WS-D: the ship board stops trusting the client, and /privacy names every field (2026-10-02)
 
 Audit 5 scored security 74. Its two HIGH findings on the Worker were one

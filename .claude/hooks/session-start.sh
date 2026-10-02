@@ -36,7 +36,17 @@ PY
 )
 if [ -n "${missing// /}" ]; then
   say "[void] installing the pipeline environment (missing: $missing)"
-  pip install --quiet -r pipeline/requirements.txt 2>&1 | tail -3
+  # A Debian-installed PyYAML (6.0.1, distutils) cannot be uninstalled by pip,
+  # so `pip install -r` died on "Cannot uninstall PyYAML" and installed
+  # nothing after it (audit 3 item 6). Install the pinned PyYAML over it
+  # first, without uninstalling, then the rest.
+  pyyaml_pin=$(grep -iE '^pyyaml' pipeline/requirements.txt | head -1 | sed 's/[[:space:]]*#.*//')
+  pip install --quiet --ignore-installed "${pyyaml_pin:-pyyaml~=6.0.2}" >/dev/null 2>&1 \
+    || say "[void] WARNING: could not install ${pyyaml_pin:-pyyaml}"
+  if ! out=$(pip install --quiet -r pipeline/requirements.txt 2>&1); then
+    say "[void] WARNING: pip install -r pipeline/requirements.txt failed; gates that import it will not run:"
+    printf '%s\n' "$out" | tail -3 | sed 's/^/[void]     /'
+  fi
 else
   say "[void] python environment already satisfied"
 fi
@@ -58,45 +68,40 @@ say "[void] this branch: $ahead ahead, $behind behind origin/main"
 
 slug=$(git remote get-url origin 2>/dev/null \
        | sed -E 's#.*github\.com[:/]([^/]+/[^/.]+)(\.git)?$#\1#')
-if [ -n "$slug" ]; then
-  api="https://api.github.com/repos/$slug/actions/runs?branch=main&per_page=8"
-  runs=$(curl -sS --max-time 12 -H 'Accept: application/vnd.github+json' "$api" 2>/dev/null)
-  if [ -n "$runs" ]; then
-    python3 - "$runs" <<'PY' 2>/dev/null || true
-import json, sys
-try:
-    d = json.loads(sys.argv[1])
-except Exception:
-    sys.exit(0)
-runs = d.get("workflow_runs") or []
-if not runs:
-    sys.exit(0)
-seen, bad = {}, []
-for r in runs:                      # newest first; keep one per workflow
-    n = r.get("name")
-    if n in seen:
-        continue
-    seen[n] = r.get("conclusion") or r.get("status")
-    # `skipped` is a conditional workflow declining to run (Alert on Failure
-    # only fires when something failed), and `cancelled` is usually a superseded
-    # run. Neither is a red main, and reporting them as one trains people to
-    # ignore the warning, which is how a real failure gets missed.
-    if seen[n] not in ("success", "skipped", "cancelled", "in_progress",
-                       "queued", "neutral", None):
-        bad.append(f'{n}: {seen[n]}')
-if bad:
-    print("[void] *** main IS NOT GREEN ***")
-    for b in bad:
-        print(f"[void]     {b}")
-    print("[void] main is production. Per CLAUDE.md, a red main is fixed")
-    print("[void] BEFORE any new work: a commit not on main is not live, and")
-    print("[void] every branch inherits main's data, so this blocks everyone.")
-else:
-    print(f"[void] main is green ({len(seen)} workflow(s) checked)")
-PY
-  else
-    say "[void] could not reach the GitHub API; main's CI state unknown"
-  fi
+# One call PER WORKFLOW (audit 3 item 6). A single repo-wide per_page=8 call
+# was mostly Pair Test and Anchor Pairs and usually missed the pipeline. The
+# responses go to ci_status.py on STDIN as one JSON object, never as argv, and
+# it judges each workflow by its newest COMPLETED run that was not skipped or
+# cancelled, so a newer skipped run cannot mask an older failure.
+# auto-merge-claude runs on claude/* branches, so it is read without the
+# branch filter.
+if [ -n "$slug" ] && [[ "$slug" != *"/"*"/"* ]]; then
+  tmp=$(mktemp -d 2>/dev/null || echo "/tmp/void-ci-$$")
+  mkdir -p "$tmp"
+  for wf in pipeline.yml verify-production.yml freshness-check.yml deploy-cloudflare.yml auto-merge-claude.yml; do
+    q="branch=main&per_page=20"
+    [ "$wf" = "auto-merge-claude.yml" ] && q="per_page=20"
+    curl -sS --max-time 10 -H 'Accept: application/vnd.github+json' \
+      "https://api.github.com/repos/$slug/actions/workflows/$wf/runs?$q" \
+      -o "$tmp/$wf.json" 2>/dev/null || rm -f "$tmp/$wf.json"
+  done
+  {
+    printf '{'
+    for wf in pipeline.yml verify-production.yml freshness-check.yml deploy-cloudflare.yml auto-merge-claude.yml; do
+      printf '"%s":' "$wf"
+      if [ -s "$tmp/$wf.json" ] && python3 -c 'import json,sys; json.load(open(sys.argv[1]))' "$tmp/$wf.json" 2>/dev/null; then
+        cat "$tmp/$wf.json"
+      else
+        printf 'null'
+      fi
+      printf ','
+    done
+    printf '"_end":null}'
+  } | python3 "$ROOT/.claude/hooks/ci_status.py" \
+    || say "[void] could not judge main's CI state"
+  rm -rf "$tmp"
+else
+  say "[void] no GitHub remote; main's CI state unknown"
 fi
 say ""
 exit 0
