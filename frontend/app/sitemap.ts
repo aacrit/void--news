@@ -25,9 +25,12 @@ const ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[number]["ch
   { path: "/audio/", changeFrequency: "daily", priority: 0.7 },
   // Paper: the same twenty as the front page, laid out to print. Back 2026-09-21.
   { path: "/paper/", changeFrequency: "daily", priority: 0.6 },
-  // /games is 301-redirected to home in public/_redirects (hidden for launch),
-  // so it is deliberately NOT listed here: a sitemap must not advertise a
-  // redirecting URL. Restore it when that section goes live.
+  // Games: back 2026-10-02. /games/frame and /games/wire redirect to the
+  // landing (public/_redirects), so they are deliberately NOT listed: a
+  // sitemap must not advertise a redirecting URL.
+  { path: "/games/", changeFrequency: "daily", priority: 0.4 },
+  { path: "/games/undertow/", changeFrequency: "daily", priority: 0.3 },
+  { path: "/games/run/", changeFrequency: "monthly", priority: 0.3 },
   { path: "/ship/", changeFrequency: "monthly", priority: 0.4 },
   // The press room and the privacy page: the two pages a journalist or a
   // cautious reader looks for by name.

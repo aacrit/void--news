@@ -51,6 +51,8 @@ export default function Footer({ lastUpdated }: FooterProps) {
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
           <Link href="/audio" className="footer-link">Audio</Link>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
+          <Link href="/games" className="footer-link">Games</Link>
+          <span className="footer-link__sep" aria-hidden="true">&middot;</span>
           <Link href="/about" className="footer-link">About</Link>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
           <Link href="/sources" className="footer-link">Sources</Link>

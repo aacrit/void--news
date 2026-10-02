@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   // Fallback title/description for routes that do not set their own metadata.
   // The primary routes (/, /sources, /about, /ship, /onair, /history,
   // /weekly, /listen) each export a DISTINCT title + description + canonical.
-  // /paper and /games are 301-hidden and no longer listed here. `keywords`
+  // /paper and /games set their own (both are live again). `keywords`
   // was removed 2026-08-09: search engines have ignored the meta keywords tag
   // for over a decade, so it was dead weight.
   title: "Void News. See through the void.",

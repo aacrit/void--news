@@ -52,10 +52,15 @@
 /listen      /audio  301
 /listen/     /audio  301
 
-# 2026-08-03. Games is hidden from prod (temporarily). 301 to home.
 # Paper returned 2026-09-21 as the printable twenty; its 301 is gone.
-/games       /  301
-/games/*     /  301
+# Games returned 2026-10-02 (CEO decision 7a); its 301 to home is gone.
+# THE FRAME was withdrawn the same day (it printed headlines no outlet wrote
+# under real mastheads), and THE WIRE is still "coming soon" on the hub, so
+# those two routes go to the Games landing. 302: neither move is permanent.
+/games/frame     /games/  302
+/games/frame/*   /games/  302
+/games/wire      /games/  302
+/games/wire/*    /games/  302
 
 # Legacy GitHub Pages project-path. CF Pages serves at root, so 301 any
 # stray /void--news/* deep link to the equivalent root path. Placed last:
