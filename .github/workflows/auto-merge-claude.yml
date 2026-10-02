@@ -14,12 +14,77 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # P0-7 (rev 85, audit 5 H3). FIRST, and a `needs:` of the merge job. Every
+  # job here runs from the PUSHED commit with contents: write, so a claude/*
+  # branch could edit this file to delete a gate and still merge itself to
+  # main, which is production. A branch that changes anything under .github/
+  # is refused here and merged by a human. This step lives in the file it
+  # protects, so it only holds together with .github/CODEOWNERS and required
+  # status checks on main (repo settings, the owner's action).
+  merge-scope:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+      - name: Refuse to auto-merge a change to .github
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          git fetch --quiet origin main "$GITHUB_SHA"
+          base=$(git merge-base origin/main "$GITHUB_SHA")
+          changed=$(git diff --name-only "$base" "$GITHUB_SHA" -- .github/)
+          if [ -n "$changed" ]; then
+            echo "::error title=Merge refused::This branch changes .github/, which auto-merge never merges. A human must review and merge it by hand."
+            echo "REFUSED: auto-merge will not merge '$REF_NAME' into main because it changes:"
+            echo "$changed" | sed 's/^/  /'
+            echo "Workflows run from the pushed commit with contents: write, so a branch"
+            echo "that edits .github/ could rewrite or delete the gates that judge it."
+            echo "Review the diff and merge it by hand:"
+            echo "  git fetch origin && git checkout main && git merge --no-ff origin/$REF_NAME"
+            exit 1
+          fi
+          echo "No change under .github/; this branch may auto-merge if every gate passes."
+
+  # P2-5 (rev 85). Known-vulnerable dependencies. continue-on-error FOR NOW:
+  # WS-D is bumping the npm and pip pins in parallel (audit 5 counted two
+  # critical and six high npm findings), and a gate that is red on arrival
+  # blocks every branch for a reason no branch can fix.
+  # TODO(rev 85 WS-D): drop both continue-on-error lines once the bumps land.
+  dependency-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.11'
+      - name: npm audit (frontend, production dependencies, high and above)
+        continue-on-error: true
+        run: cd frontend && npm audit --omit=dev --audit-level=high
+      - name: pip-audit (pipeline/requirements.txt)
+        continue-on-error: true
+        run: |
+          pip install --quiet pip-audit
+          pip-audit --requirement pipeline/requirements.txt --vulnerability-service osv --progress-spinner off
+
   build-check:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '22'
           cache: 'npm'
@@ -49,7 +114,7 @@ jobs:
       # widths, and a `position: sticky` rail that had never once held.
       # Chromium is cached, so a warm run costs seconds.
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('frontend/package-lock.json') }}
@@ -90,7 +155,7 @@ jobs:
       #
       # A gate that cannot execute is not a gate, which is the sentence the
       # controls table in CLAUDE.md opens with.
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -111,7 +176,7 @@ jobs:
         run: pip install --quiet -r pipeline/requirements.txt
       - name: Cache spaCy model
         id: spacy-cache-gates
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
           key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
@@ -175,6 +240,13 @@ jobs:
           python tests/test_prompt_grounding.py      # every production prompt carries the grounding line
           python tests/test_paper.py                 # Paper prints the front page's twenty, in order, with no retired claim
 
+          # Rev 85 (P2-8): the two gates no workflow ran, and the two that
+          # keep the inventory honest.
+          python tests/test_insecure_origins.py      # an http source link only for an allowlisted host
+          python tests/test_lean_suite_discriminates.py  # the lean fixtures can tell the text engine from the outlet label
+          python tests/test_workflow_hygiene.py      # crons off :00/:30, the merge refusal, no ref in shell, every test run by a workflow
+          python tests/test_session_start_hook.py    # the session hook cannot report green over an older failure
+
   # End-to-end run of the editorial half of the pipeline (8c through 8f plus
   # the static export) against a synthetic state DB built from the committed
   # snapshots. No network, no LLM key, nothing generated. It exists because a
@@ -184,8 +256,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -194,7 +266,7 @@ jobs:
         run: pip install -r pipeline/requirements.txt
       - name: Cache spaCy model
         id: spacy-cache
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
           key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
@@ -230,8 +302,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.11'
       - name: Install system dependencies
@@ -240,13 +312,13 @@ jobs:
         run: pip install --quiet "numpy~=1.26.4" pydub mutagen pyyaml "edge-tts>=6.1.0"
       # ── On Air voices: Kokoro-82M in its own venv (numpy 2) + pinned model files ──
       - name: Cache Kokoro model files
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.cache/void-kokoro
           key: kokoro-${{ hashFiles('pipeline/briefing/kokoro.lock.json') }}
       - name: Cache TTS venv
         id: tts-venv
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: .venv-tts
           key: venv-tts-py3.11-${{ hashFiles('pipeline/requirements-tts.txt') }}
@@ -280,8 +352,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -290,7 +362,7 @@ jobs:
         run: pip install -r pipeline/requirements.txt
       - name: Cache spaCy model
         id: spacy-cache
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
           key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
@@ -315,8 +387,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -325,7 +397,7 @@ jobs:
         run: pip install -r pipeline/requirements.txt
       - name: Cache spaCy model
         id: spacy-cache
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
           key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
@@ -345,7 +417,7 @@ jobs:
           fi
 
   auto-merge:
-    needs: [build-check, validate-bias, validate-clustering, editorial-stage, radio-audio]
+    needs: [merge-scope, build-check, validate-bias, validate-clustering, editorial-stage, radio-audio]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     # Serialize ALL merges to main across branches.
@@ -353,17 +425,46 @@ jobs:
       group: auto-merge-push-main
       cancel-in-progress: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
           ref: main
 
-      - name: Merge claude branch into main
+      # Checked again here, against the exact commit about to be merged,
+      # because `needs:` is only as good as the file that declares it.
+      - name: Refuse to auto-merge a change to .github
+        env:
+          REF_NAME: ${{ github.ref_name }}
         run: |
+          set -euo pipefail
+          git fetch --quiet origin main "$GITHUB_SHA"
+          base=$(git merge-base origin/main "$GITHUB_SHA")
+          changed=$(git diff --name-only "$base" "$GITHUB_SHA" -- .github/)
+          if [ -n "$changed" ]; then
+            echo "::error title=Merge refused::This branch changes .github/, which auto-merge never merges. A human must review and merge it by hand."
+            echo "REFUSED: auto-merge will not merge '$REF_NAME' into main because it changes:"
+            echo "$changed" | sed 's/^/  /'
+            echo "Workflows run from the pushed commit with contents: write, so a branch"
+            echo "that edits .github/ could rewrite or delete the gates that judge it."
+            echo "Review the diff and merge it by hand:"
+            echo "  git fetch origin && git checkout main && git merge --no-ff origin/$REF_NAME"
+            exit 1
+          fi
+          echo "No change under .github/; this branch may auto-merge if every gate passes."
+
+      # The ref reaches the shell through env and quoted, never as
+      # ${{ github.ref_name }} pasted into the script (audit 5 H3: a branch
+      # name is chosen by whoever pushes it). It merges GITHUB_SHA, the commit
+      # every gate above judged, not whatever the branch tip is by now.
+      - name: Merge claude branch into main
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch origin ${{ github.ref_name }}
-          git merge origin/${{ github.ref_name }} --no-ff -m "Auto-merge ${{ github.ref_name }} into main"
+          git fetch origin "$GITHUB_SHA"
+          git merge "$GITHUB_SHA" --no-ff -m "Auto-merge $REF_NAME into main"
           git push origin main
 
   # migrate job REMOVED (2026-08-31, Cloudflare migration): the pipeline runs on
