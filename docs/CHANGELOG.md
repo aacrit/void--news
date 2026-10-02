@@ -18,6 +18,67 @@ lives in this file.
 
 ---
 
+## rev 85 WS-B: audio that outlived its corrections, and History data that pointed nowhere (2026-10-02)
+
+Audit 4 of 2026-10-02 found the History and Weekly audio serving words that
+published corrections had removed, and thesis images that loaded nothing.
+Every fix ships with the check that would have caught it.
+
+1. **Withdrawn Weekly audio still answered by URL (P0-3).** Issue #26's
+   episode of The Argument was withdrawn in rev 84, but `latest.mp3`,
+   `2026-09-21-am.mp3` and their chapter sidecars stayed under
+   `frontend/public/audio/weekly-world/`, with the 09-19 and 09-20 pilots
+   beside them. All seven files are deleted. `tests/test_weekly_audio_served.py`
+   gains the inverse rule (no file there that no issue row names; a `latest.*`
+   alias only as a byte copy of a named file), and `verify_production.py`
+   asserts the old URLs are not served live.
+2. **Two theses served audio their corrected scripts contradict (P0-4).**
+   `haitian-revolution` and `scramble-for-africa` were rendered before the
+   09-25 corrections. `tests/test_history_audio.py` compared commit dates and
+   skipped itself on a shallow clone, which is every CI checkout. The producer
+   now hashes the script it renders; the manifest stores `script_sha256`; the
+   test compares content. The backfill is proven from the run record: 73
+   episodes by their render workflow run (the slug's render job, the publish
+   window holding `renderedAt`, the script at the run's head equal to today's).
+   Scramble's run rendered an earlier script; Haiti was a local render whose
+   only earlier commit differs. Both are `audio_withdrawn`, and the History
+   page, `/audio`, the feed, the deploy fetch and the thesis export skip them
+   until `render-history-audio.yml` re-renders them. Three local renders with
+   no run on record (Apollo 11, Chernobyl, Mali) carry a null hash and are
+   listed as unverified on every run.
+3. **Four thesis images pointed at other files (P0-8).** Hand-typed Commons
+   hash directories for Afrikakonferenz, Colonial_Africa_1913_map,
+   MutilatedChildrenFromCongo and Choeungek2. Corrected from md5 of the file
+   name and confirmed against the Commons API; `export_thesis.py` now derives
+   the URL from the exhibit's accession; T-22 (T-21 was taken) fails a path
+   that is not md5 of its own name, over every ledger and served file.
+4. **Stale lists and time-bound lines (P2-9).** `episode_report.py --lists`
+   derives the over-ceiling episodes from the manifest (Ottoman 15.26,
+   Peloponnesian War 15.21, Srebrenica 15.19, Sykes-Picot 15.18); the four in
+   OPEN-ITEMS had gone under. Congo's cobalt line is dated 2023, Apollo's
+   "has not resumed" and "Nobody has been back" end on December 1972, the
+   Great Leap's "to this day" is gone, the undated Kurdish population range
+   is cut, in the scripts and the event YAML alike. The time gate now reads
+   narrator lines, with the 35 existing hits listed as a backlog that fails on
+   any new one. The three reworded episodes that keep serving are recorded as
+   `script_revised_after_render`, tied to the exact revised script. No
+   episode was re-cut for length: that is the narrative team's call.
+5. **The script export check could not fail.** `export_scripts.py` ignored
+   `VOID_EXPORT_BUILD_DIR`, so `test_history_export_parity.py` re-exported
+   over the committed files and compared them with themselves. It honours the
+   variable now, and a planted drift fails.
+6. **Credits and a title (P2-11).** 49 image credits served Commons template
+   residue; `export_history.clean_artist()` normalises them and
+   `test_history_copy.py` fails on any served credit that still carries it.
+   A Congo source title lost its em dash for a colon and is flagged for
+   review, because it is in no ledger. Self-hosting the Commons images is not
+   done.
+7. **Feed punctuation and rounding (audit 4 LOW).** An On Air item title read
+   "US Exits Iraq.: On Air"; the join now drops the headline's own stop
+   (an abbreviation keeps it). `/audio` rounded durations while the feeds and
+   the player truncate; it truncates now, and `test_podcast_feed.py` runs the
+   page's own `clock()` under node against the feed's.
+
 ## rev 83: a red main from four causes, one of them silent for a week (2026-10-01)
 
 Verify Production had been red on every scheduled run since 2026-09-28 and
