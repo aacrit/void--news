@@ -127,6 +127,10 @@ def runtime_and_llm(conn: sqlite3.Connection) -> dict:
             "flash_requests": int(req.get(flash, 0)),
             "flash_daily_cap": FLASH_DAILY_CAP, "flash_warn": FLASH_WARN,
         }
+    # P2-3 (rev 85): the lexicon corpus's distance to its halt ceiling.
+    pc = m.get("phrase_counts")
+    if isinstance(pc, dict) and pc:
+        out["phrase_counts"] = pc
     return out
 
 
@@ -220,6 +224,9 @@ def budget_problems(health: dict) -> list[str]:
     if isinstance(flash, int) and flash > FLASH_DAILY_CAP:
         out.append(f"{flash} requests to the flash model in one run, over its "
                    f"{FLASH_DAILY_CAP}-a-day free cap")
+    if (health.get("phrase_counts") or {}).get("halted"):
+        out.append("phrase_counts is HALTED at its row ceiling: the lexicon corpus "
+                   "recorded nothing this run")
     return out
 
 
@@ -233,6 +240,10 @@ def budget_warnings(health: dict) -> list[str]:
     if isinstance(flash, int) and FLASH_WARN < flash <= FLASH_DAILY_CAP:
         out.append(f"{flash} flash requests this run (warn above {FLASH_WARN}, "
                    f"cap {FLASH_DAILY_CAP} a day)")
+    pc = health.get("phrase_counts") or {}
+    if pc.get("projection_warn"):
+        out.append(f"phrase_counts reaches its {pc.get('ceiling')}-row ceiling in about "
+                   f"{pc.get('days_to_ceiling')} days at +{pc.get('daily_gain')} rows a day")
     return out
 
 

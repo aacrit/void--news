@@ -360,8 +360,37 @@ DAILY_MIN_BODY_WORDS = 150
 DAILY_PER_OUTLET_CAP = 3
 RETAIN_EARLY_DAYS = 7
 RETAIN_MIN_OUTLETS_EARLY = 3
-RETAIN_LATE_DAYS = 28
-RETAIN_MIN_OUTLETS_LATE = 8
+# THE LATE RULE, retuned 2026-10-02 (rev 85, P2-3) on the table itself, not on a
+# replay. It was 28 days and 8 outlets. Measured on the snapshot of run #385
+# (2,007,001 rows, 332,755 phrases, 347 outlets, six days old):
+#
+#   rows held by phrases at < 3 outlets     253,841  (what the early rule can reach)
+#   rows held by phrases at < 8 outlets     597,659  (what the old late rule could reach)
+#   rows held by phrases at < 20 outlets    978,480
+#
+# and the table gained about 370,000 rows a day. 70% of it sat in phrases at 8 or
+# more outlets, which no rule ever pruned, so pruning could not keep pace BY
+# DESIGN: a cross-sectional fit of rows against articles per outlet (Heaps'
+# exponent 0.88) puts the 8M ceiling about four weeks out, and the old late rule
+# would not have fired once before it (its first phrases come of age on 10-24).
+#
+# Both numbers now come from what the derivation can use:
+#
+#   20 outlets   `lexicon_derive.MIN_OUTLETS`. A phrase under it is never scored,
+#                however long it is kept.
+#   14 days      two gate generations. At ~850 bodies a day, a phrase no outlet
+#                has used in 14 days occurs under once in ~12,000 bodies; reaching
+#                `lexicon_derive.MIN_ARTICLES` (50) at that rate takes on the order
+#                of two years. It is dead weight now, not a slow riser.
+#
+# A phrase still in use is never old (`last_seen` moves on every sighting), so this
+# drops only the dormant tail. If the projection below still warns, the next lever
+# is the ceiling, raised on a measurement, never pruning to fit.
+RETAIN_LATE_DAYS = 14
+RETAIN_MIN_OUTLETS_LATE = 20
+# Warn when the last run's net gain would reach DAILY_MAX_ROWS within this many
+# days (`projection`). Two weeks is long enough to measure and decide.
+PROJECTION_WARN_DAYS = 14
 # At 26 bytes a row, ~210 MB of counts: the most this file may cost the Actions cache,
 # beside a state DB of 433 MB (105 MB gzipped) on 2026-09-25.
 DAILY_MAX_ROWS = 8_000_000
@@ -402,6 +431,15 @@ create view if not exists outlet_phrase_counts as
       join pc_outlet o on o.id = c.outlet_id;
 create view if not exists outlet_phrase_articles as
     select source_id, articles, updated_at from pc_outlet;
+-- One row of COUNTERS per run, for the days-to-ceiling projection. Counts only.
+create table if not exists pc_run (
+    run_at      text not null primary key,
+    rows_before integer not null,
+    rows_after  integer not null,
+    written     integer not null,
+    pruned      integer not null,
+    articles    integer not null
+);
 create table if not exists phrase_gate (
     name       text not null primary key,   -- cur1, cur2, prev1, prev2
     started_at text not null,
@@ -574,6 +612,7 @@ def record_daily(conn: sqlite3.Connection, rows, now: str) -> dict:
               "halted": False, "gated": 0, "gate_rotated": False, "gate_fill": 0.0}
     if total > DAILY_MAX_ROWS:
         report["halted"] = True
+        report.update(projection(conn))
         print(f"  PHRASE COUNTS HALTED: {total:,} rows exceeds DAILY_MAX_ROWS "
               f"({DAILY_MAX_ROWS:,}). Nothing recorded this run. The retention rules "
               f"are not holding; measure before raising the ceiling.")
@@ -649,6 +688,37 @@ def record_daily(conn: sqlite3.Connection, rows, now: str) -> dict:
            updated_at = excluded.updated_at""",
         ((s, n, now) for s, n in per_outlet.items()))
     report["pruned"] = prune(conn, now)
-    conn.commit()
     report["rows_after"] = conn.execute("select count(*) from pc_count").fetchone()[0]
+    conn.execute(
+        """insert into pc_run(run_at, rows_before, rows_after, written, pruned, articles)
+           values(?,?,?,?,?,?) on conflict(run_at) do update set
+           rows_before=excluded.rows_before, rows_after=excluded.rows_after,
+           written=excluded.written, pruned=excluded.pruned, articles=excluded.articles""",
+        (now, report["rows_before"], report["rows_after"], report["written"],
+         report["pruned"], report["articles"]))
+    conn.commit()
+    report.update(projection(conn))
     return report
+
+
+def projection(conn: sqlite3.Connection) -> dict:
+    """Days until DAILY_MAX_ROWS at the last run's net gain (rows_after minus
+    rows_before, so pruning is already netted out). None when the table is not
+    growing. `warn` is True under PROJECTION_WARN_DAYS.
+
+    One run's gain, deliberately: the trend that matters is the current one, and
+    a mean over a week would hide the day pruning starts (or stops) biting."""
+    try:
+        row = conn.execute(
+            "select rows_before, rows_after from pc_run order by run_at desc limit 1"
+        ).fetchone()
+    except sqlite3.Error:
+        row = None
+    if not row:
+        return {"daily_gain": None, "days_to_ceiling": None, "projection_warn": False}
+    gain = int(row[1]) - int(row[0])
+    if gain <= 0:
+        return {"daily_gain": gain, "days_to_ceiling": None, "projection_warn": False}
+    days = round(max(0, DAILY_MAX_ROWS - int(row[1])) / gain, 1)
+    return {"daily_gain": gain, "days_to_ceiling": days,
+            "projection_warn": days < PROJECTION_WARN_DAYS}

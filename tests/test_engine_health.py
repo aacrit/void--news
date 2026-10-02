@@ -262,6 +262,14 @@ check("a run from before rev 85 (no phases, no meter) is tolerated",
       legacy["runtime"]["phases_minutes"] == {} and "llm" not in legacy
       and eh.budget_problems(legacy) == [], str(legacy.get("runtime")))
 check("a DB with no pipeline_runs table is tolerated", "runtime" not in h)
+pcw = run_fixture(60 * 60, {"phrase_counts": {"halted": False, "projection_warn": True,
+                                              "days_to_ceiling": 9.5, "daily_gain": 420000,
+                                              "ceiling": 8000000}})
+check("phrase_counts under two weeks from its ceiling warns and does not fail",
+      eh.budget_problems(pcw) == [] and any("phrase_counts" in w for w in eh.budget_warnings(pcw)))
+pch = run_fixture(60 * 60, {"phrase_counts": {"halted": True, "ceiling": 8000000}})
+check("phrase_counts halted at its ceiling fails",
+      any("HALTED" in p for p in eh.budget_problems(pch)))
 check("an engine.json without the blocks raises nothing",
       eh.budget_problems({}) == [] and eh.budget_warnings({}) == [])
 if ENGINE_JSON.exists():

@@ -1222,6 +1222,82 @@ def phase_durations(marks: list[tuple[str, float]], end: float) -> dict[str, flo
     return out
 
 
+def sweep_unretainable_rows(conn, now_iso: str | None = None,
+                            article_days: int = 7, cluster_days: int = 2,
+                            archive_days: int = 10) -> dict:
+    """Delete the rows the date-based retention below can never reach (P2-3, rev 85).
+
+    Every retention rule in this file compares a date column to an ISO cutoff:
+    `published_at < cutoff` for articles, `first_published < cutoff` for clusters
+    and the archive. A row whose date is NULL, is not ISO ("Sep 23, 2026 2:34pm",
+    "undefined") or lies in the future fails that comparison forever, so it is
+    never deleted. On the 2026-10-01 snapshot that was 5,136 articles (NULL or
+    junk published_at, the oldest fetched 2026-03-22) with their bias rows, and
+    154 clusters, and it grew about 110 articles a day.
+
+    The fallback is the date WE wrote: fetched_at for an article (moved every
+    time the URL is seen again, so a live article is never old), created_at for a
+    cluster, archived_at for an archive row. The windows are the existing ones
+    (7, 2, 10 days), so nothing is kept for less time than the rule it backs up.
+
+    Dates are compared with SQLite's datetime(), which normalises both the
+    'YYYY-MM-DD HH:MM:SS' that CURRENT_TIMESTAMP writes and ISO with a 'T'; a
+    plain string compare puts every same-day space-form value before every
+    T-form cutoff.
+
+    Dependent rows are deleted explicitly rather than trusted to ON DELETE
+    CASCADE, which SQLite only honours with PRAGMA foreign_keys on.
+    printed_stories and printed_days are permanent and are not touched.
+    """
+    import sqlite3 as _sq
+    now = now_iso or datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    out = {"articles": 0, "clusters": 0, "archive": 0}
+    cur = conn.cursor()
+
+    def _ids(sql: str, params: tuple) -> list:
+        return [r[0] for r in cur.execute(sql, params).fetchall()]
+
+    def _delete(table: str, col: str, ids: list) -> int:
+        n = 0
+        for i in range(0, len(ids), 500):
+            chunk = ids[i:i + 500]
+            marks = ",".join("?" * len(chunk))
+            try:
+                n += cur.execute(f'DELETE FROM "{table}" WHERE "{col}" IN ({marks})',
+                                 chunk).rowcount or 0
+            except _sq.OperationalError:     # table absent in this environment
+                return n
+        return n
+
+    # A date the comparison can use: parseable, and not more than a day ahead.
+    unusable = ("(datetime({c}) IS NULL OR datetime({c}) > datetime(?, '+1 day'))")
+    art = _ids(
+        "SELECT id FROM articles WHERE datetime(fetched_at) < datetime(?, ?) AND "
+        + unusable.format(c="published_at"),
+        (now, f"-{article_days} days", now))
+    for dep in ("bias_scores", "cluster_articles", "article_categories"):
+        _delete(dep, "article_id", art)
+    out["articles"] = _delete("articles", "id", art)
+
+    cl = _ids(
+        "SELECT id FROM story_clusters WHERE datetime(created_at) < datetime(?, ?) AND "
+        + unusable.format(c="first_published"),
+        (now, f"-{cluster_days} days", now))
+    _delete("cluster_articles", "cluster_id", cl)
+    out["clusters"] = _delete("story_clusters", "id", cl)
+
+    try:
+        arc = _ids(
+            "SELECT id FROM cluster_archive WHERE datetime(archived_at) < datetime(?, ?) AND "
+            + unusable.format(c="first_published"),
+            (now, f"-{archive_days} days", now))
+        out["archive"] = _delete("cluster_archive", "id", arc)
+    except _sq.OperationalError:
+        pass
+    conn.commit()
+    return out
+
+
 def run_retention_and_ghost_sweep() -> None:
     """Cluster + article retention and the ghost-cluster sweep.
 
@@ -1271,11 +1347,18 @@ def run_retention_and_ghost_sweep() -> None:
                     "first_published,headline_rank,divergence_score,bias_diversity,"
                     "consensus_points,divergence_points"
                 ).in_("id", batch).execute()
-                if to_archive.data:
+                # Only clusters that could have been shown are archived (rev 85,
+                # P2-3). On 2026-10-01 the archive held 54,471 orphans (one or
+                # two sources) beside 1,081 displayable clusters: 70% of its
+                # 76 MB, each orphan's "summary" being its one article's RSS
+                # excerpt. Nothing in the repo reads cluster_archive back.
+                _arch = [r for r in (to_archive.data or [])
+                         if int(float(r.get("source_count") or 0)) >= 3]
+                if _arch:
                     # Upsert into archive table (created by migration 016)
                     try:
                         supabase.table("cluster_archive").upsert(
-                            to_archive.data, on_conflict="id"
+                            _arch, on_conflict="id"
                         ).execute()
                     except Exception:
                         pass  # Archive table may not exist yet — still delete
@@ -1387,6 +1470,20 @@ def run_retention_and_ghost_sweep() -> None:
             print(f"  Retention: no articles older than 7 days")
     except Exception as e:
         print(f"  [warn] article retention failed: {e}")
+
+    # Rows with a NULL, junk or future date that the cutoffs above can never
+    # reach (see sweep_unretainable_rows). Before the ghost sweep, so a cluster
+    # this empties is caught by it.
+    _sq_conn = getattr(supabase, "_conn", None)
+    if _sq_conn is not None:
+        try:
+            with getattr(supabase, "_lock", None) or __import__("contextlib").nullcontext():
+                _swept = sweep_unretainable_rows(_sq_conn)
+            print(f"  Undated-row sweep: {_swept['articles']} articles, "
+                  f"{_swept['clusters']} clusters, {_swept['archive']} archive rows "
+                  f"with a NULL, junk or future date past their window")
+        except Exception as e:
+            print(f"  [warn] undated-row sweep failed: {e}")
 
     # Ghost-cluster sweep: remove story_clusters that have ZERO cluster_articles.
     #
@@ -4231,6 +4328,7 @@ def main():
     # VOID_PHRASE_DB (local and test runs) and the step is skipped.
     _phase("phrases_truncate")
     _phrase_db = os.environ.get("VOID_PHRASE_DB")
+    _phrase_report: dict = {}
     if _phrase_db and not recluster_only:
         print("\n[9e] Recording per-outlet phrase counts (lexicon corpus)...")
         try:
@@ -4265,6 +4363,16 @@ def main():
                       f"{rep['written']:,} rows merged, {rep['pruned']:,} pruned; "
                       f"table {rep['rows_before']:,} -> {rep['rows_after']:,} rows, "
                       f"{os.path.getsize(_phrase_db) / 1e6:.0f} MB")
+            # P2-3 (rev 85): days to the halt ceiling at today's net gain.
+            if rep.get("days_to_ceiling") is not None:
+                print(f"  phrase_counts: +{rep['daily_gain']:,} rows net this run; "
+                      f"{_pc.DAILY_MAX_ROWS:,}-row ceiling in ~{rep['days_to_ceiling']} days"
+                      + (f"  [WARN] under {_pc.PROJECTION_WARN_DAYS} days"
+                         if rep.get("projection_warn") else ""))
+            _phrase_report = {k: rep.get(k) for k in (
+                "rows_after", "written", "pruned", "halted", "daily_gain",
+                "days_to_ceiling", "projection_warn")}
+            _phrase_report["ceiling"] = _pc.DAILY_MAX_ROWS
         except Exception as e:
             print(f"  [warn] Phrase counts failed (non-fatal): {e}")
 
@@ -4471,6 +4579,7 @@ def main():
         "phases": phase_durations(_PHASE_MARKS, time.time()),
         "duration_minutes": round(duration / 60.0, 1),
         "gemini_usage": _gemini_usage,
+        "phrase_counts": _phrase_report,
     }
 
     if run_id:
