@@ -1,14 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { submitShipRequest, generateFingerprint } from "../lib/supabase";
+import { useRef, useState } from "react";
+import { submitShipRequest } from "../lib/supabase";
 import type { ShipCategory } from "../lib/types";
 import "../styles/feedback.css";
 
 /* ---------------------------------------------------------------------------
    FeedbackForm — the whole of the retired void --ship, reduced to a calm note.
-   Reuses submitShipRequest + generateFingerprint + the same localStorage rate
-   limit, so a note lands in the same ship_requests table with no new migration.
+   Reuses submitShipRequest + the same localStorage rate limit, so a note lands in the same ship_requests table with no new migration.
    No board, no votes, no replies, no status.
    --------------------------------------------------------------------------- */
 
@@ -22,6 +21,33 @@ const CATEGORY_OPTIONS: { value: ShipCategory; label: string }[] = [
 const RATE_LIMIT_KEY = "void-ship-submissions";
 const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW = 3600000;
+
+/* A coarse device class ("mobile safari"), never the user agent itself. The
+   Worker accepts only this shape and stores null for anything else, and the
+   privacy page names it. */
+function deviceClass(): string | null {
+  if (typeof navigator === "undefined") return null;
+  const ua = navigator.userAgent;
+  const kind = /iPad|Tablet|PlayBook|Silk|(Android(?!.*Mobile))/i.test(ua)
+    ? "tablet"
+    : /Mobi|iPhone|iPod|Android/i.test(ua)
+      ? "mobile"
+      : "desktop";
+  const family = /SamsungBrowser/i.test(ua)
+    ? "samsung"
+    : /Edg\//i.test(ua)
+      ? "edge"
+      : /OPR\/|Opera/i.test(ua)
+        ? "opera"
+        : /Firefox|FxiOS/i.test(ua)
+          ? "firefox"
+          : /Chrome|CriOS|Chromium/i.test(ua)
+            ? "chrome"
+            : /Safari/i.test(ua)
+              ? "safari"
+              : "other";
+  return `${kind} ${family}`;
+}
 
 function checkRateLimit(): boolean {
   try {
@@ -57,13 +83,8 @@ export default function FeedbackForm() {
   const [titleError, setTitleError] = useState("");
   const [messageError, setMessageError] = useState("");
   const [success, setSuccess] = useState(false);
-  const fingerprintRef = useRef("");
   const titleRef = useRef<HTMLInputElement>(null);
   const messageRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    fingerprintRef.current = generateFingerprint();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,8 +121,7 @@ export default function FeedbackForm() {
     }
     setSubmitting(true);
     setError("");
-    const deviceInfo =
-      typeof navigator !== "undefined" ? navigator.userAgent.slice(0, 180) : null;
+    const deviceInfo = deviceClass();
     const result = await submitShipRequest({
       title: title.trim(),
       description: message.trim(),
@@ -109,7 +129,6 @@ export default function FeedbackForm() {
       area: "other",
       edition_context: null,
       device_info: deviceInfo,
-      ip_hash: fingerprintRef.current,
     });
     if (result) {
       recordSubmission();

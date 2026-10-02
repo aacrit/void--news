@@ -60,6 +60,8 @@ if "--floors" in sys.argv:
     else:
         probs.append("VOID_SQLITE_PATH not set: cannot tell whether engine.json "
                      "describes this run")
+    for w in eh.budget_warnings(health):
+        print(f"  WARN  {w}")
     for p in probs:
         print(f"  FAIL  {p}")
     sys.exit(1 if probs else 0)
@@ -178,6 +180,24 @@ check("/sources prints the measured movement from engine.json",
       and "engine.scoring.outlet_only_share" in src_client)
 check("/sources restates no measured movement as a literal",
       not re.search(r"\d+(\.\d+)?\s+points on average", src_client))
+# /press (P1-10, 2026-10-02). Its method callout said "on a full feature, the
+# article's own words lead" against a 10 point cap and a measured mean near
+# 1.4. It now reads engine.json and leanBounds exactly as /sources does, and
+# may not write an engine number by hand where either provides one.
+press = (ROOT / "frontend" / "app" / "press" / "page.tsx").read_text(encoding="utf-8")
+press_code = re.sub(r"/\*[\s\S]*?\*/", "", press)
+check("/press prints the measured movement from engine.json",
+      "engine.text_movement_rated.mean_abs" in press_code
+      and "engine.text_movement_rated.zero_share" in press_code
+      and 'join(process.cwd(), "build-data", "engine.json")' in press_code)
+check("/press quotes delta_max from leanBounds, not a literal",
+      "{RATED_DELTA_MAX}" in press_code and "{FULL_TEXT_WORDS}" in press_code)
+check("/press restates no engine number as a literal",
+      not re.search(r"\d+(\.\d+)?\s+points\b|\b\d+%\s+of them|\bunder \d+ words",
+                    press_code), "a hand-written points, share or word-count figure")
+check("/press no longer says the words lead",
+      not re.search(r"own words\s+lead", press_code))
+
 retired = {
     "frontend/app/components/about/AboutPipeline.tsx": "a full article leans on its words",
     "frontend/app/components/about/beats/BeatSigil.tsx": "so its words carry more",
@@ -207,6 +227,85 @@ i_floor = wf.find("tests/test_engine_health.py --floors")
 check("pipeline.yml runs the floor check", i_floor > 0)
 check("and runs it after the data commit, so a bad day still ships the paper",
       i_commit > 0 and i_floor > i_commit)
+
+# --- 6. Runtime and the flash meter (P2-1, P2-12, rev 85) ---------------------
+def run_fixture(duration_s, metrics):
+    c = fixture(direct_full=6, direct_short=2)
+    c.execute("""create table pipeline_runs (id text, started_at text, completed_at text,
+                 status text, duration_seconds real, llm_metrics text)""")
+    c.execute("insert into pipeline_runs values ('old', '2026-09-24 11:00:00', "
+              "'2026-09-24T13:00:00+00:00', 'completed', 9999, '{}')")
+    c.execute("insert into pipeline_runs values ('r1', '2026-09-25 11:00:00', "
+              "'2026-09-25T13:00:00+00:00', 'completed', ?, ?)",
+              (duration_s, json.dumps(metrics)))
+    c.execute("insert into pipeline_runs values ('live', '2026-09-26 11:00:00', null, "
+              "'running', null, null)")
+    return eh.compute(c)
+
+
+flash = "gemini-2.5-flash"
+usage = {"requests_by_model": {flash: 14, "gemini-2.5-flash-lite": 52},
+         "calls_by_model": {flash: 12, "gemini-2.5-flash-lite": 50},
+         "uncounted_calls_by_model": {"gemini-2.5-flash-lite": 3},
+         "flash_model": flash, "lite_model": "gemini-2.5-flash-lite"}
+h6 = run_fixture(95 * 60, {"phases": {"scrape": 1200.0, "rerank": 120.0}, "gemini_usage": usage})
+check("engine.json carries the newest completed run's runtime, in minutes",
+      h6.get("runtime", {}).get("total_minutes") == 95.0
+      and h6["runtime"].get("run_id") == "r1", str(h6.get("runtime")))
+check("and its phases, in minutes",
+      h6["runtime"].get("phases_minutes") == {"scrape": 20.0, "rerank": 2.0},
+      str(h6["runtime"].get("phases_minutes")))
+check("the meter reports requests by model, retries and count_call=False included",
+      h6.get("llm", {}).get("flash_requests") == 14
+      and h6["llm"]["requests_by_model"]["gemini-2.5-flash-lite"] == 52, str(h6.get("llm")))
+check("a healthy runtime and meter raise nothing",
+      eh.budget_problems(h6) == [] and eh.budget_warnings(h6) == [])
+check("a run over 150 minutes fails",
+      any("150-minute" in p for p in eh.problems(run_fixture(151 * 60, {}))))
+slow = run_fixture(120 * 60, {})
+check("a run between 110 and 150 minutes warns and does not fail",
+      eh.budget_problems(slow) == [] and len(eh.budget_warnings(slow)) == 1)
+check("the ceilings are the plan's", (eh.RUNTIME_WARN_MINUTES, eh.RUNTIME_FAIL_MINUTES) == (110, 150))
+over = dict(usage, requests_by_model={flash: 21})
+check("21 flash requests in a run fails",
+      any("flash" in p for p in eh.budget_problems(run_fixture(60 * 60, {"gemini_usage": over}))))
+near = dict(usage, requests_by_model={flash: 19})
+nh = run_fixture(60 * 60, {"gemini_usage": near})
+check("19 flash requests warns and does not fail",
+      eh.budget_problems(nh) == [] and len(eh.budget_warnings(nh)) == 1)
+check("the flash gate is the free tier's 20 a day, warning over 18",
+      (eh.FLASH_DAILY_CAP, eh.FLASH_WARN) == (20, 18))
+legacy = run_fixture(100 * 60, {"summaries_total": 35})
+check("a run from before rev 85 (no phases, no meter) is tolerated",
+      legacy["runtime"]["phases_minutes"] == {} and "llm" not in legacy
+      and eh.budget_problems(legacy) == [], str(legacy.get("runtime")))
+check("a DB with no pipeline_runs table is tolerated", "runtime" not in h)
+pcw = run_fixture(60 * 60, {"phrase_counts": {"halted": False, "projection_warn": True,
+                                              "days_to_ceiling": 9.5, "daily_gain": 420000,
+                                              "ceiling": 8000000}})
+check("phrase_counts under two weeks from its ceiling warns and does not fail",
+      eh.budget_problems(pcw) == [] and any("phrase_counts" in w for w in eh.budget_warnings(pcw)))
+pch = run_fixture(60 * 60, {"phrase_counts": {"halted": True, "ceiling": 8000000}})
+check("phrase_counts halted at its ceiling fails",
+      any("HALTED" in p for p in eh.budget_problems(pch)))
+check("an engine.json without the blocks raises nothing",
+      eh.budget_problems({}) == [] and eh.budget_warnings({}) == [])
+if ENGINE_JSON.exists():
+    e = json.loads(ENGINE_JSON.read_text(encoding="utf-8"))
+    if "runtime" in e:
+        check("a committed runtime block is well formed",
+              isinstance(e["runtime"].get("phases_minutes"), dict)
+              and "total_minutes" in e["runtime"])
+    if "llm" in e:
+        check("a committed llm block names the flash model and its count",
+              isinstance(e["llm"].get("flash_requests"), int) and e["llm"].get("flash_model"))
+
+_main = (ROOT / "pipeline" / "main.py").read_text(encoding="utf-8")
+check("main.py records phase timings and the meter into llm_metrics",
+      '"phases": phase_durations(_PHASE_MARKS' in _main and '"gemini_usage": _gemini_usage' in _main)
+_gc = (ROOT / "pipeline" / "summarizer" / "gemini_client.py").read_text(encoding="utf-8")
+check("gemini_client sends every request through the meter (one generate_content call site)",
+      _gc.count("generate_content(") == 1 and "def _send(" in _gc)
 
 if failures:
     print(f"\nFAIL  {len(failures)} engine-health check(s)")

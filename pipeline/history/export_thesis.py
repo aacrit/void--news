@@ -59,6 +59,21 @@ MANIFEST = ROOT / "frontend/public/data/history-audio.json"
 PRODUCERS = ROOT / "data/history/producers.yaml"
 
 
+def served_image(x: dict) -> str | None:
+    """The exhibit image the page loads. A Commons original is DERIVED from
+    the file name its accession names (md5 hash path, pipeline/history/commons.py),
+    never copied from a hand-typed path: four of those served nothing on
+    2026-10-02. Any other image is served as the ledger holds it."""
+    from pipeline.history import commons
+    img = x.get("image") or None
+    if not img:
+        return None
+    acc = commons.file_name(x.get("accession"))
+    if acc and commons.UPLOAD_RE.search(str(img)) and "/thumb/" not in str(img):
+        return commons.upload_url(acc)
+    return img
+
+
 def producer_labels() -> dict[str, str]:
     if not PRODUCERS.exists():
         return {}
@@ -88,6 +103,11 @@ def load_inputs(slug: str, draft: bool = False):
     episode = None
     if MANIFEST.exists():
         episode = (json.loads(MANIFEST.read_text(encoding="utf-8")).get("episodes") or {}).get(slug)
+        # A withdrawn episode (its audio contradicts the corrected script) is
+        # not served, so no episode mark may point a listener into it: the
+        # excerpt still prints from the script, with no start time.
+        if isinstance(episode, dict) and episode.get("audio_withdrawn"):
+            episode = None
     return event, ledger, thesis, script, episode
 
 
@@ -200,7 +220,7 @@ class Exporter:
                 "t": "exhibit", "n": n, "id": ref, "kind": x.get("kind"), "title": x.get("title"),
                 "creator": x.get("creator"), "date": x.get("date"), "repository": x.get("repository"),
                 "accession": x.get("accession"), "licence": x.get("licence"), "url": x.get("url"),
-                "image": x.get("image") or None, "shows": x.get("shows"), "doesNotShow": x.get("does_not_show"),
+                "image": served_image(x), "shows": x.get("shows"), "doesNotShow": x.get("does_not_show"),
                 "text": None, "source": x.get("source"), "locator": x.get("locator"),
             }
             if x.get("kind") == "document" and x.get("source"):

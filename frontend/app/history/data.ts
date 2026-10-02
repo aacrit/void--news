@@ -279,6 +279,7 @@ function mapEventWithRelations(
     dateRange: row.duration ?? row.date_display,
     location: row.country ?? "",
     heroImage: row.hero_image_url || undefined,
+    heroImageWidth: typeof row.hero_image_width === "number" ? row.hero_image_width : undefined,
     heroCaption: row.subtitle ?? undefined,
     heroAttribution: row.hero_image_attribution ?? undefined,
     contextNarrative: row.summary ?? "",

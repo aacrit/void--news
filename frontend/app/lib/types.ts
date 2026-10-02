@@ -37,6 +37,11 @@ export interface BiasSpread {
    *  the lean is measured from instead of implying the whole roster voted. */
   leanMeasuredCount?: number;
   leanTotalCount?: number;
+  /** "outlet": the seven counts are one vote per outlet (2026-10-02 on). */
+  leanVote?: "outlet" | "article";
+  /** State-affiliated outlets, on their own rung outside the seven buckets. */
+  leanStateCount?: number;
+  leanStateOutlets?: readonly string[];
 }
 
 export interface Source {
@@ -54,6 +59,12 @@ export interface LeanRationale {
   topRightKeywords: string[];
   framingPhrasesFound: string[];
   entitySentiments: Record<string, number>;
+  /** Points the article's words moved it off the outlet baseline (signed,
+   *  after the length weighting): score = baseline + textShift. */
+  textShift?: number;
+  /** The most the words may move this outlet's articles (10 for a rated
+   *  outlet, 24 unrated, 8 state-affiliated). */
+  deltaMax?: number;
 }
 
 /** Rationale for opinion vs reporting classification */

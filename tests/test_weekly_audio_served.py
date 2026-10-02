@@ -108,10 +108,93 @@ def loudness(path: pathlib.Path) -> float | None:
     return float(m.group(1)) if m else None
 
 
+WEEKLY_AUDIO_DIR = PUBLIC / "audio/weekly-world"
+WEEKLY_ISSUES = ROOT / "frontend/build-data/weekly-issues.json"
+
+
+def _issue_rows() -> list[dict]:
+    """Every Weekly issue row the deploy tree carries: the back-issue archive
+    and the current issue."""
+    rows: list[dict] = []
+    for path in (WEEKLY_ISSUES, PUBLIC / "data/weekly.json"):
+        if not path.exists():
+            continue
+        blob = json.loads(path.read_text(encoding="utf-8"))
+        if isinstance(blob, dict):
+            blob = blob["issues"] if isinstance(blob.get("issues"), list) else [blob]
+        rows.extend(r for r in blob if isinstance(r, dict))
+    return rows
+
+
+def orphan_weekly_audio(audio_dir: pathlib.Path, rows: list[dict]) -> list[str]:
+    """Files under the Weekly audio directory that no issue row names.
+
+    The inverse of the gate below. On 2026-10-02 the withdrawn Issue #26 audio
+    (rev 84 cut the passages it speaks) still answered 206 at
+    `/audio/weekly-world/latest.mp3` and `/2026-09-21-am.mp3`, with
+    `latest.chapters.json` titled for it, because withdrawing the episode
+    cleared the row and left the files: no row pointed at them, so no check
+    looked. A file is legitimate only if a row's `audio_url` names it, or it
+    is that MP3's `.chapters.json` sidecar, or it is a `latest.*` alias that
+    is byte-identical to a named file (the producer writes one beside every
+    render). Anything else is audio no page offers and a URL still serves.
+    """
+    if not audio_dir.exists():
+        return []
+    named: set[str] = set()
+    for r in rows:
+        url = (r.get("audio_url") or "").split("?")[0]
+        if not url.startswith("/audio/weekly-world/"):
+            continue
+        name = url.rsplit("/", 1)[1]
+        named.add(name)
+        named.add(name.rsplit(".", 1)[0] + ".chapters.json")
+    named_bytes = {(audio_dir / n).read_bytes() for n in named if (audio_dir / n).is_file()}
+    out = []
+    for f in sorted(p for p in audio_dir.iterdir() if p.is_file()):
+        if f.name in named:
+            continue
+        if f.name.startswith("latest.") and f.read_bytes() in named_bytes:
+            continue
+        out.append(f.name)
+    return out
+
+
+def check_no_orphans() -> None:
+    """Runs everywhere, with or without ffmpeg: it reads names and bytes."""
+    orphans = orphan_weekly_audio(WEEKLY_AUDIO_DIR, _issue_rows())
+    check("no Weekly audio file that no issue row names", not orphans,
+          (", ".join(orphans) + ": delete it (a withdrawn episode must not stay "
+           "reachable by URL)") if orphans else "")
+
+    # The rule must be able to fail: a planted orphan beside a named file.
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="void-weekly-orphan-"))
+    try:
+        (tmp / "2026-01-04-pm.mp3").write_bytes(b"named")
+        (tmp / "2026-01-04-pm.chapters.json").write_bytes(b"{}")
+        (tmp / "latest.mp3").write_bytes(b"named")
+        (tmp / "2025-12-28-pm.mp3").write_bytes(b"withdrawn")
+        (tmp / "latest.chapters.json").write_bytes(b"withdrawn chapters")
+        planted = orphan_weekly_audio(tmp, [
+            {"audio_url": "/audio/weekly-world/2026-01-04-pm.mp3?v=1"},
+            {"audio_url": None}])
+        check("the orphan rule catches a planted withdrawn file and a stale alias",
+              planted == ["2025-12-28-pm.mp3", "latest.chapters.json"], str(planted))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--url", help="probe this origin instead of the local tree")
     args = ap.parse_args()
+
+    if not args.url:
+        print("Weekly audio directory: every file is named by an issue row")
+        check_no_orphans()
+        if failures:
+            print(f"\nFAIL  {len(failures)} Weekly audio check(s)")
+            return 1
 
     if not (have("ffprobe") and have("ffmpeg")):
         print("SKIP  ffmpeg/ffprobe not available; cannot judge the artifact")

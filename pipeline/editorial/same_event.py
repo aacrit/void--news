@@ -780,6 +780,123 @@ def incoherent_members(member_titles: list[str],
             if not (topic_stems(t) & vocab) and not (topic_stems(t) & head)], vocab
 
 
+# ---------------------------------------------------------------------------
+# Entity coherence (rev 85): cut, do not abstain.
+#
+# On 2026-10-01 the Putin card ("Putin Warns Russia Will Use All Weapons if
+# Directly Attacked") carried a Kanye West concert story, and about half of
+# its 33 members were Kanye or unrelated Moscow items. The headline pass above
+# could not touch it: ten Kanye headlines out of 33 made "kanye" MODAL, and
+# with half the members off any one vocabulary the pass reported "no core" and
+# trimmed nothing. The card's summary then said "Separately, two sold-out
+# concerts by Kanye West ...", and the contamination fed the card's source
+# count and its lean label.
+#
+# The headline the card carries IS the core, so this pass anchors on it: the
+# entities (capitalised names, broad geography removed) the cluster title
+# names, widened by every entity at least two title-anchored members share.
+# A member that names entities and shares none of them with that bag is cut.
+# A member that names no entity is not judged. It does NOT invalidate the
+# summary (that would cost a model call); the Stage 2 card repair cuts any
+# sentence that names only members this pass removed.
+# ---------------------------------------------------------------------------
+ENTITY_MAX_CUT_SHARE = 0.75   # above this the title itself may be the stray
+ENTITY_MIN_ANCHORED = 2       # title-anchored members needed to define a core
+ENTITY_MIN_MEMBERS = 4        # below this one cut is too large a share
+_ENTITY_TOKEN = re.compile(r"\b[A-Z][A-Za-z'’-]{2,}")
+_ENTITY_STOP = frozenset("""
+the this that these those there their they his her its and but for with from
+president prime minister ministry foreign secretary general chief state states
+government official officials police court news report reports breaking live
+monday tuesday wednesday thursday friday saturday sunday january february march
+april may june july august september october november december read full
+article say says said
+""".split())
+
+
+# Countries and their demonyms join unrelated stories ("Russia" holds both
+# the Putin warning and a Kanye concert). Alliances do not: NATO and the EU
+# are the subject of the stories that name them, so unlike BROAD_GEOGRAPHY
+# this list leaves them in.
+_BROAD_ENTITIES = frozenset("""
+russia russian russians america american americans usa britain british uk
+china chinese iran iranian israel israeli india indian pakistan pakistani
+japan japanese korea korean germany german france french spain spanish italy
+italian ukraine ukrainian europe european europeans turkey turkish brazil
+brazilian mexico mexican canada canadian australia australian africa african
+asia asian arab middle east west western moscow washington london beijing
+""".split())
+
+
+def _entity_key(tok: str) -> str | None:
+    w = re.sub(r"['’]s$", "", tok).lower().strip("'’-")
+    if len(w) < 3 or w in _ENTITY_STOP or w in _BROAD_ENTITIES:
+        return None
+    return w
+
+
+def _midsentence_caps(text: str) -> set[str]:
+    out: set[str] = set()
+    for sent in re.split(r"(?<=[.!?])\s+", text or ""):
+        for m in _ENTITY_TOKEN.finditer(sent):
+            if m.start() == 0:
+                continue
+            k = _entity_key(m.group(0))
+            if k:
+                out.add(k)
+    return out
+
+
+def entity_outliers(members: list[tuple[str, str]],
+                    cluster_title: str) -> tuple[list[int], set[str]]:
+    """Indices of members whose entities share nothing with the title's bag.
+
+    `members` are (headline, summary) pairs. Headline tokens count only when
+    the cluster's own summaries use them as names (a Title Case headline
+    capitalises every word). Returns ([], bag) when the title names nothing or
+    fewer than ENTITY_MIN_ANCHORED members carry it, and when cutting would
+    take more than ENTITY_MAX_CUT_SHARE of the cluster.
+    """
+    # Names as the cluster's own summaries use them. Headlines are Title Case
+    # and capitalise every word, so a headline token counts only when some
+    # member's summary capitalises it mid-sentence.
+    vocab: set[str] = set()
+    for _t, s in members:
+        vocab |= _midsentence_caps(s)
+
+    def ents(title: str, summary: str) -> set[str]:
+        out = _midsentence_caps(summary)
+        for m in _ENTITY_TOKEN.finditer(title or ""):
+            k = _entity_key(m.group(0))
+            if k and k in vocab:
+                out.add(k)
+        return out
+
+    per = [ents(t, s) for t, s in members]
+    head = {k for m in _ENTITY_TOKEN.finditer(cluster_title or "")
+            for k in [_entity_key(m.group(0))] if k and k in vocab}
+    if not head:
+        return [], set()
+    anchored = [e for e in per if e & head]
+    if len(anchored) < ENTITY_MIN_ANCHORED:
+        return [], head
+    counts: dict[str, int] = {}
+    for e in anchored:
+        for k in e:
+            counts[k] = counts.get(k, 0) + 1
+    bag = head | {k for k, n in counts.items() if n >= 2}
+    # Two independent signals, as in incoherent_members: a member goes only
+    # when it names at least two entities, none in the bag, AND shares no
+    # word with the cluster's headline.
+    head_stems = topic_stems(cluster_title) - BROAD_GEOGRAPHY
+    out = [i for i, e in enumerate(per)
+           if len(e) >= 2 and not (e & bag)
+           and not (topic_stems(members[i][0]) & head_stems)]
+    if len(out) > ENTITY_MAX_CUT_SHARE * len(members):
+        return [], bag
+    return out, bag
+
+
 MIN_MEMBERS_TO_TRIM = 6   # below this one removal is a large share of a small
                           # cluster, and the borderline calls (a wire stub with
                           # a generic headline) cost more than they fix.
@@ -803,7 +920,9 @@ def split_incoherent_candidates(supabase, candidate_ids: list[str],
     trimming would choose an arbitrary half.
     """
     log = log_fn or (lambda m: print(m))
-    metrics = {"trimmed": 0, "removed": 0, "reported": 0, "abstained": 0}
+    metrics = {"trimmed": 0, "removed": 0, "reported": 0, "abstained": 0,
+               "entity_trimmed": 0, "trimmed_ids": [], "entity_trimmed_ids": [],
+               "entity_removed_text": {}}
     if not candidate_ids:
         return metrics
     try:
@@ -817,7 +936,7 @@ def split_incoherent_candidates(supabase, candidate_ids: list[str],
         all_ids = sorted({a for v in links.values() for a in v})
         arts: dict[str, dict] = {}
         for i in range(0, len(all_ids), 200):
-            res = supabase.table("articles").select("id,title,source_id").in_(
+            res = supabase.table("articles").select("id,title,summary,source_id").in_(
                 "id", all_ids[i:i + 200]).execute()
             for a in (res.data or []):
                 arts[a["id"]] = a
@@ -835,17 +954,30 @@ def split_incoherent_candidates(supabase, candidate_ids: list[str],
             member_titles = [arts[a].get("title") or "" for a in aids]
             idx, vocab = incoherent_members(
                 member_titles, titles_by_cluster.get(cid, ""))
-            if len(vocab) < MODAL_MIN_STEMS:
-                metrics["abstained"] += 1
-                continue
-            if not idx:
-                continue
             head = titles_by_cluster.get(cid, "")[:44]
-            if len(aids) < MIN_MEMBERS_TO_TRIM or len(idx) * 2 > len(aids):
-                metrics["reported"] += 1
-                log(f"  [coherence-report] \"{head}\": {len(idx)} of {len(aids)} "
-                    f"members share none of {sorted(vocab)[:4]}, not trimmed "
-                    f"({'too small' if len(aids) < MIN_MEMBERS_TO_TRIM else 'no core'})")
+            by_entity = False
+            no_vocab = len(vocab) < MODAL_MIN_STEMS
+            no_core = bool(idx) and (len(aids) < MIN_MEMBERS_TO_TRIM
+                                     or len(idx) * 2 > len(aids))
+            if no_vocab or no_core:
+                # Where the headline pass abstains or only reports, the entity
+                # pass decides (rev 85): the card's own headline is the core.
+                eidx: list[int] = []
+                if len(aids) >= ENTITY_MIN_MEMBERS:
+                    eidx, _bag = entity_outliers(
+                        [(arts[a].get("title") or "", arts[a].get("summary") or "")
+                         for a in aids], titles_by_cluster.get(cid, ""))
+                if not eidx:
+                    if no_vocab:
+                        metrics["abstained"] += 1
+                    else:
+                        metrics["reported"] += 1
+                        log(f"  [coherence-report] \"{head}\": {len(idx)} of {len(aids)} "
+                            f"members share none of {sorted(vocab)[:4]}, not trimmed "
+                            f"({'too small' if len(aids) < MIN_MEMBERS_TO_TRIM else 'no core'})")
+                    continue
+                idx, by_entity = eidx, True
+            if not idx:
                 continue
 
             drop = [aids[i] for i in idx]
@@ -855,24 +987,34 @@ def split_incoherent_candidates(supabase, candidate_ids: list[str],
                         "cluster_id", cid).eq("article_id", aid).execute()
                 keep = [a for a in aids if a not in set(drop)]
                 srcs = {arts[a].get("source_id") for a in keep} - {None, ""}
-                supabase.table("story_clusters").update({
-                    "source_count": len(srcs),
+                update = {"source_count": len(srcs)}
+                if not by_entity:
                     # The stored summary was written from the contaminated
                     # membership. Clearing the cache key and the tier makes 8d
                     # treat this as a miss and rewrite the card.
-                    "summary_tier": None,
-                    "summary_article_hash": None,
-                }).eq("id", cid).execute()
+                    update.update({"summary_tier": None, "summary_article_hash": None})
+                # An entity trim keeps the summary: a rewrite would cost a model
+                # call. Stage 2's card repair cuts every sentence that names
+                # only the members removed here (derived_grounding.repair_card).
+                supabase.table("story_clusters").update(update).eq("id", cid).execute()
             except Exception as e:
                 log(f"  [warn][coherence] write failed for {cid[:8]}: {e}")
                 continue
             metrics["trimmed"] += 1
             metrics["removed"] += len(drop)
+            metrics["trimmed_ids"].append(cid)
+            if by_entity:
+                metrics["entity_trimmed"] += 1
+                metrics["entity_trimmed_ids"].append(cid)
+                metrics["entity_removed_text"][cid] = "\n".join(
+                    f"{arts[a].get('title') or ''}\n{arts[a].get('summary') or ''}"
+                    for a in drop)
             for i in idx:
-                log(f"  [coherence] \"{head}\" -> removed "
+                log(f"  [coherence{'-entity' if by_entity else ''}] \"{head}\" -> removed "
                     f"\"{member_titles[i][:58]}\"")
             log(f"  [coherence] \"{head}\": {len(keep)} members, "
-                f"{len(srcs)} sources, summary invalidated")
+                f"{len(srcs)} sources, "
+                + ("summary kept for the card repair" if by_entity else "summary invalidated"))
             try:
                 enrich = _bias_reaggregator()
                 if enrich is not None:

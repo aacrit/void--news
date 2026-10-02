@@ -3,7 +3,9 @@ import Link from "next/link";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { pageMetadata, SITE_URL } from "../lib/siteMeta";
-import { getWeeklyIssues } from "../lib/weeklyIssues";
+import { getWeeklyIssues, getWeeklyCorrections } from "../lib/weeklyIssues";
+import { audioWithdrawal } from "../lib/weeklyAudio";
+import { issueLabel } from "../weekly/format";
 import type { AudioChapter } from "../lib/types";
 import CopyButton from "../press/CopyButton";
 import AudioPlay from "./AudioPlay";
@@ -47,6 +49,7 @@ interface HistoryEpisode {
   durationSeconds: number;
   publishedAt?: string | null;
   chapters?: AudioChapter[] | null;
+  audio_withdrawn?: boolean;
 }
 
 function readJson<T>(rel: string): T | null {
@@ -57,8 +60,12 @@ function readJson<T>(rel: string): T | null {
   }
 }
 
+/* Whole seconds, truncated: the rule the player, the History pages and the
+   podcast feeds (`_itunes_duration`) all use, so one episode never reads
+   11:41 here and 11:40 in a podcast app. tests/test_podcast_feed.py runs
+   this function against the feed's on the same durations. */
 function clock(seconds: number): string {
-  const s = Math.max(0, Math.round(seconds));
+  const s = Math.max(0, Math.floor(seconds));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 }
 
@@ -70,10 +77,21 @@ function dateUTC(iso: string): string {
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 }
 
+/* How many episodes a committed feed carries. A feed with none is an address
+   a podcast app would subscribe to and find empty, so it is not offered. Read
+   at build from the same public/ file the CDN serves. */
+function feedItems(file: string): number {
+  try {
+    return (readFileSync(join(process.cwd(), "public", file), "utf8").match(/<item[\s>]/g) ?? []).length;
+  } catch {
+    return 0;
+  }
+}
+
 const FEEDS = [
-  { key: "onair", title: "On Air", cadence: "Daily", feed: `${SITE_URL}/podcast-world.xml` },
-  { key: "argument", title: "The Argument", cadence: "Sundays", feed: `${SITE_URL}/podcast-weekly.xml` },
-  { key: "history", title: "History", cadence: "One event per episode", feed: `${SITE_URL}/podcast-history.xml` },
+  { key: "onair", title: "On Air", cadence: "Daily", file: "podcast-world.xml" },
+  { key: "argument", title: "The Argument", cadence: "Sundays", file: "podcast-weekly.xml" },
+  { key: "history", title: "History", cadence: "One event per episode", file: "podcast-history.xml" },
 ] as const;
 
 export default function AudioPage() {
@@ -81,14 +99,27 @@ export default function AudioPage() {
   const dailyDuration = brief?.audio_duration_seconds != null ? Number(brief.audio_duration_seconds) : 0;
   const daily = brief?.audio_url && dailyDuration > 0 ? brief : null;
 
-  const weekly = getWeeklyIssues().find((i) => i.audio_url) ?? null;
+  const issues = getWeeklyIssues();
+  const weekly = issues.find((i) => i.audio_url) ?? null;
+  /* The latest issue's recording, if a correction withdrew it. Read from the
+     corrections file, never written here by hand. */
+  const latest = issues[0] ?? null;
+  const withdrawn = latest && !latest.audio_url
+    ? audioWithdrawal(getWeeklyCorrections(latest.week_start), latest.week_start)
+    : null;
+  const feeds = FEEDS
+    .filter((f) => feedItems(f.file) > 0)
+    .map((f) => ({ ...f, feed: `${SITE_URL}/${f.file}` }));
 
   const manifest = readJson<{ episodes: Record<string, HistoryEpisode> }>("public/data/history-audio.json");
-  const episodes = Object.entries(manifest?.episodes ?? {})
-    .filter(([, e]) => e && e.url && e.durationSeconds > 0)
+  // A withdrawn episode (its script was corrected after the render) is not
+  // offered here, as on its own page and in the feed.
+  const served = Object.entries(manifest?.episodes ?? {})
+    .filter(([, e]) => e && e.url && e.durationSeconds > 0 && !e.audio_withdrawn);
+  const episodes = [...served]
     .sort((a, b) => (b[1].publishedAt ?? "").localeCompare(a[1].publishedAt ?? ""))
     .slice(0, 6);
-  const historyCount = Object.keys(manifest?.episodes ?? {}).length;
+  const historyCount = served.length;
 
   return (
     <div className="audio-page">
@@ -127,6 +158,12 @@ export default function AudioPage() {
             <span className="audio-prog__n">02</span> Sundays
           </p>
           <h2 id="audio-argument-h" className="audio-prog__title">The Argument</h2>
+          {withdrawn && latest ? (
+            <p className="audio-prog__line" data-weekly-audio="withdrawn">
+              The recording of {issueLabel(latest.issue_number).replace(/^Pilot issue$/, "the pilot issue")} was withdrawn after a correction.{" "}
+              <Link href="/weekly#corrections" className="audio-prog__open">Read the correction</Link>
+            </p>
+          ) : null}
           {weekly ? (
             <>
               <p className="audio-prog__line">{weekly.cover_headline}</p>
@@ -139,8 +176,8 @@ export default function AudioPage() {
                 <Link href="/weekly" className="audio-prog__open">Open the issue</Link>
               </div>
             </>
-          ) : (
-            <p className="audio-prog__line">No issue has been recorded yet.</p>
+          ) : withdrawn ? null : (
+            <p className="audio-prog__line">No recording is published.</p>
           )}
         </section>
 
@@ -180,7 +217,7 @@ export default function AudioPage() {
           <h2 id="audio-feeds-h" className="audio-feeds__title">Subscribe</h2>
           <p className="audio-feeds__lede">Paste a feed address into any podcast app.</p>
           <ul className="audio-feeds__list">
-            {FEEDS.map((f) => (
+            {feeds.map((f) => (
               <li key={f.key} className="audio-feed">
                 <span className="audio-feed__name">
                   {f.title} <span className="audio-feed__cadence">{f.cadence}</span>

@@ -330,6 +330,23 @@
   letter-spacing: 0.08em;
 }
 
+/* The line where the player would sit when a correction withdrew the issue's
+   recording (P1-16). Same rail as the strip above, so it reads as furniture. */
+.wk-audio-note {
+  grid-column: rail-start / rail-end;
+  margin: var(--space-3) 0 0;
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+  color: var(--fg-secondary);
+}
+
+.wk-audio-note__link {
+  color: var(--wk-accent);
+  border-bottom: 1px solid currentColor;
+  text-decoration: none;
+}
+
 .wk-utils__time {
   color: var(--fg-muted);
   font-variant-numeric: tabular-nums;

@@ -2,7 +2,8 @@
 
 import { useState, useCallback, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { DAILY_WIRE } from "./data";
+import { WIRE_CHALLENGES } from "./data";
+import { rotationIndex, utcDateLabel } from "../daily";
 import Transmission from "./components/Transmission";
 import WordInput from "./components/WordInput";
 import ConnectionGuess from "./components/ConnectionGuess";
@@ -25,9 +26,13 @@ type Phase = "loading" | "playing" | "connecting" | "reveal";
 const MAX_WORD_ATTEMPTS = 3;
 
 export default function WireGame() {
-  const challenge = DAILY_WIRE;
+  // Picked after mount by UTC day, so the static HTML (rendered on build day)
+  // and the first client render agree.
+  const [index, setIndex] = useState<number | null>(null);
+  const challenge = WIRE_CHALLENGES[index ?? 0];
   const [phase, setPhase] = useState<Phase>("loading");
   const [mounted, setMounted] = useState(false);
+  const [today, setToday] = useState("");
 
   // Per-word state
   const [solvedWords, setSolvedWords] = useState<Set<number>>(new Set());
@@ -42,6 +47,8 @@ export default function WireGame() {
   const [utcTime, setUtcTime] = useState("");
 
   useEffect(() => {
+    setIndex(rotationIndex(WIRE_CHALLENGES.length));
+    setToday(utcDateLabel());
     setMounted(true);
     const now = new Date();
     const hh = String(now.getUTCHours()).padStart(2, "0");
@@ -50,13 +57,7 @@ export default function WireGame() {
   }, []);
 
   // Format date
-  const dateStr = mounted
-    ? new Date(challenge.date + "T00:00:00").toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
-    : "\u00A0";
+  const dateStr = mounted ? today : "\u00A0";
 
   // Check if all words are found (solved or revealed by penalty)
   const allWordsFound = useMemo(() => {
@@ -166,9 +167,9 @@ export default function WireGame() {
         {/* Header */}
         <header className="wire-page__header">
           <div className="wire-page__header-top">
-            <h1 className="wire-page__title">VOID --WIRE</h1>
+            <h1 className="wire-page__title">THE WIRE</h1>
             <p className="wire-page__meta" suppressHydrationWarning>
-              #{challenge.id} &middot; {dateStr}
+              No. {challenge.id} of {WIRE_CHALLENGES.length} &middot; {dateStr}
             </p>
           </div>
           <div className="wire-page__rule" aria-hidden="true" />

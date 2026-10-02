@@ -1,8 +1,17 @@
 /* ==========================================================================
-   UNDERTOW — Daily Cultural Subtext Puzzle Data
-   30 daily challenges. Pipeline will rotate by day-of-year.
+   UNDERTOW: Daily Cultural Subtext Puzzle Data
+   A fixed bank, served one per UTC day in order and repeated (../daily.ts).
    All artifacts: no names, no dates, no sources. Just the text.
+
+   Rule 1 applies here too. A reveal interprets the artifact in front of the
+   reader; it makes no factual claim about the world that Void's own data
+   cannot carry. 2026-10-02: five such claims were cut (a committee's meeting
+   schedule, a text's age, an astronomy explanation, two claims about history),
+   and the challenge built on an altered quotation of a real document was
+   removed, leaving 29.
    ========================================================================== */
+
+import { rotationIndex } from "../daily";
 
 export type ArtifactCategory =
   | "advertising"
@@ -32,14 +41,13 @@ export interface Axis {
 
 export interface DailyChallenge {
   id: number;
-  date: string;
   axis: Axis;
   artifacts: Artifact[];
   correct_order: string[]; // ids ordered left pole → right pole
   tomorrow_axis?: string;
 }
 
-/** Category label colors — muted, atmospheric */
+/** Category label colors: muted, atmospheric */
 export const CATEGORY_COLORS: Record<ArtifactCategory, string> = {
   advertising: "#b5a08a",
   speech:      "#8a9bb5",
@@ -51,45 +59,9 @@ export const CATEGORY_COLORS: Record<ArtifactCategory, string> = {
   manifesto:   "#b58aaa",
 };
 
-/** Background images per axis — Unsplash License (free commercial use) */
-export const AXIS_IMAGES: Record<string, { url: string; credit: string }> = {
-  CULT: {
-    url: "https://images.unsplash.com/photo-XS49QQVKh_8?w=1920&q=80&auto=format&fit=crop",
-    credit: "Ilia Bronskiy",
-  },
-  BOSS: {
-    url: "https://images.unsplash.com/photo-AHlWf9ICfIc?w=1920&q=80&auto=format&fit=crop",
-    credit: "Willian Justen de Vasconcellos",
-  },
-  "2AM": {
-    url: "https://images.unsplash.com/photo-Xq1VNBrpJzI?w=1920&q=80&auto=format&fit=crop",
-    credit: "Baris Cobanoglu",
-  },
-  DAD: {
-    url: "https://images.unsplash.com/photo-7q-hhI27pUU?w=1920&q=80&auto=format&fit=crop",
-    credit: "Hasan Almasi",
-  },
-  DEFAULT: {
-    // Replaced 2026-05-13: previous Unsplash ID returned 404 in prod (UAT P1-5).
-    // Falls back to the BOSS image — neutral dark architecture works for any axis.
-    url: "https://images.unsplash.com/photo-AHlWf9ICfIc?w=1920&q=80&auto=format&fit=crop",
-    credit: "Willian Justen de Vasconcellos",
-  },
-};
-
-export function getAxisImage(leftPole: string): { url: string; credit: string } {
-  const key = Object.keys(AXIS_IMAGES).find((k) => leftPole.includes(k));
-  return key ? AXIS_IMAGES[key] : AXIS_IMAGES["DEFAULT"];
-}
-
-/** Return today's challenge based on day-of-year (cycles through all 30) */
-export function getDailyChallenge(date?: string): DailyChallenge {
-  const d = date ? new Date(date + "T00:00:00") : new Date();
-  const start = new Date(d.getFullYear(), 0, 0);
-  const diff = d.getTime() - start.getTime();
-  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const index = (dayOfYear - 1) % ALL_CHALLENGES.length;
-  return ALL_CHALLENGES[index];
+/** Today's challenge: a fixed rotation by UTC day (see ../daily.ts). */
+export function getDailyChallenge(now: Date = new Date()): DailyChallenge {
+  return ALL_CHALLENGES[rotationIndex(ALL_CHALLENGES.length, now)];
 }
 
 export const ALL_CHALLENGES: DailyChallenge[] = [
@@ -97,12 +69,11 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 1 ─────────────────────────────────────────────────────────────────── */
   {
     id: 1,
-    date: "2026-04-10",
     axis: {
       label: "SOUNDS LIKE A CULT ←→ SOUNDS LIKE A YOGA CLASS",
       left_pole: "CULT",
       right_pole: "YOGA CLASS",
-      description: "Is this asking you to surrender yourself — or just your Saturday morning?",
+      description: "Is this asking you to surrender yourself, or just your Saturday morning?",
     },
     artifacts: [
       {
@@ -119,7 +90,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "advertising",
         axis_position: -0.9,
         highlighted_words: ["movement", "tribe", "Leave it all"],
-        reveal: "The copy borrows the grammar of conversion. \"Movement\" and \"tribe\" do not belong to fitness — they belong to belonging. The bike is incidental. The subscription is not mentioned.",
+        reveal: "The copy borrows the grammar of conversion. \"Movement\" and \"tribe\" do not belong to fitness: they belong to belonging. The bike is incidental. The subscription is not mentioned.",
       },
       {
         id: "c",
@@ -127,7 +98,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "wellness",
         axis_position: 1.1,
         highlighted_words: ["Honor", "Release", "no longer serves you", "belongs to you"],
-        reveal: "\"No longer serves you\" treats your own feelings as employees you can terminate. The grammar is gentle. The implication — that your current self needs managing — is not.",
+        reveal: "\"No longer serves you\" treats your own feelings as employees you can terminate. The grammar is gentle. The implication, that your current self needs managing, is not.",
       },
       {
         id: "d",
@@ -135,7 +106,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "wellness",
         axis_position: 1.9,
         highlighted_words: ["intention", "mirror", "already have everything"],
-        reveal: "The claim that you already have everything you need is the most radical sentence here — it is the one selling the least. The mat as mirror is a metaphor so soft it almost disappears. This one means it.",
+        reveal: "The claim that you already have everything you need is the most radical sentence here: it is the one selling the least. The mat as mirror is a metaphor so soft it almost disappears. This one means it.",
       },
     ],
     correct_order: ["a", "b", "c", "d"],
@@ -145,7 +116,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 2 ─────────────────────────────────────────────────────────────────── */
   {
     id: 2,
-    date: "2026-04-11",
     axis: {
       label: "YOUR BOSS WROTE THIS ←→ YOUR THERAPIST WROTE THIS",
       left_pole: "BOSS",
@@ -159,7 +129,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "corporate",
         axis_position: -2,
         highlighted_words: ["growth potential", "focused effort", "next level", "contribute"],
-        reveal: "\"Contribute\" is doing significant work here. The text is enthusiastic about your future — specifically, your future usefulness. The question of whether you want to be at the next level is not raised.",
+        reveal: "\"Contribute\" is doing a lot of work here. The text is enthusiastic about your future: specifically, your future usefulness. The question of whether you want to be at the next level is not raised.",
       },
       {
         id: "b",
@@ -171,11 +141,11 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
       },
       {
         id: "c",
-        text: "You can't pour from an empty cup. Rest is not a reward — it's part of the work.",
+        text: "You can't pour from an empty cup. Rest is not a reward: it's part of the work.",
         category: "wellness",
         axis_position: 0.9,
         highlighted_words: ["empty cup", "Rest", "part of the work"],
-        reveal: "The sentence is therapeutic in tone but still frames rest as instrumental — it serves the work. You are being given permission to recover so you can produce. The cup metaphor is a container. So is the logic.",
+        reveal: "The sentence is therapeutic in tone but still frames rest as instrumental: it serves the work. You are being given permission to recover so you can produce. The cup metaphor is a container. So is the logic.",
       },
       {
         id: "d",
@@ -193,7 +163,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 3 ─────────────────────────────────────────────────────────────────── */
   {
     id: 3,
-    date: "2026-04-12",
     axis: {
       label: "WROTE THIS AT 2AM ←→ PAID A CONSULTANT TO WRITE THIS",
       left_pole: "2AM",
@@ -203,11 +172,11 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
     artifacts: [
       {
         id: "a",
-        text: "Everything is connected right now. The system isn't broken — it IS the system. I feel like I can finally see it.",
+        text: "Everything is connected right now. The system isn't broken: it IS the system. I feel like I can finally see it.",
         category: "literary",
         axis_position: -2,
         highlighted_words: ["connected", "IS the system", "finally see it"],
-        reveal: "The grammar of revelation at 2am: capitalization for emphasis, the word \"finally,\" the sense that perception itself has upgraded. The thought is not original. The feeling that it is — that is the hour.",
+        reveal: "The grammar of revelation at 2am: capitalization for emphasis, the word \"finally,\" the sense that perception itself has upgraded. The thought is not original. The feeling that it is: that is the hour.",
       },
       {
         id: "b",
@@ -231,7 +200,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "corporate",
         axis_position: 2,
         highlighted_words: ["north star metric", "optimized", "touchpoints", "customer journey"],
-        reveal: "The sentence contains no subject, no verb of consequence, and no human being. It is not trying to communicate — it is demonstrating familiarity with a vocabulary. This costs between $400 and $800 per hour.",
+        reveal: "The sentence contains no subject, no verb of consequence, and no human being. It is not trying to communicate: it is demonstrating familiarity with a vocabulary. This costs between $400 and $800 per hour.",
       },
     ],
     correct_order: ["a", "b", "c", "d"],
@@ -240,7 +209,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 4 ─────────────────────────────────────────────────────────────────── */
   {
     id: 4,
-    date: "2026-04-13",
     axis: {
       label: "SOUNDS LIKE A STARTUP ←→ SOUNDS LIKE A GOVERNMENT",
       left_pole: "STARTUP",
@@ -262,7 +230,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "corporate",
         axis_position: -0.6,
         highlighted_words: ["platform", "at scale", "safety", "trust at the core"],
-        reveal: "This could describe a large tech company at its most defensive, or a utility company at its most ambitious. The passive voice is doing significant diplomatic work. \"Trust at the core\" is the sentence a company writes after trust has become a problem.",
+        reveal: "This could describe a large tech company at its most defensive, or a utility company at its most ambitious. The passive voice is doing the diplomatic work. \"Trust at the core\" is the sentence a company writes after trust has become a problem.",
       },
       {
         id: "c",
@@ -287,7 +255,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 5 ─────────────────────────────────────────────────────────────────── */
   {
     id: 5,
-    date: "2026-04-14",
     axis: {
       label: "GYM BRO MANIFESTO ←→ BUDDHIST TEXT",
       left_pole: "GYM BRO",
@@ -301,7 +268,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "manifesto",
         axis_position: -2,
         highlighted_words: ["weakness leaving", "No one ever got great", "growing or dying"],
-        reveal: "The binary at the end — \"growing or dying\" — forecloses the possibility of rest as something other than failure. The body is addressed as a problem. The solution is the problem, applied harder.",
+        reveal: "The binary at the end, \"growing or dying\", forecloses the possibility of rest as something other than failure. The body is addressed as a problem. The solution is the problem, applied harder.",
       },
       {
         id: "b",
@@ -309,15 +276,15 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "advertising",
         axis_position: -0.7,
         highlighted_words: ["Consistency", "Show up", "Trust the process", "Results don't lie"],
-        reveal: "\"Trust the process\" entered sports culture and never left. It asks you to defer judgment indefinitely. \"Results don't lie\" is the evidence that will eventually justify the deferral — or the sentence that ends the relationship when they don't.",
+        reveal: "\"Trust the process\" entered sports culture and never left. It asks you to defer judgment indefinitely. \"Results don't lie\" is the evidence that will eventually justify the deferral, or the sentence that ends the relationship when they don't.",
       },
       {
         id: "c",
-        text: "Notice the resistance. Breathe through it. You don't need to conquer anything — only to be present.",
+        text: "Notice the resistance. Breathe through it. You don't need to conquer anything, only to be present.",
         category: "wellness",
         axis_position: 1,
         highlighted_words: ["resistance", "Breathe through it", "conquer", "be present"],
-        reveal: "The word \"conquer\" is introduced only to be discarded. This is not neutral — it's a quiet argument against a specific worldview. \"Only to be present\" sounds easy. It is not easy. That is the point.",
+        reveal: "The word \"conquer\" is introduced only to be discarded. This is not neutral: it's a quiet argument against a specific worldview. \"Only to be present\" sounds easy. It is not easy. That is the point.",
       },
       {
         id: "d",
@@ -325,7 +292,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "literary",
         axis_position: 2,
         highlighted_words: ["raft", "carries you", "You do not carry it"],
-        reveal: "The metaphor reverses the gym bro's logic without mentioning it. The body is useful — not for conquering, but for crossing. The river is not named. You are expected to know which one.",
+        reveal: "The metaphor reverses the gym bro's logic without mentioning it. The body is useful, not for conquering, but for crossing. The river is not named. You are expected to know which one.",
       },
     ],
     correct_order: ["a", "b", "c", "d"],
@@ -334,7 +301,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 6 ─────────────────────────────────────────────────────────────────── */
   {
     id: 6,
-    date: "2026-04-15",
     axis: {
       label: "SELLING SOMETHING ←→ GENUINELY BELIEVES THIS",
       left_pole: "SELLING",
@@ -364,7 +330,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "speech",
         axis_position: 0.9,
         highlighted_words: ["just neighbors", "tired", "do something about it"],
-        reveal: "\"Just neighbors\" is doing structural work — it positions the group outside the system of organized politics even if the group is organized. \"Tired\" is the most honest word here. Exhaustion is not a posture that is easy to perform convincingly.",
+        reveal: "\"Just neighbors\" is doing structural work: it positions the group outside the system of organized politics even if the group is organized. \"Tired\" is the most honest word here. Exhaustion is not a posture that is easy to perform convincingly.",
       },
       {
         id: "d",
@@ -372,7 +338,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "literary",
         axis_position: 2,
         highlighted_words: ["stayed quiet", "easier", "not this time"],
-        reveal: "The child appears not as rhetoric but as witness. The sentence doesn't promise anything — it describes a decision already made. \"Not this time\" implies previous times of staying quiet. This one has been drafted in the body for a while.",
+        reveal: "The child appears not as rhetoric but as witness. The sentence doesn't promise anything: it describes a decision already made. \"Not this time\" implies previous times of staying quiet. This one has been drafted in the body for a while.",
       },
     ],
     correct_order: ["a", "b", "c", "d"],
@@ -381,7 +347,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 7 ─────────────────────────────────────────────────────────────────── */
   {
     id: 7,
-    date: "2026-04-16",
     axis: {
       label: "SOUNDS LIKE A THREAT ←→ SOUNDS LIKE CUSTOMER SERVICE",
       left_pole: "THREAT",
@@ -428,7 +393,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 8 ─────────────────────────────────────────────────────────────────── */
   {
     id: 8,
-    date: "2026-04-17",
     axis: {
       label: "SOUNDS LIKE 1984 ←→ SOUNDS LIKE A LINKEDIN POST",
       left_pole: "1984",
@@ -442,7 +406,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "corporate",
         axis_position: -2,
         highlighted_words: ["Non-compliant", "documented", "report concerns"],
-        reveal: "\"Appropriate channel\" is the modern equivalent of \"the committee.\" The encouragement to report colleagues is framed as civic virtue. The passive construction — \"will be documented\" — removes the documenter from view.",
+        reveal: "\"Appropriate channel\" is the modern equivalent of \"the committee.\" The encouragement to report colleagues is framed as civic virtue. The passive construction, \"will be documented\", removes the documenter from view.",
       },
       {
         id: "b",
@@ -450,7 +414,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "corporate",
         axis_position: -0.9,
         highlighted_words: ["employee experience platform", "protects company assets", "Transparency builds trust"],
-        reveal: "\"Employee experience platform\" is a monitoring tool whose name has been selected to suggest the opposite of monitoring. The final sentence — \"transparency builds trust\" — applies to the employees, not to the company.",
+        reveal: "\"Employee experience platform\" is a monitoring tool whose name has been selected to suggest the opposite of monitoring. The final sentence, \"transparency builds trust\", applies to the employees, not to the company.",
       },
       {
         id: "c",
@@ -466,7 +430,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "linkedin",
         axis_position: 2,
         highlighted_words: ["Grateful. Humbled. Blessed.", "failure is just data", "worst quarter"],
-        reveal: "The opening triad — three words, three periods — is a liturgical structure borrowed from somewhere older. \"Failure is just data\" converts a human experience into an asset. The worst quarter will now generate content for six months.",
+        reveal: "The opening triad, three words, three periods, is a liturgical structure borrowed from somewhere older. \"Failure is just data\" converts a human experience into an asset. The worst quarter will now generate content for six months.",
       },
     ],
     correct_order: ["a", "b", "c", "d"],
@@ -475,7 +439,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 9 ─────────────────────────────────────────────────────────────────── */
   {
     id: 9,
-    date: "2026-04-18",
     axis: {
       label: "YOUR MOM WOULD SHARE THIS ←→ YOUR KID WOULD SHARE THIS",
       left_pole: "MOM SHARE",
@@ -489,7 +452,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "literary",
         axis_position: -2,
         highlighted_words: ["Dance like nobody's watching", "never been hurt"],
-        reveal: "The advice requires you to forget your audience, your ears, and your entire relationship history simultaneously. It is technically impossible. The impossibility is the point — this text is offering a feeling, not an instruction.",
+        reveal: "The advice requires you to forget your audience, your ears, and your entire relationship history simultaneously. It is technically impossible. The impossibility is the point: this text is offering a feeling, not an instruction.",
       },
       {
         id: "b",
@@ -497,7 +460,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "advertising",
         axis_position: -0.8,
         highlighted_words: ["They said it couldn't", "dream it", "achieve it"],
-        reveal: "\"They\" — the skeptics — appear in this text only to be defeated. The victory belongs to you before you've done anything. \"Dream it, achieve it\" rhymes, which is doing the work that evidence would otherwise need to do.",
+        reveal: "\"They\", the skeptics, appear in this text only to be defeated. The victory belongs to you before you've done anything. \"Dream it, achieve it\" rhymes, which is doing the work that evidence would otherwise need to do.",
       },
       {
         id: "c",
@@ -513,7 +476,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "lyric",
         axis_position: 2,
         highlighted_words: ["audacity", "continuing to participate", "Respect yourself"],
-        reveal: "The sentence treats the continuation of daily life as a form of heroism — which is ironic, except that it also isn't. \"Honestly\" at the end transforms the compliment into a challenge. This genre requires you to hold both readings at once.",
+        reveal: "The sentence treats the continuation of daily life as a form of heroism: which is ironic, except that it also isn't. \"Honestly\" at the end transforms the compliment into a challenge. This genre requires you to hold both readings at once.",
       },
     ],
     correct_order: ["a", "b", "c", "d"],
@@ -522,7 +485,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 10 ────────────────────────────────────────────────────────────────── */
   {
     id: 10,
-    date: "2026-04-19",
     axis: {
       label: "SOUNDS LIKE SCIENCE ←→ SOUNDS LIKE ASTROLOGY",
       left_pole: "SCIENCE",
@@ -548,7 +510,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
       },
       {
         id: "c",
-        text: "Your attachment style — likely formed in early childhood — determines your relationship patterns today.",
+        text: "Your attachment style, likely formed in early childhood, determines your relationship patterns today.",
         category: "wellness",
         axis_position: 0.9,
         highlighted_words: ["attachment style", "early childhood", "determines"],
@@ -560,7 +522,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "speech",
         axis_position: 2,
         highlighted_words: ["Mars in retrograde", "amplifies", "reflection, not action"],
-        reveal: "Mars is a planet. It does not know you are trying to send an email. What retrograde actually describes is an optical illusion from Earth's perspective. The prescription — \"reflection, not action\" — is useful advice issued on a false premise, which is the tradition of many useful things.",
+        reveal: "Mars is a planet. It does not know you are trying to send an email. The prescription, \"reflection, not action\", is useful advice issued on a false premise, which is the tradition of many useful things.",
       },
     ],
     correct_order: ["a", "b", "c", "d"],
@@ -569,7 +531,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 11 ────────────────────────────────────────────────────────────────── */
   {
     id: 11,
-    date: "2026-04-20",
     axis: {
       label: "SOUNDS SINCERE ←→ SOUNDS COACHED",
       left_pole: "SINCERE",
@@ -591,11 +552,11 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "speech",
         axis_position: -0.8,
         highlighted_words: ["I don't have a great answer", "I got that one wrong", "I own it"],
-        reveal: "\"I own it\" is a coached phrase. But the sentence before it — \"I don't have a great answer\" — is an unusual thing for a prepared speaker to say. The combination is either authentic or a very good simulation of it. The distinction may not matter.",
+        reveal: "\"I own it\" is a coached phrase. But the sentence before it, \"I don't have a great answer\", is an unusual thing for a prepared speaker to say. The combination is either authentic or a very good simulation of it. The distinction may not matter.",
       },
       {
         id: "c",
-        text: "I take full responsibility. We fell short of our values, and I am committed — fully committed — to doing the work.",
+        text: "I take full responsibility. We fell short of our values, and I am committed, fully committed, to doing the work.",
         category: "speech",
         axis_position: 0.9,
         highlighted_words: ["full responsibility", "fell short of our values", "fully committed", "doing the work"],
@@ -603,7 +564,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
       },
       {
         id: "d",
-        text: "I want to be very clear: we heard you. And we are committed — fully committed — to doing better going forward.",
+        text: "I want to be very clear: we heard you. And we are committed, fully committed, to doing better going forward.",
         category: "corporate",
         axis_position: 2,
         highlighted_words: ["very clear", "we heard you", "fully committed", "going forward"],
@@ -616,7 +577,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 12 ────────────────────────────────────────────────────────────────── */
   {
     id: 12,
-    date: "2026-04-21",
     axis: {
       label: "MLM PITCH ←→ PERSONAL GROWTH BOOK",
       left_pole: "MLM",
@@ -646,7 +606,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "wellness",
         axis_position: 0.9,
         highlighted_words: ["not behind", "not failing", "becoming"],
-        reveal: "The three negations arrive before the positive. \"Becoming\" is the payoff — but becoming what, at what pace, is left open. This is compassionate. It is also possible to read as: your timeline is indefinitely deferred and that's okay.",
+        reveal: "The three negations arrive before the positive. \"Becoming\" is the payoff, but becoming what, at what pace, is left open. This is compassionate. It is also possible to read as: your timeline is indefinitely deferred and that's okay.",
       },
       {
         id: "d",
@@ -654,7 +614,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "literary",
         axis_position: 2,
         highlighted_words: ["most advice about change is wrong", "slow", "while you sleep"],
-        reveal: "The opening sentence is designed to neutralize competing claims, including the one you might have read last month. \"While you sleep\" is the anti-hustle punchline — and also, incidentally, true. This book will not sell as many copies.",
+        reveal: "The opening sentence is designed to neutralize competing claims, including the one you might have read last month. \"While you sleep\" is the anti-hustle punchline, and also, incidentally, true. This book will not sell as many copies.",
       },
     ],
     correct_order: ["a", "b", "c", "d"],
@@ -663,7 +623,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 13 ────────────────────────────────────────────────────────────────── */
   {
     id: 13,
-    date: "2026-04-22",
     axis: {
       label: "STARTUP PITCH ←→ RELIGIOUS TEXT",
       left_pole: "STARTUP",
@@ -677,7 +636,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "corporate",
         axis_position: -2,
         highlighted_words: ["not building an app", "infrastructure", "human flourishing at scale"],
-        reveal: "\"Human flourishing\" has been borrowed from philosophy and placed in a pitch deck. \"At scale\" converts the aspiration into a growth metric. The app — which is what they are building — is mentioned only to be disclaimed.",
+        reveal: "\"Human flourishing\" has been borrowed from philosophy and placed in a pitch deck. \"At scale\" converts the aspiration into a growth metric. The app, which is what they are building, is mentioned only to be disclaimed.",
       },
       {
         id: "b",
@@ -685,7 +644,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "speech",
         axis_position: -0.7,
         highlighted_words: ["Imagine", "every child", "full potential"],
-        reveal: "\"Imagine\" opens the sentence, which signals: this world does not exist yet, and we are the ones who will build it. \"Full potential\" is the endpoint — a phrase so large it cannot be measured, which makes it impossible to fail to achieve.",
+        reveal: "\"Imagine\" opens the sentence, which signals: this world does not exist yet, and we are the ones who will build it. \"Full potential\" is the endpoint: a phrase so large it cannot be measured, which makes it impossible to fail to achieve.",
       },
       {
         id: "c",
@@ -693,7 +652,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "literary",
         axis_position: 0.8,
         highlighted_words: ["not coming", "already here", "if you know how to look"],
-        reveal: "The present tense is the theological move. The kingdom does not require infrastructure or a Series B — only a change in perception. \"If you know how to look\" places the obstacle inside the seeker, not inside history.",
+        reveal: "The present tense is the theological move. The kingdom does not require infrastructure or a Series B, only a change in perception. \"If you know how to look\" places the obstacle inside the seeker, not inside history.",
       },
       {
         id: "d",
@@ -701,7 +660,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "literary",
         axis_position: 2,
         highlighted_words: ["profit", "gain the whole world", "lose themselves"],
-        reveal: "The question uses the language of commerce — \"profit\" — to critique a commercial logic. This was not an accident. The text has been asking this question for two thousand years, which gives it a replication rate most studies cannot match.",
+        reveal: "The question uses the language of commerce, \"profit\", to critique a commercial logic.",
       },
     ],
     correct_order: ["a", "b", "c", "d"],
@@ -710,7 +669,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 14 ────────────────────────────────────────────────────────────────── */
   {
     id: 14,
-    date: "2026-04-23",
     axis: {
       label: "SOUNDS LIKE YOUR HOROSCOPE ←→ SOUNDS LIKE ECONOMIC POLICY",
       left_pole: "HOROSCOPE",
@@ -748,7 +706,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "corporate",
         axis_position: 2,
         highlighted_words: ["Committee", "assess incoming data", "as appropriate", "return inflation to target"],
-        reveal: "The subject of this sentence — \"the Committee\" — meets eight times a year and its decisions affect the mortgage payments of everyone reading this. \"As appropriate\" is the phrase that means: we will do what we decide to do, and we will tell you afterward.",
+        reveal: "The subject of this sentence is \"the Committee\". \"As appropriate\" is the phrase that means: we will do what we decide to do, and we will tell you afterward.",
       },
     ],
     correct_order: ["a", "b", "c", "d"],
@@ -757,7 +715,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 15 ────────────────────────────────────────────────────────────────── */
   {
     id: 15,
-    date: "2026-04-24",
     axis: {
       label: "WELLNESS BRAND ←→ PHARMACEUTICAL AD",
       left_pole: "WELLNESS BRAND",
@@ -771,7 +728,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "advertising",
         axis_position: -2,
         highlighted_words: ["Reset", "Rebalance", "Reclaim", "feel like yourself"],
-        reveal: "The three imperatives are medical-adjacent without being medical claims. \"Deserve\" converts a health outcome into a moral entitlement. \"Feel like yourself again\" implies the problem is that you have stopped being yourself — which is a more expansive diagnosis than any doctor would make.",
+        reveal: "The three imperatives are medical-adjacent without being medical claims. \"Deserve\" converts a health outcome into a moral entitlement. \"Feel like yourself again\" implies the problem is that you have stopped being yourself: which is a more expansive diagnosis than any doctor would make.",
       },
       {
         id: "b",
@@ -779,7 +736,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "advertising",
         axis_position: -0.7,
         highlighted_words: ["Clinically studied", "natural processes", "30 days"],
-        reveal: "\"Clinically studied\" is not \"clinically proven\" — the study exists, but the outcome is not guaranteed by the phrase. \"Natural processes\" signals that the product is helping you be more you, which is different from treating a condition. The 30-day window is the refund policy.",
+        reveal: "\"Clinically studied\" is not \"clinically proven\": the study exists, but the outcome is not guaranteed by the phrase. \"Natural processes\" signals that the product is helping you be more you, which is different from treating a condition. The 30-day window is the refund policy.",
       },
       {
         id: "c",
@@ -787,7 +744,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "advertising",
         axis_position: 0.9,
         highlighted_words: ["condition", "options", "Ask your doctor"],
-        reveal: "The condition is named in the full ad, but this excerpt reads as a category. \"Ask your doctor\" is the regulatory-compliant handoff — the company has told you about the drug without prescribing it. Your doctor, who has seven minutes, will now complete the sale.",
+        reveal: "The condition is named in the full ad, but this excerpt reads as a category. \"Ask your doctor\" is the regulatory-compliant handoff: the company has told you about the drug without prescribing it. Your doctor, who has seven minutes, will now complete the sale.",
       },
       {
         id: "d",
@@ -804,7 +761,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 16 ────────────────────────────────────────────────────────────────── */
   {
     id: 16,
-    date: "2026-04-25",
     axis: {
       label: "SOUNDS LIKE A COMPLIMENT ←→ SOUNDS LIKE A THREAT",
       left_pole: "COMPLIMENT",
@@ -818,7 +774,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "speech",
         axis_position: -2,
         highlighted_words: ["beautifully", "learned something", "watching you work"],
-        reveal: "The admiration is specific — \"watching you work\" means the observation was real, not performed. \"I learned something\" places the speaker below the person being praised, which requires either confidence or truth. This one costs nothing to say. It is the rarest kind.",
+        reveal: "The admiration is specific: \"watching you work\" means the observation was real, not performed. \"I learned something\" places the speaker below the person being praised, which requires either confidence or truth. This one costs nothing to say. It is the rarest kind.",
       },
       {
         id: "b",
@@ -834,7 +790,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "corporate",
         axis_position: 0.9,
         highlighted_words: ["exceeded every expectation", "I'd hate to see you plateau"],
-        reveal: "The sentence pivots on the word \"but\" that isn't written. The second clause converts the compliment into a warning. \"I'd hate to see\" positions the speaker as caring — while the content of the sentence is a threat dressed in disappointment.",
+        reveal: "The sentence pivots on the word \"but\" that isn't written. The second clause converts the compliment into a warning. \"I'd hate to see\" positions the speaker as caring: while the content of the sentence is a threat dressed in disappointment.",
       },
       {
         id: "d",
@@ -851,7 +807,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 17 ────────────────────────────────────────────────────────────────── */
   {
     id: 17,
-    date: "2026-04-26",
     axis: {
       label: "SOUNDS REVOLUTIONARY ←→ SOUNDS LIKE A BRAND",
       left_pole: "REVOLUTIONARY",
@@ -865,7 +820,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "manifesto",
         axis_position: -2,
         highlighted_words: ["owners of this system", "never needed your permission", "never voluntarily return"],
-        reveal: "The sentence describes a power relationship accurately. It is not asking you to feel good about this — it is asking you to be clear about it. There is no product at the end. There is also no plan. This is the text that generates the next three.",
+        reveal: "The sentence describes a power relationship accurately. It is not asking you to feel good about this: it is asking you to be clear about it. There is no product at the end. There is also no plan. This is the text that generates the next three.",
       },
       {
         id: "b",
@@ -881,7 +836,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "corporate",
         axis_position: 0.9,
         highlighted_words: ["We stand with", "not a side", "not a talking point", "not a policy position"],
-        reveal: "The structure — \"X is not just Y\" — is borrowed from activist language and used here to sell products to people who use activist language. The company's supply chain is not mentioned. The statement will be updated if the political environment changes.",
+        reveal: "The structure, \"X is not just Y\", is borrowed from activist language and used here to sell products to people who use activist language. The company's supply chain is not mentioned. The statement will be updated if the political environment changes.",
       },
       {
         id: "d",
@@ -898,7 +853,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 18 ────────────────────────────────────────────────────────────────── */
   {
     id: 18,
-    date: "2026-04-27",
     axis: {
       label: "SOUNDS LIKE FREEDOM ←→ SOUNDS LIKE LONELINESS",
       left_pole: "FREEDOM",
@@ -928,7 +882,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "literary",
         axis_position: 0.9,
         highlighted_words: ["eat alone", "used to think I liked it", "less sure"],
-        reveal: "The shift from past tense to present uncertainty is the confession the other artifacts in this set have been avoiding. \"Less sure\" is not a crisis — it is honest. The plate is still there. The table is still set.",
+        reveal: "The shift from past tense to present uncertainty is the confession the other artifacts in this set have been avoiding. \"Less sure\" is not a crisis: it is honest. The plate is still there. The table is still set.",
       },
       {
         id: "d",
@@ -945,7 +899,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 19 ────────────────────────────────────────────────────────────────── */
   {
     id: 19,
-    date: "2026-04-28",
     axis: {
       label: "HUSTLE CULTURE ←→ ACTUAL WISDOM",
       left_pole: "HUSTLE",
@@ -983,7 +936,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "literary",
         axis_position: 2,
         highlighted_words: ["will not matter", "not a failure", "find out what does"],
-        reveal: "The sentence contradicts the premise of most career advice by naming the waste as the method. \"This is not a failure\" is the most important clause — it removes the shame from the process of elimination. This could not be monetized into a course.",
+        reveal: "The sentence contradicts the premise of most career advice by naming the waste as the method. \"This is not a failure\" is the most important clause: it removes the shame from the process of elimination. This could not be monetized into a course.",
       },
     ],
     correct_order: ["a", "b", "c", "d"],
@@ -992,7 +945,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 20 ────────────────────────────────────────────────────────────────── */
   {
     id: 20,
-    date: "2026-04-29",
     axis: {
       label: "SOUNDS INEVITABLE ←→ SOUNDS LIKE A CHOICE",
       left_pole: "INEVITABLE",
@@ -1006,15 +958,15 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "corporate",
         axis_position: -2,
         highlighted_words: ["always finds equilibrium", "engine of progress", "simply how"],
-        reveal: "\"Simply\" is the word you use when you want the listener to feel naive for asking further questions. \"Always finds equilibrium\" describes a tendency as a law. The workers displaced by disruption are in the equilibrium — they are just not in this sentence.",
+        reveal: "\"Simply\" is the word you use when you want the listener to feel naive for asking further questions. \"Always finds equilibrium\" describes a tendency as a law. The workers displaced by disruption are in the equilibrium: they are just not in this sentence.",
       },
       {
         id: "b",
-        text: "AI will transform every industry. The question is not whether, but when — and whether you'll be ready.",
+        text: "AI will transform every industry. The question is not whether, but when, and whether you'll be ready.",
         category: "corporate",
         axis_position: -0.7,
         highlighted_words: ["transform every industry", "not whether, but when", "whether you'll be ready"],
-        reveal: "The transformation is declared fait accompli before it is complete. \"Not whether, but when\" converts a prediction into a schedule. The final question — \"whether you'll be ready\" — transfers the uncertainty from the technology to you.",
+        reveal: "The transformation is declared fait accompli before it is complete. \"Not whether, but when\" converts a prediction into a schedule. The final question, \"whether you'll be ready\", transfers the uncertainty from the technology to you.",
       },
       {
         id: "c",
@@ -1039,7 +991,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 21 ────────────────────────────────────────────────────────────────── */
   {
     id: 21,
-    date: "2026-04-30",
     axis: {
       label: "SOUNDS LIKE A RESIGNATION LETTER ←→ SOUNDS LIKE A LINKEDIN ANNOUNCEMENT",
       left_pole: "RESIGNATION",
@@ -1065,11 +1016,11 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
       },
       {
         id: "c",
-        text: "I'm stepping into my next chapter. I'll be sharing more very soon. Stay tuned — the best is ahead.",
+        text: "I'm stepping into my next chapter. I'll be sharing more very soon. Stay tuned: the best is ahead.",
         category: "linkedin",
         axis_position: 0.9,
         highlighted_words: ["next chapter", "sharing more very soon", "Stay tuned"],
-        reveal: "\"Stay tuned\" is the grammar of broadcasting. The person is now a channel. \"The best is ahead\" is a claim about the future made as if it were a forecast. The announcement contains no information, which is intentional — the information will be monetized separately.",
+        reveal: "\"Stay tuned\" is the grammar of broadcasting. The person is now a channel. \"The best is ahead\" is a claim about the future made as if it were a forecast. The announcement contains no information, which is intentional: the information will be monetized separately.",
       },
       {
         id: "d",
@@ -1086,7 +1037,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 22 ────────────────────────────────────────────────────────────────── */
   {
     id: 22,
-    date: "2026-05-01",
     axis: {
       label: "LOVE LANGUAGE ←→ DEPENDENCY LANGUAGE",
       left_pole: "DEPENDENCY",
@@ -1108,15 +1058,15 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "literary",
         axis_position: -0.8,
         highlighted_words: ["everything to each other", "too much to ask"],
-        reveal: "The question — \"is that too much to ask?\" — already knows the answer and is daring the other person to give it. \"Everything\" is the scope of the request, which leaves room for nothing else. The grammar of this sentence is a closed circle.",
+        reveal: "The question, \"is that too much to ask?\", already knows the answer and is daring the other person to give it. \"Everything\" is the scope of the request, which leaves room for nothing else. The grammar of this sentence is a closed circle.",
       },
       {
         id: "c",
-        text: "I choose you every day. Not because I can't live without you — but because I don't want to.",
+        text: "I choose you every day. Not because I can't live without you, but because I don't want to.",
         category: "literary",
         axis_position: 0.9,
         highlighted_words: ["choose you every day", "can't live without", "don't want to"],
-        reveal: "The distinction — can't vs. won't — is the whole argument. The first is need, the second is preference. Preference requires a continuous decision, which means the relationship is reconsidered daily and confirmed. This is more demanding than dependency, and more generous.",
+        reveal: "The distinction, can't vs. won't, is the whole argument. The first is need, the second is preference. Preference requires a continuous decision, which means the relationship is reconsidered daily and confirmed. This is more demanding than dependency, and more generous.",
       },
       {
         id: "d",
@@ -1124,7 +1074,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "literary",
         axis_position: 2,
         highlighted_words: ["your life", "mine", "something different and good"],
-        reveal: "The separateness is named before the togetherness. \"Something different\" is the honest word for love — it doesn't try to name it. \"And good\" is the quietest possible endorsement, offered without fanfare. This sentence has been arrived at.",
+        reveal: "The separateness is named before the togetherness. \"Something different\" is the honest word for love: it doesn't try to name it. \"And good\" is the quietest possible endorsement, offered without fanfare. This sentence has been arrived at.",
       },
     ],
     correct_order: ["a", "b", "c", "d"],
@@ -1133,7 +1083,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 23 ────────────────────────────────────────────────────────────────── */
   {
     id: 23,
-    date: "2026-05-02",
     axis: {
       label: "SOUNDS LIKE OPTIMISM ←→ SOUNDS LIKE DENIAL",
       left_pole: "DENIAL",
@@ -1151,7 +1100,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
       },
       {
         id: "b",
-        text: "Every challenge is a growth opportunity. There are no bad outcomes — only lessons.",
+        text: "Every challenge is a growth opportunity. There are no bad outcomes, only lessons.",
         category: "wellness",
         axis_position: -0.7,
         highlighted_words: ["growth opportunity", "no bad outcomes", "only lessons"],
@@ -1163,7 +1112,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "speech",
         axis_position: 0.9,
         highlighted_words: ["bad right now", "I know that", "seem permanent rarely are"],
-        reveal: "The acknowledgment arrives first, before the reassurance. \"I know that\" earns the optimism that follows. \"Seem permanent rarely are\" is a historical claim, not a promise — which is the difference between optimism and salesmanship.",
+        reveal: "The acknowledgment arrives first, before the reassurance. \"I know that\" earns the optimism that follows. \"Seem permanent rarely are\" is a historical claim, not a promise: which is the difference between optimism and salesmanship.",
       },
       {
         id: "d",
@@ -1171,7 +1120,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "literary",
         axis_position: 2,
         highlighted_words: ["not because things work out", "seen what people do", "when they have to"],
-        reveal: "The source of the optimism is evidence, not faith. \"When they have to\" is the key phrase — it acknowledges that the situation will require something. The confidence is in the response, not in the outcome. This is optimism with its eyes open.",
+        reveal: "The source of the optimism is evidence, not faith. \"When they have to\" is the key phrase: it acknowledges that the situation will require something. The confidence is in the response, not in the outcome. This is optimism with its eyes open.",
       },
     ],
     correct_order: ["a", "b", "c", "d"],
@@ -1180,7 +1129,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 24 ────────────────────────────────────────────────────────────────── */
   {
     id: 24,
-    date: "2026-05-03",
     axis: {
       label: "SOUNDS LIKE THE GOVERNMENT ←→ SOUNDS LIKE A PARENT",
       left_pole: "GOVERNMENT",
@@ -1194,7 +1142,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "corporate",
         axis_position: -2,
         highlighted_words: ["must comply", "applicable ordinances", "enforcement action"],
-        reveal: "The passive construction — \"may result in\" — is the state's way of saying: a person will decide what happens to you, but that person will not be named in this document. \"Enforcement action\" is the clinical term for consequences applied by someone with a badge.",
+        reveal: "The passive construction, \"may result in\", is the state's way of saying: a person will decide what happens to you, but that person will not be named in this document. \"Enforcement action\" is the clinical term for consequences applied by someone with a badge.",
       },
       {
         id: "b",
@@ -1210,7 +1158,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "speech",
         axis_position: 0.8,
         highlighted_words: ["in this house", "feelings", "everyone", "Punishment is off the table"],
-        reveal: "\"In this house\" is the jurisdiction declaration. \"Punishment is off the table\" is a policy announcement made to the people who will test it. The house has a constitution. It was not ratified — it was announced.",
+        reveal: "\"In this house\" is the jurisdiction declaration. \"Punishment is off the table\" is a policy announcement made to the people who will test it. The house has a constitution. It was not ratified: it was announced.",
       },
       {
         id: "d",
@@ -1218,7 +1166,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "speech",
         axis_position: 2,
         highlighted_words: ["Because I said so", "Because I love you", "mistake I made"],
-        reveal: "The three \"because\" clauses move from authority to love to personal history. Only the last one explains anything. The disclosure — \"the mistake I made\" — is what separates this from the bureaucratic texts above it. The government does not make this admission.",
+        reveal: "The three \"because\" clauses move from authority to love to personal history. Only the last one explains anything. The disclosure, \"the mistake I made\", is what separates this from the bureaucratic texts above it. The government does not make this admission.",
       },
     ],
     correct_order: ["a", "b", "c", "d"],
@@ -1227,7 +1175,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 25 ────────────────────────────────────────────────────────────────── */
   {
     id: 25,
-    date: "2026-05-04",
     axis: {
       label: "AMAZON REVIEW ←→ POLITICAL SPEECH",
       left_pole: "AMAZON REVIEW",
@@ -1249,7 +1196,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "corporate",
         axis_position: -0.7,
         highlighted_words: ["Exactly as described", "Would purchase again"],
-        reveal: "The most under-rated genre of writing: accurate description of an adequate experience. No hyperbole. No narrative. \"Would purchase again\" is the consumer equivalent of a standing ovation — offered quietly, which makes it the most reliable review in the set.",
+        reveal: "The most under-rated genre of writing: accurate description of an adequate experience. No hyperbole. No narrative. \"Would purchase again\" is the consumer equivalent of a standing ovation: offered quietly, which makes it the most reliable review in the set.",
       },
       {
         id: "c",
@@ -1265,7 +1212,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "speech",
         axis_position: 2,
         highlighted_words: ["not just an election", "defining moment", "History will look back"],
-        reveal: "The text has been delivered at most elections held in living memory. \"History will look back\" asks you to imagine an audience watching from the future, which is an effective rhetorical technique and also unfalsifiable until you are dead.",
+        reveal: "\"History will look back\" asks you to imagine an audience watching from the future, which is an effective rhetorical technique and also unfalsifiable until you are dead.",
       },
     ],
     correct_order: ["a", "b", "c", "d"],
@@ -1274,7 +1221,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 26 ────────────────────────────────────────────────────────────────── */
   {
     id: 26,
-    date: "2026-05-05",
     axis: {
       label: "CORPORATE DEI STATEMENT ←→ ACTUAL ALLY",
       left_pole: "CORPORATE DEI",
@@ -1304,7 +1250,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "speech",
         axis_position: 0.9,
         highlighted_words: ["advantages I didn't earn", "didn't see", "still figuring out"],
-        reveal: "\"Still figuring out\" is not a resolution — it is an honest account of a process in progress. The admission that the advantages were invisible until pointed out is harder to perform than the admission itself. This sentence was written without a communications team.",
+        reveal: "\"Still figuring out\" is not a resolution: it is an honest account of a process in progress. The admission that the advantages were invisible until pointed out is harder to perform than the admission itself. This sentence was written without a communications team.",
       },
       {
         id: "d",
@@ -1321,7 +1267,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 27 ────────────────────────────────────────────────────────────────── */
   {
     id: 27,
-    date: "2026-05-06",
     axis: {
       label: "SOUNDS LIKE PROPAGANDA ←→ SOUNDS LIKE ADVERTISING",
       left_pole: "PROPAGANDA",
@@ -1343,7 +1288,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "speech",
         axis_position: -0.7,
         highlighted_words: ["nation's strength", "sacrifice", "unity", "worth fighting for"],
-        reveal: "The sentence accumulates abstractions — strength, sacrifice, unity, belief — without attaching them to policy. This is the language of national identification, which can be used for anything from recruiting soldiers to selling insurance. Both have happened.",
+        reveal: "The sentence accumulates abstractions, strength, sacrifice, unity, belief, without attaching them to policy. This is the language of national identification, which can be used for anything from recruiting soldiers to selling insurance.",
       },
       {
         id: "c",
@@ -1368,54 +1313,6 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   /* ── 28 ────────────────────────────────────────────────────────────────── */
   {
     id: 28,
-    date: "2026-05-07",
-    axis: {
-      label: "MANIFESTO ←→ TERMS OF SERVICE",
-      left_pole: "MANIFESTO",
-      right_pole: "TERMS OF SERVICE",
-      description: "Both describe the conditions under which you are allowed to exist here. One is longer.",
-    },
-    artifacts: [
-      {
-        id: "a",
-        text: "We declare the current order illegitimate. Its laws protect property. Its prisons protect power. We are building something else.",
-        category: "manifesto",
-        axis_position: -2,
-        highlighted_words: ["declare", "illegitimate", "protect property", "protect power", "something else"],
-        reveal: "The two-clause analysis of law and prison is compressed enough to be a slogan and specific enough to be an argument. \"Something else\" is the refusal to name the alternative before it exists — which is either strategic or honest, depending on what comes next.",
-      },
-      {
-        id: "b",
-        text: "We hold these truths to be self-evident: that all are created equal, and that governments derive their powers from the consent of the governed.",
-        category: "speech",
-        axis_position: -0.7,
-        highlighted_words: ["self-evident", "created equal", "consent of the governed"],
-        reveal: "\"Self-evident\" is a rhetorical move: it declares that the claim requires no proof, which is useful when proof is unavailable. The document asserting universal equality was written by men who owned people. This is the most studied gap in the history of political writing.",
-      },
-      {
-        id: "c",
-        text: "By accessing this service, you agree to our Terms of Service, Privacy Policy, and Cookie Policy. We reserve the right to modify these terms at any time.",
-        category: "corporate",
-        axis_position: 0.9,
-        highlighted_words: ["By accessing", "you agree", "reserve the right to modify"],
-        reveal: "\"By accessing\" means that arriving at this page constitutes signing a contract. \"We reserve the right to modify at any time\" means the contract you signed may be different by tomorrow. You will be notified by email, which you will not open.",
-      },
-      {
-        id: "d",
-        text: "Company may, in its sole discretion, terminate your access immediately and without notice for any reason not prohibited by applicable law.",
-        category: "corporate",
-        axis_position: 2,
-        highlighted_words: ["sole discretion", "immediately and without notice", "any reason"],
-        reveal: "\"Sole discretion\" means: we decide. \"Without notice\" means: you will find out afterward. \"Any reason\" means the list of reasons is not a list — it is a posture. This sentence is the Terms of Service at maximum honesty, which is why it appears on page 12.",
-      },
-    ],
-    correct_order: ["a", "b", "c", "d"],
-  },
-
-  /* ── 29 ────────────────────────────────────────────────────────────────── */
-  {
-    id: 29,
-    date: "2026-05-08",
     axis: {
       label: "GEN Z WROTE THIS ←→ BOOMER GUESSING WHAT GEN Z SAYS",
       left_pole: "GEN Z",
@@ -1429,7 +1326,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "lyric",
         axis_position: -2,
         highlighted_words: ["It's giving", "energy", "not built for that"],
-        reveal: "\"Not built for that\" treats emotional capacity as infrastructure — a limitation of design rather than a failure of will. This reframing is the linguistic signature of a generation that grew up with the vocabulary of mental health. The sentence is also extremely funny.",
+        reveal: "\"Not built for that\" treats emotional capacity as infrastructure: a limitation of design rather than a failure of will. This reframing is the linguistic signature of a generation that grew up with the vocabulary of mental health. The sentence is also extremely funny.",
       },
       {
         id: "b",
@@ -1437,7 +1334,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "lyric",
         axis_position: -0.6,
         highlighted_words: ["No cap", "hits different", "Main character"],
-        reveal: "The vocabulary is correct but the density is off. No speaker under 30 uses this many markers in a single sentence — it has the quality of a checklist rather than a voice. The phrases are accurate; their arrangement is the tell.",
+        reveal: "The vocabulary is correct but the density is off. No speaker under 30 uses this many markers in a single sentence: it has the quality of a checklist rather than a voice. The phrases are accurate; their arrangement is the tell.",
       },
       {
         id: "c",
@@ -1445,7 +1342,7 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "advertising",
         axis_position: 0.9,
         highlighted_words: ["vibe is immaculate", "weekend is valid", "sale ends Sunday"],
-        reveal: "The brand has read the style guide. \"Your weekend is valid\" is therapeutic language borrowed to sell something. The parenthetical — \"(Also, our sale ends Sunday)\" — is the company being self-aware about what it is doing, which is now itself a branding strategy.",
+        reveal: "The brand has read the style guide. \"Your weekend is valid\" is therapeutic language borrowed to sell something. The parenthetical, \"(Also, our sale ends Sunday)\", is the company being self-aware about what it is doing, which is now itself a branding strategy.",
       },
       {
         id: "d",
@@ -1459,10 +1356,9 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
     correct_order: ["a", "b", "c", "d"],
   },
 
-  /* ── 30 ────────────────────────────────────────────────────────────────── */
+  /* ── 29 ────────────────────────────────────────────────────────────────── */
   {
-    id: 30,
-    date: "2026-05-09",
+    id: 29,
     axis: {
       label: "SOUNDS LIKE THE END ←→ SOUNDS LIKE THE BEGINNING",
       left_pole: "ENDING",
@@ -1476,15 +1372,15 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
         category: "literary",
         axis_position: -2,
         highlighted_words: ["After everything", "what remains", "ordinary morning"],
-        reveal: "\"After everything\" is an ending that doesn't name what was lost. What remains is sensory and small — not because the losses were small but because the small things are what survives them. The ordinary morning is the sentence's answer to whatever the question was.",
+        reveal: "\"After everything\" is an ending that doesn't name what was lost. What remains is sensory and small, not because the losses were small but because the small things are what survives them. The ordinary morning is the sentence's answer to whatever the question was.",
       },
       {
         id: "b",
-        text: "There's nothing left to prove. Nothing left to win. Just this — the quiet after.",
+        text: "There's nothing left to prove. Nothing left to win. Just this: the quiet after.",
         category: "literary",
         axis_position: -0.7,
         highlighted_words: ["nothing left to prove", "Nothing left to win", "the quiet after"],
-        reveal: "The sentence might be peace or it might be exhaustion — the grammar cannot tell you which. \"The quiet after\" names itself as a sequel, which means something preceded it. The text is standing in a room where something has just happened and choosing to describe the silence.",
+        reveal: "The sentence might be peace or it might be exhaustion: the grammar cannot tell you which. \"The quiet after\" names itself as a sequel, which means something preceded it. The text is standing in a room where something has just happened and choosing to describe the silence.",
       },
       {
         id: "c",
@@ -1507,6 +1403,3 @@ export const ALL_CHALLENGES: DailyChallenge[] = [
   },
 
 ];
-
-/** Alias for backward compatibility — returns today's challenge */
-export const DAILY_UNDERTOW: DailyChallenge = getDailyChallenge();

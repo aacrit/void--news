@@ -30,13 +30,25 @@
 #     not maintainable here. Dropping it would break hydration. Revisit only
 #     if a nonce-capable runtime (Workers) fronts the site.
 #   • Strict-Transport-Security: 1yr, includeSubDomains. Site is HTTPS-only.
+#   • Cloudflare Web Analytics (static.cloudflareinsights.com,
+#     cloudflareinsights.com) REMOVED from script-src and connect-src (rev 85
+#     WS-D, audit 5 Sec L3). No page loads beacon.min.js and the privacy page
+#     says we run no analytics, so the allowance only widened the policy. The
+#     <meta> CSP in app/layout.tsx still lists it; browsers enforce the
+#     intersection, so this header alone closes it. Drop it there too.
+#   • Access-Control-Allow-Origin: Cloudflare Pages adds `*` to every response
+#     by default. Detached below (`! Header` is the Pages syntax for removing
+#     one), audit 5 Sec L2: every fetch of /data/*.json is same-origin
+#     (lib/supabase.ts, history/data.ts), so no route needs it. If a
+#     third-party reader of the JSON ever does, re-add it under /data/* only.
 /*
+  ! Access-Control-Allow-Origin
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=()
   Strict-Transport-Security: max-age=31536000; includeSubDomains
-  Content-Security-Policy: default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; font-src 'self' data:; connect-src 'self' https://void-api.aacrit.workers.dev https://cloudflareinsights.com; media-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  Content-Security-Policy: default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://void-api.aacrit.workers.dev; media-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
 
 # ── Per-issue share cards ───────────────────────────────────────────────
 # Next's `opengraph-image` file convention emits the PNG at an EXTENSIONLESS

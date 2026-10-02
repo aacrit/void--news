@@ -137,6 +137,43 @@ def _to_24k_mono(seg: "AudioSegment") -> "AudioSegment":
 # Kokoro (subprocess worker in .venv-tts)
 # ---------------------------------------------------------------------------
 
+# Worker processes for Kokoro (P2-1, rev 85). It was a flat 2 on a 4-core runner,
+# which left half the machine idle through ~14 minutes of brief + TTS on run #385.
+# Each worker is one ONNX session over the int8 model (~88 MB on disk); measured
+# resident size is a few hundred MB, so four of them sit far inside the runner's
+# 16 GB. The default is 4 only where there are 4 cores AND the memory to hold four
+# sessions at a generous KOKORO_WORKER_MB each; otherwise it stays at 2.
+# VOID_KOKORO_WORKERS overrides either way.
+KOKORO_WORKER_MB = 1500
+
+
+def _available_mb() -> int | None:
+    try:
+        with open("/proc/meminfo", encoding="ascii") as fh:
+            for line in fh:
+                if line.startswith("MemAvailable:"):
+                    return int(line.split()[1]) // 1024
+    except (OSError, ValueError, IndexError):
+        return None
+    return None
+
+
+def default_kokoro_workers(cpu: int | None = None, mem_mb: int | None = None,
+                           env: dict | None = None) -> int:
+    """4 on a 4-core runner with room for four sessions, else 2. Env wins."""
+    raw = (env if env is not None else os.environ).get("VOID_KOKORO_WORKERS", "").strip()
+    if raw:
+        try:
+            return max(1, int(raw))
+        except ValueError:
+            pass
+    cpu = cpu if cpu is not None else (os.cpu_count() or 2)
+    mem_mb = mem_mb if mem_mb is not None else _available_mb()
+    if cpu >= 4 and (mem_mb is None or mem_mb >= 4 * KOKORO_WORKER_MB):
+        return 4
+    return 2
+
+
 class KokoroEngine:
     name = "kokoro"
 
@@ -149,7 +186,8 @@ class KokoroEngine:
         # ONNX intra-op threading scales poorly for this model: two worker
         # processes with half the threads each finish a show sooner than one
         # process with all of them (measured 2026-09-18, see tts_bench.py).
-        self.workers = max(1, workers if workers is not None else int(os.environ.get("VOID_KOKORO_WORKERS", "2") or 2))
+        # The same holds at four: one thread each (default_kokoro_workers).
+        self.workers = max(1, workers if workers is not None else default_kokoro_workers())
         cpu = os.cpu_count() or 4
         self.threads = threads if threads is not None else int(os.environ.get("VOID_KOKORO_THREADS", "0") or 0)
         if self.threads <= 0:

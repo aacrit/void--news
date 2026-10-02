@@ -216,6 +216,19 @@ def _cover_for(edition: str) -> str:
     return f"{SITE_URL}/{own}"
 
 
+def _strip_trailing_stop(text: str) -> str:
+    """Drop a trailing . , ; or : that a following ": " would collide with.
+
+    A final word that is an abbreviation ("U.S.", "D.C.") keeps its stop.
+    """
+    while text and text[-1] in ".,;:":
+        last = text.split()[-1] if text.split() else ""
+        if text[-1] == "." and last.count(".") >= 2:
+            break
+        text = text[:-1].rstrip()
+    return text
+
+
 def _episode_title(brief: dict) -> str:
     """Build a descriptive episode title from the brief data."""
     edition = brief.get("edition", "world")
@@ -227,7 +240,11 @@ def _episode_title(brief: dict) -> str:
         created = brief.get("created_at") or ""
         date_str = created[:10] if created else "Undated"
 
-    headline = (brief.get("tldr_headline") or "").strip()
+    # A headline that ends in its own stop met the ": " join as "US Exits
+    # Iraq.: On Air" (served 2026-09-30). The join supplies the punctuation,
+    # so the headline's trailing stop, comma, semicolon or colon goes.
+    # An abbreviation keeps its stop ("Talks With U.S.: On Air").
+    headline = _strip_trailing_stop((brief.get("tldr_headline") or "").strip())
     if headline:
         return f"{headline}: {label}, {date_str}"
     return f"{label}: {date_str}"
@@ -410,6 +427,16 @@ def generate_podcast_feeds(editions: list[str] | None = None) -> dict[str, str]:
 
     PUBLIC_DIR.mkdir(parents=True, exist_ok=True)
     results: dict[str, str] = {}
+
+    # Out of git (P2-2, VOID_AUDIO_STORE=release): a fresh checkout holds no MP3,
+    # so pull the stored episodes into the tree before deciding which are playable.
+    try:
+        from briefing import audio_store as _store
+    except ImportError:
+        from pipeline.briefing import audio_store as _store  # type: ignore
+    if _store.enabled():
+        for p in _store.materialize(AUDIO_DIR):
+            print(f"  [podcast][audio-store] {p}")
 
     for edition in editions:
         try:
@@ -615,6 +642,11 @@ def generate_history_podcast_feed() -> str | None:
     rows = []
     for slug, ep in episodes.items():
         if not isinstance(ep, dict) or not ep.get("url"):
+            continue
+        # Withdrawn: the audio speaks a script that has since been corrected.
+        # A podcast app keeps what it downloaded, so the item must not be
+        # offered at all until a re-render publishes a fresh entry.
+        if ep.get("audio_withdrawn"):
             continue
         rows.append((slug, ep))
     rows.sort(key=lambda r: r[1].get("publishedAt") or "", reverse=True)

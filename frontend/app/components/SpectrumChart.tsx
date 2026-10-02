@@ -92,6 +92,67 @@ function tierLabel(tier: string): string {
 }
 
 /* ---------------------------------------------------------------------------
+   LogoMark: a source's favicon over its letter, never an empty circle.
+
+   The letter is ALWAYS in the box, and the image covers it on the card
+   colour only once it has actually drawn, so whatever happens to the image
+   (pending below the fold, refused, broken) the mark names its outlet. The
+   old fallback swapped in the letter from an onError handler, and the
+   roster is prerendered: an image that failed before hydration (582 of
+   1,610 on one load of the live page, behind a rate limit, audit 2 F2) had
+   already fired its error before React was listening, so the swap never
+   ran and the Center Right to Far Right columns read as empty cream circles,
+   which a reader takes for "no right-wing sources". A mount check catches
+   the image that broke before React arrived; onError catches the rest.
+   Lazy and async decoding, so a column below the fold costs nothing until
+   it is reached.
+   --------------------------------------------------------------------------- */
+function LogoMark({
+  name,
+  size,
+  imgClass,
+  letterClass,
+  lazy = true,
+}: {
+  name: string;
+  size: number;
+  imgClass: string;
+  letterClass?: string;
+  lazy?: boolean;
+}) {
+  const src = sourceLogoUrl(name);
+  const [state, setState] = useState<"pending" | "loaded" | "failed">("pending");
+  const ref = useRef<HTMLImageElement>(null);
+  useEffect(() => {
+    const img = ref.current;
+    if (img && img.complete) setState(img.naturalWidth > 0 ? "loaded" : "failed");
+  }, []);
+  return (
+    <>
+      <span className={letterClass ? `${letterClass} logo-mark__letter` : "logo-mark__letter"} aria-hidden="true">
+        {name.charAt(0)}
+      </span>
+      {src && state !== "failed" && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          ref={ref}
+          src={src}
+          alt=""
+          width={size}
+          height={size}
+          loading={lazy ? "lazy" : undefined}
+          decoding="async"
+          className={`${imgClass} logo-mark__img`}
+          data-loaded={state === "loaded" ? "" : undefined}
+          onLoad={() => setState("loaded")}
+          onError={() => setState("failed")}
+        />
+      )}
+    </>
+  );
+}
+
+/* ---------------------------------------------------------------------------
    SourceLogo — favicon circle with overlap + fan-out on zone hover
    Desktop: hover/focus shows the fixed tooltip.
    Mobile: click (onSelect) opens the naming bottom sheet.
@@ -105,9 +166,6 @@ function SourceLogo({
   onTooltip: (source: SpectrumSource | null, el: HTMLElement | null) => void;
   onSelect: (source: SpectrumSource) => void;
 }) {
-  // Self-hosted first-party outlet favicon (see sourceLogoUrl); "" -> letter.
-  const favicon = sourceLogoUrl(source.name);
-
   return (
     <button
       className="spectrum-logo"
@@ -118,30 +176,7 @@ function SourceLogo({
       onBlur={() => onTooltip(null, null)}
       onClick={() => onSelect(source)}
     >
-      {favicon ? (
-        <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={favicon}
-            alt=""
-            width={20}
-            height={20}
-            className="spectrum-logo__img"
-            loading="lazy"
-            onError={(e) => {
-              const t = e.currentTarget;
-              t.style.display = "none";
-              const fb = t.nextElementSibling as HTMLElement | null;
-              if (fb) fb.style.display = "flex";
-            }}
-          />
-          <span className="spectrum-logo__fallback" style={{ display: "none" }}>
-            {source.name.charAt(0)}
-          </span>
-        </>
-      ) : (
-        <span className="spectrum-logo__fallback">{source.name.charAt(0)}</span>
-      )}
+      <LogoMark name={source.name} size={20} imgClass="spectrum-logo__img" letterClass="spectrum-logo__fallback" />
     </button>
   );
 }
@@ -431,19 +466,7 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
                           data-lean={normalizeLean(s.political_lean_baseline)}
                           aria-hidden="true"
                         >
-                          {sourceLogoUrl(s.name) ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={sourceLogoUrl(s.name)}
-                              alt=""
-                              width={18}
-                              height={18}
-                              loading="lazy"
-                              className="spectrum-list__logo"
-                            />
-                          ) : (
-                            s.name.charAt(0)
-                          )}
+                          <LogoMark name={s.name} size={18} imgClass="spectrum-list__logo" />
                         </span>
                         <span className="spectrum-list__body">
                           <span className="spectrum-list__name">{s.name}</span>
@@ -522,18 +545,7 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
                 data-lean={sheetLean}
                 aria-hidden="true"
               >
-                {sourceLogoUrl(sheetSource.name) ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={sourceLogoUrl(sheetSource.name)}
-                    alt=""
-                    width={22}
-                    height={22}
-                    className="spectrum-sheet__logo"
-                  />
-                ) : (
-                  sheetSource.name.charAt(0)
-                )}
+                <LogoMark key={sheetSource.slug} name={sheetSource.name} size={22} imgClass="spectrum-sheet__logo" lazy={false} />
               </span>
               <p className="spectrum-sheet__name">{sheetSource.name}</p>
             </div>

@@ -383,6 +383,8 @@ PLANTED_STALE = [
     "Maize, domesticated in central Mexico 9,000 years ago, reached Africa.",
     "As of 2024, 34 countries have formally recognized the genocide.",
     "The editorial triage is currently disabled.",
+    "No human has returned to the Moon since December 1972.",
+    "crewed lunar exploration was abandoned and has not resumed",
 ]
 DURABLE = [
     "The question of whether it was a liberation has never been settled.",
@@ -401,6 +403,8 @@ DURABLE = [
     "The United States did not ratify it until 1988, forty years after.",
     "The Convention was ratified forty years later in 1988.",
     "2024 unemployment among black South Africans exceeded 40%.",
+    "The last crew left the Moon in December 1972.",
+    "the DRC supplied 70% of global cobalt as of 2023",
 ]
 
 for line in PLANTED_STALE:
@@ -410,6 +414,149 @@ for line in PLANTED_STALE:
 for line in DURABLE:
     spared = not any(rx.search(line) for _, rx in TIME_RELATIVE)
     check(f"durable: {line[:44]}", spared, "a dated, durable sentence was rejected")
+
+# ------------------------------------------ the same gate on the SCRIPTS
+# The narration is published twice, as audio and as the transcript the event
+# page and the thesis excerpts print, and until 2026-10-02 the time-relative
+# gate never read it. The audit found four lines there: Congo's "seventy
+# percent of the global supply ... today", Apollo's "has not resumed" and
+# "Nobody has been back", the Great Leap's "banned on the mainland to this
+# day", the Ottoman "thirty to forty five million Kurds" (an undated count).
+# Those are rewritten. Every other hit is listed below, because a script line
+# changes only with a re-render; the list is a backlog, not a pardon. The gate
+# fails on any hit NOT listed (a new one cannot ship) and on a listed one that
+# no longer occurs (the list cannot go stale). Narrator lines only: a document
+# read is a quotation. "Years later" is spared in scripts, where it counts from
+# the scene being narrated, not from the listener.
+#   review: a claim measured from the listener, to be dated or cut at the
+#           episode's next re-render
+#   spared: narrative present or past tense that the regex cannot tell apart
+SCRIPT_TIME_BOUND_KNOWN = [
+    ("angkor-khmer-empire", "It remains the largest religious", "review"),
+    ("angkor-khmer-empire", "park that stands today", "review"),
+    ("apollo-11-moon-landing", "his country was currently losing", "spared"),
+    ("arab-spring", "still the smallest", "review"),
+    ("ashoka-maurya-empire", "is still the majority", "review"),
+    ("bandung-conference", "was still the currency", "spared"),
+    ("cambodian-genocide", "photographs survive today", "review"),
+    ("cambodian-genocide", "median age in Cambodia today", "review"),
+    ("chinese-civil-war", "is still open in twenty", "review"),
+    ("columbian-exchange", "drilled in Antarctica today", "review"),
+    ("columbian-exchange", "as the world knows it today", "review"),
+    ("cuban-revolution", "it is still the law", "review"),
+    ("cyrus-cylinder", "The cylinder sits today", "review"),
+    ("great-depression", "New York Stock Exchange today, as prices", "spared"),
+    ("great-leap-forward", "That resolution is still the party", "review"),
+    ("inca-conquest-peru", "speak Quechua today", "review"),
+    ("inca-conquest-peru", "piled still stands in Cajamarca", "review"),
+    ("iranian-revolution", "is still the law", "review"),
+    ("korean-war", "that is still the only document", "review"),
+    ("mongol-conquest-baghdad", "still standing in Baghdad today", "review"),
+    ("mongol-empire", "men alive today", "review"),
+    ("mughal-empire", "billion dollars today", "review"),
+    ("mughal-empire", "shapes Indian policy today", "review"),
+    ("mughal-empire", "left behind still stands", "review"),
+    ("opium-wars", "argued over today", "review"),
+    ("opium-wars", "every Chinese school today", "review"),
+    ("opium-wars", "Lin Zexu is honored today", "review"),
+    ("ottoman-empire", "were still in force in Jordan", "spared"),
+    ("scramble-for-africa", "defends it today", "review"),
+    ("spanish-flu-1918", "genome sits, today", "review"),
+    ("sykes-picot-agreement", "borders on the map today", "review"),
+    ("the-reformation", "on the church today is bronze", "review"),
+    ("trail-of-tears", "in today's money", "review"),
+    ("trail-of-tears", "still arguing about today", "review"),
+    ("transatlantic-slave-trade", "people alive today", "review"),
+]
+SCRIPT_INTERVAL = "an interval measured from now"
+
+
+def script_time_hits(text: str) -> list[tuple[str, str]]:
+    """(label, narrator line) for each time-relative hit in a script's narration."""
+    out = []
+    for line in text.splitlines():
+        if not line.startswith("N:"):
+            continue
+        prose = outside_quotations(line[2:].strip())
+        for label, rx in TIME_RELATIVE:
+            if label == SCRIPT_INTERVAL:
+                continue
+            out.extend((label, prose) for _ in rx.finditer(prose))
+    return out
+
+
+used_known: set[int] = set()
+script_hits = 0
+for spath in sorted(glob.glob(str(ROOT / "data/history/scripts/*.txt"))):
+    sslug = pathlib.Path(spath).stem
+    for label, prose in script_time_hits(pathlib.Path(spath).read_text(encoding="utf-8")):
+        idx = next((i for i, (s, needle, _k) in enumerate(SCRIPT_TIME_BOUND_KNOWN)
+                    if s == sslug and needle in prose), None)
+        if idx is None:
+            script_hits += 1
+            check(f"{sslug} script", False, f"{label}: {prose[:110]}")
+        else:
+            used_known.add(idx)
+for i, (s, needle, _k) in enumerate(SCRIPT_TIME_BOUND_KNOWN):
+    check(f"script backlog entry still occurs: {s} {needle!r}", i in used_known,
+          "fixed: remove it from SCRIPT_TIME_BOUND_KNOWN")
+
+for line in ("N: The book is banned on the mainland to this day.",
+             "N: crewed lunar exploration was abandoned three years later and has not resumed.",
+             "N: The last people left in nineteen seventy two. Nobody has been back.",
+             "N: documented by Amnesty International as involving child labor today."):
+    check(f"planted stale script line: {line[3:47]}", bool(script_time_hits(line)),
+          "a scheduled error in a script slipped through")
+for line in ("N: The book was banned on the mainland.",
+             "N: The last people left in December nineteen seventy two.",
+             "M: The book is banned to this day.",
+             "N: Two years later the Senate declared Caesar a god."):
+    check(f"durable script line: {line[3:47]}", not script_time_hits(line),
+          "a durable or quoted line was rejected")
+print(f"note  {sum(1 for *_x, k in SCRIPT_TIME_BOUND_KNOWN if k == 'review')} script line(s) "
+      f"await a dated rewrite at their next re-render (SCRIPT_TIME_BOUND_KNOWN)")
+
+# ------------------------------------------------- the image-credit gate
+# Every picture's credit line is a licence condition, and on 2026-10-02 49 of
+# them served Commons template residue: "Unknown authorUnknown author",
+# "unknown, please edit with correct data.", "Harris &amp; Ewing", "(talk)",
+# footnote markers. export_history.clean_artist() normalises the field; this
+# holds the SERVED file to it, and holds the normaliser to planted cases.
+import json  # noqa: E402
+
+from pipeline.history.export_history import clean_artist  # noqa: E402
+
+CREDIT_JUNK = re.compile(
+    r"(?i)(unknown author){2}|[a-z]unknown author|please edit|correct data|&(?:amp|quot|lt|gt|#\d+);"
+    r"|\(talk\)|\[\d+\]|https?://|[–—]")
+served_path = ROOT / "frontend/public/data/history.json"
+if served_path.exists():
+    served = json.loads(served_path.read_text(encoding="utf-8"))
+    served = served if isinstance(served, list) else served.get("events", [])
+    credit_hits = 0
+    for ev in served:
+        credits = [("hero", ev.get("hero_image_attribution"))] + \
+                  [(f"media[{i}]", m.get("attribution")) for i, m in enumerate(ev.get("media") or [])]
+        for where, credit in credits:
+            if credit and CREDIT_JUNK.search(credit):
+                credit_hits += 1
+                check(f"{ev.get('slug')} {where} credit", False,
+                      f"scraped residue in an image credit: {credit[:90]!r}")
+for raw, want in [
+    ("Unknown authorUnknown author", "Unknown author"),
+    ("AnonymousUnknown author", "Anonymous"),
+    ("Unknown authorUnknown author or not provided", "Unknown author"),
+    ("unknown, please edit with correct data.", "Unknown author"),
+    ("Harris &amp; Ewing", "Harris & Ewing"),
+    ("Ford & West Lith.", "Ford & West Lith."),
+    ("derivative work: Ingsoc (talk) Brutus.jpg: Unknown", "derivative work: Ingsoc Brutus.jpg: Unknown"),
+    ("Eduardo Chiossone (1833–98)[3]", "Eduardo Chiossone (1833-98)"),
+]:
+    got = clean_artist(raw)
+    check(f"credit normaliser: {raw[:40]!r}", got == want, f"{got!r}, wanted {want!r}")
+    check(f"credit gate rejects the raw form: {raw[:40]!r}",
+          raw == want or bool(CREDIT_JUNK.search(raw)) or raw.endswith(".") or "(talk)" in raw,
+          "the gate would pass this residue")
 
 PLANTED_HEDGE = [
     "Many analysts argue the treaty was doomed from the first draft.",

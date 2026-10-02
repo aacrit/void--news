@@ -400,7 +400,7 @@ perspectives:
   - The Congo Free State was not an aberration but colonialism's logic made visible; other powers used similar forced-labor systems
   - Hochschild centered white reformers at the expense of Congolese agency and precolonial civilization
   - The demographic catastrophe, a population halved, is comparable to the Black Death
-  - 'Extractive structures persist: 70% of global cobalt comes from the DRC under conditions that echo the rubber regime'
+  - 'Extractive structures outlived the Free State: the DRC supplied 70% of global cobalt as of 2023, under conditions that echo the rubber regime'
   sources:
   - title: King Leopold's Ghost
     author: Adam Hochschild
@@ -489,7 +489,11 @@ perspectives:
     year: '2002'
     type: book
     verified: false
-  - title: William Sheppard — Congo's African-American Livingstone
+  # REVIEW (2026-10-02): this title is unverified and is not in any ledger.
+  # It served with an em dash; the dash is now a colon, nothing else changed.
+  # Kennedy's 2002 book may be "Black Livingstone"; confirm against a
+  # catalogue record before changing the words.
+  - title: "William Sheppard: Congo's African-American Livingstone"
     author: Pagan Kennedy
     year: '2002'
     type: book

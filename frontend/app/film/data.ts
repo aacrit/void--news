@@ -78,7 +78,7 @@ export const SIX_AXES: BiasAxis[] = [
   {
     name: "Political Lean",
     brief: "Where it falls left to right, from the outlet's track record and the article's own words.",
-    signals: "Keyword lexicons, entity sentiment (NER + TextBlob), framing phrases, length-adaptive blend of the article's words with the outlet's historical baseline.",
+    signals: "Keyword lexicons, entity sentiment (NER + TextBlob), framing phrases, and the outlet's historical baseline, which the article's words may move by a bounded number of points.",
   },
   {
     name: "Sensationalism",

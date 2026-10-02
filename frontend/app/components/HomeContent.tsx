@@ -16,6 +16,7 @@ import { SEARCH_EVENT } from "./NavBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
 import LeanLabelLegend from "./LeanLabelLegend";
+import FirstVisitNote from "./FirstVisitNote";
 import { computeStoryFamilies } from "../lib/storyFamilies";
 // Deep Dive is split by breakpoint (2026-08-09):
 //   Desktop (>=768px): InlineDeepDive — an in-feed accordion that expands in
@@ -941,6 +942,10 @@ function HomeContentInner({
 
         {/* Filters now integrated into NavBar — no separate filter row */}
 
+        {/* First visit: one sentence under the dateline saying what Void is
+            and how to read a card, with the legend and /about (P1-14). */}
+        <FirstVisitNote />
+
         {/* Live region, loading, error, empty states, story grids */}
         <>
             {/* Live region for screen readers — announces the story count. */}
@@ -1115,12 +1120,10 @@ function HomeContentInner({
         onClose={() => setSearchOpen(false)}
       />
 
-      {/* Unified onboarding — DISABLED (2026-08-04). The auto-launching tour was
-          distracting and the /about experience now covers the same ground. The
-          UnifiedOnboarding component + onboarding.css are kept intact so it can
-          be re-enabled later; here it is hard-gated to never auto-activate.
-          Re-enable by restoring: active={!isLoading && stories.length > 0} */}
-      <UnifiedOnboarding active={false} />
+      {/* The tour, offered ONCE on arrival (P1-14, 2026-10-02). It was
+          disabled 2026-08-04 because it launched itself; it now only offers,
+          in a dismissible card, and never offers again whatever the answer. */}
+      <UnifiedOnboarding active={!isLoading && stories.length > 0} />
 
       {/* Keyboard shortcuts overlay — press ? to toggle */}
       <KeyboardShortcutsOverlay />

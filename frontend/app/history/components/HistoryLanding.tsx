@@ -6,6 +6,7 @@ import type { HistoricalEvent, RedactedEvent, HistoryEra } from "../types";
 import { ERAS, REGIONS } from "../types";
 import { HOOKS, CTAS } from "../hooks";
 import { ARC_FEATURES } from "../arc-features";
+import { commonsSrcSet } from "../../lib/commonsImage";
 import { THREADS, buildThreadMembership } from "../threads";
 /* CartographerStrip deferred — removed from timeline view, kept as component for future arc/map pages */
 
@@ -393,6 +394,9 @@ function PosterImage({ event, eager, year }: { event: HistoricalEvent; eager?: b
     if (nextIdx < fallbackUrls.length) {
       indexRef.current = nextIdx;
       if (imgRef.current) {
+        // A srcset outranks src, so the next candidate would never load
+        // while the first one's widths were still offered.
+        imgRef.current.removeAttribute("srcset");
         imgRef.current.src = fallbackUrls[nextIdx];
       }
     } else {
@@ -412,6 +416,11 @@ function PosterImage({ event, eager, year }: { event: HistoricalEvent; eager?: b
     <img
       ref={imgRef}
       src={fallbackUrls[0]}
+      /* The card's photo is about 320px wide on a phone and 260px on a
+         desktop; the stored file is 1280px. Offer the smaller Commons widths
+         (P2-4). */
+      srcSet={commonsSrcSet(fallbackUrls[0], fallbackUrls[0] === event.heroImage ? event.heroImageWidth : undefined)}
+      sizes="(max-width: 767px) calc(100vw - 56px), 280px"
       alt={event.heroCaption || event.title}
       loading={eager ? "eager" : "lazy"}
       // The first cards are the LCP candidate on /history — hint the browser to

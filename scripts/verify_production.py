@@ -24,13 +24,16 @@ One exception to the no-I/O rule, added 2026-09-21: `check_internal_routes_hidde
 issues three HEAD requests, because "is /command-center still served?" cannot be
 answered from the homepage's bytes. It reads its origin out of the page's own
 canonical link, so it needs no new plumbing, and it never fails on a network
-error: only a live 200 is a defect.
+error: only a live 200 is a defect. A second, 2026-10-02:
+`check_first_party_assets_not_rate_limited` GETs `/` and the page's own
+`/_next/static` assets, paced, and fails only on a 429.
 """
 
 from __future__ import annotations
 
 import argparse
 import html as _html
+import json
 import re
 import sys
 from pathlib import Path
@@ -770,6 +773,115 @@ def check_internal_routes_hidden(p: Page) -> list[str]:
     return out
 
 
+# P0-6 (2026-10-02): Cloudflare's rate-limit rule returned 429 on /_next/static
+# chunks during ONE calm load of /, and the page twice fell to Next's bare error
+# screen; /sources got 284 of 406 logo requests refused. The exemption lives in
+# the Cloudflare dashboard, not this repo (docs/DEPLOYMENT.md, "Rate limiting"),
+# so only the served behaviour can show it is in place. This loads the page's
+# own first-party assets the way one browser would, paced, and fails on any 429.
+_STATIC_ASSET_RE = re.compile(r'(?:src|href)="(/_next/static/[^"?#]+)')
+_ASSET_PACE_SECONDS = 0.15
+_ASSET_MAX = 80
+
+
+def _get_status(url: str, timeout: float = 15.0) -> int | None:
+    """Status of a GET with the body drained. None => could not ask."""
+    import urllib.error
+    import urllib.request
+
+    req = urllib.request.Request(url, headers={"User-Agent": "VoidNews-verify/1.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            resp.read()
+            return resp.status
+    except urllib.error.HTTPError as e:
+        return e.code
+    except Exception:
+        return None
+
+
+def check_first_party_assets_not_rate_limited(p: Page) -> list[str]:
+    import time
+
+    m = _CANONICAL_RE.search(p.raw)
+    if not m:
+        return []
+    origin = (m.group(1) or m.group(2)).rstrip("/")
+    assets = list(dict.fromkeys(_STATIC_ASSET_RE.findall(p.raw)))[:_ASSET_MAX]
+    limited = []
+    for path in ["/"] + assets:
+        if _get_status(f"{origin}{path}") == 429:
+            limited.append(path)
+        time.sleep(_ASSET_PACE_SECONDS)
+    if not limited:
+        return []
+    return [
+        f"{len(limited)} of {len(assets) + 1} first-party requests got HTTP 429 at "
+        f"{origin} (e.g. {', '.join(limited[:4])}): the Cloudflare rate-limit "
+        f"rule must exempt /_next/static/*, /logos/*, /brand/*, /audio/* "
+        f"(docs/DEPLOYMENT.md)"
+    ]
+
+
+# Withdrawn audio must not stay reachable by URL. Issue #26's episode of The
+# Argument was withdrawn in rev 84 (it speaks passages a published correction
+# removed), yet on 2026-10-02 these paths still answered 206 audio/mpeg: the
+# row was cleared and the files were left. History episodes the manifest marks
+# `audio_withdrawn` (their script was corrected after the render) are held to
+# the same rule. A 2xx that is not an HTML page fails; a 404, a 301 and the
+# site's own HTML 404 page all mean "not served".
+_WITHDRAWN_AUDIO_PATHS = (
+    "/audio/weekly-world/2026-09-21-am.mp3",
+    "/audio/weekly-world/2026-09-21-am.chapters.json",
+    "/audio/weekly-world/latest.mp3",
+    "/audio/weekly-world/latest.chapters.json",
+)
+_HISTORY_MANIFEST = Path(__file__).resolve().parents[1] / "frontend/public/data/history-audio.json"
+
+
+def _withdrawn_history_paths() -> list[str]:
+    try:
+        eps = json.loads(_HISTORY_MANIFEST.read_text(encoding="utf-8")).get("episodes") or {}
+    except (OSError, ValueError):
+        return []
+    return [f"/audio/history/{slug}.mp3" for slug, ep in sorted(eps.items())
+            if isinstance(ep, dict) and ep.get("audio_withdrawn")]
+
+
+def _head(url: str, timeout: float = 10.0) -> tuple[int | None, str]:
+    """(status, content-type) of one HEAD, redirects not followed."""
+    import urllib.error
+    import urllib.request
+
+    class _NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            return None
+
+    opener = urllib.request.build_opener(_NoRedirect)
+    req = urllib.request.Request(url, method="HEAD", headers={"Cache-Control": "no-cache"})
+    try:
+        with opener.open(req, timeout=timeout) as resp:
+            return resp.status, resp.headers.get("Content-Type", "")
+    except urllib.error.HTTPError as e:
+        return e.code, e.headers.get("Content-Type", "") if e.headers else ""
+    except Exception:
+        return None, ""
+
+
+def check_withdrawn_audio_gone(p: Page) -> list[str]:
+    m = _CANONICAL_RE.search(p.raw)
+    if not m:
+        return []
+    origin = (m.group(1) or m.group(2)).rstrip("/")
+    out = []
+    for path in list(_WITHDRAWN_AUDIO_PATHS) + _withdrawn_history_paths():
+        status, ctype = _head(f"{origin}{path}")
+        if status is not None and 200 <= status < 300 and "text/html" not in ctype.lower():
+            out.append(f"{path} is still served (HTTP {status}, {ctype or 'no type'}) at "
+                       f"{origin}: withdrawn audio must 404")
+    return out
+
+
 CHECKS = [
     ("structural: single Top story", check_top_story),
     ("structural: wordmark not doubled", check_wordmark),
@@ -795,6 +907,9 @@ CHECKS = [
     ("structural: every card links to /story/<uuid>/", check_card_anchor_coverage),
     ("integrity: confidence is real (not COUNT/5 proxy)", check_confidence_not_proxy),
     ("exposure: internal tooling routes are not served", check_internal_routes_hidden),
+    ("availability: first-party assets are not rate-limited (P0-6)",
+     check_first_party_assets_not_rate_limited),
+    ("exposure: withdrawn audio is not served", check_withdrawn_audio_gone),
 ]
 
 # Reported on every run, promoted to hard failures by --strict once the

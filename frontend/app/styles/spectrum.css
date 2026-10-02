@@ -346,6 +346,26 @@
   border-radius: var(--radius-md);
 }
 
+/* LogoMark (SpectrumChart.tsx): the letter is always in the box and the image
+   sits over it on the card colour, so a mark whose image failed still names
+   its outlet. The parent boxes already centre their content; these two only
+   stack the layers. */
+.spectrum-logo,
+.spectrum-list__mono,
+.spectrum-sheet__mono {
+  position: relative;
+}
+.logo-mark__img {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  background: var(--bg-card);
+  opacity: 0;
+}
+.logo-mark__img[data-loaded] {
+  opacity: 1;
+}
+
 /* Self-hosted outlet favicon inside the list-row + detail-sheet monogram tiles */
 .spectrum-list__logo { width: 18px; height: 18px; object-fit: contain; display: block; border-radius: var(--radius-md); }
 .spectrum-sheet__logo { width: 22px; height: 22px; object-fit: contain; display: block; border-radius: var(--radius-md); }

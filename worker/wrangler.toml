@@ -13,11 +13,18 @@ workers_dev = true
 # Comma-free allow-list of site origins permitted to call the API (CORS).
 [vars]
 ALLOWED_ORIGINS = "https://news.voidvision.org,https://void-news.pages.dev"
-# Salt for hashing the client IP into ip_hash. Override with a secret in prod:
-#   wrangler secret put IP_SALT
-IP_SALT = "void-news-dev-salt-change-me"
+
+# IP_SALT is a SECRET, never a [vars] literal (rev 85 WS-D). A committed salt
+# lets anyone brute-force the IPv4 space back out of every stored ip_hash.
+# The Worker refuses writes (503, logged) while the salt is missing, shorter
+# than 16 characters, or the old placeholder. Set it once in production:
+#   openssl rand -hex 32 | npx wrangler secret put IP_SALT
+# For `wrangler dev`, put IP_SALT=<random> in worker/.dev.vars (gitignored).
 
 [[d1_databases]]
 binding = "DB"
 database_name = "void-live"
 database_id = "ce47791c-ea80-4007-bfbf-f9ec4070107a"
+# schema.sql is the baseline; later changes are numbered files here, applied
+# with `npm run db:migrate` (wrangler d1 migrations apply void-live --remote).
+migrations_dir = "migrations"

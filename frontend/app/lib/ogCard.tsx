@@ -126,10 +126,9 @@ let _fonts: Promise<LoadedFont[]> | null = null;
  * face, and the subset request is a network round trip per card, which a
  * per-story card cannot afford.
  *
- * Safe as a build-time network call because `app/layout.tsx` already imports
- * from `next/font/google`, so a build without network access is already
- * impossible. Still wrapped: a font that fails to load costs the cards their
- * faces, not the deploy.
+ * The one build-time network call left: the site's own faces are self-hosted
+ * woff2 in `app/fonts/`, which satori cannot read. Wrapped, so a font that
+ * fails to load costs the cards their faces, not the deploy.
  *
  * The User-Agent matters. Google serves woff2 to a modern browser string, and
  * satori cannot read woff2; this one gets plain TTF back.

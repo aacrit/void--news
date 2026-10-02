@@ -27,6 +27,63 @@ from utils.safe_requests import safe_get
 # (which won't happen if we skip) OR a manual /sources reset clears them.
 QUARANTINE_THRESHOLD = 5
 
+# WHY A FEED FAILED, recorded on every failure in sources.last_fetch_status, so a
+# quarantined feed always carries its cause (P2-6, rev 85). The old statuses
+# were http_4xx / http_5xx / parse_error / other: a 429 rate limit, a 403 block
+# and a 404 dead URL all read http_4xx, an SSL failure and a refused
+# connection both read "other", and an empty Google News search read
+# "parse_error". 260 of 1,061 sources were quarantined on 2026-10-01 with no way
+# to tell which of those they were. `scripts/roster/quarantine_report.py`
+# prints the counts per cause; tests/test_quarantine_causes.py holds the list.
+#
+#   http_<code>   the server answered with that status (http_429, http_403, ...)
+#   timeout       no answer within FEED_TIMEOUT
+#   ssl           the TLS handshake or certificate failed
+#   dns           the host does not resolve
+#   connection    refused, reset or unreachable
+#   blocked       refused by our own SSRF guard (private or metadata address)
+#   empty         a well-formed feed with no entries
+#   parse_error   not a feed (HTML, truncated XML)
+#   stale         NOT a failure: entries, all older than MAX_ARTICLE_AGE_DAYS.
+#                 Recorded so the report can show it; it resets the counter like ok.
+#   other         anything else; the exception class is printed in the run log
+FAILURE_CAUSES = ("timeout", "ssl", "dns", "connection", "blocked", "empty",
+                  "parse_error", "other")
+NON_FAILURE_STATUSES = ("ok", "stale")
+
+
+def is_known_status(status: str | None) -> bool:
+    """True for a status this module writes (http_<3 digits> or a named cause)."""
+    if not status:
+        return False
+    if status.startswith("http_"):
+        return status[5:].isdigit() and len(status) == 8
+    return status in FAILURE_CAUSES or status in NON_FAILURE_STATUSES
+
+
+def classify_fetch_error(exc: BaseException) -> str:
+    """The cause recorded for a fetch that raised. Order matters: requests'
+    SSLError is a ConnectionError, and the SSRF guard's error is a RequestException."""
+    from utils.safe_requests import BlockedAddressError
+    if isinstance(exc, requests.exceptions.Timeout):
+        return "timeout"
+    if isinstance(exc, requests.exceptions.HTTPError):
+        status = getattr(getattr(exc, "response", None), "status_code", 0) or 0
+        return f"http_{status}" if 100 <= status <= 599 else "other"
+    if isinstance(exc, requests.exceptions.SSLError):
+        return "ssl"
+    if isinstance(exc, BlockedAddressError):
+        return "dns" if "dns resolution failed" in str(exc).lower() else "blocked"
+    if isinstance(exc, requests.exceptions.ConnectionError):
+        msg = str(exc).lower()
+        if "ssl" in msg or "certificate" in msg:
+            return "ssl"
+        if ("name or service not known" in msg or "nodename nor servname" in msg
+                or "temporary failure in name resolution" in msg or "getaddrinfo" in msg):
+            return "dns"
+        return "connection"
+    return "other"
+
 
 # --- Junk content filters (applied before scraping to save time) ---
 
@@ -199,9 +256,9 @@ def _fetch_single_feed(source: dict) -> tuple[list[dict], str]:
     Returns:
         Tuple of (articles, status):
             articles: List of parsed article dicts (empty on failure).
-            status: One of: 'ok' | 'timeout' | 'http_4xx' | 'http_5xx'
-                    | 'parse_error' | 'other' — used to update
-                    sources.last_fetch_status and consecutive_fetch_failures.
+            status: 'ok', 'stale', or a failure cause (see FAILURE_CAUSES and
+                    http_<code>), used to update sources.last_fetch_status and
+                    consecutive_fetch_failures.
     """
     rss_url = source.get("rss_url")
     if not rss_url:
@@ -223,10 +280,13 @@ def _fetch_single_feed(source: dict) -> tuple[list[dict], str]:
 
         if not feed.entries:
             print(f"  [warn] No entries in feed for {source.get('name', 'unknown')} ({rss_url})")
-            return [], "parse_error"
+            # A well-formed feed with nothing in it is not a parse failure (an
+            # empty `when:24h` Google News search is the common case).
+            return [], ("empty" if feed.get("version") else "parse_error")
 
         articles = []
         skipped = 0
+        stale = 0
         # Limit to the 30 most-recent entries per feed. RSS feeds are ordered
         # newest-first; entries beyond 30 are typically older than MAX_ARTICLE_AGE_DAYS
         # and will be filtered anyway. Capping here avoids downloading and parsing
@@ -259,6 +319,7 @@ def _fetch_single_feed(source: dict) -> tuple[list[dict], str]:
                     cutoff = datetime.now(timezone.utc) - timedelta(days=MAX_ARTICLE_AGE_DAYS)
                     if pub_dt < cutoff:
                         skipped += 1
+                        stale += 1
                         continue
                 except (TypeError, ValueError):
                     pass  # Can't parse date — don't filter, let it through
@@ -270,18 +331,17 @@ def _fetch_single_feed(source: dict) -> tuple[list[dict], str]:
         if skipped:
             print(f"  [filter] {source.get('name', 'unknown')}: skipped {skipped} junk/stale entries")
 
+        if not articles and stale and stale == len(feed.entries[:30]):
+            return articles, "stale"
         return articles, "ok"
 
-    except requests.exceptions.Timeout:
-        print(f"  [timeout] {source.get('name', 'unknown')}: timed out after {FEED_TIMEOUT}s")
-        return [], "timeout"
-    except requests.exceptions.HTTPError as e:
-        status = getattr(e.response, "status_code", 0) or 0
-        print(f"  [http] {source.get('name', 'unknown')}: {status}")
-        return [], ("http_4xx" if 400 <= status < 500 else "http_5xx" if status >= 500 else "other")
     except Exception as e:
-        print(f"  [error] {source.get('name', 'unknown')}: {e}")
-        return [], "other"
+        cause = classify_fetch_error(e)
+        if cause == "timeout":
+            print(f"  [timeout] {source.get('name', 'unknown')}: timed out after {FEED_TIMEOUT}s")
+        else:
+            print(f"  [{cause}] {source.get('name', 'unknown')}: {type(e).__name__}: {e}")
+        return [], cause
 
 
 def fetch_from_rss(sources: list[dict]) -> tuple[list[dict], list[dict]]:
@@ -355,8 +415,8 @@ def fetch_from_rss(sources: list[dict]) -> tuple[list[dict], list[dict]]:
                     all_articles.extend(articles)
                     if source_id:
                         status_by_source_id[source_id] = status
-                    if status == "ok":
-                        print(f"  [ok] {source.get('name', 'unknown')}: {len(articles)} articles")
+                    if status in NON_FAILURE_STATUSES:
+                        print(f"  [{status}] {source.get('name', 'unknown')}: {len(articles)} articles")
                 except TimeoutError:
                     error_msg = f"Timeout after {FEED_TIMEOUT}s"
                     print(f"  [timeout] {source.get('name', 'unknown')}: {error_msg}")
@@ -418,7 +478,9 @@ def _update_source_health(status_by_source_id: dict[str, str]) -> None:
 
     now_iso = datetime.now(timezone.utc).isoformat()
     ok_ids = [sid for sid, st in status_by_source_id.items() if st == "ok"]
-    fail_items = [(sid, st) for sid, st in status_by_source_id.items() if st != "ok"]
+    stale_ids = [sid for sid, st in status_by_source_id.items() if st == "stale"]
+    fail_items = [(sid, st) for sid, st in status_by_source_id.items()
+                  if st not in NON_FAILURE_STATUSES]
 
     # Reset successful sources in one batch UPDATE
     if ok_ids:
@@ -434,6 +496,17 @@ def _update_source_health(status_by_source_id: dict[str, str]) -> None:
                 return  # migration 051 not yet applied — silent skip
             print(f"  [warn] source-health update (ok batch) failed: {e}")
             return
+    # A stale feed answered: the counter resets exactly as for ok, and the status
+    # says why it brought nothing.
+    if stale_ids:
+        try:
+            supabase.table("sources").update({
+                "consecutive_fetch_failures": 0,
+                "last_fetch_at": now_iso,
+                "last_fetch_status": "stale",
+            }).in_("id", stale_ids).execute()
+        except Exception as e:
+            print(f"  [warn] source-health update (stale batch) failed: {e}")
 
     # Failures need per-row read-modify-write to increment the counter
     if fail_items:

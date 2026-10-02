@@ -1,10 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import {
-  Playfair_Display,
-  Inter,
-  IBM_Plex_Mono,
-  Barlow_Condensed,
-} from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import AudioProvider from "./components/AudioProvider";
 import MobileNav from "./components/MobileNav";
@@ -27,36 +22,50 @@ import { ROSTER_SOURCES_TEXT } from "./lib/rosterConfig";
                humanist mono with institutional warmth (not a coding font)
    --------------------------------------------------------------------------- */
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "700"],
+// Self-hosted (app/fonts/, latin subset, all SIL OFL). next/font/google fetched
+// the CSS at build time, so the build depended on whatever Google served the
+// runner: on 2026-10-02 it handed CI `fonts.gstatic.com/l/font?kit=..&skey=..`
+// URLs, which Next 16.3's font loader rejects ("next/font/google queries have
+// exactly one entry"), and the build failed three times in a row while the same
+// commit built locally. Inter and Playfair Display are variable files covering
+// every weight used here.
+const playfair = localFont({
+  src: [{ path: "./fonts/playfair-display-latin-var.woff2", weight: "400 700", style: "normal" }],
   variable: "--font-playfair",
   display: "swap",
+  adjustFontFallback: "Times New Roman",
 });
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+const inter = localFont({
+  src: [{ path: "./fonts/inter-latin-var.woff2", weight: "400 600", style: "normal" }],
   variable: "--font-inter",
   display: "swap",
 });
 
-// Secondary families (meta labels, mono data): not on the critical render
-// path, so don't preload them — keeps Playfair + Inter uncontended at FCP.
-const barlowCondensed = Barlow_Condensed({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+// Barlow Condensed (meta labels) is not on the critical render
+// path, so don't preload it — keeps Playfair + Inter uncontended at FCP.
+const barlowCondensed = localFont({
+  src: [
+    { path: "./fonts/barlow-condensed-400-latin.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/barlow-condensed-500-latin.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/barlow-condensed-600-latin.woff2", weight: "600", style: "normal" },
+  ],
   variable: "--font-barlow",
   display: "swap",
   preload: false,
 });
 
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400"],
+// IBM Plex Mono IS on the critical path from 768px up: the masthead's
+// dateline and the experimental badge are set in it, and its late swap
+// resized the masthead row and moved the right-hand nav: the
+// likeliest source of the layout shift of 0.02 to 0.047 at 768 and wider on
+// every route (audit 2 F8; reproduced locally with fonts delayed). One weight, latin
+// only, so the preload is one small file.
+const ibmPlexMono = localFont({
+  src: [{ path: "./fonts/ibm-plex-mono-400-latin.woff2", weight: "400", style: "normal" }],
   variable: "--font-ibm-mono",
   display: "swap",
-  preload: false,
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -64,7 +73,7 @@ export const metadata: Metadata = {
   // Fallback title/description for routes that do not set their own metadata.
   // The primary routes (/, /sources, /about, /ship, /onair, /history,
   // /weekly, /listen) each export a DISTINCT title + description + canonical.
-  // /paper and /games are 301-hidden and no longer listed here. `keywords`
+  // /paper and /games set their own (both are live again). `keywords`
   // was removed 2026-08-09: search engines have ignored the meta keywords tag
   // for over a decade, so it was dead weight.
   title: "Void News. See through the void.",
@@ -157,7 +166,7 @@ export default async function RootLayout({
             runtime data host now that reads are static JSON on this origin. */}
         <link rel="preconnect" href="https://void-api.aacrit.workers.dev" />
         <link rel="dns-prefetch" href="https://void-api.aacrit.workers.dev" />
-        {/* Fonts loaded via next/font/google above — no additional font loads needed.
+        {/* Fonts loaded via next/font/local above — no additional font loads needed.
             Chomsky, IM Fell English, Old Standard TT, and Lora were removed:
             none are referenced in CSS. Saves 4 network requests. */}
         {/* CSP — UAT 2026-05-13 P1-2/P1-3:
@@ -213,6 +222,16 @@ export default async function RootLayout({
                     document.documentElement.setAttribute('data-mode', 'light');
                   } else if (!stored && window.matchMedia('(prefers-color-scheme: light)').matches) {
                     document.documentElement.setAttribute('data-mode', 'light');
+                  }
+                } catch(e) {}
+                // The first-visit note (components/FirstVisitNote.tsx) is in
+                // the prerendered page; a returning reader's browser hides it
+                // here, before first paint, so it never flashes or reflows.
+                // Seen 12h ago or dismissed: hidden.
+                try {
+                  var fv = localStorage.getItem('void-news-first-visit');
+                  if (fv && (fv === 'dismissed' || !(Date.now() - Number(fv) <= 43200000))) {
+                    document.documentElement.setAttribute('data-fv-seen', '');
                   }
                 } catch(e) {}
                 var m = window.matchMedia('(max-width: 767px)').matches;

@@ -1,4 +1,4 @@
-"""The rigor controls on a History thesis: T-01..T-21 (proposal §9, CEO rules
+"""The rigor controls on a History thesis: T-01..T-22 (proposal §9, CEO rules
 of 2026-09-24). Each returns Findings; `validate_thesis` runs them all, the
 ledger's own L-xx checks included, because a thesis is only as sound as the
 ledger it cites.
@@ -47,6 +47,9 @@ ledger it cites.
         is not on the page or whose own sources are heard fewer than twice in
         its sections, an event section no strand claims, too few event
         sections or contested questions, an unknown scope
+  T-22  a Commons upload path whose hash directories are not md5 of its own
+        file name, or an exhibit image naming another file than its
+        accession (four exhibits served nothing on 2026-10-02 for this)
 """
 from __future__ import annotations
 
@@ -520,6 +523,22 @@ def check_coverage(th: Thesis, ledger: Ledger, event: dict, out: list[Finding]) 
             _fail(out, "T-21", s.id, "an event section no strand claims")
 
 
+def check_commons_paths(ledger: Ledger, out: list[Finding]) -> None:
+    """T-22: every Commons upload path the ledger serves sits under the md5 of
+    its own file name, and names the file its accession names."""
+    from pipeline.history import commons
+    for xid, x in ledger.exhibits.items():
+        for key in ("image", "url"):
+            v = str(x.get(key) or "")
+            problem = commons.hash_problem(v)
+            if problem:
+                _fail(out, "T-22", xid, f"{key}: {problem}")
+        img = commons.file_name(x.get("image")) if commons.UPLOAD_RE.search(str(x.get("image") or "")) else None
+        acc = commons.file_name(x.get("accession"))
+        if img and acc and img != acc:
+            _fail(out, "T-22", xid, f"image is {img} but the accession names {acc}")
+
+
 def validate_thesis(th: Thesis, ledger: Ledger, event: dict,
                     script: dict | None = None, episode: dict | None = None) -> list[Finding]:
     out: list[Finding] = []
@@ -537,4 +556,5 @@ def validate_thesis(th: Thesis, ledger: Ledger, event: dict,
     check_analyses(th, ledger, out)
     check_bar(th, ledger, event, out)
     check_coverage(th, ledger, event, out)
+    check_commons_paths(ledger, out)
     return out

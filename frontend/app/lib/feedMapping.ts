@@ -187,6 +187,14 @@ export function mapClustersToStories(
           // was computed over every article, so that stays truthful.
           leanMeasuredCount: safeNum(bd, "lean_measured_count", safeNum(bd, "analyzed_count", 0)),
           leanTotalCount: safeNum(bd, "lean_total_count", safeNum(bd, "analyzed_count", 0)),
+          // One vote per outlet from 2026-10-02 (CEO decision 3); older
+          // payloads counted articles and say nothing.
+          leanVote: bd["lean_vote"] === "outlet" ? "outlet" : "article",
+          // CEO decision 1: state-affiliated outlets, outside the ladder.
+          leanStateCount: safeNum(bd, "lean_state_count", 0),
+          leanStateOutlets: Array.isArray(bd["lean_state_outlets"])
+            ? (bd["lean_state_outlets"] as unknown[]).filter((n): n is string => typeof n === "string")
+            : [],
         }
       : undefined;
 

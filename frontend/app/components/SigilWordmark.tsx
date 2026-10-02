@@ -104,9 +104,15 @@ export default function SigilWordmark({
         ...(accent ? { ["--sigil-mark" as string]: accent } : {}),
       }}
     >
-      <span style={letter} aria-hidden="true">
-        V
-      </span>
+      {/* The letters are drawn, not written (audit 2 F11). The lockup is an
+          image with one name, "VOID NEWS", and its glyphs are paint: as text
+          nodes they were checked as body copy, and "NEWS" in the brand's
+          terracotta (#B26F52, 3.1 to 3.4:1 on the light paper) was flagged
+          on every page although a logo is exempt from the contrast minimum
+          (WCAG 1.4.3). Generated content (components.css, .sigil-word__glyph)
+          renders the same letters in the same face and colour, and leaves no
+          text for a checker or a copy-paste to mistake for prose. */}
+      <span className="sigil-word__glyph" data-glyph="V" style={letter} aria-hidden="true" />
       <svg
         className="sigil-word__mark"
         viewBox="0 0 100 100"
@@ -145,14 +151,10 @@ export default function SigilWordmark({
         <line className="sigil-word__foot" x1="50" y1="91" x2="50" y2="112" strokeWidth={6} strokeLinecap="round" />
         <path className="sigil-word__foot" d="M35 118 C43 113 57 113 65 118" fill="none" strokeWidth={6} strokeLinecap="round" />
       </svg>
-      <span style={letter} aria-hidden="true">
-        ID
-      </span>
+      <span className="sigil-word__glyph" data-glyph="ID" style={letter} aria-hidden="true" />
       {/* Wider gap between the two words */}
       <span style={{ display: "inline-block", width: "0.34em" }} aria-hidden="true" />
-      <span style={wordStyle} aria-hidden="true">
-        {product}
-      </span>
+      <span className="sigil-word__glyph" data-glyph={product} style={wordStyle} aria-hidden="true" />
     </span>
   );
 }
