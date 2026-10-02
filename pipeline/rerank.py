@@ -41,9 +41,13 @@ RANK_ALL = "--all" in sys.argv
 # among the top POOL rows by rank_world and pushed a candidate out of the pool.
 #
 # So the pool-eligible clusters are ranked exactly as before, and every orphan is
-# parked at ORPHAN_RANK_FLOOR, below every rank the feed ranker can produce (its
-# own removal sentinel is -1.0 and the strictly decreasing encoding steps by 0.1).
-# Orphans keep their headline_rank and every other column as they are.
+# parked at ORPHAN_RANK_FLOOR, or one point under the lowest rank this run wrote
+# if that is lower (`parking_floor`), so it sits below every ranked row. Orphans
+# keep their headline_rank and every other column as they are.
+#
+# Measured on the 2026-10-01 state snapshot (15,430 clusters, 623 eligible): the
+# old path took 523 s, this one 60 s; the 35-candidate bench was identical in
+# order, and so was the eligible ordering down to position 178.
 #
 # What this can change, stated rather than hoped: apply_feed_ordering's
 # same-event cap and its two top-80 scans used to see orphans too, so an orphan
