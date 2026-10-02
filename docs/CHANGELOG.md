@@ -463,6 +463,69 @@ Found and not fixed here: `cleanup_stuck_pipeline_runs` compares the space
 form `started_at` against a `T` cutoff, so every run marks ITSELF stuck and
 carries a "Pipeline run timed out" error into its record (all three runs of
 09-29 to 10-01 do).
+## rev 85 WS-I: Games comes back, minus the game that printed headlines nobody wrote (2026-10-02)
+
+The CEO un-hid Games on 2026-10-02 (decision 7a, overriding the plan's
+recommendation to wait). The audit said Games had no Supabase dependency and
+no technical blocker. Both were true. Every bank is static TypeScript in
+`frontend/app/games/`; nothing fetches. What the audit did not read was the
+content.
+
+**THE FRAME is withdrawn.** Its one puzzle printed four headlines about a
+rate rise under four real mastheads (The Guardian, BBC News, Reuters, The Wall
+Street Journal). No outlet wrote them. Each carried a lean score from -2.8 to 2.4,
+on a scale the engine has never used (it scores 0 to 100). That is a fabricated record under a real
+name, which Rule 1 forbids however small the stakes. It cannot be rebuilt from
+Void's own data yet: `build-data/archive.json` holds each member's outlet,
+lean and URL but not its headline. The route is deleted and `/games/frame`
+302s to `/games/`.
+
+**UNDERTOW's reveals made claims about the world.** Its artifacts are
+invented specimens (ad copy, LinkedIn posts, corporate statements) and its
+reveals read them. Six sentences went further, from model knowledge: how often
+a central bank committee meets, how old a scripture passage is, what Mars
+retrograde "actually" is, how many elections a line has been used at, and
+that such language had both recruited soldiers and sold insurance, and
+that a scripture's wording "was not an accident". All six were cut, not
+softened, as were two uses of "significant". One challenge was built on an altered, unattributed quotation
+of the Declaration of Independence ("all are created equal") with a reveal
+making historical claims about its authors; it was removed, leaving 29.
+
+**A rotation, said out loud.** The banks were dated (2026-04-10 onward) and
+picked by day of year, and the page printed the bank's own date as if it were
+today's. Now `app/games/daily.ts` is the one definition: puzzle (UTC day mod
+bank size), so a bank cannot run out and no day can come up blank, and the
+page says "No. 23 of 29 · October 2, 2026" and "29 puzzles, one a day, in a
+fixed order. The set repeats." The pick happens after mount, because a pick at
+module load hydrates a different puzzle than the build-day HTML (React #418).
+Runway: UNDERTOW 29 puzzles, repeating; VOID RUN needs none.
+
+**Smaller defects found on the way.** Every UNDERTOW background photograph
+answered 404 and each page still credited its photographer; the images and
+credits are gone. Every dash in the banks became a comma or a colon. THE WIRE's
+hub teaser described a different game ("Headline or hallucination?") and its
+page was titled `VOID --WIRE`; it stays "coming soon" and 302s to `/games/`.
+The hub's h1 was a VOID GAMES lockup, which the brand rule forbids; it is the
+word Games now, and the hub's own back link and footer are gone in favour of
+the one masthead, which reads VOID NEWS · Games with Games in the section
+links, the drawer and the footer.
+
+**Gates.** `copy-facts.test.mjs` no longer skips `app/games/`.
+`tests/test_games_content.py` (new, in `auto-merge-claude.yml`) reads every
+string in every bank for a dash or a kill-list term (an artifact's text and a
+quoted span are specimens, as in W-10), fails if THE FRAME's route returns or
+a puzzle carries a date, and pins the removed quotation out.
+`scripts/verify_sections.py` G-01..G-03 assert on the live site that `/games/`
+serves itself titled "Games | Void News", links only the live games, states
+the rotation, and serves no dash or kill-list term. The headless sweep walks
+`/games/`, `/games/undertow/` and `/games/run/`, plus `games-landing` and
+`games-undertow-today`. `test_docs_facts.py` holds the CLAUDE.md row to
+`_redirects` and to the bank size.
+
+**Not done.** The 116 UNDERTOW reveals have had a partial read, not a
+sentence-by-sentence Rule 1 read; they need one before the CEO signs the bank off. `games.css`
+still carries about 139 dead selectors (THE FRAME, CIPHER, the quote and
+alphabet games) and stays exempt from the parity and lint gates.
 
 ## rev 83: a red main from four causes, one of them silent for a week (2026-10-01)
 

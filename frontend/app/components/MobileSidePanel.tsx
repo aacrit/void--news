@@ -58,7 +58,7 @@ interface MobileSidePanelProps {
   editionBuiltAt?: string | null;
 }
 
-type NavIcon = "feed" | "onair" | "history" | "weekly" | "paper" | "listen" | "sources" | "feedback";
+type NavIcon = "feed" | "onair" | "history" | "weekly" | "paper" | "listen" | "sources" | "games" | "feedback";
 
 interface NavItem {
   href: string;
@@ -84,6 +84,7 @@ const MAIN_ITEMS: NavItem[] = [
   { href: "/weekly", label: "Weekly", desc: "The week, in one issue.", accent: "neutral", icon: "weekly", cascade: 3 },
   { href: "/paper", label: "Paper", desc: "Today’s front page, laid out to print.", accent: "neutral", icon: "paper", cascade: 3 },
   { href: "/audio", label: "Audio", desc: "Every programme, one place.", accent: "neutral", icon: "listen", cascade: 3 },
+  { href: "/games", label: "Games", desc: "A daily puzzle and an endless runner.", accent: "neutral", icon: "games", cascade: 3 },
   { href: "/sources", label: "Sources", desc: `${ROSTER_SOURCES_TEXT} sources, ${ROSTER_COUNTRIES} countries.`, accent: "neutral", icon: "sources", cascade: 3 },
   { href: "/ship", label: "Feedback", desc: "Tell us what to build or fix.", accent: "neutral", icon: "feedback", cascade: 3 },
 ];
@@ -159,6 +160,15 @@ function NavGlyph({ icon }: { icon: NavIcon }) {
         <path d="M7 9h5" />
         <path d="M7 13h5" />
         <path d="M7 16h3" />
+      </svg>
+    );
+  }
+  if (icon === "games") {
+    // The Games mascot's head: a diamond with its core dot.
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 3 21 12 12 21 3 12Z" />
+        <circle cx="12" cy="12" r="1.75" fill="currentColor" stroke="none" />
       </svg>
     );
   }

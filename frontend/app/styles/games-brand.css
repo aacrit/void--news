@@ -143,13 +143,15 @@
    Hub Masthead — wordmark sizing within the games hub
    -------------------------------------------------------------------------- */
 
-.games-hub__wordmark-wrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: var(--space-3);
-}
-
-.games-hub__wordmark-wrap svg {
-  height: clamp(32px, 5vw, 48px);
-  width: auto;
+/* The hub's h1 is the section's name in type, not a second lockup: VOID NEWS
+   is the only word that gets one (CLAUDE.md, Brand). */
+.games-hub__title {
+  font-family: var(--font-editorial);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  color: rgba(245, 240, 232, 0.94);
+  margin: 0 0 var(--space-3);
+  text-align: center;
 }
