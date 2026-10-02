@@ -3,8 +3,8 @@
 
   - the Gemini meter counts every REQUEST by model, including retries and calls
     made with count_call=False, and survives the module being imported twice;
-  - Kokoro runs four workers on a four-core runner with the memory for them, two
-    otherwise, and VOID_KOKORO_WORKERS wins;
+  - Kokoro runs two workers unless VOID_KOKORO_WORKERS asks for more and the
+    runner has the cores and memory for them;
   - main.py's phase clock turns marks into durations.
 
 No network, no API key, no VOID_SQLITE_PATH.
@@ -81,15 +81,17 @@ check("get_usage names the flash model the gate reads", gc.get_usage()["flash_mo
 # --- 2. Kokoro workers -----------------------------------------------------------
 from briefing.tts_engines import KOKORO_WORKER_MB, default_kokoro_workers  # noqa: E402
 
-check("4 cores with room for four sessions: 4 workers",
-      default_kokoro_workers(cpu=4, mem_mb=16000, env={}) == 4)
+check("default is 2 even on a big runner (run #386 died at 4)",
+      default_kokoro_workers(cpu=4, mem_mb=16000, env={}) == 2)
 check("2 cores: 2 workers", default_kokoro_workers(cpu=2, mem_mb=16000, env={}) == 2)
-check("4 cores but too little memory: 2 workers",
-      default_kokoro_workers(cpu=4, mem_mb=4 * KOKORO_WORKER_MB - 1, env={}) == 2)
-check("VOID_KOKORO_WORKERS overrides", default_kokoro_workers(
-    cpu=4, mem_mb=16000, env={"VOID_KOKORO_WORKERS": "3"}) == 3)
+check("4 asked with room for four: 4 workers", default_kokoro_workers(
+    cpu=4, mem_mb=16000, env={"VOID_KOKORO_WORKERS": "4"}) == 4)
+check("4 asked without the memory: 2 workers", default_kokoro_workers(
+    cpu=4, mem_mb=4 * KOKORO_WORKER_MB - 1, env={"VOID_KOKORO_WORKERS": "4"}) == 2)
+check("4 asked on 2 cores: 2 workers", default_kokoro_workers(
+    cpu=2, mem_mb=16000, env={"VOID_KOKORO_WORKERS": "4"}) == 2)
 check("a junk override falls back to the default",
-      default_kokoro_workers(cpu=4, mem_mb=16000, env={"VOID_KOKORO_WORKERS": "x"}) == 4)
+      default_kokoro_workers(cpu=4, mem_mb=16000, env={"VOID_KOKORO_WORKERS": "x"}) == 2)
 
 # --- 3. The phase clock ------------------------------------------------------------
 src = (ROOT / "pipeline" / "main.py").read_text(encoding="utf-8")
@@ -106,4 +108,4 @@ for name in ("fetch", "scrape", "bias", "cluster", "rank", "rerank", "stage2", "
 if failures:
     print(f"\nFAIL  {len(failures)} runtime check(s)")
     sys.exit(1)
-print("\nPASS  the meter counts every request, Kokoro uses the cores, phases are timed")
+print("\nPASS  the meter counts every request, Kokoro defaults to two workers, phases are timed")
