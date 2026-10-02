@@ -109,6 +109,8 @@ impossible, not a note asking people to be careful:
 | `tests/test_history_quote_ledger.py` | a History quotation that diverges from a ledger extract we hold (Srebrenica carried two, 2026-09-24) |
 | `tests/test_history_clips.py` (H-12..H-17) + `pipeline/history/verify_clip.py` | an archival recording in a History episode without a rights basis on the allowlist, provenance, a transcript that the free local ASR matches against the ledger extract, the CEO's signature, a spoken credit, or its caps; and designed sound (bed, ambience) within 3 s of a real voice. `# MOOD:` / `# CLIP:` script directives are inert to every other consumer |
 | `tests/test_docs_facts.py` | this file's own numbers, against disk |
+| `tests/test_workflow_hygiene.py` | a cron on minute 0 or 30, a branch that changes `.github/` auto-merging (the refusal script is executed both ways), a branch name or commit text pasted into a `run:` script, a workflow without `permissions:`, a test file no workflow runs, a pushing workflow without the four pre-commit gates, the pipeline not dispatching its own deploy, an action not pinned to a SHA |
+| `tests/test_session_start_hook.py` | the session hook printing green over an older failure hidden under newer skipped or cancelled runs |
 | `frontend/scripts/verify-responsive.mjs` | content past the viewport, and sticky that does not stick |
 | `scripts/verify_production.py` | what the live page actually serves, and that `/command-center`, `/admin`, `/pipeline` are not served at all |
 | `scripts/verify_sections.py` | served History (H-01..H-06), Weekly (W-01..W-10, W-10 is the kill list on the page), Paper (P-01..P-04: the front page's twenty, in order, no dash, no retired claim) and Press (PR-01: the feed size it quotes) |
