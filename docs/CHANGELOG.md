@@ -69,6 +69,56 @@ and lock out everyone.
 Not done here: the Worker is not deployed (by hand: secret, migration,
 deploy); the dashboard rule is not applied; `layout.tsx`'s `<meta>` CSP still
 lists Insights; the Worker's 8 dev-only advisories need wrangler 4.
+## rev 85 WS-G: the Weekly quotes only what was printed, and writes only what it was given (2026-10-02)
+
+Audit 4 checked Issue #26 against `build-data/archive.json` and found what
+`ground_text` could not see: every name and number in the offending sentences
+was sourced, and the quotation marks around them were not.
+
+1. **Issue #26 corrected** in `weekly-issues.json` and `weekly.json`, each
+   point checked against the printed stories of 2026-09-14..20 first. The line
+   credited to Greenland's Jens-Frederik Nielsen is Mette Frederiksen's in the
+   printed story, and is hers now (cover and two columns). Rasmussen's
+   "binding agreement" was reported as paraphrase and is paraphrase. Trump's
+   quotation ends where the printed one ends. "EVER have a base" was in no
+   story and is gone, as is "since at least 2024" (the record says January
+   2025). The Sheeran cover's "disproportionate" and its 1,200 toll were in no
+   printed story; its quotes are now paraphrase of the 09-22 printed account.
+   Two columns (Moscow drones, Saudi strikes) are withdrawn: most of what they
+   asserted, including 1,600, 1,110 and 110,000, was not in the week. Both
+   departments are removed. Five briefs with no printed story are removed
+   (Erdogan at the UN, Jehovah's Witnesses, a Justice Department handgun
+   position the audit missed, Camp David, Xi at the airport), the Kohat toll
+   of 31 is the printed 21 and 23, and the other briefs are rewritten from
+   their printed rows without the guessed third sentence. The pipeline jargon
+   line is cut, the opinion topic names Greenland once, and the colophon's
+   2,355 "articles" (a sum of source counts over a capped read) is the scored
+   count The Week in Bias prints. Seven entries in `weekly-corrections.json`.
+2. **W-T22** (`tests/test_weekly.py`): every quotation in a committed issue's
+   covers, columns, departments and briefs must be verbatim in that week's
+   printed title, summary, consensus or divergence, curly or straight; only
+   Void's own section titles are allowed. Every brief must map to a printed
+   story by id or title. Planted: the extended Trump quote, the Rasmussen
+   paraphrase, the invented quote, an unprinted brief. Run against the issue
+   as it was, it names fifteen quotations and five briefs. Issue #23 is exempt
+   with its reason: the archive holds only two of its seven printed days.
+3. **The generator** (P1-18). Writers get every printed row of their thread in
+   full. The word brief is sized to those words (`sized_spec`), and length is
+   measured again AFTER `ground_text`, the new `ground_quotes` and the source
+   check (`length_after_cut`): a short piece ships, a fragment does not, and
+   nothing is regenerated to add words. A kill-list hit cuts its sentence, not
+   the piece. The recap is no longer asked for "the one thing it changes",
+   which is where "signals a crackdown" came from. `total_articles` is the
+   scored count. Gates WG-12..WG-15.
+4. **Decision 5**: Technology and Sports & Culture are suspended behind
+   `VOID_WEEKLY_DEPARTMENTS=1`. Their category match compared title case
+   labels against a lowercase taxonomy and never matched; it is lowercased.
+5. **Decision 6**: The Argument's band floats with the issue's sourced words
+   (`target_minutes`), 18-22 for a full issue, floor 14. The corrected Issue
+   #26 script runs 14.2 minutes in its 14-18 band and is back in
+   `data/weekly/scripts/`. It is not re-rendered: `render_weekly_audio` writes
+   `latest.*`, so rendering an older week after Issue #27 would replace the
+   current episode (OPEN-ITEMS).
 
 ---
 

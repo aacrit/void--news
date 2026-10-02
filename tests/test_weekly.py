@@ -623,7 +623,7 @@ def test_enforcement():
 
 
 # ---------------------------------------------------------------------------
-# W-T14  A kill-list term that survives the regeneration drops the section
+# W-T14  A kill-list term that survives the regeneration cuts its sentence
 # ---------------------------------------------------------------------------
 def test_drop_path():
     """`_gen_essay` regenerated once and shipped the better attempt, whatever
@@ -633,8 +633,8 @@ def test_drop_path():
     F-03). The generator cannot be imported without a DB, so the function is
     re-read as source and exec'd with the model call stubbed, the same seam
     `test_week_spread` uses."""
-    print("\nW-T14  a kill-list term that survives the regeneration drops the section")
-    from briefing.weekly_parse import parse_essay
+    print("\nW-T14  a kill-list term that survives the regeneration cuts its sentence")
+    from briefing.weekly_parse import parse_essay, cut_slop_sentences
     from utils.prohibited_terms import strip_significance
 
     src = (ROOT / "pipeline" / "briefing" / "weekly_digest_generator.py").read_text()
@@ -649,6 +649,7 @@ def test_drop_path():
           "_may_retry": lambda m: True, "strip_dashes": strip_dashes,
           "strip_significance": strip_significance, "enforce": enforce,
           "retry_suffix": retry_suffix, "drop_terms": drop_terms,
+          "cut_slop_sentences": cut_slop_sentences,
           "print": lambda *a, **k: None}
     exec(compile(body, "weekly_digest_generator.py", "exec"), ns)
     gen = ns["_gen_essay"]
@@ -666,8 +667,13 @@ def test_drop_path():
         return gen("prompt", "system", spec=spec, label="t")
 
     r, n = run(slop, slop)
-    check("still slop after the retry: the section is dropped", r is None and n == 2,
+    check("still slop after the retry: the SENTENCE is cut and the piece ships (P1-18)",
+          r is not None and n == 2 and "underscores" not in r["text"]
+          and r["text"].count("The council met") == 24,
           f"result={r is not None} calls={n}")
+    bare = "A headline for the piece\n\nThis incident underscores the vulnerability."
+    r, n = run(bare, bare)
+    check("a piece that is nothing but slop has nothing left, and is dropped", r is None)
     r, n = run(slop, clean)
     check("clean on regeneration ships", r is not None and "underscores" not in r["text"])
     check("the retry names the term", len(calls) == 2 and "underscores" in calls[1])
@@ -1133,6 +1139,176 @@ def test_source_check():
     check("an out-of-range sentence number cuts nothing", txt == cover.replace("\n\n", "\n\n"), repr(txt))
 
 
+# ---------------------------------------------------------------------------
+# W-T22  Every quotation is verbatim in that week's printed stories, and every
+#        recap item is a story Void printed that week
+# ---------------------------------------------------------------------------
+# Issue #26 set Rasmussen's reported paraphrase ("binding agreement") as a
+# direct quote, ran a Trump quote a clause past the printed one, quoted
+# "EVER have a base", which no story carried, and credited Mette Frederiksen's
+# line to Jens-Frederik Nielsen. Its Week in Brief carried five items no
+# printed story of the week held. `ground_text` saw none of it: every name and
+# number in those sentences was sourced. Quotation marks are a claim about
+# somebody's exact words, so this is literal.
+#
+# The corpus is the archive's printed rows for week_start..week_end, and only
+# the fields Stage 2 wrote: title, summary, consensus, divergence.
+ARCHIVE_PRINTED = ROOT / "frontend" / "build-data" / "archive.json"
+
+#: Void's own section titles may be quoted as names. Nothing else is allowed.
+SECTION_TITLE_QUOTES = frozenset({
+    "The Brief", "The Argument", "The Week in Bias", "The Week in Brief", "On Air",
+    "Deep Dive", "The Cover", "Void News",
+})
+
+#: Issues checked against something other than the printed week, with why.
+EXEMPT_ISSUES = {
+    23: ("the pilot (week of 2026-08-24). The archive holds printed stories for "
+         "2026-08-24 and 08-25 only; 08-26..30 were never written to "
+         "printed_stories, so its quotations cannot be checked against the week "
+         "they came from. It predates the printed record, not the rule."),
+}
+
+#: A recap headline maps to a printed title when this share of its content
+#: words appear in one.
+RECAP_TITLE_OVERLAP = 0.5
+_STOP = frozenset("the a an of in on at to for and or as by with from after over amid its his her "
+                  "their is are was were be new says say said".split())
+
+
+def _printed_rows(archive, week_start, week_end):
+    return [r for r in archive if week_start <= str(r.get("printed_on") or "") <= week_end]
+
+
+def _printed_corpus(rows):
+    out = []
+    for r in rows:
+        out.append(r.get("title") or "")
+        out.append(r.get("summary") or "")
+        for k in ("consensus_points", "divergence_points"):
+            v = r.get(k) or []
+            out.extend(v if isinstance(v, list) else [str(v)])
+    return "\n".join(out)
+
+
+def _content_words(s):
+    return {w.rstrip("s") for w in re.findall(r"[a-z0-9']+", (s or "").lower().replace("’", "'"))
+            if len(w) > 2 and w not in _STOP}
+
+
+def issue_quote_findings(issue, rows):
+    """(where, quote) for every quotation in the issue not verbatim in `rows`."""
+    from briefing.weekly_parse import unsourced_quotes
+    corpus = _printed_corpus(rows)
+    texts = []
+    for i, c in enumerate(issue.get("cover_text") or []):
+        if isinstance(c, dict):
+            texts += [(f"cover {i + 1}", c.get("text")), (f"cover {i + 1} headline", c.get("headline"))]
+    texts.append(("editorial", issue.get("opinion_text")))
+    texts.append(("editorial headline", issue.get("opinion_headline")))
+    for i, o in enumerate(issue.get("opinions") or []):
+        texts += [(f"column {i + 1}", o.get("text")), (f"column {i + 1} headline", o.get("headline"))]
+    for d in issue.get("departments") or []:
+        texts.append((f"department {d.get('slug')}", d.get("text")))
+    for i, r in enumerate(issue.get("recap_stories") or []):
+        texts += [(f"recap {i + 1}", r.get("summary")), (f"recap {i + 1} headline", r.get("headline"))]
+    out = []
+    for where, text in texts:
+        for q in unsourced_quotes(text or "", corpus, allow=SECTION_TITLE_QUOTES):
+            out.append((where, q))
+    return out
+
+
+def issue_recap_findings(issue, rows):
+    """Recap headlines that map to no printed story of the week, by id or title."""
+    ids = {r.get("source_cluster_id") for r in rows} | {r.get("id") for r in rows}
+    titles = [_content_words(r.get("title")) for r in rows]
+    out = []
+    for item in issue.get("recap_stories") or []:
+        if item.get("cluster_id") and item["cluster_id"] in ids:
+            continue
+        words = _content_words(item.get("headline"))
+        best = max((len(words & t) / len(words) for t in titles), default=0) if words else 0
+        if best < RECAP_TITLE_OVERLAP:
+            out.append(item.get("headline"))
+    return out
+
+
+def test_quotations_verbatim():
+    print("\nW-T22  every quotation is verbatim in the week's printed stories; every brief is a printed story")
+    from briefing.weekly_parse import ground_quotes, unsourced_quotes
+
+    # Planted defects, from Issue #26 itself.
+    printed = [{
+        "printed_on": "2026-09-19", "source_cluster_id": "c-greenland",
+        "title": "Denmark, Greenland Affirm Sovereignty After US Deal on Arctic Security",
+        "summary": ('Danish Foreign Minister Lars Lokke Rasmussen said a time of uncertainty will '
+                    'hopefully give way to a binding agreement. Trump, on Truth Social, said the '
+                    'United States will "FOREVER have the complete ability to do what is necessary '
+                    'in Greenland" to secure its security and that of the United States.'),
+        "consensus_points": ['Trump states the deal gives the United States "permanent control".'],
+        "divergence_points": [],
+    }]
+    corpus = _printed_corpus(printed)
+    exact = 'Trump said the US would "FOREVER have the complete ability to do what is necessary in Greenland."'
+    extended = ('Trump said the US would "FOREVER have the complete ability to do what is necessary in '
+                'Greenland in order to secure and defend the security of Greenland."')
+    paraphrase = 'Rasmussen said uncertainty would "hopefully give way to a binding agreement that strengthens security."'
+    invented = 'Trump added that "no U.S. adversary can EVER have a base in Greenland."'
+    curly = "Trump spoke of “permanent control” over the island."
+    titled = 'Void scored them in "The Week in Bias".'
+    check("an exact quotation passes", unsourced_quotes(exact, corpus) == [])
+    check("an EXTENDED quotation fails (planted: Issue #26's Trump quote)",
+          len(unsourced_quotes(extended, corpus)) == 1)
+    check("a PARAPHRASE set as a quotation fails (planted: Rasmussen's binding agreement)",
+          len(unsourced_quotes(paraphrase, corpus)) == 1)
+    check("an invented quotation fails (planted: EVER have a base)",
+          len(unsourced_quotes(invented, corpus)) == 1)
+    check("curly quotation marks are read too", unsourced_quotes(curly, corpus) == [])
+    check("a curly quotation that is not in the source fails",
+          len(unsourced_quotes("He called it “a binding pact”.", corpus)) == 1)
+    check("a section title may be quoted as a name, and only via the allowlist",
+          unsourced_quotes(titled, corpus, allow=SECTION_TITLE_QUOTES) == []
+          and len(unsourced_quotes(titled, corpus)) == 1)
+    kept, cut = ground_quotes("Denmark replied. " + paraphrase + " Trump answered.", corpus)
+    check("the generator's cut removes the misquoting sentence and keeps its neighbours",
+          kept == "Denmark replied. Trump answered." and len(cut) == 1, repr(kept))
+
+    issue = {"recap_stories": [
+        {"headline": "Denmark and Greenland Affirm Sovereignty", "cluster_id": "x"},
+        {"headline": "Anything at all", "cluster_id": "c-greenland"},
+        {"headline": "Jehovah's Witnesses Update Blood Transfusion Stance", "cluster_id": "y"},
+    ]}
+    check("a brief maps by printed id or by its title; one with neither fails (planted: Jehovah's Witnesses)",
+          issue_recap_findings(issue, printed) == ["Jehovah's Witnesses Update Blood Transfusion Stance"],
+          str(issue_recap_findings(issue, printed)))
+
+    # The committed issues.
+    if not ARCHIVE_PRINTED.exists():
+        check("archive.json exists", False, str(ARCHIVE_PRINTED))
+        return
+    archive = json.loads(ARCHIVE_PRINTED.read_text())
+    seen = 0
+    for path in (ISSUES_JSON, WEEKLY_JSON):
+        blob = json.loads(path.read_text())
+        for issue in (blob if isinstance(blob, list) else [blob]):
+            n = issue.get("issue_number")
+            if n in EXEMPT_ISSUES:
+                print(f"  [skip] #{n}: {EXEMPT_ISSUES[n][:90]}...")
+                continue
+            rows = _printed_rows(archive, issue.get("week_start") or "", issue.get("week_end") or "")
+            days = {r.get("printed_on") for r in rows}
+            check(f"{path.name} #{n}: the archive holds the printed week", len(days) >= 5,
+                  f"{len(days)} printed day(s)")
+            q = issue_quote_findings(issue, rows)
+            check(f"{path.name} #{n}: every quotation is verbatim in the printed week", not q,
+                  "; ".join(f"{w}: {s[:60]!r}" for w, s in q[:6]))
+            rc = issue_recap_findings(issue, rows)
+            check(f"{path.name} #{n}: every brief is a story printed that week", not rc, str(rc))
+            seen += 1
+    check("there was a committed issue to check", seen > 0)
+
+
 def main():
     print("void --weekly gates")
     test_headline_guard()
@@ -1154,6 +1330,7 @@ def main():
     test_archive_is_derived()
     test_grounding_cut()
     test_source_check()
+    test_quotations_verbatim()
     print()
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))

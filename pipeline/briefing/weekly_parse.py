@@ -381,6 +381,186 @@ def ground_text(text, source_text):
     return "\n\n".join(paras), cut
 
 
+def _cut_sentences(text, test):
+    """`text` with every sentence for which `test(sentence)` is truthy cut.
+
+    Returns (kept_text, cut) where `cut` lists (sentence, test_result). Same
+    sentence splitter and paragraph handling as `ground_text`, so a piece cut
+    by one rule and then another is split the same way both times.
+    """
+    if not text:
+        return text, []
+    cut, paras = [], []
+    for para in text.split("\n\n"):
+        kept = []
+        for sent in _G_SENT_RE.split(para.strip()):
+            if not sent:
+                continue
+            why = test(sent)
+            if why:
+                cut.append((sent, why))
+            else:
+                kept.append(sent)
+        if kept:
+            paras.append(" ".join(kept))
+    return "\n\n".join(paras), cut
+
+
+# ---------------------------------------------------------------------------
+# Quotations: verbatim from the week, or not in quotation marks at all.
+#
+# Issue #26 set three passages in quotation marks that the week's printed
+# stories did not carry as quoted: Rasmussen's "binding agreement" (reported
+# as paraphrase), a Trump quote that ran a clause past the printed one, and
+# "EVER have a base", which no story carried at all. `ground_text` could not
+# see any of it, because every name and number in those sentences WAS
+# sourced. Quotation marks are a claim that these are the speaker's words,
+# so the check is literal: the quoted span, punctuation at its ends aside,
+# must appear in the sources. Case and curly quotes are normalised; nothing
+# else is.
+# ---------------------------------------------------------------------------
+_Q_RE = re.compile(r'"([^"\n]+?)"|“([^“”\n]+?)”')
+_Q_EDGE = " \t.,;:!?'’‘"
+
+
+def _q_norm(text):
+    t = (text or "").replace("’", "'").replace("‘", "'")
+    t = t.replace("“", '"').replace("”", '"')
+    return re.sub(r"\s+", " ", t).strip().lower()
+
+
+def quotations(text):
+    """Every double-quoted span in `text`, straight or curly, as written."""
+    return [a or b for a, b in _Q_RE.findall(text or "")]
+
+
+def unsourced_quotes(text, source_text, allow=()):
+    """The quoted spans in `text` that `source_text` does not hold verbatim.
+
+    `allow` is a set of spans that may be quoted without a source: Void's own
+    section titles, which the page quotes as names, not as anybody's words.
+    """
+    src = _q_norm(source_text)
+    allowed = {_q_norm(a).strip(_Q_EDGE) for a in allow}
+    out = []
+    for q in quotations(text):
+        core = _q_norm(q).strip(_Q_EDGE)
+        if not core or core in allowed:
+            continue
+        if core not in src:
+            out.append(q)
+    return out
+
+
+def ground_quotes(text, source_text, allow=()):
+    """`text` with every sentence carrying an unsourced quotation cut.
+
+    Cut, not unquoted: removing the marks would leave the same words standing
+    as Void's own assertion of what someone said, which is the error in a
+    quieter form. Returns (kept_text, cut).
+    """
+    return _cut_sentences(text, lambda s: unsourced_quotes(s, source_text, allow))
+
+
+# ---------------------------------------------------------------------------
+# The kill list cuts the SENTENCE, not the piece.
+#
+# `drop_terms` used to discard a whole cover, column or department over one
+# word that survived the regeneration: 3 of 5 columns were dropped on
+# 2026-09-27. A kill-list verb ("underscores") cannot be deleted from its
+# sentence by code, because the sentence loses its verb; it CAN be deleted
+# with its sentence, which costs one sentence and keeps every sourced fact
+# around it.
+# ---------------------------------------------------------------------------
+def cut_slop_sentences(text):
+    """`text` with every sentence carrying a kill-list hit cut. (kept, cut)."""
+    return _cut_sentences(text, drop_terms)
+
+
+# ---------------------------------------------------------------------------
+# Length is sized to what the sources can carry, and checked AFTER the cut.
+#
+# The cover brief was 800-1200 words whatever the week held. A thread printed
+# once, about 450 words of summary and points, cannot fill 800 words without
+# reaching past its sources, and the reaching is what `ground_text` and the
+# source check then cut: Issue #26's Greenland cover lost seventeen claims
+# that way. The length was enforced before those cuts and never after, so the
+# brief demanded the padding and the checks removed it, and nothing measured
+# what was left. A short sourced piece is acceptable. A padded one is not.
+# ---------------------------------------------------------------------------
+#: A piece runs no longer than the words it was written from.
+SOURCE_SIZE_SHARE = 1.0
+#: Under this many source words there is nothing to write a piece from.
+MIN_SOURCE_WORDS = 120
+#: The floor of a sized brief, as a share of its ceiling.
+SIZED_FLOOR_SHARE = 0.6
+#: After the cuts, a piece under this share of its sized floor is a fragment.
+AFTER_CUT_FLOOR_SHARE = 0.5
+
+
+def sized_spec(spec, source_words):
+    """The word brief sized to the sources, or None when they cannot carry one.
+
+    The ceiling is the smaller of the section's own ceiling and the source
+    word count; the floor follows the ceiling down. Never raised: a week with
+    more material than the section's brief still gets the section's brief.
+    """
+    spec = spec or {}
+    if source_words < MIN_SOURCE_WORDS:
+        return None
+    hi = min(int(spec.get("max_words") or source_words), int(source_words * SOURCE_SIZE_SHARE))
+    lo = min(int(spec.get("min_words") or 0), int(hi * SIZED_FLOOR_SHARE))
+    return {"min_words": lo, "max_words": hi}
+
+
+def length_after_cut(text, spec):
+    """None when what is left after the cuts can ship; else the reason it cannot.
+
+    Run on the text that survived `ground_text`, `ground_quotes`, the kill-list
+    cut and the source check. It never asks for more words: a piece under its
+    floor but over the fragment line ships short, because the only way to
+    lengthen it is to write what the sources do not hold.
+    """
+    n = word_count(text)
+    floor = int((spec or {}).get("min_words") or 0)
+    if floor and n < floor * AFTER_CUT_FLOOR_SHARE:
+        return f"{n} words left after the cuts, under half its {floor}-word floor"
+    return None
+
+
+def source_words(rows):
+    """Words a writer is handed from these printed rows (see `row_corpus`)."""
+    return word_count(row_corpus(rows))
+
+
+def row_corpus(rows):
+    """The printed rows in full, as a writer reads them: every field Stage 2 wrote.
+
+    A writer handed a title and a summary was asked for 500 words and had
+    about 60 to write them from (audit 4, the tech and sports pages). The
+    consensus and divergence points are part of what Void printed, and they
+    are where the attributed quotations usually live.
+    """
+    blocks = []
+    for r in rows or []:
+        when = str(r.get("printed_on") or r.get("first_published") or "")[:10]
+        parts = [f"[{when}] {r.get('title') or ''}".strip()]
+        if r.get("source_count"):
+            parts.append(f"Sources: {r['source_count']}")
+        if r.get("summary"):
+            parts.append(f"Summary: {r['summary']}")
+        for key, label in (("consensus_points", "Agreed across sources"),
+                           ("divergence_points", "Where sources differ")):
+            v = r.get(key)
+            if v:
+                if isinstance(v, str):
+                    parts.append(f"{label}: {v}")
+                else:
+                    parts.append(f"{label}: " + json.dumps(v, ensure_ascii=False))
+        blocks.append("\n".join(parts))
+    return "\n\n".join(blocks)
+
+
 def retry_suffix(findings):
     """The findings, named, appended to the original prompt for one retry.
 

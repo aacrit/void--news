@@ -51,9 +51,10 @@ BENCH_SEGMENTS = ("LEFT", "RIGHT")
 REQUIRED = ("OPEN", "COVER", "TOPIC", "LEFT", "RIGHT", "TURN", "NUMBERS",
             "EDITORIAL", "CLOSE")
 
-# 18-22 minutes, curated (CEO decision). Wider than History's band because the
-# issue has four departments to carry and narrower than an hour because a
-# magazine read is not a podcast.
+# 18-22 minutes, curated (CEO decision): the band of a FULL issue and the
+# ceiling of every issue. Since decision 6 (2026-10-02) the band W-07 applies
+# is `target_minutes(issue)`, which floats down with the sourced words to a
+# floor of 14. Narrower than an hour because a magazine read is not a podcast.
 TARGET_MINUTES = (18.0, 22.0)
 MUSIC_MINUTES = 1.4          # theme, contents bed, two transitions, break, outro
 
@@ -70,8 +71,56 @@ WPM = 163.0                  # the blend, used when the cast is unknown
 #: variance in how much the Editor carries does not tip a good script out.
 BAND_MARGIN_MINUTES = 0.5
 
+# THE BAND FLOATS WITH THE SOURCED WORDS (decision 6, CEO 2026-10-02).
+#
+# 18-22 was fixed whatever the issue held, while the material shrinks every
+# time grounding and the source check do their job. The corrected Issue #26
+# script ran 17.6 minutes and was refused for being SHORT, which left two
+# ways to ship it: pad it, or withdraw it. Padding is where the unsourced
+# sentences came from in the first place. So the band is sized to what the
+# published issue actually carries, with a floor under it and the old band
+# as its ceiling.
+#
+#   spoken = sourced_words(issue) / WPM * SOURCED_SHARE + MUSIC_MINUTES
+#   hi     = clamp(spoken + BAND_WIDTH / 2, FLOOR + BAND_WIDTH, CEILING)
+#   lo     = max(FLOOR, hi - BAND_WIDTH)
+#
+# SOURCED_SHARE is how much of the printed issue the programme reads: it
+# SELECTS from the columns and the editorial and summarises the covers, it
+# does not read the issue aloud. At 0.55 a full issue (two covers, five
+# columns, the editorial and ten briefs, about 5,700 words) keeps the 18-22
+# band exactly, and a thin one floats down to 14-18.
+FLOOR_MINUTES = 14.0
+CEILING_MINUTES = TARGET_MINUTES[1]
+BAND_WIDTH_MINUTES = TARGET_MINUTES[1] - TARGET_MINUTES[0]
+SOURCED_SHARE = 0.55
 
-def word_budget(voices: dict | None = None) -> tuple[int, int]:
+
+def sourced_words(issue: dict | None) -> int:
+    """Words the published issue carries that the programme may read from."""
+    issue = issue or {}
+    texts = [c.get("text") for c in (issue.get("cover_text") or []) if isinstance(c, dict)]
+    texts += [o.get("text") for o in (issue.get("opinions") or []) if isinstance(o, dict)]
+    texts += [d.get("text") for d in (issue.get("departments") or []) if isinstance(d, dict)]
+    texts += [r.get("summary") for r in (issue.get("recap_stories") or []) if isinstance(r, dict)]
+    texts.append(issue.get("opinion_text"))
+    return sum(len(str(t).split()) for t in texts if t)
+
+
+def target_minutes(issue: dict | None = None) -> tuple[float, float]:
+    """The W-07 band for THIS issue. With no issue, the full band."""
+    words = sourced_words(issue)
+    if not words:
+        return TARGET_MINUTES
+    spoken = words / WPM * SOURCED_SHARE + MUSIC_MINUTES
+    hi = min(CEILING_MINUTES, max(FLOOR_MINUTES + BAND_WIDTH_MINUTES,
+                                  spoken + BAND_WIDTH_MINUTES / 2))
+    lo = max(FLOOR_MINUTES, hi - BAND_WIDTH_MINUTES)
+    return round(lo, 1), round(hi, 1)
+
+
+def word_budget(voices: dict | None = None,
+                band: tuple[float, float] | None = None) -> tuple[int, int]:
     """The word range that actually lands inside TARGET_MINUTES.
 
     This exists because the generator and W-07 used to model the same quantity
@@ -95,8 +144,11 @@ def word_budget(voices: dict | None = None) -> tuple[int, int]:
     assume the FASTEST. Using one blended rate for both puts the floor below
     the band whenever the Editor, at 172, carries most of the programme, which
     he always does.
+
+    `band` is the issue's own band (`target_minutes(issue)`); without one, the
+    full 18-22.
     """
-    lo, hi = TARGET_MINUTES
+    lo, hi = band or TARGET_MINUTES
     rates = [VOICE_WPM[v] for v in (voices or {}).values() if v in VOICE_WPM]
     fastest = max(rates) if rates else WPM
     slowest = min(rates) if rates else WPM
@@ -369,7 +421,7 @@ def validate_script(script: Script, issue: dict,
 
     # --- W-07: length ------------------------------------------------------
     minutes, wpm = estimated_minutes(script, voices)
-    lo, hi = TARGET_MINUTES
+    lo, hi = target_minutes(issue)
     if not (lo <= minutes <= hi):
         out.append(Finding("W-07", "fail", "TOTAL",
                            f"{script.words} words is about {minutes:.1f} min at {wpm:.0f} wpm; "
