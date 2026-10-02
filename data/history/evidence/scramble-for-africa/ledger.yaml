@@ -1178,7 +1178,7 @@ exhibits:
     accession: "File:Afrikakonferenz.jpg"
     licence: Public domain (Creative Commons Public Domain Mark on the file page)
     url: "https://commons.wikimedia.org/wiki/File:Afrikakonferenz.jpg"
-    image: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Afrikakonferenz.jpg"
+    image: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Afrikakonferenz.jpg"
     shows: "a room of seated and standing men in frock coats around a long table, with a wall map behind them, as an illustrated weekly of 1884 drew the conference; the file page gives no artist"
     does_not_show: "any African delegate, because none attended; nor a border being drawn, which the Act's text does not contain; the event YAML's attribution to Adalbert von Rossler is not on the file page"
   - id: ex-map-1913
@@ -1190,7 +1190,7 @@ exhibits:
     accession: "File:Colonial_Africa_1913_map.svg"
     licence: CC BY-SA 3.0 (also GFDL and CC BY-SA 2.5, as the file page lists)
     url: "https://commons.wikimedia.org/wiki/File:Colonial_Africa_1913_map.svg"
-    image: "https://upload.wikimedia.org/wikipedia/commons/e/e5/Colonial_Africa_1913_map.svg"
+    image: "https://upload.wikimedia.org/wikipedia/commons/d/de/Colonial_Africa_1913_map.svg"
     shows: "the areas of European control in 1913 as a contributor drew them from four reference atlases, laid over modern borders"
     does_not_show: "the map of 1885 or of 1913 as any treaty printed it; its own note says the limits of the areas of control may not be perfectly accurate, and no line on it is a document"
   - id: ex-mutilated
@@ -1202,7 +1202,7 @@ exhibits:
     accession: "File:MutilatedChildrenFromCongo.jpg"
     licence: Public domain in the United States, published before 1931 (the file page's tag)
     url: "https://commons.wikimedia.org/wiki/File:MutilatedChildrenFromCongo.jpg"
-    image: "https://upload.wikimedia.org/wikipedia/commons/e/ec/MutilatedChildrenFromCongo.jpg"
+    image: "https://upload.wikimedia.org/wikipedia/commons/5/52/MutilatedChildrenFromCongo.jpg"
     shows: "people the file page describes as mutilated Congolese children and adults, photographed before 1905 and printed in a pamphlet of the reform campaign"
     does_not_show: "who they are, where or when the photograph was taken, or who took it; the event YAML's caption, that a man looks at the hand and foot of his daughter, and its attribution to Alice Harris, are not on the file page and are not repeated here"
 
