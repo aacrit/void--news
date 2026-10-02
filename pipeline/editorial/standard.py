@@ -29,6 +29,14 @@ from __future__ import annotations
 import re
 from typing import Callable, Iterable, NamedTuple
 
+# The grounded rules (E-13, E-14, E-17) share their extraction with the index
+# that records the sources after the run, so the write-time answer and the
+# after-the-fact answer are one implementation. grounding.py is stdlib only.
+try:
+    from . import grounding as _grounding
+except ImportError:  # pragma: no cover - loaded as a top-level module
+    import grounding as _grounding  # type: ignore[no-redef]
+
 # ---------------------------------------------------------------------------
 # Finding
 # ---------------------------------------------------------------------------
@@ -640,30 +648,128 @@ def f04_count_match(header_count: int | None, rendered: int,
 #   - percentages and money keep their digits and are checked the same way.
 # The headline is checked with the summary because the headline is the claim a
 # reader carries away, and this one was wrong there first.
-_NUM_RE = re.compile(r"\b\d[\d,]*\b")
+#
+# Decimals (rev 85). The pattern was `\b\d[\d,]*\b`, which read "8.3%" as the
+# single digits 8 and 3 and ignored both, so no decimal figure was ever
+# checked: on run #385 "8.3% of passengers" and "Talarico with 47.6% ...
+# Paxton's 44.7%" shipped unexamined. Numbers now keep their decimal part, and
+# the extraction is grounding.numbers_in, the same function the index uses.
+#
+# Attachment (rev 85). Existence is not enough. The Iraq card of 2026-10-01
+# said the Pentagon reported 4,419 U.S. military deaths "during the operation",
+# the operation being Operation Inherent Resolve (2014 onward). The sources put
+# 4,419 beside the 23 years since 2003. E-13 passed because 4,419 is in them.
+# So a number is now also checked against the NAME it is attached to: when a
+# card sentence puts a number beside a multi-word proper name (or "the
+# operation", resolved to the name it refers back to), and no source sentence
+# carrying that number holds that name, while some source sentence carrying it
+# holds a DIFFERENT name that starts with the same word ("Operation ..."), the
+# card has moved the number from one thing to another. That is enforced. The
+# looser question, whether any source sentence carrying the number shares any
+# word with the card's sentence, is E-17, advisory, because "Attack Kills 16"
+# against "recovered 16 bodies" shares none and is right.
+_NUM_RE = _grounding._NUM_RE
 
 
 def _numbers(text: str) -> set[str]:
-    out = set()
-    for m in _NUM_RE.finditer(text or ""):
-        raw = m.group(0).replace(",", "")
-        if raw.isdigit() and len(raw) >= 2:
-            out.add(raw.lstrip("0") or "0")
+    return set(_grounding.numbers_in(text))
+
+
+_DEFINITE = re.compile(r"\bthe\s+([a-z]+)\b")
+
+
+def _card_sentences(title: str, summary: str):
+    """(field, sentence, names attached in it), in reading order.
+
+    A definite noun phrase ("the operation") is resolved to the most recent
+    earlier multi-word name that starts with that word ("Operation Inherent
+    Resolve"), which is how the Iraq card attached its number.
+    """
+    seen: list[str] = []
+    out = []
+    parts = [("headline", title)] if title else []
+    parts += [("summary", s) for s in sentences(summary or "")]
+    for field, sent in parts:
+        names = list(_grounding.proper_names(sent))
+        for m in _DEFINITE.finditer(sent):
+            word = m.group(1)
+            for nm in reversed(seen):
+                if nm.split(" ")[0] == word and nm not in names:
+                    names.append(nm)
+                    break
+        out.append((field, sent, names))
+        seen.extend(_grounding.proper_names(sent))
     return out
 
 
+def _misattached(ev, n: str, names: list[str]) -> str | None:
+    """The card's name the sources do not put beside `n`, when they put a rival."""
+    if not getattr(ev, "contexts", False):
+        return None
+    for nm in names:
+        toks = nm.split(" ")
+        if ev.has_pair(n, "P:" + nm):
+            continue
+        if not ev.has_pair(n, "F:" + toks[0]):
+            continue
+        # Every distinctive word of the name beside the number in some source
+        # sentence means the name is there in another form ("Donald Trump"
+        # for "President Donald Trump"): not a rival.
+        rest = [w for w in (_grounding.context_word(t) for t in toks[1:]) if w]
+        if rest and all(ev.has_pair(n, w) for w in rest):
+            continue
+        return nm
+    return None
+
+
 def e13_numbers_are_sourced(title: str, summary: str, sources) -> list[Finding]:
-    """Every multi-digit number in the card appears in its source articles."""
+    """Every number in the card appears in its sources, beside what it counts."""
     ev = _evidence(sources)
     findings: list[Finding] = []
+    decimals = getattr(ev, "decimals", True)
     for field, text in (("headline", title), ("summary", summary)):
-        for n in sorted((n for n in _numbers(text) if not ev.has_number(n)), key=int):
+        for n in sorted((n for n in _numbers(text) if not ev.has_number(n)),
+                        key=lambda x: float(x)):
+            if "." in n and not decimals:
+                continue  # a format-2 index never recorded decimals
             findings.append(Finding(
                 "E-13",
                 f"{field} states {n}, which appears in none of the source articles: "
                 f"source it or cut it",
             ))
+    for field, sent, names in _card_sentences(title, summary):
+        for n in sorted(_numbers(sent)):
+            if not ev.has_number(n):
+                continue
+            rival = _misattached(ev, n, names)
+            if rival:
+                findings.append(Finding(
+                    "E-13",
+                    f"{field} puts {n} beside \"{rival}\", but no source sentence "
+                    f"carrying {n} names it and one names another "
+                    f"\"{rival.split(' ')[0]} ...\": \"{sent[:90]}\""))
     return findings
+
+
+def e17_numbers_are_attached(title: str, summary: str, sources) -> list[Finding]:
+    """A sourced number shares at least one word with a source sentence carrying it."""
+    ev = _evidence(sources)
+    if not getattr(ev, "contexts", False):
+        return []
+    out: list[Finding] = []
+    for field, sent, _names in _card_sentences(title, summary):
+        words = {w for w in _grounding.context_words(sent)}
+        if not words:
+            continue
+        for n in sorted(_numbers(sent)):
+            if not ev.has_number(n):
+                continue
+            if not any(ev.has_pair(n, w) for w in words):
+                out.append(Finding(
+                    "E-17",
+                    f"{field} states {n}, but no source sentence carrying {n} "
+                    f"shares a word with this one: \"{sent[:90]}\""))
+    return out
 
 
 # E-14: a quotation in the card must be verbatim in the source articles.
@@ -697,7 +803,18 @@ def _fold_quote(text: str) -> str:
 
 
 def e14_quotes_are_verbatim(title: str, summary: str, sources) -> list[Finding]:
-    """Every quotation of four words or more appears verbatim in the sources."""
+    """Every quotation of four words or more appears verbatim in the sources.
+
+    Verbatim includes the punctuation between the words (rev 85). The Hegseth
+    card of 2026-10-01 turned a source's "...the 'woke department'... no longer
+    work here" into "...the 'woke department'. No longer work here," which
+    reads as two sentences the speaker never said in that order. The word
+    shingles strip punctuation, so it passed. Each junction inside a quoted
+    segment that CARRIES a mark (.,;:!? or an ellipsis) must now appear with
+    that mark in a source. An ellipsis in the card is the one legitimate cut
+    mark: the quotation is split there and each side is checked on its own.
+    A segment's closing mark is typography and is not examined.
+    """
     ev = _evidence(sources)
     findings: list[Finding] = []
     for field, text in (("headline", title), ("summary", summary)):
@@ -715,7 +832,81 @@ def e14_quotes_are_verbatim(title: str, summary: str, sources) -> list[Finding]:
                     f"{field} quotes \"{shown}\", which appears in none of the "
                     f"source articles: quote it as written or paraphrase it",
                 ))
+                continue
+            if not getattr(ev, "punctuation", False):
+                continue
+            for seg in segments:
+                bad = next(((w, mark, nxt) for _j, mark, w, nxt
+                            in _grounding.quote_junctions(seg)
+                            if mark and not ev.has_junction(f"{w}{mark}{nxt}")),
+                           None)
+                if bad:
+                    w, mark, nxt = bad
+                    findings.append(Finding(
+                        "E-14",
+                        f"{field} quotes \"{_fold_quote(seg)[:70]}\" with "
+                        f"\"{w}{mark} {nxt}\", punctuation no source carries "
+                        f"there: restore the source's punctuation (an ellipsis "
+                        f"marks a cut) or paraphrase it",
+                    ))
+                    break
     return findings
+
+
+# ---------------------------------------------------------------------------
+# E-16: a sentence that changes the subject.
+#
+# On 2026-10-01 the Putin card ran "Separately, two sold-out concerts by Kanye
+# West in St. Petersburg ... were officially canceled", and the pensions card
+# ended "Separately, an incident at an RAF base was reported ...". The cluster
+# had let in unrelated stories and the summarizer, writing faithfully from what
+# it was handed, joined them with a topic-shift adverb. A card describes one
+# event (L-03); a sentence that opens by announcing it is about something else
+# is the card saying so itself. Enforced, and the write-time repair cuts it
+# (with the sentences that follow it until one returns to the story's names).
+# ---------------------------------------------------------------------------
+TOPIC_SHIFT_RE = re.compile(
+    r"^\W*(?:separately|in other news|in an unrelated|in unrelated news|"
+    r"in a separate (?:development|incident|story|case)|elsewhere|"
+    r"meanwhile,?\s+in|on another (?:front|note)|in other developments)\b",
+    re.I)
+
+
+def e16_topic_shift(summary: str) -> list[Finding]:
+    out: list[Finding] = []
+    for para in re.split(r"\n\s*\n", summary or ""):
+        for sent in sentences(para):
+            m = TOPIC_SHIFT_RE.match(sent)
+            if m:
+                out.append(Finding(
+                    "E-16",
+                    f'sentence opens on "{m.group(0).strip()}", announcing another '
+                    f'story: "{sent[:90]}"'))
+    return out
+
+
+# ---------------------------------------------------------------------------
+# E-18: a count that goes stale.
+#
+# CLAUDE.md Rule 1: a number that changes with time is a future error. "There
+# are currently 841 active-duty generals and admirals" (Hegseth card,
+# 2026-10-01) is wrong the day a general retires, and the card is a permanent
+# /story/ page. Advisory: the fix is a dated formulation ("as of September
+# 30"), which needs the date the source carried.
+# ---------------------------------------------------------------------------
+STALE_COUNT_RE = re.compile(
+    r"\b(?:there\s+(?:are|is)\s+(?:currently|now)|(?:is|are)\s+currently|"
+    r"currently\s+(?:has|have|holds?|employs?|numbers?|stands?\s+at|totals?)|"
+    r"(?:now|currently)\s+(?:numbers?|totals?|stands?\s+at))\s+"
+    r"(?:about\s+|around\s+|roughly\s+|some\s+|more\s+than\s+|over\s+|nearly\s+|"
+    r"almost\s+)?\d", re.I)
+
+
+def e18_stale_count(summary: str) -> list[Finding]:
+    return [Finding("E-18",
+                    f'a count stated as "{m.group(0).strip()}" goes stale; date it '
+                    f'or drop the time word: "{_ctx(summary, m.group(0))}"')
+            for m in STALE_COUNT_RE.finditer(summary or "")]
 
 
 # ---------------------------------------------------------------------------
@@ -738,22 +929,9 @@ def e14_quotes_are_verbatim(title: str, summary: str, sources) -> list[Finding]:
 # Both backings are accepted here, behind one interface, so E-13 and E-14 stay
 # ONE implementation. Two rules, one at write time over text and one at audit
 # time over an index, would be two rules that drift.
-class _TextEvidence:
-    """The interface over source text the caller still holds in memory."""
-
-    __slots__ = ("_nums", "_folded", "truncated", "present")
-
-    def __init__(self, text: str):
-        self._nums = _numbers(text)
-        self._folded = _fold_quote(text)
-        self.truncated = False
-        self.present = bool(self._folded)
-
-    def has_number(self, n: str) -> bool:
-        return str(n) in self._nums
-
-    def has_span(self, text: str) -> bool:
-        return _fold_quote(text).strip(" ,.;:!?-") in self._folded
+# The write-time backing is grounding.TextIndex, built with the same
+# extraction as the persisted record, so the two cannot drift.
+_TextEvidence = _grounding.TextIndex
 
 
 def _evidence(sources):
@@ -794,6 +972,9 @@ VALIDATORS: list[Validator] = [
     Validator("E-13", "every number in the card appears in its sources", ENFORCED, e13_numbers_are_sourced, "grounded"),
     Validator("E-14", "every quotation in the card is verbatim in its sources", ENFORCED, e14_quotes_are_verbatim, "grounded"),
     Validator("E-15", "a hedge is not an attribution", ADVISORY, e15_hedge_is_not_attribution, "summary"),
+    Validator("E-16", "no sentence opens by changing the subject", ENFORCED, e16_topic_shift, "summary"),
+    Validator("E-17", "a sourced number shares a word with a source sentence carrying it", ADVISORY, e17_numbers_are_attached, "grounded"),
+    Validator("E-18", "no count that goes stale", ADVISORY, e18_stale_count, "summary"),
 ]
 
 VALIDATORS_BY_ID = {v.id: v for v in VALIDATORS}

@@ -181,6 +181,86 @@ Every fix ships with the check that would have caught it.
    (an abbreviation keeps it). `/audio` rounded durations while the feeds and
    the player truncate; it truncates now, and `test_podcast_feed.py` runs the
    page's own `clock()` under node against the feed's.
+## rev 85 WS-C: Rule 1 reaches the TL;DR, the Opinion and On Air, and the grounded rules finally run at write time (2026-10-02)
+
+Audit 1 of 2026-10-02 read the edition of 2026-10-01 against its sources and
+found five factual errors in products no check read (a stacked twenty
+percent a listener heard as thirty, a £1,000 figure no source carries, "two
+days later" for "a day earlier", "would be purged" for "no longer work
+here", a TL;DR paragraph ending on another card's story), three on cards the
+checks did read and passed (4,419 deaths on the wrong war, an ellipsis turned
+into a full stop inside a quotation, a Kanye West concert on the Putin card),
+and the reason the grounded rules could not have caught them anyway.
+
+1. **E-13 and E-14 never ran at write time.** 8d.3 called the validators
+   with the card alone, so the grounded rules skipped on every run, and the
+   only place they ran was an audit against an index the export built AFTER
+   step 10 had cut every body to 300 characters (median indexed article 496
+   characters; 48 numbers and 6 quotations false-flagged across one top 20).
+   Stage 2 now writes the index at 8f from the bodies it reviewed and the
+   export keeps it (`grounding.keep_existing`). The rules run at 8d.3 for
+   cards summarized in that run, and a failing sentence is CUT
+   (`derived_grounding.repair_card`) before any regeneration is considered.
+   A card cached from an earlier day is not judged on absence: it was
+   written from bodies since truncated, and on the test harness, built from
+   truncated bodies, judging it cut 85 sentences, nearly all true.
+2. **E-13 could not see a decimal and checked existence, not attachment.**
+   Numbers now keep their decimal part, and the index (format 3) holds
+   (number, word or name) pairs per source sentence. A number the sources put
+   beside a different name with the same first word fails ("the operation"
+   resolves to Operation Inherent Resolve; the sources' 4,419 sits beside the
+   23 years from 2003). E-17 (advisory) is the looser half.
+3. **E-14 stripped punctuation.** A third Bloom filter holds the punctuated
+   word junctions; a quotation that changes the punctuation between two of
+   its words fails. The card's own ellipsis is the one legitimate cut mark.
+4. **The derived products are grounded.** New
+   `pipeline/editorial/derived_grounding.py`, deterministic, no model call:
+   each paragraph is mapped to its story and every number (spoken numbers
+   read as values, so "twenty percent" is 20), quotation, multi-word name,
+   weekday, date and interval must be in that story's text, or the sentence
+   is cut and logged. Also cut: a total that is not the sum of its stated
+   parts, reported speech that lifts a quotation and ends on words it never
+   said, and a hedge as attribution (E-15 is blocking here). One story per
+   paragraph: a sentence about another story moves to that story's paragraph,
+   or is cut when it has one. On the committed 2026-10-01 brief it cuts
+   exactly the audit's five; on four earlier days, one sentence, and that one
+   was a real error (the TL;DR blamed Houthis where the card said Iraqi
+   militias).
+5. **Cluster contamination.** Coherence used to abstain or merely report when
+   a cluster had no single core; ten Kanye headlines out of 33 had made
+   "kanye" modal. An entity pass anchored on the card's own headline now cuts
+   the members that share none of its names, without invalidating the summary
+   (no model call); the card repair cuts a sentence whose names appear only in
+   the removed members. E-16 (enforced) fails a sentence that opens by
+   changing the subject, the summarizer prompt bans those openers, and it now
+   tells the model to publish a disagreement between sources rather than
+   settle it.
+6. **Prompt injection.** Scraped and card text in the summarizer, critique,
+   brief, Opinion and radio prompts sits inside `<source>` tags, defused, and
+   each prompt says text inside them is data. The Weekly prompts are a printed
+   gap (outside this workstream's files).
+7. **Corrections had no mechanism.** `pipeline/editorial/corrections.json`,
+   applied by the export to the feed and the archive on every run, so the
+   database cannot put an error back. The four 2026-10-01 cards are corrected
+   there, and the retired fallback strings are rewritten in the archived cards
+   that carried them.
+8. **Smaller.** The rule-based fallbacks in `main.py` lose "significant",
+   "notably" and their dashes, under a literal scan gate. The pronoun scrubber
+   is retired (CEO Decision 8): a first-person sentence outside quotes is cut,
+   never rewritten. E-18 (advisory) flags a count that goes stale. Each served
+   Deep Dive summary is capped at 300 characters (176 of 846 trimmed). The
+   index's per-article cap falls from 24,000 to 3,000 characters: the
+   summarizer reads 2,200, and a whole-body index at 24,000 would commit about
+   10 MB a day.
+
+Gates: `tests/test_brief_grounding.py` (new), `tests/test_grounding.py`,
+`tests/test_editorial_standard.py` (E-13 decimals and attachment, E-14
+punctuation, E-16..E-18), `tests/test_same_event_merge.py` (the Putin card),
+`tests/test_prompt_grounding.py` (data clause, literal scan),
+`tests/test_editorial_stage.py` (the index written at 8f and kept by the
+export). Left open: `docs/OPEN-ITEMS.md`, "Rev 85 WS-C".
+
+---
 
 ## rev 83: a red main from four causes, one of them silent for a week (2026-10-01)
 
