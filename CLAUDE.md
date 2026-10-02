@@ -15,9 +15,10 @@ belongs in one of those two.
 ## Architecture
 
 ```
-GitHub Actions (daily 11:00 UTC)
+GitHub Actions (daily 10:07 UTC cron; no cron on minute 0 or 30)
   → pipeline → pipeline_state.db (SQLite, VOID_SQLITE_PATH)
   → static JSON + MP3 committed to the repo
+  → pipeline.yml dispatches deploy-cloudflare.yml (workflow_run kept as a 2nd path)
   → Next.js static export → Cloudflare Pages
   → verify-production.yml asserts ~22 checks on the LIVE served HTML
 
@@ -292,9 +293,9 @@ Do NOT "fix" a failure here by reconnecting Supabase:
 | Job | Cron | Reality |
 |---|---|---|
 | `feed-snapshot.yml` | none (unscheduled 2026-09-24) | Committed EMPTY snapshots, then failed daily from 09-21; manual only |
-| `db-cleanup.yml` | 09:00 | Prunes a database nothing reads |
+| `db-cleanup.yml` | none (unscheduled rev 85) | Prunes a database nothing reads; manual only |
 | `audit-db.yml` | none (unscheduled 2026-09-24) | Audits the dead DB; failed daily from 09-21; manual only |
-| `freshness-check.yml` | 15:00 | Repointed rev 66 — reads `feed.json.builtAt`, no Supabase |
+| `freshness-check.yml` | 15:19 + after each pipeline | Repointed rev 66 — reads `feed.json.builtAt`, no Supabase; since rev 85 also asserts the LIVE `/paper/` edition matches main within 20 min of the data commit |
 | `curate-ship.yml` | manual | Targets `ship_requests`, which lives in D1 now |
 | `refresh-brief`, `editorial`, `eval`, `ig-*`, history/revolt loaders | manual | Supabase env, no `VOID_SQLITE_PATH` |
 
@@ -310,7 +311,7 @@ The weekly row therefore dies with the container, which is why the back-issue
 archive lives in the deploy tree (`build-data/weekly-issues.json`) instead. On
 the old Monday 12:00 slot restore-only was a hard requirement, because the
 daily pipeline was usually still running and a save would have pushed a pre-run
-copy of the state under a newer key. The cron is now **Sunday 18:00**, after the
+copy of the state under a newer key. The cron is now **Sunday 18:07**, after the
 daily has finished, so that race is gone; restore-only stays because the weekly
 adds nothing to the state that anything reads back.
 

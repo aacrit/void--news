@@ -12,33 +12,78 @@ name: Site Freshness Check
 # used to query story_clusters in Supabase, which is now frozen and made the job
 # a permanent false alarm. `feed.json.builtAt` is pipeline_runs.completed_at from
 # the last export, i.e. exactly when the site last refreshed.
+#
+# LIVE check (rev 85, P0-1). Fresh data on main is not fresh data on the site:
+# run #385 committed at 19:22 on 2026-10-01 and the site served the previous
+# edition until a manual deploy at 19:49, and this check, which read only the
+# repo, would have passed. It now also reads the edition the LIVE /paper/ page
+# serves (`<time dateTime>` is feed.builtAt, rendered at build time) and
+# requires it to equal the committed builtAt within 20 minutes of the commit
+# that wrote feed.json. Run after the pipeline it polls until that deadline;
+# on the schedule the deadline has long passed and it checks once. On failure
+# it says which side is behind and lists the deploys since the commit.
 on:
+  workflow_run:
+    workflows: ["News Pipeline"]
+    types: [completed]
   schedule:
-    - cron: '0 15 * * *'   # 15:00 UTC, ~4h after the 11:00 daily pipeline window
+    - cron: '19 15 * * *'   # 15:19 UTC, off minute 0 and 30 (rev 85); ~5h after the 10:07 pipeline cron
   workflow_dispatch:
 
 permissions:
   contents: read
+  actions: read   # list the deploy runs since the data commit when the live page is behind
 
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 35
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           ref: main
-      - uses: actions/setup-python@v5
+          # Enough history to find the commit that last wrote feed.json; the
+          # pair and anchor collectors commit between pipeline runs.
+          fetch-depth: 200
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.11'
-      - name: Check feed freshness
+      - name: Check feed freshness (repo and live)
         env:
           WEBHOOK: ${{ secrets.ALERT_WEBHOOK_URL }}
+          GH_TOKEN: ${{ github.token }}
+          LIVE_URL: https://news.voidvision.org/paper/
+          LIVE_DEADLINE_MIN: "20"
         run: |
           python3 << 'PYEOF'
-          import json, os, urllib.request, datetime as dt
+          import json, os, re, subprocess, time, urllib.request, datetime as dt
 
           FEED = "frontend/build-data/feed.json"
+          UTC = dt.timezone.utc
+
+          def parse(ts):
+              if not ts:
+                  return None
+              ts = ts.strip().replace("Z", "+00:00")
+              try:
+                  d = dt.datetime.fromisoformat(ts)
+              except ValueError:
+                  return None
+              return d if d.tzinfo else d.replace(tzinfo=UTC)
+
+          def alert(msg):
+              print(msg)
+              wh = os.environ.get("WEBHOOK")
+              if wh:
+                  try:
+                      req = urllib.request.Request(
+                          wh, data=json.dumps({"text": msg}).encode(),
+                          headers={"Content-Type": "application/json"})
+                      urllib.request.urlopen(req, timeout=15)
+                  except Exception as e:
+                      print("webhook POST failed:", e)
+              raise SystemExit(1)   # fail the job so it also shows red in Actions
+
           try:
               feed = json.load(open(FEED, encoding="utf-8"))
           except Exception as e:
@@ -51,35 +96,76 @@ jobs:
                      if c.get("last_updated")]
               built = max(lus) if lus else None
 
-          def parse(ts):
-              if not ts:
-                  return None
-              ts = ts.replace("Z", "+00:00")
-              try:
-                  d = dt.datetime.fromisoformat(ts)
-              except ValueError:
-                  return None
-              return d if d.tzinfo else d.replace(tzinfo=dt.timezone.utc)
-
-          newest = parse(built)
-          age_h = ((dt.datetime.now(dt.timezone.utc) - newest).total_seconds() / 3600
-                   if newest else 1e9)
-          print(f"feed.json builtAt = {built} ({age_h:.1f}h ago)")
+          now = dt.datetime.now(UTC)
+          committed = parse(built)
+          age_h = (now - committed).total_seconds() / 3600 if committed else 1e9
+          print(f"main: feed.json builtAt = {built} ({age_h:.1f}h ago)")
 
           if age_h > 30:
-              msg = (f":large_orange_diamond: Void News feed is STALE: static data is "
-                     f"{age_h:.0f}h old (builtAt {built}). The daily pipeline likely "
-                     f"failed to refresh + commit.")
-              print(msg)
-              wh = os.environ.get("WEBHOOK")
-              if wh:
+              alert(f":large_orange_diamond: Void News feed is STALE: static data is "
+                    f"{age_h:.0f}h old (builtAt {built}). The daily pipeline likely "
+                    f"failed to refresh + commit.")
+
+          # ---- the live page against the committed data -----------------
+          out = subprocess.run(
+              ["git", "log", "-1", "--format=%H %cI", "--", FEED],
+              capture_output=True, text=True).stdout.split()
+          if len(out) != 2:
+              alert(f"could not find the commit that wrote {FEED} in the last 200 commits")
+          commit_sha, commit_at = out[0], parse(out[1])
+          deadline = commit_at + dt.timedelta(minutes=int(os.environ["LIVE_DEADLINE_MIN"]))
+          print(f"main: {FEED} last written by {commit_sha[:8]} at {commit_at:%F %H:%MZ}; "
+                f"live deadline {deadline:%H:%MZ}")
+
+          def served():
+              req = urllib.request.Request(
+                  os.environ["LIVE_URL"] + f"?freshness={int(time.time())}",
+                  headers={"User-Agent": "VoidNewsFreshnessCheck/1.0",
+                           "Cache-Control": "no-cache"})
+              html = urllib.request.urlopen(req, timeout=30).read().decode("utf-8", "replace")
+              m = re.search(r'<time[^>]*\bdate[Tt]ime="([^"]+)"', html)
+              return m.group(1) if m else None
+
+          live = None
+          while True:
+              try:
+                  live = served()
+              except Exception as e:
+                  print(f"live fetch failed: {e}")
+                  live = None
+              lt = parse(live)
+              if lt and committed and lt >= committed:
+                  lag = (dt.datetime.now(UTC) - commit_at).total_seconds() / 60
+                  note = "" if lt == committed else " (live is NEWER than main's copy)"
+                  print(f"live: {os.environ['LIVE_URL']} serves builtAt {live}{note}; "
+                        f"checked {lag:.0f} min after the data commit. Live is current.")
+                  break
+              if dt.datetime.now(UTC) >= deadline:
+                  runs = subprocess.run(
+                      ["gh", "run", "list", "--repo", os.environ["GITHUB_REPOSITORY"],
+                       "--workflow=deploy-cloudflare.yml", "-L", "10", "--json",
+                       "createdAt,event,status,conclusion,databaseId"],
+                      capture_output=True, text=True).stdout or "[]"
                   try:
-                      req = urllib.request.Request(
-                          wh, data=json.dumps({"text": msg}).encode(),
-                          headers={"Content-Type": "application/json"})
-                      urllib.request.urlopen(req, timeout=15)
-                  except Exception as e:
-                      print("webhook POST failed:", e)
-              raise SystemExit(1)   # fail the job so it also shows red in Actions
-          print("Feed is fresh.")
+                      runs = [r for r in json.loads(runs)
+                              if (parse(r.get("createdAt")) or now) >= commit_at]
+                  except ValueError:
+                      runs = []
+                  listed = "; ".join(
+                      f"#{r['databaseId']} {r['event']} {r['status']}/{r.get('conclusion') or '-'}"
+                      for r in runs) or "NONE"
+                  why = ("no deploy started after the data commit, so the dispatch at the end "
+                         "of pipeline.yml and the workflow_run both failed to fire"
+                         if not runs else
+                         "a deploy started but the live page still serves the older edition: "
+                         "it failed, was skipped by its guard, or Cloudflare is serving a cached copy")
+                  alert(f":large_orange_diamond: Void News LIVE page is behind main: "
+                        f"{os.environ['LIVE_URL']} serves builtAt {live or 'nothing readable'}, "
+                        f"main committed builtAt {built} at {commit_at:%F %H:%MZ} "
+                        f"({commit_sha[:8]}), and the {os.environ['LIVE_DEADLINE_MIN']}-minute "
+                        f"deadline has passed. Why: {why}. Deploys since the commit: {listed}.")
+              print(f"live serves {live}; main has {built}; waiting for the deploy "
+                    f"(deadline {deadline:%H:%MZ})")
+              time.sleep(60)
+          print("Feed is fresh, on main and live.")
           PYEOF

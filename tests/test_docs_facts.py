@@ -242,6 +242,30 @@ check("the length-confidence divisor is stated",
       str(int(_deltas["_LENGTH_FULL_CONFIDENCE"])) in claude_md,
       f"{_deltas['_LENGTH_FULL_CONFIDENCE']} appears nowhere in CLAUDE.md")
 
+# ------------------------------------------- the schedules CLAUDE.md quotes
+# Rev 85 (P0-2). Every cron moved off minute 0 and 30, where GitHub's
+# scheduler started the 11:00 pipeline 4 to 7.5 hours late. The architecture
+# line quotes the pipeline's time, so it must be the cron's time, and no
+# workflow may schedule on a shared minute. Regex, not yaml: this gate runs
+# with the docs job's dependencies. tests/test_workflow_hygiene.py holds the
+# full cron grammar; this is the half that ties the docs to it.
+_wf_dir = ROOT / ".github" / "workflows"
+_cron_re = re.compile(r"^\s*-\s*cron:\s*['\"]([^'\"]+)['\"]", re.M)
+for _wf in sorted(_wf_dir.glob("*.yml")):
+    for _c in _cron_re.findall(_wf.read_text()):
+        _minute = _c.split()[0]
+        check(f"{_wf.name} cron '{_c}' is off minute 0 and 30",
+              not any(m.lstrip("0") in ("", "30") or m.startswith("*")
+                      for m in _minute.split(",")),
+              "minute 0 and 30 start hours late on GitHub's scheduler")
+_pipe = _cron_re.findall((_wf_dir / "pipeline.yml").read_text())
+_said = re.search(r"GitHub Actions \(daily (\d{2}):(\d{2}) UTC", text)
+check("CLAUDE.md states the pipeline's daily time", _said is not None)
+if _said and _pipe:
+    _m, _h = _pipe[0].split()[:2]
+    check(f"CLAUDE.md's 'daily {_said.group(1)}:{_said.group(2)} UTC' is pipeline.yml's cron ({_pipe[0]})",
+          (int(_said.group(1)), int(_said.group(2))) == (int(_h), int(_m)))
+
 if failures:
     print(f"FAIL  {len(failures)} docs-facts check(s)")
     for f in failures:

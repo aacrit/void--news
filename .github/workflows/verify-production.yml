@@ -17,10 +17,11 @@ on:
   # run followed any of the five scheduled 15:00/17:00 UTC backstop deploys
   # between 09-04 and 09-06: the workflow_run chain only fired after push-driven
   # deploys, so the gate went blind for the exact deploys that carry each day's
-  # pipeline data. These run 30 minutes after each backstop deploy slot.
+  # pipeline data. These run 24 minutes after each backstop deploy slot (15:13
+  # and 17:13 since rev 85, which moved every cron off minute 0 and 30).
   schedule:
-    - cron: '30 15 * * *'
-    - cron: '30 17 * * *'
+    - cron: '37 15 * * *'
+    - cron: '37 17 * * *'
   workflow_dispatch:
     inputs:
       url:
@@ -43,9 +44,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: "3.11"
 
@@ -107,7 +108,7 @@ jobs:
 
       - name: Open / refresh tracking issue on failure
         if: ${{ steps.verify.outputs.exit != '0' }}
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
             const fs = require('fs');

@@ -50,8 +50,21 @@ on:
     # running, so on a slow/failed run (e.g. the 238-min 2026-08-14 run) it skips
     # and the 17:00 backstop below still covers the worst case. This is why the
     # old un-gated 15:00 slot was unsafe and this one is not.
-    - cron: '0 15 * * *'
-    - cron: '0 17 * * *'
+    #
+    # Rev 85: minute 13, not 0. GitHub's scheduler starts the shared minutes
+    # (0 and 30) hours late: the 15:00 and 17:00 slots ran at 20:10 and 21:30
+    # on 2026-10-01. pipeline.yml now dispatches this workflow itself after its
+    # data commit, so these two are backstops only; retire them once two
+    # scheduled runs have deployed through the dispatch.
+    - cron: '13 15 * * *'
+    - cron: '13 17 * * *'
+  # The FAST PATH since rev 85. pipeline.yml's last step runs
+  # `gh workflow run deploy-cloudflare.yml` once its data commit is on main.
+  # A dispatch is exempt from the rule that stops GITHUB_TOKEN events starting
+  # workflows, and it skips the mid-pipeline guard below (that guard would
+  # otherwise see the dispatching pipeline still in progress and skip). The
+  # 2026-10-01 run finished 19:22 and nothing deployed until a manual dispatch
+  # at 19:49; the workflow_run above is kept as a second path.
   workflow_dispatch:
 
 permissions:
@@ -87,6 +100,7 @@ jobs:
         if: github.event_name != 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
         run: |
           active=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=pipeline.yml \
             --json status --jq '[.[] | select(.status=="in_progress" or .status=="queued")] | length' || echo 0)
@@ -95,31 +109,31 @@ jobs:
             echo "News Pipeline is queued/running — skipping to avoid a fresh-timestamp/stale-data build. The post-pipeline workflow_run deploy will carry this commit."
             exit 0
           fi
-          # The 15:00 EARLY backstop must POSITIVELY confirm today's pipeline
+          # The 15:13 EARLY backstop must POSITIVELY confirm today's pipeline
           # succeeded before it publishes, so it can never rebuild yesterday's
-          # feed (the 2026-08-14 failure mode). The 17:00 backstop keeps the
+          # feed (the 2026-08-14 failure mode). The 17:13 backstop keeps the
           # looser guard so it still publishes to cover a workflow_run drop even
           # if the pipeline itself failed (the build's <20-story fail-loud guard
           # blocks a truly empty deploy).
-          if [ "${{ github.event.schedule }}" = "0 15 * * *" ]; then
+          if [ "$EVENT_SCHEDULE" = "13 15 * * *" ]; then
             today=$(date -u +%Y-%m-%d)
             ok=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=pipeline.yml \
               --json conclusion,createdAt \
               --jq "[.[] | select(.createdAt | startswith(\"$today\")) | select(.conclusion==\"success\")] | length" || echo 0)
             if [ "${ok:-0}" -lt 1 ]; then
               echo "skip=true" >> "$GITHUB_OUTPUT"
-              echo "Early (15:00) backstop: today's News Pipeline has not succeeded yet — skipping. The 17:00 backstop will cover a slow or failed run."
+              echo "Early (15:13) backstop: today's News Pipeline has not succeeded yet — skipping. The 17:13 backstop will cover a slow or failed run."
               exit 0
             fi
           fi
           echo "skip=false" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         if: steps.guard.outputs.skip != 'true'
         with:
           ref: main
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         if: steps.guard.outputs.skip != 'true'
         with:
           node-version: 20
@@ -171,7 +185,7 @@ jobs:
       - name: Ensure Cloudflare Pages project exists
         if: steps.guard.outputs.skip != 'true'
         continue-on-error: true
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3.15.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -179,7 +193,7 @@ jobs:
 
       - name: Deploy to Cloudflare Pages
         if: steps.guard.outputs.skip != 'true'
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3.15.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -200,7 +214,7 @@ jobs:
       # red, and verify-production skipped twice, so nothing was recorded.
       # The step still shows red in the UI, which is the signal we want; the
       # deploy itself already succeeded by this point and must report as such.
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         if: steps.guard.outputs.skip != 'true'
         with:
           python-version: "3.11"

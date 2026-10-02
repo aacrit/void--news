@@ -3,17 +3,23 @@ name: News Pipeline
 # Cloudflare migration (2026-08-30): the pipeline runs against a local SQLite
 # state DB (persisted in the Actions cache, bootstrapped from the latest DB
 # backup on a cache miss) via the PostgREST-compatible shim, NOT Supabase. It
-# then emits the frontend static-JSON snapshots and commits them to main; the
-# existing deploy-cloudflare.yml (workflow_run on this workflow's success) builds
-# and deploys. No Supabase, no metered egress.
+# then emits the frontend static-JSON snapshots and commits them to main, and
+# its LAST step dispatches deploy-cloudflare.yml (rev 85). The workflow_run on
+# this workflow's success is kept, but it dropped on 08-10, 08-14, 08-21 and
+# 10-01 and it never fires when the engine floor turns the run red after the
+# data has shipped. No Supabase, no metered egress.
 
 permissions:
   contents: write   # commit the refreshed static data to main
-  actions: read     # download the backup artifact on a cold cache
+  actions: write    # download the backup artifact on a cold cache; dispatch the deploy
 
 on:
   schedule:
-    - cron: '0 11 * * *'     # 11:00 UTC — 6 AM Chicago
+    # 10:07 UTC (rev 85; it was 11:00). Minute 0 and 30 are the minutes every
+    # repository on GitHub schedules at, and the scheduler started this cron
+    # 4 to 7.5 hours late on runs #380 to #385 (14:55 to 18:32 against 11:00).
+    # tests/test_workflow_hygiene.py fails any cron on minute 0 or 30.
+    - cron: '7 10 * * *'
   workflow_dispatch:
     inputs:
       recluster_only:
@@ -36,10 +42,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 240
     steps:
-      - uses: actions/checkout@v4
+      # persist-credentials: false (rev 85, audit 5 M1). By default checkout
+      # writes this job's contents:write token into .git/config, where the
+      # "Run pipeline" step, which renders untrusted publisher pages in
+      # headless Chromium, could read it. The token is now handed to git only
+      # inside the commit step, after the scrape process has exited.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           ref: main
-      - uses: actions/setup-python@v5
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -50,13 +62,13 @@ jobs:
         run: pip install -r pipeline/requirements.txt
       # ── On Air voices: Kokoro-82M in its own venv (numpy 2) + pinned model files ──
       - name: Cache Kokoro model files
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.cache/void-kokoro
           key: kokoro-${{ hashFiles('pipeline/briefing/kokoro.lock.json') }}
       - name: Cache TTS venv
         id: tts-venv
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: .venv-tts
           key: venv-tts-py3.11-${{ hashFiles('pipeline/requirements-tts.txt') }}
@@ -69,7 +81,7 @@ jobs:
         run: playwright install chromium --with-deps
       - name: Cache spaCy model
         id: spacy-cache
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
           key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
@@ -80,7 +92,7 @@ jobs:
       # ── Pipeline state DB (SQLite) — restored from cache, else bootstrapped ──
       - name: Restore pipeline state DB
         id: state
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: pipeline_state.db
           key: void-state-v1-${{ github.run_id }}
@@ -126,7 +138,7 @@ jobs:
       # Losing it costs accumulated counts, not the product: a cold start with
       # no artifact simply begins empty.
       - name: Restore phrase counts DB
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: phrase_counts.db
           key: void-phrases-v1-${{ github.run_id }}
@@ -241,7 +253,16 @@ jobs:
           python tests/test_onair_sidecar.py
 
       - name: Commit refreshed static data to main
+        id: commit
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          # The checkout persisted no credentials (see the checkout step), so
+          # the token reaches git here, per command, and is never written to
+          # .git/config.
+          AUTH=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          echo "::add-mask::$AUTH"
+          gitauth() { git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $AUTH" "$@"; }
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add frontend/build-data frontend/public/data frontend/public/audio frontend/public/podcast-*.xml
@@ -291,10 +312,14 @@ jobs:
           # plain push would be a non-fast-forward reject. Rebase onto the
           # latest main and retry.
           for attempt in 1 2 3 4 5; do
-            git fetch origin main
+            gitauth fetch origin main
             git rebase origin/main || resolve_generated || {
               git rebase --abort 2>/dev/null || true; echo "rebase failed"; exit 1; }
-            if git push origin HEAD:main; then echo "pushed on attempt $attempt"; exit 0; fi
+            if gitauth push origin HEAD:main; then
+              echo "pushed on attempt $attempt"
+              echo "pushed=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
             echo "push rejected (attempt $attempt); refetching and retrying"
             sleep 5
           done
@@ -302,7 +327,7 @@ jobs:
 
       - name: Save pipeline state DB to cache
         if: always()
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: pipeline_state.db
           key: void-state-v1-${{ github.run_id }}
@@ -320,7 +345,7 @@ jobs:
           fi
       - name: Upload state snapshot
         if: always() && hashFiles('pipeline_state.db.gz') != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: void-state-snapshot
           path: pipeline_state.db.gz
@@ -329,7 +354,7 @@ jobs:
 
       - name: Save phrase counts DB to cache
         if: always() && hashFiles('phrase_counts.db') != ''
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: phrase_counts.db
           key: void-phrases-v1-${{ github.run_id }}
@@ -340,7 +365,7 @@ jobs:
           ls -lh phrase_counts.db phrase_counts.db.gz
       - name: Upload phrase counts snapshot
         if: always() && hashFiles('phrase_counts.db.gz') != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: void-phrase-snapshot
           path: phrase_counts.db.gz
@@ -357,3 +382,18 @@ jobs:
           # run's newest article, which it can only know from the state DB.
           VOID_SQLITE_PATH: pipeline_state.db
         run: python tests/test_engine_health.py --floors
+
+      # P0-1 (rev 85). The deploy follows the data commit because this job
+      # starts it. deploy-cloudflare.yml's workflow_run trigger dropped on
+      # 2026-08-10, 08-14, 08-21 and 10-01 (run #385 finished 19:22; nothing
+      # deployed until a manual dispatch at 19:49), and it never fires when the
+      # engine floor above turns this run red AFTER the data shipped. A
+      # workflow_dispatch made with GITHUB_TOKEN does start a run, which a push
+      # made with it does not. Runs whenever the data reached main, floor or
+      # no floor, for the reason the floor step gives: the data ships and the
+      # run goes red. freshness-check.yml asserts the live page caught up.
+      - name: Deploy the data just committed
+        if: always() && steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy-cloudflare.yml --repo "$GITHUB_REPOSITORY" --ref main
