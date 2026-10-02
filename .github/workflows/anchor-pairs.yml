@@ -17,10 +17,12 @@ name: Anchor Pairs
 
 on:
   schedule:
-    # Twice daily, deliberately offset from the 11:00 pipeline so the two never
-    # contend for the runner or the commit.
-    - cron: '30 7 * * *'
-    - cron: '30 19 * * *'
+    # Once daily (rev 85; it was twice, 07:30 and 19:30). The second run
+    # doubled the commits on main for a corpus that grows by about 11 pairs a
+    # run. Off minute 0 and 30: GitHub's scheduler starts the shared minutes
+    # hours late (tests/test_workflow_hygiene.py), and offset from the 10:07
+    # pipeline and from Pair Test so none of them contend for the commit.
+    - cron: '23 7 * * *'
   workflow_dispatch:
 
 permissions:
@@ -35,9 +37,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.11'
 
