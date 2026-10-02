@@ -37,6 +37,8 @@ export interface BiasSpread {
    *  the lean is measured from instead of implying the whole roster voted. */
   leanMeasuredCount?: number;
   leanTotalCount?: number;
+  /** "outlet": the seven counts are one vote per outlet (2026-10-02 on). */
+  leanVote?: "outlet" | "article";
 }
 
 export interface Source {

@@ -326,12 +326,19 @@ if want("feed"):
         is_default_tuple as _is_default_tuple, per_axis_default_share,
     )
 
+    from utils.bias_aggregation import compute_outlet_lean_histogram  # noqa: E402
+
     dd = 0
     gr = 0
     exported_bias_rows = []  # every per-article bias row the deepdive files carry
+    # The card's histogram, re-counted per OUTLET from exactly the rows this
+    # loop writes for the Deep Dive Bench, so the two cannot disagree even
+    # when a row is stamped unscored here after the run aggregated it.
+    lean_hist: dict = {}
     for cid in [d["id"] for d in clusters]:
         links = c.execute("SELECT article_id FROM cluster_articles WHERE cluster_id=?", (cid,)).fetchall()
         out_rows = []
+        vote_rows, vote_all = [], []
         # The text the card was written from, kept so E-13 and E-14 can still
         # be run against it after the run's database is gone. Not served.
         grounding_rows = []
@@ -379,6 +386,12 @@ if want("feed"):
                 if _is_default_tuple(bias):
                     bias["lean_unscored"] = True
                 exported_bias_rows.append(bias)
+                _nm = src["name"] if src else None
+                _vote = {"outlet": _nm or f"article:{a['id']}", "name": _nm or a["id"],
+                         "lean": bias["political_lean"]}
+                vote_all.append(_vote)
+                if not bias.get("lean_unscored"):
+                    vote_rows.append(_vote)
             grounding_rows.append({
                 "id": a["id"], "url": a["url"], "title": a["title"],
                 "summary": a["summary"], "full_text": a["full_text"],
@@ -394,11 +407,40 @@ if want("feed"):
         if out_rows:
             wj(PUBLIC_DIR / "deepdive" / f"{cid}.json", out_rows)
             dd += 1
+        if vote_all:
+            # Whole set when nothing is measured: main.py's own fallback.
+            lean_hist[cid] = compute_outlet_lean_histogram(vote_rows or vote_all)
         if grounding_rows:
             grounding.write_record(
                 BUILD_DIR, grounding.build_record(cid, grounding_rows))
             gr += 1
     print(f"deepdive/: {dd} cluster files")
+
+    # ONE VOTE PER OUTLET on the card, the Bench and the share card (CEO
+    # decision 3, 2026-10-02). Rewrite the histogram fields of every exported
+    # cluster, and of the latest edition's archive rows (the share card and
+    # /story read those), from the per-outlet count above.
+    for d in clusters:
+        h = lean_hist.get(d["id"])
+        if h and isinstance(d.get("bias_diversity"), dict):
+            d["bias_diversity"].update(h)
+    wj(BUILD_DIR / "feed.json", {"clusters": clusters, "builtAt": built_at})
+    _arch_path = BUILD_DIR / "archive.json"
+    if _arch_path.exists():
+        _arch = json.loads(_arch_path.read_text(encoding="utf-8"))
+        _latest = max((r.get("printed_on") or "" for r in _arch), default="")
+        _n = 0
+        for r in _arch:
+            h = lean_hist.get(r.get("source_cluster_id"))
+            bd = r.get("bias_diversity")
+            if r.get("printed_on") == _latest and h and isinstance(bd, dict):
+                if r.get("polarization") == bd.get("polarization"):
+                    r["polarization"] = h["polarization"]
+                bd.update(h)
+                _n += 1
+        if _n:
+            wj(_arch_path, _arch)
+    print(f"lean histogram: {len(lean_hist)} clusters re-counted one vote per outlet")
     print(f"grounding/: {gr} cluster files (build-data, not served)")
 
     # What the run measured, and what it did not. Every row that carried the

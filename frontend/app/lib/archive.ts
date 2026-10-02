@@ -195,15 +195,15 @@ export function archiveMembersToSpectrumSources(
   members: PrintedMember[] | null,
 ): DeepDiveSpectrumSource[] {
   if (!Array.isArray(members)) return [];
-  const seen = new Set<string>();
   const out: DeepDiveSpectrumSource[] = [];
   for (const m of members) {
     if (typeof m.lean !== "number" || Number.isNaN(m.lean)) continue;
     const name = (m.source_name || "").trim();
     if (!name) continue;
-    const key = name.toLowerCase();
-    if (seen.has(key)) continue; // one entry per source (mirrors the live Deep Dive dedupe)
-    seen.add(key);
+    /* Every member, not the first per source: DeepDiveSpectrum votes one per
+       OUTLET at the mean of its measured articles (lib/outletVotes.ts), the
+       rule the card's histogram is counted by. Keeping the first row here
+       placed an outlet wherever its first article happened to sit. */
     const url = m.url || "#";
     out.push({
       name,

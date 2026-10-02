@@ -61,6 +61,9 @@ export interface BenchSource {
    *  score is the outlet's baseline, and the mark says so rather than drawing
    *  identically to one read off a full article. */
   confidence?: number;
+  /** Measured articles this outlet's position is the mean of. One mark per
+   *  OUTLET (CEO decision 3): ten articles from one outlet are one view. */
+  articles?: number;
 }
 
 const BUCKET_TOKEN: Record<LeanCategory, string> = {
@@ -224,15 +227,19 @@ function Mark({ source, size }: { source: BenchSource; size: number }) {
 /* ── The Bench ──────────────────────────────────────────────────────────── */
 
 export interface BenchProps {
-  /** Sources with a MEASURED lean. The caller does the filtering. */
+  /** One entry per OUTLET with a measured lean, already voted
+   *  (lib/outletVotes.ts). The caller does the filtering. */
   sources: BenchSource[];
-  /** Sources that covered the story but whose lean was never measured. */
+  /** Outlets that covered the story but whose lean was never measured. */
   unscoredCount?: number;
+  /** The story's per-outlet histogram, the one its card prints from. When
+   *  given, the word and its colour come from it. */
+  storySpread?: WingCounts | null;
   /** Mount already drawn: the parent owns the one opening motion. */
   settled?: boolean;
 }
 
-export default function Bench({ sources, unscoredCount = 0, settled = false }: BenchProps) {
+export default function Bench({ sources, unscoredCount = 0, storySpread = null, settled = false }: BenchProps) {
   /* Said out loud in the head, not only on hover: 13 us_major outlets serve us
      no article text, so on a wire-heavy story most of the bench can be sitting
      on its outlets' baselines and every mark used to look the same. */
@@ -295,18 +302,25 @@ export default function Bench({ sources, unscoredCount = 0, settled = false }: B
   const total = counts.reduce((a, b) => a + b, 0);
   const tallest = counts.length ? Math.max(...counts) : 0;
 
-  /* The same L/C/R split the card's register reads, derived from the same
-     seven buckets, so the Bench and the card can never print different words
-     about one story. */
+  /* The word. This comment used to say the Bench and the card "can never
+     print different words about one story", and on 2026-10-01 three of the
+     twenty did: the card counted ARTICLES in the pipeline, this counted the
+     first article per outlet here. Now both count OUTLETS by one rule
+     (`compute_outlet_lean_histogram`, mirrored in lib/outletVotes.ts), the
+     word is read from the story's own histogram when it carries one, and
+     `test/labels.test.mjs` plus `tests/test_bias_bins.py` assert, on every
+     story in the committed export, that these columns re-derive that
+     histogram. The local count is the fallback for a payload written before
+     the change (an archived story), whose card counted articles. */
   const spread: WingCounts = useMemo(
-    () => ({
+    () => storySpread ?? {
       leanBuckets: counts,
       leanLeftCount: counts[0] + counts[1] + counts[2],
       leanCenterCount: counts[3],
       leanRightCount: counts[4] + counts[5] + counts[6],
       leanMeasuredCount: total,
-    }),
-    [counts, total],
+    },
+    [counts, total, storySpread],
   );
 
   const narrow = width > 0 && width < 560;

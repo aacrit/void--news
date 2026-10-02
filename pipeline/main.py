@@ -167,7 +167,7 @@ from utils.editions import ACTIVE_EDITIONS, ALL_EDITIONS as _ALL_EDITIONS  # noq
 # Python fallback; the SQL RPC in migration 076 mirrors the same two formulas).
 from utils.bias_aggregation import (  # noqa: E402
     compute_aggregate_confidence,
-    compute_lean_histogram,
+    compute_outlet_lean_histogram,
 )
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
@@ -797,6 +797,36 @@ def _generate_consensus_divergence(
     return consensus, divergence
 
 
+def _outlet_rows(score_rows: list[dict]) -> list[dict]:
+    """Bias rows -> {outlet, name, lean} for the per-outlet histogram.
+
+    Resolves each row's article to its source NAME (the key the deepdive
+    export carries). A row whose source cannot be resolved votes as its own
+    outlet rather than vanishing, so a lookup failure can only make the count
+    more like the old per-article one, never drop coverage.
+    """
+    ids = [r.get("article_id") for r in score_rows if r.get("article_id")]
+    src_of: dict = {}
+    name_of: dict = {}
+    try:
+        if ids:
+            arts = supabase.table("articles").select("id,source_id").in_("id", ids).execute()
+            src_of = {a["id"]: a.get("source_id") for a in (arts.data or [])}
+            sids = list({v for v in src_of.values() if v})
+            if sids:
+                srcs = supabase.table("sources").select("id,name").in_("id", sids).execute()
+                name_of = {r["id"]: r.get("name") for r in (srcs.data or [])}
+    except Exception:
+        pass  # fall through: unresolved rows vote alone
+    out = []
+    for r in score_rows:
+        aid = r.get("article_id")
+        name = name_of.get(src_of.get(aid)) if aid else None
+        out.append({"outlet": name or f"article:{aid}", "name": name or aid,
+                    "lean": r["political_lean"]})
+    return out
+
+
 def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
     """
     Client-side fallback for cluster enrichment when the DB function
@@ -822,7 +852,7 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
 
         scores_result = (
             supabase.table("bias_scores")
-            .select("political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence,lean_unscored")
+            .select("article_id,political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence,lean_unscored")
             .in_("article_id", article_ids)
             .execute()
         )
@@ -897,7 +927,14 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
         # leanToBucket boundaries so the UI and pipeline agree. The primary
         # SQL RPC (migration 076) mirrors this exact shape, so the histogram
         # is present whether the RPC or this fallback did the work.
-        _hist = compute_lean_histogram(pl_values)
+        # ONE VOTE PER OUTLET (CEO decision 3, 2026-10-02). The histogram the
+        # card prints and the Deep Dive Bench draws is counted per outlet, at
+        # the mean of that outlet's measured articles here. It used to count
+        # articles, so ten articles from one outlet cast ten votes on the card
+        # and one mark on the Bench. Same rows as pl_values. The outlet key is
+        # the source NAME, the key the exported deepdive rows carry, so the
+        # committed export can be re-derived and checked (test_bias_bins.py).
+        _hist = compute_outlet_lean_histogram(_outlet_rows(_lean_rows))
         lean_buckets = _hist["lean_buckets"]
         lean_left_count = _hist["lean_left_count"]
         lean_center_count = _hist["lean_center_count"]

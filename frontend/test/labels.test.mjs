@@ -19,7 +19,7 @@
  * Run: node test/labels.test.mjs   (compiles the TS it needs first)
  */
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync, readFileSync, readdirSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -43,10 +43,30 @@ function compile(files) {
 
 // biasColors reads CSS variables through getColors(); under Node there is no
 // document, so it falls back to the SSR palette. No stub needed.
-compile(["app/lib/biasColors.ts", "app/lib/summaryHygiene.ts"]);
+compile(["app/lib/biasColors.ts", "app/lib/summaryHygiene.ts", "app/lib/outletVotes.ts",
+  "app/components/about/demoSigil.ts"]);
 
-const bias = await import(pathToFileURL(join(out, "biasColors.js")).href);
-const hygiene = await import(pathToFileURL(join(out, "summaryHygiene.js")).href);
+/* tsc anchors output at the common root of what it compiled and emits import
+   specifiers extensionless, which Node's ESM resolver refuses. Find each file
+   and add the extension, as episode.test.mjs does. */
+function collect(dir) {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+    const p = join(dir, e.name);
+    return e.isDirectory() ? collect(p) : p.endsWith(".js") ? [p] : [];
+  });
+}
+const emitted = collect(out);
+for (const file of emitted) {
+  writeFileSync(file, readFileSync(file, "utf8").replace(
+    /(\bfrom\s+["'])(\.[^"']*?)(["'])/g,
+    (m, a, spec, b) => (spec.endsWith(".js") ? m : `${a}${spec}.js${b}`)));
+}
+const load = (name) => import(pathToFileURL(emitted.find((f) => f.endsWith(`/${name}`))).href);
+
+const bias = await load("biasColors.js");
+const hygiene = await load("summaryHygiene.js");
+const votes = await load("outletVotes.js");
+const demo = await load("demoSigil.js");
 
 /* ---- 1. one ladder ---------------------------------------------------- */
 
@@ -299,6 +319,68 @@ const oneWing = { leanLeftCount: 1, leanCenterCount: 11, leanRightCount: 0,
 check("one wing article does NOT read a direction",
   bias.storyLeanLabel(49, oneWing, 10).state !== "confident",
   bias.storyLeanLabel(49, oneWing, 10).text);
+
+/* ---- one vote per outlet: the card's word IS the Bench's word ---------- */
+/*
+   CEO decision 3 (2026-10-02). The card counted ARTICLES in the pipeline and
+   the Bench counted the first article per OUTLET here, and on the 2026-10-01
+   feed 3 of the 20 cards printed a different word from their own Deep Dive
+   (one card "Leans left" on 14/10/4 articles, its Bench "Split" on 6/6/4
+   outlets) while Bench.tsx said the two could never differ. Both now count
+   outlets by one rule; this re-derives the Bench from every committed
+   deepdive file and requires the card's histogram and word to match it.
+*/
+{
+  const ten = votes.outletVotes([
+    ...Array.from({ length: 10 }, () => ({ name: "RT", politicalLean: 90 })),
+    { name: "The Guardian", politicalLean: 20 },
+    { name: "Fox", politicalLean: 80, leanUnscored: true },
+  ]);
+  check("ten articles from one outlet are one vote", ten.length === 2 && ten[0].articles === 10,
+    JSON.stringify(ten.map((v) => [v.name, v.articles])));
+  const mean = votes.outletVotes([{ name: "JNS", politicalLean: 65 }, { name: "jns ", politicalLean: 70 }]);
+  check("an outlet sits at the mean of its articles", mean.length === 1 && mean[0].lean === 67.5,
+    JSON.stringify(mean));
+}
+
+const KEYS = ["far_left", "left", "center_left", "center", "center_right", "right", "far_right"];
+const FEED = join(ROOT, "build-data/feed.json");
+const DD = join(ROOT, "public/data/deepdive");
+let compared = 0;
+if (existsSync(FEED)) {
+  const feed = JSON.parse(readFileSync(FEED, "utf8"));
+  for (const c of feed.clusters ?? []) {
+    const path = join(DD, `${c.id}.json`);
+    if (!existsSync(path)) continue;
+    const bd = c.bias_diversity ?? {};
+    const card = {
+      leanBuckets: KEYS.map((k) => bd.lean_buckets?.[k] ?? 0),
+      leanLeftCount: bd.lean_left_count ?? 0,
+      leanCenterCount: bd.lean_center_count ?? 0,
+      leanRightCount: bd.lean_right_count ?? 0,
+    };
+    /* The Bench's own rows, exactly as the Deep Dive maps them. */
+    const rows = JSON.parse(readFileSync(path, "utf8")).flatMap((r) => {
+      const a = r.article ?? {};
+      const b = (a.bias_scores ?? [])[0];
+      if (!b) return [];
+      return [{ name: a.source?.name ?? `article:${a.id}`, politicalLean: b.political_lean,
+                leanUnscored: b.lean_unscored === true }];
+    });
+    const placed = votes.outletVotes(rows);
+    if (!placed.length) continue; // nothing measured: the Bench draws no columns
+    const bench = votes.outletSpread(placed.map((v) => v.lean));
+    compared += 1;
+    check(`${c.id.slice(0, 8)}: the card's histogram is one vote per outlet`, bd.lean_vote === "outlet");
+    check(`${c.id.slice(0, 8)}: the card's seven counts are the Bench's columns`,
+      bench.leanBuckets.join("/") === card.leanBuckets.join("/"),
+      `card ${card.leanBuckets.join("/")} vs Bench ${bench.leanBuckets.join("/")}`);
+    check(`${c.id.slice(0, 8)}: card word = Bench word`,
+      bias.leanShapeLabel(card) === bias.leanShapeLabel(bench),
+      `card "${bias.leanShapeLabel(card)}" vs Bench "${bias.leanShapeLabel(bench)}"`);
+  }
+  check("the committed export has stories to compare", compared > 0, `${compared} compared`);
+}
 
 /* ---- 2. summary hygiene parity ---------------------------------------- */
 

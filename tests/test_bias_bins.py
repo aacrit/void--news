@@ -154,6 +154,93 @@ def check_the_collapse_is_three_even_groups():
     return []
 
 
+# ── One vote per OUTLET (CEO decision 3, 2026-10-02) ─────────────────────
+# The card counted ARTICLES and the Deep Dive Bench counted OUTLETS, so on the
+# 2026-10-01 feed 3 of 20 cards printed a different word from their own Bench
+# (Putin card "Leans left" on 14/10/4 articles, Bench "Split" on 6/6/4
+# outlets). Both now read `compute_outlet_lean_histogram`; these checks pin
+# the rule and assert the committed export was counted by it.
+
+FEED = ROOT / "frontend/build-data/feed.json"
+ARCHIVE = ROOT / "frontend/build-data/archive.json"
+DEEPDIVE = ROOT / "frontend/public/data/deepdive"
+HIST_KEYS = ("lean_buckets", "lean_left_count", "lean_center_count",
+             "lean_right_count", "polarization", "lean_outlet_count")
+
+
+def _vote_rows(cid):
+    """The deepdive rows as the export hands them to the histogram."""
+    import json
+    path = DEEPDIVE / f"{cid}.json"
+    if not path.exists():
+        return None
+    measured, every = [], []
+    for r in json.loads(path.read_text(encoding="utf-8")):
+        a = r.get("article") or {}
+        b = (a.get("bias_scores") or [None])[0]
+        if not b:
+            continue
+        nm = (a.get("source") or {}).get("name")
+        row = {"outlet": nm or f"article:{a.get('id')}", "name": nm or a.get("id"),
+               "lean": b["political_lean"]}
+        every.append(row)
+        if not b.get("lean_unscored"):
+            measured.append(row)
+    return measured or every
+
+
+def check_one_vote_per_outlet():
+    from utils.bias_aggregation import compute_outlet_lean_histogram
+    out = []
+    ten_rt = [{"outlet": "RT", "lean": 90}] * 10 + [{"outlet": "Guardian", "lean": 20}]
+    h = compute_outlet_lean_histogram(ten_rt)
+    if (h["lean_buckets"]["far_right"], h["lean_buckets"]["left"]) != (1, 1):
+        out.append(f"ten articles from one outlet cast {h['lean_buckets']['far_right']} votes")
+    two = [{"outlet": "JNS", "lean": 65}, {"outlet": "jns ", "lean": 70}]
+    h = compute_outlet_lean_histogram(two)
+    if h["lean_outlet_count"] != 1 or h["lean_buckets"]["center_right"] != 1:
+        out.append("an outlet is keyed case-insensitively and sits at its mean (67.5)")
+    if h.get("lean_vote") != "outlet":
+        out.append("the histogram does not declare lean_vote = outlet")
+    return out
+
+
+def check_committed_export_is_per_outlet():
+    """Every exported cluster's histogram re-derives from its own deepdive."""
+    import json
+    from utils.bias_aggregation import compute_outlet_lean_histogram
+    if not FEED.exists():
+        return []
+    feed = json.loads(FEED.read_text(encoding="utf-8"))
+    out = []
+    by_id = {}
+    for c in feed.get("clusters", []):
+        bd = c.get("bias_diversity") or {}
+        by_id[c["id"]] = bd
+        rows = _vote_rows(c["id"])
+        if rows is None:
+            continue
+        if bd.get("lean_vote") != "outlet":
+            out.append(f"{c['id'][:8]}: histogram is not one vote per outlet")
+            continue
+        h = compute_outlet_lean_histogram(rows)
+        bad = [k for k in HIST_KEYS + ("lean_state_count",) if h.get(k) != bd.get(k)]
+        if bad:
+            out.append(f"{c['id'][:8]}: card histogram {[bd.get(k) for k in bad]} "
+                       f"!= its Deep Dive {[h.get(k) for k in bad]} on {bad}")
+    if ARCHIVE.exists():
+        arch = json.loads(ARCHIVE.read_text(encoding="utf-8"))
+        latest = max((r.get("printed_on") or "" for r in arch), default="")
+        for r in arch:
+            bd = by_id.get(r.get("source_cluster_id"))
+            if r.get("printed_on") != latest or bd is None:
+                continue
+            abd = r.get("bias_diversity") or {}
+            if any(abd.get(k) != bd.get(k) for k in HIST_KEYS):
+                out.append(f"archive {r['id'][:8]}: the share card's histogram is not the card's")
+    return out[:8]
+
+
 CHECKS = (
     ("the frontend declares its rungs", check_the_frontend_declares_its_rungs),
     ("every baseline lands on its own name", check_every_baseline_lands_on_its_own_name),
@@ -161,6 +248,8 @@ CHECKS = (
     ("the ladder is symmetric", check_the_ladder_is_symmetric),
     ("the ladder never steps back", check_the_ladder_never_steps_back),
     ("left/centre/right collapses 3/1/3", check_the_collapse_is_three_even_groups),
+    ("one vote per outlet", check_one_vote_per_outlet),
+    ("the committed card histogram is its Deep Dive's", check_committed_export_is_per_outlet),
 )
 
 

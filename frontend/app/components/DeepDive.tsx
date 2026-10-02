@@ -132,10 +132,16 @@ export default function DeepDive({
 
   const deepDive: DeepDiveData | undefined = liveData ?? story.deepDive;
   const sources = useMemo(() => deepDive?.sources ?? [], [deepDive]);
+  /* Every article row, before the coverage list keeps one per source. The
+     Bench votes per outlet from these (lib/outletVotes.ts) by the rule the
+     pipeline counted the card with; handing it the deduplicated list kept
+     an arbitrary article per outlet. */
+  const [articleRows, setArticleRows] = useState<StorySource[] | null>(null);
+  const spectrumRows = articleRows ?? sources;
 
   const spectrumSources: DeepDiveSpectrumSource[] = useMemo(
     () =>
-      sources
+      spectrumRows
         .filter((src) => src.biasScores != null)
         .map((src) => ({
           name: src.name,
@@ -148,7 +154,7 @@ export default function DeepDive({
           headline: src.articleTitle,
           leanUnscored: src.leanUnscored,
         })),
-    [sources],
+    [spectrumRows],
   );
 
   /* Spread page makes sense only when there is a Sigil or scored sources. */
@@ -328,6 +334,7 @@ export default function DeepDive({
           const consensus = Array.isArray(story.deepDive?.consensus) ? story.deepDive.consensus : [];
           const divergenceData = Array.isArray(story.deepDive?.divergence) ? story.deepDive.divergence : [];
 
+          setArticleRows(storySourceList);
           setLiveData({
             consensus,
             divergence: divergenceData,
@@ -516,7 +523,7 @@ export default function DeepDive({
 
               {spectrumSources.length > 0 && (
                 <div className="dd-analysis-block__spectrum">
-                  <DeepDiveSpectrum sources={spectrumSources} />
+                  <DeepDiveSpectrum sources={spectrumSources} spread={story.sigilData?.biasSpread} />
                 </div>
               )}
             </section>

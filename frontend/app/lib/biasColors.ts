@@ -331,6 +331,10 @@ export interface WingCounts {
   aggregateConfidence?: number;
   /** Articles the lean was actually measured from (see LABEL_MIN_MEASURED). */
   leanMeasuredCount?: number;
+  /** "outlet" when the seven counts are one vote per outlet (the pipeline's
+   *  `compute_outlet_lean_histogram`, from 2026-10-02). Absent on payloads
+   *  written before, whose counts are one vote per article. */
+  leanVote?: "outlet" | "article";
 }
 
 /** Both wings genuinely present: left AND right coverage, with >=3 total.

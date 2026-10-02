@@ -3,6 +3,8 @@
 import { useMemo } from "react";
 import "../styles/bench.css";
 import Bench, { type BenchSource } from "./Bench";
+import { outletVotes } from "../lib/outletVotes";
+import type { WingCounts } from "../lib/biasColors";
 
 /* ---------------------------------------------------------------------------
    DeepDiveSpectrum — the Deep Dive's lean panel.
@@ -53,7 +55,16 @@ export interface DeepDiveSpectrumSource {
 }
 
 interface DeepDiveSpectrumProps {
+  /** EVERY article row, not one per source: the outlet vote happens here
+      (lib/outletVotes.ts), by the same rule the pipeline counted the card's
+      histogram with. A caller that deduplicates first keeps an arbitrary
+      article per outlet, which is how the Bench and the card came to print
+      different words. */
   sources: DeepDiveSpectrumSource[];
+  /** The story's own histogram, the one the card prints from. When it is a
+      per-outlet histogram the Bench prints ITS word, so the two cannot
+      differ by construction; the gate asserts the columns agree with it. */
+  spread?: WingCounts | null;
   /** Mount already-drawn: no entrance choreography. Used where a parent owns
       the one continuous open motion (the inline Deep Dive accordion). */
   settled?: boolean;
@@ -61,6 +72,7 @@ interface DeepDiveSpectrumProps {
 
 export default function DeepDiveSpectrum({
   sources: allSources,
+  spread = null,
   settled = false,
 }: DeepDiveSpectrumProps) {
   /* One filter, in the one component that places sources on the ladder. An
@@ -72,25 +84,37 @@ export default function DeepDiveSpectrum({
      breakdown, and the Bench says out loud how many are being held back. */
   const measured = useMemo<BenchSource[]>(
     () =>
-      allSources
-        .filter((s) => !s.leanUnscored)
-        .map((s) => ({
-          name: s.name,
-          articleUrl: s.articleUrl,
-          tier: s.tier,
-          politicalLean: s.politicalLean,
-          headline: s.headline,
-          /* Carried through, not dropped. This component declared `confidence`
-             on its props and never read it, so a mark placed from a headline
-             and one read off a full article drew identically. */
-          confidence: s.confidence,
-        })),
+      outletVotes(allSources).map(({ row: s, lean, articles }) => ({
+        name: s.name,
+        articleUrl: s.articleUrl,
+        tier: s.tier,
+        /* The outlet's position: the mean of its measured articles here. */
+        politicalLean: lean,
+        articles,
+        headline: s.headline,
+        /* Carried through, not dropped. This component declared `confidence`
+           on its props and never read it, so a mark placed from a headline
+           and one read off a full article drew identically. */
+        confidence: s.confidence,
+      })),
     [allSources],
   );
 
-  const unscoredCount = allSources.length - measured.length;
+  /* Outlets that covered the story and were never measured on any article. */
+  const unscoredCount = useMemo(() => {
+    const placed = new Set(measured.map((m) => m.name.toLowerCase().trim()));
+    const all = new Set(allSources.map((s) => s.name.toLowerCase().trim()));
+    let n = 0;
+    for (const k of all) if (!placed.has(k)) n += 1;
+    return n;
+  }, [allSources, measured]);
 
   return (
-    <Bench sources={measured} unscoredCount={unscoredCount} settled={settled} />
+    <Bench
+      sources={measured}
+      unscoredCount={unscoredCount}
+      storySpread={spread?.leanVote === "outlet" ? spread : null}
+      settled={settled}
+    />
   );
 }
