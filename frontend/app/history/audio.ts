@@ -31,10 +31,18 @@ interface RawEpisode {
   title?: string;
   durationSeconds?: number;
   chapters?: unknown;
+  audio_withdrawn?: boolean;
 }
 
-const EPISODES: Record<string, RawEpisode> =
-  (manifest as { episodes?: Record<string, RawEpisode> })?.episodes ?? {};
+/* An episode the manifest marks `audio_withdrawn` speaks a script that has
+   since been corrected (haitian-revolution and scramble-for-africa,
+   2026-10-02). It is not offered anywhere: no Listen button, no episode mark,
+   no feed item, and the deploy does not fetch its MP3. It returns when a
+   re-render publishes a fresh entry, which carries no withdrawal. */
+const EPISODES: Record<string, RawEpisode> = Object.fromEntries(
+  Object.entries((manifest as { episodes?: Record<string, RawEpisode> })?.episodes ?? {})
+    .filter(([, e]) => !e?.audio_withdrawn)
+);
 
 /** The published episode for an event slug, or null when none exists yet. */
 export function historyEpisode(slug: string): HistoryEpisode | null {

@@ -600,36 +600,62 @@ post-fix run log and tighten them to fit. `sensationalism` at 86.4% on the old
 export is the one to watch: its cap is 60% and a real corpus may well sit far
 below that, in which case 60% is too loose to catch anything.
 
-**Two live episodes serve audio that contradicts their own script.**
-`great-leap-forward` presents a secondhand Mao remark, and
-`gutenberg-printing-press` an attributed line from a Dominican friar, as
-verbatim speech. Both scripts were corrected for H-11 and neither was
-re-rendered. `tests/test_history_audio.py` now fails on exactly this and stays
-red until both are re-rendered. No script work needed; the fix is a render.
+**Two thesis episodes are withdrawn until they are re-rendered (rev 85 WS-B).**
+`haitian-revolution` and `scramble-for-africa` were rendered on 2026-09-19 and
+2026-09-20, before their scripts were corrected on 2026-09-25: Haiti still says
+"thirty thousand men" and voices Toussaint's "tree of liberty" as his own
+words; Scramble voices a paraphrase of von Trotha's order as a quotation. Both
+are `audio_withdrawn` in `history-audio.json`, so no page, feed, Audio hub or
+deploy serves them. (This entry used to name `great-leap-forward` and
+`gutenberg-printing-press`; both were re-rendered on 2026-09-20 18:52, after
+their corrections.) The fix is one dispatch, after rev 85 is on main:
 
-**Live History episodes that run over the 15 minute format ceiling.** Congo
-Free State 15.46, Rise of Islam 15.43, Russian Revolution 15.37, Indian
-Independence 15.36. All sit under the audio gate's 15.5, so they shipped and
-still serve. Peloponnesian War renders at about 15.2 and joins this list when
-it publishes.
+    gh workflow run render-history-audio.yml --ref main \
+      -f slugs=haitian-revolution,scramble-for-africa -f publish=true
 
-(An earlier version of this entry named Peloponnesian War instead of Russian
-Revolution. Peloponnesian War's 15.2 came from a render log, not the manifest:
-that run was rejected at publish over a different episode, so it never went
-live. Read the manifest for what is serving, not a render log for what was
-made.)
+then `python3 -m pipeline.history.export_thesis` and commit, because a fresh
+render moves the chapter start times the two theses' episode marks carry
+(T-14 fails until the export is redone).
 
-This is not a regression. The runtime estimator modelled non-speech time as a
-flat 1.1 minutes, so it could not see them; it now spends silence per segment
-(2026-09-20) and H-07 warns on each. The warning is the first honest report of
-a condition that was already live.
+Three more scripts were reworded after their render without contradicting the
+audio (`congo-free-state`, `great-leap-forward`, `ottoman-empire`: time-bound
+lines made durable). They keep serving, recorded as
+`script_revised_after_render`, and want the same dispatch when convenient.
+`apollo-11-moon-landing`, `chernobyl-disaster` and `mali-empire-mansa-musa`
+were local renders with no workflow run on record, so their `script_sha256`
+is null and `tests/test_history_audio.py` lists them on every run until a
+listen confirms them or a re-render replaces them. The live list:
+`python3 pipeline/history/episode_report.py --lists`.
+
+**Live History episodes that run over the 15 minute format ceiling.** Derived
+from the manifest's `durationSeconds` by `episode_report.py --lists`, not
+kept by hand (the hand list here named Congo Free State, Rise of Islam,
+Russian Revolution and Indian Independence, which now run 13.5 to 14.4):
+Ottoman Empire 15.26, Peloponnesian War 15.21, Srebrenica 15.19, Sykes-Picot
+15.18. All sit under the audio gate's 15.5, so they ship. No over-ceiling
+gate is added: it would turn CI red until four re-cuts and re-renders land.
 
 Each is a re-cut of roughly 100-200 words followed by a re-render, in the
 manner of `september-11-attacks`: drop whole lines that repeat a fact the
 script tells better elsewhere, never trim clauses, and protect the cold open,
 the closing turn, every perspective's strongest fact and witness, and the
-close. Left alone for now because they are live and serving, and four re-cuts
-is its own piece of work rather than a footnote to another one.
+close. That is the narrative team's call, not a mechanical trim, so it is
+left for them; Ottoman also carries one of the reworded lines above.
+
+**Script lines measured from the listener.** `tests/test_history_copy.py`
+now runs the time-relative gate over narrator lines and lists 31 existing
+hits to review ("Ten million people speak Quechua today", "is still the
+law", "people alive today"...) in `SCRIPT_TIME_BOUND_KNOWN`. Each is dated
+or cut at its episode's next re-render, and its entry removed.
+
+**A Congo source title is unverified.** "William Sheppard: Congo's
+African-American Livingstone" (Pagan Kennedy, 2002) served with an em dash;
+the dash is now a colon and nothing else changed. The book may be "Black
+Livingstone"; confirm against a catalogue record before changing the words.
+
+**History images still hotlink Commons.** history.json carries 152 image URLs (70 distinct files) on
+upload.wikimedia.org, which answers 429 under load. Self-hosting under
+`public/history/` with licence rows is not done (P2-11).
 
 **The Sigil disagrees with its own caption.** It paints a direction, and
 sometimes consensus-green, on cards whose caption reads "Flat".
@@ -1117,9 +1143,9 @@ building the ledger.** The YAML and the script were corrected on 2026-09-25
 (every item below; the script is re-cut against the ledger, every spoken
 quotation is a ledger extract, and it carries inert `# CLIP:` / `# MOOD:`
 slots per `docs/proposals/HISTORY-AUDIO-ARCHIVAL.md`). **The served MP3
-still carries the old script**: it must be re-rendered (one
-`render-history-audio.yml` dispatch), after which the thesis's episode marks
-are re-aligned to the new chapters. Until then chapter 5 keeps the manifest's
+carried the old script**; it was re-rendered from the corrected script
+by run 36181105314 on 2026-09-25 (the manifest's `script_sha256` matches),
+after which the thesis's episode marks are re-aligned to the new chapters. Until then chapter 5 keeps the manifest's
 title "The force that was supposed to hold" so T-10 resolves. The list, as
 found:
 
@@ -1198,8 +1224,8 @@ What is unfinished on Srebrenica:
   significance, the 2019 Karadzic appeal as the Mechanism's, the Riad context,
   the Katzenberger photograph dated 2010, the photographer Michael Büker), and
   every spoken quotation is now in `primary_source_excerpts` and pinned
-  verbatim to an extract. **The MP3 still carries the old script and awaits a
-  re-render**; the thesis page's episode blocks already show the new lines.
+  verbatim to an extract. The MP3 was re-rendered from this script by run
+  36092233886 on 2026-09-25 (the manifest's `script_sha256` matches).
 - **Mongol Baghdad** is not started. Partition's gaps that a browser could
   close: Munir's report (in the Kirpal Singh collection, pp. 409-444, fetched
   but not sliced), the Punjab volume of the 1941 census, the two Security

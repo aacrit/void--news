@@ -68,8 +68,8 @@ def build_entry(slug: str, src_dir: Path, existing: dict | None = None, *,
     which is the ID3 header: a re-encode that left the tags alone kept the
     same `?v=`, so the CDN could serve the old bytes under new chapters for
     the length of its cache. `renderedAt` is when TTS last ran; `publishedAt`
-    is when the file last changed. The staleness test compares the script's
-    commit date against `renderedAt`.
+    is when the file last changed. The staleness test compares
+    `script_sha256` (the rendered script's content) with today's script.
     """
     mp3 = src_dir / f"{slug}.mp3"
     sidecar = src_dir / f"{slug}.chapters.json"
@@ -129,6 +129,32 @@ def build_entry(slug: str, src_dir: Path, existing: dict | None = None, *,
         "renderedAt": rendered_at,
         "publishedAt": now,
     }
+    # The script the audio was rendered from, by content (P0-4, 2026-10-02).
+    # history_producer.py hashes the bytes it renders and leaves the hash
+    # beside the MP3; tests/test_history_audio.py compares it with today's
+    # script on any clone, shallow or not. It is never computed here from the
+    # working tree: the publish job checks out a newer commit than the render
+    # job did, so a hash taken now could vouch for a script the audio never
+    # spoke. A stitch does not re-render, so it keeps the render's hash and,
+    # if the episode was withdrawn, keeps it withdrawn.
+    script_file = src_dir / f"{slug}.script.json"
+    if restitch:
+        entry["script_sha256"] = existing.get("script_sha256")
+        entry["script_sha256_basis"] = existing.get("script_sha256_basis") or "unknown"
+        for k in ("audio_withdrawn", "audio_withdrawn_reason", "script_revised_after_render"):
+            if k in existing:
+                entry[k] = existing[k]
+    else:
+        sha = None
+        if script_file.exists():
+            try:
+                sha = json.loads(script_file.read_text()).get("sha256")
+            except json.JSONDecodeError:
+                sha = None
+        entry["script_sha256"] = sha if isinstance(sha, str) and len(sha) == 64 else None
+        entry["script_sha256_basis"] = (f"{slug}.script.json written by history_producer.py at render"
+                                        if entry["script_sha256"] else
+                                        "no script hash beside the render: not provable, re-verify")
     if promo:
         entry["promo"] = {k: promo[k] for k in ("id", "sha", "voice", "startTime") if k in promo}
     # Archival clips the episode carries (HISTORY-AUDIO-ARCHIVAL.md §4c.7):

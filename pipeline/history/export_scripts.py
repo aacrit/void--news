@@ -23,6 +23,7 @@ Run: python3 -m pipeline.history.export_scripts
 from __future__ import annotations
 
 import json
+import os
 import pathlib
 import sys
 
@@ -37,7 +38,13 @@ from pipeline.history.script_format import (  # noqa: E402
 
 SCRIPTS = ROOT / "data/history/scripts"
 EVENTS = ROOT / "data/history/events"
-OUT = ROOT / "frontend/build-data/history-scripts"
+# VOID_EXPORT_BUILD_DIR redirects the export, as it does for export_thesis.py.
+# tests/test_history_export_parity.py sets it and compares against the tree;
+# before this was honoured, the "check" ran the exporter over the committed
+# files themselves, so a script correction that never reached the export
+# passed it (found 2026-10-02 while correcting four time-bound lines).
+OUT = pathlib.Path(os.environ["VOID_EXPORT_BUILD_DIR"]) / "history-scripts" \
+    if os.environ.get("VOID_EXPORT_BUILD_DIR") else ROOT / "frontend/build-data/history-scripts"
 
 
 def resolve_accounts(script: Script, event: dict) -> list[int | None]:

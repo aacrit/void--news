@@ -24,10 +24,12 @@ without anyone remembering to flag it.
 
 Two things that register currently surfaces:
 
-- **Four rendered episodes exceed the 15.0 minute format ceiling** (Congo Free
-  State 15.46, Rise of Islam 15.43, Russian Revolution 15.37, Indian
-  Independence 15.36). All sit under the audio gate's 15.5, so they shipped.
-  They are a re-cut or an accepted exception, not a defect.
+- **Episodes over the 15.0 minute format ceiling** are derived from the
+  manifest, not listed here: `python3 pipeline/history/episode_report.py
+  --lists` prints them, with every episode whose audio is withdrawn, revised
+  after its render, or unverified against its script. All sit under the
+  audio gate's 15.5, so they ship. They are a re-cut or an accepted
+  exception, not a defect.
 - **39 of the written scripts predate H-11.** They are not known to be wrong;
   they were never checked against that rule.
 
@@ -392,5 +394,15 @@ tenth that failed, and it runs the manifest gate before it commits.
   the recorded values: every entry at the size and duration claimed, under the
   25 MiB Cloudflare Pages per-file limit, naming a real event, chapters ordered
   from zero, and no MP3 in the deploy tree that no page serves.
+- **The audio speaks today's script** (rev 85). `history_producer.py` hashes
+  the script bytes it renders into `<slug>.script.json`; `publish_audio.py`
+  records them as `script_sha256`; the test hashes the committed script and
+  compares, on any clone (the commit-date check it replaced skipped itself on
+  the shallow clones CI uses, and two corrected theses served uncorrected
+  audio). A mismatch fails unless the entry is `audio_withdrawn` (served
+  nowhere: `audio.ts`, `/audio`, the History feed and `release_store.py fetch`
+  all skip it) or carries `script_revised_after_render` naming the exact
+  revised script and why it contradicts nothing the audio says. A null hash
+  (a render with no hash on record) is listed as unverified on every run.
 - Served: episodes reachable from the CDN, chapters render, player resumes.
 - Ear test per stage, by the CEO, before the next stage starts.

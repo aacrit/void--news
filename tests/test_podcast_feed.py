@@ -327,7 +327,75 @@ def test_weekly_feed_matches_archive():
           not any("Issue #" in (i.findtext("title") or "") for i in items))
 
 
+_COLLISION = re.compile(r"([.,;:]):\s")
+
+
+def _title_collisions(title: str) -> list[str]:
+    """A stop met by the ": " join ("Iraq.: On Air"). An abbreviation's own
+    stop ("U.S.: On Air") is not a collision."""
+    out = []
+    for m in _COLLISION.finditer(title):
+        before = title[:m.start() + 1].split()[-1] if title[:m.start() + 1].split() else ""
+        if m.group(1) == "." and before.count(".") >= 2:
+            continue
+        out.append(title[max(0, m.start() - 20):m.end() + 6])
+    return out
+
+
+def test_item_title_punctuation():
+    print("\nP-T08  An item title carries one stop at the join (audit 4 LOW)")
+    t = pfg._episode_title({"edition": "world", "created_at": "2026-09-30T12:00:00+00:00",
+                            "tldr_headline": "UK Floats EU Return; US Exits Iraq."})
+    check("a headline's trailing stop is dropped at the join",
+          t == "UK Floats EU Return; US Exits Iraq: On Air, September 30, 2026", t)
+    t = pfg._episode_title({"edition": "world", "created_at": "2026-09-30T12:00:00+00:00",
+                            "tldr_headline": "Talks With the U.S."})
+    check("an abbreviation keeps its stop", t.startswith("Talks With the U.S.: On Air"), t)
+    check("the collision rule can fail", bool(_title_collisions("US Exits Iraq.: On Air")))
+    for name, _path, channel in feeds():
+        bad = [c for i in channel.findall("item") for c in _title_collisions(i.findtext("title") or "")]
+        check(f"{name}: no item title doubles its punctuation at the join", not bad, "; ".join(bad))
+
+
+def test_history_feed_omits_withdrawn():
+    print("\nP-T09  The History feed offers no withdrawn episode, and every other one")
+    manifest = json.loads((PUBLIC / "data" / "history-audio.json").read_text(encoding="utf-8"))
+    eps = manifest.get("episodes") or {}
+    withdrawn = {s for s, e in eps.items() if e.get("audio_withdrawn")}
+    served = {s for s, e in eps.items() if e.get("url") and not e.get("audio_withdrawn")}
+    xml = ET.parse(PUBLIC / "podcast-history.xml").getroot().find("channel")
+    guids = {(i.findtext("guid") or "").removeprefix("history:") for i in xml.findall("item")}
+    check("no withdrawn episode is a feed item", not (guids & withdrawn), str(sorted(guids & withdrawn)))
+    check("every served episode is a feed item", served <= guids, str(sorted(served - guids))[:200])
+
+
+def test_duration_rounding_parity():
+    """/audio printed 11:41 where the feed said 11:40 for one file: the page
+    rounded and the feed truncated. Both truncate now, as the player does;
+    this runs the page's own `clock` under node against `_itunes_duration`."""
+    print("\nP-T10  /audio and the feeds print one duration for one file")
+    import shutil
+    import subprocess
+    src = (ROOT / "frontend" / "app" / "audio" / "page.tsx").read_text(encoding="utf-8")
+    m = re.search(r"function clock\(seconds: number\): string \{(.*?)\n\}", src, re.S)
+    check("/audio defines clock()", bool(m))
+    if not m or not shutil.which("node"):
+        print("  (node not available: parity not run)")
+        return
+    samples = [59.4, 59.6, 700.5, 701.9, 725.995, 800.2, 899.99]
+    js = ("function clock(seconds){" + m.group(1).replace(": number", "") + "}\n"
+          f"console.log(JSON.stringify({json.dumps(samples)}.map(clock)));")
+    out = subprocess.run(["node", "-e", js], capture_output=True, text=True)
+    page = json.loads(out.stdout or "[]")
+    feed = [pfg._itunes_duration(s) for s in samples]
+    check("the page's clock and the feed's duration agree on every sample", page == feed,
+          f"page {page} vs feed {feed}")
+
+
 if __name__ == "__main__":
+    test_item_title_punctuation()
+    test_history_feed_omits_withdrawn()
+    test_duration_rounding_parity()
     test_history_description()
     test_cover_lookup()
     test_issue_label()
