@@ -18,6 +18,70 @@ lives in this file.
 
 ---
 
+## rev 85 WS-E: the card, the Bench and the share card count one thing, and every mark shows its work (2026-10-02)
+
+Audit 6 found the lean display saying three different things about one story.
+The card counted ARTICLES, the Deep Dive Bench counted OUTLETS (the first
+article of each), and the share card read a third rule, the confidence-gated
+mean. On the 2026-10-01 front page that was 417 article votes from 347
+outlets, and 3 of the 20 cards printed a word their own Bench did not, while
+`Bench.tsx` said the two could never differ. Four CEO decisions, taken at the
+plan's recommendation, each in its own commit so it can be reverted alone.
+
+**Decision 3, one vote per outlet.** `compute_outlet_lean_histogram` in
+`pipeline/utils/bias_aggregation.py` places each outlet at the mean of its
+measured articles in the story, keyed by source name, and counts it once.
+`main.py` uses it; `export_static.py` re-counts from exactly the rows it
+writes to the deepdive files and rewrites `feed.json` and the latest edition's
+archive rows, so a row stamped unscored at export cannot split card from
+Bench. `lib/outletVotes.ts` mirrors the rule for the one place that draws
+outlets individually. The Deep Dive no longer deduplicates before the Bench.
+The committed export was re-derived from the committed deepdive rows (they
+reproduce the run's per-article histogram on 35 of 35 clusters, so no state DB
+was needed).
+
+**Decision 1, a state rung.** Outlets flagged `state_affiliated` in
+`data/sources.json` are counted in `lean_state_count` and in none of the seven
+buckets. Their baselines ran from far left (Tehran Times) to far right (RT,
+CGTN, Global Times) with TASS, Sputnik and Xinhua at centre, and they cast 12
+wing votes on the 2026-10-01 twenty. The Bench draws them on their own rung
+under the anchors, square marks in plain ink.
+
+**Decision 2, the card prints its count.** `leanShapeCount` reads the three
+counts `leanShape` reads: "Leans right" over "15 of 22 right". "N measured" is
+now "N placed", because about a third of placements are the outlet's record
+with no text read.
+
+**Decision 4, the share card follows `leanShape`.** `leanLabelState`,
+`storyLeanLabel` and `LABEL_MIN_CONFIDENCE` now drive no surface; OPEN-ITEMS
+says so.
+
+**P1-10.** "Blend" left `/about` and `/sources`; `/press` reads `engine.json`
+and `leanBounds` as `/sources` does instead of saying the words lead.
+**P1-12.** The `/about` demos carry a real roster, so no "0 measured" sits
+beside a lean word. **P1-13.** The Bench mark's card prints the working:
+outlet baseline, the points the words moved it, the cap, the terms, or that
+the article was placed from the outlet's record alone.
+
+What it moved on the 2026-10-01 twenty, against the shipped labels: three
+words. Iraq withdrawal, Balanced to Split, and Musk returns, Balanced to
+Split, under decision 3; Trump diesel ban, Leans right to Split, under
+decision 1 (two state outlets left its centre and right). The Putin card went
+Leans left to Split under decision 3 alone and back to Leans left once its
+three state outlets left the wings; its Bench now agrees with it. One thin
+card changed only its number (7 placed to 6).
+
+Gates: `tests/test_bias_bins.py` (one vote per outlet, state outlets never in
+the wings, the committed histogram re-derives from its deepdive);
+`test/labels.test.mjs` (card counts, card word and Bench word agree on every
+committed story; the printed count is the histogram's; the share card's word
+is the card's; every `/about` demo prints a real count); `copy-facts`
+(no "blend" in method copy); `test_engine_health.py` (`/press` writes no
+engine number by hand); headless `bench-mark-shows-work`. Not run here:
+`next build` and the headless sweep (Google Fonts are blocked in this
+sandbox). Older archived stories keep their per-article histograms; their
+Bench falls back to its own count.
+
 ## rev 83: a red main from four causes, one of them silent for a week (2026-10-01)
 
 Verify Production had been red on every scheduled run since 2026-09-28 and
