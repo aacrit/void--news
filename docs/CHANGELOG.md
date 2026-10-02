@@ -389,6 +389,80 @@ F8 to F11. Every item has a headless scenario in `frontend/scripts/verify-headle
 
 Not done here: a weekly cover shift of about 0.08 at hydration
 (`CinematicCover`), found while measuring; it belongs to the Weekly page.
+## rev 85 WS-H: the pipeline's runtime, its LLM spend and its growth, measured and bounded (2026-10-02)
+
+Plan items P2-1, P2-2, P2-3, P2-6 and P2-12 of
+`docs/proposals/HOLISTIC-PLAN-2026-10-02.md`. Every number below was taken
+from the state and phrase snapshots of run #385 (2026-10-01).
+
+1. **Step 8c ranked 15,430 clusters to place 623.** The candidate bench and
+   the display predicate refuse anything under 3 sources, so an orphan's rank
+   decided only whether it crowded the top 100. `rerank.py` now ranks the
+   pool-eligible clusters and parks orphans below every ranked row
+   (`parking_floor`), leaving their other columns alone; the corpus count the
+   adaptive `is_headline` band reads still includes orphans' articles. On the
+   real snapshot: 523 s became 60 s, the 35-candidate bench was identical in
+   order, and the eligible ordering matched down to position 178. Step 7 is
+   unchanged: its orphan `headline_rank` is what `weekly_digest_generator`
+   orders by. Gate: `tests/test_rerank_pool.py` (old and new paths on a
+   synthetic state DB).
+2. **Kokoro ran 2 workers on 4 cores.** `default_kokoro_workers` gives 4 where
+   there are 4 cores and memory for four sessions, else 2;
+   `VOID_KOKORO_WORKERS` still overrides.
+3. **Nobody could say where 124 minutes went.** `main.py` marks 16 phases and
+   writes their durations into `pipeline_runs.llm_metrics`; `engine_health`
+   copies them into `engine.json` as `runtime`. `test_engine_health.py
+   --floors` fails a run over 150 minutes and warns over 110. Run #385 was
+   121.6, so the next floor run prints a warning.
+4. **Flash use against its 20 a day was unmeasurable.** `gemini_client` sent
+   requests from two functions, counted logical calls only, skipped every
+   `count_call=False` call, and was imported under two module names. Every
+   request now goes through `_send`, counted per model in a meter held in
+   `sys.modules`; `engine.json` carries it as `llm`. The floor fails over 20
+   flash requests and warns over 18.
+5. **phrase_counts could not be pruned fast enough by design.** 70% of its
+   2.0M rows sat in phrases at 8 or more outlets, which no rule ever pruned,
+   and the old late rule (28 days, 8 outlets) would first have fired on 10-24,
+   after the 8M ceiling. The late rule is now the derivation's own floor: 20
+   outlets (`lexicon_derive.MIN_OUTLETS`) over 14 days (two gate generations),
+   since a phrase no outlet has used in 14 days cannot reach 50 articles in any
+   useful time. Each run's counters go into `pc_run`; `projection()` gives days
+   to the ceiling at the last net gain, warning under 14 and failing the floor
+   when halted.
+6. **The state DB kept what its cutoffs could not see.** Every retention rule
+   compares a date column to an ISO cutoff, so 5,136 articles with a NULL,
+   junk ("Sep 23, 2026 2:34pm") or future `published_at`, the oldest fetched
+   2026-03-22, were never deleted, with their bias rows. `sweep_unretainable_rows`
+   deletes rows like that on `fetched_at`, `created_at` and `archived_at` within
+   the existing 7, 2 and 10 day windows, comparing through `datetime()` because
+   a plain string compare puts every same-day `YYYY-MM-DD HH:MM:SS` value
+   before a `T` cutoff. `cluster_archive`, which nothing reads, no longer stores
+   orphans (54,471 of its 55,552 rows). The rest of the 9 MB a day was not a
+   leak: bias rationales grew from 317 to 539 bytes a row and SQLite's free list
+   from 54 to 73 MB. `printed_stories` is untouched. Gate:
+   `tests/test_state_retention.py`.
+7. **260 quarantined feeds, no causes.** The fetcher wrote `http_4xx` for a
+   429, a 403 and a 404 alike, `other` for SSL and refused connections, and
+   `parse_error` for an empty Google News search. It now writes `http_<code>`,
+   `timeout`, `ssl`, `dns`, `connection`, `blocked`, `empty` or `parse_error`,
+   and `stale` (not a failure) for a feed whose every entry is past the age
+   limit. `scripts/roster/quarantine_report.py` counts per cause and exits 1 on
+   a quarantined row with none. On the snapshot: 261 quarantined, 214 of them
+   last tried 2026-09-06, 137 `parse_error` and 117 legacy `http_4xx/5xx`;
+   78 of the 261 are Google News searches. Nothing is released automatically. Gate:
+   `tests/test_quarantine_causes.py`.
+8. **MP3s out of git, pipeline side.** `pipeline/briefing/audio_store.py`
+   stores each On Air and Weekly MP3 in a `<edition>-audio` release and records
+   it in `frontend/public/data/audio-store.json` with URL, size and SHA-256;
+   `fetch --out DIR` is the deploy half and fails on a miss or a mismatch. Off
+   by default (`VOID_AUDIO_STORE=git`) because the switch needs `.gitignore`,
+   a seeding run and three workflow edits at once, written out in
+   `docs/proposals/AUDIO-OUT-OF-GIT.md`. Gate: `tests/test_audio_store.py`.
+
+Found and not fixed here: `cleanup_stuck_pipeline_runs` compares the space
+form `started_at` against a `T` cutoff, so every run marks ITSELF stuck and
+carries a "Pipeline run timed out" error into its record (all three runs of
+09-29 to 10-01 do).
 
 ## rev 83: a red main from four causes, one of them silent for a week (2026-10-01)
 

@@ -134,8 +134,9 @@ day0 = "2026-09-01T11:00:00Z"
 pc.record_daily(conn, [{"source_id": "solo", "full_text": FILLER + " sacramento county ordinance"}], day0)
 for sid in ("x1", "x2", "x3"):
     pc.record_daily(conn, [{"source_id": sid, "full_text": FILLER + " border funding vote"}], day0)
-# 15 days later, nothing new mentions either phrase.
-pc.record_daily(conn, [], "2026-09-16T11:00:00Z")
+# 11 days later (past the early window, inside the late one), nothing new
+# mentions either phrase.
+pc.record_daily(conn, [], "2026-09-12T11:00:00Z")
 solo = phrases_for(conn, "solo")
 check("a phrase at one outlet is pruned after the early window",
       "sacramento county ordinance" not in solo, str(sorted(solo)[:5]))
@@ -151,8 +152,48 @@ check("a phrase still in use is never aged out",
       "harbour dredging levy" in phrases_for(conn2, "solo"))
 # 57 days on, three outlets is not enough.
 pc.record_daily(conn, [], "2026-10-28T11:00:00Z")
-check("a phrase that never reached eight outlets is pruned after the late window",
+check("a phrase that never reached RETAIN_MIN_OUTLETS_LATE outlets is pruned after the late window",
       "border funding vote" not in phrases_for(conn, "x1"))
+
+# --- 4b. The late rule is the derivation's own floor (rev 85, P2-3) ---------
+check("the late rule keeps only what the derivation can score (MIN_OUTLETS)",
+      pc.RETAIN_MIN_OUTLETS_LATE == ld.MIN_OUTLETS, f"{pc.RETAIN_MIN_OUTLETS_LATE} vs {ld.MIN_OUTLETS}")
+check("the late window is two gate generations",
+      pc.RETAIN_LATE_DAYS == 2 * pc.GATE_GEN_DAYS)
+conn = fresh()
+for k in range(12):                                   # 8 or more: kept forever before rev 85
+    pc.record_daily(conn, [{"source_id": f"m{k}", "full_text": FILLER + " estuary toll bridge"}], day0)
+for k in range(pc.RETAIN_MIN_OUTLETS_LATE):
+    pc.record_daily(conn, [{"source_id": f"w{k}", "full_text": FILLER + " pension triple lock"}], day0)
+pc.record_daily(conn, [], "2026-09-16T11:00:00Z")    # 15 days dormant
+check("a dormant phrase at 12 outlets is pruned after the late window",
+      "estuary toll bridge" not in phrases_for(conn, "m0"))
+check("a dormant phrase at MIN_OUTLETS outlets is kept",
+      "pension triple lock" in phrases_for(conn, "w0"))
+
+# --- 4c. Days to the ceiling, from the last run's counters ------------------
+conn = fresh()
+r1 = pc.record_daily(conn, [{"source_id": "a", "full_text": BODY}], day0)
+check("a run records its counters", conn.execute("select count(*) from pc_run").fetchone()[0] == 1)
+check("and reports its net gain and days to the ceiling",
+      r1["daily_gain"] == r1["rows_after"] - r1["rows_before"] > 0
+      and r1["days_to_ceiling"] is not None,
+      str({k: r1.get(k) for k in ("daily_gain", "days_to_ceiling")}))
+conn.execute("insert into pc_run values ('2026-10-02T11:00:00Z', 2000000, 2370000, 400000, 30000, 850)")
+proj = pc.projection(conn)
+check("+370k a day from 2.37M is about 15 days to 8M, no warning",
+      proj["days_to_ceiling"] == round((pc.DAILY_MAX_ROWS - 2370000) / 370000, 1)
+      and not proj["projection_warn"], str(proj))
+conn.execute("insert into pc_run values ('2026-10-03T11:00:00Z', 2370000, 3000000, 700000, 70000, 850)")
+check("+630k a day from 3M is under 14 days and warns", pc.projection(conn)["projection_warn"])
+conn.execute("insert into pc_run values ('2026-10-04T11:00:00Z', 3000000, 2900000, 100000, 200000, 850)")
+proj = pc.projection(conn)
+check("a shrinking table projects no ceiling and does not warn",
+      proj["days_to_ceiling"] is None and not proj["projection_warn"], str(proj))
+check("the warning threshold is two weeks", pc.PROJECTION_WARN_DAYS == 14)
+_main_src = (ROOT / "pipeline" / "main.py").read_text(encoding="utf-8")
+check("main.py prints the projection and records it for engine.json",
+      'rep.get("days_to_ceiling")' in _main_src and '"phrase_counts": _phrase_report' in _main_src)
 
 # --- 5. The ceiling halts, it does not prune to fit -------------------------
 conn = fresh()

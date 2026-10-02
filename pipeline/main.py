@@ -1250,6 +1250,104 @@ class _ReclusterSkip(Exception):
     pass
 
 
+# ── Phase clock (P2-1, rev 85) ──────────────────────────────────────────────
+# Run #385 took 124 minutes and nobody could say where without reading a 40,000
+# line log. Each step below calls _phase() as it starts; a phase lasts until the
+# next mark. The durations go into pipeline_runs.llm_metrics["phases"], from
+# where validation/engine_health.py writes them into build-data/engine.json and
+# tests/test_engine_health.py --floors fails a run over its runtime ceiling.
+_PHASE_MARKS: list[tuple[str, float]] = []
+
+
+def _phase(name: str) -> None:
+    _PHASE_MARKS.append((name, time.time()))
+
+
+def phase_durations(marks: list[tuple[str, float]], end: float) -> dict[str, float]:
+    """{phase: seconds}. A name marked twice (a re-entered step) accumulates."""
+    out: dict[str, float] = {}
+    for i, (name, t0) in enumerate(marks):
+        t1 = marks[i + 1][1] if i + 1 < len(marks) else end
+        out[name] = round(out.get(name, 0.0) + max(0.0, t1 - t0), 1)
+    return out
+
+
+def sweep_unretainable_rows(conn, now_iso: str | None = None,
+                            article_days: int = 7, cluster_days: int = 2,
+                            archive_days: int = 10) -> dict:
+    """Delete the rows the date-based retention below can never reach (P2-3, rev 85).
+
+    Every retention rule in this file compares a date column to an ISO cutoff:
+    `published_at < cutoff` for articles, `first_published < cutoff` for clusters
+    and the archive. A row whose date is NULL, is not ISO ("Sep 23, 2026 2:34pm",
+    "undefined") or lies in the future fails that comparison forever, so it is
+    never deleted. On the 2026-10-01 snapshot that was 5,136 articles (NULL or
+    junk published_at, the oldest fetched 2026-03-22) with their bias rows, and
+    154 clusters, and it grew about 110 articles a day.
+
+    The fallback is the date WE wrote: fetched_at for an article (moved every
+    time the URL is seen again, so a live article is never old), created_at for a
+    cluster, archived_at for an archive row. The windows are the existing ones
+    (7, 2, 10 days), so nothing is kept for less time than the rule it backs up.
+
+    Dates are compared with SQLite's datetime(), which normalises both the
+    'YYYY-MM-DD HH:MM:SS' that CURRENT_TIMESTAMP writes and ISO with a 'T'; a
+    plain string compare puts every same-day space-form value before every
+    T-form cutoff.
+
+    Dependent rows are deleted explicitly rather than trusted to ON DELETE
+    CASCADE, which SQLite only honours with PRAGMA foreign_keys on.
+    printed_stories and printed_days are permanent and are not touched.
+    """
+    import sqlite3 as _sq
+    now = now_iso or datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    out = {"articles": 0, "clusters": 0, "archive": 0}
+    cur = conn.cursor()
+
+    def _ids(sql: str, params: tuple) -> list:
+        return [r[0] for r in cur.execute(sql, params).fetchall()]
+
+    def _delete(table: str, col: str, ids: list) -> int:
+        n = 0
+        for i in range(0, len(ids), 500):
+            chunk = ids[i:i + 500]
+            marks = ",".join("?" * len(chunk))
+            try:
+                n += cur.execute(f'DELETE FROM "{table}" WHERE "{col}" IN ({marks})',
+                                 chunk).rowcount or 0
+            except _sq.OperationalError:     # table absent in this environment
+                return n
+        return n
+
+    # A date the comparison can use: parseable, and not more than a day ahead.
+    unusable = ("(datetime({c}) IS NULL OR datetime({c}) > datetime(?, '+1 day'))")
+    art = _ids(
+        "SELECT id FROM articles WHERE datetime(fetched_at) < datetime(?, ?) AND "
+        + unusable.format(c="published_at"),
+        (now, f"-{article_days} days", now))
+    for dep in ("bias_scores", "cluster_articles", "article_categories"):
+        _delete(dep, "article_id", art)
+    out["articles"] = _delete("articles", "id", art)
+
+    cl = _ids(
+        "SELECT id FROM story_clusters WHERE datetime(created_at) < datetime(?, ?) AND "
+        + unusable.format(c="first_published"),
+        (now, f"-{cluster_days} days", now))
+    _delete("cluster_articles", "cluster_id", cl)
+    out["clusters"] = _delete("story_clusters", "id", cl)
+
+    try:
+        arc = _ids(
+            "SELECT id FROM cluster_archive WHERE datetime(archived_at) < datetime(?, ?) AND "
+            + unusable.format(c="first_published"),
+            (now, f"-{archive_days} days", now))
+        out["archive"] = _delete("cluster_archive", "id", arc)
+    except _sq.OperationalError:
+        pass
+    conn.commit()
+    return out
+
+
 def run_retention_and_ghost_sweep() -> None:
     """Cluster + article retention and the ghost-cluster sweep.
 
@@ -1299,11 +1397,18 @@ def run_retention_and_ghost_sweep() -> None:
                     "first_published,headline_rank,divergence_score,bias_diversity,"
                     "consensus_points,divergence_points"
                 ).in_("id", batch).execute()
-                if to_archive.data:
+                # Only clusters that could have been shown are archived (rev 85,
+                # P2-3). On 2026-10-01 the archive held 54,471 orphans (one or
+                # two sources) beside 1,081 displayable clusters: 70% of its
+                # 76 MB, each orphan's "summary" being its one article's RSS
+                # excerpt. Nothing in the repo reads cluster_archive back.
+                _arch = [r for r in (to_archive.data or [])
+                         if int(float(r.get("source_count") or 0)) >= 3]
+                if _arch:
                     # Upsert into archive table (created by migration 016)
                     try:
                         supabase.table("cluster_archive").upsert(
-                            to_archive.data, on_conflict="id"
+                            _arch, on_conflict="id"
                         ).execute()
                     except Exception:
                         pass  # Archive table may not exist yet — still delete
@@ -1415,6 +1520,20 @@ def run_retention_and_ghost_sweep() -> None:
             print(f"  Retention: no articles older than 7 days")
     except Exception as e:
         print(f"  [warn] article retention failed: {e}")
+
+    # Rows with a NULL, junk or future date that the cutoffs above can never
+    # reach (see sweep_unretainable_rows). Before the ghost sweep, so a cluster
+    # this empties is caught by it.
+    _sq_conn = getattr(supabase, "_conn", None)
+    if _sq_conn is not None:
+        try:
+            with getattr(supabase, "_lock", None) or __import__("contextlib").nullcontext():
+                _swept = sweep_unretainable_rows(_sq_conn)
+            print(f"  Undated-row sweep: {_swept['articles']} articles, "
+                  f"{_swept['clusters']} clusters, {_swept['archive']} archive rows "
+                  f"with a NULL, junk or future date past their window")
+        except Exception as e:
+            print(f"  [warn] undated-row sweep failed: {e}")
 
     # Ghost-cluster sweep: remove story_clusters that have ZERO cluster_articles.
     #
@@ -1949,6 +2068,7 @@ def main():
     print("=" * 60)
 
     # Step 1: Load sources
+    _phase("sources")
     print("\n[1/9] Loading sources...")
     sources = load_sources(editions=editions)
     if not sources:
@@ -2106,6 +2226,7 @@ def main():
         except Exception as _del_err:
             print(f"  [warn] prior cluster wipe failed: {_del_err}")
 
+    _phase("fetch")
     # Step 3: Fetch articles via RSS  [skipped if --recluster-only]
     if recluster_only:
         print("\n[3/9] Fetching RSS feeds... SKIPPED (--recluster-only)")
@@ -2179,6 +2300,7 @@ def main():
     # fail-open on missing titles; no-op on the --recluster-only path (empty list).
     articles_to_scrape = drop_evergreen_junk(articles_to_scrape)
 
+    _phase("scrape")
     # Step 4: Scrape full text (parallel), then batch-insert articles
     scraped_articles = []
     if recluster_only:
@@ -2439,6 +2561,7 @@ def main():
     except Exception as e:
         print(f"  [warn] Wire-fingerprint pass failed, continuing untagged: {e}")
 
+    _phase("bias")
     # Step 5: Run bias analysis on each article
     articles_analyzed = 0
     clusters_created = 0
@@ -2558,6 +2681,7 @@ def main():
         # Step 6: Cluster articles
         # Include recent articles from the last 36h so stories that span
         # multiple pipeline runs can cluster together (cross-run continuity).
+        _phase("cluster")
         print(f"\n[6/9] Clustering articles into stories...")
         recent_articles = []
         try:
@@ -2772,6 +2896,7 @@ def main():
         # Performance optimization: pre-compute cluster entity cache once per
         # cluster (instead of re-parsing all articles for each article in the
         # cluster). This reduces spaCy calls from O(N*M) to O(N+M).
+        _phase("rescore_6b")
         print("\n[6b] Re-scoring framing with cluster context...")
         framing_updated = 0
         framing_no_scores = 0
@@ -3025,6 +3150,7 @@ def main():
             print("\n[6c] Skipping Gemini bias reasoning (module not available)")
 
         # Step 7: Categorize and rank with v2 engine
+        _phase("rank")
         print("\n[7/9] Categorizing and ranking clusters (v2 engine)...")
         for cluster in clusters:
             cluster_articles_list = cluster.get("articles", [])
@@ -3321,6 +3447,7 @@ def main():
 
 
         # Step 8: Store clusters with enrichment data
+        _phase("store")
         print("\n[8/9] Storing clusters with enrichment data...")
         all_cluster_article_links: list[dict] = []  # batch insert
         cluster_ids_to_enrich: list[str] = []
@@ -3662,6 +3789,7 @@ def main():
     # This prevents the "Presses Are Warming Up" empty state during pipeline runs.
     new_cluster_ids = set(cluster_ids_to_enrich)
     if new_cluster_ids:
+        _phase("dedup")
         print(f"\n[8b] Deduplicating clusters (deferred — new clusters already enriched)...")
         new_cluster_articles: dict[str, set[str]] = {}
         for link in all_cluster_article_links:
@@ -3955,6 +4083,7 @@ def main():
     # Without this, old clusters keep stale scores from previous pipeline runs
     # while new clusters are scored with the current engine, causing rank drift.
     if ANALYSIS_AVAILABLE:
+        _phase("rerank")
         print("\n[8c] Holistic re-rank (all clusters, v6.0 engine)...")
         try:
             import sys as _sys
@@ -3972,6 +4101,7 @@ def main():
     # Retention + ghost sweep (moved here 2026-09-06 — see the function
     # docstring). Everything downstream (candidate window, ordering, floor,
     # brief, printed edition, static export) now sees one set of clusters.
+    _phase("retention")
     print("\n[8c.1] Retention + ghost sweep (before the display window is chosen)...")
     run_retention_and_ghost_sweep()
 
@@ -4015,6 +4145,7 @@ def main():
               f"Skipping LLM editorial steps (8d, brief, weekly).")
         return
 
+    _phase("stage2")
     # ── Steps 8c.5 through 8f: Stage 2 ───────────────────────────────────
     # Everything from here to the print archive is the EXPENSIVE, NARROW half
     # of the pipeline, and it lives in editorial/stage2.py because the
@@ -4049,6 +4180,7 @@ def main():
         print(f"  [warn] Stage 2 failed: {e}")
         traceback.print_exc()
 
+    _phase("brief_audio")
     # ── Step 7d: the daily brief, from the PUBLISHED feed ────────────────
     # 7d used to run before step 8, on the pre-insert cluster list. It
     # described a running order the reader never saw, quoted headlines and
@@ -4081,6 +4213,7 @@ def main():
     # media/cluster_image_cacher.py, uninvoked). When Weekly returns as a feature it
     # will use public-domain Wikimedia (hotlinked + attributed), like History, not
     # this scraped-image cacher.
+    _phase("memory_tracking")
     print("\n[8e] Image cache RETIRED (copyright): scraped-image re-hosting disabled.")
 
     # Step 9a: Update memory engine with new top story
@@ -4243,7 +4376,9 @@ def main():
     # argument and the retention rules). Written to its own file, never the state
     # DB, so it can neither bloat nor endanger the durability snapshot. Unset
     # VOID_PHRASE_DB (local and test runs) and the step is skipped.
+    _phase("phrases_truncate")
     _phrase_db = os.environ.get("VOID_PHRASE_DB")
+    _phrase_report: dict = {}
     if _phrase_db and not recluster_only:
         print("\n[9e] Recording per-outlet phrase counts (lexicon corpus)...")
         try:
@@ -4278,6 +4413,16 @@ def main():
                       f"{rep['written']:,} rows merged, {rep['pruned']:,} pruned; "
                       f"table {rep['rows_before']:,} -> {rep['rows_after']:,} rows, "
                       f"{os.path.getsize(_phrase_db) / 1e6:.0f} MB")
+            # P2-3 (rev 85): days to the halt ceiling at today's net gain.
+            if rep.get("days_to_ceiling") is not None:
+                print(f"  phrase_counts: +{rep['daily_gain']:,} rows net this run; "
+                      f"{_pc.DAILY_MAX_ROWS:,}-row ceiling in ~{rep['days_to_ceiling']} days"
+                      + (f"  [WARN] under {_pc.PROJECTION_WARN_DAYS} days"
+                         if rep.get("projection_warn") else ""))
+            _phrase_report = {k: rep.get(k) for k in (
+                "rows_after", "written", "pruned", "halted", "daily_gain",
+                "days_to_ceiling", "projection_warn")}
+            _phrase_report["ceiling"] = _pc.DAILY_MAX_ROWS
         except Exception as e:
             print(f"  [warn] Phrase counts failed (non-fatal): {e}")
 
@@ -4365,6 +4510,7 @@ def main():
         print(f"  [warn] Full-text truncation failed: {e}")
 
     # Cleanup: remove stale clusters and stuck pipeline runs
+    _phase("cleanup")
     print("\n[cleanup] Running database cleanup RPCs...")
     try:
         result = supabase.rpc("cleanup_stale_clusters").execute()
@@ -4447,6 +4593,11 @@ def main():
         _gemini_calls = gemini_get_call_count()
     except Exception:
         _gemini_calls = 0
+    try:
+        from summarizer.gemini_client import get_usage as _gemini_get_usage
+        _gemini_usage = _gemini_get_usage()
+    except Exception:
+        _gemini_usage = {}
     _AVG_TOKENS_PER_CALL_USD = 0.0225  # ~3500 in × $3/M + 800 out × $15/M
     estimated_cost_usd = round(_claude_calls * _AVG_TOKENS_PER_CALL_USD, 4)
     cache_hit_rate = 0.0
@@ -4472,6 +4623,13 @@ def main():
         # 6a: the editorial standard's pass rate, per run, so "how often does a
         # candidate ship clean" is a number in the record and not an impression.
         "editorial": editorial_metrics,
+        # P2-1 / P2-12 (rev 85): where the run's time went, and every request
+        # sent to each Gemini model (count_call=False included). engine_health
+        # copies both into engine.json; test_engine_health.py --floors gates them.
+        "phases": phase_durations(_PHASE_MARKS, time.time()),
+        "duration_minutes": round(duration / 60.0, 1),
+        "gemini_usage": _gemini_usage,
+        "phrase_counts": _phrase_report,
     }
 
     if run_id:
@@ -4498,6 +4656,14 @@ def main():
         f"({llm_metrics['summaries_total']} new, {llm_metrics['cached_skips']} cached) | "
         f"~${estimated_cost_usd:.2f}"
     )
+    _ph = llm_metrics.get("phases") or {}
+    if _ph:
+        print("  Phases (min): " + ", ".join(
+            f"{k} {v / 60:.1f}" for k, v in sorted(_ph.items(), key=lambda kv: -kv[1])))
+    _req = (_gemini_usage or {}).get("requests_by_model") or {}
+    if _req:
+        print("  Gemini requests by model: " + ", ".join(
+            f"{m} {n}" for m, n in sorted(_req.items())))
     if editorial_metrics.get("candidates"):
         _em = editorial_metrics
         _rate = 100 * _em.get("passed", 0) / _em["candidates"]
