@@ -202,13 +202,16 @@ def _is_title_echo(text: str, title: str) -> bool:
     return False
 
 
-# Use a realistic browser User-Agent — news sites commonly block identifiable
-# bot UAs. The scraper respects robots.txt and rate-limits regardless.
-USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/131.0.0.0 Safari/537.36"
-)
+# An honest User-Agent (rev 85 WS-D, audit 5 Sec L1). The scraper used to send
+# a spoofed Chrome string while reading robots.txt as `*`, so a site that
+# disallowed named crawlers read as open to us and could not tell who we were.
+# We now name ourselves, with a contact URL, and robots.txt is evaluated for
+# our own token AND for `*` (both must allow). This MAY lower scrape success:
+# some sites block unfamiliar bot UAs outright. It was not measured live when
+# made; watch the direct-feed full-body share in build-data/engine.json
+# (engine_health --floors fails under 55%) after the first run on it.
+ROBOTS_TOKEN = "VoidNewsBot"
+USER_AGENT = f"{ROBOTS_TOKEN}/1.0 (+https://news.voidvision.org/press)"
 REQUEST_TIMEOUT = 12  # seconds — balanced: 8s was too aggressive for CDN-heavy sites
 MAX_RETRIES = 1  # single retry on transient failures (timeout, 5xx)
 
@@ -254,12 +257,11 @@ def _check_robots_txt(url: str) -> bool:
     Check if the URL is allowed by the site's robots.txt.
     Results are cached per domain to avoid repeated fetches.
 
-    We send a browser User-Agent, so we present no product token of our own and
-    the applicable group is `*`. That is the correct robots reading for an
-    unnamed agent, and it is also why a site that disallows only named
-    crawlers reads as open to us. Declaring our own token would change that,
-    and it would also change what a great many sites serve us, so it is a
-    product decision rather than a fix; `docs/OPEN-ITEMS.md` carries it.
+    We send our own product token (ROBOTS_TOKEN), so a URL is allowed only
+    when the group for that token AND the `*` group both allow it. Python's
+    robotparser falls back to `*` when no group names us, which is RFC 9309's
+    reading; requiring `*` as well is stricter than the RFC on purpose, so a
+    site's general rule is never escaped by a lenient named group.
     """
     parsed = urlparse(url)
     domain = f"{parsed.scheme}://{parsed.netloc}"
@@ -304,7 +306,7 @@ def _check_robots_txt(url: str) -> bool:
         return True
     if cached == _DENY_ALL:
         return False
-    return cached.can_fetch("*", url)
+    return cached.can_fetch(ROBOTS_TOKEN, url) and cached.can_fetch("*", url)
 
 
 def _extract_json_ld_text(soup: BeautifulSoup) -> str:
@@ -522,11 +524,7 @@ def _scrape_with_playwright(url: str) -> str:
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
             context = browser.new_context(
-                user_agent=(
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) "
-                    "Chrome/131.0.0.0 Safari/537.36"
-                ),
+                user_agent=USER_AGENT,
                 viewport={"width": 1280, "height": 800},
             )
             page = context.new_page()
