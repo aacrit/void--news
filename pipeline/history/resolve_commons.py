@@ -205,6 +205,11 @@ def resolve(names: list[str]) -> tuple[dict, list[tuple[str, str]]]:
                 "url": url,
                 "width": info.get("thumbwidth") or info.get("width"),
                 "height": info.get("thumbheight") or info.get("height"),
+                # The FILE's own width. "width" above is the thumbnail's, and an
+                # original narrower than THUMB_WIDTH comes back unscaled, so a
+                # 700px file was recorded as 1280: srcset steps are offered
+                # only below this number (frontend/app/lib/commonsImage.ts).
+                "original_width": info.get("width"),
                 "mime": info.get("mime"),
                 "licence": licence,
                 "artist": artist,

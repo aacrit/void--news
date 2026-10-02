@@ -287,14 +287,20 @@ def build_rows(docs: list[dict]) -> list[dict]:
         if hero_rec:
             row["hero_image_url"] = hero_rec["url"]
             row["hero_image_attribution"] = _credit(hero_rec, row.get("hero_image_attribution"))
+            # The file's own width, so the page can offer smaller Commons
+            # thumbnails of an unscaled original without asking for one wider
+            # than the file (frontend/app/lib/commonsImage.ts).
+            row["hero_image_width"] = hero_rec.get("original_width")
         elif row["media"]:
             first = row["media"][0]
             row["hero_image_url"] = first["source_url"]
             row["hero_image_attribution"] = first["attribution"]
+            row["hero_image_width"] = (resolved_image(first["source_url"], commons) or {}).get("original_width")
             heroes_substituted.append(slug)
         else:
             row["hero_image_url"] = None
             row["hero_image_attribution"] = None
+            row["hero_image_width"] = None
             heroes_missing.append(slug)
 
         row["connections"] = []

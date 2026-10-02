@@ -28,7 +28,7 @@ export default function EventCard({ event }: EventCardProps) {
         {event.heroImage ? (
           <img
             src={event.heroImage}
-            srcSet={commonsSrcSet(event.heroImage)}
+            srcSet={commonsSrcSet(event.heroImage, event.heroImageWidth)}
             sizes="(max-width: 767px) calc(100vw - 32px), 360px"
             alt={event.heroCaption ?? event.title}
             loading="lazy"

@@ -419,7 +419,7 @@ function PosterImage({ event, eager, year }: { event: HistoricalEvent; eager?: b
       /* The card's photo is about 320px wide on a phone and 260px on a
          desktop; the stored file is 1280px. Offer the smaller Commons widths
          (P2-4). */
-      srcSet={commonsSrcSet(fallbackUrls[0])}
+      srcSet={commonsSrcSet(fallbackUrls[0], fallbackUrls[0] === event.heroImage ? event.heroImageWidth : undefined)}
       sizes="(max-width: 767px) calc(100vw - 56px), 280px"
       alt={event.heroCaption || event.title}
       loading={eager ? "eager" : "lazy"}
