@@ -1059,6 +1059,13 @@
    Letters inherit currentColor; the Sigil-O ring + beam render in brass.
    On hover / focus-visible the beam tilts and sweeps across the lean spectrum.
    =========================================================================== */
+/* The lockup's letters, as paint (SigilWordmark.tsx): the logo is role="img"
+   with one accessible name, so its glyphs are generated content rather than
+   text nodes a contrast checker reads as prose (audit 2 F11). */
+.sigil-word__glyph::before {
+  content: attr(data-glyph);
+}
+
 .sigil-word__ring {
   stroke: var(--sigil-mark, var(--sigil-brass));
 }
@@ -1769,9 +1776,19 @@ button:focus-visible .sigil-word__beam {
   font-size: var(--text-xs);
 }
 .footer-link {
+  /* A tap target, not just a word: 18px tall until 2026-10-02 (audit 2 F9).
+     24px everywhere (WCAG 2.5.8), 44px under a coarse pointer. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
   color: var(--fg-secondary);
   text-decoration: none;
   transition: color 0.18s ease;
+}
+@media (pointer: coarse) {
+  .footer-link {
+    min-height: 44px;
+  }
 }
 .footer-link:hover,
 .footer-link:focus-visible {
