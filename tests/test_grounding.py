@@ -261,24 +261,116 @@ def coverage_problems(record: dict) -> list[str]:
     # never more, and never fewer than a quarter of them.
     if count > max(words, 1) or (floor > 40 and count < floor * 0.25):
         out.append(f"{record.get('cluster')}: {count} shingles for {words} words")
-    if record.get("stage") == grounding.STAGE_PRE:
-        bodies = [a for a in arts if int(a.get("bodyChars") or 0) > 0]
-        if bodies and all(a.get("stub") for a in bodies):
-            out.append(f"{record.get('cluster')}: pre-truncation record built "
-                       f"only from {len(bodies)} step-10 stub(s)")
-        if any(a.get("stub") is None for a in arts):
-            out.append(f"{record.get('cluster')}: an article row does not say "
-                       f"whether its body was a stub")
+    if any(a.get("stub") is None for a in arts):
+        out.append(f"{record.get('cluster')}: an article row does not say "
+                   f"whether its body was a step-10 stub")
+    for a in arts:
+        # A row that claims a whole body must have indexed more than a stub's
+        # worth of it.
+        if a.get("stub") is False and int(a.get("bodyChars") or 0) > grounding.STUB_CHARS \
+                and int(a.get("words") or 0) * 12 < min(int(a.get("chars") or 0),
+                                                         grounding.PER_ARTICLE_CHARS):
+            out.append(f"{record.get('cluster')}: article {a.get('id')} claims "
+                       f"{a.get('chars')} characters and indexed {a.get('words')} words")
     return out
 
 
 check("coverage: a whole-body record is consistent", not coverage_problems(whole),
       str(coverage_problems(whole)))
-check("coverage: a pre-truncation record built from stubs is caught",
-      bool(coverage_problems(stub)))
+check("coverage: a stub is declared as one, so a reader can discount it",
+      not coverage_problems(stub) and stub["articles"][0]["stub"] is True)
+undeclared = dict(whole, articles=[{k: v for k, v in a.items() if k != "stub"}
+                                   for a in whole["articles"]])
+check("coverage: a row that does not declare whether it was a stub is caught",
+      bool(coverage_problems(undeclared)))
+hollow = dict(whole, articles=[dict(a, words=10) for a in whole["articles"]])
+check("coverage: a row claiming a whole body it did not index is caught",
+      bool(coverage_problems(hollow)))
+
+# The ordering itself: Stage 2 writes the index (8f), and Stage 2 runs before
+# main.py truncates bodies at step 10. Asserted on the source, because the
+# defect was an ordering and no unit test of either half could see it.
+_main = (ROOT / "pipeline" / "main.py").read_text(encoding="utf-8")
+_s2 = (ROOT / "pipeline" / "editorial" / "stage2.py").read_text(encoding="utf-8")
+_run = _s2[_s2.index("def run_stage2("):]
+check("Stage 2 writes the grounding index before it returns",
+      "write_bench_index(" in _run)
+check("main.py runs Stage 2 before step 10 truncates the bodies",
+      0 < _main.index("run_stage2(supabase") < _main.index("[10] Truncating full_text"))
+_exp = (ROOT / "pipeline" / "export_static.py").read_text(encoding="utf-8")
+check("the export keeps a pre-truncation record instead of rebuilding it",
+      "grounding.keep_existing(" in _exp)
 inflated = dict(whole, quotes=dict(whole["quotes"], count=whole["quotes"]["count"] * 9))
 check("coverage: a shingle count larger than the words is caught",
       bool(coverage_problems(inflated)))
+
+
+# --- rev 85, P2-10: publisher summaries served in the Deep Dive are capped ---
+# 846 per-article summaries across 35 deep-dive files, 181,000 characters,
+# 111 of them over 60 words and some a whole lede (security audit M5), against
+# IP-COMPLIANCE's 2 to 3 sentences and 300 characters.
+from pipeline.editorial import corrections  # noqa: E402
+
+LONG = ("The first sentence of the lede runs on for a while with detail. " * 3
+        + "The second sentence adds a further and different fact entirely. " * 4)
+capped = corrections.cap_summary(LONG)
+check("cap: a long summary is cut to the cap", len(capped) <= corrections.SUMMARY_CAP,
+      str(len(capped)))
+check("cap: it ends on a sentence boundary when one is in reach", capped.endswith("."))
+check("cap: no ellipsis is added", "…" not in capped and not capped.endswith("..."))
+words = "word " * 120
+cw = corrections.cap_summary(words)
+check("cap: with no sentence end it cuts on a word boundary",
+      len(cw) <= corrections.SUMMARY_CAP and not cw.endswith(" ") and cw.split()[-1] == "word")
+check("cap: a short summary is untouched", corrections.cap_summary("Short.") == "Short.")
+
+DD = ROOT / "frontend" / "public" / "data" / "deepdive"
+over = []
+for path in sorted(DD.glob("*.json")) if DD.exists() else []:
+    for row in json.loads(path.read_text(encoding="utf-8")):
+        s = ((row.get("article") or {}).get("summary")) or ""
+        if len(s) > corrections.SUMMARY_CAP:
+            over.append(f"{path.name[:8]}: {len(s)}")
+check("every served Deep Dive summary is within the cap", not over,
+      f"{len(over)} over: {over[:3]}")
+_exp_src = (ROOT / "pipeline" / "export_static.py").read_text(encoding="utf-8")
+check("the export caps each served summary", '"summary": cap_summary(a["summary"])' in _exp_src)
+
+# --- rev 85: published corrections hold in the committed tree ---------------
+# A printed card is a permanent /story/ page and the export rewrites
+# archive.json from a database that still holds the error, so a correction
+# lives in pipeline/editorial/corrections.json and the export applies it. The
+# gate asserts no committed copy still carries a corrected text.
+row = {"id": "x", "summary": "A. The Pentagon reported 9 deaths during the operation. B.",
+       "divergence_points": ["Sources show significant differences in political "
+                             "framing (lean spread: 41 points)"]}
+plant = [{"cluster": "x", "date": "t", "reason": "r",
+          "edits": [{"field": "summary",
+                     "find": "The Pentagon reported 9 deaths during the operation. ",
+                     "replace": ""}]},
+         {"cluster": "*", "date": "t", "reason": "r",
+          "edits": [{"field": "divergence_points",
+                     "regex": "Sources show significant differences in political "
+                              "framing \\(lean spread: (\\d+) points\\)",
+                     "replace": "Sources differ in political framing by \\1 points of lean"}]}]
+check("corrections: an uncorrected row is found", len(corrections.unapplied([row], "id", plant)) == 2)
+corrections.apply_all([row], "id", plant)
+check("corrections: applying removes the text and rewrites the pattern",
+      "Pentagon" not in row["summary"] and row["summary"] == "A. B."
+      and row["divergence_points"] == ["Sources differ in political framing by 41 points of lean"])
+check("corrections: a corrected row is clean", not corrections.unapplied([row], "id", plant))
+check("corrections: a card that no longer carries the text is left alone",
+      corrections.apply_all([{"id": "x", "summary": "Rewritten."}], "id", plant) == [])
+
+_bd = ROOT / "frontend" / "build-data"
+_feed = json.loads((_bd / "feed.json").read_text(encoding="utf-8"))["clusters"]
+_arch = json.loads((_bd / "archive.json").read_text(encoding="utf-8"))
+left = corrections.unapplied(_feed, "id") + corrections.unapplied(_arch, "source_cluster_id")
+check("every published correction holds in the committed feed and archive", not left,
+      f"{len(left)}: {left[:3]}")
+check("the export applies the corrections to the feed and the archive",
+      'corrections.apply_all(clusters, key="id")' in _exp_src
+      and 'corrections.apply_all(archive, key="source_cluster_id")' in _exp_src)
 
 # --- THE GATE: the committed tree carries no prose -------------------------
 # This is the check that would have caught the leak. The defect was never in
