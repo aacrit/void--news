@@ -1114,8 +1114,14 @@ def _rpc_cleanup_stuck_pipeline_runs(client: SqliteClient, params: dict) -> _Res
     cutoff = _iso_minutes_ago(minutes)
     cur = client._conn.cursor()
     cur.execute(
+        # julianday() on BOTH sides: started_at defaults to CURRENT_TIMESTAMP
+        # ("2026-10-02 11:07:00") while the cutoff is isoformat
+        # ("2026-10-02T09:07:00+00:00"). Compared as strings the space sorts
+        # before the "T", so every run started on the cutoff's date read as
+        # older than it, and each run marked ITSELF stuck: runs from 09-29 to
+        # 10-01 all carried a false "timed out" error (WS-H, 2026-10-02).
         "SELECT id, errors FROM pipeline_runs "
-        "WHERE status = 'running' AND started_at < ?",
+        "WHERE status = 'running' AND julianday(started_at) < julianday(?)",
         [cutoff],
     )
     stuck = cur.fetchall()
