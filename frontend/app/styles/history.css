@@ -7772,6 +7772,24 @@ a.hist-record__figure-name:hover {
   background: var(--hist-border);
 }
 
+/* The landing's fixed chrome (this plate, the view toggle, the era header)
+   lives inside .hist-page, whose z-index of 1 is the same as the footer's, and
+   the footer comes later in the document, so once the page reached its foot
+   the footer slid OVER the plate and cut it off at 1440 (audit 2 F8). The
+   landing's page rises one step; nothing in flow overlaps the footer. */
+.hist-page:has(.hist-tl-masthead) {
+  z-index: 2;
+}
+
+/* The shared player's pill rests bottom-left on every other page, which is
+   this plate's corner; on the landing it takes the bottom-right. */
+@media (min-width: 768px) {
+  :root:has(.hist-tl-masthead) .fp--compact {
+    left: auto;
+    right: var(--space-4);
+  }
+}
+
 /* Phones: the bottom carries two bars already, so the masthead takes the top,
    under the topbar, as one scrolling line. */
 @media (max-width: 767px) {
@@ -7807,5 +7825,22 @@ a.hist-record__figure-name:hover {
   /* Clear the strip the masthead now occupies. */
   .hist-tl-full__inner {
     padding-top: calc(var(--space-4) + 32px);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Era jumps, phones: 32px buttons in a 40px strip (audit 2 F9). The hit area
+   reaches the strip's full height without moving the strip or the timeline
+   padding that is sized to it. The strip scrolls sideways, so it clips the
+   expansion to itself and no jump reaches over the page.
+   --------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .hist-mobile-era-btn {
+    position: relative;
+  }
+  .hist-mobile-era-btn::after {
+    content: "";
+    position: absolute;
+    inset: calc(var(--space-1) * -1) 0;
   }
 }

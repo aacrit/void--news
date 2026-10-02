@@ -24,7 +24,7 @@ import re
 
 from briefing.weekly_script import (
     BORROWED, KINDS, MUSIC_MINUTES, TARGET_MINUTES, estimated_minutes,
-    parse_script, validate_script, word_budget,
+    parse_script, target_minutes, validate_script, word_budget,
 )
 
 #: The cast the Weekly is actually read by. Imported lazily by callers that
@@ -152,12 +152,14 @@ def generate(issue: dict, generate_text,
     Stage 2 before it. `generate_text(prompt, system_instruction=...)` is
     injected so this module stays importable and testable without a key.
     """
-    lo, hi = TARGET_MINUTES
+    # The band is the ISSUE's (decision 6): it floats with the sourced words,
+    # so a thin issue is asked for a shorter programme rather than padding.
+    lo, hi = target_minutes(issue)
     # The budget comes from weekly_script, which is also what W-07 measures
     # with. A flat 163 wpm here ignored MUSIC_MINUTES and asked for up to 3,586
     # words when 3,216 is the real ceiling, so a rundown could obey the prompt
     # and still be rejected. That is what sent 2026-09-20 to the legacy read.
-    words_lo, words_hi = word_budget(voices or VOICES_DEFAULT)
+    words_lo, words_hi = word_budget(voices or VOICES_DEFAULT, (lo, hi))
     system = SYSTEM.format(LO=lo, HI=hi, MUSIC=MUSIC_MINUTES,
                            WORDS_LO=words_lo, WORDS_HI=words_hi,
                            BORROWED=", ".join(f'"{b}"' for b in BORROWED))

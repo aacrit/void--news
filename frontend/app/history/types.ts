@@ -96,6 +96,8 @@ export interface HistoricalEvent {
   dateRange: string;
   location: string;
   heroImage?: string;
+  /** The Commons file's own width, when known (commonsSrcSet). */
+  heroImageWidth?: number;
   heroCaption?: string;
   heroAttribution?: string;
   contextNarrative: string;

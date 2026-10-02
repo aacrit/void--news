@@ -41,6 +41,7 @@ from utils.display_window import (
     select_candidates,
 )
 from editorial import standard as std
+from editorial import grounding
 
 
 # ---------------------------------------------------------------------------
@@ -152,9 +153,87 @@ def _note(finding) -> str:
     return f"{finding.id}: {finding.message}"
 
 
+def _source_text(arts: list[dict]) -> str:
+    """The text a card was written from, one passage per line, for the
+    grounded rules (E-13, E-14, E-17) at write time.
+
+    Until rev 85 the validators here were called with the card alone, so the
+    grounded rules skipped at write time on every run and ran only in a
+    post-run audit, against an index built after step 10 had cut the bodies.
+    """
+    lines = []
+    for a in arts or []:
+        for k in ("title", "summary", "full_text"):
+            v = (a.get(k) or "").strip()
+            if v:
+                lines.append(v)
+    return "\n".join(lines)
+
+
+_REPAIR_IDS = ("E-13", "E-14", "E-16")
+
+
+def _repair_by_cut(supabase, cid: str, card: dict, src: str | None,
+                   removed_text: str | None = None,
+                   kept_text: str | None = None) -> list:
+    """Cut the card's ungrounded sentences in place, deterministically.
+
+    A number no source carries, a quotation no source says (or punctuates),
+    a sentence that changes the subject, and, after an entity trim, a sentence
+    that names only the members removed. A cut costs no model call; the old
+    path was a regeneration, which spends one and can introduce a new error.
+    Stored only when the cut leaves a summary.
+    """
+    from editorial.derived_grounding import repair_card
+    new, cuts = repair_card(card.get("summary") or "", src,
+                            title=card.get("title") or "",
+                            removed_text=removed_text, kept_text=kept_text)
+    if not cuts or not new.strip():
+        return []
+    try:
+        supabase.table("story_clusters").update({"summary": new}).eq("id", cid).execute()
+        card["summary"] = new
+    except Exception as e:
+        print(f"    [warn] repaired summary write failed for {cid[:8]}: {e}")
+        return []
+    for c in cuts:
+        print(f"    [cut] {c.reason}: \"{c.sentence[:90]}\"")
+    return cuts
+
+
+def write_bench_index(supabase, cluster_ids: list[str],
+                      build_dir: Optional[str] = None) -> int:
+    """8f: the grounding index for every bench card, from whole bodies.
+
+    This is the last point in the run where the bodies exist: step 10 of
+    main.py cuts each to 300 characters right after Stage 2, and the export
+    used to build this record afterwards, from the stubs (median indexed
+    article 496 characters; 48 numbers and 6 quotations false-flagged across
+    one top 20 by the audit of 2026-10-01). An article carried in by the
+    36-hour lookback was cut by an EARLIER run, and its row says so (`stub`).
+    The export keeps this record (grounding.keep_existing).
+    """
+    import os
+    from pathlib import Path
+    out = Path(build_dir or os.environ.get("VOID_EXPORT_BUILD_DIR")
+               or Path(__file__).resolve().parents[2] / "frontend" / "build-data")
+    arts = _fetch_articles_for(supabase, list(cluster_ids))
+    n = 0
+    for cid in cluster_ids:
+        rows = arts.get(cid) or []
+        if not rows:
+            continue
+        grounding.write_record(out, grounding.build_record(
+            cid, rows, stage=grounding.STAGE_PRE))
+        n += 1
+    return n
+
+
 def review_bench(supabase, candidate_ids: list[str],
                  run_critique: bool = True,
-                 prefer_provider: str | None = "gemini") -> dict:
+                 prefer_provider: str | None = "gemini",
+                 entity_removed: Optional[dict] = None,
+                 fresh_ids: Optional[set] = None) -> dict:
     """Steps 8d.2 and 8d.3 over the bench.
 
     Every candidate is read twice: by the deterministic validators in
@@ -170,7 +249,7 @@ def review_bench(supabase, candidate_ids: list[str],
     """
     out = {"survivors": list(candidate_ids), "dropped": [], "regenerated": 0,
            "passed": 0, "candidates": len(candidate_ids), "by_id": {},
-           "critiqued": 0}
+           "critiqued": 0, "cut_sentences": 0}
     if not candidate_ids:
         return out
 
@@ -214,7 +293,27 @@ def review_bench(supabase, candidate_ids: list[str],
         if not card:
             survivors.append(cid)
             continue
-        findings = std.validate_candidate(card)
+        src = _source_text(articles.get(cid) or [])
+        # The grounded rules read a card against the text it was WRITTEN from.
+        # That is this run's database text only for a card summarized in this
+        # run (8d): a cached card was written on an earlier day from bodies
+        # step 10 has since cut to 300 characters, so an absence in them is
+        # "cannot confirm", and judging it would cut true sentences. Measured
+        # on the harness built from truncated bodies: 85 sentences cut, nearly
+        # all of them correct.
+        grounded = src if cid in (fresh_ids or ()) else None
+        candidate = dict(card, source_text=grounded) if grounded else dict(card)
+        findings = std.validate_candidate(candidate)
+        removed = (entity_removed or {}).get(cid)
+        if removed or any(
+                f.id in _REPAIR_IDS and f.message.startswith(("summary", "sentence"))
+                for f in findings):
+            cut = _repair_by_cut(supabase, cid, card, grounded,
+                                 removed_text=removed, kept_text=src)
+            if cut:
+                out["cut_sentences"] += len(cut)
+                candidate = dict(card, source_text=grounded) if grounded else dict(card)
+                findings = std.validate_candidate(candidate)
         all_findings.extend(findings)
         blocking = [f for f in findings
                     if std.VALIDATORS_BY_ID.get(f.id)
@@ -246,8 +345,16 @@ def review_bench(supabase, candidate_ids: list[str],
         if not result:
             survivors.append(cid)   # the model could not answer; not the card's fault
             continue
-        recheck = std.validate_candidate(
-            {"title": result.get("headline"), "summary": result.get("summary")})
+        _regen = {"title": result.get("headline"), "summary": result.get("summary")}
+        recheck = std.validate_candidate(dict(_regen, source_text=src))
+        if any(f.id in _REPAIR_IDS for f in recheck):
+            from editorial.derived_grounding import repair_card
+            _fixed, _cuts = repair_card(_regen["summary"] or "", src,
+                                        title=_regen["title"] or "")
+            if _cuts and _fixed.strip():
+                result["summary"] = _fixed
+                recheck = std.validate_candidate(
+                    dict(_regen, summary=_fixed, source_text=src))
         still = [f for f in recheck
                  if std.VALIDATORS_BY_ID.get(f.id)
                  and std.VALIDATORS_BY_ID[f.id].status == std.ENFORCED]
@@ -283,7 +390,8 @@ def review_bench(supabase, candidate_ids: list[str],
                        else "")
         for k, v in out["worst"]) or "none"
     print(f"  Editorial: {out['passed']}/{out['candidates']} candidates clean "
-          f"({rate:.1f}%) | {regenerated} regenerated, {len(dropped)} dropped "
+          f"({rate:.1f}%) | {regenerated} regenerated, {len(dropped)} dropped, "
+          f"{out['cut_sentences']} ungrounded sentence(s) cut "
           f"| worst: {worst}")
     return out
 
@@ -412,6 +520,8 @@ def run_stage2(supabase, sources, *,
             print(f"  [warn] Coherence pass failed (bench unchanged): {e}")
 
     bench = candidate_ids or None
+    entity_removed = dict((metrics.get("coherence") or {}).get("entity_removed_text") or {})
+    fresh_ids: set = set()
 
     # 8d: the one and only LLM summarization pass.
     if llm_available() and calls_remaining() > 0:
@@ -427,6 +537,7 @@ def run_stage2(supabase, sources, *,
                   f"({sm.get('trimmed_cached', 0)} over-cap cached summaries "
                   f"trimmed in place), {sm['skipped']} skipped (op-ed / "
                   f"<3 sources), {sm['failed']} failed")
+            fresh_ids = set((sm.get("updated_summaries") or {}).keys())
             if on_summaries:
                 on_summaries(sm.get("updated_summaries", {}) or {})
         except Exception as e:
@@ -491,7 +602,8 @@ def run_stage2(supabase, sources, *,
     # 8d.2 + 8d.3.
     survivors = list(candidate_ids)
     try:
-        review = review_bench(supabase, candidate_ids, run_critique=run_critique)
+        review = review_bench(supabase, candidate_ids, run_critique=run_critique,
+                              entity_removed=entity_removed, fresh_ids=fresh_ids)
         metrics["editorial"] = {k: v for k, v in review.items()
                                 if k != "survivors"}
         survivors = review["survivors"]
@@ -520,6 +632,17 @@ def run_stage2(supabase, sources, *,
               f"{floor['still_null']} still without a summary")
     except Exception as e:
         print(f"  [warn] Final-order summary floor failed: {e}")
+
+    # 8f, first half: the grounding index, from whole bodies, before main.py
+    # step 10 truncates them (rev 85, P1-4).
+    try:
+        gi = write_bench_index(supabase, list(dict.fromkeys(
+            list(survivors or []) + list(candidate_ids or []))))
+        metrics["grounding_records"] = gi
+        print(f"\n[8f] Grounding index: {gi} bench record(s) from whole bodies")
+    except Exception as e:
+        print(f"\n[8f] [warn] grounding index failed (the export will build "
+              f"one from what remains): {e}")
 
     # 8f: the record.
     try:

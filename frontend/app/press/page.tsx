@@ -8,6 +8,25 @@ import "../styles/prose-page.css";
 import "../privacy/privacy.css";
 import "./press.css";
 import { ROSTER_SOURCES_TEXT, ROSTER_COUNTRIES } from "../lib/rosterConfig";
+import { readFileSync } from "fs";
+import { join } from "path";
+import { RATED_DELTA_MAX, UNRATED_DELTA_MAX, FULL_TEXT_WORDS } from "../lib/leanBounds";
+import { type EngineStats, engineComplete, engineRunDate, pct } from "../lib/engineStats";
+
+/** What the engine did on the latest run, read at build time exactly as
+ *  /sources reads it. The method callout used to say "on a full feature, the
+ *  article's own words lead", against a 10 point cap and a measured mean
+ *  movement near 1.4 points (audit 2026-10-02). Unreadable: the measured
+ *  sentence is left out rather than guessed. */
+function loadEngine(): EngineStats | null {
+  try {
+    return JSON.parse(
+      readFileSync(join(process.cwd(), "build-data", "engine.json"), "utf-8"),
+    ) as EngineStats;
+  } catch {
+    return null;
+  }
+}
 
 export const metadata: Metadata = {
   title: "Press | Void News",
@@ -72,6 +91,7 @@ const PROGRAMMES = [
 ] as const;
 
 export default function PressPage() {
+  const engine = loadEngine();
   return (
     <article className="press">
       <Link href="/" className="pwa-back" aria-label="Back to news feed">
@@ -229,11 +249,22 @@ export default function PressPage() {
             We do not judge a story by its outlet alone, and we do not judge it
             by its words alone. We use both.
           </strong>{" "}
-          A score weighs the outlet&rsquo;s measured track record and the
-          specific language of the article in front of you. On a short wire
-          dispatch there is little text to read, so the outlet&rsquo;s history
-          carries more weight. On a full feature, the article&rsquo;s own words
-          lead. The balance shifts with how much there is to actually read.
+          On political lean the outlet&rsquo;s track record sets the anchor and
+          the article&rsquo;s words move the score from there, within bounds:{" "}
+          {RATED_DELTA_MAX} points at most for an outlet we have rated,{" "}
+          {UNRATED_DELTA_MAX} for one we have not. An article under{" "}
+          {FULL_TEXT_WORDS} words is scored on the record alone. A longer
+          article earns more of that bound, never more than all of it.
+          {engineComplete(engine) && (
+            <>
+              {" "}On the run of {engineRunDate(engine)}, across{" "}
+              {engine.text_movement_rated.articles.toLocaleString("en-US")} full
+              articles from rated outlets, the words moved the score{" "}
+              {engine.text_movement_rated.mean_abs.toFixed(1)} points on average
+              and left {pct(engine.text_movement_rated.zero_share)} of them exactly
+              on the record.
+            </>
+          )}
         </div>
 
         <div

@@ -20,6 +20,53 @@ from history.casting import cast
 ROOT = pathlib.Path('.')
 manifest = json.loads((ROOT/'frontend/public/data/history-audio.json').read_text())['episodes']
 
+# The format ceiling. The audio gate (tests/test_history_audio.py) allows 15.5,
+# so an episode between the two ships and is listed here, not failed.
+CEILING_MINUTES = 15.0
+
+
+def over_ceiling(episodes: dict) -> list[tuple[str, float]]:
+    """Episodes whose RENDERED duration (the manifest, not a render log, not an
+    estimate) runs over the format ceiling, longest first. docs/OPEN-ITEMS.md
+    quoted a hand-kept list of four that had gone stale (three of them now run
+    under 15); this is the list, derived."""
+    out = [(slug, round(ep['durationSeconds'] / 60, 2)) for slug, ep in episodes.items()
+           if isinstance(ep.get('durationSeconds'), (int, float))
+           and ep['durationSeconds'] / 60 > CEILING_MINUTES]
+    return sorted(out, key=lambda r: (-r[1], r[0]))
+
+
+def audio_against_script(episodes: dict) -> dict[str, list[str]]:
+    """Which episodes' audio is known to contradict today's script (withdrawn
+    or not), and which cannot be checked (no script hash on record)."""
+    import hashlib
+    res = {'contradicts': [], 'withdrawn': [], 'revised, awaiting re-render': [], 'unverified': []}
+    for slug, ep in sorted(episodes.items()):
+        sha = ep.get('script_sha256')
+        sp = ROOT / f'data/history/scripts/{slug}.txt'
+        current = hashlib.sha256(sp.read_bytes()).hexdigest() if sp.exists() else None
+        rev = ep.get('script_revised_after_render') or {}
+        if ep.get('audio_withdrawn'):
+            res['withdrawn'].append(slug)
+        elif sha is None:
+            res['unverified'].append(slug)
+        elif current and current != sha:
+            if rev.get('sha256') == current:
+                res['revised, awaiting re-render'].append(slug)
+            else:
+                res['contradicts'].append(slug)
+        if sha is None and ep.get('audio_withdrawn'):
+            res['unverified'].append(slug)
+    return res
+
+
+if '--lists' in sys.argv:
+    for slug, mins in over_ceiling(manifest):
+        print(f'over {CEILING_MINUTES:.0f} min: {slug} {mins:.2f}')
+    for k, v in audio_against_script(manifest).items():
+        print(f'audio {k}: {", ".join(v) or "none"}')
+    sys.exit(0)
+
 # Milestones in this session, oldest first. A script committed BEFORE a
 # milestone was written without that rule.
 MILESTONES = [
@@ -41,6 +88,7 @@ def added_time(path):
                          capture_output=True,text=True).stdout.split()
     return int(out[-1]) if out else None
 
+_against = audio_against_script(manifest)
 rows = []
 for ypath in sorted(glob.glob('data/history/events/*.yaml')):
     slug = os.path.basename(ypath)[:-5]
@@ -104,7 +152,16 @@ for ypath in sorted(glob.glob('data/history/events/*.yaml')):
         })
     # One actionable column, most urgent first.
     flags = []
-    if ep and ep['durationSeconds']/60 > 15.0:
+    if ep and ep.get('audio_withdrawn'):
+        flags.append("audio WITHDRAWN (contradicts the corrected script): re-render")
+    elif ep and slug in _against['contradicts']:
+        flags.append("audio CONTRADICTS the current script: re-render or withdraw")
+    elif ep and slug in _against['revised, awaiting re-render']:
+        flags.append("script revised after the render (attested, no contradiction): re-render to match: "
+                     + str((ep.get('script_revised_after_render') or {}).get('reason', ''))[:140])
+    if ep and ep.get('script_sha256', '') is None:
+        flags.append("audio not verified against the script (no hash on record): listen and confirm, or re-render")
+    if ep and ep['durationSeconds']/60 > CEILING_MINUTES:
         flags.append(f"OVER the 15 min format ceiling at {ep['durationSeconds']/60:.2f} (audio gate allows 15.5): re-cut the script or accept")
     if spath.exists():
         if row.get('Gate','clean') != 'clean':
@@ -164,8 +221,10 @@ def _action(r: dict) -> str:
         return 'write script'
     if r['Episode'] != 'rendered':
         return 'render'
+    if 'WITHDRAWN' in r.get('What to review', '') or 'CONTRADICTS' in r.get('What to review', ''):
+        return 're-render (audio contradicts script)'
     rendered = r.get('Rendered minutes') or 0
-    if rendered and float(rendered) > 15.0:
+    if rendered and float(rendered) > CEILING_MINUTES:
         return f'OVER 15 min ({rendered})'
     return ''
 

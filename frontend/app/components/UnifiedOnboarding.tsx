@@ -3,17 +3,22 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import dynamic from "next/dynamic";
+import "../styles/onboarding.css";
 
 /* ---------------------------------------------------------------------------
    UnifiedOnboarding — Orchestrator for "The Prologue"
 
-   Three-phase flow:
-   1. Silent exploration: user browses freely for ~2 minutes
-   2. Invitation card: subtle bottom card offers a 60-second tour
-   3. Prologue: full cinematic introduction (if user opts in)
+   Two-phase flow:
+   1. Invitation card: a bottom card offers a 60-second tour, on arrival
+   2. Prologue: full cinematic introduction (if the reader opts in)
 
-   Triggers: 120s elapsed OR 3+ story card interactions (whichever first).
-   Skip always available. Never forced. Re-discoverable via /about.
+   Offered ONCE (P1-14, 2026-10-02). It used to wait 120 s or three card
+   clicks, so the reader who most needed it, the one who did not know how to
+   read a card, had usually left first (audit 2 F6). It now offers shortly
+   after arrival, and the offer is recorded the moment it is shown: accept,
+   "Not now", the close button, Escape or the card timing out all end it for
+   good. It never takes focus from the page; it announces itself politely.
+   Never forced. Re-discoverable via /about.
 
    State machine: idle → invitation → prologue → complete
    Single localStorage key with migration from old keys.
@@ -26,9 +31,8 @@ const OLD_CAROUSEL_KEY = "void-news-intro-seen";
 const OLD_VISITS_KEY = "void-news-visit-count";
 const OLD_TOUR_KEY = "void-tour-complete";
 
-const EXPLORE_DELAY = 120_000;   // 2 minutes of exploration before invitation
-const INTERACTION_THRESHOLD = 3;  // OR 3 story interactions
-const INVITATION_LINGER = 15_000; // Auto-dismiss invitation after 15s if no action
+const ARRIVAL_DELAY = 1_200;      // let the page settle before the card slides in
+const INVITATION_LINGER = 20_000; // the card withdraws after 20s if left alone
 
 type State = "idle" | "invitation" | "prologue" | "complete";
 
@@ -41,15 +45,10 @@ interface UnifiedOnboardingProps {
 function InvitationCard({ onAccept, onDismiss }: { onAccept: () => void; onDismiss: () => void }) {
   const [show, setShow] = useState(false);
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const goRef = useRef<HTMLButtonElement>(null);
-
   useEffect(() => {
-    // Stagger entrance
-    const t = setTimeout(() => {
-      setShow(true);
-      // Focus the CTA after entrance animation
-      setTimeout(() => goRef.current?.focus(), 400);
-    }, 50);
+    // Stagger entrance. No focus move: on arrival the reader's focus belongs
+    // to the page (the skip link first), and the card announces itself.
+    const t = setTimeout(() => setShow(true), 50);
     // Auto-dismiss after linger period
     dismissTimer.current = setTimeout(() => {
       onDismiss();
@@ -95,7 +94,7 @@ function InvitationCard({ onAccept, onDismiss }: { onAccept: () => void; onDismi
           There&rsquo;s more to every story.
         </p>
         <div className="onb-invite__actions">
-          <button ref={goRef} className="onb-invite__btn onb-invite__btn--go" onClick={handleAccept}>
+          <button className="onb-invite__btn onb-invite__btn--go" onClick={handleAccept}>
             60-second tour
           </button>
           <button className="onb-invite__btn onb-invite__btn--skip" onClick={handleDismiss}>
@@ -114,12 +113,13 @@ function InvitationCard({ onAccept, onDismiss }: { onAccept: () => void; onDismi
 export default function UnifiedOnboarding({ active }: UnifiedOnboardingProps) {
   const [state, setState] = useState<State>("idle");
   const exploreTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const interactionCountRef = useRef(0);
   const reducedMotion = useRef(false);
 
   // Declared before the effects that call it (lint: no use-before-declare).
   const showInvitation = useCallback(() => {
     if (exploreTimerRef.current) clearTimeout(exploreTimerRef.current);
+    // Offered once: recorded as it is shown, so no answer brings it back.
+    try { localStorage.setItem(STORAGE_KEY, "offered"); } catch { /* storage blocked */ }
     setState((prev) => prev === "idle" ? "invitation" : prev);
   }, []);
 
@@ -156,35 +156,13 @@ export default function UnifiedOnboarding({ active }: UnifiedOnboardingProps) {
     }
   }, []);
 
-  // Track story card interactions (clicks on .story-card, .lead-section, .msc)
-  useEffect(() => {
-    if (state !== "idle" || !active) return;
-
-    const handler = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (
-        target.closest(".story-card") ||
-        target.closest(".lead-section") ||
-        target.closest(".msc")
-      ) {
-        interactionCountRef.current++;
-        if (interactionCountRef.current >= INTERACTION_THRESHOLD) {
-          showInvitation();
-        }
-      }
-    };
-
-    document.addEventListener("click", handler, { passive: true });
-    return () => document.removeEventListener("click", handler);
-  }, [state, active, showInvitation]);
-
-  // Time-based trigger
+  // On arrival
   useEffect(() => {
     if (state !== "idle" || !active) return;
 
     exploreTimerRef.current = setTimeout(() => {
       showInvitation();
-    }, EXPLORE_DELAY);
+    }, ARRIVAL_DELAY);
 
     return () => {
       if (exploreTimerRef.current) clearTimeout(exploreTimerRef.current);
@@ -196,20 +174,15 @@ export default function UnifiedOnboarding({ active }: UnifiedOnboardingProps) {
     setState("complete");
   }, []);
 
-  // Deferred dismiss — hide for this session only, re-show on next visit
-  const deferOnboarding = useCallback(() => {
-    try { sessionStorage.setItem(STORAGE_KEY + "-deferred", "1"); } catch { /* ignore */ }
-    setState("complete");
-  }, []);
-
   const handleAcceptInvitation = useCallback(() => {
     setState("prologue");
   }, []);
 
-  // Invitation dismissed (auto-dismiss or "Not now") — defer, don't permanently complete
+  // Invitation dismissed ("Not now", close, Escape, or left to time out):
+  // complete for good. The offer is made once.
   const handleDismissInvitation = useCallback(() => {
-    deferOnboarding();
-  }, [deferOnboarding]);
+    markComplete();
+  }, [markComplete]);
 
   // Prologue finished or explicitly skipped — permanently complete
   const handlePrologueComplete = useCallback(() => {

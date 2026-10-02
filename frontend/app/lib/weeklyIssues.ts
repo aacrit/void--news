@@ -154,6 +154,9 @@ export interface WeeklyCorrection {
   section: string;
   /** What was wrong and what is right. Plain prose, no dashes. */
   text: string;
+  /** "withdrawn" when this correction withdrew the issue's recording. The
+   *  prose is read too (lib/weeklyAudio.ts), so the field is optional. */
+  audio?: string;
 }
 
 export function getWeeklyCorrections(week: string): WeeklyCorrection[] {

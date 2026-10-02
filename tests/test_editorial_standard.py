@@ -134,6 +134,59 @@ CASES = [
                   "reporters outside the ministry. The review found lead above the national "
                   "limit at 11 of 40 sampling points.")},
      "a quotation the source never contains"),
+    # rev 85, P1-2. A decimal was invisible: "8.3%" read as 8 and 3, both
+    # ignored. Run #385 shipped "8.3% of passengers" unexamined.
+    ("E-13", {"title": "Airline Delays Rise Across the Network",
+              "summary": "Delays affected 8.3% of passengers on the network last month. "
+                         + CLEAN_SUMMARY,
+              "source_text": "Delays affected 8.1% of passengers on the network last month, "
+                             "the regulator said. Mortgage applications fell 12 percent."},
+     "a decimal percentage the sources give differently (8.3% for 8.1%)"),
+    ("E-13", {"title": "Talarico Leads Paxton in Texas Senate Race",
+              "summary": "Talarico led with 47.6% to Paxton's 44.7% in the final count. "
+                         + CLEAN_SUMMARY,
+              "source_text": "Talarico finished with 46.7% of the vote and Paxton with "
+                             "44.7%, the final count showed. Mortgage applications "
+                             "fell 12 percent."},
+     "\"47.6% to 44.7%\" against a source that says 46.7%"),
+    # rev 85, P1-2. The Iraq card of 2026-10-01: the number exists, attached to
+    # another war. "the operation" refers back to Operation Inherent Resolve.
+    ("E-13", {"title": "US Completes Troop Withdrawal From Iraq",
+              "summary": ("The withdrawal marks the end of Operation Inherent Resolve, a "
+                          "mission that began in 2014 to combat the Islamic State group. "
+                          "The Pentagon reported 4,419 U.S. military deaths during the "
+                          "operation. " + CLEAN_SUMMARY),
+              "source_text": ("The withdrawal marks the end of Operation Inherent Resolve, "
+                              "which began in 2014.\n"
+                              "The Pentagon reported 4,419 U.S. military deaths during "
+                              "Operation Iraqi Freedom, which began with the 2003 "
+                              "invasion.\nMortgage applications fell 12 percent.")},
+     "4,419 deaths attached to Operation Inherent Resolve when the source says Operation Iraqi Freedom"),
+    # rev 85, P1-3. The Hegseth card of 2026-10-01 turned an ellipsis into a
+    # full stop inside a quotation. The words were all there.
+    ("E-14", {"title": "Defense Secretary Addresses Officers at Quantico",
+              "summary": ("He told the officers that those who “clung to the woke "
+                          "department. No longer work here,” and left the stage. "
+                          + CLEAN_SUMMARY),
+              "source_text": ("He told the officers that those who “clung to the woke "
+                              "department... no longer work here.” Mortgage "
+                              "applications fell 12 percent.")},
+     "a quotation whose ellipsis became a full stop"),
+    # rev 85, P1-5. The Putin card of 2026-10-01, verbatim.
+    ("E-16", {"title": CLEAN_TITLE,
+              "summary": CLEAN_SUMMARY + " Separately, two sold-out concerts by Kanye West "
+                         "in St. Petersburg, scheduled for October 10 and 11, were "
+                         "officially canceled."},
+     "a sentence that opens by changing the subject"),
+    ("E-17", {"title": CLEAN_TITLE,
+              "summary": CLEAN_SUMMARY.replace("12 percent", "31 percent"),
+              "source_text": "Mortgage applications fell 12 percent. The ferry carried "
+                             "31 passengers across the strait."},
+     "a sourced number lifted from an unrelated source sentence"),
+    ("E-18", {"title": CLEAN_TITLE,
+              "summary": CLEAN_SUMMARY + " There are currently 841 active-duty generals "
+                                         "and admirals."},
+     "a count that goes stale"),
 ]
 
 
@@ -173,6 +226,59 @@ def main() -> int:
         ok = False
     else:
         print("PASS: E-15 quiet when the claim is also attributed")
+
+    # rev 85: the grounded checks must stay quiet on correct copy, or a cut
+    # repair deletes a true sentence.
+    quiet = [
+        ("decimals that match",
+         {"title": "Talarico Leads Paxton in Texas Senate Race",
+          "summary": "Talarico led with 47.6% to Paxton's 44.7% in the final count. "
+                     + CLEAN_SUMMARY,
+          "source_text": "Talarico finished with 47.6 percent of the vote and Paxton "
+                         "with 44.7%, the final count showed. Mortgage applications "
+                         "fell 12 percent."}),
+        ("a number on the operation the source names",
+         {"title": "US Completes Troop Withdrawal From Iraq",
+          "summary": ("The Pentagon reported 4,419 U.S. military deaths during "
+                      "Operation Iraqi Freedom. " + CLEAN_SUMMARY),
+          "source_text": ("The Pentagon reported 4,419 U.S. military deaths during "
+                          "Operation Iraqi Freedom, which began with the 2003 "
+                          "invasion.\nMortgage applications fell 12 percent.")}),
+        ("a title on the name in another form",
+         {"title": CLEAN_TITLE,
+          "summary": "President Donald Trump signed 14 orders on Monday. " + CLEAN_SUMMARY,
+          "source_text": "Donald Trump signed 14 orders on Monday, beside President "
+                         "Emmanuel Macron. Mortgage applications fell 12 percent."}),
+        ("an elided quotation with the ellipsis kept",
+         {"title": "Defense Secretary Addresses Officers at Quantico",
+          "summary": ("He told the officers that those who “clung to the woke "
+                      "department ... no longer work here,” and left the stage. "
+                      + CLEAN_SUMMARY),
+          "source_text": ("He told the officers that those who “clung to the woke "
+                          "department... no longer work here.” Mortgage "
+                          "applications fell 12 percent.")}),
+        ("a verbatim quotation across a sentence break",
+         {"title": CLEAN_TITLE,
+          "summary": ("He said, “The clowns are out. The cowboys are in,” to "
+                      "applause. " + CLEAN_SUMMARY),
+          "source_text": ("He said: “The clowns are out. The cowboys are in.” "
+                          "Mortgage applications fell 12 percent.")}),
+        ("a dated count", {"title": CLEAN_TITLE,
+                           "summary": CLEAN_SUMMARY + " The force had 841 generals and "
+                                                      "admirals on September 30."}),
+        ("an ordinary 'Meanwhile' that does not leave the story",
+         {"title": CLEAN_TITLE,
+          "summary": CLEAN_SUMMARY + " Meanwhile, the committee said it would publish "
+                                     "its minutes in November."}),
+    ]
+    for label, cand in quiet:
+        found = [f for f in std.validate_candidate(cand)
+                 if f.id in ("E-13", "E-14", "E-16", "E-17", "E-18")]
+        if found:
+            print(f"FAIL: grounded rule fired on {label}: {[str(f) for f in found]}")
+            ok = False
+        else:
+            print(f"PASS: quiet on {label}")
 
     # Clean control: a good card trips nothing.
     clean = std.validate_candidate({
@@ -287,6 +393,7 @@ def test_e13_catches_a_fabricated_number():
 
 def test_e14_catches_an_invented_quotation() -> None:
     """A quotation must be in the sources; scare quotes and elisions must not fire."""
+    from pipeline.editorial.standard import validate_candidate
     sources = (
         "Environment Minister Dela Whitcombe dismissed the review on Thursday. "
         "\u201cI have real questions about the methodology here, and I have said so to "

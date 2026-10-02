@@ -41,6 +41,15 @@ TIME_RELATIVE = [
      re.compile(r"\b\w+(?:-\w+)? years "
                 r"(?:ago\b|later\b|on\b(?=\s*[,.;:]|$))"
                 r"(?!\s+in\s+\d{4})", re.I)),
+    # "crewed lunar exploration ... has not resumed", "Nobody has been back"
+    # (Apollo 11, audit 2026-10-02): a negative present perfect is true only
+    # until the day it is not, and nothing in the file changes that day.
+    ("a negative measured to now",
+     re.compile(r"\b(?:has|have) (?:not|never) (?:since |yet )?"
+                r"(?:resumed|returned|been back|been repeated|been matched)\b", re.I)),
+    ("nobody since",
+     re.compile(r"\b(?:nobody|no one|no human|none) (?:has|have) (?:since |yet )?"
+                r"(?:been back|returned|revisited|resumed)\b", re.I)),
     ("the present decade", re.compile(r"\bin the 2020s\b", re.I)),
     ("currently", re.compile(r"\bcurrently\b", re.I)),
     ("today", re.compile(r"\btoday\b", re.I)),

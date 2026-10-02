@@ -182,6 +182,25 @@ def main() -> int:
         # export. VOID_BIAS_DEFAULTS_GATE=warn used to be set here because the
         # export refused such a run; it degrades now, so nothing needs the
         # escape hatch (2026-09-21).
+        # rev 85, P1-4: Stage 2 writes the grounding index at 8f from whole
+        # bodies, and the export keeps it instead of rebuilding it from what
+        # step 10 leaves. Exercised end to end here, because the defect was an
+        # ORDERING across two processes that no unit test of either could see.
+        m = re.search(r"\[8f\] Grounding index: (\d+) bench record", out)
+        if not m or int(m.group(1)) == 0:
+            print("FAIL: Stage 2 wrote no grounding index at 8f")
+            ok = False
+        else:
+            print(f"PASS: Stage 2 wrote {m.group(1)} grounding records at 8f")
+        m = re.search(r"grounding/: (\d+) cluster files .*?; (\d+) kept", export.stdout)
+        if not m or int(m.group(2)) == 0:
+            print("FAIL: the export rebuilt every grounding record instead of "
+                  "keeping Stage 2's")
+            ok = False
+        else:
+            print(f"PASS: the export kept {m.group(2)} of {m.group(1)} "
+                  f"pre-truncation grounding records")
+
         gate_line = next((ln for ln in export.stdout.splitlines()
                           if ln.startswith("bias defaults:")), "")
         if not gate_line:

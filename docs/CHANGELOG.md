@@ -18,6 +18,515 @@ lives in this file.
 
 ---
 
+## rev 85 WS-D: the ship board stops trusting the client, and /privacy names every field (2026-10-02)
+
+Audit 5 scored security 74. Its two HIGH findings on the Worker were one
+defect: every ship write was keyed on a `fingerprint` the browser chose. A
+client rotating that string could vote without bound on any request, and one
+client could exhaust the global reply and submit caps (200 and 120 an hour)
+and lock out everyone.
+
+- **Worker.** Votes, replies and submits are keyed on the server's salted
+  hash of `CF-Connecting-IP`. `worker/migrations/0001` adds `ip_hash` to
+  `ship_votes` and `ship_replies` with `UNIQUE(request_id, ip_hash)` on votes;
+  the old `fingerprint` column stays and is filled with the same hash, so the
+  old unique agrees with the new one. Per IP per hour: 5 submits, 30 votes, 15
+  replies. Global caps stay only as backstops (1,000 / 5,000 / 2,000). A vote
+  checks its parent first (404, not an FK 500). `GET /api/ship/requests` has
+  `LIMIT 200`. The 500 handler no longer returns `String(e)`.
+- **Salt.** `IP_SALT = "void-news-dev-salt-change-me"` was a committed
+  `[vars]` literal, so every stored hash was a lookup away from its IPv4
+  address. It is removed; the Worker returns 503 on every write while the salt
+  is missing, short or that placeholder, and logs why.
+- **Tests.** `worker/test/ship.test.ts` (vitest) drives the real fetch handler
+  against an in-memory D1 built from `schema.sql` plus `migrations/`: a 31st
+  vote is refused, 25 rotating fingerprints from one IP count once, a
+  missing parent writes nothing, a flood from one IP leaves another IP able to
+  reply. `worker/package-lock.json` exists now.
+- **Privacy.** `FeedbackForm` sent the full `navigator.userAgent` as
+  `device_info`; it sends a class such as "mobile safari", and the Worker
+  stores null for anything else. `/privacy` said feedback stored "a coarse
+  one-way hash of your browser profile"; it now names every column the Worker
+  writes, the salted IP hash, the device class, that older notes hold the full
+  user agent, and that rows have no automatic expiry.
+  `frontend/test/privacy-facts.test.mjs` parses `schema.sql` and the
+  migrations and fails on a column the page does not name.
+- **Scraper.** `web_scraper` sent a spoofed Chrome UA while reading robots.txt
+  as `*`. It sends `VoidNewsBot/1.0 (+https://news.voidvision.org/press)` and
+  a URL must be allowed by both the VoidNewsBot group and `*`. Scrape success
+  may fall; it was not measured live, and `engine_health --floors` is where it
+  would show.
+- **Headers.** The Pages default `Access-Control-Allow-Origin: *` is detached
+  on `/*`; the unused Cloudflare Insights allowance is out of the CSP.
+- **Dependencies.** `next` 16.3.8 plus `npm audit fix`: frontend audit 9 to 0.
+  Python: `requests>=2.32.4`, `Pillow>=11.3`, `playwright~=1.63.0`,
+  `edge-tts<8`.
+- **P0-6.** `verify_production.py` fails on a 429 for `/` or its own
+  `/_next/static` assets. `docs/DEPLOYMENT.md` has a current section with the
+  dashboard exemption (`/_next/static/*`, `/logos/*`, `/brand/*`, `/audio/*`)
+  and the Worker's hand deploy.
+
+Not done here: the Worker is not deployed (by hand: secret, migration,
+deploy); the dashboard rule is not applied; `layout.tsx`'s `<meta>` CSP still
+lists Insights; the Worker's 8 dev-only advisories need wrangler 4.
+## rev 85 WS-G: the Weekly quotes only what was printed, and writes only what it was given (2026-10-02)
+
+Audit 4 checked Issue #26 against `build-data/archive.json` and found what
+`ground_text` could not see: every name and number in the offending sentences
+was sourced, and the quotation marks around them were not.
+
+1. **Issue #26 corrected** in `weekly-issues.json` and `weekly.json`, each
+   point checked against the printed stories of 2026-09-14..20 first. The line
+   credited to Greenland's Jens-Frederik Nielsen is Mette Frederiksen's in the
+   printed story, and is hers now (cover and two columns). Rasmussen's
+   "binding agreement" was reported as paraphrase and is paraphrase. Trump's
+   quotation ends where the printed one ends. "EVER have a base" was in no
+   story and is gone, as is "since at least 2024" (the record says January
+   2025). The Sheeran cover's "disproportionate" and its 1,200 toll were in no
+   printed story; its quotes are now paraphrase of the 09-22 printed account.
+   Two columns (Moscow drones, Saudi strikes) are withdrawn: most of what they
+   asserted, including 1,600, 1,110 and 110,000, was not in the week. Both
+   departments are removed. Five briefs with no printed story are removed
+   (Erdogan at the UN, Jehovah's Witnesses, a Justice Department handgun
+   position the audit missed, Camp David, Xi at the airport), the Kohat toll
+   of 31 is the printed 21 and 23, and the other briefs are rewritten from
+   their printed rows without the guessed third sentence. The pipeline jargon
+   line is cut, the opinion topic names Greenland once, and the colophon's
+   2,355 "articles" (a sum of source counts over a capped read) is the scored
+   count The Week in Bias prints. Seven entries in `weekly-corrections.json`.
+2. **W-T22** (`tests/test_weekly.py`): every quotation in a committed issue's
+   covers, columns, departments and briefs must be verbatim in that week's
+   printed title, summary, consensus or divergence, curly or straight; only
+   Void's own section titles are allowed. Every brief must map to a printed
+   story by id or title. Planted: the extended Trump quote, the Rasmussen
+   paraphrase, the invented quote, an unprinted brief. Run against the issue
+   as it was, it names fifteen quotations and five briefs. Issue #23 is exempt
+   with its reason: the archive holds only two of its seven printed days.
+3. **The generator** (P1-18). Writers get every printed row of their thread in
+   full. The word brief is sized to those words (`sized_spec`), and length is
+   measured again AFTER `ground_text`, the new `ground_quotes` and the source
+   check (`length_after_cut`): a short piece ships, a fragment does not, and
+   nothing is regenerated to add words. A kill-list hit cuts its sentence, not
+   the piece. The recap is no longer asked for "the one thing it changes",
+   which is where "signals a crackdown" came from. `total_articles` is the
+   scored count. Gates WG-12..WG-15.
+4. **Decision 5**: Technology and Sports & Culture are suspended behind
+   `VOID_WEEKLY_DEPARTMENTS=1`. Their category match compared title case
+   labels against a lowercase taxonomy and never matched; it is lowercased.
+5. **Decision 6**: The Argument's band floats with the issue's sourced words
+   (`target_minutes`), 18-22 for a full issue, floor 14. The corrected Issue
+   #26 script runs 14.2 minutes in its 14-18 band and is back in
+   `data/weekly/scripts/`. It is not re-rendered: `render_weekly_audio` writes
+   `latest.*`, so rendering an older week after Issue #27 would replace the
+   current episode (OPEN-ITEMS).
+
+---
+## rev 85 WS-B: audio that outlived its corrections, and History data that pointed nowhere (2026-10-02)
+
+Audit 4 of 2026-10-02 found the History and Weekly audio serving words that
+published corrections had removed, and thesis images that loaded nothing.
+Every fix ships with the check that would have caught it.
+
+1. **Withdrawn Weekly audio still answered by URL (P0-3).** Issue #26's
+   episode of The Argument was withdrawn in rev 84, but `latest.mp3`,
+   `2026-09-21-am.mp3` and their chapter sidecars stayed under
+   `frontend/public/audio/weekly-world/`, with the 09-19 and 09-20 pilots
+   beside them. All seven files are deleted. `tests/test_weekly_audio_served.py`
+   gains the inverse rule (no file there that no issue row names; a `latest.*`
+   alias only as a byte copy of a named file), and `verify_production.py`
+   asserts the old URLs are not served live.
+2. **Two theses served audio their corrected scripts contradict (P0-4).**
+   `haitian-revolution` and `scramble-for-africa` were rendered before the
+   09-25 corrections. `tests/test_history_audio.py` compared commit dates and
+   skipped itself on a shallow clone, which is every CI checkout. The producer
+   now hashes the script it renders; the manifest stores `script_sha256`; the
+   test compares content. The backfill is proven from the run record: 73
+   episodes by their render workflow run (the slug's render job, the publish
+   window holding `renderedAt`, the script at the run's head equal to today's).
+   Scramble's run rendered an earlier script; Haiti was a local render whose
+   only earlier commit differs. Both are `audio_withdrawn`, and the History
+   page, `/audio`, the feed, the deploy fetch and the thesis export skip them
+   until `render-history-audio.yml` re-renders them. Three local renders with
+   no run on record (Apollo 11, Chernobyl, Mali) carry a null hash and are
+   listed as unverified on every run.
+3. **Four thesis images pointed at other files (P0-8).** Hand-typed Commons
+   hash directories for Afrikakonferenz, Colonial_Africa_1913_map,
+   MutilatedChildrenFromCongo and Choeungek2. Corrected from md5 of the file
+   name and confirmed against the Commons API; `export_thesis.py` now derives
+   the URL from the exhibit's accession; T-22 (T-21 was taken) fails a path
+   that is not md5 of its own name, over every ledger and served file.
+4. **Stale lists and time-bound lines (P2-9).** `episode_report.py --lists`
+   derives the over-ceiling episodes from the manifest (Ottoman 15.26,
+   Peloponnesian War 15.21, Srebrenica 15.19, Sykes-Picot 15.18); the four in
+   OPEN-ITEMS had gone under. Congo's cobalt line is dated 2023, Apollo's
+   "has not resumed" and "Nobody has been back" end on December 1972, the
+   Great Leap's "to this day" is gone, the undated Kurdish population range
+   is cut, in the scripts and the event YAML alike. The time gate now reads
+   narrator lines, with the 35 existing hits listed as a backlog that fails on
+   any new one. The three reworded episodes that keep serving are recorded as
+   `script_revised_after_render`, tied to the exact revised script. No
+   episode was re-cut for length: that is the narrative team's call.
+5. **The script export check could not fail.** `export_scripts.py` ignored
+   `VOID_EXPORT_BUILD_DIR`, so `test_history_export_parity.py` re-exported
+   over the committed files and compared them with themselves. It honours the
+   variable now, and a planted drift fails.
+6. **Credits and a title (P2-11).** 49 image credits served Commons template
+   residue; `export_history.clean_artist()` normalises them and
+   `test_history_copy.py` fails on any served credit that still carries it.
+   A Congo source title lost its em dash for a colon and is flagged for
+   review, because it is in no ledger. Self-hosting the Commons images is not
+   done.
+7. **Feed punctuation and rounding (audit 4 LOW).** An On Air item title read
+   "US Exits Iraq.: On Air"; the join now drops the headline's own stop
+   (an abbreviation keeps it). `/audio` rounded durations while the feeds and
+   the player truncate; it truncates now, and `test_podcast_feed.py` runs the
+   page's own `clock()` under node against the feed's.
+## rev 85 WS-C: Rule 1 reaches the TL;DR, the Opinion and On Air, and the grounded rules finally run at write time (2026-10-02)
+
+Audit 1 of 2026-10-02 read the edition of 2026-10-01 against its sources and
+found five factual errors in products no check read (a stacked twenty
+percent a listener heard as thirty, a £1,000 figure no source carries, "two
+days later" for "a day earlier", "would be purged" for "no longer work
+here", a TL;DR paragraph ending on another card's story), three on cards the
+checks did read and passed (4,419 deaths on the wrong war, an ellipsis turned
+into a full stop inside a quotation, a Kanye West concert on the Putin card),
+and the reason the grounded rules could not have caught them anyway.
+
+1. **E-13 and E-14 never ran at write time.** 8d.3 called the validators
+   with the card alone, so the grounded rules skipped on every run, and the
+   only place they ran was an audit against an index the export built AFTER
+   step 10 had cut every body to 300 characters (median indexed article 496
+   characters; 48 numbers and 6 quotations false-flagged across one top 20).
+   Stage 2 now writes the index at 8f from the bodies it reviewed and the
+   export keeps it (`grounding.keep_existing`). The rules run at 8d.3 for
+   cards summarized in that run, and a failing sentence is CUT
+   (`derived_grounding.repair_card`) before any regeneration is considered.
+   A card cached from an earlier day is not judged on absence: it was
+   written from bodies since truncated, and on the test harness, built from
+   truncated bodies, judging it cut 85 sentences, nearly all true.
+2. **E-13 could not see a decimal and checked existence, not attachment.**
+   Numbers now keep their decimal part, and the index (format 3) holds
+   (number, word or name) pairs per source sentence. A number the sources put
+   beside a different name with the same first word fails ("the operation"
+   resolves to Operation Inherent Resolve; the sources' 4,419 sits beside the
+   23 years from 2003). E-17 (advisory) is the looser half.
+3. **E-14 stripped punctuation.** A third Bloom filter holds the punctuated
+   word junctions; a quotation that changes the punctuation between two of
+   its words fails. The card's own ellipsis is the one legitimate cut mark.
+4. **The derived products are grounded.** New
+   `pipeline/editorial/derived_grounding.py`, deterministic, no model call:
+   each paragraph is mapped to its story and every number (spoken numbers
+   read as values, so "twenty percent" is 20), quotation, multi-word name,
+   weekday, date and interval must be in that story's text, or the sentence
+   is cut and logged. Also cut: a total that is not the sum of its stated
+   parts, reported speech that lifts a quotation and ends on words it never
+   said, and a hedge as attribution (E-15 is blocking here). One story per
+   paragraph: a sentence about another story moves to that story's paragraph,
+   or is cut when it has one. On the committed 2026-10-01 brief it cuts
+   exactly the audit's five; on four earlier days, one sentence, and that one
+   was a real error (the TL;DR blamed Houthis where the card said Iraqi
+   militias).
+5. **Cluster contamination.** Coherence used to abstain or merely report when
+   a cluster had no single core; ten Kanye headlines out of 33 had made
+   "kanye" modal. An entity pass anchored on the card's own headline now cuts
+   the members that share none of its names, without invalidating the summary
+   (no model call); the card repair cuts a sentence whose names appear only in
+   the removed members. E-16 (enforced) fails a sentence that opens by
+   changing the subject, the summarizer prompt bans those openers, and it now
+   tells the model to publish a disagreement between sources rather than
+   settle it.
+6. **Prompt injection.** Scraped and card text in the summarizer, critique,
+   brief, Opinion and radio prompts sits inside `<source>` tags, defused, and
+   each prompt says text inside them is data. The Weekly prompts are a printed
+   gap (outside this workstream's files).
+7. **Corrections had no mechanism.** `pipeline/editorial/corrections.json`,
+   applied by the export to the feed and the archive on every run, so the
+   database cannot put an error back. The four 2026-10-01 cards are corrected
+   there, and the retired fallback strings are rewritten in the archived cards
+   that carried them.
+8. **Smaller.** The rule-based fallbacks in `main.py` lose "significant",
+   "notably" and their dashes, under a literal scan gate. The pronoun scrubber
+   is retired (CEO Decision 8): a first-person sentence outside quotes is cut,
+   never rewritten. E-18 (advisory) flags a count that goes stale. Each served
+   Deep Dive summary is capped at 300 characters (176 of 846 trimmed). The
+   index's per-article cap falls from 24,000 to 3,000 characters: the
+   summarizer reads 2,200, and a whole-body index at 24,000 would commit about
+   10 MB a day.
+
+Gates: `tests/test_brief_grounding.py` (new), `tests/test_grounding.py`,
+`tests/test_editorial_standard.py` (E-13 decimals and attachment, E-14
+punctuation, E-16..E-18), `tests/test_same_event_merge.py` (the Putin card),
+`tests/test_prompt_grounding.py` (data clause, literal scan),
+`tests/test_editorial_stage.py` (the index written at 8f and kept by the
+export). Left open: `docs/OPEN-ITEMS.md`, "Rev 85 WS-C".
+
+---
+## rev 85 WS-E: the card, the Bench and the share card count one thing, and every mark shows its work (2026-10-02)
+
+Audit 6 found the lean display saying three different things about one story.
+The card counted ARTICLES, the Deep Dive Bench counted OUTLETS (the first
+article of each), and the share card read a third rule, the confidence-gated
+mean. On the 2026-10-01 front page that was 417 article votes from 347
+outlets, and 3 of the 20 cards printed a word their own Bench did not, while
+`Bench.tsx` said the two could never differ. Four CEO decisions, taken at the
+plan's recommendation, each in its own commit so it can be reverted alone.
+
+**Decision 3, one vote per outlet.** `compute_outlet_lean_histogram` in
+`pipeline/utils/bias_aggregation.py` places each outlet at the mean of its
+measured articles in the story, keyed by source name, and counts it once.
+`main.py` uses it; `export_static.py` re-counts from exactly the rows it
+writes to the deepdive files and rewrites `feed.json` and the latest edition's
+archive rows, so a row stamped unscored at export cannot split card from
+Bench. `lib/outletVotes.ts` mirrors the rule for the one place that draws
+outlets individually. The Deep Dive no longer deduplicates before the Bench.
+The committed export was re-derived from the committed deepdive rows (they
+reproduce the run's per-article histogram on 35 of 35 clusters, so no state DB
+was needed).
+
+**Decision 1, a state rung.** Outlets flagged `state_affiliated` in
+`data/sources.json` are counted in `lean_state_count` and in none of the seven
+buckets. Their baselines ran from far left (Tehran Times) to far right (RT,
+CGTN, Global Times) with TASS, Sputnik and Xinhua at centre, and they cast 12
+wing votes on the 2026-10-01 twenty. The Bench draws them on their own rung
+under the anchors, square marks in plain ink.
+
+**Decision 2, the card prints its count.** `leanShapeCount` reads the three
+counts `leanShape` reads: "Leans right" over "15 of 22 right". "N measured" is
+now "N placed", because about a third of placements are the outlet's record
+with no text read.
+
+**Decision 4, the share card follows `leanShape`.** `leanLabelState`,
+`storyLeanLabel` and `LABEL_MIN_CONFIDENCE` now drive no surface; OPEN-ITEMS
+says so.
+
+**P1-10.** "Blend" left `/about` and `/sources`; `/press` reads `engine.json`
+and `leanBounds` as `/sources` does instead of saying the words lead.
+**P1-12.** The `/about` demos carry a real roster, so no "0 measured" sits
+beside a lean word. **P1-13.** The Bench mark's card prints the working:
+outlet baseline, the points the words moved it, the cap, the terms, or that
+the article was placed from the outlet's record alone.
+
+What it moved on the 2026-10-01 twenty, against the shipped labels: three
+words. Iraq withdrawal, Balanced to Split, and Musk returns, Balanced to
+Split, under decision 3; Trump diesel ban, Leans right to Split, under
+decision 1 (two state outlets left its centre and right). The Putin card went
+Leans left to Split under decision 3 alone and back to Leans left once its
+three state outlets left the wings; its Bench now agrees with it. One thin
+card changed only its number (7 placed to 6).
+
+Gates: `tests/test_bias_bins.py` (one vote per outlet, state outlets never in
+the wings, the committed histogram re-derives from its deepdive);
+`test/labels.test.mjs` (card counts, card word and Bench word agree on every
+committed story; the printed count is the histogram's; the share card's word
+is the card's; every `/about` demo prints a real count); `copy-facts`
+(no "blend" in method copy); `test_engine_health.py` (`/press` writes no
+engine number by hand); headless `bench-mark-shows-work`. Not run here:
+`next build` and the headless sweep (Google Fonts are blocked in this
+sandbox). Older archived stories keep their per-article histograms; their
+Bench falls back to its own count.
+## rev 85 WS-F: a first visit that explains itself, a player in reach everywhere, and lighter pages (2026-10-02)
+
+From audit 2 (UX) and the holistic plan, items P1-14 to P1-17, P2-4 and UX
+F8 to F11. Every item has a headless scenario in `frontend/scripts/verify-headless.mjs`.
+
+1. **First visit (P1-14).** A reader who had never been here was not told
+   what Void is: "bias" first appeared 8,581 characters in, the legend sat
+   behind a 14px icon, and the tour waited 120 s or three card clicks.
+   `FirstVisitNote.tsx` puts one sentence under the dateline, with the label
+   legend (a text toggle on `LeanLabelLegend`) and /about beside it. It is
+   prerendered, and the bootstrap in `layout.tsx` sets `html[data-fv-seen]`
+   before first paint for a returning reader (key `void-news-first-visit`,
+   twelve hours or dismissed), so it never flashes or shifts. The tour
+   (`UnifiedOnboarding`) is offered on arrival, recorded as offered the
+   moment it shows, and never offered again whatever the answer; it no
+   longer takes focus. Scenario `first-visit-explainer` at 375 and 1440.
+2. **The player is in reach wherever audio plays (P1-15, WCAG 1.4.2).**
+   `MobileNav` stood the pill down on every History route unless History
+   audio was loaded, so On Air started on /audio played on with no control.
+   On History it now mounts once anything has been started (playing, paused
+   part way, or History's own audio); an idle edition nobody pressed still
+   does not sit over the archive. On the landing the pill takes the bottom
+   right, the browse plate's corner being the bottom left. Scenario
+   `audio-controllable-everywhere` at 1440 and 390.
+3. **The Argument's withdrawal is said where it matters (P1-16).** /audio
+   said "No issue has been recorded yet" over an issue recorded and then
+   withdrawn by a correction. `lib/weeklyAudio.ts` reads the withdrawal from
+   `build-data/weekly-corrections.json` (an `audio: "withdrawn"` field, or
+   the correction's own words) for /audio and the issue alike; each prints
+   one line linking to the correction (`#corrections`). A podcast feed
+   address is offered only while its committed XML carries an item, so
+   `podcast-weekly.xml` is hidden; `audio-hub-feeds` follows the same files.
+4. **No empty marks on /sources (P1-17).** The roster is prerendered, so a
+   logo that failed before hydration fired its error before React listened,
+   and the swap to a letter never ran: the right-hand columns read as empty.
+   `LogoMark` keeps the letter in the box always and lets the image cover it
+   only once drawn, with a mount check for images that broke early; lazy
+   and async decoding throughout. No sprite: the 922 PNGs stay separate.
+   Scenario `sources-no-empty-marks` aborts every logo request.
+5. **Weight (P2-4).** Masthead, footer and tab bar links (`ChromeLink`) now
+   prefetch on pointer or focus rather than on sight: on sight, the router
+   preloaded every linked route's CSS, which is where the "preloaded but not
+   used" warnings came from (seven on /about, none after). `onboarding.css`
+   (28 KB raw) moved from `globals.css` to its two consumers. History cards
+   carry a Commons `srcset` (330, 500, 960, 1280; `lib/commonsImage.ts`) and
+   `sizes`, so a 319px card no longer downloads the 1280px file. The phone
+   drawer's links take the same intent prefetch. Scenario `transfer-budget`
+   at 375, same origin bytes gzipped: the front page measured 624 KB
+   (1,961 KB while the drawer still prefetched every section), so its budget
+   is 700 KB against the 600 KB target; /history's images are budgeted at the
+   2.5 MB target and are measured in CI (the sandbox has no route to
+   Wikimedia).
+6. **Layout and targets (F8 to F11).** IBM Plex Mono is preloaded: it sets
+   the masthead dateline and badge from 768px up, and its late swap resized
+   the masthead row. The /history landing's page rises above the footer, which
+   had covered the browse plate at the foot of the page. Footer links,
+   the On Air seek bar and speed control, and Bench marks (a pseudo element
+   hit area, no mark moves) reach 24px, and 44px under a coarse pointer. On a
+   phone a card is one tab stop: the Sigil leaves the Tab order and the card
+   link names its coverage word and source count. The wordmark's letters are
+   generated content inside its `role="img"`, so the logo's terracotta is no
+   longer read as body text by a contrast checker.
+
+Not done here: a weekly cover shift of about 0.08 at hydration
+(`CinematicCover`), found while measuring; it belongs to the Weekly page.
+## rev 85 WS-H: the pipeline's runtime, its LLM spend and its growth, measured and bounded (2026-10-02)
+
+Plan items P2-1, P2-2, P2-3, P2-6 and P2-12 of
+`docs/proposals/HOLISTIC-PLAN-2026-10-02.md`. Every number below was taken
+from the state and phrase snapshots of run #385 (2026-10-01).
+
+1. **Step 8c ranked 15,430 clusters to place 623.** The candidate bench and
+   the display predicate refuse anything under 3 sources, so an orphan's rank
+   decided only whether it crowded the top 100. `rerank.py` now ranks the
+   pool-eligible clusters and parks orphans below every ranked row
+   (`parking_floor`), leaving their other columns alone; the corpus count the
+   adaptive `is_headline` band reads still includes orphans' articles. On the
+   real snapshot: 523 s became 60 s, the 35-candidate bench was identical in
+   order, and the eligible ordering matched down to position 178. Step 7 is
+   unchanged: its orphan `headline_rank` is what `weekly_digest_generator`
+   orders by. Gate: `tests/test_rerank_pool.py` (old and new paths on a
+   synthetic state DB).
+2. **Kokoro ran 2 workers on 4 cores.** `default_kokoro_workers` gives 4 where
+   there are 4 cores and memory for four sessions, else 2;
+   `VOID_KOKORO_WORKERS` still overrides.
+3. **Nobody could say where 124 minutes went.** `main.py` marks 16 phases and
+   writes their durations into `pipeline_runs.llm_metrics`; `engine_health`
+   copies them into `engine.json` as `runtime`. `test_engine_health.py
+   --floors` fails a run over 150 minutes and warns over 110. Run #385 was
+   121.6, so the next floor run prints a warning.
+4. **Flash use against its 20 a day was unmeasurable.** `gemini_client` sent
+   requests from two functions, counted logical calls only, skipped every
+   `count_call=False` call, and was imported under two module names. Every
+   request now goes through `_send`, counted per model in a meter held in
+   `sys.modules`; `engine.json` carries it as `llm`. The floor fails over 20
+   flash requests and warns over 18.
+5. **phrase_counts could not be pruned fast enough by design.** 70% of its
+   2.0M rows sat in phrases at 8 or more outlets, which no rule ever pruned,
+   and the old late rule (28 days, 8 outlets) would first have fired on 10-24,
+   after the 8M ceiling. The late rule is now the derivation's own floor: 20
+   outlets (`lexicon_derive.MIN_OUTLETS`) over 14 days (two gate generations),
+   since a phrase no outlet has used in 14 days cannot reach 50 articles in any
+   useful time. Each run's counters go into `pc_run`; `projection()` gives days
+   to the ceiling at the last net gain, warning under 14 and failing the floor
+   when halted.
+6. **The state DB kept what its cutoffs could not see.** Every retention rule
+   compares a date column to an ISO cutoff, so 5,136 articles with a NULL,
+   junk ("Sep 23, 2026 2:34pm") or future `published_at`, the oldest fetched
+   2026-03-22, were never deleted, with their bias rows. `sweep_unretainable_rows`
+   deletes rows like that on `fetched_at`, `created_at` and `archived_at` within
+   the existing 7, 2 and 10 day windows, comparing through `datetime()` because
+   a plain string compare puts every same-day `YYYY-MM-DD HH:MM:SS` value
+   before a `T` cutoff. `cluster_archive`, which nothing reads, no longer stores
+   orphans (54,471 of its 55,552 rows). The rest of the 9 MB a day was not a
+   leak: bias rationales grew from 317 to 539 bytes a row and SQLite's free list
+   from 54 to 73 MB. `printed_stories` is untouched. Gate:
+   `tests/test_state_retention.py`.
+7. **260 quarantined feeds, no causes.** The fetcher wrote `http_4xx` for a
+   429, a 403 and a 404 alike, `other` for SSL and refused connections, and
+   `parse_error` for an empty Google News search. It now writes `http_<code>`,
+   `timeout`, `ssl`, `dns`, `connection`, `blocked`, `empty` or `parse_error`,
+   and `stale` (not a failure) for a feed whose every entry is past the age
+   limit. `scripts/roster/quarantine_report.py` counts per cause and exits 1 on
+   a quarantined row with none. On the snapshot: 261 quarantined, 214 of them
+   last tried 2026-09-06, 137 `parse_error` and 117 legacy `http_4xx/5xx`;
+   78 of the 261 are Google News searches. Nothing is released automatically. Gate:
+   `tests/test_quarantine_causes.py`.
+8. **MP3s out of git, pipeline side.** `pipeline/briefing/audio_store.py`
+   stores each On Air and Weekly MP3 in a `<edition>-audio` release and records
+   it in `frontend/public/data/audio-store.json` with URL, size and SHA-256;
+   `fetch --out DIR` is the deploy half and fails on a miss or a mismatch. Off
+   by default (`VOID_AUDIO_STORE=git`) because the switch needs `.gitignore`,
+   a seeding run and three workflow edits at once, written out in
+   `docs/proposals/AUDIO-OUT-OF-GIT.md`. Gate: `tests/test_audio_store.py`.
+
+Found and not fixed here: `cleanup_stuck_pipeline_runs` compares the space
+form `started_at` against a `T` cutoff, so every run marks ITSELF stuck and
+carries a "Pipeline run timed out" error into its record (all three runs of
+09-29 to 10-01 do).
+## rev 85 WS-I: Games comes back, minus the game that printed headlines nobody wrote (2026-10-02)
+
+The CEO un-hid Games on 2026-10-02 (decision 7a, overriding the plan's
+recommendation to wait). The audit said Games had no Supabase dependency and
+no technical blocker. Both were true. Every bank is static TypeScript in
+`frontend/app/games/`; nothing fetches. What the audit did not read was the
+content.
+
+**THE FRAME is withdrawn.** Its one puzzle printed four headlines about a
+rate rise under four real mastheads (The Guardian, BBC News, Reuters, The Wall
+Street Journal). No outlet wrote them. Each carried a lean score from -2.8 to 2.4,
+on a scale the engine has never used (it scores 0 to 100). That is a fabricated record under a real
+name, which Rule 1 forbids however small the stakes. It cannot be rebuilt from
+Void's own data yet: `build-data/archive.json` holds each member's outlet,
+lean and URL but not its headline. The route is deleted and `/games/frame`
+302s to `/games/`.
+
+**UNDERTOW's reveals made claims about the world.** Its artifacts are
+invented specimens (ad copy, LinkedIn posts, corporate statements) and its
+reveals read them. Six sentences went further, from model knowledge: how often
+a central bank committee meets, how old a scripture passage is, what Mars
+retrograde "actually" is, how many elections a line has been used at, and
+that such language had both recruited soldiers and sold insurance, and
+that a scripture's wording "was not an accident". All six were cut, not
+softened, as were two uses of "significant". One challenge was built on an altered, unattributed quotation
+of the Declaration of Independence ("all are created equal") with a reveal
+making historical claims about its authors; it was removed, leaving 29.
+
+**A rotation, said out loud.** The banks were dated (2026-04-10 onward) and
+picked by day of year, and the page printed the bank's own date as if it were
+today's. Now `app/games/daily.ts` is the one definition: puzzle (UTC day mod
+bank size), so a bank cannot run out and no day can come up blank, and the
+page says "No. 23 of 29 · October 2, 2026" and "29 puzzles, one a day, in a
+fixed order. The set repeats." The pick happens after mount, because a pick at
+module load hydrates a different puzzle than the build-day HTML (React #418).
+Runway: UNDERTOW 29 puzzles, repeating; VOID RUN needs none.
+
+**Smaller defects found on the way.** Every UNDERTOW background photograph
+answered 404 and each page still credited its photographer; the images and
+credits are gone. Every dash in the banks became a comma or a colon. THE WIRE's
+hub teaser described a different game ("Headline or hallucination?") and its
+page was titled `VOID --WIRE`; it stays "coming soon" and 302s to `/games/`.
+The hub's h1 was a VOID GAMES lockup, which the brand rule forbids; it is the
+word Games now, and the hub's own back link and footer are gone in favour of
+the one masthead, which reads VOID NEWS · Games with Games in the section
+links, the drawer and the footer.
+
+**Gates.** `copy-facts.test.mjs` no longer skips `app/games/`.
+`tests/test_games_content.py` (new, in `auto-merge-claude.yml`) reads every
+string in every bank for a dash or a kill-list term (an artifact's text and a
+quoted span are specimens, as in W-10), fails if THE FRAME's route returns or
+a puzzle carries a date, and pins the removed quotation out.
+`scripts/verify_sections.py` G-01..G-03 assert on the live site that `/games/`
+serves itself titled "Games | Void News", links only the live games, states
+the rotation, and serves no dash or kill-list term. The headless sweep walks
+`/games/`, `/games/undertow/` and `/games/run/`, plus `games-landing` and
+`games-undertow-today`. `test_docs_facts.py` holds the CLAUDE.md row to
+`_redirects` and to the bank size.
+
+**Not done.** The 116 UNDERTOW reveals have had a partial read, not a
+sentence-by-sentence Rule 1 read; they need one before the CEO signs the bank off. `games.css`
+still carries about 139 dead selectors (THE FRAME, CIPHER, the quote and
+alphabet games) and stays exempt from the parity and lint gates.
+
 ## rev 83: a red main from four causes, one of them silent for a week (2026-10-01)
 
 Verify Production had been red on every scheduled run since 2026-09-28 and

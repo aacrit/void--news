@@ -3,7 +3,16 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import SigilWordmark from "../components/SigilWordmark";
+import { ALL_CHALLENGES } from "./undertow/data";
+import { utcDateLabel } from "./daily";
+
+/* THE FRAME was withdrawn 2026-10-02 when Games came back: its one puzzle
+   printed four headlines no outlet wrote under four real mastheads (The
+   Guardian, BBC News, Reuters, The Wall Street Journal), with lean scores on
+   a scale the engine does not use. Void's archive carries no article
+   headlines to rebuild it from, so it stays out until it can be written from
+   Void's own data. */
+const UNDERTOW_BANK = ALL_CHALLENGES.length;
 
 /* ==========================================================================
    GamesHub — void --games Landing Page
@@ -205,18 +214,6 @@ function VoidMascot() {
 }
 
 /* --------------------------------------------------------------------------
-   Games Wordmark — inline SVG with animation classes
-   -------------------------------------------------------------------------- */
-
-function GamesWordmark() {
-  return (
-    <div className="games-hub__wordmark-wrap" role="img" aria-label="Games">
-      <SigilWordmark product="GAMES" height={40} />
-    </div>
-  );
-}
-
-/* --------------------------------------------------------------------------
    Particle System — 8 floating amber dust motes
    -------------------------------------------------------------------------- */
 
@@ -279,14 +276,7 @@ const ACTIVE_GAMES = [
     name: "UNDERTOW",
     href: "/games/undertow",
     tagline: "every text has a tide",
-    description: "Four cultural artifacts. One axis. Order them from pole to pole.",
-    badge: "DAILY",
-  },
-  {
-    name: "THE FRAME",
-    href: "/games/frame",
-    tagline: "see through the frame",
-    description: "Four outlets. One story. Rank the headlines from left to right.",
+    description: `Four texts. One axis. Order them from pole to pole. ${UNDERTOW_BANK} puzzles, one a day, in a fixed order.`,
     badge: "DAILY",
   },
   {
@@ -301,7 +291,7 @@ const ACTIVE_GAMES = [
 const COMING_SOON = [
   {
     name: "THE WIRE",
-    tagline: "Headline or hallucination? Spot the AI-generated story.",
+    tagline: "An intercepted transmission. Four hidden words. One connection.",
   },
 ];
 
@@ -345,13 +335,8 @@ export default function GamesHub() {
     setTimeout(() => router.push(href), 300);
   }, [router]);
 
-  const today = mounted
-    ? new Date().toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
-    : "\u00A0";
+  // The UTC day, the same day the rotation and the reset countdown use.
+  const today = mounted ? utcDateLabel() : "\u00A0";
 
   return (
     <div className={`games-hub${mounted ? " games-hub--mounted" : ""}${exiting ? " games-hub--exiting" : ""}`}>
@@ -411,20 +396,10 @@ export default function GamesHub() {
 
       {/* Layer 5: Content */}
       <div className="games-hub__content">
-        {/* Navigation */}
-        <nav className="games-hub__nav" aria-label="Navigation">
-          <Link href="/" className="games-hub__back">
-            <span aria-hidden="true">&larr;</span>
-            {" "}Void News
-          </Link>
-        </nav>
-
         {/* Masthead */}
-        <header className="games-hub__masthead">
+        <div className="games-hub__masthead">
           <VoidMascot />
-          <h1>
-            <GamesWordmark />
-          </h1>
+          <h1 className="games-hub__title">Games</h1>
           <p className="games-hub__subtitle">
             every text has a tide
           </p>
@@ -436,7 +411,7 @@ export default function GamesHub() {
           >
             <path d="M0,2 C50,0.5 100,3.5 150,2 C200,0.5 250,3 300,2 C350,1 400,3.5 450,2 C500,0.5 550,3 600,2" />
           </svg>
-        </header>
+        </div>
 
         {/* Active games — cards with rack focus */}
         <section className="games-hub__cards" aria-label="Active games">
@@ -498,13 +473,6 @@ export default function GamesHub() {
           </p>
         </div>
 
-        {/* Footer */}
-        <footer className="games-hub__footer">
-          <p className="games-hub__footer-text">
-            Media literacy, gamified. From{" "}
-            <Link href="/" className="games-hub__footer-link">Void News</Link>.
-          </p>
-        </footer>
       </div>
     </div>
   );

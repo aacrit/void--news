@@ -716,7 +716,14 @@ def _load_ledger(slug: str):
 def produce(slug: str, out_dir: Path, *, only: list[str] | None = None,
             promo: bool = True) -> dict | None:
     event = yaml.safe_load((EVENTS / f"{slug}.yaml").read_text())
-    script = parse_script((SCRIPTS / f"{slug}.txt").read_text(), slug)
+    # The bytes rendered are hashed here, at render time, and travel with the
+    # MP3 to publish_audio.py, which records them in the manifest. That hash
+    # is how tests/test_history_audio.py knows the audio still speaks the
+    # current script (P0-4, 2026-10-02): a commit date cannot say it on a
+    # shallow clone, and two corrected theses served uncorrected audio unseen.
+    script_bytes = (SCRIPTS / f"{slug}.txt").read_bytes()
+    script_sha256 = hashlib.sha256(script_bytes).hexdigest()
+    script = parse_script(script_bytes.decode("utf-8"), slug)
     findings = validate_script(script, event)
     fails = [f for f in findings if f.level == "fail"]
     for f in findings:
@@ -946,6 +953,9 @@ def produce(slug: str, out_dir: Path, *, only: list[str] | None = None,
             "endTime": round(p["end_ms"] / 1000, 3),
             "sha256": next((s.verification or {}).get("excerpt_sha256") for s in admitted.values()
                            if s.clip_id == p["id"])} for p in clips_placed], indent=1) + "\n")
+    if not only:
+        (out_dir / f"{slug}.script.json").write_text(json.dumps({
+            "slug": slug, "sha256": script_sha256}, indent=1) + "\n")
     rp.write_id3_chapters(mp3, chs, event["title"], event.get("date_display", ""))
     (out_dir / f"{slug}.chapters.json").write_bytes(rp.chapters_sidecar(chs, event["title"]))
     size = mp3.stat().st_size

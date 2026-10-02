@@ -20,13 +20,21 @@ So this asserts the manifest against the repository it ships with:
    duration match what the manifest claims and it is under the Cloudflare
    Pages per-file limit; and nothing sitting in public/audio/history is
    missing from the manifest.
+5. The audio speaks today's script: the manifest's `script_sha256` (the hash
+   of the script the render read) equals the hash of the committed script.
+   Content, not commit dates, so it holds on a shallow clone. A mismatch
+   fails unless the entry is `audio_withdrawn` (served nowhere); a null hash
+   is listed as unverified, never passed.
 
 Run: python tests/test_history_audio.py
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
+import shutil
+import tempfile
 import subprocess
 import sys
 from pathlib import Path
@@ -84,6 +92,66 @@ def duration_of(path: Path) -> float | None:
         return float(out)
     except (OSError, subprocess.CalledProcessError, ValueError):
         return None   # no ffprobe on this machine: the other checks still run
+
+
+def script_sha256(path: Path) -> str:
+    """The same hash history_producer.py takes of the bytes it renders."""
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def script_findings(episodes: dict, scripts: Path) -> tuple[list[str], list[str], list[str]]:
+    """(failures, notes, unverified) for the audio-speaks-its-script rule.
+
+    - no `script_sha256` field at all: a failure (every entry must say what
+      it knows, even if that is null);
+    - null: unverified. Rendered before the hash was recorded and not provable
+      from the run record. Listed on every run as needing a check, never
+      counted as a pass;
+    - a hash that differs from today's script: a failure, unless the entry is
+      `audio_withdrawn`, in which case no page, feed or deploy serves it and
+      it is noted as awaiting a re-render.
+    """
+    fails: list[str] = []
+    notes: list[str] = []
+    unverified: list[str] = []
+    for slug, ep in sorted(episodes.items()):
+        if "script_sha256" not in ep:
+            fails.append(f"{slug}: manifest entry has no script_sha256 field "
+                         f"(publish_audio.py writes it; null if unproven)")
+            continue
+        recorded = ep.get("script_sha256")
+        script = scripts / f"{slug}.txt"
+        if recorded is None:
+            unverified.append(slug)
+            continue
+        if not script.exists():
+            fails.append(f"{slug}: no script at {script.name} to hold the audio to")
+            continue
+        current = script_sha256(script)
+        if current == recorded:
+            if ep.get("audio_withdrawn"):
+                notes.append(f"{slug}: withdrawn, yet its audio matches the script; "
+                             f"lift the withdrawal")
+            continue
+        detail = (f"{slug}: audio was rendered from script {recorded[:12]}, the script is "
+                  f"now {current[:12]}")
+        # A revision that contradicts nothing the audio says (a time-bound
+        # phrase made durable, 2026-10-02) may wait for its re-render while
+        # the episode keeps serving, but only by a committed attestation tied
+        # to the exact revised script: any further edit fails again.
+        rev = ep.get("script_revised_after_render") or {}
+        if ep.get("audio_withdrawn"):
+            notes.append(detail + "; withdrawn, not served, awaiting a re-render")
+        elif (isinstance(rev, dict) and rev.get("sha256") == current
+              and str(rev.get("reason") or "").strip() and rev.get("at")):
+            notes.append(detail + f"; revised {rev['at']} without contradicting the audio "
+                         f"({rev['reason'][:90]}), awaiting a re-render")
+        else:
+            fails.append(detail + ": the served audio contradicts its corrected script. "
+                         "Re-render it, or mark it audio_withdrawn (or, if the revision contradicts "
+                         "nothing the audio says, record script_revised_after_render with this "
+                         "script's sha256 and the reason)")
+    return fails, notes, unverified
 
 
 def main() -> int:
@@ -234,48 +302,67 @@ def main() -> int:
             check(f"{mp3.name}: published file is in the manifest",
                   mp3.stem in episodes)
 
-    # An episode whose SCRIPT changed after it was rendered is serving audio
-    # that no longer matches its own source of truth. This is not hypothetical:
-    # two H-11 disclosure fixes (great-leap-forward's secondhand Mao quote,
-    # gutenberg's attributed friar) were corrected in the scripts and left
-    # uncorrected in the published MP3s, so the page kept presenting both lines
-    # as verbatim speech. Nobody noticed until this check was written; the
-    # manifest carries publishedAt and git carries the script's commit date, so
-    # the comparison was always available.
-    import subprocess
-    from datetime import datetime
+    # The audio must speak the script as it stands. Two H-11 fixes
+    # (great-leap-forward, gutenberg) once sat corrected in the scripts and
+    # uncorrected in the MP3s; on 2026-10-02 two published theses
+    # (haitian-revolution, scramble-for-africa) did the same. The check that
+    # should have caught the second pair compared commit dates and skipped
+    # itself on a shallow clone, which is every CI checkout. It compares
+    # CONTENT now: the manifest stores the sha256 of the script the render
+    # read, and this hashes today's script. No history needed.
+    fails, notes, unverified = script_findings(episodes, ROOT / "data/history/scripts")
+    for f in fails:
+        check(f, False)
 
-    # A SHALLOW clone has one commit, so `git log -1 -- <file>` returns that
-    # commit's date for EVERY file, and every script looks newer than every
-    # episode. actions/checkout defaults to fetch-depth 1, so the first CI run
-    # after this check shipped reported all 49 episodes stale and failed the
-    # publish job, discarding ten good renders. The guard for this was written
-    # as "no output, skip", which is the one thing a shallow clone never does.
-    shallow = subprocess.run(["git", "rev-parse", "--is-shallow-repository"],
-                             capture_output=True, text=True, cwd=ROOT).stdout.strip()
-    if shallow == "true":
-        print("note: shallow clone, skipping the script-newer-than-audio check")
-        episodes_to_date = {}
-    else:
-        episodes_to_date = episodes
+    # The rule must be able to fail: the pair above, had nobody withdrawn
+    # them, is exactly what it exists to refuse.
+    line_sha = hashlib.sha256(b"N: a corrected line\n").hexdigest()
+    planted = {"x": {"script_sha256": "0" * 64}, "y": {"script_sha256": None},
+               "z": {"script_sha256": "0" * 64, "audio_withdrawn": True},
+               "r": {"script_sha256": "0" * 64, "script_revised_after_render":
+                     {"sha256": line_sha, "reason": "a time-bound phrase dated", "at": "2026-10-02"}},
+               "s": {"script_sha256": "0" * 64, "script_revised_after_render":
+                     {"sha256": "1" * 64, "reason": "attested an older revision", "at": "2026-10-02"}}}
+    tmp = Path(tempfile.mkdtemp(prefix="void-hist-sha-"))
+    try:
+        for s in planted:
+            (tmp / f"{s}.txt").write_text("N: a corrected line\n")
+        pf, pn, pu = script_findings(planted, tmp)
+        check("planted: a stale, served episode fails, and so does one whose attestation "
+              "names another revision", sorted(f.split(":")[0] for f in pf) == ["s", "x"], str(pf))
+        check("planted: an unverified episode is listed, not passed", pu == ["y"], str(pu))
+        check("planted: a withdrawn episode and an attested revision are noted, not failed",
+              sorted(n.split(":")[0] for n in pn) == ["r", "z"], str(pn))
+        missing_field = script_findings({"w": {}}, tmp)[0]
+        check("planted: an entry with no script_sha256 field fails",
+              len(missing_field) == 1, str(missing_field))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
 
-    for slug, meta in sorted(episodes_to_date.items()):
-        script = ROOT / f"data/history/scripts/{slug}.txt"
-        # A stitch re-publishes without re-rendering, so the date that says
-        # whether the AUDIO matches the script is renderedAt, not publishedAt.
-        published = meta.get("renderedAt") or meta.get("publishedAt")
-        if not script.exists() or not published:
-            continue
-        iso = subprocess.run(["git", "log", "-1", "--format=%cI", "--", str(script)],
-                             capture_output=True, text=True, cwd=ROOT).stdout.strip()
-        if not iso:
-            continue          # untracked or shallow clone: nothing to compare
-        changed = datetime.fromisoformat(iso)
-        rendered = datetime.fromisoformat(published.replace("Z", "+00:00"))
-        check(f"{slug}: published audio is not older than its script",
-              changed <= rendered,
-              f"script changed {changed:%Y-%m-%d %H:%M}, audio rendered "
-              f"{rendered:%Y-%m-%d %H:%M}: re-render it")
+    # A withdrawn episode is served nowhere: the deploy does not fetch it, and
+    # every reader of the manifest in the frontend filters it.
+    withdrawn = {s for s, e in episodes.items() if e.get("audio_withdrawn")}
+    try:
+        from history import release_store
+        fetched = set(release_store.served_slugs(data))
+        check("deploy fetches no withdrawn episode", not (fetched & withdrawn),
+              str(sorted(fetched & withdrawn)))
+        check("deploy fetches every other episode", fetched == set(episodes) - withdrawn)
+    except ImportError as e:
+        check("release_store importable", False, str(e))
+    for rel in ("frontend/app/history/audio.ts", "frontend/app/audio/page.tsx"):
+        src = (ROOT / rel).read_text(encoding="utf-8")
+        check(f"{rel} filters audio_withdrawn episodes", "audio_withdrawn" in src)
+    for slug in withdrawn:
+        check(f"{slug}: withdrawn with a reason on record",
+              bool(str(episodes[slug].get("audio_withdrawn_reason") or "").strip()))
+
+    for n in notes:
+        print(f"note  {n}")
+    if unverified:
+        print(f"WARN  {len(unverified)} episode(s) need verifying against their script "
+              f"(script_sha256 is null: rendered with no hash on record): "
+              + ", ".join(unverified))
 
     if failures:
         print("\n".join(f"FAIL  {f}" for f in failures))

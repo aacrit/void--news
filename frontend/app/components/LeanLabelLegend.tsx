@@ -9,14 +9,16 @@ import { LEAN_SHAPE_LEGEND } from "../lib/biasColors";
    defines the coverage descriptors shown under each headline.
 
    Readers see the card's register (seven strokes) and one word under it:
-   Leans left, Split, Balanced, Consensus, "9 measured". This popover defines
+   Leans left, Split, Balanced, Consensus, "9 placed". This popover defines
    exactly those words, from LEAN_SHAPE_LEGEND in lib/biasColors.ts, which is
    built from the same constants the card's rule uses (2026-09-26: it used to
    define the retired ladder's words, which no card printed). Accessible: a labelled toggle button (aria-expanded /
    aria-controls) reveals a labelled region; Escape and outside-click dismiss.
    --------------------------------------------------------------------------- */
 
-export default function LeanLabelLegend() {
+/** `trigger`: a text label for the toggle in place of the icon, for a place
+ *  that names the legend in a sentence (the first-visit note). */
+export default function LeanLabelLegend({ trigger }: { trigger?: string } = {}) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLSpanElement>(null);
   const rawId = useId();
@@ -42,13 +44,13 @@ export default function LeanLabelLegend() {
     <span className="lean-legend" ref={wrapRef}>
       <button
         type="button"
-        className="lean-legend__btn"
+        className={trigger ? "lean-legend__btn lean-legend__btn--text" : "lean-legend__btn"}
         aria-expanded={open}
         aria-controls={open ? panelId : undefined}
-        aria-label="What the coverage labels mean"
+        aria-label={trigger ? undefined : "What the coverage labels mean"}
         onClick={() => setOpen((v) => !v)}
       >
-        <Info size={14} weight="bold" aria-hidden="true" />
+        {trigger ?? <Info size={14} weight="bold" aria-hidden="true" />}
       </button>
 
       {open && (

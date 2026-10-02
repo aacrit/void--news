@@ -127,6 +127,18 @@ def upload(paths: list[Path], tag: str = TAG, replace: bool = True) -> int:
     return 0
 
 
+def served_slugs(manifest: dict) -> list[str]:
+    """The episodes a deploy carries: every manifest entry not withdrawn.
+
+    A withdrawn episode speaks a script that has since been corrected. The
+    page, the feed and the Audio hub stop offering it; not fetching it is what
+    makes its URL 404 rather than serve the old words to anyone who kept the
+    link (scripts/verify_production.py asserts that live).
+    """
+    return sorted(s for s, ep in (manifest.get("episodes") or {}).items()
+                  if not (isinstance(ep, dict) and ep.get("audio_withdrawn")))
+
+
 def fetch(out_dir: Path, tag: str = TAG, slugs: list[str] | None = None) -> int:
     """Pull every episode the manifest claims (or just `slugs`) into the
     publish directory.
@@ -136,7 +148,7 @@ def fetch(out_dir: Path, tag: str = TAG, slugs: list[str] | None = None) -> int:
     """
     manifest = json.loads((ROOT / "frontend" / "public" / "data"
                            / "history-audio.json").read_text())
-    want = sorted(slugs) if slugs else sorted(manifest.get("episodes", {}))
+    want = sorted(slugs) if slugs else served_slugs(manifest)
     if not want:
         print("  [store] manifest lists no episodes, nothing to fetch")
         return 0

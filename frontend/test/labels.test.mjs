@@ -19,7 +19,7 @@
  * Run: node test/labels.test.mjs   (compiles the TS it needs first)
  */
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync, readFileSync, readdirSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -43,10 +43,30 @@ function compile(files) {
 
 // biasColors reads CSS variables through getColors(); under Node there is no
 // document, so it falls back to the SSR palette. No stub needed.
-compile(["app/lib/biasColors.ts", "app/lib/summaryHygiene.ts"]);
+compile(["app/lib/biasColors.ts", "app/lib/summaryHygiene.ts", "app/lib/outletVotes.ts", "app/lib/feedMapping.ts",
+  "app/components/about/demoSigil.ts"]);
 
-const bias = await import(pathToFileURL(join(out, "biasColors.js")).href);
-const hygiene = await import(pathToFileURL(join(out, "summaryHygiene.js")).href);
+/* tsc anchors output at the common root of what it compiled and emits import
+   specifiers extensionless, which Node's ESM resolver refuses. Find each file
+   and add the extension, as episode.test.mjs does. */
+function collect(dir) {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+    const p = join(dir, e.name);
+    return e.isDirectory() ? collect(p) : p.endsWith(".js") ? [p] : [];
+  });
+}
+const emitted = collect(out);
+for (const file of emitted) {
+  writeFileSync(file, readFileSync(file, "utf8").replace(
+    /(\bfrom\s+["'])(\.[^"']*?)(["'])/g,
+    (m, a, spec, b) => (spec.endsWith(".js") ? m : `${a}${spec}.js${b}`)));
+}
+const load = (name) => import(pathToFileURL(emitted.find((f) => f.endsWith(`/${name}`))).href);
+
+const bias = await load("biasColors.js");
+const hygiene = await load("summaryHygiene.js");
+const votes = await load("outletVotes.js");
+const demo = await load("demoSigil.js");
 
 /* ---- 1. one ladder ---------------------------------------------------- */
 
@@ -200,9 +220,9 @@ for (const [L, C, R, want, why] of [
   [14, 39, 9, "Balanced", "centre holds the mass and the wings are even"],
   /* The fall-through cases. A first draft of this rule called the next one
      Balanced, on a story with NO right-of-centre coverage at all. */
-  [3, 4, 0, "7 measured", "zero right-of-centre coverage is not balance"],
-  [1, 5, 0, "6 measured", "one wing article is not a roster"],
-  [2, 0, 1, "3 measured", "too little coverage to say anything"],
+  [3, 4, 0, "7 placed", "zero right-of-centre coverage is not balance"],
+  [1, 5, 0, "6 placed", "one wing article is not a roster"],
+  [2, 0, 1, "3 placed", "too little coverage to say anything"],
 ]) {
   check(`roster ${L}/${C}/${R} reads "${want}" (${why})`, shape(L, C, R) === want,
     `got "${shape(L, C, R)}"`);
@@ -299,6 +319,188 @@ const oneWing = { leanLeftCount: 1, leanCenterCount: 11, leanRightCount: 0,
 check("one wing article does NOT read a direction",
   bias.storyLeanLabel(49, oneWing, 10).state !== "confident",
   bias.storyLeanLabel(49, oneWing, 10).text);
+
+/* ---- one vote per outlet: the card's word IS the Bench's word ---------- */
+/*
+   CEO decision 3 (2026-10-02). The card counted ARTICLES in the pipeline and
+   the Bench counted the first article per OUTLET here, and on the 2026-10-01
+   feed 3 of the 20 cards printed a different word from their own Deep Dive
+   (one card "Leans left" on 14/10/4 articles, its Bench "Split" on 6/6/4
+   outlets) while Bench.tsx said the two could never differ. Both now count
+   outlets by one rule; this re-derives the Bench from every committed
+   deepdive file and requires the card's histogram and word to match it.
+*/
+{
+  const ten = votes.outletVotes([
+    ...Array.from({ length: 10 }, () => ({ name: "RT", politicalLean: 90 })),
+    { name: "The Guardian", politicalLean: 20 },
+    { name: "Fox", politicalLean: 80, leanUnscored: true },
+  ]);
+  check("ten articles from one outlet are one vote", ten.length === 2 && ten[0].articles === 10,
+    JSON.stringify(ten.map((v) => [v.name, v.articles])));
+  const mean = votes.outletVotes([{ name: "JNS", politicalLean: 65 }, { name: "jns ", politicalLean: 70 }]);
+  check("an outlet sits at the mean of its articles", mean.length === 1 && mean[0].lean === 67.5,
+    JSON.stringify(mean));
+}
+
+/* Decision 2 by example: the word and its count, from one set of counts. */
+{
+  const s = { leanLeftCount: 4, leanCenterCount: 3, leanRightCount: 15 };
+  check("the card's count reads the CEO's example",
+    bias.leanShapeLabel(s) === "Leans right"
+      && bias.leanShapeCount(s)?.full === "15 of 22 outlets right of centre"
+      && bias.leanShapeCount(s)?.short === "15 of 22 right",
+    JSON.stringify(bias.leanShapeCount(s)));
+  check("a thin roster prints N placed, never N measured",
+    bias.leanShapeLabel({ leanLeftCount: 1, leanCenterCount: 2, leanRightCount: 0 }) === "3 placed");
+  check("the legend defines N placed", bias.LEAN_SHAPE_LEGEND.some((t) => t.term === "N placed")
+    && !bias.LEAN_SHAPE_LEGEND.some((t) => /measured/.test(t.term)));
+  check("the Sigil prints the count from the same rule",
+    /leanShapeCount\(data\.biasSpread\)/.test(readFileSync(join(ROOT, "app/components/Sigil.tsx"), "utf8")));
+}
+
+const KEYS = ["far_left", "left", "center_left", "center", "center_right", "right", "far_right"];
+const FEED = join(ROOT, "build-data/feed.json");
+const DD = join(ROOT, "public/data/deepdive");
+const STATE = new Set(JSON.parse(readFileSync(join(ROOT, "../data/sources.json"), "utf8"))
+  .filter((s) => s.state_affiliated).map((s) => String(s.name).toLowerCase().trim()));
+let compared = 0;
+if (existsSync(FEED)) {
+  const feed = JSON.parse(readFileSync(FEED, "utf8"));
+  for (const c of feed.clusters ?? []) {
+    const path = join(DD, `${c.id}.json`);
+    if (!existsSync(path)) continue;
+    const bd = c.bias_diversity ?? {};
+    const card = {
+      leanBuckets: KEYS.map((k) => bd.lean_buckets?.[k] ?? 0),
+      leanLeftCount: bd.lean_left_count ?? 0,
+      leanCenterCount: bd.lean_center_count ?? 0,
+      leanRightCount: bd.lean_right_count ?? 0,
+    };
+    /* The Bench's own rows, exactly as the Deep Dive maps them. */
+    const rows = JSON.parse(readFileSync(path, "utf8")).flatMap((r) => {
+      const a = r.article ?? {};
+      const b = (a.bias_scores ?? [])[0];
+      if (!b) return [];
+      return [{ name: a.source?.name ?? `article:${a.id}`, politicalLean: b.political_lean,
+                leanUnscored: b.lean_unscored === true }];
+    });
+    /* CEO decision 1: the outlets the pipeline names as state-affiliated
+       leave the columns, exactly as DeepDiveSpectrum takes them out. */
+    const stateNames = new Set((bd.lean_state_outlets ?? []).map((n) => n.toLowerCase().trim()));
+    for (const n of bd.lean_state_outlets ?? []) {
+      check(`${c.id.slice(0, 8)}: "${n}" is state-affiliated in the roster`, STATE.has(n.toLowerCase().trim()));
+    }
+    const voted = votes.outletVotes(rows);
+    for (const v of voted) {
+      check(`${c.id.slice(0, 8)}: state outlet "${v.name}" is set apart, never in a column`,
+        !STATE.has(v.name.toLowerCase().trim()) || stateNames.has(v.name.toLowerCase().trim()));
+    }
+    const placed = voted.filter((v) => !stateNames.has(v.name.toLowerCase().trim()));
+    if (!placed.length) continue; // nothing measured: the Bench draws no columns
+    const bench = votes.outletSpread(placed.map((v) => v.lean));
+    compared += 1;
+    check(`${c.id.slice(0, 8)}: the card's histogram is one vote per outlet`, bd.lean_vote === "outlet");
+    check(`${c.id.slice(0, 8)}: the card's seven counts are the Bench's columns`,
+      bench.leanBuckets.join("/") === card.leanBuckets.join("/"),
+      `card ${card.leanBuckets.join("/")} vs Bench ${bench.leanBuckets.join("/")}`);
+    /* CEO decision 2: the count printed under the word is the histogram's,
+       number for number. */
+    const tally = bias.leanShapeCount(card);
+    const T = card.leanLeftCount + card.leanCenterCount + card.leanRightCount;
+    const word = bias.leanShapeLabel(card);
+    const nums = tally ? tally.full.match(/\d+/g).map(Number) : [];
+    const want = word === "Leans right" ? [card.leanRightCount, T]
+      : word === "Leans left" ? [card.leanLeftCount, T]
+      : word === "Consensus" ? [card.leanCenterCount, T]
+      : (word === "Split" || word === "Balanced")
+        ? [card.leanLeftCount, card.leanCenterCount, card.leanRightCount, T]
+        : [];
+    check(`${c.id.slice(0, 8)}: the printed count is the histogram's`,
+      nums.join("/") === want.join("/") && (tally === null) === (want.length === 0),
+      `"${tally?.full ?? word}" vs ${want.join("/")}`);
+    if (!tally) check(`${c.id.slice(0, 8)}: a thin word states the placed count`, word === `${T} placed`, word);
+    check(`${c.id.slice(0, 8)}: card word = Bench word`,
+      bias.leanShapeLabel(card) === bias.leanShapeLabel(bench),
+      `card "${bias.leanShapeLabel(card)}" vs Bench "${bias.leanShapeLabel(bench)}"`);
+  }
+  check("the committed export has stories to compare", compared > 0, `${compared} compared`);
+}
+
+/* ---- the /about demos carry a roster (P1-12) --------------------------- */
+/*
+   demoSigil passed no wing counts, so the real Sigil on /about printed
+   "0 measured" beside "Lean Center-Left" and "In agreement". Every demo
+   setting the sliders can reach, and the three archetypes, must now print a
+   nonzero count under any word, and the counts must be the demo's sources.
+*/
+{
+  const bad = [];
+  const settings = [];
+  for (let lean = 0; lean <= 100; lean += 5)
+    for (let spread = 0; spread <= 40; spread += 4)
+      for (let n = 1; n <= 15; n += 2) settings.push([lean, spread, n]);
+  settings.push([28, 16, 12], [50, 3, 14], [78, 6, 3], [38, 20, 9]); // BeatVerdict + BeatSigil defaults
+  for (const [lean, spread, n] of settings) {
+    const s = demo.demoSigil(lean, spread, n).biasSpread;
+    const placed = (s.leanLeftCount ?? 0) + (s.leanCenterCount ?? 0) + (s.leanRightCount ?? 0);
+    const word = bias.leanShapeLabel(s);
+    if (placed !== n || /^0 /.test(word) || (s.leanBuckets ?? []).reduce((a, b) => a + b, 0) !== n) {
+      bad.push(`${lean}/${spread}/${n}: "${word}", ${placed} placed of ${n}`);
+    }
+  }
+  check("every /about demo prints a real count under its word", bad.length === 0, bad.slice(0, 3).join("; "));
+  check("the consensus archetype reads Consensus",
+    bias.leanShapeLabel(demo.demoSigil(50, 3, 14).biasSpread) === "Consensus",
+    bias.leanShapeLabel(demo.demoSigil(50, 3, 14).biasSpread));
+}
+
+/* ---- the share card says what the card says (CEO decision 4) ---------- */
+/*
+   `story/[id]/ogCard.tsx` gated on `leanLabelState`, the confidence-gated
+   mean, a third rule: audit 6 found a card printing "Leans right" whose
+   share card would print no lean at 0.463 confidence. It now prints
+   `storyShapeLabel` from the archive row, so the gate is twofold: the file
+   uses the card's rule, and on every story of the latest edition the archive
+   row the share card reads gives the word the feed card gives. The synthetic
+   cluster below is `archiveRowToStory`'s, field for field.
+*/
+{
+  const og = readFileSync(join(ROOT, "app/story/[id]/ogCard.tsx"), "utf8");
+  check("the share card prints the card's word (storyShapeLabel)", /storyShapeLabel\(/.test(og));
+  check("the share card no longer reads the confidence gate", !/leanLabelState\s*\(/.test(og));
+  const ARCH = join(ROOT, "build-data/archive.json");
+  if (existsSync(FEED) && existsSync(ARCH)) {
+    const fm = await load("feedMapping.js");
+    const feed = JSON.parse(readFileSync(FEED, "utf8"));
+    const byId = new Map((feed.clusters ?? []).map((c) => [c.id, c]));
+    const rows = JSON.parse(readFileSync(ARCH, "utf8"));
+    const latest = rows.reduce((m, r) => (r.printed_on > m ? r.printed_on : m), "");
+    let shared = 0;
+    for (const row of rows.filter((r) => r.printed_on === latest)) {
+      const c = byId.get(row.source_cluster_id);
+      if (!c) continue;
+      const [fromArchive] = fm.mapClustersToStories([{
+        id: row.id, title: row.title, summary: row.summary, category: row.category,
+        section: "world", sections: ["world"], importance_score: row.rank_world,
+        source_count: row.source_count, first_published: row.first_published,
+        last_updated: row.first_published, divergence_score: row.divergence_score,
+        headline_rank: row.headline_rank, coverage_velocity: 0,
+        bias_diversity: row.bias_diversity, consensus_points: row.consensus_points,
+        divergence_points: row.divergence_points, rank_world: row.rank_world,
+        claim_consensus: row.claim_consensus, cached_image_url: null, is_international: false,
+      }], true);
+      const [fromFeed] = fm.mapClustersToStories([c], true);
+      if (!fromArchive || !fromFeed) continue;
+      shared += 1;
+      const ogWord = bias.storyShapeLabel(fromArchive.biasSpread, !!fromArchive.sigilData.unscored).text;
+      const cardWord = bias.storyShapeLabel(fromFeed.sigilData.biasSpread, !!fromFeed.sigilData.unscored).text;
+      check(`${row.id.slice(0, 8)}: share card word = card word`, ogWord === cardWord,
+        `share "${ogWord}" vs card "${cardWord}"`);
+    }
+    check("the latest edition has share cards to compare", shared > 0, `${shared} compared`);
+  }
+}
 
 /* ---- 2. summary hygiene parity ---------------------------------------- */
 

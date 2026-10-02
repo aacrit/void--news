@@ -3,16 +3,17 @@
 
    Composition lives in `app/lib/ogCard.tsx`, the composer every Void card is
    drawn by. What is here is the part that is about a STORY: the headline, how
-   many outlets it was read across, and the measured lean when the measurement
-   is one the product is willing to state.
+   many outlets it was read across, and the card's own word with its count.
 
-   THE LEAN IS SHOWN ONLY WHEN IT IS CONFIDENT. A share card is the most public
-   surface in the product and the least correctable, so it goes through the
-   SAME gate as the feed card, the Sigil popup and the Deep Dive
-   (`leanLabelState` in lib/biasColors). "Contested", "Flat" and "Unscored" are
-   honest on a page that can explain them; on a card, with no room to say what
-   they mean, the line is simply left out and the card shows the source count
-   alone.
+   THE SHARE CARD SAYS WHAT THE PAGE SAYS (CEO decision 4, 2026-10-02). It
+   used to gate on `leanLabelState`, the confidence-gated MEAN, a third rule
+   beside the card's roster word and the Bench: audit 6 (2026-10-02) found a
+   card printing "Leans right" whose share card would print no lean at all,
+   at aggregate confidence 0.463. It now prints `storyShapeLabel` and
+   `leanShapeCount`, the feed card's word and count from the same per-outlet
+   histogram, and test/labels.test.mjs asserts the two agree on every story
+   of the latest edition. The share card is the least correctable surface,
+   which is the reason it must never disagree with the page it links to.
 
    WHICH STORIES. The archive is 1,577 rows and every card is a satori render
    at build time, so cards are emitted for the LATEST EDITION only, which is
@@ -26,7 +27,7 @@ import {
   archiveRowToStory,
   type PrintedStoryRow,
 } from "../../lib/archive";
-import { leanLabel, leanLabelState } from "../../lib/biasColors";
+import { storyShapeLabel, leanShapeCount, leanShape } from "../../lib/biasColors";
 import { voidCard, size, contentType, ACCENT_NEWS } from "../../lib/ogCard";
 
 export { size, contentType };
@@ -62,20 +63,30 @@ export async function hasStoryCard(id: string): Promise<boolean> {
   return (await storyCardIds()).has(id);
 }
 
-export function storyCard(row: PrintedStoryRow) {
+/** The words the share card prints about a story's lean: the card's own word
+ *  and the count behind it. Exported so the gate can compare it with the
+ *  feed card's word on every story of the latest edition. */
+export function storyCardLean(row: PrintedStoryRow): { word: string; count: string | null } {
   const story = archiveRowToStory(row);
-  const lean = story.biasScores.politicalLean;
-  const confident =
-    !story.sigilData.unscored &&
-    leanLabelState(lean, story.biasSpread, row.source_count) === "confident";
+  const unscored = !!story.sigilData.unscored;
+  const word = storyShapeLabel(story.biasSpread, unscored).text;
+  const tally = unscored ? null : leanShapeCount(story.biasSpread);
+  const shape = unscored ? "unscored" : leanShape(story.biasSpread);
+  /* The full sentence where it is short ("15 of 22 outlets right of
+     centre"); both wings where the full one would run off a 1200px card. */
+  const count = !tally ? null
+    : shape === "split" || shape === "balanced" ? tally.short : tally.full;
+  return { word, count };
+}
 
+export function storyCard(row: PrintedStoryRow) {
+  const { word, count } = storyCardLean(row);
   const n = row.source_count || 0;
   return voidCard({
     section: STORY_SECTION,
     accent: ACCENT_NEWS,
     title: row.title,
-    meta: [n > 0 ? `${n} ${n === 1 ? "source" : "sources"}` : null,
-           confident ? leanLabel(lean) : null],
+    meta: [n > 0 ? `${n} ${n === 1 ? "source" : "sources"}` : null, word, count],
     tagline: "Every source, placed. Not averaged.",
   });
 }

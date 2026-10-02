@@ -146,11 +146,17 @@ export default function InlineDeepDive({
   const deepDive: DeepDiveData | undefined = liveData ?? story.deepDive;
 
   const sources = useMemo(() => deepDive?.sources ?? [], [deepDive]);
+  /* Every article row, before the coverage list keeps one per source. The
+     Bench votes per outlet from these (lib/outletVotes.ts) by the rule the
+     pipeline counted the card with; handing it the deduplicated list kept
+     an arbitrary article per outlet. */
+  const [articleRows, setArticleRows] = useState<StorySource[] | null>(null);
+  const spectrumRows = articleRows ?? sources;
 
   /* ---- Map sources for the mini-spectrum component ---------------------- */
   const spectrumSources: DeepDiveSpectrumSource[] = useMemo(
     () =>
-      sources
+      spectrumRows
         .filter((src) => src.biasScores != null)
         .map((src) => ({
           name: src.name,
@@ -162,8 +168,11 @@ export default function InlineDeepDive({
           confidence: src.confidence,
           headline: src.articleTitle,
           leanUnscored: src.leanUnscored,
+          /* The working the Bench mark's card prints (P1-13). */
+          leanRationale: src.lensData?.leanRationale,
+          leanRead: Boolean(src.lensData?.leanRationale),
         })),
-    [sources],
+    [spectrumRows],
   );
 
   /* ---- Sources span 2+ lean buckets? (Source Perspectives gate) -------- */
@@ -225,6 +234,8 @@ export default function InlineDeepDive({
             topRightKeywords: rawLean.top_right_keywords ?? rawLean.topRightKeywords ?? [],
             framingPhrasesFound: rawLean.framing_phrases_found ?? rawLean.framingPhrasesFound ?? [],
             entitySentiments: rawLean.entity_sentiments ?? rawLean.entitySentiments ?? {},
+            textShift: typeof rawLean.text_shift === "number" ? rawLean.text_shift : undefined,
+            deltaMax: typeof rawLean.delta_max === "number" ? rawLean.delta_max : undefined,
           } : undefined;
 
           const mappedOpinion = rawOpinion ? {
@@ -341,6 +352,7 @@ export default function InlineDeepDive({
           const consensus = Array.isArray(story.deepDive?.consensus) ? story.deepDive.consensus : [];
           const divergenceData = Array.isArray(story.deepDive?.divergence) ? story.deepDive.divergence : [];
 
+          setArticleRows(storySourceList);
           setLiveData({
             consensus,
             divergence: divergenceData,
@@ -684,7 +696,7 @@ export default function InlineDeepDive({
             </div>
             <div className="inline-dd__spectrum">
               {spectrumSources.length > 0 ? (
-                <DeepDiveSpectrum sources={spectrumSources} settled />
+                <DeepDiveSpectrum sources={spectrumSources} spread={story.sigilData?.biasSpread} settled />
               ) : (
                 <p className="inline-dd__spectrum-loading" role="status">
                   Gathering the full source list

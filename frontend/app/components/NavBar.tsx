@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import ChromeLink from "./ChromeLink";
 import { usePathname } from "next/navigation";
 import { MagnifyingGlass } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
@@ -34,6 +34,7 @@ export type Section =
   | "history"
   | "weekly"
   | "paper"
+  | "games"
   | "onair"
   | "audio"
   | "sources"
@@ -53,6 +54,7 @@ export function sectionForPath(path: string): Section {
     case "history": return "history";
     case "weekly": return "weekly";
     case "paper": return "paper";
+    case "games": return "games";
     case "onair": return "onair";
     /* /listen 301s to /audio at the edge; the section is the same either way. */
     case "audio":
@@ -73,6 +75,7 @@ const NAMEPLATES: Partial<Record<Section, { href: string; label: string }>> = {
   history: { href: "/history", label: "History" },
   weekly: { href: "/weekly", label: "Weekly" },
   paper: { href: "/paper", label: "Paper" },
+  games: { href: "/games", label: "Games" },
   /* On Air is a programme inside the Audio section, so its page wears the
      section's nameplate; the nameplate links to the section, not to itself. */
   audio: { href: "/audio", label: "Audio" },
@@ -87,6 +90,7 @@ const SECTION_LINKS: { href: string; label: string; section: Section }[] = [
   { href: "/audio", label: "Audio", section: "audio" },
   { href: "/history", label: "History", section: "history" },
   { href: "/weekly", label: "Weekly", section: "weekly" },
+  { href: "/games", label: "Games", section: "games" },
 ];
 
 /** A section link is current on its own routes and on the routes of the
@@ -202,17 +206,17 @@ export default function NavBar({
     >
       <nav className="nav-inner" aria-label="Main navigation">
         <div className="nav-left">
-          <Link href="/" aria-label="Void News home" className="nav-logo si-hoverable">
+          <ChromeLink href="/" aria-label="Void News home" className="nav-logo si-hoverable">
             <LogoFull responsive className="nav-logo-mark" />
-          </Link>
+          </ChromeLink>
           {nameplate ? (
-            <Link
+            <ChromeLink
               href={nameplate.href}
               className="nav-nameplate"
               aria-current={route === nameplate.href || route === `${nameplate.href}/` ? "page" : undefined}
             >
               {nameplate.label}
-            </Link>
+            </ChromeLink>
           ) : (
             <>
               <ExperimentalBadge />
@@ -236,7 +240,7 @@ export default function NavBar({
         <div className="nav-right">
           <nav className="nav-sections" aria-label="Sections">
             {SECTION_LINKS.map((l) => (
-              <Link
+              <ChromeLink
                 key={l.href}
                 href={l.href}
                 className="nav-page"
@@ -244,12 +248,12 @@ export default function NavBar({
                 aria-current={section === l.section || HELD_BY[section] === l.section ? "page" : undefined}
               >
                 {l.label}
-              </Link>
+              </ChromeLink>
             ))}
           </nav>
           <nav className="nav-pages" aria-label="Pages">
             {PAGE_LINKS.map((l) => (
-              <Link
+              <ChromeLink
                 key={l.href}
                 href={l.href}
                 className="nav-page"
@@ -257,7 +261,7 @@ export default function NavBar({
                 aria-current={section === l.section ? "page" : undefined}
               >
                 {l.label}
-              </Link>
+              </ChromeLink>
             ))}
           </nav>
 

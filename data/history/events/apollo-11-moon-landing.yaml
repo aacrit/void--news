@@ -45,7 +45,7 @@ significance: 'The landing settled the central technological contest of the Cold
   model, systems engineering across 20,000 contractor firms, that reshaped how governments and corporations run large projects. The integrated circuit, ordered by the thousands for the Apollo Guidance Computer,
   found its first mass buyer in the space program and seeded the semiconductor industry. The photograph of Earth from lunar distance, a blue marble in black vacuum, became the emblem of the environmental
   movement founded the same decade. And the estimated 25.4 billion dollars spent to reach the Moon, at a moment when Ralph Abernathy drove mule carts to the launch gate to protest American poverty, opened
-  a debate about national priorities that has never closed: whether a society proves its greatness by what it can build or by whom it leaves behind. No human has returned to the Moon since December 1972.
+  a debate about national priorities that has never closed: whether a society proves its greatness by what it can build or by whom it leaves behind. The last crew left the Moon in December 1972.
 
   '
 key_figures:
@@ -313,7 +313,7 @@ perspectives:
     The management method proved as influential as the hardware. Apollo systematized what became known as systems engineering and program management: coordinating some 20,000 contractors, tracking millions
     of parts, and computing reliability across a machine with a failure tolerance measured in single digits. That method migrated into aerospace, software, and civil megaprojects. Margaret Hamilton''s asynchronous,
     priority-scheduled flight software is why Eagle landed at all: when the 1202 alarms fired during descent, the computer shed low-priority tasks and kept the guidance running, a design choice that turned
-    a potential abort into a landing. In this reading, the durable legacy of Apollo is not the footprints, which no wind will erase but no one has revisited since 1972, but the computing, materials, and methods
+    a potential abort into a landing. In this reading, the durable legacy of Apollo is not the footprints, which no wind will erase, but the computing, materials, and methods
     it forced into being decades ahead of schedule.
 
     '

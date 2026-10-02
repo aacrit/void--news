@@ -539,7 +539,7 @@
   font-size: 0.65rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(138, 130, 120, 0.2);
+  color: rgba(184, 176, 164, 0.85); /* AA on the hub black; 0.2 measured 1.22:1 */
   font-feature-settings: "tnum" 1;
   font-variant-numeric: tabular-nums;
 }

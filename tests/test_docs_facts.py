@@ -242,6 +242,26 @@ check("the length-confidence divisor is stated",
       str(int(_deltas["_LENGTH_FULL_CONFIDENCE"])) in claude_md,
       f"{_deltas['_LENGTH_FULL_CONFIDENCE']} appears nowhere in CLAUDE.md")
 
+# ------------------------------------------------- the Games row matches disk
+# Games was "301-hidden" from 2026-08-03 to 2026-10-02. The row and the
+# redirect file must agree, both ways, and the bank size it quotes must be the
+# bank's. A rotation that wraps never runs out, so the count is the runway.
+_redirects = (ROOT / "frontend/public/_redirects").read_text()
+_games_hidden = bool(re.search(r"^/games/?\*?\s+/\s+30[12]\b", _redirects, re.M))
+_games_row = re.search(r"^\| \*\*Games\*\* \| (.+) \|$", claude_md, re.M)
+check("CLAUDE.md has a Games section-state row", _games_row is not None)
+if _games_row:
+    _row = _games_row.group(1)
+    check("CLAUDE.md Games row agrees with public/_redirects",
+          ("301-hidden" in _row) == _games_hidden,
+          f"row says {'hidden' if '301-hidden' in _row else 'live'}, "
+          f"_redirects says {'hidden' if _games_hidden else 'live'}")
+    _undertow = (ROOT / "frontend/app/games/undertow/data.ts").read_text()
+    _bank = len(re.findall(r"^    id: \d+,$", _undertow, re.M))
+    for _claimed in re.findall(r"(\d+) UNDERTOW puzzles", _row):
+        check(f"CLAUDE.md '{_claimed} UNDERTOW puzzles'", int(_claimed) == _bank,
+              f"undertow/data.ts holds {_bank}")
+
 if failures:
     print(f"FAIL  {len(failures)} docs-facts check(s)")
     for f in failures:

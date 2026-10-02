@@ -9,6 +9,92 @@
 >
 > Trust the Architecture section of `CLAUDE.md` for how data reaches the page.
 
+---
+
+## Current: edge rules and the Worker (rev 85, 2026-10-02)
+
+This section is current. The rest of this file predates the migration; where
+they disagree, this section and `CLAUDE.md` win.
+
+### Rate limiting must exempt first-party assets (P0-6)
+
+A Cloudflare rate-limiting rule lives in the dashboard, not in this repo. On
+2026-10-02 one calm load of `/` got HTTP 429 on `/_next/static` chunks and fell
+to Next's bare error page twice, and `/sources` had 284 of 406 logo requests
+refused. One page view legitimately fetches dozens to hundreds of first-party
+files, so a per-IP request budget that counts them locks out ordinary readers.
+
+The rule must not count these paths:
+
+| Path | Why |
+|---|---|
+| `/_next/static/*` | hashed JS, CSS and fonts; a page needs all of them to hydrate |
+| `/logos/*` | `/sources` and the Bench draw one mark per outlet |
+| `/brand/*` | wordmark, Sigil, covers |
+| `/audio/*` | MP3s are fetched in ranged requests while playing |
+
+Dashboard (zone `voidvision.org`): Security, then WAF, then Rate limiting
+rules, open the existing rule, and add the exemption to its expression, for
+example:
+
+```
+(http.host eq "news.voidvision.org")
+and not starts_with(http.request.uri.path, "/_next/static/")
+and not starts_with(http.request.uri.path, "/logos/")
+and not starts_with(http.request.uri.path, "/brand/")
+and not starts_with(http.request.uri.path, "/audio/")
+```
+
+If the plan's rule builder does not offer `starts_with`, use the editor's
+"URI Path" field with "does not start with" (or "does not contain" on the four
+prefixes). Record the final expression here when it changes.
+
+Check: `scripts/verify_production.py` ("availability: first-party assets are
+not rate-limited") GETs `/` and the page's own `/_next/static` assets, paced,
+and fails on any 429. It runs in `verify-production.yml` against the live page.
+
+The Worker (`void-api.aacrit.workers.dev`) is on `workers.dev`, outside the
+zone, so a zone WAF rule cannot reach `/api/*` there. Its abuse limits are in
+code (per-IP caps below). A WAF rule on `/api/*` needs the Worker routed on a
+zone hostname first.
+
+### The Worker (`worker/`), deployed by hand
+
+No CI deploys it. From `worker/`:
+
+```
+npm ci
+npm test                                   # vitest, in-memory D1
+openssl rand -hex 32 | npx wrangler secret put IP_SALT
+npm run db:migrate                         # wrangler d1 migrations apply void-live --remote
+npm run deploy                             # wrangler deploy
+```
+
+- `IP_SALT` is a secret, never a `[vars]` literal. While it is missing,
+  shorter than 16 characters, or the old placeholder, every POST returns 503
+  and the log (`npx wrangler tail`) says why. Reads keep working. Setting a
+  new salt changes every future hash, so per-IP limits and vote dedup restart
+  from that moment; old rows are untouched.
+- `worker/schema.sql` is the baseline; numbered files in `worker/migrations/`
+  apply after it. `0001` adds `ip_hash` to `ship_votes` and `ship_replies`
+  with `UNIQUE(request_id, ip_hash)` on votes.
+- Limits per IP hash per hour: 5 submits, 30 votes, 15 replies. Global
+  backstops (1,000 / 5,000 / 2,000) sit far above any honest hour.
+- For `wrangler dev`, put `IP_SALT=<random>` in `worker/.dev.vars` (gitignored).
+
+### `_headers`, current
+
+- Cloudflare Pages adds `Access-Control-Allow-Origin: *` to every response.
+  `/*` detaches it (`! Access-Control-Allow-Origin`): every fetch of
+  `/data/*.json` is same-origin.
+- The CSP no longer allows `static.cloudflareinsights.com` or
+  `cloudflareinsights.com`; no page loads the beacon. The `<meta>` CSP in
+  `app/layout.tsx` still lists them, which a browser intersects away.
+- `connect-src` carries `'self'` and the Worker origin only. The Supabase
+  entries described further down are gone.
+
+---
+
 **Last updated**: 2026-08-01 (rev 4 — Cloudflare-Pages-only reality; GitHub Pages removed; staging/preview split + branch protection documented)
 **Status**: Single production surface, live at https://news.voidvision.org (Cloudflare Pages, root basePath). The Cloudflare Pages origin remains `void-news.pages.dev`; the custom domain `news.voidvision.org` sits on top of it (added in the CF Pages dashboard → Custom domains). PWA installable. Capacitor iOS/Android shells initialized, awaiting signing. GitHub Pages retired (the old `deploy.yml` no longer exists).
 

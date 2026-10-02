@@ -39,7 +39,8 @@ from briefing.weekly_parse import (  # pure: no DB, no LLM, no network
     build_weekly_row, clean_headline, parse_essay, parse_recap,
     looks_like_headline, weekly_window,
     banned_terms, drop_terms, enforce, enforce_recap, retry_suffix, strip_dashes,
-    word_count, ground_text,
+    word_count, ground_text, ground_quotes, cut_slop_sentences, sized_spec,
+    length_after_cut, row_corpus, source_words,
 )
 from utils.prohibited_terms import strip_significance
 from summarizer.gemini_client import (
@@ -130,6 +131,27 @@ ESSAY_SPECS = {
     "brief":     {"min_words": 55,  "max_words": 75},
 }
 
+# Decision 5 (CEO, 2026-10-02): the Technology and Sports & Culture departments
+# are SUSPENDED until each has a sourced corpus. Neither was ever written from
+# the week as printed: both read the raw cluster pool, both were handed a title
+# and a summary and asked for 500 words, and Issue #26's Sports & Culture page
+# was a German election essay with no sport in it and no source for its lede.
+# The selection code stays, with its category match fixed (below), so the
+# departments can return behind this switch once a sourced corpus exists.
+WEEKLY_DEPARTMENTS = os.environ.get("VOID_WEEKLY_DEPARTMENTS", "0") == "1"
+
+# The categorizer's taxonomy is LOWERCASE (`auto_categorize.py`: general,
+# politics, conflict, economy, environment, health, science, culture). These
+# sets were written in title case ("Technology", "Sports", "Culture"), so the
+# label match missed on every cluster ever stored and both departments fell
+# through to substring keywords. Compared lowercased now.
+TECH_CATEGORIES = frozenset({"technology", "tech", "science", "ai", "cybersecurity", "space"})
+SPORTS_CATEGORIES = frozenset({"sports", "sport", "culture"})
+
+
+def _category(c):
+    return str(c.get("category") or "").strip().lower()
+
 # Flash has a shared 20-requests-a-DAY free cap and the daily pipeline already
 # spends ~13 of it. A regeneration is one more request, so the flash sections
 # draw from a budget while flash-lite (high RPD) retries freely. Without this a
@@ -216,10 +238,12 @@ def _gen_essay(prompt, system, model=None, max_output_tokens=4096,
     is attempted naming the findings, and whichever attempt is cleaner ships
     when the remaining findings are about LENGTH: a missing department reads
     worse than a long one. A kill-list verb, noun or scaffolding opener that
-    survives the regeneration DROPS the piece instead (`drop_terms`): it
-    cannot be deleted by code, and a missing department is visible and honest
-    where "underscores the vulnerability" is neither. The prose is
-    dash-stripped and significance-stripped either way.
+    survives the regeneration cuts its SENTENCE (`cut_slop_sentences`): the
+    word cannot be deleted from its sentence by code, but the sentence can be
+    deleted whole, and dropping the piece over one word cost 3 of 5 columns on
+    2026-09-27. The prose is dash-stripped and significance-stripped either
+    way. Length is checked again by the caller AFTER grounding and the source
+    check (`length_after_cut`), because those cuts are what decide it.
     """
     spec = spec or {}
     best, best_findings, calls = None, None, 0
@@ -260,11 +284,19 @@ def _gen_essay(prompt, system, model=None, max_output_tokens=4096,
         print(f"    [{label}] rejected: {'; '.join(findings)} — regenerating")
 
     if best is not None:
-        slop = drop_terms(best["text"]) + drop_terms(best.get("headline"))
-        if slop:
-            print(f"    [{label}] DROPPED: still carries {', '.join(repr(t) for t in slop)} "
-                  f"after regeneration; the section does not ship")
+        # The kill list cuts the SENTENCE that carries it, not the piece
+        # (P1-18). A headline that carries one is discarded and the caller
+        # names the piece from its story, as it does for an empty headline.
+        if drop_terms(best.get("headline")):
+            print(f"    [{label}] headline cut for {drop_terms(best.get('headline'))}")
+            best["headline"] = ""
+        kept, cut = cut_slop_sentences(best["text"])
+        for sent, terms in cut:
+            print(f"    [{label}] cut for {', '.join(repr(t) for t in terms)}: {sent[:100]}")
+        if not (kept or "").strip():
+            print(f"    [{label}] DROPPED: nothing left once the kill-list sentences were cut")
             return None, calls
+        best["text"] = kept
         if best_findings:
             print(f"    [{label}] shipped with {len(best_findings)} finding(s): {'; '.join(best_findings)}")
     return best, calls
@@ -488,7 +520,7 @@ should be noted", "interestingly", "crucially", "here's what you need to know",
 OUTPUT FORMAT — plain text only, no JSON, no Markdown:
 - Line 1: the headline only (no label, no quotes, no Markdown).
 - Then a blank line.
-- Then the 800-1200 word essay in flowing prose paragraphs separated by blank
+- Then the essay, at the length the prompt gives, in flowing prose paragraphs separated by blank
   lines. No bulleted or numbered lists, no "TIMELINE" section, no headings,
   no asterisks or bold/italic markers.
 - Then a line containing only NUMBERS, then 3 to 5 lines of "value | context",
@@ -775,11 +807,16 @@ def _generate_cover_stories(threads, edition):
             f"  {e['date']}: {e['title']} ({e['source_count']} sources)"
             for e in timeline
         )
-        related_ctx = "\n".join(
-            f"  [{(c.get('printed_on') or c.get('first_published') or '')[:10]}] {c.get('title', '')} "
-            f"({c.get('source_count', 0)} sources)"
-            for c in thread["clusters"]
-        )
+        # Every printed row of the thread IN FULL: summary, consensus and
+        # divergence for each day, not the titles of the days after the lead
+        # (P1-18). The brief is then sized to those words, so a thread printed
+        # once gets a short cover rather than a padded one.
+        related_ctx = row_corpus(thread["clusters"])
+        spec = sized_spec(ESSAY_SPECS["cover"], source_words(thread["clusters"]))
+        if spec is None:
+            print(f"    Cover {i+1}: '{lead.get('title', '')[:50]}' has too little "
+                  f"printed text to write from; skipped")
+            continue
 
         prompt = (
             f"Write a deep-dive cover story for Void Weekly ({edition} edition).\n\n"
@@ -790,19 +827,24 @@ def _generate_cover_stories(threads, edition):
             f"Key agreements: {json.dumps(lead.get('consensus_points', []))}\n"
             f"Key disagreements: {json.dumps(lead.get('divergence_points', []))}\n\n"
             f"DATA TIMELINE (real dates, real clusters):\n{timeline_ctx}\n\n"
-            f"ALL RELATED DEVELOPMENTS:\n{related_ctx}\n\n"
-            f"Write an 800-1200 word analytical essay in flowing prose, weaving "
-            f"these real dates into the narrative.\n"
+            f"EVERY PRINTED STORY IN THIS THREAD, IN FULL:\n{related_ctx}\n\n"
+            f"Write a {spec['min_words']}-{spec['max_words']} word analytical essay "
+            f"in flowing prose, weaving these real dates into the narrative. If the "
+            f"stories above carry less, write less: a short essay is acceptable, a "
+            f"padded one is not.\n"
+            f"Quote only words that appear inside quotation marks above, exactly as "
+            f"they appear there. Everything else is paraphrase, without quotation marks.\n"
             f"Do NOT invent events not shown above. Do NOT output a bulleted "
             f"timeline, a section titled TIMELINE, lists, or any Markdown headings."
         )
 
         result, used = _gen_essay(
             prompt, COVER_SYSTEM, model=_FLASH_MODEL, max_output_tokens=8192,
-            want_numbers=True, spec=ESSAY_SPECS["cover"], label=f"cover {i+1}",
+            want_numbers=True, spec=spec, label=f"cover {i+1}",
         )
         calls += used
         if result and isinstance(result, dict):
+            result["_spec"] = spec
             # parse_essay leaves the headline empty when line 1 was prose, so
             # the essay keeps its lede. Name the feature from the cluster
             # rather than setting a paragraph at display size.
@@ -848,7 +890,7 @@ def _generate_cover_stories(threads, edition):
 # ── SECTION 2: THE OPINIONS (5-6 topics × 1 voice each) ──
 
 OPINION_SYSTEM = """You are a {perspective} columnist for Void Weekly.
-Write a 400-600 word opinion essay. {instruction}
+Write a {min_words}-{max_words} word opinion essay; if the stories carry less, write less, never pad. {instruction}
 Every fact MUST appear in the provided articles. Do not supplement with prior knowledge.
 Argue only from facts in the provided stories. Historical parallels, other countries and 'patterns' are not permitted unless a provided article states them.
 
@@ -871,7 +913,8 @@ chill".
 
 OUTPUT FORMAT — plain text only, no JSON, no Markdown:
 Line 1 is the headline only (no label, no quotes). Then a blank line. Then the
-400-600 word essay in flowing prose."""
+{min_words}-{max_words} word essay in flowing prose. Quote only words that appear inside
+quotation marks in the provided stories, exactly as they appear there."""
 
 
 def _generate_opinions(top_threads, all_threads, edition):
@@ -890,13 +933,13 @@ def _generate_opinions(top_threads, all_threads, edition):
     # First 2: opposing voices on cover story #1
     if top_threads:
         lead = top_threads[0]["lead_cluster"]
-        plan.append((lead, "left"))
-        plan.append((lead, "right"))
+        plan.append((lead, "left", top_threads[0]))
+        plan.append((lead, "right", top_threads[0]))
 
     # Third: center voice on cover story #2
     if len(top_threads) > 1:
         second = top_threads[1]["lead_cluster"]
-        plan.append((second, "center"))
+        plan.append((second, "center", top_threads[1]))
 
     # Remaining: other important threads not in cover
     cover_ids = set()
@@ -906,22 +949,27 @@ def _generate_opinions(top_threads, all_threads, edition):
     other = [t for t in all_threads if t.get("lead_cluster", {}).get("id") not in cover_ids]
     lean_cycle = ["center-left", "center-right"]
     for i, thread in enumerate(other[:2]):
-        plan.append((thread["lead_cluster"], lean_cycle[i % 2]))
+        plan.append((thread["lead_cluster"], lean_cycle[i % 2], thread))
 
-    for i, (cluster, lean) in enumerate(plan):
+    for i, (cluster, lean, thread) in enumerate(plan):
         voice = OPINION_VOICE_CONFIGS.get(lean, OPINION_VOICE_CONFIGS["center"])
         is_paired = i < 2 and len(plan) >= 2
-        system = OPINION_SYSTEM.format(**voice)
+        # The column is written from every printed day of its thread, and its
+        # brief is sized to those words (P1-18), as the cover's is.
+        rows = (thread or {}).get("clusters") or [cluster]
+        spec = sized_spec(ESSAY_SPECS["opinion"], source_words(rows))
+        if spec is None:
+            print(f"    Opinion {i+1} ({lean}): too little printed text to argue from; skipped")
+            continue
+        system = OPINION_SYSTEM.format(**voice, **spec)
         if is_paired:
             opposing = "conservative" if lean == "left" else "progressive"
             system += f"\n\nThis is a PAIRED opinion. A {opposing} columnist writes about the same story. Your reader sees both side by side."
 
         prompt = (
             f"Write a {voice['perspective']} opinion essay for Void Weekly ({edition}).\n\n"
-            f"Topic: {cluster.get('title', 'Untitled')}\n"
-            f"Summary: {cluster.get('summary', '')}\n"
-            f"Key points: {json.dumps(cluster.get('consensus_points', []))}\n"
-            f"Disagreements: {json.dumps(cluster.get('divergence_points', []))}\n"
+            f"Topic: {cluster.get('title', 'Untitled')}\n\n"
+            f"EVERY PRINTED STORY ON THIS TOPIC, IN FULL:\n{row_corpus(rows)}\n"
         )
         # The five opinion calls run in isolation, with no idea what the others
         # wrote, which is how "The ink is barely dry" came to open two
@@ -935,11 +983,12 @@ def _generate_opinions(top_threads, all_threads, edition):
 
         result, used = _gen_essay(
             prompt, system, max_output_tokens=4096,
-            spec=ESSAY_SPECS["opinion"], label=f"opinion {i+1} ({lean})",
+            spec=spec, label=f"opinion {i+1} ({lean})",
         )
         calls += used
 
         if result and isinstance(result, dict):
+            result["_spec"] = spec
             if not result.get("headline"):
                 result["headline"] = cluster.get("title", "")
             openers.append(" ".join((result.get("text") or "").split()[:14]))
@@ -987,7 +1036,7 @@ def _attach_art(essay, cluster):
 # ── SECTION 3: TECH BRIEF ──
 
 TECH_SYSTEM = """You are the technology correspondent for Void Weekly. Write a
-500-700 word analysis of this week's most important technology story.
+analysis, at the length the prompt gives, of this week's most important technology story.
 Focus on mechanism and implication, not hype. Think Ars Technica meets The Economist.
 Every fact MUST appear in the provided articles. Do not supplement with prior knowledge.
 
@@ -1000,8 +1049,7 @@ analysis in flowing prose."""
 
 def _generate_tech_brief(clusters, edition):
     """Find the top tech story and write a brief."""
-    tech_categories = {"Technology", "Science", "AI", "Cybersecurity", "Space"}
-    tech_clusters = [c for c in clusters if c.get("category") in tech_categories]
+    tech_clusters = [c for c in clusters if _category(c) in TECH_CATEGORIES]
 
     if not tech_clusters:
         # Fallback: look for tech keywords in titles
@@ -1016,16 +1064,19 @@ def _generate_tech_brief(clusters, edition):
         return None, 0
 
     top_tech = tech_clusters[0]
+    spec = sized_spec(ESSAY_SPECS["tech"], source_words([top_tech]))
+    if spec is None:
+        return None, 0
     prompt = (
-        f"Write a tech brief for Void Weekly ({edition}).\n\n"
-        f"Story: {top_tech.get('title', '')}\n"
-        f"Summary: {top_tech.get('summary', '')}\n"
-        f"Sources: {top_tech.get('source_count', 0)}\n"
+        f"Write a tech brief for Void Weekly ({edition}), "
+        f"{spec['min_words']}-{spec['max_words']} words; if the story carries less, write less.\n\n"
+        f"THE STORY, IN FULL:\n{row_corpus([top_tech])}\n"
     )
 
     result, calls = _gen_essay(prompt, TECH_SYSTEM, max_output_tokens=4096,
-                               spec=ESSAY_SPECS["tech"], label="tech")
+                               spec=spec, label="tech")
     if result:
+        result["_spec"] = spec
         if not result.get("headline"):
             result["headline"] = top_tech.get("title", "")
         result["cluster_id"] = top_tech.get("id")
@@ -1036,7 +1087,7 @@ def _generate_tech_brief(clusters, edition):
 # ── SECTION 4: SPORTS PAGE ──
 
 SPORTS_SYSTEM = """You are the sports-and-culture correspondent for Void Weekly.
-Write a 400-600 word piece about this week's top sports story — but through the
+Write a piece, at the length the prompt gives, about this week's top sports story — but through the
 lens of culture, politics, or economics. Sports as a mirror of society.
 Think of how The New Yorker covers sports: the game is the entry point, the
 story is about something larger.
@@ -1142,7 +1193,7 @@ def _is_sport_or_culture(cluster):
 
 def _generate_sports(clusters, edition):
     """Find the top sports story and write a culture piece."""
-    labelled = [c for c in clusters if c.get("category") in {"Sports", "Culture"}]
+    labelled = [c for c in clusters if _category(c) in SPORTS_CATEGORIES]
     labelled_ids = {id(c) for c in labelled}
     sports_clusters = [c for c in labelled if _is_sport_or_culture(c)]
 
@@ -1159,15 +1210,19 @@ def _generate_sports(clusters, edition):
         return None, 0
 
     top = sports_clusters[0]
+    spec = sized_spec(ESSAY_SPECS["sports"], source_words([top]))
+    if spec is None:
+        return None, 0
     prompt = (
-        f"Write a sports-as-culture piece for Void Weekly ({edition}).\n\n"
-        f"Story: {top.get('title', '')}\n"
-        f"Summary: {top.get('summary', '')}\n"
+        f"Write a sports-as-culture piece for Void Weekly ({edition}), "
+        f"{spec['min_words']}-{spec['max_words']} words; if the story carries less, write less.\n\n"
+        f"THE STORY, IN FULL:\n{row_corpus([top])}\n"
     )
 
     result, calls = _gen_essay(prompt, SPORTS_SYSTEM, max_output_tokens=4096,
-                               spec=ESSAY_SPECS["sports"], label="sports")
+                               spec=spec, label="sports")
     if result:
+        result["_spec"] = spec
         if not result.get("headline"):
             result["headline"] = top.get("title", "")
         result["cluster_id"] = top.get("id")
@@ -1195,7 +1250,7 @@ def _generate_bias_report(clusters, bias_stats, edition, clusters_truncated=Fals
     cluster_hedge = "more than " if clusters_truncated else ""
 
     lines = [
-        f"This week's {edition} edition processed {scored_hedge}{bias_stats['total_scored']} "
+        f"This week's {edition} edition scored {scored_hedge}{bias_stats['total_scored']:,} "
         f"articles across {cluster_hedge}{len(clusters)} story clusters.",
         "",
         f"Coverage lean: {bias_stats['avg_lean']}/100 "
@@ -1227,7 +1282,10 @@ def _generate_bias_report(clusters, bias_stats, edition, clusters_truncated=Fals
 
 RECAP_SYSTEM = """You are an editor for Void Weekly. Write 55-75 word briefs.
 
-Three sentences: what happened, who it lands on, and the one thing it changes.
+Three sentences, each a fact the story gives: what happened, who did it or who
+it lands on, and the next fact the story carries (a number, a date, a response).
+Never say what an event signals, demonstrates, highlights or means; if the story
+does not say it, leave it out, and write two sentences rather than guess a third.
 This is a Week in Brief column, not a second feature well. A fourth sentence
 belongs elsewhere in the issue; two sentences is a headline with a comma in it,
 and any brief under 55 words is carrying one fact where it owes three. Lead
@@ -1295,10 +1353,14 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
                    for c in remaining} - {""})
     print(f"    [brief] {len(remaining)} stories across {len(days)} day(s) of the week")
 
+    # Each brief is written from its printed row IN FULL. The summary used to
+    # be cut at 300 characters, which left the writer two sentences to make
+    # three from, and the third was the guess ("signals a crackdown",
+    # "signifies the high level of diplomatic engagement") that Issue #26's
+    # correction removed.
     stories_text = "\n".join(
         f"--- Story {i+1} ---\n"
-        f"Title: {c.get('title', '')}\n"
-        f"Summary: {(c.get('summary') or '')[:300]}\n"
+        f"{row_corpus([c])}\n"
         f"Category: {c.get('category', 'General')}"
         for i, c in enumerate(remaining)
     )
@@ -1380,16 +1442,22 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
                         story["image_attribution"] = found["attribution"]
                     if found.get("caption"):
                         story["image_caption"] = found["caption"]
-        # A brief that still carries a kill-list verb or noun after the
-        # column's one regeneration is dropped from the column, not shipped:
-        # the same rule `_gen_essay` applies to a whole department.
+        # A kill-list verb or noun that survives the column's one regeneration
+        # cuts its SENTENCE, the same rule `_gen_essay` applies to a piece. A
+        # headline that carries one is replaced by the printed title; a brief
+        # with nothing left once its sentences are cut is dropped.
+        titles = {c.get("id"): c.get("title", "") for c in remaining}
         kept = []
         for story in parsed["stories"]:
-            slop = drop_terms(story.get("summary")) + drop_terms(story.get("headline"))
-            if slop:
-                print(f"    [brief] DROPPED {story.get('headline', '')[:50]!r}: "
-                      f"still carries {', '.join(repr(t) for t in slop)}")
+            if drop_terms(story.get("headline")):
+                story["headline"] = titles.get(story.get("cluster_id")) or ""
+            text, cut = cut_slop_sentences(story.get("summary") or "")
+            for sent, terms in cut:
+                print(f"    [brief] cut for {', '.join(repr(t) for t in terms)}: {sent[:80]}")
+            if not text.strip() or not story.get("headline"):
+                print(f"    [brief] DROPPED {story.get('headline', '')[:50]!r}: nothing left")
                 continue
+            story["summary"] = text
             kept.append(story)
         parsed["stories"] = kept
     return parsed, calls
@@ -1412,6 +1480,30 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
 #
 # All of that is kept, unchanged, as the fallback. A weekly that cannot be
 # validated still ships a show.
+
+
+def _after_cut(kind, pieces):
+    """The pieces that can still ship once grounding and the source check are done.
+
+    Each piece is measured against the brief it was WRITTEN to (`_spec`, sized
+    to its sources), or the section's own brief when it has none. A piece
+    under half its floor is a fragment and goes; anything above that ships at
+    whatever length the sources left it. A fallback cover (the lead summary,
+    no model) is not an essay and is left to the content floor further down.
+    """
+    out = []
+    for i, p in enumerate(pieces or []):
+        if not p:
+            continue
+        if p.get("_fallback"):
+            out.append(p)
+            continue
+        why = length_after_cut(p.get("text") or "", p.get("_spec") or ESSAY_SPECS.get(kind))
+        if why:
+            print(f"    [length] {kind} {i + 1} dropped: {why}")
+            continue
+        out.append(p)
+    return out
 
 
 def _cover_core(c):
@@ -2198,12 +2290,16 @@ def _generate_weekly_opinion(covers, top_threads, recap, bias_data, daily_opinio
     if not text:
         print("    [weekly-opinion] Editorial generation failed")
         return None, calls
-    slop = drop_terms(text) + drop_terms(headline)
-    if slop:
-        # Same rule as `_gen_essay`: a length finding ships, a kill-list verb
-        # or noun that survived the regeneration does not.
-        print(f"    [weekly-opinion] DROPPED: still carries {', '.join(repr(t) for t in slop)} "
-              f"after regeneration; no editorial this week")
+    # Same rule as `_gen_essay`: a kill-list verb or noun that survived the
+    # regeneration cuts its sentence, and a headline carrying one is dropped
+    # (the page then sets the editorial without a headline).
+    if drop_terms(headline):
+        headline = None
+    text, cut = cut_slop_sentences(text)
+    for sent, terms in cut:
+        print(f"    [weekly-opinion] cut for {', '.join(repr(t) for t in terms)}: {sent[:80]}")
+    if not (text or "").strip():
+        print("    [weekly-opinion] DROPPED: nothing left once the kill-list sentences were cut")
         return None, calls
 
     # --- Call 2: spoken monologue (flash-lite, plain text) ---
@@ -2351,27 +2447,31 @@ def generate_weekly_digest(editions=None, week_offset=0):
             if o.get("cluster_id"):
                 used_ids.add(o["cluster_id"])
 
-        # Section 3: Tech brief
-        print(f"\n  ── TECH BRIEF ──")
-        tech, calls = _generate_tech_brief(clusters, edition)
-        total_calls += calls
-        if tech:
-            print(f"    {tech.get('headline', '?')[:60]}")
-            if tech.get("cluster_id"):
-                used_ids.add(tech["cluster_id"])
+        # Sections 3 and 4: Tech and Sports & Culture, SUSPENDED by default
+        # (decision 5). No call is spent and the issue carries no department.
+        tech, sports = None, None
+        if not WEEKLY_DEPARTMENTS:
+            print(f"\n  ── DEPARTMENTS ── suspended (VOID_WEEKLY_DEPARTMENTS=1 to run them)")
         else:
-            print(f"    No tech story found")
+            print(f"\n  ── TECH BRIEF ──")
+            tech, calls = _generate_tech_brief(clusters, edition)
+            total_calls += calls
+            if tech:
+                print(f"    {tech.get('headline', '?')[:60]}")
+                if tech.get("cluster_id"):
+                    used_ids.add(tech["cluster_id"])
+            else:
+                print(f"    No tech story found")
 
-        # Section 4: Sports
-        print(f"\n  ── SPORTS PAGE ──")
-        sports, calls = _generate_sports(clusters, edition)
-        total_calls += calls
-        if sports:
-            print(f"    {sports.get('headline', '?')[:60]}")
-            if sports.get("cluster_id"):
-                used_ids.add(sports["cluster_id"])
-        else:
-            print(f"    No sports story found")
+            print(f"\n  ── SPORTS PAGE ──")
+            sports, calls = _generate_sports(clusters, edition)
+            total_calls += calls
+            if sports:
+                print(f"    {sports.get('headline', '?')[:60]}")
+                if sports.get("cluster_id"):
+                    used_ids.add(sports["cluster_id"])
+            else:
+                print(f"    No sports story found")
 
         # Section 5: Bias report (rule-based, 0 calls)
         print(f"\n  ── BIAS REPORT ──")
@@ -2427,10 +2527,19 @@ def generate_weekly_digest(editions=None, week_offset=0):
             f"{t.get('cumulative_sources', '')} {t.get('daily_appearances', '')}" for t in top_threads
         ) + " " + " ".join(str(d.get("opinion_text") or "") for d in (daily_rows or []))
 
-        def _ground(label, text):
-            kept, cut = ground_text(text, corpus)
+        # Quotations are held to the PRINTED stories only (W-T22): a daily
+        # column is Void's own prose, not anybody's words.
+        quote_corpus = row_corpus(story_pool)
+
+        def _ground(label, text, extra_rows=()):
+            src = corpus + (" " + row_corpus(extra_rows) if extra_rows else "")
+            kept, cut = ground_text(text, src)
             for sent, miss in cut:
                 print(f"    [ground] {label}: cut {miss}: {sent[:120]}")
+            qsrc = quote_corpus + ("\n\n" + row_corpus(extra_rows) if extra_rows else "")
+            kept, cut = ground_quotes(kept, qsrc)
+            for sent, miss in cut:
+                print(f"    [ground] {label}: cut unsourced quotation {miss}: {sent[:120]}")
             return kept
 
         for i, c in enumerate(covers):
@@ -2441,6 +2550,13 @@ def generate_weekly_digest(editions=None, week_offset=0):
             st["summary"] = _ground(f"recap {i + 1}", st.get("summary") or "")
         if weekly_opinion and weekly_opinion.get("opinion_text"):
             weekly_opinion["opinion_text"] = _ground("editorial", weekly_opinion["opinion_text"])
+        # The departments read the cluster pool, so each is grounded against
+        # its own cluster as well as the week.
+        by_id = {c.get("id"): c for c in clusters}
+        for name, piece in (("tech", tech), ("sports", sports)):
+            if piece and piece.get("text"):
+                own = [by_id[piece["cluster_id"]]] if piece.get("cluster_id") in by_id else []
+                piece["text"] = _ground(name, piece["text"], own)
 
         # The source check: flash-lite reads every sentence against the week
         # (weekly_source_check). The deterministic cut above catches only an
@@ -2500,6 +2616,21 @@ def generate_weekly_digest(editions=None, week_offset=0):
                 tech = None
             else:
                 sports = None
+
+        # LENGTH, AGAIN, ON WHAT SURVIVED (P1-18). `_gen_essay` measured each
+        # piece before grounding and the source check cut it, and nothing
+        # measured it after: a cover could lose half its sentences and ship as
+        # a fragment, or (the old failure) be padded to a brief the sources
+        # could not fill. A short piece ships; a fragment does not; nothing is
+        # ever regenerated to add words.
+        covers, opinions = _after_cut("cover", covers), _after_cut("opinion", opinions)
+        tech = (_after_cut("tech", [tech]) or [None])[0] if tech else None
+        sports = (_after_cut("sports", [sports]) or [None])[0] if sports else None
+        if weekly_opinion and weekly_opinion.get("opinion_text"):
+            why = length_after_cut(weekly_opinion["opinion_text"], ESSAY_SPECS["editorial"])
+            if why:
+                print(f"    [length] editorial dropped: {why}")
+                weekly_opinion = None
         print(f"    {len(covers)} cover(s), {len(opinions)} column(s), "
               f"{len((recap or {}).get('stories') or [])} recap item(s), "
               f"editorial {'kept' if weekly_opinion else 'dropped'} after the check")
@@ -2623,7 +2754,15 @@ def generate_weekly_digest(editions=None, week_offset=0):
                 "voice_label": "Three voices" if audio_chapters else None,
             },
             cover_image=cover_image,
-            total_articles=sum(c.get("source_count", 0) for c in clusters),
+            # ONE article figure. This was the sum of `source_count` over the
+            # cluster read, which is sources per story, not articles, and Issue
+            # #26 printed 2,355 of it in the colophon beside "more than 60,000
+            # articles" scored in The Week in Bias. The colophon's hedge reads
+            # `clusters_truncated`, so a scorer read that hit its own ceiling
+            # prints nothing rather than a floor dressed as a count.
+            total_articles=(bias_stats["total_scored"]
+                            if bias_stats and (not bias_stats.get("truncated") or clusters_truncated)
+                            else None),
             week_days=week_days,
             total_clusters=len(clusters),
             gemini_calls=total_calls,

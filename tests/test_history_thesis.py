@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The History thesis gates, T-01..T-21, each against a planted defect.
+"""The History thesis gates, T-01..T-22, each against a planted defect.
 
 A rule that has only ever been run against clean copy is a comment, not a
 gate (tests/test_history_script.py says the same about H-01..H-11). So this
@@ -655,6 +655,51 @@ def test_t21_coverage():
         assert "T-21" in ids_h(tp, thesis=THESIS_H.replace("scope: holistic", "scope: sweeping"))
         # the pilot model is untouched: no scope, no T-21
         assert "T-21" not in ids(tp)
+
+
+def test_t22_commons_hash_paths():
+    """Four exhibits served nothing on 2026-10-02: hand-typed hash directories
+    (Afrikakonferenz e/e2 for 5/5c, Colonial_Africa_1913_map e/e5 for d/de,
+    MutilatedChildrenFromCongo e/ec for 5/52, Choeungek2 8/8c for 9/9c)."""
+    from pipeline.history import commons
+    # The rule against values Commons itself returned (imageinfo API, 2026-10-02).
+    for url in ("https://upload.wikimedia.org/wikipedia/commons/5/5c/Afrikakonferenz.jpg",
+                "https://upload.wikimedia.org/wikipedia/commons/d/de/Colonial_Africa_1913_map.svg",
+                "https://upload.wikimedia.org/wikipedia/commons/5/52/MutilatedChildrenFromCongo.jpg",
+                "https://upload.wikimedia.org/wikipedia/commons/9/9c/Choeungek2.JPG",
+                "https://upload.wikimedia.org/wikipedia/commons/8/89/Destroying_Chinese_war_junks%2C_by_E._Duncan_%281843%29.jpg"):
+        assert commons.hash_problem(url) is None, url
+        assert commons.upload_url(commons.file_name(url)) == url, (url, commons.upload_url(commons.file_name(url)))
+    assert commons.hash_problem("https://upload.wikimedia.org/wikipedia/commons/e/e2/Afrikakonferenz.jpg")
+    with tempfile.TemporaryDirectory() as t:
+        ok = "https://upload.wikimedia.org/wikipedia/commons/" + "/".join(commons.hash_dirs("Harbour_wall.jpg")) + "/Harbour_wall.jpg"
+        def good(d):
+            d["exhibits"][0]["image"] = ok
+        assert "T-22" not in ids(pathlib.Path(t), ledger=mutated(good))
+        def typed(d):
+            d["exhibits"][0]["image"] = ok.replace("/" + "/".join(commons.hash_dirs("Harbour_wall.jpg")) + "/", "/e/e2/")
+        assert "T-22" in ids(pathlib.Path(t), ledger=mutated(typed))
+        def other_file(d):
+            d["exhibits"][0]["image"] = commons.upload_url("Another_wall.jpg")
+        assert "T-22" in ids(pathlib.Path(t), ledger=mutated(other_file))
+
+
+def test_commons_paths_in_every_ledger_and_served_file():
+    """T-22 over the committed tree: every ledger, every served thesis, the
+    served History JSON. A hash path that is another file's is caught here
+    before a reader sees an empty frame."""
+    from pipeline.history import commons
+    files = sorted((ROOT / "data/history/evidence").glob("*/*.yaml")) \
+        + sorted((ROOT / "data/history/theses").glob("**/*.md")) \
+        + sorted((ROOT / "frontend/build-data/history-theses").glob("*.json")) \
+        + sorted((ROOT / "frontend/public/data").glob("history*.json"))
+    bad = []
+    for f in files:
+        for m in commons.UPLOAD_RE.finditer(f.read_text(encoding="utf-8")):
+            p = commons.hash_problem(m.group(0))
+            if p:
+                bad.append(f"{f.relative_to(ROOT)}: {p}")
+    assert not bad, "\n".join(bad)
 
 
 def test_draft_overlay():

@@ -39,6 +39,7 @@ entirely: that bucket was decommissioned and every object in it is gone.
 Usage:
     python -m pipeline.history.export_history
 """
+import html
 import json
 import os
 import re
@@ -127,6 +128,40 @@ def resolved_image(url, commons: dict) -> dict | None:
     return commons.get(name)
 
 
+_UNKNOWN = "Unknown author"
+
+
+def clean_artist(raw: str) -> str:
+    """A Commons `Artist` field as a reader should see it.
+
+    Wikimedia returns the field as rendered HTML, and its templates leave
+    residue that shipped in 49 credits on 2026-10-02: the "Unknown author"
+    template rendered twice ("Unknown authorUnknown author"), glued to a
+    prefix ("AnonymousUnknown author"), the placeholder "unknown, please edit
+    with correct data.", an escaped ampersand ("Harris &amp; Ewing"), a
+    "(talk)" link, and a talk-page quotation with its bracketed URL. This
+    removes the residue and never adds a name the field does not carry.
+    """
+    s = html.unescape(str(raw or "")).strip()
+    s = re.sub(r"\s*\(talk\)", "", s)
+    # A quotation pasted in after the credit, with its link residue.
+    s = re.sub(r';\s*".*$', "", s)
+    s = re.sub(r"\s*\[?\(?https?://\S+", "", s)
+    s = re.sub(r"(?i)unknown,\s*please edit with correct data\.?", _UNKNOWN, s)
+    s = re.sub(r"(?i)(Unknown author){2,}", _UNKNOWN, s)
+    s = re.sub(r"(?i)^(Anonymous)Unknown author\b", r"\1", s)
+    s = re.sub(r"(?i)^Unknown author or not provided\b", _UNKNOWN, s)
+    s = re.sub(r"(?i)^Unknown author\.(?=\s|,|$)", _UNKNOWN, s)
+    s = re.sub(r"\[\d+\]", "", s)                      # footnote markers
+    s = re.sub(r"(?<=\d)\s*[–—]\s*(?=\d)", "-", s)      # a date range keeps a hyphen
+    s = re.sub(r"\s*[–—]\s*", ", ", s)                  # the house dash ban
+    s = re.sub(r"\s{2,}", " ", s).strip(" ,;")
+    # A sentence's stop before the ", <licence>" join; an abbreviation
+    # ("Ford & West Lith.") is short and keeps its own.
+    s = re.sub(r"(?<=\b[A-Za-z]{5})[A-Za-z]*\.$", lambda m: m.group(0)[:-1], s)
+    return s
+
+
 def _credit(rec: dict, fallback) -> str:
     """One credit line for an image: author, licence, and where it is hosted.
 
@@ -134,13 +169,13 @@ def _credit(rec: dict, fallback) -> str:
     this is a licence condition rather than a nicety. Falls back to the curated
     attribution when Wikimedia reports no author (common on old public-domain
     scans, where there is genuinely no one to name)."""
-    artist = (rec.get("artist") or "").strip()
+    artist = clean_artist(rec.get("artist") or "")
     licence = (rec.get("licence") or "").strip()
     if artist and licence:
         return f"{artist}, {licence}, via Wikimedia Commons"
     if licence:
         return f"{licence}, via Wikimedia Commons"
-    return str(fallback or "via Wikimedia Commons")
+    return clean_artist(fallback) or "via Wikimedia Commons"
 
 
 def build_rows(docs: list[dict]) -> list[dict]:
@@ -252,14 +287,20 @@ def build_rows(docs: list[dict]) -> list[dict]:
         if hero_rec:
             row["hero_image_url"] = hero_rec["url"]
             row["hero_image_attribution"] = _credit(hero_rec, row.get("hero_image_attribution"))
+            # The file's own width, so the page can offer smaller Commons
+            # thumbnails of an unscaled original without asking for one wider
+            # than the file (frontend/app/lib/commonsImage.ts).
+            row["hero_image_width"] = hero_rec.get("original_width")
         elif row["media"]:
             first = row["media"][0]
             row["hero_image_url"] = first["source_url"]
             row["hero_image_attribution"] = first["attribution"]
+            row["hero_image_width"] = (resolved_image(first["source_url"], commons) or {}).get("original_width")
             heroes_substituted.append(slug)
         else:
             row["hero_image_url"] = None
             row["hero_image_attribution"] = None
+            row["hero_image_width"] = None
             heroes_missing.append(slug)
 
         row["connections"] = []

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import GamesHub from "./GamesHub";
-import { pageMetadata } from "../lib/siteMeta";
+import { pageMetadata, sectionTitle } from "../lib/siteMeta";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Games | Void News",
+  title: sectionTitle("Games"),
   description:
-    "Media literacy puzzles from Void News. Cultural subtext, political framing, language patterns. Every text has a tide.",
+    "Games from Void News. UNDERTOW, a daily puzzle in reading subtext, and VOID RUN, an endless runner.",
   path: "/games/",
 });
 

@@ -42,18 +42,23 @@ const OnAirPanel = dynamic(() => import("./OnAirPanel"), { ssr: false });
 export default function MobileNav({ editionBuiltAt = null }: { editionBuiltAt?: string | null } = {}) {
   const [moreSheetOpen, setMoreSheetOpen] = useState(false);
   const pathname = usePathname();
-  const { contentType } = useAudio();
   const route = pathname.replace(BASE_PATH, "") || "/";
   // The /ship "Mission Control" dashboard owns the viewport and has no place for
   // the On Air player chrome — suppress both audio players there. The global
   // MobileTabBar / side panel (site navigation, not audio) stay.
   const onShip = route.startsWith("/ship");
-  // On a void --history event route the daily news brief must NOT show — its
-  // pill physically overlaps the hero/scrubber. Suppress the shared player
-  // UNLESS the reader has loaded the event's own audio via playHistory (which
-  // flips contentType to "history"), in which case the same shared player is
-  // now showing HISTORY audio and should stay. Same per-route gate as /ship.
-  const suppressNewsChrome = route.startsWith("/history") && contentType !== "history";
+  // The pill used to stand down on /history* unless History audio was loaded,
+  // so On Air started on /audio kept playing on a History page with no control
+  // in reach (WCAG 1.4.2, audit 2 F5). On History it now mounts whenever the
+  // reader has started anything: playing, or paused part way (currentTime > 0),
+  // or History's own audio loaded. What it still does not do on History is
+  // advertise today's brief that nobody pressed: the daily edition is offered
+  // to the element on every route, and an idle pill over the archive's
+  // corner was the reason for the old gate. The documented stand downs remain
+  // inside FloatingPlayer: /onair and an open panel.
+  const { contentType, isPlaying, currentTime } = useAudio();
+  const onHistory = route.startsWith("/history");
+  const idleOnHistory = onHistory && contentType !== "history" && !isPlaying && !(currentTime > 0);
 
   const handleMoreTap = useCallback(() => {
     setMoreSheetOpen((v) => !v);
@@ -66,9 +71,9 @@ export default function MobileNav({ editionBuiltAt = null }: { editionBuiltAt?: 
   return (
     <>
       {/* Desktop floating player — global across all routes (incl. /weekly),
-          hidden on mobile via CSS. Suppressed on /ship and on /history when the
-          daily brief (not history audio) would otherwise be shown. */}
-      {AUDIO_ENABLED && !onShip && !suppressNewsChrome && <FloatingPlayer />}
+          hidden on mobile via CSS. Suppressed on /ship, and on /history only
+          while nothing has been started, so whatever plays can be paused. */}
+      {AUDIO_ENABLED && !onShip && !idleOnHistory && <FloatingPlayer />}
       {AUDIO_ENABLED && !onShip && <OnAirPanel />}
       <MobileTabBar onMoreTap={handleMoreTap} moreOpen={moreSheetOpen} />
       <MobileSidePanel open={moreSheetOpen} onClose={handleMoreSheetClose} editionBuiltAt={editionBuiltAt} />

@@ -415,6 +415,60 @@
   margin: 5px auto 0;
 }
 
+/* ---- The state rung ------------------------------------------------------
+   State-affiliated outlets, under the ladder and outside it (CEO decision 1,
+   2026-10-02). A square in plain secondary ink, so it cannot be read as a
+   circle that wandered out of a column, and no bias hue, because the hue is
+   the claim this rung withholds. A hairline above separates it from the
+   anchors, which belong to the ladder. */
+.bench__state {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: var(--bench-max);
+  margin: var(--space-3) auto 0;
+  padding-top: var(--space-2);
+  border-top: 1px dotted var(--border-subtle);
+}
+
+.bench__state-label,
+.bench__state-count {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+  flex-shrink: 0;
+}
+
+.bench__state-count {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+}
+
+.bench__state-marks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--bench-gap-marks, 2px);
+  min-width: 0;
+}
+
+.bench__disc[data-state="true"] {
+  border-radius: 0;
+  color: var(--fg-secondary);
+}
+
+.bench__disc[data-state="true"] .bench__disc-img {
+  border-radius: 0;
+}
+
+.bench__card-dot--state {
+  border-radius: 0;
+  background: var(--fg-secondary);
+}
+
 .bench__anchor {
   font-family: var(--font-structural);
   font-size: var(--text-xs);
@@ -567,6 +621,54 @@
 
 /* The card's one sentence of provenance. Sits under the headline because it is
    about that headline: it is the whole of what we were served. */
+/* The working (P1-13): the engine's arithmetic for this mark, label left in
+   the structural face, figure right in the data face, as a ledger reads. */
+.bench__card-work {
+  margin-top: var(--space-1);
+  border-top: 1px solid var(--divider);
+  padding-top: var(--space-1);
+}
+
+.bench__card-work-list {
+  margin: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.bench__card-work-list > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.bench__card-work-list dt {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  flex-shrink: 0;
+}
+
+.bench__card-work-list dd {
+  margin: 0;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-primary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.bench__card-work-cap {
+  color: var(--fg-tertiary);
+}
+
+.bench__card-work-note {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  color: var(--fg-tertiary);
+}
+
 .bench__card-headline-only {
   margin-top: var(--space-1);
   font-family: var(--font-structural);
@@ -647,4 +749,19 @@
   .bench__card {
     max-width: 220px;
   }
+}
+
+/* ---- Hit area (audit 2 F9) ------------------------------------------------
+   A mark can be drawn as small as 20px, under the 24px a target needs
+   (WCAG 2.5.8). The anchor's hit area grows by 2px each side with a pseudo
+   element, so no mark moves and the column heights, which ARE the counts, are
+   untouched. Where two expanded areas meet, the later mark takes the 2px. */
+.bench__mark {
+  position: relative;
+}
+.bench__mark::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
 }

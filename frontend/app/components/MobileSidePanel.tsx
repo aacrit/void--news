@@ -2,7 +2,7 @@
 
 import { FEED_DISPLAYED } from "../lib/feedConfig";
 import { useState, useEffect, useRef, useCallback } from "react";
-import Link from "next/link";
+import ChromeLink from "./ChromeLink";
 import { usePathname } from "next/navigation";
 import LogoWordmark from "./LogoWordmark";
 import ThemeToggle from "./ThemeToggle";
@@ -58,7 +58,7 @@ interface MobileSidePanelProps {
   editionBuiltAt?: string | null;
 }
 
-type NavIcon = "feed" | "onair" | "history" | "weekly" | "paper" | "listen" | "sources" | "feedback";
+type NavIcon = "feed" | "onair" | "history" | "weekly" | "paper" | "listen" | "sources" | "games" | "feedback";
 
 interface NavItem {
   href: string;
@@ -84,6 +84,7 @@ const MAIN_ITEMS: NavItem[] = [
   { href: "/weekly", label: "Weekly", desc: "The week, in one issue.", accent: "neutral", icon: "weekly", cascade: 3 },
   { href: "/paper", label: "Paper", desc: "Today’s front page, laid out to print.", accent: "neutral", icon: "paper", cascade: 3 },
   { href: "/audio", label: "Audio", desc: "Every programme, one place.", accent: "neutral", icon: "listen", cascade: 3 },
+  { href: "/games", label: "Games", desc: "A daily puzzle and an endless runner.", accent: "neutral", icon: "games", cascade: 3 },
   { href: "/sources", label: "Sources", desc: `${ROSTER_SOURCES_TEXT} sources, ${ROSTER_COUNTRIES} countries.`, accent: "neutral", icon: "sources", cascade: 3 },
   { href: "/ship", label: "Feedback", desc: "Tell us what to build or fix.", accent: "neutral", icon: "feedback", cascade: 3 },
 ];
@@ -159,6 +160,15 @@ function NavGlyph({ icon }: { icon: NavIcon }) {
         <path d="M7 9h5" />
         <path d="M7 13h5" />
         <path d="M7 16h3" />
+      </svg>
+    );
+  }
+  if (icon === "games") {
+    // The Games mascot's head: a diamond with its core dot.
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 3 21 12 12 21 3 12Z" />
+        <circle cx="12" cy="12" r="1.75" fill="currentColor" stroke="none" />
       </svg>
     );
   }
@@ -342,7 +352,7 @@ export default function MobileSidePanel({ open, onClose, editionBuiltAt = null }
   const renderItem = (item: NavItem, cascade: number) => {
     const active = isActive(item.href);
     return (
-      <Link
+      <ChromeLink
         key={item.href}
         href={item.href}
         className={`msp__link${active ? " msp__link--active" : ""}`}
@@ -358,7 +368,7 @@ export default function MobileSidePanel({ open, onClose, editionBuiltAt = null }
           <span className="msp__link-cmd">{item.label}</span>
           <span className="msp__link-desc">{item.desc}</span>
         </span>
-      </Link>
+      </ChromeLink>
     );
   };
 
@@ -402,32 +412,32 @@ export default function MobileSidePanel({ open, onClose, editionBuiltAt = null }
 
           {/* About Void News — quieter utility trio, subordinate to the rows above */}
           <div className="msp__util" data-msp-cascade="4">
-            <Link
+            <ChromeLink
               href="/about"
               className={`msp__util-link${isActive("/about") ? " msp__util-link--active" : ""}`}
               aria-current={isActive("/about") ? "page" : undefined}
               onClick={handleLinkClick}
             >
               About
-            </Link>
+            </ChromeLink>
             <span className="msp__util-sep" aria-hidden="true">&middot;</span>
-            <Link
+            <ChromeLink
               href="/press"
               className={`msp__util-link${isActive("/press") ? " msp__util-link--active" : ""}`}
               aria-current={isActive("/press") ? "page" : undefined}
               onClick={handleLinkClick}
             >
               Press
-            </Link>
+            </ChromeLink>
             <span className="msp__util-sep" aria-hidden="true">&middot;</span>
-            <Link
+            <ChromeLink
               href="/privacy"
               className={`msp__util-link${isActive("/privacy") ? " msp__util-link--active" : ""}`}
               aria-current={isActive("/privacy") ? "page" : undefined}
               onClick={handleLinkClick}
             >
               Privacy
-            </Link>
+            </ChromeLink>
           </div>
         </nav>
 

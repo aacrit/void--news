@@ -56,7 +56,7 @@ const AXES_DATA: {
       "Keyword frequency against curated left/right phrase lists",
       "Positive or negative tone around named political figures",
       "Framing phrases that signal ideological perspective",
-      "Length-adaptive scoring blended with each outlet\u2019s historical baseline",
+      "Each outlet\u2019s historical baseline, moved by the article\u2019s words within a fixed bound",
     ],
   },
   {

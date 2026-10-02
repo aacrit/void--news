@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import ChromeLink from "./ChromeLink";
 import LogoIcon from "./LogoIcon";
 import LogoWordmark from "./LogoWordmark";
 
@@ -41,25 +41,27 @@ export default function Footer({ lastUpdated }: FooterProps) {
             the mobile side panel carries the rest, so the footer links the
             remaining pages for desktop readers. */}
         <nav className="footer-links" aria-label="Site pages">
-          <Link href="/onair" className="footer-link">On Air</Link>
+          <ChromeLink href="/onair" className="footer-link">On Air</ChromeLink>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
-          <Link href="/history" className="footer-link">History</Link>
+          <ChromeLink href="/history" className="footer-link">History</ChromeLink>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
-          <Link href="/weekly" className="footer-link">Weekly</Link>
+          <ChromeLink href="/weekly" className="footer-link">Weekly</ChromeLink>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
-          <Link href="/paper" className="footer-link">Paper</Link>
+          <ChromeLink href="/paper" className="footer-link">Paper</ChromeLink>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
-          <Link href="/audio" className="footer-link">Audio</Link>
+          <ChromeLink href="/audio" className="footer-link">Audio</ChromeLink>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
-          <Link href="/about" className="footer-link">About</Link>
+          <ChromeLink href="/games" className="footer-link">Games</ChromeLink>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
-          <Link href="/sources" className="footer-link">Sources</Link>
+          <ChromeLink href="/about" className="footer-link">About</ChromeLink>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
-          <Link href="/ship" className="footer-link">Feedback</Link>
+          <ChromeLink href="/sources" className="footer-link">Sources</ChromeLink>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
-          <Link href="/press" className="footer-link">Press</Link>
+          <ChromeLink href="/ship" className="footer-link">Feedback</ChromeLink>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
-          <Link href="/privacy" className="footer-link">Privacy</Link>
+          <ChromeLink href="/press" className="footer-link">Press</ChromeLink>
+          <span className="footer-link__sep" aria-hidden="true">&middot;</span>
+          <ChromeLink href="/privacy" className="footer-link">Privacy</ChromeLink>
         </nav>
 
         <p className="footer-built">&copy; 2026 Void News. All rights reserved.</p>
