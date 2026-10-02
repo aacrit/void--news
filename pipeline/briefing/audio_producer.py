@@ -784,10 +784,20 @@ def _write_audio_static(audio_bytes: bytes, edition: str,
     import hashlib
 
     try:
+        from briefing import audio_store as _store
+    except ImportError:  # imported as pipeline.briefing.audio_producer
+        from pipeline.briefing import audio_store as _store  # type: ignore
+    try:
         now = datetime.now(timezone.utc)
         slot = "am" if now.hour < 12 else "pm"
         out_dir = _STATIC_AUDIO_ROOT / edition
         out_dir.mkdir(parents=True, exist_ok=True)
+        if _store.enabled():
+            # Out of git (P2-2): the retained back-catalogue is not in a fresh
+            # checkout, so pull it from the store before the rotation reads the
+            # tree. Best effort: a miss here costs a podcast item, not the show.
+            for p in _store.materialize(_STATIC_AUDIO_ROOT, edition):
+                print(f"  [audio-store] {p}")
         # Rotate: keep only the last 2 date-stamped files (bounds the working tree;
         # the web player uses latest.mp3, so the back-catalogue is not needed here).
         for old in sorted(out_dir.glob("20??-??-??-??.mp3"))[:-2]:
@@ -832,6 +842,17 @@ def _write_audio_static(audio_bytes: bytes, edition: str,
                     side.unlink()
                 except OSError:
                     pass
+        if _store.enabled():
+            # The episode is deployable only once it is in the store with its
+            # hash in the manifest. If the upload fails, publish no URL: the
+            # tree copy will not reach the site after the switch-over.
+            try:
+                _store.record(edition, fname, audio_bytes)
+                _store.prune(edition, {p.name for p in out_dir.glob("20??-??-??-??.mp3")})
+            except Exception as e:
+                print(f"  [error][audio-store] {edition}/{fname} not stored, no audio URL "
+                      f"published: {e}")
+                return None
         fp = hashlib.md5(audio_bytes[:1024]).hexdigest()[:8]
         print(f"  [audio] wrote static /audio/{edition}/{fname} ({len(audio_bytes)//1024} KB)")
         return f"/audio/{edition}/{fname}?v={fp}"

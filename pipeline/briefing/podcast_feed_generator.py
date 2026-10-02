@@ -411,6 +411,16 @@ def generate_podcast_feeds(editions: list[str] | None = None) -> dict[str, str]:
     PUBLIC_DIR.mkdir(parents=True, exist_ok=True)
     results: dict[str, str] = {}
 
+    # Out of git (P2-2, VOID_AUDIO_STORE=release): a fresh checkout holds no MP3,
+    # so pull the stored episodes into the tree before deciding which are playable.
+    try:
+        from briefing import audio_store as _store
+    except ImportError:
+        from pipeline.briefing import audio_store as _store  # type: ignore
+    if _store.enabled():
+        for p in _store.materialize(AUDIO_DIR):
+            print(f"  [podcast][audio-store] {p}")
+
     for edition in editions:
         try:
             if not any((AUDIO_DIR / edition).glob("*.mp3")):
