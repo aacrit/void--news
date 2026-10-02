@@ -2,8 +2,9 @@
 
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
-import { DAILY_UNDERTOW, getAxisImage } from "./data";
+import { ALL_CHALLENGES } from "./data";
 import type { Artifact } from "./data";
+import { rotationIndex, utcDateLabel } from "../daily";
 import ArtifactCard from "./components/ArtifactCard";
 import AxisBar from "./components/AxisBar";
 import ShareButton from "./components/ShareButton";
@@ -63,7 +64,12 @@ function getFeedbackMessage(attemptNumber: number, correctCount: number): string
 }
 
 export default function UndertowGame() {
-  const challenge = DAILY_UNDERTOW;
+  // Today's puzzle is picked in the browser after mount, by UTC day. The
+  // static HTML was rendered on build day; picking at module load would
+  // hydrate a different puzzle than the server rendered (React #418).
+  const [index, setIndex] = useState<number | null>(null);
+  const [today, setToday] = useState("");
+  const challenge = ALL_CHALLENGES[index ?? 0];
   const [phase, setPhase] = useState<Phase>("playing");
   const [attempt, setAttempt] = useState(1);
   const [feedbackMsg, setFeedbackMsg] = useState("");
@@ -79,7 +85,11 @@ export default function UndertowGame() {
   // Axis intro animation: staged entrance
   useEffect(() => {
     // Small delay to ensure DOM is painted before triggering CSS transitions
-    const timer = setTimeout(() => setMounted(true), 50);
+    const timer = setTimeout(() => {
+      setIndex(rotationIndex(ALL_CHALLENGES.length));
+      setToday(utcDateLabel());
+      setMounted(true);
+    }, 50);
     return () => clearTimeout(timer);
   }, []);
 
@@ -250,29 +260,18 @@ export default function UndertowGame() {
   // (Node SSR vs browser), which trips React #418 (hydration mismatch) in
   // production minified builds. UAT 2026-05-13 P0-9.
   const dateStr = mounted
-    ? new Date(challenge.date + "T00:00:00").toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
-    : " ";
+    ? today
+    :" ";
 
   const attemptsRemaining = MAX_ATTEMPTS - attempt + 1;
-
-  // Resolve background image for this axis
-  const axisImage = getAxisImage(challenge.axis.left_pole);
 
   return (
     <div className={`undertow-page${mounted ? " undertow-page--mounted" : ""}${phase === "reveal" ? " undertow-page--revealed" : ""}`}>
       {/* Layer 1: Background image — heavily blurred, dark overlay */}
       <div className="undertow-page__bg" ref={bgRef} aria-hidden="true">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={axisImage.url}
-          alt=""
-          className="undertow-page__bg-img"
-          loading="eager"
-        />
+        {/* The per-axis Unsplash photos this layer carried all answered 404
+            (2026-10-02), and their credit lines named photographs nobody
+            could see. Both are gone; the overlay stays. */}
         <div className="undertow-page__bg-overlay" />
       </div>
 
@@ -317,7 +316,10 @@ export default function UndertowGame() {
         <header className="undertow-page__header">
           <h1 className="undertow-page__title">UNDERTOW</h1>
           <p className="undertow-page__meta">
-            #{challenge.id} &middot; {dateStr}
+            No. {challenge.id} of {ALL_CHALLENGES.length} &middot; {dateStr}
+          </p>
+          <p className="undertow-page__meta undertow-page__rotation">
+            {ALL_CHALLENGES.length} puzzles, one a day, in a fixed order. The set repeats.
           </p>
         </header>
 
@@ -482,18 +484,7 @@ export default function UndertowGame() {
               confidencePick={confidencePick}
               confidenceResult={confidenceResult}
             />
-
-            <p className="undertow-page__credit" aria-hidden="true">
-              {axisImage.credit}
-            </p>
           </div>
-        )}
-
-        {/* Photo credit (playing phase only — reveal has its own) */}
-        {phase !== "reveal" && (
-          <p className="undertow-page__credit" aria-hidden="true">
-            {axisImage.credit}
-          </p>
         )}
       </div>
     </div>
