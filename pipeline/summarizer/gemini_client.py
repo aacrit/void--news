@@ -22,9 +22,12 @@ Environment:
     GEMINI_API_KEY — required. Get one free at https://aistudio.google.com/apikey
 """
 
+import collections
 import json
 import os
+import sys
 import time
+import types as _pytypes
 
 # SDK is optional — pipeline works without it
 try:
@@ -67,6 +70,57 @@ _MIN_INTERVAL: float = float(os.environ.get("GEMINI_MIN_INTERVAL", "") or 7.0)
 # request quota. Cap set above that so full top-50 coverage is never truncated.
 _MAX_CALLS_PER_RUN: int = 90
 _call_count: int = 0
+
+# THE METER (P2-12, rev 85). `_call_count` is a BUDGET, not a meter: it skips
+# every call made with count_call=False (editorial triage, and anything else that
+# opts out), counts a logical call once however many times it retries, and does
+# not say which model was hit. The binding constraint is per MODEL and per
+# REQUEST: gemini-2.5-flash allows 20 requests a day, and a JSON or 503 retry is
+# a second request against it. So every request that leaves this module is
+# counted here, by model, whatever the caller asked for, and main.py writes the
+# totals into pipeline_runs.llm_metrics, from where engine_health puts them in
+# engine.json and tests/test_engine_health.py gates the flash count.
+#
+# The meter lives in sys.modules rather than in this module's globals because
+# this file is imported under two names (`summarizer.gemini_client` and
+# `pipeline.summarizer.gemini_client`); two copies of a counter would each be
+# right and the sum would be wrong.
+_METER = sys.modules.setdefault("void_llm_meter", _pytypes.ModuleType("void_llm_meter"))
+if not hasattr(_METER, "requests"):
+    _METER.requests = collections.Counter()   # every generate_content sent, by model
+    _METER.calls = collections.Counter()      # logical calls (retries folded), by model
+    _METER.uncounted = collections.Counter()  # logical calls made with count_call=False
+
+
+def _meter_call(model: str, count_call: bool) -> None:
+    _METER.calls[model] += 1
+    if not count_call:
+        _METER.uncounted[model] += 1
+
+
+def _send(client, model: str, **kwargs):
+    """The one place a request leaves for the API, so the meter cannot be skipped."""
+    _METER.requests[model] += 1
+    return client.models.generate_content(model=model, **kwargs)
+
+
+def get_usage() -> dict:
+    """Requests and logical calls this process sent, per model."""
+    return {
+        "requests_by_model": dict(_METER.requests),
+        "calls_by_model": dict(_METER.calls),
+        "uncounted_calls_by_model": dict(_METER.uncounted),
+        "flash_model": _FLASH_MODEL,
+        "lite_model": _MODEL,
+    }
+
+
+def reset_usage() -> None:
+    """Tests only."""
+    _METER.requests.clear()
+    _METER.calls.clear()
+    _METER.uncounted.clear()
+
 
 # Persistent failure flag — set on billing/spending-cap errors to skip all
 # subsequent calls in the same run (avoids wasting minutes on doomed retries).
@@ -213,6 +267,7 @@ def generate_json(
     # not burn additional budget.
     if count_call:
         _call_count += 1
+    _meter_call(use_model, count_call)
 
     # `attempt` counts model/JSON retries (bounded by max_retries, quota-costing).
     # `transport_retries` counts transient transport-drop retries separately —
@@ -223,8 +278,8 @@ def generate_json(
     while True:
         try:
             _rate_limit()
-            response = client.models.generate_content(
-                model=use_model,
+            response = _send(
+                client, use_model,
                 contents=prompt,
                 config=config,
             )
@@ -352,14 +407,13 @@ def generate_text(
     )
     if count_call:
         _call_count += 1
+    _meter_call(use_model, count_call)
 
     transport_retries = 0
     while True:
         try:
             _rate_limit()
-            response = client.models.generate_content(
-                model=use_model, contents=prompt, config=config,
-            )
+            response = _send(client, use_model, contents=prompt, config=config)
             if not response.text:
                 print("  [warn] Gemini returned empty text response")
                 return None

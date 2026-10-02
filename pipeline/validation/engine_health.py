@@ -43,6 +43,21 @@ FULL_SHARE_FLOOR = 0.55
 
 UNPLACED = ("unrated", "varies")
 
+# RUNTIME (P2-1, rev 85). The pipeline's own wall clock (main() start to finish,
+# not the workflow's setup and export around it), from pipeline_runs. Runs
+# #380-#385 took 84 to 124 minutes and were creeping; the Actions job dies at
+# 240. A run past RUNTIME_FAIL_MINUTES fails the floor; past RUNTIME_WARN_MINUTES
+# it is printed as a warning so the creep is seen before it is an outage.
+RUNTIME_WARN_MINUTES = 110
+RUNTIME_FAIL_MINUTES = 150
+
+# THE FLASH METER (P2-12, rev 85). gemini-2.5-flash allows 20 requests a day on
+# the free tier, and a JSON or 503 retry is a request. The gate fails a run that
+# sent more than the cap and warns two short of it, because the cap is per DAY
+# and a manual refresh-brief on the same day spends from the same 20.
+FLASH_DAILY_CAP = 20
+FLASH_WARN = 18
+
 
 def feed_class(rss_url: str | None) -> str:
     return "google_news" if rss_url and "news.google.com" in rss_url else "direct"
@@ -60,10 +75,65 @@ def _class_stats(rows: list[tuple[int, str]]) -> dict:
     }
 
 
+def _latest_run(conn: sqlite3.Connection) -> dict | None:
+    """The newest completed pipeline run that recorded llm_metrics, or None.
+    Tolerates a DB with no pipeline_runs table (fixtures, old snapshots)."""
+    try:
+        row = conn.execute(
+            """select id, started_at, completed_at, duration_seconds, llm_metrics
+                 from pipeline_runs
+                where status = 'completed' and llm_metrics is not null
+                order by completed_at desc limit 1""").fetchone()
+    except sqlite3.Error:
+        return None
+    if not row:
+        return None
+    try:
+        metrics = json.loads(row[4]) if isinstance(row[4], str) else (row[4] or {})
+    except ValueError:
+        metrics = {}
+    return {"id": row[0], "started_at": row[1], "completed_at": row[2],
+            "duration_seconds": row[3],
+            "metrics": metrics if isinstance(metrics, dict) else {}}
+
+
+def runtime_and_llm(conn: sqlite3.Connection) -> dict:
+    """The `runtime` and `llm` blocks of engine.json. Empty when no run recorded
+    them; a run from before rev 85 has a total and no phases or meter."""
+    run = _latest_run(conn)
+    if not run:
+        return {}
+    m = run["metrics"]
+    try:
+        total = round(float(run["duration_seconds"]) / 60.0, 1)
+    except (TypeError, ValueError):
+        total = None
+    out = {"runtime": {
+        "run_id": run["id"], "completed_at": run["completed_at"],
+        "total_minutes": total,
+        "phases_minutes": {k: round(float(v) / 60.0, 1)
+                           for k, v in (m.get("phases") or {}).items()},
+        "warn_minutes": RUNTIME_WARN_MINUTES, "fail_minutes": RUNTIME_FAIL_MINUTES,
+    }}
+    usage = m.get("gemini_usage")
+    if isinstance(usage, dict) and usage:
+        req = usage.get("requests_by_model") or {}
+        flash = usage.get("flash_model") or "gemini-2.5-flash"
+        out["llm"] = {
+            "requests_by_model": req,
+            "calls_by_model": usage.get("calls_by_model") or {},
+            "uncounted_calls_by_model": usage.get("uncounted_calls_by_model") or {},
+            "flash_model": flash,
+            "flash_requests": int(req.get(flash, 0)),
+            "flash_daily_cap": FLASH_DAILY_CAP, "flash_warn": FLASH_WARN,
+        }
+    return out
+
+
 def compute(conn: sqlite3.Connection) -> dict:
     newest = conn.execute("select max(fetched_at) from articles").fetchone()[0]
     if not newest:
-        return {"run": None}
+        return {"run": None, **runtime_and_llm(conn)}
     rows = conn.execute(
         f"""select coalesce(a.word_count, 0), s.rss_url, s.id,
                    s.political_lean_baseline, b.rationale
@@ -117,6 +187,7 @@ def compute(conn: sqlite3.Connection) -> dict:
         # Rated outlets only: an unplaced outlet has no baseline for the words to
         # move away from, and its articles are handled by the ±24 path instead.
         "text_movement_rated": movement,
+        **runtime_and_llm(conn),
     }
 
 
@@ -133,6 +204,35 @@ def problems(health: dict) -> list[str]:
     m = health.get("text_movement_rated") or {}
     if not m.get("articles"):
         out.append("no rated article carries a measured text_shift")
+    out += budget_problems(health)
+    return out
+
+
+def budget_problems(health: dict) -> list[str]:
+    """Runtime and flash-meter failures. Absent blocks (exports from before
+    rev 85) are not failures: there is nothing to judge."""
+    out = []
+    total = (health.get("runtime") or {}).get("total_minutes")
+    if isinstance(total, (int, float)) and total > RUNTIME_FAIL_MINUTES:
+        out.append(f"the pipeline ran {total:.0f} minutes, over the "
+                   f"{RUNTIME_FAIL_MINUTES}-minute ceiling: read runtime.phases_minutes")
+    flash = (health.get("llm") or {}).get("flash_requests")
+    if isinstance(flash, int) and flash > FLASH_DAILY_CAP:
+        out.append(f"{flash} requests to the flash model in one run, over its "
+                   f"{FLASH_DAILY_CAP}-a-day free cap")
+    return out
+
+
+def budget_warnings(health: dict) -> list[str]:
+    out = []
+    total = (health.get("runtime") or {}).get("total_minutes")
+    if isinstance(total, (int, float)) and RUNTIME_WARN_MINUTES < total <= RUNTIME_FAIL_MINUTES:
+        out.append(f"the pipeline ran {total:.0f} minutes (warn above "
+                   f"{RUNTIME_WARN_MINUTES}, fail above {RUNTIME_FAIL_MINUTES})")
+    flash = (health.get("llm") or {}).get("flash_requests")
+    if isinstance(flash, int) and FLASH_WARN < flash <= FLASH_DAILY_CAP:
+        out.append(f"{flash} flash requests this run (warn above {FLASH_WARN}, "
+                   f"cap {FLASH_DAILY_CAP} a day)")
     return out
 
 
@@ -160,4 +260,8 @@ def format_summary(health: dict) -> str:
             f"google_news {g.get('articles', 0)} / {g.get('sources', 0)}, "
             f"median {g.get('median_words')}; outlet-only {s.get('outlet_only_share', 0):.1%}; "
             f"rated text_shift mean |{m.get('mean_abs')}| over {m.get('articles', 0)}, "
-            f"zero {m.get('zero_share', 0):.1%}")
+            f"zero {m.get('zero_share', 0):.1%}"
+            + (f"; runtime {health['runtime'].get('total_minutes')} min"
+               if health.get("runtime") else "")
+            + (f"; flash requests {health['llm'].get('flash_requests')}"
+               if health.get("llm") else ""))
