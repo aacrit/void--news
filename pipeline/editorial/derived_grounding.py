@@ -648,3 +648,90 @@ def ground_brief(text: str, clusters: list[dict[str, Any]],
 def log_cuts(cuts: Iterable[Cut], prefix: str = "  [grounding]") -> None:
     for c in cuts:
         print(f"{prefix} {c}")
+
+
+# ---------------------------------------------------------------------------
+# The card itself, at write time (Stage 2, 8d.3)
+# ---------------------------------------------------------------------------
+_REPAIRABLE = ("E-13", "E-14", "E-16")
+
+
+def repair_card(summary: str, sources=None, *, title: str = "",
+                removed_text: str | None = None,
+                kept_text: str | None = None) -> tuple[str, list[Cut]]:
+    """A card summary with every sentence E-13, E-14 or E-16 fails CUT.
+
+    A sentence goes when it opens by changing the subject ("Separately,"),
+    with the sentences after it until one names something the card named
+    before the shift. With `sources` (the text the card was WRITTEN from, or a
+    grounding index), a sentence also goes when it states a number no source
+    carries or one the sources attach to another name, or quotes words no
+    source says (or punctuates). Pass `sources` only when it is complete: a
+    card cached from an earlier run was written from bodies step 10 has since
+    cut, and an absence there means "cannot confirm", never "invented". With
+    `removed_text` (the members a coherence pass removed) and `kept_text`, a
+    sentence whose names appear in the removed members and in none of the
+    kept ones goes too: the Kanye West paragraph on the Putin card. That is
+    positive evidence of where the sentence came from, so it holds however
+    much of the kept bodies survives.
+
+    Deterministic, so a failing card costs no model call: regeneration is the
+    fallback for what a cut cannot fix (a headline), never the first resort.
+    """
+    if not summary:
+        return summary, []
+    ev = std._evidence(sources) if sources else None
+    decimals = getattr(ev, "decimals", True)
+    removed = _norm_names(removed_text) if removed_text else None
+    kept_folded = _norm_names(kept_text) if kept_text else ""
+    seen: list[str] = list(G.proper_names(title or ""))
+    before = _entities(title or "")
+    shifted = False
+    kept: list[str] = []
+    cuts: list[Cut] = []
+    for sent in _sentences(summary):
+        names = list(G.proper_names(sent))
+        for m in std._DEFINITE.finditer(sent):
+            for nm in reversed(seen):
+                if nm.split(" ")[0] == m.group(1) and nm not in names:
+                    names.append(nm)
+                    break
+        why = None
+        if std.TOPIC_SHIFT_RE.match(sent):
+            why, shifted = "E-16 opens on another story", True
+        elif shifted:
+            if _entities(sent) & before:
+                shifted = False
+            else:
+                why = "E-16 continues the other story"
+        if not why and ev is not None:
+            for n in sorted(std._numbers(sent)):
+                if not ev.has_number(n):
+                    if "." in n and not decimals:
+                        continue
+                    why = f"E-13 {n} is in no source"
+                    break
+                rival = std._misattached(ev, n, names)
+                if rival:
+                    why = f"E-13 {n} is attached to {rival!r} in no source"
+                    break
+        if not why and ev is not None:
+            found = std.e14_quotes_are_verbatim("", sent, ev)
+            if found:
+                why = "E-14 " + found[0].message[:80]
+        if not why and removed:
+            multi = [" ".join(_norm_names(n).split()[-2:]) for n in G.proper_names(sent)
+                     if not all(t in _TITLE_WORDS for t in n.split())]
+            # A name counts on its last two words ("NATO Secretary General
+            # Mark Rutte" for "Mark Rutte").
+            if multi and any(m in removed for m in multi) \
+                    and not any(m in kept_folded for m in multi):
+                why = "names only members the coherence pass removed"
+        if why:
+            cuts.append(Cut("card", sent, why))
+        else:
+            kept.append(sent)
+            if not shifted:
+                before |= _entities(sent)
+        seen.extend(G.proper_names(sent))
+    return " ".join(kept), cuts

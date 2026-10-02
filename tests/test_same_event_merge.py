@@ -17,6 +17,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "pipeline"))
 
 from editorial.same_event import (  # noqa: E402
+    entity_outliers,
     MODAL_MIN_STEMS,
     ambient_stems,
     incoherent_members,
@@ -371,6 +372,92 @@ def check_coherence() -> int:
     return failed
 
 
+# rev 85, P1-5. The Putin card of 2026-10-01, from its own members. The
+# headline pass could not touch it: ten Kanye headlines out of 33 made "kanye"
+# modal and the pass reported "no core". The entity pass anchors on the card's
+# headline instead, and must cut the concert story while keeping every member
+# about the warning, including one whose headline never says "Putin".
+PUTIN_TITLE = "Putin Warns Russia Will Use All Weapons if Directly Attacked"
+PUTIN_MEMBERS = [
+    ("Putin Says Russia Will Consider Using Full Range of Weapons in Its Arsenal if Kaliningrad Is Threatened",
+     "He also said it was impossible to be sure that weapons of mass destruction would never be used, President Vladimir Putin told the Valdai forum."),
+    ("Putin says 'all weapons at disposal' if there's an attack on Russia",
+     "The president said it was a warning if any countries were considering an attack on Russia, Vladimir Putin told the Valdai Discussion Club."),
+    ("Bulgarian PM Warns Putin Holds a 'Nuclear Trump Card'",
+     "Responding to Russian threats to use nuclear weapons in defense of Kaliningrad, Mark Rutte condemned Moscow's rhetoric and said NATO would remain undeterred."),
+    ("Russia issues threat over Kaliningrad",
+     "Russia has warned that an attack on Kaliningrad would be met with every weapon, the Kremlin said after Putin spoke."),
+    ("Kanye West's 2 stadium concerts in Russia officially canceled",
+     "US rapper had been scheduled to perform at St. Petersburg's Gazprom Arena on Oct. 10-11."),
+    ("Kanye West's Russia shows officially cancelled after weeks of uncertainty",
+     "Chaos has surrounded the St Petersburg shows since the Gazprom Arena said it had not agreed to host the rapper."),
+    ("Kanye West's Russian concerts have been cancelled, organisers say",
+     "The organisers, Say Agency, did not give a reason for the cancellation at Gazprom Arena."),
+    ("Russian police investigate organizer of canceled Kanye West concerts",
+     "Police are looking into possible fraud involving Moscow-based Say Agency, which was organizing concerts in Russia for rapper Kanye West, also known as Ye."),
+]
+PUTIN_CUT = {4, 5, 6, 7}
+
+# Control: an alliance is the subject of the stories that name it. Treating
+# NATO as broad geography cut fifteen of thirty-seven members of the NATO
+# warning card in the first draft of this pass.
+NATO_TITLE = "Russia Issues Nuclear Warning to NATO; EU Commissioner Cites Article 5"
+NATO_MEMBERS = [
+    ("Russia sends nuclear warning to NATO as tensions rise in the Baltic",
+     "Russia sent a document to NATO stating its readiness to use its arsenal if the alliance isolates Kaliningrad, the Kremlin said."),
+    ("NATO responds to Russia's nuclear threats",
+     "NATO Secretary General Mark Rutte said the alliance would defend every inch of NATO territory."),
+    ("No imminent threat to NATO territory from Russia, Rutte says",
+     "NATO chief Mark Rutte told Euronews there was no imminent threat to NATO territory."),
+    ("EU commissioner says strike on arms factory should trigger Article 5",
+     "EU Defence Commissioner Andrius Kubilius said a Russian strike on a European arms factory should trigger Article 5 of the NATO treaty."),
+    ("Lithuania calls for calm over Kaliningrad",
+     "Lithuanian President Gitanas Nauseda said NATO was ready to defend the Baltic states."),
+]
+
+
+def check_entity_coherence() -> int:
+    failed = 0
+    out, bag = entity_outliers(PUTIN_MEMBERS, PUTIN_TITLE)
+    ok = set(out) == PUTIN_CUT
+    failed += 0 if ok else 1
+    print(f"  [{'ok  ' if ok else 'FAIL'}] Putin card: the Kanye concert members "
+          f"are cut, the warning kept; want {sorted(PUTIN_CUT)} got {sorted(out)} "
+          f"bag={sorted(bag)[:6]}")
+    out, bag = entity_outliers(NATO_MEMBERS, NATO_TITLE)
+    ok = not out
+    failed += 0 if ok else 1
+    print(f"  [{'ok  ' if ok else 'FAIL'}] NATO card: nothing cut when every member "
+          f"names the alliance; got {sorted(out)}")
+    # The card text the coherence pass leaves behind: the summary is kept (no
+    # model call) and the card repair cuts what only the removed members said.
+    from editorial.derived_grounding import repair_card
+    summary = ("Russian President Vladimir Putin stated that Russia would use all "
+               "weapons at its disposal if attacked. Putin specified this could mean "
+               "Kaliningrad. Separately, two sold-out concerts by Kanye West in St. "
+               "Petersburg, scheduled for October 10 and 11, were officially canceled. "
+               "Gazprom Arena stated it never signed a rental agreement with the "
+               "promoter, Say Agency. NATO Secretary General Mark Rutte condemned "
+               "Russia's nuclear rhetoric.")
+    kept = "\n".join(f"{t}\n{s}" for i, (t, s) in enumerate(PUTIN_MEMBERS)
+                     if i not in PUTIN_CUT)
+    removed = "\n".join(f"{t}\n{s}" for i, (t, s) in enumerate(PUTIN_MEMBERS)
+                        if i in PUTIN_CUT)
+    # No topic-shift opener this time: the removed members alone must carry it.
+    plain = summary.replace("Separately, two", "Two")
+    text, cuts = repair_card(plain, None, title=PUTIN_TITLE,
+                             removed_text=removed, kept_text=kept)
+    ok = "Kanye" not in text and "Gazprom" not in text and "Rutte" in text \
+        and "Kaliningrad" in text and "Valdai" not in [c.sentence for c in cuts]
+    text2, _ = repair_card(summary, None, title=PUTIN_TITLE)
+    ok = ok and "Kanye" not in text2 and "Gazprom" not in text2
+    failed += 0 if ok else 1
+    print(f"  [{'ok  ' if ok else 'FAIL'}] the card repair cuts the concert "
+          f"paragraph and keeps the rest ({[c.reason for c in cuts]})")
+    print()
+    return failed
+
+
 def main() -> int:
     failed = 0
     for name, a, b, ta, tb, mast, want in CASES:
@@ -387,6 +474,7 @@ def main() -> int:
     failed += check_demonyms()
     failed += check_bench()
     failed += check_coherence()
+    failed += check_entity_coherence()
     return 1 if failed else 0
 
 
