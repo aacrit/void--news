@@ -342,6 +342,96 @@ def main():
     check("an essay prompt carries the drop list",
           bool(seen) and all(w in seen[0] for w in ("robust", "underscore", "multifaceted")))
 
+    # ── WG-12  A short sourced piece is not padded ─────────────────────────
+    # Issue #26's Greenland cover was asked for 800-1200 words from ONE printed
+    # story of about 450 words. The writer reached past the story to fill the
+    # brief, and seventeen of its claims had to be cut. The brief is sized to
+    # the printed rows now, and a piece inside that brief is not regenerated.
+    print("\nWG-12  a short sourced piece is sized to its sources, and not padded")
+    one_row = {
+        "id": "c-gl", "printed_on": "2026-09-19", "title": "Denmark, Greenland Affirm Sovereignty",
+        "summary": " ".join(["Denmark and Greenland said the agreement respects sovereignty."] * 20),
+        "consensus_points": ["The agreement is expected to be signed next week."],
+        "divergence_points": [], "source_count": 13, "first_published": "2026-09-19T08:00:00+00:00",
+    }
+    thread = {"lead_cluster": one_row, "clusters": [one_row], "title": one_row["title"],
+              "cumulative_sources": 13, "daily_appearances": 1}
+    words = g.source_words([one_row])
+    prompts, replies = [], []
+
+    def fake_text(prompt, system_instruction=None, **kw):
+        prompts.append(prompt)
+        return replies[min(len(prompts) - 1, len(replies) - 1)]
+
+    short_essay = "Greenland Holds Its Line\n\n" + " ".join(
+        ["Denmark and Greenland said the agreement respects sovereignty."] * 22)
+    real_text, real_sleep = g._smart_generate_text, g.time.sleep
+    g._smart_generate_text, g.time.sleep = fake_text, (lambda *_: None)
+    try:
+        replies[:] = [short_essay]
+        covers, calls = g._generate_cover_stories([thread], "world")
+    finally:
+        g._smart_generate_text, g.time.sleep = real_text, real_sleep
+    spec = covers[0].get("_spec") if covers else None
+    check("the cover brief is sized to the printed words, not 800-1200",
+          bool(spec) and spec["max_words"] <= words and "800-1200" not in prompts[0],
+          f"{spec} from {words} source words")
+    check("the writer is handed the consensus points, not just title and summary",
+          "expected to be signed next week" in prompts[0])
+    check("a piece inside its sized brief is not regenerated to add words", calls == 1, f"{calls}")
+    check("a thread with almost nothing printed gets no cover and spends no call",
+          g.sized_spec(g.ESSAY_SPECS["cover"], 40) is None)
+
+    # ── WG-13  Length is checked AFTER the cut ─────────────────────────────
+    print("\nWG-13  length is measured on what survived grounding and the source check")
+    sized = {"min_words": 270, "max_words": 450}
+    fragment = {"text": "One sentence survived the source check.", "_spec": sized}
+    short_ok = {"text": " ".join(["A sourced sentence stands here."] * 30), "_spec": sized}
+    kept = g._after_cut("cover", [fragment, short_ok])
+    check("a piece cut to a fragment does not ship", fragment not in kept)
+    check("a piece cut short, but past the fragment line, ships short", short_ok in kept)
+    src = (ROOT / "pipeline" / "briefing" / "weekly_digest_generator.py").read_text()
+    run = src[src.index("def generate_weekly_digest"):]
+    check("the length check runs after the source check, in the run itself",
+          run.index('_after_cut("cover", covers)') > run.index("check_piece(c.get(\"text\")")
+          and run.index("check_piece(c.get(\"text\")") > run.index("ground_text(text, src)"))
+    check("an unsourced quotation is cut at write time, before the source check",
+          run.index("ground_quotes(kept, qsrc)") < run.index("check_piece(c.get(\"text\")"))
+
+    # ── WG-14  A kill-list sentence is cut, and the piece is kept ──────────
+    print("\nWG-14  the kill list cuts the sentence, not the piece")
+    body = " ".join(["The council met on Tuesday and voted."] * 12)
+    slop_essay = ("A Vote in the Council\n\n" + body
+                  + " This incident underscores the vulnerability of the council. " + body)
+    real_text = g._smart_generate_text
+    g._smart_generate_text = lambda prompt, system_instruction=None, **kw: slop_essay
+    try:
+        r, n = g._gen_essay("p", "SYSTEM", spec={"min_words": 50, "max_words": 200}, label="probe")
+    finally:
+        g._smart_generate_text = real_text
+    check("the piece ships", r is not None)
+    check("without the sentence that carried the term",
+          r is not None and "underscores" not in r["text"] and r["text"].count("The council met") == 24)
+    check("the department switch is OFF by default (decision 5)", g.WEEKLY_DEPARTMENTS is False)
+    check("a lowercase taxonomy label nominates a tech cluster",
+          g._category({"category": "science"}) in g.TECH_CATEGORIES
+          and g._category({"category": "Culture"}) in g.SPORTS_CATEGORIES)
+
+    # ── WG-15  The audio band floats with the sourced words ────────────────
+    print("\nWG-15  The Argument's band floats with the issue's sourced words, floor 14")
+    from briefing.weekly_script import target_minutes, FLOOR_MINUTES, TARGET_MINUTES
+    from briefing import weekly_rundown
+    thin = {"opinion_text": "word " * 1500, "edition": "world", "opinions": []}
+    full = {"opinion_text": "word " * 6000, "edition": "world", "opinions": []}
+    check("a full issue keeps 18-22", target_minutes(full) == TARGET_MINUTES, str(target_minutes(full)))
+    lo, hi = target_minutes(thin)
+    check("a thin issue floats down, and never under 14",
+          lo == FLOOR_MINUTES and hi < TARGET_MINUTES[1], f"{(lo, hi)}")
+    asked = []
+    weekly_rundown.generate(thin, lambda p, system_instruction=None: asked.append(system_instruction) or None)
+    check("the rundown prompt asks for the floated band, not 18-22",
+          bool(asked) and f"{lo:.0f} to {hi:.0f} minutes" in asked[0], (asked[0] if asked else "")[:0])
+
     # ── WG-09  A week with nothing in it stores nothing, and says so ───────
     print("\nWG-09  an empty week reports zero issues stored")
     stored = g.generate_weekly_digest(editions=["world"], week_offset=60)
