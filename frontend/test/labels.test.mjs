@@ -220,9 +220,9 @@ for (const [L, C, R, want, why] of [
   [14, 39, 9, "Balanced", "centre holds the mass and the wings are even"],
   /* The fall-through cases. A first draft of this rule called the next one
      Balanced, on a story with NO right-of-centre coverage at all. */
-  [3, 4, 0, "7 measured", "zero right-of-centre coverage is not balance"],
-  [1, 5, 0, "6 measured", "one wing article is not a roster"],
-  [2, 0, 1, "3 measured", "too little coverage to say anything"],
+  [3, 4, 0, "7 placed", "zero right-of-centre coverage is not balance"],
+  [1, 5, 0, "6 placed", "one wing article is not a roster"],
+  [2, 0, 1, "3 placed", "too little coverage to say anything"],
 ]) {
   check(`roster ${L}/${C}/${R} reads "${want}" (${why})`, shape(L, C, R) === want,
     `got "${shape(L, C, R)}"`);
@@ -343,6 +343,22 @@ check("one wing article does NOT read a direction",
     JSON.stringify(mean));
 }
 
+/* Decision 2 by example: the word and its count, from one set of counts. */
+{
+  const s = { leanLeftCount: 4, leanCenterCount: 3, leanRightCount: 15 };
+  check("the card's count reads the CEO's example",
+    bias.leanShapeLabel(s) === "Leans right"
+      && bias.leanShapeCount(s)?.full === "15 of 22 outlets right of centre"
+      && bias.leanShapeCount(s)?.short === "15 of 22 right",
+    JSON.stringify(bias.leanShapeCount(s)));
+  check("a thin roster prints N placed, never N measured",
+    bias.leanShapeLabel({ leanLeftCount: 1, leanCenterCount: 2, leanRightCount: 0 }) === "3 placed");
+  check("the legend defines N placed", bias.LEAN_SHAPE_LEGEND.some((t) => t.term === "N placed")
+    && !bias.LEAN_SHAPE_LEGEND.some((t) => /measured/.test(t.term)));
+  check("the Sigil prints the count from the same rule",
+    /leanShapeCount\(data\.biasSpread\)/.test(readFileSync(join(ROOT, "app/components/Sigil.tsx"), "utf8")));
+}
+
 const KEYS = ["far_left", "left", "center_left", "center", "center_right", "right", "far_right"];
 const FEED = join(ROOT, "build-data/feed.json");
 const DD = join(ROOT, "public/data/deepdive");
@@ -388,6 +404,22 @@ if (existsSync(FEED)) {
     check(`${c.id.slice(0, 8)}: the card's seven counts are the Bench's columns`,
       bench.leanBuckets.join("/") === card.leanBuckets.join("/"),
       `card ${card.leanBuckets.join("/")} vs Bench ${bench.leanBuckets.join("/")}`);
+    /* CEO decision 2: the count printed under the word is the histogram's,
+       number for number. */
+    const tally = bias.leanShapeCount(card);
+    const T = card.leanLeftCount + card.leanCenterCount + card.leanRightCount;
+    const word = bias.leanShapeLabel(card);
+    const nums = tally ? tally.full.match(/\d+/g).map(Number) : [];
+    const want = word === "Leans right" ? [card.leanRightCount, T]
+      : word === "Leans left" ? [card.leanLeftCount, T]
+      : word === "Consensus" ? [card.leanCenterCount, T]
+      : (word === "Split" || word === "Balanced")
+        ? [card.leanLeftCount, card.leanCenterCount, card.leanRightCount, T]
+        : [];
+    check(`${c.id.slice(0, 8)}: the printed count is the histogram's`,
+      nums.join("/") === want.join("/") && (tally === null) === (want.length === 0),
+      `"${tally?.full ?? word}" vs ${want.join("/")}`);
+    if (!tally) check(`${c.id.slice(0, 8)}: a thin word states the placed count`, word === `${T} placed`, word);
     check(`${c.id.slice(0, 8)}: card word = Bench word`,
       bias.leanShapeLabel(card) === bias.leanShapeLabel(bench),
       `card "${bias.leanShapeLabel(card)}" vs Bench "${bias.leanShapeLabel(bench)}"`);

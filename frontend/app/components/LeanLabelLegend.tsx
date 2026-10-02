@@ -9,7 +9,7 @@ import { LEAN_SHAPE_LEGEND } from "../lib/biasColors";
    defines the coverage descriptors shown under each headline.
 
    Readers see the card's register (seven strokes) and one word under it:
-   Leans left, Split, Balanced, Consensus, "9 measured". This popover defines
+   Leans left, Split, Balanced, Consensus, "9 placed". This popover defines
    exactly those words, from LEAN_SHAPE_LEGEND in lib/biasColors.ts, which is
    built from the same constants the card's rule uses (2026-09-26: it used to
    define the retired ladder's words, which no card printed). Accessible: a labelled toggle button (aria-expanded /

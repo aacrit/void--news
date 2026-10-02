@@ -475,19 +475,57 @@ export function leanShapeColor(spread?: WingCounts | null): string {
 export function leanShapeLabel(spread?: WingCounts | null): string {
   const shape = leanShape(spread);
   if (shape === "thin") {
-    /* "9 measured", not "9 articles": the card's source count (outlets
-       covering) and this number (articles whose lean was measured) are two
-       different quantities, and "articles" beside a count of sources read as
-       one number disagreeing with another (audit 2026-09-26, finding 10). */
+    /* "9 placed", not "9 articles" and no longer "9 measured" (CEO decision
+       2, 2026-10-02): about a third of placements come from the outlet's
+       record alone, with no text read, so "measured" claimed more than the
+       engine did. "Placed" is what happened to every one of them. It is
+       still a different number from the card's source count (outlets
+       covering), which is why it is not called "sources". */
     const n = (spread?.leanLeftCount ?? 0) + (spread?.leanCenterCount ?? 0)
       + (spread?.leanRightCount ?? 0);
-    return `${n} measured`;
+    return `${n} placed`;
   }
   if (shape === "leans") {
     return leanShapeDirection(spread) > 0 ? "Leans right" : "Leans left";
   }
   return shape === "split" ? "Split"
     : shape === "consensus" ? "Consensus" : "Balanced";
+}
+
+/** The count a card prints under its word (CEO decision 2, 2026-10-02).
+ *
+ *  A word alone asked the reader to take it on trust. The count is the
+ *  evidence for THAT word, read off the same three numbers `leanShape` read,
+ *  so it cannot disagree with it: "Leans right" carries how many of the
+ *  placed outlets sit right of centre, "Consensus" how many sit in it,
+ *  "Split" and "Balanced" both wings. `short` is what fits under a card's
+ *  mark; `full` is the sentence the aria-label and the share card carry.
+ *  Null for a thin roster, whose word ("6 placed") is already its count. */
+export interface LeanShapeCount { short: string; full: string }
+
+export function leanShapeCount(spread?: WingCounts | null): LeanShapeCount | null {
+  const left = spread?.leanLeftCount ?? 0;
+  const center = spread?.leanCenterCount ?? 0;
+  const right = spread?.leanRightCount ?? 0;
+  const total = left + center + right;
+  const outlets = (n: number) => `${n === 1 ? "outlet" : "outlets"}`;
+  switch (leanShape(spread)) {
+    case "leans": {
+      const dir = leanShapeDirection(spread) > 0 ? "right" : "left";
+      const n = dir === "right" ? right : left;
+      return { short: `${n} of ${total} ${dir}`, full: `${n} of ${total} ${outlets(total)} ${dir} of centre` };
+    }
+    case "consensus":
+      return { short: `${center} of ${total} centre`, full: `${center} of ${total} ${outlets(total)} in the centre` };
+    case "split":
+    case "balanced":
+      return {
+        short: `${left} left, ${right} right`,
+        full: `${left} left of centre, ${center} centre, ${right} right of centre, of ${total} ${outlets(total)}`,
+      };
+    default:
+      return null;
+  }
 }
 
 /* ── The legend, from the same rule ────────────────────────────────────────
@@ -512,38 +550,40 @@ export const LEAN_SHAPE_LEGEND: LeanLegendTerm[] = [
        production minifier folded `a ${x} b ` + `c` into "a xc" and shipped
        "At least 5outnumbers" (caught on the built page, 2026-09-26). */
     definition: [
-      "At least", String(SHAPE_MIN_WINGS), "articles came from outlets left or right of centre,",
+      "At least", String(SHAPE_MIN_WINGS), "of the outlets placed sit left or right of centre,",
       "and one side outnumbers the other by about", TILT_RATIO.toFixed(0), "to 1.",
+      "Each outlet counts once, however many articles it ran.",
     ].join(" "),
   },
   {
     shape: "split",
     term: "Split",
     definition:
-      "Both sides covered it, at least 2 articles each and roughly evenly, " +
-      "and fewer than half of the articles came from the centre.",
+      "Both sides covered it, at least 2 outlets each and roughly evenly, " +
+      "and fewer than half of the outlets placed sit in the centre.",
   },
   {
     shape: "balanced",
     term: "Balanced",
     definition:
-      "Both sides covered it, at least 2 articles each and roughly evenly, " +
-      "and at least half of the articles came from the centre.",
+      "Both sides covered it, at least 2 outlets each and roughly evenly, " +
+      "and at least half of the outlets placed sit in the centre.",
   },
   {
     shape: "consensus",
     term: "Consensus",
     definition: [
       "At least", `${Math.round(SHAPE_CONSENSUS_SHARE * 100)}%`,
-      "of 8 or more measured articles came from centre outlets.",
+      "of 8 or more outlets placed sit in the centre.",
     ].join(" "),
   },
   {
     shape: "thin",
-    term: "N measured",
+    term: "N placed",
     definition: [
-      "Too little to read a shape: fewer than", String(SHAPE_MIN_TOTAL), "measured articles, or fewer than",
-      String(SHAPE_MIN_WINGS), "from outlets left or right of centre. The card states how many were measured.",
+      "Too little to read a shape: fewer than", String(SHAPE_MIN_TOTAL), "outlets placed, or fewer than",
+      String(SHAPE_MIN_WINGS), "left or right of centre. The card states how many were placed.",
+      "Placed means positioned from the outlet's record, the article's words, or both.",
     ].join(" "),
   },
   {
@@ -562,7 +602,7 @@ export const LEAN_SHAPE_LEGEND: LeanLegendTerm[] = [
 
 /** The legend entry a printed card label belongs to. */
 export function legendTermFor(label: string): LeanLegendTerm | undefined {
-  if (/^\d+ measured$/.test(label)) return LEAN_SHAPE_LEGEND.find((t) => t.shape === "thin");
+  if (/^\d+ placed$/.test(label)) return LEAN_SHAPE_LEGEND.find((t) => t.shape === "thin");
   if (label === "Leans left" || label === "Leans right") return LEAN_SHAPE_LEGEND.find((t) => t.shape === "leans");
   return LEAN_SHAPE_LEGEND.find((t) => t.term === label);
 }
@@ -604,7 +644,7 @@ export function leanShapeDescriptor(spread?: WingCounts | null): string {
     case "balanced": return `Both sides covered this and neither outweighs the other: ${counts}`;
     case "split": return `Both sides covered this and the centre does not hold: ${counts}`;
     case "leans": return `One side carried most of the coverage: ${counts}`;
-    default: return "Too few measured articles to read the coverage";
+    default: return "Too few outlets placed to read the coverage";
   }
 }
 

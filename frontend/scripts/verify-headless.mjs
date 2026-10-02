@@ -923,7 +923,7 @@ async function scenarios(browser) {
       await page.locator(".feed-start .lean-legend__btn").first().click();
       await page.waitForSelector(".lean-legend__panel", { timeout: 3000 }).catch(() => {});
       const terms = await page.evaluate(() => [...document.querySelectorAll(".lean-legend__panel dt")].map((e) => e.textContent.trim()));
-      const covered = (w) => terms.some((t) => t === w || t.split(" / ").includes(w) || (t === "N measured" && /^\d+ measured$/.test(w)));
+      const covered = (w) => terms.some((t) => t === w || t.split(" / ").includes(w) || (t === "N placed" && /^\d+ placed$/.test(w)));
       const missing = printed.filter((w) => !covered(w));
       assert(terms.length > 0 && missing.length === 0, "legend-matches-cards",
         missing.length ? `cards print ${missing.join(", ")} but the legend does not define it` : `${printed.length} printed word(s), all defined`);
