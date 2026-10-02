@@ -40,6 +40,10 @@ Checks, against the LIVE site (stdlib only, like verify_production.py):
   P-02  /paper/ carries exactly the front page's headlines, in the same order
   P-03  no em or en dash in the served /paper/ prose
   P-04  none of the five untrue strings the pre-relaunch Paper served
+  G-01  /games/ resolves to itself (200, not the 2026-08-03 301 to home)
+  G-02  the landing links UNDERTOW and VOID RUN, never a withdrawn game, and
+        UNDERTOW states that its puzzles are a fixed rotation that repeats
+  G-03  no em or en dash and no kill-list term in served Games prose
 
 Exit 1 on any failure; prints one line per check. Run by verify-production.yml.
 """
@@ -519,6 +523,9 @@ def main(site: str) -> int:
     # P-01..P-04 — Paper, the printable front page.
     check_paper(base)
 
+    # G-01..G-03 — Games, back 2026-10-02.
+    check_games(base)
+
     # TH-01..TH-04 — a published History thesis page, if any.
     check_thesis(base)
 
@@ -712,6 +719,70 @@ def check_paper(base: str) -> None:
     report("P-04", not found,
            "none of the retired strings are served"
            if not found else f"still serving: {found}")
+
+
+GAMES_LIVE = ("undertow", "run")
+GAMES_WITHDRAWN = ("frame", "wire")
+GAMES_ROTATION_NOTE = "in a fixed order. The set repeats."
+
+
+def check_games(base: str) -> None:
+    """G-01..G-03 — Games is served, and serves only what it can stand behind.
+
+    G-01  /games/ resolves to itself (200, not the 2026-08-03 301 to home),
+          titled "Games | Void News"
+    G-02  the landing links UNDERTOW and VOID RUN and neither withdrawn game
+          (THE FRAME printed headlines no outlet wrote under real mastheads);
+          /games/undertow/ resolves and SAYS its puzzles are a fixed rotation
+          that repeats, rather than passing a repeat off as a fresh day
+    G-03  no em or en dash and no kill-list term in the served prose of either
+    """
+    pages: dict[str, str] = {}
+    for code, path in (("G-01", "/games/"), ("G-02", "/games/undertow/")):
+        try:
+            status, final, doc = fetch(f"{base}{path}")
+        except urllib.error.HTTPError as e:
+            report(code, False, f"{path} HTTP {e.code}")
+            continue
+        except Exception as e:
+            report(code, False, f"{path} {type(e).__name__}: {e}")
+            continue
+        landed = final.rstrip("/").endswith(path.rstrip("/"))
+        if not (status == 200 and landed):
+            report(code, False, f"{path} {status} at {final}"
+                   + ("" if landed else " (redirected away)"))
+            continue
+        pages[path] = doc
+
+    hub = pages.get("/games/")
+    if hub is not None:
+        title = re.search(r"<title>([^<]*)</title>", hub)
+        title_text = unescape(title.group(1)).strip() if title else ""
+        report("G-01", title_text == "Games | Void News",
+               f"/games/ served, title {title_text!r}")
+        hrefs = re.findall(r'<a\b[^>]*href="([^"]+)"', hub)
+        live = [g for g in GAMES_LIVE
+                if any(re.search(rf"/games/{g}/?$", h) for h in hrefs)]
+        dead = sorted({h for h in hrefs for g in GAMES_WITHDRAWN
+                       if re.search(rf"/games/{g}(/|$)", h)})
+        undertow = pages.get("/games/undertow/")
+        honest = undertow is not None and GAMES_ROTATION_NOTE in unescape(strip_chrome(undertow))
+        report("G-02", len(live) == len(GAMES_LIVE) and not dead and honest,
+               f"links {live}, withdrawn links {dead or 'none'}, "
+               f"UNDERTOW rotation stated: {honest}")
+    elif "/games/undertow/" in pages:
+        report("G-02", False, "skipped (no landing)")
+
+    hits: list[str] = []
+    for path, doc in pages.items():
+        body = strip_chrome(doc)
+        if re.search(r"[—–]", body):
+            m = re.search(r".{0,50}[—–].{0,50}", body)
+            hits.append(f"{path} dash: ..." + (m.group().replace("\n", " ") if m else ""))
+        hits += [f"{path} {h}" for h in kill_list_hits(doc)]
+    report("G-03", bool(pages) and not hits,
+           f"{len(pages)} page(s), no dash or kill-list term" if pages and not hits
+           else ("no page to read" if not pages else "; ".join(hits[:3])))
 
 
 def _insecure_hosts() -> set[str]:

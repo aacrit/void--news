@@ -122,7 +122,7 @@ ok("ranking weights match the engine",
 //
 //    History is scanned too since 2026-09-21 (its era ranges, hooks and
 //    aria-labels lost their dashes, brand audit F-09).
-const SCAN_SKIP_DIRS = new Set(["games", "revolt", "ig", "node_modules", ".next"]);
+const SCAN_SKIP_DIRS = new Set(["revolt", "ig", "node_modules", ".next"]);
 // Files that CONSUME dashes rather than render them: history/stats.ts parses
 // "1914-1918" style ranges through a RegExp built from a template literal, so
 // its character classes have to be able to spell both dashes.

@@ -48,6 +48,7 @@ const STATIC_ROUTES = [
   "/", "/onair/", "/history/", "/weekly/", "/weekly/archive/", "/paper/",
   "/audio/", "/sources/", "/about/", "/ship/", "/press/", "/privacy/",
   "/history/threads/",
+  "/games/", "/games/undertow/", "/games/run/",
 ];
 const QUICK_ROUTES = ["/", "/history/", "/weekly/", "/paper/", "/onair/", "/audio/"];
 
@@ -99,6 +100,7 @@ function sectionForPath(path) {
     case "history": return "history";
     case "weekly": return "weekly";
     case "paper": return "paper";
+    case "games": return "games";
     case "onair": return "onair";
     case "audio":
     case "listen": return "audio";
@@ -113,9 +115,9 @@ function sectionForPath(path) {
   }
 }
 /* Sections that have a link in the masthead (SECTION_LINKS + PAGE_LINKS). */
-const LINKED_SECTIONS = new Set(["audio", "onair", "history", "weekly", "sources", "ship", "about"]);
+const LINKED_SECTIONS = new Set(["audio", "onair", "history", "weekly", "games", "sources", "ship", "about"]);
 /* Landings whose nameplate is the current page. */
-const NAMEPLATE_LANDINGS = new Set(["/history/", "/weekly/", "/paper/", "/audio/"]);
+const NAMEPLATE_LANDINGS = new Set(["/history/", "/weekly/", "/paper/", "/audio/", "/games/"]);
 
 /* ── Redirect prefixes from public/_redirects: a link into one of these is a
    301 at the edge, not a dangling link. ── */
@@ -260,7 +262,7 @@ async function auditPage(browser, route, width, scheme, axeSource) {
        "Page | Void News" or "Page | Section | Void News". */
     const title = await page.title();
     const titleOk = route === "/" ? title === TAGLINE_TITLE
-      : /^.+ \| Void News$/.test(title) || /^.+ \| (History|Weekly|On Air|Paper) \| Void News$/.test(title);
+      : /^.+ \| Void News$/.test(title) || /^.+ \| (History|Weekly|On Air|Paper|Games) \| Void News$/.test(title);
     if (!titleOk) F("title-grammar", JSON.stringify(title)); else ok("title-grammar", title);
     if (DASH.test(title)) F("no-dash", `title: ${title}`);
 
@@ -1824,6 +1826,55 @@ async function brandChecks(browser) {
       assert(s.nav === false && s.footer === false && s.mtb !== true, "print-hides-chrome", `masthead ${s.nav}, footer ${s.footer}, tabbar ${s.mtb}`);
       assert(s.mast === true, "print-mast", `.print-mast visible: ${s.mast}`);
       assert(/^rgb\(255, 255, 255\)$|rgba\(0, 0, 0, 0\)/.test(s.body), "print-white", `body background ${s.body}`);
+    });
+  }
+
+  /* Games (back 2026-10-02, CEO decision 7a). The landing renders under the
+     one masthead with the Games nameplate, one h1, no second lockup and no
+     console error; UNDERTOW serves today's puzzle from its fixed rotation and
+     says so; the two withdrawn routes are not linked. */
+  if (existsSync(join(OUT, "games/index.html"))) {
+    await withPage(browser, { width: 1440, route: "/games/" }, "games-landing", async (page, log) => {
+      await page.waitForTimeout(800);
+      const g = await page.evaluate(() => ({
+        h1: [...document.querySelectorAll("h1")].map((h) => h.textContent.trim()),
+        mastheads: document.querySelectorAll(".nav-header").length,
+        section: document.querySelector(".nav-header")?.getAttribute("data-section") ?? null,
+        nameplate: document.querySelector(".nav-nameplate")?.textContent.trim() ?? null,
+        lockups: document.querySelectorAll(".games-hub [aria-label^='VOID ']").length,
+        cards: [...document.querySelectorAll(".games-hub__card--featured")].map((a) => a.getAttribute("href")),
+        withdrawn: document.querySelectorAll("a[href*='/games/frame'], a[href*='/games/wire']").length,
+      }));
+      assert(g.h1.length === 1, "games-one-h1", JSON.stringify(g.h1));
+      assert(g.mastheads === 1 && g.section === "games" && g.nameplate === "Games", "games-masthead",
+        `${g.mastheads} masthead(s), section ${g.section}, nameplate ${g.nameplate}`);
+      assert(g.lockups === 0, "games-no-second-lockup", `${g.lockups} VOID lockup(s) inside the page`);
+      assert(g.cards.length >= 2 && g.cards.every((h) => /\/games\/(undertow|run)\/?$/.test(h ?? "")), "games-cards",
+        JSON.stringify(g.cards));
+      assert(g.withdrawn === 0, "games-withdrawn-unlinked", `${g.withdrawn} link(s) to /games/frame or /games/wire`);
+      const errs = [...log.console.filter((m) => m.startsWith("error:")), ...log.errors];
+      assert(errs.length === 0, "games-console-clean", errs[0]?.slice(0, 200) ?? "none");
+    });
+  }
+  if (existsSync(join(OUT, "games/undertow/index.html"))) {
+    await withPage(browser, { width: 390, route: "/games/undertow/" }, "games-undertow-today", async (page, log) => {
+      await page.waitForTimeout(800);
+      const u = await page.evaluate(() => ({
+        h1: document.querySelectorAll("h1").length,
+        meta: document.querySelector(".undertow-page__meta")?.textContent.replace(/\s+/g, " ").trim() ?? "",
+        rotation: document.querySelector(".undertow-page__rotation")?.textContent.trim() ?? "",
+        cards: document.querySelectorAll(".undertow-page__cards > *").length,
+      }));
+      /* Today's UTC date, in the words the page uses (app/games/daily.ts). */
+      const today = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
+      const m = u.meta.match(/^No\. (\d+) of (\d+) · (.+)$/);
+      const inRange = !!m && Number(m[1]) >= 1 && Number(m[1]) <= Number(m[2]);
+      assert(u.h1 === 1, "games-undertow-one-h1", `${u.h1} h1`);
+      assert(inRange && m[3] === today, "games-undertow-today", `meta "${u.meta}", today ${today}`);
+      assert(/fixed order\. The set repeats\./.test(u.rotation), "games-undertow-honest-rotation", u.rotation || "(no rotation note)");
+      assert(u.cards >= 4, "games-undertow-cards", `${u.cards} artifact card(s)`);
+      const errs = [...log.console.filter((x) => x.startsWith("error:")), ...log.errors];
+      assert(errs.length === 0, "games-undertow-console-clean", errs[0]?.slice(0, 200) ?? "none");
     });
   }
 }
