@@ -21,8 +21,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "pipeline"))
 
 from briefing.weekly_script import (  # noqa: E402
-    OVERLAP_FLOOR, TARGET_MINUTES, estimated_minutes, overlap,
-    parse_script, validate_script, _bench_columns,
+    FLOOR_MINUTES, OVERLAP_FLOOR, TARGET_MINUTES, WPM, estimated_minutes, overlap,
+    parse_script, target_minutes, validate_script, _bench_columns,
 )
 
 ISSUES = ROOT / "frontend" / "build-data" / "weekly-issues.json"
@@ -67,7 +67,19 @@ def _filler(voice, words):
     return [f"{voice}: {text.strip()}"]
 
 
-def build_clean(issue):
+def clean_for_band(issue, band=None):
+    """`build_clean`, with the cover sized so the whole lands mid-band.
+
+    The band is the issue's own (decision 6), so a fixed-length fixture would
+    be right for one issue and wrong for the next."""
+    lo, hi = band or target_minutes(issue)
+    first = build_clean(issue)
+    minutes, _ = estimated_minutes(parse_script(first))
+    words = max(100, int(700 + ((lo + hi) / 2 - minutes) * WPM))
+    return build_clean(issue, cover_words=words)
+
+
+def build_clean(issue, cover_words=700):
     """A rundown that passes every validator, built from the real issue."""
     cols = _bench_columns(issue.get("opinions") or [])
     stats = ((issue.get("bias_report_data") or {}).get("stats") or {})
@@ -87,7 +99,7 @@ def build_clean(issue):
     lines = ["## OPEN"] + _filler("E", 90)
     lines += ["## CONTENTS", "E: Inside this week.", "E: The Arctic, contested.",
               "E: Two columnists, one story.", "E: The week, measured."]
-    lines += ["## COVER"] + _filler("E", 700)
+    lines += ["## COVER"] + _filler("E", cover_words)
     lines += ["## DATELINE", "E: Tuesday. Thirteen sources."]
     lines += ["## COVER"] + _filler("E", 250)
     lines += ["## TOPIC", "E: The two columns below argue about the same agreement."]
@@ -110,7 +122,7 @@ def build_clean(issue):
 def test_clean():
     print("\nWA-01  a rundown built from the real issue passes every validator")
     issue = _issue()
-    script = parse_script(build_clean(issue))
+    script = parse_script(clean_for_band(issue))
     findings = validate_script(script, issue)
     fails = [f for f in findings if f.level == "fail"]
     for f in findings:
@@ -118,8 +130,8 @@ def test_clean():
     check("no failures on a clean rundown", not fails,
           "; ".join(f"{f.id}:{f.segment}" for f in fails))
     minutes, wpm = estimated_minutes(script)
-    lo, hi = TARGET_MINUTES
-    check("inside the 18-22 minute band", lo <= minutes <= hi,
+    lo, hi = target_minutes(issue)
+    check(f"inside this issue's {lo:.0f}-{hi:.0f} minute band", lo <= minutes <= hi,
           f"{minutes:.1f} min, {script.words} words")
     return issue
 
@@ -131,7 +143,7 @@ def _fails(issue, text, rule):
 
 def test_planted(issue):
     print("\nWA-02  one planted defect per validator")
-    clean = build_clean(issue)
+    clean = clean_for_band(issue)
 
     # W-01 — THE MOAT. A bench line the column does not contain.
     bad = clean.replace(
@@ -187,6 +199,22 @@ def test_planted(issue):
                       if not l.startswith("E: The week ran long"))
     check("W-07 catches a programme far under the band",
           _fails(issue, short, "W-07"))
+
+    # W-07 floats with the sourced words (decision 6). A rundown sized for a
+    # full issue's 18-22 is too long for a thin one, which is the padding the
+    # floating band exists to stop; and no issue's band drops under 14.
+    full = {"opinion_text": "word " * 6000}
+    thin = {"opinion_text": "word " * 300}
+    check("a full issue keeps the 18-22 band", target_minutes(full) == TARGET_MINUTES,
+          str(target_minutes(full)))
+    check("a thin issue floats down to the floor, never under it",
+          target_minutes(thin) == (FLOOR_MINUTES, FLOOR_MINUTES + 4.0), str(target_minutes(thin)))
+    check("an issue with no sourced words gets the full band",
+          target_minutes({}) == TARGET_MINUTES)
+    long_ = clean_for_band(issue, TARGET_MINUTES)
+    if target_minutes(issue)[1] < TARGET_MINUTES[0] + 1:
+        check("W-07 catches a full-length rundown on a thin issue (padding)",
+              _fails(issue, long_, "W-07"))
 
     # W-08 — borrowed radio furniture.
     check("W-08 catches a borrowed catchphrase",
@@ -265,8 +293,8 @@ def test_committed_scripts():
         check(f"{week}: renders clean", not fails,
               "; ".join(f"{f.id}" for f in fails))
         minutes, wpm = estimated_minutes(script, VOICES)
-        lo, hi = TARGET_MINUTES
-        check(f"{week}: inside the band", lo <= minutes <= hi,
+        lo, hi = target_minutes(issue)
+        check(f"{week}: inside its {lo:.0f}-{hi:.0f} band", lo <= minutes <= hi,
               f"{minutes:.1f} min, {script.words} words")
 
 
