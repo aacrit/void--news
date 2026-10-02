@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import html as _html
+import json
 import re
 import sys
 from pathlib import Path
@@ -770,6 +771,65 @@ def check_internal_routes_hidden(p: Page) -> list[str]:
     return out
 
 
+# Withdrawn audio must not stay reachable by URL. Issue #26's episode of The
+# Argument was withdrawn in rev 84 (it speaks passages a published correction
+# removed), yet on 2026-10-02 these paths still answered 206 audio/mpeg: the
+# row was cleared and the files were left. History episodes the manifest marks
+# `audio_withdrawn` (their script was corrected after the render) are held to
+# the same rule. A 2xx that is not an HTML page fails; a 404, a 301 and the
+# site's own HTML 404 page all mean "not served".
+_WITHDRAWN_AUDIO_PATHS = (
+    "/audio/weekly-world/2026-09-21-am.mp3",
+    "/audio/weekly-world/2026-09-21-am.chapters.json",
+    "/audio/weekly-world/latest.mp3",
+    "/audio/weekly-world/latest.chapters.json",
+)
+_HISTORY_MANIFEST = Path(__file__).resolve().parents[1] / "frontend/public/data/history-audio.json"
+
+
+def _withdrawn_history_paths() -> list[str]:
+    try:
+        eps = json.loads(_HISTORY_MANIFEST.read_text(encoding="utf-8")).get("episodes") or {}
+    except (OSError, ValueError):
+        return []
+    return [f"/audio/history/{slug}.mp3" for slug, ep in sorted(eps.items())
+            if isinstance(ep, dict) and ep.get("audio_withdrawn")]
+
+
+def _head(url: str, timeout: float = 10.0) -> tuple[int | None, str]:
+    """(status, content-type) of one HEAD, redirects not followed."""
+    import urllib.error
+    import urllib.request
+
+    class _NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            return None
+
+    opener = urllib.request.build_opener(_NoRedirect)
+    req = urllib.request.Request(url, method="HEAD", headers={"Cache-Control": "no-cache"})
+    try:
+        with opener.open(req, timeout=timeout) as resp:
+            return resp.status, resp.headers.get("Content-Type", "")
+    except urllib.error.HTTPError as e:
+        return e.code, e.headers.get("Content-Type", "") if e.headers else ""
+    except Exception:
+        return None, ""
+
+
+def check_withdrawn_audio_gone(p: Page) -> list[str]:
+    m = _CANONICAL_RE.search(p.raw)
+    if not m:
+        return []
+    origin = (m.group(1) or m.group(2)).rstrip("/")
+    out = []
+    for path in list(_WITHDRAWN_AUDIO_PATHS) + _withdrawn_history_paths():
+        status, ctype = _head(f"{origin}{path}")
+        if status is not None and 200 <= status < 300 and "text/html" not in ctype.lower():
+            out.append(f"{path} is still served (HTTP {status}, {ctype or 'no type'}) at "
+                       f"{origin}: withdrawn audio must 404")
+    return out
+
+
 CHECKS = [
     ("structural: single Top story", check_top_story),
     ("structural: wordmark not doubled", check_wordmark),
@@ -795,6 +855,7 @@ CHECKS = [
     ("structural: every card links to /story/<uuid>/", check_card_anchor_coverage),
     ("integrity: confidence is real (not COUNT/5 proxy)", check_confidence_not_proxy),
     ("exposure: internal tooling routes are not served", check_internal_routes_hidden),
+    ("exposure: withdrawn audio is not served", check_withdrawn_audio_gone),
 ]
 
 # Reported on every run, promoted to hard failures by --strict once the
