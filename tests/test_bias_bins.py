@@ -171,9 +171,12 @@ HIST_KEYS = ("lean_buckets", "lean_left_count", "lean_center_count",
 def _vote_rows(cid):
     """The deepdive rows as the export hands them to the histogram."""
     import json
+    from utils.bias_aggregation import state_affiliated_names
     path = DEEPDIVE / f"{cid}.json"
     if not path.exists():
         return None
+    state = state_affiliated_names(
+        json.loads((ROOT / "data/sources.json").read_text(encoding="utf-8")))
     measured, every = [], []
     for r in json.loads(path.read_text(encoding="utf-8")):
         a = r.get("article") or {}
@@ -182,7 +185,8 @@ def _vote_rows(cid):
             continue
         nm = (a.get("source") or {}).get("name")
         row = {"outlet": nm or f"article:{a.get('id')}", "name": nm or a.get("id"),
-               "lean": b["political_lean"]}
+               "lean": b["political_lean"],
+               "state_affiliated": bool(nm) and nm.strip().lower() in state}
         every.append(row)
         if not b.get("lean_unscored"):
             measured.append(row)
@@ -203,6 +207,35 @@ def check_one_vote_per_outlet():
     if h.get("lean_vote") != "outlet":
         out.append("the histogram does not declare lean_vote = outlet")
     return out
+
+
+def check_state_outlets_never_in_the_wings():
+    """CEO decision 1: a state-affiliated outlet is on its own rung. It is
+    counted in lean_state_count and in NONE of the seven buckets, so it can
+    never move a wing count or the shape word, whatever its baseline says."""
+    import json
+    from utils.bias_aggregation import compute_outlet_lean_histogram
+    out = []
+    rows = ([{"outlet": "RT", "lean": 90, "state_affiliated": True}] * 10
+            + [{"outlet": "Tehran Times", "lean": 10, "state_affiliated": True},
+               {"outlet": "AP", "lean": 50}])
+    h = compute_outlet_lean_histogram(rows)
+    if sum(h["lean_buckets"].values()) != 1 or h["lean_state_count"] != 2:
+        out.append(f"state outlets reached the ladder: {h['lean_buckets']}, "
+                   f"state {h.get('lean_state_count')}")
+    if h["lean_left_count"] or h["lean_right_count"]:
+        out.append("a state outlet cast a wing vote")
+    # And in the committed export: no named state outlet is also counted.
+    if FEED.exists():
+        for c in json.loads(FEED.read_text(encoding="utf-8")).get("clusters", []):
+            bd = c.get("bias_diversity") or {}
+            names = bd.get("lean_state_outlets") or []
+            if len(names) != (bd.get("lean_state_count") or 0):
+                out.append(f"{c['id'][:8]}: {len(names)} state outlets named, "
+                           f"{bd.get('lean_state_count')} counted")
+            if bd.get("lean_vote") == "outlet" and sum((bd.get("lean_buckets") or {}).values()) != bd.get("lean_outlet_count"):
+                out.append(f"{c['id'][:8]}: the seven buckets do not sum to the placed outlets")
+    return out[:8]
 
 
 def check_committed_export_is_per_outlet():
@@ -249,6 +282,7 @@ CHECKS = (
     ("the ladder never steps back", check_the_ladder_never_steps_back),
     ("left/centre/right collapses 3/1/3", check_the_collapse_is_three_even_groups),
     ("one vote per outlet", check_one_vote_per_outlet),
+    ("state outlets never in the wings", check_state_outlets_never_in_the_wings),
     ("the committed card histogram is its Deep Dive's", check_committed_export_is_per_outlet),
 )
 

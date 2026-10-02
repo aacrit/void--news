@@ -39,6 +39,9 @@ export interface BiasSpread {
   leanTotalCount?: number;
   /** "outlet": the seven counts are one vote per outlet (2026-10-02 on). */
   leanVote?: "outlet" | "article";
+  /** State-affiliated outlets, on their own rung outside the seven buckets. */
+  leanStateCount?: number;
+  leanStateOutlets?: readonly string[];
 }
 
 export interface Source {

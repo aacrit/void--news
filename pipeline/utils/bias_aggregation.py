@@ -177,21 +177,43 @@ def compute_outlet_lean_histogram(rows: Sequence[dict]) -> dict:
     outlets). This wraps it so there is one counting rule and it is computed
     here, once, for both.
 
+    STATE-AFFILIATED OUTLETS SIT ON THEIR OWN RUNG (CEO decision 1,
+    2026-10-02). A government's line is not a position on a domestic
+    left/right axis, and the roster's baselines for them say so by
+    contradiction: RT, CGTN and Global Times are rated far-right, Tehran Times
+    far-left, TASS, Sputnik and Xinhua centre. On the 2026-10-01 top 20 they
+    cast 12 wing votes (10 of them RT's articles). A row whose outlet carries
+    `state_affiliated` in data/sources.json is counted HERE, in
+    ``lean_state_count``, and in none of the seven buckets, so it never moves
+    the wing counts or the shape word. The Bench draws them apart.
+
     Adds to the dict ``compute_lean_histogram`` returns:
         lean_vote            "outlet", so a reader of the payload can tell a
                              per-outlet histogram from a pre-2026-10-02 one.
         lean_outlet_count    outlets in the seven buckets (the "N placed").
-        lean_article_count   measured articles behind them.
+        lean_article_count   measured articles behind every outlet counted.
+        lean_state_count     state-affiliated outlets, outside the ladder.
+        lean_state_outlets   their names, so a surface can draw them apart.
     """
     outlets = outlet_positions(rows)
-    placed = outlets
+    placed = [o for o in outlets if not o["state_affiliated"]]
+    state = [o for o in outlets if o["state_affiliated"]]
     hist = compute_lean_histogram([o["lean"] for o in placed])
     hist.update({
         "lean_vote": "outlet",
         "lean_outlet_count": len(placed),
         "lean_article_count": sum(o["articles"] for o in outlets),
+        "lean_state_count": len(state),
+        "lean_state_outlets": sorted(str(o["name"]) for o in state),
     })
     return hist
+
+
+def state_affiliated_names(roster: Sequence[dict]) -> frozenset:
+    """Lower-cased names of the roster's state-affiliated outlets, the key
+    ``outlet_positions`` groups by. The caller reads data/sources.json."""
+    return frozenset(str(s.get("name") or "").strip().lower()
+                     for s in roster if s.get("state_affiliated"))
 
 
 def stddev(vals: Sequence[float]) -> float:

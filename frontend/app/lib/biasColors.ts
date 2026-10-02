@@ -335,6 +335,10 @@ export interface WingCounts {
    *  `compute_outlet_lean_histogram`, from 2026-10-02). Absent on payloads
    *  written before, whose counts are one vote per article. */
   leanVote?: "outlet" | "article";
+  /** State-affiliated outlets that covered the story. On their own rung,
+   *  outside the seven buckets and every count above (CEO decision 1). */
+  leanStateCount?: number;
+  leanStateOutlets?: readonly string[];
 }
 
 /** Both wings genuinely present: left AND right coverage, with >=3 total.
@@ -493,7 +497,7 @@ export function leanShapeLabel(spread?: WingCounts | null): string {
    this table, and the definitions are built from the constants leanShape
    uses, so a threshold cannot change without its explanation changing. */
 export interface LeanLegendTerm {
-  shape: LeanShape | "unscored";
+  shape: LeanShape | "unscored" | "state";
   term: string;
   definition: string;
 }
@@ -546,6 +550,13 @@ export const LEAN_SHAPE_LEGEND: LeanLegendTerm[] = [
     shape: "unscored",
     term: "Unscored",
     definition: "No article in the story had a measurable lean.",
+  },
+  {
+    shape: "state",
+    term: "State-affiliated",
+    definition:
+      "Outlets our roster marks as state-affiliated sit on their own rung, apart from the ladder. " +
+      "They are not counted on either side and do not decide any word above.",
   },
 ];
 

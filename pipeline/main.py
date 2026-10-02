@@ -168,6 +168,7 @@ from utils.editions import ACTIVE_EDITIONS, ALL_EDITIONS as _ALL_EDITIONS  # noq
 from utils.bias_aggregation import (  # noqa: E402
     compute_aggregate_confidence,
     compute_outlet_lean_histogram,
+    state_affiliated_names,
 )
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
@@ -818,13 +819,25 @@ def _outlet_rows(score_rows: list[dict]) -> list[dict]:
                 name_of = {r["id"]: r.get("name") for r in (srcs.data or [])}
     except Exception:
         pass  # fall through: unresolved rows vote alone
+    global _STATE_NAMES
+    if _STATE_NAMES is None:
+        try:
+            _STATE_NAMES = state_affiliated_names(
+                json.loads(SOURCES_PATH.read_text(encoding="utf-8")))
+        except Exception:
+            _STATE_NAMES = frozenset()
     out = []
     for r in score_rows:
         aid = r.get("article_id")
         name = name_of.get(src_of.get(aid)) if aid else None
         out.append({"outlet": name or f"article:{aid}", "name": name or aid,
-                    "lean": r["political_lean"]})
+                    "lean": r["political_lean"],
+                    # CEO decision 1: their own rung, outside the ladder.
+                    "state_affiliated": bool(name) and name.strip().lower() in _STATE_NAMES})
     return out
+
+
+_STATE_NAMES: frozenset | None = None
 
 
 def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:

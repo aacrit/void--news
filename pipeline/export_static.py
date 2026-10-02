@@ -326,7 +326,12 @@ if want("feed"):
         is_default_tuple as _is_default_tuple, per_axis_default_share,
     )
 
-    from utils.bias_aggregation import compute_outlet_lean_histogram  # noqa: E402
+    from utils.bias_aggregation import (  # noqa: E402
+        compute_outlet_lean_histogram, state_affiliated_names,
+    )
+    # CEO decision 1: state-affiliated outlets are counted on their own rung.
+    _state_names = state_affiliated_names(
+        json.loads((REPO / "data" / "sources.json").read_text(encoding="utf-8")))
 
     dd = 0
     gr = 0
@@ -388,7 +393,8 @@ if want("feed"):
                 exported_bias_rows.append(bias)
                 _nm = src["name"] if src else None
                 _vote = {"outlet": _nm or f"article:{a['id']}", "name": _nm or a["id"],
-                         "lean": bias["political_lean"]}
+                         "lean": bias["political_lean"],
+                         "state_affiliated": bool(_nm) and _nm.strip().lower() in _state_names}
                 vote_all.append(_vote)
                 if not bias.get("lean_unscored"):
                     vote_rows.append(_vote)

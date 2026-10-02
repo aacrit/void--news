@@ -82,7 +82,14 @@ export default function DeepDiveSpectrum({
      2026-09-20 export were unmeasured. It is still a source that covered the
      story, so it keeps its place in the roster, the source count and the tier
      breakdown, and the Bench says out loud how many are being held back. */
-  const measured = useMemo<BenchSource[]>(
+  /* CEO decision 1: the pipeline names the story's state-affiliated outlets
+     (`lean_state_outlets`); they leave the columns for their own rung. */
+  const stateNames = useMemo(
+    () => new Set((spread?.leanStateOutlets ?? []).map((n) => n.toLowerCase().trim())),
+    [spread],
+  );
+
+  const voted = useMemo<BenchSource[]>(
     () =>
       outletVotes(allSources).map(({ row: s, lean, articles }) => ({
         name: s.name,
@@ -96,23 +103,27 @@ export default function DeepDiveSpectrum({
            on its props and never read it, so a mark placed from a headline
            and one read off a full article drew identically. */
         confidence: s.confidence,
+        state: stateNames.has(s.name.toLowerCase().trim()),
       })),
-    [allSources],
+    [allSources, stateNames],
   );
+  const measured = useMemo(() => voted.filter((v) => !v.state), [voted]);
+  const stateSources = useMemo(() => voted.filter((v) => v.state), [voted]);
 
   /* Outlets that covered the story and were never measured on any article. */
   const unscoredCount = useMemo(() => {
-    const placed = new Set(measured.map((m) => m.name.toLowerCase().trim()));
+    const placed = new Set(voted.map((m) => m.name.toLowerCase().trim()));
     const all = new Set(allSources.map((s) => s.name.toLowerCase().trim()));
     let n = 0;
     for (const k of all) if (!placed.has(k)) n += 1;
     return n;
-  }, [allSources, measured]);
+  }, [allSources, voted]);
 
   return (
     <Bench
       sources={measured}
       unscoredCount={unscoredCount}
+      stateSources={stateSources}
       storySpread={spread?.leanVote === "outlet" ? spread : null}
       settled={settled}
     />

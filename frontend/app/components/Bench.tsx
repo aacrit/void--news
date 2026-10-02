@@ -64,6 +64,10 @@ export interface BenchSource {
   /** Measured articles this outlet's position is the mean of. One mark per
    *  OUTLET (CEO decision 3): ten articles from one outlet are one view. */
   articles?: number;
+  /** A state-affiliated outlet (`state_affiliated` in data/sources.json). It
+   *  sits on its own rung under the ladder, never in a column (CEO decision
+   *  1): a government's line is not a position on a domestic left/right axis. */
+  state?: boolean;
 }
 
 const BUCKET_TOKEN: Record<LeanCategory, string> = {
@@ -158,15 +162,22 @@ function BenchCard({ data }: { data: CardData }) {
       role="tooltip"
     >
       <p className="bench__card-name">{s.name}</p>
-      <p className="bench__card-lean">
-        <span
-          className="bench__card-dot"
-          style={{ background: `var(${BUCKET_TOKEN[leanToBucket(s.politicalLean)]})` }}
-          aria-hidden="true"
-        />
-        {leanLabel(s.politicalLean)}
-        <span className="bench__card-score">{Math.round(s.politicalLean)}</span>
-      </p>
+      {s.state ? (
+        <p className="bench__card-lean">
+          <span className="bench__card-dot bench__card-dot--state" aria-hidden="true" />
+          State-affiliated; not placed on the ladder
+        </p>
+      ) : (
+        <p className="bench__card-lean">
+          <span
+            className="bench__card-dot"
+            style={{ background: `var(${BUCKET_TOKEN[leanToBucket(s.politicalLean)]})` }}
+            aria-hidden="true"
+          />
+          {leanLabel(s.politicalLean)}
+          <span className="bench__card-score">{Math.round(s.politicalLean)}</span>
+        </p>
+      )}
       <p className="bench__card-tier">{tierLabel(s.tier)}</p>
       {s.headline && <p className="bench__card-headline">{s.headline}</p>}
       {authorityNote(s.confidence) && (
@@ -202,7 +213,8 @@ function Mark({ source, size }: { source: BenchSource; size: number }) {
   return (
     <span
       className="bench__disc"
-      data-lean={bucket}
+      data-lean={source.state ? undefined : bucket}
+      data-state={source.state ? "true" : undefined}
       data-authority={authority}
       style={{ width: size, height: size }}
       aria-hidden="true"
@@ -232,6 +244,8 @@ export interface BenchProps {
   sources: BenchSource[];
   /** Outlets that covered the story but whose lean was never measured. */
   unscoredCount?: number;
+  /** State-affiliated outlets, drawn on their own rung under the ladder. */
+  stateSources?: BenchSource[];
   /** The story's per-outlet histogram, the one its card prints from. When
    *  given, the word and its colour come from it. */
   storySpread?: WingCounts | null;
@@ -239,7 +253,9 @@ export interface BenchProps {
   settled?: boolean;
 }
 
-export default function Bench({ sources, unscoredCount = 0, storySpread = null, settled = false }: BenchProps) {
+export default function Bench({
+  sources, unscoredCount = 0, stateSources = [], storySpread = null, settled = false,
+}: BenchProps) {
   /* Said out loud in the head, not only on hover: 13 us_major outlets serve us
      no article text, so on a wire-heavy story most of the bench can be sitting
      on its outlets' baselines and every mark used to look the same. */
@@ -423,13 +439,60 @@ export default function Bench({ sources, unscoredCount = 0, storySpread = null, 
         <p className="bench__empty">
           {unscoredCount > 0
             ? `${unscoredCount} ${unscoredCount === 1 ? "source" : "sources"}, none measured`
-            : "No sources"}
+            : stateSources.length > 0 ? "" : "No sources"}
+          {stateSources.length > 0
+            && `${unscoredCount > 0 ? "; " : ""}${stateSources.length} state-affiliated, not placed on the ladder`}
         </p>
       </div>
     );
   }
 
   const focusName = card?.source.name ?? null;
+
+  /* One mark, as a link on a fine pointer and a toggle on a coarse one. Used
+     by the seven columns and by the state rung under them. */
+  const markEl = (s: BenchSource, size: number) => {
+    const said = `${s.name}, ${s.state ? "state-affiliated, outside the ladder" : leanLabel(s.politicalLean)}${
+      textAuthority(s.confidence) === "headline" ? ", scored from the headline" : ""
+    }`;
+    return coarse ? (
+      <button
+        key={s.name}
+        type="button"
+        className="bench__mark"
+        data-focused={focusName === s.name ? "true" : undefined}
+        aria-label={`${said}. Show details.`}
+        aria-expanded={pinned === s.name}
+        onClick={(e) => {
+          if (pinned === s.name) {
+            setPinned(null);
+            setCard(null);
+          } else {
+            setPinned(s.name);
+            show(e.currentTarget, s);
+          }
+        }}
+      >
+        <Mark source={s} size={size} />
+      </button>
+    ) : (
+      <a
+        key={s.name}
+        href={s.articleUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="bench__mark"
+        data-focused={focusName === s.name ? "true" : undefined}
+        aria-label={said}
+        onPointerEnter={(e) => show(e.currentTarget, s)}
+        onPointerLeave={() => setCard(null)}
+        onFocus={(e) => show(e.currentTarget, s)}
+        onBlur={() => setCard(null)}
+      >
+        <Mark source={s} size={size} />
+      </a>
+    );
+  };
 
   return (
     <div
@@ -460,6 +523,9 @@ export default function Bench({ sources, unscoredCount = 0, storySpread = null, 
           )}
           {unscoredCount > 0 && (
             <span className="bench__unscored"> &middot; {unscoredCount} not measured</span>
+          )}
+          {stateSources.length > 0 && (
+            <span className="bench__unscored"> &middot; {stateSources.length} state-affiliated</span>
           )}
         </p>
       </div>
@@ -568,53 +634,7 @@ export default function Bench({ sources, unscoredCount = 0, storySpread = null, 
                     key={ri}
                     style={{ gap: `${BENCH_GAP}px` }}
                   >
-                    {row.map((s) =>
-                      coarse ? (
-                        <button
-                          key={s.name}
-                          type="button"
-                          className="bench__mark"
-                          data-focused={focusName === s.name ? "true" : undefined}
-                          aria-label={`${s.name}, ${leanLabel(s.politicalLean)}${
-                            textAuthority(s.confidence) === "headline"
-                              ? ", scored from the headline"
-                              : ""
-                          }. Show details.`}
-                          aria-expanded={pinned === s.name}
-                          onClick={(e) => {
-                            if (pinned === s.name) {
-                              setPinned(null);
-                              setCard(null);
-                            } else {
-                              setPinned(s.name);
-                              show(e.currentTarget, s);
-                            }
-                          }}
-                        >
-                          <Mark source={s} size={pack.mark} />
-                        </button>
-                      ) : (
-                        <a
-                          key={s.name}
-                          href={s.articleUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bench__mark"
-                          data-focused={focusName === s.name ? "true" : undefined}
-                          aria-label={`${s.name}, ${leanLabel(s.politicalLean)}${
-                            textAuthority(s.confidence) === "headline"
-                              ? ", scored from the headline"
-                              : ""
-                          }`}
-                          onPointerEnter={(e) => show(e.currentTarget, s)}
-                          onPointerLeave={() => setCard(null)}
-                          onFocus={(e) => show(e.currentTarget, s)}
-                          onBlur={() => setCard(null)}
-                        >
-                          <Mark source={s} size={pack.mark} />
-                        </a>
-                      ),
-                    )}
+                    {row.map((s) => markEl(s, pack.mark))}
                   </div>
                 ))}
               </div>
@@ -639,6 +659,29 @@ export default function Bench({ sources, unscoredCount = 0, storySpread = null, 
         <span className="bench__anchor bench__anchor--center">Centre</span>
         <span className="bench__anchor bench__anchor--right">Right</span>
       </div>
+
+      {/* THE STATE RUNG (CEO decision 1, 2026-10-02). Outlets the roster
+          flags `state_affiliated` sit here, under the ladder and outside it,
+          in a square mark rather than a circle. Their roster baselines run
+          from far left to far right with nothing domestic behind them, so a
+          column would claim a position the outlet does not hold, and on the
+          2026-10-01 front page they cast 12 wing votes. They are not in the
+          word, the counts or any column. */}
+      {stateSources.length > 0 && (
+        <div
+          className="bench__state"
+          role="group"
+          aria-label={`${stateSources.length} state-affiliated ${
+            stateSources.length === 1 ? "outlet" : "outlets"
+          }, not placed on the left to right ladder`}
+        >
+          <span className="bench__state-label">State-affiliated</span>
+          <span className="bench__state-marks">
+            {stateSources.map((s) => markEl(s, Math.max(pack.mark, BENCH_FAVICON_MIN)))}
+          </span>
+          <span className="bench__state-count">{stateSources.length}</span>
+        </div>
+      )}
 
       {capped && (
         <button

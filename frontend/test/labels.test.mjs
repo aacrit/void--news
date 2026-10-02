@@ -346,6 +346,8 @@ check("one wing article does NOT read a direction",
 const KEYS = ["far_left", "left", "center_left", "center", "center_right", "right", "far_right"];
 const FEED = join(ROOT, "build-data/feed.json");
 const DD = join(ROOT, "public/data/deepdive");
+const STATE = new Set(JSON.parse(readFileSync(join(ROOT, "../data/sources.json"), "utf8"))
+  .filter((s) => s.state_affiliated).map((s) => String(s.name).toLowerCase().trim()));
 let compared = 0;
 if (existsSync(FEED)) {
   const feed = JSON.parse(readFileSync(FEED, "utf8"));
@@ -367,7 +369,18 @@ if (existsSync(FEED)) {
       return [{ name: a.source?.name ?? `article:${a.id}`, politicalLean: b.political_lean,
                 leanUnscored: b.lean_unscored === true }];
     });
-    const placed = votes.outletVotes(rows);
+    /* CEO decision 1: the outlets the pipeline names as state-affiliated
+       leave the columns, exactly as DeepDiveSpectrum takes them out. */
+    const stateNames = new Set((bd.lean_state_outlets ?? []).map((n) => n.toLowerCase().trim()));
+    for (const n of bd.lean_state_outlets ?? []) {
+      check(`${c.id.slice(0, 8)}: "${n}" is state-affiliated in the roster`, STATE.has(n.toLowerCase().trim()));
+    }
+    const voted = votes.outletVotes(rows);
+    for (const v of voted) {
+      check(`${c.id.slice(0, 8)}: state outlet "${v.name}" is set apart, never in a column`,
+        !STATE.has(v.name.toLowerCase().trim()) || stateNames.has(v.name.toLowerCase().trim()));
+    }
+    const placed = voted.filter((v) => !stateNames.has(v.name.toLowerCase().trim()));
     if (!placed.length) continue; // nothing measured: the Bench draws no columns
     const bench = votes.outletSpread(placed.map((v) => v.lean));
     compared += 1;
