@@ -18,6 +18,60 @@ lives in this file.
 
 ---
 
+## rev 85 WS-D: the ship board stops trusting the client, and /privacy names every field (2026-10-02)
+
+Audit 5 scored security 74. Its two HIGH findings on the Worker were one
+defect: every ship write was keyed on a `fingerprint` the browser chose. A
+client rotating that string could vote without bound on any request, and one
+client could exhaust the global reply and submit caps (200 and 120 an hour)
+and lock out everyone.
+
+- **Worker.** Votes, replies and submits are keyed on the server's salted
+  hash of `CF-Connecting-IP`. `worker/migrations/0001` adds `ip_hash` to
+  `ship_votes` and `ship_replies` with `UNIQUE(request_id, ip_hash)` on votes;
+  the old `fingerprint` column stays and is filled with the same hash, so the
+  old unique agrees with the new one. Per IP per hour: 5 submits, 30 votes, 15
+  replies. Global caps stay only as backstops (1,000 / 5,000 / 2,000). A vote
+  checks its parent first (404, not an FK 500). `GET /api/ship/requests` has
+  `LIMIT 200`. The 500 handler no longer returns `String(e)`.
+- **Salt.** `IP_SALT = "void-news-dev-salt-change-me"` was a committed
+  `[vars]` literal, so every stored hash was a lookup away from its IPv4
+  address. It is removed; the Worker returns 503 on every write while the salt
+  is missing, short or that placeholder, and logs why.
+- **Tests.** `worker/test/ship.test.ts` (vitest) drives the real fetch handler
+  against an in-memory D1 built from `schema.sql` plus `migrations/`: a 31st
+  vote is refused, 25 rotating fingerprints from one IP count once, a
+  missing parent writes nothing, a flood from one IP leaves another IP able to
+  reply. `worker/package-lock.json` exists now.
+- **Privacy.** `FeedbackForm` sent the full `navigator.userAgent` as
+  `device_info`; it sends a class such as "mobile safari", and the Worker
+  stores null for anything else. `/privacy` said feedback stored "a coarse
+  one-way hash of your browser profile"; it now names every column the Worker
+  writes, the salted IP hash, the device class, that older notes hold the full
+  user agent, and that rows have no automatic expiry.
+  `frontend/test/privacy-facts.test.mjs` parses `schema.sql` and the
+  migrations and fails on a column the page does not name.
+- **Scraper.** `web_scraper` sent a spoofed Chrome UA while reading robots.txt
+  as `*`. It sends `VoidNewsBot/1.0 (+https://news.voidvision.org/press)` and
+  a URL must be allowed by both the VoidNewsBot group and `*`. Scrape success
+  may fall; it was not measured live, and `engine_health --floors` is where it
+  would show.
+- **Headers.** The Pages default `Access-Control-Allow-Origin: *` is detached
+  on `/*`; the unused Cloudflare Insights allowance is out of the CSP.
+- **Dependencies.** `next` 16.3.8 plus `npm audit fix`: frontend audit 9 to 0.
+  Python: `requests>=2.32.4`, `Pillow>=11.3`, `playwright~=1.63.0`,
+  `edge-tts<8`.
+- **P0-6.** `verify_production.py` fails on a 429 for `/` or its own
+  `/_next/static` assets. `docs/DEPLOYMENT.md` has a current section with the
+  dashboard exemption (`/_next/static/*`, `/logos/*`, `/brand/*`, `/audio/*`)
+  and the Worker's hand deploy.
+
+Not done here: the Worker is not deployed (by hand: secret, migration,
+deploy); the dashboard rule is not applied; `layout.tsx`'s `<meta>` CSP still
+lists Insights; the Worker's 8 dev-only advisories need wrangler 4.
+
+---
+
 ## rev 83: a red main from four causes, one of them silent for a week (2026-10-01)
 
 Verify Production had been red on every scheduled run since 2026-09-28 and
