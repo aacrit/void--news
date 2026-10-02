@@ -1,10 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import {
-  Playfair_Display,
-  Inter,
-  IBM_Plex_Mono,
-  Barlow_Condensed,
-} from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import AudioProvider from "./components/AudioProvider";
 import MobileNav from "./components/MobileNav";
@@ -27,33 +22,41 @@ import { ROSTER_SOURCES_TEXT } from "./lib/rosterConfig";
                humanist mono with institutional warmth (not a coding font)
    --------------------------------------------------------------------------- */
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "700"],
+// Self-hosted (app/fonts/, latin subset, all SIL OFL). next/font/google fetched
+// the CSS at build time, so the build depended on whatever Google served the
+// runner: on 2026-10-02 it handed CI `fonts.gstatic.com/l/font?kit=..&skey=..`
+// URLs, which Next 16.3's font loader rejects ("next/font/google queries have
+// exactly one entry"), and the build failed three times in a row while the same
+// commit built locally. Inter and Playfair Display are variable files covering
+// every weight used here.
+const playfair = localFont({
+  src: [{ path: "./fonts/playfair-display-latin-var.woff2", weight: "400 700", style: "normal" }],
   variable: "--font-playfair",
   display: "swap",
+  adjustFontFallback: "Times New Roman",
 });
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+const inter = localFont({
+  src: [{ path: "./fonts/inter-latin-var.woff2", weight: "400 600", style: "normal" }],
   variable: "--font-inter",
   display: "swap",
 });
 
 // Secondary families (meta labels, mono data): not on the critical render
 // path, so don't preload them — keeps Playfair + Inter uncontended at FCP.
-const barlowCondensed = Barlow_Condensed({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+const barlowCondensed = localFont({
+  src: [
+    { path: "./fonts/barlow-condensed-400-latin.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/barlow-condensed-500-latin.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/barlow-condensed-600-latin.woff2", weight: "600", style: "normal" },
+  ],
   variable: "--font-barlow",
   display: "swap",
   preload: false,
 });
 
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400"],
+const ibmPlexMono = localFont({
+  src: [{ path: "./fonts/ibm-plex-mono-400-latin.woff2", weight: "400", style: "normal" }],
   variable: "--font-ibm-mono",
   display: "swap",
   preload: false,
@@ -157,7 +160,7 @@ export default async function RootLayout({
             runtime data host now that reads are static JSON on this origin. */}
         <link rel="preconnect" href="https://void-api.aacrit.workers.dev" />
         <link rel="dns-prefetch" href="https://void-api.aacrit.workers.dev" />
-        {/* Fonts loaded via next/font/google above — no additional font loads needed.
+        {/* Fonts loaded via next/font/local above — no additional font loads needed.
             Chomsky, IM Fell English, Old Standard TT, and Lora were removed:
             none are referenced in CSS. Saves 4 network requests. */}
         {/* CSP — UAT 2026-05-13 P1-2/P1-3:
