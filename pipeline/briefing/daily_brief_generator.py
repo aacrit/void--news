@@ -1894,6 +1894,67 @@ def _build_stub_brief(top_ids: list[str], reason: str = "generator_failure") -> 
     }
 
 
+def _ground_brief_result(brief_result: dict, top_clusters: list[dict],
+                         edition: str) -> list:
+    """Cut every TL;DR, Opinion and script sentence its own story does not carry.
+
+    The TL;DR is mapped paragraph by paragraph to its story (one story per
+    paragraph: a sentence about another story is moved to that story's own
+    paragraph, or cut when it already has one). The Opinion and its spoken
+    monologue are read against the Opinion's one cluster. The legacy two-voice
+    script, which On Air replaces when the radio format succeeds, is read
+    against the day's stories together. Each cut is logged and kept on the
+    result under a private key (main builds the stored row explicitly).
+    """
+    try:
+        from editorial import derived_grounding as dg
+    except ImportError:  # pragma: no cover
+        from pipeline.editorial import derived_grounding as dg  # type: ignore
+    cuts: list = []
+    try:
+        if not brief_result.get("_carried") and brief_result.get("tldr_text") \
+                and top_clusters:
+            text, more = dg.ground_brief(brief_result["tldr_text"], top_clusters,
+                                         product=f"tldr:{edition}")
+            cuts += more
+            if text.strip():
+                brief_result["tldr_text"] = _ensure_paragraph_structure(text)
+        script = brief_result.get("audio_script")
+        if script and not brief_result.get("_carried") and top_clusters:
+            union = dg.Evidence("\n".join(dg.cluster_text(c) for c in top_clusters))
+            lines = []
+            for line in script.split("\n"):
+                m = re.match(r"^(\s*[AB]:\s*)(.*)$", line)
+                if not m or not m.group(2).strip():
+                    lines.append(line)
+                    continue
+                kept, more = dg.ground_text(m.group(2), union,
+                                            product=f"script:{edition}")
+                cuts += more
+                if kept.strip():
+                    lines.append(m.group(1) + kept.replace("\n\n", " "))
+            brief_result["audio_script"] = "\n".join(lines)
+        opinion_cluster = brief_result.get("_opinion_cluster_ref")
+        if opinion_cluster and brief_result.get("_fresh_opinion"):
+            for key in ("opinion_text", "opinion_audio_script"):
+                if brief_result.get(key):
+                    kept, more = dg.ground_text(brief_result[key], opinion_cluster,
+                                                product=f"{key}:{edition}")
+                    cuts += more
+                    if kept.strip():
+                        brief_result[key] = kept
+    except Exception as e:  # grounding must never cost the edition its brief
+        print(f"  [grounding][brief:{edition}] [warn] pass failed, text kept: {e}")
+        return []
+    for c in cuts:
+        print(f"  [grounding] {c}")
+    if cuts:
+        print(f"  [grounding][brief:{edition}] {len(cuts)} sentence(s) cut "
+              f"(not in the story they were written from)")
+    brief_result["_grounding_cuts"] = [c._asdict() for c in cuts]
+    return cuts
+
+
 def generate_daily_briefs(
     clusters: list[dict],
     source_map: dict,
@@ -2158,6 +2219,12 @@ def generate_daily_briefs(
         # Private keys (never persisted — main builds brief_row explicitly).
         if not brief_result.get("_carried"):
             brief_result["_top_cluster_refs"] = top_clusters
+
+        # Rule 1 for the derived products (rev 85): every paragraph is read
+        # against the story it is about and a sentence its story's text does
+        # not carry is CUT, never regenerated. Fresh text only; a carried
+        # brief was grounded on the day it was written.
+        _ground_brief_result(brief_result, top_clusters, edition)
 
         results[edition] = brief_result
 
