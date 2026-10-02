@@ -135,11 +135,22 @@ def script_findings(episodes: dict, scripts: Path) -> tuple[list[str], list[str]
             continue
         detail = (f"{slug}: audio was rendered from script {recorded[:12]}, the script is "
                   f"now {current[:12]}")
+        # A revision that contradicts nothing the audio says (a time-bound
+        # phrase made durable, 2026-10-02) may wait for its re-render while
+        # the episode keeps serving, but only by a committed attestation tied
+        # to the exact revised script: any further edit fails again.
+        rev = ep.get("script_revised_after_render") or {}
         if ep.get("audio_withdrawn"):
             notes.append(detail + "; withdrawn, not served, awaiting a re-render")
+        elif (isinstance(rev, dict) and rev.get("sha256") == current
+              and str(rev.get("reason") or "").strip() and rev.get("at")):
+            notes.append(detail + f"; revised {rev['at']} without contradicting the audio "
+                         f"({rev['reason'][:90]}), awaiting a re-render")
         else:
             fails.append(detail + ": the served audio contradicts its corrected script. "
-                         "Re-render it, or mark it audio_withdrawn")
+                         "Re-render it, or mark it audio_withdrawn (or, if the revision contradicts "
+                         "nothing the audio says, record script_revised_after_render with this "
+                         "script's sha256 and the reason)")
     return fails, notes, unverified
 
 
@@ -305,18 +316,23 @@ def main() -> int:
 
     # The rule must be able to fail: the pair above, had nobody withdrawn
     # them, is exactly what it exists to refuse.
+    line_sha = hashlib.sha256(b"N: a corrected line\n").hexdigest()
     planted = {"x": {"script_sha256": "0" * 64}, "y": {"script_sha256": None},
-               "z": {"script_sha256": "0" * 64, "audio_withdrawn": True}}
+               "z": {"script_sha256": "0" * 64, "audio_withdrawn": True},
+               "r": {"script_sha256": "0" * 64, "script_revised_after_render":
+                     {"sha256": line_sha, "reason": "a time-bound phrase dated", "at": "2026-10-02"}},
+               "s": {"script_sha256": "0" * 64, "script_revised_after_render":
+                     {"sha256": "1" * 64, "reason": "attested an older revision", "at": "2026-10-02"}}}
     tmp = Path(tempfile.mkdtemp(prefix="void-hist-sha-"))
     try:
         for s in planted:
             (tmp / f"{s}.txt").write_text("N: a corrected line\n")
         pf, pn, pu = script_findings(planted, tmp)
-        check("planted: a stale, served episode fails",
-              len(pf) == 1 and pf[0].startswith("x:"), str(pf))
+        check("planted: a stale, served episode fails, and so does one whose attestation "
+              "names another revision", sorted(f.split(":")[0] for f in pf) == ["s", "x"], str(pf))
         check("planted: an unverified episode is listed, not passed", pu == ["y"], str(pu))
-        check("planted: a stale, withdrawn episode is noted, not failed",
-              len(pn) == 1 and pn[0].startswith("z:"), str(pn))
+        check("planted: a withdrawn episode and an attested revision are noted, not failed",
+              sorted(n.split(":")[0] for n in pn) == ["r", "z"], str(pn))
         missing_field = script_findings({"w": {}}, tmp)[0]
         check("planted: an entry with no script_sha256 field fails",
               len(missing_field) == 1, str(missing_field))

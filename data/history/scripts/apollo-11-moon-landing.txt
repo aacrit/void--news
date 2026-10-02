@@ -103,14 +103,14 @@ N: Each of those five is true, and each leaves something out.
 N: The triumph account leaves out the poverty and the civil rights struggle happening in the same month, and it leaves out Wernher von Braun, who designed the rocket, and who had built the V two for Nazi Germany using slave labour.
 N: The Soviet account leaves out the scale and the consistency of the effort that beat them, and the two decades they spent concealing that the N one had failed at all.
 N: The domestic critique leaves out the jobs the programme created, including for Black engineers and mathematicians, and the spinoffs that later reached ordinary people.
-N: The engineers' account leaves out that Cold War prestige is what paid for the science, and that crewed lunar exploration was abandoned three years later and has not resumed.
+N: The engineers' account leaves out that Cold War prestige is what paid for the science, and that the last crew left the Moon three years later, in December nineteen seventy two.
 N: And the Global South account leaves out the inspiration that Apollo genuinely provided to space programmes later built in India and Brazil, on explicitly developmental terms.
 N: The holes are not random. Each account omits the part that would most complicate its own conclusion.
 
 ## REST
 
 ## CLOSE
-N: The last people left in nineteen seventy two. Nobody has been back.
+N: The last people left in December nineteen seventy two.
 N: What stayed was less obvious than a flag. The integrated circuit found its first buyer at scale, and the industry that grew from that is the one you are probably listening to this on.
 N: And a photograph. On the way, someone pointed a camera back at the Earth, and it turned out to be small, and blue, and entirely surrounded by nothing.
 N: That picture became the emblem of the environmental movement. The most expensive journey ever made away from this planet is now best remembered for what it showed us when it looked back.

@@ -551,6 +551,11 @@
    "publishedAt": "2026-09-21T01:09:43+00:00",
    "script_sha256": null,
    "script_sha256_basis": "local render with no workflow run on record: not provable, re-verify",
+   "script_revised_after_render": {
+    "sha256": "014b45d382ded8f35ac4973d6ba0df9c2b4dfb04f95136cab5746fd4d8728010",
+    "at": "2026-10-02",
+    "reason": "time-bound lines made durable (P2-9): 'has not resumed' and 'Nobody has been back' became the record's own date, December 1972"
+   },
    "promo": {
     "id": "weekly-01-verbatim",
     "sha": "da7009d30a33",
@@ -2047,6 +2052,11 @@
    "publishedAt": "2026-09-21T01:18:12+00:00",
    "script_sha256": "57e63d892eb12bc966320c349af2ac3ff03845e7b110a751d38661a92541e353",
    "script_sha256_basis": "render-history-audio.yml run 35529645583 at c11bf663",
+   "script_revised_after_render": {
+    "sha256": "f2489bb98ba918e3c5f80f9c5145aedc02f8cedebd9f0101fab94aae35d69a2b",
+    "at": "2026-10-02",
+    "reason": "time-bound line dated (P2-9): 'seventy percent of the global supply ... today' became 'in twenty twenty three ... seventy percent', the record's own date; the audio's figure is the same and not false"
+   },
    "promo": {
     "id": "weekly-03-shape",
     "sha": "f0e39c05137d",
@@ -3434,6 +3444,11 @@
    "publishedAt": "2026-09-21T01:26:21+00:00",
    "script_sha256": "3833f8a020d9a3793c9c9c21a4f88a9a0ba536a8fcb0b7ddd3ec13da4ede1b72",
    "script_sha256_basis": "render-history-audio.yml run 35529645583 at c11bf663",
+   "script_revised_after_render": {
+    "sha256": "425459b8fb010f6e56a39d1f809dbd873b95321b0ec8d169707bdbb070bcb733",
+    "at": "2026-10-02",
+    "reason": "time-bound line made durable (P2-9): 'banned on the mainland to this day' became 'was banned on the mainland'; the record says it was banned and gives no date"
+   },
    "promo": {
     "id": "weekly-06-week-in-bias",
     "sha": "5d3bb7b7d195",
@@ -5477,6 +5492,11 @@
    "publishedAt": "2026-09-21T05:14:32+00:00",
    "script_sha256": "93ed505a13dca4c687d562c7aa2480746b30a8be1dd599d2647b1f3d5da756d4",
    "script_sha256_basis": "render-history-audio.yml run 35562858536 at 6bafe22f",
+   "script_revised_after_render": {
+    "sha256": "6d9d0309bf7c4c4931487a1ee693b888d9bbadd0bf9d2bdf090b3f42742c8fbf",
+    "at": "2026-10-02",
+    "reason": "undated population count cut (P2-9): 'thirty to forty five million Kurds' became 'the Kurds'; the record carries the range with no date. Also over the 15 minute ceiling"
+   },
    "promo": {
     "id": "site-04-nothing-knows",
     "sha": "5c2c800fc41f",

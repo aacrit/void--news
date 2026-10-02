@@ -141,7 +141,7 @@ def build_entry(slug: str, src_dir: Path, existing: dict | None = None, *,
     if restitch:
         entry["script_sha256"] = existing.get("script_sha256")
         entry["script_sha256_basis"] = existing.get("script_sha256_basis") or "unknown"
-        for k in ("audio_withdrawn", "audio_withdrawn_reason"):
+        for k in ("audio_withdrawn", "audio_withdrawn_reason", "script_revised_after_render"):
             if k in existing:
                 entry[k] = existing[k]
     else:
