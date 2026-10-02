@@ -58,7 +58,7 @@ REST             held pause
 TURN         E   what each side leaves out. Both, never one.
 transition
 SECOND       E   feature 2
-DEPARTMENT   E   Technology or Sports & Culture
+DEPARTMENT   E   Technology or Sports & Culture (both suspended since 2026-10-02, decision 5)
 break (9 s)
 NUMBERS      E   The Week in Bias, read as measurement           « device 3
                  the spectrum sonified beneath it, -40 dBFS
@@ -117,7 +117,7 @@ page; these are the script).
 | W-04 | the turn engages both columns, by distinctive vocabulary |
 | W-05 | the programme's shape: every required movement, no unknown marker |
 | W-06 | the dateline beat exists; a rest is expected |
-| W-07 | 18-22 minutes, measured per voice, not against one constant |
+| W-07 | inside the issue's own band (18-22 for a full issue, floating down to a floor of 14 with the sourced words), measured per voice, not against one constant |
 | W-08 | Void's own lines: no borrowed radio furniture, no podcast tells |
 | W-09 | no figure read aloud that the issue does not carry |
 | W-10 | the close asks rather than states |
@@ -270,7 +270,18 @@ Every other Weekly check runs before synthesis.
 
 ## The word budget
 
-W-07's band is the format and is not negotiable. The generator used to be told
+W-07's band is sized to the issue (decision 6, 2026-10-02). It used to be a
+fixed 18-22, while grounding and the source check shrink the material every
+week: the corrected Issue 26 script ran 17.6 minutes and was refused for being
+short, which left padding or withdrawal, and padding is where the unsourced
+sentences came from. `weekly_script.target_minutes(issue)` takes the published
+issue's sourced words (covers, columns, departments, briefs, editorial), reads
+55% of them at 163 wpm plus the music, and centres a four-minute band there,
+clamped to a ceiling of 22 and a floor of 14. A full issue of about 5,700 words
+or more keeps 18-22; the corrected Issue 26 gets 14-18. The rundown prompt and
+`word_budget` take the same band, so the writer is asked for what W-07 measures.
+
+The generator used to be told
 something different from what W-07 measures: its prompt asked for
 `band x 163 wpm`, while `estimated_minutes` adds `MUSIC_MINUTES` (1.4) of theme,
 beds and outro that nobody speaks over. The prompt's ceiling was ~228 words past

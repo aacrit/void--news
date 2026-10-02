@@ -88,16 +88,20 @@ claims about its own confidence. It needs a decision, not a tweak.
 
 ## Known defects, not yet fixed
 
-**Weekly Issue #26 still carries claims this session could not verify.** It
-was written from cluster rows that are now pruned, so two quotations rendered
-as direct quotes (Trump on "the security of Greenland, and the United States
-of America"; Rasmussen's "binding agreement") and a statement credited to
-Greenland Prime Minister Jens-Frederik Nielsen (the printed stories give a
-similar line to Mette Frederiksen) cannot be checked. Left as published by the
-CEO's call on 2026-10-01; the audio is withdrawn. To restore it, the draft at
-`data/weekly/scripts/drafts/2026-09-14.txt` needs about 300 more SOURCED words
-(17.6 min against 18-22), then move it back to `data/weekly/scripts/` and run
-`weekly-digest.yml` with `mode=audio-only`.
+**Weekly Issue #26's audio is not yet re-rendered.** The issue was corrected
+on 2026-10-02 against the printed stories (rev 85 WS-G: the Frederiksen
+attribution, two quotations, an invented one, the Sheeran cover, two columns
+withdrawn, both departments, five briefs, the article count), and W-T22 now
+holds every committed quotation to the printed week. The corrected script is
+at `data/weekly/scripts/2026-09-14.txt`, 14.2 min inside the issue's floated
+14-18 band, every validator clean. Rendering it is blocked on one thing:
+`render_weekly_audio` writes through `_write_audio_static`, which overwrites
+`frontend/public/audio/weekly-world/latest.mp3` and `latest.chapters.json`
+and rotates out all but the two newest dated files. Once Issue 27 is the
+latest, rendering Issue 26 with `--week 2026-09-14` would put the older
+episode under the current one's address. It needs a per-issue stem that
+leaves `latest.*` alone when the week is not the newest, and the workflow's
+`audio-only` mode has no week input at all.
 
 **The spoken brief has no per-story grounding check on its OUTPUT.**
 2026-09-30 aired another story's judge and date inside the Christa Pike item.
