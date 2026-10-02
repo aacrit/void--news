@@ -49,6 +49,7 @@ import BiasReport from "./components/BiasReport";
 import BriefList from "./components/BriefList";
 import BackIssues from "./components/BackIssues";
 import IssueUtilities from "./components/IssueUtilities";
+import { audioWithdrawal } from "../lib/weeklyAudio";
 import WeekRail from "./components/WeekRail";
 import WeekDelta from "./components/WeekDelta";
 import Corrections from "./components/Corrections";
@@ -82,6 +83,7 @@ export default function WeeklyIssue({
   corrections?: WeeklyCorrection[];
 }) {
   const { playWeekly } = useAudio();
+  const withdrawal = audioWithdrawal(corrections, issue.week_start);
 
   /* OFFER this issue to the shared player, recoloured to the weekly accent.
      `playWeekly` routes through `load`, which refuses to interrupt playback,
@@ -228,6 +230,16 @@ export default function WeeklyIssue({
           weekStart={issue.week_start}
           archive={archive}
         />
+
+        {/* Where the player would sit. A correction withdrew this issue's
+            recording; until 2026-10-02 the only notice was in Corrections at
+            the foot of the issue, 24,000 px down at 375 (audit 2 F4). */}
+        {!issue.audio_url && withdrawal && (
+          <p className="wk-audio-note" data-weekly-audio="withdrawn">
+            This issue&apos;s recording was withdrawn after a correction.{" "}
+            <a className="wk-audio-note__link" href="#corrections">Read the correction</a>
+          </p>
+        )}
 
         {lead && (
           <>
