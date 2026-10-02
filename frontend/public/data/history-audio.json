@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-25T19:55:25+00:00",
+ "generatedAt": "2026-10-02T06:35:55+00:00",
  "episodes": {
   "alexanders-conquests": {
    "url": "/audio/history/alexanders-conquests.mp3?v=ab0c51b6",
@@ -3560,109 +3560,107 @@
    }
   },
   "haitian-revolution": {
-   "url": "/audio/history/haitian-revolution.mp3?v=0ff60e2a",
-   "chaptersUrl": "/audio/history/haitian-revolution.chapters.json?v=0ff60e2a",
+   "url": "/audio/history/haitian-revolution.mp3?v=9eca7a1d",
+   "chaptersUrl": "/audio/history/haitian-revolution.chapters.json?v=9eca7a1d",
    "title": "The Haitian Revolution",
-   "durationSeconds": 725.995,
-   "bytes": 11630698,
+   "durationSeconds": 733.701,
+   "bytes": 11754119,
    "chapters": [
     {
      "startTime": 0.0,
      "title": "Opening",
      "kind": "segment",
-     "endTime": 48.423
+     "endTime": 48.443
     },
     {
-     "startTime": 48.423,
+     "startTime": 48.443,
      "title": "The clearing",
      "kind": "segment",
-     "endTime": 113.115
+     "endTime": 113.031
     },
     {
-     "startTime": 113.115,
+     "startTime": 113.031,
      "title": "What the colony was worth",
      "kind": "segment",
-     "endTime": 181.531
+     "endTime": 181.319
     },
     {
-     "startTime": 181.531,
+     "startTime": 181.319,
      "title": "Toussaint",
      "kind": "segment",
-     "endTime": 263.333
+     "endTime": 271.25
     },
     {
-     "startTime": 263.333,
+     "startTime": 271.25,
      "title": "The flag",
      "kind": "segment",
-     "endTime": 323.78
+     "endTime": 331.677
     },
     {
-     "startTime": 323.78,
+     "startTime": 331.677,
      "title": "Five accounts",
      "kind": "segment",
-     "endTime": 330.823
+     "endTime": 338.72
     },
     {
-     "startTime": 330.823,
+     "startTime": 338.72,
      "title": "The enslaved revolutionaries",
      "kind": "segment",
-     "endTime": 382.639
+     "endTime": 390.621
     },
     {
-     "startTime": 382.639,
+     "startTime": 390.621,
      "title": "The French colonial account",
      "kind": "segment",
-     "endTime": 431.661
+     "endTime": 439.77
     },
     {
-     "startTime": 431.661,
+     "startTime": 439.77,
      "title": "The Haitian nationalist account",
      "kind": "segment",
-     "endTime": 491.05
+     "endTime": 499.16
     },
     {
-     "startTime": 491.05,
+     "startTime": 499.16,
      "title": "The academic account",
      "kind": "segment",
-     "endTime": 541.766
+     "endTime": 549.747
     },
     {
-     "startTime": 541.766,
+     "startTime": 549.747,
      "title": "The indemnity",
      "kind": "segment",
-     "endTime": 597.649
+     "endTime": 605.566
     },
     {
-     "startTime": 597.649,
+     "startTime": 605.566,
      "title": "The shape of the disagreement",
      "kind": "segment",
-     "endTime": 668.344
+     "endTime": 676.218
     },
     {
-     "startTime": 668.344,
+     "startTime": 676.218,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 712.844
+     "endTime": 720.568
     },
     {
-     "startTime": 712.844,
+     "startTime": 720.568,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 725.944
+     "endTime": 733.668
     }
    ],
-   "renderedAt": "2026-09-19T23:38:03+00:00",
-   "publishedAt": "2026-09-21T01:27:28+00:00",
-   "script_sha256": "4dea7d64eda2b31a10bff04fe10f3ddd0fb1ec460ecb71c4248a1c627881e167",
-   "script_sha256_basis": "local render 2026-09-19T23:38Z; the only earlier commit of the script is ae5d7cd6",
+   "renderedAt": "2026-10-02T06:35:55+00:00",
+   "publishedAt": "2026-10-02T06:35:55+00:00",
+   "script_sha256": "aca16aaf6e6e9300651481d3b9398ec986280abc6993b2821d5d4a6b781c3127",
+   "script_sha256_basis": "haitian-revolution.script.json written by history_producer.py at render",
    "promo": {
     "id": "onair-05-cold-open",
     "sha": "d2845fcb5ec1",
     "voice": "af_kore",
-    "startTime": 712.844
-   },
-   "audio_withdrawn": true,
-   "audio_withdrawn_reason": "script corrected 2026-09-25 (30aa24d4: Toussaint's 'tree of liberty' given as reported; 'thirty thousand men' cut); audio rendered 2026-09-19 still speaks the old lines"
+    "startTime": 720.568
+   }
   },
   "hiroshima-nagasaki": {
    "url": "/audio/history/hiroshima-nagasaki.mp3?v=173acecc",
@@ -6076,103 +6074,101 @@
    }
   },
   "scramble-for-africa": {
-   "url": "/audio/history/scramble-for-africa.mp3?v=1403f7f3",
-   "chaptersUrl": "/audio/history/scramble-for-africa.chapters.json?v=1403f7f3",
+   "url": "/audio/history/scramble-for-africa.mp3?v=aed82775",
+   "chaptersUrl": "/audio/history/scramble-for-africa.chapters.json?v=aed82775",
    "title": "The Scramble for Africa",
-   "durationSeconds": 771.082,
-   "bytes": 12352858,
+   "durationSeconds": 770.586,
+   "bytes": 12344908,
    "chapters": [
     {
      "startTime": 0.0,
      "title": "Opening",
      "kind": "segment",
-     "endTime": 54.033
+     "endTime": 53.99
     },
     {
-     "startTime": 54.033,
+     "startTime": 53.99,
      "title": "Berlin, November fifteenth, eighteen eighty four",
      "kind": "segment",
-     "endTime": 148.222
+     "endTime": 148.201
     },
     {
-     "startTime": 148.222,
+     "startTime": 148.201,
      "title": "The Congo Free State",
      "kind": "segment",
-     "endTime": 247.297
+     "endTime": 247.36
     },
     {
-     "startTime": 247.297,
+     "startTime": 247.36,
      "title": "German South West Africa, October second, nineteen oh four",
      "kind": "segment",
-     "endTime": 318.944
+     "endTime": 318.346
     },
     {
-     "startTime": 318.944,
+     "startTime": 318.346,
      "title": "Five accounts",
      "kind": "segment",
-     "endTime": 342.349
+     "endTime": 341.965
     },
     {
-     "startTime": 342.349,
+     "startTime": 341.965,
      "title": "The colonizers",
      "kind": "segment",
-     "endTime": 398.754
+     "endTime": 398.179
     },
     {
-     "startTime": 398.754,
+     "startTime": 398.179,
      "title": "The kingdoms that resisted",
      "kind": "segment",
-     "endTime": 463.102
+     "endTime": 462.356
     },
     {
-     "startTime": 463.102,
+     "startTime": 462.356,
      "title": "The Pan African critique",
      "kind": "segment",
-     "endTime": 530.17
+     "endTime": 529.51
     },
     {
-     "startTime": 530.17,
+     "startTime": 529.51,
      "title": "The economic ledger",
      "kind": "segment",
-     "endTime": 577.245
+     "endTime": 576.542
     },
     {
-     "startTime": 577.245,
+     "startTime": 576.542,
      "title": "North Africa's own war",
      "kind": "segment",
-     "endTime": 648.786
+     "endTime": 647.978
     },
     {
-     "startTime": 648.786,
+     "startTime": 647.978,
      "title": "What each one leaves out",
      "kind": "segment",
-     "endTime": 725.386
+     "endTime": 724.644
     },
     {
-     "startTime": 725.386,
+     "startTime": 724.644,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 757.946
+     "endTime": 757.439
     },
     {
-     "startTime": 757.946,
+     "startTime": 757.439,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 771.046
+     "endTime": 770.539
     }
    ],
-   "renderedAt": "2026-09-20T01:47:18+00:00",
-   "publishedAt": "2026-09-21T01:42:28+00:00",
-   "script_sha256": "559040784659af0f47cc62650ea963b60872a8efb00c31242bb91037914a5aa7",
-   "script_sha256_basis": "render-history-audio.yml run 35481638788 at 0a2f0003",
+   "renderedAt": "2026-10-02T06:35:55+00:00",
+   "publishedAt": "2026-10-02T06:35:55+00:00",
+   "script_sha256": "6e454acef263ed4bc5a48d09fa08a7ec6ec8661238e3e414332c8601c76ac76c",
+   "script_sha256_basis": "scramble-for-africa.script.json written by history_producer.py at render",
    "promo": {
     "id": "weekly-04-no-host",
     "sha": "537c6d381004",
     "voice": "af_kore",
-    "startTime": 757.946
-   },
-   "audio_withdrawn": true,
-   "audio_withdrawn_reason": "script corrected 2026-09-25 (von Trotha's order read in a named English translation); audio rendered 2026-09-20 voices the earlier paraphrase as quotation"
+    "startTime": 757.439
+   }
   },
   "september-11-attacks": {
    "url": "/audio/history/september-11-attacks.mp3?v=c6b9ebe4",
