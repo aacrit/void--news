@@ -28,6 +28,7 @@ import {
 } from "../lib/bench";
 import { envelope, inkRibbon, whitespace, type BenchGeometry } from "../lib/benchCurve";
 import BenchSigil from "./BenchSigil";
+import type { LeanRationale } from "../lib/types";
 
 /* ---------------------------------------------------------------------------
    Bench — who is sitting where, left to right.
@@ -68,6 +69,13 @@ export interface BenchSource {
    *  sits on its own rung under the ladder, never in a column (CEO decision
    *  1): a government's line is not a position on a domestic left/right axis. */
   state?: boolean;
+  /** THE WORKING (P1-13). The linked article's own score, and how the engine
+   *  reached it: score = outlet baseline + text shift. */
+  articleLean?: number;
+  leanRationale?: LeanRationale;
+  /** False: no text reading is stored, so the article sits on the outlet's
+   *  record alone. Undefined: this surface does not carry the working. */
+  leanRead?: boolean;
 }
 
 const BUCKET_TOKEN: Record<LeanCategory, string> = {
@@ -122,6 +130,66 @@ const BOX_H_NARROW = 132;
 const BOX_H_EXPANDED = 440;
 const COL_GAP = 8;
 const COL_GAP_NARROW = 4;
+
+/* ── The working behind a mark (P1-13, 2026-10-02) ──────────────────────────
+   "Every score shows how it was reached" was printed on /about while the Deep
+   Dive built each article's lean rationale and rendered none of it. The card
+   now prints the engine's own arithmetic, score = outlet baseline + the
+   points the words moved it, with the cap on that movement and the words that
+   did the moving. An article with no stored text reading sat on its outlet's
+   record alone, and the card says so instead of implying a reading. */
+
+const fmtPts = (x: number) => (Number.isInteger(x) ? String(x) : x.toFixed(1));
+
+function BenchWork({ source: s }: { source: BenchSource }) {
+  if (s.state) return null;
+  const r = s.leanRationale;
+  const many = (s.articles ?? 1) > 1;
+  const mean = many ? (
+    <p className="bench__card-work-note">
+      {`Placed at the mean of ${s.articles} articles from this outlet. The working is the linked one's.`}
+    </p>
+  ) : null;
+  if (!r) {
+    if (s.leanRead !== false) return mean;
+    return (
+      <div className="bench__card-work" data-work="outlet-only">
+        {mean}
+        <p className="bench__card-work-note">
+          Placed from the outlet&apos;s record alone. No reading of this article&apos;s words is stored.
+        </p>
+      </div>
+    );
+  }
+  const shift = typeof r.textShift === "number" ? r.textShift : null;
+  const dir = shift === null || Math.abs(shift) < 0.05 ? "" : shift < 0 ? " left" : " right";
+  const left = (r.topLeftKeywords ?? []).slice(0, 3);
+  const right = (r.topRightKeywords ?? []).slice(0, 3);
+  return (
+    <div className="bench__card-work" data-work="read">
+      {mean}
+      <dl className="bench__card-work-list">
+        {many && typeof s.articleLean === "number" && (
+          <div><dt>This article</dt><dd>{fmtPts(Math.round(s.articleLean))}</dd></div>
+        )}
+        <div><dt>Outlet baseline</dt><dd>{fmtPts(r.sourceBaseline)}</dd></div>
+        {shift !== null && (
+          <div>
+            <dt>Words moved it</dt>
+            <dd>
+              {`${fmtPts(Math.abs(shift))}${dir}`}
+              {typeof r.deltaMax === "number" && (
+                <span className="bench__card-work-cap">{` of ${r.deltaMax} at most`}</span>
+              )}
+            </dd>
+          </div>
+        )}
+        {left.length > 0 && <div><dt>Left terms</dt><dd>{left.join(", ")}</dd></div>}
+        {right.length > 0 && <div><dt>Right terms</dt><dd>{right.join(", ")}</dd></div>}
+      </dl>
+    </div>
+  );
+}
 
 /* ── The card that names a mark ─────────────────────────────────────────── */
 
@@ -180,6 +248,7 @@ function BenchCard({ data }: { data: CardData }) {
       )}
       <p className="bench__card-tier">{tierLabel(s.tier)}</p>
       {s.headline && <p className="bench__card-headline">{s.headline}</p>}
+      <BenchWork source={s} />
       {authorityNote(s.confidence) && (
         <p className="bench__card-headline-only">{authorityNote(s.confidence)}</p>
       )}
@@ -677,7 +746,7 @@ export default function Bench({
         >
           <span className="bench__state-label">State-affiliated</span>
           <span className="bench__state-marks">
-            {stateSources.map((s) => markEl(s, Math.max(pack.mark, BENCH_FAVICON_MIN)))}
+            {stateSources.map((s) => markEl(s, pack.mark))}
           </span>
           <span className="bench__state-count">{stateSources.length}</span>
         </div>

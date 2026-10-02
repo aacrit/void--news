@@ -5,6 +5,7 @@ import "../styles/bench.css";
 import Bench, { type BenchSource } from "./Bench";
 import { outletVotes } from "../lib/outletVotes";
 import type { WingCounts } from "../lib/biasColors";
+import type { LeanRationale } from "../lib/types";
 
 /* ---------------------------------------------------------------------------
    DeepDiveSpectrum — the Deep Dive's lean panel.
@@ -52,6 +53,13 @@ export interface DeepDiveSpectrumSource {
   /** The engine did not measure this article's lean. Its stored value is 50,
    *  so it must not be placed on a column: see the filter below. */
   leanUnscored?: boolean;
+  /** How the engine placed this article (outlet baseline, the points the
+   *  words moved it, the words). Shown on the Bench mark's card. */
+  leanRationale?: LeanRationale;
+  /** True: a text reading is stored. False: none is, so the article sits on
+   *  the outlet's record alone. Undefined: the surface does not carry it
+   *  (an archived story), and the card says nothing either way. */
+  leanRead?: boolean;
 }
 
 interface DeepDiveSpectrumProps {
@@ -104,6 +112,10 @@ export default function DeepDiveSpectrum({
            and one read off a full article drew identically. */
         confidence: s.confidence,
         state: stateNames.has(s.name.toLowerCase().trim()),
+        /* The working of the article the mark links to (P1-13). */
+        articleLean: s.politicalLean,
+        leanRationale: s.leanRationale,
+        leanRead: s.leanRead,
       })),
     [allSources, stateNames],
   );

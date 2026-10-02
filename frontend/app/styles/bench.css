@@ -621,6 +621,54 @@
 
 /* The card's one sentence of provenance. Sits under the headline because it is
    about that headline: it is the whole of what we were served. */
+/* The working (P1-13): the engine's arithmetic for this mark, label left in
+   the structural face, figure right in the data face, as a ledger reads. */
+.bench__card-work {
+  margin-top: var(--space-1);
+  border-top: 1px solid var(--divider);
+  padding-top: var(--space-1);
+}
+
+.bench__card-work-list {
+  margin: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.bench__card-work-list > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.bench__card-work-list dt {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  flex-shrink: 0;
+}
+
+.bench__card-work-list dd {
+  margin: 0;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-primary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.bench__card-work-cap {
+  color: var(--fg-tertiary);
+}
+
+.bench__card-work-note {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  color: var(--fg-tertiary);
+}
+
 .bench__card-headline-only {
   margin-top: var(--space-1);
   font-family: var(--font-structural);

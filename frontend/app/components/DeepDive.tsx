@@ -153,6 +153,9 @@ export default function DeepDive({
           confidence: src.confidence,
           headline: src.articleTitle,
           leanUnscored: src.leanUnscored,
+          /* The working the Bench mark's card prints (P1-13). */
+          leanRationale: src.lensData?.leanRationale,
+          leanRead: Boolean(src.lensData?.leanRationale),
         })),
     [spectrumRows],
   );
@@ -224,6 +227,8 @@ export default function DeepDive({
             topRightKeywords: rawLean.top_right_keywords ?? rawLean.topRightKeywords ?? [],
             framingPhrasesFound: rawLean.framing_phrases_found ?? rawLean.framingPhrasesFound ?? [],
             entitySentiments: rawLean.entity_sentiments ?? rawLean.entitySentiments ?? {},
+            textShift: typeof rawLean.text_shift === "number" ? rawLean.text_shift : undefined,
+            deltaMax: typeof rawLean.delta_max === "number" ? rawLean.delta_max : undefined,
           } : undefined;
 
           const mappedOpinion = rawOpinion ? {

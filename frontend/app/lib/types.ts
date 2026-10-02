@@ -59,6 +59,12 @@ export interface LeanRationale {
   topRightKeywords: string[];
   framingPhrasesFound: string[];
   entitySentiments: Record<string, number>;
+  /** Points the article's words moved it off the outlet baseline (signed,
+   *  after the length weighting): score = baseline + textShift. */
+  textShift?: number;
+  /** The most the words may move this outlet's articles (10 for a rated
+   *  outlet, 24 unrated, 8 state-affiliated). */
+  deltaMax?: number;
 }
 
 /** Rationale for opinion vs reporting classification */
