@@ -1,0 +1,136 @@
+## OPEN
+N: He is called The Liberator. Statues carry the name across six countries.
+N: In eighteen sixteen, a Black republic gave Bolivar the ships, the soldiers, and the guns that made his war possible. Haiti's president asked for one condition in return. Abolish slavery.
+N: Bolivar agreed, and freed the enslaved men who joined his own army. He did not abolish slavery itself. Full abolition in the countries he freed did not arrive until decades after he was dead.
+N: This is the story of a continent's liberation, and a promise the Liberator kept less than half of.
+
+## TITLE
+N: The Bolivarian Revolutions. Eighteen ten to eighteen thirty.
+
+## SCENE 1 | The earthquake
+N: Caracas, Holy Thursday, the twenty sixth of March, eighteen twelve. An earthquake levels the city.
+N: The Congress of Venezuela had declared independence from Spain on the fifth of July, eighteen eleven. The quake kills an estimated ten thousand people, and it falls almost entirely on patriot ground. Royalist towns are left standing.
+N: The Catholic clergy tells the survivors this is divine punishment for rebellion.
+N: By July, the First Republic is finished. Simon Bolivar, a twenty eight year old creole aristocrat who had inherited copper mines, cacao plantations, and enslaved laborers, escapes to Cartagena.
+
+## REST
+
+## SCENE 2 | The condition
+N: Bolivar writes a manifesto, raises a new army, and invades Venezuela. He wins, then loses again. By eighteen fifteen he is in exile a second time, in Jamaica, writing another manifesto.
+N: From Jamaica he goes to Haiti. Alexandre Petion, president of the southern Haitian republic, gives him seven ships, two hundred fifty soldiers, weapons, and a printing press.
+N: Petion's condition is a single sentence. Abolish slavery.
+
+## DOCUMENT | Simon Bolivar | The Jamaica Letter (Carta de Jamaica) | September 6, 1815
+N: Bolivar had written from exile in Kingston, months before Haiti armed him, about what three hundred years of Spanish rule had denied men like him.
+M: We were never viceroys or governors except by extraordinary chance; seldom were we bishops or archbishops; diplomats, never; soldiers, only in subordinate ranks.
+
+## ASIDE
+N: It is the case for creole grievance. It says nothing yet about the enslaved, who do not appear in it at all.
+
+## REST
+
+## SCENE 3 | The decree and the war to the death
+N: Bolivar returns to Venezuela in eighteen sixteen and issues a decree of emancipation. It frees enslaved people only if they join his army. The full abolition Petion demanded never comes in Bolivar's lifetime.
+N: Three years earlier, in the Second Republic, Bolivar had issued the Decree of War to the Death: any Spaniard who did not actively support independence would be executed, any American spared regardless of what they had done.
+N: This is not a war of gentlemen. On the eastern plains, cavalry under Jose Antonio Paez, a former cattle herder, fight with lances and machetes. His riders are formerly enslaved workers, fugitives, mixed race farmers, fighting for land and freedom, not for Enlightenment principles.
+
+## REST
+
+## SCENE 4 | Boyaca
+N: The seventh of August, eighteen nineteen. Bolivar's army has crossed the flooded Orinoco basin and climbed Andes passes at thirteen thousand feet, arriving in New Granada with half the men it started with.
+N: It surprises the Spanish royalist force and wins in two hours. Bolivar enters Bogota three days later.
+N: By eighteen twenty two, Antonio Jose de Sucre has liberated Quito. By eighteen twenty four, Sucre breaks the last Spanish army at Ayacucho, in Peru. Three hundred years of Spanish rule on the continent ends there.
+
+## REST
+
+## SCENE 5 | The Congress of Panama
+N: In eighteen twenty six, Bolivar convenes a Congress of Panama, his attempt to bind the new republics into one federation strong enough to defend itself without anyone's patronage.
+N: Of the ten nations invited, four send delegates. The United States appoints two; one dies on the way, the other arrives after the congress has already adjourned.
+N: Bolivar's continental dream is already smaller than his continental war had been.
+
+## SCENE 6 | The house in Santa Marta
+N: That dream was Gran Colombia, one republic stretching from Panama to Bolivia, proclaimed in eighteen twenty one to resist any European return. By eighteen thirty it has splintered into Venezuela, Colombia, and Ecuador.
+N: Two years earlier, Manuela Saenz had fought off assassins at his door while Bolivar escaped through a window. Sucre, his most trusted general, is murdered in the mountains the same year Gran Colombia falls apart.
+N: Bolivar, exiled from the country he liberated, dies of tuberculosis in a borrowed house in Santa Marta, on the seventeenth of December, eighteen thirty. He is forty seven.
+
+## DOCUMENT | Simon Bolivar | last words, reported by attendants | December 17, 1830
+N: Bolivar's last words, by multiple accounts, from the people in the room.
+M: Let us go. These people do not want us here.
+
+## REST
+
+## TURN | Five accounts
+N: What this liberation cost, and who it liberated, is argued from five directions.
+
+## PERSPECTIVE | Bolivarian / Creole Elite | victor
+N: Bolivar's own case is laid out in the Jamaica Letter and at the Congress of Angostura four years later. Three hundred years of Spanish rule, he argued, had denied creoles high office and treated the Americas only as a source of revenue.
+N: He rejected both monarchy and pure democracy, and at Angostura proposed a middle path built for conditions Europe had never faced.
+M: Do not adopt the best system of government, but the one that is most likely to succeed.
+N: The Andes crossing that followed killed hundreds of soldiers and most of the horses before Boyaca was even fought. He had already lost three campaigns, and each failure taught him to build a wider coalition.
+N: Jose de San Martin, who had liberated Chile and Peru from the south, met Bolivar at Guayaquil in July eighteen twenty two and withdrew, leaving Bolivar to finish the continental campaign alone.
+N: Gran Colombia, proclaimed in eighteen twenty one, was the answer: one republic large enough to resist European re-colonization and command international respect. Its collapse was a tragedy of personality and regional jealousy, not a failure of the vision itself.
+
+## PERSPECTIVE | Spanish Colonial / Royalist | vanquished
+N: Spain in eighteen ten was not a confident empire crushing a revolt. Napoleon had just invaded Spain and forced King Ferdinand from his own throne, and the juntas in Caracas first claimed loyalty to that same king.
+N: The separatist turn came only after Ferdinand's restoration in eighteen fourteen, when the king abolished Spain's own liberal constitution and sent armies to reconquer the Americas by force.
+N: Most royalist soldiers were not Spanish at all. Under the warlord Jose Tomas Boves, pardos and enslaved men devastated the Second Republic in eighteen fourteen, fighting for the Crown out of hostility to the creole landowners who led the rebellion.
+N: General Pablo Morillo arrived with ten thousand troops in eighteen fifteen and reconquered New Granada within a year, executing independence leaders as he went.
+N: Morillo's own judgment on the men he fought is on the record.
+M: The rebels do not fight for liberty; they fight for the right to oppress those beneath them without interference from Madrid.
+N: Spain's Laws of the Indies had, at least on paper, protected Indigenous land. The republics abolished that protection along with Spanish rule.
+
+## PERSPECTIVE | Indigenous / Afro-Latin American | indigenous
+N: Pardos and enslaved Africans fought on both sides, and the creole leadership needed them as soldiers on both. Neither side planned to share power with them afterward.
+N: Under Spain's sistema de castas, pardos were legally subordinate to creoles regardless of their own wealth or education. That grievance is what the independence movement needed and never resolved.
+N: Bolivar recruited pardos and formerly enslaved men after eighteen sixteen, offering freedom for service. But the offer was selective: freedom for soldiers, not for everyone. Full abolition waited until eighteen fifty four in Venezuela, eighteen fifty one in Colombia and Ecuador.
+N: Women carried this war and were written out of its rewards. Policarpa Salavarrieta ran an intelligence network in Bogota before her capture.
+N: Before the firing squad took her, on the fourteenth of November, eighteen seventeen, she said this.
+F: My crime is to have loved my country.
+N: Manuela Saenz, Bolivar's own partner, fought off his assassins alone and was later exiled and denied a pension.
+
+## PERSPECTIVE | Monroe Doctrine / U.S. Perspective | bystander
+N: On the second of December, eighteen twenty three, President James Monroe told Congress that the Americas were closed to future European colonization.
+M: The American continents, by the free and independent condition which they have assumed and maintain, are henceforth not to be considered as subjects for future colonization by any European powers.
+N: The doctrine's timing was no accident. The Holy Alliance of Russia, Austria, Prussia, and France was rumored to be planning an intervention to restore Spanish rule, and Britain proposed a joint declaration to stop it. Secretary of State John Quincy Adams persuaded Monroe to act alone instead, and no Latin American government was consulted either way.
+N: Recognition of Bolivar's republics had already been delayed for years, partly because Southern slaveholders in Congress found his talk of emancipation uncomfortable.
+N: When Bolivar invited the United States to his Congress of Panama in eighteen twenty six, one American delegate died en route and the other arrived after it had adjourned.
+
+## PERSPECTIVE | Indigenous / Andean Peoples | indigenous
+N: The mita, Spain's forced labor draft, sent Indigenous men into the silver mines at Potosi from the fifteen seventies onward. An estimated eight million died there over three centuries.
+N: In seventeen eighty one, Spain crushed the Tupac Amaru rebellion, an Indigenous uprising of sixty thousand across the Andes, and executed its leader in the plaza of Cusco.
+N: Bolivar named a province after that rebellion, and borrowed its energy without its aims. His decree at Cucuta abolished the Indigenous head tax, but also the office that had defended Indigenous communal land, and gave communities the right to sell it.
+N: Creole landowners bought or seized that land within decades. In Bolivia, the country that carries Bolivar's name, Indigenous people were the majority and held no political office until Evo Morales, in two thousand six.
+N: The Bolivian sociologist Silvia Rivera Cusicanqui has her own name for what replaced Spanish rule.
+F: The colonial horizon did not end with independence. It was renewed, dressed in republican clothing.
+
+## REST | short
+
+## TURN | What each one leaves out
+N: The creole case never mentions the promise it broke to Petion, the Decree of War to the Death, or that Bolivar made himself dictator in eighteen twenty eight.
+N: The royalist case leaves out three centuries of silver and forced labor that came before any of it, and the absolutism Ferdinand restored the moment Napoleon was gone.
+N: The Afro-Latin American case leaves out that some creole leaders held their convictions sincerely, and that Bolivar's own views on race shifted, however slowly, over time.
+N: The American case leaves out that Latin Americans won this war themselves, and that a British navy did more to secure it than any doctrine out of Washington.
+N: The Andean Indigenous case leaves out the creole leaders who did argue for Indigenous rights, and the resistance movements that, generations later, won some of what eighteen ten never gave them.
+
+## REST | short
+
+## CLOSE
+N: Bolivia is the country that carries his name. It did not have an Indigenous head of state until Evo Morales, in two thousand six. One hundred eighty one years after independence.
+
+## SAY
+Bolivar = boh-LEE-var
+Petion = peh-tee-OHN
+Cartagena = kar-tah-HAY-nah
+Caracas = kah-RAH-kahs
+Boyaca = boh-yah-KAH
+Angostura = an-goh-STOO-rah
+Sucre = SOO-kray
+Paez = PAH-ess
+Boves = BOH-vess
+Morillo = moh-REE-yoh
+Salavarrieta = sah-lah-vah-ree-EH-tah
+Saenz = SAH-enss
+Cucuta = KOO-koo-tah
+Cusicanqui = koo-see-KAHN-kee
+Ayacucho = ah-yah-KOO-choh
+Quito = KEE-toh

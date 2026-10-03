@@ -1,0 +1,8 @@
+source: src-gust-19150617-en
+locator: para4
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-06-17-DE-003
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+note: the translation is the online edition's own (sponsored by the Zoryan Institute), held here as the edition prints it, at most 150 words
+
+It has come to light that the banishment of the Armenians is not only motivated by military considerations. The Minister of the Interior, Talaat Bey, recently spoke about this without reservation to Dr. Mordtmann, who is currently employed by the Imperial Embassy. He said “that the Porte is intent on taking advantage of the World War in order to make a clean sweep of internal enemies - the indigenous Christians - without being hindered in doing so by diplomatic intervention from other countries. Such an undertaking will serve the interest of the Germans, the Allies of Turkey, which thus in turn could be strengthened."

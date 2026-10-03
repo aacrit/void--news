@@ -1,0 +1,7 @@
+source: src-phr-1919-04-18
+locator: p775
+url: https://archive.org/download/jstor-4575115/4575115_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+Over 40 per cent of its population affected with influenza in the four months during which the epidemic raged i3 the record reported by the Union of South Africa in an official Blue Book just received by the United States Public Health Service. For the 6,115,212 population this means 2,616,805 cases of influenza, and of these, 139,471 were fatal — a case mortality rate of 5.32 per cent. This is certainly a severe visitation. The case mortality rate among the European stocks was less. than half that among the non-Europeans, the respective rates being 2.57 and 5.90 per cent. In South Africa persons in the third and fourth decades of life were particularly susceptible to attack by the disease, and the death rate was also greater in these age groups. A large number of instances were also noted where the disease resulted in miscarriages. Moreover, there was a high mortality among pregnant women. The highest death rate from the disease was in the Caps Province, where out of every thousand of population there were 33.5 deaths from influenza and its complications. The rates for Orange Free State, Transvaal, and Natal were very much lower, being 18.21, 16.24, and 11.47, respectively.

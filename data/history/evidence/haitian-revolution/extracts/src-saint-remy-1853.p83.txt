@@ -1,0 +1,7 @@
+source: src-saint-remy-1853
+locator: p83
+url: https://archive.org/download/mmoiresdugn00tous/mmoiresdugn00tous_djvu.txt
+read: 2026-09-25
+note: the editor's footnote 2 on page 83, which quotes Pamphile de Lacroix
+
+2 Le Héros était commandé par le chef de division Savary. « En me » renversant, dit le Premier des Noirs au capitaine Savary, en montant » à son bord, on n'a abattu à Saint-Domingue que le tronc de l'arbre de » liberté des noirs; il repoussera, parce que les racines en sont pro- » fondes et nombreuses. » Pamphile de Lacroix. Révolution de Saint- Domingue.

@@ -1,0 +1,445 @@
+{
+ "_comment": "Roster metadata for the major outlets absent on 2026-09-22, keyed by the name in scripts/roster/majors_target.py. WHAT IS AND IS NOT A MEASUREMENT: name, url, country, tier and type are facts about the outlet. `political_lean_baseline` is NOT measured; it is the intended side from majors_target.py mapped conservatively (L -> center-left, C -> center, R -> center-right) so a new row is never claimed to be extreme on evidence nobody has. Every row's notes say so. The outlet-baseline programme measures them; until it does, a provisional inner placement keeps the outlet in the lean aggregate, which `unrated` would not, and understates rather than overstates.",
+ "_lean_map": {
+  "L": "center-left",
+  "C": "center",
+  "R": "center-right"
+ },
+ "outlets": {
+  "The Mirror": {
+   "roster_name": "The Mirror",
+   "country": "GB",
+   "type": "digital",
+   "notes": "British tabloid, founded 1903. Labour-leaning. Trinity Mirror/Reach plc."
+  },
+  "Irish Independent": {
+   "roster_name": "Irish Independent",
+   "country": "IE",
+   "type": "broadsheet",
+   "notes": "Ireland's largest-circulation daily, founded 1905. Mediahuis Ireland."
+  },
+  "The Journal.ie": {
+   "roster_name": "TheJournal.ie",
+   "country": "IE",
+   "type": "digital",
+   "notes": "Irish digital-native daily, founded 2010. Runs FactCheck, an IFCN signatory."
+  },
+  "Liberation": {
+   "roster_name": "Liberation",
+   "country": "FR",
+   "type": "broadsheet",
+   "notes": "French daily, founded 1973 by Jean-Paul Sartre and Serge July."
+  },
+  "Mediapart": {
+   "roster_name": "Mediapart",
+   "country": "FR",
+   "type": "investigative",
+   "notes": "Subscriber-funded French investigative site, founded 2008. Broke the Cahuzac and Benalla affairs. Takes no advertising."
+  },
+  "RFI": {
+   "roster_name": "RFI English",
+   "country": "FR",
+   "type": "broadcast",
+   "notes": "Radio France Internationale, France's state-funded international broadcaster, editorially independent under France Medias Monde."
+  },
+  "Les Echos": {
+   "roster_name": "Les Echos",
+   "country": "FR",
+   "type": "broadsheet",
+   "notes": "French business daily, founded 1908. LVMH-owned."
+  },
+  "Le Figaro": {
+   "roster_name": "Le Figaro",
+   "country": "FR",
+   "type": "broadsheet",
+   "notes": "France's oldest national daily, founded 1826. Conservative. Dassault-owned."
+  },
+  "L'Express": {
+   "roster_name": "L'Express",
+   "country": "FR",
+   "type": "magazine",
+   "notes": "French weekly news magazine, founded 1953."
+  },
+  "Le Point": {
+   "roster_name": "Le Point",
+   "country": "FR",
+   "type": "magazine",
+   "notes": "French weekly news magazine, founded 1972."
+  },
+  "Sueddeutsche Zeitung": {
+   "roster_name": "Sueddeutsche Zeitung",
+   "country": "DE",
+   "type": "broadsheet",
+   "notes": "Munich daily, founded 1945. One of Germany's two largest national broadsheets. Panama Papers partner."
+  },
+  "Die Zeit": {
+   "roster_name": "Die Zeit",
+   "country": "DE",
+   "type": "magazine",
+   "notes": "German weekly, founded 1946. Long-form and debate format."
+  },
+  "taz": {
+   "roster_name": "taz (die tageszeitung)",
+   "country": "DE",
+   "type": "broadsheet",
+   "notes": "Berlin daily, founded 1978, cooperatively owned by its readers."
+  },
+  "Frankfurter Allgemeine": {
+   "roster_name": "Frankfurter Allgemeine Zeitung",
+   "country": "DE",
+   "type": "broadsheet",
+   "notes": "German national daily of record, founded 1949. Owned by a nonprofit foundation.",
+   "feed_tokens": [
+    "faz"
+   ]
+  },
+  "Focus": {
+   "roster_name": "Focus (Germany)",
+   "country": "DE",
+   "type": "magazine",
+   "notes": "German weekly news magazine, founded 1993. Hubert Burda Media."
+  },
+  "Il Fatto Quotidiano": {
+   "roster_name": "Il Fatto Quotidiano",
+   "country": "IT",
+   "type": "broadsheet",
+   "notes": "Italian daily, founded 2009. Takes no state subsidy."
+  },
+  "Il Foglio": {
+   "roster_name": "Il Foglio",
+   "country": "IT",
+   "type": "broadsheet",
+   "notes": "Italian daily, founded 1996 by Giuliano Ferrara."
+  },
+  "Libero": {
+   "roster_name": "Libero Quotidiano",
+   "country": "IT",
+   "type": "broadsheet",
+   "notes": "Italian daily, founded 2000."
+  },
+  "eldiario.es": {
+   "roster_name": "eldiario.es",
+   "country": "ES",
+   "type": "digital",
+   "notes": "Spanish digital daily, founded 2012, majority-owned by its journalists. Member-funded."
+  },
+  "Publico": {
+   "roster_name": "Publico (Spain)",
+   "country": "ES",
+   "type": "digital",
+   "notes": "Spanish digital daily, founded 2007 as a print paper, online-only since 2012."
+  },
+  "El Mundo": {
+   "roster_name": "El Mundo",
+   "country": "ES",
+   "type": "broadsheet",
+   "notes": "Spanish national daily, founded 1989. Unidad Editorial."
+  },
+  "ABC": {
+   "roster_name": "ABC (Spain)",
+   "country": "ES",
+   "type": "broadsheet",
+   "notes": "Spanish national daily, founded 1903. Monarchist and conservative. Vocento."
+  },
+  "La Razon": {
+   "roster_name": "La Razon (Spain)",
+   "country": "ES",
+   "type": "broadsheet",
+   "notes": "Spanish national daily, founded 1998. Planeta group."
+  },
+  "La Vanguardia": {
+   "roster_name": "La Vanguardia",
+   "country": "ES",
+   "type": "broadsheet",
+   "notes": "Barcelona daily, founded 1881. Catalonia's largest by circulation."
+  },
+  "De Volkskrant": {
+   "roster_name": "De Volkskrant",
+   "country": "NL",
+   "type": "broadsheet",
+   "notes": "Dutch national daily, founded 1919. DPG Media."
+  },
+  "NRC": {
+   "roster_name": "NRC",
+   "country": "NL",
+   "type": "broadsheet",
+   "notes": "Dutch national daily (NRC Handelsblad), founded 1970. Mediahuis."
+  },
+  "Trouw": {
+   "roster_name": "Trouw",
+   "country": "NL",
+   "type": "broadsheet",
+   "notes": "Dutch national daily, founded 1943 as a resistance paper. DPG Media."
+  },
+  "De Telegraaf": {
+   "roster_name": "De Telegraaf",
+   "country": "NL",
+   "type": "digital",
+   "notes": "Netherlands' largest-circulation daily, founded 1893. Mediahuis."
+  },
+  "Elsevier Weekblad": {
+   "roster_name": "EW Magazine",
+   "country": "NL",
+   "type": "magazine",
+   "notes": "Dutch weekly news magazine, founded 1945, renamed EW Magazine in 2018.",
+   "feed_tokens": [
+    "ewmagazine",
+    "ew"
+   ]
+  },
+  "De Standaard": {
+   "roster_name": "De Standaard",
+   "country": "BE",
+   "type": "broadsheet",
+   "notes": "Flemish daily, founded 1918. Mediahuis."
+  },
+  "Le Soir": {
+   "roster_name": "Le Soir",
+   "country": "BE",
+   "type": "broadsheet",
+   "notes": "Francophone Belgian daily, founded 1887. Rossel group."
+  },
+  "De Morgen": {
+   "roster_name": "De Morgen",
+   "country": "BE",
+   "type": "broadsheet",
+   "notes": "Flemish daily, founded 1978. DPG Media."
+  },
+  "La Libre Belgique": {
+   "roster_name": "La Libre Belgique",
+   "country": "BE",
+   "type": "broadsheet",
+   "notes": "Francophone Belgian daily, founded 1884. IPM group."
+  },
+  "Dagens Nyheter": {
+   "roster_name": "Dagens Nyheter",
+   "country": "SE",
+   "type": "broadsheet",
+   "notes": "Sweden's largest morning daily, founded 1864. Bonnier."
+  },
+  "Svenska Dagbladet": {
+   "roster_name": "Svenska Dagbladet",
+   "country": "SE",
+   "type": "broadsheet",
+   "notes": "Swedish national daily, founded 1884. Schibsted."
+  },
+  "Aftonbladet": {
+   "roster_name": "Aftonbladet",
+   "country": "SE",
+   "type": "digital",
+   "notes": "Sweden's largest news site, founded 1830. Part-owned by the trade union confederation LO."
+  },
+  "Jyllands-Posten": {
+   "roster_name": "Jyllands-Posten",
+   "country": "DK",
+   "type": "broadsheet",
+   "notes": "Danish national daily, founded 1871. JP/Politikens Hus."
+  },
+  "Gazeta Wyborcza": {
+   "roster_name": "Gazeta Wyborcza",
+   "country": "PL",
+   "type": "broadsheet",
+   "notes": "Polish daily, founded 1989 out of the Solidarity round-table talks. Agora."
+  },
+  "Rzeczpospolita": {
+   "roster_name": "Rzeczpospolita",
+   "country": "PL",
+   "type": "broadsheet",
+   "notes": "Polish daily of record on law and business, founded 1920.",
+   "feed_tokens": [
+    "rp.pl"
+   ]
+  },
+  "Hospodarske noviny": {
+   "roster_name": "Hospodarske noviny",
+   "country": "CZ",
+   "type": "broadsheet",
+   "notes": "Czech business daily, founded 1990. Economia."
+  },
+  "Telex": {
+   "roster_name": "Telex",
+   "country": "HU",
+   "type": "digital",
+   "notes": "Hungarian digital daily, founded 2020 by the staff who resigned from Index. Reader-funded."
+  },
+  "Magyar Nemzet": {
+   "roster_name": "Magyar Nemzet",
+   "country": "HU",
+   "type": "broadsheet",
+   "notes": "Hungarian daily, founded 1938, relaunched 2019. Pro-government."
+  },
+  "Denik N": {
+   "roster_name": "Denik N",
+   "country": "CZ",
+   "type": "digital",
+   "notes": "Czech subscriber-funded daily, founded 2018 by former Denik Referendum and Respekt journalists."
+  },
+  "Publico (Portugal)": {
+   "roster_name": "Publico (Portugal)",
+   "country": "PT",
+   "type": "broadsheet",
+   "notes": "Portuguese national daily, founded 1990. Sonae group."
+  },
+  "Expresso": {
+   "roster_name": "Expresso",
+   "country": "PT",
+   "type": "magazine",
+   "notes": "Portuguese weekly, founded 1973. Impresa."
+  },
+  "Diario de Noticias": {
+   "roster_name": "Diario de Noticias (Portugal)",
+   "country": "PT",
+   "type": "broadsheet",
+   "notes": "Portuguese daily, founded 1864."
+  },
+  "Tages-Anzeiger": {
+   "roster_name": "Tages-Anzeiger",
+   "country": "CH",
+   "type": "broadsheet",
+   "notes": "Zurich daily, founded 1893. TX Group."
+  },
+  "Die Presse": {
+   "roster_name": "Die Presse",
+   "country": "AT",
+   "type": "broadsheet",
+   "notes": "Austrian daily, founded 1848. Styria Media Group."
+  },
+  "Kyiv Post": {
+   "roster_name": "Kyiv Post",
+   "country": "UA",
+   "type": "digital",
+   "notes": "Ukraine's oldest English-language newspaper, founded 1995."
+  },
+  "Novaya Gazeta Europe": {
+   "roster_name": "Novaya Gazeta Europe",
+   "country": "LV",
+   "type": "investigative",
+   "notes": "Founded 2022 in Riga by Novaya Gazeta journalists after the Russian edition suspended publication. Six of its Russian predecessor's journalists have been murdered."
+  },
+  "Meduza": {
+   "roster_name": "Meduza",
+   "country": "LV",
+   "type": "digital",
+   "notes": "Russian-language outlet based in Riga, founded 2014 by the sacked Lenta.ru editorial team. Designated undesirable by Russia in 2023."
+  },
+  "Duvar English": {
+   "roster_name": "Duvar English",
+   "country": "TR",
+   "type": "digital",
+   "notes": "English service of Gazete Duvar, founded 2019. Independent of the Turkish state media pool."
+  },
+  "Asahi Shimbun": {
+   "roster_name": "The Asahi Shimbun (English)",
+   "country": "JP",
+   "type": "broadsheet",
+   "notes": "Japanese national daily, founded 1879. Second-largest circulation in Japan."
+  },
+  "Hankyoreh": {
+   "roster_name": "The Hankyoreh (English)",
+   "country": "KR",
+   "type": "broadsheet",
+   "notes": "South Korean daily, founded 1988 by journalists dismissed under the military government, funded by a public share issue.",
+   "feed_tokens": [
+    "hani"
+   ]
+  },
+  "Philippine Daily Inquirer": {
+   "roster_name": "Philippine Daily Inquirer",
+   "country": "PH",
+   "type": "broadsheet",
+   "notes": "Philippine national daily, founded 1985."
+  },
+  "The Daily Star (Lebanon)": {
+   "roster_name": "The Daily Star (Lebanon)",
+   "country": "LB",
+   "type": "digital",
+   "notes": "Lebanese English-language daily, founded 1952. Publication has been intermittent since 2020."
+  },
+  "BusinessDay (SA)": {
+   "roster_name": "BusinessDay (South Africa)",
+   "country": "ZA",
+   "type": "broadsheet",
+   "notes": "South African business daily, founded 1985. Arena Holdings. Also syndicated on businesslive.co.za; the roster uses businessday.co.za, which is where its feed's articles live.",
+   "url": "https://www.businessday.co.za"
+  },
+  "Ahram Online": {
+   "roster_name": "Ahram Online",
+   "country": "EG",
+   "type": "digital",
+   "notes": "English service of Al-Ahram, an Egyptian state-owned daily founded 1875."
+  },
+  "Mada Masr": {
+   "roster_name": "Mada Masr",
+   "country": "EG",
+   "type": "investigative",
+   "notes": "Egyptian independent outlet, founded 2013. Blocked inside Egypt since 2017."
+  },
+  "GhanaWeb": {
+   "roster_name": "GhanaWeb",
+   "country": "GH",
+   "type": "digital",
+   "notes": "Ghanaian news portal, founded 1999."
+  },
+  "O Globo": {
+   "roster_name": "O Globo",
+   "country": "BR",
+   "type": "broadsheet",
+   "notes": "Rio de Janeiro daily, founded 1925. Grupo Globo."
+  },
+  "Clarin": {
+   "roster_name": "Clarin",
+   "country": "AR",
+   "type": "broadsheet",
+   "notes": "Argentina's largest-circulation daily, founded 1945. Grupo Clarin."
+  },
+  "Pagina 12": {
+   "roster_name": "Pagina 12",
+   "country": "AR",
+   "type": "broadsheet",
+   "notes": "Argentine daily, founded 1987."
+  },
+  "Reforma": {
+   "roster_name": "Reforma",
+   "country": "MX",
+   "type": "broadsheet",
+   "notes": "Mexico City daily, founded 1993. Grupo Reforma."
+  },
+  "El Comercio": {
+   "roster_name": "El Comercio (Peru)",
+   "country": "PE",
+   "type": "broadsheet",
+   "notes": "Peru's oldest daily, founded 1839. Grupo El Comercio."
+  },
+  "La Tercera": {
+   "roster_name": "La Tercera",
+   "country": "CL",
+   "type": "broadsheet",
+   "notes": "Chilean daily, founded 1950. Copesa."
+  },
+  "El Mostrador": {
+   "roster_name": "El Mostrador",
+   "country": "CL",
+   "type": "digital",
+   "notes": "Chile's first digital-native daily, founded 2000."
+  },
+  "El Tiempo": {
+   "roster_name": "El Tiempo (Colombia)",
+   "country": "CO",
+   "type": "broadsheet",
+   "notes": "Colombia's largest-circulation daily, founded 1911."
+  },
+  "The Age": {
+   "roster_name": "The Age",
+   "country": "AU",
+   "type": "broadsheet",
+   "notes": "Melbourne daily, founded 1854. Nine Entertainment."
+  },
+  "Stuff": {
+   "roster_name": "Stuff (NZ)",
+   "country": "NZ",
+   "type": "digital",
+   "notes": "New Zealand's largest news site, founded 2000. Employee-owned since 2020."
+  }
+ },
+ "_feed_tokens_comment": "`feed_tokens` on an outlet lists extra strings its own feed title may use in place of its name: an abbreviation it puts in its masthead, or a name it has since taken. add_sources.py accepts a title matching one. Declared per outlet rather than by loosening the check, so a wrong equivalence is visible in this file."
+}

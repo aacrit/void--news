@@ -1,0 +1,140 @@
+## OPEN
+N: Israel took the Sinai peninsula in about a hundred hours. British and French paratroopers destroyed the Egyptian air force on the ground and held the northern Suez Canal within days.
+N: This is a war Egypt lost on every battlefield it fought.
+N: Egypt also kept the canal, kept its government, and its president became the most celebrated man in the Arab world.
+N: Three governments met in secret at a villa outside Paris three weeks before the shooting started, and none of them planned for that outcome.
+
+## TITLE
+N: The Suez Crisis. July to November, nineteen fifty six.
+
+## SCENE 1 | Alexandria, the twenty sixth of July
+N: On the nineteenth of July, nineteen fifty six, the American Secretary of State John Foster Dulles withdrew Washington's offer to finance Egypt's Aswan High Dam.
+N: Seven days later Gamal Abdel Nasser spoke to a crowd in Alexandria for two hours. In the middle of it, he said one name: Ferdinand de Lesseps.
+N: It was a signal. As he spoke, Egyptian officers were already seizing the offices of the company that had run the Suez Canal since eighteen sixty nine.
+N: Nasser told the crowd the canal, dug through Egyptian soil by Egyptian labor, now belonged to Egypt. Its tolls would build the dam the Americans had refused to fund.
+
+## DOCUMENT | Government of Egypt | Presidential Decree Law No. 285 of 1956 | July 26, 1956
+N: That same day, Egypt published the decree itself.
+M: The Universal Company of the Suez Maritime Canal is hereby nationalized. All its assets, rights, and obligations are transferred to the State.
+
+## ASIDE
+N: Egypt had bought its own company at market value and promised to keep the canal open, which it did. There was no law against what Nasser had just done.
+
+## REST
+
+## SCENE 2 | London
+N: Anthony Eden reached for the analogy that had shaped his whole career. He had resigned from government eighteen years earlier over the appeasement of the dictators.
+N: To Eden, Nasser was Mussolini on the Nile, and the canal was Munich again.
+N: Britain and France drew two thirds of Western Europe's oil through that canal. But nationalizing a company at market value broke no law, and they could not simply invade a country that had committed no crime.
+N: So they built a pretext instead.
+
+## SCENE 3 | Sevres
+N: At a villa outside Paris, between the twenty second and twenty fourth of October, nineteen fifty six, British, French, and Israeli officials signed a secret protocol.
+N: Israel would invade the Sinai. Britain and France would then demand that both sides withdraw from the canal. When Egypt refused to retreat inside its own territory, the two European powers would occupy the canal zone, calling themselves peacekeepers.
+N: Eden later ordered the British copy of the protocol destroyed.
+N: It was a war planned in secret by three governments against a fourth that had broken no law.
+
+## REST
+
+## SCENE 4 | The invasion
+N: On the twenty ninth of October, Israeli forces struck into the Sinai. Israel calls it Operation Kadesh.
+N: On the thirty first, British and French aircraft began bombing Egyptian airfields.
+N: On the fifth of November, British and French paratroopers dropped on Port Said and Port Fuad, followed by a seaborne and helicopter assault, one of the first large helicopter landings in military history.
+N: Militarily, it worked. Israel took the Sinai in roughly a hundred hours. Anglo-French forces held the northern canal within days.
+
+## REST
+
+## SCENE 5 | Washington
+N: The two governments not consulted at Sevres ended the war.
+N: Dwight Eisenhower learned of the invasion from intelligence reports, not from his allies. It was the final week of his re-election campaign, and Soviet tanks were crushing the Hungarian uprising at the same time.
+N: He refused to protect the pound. Speculators drained the Bank of England's reserves, and the United States blocked Britain's emergency access to the International Monetary Fund until it accepted a ceasefire.
+N: In Moscow, Nikolai Bulganin sent notes threatening rocket attacks. The United Nations General Assembly bypassed the British and French vetoes and voted for a ceasefire, creating the first armed peacekeeping force in its history.
+
+## DOCUMENT | Dwight D. Eisenhower | Radio and television address to the American people on the Suez and Hungary | October 31, 1956
+N: On the same day the bombing began, Eisenhower told the American public where he stood.
+M: We cannot subscribe to one law for the weak, another law for the strong; one law for those opposing us, another for those allied with us. There can be only one law, or there shall be no peace.
+
+## ASIDE
+N: He said it about Hungary and Egypt in the same breath, and then used financial pressure, not weapons, against the ally he would not name.
+
+## SCENE 6 | The ceasefire
+N: Britain accepted the ceasefire on the sixth of November, hours after the invasion had already succeeded on the ground.
+N: British troops withdrew in December, having gained nothing.
+N: Nasser, who had lost the battle for the Sinai, kept the canal, kept his government, and became the undisputed hero of the Arab world.
+
+## REST
+
+## TURN | Five accounts
+N: What Suez was, and who really won it, is contested from five directions. Each gets its own case, in its own terms, before anything is said against it.
+
+## PERSPECTIVE | British and French Imperial | vanquished
+N: For Eden, the canal was not a business asset. It was an imperial artery, carrying two thirds of the oil that heated Western European homes and ran its factories.
+N: Nasser's seizure of the company was, to a generation that remembered appeasing dictators, Munich all over again. There was no legal ground for war, so Britain and France invented one at Sevres.
+N: The operation itself succeeded. French and British paratroopers took Port Said, and by the sixth of November the northern canal was in Anglo-French hands.
+N: It was American financial pressure, not an Egyptian army, that ended the war. Eden defended the intervention to Parliament in his own words.
+M: We are not at war with Egypt. We are in an armed conflict.
+N: Britain never again conducted a great power foreign policy without American permission. France concluded the opposite lesson, that it could trust nobody but itself.
+
+## PERSPECTIVE | Egyptian and Arab Nationalist | victor
+N: The canal was Egyptian ground, carved through the isthmus by Egyptian labor. For nearly a century its profits had flowed to shareholders in Paris and London.
+N: When Dulles withdrew the Aswan Dam financing, Nasser read it as a colonial insult. He chose to fund the dam himself, from the canal's own tolls.
+N: Three foreign armies, two of them the old colonial masters and the third a new settler state, attacked Egypt in concert. Egyptian forces were beaten in the Sinai and outgunned at Port Said.
+N: But the invaders were forced out by the world's condemnation. The canal stayed nationalized, and Nasser became the paramount voice of Arab nationalism. He had told the crowd what Egypt now owned.
+M: The Suez Canal Company has become Egyptian, and Egyptians will run it.
+N: A defeat on the battlefield became, in Cairo's telling, a triumph of sovereignty.
+
+## REST | short
+
+## PERSPECTIVE | Israeli Strategic | victor
+N: For Israel, Suez was never about the canal. It was about Egyptian raids launched from Gaza, a blockade of the Straits of Tiran, and a new arms deal that had just armed Egypt with Soviet bloc tanks and aircraft.
+N: France, fighting its own war against rebels it blamed on Nasser, offered Israel weapons and air cover in exchange for the spark Britain and France needed. At Sevres, Ben-Gurion signed, reluctant about the role but clear about the aims.
+N: On the twenty ninth of October, Israeli paratroopers dropped at the Mitla Pass. Within about a hundred hours the Israel Defense Forces had overrun the Sinai.
+N: Israel was forced to give back the Sinai by March nineteen fifty seven. But it reopened the Straits of Tiran, won a UN buffer force, and built the French alliance that would seed its own nuclear program. Moshe Dayan, the Israeli Chief of Staff, put it plainly.
+M: We were fighting our own war, for our own reasons, at a time that suited us.
+N: What Israel returned in fifty seven under pressure, it would take again eleven years later in six days.
+
+## PERSPECTIVE | American Cold War Management | bystander
+N: Eisenhower's own allies had blindsided him, during his re-election campaign, in the same week Soviet tanks were crushing Hungary. This account's fury is aimed less at Nasser than at London and Paris.
+N: Letting the old colonial powers reconquer an Arab state by force would have driven the whole region toward Moscow, at the exact moment America was trying to look like the alternative to European empire.
+N: So Washington moved against its own allies. It sponsored the ceasefire the Anglo-French veto had blocked at the Security Council, and the Treasury made clear it would not support the pound.
+N: An adviser recorded Eisenhower asking the plainest version of the question, in the middle of the crisis.
+M: How could we possibly support Britain and France if in doing so we lose the whole Arab world?
+N: Into the vacuum the two humiliated empires left, the United States stepped, a role formalized weeks later in the Eisenhower Doctrine.
+
+## PERSPECTIVE | Later Scholarship and the End of Empire | academic
+N: To the historians who reconstructed Suez after the archives opened, nineteen fifty six is the hinge where a European world turned into a superpower one.
+N: The collusion Eden denied for the rest of his life, that Britain, France, and Israel had secretly conspired at Sevres, was pieced together decades later from Israeli and French records.
+N: Historians still argue whether Eisenhower's coercion was wise restraint or a needless humiliation that pushed France toward its own nuclear force. What nobody disputes is the sequence that followed.
+N: Ghana became independent within a year. By nineteen sixty, Harold Macmillan himself was describing what Suez had exposed.
+M: The wind of change is blowing through this continent, and whether we like it or not, this growth of national consciousness is a political fact.
+N: Within a decade, the map of empire he was describing was gone.
+
+## REST
+
+## TURN | What each one leaves out
+N: None of these five accounts is invented, and each has a gap it would rather not discuss.
+N: The British and French account leaves out that Eden denied the plot he had personally signed off on, for the rest of his life, and that Egyptian civilians died at Port Said.
+N: The Egyptian and Arab nationalist account leaves out the scale of its own defeat in the Sinai, and how quickly Nasser's own pan-Arab unity fractured after him.
+N: The Israeli account leaves out that it was the trigger in somebody else's colonial plot, and the Palestinian civilian toll during the occupation of Gaza.
+N: The American account leaves out that the same pressure was never once applied to reverse the Soviets crushing Hungary, and that replacing European influence with its own was also, plainly, in its own interest.
+N: The scholars leave out the immediate human experience of the invasion itself, for the people who were actually in Port Said when the paratroopers landed.
+N: Nobody in these five accounts disputes who won which battle. What they cannot agree on is who won the war.
+
+## REST
+
+## CLOSE
+N: Eden resigned in January nineteen fifty seven, replaced by Harold Macmillan, the man who had pushed hardest for the invasion and then led the retreat from it.
+N: The canal itself, the reason for all of it, sat blocked by scuttled ships for five months. Nobody's ships moved through it either.
+
+## SAY
+Nasser = NAH-ser
+Sevres = SEV-ruh
+de Lesseps = duh leh-SEPS
+Aswan = as-WAHN
+Kadesh = kah-DESH
+Fuad = foo-AHD
+Tiran = tee-RAHN
+Mitla = MIT-lah
+Bulganin = bul-GAH-nin
+Ben-Gurion = ben GOOR-ee-on
+Dayan = dah-YAHN

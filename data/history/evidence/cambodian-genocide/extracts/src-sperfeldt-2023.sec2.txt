@@ -1,0 +1,7 @@
+source: src-sperfeldt-2023
+locator: sec2
+url: https://statelessnessandcitizenshipreview.com/index.php/journal/article/download/503/283/
+read: 2026-09-25
+note: section II of the case note, on p. 120, the paragraph before the passage held as p120
+
+— for many, spanning back to French colonial times — many are stateless or at risk of statelessness.13 This phenomenon has deep roots in Cambodia’s colonial and post-colonial history when many ethnic Vietnamese were excluded from Cambodian citizenship. The United Nations High Commissioner for Refugees (‘UNHCR’) reported a figure of 75,000 individuals falling under the organisation’s statelessness mandate — most are Vietnamese Cambodians, who do not hold proof of Cambodian citizenship or any other nationality.14 During the

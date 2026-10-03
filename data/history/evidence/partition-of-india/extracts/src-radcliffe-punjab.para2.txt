@@ -1,0 +1,19 @@
+source: src-radcliffe-punjab
+locator: para2
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: paragraph 2 of the Punjab report, with the opening words of paragraph 3, which the builder's end marker needs to tell the Punjab report from the Bengal report; the members' names are set on their own lines in the print
+
+2. The Punjab Boundary Commission was constituted by the announcement of the Governor-General dated the 30th June 1947, Reference No. D50/7/47R. The members of the Commission thereby appointed were—
+
+Mr. Justice Din Muhammad,
+
+Mr. Justice Muhammad Munir,
+
+Mr. Justice Mehr Chand Mahajan, and Mr. Justice Teja Singh.
+
+I was subsequently appointed Chairman of this Commission.
+
+3. The terms of reference of the Commission, as set out in the announcement, were as follows:—
+
+“The Boundary Commission is instructed to demarcate the boundaries of the two parts of the Punjab

@@ -1,0 +1,6 @@
+source: src-heuveline-2015
+locator: abstract
+url: https://www.ncbi.nlm.nih.gov/research/bionlp/RESTful/pmcoa.cgi/BioC_json/PMC4562795/unicode
+read: 2026-09-25
+
+Estimates of excess deaths under Pol Pot's rule of Cambodia (1975-79) range from under one million to over three million. The more plausible among those, methodologically, still vary from one to two million deaths, but this range of independent point estimates has no particular statistical meaning. Stochastically reconstructing population dynamics in Cambodia from extant historical and demographic data yields interpretable distributions of the death toll and other demographic indicators. The resulting 95-percent simulation interval (1.2 to 2.8 million excess deaths) demonstrates substantial uncertainty with regards to the exact scale of mortality, yet still excludes nearly half of the previous death-toll estimates. The 1.5 to 2.25 million interval contains 69 per cent of the simulations for the actual number of excess death, more than the wider (one to two million) range of previous plausible estimates. The median value of 1.9 million excess deaths represents 21 percent of the population at risk.

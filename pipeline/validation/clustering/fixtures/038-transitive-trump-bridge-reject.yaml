@@ -1,0 +1,111 @@
+id: transitive-trump-bridge-reject-2026-05-30
+name: "Three Trump-mentioning stories with no other shared entities — must NOT chain-merge"
+failure_date: "2026-05-30"
+failure_kind: transitive-chain-bridge
+articles:
+  - id: trump-housing-1
+    title: "Trump signs executive order on federal housing finance reform"
+    summary: "President Trump signed an executive order directing HUD to draft reforms to FHA and Ginnie Mae loan-loss-coverage thresholds within 120 days."
+    full_text: >
+      President Trump signed an executive order directing the Department of Housing
+      and Urban Development to draft reforms to FHA and Ginnie Mae loan-loss-coverage
+      thresholds within 120 days. HUD Secretary Scott Turner said the order would
+      streamline counterparty risk management for mortgage servicers. The order
+      followed a 90-day review period during which Trump met with housing finance
+      executives. Industry trade groups including the Mortgage Bankers Association
+      praised the move. Senate Banking Committee chair Tim Scott said hearings would
+      follow in early June.
+    source: { slug: bloomberg, country: US, tier: us_major }
+    published_at: "2026-05-30T13:00Z"
+  - id: trump-housing-2
+    title: "FHA reform: Turner says Trump order targets servicer counterparty risk"
+    summary: "HUD Secretary Scott Turner detailed President Trump's executive order on FHA reform, focused on counterparty risk management for loan servicers."
+    full_text: >
+      HUD Secretary Scott Turner detailed President Trump's executive order on FHA
+      reform during a Friday briefing, emphasising the focus on counterparty risk
+      management for loan servicers. Turner said the 120-day drafting window would
+      include consultations with Ginnie Mae issuers and FHA-approved lenders. The
+      MBA's chief economist Mike Fratantoni said the order acknowledged industry
+      concerns about scope-2 capital treatment under existing rules.
+    source: { slug: hud-news, country: US, tier: us_major }
+    published_at: "2026-05-30T14:30Z"
+
+  - id: trump-tariff-1
+    title: "Trump announces 12 percent tariff on Brazilian green coffee"
+    summary: "President Trump announced a 12 percent tariff on Brazilian green coffee imports, citing currency manipulation concerns."
+    full_text: >
+      President Trump announced a 12 percent tariff on Brazilian green coffee
+      imports during a Friday Rose Garden statement, citing currency manipulation
+      concerns from Brazil's central bank intervention earlier this month.
+      Brazilian coffee accounts for roughly a third of US arabica imports. The
+      Specialty Coffee Association of America warned of consumer price increases.
+      Trump said the measure would take effect in 30 days and reciprocal
+      Brazilian agricultural tariffs were under review by the USTR.
+    source: { slug: reuters, country: GB, tier: wire }
+    published_at: "2026-05-30T15:00Z"
+  - id: trump-tariff-2
+    title: "Brazilian coffee tariff: USTR review under way after Trump announcement"
+    summary: "The USTR is reviewing reciprocal tariff options after President Trump's 12 percent Brazilian coffee tariff announcement, officials said."
+    full_text: >
+      The United States Trade Representative is reviewing reciprocal tariff options
+      after President Trump's 12 percent Brazilian coffee tariff announcement,
+      officials told reporters. Brazilian Agriculture Minister Tereza Cristina said
+      Brasilia would consult with the WTO before responding. Coffee futures in New
+      York rose 4.7 percent on the announcement. The Specialty Coffee Association
+      said roasters would face squeezed margins through 2026 if the tariff persists.
+    source: { slug: ap-news, country: US, tier: wire }
+    published_at: "2026-05-30T16:30Z"
+
+  - id: trump-judicial-1
+    title: "Senate confirms Trump appellate nominee Holcombe for Fifth Circuit"
+    summary: "The Senate confirmed President Trump's appellate nominee Whitman Holcombe to the Fifth Circuit Court of Appeals on a 52-46 vote."
+    full_text: >
+      The Senate confirmed President Trump's appellate nominee Whitman Holcombe to
+      the Fifth Circuit Court of Appeals on a 52-46 vote Friday afternoon. Holcombe
+      had served as a federal district judge in the Eastern District of Louisiana
+      since 2019. Senate Judiciary chair Chuck Grassley praised the confirmation as
+      restoring originalist jurisprudence to a critical appellate court. Holcombe
+      becomes the 14th Trump appellate confirmation of the second term. Critics
+      cited his rulings on Fourth Amendment cases involving warrantless searches.
+    source: { slug: politico, country: US, tier: us_major }
+    published_at: "2026-05-30T17:00Z"
+  - id: trump-judicial-2
+    title: "Fifth Circuit: Holcombe confirmation completes Trump's 14th appellate seat"
+    summary: "Whitman Holcombe's Senate confirmation completes President Trump's 14th appellate court appointment of the second term."
+    full_text: >
+      Whitman Holcombe's Senate confirmation completes President Trump's 14th
+      appellate court appointment of the second term. Judiciary chair Chuck
+      Grassley said the pace of confirmations had returned to historical norms
+      after the 2025 procedural backlog. Holcombe's confirmation moves the Fifth
+      Circuit toward an 11-6 Republican-appointee majority. Federalist Society
+      executive vice president Leonard Leo praised the appointment in a written
+      statement.
+    source: { slug: wsj, country: US, tier: us_major }
+    published_at: "2026-05-30T18:00Z"
+expectation:
+  type: should_split
+  member_ids: [trump-housing-1, trump-tariff-1, trump-judicial-1]
+  min_clusters: 3
+rationale: |
+  Six articles split across three unrelated stories where the only entity
+  shared across stories is "Trump" (high-frequency, low-specificity political
+  vocabulary). Within each pair: housing-1 and housing-2 share Trump + HUD +
+  Turner + FHA + Ginnie Mae (5+ entities → merge); tariff-1 and tariff-2
+  share Trump + Brazil + coffee + USTR (4+ entities → merge); judicial-1
+  and judicial-2 share Trump + Holcombe + Fifth Circuit + Senate + Grassley
+  (5+ entities → merge). Within-pair Phase 2 fires.
+
+  Across stories: housing↔tariff shares only {Trump}; housing↔judicial
+  shares only {Trump}; tariff↔judicial shares only {Trump}. With Phase 2's
+  min_shared_entities=3 gate, none of these cross-story pairs cross the
+  threshold and no transitive A↔B↔C bridge forms.
+
+  This fixture is the structural defence test. If a future change relaxes
+  the 3-entity gate to 2, or fails to filter "Trump" out of distinguishing
+  entities, this test catches the regression that creates Trump-bridge
+  mega-clusters.
+
+  The 50-article hard cap (union-find size accumulation) is a separate
+  defence layer that activates only when shared entities ARE sufficient
+  to merge but accumulated group size would exceed 50. Not tested here;
+  tested separately by fixture 033 (post-simplification update).

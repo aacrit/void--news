@@ -1,0 +1,7 @@
+source: src-hansard-lords-19470220
+locator: p839
+url: https://api.parliament.uk/historic-hansard/lords/1947/feb/20/indian-policy
+read: 2026-09-25
+note: p is the Hansard column; HL Deb 20 February 1947 vol 145 cc835-41, the Government's statement as Lord Pethick-Lawrence read it to the Lords
+
+His Majesty has been pleased to approve the appointment, in succession to Lord Wavell, of Rear-Admiral the Viscount Mountbatten of Burma, who will be entrusted with the task of transferring to Indian hands the responsibility for the government of British India in the manner that will best ensure the future happiness and prosperity of India.

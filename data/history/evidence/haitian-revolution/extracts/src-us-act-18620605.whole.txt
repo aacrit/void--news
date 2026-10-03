@@ -1,0 +1,7 @@
+source: src-us-act-18620605
+locator: whole
+url: https://govtrackus.s3.amazonaws.com/legislink/pdf/stat/12/STATUTE-12-Pg421.pdf
+read: 2026-09-25
+note: 12 Stat. 421, chapter 96, as the PDF's text layer prints it, the marginal notes (Diplomatic representatives to Haiti and Liberia; Rank and pay) run into the lines
+
+Cser. XC VI. - An Act to authorize the President of the United States to appoist June 5,18x2. Diplomatic Representatires to the Republics of Hayti and Liberia, respectively . Be it enacted by the Senate and Rouse of Representatives of the United Slates of America in Congress assembled, That the President of the United Diplomatic States be, and he hereby is authorized, by and with the advice and con- representatives to halts and sent of the Senate, to appoint diplomatic representatives of the United Liberia. States to the Republics of Hayti and Liberia, respectively . Each of the hu said representatives so appointed shall be accredited as commissioner and consul-general, and shall receive the compensation of commissioners Rank and pay. according to the act of Congress approved August eighteen, eighteen 18N ch.127. ndred and fifty-six : Provided, That the annual compensation of the Vol . x f- 52- representative at Liberia shall not exceed four thousand dollars . APPROVED, June 5, 1862

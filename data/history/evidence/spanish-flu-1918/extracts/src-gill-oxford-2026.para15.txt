@@ -1,0 +1,6 @@
+source: src-gill-oxford-2026
+locator: para15
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13311354/fullTextXML
+read: 2026-09-25
+
+In their Aldershot hospitals, in southern England, Dr Abrahams and his colleagues were unaware, initially, of Hammond’s work at Etaples, but, early that summer, they felt impelled to describe the peculiarities of the condition which they had seen. They, too, employed the words ‘purulent bronchitis’

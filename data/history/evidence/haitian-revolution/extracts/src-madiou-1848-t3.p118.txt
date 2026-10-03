@@ -1,0 +1,9 @@
+source: src-madiou-1848-t3
+locator: p118
+url: https://archive.org/download/histoiredhaiti03madi/histoiredhaiti03madi_djvu.txt
+read: 2026-09-25
+note: tome III, page 118: the act naming Dessalines governor-general for life, with its signatures; the layer prints the year as 4084
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+AU NOM DU PEUPLE D HAYTÉ. Nous généraux et chefs des armées de l'ile d'Hayti, pénétrés de reconnaissance des bienfaits que nous avons éprouvés du général en chef Jean Jacques Dessalines, le protecteur de-la liberté dont jouit le peuple ; au nom de la liberté, au nom de indépendance, au nom du peuple quil a rendu heureux , nous le proclamons gouverneur-général à vie delîle d'Hayti; nous jurons d'obéir aveuglement aux lois émanées de son autorité, la seule que nous reconnaitrons ; nous lui donnons le droit de faire la paix, la guerre, de nommer son successeur. Fait au quartier-général des Gonaïves le 1° Janvier 4084, 1° jour de l'Indépendance. Signé : Gabart, P. Romain, J. J. Herne, Capoix, Christophe, Geffrard, E. Gérin, Vernet, Pétion, Clervaux, J. EL, François, Cangé, Férou, Yayou, Toussaint Brave, Magloira Ambroise, L. Bazelais.

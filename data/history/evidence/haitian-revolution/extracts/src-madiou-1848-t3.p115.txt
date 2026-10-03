@@ -1,0 +1,9 @@
+source: src-madiou-1848-t3
+locator: p115
+url: https://archive.org/download/histoiredhaiti03madi/histoiredhaiti03madi_djvu.txt
+read: 2026-09-25
+note: tome III, page 115: the close of the proclamation of 1 January 1804 as Madiou prints it
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+affreuse. idée; tu seras le soutien de la liberté que tu chéris et l'appui du chef qui te commande. Prête donc entre mes mains le serment de vivre libre et indépendant , et de préférer: la mort à tout ce qui tendrait à Le remettre sous le joug. Jure enfin de poursuivre à jamais les traîtres et les ennemis de ton indépendance. Fait au quartier général des Gonaïves, le premier Janvier mil-huitgent quatre, l'an 4er de l'indépendance. (Signé) : J. J. DESSALINES.

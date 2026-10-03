@@ -1,0 +1,29 @@
+source: src-radcliffe-bengal
+locator: para8
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: the OCR layer garbles item (5); it is kept as the layer prints it
+
+8. In my view, the demarcation of a boundary line between East and West Bengal depended on the answers to be given to certain basic questions which may be stated as follows:—
+
+(1) To which State was the City of Calcutta to be assigned, or was it possible to adopt any method of dividing the City between the two States?
+
+(2) If the City of Calcutta must be assigned as a whole to one or other of the States, what were its indispensable claims to the control of territory, such as all or part of the Nadia River system or the Kulti rivers, upon which the life of Calcutta as a city and port depended?
+
+(3) Could the attractions of the Ganges-Padma-Madhumati river line displace the strong claims of the heavy concentration of Muslim majorities in the districts of Jessore and Nadia without doing too great a violence to the principle of our terms of reference?
+
+(4) Could the district of Khulna usefully be held by a State different from that which held the district of Jessore?
+
+(5) Was it right to assign district of Khulna the considerable block of non-Muslim district it which held the di of Malda and Dinajpur?
+
+3
+
+(6) Which State’s claim ought to prevail in respect of the
+
+Districts of Darjeeling and Jalpaiguri, in which the Muslim population amounted to 2'42 per cent, of the whole in the case of
+
+Darjeeling, and to 23-08 per cent, of the whole in the case of
+
+Jalpaiguri, but which constituted an area not in any natural sense contiguous to another non-Muslim area of Bengal?
+
+(7) To which State should the Chittagong Hill Tracts be assigned, an area in which the Muslim population was only 3 per cent, of the whole, but which it was difficult to assign to a State different from that which controlled the district of Chittagong itself?

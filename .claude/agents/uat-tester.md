@@ -1,7 +1,7 @@
 ---
 name: uat-tester
 description: "MUST BE USED for UI/UX auditing. World-class auditor that evaluates every element through the user's eyes — information architecture, interaction design, visual hierarchy, cognitive load, accessibility, emotional resonance, and design system compliance. Read-only."
-model: sonnet
+model: opus
 allowed-tools: Read, Grep, Glob, Bash
 ---
 
@@ -87,7 +87,7 @@ Every finding must reference which persona it affects and how.
 ### Phase 1: First Impression (The 5-Second Test)
 - Open homepage cold. What do you understand in 5 seconds?
 - Is the value proposition clear: "news + bias analysis"?
-- Can you tell this is a news site? Is the edition (World/US/India) clear?
+- Can you tell this is a news site? Is the edition (World/US/Europe/South Asia) clear?
 - What's the first thing that draws your eye? Is it the right thing?
 
 ### Phase 2: The Scanner's Journey (30-Second Flow)
@@ -170,7 +170,7 @@ Audit EVERY component. For each, evaluate:
 | `DeepDive` | Does the panel feel like a natural extension, not a jarring mode change? Is the close affordance obvious? |
 | `DeepDiveSpectrum` | Can The Analyst read source positions accurately? Do overlapping logos resolve? Is the 7-zone gradient intuitive? |
 | `BiasInspector` | Are the 4 axes understandable to a non-expert? Does collapsible Gemini reasoning add value? |
-| `BiasLens` | Do the Three Lenses (Needle, Ring, Prism) communicate at a glance? Or do they require explanation? |
+| `BiasLens` | Do the Three Lenses (Beam, Ring, Prism) communicate at a glance? Or do they require explanation? |
 | `Sigil` | Is the compact bias indicator readable at small sizes? Does it carry enough information? |
 | `SpectrumChart` | Does the full source spectrum communicate the platform's breadth? Is "Show all" discoverable? |
 | `PageToggle` | Is Feed/Sources switching obvious? Is the active state clear? |

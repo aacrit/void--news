@@ -1,0 +1,8 @@
+source: src-adhikari-2008
+locator: secbluebook
+url: https://scielo.org.za/scielo.php?script=sci_arttext&pid=S0259-01902008000100014
+read: 2026-09-25
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: the paragraph on the Blue Book's withdrawal, cut at the cap
+
+After it had served its propagandistic purpose, however, the Report proved to be a liability to the white supremacist agenda of the South African administration because its contents had all along been regarded as a major injustice by Germans, 12 most acrimoniously amongst those who had remained in the colony. In 1926, at the urging of the first legislative assembly constituted by the South African authorities, the Blue Book was withdrawn from circulation in libraries and archives throughout the British Empire. In South Africa and Namibia copies were destroyed. The suppression of the Report was an attempt to foster reconciliation between the aggrieved German and growing South African settler communities

@@ -1,0 +1,7 @@
+source: src-geggus-1997
+locator: abstract
+url: https://brill.com/view/journals/nwig/71/1-2/article-p43_3.xml
+read: 2026-09-25
+note: the abstract as the Brill record prints it; the article's PDF is not served to this container
+
+When St. Domingue declared its independence it was renamed Haiti, an Amerindian name. Author explores what the founding fathers of Haitian independence might have known about the Amerindian past in the Caribbean and in South America. He also raises questions about ethnicity and identity in 19th-c. Haiti.

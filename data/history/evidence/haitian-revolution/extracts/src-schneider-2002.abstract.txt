@@ -1,0 +1,7 @@
+source: src-schneider-2002
+locator: abstract
+url: https://www.persee.fr/doc/ahrf_0003-4436_2002_num_329_1_2600
+read: 2026-09-25
+note: the French abstract as the Persée record prints it
+
+Le colonel Vincent, officier du génie en poste à Saint-Domingue de façon presque ininterrompue de 1786 à 1800 s'était marié à la fille d'un colon, mais était devenu l'ami de Toussaint Louverture. Il était contre l'esclavage, mais pour l'exclusivité du commerce de la colonie avec la France. C'est sur ce dernier point qu'il s'opposa à Toussaint Louverture qui commerçait avec les États-Unis, et avait préparé en 1801 une constitution de Saint-Domingue. Chargé d'en porter le texte au Premier Consul, il essaya vainement de dissuader celui-ci de faire partir l'expédition du général Leclerc. Hostile à l'indépendantisme d'une part et au retour de l'esclavage d'autre part, il était partisan d'une voie modérée qui ne fut pas essayée, mais dont Napoléon reconnut à Sainte Hélène le bien-fondé.

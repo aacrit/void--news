@@ -1,0 +1,7 @@
+source: src-de-19150531
+locator: para2
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-05-31-DE-001
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+
+Natürlich werden die türkischen Maßnahmen in der gesamten uns feindlichen Welt wieder große Aufregung verursachen und auch gegen uns ausgebeutet werden, speziell wird Amerika in seinen vielen armenischen Schulen getroffen werden. Auch bedeuten die Maßnahmen gewiß eine große Härte für die armenische Bevölkerung. Doch bin ich der Meinung, daß wir die Maßnahmen wohl in ihrer Form mildern aber nicht grundsätzlich hindern dürfen. Die von Rußland genährte armenische Wühlarbeit hat Dimensionen angenommen, welche den Bestand der Türkei bedrohen.

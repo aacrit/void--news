@@ -1,0 +1,9 @@
+source: src-napoleon-corr-7
+locator: item5863
+url: https://archive.org/download/correspondancede07napouoft/correspondancede07napouoft_djvu.txt
+read: 2026-09-25
+note: No. 5863, to Talleyrand, 22 brumaire an X (13 November 1801): the dateline and the paragraphs from Que je ne puis pas retarder to nouveau monde; the heading and the paragraphs between are not held
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+Paris, 22 brumaire au X (13 novembre 1801). Que je ne puis pas retarder d'un jour l'expédition de Saint-Domingue, car, passé le mois de germinal, le climat est impraticable pour les Européens ; Que, si j'étais obligé de renvoyer l'expédition à une autre année, je serais obligé de reconnaître Toussaint, de renoncer à Saint-Domingue, et d'y constituer des noirs français, ce qui sans doute ne serait point une spéculation d'argent, mais serait très-avantageux à la République sous le point de vue de la puissance militaire; Que, dans le parti que j'ai pris d'anéantir à Saint-Domingue le gouvernement des noirs, j'ai moins été guidé par des considérations de commerce et de finances que par la nécessité d'étouffer, dans toutes les parties du monde, toute espèce de germe d'inquiétude et de troubles; mais qu'il n'a pas pu m'échapper que Saint-Domingue, reconquis par les blancs, serait pendant bien des années un point faible qui aurait besoin de l'appui de la paix et de la métropole; Que la liberté des noirs, reconnue à Saint-Domingue et légitimée par le Gouvernement, serait dans tous les temps un point d'appui pour la République dans le nouveau monde;

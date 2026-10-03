@@ -1,0 +1,13 @@
+source: src-lugard-1922
+locator: p617
+url: https://archive.org/download/dualmandateinbri00luga/dualmandateinbri00luga_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+
+Let it be admitted at the outset that European brains,
+capital, and energy have not been, and never will be, expended in developing the resources of Africa from motives
+of pure philanthropy ; that Europe is in Africa for the mutual
+benefit of her own industrial classes, and of the native raees
+in their progress to a higher plane ; that the benefit can be
+made reciprocal, and that it is the aim and desire of civilised
+administration to fulfil this dual mandate.

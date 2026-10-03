@@ -1,0 +1,137 @@
+## OPEN
+N: The massacre did not happen in Tiananmen Square.
+N: Every year the world uses that name for the third and fourth of June, nineteen eighty nine, and every year the record says something else. The square itself was cleared before dawn on June the fourth, mostly by negotiation between the last students and the soldiers surrounding them.
+N: The killing happened on the roads leading in: Chang'an Avenue, Muxidi, Fuxingmen, Xidan. Ordinary residents, not students, caught in the path of an army trying to reach a square that was already emptying.
+N: The picture the world kept was not wrong about the violence. It was wrong about where it was.
+
+## TITLE
+N: Tiananmen Square, nineteen eighty nine. April the fifteenth to June the fourth.
+
+## SCENE 1 | The kneeling petition
+N: April the twenty second. Inside the Great Hall of the People, the state funeral for Hu Yaobang.
+N: Outside, on the steps, three student representatives kneel. Above their heads they hold a petition, in the old posture of subjects appealing to an emperor.
+N: One hundred thousand students fill the square behind them.
+N: No official comes out to receive it.
+
+## SCENE 2 | Ten to five in the morning
+N: May the nineteenth. Six days into a hunger strike that has already put students in ambulances.
+N: General Secretary Zhao Ziyang walks out into the square to talk to the strikers himself, the highest ranking man in China they will ever see there. He is crying.
+
+## DOCUMENT | Zhao Ziyang | Address to hunger-striking students, Tiananmen Square | May 19, 1989, 4:50 a.m.
+N: Through tears, Zhao Ziyang told them the truth about why he had come.
+M: We came too late.
+
+## ASIDE
+N: Within days he was stripped of every post he held. He spent the next fifteen years of his life under house arrest and never addressed the public again. The tapes that finally carried his own account out of China were smuggled out only after he died, in two thousand five.
+
+## REST
+
+## SCENE 3 | The night of June third
+N: Just after midnight, the twenty seventh and thirty eighth Group Armies enter Beijing from several directions, firing live ammunition as they come.
+N: At Muxidi, where the boulevard narrows, residents in the apartment blocks above throw whatever they have down at the column. Soldiers fire automatic weapons back into the buildings.
+N: Armored personnel carriers crush barricades built from city buses.
+N: The square is cleared in the hours before dawn, mostly by talking. It is what happened on the roads getting there that nobody has ever agreed how to count.
+
+## SCENE 4 | Counting
+N: The Chinese Red Cross put out a number within hours: two thousand six hundred dead. Under government pressure, it took the number back the same day.
+N: The government's own figure, given at the time, was around two hundred civilians and several dozen soldiers.
+
+## DOCUMENT | Sir Alan Donald | Diplomatic cable, British Ambassador to China | June 5, 1989
+N: That same week, the British ambassador to China, Sir Alan Donald, sent a cable that stayed secret for almost thirty years.
+M: Minimum estimate of civilian dead ten thousand.
+
+## ASIDE
+N: Three figures, from three sources, none of them a count of names. The group that has actually tried to count by name is the Tiananmen Mothers, started by a philosophy professor named Ding Zilin after her own son was shot dead that night. Working in secret, illegally, they had documented two hundred and two victims by name by two thousand twenty four.
+
+## REST
+
+## SCENE 5 | The morning after
+N: June the fifth. A column of Type fifty nine tanks rolls down Chang'an Avenue, leaving the square behind it.
+N: A man in a white shirt, carrying two shopping bags, walks into the middle of the road and stops. The lead tank tries to go around him. He steps back into its path.
+N: He climbs onto the turret, says something to the crew inside, climbs down, and stands in front of it again.
+N: After several minutes, two other figures pull him away. No one has ever confirmed who he was.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of one spring. Four of them argue about what it meant. The first is not a fifth position on whether it happened. It is what the Chinese state said at the time, and saying it is itself part of the evidence.
+
+## PERSPECTIVE | Chinese Communist Party / State | victor
+N: The Party's account starts from a number. In nineteen eighty nine, income per person in China was three hundred and eleven dollars a year, lower than the average across Sub Saharan Africa. By two thousand twenty three it was twelve thousand seven hundred and twenty dollars, and eight hundred million people had been lifted out of poverty.
+N: On this reading, the students were asking the country to gamble that record. Deng Xiaoping had watched the Cultural Revolution kill between five hundred thousand and two million people when Mao turned mass mobilization against the Party itself, and he was not willing to let a second mass movement decide China's future in the street.
+N: Deng told the martial law commanders this directly, five days after the square was cleared.
+M: This storm was bound to come sooner or later. It was bound to happen and was independent of man's will.
+N: Seven weeks of talking, on this account, came before a single soldier entered the city.
+
+## PERSPECTIVE | Student Protesters / Democracy Movement | vanquished
+N: The students did not begin by asking for the Party's removal. Their first demands, in April, were narrower: honor Hu Yaobang properly, publish officials' incomes, let the press report freely.
+N: The demand that frightened Beijing more than any speech was a fast. On May the thirteenth, roughly three thousand students stopped eating. Within four days, between one and two million people were marching through the capital in support of them.
+N: Chai Ling, twenty three years old, drafted the strikers' declaration and read it to the square herself.
+F: We do not want to die. We love life. We will use our lives to seek truth.
+N: Ding Zilin's seventeen year old son, Jiang Jielian, ran toward the sound of gunfire on the night of June the third and was shot dead. Ding later said what his crime had been.
+F: He wanted to see what was happening. That was his crime.
+
+## PERSPECTIVE | Foreign Journalist / Witness | bystander
+N: Over one thousand foreign reporters were already in Beijing, sent to cover Mikhail Gorbachev's visit, when the story became a different one entirely.
+N: Jeff Widener of the Associated Press was on a sixth floor balcony of the Beijing Hotel on the morning of June the fifth, concussed from a rock that had hit him the night before, and nearly out of film.
+M: I was running out of film. I begged a young American exchange student for his last roll of Fuji 100. That roll had the Tank Man.
+N: BBC correspondent Kate Adie was on Chang'an Avenue the night before, describing what she was watching as it happened.
+F: The soldiers just opened fire. I could see tracer bullets. People were falling.
+N: The photograph Widener took became the most reproduced image of the decade. It was smuggled out of China in a French student's underwear.
+
+## PERSPECTIVE | Post-Tiananmen Academic / Dissident | revisionist
+N: Thirty years of later scholarship do not dispute that the crackdown happened. What they complicate is everything around it.
+N: Leaked internal minutes known as the Tiananmen Papers show the Party's own Politburo Standing Committee split two to two on martial law, with Zhao Ziyang arguing openly that the students were patriotic. Deng Xiaoping, who held no seat on that committee, cast the deciding vote anyway.
+N: Zhao never recanted. Under house arrest for fifteen years, he recorded his memoir in secret on cassette tapes, and it reached the world only after his death.
+M: A China that embraces reform and modernization needs the rule of law.
+N: And historian Timothy Brook's research places most of the killing exactly where Ding Zilin's group has spent thirty five years counting names: the western approach roads, not the square. She still makes the same demand every June.
+F: The blood debt must be repaid.
+
+## PERSPECTIVE | Workers' Movement / Labor | vanquished
+N: The Beijing Workers' Autonomous Federation set up its tent at the corner of the square five days after the protests began, run by a twenty six year old railway worker named Han Dongfang.
+N: The Party feared it more than the students. Internal documents record Deng warning the Politburo of the precedent directly. Poland's Solidarity had also begun as a strike, at the Gdansk shipyards, not as a student movement.
+N: The workers wanted an end to inflation running near twenty eight percent, and an end to the corruption enriching officials' children while the guaranteed jobs and housing of the old system were dismantled underneath them.
+N: After June the fourth the punishment split cleanly along class lines. Most of the twenty one wanted student leaders escaped abroad through a Hong Kong smuggling network. Three workers, who had thrown paint at a portrait of Mao, were executed. Han Dongfang was held without trial for twenty two months and has not been allowed back into China since.
+N: Historian Louisa Lim put the difference in one line.
+F: Three workers were the first to be executed. They had thrown paint at Mao's portrait. The students who had occupied the square for seven weeks received prison sentences.
+
+## REST | short
+
+## TURN | What each one leaves out
+N: What each account has to leave out.
+N: The Party's growth chart is real, and it says nothing about the seven weeks of talking that came before the shooting, or about the fact that no independent investigation has ever been allowed to check its own casualty figure.
+N: The students' account is the one the world adopted whole, and it is thinnest exactly where the workers were. The Beijing Workers' Autonomous Federation gets a sentence in most retellings, and its members got the longest sentences and the only executions.
+N: The foreign press gave the world its only footage of the night, and pointed nearly all of it at the square, which is not where most of the dead were.
+N: The revisionist account is the most careful with the facts, and the easiest to mistake for closure. Precision about which road the killing happened on is not the same as an answer for why it happened at all.
+N: And the workers' account is right that the punishment fell hardest on people history barely names. Which is also, on its own admission, most of what survives of them: the sentence, not the person.
+
+## REST
+
+## DOCUMENT | Liu Xiaobo | Final statement at trial, Beijing No. 1 Intermediate People's Court | December 23, 2009
+N: Liu Xiaobo joined the hunger strike on June the second, two days before the tanks moved. In two thousand ten, twenty one years later, he won the Nobel Peace Prize while still in prison, for a document he had drafted called Charter zero eight. At his trial, in his final statement, this is what he told the court.
+M: I have no enemies and no hatred.
+
+## CLOSE
+N: He died in state custody in twenty seventeen. The only Nobel Peace laureate to do that since Carl von Ossietzky, held by the Nazis in nineteen thirty eight.
+
+## SAY
+Tiananmen = tee-en-AN-men
+Chang'an = chahng-AHN
+Muxidi = moo-shee-DEE
+Fuxingmen = foo-shing-MEN
+Xidan = shee-DAHN
+Deng Xiaoping = duhng shyow-PING
+Zhao Ziyang = jow dzuh-YAHNG
+Li Peng = lee PUNG
+Hu Yaobang = hoo yow-BAHNG
+Wang Dan = wahng DAHN
+Chai Ling = chai LING
+Ding Zilin = ding dzuh-LIN
+Jiang Jielian = jyahng jyeh-lyen
+Liu Xiaobo = lyoh shyow-BWOR
+Han Dongfang = hahn dong-FAHNG
+Gdansk = guh-DANSK
+Ossietzky = oss-YET-skee
+Beijing = bay-JING
+Widener = WHY-den-er
+Gorbachev = GOR-bah-chof

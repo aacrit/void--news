@@ -1,0 +1,72 @@
+{
+ "version": "1.2.0",
+ "title": "The 1918 Influenza Pandemic",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 43.957
+  },
+  {
+   "startTime": 43.957,
+   "title": "Camp Funston, Kansas, March nineteen eighteen",
+   "endTime": 95.854
+  },
+  {
+   "startTime": 95.854,
+   "title": "Camp Devens, Massachusetts, late September nineteen eighteen",
+   "endTime": 191.511
+  },
+  {
+   "startTime": 191.511,
+   "title": "Philadelphia, September twenty eighth, nineteen eighteen",
+   "endTime": 238.081
+  },
+  {
+   "startTime": 238.081,
+   "title": "Five accounts",
+   "endTime": 250.798
+  },
+  {
+   "startTime": 250.798,
+   "title": "Wartime Governments and Censorship",
+   "endTime": 315.77
+  },
+  {
+   "startTime": 315.77,
+   "title": "Public Health and Medicine",
+   "endTime": 377.755
+  },
+  {
+   "startTime": 377.755,
+   "title": "Colonial and Global South Populations",
+   "endTime": 456.269
+  },
+  {
+   "startTime": 456.269,
+   "title": "Pacific and Indigenous Peoples",
+   "endTime": 543.823
+  },
+  {
+   "startTime": 543.823,
+   "title": "Epidemiology and Historical Memory",
+   "endTime": 632.894
+  },
+  {
+   "startTime": 632.894,
+   "title": "What each one leaves out",
+   "endTime": 700.665
+  },
+  {
+   "startTime": 700.665,
+   "title": "Legacy",
+   "endTime": 723.667
+  },
+  {
+   "startTime": 723.667,
+   "endTime": 736.767,
+   "title": "Also from Void News"
+  }
+ ]
+}

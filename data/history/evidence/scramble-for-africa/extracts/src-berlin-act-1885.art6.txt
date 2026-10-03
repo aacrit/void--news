@@ -1,0 +1,42 @@
+source: src-berlin-act-1885
+locator: art6
+url: https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: Article VI whole, with Hertslet's italic side-headings as the text layer prints them
+
+Art. VI. — Provisions relative to Protection of the Natives , of Missionaries and Travellers, as well as relative to Religious Liberty.
+
+Preservation and Improvement of Native Tribes ; Slavery, and the Slave
+
+Trade.
+
+All the Powers exercising sovereign rights or influence in the
+aforesaid territories bind themselves to watch over the preservation
+of the native tribes, and to care for the improvement of the conditions
+of their moral and material well-being, and to help in suppressing
+slavery, and especially the slave trade.
+
+Religious and other Institutions. Civilization of Natives.
+
+They shall, without distinction of creed or nation, protect and
+favour all religions, scientific, or charitable institutions, and undertakings created and organized for the above ends, or which aim at
+instructing the natives and bringing home to them the blessings of
+civilization.
+
+Protection of Missionaries, Scientists , and Explorers.
+
+Christian missionaries, scientists and explorers, with their followers,
+property, and collections, shall likewise be the objects of especial protection.
+
+Religious Toleration.
+
+Freedom of conscience and religious toleration are expressly
+guaranteed to the natives, no less than to subjects and to foreigners.
+
+Public Worship.
+
+The free and public exercise of all forms of Divine worship, and
+the right to build edifices for religious purposes, and to organize religious
+missions belonging to all creeds, shall not be limited or fettered in any
+way whatsoever.

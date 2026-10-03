@@ -1,0 +1,134 @@
+## OPEN
+N: You think of a flu season as dangerous for the very old, the very young, the already sick.
+N: In the autumn of nineteen eighteen, the age group that died in the greatest numbers was twenty to forty. Healthy adults, in the prime of life.
+N: Some of them coughed in the morning and were dead within a day, drowning in their own tissue.
+N: No ordinary influenza has ever done that.
+
+## TITLE
+N: The nineteen eighteen influenza pandemic. Nineteen eighteen to nineteen nineteen.
+
+## SCENE 1 | Camp Funston, Kansas, March nineteen eighteen
+N: A mess cook reports to the camp infirmary with a fever. It looks like ordinary influenza.
+N: By noon the surgeon has more than a hundred men on cots.
+N: Within three weeks, eleven hundred soldiers at the camp are too sick to stand.
+N: Most of the men recover. Then they ship out to France.
+
+## ASIDE
+N: The first wave, in the spring of nineteen eighteen, is mild enough that most governments ignore it.
+N: Then, somewhere in the late summer, the virus changes. When it returns in the autumn it kills with a speed physicians have never seen.
+N: The autumn of nineteen eighteen kills more people in thirteen weeks than any comparable span in recorded history.
+
+## REST
+
+## SCENE 2 | Camp Devens, Massachusetts, late September nineteen eighteen
+N: The outbreak here is faster and worse than Funston's. Patients turn a blue black shade physicians call heliotrope cyanosis, as their lungs fill and they suffocate.
+N: Victor Vaughan, a United States Army epidemiologist and former president of the American Medical Association, is sent to inspect. He counts sixty three deaths in the camp in a single day.
+N: A physician on the ward, Roy Grist, writes a letter describing what he is seeing.
+
+## DOCUMENT | Roy Grist | Letter from a physician at Camp Devens, Massachusetts, published in the British Medical Journal | September 29, 1918
+N: Grist's letter was published decades later, in the British Medical Journal.
+M: These men start with what appears to be an ordinary attack of la grippe, and when brought to the hospital they very rapidly develop the most vicious type of pneumonia. It is only a matter of a few hours then until death comes, and it is simply a struggle for air until they suffocate. It is horrible.
+
+## DOCUMENT | Victor C. Vaughan | US Army report after inspecting Camp Devens, quoted in John M. Barry, The Great Influenza | 1918
+N: Vaughan's own report went further than a body count.
+M: If the epidemic continues its mathematical rate of acceleration, civilization could easily disappear from the face of the earth.
+
+## ASIDE
+N: There is no vaccine, no antiviral, and no antibiotic for the bacterial pneumonias that kill most of the victims.
+N: Medicine in nineteen eighteen can describe the catastrophe with precision. It can stop almost none of it.
+
+## REST
+
+## SCENE 3 | Philadelphia, September twenty eighth, nineteen eighteen
+N: Philadelphia's director of public health, Wilmer Krusen, allows a Liberty Loan war bond parade to proceed, over the warnings of physicians.
+N: More than two hundred thousand people line the route.
+N: Within seventy two hours, every bed in the city's thirty one hospitals is full.
+N: In the week ending October fifth, about twenty six hundred Philadelphians are dead. The following week, more than forty five hundred.
+N: In St. Louis, health commissioner Max Starkloff closes schools, churches, and public gatherings within two days of the first cases. Philadelphia had waited weeks.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of this pandemic, and the science of what happened is not one of the disagreements. That was settled by molecular biology in two thousand and five.
+
+## PERSPECTIVE | Wartime Governments and Censorship | victor
+N: The first account belongs to the governments fighting the war the flu rode in on, and its strongest evidence is the name itself.
+N: France, Britain, Germany, and the United States judged the scale of the dying a threat to morale and war production, and their censors suppressed it.
+N: In the United States the Sedition Act of nineteen eighteen made it a crime to obstruct the war effort, and officials repeatedly assured citizens the flu was nothing unusual.
+N: Spain was neutral. Its newspapers wrote openly about the epidemic, and when King Alfonso the Thirteenth fell gravely ill in May nineteen eighteen, the story ran across Europe.
+N: The disease acquired a nationality it never had. Spaniards, who resented the label, called it the Naples Soldier.
+N: The war built the virus its own roads. Troopships and railways moved millions of young men between continents at the exact moment it turned lethal, and it carried them out to the world again.
+
+## PERSPECTIVE | Public Health and Medicine | bystander
+N: The second account belongs to the doctors and health officers who faced the second wave, and it turns on the one thing they actually could control: contact between people.
+N: St. Louis reported its first civilian cases on October fifth, nineteen eighteen. Its health commissioner, Max Starkloff, closed schools, churches, theaters, and public gatherings two days later, over the objections of businessmen.
+N: Philadelphia had let its Liberty Loan parade proceed and delayed closures for weeks. Its peak weekly death rate reached roughly eight times that of St. Louis.
+N: Nurses, not physicians, carried most of the burden of care, and there were far too few of them, because so many had been sent to military service.
+N: A public health notice posted in San Francisco put the strategy the city had chosen in one line.
+M: Wear a mask and save your life. A mask is ninety nine percent proof against influenza.
+
+## PERSPECTIVE | Colonial and Global South Populations | vanquished
+N: The third account says the war and the wartime governments were never the center of this story. The center was India.
+N: India buried more people in the autumn of nineteen eighteen than any other country on earth: between twelve and eighteen million dead, most of them in a few months.
+N: The colonial administration offered almost nothing. Medical services sat in the cantonments and the European districts. Rural India, where most people died, had almost no public health organization at all.
+N: The poet Suryakant Tripathi Nirala lost his wife and much of his family within weeks.
+M: My family disappeared in the blink of an eye. The Ganges was swollen with dead bodies.
+N: Gandhi himself fell ill during the epidemic. The Non-Cooperation movement that mobilized millions began the following year.
+N: Africa was struck along the same colonial shipping and rail routes. In South Africa the weeks that followed were remembered as Black October: an estimated three hundred thousand people died.
+N: Across sub-Saharan Africa, the pandemic killed close to two percent of the population in six months.
+
+## PERSPECTIVE | Pacific and Indigenous Peoples | vanquished
+N: The fourth account is a natural experiment, run by accident on two halves of the same island chain.
+N: Western Samoa, governed by New Zealand, received the steamer Talune from Auckland on November seventh, nineteen eighteen. The ship carried infected passengers, and the administrator allowed it to dock without quarantine.
+N: Within weeks, roughly a fifth of the population was dead, an estimated eighty five hundred people, most of them adults between eighteen and fifty, the generation that held villages together.
+N: Fifty miles across the strait, American Samoa's governor, John Martin Poyer, imposed a strict maritime quarantine. It recorded not a single influenza death.
+N: When Poyer offered by wireless to help, the New Zealand administrator, Robert Logan, refused and broke off communication. Logan was later recalled and censured.
+N: Indigenous peoples across the Pacific died at rates far above the global average. In New Zealand, Maori died at roughly seven to eight times the rate of Pakeha settlers.
+N: This became the founding grievance of the Mau movement, the resistance to New Zealand rule.
+M: Samoa mo Samoa.
+N: Samoa for Samoans: the slogan of the resistance movement this epidemic fed.
+
+## PERSPECTIVE | Epidemiology and Historical Memory | revisionist
+N: The fifth account is the scholarly one, and for most of the twentieth century it barely existed.
+N: Alfred Crosby titled his nineteen seventy six study Americas Forgotten Pandemic, and asked why an event that killed at least six hundred seventy five thousand Americans had left almost no trace in the nation's memory.
+N: The contemporary estimate of twenty one million dead worldwide was accepted for decades. In two thousand and two, Niall Johnson and Juergen Mueller recompiled the mortality data country by country.
+M: Even this vast figure may be substantially lower than the real number, which could have been as high as one hundred million.
+N: The revision moved the pandemic's center of gravity from the West, where the records were kept, to the colonized world, where the people actually died.
+N: In two thousand and five, Jeffery Taubenberger's team reconstructed the complete virus from lung tissue Johan Hultin recovered at Brevig Mission, Alaska, and confirmed it was an avian descended H1N1.
+N: The strain's exact origin is still debated, with cases traced to Haskell County and Camp Funston in Kansas, and to a British army camp at Etaples in France. No single point of emergence is settled.
+
+## REST | short
+
+## TURN | What each one leaves out
+N: And here is what each of these cannot account for.
+N: The governments' account explains the censorship and the parade honestly, and it has nothing to say about who actually died, or in what numbers, once the war was over.
+N: The public health account is proud of what closures achieved, and it earned that pride. It says little about the colonial world, where there was no public health system left to close anything.
+N: The colonial account has the highest death toll and the clearest grievance, and it says almost nothing about the doctors and nurses who fought the disease without a treatment for it.
+N: The Pacific account has the cleanest evidence of all, two islands, one outcome each, and it says nothing about the millions who died in places with no second island to compare against.
+N: The scholarly account corrected the number and reconstructed the virus, and it says little about what any of that felt like, coughing blood in a ward with no cure to offer.
+
+## REST
+
+## CLOSE
+N: New Zealand apologized to Samoa for the epidemic in two thousand and two, eighty four years after the Talune docked.
+N: The virus itself was reconstructed only once, from lung tissue frozen in the Alaskan permafrost since nineteen eighteen.
+N: The reconstructed genome sits, today, under maximum containment.
+
+## SAY
+Funston = FUN-stun
+Devens = DEV-enz
+Vaughan = VAWN
+Krusen = KROO-zen
+Starkloff = STARK-lawf
+Alfonso = al-FON-soh
+Suryakant Tripathi = soor-yuh-KAHNT trih-PAH-tee
+Nirala = nih-RAH-lah
+Talune = tah-LOO-nay
+Poyer = POY-er
+Crosby = KROZ-bee
+Niall = NYE-al
+Juergen Mueller = YUR-gen MYOO-ler
+Taubenberger = TOW-ben-ber-ger
+Hultin = HUL-tin
+Brevig Mission = BREV-ig MISH-un
+H1N1 = H-one-N-one

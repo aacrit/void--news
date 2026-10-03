@@ -1,0 +1,8 @@
+source: src-aicc-19470615
+locator: p108
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: p is the page of Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947 (2nd ed., 2005), read from the Internet Archive text layer; line breaks are joined and the layer's soft hyphens rejoined
+note: Document 62, its heading and first two paragraphs; 'Junie' is the layer's
+
+Resolution of the All-India Congress Committee (passed on Sunday, 15th June, 1947). Encyclopaedia of Indian National Congress Vol. 10, p.110-112 The A.LC.C. has given careful consideration to the course of events since its last meeting in January last and in particular to the statements made on behalf of the British Government on February 20, 1947, and Junie 3, 1947. The Committee approves and endorses the resolutions passed by the Working Committee during this period. - The Committee welcomes the decision of the British Government to transfer power completely to the Indian People by next August.

@@ -1,0 +1,6 @@
+source: src-radcliffe-punjab
+locator: para9
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+
+9. The task of delimiting a boundary in the Punjab is a difficult one. The claims of the respective parties ranged over a wide field of territory, but in my judgment the truly debatable ground in the end proved to lie in and around the area between the Beas and Sutlej rivers on the one hand, and the River Ravi on the other. The fixing of a boundary in this area was further complicated by the existence of canal systems, so vital to the life of the Punjab but developed only under the conception of a single administration, and of systems of road and rail communication, which have been planned in the same way. There was also the stubborn geographical fact of the respective situations of Lahore and Amritsar, and the claims to each or both of those cities which each side vigorously maintained. After weighing to the best of my ability such other factors as appeared to me relevant as affecting the fundamental basis of contiguous majority areas, I have come to the decision set out in the Schedule which thus becomes the award of the Commission. I am conscious that there are legitimate criticisms to be made of it: as there are, I think, of any other line that might be chosen.

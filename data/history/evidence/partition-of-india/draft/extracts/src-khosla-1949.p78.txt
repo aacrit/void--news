@@ -1,0 +1,8 @@
+source: src-khosla-1949
+locator: p78
+url: https://archive.org/download/stern-reckoning/Stern%20Reckoning_djvu.txt
+read: 2026-09-25
+note: the layer's soft hyphens (¬) are rejoined, a hyphen at a line break is kept without the break, and line breaks are joined; OCR glyphs are kept as printed
+note: the newspaper's figures as the fact-finding body reports them; 'deSth' and 'annnouttced' are the layer's
+
+On August 18, the Statesman of Calcutta announced that over 170 persons had been killed and 1,000 injured. On August 19, the news was that 270 had been killed and 1,600 injured. On the 20th the Statesman announced that the deSth roll was between 2,000 and 3,000. Thousands of refugees began to leave Howrah; and the Bihar Government, fearing an outbreak in the province, issued instructions to the magistracy and the police asking them to exercise special vigilance in maintaining law and order. They were enjoined, to enforce not only the ordinary law but also the Emergency War Legislation which had not yc* expired and was to remain in force until the end of September. The Provincial Armed Police^ Reserve were moved to strategic centres, e.g., Patna, Muzaffarpur, Monghyr and Gaya. On August 28, the Statesman annnouttced that 3,468 bodies had so far been accounted for in Calcutta.

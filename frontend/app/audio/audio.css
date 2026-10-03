@@ -1,0 +1,293 @@
+/* /audio: every programme, one place.
+
+   One measure (the prose measure), three programme blocks in the reading
+   order of the week (today, Sunday, the archive), then the feeds. Tokens
+   only; the section's accent is the voice teal, carried by the masthead
+   nameplate (components.css, "Section skins") and by the play buttons
+   here. No radius beyond the scale, no shadow: a listings page on newsprint,
+   not a media app. */
+
+.audio-page {
+  min-height: 60vh;
+}
+
+.audio-hub {
+  max-width: var(--measure-prose, 72ch);
+  margin: 0 auto;
+  padding: var(--space-7) var(--space-5) var(--space-8);
+}
+
+.audio-hub__head {
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: var(--space-6);
+}
+
+.audio-hub__title {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: var(--text-hero, clamp(2.25rem, 1.8rem + 2vw, 3.5rem));
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--space-3);
+  color: var(--fg-primary);
+}
+
+.audio-hub__lede {
+  font-family: var(--font-structural);
+  font-size: var(--text-lg);
+  line-height: 1.5;
+  color: var(--fg-secondary);
+  margin: 0;
+  max-width: 48ch;
+}
+
+/* ── A programme ─────────────────────────────────────────────────────────── */
+.audio-prog {
+  padding: var(--space-6) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.audio-prog__kicker {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin: 0 0 var(--space-2);
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.audio-prog__n {
+  font-family: var(--font-data);
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--voice-ink);
+}
+
+.audio-prog__title {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 1.3rem + 1vw, 2.125rem);
+  line-height: 1.1;
+  margin: 0 0 var(--space-3);
+  color: var(--fg-primary);
+}
+
+.audio-prog__line {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  line-height: 1.55;
+  color: var(--fg-secondary);
+  margin: 0 0 var(--space-3);
+  max-width: 62ch;
+}
+
+.audio-prog__meta {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+  margin: 0 0 var(--space-4);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+}
+
+.audio-prog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-5);
+  margin: 0;
+}
+
+.audio-prog__open {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+  text-decoration: none;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--border-strong);
+  transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.audio-prog__open:hover,
+.audio-prog__open:focus-visible {
+  color: var(--fg-primary);
+  border-bottom-color: var(--voice-ink);
+}
+
+/* ── The play button: the section's one accented control ─────────────────── */
+.audio-play {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--voice-ink);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--voice-ink);
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.audio-play:hover,
+.audio-play:focus-visible,
+.audio-play--playing {
+  background: var(--voice-ink);
+  color: var(--bg-primary);
+}
+.audio-play:focus-visible {
+  outline: 2px solid var(--voice-ink);
+  outline-offset: 3px;
+}
+.audio-play__icon {
+  flex: none;
+}
+.audio-play--compact {
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  font-size: var(--text-xs);
+}
+
+/* ── History's latest six ────────────────────────────────────────────────── */
+.audio-episodes {
+  list-style: none;
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.audio-episode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.audio-episode__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.audio-episode__title {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: var(--text-base);
+  line-height: 1.25;
+  color: var(--fg-primary);
+  text-decoration: none;
+}
+.audio-episode__title:hover,
+.audio-episode__title:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.audio-episode__meta {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+}
+
+/* ── The feeds ───────────────────────────────────────────────────────────── */
+.audio-feeds {
+  padding-top: var(--space-6);
+}
+
+.audio-feeds__title {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: var(--text-xl);
+  margin: 0 0 var(--space-2);
+  color: var(--fg-primary);
+}
+
+.audio-feeds__lede {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  color: var(--fg-secondary);
+  margin: 0 0 var(--space-4);
+}
+
+.audio-feeds__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--divider);
+  border: 1px solid var(--divider);
+}
+
+.audio-feed {
+  background: var(--bg-card);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.audio-feed__name {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: var(--text-lg);
+  color: var(--fg-primary);
+}
+
+.audio-feed__cadence {
+  font-family: var(--font-meta);
+  font-weight: 500;
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-left: var(--space-2);
+}
+
+/* The address and its button on one row; the address wraps at any width
+   rather than forcing a horizontal scroll on a phone. */
+.audio-feed__row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+}
+
+.audio-feed__url {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--fg-primary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 6px 10px;
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+
+@media (max-width: 767px) {
+  .audio-hub {
+    padding: var(--space-6) var(--space-4) var(--space-7);
+  }
+  .audio-episode {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+}

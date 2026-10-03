@@ -1,0 +1,122 @@
+# The reader's name for every `producer` id a History ledger uses.
+#
+# A ledger entry names the body that produced a document by a short id
+# (`uk-government`, `icty`); a thesis page prints the producers a verdict rests
+# on, and an analysis may print a producer column. The page prints the label
+# here, never the raw id.
+#
+# Every label is taken from the `author` or `publisher` of the ledger entry
+# named in `from`, which carries that producer id: the gate
+# (tests/test_history_thesis.py, test_producer_labels) fails when a producer id
+# used in any committed ledger or draft overlay has no label, when a label's
+# `from` entry does not exist or carries another producer, or when a label is
+# left here with no ledger using it. Where one id covers several authors
+# (scholarship, survivor testimony) the label is the class the ledger itself
+# names, not a body it does not.
+#
+# Read by pipeline/history/export_thesis.py, which writes the labels a thesis
+# needs into its JSON as `producerLabels`.
+producers:
+  accused-testimony: {label: "Testimony of the accused", from: src-eccc-duch-apology}
+  allied-powers: {label: "Allied Powers", from: src-sevres-1920}
+  boundary-commission-chairman: {label: "Cyril Radcliffe, Chairman of the Boundary Commissions", from: src-radcliffe-punjab}
+  british-crown: {label: "Queen Victoria in Council", from: src-hertslet-charter-1889}
+  british-historian: {label: "John Relly Beard", from: src-beard-1863}
+  british-planter-witness: {label: "Bryan Edwards", from: src-edwards-1797}
+  british-viceroy-staff: {label: "Viceroy and his staff", from: src-abell-19470808}
+  cambodian-state: {label: "Kingdom of Cambodia, National Assembly", from: src-eccc-law-2004}
+  census-of-india: {label: "Census Commissioner for India", from: src-census-1941-vol1}
+  colonial-administrator: {label: "Sir F. D. Lugard", from: src-lugard-1922}
+  commission-member-congress: {label: "Mehr Chand Mahajan, Punjab Boundary Commission (nominated by the Congress)", from: src-mahajan-1947}
+  commission-member-league: {label: "Din Mohammad, Punjab Boundary Commission (nominated by the Muslim League)", from: src-dinmohammad-1947}
+  commission-member-sikh: {label: "Teja Singh, Punjab Boundary Commission (nominated by the Congress for the Sikhs)", from: src-tejasingh-1947}
+  congo-free-state: {label: "Congo Free State Government", from: src-congo-commission-1906}
+  congo-reform-association: {label: "E. D. Morel", from: src-morel-1906}
+  constituent-assembly-of-india: {label: "Constituent Assembly of India", from: src-cad-19470814}
+  constituent-assembly-of-pakistan: {label: "Constituent Assembly of Pakistan", from: src-jinnah-19470811}
+  dc-cam: {label: "Documentation Center of Cambodia (DC-Cam)", from: src-dccam-mapping}
+  dutch-supreme-court: {label: "Supreme Court of the Netherlands (Hoge Raad)", from: src-nl-hr-2019}
+  east-punjab-liaison-agency: {label: "East Punjab Liaison Agency, Lahore", from: src-clo-19480429}
+  east-punjab-rehabilitation: {label: "Director General of Rural Rehabilitation, East Punjab", from: src-randhawa-1954}
+  eccc: {label: "Extraordinary Chambers in the Courts of Cambodia", from: src-eccc-002-01-tj}
+  echr: {label: "European Court of Human Rights", from: src-echr-perincek-2015}
+  ethiopian-emperor: {label: "Menelik II, King of Kings of Ethiopia", from: src-menelik-1897}
+  european-parliament: {label: "European Parliament", from: src-ep-1987}
+  french-civil-commission: {label: "Polverel and Sonthonax, civil commissioners of the Republic", from: src-sonthonax-17930829}
+  french-colonist-memoir: {label: "Antoine Dalmas", from: src-dalmas-1814}
+  french-consulate: {label: "Napoléon Bonaparte, First Consul", from: src-napoleon-corr-7}
+  french-convention: {label: "Convention nationale", from: src-decret-16-pluviose-anii}
+  french-convention-commission: {label: "Commission des colonies of the Convention nationale", from: src-garran-1797-t1}
+  french-crown: {label: "France, in the ordonnance of 1825 and the treaties of 1838", from: src-ordonnance-18250417}
+  french-expedition-command: {label: "Charles Victoire Emmanuel Leclerc", from: src-roussier-1937}
+  french-general-memoir: {label: "Pamphile de Lacroix, lieutenant-general", from: src-lacroix-1819}
+  french-government: {label: "Jules Ferry, in the Chambre des députés", from: src-ferry-1885}
+  french-legislature: {label: "Corps législatif of the French Republic", from: src-loi-30-floreal-anx}
+  french-peer: {label: "François, marquis de Barbé-Marbois", from: src-barbe-marbois-1826}
+  french-republic: {label: "République française", from: src-fr-law-2001}
+  gandhi: {label: "M. K. Gandhi", from: src-gandhi-19470824}
+  german-army: {label: "Lothar von Trotha, Kommandeur der Kaiserlichen Schutztruppe", from: src-trotha-1904}
+  german-bundestag: {label: "Deutscher Bundestag", from: src-bundestag-2016}
+  german-court: {label: "Landgericht Berlin III", from: src-tehlirian-1921}
+  german-foreign-office: {label: "German Ambassador at Constantinople and German consuls", from: src-de-19150531}
+  german-parliament-research-service: {label: "Wissenschaftliche Dienste des Deutschen Bundestages", from: src-bundestag-2004}
+  government-of-india: {label: "Government of India", from: src-sancom-1918}
+  governments-of-india-and-pakistan: {label: "Governments of India and Pakistan, and the International Bank for Reconstruction and Development", from: src-indus-waters-treaty-1960}
+  haitian-historian: {label: "Thomas Madiou and Joseph Saint-Rémy", from: src-madiou-1847-t1}
+  haitian-legislature: {label: "Chamber of Representatives of the communes, Republic of Haiti", from: src-haiti-loi-18260226}
+  haitian-state: {label: "Jean-Jacques Dessalines and the generals", from: src-tna-declaration-1804}
+  historian-editor: {label: "Kirpal Singh", from: src-kirpal-intro-recovery}
+  icj: {label: "International Court of Justice", from: src-icj-2007}
+  icty: {label: "International Criminal Tribunal for the former Yugoslavia", from: src-icty-krstic-tj}
+  india-fact-finding-organisation: {label: "Fact Finding Organisation of the Government of India", from: src-khosla-1949}
+  india-high-commission: {label: "High Commissioner for India, Camp Lahore", from: src-hc-lahore-19470827}
+  indian-national-congress: {label: "Indian National Congress", from: src-aicc-19470615}
+  joint-defence-council: {label: "Joint Defence Council", from: src-jdc-19470829}
+  joint-evacuation-organisations: {label: "Military Evacuation Organisations of India and Pakistan", from: src-joint-evacuation-plan-19471020}
+  khmer-rouge-leadership: {label: "Pol Pot", from: src-thayer-1997}
+  lepsius: {label: "Johannes Lepsius", from: src-lepsius-1919}
+  morgenthau: {label: "Henry Morgenthau", from: src-morgenthau-1918}
+  muslim-league: {label: "All-India Muslim League", from: src-league-memo-1947}
+  nama-chief: {label: "Hendrik Witbooi, kaptein of the Witbooi Nama", from: src-witbooi-1929}
+  niod: {label: "Netherlands Institute for War Documentation (NIOD)", from: src-niod-2002}
+  nurse-letter: {label: "A nurse in North Dakota (letter to the editor)", from: src-ajn-1918-12}
+  ottoman-court-martial: {label: "Ottoman Extraordinary Court-Martial", from: src-takvim-1919}
+  ottoman-government: {label: "Imperial Ottoman Government", from: src-verite-1916}
+  ottoman-interior-ministry: {label: "Ottoman Ministry of the Interior", from: src-talat-1917}
+  ottoman-official: {label: "Ahmed Rüstem Bey", from: src-rustem-1918}
+  pakistan-state-edition: {label: "Quaid-i-Azam Papers Project, Government of Pakistan", from: src-jinnah-papers-v-intro}
+  physician-memoir: {label: "Victor C. Vaughan", from: src-vaughan-1926}
+  prk-state: {label: "People's Revolutionary Tribunal of the People's Republic of Kampuchea", from: src-prt-1979}
+  punjab-governor: {label: "Evan Jenkins, Governor of the Punjab", from: src-jenkins-punjab-problem-1947}
+  punjabi-poet: {label: "Amrita Pritam", from: src-amrita-pritam-1949}
+  republic-of-armenia: {label: "Supreme Council of the Armenian SSR", from: src-armenia-decl-1990}
+  scholarship: {label: "Scholarship", from: src-gust-19150617-en}
+  serbian-denial-literature: {label: "Marko P. Atlagić and Aleksandar L. Martinović", from: src-atlagic-2021}
+  sgpc: {label: "Shiromani Gurdwara Parbandhak Committee", from: src-talib-1950}
+  signatory-powers: {label: "Plenipotentiaries at the Conference of Berlin", from: src-berlin-act-1885}
+  sikh-all-parties-committee: {label: "Sikh All Parties Committee, Amritsar", from: src-sikh-note-1942}
+  sikh-panthic-bodies: {label: "Panthic Assembly Party, the Shiromani Akali Dal and the Panthic Pratinidhi Board", from: src-panthic-19470614}
+  south-african-railways: {label: "South African Railways and Harbours", from: src-sar-1919}
+  survivor-memoir: {label: "Survivor memoirs", from: src-ung-2000}
+  survivor-testimony: {label: "Survivor testimony", from: src-eccc-tr-20090629}
+  toussaint-government: {label: "Toussaint Louverture and the central assembly of Saint-Domingue", from: src-toussaint-const-1801}
+  toussaint-louverture: {label: "Toussaint Louverture", from: src-toussaint-memoire}
+  turkish-state: {label: "Republic of Türkiye, Ministry of Foreign Affairs", from: src-mfa-tr}
+  uk-consul: {label: "Roger Casement, His Majesty's Consul at Boma", from: src-casement-1904}
+  uk-government: {label: "UK government", from: src-hansard-lords-19470220}
+  uk-ministry-of-health: {label: "Ministry of Health (Great Britain)", from: src-moh-1920}
+  uk-parliament: {label: "Parliament of the United Kingdom", from: src-iia-1947}
+  uk-registrar-general: {label: "Registrar-General for England and Wales", from: src-rg-1920}
+  un-and-cambodia: {label: "United Nations and Royal Government of Cambodia", from: src-un-rgc-agreement-2003}
+  un-council: {label: "United Nations Security Council", from: src-un-spv2108}
+  un-experts: {label: "Group of Experts for Cambodia (United Nations)", from: src-un-goe-1999}
+  un-general-assembly: {label: "United Nations General Assembly", from: src-un-ares78282}
+  un-secretariat: {label: "United Nations Secretary-General", from: src-un-a54549}
+  un-security-council: {label: "United Nations Security Council", from: src-un-sres47}
+  union-administration-swa: {label: "Administrator's Office, Windhuk (Union of South Africa)", from: src-bluebook-1918}
+  united-nations: {label: "United Nations", from: src-un-convention-1948}
+  us-congress: {label: "Congress of the United States", from: src-us-act-18060228}
+  us-federal-government: {label: "United States Senate, Committee on Appropriations", from: src-alaska-1919}
+  us-government: {label: "United States government", from: src-frus-d1399}
+  us-prosecution-nuremberg: {label: "Office of United States Chief of Counsel for Prosecution of Axis Criminality", from: src-nca-vii-1946}
+  us-public-health-service: {label: "United States Public Health Service", from: src-phr-1919-04-18}

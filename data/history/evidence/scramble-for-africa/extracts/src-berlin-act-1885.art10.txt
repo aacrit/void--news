@@ -1,0 +1,15 @@
+source: src-berlin-act-1885
+locator: art10
+url: https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: the opening of Article X
+
+Art. X. — In order to give a new guarantee of security to trade
+and industry, and to encourage, by the maintenance of peace, the
+development of civilization in the countries mentioned in Article I,
+and placed under the free trade system, the High Signatory Parties
+to the present Act, and those who shall hereafter adopt it, bind themselves to respect the neutrality of the territories, or portions of territories, belonging to the said countries, comprising therein the territorial
+waters, so long as the Powers which exercise or shall exercise the rights
+
+47 4

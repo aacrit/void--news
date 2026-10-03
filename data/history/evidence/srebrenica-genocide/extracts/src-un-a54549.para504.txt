@@ -1,0 +1,6 @@
+source: src-un-a54549
+locator: para504
+url: https://documents.un.org/doc/undoc/gen/n99/348/76/pdf/n9934876.pdf
+read: 2026-09-24
+
+504. In the end, the only meaningful and lasting amends we can make to the citizens of Bosnia and Herzegovina who put their faith in the international community is to do our utmost not to allow such horrors to recur. When the international community makes a solemn promise to safeguard and protect innocent civilians from massacre, then it must be willing to back its promise with the necessary means. Otherwise, it is surely better not to raise hopes and expectations in the first place, and not to impede whatever capability they may be able to muster in their own defence.

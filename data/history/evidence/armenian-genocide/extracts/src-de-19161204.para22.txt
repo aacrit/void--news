@@ -1,0 +1,7 @@
+source: src-de-19161204
+locator: para22
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1916-12-04-DE-001
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+
+Die in meinem Bericht aus Erserum ausgesprochene Befürchtung, dass die Aussiedelung der Armenier ihrer Vernichtung gleichkommen werde, bezw. dieselbe bezwecken sollte, hat sich leider bewahrheitet. Was von den Ausgesiedelten dieses Volksstammes noch in Mesopotamien lebt, befindet sich in einem trostlosen Zustande. Es ist nicht zuviel gesagt, wenn man ausspricht, dass die türkischen Armenier mit Ausnahme einiger Hundert Tausenden in Konstantinopel und anderen grösseren Städten Lebender, so gut wie ausgerottet sind.

@@ -1,0 +1,9 @@
+source: src-radcliffe-bengal
+locator: item4
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: item n is paragraph n of Annexure A, the schedule of the Bengal award; the thanas named are Dinajpur's, Rajshahi's and Malda's; the OCR layer's Porslia for Porsha is kept
+
+4. From that point the line shall run along the boundary between •the following Thanas.
+
+Balurghat and Panchbibi; Balurghat and Joypurhat; Balurghat and Dhamairhat; Tapan and Dhamairhat; Tapan and Patnitala; 'tapan and Porsha; Bamangola and Porsha; Habibpur and Porslia; Habibpur and Gomastapur; Habibpur and Bholahat; Malda and Bholahat; English Bazar and Bholahat; English Bazar and Shibganj; Kaliachak and Shibganj; to the point where the boundary between the two last mentioned thanas meets the boundary between the districts of Malda and Murshidabad on the River Ganges.

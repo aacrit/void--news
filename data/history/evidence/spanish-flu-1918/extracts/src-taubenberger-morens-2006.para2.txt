@@ -1,0 +1,6 @@
+source: src-taubenberger-morens-2006
+locator: para2
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3291398/fullTextXML
+read: 2026-09-25
+
+An estimated one third of the world's population (or ≈500 million persons) were infected and had clinically apparent illnesses (1,2) during the 1918–1919 influenza pandemic. The disease was exceptionally severe. Case-fatality rates were >2.5%, compared to <0.1% in other influenza pandemics (3,4). Total deaths were estimated at ≈50 million (5–7) and were arguably as high as 100 million (7).

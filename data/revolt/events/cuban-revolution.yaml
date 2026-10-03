@@ -1,0 +1,232 @@
+slug: cuban-revolution
+title: The Cuban Revolution
+subtitle: Eighty-two guerrillas land in a rowboat and topple a dictator in six years
+date_display: 1953-1959
+date_start: 1953
+date_end: 1959
+date_precision: year
+era: anticolonial
+region: americas
+country: Cuba
+revolt_type: communist
+status: concluded
+summary: Fidel Castro's failed 1953 attack on the Moncada Barracks became the founding date of a movement that regrouped in Mexico, landed 82 fighters from the yacht Granma in 1956, and fought a guerrilla campaign from the Sierra Maestra mountains that combined with an urban underground and a collapsing army to drive Batista from power in six years.
+significance: Established the first Marxist-Leninist government in the Western Hemisphere, ninety miles from the United States, and made the Sierra Maestra guerrilla model a template studied and imitated across Latin America and Africa for decades.
+grievances:
+  - kind: Batista's 1952 coup
+    intensity: 80
+    evidence: Fulgencio Batista seized power in a March 1952 coup that canceled scheduled elections he was expected to lose, ending any near-term path to change at the ballot box.
+  - kind: Foreign ownership of the sugar economy
+    intensity: 65
+    evidence: US-based companies owned an estimated 40 percent of Cuba's sugar-producing land by the early 1950s, concentrating the island's main export industry in foreign hands.
+  - kind: Police repression under Batista
+    intensity: 75
+    evidence: Batista's secret police, the SIM, tortured and killed an estimated several thousand suspected opponents over the course of his rule, radicalizing broad sections of Cuban society against him.
+actors:
+  - actor_type: vanguard
+    name: Fidel Castro
+    description: Lawyer and leader of the 26th of July Movement.
+    role_in_arc: Led the failed 1953 Moncada attack, organized the 1956 Granma landing, and commanded the Sierra Maestra guerrilla campaign to victory.
+    defected: false
+  - actor_type: military-defectors
+    name: Che Guevara
+    description: Argentine physician who joined Castro's movement in Mexico.
+    role_in_arc: Commanded rebel columns including the decisive Battle of Santa Clara in December 1958 that cut the island in two.
+    defected: false
+  - actor_type: old-regime
+    name: Fulgencio Batista
+    description: President of Cuba after his 1952 coup.
+    role_in_arc: Fled Cuba by plane on January 1, 1959, as rebel forces and mass army desertions closed in on Havana.
+    defected: false
+  - actor_type: organized-labor
+    name: The urban underground
+    description: 26th of July Movement cells operating in Havana and Santiago de Cuba.
+    role_in_arc: Carried out sabotage and organized a partially successful April 1958 general strike, complementing the rural guerrilla campaign.
+    defected: false
+  - actor_type: security-forces
+    name: Batista's conscript army
+    description: Cuba's roughly 40,000-strong military.
+    role_in_arc: Suffered mass desertions in the final weeks of 1958 after repeated defeats, collapsing the regime's last coercive instrument.
+    defected: true
+tactics:
+  - tactic_type: guerrilla-warfare
+    description: The Sierra Maestra campaign built rebel-controlled rural territory from a landing force of just a dozen survivors in late 1956.
+    prominence: primary
+  - tactic_type: sabotage
+    description: Urban underground cells in Havana and Santiago carried out bombings and arson against Batista-aligned infrastructure and businesses.
+    prominence: primary
+  - tactic_type: general-strike
+    description: An April 1958 general strike call achieved only partial participation, exposing the limits of the urban wing relative to the rural guerrilla campaign.
+    prominence: secondary
+resistance_type: armed
+phases:
+  - phase: old-regime-crisis
+    label: Batista's coup
+    date_start: '1952-03-10'
+    t_start: 0
+    t_end: 0.12
+    intensity: 50
+    reached: true
+    summary: Batista's coup cancels scheduled elections, closing off legal paths to change and pushing opposition figures like Castro toward armed resistance.
+    key_events:
+      - Batista's coup, March 10, 1952
+  - phase: the-spark
+    label: Moncada
+    date_start: '1953-07-26'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 55
+    reached: true
+    summary: Castro's attack on the Moncada Barracks fails militarily but gives the movement its name and its founding date.
+    key_events:
+      - Moncada Barracks attack, July 26, 1953
+      - Castro imprisoned then amnestied, 1953-1955
+  - phase: moderate-phase
+    label: Exile and the Granma landing
+    date_start: '1956-12-02'
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 50
+    reached: true
+    summary: Castro's movement regroups in Mexico and lands 82 fighters from the yacht Granma; most are killed or captured within days, leaving a small surviving nucleus in the mountains.
+    key_events:
+      - Granma landing, December 2, 1956
+  - phase: dual-power
+    label: Sierra Maestra versus the cities
+    t_start: 0.48
+    t_end: 0.6
+    intensity: 60
+    reached: true
+    summary: Rebel-controlled rural zones in the Sierra Maestra expand while Batista's government still controls Havana and the major cities.
+    key_events:
+      - Rebel radio broadcasts begin from the Sierra Maestra, 1958
+      - April 1958 general strike only partially succeeds
+  - phase: radical-phase
+    label: The final offensive
+    date_start: '1958-12-28'
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 85
+    reached: true
+    summary: Rebel columns under Guevara and Camilo Cienfuegos advance from the mountains, culminating in the Battle of Santa Clara that severs the island.
+    key_events:
+      - Battle of Santa Clara, December 28-31, 1958
+  - phase: consolidation
+    label: Batista flees
+    date_start: '1959-01-01'
+    t_start: 0.92
+    t_end: 1
+    intensity: 55
+    reached: true
+    summary: Batista flees Cuba by plane and Castro's forces enter Havana within days, installing a new revolutionary government.
+    key_events:
+      - Batista flees Cuba, January 1, 1959
+      - Castro's forces enter Havana, January 8, 1959
+outcome: consolidated-autocracy
+peak_participation_pct: null
+crossed_participation_threshold: null
+military_defection: full
+foreign_intervention: material
+duration_days: 2200
+death_toll: Estimates for the insurgency itself range from roughly 5,000 to 20,000 killed, including combatants and civilian victims of Batista's repression.
+death_toll_low: 5000
+death_toll_high: 20000
+regime_before: personalist
+regime_after: one-party
+democratization_delta: -1
+success_factors:
+  - factor_key: hybrid-tactics
+    label: Combining guerrilla and urban sabotage tactics can outperform either alone
+    framework: chenoweth
+    status: confirmed
+    direction: favors-movement
+    base_rate: Armed campaigns succeed in roughly 26% of historical cases; hybrid campaigns pairing rural guerrilla war with urban sabotage networks fracture regime morale on multiple fronts at once
+    rationale: The Sierra Maestra guerrilla campaign alone controlled only rural territory, but combined with the Havana and Santiago underground, it steadily eroded Batista's urban support base as well.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: security-force-defection
+    label: Security force defection is the strongest single predictor of rapid collapse
+    framework: chenoweth
+    status: confirmed
+    direction: favors-movement
+    base_rate: Movements that achieve late-stage defection among an incumbent's own conscript forces succeed at markedly higher rates than those facing a fully loyal military
+    rationale: Batista's 40,000-strong army suffered mass desertions in December 1958 after repeated battlefield defeats, leaving him with no force willing to defend Havana.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: foreign-backing-withdrawal
+    label: Withdrawal of foreign backing from an incumbent can weaken it as much as backing a challenger
+    framework: goldstone
+    status: atypical
+    direction: favors-movement
+    base_rate: The literature more often finds that foreign material backing GIVEN to a challenger correlates with weaker post-victory institutions; Cuba's case instead shows withdrawal of backing FROM the incumbent accelerating its collapse
+    rationale: A US arms embargo imposed on Batista in March 1958 reduced his government's coercive capacity in the campaign's final, decisive months.
+    sources:
+      - 'Goldstone, Revolutions: A Very Short Introduction (2014)'
+key_figures:
+  - name: Fidel Castro
+    role: Leader of the 26th of July Movement, later Cuban head of state
+    born: 1926
+    died: 2016
+  - name: Che Guevara
+    role: Rebel commander, later government minister
+    born: 1928
+    died: 1967
+  - name: Fulgencio Batista
+    role: Deposed president of Cuba
+    born: 1901
+    died: 1973
+  - name: Camilo Cienfuegos
+    role: Rebel column commander in the final offensive
+    born: 1932
+    died: 1959
+legacy_points:
+  - Nationalization of US-owned sugar and utility companies within two years of victory triggered the US trade embargo still in force today.
+  - Cuba became the first Marxist-Leninist government in the Western Hemisphere, a status it retains more than six decades later.
+  - A 1961 national literacy campaign raised Cuba's literacy rate from roughly 60 to over 96 percent within a single year.
+  - The Sierra Maestra guerrilla model became a template studied and adapted by revolutionary movements across Latin America and Africa for decades afterward.
+related_revolt_slugs:
+  - chinese-revolution-1949
+  - sandinista-revolution
+related_history_slugs: []
+is_published: true
+perspectives:
+  - viewpoint: Cuban revolutionary official view
+    viewpoint_type: regime
+    region_origin: Cuba
+    narrative: The revolution ended a corrupt dictatorship propped up by foreign capital and delivered literacy, healthcare, and national sovereignty to a population long treated as a dependent economy of the United States.
+    key_arguments:
+      - Batista's government was a dictatorship maintained through torture and canceled elections
+      - US corporate ownership of Cuban sugar land represented a loss of national economic sovereignty
+      - Post-revolution literacy and healthcare gains are measurable and durable
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - the literacy campaign
+      - US corporate landholding before 1959
+    omitted:
+      - the one-party political system installed after 1959
+      - the scale of political imprisonment under the new government
+  - viewpoint: Cuban exile diaspora view
+    viewpoint_type: diaspora
+    region_origin: Miami, United States
+    narrative: A revolution that promised a return to Cuba's 1940 constitution and free elections instead consolidated into a one-party state, driving hundreds of thousands into exile and nationalizing private property without compensation.
+    key_arguments:
+      - Castro postponed and then abandoned the promised elections of the 26th of July Movement's original platform
+      - Nationalization without compensation devastated the Cuban middle class and professional sectors
+      - Ongoing one-party rule and political imprisonment contradict the revolution's original democratic rhetoric
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - the abandoned 1940 constitution promise
+      - mass emigration after 1959
+    omitted:
+      - the scale of Batista-era repression that preceded the revolution
+      - material gains among Cuba's rural poor after 1959
+media: []
+connections:
+  - target_slug: chinese-revolution-1949
+    connection_type: inspired
+    description: Guevara and other Cuban revolutionaries studied Mao's protracted guerrilla and base-area doctrine while planning the Sierra Maestra campaign.
+  - target_slug: sandinista-revolution
+    connection_type: provided-model
+    description: Cuba supplied material aid, training, and an ideological template that directly shaped the Sandinista Front's own guerrilla campaign two decades later.

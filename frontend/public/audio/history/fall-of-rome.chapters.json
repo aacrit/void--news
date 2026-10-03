@@ -1,0 +1,82 @@
+{
+ "version": "1.2.0",
+ "title": "Fall of the Western Roman Empire",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 46.56
+  },
+  {
+   "startTime": 46.56,
+   "title": "Piacenza, the twenty eighth of August",
+   "endTime": 74.444
+  },
+  {
+   "startTime": 74.444,
+   "title": "Ravenna, the fourth of September",
+   "endTime": 104.672
+  },
+  {
+   "startTime": 104.672,
+   "title": "The little Augustus",
+   "endTime": 188.714
+  },
+  {
+   "startTime": 188.714,
+   "title": "The gift to Constantinople",
+   "endTime": 232.534
+  },
+  {
+   "startTime": 232.534,
+   "title": "The morning after",
+   "endTime": 272.469
+  },
+  {
+   "startTime": 272.469,
+   "title": "Five accounts",
+   "endTime": 283.074
+  },
+  {
+   "startTime": 283.074,
+   "title": "Late Roman / Imperial",
+   "endTime": 357.071
+  },
+  {
+   "startTime": 357.071,
+   "title": "Germanic Successor Kingdoms",
+   "endTime": 447.008
+  },
+  {
+   "startTime": 447.008,
+   "title": "Eastern Roman / Byzantine",
+   "endTime": 525.772
+  },
+  {
+   "startTime": 525.772,
+   "title": "Modern Historiographic Debate: Fall vs. Transformation",
+   "endTime": 615.756
+  },
+  {
+   "startTime": 615.756,
+   "title": "North African / Berber",
+   "endTime": 712.4
+  },
+  {
+   "startTime": 712.4,
+   "title": "What each one leaves out",
+   "endTime": 793.205
+  },
+  {
+   "startTime": 793.205,
+   "title": "Legacy",
+   "endTime": 811.564
+  },
+  {
+   "startTime": 811.564,
+   "endTime": 824.664,
+   "title": "Also from Void News"
+  }
+ ]
+}

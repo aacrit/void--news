@@ -1,0 +1,17 @@
+[
+ {
+  "name": "Wyoming Tribune Eagle",
+  "id": "cheyenne-tribune-eagle",
+  "was": "https://news.google.com/rss/search?q=site:wyomingnews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "http://www.wyomingnews.com/search/?f=rss&t=article&l=50&s=start_time&sd=desc&k%5B%5D=%23topstory",
+  "evidence": {
+   "items": 0,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "wyomingnews.com",
+   "title": "www.wyomingnews.com - RSS Results of type article with keyword(s) of #topstory",
+   "sample": null
+  },
+  "why_held": "only 0 items"
+ }
+]

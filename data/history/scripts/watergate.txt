@@ -1,0 +1,138 @@
+## OPEN
+N: The story goes that two newspaper reporters brought down a president.
+N: The record disagrees. Its own institutional account credits grand juries, judges, a special prosecutor, two congressional committees, and a unanimous Supreme Court, not two reporters at a typewriter.
+N: And when the break-in happened, almost nobody thought it mattered. A White House spokesman called it a third-rate burglary. That November, the man he worked for carried forty nine states.
+
+## TITLE
+N: The Pentagon Papers and Watergate. June the thirteenth, nineteen seventy one, to August the ninth, nineteen seventy four.
+
+## SCENE 1 | Presses stopped by court order
+N: June the thirteenth, nineteen seventy one. The New York Times publishes the first installment of a seven thousand page classified Defense Department study of American decision making in Vietnam.
+N: Robert McNamara had commissioned the study in nineteen sixty seven. It documents that four administrations misled the public about the war.
+N: After three installments, Attorney General John Mitchell obtains a federal restraining order, the first prior restraint on a newspaper in American history. The Washington Post picks up the story and is enjoined too.
+N: On June the thirtieth, the Supreme Court rules six to three that the government has not met the heavy burden required to censor publication.
+
+## DOCUMENT | Justice Hugo Black | Concurring opinion, New York Times Co. v. United States | June 30, 1971
+N: Justice Hugo Black adds this in his concurring opinion.
+M: The press was to serve the governed, not the governors. The government's power to censor the press was abolished so that the press would remain forever free to censure the government.
+
+## ASIDE
+N: The presses run that night.
+
+## REST
+
+## SCENE 2 | A photocopier, over months
+N: The seven thousand pages had a source. Daniel Ellsberg, a former Pentagon and RAND analyst, had helped write the study himself.
+N: He photocopies the volumes over months and passes them to the Times. Then he surrenders to federal authorities.
+
+## DOCUMENT | Daniel Ellsberg | Public statement after surrendering to federal authorities | June 28, 1971
+N: This is what Ellsberg says when he turns himself in.
+M: I felt that as an American citizen, as a responsible citizen, I could no longer cooperate in concealing this information from the American public.
+
+## ASIDE
+N: He is admitting, on the record, to copying classified analysis of a war still being fought.
+
+## REST
+
+## SCENE 3 | Tape over a door latch
+N: Three days after the ruling, a White House unit called the Plumbers, formed to stop leaks, breaks into the office of Ellsberg's psychiatrist, looking for material to discredit him.
+N: Their next operations lead to the Watergate complex.
+N: Two thirty in the morning, June the seventeenth, nineteen seventy two. A security guard named Frank Wills finds tape over a door latch and calls the police.
+N: Five men in suits and surgical gloves are arrested inside the headquarters of the Democratic National Committee, carrying bugging equipment and sequential hundred dollar bills.
+N: One of them is James McCord, security coordinator for the Committee to Re-elect the President.
+
+## REST
+
+## SCENE 4 | The thread
+N: Two Washington Post reporters, Bob Woodward and Carl Bernstein, keep pulling the thread, guided in part by a source they call Deep Throat. In two thousand five he is revealed to be FBI Associate Director W. Mark Felt.
+N: A Senate committee under Sam Ervin holds televised hearings through nineteen seventy three.
+N: On July the sixteenth, aide Alexander Butterfield discloses that Nixon has been taping his own conversations.
+N: The tapes become the battle.
+
+## REST
+
+## SCENE 5 | The Saturday Night Massacre
+N: October the twentieth, nineteen seventy three. Nixon orders the firing of special prosecutor Archibald Cox, who has subpoenaed the tapes.
+N: Attorney General Elliot Richardson and his deputy William Ruckelshaus resign rather than carry out the order. Solicitor General Robert Bork does it instead.
+N: Telegrams flood into Congress. On November the seventeenth, Nixon stands in front of a room of newspaper editors.
+
+## DOCUMENT | Richard Nixon | Remarks to Associated Press Managing Editors, Walt Disney World, Florida | November 17, 1973
+N: This is what Nixon tells them.
+M: People have got to know whether or not their president is a crook. Well, I am not a crook.
+
+## ASIDE
+N: He had already recorded himself, on tape, ordering the cover up.
+
+## REST
+
+## SCENE 6 | The tape that ends it
+N: July the twenty fourth, nineteen seventy four. The Supreme Court rules eight to nothing in United States versus Nixon: executive privilege does not shield the tapes from a criminal subpoena.
+N: Between July the twenty seventh and the thirtieth, the House Judiciary Committee approves three articles of impeachment.
+N: On August the fifth, Nixon releases the smoking gun tape, recorded June the twenty third, nineteen seventy two, six days after the break-in, on which he orders the FBI investigation obstructed.
+N: His remaining support collapses. On August the eighth, he announces his resignation on television, effective at noon the next day.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of what this was.
+
+## PERSPECTIVE | The Investigative Press and the Leaker | victor
+N: In this account, a free press did its job. Ellsberg's leak was an act of citizenship: the public's right to know outweighed a classification stamp. The Times published against its own lawyers' advice, and Katharine Graham, the Post's publisher, facing a stock offering and a threat to her television licenses, told her editor, Ben Bradlee, to run it anyway.
+N: The stakes were personal. Ellsberg faced a hundred and fifteen years under the Espionage Act. Graham risked her company.
+N: Woodward and Bernstein were not the paper's stars. They worked the phones, the courthouse, and the CREEP payroll, and confirmed every fact with two sources before printing it. In this telling, the First Amendment worked exactly as designed, and the other branches acted because the press did its job first.
+
+## PERSPECTIVE | The Executive-Power Defense | vanquished
+N: Nixon and his defenders told it differently. He had been elected in nineteen seventy two by the largest popular margin in history to that point, and this account calls the fall a hostile press and partisan prosecutors making governing impossible.
+N: On Watergate, Nixon's defense concedes the break-in but insists he neither ordered it nor knew of it in advance. His deeper argument was constitutional. He says this to David Frost, in an interview broadcast in May of nineteen seventy seven.
+M: When the president does it, that means that it is not illegal.
+N: Executive privilege, in this account, was not a dodge. It was confidential advice that had to stay confidential for the office to function at all.
+
+## PERSPECTIVE | The Institutional Rule-of-Law View | academic
+N: The scholarly account puts the credit somewhere else entirely: grand juries, judges, a special prosecutor, two congressional committees, and a unanimous Supreme Court. Judge John Sirica pressed the burglars until McCord broke.
+N: The decisive moment was legal, and it came from a court three of whose members Nixon himself had appointed.
+N: This is Chief Justice Warren Burger, writing for that court.
+M: In the performance of assigned constitutional duties each branch of the Government must initially interpret the Constitution, and the interpretation of its powers by any branch is due great respect from the others.
+N: Congress then writes the failure into law: the War Powers Resolution, the Ethics in Government Act, the Foreign Intelligence Surveillance Act.
+N: The Church Committee, chaired by Senator Frank Church, examines a hundred and ten thousand documents and hears more than eight hundred witnesses. It documents CIA assassination plots and the FBI's surveillance of Martin Luther King, and builds the permanent committees that watch the intelligence agencies.
+N: Church himself said this about what the National Security Agency could do.
+M: That capability at any time could be turned around on the American people, and no American would have any privacy left. There would be no place to hide.
+
+## PERSPECTIVE | The Skeptical Revisionist | revisionist
+N: A revisionist account, argued by Edward Jay Epstein in nineteen seventy four, holds that the heroic press story is largely a myth the press wrote about itself. On this reading, almost every major revelation came from the FBI, federal prosecutors, and the grand jury, not from Woodward and Bernstein.
+M: The purposeful design of the myth is to enhance the value of the investigative reporter, without whom, presumably, Watergate would never have been exposed.
+N: Even the line everyone remembers, follow the money, was never said by anyone in the original reporting. It was written for the film.
+N: On this account, the Deep Throat legend fares no better. Felt is read as an ambitious bureaucrat passed over for the top job at the FBI, not a man acting on conscience.
+
+## PERSPECTIVE | The Public and the Loss of Trust | bystander
+N: For citizens watching, this is measured in a number that fell and never fully came back. In surveys taken in the late nineteen fifties and nineteen sixties, roughly three in four Americans said they trusted the federal government to do what is right most of the time. By nineteen seventy four it was near one in three.
+N: The televised hearings put it on every screen in the country. Aide John Dean recounts, to the Senate committee, the warning he says he gave Nixon back in March.
+M: We have a cancer within, close to the presidency, that is growing.
+N: Gerald Ford, taking the oath the day Nixon resigns, tells the country this.
+F: My fellow Americans, our long national nightmare is over. Our Constitution works.
+N: The trust does not come back with him.
+
+## REST | short
+
+## TURN | What each one leaves out
+N: And here is what each account cannot afford to say.
+N: The press account has no room for the FBI agents, prosecutors, and judges who produced most of the actual evidence, or for how rarely a later leak investigation ended in vindication for the reporters who ran it.
+N: The executive defense never mentions the June twenty third tape, the one where Nixon orders the cover up himself, or the break-in at the psychiatrist's office that the same White House unit carried out, or that roughly forty eight officials were convicted, including two attorneys general and the White House chief of staff.
+N: The rule of law account has little room for the emotional force of the press story, or for how many of its own reforms were later weakened or allowed to lapse.
+N: The revisionist account, so careful about the reporters' myth, has no line for the Pentagon Papers case, where the press published against the government rather than alongside leaks the government wanted out.
+N: And the public trust account, which counts the collapse in exact numbers, has no room for the specific legal victories that actually ended this, or for the journalists and reformers the scandal energized rather than embittered.
+
+## REST
+
+## CLOSE
+N: Gerald Ford, who had just told the country the nightmare was over, pardons Nixon on September the eighth, nineteen seventy four. One month after the resignation.
+
+## SAY
+Ellsberg = ELZ-berg
+McCord = muh-KORD
+McNamara = mak-nah-MAR-ah
+Ervin = ER-vin
+Ruckelshaus = RUK-uhls-house
+Sirica = suh-REE-kuh
+Epstein = EP-styne
+CREEP = kreep
+Butterfield = BUT-er-feeld

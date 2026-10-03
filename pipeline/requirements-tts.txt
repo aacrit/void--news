@@ -1,0 +1,7 @@
+# Kokoro-82M text-to-speech (Apache-2.0), installed into its OWN virtualenv
+# (.venv-tts) because kokoro-onnx needs numpy 2 and the pipeline pins numpy
+# 1.26 for spaCy / scikit-learn. The pipeline never imports these; it runs
+# briefing/tts_kokoro_worker.py under .venv-tts/bin/python (VOID_KOKORO_PYTHON).
+kokoro-onnx==0.6.1
+onnxruntime>=1.20.1,<2
+numpy>=2.0.2,<3

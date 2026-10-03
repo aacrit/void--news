@@ -1,0 +1,7 @@
+source: src-masseret-2001
+locator: p113
+url: https://www.persee.fr/doc/cemot_0764-9878_2001_num_31_1_1574
+read: 2026-09-25
+note: p. 113, the only page Persée serves free; a copyrighted article, held at most 150 words
+
+C'est ce qui advint avec l'adoption définitive par le Parlement français, le 18 janvier 2001, de la proposition de loi reconnaissant le génocide arménien de 1915. Il n'est pas exclu que seul un acte déclaratif et symbolique ait été voulu; mais, au delà, c'est bien à une prise de position politique que l'on est arrivé, acquise contre la volonté de l'exécutif.

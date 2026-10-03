@@ -1,0 +1,8 @@
+source: src-hansard-lords-19460516
+locator: p271
+url: https://api.parliament.uk/historic-hansard/lords/1946/may/16/india-statement-by-the-cabinet-mission
+read: 2026-09-25
+note: p is the Hansard column; HL Deb 16 May 1946 vol 141 cc271-87, the Cabinet Mission's statement as Viscount Addison read it to the Lords
+note: the page's heading line and the opening of Addison's statement; the column marker is dropped
+
+HL Deb 16 May 1946 vol 141 cc271-87 § THE SECRETARY OF STATE FOR DOMINION AFFAIRS (VISCOUNT ADDISON) My Lords, I would ask your Lordships' permission to make a statement on India. In view of the great importance of this statement made by the Cabinet Mission and his excellency the Viceroy it has been deemed necessary that it should be read to your Lordships in full.

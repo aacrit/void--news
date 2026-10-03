@@ -1,0 +1,13 @@
+source: src-roes-2010
+locator: p15
+url: https://eprints.whiterose.ac.uk/id/eprint/74340/2/roesAW2.pdf
+read: 2026-09-25
+note: sliced from the PDF's text layer; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed
+note: the author's accepted manuscript, whose page numbers are its own
+
+The heated debate over population decline, with critiques of demographic data bordering
+on the obsessive, concerns more than figures alone. Minimalists generally recognise that
+even a serious downward revision of the estimated 10 million victims forwarded by
+Morel, Hochschild and others does not substantially alter the picture of a brutal colonial
+system engendering widespread violence, death and devastation –even if they tend to
+confine the most serious excesses to the „red rubber‟ episode alone64. What they do take

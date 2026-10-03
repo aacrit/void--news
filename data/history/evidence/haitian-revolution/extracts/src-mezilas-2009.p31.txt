@@ -1,0 +1,7 @@
+source: src-mezilas-2009
+locator: p31
+url: https://www.scielo.org.ar/pdf/efphi/v11n2/v11n2a04.pdf
+read: 2026-09-25
+note: page 31: the byline and the Spanish abstract, as the PDF's text layer prints them
+
+Glodel Mezilas Secretario de la Embajada de Haití en México La revolución haitiana de 1804 y sus impactos políticos sobre América Latina The Haitian Revolution of 1804 and its political impact on Latin America Resumen Este ensayo analiza las repercusiones políticas que tuvo la Revolución haitiana de 1804 sobre América Latina. Por ello, se analiza el contexto ideológico europeo y sus repercusiones sobre la región. En segundo lugar, se caracteriza la revolución haitiana y su ubicación en el sistema-mundo moderno. Luego, se procede a un análisis detallado de la ayuda de los dirigentes haitianos a los revolucionarios hispanoamericanos y la significación histórica de este gesto.

@@ -1,0 +1,227 @@
+slug: iran-woman-life-freedom
+title: Woman, Life, Freedom
+subtitle: A death in custody and the largest challenge to the Islamic Republic in a generation
+date_display: 2022 to present
+date_start: 2022
+date_precision: year
+era: square-revolutions
+region: middle-east
+country: Iran
+revolt_type: democratic-uprising
+status: dormant
+summary: 'In September 2022 a 22-year-old woman, Mahsa Jina Amini, died in the custody of Iran’s morality police after being detained over her headscarf. Protests led by young women spread to every province under three words: Woman, Life, Freedom. The state answered with mass arrests, hundreds of deaths and executions. Open protest has receded, but the defiance of the mandatory hijab has not.'
+significance: This was the first Iranian uprising organized around gender and everyday autonomy rather than economics or a single leader. It has no headquarters to arrest, which is both its resilience and its limit.
+analytical_outlook: 'The movement is currently dormant rather than defeated: street mobilization has fallen, but everyday noncompliance persists and the security forces have not fractured. History suggests leaderless movements are hard to crush and hard to convert into a transfer of power. Placement on the arc: a spark that reached a radical challenge and then receded without dual power.'
+grievances:
+  - kind: rights
+    intensity: 88
+    evidence: Enforcement of the mandatory hijab by a morality police empowered to detain women on sight.
+  - kind: political
+    intensity: 80
+    evidence: A clerical system that vets candidates and reserves ultimate power to an unelected Supreme Leader.
+  - kind: economic
+    intensity: 70
+    evidence: Sanctions, inflation and youth unemployment among a large, educated under-30 population.
+repression_level: severe
+actors:
+  - actor_type: students-youth
+    name: Young women and students
+    description: Schoolgirls and university students who led the marches and removed their headscarves in public.
+    role_in_arc: The movement’s face and front line.
+    defected: false
+  - actor_type: masses
+    name: Cross-class urban protesters
+    description: Bazaar merchants, ethnic minorities and workers who joined the wave.
+    role_in_arc: Broadened the protests beyond the capital.
+    defected: false
+  - actor_type: security-forces
+    name: The Basij and the Revolutionary Guard
+    description: The paramilitary and elite security apparatus of the Islamic Republic.
+    role_in_arc: Suppressed the protests without visible defection.
+    defected: false
+  - actor_type: diaspora
+    name: The Iranian diaspora
+    description: Exiles who amplified the movement abroad and pressed for sanctions.
+    role_in_arc: Kept the movement visible internationally; contested over leadership claims.
+    defected: false
+tactics:
+  - tactic_type: mass-demonstration
+    description: Street protests across more than 150 cities and towns.
+    prominence: high
+  - tactic_type: civil-disobedience
+    description: Public removal and burning of the mandatory hijab.
+    prominence: high
+  - tactic_type: digital-mobilization
+    description: Encrypted apps and diaspora media coordinated protest despite internet shutdowns.
+    prominence: medium
+resistance_type: nonviolent
+phases:
+  - phase: old-regime-crisis
+    label: A brittle system
+    date_start: 2022-09
+    t_start: 0
+    t_end: 0.12
+    intensity: 30
+    reached: true
+    summary: Economic pain and social control meet a young, connected population.
+    key_events:
+      - Sanctions and inflation
+      - Rising defiance of dress codes
+  - phase: the-spark
+    label: A death in custody
+    date_start: '2022-09-16'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 75
+    reached: true
+    summary: Mahsa Jina Amini dies after detention over her headscarf. Protests spread nationwide within days.
+    key_events:
+      - Death of Mahsa Amini
+      - Woman, Life, Freedom spreads
+  - phase: radical-phase
+    label: A nationwide challenge
+    date_start: 2022-10
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 80
+    reached: true
+    summary: Protests demand not reform but the end of the Islamic Republic. The state responds with lethal force and executions.
+    key_events:
+      - Nationwide protests
+      - Executions of protesters
+  - phase: dual-power
+    label: A rival authority
+    t_start: 0.48
+    t_end: 0.6
+    intensity: 0
+    reached: false
+    summary: Not reached. The movement produced no governing alternative on the ground.
+    key_events: []
+  - phase: consolidation
+    label: A settled order
+    t_start: 0.92
+    t_end: 1
+    intensity: 0
+    reached: false
+    summary: Not reached.
+    key_events: []
+outcome: ongoing-unresolved
+peak_participation_pct: null
+peak_participation_display: Protests in more than 150 cities; sustained peak participation stayed below the level that has historically forced change.
+crossed_participation_threshold: false
+military_defection: none
+foreign_intervention: none
+duration_days: null
+death_toll_low: null
+death_toll_high: null
+regime_before: theocracy
+regime_after: unresolved
+democratization_delta: null
+success_factors:
+  - factor_key: resistance_method
+    label: Method of struggle
+    framework: chenoweth
+    status: Nonviolent and civic.
+    direction: favors-movement
+    base_rate: About 53 percent of nonviolent campaigns from 1900 to 2006 succeeded, versus about 26 percent of armed ones.
+    rationale: The movement’s discipline keeps the higher base rate available to it.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+    as_of: '2026'
+    confidence: medium
+  - factor_key: peak_participation
+    label: Peak participation
+    framework: chenoweth
+    status: Broad but below the threshold; sustained turnout fell after the crackdown.
+    direction: favors-regime
+    base_rate: No campaign that mobilized at least 3.5 percent of the population at its peak has failed.
+    rationale: The movement did not sustain the mass turnout the record associates with success.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+    as_of: '2026'
+    confidence: medium
+  - factor_key: security_defection
+    label: Did the security forces defect
+    framework: chenoweth
+    status: No visible defection.
+    direction: favors-regime
+    base_rate: Defection of the security forces is the single strongest predictor of a campaign’s success.
+    rationale: The Revolutionary Guard and Basij are bound to the system by ideology and privilege.
+    sources:
+      - Nepstad, Nonviolent Revolutions (2011)
+    as_of: '2026'
+    confidence: high
+  - factor_key: leadership_structure
+    label: Leadership
+    framework: tilly
+    status: Leaderless and horizontal.
+    direction: indeterminate
+    base_rate: Leaderless movements resist decapitation but struggle to negotiate a transfer of power.
+    rationale: No headquarters to arrest, but also no body that could accept a regime’s surrender.
+    sources:
+      - Tufekci, Twitter and Tear Gas (2017)
+    as_of: '2026'
+    confidence: medium
+key_figures:
+  - name: Mahsa Jina Amini
+    role: Whose death in custody sparked the movement
+    born: 2000
+    died: 2022
+    wikipedia: https://en.wikipedia.org/wiki/Death_of_Mahsa_Amini
+legacy_points:
+  - The first Iranian uprising centered on women and bodily autonomy rather than economics.
+  - Everyday defiance of the mandatory hijab has outlasted the street protests.
+  - A leaderless structure made the movement hard to behead and hard to bargain with.
+related_revolt_slugs:
+  - iranian-revolution
+related_history_slugs:
+  - iranian-revolution
+live_query:
+  strong:
+    - Mahsa Amini
+    - Woman Life Freedom
+    - Woman, Life, Freedom
+    - morality police
+    - Jina Amini
+  context:
+    - Iran
+    - Tehran
+    - Iranian
+  exclude:
+    - nuclear deal
+    - nuclear talks
+    - JCPOA
+    - uranium enrichment
+    - nuclear program
+analysis_reviewed_at: '2026-07-01'
+prediction_confidence: medium
+is_published: true
+perspectives:
+  - viewpoint: The protesters
+    viewpoint_type: movement
+    region_origin: Iran
+    narrative: We are not asking for a softer version of this system. A woman detained and dead over a piece of cloth is the whole system in one image. Woman, Life, Freedom is not a slogan about clothes. It is about who owns a life.
+    key_arguments:
+      - The demand is the end of the system, not reform.
+      - Everyday defiance continues even when the streets are quiet.
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - Gender and autonomy
+      - The scale of repression
+    omitted: []
+  - viewpoint: The analyst
+    viewpoint_type: academic
+    region_origin: Global
+    narrative: 'The movement has the method the record rewards and lacks the two things it also rewards: a security-force fracture and sustained mass turnout. Leaderlessness protects it from decapitation and denies it a negotiating table.'
+    key_arguments:
+      - Method favorable, structure unfavorable.
+      - Dormant is not the same as defeated.
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - Base rates
+      - Movement structure
+    omitted: []
+media: []
+connections: []

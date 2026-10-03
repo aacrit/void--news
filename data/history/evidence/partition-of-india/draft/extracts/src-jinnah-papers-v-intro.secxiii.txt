@@ -1,0 +1,7 @@
+source: src-jinnah-papers-v-intro
+locator: secxiii
+url: https://archive.org/download/05-pakistan-pangs-of-birth-19470815-19470930/05%20Pakistan%20-%20Pangs%20of%20Birth%20%2819470815%20-%2019470930%29_djvu.txt
+read: 2026-09-25
+note: the editors' Introduction to Jinnah Papers, vol. V (2000), page xiii (sec is the page in roman numerals); the text layer's soft hyphens are rejoined and line breaks joined; the introduction's footnote marks are the layer's
+
+There is strong evidence to suggest that both Mountbatten and Radcliffe had acted in league with the Congress leadership which was hell-bent on making Pakistan as “small and unattractive”™ as possible. The “popular belief” about Radcliffe awarding “as HE. dictates”’' had turned out to be well-founded. The Boundary Commission Award on the partition of Punjab had been finalized by Radcliffe about a week before the partition; it was then gerrymandered in favour of India and to the detriment of Pakistan.

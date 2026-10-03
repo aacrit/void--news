@@ -1,0 +1,224 @@
+slug: sudan-civil-war
+title: 'Sudan: The Captured Revolution'
+subtitle: A democracy overthrown by the two generals meant to protect it
+date_display: 2019 to present
+date_start: 2019
+date_precision: year
+era: square-revolutions
+region: africa
+country: Sudan
+revolt_type: political
+status: active
+summary: In 2019 a nonviolent uprising toppled Omar al-Bashir after thirty years in power. A civilian-military transition followed. In 2021 the generals seized full control in a coup. In April 2023 the two men who led that coup, the head of the army and the head of the Rapid Support Forces, turned their arsenals on each other. A revolution that began with chants for civilian rule became one of the world’s largest displacement crises.
+significance: Sudan is the case of a successful nonviolent overthrow that was captured before it could consolidate. It shows that removing a dictator is not the same as ending the system that produced him.
+analytical_outlook: 'The civilian movement that won in 2019 has been sidelined by a war between two armed factions. The historical record is clear that revolutions are most vulnerable in the transition, when the old coercive institutions survive the ruler. Placement on the arc: a spark and moderate phase that collapsed back into a factional civil war rather than reaching consolidation.'
+grievances:
+  - kind: economic
+    intensity: 85
+    evidence: A tripling of bread prices in December 2018 lit the initial protests.
+  - kind: political
+    intensity: 88
+    evidence: Thirty years of one-man rule under Omar al-Bashir, wanted by the International Criminal Court.
+  - kind: security
+    intensity: 82
+    evidence: A paramilitary force, the Rapid Support Forces, grown powerful enough to rival the national army.
+repression_level: severe
+actors:
+  - actor_type: organized-labor
+    name: The Sudanese Professionals Association
+    description: A coalition of doctors, lawyers and teachers that organized the 2019 uprising.
+    role_in_arc: Provided the civilian leadership and the sit-in that forced Bashir out.
+    defected: false
+  - actor_type: masses
+    name: The neighborhood resistance committees
+    description: Grassroots bodies that sustained protest and now run local aid.
+    role_in_arc: Kept the civilian revolution alive after the coup.
+    defected: false
+  - actor_type: security-forces
+    name: The Sudanese Armed Forces
+    description: The national army under General Abdel Fattah al-Burhan.
+    role_in_arc: Co-led the coup, then fought its former partner.
+    defected: false
+  - actor_type: counter-revolutionaries
+    name: The Rapid Support Forces
+    description: A paramilitary force under Mohamed Hamdan Dagalo, known as Hemedti, rooted in the Darfur Janjaweed.
+    role_in_arc: Co-led the coup, then turned on the army; accused of atrocities in Darfur.
+    defected: false
+tactics:
+  - tactic_type: general-strike
+    description: A general strike and a mass sit-in outside army headquarters forced Bashir out in 2019.
+    prominence: high
+  - tactic_type: occupation
+    description: The Khartoum sit-in became the symbol of the civilian revolution.
+    prominence: high
+  - tactic_type: parallel-institutions
+    description: Resistance committees organized services and documentation through the war.
+    prominence: medium
+resistance_type: nonviolent
+phases:
+  - phase: old-regime-crisis
+    label: Bread and thirty years
+    date_start: 2018-12
+    t_start: 0
+    t_end: 0.12
+    intensity: 40
+    reached: true
+    summary: A currency crisis and a price shock ignite protests against a long dictatorship.
+    key_events:
+      - Bread price protests
+      - Nationwide demonstrations
+  - phase: the-spark
+    label: The sit-in topples Bashir
+    date_start: 2019-04
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 70
+    reached: true
+    summary: A mass sit-in outside army headquarters forces the military to remove Bashir.
+    key_events:
+      - Fall of al-Bashir
+      - The Khartoum sit-in
+  - phase: moderate-phase
+    label: A shared transition
+    date_start: 2019-08
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 55
+    reached: true
+    summary: A civilian-military council is meant to lead to elections. The generals never intend to leave.
+    key_events:
+      - Transitional government
+      - Massacre of the sit-in
+  - phase: dual-power
+    label: The coup and the split
+    date_start: 2021-10
+    t_start: 0.48
+    t_end: 0.6
+    intensity: 78
+    reached: true
+    summary: The generals seize full power, then fall out. In April 2023 army and paramilitary go to war.
+    key_events:
+      - 2021 coup
+      - April 2023 war begins
+  - phase: radical-phase
+    label: The radicals win
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 0
+    reached: false
+    summary: Not reached. Power was captured by armed factions, not a revolutionary vanguard.
+    key_events: []
+  - phase: consolidation
+    label: A settled order
+    t_start: 0.92
+    t_end: 1
+    intensity: 0
+    reached: false
+    summary: Not reached.
+    key_events: []
+outcome: civil-war
+peak_participation_pct: null
+peak_participation_display: The 2019 uprising drew mass nationwide participation; the current war is fought by two armed factions, not the civilian movement.
+crossed_participation_threshold: true
+military_defection: none
+foreign_intervention: material
+duration_days: null
+death_toll_low: null
+death_toll_high: null
+regime_before: personalist
+regime_after: unresolved
+democratization_delta: null
+success_factors:
+  - factor_key: resistance_method
+    label: Method of the 2019 uprising
+    framework: chenoweth
+    status: Nonviolent, and it succeeded in removing the dictator.
+    direction: favors-movement
+    base_rate: About 53 percent of nonviolent campaigns from 1900 to 2006 succeeded, versus about 26 percent of armed ones.
+    rationale: 'The civilian movement achieved the higher-probability outcome: it toppled the ruler without a war.'
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+    as_of: '2019'
+    confidence: high
+  - factor_key: transition_capture
+    label: Surviving the transition
+    framework: skocpol
+    status: Failed. The old coercive institutions outlived the ruler and seized power.
+    direction: favors-regime
+    base_rate: Revolutions are most fragile in the transition, when the old state’s security apparatus survives the leader.
+    rationale: The army and the Rapid Support Forces were never dismantled and later took the state by force.
+    sources:
+      - Skocpol, States and Social Revolutions (1979)
+    as_of: '2023'
+    confidence: high
+  - factor_key: security_defection
+    label: Did the security forces defect
+    framework: chenoweth
+    status: The army removed Bashir but kept power for itself.
+    direction: indeterminate
+    base_rate: Defection of the security forces is the single strongest predictor of a campaign’s success.
+    rationale: A defection that installs the generals rather than the movement is a partial and dangerous kind of victory.
+    sources:
+      - Nepstad, Nonviolent Revolutions (2011)
+    as_of: '2021'
+    confidence: medium
+key_figures:
+  - name: Abdel Fattah al-Burhan
+    role: Head of the Sudanese Armed Forces
+    wikipedia: https://en.wikipedia.org/wiki/Abdel_Fattah_al-Burhan
+  - name: Mohamed Hamdan Dagalo (Hemedti)
+    role: Head of the Rapid Support Forces
+    wikipedia: https://en.wikipedia.org/wiki/Hemedti
+legacy_points:
+  - A nonviolent movement removed a thirty-year dictator in 2019.
+  - The revolution was captured in the transition by the very forces meant to guard it.
+  - The 2023 war became one of the world’s largest displacement crises.
+related_revolt_slugs:
+  - arab-spring
+related_history_slugs: []
+live_query:
+  strong:
+    - Rapid Support Forces
+    - Hemedti
+    - Burhan
+    - Sudanese Armed Forces
+    - Dagalo
+  context:
+    - Sudan
+    - Khartoum
+    - Darfur
+    - Sudanese
+  exclude:
+    - South Sudan
+    - Juba
+analysis_reviewed_at: '2026-07-01'
+prediction_confidence: low
+is_published: true
+perspectives:
+  - viewpoint: The resistance committees
+    viewpoint_type: movement
+    region_origin: Sudan
+    narrative: 'We won in 2019 and were robbed in the years after. Neither general speaks for the revolution. Our demand has not changed since the sit-in: a full civilian government and no army in politics.'
+    key_arguments:
+      - Neither warring faction represents the revolution.
+      - The demand remains civilian rule.
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - The 2019 victory
+      - The betrayal of the transition
+    omitted: []
+  - viewpoint: The analyst
+    viewpoint_type: academic
+    region_origin: Global
+    narrative: Sudan is the textbook warning that toppling a dictator is the easy half. When the old security institutions survive intact, they can wait out the crowd and then divide the state between them.
+    key_arguments:
+      - The danger is the transition, not the overthrow.
+      - Unreformed coercive institutions capture revolutions.
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - Institutional survival
+    omitted: []
+media: []
+connections: []

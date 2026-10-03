@@ -1,0 +1,6 @@
+source: src-un-rgc-agreement-2003
+locator: art1
+url: https://www.eccc.gov.kh/sites/default/files/legal-documents/Agreement_between_UN_and_RGC.pdf
+read: 2026-09-25
+
+Article 1 Purpose The purpose of the present Agreement is to regulate the cooperation between the United Nations and the Royal Government of Cambodia in bringing to trial senior leaders of Democratic Kampuchea and those who were most responsible for the crimes and serious violations of Cambodian penal law, international humanitarian law and custom, and international conventions recognized by Cambodia, that were committed during the period from 17 April 1975 to 6 January 1979. The Agreement provides, inter alia, the legal basis and the principles and modalities for such cooperation.

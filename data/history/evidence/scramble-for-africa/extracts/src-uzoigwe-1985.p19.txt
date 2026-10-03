@@ -1,0 +1,12 @@
+source: src-uzoigwe-1985
+locator: p19
+url: https://archive.org/download/unesco_general_history_africa_vii/general_history_africa_vii_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+
+Introduction: a generation of war and revolutionary change
+
+The generation following 1880 witnessed one of the most significant historical movements of modern times. During this period Africa, a continent
+of over 28 million square kilometres, was partitioned, conquered and occupied effectively by the industrialized nations of Europe. Historians have not
+yet come to grips with the deleterious impact of this generation of continuous war on both the colonized and the colonizer. But that it was a
+generation of revolutionary change of a fundamental nature is generally

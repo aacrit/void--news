@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The Haitian Revolution",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 48.443
+  },
+  {
+   "startTime": 48.443,
+   "title": "The clearing",
+   "endTime": 113.031
+  },
+  {
+   "startTime": 113.031,
+   "title": "What the colony was worth",
+   "endTime": 181.319
+  },
+  {
+   "startTime": 181.319,
+   "title": "Toussaint",
+   "endTime": 271.25
+  },
+  {
+   "startTime": 271.25,
+   "title": "The flag",
+   "endTime": 331.677
+  },
+  {
+   "startTime": 331.677,
+   "title": "Five accounts",
+   "endTime": 338.72
+  },
+  {
+   "startTime": 338.72,
+   "title": "The enslaved revolutionaries",
+   "endTime": 390.621
+  },
+  {
+   "startTime": 390.621,
+   "title": "The French colonial account",
+   "endTime": 439.77
+  },
+  {
+   "startTime": 439.77,
+   "title": "The Haitian nationalist account",
+   "endTime": 499.16
+  },
+  {
+   "startTime": 499.16,
+   "title": "The academic account",
+   "endTime": 549.747
+  },
+  {
+   "startTime": 549.747,
+   "title": "The indemnity",
+   "endTime": 605.566
+  },
+  {
+   "startTime": 605.566,
+   "title": "The shape of the disagreement",
+   "endTime": 676.218
+  },
+  {
+   "startTime": 676.218,
+   "title": "Legacy",
+   "endTime": 720.568
+  },
+  {
+   "startTime": 720.568,
+   "endTime": 733.668,
+   "title": "Also from Void News"
+  }
+ ]
+}

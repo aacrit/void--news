@@ -1,0 +1,7 @@
+source: src-de-19150707
+locator: para10
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-07-07-DE-001
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+
+Um eventuellen späteren Invektiven unserer Feinde, als seien wir mitschuldig an dem rigorosen türkischen Vorgehen, wirksam entgegentreten zu können, habe ich es daher für geboten erachtet, die Pforte darauf aufmerksam zu machen, daß wir die Deportation der armenischen Bevölkerung nur insofern billigen, als sie durch militärische Rücksichten geboten ist und zur Sicherung gegen Aufstände dient, daß aber bei Ausführung dieser Maßregel die Deportierten vor Plünderung und Metzeleien zu schützen seien. Um diesen Vorstellungen den nötigen Nachdruck zu geben, habe ich sie schriftlich in Form eines Memorandums zusammengefaßt, das ich am 4. d.M. dem Großwesir persönlich überreicht habe; Abschriften dieses Memorandums habe ich nachträglich den Ministerien des Äußern und des Innern übergeben lassen.

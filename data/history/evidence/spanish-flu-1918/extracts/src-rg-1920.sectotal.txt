@@ -1,0 +1,7 @@
+source: src-rg-1920
+locator: sectotal
+url: https://archive.org/download/sid14156800/sid14156800_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+In addition to the above there were 7,591 deaths of non-civilian males in this country allocated to influenza in 1918 and 2,899 in 1919 during the epidemic period, or 10,490 in all. This number has to be increased to an uncertain extent, say to 14,000 to allow for deaths really due to influenza but allocated to other causes. The non-civilian mortality of the preceeding years was so small that it may be left out of account. This addition to the civilian deaths brings the total toe 198,000, and in view of the uncertainties of the estimation the round figure of 200,000 deaths attributable to the epidemic (in addition to about 7,000 which the average rate of recent mortality would have accounted for) may be accepted as adequately summing up its results

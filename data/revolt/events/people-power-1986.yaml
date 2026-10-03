@@ -1,0 +1,216 @@
+slug: people-power-1986
+title: People Power (EDSA Revolution)
+subtitle: Four days on one Manila highway ended a twenty-year dictatorship
+date_display: February 22-25, 1986
+date_start: 1986
+date_end: 1986
+date_precision: year
+era: people-power
+region: southeast-asia
+country: Philippines
+revolt_type: democratic-uprising
+status: concluded
+summary: Ferdinand Marcos claimed victory in a February 7, 1986 snap election widely documented as fraudulent, prompting opposition leader Corazon Aquino, widow of assassinated senator Benigno Aquino, to call for civil disobedience. When Defense Minister Juan Ponce Enrile and armed forces vice chief Fidel Ramos broke from Marcos on February 22 and barricaded themselves at two military camps on Epifanio de los Santos Avenue, Catholic Cardinal Jaime Sin broadcast a radio appeal for citizens to protect them. An estimated one to two million Filipinos filled EDSA over four days, offering food and rosaries to troops sent to disperse them. Marcos fled to Hawaii on a US Air Force flight on February 25, ending twenty years of rule including nine years of martial law.
+significance: Coined the term 'People Power' and became the reference case for mass nonviolent civilian protection of a military mutiny forcing a dictator's exit without civil war.
+analytical_outlook: A near-textbook case of the security-force defection and mass-nonviolent-participation literature converging within a single four-day window.
+grievances:
+  - kind: Electoral fraud
+    intensity: 85
+    evidence: The National Movement for Free Elections documented widespread ballot tampering in the February 7, 1986 snap election; the Marcos-controlled National Assembly declared him winner despite an independent count favoring Aquino.
+  - kind: Political assassination and repression
+    intensity: 80
+    evidence: Opposition leader Benigno Aquino Jr. was shot dead on the tarmac at Manila International Airport on August 21, 1983 upon returning from exile, an event that galvanized mass opposition organizing.
+  - kind: Martial law legacy
+    intensity: 75
+    evidence: Marcos ruled under martial law from 1972 to 1981, during which Amnesty International documented thousands of arbitrary arrests and hundreds of forced disappearances.
+  - kind: Economic crisis and cronyism
+    intensity: 65
+    evidence: The Philippine economy contracted by roughly 7 percent in 1984 amid an estimated 5 to 10 billion dollars in wealth accumulated by the Marcos family and associated cronies.
+actors:
+  - actor_type: vanguard
+    name: Corazon Aquino
+    description: Widow of assassinated senator Benigno Aquino Jr., ran as opposition presidential candidate in the disputed 1986 election.
+    role_in_arc: Became the movement's civilian figurehead and was inaugurated president February 25, 1986
+    defected: false
+  - actor_type: military-defectors
+    name: Juan Ponce Enrile and Fidel Ramos
+    description: Marcos's Defense Minister and armed forces vice chief, who broke from the regime on February 22, 1986 and barricaded themselves at Camp Aguinaldo and Camp Crame.
+    role_in_arc: Their mutiny and the crowd that protected it became the pivot point of the four-day uprising
+    defected: true
+  - actor_type: religious-clergy
+    name: Cardinal Jaime Sin
+    description: Archbishop of Manila, broadcast a radio appeal via Radio Veritas asking citizens to bring food and support to the mutinous soldiers.
+    role_in_arc: His February 22 broadcast is widely credited with drawing the first large crowds to EDSA
+    defected: false
+  - actor_type: masses
+    name: EDSA crowd
+    description: An estimated one to two million Filipinos who filled Epifanio de los Santos Avenue over four days, unarmed, offering food, flowers, and rosaries to approaching troops.
+    role_in_arc: Physically blocked tank and troop movements against the mutinous camps without significant violence
+    defected: false
+  - actor_type: old-regime
+    name: Ferdinand Marcos
+    description: President of the Philippines since 1965, ruled under martial law 1972 to 1981.
+    role_in_arc: Fled to Hawaii via US Air Force evacuation on February 25, 1986, ending 20 years in power
+    defected: false
+tactics:
+  - tactic_type: occupation
+    description: Unarmed crowds physically blocked Marine tanks and troops from advancing on Camps Aguinaldo and Crame, offering food and prayer rather than confrontation.
+    prominence: primary
+  - tactic_type: digital-mobilization
+    description: Radio Veritas, the Catholic station, broadcast Cardinal Sin's appeal and ongoing updates that drew and sustained the EDSA crowds after the government-controlled stations went dark.
+    prominence: primary
+  - tactic_type: civil-disobedience
+    description: Aquino called for a boycott of Marcos-linked banks and businesses following the disputed election, part of a broader civil disobedience campaign preceding the military mutiny.
+    prominence: secondary
+resistance_type: nonviolent
+phases:
+  - phase: old-regime-crisis
+    label: Martial Law Legacy and Assassination
+    t_start: 0
+    t_end: 0.12
+    intensity: 45
+    reached: true
+    summary: Nine years of martial law and the 1983 Aquino assassination build sustained opposition organizing through the mid-1980s.
+    key_events:
+      - Martial law period, 1972-1981
+      - Benigno Aquino Jr. assassinated, August 21, 1983
+  - phase: the-spark
+    label: Snap Election Fraud and Military Mutiny
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 65
+    reached: true
+    summary: Marcos claims victory in a widely documented fraudulent snap election; two weeks later Enrile and Ramos break from Marcos and barricade themselves inside two Manila military camps, and Cardinal Sin's radio appeal draws the first crowds.
+    key_events:
+      - Snap election held, February 7, 1986
+      - Enrile and Ramos mutiny, February 22, 1986
+      - Cardinal Sin's Radio Veritas appeal, evening of February 22
+  - phase: dual-power
+    label: EDSA Fills
+    t_start: 0.48
+    t_end: 0.6
+    intensity: 80
+    reached: true
+    summary: An estimated one to two million Filipinos occupy EDSA over three days, physically shielding the mutinous camps from Marcos loyalist troops.
+    key_events:
+      - Crowds swell to over a million, February 23-24, 1986
+      - Loyalist Marine units halt rather than fire on the crowd
+  - phase: consolidation
+    label: Marcos Departs
+    t_start: 0.92
+    t_end: 1
+    intensity: 50
+    reached: true
+    summary: Marcos is evacuated to Hawaii and Aquino is inaugurated the same day, ending twenty years of rule without a civil war.
+    key_events:
+      - Marcos flees to Hawaii, February 25, 1986
+      - Corazon Aquino inaugurated president, February 25, 1986
+outcome: consolidated-democracy
+peak_participation_pct: null
+peak_participation_display: one to two million on EDSA at peak, February 24-25, 1986
+crossed_participation_threshold: true
+military_defection: full
+foreign_intervention: diplomatic
+duration_days: 4
+death_toll: widely reported as effectively bloodless; fewer than a handful of deaths documented directly at EDSA over the four days
+death_toll_low: 0
+death_toll_high: 5
+regime_before: personalist
+regime_after: democracy
+democratization_delta: 3
+success_factors:
+  - factor_key: participation-threshold
+    label: 3.5 percent participation rule
+    framework: chenoweth
+    status: One to two million participants out of a national population near 56 million in 1986 is roughly 2 to 3.5 percent, among the more frequently cited near-threshold cases in the literature
+    direction: favors-movement
+    base_rate: Chenoweth's research finds no campaign that achieved active participation from 3.5 percent of a population has failed to achieve its aims
+    rationale: EDSA sits close to or at the 3.5 percent line depending on which population and participation estimates are used, and is frequently cited alongside cases exceeding the threshold as evidence for the rule's predictive power.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: military-defection
+    label: Security force defection
+    framework: chenoweth
+    status: Defense Minister Enrile and armed forces vice chief Ramos broke from Marcos on February 22, 1986, and loyalist units subsequently refused to fire on the EDSA crowd
+    direction: favors-movement
+    base_rate: Security force defection or refusal to suppress protesters is the single strongest predictor of nonviolent movement success across the historical record
+    rationale: EDSA is a widely cited textbook case precisely because the defection came first, from the top of the military hierarchy, and the crowd's role was to protect that defection rather than to independently force capitulation.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: nonviolent-campaign-rate
+    label: Nonviolent campaign base rate
+    framework: chenoweth
+    status: The entire four-day campaign proceeded without organized armed resistance from the opposition side
+    direction: favors-movement
+    base_rate: Chenoweth and Stephan find nonviolent campaigns succeed in roughly 53 percent of cases historically, roughly double the rate for armed campaigns
+    rationale: EDSA achieved regime change in four days with a reported death toll in the single digits, an outcome the nonviolent-campaign literature associates with lower state repression capacity and higher public and international legitimacy relative to armed uprisings.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+key_figures:
+  - name: Corazon Aquino
+    role: Opposition leader, became President of the Philippines February 25, 1986
+    born: 1933
+    died: 2009
+    wikipedia: https://en.wikipedia.org/wiki/Corazon_Aquino
+  - name: Ferdinand Marcos
+    role: President of the Philippines 1965-1986
+    born: 1917
+    died: 1989
+    wikipedia: https://en.wikipedia.org/wiki/Ferdinand_Marcos
+  - name: Fidel Ramos
+    role: Armed forces vice chief who defected February 22, 1986, later President 1992-1998
+    born: 1928
+    died: 2022
+    wikipedia: https://en.wikipedia.org/wiki/Fidel_V._Ramos
+  - name: Jaime Sin
+    role: Cardinal Archbishop of Manila whose radio appeal mobilized the EDSA crowds
+    born: 1928
+    died: 2005
+    wikipedia: https://en.wikipedia.org/wiki/Jaime_Sin
+legacy_points:
+  - Coined the term 'People Power,' subsequently applied to nonviolent uprisings across the world.
+  - Ended twenty years of Marcos rule, including nine years of martial law, without descending into civil war.
+  - Restored competitive multiparty democracy under a new 1987 constitution drafted within a year of the uprising.
+  - Became a widely taught case study in the nonviolent-resistance literature for the combination of mass civilian mobilization and military defection.
+related_revolt_slugs:
+  - fall-of-communism-1989
+  - myanmar-spring-revolution
+related_history_slugs: []
+is_published: true
+perspectives:
+  - viewpoint: EDSA participant
+    viewpoint_type: movement
+    region_origin: southeast-asia
+    narrative: Participants who filled EDSA over four days described a spontaneous civic response to Cardinal Sin's appeal, driven by years of accumulated anger over the 1983 Aquino assassination and the stolen 1986 election, expressed through prayer and food rather than weapons.
+    key_arguments:
+      - Mass unarmed presence, not organized armed force, was what physically prevented loyalist tanks from reaching the mutinous camps
+      - The movement's discipline in avoiding violence protected both the crowd and the defecting soldiers from a justification for a bloody crackdown
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - The religious and communal character of the crowd's tactics, including rosaries and shared food
+      - The rapid, four-day timeline from mutiny to Marcos's departure
+    omitted:
+      - The extent to which the outcome depended on the prior elite-level defection by Enrile and Ramos rather than civilian action alone
+  - viewpoint: Defecting military officer
+    viewpoint_type: military
+    region_origin: southeast-asia
+    narrative: Enrile and Ramos later described their break from Marcos as driven by internal AFP factionalism and the perceived illegitimacy of the snap election result, framing their February 22 barricade less as a plan for civilian revolution and more as an attempted military reform that the EDSA crowd then made irreversible.
+    key_arguments:
+      - Their initial move was a narrow military mutiny against Marcos loyalists within the armed forces, not a call for the mass civilian mobilization that followed
+      - Cardinal Sin's broadcast and the resulting crowd transformed a contained military standoff into a decisive national event
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - Internal AFP reform grievances predating the snap election
+      - The tactical vulnerability of their position at Camps Aguinaldo and Crame absent civilian protection
+    omitted:
+      - Their own prior service enforcing Marcos's martial-law-era policies before their 1986 break
+media: []
+connections:
+  - target_slug: fall-of-communism-1989
+    connection_type: provided-model
+    description: EDSA's combination of mass nonviolent crowds and military non-cooperation was cited by organizers and observers of the 1989 Eastern European transitions as an example that entrenched governments could fall without civil war.
+  - target_slug: myanmar-spring-revolution
+    connection_type: counter-example
+    description: Where EDSA's military high command defected early and refused to fire on crowds, Myanmar's 2021 uprising faced a military that remained cohesive and used lethal force throughout, producing a starkly different trajectory.
