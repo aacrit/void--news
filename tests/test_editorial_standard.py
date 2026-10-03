@@ -388,6 +388,37 @@ def test_e13_catches_a_fabricated_number():
     print("PASS  E-13 catches a fabricated number and spares a sourced one")
 
 
+def test_e13_appositive_age_is_attached_to_its_name() -> None:
+    """`Name, 47,` gives the number to Name; a party in the same sentence is no rival.
+
+    Served 2026-10-03 and failed verify-production: "Kulbergs, 47, of the
+    centrist United List party". The sources put 47 beside Kulbergs; one of
+    them also mentioned another "United ..." beside 47, and the rival test
+    read the party as what 47 counted. The Iraq shape must still fail.
+    """
+    import sys, pathlib
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "pipeline"))
+    from editorial.standard import validate_candidate
+
+    filler = " The vote closes on Saturday evening. " + "Filler. " * 40
+    src = ("Kulbergs, 47, a former businessman, studied in the United States.\n"
+           "His United List party is polling at around 20 percent.")
+    card = {"title": "Latvians Vote for New Parliament",
+            "summary": "Kulbergs, 47, of the centrist United List party, then led a "
+                       "four-party coalition." + filler,
+            "source_text": src}
+    assert "E-13" not in [f.id for f in validate_candidate(card)], \
+        [f.message for f in validate_candidate(card) if f.id == "E-13"]
+
+    # The appositive must be sourced beside THAT name: an age the sources give
+    # to someone else is not rescued.
+    other = dict(card, summary="Silina, 47, of the centrist United List party, then led "
+                               "a four-party coalition." + filler)
+    other_ids = [f.id for f in validate_candidate(other)]
+    assert "E-13" in other_ids or "E-17" in other_ids, other_ids
+    print("PASS  E-13 reads an appositive age as its name's, and still refuses another's")
+
+
 def test_e14_catches_an_invented_quotation() -> None:
     """A quotation must be in the sources; scare quotes and elisions must not fire."""
     from pipeline.editorial.standard import validate_candidate
@@ -785,6 +816,7 @@ def test_bench_index_keeps_whole_bodies_over_stubs() -> None:
 
 ALL_TESTS = (
     test_e13_catches_a_fabricated_number,
+    test_e13_appositive_age_is_attached_to_its_name,
     test_e14_catches_an_invented_quotation,
     test_points_are_checked_and_a_failing_point_is_dropped,
     test_cached_card_is_judged_against_its_stored_index,
