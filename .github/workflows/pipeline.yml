@@ -221,6 +221,14 @@ jobs:
           VOID_EXPORT_ONLY: feed,brief,archive,methodology,history,engine
         run: python pipeline/export_static.py
 
+      # Rev 86 WS-G (docs/proposals/FACTUAL-RIGOR-PLAN-2026-10-02.md, section
+      # 1). Counts only, internal only: per-product coverage, the audit's
+      # tallies and this run's counters into build-data/rigor.json, and one
+      # row per run into docs/data/rigor-series.csv. Before the gate step,
+      # because test_rigor --floors asserts the file describes THIS feed.
+      - name: Measure factual rigor
+        run: python pipeline/validation/rigor.py --write
+
       # The data commit goes STRAIGHT TO MAIN and skipped every gate until
       # 2026-09-23, because the controls live in auto-merge-claude.yml, which
       # only runs when a claude/* branch merges. So this job could commit
@@ -251,6 +259,15 @@ jobs:
           # beside Sept 26's show and labelled two edge-tts voices with three
           # Gemini roster names.
           python tests/test_onair_sidecar.py
+          # Rule 1 floors (rev 86 WS-G). The grounding index was written every
+          # run and read by nothing. Every shipped card and point now goes
+          # through E-13, E-14 and E-16 against it: a confirmed finding (F-1)
+          # or a fresh card with no pre-truncation record (F-2) fails the run.
+          # A stub-only record reports "cannot confirm" and never fails. Then
+          # F-3 (a TL;DR, Opinion or On Air that shipped unverified must wear
+          # its label) and F-5 (every correction applied and gated).
+          python scripts/audit_grounding.py --quiet
+          python tests/test_rigor.py --floors
 
       - name: Commit refreshed static data to main
         id: commit
@@ -265,7 +282,7 @@ jobs:
           gitauth() { git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $AUTH" "$@"; }
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add frontend/build-data frontend/public/data frontend/public/audio frontend/public/podcast-*.xml
+          git add frontend/build-data frontend/public/data frontend/public/audio frontend/public/podcast-*.xml docs/data/rigor-series.csv
           if git diff --cached --quiet; then
             echo "No static-data changes to commit."
             exit 0
@@ -296,7 +313,7 @@ jobs:
             while IFS= read -r f; do
               [ -n "$f" ] || continue
               case "$f" in
-                frontend/build-data/*|frontend/public/data/*|frontend/public/audio/*) ;;
+                frontend/build-data/*|frontend/public/data/*|frontend/public/audio/*|docs/data/rigor-series.csv) ;;
                 *) echo "conflict outside generated data: $f"; return 1 ;;
               esac
             done <<< "$conflicted"
