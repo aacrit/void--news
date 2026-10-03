@@ -417,6 +417,19 @@ check("no committed record carries a sentence",
 check("every committed format-3 record's coverage matches its bodies",
       not coverage, f"{len(coverage)}: {coverage[:3]}")
 
+# --- rev 86 WS-R: every correction holds, on every product -----------------
+# tests/test_corrections.py is run from here so it runs wherever this gate
+# does: in auto-merge-claude.yml AND in pipeline.yml before the data commit,
+# which is where an export from a database that still holds the error would
+# otherwise put it back (factual-rigor plan, floor F-5).
+print("\n--- tests/test_corrections.py ---")
+import importlib.util as _ilu  # noqa: E402
+_spec = _ilu.spec_from_file_location("_test_corrections", ROOT / "tests" / "test_corrections.py")
+_tc = _ilu.module_from_spec(_spec)
+_spec.loader.exec_module(_tc)
+check("test_corrections: every correction is applied and every past error class has its gate",
+      _tc.main() == 0)
+
 if failures:
     print(f"\nFAIL  {len(failures)} grounding check(s)")
     sys.exit(1)

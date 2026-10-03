@@ -1,0 +1,17 @@
+{
+ "class": "kill-list-in-code-copy",
+ "gate": "tests/test_prompt_grounding.py::copy_literals",
+ "product": "card",
+ "covers": [
+  "pipeline/editorial/corrections.json#2026-10-02-fallback-killlist"
+ ],
+ "note": "A rule-based fallback string the code returns, carrying a kill-list word no model wrote.",
+ "planted": {
+  "check": "kill-list",
+  "source": "def fallback():\n    return [\"Sources show significant differences in political framing\"]\n"
+ },
+ "clean": {
+  "check": "kill-list",
+  "source": "def fallback():\n    return [\"Sources differ in political framing\"]\n"
+ }
+}

@@ -219,6 +219,10 @@ if want("brief"):
         # frontend labels a False "Not yet verified" (lib/verification.ts).
         if "grounding_ran" in brief:
             brief["grounding_ran"] = pjson(b["grounding_ran"])
+        # Brief, Opinion and radio corrections (rev 86 WS-R): text edits in
+        # place, and a withdrawn episode loses every audio field.
+        for _line in corrections.apply_brief(brief):
+            print(f"  [correction] brief {_line}")
     wj(PUBLIC_DIR / "brief.json", brief)
     print(f"brief.json: {'ok' if brief else 'MISSING'}")
 
@@ -316,6 +320,20 @@ if want("archive"):
         archive.append(d)
     for _line in corrections.apply_all(archive, key="source_cluster_id"):
         print(f"  [correction] archive {_line}")
+    # Deep Dive membership corrections: the members go, and source_count,
+    # member_count and the one-vote-per-outlet histogram are recomputed.
+    from utils.bias_aggregation import state_affiliated_names as _san  # noqa: E402
+    _arch_state = _san(json.loads((REPO / "data" / "sources.json").read_text(encoding="utf-8")))
+    for _line in corrections.apply_members(archive, key="source_cluster_id",
+                                           state_names=_arch_state):
+        print(f"  [correction] archive {_line}")
+    # The archive repair: an E-16 topic-shift sentence is another story's,
+    # removed with a notice on the page (CEO decision 3, factual-rigor plan).
+    _repaired = corrections.repair_archive(archive)
+    for _line in _repaired[:5]:
+        print(f"  [correction] {_line}")
+    print(f"archive repair: {len(_repaired)} card(s) carried an E-16 topic-shift "
+          f"sentence, removed and marked auto_corrected")
     wj(BUILD_DIR / "archive.json", archive)
 
     latest = c.execute("SELECT printed_on FROM printed_stories ORDER BY printed_on DESC LIMIT 1").fetchone()
@@ -354,8 +372,12 @@ if want("feed"):
     # loop writes for the Deep Dive Bench, so the two cannot disagree even
     # when a row is stamped unscored here after the run aggregated it.
     lean_hist: dict = {}
+    _dd_removed = 0
     for cid in [d["id"] for d in clusters]:
         links = c.execute("SELECT article_id FROM cluster_articles WHERE cluster_id=?", (cid,)).fetchall()
+        # Deep Dive membership corrections: a member that is another story's
+        # is skipped here, before anything is counted from it.
+        _drop = corrections.removed_members(cid)
         out_rows = []
         vote_rows, vote_all = [], []
         # The text the card was written from, kept so E-13 and E-14 can still
@@ -368,6 +390,9 @@ if want("feed"):
                 (lk["article_id"],),
             ).fetchone()
             if not a:
+                continue
+            if _drop and a["url"] in _drop:
+                _dd_removed += 1
                 continue
             src = None
             if a["source_id"]:
@@ -431,6 +456,17 @@ if want("feed"):
         if out_rows:
             wj(PUBLIC_DIR / "deepdive" / f"{cid}.json", out_rows)
             dd += 1
+        if _drop:
+            # The card's count follows its corrected member list (distinct
+            # outlets, the field's convention), and the card says so.
+            _card = next(d for d in clusters if d["id"] == cid)
+            _card["source_count"] = len({(r["article"]["source"] or {}).get("name")
+                                         or r["article"]["id"] for r in out_rows})
+            for _c in corrections.load():
+                if (corrections.product_of(_c) == "deepdive" and _c.get("cluster") == cid
+                        and _c.get("notice")):
+                    _card.setdefault("corrections", []).append(
+                        {"date": _c["date"], "product": "deepdive", "notice": _c["notice"]})
         if vote_all:
             # Whole set when nothing is measured: main.py's own fallback.
             lean_hist[cid] = compute_outlet_lean_histogram(vote_rows or vote_all)
@@ -452,7 +488,8 @@ if want("feed"):
                 grounding.write_record(
                     BUILD_DIR, grounding.build_record(cid, grounding_rows))
             gr += 1
-    print(f"deepdive/: {dd} cluster files")
+    print(f"deepdive/: {dd} cluster files"
+          + (f"; {_dd_removed} member(s) removed by correction" if _dd_removed else ""))
 
     # ONE VOTE PER OUTLET on the card, the Bench and the share card (CEO
     # decision 3, 2026-10-02). Rewrite the histogram fields of every exported

@@ -253,6 +253,7 @@ export default async function StoryPage(
         builtAt={displayIso}
         datelineLabel={datelineLabel}
         shareUrl={url}
+        corrections={row.corrections ?? null}
       />
     </>
   );

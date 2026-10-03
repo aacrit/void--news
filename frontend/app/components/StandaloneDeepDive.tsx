@@ -25,6 +25,7 @@ import CoverageList from "./CoverageList";
 import DeepDiveNext from "./DeepDiveNext";
 import LeanLabelLegend from "./LeanLabelLegend";
 import SpreadDisagreement from "./SpreadDisagreement";
+import CorrectionNotice, { type CorrectionNote } from "./CorrectionNotice";
 
 /* ---------------------------------------------------------------------------
    StandaloneDeepDive — the shareable /story/[id] page.
@@ -62,6 +63,8 @@ interface StandaloneDeepDiveProps {
     next: { title: string; href: string } | null;
     editionLabel?: string;
   } | null;
+  /** Published corrections to this story, each printed as one line. */
+  corrections?: CorrectionNote[] | null;
 }
 
 export default function StandaloneDeepDive({
@@ -72,6 +75,7 @@ export default function StandaloneDeepDive({
   datelineLabel,
   shareUrl,
   editionNav = null,
+  corrections = null,
 }: StandaloneDeepDiveProps) {
   const [shareCopied, setShareCopied] = useState(false);
   const shareTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -154,6 +158,8 @@ export default function StandaloneDeepDive({
             <span className="dot-separator" aria-hidden="true" />
             <span className="time-tag">{datelineLabel}</span>
           </div>
+
+          <CorrectionNotice notes={corrections} />
 
           {story.sigilData && !story.sigilData.pending && (
             <BiasSnapshot

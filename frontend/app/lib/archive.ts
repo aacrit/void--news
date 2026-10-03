@@ -74,6 +74,12 @@ export interface PrintedStoryRow {
   bias_diversity: any;
   members: PrintedMember[] | null;
   member_count: number;
+  /** Published corrections to this row, written by the export
+   *  (pipeline/editorial/corrections.py). Absent on an uncorrected row. */
+  corrections?: { date: string; product?: string; notice: string }[] | null;
+  /** The date the export's archive repair removed a sentence from another
+   *  story (E-16). Absent on a row that needed none. */
+  auto_corrected?: string | null;
   story_thread_id: string | null;
   continues_printed_id: string | null;
 }
