@@ -1,6 +1,6 @@
 {
  "class": "wrong-interval",
- "gate": "derived_grounding.check_dates",
+ "gate": "pipeline/editorial/derived_grounding.py::check_dates",
  "product": "opinion",
  "covers": [
   "pipeline/editorial/corrections.json#2026-10-03-opinion-bail-interval"

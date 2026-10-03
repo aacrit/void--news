@@ -208,15 +208,25 @@ def values_of(text: str) -> list[Value]:
 # The cluster's evidence
 # ---------------------------------------------------------------------------
 def cluster_text(cluster: dict[str, Any] | str) -> str:
-    """What the writer was handed for one story, one passage per line."""
+    """What the writer was handed for one story, one passage per line.
+
+    The points read here are the ones that PASSED. Stage 2 (8d.3, rev 86) runs
+    E-13, E-14 and E-16 on every consensus and divergence point against the
+    card's own evidence and writes back only the survivors, and the brief and
+    radio read their rows after that write. So a point is evidence here only
+    once a check has had the chance to drop it: before rev 86 an unsourced
+    number in a point became an anchor that let the same number through the
+    TL;DR. E-16 needs no evidence, so it is also re-run here, and a point that
+    opens on another story is never evidence for this one.
+    """
     if isinstance(cluster, str):
         return cluster
     parts = [cluster.get("title"), cluster.get("summary")]
-    for k in ("consensus_points", "divergence_points"):
-        pts = cluster.get(k) or []
-        if isinstance(pts, str):
-            pts = [pts]
-        parts.extend(str(p) for p in pts)
+    for k in std.POINT_FIELDS:
+        for p in std.as_points(cluster.get(k)):
+            text = std.point_text(p)
+            if text.strip() and not std.e16_topic_shift(text.strip()):
+                parts.append(text)
     if cluster.get("_source_text"):
         parts.append(str(cluster["_source_text"]))
     return "\n".join(str(p).strip() for p in parts if p and str(p).strip())

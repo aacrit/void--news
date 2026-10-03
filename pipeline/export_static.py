@@ -215,6 +215,10 @@ if want("brief"):
             brief["top_cluster_ids"] = parr(b["top_cluster_ids"])
         if "audio_chapters" in brief:
             brief["audio_chapters"] = pjson(b["audio_chapters"])
+        # rev 86: {"tldr","opinion","onair"} -> grounding completed. The
+        # frontend labels a False "Not yet verified" (lib/verification.ts).
+        if "grounding_ran" in brief:
+            brief["grounding_ran"] = pjson(b["grounding_ran"])
         # Brief, Opinion and radio corrections (rev 86 WS-R): text edits in
         # place, and a withdrawn episode loses every audio field.
         for _line in corrections.apply_brief(brief):

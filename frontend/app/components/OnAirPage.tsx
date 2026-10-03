@@ -5,6 +5,8 @@ import { useAudio, type EpisodeMeta } from "./AudioProvider";
 import { episodeFromBrief, sameEpisode } from "../lib/episode";
 import { hapticLight, hapticMicro } from "../lib/haptics";
 import { splitBriefParagraphs } from "../lib/briefText";
+import { isUnverified } from "../lib/verification";
+import UnverifiedLabel from "./UnverifiedLabel";
 import {
   chapterKindLabel,
   chapterMarks,
@@ -277,6 +279,7 @@ export default function OnAirPage() {
               {brief?.tldr_headline && (
                 <h2 className="onair__np-headline">{brief.tldr_headline}</h2>
               )}
+              {isUnverified(brief, "onair") && <UnverifiedLabel />}
 
               {/* Hero VU meter — teal phosphor bars, CSS-animated when playing */}
               <div className={`onair__vu${playing ? " onair__vu--active" : ""}`} aria-hidden="true">
@@ -494,6 +497,7 @@ export default function OnAirPage() {
                   {brief.tldr_headline && (
                     <p className="onair__note-lead">{brief.tldr_headline}</p>
                   )}
+                  {isUnverified(brief, "tldr") && <UnverifiedLabel />}
                   <div className="onair__note-body">
                     {splitBriefParagraphs(brief.tldr_text).map((para, i) => <p key={i}>{para}</p>)}
                   </div>
@@ -508,6 +512,7 @@ export default function OnAirPage() {
                   {brief.opinion_headline && (
                     <p className="onair__note-lead">{brief.opinion_headline}</p>
                   )}
+                  {isUnverified(brief, "opinion") && <UnverifiedLabel />}
                   <div className="onair__note-body">
                     {splitBriefParagraphs(brief.opinion_text).map((para, i) => <p key={i}>{para}</p>)}
                   </div>

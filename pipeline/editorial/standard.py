@@ -722,8 +722,23 @@ def _misattached(ev, n: str, names: list[str]) -> str | None:
     return None
 
 
-def e13_numbers_are_sourced(title: str, summary: str, sources) -> list[Finding]:
-    """Every number in the card appears in its sources, beside what it counts."""
+def _name_key_bare(name: str) -> str:
+    """A name folded as `grounding.name_key`, with a leading article dropped."""
+    return re.sub(r"^(?:the|a|an)\s+", "", _grounding.name_key(name))
+
+
+def e13_numbers_are_sourced(title: str, summary: str, sources,
+                            ignore_names: Iterable[str] = ()) -> list[Finding]:
+    """Every number in the card appears in its sources, beside what it counts.
+
+    `ignore_names` are names the attachment half must not read as what a
+    number counts: the outlets a divergence point attributes a figure to
+    ("The Daily Beast and The Hill emphasize ... 2028"). An article rarely
+    names its own masthead beside a figure, so an outlet name is never found
+    beside the number in a source, and a rival "Daily ..." name elsewhere
+    would read as a misattachment.
+    """
+    ignore = {_name_key_bare(n) for n in ignore_names or () if n}
     ev = _evidence(sources)
     findings: list[Finding] = []
     decimals = getattr(ev, "decimals", True)
@@ -741,7 +756,8 @@ def e13_numbers_are_sourced(title: str, summary: str, sources) -> list[Finding]:
         for n in sorted(_numbers(sent)):
             if not ev.has_number(n):
                 continue
-            rival = _misattached(ev, n, names)
+            rival = _misattached(ev, n, [nm for nm in names
+                                         if _name_key_bare(nm) not in ignore])
             if rival:
                 findings.append(Finding(
                     "E-13",
@@ -1037,6 +1053,83 @@ def validate_candidate(candidate: dict, include_advisory: bool = True) -> list[F
             if sources is not None and sources.present:
                 out.extend(v.fn(title, summary, sources))
     return out
+
+
+# ---------------------------------------------------------------------------
+# Consensus and divergence points (rev 86, factual rigor plan gap 1).
+#
+# A card's consensus and divergence points are published on the Deep Dive and
+# handed to the TL;DR, On Air and the Weekly as evidence
+# (`derived_grounding.cluster_text`), and until rev 86 no rule read them. A
+# point is a claim like any sentence of the summary, so it takes the same three
+# rules the cut repair enforces on the summary: E-13 (a number no source
+# carries, or one moved onto another name), E-14 (a quotation no source says or
+# punctuates) and E-16 (a point that opens on another story). A failing point
+# is DROPPED and the card survives: a point is one sentence, and the card does
+# not depend on it.
+#
+# E-16 reads the point alone and always runs. E-13 and E-14 run only against
+# evidence that is present, exactly as on the card: with none, a point is
+# "cannot confirm", never "invented".
+# ---------------------------------------------------------------------------
+POINT_RULE_IDS = ("E-13", "E-14", "E-16")
+POINT_FIELDS = ("consensus_points", "divergence_points")
+
+
+def as_points(value) -> list:
+    """A points field as a list. The column holds a list; tolerate a lone str."""
+    if not value:
+        return []
+    if isinstance(value, str):
+        return [value]
+    return list(value)
+
+
+def point_text(point) -> str:
+    """The prose of one point. A point is a str; a dict carries it under text."""
+    if isinstance(point, dict):
+        return str(point.get("text") or point.get("point") or "")
+    return str(point or "")
+
+
+def validate_point(point, sources=None, outlets: Iterable[str] = ()) -> list[Finding]:
+    """E-13, E-14 and E-16 on one consensus or divergence point.
+
+    `sources` is what the card is checked against: the text it was written
+    from, or a `grounding.Verifier`. None, or evidence that is not present,
+    runs E-16 only. `outlets` are the cluster's outlet names, which a point
+    attributes figures to and E-13's attachment half must not read as what
+    a number counts.
+    """
+    text = point_text(point).strip()
+    if not text:
+        return []
+    out = [Finding(f.id, "point: " + f.message) for f in e16_topic_shift(text)]
+    ev = _evidence(sources) if sources is not None else None
+    if ev is not None and getattr(ev, "present", False):
+        for f in (e13_numbers_are_sourced("", text, ev, ignore_names=outlets)
+                  + e14_quotes_are_verbatim("", text, ev)):
+            out.append(Finding(f.id, "point: " + f.message.replace(
+                "summary ", "", 1)))
+    return out
+
+
+def check_points(points, sources=None,
+                 outlets: Iterable[str] = ()) -> tuple[list, list[tuple[str, list[Finding]]]]:
+    """(kept, dropped) for one points field. `dropped` is (text, findings).
+
+    The kept items are the original objects, in order, so a list written back
+    is the same list less the failures.
+    """
+    kept: list = []
+    dropped: list[tuple[str, list[Finding]]] = []
+    for p in as_points(points):
+        found = validate_point(p, sources, outlets)
+        if found:
+            dropped.append((point_text(p), found))
+        else:
+            kept.append(p)
+    return kept, dropped
 
 
 def validate_feed(cards: list[dict], expected_count: int | None = None,

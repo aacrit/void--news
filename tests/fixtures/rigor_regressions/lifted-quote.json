@@ -1,6 +1,6 @@
 {
  "class": "lifted-quote",
- "gate": "derived_grounding.check_lifted_quote",
+ "gate": "pipeline/editorial/derived_grounding.py::check_lifted_quote",
  "product": "radio",
  "covers": [
   "pipeline/editorial/corrections.json#2026-10-03-radio-purged"

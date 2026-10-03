@@ -15,9 +15,7 @@ THE ENTRY (schema 2, rev 86 WS-R). Every entry carries:
   product   card | brief | opinion | radio | deepdive
   class     the error class (tests/fixtures/rigor_regressions/<class>.json)
   date      the day the correction was made (the reader's notice prints it)
-  gate      the rule or test that now catches this class, or "none" when no
-            deterministic check does yet (a declared gap, listed in
-            tests/test_corrections.py, never a silent one)
+  gate      the rule or test that now catches this class (see THE GATE)
   reason    internal: what was wrong and the evidence (never served)
   notice    the short public reason, or null for a wording change that
             corrects no fact. Rendered as "Corrected <date>: <notice>."
@@ -52,6 +50,13 @@ names (the write-time repair's rule, `derived_grounding.repair_card`, run on
 and pass). The row is stamped `auto_corrected` with the repair's date and
 carries a notice. Deterministic and idempotent: the state database still holds
 the old text, so every export repairs it again, the same way, on the same date.
+
+THE GATE resolves (rev 86 WS-G): it is an ENFORCED rule id in
+`editorial/standard.py`, or a file that exists, optionally `path::name` for
+the function in it. `tests/test_rigor.py --floors` (F-5) fails an entry with
+no gate or one that does not resolve, so a class with no deterministic check
+is not an entry's gate: it is listed in the entry's `gap_classes` and declared
+in tests/test_corrections.py KNOWN_GAPS. `gate_note` says what the gate reads.
 
 Pure, stdlib plus the editorial modules, no I/O beyond reading the file.
 `tests/test_corrections.py` and `tests/test_grounding.py` assert the committed
@@ -129,6 +134,9 @@ def schema_problems(corr: list[dict[str, Any]]) -> list[str]:
                 if e.get("field") not in allowed:
                     out.append(f"{tag}: a {p} correction edits {e.get('field')!r}, "
                                f"not one of {allowed}")
+        if str(c.get("gate") or "").strip().lower() == "none":
+            out.append(f"{tag}: 'none' is not a gate; record the class in "
+                       f"gap_classes on an entry whose gate resolves")
         notice = c.get("notice")
         if isinstance(notice, str) and re.search("[\u2014\u2013]", notice):
             out.append(f"{tag}: the notice carries a dash")

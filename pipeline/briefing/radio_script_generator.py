@@ -356,6 +356,9 @@ class RadioRundown:
     say: dict[str, str]
     raw: str
     warnings: list[str] = field(default_factory=list)
+    # Whether ground_rundown completed over this rundown (rev 86). None until
+    # it is attempted; False ships the show labelled "Not yet verified".
+    grounded: bool | None = None
 
     def story_segments(self) -> list[RadioSegment]:
         return [s for s in self.segments if s.kind == "STORY"]
@@ -1073,13 +1076,35 @@ def _gemini():
         return None, (lambda: False), None
 
 
+def _note_radio_rigor(ran: bool, cuts: list) -> None:
+    """Counts for validation/rigor.py. Never raises."""
+    try:
+        try:
+            from validation import rigor as _r
+        except ImportError:  # pragma: no cover
+            from pipeline.validation import rigor as _r  # type: ignore
+        _r.note_run("onair", {"grounding_ran": bool(ran), "cut_sentences": len(cuts),
+                              "cuts_by_reason": _r.count_reasons(cuts)})
+    except Exception as e:  # pragma: no cover
+        print(f"  [rigor] [warn] radio counters not recorded: {e}")
+
+
 def _log_ground(rundown: RadioRundown, ctx: RundownContext) -> None:
-    """Ground the accepted rundown in place and log every cut."""
+    """Ground the accepted rundown in place and log every cut.
+
+    Sets `rundown.grounded`: True only when the pass completed over a non-empty
+    top 20 (ground_rundown returns early, reading nothing, without one).
+    """
+    rundown.grounded = False
     try:
         cuts = ground_rundown(rundown, ctx)
     except Exception as e:  # a grounding fault must not cost the show
-        print(f"  [radio][warn] grounding pass failed, rundown kept as validated: {e}")
+        print(f"  [radio][warn] grounding pass failed, rundown kept as validated "
+              f"and labelled not yet verified: {e}")
+        _note_radio_rigor(False, [])
         return
+    rundown.grounded = bool(ctx.top20)
+    _note_radio_rigor(rundown.grounded, cuts)
     for c in cuts:
         print(f"  [radio][grounding] cut ({c.reason}): {c.sentence[:110]!r}")
     if cuts:

@@ -1,6 +1,6 @@
 {
  "class": "weekly-quotation-not-in-sources",
- "gate": "weekly_parse.ground_quotes",
+ "gate": "pipeline/briefing/weekly_parse.py::ground_quotes",
  "product": "weekly",
  "covers": [
   "frontend/build-data/weekly-corrections.json (entries whose \"classes\" name this class)"

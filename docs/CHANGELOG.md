@@ -26,13 +26,16 @@ page, no methodology line), a corrected page says so on itself, and the
 archive repair goes ahead with a notice.
 
 1. **`corrections.json` schema 2.** Every entry now carries `id`, `product`
-   (card, brief, opinion, radio, deepdive), `class`, `date`, `gate` (the rule
-   that now catches the class, or `none` for a declared gap), the internal
-   `reason` and a public `notice` (null for a wording change that corrects no
-   fact). The five rev 85 entries were backfilled and split where one entry
-   held two classes (Hegseth: the altered quotation and the outlet's adjective;
-   Putin: the contamination and the garble; the fallback copy: the kill-list
-   word and the dash). `schema_problems()` refuses an entry without a field.
+   (card, brief, opinion, radio, deepdive), `class`, `date`, `gate`, a
+   `gate_note`, the internal `reason` and a public `notice` (null for a
+   wording change that corrects no fact). The gate is what WS-G's F-5 resolves:
+   an ENFORCED rule id, or a file that exists, written `path::function` when
+   it names a function (`test_corrections` also asserts the function exists).
+   A class with no deterministic check is never an entry's gate: it sits in
+   the entry's `gap_classes` (Hegseth: the outlet's adjective in Void's voice;
+   Putin: the "Q&An" garble) and in `KNOWN_GAPS`, and `schema_problems()`
+   refuses `gate: none`. The fallback-copy entry was split into its kill-list
+   and dash classes.
 2. **Corrections reach the brief, the Opinion, On Air and the Deep Dive.**
    The export applies `brief` and `opinion` edits to `brief.json`; a `radio`
    correction withdraws the episode (every audio field cleared, the row
@@ -110,6 +113,140 @@ archive repair goes ahead with a notice.
    network error is a skip). It fails against the live site until this
    branch deploys, by design. The withdrawn-audio check also
    404s every path a radio correction withdrew.
+
+---
+
+## rev 86 WS-A (rigor): points are checked, cached cards are judged, a factual failure never ships (2026-10-03)
+
+Gaps 1 and 3 of `docs/proposals/FACTUAL-RIGOR-PLAN-2026-10-02.md`. Zero new
+LLM calls. Every rule change has a planted-defect test in
+`tests/test_editorial_standard.py` or `tests/test_brief_grounding.py`.
+
+1. **Consensus and divergence points are checked** (gap 1). They were read by
+   no rule, published on the Deep Dive, and handed to the TL;DR and On Air as
+   evidence by `derived_grounding.cluster_text`, so an unsourced number in a
+   point cleared the same number downstream. At 8d.3 every point now runs
+   E-13, E-14 and E-16 (`standard.validate_point`, `check_points`) against the
+   same evidence as its card. A failing point is DROPPED and the card is kept;
+   the surviving list is written back before the brief reads its rows, and a
+   card whose filtered points cannot be written does not ship. A regenerated
+   card's points are checked against the text it was written from.
+   `cluster_text` also re-applies E-16, the one rule that needs no evidence.
+   The attachment half of E-13 skips the cluster's own outlet names, because a
+   divergence point attributes figures to outlets ("The Daily Beast and The
+   Hill emphasize ... 2028") and no article names its masthead beside a number:
+   that was 4 of the 8 point findings on the committed feed of 2026-10-02,
+   measured before the index gate below.
+2. **A cached card is judged against its stored index** (gap 3). A card not
+   summarized this run used to skip E-13 and E-14 entirely. It is now checked
+   against the pre-truncation record the run that wrote it stored at 8f, via
+   `grounding.load_verifier` as `source_index`, and enforced findings are
+   repaired by cut. The index is used only when it can judge
+   (`stage2.cached_evidence_status`): pre-truncation stage, format 3, the card
+   written from this membership (its `summary_article_hash`), every member
+   indexed, no member a stub, no member indexed short of the 2,200 body
+   characters the summarizer reads. Anything else is "cannot confirm" and cuts
+   nothing. On the committed feed, 6 of 35 records qualify, 23 fail on stubs and
+   6 on a short index. Ungated, the stub records still produce 5 point
+   findings in 295 points; gated, 0 of 54.
+3. **8f keeps a whole-body index over the same articles' stubs.** A cached
+   card's articles are all stubs by its second day, and rebuilding its record
+   at 8f replaced the whole-body index with one that can only answer "cannot
+   confirm". The existing record is kept when it indexes the same articles
+   from fewer stubs.
+4. **A factual failure never ships.** A card still carrying an enforced E-13,
+   E-14 or E-16 finding after repair was KEPT when its cluster had fewer than
+   three articles, no model was available, the model returned nothing, or the
+   regenerated card failed to store. It is now dropped on every one of those
+   paths. A style-only failure is still kept there.
+5. **Counters** in `llm_metrics["editorial"]["rigor"]`, printed as the
+   "Rigor:" line of 8d.3 and asserted by `tests/test_editorial_stage.py`:
+   points checked, unconfirmable and dropped (by rule), fresh cards checked,
+   cached cards checked, cannot-confirm reasons, cached cards and sentences
+   cut, factual drops (by rule, and how many the old path kept), and drops for
+   a failed points write.
+
+Also: the two pytest-only tests in `tests/test_editorial_standard.py` (E-13,
+E-14) sat after a `sys.exit(main())` and CI, which runs the file with `python`,
+never reached them. They run on both paths now.
+
+---
+## rev 86 WS-G (rigor): Rule 1 measured in sentences, and four floors that can fail (2026-10-03)
+
+Section 1 and gap 8 of `docs/proposals/FACTUAL-RIGOR-PLAN-2026-10-02.md`, with
+two CEO decisions that override the plan: the rigor numbers and corrections are
+INTERNAL ONLY (no `/corrections` page, no methodology line), and a TL;DR,
+Opinion or On Air whose grounding pass cannot run SHIPS WITH A VISIBLE LABEL
+("Not yet verified") rather than being withheld.
+
+1. **The metric** (`pipeline/validation/rigor.py`). Per product (card headline,
+   card summary, consensus and divergence points, TL;DR, Opinion, On Air): the
+   sentences published, the sentences carrying an anchor the product's
+   enforced rules read (a number in E-13 scope or a 4+ word quotation on cards
+   and points; those plus a multi-word name, a date or an interval on the
+   derived products), and the sentences whose anchors were actually CHECKED. A
+   card's anchors count as checked only when its index can confirm an absence;
+   a derived product's only when its grounding pass completed. Each split uses
+   the checking rule's own splitter. Machine-written points ("Sources differ
+   in political framing by 31 points of lean") are Void's measurement, not a
+   claim about the story, and are excluded. Counts only into
+   `frontend/build-data/rigor.json`; one row per run, keyed by `builtAt`, into
+   `docs/data/rigor-series.csv`.
+2. **First numbers, on the committed 2026-10-02 edition** (20 shipped cards):
+   card headlines 20 sentences, 3 anchored, 1 checked (5.0%); card summaries
+   222, 68, 16 (7.2%); points 181, 45, 16 (8.8%); TL;DR 30, 23, 0; Opinion 31,
+   7, 0; On Air 92, 42, 0. Of the 20 shipped records, 5 can confirm an absence,
+   13 hold 300-character stubs behind a card not known to have been written
+   that run, and 2 cap below the 2,200 characters the writer reads. The derived
+   products read 0 checked because that brief predates the flag, not because
+   their pass failed: unknown is not claimed either way.
+3. **The audit** (`scripts/audit_grounding.py`, gap 8). Every `feed.json` card
+   and every point through E-13, E-14 and E-16 against
+   `grounding.load_verifier`. A finding is CONFIRMED only when the record can
+   carry it: E-16 reads text alone; an absence needs a format-3,
+   pre-truncation record with no stub row (unless the card was written this
+   run, when the stub is what it was written from) and no row capped below the
+   writer's window. Everything else prints "cannot confirm" and never fails.
+   A number a point puts beside an outlet's name is advisory: outlets do not
+   name themselves in their own sentences. On the committed data: 0 confirmed,
+   4 cannot confirm, 4 advisory, across the shipped twenty.
+4. **The floors** (`tests/test_rigor.py --floors`). F-1 a confirmed E-13, E-14
+   or E-16 finding on a shipped card or point. F-2 a shipped card with no
+   record, or a fresh card whose record was built after truncation. F-3 (as
+   overridden) a derived product that shipped with its pass incomplete AND
+   unlabelled, or with no flag at all on a brief written from 2026-10-03. F-5
+   a correction unapplied in the export, or naming no gate that resolves (an
+   ENFORCED rule id or a file that exists). Every floor fails on a planted
+   fixture and holds without it. F-4 (critique read zero while the model was
+   up) is not built: the critique is WS-L's rebuild.
+5. **The hooks.** Stage 2 resets `build-data/rigor-run.json` and records fresh
+   card ids, critique cards read and unread (`critique_cards(stats=)`),
+   sentences cut by reason class, regenerations, drops, and cards KEPT while
+   still carrying an enforced finding (the thin-cluster and model-down paths,
+   now counted). The brief and radio generators record whether each grounding
+   pass completed and their cuts by class. `note_run` writes only inside a run
+   that `start_run` began in the same process, so a test that calls a
+   generator cannot touch the committed counters.
+6. **The label.** `daily_briefs.grounding_ran` (additive column, JSON
+   `{tldr, opinion, onair}`) is exported in `brief.json`. A carried brief keeps
+   the flag of the day it was written; unknown reads as not verified. Only an
+   explicit `false` renders `UnverifiedLabel` ("Not yet verified") on the
+   Skybox, the mobile brief pill, the On Air panel's notes and the On Air page
+   (broadcast, In brief, Opinion). `frontend/test/verification.test.mjs`.
+7. **Served cards** (`scripts/verify_production.py`): the served headline and
+   summary of every card matched by title to the committed `feed.json` run
+   through the same classifier against the committed index. Confirmed fails;
+   cannot confirm prints under `[grounding]` and never fails.
+8. **Corrections name their gate.** The five entries in
+   `pipeline/editorial/corrections.json` carry `gate` (E-13, E-14, E-16, E-16,
+   `tests/test_prompt_grounding.py`) and a `gate_note`. The "Q&An" garble in
+   the Putin entry has no deterministic gate yet, and the note says so.
+9. **Not on this branch.** A `claude/*` branch may not change `.github/`, so
+   the `pipeline.yml` and `auto-merge-claude.yml` edits (measure, audit,
+   floors before the data commit; the test in auto-merge; the series file
+   staged with the data) are written out exactly in
+   `docs/proposals/RIGOR-WORKFLOW-DIFF.md` for a hand-merged PR, and
+   `test_rigor.py` sits on the W-05 allowlist until it lands.
 
 ---
 

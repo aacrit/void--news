@@ -1,6 +1,6 @@
 {
  "class": "unsourced-number",
- "gate": "derived_grounding.check_numbers",
+ "gate": "pipeline/editorial/derived_grounding.py::check_numbers",
  "product": "brief",
  "covers": [
   "pipeline/editorial/corrections.json#2026-10-03-brief-swinney-figure"

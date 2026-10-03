@@ -89,9 +89,11 @@ def _load_module(name: str, path: Path):
 # The two gates that live in other test files are run from their own code, so
 # a fixture exercises the real rule and not a copy of it.
 _tpg = _load_module("_tpg", ROOT / "tests" / "test_prompt_grounding.py")
+sys.path.insert(0, str(ROOT))
+from pipeline.validation import rigor as _rigor  # noqa: E402
 _lint_src = (ROOT / "tests" / "test_truncation_lint.py").read_text(encoding="utf-8")
 _lint_ns: dict = {"__file__": str(ROOT / "tests" / "test_truncation_lint.py"), "__name__": "_lint"}
-exec(compile(_lint_src.split("\nchecked = 0")[0], "test_truncation_lint", "exec"), _lint_ns)
+exec(compile(_lint_src.split("\nchecked = 0")[0], "tests/test_truncation_lint.py", "exec"), _lint_ns)
 
 
 # ---------------------------------------------------------------------------
@@ -134,15 +136,15 @@ GATES = {
     "E-13": lambda x: [f for f in std.validate_candidate(x) if f.id == "E-13"],
     "E-14": lambda x: [f for f in std.validate_candidate(x) if f.id == "E-14"],
     "E-16": lambda x: std.e16_topic_shift(x["summary"]),
-    "derived_grounding.check_total": lambda x: _derived("check_total", x),
-    "derived_grounding.check_numbers": lambda x: _derived("check_numbers", x),
-    "derived_grounding.check_dates": lambda x: _derived("check_dates", x),
-    "derived_grounding.check_lifted_quote": lambda x: _derived("check_lifted_quote", x),
-    "same_event.entity_outliers": _entity,
-    "test_prompt_grounding.copy_literals": _copy_literals,
-    "weekly_parse.ground_text": lambda x: wp.ground_text(x["text"], x["source_text"])[1],
-    "weekly_parse.ground_quotes": lambda x: wp.ground_quotes(x["text"], x["source_text"])[1],
-    "test_truncation_lint": _truncation,
+    "pipeline/editorial/derived_grounding.py::check_total": lambda x: _derived("check_total", x),
+    "pipeline/editorial/derived_grounding.py::check_numbers": lambda x: _derived("check_numbers", x),
+    "pipeline/editorial/derived_grounding.py::check_dates": lambda x: _derived("check_dates", x),
+    "pipeline/editorial/derived_grounding.py::check_lifted_quote": lambda x: _derived("check_lifted_quote", x),
+    "pipeline/editorial/same_event.py::entity_outliers": _entity,
+    "tests/test_prompt_grounding.py::copy_literals": _copy_literals,
+    "pipeline/briefing/weekly_parse.py::ground_text": lambda x: wp.ground_text(x["text"], x["source_text"])[1],
+    "pipeline/briefing/weekly_parse.py::ground_quotes": lambda x: wp.ground_quotes(x["text"], x["source_text"])[1],
+    "tests/test_truncation_lint.py": _truncation,
 }
 
 
@@ -150,7 +152,7 @@ def run_fixture(fx: dict) -> tuple[bool, bool, str]:
     """(fails when planted, passes when clean, detail)."""
     gate = GATES[fx["gate"]]
     planted, clean = gate(fx["planted"]), gate(fx["clean"])
-    if fx["gate"] == "same_event.entity_outliers":
+    if fx["gate"] == "pipeline/editorial/same_event.py::entity_outliers":
         caught = sorted(planted) == sorted(fx["planted"]["foreign"])
         return caught, not clean, f"flagged {sorted(planted)}, clean flagged {sorted(clean)}"
     return bool(planted), not clean, f"planted {planted[:1]!r}, clean {clean[:1]!r}"
@@ -207,7 +209,22 @@ def main() -> int:
             fx = fixtures.get(cls)
             check(f"weekly-corrections #{i}: class {cls!r} has a Weekly fixture",
                   fx is not None and fx.get("product") == "weekly")
-    used = {c.get("class") for c in corr} | {cls for w in weekly for cls in w.get("classes") or []}
+    for c in corr:
+        for gap in c.get("gap_classes") or []:
+            check(f"{c.get('id')}: gap class {gap!r} is a declared gap with its fixture",
+                  gap in KNOWN_GAPS and gap in fixtures)
+        # F-5's own resolver (pipeline/validation/rigor.py): an ENFORCED rule
+        # id, or a file that exists; with path::name, the function must exist.
+        g = c.get("gate") or ""
+        ok = _rigor.gate_resolves(g)
+        if ok and "::" in g:
+            path, name = g.split("::", 1)
+            ok = re.search(rf"^\s*def {re.escape(name)}\b",
+                           (ROOT / path).read_text(encoding="utf-8"), re.M) is not None
+        check(f"{c.get('id')}: its gate {g!r} resolves (rule, file, named function)", ok)
+    used = ({c.get("class") for c in corr}
+            | {gap for c in corr for gap in c.get("gap_classes") or []}
+            | {cls for w in weekly for cls in w.get("classes") or []})
     used.add(C.ARCHIVE_REPAIR_CLASS)
     check("every fixture is a class some correction records", set(fixtures) <= used,
           str(sorted(set(fixtures) - used)))

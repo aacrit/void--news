@@ -1,6 +1,6 @@
 {
  "class": "weekly-capped-count",
- "gate": "test_truncation_lint",
+ "gate": "tests/test_truncation_lint.py",
  "product": "weekly",
  "covers": [
   "frontend/build-data/weekly-corrections.json (entries whose \"classes\" name this class)"

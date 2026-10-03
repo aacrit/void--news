@@ -1935,6 +1935,22 @@ async function brandChecks(browser) {
      dateline, what Void is and how to read a card, with the legend and
      /about one press away, and is offered the tour once. Dismissed, neither
      comes back. Same sentence, same stories, for everyone. */
+  /* A Sigil popup opened by hover must not eat the reader's next click on the
+     rest of the page (2026-10-03: the pointer left on a Sigil after the tour
+     invitation vanished, and "How to read a card" needed two presses). Its
+     capture-phase close handler may swallow only clicks on its own card (F03). */
+  await withPage(browser, { width: 1440, route: "/" }, "sigil-hover-does-not-eat-clicks", async (page) => {
+    const sigil = page.locator("article .sigil").first();
+    if (!assert(await sigil.count() === 1, "sigil-hover-does-not-eat-clicks", "a card Sigil to hover")) return;
+    await sigil.hover();
+    await page.waitForTimeout(400);
+    const btn = page.locator(".lean-legend__btn").first();
+    await btn.click();
+    await page.waitForTimeout(300);
+    assert(await btn.getAttribute("aria-expanded") === "true", "sigil-hover-does-not-eat-clicks",
+      "one click on the legend opens it while a hover popup is up");
+  });
+
   for (const width of [375, 1440]) {
     await withPage(browser, { width, route: "/" }, `first-visit-explainer @${width}`, async (page) => {
       const note = page.locator(".fv-note");

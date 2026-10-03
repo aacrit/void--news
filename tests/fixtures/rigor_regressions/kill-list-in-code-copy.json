@@ -1,6 +1,6 @@
 {
  "class": "kill-list-in-code-copy",
- "gate": "test_prompt_grounding.copy_literals",
+ "gate": "tests/test_prompt_grounding.py::copy_literals",
  "product": "card",
  "covers": [
   "pipeline/editorial/corrections.json#2026-10-02-fallback-killlist"

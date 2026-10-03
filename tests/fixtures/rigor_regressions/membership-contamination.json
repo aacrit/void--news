@@ -1,6 +1,6 @@
 {
  "class": "membership-contamination",
- "gate": "same_event.entity_outliers",
+ "gate": "pipeline/editorial/same_event.py::entity_outliers",
  "product": "deepdive",
  "covers": [
   "pipeline/editorial/corrections.json#2026-10-03-putin-members"

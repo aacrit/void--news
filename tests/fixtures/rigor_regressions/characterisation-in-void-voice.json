@@ -3,7 +3,7 @@
  "gate": "none",
  "product": "card",
  "covers": [
-  "pipeline/editorial/corrections.json#2026-10-02-hegseth-voice"
+  "pipeline/editorial/corrections.json#2026-10-02-hegseth-quote (gap_classes)"
  ],
  "known_gap": "E-07 is advisory and its term list holds contested labels, not an outlet's evaluative adjective ('ideology-heavy speech'). The L-08/L-03 critique is a model pass, not a deterministic gate.",
  "planted": {

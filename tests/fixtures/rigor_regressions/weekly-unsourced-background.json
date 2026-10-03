@@ -1,6 +1,6 @@
 {
  "class": "weekly-unsourced-background",
- "gate": "weekly_parse.ground_text",
+ "gate": "pipeline/briefing/weekly_parse.py::ground_text",
  "product": "weekly",
  "covers": [
   "frontend/build-data/weekly-corrections.json (entries whose \"classes\" name this class)"

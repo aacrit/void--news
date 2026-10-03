@@ -1,0 +1,152 @@
+{
+ "builtAt": "2026-10-02T21:31:05.027310Z",
+ "briefCreatedAt": "2026-10-02T21:30:27.845174+00:00",
+ "products": {
+  "card_headline": {
+   "sentences": 20,
+   "anchored": 3,
+   "checked": 1,
+   "anchorTypes": [
+    "number",
+    "quote"
+   ],
+   "byAnchor": {
+    "number": 3
+   },
+   "coverage": 5.0
+  },
+  "card_summary": {
+   "sentences": 222,
+   "anchored": 68,
+   "checked": 16,
+   "byAnchor": {
+    "number": 63,
+    "quote": 8
+   },
+   "anchorTypes": [
+    "number",
+    "quote"
+   ],
+   "coverage": 7.2
+  },
+  "points": {
+   "sentences": 181,
+   "anchored": 45,
+   "checked": 16,
+   "anchorTypes": [
+    "number",
+    "quote"
+   ],
+   "byAnchor": {
+    "number": 35,
+    "quote": 13
+   },
+   "coverage": 8.8,
+   "machinePointsExcluded": 1
+  },
+  "tldr": {
+   "sentences": 30,
+   "anchored": 23,
+   "checked": 0,
+   "coverage": 0.0,
+   "anchorTypes": [
+    "number",
+    "name",
+    "date",
+    "quote"
+   ],
+   "byAnchor": {
+    "date": 5,
+    "name": 17,
+    "number": 14
+   },
+   "groundingRan": null,
+   "shipped": true
+  },
+  "opinion": {
+   "sentences": 31,
+   "anchored": 7,
+   "checked": 0,
+   "coverage": 0.0,
+   "anchorTypes": [
+    "number",
+    "name",
+    "date",
+    "quote"
+   ],
+   "byAnchor": {
+    "date": 1,
+    "name": 5,
+    "number": 2
+   },
+   "groundingRan": null,
+   "shipped": true
+  },
+  "onair": {
+   "sentences": 92,
+   "anchored": 42,
+   "checked": 0,
+   "coverage": 0.0,
+   "anchorTypes": [
+    "number",
+    "name",
+    "date",
+    "quote"
+   ],
+   "byAnchor": {
+    "date": 6,
+    "name": 32,
+    "number": 13
+   },
+   "groundingRan": null,
+   "shipped": true
+  }
+ },
+ "evidence": {
+  "shipped": 20,
+  "freshKnown": false,
+  "fresh": null,
+  "states": {
+   "confirmable": 5,
+   "index cap below writer window": 2,
+   "stub rows, card not fresh": 13
+  }
+ },
+ "audit": {
+  "shipped": {
+   "advisory": {
+    "E-13 misattached": 4
+   },
+   "cannot confirm": {
+    "E-13 absent": 1,
+    "E-14 absent": 3
+   }
+  },
+  "bench": {
+   "advisory": {
+    "E-13 misattached": 1
+   },
+   "cannot confirm": {
+    "E-13 absent": 1,
+    "E-13 misattached": 1
+   }
+  }
+ },
+ "run": null,
+ "corrections": {
+  "entries": 5,
+  "ungated": [],
+  "unapplied": 0,
+  "bySurface": {
+   "card": 5
+  }
+ },
+ "floors": {
+  "F-1": "pass",
+  "F-2": "pass",
+  "F-3": "pass",
+  "F-5": "pass"
+ },
+ "floorDetail": {},
+ "computedAt": "2026-10-03T05:24:25Z"
+}

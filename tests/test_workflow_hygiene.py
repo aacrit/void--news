@@ -54,6 +54,11 @@ ALLOWLIST: dict[str, str] = {
         "run from inside tests/test_grounding.py, which auto-merge-claude.yml "
         "and pipeline.yml (before the data commit) both run, so it guards the "
         "path that writes. Name it in a run: block when .github/ is next edited.",
+    # Rev 86 WS-G. A claude/* branch may not change .github/ (W-02), so the
+    # workflow half ships as a hand-merged PR whose exact diff is
+    # docs/proposals/RIGOR-WORKFLOW-DIFF.md. That PR adds this test to
+    # auto-merge-claude.yml and pipeline.yml and removes this entry.
+    "test_rigor.py": "pending the hand-merged workflow PR in docs/proposals/RIGOR-WORKFLOW-DIFF.md",
 }
 
 FOUR_GATES = ("tests/test_grounding.py", "tests/test_bias_defaults_gate.py",

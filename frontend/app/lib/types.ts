@@ -1,3 +1,5 @@
+import type { GroundingFlags } from "./verification";
+
 export interface BiasScores {
   /** 0 = far left, 50 = center, 100 = far right */
   politicalLean: number;
@@ -377,6 +379,9 @@ export interface DailyBriefData {
   corrections?: { date: string; product?: string; notice: string }[] | null;
   /** A radio correction withdrew this episode; every audio field is null. */
   audio_withdrawn?: boolean | null;
+  /** Per product: did the grounding pass complete. false renders "Not yet
+   *  verified" (lib/verification.ts). Absent on briefs before 2026-10-03. */
+  grounding_ran?: GroundingFlags | null;
 }
 
 export interface EditionMeta {

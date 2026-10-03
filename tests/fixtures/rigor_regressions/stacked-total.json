@@ -1,6 +1,6 @@
 {
  "class": "stacked-total",
- "gate": "derived_grounding.check_total",
+ "gate": "pipeline/editorial/derived_grounding.py::check_total",
  "product": "brief",
  "covers": [
   "pipeline/editorial/corrections.json#2026-10-03-brief-hegseth-total"

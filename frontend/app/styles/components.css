@@ -3709,3 +3709,22 @@ html {
 .sigil__roster {
   margin: 4px auto 3px;
 }
+
+/* "Not yet verified" (rev 86, components/UnverifiedLabel.tsx). Worn by a
+   TL;DR, Opinion or On Air broadcast whose grounding pass did not complete:
+   the product ships, and says so. Muted ink, not an alarm colour: it states a
+   fact about the text, it does not grade it. --fg-muted is AA on both papers. */
+.unverified-label {
+  display: inline-block;
+  margin: var(--space-1) 0 var(--space-2);
+  padding: 1px 8px;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  border: 1px solid currentColor;
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+}
