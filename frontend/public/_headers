@@ -94,6 +94,17 @@
 # rule: /*.woff2 overlapped /_next/static/* and emitted a duplicate
 # Cache-Control on every font, which defeats the immutable long-cache.
 
+# ── Outlet logos and favicons — a day fresh, a week stale-while-revalidate ─
+# Rate-limit relief (2026-10-03): these defaulted to max-age=14400 with
+# must-revalidate, so a reader browsing past the 4h mark re-asked the edge
+# about every logo on every page, and each ask counted against the per-IP
+# limit (a feed page shows dozens). A logo that changes is visible within a
+# day; nothing here is content a reader needs fresher than that.
+/logos/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/favicon*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
 # ── Service worker — never cache, always revalidate ─────────────────────
 # The browser MUST fetch the freshest sw.js on every load so a new deploy's
 # service worker is detected and installed promptly. Without this, a stale
