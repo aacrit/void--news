@@ -28,14 +28,38 @@ BORROWED = ("up first", "here's what we're covering", "first the headlines",
             "and that's the headlines", "these are our main stories", "stay with us", "and finally")
 
 
+# A 429 says "later", not "broken" (the same rule as verify_sections.fetch).
+# On 2026-10-03 the served-page sweep that runs just before this script grew
+# (served grounding, A-01 /story fetches), the CDN's rate-limit rule answered
+# brief.json with 429 on all three attempts of verify-production, and main
+# went red with every On Air file serving fine. 429 and 503 are retried with
+# backoff (Retry-After honoured, capped); any other status fails at once.
+_RETRY_STATUSES = (429, 503)
+_RETRY_DELAYS = (5, 15, 30)
+
+
 def fetch(url: str, binary: bool = False, head: bool = False):
-    req = urllib.request.Request(url, method="HEAD" if head else "GET",
-                                 headers={"User-Agent": "void-verify-audio/1.0", "Cache-Control": "no-cache"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        if head:
-            return r.status, dict(r.headers), b""
-        data = r.read()
-        return r.status, dict(r.headers), data if binary else data.decode("utf-8", "replace")
+    import time
+    import urllib.error
+
+    for attempt in range(len(_RETRY_DELAYS) + 1):
+        req = urllib.request.Request(url, method="HEAD" if head else "GET",
+                                     headers={"User-Agent": "void-verify-audio/1.0", "Cache-Control": "no-cache"})
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                if head:
+                    return r.status, dict(r.headers), b""
+                data = r.read()
+                return r.status, dict(r.headers), data if binary else data.decode("utf-8", "replace")
+        except urllib.error.HTTPError as e:
+            if e.code not in _RETRY_STATUSES or attempt == len(_RETRY_DELAYS):
+                raise
+            delay = _RETRY_DELAYS[attempt]
+            try:
+                delay = min(60, max(delay, int(e.headers.get("Retry-After") or 0)))
+            except (TypeError, ValueError):
+                pass
+            time.sleep(delay)
 
 
 def main(base: str) -> int:
