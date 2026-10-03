@@ -1,0 +1,234 @@
+# Cinematic variant, 2026-10-03. Written for the Orpheus 3B audition (narrator
+# "tara"; a male reader of record for M: lines, a female reader for F: lines) in the
+# Ken Burns register: short declarative sentences, documents read plainly, the
+# silence placed by the writer. Re-cut from the live script against the evidence
+# ledger (data/history/evidence/partition-of-india/): every line the document voice
+# reads is verbatim from a stored extract, and the extract id follows the DOCUMENT
+# marker in a comment. Sources are the event YAML and the ledger, nothing else.
+# Lines beginning with "#" are inert: the parser skips them
+# (pipeline/history/script_format.py::parse_script). "# MOOD:" and "# CLIP:" are the
+# directives of docs/proposals/HISTORY-AUDIO-ARCHIVAL.md. The Nehru clip is signed
+# (ledger recordings:) and its slot is carried unchanged from the live script. The
+# unverified Mountbatten candidate slot is NOT carried: a candidate belongs in the
+# ledger, not in a script directive that fires ten warnings per gate run (see
+# docs/proposals/HISTORY-SCRIPT-ALGORITHM-REVIEW.md). This file is not the live
+# script: nothing globs this directory.
+
+## OPEN
+# MOOD: dread
+N: There is a border in South Asia that two nuclear armed states have fought four wars across. The dispute is not finished.
+N: You would assume a line like that was drawn slowly, by people who knew the ground.
+N: It was drawn in five weeks, by a man who had never been to India, from one census, six years old.
+N: One census, any map, and five weeks.
+
+## TITLE
+N: The Partition of India. August, nineteen forty seven.
+
+## SCENE 1 | The count
+# MOOD: procedure
+N: The third of June, nineteen forty seven, in London. The Prime Minister is reading a statement to the House of Commons about India.
+N: One sentence in it decides what the map will be made of.
+
+## DOCUMENT | Clement Attlee | statement to the House of Commons | June 3, 1947
+# extract: src-hansard-19470603.p36
+# MOOD: procedure
+N: Clement Attlee, the Prime Minister, reading the statement to Parliament.
+M: For the purpose of determining the population of districts, the 1941 census figures will be taken as authoritative.
+
+## ASIDE
+N: A census taken in wartime, six years before.
+N: The secretaries of the Punjab commission asked for a map. Sir George Abell sent none. Any map, he suggested, read with the figures of nineteen forty one, would suffice.
+N: Cyril Radcliffe was a British barrister who had never been to India. He was given until the fifteenth of August.
+
+## DOCUMENT | Sir Cyril Radcliffe | the Punjab award, paragraph ten | August 12, 1947
+# extract: src-radcliffe-punjab.para10
+# MOOD: procedure
+N: Cyril Radcliffe, in the award.
+M: I have hesitated long over those not inconsiderable areas east of the Sutlej River and in the angle of the Beas and Sutlej Rivers in which Muslim majorities are found.
+
+## ASIDE
+N: He wrote that he had hesitated long. He had five weeks.
+N: One census, any map, and five weeks.
+
+## REST | short
+
+## SCENE 2 | Midnight
+# MOOD: rupture
+N: The fourteenth of August, in Delhi. The Constituent Assembly is sitting, Rajendra Prasad presiding. Towards midnight, Jawaharlal Nehru rises to move the pledge.
+
+## DOCUMENT | Jawaharlal Nehru | Tryst with Destiny, to the Constituent Assembly | August 14, 1947
+# extract: src-cad-19470814.sec53612
+# CLIP: id=clip-nehru-tryst-19470814 replaces=document status=signed source=https://archive.org/details/HindSwaraj-Speech-03-1 licence=CC0-as-stated origin="All India Radio" max=45s
+# MOOD: rupture
+N: What follows is a recording of Nehru. The Internet Archive holds it, and names All India Radio as its source.
+M: Long years ago we made a tryst with destiny, and now the time comes when we shall redeem our pledge, not wholly or in full measure, but very substantially. At the stroke of the midnight hour, when the world sleeps, India will awake to life and freedom.
+
+## ASIDE
+N: Before the English, in Hindustani, Nehru had told the same hall that big cities not far from Delhi were ablaze, and that their heat was reaching them there.
+N: The line was already signed, and dated the twelfth of August. It would not be published until after independence.
+
+## REST
+
+## SCENE 3 | Gurdaspur
+# MOOD: reckoning
+N: One district explains why the line is still argued about. Gurdaspur, where every count of its people puts the Muslim share a little over half, and the judges of the commission could not agree which count should rule.
+N: Two things the Viceroy said about it are in the record, two months apart. One in public, one in private.
+
+## DOCUMENT | Lord Louis Mountbatten | press conference, New Delhi | June 4, 1947
+# extract: src-mountbatten-press-19470604.p99-100
+# MOOD: procedure
+N: In public, on the fourth of June, Lord Mountbatten gave Gurdaspur as fifty point four per cent Muslim, and said this.
+M: With a difference of 0.8 per cent you will see at once that it is unlikely that the Boundary Commission will throw the whole of the district into the Muslim majority areas.
+
+## DOCUMENT | Record of an interview between Lord Mountbatten and the Nawab of Bhopal, by the Viceroy's staff | The Transfer of Power, volume XII, number 335 | August 4, 1947
+# extract: src-top-xii.item335
+# MOOD: reckoning
+N: In private, on the fourth of August, eight days before the award was signed, Mountbatten received the Nawab of Bhopal. The record his staff kept has him saying this.
+M: Kashmir, which was so placed geographically that it could join either Dominion, provided part of Gurdaspur were put into East Punjab by the Boundary Commission.
+
+## ASIDE
+N: The award gave three of the four tehsils of Gurdaspur to India. Its stated grounds are a canal and a hydro-electric scheme. Its reasons do not mention Kashmir.
+N: Lord Ismay, answering a protest from Liaquat Ali Khan, wrote that the Viceroy had said from the outset he must have nothing to do with the commissions.
+N: Nothing in the record shows that sentence reaching Radcliffe. This programme stops where the record stops.
+
+## REST
+
+## SCENE 4 | How many
+# MOOD: grief
+N: Nobody knows how many people died. What exists is a set of counts that disagree, each with a name on it.
+N: The Fact Finding Organisation of the Government of India examined nearly fifteen thousand witnesses. Their evidence covered two thousand and ninety four villages of West Punjab. The province had nineteen thousand nine hundred and fourteen.
+N: Khosla, who wrote its report, said the census of nineteen forty one was not accurate even when it was compiled.
+
+## DOCUMENT | G. D. Khosla, Fact Finding Organisation report | Stern Reckoning | 1949
+# extract: src-khosla-1949.p299
+# MOOD: grief
+N: Khosla, for the Fact Finding Organisation.
+M: Taking these factors into consideration the loss of non-Muslim life has been estimated at a figure between 200,000 and 250,000. It is believed that an equal number of Muslims perished in the course of the riots in India.
+
+## ASIDE
+N: One body, counting one side and believing the other.
+N: The Sikh compilation of nineteen fifty put the dead at about a million. The economists Bharadwaj and Mirza write of nearly a million, by many accounts.
+N: The migration has the same shape. The House of Commons was told in December that eight and a half million had moved between the two Punjabs. The economists count fourteen and a half million displaced in four years, across both borders.
+N: Larger figures exist, in books this programme could not read, so they are not said here.
+
+## REST
+
+## SCENE 5 | The force that was supposed to hold
+# MOOD: dread
+N: A force had been assigned to prevent this. Go back a week.
+N: The Punjab Boundary Force, under Major General Rees, was to hold the twelve districts the line would cut. On the eighth of August the Governor, Sir Evan Jenkins, telegraphed the Viceroy with the count.
+
+## DOCUMENT | Sir Evan Jenkins, Governor of the Punjab | telegram to the Viceroy | August 8, 1947
+# extract: src-top-xii.item382
+# MOOD: dread
+N: Evan Jenkins, to the Viceroy, by telegram.
+M: This means that in addition to police we have a strength of say 7500 effective rifles to control 12 districts with a population of no less than 12 million.
+
+## ASIDE
+N: Seven thousand five hundred rifles, for twelve million people. One rifle for at least sixteen hundred of them, before the police were counted.
+N: Five days later, the day after the award was signed, he wrote that he had estimated the need at twenty thousand men. He had about nine thousand.
+
+## SCENE 6 | The drum
+# MOOD: testimony
+N: Sarla Dutta was thirteen. Her father was killed on the road. She and two or three other girls were taken by a group of men, and she was converted and renamed.
+N: Months later, soldiers came looking for abducted girls. The man who held her put her inside the drum he kept his seeds in.
+
+## DOCUMENT | Sarla Dutta | oral history, The 1947 Partition Archive | 2024
+# extract: src-pa-sarla-dutta.para6
+# MOOD: testimony
+N: Sarla Dutta, in her own words.
+F: I slid my hand through an opening in the drum and screamed to make myself noticed.
+
+## ASIDE
+N: That December, the two governments agreed that abducted persons were to be restored to their own Dominion, even against their wishes.
+N: The following April, the Chief Liaison Officer reported about a hundred women still to be recovered in Sheikhupura. Sixteen had been recovered between the first and the twenty fifth.
+
+## REST
+
+## TURN | Five accounts
+# MOOD: reckoning
+N: Five accounts of what happened mostly agree about the documents, and disagree about which documents are the story. Each gets its own case first.
+
+## PERSPECTIVE | British Imperial | victor
+# MOOD: procedure
+N: The British account is administrative. Both Congress and the League accepted the plan; the Indian leaders chose the commissions and drafted their terms. The Viceroy kept out of the award, and Ismay said so in writing.
+N: On the speed, it holds that collapse was already under way, and a slower handover would have cost more lives. Attlee told Parliament they were constrained by urgency.
+
+## PERSPECTIVE | Indian Nationalist | victor
+# MOOD: reckoning
+N: The Indian nationalist account holds that Congress never wanted partition, and accepted it only after concluding that a united India had become ungovernable. Freedom came with a partition, not because of one.
+N: It points at what the violence tends to bury: five hundred and sixty two princely states integrated, a secular constitution written, the dead counted from witnesses.
+
+## PERSPECTIVE | Pakistani Nationalist | victor
+# MOOD: reckoning
+N: The Pakistani account begins with an election. In nineteen forty six the Muslim League won four hundred and forty six of the four hundred and ninety five seats reserved for Muslim voters.
+N: On Gurdaspur, it holds that a Muslim majority district went to India by a political decision, not a judicial one.
+N: On the state, it holds that something was built from almost nothing. Jinnah addressed its assembly on the eleventh of August.
+
+## DOCUMENT | Muhammad Ali Jinnah | presidential address to the Constituent Assembly of Pakistan, Karachi | August 11, 1947
+# extract: src-jinnah-19470811.whole
+# MOOD: reckoning
+N: Jinnah, to the assembly.
+M: On both sides, in Hindustan and Pakistan, there are sections of people who may not agree with it, who may not like it, but in my judgment there was no other solution and I am sure future history will record its verdict in favour of it.
+
+## PERSPECTIVE | Subaltern and displacement | vanquished
+# MOOD: testimony
+N: The fourth account is not about states at all. It holds that national narratives erase the people who walked.
+N: Khushi Muhammad Jut was seven, in a village in Ludhiana district that the line left in India. The Partition Archive summarised his interview, and recounts what his elders said.
+
+## DOCUMENT | The elders of Aloona Tola, as recounted by Khushi Muhammad Jut | The 1947 Partition Archive, the Archive's summary of his interview | 1947
+# extract: src-pa-khushi-muhammad.para8
+# MOOD: testimony
+N: His elders, as he recounted them.
+M: For generations we have been living here, how can we leave our homes?
+N: They left the village. His father hid the family in a field, on land that belonged to another man.
+
+## PERSPECTIVE | Women's history | vanquished
+# MOOD: grief
+N: The fifth account is about what was done to women, and then what the two states did: a recovery that moved women across the border by religion, even against their wishes.
+N: It cannot count them. The books that carry a count could not be read here, so none is given.
+N: Its witness is a poem, written by Amrita Pritam on a train out of Lahore, calling to the eighteenth century poet Waris Shah.
+
+## DOCUMENT | Amrita Pritam (Void translation from the Punjabi) | Ajj Aakhaan Waris Shah Nu, rendered by Void from the Punjabi | 1949
+# extract: src-amrita-pritam-1949.sec1.en
+# MOOD: grief
+N: Amrita Pritam, in a translation made by Void from the Punjabi.
+F: today lakhs of daughters weep, and say to you, Waris Shah: rise, you who felt for the grieving, rise and look at your own Punjab
+
+## REST
+
+## TURN | The shape of the disagreement
+# MOOD: reckoning
+N: None of the five is a lie. Each is a true account, and each has a hole in it.
+N: The British account leaves out what the staff of the Viceroy wrote about Gurdaspur before the award, and how thin the Governor found the Force.
+N: The Indian account leaves out the Muslim dead of the east, carried in its own count only as an equal number, believed.
+N: The Pakistani account leaves out the two stated grounds of the award, and the Sikh note of nineteen forty two that called Gurdaspur balanced, by an older census.
+N: The subaltern account leaves out the states that were built. The account of the women leaves out the recovered women who wished to return, and the men killed in the same columns.
+N: The holes are not random. Each omits what would cost its own side the most.
+N: And none of the five is a Sikh account. The Viceroy, on the fourth of June, said he had sent for a map, and was astounded to find that the plan divided that community into two almost equal parts.
+
+## REST
+
+## CLOSE
+# MOOD: grief
+N: The line left a hundred and sixty two enclaves on the wrong side of the border with what became Bangladesh. They were exchanged in twenty fifteen.
+N: In nineteen seventy one, Pakistan itself broke, and Bangladesh became a third country born from the first partition.
+N: Both states hold nuclear weapons now. They have fought four wars. Kashmir is still contested.
+N: One census, any map, and five weeks.
+
+## SAY
+Radcliffe = RAD-kliff
+Attlee = AT-lee
+Abell = AY-bell
+Jinnah = JIN-ah
+Gurdaspur = gur-DAHS-poor
+Sutlej = SUT-lej
+Beas = bee-AHS
+Ismay = IZ-may
+Liaquat = lee-AH-kut
+Khosla = KOHS-la
+Sheikhupura = shay-koo-POOR-ah
+Aloona Tola = ah-LOO-nah TOH-lah
+Waris Shah = WAH-ris SHAH
+Amrita Pritam = um-REE-tah PREE-tum
+Mahajan = mah-HAH-jun

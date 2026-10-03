@@ -31,6 +31,7 @@ import copy
 import hashlib
 import json
 import os
+import re
 import sys
 import tempfile
 import time
@@ -89,6 +90,10 @@ ROLE_FOR = {"N": NARRATOR, "M": DOC_M, "F": DOC_F}
 CLIP_BLOCK_BEFORE_MS = 500
 CLIP_BLOCK_AFTER_MS = GAPS["from_clip"]
 AMBIENCE_RMS_DBFS = -32.0
+# Scales every silence the timeline opens (line gaps, document beats, rests).
+# 1.0 is the Kokoro grammar. Orpheus has no speed control, so its pace comes
+# from silence: produce(gap_scale=...) sets this for one render.
+GAP_SCALE = 1.0
 DRY_WARN_MS = 4 * 60 * 1000
 
 
@@ -212,10 +217,12 @@ def build_timeline(turns, audio, *, opener_ms: int, transition_ms, outro_ms: int
         if seg is None:
             continue
         gap, wants_transition = _gap(prev, meta)
+        gap = int(gap * GAP_SCALE)
         pending_rest = (rests or {}).get(meta["seg_idx"]) if meta["seg_idx"] not in seen_segs else None
         seen_segs.add(meta["seg_idx"])
         if pending_rest and prev is not None:
             length = GAPS[pending_rest] if isinstance(pending_rest, str) else int(pending_rest)
+            length = int(length * GAP_SCALE)
             # The break cue plays inside the rest, starting a beat in, so the
             # silence is heard as music arriving rather than as a dropout.
             if break_ms:
@@ -714,14 +721,21 @@ def _load_ledger(slug: str):
 
 
 def produce(slug: str, out_dir: Path, *, only: list[str] | None = None,
-            promo: bool = True) -> dict | None:
+            promo: bool = True, engine: str | None = None, script_path: Path | None = None,
+            gap_scale: float | None = None, seed_offset: int = 0, strict: bool = True) -> dict | None:
+    """`engine="orpheus"` renders on the local GPU (briefing/tts_orpheus.py),
+    every line word-checked; `script_path` renders a variant beside the live
+    script (staging, never published from here); `strict` refuses to master
+    an Orpheus render with any line that never passed the word check."""
+    global GAP_SCALE
+    GAP_SCALE = gap_scale if gap_scale is not None else (1.2 if engine == "orpheus" else 1.0)
     event = yaml.safe_load((EVENTS / f"{slug}.yaml").read_text())
     # The bytes rendered are hashed here, at render time, and travel with the
     # MP3 to publish_audio.py, which records them in the manifest. That hash
     # is how tests/test_history_audio.py knows the audio still speaks the
     # current script (P0-4, 2026-10-02): a commit date cannot say it on a
     # shallow clone, and two corrected theses served uncorrected audio unseen.
-    script_bytes = (SCRIPTS / f"{slug}.txt").read_bytes()
+    script_bytes = (Path(script_path) if script_path else SCRIPTS / f"{slug}.txt").read_bytes()
     script_sha256 = hashlib.sha256(script_bytes).hexdigest()
     script = parse_script(script_bytes.decode("utf-8"), slug)
     findings = validate_script(script, event)
@@ -769,16 +783,48 @@ def produce(slug: str, out_dir: Path, *, only: list[str] | None = None,
     print(f"  [history] narrator {voices['narrator']}, quotes {voices['document_m']}/"
           f"{voices['document_f']} ({voices['why']})")
 
+    orpheus = None
+    if engine == "orpheus":
+        from briefing.tts_orpheus import OrpheusEngine, ORPHEUS_VOICES
+        # The SAY table is Kokoro's G2P respellings; Orpheus reads text, so it
+        # gets only entries written for it ("orpheus:Beas = ..."). Every SAY
+        # name is also a name the ASR cannot spell: logged for the ear, never
+        # a failed take.
+        say_all = dict(script.say)
+        script.say = {k.split(":", 1)[1].strip(): v for k, v in say_all.items() if k.startswith("orpheus:")}
+        names = set()
+        for k, v in say_all.items():
+            for w in re.findall(r"[a-z]+", f"{k.split(':', 1)[-1]} {v}".lower()):
+                names.add(w)
+        orpheus = OrpheusEngine(name_tokens=names, seed_offset=seed_offset,
+                                ledger_path=Path(out_dir) / f"{slug}.render.json")
+        voices = dict(voices, narrator=ORPHEUS_VOICES["A"], document_m=ORPHEUS_VOICES["B"],
+                      document_f=ORPHEUS_VOICES["C"], why="Orpheus casting (2026-10-03 audition)")
+        print(f"  [history] Orpheus: narrator {ORPHEUS_VOICES['A']}, quotes {ORPHEUS_VOICES['B']}/"
+              f"{ORPHEUS_VOICES['C']}, gaps x{GAP_SCALE}")
     turns = build_turns(script, moods, admitted)
     clip_turns = [(s, m) for s, m in turns if m.get("clip") is not None]
     speak = [s for s, m in turns if m.get("clip") is None]
     vmap = {NARRATOR: voices["narrator"], DOC_M: voices["document_m"], DOC_F: voices["document_f"]}
-    engines = [KokoroEngine(voices=vmap), EdgeTtsEngine()]
+    # No fallback under Orpheus: a Kokoro line inside an Orpheus narration is
+    # a change of person, so a failed Orpheus render fails whole.
+    engines = [orpheus] if orpheus is not None else [KokoroEngine(voices=vmap), EdgeTtsEngine()]
     t0 = time.time()
-    res = synthesize_with_fallback(speak, engines=engines)
+    res = synthesize_with_fallback(speak, engines=engines,
+                                   deadline_s=(6 * 3600 if orpheus is not None else None))
     if res is None:
         print("  [history] every engine failed")
         return None
+    if orpheus is not None:
+        bad = {u: v for u, v in orpheus.ledger.get("units", {}).items() if not v.get("passed")}
+        for u, v in bad.items():
+            print(f"  [history] RULE 1: unit {u} never passed the word check: {v.get('wrong')} :: {v.get('text', '')[:90]}")
+        heard = sorted({str(o) for v in orpheus.ledger.get("units", {}).values() for o in v.get("names") or []})
+        if heard:
+            print(f"  [history] names for the ear ({len(heard)}): {', '.join(heard[:12])}")
+        if bad and strict:
+            print(f"  [history] {len(bad)} unit(s) failed the word check; not mastering (strict)")
+            return None
     audio = dict(res.audio)
     clip_audio: dict[int, object] = {}
     for spec, meta in clip_turns:
@@ -1012,9 +1058,18 @@ def main() -> int:
     ap.add_argument("--only", default=None,
                     help='a listening test: render only these segments, e.g. "OPEN,SCENE 2"')
     ap.add_argument("--no-promo", action="store_true")
+    ap.add_argument("--engine", choices=["kokoro", "orpheus"], default=None,
+                    help="orpheus: local GPU, every line word-checked (default: Kokoro chain)")
+    ap.add_argument("--script", default=None, help="render this script file instead of the live one (staging)")
+    ap.add_argument("--gap-scale", type=float, default=None, help="scale every silence (default 1.2 under orpheus)")
+    ap.add_argument("--seed-offset", type=int, default=0)
+    ap.add_argument("--lenient", action="store_true",
+                    help="master even if a line never passed the word check (a listening copy, never published)")
     a = ap.parse_args()
     only = [s for s in (a.only or "").split(",") if s.strip()] or None
-    return 0 if produce(a.slug, Path(a.out), only=only, promo=not (a.no_promo or only)) else 1
+    return 0 if produce(a.slug, Path(a.out), only=only, promo=not (a.no_promo or only),
+                        engine=a.engine, script_path=Path(a.script) if a.script else None,
+                        gap_scale=a.gap_scale, seed_offset=a.seed_offset, strict=not a.lenient) else 1
 
 
 if __name__ == "__main__":
