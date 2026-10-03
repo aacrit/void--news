@@ -107,3 +107,7 @@ frontend/public/audio/history/*.mp3
 # producer renders it in memory, so it is never committed.
 pipeline/briefing/assets/history/
 .pair_test_scratch.db*
+
+# Local TTS audition (docs/handoffs/PARTITION-TTS-AUDITION.md): never committed
+out/
+.venv-audition-*
