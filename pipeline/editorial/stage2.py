@@ -90,7 +90,8 @@ def _fetch_cards(supabase, cluster_ids: list[str]) -> dict[str, dict]:
     for i in range(0, len(cluster_ids), 100):
         try:
             res = supabase.table("story_clusters").select(
-                "id,title,summary,summary_tier,source_count,content_type"
+                "id,title,summary,summary_tier,source_count,content_type,"
+                "summary_article_hash,consensus_points,divergence_points"
             ).in_("id", cluster_ids[i:i + 100]).execute()
             for r in (res.data or []):
                 out[r["id"]] = r
@@ -172,6 +173,169 @@ def _source_text(arts: list[dict]) -> str:
 
 _REPAIR_IDS = ("E-13", "E-14", "E-16")
 
+# What the summarizer reads of one body (cluster_summarizer._ARTICLE_BODY_MAX_CHARS,
+# restated so this module does not import the summarizer to read a constant).
+_BODY_EXCERPT_CHARS = 2200
+
+
+def _default_build_dir():
+    import os
+    from pathlib import Path
+    return Path(os.environ.get("VOID_EXPORT_BUILD_DIR")
+                or Path(__file__).resolve().parents[2] / "frontend" / "build-data")
+
+
+def _read_record(build_dir, cid: str) -> Optional[dict]:
+    import json
+    from pathlib import Path
+    path = Path(build_dir) / grounding.DIRNAME / f"{cid}.json"
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+
+def cached_evidence_status(record: Optional[dict], member_ids,
+                           written_from_members: bool) -> str:
+    """Whether a stored index can JUDGE a cached card, or only fail to confirm.
+
+    "ok" only when every one of these holds; any other answer is the reason it
+    cannot, and the grounded rules then skip (rev 86, factual rigor plan gap 3):
+
+      * the record exists and was built at 8f from whole bodies
+        (`pre-truncation`), in format 3. A format-2 or export-stage record was
+        indexed from the step-10 stubs, which is how one top 20 false-flagged
+        48 numbers on 2026-10-01;
+      * the card was written from the cluster's CURRENT membership (its
+        summary_article_hash is this membership's), so the record's articles
+        are the ones the card was written from;
+      * the record indexes every current member;
+      * no member was already a 300-character stub when indexed;
+      * no member's index stopped short of what the summarizer read of its
+        body (2,200 characters), which a long title plus RSS summary can cause
+        inside the 3,000-character per-article bound.
+
+    An absence in an index that fails any of these is "cannot confirm", never
+    "invented", and a cut on it would delete a true sentence.
+    """
+    if not record:
+        return "no-record"
+    if record.get("stage") != grounding.STAGE_PRE:
+        return "not-pre-truncation"
+    if int(record.get("format") or 0) < 3:
+        return "format"
+    if not written_from_members:
+        return "membership-changed"
+    rows = {a.get("id"): a for a in record.get("articles") or []}
+    ids = [i for i in member_ids or [] if i]
+    if not ids or not set(ids) <= set(rows):
+        return "uncovered"
+    for aid in ids:
+        row = rows[aid]
+        if row.get("stub"):
+            return "stub"
+        if row.get("truncated"):
+            body = int(row.get("bodyChars") or 0)
+            indexed_body = grounding.PER_ARTICLE_CHARS - (
+                int(row.get("chars") or 0) - body)
+            if indexed_body < min(body, _BODY_EXCERPT_CHARS):
+                return "short-index"
+    return "ok"
+
+
+def cached_evidence(build_dir, cid: str, member_ids,
+                    written_from_members: bool):
+    """(Verifier or None, status) for a card not summarized in this run.
+
+    The Verifier comes from `grounding.load_verifier`, the persisted index the
+    previous run's 8f wrote from whole bodies, and is passed to the validators
+    as `source_index`. None whenever the status is not "ok".
+    """
+    status = cached_evidence_status(_read_record(build_dir, cid), member_ids,
+                                     written_from_members)
+    if status != "ok":
+        return None, status
+    return grounding.load_verifier(build_dir, cid), status
+
+
+def _write_points(supabase, cid: str, fields: dict) -> bool:
+    try:
+        supabase.table("story_clusters").update(fields).eq("id", cid).execute()
+        return True
+    except Exception as e:
+        print(f"    [warn] points write failed for {cid[:8]}: {e}")
+        return False
+
+
+def _check_card_points(card: dict, evidence, rigor: dict,
+                       outlets=()) -> tuple[dict, list]:
+    """E-13, E-14, E-16 on every consensus and divergence point of one card.
+
+    Returns ({field: kept list} for each field that lost a point, dropped).
+    The caller persists the kept lists, which is what makes every later reader
+    (the Deep Dive export, the print archive, the TL;DR, On Air, the Weekly,
+    `derived_grounding.cluster_text`) read only the points that passed.
+    """
+    # Built once per card: a text index over every article is not free.
+    ev = std._evidence(evidence) if evidence is not None else None
+    present = ev is not None and bool(getattr(ev, "present", False))
+    changed: dict = {}
+    dropped: list = []
+    for field in std.POINT_FIELDS:
+        pts = std.as_points(card.get(field))
+        if not pts:
+            continue
+        rigor["points_checked"] += len(pts)
+        if not present:
+            rigor["points_unconfirmable"] += len(pts)
+        kept, gone = std.check_points(pts, ev if present else None, outlets)
+        if gone:
+            changed[field] = kept
+            dropped.extend(gone)
+            rigor["points_dropped"] += len(gone)
+            for _text, found in gone:
+                rid = found[0].id
+                rigor["points_dropped_by_rule"][rid] = (
+                    rigor["points_dropped_by_rule"].get(rid, 0) + 1)
+    return changed, dropped
+
+
+def new_rigor_counters() -> dict:
+    """The counters the factual-rigor paths of 8d.3 record, per run.
+
+    Stored under llm_metrics["editorial"]["rigor"] so a later rigor.json can
+    read them. Named for what each counts:
+
+      points_checked          consensus + divergence points read at 8d.3
+      points_unconfirmable    of those, read with no evidence (E-16 only)
+      points_dropped          points removed, the card kept
+      points_dropped_by_rule  {rule id: n}, first finding of each drop
+      fresh_cards_checked     cards summarized this run, checked against the
+                              text they were written from
+      cached_cards            cards NOT summarized this run
+      cached_cards_checked    of those, judged against their stored
+                              pre-truncation index
+      cached_cards_cannot_confirm  {reason: n} for the rest
+      cached_cards_cut        cached cards with at least one sentence cut
+      cached_sentences_cut    sentences cut from cached cards
+      factual_drops           cards dropped for an enforced E-13/E-14/E-16
+                              finding left after repair (never shipped)
+      factual_drops_by_rule   {rule id: n}
+      factual_drops_kept_before_rev86  of those, cards the old path KEPT
+                              (fewer than 3 articles, no LLM, no answer, or
+                              a failed write)
+      points_write_failed_drops  cards dropped because their filtered points
+                              could not be written back
+    """
+    return {"points_checked": 0, "points_unconfirmable": 0,
+            "points_dropped": 0, "points_dropped_by_rule": {},
+            "fresh_cards_checked": 0, "cached_cards": 0,
+            "cached_cards_checked": 0, "cached_cards_cannot_confirm": {},
+            "cached_cards_cut": 0, "cached_sentences_cut": 0,
+            "factual_drops": 0, "factual_drops_by_rule": {},
+            "factual_drops_kept_before_rev86": 0,
+            "points_write_failed_drops": 0}
+
 
 def _repair_by_cut(supabase, cid: str, card: dict, src: str | None,
                    removed_text: str | None = None,
@@ -212,28 +376,52 @@ def write_bench_index(supabase, cluster_ids: list[str],
     one top 20 by the audit of 2026-10-01). An article carried in by the
     36-hour lookback was cut by an EARLIER run, and its row says so (`stub`).
     The export keeps this record (grounding.keep_existing).
+
+    An existing record is KEPT when it indexes exactly the same articles from
+    fewer stubs (rev 86). A cached card's articles were all fetched by earlier
+    runs, so by now step 10 has cut every one of them, and rebuilding its
+    record here would replace the whole-body index the run that wrote the card
+    stored with an index of stubs. The next run judges that card against this
+    file (stage2.cached_evidence), and against stubs it can only answer
+    "cannot confirm".
     """
-    import os
     from pathlib import Path
-    out = Path(build_dir or os.environ.get("VOID_EXPORT_BUILD_DIR")
-               or Path(__file__).resolve().parents[2] / "frontend" / "build-data")
+    out = Path(build_dir) if build_dir else _default_build_dir()
     arts = _fetch_articles_for(supabase, list(cluster_ids))
     n = 0
     for cid in cluster_ids:
         rows = arts.get(cid) or []
         if not rows:
             continue
-        grounding.write_record(out, grounding.build_record(
-            cid, rows, stage=grounding.STAGE_PRE))
+        new = grounding.build_record(cid, rows, stage=grounding.STAGE_PRE)
+        if _keep_better_record(_read_record(out, cid), new):
+            n += 1
+            continue
+        grounding.write_record(out, new)
         n += 1
     return n
+
+
+def _keep_better_record(existing: Optional[dict], new: dict) -> bool:
+    """True when `existing` indexes the same articles as `new` from fewer stubs."""
+    if not existing or existing.get("stage") != grounding.STAGE_PRE:
+        return False
+    if int(existing.get("format") or 0) < int(new.get("format") or 0):
+        return False
+    old_rows = existing.get("articles") or []
+    new_rows = new.get("articles") or []
+    if {a.get("id") for a in old_rows} != {a.get("id") for a in new_rows}:
+        return False
+    stubs = lambda rs: sum(1 for a in rs if a.get("stub"))  # noqa: E731
+    return stubs(old_rows) < stubs(new_rows)
 
 
 def review_bench(supabase, candidate_ids: list[str],
                  run_critique: bool = True,
                  prefer_provider: str | None = "gemini",
                  entity_removed: Optional[dict] = None,
-                 fresh_ids: Optional[set] = None) -> dict:
+                 fresh_ids: Optional[set] = None,
+                 build_dir=None) -> dict:
     """Steps 8d.2 and 8d.3 over the bench.
 
     Every candidate is read twice: by the deterministic validators in
@@ -245,15 +433,28 @@ def review_bench(supabase, candidate_ids: list[str],
     An ADVISORY finding is recorded and never causes a regeneration or a drop:
     the rules whose precision is not yet proven do not get to delete a story.
 
-    Returns {survivors, dropped, regenerated, passed, candidates, by_id, worst}.
+    Rule 1 (rev 86): a card that still carries an ENFORCED E-13, E-14 or E-16
+    finding after the cut repair never ships, whatever its article count or
+    the model's availability. The old path kept it when the cluster had fewer
+    than three articles or no model could answer, on the reasoning that a
+    flawed card beats a hole; for a factual finding Rule 1 says otherwise.
+    Style-only failures are still kept on that path. Every consensus and
+    divergence point is read by the same three rules against the same
+    evidence as its card, and a failing point is dropped (the card is kept).
+
+    Returns {survivors, dropped, regenerated, passed, candidates, by_id, worst,
+    rigor}.
     """
     out = {"survivors": list(candidate_ids), "dropped": [], "regenerated": 0,
            "passed": 0, "candidates": len(candidate_ids), "by_id": {},
-           "critiqued": 0, "cut_sentences": 0}
+           "critiqued": 0, "cut_sentences": 0, "rigor": new_rigor_counters()}
     if not candidate_ids:
         return out
+    rigor = out["rigor"]
+    build_dir = build_dir or _default_build_dir()
 
     from summarizer.cluster_summarizer import (  # heavy, pipeline-only
+        _content_hash,
         _store_cluster_summary,
         critique_cards,
         summarize_cluster,
@@ -288,36 +489,97 @@ def review_bench(supabase, candidate_ids: list[str],
     survivors: list[str] = []
     dropped: list[tuple[str, str]] = []
     regenerated = 0
+
+    def _drop_factual(cid: str, factual: list, why: str) -> None:
+        dropped.append((cid, factual[0].id))
+        rigor["factual_drops"] += 1
+        rigor["factual_drops_kept_before_rev86"] += 1
+        for f in factual:
+            rigor["factual_drops_by_rule"][f.id] = (
+                rigor["factual_drops_by_rule"].get(f.id, 0) + 1)
+        print(f"    dropped ({why}): enforced grounded finding "
+              f"{', '.join(sorted({f.id for f in factual}))} remains after "
+              f"repair, and Rule 1 does not ship it")
+
     for cid in candidate_ids:
         card = cards.get(cid)
         if not card:
             survivors.append(cid)
             continue
-        src = _source_text(articles.get(cid) or [])
+        rows = articles.get(cid) or []
+        src = _source_text(rows)
         # The grounded rules read a card against the text it was WRITTEN from.
-        # That is this run's database text only for a card summarized in this
-        # run (8d): a cached card was written on an earlier day from bodies
-        # step 10 has since cut to 300 characters, so an absence in them is
-        # "cannot confirm", and judging it would cut true sentences. Measured
-        # on the harness built from truncated bodies: 85 sentences cut, nearly
-        # all of them correct.
-        grounded = src if cid in (fresh_ids or ()) else None
-        candidate = dict(card, source_text=grounded) if grounded else dict(card)
-        findings = std.validate_candidate(candidate)
+        # For a card summarized in this run (8d) that is this run's database
+        # text. A cached card was written on an earlier day from bodies step 10
+        # has since cut to 300 characters, so this run's text cannot judge it
+        # (measured on the harness built from truncated bodies: 85 sentences
+        # cut, nearly all of them correct). Its evidence is the index the run
+        # that wrote it stored at 8f from whole bodies, used only when that
+        # index provably covers what the card was written from; otherwise the
+        # grounded rules report "cannot confirm" and skip (rev 86).
+        index = None
+        if cid in (fresh_ids or ()):
+            grounded = src or None
+            if grounded:
+                rigor["fresh_cards_checked"] += 1
+        else:
+            grounded = None
+            rigor["cached_cards"] += 1
+            try:
+                same = bool(rows) and (card.get("summary_article_hash")
+                                       == _content_hash(rows))
+            except Exception:
+                same = False
+            index, status = cached_evidence(
+                build_dir, cid, [a.get("id") for a in rows], same)
+            if index is not None:
+                rigor["cached_cards_checked"] += 1
+            else:
+                bucket = rigor["cached_cards_cannot_confirm"]
+                bucket[status] = bucket.get(status, 0) + 1
+        evidence = grounded if grounded else index
+
+        def _candidate() -> dict:
+            if grounded:
+                return dict(card, source_text=grounded)
+            if index is not None:
+                return dict(card, source_index=index)
+            return dict(card)
+
+        # The points, against the same evidence as the card. Written back
+        # before anything reads them, so every later reader sees only the
+        # points that passed.
+        outlets = sorted({a.get("source_name") for a in rows if a.get("source_name")})
+        changed, gone = _check_card_points(card, evidence, rigor, outlets)
+        if changed:
+            for text, found in gone:
+                print(f"    [point dropped] {found[0].id}: \"{text[:90]}\"")
+            if not _write_points(supabase, cid, changed):
+                # The unchecked points would ship on the Deep Dive and feed
+                # the TL;DR. Without the write, the card does not ship.
+                dropped.append((cid, "points"))
+                rigor["points_write_failed_drops"] += 1
+                continue
+            card.update(changed)
+
+        findings = std.validate_candidate(_candidate())
         removed = (entity_removed or {}).get(cid)
         if removed or any(
                 f.id in _REPAIR_IDS and f.message.startswith(("summary", "sentence"))
                 for f in findings):
-            cut = _repair_by_cut(supabase, cid, card, grounded,
+            cut = _repair_by_cut(supabase, cid, card, evidence,
                                  removed_text=removed, kept_text=src)
             if cut:
                 out["cut_sentences"] += len(cut)
-                candidate = dict(card, source_text=grounded) if grounded else dict(card)
-                findings = std.validate_candidate(candidate)
+                if index is not None:
+                    rigor["cached_cards_cut"] += 1
+                    rigor["cached_sentences_cut"] += len(cut)
+                findings = std.validate_candidate(_candidate())
         all_findings.extend(findings)
         blocking = [f for f in findings
                     if std.VALIDATORS_BY_ID.get(f.id)
                     and std.VALIDATORS_BY_ID[f.id].status == std.ENFORCED]
+        factual = [f for f in blocking if f.id in _REPAIR_IDS]
         notes = [_note(f) for f in blocking]
         notes += [f"{rid}: {detail}" for rid, detail in critique.get(cid, [])]
         if not notes:
@@ -325,14 +587,17 @@ def review_bench(supabase, candidate_ids: list[str],
             out["passed"] += 1
             continue
 
-        arts = articles.get(cid) or []
+        arts = rows
         title = (card.get("title") or "")[:60]
         print(f"  [editorial] {cid[:8]} \"{title}\": "
               f"{', '.join(n.split(':')[0] for n in notes)}")
         if len(arts) < 3 or not llm_available():
-            # Nothing to regenerate FROM. Keep the card: a thin cluster with a
-            # flawed summary is still better than a hole, and the floor pass
-            # will replace a summary that is actually unusable.
+            # Nothing to regenerate FROM. A style failure is kept: a thin
+            # cluster with an awkward summary beats a hole, and the floor pass
+            # replaces a summary that is unusable. A factual one is not kept.
+            if factual:
+                _drop_factual(cid, factual, "thin cluster or no model")
+                continue
             survivors.append(cid)
             continue
         result = None
@@ -343,6 +608,9 @@ def review_bench(supabase, candidate_ids: list[str],
         except Exception as e:
             print(f"    [warn] regeneration raised: {e}")
         if not result:
+            if factual:
+                _drop_factual(cid, factual, "the model could not answer")
+                continue
             survivors.append(cid)   # the model could not answer; not the card's fault
             continue
         _regen = {"title": result.get("headline"), "summary": result.get("summary")}
@@ -362,20 +630,42 @@ def review_bench(supabase, candidate_ids: list[str],
             dropped.append((cid, still[0].id))
             print(f"    dropped: still fails {', '.join(f.id for f in still)}")
             continue
+        # The regenerated points, against the text they were written from.
+        new_points = {"consensus_points": std.as_points(result.get("consensus")),
+                      "divergence_points": std.as_points(result.get("divergence"))}
+        point_changes, point_gone = _check_card_points(new_points, src or None,
+                                                       rigor, outlets)
+        for text, found in point_gone:
+            print(f"    [point dropped] {found[0].id}: \"{text[:90]}\"")
+        if point_changes:
+            result["consensus"] = point_changes.get(
+                "consensus_points", new_points["consensus_points"])
+            result["divergence"] = point_changes.get(
+                "divergence_points", new_points["divergence_points"])
         try:
-            from summarizer.cluster_summarizer import _content_hash
             # _store_cluster_summary records into `metrics`, including a
             # "failed" bump on its own exception path, so the dict has to carry
             # every key it touches.
             _store_cluster_summary(supabase, cid, result, _content_hash(arts),
                                    {"summarized": 0, "failed": 0,
                                     "updated_ids": [], "updated_summaries": {}})
-            regenerated += 1
-            survivors.append(cid)
-            print("    regenerated, clean")
         except Exception as e:
             print(f"    [warn] regenerated summary write failed: {e}")
+            if factual:
+                _drop_factual(cid, factual, "the regenerated card was not stored")
+                continue
             survivors.append(cid)
+            continue
+        # The store writes a points field only when its list is non-empty, so
+        # a list the check emptied is written here, or the previous card's
+        # points would stand beside the new card.
+        if point_changes and not _write_points(supabase, cid, point_changes):
+            dropped.append((cid, "points"))
+            rigor["points_write_failed_drops"] += 1
+            continue
+        regenerated += 1
+        survivors.append(cid)
+        print("    regenerated, clean")
 
     out["survivors"] = survivors
     out["dropped"] = [cid for cid, _ in dropped]
@@ -393,6 +683,13 @@ def review_bench(supabase, candidate_ids: list[str],
           f"({rate:.1f}%) | {regenerated} regenerated, {len(dropped)} dropped, "
           f"{out['cut_sentences']} ungrounded sentence(s) cut "
           f"| worst: {worst}")
+    print(f"  Rigor: {rigor['points_dropped']}/{rigor['points_checked']} points "
+          f"dropped ({rigor['points_unconfirmable']} read with no evidence); "
+          f"{rigor['cached_cards_checked']}/{rigor['cached_cards']} cached cards "
+          f"judged against their stored index, {rigor['cached_cards_cut']} cut "
+          f"({rigor['cached_sentences_cut']} sentences); cannot confirm "
+          f"{rigor['cached_cards_cannot_confirm'] or 'none'}; "
+          f"{rigor['factual_drops']} factual drop(s)")
     return out
 
 

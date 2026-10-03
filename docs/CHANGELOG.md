@@ -18,6 +18,62 @@ lives in this file.
 
 ---
 
+## rev 86 WS-A (rigor): points are checked, cached cards are judged, a factual failure never ships (2026-10-03)
+
+Gaps 1 and 3 of `docs/proposals/FACTUAL-RIGOR-PLAN-2026-10-02.md`. Zero new
+LLM calls. Every rule change has a planted-defect test in
+`tests/test_editorial_standard.py` or `tests/test_brief_grounding.py`.
+
+1. **Consensus and divergence points are checked** (gap 1). They were read by
+   no rule, published on the Deep Dive, and handed to the TL;DR and On Air as
+   evidence by `derived_grounding.cluster_text`, so an unsourced number in a
+   point cleared the same number downstream. At 8d.3 every point now runs
+   E-13, E-14 and E-16 (`standard.validate_point`, `check_points`) against the
+   same evidence as its card. A failing point is DROPPED and the card is kept;
+   the surviving list is written back before the brief reads its rows, and a
+   card whose filtered points cannot be written does not ship. A regenerated
+   card's points are checked against the text it was written from.
+   `cluster_text` also re-applies E-16, the one rule that needs no evidence.
+   The attachment half of E-13 skips the cluster's own outlet names, because a
+   divergence point attributes figures to outlets ("The Daily Beast and The
+   Hill emphasize ... 2028") and no article names its masthead beside a number:
+   that was 4 of the 8 point findings on the committed feed of 2026-10-02,
+   measured before the index gate below.
+2. **A cached card is judged against its stored index** (gap 3). A card not
+   summarized this run used to skip E-13 and E-14 entirely. It is now checked
+   against the pre-truncation record the run that wrote it stored at 8f, via
+   `grounding.load_verifier` as `source_index`, and enforced findings are
+   repaired by cut. The index is used only when it can judge
+   (`stage2.cached_evidence_status`): pre-truncation stage, format 3, the card
+   written from this membership (its `summary_article_hash`), every member
+   indexed, no member a stub, no member indexed short of the 2,200 body
+   characters the summarizer reads. Anything else is "cannot confirm" and cuts
+   nothing. On the committed feed, 6 of 35 records qualify, 23 fail on stubs and
+   6 on a short index. Ungated, the stub records still produce 5 point
+   findings in 295 points; gated, 0 of 54.
+3. **8f keeps a whole-body index over the same articles' stubs.** A cached
+   card's articles are all stubs by its second day, and rebuilding its record
+   at 8f replaced the whole-body index with one that can only answer "cannot
+   confirm". The existing record is kept when it indexes the same articles
+   from fewer stubs.
+4. **A factual failure never ships.** A card still carrying an enforced E-13,
+   E-14 or E-16 finding after repair was KEPT when its cluster had fewer than
+   three articles, no model was available, the model returned nothing, or the
+   regenerated card failed to store. It is now dropped on every one of those
+   paths. A style-only failure is still kept there.
+5. **Counters** in `llm_metrics["editorial"]["rigor"]`, printed as the
+   "Rigor:" line of 8d.3 and asserted by `tests/test_editorial_stage.py`:
+   points checked, unconfirmable and dropped (by rule), fresh cards checked,
+   cached cards checked, cannot-confirm reasons, cached cards and sentences
+   cut, factual drops (by rule, and how many the old path kept), and drops for
+   a failed points write.
+
+Also: the two pytest-only tests in `tests/test_editorial_standard.py` (E-13,
+E-14) sat after a `sys.exit(main())` and CI, which runs the file with `python`,
+never reached them. They run on both paths now.
+
+---
+
 ## rev 85 WS-A: the deploy follows the data, and the merge gate cannot rewrite itself (2026-10-02)
 
 Infra and CI half of the holistic plan (`docs/proposals/HOLISTIC-PLAN-2026-10-02.md`).
