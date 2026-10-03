@@ -8,6 +8,8 @@ import { hapticLight } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
 import { splitBriefParagraphs } from "../lib/briefText";
 import { useHeightMorph } from "../lib/useHeightMorph";
+import { isUnverified } from "../lib/verification";
+import UnverifiedLabel from "./UnverifiedLabel";
 
 type ExpandedSection = null | "tldr" | "opinion";
 
@@ -194,6 +196,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                   </button>
                 </div>
                 {brief.tldr_headline && <h3 className="skb__section-hl skb__section-hl--tldr">{String(brief.tldr_headline)}</h3>}
+                {isUnverified(brief, "tldr") && <UnverifiedLabel />}
                 <div className="skb__section-body skb__section-body--tldr">
                   {splitBriefParagraphs(String(brief.tldr_text)).map((para, i) => <p key={i}>{para}</p>)}
                 </div>
@@ -218,6 +221,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                   </button>
                 </div>
                 {brief.opinion_headline && <h3 className="skb__section-hl skb__section-hl--opinion">{String(brief.opinion_headline)}</h3>}
+                {isUnverified(brief, "opinion") && <UnverifiedLabel />}
                 <div className="skb__section-body skb__section-body--opinion">
                   {splitBriefParagraphs(String(brief.opinion_text || "")).map((para, i) => <p key={i}>{para}</p>)}
                 </div>

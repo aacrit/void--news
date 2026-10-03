@@ -7,6 +7,8 @@ import ScaleIcon from "./ScaleIcon";
 import VuMeter from "./broadcast/VuMeter";
 import { hapticConfirm, hapticLight, hapticMedium } from "../lib/haptics";
 import { splitBriefParagraphs } from "../lib/briefText";
+import { isUnverified } from "../lib/verification";
+import UnverifiedLabel from "./UnverifiedLabel";
 import {
   chapterKindLabel,
   chapterMarks,
@@ -530,6 +532,7 @@ export default function OnAirPanel() {
               <div className="fp__bcast-content">
                 <div className="fp__bcast-section">
                   <span className="fp__bcast-section-label">Summary</span>
+                  {isUnverified(brief, "tldr") && <UnverifiedLabel />}
                   <div className="fp__bcast-text">
                     {splitBriefParagraphs(brief.tldr_text).map((para, i) => <p key={i}>{para}</p>)}
                   </div>
@@ -540,6 +543,7 @@ export default function OnAirPanel() {
                     <div className="fp__bcast-section">
                       <div className="fp__bcast-section-head">
                         <span className="fp__bcast-section-label">Opinion</span>
+                        {isUnverified(brief, "opinion") && <UnverifiedLabel />}
                         {brief.opinion_lean && (
                           <span className={`fp__bcast-lean fp__bcast-lean--${brief.opinion_lean}`}>
                             {brief.opinion_lean}

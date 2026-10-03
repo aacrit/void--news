@@ -1656,6 +1656,8 @@ def _produce_radio_edition(edition: str, clusters: list[dict], brief: dict, brie
         return False
     brief_row["audio_script"] = result.audio_script
     brief_row.update(result.as_row_fields())
+    # The show that shipped is this rundown, so its flag is the rundown's.
+    brief_row.setdefault("grounding_ran", {})["onair"] = getattr(rundown, "grounded", None) is True
     brief_row["generator"] = f"{brief.get('generator') or ''}+radio:{label}:{result.engine}".strip("+")
     print(f"  [radio:{edition}] {result.duration_seconds:.0f}s, {len(result.chapters)} chapters, "
           f"engine {result.engine}, {result.timing.get('wpm')} wpm, news at {result.news_start_seconds}s, "
@@ -1703,6 +1705,16 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                     "top_cluster_ids": brief.get("top_cluster_ids", []),
                     "generator": brief.get("generator"),
                 }
+                # Whether each derived product's grounding pass completed
+                # (rev 86). False ships with a "Not yet verified" label;
+                # tests/test_rigor.py F-3 reads it from brief.json. "onair" is
+                # the legacy script's flag until the radio path replaces it.
+                _gr = brief.get("_grounding_ran") or {}
+                brief_row["grounding_ran"] = {
+                    "tldr": _gr.get("tldr") is True,
+                    "opinion": (_gr.get("opinion") is True) if brief.get("opinion_text") else None,
+                    "onair": _gr.get("script") is True,
+                }
 
                 # Fallback: if this run produced an empty/placeholder brief,
                 # carry forward the previous brief so the frontend always has
@@ -1722,7 +1734,7 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                             "audio_script,audio_url,audio_duration_seconds,"
                             "audio_voice_label,audio_voice,audio_file_size,"
                             "opinion_audio_script,top_cluster_ids,opinion_start_seconds,"
-                            "audio_chapters,news_start_seconds"
+                            "audio_chapters,news_start_seconds,grounding_ran"
                         ).eq("edition", edition).not_.is_(
                             "tldr_headline", "null"
                         ).order(
@@ -1746,6 +1758,17 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                             brief_row["audio_chapters"] = p.get("audio_chapters")
                             brief_row["news_start_seconds"] = p.get("news_start_seconds")
                             brief_row["top_cluster_ids"] = p.get("top_cluster_ids", [])
+                            # The carried text keeps the verification of the
+                            # day it was written; unknown reads as unverified.
+                            _pg = p.get("grounding_ran")
+                            if isinstance(_pg, str):
+                                try:
+                                    _pg = json.loads(_pg)
+                                except ValueError:
+                                    _pg = None
+                            _pg = _pg if isinstance(_pg, dict) else {}
+                            brief_row["grounding_ran"] = {
+                                k: (_pg.get(k) is True) for k in ("tldr", "opinion", "onair")}
                             print(f"  [brief:{edition}] Empty brief — carried forward previous brief")
                     except Exception as e:
                         print(f"  [warn] Could not fetch previous brief for {edition}: {e}")
@@ -1865,7 +1888,8 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                     err_msg = str(e)
                     if "PGRST204" in err_msg or "does not exist" in err_msg.lower() or "schema cache" in err_msg.lower():
                         # Extract column name from error if possible, or strip known optional cols
-                        for optional_col in ("opinion_start_seconds", "audio_chapters", "news_start_seconds"):
+                        for optional_col in ("opinion_start_seconds", "audio_chapters", "news_start_seconds",
+                                             "grounding_ran"):
                             brief_row.pop(optional_col, None)
                         try:
                             supabase.table("daily_briefs").upsert(

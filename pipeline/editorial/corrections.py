@@ -16,6 +16,12 @@ three kinds:
   regex / replace  a pattern, for a correction that applies to every card
                    ("cluster": "*"), such as a retired fallback string
 
+Each entry also names its `gate` (rev 86): the enforced rule id in
+`editorial/standard.py`, or the test file, that now catches its class of
+error, because the fix for an error that reached production is not complete
+until a check exists. `tests/test_rigor.py --floors` (F-5) fails an entry
+with no gate, or a gate that does not resolve.
+
 An edit whose text is no longer present is skipped and said so: the card may
 have been regenerated, and a correction must never write text of its own
 into a card it cannot find. Pure, stdlib, no I/O beyond reading the file.
