@@ -1,0 +1,74 @@
+{
+ "brief": {
+  "cut_sentences": 5,
+  "cuts_by_reason": {
+   "name": 4,
+   "total": 1
+  },
+  "edition": "world",
+  "grounding_ran": {
+   "opinion": true,
+   "script": true,
+   "tldr": true
+  }
+ },
+ "onair": {
+  "cut_sentences": 1,
+  "cuts_by_reason": {
+   "name": 1
+  },
+  "grounding_ran": true
+ },
+ "stage2": {
+  "candidates": 35,
+  "critique_read": 35,
+  "critique_unread": 0,
+  "cut_sentences": 16,
+  "cuts_by_reason": {
+   "number": 10,
+   "other story": 10
+  },
+  "dropped": 2,
+  "fresh_ids": [
+   "027b41f5-dae1-4a6f-a638-18a4d2411107",
+   "031bd5b4-59c3-477f-8ea0-856211411318",
+   "0d84ff5d-5a9f-430f-9689-ff4e1f873103",
+   "335b3a7d-47a3-4692-86c5-c9737eb740e9",
+   "38b928f1-686b-4d1e-90bd-3af61bfdc69b",
+   "39c0fd4d-5062-479c-a25e-a1d7dd9a22f5",
+   "3c695f47-3853-4337-a316-9aab9160596e",
+   "4060d8e2-0f7c-4f31-81b2-88d3e0598185",
+   "469855d0-f70f-4232-86e6-6f016b59a9e5",
+   "4889987a-bbbb-4843-93e6-3e947e191c02",
+   "50644c7b-36bf-4571-bb1d-a84f8e84a982",
+   "6884cd1e-1d21-4d26-8ecc-a89ee06fe3cc",
+   "6b9ede60-f974-4930-b473-e371668e0327",
+   "7fccce28-e7f8-4b83-b848-0ec313059ee8",
+   "89e53d97-2189-43aa-8c43-3bee09b22e30",
+   "90b5bdab-164b-4946-bb7f-7d354fbc775f",
+   "913b4253-b469-4f4b-b8bc-5ee7a007c8b3",
+   "95a62c79-9d02-4029-a1ce-1f75110e6baa",
+   "9f0574fb-2741-4e78-8050-e57f7d8b8b64",
+   "a6cd3f6d-9086-4f19-a024-d2d2c42320f2",
+   "a77662e3-3507-4a6d-9293-0b7e2aa07871",
+   "a7ef39a2-731b-4292-bcc1-5cf03321909f",
+   "b15cd0fd-670f-4f9c-baad-ed42e692be2f",
+   "b489b0e1-c0bc-423c-9743-4cf6ec3b00ad",
+   "b50fe463-6565-448f-bb16-4225f21b6c3f",
+   "bd0a048d-8e00-4569-ad97-4d8d3c6b1605",
+   "be7e7e50-6cc1-4ca9-bc05-307600f5a531",
+   "c4c23c4e-b82d-4623-bb2c-cccc522dce66",
+   "c5a45a78-e0a2-49a2-af49-f37d7fd3c43b",
+   "cc6043dd-addb-478e-a06f-0293ecfc5a33",
+   "d1e36d2e-7f5d-45ab-9c41-2e82a1395882",
+   "d6f46dab-9638-4a53-a055-b186d0c8f051",
+   "d932723d-a879-4596-b092-af183cbfbc6a",
+   "e3a57b09-1b6f-46f6-9951-e19f77159bd0",
+   "faa357cc-ab9d-486c-9493-b7777b8491ba"
+  ],
+  "kept_failing": 0,
+  "regenerated": 5,
+  "reviewed": true
+ },
+ "startedAt": "2026-10-03T15:51:27Z"
+}

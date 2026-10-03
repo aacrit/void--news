@@ -1,51 +1,51 @@
 {
  "version": "1.2.0",
- "title": "On Air · Friday 02 October 2026",
+ "title": "On Air · Saturday 03 October 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Headlines",
-   "endTime": 39.419
+   "endTime": 38.375
   },
   {
-   "startTime": 39.419,
-   "title": "French Protests",
-   "endTime": 125.811
+   "startTime": 38.375,
+   "title": "French Student Protests",
+   "endTime": 120.308
   },
   {
-   "startTime": 125.811,
-   "title": "G7 Oil Release",
-   "endTime": 203.1
+   "startTime": 120.308,
+   "title": "Congo Ebola Outbreak",
+   "endTime": 209.479
   },
   {
-   "startTime": 203.1,
-   "title": "U-S Iran Escalation",
-   "endTime": 279.236
+   "startTime": 209.479,
+   "title": "Trump Medicare Payments",
+   "endTime": 270.127
   },
   {
-   "startTime": 279.236,
-   "title": "New York Loophole",
-   "endTime": 360.641
+   "startTime": 270.127,
+   "title": "Brazil Election",
+   "endTime": 345.004
   },
   {
-   "startTime": 360.641,
+   "startTime": 345.004,
    "title": "Also today",
-   "endTime": 415.337
+   "endTime": 409.921
   },
   {
-   "startTime": 415.337,
-   "title": "Elon Musk Partner Breakup",
-   "endTime": 454.78
+   "startTime": 409.921,
+   "title": "WNBA Semifinals",
+   "endTime": 455.423
   },
   {
-   "startTime": 454.78,
+   "startTime": 455.423,
    "title": "Opinion",
-   "endTime": 645.481
+   "endTime": 638.482
   },
   {
-   "startTime": 645.481,
-   "endTime": 658.581,
+   "startTime": 638.482,
+   "endTime": 651.582,
    "title": "Also from Void"
   }
  ]
