@@ -44,8 +44,10 @@ artifact (90-day retention). **There is no R2 sync** — several in-repo comment
 claim one; it was never implemented. That artifact window plus the cache is the
 entire durability floor for the `printed_stories` archive.
 
-**The Worker is deployed BY HAND** (`npm run deploy` in `worker/`). No CI
-deploys it.
+**The Worker deploys from `deploy-worker.yml`** on any change under `worker/`
+that reaches main, or on dispatch: D1 migrations first, then the code, then
+`IP_SALT` once if the Worker has none. It uses the Pages deploy's
+`CLOUDFLARE_API_TOKEN`, which needs Workers Scripts and D1 edit rights.
 
 **Stack:** Python 3.11+/spaCy/NLTK (rule-based NLP, no LLM in bias scoring),
 Gemini 2.5 via google-genai, Kokoro-82M TTS (Apache-2.0, CPU, own venv
