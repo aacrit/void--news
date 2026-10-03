@@ -242,6 +242,8 @@ jobs:
           # Rev 85 (holistic fixes): the eight gates the workstreams added.
           python tests/test_games_content.py         # every Games bank: no dash, no kill-list term, no date, THE FRAME stays out
           python tests/test_brief_grounding.py       # TL;DR, Opinion and On Air cut what the sources do not carry
+          python tests/test_rigor.py                 # rigor.json recomputes; F-1, F-2, F-3, F-5 each fail on a planted defect
+          python tests/test_corrections.py           # every correction applied, gated, and each past error class caught by its fixture
           python tests/test_stuck_runs.py            # a running pipeline run is never failed by its own cleanup
           python tests/test_rerank_pool.py           # 8c ranks only pool-eligible clusters; the feed does not move
           python tests/test_pipeline_runtime.py      # one metered Gemini call site, phase timings, Kokoro workers
