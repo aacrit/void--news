@@ -722,6 +722,28 @@ def _misattached(ev, n: str, names: list[str]) -> str | None:
     return None
 
 
+def _appositive_confirmed(ev, n: str, sent: str) -> bool:
+    """`Name, n,` sets n beside Name alone, and a source sentence does too.
+
+    "Kulbergs, 47, of the centrist United List party" gives the age to
+    Kulbergs. The rival test reads every name in the sentence as a candidate
+    for what 47 counts, so a source that phrased the party differently and
+    mentioned another "United ..." beside 47 failed a correct card (served
+    2026-10-03, verify-production red). When the number is an appositive and
+    every distinctive word of its head name pairs with it in some source
+    sentence, the attachment is confirmed and the other names are not rivals.
+    The Iraq shape ("4,419 U.S. military deaths during the operation") is not
+    an appositive and is still judged by `_misattached`.
+    """
+    if not getattr(ev, "contexts", False):
+        return False
+    m = re.search(r"((?:[A-Z][\w'’.-]*\s+){0,3}[A-Z][\w'’.-]*),\s*" + re.escape(n) + r"\s*,", sent)
+    if not m:
+        return False
+    words = [w for w in (_grounding.context_word(t) for t in m.group(1).split()) if w]
+    return bool(words) and all(ev.has_pair(n, w) for w in words)
+
+
 def _name_key_bare(name: str) -> str:
     """A name folded as `grounding.name_key`, with a leading article dropped."""
     return re.sub(r"^(?:the|a|an)\s+", "", _grounding.name_key(name))
@@ -755,6 +777,8 @@ def e13_numbers_are_sourced(title: str, summary: str, sources,
     for field, sent, names in _card_sentences(title, summary):
         for n in sorted(_numbers(sent)):
             if not ev.has_number(n):
+                continue
+            if _appositive_confirmed(ev, n, sent):
                 continue
             rival = _misattached(ev, n, [nm for nm in names
                                          if _name_key_bare(nm) not in ignore])
