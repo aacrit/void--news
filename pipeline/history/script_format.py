@@ -557,7 +557,244 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
             if "—" in l.text or "–" in l.text:
                 out.append(Finding("H-08", "warn", seg.kind, "dash in spoken copy"))
                 break
+    out.extend(h18_findings(script, event))
     return out
+
+
+# --------------------------------------------------------------------------
+# H-18: every number the episode says aloud is a number its record carries.
+#
+# H-10 checks names and H-01 quotations; nothing checked numbers, and a number
+# is the claim a listener is likeliest to repeat. A script is written FROM the
+# event YAML, so a spoken number with no value in the record was computed by
+# the writer (a span of years, a unit conversion, a rounding), remembered from
+# elsewhere, or wrong. Silence beats a plausible reconstruction: the number is
+# sourced into the record, or cut from the script.
+#
+# Read as values, not strings (pipeline/history/spoken_numbers.py): "nineteen
+# seventy five" is 1975 and matches "April 17, 1975"; "one and a half million"
+# matches "1.5 million". A figure the script hedges ("about", "more than",
+# "nearly") may round to within a tenth of a record value. Only spoken lines
+# are read; SAY (pronunciation) and segment markers are not speech.
+#
+# The format's own count of its accounts ("Five accounts", "the fourth
+# account", "of the five") is the structure talking, not a claim, and is not
+# read when it is no larger than the event's perspective count.
+#
+# H18_KNOWN is the baseline found when the rule landed (2026-10-03): numbers
+# already rendered into published audio. Each is listed here, reported as a
+# warning, and awaits sourcing or a cut at the episode's next re-render. A
+# number NOT on the list fails, so no new unsourced number can enter, and an
+# entry that no longer fires fails too (tests/test_history_script.py), so the
+# list can only shrink.
+# --------------------------------------------------------------------------
+_ACCOUNT_COUNT = re.compile(
+    r"\b(?:(?:one|two|three|four|five|six|first|second|third|fourth|fifth|sixth|last)"
+    r"\s+(?:accounts?|sides?|cases?)|(?:the other|those|these|all|of the|each of the)\s+"
+    r"(?:two|three|four|five|six)\b)", re.I)
+
+
+def h18_numbers(script: Script, event: dict) -> list[tuple[str, str, float, str]]:
+    """(segment label, spoken words, value, line) for every spoken number the
+    record does not carry."""
+    from history.spoken_numbers import (  # local: script_format has no other deps
+        Num, digit_numbers, record_values, spoken_numbers, supported)
+    values = record_values(_event_text(event) + "\n" + _thesis_record_text(script.slug))
+    n_accounts = len(event.get("perspectives") or [])
+    out = []
+    for seg in script.segments:
+        if seg.kind == "SAY":
+            continue
+        label = f"{seg.kind}{' ' + seg.title if seg.title else ''}"
+        # A span ("forty years later") is NOT credited as arithmetic on two
+        # record years. It was tried: the-holocaust's "Forty years later he
+        # accepted the Nobel" (1945 to 1986 is forty one) passed, because 1944
+        # plus forty is a year the record happens to carry for something
+        # else. With seventy years in a record, some sum always lands.
+        for l in seg.lines:
+            structural = {float(v) for v in range(1, n_accounts + 1)} \
+                if (seg.kind == "TURN" or _ACCOUNT_COUNT.search(l.text)) else set()
+            nums = spoken_numbers(l.text) + [Num(v, f"{v:g}", False) for v in digit_numbers(l.text)]
+            for x in nums:
+                if x.value == 0 or x.value in structural:
+                    continue
+                if not supported(x, values):
+                    out.append((label, x.text, x.value, l.text))
+    return out
+
+
+def _thesis_record_text(slug: str) -> str:
+    """For an event with a published thesis, its record is wider than the
+    YAML: the thesis and the ledger extracts it cites, which the script was
+    revised against. Empty for every other event."""
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[2] / "data" / "history"
+    thesis = root / "theses" / f"{slug}.md"
+    if not slug or not thesis.exists():
+        return ""
+    parts = [thesis.read_text(encoding="utf-8")]
+    parts += [f.read_text(encoding="utf-8")
+              for f in sorted((root / "evidence" / slug / "extracts").glob("*.txt"))]
+    return "\n".join(parts)
+
+
+def _known_key(value: float) -> str:
+    return f"{value:g}"
+
+
+def h18_findings(script: Script, event: dict) -> list[Finding]:
+    known = H18_KNOWN.get(script.slug, {})
+    out = []
+    for label, words, value, _line in h18_numbers(script, event):
+        level = "warn" if _known_key(value) in known else "fail"
+        note = " (known at the rule's landing; source it or cut it at the next re-render)" \
+            if level == "warn" else ""
+        out.append(Finding("H-18", level, label,
+                           f"{words!r} ({value:g}) is spoken and is no number in this event's "
+                           f"record: source it in the YAML or cut it{note}"))
+    return out
+
+
+# slug -> {value: why it stands}. Generated 2026-10-03 from the committed
+# scripts; see docs/CHANGELOG.md rev 86 WS-H for the review of each.
+H18_KNOWN: dict[str, dict[str, str]] = {
+    'alexanders-conquests': {
+        '1300': "a span the writer computed; the record states no such span: 'thirteen hundred'",
+    },
+    'algerian-war': {
+        '9': "a span the writer computed; the record states no such span: 'nine'",
+    },
+    'angkor-khmer-empire': {
+        '80': "a span the writer computed; the record states no such span: 'eighty'",
+    },
+    'apollo-11-moon-landing': {
+        '240000': "not in the record: 'two hundred and forty thousand'",
+    },
+    'ashoka-maurya-empire': {
+        '2000': "not in the record: 'two thousand'",
+    },
+    'assassination-of-caesar': {
+        '270': "a span the writer computed; the record states no such span: 'two hundred seventy'",
+        '16': "a span the writer computed; the record states no such span: 'sixteen'",
+    },
+    'chernobyl-disaster': {
+        '2.5': "not in the record: 'two and a half'",
+        '6': "a span the writer computed; the record states no such span: 'six'",
+        '108': "not in the record: 'a hundred and eight'",
+    },
+    'chinese-civil-war': {
+        '2026': "time-bound: a year measured from today: 'twenty twenty six'",
+    },
+    'chinese-cultural-revolution': {
+        '2.5': "a span the writer computed; the record states no such span: 'two and a half'",
+    },
+    'civil-rights-movement': {
+        '42': "not in the record: 'forty two'",
+    },
+    'creation-of-israel-nakba': {
+        '45': "not in the record: 'forty five'",
+        '1890': "not in the record: 'eighteen nineties'",
+        '50': "a span the writer computed; the record states no such span: 'fifty'",
+    },
+    'cuban-missile-crisis': {
+        '200': "not in the record: 'two hundred'",
+        '50': "not in the record: 'fifty'",
+        '18': "a span the writer computed; the record states no such span: 'eighteen'",
+    },
+    'cuban-revolution': {
+        '10': "not in the record, and a count that goes stale: 'ten' American presidents",
+        '11': "PROBABLE ERROR: 'the same eleven years'; the record dates the event 1953 to 1959",
+        '66': "time-bound: 'sixty six years later', counted to twenty twenty six",
+    },
+    'cyrus-cylinder': {
+        '92': "a span the writer computed; the record states no such span: 'ninety two'",
+        '52': "not in the record: 'fifty two'",
+        '9': "a span the writer computed; the record states no such span: 'nine'",
+    },
+    'fall-of-berlin-wall': {
+        '1953': "not in the record: 'nineteen fifty three'",
+    },
+    'fall-of-constantinople': {
+        '10': "not in the record: 'ten'",
+    },
+    'french-revolution': {
+        '6': "a span the writer computed; the record states no such span: 'six'",
+        '200': "not in the record: 'two hundred'",
+    },
+    'global-financial-crisis-2008': {
+        '6': "not in the record: 'six'",
+    },
+    'gutenberg-printing-press': {
+        '19': "a span the writer computed; the record states no such span: 'nineteen'",
+        '4500': "not in the record: 'four and a half thousand'",
+    },
+    'hiroshima-nagasaki': {
+        '31000': "not in the record: 'thirty one thousand'",
+        '43': "not in the record: 'forty three'",
+    },
+    'industrial-revolution': {
+        '1763': "not in the record: 'seventeen sixty three'",
+        '24': "not in the record: 'twenty four'",
+        '2026': "time-bound: a year measured from today: 'twenty twenty six'",
+    },
+    'iranian-revolution': {
+        '2500': "not in the record: 'two and a half thousand'",
+        '25': "a span the writer computed; the record states no such span: 'twenty five'",
+    },
+    'kingdom-of-kongo': {
+        '1600': "not in the record: 'sixteen hundreds'",
+    },
+    'mali-empire-mansa-musa': {
+        '1460': "not in the record: 'fourteen sixties'",
+    },
+    'mongol-empire': {
+        '31': "a span the writer computed; the record states no such span: 'thirty one'",
+    },
+    'mughal-empire': {
+        '1520': "not in the record: 'fifteen twenties'",
+    },
+    'ottoman-empire': {
+        '11': "a span the writer computed; the record states no such span: 'eleven'",
+        '300': "not in the record: 'three hundred'",
+        '430': "not in the record: 'four hundred and thirty'",
+    },
+    'partition-of-india': {
+        '2e+06': "not in the record: 'two million'",
+    },
+    'silk-road': {
+        '3000': "a span the writer computed; the record states no such span: 'three thousand'",
+        '1200': "a span the writer computed; the record states no such span: 'twelve hundred'",
+    },
+    'six-day-war': {
+        '15': "a span the writer computed; the record states no such span: 'fifteen'",
+    },
+    'soviet-union-collapse': {
+        '1980': "not in the record: 'nineteen eighties'",
+    },
+    'spanish-civil-war': {
+        '4': "a span the writer computed; the record states no such span: 'four'",
+    },
+    'suez-crisis': {
+        '18': "a span the writer computed; the record states no such span: 'eighteen'",
+        '11': "a span the writer computed; the record states no such span: 'eleven'",
+    },
+    'the-crusades': {
+        '2000': "not in the record: 'two thousand'",
+        '200': "not in the record: 'two hundred'",
+        '930': "not in the record: 'nine hundred and thirty'",
+    },
+    'transatlantic-slave-trade': {
+        '1700': "not in the record: 'seventeen hundreds'",
+        '50': "not in the record: 'fifty'",
+    },
+    'treaty-of-waitangi': {
+        '9': "not in the record: 'nine'",
+        '32': "not in the record: 'thirty two'",
+    },
+    'womens-suffrage': {
+        '42': "not in the record: 'forty two'",
+    },
+}
 
 
 def _event_text(event: dict) -> str:

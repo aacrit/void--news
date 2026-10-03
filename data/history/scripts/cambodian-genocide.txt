@@ -48,10 +48,6 @@ N: December the twenty fifth, nineteen seventy eight. One hundred fifty thousand
 N: By January the seventh, nineteen seventy nine, they hold Phnom Penh. The Khmer Rouge flee west to the Thai border and keep fighting as a guerrilla force for another twenty years.
 N: Three years, eight months, and twenty days after it started, the killing is over.
 
-## DOCUMENT | Dith Pran | Testimony to the ECCC | 2009
-N: Dith Pran was a Cambodian journalist for the New York Times who lived through all of it. This is what he told the tribunal, thirty years later.
-M: They told us to leave the city for three days. Three days became three years, eight months, and twenty days.
-
 ## REST
 
 ## TURN | Five accounts

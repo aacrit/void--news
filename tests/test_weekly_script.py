@@ -100,7 +100,7 @@ def build_clean(issue, cover_words=700):
     lines += ["## CONTENTS", "E: Inside this week.", "E: The Arctic, contested.",
               "E: Two columnists, one story.", "E: The week, measured."]
     lines += ["## COVER"] + _filler("E", cover_words)
-    lines += ["## DATELINE", "E: Tuesday. Thirteen sources."]
+    lines += ["## DATELINE", "E: Tuesday, September fifteenth."]
     lines += ["## COVER"] + _filler("E", 250)
     lines += ["## TOPIC", "E: The two columns below argue about the same agreement."]
     lines += ["## LEFT"] + [f"L: {s}" for s in left]
@@ -110,7 +110,7 @@ def build_clean(issue, cover_words=700):
     lines += ["## SECOND"] + _filler("E", 420)
     lines += ["## DEPARTMENT | Technology"] + _filler("E", 200)
     lines += ["## NUMBERS",
-              f"E: Void scored more than three thousand articles this week.",
+              f"E: Void scored more than sixty thousand articles this week.",
               f"E: Coverage sat at {stats.get('avg_lean', 51.2)} on a hundred point scale.",
               f"E: The spread was {stats.get('lean_std', 14.9)}."]
     lines += ["## EDITORIAL"] + _filler("E", 620)
@@ -191,7 +191,7 @@ def test_planted(issue):
 
     # W-06 — the dateline beat.
     check("W-06 catches a missing dateline",
-          _fails(issue, clean.replace("## DATELINE\nE: Tuesday. Thirteen sources.\n", "", 1),
+          _fails(issue, clean.replace("## DATELINE\nE: Tuesday, September fifteenth.\n", "", 1),
                  "W-06"))
 
     # W-07 — length.
@@ -226,6 +226,38 @@ def test_planted(issue):
           _fails(issue, clean.replace("E: The spread was",
                                       "E: Void scored 8412 articles and the spread was", 1),
                  "W-09"))
+
+
+def test_w13(issue):
+    """W-13: the Editor says no number and no name the issue did not print.
+
+    Issue #26's committed rundown, read against it when the rule landed
+    (2026-10-03), had the Editor say "where fifty is the centre" and "a tilt
+    of one point two": the issue prints 51.2 labelled centre, and neither the
+    scale's midpoint nor the subtraction. Both lines were cut to what the
+    issue says. W-01 and W-09 could not see them; nothing read the Editor.
+    """
+    print("\nWA-07  W-13: the Editor's numbers and names are the issue's")
+    clean = clean_for_band(issue)
+    check("W-13 is silent on a clean rundown", not _fails(issue, clean, "W-13"),
+          str([f.detail for f in validate_script(parse_script(clean), issue) if f.id == "W-13"]))
+    num = clean.replace("## CLOSE\n", "## CLOSE\nE: Nine hundred and seventy three thousand bases were promised.\n", 1)
+    check("W-13 catches a spoken number the issue does not carry", _fails(issue, num, "W-13"))
+    year = clean.replace("## CLOSE\n", "## CLOSE\nE: The deal dates to nineteen fifty one.\n", 1)
+    check("W-13 catches a year the issue does not carry", _fails(issue, year, "W-13"))
+    name = clean.replace("## CLOSE\n", "## CLOSE\nE: The Hudson Institute called it a bargain.\n", 1)
+    check("W-13 catches a multi-word name the issue does not print", _fails(issue, name, "W-13"))
+    for seg in ("COVER", "DATELINE", "TOPIC", "TURN", "EDITORIAL"):
+        planted = clean.replace(f"## {seg}\n", f"## {seg}\nE: Nine hundred and seventy three thousand bases were promised.\n", 1)
+        check(f"W-13 reads the Editor in {seg}", _fails(issue, planted, "W-13"))
+    named = clean.replace("## CLOSE\n", "## CLOSE\nE: Mette Frederiksen spoke for the kingdom.\n", 1)
+    check("W-13 passes a name the issue prints", not _fails(issue, named, "W-13"),
+          str([f.detail for f in validate_script(parse_script(named), issue) if f.id == "W-13"]))
+    sourced = clean.replace("## CLOSE\n", "## CLOSE\nE: Void scored more than sixty thousand "
+                            "articles, and the European Union was among them.\n", 1)
+    check("W-13 passes a sourced number, and a long form the issue prints short (EU)",
+          not _fails(issue, sourced, "W-13"),
+          str([f.detail for f in validate_script(parse_script(sourced), issue) if f.id == "W-13"]))
 
 
 def test_columns_match_the_page(issue):
@@ -302,6 +334,7 @@ def main():
     print("void --weekly audio gates (The Argument)")
     issue = test_clean()
     test_planted(issue)
+    test_w13(issue)
     test_columns_match_the_page(issue)
     test_committed_scripts()
     print()

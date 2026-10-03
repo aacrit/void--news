@@ -57,7 +57,7 @@ N: The first is testimony, and its authority is that the people giving it were t
 N: What it describes is not only cruelty. It is the deliberate removal of a person: the shaving, the number tattooed on the arm, the name replaced by it. Primo Levi's number was one seven four five one seven.
 N: And it refuses to make itself comfortable. Levi wrote at length about what he called the grey zone, where staying alive required complicity, where prisoners were made to burn other prisoners, where a man might take bread from someone who was dying.
 N: His own verdict on his own book was that the survivors are not the true witnesses. The complete witnesses, he wrote, are the ones who did not come back.
-N: Elie Wiesel arrived at Birkenau from Romania in May nineteen forty four, aged fifteen. His mother Sarah and his younger sister Tzipora were killed on arrival. His father died at Buchenwald in January nineteen forty five. Forty years later he accepted the Nobel Peace Prize with an instruction.
+N: Elie Wiesel arrived at Birkenau from Romania in May nineteen forty four, aged fifteen. His mother Sarah and his younger sister Tzipora were killed on arrival. His father died at Buchenwald in January nineteen forty five. In nineteen eighty six he accepted the Nobel Peace Prize with an instruction.
 M: For the dead and the living, we must bear witness.
 
 ## PERSPECTIVE | The bureaucracy | academic
