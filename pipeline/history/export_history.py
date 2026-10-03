@@ -48,6 +48,7 @@ from pathlib import Path
 
 import yaml
 
+from .quote_ledger import filter_event
 from .resolve_commons import commons_filename
 
 REPO = Path(__file__).resolve().parents[2]
@@ -186,10 +187,19 @@ def build_rows(docs: list[dict]) -> list[dict]:
     heroes_substituted: list[str] = []
     heroes_missing: list[str] = []
     backfill_added: dict[str, int] = {}
+    quotes_withdrawn: dict[str, int] = {}
 
     for doc in docs:
         slug = doc["slug"]
         row = {f: doc.get(f) for f in EVENT_FIELDS if f in doc}
+        # Quotations not verified against a ledger extract are withdrawn from
+        # the served page for every event without a published thesis (CEO,
+        # 2026-10-03; pipeline/history/quote_ledger.py). Not labelled: gone.
+        kept_excerpts, kept_quotes, withdrawn = filter_event(doc)
+        if "primary_source_excerpts" in row:
+            row["primary_source_excerpts"] = kept_excerpts
+        if withdrawn:
+            quotes_withdrawn[slug] = len(withdrawn)
         row["id"] = event_id(slug)
         row["is_published"] = True
         # The audio edition is NOT carried here. Which events have a produced
@@ -212,7 +222,7 @@ def build_rows(docs: list[dict]) -> list[dict]:
                 "narrative": p.get("narrative", ""),
                 "key_arguments": p.get("key_arguments") or [],
                 "sources": p.get("sources") or [],
-                "notable_quotes": p.get("notable_quotes") or [],
+                "notable_quotes": kept_quotes[i],
                 "emphasized": p.get("emphasized") or [],
                 "omitted": p.get("omitted") or [],
                 "display_order": p.get("display_order", i),
@@ -342,6 +352,9 @@ def build_rows(docs: list[dict]) -> list[dict]:
     if added:
         print(f"  {added} image(s) backfilled from Commons search across "
               f"{sum(1 for v in backfill_added.values() if v)} event(s)")
+    if quotes_withdrawn:
+        print(f"  {sum(quotes_withdrawn.values())} quotation(s) withdrawn across "
+              f"{len(quotes_withdrawn)} event(s): not verified against a ledger extract")
     if heroes_substituted:
         print(f"  {len(heroes_substituted)} hero(es) adopted from the event's own gallery")
     if heroes_missing:

@@ -21,6 +21,7 @@ Run: python tests/test_history_quote_ledger.py
 """
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -105,8 +106,114 @@ def self_test() -> None:
         sys.exit(1)
 
 
+# --------------------------------------------------------------------------
+# The withdrawal gate (CEO, 2026-10-03, rev 86 WS-H).
+#
+# Until an event has a ledger, its quotations are WITHDRAWN from the served
+# page, not labelled. An event with a published thesis is held to the T-checks
+# instead and is exempt here. Everything else may serve a quotation only if
+# its words occur in a stored extract (pipeline/history/quote_ledger.py), and
+# that holds for the three places the page reads quotations from: the event
+# row's `primary_source_excerpts`, each perspective's `notable_quotes`, and
+# the document-voice lines of the exported script the Hearing renders.
+# --------------------------------------------------------------------------
+sys.path.insert(0, str(ROOT))
+from pipeline.history import quote_ledger as QL  # noqa: E402
+
+SERVED = ROOT / "frontend" / "public" / "data" / "history.json"
+SERVED_SCRIPTS = ROOT / "frontend" / "build-data" / "history-scripts"
+SCRIPTS = ROOT / "data" / "history" / "scripts"
+
+
+def served_unverified(rows: list[dict], scripts: dict[str, dict]) -> list[str]:
+    """Every quotation the served files carry for an event held to the ledger
+    that no stored extract carries."""
+    bad = []
+    for row in rows:
+        slug = row.get("slug") or ""
+        if not QL.held_to_ledger(slug):
+            continue
+        for q in row.get("primary_source_excerpts") or []:
+            if not QL.verified(slug, q.get("text", "")):
+                bad.append(f"{slug}: history.json primary_source_excerpts: {str(q.get('text'))[:60]}")
+        for p in row.get("perspectives") or []:
+            for q in p.get("notable_quotes") or []:
+                if not QL.verified(slug, q.get("text", "")):
+                    bad.append(f"{slug}: history.json notable_quotes: {str(q.get('text'))[:60]}")
+    for slug, blob in scripts.items():
+        if not QL.held_to_ledger(slug):
+            continue
+        for seg in blob.get("segments") or []:
+            for line in seg.get("lines") or []:
+                if (line.get("speaker") or "N") != "N" and not QL.verified(slug, line.get("text", "")):
+                    bad.append(f"{slug}: history-scripts {seg.get('kind')}: {str(line.get('text'))[:60]}")
+    return bad
+
+
+def withdrawal_self_test() -> list[str]:
+    """The gate and the exporter's filter must each be able to fail."""
+    out = []
+    thesis = next(iter(sorted(QL.published_theses())), None)
+    planted_rows = [
+        {"slug": "planted-hearing", "primary_source_excerpts": [{"text": "Words nobody holds a copy of."}],
+         "perspectives": [{"notable_quotes": [{"text": "Nor these.", "speaker": "X"}]}]},
+    ]
+    doc = {"kind": "DOCUMENT", "lines": [{"speaker": "N", "text": "She wrote it down."},
+                                         {"speaker": "F", "text": "Words nobody holds a copy of."}]}
+    got = served_unverified(planted_rows, {"planted-hearing": {"segments": [doc]}})
+    if len(got) != 3:
+        out.append(f"planted: an unverified excerpt, notable quote and script line must each fail ({got})")
+    if thesis:
+        exempt = served_unverified([dict(planted_rows[0], slug=thesis)], {thesis: {"segments": [doc]}})
+        if exempt:
+            out.append(f"planted: a published thesis event is exempt, got {exempt}")
+    ex, nq, w = QL.filter_event(dict(planted_rows[0]))
+    if ex or any(nq) or len(w) != 2:
+        out.append(f"planted: the exporter must withdraw both planted quotations ({ex}, {nq}, {w})")
+    segs, q, _lead = QL.filter_script_segments("planted-hearing", [
+        doc,
+        {"kind": "PERSPECTIVE", "lines": [{"speaker": "N", "text": "The account rests on the tide tables."},
+                                          {"speaker": "N", "text": "Its admiral put it this way."},
+                                          {"speaker": "M", "text": "Nor these."},
+                                          {"speaker": "N", "text": "Nobody read them."}]}])
+    texts = [l["text"] for s_ in segs for l in s_["lines"]]
+    if [s_["kind"] for s_ in segs] != ["PERSPECTIVE"] or texts != [
+            "The account rests on the tide tables.", "Nobody read them."] or q != 2:
+        out.append(f"planted: a withdrawn DOCUMENT goes whole and a lead-in goes with its quote ({segs})")
+    return out
+
+
+def withdrawal_gate() -> int:
+    fails = withdrawal_self_test()
+    rows = json.loads(SERVED.read_text(encoding="utf-8")) if SERVED.exists() else []
+    rows = rows if isinstance(rows, list) else rows.get("events", [])
+    scripts = {f.stem: json.loads(f.read_text(encoding="utf-8")) for f in sorted(SERVED_SCRIPTS.glob("*.json"))}
+    fails += served_unverified(rows, scripts)
+    held = [r for r in rows if QL.held_to_ledger(r.get("slug") or "")]
+    yaml_quotes = 0
+    for r in held:
+        ev = yaml.safe_load((EVENTS / f"{r['slug']}.yaml").read_text(encoding="utf-8"))
+        yaml_quotes += len(ev.get("primary_source_excerpts") or []) + sum(
+            len(p.get("notable_quotes") or []) for p in ev.get("perspectives") or [])
+    served_quotes = sum(len(r.get("primary_source_excerpts") or []) + sum(
+        len(p.get("notable_quotes") or []) for p in r.get("perspectives") or []) for r in held)
+    speaking = QL.scripts_speaking_withdrawn(SCRIPTS, EVENTS)
+    if fails:
+        for f in fails:
+            print("FAIL ", f)
+        return 1
+    print(f"PASS  {len(held)} events without a published thesis serve no unverified quotation "
+          f"({yaml_quotes - served_quotes} of {yaml_quotes} in the record withdrawn, {served_quotes} served)")
+    if speaking:
+        print(f"note  {len(speaking)} episode(s) still SPEAK {sum(speaking.values())} withdrawn "
+              f"quotation line(s), awaiting a re-render: " + ", ".join(sorted(speaking)))
+    return 0
+
+
 def main() -> int:
     self_test()
+    if withdrawal_gate():
+        return 1
     failures, unpinned, checked = [], [], 0
     for ledger_dir in sorted(p for p in EVIDENCE.glob("*") if (p / "extracts").is_dir()):
         slug = ledger_dir.name
