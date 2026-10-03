@@ -89,6 +89,28 @@ claims about its own confidence. It needs a decision, not a tweak.
 
 ## Known defects, not yet fixed
 
+### History audio after rev 86 WS-H (2026-10-03)
+
+- **Four episodes are `audio_withdrawn`** and serve nowhere until
+  `render-history-audio.yml` re-renders them from their corrected scripts:
+  `cambodian-genocide` (the Dith Pran quotation, cut), `the-crusades`,
+  `peloponnesian-war` and `the-holocaust` (H-18: a number the record
+  contradicts). The History feed carries 74.
+- **71 episodes still SPEAK 483 quotation lines the page no longer prints.**
+  The CEO decision withdrew every quotation not verified against a ledger
+  extract from the served page of the 71 events without a published thesis;
+  the audio was deliberately not touched. `tests/test_history_quote_ledger.py`
+  lists them on every run. Whether to re-render them without their documents,
+  or to build ledger extracts first (plan item 6, Phase 3) so the verified
+  ones come back, is open.
+- **H18_KNOWN holds 62 spoken numbers (66 occurrences) in 37 scripts** that the event records
+  do not carry (`pipeline/history/script_format.py`): spans the writer
+  computed, unit conversions, time-bound counts ("twenty twenty six", "ten
+  American presidents"). One is marked PROBABLE ERROR: cuban-revolution's
+  "the same eleven years" against a record dated 1953 to 1959. Each is
+  sourced into the YAML or cut at its episode's next re-render; the list can
+  only shrink.
+
 **Weekly Issue #26's audio is not yet re-rendered.** The issue was corrected
 on 2026-10-02 against the printed stories (rev 85 WS-G: the Frederiksen
 attribution, two quotations, an invented one, the Sheeran cover, two columns
@@ -126,9 +148,6 @@ ledger, not the event data; the chapter title is the ledger row's full title;
 Found while settling the record for the thesis; the YAML and the script were
 not edited (parallel-work rule). Each item names what the fetched record says.
 
-- `primary_source_excerpts` and the survivor perspective attribute a quotation
-  to Dith Pran as "Testimony to the ECCC, 2009". The YAML's own `key_figures`
-  row has him dead in 2008. Impossible; no ECCC transcript carries him.
 - `hero_image_attribution` and the media rows name Commons files that do not
   exist: `File:Tuol_Sleng_Genocide_Museum.jpg` and `File:Vann_Nath_Painting.jpg`
   both answer 404. `File:Choeungek2.JPG` exists but is Adam Carr, February 2005,
