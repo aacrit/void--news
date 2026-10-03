@@ -48,6 +48,9 @@ if _SQLITE_PATH:
             "daily_briefs": {
                 "audio_chapters": "TEXT",       # radio show chapters (JSON), 2026-09-18
                 "news_start_seconds": "REAL",   # where STORY 1 begins, 2026-09-18
+                # {"tldr","opinion","onair"} -> did the grounding pass
+                # complete (JSON), rev 86. False renders "Not yet verified".
+                "grounding_ran": "TEXT",
             },
             "weekly_digests": {
                 "departments": "TEXT",   # front-of-book essays (JSON), 2026-09-20

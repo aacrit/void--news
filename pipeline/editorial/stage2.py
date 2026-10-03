@@ -44,6 +44,18 @@ from editorial import standard as std
 from editorial import grounding
 
 
+def _rigor(name: str, *args) -> None:
+    """Run-counter hook into validation/rigor.py (rev 86). Never raises."""
+    try:
+        try:
+            from validation import rigor as _r
+        except ImportError:  # pragma: no cover - imported as pipeline.editorial
+            from pipeline.validation import rigor as _r  # type: ignore
+        getattr(_r, name)(*args)
+    except Exception as e:  # pragma: no cover - a counter never costs the run
+        print(f"  [rigor] [warn] {name} failed: {e}")
+
+
 # ---------------------------------------------------------------------------
 # 8c.5: the bench
 # ---------------------------------------------------------------------------
@@ -201,6 +213,20 @@ def _repair_by_cut(supabase, cid: str, card: dict, src: str | None,
     return cuts
 
 
+def _rigor_reasons(tally: dict, cuts) -> None:
+    """Add each cut's reason CLASS (a short label, never the sentence)."""
+    try:
+        try:
+            from validation.rigor import reason_class
+        except ImportError:  # pragma: no cover
+            from pipeline.validation.rigor import reason_class  # type: ignore
+    except Exception:  # pragma: no cover
+        return
+    for c in cuts or ():
+        k = reason_class(getattr(c, "reason", "") or "")
+        tally[k] = tally.get(k, 0) + 1
+
+
 def write_bench_index(supabase, cluster_ids: list[str],
                       build_dir: Optional[str] = None) -> int:
     """8f: the grounding index for every bench card, from whole bodies.
@@ -249,7 +275,11 @@ def review_bench(supabase, candidate_ids: list[str],
     """
     out = {"survivors": list(candidate_ids), "dropped": [], "regenerated": 0,
            "passed": 0, "candidates": len(candidate_ids), "by_id": {},
-           "critiqued": 0, "cut_sentences": 0}
+           "critiqued": 0, "cut_sentences": 0,
+           # rev 86 counters for validation/rigor.py: what the critique did not
+           # read, why sentences were cut, and cards kept while still failing.
+           "critique_read": 0, "critique_unread": 0, "cuts_by_reason": {},
+           "kept_failing": 0}
     if not candidate_ids:
         return out
 
@@ -265,6 +295,8 @@ def review_bench(supabase, candidate_ids: list[str],
 
     # 8d.2: the second reader.
     critique: dict[str, list[tuple[str, str]]] = {}
+    with_summary = sum(1 for cid in candidate_ids if (cards.get(cid) or {}).get("summary"))
+    cstats = {"read": 0, "unread": 0}
     if run_critique and llm_available():
         print("\n[8d.2] Critique pass (a second model reads every card)...")
         recs = [{"cid": cid, "title": (cards.get(cid) or {}).get("title"),
@@ -273,14 +305,18 @@ def review_bench(supabase, candidate_ids: list[str],
                 for cid in candidate_ids
                 if (cards.get(cid) or {}).get("summary")]
         try:
-            critique = critique_cards(recs, prefer_provider=prefer_provider)
+            critique = critique_cards(recs, prefer_provider=prefer_provider,
+                                      stats=cstats)
             out["critiqued"] = len(recs)
-            print(f"  Critique: {len(recs)} cards read, "
+            print(f"  Critique: {len(recs)} cards sent, {cstats['read']} read, "
                   f"{len(critique)} carried a finding")
         except Exception as e:
             print(f"  [warn] critique pass failed (cards treated as clean): {e}")
     elif run_critique:
         print("\n[8d.2] Critique pass skipped (no LLM available).")
+    # An unread card is treated as clean, so it is at least counted.
+    out["critique_read"] = cstats["read"]
+    out["critique_unread"] = max(0, with_summary - cstats["read"])
 
     # 8d.3: the deterministic rules, then one regeneration, then the drop.
     print("\n[8d.3] Editorial validation (regenerate once, then drop)...")
@@ -312,6 +348,7 @@ def review_bench(supabase, candidate_ids: list[str],
                                  removed_text=removed, kept_text=src)
             if cut:
                 out["cut_sentences"] += len(cut)
+                _rigor_reasons(out["cuts_by_reason"], cut)
                 candidate = dict(card, source_text=grounded) if grounded else dict(card)
                 findings = std.validate_candidate(candidate)
         all_findings.extend(findings)
@@ -334,6 +371,8 @@ def review_bench(supabase, candidate_ids: list[str],
             # flawed summary is still better than a hole, and the floor pass
             # will replace a summary that is actually unusable.
             survivors.append(cid)
+            if blocking:
+                out["kept_failing"] += 1
             continue
         result = None
         try:
@@ -344,6 +383,8 @@ def review_bench(supabase, candidate_ids: list[str],
             print(f"    [warn] regeneration raised: {e}")
         if not result:
             survivors.append(cid)   # the model could not answer; not the card's fault
+            if blocking:
+                out["kept_failing"] += 1
             continue
         _regen = {"title": result.get("headline"), "summary": result.get("summary")}
         recheck = std.validate_candidate(dict(_regen, source_text=src))
@@ -352,6 +393,7 @@ def review_bench(supabase, candidate_ids: list[str],
             _fixed, _cuts = repair_card(_regen["summary"] or "", src,
                                         title=_regen["title"] or "")
             if _cuts and _fixed.strip():
+                _rigor_reasons(out["cuts_by_reason"], _cuts)
                 result["summary"] = _fixed
                 recheck = std.validate_candidate(
                     dict(_regen, summary=_fixed, source_text=src))
@@ -376,6 +418,8 @@ def review_bench(supabase, candidate_ids: list[str],
         except Exception as e:
             print(f"    [warn] regenerated summary write failed: {e}")
             survivors.append(cid)
+            if blocking:
+                out["kept_failing"] += 1
 
     out["survivors"] = survivors
     out["dropped"] = [cid for cid, _ in dropped]
@@ -498,6 +542,7 @@ def run_stage2(supabase, sources, *,
 
     started = time.time()
     metrics: dict = {"summary": {}, "editorial": {}, "printed": 0}
+    _rigor("start_run")
     candidate_ids = select_bench(supabase)
 
     # 8c.6: candidate coherence. It runs BEFORE the merge, not after. Run the
@@ -609,6 +654,22 @@ def run_stage2(supabase, sources, *,
         survivors = review["survivors"]
     except Exception as e:
         print(f"  [warn] Editorial review failed (bench kept whole): {e}")
+    # Counts and ids for validation/rigor.py. `fresh_ids` is what F-2 reads: a
+    # card written this run must ship against a pre-truncation record.
+    _ed = metrics.get("editorial") or {}
+    _rigor("note_run", "stage2", {
+        "candidates": len(candidate_ids or []),
+        "fresh_ids": sorted(fresh_ids),
+        "reviewed": bool(_ed),
+        "critique_read": _ed.get("critique_read", 0),
+        "critique_unread": _ed.get("critique_unread",
+                                   len(candidate_ids or []) if not _ed else 0),
+        "cut_sentences": _ed.get("cut_sentences", 0),
+        "cuts_by_reason": _ed.get("cuts_by_reason", {}),
+        "regenerated": _ed.get("regenerated", 0),
+        "dropped": len(_ed.get("dropped") or []),
+        "kept_failing": _ed.get("kept_failing", 0),
+    })
 
     # 8d.5.
     try:

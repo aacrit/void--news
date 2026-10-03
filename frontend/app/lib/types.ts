@@ -1,3 +1,5 @@
+import type { GroundingFlags } from "./verification";
+
 export interface BiasScores {
   /** 0 = far left, 50 = center, 100 = far right */
   politicalLean: number;
@@ -373,6 +375,9 @@ export interface DailyBriefData {
   news_start_seconds: number | null;
   top_cluster_ids: string[] | null;
   created_at: string;
+  /** Per product: did the grounding pass complete. false renders "Not yet
+   *  verified" (lib/verification.ts). Absent on briefs before 2026-10-03. */
+  grounding_ran?: GroundingFlags | null;
 }
 
 export interface EditionMeta {

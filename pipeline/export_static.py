@@ -215,6 +215,10 @@ if want("brief"):
             brief["top_cluster_ids"] = parr(b["top_cluster_ids"])
         if "audio_chapters" in brief:
             brief["audio_chapters"] = pjson(b["audio_chapters"])
+        # rev 86: {"tldr","opinion","onair"} -> grounding completed. The
+        # frontend labels a False "Not yet verified" (lib/verification.ts).
+        if "grounding_ran" in brief:
+            brief["grounding_ran"] = pjson(b["grounding_ran"])
     wj(PUBLIC_DIR / "brief.json", brief)
     print(f"brief.json: {'ok' if brief else 'MISSING'}")
 

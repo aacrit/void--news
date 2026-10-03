@@ -4,6 +4,8 @@
    "cluster": "cd6ea179-0ffc-4a45-b116-65d3297cf888",
    "date": "2026-10-02",
    "reason": "4,419 is the U.S. military death toll over the 23 years from 2003 (LiveMint: '23 years, 4,419 military deaths'), not Operation Inherent Resolve's, to which the sentence attached it. Audit 1 item 3.",
+   "gate": "E-13",
+   "gate_note": "E-13 contexts (format 3): a number beside a name no source puts it beside",
    "edits": [
     {
      "field": "summary",
@@ -16,6 +18,8 @@
    "cluster": "bf16e44c-0173-47f7-abd1-5a1536a79fd1",
    "date": "2026-10-02",
    "reason": "Quotation altered: the source's ellipsis between the two phrases had become a full stop (audit 1 item 6). 'Ideology-heavy speech' was The Independent's characterisation in Void's voice (E-07 class).",
+   "gate": "E-14",
+   "gate_note": "E-14 junctions (format 3): punctuation inside a quotation must match a source. The E-07 characterisation is advisory",
    "edits": [
     {
      "field": "summary",
@@ -33,6 +37,8 @@
    "cluster": "7cfd4407-2bc8-4266-927e-1a4e71a9aa82",
    "date": "2026-10-02",
    "reason": "Cluster contamination: a Kanye West concert story rode in on 'Russia' (audit 1 item 8). Garble 'Q&An' (item 12).",
+   "gate": "E-16",
+   "gate_note": "E-16 cuts a sentence that opens on another story. The Q&An garble has no gate yet",
    "edits": [
     {
      "field": "summary",
@@ -58,6 +64,8 @@
    "cluster": "1b9b716e-a185-4ae6-b67b-e69f135dc7af",
    "date": "2026-10-02",
    "reason": "Cluster contamination: the RAF Fairford incident and EU rejoining are separate stories with their own cards (audit 1 item 8).",
+   "gate": "E-16",
+   "gate_note": "E-16 cuts a sentence that opens on another story",
    "edits": [
     {
      "field": "summary",
@@ -74,6 +82,8 @@
    "cluster": "*",
    "date": "2026-10-02",
    "reason": "Retired rule-based fallback copy: a kill-list word or a dash written by code, not by a model (audit 1 item 13).",
+   "gate": "tests/test_prompt_grounding.py",
+   "gate_note": "kill-list words and dashes in copy the code writes",
    "edits": [
     {
      "field": "divergence_points",

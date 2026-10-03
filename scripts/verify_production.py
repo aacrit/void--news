@@ -882,7 +882,61 @@ def check_withdrawn_audio_gone(p: Page) -> list[str]:
     return out
 
 
+# ---------------------------------------------------------------------------
+# Grounded rules on the SERVED cards (rev 86, factual rigor plan gap 8).
+#
+# E-13, E-14 and E-16 ran at write time and nowhere after, and the index the
+# pipeline commits (frontend/build-data/grounding/) was read by nothing. This
+# reads each served card against the record for the cluster it came from,
+# matched by headline in the committed feed.json, with the same classifier as
+# scripts/audit_grounding.py (pipeline/validation/rigor.audit_text). A
+# confirmed finding fails. A finding the record cannot confirm (a format-2 or
+# export-stage index, 300-character stubs behind a card not written that run)
+# is reported under ADVISORY and never fails: stubs prove nothing absent.
+# ---------------------------------------------------------------------------
+BUILD_DATA = Path(__file__).resolve().parent.parent / "frontend" / "build-data"
+GROUNDING_REPORT: list[str] = []
+
+
+def _title_key(t: str) -> str:
+    return re.sub(r"\s+", " ", _decode(t or "")).strip().lower()
+
+
+def check_served_grounding(p: Page, build: Path | None = None) -> list[str]:
+    from pipeline.validation import rigor
+    build = Path(build or BUILD_DATA)
+    feed_path = build / "feed.json"
+    if not feed_path.exists():
+        GROUNDING_REPORT.append(f"no committed feed at {feed_path}: served grounding not checked")
+        return []
+    feed = json.loads(feed_path.read_text(encoding="utf-8"))
+    by_title = {_title_key(c.get("title") or ""): c for c in feed.get("clusters") or []}
+    fresh = rigor.fresh_ids(rigor.run_counters(build, feed.get("builtAt")))
+    out: list[str] = []
+    matched = 0
+    for headline, summary in p.card_pairs():
+        c = by_title.get(_title_key(headline))
+        if not c:
+            continue
+        matched += 1
+        cid = str(c.get("id") or "")
+        rec = rigor.load_record(build, cid)
+        state = rigor.evidence_state(rec, None if fresh is None else cid in fresh)
+        from pipeline.editorial import grounding as _g
+        v = _g.Verifier(rec) if rec else None
+        for f in rigor.audit_text(headline, summary, v, where="card", state=state):
+            line = f"{cid[:8]} {f['rule']}: {f['message'][:140]}"
+            if f["status"] == "confirmed":
+                out.append(line)
+            else:
+                GROUNDING_REPORT.append(f"[{f['status']}: {state}] {line}")
+    GROUNDING_REPORT.insert(0, f"served grounding: {matched} card(s) matched to the committed index")
+    return out
+
+
 CHECKS = [
+    ("grounding: served cards carry no confirmed E-13/E-14/E-16 finding",
+     check_served_grounding),
     ("structural: single Top story", check_top_story),
     ("structural: wordmark not doubled", check_wordmark),
     ("structural: single dateline", check_dateline),
@@ -937,7 +991,15 @@ def main() -> int:
         help="intended feed size (frontend/config/feed.json displayed); when "
              "given, the count check asserts the page rendered exactly this many cards",
     )
+    ap.add_argument(
+        "--build-data", default=None,
+        help="the committed build-data directory holding feed.json and the "
+             "grounding index (default: this checkout's frontend/build-data)",
+    )
     args = ap.parse_args()
+    if args.build_data:
+        global BUILD_DATA
+        BUILD_DATA = Path(args.build_data)
 
     with open(args.html_file, encoding="utf-8", errors="replace") as fh:
         doc = fh.read()
@@ -982,6 +1044,11 @@ def main() -> int:
                 print(line)
         else:
             print("ADVISORY: no editorial findings")
+
+    if GROUNDING_REPORT:
+        print()
+        for line in GROUNDING_REPORT:
+            print(f"[grounding] {line}")
 
     print()
     if total_fail:
