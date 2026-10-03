@@ -1415,7 +1415,9 @@
     "sha": "bf338b01af9d",
     "voice": "af_kore",
     "startTime": 805.391
-   }
+   },
+   "audio_withdrawn": true,
+   "audio_withdrawn_reason": "2026-10-03 rev 86 WS-H: the episode reads a quotation credited to Dith Pran as 'Testimony to the ECCC, 2009'; the event record has him dying in 2008, so the line was cut from the record and the script. Re-render from the corrected script."
   },
   "chernobyl-disaster": {
    "url": "/audio/history/chernobyl-disaster.mp3?v=716c98e6",
