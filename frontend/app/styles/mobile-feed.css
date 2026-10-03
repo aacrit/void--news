@@ -159,25 +159,79 @@
   margin-top: var(--space-1);
 }
 
+/* The broadsheet column, phone edition (CEO 2026-10-03). The 40px mark and
+   its three caption lines stood beside a 14px head, so a two-line head sat
+   above an empty block the height of the caption. The head now takes the
+   full measure at a bold size up, and the Sigil reads as one slug line under
+   a hairline rule, the same grammar as the desktop card. */
 .msc__headline--compact {
   font-family: var(--font-editorial);
-  font-size: var(--text-base);
-  font-weight: 400;
-  line-height: 1.35;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -0.005em;
   color: var(--fg-primary);
   flex: 1;
   min-width: 0;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-3);
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
   overflow-wrap: break-word;
-  word-break: break-word;
+  word-break: normal;
+  text-wrap: pretty;
 }
 
-.msc__headline--compact span {
-  flex: 1;
+.msc__headline--compact > span {
   min-width: 0;
+}
+
+.msc__headline--compact .msc__sigil-wrapper {
+  padding-top: 6px;
+  border-top: 1px solid var(--divider);
+}
+
+.msc__headline--compact .sigil {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  column-gap: 6px;
+  row-gap: 2px;
+}
+
+.msc__headline--compact .sigil > svg:first-child {
+  width: 26px;
+  height: 26px;
+}
+
+.msc__headline--compact .sigil__roster {
+  margin: 0;
+}
+
+/* As on desktop: the slug spans the card, so only the mark and the strokes
+   take the tap; a tap on the words opens the story. */
+.msc__headline--compact .msc__sigil-wrapper,
+.msc__headline--compact .sigil { pointer-events: none; }
+.msc__headline--compact .sigil > svg:first-child,
+.msc__headline--compact .sigil__roster { pointer-events: auto; }
+
+.msc .msc__headline--compact .sigil__lean-label,
+.msc .msc__headline--compact .sigil__tally,
+.msc .msc__headline--compact .sigil__count {
+  display: inline;
+  max-width: none;
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.msc .msc__headline--compact .sigil__tally::before,
+.msc .msc__headline--compact .sigil__count::before {
+  content: "\00B7";
+  margin-right: 6px;
+  color: var(--fg-tertiary);
 }
 
 /* .msc__sigil-row .sigil — smaller SVG for compact cards */
@@ -1012,7 +1066,11 @@
 }
 
 .mbp__teaser-tldr   { grid-area: tldr; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.mbp__teaser-opinion { grid-area: opin; display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-left: var(--space-3); border-left: 2px solid var(--border-subtle); }
+/* Opinion sits on The Brief's own left edge under a hairline rule, as the
+   second item in one box (CEO 2026-10-03: the 2px indented bar set its text
+   12px right of The Brief's, so the two items never lined up). The rule
+   carries the lean colour the bar used to. */
+.mbp__teaser-opinion { grid-area: opin; display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-top: var(--space-3); border-top: 1px solid var(--border-subtle); }
 
 /* Module kicker — small uppercase accent label signalling a summary block.
    No human-authorship label (the brief is LLM-generated). */
@@ -1076,10 +1134,13 @@
   overflow: hidden;
 }
 
+/* Same size, weight and ink as The Brief's head, so the two read as one
+   box; italic is what marks the argued piece. */
 .mbp__teaser-hl--opinion {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--fg-tertiary);
+  font-style: italic;
+  color: var(--fg-secondary);
 }
 
 .mbp__teaser-preview {
@@ -1096,8 +1157,6 @@
 
 .mbp__teaser-preview--opinion {
   -webkit-line-clamp: 1;
-  color: var(--fg-tertiary);
-  font-size: var(--text-xs);
 }
 
 .mbp__teaser-chevron {
@@ -1109,9 +1168,9 @@
   line-height: 1;
 }
 
-.mbp__teaser-opinion--left   { border-left-color: var(--bias-left); }
-.mbp__teaser-opinion--center { border-left-color: var(--bias-center); }
-.mbp__teaser-opinion--right  { border-left-color: var(--bias-right); }
+.mbp__teaser-opinion--left   { border-top-color: var(--bias-left); }
+.mbp__teaser-opinion--center { border-top-color: var(--bias-center); }
+.mbp__teaser-opinion--right  { border-top-color: var(--bias-right); }
 
 
 /* Opinion-lean accent strip on the opinion row (left/center/right tinted). */

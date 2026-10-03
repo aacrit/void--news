@@ -159,8 +159,8 @@
 .story-card[data-variant="wire"] .story-card__headline {
   font-family: var(--font-editorial);
   font-size: var(--type-card-headline);
-  font-weight: 600;
-  line-height: 1.25;
+  font-weight: 700;
+  line-height: 1.12;
   letter-spacing: var(--type-card-tracking);
 }
 
