@@ -447,7 +447,14 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
       const insideTrigger = triggerRef.current?.contains(target);
       const insidePopup = popupRef.current?.contains(target);
       if (!insideTrigger && !insidePopup) {
-        e.stopPropagation();
+        // Swallow the click only where it would reach the card this Sigil
+        // sits on (F03: it would open the Deep Dive). Anywhere else the click
+        // is the reader's and must land: a popup opened by HOVER (the
+        // pointer left resting on a Sigil, e.g. after the tour invitation
+        // vanished from over it) used to eat the next click on the whole
+        // page, so "How to read a card" needed two presses (2026-10-03).
+        const card = triggerRef.current?.closest("article");
+        if (card && card.contains(target)) e.stopPropagation();
         onClose();
       }
     };
