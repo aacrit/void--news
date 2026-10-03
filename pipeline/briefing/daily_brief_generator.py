@@ -1290,10 +1290,28 @@ def _fetch_last_successful_brief(edition: str) -> dict | None:
                 "audio_script": p.get("audio_script"),
                 "opinion_audio_script": p.get("opinion_audio_script"),
                 "top_cluster_ids": p.get("top_cluster_ids", []),
+                # Whether THAT brief's grounding pass completed (rev 86). Read
+                # on its own so a missing column can never cost the carry.
+                "_prior_grounding": _prior_grounding(supabase, edition),
             }
     except Exception as e:
         print(f"  [warn] Could not fetch previous successful brief for {edition}: {e}")
     return None
+
+
+def _prior_grounding(supabase, edition: str) -> dict:
+    """grounding_ran of the brief a carry-forward reuses, or {} when unknown."""
+    import json as _json
+    try:
+        res = supabase.table("daily_briefs").select("grounding_ran").eq(
+            "edition", edition).not_.is_("tldr_headline", "null").order(
+            "created_at", desc=True).limit(1).execute()
+        g = (res.data or [{}])[0].get("grounding_ran")
+        if isinstance(g, str):
+            g = _json.loads(g)
+        return g if isinstance(g, dict) else {}
+    except Exception:
+        return {}
 
 
 # ---------------------------------------------------------------------------
@@ -1919,6 +1937,22 @@ def _ground_brief_result(brief_result: dict, top_clusters: list[dict],
     except ImportError:  # pragma: no cover
         from pipeline.editorial import derived_grounding as dg  # type: ignore
     cuts: list = []
+    # Whether each product's grounding pass COMPLETED (rev 86). False ships
+    # with a visible "Not yet verified" label (CEO, 2026-10-03: label rather
+    # than withhold); tests/test_rigor.py F-3 fails a product that shipped
+    # unverified AND unlabelled. A carried product keeps the flag of the day
+    # it was written; unknown reads as not verified.
+    prior = brief_result.get("_prior_grounding") or {}
+    carried = bool(brief_result.get("_carried"))
+    ran: dict = {
+        "tldr": (prior.get("tldr") is True) if carried else False,
+        "opinion": None,
+        "script": (prior.get("onair") is True) if carried else False,
+    }
+    if brief_result.get("opinion_text"):
+        ran["opinion"] = False if brief_result.get("_fresh_opinion") else (
+            prior.get("opinion") is True)
+    brief_result["_grounding_ran"] = ran
     try:
         if not brief_result.get("_carried") and brief_result.get("tldr_text") \
                 and top_clusters:
@@ -1927,6 +1961,7 @@ def _ground_brief_result(brief_result: dict, top_clusters: list[dict],
             cuts += more
             if text.strip():
                 brief_result["tldr_text"] = _ensure_paragraph_structure(text)
+            ran["tldr"] = True
         script = brief_result.get("audio_script")
         if script and not brief_result.get("_carried") and top_clusters:
             union = dg.Evidence("\n".join(dg.cluster_text(c) for c in top_clusters))
@@ -1942,6 +1977,7 @@ def _ground_brief_result(brief_result: dict, top_clusters: list[dict],
                 if kept.strip():
                     lines.append(m.group(1) + kept.replace("\n\n", " "))
             brief_result["audio_script"] = "\n".join(lines)
+            ran["script"] = True
         opinion_cluster = brief_result.get("_opinion_cluster_ref")
         if opinion_cluster and brief_result.get("_fresh_opinion"):
             for key in ("opinion_text", "opinion_audio_script"):
@@ -1951,8 +1987,11 @@ def _ground_brief_result(brief_result: dict, top_clusters: list[dict],
                     cuts += more
                     if kept.strip():
                         brief_result[key] = kept
+            ran["opinion"] = True if brief_result.get("opinion_text") else None
     except Exception as e:  # grounding must never cost the edition its brief
-        print(f"  [grounding][brief:{edition}] [warn] pass failed, text kept: {e}")
+        print(f"  [grounding][brief:{edition}] [warn] pass failed, text kept "
+              f"and labelled not yet verified: {e}")
+        _note_brief_rigor(edition, ran, [])
         return []
     for c in cuts:
         print(f"  [grounding] {c}")
@@ -1960,7 +1999,22 @@ def _ground_brief_result(brief_result: dict, top_clusters: list[dict],
         print(f"  [grounding][brief:{edition}] {len(cuts)} sentence(s) cut "
               f"(not in the story they were written from)")
     brief_result["_grounding_cuts"] = [c._asdict() for c in cuts]
+    _note_brief_rigor(edition, ran, cuts)
     return cuts
+
+
+def _note_brief_rigor(edition: str, ran: dict, cuts: list) -> None:
+    """Counts for validation/rigor.py: the flags, and cuts by reason class."""
+    try:
+        try:
+            from validation import rigor as _r
+        except ImportError:  # pragma: no cover
+            from pipeline.validation import rigor as _r  # type: ignore
+        _r.note_run("brief", {"edition": edition, "grounding_ran": dict(ran),
+                              "cut_sentences": len(cuts),
+                              "cuts_by_reason": _r.count_reasons(cuts)})
+    except Exception as e:  # pragma: no cover - a counter never costs the brief
+        print(f"  [rigor] [warn] brief counters not recorded: {e}")
 
 
 def generate_daily_briefs(

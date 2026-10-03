@@ -279,6 +279,35 @@ def main() -> int:
         else:
             print("PASS: feed.json carries content_type and disaster_severity")
 
+        # 8. rev 86 WS-G: Stage 2 records its counters for validation/rigor.py
+        # in the run's own build dir, and the post-export audit reads the
+        # export it just made. Across two processes again, so end to end here.
+        run_file = tmp / "build-data" / "rigor-run.json"
+        counters = json.loads(run_file.read_text()) if run_file.exists() else {}
+        s2 = counters.get("stage2") or {}
+        if not counters.get("startedAt") or "fresh_ids" not in s2 \
+                or "critique_unread" not in s2 or "cuts_by_reason" not in s2:
+            print(f"FAIL: Stage 2 recorded no rigor counters ({sorted(s2)})")
+            ok = False
+        else:
+            print(f"PASS: Stage 2 recorded rigor counters ({s2.get('candidates')} candidates, "
+                  f"{s2.get('critique_unread')} unread by the critique, "
+                  f"{s2.get('cut_sentences')} sentence(s) cut)")
+        # Only that it RAN is asserted. The harness rebuilds articles from the
+        # deepdive files, which keep each source's 300-character snippet, and
+        # its cards are the committed ones, written in production from whole
+        # bodies, so its findings say nothing about the cards.
+        audit = run([sys.executable, "scripts/audit_grounding.py", "--quiet",
+                     "--build-data", str(tmp / "build-data")], env)
+        if "F-1:" not in audit.stdout or "F-2:" not in audit.stdout \
+                or "Traceback" in audit.stderr:
+            print("FAIL: the grounding audit did not run over the export")
+            print(audit.stdout[-1500:] + audit.stderr[-1500:])
+            ok = False
+        else:
+            print("PASS: the grounding audit read the export (findings not judged: "
+                  "harness bodies are deepdive snippets)")
+
         return 0 if ok else 1
     finally:
         shutil.rmtree(tmp, ignore_errors=True)

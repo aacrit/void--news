@@ -4018,7 +4018,8 @@ def _parse_critique(result: dict, n: int) -> dict[int, list[tuple[str, str]]]:
 
 
 def critique_cards(records: list[dict],
-                   prefer_provider: str | None = "gemini") -> dict[str, list[tuple[str, str]]]:
+                   prefer_provider: str | None = "gemini",
+                   stats: dict | None = None) -> dict[str, list[tuple[str, str]]]:
     """Read every finished card against its articles. Returns cid -> findings.
 
     `records`: [{cid, title, summary, articles}]. Batched on flash-lite (the
@@ -4027,6 +4028,10 @@ def critique_cards(records: list[dict],
     that batch its findings and nothing else: an unread card is treated as
     clean, never as failed, because a checker that cannot run must not start
     dropping stories.
+
+    `stats`, when given, gets "read" incremented by the cards in each batch
+    whose answer came back (rev 86, validation/rigor.py), so an unread card is
+    at least counted.
     """
     findings: dict[str, list[tuple[str, str]]] = {}
     records = [r for r in records if (r.get("summary") or "").strip()]
@@ -4054,6 +4059,8 @@ def critique_cards(records: list[dict],
                   f"treating those cards as unread")
             continue
         parsed = _parse_critique(result, len(chunk))
+        if stats is not None:
+            stats["read"] = stats.get("read", 0) + len(chunk)
         for idx, found in parsed.items():
             findings[chunk[idx]["cid"]] = found
     return findings

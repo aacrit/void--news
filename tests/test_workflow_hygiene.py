@@ -49,7 +49,13 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 WF = ROOT / ".github" / "workflows"
 
 # W-05: test files no workflow runs ON PURPOSE, each with its reason.
-ALLOWLIST: dict[str, str] = {}
+ALLOWLIST: dict[str, str] = {
+    # Rev 86 WS-G. A claude/* branch may not change .github/ (W-02), so the
+    # workflow half ships as a hand-merged PR whose exact diff is
+    # docs/proposals/RIGOR-WORKFLOW-DIFF.md. That PR adds this test to
+    # auto-merge-claude.yml and pipeline.yml and removes this entry.
+    "test_rigor.py": "pending the hand-merged workflow PR in docs/proposals/RIGOR-WORKFLOW-DIFF.md",
+}
 
 FOUR_GATES = ("tests/test_grounding.py", "tests/test_bias_defaults_gate.py",
               "tests/test_feed_buildable.py", "tests/test_onair_sidecar.py")
