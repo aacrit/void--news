@@ -373,6 +373,10 @@ export interface DailyBriefData {
   news_start_seconds: number | null;
   top_cluster_ids: string[] | null;
   created_at: string;
+  /** Published corrections to this brief (pipeline/editorial/corrections.py). */
+  corrections?: { date: string; product?: string; notice: string }[] | null;
+  /** A radio correction withdrew this episode; every audio field is null. */
+  audio_withdrawn?: boolean | null;
 }
 
 export interface EditionMeta {

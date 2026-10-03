@@ -1,0 +1,15 @@
+{
+ "class": "weekly-capped-count",
+ "gate": "test_truncation_lint",
+ "product": "weekly",
+ "covers": [
+  "frontend/build-data/weekly-corrections.json (entries whose \"classes\" name this class)"
+ ],
+ "note": "A capped query's length published as an exact count.",
+ "planted": {
+  "source": "def fetch(sb):\n    rows = sb.table(\"story_clusters\").select(\"*\").limit(500).execute().data or []\n    return {\"clusters\": rows, \"total_clusters\": len(rows)}\n"
+ },
+ "clean": {
+  "source": "def fetch(sb):\n    rows = sb.table(\"story_clusters\").select(\"*\").limit(500).execute().data or []\n    return {\"clusters\": rows, \"total_clusters\": len(rows), \"truncated\": len(rows) >= 500}\n"
+ }
+}

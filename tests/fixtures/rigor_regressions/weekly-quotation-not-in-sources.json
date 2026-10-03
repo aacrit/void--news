@@ -1,0 +1,17 @@
+{
+ "class": "weekly-quotation-not-in-sources",
+ "gate": "weekly_parse.ground_quotes",
+ "product": "weekly",
+ "covers": [
+  "frontend/build-data/weekly-corrections.json (entries whose \"classes\" name this class)"
+ ],
+ "note": "A quotation run past the reported words, a paraphrase set in quotation marks, or words no story carries.",
+ "planted": {
+  "text": "He called the situation “unjustifiable, catastrophic, and disproportionate.”",
+  "source_text": "He called the situation \"unjustifiable, catastrophic\" in a statement."
+ },
+ "clean": {
+  "text": "He called the situation “unjustifiable, catastrophic.”",
+  "source_text": "He called the situation \"unjustifiable, catastrophic\" in a statement."
+ }
+}

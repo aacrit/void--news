@@ -1,9 +1,15 @@
 {
+ "schema": 2,
  "corrections": [
   {
-   "cluster": "cd6ea179-0ffc-4a45-b116-65d3297cf888",
+   "id": "2026-10-02-iraq-toll",
+   "product": "card",
+   "class": "number-misattached",
+   "gate": "E-13",
    "date": "2026-10-02",
+   "cluster": "cd6ea179-0ffc-4a45-b116-65d3297cf888",
    "reason": "4,419 is the U.S. military death toll over the 23 years from 2003 (LiveMint: '23 years, 4,419 military deaths'), not Operation Inherent Resolve's, to which the sentence attached it. Audit 1 item 3.",
+   "notice": "a death toll was attached to the wrong military operation, and the sentence was removed",
    "edits": [
     {
      "field": "summary",
@@ -13,15 +19,32 @@
    ]
   },
   {
-   "cluster": "bf16e44c-0173-47f7-abd1-5a1536a79fd1",
+   "id": "2026-10-02-hegseth-quote",
+   "product": "card",
+   "class": "quotation-altered",
+   "gate": "E-14",
    "date": "2026-10-02",
-   "reason": "Quotation altered: the source's ellipsis between the two phrases had become a full stop (audit 1 item 6). 'Ideology-heavy speech' was The Independent's characterisation in Void's voice (E-07 class).",
+   "cluster": "bf16e44c-0173-47f7-abd1-5a1536a79fd1",
+   "reason": "Quotation altered: the source's ellipsis between the two phrases had become a full stop (audit 1 item 6).",
+   "notice": "a quotation's punctuation was restored to what the speaker said",
    "edits": [
     {
      "field": "summary",
      "find": "those who “clung to the 'woke department'. No longer work here,”",
      "replace": "those who “clung to the 'woke department' ... no longer work here,”"
-    },
+    }
+   ]
+  },
+  {
+   "id": "2026-10-02-hegseth-voice",
+   "product": "card",
+   "class": "characterisation-in-void-voice",
+   "gate": "none",
+   "date": "2026-10-02",
+   "cluster": "bf16e44c-0173-47f7-abd1-5a1536a79fd1",
+   "reason": "'Ideology-heavy speech' was The Independent's characterisation in Void's voice (E-07 class). E-07 is advisory and its term list does not hold this phrase, so no deterministic gate catches the class yet.",
+   "notice": "an outlet's description of the speech, printed as Void's own, was removed",
+   "edits": [
     {
      "field": "summary",
      "find": "during an ideology-heavy speech at Marine Corps Base Quantico",
@@ -30,19 +53,19 @@
    ]
   },
   {
-   "cluster": "7cfd4407-2bc8-4266-927e-1a4e71a9aa82",
+   "id": "2026-10-02-putin-kanye",
+   "product": "card",
+   "class": "cluster-contamination",
+   "gate": "E-16",
    "date": "2026-10-02",
-   "reason": "Cluster contamination: a Kanye West concert story rode in on 'Russia' (audit 1 item 8). Garble 'Q&An' (item 12).",
+   "cluster": "7cfd4407-2bc8-4266-927e-1a4e71a9aa82",
+   "reason": "Cluster contamination: a Kanye West concert story rode in on 'Russia' (audit 1 item 8).",
+   "notice": "a passage about another story was removed",
    "edits": [
     {
      "field": "summary",
      "find": "Separately, two sold-out concerts by Kanye West in St. Petersburg, scheduled for October 10 and 11, were officially canceled. Gazprom Arena stated it never signed a rental agreement with the promoter, Say Agency. ",
      "replace": ""
-    },
-    {
-     "field": "summary",
-     "find": "during a Q&An after",
-     "replace": "during a Q&A after"
     },
     {
      "field": "consensus_points",
@@ -55,9 +78,51 @@
    ]
   },
   {
-   "cluster": "1b9b716e-a185-4ae6-b67b-e69f135dc7af",
+   "id": "2026-10-02-putin-garble",
+   "product": "card",
+   "class": "text-garble",
+   "gate": "none",
    "date": "2026-10-02",
+   "cluster": "7cfd4407-2bc8-4266-927e-1a4e71a9aa82",
+   "reason": "Garble 'Q&An' for 'Q&A' (audit 1 item 12). No deterministic rule reads a corrupted token like this one.",
+   "notice": null,
+   "edits": [
+    {
+     "field": "summary",
+     "find": "during a Q&An after",
+     "replace": "during a Q&A after"
+    }
+   ]
+  },
+  {
+   "id": "2026-10-03-putin-members",
+   "product": "deepdive",
+   "class": "membership-contamination",
+   "gate": "same_event.entity_outliers",
+   "date": "2026-10-03",
+   "cluster": "7cfd4407-2bc8-4266-927e-1a4e71a9aa82",
+   "reason": "The Putin card's Deep Dive listed eight articles on the cancelled Kanye West concerts in St. Petersburg (Meduza twice, Anadolu, RT, The Citizen, The Daily Beast, The Independent, Asharq Al-Awsat) as coverage of Putin's Valdai remarks. They fed its source count (20) and its lean histogram (audit 1 item 8; OPEN-ITEMS 1266). Other off-topic members on the same row are not removed here: see the WS-R report.",
+   "notice": "articles about another story were removed from this page's sources, and its counts were recomputed",
+   "remove_members": [
+    "https://meduza.io/en/news/2026/09/30/kanye-west-s-st-petersburg-concerts-are-officially-canceled-ticket-refunds-begin-october-12",
+    "https://www.aa.com.tr/en/eurasia/kanye-west-s-2-stadium-concerts-in-russia-officially-canceled/4075243",
+    "https://www.rt.com/pop-culture/646565-kanye-concert-st-petersburg-zakharova/?utm_source=rss&utm_medium=rss&utm_campaign=RSS",
+    "https://www.citizen.co.za/lifestyle/entertainment/celebrity-news/kanye-wests-russian-concerts-have-been-cancelled-organisers-say/",
+    "https://www.thedailybeast.com/obsessed/kanye-wests-shows-in-putins-hometown-axed-in-humiliating-mess/",
+    "https://meduza.io/en/news/2026/09/30/russian-police-reportedly-investigate-organizer-of-canceled-kanye-west-concerts-in-st-petersburg-for-possible-fraud",
+    "https://www.the-independent.com/arts-entertainment/music/news/kanye-west-russia-shows-cancelled-b3059897.html",
+    "https://english.aawsat.com/entertainment/5324685-kanye-wests-planned-russia-concerts-cancelled-organizer-says"
+   ]
+  },
+  {
+   "id": "2026-10-02-pensions-raf",
+   "product": "card",
+   "class": "cluster-contamination",
+   "gate": "E-16",
+   "date": "2026-10-02",
+   "cluster": "1b9b716e-a185-4ae6-b67b-e69f135dc7af",
    "reason": "Cluster contamination: the RAF Fairford incident and EU rejoining are separate stories with their own cards (audit 1 item 8).",
+   "notice": "a passage about other stories was removed",
    "edits": [
     {
      "field": "summary",
@@ -71,9 +136,14 @@
    ]
   },
   {
-   "cluster": "*",
+   "id": "2026-10-02-fallback-killlist",
+   "product": "card",
+   "class": "kill-list-in-code-copy",
+   "gate": "test_prompt_grounding.copy_literals",
    "date": "2026-10-02",
-   "reason": "Retired rule-based fallback copy: a kill-list word or a dash written by code, not by a model (audit 1 item 13).",
+   "cluster": "*",
+   "reason": "Retired rule-based fallback copy: a kill-list word written by code, not by a model (audit 1 item 13).",
+   "notice": null,
    "edits": [
     {
      "field": "divergence_points",
@@ -84,12 +154,90 @@
      "field": "divergence_points",
      "regex": "Some sources use notably more sensational language than others",
      "replace": "Some sources use more sensational language than others"
-    },
+    }
+   ]
+  },
+  {
+   "id": "2026-10-02-fallback-dash",
+   "product": "card",
+   "class": "dash-in-code-copy",
+   "gate": "test_prompt_grounding.copy_literals",
+   "date": "2026-10-02",
+   "cluster": "*",
+   "reason": "Retired rule-based fallback copy: a dash written by code, not by a model (audit 1 item 13).",
+   "notice": null,
+   "edits": [
     {
      "field": "consensus_points",
      "regex": "Single-source coverage — no cross-source comparison available",
      "replace": "Single-source coverage; no cross-source comparison available"
     }
+   ]
+  },
+  {
+   "id": "2026-10-03-brief-hegseth-total",
+   "product": "brief",
+   "class": "stacked-total",
+   "gate": "derived_grounding.check_total",
+   "date": "2026-10-03",
+   "brief": "150e94dc-2748-40f7-9b58-0fd3b42332b9",
+   "reason": "TL;DR of 2026-10-01: 'Hegseth announced a 20 percent reduction... This follows 10 percent cuts last year, totaling a 20 percent reduction.' Stacks last year's 10 on this year's 20 and calls it 20. The card (bf16e44c) says this year's cut is an additional 10 percent, following 10 last year, totaling 20. Audit 4c.",
+   "notice": "a sentence that added two cuts to a total they do not make was removed",
+   "edits": [
+    {
+     "field": "tldr_text",
+     "find": "This follows 10 percent cuts last year, totaling a 20 percent reduction. ",
+     "replace": ""
+    }
+   ]
+  },
+  {
+   "id": "2026-10-03-brief-swinney-figure",
+   "product": "brief",
+   "class": "unsourced-number",
+   "gate": "derived_grounding.check_numbers",
+   "date": "2026-10-03",
+   "brief": "150e94dc-2748-40f7-9b58-0fd3b42332b9",
+   "reason": "TL;DR of 2026-10-01 said Swinney put the cost to Scottish pensioners at £1,000 per year. The card (1b9b716e) says £4 billion annually by 2049/50 and nearly £2,000 per person in real terms; £1,000 is in no source. Audit 4c.",
+   "notice": "a figure for the cost to Scottish pensioners that the reporting does not carry was removed",
+   "edits": [
+    {
+     "field": "tldr_text",
+     "find": " John Swinney, First Minister of Scotland, stated official analysis shows the changes would cost Scottish pensioners £1,000 per year.",
+     "replace": ""
+    }
+   ]
+  },
+  {
+   "id": "2026-10-03-opinion-bail-interval",
+   "product": "opinion",
+   "class": "wrong-interval",
+   "gate": "derived_grounding.check_dates",
+   "date": "2026-10-03",
+   "brief": "150e94dc-2748-40f7-9b58-0fd3b42332b9",
+   "reason": "Opinion of 2026-10-01 said the five men arrested on Sunday were released on bail 'just two days later'. The card (44ef0706) says arrested on Sunday, released on police bail Monday. The replacement is the card's own words. Audit 4c.",
+   "notice": "the day the five men were released on bail was wrong, and now matches the reporting",
+   "edits": [
+    {
+     "field": "opinion_text",
+     "find": "who were released on police bail just two days later.",
+     "replace": "who were released on police bail on Monday."
+    }
+   ]
+  },
+  {
+   "id": "2026-10-03-radio-purged",
+   "product": "radio",
+   "class": "lifted-quote",
+   "gate": "derived_grounding.check_lifted_quote",
+   "date": "2026-10-03",
+   "brief": "150e94dc-2748-40f7-9b58-0fd3b42332b9",
+   "reason": "On Air of 2026-10-01 said Hegseth told troops 'those who clung to the woke department would be purged'. The quotation ends 'no longer work here'; 'purged' is not in it. The episode also speaks the TL;DR's stacked total and the £1,000 figure. Withdrawn until re-rendered. Audit 4c.",
+   "notice": "the recording is withdrawn: it gave a speaker words the reporting does not carry",
+   "audio": "withdrawn",
+   "audio_paths": [
+    "/audio/world/2026-10-01-pm.mp3",
+    "/audio/world/2026-10-01-pm.chapters.json"
    ]
   }
  ]

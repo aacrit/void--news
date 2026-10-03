@@ -456,7 +456,18 @@ def generate_podcast_feeds(editions: list[str] | None = None) -> dict[str, str]:
                 "created_at", desc=True
             ).limit(EPISODES_PER_FEED).execute()
 
-            episodes = _playable(resp.data if resp.data else [], edition)
+            # Published corrections (rev 86 WS-R): a corrected TL;DR is read
+            # corrected, and a withdrawn episode loses its audio_url here, so
+            # _playable drops it even while its MP3 is still in the tree.
+            rows = resp.data if resp.data else []
+            try:
+                from editorial import corrections as _corr
+            except ImportError:
+                from pipeline.editorial import corrections as _corr  # type: ignore
+            for _row in rows:
+                for _line in _corr.apply_brief(_row):
+                    print(f"  [podcast][correction] {_line}")
+            episodes = _playable(rows, edition)
             if not episodes:
                 print(f"  [podcast] No playable audio episodes for {edition}, skipping")
                 continue

@@ -3,54 +3,86 @@
     "week_start": "2026-09-14",
     "corrected_on": "2026-10-01",
     "section": "The Cover",
-    "text": "The cover gave the date of the Greenland announcement as Saturday, September 19. It was announced late on Friday, September 18. We also removed passages on Arctic geopolitics, Greenland's history in World War II and Cold War basing, and Greenland's constitutional status: none of it came from the reporting this issue was written from, and Void prints only what its sources carry. The audio edition is withdrawn: it spoke the removed passages, and it will return only once it is re-recorded from the corrected text."
+    "text": "The cover gave the date of the Greenland announcement as Saturday, September 19. It was announced late on Friday, September 18. We also removed passages on Arctic geopolitics, Greenland's history in World War II and Cold War basing, and Greenland's constitutional status: none of it came from the reporting this issue was written from, and Void prints only what its sources carry. The audio edition is withdrawn: it spoke the removed passages, and it will return only once it is re-recorded from the corrected text.",
+    "classes": [
+      "weekly-wrong-date",
+      "weekly-unsourced-background"
+    ]
   },
   {
     "week_start": "2026-09-14",
     "corrected_on": "2026-10-01",
     "section": "Opinion",
-    "text": "Two columns stated that the United States holds access to Greenland under a treaty from the 1950s. The reporting this issue was written from does not carry that, so the sentence was removed from both."
+    "text": "Two columns stated that the United States holds access to Greenland under a treaty from the 1950s. The reporting this issue was written from does not carry that, so the sentence was removed from both.",
+    "classes": [
+      "weekly-unsourced-background"
+    ]
   },
   {
     "week_start": "2026-09-14",
     "corrected_on": "2026-10-02",
     "section": "The Cover",
-    "text": "The cover credited Greenland Prime Minister Jens-Frederik Nielsen with saying the deal recognized Greenland's interests and strengthened its security. The reporting this issue was written from gives a different statement to a different person: Danish Prime Minister Mette Frederiksen described the deal as recognizing the sovereignty and territorial integrity of the Kingdom and the Greenlandic people's right to self-determination. The cover now says that, and so do the two columns that repeated the line."
+    "text": "The cover credited Greenland Prime Minister Jens-Frederik Nielsen with saying the deal recognized Greenland's interests and strengthened its security. The reporting this issue was written from gives a different statement to a different person: Danish Prime Minister Mette Frederiksen described the deal as recognizing the sovereignty and territorial integrity of the Kingdom and the Greenlandic people's right to self-determination. The cover now says that, and so do the two columns that repeated the line.",
+    "classes": [
+      "weekly-wrong-speaker"
+    ]
   },
   {
     "week_start": "2026-09-14",
     "corrected_on": "2026-10-02",
     "section": "The Cover",
-    "text": "The cover set three passages in quotation marks that were not quotations as reported. Lars Lokke Rasmussen's words on a binding agreement were reported as paraphrase, so they are now paraphrase. President Trump's quotation ran past the words reported; it now ends where they end, at \"FOREVER have the complete ability to do what is necessary in Greenland\". A second Trump quotation, including the words \"EVER have a base\", appears in none of the reporting, and it is removed. The opinion columns that repeated these quotations were changed the same way. We also removed the claim that Trump had cited strategic reasons since at least 2024: the reporting says since January 2025."
+    "text": "The cover set three passages in quotation marks that were not quotations as reported. Lars Lokke Rasmussen's words on a binding agreement were reported as paraphrase, so they are now paraphrase. President Trump's quotation ran past the words reported; it now ends where they end, at \"FOREVER have the complete ability to do what is necessary in Greenland\". A second Trump quotation, including the words \"EVER have a base\", appears in none of the reporting, and it is removed. The opinion columns that repeated these quotations were changed the same way. We also removed the claim that Trump had cited strategic reasons since at least 2024: the reporting says since January 2025.",
+    "classes": [
+      "weekly-quotation-not-in-sources",
+      "weekly-wrong-date"
+    ]
   },
   {
     "week_start": "2026-09-14",
     "corrected_on": "2026-10-02",
     "section": "The Cover",
-    "text": "The second cover, on Ed Sheeran, quoted him calling the situation in Gaza \"unjustifiable, catastrophic, and disproportionate\" and gave a death toll for the October 2023 attack. The reporting carries catastrophic and unjustifiable, and his description of the October 7 events as horrific, with no toll. Both are corrected, and the column on Sheeran is corrected to match. We removed a protest outside the Philadelphia concert and a line attributed to Sheeran that the reporting does not carry, the descriptions given for three supporting acts, and a sentence that described the story's coverage in the pipeline's own terms rather than the reader's."
+    "text": "The second cover, on Ed Sheeran, quoted him calling the situation in Gaza \"unjustifiable, catastrophic, and disproportionate\" and gave a death toll for the October 2023 attack. The reporting carries catastrophic and unjustifiable, and his description of the October 7 events as horrific, with no toll. Both are corrected, and the column on Sheeran is corrected to match. We removed a protest outside the Philadelphia concert and a line attributed to Sheeran that the reporting does not carry, the descriptions given for three supporting acts, and a sentence that described the story's coverage in the pipeline's own terms rather than the reader's.",
+    "classes": [
+      "weekly-quotation-not-in-sources",
+      "weekly-unsourced-number",
+      "weekly-unsourced-background"
+    ]
   },
   {
     "week_start": "2026-09-14",
     "corrected_on": "2026-10-02",
     "section": "Opinion",
-    "text": "Two columns, on the drone attack on Moscow and on the strikes on Saudi Arabia, are withdrawn. Most of what they asserted was not in the week's reporting, including drone counts of 1,600 and 1,110 and a figure of 110,000 people displaced. The reporting gives 1,951 drones claimed shot down by Russia's Ministry of Defence, and estimates of 112,000 to 115,000 displaced in Yemen. The opinion topic line also named the Greenland story twice; it names it once."
+    "text": "Two columns, on the drone attack on Moscow and on the strikes on Saudi Arabia, are withdrawn. Most of what they asserted was not in the week's reporting, including drone counts of 1,600 and 1,110 and a figure of 110,000 people displaced. The reporting gives 1,951 drones claimed shot down by Russia's Ministry of Defence, and estimates of 112,000 to 115,000 displaced in Yemen. The opinion topic line also named the Greenland story twice; it names it once.",
+    "classes": [
+      "weekly-unsourced-number"
+    ]
   },
   {
     "week_start": "2026-09-14",
     "corrected_on": "2026-10-02",
     "section": "Departments",
-    "text": "The Technology and Sports & Culture pages are removed. The Sports & Culture page was about a German election result the week's reporting does not contain, and neither page was written from the week's reporting. Both departments are suspended until each has sourced reporting of its own to draw on."
+    "text": "The Technology and Sports & Culture pages are removed. The Sports & Culture page was about a German election result the week's reporting does not contain, and neither page was written from the week's reporting. Both departments are suspended until each has sourced reporting of its own to draw on.",
+    "classes": [
+      "weekly-off-week-content"
+    ]
   },
   {
     "week_start": "2026-09-14",
     "corrected_on": "2026-10-02",
     "section": "The Week in Brief",
-    "text": "Five briefs are removed because no story Void printed that week carries them: Recep Tayyip Erdogan at the UN General Assembly, a change to Jehovah's Witnesses' policy on blood, a Justice Department position on handgun sales, Trump's early return from Camp David, and Trump greeting Xi Jinping at the airport. The brief on the attack in Kohat said 31 dead; the reporting says at least 21, and 23 once the operation ended. The remaining briefs are rewritten from the printed stories, without the lines that guessed at what each event meant."
+    "text": "Five briefs are removed because no story Void printed that week carries them: Recep Tayyip Erdogan at the UN General Assembly, a change to Jehovah's Witnesses' policy on blood, a Justice Department position on handgun sales, Trump's early return from Camp David, and Trump greeting Xi Jinping at the airport. The brief on the attack in Kohat said 31 dead; the reporting says at least 21, and 23 once the operation ended. The remaining briefs are rewritten from the printed stories, without the lines that guessed at what each event meant.",
+    "classes": [
+      "weekly-off-week-content",
+      "weekly-unsourced-number"
+    ]
   },
   {
     "week_start": "2026-09-14",
     "corrected_on": "2026-10-02",
     "section": "How this issue was made",
-    "text": "The colophon said this issue was assembled from more than 2,355 articles while The Week in Bias said more than 60,000 were scored. The first figure was a sum of source counts over a capped read of 500 story clusters, not a count of articles. Both now print the count of articles scored."
+    "text": "The colophon said this issue was assembled from more than 2,355 articles while The Week in Bias said more than 60,000 were scored. The first figure was a sum of source counts over a capped read of 500 story clusters, not a count of articles. Both now print the count of articles scored.",
+    "classes": [
+      "weekly-capped-count"
+    ]
   }
 ]

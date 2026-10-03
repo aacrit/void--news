@@ -1,0 +1,17 @@
+{
+ "class": "weekly-unsourced-number",
+ "gate": "weekly_parse.ground_text",
+ "product": "weekly",
+ "covers": [
+  "frontend/build-data/weekly-corrections.json (entries whose \"classes\" name this class)"
+ ],
+ "note": "A toll or a count the week's reporting does not carry (31 dead against at least 21).",
+ "planted": {
+  "text": "The attack killed 31 people.",
+  "source_text": "The attack killed at least 21 people, and 23 once the operation ended."
+ },
+ "clean": {
+  "text": "The attack killed at least 21 people.",
+  "source_text": "The attack killed at least 21 people, and 23 once the operation ended."
+ }
+}

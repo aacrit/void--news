@@ -1,0 +1,19 @@
+{
+ "class": "number-misattached",
+ "gate": "E-13",
+ "product": "card",
+ "covers": [
+  "pipeline/editorial/corrections.json#2026-10-02-iraq-toll"
+ ],
+ "note": "The number is in the sources, attached to a different operation. Planted from the 2026-10-01 Iraq card's shape.",
+ "planted": {
+  "title": "US Completes Troop Withdrawal From Iraq",
+  "summary": "The withdrawal ends Operation Inherent Resolve, which began in 2014. The Pentagon reported 4,419 U.S. military deaths during Operation Inherent Resolve. Officials confirmed the figures on Tuesday, and the ministry said the review would continue through the month. Reporters were briefed at the ministry. ",
+  "source_text": "The withdrawal ends Operation Inherent Resolve, which began in 2014.\nThe Pentagon reported 4,419 U.S. military deaths during Operation Iraqi Freedom, which began in 2003.\nOfficials confirmed the figures on Tuesday."
+ },
+ "clean": {
+  "title": "US Completes Troop Withdrawal From Iraq",
+  "summary": "The withdrawal ends Operation Inherent Resolve, which began in 2014. The Pentagon reported 4,419 U.S. military deaths during Operation Iraqi Freedom. Officials confirmed the figures on Tuesday, and the ministry said the review would continue through the month. Reporters were briefed at the ministry. ",
+  "source_text": "The withdrawal ends Operation Inherent Resolve, which began in 2014.\nThe Pentagon reported 4,419 U.S. military deaths during Operation Iraqi Freedom, which began in 2003.\nOfficials confirmed the figures on Tuesday."
+ }
+}

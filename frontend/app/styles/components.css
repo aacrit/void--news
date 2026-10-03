@@ -1679,6 +1679,21 @@ button:focus-visible .sigil-word__beam {
   letter-spacing: 0.04em;
 }
 
+/* ---- Correction notice (rev 86): "Corrected <date>: <reason>." on the page
+   that was corrected. A quiet rule and small type, not an alert. ---------- */
+.correction-notice {
+  margin: var(--space-3) 0 0;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--border-strong);
+}
+
+.correction-notice__line {
+  margin: 0;
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--fg-secondary);
+}
+
 /* Analysis depth dots — 3 dots showing exploration progress.
    First dot auto-fills (spectrum), second fills on All Sides open,
    third fills on Scoring open. Subtle reward for curiosity. */

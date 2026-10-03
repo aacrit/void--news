@@ -1,0 +1,64 @@
+{
+ "class": "membership-contamination",
+ "gate": "same_event.entity_outliers",
+ "product": "deepdive",
+ "covers": [
+  "pipeline/editorial/corrections.json#2026-10-03-putin-members"
+ ],
+ "note": "Two members about a concert ride into a cluster about a speech on 'Russia'. The entity pass anchored on the card's headline flags exactly them.",
+ "planted": {
+  "cluster_title": "Putin Warns Russia Will Use All Weapons if Directly Attacked",
+  "members": [
+   [
+    "Putin warns Russia will use all weapons if attacked",
+    "Russian President Vladimir Putin said at the Valdai Discussion Club that Russia would use all weapons."
+   ],
+   [
+    "Putin says Kaliningrad could be defended with all weapons",
+    "Vladimir Putin named Kaliningrad at the Valdai Discussion Club."
+   ],
+   [
+    "Putin at Valdai: nuclear risk serious only if NATO threats are",
+    "Vladimir Putin told the Valdai Discussion Club that NATO threats decide the risk."
+   ],
+   [
+    "Putin warns NATO at Valdai forum",
+    "Vladimir Putin spoke to the Valdai Discussion Club about NATO."
+   ],
+   [
+    "Kanye West concerts in St Petersburg canceled",
+    "Two concerts by Kanye West in St. Petersburg were canceled, Gazprom Arena said."
+   ],
+   [
+    "Kanye West's Russia shows axed as Gazprom Arena denies deal",
+    "Gazprom Arena said it never signed with Say Agency for the Kanye West shows."
+   ]
+  ],
+  "foreign": [
+   4,
+   5
+  ]
+ },
+ "clean": {
+  "cluster_title": "Putin Warns Russia Will Use All Weapons if Directly Attacked",
+  "members": [
+   [
+    "Putin warns Russia will use all weapons if attacked",
+    "Russian President Vladimir Putin said at the Valdai Discussion Club that Russia would use all weapons."
+   ],
+   [
+    "Putin says Kaliningrad could be defended with all weapons",
+    "Vladimir Putin named Kaliningrad at the Valdai Discussion Club."
+   ],
+   [
+    "Putin at Valdai: nuclear risk serious only if NATO threats are",
+    "Vladimir Putin told the Valdai Discussion Club that NATO threats decide the risk."
+   ],
+   [
+    "Putin warns NATO at Valdai forum",
+    "Vladimir Putin spoke to the Valdai Discussion Club about NATO."
+   ]
+  ],
+  "foreign": []
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "class": "text-garble",
+ "gate": "none",
+ "product": "card",
+ "covers": [
+  "pipeline/editorial/corrections.json#2026-10-02-putin-garble"
+ ],
+ "known_gap": "No deterministic rule reads a corrupted token such as 'Q&An'. S-07 judges a/an agreement before a word, not a letter glued to an abbreviation.",
+ "planted": {
+  "summary": "He made the remarks during a Q&An after his speech."
+ },
+ "clean": {
+  "summary": "He made the remarks during a Q&A after his speech."
+ }
+}

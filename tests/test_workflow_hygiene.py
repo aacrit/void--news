@@ -49,7 +49,12 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 WF = ROOT / ".github" / "workflows"
 
 # W-05: test files no workflow runs ON PURPOSE, each with its reason.
-ALLOWLIST: dict[str, str] = {}
+ALLOWLIST: dict[str, str] = {
+    "test_corrections.py":
+        "run from inside tests/test_grounding.py, which auto-merge-claude.yml "
+        "and pipeline.yml (before the data commit) both run, so it guards the "
+        "path that writes. Name it in a run: block when .github/ is next edited.",
+}
 
 FOUR_GATES = ("tests/test_grounding.py", "tests/test_bias_defaults_gate.py",
               "tests/test_feed_buildable.py", "tests/test_onair_sidecar.py")
