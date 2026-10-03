@@ -1919,3 +1919,40 @@ body:has(.mms--open) .fp {
     display: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   The console in the page (/audio, OnAirPanel inline, 2026-10-03)
+   The same console the sidebar opens, set in the flow of the page: no fixed
+   position, no slide-in, no pane width, no shadow to lift it off a page it
+   now belongs to. Three classes deep so it outranks every breakpoint's
+   .fp--broadcast placement without !important.
+   --------------------------------------------------------------------------- */
+.fp.fp--broadcast.oap--inline {
+  position: relative;
+  inset: auto;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  width: auto;
+  max-width: none;
+  transform: none;
+  animation: none;
+  z-index: auto;
+  overflow: visible;
+}
+
+.fp.fp--broadcast.oap--inline .fp__broadcast {
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  border: 1px solid color-mix(in srgb, var(--fp-accent) 20%, transparent);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- matches the tablet console's literal radius */
+  border-radius: 16px;
+  box-shadow: none;
+  padding: var(--space-5);
+}
+
+.fp.fp--broadcast.fp--playing.oap--inline .fp__broadcast {
+  border-color: color-mix(in srgb, var(--fp-accent) 40%, transparent);
+}

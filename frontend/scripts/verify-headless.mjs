@@ -1182,16 +1182,22 @@ async function scenarios(browser) {
       assert(await page.locator(".exp-banner").count() === 0, "banner-dismiss", "dismiss removes it");
     }
   });
-  /* The floating player: on the news, Audio and Weekly pages; not on Ship,
-     not on History (the event page carries its own Listen), and NOT on /onair,
-     where the page's own portal is the transport. It used to appear there too,
-     so at 1440 two transports showed the same episode through two
-     implementations. See the no-double-transport scenario. */
-  for (const [route, expect] of [["/", true], ["/onair/", false], ["/audio/", true], ["/weekly/", true], ["/ship/", false], ["/history/", false]]) {
+  /* The floating player: on the news and Weekly pages; not on Ship, not on
+     History (the event page carries its own Listen), and NOT on /onair or
+     /audio, where the page's own console is the transport. It used to appear
+     on /onair too, so at 1440 two transports showed the same episode through
+     two implementations. See the no-double-transport scenario. /audio carries
+     the console inline (2026-10-03), which is an .fp by class, so the count
+     is of every OTHER .fp, and the inline one is asserted to be there. */
+  for (const [route, expect] of [["/", true], ["/onair/", false], ["/audio/", false], ["/weekly/", true], ["/ship/", false], ["/history/", false]]) {
     await withPage(browser, { width: 1440, route }, `floating-player ${route}`, async (page) => {
       await page.waitForTimeout(500);
-      const n = await page.locator(".fp").count();
+      const n = await page.locator(".fp:not(.oap--inline)").count();
       assert((n > 0) === expect, "floating-player", `${route}: ${n} .fp, expected ${expect ? "present" : "absent"}`);
+      if (route === "/audio/") {
+        const inline = await page.locator(".oap--inline").count();
+        assert(inline === 1, "audio-console-inline", `/audio carries ${inline} inline console(s), expected 1`);
+      }
     });
   }
   /* Paper carries the front page's twenty, in order (the same extraction
@@ -1533,10 +1539,34 @@ async function brandChecks(browser) {
       assert(await page.locator(".audio-prog--argument [data-weekly-audio='withdrawn']").count() === 1,
         "audio-hub-argument-withdrawn", `withdrawal line: ${JSON.stringify(argument.replace(/\s+/g, " ").trim().slice(0, 160))}`);
     }
+    /* A reader LANDS on the player (CEO 2026-10-03): the console is in the
+       page with today's programme cued, the switch has three tabs, On Air is
+       chosen, and the arrow keys move the choice. */
+    const land = await page.evaluate(() => ({
+      console: document.querySelectorAll(".oap--inline").length,
+      programme: document.querySelector(".oap--inline .fp__bcast-cmd")?.textContent?.trim() ?? null,
+      tabs: [...document.querySelectorAll(".audio-switch [role='tab']")].map((t) => t.getAttribute("data-programme")),
+      chosen: document.querySelector(".audio-switch [aria-selected='true']")?.getAttribute("data-programme") ?? null,
+    }));
+    assert(land.console === 1 && land.programme === "On Air", "audio-lands-on-player",
+      `${land.console} console(s) in the page, cued: ${land.programme}`);
+    assert(land.tabs.join(",") === "daily,weekly,history" && land.chosen === "daily", "audio-switch-tabs",
+      `tabs ${land.tabs.join(",")}, chosen ${land.chosen}`);
+    await page.locator(".audio-switch [aria-selected='true']").focus();
+    await page.keyboard.press("ArrowRight");
+    const moved = await page.evaluate(() => ({
+      chosen: document.querySelector(".audio-switch [aria-selected='true']")?.getAttribute("data-programme"),
+      shown: [...document.querySelectorAll(".audio-prog")].filter((el) => !el.hidden).map((el) => el.id),
+    }));
+    assert(moved.chosen === "weekly" && moved.shown.join(",") === "audio-panel-weekly", "audio-switch-keys",
+      `ArrowRight chose ${moved.chosen}, panels shown ${moved.shown.join(",")}`);
+    /* The page is the player (2026-10-03): the switch chooses the list, the
+       episode's own button plays it, and the console in the page names it. */
+    await page.locator(".audio-switch__tab[data-programme='history']").click();
     await page.locator(".audio-play[data-kind='history']").first().click();
     await page.waitForTimeout(1200);
-    const fp = await page.evaluate(() => ({ title: document.querySelector(".fp__title")?.textContent?.trim() ?? null, state: document.querySelector(".audio-play[data-kind='history']")?.getAttribute("data-state") }));
-    assert(fp.title === "History" && fp.state !== "idle", "audio-hub-plays-history", `player title ${fp.title}, button state ${fp.state}`);
+    const fp = await page.evaluate(() => ({ title: document.querySelector(".oap--inline .fp__bcast-cmd")?.textContent?.trim() ?? null, state: document.querySelector(".audio-play[data-kind='history']")?.getAttribute("data-state") }));
+    assert(fp.title === "History" && fp.state !== "idle", "audio-hub-plays-history", `console names ${fp.title}, button state ${fp.state}`);
   });
   /* ─────────────────────────────────────────────────────────────────────
      THE ON AIR SYSTEM
@@ -1616,6 +1646,7 @@ async function brandChecks(browser) {
       const btn = page.locator(`.audio-play[data-kind='${kind}']`).first();
       if (await btn.count() === 0) { skip(`one-play-button-${kind}`, "no button for this programme"); continue; }
       if (kind === "history" && !stood) { skip("one-play-button-history", "no stand-in mp3 in this export"); continue; }
+      await page.locator(`.audio-switch__tab[data-programme='${kind}']`).click();
       await btn.click();
       await page.waitForTimeout(1800);
       const playing = await page.evaluate(REPORT);
@@ -1711,6 +1742,7 @@ async function brandChecks(browser) {
     const stood = standIn.ok;
     const hist = page.locator(".audio-play[data-kind='history']").first();
     if (await hist.count() === 0 || !stood) { skip("onair-tells-the-truth", "no history episode to load"); return; }
+    await page.locator(".audio-switch__tab[data-programme='history']").click();
     const episodeTitle = (await page.locator(".audio-episode").first().locator(".audio-episode__title").textContent())?.trim();
     await hist.click();
     await page.waitForTimeout(1500);

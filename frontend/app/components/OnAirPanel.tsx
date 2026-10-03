@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { BASE_PATH } from "../lib/utils";
 import { CaretRight } from "@phosphor-icons/react";
 import { useAudio } from "./AudioProvider";
 import ScaleIcon from "./ScaleIcon";
@@ -68,7 +70,12 @@ function formatEpisodeTime(dateStr: string): string {
   });
 }
 
-export default function OnAirPanel() {
+/* `inline` (2026-10-03, CEO: "the user should land directly on the same audio
+   portal as the sidebar"). /audio renders this same console in the page, not
+   as a dialog: no scrim, no focus trap, no throwaway history entry, no close
+   or dismiss, always showing what is in the element. While /audio is the
+   route the dialog form stands down, so the reader never sees two consoles. */
+export default function OnAirPanel({ inline = false }: { inline?: boolean } = {}) {
   const {
     brief, nowPlaying, isPlaying, currentTime, duration, buffered, audioError,
     handlePlayPause, handleSeek, seekTo, skipForward, skipBackward,
@@ -85,7 +92,14 @@ export default function OnAirPanel() {
   const dragRef = useRef<{ startY: number; current: number } | null>(null);
   const [dragOffset, setDragOffset] = useState(0);
 
-  const open = isPanelOpen && !!nowPlaying;
+  const pathname = usePathname() ?? "/";
+  const route = pathname.replace(BASE_PATH, "") || "/";
+  const onAudioRoute = route === "/audio" || route.startsWith("/audio/");
+  const open = inline ? !!nowPlaying : isPanelOpen && !!nowPlaying && !onAudioRoute;
+  /* Everything a DIALOG does (Escape, Back, focus in and out, scroll lock,
+     the canvas shift) keys off this, never off `open`, so the inline console
+     does none of it. */
+  const dialogOpen = open && !inline;
 
   /* Two forms, and they are not equally modal. Below 1024px the panel covers
      the page: a scrim dims it, body scroll is locked, Tab stays inside and
@@ -117,7 +131,7 @@ export default function OnAirPanel() {
 
   /* Escape closes. */
   useEffect(() => {
-    if (!open) return;
+    if (!dialogOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
@@ -126,11 +140,11 @@ export default function OnAirPanel() {
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [open, requestClose]);
+  }, [dialogOpen, requestClose]);
 
   /* Back closes the panel rather than leaving the route. */
   useEffect(() => {
-    if (!open) return;
+    if (!dialogOpen) return;
     window.history.pushState({ onAirPanel: true }, "");
     historyPushedRef.current = true;
     const onPop = () => {
@@ -139,7 +153,7 @@ export default function OnAirPanel() {
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
-  }, [open, setPanelOpen]);
+  }, [dialogOpen, setPanelOpen]);
 
   /* Focus in on open, back where it came from on close.
 
@@ -154,7 +168,7 @@ export default function OnAirPanel() {
      than <body>, and otherwise the restore waits a frame for the pill or the
      On Air tab to come back and focuses that. */
   useEffect(() => {
-    if (open) {
+    if (dialogOpen) {
       wasOpenRef.current = true;
       openerRef.current = (document.activeElement as HTMLElement) ?? null;
       panelRef.current
@@ -179,31 +193,31 @@ export default function OnAirPanel() {
         ?.focus();
     });
     return () => cancelAnimationFrame(raf);
-  }, [open]);
+  }, [dialogOpen]);
 
   /* Body scroll lock, saved and restored, for the sheet only: the desktop
      pane pushes the canvas rather than covering it, so the page behind is
      still the reader's to scroll. Locking it there would freeze the article
      they opened the transport to listen along with. */
   useEffect(() => {
-    if (!open || !isSheet) return;
+    if (!dialogOpen || !isSheet) return;
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = previous; };
-  }, [open, isSheet]);
+  }, [dialogOpen, isSheet]);
 
   /* The desktop canvas shifts to make room. */
   useEffect(() => {
     const root = document.documentElement;
-    if (open) root.setAttribute("data-onair-pane", "");
+    if (dialogOpen) root.setAttribute("data-onair-pane", "");
     else root.removeAttribute("data-onair-pane");
     return () => root.removeAttribute("data-onair-pane");
-  }, [open]);
+  }, [dialogOpen]);
 
   /* Tab stays inside the sheet. In the pane form the reader must be able to
      Tab back out to the page they are reading. */
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key !== "Tab" || !panelRef.current || !isSheet) return;
+    if (inline || e.key !== "Tab" || !panelRef.current || !isSheet) return;
     const focusables = Array.from(
       panelRef.current.querySelectorAll<HTMLElement>(
         "a, button, input, summary, [tabindex]:not([tabindex='-1'])"
@@ -220,7 +234,7 @@ export default function OnAirPanel() {
       e.preventDefault();
       first.focus();
     }
-  }, [isSheet]);
+  }, [inline, isSheet]);
 
   /* A chapter's Read link leaves the site's SPA for the story page. The
      throwaway history entry this panel pushed would survive that navigation
@@ -228,12 +242,14 @@ export default function OnAirPanel() {
      close the panel; the link then navigates normally. The same reasoning as
      MobileSidePanel's link-click case, for the same reason. */
   const releaseForLink = useCallback(() => {
+    if (inline) return;
     historyPushedRef.current = false;
     setPanelOpen(false);
-  }, [setPanelOpen]);
+  }, [inline, setPanelOpen]);
 
   /* Swipe down to dismiss (the sheet and the phone panel). */
   const onTouchStart = (e: React.TouchEvent) => {
+    if (inline) return;
     dragRef.current = { startY: e.touches[0].clientY, current: 0 };
   };
   const onTouchMove = (e: React.TouchEvent) => {
@@ -304,7 +320,7 @@ export default function OnAirPanel() {
 
   return (
     <>
-      {isSheet && (
+      {isSheet && !inline && (
         <div className="oap__scrim" onClick={requestClose} aria-hidden="true" />
       )}
       <div
@@ -313,14 +329,14 @@ export default function OnAirPanel() {
            panel inherits rather than restating. `oap` adds only what a dialog
            needs on top of it. */
         className={[
-          "fp", "fp--broadcast", "oap",
+          "fp", "fp--broadcast", "oap", inline ? "oap--inline" : "",
           isPlaying ? "fp--playing" : "",
           nowPlaying.kind === "weekly" ? "fp--weekly" : "",
           nowPlaying.kind === "history" ? "fp--history" : "",
         ].filter(Boolean).join(" ")}
         style={dragOffset > 0 ? { transform: `translateY(${dragOffset}px)`, transition: "none" } : undefined}
-        role="dialog"
-        aria-modal={isSheet ? "true" : undefined}
+        role={inline ? "region" : "dialog"}
+        aria-modal={isSheet && !inline ? "true" : undefined}
         aria-label={`${nowPlaying.programmeLabel}: ${nowPlaying.title}`}
         onKeyDown={handleKeyDown}
       >
@@ -330,7 +346,7 @@ export default function OnAirPanel() {
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
         >
-          <div className="fp__drag-indicator" aria-hidden="true" />
+          {!inline && <div className="fp__drag-indicator" aria-hidden="true" />}
 
           {/* VU arc motif — decorative broadcast gauge behind the header */}
           <svg className="fp__vu-arc" viewBox="0 0 200 60" aria-hidden="true">
@@ -369,15 +385,19 @@ export default function OnAirPanel() {
               <button className="fp__speed" type="button"
                 onClick={() => { hapticLight(); cycleSpeed(); }}
                 aria-label={`Speed ${speedLabel}`}>{speedLabel}</button>
-              <button className="fp__minimize" type="button"
-                onClick={() => { hapticLight(); requestClose(); }}
-                aria-label="Close the player panel">
-                <CaretRight size={14} weight="bold" className="fp__caret fp__caret--down" />
-              </button>
-              <button className="fp__dismiss" type="button" onClick={dismiss}
-                aria-label="Stop and dismiss the player">
-                <span aria-hidden="true">&times;</span>
-              </button>
+              {!inline && (
+                <>
+                  <button className="fp__minimize" type="button"
+                    onClick={() => { hapticLight(); requestClose(); }}
+                    aria-label="Close the player panel">
+                    <CaretRight size={14} weight="bold" className="fp__caret fp__caret--down" />
+                  </button>
+                  <button className="fp__dismiss" type="button" onClick={dismiss}
+                    aria-label="Stop and dismiss the player">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </>
+              )}
             </div>
           </div>
 

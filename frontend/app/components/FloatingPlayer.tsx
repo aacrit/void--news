@@ -65,7 +65,10 @@ export default function FloatingPlayer() {
   const productLabel = nowPlaying?.programmeLabel ?? "On Air";
 
   const onOnAirRoute = route === "/onair" || route.startsWith("/onair/");
-  const suppressed = onOnAirRoute || isPanelOpen;
+  /* /audio carries the console in the page (OnAirPanel inline), so the pill
+     stands down there as it does on /onair: one transport on screen. */
+  const onAudioRoute = route === "/audio" || route.startsWith("/audio/");
+  const suppressed = onOnAirRoute || onAudioRoute || isPanelOpen;
 
   // Desktop: reserve a bottom gutter so the fixed pill never covers the end of
   // page content (/ship, /about, /sources — F10). floating-player.css consumes

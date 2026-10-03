@@ -8,11 +8,16 @@ import { audioWithdrawal } from "../lib/weeklyAudio";
 import { issueLabel } from "../weekly/format";
 import type { AudioChapter } from "../lib/types";
 import CopyButton from "../press/CopyButton";
-import AudioPlay from "./AudioPlay";
+import AudioPortal from "./AudioPortal";
 import "../styles/prose-page.css";
 import "./audio.css";
 
 /* ---------------------------------------------------------------------------
+   /audio: the player, with a switch between programmes (CEO 2026-10-03:
+   "the user should land directly on the same audio portal as the sidebar").
+   The console is OnAirPanel's own, inline (AudioPortal). What follows is the
+   page's history; the listing it describes is now the switch's three panels.
+
    /audio: every programme, one place.
 
    Until 2026-09-21 the masthead carried On Air (the daily programme's page)
@@ -97,15 +102,31 @@ const FEEDS = [
 export default function AudioPage() {
   const brief = readJson<BriefRow>("public/data/brief.json");
   const dailyDuration = brief?.audio_duration_seconds != null ? Number(brief.audio_duration_seconds) : 0;
-  const daily = brief?.audio_url && dailyDuration > 0 ? brief : null;
+  const daily = brief?.audio_url && dailyDuration > 0
+    ? {
+        headline: brief.tldr_headline,
+        dateline: brief.created_at ? dateUTC(brief.created_at) : "",
+        clock: clock(dailyDuration),
+      }
+    : null;
 
-  const issues = getWeeklyIssues();
-  const weekly = issues.find((i) => i.audio_url) ?? null;
+  const all = getWeeklyIssues();
+  const issues = all
+    .filter((i) => i.audio_url)
+    .map((i) => ({
+      issue: i,
+      label: issueLabel(i.issue_number),
+      dateline: `Week of ${dateUTC(i.week_start)}`,
+      clock: i.audio_duration_seconds ? clock(Number(i.audio_duration_seconds)) : null,
+    }));
   /* The latest issue's recording, if a correction withdrew it. Read from the
      corrections file, never written here by hand. */
-  const latest = issues[0] ?? null;
+  const latest = all[0] ?? null;
   const withdrawn = latest && !latest.audio_url
     ? audioWithdrawal(getWeeklyCorrections(latest.week_start), latest.week_start)
+    : null;
+  const withdrawnLabel = withdrawn && latest
+    ? issueLabel(latest.issue_number).replace(/^Pilot issue$/, "the pilot issue")
     : null;
   const feeds = FEEDS
     .filter((f) => feedItems(f.file) > 0)
@@ -114,12 +135,21 @@ export default function AudioPage() {
   const manifest = readJson<{ episodes: Record<string, HistoryEpisode> }>("public/data/history-audio.json");
   // A withdrawn episode (its script was corrected after the render) is not
   // offered here, as on its own page and in the feed.
-  const served = Object.entries(manifest?.episodes ?? {})
-    .filter(([, e]) => e && e.url && e.durationSeconds > 0 && !e.audio_withdrawn);
-  const episodes = [...served]
+  const history = Object.entries(manifest?.episodes ?? {})
+    .filter(([, e]) => e && e.url && e.durationSeconds > 0 && !e.audio_withdrawn)
     .sort((a, b) => (b[1].publishedAt ?? "").localeCompare(a[1].publishedAt ?? ""))
-    .slice(0, 6);
-  const historyCount = served.length;
+    .map(([slug, e]) => ({
+      slug,
+      id: slug,
+      title: e.title,
+      subtitle: null,
+      audioUrl: e.url,
+      durationSeconds: e.durationSeconds,
+      chapters: e.chapters ?? null,
+      publishedAt: e.publishedAt ?? null,
+      chapterCount: e.chapters?.length ?? 0,
+      clock: clock(e.durationSeconds),
+    }));
 
   return (
     <div className="audio-page">
@@ -127,91 +157,17 @@ export default function AudioPage() {
         <header className="audio-hub__head">
           <h1 className="audio-hub__title">Audio</h1>
           <p className="audio-hub__lede">
-            Three programmes. Play them here, or take the feeds to any podcast app.
+            Three programmes, one player. Switch programmes above it; the player follows you round the site.
           </p>
         </header>
 
-        <section className="audio-prog audio-prog--onair" aria-labelledby="audio-onair-h">
-          <p className="audio-prog__kicker">
-            <span className="audio-prog__n">01</span> Daily
-          </p>
-          <h2 id="audio-onair-h" className="audio-prog__title">On Air</h2>
-          {daily ? (
-            <>
-              <p className="audio-prog__line">{daily.tldr_headline}</p>
-              <p className="audio-prog__meta">
-                {daily.created_at ? <span>{dateUTC(daily.created_at)}</span> : null}
-                <span>{clock(dailyDuration)}</span>
-              </p>
-              <div className="audio-prog__actions">
-                <AudioPlay kind="daily" label="Play today's programme" />
-                <Link href="/onair" className="audio-prog__open">Open On Air</Link>
-              </div>
-            </>
-          ) : (
-            <p className="audio-prog__line">No programme has been published yet.</p>
-          )}
-        </section>
+        <AudioPortal daily={daily} issues={issues} withdrawnLabel={withdrawnLabel} history={history} />
 
-        <section className="audio-prog audio-prog--argument" aria-labelledby="audio-argument-h">
-          <p className="audio-prog__kicker">
-            <span className="audio-prog__n">02</span> Sundays
-          </p>
-          <h2 id="audio-argument-h" className="audio-prog__title">The Argument</h2>
-          {withdrawn && latest ? (
-            <p className="audio-prog__line" data-weekly-audio="withdrawn">
-              The recording of {issueLabel(latest.issue_number).replace(/^Pilot issue$/, "the pilot issue")} was withdrawn after a correction.{" "}
-              <Link href="/weekly#corrections" className="audio-prog__open">Read the correction</Link>
-            </p>
-          ) : null}
-          {weekly ? (
-            <>
-              <p className="audio-prog__line">{weekly.cover_headline}</p>
-              <p className="audio-prog__meta">
-                <span>Week of {dateUTC(weekly.week_start)}</span>
-                {weekly.audio_duration_seconds ? <span>{clock(Number(weekly.audio_duration_seconds))}</span> : null}
-              </p>
-              <div className="audio-prog__actions">
-                <AudioPlay kind="weekly" label="Play this week's Argument" issue={weekly} />
-                <Link href="/weekly" className="audio-prog__open">Open the issue</Link>
-              </div>
-            </>
-          ) : withdrawn ? null : (
-            <p className="audio-prog__line">No recording is published.</p>
-          )}
-        </section>
-
-        <section className="audio-prog audio-prog--history" aria-labelledby="audio-history-h">
-          <p className="audio-prog__kicker">
-            <span className="audio-prog__n">03</span> One event per episode
-          </p>
-          <h2 id="audio-history-h" className="audio-prog__title">History</h2>
-          <p className="audio-prog__line">
-            {historyCount} episodes. The latest six:
-          </p>
-          <ol className="audio-episodes">
-            {episodes.map(([slug, e]) => (
-              <li key={slug} className="audio-episode">
-                <div className="audio-episode__text">
-                  <Link href={`/history/${slug}`} className="audio-episode__title">{e.title}</Link>
-                  <span className="audio-episode__meta">
-                    {clock(e.durationSeconds)}
-                    {e.chapters?.length ? ` · ${e.chapters.length} chapters` : ""}
-                  </span>
-                </div>
-                <AudioPlay
-                  kind="history"
-                  label={`Play ${e.title}`}
-                  compact
-                  payload={{ id: slug, title: e.title, subtitle: null, audioUrl: e.url, durationSeconds: e.durationSeconds, chapters: e.chapters ?? null, publishedAt: e.publishedAt ?? null }}
-                />
-              </li>
-            ))}
-          </ol>
-          <p className="audio-prog__actions">
-            <Link href="/history" className="audio-prog__open">Every event</Link>
-          </p>
-        </section>
+        <p className="audio-hub__elsewhere">
+          <Link href="/onair" className="audio-prog__open">On Air page</Link>
+          <Link href="/weekly" className="audio-prog__open">This week&rsquo;s issue</Link>
+          <Link href="/history" className="audio-prog__open">Every History event</Link>
+        </p>
 
         <section className="audio-feeds" aria-labelledby="audio-feeds-h">
           <h2 id="audio-feeds-h" className="audio-feeds__title">Subscribe</h2>
