@@ -729,14 +729,20 @@
   .skb__compact-cols {
     grid-template-columns: 1fr;
   }
+  /* One table, three columns, every row the same: kicker | head | chevron,
+     all on the head's first baseline. The kicker column is wide enough for
+     "OPINION" and its lean badge on one line (they wrapped at 11.5rem, so
+     the two rows' kickers had different shapes), and the chevron is a cell
+     in the row, not a box centred on the row's height (it floated mid-
+     preview on The Brief and below the head on Opinion). */
   .skb__compact-col--tldr,
   .skb__compact-col--opinion {
     display: grid;
-    grid-template-columns: 11.5rem minmax(0, 1fr);
+    grid-template-columns: 13.5rem minmax(0, 1fr) 1.5rem;
     column-gap: var(--space-5);
     row-gap: var(--space-1);
     align-items: baseline;
-    padding: var(--space-3) calc(var(--space-4) + 44px) var(--space-3) var(--space-4);
+    padding: var(--space-3) var(--space-4);
     border-right: none;
   }
   .skb__compact-col--tldr {
@@ -744,9 +750,10 @@
   }
   .skb__compact-col .skb__compact-label {
     grid-column: 1;
-    grid-row: 1 / span 2;
-    align-self: start;
-    gap: 4px var(--space-2);
+    grid-row: 1;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    gap: var(--space-2);
   }
   .skb__compact-col .skb__compact-desc {
     display: none;
@@ -771,15 +778,20 @@
   .skb__compact-col--opinion .skb__compact-preview--opinion {
     display: none;
   }
-  /* One chevron position for both rows: same inset, same top. */
   .skb__compact-col .skb__compact-expand {
-    top: 50%;
-    right: var(--space-2);
-    transform: translateY(-50%);
+    grid-column: 3;
+    grid-row: 1;
+    position: static;
+    justify-self: end;
+    width: 1.5rem;
+    height: 1em;
+    min-width: 0;
+    min-height: 0;
+    transform: none;
   }
   .skb__compact-col:hover .skb__compact-expand,
   .skb__compact-col:focus-visible .skb__compact-expand {
-    transform: translateY(calc(-50% + 1px));
+    transform: translateY(1px);
   }
 }
 @media (min-width: 768px) {
