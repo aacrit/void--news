@@ -1119,7 +1119,8 @@ def test_source_check():
     from briefing.weekly_source_check import check_texts, check_piece
 
     def fake(prompt, **kw):
-        bad = [{"n": int(m.group(1)), "claim": "not in sources"}
+        bad = [{"n": int(m.group(1)), "starts": " ".join(m.group(2).split()[:5]),
+                "claim": "not in sources"}
                for m in _re.finditer(r"\[(\d+)\] ([^\n]*)", prompt)
                if "seaborne oil" in m.group(2) or "avoided" in m.group(2)]
         return {"unsupported": bad}
@@ -1136,7 +1137,133 @@ def test_source_check():
     txt, _ = check_piece(cover, "src", lambda p, **k: None, label="cover")
     check("a piece the check cannot read does not ship", txt is None)
     txt, _ = check_piece(cover, "src", lambda p, **k: {"unsupported": [{"n": 99}]}, label="cover")
-    check("an out-of-range sentence number cuts nothing", txt == cover.replace("\n\n", "\n\n"), repr(txt))
+    check("a verdict on a sentence that does not exist cuts nothing and the piece is unread",
+          txt is None, repr(txt))
+
+
+def test_source_check_alignment():
+    """W-T21b  the source check reads each piece against its own evidence, cuts the
+    sentence the model described, and calls a missing source a checker error.
+
+    The Issue #27 run (weekly-digest run 37105730672, 2026-10-03) handed every
+    call the whole week (134 printed stories, 407,306 characters) and marked
+    10 of 10 recap briefs wholly unsupported though every fact was in the
+    prompt; its claim "one shooting near Johannesburg, killing 17" cut the
+    Cape Town sentence; and the splitter cut "U.S. President Donald Trump" in
+    two, so "President Donald Trump during this brief visit." was checked,
+    and cut, as a sentence of its own.
+    """
+    print("\nW-T21b source check: one splitter, verified alignment, per-piece evidence, checker errors")
+    import re as _re
+    from briefing.weekly_parse import split_sentences, ground_text
+    from briefing.weekly_source_check import (
+        check_texts, check_piece, number_sentences, select_evidence, source_text,
+        SOURCE_BUDGET_CHARS)
+
+    # 1. The splitter.
+    item = ("Mayor Zohran Mamdani said he cannot arrest Netanyahu, and the Prime Minister is not "
+            "scheduled to meet with U.S. President Donald Trump during this brief visit. "
+            "Gen. Dan Caine said \"We will hold the line.\" He spoke at 9 a.m. on Sept. 24 "
+            "outside No. 10 Downing St. after Donald J. Trump left. Oil fell 3.2%.")
+    sents = split_sentences(item)
+    check("a recap item with U.S., a title, a quotation, initials and a decimal splits in four",
+          len(sents) == 4 and sents[0].endswith("brief visit.")
+          and sents[1] == 'Gen. Dan Caine said "We will hold the line."'
+          and sents[3] == "Oil fell 3.2%.", repr(sents))
+    check("a dotted acronym still ends a sentence before a sentence opener",
+          split_sentences("Talks were held in the U.S. The deal failed.")
+          == ["Talks were held in the U.S.", "The deal failed."])
+    check("the source check and ground_text segment the same way",
+          number_sentences(item + "\n\nA second paragraph.") == [sents, ["A second paragraph."]])
+    kept, cut = ground_text(item, "Zohran Mamdani. Netanyahu. Prime Minister. President Donald Trump. "
+                                  "Oil fell 3.2%.")
+    check("ground_text cuts the U.S. sentence whole, never its tail alone",
+          not any(s.startswith("President Donald Trump during") for s, _ in cut)
+          and "meet with U.S." not in kept, repr([s[:40] for s, _ in cut]))
+
+    # 2. Alignment: the model's number is checked against the words it echoes.
+    shootings = ("At least 27 people died in two mass shootings, one near Johannesburg killing 17. "
+                 "The second, near Cape Town, killed 10. Police have made no arrests in either.")
+    seen = {}
+
+    def per_claim(prompt, **kw):  # numbers claims, not sentences, as the 10-03 run did
+        seen["prompt"] = prompt
+        return {"unsupported": [
+            {"n": 1, "starts": "At least 27 people died in", "claim": "27 died"},
+            {"n": 2, "starts": "At least 27 people died", "claim": "one near Johannesburg, 17"},
+            {"n": 3, "starts": "The second, near Cape Town,", "claim": "Cape Town, 10"},
+        ]}
+    outs, cuts = check_texts([shootings], "SRC", per_claim, label="recap", max_cut_share=1.0)
+    cut_s = [c[1] for c in cuts]
+    check("a verdict numbered on the wrong sentence cuts the sentence its words open",
+          "Police have made no arrests in either." not in cut_s
+          and outs[0] == "Police have made no arrests in either.", repr(cut_s))
+
+    def stray(prompt, **kw):
+        return {"unsupported": [{"n": 2, "starts": "Iran seized a tanker on", "claim": "x"}]}
+    outs, cuts = check_texts([shootings, "Iran said it would wait."], "SRC", stray, label="recap")
+    check("a verdict whose words open no sentence is never cut by number; its text is unread",
+          outs[0] is None and outs[1] == "Iran said it would wait." and not cuts, repr(outs))
+
+    def no_echo(prompt, **kw):
+        return {"unsupported": [{"n": 1, "claim": "x"}]}
+    check("a verdict with no echo is not trusted", check_piece(shootings, "SRC", no_echo)[0] is None)
+
+    # 3. A missing source is a checker error, never a finding.
+    calls = []
+    errs = []
+
+    def counting(prompt, **kw):
+        calls.append(prompt)
+        return {"unsupported": []}
+    txt, cuts = check_piece(shootings, "   ", counting, label="cover 1", errors=errs)
+    check("a piece checked against empty sources does not ship, spends no call, logs a checker error",
+          txt is None and not calls and not cuts and errs and "no sources" in errs[0][1], repr(errs))
+    errs = []
+    outs, cuts = check_texts(["Iran said it would wait.", shootings], "SRC", counting,
+                             label="recap", missing=[False, True], errors=errs)
+    check("a recap item whose own story is absent is a checker error; its neighbour ships",
+          outs == ["Iran said it would wait.", None] and not cuts
+          and [w for w, _ in errs] == ["recap 2"], repr((outs, errs)))
+    check("the absent item is not shown to the model at all", "Johannesburg" not in calls[-1])
+
+    # 4. Per-piece evidence, on the committed printed week of Issue #27.
+    if not ARCHIVE_PRINTED.exists():
+        check("archive.json is present for the evidence test", False)
+        return
+    archive = json.loads(ARCHIVE_PRINTED.read_text())
+    week = [dict(r, id=r.get("source_cluster_id") or r.get("id"))
+            for r in _printed_rows(archive, "2026-09-21", "2026-09-27")
+            if isinstance(r.get("summary"), str) and r["summary"].strip()]
+    whole = len(source_text(week))
+    picks = [r for r in week if any(k in r["title"] for k in (
+        "Imran Khan", "Bars CNN", "United Russia", "South Africa Mass", "Air Refueling"))][:5]
+    texts = [" ".join(split_sentences(r["summary"])[:3]) for r in picks]
+    rows, missing = select_evidence(texts, week, [[r["id"]] for r in picks])
+    size = len(source_text(rows))
+    check("each recap item's own printed story is in its evidence",
+          len(picks) == 5 and all(any(e is r for e in rows) for r in picks), str(len(picks)))
+    check(f"the evidence is a fraction of the week ({size:,} of {whole:,} chars), under budget",
+          size <= SOURCE_BUDGET_CHARS + 2 and size < whole / 4)
+    check("no item is flagged missing when its story was printed", missing == [False] * 5)
+    rows, missing = select_evidence(texts[:1], week, [["not-a-printed-story"]])
+    check("an item whose own story is not in the printed week is flagged missing", missing == [True])
+
+    # 5. A stub that does the job honestly: a sentence is unsupported when a
+    #    number or capitalised name in it is absent from the SOURCES it got.
+    def honest(prompt, **kw):
+        src, text = prompt.split("\n\nTEXT:\n", 1)
+        bad = []
+        for m in _re.finditer(r"^\[(\d+)\] (.*)$", text, _re.M):
+            terms = _re.findall(r"\d[\d,.]*\d|\d|[A-Z][a-z]{3,}", m.group(2))
+            if any(t not in src for t in terms[1:]):
+                bad.append({"n": int(m.group(1)), "starts": " ".join(m.group(2).split()[:5]),
+                            "claim": "absent"})
+        return {"unsupported": bad}
+    rows, missing = select_evidence(texts, week, [[r["id"]] for r in picks])
+    outs, cuts = check_texts(texts, source_text(rows), honest, label="recap", missing=missing)
+    check("recap briefs restating their own printed stories all ship, uncut",
+          outs == texts and not cuts, f"{len(cuts)} cut: {[c[1][:50] for c in cuts[:3]]}")
 
 
 # ---------------------------------------------------------------------------
@@ -1330,6 +1457,7 @@ def main():
     test_archive_is_derived()
     test_grounding_cut()
     test_source_check()
+    test_source_check_alignment()
     test_quotations_verbatim()
     print()
     if _failures:

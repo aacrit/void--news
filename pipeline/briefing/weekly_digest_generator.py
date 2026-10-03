@@ -995,6 +995,8 @@ def _generate_opinions(top_threads, all_threads, edition):
             result["lean"] = lean
             result["topic"] = cluster.get("title", "")
             result["cluster_id"] = cluster.get("id")
+            # What the source check reads it against (weekly_source_check).
+            result["thread_cluster_ids"] = [c.get("id") for c in rows if c.get("id")]
             result["paired"] = is_paired
             opinions.append(result)
             print(f"    Opinion {i+1} ({lean}): {result.get('headline', '?')[:50]}...")
@@ -2558,41 +2560,79 @@ def generate_weekly_digest(editions=None, week_offset=0):
                 own = [by_id[piece["cluster_id"]]] if piece.get("cluster_id") in by_id else []
                 piece["text"] = _ground(name, piece["text"], own)
 
-        # The source check: flash-lite reads every sentence against the week
-        # (weekly_source_check). The deterministic cut above catches only an
-        # unsourced number or name; this catches the unnamed background
+        # The source check: flash-lite reads every sentence against its
+        # evidence (weekly_source_check). The deterministic cut above catches
+        # only an unsourced number or name; this catches the unnamed background
         # ("a substantial portion of the world's seaborne oil") and the claim
         # the week contradicts. A piece it cannot read does not ship.
+        #
+        # Each piece is read against ITS OWN printed rows plus the rows that
+        # share its rarest words, not the whole week: handed all 134 stories
+        # (407,306 characters) on every call, the Issue #27 run marked ten of
+        # ten recap briefs wholly unsupported while every fact they named was
+        # in the prompt. A piece whose own story is missing from its evidence
+        # is a checker error, logged as one, and does not ship.
         print(f"\n  ── SOURCE CHECK ──")
-        from briefing.weekly_source_check import check_piece, check_texts, source_text
-        week_sources = source_text(story_pool) + "\n\n" + "\n\n".join(
-            f"DAILY COLUMN: {d.get('opinion_text')}" for d in (daily_rows or []) if d.get("opinion_text"))
+        from briefing.weekly_source_check import (
+            check_piece, check_texts, select_evidence, source_text)
+        check_errors = []
 
         def _lite_json(prompt, **kw):
-            time.sleep(8)  # flash-lite TPM: each request carries the whole week
+            time.sleep(4)  # flash-lite TPM; a call now carries ~15k tokens, not ~100k
             return gemini_generate_json(prompt, count_call=False, model=None, **kw)
+
+        def _evidence(texts, anchors, extra=""):
+            rows, missing = select_evidence(texts, story_pool, anchors)
+            src = source_text(rows) + (("\n\n" + extra) if extra else "")
+            print(f"    [source-check] evidence: {len(rows)} printed row(s), {len(src):,} chars")
+            return src, missing
 
         kept_covers = []
         for i, c in enumerate(covers):
-            txt, _ = check_piece(c.get("text") or "", week_sources, _lite_json, label=f"cover {i + 1}")
+            src, miss = _evidence([c.get("text") or ""],
+                                  [c.get("thread_cluster_ids") or [c.get("cluster_id")]])
+            txt, _ = check_piece(c.get("text") or "", src, _lite_json, label=f"cover {i + 1}",
+                                 missing=miss[0], errors=check_errors)
             if txt:
                 c["text"] = txt
                 kept_covers.append(c)
         covers = kept_covers
         kept_ops = []
         for i, o in enumerate(opinions):
-            txt, _ = check_piece(o.get("text") or "", week_sources, _lite_json, label=f"opinion {i + 1}")
+            src, miss = _evidence([o.get("text") or ""],
+                                  [o.get("thread_cluster_ids") or [o.get("cluster_id")]])
+            txt, _ = check_piece(o.get("text") or "", src, _lite_json, label=f"opinion {i + 1}",
+                                 missing=miss[0], errors=check_errors)
             if txt:
                 o["text"] = txt
                 kept_ops.append(o)
         opinions = kept_ops
         if recap and recap.get("stories"):
-            outs, _ = check_texts([st.get("summary") or "" for st in recap["stories"]],
-                                  week_sources, _lite_json, label="recap")
+            texts = [st.get("summary") or "" for st in recap["stories"]]
+            src, miss = _evidence(texts, [[st.get("cluster_id")] for st in recap["stories"]])
+            outs, _ = check_texts(texts, src, _lite_json, label="recap",
+                                  missing=miss, errors=check_errors)
             recap["stories"] = [dict(st, summary=t) for st, t in zip(recap["stories"], outs) if t]
         if weekly_opinion and weekly_opinion.get("opinion_text"):
-            txt, _ = check_piece(weekly_opinion["opinion_text"], week_sources, _lite_json,
-                                 label="editorial")
+            # The editorial is written from the covers, the threads' counts,
+            # the recap, the bias figures and the daily columns, and is read
+            # against exactly those.
+            ed_anchor = [x for c in covers
+                         for x in (c.get("thread_cluster_ids") or [c.get("cluster_id")])]
+            ed_anchor += [st.get("cluster_id") for st in (recap or {}).get("stories") or []]
+            figures = "\n".join(
+                f"THREAD: {t.get('title', '?')} ({t.get('cumulative_sources', 0)} sources, "
+                f"{t.get('daily_appearances', 0)} days)" for t in (top_threads or [])[:8])
+            stats = (bias_data.get("stats") or {}) if isinstance(bias_data, dict) else {}
+            if stats:
+                figures += (f"\nWEEK BIAS FIGURES: average lean {stats.get('avg_lean', '?')}/100, "
+                            f"spread {stats.get('lean_std', '?')}")
+            columns = "\n\n".join(f"DAILY COLUMN: {d.get('opinion_text')}"
+                                  for d in (daily_rows or []) if d.get("opinion_text"))
+            src, _ = _evidence([weekly_opinion["opinion_text"]], [ed_anchor],
+                               extra="\n\n".join(x for x in (figures, columns) if x))
+            txt, _ = check_piece(weekly_opinion["opinion_text"], src, _lite_json,
+                                 label="editorial", errors=check_errors)
             if txt:
                 if txt != weekly_opinion["opinion_text"]:
                     # The monologue was written from the uncut text.
@@ -2608,14 +2648,18 @@ def generate_weekly_digest(editions=None, week_offset=0):
             if not piece or not piece.get("text"):
                 continue
             own = [by_id[piece["cluster_id"]]] if piece.get("cluster_id") in by_id else []
-            txt, _ = check_piece(piece["text"], source_text(own) + "\n\n" + week_sources,
-                                 _lite_json, label=name)
+            src, _ = _evidence([piece["text"]], [()])
+            txt, _ = check_piece(piece["text"], source_text(own) + "\n\n" + src,
+                                 _lite_json, label=name, missing=not own, errors=check_errors)
             if txt:
                 piece["text"] = txt
             elif name == "tech":
                 tech = None
             else:
                 sports = None
+        if check_errors:
+            print(f"    [source-check] {len(check_errors)} checker error(s), not findings: "
+                  + "; ".join(f"{w} ({why})" for w, why in check_errors))
 
         # LENGTH, AGAIN, ON WHAT SURVIVED (P1-18). `_gen_essay` measured each
         # piece before grounding and the source check cut it, and nothing
