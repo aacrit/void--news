@@ -35,6 +35,7 @@ sys.path.insert(0, str(ROOT))
 from pipeline.history.script_format import (  # noqa: E402
     Script, _norm, parse_script,
 )
+from pipeline.history.quote_ledger import filter_script_segments  # noqa: E402
 
 SCRIPTS = ROOT / "data/history/scripts"
 EVENTS = ROOT / "data/history/events"
@@ -129,6 +130,10 @@ def export(script: Script, event: dict) -> dict:
             row["account"] = accounts[seen_perspective]
             seen_perspective += 1
         segments.append(row)
+    # The page prints what the export carries, so a quotation withdrawn from
+    # history.json is withdrawn here too (pipeline/history/quote_ledger.py).
+    # `words` stays the episode's: the audio is not re-rendered by this.
+    segments, _q, _lead = filter_script_segments(script.slug, segments)
     return {
         "slug": script.slug,
         "words": script.words,

@@ -386,6 +386,15 @@ tenth that failed, and it runs the manifest gate before it commits.
     loud. Without it, the programme puts words in a real person's mouth and
     presents them as that person's own. It fired on a Patricia Crone
     paraphrase about to be voiced as her words.
+  - `H-18` (blocking, rev 86) every number the episode says aloud is a value
+    the event record carries: "nineteen seventy five" is read as 1975 and
+    found in "April 17, 1975" (`pipeline/history/spoken_numbers.py`). A span
+    the writer computed ("forty years later") is not credited, because with
+    seventy years in a record some sum always lands on one of them. Numbers
+    found when the rule landed are listed in `H18_KNOWN` as warnings; a new
+    one fails, and an entry that stops firing must leave the list. For an
+    event with a published thesis, the record includes the thesis and its
+    ledger extracts.
 - Render gates: reuse the On Air assertions (gaps, arcs, fades landing under
   speech, loudness within tolerance, TP and LRA, chapters exact).
 - `tests/test_history_audio.py` holds the published catalogue to its manifest.

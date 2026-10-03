@@ -287,6 +287,68 @@ Opinion or On Air whose grounding pass cannot run SHIPS WITH A VISIBLE LABEL
    staged with the data) are written out exactly in
    `docs/proposals/RIGOR-WORKFLOW-DIFF.md` for a hand-merged PR, and
    `test_rigor.py` sits on the W-05 allowlist until it lands.
+## rev 86 WS-H (rigor): History quotations, History numbers, the Weekly Editor (2026-10-03)
+
+Gap items 6 and 7 of `docs/proposals/FACTUAL-RIGOR-PLAN-2026-10-02.md`, with
+one CEO decision overriding the plan: until an event has a ledger, its
+unverified quotations are WITHDRAWN from the served page, not labelled.
+
+1. **Dith Pran, dated after his death.** `cambodian-genocide` served "They
+   told us to leave the city for three days..." as his "Testimony to the
+   ECCC, 2009" beside a `key_figures` row that has him dying in 2008. Cut from
+   `primary_source_excerpts`, the Survivors' `notable_quotes` and the script's
+   DOCUMENT; the episode is `audio_withdrawn`. `tests/test_history_data.py`
+   now fails a quotation dated after its speaker's death or before their
+   birth, unless the record itself says the date is not the utterance's
+   (posthumous, recounted, recorded by, cited in), and a figure credited with
+   an act before birth. Planted fixture. Over all 78 it also found Mouhot's
+   Le Tour du Monde line (1863, he died 1861: now says "published
+   posthumously", as the same file's other Mouhot excerpt does) and Ibn
+   Khatima's `born: 1369` beside his treatise of 1349 (the year was cut; the
+   record holds no other).
+2. **H-18: every number a History script speaks is in its event record.**
+   `pipeline/history/spoken_numbers.py` reads both sides as values ("nineteen
+   seventy five" is 1975; "between sixty and ninety thousand" is 60,000 to
+   90,000; "five hundred and four thousand" is read both ways). For a
+   published thesis the record includes the thesis and its ledger extracts.
+   Blocking, planted fixtures. A span the writer computed is not credited as
+   arithmetic on two record years: it was tried, and "Forty years later" (1945
+   to 1986) passed because 1944 plus forty is a year the Holocaust record
+   carries for something else. Run over the 78 scripts: 69 unsourced numbers
+   in 39. Three contradicted their record and were corrected from it, each
+   episode `audio_withdrawn`: the-crusades (Constantinople "two hundred and
+   ninety six years" after 1291; record 1453), peloponnesian-war ("the
+   fourteen fifties"; record the 440s BCE), the-holocaust (the Nobel "forty
+   years" after January 1945; record 1986). The other 62 values (66
+   occurrences, 37 scripts) are `H18_KNOWN` warnings; a new one fails and a
+   stale entry fails, so the list only shrinks. One is marked PROBABLE ERROR
+   (cuban-revolution, "the same eleven years" against 1953 to 1959).
+3. **Withdrawal at export.** `pipeline/history/quote_ledger.py` verifies a
+   quotation when its words occur in order in a stored extract. For the 71
+   events without a published thesis, `export_history` drops what does not
+   verify from `history.json` and `export_scripts` drops it from the script
+   export the Hearing renders (a DOCUMENT whose quotations all go is dropped
+   whole; a narrator line that only hands over to a dropped quotation goes
+   with it). None of the 71 has a ledger, so: 965 quotations withdrawn from
+   `history.json` (267 excerpts, 698 notable quotes), and 483 document-voice
+   lines, 191 DOCUMENT segments and 306 narration lines from the script
+   export. `tests/test_history_quote_ledger.py` fails if the served
+   `history.json` or a served script carries an unverified quotation for such
+   an event (planted fixtures) and lists the 71 episodes that still speak 483
+   of those lines; the audio was not re-rendered. `next build` passes; the
+   Hearing hides its empty Primary sources block and keeps every account and
+   the turn.
+4. **W-13: the Weekly Editor says no number or name the issue did not print.**
+   W-01 held the bench and W-09 the NUMBERS segment; nothing read the Editor.
+   Numbers as values, names by the Weekly print rule
+   (`weekly_parse.unsourced_terms`), the audio's own metadata excluded from
+   the issue text so a script cannot source itself. Failure means no render.
+   Planted fixtures per segment (WA-07). Issue #26's committed rundown said
+   "where fifty is the centre. That is a tilt of one point two"; the issue
+   prints 51.2 labelled centre. Cut to that. The issue serves no audio.
+
+Four History episodes are withdrawn (the feed carries 74) and 71 speak
+quotations the page no longer prints: `docs/OPEN-ITEMS.md`.
 
 ---
 

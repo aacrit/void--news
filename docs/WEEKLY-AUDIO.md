@@ -123,6 +123,7 @@ page; these are the script).
 | W-10 | the close asks rather than states |
 | W-11 | the contents is four lines, not a rundown |
 | W-12 | no quotation marks in spoken copy |
+| W-13 | every number (read as a value, "twenty percent" is 20) and every multi-word proper name the Editor says, in any segment, is in the published issue; the name rule is the print rule (`weekly_parse.unsourced_terms`), with the long form of a name the issue prints short ("European Union" for "EU") allowed. Blocking (rev 86) |
 
 A rundown with any `fail` is **not rendered**, and the caller falls back to the
 legacy path. That asymmetry is deliberate: an essay running forty words long is
@@ -209,7 +210,7 @@ then ships whole rather than amputating a movement.
 ## Files
 
 ```
-pipeline/briefing/weekly_script.py      format, parser, W-01..W-12
+pipeline/briefing/weekly_script.py      format, parser, W-01..W-13
 pipeline/briefing/weekly_rundown.py     the one Gemini call + one regeneration
 pipeline/briefing/weekly_producer.py    timeline, gap table, music bus, master
 pipeline/briefing/generate_assets.py    render_weekly_assets() + weekly_spectrum()

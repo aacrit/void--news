@@ -320,8 +320,72 @@ reworded = CLEAN_LEGAL.replace("## PERSPECTIVE | The Fishing Villages | vanquish
 check("H-09 is conservative about a title sharing only a short root",
       "H-09" in fails(reworded), str(fails(reworded)))
 
-# ---- every committed script still passes --------------------------------
+# ---- H-18 every spoken number is a number the record carries --------------
+# Three scripts said a number their record contradicts when the rule landed
+# (2026-10-03): the-crusades put Constantinople's fall "two hundred and ninety
+# six years" after 1291 (the record: 1453), peloponnesian-war dated the
+# Athenian empire to "the fourteen fifties" (the record: the 440s BCE), and
+# the-holocaust put Wiesel's Nobel "forty years" after January 1945 (the
+# record: 1986). Nothing checked a spoken number against anything.
+from history.spoken_numbers import spoken_numbers  # noqa: E402
+
+def _vals(text: str) -> list[float]:
+    return [x.value for x in spoken_numbers(text)]
+
+check("H-18 reads a spoken year as a year", _vals("nineteen seventy five") == [1975.0],
+      str(_vals("nineteen seventy five")))
+check("H-18 reads the hundreds-pair forms",
+      _vals("in four seventy six, and in ten eighty two, and twenty twelve") == [476.0, 1082.0, 2012.0],
+      str(_vals("in four seventy six, and in ten eighty two, and twenty twelve")))
+check("H-18 reads scales, halves and decimals",
+      _vals("one hundred fifty thousand men, one and a half million, one point five million") ==
+      [150000.0, 1500000.0, 1500000.0],
+      str(_vals("one hundred fifty thousand men, one and a half million, one point five million")))
+check("H-18 keeps a range's two ends apart and shares its scale",
+      _vals("between seven hundred thousand and seven hundred and fifty thousand, "
+            "and between sixty and ninety thousand") == [700000.0, 750000.0, 60000.0, 90000.0],
+      str(_vals("between seven hundred thousand and seven hundred and fifty thousand, "
+                "and between sixty and ninety thousand")))
+check("H-18 does not read 'no one' or 'the first' as counts",
+      _vals("No one came. The first ship sailed.") == [], str(_vals("No one came. The first ship sailed.")))
+
+H18_EVENT = dict(EVENT, primary_source_excerpts=EVENT["primary_source_excerpts"],
+                 summary="The sea rose on 12 March 1961, and 340 boats were lost.")
+h18_clean = pad(CLEAN).replace(
+    "N: A scene arrives late and leaves early, and this line is the whole of it.",
+    "N: On the twelfth of March, nineteen sixty one, three hundred and forty boats were lost.")
+check("H-18 passes a number the record carries, spelled for the ear",
+      "H-18" not in fails(h18_clean, H18_EVENT), str(fails(h18_clean, H18_EVENT)))
+h18_bad = h18_clean.replace("three hundred and forty boats", "three hundred and ninety boats")
+check("H-18 fails a spoken number the record does not carry",
+      "H-18" in fails(h18_bad, H18_EVENT), str(fails(h18_bad, H18_EVENT)))
+h18_year = h18_clean.replace("nineteen sixty one", "nineteen sixty three")
+check("H-18 fails a year the record does not carry",
+      "H-18" in fails(h18_year, H18_EVENT), str(fails(h18_year, H18_EVENT)))
+h18_span = h18_clean.replace("were lost.", "were lost. Forty years later the harbour reopened.")
+check("H-18 fails a span the writer computed and the record never states",
+      "H-18" in fails(h18_span, H18_EVENT), str(fails(h18_span, H18_EVENT)))
+check("H-18 leaves the format's own count of its accounts alone",
+      "H-18" not in fails(h18_clean.replace("## TURN | What each one leaves out\n",
+                                            "## TURN | What each one leaves out\nN: Two accounts, "
+                                            "and the second account is the shore's.\n"), H18_EVENT))
+
+# The baseline can only shrink: an H18_KNOWN entry that no longer fires is a
+# number that was sourced or cut, and must leave the list with it.
+from history.script_format import H18_KNOWN, h18_numbers, _known_key  # noqa: E402
 import yaml   # noqa: E402
+for slug, entries in H18_KNOWN.items():
+    sf = ROOT / "data" / "history" / "scripts" / f"{slug}.txt"
+    ef = ROOT / "data" / "history" / "events" / f"{slug}.yaml"
+    if not (sf.exists() and ef.exists()):
+        check(f"H18_KNOWN {slug}: has a script and an event", False)
+        continue
+    firing = {_known_key(v) for _l, _w, v, _t in h18_numbers(parse_script(sf.read_text(), slug),
+                                                            yaml.safe_load(ef.read_text()))}
+    stale = sorted(set(entries) - firing)
+    check(f"H18_KNOWN {slug}: every entry still fires (remove {stale})", not stale)
+
+# ---- every committed script still passes --------------------------------
 
 scripts = sorted((ROOT / "data" / "history" / "scripts").glob("*.txt"))
 check("there are committed scripts to check", len(scripts) > 0)
@@ -340,7 +404,8 @@ if failures:
     print("\n".join(f"FAIL  {f}" for f in failures))
     print(f"\n{len(failures)} History script failure(s)")
     raise SystemExit(1)
-print(f"PASS  H-01..H-11 against planted defects, and {len(scripts)} committed scripts")
+print(f"PASS  H-01..H-11 and H-18 against planted defects, and {len(scripts)} committed scripts "
+      f"({sum(len(v) for v in H18_KNOWN.values())} known H-18 numbers await a source or a cut)")
 
 
 def test_check_script_prints_findings():

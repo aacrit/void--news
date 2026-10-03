@@ -13,6 +13,7 @@ import glob
 import pathlib
 import re
 import sys
+import unicodedata
 
 import yaml
 
@@ -40,9 +41,118 @@ ROLE_WORDS = {
     "monk": ("monk", "buddhis"),
 }
 
+# --------------------------------------------------------------------------
+# A quotation dated outside its speaker's life.
+#
+# cambodian-genocide served "They told us to leave the city for three
+# days..." as Dith Pran's "Testimony to the ECCC, 2009", in the same file that
+# records him dying in 2008. Nothing compared the two fields, so the page and
+# the episode both carried a testimony its speaker could not have given. The
+# check reads the date the record gives a quotation (an excerpt's `date`, the
+# year in a notable quote's `context`) against the `born`/`died` of the key
+# figure the speaker field names.
+#
+# A record that SAYS its date is not the utterance date is not a
+# contradiction: a journal published posthumously, a remark "as recounted in"
+# a memoir thirty years later, a line "recorded by" a chronicler. Those dates
+# belong to the publication, and whether the line may be read as the
+# speaker's own words is H-11's question, not this one. BCE dates are skipped
+# for the same reason the lifespan check skips them: the catalogue stores them
+# both ways.
+_NOT_THE_UTTERANCE = re.compile(
+    r"posthum|published|recorded by|recounted|reported (?:in|by)|cited in|quoted (?:in|by)|"
+    r"as told|attributed|compiled|tradition|memoir|translated", re.I)
+
+
+def _toks(s: str) -> list[str]:
+    s = "".join(c for c in unicodedata.normalize("NFD", s or "")
+                if unicodedata.category(c) != "Mn")
+    return re.findall(r"[a-z0-9]+", s.lower())
+
+
+def _figure_for(speaker: str, figures: list[dict]) -> dict | None:
+    """The ONE key figure a speaker field names, or None when it names none or
+    several. A guess here would fail a true quotation, so ambiguity is silence."""
+    said = _toks(re.sub(r"\([^)]*\)", "", speaker or ""))
+    if not said:
+        return None
+    hits = []
+    for fig in figures:
+        raw = str(fig.get("name") or "")
+        forms = [_toks(re.sub(r"\([^)]*\)", "", raw))] + [_toks(a) for a in re.findall(r"\(([^)]+)\)", raw)]
+        for form in forms:
+            if form and (form == said
+                         or (len(form) >= 2 and all(t in said for t in form))
+                         or (len(said) >= 2 and all(t in form for t in said))):
+                hits.append(fig)
+                break
+    return hits[0] if len(hits) == 1 else None
+
+
+def _years(text: str) -> list[int]:
+    """Three- and four-digit years in a date string, in order. A thousands
+    figure ("60,000 people") is not a year."""
+    s = re.sub(r"\d{1,3}(?:,\d{3})+", " ", str(text or ""))
+    return [int(y) for y in re.findall(r"(?<!\d)(\d{3,4})(?!\d)", s)]
+
+
+def quote_lifespan_findings(ev: dict) -> list[str]:
+    out: list[str] = []
+    if "BCE" in str(ev.get("date_display") or ""):
+        return out
+    figures = ev.get("key_figures") or []
+    quotes = [(q.get("author"), q.get("date"), " ".join(str(q.get(k) or "") for k in ("date", "work")),
+               q.get("text", ""), "primary_source_excerpts")
+              for q in ev.get("primary_source_excerpts") or []]
+    quotes += [(q.get("speaker"), q.get("context"), str(q.get("context") or ""),
+                q.get("text", ""), "notable_quotes")
+               for p in ev.get("perspectives") or [] for q in p.get("notable_quotes") or []]
+    for speaker, date, said_about, text, where in quotes:
+        if re.search(r"\bB\.?C", str(date or "")) or _NOT_THE_UTTERANCE.search(said_about):
+            continue
+        fig = _figure_for(str(speaker or ""), figures)
+        years = _years(date)
+        if fig is None or not years:
+            continue
+        born, died = fig.get("born"), fig.get("died")
+        label = f"{ev.get('slug')}/{where}: {speaker}: {str(text)[:50]!r}"
+        if isinstance(died, int) and died > 0 and min(years) > died:
+            out.append(f"{label} is dated {date!r}, after its speaker died ({died})")
+        if isinstance(born, int) and born > 0 and max(years) < born:
+            out.append(f"{label} is dated {date!r}, before its speaker was born ({born})")
+    return out
+
+
+# The rule must be able to fail: the Dith Pran shape, and its mirror.
+_PLANTED = {
+    "slug": "planted", "date_display": "1975-1979",
+    "key_figures": [{"name": "Ana Writer", "born": 1942, "died": 2008},
+                    {"name": "Ben Elder (The Elder)", "born": 1900, "died": 1960}],
+    "primary_source_excerpts": [
+        {"text": "after death", "author": "Ana Writer", "work": "Testimony to a court", "date": "2009"},
+        {"text": "in life", "author": "Ana Writer", "work": "Testimony to a court", "date": "1999"},
+        {"text": "posthumous", "author": "Ana Writer", "work": "Diary, published posthumously", "date": "2010"},
+    ],
+    "perspectives": [{"notable_quotes": [
+        {"text": "before birth", "speaker": "The Elder", "context": "Letter, 1888"},
+        {"text": "secondhand", "speaker": "Ben Elder", "context": "Remark, as recounted in a memoir, 1990"},
+        {"text": "thousands", "speaker": "Ben Elder", "context": "Speech moving 60,000 people, 1930"},
+    ]}],
+}
+_got = quote_lifespan_findings(_PLANTED)
+check("planted: a quotation dated after its speaker's death fails",
+      any("'after death'" in g for g in _got), str(_got))
+check("planted: a quotation dated before its speaker's birth fails",
+      any("'before birth'" in g for g in _got), str(_got))
+check("planted: a date the record marks as posthumous or secondhand, a dated-in-life quote "
+      "and a thousands figure are not failures", len(_got) == 2, str(_got))
+
 for path in EVENTS:
     ev = yaml.safe_load(open(path))
     slug = ev["slug"]
+
+    for finding in quote_lifespan_findings(ev):
+        check(finding, False)
 
     for fig in ev.get("key_figures") or []:
         name = fig.get("name", "?")
@@ -91,6 +201,15 @@ for path in EVENTS:
 
     # A figure credited with an act cannot have died before it. We only check
     # the cases the text states plainly as a four-digit year.
+    for fig in ev.get("key_figures") or []:
+        # And no figure acts before birth. black-death gave Ibn Khatima
+        # `born: 1369` beside a role crediting him with a treatise of 1349;
+        # the year was cut (the record holds no other), not moved to `died`.
+        born = fig.get("born")
+        if isinstance(born, int) and born > 0 and "BCE" not in str(ev.get("date_display") or ""):
+            for year in re.findall(r"\b(1[0-9]\d\d|20[0-2]\d)\b", str(fig.get("role") or "")):
+                check(f"{slug}/{fig.get('name')}: credited with an act before birth",
+                      int(year) >= born, f"born {born}, role cites {year}")
     for fig in ev.get("key_figures") or []:
         died = fig.get("died")
         if not isinstance(died, int) or died < 0:

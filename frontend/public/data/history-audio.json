@@ -1415,7 +1415,9 @@
     "sha": "bf338b01af9d",
     "voice": "af_kore",
     "startTime": 805.391
-   }
+   },
+   "audio_withdrawn": true,
+   "audio_withdrawn_reason": "2026-10-03 rev 86 WS-H: the episode reads a quotation credited to Dith Pran as 'Testimony to the ECCC, 2009'; the event record has him dying in 2008, so the line was cut from the record and the script. Re-render from the corrected script."
   },
   "chernobyl-disaster": {
    "url": "/audio/history/chernobyl-disaster.mp3?v=716c98e6",
@@ -2486,7 +2488,9 @@
     "sha": "5dc16aaca50d",
     "voice": "af_kore",
     "startTime": 846.392
-   }
+   },
+   "audio_withdrawn": true,
+   "audio_withdrawn_reason": "2026-10-03 rev 86: the episode says the five accounts cover 'the same eleven years'; the record dates the event 1953 to 1959 and states no eleven-year span (H-18). The script now says 'the same revolution'. Withdrawn until the bundled History re-render (CEO, 2026-10-03)."
   },
   "cyrus-cylinder": {
    "url": "/audio/history/cyrus-cylinder.mp3?v=1fed32cc",
@@ -5750,7 +5754,9 @@
     "sha": "5d5a4ff4d5fc",
     "voice": "af_kore",
     "startTime": 899.401
-   }
+   },
+   "audio_withdrawn": true,
+   "audio_withdrawn_reason": "2026-10-03 rev 86 WS-H (H-18): the episode dates the Athenian empire to 'the fourteen fifties'; the record says the 440s BCE. The script now says the four forties BCE. Re-render from the corrected script."
   },
   "rise-of-islam": {
    "url": "/audio/history/rise-of-islam.mp3?v=6d7ba1bd",
@@ -7367,7 +7373,9 @@
     "sha": "da7009d30a33",
     "voice": "af_kore",
     "startTime": 828.056
-   }
+   },
+   "audio_withdrawn": true,
+   "audio_withdrawn_reason": "2026-10-03 rev 86 WS-H (H-18): the episode says Constantinople fell 'two hundred and ninety six years' after Acre in 1291; the record dates it 1453. The script now says fourteen fifty three. Re-render from the corrected script."
   },
   "the-holocaust": {
    "url": "/audio/history/the-holocaust.mp3?v=a0781f82",
@@ -7470,7 +7478,9 @@
     "sha": "da7009d30a33",
     "voice": "af_kore",
     "startTime": 858.08
-   }
+   },
+   "audio_withdrawn": true,
+   "audio_withdrawn_reason": "2026-10-03 rev 86 WS-H (H-18): the episode puts Elie Wiesel's Nobel Peace Prize 'forty years' after January 1945; the record dates it 1986. The script now says nineteen eighty six. Re-render from the corrected script."
   },
   "the-reformation": {
    "url": "/audio/history/the-reformation.mp3?v=4341e4f4",

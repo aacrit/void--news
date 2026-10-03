@@ -91,10 +91,6 @@ primary_source_excerpts:
   author: Khmer Rouge slogan
   work: Documented by survivors and displayed at Tuol Sleng Genocide Museum
   date: 1975-1979
-- text: They told us to leave the city for three days. Three days became three years, eight months, and twenty days.
-  author: Dith Pran
-  work: Testimony to the ECCC
-  date: '2009'
 - text: I am not a violent man. I was simply doing my duty... I recognize that crimes were committed at S-21 and I accept responsibility.
   author: Kaing Guek Eav (Duch)
   work: Testimony at the Extraordinary Chambers in the Courts of Cambodia
@@ -251,9 +247,6 @@ perspectives:
     year: '2005'
     type: study
   notable_quotes:
-  - text: They told us to leave the city for three days. Three days became three years, eight months, and twenty days.
-    speaker: Dith Pran
-    context: Testimony to the ECCC, 2009
   - text: I could not tell them I was a doctor. To be a doctor was to be dead.
     speaker: Haing Ngor
     context: Survival in the Killing Fields, 1987

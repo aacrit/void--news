@@ -24,7 +24,7 @@ published `opinions[].text` by word overlap. Trimming for the ear is allowed;
 inventing is not. That makes the show's core content unfabricatable, and it
 means a listener hears the same words a reader reads.
 
-Validator IDs are stable. W-01..W-12 here; W-01..W-09 in `verify_sections.py`
+Validator IDs are stable. W-01..W-13 here; W-01..W-09 in `verify_sections.py`
 are a different namespace (the served page), as R-nn and H-nn already are.
 """
 
@@ -473,7 +473,107 @@ def validate_script(script: Script, issue: dict,
             if '"' in line.text or "“" in line.text:
                 out.append(Finding("W-12", "warn", seg.kind,
                                    "quotation marks in spoken copy; attribute in words instead"))
+
+    out.extend(w13_findings(script, issue))
     return out
+
+
+# --- W-13: the Editor says nothing the issue did not print -----------------
+#   W-01 holds the bench to its columns and W-09 the NUMBERS segment to the
+#   issue's stats. Nothing held the Editor, who carries most of the programme:
+#   the cover, the dateline, the topic, the turn, the editorial and the close
+#   are his, written by a person or a model from the issue and read against
+#   nothing. Every number he says (read as a value, so "twenty percent" is 20
+#   and "two thousand and twenty six" is 2026) and every multi-word proper
+#   name must be in the published issue. The name rule is the Weekly print
+#   rule (`weekly_parse.unsourced_terms`): the name as a phrase, or its last
+#   two capitalised words as a phrase and each of them on its own. Failure
+#   means no render.
+#: The programme's own names, which the issue does not print about itself.
+HOUSE_NAMES = ("From Void News", "Void News", "Void Opinion", "The Argument")
+#: The long and short forms of one name: the script spells a name out for the
+#: ear ("the European Union") where the issue prints its short form ("EU").
+NAME_ALIASES = (("european union", "eu"), ("united states", "us"), ("united kingdom", "uk"),
+                ("united nations", "un"), ("federal reserve", "fed"))
+#: Issue fields that are not the issue's text: the audio edition's own
+#: metadata (its chapter titles come FROM the script, so reading them back
+#: would let the script source itself) and bookkeeping.
+_NOT_ISSUE_TEXT = ("audio_", "gemini_calls_used", "generation_duration_seconds",
+                   "generator", "id", "created_at", "updated_at", "opinion_start_seconds")
+
+
+def issue_text(issue: dict) -> str:
+    """Every string and number the published issue carries, flattened."""
+    parts: list[str] = []
+
+    def walk(v):
+        if isinstance(v, dict):
+            for x in v.values():
+                walk(x)
+        elif isinstance(v, list):
+            for x in v:
+                walk(x)
+        elif isinstance(v, bool) or v is None:
+            return
+        else:
+            parts.append(str(v))
+
+    for k, v in (issue or {}).items():
+        if any(k == p or (p.endswith("_") and k.startswith(p)) for p in _NOT_ISSUE_TEXT):
+            continue
+        walk(v)
+    return "\n".join(parts)
+
+
+def w13_findings(script: Script, issue: dict) -> list[Finding]:
+    try:
+        from history.spoken_numbers import (
+            Num, digit_numbers, record_values, spoken_numbers, supported)
+    except ImportError:  # pragma: no cover - imported from the repo root
+        from pipeline.history.spoken_numbers import (
+            Num, digit_numbers, record_values, spoken_numbers, supported)
+    try:
+        from briefing.weekly_parse import _G_SENT_RE, unsourced_terms
+    except ImportError:  # pragma: no cover
+        from pipeline.briefing.weekly_parse import _G_SENT_RE, unsourced_terms
+
+    text = issue_text(issue)
+    low_text = re.sub(r"\s+", " ", text.lower().replace(".", ""))
+    values = record_values(text)
+    out: list[Finding] = []
+    for seg in script.segments:
+        for line in seg.lines:
+            if line.speaker != "E":
+                continue
+            said = line.text
+            for house in HOUSE_NAMES:
+                said = said.replace(house, " ")
+            nums = spoken_numbers(said) + [Num(v, f"{v:g}", False) for v in digit_numbers(said)]
+            for x in nums:
+                if x.value and not supported(x, values):
+                    out.append(Finding("W-13", "fail", seg.kind,
+                                       f"the Editor says {x.text!r} ({x.value:g}); the issue "
+                                       f"carries no such number: {line.text[:80]!r}"))
+            for sent in _G_SENT_RE.split(said):
+                for name in unsourced_terms(sent, text, set()):
+                    if re.fullmatch(r"[\d,.]+", name):
+                        continue          # digits are judged as values above
+                    if _aliased(name, low_text):
+                        continue
+                    out.append(Finding("W-13", "fail", seg.kind,
+                                       f"the Editor names {name!r}; the issue does not: "
+                                       f"{line.text[:80]!r}"))
+    return out
+
+
+def _aliased(name: str, low_text: str) -> bool:
+    low = re.sub(r"\s+", " ", name.lower().replace(".", "")).strip()
+    for long, short in NAME_ALIASES:
+        if long in low:
+            alt = low.replace(long, short)
+            if re.search(r"\b" + re.escape(alt) + r"\b", low_text):
+                return True
+    return False
 
 
 def _bench_columns(opinions: list[dict]) -> dict[str, str]:
