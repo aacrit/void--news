@@ -1050,9 +1050,11 @@
 .mbp__teaser {
   display: grid;
   grid-template-columns: 1fr auto;
+  /* The chevron takes the first row only, so the rule over Opinion runs the
+     full width of the box instead of stopping at the chevron's column. */
   grid-template-areas:
     "tldr chev"
-    "opin chev";
+    "opin opin";
   gap: var(--space-3) var(--space-2);
   width: 100%;
   padding: var(--space-3) var(--space-4);
@@ -1083,8 +1085,9 @@
   text-transform: uppercase;
 }
 
+/* One kicker colour for both items (they were accent and grey). */
 .mbp__teaser-cmd--opinion {
-  color: var(--fg-tertiary);
+  color: var(--fg-accent);
 }
 
 /* Functional descriptor (dek) — quiet lowercase mono tail on the kicker line
@@ -1161,7 +1164,7 @@
 
 .mbp__teaser-chevron {
   grid-area: chev;
-  align-self: end;
+  align-self: start;
   font-size: 10px;
   color: var(--fg-tertiary);
   padding: var(--space-1);
