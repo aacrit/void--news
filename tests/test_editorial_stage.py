@@ -131,6 +131,15 @@ def main() -> int:
             ok = False
         else:
             print("PASS: editorial validation reported a pass rate")
+        # rev 86: the rigor counters (points checked, cached cards judged
+        # against their stored index) are reported every run.
+        m = re.search(r"Rigor: (\d+)/(\d+) points dropped .*?(\d+)/(\d+) cached cards",
+                      out)
+        if not m:
+            print("FAIL: no rigor line (points and cached cards were not checked)")
+            ok = False
+        else:
+            print(f"PASS: rigor reported ({m.group(0)[:120]})")
         if "Bench lifted" not in out:
             print("FAIL: the bench was not lifted clear of the non-candidates")
             ok = False

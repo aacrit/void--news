@@ -10,6 +10,7 @@ is why that rule is now model-checked (L-07) instead of a regex.
 
 Run: python tests/test_editorial_standard.py
 """
+import json
 import sys
 from pathlib import Path
 
@@ -342,10 +343,6 @@ def main() -> int:
     return 0 if ok else 1
 
 
-if __name__ == "__main__":
-    sys.exit(main())
-
-
 def test_e13_catches_a_fabricated_number():
     """A number in the card that no source article contains.
 
@@ -429,6 +426,385 @@ def test_e14_catches_an_invented_quotation() -> None:
     print("PASS  E-14 catches an invented quotation and spares a verbatim one")
 
 
+# ---------------------------------------------------------------------------
+# rev 86 (factual rigor plan, gaps 1 and 3). Run by `python` in CI as well as
+# by pytest: until rev 86 the two tests above sat after a `sys.exit(main())`
+# and only pytest ever reached them, while CI runs this file with `python`.
+# ---------------------------------------------------------------------------
+POINT_SOURCES = (
+    "The central bank raised its benchmark rate by half a point on Tuesday. "
+    "Governor Adeyemi said the decision was unanimous. Mortgage applications "
+    "fell 12 percent in the week after the announcement.\n"
+    "“We will not hesitate to act again if inflation persists,” Adeyemi "
+    "told reporters at the central bank."
+)
+
+
+def test_points_are_checked_and_a_failing_point_is_dropped() -> None:
+    """Gap 1: E-13, E-14, E-16 on each consensus or divergence point."""
+    good = "Outlets agree mortgage applications fell 12 percent after the rise."
+    unsourced = "Outlets agree the bank closed 37 regional branches."
+    invented = ("Adeyemi said “the bank has lost control of prices "
+                "entirely” on Tuesday.")
+    verbatim = ("Adeyemi said “we will not hesitate to act again if inflation "
+                "persists.”")
+    shift = "Separately, a court in Lagos fined a telecom operator."
+    kept, dropped = std.check_points(
+        [good, unsourced, invented, verbatim, shift], POINT_SOURCES)
+    assert kept == [good, verbatim], f"wrong points kept: {kept}"
+    why = {text: found[0].id for text, found in dropped}
+    assert why == {unsourced: "E-13", invented: "E-14", shift: "E-16"}, why
+
+    # Precision: no evidence is "cannot confirm". E-13 and E-14 skip, E-16
+    # (which reads the point alone) still runs.
+    kept, dropped = std.check_points([good, unsourced, invented, shift], None)
+    assert kept == [good, unsourced, invented], kept
+    assert [d[0] for d in dropped] == [shift]
+
+    # An index with no record behind it is not evidence either.
+    from pipeline.editorial import grounding as G
+    kept, _ = std.check_points([unsourced], G.Verifier(None))
+    assert kept == [unsourced], "an absent index accused a point"
+
+    # The same question against the persisted index as against the text.
+    rec = G.build_record("c", [{"id": "a1", "title": "Bank raises rate",
+                                "full_text": POINT_SOURCES}], stage=G.STAGE_PRE)
+    kept, dropped = std.check_points([good, unsourced], G.Verifier(rec))
+    assert kept == [good] and dropped[0][0] == unsourced
+
+    # Precision: a divergence point attributes a figure to an OUTLET, which no
+    # article names beside it. On the committed feed of 2026-10-02, "The Daily
+    # Beast and The Hill emphasize ... the 2028 presidential nomination" read
+    # as 2028 moved onto "Daily Beast" because a source put 2028 beside
+    # another "Daily ..." name. The cluster's outlet names are not counted.
+    src = "Vance is weighing a 2028 presidential run, Daily Wire Editor Ben Shapiro said."
+    point = "The Daily Beast emphasizes Vance's 2028 presidential ambitions."
+    assert std.check_points([point], src)[1], "control: the attachment half fires"
+    kept, _ = std.check_points([point], src, outlets=["The Daily Beast", "The Hill"])
+    assert kept == [point], "an outlet name was read as what a number counts"
+    print("PASS  points: an unsourced number, an invented quotation and a "
+          "topic shift are dropped; evidence that is absent drops nothing")
+
+
+# --- a minimal Stage 2 harness: an in-memory table store and a stub model ---
+
+class _Q:
+    def __init__(self, db, name):
+        self.db, self.name, self.filters, self.payload = db, name, [], None
+
+    def select(self, _cols):
+        return self
+
+    def in_(self, col, vals):
+        vals = set(vals)
+        self.filters.append(lambda r: r.get(col) in vals)
+        return self
+
+    def eq(self, col, val):
+        self.filters.append(lambda r: r.get(col) == val)
+        return self
+
+    def update(self, payload):
+        self.payload = payload
+        return self
+
+    def execute(self):
+        rows = [r for r in self.db.tables.setdefault(self.name, [])
+                if all(f(r) for f in self.filters)]
+        if self.payload is not None:
+            if self.db.fail_updates:
+                raise RuntimeError("write refused")
+            for r in rows:
+                r.update(self.payload)
+            self.db.writes.append((self.name, dict(self.payload)))
+        return type("R", (), {"data": [dict(r) for r in rows]})()
+
+
+class _DB:
+    def __init__(self):
+        self.tables: dict = {}
+        self.writes: list = []
+        self.fail_updates = False
+
+    def table(self, name):
+        return _Q(self, name)
+
+    def row(self, table, rid):
+        return next(r for r in self.tables[table] if r["id"] == rid)
+
+
+_SUMMARIZER = "summarizer.cluster_summarizer"
+
+
+def _restores_summarizer(fn):
+    """Put the real summarizer module back after a test that stubbed it, so a
+    pytest session running other files in this process never sees the stub."""
+    import functools
+
+    @functools.wraps(fn)
+    def wrapper(*a, **k):
+        had = _SUMMARIZER in sys.modules
+        saved = sys.modules.get(_SUMMARIZER)
+        try:
+            return fn(*a, **k)
+        finally:
+            if had:
+                sys.modules[_SUMMARIZER] = saved
+            else:
+                sys.modules.pop(_SUMMARIZER, None)
+    return wrapper
+
+
+def _stage2(llm: bool):
+    """editorial.stage2 with the summarizer replaced by a stub that spends
+    nothing: no model is called, and `llm` is what is_available() answers.
+    Call only inside a test wrapped by @_restores_summarizer."""
+    import types
+    pipeline = str(ROOT / "pipeline")
+    if pipeline not in sys.path:
+        sys.path.insert(0, pipeline)
+    fake = types.ModuleType("summarizer.cluster_summarizer")
+    fake._content_hash = lambda arts: "h:" + "|".join(sorted(a["id"] for a in arts))
+    fake._store_cluster_summary = lambda *a, **k: None
+    fake.critique_cards = lambda recs, **k: {}
+    fake.summarize_cluster = lambda *a, **k: None
+    fake.is_available = lambda: llm
+    import summarizer  # noqa: F401  the real (light) package
+    sys.modules["summarizer.cluster_summarizer"] = fake
+    from editorial import stage2
+    return stage2
+
+
+BODY = (
+    "The central bank raised its benchmark rate by half a point on Tuesday, the "
+    "third increase this quarter. Governor Adeyemi said the decision was "
+    "unanimous and that the committee would meet again in November. Mortgage "
+    "applications fell 12 percent in the week after the announcement, according "
+    "to the national lenders association. Two of the five largest banks passed "
+    "the increase to savers within a day. " * 2
+)
+
+
+def _cluster(db, cid, n_articles, *, title, summary, stub=False, points=None,
+             tier="flash"):
+    arts = []
+    for i in range(n_articles):
+        aid = f"{cid}-a{i}"
+        body = (BODY[:297] + "...") if stub else BODY
+        a = {"id": aid, "title": f"Central bank raises rate ({i})",
+             "summary": "", "full_text": body, "source_id": "s1",
+             "published_at": "2026-10-02T10:00", "url": f"https://x.test/{aid}"}
+        db.tables.setdefault("articles", []).append(a)
+        db.tables.setdefault("cluster_articles", []).append(
+            {"cluster_id": cid, "article_id": aid})
+        arts.append(a)
+    db.tables.setdefault("sources", [{"id": "s1", "name": "Wire",
+                                      "tier": "international",
+                                      "political_lean_baseline": "center"}])
+    row = {"id": cid, "title": title, "summary": summary, "summary_tier": tier,
+           "source_count": n_articles, "content_type": "reporting",
+           "summary_article_hash": "h:" + "|".join(sorted(a["id"] for a in arts))}
+    row.update(points or {})
+    db.tables.setdefault("story_clusters", []).append(row)
+    return arts
+
+
+def _write_index(build_dir, cid, arts, **over):
+    from editorial import grounding as G
+    rec = G.build_record(cid, arts, stage=over.pop("stage", G.STAGE_PRE))
+    rec.update(over)
+    G.write_record(build_dir, rec)
+
+
+@_restores_summarizer
+def test_cached_card_is_judged_against_its_stored_index() -> None:
+    """Gap 3: a cached card is checked against its pre-truncation record."""
+    import tempfile
+    stage2 = _stage2(llm=False)
+    build = Path(tempfile.mkdtemp(prefix="void-rigor-"))
+    db = _DB()
+    bad = " The bank said it would close 73 regional branches by March."
+    arts = _cluster(db, "cached", 3, title=CLEAN_TITLE, summary=CLEAN_SUMMARY + bad)
+    _write_index(build, "cached", arts)
+    out = stage2.review_bench(db, ["cached"], run_critique=False,
+                              fresh_ids=set(), build_dir=build)
+    card = db.row("story_clusters", "cached")
+    assert "73" not in card["summary"], "the unsourced sentence shipped"
+    assert card["summary"].startswith("The central bank raised"), card["summary"]
+    assert out["survivors"] == ["cached"], out
+    r = out["rigor"]
+    assert (r["cached_cards"], r["cached_cards_checked"], r["cached_cards_cut"],
+            r["cached_sentences_cut"]) == (1, 1, 1, 1), r
+    print("PASS  a cached card's number its stored index lacks is cut")
+
+
+@_restores_summarizer
+def test_stub_or_format2_record_cannot_confirm() -> None:
+    """Precision: an index the card was not written from never cuts."""
+    import tempfile
+    from editorial import grounding as G
+    stage2 = _stage2(llm=False)
+    bad = " The bank said it would close 73 regional branches by March."
+    cases = [
+        ("stub", dict(stub=True), {}),
+        ("format", {}, {"format": 2}),
+        ("not-pre-truncation", {}, {"stage": G.STAGE_EXPORT}),
+        ("no-record", {}, None),
+    ]
+    for reason, kw, over in cases:
+        build = Path(tempfile.mkdtemp(prefix="void-rigor-"))
+        db = _DB()
+        arts = _cluster(db, "c1", 3, title=CLEAN_TITLE,
+                        summary=CLEAN_SUMMARY + bad, **kw)
+        if over is not None:
+            _write_index(build, "c1", arts, **over)
+        out = stage2.review_bench(db, ["c1"], run_critique=False,
+                                  fresh_ids=set(), build_dir=build)
+        card = db.row("story_clusters", "c1")
+        assert "73" in card["summary"], f"{reason}: a stub-backed absence cut a sentence"
+        assert out["survivors"] == ["c1"], f"{reason}: {out}"
+        assert out["rigor"]["cached_cards_cannot_confirm"] == {reason: 1}, out["rigor"]
+
+    # A card written from another membership is not judged by this one's index.
+    assert stage2.cached_evidence_status(
+        {"stage": G.STAGE_PRE, "format": 3, "articles": [{"id": "a"}]},
+        ["a"], written_from_members=False) == "membership-changed"
+    # An index that does not hold every member cannot clear or accuse.
+    assert stage2.cached_evidence_status(
+        {"stage": G.STAGE_PRE, "format": 3, "articles": [{"id": "a"}]},
+        ["a", "b"], written_from_members=True) == "uncovered"
+    # An index cut short of the 2,200 body characters the summarizer read.
+    assert stage2.cached_evidence_status(
+        {"stage": G.STAGE_PRE, "format": 3, "articles": [
+            {"id": "a", "truncated": True, "chars": 5200, "bodyChars": 4000}]},
+        ["a"], written_from_members=True) == "short-index"
+    assert stage2.cached_evidence_status(
+        {"stage": G.STAGE_PRE, "format": 3, "articles": [
+            {"id": "a", "truncated": True, "chars": 4200, "bodyChars": 4000}]},
+        ["a"], written_from_members=True) == "ok"
+    print("PASS  stub, format-2, export-stage and missing records cannot "
+          "confirm, and cut nothing")
+
+
+@_restores_summarizer
+def test_factual_failure_on_a_thin_cluster_is_dropped_not_kept() -> None:
+    """Gap 3: an enforced grounded finding after repair never ships."""
+    import tempfile
+    stage2 = _stage2(llm=False)
+    build = Path(tempfile.mkdtemp(prefix="void-rigor-"))
+    db = _DB()
+    # A headline cannot be repaired by a cut. Two articles, no model.
+    arts = _cluster(db, "thin", 2, title="Central Bank Raise Costs 31 Branches",
+                    summary=CLEAN_SUMMARY)
+    _write_index(build, "thin", arts)
+    # Control: a STYLE failure on the same thin cluster is still kept.
+    arts2 = _cluster(db, "style", 2, title=CLEAN_TITLE,
+                     summary=CLEAN_SUMMARY + " although the committee was unanimous.")
+    _write_index(build, "style", arts2)
+    out = stage2.review_bench(db, ["thin", "style"], run_critique=False,
+                              fresh_ids=set(), build_dir=build)
+    assert "thin" in out["dropped"] and "thin" not in out["survivors"], out
+    assert "style" in out["survivors"], "a style-only failure was dropped"
+    r = out["rigor"]
+    assert r["factual_drops"] == 1 and r["factual_drops_by_rule"] == {"E-13": 1}, r
+    assert r["factual_drops_kept_before_rev86"] == 1, r
+
+    # The same headline on a FRESH card, judged against this run's text.
+    db2 = _DB()
+    _cluster(db2, "fresh", 2, title="Central Bank Raise Costs 31 Branches",
+             summary=CLEAN_SUMMARY)
+    out = stage2.review_bench(db2, ["fresh"], run_critique=False,
+                              fresh_ids={"fresh"}, build_dir=build)
+    assert out["dropped"] == ["fresh"], out
+    print("PASS  a headline E-13 failure on a 2-article cluster is dropped; "
+          "a style failure there is kept")
+
+
+@_restores_summarizer
+def test_failing_point_is_dropped_and_the_card_kept() -> None:
+    """Gap 1 at 8d.3: the stored points lose the failure, the card ships."""
+    import tempfile
+    stage2 = _stage2(llm=False)
+    build = Path(tempfile.mkdtemp(prefix="void-rigor-"))
+    db = _DB()
+    good = "Outlets agree mortgage applications fell 12 percent after the rise."
+    bad = "Outlets agree the bank closed 37 regional branches."
+    arts = _cluster(db, "pts", 3, title=CLEAN_TITLE, summary=CLEAN_SUMMARY,
+                    points={"consensus_points": [good, bad],
+                            "divergence_points": ["Separately, a court fined "
+                                                  "a telecom operator."]})
+    _write_index(build, "pts", arts)
+    out = stage2.review_bench(db, ["pts"], run_critique=False,
+                              fresh_ids=set(), build_dir=build)
+    row = db.row("story_clusters", "pts")
+    assert row["consensus_points"] == [good], row["consensus_points"]
+    assert row["divergence_points"] == [], row["divergence_points"]
+    assert out["survivors"] == ["pts"], out
+    r = out["rigor"]
+    assert (r["points_checked"], r["points_dropped"]) == (3, 2), r
+    assert r["points_dropped_by_rule"] == {"E-13": 1, "E-16": 1}, r
+
+    # A card whose filtered points cannot be written does not ship them.
+    db2 = _DB()
+    arts = _cluster(db2, "nowrite", 3, title=CLEAN_TITLE, summary=CLEAN_SUMMARY,
+                    points={"consensus_points": [bad]})
+    _write_index(build, "nowrite", arts)
+    db2.fail_updates = True
+    out = stage2.review_bench(db2, ["nowrite"], run_critique=False,
+                              fresh_ids=set(), build_dir=build)
+    assert out["dropped"] == ["nowrite"], out
+    assert out["rigor"]["points_write_failed_drops"] == 1
+    print("PASS  a point with an unsourced number is dropped from the stored "
+          "card, which ships")
+
+
+@_restores_summarizer
+def test_bench_index_keeps_whole_bodies_over_stubs() -> None:
+    """8f must not overwrite a whole-body index with the same articles' stubs."""
+    import tempfile
+    from editorial import grounding as G
+    stage2 = _stage2(llm=False)
+    build = Path(tempfile.mkdtemp(prefix="void-rigor-"))
+    db = _DB()
+    arts = _cluster(db, "k", 3, title=CLEAN_TITLE, summary=CLEAN_SUMMARY)
+    _write_index(build, "k", arts)                     # yesterday, whole bodies
+    for a in db.tables["articles"]:                    # step 10 since
+        a["full_text"] = a["full_text"][:297] + "..."
+    stage2.write_bench_index(db, ["k"], build_dir=str(build))
+    rec = json.loads((build / G.DIRNAME / "k.json").read_text())
+    assert not any(a["stub"] for a in rec["articles"]), "stubs replaced bodies"
+    # A new member means a new record.
+    _cluster(db, "k", 1, title=CLEAN_TITLE, summary=CLEAN_SUMMARY)
+    db.tables["cluster_articles"][-1]["article_id"] = "k-new"
+    db.tables["articles"][-1]["id"] = "k-new"
+    stage2.write_bench_index(db, ["k"], build_dir=str(build))
+    rec = json.loads((build / G.DIRNAME / "k.json").read_text())
+    assert "k-new" in {a["id"] for a in rec["articles"]}
+    print("PASS  8f keeps a whole-body index over the same articles' stubs")
+
+
+ALL_TESTS = (
+    test_e13_catches_a_fabricated_number,
+    test_e14_catches_an_invented_quotation,
+    test_points_are_checked_and_a_failing_point_is_dropped,
+    test_cached_card_is_judged_against_its_stored_index,
+    test_stub_or_format2_record_cannot_confirm,
+    test_factual_failure_on_a_thin_cluster_is_dropped_not_kept,
+    test_failing_point_is_dropped_and_the_card_kept,
+    test_bench_index_keeps_whole_bodies_over_stubs,
+)
+
+
+def _run_all() -> int:
+    rc = main()
+    for fn in ALL_TESTS:
+        try:
+            fn()
+        except AssertionError as e:
+            print(f"FAIL  {fn.__name__}: {e}")
+            rc = 1
+    return rc
+
+
 if __name__ == "__main__":
-    test_e13_catches_a_fabricated_number()
-    test_e14_catches_an_invented_quotation()
+    sys.exit(_run_all())
