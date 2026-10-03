@@ -104,6 +104,49 @@ def main() -> int:
     else:
         print("PASS: short render rejected against the configured feed size")
 
+    # verify_audio.fetch: a 429 is "later", not "broken" (2026-10-03: the CDN
+    # answered brief.json 429 and main went red with On Air serving fine).
+    # Planted: one 429 then a 200 must succeed; a 404 must raise at once.
+    import importlib.util, io, urllib.error, urllib.request
+    spec = importlib.util.spec_from_file_location("verify_audio", VERIFY.parent / "verify_audio.py")
+    va = importlib.util.module_from_spec(spec); spec.loader.exec_module(va)
+    va._RETRY_DELAYS = (0, 0, 0)
+    calls = {"n": 0}
+
+    class _Resp(io.BytesIO):
+        status = 200
+        headers = {}
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+
+    def _open(code):
+        def f(req, timeout=60):
+            calls["n"] += 1
+            if calls["n"] == 1:
+                raise urllib.error.HTTPError(req.full_url, code, "x", {}, None)
+            return _Resp(b"{}")
+        return f
+
+    real = urllib.request.urlopen
+    try:
+        urllib.request.urlopen = _open(429)
+        status, _, body = va.fetch("https://example.invalid/data/brief.json")
+        retried = status == 200 and calls["n"] == 2
+        calls["n"] = 0
+        urllib.request.urlopen = _open(404)
+        try:
+            va.fetch("https://example.invalid/missing.json")
+            refused = False
+        except urllib.error.HTTPError:
+            refused = calls["n"] == 1
+    finally:
+        urllib.request.urlopen = real
+    if retried and refused:
+        print("PASS: verify_audio retries a 429 and fails a 404 at once")
+    else:
+        print(f"FAIL: verify_audio 429 retry (retried={retried}, 404 refused at once={refused})")
+        ok = False
+
     return 0 if ok else 1
 
 
