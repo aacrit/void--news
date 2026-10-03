@@ -450,23 +450,98 @@
 
 /* Meta row removed — sigil now inline with headline */
 
+/* The broadsheet column (CEO 2026-10-03). The Sigil used to stand beside
+   the head as a 56px mark over three caption lines, ~130px tall and ~90px
+   wide: in a 250px column it pinched the head to ~150px, so a six-word head
+   broke over seven lines, and under a short head it left a block of empty
+   paper. A newspaper sets the head across the full column, then a hairline
+   rule and one slug line, then the body. So: head first, at full measure and
+   a size up; the Sigil's mark, word, count and sources on one line under a
+   rule; the caret stays top right. */
 .story-card__headline {
   font-family: var(--font-editorial);
-  font-size: var(--text-lg);
+  font-size: var(--text-xl);
   font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.005em;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
   color: var(--fg-primary);
   margin-bottom: var(--space-2);
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-2);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--space-2);
+  align-items: start;
   overflow-wrap: break-word;
-  word-break: break-word;
+  word-break: normal;
+  hyphens: manual;
+  text-wrap: pretty;
 }
 
-/* Sigil stacks vertically when inline with headline — icon over lean label */
-.story-card__headline .sigil,
+.story-card__headline .story-card__headline-text { grid-column: 1; grid-row: 1; }
+.story-card__headline .story-card__headline-icon { grid-column: 2; grid-row: 1; }
+
+/* The slug: the mark, then two short lines beside it. The word and the
+   count behind it on the first ("Leans right · 7 of 14 right"), the seven
+   strokes and the sources on the second. One wrapped line in a 250px column
+   orphaned a "·" at the start of its second line; two set lines cannot. */
+.story-card__headline .sigil {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  justify-items: start;
+  column-gap: 6px;
+  row-gap: 3px;
+  min-height: auto;
+  margin-top: var(--space-2);
+  padding-top: 6px;
+  border-top: 1px solid var(--divider);
+  width: 100%;
+}
+
+.story-card__headline .sigil > svg:first-child { grid-column: 1; grid-row: 1 / span 2; }
+
+/* The slug runs across the middle of the card, so it must not swallow the
+   card's click: only the mark and the strokes answer the pointer (they open
+   the bias card, as the mark always has); a click on the words falls through
+   to the stretch link and opens the story. Keyboard focus is the Sigil's own
+   tabindex and is unchanged. The popup is portalled, so it is unaffected. */
+.story-card__headline .sigil { pointer-events: none; }
+.story-card__headline .sigil > svg:first-child,
+.story-card__headline .sigil__roster { pointer-events: auto; cursor: pointer; }
+.story-card__headline .sigil__lean-label { grid-column: 2; grid-row: 1; }
+.story-card__headline .sigil__tally { grid-column: 3; grid-row: 1; }
+.story-card__headline .sigil__roster { grid-column: 2; grid-row: 2; }
+.story-card__headline .sigil__count { grid-column: 3; grid-row: 2; }
+
+.story-card__headline .sigil > svg:first-child {
+  width: 28px;
+  height: 28px;
+}
+
+.story-card__headline .sigil__roster {
+  margin: 0;
+}
+
+.story-card .story-card__headline .sigil__lean-label,
+.story-card .story-card__headline .sigil__tally,
+.story-card .story-card__headline .sigil__count {
+  display: inline;
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.story-card__headline .sigil__tally::before {
+  content: "\00B7";
+  margin-right: 6px;
+  color: var(--fg-tertiary);
+}
+
+/* The lead keeps its mark beside the head: at lead size the head has the
+   measure to spare. Icon over lean label. */
 .lead-story__headline .sigil {
   flex-direction: column;
   align-items: center;

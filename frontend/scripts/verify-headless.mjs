@@ -1059,7 +1059,10 @@ async function scenarios(browser) {
       : `${rows.length} Sigils, aria-label = printed word`);
     const popupBad = [];
     for (let i = 0; i < Math.min(4, rows.length); i++) {
-      await page.locator(".sigil[role='button']").nth(i).hover();
+      // The mark, not the box: on a feed card the slug's words pass the
+      // pointer through to the story link (2026-10-03), so the mark is what
+      // a reader hovers to open the bias card.
+      await page.locator(".sigil[role='button']").nth(i).locator("svg").first().hover();
       await page.waitForSelector(".sigil-popup__label", { timeout: 2000 }).catch(() => {});
       const heading = (await page.locator(".sigil-popup__label").first().textContent().catch(() => ""))?.trim();
       if (heading !== rows[i].printed) popupBad.push(`card ${i}: printed "${rows[i].printed}", popup "${heading}"`);

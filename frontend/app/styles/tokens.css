@@ -567,7 +567,7 @@
   /* Unified card-headline scale for ranks 1+ (digest and wire variants).
      CEO 2026-05-13: feed should read as a single editorial surface, not
      two tiered scales. Layout grids still differ; type does not. */
-  --type-card-headline:   clamp(0.9rem, 0.816rem + 0.36vw, 1.1rem); /* 14 -> 18px (-20% 2026-06-25) */
+  --type-card-headline:   clamp(1.125rem, 0.95rem + 0.5vw, 1.45rem); /* 18 -> 23px (CEO 2026-10-03: heads set full measure, a broadsheet size) */
   --type-card-tracking:   -0.01em;
   --type-lead-tracking:   -0.02em;
   /* Brief headline scale when the TL;DR / Opinion block expands. Kept
