@@ -105,6 +105,46 @@ def keeps(text: str, story: dict, label: str) -> None:
                                         if cuts else ""))
 
 
+def points_are_evidence_only_once_checked() -> None:
+    """A brief sentence whose only anchor is a dropped point is cut.
+
+    Before rev 86 a consensus point was read by no rule and then handed to
+    this pass as evidence, so an unsourced number in a point cleared the same
+    number in the TL;DR. Stage 2 now drops the point at 8d.3 (E-13 against the
+    card's sources) and stores only the survivors, which is what this cluster
+    dict is once the brief reads it back.
+    """
+    from editorial import standard as std
+    sources = ("Flooding forced evacuations along the river on Sunday. Officials "
+               "said 12 villages were cut off by the water.")
+    story = {
+        "id": "flood",
+        "title": "Floods Cut Off Villages Along the River",
+        "summary": ("Flooding forced evacuations along the river on Sunday. "
+                    "Officials said 12 villages were cut off by the water."),
+        "consensus_points": ["Officials said 4,800 residents were evacuated.",
+                             "Officials said 12 villages were cut off."],
+        "divergence_points": ["Separately, a dam inspection found 4,800 cracks."],
+    }
+    brief = "Officials said 4,800 residents were evacuated as the river rose."
+    # The control: with the unchecked point, the number has an anchor.
+    keeps(brief, story, "the sentence while the unchecked point stood (control)")
+    kept_c, gone_c = std.check_points(story["consensus_points"], sources)
+    kept_d, gone_d = std.check_points(story["divergence_points"], sources)
+    check([t for t, _ in gone_c] == ["Officials said 4,800 residents were evacuated."],
+          "the point with the unsourced number is dropped at 8d.3")
+    check(kept_c == ["Officials said 12 villages were cut off."],
+          "the sourced point is kept")
+    checked = dict(story, consensus_points=kept_c, divergence_points=kept_d)
+    cut_one(brief, checked, "4,800", "the brief sentence anchored only in the dropped point",
+            "number")
+    # E-16 needs no evidence, so cluster_text re-applies it: a point that
+    # opens on another story is never evidence, even if nothing dropped it.
+    text = dg.cluster_text(story)
+    check("dam inspection" not in text, "cluster_text skips a point that opens on another story")
+    check("12 villages were cut off." in text, "cluster_text keeps a passing point")
+
+
 def main() -> int:
     print("planted defects, each cut")
     # 1. The unsourced figure (audit 1 item 2).
@@ -237,6 +277,9 @@ def main() -> int:
               "a first-person pronoun inside a quotation is left alone")
     except ImportError as e:  # the summarizer needs google-genai
         print(f"  [skip] summarizer not importable here ({e}); source checks above hold")
+
+    print("points that failed their check are not evidence (rev 86, gap 1)")
+    points_are_evidence_only_once_checked()
 
     if failures:
         print(f"\n{len(failures)} FAILED")
