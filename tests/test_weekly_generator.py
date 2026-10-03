@@ -397,6 +397,13 @@ def main():
           and run.index("check_piece(c.get(\"text\")") > run.index("ground_text(text, src)"))
     check("an unsourced quotation is cut at write time, before the source check",
           run.index("ground_quotes(kept, qsrc)") < run.index("check_piece(c.get(\"text\")"))
+    # W-T21b: the 2026-10-03 run handed every check call the whole printed
+    # week (407,306 chars) and the model marked 10 of 10 recap briefs wholly
+    # unsupported. Each piece is read against its own rows now.
+    sc = run[run.index("── SOURCE CHECK ──"):run.index("LENGTH, AGAIN")]
+    check("the source check reads each piece against its own evidence, not the whole week",
+          "select_evidence(" in sc and "source_text(story_pool)" not in sc
+          and sc.count("missing=") >= 3 and "errors=check_errors" in sc)
 
     # ── WG-14  A kill-list sentence is cut, and the piece is kept ──────────
     print("\nWG-14  the kill list cuts the sentence, not the piece")

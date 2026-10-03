@@ -115,6 +115,46 @@ archive repair goes ahead with a notice.
    404s every path a radio correction withdrew.
 
 ---
+## rev 86 (weekly): the source check reads each piece against its own story, and cuts the sentence it names (2026-10-03)
+
+The Issue #27 run (weekly-digest run 37105730672, week Sep 21-27) stored no
+issue: flash-lite marked 10 of 10 recap briefs wholly unsupported, both covers
+(27 of 34, 36 of 36 sentences), two of five columns and much of the editorial.
+
+**Root cause.** The checker was shown the evidence, and buried in it. Every
+call carried the whole printed week: 134 stories, 407,306 characters, about
+100,000 tokens, for a three-sentence brief whose evidence was one row of about
+2,000 characters. Every fact the cut briefs named is in that text, reproduced
+offline from `build-data/archive.json` ("Noreen Niazi", "355 of the 450",
+"Jabalia", "Trump TV": 14 of 14 sampled facts present). The verdicts were the
+sentences restated in order, not facts looked up. Two defects compounded it.
+The model numbered claims, not sentences, and code cut by the number: "one
+shooting near Johannesburg, killing 17" cut the Cape Town sentence, "arrested
+four farmers" cut the Qatari Prime Minister's. And the splitter broke on every
+full stop before a capital, so "U.S. President Donald Trump during this brief
+visit." became the sentence "President Donald Trump during this brief visit."
+
+**Fix.** `weekly_source_check.select_evidence` gives each piece its own printed
+rows (the story or thread it was written from) plus the rows sharing its
+rarest words, under 60,000 characters; the recap stand-in measures 58,437 of
+407,306. The model echoes the first five words of each sentence it names and
+code places the verdict only where they open a numbered sentence, realigning a
+wrong number when the words match exactly one sentence; a verdict that opens
+none is never cut by number and its text is unread, so it does not ship. A
+piece whose own story is absent from its evidence, or a call with no sources,
+is a CHECKER ERROR, logged as one and not shipped, never reported as
+unsupported claims. `weekly_parse.split_sentences` is the one splitter for the
+source check, `ground_text`, `ground_quotes` and the kill-list cut: no split
+after a title, an initial, "No." or a month before a digit, and after a dotted
+acronym only before a sentence opener. The more-than-half rule is unchanged.
+Still flash-lite only; the pause between calls drops from 8 s to 4 s because a
+call carries about 15,000 tokens, not 100,000.
+
+**Gates.** `tests/test_weekly.py` W-T21b (splitter, misnumbered verdict,
+unplaceable verdict, empty sources, absent story, evidence on the committed
+Sep 21-27 week, an honest stub shipping briefs uncut) and
+`tests/test_weekly_generator.py` (the run never hands the checker the whole
+week).
 
 ## rev 86 WS-A (rigor): points are checked, cached cards are judged, a factual failure never ships (2026-10-03)
 

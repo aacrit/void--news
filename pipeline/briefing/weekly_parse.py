@@ -315,6 +315,7 @@ def enforce_recap(items, *, min_words, max_words):
 # control for that.
 # ---------------------------------------------------------------------------
 _G_SENT_RE = re.compile(r"(?:(?<=[.!?])|(?<=[.!?][\"\u201d']))\s+(?=[\"\u201c']?[A-Z0-9])")
+
 _G_NUM_RE = re.compile(r"\d[\d,.]*\d|\d")
 _G_CAP = r"[A-Z][\w'\u2019.-]*"
 _G_NAME_RE = re.compile(_G_CAP + r"(?:\s+(?:of|the|de|al|bin)\s+" + _G_CAP + r"|\s+" + _G_CAP + r")+")
@@ -322,6 +323,68 @@ _G_OPENERS = frozenset("""The A An In On But And This That These Those For As At
 Her Their It He She They We After Before Since Until Over Under From Into Across Such Both Each Many Most Some
 Every Yet Still So Then Now Here There What Why How Where Who Which Meanwhile However Although Though Outside
 Inside Despite During Against Within Without Under Among Between Following Last Next""".split())
+
+
+# ---------------------------------------------------------------------------
+# The one sentence splitter. Every consumer that cuts by sentence (ground_text,
+# ground_quotes, the kill-list cut, and the source check's numbering and
+# rebuild) splits with THIS function, so a sentence number means the same
+# span everywhere.
+#
+# `_G_SENT_RE` alone split on every full stop before a capital, and the Issue
+# #27 run (2026-10-03) shows what that costs: "...is not scheduled to meet
+# with U.S. President Donald Trump during this brief visit." became two
+# sentences, the checker was shown the fragment "President Donald Trump during
+# this brief visit." as a sentence of its own, and the cut removed it, leaving
+# "...to meet with U.S." standing as prose. A candidate boundary is refused
+# after a title ("Gen.", "Mr."), an initial ("Donald J."), and before a digit
+# after "No." or a month ("No. 10", "Sept. 24"). After a dotted acronym or a
+# corporate suffix ("U.S.", "a.m.", "Inc.") it splits only when the next word
+# is one that opens a sentence ("in the U.S. The company"): merging two
+# sentences costs a cut one sentence too many; splitting one leaves a fragment
+# on the page.
+# ---------------------------------------------------------------------------
+_SB_CAND = re.compile(r"[.!?]+[\"\u201d'\u2019)\]]*\s+(?=[\"\u201c'\u2018(\[]?[A-Z0-9])")
+_SB_TITLES = frozenset("""mr mrs ms dr gen lt col sgt capt cmdr adm maj gov sen rep rev prof st ft mt
+pres supt det insp hon amb brig cpl pvt rt fr messrs mme mlle approx""".split())
+_SB_BEFORE_DIGIT = frozenset("""no nos vol art fig p pp jan feb mar apr jun jul aug sep sept oct nov dec
+ch sec para""".split())
+_SB_SOFT = frozenset("""inc corp ltd co bros jr sr etc vs llc plc""".split())
+_SB_OPENERS = _G_OPENERS | frozenset("""I Police Officials Authorities Analysts Critics Supporters
+Officials Some Others Nobody No None Neither Not Only Also Even Instead Later Earlier Today Yesterday
+Tomorrow Separately Elsewhere Overall Ultimately""".split())
+
+
+def split_sentences(para):
+    """`para` as a list of sentences. See the block comment above."""
+    para = (para or "").strip()
+    if not para:
+        return []
+    out, start = [], 0
+    for m in _SB_CAND.finditer(para):
+        punct = m.group(0).lstrip()
+        if punct[:1] == "." and not punct.startswith(".."):
+            head = para[start:m.start()]
+            word = re.split(r"\s+", head)[-1] if head else ""
+            word = word.lstrip("\"\u201c'\u2018([")
+            nxt = para[m.end():].lstrip("\"\u201c'\u2018([")
+            nxt_word = re.match(r"[\w'\u2019-]*", nxt).group(0)
+            low = word.lower()
+            if low in _SB_TITLES:
+                continue
+            if low in _SB_BEFORE_DIGIT and nxt[:1].isdigit():
+                continue
+            if re.fullmatch(r"[A-Z]", word):  # an initial: "Donald J. Trump"
+                continue
+            dotted = re.fullmatch(r"(?:[A-Za-z]\.)+[A-Za-z]", word) is not None
+            if (dotted or low in _SB_SOFT) and nxt_word not in _SB_OPENERS:
+                continue
+        out.append(para[start:m.end()].strip())
+        start = m.end()
+    tail = para[start:].strip()
+    if tail:
+        out.append(tail)
+    return [s for s in out if s]
 
 
 def _g_norm(text):
@@ -368,7 +431,7 @@ def ground_text(text, source_text):
     cut, paras = [], []
     for para in text.split("\n\n"):
         kept = []
-        for sent in _G_SENT_RE.split(para.strip()):
+        for sent in split_sentences(para):
             if not sent:
                 continue
             miss = unsourced_terms(sent, source_text, nums)
@@ -393,7 +456,7 @@ def _cut_sentences(text, test):
     cut, paras = [], []
     for para in text.split("\n\n"):
         kept = []
-        for sent in _G_SENT_RE.split(para.strip()):
+        for sent in split_sentences(para):
             if not sent:
                 continue
             why = test(sent)
