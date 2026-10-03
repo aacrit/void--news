@@ -2488,7 +2488,9 @@
     "sha": "5dc16aaca50d",
     "voice": "af_kore",
     "startTime": 846.392
-   }
+   },
+   "audio_withdrawn": true,
+   "audio_withdrawn_reason": "2026-10-03 rev 86: the episode says the five accounts cover 'the same eleven years'; the record dates the event 1953 to 1959 and states no eleven-year span (H-18). The script now says 'the same revolution'. Withdrawn until the bundled History re-render (CEO, 2026-10-03)."
   },
   "cyrus-cylinder": {
    "url": "/audio/history/cyrus-cylinder.mp3?v=1fed32cc",

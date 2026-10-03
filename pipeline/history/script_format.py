@@ -703,7 +703,6 @@ H18_KNOWN: dict[str, dict[str, str]] = {
     },
     'cuban-revolution': {
         '10': "not in the record, and a count that goes stale: 'ten' American presidents",
-        '11': "PROBABLE ERROR: 'the same eleven years'; the record dates the event 1953 to 1959",
         '66': "time-bound: 'sixty six years later', counted to twenty twenty six",
     },
     'cyrus-cylinder': {
