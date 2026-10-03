@@ -14,6 +14,7 @@ import {
   formatChapterTime,
 } from "../lib/chapters";
 import ScaleIcon from "./ScaleIcon";
+import CorrectionNotice from "./CorrectionNotice";
 
 /* ---------------------------------------------------------------------------
    OnAirPage — dedicated On Air broadcast interface (/onair).
@@ -209,7 +210,14 @@ export default function OnAirPage() {
           </p>
         )}
 
-        {!hasAudio ? (
+        {!hasAudio && brief?.audio_withdrawn ? (
+          /* A radio correction withdrew today's recording. "Being prepared"
+             would be untrue, so the page says what the correction says. */
+          <section className="onair__empty">
+            <p>Today&apos;s broadcast is withdrawn.</p>
+            <CorrectionNotice notes={brief.corrections} />
+          </section>
+        ) : !hasAudio ? (
           <section className="onair__empty">
             <p>Today&apos;s broadcast is being prepared.</p>
             <span className="onair__empty-sub">Check back after the morning run.</span>
@@ -480,6 +488,9 @@ export default function OnAirPage() {
 
             {/* Show notes */}
             <section className="onair__notes" aria-label="Show notes">
+              {/* A published correction to today's brief, TL;DR, Opinion or
+                  recording, said on the page it corrects. */}
+              <CorrectionNotice notes={brief?.corrections} />
               {brief?.tldr_text && (
                 <div className="onair__note">
                   <h3 className="onair__note-h">In brief</h3>

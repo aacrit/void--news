@@ -1,0 +1,17 @@
+{
+ "class": "cluster-contamination",
+ "gate": "E-16",
+ "product": "card",
+ "covers": [
+  "pipeline/editorial/corrections.json#2026-10-02-putin-kanye",
+  "pipeline/editorial/corrections.json#2026-10-02-pensions-raf",
+  "pipeline/editorial/corrections.py#repair_archive"
+ ],
+ "note": "Another story joined with a topic-shift opener. The archive repair removes the sentence at export.",
+ "planted": {
+  "summary": "The president said the country would use all weapons if attacked. Separately, two concerts in the city were canceled by the stadium."
+ },
+ "clean": {
+  "summary": "The president said the country would use all weapons if attacked. He named the western exclave as one example."
+ }
+}

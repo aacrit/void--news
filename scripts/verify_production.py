@@ -848,6 +848,15 @@ def _withdrawn_history_paths() -> list[str]:
             if isinstance(ep, dict) and ep.get("audio_withdrawn")]
 
 
+def _withdrawn_radio_paths() -> list[str]:
+    """On Air episodes a radio correction withdrew (corrections.json, rev 86)."""
+    try:
+        from pipeline.editorial import corrections as _corr
+        return _corr.withdrawn_audio()
+    except Exception:
+        return []
+
+
 def _head(url: str, timeout: float = 10.0) -> tuple[int | None, str]:
     """(status, content-type) of one HEAD, redirects not followed."""
     import urllib.error
@@ -874,11 +883,72 @@ def check_withdrawn_audio_gone(p: Page) -> list[str]:
         return []
     origin = (m.group(1) or m.group(2)).rstrip("/")
     out = []
-    for path in list(_WITHDRAWN_AUDIO_PATHS) + _withdrawn_history_paths():
+    for path in list(_WITHDRAWN_AUDIO_PATHS) + _withdrawn_history_paths() + _withdrawn_radio_paths():
         status, ctype = _head(f"{origin}{path}")
         if status is not None and 200 <= status < 300 and "text/html" not in ctype.lower():
             out.append(f"{path} is still served (HTTP {status}, {ctype or 'no type'}) at "
                        f"{origin}: withdrawn audio must 404")
+    return out
+
+
+# A-01 (rev 86 WS-R): no served /story page carries an E-16 topic-shift
+# opener. 146 archived cards opened a sentence with "Separately," (another
+# story's sentence, let in by the cluster) on permanent pages; the export now
+# removes it and marks the row auto_corrected. Checked on the homepage's own
+# cards (no I/O), then on the served /story pages of the repaired rows, read
+# from the committed archive. Those GETs are paced and capped, and a network
+# error is a skip, never a failure: only a live page carrying the opener is a
+# defect.
+_ARCHIVE_JSON = Path(__file__).resolve().parents[1] / "frontend/build-data/archive.json"
+_A01_SAMPLE = 8
+_DD_SUMMARY_RE = re.compile(r'class="dd-summary"[^>]*>(.*?)</div>', re.DOTALL)
+# Mirrors pipeline/editorial/corrections.py _AFTER_QUOTE.
+_AFTER_QUOTE = re.compile("(?<=[.!?][\"\u201d\u2019'])\\s+(?=[A-Z\u201c\"])")
+
+
+def _get(url: str, timeout: float = 10.0) -> str | None:
+    import urllib.request
+    req = urllib.request.Request(url, headers={"Cache-Control": "no-cache",
+                                               "User-Agent": "void-verify-production"})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            if resp.status != 200:
+                return None
+            return resp.read().decode("utf-8", errors="replace")
+    except Exception:
+        return None
+
+
+def check_story_no_topic_shift(p: Page) -> list[str]:
+    out = []
+    for s in p.summaries:
+        for f in std.e16_topic_shift(s):
+            out.append(f"homepage card: {f.message}")
+    m = _CANONICAL_RE.search(p.raw)
+    if not m:
+        return out
+    origin = (m.group(1) or m.group(2)).rstrip("/")
+    try:
+        rows = json.loads(_ARCHIVE_JSON.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return out
+    repaired = sorted(r["id"] for r in rows if isinstance(r, dict) and r.get("auto_corrected"))
+    import time
+    for rid in repaired[:_A01_SAMPLE]:
+        page = _get(f"{origin}/story/{rid}/")
+        if page is None:
+            continue
+        for block in _DD_SUMMARY_RE.findall(page):
+            # One paragraph per <p>: joined, "end.</p><p>Separately" would
+            # read as one sentence and hide the opener.
+            paras = re.findall(r"<p[^>]*>(.*?)</p>", block, re.DOTALL) or [block]
+            text = "\n\n".join(_decode(_strip_inline(x)) for x in paras)
+            # A sentence that ends inside a quotation runs into the next one
+            # in standard.sentences; break there so the opener is seen.
+            text = _AFTER_QUOTE.sub("\n\n", text)
+            for f in std.e16_topic_shift(text):
+                out.append(f"/story/{rid}/: {f.message}")
+        time.sleep(0.3)
     return out
 
 
@@ -964,6 +1034,8 @@ CHECKS = [
     ("availability: first-party assets are not rate-limited (P0-6)",
      check_first_party_assets_not_rate_limited),
     ("exposure: withdrawn audio is not served", check_withdrawn_audio_gone),
+    ("A-01 correction: no served /story carries an E-16 topic-shift opener",
+     check_story_no_topic_shift),
 ]
 
 # Reported on every run, promoted to hard failures by --strict once the

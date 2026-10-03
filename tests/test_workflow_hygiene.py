@@ -50,6 +50,10 @@ WF = ROOT / ".github" / "workflows"
 
 # W-05: test files no workflow runs ON PURPOSE, each with its reason.
 ALLOWLIST: dict[str, str] = {
+    "test_corrections.py":
+        "run from inside tests/test_grounding.py, which auto-merge-claude.yml "
+        "and pipeline.yml (before the data commit) both run, so it guards the "
+        "path that writes. Name it in a run: block when .github/ is next edited.",
     # Rev 86 WS-G. A claude/* branch may not change .github/ (W-02), so the
     # workflow half ships as a hand-merged PR whose exact diff is
     # docs/proposals/RIGOR-WORKFLOW-DIFF.md. That PR adds this test to

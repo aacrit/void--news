@@ -1,0 +1,17 @@
+{
+ "class": "wrong-interval",
+ "gate": "pipeline/editorial/derived_grounding.py::check_dates",
+ "product": "opinion",
+ "covers": [
+  "pipeline/editorial/corrections.json#2026-10-03-opinion-bail-interval"
+ ],
+ "note": "An interval the card does not state (Sunday to Monday written as two days).",
+ "planted": {
+  "evidence": "Five men were arrested on Sunday near the base, then released on police bail Monday.",
+  "sentence": "The five men were released on police bail just two days later."
+ },
+ "clean": {
+  "evidence": "Five men were arrested on Sunday near the base, then released on police bail Monday.",
+  "sentence": "The five men were released on police bail on Monday."
+ }
+}

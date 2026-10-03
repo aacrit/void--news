@@ -18,6 +18,104 @@ lives in this file.
 
 ---
 
+## rev 86 WS-R (rigor): every product can be corrected, every past error class has its gate, and the archive loses its contamination openers (2026-10-03)
+
+Gap items 4 and 10 and the WS-R line of `docs/proposals/FACTUAL-RIGOR-PLAN-2026-10-02.md`.
+CEO decisions: corrections are internal at the site level (no `/corrections`
+page, no methodology line), a corrected page says so on itself, and the
+archive repair goes ahead with a notice.
+
+1. **`corrections.json` schema 2.** Every entry now carries `id`, `product`
+   (card, brief, opinion, radio, deepdive), `class`, `date`, `gate`, a
+   `gate_note`, the internal `reason` and a public `notice` (null for a
+   wording change that corrects no fact). The gate is what WS-G's F-5 resolves:
+   an ENFORCED rule id, or a file that exists, written `path::function` when
+   it names a function (`test_corrections` also asserts the function exists).
+   A class with no deterministic check is never an entry's gate: it sits in
+   the entry's `gap_classes` (Hegseth: the outlet's adjective in Void's voice;
+   Putin: the "Q&An" garble) and in `KNOWN_GAPS`, and `schema_problems()`
+   refuses `gate: none`. The fallback-copy entry was split into its kill-list
+   and dash classes.
+2. **Corrections reach the brief, the Opinion, On Air and the Deep Dive.**
+   The export applies `brief` and `opinion` edits to `brief.json`; a `radio`
+   correction withdraws the episode (every audio field cleared, the row
+   stamped `audio_withdrawn`, the flag History's manifest already used) rather
+   than editing audio; a `deepdive` correction removes members and recomputes
+   `source_count` (distinct outlets, the field's convention, checked on the
+   archive first), `member_count` and the lean histogram through
+   `compute_outlet_lean_histogram`. A derived `bias_diversity` field is
+   rewritten only when recomputing it from the original members reproduces
+   the stored value. The podcast feed reads every daily row through the same
+   `apply_brief`, so a corrected TL;DR is never re-served as an episode
+   description.
+3. **The 2026-10-01 brief, corrected.** Each error was re-checked against the
+   committed cards before acting. The TL;DR stacked last year's 10 percent on
+   this year's 20 and called it 20 (the Hegseth card says an additional 10,
+   totaling 20): the sentence is cut. It put Swinney's figure at £1,000 a year
+   (the pensions card says £4 billion by 2049/50 and nearly £2,000 each): cut.
+   The Opinion said the five men were bailed "just two days later" (the
+   Fairford card: arrested Sunday, bailed Monday): now "on Monday", the card's
+   own words. On Air said those who clung to the woke department "would be
+   purged" (the quotation ends "no longer work here"): the 2026-10-01 episode
+   is withdrawn, its MP3 and chapters removed from the tree, and its item
+   removed from `podcast-world.xml`, the one served surface that still carried
+   that day's TL;DR. `brief.json` already held 2026-10-02's brief, so the text
+   corrections are recorded and applied on any export of that row.
+4. **The Putin card's Deep Dive.** Eight members about the cancelled Kanye
+   West concerts (Meduza twice, Anadolu, RT, The Citizen, The Daily Beast, The
+   Independent, Asharq Al-Awsat) are removed: source_count 20 to 13,
+   member_count 33 to 25, histogram recounted one vote per outlet. Other
+   off-topic members on that row (a Townhall court story, Moscow Times items on
+   a footballer and on bears) are NOT removed here; deciding each needs its
+   own reading, so they are left open.
+5. **The archive repair.** At export, `corrections.repair_archive` removes an
+   E-16 topic-shift sentence ("Separately,") and the sentences after it that
+   never return to the card's own names (the write-time repair's rule, run on
+   `standard.py`'s splitter so the result re-checks clean), marks the row
+   `auto_corrected` with the date and adds the notice "a sentence from another
+   story was removed". **151 archived cards repaired** (155 opener sentences,
+   160 continuation sentences); none still trips E-16, none is left empty,
+   three now fall under 300 characters. The audit counted 146 with
+   `standard.sentences`; five more carried an opener straight after a closing
+   quotation ('"freedom fighters." Separately, ...'), where that splitter runs
+   two sentences together and E-16 cannot see the opener but the page shows
+   it. The repair splits there too; E-16 itself is unchanged and still blind
+   in that position (left open). Deterministic and idempotent: the
+   state database keeps the printed text, so every export repairs it the same
+   way on the same date.
+6. **`CorrectionNotice`** on `/story/[id]` (under the dateline) and in On Air's
+   show notes: "Corrected October 3, 2026: a sentence from another story was
+   removed." A withdrawn episode says "Today's broadcast is withdrawn" instead
+   of "being prepared", which would be untrue.
+7. **The regression corpus**, `tests/fixtures/rigor_regressions/`: 19
+   fixtures, one per class in BOTH corrections files (`weekly-corrections.json`
+   entries now name their `classes`). Each names its gate and carries a planted
+   input and a clean twin; the gates are run from their own code (E-13, E-14,
+   E-16, four `derived_grounding` checks, `same_event.entity_outliers`,
+   `weekly_parse.ground_text` and `ground_quotes`, `test_prompt_grounding`'s
+   literal scan, `test_truncation_lint`). Three classes have no deterministic
+   gate and are declared, not hidden: an outlet's adjective in Void's voice,
+   a corrupted token ("Q&An"), and a Weekly statement credited to the wrong
+   named person.
+8. **`tests/test_corrections.py`**: every fixture fails its gate planted and
+   passes clean; every entry names a class with a fixture and the same gate;
+   no card, brief, opinion, radio or deepdive correction is unapplied in the
+   committed tree; no corrected sentence is in `brief.json` or the podcast
+   feed; no withdrawn file is in the deploy tree; a corrected Deep Dive's
+   `source_count` is its outlet count and `member_count` its member list; no
+   archived card trips E-16. It runs from inside `tests/test_grounding.py`, so
+   it runs in auto-merge AND in `pipeline.yml` before the data commit (floor
+   F-5) without a `.github/` change; `test_workflow_hygiene` allowlists it
+   with that reason until a workflow names it directly.
+9. **`verify_production.py` A-01**: no served `/story` page carries an E-16
+   opener (homepage cards with no I/O, then the served pages of eight repaired
+   rows, paced, split per rendered paragraph and after a closing quotation; a
+   network error is a skip). It fails against the live site until this
+   branch deploys, by design. The withdrawn-audio check also
+   404s every path a radio correction withdrew.
+
+---
+
 ## rev 86 WS-A (rigor): points are checked, cached cards are judged, a factual failure never ships (2026-10-03)
 
 Gaps 1 and 3 of `docs/proposals/FACTUAL-RIGOR-PLAN-2026-10-02.md`. Zero new
@@ -149,6 +247,8 @@ Opinion or On Air whose grounding pass cannot run SHIPS WITH A VISIBLE LABEL
    staged with the data) are written out exactly in
    `docs/proposals/RIGOR-WORKFLOW-DIFF.md` for a hand-merged PR, and
    `test_rigor.py` sits on the W-05 allowlist until it lands.
+
+---
 
 ## rev 85 WS-A: the deploy follows the data, and the merge gate cannot rewrite itself (2026-10-02)
 
