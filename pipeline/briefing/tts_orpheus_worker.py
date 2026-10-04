@@ -147,16 +147,42 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--jobs", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--cache", default=None,
+                    help="unit cache: a unit already accepted with the same model, voice, text and settings is reused, "
+                         "so a render that dies (the 2026-10-03 WSL hang) resumes instead of starting over")
     a = ap.parse_args()
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
-    t0 = time.time()
-    s = Synth()
-    load_s = time.time() - t0
+    cache = Path(a.cache) if a.cache else None
+    if cache:
+        cache.mkdir(parents=True, exist_ok=True)
     jobs = json.loads(Path(a.jobs).read_text(encoding="utf-8"))
+    import hashlib
+    import shutil
+
+    def key_of(j: dict) -> str:
+        k = {f: j.get(f) for f in ("voice", "text", "seed", "temperature", "top_p", "repetition_penalty")}
+        k.update(model=MODEL, asr=ASR_MODEL, retries=SEED_RETRIES, low=LOW_TEMPERATURE)
+        return hashlib.sha256(json.dumps(k, sort_keys=True).encode()).hexdigest()[:24]
+
+    cached = {}
+    if cache:
+        for j in jobs:
+            meta = cache / f"{key_of(j)}.json"
+            if meta.exists() and (cache / f"{key_of(j)}.wav").exists():
+                cached[j["id"]] = json.loads(meta.read_text(encoding="utf-8"))
+    t0 = time.time()
+    s = Synth() if len(cached) < len(jobs) else None
+    load_s = time.time() - t0
     units, synth_s, audio_s, takes_total = {}, 0.0, 0.0, 0
     torch.cuda.reset_peak_memory_stats()
     for j in jobs:
+        if j["id"] in cached:
+            shutil.copy(cache / f"{key_of(j)}.wav", out / f"{j['id']}.wav")
+            units[j["id"]] = dict(cached[j["id"]], cached=True)
+            audio_s += float((cached[j["id"]].get("accepted") or {}).get("seconds") or 0)
+            print(f"  {j['id']} cached ({'ok' if cached[j['id']].get('passed') else 'FAIL'})", flush=True)
+            continue
         plan = [(j["seed"] + k, float(j["temperature"])) for k in range(1 + SEED_RETRIES)]
         plan.append((j["seed"] + 100, LOW_TEMPERATURE))
         best, takes = None, []
@@ -189,10 +215,13 @@ def main() -> int:
         passed = not take["wrong"]
         units[j["id"]] = {"passed": passed, "accepted": {k: take[k] for k in ("seed", "temperature", "seconds")},
                           "names": take["names"], "wrong": take["wrong"], "takes": takes}
+        if cache:
+            shutil.copy(out / f"{j['id']}.wav", cache / f"{key_of(j)}.wav")
+            (cache / f"{key_of(j)}.json").write_text(json.dumps(units[j["id"]]), encoding="utf-8")
         print(f"  {j['id']} {'ok  ' if passed else 'FAIL'} {take['seconds']:5.1f}s after {len(takes)} take(s)"
               + (f"  wrong={take['wrong']}" if not passed else ""), flush=True)
     (out / "result.json").write_text(json.dumps({
-        "units": units, "versions": s.versions, "sample_rate": SR,
+        "units": units, "versions": s.versions if s else {"model": MODEL, "asr": ASR_MODEL, "note": "all units cached"}, "sample_rate": SR,
         "timing": {"load_s": round(load_s, 1), "synth_s": round(synth_s, 1), "audio_s": round(audio_s, 1),
                    "rtf": round(synth_s / audio_s, 3) if audio_s else None, "takes": takes_total,
                    "wall_s": round(time.time() - t0, 1),

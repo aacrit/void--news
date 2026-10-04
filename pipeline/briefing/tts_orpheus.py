@@ -149,8 +149,9 @@ class OrpheusEngine:
                                  "temperature": temperature_for(t.speed), **SAMPLING})
             (work / "jobs.json").write_text(json.dumps(jobs, indent=1), encoding="utf-8")
             t0 = time.time()
+            cache = os.environ.get("VOID_ORPHEUS_CACHE", "").strip() or str(Path.home() / ".cache" / "void-orpheus-units")
             p = subprocess.run([self.python, str(self._worker), "--jobs", str(work / "jobs.json"),
-                                "--out", str(work / "out")])
+                                "--out", str(work / "out"), "--cache", cache])
             result_path = work / "out" / "result.json"
             if p.returncode != 0 or not result_path.exists():
                 res.failed = {t.idx: f"orpheus worker exited {p.returncode}" for t in turns}
