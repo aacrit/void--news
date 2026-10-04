@@ -23,7 +23,10 @@ _NUMBER_WORDS = {"one", "two", "three", "four", "five", "six", "seven", "eight",
 _SPELLING = [(re.compile(r"isation"), "ization"), (re.compile(r"ise(d|s)?$"), r"ize\1"),
              (re.compile(r"^programme(s)?$"), r"program\1"), (re.compile(r"our$"), "or"),
              (re.compile(r"our(s|ed|ing)$"), r"or\1"), (re.compile(r"tre(s)?$"), r"ter\1"),
-             (re.compile(r"ogue(s)?$"), r"og\1")]
+             (re.compile(r"ogue(s)?$"), r"og\1"), (re.compile(r"dgement(s)?$"), r"dgment\1")]
+_TENS_TEENS = {"ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen",
+               "eighteen", "nineteen", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty",
+               "ninety"}
 
 
 def _canon(w: str) -> str:
@@ -44,9 +47,23 @@ def norm_words(text: str) -> list[str]:
     words = [_canon(w) for w in re.findall(r"[a-z0-9]+", t.lower())]
     # "two thousand and ninety four" is the British spoken form of 2,094; an
     # ASR model writes the digits, which spell back without the "and".
-    return [w for i, w in enumerate(words)
-            if not (w == "and" and 0 < i < len(words) - 1
-                    and words[i - 1] in _NUMBER_WORDS and words[i + 1] in _NUMBER_WORDS)]
+    words = [w for i, w in enumerate(words)
+             if not (w == "and" and 0 < i < len(words) - 1
+                     and words[i - 1] in _NUMBER_WORDS and words[i + 1] in _NUMBER_WORDS)]
+    # A year from 2010 is said two ways: the script writes "two thousand
+    # thirteen", an ASR model writes 2013, which spells back as "twenty
+    # thirteen" (Srebrenica render, 2026-10-04). One form for both; it runs on
+    # both sides after the "and" goes, so 2,094 still matches.
+    i, folded = 0, []
+    while i < len(words):
+        if (words[i] == "two" and i + 2 < len(words) and words[i + 1] == "thousand"
+                and words[i + 2] in _TENS_TEENS):
+            folded.append("twenty")
+            i += 2
+            continue
+        folded.append(words[i])
+        i += 1
+    return folded
 
 
 def same_when_joined(ref: list[str], hyp: list[str]) -> bool:
