@@ -42,15 +42,34 @@ import soundfile as sf
 import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from briefing.asr_words import norm_words, align  # noqa: E402  (pure python, shared with the host)
+from briefing.asr_words import norm_words, align, same_when_joined  # noqa: E402  (pure python, shared with the host)
 
-MODEL = os.environ.get("VOID_ORPHEUS_MODEL", "canopylabs/orpheus-3b-0.1-ft")
+MODEL_ID = "canopylabs/orpheus-3b-0.1-ft"
+_BF16 = Path.home() / "models" / "orpheus-3b-0.1-ft-bf16"
+# The bfloat16 copy (briefing/orpheus_bf16.py) when it exists: the published
+# float32 shards are 15 GB and their page cache is what exhausted the WSL host.
+MODEL = os.environ.get("VOID_ORPHEUS_MODEL") or (str(_BF16) if (_BF16 / "config.json").exists()
+                                                  else "canopylabs/orpheus-3b-0.1-ft")
 SNAC_MODEL = "hubertsiuzdak/snac_24khz"
 ASR_MODEL = os.environ.get("VOID_ORPHEUS_ASR", "large-v3")
 SR = 24000
 TOKENS_PER_SECOND = 82.0          # SNAC 24 kHz: 11.72 coarse frames/s x 7 codes
 SEED_RETRIES = 3
 LOW_TEMPERATURE = 0.4
+
+
+def _drop_page_cache(model: str) -> None:
+    roots = [Path(model)] if Path(model).exists() else list(
+        (Path(os.environ.get("HF_HOME", Path.home() / ".cache" / "huggingface")) / "hub").glob(
+            "models--" + model.replace("/", "--") + "/snapshots/*"))
+    for root in roots:
+        for f in root.rglob("*.safetensors"):
+            try:
+                fd = os.open(str(f), os.O_RDONLY)
+                os.posix_fadvise(fd, 0, 0, os.POSIX_FADV_DONTNEED)
+                os.close(fd)
+            except OSError:
+                pass
 
 
 def seed_all(s: int) -> None:
@@ -90,7 +109,11 @@ class Synth:
         import transformers
         import faster_whisper
         self.tok = AutoTokenizer.from_pretrained(MODEL)
-        self.model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.bfloat16).to("cuda").eval()
+        # Straight onto the GPU, shard by shard, then drop the files from the
+        # page cache: under WSL2 cached file pages are RAM the host never gets back.
+        self.model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.bfloat16, device_map="cuda",
+                                                          low_cpu_mem_usage=True).eval()
+        _drop_page_cache(MODEL)
         self.snac = SNAC.from_pretrained(SNAC_MODEL).to("cuda").eval()
         self.asr = WhisperModel(ASR_MODEL, device="cuda", compute_type="float16")
         self.versions = {"torch": torch.__version__, "cuda": torch.version.cuda,
@@ -135,7 +158,11 @@ class Synth:
         names = set(job.get("name_tokens") or [])
         sets = []
         for t in texts:
-            sets.append({o for o in align(job["ref_words"], norm_words(t)) if o[0] != "="})
+            hyp = norm_words(t)
+            if same_when_joined(job["ref_words"], hyp):
+                sets.append(set())
+                continue
+            sets.append({o for o in align(job["ref_words"], hyp) if o[0] != "="})
         agreed = sets[0] & sets[1]
         wrong = [o for o in agreed if not ((o[1] in names) or (o[2] in names) or
                                            (o[0] == "S" and o[1] in names))]
@@ -162,7 +189,9 @@ def main() -> int:
 
     def key_of(j: dict) -> str:
         k = {f: j.get(f) for f in ("voice", "text", "seed", "temperature", "top_p", "repetition_penalty")}
-        k.update(model=MODEL, asr=ASR_MODEL, retries=SEED_RETRIES, low=LOW_TEMPERATURE)
+        # The bfloat16 copy is the same weights the GPU always ran (they were
+        # cast at load), so it shares the published model's cache identity.
+        k.update(model=MODEL_ID, asr=ASR_MODEL, retries=SEED_RETRIES, low=LOW_TEMPERATURE)
         return hashlib.sha256(json.dumps(k, sort_keys=True).encode()).hexdigest()[:24]
 
     cached = {}
