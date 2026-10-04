@@ -53,6 +53,10 @@ ALLOWLIST: dict[str, str] = {
     "test_history_score.py": "History pilot score (2026-10-03): runs locally until a CEO-merged "
                              ".github change adds it to auto-merge-claude.yml's gates (a branch "
                              "touching .github cannot auto-merge)",
+    "test_cut_confirmed.py": "Rule 1 cut and publish (2026-10-04): the cut itself runs in every "
+                             "pipeline export and the gate after it is unchanged; this test runs "
+                             "locally until a CEO-merged .github change adds it to "
+                             "auto-merge-claude.yml",
 }
 
 FOUR_GATES = ("tests/test_grounding.py", "tests/test_bias_defaults_gate.py",
