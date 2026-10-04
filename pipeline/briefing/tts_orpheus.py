@@ -38,6 +38,43 @@ except ImportError:  # pragma: no cover
 # male voice as natural, so the men's documents go to leo and the women's to
 # zoe. A reader of record never changes per speaker.
 ORPHEUS_VOICES = {"A": "tara", "B": "leo", "C": "zoe"}
+MALE = ("leo", "dan", "zac")
+FEMALE = ("tara", "leah", "jess", "mia", "zoe")
+_CAST_RE = re.compile(r"^#\s*CAST:\s*(.+)$", re.M)
+
+
+def orpheus_cast(raw_script: str) -> tuple[dict[str, str], str]:
+    """Casting for one episode. Tara narrates unless the script's header says
+    otherwise (CEO 2026-10-03: "Tara remains primary"; a story that demands a
+    different narrator gets one, with its reason written down):
+
+        # CAST: narrator=dan reason=<why this story needs him>
+
+    A reader of record never doubles as the narrator: a male narrator moves
+    the men's documents to the next male voice, a female narrator the women's.
+    Returns ({"A","B","C"} voices, reason)."""
+    m = _CAST_RE.search(raw_script or "")
+    fields: dict[str, str] = {}
+    if m:
+        body = m.group(1)
+        reason = ""
+        if "reason=" in body:
+            body, reason = body.split("reason=", 1)
+        for tok in body.split():
+            if "=" in tok:
+                k, v = tok.split("=", 1)
+                fields[k.strip().lower()] = v.strip().lower()
+        fields["reason"] = reason.strip()
+    narrator = fields.get("narrator", ORPHEUS_VOICES["A"])
+    if narrator not in MALE + FEMALE:
+        raise ValueError(f"# CAST: narrator={narrator!r} is not a built-in Orpheus voice {MALE + FEMALE}")
+    if narrator != ORPHEUS_VOICES["A"] and not fields.get("reason"):
+        raise ValueError("# CAST: a narrator other than tara needs reason=<why the story demands it>")
+    doc_m = fields.get("doc_m") or next(v for v in ("leo", "dan", "zac") if v != narrator)
+    doc_f = fields.get("doc_f") or next(v for v in ("zoe", "leah", "mia") if v != narrator)
+    if doc_m not in MALE or doc_f not in FEMALE or narrator in (doc_m, doc_f):
+        raise ValueError(f"# CAST: readers must be distinct built-ins (narrator {narrator}, M {doc_m}, F {doc_f})")
+    return {"A": narrator, "B": doc_m, "C": doc_f}, fields.get("reason") or "Tara, the primary narrator"
 SAMPLING = {"top_p": 0.8, "repetition_penalty": 1.1}
 SEEDS = {"A": 1947, "B": 1948, "C": 1949}
 SENTENCE_GAP_MS = 160

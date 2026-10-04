@@ -796,7 +796,8 @@ def produce(slug: str, out_dir: Path, *, only: list[str] | None = None,
 
     orpheus = None
     if engine == "orpheus":
-        from briefing.tts_orpheus import OrpheusEngine, ORPHEUS_VOICES
+        from briefing.tts_orpheus import OrpheusEngine, orpheus_cast
+        cast_voices, cast_why = orpheus_cast(script_bytes.decode("utf-8"))
         # The SAY table is Kokoro's G2P respellings; Orpheus reads text, so it
         # gets only entries written for it ("orpheus:Beas = ..."). Every SAY
         # name is also a name the ASR cannot spell: logged for the ear, never
@@ -807,12 +808,12 @@ def produce(slug: str, out_dir: Path, *, only: list[str] | None = None,
         for k, v in say_all.items():
             for w in re.findall(r"[a-z]+", f"{k.split(':', 1)[-1]} {v}".lower()):
                 names.add(w)
-        orpheus = OrpheusEngine(name_tokens=names, seed_offset=seed_offset,
+        orpheus = OrpheusEngine(voices=cast_voices, name_tokens=names, seed_offset=seed_offset,
                                 ledger_path=Path(out_dir) / f"{slug}.render.json")
-        voices = dict(voices, narrator=ORPHEUS_VOICES["A"], document_m=ORPHEUS_VOICES["B"],
-                      document_f=ORPHEUS_VOICES["C"], why="Orpheus casting (2026-10-03 audition)")
-        print(f"  [history] Orpheus: narrator {ORPHEUS_VOICES['A']}, quotes {ORPHEUS_VOICES['B']}/"
-              f"{ORPHEUS_VOICES['C']}, gaps x{GAP_SCALE}")
+        voices = dict(voices, narrator=cast_voices["A"], document_m=cast_voices["B"],
+                      document_f=cast_voices["C"], why=cast_why)
+        print(f"  [history] Orpheus: narrator {cast_voices['A']}, quotes {cast_voices['B']}/"
+              f"{cast_voices['C']} ({cast_why}), gaps x{GAP_SCALE}")
     turns = build_turns(script, moods, admitted)
     clip_turns = [(s, m) for s, m in turns if m.get("clip") is not None]
     speak = [s for s, m in turns if m.get("clip") is None]
