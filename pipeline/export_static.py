@@ -519,6 +519,16 @@ if want("feed"):
     print(f"grounding/: {gr} cluster files (build-data, not served); "
           f"{gr_kept} kept from Stage 2's whole-body index")
 
+    # Rule 1, cut and publish (CEO 2026-10-04, after run #389 held a whole
+    # edition for two wrong lines). A sentence or point the grounding gate
+    # would confirm as wrong is cut from every copy here, the way a copy desk
+    # cuts a line it cannot stand behind, and the rest of the edition ships.
+    # The gate still runs after this and still fails on anything left.
+    if str(REPO) not in sys.path:
+        sys.path.insert(0, str(REPO))
+    from pipeline.editorial import cut_confirmed
+    cut_confirmed.run(BUILD_DIR, DB)
+
     # What the run measured, and what it did not. Every row that carried the
     # default tuple was marked unscored above, so it is already out of the
     # cluster aggregate and off the spectrum; these two lines are the record,
