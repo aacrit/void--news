@@ -20,7 +20,7 @@ holds, and otherwise the DOCUMENT read under it renders exactly as before:
                     coverage floor
   H-15 credit       the narrator line spoken immediately before the clip names
                     the speaker and says "recording" or "broadcast"
-  H-16 caps         at most 45 s, at most two per episode, never in the OPEN
+  H-16 caps         at most 45 s, at most three per episode, never in the OPEN
   H-17 dry          no bed, sting or designed sound under a real voice; the
                     timeline half is `timeline_findings`, the rendered half is
                     `bus_findings` (both run by the producer before it writes)
@@ -63,7 +63,9 @@ PROVENANCE_FIELDS = ("speaker", "occasion", "date", "repository", "accession", "
 RIGHTS_FIELDS = ("licence_as_stated", "licence_url", "rights_reading")
 
 MAX_CLIP_S = 45.0
-MAX_CLIPS = 2
+# Three since 2026-10-03 (CEO, for the Apollo 11 pilot): two was the policy-B
+# pilot's cap; each clip still carries every other gate (H-12..H-17).
+MAX_CLIPS = 3
 # Calibrated on the pilot (docs/proposals/HISTORY-AUDIO-ARCHIVAL.md §3): the
 # stored words must recur, in order, at this share of the transcript. A 1947
 # disc transfer through a base-size model comes in far under a clean-speech

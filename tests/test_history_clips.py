@@ -13,7 +13,7 @@ silent on a clean fixture, firing on a fixture with exactly one thing wrong.
                transcript (fixture: the same speaker in a different passage)
   H-15         spoken credit: the narrator does not name the speaker and say
                "recording" or "broadcast" before the clip
-  H-16         caps: over 45 s, more than two, or one in the OPEN
+  H-16         caps: over 45 s, more than three, or one in the OPEN
   H-17         no bed under a real voice: (a) in the timeline, (b) in the
                rendered music and ambience buses, by RMS
 
@@ -289,10 +289,12 @@ def test_h16_caps() -> None:
                                                              "## OPEN\n# MOOD: dread\n" + clip_line, 1))
     check("H-16 fires on a clip in the OPEN", any(x.id == "H-16" and "OPEN" in x.detail for x in f))
     check("H-16 stops every clip", not any(s.admitted for s in slots))
-    third = "# CLIP: id=clip-extra replaces=none status=candidate max=30s\n"
+    # The fixture carries two slots; two more make four, one over the cap of three.
+    extra = ("# CLIP: id=clip-extra replaces=none status=candidate max=30s\n"
+             "# CLIP: id=clip-extra-2 replaces=none status=candidate max=30s\n")
     _, slots, f, n = fixture(script_edit=lambda t: t.replace("## SCENE 4 | How many\n",
-                                                             "## SCENE 4 | How many\n" + third, 1))
-    check("H-16 fires on a third clip", any(x.id == "H-16" and "at most" in x.detail for x in f))
+                                                             "## SCENE 4 | How many\n" + extra, 1))
+    check("H-16 fires on a fourth clip", any(x.id == "H-16" and "at most" in x.detail for x in f))
     _, slots, f, n = fixture(script_edit=lambda t: t.replace(
         f"id={NEHRU} replaces=document status=candidate", f"id={NEHRU} replaces=document status=candidate").replace(
         "max=45s", "max=60s", 1))
