@@ -1,33 +1,45 @@
-# Cinematic variant, 2026-10-04. The sixth Orpheus 3B episode (narrator "tara"; a male
-# reader of record for M: lines, a female reader for F: lines), in the Ken Burns
-# register: short declarative sentences, documents read plainly, the silence placed by
-# the writer. Re-cut from the live script against the evidence ledger
-# (data/history/evidence/haitian-revolution/) and the published thesis
-# (data/history/theses/haitian-revolution.md): every line the document voice reads is
-# verbatim from a stored extract, and the extract id follows the marker in a comment.
-# Sources are the event YAML, the ledger and the thesis, nothing else. Lines beginning
-# with "#" are inert: the parser skips them (pipeline/history/script_format.py::parse_script).
-# The mood directive on every segment is the one docs/proposals/HISTORY-AUDIO-ARCHIVAL.md
-# defines. There is no clip slot: this episode has no admitted recording, and a candidate
-# belongs in the ledger, not here. There is no F: line: no stored extract for this event is
-# a woman's words (the thesis says so under what the record omits), so the reader of record
-# carries every read. Seven reads are Void translations (the Creole broadside, Sonthonax,
-# the constitutions of 1801 and 1805, Bonaparte's note, Toussaint's memoir, Lacroix) and
-# the narration says so before each; the Lacroix words are attributed, and the narration
-# says that too. The live script's Boukman prayer, its C.L.R. James, Napoleon "damn sugar",
-# Trouillot and Dubois quotations are in no extract this programme holds, so none is read;
-# its "We have dared to be free" is read from the translation the ledger holds, which
-# differs from the event record's wording; its "I have avenged America" stands in this
-# record in the proclamation of April 1804, not the declaration of 1 January, and is
-# narrated with that said. Where the record disagrees with itself (what happened before
-# the rising and on which night, the day Toussaint died, how long Haiti paid) the script
-# states the accounts and chooses none. Where a figure is known to this programme only
-# from the event YAML, the narration says "the event record". This file is not the live
-# script: nothing globs this directory.
+# Cinematic variant, 2026-10-04, revised the same day to the first-listener orientation
+# standard (docs/proposals/HISTORY-FIRST-LISTENER.md, O-1..O-8) after the CEO's note on
+# the eight Orpheus episodes: the voice is right, but is a newcomer told where, when, who
+# and why? Same cast (narrator "tara"; a male reader of record for M: lines, a female
+# reader for F: lines), same Ken Burns register, same rules. What is added: an
+# establishing passage at the head of SCENE 1 (the island and the colony, the sugar, the
+# five hundred thousand enslaved, the thirteen years, Saint-Domingue becoming Haiti), a
+# role with every name on its first mention (Toussaint Louverture, Bonaparte, Talleyrand,
+# Leclerc, Dessalines, Saint-Remy, Charles the Tenth, Lamartiniere, Gainot and Mace), a
+# gloss with every term a newcomer would not know (the workshops, the Convention, the
+# civil commissioners, the Cap, the fort de Joux, the Heros, the native army, vodou, an
+# ordinance, the indemnity), a time and a place in the first line of every SCENE, a
+# "how we know" line before the five accounts, and a CLOSE that restates the facts before
+# the motif. Every orientation fact is from the event YAML, the evidence ledger
+# (data/history/evidence/haitian-revolution/) or the published thesis
+# (data/history/theses/haitian-revolution.md), and nothing else: Rule 1. Every line the
+# document voice reads is byte-for-byte a stored extract, and the extract id follows the
+# marker in a comment. Two fixes from the CEO's listening queue: Orpheus read the Act's
+# "posterity" so the ASR heard "prosperity" on every take, and the words of a read cannot
+# change, so the SAY block carries an Orpheus-only respelling (history_producer.py applies
+# "orpheus:" keys to Orpheus alone); and "in the event record it is about cost" was heard
+# as "recorded", so no spoken "record" now stands before a vowel. To pay for the
+# orientation these were cut: the "what he is said to have said" couplet of SCENE 4 (the
+# two DOCUMENT introductions carry it), Madiou's line on the governor's absence and the
+# straw (the death-date disagreement stays), the Trouillot-James-Fick-Dubois refusal
+# (folded into the how-we-know line), the ordinance's ports-and-duties sentence, the
+# motif's repeat inside the indemnity account (OPEN and CLOSE keep it), the enslaved
+# account's abolitionist clause, and the SCENE 4 aside now runs as trailing narration
+# inside the Lacroix DOCUMENT, because the silence grammar prices every segment. There is
+# no clip slot and no F: line (no stored extract is a woman's words; the thesis says so).
+# Seven reads are Void translations and the narration says so before each; the Lacroix
+# words are attributed, and the narration says that too. Where the record disagrees with
+# itself (what happened before the rising, the day Toussaint died, how long Haiti paid)
+# the script states the accounts and chooses none. Where a figure is known to this
+# programme only from the event YAML, the narration says "the event record". Lines
+# beginning with "#" are inert (pipeline/history/script_format.py::parse_script). This
+# file is not the live script: nothing globs this directory.
 
 ## OPEN
 # MOOD: dread
-N: On the eighth of November, eighteen oh one, the First Consul of France told the people of Saint-Domingue that they were all French, all free and all equal. In the same fortnight he wrote to his foreign minister about annihilating the government of the blacks.
+N: On the eighth of November, eighteen oh one, the First Consul of France told the people of Saint-Domingue, his colony in the Caribbean, that they were all French, all free and all equal.
+N: In the same fortnight he wrote to his foreign minister about annihilating the government of the blacks.
 N: Five acts said free. One law said nothing. One ordinance set the price.
 
 ## TITLE
@@ -36,17 +48,20 @@ N: The Haitian Revolution, seventeen ninety one to eighteen oh four.
 
 ## SCENE 1 | The night of the twenty second
 # MOOD: rupture
-N: The northern plain of Saint-Domingue, August seventeen ninety one. Three accounts of how it began are held here, and they do not agree.
-N: Thomas Madiou, the Haitian historian, tells of the night of the fourteenth: two hundred delegates of the workshops of the North met at one plantation, heard a supposed decree of the king read out, and fixed the twenty second.
-N: The commission of the French Convention reports no ceremony. The fire began towards midnight. By the morning of the twenty third it counted thirty seven proprietors, attorneys and refiners killed.
-N: Antoine Dalmas, a colonist, is the one source here for a sacrifice: a black pig, in a wooded ground called the Caiman. He dates the meeting that preceded it, not the sacrifice.
+N: Saint-Domingue, August seventeen ninety one. France's part of the island of Hispaniola, in the Caribbean, grows forty per cent of the sugar in the world, and five hundred thousand enslaved Africans grow it.
+N: This month the enslaved of the northern plain rise and burn the plantations. The war that follows lasts thirteen years and beats Spanish, British and French invasions.
+N: It ends on the first of January, eighteen oh four, when the generals of what calls itself the native army declare the colony independent and name it Haiti, the first independent Black republic.
+N: Three accounts of how it began are held here, and disagree.
+N: Thomas Madiou, the Haitian historian, tells of the night of the fourteenth: two hundred delegates of the workshops, the enslaved of each plantation, met at one plantation, heard a supposed decree of the king read out, and fixed the twenty second.
+N: The commission of the Convention, the revolutionary government in Paris, records no ceremony: the fire began towards midnight, and by the morning of the twenty third it counted thirty seven proprietors, attorneys and refiners killed.
+N: Antoine Dalmas, a colonist writing afterwards, is the one source here for a sacrifice: a black pig, in a wooded ground called the Caiman. He dates the meeting before it, not the sacrifice.
 
 ## REST
 # MOOD: grief
 
 ## SCENE 2 | Free, and bound
 # MOOD: procedure
-N: Haut-du-Cap, the second of July, seventeen ninety three. The civil commissioners of the Republic, Polverel and Sonthonax, print a broadside in Creole, the language of the people it addressed.
+N: The Cap, the colonial capital, the second of July, seventeen ninety three. France is a republic now. Polverel and Sonthonax, its two civil commissioners in the colony, print a broadside in Creole, the language of the people it addresses.
 
 ## DOCUMENT | Etienne Polverel and Leger-Felicite Sonthonax (Void translation from the Creole) | Proclamation of 2 July 1793, the Creole broadside, rendered by Void from the Creole | July 2, 1793
 # extract: src-commissaires-17930702-ht.sec1.en
@@ -66,7 +81,7 @@ N: A later article binds the freed to the plantations of their former masters. F
 
 ## SCENE 3 | One fortnight
 # MOOD: procedure
-N: Paris, autumn eighteen oh one. Toussaint Louverture has sent the First Consul a constitution. Its twenty eighth article gives him the government for life.
+N: Paris, autumn eighteen oh one. Toussaint Louverture, formerly enslaved, governs the colony and has sent its constitution to Napoleon Bonaparte, First Consul, who rules France. Its twenty eighth article gives Toussaint the government for life.
 
 ## DOCUMENT | Toussaint Louverture and the central assembly of Saint-Domingue (Void translation from the French) | Constitution of 1801, title II, article 3, rendered by Void from the French | 1801
 # extract: src-toussaint-const-1801.art3.en
@@ -77,8 +92,9 @@ M: Slaves are not permitted in this territory; slavery is abolished for ever. Al
 ## DOCUMENT | Napoleon Bonaparte, First Consul (Void translation from the French) | Note to Talleyrand, 13 November 1801, rendered by Void from the French | November 13, 1801
 # extract: src-napoleon-corr-7.item5863.en
 # MOOD: dread
-N: On the thirteenth of November Bonaparte wrote to Talleyrand of the course he had taken: to annihilate the government of the blacks at Saint-Domingue. His reason, in a translation made by Void.
+N: On the thirteenth of November Bonaparte wrote to Talleyrand, his foreign minister, of the course he had taken: to annihilate the government of the blacks at Saint-Domingue. His reason, in a translation made by Void.
 M: I have been guided less by considerations of commerce and finance than by the necessity of stifling, in every part of the world, every kind of seed of unrest and trouble
+N: Talleyrand had already told the British which ships would sail: about twenty thousand men under General Leclerc, his brother-in-law.
 N: The next May a law maintained slavery in the colonies the peace with Britain had returned to France. It does not name Saint-Domingue.
 
 ## REST
@@ -86,33 +102,30 @@ N: The next May a law maintained slavery in the colonies the peace with Britain 
 
 ## SCENE 4 | The Heros
 # MOOD: testimony
-N: Toussaint Louverture was arrested in June eighteen oh two. What he is said to have said survives in a French general's memoir. What he wrote survives in his own.
+N: Saint-Domingue, June eighteen oh two. The French army has landed. Toussaint Louverture is arrested under a flag of truce, by the event record.
 
 ## DOCUMENT | Toussaint Louverture (Void translation from the French) | Memoir written at the fort de Joux, 1802, in Joseph Saint-Remy's edition of 1853, rendered by Void from the French | 1802
 # extract: src-toussaint-memoire.p83.en
 # MOOD: testimony
-N: Toussaint Louverture, from the fort de Joux, in a translation made by Void.
+N: Toussaint Louverture, writing from the fort de Joux, his prison in the Jura mountains of France, in a translation made by Void.
 M: When I was arrested, I had no other clothes than those I wore.
 M: The next day my wife, together with my children who had been arrested with her, arrived there too. Sail was set at once for France.
 
 ## DOCUMENT | Toussaint Louverture | Words to Captain Savary aboard the Heros, as reported by General Pamphile de Lacroix in his memoir (1819), in Void's translation from the French | June 1802
 # extract: src-lacroix-1819.p203-204.en
 # MOOD: testimony
-N: The words attributed to Toussaint Louverture on the Heros rest on one source, the memoir of Pamphile de Lacroix, a general of the expedition, in Void's translation.
+N: The words attributed to Toussaint Louverture aboard the ship Heros rest on one source, the memoir of Pamphile de Lacroix, a general of the expedition, in Void's translation.
 M: In overthrowing me, they have cut down at Saint-Domingue only the trunk of the tree of the liberty of the blacks; it will grow back from the roots, because they are deep and many.
-
-## ASIDE
-# MOOD: grief
-N: On the day he died the record disagrees with itself: Lacroix writes of cold and regret after ten months of captivity, Saint-Remy gives the twenty seventh of April, eighteen oh three, and the event record gives the seventh.
-N: Madiou writes that the governor of the fort went away for some days and came back to find Toussaint dead on his straw, left to die of hunger.
+N: On the day he died the record disagrees. Lacroix writes of cold and regret after ten months of captivity. Saint-Remy, the memoir's Haitian editor, gives the twenty seventh of April, eighteen oh three; the event record gives the seventh.
 
 ## REST
 # MOOD: grief
 
 ## SCENE 5 | Gonaives
 # MOOD: rupture
-N: Vertieres, the eighteenth of November, eighteen oh three. At daybreak, Madiou writes, the attack began. The French left within days, by the event record.
-N: Gonaives, the first of January, eighteen oh four. The general in chief of the native army assembles his generals.
+N: Vertieres, outside the Cap, the eighteenth of November, eighteen oh three. The army of Jean-Jacques Dessalines, who succeeded Toussaint in command, faces the last French position. At daybreak, Madiou writes, the attack began.
+N: The French left within days, by the event record.
+N: Gonaives, the army headquarters, the first of January, eighteen oh four. Dessalines, its general in chief, assembles his generals.
 
 ## DOCUMENT | Jean-Jacques Dessalines | Declaration of Independence of Haiti, in the translation of Laurent Dubois and John Garrigus | January 1, 1804
 # extract: src-dubois-garrigus-2006.sec0
@@ -130,32 +143,34 @@ N: As Madiou prints it, the Act carries thirty seven names. The original, in the
 
 ## ASIDE
 # MOOD: grief
-N: In April Madiou prints another proclamation of Dessalines, announcing the general extermination of the French, which almost every arm, he writes, had carried out. He counts the victims himself, in the thousands.
-N: Its text says that its author has saved his country and avenged America. The event record places those words in January. In this record they stand in April.
+N: In April Madiou prints another proclamation of Dessalines, announcing the general extermination of the French, which almost every arm, he writes, had carried out. He counts the victims, in the thousands.
+N: Its text says its author has avenged America; the event record places those words in January, this record in April.
 
 ## REST
 # MOOD: grief
 
 ## TURN | Five accounts
 # MOOD: reckoning
-N: Five accounts of who freed whom, and what it cost. Each gets its own case first.
+N: Five accounts of who freed whom, and what it cost.
+N: They are argued from what this programme could read: the acts, letters and laws of the French and Haitian states, the memoirs of a prisoner, a general and a colonist, and the abstracts of articles.
+N: The standard books sit in collections this programme could not open.
 
 ## PERSPECTIVE | The enslaved revolutionaries | indigenous
 # MOOD: testimony
 # extract: src-madiou-1848-t3.p471.en
-N: The first account belongs to the people who did it, and its claim is authorship: by the event record they organised through vodou, the markets and the drums, and applied liberty to their own condition before any European abolitionist proposed it.
-N: No one of the enslaved of seventeen ninety one speaks here in his or her own words. The case is made by the state they founded.
+N: The first account belongs to the people who did it. By the event record they organised through vodou, a spiritual practice forged from West African traditions under enslavement, the markets and the drums.
+N: None of the enslaved speaks here in his or her own words; the case is made by the state they founded.
 N: In May eighteen oh five Dessalines, now emperor, gave it a constitution. As Madiou prints it, in a translation made by Void.
 M: The people inhabiting the island formerly called St. Domingue agree here to form themselves into a free, sovereign state, independent of all other powers of the universe, under the name of empire of Haiti.
 N: Its second article abolishes slavery for ever. Its fourteenth says Haitians will be known only under the generic name of blacks.
-N: Women fought at every stage, by the event record, Marie-Jeanne Lamartiniere among them. No source here is a woman's account.
+N: Women fought at every stage, by the event record; it names Marie-Jeanne Lamartiniere. No source here is a woman's account.
 
 ## PERSPECTIVE | The French colonial account | vanquished
 # MOOD: procedure
 # extract: src-gainot-mace-2003.abstract
-N: The second account is French, and in the event record it is about cost: roughly forty per cent of France's foreign trade, over fifty thousand men dead, and a war that yellow fever decided.
+N: The second account is French. The event record counts its cost: roughly forty per cent of France's foreign trade, over fifty thousand men dead, and a war that yellow fever decided.
 N: Bonaparte, to Toussaint Louverture in November eighteen oh one: Leclerc comes with forces suitable to make the sovereignty of the French people respected.
-N: On the fever, French scholarship has turned on its own account. Bernard Gainot and Mayeul Mace, in two thousand three.
+N: On the fever, French scholarship has turned on itself. Bernard Gainot and Mayeul Mace, French scholars, in two thousand three.
 M: The spread of yellow fever as well as the renewal of the war with Britain are facile explanations concealing the direct responsibilities of the colonial authorities.
 
 ## REST | short
@@ -164,28 +179,26 @@ M: The spread of yellow fever as well as the renewal of the war with Britain are
 ## PERSPECTIVE | The Haitian nationalist account | revisionist
 # MOOD: reckoning
 # extract: src-dubois-garrigus-2006.sec11
-N: The third account is the Haitian state's own, from the declaration to the legislature that took on the debt. It holds that the people freed themselves, and that France set the price of recognising it.
+N: The third account is the Haitian state's own, from the declaration to the legislature that took on the debt. It holds that the people freed themselves and France set the price of recognising it.
 N: The declaration Dessalines signed puts the claim as a question, in the Dubois and Garrigus translation.
 M: We have dared to be free, let us be thus by ourselves and for ourselves.
 M: What people fought for us? What people wanted to gather the fruits of our labor?
-N: In eighteen twenty six the Haitian legislature declared the hundred and fifty million francs a national debt, and voted a contribution, payable over ten years, to extinguish what it called a sacred engagement.
+N: In eighteen twenty six the Haitian legislature declared that price, a hundred and fifty million francs, a national debt, and voted a contribution over ten years to extinguish what it called a sacred engagement.
 
 ## PERSPECTIVE | The Atlantic academic account | academic
 # MOOD: reckoning
 # extract: src-yakubu-opondo-2025.p166
-N: The fourth account is the scholars', and in the event record its subject is silence: Michel-Rolph Trouillot's argument that the revolution was unthinkable to those who watched it, and so went unwritten.
-N: Trouillot, James, Fick and Dubois sit in lending collections this programme could not open. What is held is the account's newest edge.
+N: The fourth account belongs to the scholars. The event record names its subject as silence: the scholar Michel-Rolph Trouillot's argument that the revolution was unthinkable to those who watched it, and so went unwritten.
 N: Moses Joseph Yakubu and Paul Abiero Opondo, writing from two African universities in twenty twenty five, trace the abolition of slavery to the slave revolts, Saint-Domingue among them.
 M: While the former protest was short-lived, the latter soared on to serve as an impetus for the freedom of black slaves across the globe
 
 ## PERSPECTIVE | The indemnity | revisionist
 # MOOD: procedure
-N: The fifth account is a receipt, and this record holds the receipt.
-N: Paris, the seventeenth of April, eighteen twenty five. Charles the Tenth signs an ordinance. It opens the ports of the French part of Saint-Domingue to all nations and halves the duties for the French flag.
-N: It requires the present inhabitants to pay a hundred and fifty million francs in five equal annual terms to compensate the former colonists, and on those conditions concedes the independence, full and entire, of their government.
-N: It does not name the enslaved. It names the colonists.
-N: Five acts said free. One law said nothing. One ordinance set the price.
-N: How long Haiti paid is disputed here. The one article that dates the indemnity runs it from eighteen twenty five to eighteen eighty three, apart from the later loans. The event record carries the debt to nineteen forty seven.
+N: The fifth account is a receipt, and this record holds it.
+N: Paris, the seventeenth of April, eighteen twenty five. Charles the Tenth, King of France, signs an ordinance, a royal edict.
+N: It requires the inhabitants of the former colony to pay a hundred and fifty million francs in five annual terms, an indemnity to compensate the former colonists, and on that condition concedes the independence, full and entire, of their government.
+N: It does not name the enslaved. It names the colonists. The lost property, by the event record, was five hundred thousand human beings.
+N: How long Haiti paid is disputed here: the one article that dates the indemnity runs it to eighteen eighty three, apart from the later loans; the event record carries the debt to nineteen forty seven.
 
 ## REST
 # MOOD: reckoning
@@ -193,10 +206,10 @@ N: How long Haiti paid is disputed here. The one article that dates the indemnit
 ## TURN | What each one leaves out
 # MOOD: reckoning
 N: Each is true as far as it goes.
-N: The revolutionaries' account has no witness of its own here, and leaves out April eighteen oh four, which Madiou counts and defends.
-N: The French account leaves out the note of the thirteenth of November and the law of May eighteen oh two, both the French state's own papers.
+N: The account of the revolutionaries has no witness of its own here, and leaves out April eighteen oh four, which Madiou counts and defends.
+N: The French account leaves out the note of the thirteenth of November and the law of May eighteen oh two, the French state's papers.
 N: The Haitian nationalist account leaves out twenty three heads of state in the first century, most removed by force, by the event record.
-N: The academic account reads the record in translation, and its standard works are closed to this programme.
+N: The academic account reads the record in translation, and none of its holders here counts the dead.
 N: The indemnity account has the ordinance and no treasury book. What was paid after eighteen twenty six is known here through two French abstracts.
 N: And no woman speaks here in her own words. The women appear as an arrested wife, an article of a constitution, and counted victims.
 
@@ -205,16 +218,18 @@ N: And no woman speaks here in her own words. The women appear as an arrested wi
 
 ## CLOSE
 # MOOD: grief
-N: Saint-Remy, editing the memoir in eighteen fifty three, wrote that Toussaint Louverture was buried as an obscure prisoner in the village cemetery below the fort, and that no trace of the grave remained.
+N: The enslaved of Saint-Domingue rose in August seventeen ninety one. On the first of January, eighteen oh four, the generals of the native army declared the colony independent and named it Haiti.
+N: France recognised it in eighteen twenty five, for a hundred and fifty million francs.
+N: Saint-Remy wrote in eighteen fifty three that Toussaint Louverture was buried as an obscure prisoner in the village cemetery below the fort, and no trace of the grave remained.
 N: Five acts said free. One law said nothing. One ordinance set the price.
 
 ## SAY
 Saint-Domingue = san doh-MANG
 Haitian = HAY-shun
+Hispaniola = his-pan-YOH-lah
 Madiou = mad-YOO
 Dalmas = dal-MAHSS
 Caiman = kai-MAHN
-Haut-du-Cap = oh doo KAP
 Polverel = pol-veh-REL
 Sonthonax = son-toh-NAKS
 Creole = KREE-ohl
@@ -223,6 +238,7 @@ Louverture = loo-vair-TOOR
 Talleyrand = tal-ee-RAHN
 Leclerc = luh-KLAIR
 Joux = ZHOO
+Jura = JOO-rah
 Saint-Remy = san ray-MEE
 Savary = sah-vah-REE
 Heros = ay-ROHSS
@@ -233,6 +249,7 @@ Gonaives = goh-nah-EEV
 Dessalines = deh-sah-LEEN
 Garrigus = GAIR-ih-gus
 vodou = voh-DOO
+Lamartiniere = lah-mar-tee-NYAIR
 Gainot = gay-NOH
 Mayeul = mah-YUL
 Mace = mah-SAY
@@ -240,3 +257,4 @@ Trouillot = troo-YOH
 Yakubu = yah-KOO-boo
 Abiero = ah-bee-AIR-oh
 Opondo = oh-PON-doh
+orpheus:posterity = poss TERR ih tee
