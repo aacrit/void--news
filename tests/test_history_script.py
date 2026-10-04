@@ -294,6 +294,39 @@ F: The boats were gone before anyone counted them.
 check("H-11 does not read 'via' inside 'Silvia' as a secondhand marker",
       "H-11" not in fails(silvia), str(fails(silvia)))
 
+# THE REGRESSION (2026-10-04). The spoken-hedge list held the bare word "as",
+# stripped from the marker "(as ", and matched it as a substring, so "was" or
+# "has" in the narration counted as the hedge said aloud. The fixture above
+# narrated "put it bluntly", which contains no "as", so the gate passed its own
+# test while letting 25 published lines in 20 episodes through.
+was_not_a_hedge = pad(CLEAN.replace("""## CLOSE""", """## DOCUMENT | Admiral Rosa Vane | Summary | 1962
+N: Admiral Vane was blunt, as she has always been, and the room was quiet.
+F: The tables were right and the messengers were slow.
+
+## CLOSE"""))
+check("H-11 is not satisfied by 'as' inside 'was' or 'has' in the narration",
+      "H-11" in fails(was_not_a_hedge), str(fails(was_not_a_hedge)))
+trivial = pad(CLEAN.replace("""## CLOSE""", """## DOCUMENT | A keeper | History | 1970
+N: The keeper made it sound trivial.
+M: The horizon went white before the sound arrived.
+
+## CLOSE"""))
+check("H-11 does not hear the hedge 'via' inside 'trivial'",
+      "H-11" in fails(trivial), str(fails(trivial)))
+
+# The H-11 baseline can only shrink, like H-18's: an entry that no longer fires
+# is a line that was fixed at a re-render, and must leave the list with it.
+import yaml as _yaml  # noqa: E402
+from history.script_format import H11_KNOWN  # noqa: E402
+for _slug, _marks in H11_KNOWN.items():
+    _sf = ROOT / "data" / "history" / "scripts" / f"{_slug}.txt"
+    _ef = ROOT / "data" / "history" / "events" / f"{_slug}.yaml"
+    _warned = {x.detail for x in validate_script(parse_script(_sf.read_text(), _slug),
+                                                 _yaml.safe_load(_ef.read_text()))
+               if x.id == "H-11"}
+    _stale = [m for m in _marks if not any(repr(m) in d for d in _warned)]
+    check(f"H11_KNOWN {_slug}: every entry still fires (remove {_stale})", not _stale)
+
 
 # ---- H-09 every account gets its own case -------------------------------
 dropped = CLEAN_LEGAL.replace("## PERSPECTIVE | The Fishing Villages | vanquished",
@@ -405,7 +438,8 @@ if failures:
     print(f"\n{len(failures)} History script failure(s)")
     raise SystemExit(1)
 print(f"PASS  H-01..H-11 and H-18 against planted defects, and {len(scripts)} committed scripts "
-      f"({sum(len(v) for v in H18_KNOWN.values())} known H-18 numbers await a source or a cut)")
+      f"({sum(len(v) for v in H18_KNOWN.values())} known H-18 numbers await a source or a cut; "
+      f"{sum(len(v) for v in H11_KNOWN.values())} known H-11 lines await a spoken hedge)")
 
 
 def test_check_script_prints_findings():

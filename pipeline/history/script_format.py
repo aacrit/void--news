@@ -366,11 +366,17 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
     # ("wrote down what Mellon told him", "a satire imagining what Leopold
     # would say", "Sima Qian wrote his report down two generations later"), so
     # the spoken list is now the marked list plus the ways people say it.
-    SPOKEN_HEDGE = tuple(h.strip(" (") for h in HEDGED) + (
+    # "(as " marks a record rendered in someone else's voice; stripped, it
+    # was the bare word "as", which matched inside "was" and "has" and so let
+    # every narration pass (found 2026-10-04). Its spoken forms are "in the
+    # voice of", "imagin" and "satir", already in the list.
+    SPOKEN_HEDGE = tuple(h.strip(" (") for h in HEDGED if h != "(as ") + (
         "said to", "reputed", "tradition holds", "by tradition",
         "is remembered", "remembered for", "later recorded",
         "recorded generations", "as reported", "as told", "as recorded",
-        "recorded by", "rendered by", "wrote down", "set down", "records that")
+        "recorded by", "rendered by", "wrote down", "set down", "records that",
+        # "as the Secretary-General's report quotes him" (Srebrenica, 2026-10-04)
+        "quotes", "quoted")
 
     kinds = [s.kind for s in script.segments]
     for required in ("OPEN", "CLOSE"):
@@ -463,12 +469,22 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
                                       _norm(seg.work or "")]
                                      + [_norm(x.text) for x in seg.lines
                                         if x.speaker == "N"])
-                    if not any(h in aloud for h in SPOKEN_HEDGE):
+                    def _said(h: str) -> bool:
+                        # From the start of a word, like _marked: "via" must
+                        # not be heard inside "trivial", nor a hedge inside
+                        # a longer word.
+                        tail = "(?![a-z])" if len(h) <= 4 and h.isalpha() else ""
+                        return re.search(rf"(?<![a-z]){re.escape(h)}{tail}", aloud) is not None
+
+                    if not any(_said(h) for h in SPOKEN_HEDGE):
                         marked = (ATTRIBUTION.get(match[0]) or match[1] or "").strip()
-                        out.append(Finding("H-11", "fail", label,
+                        known = marked in H11_KNOWN.get(script.slug, ())
+                        out.append(Finding("H-11", "warn" if known else "fail", label,
                                            f"the record marks this line {marked!r}, and nothing "
                                            f"says so aloud: either say it is attributed, or narrate "
-                                           f"the position instead of reading it as their words"))
+                                           f"the position instead of reading it as their words"
+                                           + (" (in published audio when the gate was repaired; "
+                                              "fix at the next re-render)" if known else "")))
 
     # H-09 is the reason this catalogue is worth making. Void's claim is that
     # it shows every side; an episode that quietly drops one is the single
@@ -881,3 +897,69 @@ def _overlap(a: str, b: str) -> float:
     """Word overlap, so trimming a quote for the ear is allowed but inventing is not."""
     wa, wb = set(a.split()), set(b.split())
     return len(wa & wb) / max(1, min(len(wa), len(wb)))
+
+
+# H11_KNOWN: the baseline found when H-11 was repaired (2026-10-04). The spoken-
+# hedge list carried the bare word "as" (from "(as "), matched as a substring, so
+# "was" or "has" in any narration counted as saying the hedge aloud and H-11 could
+# not fail. These lines were already in published audio: each is reported as a
+# warning and is fixed (hedge said aloud, or the position narrated) at the
+# episode's next re-render. A line NOT listed fails; an entry that no longer
+# fires fails too (tests/test_history_script.py), so the list only shrinks.
+H11_KNOWN: dict[str, tuple[str, ...]] = {
+    'alexanders-conquests': (
+        'Alexander, as reported by Plutarch Before the siege of the Sogdian Rock, 327 BCE',
+        'Porus, as reported by Arrian After the Battle of the Hydaspes, when Alexander asked how he wished to be treated',
+    ),
+    'apartheid': (
+        'Margaret Thatcher Commonwealth Heads of Government Meeting, Nassau, 1985 (paraphrase of her famous line)',
+    ),
+    'assassination-of-caesar': (
+        "Marcus Brutus Letter to Cicero, quoted in Cicero's Ad Familiares, 43 BCE",
+    ),
+    'cambodian-genocide': (
+        'Zbigniew Brzezinski Quoted in Elizabeth Becker, When the War Was Over, 1986',
+    ),
+    'chernobyl-disaster': (
+        'Soviet official framing Substance of the 1986 Vienna report and the 1987 trial, paraphrased',
+        "Liquidator testimony Paraphrase of the testimonial voice recorded across Alexievich's oral histories",
+        'Substance of the Chernobyl Forum finding 2005 WHO/IAEA consensus report, paraphrased',
+        'Substance of the TORCH / Greenpeace critique 2006 European Greens and Greenpeace reports, paraphrased',
+    ),
+    'fall-of-rome': (
+        'Theodoric the Great As quoted in Cassiodorus, Variae, Letter to Emperor Anastasius, c. 508 CE',
+    ),
+    'haitian-revolution': (
+        "Napoleon Bonaparte Attributed remark after learning of Leclerc's death, November 1802",
+    ),
+    'indian-independence-movement': (
+        'Mohandas K. Gandhi Widely attributed; used in Congress mobilization literature',
+    ),
+    'korean-war': (
+        'Unnamed elderly South Korean woman KBS Finding Dispersed Families broadcast, 1983; quoted in KBS archive, UNESCO Memory of the World submission',
+    ),
+    'mongol-empire': (
+        'Genghis Khan Attributed address to the people of Bukhara, 1220 (recorded by Juvaini)',
+    ),
+    'nanjing-massacre': (
+        'Xia Shuqin Survivor testimony, recounted through her Tokyo defamation case, 2007',
+    ),
+    'russian-revolution': (
+        "Orlando Figes A People's Tragedy, 1996 (paraphrased from his argument)",
+    ),
+    'rwandan-genocide': (
+        "Agathe Uwilingiyimana  Phone call to UNAMIR headquarters, April 7, 1994 (paraphrased in Dallaire's account)",
+    ),
+    'scramble-for-africa': (
+        'Omar al-Mukhtar Attributed statement during interrogation before his execution, September 16, 1931',
+    ),
+    'six-day-war': (
+        'Yitzhak Rabin Quoted in Le Monde, February 1968',
+    ),
+    'the-holocaust': (
+        'Jan Karski  Recounting his 1943 meeting with President Roosevelt',
+    ),
+    'vietnam-war': (
+        "Vang Pao Attributed, Hmong community accounts of the CIA's secret war",
+    ),
+}
