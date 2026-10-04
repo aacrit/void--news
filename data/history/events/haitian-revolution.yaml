@@ -103,6 +103,58 @@ primary_source_excerpts:
   date: '1938'
   archive_url: https://archive.org/details/blackjacobinstou0000jame
   doi: 10.2307/2507494
+- text: "No, this country will not die: it will never again know a king, nor know wicked masters; it will rise from its ashes, and it will be more brilliant than ever; it will be like France, which is now the land of liberty and the land of equality, and the French republic will still find in it children who will serve it well."
+  author: Étienne Polverel and Léger-Félicité Sonthonax, civil commissioners of the Republic (Void translation from the Creole)
+  work: Proclamation of 2 July 1793, the Creole broadside, rendered by Void from the Creole and checked against the French broadside of the same day (ledger extract src-commissaires-17930702-ht.sec1.en)
+  date: July 2, 1793
+- text: All the negroes and people of mixed blood now in slavery are declared free, to enjoy all the rights attached to the quality of French citizen; they will however be subject to a regime whose provisions are contained in the following articles.
+  author: Léger-Félicité Sonthonax, civil commissioner of the Republic (Void translation from the French)
+  work: Proclamation of 29 August 1793 for the province of the North, article II, rendered by Void from the French (ledger extract src-sonthonax-17930829.art2.en)
+  date: August 29, 1793
+- text: Slaves are not permitted in this territory; slavery is abolished for ever. All men born in this country live and die free men and French.
+  author: Toussaint Louverture and the central assembly of Saint-Domingue (Void translation from the French)
+  work: Constitution of Saint-Domingue of 1801, title II, article 3, rendered by Void from the French (ledger extract src-toussaint-const-1801.art3.en)
+  date: '1801'
+- text: That, in the course I have taken of annihilating the government of the blacks at Saint-Domingue, I have been guided less by considerations of commerce and finance than by the necessity of stifling, in every part of the world, every kind of seed of unrest and trouble
+  author: Napoléon Bonaparte, First Consul (Void translation from the French)
+  work: Note to Talleyrand, 13 November 1801, Correspondance de Napoléon Ier, tome VII, No. 5863, rendered by Void from the French (ledger extract src-napoleon-corr-7.item5863.en)
+  date: November 13, 1801
+- text: When I was arrested, I had no other clothes than those I wore.
+  author: Toussaint Louverture (Void translation from the French)
+  work: Memoir written at the fort de Joux, 1802, addressed to the First Consul, in Joseph Saint-Rémy's edition of 1853, rendered by Void from the French (ledger extract src-toussaint-memoire.p83.en)
+  date: '1802'
+- text: The next day my wife, together with my children who had been arrested with her, arrived there too. Sail was set at once for France.
+  author: Toussaint Louverture (Void translation from the French)
+  work: Memoir written at the fort de Joux, 1802, addressed to the First Consul, in Joseph Saint-Rémy's edition of 1853, rendered by Void from the French (ledger extract src-toussaint-memoire.p83.en)
+  date: '1802'
+- text: In the end we must live independent or die.
+  author: Jean-Jacques Dessalines
+  work: Declaration of Independence of Haiti, in the translation of Laurent Dubois and John D. Garrigus (ledger extract src-dubois-garrigus-2006.sec0)
+  date: January 1, 1804
+- text: We have dared to be free, let us be thus by ourselves and for ourselves.
+  author: Jean-Jacques Dessalines
+  work: Declaration of Independence of Haiti, in the translation of Laurent Dubois and John D. Garrigus (ledger extract src-dubois-garrigus-2006.sec11)
+  date: January 1, 1804
+- text: What people fought for us? What people wanted to gather the fruits of our labor?
+  author: Jean-Jacques Dessalines
+  work: Declaration of Independence of Haiti, in the translation of Laurent Dubois and John D. Garrigus (ledger extract src-dubois-garrigus-2006.sec11)
+  date: January 1, 1804
+- text: The generals, deeply moved by these sacred principles, after voting their unanimous attachment to the declared project of independence, have all sworn to posterity, to the universe, to forever renounce France, and to die rather than to live under its domination.
+  author: Jean-Jacques Dessalines and the generals of the native army
+  work: The Act of Independence, 1 January 1804, in the translation of Laurent Dubois and John D. Garrigus (ledger extract src-dubois-garrigus-2006.sec25)
+  date: January 1, 1804
+- text: The people inhabiting the island formerly called St. Domingue agree here to form themselves into a free, sovereign state, independent of all other powers of the universe, under the name of empire of Haiti.
+  author: Jean-Jacques Dessalines, Emperor, and the generals (Void translation from the French)
+  work: Constitution of Haiti, 20 May 1805, preliminary declaration, article 1, as Thomas Madiou prints it in Histoire d'Haïti, tome III, rendered by Void from the French (ledger extract src-madiou-1848-t3.p471.en)
+  date: May 20, 1805
+- text: The spread of yellow fever as well as the renewal of the war with Britain are facile explanations concealing the direct responsibilities of the colonial authorities.
+  author: Bernard Gainot and Mayeul Macé
+  work: Fin de campagne à Saint-Domingue, novembre 1802-novembre 1803, English abstract (ledger extract src-gainot-mace-2003.abstract)
+  date: '2003'
+- text: While the former protest was short-lived, the latter soared on to serve as an impetus for the freedom of black slaves across the globe
+  author: Moses Joseph Yakubu and Paul Abiero Opondo
+  work: 'The Haitian Revolution, 1791-1804: Slave Insurgency as a Background to the Abolition of Slavery, introduction (ledger extract src-yakubu-opondo-2025.p166)'
+  date: '2025'
 coordinates:
   lat: 19.76
   lng: -72.33
