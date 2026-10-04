@@ -348,7 +348,7 @@ jobs:
 
       - name: Save pipeline state DB to cache
         if: always()
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: pipeline_state.db
           key: void-state-v1-${{ github.run_id }}
@@ -375,7 +375,7 @@ jobs:
 
       - name: Save phrase counts DB to cache
         if: always() && hashFiles('phrase_counts.db') != ''
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: phrase_counts.db
           key: void-phrases-v1-${{ github.run_id }}
