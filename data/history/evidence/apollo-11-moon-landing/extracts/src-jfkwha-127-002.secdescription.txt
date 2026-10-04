@@ -1,0 +1,7 @@
+source: src-jfkwha-127-002
+locator: secdescription
+url: https://www.jfklibrary.org/asset-viewer/archives/JFKWHA/1962/JFKWHA-127-002/JFKWHA-127-002
+read: 2026-10-03
+note: the item page's Description field, whole; the page's HTML read as text; the Library's own quotation of the sentence closes it with a full stop inside the quotation marks, where the full text (src-jfk-19620912.para20) runs on with a comma
+
+Sound recording of President John F. Kennedy’s remarks at Rice University Stadium in Houston, Texas concerning the nation’s space exploration efforts. In his speech President Kennedy discusses the necessity for the United States to become an international leader in space exploration, and famously states, “We choose to go to the Moon in this decade and do the other things, not because they are easy, but because they are hard.”

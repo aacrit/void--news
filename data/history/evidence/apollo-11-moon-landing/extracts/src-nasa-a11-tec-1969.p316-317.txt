@@ -1,0 +1,20 @@
+source: src-nasa-a11-tec-1969
+locator: p316-317
+url: https://www.apollojournals.org/alsj/a11/a11transcript_tec.pdf
+read: 2026-10-03
+note: the PDF's text layer, line breaks as the layer has them; the printed pages 316 and 317 (Tape 66/12) sit on PDF page 211; times are ground elapsed time, day hour minute second; CDR, LMP and CC are the transcript's speaker codes, which the Lunar Surface Journal's corrected transcript of the same transmissions (src-alsj-a11-landing.sec1024557) gives to Armstrong, Aldrin and Duke
+
+04 06 45 40 LMP (EAGLE) CONTACT LIGHT.
+04 06 45 43 LMP (EAGLE) Okay. ENGINE STOP .
+04 06 45 45 LMP (EAGLE) ACA - out of DETENT.
+04 06 45 46 CDR (EAGLE) Out of DETENT.
+04 06 45 47 LMP (EAGLE) MODE CONTROL - both AUTO. DESCENT ENGINE
+COMMAND OVERRIDE - OFF. ENGINE ARM - OFF.
+Tape 66/12 - Page 317
+04 06 45 52 LMP (EAGLE) 413 is in.
+04 06 45 57 CC We copy you down, Eagle.
+04 06 45 59 CDR  (TRANQ) Houston, Tranquility Base here.
+04 06 46 04 CDR  (TRANQ) THE EAGLE HAS LANDED.
+04 06 46 06 CC Roger, Tranquility. We copy you on the ground. You got a bunch of
+guys about to turn blue. We're breathing again. Thanks a lot.
+04 06 46 16 CDR  (TRANQ) Thank you.

@@ -494,10 +494,14 @@ def mood_plan(tl: Timeline, dry_seg: list[bool]) -> list[cliplib.Span]:
     return plan
 
 
-def mood_music_bus(tl: Timeline, score: dict, plan: list[cliplib.Span], room=None):
+def mood_music_bus(tl: Timeline, score: dict, plan: list[cliplib.Span], room=None,
+                   theme_at_ms: int | None = None):
+    """`theme_at_ms`: a composed score states its theme under the TITLE, in a
+    pause the timeline opened for it, with the beds muted beneath it; None is
+    the house order (theme at 0, before the first word)."""
     bus = rp._silent(tl.total_ms, channels=2)
     used: dict = {"beds": [], "stings": [], "transitions": []}
-    for key, at in (("theme", 0), ("outro", tl.outro_at_ms)):
+    for key, at in ((("theme", 0),) if theme_at_ms is None else ()) + (("outro", tl.outro_at_ms),):
         seg = score.get(key)
         if seg is not None:
             bus = bus.overlay(seg.apply_gain(rp.CUE_GAIN_DB).set_channels(2), position=at)
@@ -535,6 +539,11 @@ def mood_music_bus(tl: Timeline, score: dict, plan: list[cliplib.Span], room=Non
             bus = bus.overlay(rp._loop_to(room, length).fade_in(fade).fade_out(fade).set_channels(2),
                               position=sp.start_ms)
             used["room"] = True
+    if theme_at_ms is not None and score.get("theme") is not None:
+        theme = score["theme"]
+        bus = _mute(bus, [(theme_at_ms, theme_at_ms + len(theme))])
+        bus = bus.overlay(theme.apply_gain(rp.CUE_GAIN_DB).set_channels(2), position=theme_at_ms)
+        used["theme"] = theme_at_ms
     blocks = clip_blocks(tl)
     if blocks:
         bus = _mute(bus, blocks)
@@ -728,7 +737,9 @@ def produce(slug: str, out_dir: Path, *, only: list[str] | None = None,
     script (staging, never published from here); `strict` refuses to master
     an Orpheus render with any line that never passed the word check."""
     global GAP_SCALE
-    GAP_SCALE = gap_scale if gap_scale is not None else (1.2 if engine == "orpheus" else 1.0)
+    # 1.0 for Orpheus too since 2026-10-03: stretched silence read as
+    # "inorganic"; the whole-line delivery carries its own pace (150 wpm).
+    GAP_SCALE = gap_scale if gap_scale is not None else 1.0
     event = yaml.safe_load((EVENTS / f"{slug}.yaml").read_text())
     # The bytes rendered are hashed here, at render time, and travel with the
     # MP3 to publish_audio.py, which records them in the manifest. That hash
@@ -785,7 +796,8 @@ def produce(slug: str, out_dir: Path, *, only: list[str] | None = None,
 
     orpheus = None
     if engine == "orpheus":
-        from briefing.tts_orpheus import OrpheusEngine, ORPHEUS_VOICES
+        from briefing.tts_orpheus import OrpheusEngine, orpheus_cast
+        cast_voices, cast_why = orpheus_cast(script_bytes.decode("utf-8"))
         # The SAY table is Kokoro's G2P respellings; Orpheus reads text, so it
         # gets only entries written for it ("orpheus:Beas = ..."). Every SAY
         # name is also a name the ASR cannot spell: logged for the ear, never
@@ -796,12 +808,12 @@ def produce(slug: str, out_dir: Path, *, only: list[str] | None = None,
         for k, v in say_all.items():
             for w in re.findall(r"[a-z]+", f"{k.split(':', 1)[-1]} {v}".lower()):
                 names.add(w)
-        orpheus = OrpheusEngine(name_tokens=names, seed_offset=seed_offset,
+        orpheus = OrpheusEngine(voices=cast_voices, name_tokens=names, seed_offset=seed_offset,
                                 ledger_path=Path(out_dir) / f"{slug}.render.json")
-        voices = dict(voices, narrator=ORPHEUS_VOICES["A"], document_m=ORPHEUS_VOICES["B"],
-                      document_f=ORPHEUS_VOICES["C"], why="Orpheus casting (2026-10-03 audition)")
-        print(f"  [history] Orpheus: narrator {ORPHEUS_VOICES['A']}, quotes {ORPHEUS_VOICES['B']}/"
-              f"{ORPHEUS_VOICES['C']}, gaps x{GAP_SCALE}")
+        voices = dict(voices, narrator=cast_voices["A"], document_m=cast_voices["B"],
+                      document_f=cast_voices["C"], why=cast_why)
+        print(f"  [history] Orpheus: narrator {cast_voices['A']}, quotes {cast_voices['B']}/"
+              f"{cast_voices['C']} ({cast_why}), gaps x{GAP_SCALE}")
     turns = build_turns(script, moods, admitted)
     clip_turns = [(s, m) for s, m in turns if m.get("clip") is not None]
     speak = [s for s, m in turns if m.get("clip") is None]
@@ -840,7 +852,14 @@ def produce(slug: str, out_dir: Path, *, only: list[str] | None = None,
 
     era = str(event.get("era") or "modern")
     if mood_mode:
-        score = history_score(era)
+        # The episode's sampled score where data/history/scores/<slug>.yaml
+        # renders it, the synthesised set for every other key and episode
+        # (history/score.py falls back key by key). Same keys, same shape.
+        try:
+            from history.score import load_score
+            score = load_score(slug, era)
+        except ImportError:
+            score = history_score(era)
         room = rp._asset("room")
         assets = {"theme": score.get("theme"), "outro": score.get("outro")}
 
@@ -874,8 +893,23 @@ def produce(slug: str, out_dir: Path, *, only: list[str] | None = None,
                     rests[nxt] = mo.rest_short_ms if short else mo.rest_ms
                 else:
                     rests[nxt] = key
+    # A composed score (data/history/scores/<slug>.yaml) opens cold and states
+    # its theme under the TITLE, the documentary order: the drone and the first
+    # words, then the title card over the theme. The house score keeps its
+    # opener. The pause before the TITLE holds the theme in the clear; the
+    # title line lands inside its release.
+    theme_title_idx = None
+    composed = (SCRIPTS.parent / "scores" / f"{slug}.yaml").exists()
+    if mood_mode and composed and assets.get("theme") is not None:
+        theme_title_idx = next((i for i, sg in enumerate(script.segments) if sg.kind == "TITLE"), None)
+    if theme_title_idx is not None:
+        hold = len(assets["theme"]) - GAPS["theme_overlap"] + 600
+        prior = rests.get(theme_title_idx)
+        prior_ms = GAPS[prior] if isinstance(prior, str) else int(prior or 0)
+        rests[theme_title_idx] = max(prior_ms, int(hold / max(GAP_SCALE, 0.01)))
     tl = build_timeline(turns, audio,
-                        opener_ms=len(assets["theme"]) if assets.get("theme") else 0,
+                        opener_ms=(0 if theme_title_idx is not None
+                                   else len(assets["theme"]) if assets.get("theme") else 0),
                         transition_ms=transition_ms,
                         outro_ms=len(assets["outro"]) if assets.get("outro") else 0,
                         rests=rests, break_ms=break_ms)
@@ -916,7 +950,12 @@ def produce(slug: str, out_dir: Path, *, only: list[str] | None = None,
     dm = rp.process_voice_bus(buses[DOC_M], 0.10, work, "M")
     df = rp.process_voice_bus(buses[DOC_F], -0.10, work, "F")
     if mood_mode:
-        music, used = mood_music_bus(tl, score, plan, room=room)
+        theme_at = None
+        if theme_title_idx is not None:
+            title_cue = next((c for c in tl.cues if c.seg_idx == theme_title_idx), None)
+            if title_cue is not None:
+                theme_at = max(0, title_cue.start_ms - (len(score["theme"]) - GAPS["theme_overlap"]))
+        music, used = mood_music_bus(tl, score, plan, room=room, theme_at_ms=theme_at)
     else:
         music, used = music_bus(tl, assets)
     print(f"  [history] music: {used}")
@@ -1061,7 +1100,7 @@ def main() -> int:
     ap.add_argument("--engine", choices=["kokoro", "orpheus"], default=None,
                     help="orpheus: local GPU, every line word-checked (default: Kokoro chain)")
     ap.add_argument("--script", default=None, help="render this script file instead of the live one (staging)")
-    ap.add_argument("--gap-scale", type=float, default=None, help="scale every silence (default 1.2 under orpheus)")
+    ap.add_argument("--gap-scale", type=float, default=None, help="scale every silence (default 1.0)")
     ap.add_argument("--seed-offset", type=int, default=0)
     ap.add_argument("--lenient", action="store_true",
                     help="master even if a line never passed the word check (a listening copy, never published)")

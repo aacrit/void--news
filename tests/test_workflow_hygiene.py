@@ -49,7 +49,11 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 WF = ROOT / ".github" / "workflows"
 
 # W-05: test files no workflow runs ON PURPOSE, each with its reason.
-ALLOWLIST: dict[str, str] = {}
+ALLOWLIST: dict[str, str] = {
+    "test_history_score.py": "History pilot score (2026-10-03): runs locally until a CEO-merged "
+                             ".github change adds it to auto-merge-claude.yml's gates (a branch "
+                             "touching .github cannot auto-merge)",
+}
 
 FOUR_GATES = ("tests/test_grounding.py", "tests/test_bias_defaults_gate.py",
               "tests/test_feed_buildable.py", "tests/test_onair_sidecar.py")

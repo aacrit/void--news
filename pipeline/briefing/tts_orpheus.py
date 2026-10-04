@@ -38,6 +38,43 @@ except ImportError:  # pragma: no cover
 # male voice as natural, so the men's documents go to leo and the women's to
 # zoe. A reader of record never changes per speaker.
 ORPHEUS_VOICES = {"A": "tara", "B": "leo", "C": "zoe"}
+MALE = ("leo", "dan", "zac")
+FEMALE = ("tara", "leah", "jess", "mia", "zoe")
+_CAST_RE = re.compile(r"^#\s*CAST:\s*(.+)$", re.M)
+
+
+def orpheus_cast(raw_script: str) -> tuple[dict[str, str], str]:
+    """Casting for one episode. Tara narrates unless the script's header says
+    otherwise (CEO 2026-10-03: "Tara remains primary"; a story that demands a
+    different narrator gets one, with its reason written down):
+
+        # CAST: narrator=dan reason=<why this story needs him>
+
+    A reader of record never doubles as the narrator: a male narrator moves
+    the men's documents to the next male voice, a female narrator the women's.
+    Returns ({"A","B","C"} voices, reason)."""
+    m = _CAST_RE.search(raw_script or "")
+    fields: dict[str, str] = {}
+    if m:
+        body = m.group(1)
+        reason = ""
+        if "reason=" in body:
+            body, reason = body.split("reason=", 1)
+        for tok in body.split():
+            if "=" in tok:
+                k, v = tok.split("=", 1)
+                fields[k.strip().lower()] = v.strip().lower()
+        fields["reason"] = reason.strip()
+    narrator = fields.get("narrator", ORPHEUS_VOICES["A"])
+    if narrator not in MALE + FEMALE:
+        raise ValueError(f"# CAST: narrator={narrator!r} is not a built-in Orpheus voice {MALE + FEMALE}")
+    if narrator != ORPHEUS_VOICES["A"] and not fields.get("reason"):
+        raise ValueError("# CAST: a narrator other than tara needs reason=<why the story demands it>")
+    doc_m = fields.get("doc_m") or next(v for v in ("leo", "dan", "zac") if v != narrator)
+    doc_f = fields.get("doc_f") or next(v for v in ("zoe", "leah", "mia") if v != narrator)
+    if doc_m not in MALE or doc_f not in FEMALE or narrator in (doc_m, doc_f):
+        raise ValueError(f"# CAST: readers must be distinct built-ins (narrator {narrator}, M {doc_m}, F {doc_f})")
+    return {"A": narrator, "B": doc_m, "C": doc_f}, fields.get("reason") or "Tara, the primary narrator"
 SAMPLING = {"top_p": 0.8, "repetition_penalty": 1.1}
 SEEDS = {"A": 1947, "B": 1948, "C": 1949}
 SENTENCE_GAP_MS = 160
@@ -46,6 +83,54 @@ MIN_UNIT_WORDS = 4
 
 _ABBR = {"mr", "mrs", "ms", "dr", "st", "sir", "gen", "lt", "col", "no", "vol", "mt", "jr", "sr"}
 _BOUNDARY = re.compile(r"[.!?][\"')\]]?\s+(?=[\"'(]?[A-Z])")
+
+
+# VOID_ORPHEUS_MODE=natural (2026-10-03, after the first full render sounded
+# "stitched together" with "inorganic" slow passages): one generation per
+# script line so the voice carries its own arc and pauses; one temperature
+# for the whole episode and retries that change only the seed, so a re-take
+# is the same performance; every line levelled to one speech loudness; the
+# model's own breaths kept. "sentence" is the first render's behaviour.
+MODE = os.environ.get("VOID_ORPHEUS_MODE", "natural").strip().lower()
+LINE_MAX_WORDS = 45
+NATURAL_TEMPERATURE = 0.6
+NATURAL_KEEP_MS = 300
+NATURAL_GAP_MS = 250
+SPEECH_TARGET_DBFS = -20.0
+
+
+def line_units(text: str, max_words: int = LINE_MAX_WORDS) -> list[str]:
+    """The whole line when it fits; otherwise whole sentences grouped up to
+    `max_words`. Never changes a character."""
+    text = re.sub(r"\s+", " ", text).strip()
+    if len(text.split()) <= max_words:
+        return [text]
+    units, cur = [], []
+    for sent in split_sentences(text, min_words=1):
+        if cur and len(" ".join(cur + [sent]).split()) > max_words:
+            units.append(" ".join(cur))
+            cur = []
+        cur.append(sent)
+    if cur:
+        units.append(" ".join(cur))
+    if " ".join(units) != text:
+        raise AssertionError(f"line split altered the text: {text!r}")
+    return units
+
+
+def level(seg, target_dbfs: float = SPEECH_TARGET_DBFS, floor_dbfs: float = -45.0):
+    """Gain a take so its SPEECH (10 ms frames above the floor) sits at one
+    loudness. Orpheus's output level varies take to take; Kokoro's did not."""
+    frames = [seg[i:i + 10] for i in range(0, len(seg), 10)]
+    loud = [f for f in frames if f.dBFS > floor_dbfs]
+    if not loud:
+        return seg
+    import math
+    rms = math.sqrt(sum(f.rms ** 2 for f in loud) / len(loud))
+    if rms <= 0:
+        return seg
+    current = 20 * math.log10(rms / seg.max_possible_amplitude)
+    return seg.apply_gain(target_dbfs - current)
 
 
 def temperature_for(speed: float | None) -> float:
@@ -140,13 +225,19 @@ class OrpheusEngine:
             jobs, by_turn = [], {}
             for t in turns:
                 by_turn[t.idx] = []
-                for k, piece in enumerate(split_sentences(t.text)):
+                natural = MODE == "natural"
+                pieces = line_units(t.text) if natural else split_sentences(t.text)
+                for k, piece in enumerate(pieces):
                     uid = f"{t.idx:04d}_{k:02d}"
                     by_turn[t.idx].append(uid)
-                    jobs.append({"id": uid, "text": piece, "ref_words": norm_words(piece),
-                                 "name_tokens": self.name_tokens, "voice": self.voices[t.role],
-                                 "seed": SEEDS[t.role] + self.seed_offset,
-                                 "temperature": temperature_for(t.speed), **SAMPLING})
+                    job = {"id": uid, "text": piece, "ref_words": norm_words(piece),
+                           "name_tokens": self.name_tokens, "voice": self.voices[t.role],
+                           "seed": SEEDS[t.role] + self.seed_offset,
+                           "temperature": NATURAL_TEMPERATURE if natural else temperature_for(t.speed),
+                           **SAMPLING}
+                    if natural:
+                        job.update(seed_retries=5, low_temp=False)
+                    jobs.append(job)
             (work / "jobs.json").write_text(json.dumps(jobs, indent=1), encoding="utf-8")
             t0 = time.time()
             cache = os.environ.get("VOID_ORPHEUS_CACHE", "").strip() or str(Path.home() / ".cache" / "void-orpheus-units")
@@ -164,14 +255,19 @@ class OrpheusEngine:
                     wav = work / "out" / f"{uid}.wav"
                     if not wav.exists():
                         break
-                    pieces.append(_trim(_to_24k_mono(AudioSegment.from_file(str(wav), format="wav"))))
+                    take = _to_24k_mono(AudioSegment.from_file(str(wav), format="wav"))
+                    if MODE == "natural":
+                        pieces.append(level(_trim(take, keep_ms=NATURAL_KEEP_MS, thresh=-50.0)))
+                    else:
+                        pieces.append(_trim(take))
                 if len(pieces) != len(by_turn[t.idx]):
                     res.failed[t.idx] = "a unit produced no audio"
                     continue
                 seg = AudioSegment.silent(duration=0, frame_rate=24000)
                 for k, piece in enumerate(pieces):
                     if k:
-                        seg += AudioSegment.silent(duration=SENTENCE_GAP_MS, frame_rate=24000)
+                        seg += AudioSegment.silent(duration=NATURAL_GAP_MS if MODE == "natural" else SENTENCE_GAP_MS,
+                                                   frame_rate=24000)
                     seg += piece
                 res.audio[t.idx] = seg
             failed_units = {u: v for u, v in units.items() if not v.get("passed")}

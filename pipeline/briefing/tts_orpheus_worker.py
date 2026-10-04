@@ -192,6 +192,8 @@ def main() -> int:
         # The bfloat16 copy is the same weights the GPU always ran (they were
         # cast at load), so it shares the published model's cache identity.
         k.update(model=MODEL_ID, asr=ASR_MODEL, retries=SEED_RETRIES, low=LOW_TEMPERATURE)
+        if "seed_retries" in j or "low_temp" in j:   # natural mode; absent keys keep old cache ids
+            k.update(seed_retries=j.get("seed_retries"), low_temp=j.get("low_temp"))
         return hashlib.sha256(json.dumps(k, sort_keys=True).encode()).hexdigest()[:24]
 
     cached = {}
@@ -212,8 +214,10 @@ def main() -> int:
             audio_s += float((cached[j["id"]].get("accepted") or {}).get("seconds") or 0)
             print(f"  {j['id']} cached ({'ok' if cached[j['id']].get('passed') else 'FAIL'})", flush=True)
             continue
-        plan = [(j["seed"] + k, float(j["temperature"])) for k in range(1 + SEED_RETRIES)]
-        plan.append((j["seed"] + 100, LOW_TEMPERATURE))
+        retries = int(j.get("seed_retries", SEED_RETRIES))
+        plan = [(j["seed"] + k, float(j["temperature"])) for k in range(1 + retries)]
+        if j.get("low_temp", True):
+            plan.append((j["seed"] + 100, LOW_TEMPERATURE))
         best, takes = None, []
         for seed, temp in plan:
             takes_total += 1
