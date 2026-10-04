@@ -1,32 +1,52 @@
-# Cinematic variant, 2026-10-04. The fifth Orpheus 3B episode (narrator "tara"; a male
-# reader of record for M: lines, a female reader for F: lines), in the Ken Burns
-# register: short declarative sentences, documents read plainly, the silence placed by
-# the writer. Re-cut from the live script against the evidence ledger
-# (data/history/evidence/scramble-for-africa/) and the published thesis
-# (data/history/theses/scramble-for-africa.md): every line the document voice reads is
-# verbatim from a stored extract, and the extract id follows the marker in a comment.
-# Sources are the event YAML, the ledger and the thesis, nothing else. Lines beginning
-# with "#" are inert: the parser skips them (pipeline/history/script_format.py::parse_script).
-# The mood directive on every segment is the one docs/proposals/HISTORY-AUDIO-ARCHIVAL.md
-# defines. There is no clip slot: this episode has no admitted recording, and a candidate
-# belongs in the ledger, not here. There is no F: line: no stored extract for this event is
-# a woman's words. The one girl in the record, whom the consul's report calls T 7, is held
-# in the consul's third person, so the reader of record reads the consul and the narration
-# says so. Two reads are Void translations, Witbooi from his Cape Dutch and Ferry from his
-# French, and the narration says so before each, as the Partition variant did for Amrita
-# Pritam. The live script's Leopold, Rhodes, Kipling, Morel, Yaa Asantewaa, Fanon, Casement
-# letter and al-Mukhtar quotations are in no extract this programme holds (ledger gaps:),
-# so none is read. Where the record disagrees with itself (whether Berlin partitioned
-# anything, what the Congo's people died of, how many Herero died) the script states both
-# and chooses neither. North Africa is in the event record and in no document this
-# programme holds; its account is stated from the record and says so. Where a figure is
-# known to this programme only from the event YAML, the narration says "the event record".
-# This file is not the live script: nothing globs this directory.
+# Cinematic variant, 2026-10-04, revised the same day to the first-listener orientation
+# standard of docs/proposals/HISTORY-FIRST-LISTENER.md (O-1..O-8), after the CEO's note on
+# the eight Orpheus episodes: the voice is right, but is a newcomer told where, when, who
+# and why? The fifth Orpheus 3B episode (narrator "tara"; a male reader of record for M:
+# lines, a female reader for F: lines), in the Ken Burns register: short declarative
+# sentences, documents read plainly, the silence placed by the writer. Re-cut from the live
+# script against the evidence ledger (data/history/evidence/scramble-for-africa/) and the
+# published thesis (data/history/theses/scramble-for-africa.md): every line the document
+# voice reads is verbatim from a stored extract, and the extract id follows the marker in a
+# comment. Sources are the event YAML, the ledger and the thesis, nothing else.
+# What the revision adds: an establishing passage at the head of SCENE 1 (the continent,
+# the year, the powers at the table and the Africans who were not, what happened in thirty
+# years, the two states left standing); a role with every name on its first mention
+# (Bismarck the German Chancellor, Fitzmaurice answering for the Foreign Office, Uzoigwe a
+# historian of the UNESCO General History, Rhodes Prime Minister of the Cape Colony,
+# Labouchere a member of Parliament, Leopold King of Belgium, Casement the British consul,
+# Trotha commanding the German troops, Kariko an under-chief, Kamatoto a servant to a German
+# officer, Lugard a colonial governor, Menelik Emperor of Ethiopia, Rodd the man he had
+# made a treaty with, Nkrumah Ghana's first president, Abd el-Kader, the Mahdi and
+# al-Mukhtar by what each fought, Ferry a former premier of France); a gloss with every term
+# (the conference, effective occupation, a concession, the charter, the Congo Free State,
+# Herero and Nama as two peoples of the land that is now Namibia, Matabeleland as what is
+# now Zimbabwe, Bolobo a town on the upper Congo); every SCENE opening on a time and a place;
+# one how-we-know line in the first TURN; and a CLOSE that restates the particulars before
+# the motif. "Indunas" is gone: the record uses the word without defining it, and Lobengula's
+# own letter calls the two men his messengers, so the record's word is the one spoken.
+# "South West Africa" is not spoken: the ASR splits it, and the YAML's "present-day Namibia"
+# licenses the plain name. To pay for the orientation within H-07: the Kamatoto aside now
+# runs as trailing narration inside the Trotha DOCUMENT, and the short REST after SCENE 2
+# and the REST after SCENE 3 are gone (the silence grammar prices every segment); the Pan
+# African account's own refusal
+# and "the concession itself is not held here" fold into the how-we-know line; "By the
+# Crown's record" becomes "by the British record of treaties" (a name the YAML carries); the
+# OPEN's thirty-years line moves to SCENE 1; the second TURN runs at 15 to 25 words a line;
+# the 2004 paper leaves the CLOSE (SCENE 6 carries it). The Casement girl is spoken as
+# "T seven" because the Blue Book's letter and figure are read aloud, not printed. There is
+# no clip slot: this episode has no admitted recording. There is no F: line: no stored
+# extract for this event is a woman's words. Two reads are Void translations, Witbooi from
+# his Cape Dutch and Ferry from his French, and the narration says so before each. Where
+# the record disagrees with itself (whether Berlin partitioned anything, what the Congo's
+# people died of, how many Herero died) the script states both and chooses neither. Where
+# a figure is known to this programme only from the event YAML, the narration says "the
+# event record". Lines beginning with "#" are inert: the parser skips them
+# (pipeline/history/script_format.py::parse_script). This file is not the live script:
+# nothing globs this directory.
 
 ## OPEN
 # MOOD: dread
 N: On the twenty sixth of February, eighteen eighty five, fourteen governments signed a General Act at Berlin. It names no border and gives no territory to anyone.
-N: Within thirty years, by the event record, European powers controlled over ninety per cent of the continent.
 N: Six documents, no border, and nobody from Africa in the room.
 
 ## TITLE
@@ -35,19 +55,22 @@ N: The Scramble for Africa. Eighteen eighty four to nineteen fourteen.
 
 ## SCENE 1 | The table
 # MOOD: procedure
-N: Berlin, the fifteenth of November, eighteen eighty four. Bismarck opens a conference at his residence: fourteen delegations, and no African of any kind.
-N: On the twentieth, in London, the Under-Secretary for Foreign Affairs is asked about Portugal's claims on the Congo.
+N: Berlin, the fifteenth of November, eighteen eighty four. In eighteen seventy Europe held about ten per cent of Africa.
+N: Otto von Bismarck, the German Chancellor, opens a conference on Africa at his residence: fourteen governments, European and American, and no African of any kind.
+N: It writes the rules by which a European power may claim African land; within thirty years, by the event record, those powers hold over ninety per cent of it.
+N: On the twentieth, in London, Lord Edmond Fitzmaurice, answering for the Foreign Office in the House of Commons, is asked about Portugal's claims on the Congo, the great river of Central Africa.
 
 ## DOCUMENT | Lord Edmond Fitzmaurice | answer to Jacob Bright in the House of Commons, Hansard | November 20, 1884
 # extract: src-hansard-18841120.whole
 # MOOD: procedure
-N: Lord Edmond Fitzmaurice, to the House of Commons.
+N: Lord Edmond Fitzmaurice, to the House.
 M: I have already stated that the decision of territorial claims is not among the bases of the Conference.
 
 ## DOCUMENT | G. N. Uzoigwe | European partition and conquest of Africa, in the UNESCO General History of Africa, volume seven | 1985
 # extract: src-uzoigwe-1985.p28
 # MOOD: reckoning
-N: Two articles of the Act set rules for future occupations on the coasts. G. N. Uzoigwe, in the UNESCO General History of Africa, read the second this way.
+N: Two articles set rules for future occupations on the coasts: whoever takes a coast must establish authority there.
+N: G. N. Uzoigwe, in the UNESCO General History of Africa, written by African historians, read it this way.
 M: This was the so-called doctrine of effective occupation that was to make the conquest of Africa such a murderous business.
 N: Six documents, no border, and nobody from Africa in the room.
 
@@ -56,13 +79,13 @@ N: Six documents, no border, and nobody from Africa in the room.
 
 ## SCENE 2 | The paper
 # MOOD: testimony
-N: Matabeleland, the thirtieth of October, eighteen eighty eight. By the Crown's record, Lobengula, king of Matabeleland, grants a concession to the British South Africa Company.
-N: The king, told what he has granted, sends two indunas to find out whether England exists and has a queen.
+N: Matabeleland, in what is now Zimbabwe, the thirtieth of October, eighteen eighty eight. Lobengula, king of the Ndebele, grants a concession, a right to dig, to the British South Africa Company of Cecil Rhodes, Prime Minister of the Cape Colony.
+N: Told what he has granted, the king sends two messengers to find out whether England exists and has a queen.
 
 ## DOCUMENT | Lobengula | letter to Queen Victoria, as Henry Labouchere read it to the House of Commons | 1889
 # extract: src-hansard-18931109.p546
 # MOOD: testimony
-N: They carry a letter. Lobengula, to Queen Victoria, as Henry Labouchere read it to the House of Commons in eighteen ninety three.
+N: They carry a letter. Lobengula, to Queen Victoria, as Henry Labouchere, a member of Parliament, read it to the House in eighteen ninety three.
 M: A document was read and presented to me for signature. I asked what it contained, and was told that in it were my words and the words of those men. I put my hand to it.
 
 ## DOCUMENT | Lobengula | second letter to Queen Victoria, as Labouchere read it to the House of Commons | August 10, 1889
@@ -70,34 +93,29 @@ M: A document was read and presented to me for signature. I asked what it contai
 # MOOD: testimony
 N: On the tenth of August Lobengula writes again.
 M: If the Queen hears that I have given away the whole country it is not so. I have no one in my country who knows how to write.
-N: In October, Labouchere told the House, the Charter was granted without any further communication with Lobengula. The concession itself is not held here.
-
-## REST | short
-# MOOD: testimony
+N: In October, Labouchere told the House, the Company received a royal charter to govern the land, with no further word to Lobengula. In eighteen ninety three its guns settled it, by the event record; the country became Rhodesia.
 
 ## SCENE 3 | Hornkrans
 # MOOD: reckoning
-N: Hornkrans, the thirtieth of May, eighteen ninety. Hendrik Witbooi, chief of the Witbooi Nama, has learned that Maharero of the Herero has given himself into German protection.
-N: The two chiefs have a war of their own. Witbooi writes to his enemy anyway.
+N: Hornkrans, in what is now Namibia, the thirtieth of May, eighteen ninety. Hendrik Witbooi, chief of the Witbooi Nama, has learned that Maharero, chief of the Herero, has given himself into German protection.
+N: The two peoples are at war; Witbooi writes to his enemy anyway.
 
 ## DOCUMENT | Hendrik Witbooi (Void translation from the Cape Dutch) | letter to Maharero, chief of the Herero, rendered by Void from the Cape Dutch | May 30, 1890
 # extract: src-witbooi-1929.p79.en
 # MOOD: reckoning
-N: Hendrik Witbooi, to Maharero, in a translation made by Void from his Cape Dutch.
+N: Hendrik Witbooi, to Maharero, rendered by Void from his Cape Dutch.
 M: you will have everlasting regret, that you have given your land and your right of government into the hands of the white people
-N: A German proclamation of December nineteen oh five says that Witbooi has been killed by a German bullet.
-
-## REST
-# MOOD: grief
+N: A German proclamation of December nineteen oh five says Witbooi has been killed by a German bullet.
 
 ## SCENE 4 | The river
 # MOOD: procedure
-N: In May nineteen oh three the House of Commons asks the Government to confer with the other signatories of the Berlin Act about the Congo Free State. That year the consul Roger Casement goes up the river.
+N: The Congo, nineteen oh three. The Congo Free State, which governs the river basin, is the personal colony of Leopold the Second, King of Belgium, by the event record; its people must bring in rubber.
+N: In May the House of Commons asks the Government to confer with the other signatories of the Berlin Act; that year Roger Casement, the British consul, goes up the river.
 
 ## DOCUMENT | Roger Casement | the statement of a girl the report calls T 7, as the consul set it down in the third person, Africa No. 1 (1904) | 1903
 # extract: src-casement-1904.p75
 # MOOD: testimony
-N: A girl his report calls T 7 tells him what the State soldiers did at her village. Casement sets it down in the third person.
+N: A girl his report calls T seven tells him what the soldiers did at her village. Casement sets it down in the third person.
 M: they began catching and tying the people, and killed lots of them.
 N: At Lake Mantumba the consul saw a boy of eleven or twelve whose right hand had been cut off at the wrist.
 
@@ -107,14 +125,14 @@ N: At Lake Mantumba the consul saw a boy of eleven or twelve whose right hand ha
 N: The Free State sends its own commission. It finds women held as hostages for the rubber, a practice the State had forbidden and could not suppress, and the river emptied.
 N: Then it sets every such cause below smallpox and sleeping sickness.
 M: All of these causes of depopulation are secondary in importance.
-N: The two records agree on the hostages and divide on what the people died of.
+N: The two records agree on the hostages and divide on what the people died of. In nineteen oh eight, by the event record, the king was made to hand the Congo to Belgium.
 
 ## REST
 # MOOD: grief
 
 ## SCENE 5 | The order
 # MOOD: dread
-N: German South West Africa, nineteen oh four. The Herero have risen. Daniel Kariko, an under-chief, swore afterwards to the cause, before the British administration that replaced the German one.
+N: Namibia, then a German colony, nineteen oh four. The Herero have risen. Daniel Kariko, an under-chief, swore afterwards to the cause, before the British administration that followed.
 
 ## DOCUMENT | Daniel Kariko | affidavit sworn before the Union administration at Windhuk, in the Report on the Natives of South-West Africa | 1918
 # extract: src-bluebook-1918.p54-55
@@ -126,78 +144,77 @@ N: A German who shot the daughter of a chief was declared not guilty, he said. T
 ## DOCUMENT | General Lothar von Trotha | proclamation to the Herero people and addendum to the troops, Osombo-Windhuk, in David Ciarlo's English translation for German History in Documents and Images | October 2, 1904
 # extract: src-ciarlo-trotha-en.whole
 # MOOD: rupture
-N: The second of October. Lothar von Trotha, commanding the German troops, signs a proclamation to the Herero people. In the English translation by David Ciarlo.
+N: The second of October. Lothar von Trotha, commanding the German troops, signs a proclamation to the Herero people, here in the English of David Ciarlo.
 M: Any Herero found within the German frontier, with or without a gun, with or without cattle, will be shot.
 N: An addendum tells the troops how to read it.
 M: the shooting at women and children is to be understood as shooting above their heads, so as to force them to flee.
 N: It assumes that no more male prisoners will be taken.
-
-## ASIDE
-# MOOD: testimony
-N: Gottlob Kamatoto, on oath, saw seven Herero leaders come in to discuss peace, and at sunset saw them tied with ropes, led aside and shot.
-N: In December nineteen oh five a new governor called the survivors in, and those who came in went to the camps.
+N: Gottlob Kamatoto, a Herero who served a German officer, swore that seven Herero leaders came in to discuss peace and at sunset were tied with ropes, led aside and shot.
+N: In December nineteen oh five a new governor called the survivors in; those who came went to the camps.
 
 ## REST
 # MOOD: grief
 
 ## SCENE 6 | The count
 # MOOD: grief
-N: Nobody knows how many Herero died. What exists is a set of counts of unlike things, each with a name on it.
+N: Windhuk, nineteen eighteen, under a British administration now. Nobody knows how many Herero died; what exists is a set of counts of unlike things.
 
 ## DOCUMENT | The Administrator's Office, Windhuk | Report on the Natives of South-West Africa and their Treatment by Germany, Cd. 9146 | 1918
 # extract: src-bluebook-1918.p67
 # MOOD: grief
-N: The British administration at Windhuk, in nineteen eighteen.
+N: The administration at Windhuk, in its report.
 M: Out of between 80,000 and 90,000 souls only about 15,000 starving and fugitive Hereros were alive at the end of 1905, when von Trotha relinquished his task.
-N: The German parliament's research service counts seven thousand six hundred and eighty two prisoners dead in the camps, and puts the whole people at thirty five to a hundred thousand before the war and fourteen to twenty five thousand after.
-N: The event record says sixty five thousand of eighty thousand. This programme states no single number.
+N: In two thousand and four the research service of the German parliament counted seven thousand six hundred and eighty two prisoners dead in the camps.
+N: It put the entire people at thirty five to a hundred thousand before the war and fourteen to twenty five thousand after. The event record says sixty five thousand of eighty thousand. This programme states no single number.
 
 ## REST
 # MOOD: grief
 
 ## TURN | Five accounts
 # MOOD: reckoning
-N: Five accounts of what was done and what to call it. Each gets its own case first.
+N: Five accounts of what was done and what to call it, argued from what this programme could read: the Act, parliamentary papers, three rulers' letters, a consul's report, the Free State's own inquiry, a German order and a German parliament's paper.
+N: The standard books, and the concession Lobengula signed, could not be read here. Each gets its own case first.
 
 ## PERSPECTIVE | The colonizers | victor
 # MOOD: procedure
 # extract: src-lugard-1922.p617
-N: The first account is the case Europe made for itself, in a treaty and a treatise. The Act binds the Powers to watch over the preservation of the native tribes.
-N: Frederick Lugard, a colonial governor, called it a dual mandate in nineteen twenty two.
+N: The first account is the case Europe made for itself: a treaty that binds the Powers to watch over the preservation of the native tribes, and a treatise.
+N: Frederick Lugard, a British colonial governor, called it a dual mandate in nineteen twenty two.
 M: Let it be admitted at the outset that European brains, capital, and energy have not been, and never will be, expended in developing the resources of Africa from motives of pure philanthropy
 
 ## PERSPECTIVE | The kingdoms that resisted | vanquished
 # MOOD: reckoning
 # extract: src-menelik-1897.p425
 N: The second account is the rulers' own. Three speak here in their own words: two have been heard; the third kept his throne.
-N: At Adwa, on the first of March, eighteen ninety six, the army of Menelik the Second defeated the Italians.
-N: The next year Menelik wrote to James Rennell Rodd about which text of their treaty, Amharic or English, should settle a dispute. In the Foreign Office translation.
+N: At Adwa, on the first of March, eighteen ninety six, Menelik the Second, Emperor of Ethiopia, defeated the Italians, and Ethiopia kept its independence.
+N: The next year Menelik wrote to James Rennell Rodd, with whom he had made a treaty in Amharic and English, on which text should settle a dispute. In the Foreign Office translation.
 M: let this translation, which is written in the French language, and which I enclose in this letter, be the witness between us, and if you accept this proposal, send me word of your acceptance by letter.
 
 ## PERSPECTIVE | The Pan African critique | revisionist
 # MOOD: reckoning
 # extract: src-uzoigwe-1985.p30
-N: The third account holds that the Scramble was not an episode but a structure, and that it outlived the flags.
-N: Its texts are Rodney, Fanon and Nkrumah, who named the continuation neo-colonialism; this programme could read none of them.
-N: The African historians of the UNESCO General History argue it from the conference itself. Uzoigwe, on what Berlin did.
+N: The third account holds that the Scramble was not an episode but a structure that outlived the flags.
+N: Its texts are Walter Rodney on how Europe underdeveloped Africa, Frantz Fanon on the colonized, and Kwame Nkrumah, Ghana's first president, who named the continuation neo-colonialism.
+N: The UNESCO historians argue it from the conference itself. Uzoigwe, on what Berlin did.
 M: To all intents and purposes the appropriation of territory did take place at the conference and the question of future appropriation is clearly implied in its decisions.
 
 ## PERSPECTIVE | The economic ledger | academic
 # MOOD: procedure
 # extract: src-roes-2010.p12-13
 N: The fourth account follows the money through rubber, diamonds and copper; this programme holds documents for rubber alone.
-N: The consul counted places he had known: Bolobo, fully forty thousand people once, believed to be seven or eight thousand.
-N: Nothing in the primary record counts the whole. The historian Aldwin Roes, who names ten million as the reform campaign's figure, writes this.
+N: The consul counted places he had known: Bolobo, a town on the upper Congo, fully forty thousand people once, believed to be seven or eight thousand.
+N: Nothing in the primary record counts the territory entire. The historian Aldwin Roes, who names ten million as the campaign's figure, writes this.
 M: a firm estimate of the number of victims must indeed remain elusive
 
 ## PERSPECTIVE | North Africa's own war | vanquished
 # MOOD: reckoning
 # extract: src-ferry-1885.secalger.en
-N: The fifth account is the half the word leaves out. North Africa was taken by the same powers in the same decades, and the event record carries its resistance: Abd el-Kader, the Mahdi, Omar al-Mukhtar.
-N: It argues that this resistance drew on Islamic political and military traditions with no equivalent south of the Sahara.
-N: No document from any of them is held here. The one North African document held is by Jules Ferry, a former French premier, in a translation made by Void.
+N: The fifth account is the half the word leaves out. North Africa was taken by the same powers in the same decades.
+N: The event record carries its resistance: Abd el-Kader, who fought the French in Algeria; the Mahdi, who took Khartoum in Sudan; Omar al-Mukhtar, who fought the Italians in Libya.
+N: It holds that this resistance drew on Islamic political and military traditions with no equivalent south of the Sahara.
+N: The one North African document held is by Jules Ferry, a former premier of France, defending the conquest of Algeria in eighteen eighty five, rendered by Void from his French.
 M: When we went to Algiers to destroy piracy and to secure the freedom of trade in the Mediterranean, were we doing the work of pirates, of conquerors, of devastators?
-N: The account answers that question with its dead, in records this programme could not read.
+N: The account answers with a count from the event record: an estimated eight hundred and twenty five thousand dead in the conquest of Algeria.
 
 ## REST
 # MOOD: reckoning
@@ -207,18 +224,19 @@ N: The account answers that question with its dead, in records this programme co
 N: Each is true as far as it goes.
 N: The colonizers leave out what their own records say was done in the basin the Act protected: the hostages, and the hands.
 N: The rulers leave out the wars they fought with one another, and the rulers who did sign.
-N: The Pan African account leaves out what African governments did with the structure after independence, and the Act's silence on territory, which its own historian concedes.
-N: The economic ledger leaves out everyone who was not a count, and the share of the dead the consul himself gave to disease.
-N: North Africa's own account leaves out the elites who worked with the powers it fought, and the women of its resistance, unwritten in the record.
-N: And no Congolese, no Herero woman and no Nama survivor speaks here in his or her own words.
+N: The Pan African account leaves out what African governments did with the structure after independence.
+N: The economic ledger leaves out the share of the dead the consul himself gave to disease.
+N: North Africa's own account leaves out the elites who worked with the powers it fought.
+N: And no Congolese, no North African, no Herero woman, no Nama survivor speaks here in their own words.
 
 ## REST
 # MOOD: grief
 
 ## CLOSE
 # MOOD: grief
-N: The report that printed the Herero affidavits was withdrawn in nineteen twenty six from libraries and archives throughout the British Empire. In South Africa and Namibia copies were destroyed.
-N: Germany recognised it as genocide in twenty twenty one, by the event record. The German parliament's research paper of two thousand four had left the question to the historians.
+N: Fourteen governments signed the Act at Berlin in eighteen eighty five; no African was in the room. Within thirty years Europe held over ninety per cent of Africa; Ethiopia and Liberia alone were independent.
+N: The Congo passed from its king to Belgium in nineteen oh eight. Germany recognised the Herero and Nama genocide in twenty twenty one, by the event record.
+N: The report that printed the Herero affidavits was withdrawn in nineteen twenty six from libraries throughout the British Empire; in South Africa and Namibia copies were destroyed.
 N: Six documents, no border, and nobody from Africa in the room.
 
 ## SAY
@@ -226,8 +244,10 @@ Bismarck = BIZ-mark
 Fitzmaurice = fits-MOR-is
 Uzoigwe = oo-ZOY-gway
 Lobengula = loh-ben-GOO-lah
+Ndebele = en-deh-BEH-leh
 Matabeleland = mat-ah-BEE-lee-land
-indunas = in-DOO-nahz
+Rhodes = ROHDZ
+Rhodesia = roh-DEE-zhah
 Labouchere = LAB-oo-shair
 Hornkrans = HORN-krahns
 Witbooi = VIT-boy
@@ -235,6 +255,7 @@ Nama = NAH-mah
 Maharero = mah-hah-REH-roh
 Herero = heh-REH-roh
 Hereros = heh-REH-rohz
+Leopold = LEE-oh-pold
 Casement = KAYS-ment
 Mantumba = man-TOOM-bah
 Bolobo = BOH-loh-boh
@@ -251,11 +272,15 @@ Amharic = am-HAR-ik
 Rennell = REN-el
 Rodd = ROD
 Rodney = ROD-nee
+Frantz = FRAHNTS
 Fanon = fah-NON
+Kwame = KWAH-may
 Nkrumah = en-KROO-mah
 Roes = ROOS
 Kader = KAH-dair
 Mahdi = MAH-dee
+Khartoum = kar-TOOM
 Mukhtar = mook-TAR
 Algiers = al-JEERZ
 Namibia = nah-MIB-ee-ah
+Zimbabwe = zim-BAHB-way
