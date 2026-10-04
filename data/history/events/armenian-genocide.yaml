@@ -116,6 +116,50 @@ primary_source_excerpts:
   author: Adolf Hitler
   work: Obersalzberg speech to Wehrmacht commanders, August 22, 1939 (disputed attribution, cited in Nuremberg documents L-3)
   date: August 22, 1939
+- text: "that the Porte is intent on taking advantage of the World War in order to make a clean sweep of internal enemies - the indigenous Christians - without being hindered in doing so by diplomatic intervention from other countries."
+  author: Talat Pasha (Talaat Bey), Ottoman Minister of the Interior, as reported by Hans von Wangenheim, German Ambassador at Constantinople
+  work: Report No. 372 to the Reichskanzler, Pera, 17 June 1915, in the English translation of the Gust edition, sponsored by the Zoryan Institute (ledger extract src-gust-19150617-en.para4)
+  date: June 17, 1915
+- text: These measures are not in response to popular or fanatical demand, but are purely arbitrary and directed from Constantinople in the name of military necessity, often in districts where no military operations are likely to take place.
+  author: Henry Morgenthau Sr.
+  work: Telegram 841 to the Secretary of State, Constantinople, July 10, 1915, printed as Document 1400 of Papers Relating to the Foreign Relations of the United States, 1915, Supplement (ledger extract src-frus-d1400.whole)
+  date: July 10, 1915
+- text: The corpses were all bound together in the same way, two by two, back to back. This regularity indicates that they were not the result of butchery, but had been killed intentionally by the authorities.
+  author: Walter Rössler, German Consul at Aleppo
+  work: Report to the Reichskanzler, Aleppo, 27 July 1915, in the English translation of the Gust edition, sponsored by the Zoryan Institute (ledger extract src-gust-19150727-en.para5)
+  date: July 27, 1915
+- text: Our company moved on slowly, leaving heaps of corpses behind. Most of us were almost naked.
+  author: A deported woman of the village of Kheiban, Moush district, as recounted to Vartkes of Moush
+  work: Narrative recorded by Vartkes of Moush on 25 July 1915 and published in the Armenian journal Van-Tosp; reprinted in The Treatment of Armenians in the Ottoman Empire, 1915-16, Document 24 (ledger extract src-bryce-1916.p92)
+  date: July 25, 1915
+- text: They gave us bread once every other day, though many did not get even that. When all our provisions were gone, we gathered wheat from the fields and ate it. Many a mother lost her mind and dropped her baby by the wayside.
+  author: A deported woman of the village of Kheiban, Moush district, as recounted to Vartkes of Moush
+  work: Narrative recorded by Vartkes of Moush on 25 July 1915 and published in the Armenian journal Van-Tosp; reprinted in The Treatment of Armenians in the Ottoman Empire, 1915-16, Document 24 (ledger extract src-bryce-1916.p92)
+  date: July 25, 1915
+- text: "about an equal number of Armenians in Turkey seem to have escaped, to have perished, and to have survived deportation in 1915 ; and we shall not be far wrong if, in round numbers, we estimate each of these categories at 600,000."
+  author: Arnold J. Toynbee
+  work: "The Treatment of Armenians in the Ottoman Empire, 1915-16: Documents presented to Viscount Grey of Fallodon by Viscount Bryce, the historical summary, p. 651 (ledger extract src-bryce-1916.p651)"
+  date: '1916'
+- text: Nevertheless, no authentic evidence exists to support the claim that there was a premeditated plan by the Ottoman Government to kill off Armenians.
+  author: Ministry of Foreign Affairs of the Republic of Türkiye
+  work: "The Events of 1915 and the Turkish-Armenian Controversy over History: An Overview, the ministry's web page, undated (ledger extract src-mfa-tr.para7)"
+  date: undated
+- text: "However, it is factually problematic, morally unsound and legally unfounded to call this episode a “genocide.”"
+  author: Ministry of Foreign Affairs of the Republic of Türkiye
+  work: "The Events of 1915 and the Turkish-Armenian Controversy over History: An Overview, the ministry's web page, undated (ledger extract src-mfa-tr.para7)"
+  date: undated
+- text: The riders quickly gathered up all the donkeys and horses belonging to the families, and when these had been driven off they dismounted and began to walk among us and pick out young women to steal. Lusanne and I clung close to mother, who tried to hide us, but one of three Kurds who walked near us saw me.
+  author: Aurora Mardiganian, as recounted to H. L. Gates
+  work: Ravished Armenia, her memoir written up with H. L. Gates, pp. 81-82 (ledger extract src-mardiganian-1918.p81-82)
+  date: '1918'
+- text: During World War I, mass murder, deportation, and forced assimilation were three faces of the same process of destruction organized by the Young Turk regime.
+  author: Ümit Kurt
+  work: "Cultural Erasure: The Absorption and Forced Conversion of Armenian Women and Children, 1915-1916, journal article (ledger extract src-kurt-2016.para1)"
+  date: '2016'
+- text: Deliberately inflicting on the group conditions of life calculated to bring about its physical destruction in whole or in part
+  author: United Nations General Assembly
+  work: Convention on the Prevention and Punishment of the Crime of Genocide, adopted 9 December 1948, Article II (ledger extract src-un-convention-1948.art2)
+  date: December 9, 1948
 coordinates:
   lat: 35.3359
   lng: 40.1408
