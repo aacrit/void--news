@@ -1,0 +1,231 @@
+# Cinematic variant, 2026-10-03. The third Orpheus 3B episode (narrator "tara"; a male
+# reader of record for M: lines, a female reader for F: lines), in the Ken Burns
+# register: short declarative sentences, documents read plainly, the silence placed by
+# the writer. Re-cut from the live script against the evidence ledger
+# (data/history/evidence/srebrenica-genocide/) and the published thesis
+# (data/history/theses/srebrenica-genocide.md): every line the document voice reads is
+# verbatim from a stored extract, and the extract id follows the marker in a comment.
+# Sources are the event YAML, the ledger and the thesis, nothing else. Lines beginning
+# with "#" are inert: the parser skips them (pipeline/history/script_format.py::parse_script).
+# The mood directive on every segment is the one docs/proposals/HISTORY-AUDIO-ARCHIVAL.md
+# defines. There is no clip slot: this episode has no admitted recording, and a candidate
+# belongs in the ledger, not here. There is no F: line: no stored extract for this event is
+# a woman's words (Witness K is a man; the courts and the Secretariat are institutions), so
+# the reader of record carries every read. What Mladic said to the camera on 11 July 1995
+# is in no document this programme holds (ledger gaps:), so it is neither read nor
+# narrated. The two records put the NATO strike and the fall of the town in different
+# orders (thesis an-clock-11-july), so the script states both without an order. This file
+# is not the live script: nothing globs this directory.
+
+## OPEN
+# MOOD: dread
+N: In April of nineteen ninety three the Security Council demanded that a town in eastern Bosnia be treated as a safe area, free from any armed attack or any other hostile act.
+N: The force sent to hold it never numbered more than six hundred men. Around it, up to two thousand, with tanks, artillery and mortars.
+N: In July of nineteen ninety five the town fell in an afternoon.
+N: One sentence, six hundred men, and two bombs.
+
+## TITLE
+N: The Srebrenica genocide. July, nineteen ninety five.
+
+## SCENE 1 | The sentence
+# MOOD: procedure
+N: The sixteenth of April, nineteen ninety three. The Security Council is meeting on Srebrenica, and its resolution recalls, reaffirms and condemns at length before its first operative paragraph, which is one sentence long.
+
+## DOCUMENT | United Nations Security Council | Resolution 819, operative paragraph one | April 16, 1993
+# extract: src-un-sres-819.op1
+# MOOD: procedure
+N: The Security Council, in resolution eight hundred and nineteen.
+M: Demands that all parties and others concerned treat Srebrenica and its surroundings as a safe area which should be free from any armed attack or any other hostile act
+
+## ASIDE
+# MOOD: procedure
+N: Paragraph four asks for more peacekeepers, with a view to monitoring the humanitarian situation. The word is monitoring.
+N: The first troops arrive on the eighteenth of April, lightly armed and far fewer than requested, and man thirteen observation posts and a compound at Potocari, five kilometres north of the town.
+N: From January nineteen ninety five the battalion is Dutch.
+
+## REST | short
+
+## SCENE 2 | The afternoon
+# MOOD: rupture
+N: The offensive begins on the sixth of July, nineteen ninety five. By the evening of the ninth the Drina Corps is one kilometre short of the town, and late that day Radovan Karadzic authorises it to capture Srebrenica.
+N: Thom Karremans sends urgent requests for NATO air support; at least three, and possibly five, are turned down along the chain of command.
+N: On the eleventh of July the town falls, and two NATO aircraft drop a total of two bombs on what are thought to be Serb vehicles.
+N: The Bosnian Serb army threatens to shell the town and the compound and to kill the Dutch soldiers it holds; the Netherlands Minister of Defence asks that the air action stop, and it is halted.
+N: Until the town fell, the battalion had not fired a single shot directly at the advancing Serb forces.
+N: One sentence, six hundred men, and two bombs.
+N: Late in the afternoon Ratko Mladic walks through the empty streets with his officers, among them Radislav Krstic, and a Serbian journalist films it.
+
+## DOCUMENT | Thom Karremans | report from Potocari after two meetings with Mladic, as quoted in the Secretary-General's report, paragraph 315 | July 1995
+# extract: src-un-a54549.para315
+# MOOD: dread
+N: After two meetings with Mladic, Thom Karremans returns to Potocari and reports up the chain; the Secretary-General's report quotes how he concluded it.
+M: there are now more than 15,000 people within one square kilometre, including the battalion, in an extreme vulnerable position: the sitting duck position, not able to defend these people at all
+
+## ASIDE
+# MOOD: dread
+N: By the evening of the eleventh, the tribunal found, twenty to twenty five thousand people had gathered at Potocari, several thousand of them inside the compound itself.
+N: The Secretariat weighed the battalion in one sentence: a hundred and fifty fighting men, lightly armed, in indefensible positions, against two thousand Serbs with armour and artillery.
+
+## REST
+
+## SCENE 3 | The column
+# MOOD: dread
+N: Not every man went to Potocari. Shortly after midnight on the twelfth, up to fifteen thousand men leave the enclave on foot from Susnjari, in single file through the minefields, perhaps a third of them armed.
+
+## SCENE 4 | The warehouse
+# MOOD: rupture
+N: On the thirteenth, between one thousand and one thousand five hundred men captured from the column are bussed or marched to a warehouse at Kravica.
+N: At around six in the evening, when the warehouse is full, the soldiers begin throwing grenades and shooting into the men packed inside.
+
+## DOCUMENT | Witness K | testimony of a survivor of the Kravica warehouse, quoted in the Krstic Trial Judgement, paragraph 206 | 2001
+# extract: src-icty-krstic-tj.para206
+# MOOD: testimony
+N: Witness K, as the tribunal names him, was slightly wounded, and crossed the warehouse to escape through a window after the shooting stopped. The judgment quotes him.
+M: I was not even able to touch the floor, the concrete floor of the warehouse…
+M: After the shooting, I felt a strange kind of heat, warmth, which was actually coming from the blood that covered the concrete floor, and I was stepping on the dead people who were lying around.
+
+## ASIDE
+# MOOD: procedure
+N: The judgment lists the mass execution sites in its table of contents, eight of them dated from the thirteenth of July to the sixteenth: the Jadar River, the Cerska valley, Kravica, Tisca, Orahovac, Petkovci, Branjevo and the Pilica Cultural Dom.
+N: The ninth, Kozluk, carries no date.
+
+## REST | short
+
+## SCENE 5 | Branjevo
+# MOOD: dread
+N: At the Branjevo Military Farm the shooting starts at ten in the morning: men off the buses in groups of ten, lined up with their backs to the firing squad.
+N: One member of that squad was Drazen Erdemovic, who estimated about twenty buses of some sixty men and boys each.
+N: At the Krstic trial he testified: when those men turned their backs to us, we shot at them. We were given orders to shoot.
+
+## DOCUMENT | Drazen Erdemovic | statement at his guilty plea, in the court's English, Sentencing Judgement, paragraph 10 | November 29, 1996
+# extract: src-icty-erdemovic-sj.para10
+# MOOD: testimony
+N: When he pleaded guilty, in nineteen ninety six, Drazen Erdemovic told the chamber what he had been told when he refused.
+M: When I refused, they told me: ‘If you’re sorry for them, stand up, line up with them and we will kill you too.’
+
+## ASIDE
+# MOOD: grief
+N: He said he was not sorry for himself but for his wife and a son of nine months. The court records that he believes he personally killed about seventy people.
+
+## REST
+
+## SCENE 6 | The graves
+# MOOD: grief
+N: From nineteen ninety six the prosecution digs, and by two thousand has exhumed twenty one gravesites. Eight of the fourteen primary graves had since been dug up and the bodies moved.
+N: At least four hundred and forty eight blindfolds and four hundred and twenty three ligatures came out of the graves; the chamber held them inconsistent with combat casualties.
+N: The reburials, in September and early October of nineteen ninety five, broke the corpses apart; the chamber read them as a campaign to conceal the bodies.
+N: It counted a minimum of two thousand and twenty eight bodies, and put the total within a range: seven to eight thousand men.
+N: In two thousand twenty four the General Assembly recited at least eight thousand three hundred and seventy two lives lost: a recital, not a count. This programme states no single number.
+
+## DOCUMENT | ICTY Trial Chamber | Prosecutor v. Radislav Krstic, Judgement, paragraph 598 | August 2, 2001
+# extract: src-icty-krstic-tj.para598
+# MOOD: reckoning
+N: On the second of August, two thousand one, the Trial Chamber that tried Radislav Krstic gave the crime its name.
+M: The Chamber concludes that the intent to kill all the Bosnian Muslim men of military age in Srebrenica constitutes an intent to destroy in part the Bosnian Muslim group within the meaning of Article 4 and therefore must be qualified as a genocide.
+
+## REST
+
+## TURN | Five accounts
+# MOOD: reckoning
+N: Five accounts of Srebrenica. Four are rival readings of a shared record; the fifth denies the crime, and is set down in its own words to be answered, not balanced.
+
+## PERSPECTIVE | Bosniak Survivors and the Legal Record | vanquished
+# MOOD: reckoning
+# extract: src-un-a54549.para2
+N: The first account is the record itself. In November nineteen ninety five the tribunal indicted Radovan Karadzic and Ratko Mladic for Srebrenica.
+N: Judge Fouad Riad confirmed the indictment, as the Secretary-General's report quotes him.
+M: These are truly scenes from hell, written on the darkest pages of human history.
+N: In two thousand four the Appeals Chamber found Krstic guilty of aiding and abetting genocide and sentenced him to thirty five years; in two thousand seventeen the chamber that tried Ratko Mladic found him guilty of genocide and sentenced him to life.
+N: The International Court of Justice found the same in two thousand seven, as the General Assembly recites.
+
+## PERSPECTIVE | The UN Safe Area and the Dutch Peacekeepers | bystander
+# MOOD: procedure
+# extract: src-un-a54549.para503
+N: The second account is the United Nations' own, in the Secretary-General's report of nineteen ninety nine on the fall of Srebrenica.
+N: The fundamental mistake, it says, lay with the Council: safe areas without the consent of the parties and without any credible military deterrent.
+N: Of the battalion, it cannot be said with any certainty that stronger action would have saved lives. Its verdict on itself is one sentence.
+M: Through error, misjudgement and an inability to recognize the scope of the evil confronting us, we failed to do our part to help save the people of Srebrenica from the Serb campaign of mass murder.
+
+## PERSPECTIVE | Genocide Denial versus the International Juridical Finding | revisionist
+# MOOD: procedure
+# extract: src-atlagic-2021.secsummary
+N: The third account denies the crime, in its authors' own words, to be answered.
+N: In two thousand twenty one Marko Atlagic and Aleksandar Martinovic wrote that they could not find a single statement by a Republika Srpska official, before or during the war or the operation, saying they wanted to destroy the Muslim population.
+N: They write that the army passed through forty two Muslim villages and left no civilian dead, put the real number of Muslim victims at between eight hundred and twelve hundred, and call eight thousand exaggerated and politically constructed.
+N: Atlagic and Martinovic, in the three sentences that open their English summary.
+M: There was no genocide against the Muslim population in Srebrenica in July 1995 because genocide did not occur. Crimes were committed in Srebrenica. The Republika Srpska Army did not intend to commit genocide.
+
+## PERSPECTIVE | The Mothers of Srebrenica | vanquished
+# MOOD: grief
+# extract: src-nl-hr-2019.sec5
+N: The fourth account is the women's, argued in court. The Mothers of Srebrenica, a foundation, sued the Netherlands and sought a remedy against the United Nations.
+N: In two thousand thirteen the European Court of Human Rights found the grant of immunity to the United Nations was not disproportionate.
+N: In two thousand nineteen the Supreme Court of the Netherlands held the state not liable for the fall of the town.
+N: But about three hundred and fifty men were still inside the compound on the afternoon of the thirteenth, and on them the Supreme Court found this.
+M: Dutchbat failed to offer the male refugees in the compound the choice of staying behind there, even though that was possible. As a result, Dutchbat withheld from these male refugees the chance of escaping from the Bosnian Serbs. That was wrongful.
+N: It put that chance, and the liability of the state, at ten per cent.
+
+## PERSPECTIVE | Scholarship on Ethnic Cleansing in the Yugoslav Wars | academic
+# MOOD: reckoning
+# extract: src-icty-krstic-aj.para37
+N: The fifth account is about a word. Ethnic cleansing was already in the resolution of April nineteen ninety three, in quotation marks.
+N: Where cleansing ends and genocide begins is a legal line, and the courts drew it narrow. The chamber that convicted Mladic of genocide at Srebrenica acquitted him of it in the municipalities.
+N: Scholars press it wider. Hikmet Karcic cites the Islamic Community's report of May nineteen ninety five, which counts fifty one imams, and reads their killing from nineteen ninety two as one segment of a genocide against the Bosniaks of the Drina valley.
+N: The Appeals Chamber said in two thousand four why the line is hard to cross.
+M: The gravity of genocide is reflected in the stringent requirements which must be satisfied before this conviction is imposed.
+
+## REST
+
+## TURN | What each one leaves out
+# MOOD: reckoning
+N: Each is true as far as it goes. The legal record settles what was done to the captured men, not what the Council, the peacekeepers or the Bosnian government could have done before the fall.
+N: The United Nations account passes over the perpetrators' chain of command, and leaves the count of the dead to the tribunal.
+N: The denial account asks for a statement of intent, and the tribunal did not rest on one. Its ceiling of twelve hundred dead sits below the two thousand and twenty eight bodies counted by two thousand.
+N: The mothers' case reaches only the men inside the compound, and a suit against a state cannot name the men who fired.
+N: The scholarship's count of the imams rests on its own war reports and testimonies; no judgment here counts them.
+N: And this record holds no order of the Bosnian Serb army in its own words, and no survivor of the column speaking for himself.
+
+## REST
+
+## CLOSE
+# MOOD: grief
+N: The agreement on the status of the peacekeepers, of May nineteen ninety three, required a claims commission: the one instrument on which an individual could seek a remedy against the United Nations.
+N: In two thousand thirteen the European Court of Human Rights looked for it. It would appear, the court wrote, that this has not been done.
+N: One sentence, six hundred men, and two bombs.
+
+## SAY
+Srebrenica = sreh-breh-NEET-sah
+Bosniak = BOZ-nee-ak
+Bosniaks = BOZ-nee-aks
+Mladic = MLAH-ditch
+Ratko = RAHT-koh
+Potocari = poh-toh-CHAR-ee
+Karremans = KAH-ruh-mahns
+Thom = TOM
+Dutchbat = DUTCH-bat
+Erdemovic = er-DEH-moh-vitch
+Drazen = DRAH-zhen
+Branjevo = BRAHN-yeh-voh
+Kravica = KRAH-vee-tsah
+Orahovac = oh-RAH-hoh-vats
+Petkovci = pet-KOHV-tsee
+Pilica = PEE-lee-tsah
+Jadar = YAH-dar
+Cerska = TSEHR-skah
+Tisca = TEESH-chah
+Kozluk = KOZ-look
+Susnjari = SOOSH-nyah-ree
+Dom = dohm
+Krstic = KUR-stitch
+Radislav = RAH-dee-slahv
+Radovan = RAH-doh-vahn
+Karadzic = kah-RAH-jitch
+Drina = DREE-nah
+Atlagic = AHT-lah-gitch
+Aleksandar = ah-lek-SAHN-dar
+Martinovic = mar-TEE-noh-vitch
+Karcic = KAR-chitch
+Hikmet = HIK-met
+Riad = ree-AHD
+Fouad = foo-AHD
+Republika Srpska = reh-POOB-lee-kah SURP-skah
