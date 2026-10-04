@@ -314,6 +314,18 @@ M: The horizon went white before the sound arrived.
 check("H-11 does not hear the hedge 'via' inside 'trivial'",
       "H-11" in fails(trivial), str(fails(trivial)))
 
+# THE SECOND REGRESSION (2026-10-04). The same words in the record twice, the
+# excerpt hedged and a perspective's notable quote not: a dict update kept the
+# later, clean copy, and the hedged line read as the speaker's own words
+# (1918 influenza, Vaughan; Chernobyl, Iran-Iraq War, World War I).
+import copy as _copy  # noqa: E402
+twice = _copy.deepcopy(EVENT)
+twice.setdefault("perspectives", [{}])[0].setdefault("notable_quotes", []).append(
+    {"text": "The tables were right and the messengers were slow.",
+     "speaker": "Admiral Rosa Vane", "context": "Summary"})
+check("H-11 keeps the hedge when an unhedged copy of the same words sits elsewhere",
+      "H-11" in fails(paraphrase_as_speech, twice), str(fails(paraphrase_as_speech, twice)))
+
 # The H-11 baseline can only shrink, like H-18's: an entry that no longer fires
 # is a line that was fixed at a re-render, and must leave the list with it.
 import yaml as _yaml  # noqa: E402

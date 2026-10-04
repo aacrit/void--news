@@ -74,7 +74,7 @@ from briefing import generate_assets as ga                                   # n
 ROOT = Path(__file__).resolve().parents[2]
 SCORES_DIR = ROOT / "data" / "history" / "scores"
 SAMPLE_RATE = 24000                     # the producer's rate (briefing.tts_engines.SAMPLE_RATE)
-RENDER_VERSION = 4                      # bump when the renderer's arithmetic changes
+RENDER_VERSION = 5                      # bump when the renderer's arithmetic changes
 
 RIGHTS_ALLOWLIST = ("cc0-as-stated", "cc-by-as-stated")
 LICENCE_URL_OK = (
@@ -426,7 +426,7 @@ def render_note(samples: list[Sample], inst: dict, midi: int, dur_s: float | Non
         if need_src <= len(s.x) or s.loop is None:
             src = s.x[:min(len(s.x), need_src)]
         else:
-            # Loop the steady region with a raised-cosine crossfade.
+            # Loop the steady region with an equal-power crossfade.
             a, b = s.loop
             seg = s.x[a:b]
             xf = min(int(0.6 * s.sr), len(seg) // 3)
@@ -434,7 +434,12 @@ def render_note(samples: list[Sample], inst: dict, midi: int, dur_s: float | Non
             total = b
             while total < need_src:
                 prev = parts[-1]
-                head = seg[:xf] * _cos_in(xf) + prev[-xf:] * _cos_out(xf)
+                # Equal POWER, not equal gain: the two sides of a loop seam
+                # are not phase-aligned for a pitched tone, so raised-cosine
+                # gains that sum to 1 partly cancel and dip several dB once
+                # per cycle (found by the 1918 influenza composer, 2026-10-04).
+                ramp = np.arange(xf) / max(xf, 1)
+                head = seg[:xf] * np.sin(0.5 * np.pi * ramp) + prev[-xf:] * np.cos(0.5 * np.pi * ramp)
                 parts[-1] = prev[:-xf]
                 parts.append(np.concatenate([head, seg[xf:]]))
                 total += len(seg) - xf
