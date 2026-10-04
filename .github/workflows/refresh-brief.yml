@@ -169,7 +169,10 @@ jobs:
           set -e
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add frontend/public/data frontend/public/audio frontend/public/podcast-*.xml
+          # The glob on its own (W-10): a pathspec that matches nothing makes
+          # git refuse the whole call.
+          git add frontend/public/data frontend/public/audio
+          git add -A -- 'frontend/public/podcast-*.xml' 2>/dev/null || true
           if git diff --staged --quiet; then
             echo "No brief changes to commit."
             exit 0

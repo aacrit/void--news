@@ -282,7 +282,11 @@ jobs:
           gitauth() { git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $AUTH" "$@"; }
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add frontend/build-data frontend/public/data frontend/public/audio frontend/public/podcast-*.xml docs/data/rigor-series.csv
+          # One call per path, the glob on its own (W-10): a pathspec that
+          # matches nothing makes git refuse the whole call (Weekly Issue #28
+          # was lost exactly so, 2026-10-04).
+          git add frontend/build-data frontend/public/data frontend/public/audio docs/data/rigor-series.csv
+          git add -A -- 'frontend/public/podcast-*.xml' 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "No static-data changes to commit."
             exit 0
