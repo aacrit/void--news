@@ -728,7 +728,9 @@ def produce(slug: str, out_dir: Path, *, only: list[str] | None = None,
     script (staging, never published from here); `strict` refuses to master
     an Orpheus render with any line that never passed the word check."""
     global GAP_SCALE
-    GAP_SCALE = gap_scale if gap_scale is not None else (1.2 if engine == "orpheus" else 1.0)
+    # 1.0 for Orpheus too since 2026-10-03: stretched silence read as
+    # "inorganic"; the whole-line delivery carries its own pace (150 wpm).
+    GAP_SCALE = gap_scale if gap_scale is not None else 1.0
     event = yaml.safe_load((EVENTS / f"{slug}.yaml").read_text())
     # The bytes rendered are hashed here, at render time, and travel with the
     # MP3 to publish_audio.py, which records them in the manifest. That hash
@@ -1061,7 +1063,7 @@ def main() -> int:
     ap.add_argument("--engine", choices=["kokoro", "orpheus"], default=None,
                     help="orpheus: local GPU, every line word-checked (default: Kokoro chain)")
     ap.add_argument("--script", default=None, help="render this script file instead of the live one (staging)")
-    ap.add_argument("--gap-scale", type=float, default=None, help="scale every silence (default 1.2 under orpheus)")
+    ap.add_argument("--gap-scale", type=float, default=None, help="scale every silence (default 1.0)")
     ap.add_argument("--seed-offset", type=int, default=0)
     ap.add_argument("--lenient", action="store_true",
                     help="master even if a line never passed the word check (a listening copy, never published)")
