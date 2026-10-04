@@ -40,7 +40,11 @@ def _canon(w: str) -> str:
 
 
 def norm_words(text: str) -> list[str]:
-    t = spoken_numbers(text or "")
+    # A digit range ("1975-1979", "1975 to 1979" written with a dash) spells
+    # each year out only once the dash is a space; "a hundred" is "one hundred".
+    t = re.sub(r"(?<=\d)\s*[-‐-―]\s*(?=\d)", " to ", text or "")
+    t = re.sub(r"\ba (hundred|thousand|million)\b", r"one \1", t, flags=re.I)
+    t = spoken_numbers(t)
     t = re.sub(r"[-‐-―]", " ", t)
     t = re.sub(r"\bper cent\b", "percent", t, flags=re.I)
     t = "".join(c for c in unicodedata.normalize("NFD", t) if unicodedata.category(c) != "Mn")
