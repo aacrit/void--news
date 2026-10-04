@@ -125,6 +125,58 @@ primary_source_excerpts:
   author: Anonymous
   work: Children's skipping-rope rhyme recorded across American schoolyards during the pandemic
   date: '1918'
+- text: every day there has been an average of about twenty deaths here a day, some toll for a camp.
+  author: Anonymous soldier at Camp Devens
+  work: letter home of September 24, 1918, as Wever and van Bergen reproduce it (ledger extract src-wever-2014.para35)
+  date: September 24, 1918
+- text: When it was first recognised that influenza was spreading over Europe in 1918, the source of the epidemic was attributed to Spain
+  author: Ministry of Health, Great Britain
+  work: Report on the Pandemic of Influenza, 1918-19, Part II, introduction (ledger extract src-moh-1920.secnaming)
+  date: '1920'
+- text: It cannot, therefore, be admitted that the European epidemic began in Spain.
+  author: Ministry of Health, Great Britain
+  work: Report on the Pandemic of Influenza, 1918-19, Part II, introduction (ledger extract src-moh-1920.secnaming)
+  date: '1920'
+- text: There is no method by which the deaths actually due to influenza can be calculated.
+  author: Sanitary Commissioner with the Government of India
+  work: Annual Report of the Sanitary Commissioner with the Government of India for 1918 (ledger extract src-sancom-1918.p56)
+  date: '1920'
+- text: It is well known that during influenza epidemics the mortality attributed to the disease does not represent the whole of that caused by it.
+  author: Registrar-General for England and Wales
+  work: Supplement to the Eighty-First Annual Report of the Registrar-General, Report on the Mortality from Influenza (ledger extract src-rg-1920.secestimate)
+  date: '1920'
+- text: From the newspapers I had already learned of death's reach. Coming to the bank of the Ganges I saw it with my own eyes. In the Ganges it was as if there flowed nothing but corpses.
+  author: Suryakant Tripathi 'Nirala' (Void translation from the Hindi)
+  work: Kulli Bhat, rendered by Void from the Hindi (ledger extract src-nirala-kulli-bhat.p79.en)
+  date: undated
+- text: A report compiled by the Department of Native Affairs, Apia, Samoa, shows the decrease of the population in the islands of Upola and Savaii during the three months ended December 31, 1918, the period of the epidemic of influenza. The figures are startling.
+  author: United States Public Health Service, from the Department of Native Affairs, Samoa
+  work: Influenza Mortality in Samoa, September to December, 1918, Public Health Reports (ledger extract src-phr-1919-10-17-samoa.p2303)
+  date: October 17, 1919
+- text: The Spanish authorities strongly maintain that the first epidemic wave of influenza that swept over Spain in May and June 1918, was due to infection introduced from France. The French authorities on the other hand as stoutly contend that France received its infection from Spain.
+  author: Ministry of Health, Great Britain
+  work: Report on the Pandemic of Influenza, 1918-19, Part II, Spain (ledger extract src-moh-1920.secspain)
+  date: '1920'
+- text: We were caught wholly unprepared, as far as organization went.
+  author: A nurse in North Dakota, signing with initials
+  work: Experiences during the Influenza Epidemic, letter to the editor, The American Journal of Nursing (ledger extract src-ajn-1918-12.p203)
+  date: December 1918
+- text: They had money, but help could not be had for money.
+  author: A nurse in North Dakota, signing with initials
+  work: Experiences during the Influenza Epidemic, letter to the editor, The American Journal of Nursing (ledger extract src-ajn-1918-12.p203)
+  date: December 1918
+- text: wiped off the whole of the natural increase in the Central Provinces and Berar, Bihar and Orissa and Bombay and substantially reduced the population in the United Provinces
+  author: Census Commissioner for India
+  work: Census of India, 1921, Volume I, Part I, Report (ledger extract src-census-1921.secnatural)
+  date: '1924'
+- text: Native races (Maoris) were more susceptible to attack than Europeans and the disease was more fatal among them.
+  author: Ministry of Health, Great Britain
+  work: Report on the Pandemic of Influenza, 1918-19, Part II, New Zealand, from the New Zealand commission (ledger extract src-moh-1920.secnz)
+  date: '1920'
+- text: This paper suggests that it was of the order of 50 million.
+  author: Niall Johnson and Juergen Mueller
+  work: Updating the Accounts, Global Mortality of the 1918-1920 Spanish Influenza Pandemic, abstract (ledger extract src-johnson-mueller-2002.abstract)
+  date: '2002'
 coordinates:
   lat: 39.0619
   lng: -96.7733

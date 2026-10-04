@@ -336,8 +336,18 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
     def _attrib(d: dict, name_key: str) -> str:
         return " ".join(str(d.get(k) or "") for k in (name_key, "context", "work"))
 
-    ATTRIBUTION = {_norm(e.get("text", "")): _attrib(e, "author") for e in excerpts}
-    ATTRIBUTION.update({_norm(q.get("text", "")): _attrib(q, "speaker") for q in quotes})
+    # The same words can sit in the record twice, as an excerpt and as a
+    # perspective's notable quote, and only one copy may carry the hedge. A
+    # dict update let the later, unhedged copy overwrite the hedged one: the
+    # 1918 influenza record marks Vaughan's "civilization could easily
+    # disappear" as "quoted in John M. Barry" in one copy and not the other,
+    # and the episode read it as his own words (found 2026-10-04). Every copy's
+    # attribution is kept, so a hedge in any copy is a hedge.
+    ATTRIBUTION: dict[str, str] = {}
+    for _t, _a in ([(_norm(e.get("text", "")), _attrib(e, "author")) for e in excerpts]
+                   + [(_norm(q.get("text", "")), _attrib(q, "speaker")) for q in quotes]):
+        if _a.strip() and _a not in ATTRIBUTION.get(_t, ""):
+            ATTRIBUTION[_t] = f"{ATTRIBUTION[_t]} | {_a}" if ATTRIBUTION.get(_t) else _a
 
     # A source whose own speaker field says the words are not verbatim. The
     # record marks these; nothing read them before H-11. "summary" is NOT here:
@@ -907,6 +917,12 @@ def _overlap(a: str, b: str) -> float:
 # episode's next re-render. A line NOT listed fails; an entry that no longer
 # fires fails too (tests/test_history_script.py), so the list only shrinks.
 H11_KNOWN: dict[str, tuple[str, ...]] = {
+    'world-war-i': (
+        'Anonymous wounded Indian soldier  Censored letter home, quoted in David Omissi, Indian Voices of the Great War | Anonymous wounded Indian soldier Censored letter home, in David Omissi, Indian Voices of the Great War',
+    ),
+    'iran-iraq-war': (
+        "Ali Hassan al-Majid  Tape recording of a Ba'ath Party meeting, quoted in Human Rights Watch, Genocide in Iraq - The Anfal Campaign | Ali Hassan al-Majid Ba'ath Party meeting recording, recovered by Human Rights Watch and cited in its Anfal report",
+    ),
     'alexanders-conquests': (
         'Alexander, as reported by Plutarch Before the siege of the Sogdian Rock, 327 BCE',
         'Porus, as reported by Arrian After the Battle of the Hydaspes, when Alexander asked how he wished to be treated',
@@ -921,6 +937,7 @@ H11_KNOWN: dict[str, tuple[str, ...]] = {
         'Zbigniew Brzezinski Quoted in Elizabeth Becker, When the War Was Over, 1986',
     ),
     'chernobyl-disaster': (
+        'Mikhail Gorbachev  Memoir reflection quoted in Serhii Plokhy, Chernobyl | Mikhail Gorbachev Reflecting on the disaster two decades later',
         'Soviet official framing Substance of the 1986 Vienna report and the 1987 trial, paraphrased',
         "Liquidator testimony Paraphrase of the testimonial voice recorded across Alexievich's oral histories",
         'Substance of the Chernobyl Forum finding 2005 WHO/IAEA consensus report, paraphrased',
