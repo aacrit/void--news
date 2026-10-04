@@ -22,7 +22,8 @@ _NUMBER_WORDS = {"one", "two", "three", "four", "five", "six", "seven", "eight",
 # the 2026-10-03 Partition render (programme/program, organisation/organization).
 _SPELLING = [(re.compile(r"isation"), "ization"), (re.compile(r"ise(d|s)?$"), r"ize\1"),
              (re.compile(r"^programme(s)?$"), r"program\1"), (re.compile(r"our$"), "or"),
-             (re.compile(r"our(s|ed|ing)$"), r"or\1"), (re.compile(r"tre$"), "ter")]
+             (re.compile(r"our(s|ed|ing)$"), r"or\1"), (re.compile(r"tre(s)?$"), r"ter\1"),
+             (re.compile(r"ogue(s)?$"), r"og\1")]
 
 
 def _canon(w: str) -> str:
