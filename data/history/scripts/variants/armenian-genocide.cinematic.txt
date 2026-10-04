@@ -1,36 +1,53 @@
-# Cinematic variant, 2026-10-04. The eighth Orpheus 3B episode (narrator "tara"; a male
-# reader of record for M: lines, a female reader for F: lines), in the Ken Burns
-# register: short declarative sentences, documents read plainly, the silence placed by
-# the writer. Re-cut from the live script against the evidence ledger
-# (data/history/evidence/armenian-genocide/) and the published thesis
-# (data/history/theses/armenian-genocide.md): every line the document voice reads is
-# verbatim from a stored extract, and the extract id follows the marker in a comment.
-# Sources are the event YAML, the ledger and the thesis, nothing else. Lines beginning
-# with "#" are inert: the parser skips them (pipeline/history/script_format.py::parse_script).
+# Cinematic variant, 2026-10-04, revised the same day to the first-listener orientation
+# standard of docs/proposals/HISTORY-FIRST-LISTENER.md (O-1..O-8) after the CEO approved
+# the Partition pilot. The eighth Orpheus 3B episode (narrator "tara"; a male reader of
+# record for M: lines, a female reader for F: lines), in the Ken Burns register: short
+# declarative sentences, documents read plainly, the silence placed by the writer. Cut
+# against the evidence ledger (data/history/evidence/armenian-genocide/) and the published
+# thesis (data/history/theses/armenian-genocide.md): every line the document voice reads
+# is verbatim from a stored extract, and the extract id follows the marker in a comment.
+# Sources are the event YAML, the ledger and the thesis, nothing else. What the revision
+# adds: an establishing passage at the head of SCENE 1 (the Ottoman Empire placed by its
+# capital and its war, the First World War, beside Germany and against Russia; the
+# Armenians as the record states them, a Christian people of about two million; what the
+# government did and what the record calls it; the spread of the counts), a role with
+# every name on first mention (Lepsius, Scheubner-Richter, Enver, Lemkin, Tehlirian, Kurt,
+# Rustem), a gloss with every term (the Porte carried only inside the read and set up as
+# the government; the Young Turks and the Committee; deportation; the court-martial; the
+# Convention; Sevres; Nuremberg), a time and a place at the head of every scene and of the
+# Talat document, one how-we-know line in the first TURN, and a CLOSE that restates the
+# particulars before the motif. Rule 1 correction: the record's heading for the author of
+# the Erzurum report of 5 August 1915 is "Administrator of the Consulate at Erzurum"
+# (ledger src-de-19150805, src-gust-19150805-en); the earlier draft said "the German
+# administrator there", which read as a civil office. Cut to pay for it: the four
+# monograph authors held by title only (names a newcomer cannot use), the second refusal
+# line in the scholars' account and the one on Lemkin's book (folded into the how-we-know
+# line), "Max Erwin von", the 7 July purpose clause the OPEN already quotes, the REST
+# between the Kheiban testimony and Talat's answer, and the interior ministry ASIDE, which
+# now runs as trailing narration inside the Toynbee document with its two tallies rounded
+# ("about", within H-18's tenth; the exact figures are in the thesis). "Plains" was heard
+# as "planes" and is gone. Lines beginning with
+# "#" are inert: the parser skips them (pipeline/history/script_format.py::parse_script).
 # The mood directive on every segment is the one docs/proposals/HISTORY-AUDIO-ARCHIVAL.md
-# defines. There is no clip slot: this episode has no admitted recording, and a candidate
-# belongs in the ledger, not here. Two women speak in F: lines, both from stored extracts:
-# the deported woman of Kheiban, whose words an Armenian of Moush wrote down on 25 July
-# 1915 (the narration says so), and Aurora Mardiganian, whose memoir was written up with
-# H. L. Gates (the narration says so). The German documents are read in the English
-# translation the Gust edition publishes, and every such read says "in the Gust
-# translation"; the words Talaat spoke to the German embassy and to Morgenthau are read
-# as those two men reported them, said aloud each time, and the diary's variant of the
-# memoir's sentence is stated beside it. The Ottoman pamphlet of 1916 and Rustem's book
-# are held in French with no rendering, so the state's own words are narrated from them
-# and read from the foreign ministry's page. The live script's Jesse Jackson dispatch,
-# its Hitler sentence in the event record's wording, and its Lemkin and Mardiganian
-# quotations are in no extract this programme holds (the Nuremberg volume prints the
-# Hitler line in other words and the attribution is disputed, so it is narrated with that
-# said). Where the record disagrees with itself (how many Armenians there were, how many
-# died, what the deportation was for) the script states the counts with their producers
-# and chooses none. This file is not the live script: nothing globs this directory.
+# defines. There is no clip slot: this episode has no admitted recording. Two women speak
+# in F: lines, both from stored extracts: the deported woman of Kheiban, whose words an
+# Armenian of Moush wrote down on 25 July 1915 (the narration says so), and Aurora
+# Mardiganian, whose memoir was written up with H. L. Gates (the narration says so). The
+# German documents are read in the English translation the Gust edition publishes, and
+# every such read says so; the words Talaat spoke to the German embassy and to Morgenthau
+# are read as those two men reported them, said aloud each time, and the diary's variant
+# of the memoir's sentence is stated beside it. The Ottoman pamphlet of 1916 and Rustem's
+# book are held in French with no rendering, so the state's own words are narrated from
+# them and read from the foreign ministry's page. Where the record disagrees with itself
+# (how many Armenians there were, how many died, what the deportation was for) the script
+# states the counts with their producers and chooses none. This file is not the live
+# script: nothing globs this directory.
 
 ## OPEN
 # MOOD: dread
 N: Constantinople, the seventh of July, nineteen fifteen. The German ambassador writes to his chancellor that the government is pursuing its purpose of eradicating the Armenian race from the Turkish Empire.
 N: Three days later the American ambassador telegraphs Washington that the measures are directed from Constantinople, often in districts where no military operations are likely.
-N: One government was the ally of the Porte, the other neutral, and neither report cites the other.
+N: One government was the Ottoman Empire's ally, the other neutral, and neither report cites the other.
 N: The ally wrote it down. The neutral wrote it down. Neither of them stopped it.
 
 ## TITLE
@@ -39,23 +56,28 @@ N: The Armenian genocide, nineteen fifteen to nineteen twenty three.
 
 ## SCENE 1 | The night of the twenty fourth
 # MOOD: rupture
-N: Constantinople, the night of the twenty fourth of April, nineteen fifteen. Ottoman police arrest two hundred and thirty five Armenians: writers, clergy, physicians, editors, lawyers.
-N: By the end of May the number reaches six hundred. Lepsius, a German pastor, wrote that eight were released again and the rest vanished without trace.
+N: The spring of nineteen fifteen. The Ottoman Empire, the Turkish empire whose capital is Constantinople, is fighting the First World War beside Germany, against Russia on its eastern border.
+N: Its Armenians are a Christian people, about two million in nineteen fourteen, concentrated in the eastern provinces along that border.
+N: This year the government, the Young Turks of the Committee of Union and Progress, will order them from their homes and march them towards the Syrian desert. The record calls it deportation.
+N: How many died is a set of counts, from six hundred thousand to one and a half million.
+N: Constantinople, the night of the twenty fourth of April. Ottoman police arrest two hundred and thirty five Armenians: writers, clergy, physicians, editors, lawyers.
+N: By the end of May the number reaches six hundred. Johannes Lepsius, a German pastor who gathered the consular reports, wrote that eight were released and the rest vanished without trace.
 
 ## DOCUMENT | Talat Pasha (Talaat Bey), Ottoman Minister of the Interior, as reported by Hans von Wangenheim, German Ambassador at Constantinople | Report No. 372 to the Reichskanzler, 17 June 1915, in the English translation of the Gust edition | June 17, 1915
 # extract: src-gust-19150617-en.para4
 # MOOD: procedure
-N: The seventeenth of June. Hans von Wangenheim, the German ambassador, reports that the interior minister, Talat, has spoken without reservation to an embassy official. As reported by Wangenheim, in the Gust translation.
+N: The seventeenth of June. Hans von Wangenheim, the German ambassador, reports that Talat, the interior minister, has told an embassy official what the government, which he calls the Porte, intends.
+N: As reported by Wangenheim, in the Gust edition's English translation of the German files.
 M: that the Porte is intent on taking advantage of the World War in order to make a clean sweep of internal enemies
 N: The banishment of the Armenians, the ambassador concludes, is not motivated by military considerations alone.
-N: On the seventh of July he reports the expulsion reaching Trebizond, Sivas and a third province, none threatened by any invasion, and names the purpose: eradicating the Armenian race from the Turkish Empire.
+N: On the seventh of July he reports the expulsion reaching Trebizond, Sivas and a third province, none threatened by any invasion.
 
 ## DOCUMENT | Henry Morgenthau Sr., American Ambassador at Constantinople | Telegram 841 to the Secretary of State | July 10, 1915
 # extract: src-frus-d1400.whole
 # MOOD: dread
 N: Three days later Henry Morgenthau, the American ambassador, telegraphs the Secretary of State.
 M: These measures are not in response to popular or fanatical demand, but are purely arbitrary and directed from Constantinople in the name of military necessity, often in districts where no military operations are likely to take place.
-N: Side by side on six points, the two reports agree on five.
+N: On six points, the two reports agree on five.
 N: The ally wrote it down. The neutral wrote it down. Neither of them stopped it.
 
 ## REST
@@ -63,13 +85,13 @@ N: The ally wrote it down. The neutral wrote it down. Neither of them stopped it
 
 ## SCENE 2 | The road
 # MOOD: grief
-N: Erzurum, the fifth of August. Scheubner-Richter, the German administrator there, writes that the plains hold only women, children and old men, driven out towards Mesopotamia and attacked on the road by Kurds and Turkish volunteers.
-N: He puts the dead on that road at ten to twenty thousand; the government, he writes, at three to four thousand.
+N: Erzurum, near the Russian front, the fifth of August. Scheubner-Richter, the administrator of the German consulate there, writes that the villages hold only women, children and old men.
+N: They are driven south towards Mesopotamia and attacked on the road by Kurds and Turkish volunteers. He puts the dead on that road at ten to twenty thousand; the government, he writes, at three to four thousand.
 
 ## DOCUMENT | Walter Rössler, German Consul at Aleppo | Report to the Reichskanzler, Aleppo, 27 July 1915, in the English translation of the Gust edition | July 27, 1915
 # extract: src-gust-19150727-en.para5
 # MOOD: grief
-N: Aleppo, the twenty seventh of July. Rossler, the German consul, reports bodies floating past on the Euphrates for twenty five days, in the Gust translation.
+N: Aleppo, on the road south, the twenty seventh of July. Rossler, the German consul, reports bodies floating past on the Euphrates, the river the deportation routes follow, for twenty five days. In the Gust translation.
 M: The corpses were all bound together in the same way, two by two, back to back. This regularity indicates that they were not the result of butchery, but had been killed intentionally by the authorities.
 
 ## REST
@@ -77,7 +99,7 @@ M: The corpses were all bound together in the same way, two by two, back to back
 
 ## SCENE 3 | The woman from Kheiban
 # MOOD: testimony
-N: Moush, the twenty fifth of July. An Armenian named Vartkes, in hiding, writes down what a woman tells him that night, for an Armenian journal a British compilation reprinted in nineteen sixteen.
+N: Moush, the twenty fifth of July. An Armenian named Vartkes, in hiding, writes down what a woman tells him that night, for an Armenian journal a British compilation reprinted.
 N: They thought she was a ghost, he writes. She had saved her two-year-old boy.
 
 ## DOCUMENT | A deported woman of the village of Kheiban, Moush district, as recounted to Vartkes of Moush | Narrative recorded on 25 July 1915, published in the Armenian journal Van-Tosp, reprinted in The Treatment of Armenians in the Ottoman Empire, 1915-16, Document 24 | July 25, 1915
@@ -87,33 +109,28 @@ N: Her words, as told to him and as he wrote them down. Village after village ha
 F: Our company moved on slowly, leaving heaps of corpses behind. Most of us were almost naked.
 F: They gave us bread once every other day, though many did not get even that. When all our provisions were gone, we gathered wheat from the fields and ate it. Many a mother lost her mind and dropped her baby by the wayside.
 
-## REST
-# MOOD: grief
-
 ## DOCUMENT | Talat Pasha | As recorded by Henry Morgenthau in his memoir, from a conversation in Constantinople | 1915
 # extract: src-morgenthau-1918.p337-338
 # MOOD: testimony
-N: Talat, as Morgenthau recorded him in his memoir of nineteen eighteen. The diary Morgenthau kept at the time, as a later editor prints it, says instead: they had already disposed of three quarters of them.
+N: Constantinople, the same year. Talat, the interior minister, to Morgenthau, as the ambassador recorded him in his memoir of nineteen eighteen. The diary Morgenthau kept at the time, as a later editor prints it, says instead: they had already disposed of three quarters of them.
 M: we have already disposed of three quarters of the Armenians; there are none at all left in Bitlis, Van, and Erzeroum.
-N: On the eleventh of August Morgenthau telegraphs that it is difficult to restrain himself from doing something to stop this attempt to exterminate a race. The United States never declared war on the Ottoman Empire.
+N: In August Morgenthau telegraphs that it is difficult to restrain himself from doing something to stop this attempt to exterminate a race. The United States never declared war on the Ottoman Empire.
 
 ## REST
 # MOOD: dread
 
 ## SCENE 4 | The counts
 # MOOD: grief
-N: In May nineteen sixteen the American Committee for Armenian and Syrian Relief computed between four hundred and fifty thousand and eight hundred and fifty thousand dead, and called six hundred thousand safe. This programme states no count as the number.
+N: In May nineteen sixteen the American Committee for Armenian and Syrian Relief, raising money for the survivors, computes between four hundred and fifty thousand and eight hundred and fifty thousand dead, and calls six hundred thousand safe.
+N: This programme states no count as the number.
 
 ## DOCUMENT | Arnold J. Toynbee | The Treatment of Armenians in the Ottoman Empire, 1915-16, the historical summary, page 651 | 1916
 # extract: src-bryce-1916.p651
 # MOOD: grief
-N: Toynbee, who compiled the British volume, traced one convoy from eighteen thousand to a hundred and fifty at Aleppo, and summed up.
+N: Arnold Toynbee, who compiled the British volume, traced one convoy from eighteen thousand to a hundred and fifty at Aleppo, and summed up.
 M: about an equal number of Armenians in Turkey seem to have escaped, to have perished, and to have survived deportation in 1915 ; and we shall not be far wrong if, in round numbers, we estimate each of these categories at 600,000.
-
-## ASIDE
-# MOOD: reckoning
-N: The interior ministry kept its own count. The report of Talat for nineteen seventeen, held here in an English edition, gives its nineteen fourteen column as one million one hundred and twelve thousand six hundred and fourteen Armenians.
-N: Its count for nineteen seventeen, Constantinople included, is two hundred and eighty four thousand one hundred and fifty seven. About a quarter remained on the books of the ministry that ordered the deportations.
+N: The interior ministry kept its own count. The report of Talat for nineteen seventeen, held here in an English edition, lists about one million one hundred thousand Armenians in its column for nineteen fourteen.
+N: Its count for nineteen seventeen, Constantinople included, is about two hundred and eighty four thousand. About a quarter remained on the books of the ministry that ordered the deportations.
 
 ## REST
 # MOOD: grief
@@ -121,14 +138,16 @@ N: Its count for nineteen seventeen, Constantinople included, is two hundred and
 ## TURN | Five accounts
 # MOOD: reckoning
 N: Five accounts of what the deportation was, each given its own case first.
+N: They are argued from what this programme could read: the reports of the two ambassadors and their consuls, a British compilation of nineteen sixteen, the Ottoman government's own pamphlet and its interior minister's count, two survivors, three open articles and the parliaments.
+N: The books of the last twenty years are held by title only.
 
 ## PERSPECTIVE | The Ottoman government and the Turkish state | victor
 # MOOD: procedure
 # extract: src-mfa-tr.para7
-N: The first account is the state's: a pamphlet of nineteen sixteen, a former ambassador's book of nineteen eighteen, and the page of the foreign ministry.
+N: The first account belongs to the state: a pamphlet of nineteen sixteen, a former ambassador's book of nineteen eighteen, and the Turkish foreign ministry's page.
 N: The pamphlet, in French, holds that the army commander, finding the Armenians making common cause with the enemy, ordered the Armenian element in localities considered military zones transferred southward, to secure the rear of his troops.
-N: Rustem Bey, formerly ambassador at Washington, argued that hundreds of thousands of Ottoman Armenians still existed, so there had been no extermination.
-N: The Republic holds the line. Armenians in or near the war zone, its foreign ministry writes, were relocated away from the supply routes of the advancing Russian army, and greater numbers of Turks died in those years.
+N: Rustem Bey, formerly Ottoman ambassador at Washington, argued that hundreds of thousands of Ottoman Armenians still existed, so there had been no extermination.
+N: The Republic of Turkey, founded in nineteen twenty three, holds the line. Armenians in or near the war zone, its foreign ministry writes, were relocated away from the advancing Russian army's supply routes, and greater numbers of Turks died in those years.
 N: The ministry, on the plan and on the word.
 M: Nevertheless, no authentic evidence exists to support the claim that there was a premeditated plan by the Ottoman Government to kill off Armenians.
 M: However, it is factually problematic, morally unsound and legally unfounded to call this episode a “genocide.”
@@ -136,12 +155,12 @@ M: However, it is factually problematic, morally unsound and legally unfounded t
 ## PERSPECTIVE | The survivors and the Republic of Armenia | vanquished
 # MOOD: testimony
 # extract: src-mardiganian-1918.p81-82
-N: The second account is the survivors', and the record holds two women: the woman from Kheiban, and Aurora Mardiganian, fourteen when the gendarmes came for her family.
-N: Her memoir, Ravished Armenia, as told to H. L. Gates, was published in nineteen eighteen. She describes the first dawn of her convoy, when Kurdish riders came down on the camp.
+N: The second account belongs to the survivors, and the record holds two women: the woman from Kheiban, and Aurora Mardiganian, fourteen when the Ottoman gendarmes came for her family.
+N: Her memoir, Ravished Armenia, as told to H. L. Gates, was published in nineteen eighteen. She describes the first dawn of her convoy, when Kurdish riders attacked.
 F: The riders quickly gathered up all the donkeys and horses belonging to the families, and when these had been driven off they dismounted and began to walk among us and pick out young women to steal.
 F: Lusanne and I clung close to mother, who tried to hide us, but one of three Kurds who walked near us saw me.
-N: The Republic of Armenia, in its declaration of independence, stands in support of international recognition of the nineteen fifteen genocide.
-N: Armenian scholarship reports that in July nineteen nineteen an Ottoman court-martial sentenced four men to death, Talat and Enver among them. Three of twenty death sentences were carried out.
+N: The Republic of Armenia, in its declaration of independence of nineteen ninety, stands in support of international recognition of the nineteen fifteen genocide.
+N: An Armenian scholar reports that in July nineteen nineteen an Ottoman court-martial, the post-war government trying the wartime leaders, sentenced Talat and Enver, the war minister, to death. Three of twenty death sentences were carried out.
 
 ## REST | short
 # MOOD: testimony
@@ -149,25 +168,24 @@ N: Armenian scholarship reports that in July nineteen nineteen an Ottoman court-
 ## PERSPECTIVE | The witnesses | bystander
 # MOOD: procedure
 # extract: src-morgenthau-1918.p309
-N: The third account belongs to the foreigners who wrote it down. The memoir of Morgenthau calls the deportation a new method of massacre.
+N: The third account belongs to the foreigners who wrote it down. Morgenthau's memoir calls the deportation a new method of massacre.
 M: When the Turkish authorities gave the orders for these deportations, they were merely giving the death warrant to a whole race; they understood this well, and, in their conversations with me, they made no particular attempt to conceal the fact.
 N: His own telegrams record ministers pleading military necessity: candour to the German embassy, a pretext for the American.
-N: Germany protested in two memoranda and did not stop it. Its parliament said so in twenty sixteen: despite unambiguous information from its own diplomats and missionaries, it did not try to stop these crimes.
+N: Germany protested in two memoranda and did not stop it. Its parliament said so in twenty sixteen: despite unambiguous information from its own diplomats, it did not try to stop these crimes.
 
 ## PERSPECTIVE | Genocide scholarship | revisionist
 # MOOD: reckoning
 # extract: src-kurt-2016.para1
-N: The fourth account is the scholars', and most of its books are closed to this programme: Suny, Akcam, Bloxham and Kieser are held by title only.
-N: What is held is three open articles and a German preprint. Umit Kurt, in twenty sixteen.
+N: The fourth account belongs to the scholars. Umit Kurt, writing in twenty sixteen in a Paris journal of Armenian studies.
 M: During World War I, mass murder, deportation, and forced assimilation were three faces of the same process of destruction organized by the Young Turk regime.
-N: Whether the design came before the war or in the spring of nineteen fifteen, the field is divided, and the archive that could settle it is not here.
+N: Whether the design came before the war or in the spring of nineteen fifteen, the field is divided; the archive that could settle it is not here.
 
 ## PERSPECTIVE | The Convention and the parliaments | academic
 # MOOD: procedure
 # extract: src-un-convention-1948.art2
-N: The fifth account is the law's, and it begins without the word. The Allied declaration of May nineteen fifteen spoke of crimes against humanity and civilization.
-N: The Treaty of Sevres of nineteen twenty bound Turkey to hand over those responsible for the massacres, and was never ratified.
-N: Raphael Lemkin published the word in nineteen forty four, in a book this programme could not open. The United Nations General Assembly adopted the Convention in nineteen forty eight. One of its acts is this.
+N: The fifth account belongs to the law. It begins without the word. In May nineteen fifteen Britain, France and Russia, the powers at war with the Ottoman Empire, declared they would hold its ministers responsible for crimes against humanity and civilization.
+N: The Treaty of Sevres of nineteen twenty, the peace the Allied powers signed with the Ottoman government, bound Turkey to hand over those responsible for the massacres, and was never ratified.
+N: Raphael Lemkin, a Polish lawyer, published the word in nineteen forty four. In nineteen forty eight the United Nations adopted the Genocide Convention, the treaty that defines the crime. One of its acts is this.
 M: Deliberately inflicting on the group conditions of life calculated to bring about its physical destruction in whole or in part
 N: The European Parliament resolved in nineteen eighty seven that the events constitute genocide within the meaning of the convention, and that no claim against present-day Turkey follows.
 N: France adopted a law of recognition in two thousand one. The United States used the word in twenty twenty one, for one and a half million dead.
@@ -178,18 +196,21 @@ N: France adopted a law of recognition in two thousand one. The United States us
 ## TURN | What each one leaves out
 # MOOD: reckoning
 N: Each is true as far as it goes.
-N: The account of the state explains a war zone, not Trebizond, Sivas, or towns fifty miles from the capital, and its count of the Muslim dead rests on a comparison no document here can test.
-N: The survivors have no Armenian archive of their own here: the woman from Kheiban comes through a British reprint, and the memoir was written up for American readers.
-N: The witnesses pass over the conspiracy a German vice-consul called a fact, and the risings the pamphlet of the government describes.
-N: The law has no judgment. And no Kurdish participant speaks here, though the consuls and the deported woman both name Kurds as the killers on the road.
+N: The state explains a war zone, not Trebizond, Sivas, or towns fifty miles from the capital; its count of the Muslim dead rests on a comparison no document here can test.
+N: The survivors have no Armenian archive here: the woman from Kheiban comes through a British reprint, the memoir was written up for American readers.
+N: The witnesses pass over the Armenian conspiracy a German vice-consul called a fact, and the risings the government's pamphlet describes.
+N: The law has no judgment. And no Kurdish participant speaks here, though the consuls and the deported woman name Kurds as the killers on the road.
 
 ## REST
 # MOOD: grief
 
 ## CLOSE
 # MOOD: grief
-N: Berlin, the fifteenth of March, nineteen twenty one. Soghomon Tehlirian shoots Talat Pasha in the street and stands trial for murder. A jury acquits him after two days of testimony about the massacres.
-N: A prosecution document at Nuremberg, headed as a talk Hitler gave his commanders in nineteen thirty nine and disputed in its attribution, ends a passage on killing the Polish population with one question. Who still talks nowadays of the extermination of the Armenians.
+N: In nineteen fifteen the Ottoman government drove its Armenians, a Christian people of about two million, from their homes towards the Syrian desert.
+N: The counts of the dead run from six hundred thousand to one and a half million. The Turkish state rejects the charge of genocide as unfounded.
+N: Berlin, the fifteenth of March, nineteen twenty one. Soghomon Tehlirian, an Armenian, shoots Talat Pasha, the minister who ordered the deportations, and stands trial for murder. A jury acquits him after two days of testimony about the massacres.
+N: A prosecution document at Nuremberg, the trial of the Nazi leaders, headed as a talk Hitler gave his commanders in nineteen thirty nine, its attribution disputed, ends a passage on killing the Polish population with one question.
+N: Who still talks nowadays of the extermination of the Armenians.
 N: The ally wrote it down. The neutral wrote it down. Neither of them stopped it.
 
 ## SAY
@@ -224,10 +245,6 @@ Lusanne = loo-SAHN
 Gates = GAYTS
 Rustem = roos-TEM
 Türkiye = TUR-kee-yeh
-Suny = SOO-nee
-Akcam = AHK-cham
-Bloxham = BLOKS-am
-Kieser = KEE-zer
 Umit Kurt = oo-MIT KURT
 Sevres = SEV-ruh
 Lemkin = LEM-kin
