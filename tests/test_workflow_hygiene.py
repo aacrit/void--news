@@ -30,6 +30,11 @@ W-07  pipeline.yml dispatches the deploy after its data commit (P0-1), its
 W-08  Retired schedules stay retired: db-cleanup has none; Pair Test and
       Anchor Pairs run once a day.
 W-09  Every action is pinned to a 40-hex commit with its tag in a comment.
+W-10  A `git add` that names a glob names nothing else. A pathspec that matches
+      no file makes git refuse the WHOLE call: weekly-digest.yml staged
+      weekly.json, the archive and `audio/weekly-*` in one call ending
+      `|| true`, a week with no audio has no such file, and Issue #28
+      (2026-10-04) was stored, exported and silently never committed.
 
     python3 tests/test_workflow_hygiene.py
 """
@@ -289,6 +294,36 @@ dbot = yaml.safe_load((ROOT / ".github/dependabot.yml").read_text())
 eco = {(u["package-ecosystem"], u["directory"]) for u in dbot.get("updates", [])}
 for want in (("npm", "/frontend"), ("npm", "/worker"), ("pip", "/pipeline"), ("github-actions", "/")):
     check(f"dependabot covers {want[0]} in {want[1]}", want in eco)
+
+# ---------------------------------------------------------------- W-10
+def glob_add_violations(text: str) -> list[str]:
+    """`git add` calls that name a glob beside any other path."""
+    import shlex
+    joined = re.sub(r"\\\n\s*", " ", text)
+    out = []
+    for cmd in re.split(r"\n|&&|\|\||;", joined):
+        cmd = cmd.strip()
+        if not re.match(r"(?:\w+\s+)?git(?:\s+-c\s+\S+)*\s+add\b", cmd):
+            continue
+        try:
+            toks = shlex.split(cmd, comments=True)
+        except ValueError:
+            toks = cmd.split()
+        args = toks[toks.index("add") + 1:]
+        paths = [t for t in args if not t.startswith("-") and not t.startswith("2>") and t != "/dev/null"]
+        if any(ch in t for t in paths for ch in "*?[") and len(paths) > 1:
+            out.append(cmd[:120])
+    return out
+
+
+check("W-10 detector fails a glob beside other paths",
+      bool(glob_add_violations("git add frontend/a.json \\\n  frontend/audio/weekly-* \\\n  b.xml || true")))
+check("W-10 detector passes a glob on its own",
+      not glob_add_violations("git add -A -- 'frontend/public/audio/weekly-*' 2>/dev/null || true\n"
+                              "git add -- \"$p\""))
+bad_adds = [f"{name}: {v}" for name, d in workflows.items() for _, _, st in steps(d)
+            for v in glob_add_violations(run_text(st))]
+check("W-10 no git add names a glob beside another path", not bad_adds, "; ".join(bad_adds))
 
 if failures:
     print(f"\nFAIL: {len(failures)} check(s)")
