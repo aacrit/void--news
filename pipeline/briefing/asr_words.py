@@ -49,6 +49,8 @@ def norm_words(text: str) -> list[str]:
     t = re.sub(r"\bper cent\b", "percent", t, flags=re.I)
     t = "".join(c for c in unicodedata.normalize("NFD", t) if unicodedata.category(c) != "Mn")
     words = [_canon(w) for w in re.findall(r"[a-z0-9]+", t.lower())]
+    # "nineteen oh four" spells back as "nineteen o four" (Scramble render).
+    words = ["oh" if w == "o" else w for w in words]
     # "two thousand and ninety four" is the British spoken form of 2,094; an
     # ASR model writes the digits, which spell back without the "and".
     words = [w for i, w in enumerate(words)
