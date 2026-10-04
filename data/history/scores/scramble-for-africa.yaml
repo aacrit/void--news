@@ -1,0 +1,363 @@
+# The documentary score for "The Scramble for Africa", as note data on sampled
+# real instruments. Rendered by pipeline/history/score.py; the samples live in
+# ~/.cache/void-score-samples (never in the repository) and are pinned by sha256.
+#
+# The music claims nothing about the event. Nothing here imitates a regional or
+# folk music, a drum, a named instrument of the continent, a march, a fanfare,
+# a bugle, a bell or a telegraph: the palette is a clarinet, a violin section
+# and a cello section plucked, each presented as what it is. None of the four
+# earlier composed scores uses any of them. This is a story about a rule
+# written in a room by people who never saw the land it was applied to, about
+# the thirty years of taking that followed, and about the people who fought it;
+# so the score is procedure and restraint. The theme is built from the house
+# cell (tonic, fifth, tonic, third: the shape of the On Air motif), in B, in
+# the minor mode with the sixth left unraised and the seventh never sounded, at
+# 54 beats a minute in two-beat bars: ten bars, twenty beats of 1.111 s. Bars 1
+# to 4 state the cell on B and step down home. Bars 5 to 7 state the SAME cell
+# a fourth higher, on E, with the plucked bass moving under it: the rule,
+# applied again, somewhere else. From its third (G) the line then walks down by
+# step, F#, E, D, C#, and stops on B, low, where it began: five bars of
+# arriving home. The clarinet never ornaments and never leaps except inside the
+# cell itself; the violins hold one open fifth and nothing else; the plucked
+# cellos keep a count under procedure, one note to a beat, dry. Testimony and
+# rupture carry no bed at all (mood.py): a person's own words and the moment
+# itself are in silence.
+#
+# Cues are keyed to the producer's moods and segment kinds, never to a line of
+# text, so the cinematic variant renders from this manifest whatever moods it
+# picks. Where each cue plays is the producer's (mood_plan): the theme under
+# the TITLE, the first word inside its release; beds under the spoken body by
+# mood, ducked to the mood's floor; transitions in the clear before a scene;
+# the rupture entry on the last word of the moment, or 1,200 ms after a clip's
+# trailing silence, never under it; the outro at the close, with the house
+# promo riding its held bars, so it is at most 13.75 s and silent at its end.
+slug: scramble-for-africa
+title: The Scramble for Africa
+version: 1
+key: B
+mode: minor, with the sixth left unraised; the seventh is never sounded
+tempo_bpm: 54
+house_cell: [0, 7, 0, 3]
+textures: []
+
+instruments:
+  clarinet:
+    library: VSCO 2 Community Edition (Versilian Studios), Clarinet, long sustain, softest layer (v1). The files are named an octave below what they sound (the file "D2" measures 146.8 Hz, D3, the instrument's lowest note); `note` is the sounding pitch. Every note the line uses is within two semitones of a recording, and nothing is asked of it below D3
+    role_as_presented: a clarinet
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: sustain
+    attack_s: 0.3
+    release_s: 0.7
+    loop_start_s: 1.0
+    gain_db: 0.0
+    # Loop regions are the steady part of each recording, measured in 0.5 s
+    # frames. The F3 is steady from 0.5 to 5.0 s and then decays, so a loop
+    # that ran to the default 7.5 s ended every cycle 5 dB down and jumped
+    # back (a 6 dB sawtooth under dread). The other four are steady to 8 s
+    # and no cue holds them past their length.
+    samples:
+      - {file: vsco2ce/Woodwinds/Clarinet/susLong/DCClar_susLong_F2_v1_rr1_sum.wav, note: F3, loop_end_s: 4.8, sha256: 008d2f0894c90e912f8315639ff8ed2687454195be14054e5fadee8e0db3b559, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Woodwinds/Clarinet/susLong/DCClar_susLong_F2_v1_rr1_sum.wav"}
+      - {file: vsco2ce/Woodwinds/Clarinet/susLong/DCClar_susLong_A#2_v1_rr1_sum.wav, note: Bb3, sha256: f4e51e4addda4e87e84b0a57b1de21cb447adff0a2c1aa5c71b5d3ef5618a93e, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Woodwinds/Clarinet/susLong/DCClar_susLong_A%232_v1_rr1_sum.wav"}
+      - {file: vsco2ce/Woodwinds/Clarinet/susLong/DCClar_susLong_D3_v1_rr1_sum.wav, note: D4, sha256: 74ba0ec6cb0698f314b07cee2f63cd309d5fd30db262d10d1f69e6aec9cd5896, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Woodwinds/Clarinet/susLong/DCClar_susLong_D3_v1_rr1_sum.wav"}
+      - {file: vsco2ce/Woodwinds/Clarinet/susLong/DCClar_susLong_F3_v1_rr1_sum.wav, note: F4, sha256: 0677787afa8d1fdc99e267a1518a49dacf3f1899dc27239c1fbe93568fda2222, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Woodwinds/Clarinet/susLong/DCClar_susLong_F3_v1_rr1_sum.wav"}
+      - {file: vsco2ce/Woodwinds/Clarinet/susLong/DCClar_susLong_A#3_v1_rr1_sum.wav, note: Bb4, sha256: c314aa26ec148ffa30afe988d7f4f178941a38ca401f487ea2633ce635e78d3f, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Woodwinds/Clarinet/susLong/DCClar_susLong_A%233_v1_rr1_sum.wav"}
+
+  violins:
+    library: VSCO 2 Community Edition (Versilian Studios), Violin Section, sustain vibrato, softest layer (v1). The files are named an octave below what they sound (the file "B2" measures 246.9 Hz, B3); `note` is the sounding pitch. The B and the F# of the held fifth are recordings of those notes, unshifted
+    role_as_presented: a violin section
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: sustain
+    attack_s: 0.9
+    release_s: 1.0
+    loop_start_s: 1.4
+    gain_db: 0.0
+    # The section's recordings bloom slowly (3.5 s from the first bow to full
+    # tone) and decay in their last 1.5 s; each loop region below is the
+    # steady tone between the two, so a held fifth does not breathe once a
+    # cycle. The bloom itself is kept: a pad entering with the theme swells
+    # in under its first bar.
+    samples:
+      - {file: vsco2ce/Strings/Violin Section/susVib/VlnEns_susVib_B2_v1.wav, note: B3, loop_start_s: 3.6, loop_end_s: 11.4, sha256: 1a873970a86da78ed8c9aa068303958496c34eee6fa94fcab39d499dbdfb7826, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Violin%20Section/susVib/VlnEns_susVib_B2_v1.wav"}
+      - {file: vsco2ce/Strings/Violin Section/susVib/VlnEns_susVib_D3_v1.wav, note: D4, loop_start_s: 3.5, loop_end_s: 10.0, sha256: 583e660bc5daa4e094aef5fc014fbb92751040be8741ed7a16847306a1fe0a99, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Violin%20Section/susVib/VlnEns_susVib_D3_v1.wav"}
+      - {file: vsco2ce/Strings/Violin Section/susVib/VlnEns_susVib_F#3_v1.wav, note: F#4, loop_start_s: 2.0, loop_end_s: 7.2, sha256: 8dc13d197373f0d1fe1b0744de57796800bde372906d3667398c55d473a383ea, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Violin%20Section/susVib/VlnEns_susVib_F%233_v1.wav"}
+      - {file: vsco2ce/Strings/Violin Section/susVib/VlnEns_susVib_C4_v1.wav, note: C5, sha256: c07edd5b2119fa1da2207aba996961b50dd616f69bbcf2300ab271bc6c16239f, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Violin%20Section/susVib/VlnEns_susVib_C4_v1.wav"}
+
+  cellos_pizz:
+    library: VSCO 2 Community Edition (Versilian Studios), Cello Section, pizzicato, softest layer (v1), first round robin. The files are named an octave below what they sound (the file "B1" measures 123.3 Hz, B2; "C1" is C2, the instrument's lowest string); `note` is the sounding pitch. The count's B and D are recordings of those notes, unshifted, and nothing is asked of the section below C2
+    role_as_presented: a cello section, plucked
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: pluck
+    release_s: 0.4
+    gain_db: 0.0
+    samples:
+      - {file: vsco2ce/Strings/Cello Section/pizzT/pizzT_E1_v1_RR1.wav, note: E2, sha256: 9fed783345f57619ccc7ac1eff282c4e5ec6ff30b7b935ee96da204efb6b6c59, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Cello%20Section/pizzT/pizzT_E1_v1_RR1.wav"}
+      - {file: vsco2ce/Strings/Cello Section/pizzT/pizzT_G1_v1_RR1.wav, note: G2, sha256: 4bfeddd80e7dd07d71f627d16b7458231c6b14118b8b8b3fe039ba8b73d88236, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Cello%20Section/pizzT/pizzT_G1_v1_RR1.wav"}
+      - {file: vsco2ce/Strings/Cello Section/pizzT/pizzT_B1_v1_RR1.wav, note: B2, sha256: 33bbfc9664e8536e8931fba5c53ab4e06abeb6f75fc3b6186bcdb159d6000604, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Cello%20Section/pizzT/pizzT_B1_v1_RR1.wav"}
+      - {file: vsco2ce/Strings/Cello Section/pizzT/pizzT_D2_v1_RR1.wav, note: D3, sha256: 434925e6b7d154cfa7c17e89ccc8e4a126e01a970cabee22fe09a9fb0e462bb6, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Cello%20Section/pizzT/pizzT_D2_v1_RR1.wav"}
+      - {file: vsco2ce/Strings/Cello Section/pizzT/pizzT_F2_v1_RR1.wav, note: F3, sha256: ff44e135372083b7c7989fc741c2ebc97bf91f11c5ba7d3c99bcf2c967f6c4e8, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Cello%20Section/pizzT/pizzT_F2_v1_RR1.wav"}
+      - {file: vsco2ce/Strings/Cello Section/pizzT/pizzT_C3_v1_RR1.wav, note: C4, sha256: 63353870ad00cebe9882b96abcceae12480d37b78b62ded6228fb638871e8a81, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Cello%20Section/pizzT/pizzT_C3_v1_RR1.wav"}
+
+# Note rows are [instrument, note, start in beats, length in beats or null, velocity].
+# null length on a pluck lets the recording decay on its own. One beat is 1.111 s.
+cues:
+  # Statement 1, under the TITLE: the line once over the violins' open fifth,
+  # the plucked cellos marking the bar groups. Bars 1 to 4 are the cell on B
+  # and the step home; bars 5 to 7 the cell a fourth up, on E, the bass moving
+  # to E with it; bars 8 to 10 the walk down by step onto a low B held. The
+  # first word of the title lands inside the last note's release.
+  theme:
+    claims: []
+    length_s: 25.0
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    notes:
+      - [clarinet, B3, 0, 2, 0.74]
+      - [clarinet, F#4, 2, 1, 0.66]
+      - [clarinet, B3, 3, 1, 0.68]
+      - [clarinet, D4, 4, 2, 0.72]
+      - [clarinet, C#4, 6, 1, 0.64]
+      - [clarinet, B3, 7, 1, 0.68]
+      - [clarinet, E4, 8, 2, 0.70]
+      - [clarinet, B4, 10, 1, 0.58]
+      - [clarinet, E4, 11, 1, 0.66]
+      - [clarinet, G4, 12, 2, 0.66]
+      - [clarinet, F#4, 14, 1, 0.64]
+      - [clarinet, E4, 15, 1, 0.64]
+      - [clarinet, D4, 16, 1, 0.66]
+      - [clarinet, C#4, 17, 1, 0.64]
+      - [clarinet, B3, 18, 2.6, 0.72]
+      - [violins, B3, 0, 20.6, 0.40]
+      - [violins, F#4, 0, 20.6, 0.24]
+      - [cellos_pizz, B2, 0, null, 0.60]
+      - [cellos_pizz, E2, 8, null, 0.52]
+      - [cellos_pizz, B2, 16, null, 0.56]
+
+  # Statement 3, at the close: the walk down again (E, D, C#) onto B, over the
+  # fifth, the plucked B twice. Everything released by 9 s and faded to silence
+  # inside 13.6 s so the house promo can ride it.
+  outro:
+    claims: []
+    length_s: 13.6
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 2400
+    tail_silence: true
+    notes:
+      - [clarinet, E4, 0, 1, 0.62]
+      - [clarinet, D4, 1, 1, 0.64]
+      - [clarinet, C#4, 2, 1, 0.62]
+      - [clarinet, B3, 3, 3.2, 0.68]
+      - [violins, B3, 0, 7.2, 0.40]
+      - [violins, F#4, 0, 7.2, 0.24]
+      - [cellos_pizz, B2, 0, null, 0.48]
+      - [cellos_pizz, B2, 4, null, 0.40]
+
+  # On the last word of a rupture scene, or after a recording's trailing
+  # silence: the theme's last two notes on a swell, inside the 6 s mood_plan
+  # opens.
+  rupture_entry:
+    claims: []
+    length_s: 6.0
+    peak_dbfs: -15.0
+    room_wet: 1.4
+    swell: [0.5, 2.8, 2.7]
+    notes:
+      - [clarinet, C#4, 0, 1, 0.60]
+      - [clarinet, B3, 1, 2.2, 0.70]
+      - [violins, B3, 0, 3.2, 0.40]
+      - [violins, F#4, 0, 3.2, 0.24]
+
+  # The change of voice (a letter, an order, a book, a speech): one plucked low
+  # note, touched.
+  sting:to_document:
+    claims: []
+    length_s: 0.9
+    peak_dbfs: -22.0
+    room_wet: 0.6
+    fade_out_ms: 150
+    notes:
+      - [cellos_pizz, B2, 0, 0.3, 0.55]
+
+  # The music returning after a recording, once its trailing silence is over.
+  # The live script carries no clip, so this key is defined for the producer's
+  # grammar and fires only if the cinematic variant admits one.
+  sting:from_clip:
+    claims: []
+    length_s: 2.4
+    peak_dbfs: -20.0
+    room_wet: 1.0
+    swell: [0.8, 0.6, 1.0]
+    notes:
+      - [violins, F#4, 0, 0.9, 0.45]
+      - [cellos_pizz, B3, 0, 1.2, 0.40]
+
+  # Dread (the room in Berlin, the rubber quota, the desert): the clarinet low
+  # on F#, the fifth BELOW the tonic, held and breathing at the halfway bar;
+  # the violins' B and F# faint above it, so the stack is a hollow fourth and
+  # fifth with no third anywhere; the plucked B once every 18 s, off the
+  # seam.
+  bed:dread:
+    claims: []
+    length_s: 35.556
+    fold: true
+    rms_dbfs: -34.0
+    room_wet: 0.6
+    notes:
+      - [clarinet, F#3, 0, 15, 0.46]
+      - [clarinet, F#3, 16, 15.2, 0.44]
+      - [violins, B3, 0, 32, 0.34]
+      - [violins, F#4, 0, 32, 0.16]
+      - [cellos_pizz, B2, 1, null, 0.30]
+      - [cellos_pizz, B2, 17, null, 0.26]
+
+  # Procedure (the conference, the general act, the treaties, the ledger): the
+  # plucked cellos keeping the count, dry. The house cell, one note every
+  # 1.111 s, the last note alternating.
+  bed:procedure:
+    claims: []
+    length_s: 35.556
+    fold: true
+    rms_dbfs: -33.0
+    room_wet: 0.0
+    notes:
+      - [cellos_pizz, B2, 0, null, 0.62]
+      - [cellos_pizz, F#3, 1, null, 0.46]
+      - [cellos_pizz, B2, 2, null, 0.52]
+      - [cellos_pizz, D3, 3, null, 0.46]
+      - [cellos_pizz, B2, 4, null, 0.62]
+      - [cellos_pizz, F#3, 5, null, 0.46]
+      - [cellos_pizz, B2, 6, null, 0.52]
+      - [cellos_pizz, C#3, 7, null, 0.46]
+      - [cellos_pizz, B2, 8, null, 0.62]
+      - [cellos_pizz, F#3, 9, null, 0.46]
+      - [cellos_pizz, B2, 10, null, 0.52]
+      - [cellos_pizz, D3, 11, null, 0.46]
+      - [cellos_pizz, B2, 12, null, 0.62]
+      - [cellos_pizz, F#3, 13, null, 0.46]
+      - [cellos_pizz, B2, 14, null, 0.52]
+      - [cellos_pizz, C#3, 15, null, 0.46]
+      - [cellos_pizz, B2, 16, null, 0.62]
+      - [cellos_pizz, F#3, 17, null, 0.46]
+      - [cellos_pizz, B2, 18, null, 0.52]
+      - [cellos_pizz, D3, 19, null, 0.46]
+      - [cellos_pizz, B2, 20, null, 0.62]
+      - [cellos_pizz, F#3, 21, null, 0.46]
+      - [cellos_pizz, B2, 22, null, 0.52]
+      - [cellos_pizz, C#3, 23, null, 0.46]
+      - [cellos_pizz, B2, 24, null, 0.62]
+      - [cellos_pizz, F#3, 25, null, 0.46]
+      - [cellos_pizz, B2, 26, null, 0.52]
+      - [cellos_pizz, D3, 27, null, 0.46]
+      - [cellos_pizz, B2, 28, null, 0.62]
+      - [cellos_pizz, F#3, 29, null, 0.46]
+      - [cellos_pizz, B2, 30, null, 0.52]
+      - [cellos_pizz, C#3, 31, null, 0.46]
+
+  # Reckoning (the turn, the five accounts, what each leaves out): the plucked
+  # cellos alone on B every 2.2 s, the low B every 18 s. No melody, the
+  # thinnest bed, under the deepest duck. The count starts on the second beat,
+  # not the first, so the loop's seam falls inside a decaying pluck rather
+  # than on an attack (the sparse-bed seam rule, learned on the Cambodian
+  # score).
+  bed:reckoning:
+    claims: []
+    length_s: 35.556
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 0.3
+    notes:
+      - [cellos_pizz, B2, 1, null, 0.55]
+      - [cellos_pizz, B3, 3, null, 0.40]
+      - [cellos_pizz, B3, 5, null, 0.40]
+      - [cellos_pizz, B3, 7, null, 0.40]
+      - [cellos_pizz, B3, 9, null, 0.40]
+      - [cellos_pizz, B3, 11, null, 0.40]
+      - [cellos_pizz, B3, 13, null, 0.40]
+      - [cellos_pizz, B3, 15, null, 0.40]
+      - [cellos_pizz, B2, 17, null, 0.55]
+      - [cellos_pizz, B3, 19, null, 0.40]
+      - [cellos_pizz, B3, 21, null, 0.40]
+      - [cellos_pizz, B3, 23, null, 0.40]
+      - [cellos_pizz, B3, 25, null, 0.40]
+      - [cellos_pizz, B3, 27, null, 0.40]
+      - [cellos_pizz, B3, 29, null, 0.40]
+      - [cellos_pizz, B3, 31, null, 0.40]
+
+  # Grief (the hands, the desert, the camps, the close): the violins' fifth
+  # alone with the tonic faint under it; the clarinet, low and plain, states
+  # the theme's walk down once (E, D, C#, B) and then is silent. The last 27 s
+  # of the loop are the violins alone.
+  bed:grief:
+    claims: []
+    length_s: 35.556
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 1.0
+    notes:
+      - [violins, F#4, 0, 32, 0.36]
+      - [violins, B3, 0, 32, 0.20]
+      - [clarinet, E4, 2, 1, 0.50]
+      - [clarinet, D4, 3, 1, 0.52]
+      - [clarinet, C#4, 4, 1, 0.50]
+      - [clarinet, B3, 5, 3, 0.54]
+
+  # Into a dread scene, in the clear: the clarinet's low F# swelling with the
+  # violins' B faint above it, one low pluck.
+  transition:dread:
+    claims: []
+    length_s: 3.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    swell: [0.3, 2.1, 1.4]
+    notes:
+      - [clarinet, F#3, 0, 1.8, 0.55]
+      - [violins, B3, 0, 1.8, 0.30]
+      - [cellos_pizz, B2, 0.2, null, 0.42]
+
+  # Into a procedure scene: three strokes of the count, dry.
+  transition:procedure:
+    claims: []
+    length_s: 4.6
+    peak_dbfs: -14.0
+    room_wet: 0.0
+    fade_out_ms: 900
+    notes:
+      - [cellos_pizz, B2, 0, null, 0.62]
+      - [cellos_pizz, F#3, 1, null, 0.50]
+      - [cellos_pizz, B2, 2, null, 0.52]
+
+  # Into a grief scene: the theme's last two notes on the clarinet, alone, the
+  # violins' F# over them.
+  transition:grief:
+    claims: []
+    length_s: 4.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    notes:
+      - [clarinet, C#4, 0, 1.0, 0.50]
+      - [clarinet, B3, 1, 1.4, 0.52]
+      - [violins, F#4, 0, 2.4, 0.30]
+
+  # Into the turn and the accounts: the count arriving.
+  transition:reckoning:
+    claims: []
+    length_s: 4.2
+    peak_dbfs: -14.0
+    room_wet: 0.3
+    fade_out_ms: 800
+    notes:
+      - [cellos_pizz, B2, 0, null, 0.58]
+      - [cellos_pizz, B3, 1, null, 0.46]
+      - [cellos_pizz, B3, 2, null, 0.46]
