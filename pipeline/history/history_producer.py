@@ -842,7 +842,14 @@ def produce(slug: str, out_dir: Path, *, only: list[str] | None = None,
 
     era = str(event.get("era") or "modern")
     if mood_mode:
-        score = history_score(era)
+        # The episode's sampled score where data/history/scores/<slug>.yaml
+        # renders it, the synthesised set for every other key and episode
+        # (history/score.py falls back key by key). Same keys, same shape.
+        try:
+            from history.score import load_score
+            score = load_score(slug, era)
+        except ImportError:
+            score = history_score(era)
         room = rp._asset("room")
         assets = {"theme": score.get("theme"), "outro": score.get("outro")}
 
