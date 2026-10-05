@@ -84,5 +84,23 @@
     "classes": [
       "weekly-capped-count"
     ]
+  },
+  {
+    "week_start": "2026-09-28",
+    "corrected_on": "2026-10-05",
+    "section": "The Cover",
+    "text": "The cover put the Flydubai co-pilot's reported words to investigators inside quotation marks. No report printed that week quotes him; they paraphrase what he reportedly told investigators. The sentence was removed.",
+    "classes": [
+      "weekly-quotation-not-in-sources"
+    ]
+  },
+  {
+    "week_start": "2026-09-28",
+    "corrected_on": "2026-10-05",
+    "section": "The Week in Brief",
+    "text": "The Week in Brief and the day by day rail carried a story and a TL;DR from Sunday, October 4, an edition that was never published. Both were removed.",
+    "classes": [
+      "weekly-off-week-content"
+    ]
   }
 ]
