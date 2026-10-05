@@ -36,9 +36,20 @@ def check(name, ok, detail=""):
 
 
 def _issue():
-    rows = json.loads(ISSUES.read_text(encoding="utf-8"))
-    return max((r for r in rows if isinstance(r, dict)),
-               key=lambda r: r.get("issue_number") or 0)
+    """The newest published issue that carries a left/right pair.
+
+    The bench SELECTS lines verbatim from the published pair, so a clean
+    rundown can only be built from an issue that has one. An issue without a
+    pair cannot have audio at all (W-01 refuses it, and the generator ships
+    the issue as text): Issue #28 (2026-10-04) published two unpaired columns,
+    and taking "the newest issue" here turned every branch's build-check red
+    with a KeyError instead of testing anything."""
+    rows = [r for r in json.loads(ISSUES.read_text(encoding="utf-8")) if isinstance(r, dict)]
+    paired = [r for r in rows
+              if {"L", "R"} <= set(_bench_columns(r.get("opinions") or []))]
+    if not paired:
+        raise SystemExit("FAIL  no published issue carries a left/right pair to build WA-01 from")
+    return max(paired, key=lambda r: r.get("issue_number") or 0)
 
 
 def _sentences(text, n, budget):
