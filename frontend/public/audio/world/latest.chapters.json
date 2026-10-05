@@ -1,51 +1,51 @@
 {
  "version": "1.2.0",
- "title": "On Air · Saturday 03 October 2026",
+ "title": "On Air · Monday 05 October 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Headlines",
-   "endTime": 38.375
+   "endTime": 37.5
   },
   {
-   "startTime": 38.375,
-   "title": "French Student Protests",
-   "endTime": 120.308
+   "startTime": 37.5,
+   "title": "French Protests Turn Violent",
+   "endTime": 116.723
   },
   {
-   "startTime": 120.308,
-   "title": "Congo Ebola Outbreak",
-   "endTime": 209.479
+   "startTime": 116.723,
+   "title": "Leavitt Joins Fox News",
+   "endTime": 198.704
   },
   {
-   "startTime": 209.479,
-   "title": "Trump Medicare Payments",
-   "endTime": 270.127
+   "startTime": 198.704,
+   "title": "Supreme Court Skeptical on Climate",
+   "endTime": 267.331
   },
   {
-   "startTime": 270.127,
-   "title": "Brazil Election",
-   "endTime": 345.004
+   "startTime": 267.331,
+   "title": "Yemeni Forces Advance",
+   "endTime": 334.037
   },
   {
-   "startTime": 345.004,
+   "startTime": 334.037,
    "title": "Also today",
-   "endTime": 409.921
+   "endTime": 383.632
   },
   {
-   "startTime": 409.921,
-   "title": "WNBA Semifinals",
-   "endTime": 455.423
+   "startTime": 383.632,
+   "title": "British Airways Emergency Landing",
+   "endTime": 409.556
   },
   {
-   "startTime": 455.423,
+   "startTime": 409.556,
    "title": "Opinion",
-   "endTime": 638.482
+   "endTime": 631.217
   },
   {
-   "startTime": 638.482,
-   "endTime": 651.582,
+   "startTime": 631.217,
+   "endTime": 644.317,
    "title": "Also from Void"
   }
  ]
