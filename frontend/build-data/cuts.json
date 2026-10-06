@@ -1,111 +1,19 @@
 {
-  "builtAt": "2026-10-05T20:54:25.779777Z",
+  "builtAt": "2026-10-06T18:27:46.515639Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "c5431aa0-f76f-4c06-b873-043b10ca2110",
-      "title": "British Airways Flight Declares Emergency, Descends 28,000 Feet Over Ireland",
-      "sentences": [],
-      "points": [
-        {
-          "text": "LiveMint states that the 7700 emergency code signifies \"unlawful interference, indicating a possible hijacking incident,\" while other sources like Daily Mail and India TV News describe it as a code for a \"general emergency\" without specifying hijacking.",
-          "rule": "E-14",
-          "message": "summary quotes \"unlawful interference, indicating a possible hijacking incident,\", which appears in none of the source articles: quote it as written or paraphrase it"
-        }
-      ],
-      "left": []
-    },
-    {
-      "id": "557a4476-ba6d-4b34-9661-739f3a942f10",
-      "title": "Obama Campaigns for Michigan Senate Candidate Abdul El-Sayed in Detroit",
+      "id": "b23227e5-6337-48ca-9fe7-f2972f884b7e",
+      "title": "Quebec Separatist Party Wins Election, Forms Minority Government",
       "sentences": [
         {
-          "text": "Rogers criticized El-Sayed on October 5 for attending a New York City fundraiser with a $57,000 admission price, alleging El-Sayed is funded by wealthy backers and the radical left.",
+          "text": "The party, led by Paul St-Pierre Plamondon, was on track to win nearly 60 of the 127 seats in Quebec’s National Assembly, falling short of the 64 needed for a majority.",
           "rule": "E-13",
-          "message": "summary puts 57000 beside \"new york city\", but no source sentence carrying 57000 names it and one names another \"new ...\": \"Rogers criticized El-Sayed on October 5 for attending a New York City fundraiser with a $5\""
+          "message": "summary puts 60 beside \"quebec national assembly\", but no source sentence carrying 60 names it and one names another \"quebec ...\": \"The party, led by Paul St-Pierre Plamondon, was on track to win nearly 60 of the 127 seats\""
         }
       ],
       "points": [],
       "left": []
-    },
-    {
-      "id": "901106b7-9b7a-4eb8-9422-551b56b110d7",
-      "title": "Trump Rallies in Nebraska for Senator Ricketts Amid Tight Race",
-      "sentences": [
-        {
-          "text": "President Donald Trump is campaigning in Grand Island, Nebraska, on Monday, October 5, 2026, for a rally supporting incumbent Senator Pete Ricketts.",
-          "rule": "E-13",
-          "message": "summary puts 2026 beside \"senator pete ricketts\", but no source sentence carrying 2026 names it and one names another \"senator ...\": \"President Donald Trump is campaigning in Grand Island, Nebraska, on Monday, October 5, 202\""
-        },
-        {
-          "text": "The Cook Political Report rates the race as \"Likely Republican.\" Trump won Nebraska statewide three times by approximately 20 points each time, though the Democratic candidate received one electoral college vote from Nebraska in 2020 and 2024 due to the state's split electoral college votes.",
-          "rule": "E-13",
-          "message": "summary puts 20 beside \"cook political report\", but no source sentence carrying 20 names it and one names another \"cook ...\": \"The Cook Political Report rates the race as \"Likely Republican.\" Trump won Nebraska statew\""
-        }
-      ],
-      "points": [],
-      "left": []
-    },
-    {
-      "id": "87ad4ccc-088e-4c9f-a431-e299e05929fc",
-      "title": "Flydubai Co-Pilot Attacked Captain, Attempted Terrorist Act on Flight",
-      "sentences": [
-        {
-          "text": "Israel had prepared to shoot down the plane to prevent a 9/11-style attack, according to sources, but the aircraft turned toward Saudi Arabia before that action was taken.",
-          "rule": "E-13",
-          "message": "summary puts 11 beside \"saudi arabia\", but no source sentence carrying 11 names it and one names another \"saudi ...\": \"Israel had prepared to shoot down the plane to prevent a 9/11-style attack, according to s\""
-        }
-      ],
-      "points": [],
-      "left": []
-    },
-    {
-      "id": "6086e7d4-971b-447d-9473-d49893a97d41",
-      "title": "Prison Chief Resigns After Christa Pike's Failed Lethal Injection",
-      "sentences": [
-        {
-          "text": "She was sentenced to death in 1996 for the 1995 murder of 19-year-old Colleen Slemmer, whom she tortured and killed with the help of Tadaryl Shipp and Shadolla Peterson.",
-          "rule": "E-13",
-          "message": "summary puts 19 beside \"tadaryl shipp\", but no source sentence carrying 19 names it and one names another \"tadaryl ...\": \"She was sentenced to death in 1996 for the 1995 murder of 19-year-old Colleen Slemmer, who\""
-        }
-      ],
-      "points": [],
-      "left": []
-    },
-    {
-      "id": "2eaf177c-6479-43ec-8028-d050d7d337e3",
-      "title": "Trump Names Jay Clayton to Lead New 'Super Intelligence Force'",
-      "sentences": [
-        {
-          "text": "President Donald Trump announced on Sunday, October 4, 2026, that he has tapped Jay Clayton, his Director of National Intelligence, to lead a new government task force on artificial intelligence.",
-          "rule": "E-13",
-          "message": "summary puts 2026 beside \"president donald trump\", but no source sentence carrying 2026 names it and one names another \"president ...\": \"President Donald Trump announced on Sunday, October 4, 2026, that he has tapped Jay Clayto\""
-        }
-      ],
-      "points": [],
-      "left": []
-    },
-    {
-      "id": "919ed35c-6105-46a8-9614-891e2885c872",
-      "title": "Medicare Advantage Premiums May Decline, Networks Tighten in 2027",
-      "sentences": [
-        {
-          "text": "Separately, Independence Blue Cross agreed to a $22.5 million settlement to resolve allegations of submitting inaccurate diagnosis data to CMS between 2017 and 2021, which inflated risk adjustment payments.",
-          "rule": "E-16",
-          "message": "sentence opens on \"Separately\", announcing another story: \"Separately, Independence Blue Cross agreed to a $22.5 million settlement to resolve allega\""
-        }
-      ],
-      "points": [],
-      "left": []
-    },
-    {
-      "id": "777f4550-4dcc-4cb3-a714-f8ed853da1ee",
-      "title": "Spanish Prime Minister Pedro Sánchez Calls Snap Election for November 29",
-      "sentences": [],
-      "points": [],
-      "left": [
-        "headline puts 29 beside \"spanish prime minister pedro sánchez calls snap election\", but no source sentence carrying 29 names it and one names another \"spanish ...\": \"Spanish Prime Minister Pedro Sánchez Calls Snap Election for November 29\""
-      ]
     }
   ]
 }

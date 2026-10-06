@@ -1,51 +1,51 @@
 {
  "version": "1.2.0",
- "title": "On Air · Monday 05 October 2026",
+ "title": "On Air · Tuesday 06 October 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Headlines",
-   "endTime": 37.5
+   "endTime": 38.522
   },
   {
-   "startTime": 37.5,
+   "startTime": 38.522,
+   "title": "Trump Defends Iran Remarks",
+   "endTime": 104.589
+  },
+  {
+   "startTime": 104.589,
+   "title": "Supreme Court Hears Climate Suits",
+   "endTime": 175.562
+  },
+  {
+   "startTime": 175.562,
    "title": "French Protests Turn Violent",
-   "endTime": 116.723
+   "endTime": 234.204
   },
   {
-   "startTime": 116.723,
-   "title": "Leavitt Joins Fox News",
-   "endTime": 198.704
+   "startTime": 234.204,
+   "title": "Trump Will Not Reimburse Ads",
+   "endTime": 294.959
   },
   {
-   "startTime": 198.704,
-   "title": "Supreme Court Skeptical on Climate",
-   "endTime": 267.331
-  },
-  {
-   "startTime": 267.331,
-   "title": "Yemeni Forces Advance",
-   "endTime": 334.037
-  },
-  {
-   "startTime": 334.037,
+   "startTime": 294.959,
    "title": "Also today",
-   "endTime": 383.632
+   "endTime": 357.058
   },
   {
-   "startTime": 383.632,
-   "title": "British Airways Emergency Landing",
-   "endTime": 409.556
+   "startTime": 357.058,
+   "title": "Paramount Skydance Acquisition",
+   "endTime": 375.579
   },
   {
-   "startTime": 409.556,
+   "startTime": 375.579,
    "title": "Opinion",
-   "endTime": 631.217
+   "endTime": 598.483
   },
   {
-   "startTime": 631.217,
-   "endTime": 644.317,
+   "startTime": 598.483,
+   "endTime": 611.583,
    "title": "Also from Void"
   }
  ]
