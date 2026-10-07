@@ -1,51 +1,51 @@
 {
  "version": "1.2.0",
- "title": "On Air · Tuesday 06 October 2026",
+ "title": "On Air · Wednesday 07 October 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Headlines",
-   "endTime": 38.522
+   "endTime": 39.889
   },
   {
-   "startTime": 38.522,
-   "title": "Trump Defends Iran Remarks",
-   "endTime": 104.589
+   "startTime": 39.889,
+   "title": "French Protests Continue",
+   "endTime": 109.881
   },
   {
-   "startTime": 104.589,
-   "title": "Supreme Court Hears Climate Suits",
-   "endTime": 175.562
+   "startTime": 109.881,
+   "title": "Kenya Confirms Ebola Death",
+   "endTime": 196.235
   },
   {
-   "startTime": 175.562,
-   "title": "French Protests Turn Violent",
-   "endTime": 234.204
+   "startTime": 196.235,
+   "title": "UK Iran Drone Plot",
+   "endTime": 262.365
   },
   {
-   "startTime": 234.204,
-   "title": "Trump Will Not Reimburse Ads",
-   "endTime": 294.959
+   "startTime": 262.365,
+   "title": "Israel Strikes Gaza",
+   "endTime": 331.83
   },
   {
-   "startTime": 294.959,
+   "startTime": 331.83,
    "title": "Also today",
-   "endTime": 357.058
+   "endTime": 406.349
   },
   {
-   "startTime": 357.058,
-   "title": "Paramount Skydance Acquisition",
-   "endTime": 375.579
+   "startTime": 406.349,
+   "title": "French A-I Firm Unveils New Model",
+   "endTime": 445.28
   },
   {
-   "startTime": 375.579,
+   "startTime": 445.28,
    "title": "Opinion",
-   "endTime": 598.483
+   "endTime": 639.369
   },
   {
-   "startTime": 598.483,
-   "endTime": 611.583,
+   "startTime": 639.369,
+   "endTime": 652.469,
    "title": "Also from Void"
   }
  ]

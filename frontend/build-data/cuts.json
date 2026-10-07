@@ -1,18 +1,44 @@
 {
-  "builtAt": "2026-10-06T18:27:46.515639Z",
+  "builtAt": "2026-10-07T18:39:49.560464Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "b23227e5-6337-48ca-9fe7-f2972f884b7e",
-      "title": "Quebec Separatist Party Wins Election, Forms Minority Government",
+      "id": "084423a4-5d6f-44c0-85bf-e1dbb5d47d30",
+      "title": "Cornell Students Plan Sit-In Over Alleged Fraternity Assault, University Hires Investigator",
+      "sentences": [],
+      "points": [
+        {
+          "text": "Breitbart News frames the newly released video from the Cornell investigation as showing \"witnesses told Cornell investigators Jane Doe consented to group sex,\" while ABC News and Newsweek describe the fraternity members as saying they \"heard it was all consensual\" or \"the general rumor... Was that it was a consensual thing,\" with an investigator questioning how they knew.",
+          "rule": "E-14",
+          "message": "summary quotes \"the general rumor\", which appears in none of the source articles: quote it as written or paraphrase it"
+        }
+      ],
+      "left": []
+    },
+    {
+      "id": "c3a6282c-9e57-4f8a-abac-5c45ddf56aa4",
+      "title": "Kyiv Deploys AI Turrets for Defense as Russian Drone Attacks Spike",
       "sentences": [
         {
-          "text": "The party, led by Paul St-Pierre Plamondon, was on track to win nearly 60 of the 127 seats in Quebec’s National Assembly, falling short of the 64 needed for a majority.",
+          "text": "President Zelensky stated on October 4 that Russia launched 1,900 strike drones, 1,700 guided aerial bombs, and 25 missiles against Ukraine over the preceding week.",
           "rule": "E-13",
-          "message": "summary puts 60 beside \"quebec national assembly\", but no source sentence carrying 60 names it and one names another \"quebec ...\": \"The party, led by Paul St-Pierre Plamondon, was on track to win nearly 60 of the 127 seats\""
+          "message": "summary puts 1700 beside \"president zelensky\", but no source sentence carrying 1700 names it and one names another \"president ...\": \"President Zelensky stated on October 4 that Russia launched 1,900 strike drones, 1,700 gui\""
         }
       ],
       "points": [],
+      "left": []
+    },
+    {
+      "id": "a51f603a-58b0-4df4-9ee4-f7850d45eb24",
+      "title": "Spanish Unions Call General Strike Over Housing Ahead of Snap Election",
+      "sentences": [],
+      "points": [
+        {
+          "text": "The Economist [12] and New Haven Register [10] provide broader framing of the election as a \"gamble\" or a response to protests, without detailing the union strike.",
+          "rule": "E-13",
+          "message": "summary states 12, which appears in none of the source articles: source it or cut it"
+        }
+      ],
       "left": []
     }
   ]

@@ -1,11 +1,11 @@
 {
- "builtAt": "2026-10-06T18:27:46.515639Z",
- "briefCreatedAt": "2026-10-06T18:27:05.495142+00:00",
+ "builtAt": "2026-10-07T18:39:49.560464Z",
+ "briefCreatedAt": "2026-10-07T18:39:16.993557+00:00",
  "products": {
   "card_headline": {
    "sentences": 20,
    "anchored": 2,
-   "checked": 1,
+   "checked": 2,
    "anchorTypes": [
     "number",
     "quote"
@@ -13,42 +13,42 @@
    "byAnchor": {
     "number": 2
    },
-   "coverage": 5.0
+   "coverage": 10.0
   },
   "card_summary": {
-   "sentences": 208,
-   "anchored": 64,
-   "checked": 27,
+   "sentences": 246,
+   "anchored": 67,
+   "checked": 40,
    "byAnchor": {
-    "number": 61,
-    "quote": 3
+    "number": 64,
+    "quote": 5
    },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "coverage": 13.0
+   "coverage": 16.3
   },
   "points": {
-   "sentences": 173,
-   "anchored": 51,
-   "checked": 24,
+   "sentences": 190,
+   "anchored": 34,
+   "checked": 21,
    "anchorTypes": [
     "number",
     "quote"
    ],
    "byAnchor": {
-    "number": 41,
-    "quote": 11
+    "number": 28,
+    "quote": 6
    },
-   "coverage": 13.9,
-   "machinePointsExcluded": 4
+   "coverage": 11.1,
+   "machinePointsExcluded": 3
   },
   "tldr": {
-   "sentences": 31,
-   "anchored": 26,
-   "checked": 26,
-   "coverage": 83.9,
+   "sentences": 28,
+   "anchored": 20,
+   "checked": 20,
+   "coverage": 71.4,
    "anchorTypes": [
     "number",
     "name",
@@ -56,18 +56,19 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 16,
-    "name": 19,
-    "number": 8
+    "date": 7,
+    "name": 15,
+    "number": 9,
+    "quote": 1
    },
    "groundingRan": true,
    "shipped": true
   },
   "opinion": {
-   "sentences": 26,
-   "anchored": 6,
-   "checked": 6,
-   "coverage": 23.1,
+   "sentences": 21,
+   "anchored": 7,
+   "checked": 7,
+   "coverage": 33.3,
    "anchorTypes": [
     "number",
     "name",
@@ -76,18 +77,17 @@
    ],
    "byAnchor": {
     "date": 1,
-    "name": 4,
-    "number": 1,
-    "quote": 2
+    "name": 6,
+    "number": 2
    },
    "groundingRan": true,
    "shipped": true
   },
   "onair": {
-   "sentences": 57,
-   "anchored": 31,
-   "checked": 31,
-   "coverage": 54.4,
+   "sentences": 84,
+   "anchored": 48,
+   "checked": 48,
+   "coverage": 57.1,
    "anchorTypes": [
     "number",
     "name",
@@ -95,9 +95,9 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 5,
-    "name": 25,
-    "number": 7
+    "date": 10,
+    "name": 32,
+    "number": 17
    },
    "groundingRan": true,
    "shipped": true
@@ -108,28 +108,24 @@
   "freshKnown": true,
   "fresh": 20,
   "states": {
-   "confirmable": 8,
-   "index cap below writer window": 12
+   "confirmable": 12,
+   "index cap below writer window": 8
   }
  },
  "audit": {
   "shipped": {
-   "advisory": {
-    "E-13 misattached": 5
+   "cannot confirm": {
+    "E-13 misattached": 1,
+    "E-14 absent": 1
    }
   },
-  "bench": {
-   "cannot confirm": {
-    "E-13 absent": 1,
-    "E-13 misattached": 1
-   }
-  }
+  "bench": {}
  },
  "run": {
   "brief": {
-   "cut_sentences": 6,
+   "cut_sentences": 4,
    "cuts_by_reason": {
-    "name": 6
+    "name": 4
    },
    "edition": "world",
    "grounding_ran": {
@@ -139,27 +135,25 @@
    }
   },
   "onair": {
-   "cut_sentences": 5,
+   "cut_sentences": 2,
    "cuts_by_reason": {
-    "name": 4,
-    "number": 1
+    "name": 2
    },
    "grounding_ran": true
   },
-  "startedAt": "2026-10-06T18:08:09Z",
+  "startedAt": "2026-10-07T18:25:33Z",
   "stage2": {
    "candidates": 35,
-   "critique_read": 33,
+   "critique_read": 35,
    "critique_unread": 0,
-   "cut_sentences": 16,
+   "cut_sentences": 12,
    "cuts_by_reason": {
-    "number": 8,
-    "other story": 7,
-    "quotation": 3
+    "number": 10,
+    "other story": 3
    },
-   "dropped": 2,
+   "dropped": 0,
    "kept_failing": 0,
-   "regenerated": 4,
+   "regenerated": 2,
    "reviewed": true,
    "fresh": 35
   }
@@ -183,5 +177,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-10-06T18:27:58Z"
+ "computedAt": "2026-10-07T18:39:56Z"
 }
