@@ -1,0 +1,146 @@
+[
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 18,
+  "a": {
+   "title": "Ronaldo stays on under cloud as Messi exits internationals",
+   "summary": "Just hours before Lionel Messi played his last match for Argentina, Cristiano Ronaldo posted his latest salvo in a row with Portugal. Ronaldo wants to play on despite the troubles, while Messi bathed in adulation.",
+   "link": "https://www.dw.com/en/ronaldo-stays-on-under-cloud-as-messi-exits-internationals/a-79574551?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Messi weint, Ronaldo flüchtet: Das Ende zweier Ären",
+   "summary": "Zwei große Nationalmannschaftskarrieren im Fußball gehen zu Ende. Doch während Lionel Messi in Argentinien als gefeierter Held abtritt, flüchtet Cristiano Ronaldo als beleidigter Altstar von Portugals Selecao.",
+   "link": "https://www.dw.com/de/messi-weint-ronaldo-flüchtet-das-ende-zweier-ären/a-79574118?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 33,
+  "a": {
+   "title": "Latvian filmmaker wins €400,000 Grand Prix at Kazakhstan's AI film festival",
+   "summary": "The first Astana AI Film Festival has concluded in Kazakhstan, with Latvian filmmaker Nikolay Shestak taking the Grand Prix. The festival had a total fund of €1.8 million, with half allocated to prize money and the other half to investment in promising AI teams and film production in Kazakhstan.",
+   "link": "https://www.euronews.com/2026/10/06/latvian-filmmaker-wins-400000-grand-prix-at-kazakhstans-ai-film-festival",
+   "published": "Tue, 06 Oct 2026 10:37:39 +0200"
+  },
+  "b": {
+   "title": "Un réalisateur letton remporte le Grand Prix de 400 000 € au festival kazakh du film d'IA",
+   "summary": "Le premier festival Astana AI du film s'est achevé au Kazakhstan, le Letton Nikolay Shestak remportant le Grand Prix. Budget : 1,8 million d'euros, moitié en prix, moitié pour soutenir des équipes d'IA et la production cinématographique au Kazakhstan.",
+   "link": "https://fr.euronews.com/2026/10/06/un-realisateur-letton-remporte-le-grand-prix-de-400-000-au-festival-kazakh-du-film-dia",
+   "published": "Tue, 06 Oct 2026 10:39:35 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 24,
+  "a": {
+   "title": "Yemen government forces advance on Bab el-Mandeb in offensive against Houthis",
+   "summary": "Operation Yemen Dawn, backed by 100 Saudi coalition aircraft, retook the town of Dhubab just north of the strait, as the Houthis claimed they struck Riyadh's international airport, an oil refinery and military bases across Saudi Arabia, and Pakistan and Turkey agreed to deploy troops to the kingdom.",
+   "link": "https://www.euronews.com/2026/10/06/yemen-government-forces-advance-on-bab-el-mandeb-in-offensive-against-houthis",
+   "published": "Tue, 06 Oct 2026 10:54:43 +0200"
+  },
+  "b": {
+   "title": "Les forces gouvernementales yéménites avancent vers Bab el-Mandeb contre les Houthis",
+   "summary": "L'opération Yemen Dawn reprend Dhubab avec 100 avions saoudiens ; les Houthis disent avoir frappé l'aéroport et une raffinerie à Riyad, tandis que le Pakistan et la Turquie envoient des troupes.",
+   "link": "https://fr.euronews.com/2026/10/06/les-forces-gouvernementales-yemenites-avancent-vers-bab-el-mandeb-contre-les-houthis",
+   "published": "Tue, 06 Oct 2026 10:56:21 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 21,
+  "a": {
+   "title": "Hardline Iranian MPs move to impeach foreign minister over UN General Assembly talks",
+   "summary": "The motion, filed by MPs aligned with the Paydari Front, accuses Araghchi of meeting US envoy Steve Witkoff at the UN General Assembly without authorisation, a claim directly opposed by Supreme National Security Council chief Mohsen Rezaei, who said the talks had prior approval.",
+   "link": "https://www.euronews.com/2026/10/07/hardline-iranian-mps-move-to-impeach-foreign-minister-over-un-general-assembly-talks",
+   "published": "Wed, 07 Oct 2026 11:44:34 +0200"
+  },
+  "b": {
+   "title": "Iran : des députés radicaux veulent destituer le chef de la diplomatie du pays",
+   "summary": "Les députés du Front Paydari accusent Abbas Araghchi d'avoir rencontré Steve Witkoff à l'ONU sans autorisation, ce que dément Mohsen Rezaei, chef du Conseil suprême de la sécurité nationale.",
+   "link": "https://fr.euronews.com/2026/10/07/iran-des-deputes-radicaux-veulent-destituer-le-chef-de-la-diplomatie-du-pays",
+   "published": "Wed, 07 Oct 2026 16:05:25 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 19,
+  "a": {
+   "title": "Quebec separatists vow independence referendum after winning local elections but falling short of majority",
+   "summary": "Canada’s Prime Minister Mark Carney has pledged to work with the incoming separatist government in Quebec to address the needs and issues of the province, including resisting a hostile US administration, creating jobs and building housing.",
+   "link": "https://www.euronews.com/2026/10/06/quebec-separatists-vow-independence-referendum-after-winning-local-elections-but-falling-s",
+   "published": "Tue, 06 Oct 2026 06:37:15 +0200"
+  },
+  "b": {
+   "title": "Canada : les indépendantistes remportent les élections au Québec et promettent un référendum",
+   "summary": "Le Premier ministre canadien Mark Carney veut travailler avec le futur gouvernement séparatiste du Québec pour défendre la province face à une administration américaine hostile et créer des emplois et des logements.",
+   "link": "https://fr.euronews.com/2026/10/06/canada-les-independantistes-remportent-les-elections-au-quebec-et-promettent-un-referendum",
+   "published": "Tue, 06 Oct 2026 07:27:58 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 18,
+  "a": {
+   "title": "Israelis mourn Nova festival victims three years after Hamas attack",
+   "summary": "Ceremonies at the Nova festival site and Kfar Aza marked three years since the Hamas-led October 7 attack that sparked the Gaza war.",
+   "link": "https://www.euronews.com/video/2026/10/07/israelis-mourn-nova-festival-victims-three-years-after-hamas-attack",
+   "published": "Wed, 07 Oct 2026 09:00:12 +0200"
+  },
+  "b": {
+   "title": "Des Israéliens rendent hommage aux victimes du festival Nova, trois ans après l'attaque du Hamas",
+   "summary": "Des cérémonies sur le site du festival Nova et à Kfar Aza ont marqué les trois ans de l'attaque du 7 octobre menée par le Hamas, à l'origine de la guerre de Gaza.",
+   "link": "https://fr.euronews.com/video/2026/10/07/des-israeliens-rendent-hommage-aux-victimes-du-festival-nova-trois-ans-apres-lattaque-du-h",
+   "published": "Wed, 07 Oct 2026 09:00:12 +0200"
+  }
+ },
+ {
+  "newsroom": "RFI",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 22,
+  "a": {
+   "title": "‘I became their slave’: Israeli hostage recounts 500 days in Hamas captivity",
+   "summary": "Omer Shem Tov was abducted by Hamas at the Nova music festival in Israel on 7 October, 2023 and held hostage by the armed Islamist group for 505 days. The 24-year-old has published a book about his time in captivity, entitled Meeting Myself in Hell. RFI spoke to him at his parents' home near Tel Aviv.",
+   "link": "https://www.rfi.fr/en/international/20261007-i-became-their-slave-israeli-hostage-recounts-500-days-in-hamas-captivity",
+   "published": "Wed, 07 Oct 2026 14:31:33 GMT"
+  },
+  "b": {
+   "title": "Omer Shem Tov, otage du Hamas pendant 505 jours: «J’étais l’esclave de mes geôliers»",
+   "summary": "Omer Shem Tov a 24 ans, il a été enlevé par le Hamas au festival Nova le 7 octobre 2023. Il est resté otage du mouvement islamiste armé pendant 505 jours. Il vient de publier un livre en hébreu et en anglais sur l'histoire de sa détention : Meeting myself in hell, que l'on peut traduire par « seul avec moi-même en enfer ». Rencontre avec ce jeune homme chez ses parents, près de Tel Aviv.",
+   "link": "https://www.rfi.fr/fr/podcasts/le-grand-invit%C3%A9-international/20261007-omer-shem-tov-otage-du-hamas-pendant-505-jours-j-%C3%A9tais-l-esclave-de-mes-ge%C3%B4liers",
+   "published": "Wed, 07 Oct 2026 06:14:25 GMT"
+  }
+ },
+ {
+  "newsroom": "RFI",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 20,
+  "a": {
+   "title": "Franco-Japanese duo Kagan and Soai win 2026 Nobel Prize in chemistry",
+   "summary": "The Nobel Prize in chemistry was awarded on Wednesday to French scientist Henri B. Kagan and Japan’s Kenso Soai for unravelling the mystery of why only one of two forms of certain molecules occurs in nature.",
+   "link": "https://www.rfi.fr/en/international/20261007-franco-japanese-duo-kagan-and-soai-win-2026-nobel-prize-in-chemistry",
+   "published": "Wed, 07 Oct 2026 12:15:50 GMT"
+  },
+  "b": {
+   "title": "Le prix Nobel de chimie décerné au Français Henri Kagan et au Japonais Kenso Soai",
+   "summary": "Les deux lauréats ont été récompensés pour leurs travaux ayant permis « la découverte des effets non linéaires et de l’autocatalyse dans la synthèse organique asymétrique », a annoncé le comité Nobel, réuni à Stockholm, ce mercredi 7 octobre.",
+   "link": "https://www.rfi.fr/fr/science/20261007-le-prix-nobel-de-chimie-d%C3%A9cern%C3%A9-au-fran%C3%A7ais-henri-kagan-et-au-japonais-kenso-soai",
+   "published": "Wed, 07 Oct 2026 09:57:21 GMT"
+  }
+ }
+]
