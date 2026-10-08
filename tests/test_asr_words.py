@@ -96,6 +96,18 @@ def test_british_ising() -> None:
     passes("recognising", "Nobody was recognising the border.", "Nobody was recognizing the border.")
 
 
+def test_british_ence() -> None:
+    # 2026-10-07 Cuban Missile Crisis render: "defence" heard "defense" on every take.
+    passes("defence", "Its arms in Cuba were for defence only.", "Its arms in Cuba were for defense only.")
+
+
+def test_designators() -> None:
+    # 2026-10-07: "a U two" heard "a U-2" on every take. Same value only.
+    passes("U two", "Photographs from a U two, a reconnaissance plane.", "Photographs from a U-2, a reconnaissance plane.")
+    passes("R twelve", "The R twelve warheads were on the ship.", "The R-12 warheads were on the ship.")
+    fails("U three is not U two", "Photographs from a U two.", "Photographs from a U-3.")
+
+
 # -- number formatting: same value, folded ----------------------------------
 
 def test_fraction_formats() -> None:
