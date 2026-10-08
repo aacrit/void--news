@@ -1,0 +1,7 @@
+source: src-nsa-gubarev-1986
+locator: item2
+url: https://nsarchive.gwu.edu/sites/default/files/documents/6279556/National-Security-Archive-Doc-12-Letter-from.pdf
+read: 2026-10-07
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+2. Soldiers working in danger zones (including 800 meters from the reactor) did not have means for individual protection, including those men who were unloading lead. In conversations, it became clear that they did not have such [protective] clothing. Helicopter pilots were in the same situation.

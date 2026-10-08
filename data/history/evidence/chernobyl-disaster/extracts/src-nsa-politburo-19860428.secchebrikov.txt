@@ -1,0 +1,8 @@
+source: src-nsa-politburo-19860428
+locator: secchebrikov
+url: https://nsarchive.gwu.edu/sites/default/files/documents/6279037/National-Security-Archive-Doc-4-Extraordinary.pdf
+read: 2026-10-07
+note: V.M. Chebrikov, chairman of the KGB
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+Chebrikov V.M. There is nothing of concern so far in our area. The population is calm. But we have to keep in mind that only a small circle of people know about the accident.

@@ -1,0 +1,8 @@
+source: src-dobrynin-19621027
+locator: p79
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf
+read: 2026-10-07
+note: the PDF's text layer, line breaks folded to spaces; where the layer breaks a word at a line end its hyphen is kept as it prints it ('docu- ment'); nothing is corrected
+note: printed page 79: Dobrynin's ciphered telegram of 27 October 1962, Robert Kennedy's words as Dobrynin reported them, in the Bulletin's translation (Mark H. Doctoroff); the same telegram's passage on Turkey is held as src-cwihp-bulletin-5.p80
+
+“Because of the plane that was shot down, there is now strong pressure on the president to give an order to respond with fire if fired upon when American reconnaissance planes are flying over Cuba. The USA can’t stop these flights, because this is the only way we can quickly get information about the state of construction of the missile bases in Cuba, which we believe pose a very serious threat to our national security. But if we start to fire in response—a chain reaction will quickly start that will be very hard to stop.

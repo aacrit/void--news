@@ -1,0 +1,9 @@
+source: src-greenpeace-2006
+locator: p23
+url: https://web.archive.org/web/20061211035033/http://www.greenpeace.org/raw/content/international/press/reports/chernobylhealthreport.pdf
+read: 2026-10-07
+note: section 1.2, printed page 23; the table beside it (Table 1.2.1) gives the Belarus solid-tumour figure as 28,300 where this sentence says 28,000
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+note: the PDF's fonts carry no ToUnicode map and the text layer is a fixed glyph shift: every character code is read 29 places higher (gpdec.py, PyMuPDF raw characters), and five punctuation glyphs are mapped by their printed form (’ “ ” – …); checked against the rendered page
+
+Calculations of individual and collective exposure doses for the population of Belarus and all other countries polluted by the Chernobyl accident have been recently published (Malko 2006). Based on the current data in the official Belarusian health statistics and his estimates of radiation exposure in various regions of Belarus, this researcher estimates that the Chernobyl accident could result in an additional 31,400 thyroid cancer cases and 28,000 solid tumours other than thyroid between 1986 and 2056 in Belarus alone (Table 1.2.1.). This estimate predicts 93,080 total excess cancer deaths associated with the Chernobyl accident in all the affected countries, ten times more than the estimate of Mousseau et al. (2005).

@@ -1,0 +1,9 @@
+source: src-alexievich-nobel-lecture-2015
+locator: secvoice2a
+url: https://www.nobelprize.org/prizes/literature/2015/alexievich/lecture/
+read: 2026-10-07
+note: the second of the voices the lecture quotes; the lecture does not name the speaker
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+note: 'firе station' is printed with a Cyrillic 'е' (U+0435) in 'fire'; kept as served
+
+We lived near the Chernobyl nuclear plant. I was working at a bakery, making pasties. My husband was a fireman. We had just gotten married, and we held hands even when we went to the store. The day the reactor exploded, my husband was on duty at the firе station. They responded to the call in their shirtsleeves, in regular clothes – there was an explosion at the nuclear power station, but they weren’t given any special clothing. That’s just the way we lived … You know … They worked all night putting out the fire, and received doses of radiation incompatible with life. The next morning they were flown straight to Moscow.

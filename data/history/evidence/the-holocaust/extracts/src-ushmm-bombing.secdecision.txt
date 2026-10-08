@@ -1,0 +1,6 @@
+source: src-ushmm-bombing
+locator: secdecision
+url: https://encyclopedia.ushmm.org/content/en/article/the-united-states-and-the-holocaust-why-auschwitz-was-not-bombed
+read: 2026-10-07
+
+Even after Anglo-American air forces developed the capacity to hit targets in Silesia (where the Auschwitz complex was located) in July 1944, US authorities decided not to bomb Auschwitz. American officials explained this decision in part with a technical argument that their aircraft did not have the capacity to conduct air raids on such targets with sufficient accuracy, and in part with a strategic argument that the Allies were committed to bombing exclusively military targets in order to win the war as quickly as possible.

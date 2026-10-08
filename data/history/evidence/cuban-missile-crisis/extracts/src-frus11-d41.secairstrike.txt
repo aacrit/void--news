@@ -1,0 +1,11 @@
+source: src-frus11-d41
+locator: secairstrike
+url: https://history.state.gov/historicaldocuments/frus1961-63v11/d41
+read: 2026-10-04
+note: Document 41, the portion of the minutes headed 'Portion of the NSC Meeting Minutes, Monday, October 22, 1962': the President's reasons against an air strike
+
+The President discussed the reasons why he had decided against an air strike now. First, there was no certainty that an air strike would destroy all missiles now in Cuba. We would be able to get a large percentage of these missiles, but could not get them all.
+
+In addition we would not know if any of these missiles were operationally ready with their nuclear warheads and we were not certain that our intelligence had discovered all the missiles in Cuba. Therefore, in attacking the ones we had located, we could not be certain that others unknown to us would not be launched against the United States. The President said an air strike would involve an action comparable to the Japanese attack on Pearl Harbor. Finally, an air strike would increase the danger of a worldwide nuclear war.
+
+The President said he had given up the thought of making an air strike only yesterday morning. In summary, he said an air strike had all the disadvantages of Pearl Harbor. It would not insure the destruction of every strategic missile in Cuba, and would end up eventually in our having to invade.

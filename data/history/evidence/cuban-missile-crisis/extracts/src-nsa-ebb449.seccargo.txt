@@ -1,0 +1,7 @@
+source: src-nsa-ebb449
+locator: seccargo
+url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB449/
+read: 2026-10-07
+note: the briefing book's third paragraph from its third sentence; the page's HTML read as text. The sentence before it reads 'U.S. intelligence at the time had no idea about the nature of the Arkhangelsk cargo.' This paragraph dates Aleksandrovsk's arrival to October 25; the same page's chronology (sectimeline) dates it to October 23
+
+Arkhangelsk carried 80 warheads for the land-based cruise missile FKR-1, 12 warheads for the dual-use Luna (Frog) launcher, and 6 nuclear bombs for IL-28 bombers — in total, 98 tactical nuclear warheads. Four other nuclear warheads, for torpedoes on the Foxtrot submarines, had already returned to the Soviet Union, as well as 24 warheads for the R-14 missiles, which arrived in Cuba on October 25 on the ship Aleksandrovsk, but were never unloaded. The available evidence suggests that the 36 warheads for the R-12 missiles that came to Cuba on the Indigirka also left on Aleksandrovsk, being loaded at Mariel between October 30 and November 3.

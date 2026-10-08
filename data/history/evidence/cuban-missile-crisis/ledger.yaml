@@ -1,0 +1,1628 @@
+# The evidence ledger for cuban-missile-crisis (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Begun 2026-10-04 for the cinematic Orpheus episode (docs/proposals/HISTORY-AUDIO-ARCHIVAL.md,
+# policy B; docs/proposals/HISTORY-FIRST-LISTENER.md): the sources the script's document voice
+# reads from, the record its narration is checked against, and the recordings it may play.
+# Every entry was fetched on 2026-10-04 from the URL it names; every extract under extracts/
+# was sliced from the fetched copy by a builder script (start marker to end marker), never
+# retyped. Nothing here was written from memory. Two hosts could not be read by a plain
+# fetch: the JFK Library answers it with a 403 challenge page and was read in a browser; the
+# UN Digital Library answers it with an empty 202 and its PDF was fetched from inside the
+# record page in a browser. digitalarchive.wilsoncenter.org did not resolve at all from this
+# machine on the day, so its documents are known here through the Cold War International
+# History Project Bulletin, which prints the same translations. The National Security
+# Archive's scanned PDFs carry no text layer, so they are listed under gaps and known here
+# through the Archive's own pages and the Bulletin.
+# This is NOT a thesis ledger: no positions, contested claims, exhibits or analyses are
+# adjudicated here, and the event renders the Hearing. The bar of §4e is not claimed.
+# Continued 2026-10-07 (same method, builder out/ledger-cuban/build_extracts.py): the JFK
+# Library's Cuban Missile Crisis pages (microsites.jfklibrary.org/cmc/), which answer a plain
+# fetch, supply Castro's letter of 26 October in English and Khrushchev's letter of 23 October;
+# the Bulletin's own documents (Zorin, Dobrynin, Castro's 1968 speech, Shakhnazarov's notes,
+# Kramer) are held as entries of their own, because the Bulletin entry already holds the five
+# extracts a copyrighted work may carry; the National Security Archive's 2008 Dobbs postings,
+# its 2013 briefing book on the warheads and its 2023 briefing book on the Jupiters are added.
+# digitalarchive.wilsoncenter.org still did not resolve (a CNAME to Cloudflare with no address
+# record, by dns.google and cloudflare-dns.com on 2026-10-07), so the rest of the Castro-
+# Khrushchev correspondence stays a gap. Where two held sources disagree, both are held and
+# the disagreement is listed under `disagreements` at the end, unadjudicated.
+slug: cuban-missile-crisis
+bootstrapped: 2026-10-04
+
+entries:
+  # ----------------------------------------------------------- Tier A: the United States record
+  - id: src-jfk-19621022
+    tier: A
+    kind: primary-document
+    author: John F. Kennedy, President of the United States
+    title: "Radio and Television Report to the American People on the Soviet Arms Buildup in Cuba, October 22, 1962"
+    container: "John F. Kennedy Speeches (the Library's text edition)"
+    publisher: John F. Kennedy Presidential Library and Museum
+    place: Boston
+    year: 1962
+    edition: "the Library's web text; the page heads it 'President John F. Kennedy, The White House, October 22, 1962'. The host answers a plain HTTP fetch with a 403 challenge page; the page was loaded in a browser and its HTML saved, then read as text"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.jfklibrary.org/archives/other-resources/john-f-kennedy-speeches/cuba-radio-and-television-report-19621022"}
+    access:
+      free_copy: "https://www.jfklibrary.org/archives/other-resources/john-f-kennedy-speeches/cuba-radio-and-television-report-19621022"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "Radio and Television Report to the American People on the Soviet Arms Buildup in Cuba, October 22, 1962 | JFK Library"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-proclamation-3504
+    tier: A
+    kind: edict
+    author: John F. Kennedy, President of the United States
+    title: "Proclamation 3504, Interdiction of the Delivery of Offensive Weapons to Cuba, October 23, 1962"
+    container: "The American Presidency Project (the text as the Public Papers of the Presidents print it)"
+    publisher: "University of California, Santa Barbara (the archive); the proclamation is a United States government work"
+    place: Santa Barbara
+    year: 1962
+    edition: "the project's web text, read whole; the page prints the time of signature, 7:06 p.m., with the signature"
+    volume: null
+    document_number: "Proclamation 3504"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.presidency.ucsb.edu/documents/proclamation-3504-interdiction-the-delivery-offensive-weapons-cuba"}
+    access:
+      free_copy: "https://www.presidency.ucsb.edu/documents/proclamation-3504-interdiction-the-delivery-offensive-weapons-cuba"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "Proclamation 3504—Interdiction of the Delivery of Offensive Weapons to Cuba | The American Presidency Project"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-app-homestead-19621126
+    tier: A
+    kind: primary-document
+    author: John F. Kennedy, President of the United States
+    title: "Remarks at Homestead Air Force Base, Florida, Upon Presenting Unit Awards, November 26, 1962"
+    container: "The American Presidency Project (the text as the Public Papers of the Presidents print it, with its editorial note)"
+    publisher: "University of California, Santa Barbara (the archive); the remarks are a United States government work"
+    place: Santa Barbara
+    year: 1962
+    edition: "the project's web text; the closing paragraph and the editorial note naming the pilot are held"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.presidency.ucsb.edu/documents/remarks-homestead-air-force-base-florida-upon-presenting-unit-awards"}
+    access:
+      free_copy: "https://www.presidency.ucsb.edu/documents/remarks-homestead-air-force-base-florida-upon-presenting-unit-awards"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Remarks at Homestead Air Force Base, Florida, Upon Presenting Unit Awards. | The American Presidency Project"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  # Foreign Relations of the United States, 1961-1963, Volume XI, Cuban Missile Crisis and
+  # Aftermath (Washington: Government Printing Office, 1996), in the Office of the Historian's
+  # web edition. One entry per document read, so a locator names the document it is in.
+  - id: src-frus11-d18
+    tier: A
+    kind: primary-document
+    author: "The White House (a transcript of the President's own recording), as edited for Foreign Relations of the United States"
+    title: "Document 18, Transcript of a Meeting at the White House, Washington, October 16, 1962, 11:50 a.m."
+    container: "Foreign Relations of the United States, 1961-1963, Volume XI, Cuban Missile Crisis and Aftermath"
+    publisher: "United States Government Printing Office (1996); the Office of the Historian's web edition"
+    place: Washington
+    year: 1962
+    edition: "the web edition; the transcript carries the editors' question marks against uncertain speakers and bracketed doubtful words, kept here"
+    volume: XI
+    document_number: 18
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1961-63v11/d18"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1961-63v11/d18"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "18. Transcript of a Meeting at the White House"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-frus11-d21
+    tier: A
+    kind: primary-document
+    author: "The White House (a transcript of the President's own recording), as edited for Foreign Relations of the United States"
+    title: "Document 21, Off the Record Meeting on Cuba, Washington, October 16, 1962, 6:30-7:55 p.m."
+    container: "Foreign Relations of the United States, 1961-1963, Volume XI, Cuban Missile Crisis and Aftermath"
+    publisher: "United States Government Printing Office (1996); the Office of the Historian's web edition"
+    place: Washington
+    year: 1962
+    edition: "the web edition; the editors' bracketed doubtful words are kept"
+    volume: XI
+    document_number: 21
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1961-63v11/d21"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1961-63v11/d21"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "21. Off the Record Meeting on Cuba"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-frus11-d36
+    tier: A
+    kind: primary-document
+    author: "Robert S. McNamara, Secretary of Defense (notes initialled RSMc)"
+    title: "Document 36, Notes on Meeting With President Kennedy, Washington, October 21, 1962, 11:30 a.m."
+    container: "Foreign Relations of the United States, 1961-1963, Volume XI, Cuban Missile Crisis and Aftermath"
+    publisher: "United States Government Printing Office (1996); the Office of the Historian's web edition"
+    place: Washington
+    year: 1962
+    edition: "the web edition"
+    volume: XI
+    document_number: 36
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1961-63v11/d36"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1961-63v11/d36"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "36. Notes on Meeting With President Kennedy"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-frus11-d41
+    tier: A
+    kind: primary-document
+    author: "National Security Council (Bromley Smith's minutes), United States"
+    title: "Document 41, Minutes of the 507th Meeting of the National Security Council, Washington, October 22, 1962, 3 p.m."
+    container: "Foreign Relations of the United States, 1961-1963, Volume XI, Cuban Missile Crisis and Aftermath"
+    publisher: "United States Government Printing Office (1996); the Office of the Historian's web edition"
+    place: Washington
+    year: 1962
+    edition: "the web edition"
+    volume: XI
+    document_number: 41
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1961-63v11/d41"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1961-63v11/d41"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "41. Minutes of the 507th Meeting of the National Security Council"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-frus11-d61
+    tier: A
+    kind: letter
+    author: "Nikita S. Khrushchev, Chairman of the Council of Ministers of the USSR (the Department of State's translation)"
+    title: "Document 61, Letter From Chairman Khrushchev to President Kennedy, Moscow, October 24, 1962"
+    container: "Foreign Relations of the United States, 1961-1963, Volume XI, Cuban Missile Crisis and Aftermath"
+    publisher: "United States Government Printing Office (1996); the Office of the Historian's web edition"
+    place: Washington
+    year: 1962
+    edition: "the web edition's English text of the letter; the Russian original is not held here"
+    volume: XI
+    document_number: 61
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1961-63v11/d61"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1961-63v11/d61"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "61. Letter From Chairman Khrushchev to President Kennedy"
+    language: en
+    region_of_authorship: europe
+    producer: soviet-government
+    position: null
+    rights: public
+
+  - id: src-frus11-d84
+    tier: A
+    kind: letter
+    author: "Nikita S. Khrushchev, Chairman of the Council of Ministers of the USSR (the Embassy's translation, telegraphed by Ambassador Kohler)"
+    title: "Document 84, Telegram From the Embassy in the Soviet Union to the Department of State, Moscow, October 26, 1962, 7 p.m. (Khrushchev's letter of October 26)"
+    container: "Foreign Relations of the United States, 1961-1963, Volume XI, Cuban Missile Crisis and Aftermath"
+    publisher: "United States Government Printing Office (1996); the Office of the Historian's web edition"
+    place: Washington
+    year: 1962
+    edition: "the web edition's English text of the letter; the Russian original is not held here"
+    volume: XI
+    document_number: 84
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1961-63v11/d84"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1961-63v11/d84"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "84. Telegram From the Embassy in the Soviet Union to the Department of State"
+    language: en
+    region_of_authorship: europe
+    producer: soviet-government
+    position: null
+    rights: public
+
+  - id: src-frus11-d90
+    tier: A
+    kind: primary-document
+    author: "Executive Committee of the National Security Council (Bromley Smith's summary record), United States"
+    title: "Document 90, Summary Record of the Seventh Meeting of the Executive Committee of the National Security Council, Washington, October 27, 1962, 10 a.m."
+    container: "Foreign Relations of the United States, 1961-1963, Volume XI, Cuban Missile Crisis and Aftermath"
+    publisher: "United States Government Printing Office (1996); the Office of the Historian's web edition"
+    place: Washington
+    year: 1962
+    edition: "the web edition"
+    volume: XI
+    document_number: 90
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1961-63v11/d90"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1961-63v11/d90"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "90. Summary Record of the Seventh Meeting of the Executive Committee of the National Security Council"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-frus11-d91
+    tier: A
+    kind: letter
+    author: "Nikita S. Khrushchev, Chairman of the Council of Ministers of the USSR (the Department of State's translation of the published message)"
+    title: "Document 91, Message From Chairman Khrushchev to President Kennedy, Moscow, October 27, 1962"
+    container: "Foreign Relations of the United States, 1961-1963, Volume XI, Cuban Missile Crisis and Aftermath"
+    publisher: "United States Government Printing Office (1996); the Office of the Historian's web edition"
+    place: Washington
+    year: 1962
+    edition: "the web edition's English text; the message was broadcast by Moscow radio the same day"
+    volume: XI
+    document_number: 91
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1961-63v11/d91"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1961-63v11/d91"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "91. Message From Chairman Khrushchev to President Kennedy"
+    language: en
+    region_of_authorship: europe
+    producer: soviet-government
+    position: null
+    rights: public
+
+  - id: src-frus11-d94
+    tier: A
+    kind: primary-document
+    author: "Executive Committee of the National Security Council (Bromley Smith's summary record), United States"
+    title: "Document 94, Summary Record of the Eighth Meeting of the Executive Committee of the National Security Council, Washington, October 27, 1962, 4 p.m."
+    container: "Foreign Relations of the United States, 1961-1963, Volume XI, Cuban Missile Crisis and Aftermath"
+    publisher: "United States Government Printing Office (1996); the Office of the Historian's web edition"
+    place: Washington
+    year: 1962
+    edition: "the web edition"
+    volume: XI
+    document_number: 94
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1961-63v11/d94"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1961-63v11/d94"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "94. Summary Record of the Eighth Meeting of the Executive Committee of the National Security Council"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-frus11-d95
+    tier: A
+    kind: letter
+    author: John F. Kennedy, President of the United States
+    title: "Document 95, Telegram From the Department of State to the Embassy in the Soviet Union, Washington, October 27, 1962, 8:05 p.m. (the President's message to Khrushchev, released to the press)"
+    container: "Foreign Relations of the United States, 1961-1963, Volume XI, Cuban Missile Crisis and Aftermath"
+    publisher: "United States Government Printing Office (1996); the Office of the Historian's web edition"
+    place: Washington
+    year: 1962
+    edition: "the web edition"
+    volume: XI
+    document_number: 95
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1961-63v11/d95"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1961-63v11/d95"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "95. Telegram From the Department of State to the Embassy in the Soviet Union"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-frus11-d96
+    tier: A
+    kind: primary-document
+    author: "Robert F. Kennedy, Attorney General of the United States"
+    title: "Document 96, Memorandum From Attorney General Kennedy to Secretary of State Rusk, Washington, October 30, 1962"
+    container: "Foreign Relations of the United States, 1961-1963, Volume XI, Cuban Missile Crisis and Aftermath"
+    publisher: "United States Government Printing Office (1996); the Office of the Historian's web edition"
+    place: Washington
+    year: 1962
+    edition: "the web edition; the volume's footnote 2 records a sentence typed and crossed out of the memorandum, held as extract fn2"
+    volume: XI
+    document_number: 96
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1961-63v11/d96"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1961-63v11/d96"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "96. Memorandum From Attorney General Kennedy to Secretary of State Rusk"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-frus11-d102
+    tier: A
+    kind: letter
+    author: "Nikita S. Khrushchev, Chairman of the Council of Ministers of the USSR (the Department of State's translation of the broadcast message)"
+    title: "Document 102, Message From Chairman Khrushchev to President Kennedy, Moscow, October 28, 1962"
+    container: "Foreign Relations of the United States, 1961-1963, Volume XI, Cuban Missile Crisis and Aftermath"
+    publisher: "United States Government Printing Office (1996); the Office of the Historian's web edition"
+    place: Washington
+    year: 1962
+    edition: "the web edition's English text; the message was broadcast by Moscow radio"
+    volume: XI
+    document_number: 102
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1961-63v11/d102"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1961-63v11/d102"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "102. Message From Chairman Khrushchev to President Kennedy"
+    language: en
+    region_of_authorship: europe
+    producer: soviet-government
+    position: null
+    rights: public
+
+  # ----------------------------------------------------------- Tier A: the Soviet record outside Foreign Relations
+  - id: src-jfkl-khrushchev-19621023
+    tier: A
+    kind: letter
+    author: "Nikita S. Khrushchev, Chairman of the Council of Ministers of the USSR (the Department of State's Division of Language Services translation, LS No. 45989)"
+    title: "Chairman Khrushchev's Letter to President Kennedy, Moscow, October 23, 1962"
+    container: "John F. Kennedy Presidential Library and Museum, Cuban Missile Crisis pages, October 23, document 6"
+    publisher: John F. Kennedy Presidential Library and Museum
+    place: Boston
+    year: 1962
+    edition: "the Library's web text of the State Department translation, read whole; the Russian original is not held"
+    volume: null
+    document_number: "LS No. 45989"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://microsites.jfklibrary.org/cmc/oct23/doc6.html"}
+    access:
+      free_copy: "https://microsites.jfklibrary.org/cmc/oct23/doc6.html"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Chairman Khrushchev's Letter to President Kennedy, October 23, 1962 - Cuban Missile Crisis - John F. Kennedy Presidential Library & Museum"
+    language: en
+    region_of_authorship: europe
+    producer: soviet-government
+    position: null
+    rights: public
+
+  - id: src-zorin-19621025
+    tier: A
+    kind: primary-document
+    author: "Valerian Zorin, Soviet representative to the United Nations (the Bulletin's translation, Mark H. Doctoroff)"
+    title: "Ciphered telegram to the USSR Ministry of Foreign Affairs on the Security Council session of 25 October 1962"
+    container: "Cold War International History Project Bulletin, Issue 5 (Spring 1995), pp. 74-75"
+    publisher: Woodrow Wilson International Center for Scholars
+    place: Washington
+    year: 1962
+    edition: "the Bulletin's translation of the telegram, source line 'AVP RF, copy courtesy of NSA'; one passage held. The Soviet account of the session at which Stevenson showed the photographs (S/PV.1025, held as src-un-spv1025)"
+    volume: 5
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf"}
+    access:
+      free_copy: "https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Telegram from the Soviet representative to the United Nations, Valerian Zorin, to the USSR MFA, 25 October 1962 (the heading as the Bulletin prints it, p. 74)"
+    language: en
+    region_of_authorship: europe
+    producer: soviet-government
+    position: null
+    rights: copyright
+
+  - id: src-dobrynin-19621027
+    tier: A
+    kind: primary-document
+    author: "Anatoly F. Dobrynin, Soviet Ambassador to the United States (the Bulletin's translation, Mark H. Doctoroff)"
+    title: "Ciphered telegram to the USSR Ministry of Foreign Affairs on his meeting with Robert Kennedy, 27 October 1962"
+    container: "Cold War International History Project Bulletin, Issue 5 (Spring 1995), pp. 79-80"
+    publisher: Woodrow Wilson International Center for Scholars
+    place: Washington
+    year: 1962
+    edition: "the Bulletin's translation, source line 'AVP RF, copy courtesy of NSA'. This entry holds the passage on the U-2 (p. 79); the same telegram's passage on Turkey was held earlier as src-cwihp-bulletin-5.p80 and is left there"
+    volume: 5
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf"}
+    access:
+      free_copy: "https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Telegram from Soviet Ambassador to the USA Dobrynin to the USSR MFA, 27 October 1962 (the heading as the Bulletin prints it, p. 79)"
+    language: en
+    region_of_authorship: europe
+    producer: soviet-government
+    position: null
+    rights: copyright
+
+  - id: src-dobrynin-19621028
+    tier: A
+    kind: primary-document
+    author: "Anatoly F. Dobrynin, Soviet Ambassador to the United States (the Bulletin's translation, Mark H. Doctoroff)"
+    title: "Ciphered telegram to the USSR Ministry of Foreign Affairs on his meeting with Robert Kennedy, 28 October 1962"
+    container: "Cold War International History Project Bulletin, Issue 5 (Spring 1995), p. 76"
+    publisher: Woodrow Wilson International Center for Scholars
+    place: Washington
+    year: 1962
+    edition: "the Bulletin's translation, source line 'AVP RF, copy courtesy of NSA'; one passage held"
+    volume: 5
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf"}
+    access:
+      free_copy: "https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Telegram from Soviet Ambassador to the USA Dobrynin to USSR MFA, 28 October 1962 (the heading as the Bulletin prints it, p. 76)"
+    language: en
+    region_of_authorship: europe
+    producer: soviet-government
+    position: null
+    rights: copyright
+
+  # ----------------------------------------------------------- Tier A: the United Nations record
+  - id: src-un-spv1025
+    tier: A
+    kind: primary-document
+    author: "United Nations Security Council (provisional verbatim record of the 1025th meeting)"
+    title: "Security Council Official Records, Seventeenth Year, 1025th Meeting, 25 October 1962, New York (S/PV.1025)"
+    container: "United Nations Digital Library"
+    publisher: United Nations
+    place: New York
+    year: 1962
+    edition: "the Digital Library's scanned PDF with its OCR text layer (English and French in two columns, 20 PDF pages); the layer misreads some glyphs and hyphenates at line ends, and the extracts keep it as it prints. The host answers a plain fetch with an empty 202; the PDF was fetched from inside the record page in a browser"
+    volume: null
+    document_number: "S/PV.1025"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://digitallibrary.un.org/record/520771"}
+    access:
+      free_copy: "https://digitallibrary.un.org/record/520771/files/S_PV-1025-EN.pdf"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "Security Council official records, 17th year : 1025th meeting, 25 October 1962, New York"
+    language: en
+    region_of_authorship: global
+    producer: united-nations
+    position: null
+    rights: copyright
+
+  # ----------------------------------------------------------- Tier A: the Cuban record, in FBIS translation
+  - id: src-fbis-castro-19621023
+    tier: A
+    kind: primary-document
+    author: "Fidel Castro, Prime Minister of Cuba (the Foreign Broadcast Information Service's translation of the broadcast)"
+    title: "Fidel Castro's 23 October Interview (Havana in Spanish to the Americas, 0135 GMT 24 October 1962)"
+    container: "Fidel Castro Speech Database, 1959-1996 (LANIC, University of Texas at Austin), file 1962_10oc_24.txt"
+    publisher: "Texas Data Repository (dataverse), University of Texas at Austin; the translation is a United States government work (FBIS)"
+    place: Austin
+    year: 1962
+    edition: "the database's plain-text file, read whole; the announcer's opening, the transcript's own editorial notes in parentheses and its typographic slips ('cane' for 'came') are kept"
+    volume: null
+    document_number: "datafile 54331 of doi:10.18738/T8/Q4LPOK"
+    identifiers: {isbn: null, doi: "10.18738/T8/Q4LPOK", archive_org: null, hathitrust: null, url: "https://dataverse.tdl.org/api/access/datafile/54331"}
+    access:
+      free_copy: "https://dataverse.tdl.org/api/access/datafile/54331"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "FIDEL CASTRO'S 23 OCTOBER INTERVIEW (the file's head)"
+    language: en
+    region_of_authorship: americas
+    producer: cuban-government
+    position: null
+    rights: public
+
+  - id: src-fbis-castro-19621028
+    tier: A
+    kind: primary-document
+    author: "Fidel Castro, Prime Minister of Cuba (the Foreign Broadcast Information Service's translation)"
+    title: "Fidel Castro's Declaration, Havana, 28 October 1962 (the five points), with the broadcast commentary that followed it"
+    container: "Fidel Castro Speech Database, 1959-1996 (LANIC, University of Texas at Austin), file 1962_10oc_28-1.txt"
+    publisher: "Texas Data Repository (dataverse), University of Texas at Austin; the translation is a United States government work (FBIS)"
+    place: Austin
+    year: 1962
+    edition: "the database's plain-text file, read whole; only the declaration's opening paragraph is held as an extract"
+    volume: null
+    document_number: "datafile 54334 of doi:10.18738/T8/Q4LPOK"
+    identifiers: {isbn: null, doi: "10.18738/T8/Q4LPOK", archive_org: null, hathitrust: null, url: "https://dataverse.tdl.org/api/access/datafile/54334"}
+    access:
+      free_copy: "https://dataverse.tdl.org/api/access/datafile/54334"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "Fidel Castro's Declaration (the file's head)"
+    language: en
+    region_of_authorship: americas
+    producer: cuban-government
+    position: null
+    rights: public
+
+  - id: src-castro-khrushchev-19621026
+    tier: A
+    kind: letter
+    author: "Fidel Castro, Prime Minister of Cuba"
+    title: "Letter to Nikita Khrushchev, Havana, 26 October 1962 (in English, as the JFK Library prints it)"
+    container: "John F. Kennedy Presidential Library and Museum, Cuban Missile Crisis pages, October 26, document 2 ('Fidel Castro's Letter')"
+    publisher: John F. Kennedy Presidential Library and Museum
+    place: Boston
+    year: 1962
+    edition: "the Library's web text, read whole and held in three passages (salutation to the second paragraph, the 'personal opinion', the sixth and seventh paragraphs); the page names no translator and no source for the English text, so the translation is treated as a copyrighted work. The Spanish original is not held. The National Security Archive's copy (621026 Castro Letter to Khrushchev.pdf, fetched 2026-10-04) is a one-page scan with no text layer and was not used. The Bulletin's editors date the letter's first release to Granma, 23 November 1990 (src-castro-cc-19680126.secfn1)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://microsites.jfklibrary.org/cmc/oct26/doc2.html"}
+    access:
+      free_copy: "https://microsites.jfklibrary.org/cmc/oct26/doc2.html"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Fidel Castro's Letter - Cuban Missile Crisis - John F. Kennedy Presidential Library & Museum"
+    language: en
+    region_of_authorship: americas
+    producer: cuban-government
+    position: null
+    rights: copyright
+
+  - id: src-castro-cc-19680126
+    tier: A
+    kind: primary-document
+    author: "Fidel Castro, First Secretary of the Communist Party of Cuba (translated from Spanish by the Cuban Council of State)"
+    title: "Speech to the Central Committee of the Communist Party of Cuba, Palace of the Revolution, Havana, 26 January 1968 (excerpts)"
+    container: "Cold War International History Project Bulletin, Issue 5 (Spring 1995), pp. 86-87"
+    publisher: Woodrow Wilson International Center for Scholars
+    place: Washington
+    year: 1968
+    edition: "the excerpts as the Bulletin prints them, in the Cuban Council of State's translation; four passages held, one of them the editors' footnote 1. A retrospective account, given five years after the crisis to the party's own Central Committee"
+    volume: 5
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf"}
+    access:
+      free_copy: "https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Excerpts of a Speech by Fidel Castro [Translated from Spanish by the Cuban Council of State] (the heading as the Bulletin prints it, p. 86)"
+    language: en
+    region_of_authorship: americas
+    producer: cuban-government
+    position: null
+    rights: copyright
+
+  - id: src-khrushchev-castro-19621030
+    tier: A
+    kind: letter
+    author: "Nikita S. Khrushchev, Chairman of the Council of Ministers of the USSR"
+    title: "Letter to Fidel Castro, Moscow, 30 October 1962"
+    container: "Wilson Center Digital Archive; first published in Granma, 23 November 1990; in English in Blight, Allyn and Welch, Cuba on the Brink (1993), 474-91"
+    publisher: Woodrow Wilson International Center for Scholars
+    place: Washington
+    year: 1962
+    edition: "not read. The letter in which, by Castro's account of 1968 (src-castro-cc-19680126.p86), Khrushchev read his letter of 26 October as advice to strike first"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: "not reached: digitalarchive.wilsoncenter.org did not resolve on 2026-10-07 and the JFK Library's pages stop at 28 October"
+    language: ru
+    region_of_authorship: europe
+    producer: soviet-government
+    position: null
+    rights: copyright
+
+  - id: src-castro-khrushchev-19621031
+    tier: A
+    kind: letter
+    author: "Fidel Castro, Prime Minister of Cuba"
+    title: "Letter to Nikita Khrushchev, Havana, 31 October 1962"
+    container: "Wilson Center Digital Archive; first published in Granma, 23 November 1990; in English in Blight, Allyn and Welch, Cuba on the Brink (1993), 474-91"
+    publisher: Woodrow Wilson International Center for Scholars
+    place: Washington
+    year: 1962
+    edition: "not read. Castro's answer to the letter of 30 October, the 'reply' his 1968 speech opens on (src-castro-cc-19680126.p86)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: "not reached: digitalarchive.wilsoncenter.org did not resolve on 2026-10-07"
+    language: es
+    region_of_authorship: americas
+    producer: cuban-government
+    position: null
+    rights: copyright
+
+  # ----------------------------------------------------------- Tier A: not readable free (gaps)
+  - id: src-jcs-meeting-19621019
+    tier: A
+    kind: primary-document
+    author: "The White House (the President's recording of his meeting with the Joint Chiefs of Staff, 19 October 1962)"
+    title: "Meeting with the Joint Chiefs of Staff, 19 October 1962 (the recording and its published transcript)"
+    container: "John F. Kennedy Presidential Library, Presidential Recordings; the transcript is printed in The Kennedy Tapes"
+    publisher: John F. Kennedy Presidential Library and Museum
+    place: Boston
+    year: 1962
+    edition: "not read. Foreign Relations volume XI does not print this meeting (its Document 31 is a different record of 19 October); the event YAML's account of General LeMay's remark about Munich rests on this recording and on the published transcript, neither of which was reached"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: "not reached: no stable free copy of the transcript is known to this ledger, and the Library's recording was not located on the day"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-usn-decklogs-1962
+    tier: A
+    kind: primary-document
+    author: "United States Navy (charts and deck logs of the anti-submarine operations against B-59, October 1962)"
+    title: "Charts and deck logs of anti-submarine warfare operations related to USSR submarine B-59, October 1962"
+    container: "National Security Archive, Cuban Missile Crisis documents (621000 Charts-deck logs.pdf)"
+    publisher: National Security Archive, George Washington University
+    place: Washington
+    year: 1962
+    edition: "a 15-page scanned PDF with no text layer; known here as the Archive's release of 11 October 2002 summarises it (extract sec3)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/621000%20Charts-deck%20logs.pdf"}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: "fetched (1,363,937 bytes, 15 pages); the PDF is an image with no text layer"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-malinovsky-19620908
+    tier: A
+    kind: primary-document
+    author: "Rodion Malinovsky, Minister of Defence of the USSR (a draft directive to the commander of Soviet forces in Cuba)"
+    title: "Draft directive to the Commander of Soviet Forces in Cuba on the transfer of Il-28s and Luna missiles and authority on the use of tactical nuclear weapons, 8 September 1962 (the National Security Archive's translation)"
+    container: "National Security Archive, Cuban Missile Crisis documents (620908 Memorandum from Malinovsky.pdf)"
+    publisher: National Security Archive, George Washington University
+    place: Washington
+    year: 1962
+    edition: "a two-page scanned PDF with no text layer; known here as Mark Kramer describes it in the Bulletin (extract p110): prepared, and not signed"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/620908%20Memorandum%20from%20Malinovsky.pdf"}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: "fetched (62,553 bytes, 2 pages); the PDF is an image with no text layer"
+    language: en
+    region_of_authorship: europe
+    producer: soviet-government
+    position: null
+    rights: public
+
+  # ----------------------------------------------------------- Tier B: edited records and the Archive's own pages
+  - id: src-cwihp-bulletin-5
+    tier: B
+    kind: edited-documents
+    author: "Cold War International History Project (James G. Hershberg, editor), with the translators it names (Mark H. Doctoroff and others) and the articles of James G. Blight and Philip Brenner and of Mark Kramer"
+    title: "Cold War International History Project Bulletin, Issue 5 (Spring 1995), second part: the Cuban Missile Crisis documents and articles"
+    container: "Cold War International History Project Bulletin"
+    publisher: Woodrow Wilson International Center for Scholars
+    place: Washington
+    year: 1995
+    edition: "the Center's PDF of the issue's second part (58 PDF pages, printed pages 58 to 115), with a text layer; held as five extracts: Dobrynin's cable of 27 October 1962 (p. 80), Blight and Brenner on Cuba and the settlement (pp. 81, 82), the Mikoyan-Castro conversation record (p. 98), Kramer on nuclear command authority (p. 110)"
+    volume: 5
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf"}
+    access:
+      free_copy: "https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "COLD WAR INTERNATIONAL HISTORY PROJECT BULLETIN (the running head of the PDF; its first page is headed NEW EVIDENCE ON THE CUBAN MISSILE CRISIS)"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-nsa-ebb75
+    tier: B
+    kind: edited-documents
+    author: "William Burr and Thomas S. Blanton, editors, National Security Archive"
+    title: "The Submarines of October: U.S. and Soviet Naval Encounters During the Cuban Missile Crisis (Electronic Briefing Book No. 75), October 31, 2002"
+    container: National Security Archive Electronic Briefing Books
+    publisher: National Security Archive, George Washington University
+    place: Washington
+    year: 2002
+    edition: "the briefing book's web text (the editors' essay; the documents it links are scanned PDFs without text layers and are not held). The page spells the brigade commander's name Archipov"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive2.gwu.edu/NSAEBB/NSAEBB75/index2.htm"}
+    access:
+      free_copy: "https://nsarchive2.gwu.edu/NSAEBB/NSAEBB75/index2.htm"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "The Submarines of October"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-nsa-press-20021011
+    tier: B
+    kind: report
+    author: "National Security Archive (press release, Havana, 11 October 2002, 5:00 PM)"
+    title: "Havana conference on Cuban missile crisis reveals dangers unknown at the time (news release, 11 October 2002)"
+    container: "The Cuban Missile Crisis, 1962: Materials from the 40th Anniversary Conference, Havana, 10-12 October 2002"
+    publisher: National Security Archive, George Washington University
+    place: Washington
+    year: 2002
+    edition: "the release's web text"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/press3.htm"}
+    access:
+      free_copy: "https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/press3.htm"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "The Cuban Missile Crisis, 1962: Press Release, 11 October 2002, 5:00 PM"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-nsa-press-20021012
+    tier: B
+    kind: report
+    author: "National Security Archive (press release, Havana, 12 October 2002, 1:00 PM)"
+    title: "Cuban missile crisis not over in 13 days; Soviet tactical nukes in Cuba until Nov. 20 (news release, 12 October 2002)"
+    container: "The Cuban Missile Crisis, 1962: Materials from the 40th Anniversary Conference, Havana, 10-12 October 2002"
+    publisher: National Security Archive, George Washington University
+    place: Washington
+    year: 2002
+    edition: "the release's web text"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/press4.htm"}
+    access:
+      free_copy: "https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/press4.htm"
+      verified_at: 2026-10-04
+      verified_by: document-fetch
+      verified_title: "The Cuban Missile Crisis, 1962: Press Release, 12 October 2002, 1:00 PM"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-shakhnazarov-castro-19871105
+    tier: B
+    kind: testimony
+    author: "Georgy Shakhnazarov, deputy head of the CPSU Central Committee department for relations with Cuba, recording Fidel Castro"
+    title: "\"I Know Something About The Caribbean Crisis\" (Notes from a conversation with Fidel Castro, 5 November 1987), in Shakhnazarov, Fidel Castro, Glasnost, and the Caribbean Crisis"
+    container: "Cold War International History Project Bulletin, Issue 5 (Spring 1995), pp. 83, 87-88"
+    publisher: Woodrow Wilson International Center for Scholars
+    place: Washington
+    year: 1995
+    edition: "the notes as the Bulletin prints them inside Shakhnazarov's article: Castro's words as a Soviet official recorded them twenty-five years after the crisis, not a transcript; two passages held"
+    volume: 5
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf"}
+    access:
+      free_copy: "https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "FIDEL CASTRO, GLASNOST, AND THE CARIBBEAN CRISIS by Georgy Shakhnazarov (the heading as the Bulletin prints it, p. 83)"
+    language: en
+    region_of_authorship: europe
+    producer: recollection
+    position: null
+    rights: copyright
+
+  - id: src-kramer-1995
+    tier: B
+    kind: journal-article
+    author: "Mark Kramer"
+    title: "The \"Lessons\" of the Cuban Missile Crisis for Warsaw Pact Nuclear Operations"
+    container: "Cold War International History Project Bulletin, Issue 5 (Spring 1995), pp. 59, 110-112, 115"
+    publisher: Woodrow Wilson International Center for Scholars
+    place: Washington
+    year: 1995
+    edition: "the article's continuation on p. 112; its passage on p. 110 was held earlier as src-cwihp-bulletin-5.p110 and is left there"
+    volume: 5
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf"}
+    access:
+      free_copy: "https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "THE \u201cLESSONS\u201d OF THE CUBAN MISSILE CRISIS FOR WARSAW PACT NUCLEAR OPERATIONS by Mark Kramer (the heading as the Bulletin prints it, p. 59)"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-jfkl-cmc-19621026
+    tier: B
+    kind: reference
+    author: "John F. Kennedy Presidential Library and Museum (the Library's own summary of the day)"
+    title: "October 26, 1962 - Cuban Missile Crisis"
+    container: "John F. Kennedy Presidential Library and Museum, Cuban Missile Crisis pages"
+    publisher: John F. Kennedy Presidential Library and Museum
+    place: Boston
+    year: undated
+    edition: "the page's web text; the page carries no date of publication. Its summary of Castro's letter is the Library's reading, held beside the letter (src-castro-khrushchev-19621026)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://microsites.jfklibrary.org/cmc/oct26/"}
+    access:
+      free_copy: "https://microsites.jfklibrary.org/cmc/oct26/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "October 26, 1962 - Cuban Missile Crisis - John F. Kennedy Presidential Library & Museum"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-jfkl-cmc-19621027
+    tier: B
+    kind: reference
+    author: "John F. Kennedy Presidential Library and Museum (the Library's own summary of the day)"
+    title: "October 27, 1962 - Cuban Missile Crisis"
+    container: "John F. Kennedy Presidential Library and Museum, Cuban Missile Crisis pages"
+    publisher: John F. Kennedy Presidential Library and Museum
+    place: Boston
+    year: undated
+    edition: "the page's web text; the page carries no date of publication"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://microsites.jfklibrary.org/cmc/oct27/"}
+    access:
+      free_copy: "https://microsites.jfklibrary.org/cmc/oct27/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "October 27, 1962 - Cuban Missile Crisis - John F. Kennedy Presidential Library & Museum"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-nsa-jupiter-2023
+    tier: B
+    kind: edited-documents
+    author: "National Security Archive (briefing book, 20 April 2023)"
+    title: "The Jupiter Missiles and the Cuban Missile Crisis Endgame"
+    container: National Security Archive Electronic Briefing Books (Nuclear Vault)
+    publisher: National Security Archive, George Washington University
+    place: Washington
+    year: 2023
+    edition: "the briefing book's web text; the documents it links are not held"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive.gwu.edu/briefing-book/cuban-missile-crisis-nuclear-vault/2023-04-20/jupiter-missiles-and-cuban-missile"}
+    access:
+      free_copy: "https://nsarchive.gwu.edu/briefing-book/cuban-missile-crisis-nuclear-vault/2023-04-20/jupiter-missiles-and-cuban-missile"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Jupiter Missiles and the Cuban Missile Crisis Endgame | National Security Archive"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-nsa-ebb449
+    tier: B
+    kind: edited-documents
+    author: "National Security Archive (Electronic Briefing Book No. 449, 11 December 2013)"
+    title: "Last Nuclear Weapons Left Cuba in December 1962"
+    container: National Security Archive Electronic Briefing Books
+    publisher: National Security Archive, George Washington University
+    place: Washington
+    year: 2013
+    edition: "the briefing book's web text, the editors' essay and chronology; the Soviet military documents it publishes are not held. Its essay and its chronology date Aleksandrovsk's arrival differently (25 and 23 October), and both are held"
+    volume: null
+    document_number: "449"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive2.gwu.edu/NSAEBB/NSAEBB449/"}
+    access:
+      free_copy: "https://nsarchive2.gwu.edu/NSAEBB/NSAEBB449/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Last Nuclear Weapons Left Cuba in December 1962"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-nsa-dobbs-eyeball-2008
+    tier: B
+    kind: edited-documents
+    author: "National Security Archive, on Michael Dobbs's One Minute to Midnight (posting of 2 July 2008)"
+    title: "One Minute to Midnight, Part V: The \"Eyeball to Eyeball\" Myth"
+    container: "National Security Archive, The Cuban Missile Crisis, 1962 (the Dobbs postings)"
+    publisher: National Security Archive, George Washington University
+    place: Washington
+    year: 2008
+    edition: "the posting's web text; the navy logs and charts it links are scanned PDFs and are not held. It carries the book's finding, not the book (src-dobbs-2008, a gap)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/dobbs/"}
+    access:
+      free_copy: "https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/dobbs/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "One Minute to Midnight - Part IV: The Shootdown of Major Anderson (the page's <title>, left over from the previous week: its body is headed 'THIS WEEK: THE \"EYEBALL TO EYEBALL\" MYTH', Washington, DC, July 2, 2008)"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-nsa-dobbs-anderson-2008
+    tier: B
+    kind: edited-documents
+    author: "National Security Archive, on Michael Dobbs's One Minute to Midnight (posting of 25 June 2008)"
+    title: "One Minute to Midnight, Part IV: The Shootdown of Major Anderson"
+    container: "National Security Archive, The Cuban Missile Crisis, 1962 (the Dobbs postings)"
+    publisher: National Security Archive, George Washington University
+    place: Washington
+    year: 2008
+    edition: "the posting's web text; the SIGINT documents it links are not held"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/dobbs/anderson.htm"}
+    access:
+      free_copy: "https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/dobbs/anderson.htm"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "One Minute to Midnight - Part IV: The Shootdown of Major Anderson"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  # ----------------------------------------------------------- Tier B: recollection and the books the event YAML cites (gaps)
+  - id: src-orlov-2002
+    tier: B
+    kind: memoir
+    author: "Vadim Orlov (recollection, as published by Alexander Mozgovoi, 2002; the National Security Archive's translation)"
+    title: "Recollections of Vadim Orlov (USSR Submarine B-59): We will Sink Them All, But We will Not Disgrace Our Navy"
+    container: "National Security Archive, Cuban Missile Crisis documents (020000 Recollections of Vadim Orlov.pdf)"
+    publisher: National Security Archive, George Washington University
+    place: Washington
+    year: 2002
+    edition: "a two-page scanned PDF with no text layer; known here as the Archive's editors summarise and quote it (extract src-nsa-ebb75.secorlov), who also record that the other submarine commanders dispute it"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/020000%20Recollections%20of%20Vadim%20Orlov.pdf"}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+      status: "fetched (109,250 bytes, 2 pages); the PDF is an image with no text layer"
+    language: en
+    region_of_authorship: europe
+    producer: recollection
+    position: null
+    rights: copyright
+
+  - id: src-rfk-thirteen-days-1969
+    tier: B
+    kind: memoir
+    author: Robert F. Kennedy
+    title: "Thirteen Days: A Memoir of the Cuban Missile Crisis"
+    container: null
+    publisher: W. W. Norton
+    place: New York
+    year: 1969
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "isbn_9780783893563", hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copies are controlled lending items, which this container cannot open"}
+    language: en
+    region_of_authorship: americas
+    producer: recollection
+    position: null
+    rights: copyright
+
+  - id: src-may-zelikow-1997
+    tier: B
+    kind: edited-documents
+    author: Ernest R. May and Philip D. Zelikow (editors)
+    title: "The Kennedy Tapes: Inside the White House During the Cuban Missile Crisis"
+    container: null
+    publisher: Harvard University Press
+    place: Cambridge, Massachusetts
+    year: 1997
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "kennedytapesinsi0000unse", hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copy is a controlled lending item, which this container cannot open; the transcripts of 16 October are read here in the Foreign Relations volume instead"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-dobbs-2008
+    tier: B
+    kind: monograph
+    author: Michael Dobbs
+    title: "One Minute to Midnight: Kennedy, Khrushchev, and Castro on the Brink of Nuclear War"
+    container: null
+    publisher: Alfred A. Knopf
+    place: New York
+    year: 2008
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "oneminutetomidni0000dobb_k5p8", hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copies are controlled lending items, which this container cannot open"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-khrushchev-remembers-1974
+    tier: B
+    kind: memoir
+    author: Nikita Khrushchev (translated and edited by Strobe Talbott)
+    title: "Khrushchev Remembers: The Last Testament"
+    container: null
+    publisher: Little, Brown
+    place: Boston
+    year: 1974
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "khrushchevrememb00khru", hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copies are controlled lending items, which this container cannot open; the event YAML's account of the Black Sea conversation with Malinovsky rests on this memoir and is not repeated in the script"}
+    language: en
+    region_of_authorship: europe
+    producer: recollection
+    position: null
+    rights: copyright
+
+  - id: src-fursenko-naftali-1997
+    tier: B
+    kind: monograph
+    author: Aleksandr Fursenko and Timothy Naftali
+    title: "\"One Hell of a Gamble\": Khrushchev, Castro, and Kennedy, 1958-1964"
+    container: null
+    publisher: W. W. Norton
+    place: New York
+    year: 1997
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "onehellofgamblek00furs", hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copy is a controlled lending item, which this container cannot open"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-dobrynin-1995
+    tier: B
+    kind: memoir
+    author: Anatoly Dobrynin
+    title: "In Confidence: Moscow's Ambassador to America's Six Cold War Presidents"
+    container: null
+    publisher: Times Books
+    place: New York
+    year: 1995
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "no Internet Archive item found under the title on the day; Dobrynin's contemporaneous cable of 27 October 1962 is read here in the Bulletin instead"}
+    language: en
+    region_of_authorship: europe
+    producer: recollection
+    position: null
+    rights: copyright
+
+  - id: src-allison-zelikow-1999
+    tier: B
+    kind: monograph
+    author: Graham Allison and Philip Zelikow
+    title: "Essence of Decision: Explaining the Cuban Missile Crisis"
+    container: null
+    publisher: Longman
+    place: New York
+    year: 1999
+    edition: second edition; the first, by Allison alone, is of 1971
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "isbn_0316034363_0", hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copy is a controlled lending item, which this container cannot open; the event YAML's quotation attributed to the book is not verified and is not read"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-schelling-1966
+    tier: B
+    kind: monograph
+    author: Thomas C. Schelling
+    title: Arms and Influence
+    container: null
+    publisher: Yale University Press
+    place: New Haven
+    year: 1966
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "armsinfluence0000sche", hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copy is a controlled lending item, which this container cannot open; the event YAML's quotation attributed to the book is not verified and is not read"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-hoffman-2009
+    tier: B
+    kind: monograph
+    author: David E. Hoffman
+    title: "The Dead Hand: The Untold Story of the Cold War Arms Race and Its Dangerous Legacy"
+    container: null
+    publisher: Doubleday
+    place: New York
+    year: 2009
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "no Internet Archive item found under the title on the day"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-blight-brenner-2002
+    tier: B
+    kind: monograph
+    author: James G. Blight and Philip Brenner
+    title: "Sad and Luminous Days: Cuba's Struggle with the Superpowers after the Missile Crisis"
+    container: null
+    publisher: Rowman and Littlefield
+    place: Lanham
+    year: 2002
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "sadluminousdaysc0000blig", hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copy is a controlled lending item, which this container cannot open; the same authors' 1995 Bulletin article is read instead"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-latell-2012
+    tier: B
+    kind: monograph
+    author: Brian Latell
+    title: "Castro's Secrets: Cuban Intelligence, the CIA, and the Assassination of John F. Kennedy"
+    container: null
+    publisher: Palgrave Macmillan
+    place: New York
+    year: 2012
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "castrossecretsci00late", hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copy is a controlled lending item, which this container cannot open"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-gleijeses-2002
+    tier: B
+    kind: monograph
+    author: Piero Gleijeses
+    title: "Conflicting Missions: Havana, Washington, and Africa, 1959-1976"
+    container: null
+    publisher: University of North Carolina Press
+    place: Chapel Hill
+    year: 2002
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "no Internet Archive item found under the title on the day"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-gott-2004
+    tier: B
+    kind: monograph
+    author: Richard Gott
+    title: "Cuba: A New History"
+    container: null
+    publisher: Yale University Press
+    place: New Haven
+    year: 2004
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "no Internet Archive item found under the title on the day"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-chang-kornbluh-1998
+    tier: B
+    kind: edited-documents
+    author: Laurence Chang and Peter Kornbluh (editors)
+    title: "The Cuban Missile Crisis, 1962: A National Security Archive Documents Reader"
+    container: null
+    publisher: The New Press
+    place: New York
+    year: 1998
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "no Internet Archive item found under the title on the day; the Archive's own web pages from the 2002 conference are read instead"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-odonnell-powers-1972
+    tier: B
+    kind: memoir
+    author: Kenneth P. O'Donnell and David F. Powers, with Joe McCarthy
+    title: "\"Johnny, We Hardly Knew Ye\": Memories of John Fitzgerald Kennedy"
+    container: null
+    publisher: Little, Brown
+    place: Boston
+    year: 1972
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "johnnywehardlykn00odon", hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copies are controlled lending items (access-restricted-item true), which this container cannot open; the event YAML's 'insane and very sad' remark to O'Donnell is not verified"}
+    language: en
+    region_of_authorship: americas
+    producer: recollection
+    position: null
+    rights: copyright
+
+  - id: src-russell-1963
+    tier: B
+    kind: memoir
+    author: Bertrand Russell
+    title: Unarmed Victory
+    container: null
+    publisher: George Allen and Unwin
+    place: London
+    year: 1963
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "unarmedvictory00russ", hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copy is a controlled lending item (access-restricted-item true), which this container cannot open; the event YAML's 'We're not lunatics' quotation, attributed to a letter from Khrushchev to Russell of 24 October 1962, is not verified"}
+    language: en
+    region_of_authorship: europe
+    producer: recollection
+    position: null
+    rights: copyright
+
+positions: []
+contested: []
+exhibits: []
+analyses: []
+
+# A Tier A or B entry the record could not read free is published as a gap, by entry id,
+# with what was tried (RULE B). What each gap costs the episode is said in `what`.
+gaps:
+  - entry: src-khrushchev-castro-19621030
+    what: "Khrushchev's letter to Castro of 30 October 1962, in which, by Castro's own later account, Khrushchev read the letter of 26 October as advice to strike first; the reading is known here only from Castro's side (src-castro-cc-19680126.p86)"
+    tried: ["https://digitalarchive.wilsoncenter.org/", "https://microsites.jfklibrary.org/cmc/oct30/"]
+    status: "the Wilson Center host did not resolve on 2026-10-07 (a CNAME with no address record); the JFK Library's pages answer 404 after 28 October"
+  - entry: src-castro-khrushchev-19621031
+    what: "Castro's answer of 31 October 1962, his own gloss on what the letter of 26 October meant"
+    tried: ["https://digitalarchive.wilsoncenter.org/", "https://microsites.jfklibrary.org/cmc/oct31/"]
+    status: "the Wilson Center host did not resolve on 2026-10-07; the JFK Library's pages answer 404 after 28 October"
+  - entry: src-jcs-meeting-19621019
+    what: "The President's meeting with the Joint Chiefs of Staff on 19 October 1962, which the event YAML's account of General LeMay's Munich remark rests on; the remark is not spoken in the episode"
+    tried: ["https://history.state.gov/historicaldocuments/frus1961-63v11/d31"]
+    status: "Foreign Relations volume XI does not print the meeting; the Library's recording and the published transcript (The Kennedy Tapes, a lending copy) were not reached"
+  - entry: src-usn-decklogs-1962
+    what: "The Navy's own record of the depth charges dropped on B-59; known here through the Archive's summary of it"
+    tried: ["https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/621000%20Charts-deck%20logs.pdf"]
+    status: "fetched; a scanned image with no text layer"
+  - entry: src-malinovsky-19620908
+    what: "The draft directive on tactical nuclear weapons of 8 September 1962, in its own words; known here as Kramer describes it"
+    tried: ["https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/620908%20Memorandum%20from%20Malinovsky.pdf"]
+    status: "fetched; a scanned image with no text layer"
+  - entry: src-orlov-2002
+    what: "Orlov's recollection of B-59 in his own words; the episode narrates it as the Archive's editors summarise it, with their caution that other commanders dispute it"
+    tried: ["https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/020000%20Recollections%20of%20Vadim%20Orlov.pdf"]
+    status: "fetched; a scanned image with no text layer"
+  - entry: src-rfk-thirteen-days-1969
+    what: "Robert Kennedy's memoir, the source of the event YAML's 'Tojo' note; the note is not spoken in the episode, which uses his contemporaneous 'Pearl Harbor type of attack' from Document 36 instead"
+    tried: ["https://archive.org/details/isbn_9780783893563"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-may-zelikow-1997
+    what: "The edited tapes; the 16 October transcripts are read in Foreign Relations instead"
+    tried: ["https://archive.org/details/kennedytapesinsi0000unse"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-dobbs-2008
+    what: "Dobbs's narrative, the source of several of the event YAML's particulars (the Alaskan U-2, the submarine's temperature), none of which is spoken in the episode"
+    tried: ["https://archive.org/details/oneminutetomidni0000dobb_k5p8"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-khrushchev-remembers-1974
+    what: "Khrushchev's recollection of conceiving the deployment on the Black Sea coast; not spoken in the episode"
+    tried: ["https://archive.org/details/khrushchevrememb00khru"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-fursenko-naftali-1997
+    what: "The Soviet archival narrative (Operation Anadyr's numbers); the episode uses only what the event YAML carries"
+    tried: ["https://archive.org/details/onehellofgamblek00furs"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-dobrynin-1995
+    what: "Dobrynin's memoir; his cable of 27 October 1962 is read instead"
+    tried: ["https://archive.org/advancedsearch.php?q=title:(In Confidence) AND mediatype:texts"]
+    status: "no item under the title was returned on the day"
+  - entry: src-allison-zelikow-1999
+    what: "The deterrence account's foundational text; its position is narrated from the event YAML and nothing is quoted from it"
+    tried: ["https://archive.org/details/isbn_0316034363_0"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-schelling-1966
+    what: "Schelling's 'threat that leaves something to chance'; the position is narrated from the event YAML and nothing is quoted from it"
+    tried: ["https://archive.org/details/armsinfluence0000sche"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-hoffman-2009
+    what: "Hoffman on the arms race that followed; not quoted"
+    tried: ["https://archive.org/advancedsearch.php?q=title:(The Dead Hand) AND mediatype:texts"]
+    status: "no item under the title was returned on the day"
+  - entry: src-blight-brenner-2002
+    what: "Blight and Brenner's book; their 1995 Bulletin article is read instead"
+    tried: ["https://archive.org/details/sadluminousdaysc0000blig"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-latell-2012
+    what: "Latell's book; nothing from it is spoken"
+    tried: ["https://archive.org/details/castrossecretsci00late"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-gleijeses-2002
+    what: "Gleijeses's book; nothing from it is spoken"
+    tried: ["https://archive.org/advancedsearch.php?q=title:(Conflicting Missions) AND mediatype:texts"]
+    status: "no item under the title was returned on the day"
+  - entry: src-gott-2004
+    what: "Gott's history of Cuba; nothing from it is spoken"
+    tried: ["https://archive.org/advancedsearch.php?q=title:(Cuba: A New History) AND mediatype:texts"]
+    status: "no item under the title was returned on the day"
+  - entry: src-chang-kornbluh-1998
+    what: "The Archive's documents reader; the Archive's web pages are read instead"
+    tried: ["https://archive.org/advancedsearch.php?q=title:(The Cuban Missile Crisis, 1962) AND mediatype:texts"]
+    status: "no item under the title was returned on the day"
+  - entry: src-odonnell-powers-1972
+    what: "The memoir the event YAML's 'insane and very sad' remark to O'Donnell rests on; the remark is spoken in the live script as a DOCUMENT line and is not verified"
+    tried: ["https://archive.org/details/johnnywehardlykn00odon", "https://archive.org/details/johnnywehardlykn0000kenn_i9n5"]
+    status: "controlled lending copies, which this container cannot open (2026-10-07)"
+  - entry: src-russell-1963
+    what: "Russell's book, where Khrushchev's reply of 24 October 1962 is printed; the event YAML's 'We're not lunatics' quotation is attributed to that letter and is spoken in the live script, unverified. The held Khrushchev letter of 26 October (src-frus11-d84.whole) carries a different sentence on lunatics"
+    tried: ["https://archive.org/details/unarmedvictory00russ"]
+    status: "a controlled lending copy, which this container cannot open (2026-10-07)"
+
+# ------------------------------------------------------------- recordings
+# Archival audio artifacts (docs/proposals/HISTORY-AUDIO-ARCHIVAL.md §4a). A recording is a
+# factual claim four times over: this speaker, this occasion, this date, these words. Every
+# `*_as_stated` field is copied from the Library's item page as read in a browser on
+# `fetched_at`, never from memory. `transcript` is verbatim from the ledger extract named in
+# `transcript_extract`. `verification` names the record pipeline/history/verify_clip.py
+# wrote; its WER, coverage, excerpt sha256 and verified_at are the check's, never hand-typed.
+# `signed_by` / `signed_at` are the CEO's, per clip, and nothing plays in an episode until
+# both are set (policy B, §2). All three rows are windows on ONE recording, the White House
+# recording of the address of 22 October 1962; each is left UNSIGNED for the CEO.
+recordings:
+  - id: clip-kennedy-address-quarantine-19621022
+    kind: audio
+    title: "John F. Kennedy announcing the quarantine, in the White House recording of the Radio and Television Address of 22 October 1962"
+    speaker: John F. Kennedy
+    occasion: "Radio and Television Address to the American People on the Soviet Arms Build-up in Cuba, delivered from the White House, as the Library titles it; the text edition heads it 'The White House, October 22, 1962'"
+    date: "1962-10-22"
+    date_as_stated: "22 October 1962 (the item's 'Date(s) of Materials')"
+    repository: "John F. Kennedy Presidential Library and Museum (National Archives and Records Administration), White House Audio Collection"
+    accession: "JFKWHA-142-001"
+    url: "https://www.jfklibrary.org/asset-viewer/archives/JFKWHA/1962/JFKWHA-142-001/JFKWHA-142-001"
+    file: "https://static.jfklibrary.org/e713e0r7h1435052m4p47115h1cl7hw5.mp3"
+    file_md5: "4f8d46b8861bf9e06c9739f152eaf58d"
+    file_md5_as_stated: "the Library publishes no checksum. This is the md5 of the file as fetched on 2026-10-04 from the item page's Download link (42,664,323 bytes, audio/mpeg, Last-Modified Thu, 25 Jun 2026 18:42:14 GMT, ETag 0165af96565a098b; the link carried ?filename=JFKWHA-142-001-AU_WR.mp3 and a dated odc parameter, dropped here), recorded so the render job refuses a changed file"
+    title_as_stated: "Radio and Television Address to the American People on the Soviet Arms Build-up in Cuba, 22 October 1962"
+    creator_as_stated: "the item page's Description: 'Sound recording of President John F. Kennedy’s radio and television address to the nation regarding the former Soviet Union’s military presence in Cuba'"
+    origin_as_stated: "Collection: White House Audio Collection. Series: Series 1. White House Audio Recordings, 1961-1963. Preferred Citation: 'White House Audio Collection. Radio and Television Address to the American People on the Soviet Arms Build-up in Cuba, 22 October 1962'. Digital Identifier: JFKWHA-142-001 (the item page)"
+    uploader_as_stated: "the Library's own asset viewer; no third-party uploader"
+    licence_as_stated: "Copyright Status: Public Domain (the item page's own field). The collection's Copyright Notice on the same page: 'Documents in this collection that were prepared by officials of the United States as part of their official duties are in the public domain.'"
+    licence_url: "https://www.jfklibrary.org/asset-viewer/archives/JFKWHA/1962/JFKWHA-142-001/JFKWHA-142-001"
+    rights_basis: public-domain-as-stated
+    rights_reading: "A recording made by the White House of the President addressing the nation, held by a federal presidential library that marks it Public Domain: a work of the United States government, not subject to copyright under 17 U.S.C. 105, in the US and with no URAA question (a domestic work). The excerpt is the President's own words. Admissible under policy B once the CEO signs, the basis printed beside the exhibit"
+    fetched_at: 2026-10-04
+    duration_s: 1066.55
+    excerpt: {in: "00:09:12.800", out: "00:09:23.200"}
+    transcript_extract: src-jfk-19621022.whole
+    transcript: "First: To halt this offensive buildup, a strict quarantine on all offensive military equipment under shipment to Cuba is being initiated."
+    verification: recordings/clip-kennedy-address-quarantine-19621022.verification.json
+    observed: "The window opens in the pause after 'taken immediately.' and closes in the pause after 'initiated.', before 'All ships of any kind'. The file is mono, 44.1 kHz, 320 kb/s MP3, 17 min 46 s; an announcer's two sentences open it before the President speaks at 8.9 s; the passage sits at 9 min 13 s"
+    shows: "Kennedy's voice, the one sentence that names the quarantine and what it covers"
+    does_not_show: "the six steps that follow it, the three sentences on how the quarantine would work, the rest of the 17-minute address"
+    signed_by: null
+    signed_at: null
+
+  - id: clip-kennedy-address-retaliation-19621022
+    kind: audio
+    title: "John F. Kennedy stating the policy of full retaliatory response, in the White House recording of the Radio and Television Address of 22 October 1962"
+    speaker: John F. Kennedy
+    occasion: "Radio and Television Address to the American People on the Soviet Arms Build-up in Cuba, delivered from the White House, as the Library titles it; the text edition heads it 'The White House, October 22, 1962'"
+    date: "1962-10-22"
+    date_as_stated: "22 October 1962 (the item's 'Date(s) of Materials')"
+    repository: "John F. Kennedy Presidential Library and Museum (National Archives and Records Administration), White House Audio Collection"
+    accession: "JFKWHA-142-001"
+    url: "https://www.jfklibrary.org/asset-viewer/archives/JFKWHA/1962/JFKWHA-142-001/JFKWHA-142-001"
+    file: "https://static.jfklibrary.org/e713e0r7h1435052m4p47115h1cl7hw5.mp3"
+    file_md5: "4f8d46b8861bf9e06c9739f152eaf58d"
+    file_md5_as_stated: "the Library publishes no checksum. This is the md5 of the file as fetched on 2026-10-04 from the item page's Download link (42,664,323 bytes, audio/mpeg, Last-Modified Thu, 25 Jun 2026 18:42:14 GMT, ETag 0165af96565a098b), recorded so the render job refuses a changed file"
+    title_as_stated: "Radio and Television Address to the American People on the Soviet Arms Build-up in Cuba, 22 October 1962"
+    creator_as_stated: "the item page's Description: 'Sound recording of President John F. Kennedy’s radio and television address to the nation regarding the former Soviet Union’s military presence in Cuba'"
+    origin_as_stated: "Collection: White House Audio Collection. Series: Series 1. White House Audio Recordings, 1961-1963. Preferred Citation: 'White House Audio Collection. Radio and Television Address to the American People on the Soviet Arms Build-up in Cuba, 22 October 1962'. Digital Identifier: JFKWHA-142-001 (the item page)"
+    uploader_as_stated: "the Library's own asset viewer; no third-party uploader"
+    licence_as_stated: "Copyright Status: Public Domain (the item page's own field). The collection's Copyright Notice on the same page: 'Documents in this collection that were prepared by officials of the United States as part of their official duties are in the public domain.'"
+    licence_url: "https://www.jfklibrary.org/asset-viewer/archives/JFKWHA/1962/JFKWHA-142-001/JFKWHA-142-001"
+    rights_basis: public-domain-as-stated
+    rights_reading: "As the first row: a work of the United States government, not subject to copyright under 17 U.S.C. 105, marked Public Domain by the Library that holds it. Admissible under policy B once the CEO signs, the basis printed beside the exhibit"
+    fetched_at: 2026-10-04
+    duration_s: 1066.55
+    excerpt: {in: "00:10:31.200", out: "00:10:50.000"}
+    transcript_extract: src-jfk-19621022.whole
+    transcript: "Third: It shall be the policy of this Nation to regard any nuclear missile launched from Cuba against any nation in the Western Hemisphere as an attack by the Soviet Union on the United States, requiring a full retaliatory response upon the Soviet Union."
+    verification: recordings/clip-kennedy-address-retaliation-19621022.verification.json
+    observed: "The window opens in the pause after 'will be recognized.' and closes on the last word, 'Union.', before 'Fourth'; the gap before 'Fourth' is short, so the out point sits 0.2 s before the ASR's end of 'Union'. The passage sits at 10 min 32 s"
+    shows: "Kennedy's voice, the one sentence that makes a missile from Cuba a Soviet attack"
+    does_not_show: "the two steps before it and the four after it, the rest of the address"
+    signed_by: null
+    signed_at: null
+
+  - id: clip-kennedy-address-opening-19621022
+    kind: audio
+    title: "John F. Kennedy's opening words, in the White House recording of the Radio and Television Address of 22 October 1962"
+    speaker: John F. Kennedy
+    occasion: "Radio and Television Address to the American People on the Soviet Arms Build-up in Cuba, delivered from the White House, as the Library titles it; the text edition heads it 'The White House, October 22, 1962'"
+    date: "1962-10-22"
+    date_as_stated: "22 October 1962 (the item's 'Date(s) of Materials')"
+    repository: "John F. Kennedy Presidential Library and Museum (National Archives and Records Administration), White House Audio Collection"
+    accession: "JFKWHA-142-001"
+    url: "https://www.jfklibrary.org/asset-viewer/archives/JFKWHA/1962/JFKWHA-142-001/JFKWHA-142-001"
+    file: "https://static.jfklibrary.org/e713e0r7h1435052m4p47115h1cl7hw5.mp3"
+    file_md5: "4f8d46b8861bf9e06c9739f152eaf58d"
+    file_md5_as_stated: "the Library publishes no checksum. This is the md5 of the file as fetched on 2026-10-04 from the item page's Download link (42,664,323 bytes, audio/mpeg, Last-Modified Thu, 25 Jun 2026 18:42:14 GMT, ETag 0165af96565a098b), recorded so the render job refuses a changed file"
+    title_as_stated: "Radio and Television Address to the American People on the Soviet Arms Build-up in Cuba, 22 October 1962"
+    creator_as_stated: "the item page's Description: 'Sound recording of President John F. Kennedy’s radio and television address to the nation regarding the former Soviet Union’s military presence in Cuba'"
+    origin_as_stated: "Collection: White House Audio Collection. Series: Series 1. White House Audio Recordings, 1961-1963. Preferred Citation: 'White House Audio Collection. Radio and Television Address to the American People on the Soviet Arms Build-up in Cuba, 22 October 1962'. Digital Identifier: JFKWHA-142-001 (the item page)"
+    uploader_as_stated: "the Library's own asset viewer; no third-party uploader"
+    licence_as_stated: "Copyright Status: Public Domain (the item page's own field). The collection's Copyright Notice on the same page: 'Documents in this collection that were prepared by officials of the United States as part of their official duties are in the public domain.'"
+    licence_url: "https://www.jfklibrary.org/asset-viewer/archives/JFKWHA/1962/JFKWHA-142-001/JFKWHA-142-001"
+    rights_basis: public-domain-as-stated
+    rights_reading: "As the first row: a work of the United States government, not subject to copyright under 17 U.S.C. 105, marked Public Domain by the Library that holds it. Admissible under policy B once the CEO signs, the basis printed beside the exhibit"
+    fetched_at: 2026-10-04
+    duration_s: 1066.55
+    excerpt: {in: "00:00:08.600", out: "00:00:20.900"}
+    transcript_extract: src-jfk-19621022.whole
+    transcript: "Good evening my fellow citizens: This Government, as promised, has maintained the closest surveillance of the Soviet Military buildup on the island of Cuba."
+    verification: recordings/clip-kennedy-address-opening-19621022.verification.json
+    observed: "The window opens after the announcer's second sentence ends at 8.1 s and closes in the pause after 'Cuba.', before 'Within the past week'. The transcript joins the salutation and the first sentence, which the text edition prints as two paragraphs"
+    shows: "Kennedy's voice, the salutation and the first sentence of the address"
+    does_not_show: "the announcer who introduces the broadcast, and everything after the first sentence"
+    signed_by: null
+    signed_at: null
+
+# ------------------------------------------------------------- disagreements held, not adjudicated
+# Where two held sources disagree, both are held. This is a list for the writer, not a verdict
+# (no positions are adjudicated in this ledger).
+# 1. What Castro asked for on 26 October. The letter (src-castro-khrushchev-19621026.secopinion)
+#    urges that after an invasion 'the moment to eliminate this danger forever' had come, 'in an
+#    act of the most legitimate self-defense', and never names a Soviet nuclear act; the JFK
+#    Library's summary of the day says he 'urges Nikita Khrushchev to initiate a nuclear first
+#    strike' (src-jfkl-cmc-19621026.secday). Castro in 1968 (src-castro-cc-19680126.p86) calls Khrushchev's reading of it
+#    'insinuations of a nuclear strike in the sense that we had advised the USSR to attack the
+#    United States'; in 1987 (src-shakhnazarov-castro-19871105.p87) he describes the letter as
+#    saying 'we should not allow the Americans to deliver a first strike'.
+# 2. When the time for Turkey was set: Dobrynin reports Robert Kennedy saying 'we need 4-5
+#    months' (src-cwihp-bulletin-5.p80); the Archive's 2002 release says '4-5 months'
+#    (src-nsa-press-20021011.sec2); the sentence crossed out of Robert Kennedy's own memorandum
+#    says 'four or five months' (src-frus11-d96.fn2). None says six. McNamara's note of 25 April 1963 says the last
+#    Jupiter in Turkey 'came down yesterday' (src-nsa-jupiter-2023.secturkey).
+# 3. Who was responsible for the U-2: the Library's summary says 'a Soviet-supplied
+#    surface-to-air missile' (src-jfkl-cmc-19621027.secday); Castro in 1987 says 'a Soviet
+#    anti-aircraft missile', ordered most probably below Pliyev, and that Khrushchev 'accused us'
+#    (src-shakhnazarov-castro-19871105.p88); Kramer says Moscow 'mistakenly thought that Castro
+#    had ordered Soviet troops to fire' (src-kramer-1995.p112).
+# 4. The pilot's name: 'Rudolph' and 'Rudolf' on one Library page (src-jfkl-cmc-19621027.secday);
+#    'Rudolf' in the Public Papers note (src-app-homestead-19621126.secnote) and the Archive.
+# 5. The ships on 24 October: the Archive's Dobbs posting says the missile-carrying ships 'were
+#    at least 500 nautical miles from the closest American warship' and that the 'eyeball to
+#    eyeball' claim was incorrect (src-nsa-dobbs-eyeball-2008.secclaim, .secships); the same
+#    paragraph quotes Rusk as 'we were eyeball to eyeball, and the other fellow just blinked',
+#    where the event YAML has 'We're eyeball to eyeball, and I think the other fellow just
+#    blinked'. That sentence is not held as an extract: the posting is not a source for Rusk's
+#    words, and no source for either wording is held.
+# 6. Medium-range missiles: 'a total of 42' by later photography (src-nsa-press-20021011.sec1)
+#    against 36 R-12 warheads aboard Indigirka (src-nsa-ebb449.sectimeline). A missile count and
+#    a warhead count are different counts; they are listed so neither is read as the other.
+# 7. Warheads: 98 tactical warheads left on Arkhangelsk and 36 R-12 warheads on Aleksandrovsk
+#    (src-nsa-ebb449.seccargo); Indigirka brought 90 and Aleksandrovsk 68, of which the 24 R-14
+#    warheads were never unloaded (src-nsa-ebb449.sectimeline). No held source states 162.
+#    Aleksandrovsk arrived on 25 October by the essay and on 23 October by the chronology.
+# 8. When the tactical weapons became known: Gribkov 'revealed their presence' at the Havana
+#    conference of January 1992 (src-nsa-ebb449.secgribkov); the Archive's 2002 releases are
+#    about further documents (src-nsa-press-20021012.sec1).
+# 9. Soviet troops: Castro in 1968 says 'over 40,000' (src-castro-cc-19680126.sectroops); the
+#    event YAML's 42,000 rests on a source not held (src-fursenko-naftali-1997, a gap).
+# 10. B-59: the only held account of the torpedo is Orlov's, as the Archive's editors summarise
+#    it, with their note that 'the other submarine commanders do not believe' Savitsky gave the
+#    order (src-nsa-ebb75.secorlov). It has Arkhipov, 'Deputy brigade commander', calming
+#    Savitsky; no held source states a rule requiring three officers' consent.

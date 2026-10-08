@@ -1,0 +1,8 @@
+source: src-greens-efa-20060406
+locator: secharms
+url: https://www.greens-efa.eu/en/article/document/the-other-report-on-chernobyl-torch
+read: 2026-10-07
+note: the launch statement's quotation of Rebecca Harms MEP; the page serves its text also as a generated PDF ('?pdf=28'), from which this was read
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+Speaking at the launch of the report in Berlin, Rebecca Harms said: "We commissioned TORCH to counterbalance claims made by the IAEA in the media last year (ii), which both played down the lethal consequences of the nuclear accident at Chernobyl and failed to make a meaningful analysis of its wider effects on Europe and the world. The much-publicised IAEA estimate of a mere 4000 excess cancer deaths provoked an outcry among the scientific community and environmental NGOs, and was a dishonour to those who have and will suffer as a result of Chernobyl. This is one of a number of underestimates, which TORCH set out to rebut. There must be no mistaking the catastrophic dangers that are still very much associated with nuclear power."

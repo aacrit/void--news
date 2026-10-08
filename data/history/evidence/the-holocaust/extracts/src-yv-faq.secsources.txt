@@ -1,0 +1,6 @@
+source: src-yv-faq
+locator: secsources
+url: https://www.yadvashem.org/holocaust/faqs.html
+read: 2026-10-07
+
+The main sources for these statistics are comparisons of prewar censuses with postwar censuses and population estimates. Nazi documentation containing partial data on various deportations and murders is also used.

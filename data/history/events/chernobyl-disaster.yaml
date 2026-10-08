@@ -112,6 +112,76 @@ primary_source_excerpts:
   author: Lyudmilla Ignatenko
   work: Voices from Chernobyl, oral history collected by Svetlana Alexievich
   date: '1997'
+- text: 'the prime cause of the accident was an extremely improbable combination of violations of instructions and operating rules committed by the staff of the unit.'
+  author: USSR report to the IAEA
+  work: Report presented by the USSR at the IAEA Post-Accident Review Meeting, Vienna, August 1986, as quoted by a Commission of the USSR State Committee for the Supervision of Safety in Industry and Nuclear Power in INSAG-7, Annex I (IAEA, 1992), p. 60
+  date: August 1986
+  url: https://www-pub.iaea.org/MTCD/publications/PDF/Pub913e_web.pdf
+- text: The statement should be written in such a way that it does not cause excessive anxiety or panic.
+  author: A.A. Gromyko
+  work: Extraordinary Session of the CC CPSU Politburo, April 28, 1986, working copy (National Security Archive translation, document 4)
+  date: April 28, 1986
+  url: https://nsarchive.gwu.edu/sites/default/files/documents/6279037/National-Security-Archive-Doc-4-Extraordinary.pdf
+- text: 'The [station] personnel are to blame for the accident; but the scale of the accident is due to the design of the reactor.'
+  author: Mikhail Gorbachev
+  work: CC CPSU Politburo session of July 3, 1986, as recorded in Anatoly S. Chernyaev's notes (National Security Archive translation, document 15)
+  date: July 3, 1986
+  url: https://nsarchive.gwu.edu/sites/default/files/documents/6279559/National-Security-Archive-Doc-15-Minutes-of-CC.pdf
+- text: 'The situation with radiation in the city was clear within an hour. No planned emergency evacuation measures existed: people did not know what to do.'
+  author: Vladimir Gubarev
+  work: Letter from the science editor of Pravda to the CC CPSU about his trip to Chernobyl, May 4 to 9, 1986 (National Security Archive translation, document 12)
+  date: May 1986
+  url: https://nsarchive.gwu.edu/sites/default/files/documents/6279556/National-Security-Archive-Doc-12-Letter-from.pdf
+- text: In parting they shook our hands and gave us certificates of gratitude for our self-sacrifice.
+  author: A liquidator, as his child reports it
+  work: Svetlana Alexievich, Voices from Chernobyl, Children's Chorus, translated by Keith Gessen (Dalkey Archive Press, 2005), as excerpted on NobelPrize.org
+  date: 2005
+  url: https://www.nobelprize.org/prizes/literature/2015/alexievich/prose/
+- text: 'It is impossible to assess reliably, with any precision, numbers of fatal cancers caused by radiation exposure due to Chernobyl accident.'
+  author: The Chernobyl Forum
+  work: 'Chernobyl''s Legacy: Health, Environmental and Socio-Economic Impacts, second revised version (IAEA, April 2006), p. 15'
+  date: 2006
+  url: https://www.iaea.org/sites/default/files/chernobyl.pdf
+- text: A total of up to 4000 people could eventually die of radiation exposure from the Chernobyl nuclear power plant (NPP) accident nearly 20 years ago, an international team of more than 100 scientists has concluded.
+  author: World Health Organization
+  work: 'Joint news release, Chernobyl: the true scale of the accident, Geneva'
+  date: September 5, 2005
+  url: https://www.who.int/news/item/05-09-2005-chernobyl-the-true-scale-of-the-accident
+- text: The Committee has decided not to use models to project absolute numbers of effects in populations exposed to low radiation doses from the Chernobyl accident, because of unacceptable uncertainties in the predictions.
+  author: UNSCEAR
+  work: Sources and Effects of Ionizing Radiation, UNSCEAR 2008 Report, Volume II, Annex D, paragraph 98 (United Nations, 2011)
+  date: '2011'
+  url: https://www.unscear.org/unscear/uploads/documents/unscear-reports/UNSCEAR_2008_Report_Vol.II.pdf
+- text: 'The accident is now seen to have been the result of the concurrence of the following major factors: specific physical characteristics of the reactor; specific design features of the reactor control elements; and the fact that the reactor was brought to a state not specified by procedures or investigated by an independent safety body.'
+  author: International Nuclear Safety Advisory Group
+  work: 'INSAG-7, The Chernobyl Accident: Updating of INSAG-1, Safety Series No. 75-INSAG-7 (IAEA, 1992), conclusion (2), p. 23'
+  date: '1992'
+  url: https://www-pub.iaea.org/MTCD/publications/PDF/Pub913e_web.pdf
+- text: However the statement is misleading, as the figure calculated in the IAEA/WHO report is actually 9,000 fatalities.
+  author: Ian Fairlie and David Sumner
+  work: The Other Report on Chernobyl (TORCH), commissioned by Rebecca Harms MEP, Greens/EFA, executive summary, p. 11
+  date: April 2006
+  url: https://www.nirs.org/wp-content/uploads/c20/torch.pdf
+- text: The most recently published figures indicate that in Belarus, Russia and the Ukraine alone the accident resulted in an estimated 200,000 additional deaths between 1990 and 2004.
+  author: Greenpeace
+  work: 'The Chernobyl Catastrophe: Consequences on Human Health (Greenpeace, Amsterdam, 2006), p. 10'
+  date: April 2006
+  url: https://web.archive.org/web/20061211035033/http://www.greenpeace.org/raw/content/international/press/reports/chernobylhealthreport.pdf
+- text: Radiation contamination maps and radiation level data were classified until 1989.
+  author: National Report of Ukraine
+  work: '20 years after Chornobyl Catastrophe. Future Outlook: National Report of Ukraine (Kyiv, Atika, 2006), p. 8'
+  date: '2006'
+  url: https://www.osti.gov/etdeweb/servlets/purl/20775483
+- text: We, Belarusians, had become the people of Chernobyl.
+  author: Svetlana Alexievich
+  work: Nobel Lecture, Swedish Academy, Stockholm
+  date: December 7, 2015
+  url: https://www.nobelprize.org/prizes/literature/2015/alexievich/lecture/
+- text: 'Indeed, the Chernobyl catastrophe was a historic turning point: there was the era before the disaster, and there is the very different era that has followed.'
+  author: Mikhail Gorbachev
+  work: Turning Point at Chernobyl, Project Syndicate
+  date: April 14, 2006
+  url: https://www.project-syndicate.org/commentary/turning-point-at-chernobyl
 coordinates:
   lat: 51.4033
   lng: 30.0542

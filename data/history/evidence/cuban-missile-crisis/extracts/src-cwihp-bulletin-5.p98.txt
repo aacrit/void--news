@@ -1,0 +1,8 @@
+source: src-cwihp-bulletin-5
+locator: p98
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf
+read: 2026-10-04
+note: the PDF's text layer, line breaks folded to spaces; where the layer breaks a word at a line end its hyphen is kept as it prints it ('docu- ment'); nothing is corrected
+note: printed page 98: the record of the Mikoyan-Castro conversation, in the Bulletin's translation, in the Bulletin's translation; the speakers are printed as F. CASTRO and A.I. MIKOYAN
+
+F. CASTRO. There is a question, on which we are insufficiently informed. On 26 October the Soviet government sent Kennedy a letter without a word about Turkey. On 27 October we learned about Turkey from the broadcasts of Soviet radio. The American media expressed some surprise because this problem had not been raised in the message of the 26th. What is it, a false communication or were there two letters of 26 and 27 October? We have received one letter that coincided with the docu- ment transmitted by Moscow radio. A.I. MIKOYAN. There were two letters. The letter of the 26th was not published. The letter of 27 October was published. But the content of the letter of 27 October covers the questions raised in the letter of the 26th. The question of Turkey was not raised at the begin- ning. Later this issue was included.

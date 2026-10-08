@@ -1,0 +1,13 @@
+source: src-ushmm-numbers
+locator: sectable1
+url: https://encyclopedia.ushmm.org/content/en/article/documenting-numbers-of-victims-of-the-holocaust-and-nazi-persecution
+read: 2026-10-07
+note: the table's figure rows only; the explanatory sentence under each row is omitted (lines dropped, not altered)
+
+Table 1. Breakdown and explanation of how six million Jewish people were murdered in the Holocaust
+Number of Jews murdered (by site and method)
+Explanation
+Approximately 2.7 million Jews were murdered at killing centers.
+About 2 million Jews were murdered in mass shooting operations and related massacres.
+Between 800,000 and 1,000,000 Jews were murdered in ghettos, labor camps, and concentration camps.
+At least 250,000 Jews were murdered in other acts of violence outside of camps and ghettos.

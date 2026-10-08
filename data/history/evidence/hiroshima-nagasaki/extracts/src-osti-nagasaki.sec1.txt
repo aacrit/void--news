@@ -1,0 +1,54 @@
+source: src-osti-nagasaki
+locator: sec1
+url: https://www.osti.gov/opennet/manhattan-project-history/Events/1945/nagasaki.htm
+read: 2026-10-05
+note: line breaks are the page's; '(right)' is the page's figure reference
+
+At 3:47 a.m. on August 9, 1945, a
+B-29 named Bock's Car lifted off from Tinian and
+headed toward the primary target: Kokura Arsenal, a
+massive collection of war industries adjacent to the city
+of Kokura.
+
+From this point on, few things went according to
+plan. The aircraft commander, Major Charles W.
+Sweeney, ordered the arming of the bomb only ten minutes
+after take-off so that the aircraft could be pressurized
+and climb above the lightning and squalls that menaced the
+flight all the way to Japan. (A journalist, William
+L. Laurence of the New York Times , on an
+escorting aircraft saw some "St. Elmo's fire"
+glowing on the edges of the aircraft and worried that the
+static electricity might detonate the bomb.) Sweeney
+then discovered that due to a minor malfunction he would
+not be able to access his reserve fuel. The aircraft
+next had to orbit over Yaku-shima off the south coast of
+Japan for almost an hour in order to rendezvous with its
+two escort B-29s, one of which never did arrive. The
+weather had been reported satisfactory earlier in the day
+over Kokura Arsenal, but by the time the B-29 finally
+arrived there, the target was obscured by smoke and
+haze. Two more passes over the target still produced
+no sightings of the aiming point. As an aircraft
+crewman, Jacob Beser, later recalled, Japanese fighters
+and bursts of antiaircraft fire were by this time starting
+to make things "a little hairy." Kokura no
+longer appeared to be an option, and there was only enough
+fuel on board to return to the secondary airfield on
+Okinawa, making one hurried pass as they went over their
+secondary target, the
+city of Nagasaki . As Beser later
+put it, "there was no sense dragging the bomb home or
+dropping it in the ocean."
+
+As it turned out, cloud cover obscured Nagasaki as
+well. Sweeney reluctantly approved a much less
+accurate radar approach on the target. At the last
+moment the bombardier, Captain Kermit K. Beahan, caught a
+brief glimpse of the city's stadium through the clouds and
+dropped the bomb. At 11:02 a.m., at an altitude of
+1,650 feet, Fat Man (right) exploded over
+Nagasaki. The yield of the
+explosion was later estimated at 21 kilotons, 40 percent
+greater than that of the
+Hiroshima bomb .

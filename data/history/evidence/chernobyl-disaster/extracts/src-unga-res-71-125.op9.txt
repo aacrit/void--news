@@ -1,0 +1,8 @@
+source: src-unga-res-71-125
+locator: op9
+url: https://documents.un.org/doc/undoc/gen/n16/430/47/pdf/n1643047.pdf
+read: 2026-10-07
+note: operative paragraph 9
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+9. Decides, in order to raise awareness of the long-term consequences of the Chernobyl disaster, to designate 26 April as International Chernobyl Disaster Remembrance Day, to be observed every year beginning in 2017, invites all Member States, relevant agencies of the United Nations system and other international organizations, as well as civil society, to observe the day, and notes that the costs of all activities that may arise should be met from voluntary contributions;

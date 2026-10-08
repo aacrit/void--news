@@ -1,0 +1,9 @@
+source: src-fbis-castro-19621023
+locator: secoffensive
+url: https://dataverse.tdl.org/api/access/datafile/54331
+read: 2026-10-04
+note: Castro on offensive and defensive weapons, as FBIS translated the broadcast; 'cane' for 'came' is the file's
+
+The imperialists have now invented the terms "offensive" and "defensive" arms. Which are the offensive weapons and which are the defensive? The rifles that cane to Playa Giron were offensive weapons; the bazookas, the grenades, the mortars, the bullets, the knives they landed in Playa Giron were offensive weapons. But the rifles, mortars, and tanks we had were defensive weapons, while the Sherman tanks they landed there were offensive tanks.
+
+The thing that determines the offensive or defensive character of the weapons is not their shape but their use, their employment. And since our weapons were used to defend ourselves, our rifles, our cannons, our tanks were defense; and the rifles, the weapons, the tanks they brought were offensive. That cannot be debated anywhere.

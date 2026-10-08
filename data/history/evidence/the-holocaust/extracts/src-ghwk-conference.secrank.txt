@@ -1,0 +1,6 @@
+source: src-ghwk-conference
+locator: secrank
+url: https://www.ghwk.de/en/conference
+read: 2026-10-07
+
+The rank of the participants and the institutions that they represented can be seen on the chart located in the historical conference room. This shows that a document produced after the Wannsee Conference, which referred to a "meeting of State Secretaries", correctly defined the nature of the conference. The State Secretaries implemented what had already been decided at a higher political level. It would therefore be incorrect to say that the murder of European Jews was decided at the Wannsee Conference. Nonetheless, the conference is of major historical significance as it provided the coordination necessary to extend the genocide to almost the whole of Europe. The conference represents the involvement of the entire German state administration in the genocide, which was implemented by range of authorities.

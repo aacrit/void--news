@@ -1,0 +1,8 @@
+source: src-cwihp-bulletin-5
+locator: p82
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf
+read: 2026-10-04
+note: the PDF's text layer, line breaks folded to spaces; where the layer breaks a word at a line end its hyphen is kept as it prints it ('docu- ment'); nothing is corrected
+note: printed page 82: Blight and Brenner, on the letter Castro sent Khrushchev
+
+In that letter, the Cuban leader predicted that U.S. military strikes, and con- ceivably an invasion, were likely to occur in the next 24 to 72 hours (that is, possibly 10- 12 hours after the Kremlin received the letter). In order to protect Cuba, Mikoyan contended, the Soviet Union had to act swiftly, without consulting Cuba.

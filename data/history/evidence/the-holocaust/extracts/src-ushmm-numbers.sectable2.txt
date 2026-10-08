@@ -1,0 +1,20 @@
+source: src-ushmm-numbers
+locator: sectable2
+url: https://encyclopedia.ushmm.org/content/en/article/documenting-numbers-of-victims-of-the-holocaust-and-nazi-persecution
+read: 2026-10-07
+
+Table 2. Number of Jewish victims murdered by the Nazis at killing centers
+Killing center
+Number of Jewish victims
+Chełmno
+at least 152,000
+Belzec
+approximately 435,000
+Sobibor
+at least 167,000
+Treblinka II
+approximately 925,000
+Auschwitz camp complex (including those gassed upon arrival at the Auschwitz-Birkenau killing center and those who were killed in the camp complex through other means)
+approximately 1,000,000
+Subtotal
+approximately 2.7 million Jewish people were murdered at killing centers

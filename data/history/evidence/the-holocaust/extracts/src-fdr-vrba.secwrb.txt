@@ -1,0 +1,6 @@
+source: src-fdr-vrba
+locator: secwrb
+url: https://www.fdrlibrary.org/vrba-wetzler-report
+read: 2026-10-07
+
+That month, Roswell McClelland, an assistant to the American Minister in Switzerland, sent his own English translations of the full reports to John Pehle, Director of the US government’s War Refugee Board (WRB), an executive agency FDR had established to aid the civilian victims of Axis powers in January 1944. The WRB sent dozens of copies of the reports on November 18 under the title “German Extermination Camps - Auschwitz and Birkenau” to American journalists and to the House Appropriations Committee.

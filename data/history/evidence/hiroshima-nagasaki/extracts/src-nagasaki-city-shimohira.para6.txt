@@ -1,0 +1,6 @@
+source: src-nagasaki-city-shimohira
+locator: para6
+url: https://nagasakipeace.jp/en/search/survivors/sakue_shimohira.html
+read: 2026-10-05
+
+Faced with the choice of finding the courage to die or the courage to live, my sister unfortunately chose the former. But I chose the courage to live. Now I am genuinely happy to have lived, and truly hope that future generations will also live, whatever troubles they may face. It has been said that ‘a human life is heavier that the Earth itself.’ I want you to understand the suffering of the many people who have passed away whilst refusing to die in the name of war.

@@ -1,0 +1,23 @@
+source: src-hasegawa-2007
+locator: p26
+url: https://www.cambridge.org/core/services/aop-cambridge-core/content/view/0E9580B3E03434472A15432EB6D8AE05/S1557466007021742a.pdf/the-atomic-bombs-and-the-soviet-invasion-what-drove-japans-decision-to-surrender.pdf
+read: 2026-10-07
+note: page 26, section 6 (Conclusions), its opening
+
+The argument presented by Asada and Frank
+that the atomic bombs rather than Soviet entry
+into the war had a more decisive effect on
+Japan’s decision to surrender cannot be
+supported. The Hiroshima bomb, although it
+heightened the sense of urgency to seek the
+termination of the war, did not prompt the
+Japanese government to take any immediate
+action that repudiated the previous policy of
+seeking Moscow’s mediation. Contrary to the
+contention advanced by Asada and Frank, there
+is no evidence to show that the Hiroshima
+bomb led either Togo or the emperor to accept
+the Potsdam terms. On the contrary, Togo’s
+urgent telegram to Sato on August 7 indicates
+that, despite the Hiroshima bomb, they
+continued to stay the previous course.

@@ -1,0 +1,7 @@
+source: src-un-s1994-470
+locator: para7
+url: https://documents.un.org/doc/undoc/gen/n94/186/70/pdf/n9418670.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+7. The dedicated personnel of UNAMIR, who have performed courageously in dangerous circumstances, cannot be left at risk indefinitely when there is no possibility of their performing the tasks for which they were dispatched. With the departure of the Belgian contingent and non-essential personnel from other contingents, the reduced strength of military personnel in UNAMIR stood, on 20 April, at 1,515 (from 2,165) and Military Observers at 190 (from 321), for a total of 1,705 (from 2,486).

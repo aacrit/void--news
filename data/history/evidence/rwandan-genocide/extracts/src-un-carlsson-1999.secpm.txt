@@ -1,0 +1,8 @@
+source: src-un-carlsson-1999
+locator: secpm
+url: https://web.archive.org/web/20001203205100/http://www.un.org:80/News/ossg/rwanda_report.htm
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: section II, 'The crash of the Presidential plane; genocide begins', two consecutive paragraphs
+
+During the morning the Prime Minister fled over the wall from her residence and sought refuge at the United Nations Volunteer (UNV) compound in Kigali. According to an eyewitness account by a UNV who was present, the Prime Minister, her husband and five children all arrived in the compound between 7.30 and 08.00 (somewhat later according to UNAMIR's report to Headquarters). The Prime Minister took refuge in a different house from her family. The UNVs informed Mr. Le Moal, the acting designated security official, at about 08.30. According to Dallaire's report to Headquarters, he called Riza at 09.20 to inform him that UNAMIR might have to use force to save the Prime Minister. Riza confirmed the rules of engagement: that UNAMIR was not to fire until fired upon. An armed escort which had been sent to rescue the Prime Minister was blocked on the way. Again according to the eyewitness account, at about 10.00, Rwandan soldiers entered into the UNV compound, while the UNVs were on the phone to the designated official, threatened the UNVs and stating that they were only seeking one person. After searching the compound, the soldiers eventually found the Prime Minister, who was shot at the back of the compound.

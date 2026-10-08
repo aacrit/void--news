@@ -1,0 +1,6 @@
+source: src-yv-faq
+locator: secdecision
+url: https://www.yadvashem.org/holocaust/faqs.html
+read: 2026-10-07
+
+The exact date of the Nazi policy decision to murder all the Jews is not entirely clear. No written order from Hitler to this effect has been found. Currently there is a consensus among historians, however, that before the outbreak of the war the Nazis did not have a definite plan to murder the Jews of Europe. Rather, the policy that came to be known as the Final Solution, which called for the murder of all Jews, developed during the war itself.

@@ -1,0 +1,7 @@
+source: src-chugoku-watch-2015
+locator: para3
+url: https://www.hiroshimapeacemedia.jp/?p=54789
+read: 2026-10-07
+note: the report's third paragraph; it describes the museum's display as of the report's date, 11 December 2015, and nothing later
+
+According to the museum, a staff member cleaning the facility noticed that the metal hand of the watch was broken. The museum then obtained approval from Mr. Nikawa’s family to replace the watch with a replica made in 1996. However, because the replica was being used in the A-bomb exhibition tour of U.S. cities, including Washington D.C., from June of this year, it took the place of the original watch on November 13 after the exhibition tour ended. The original watch was then moved to the museum’s storage room.

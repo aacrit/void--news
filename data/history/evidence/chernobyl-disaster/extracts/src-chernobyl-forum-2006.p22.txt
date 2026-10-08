@@ -1,0 +1,8 @@
+source: src-chernobyl-forum-2006
+locator: p22
+url: https://www.iaea.org/sites/default/files/chernobyl.pdf
+read: 2026-10-07
+note: Forum Expert Group Report: Environmental Consequences, printed page 22 (PDF page 20); 'm-2' is the layer's form of the printed superscript
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+More than 200 000 square kilometres of Europe received levels of 137Cs above 37 kBq m-2. Over 70 percent of this area was in the three most affected countries, Belarus, Russia and Ukraine.

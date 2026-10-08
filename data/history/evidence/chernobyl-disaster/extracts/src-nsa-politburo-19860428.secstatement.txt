@@ -1,0 +1,7 @@
+source: src-nsa-politburo-19860428
+locator: secstatement
+url: https://nsarchive.gwu.edu/sites/default/files/documents/6279037/National-Security-Archive-Doc-4-Extraordinary.pdf
+read: 2026-10-07
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+Gorbachev M.S. What are we going to do with the information? Dolgikh V.I. We must complete the containment of the source of radiation. Gorbachev M.S. We should issue a statement quickly, we must not delay. We should say that there was an explosion, that we are taking necessary measures to contain its consequences. This is first of all.

@@ -1,0 +1,6 @@
+source: src-nagasaki-city-shimohira
+locator: para3
+url: https://nagasakipeace.jp/en/search/survivors/sakue_shimohira.html
+read: 2026-10-05
+
+However, the fighting intensified, and we started to lead our lives in dugouts or air-raid shelters. On that unforgettable day of August 9th 1945, the air-raid sirens started ringing out from early in the morning, and we children rushed to our regular dugout, around 800 meters from the epicenter of the blast. Many other children were hiding inside the dark hole. Presently, we heard a voice saying, “Air-raid warning lifted, air-raid warning lifted.” Some of the children rushed outside, but seven or eight of us, including my sister and I stayed in the shelter.

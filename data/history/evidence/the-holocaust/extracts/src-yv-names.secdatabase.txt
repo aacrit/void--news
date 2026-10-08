@@ -1,0 +1,6 @@
+source: src-yv-names
+locator: secdatabase
+url: https://www.yadvashem.org/archive/hall-of-names/database.html
+read: 2026-10-07
+
+The Central Database of Shoah Victims’ Names is a unique international endeavor initiated and led by Yad Vashem. Its primary aim is to recover the names and reconstruct the life stories of each individual victim of the Shoah. To date an estimated four and a half million Jews murdered in the Shoah have been commemorated in the database.

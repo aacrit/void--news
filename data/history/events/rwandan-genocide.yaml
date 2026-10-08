@@ -116,6 +116,56 @@ primary_source_excerpts:
   author: Jean Kambanda
   work: Statement to ICTR investigators after his arrest
   date: '1997'
+- text: HE HAS BEEN ORDERED TO REGISTER ALL TUTSI IN KIGALI. HE SUSPECTS IT IS FOR THEIR EXTERMINATION.
+  author: UNAMIR Force Headquarters, Kigali
+  work: 'Code cable to Baril, DPKO, New York, "Request for protection for informant", paragraph 6, reporting what the informant said (National Security Archive, Briefing Book 452, document 3)'
+  date: January 11, 1994
+  url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB452/docs/doc03.pdf
+- text: We cannot agree to the operation contemplated in paragraph 7 of your cable, as it clearly goes beyond the mandate entrusted to UNAMIR under resolution 872 (1993).
+  author: Kofi Annan
+  work: 'Code cable to Booh-Booh and Dallaire, "Contacts with Informant", sent over his name from the Department of Peacekeeping Operations (National Security Archive, Briefing Book 452, document 5)'
+  date: January 11, 1994
+  url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB452/docs/doc05.pdf
+- text: Based on the evidence we have seen from observations on the ground, we have every reason to believe that acts of genocide have occurred in Rwanda.
+  author: Christine Shelly
+  work: US Department of State Daily Press Briefing (the transcript spells her name Shelly)
+  date: June 10, 1994
+  url: https://web.archive.org/web/20000126075448/http://dosfan.lib.uic.edu:80/ERC/briefing/daily_briefings/1994/9406/940610db.html
+- text: Alan, that's just not a question that I'm in a position to answer.
+  author: Christine Shelly
+  work: 'US Department of State Daily Press Briefing, in reply to the question "How many acts of genocide does it take to make genocide?"'
+  date: June 10, 1994
+  url: https://web.archive.org/web/20000126075448/http://dosfan.lib.uic.edu:80/ERC/briefing/daily_briefings/1994/9406/940610db.html
+- text: you refuse to give your blood to your country and the dogs drink it for nothing.
+  author: Jean Kambanda
+  work: 'The phrase his plea agreement admits he uttered and that was repeatedly broadcast, as quoted in the ICTR Judgement and Sentence, paragraph 39 (x), the tribunal''s English of the Kinyarwanda "Wima igihugu amaraso imbwa zikayanywera ubusa"'
+  date: September 4, 1998
+  url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-97-23/trial-judgements/en/980904.pdf
+- text: each time you encountered attackers they would rape you
+  author: Witness JJ, a Tutsi woman of Taba commune
+  work: Testimony before the ICTR, as recorded in the court's English in the Akayesu Judgement of 2 September 1998, paragraph 421
+  date: September 2, 1998
+  url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-96-4/trial-judgements/en/980902.pdf
+- text: Sexual violence was an integral part of the process of destruction, specifically targeting Tutsi women and specifically contributing to their destruction and to the destruction of the Tutsi group as a whole.
+  author: International Criminal Tribunal for Rwanda, Trial Chamber I
+  work: Prosecutor v. Akayesu, Judgement, paragraph 731
+  date: September 2, 1998
+  url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-96-4/trial-judgements/en/980902.pdf
+- text: We will not deny that, in their greatest hour of need, the world failed the people of Rwanda.
+  author: Kofi Annan
+  work: Address to the Parliament of Rwanda, Kigali, as issued in UN press release SG/SM/6552 (text checked against delivery)
+  date: May 7, 1998
+  url: https://web.archive.org/web/20010504213058/http://www.un.org:80/News/Press/docs/1998/19980506.sgsm6552.html
+- text: The people who planned and carried out the Genocide were Rwandans, but the history and root causes go beyond this country.
+  author: Paul Kagame
+  work: Speech at the 20th commemoration, Amahoro National Stadium, Kigali, as the presidency's account quotes it
+  date: April 7, 2014
+  url: https://www.paulkagame.rw/historical-clarity-is-a-duty-of-memory-that-we-cannot-escape/
+- text: If by this we mean a willingness to join a genocidal operation, nothing in the archives that were examined demonstrates this.
+  author: Commission de recherche sur les archives françaises relatives au Rwanda et au génocide des Tutsi (Duclert Commission)
+  work: La France, le Rwanda et le génocide des Tutsi (1990-1994), the report's own English text of its conclusion, page 986, answering "Is France an accomplice to the genocide of the Tutsi?"
+  date: March 26, 2021
+  url: https://www.vie-publique.fr/files/rapport/pdf/279186.pdf
 coordinates:
   lat: -1.9403
   lng: 29.8739
