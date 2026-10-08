@@ -1511,8 +1511,8 @@ recordings:
     observed: "The window opens in the pause after 'taken immediately.' and closes in the pause after 'initiated.', before 'All ships of any kind'. The file is mono, 44.1 kHz, 320 kb/s MP3, 17 min 46 s; an announcer's two sentences open it before the President speaks at 8.9 s; the passage sits at 9 min 13 s"
     shows: "Kennedy's voice, the one sentence that names the quarantine and what it covers"
     does_not_show: "the six steps that follow it, the three sentences on how the quarantine would work, the rest of the 17-minute address"
-    signed_by: null
-    signed_at: null
+    signed_by: CEO
+    signed_at: 2026-10-07
 
   - id: clip-kennedy-address-retaliation-19621022
     kind: audio
@@ -1544,8 +1544,8 @@ recordings:
     observed: "The window opens in the pause after 'will be recognized.' and closes on the last word, 'Union.', before 'Fourth'; the gap before 'Fourth' is short, so the out point sits 0.2 s before the ASR's end of 'Union'. The passage sits at 10 min 32 s"
     shows: "Kennedy's voice, the one sentence that makes a missile from Cuba a Soviet attack"
     does_not_show: "the two steps before it and the four after it, the rest of the address"
-    signed_by: null
-    signed_at: null
+    signed_by: CEO
+    signed_at: 2026-10-07
 
   - id: clip-kennedy-address-opening-19621022
     kind: audio
@@ -1577,8 +1577,8 @@ recordings:
     observed: "The window opens after the announcer's second sentence ends at 8.1 s and closes in the pause after 'Cuba.', before 'Within the past week'. The transcript joins the salutation and the first sentence, which the text edition prints as two paragraphs"
     shows: "Kennedy's voice, the salutation and the first sentence of the address"
     does_not_show: "the announcer who introduces the broadcast, and everything after the first sentence"
-    signed_by: null
-    signed_at: null
+    signed_by: CEO
+    signed_at: 2026-10-07
 
 # ------------------------------------------------------------- disagreements held, not adjudicated
 # Where two held sources disagree, both are held. This is a list for the writer, not a verdict

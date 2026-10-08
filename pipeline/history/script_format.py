@@ -724,7 +724,6 @@ H18_KNOWN: dict[str, dict[str, str]] = {
     },
     'cuban-missile-crisis': {
         '200': "not in the record: 'two hundred'",
-        '50': "not in the record: 'fifty'",
         '18': "a span the writer computed; the record states no such span: 'eighteen'",
     },
     'cuban-revolution': {
