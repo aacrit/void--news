@@ -62,6 +62,9 @@ ALLOWLIST: dict[str, str] = {
                              "pipeline export and the gate after it is unchanged; this test runs "
                              "locally until a CEO-merged .github change adds it to "
                              "auto-merge-claude.yml",
+    "test_asr_words.py": "Orpheus word check (2026-10-07): the check runs only inside the local GPU "
+                         "History render; this test runs locally until a CEO-merged .github change "
+                         "adds it to auto-merge-claude.yml's gates",
 }
 
 FOUR_GATES = ("tests/test_grounding.py", "tests/test_bias_defaults_gate.py",

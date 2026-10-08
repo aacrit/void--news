@@ -42,7 +42,7 @@ import soundfile as sf
 import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from briefing.asr_words import norm_words, align, same_when_joined  # noqa: E402  (pure python, shared with the host)
+from briefing.asr_words import norm_words, align, same_when_joined, judge_ops  # noqa: E402  (pure python, shared with the host)
 
 MODEL_ID = "canopylabs/orpheus-3b-0.1-ft"
 _BF16 = Path.home() / "models" / "orpheus-3b-0.1-ft-bf16"
@@ -155,18 +155,21 @@ class Synth:
 
     def judge(self, job: dict, texts: list[str]) -> tuple[list[tuple], list[tuple]]:
         """(wrong words agreed by both decodes, name ops for the ear)."""
-        names = set(job.get("name_tokens") or [])
-        sets = []
+        names = job.get("name_tokens") or []
+        wrongs, ears = [], []
         for t in texts:
             hyp = norm_words(t)
             if same_when_joined(job["ref_words"], hyp):
-                sets.append(set())
+                wrongs.append(set())
+                ears.append(set())
                 continue
-            sets.append({o for o in align(job["ref_words"], hyp) if o[0] != "="})
-        agreed = sets[0] & sets[1]
-        wrong = [o for o in agreed if not ((o[1] in names) or (o[2] in names) or
-                                           (o[0] == "S" and o[1] in names))]
-        heard_names = [o for o in agreed if o not in wrong]
+            # Proper-name spellings of the script line go to the ear, never a
+            # number, never "void" (asr_words.judge_ops).
+            w, e = judge_ops(job.get("text", ""), align(job["ref_words"], hyp), names)
+            wrongs.append(w)
+            ears.append(e)
+        wrong = wrongs[0] & wrongs[1]
+        heard_names = ears[0] & ears[1]
         return sorted(wrong, key=str), sorted(heard_names, key=str)
 
 
