@@ -101,6 +101,14 @@ def test_british_ence() -> None:
     passes("defence", "Its arms in Cuba were for defence only.", "Its arms in Cuba were for defense only.")
 
 
+def test_british_doubled_l_and_titles() -> None:
+    # 2026-10-07 Cuban Missile Crisis render.
+    passes("signalling", "The destroyers were signalling to the submarine.", "The destroyers were signaling to the submarine.")
+    passes("Mister", "Mister Khrushchev wrote again.", "Mr. Khrushchev wrote again.")
+    fails("filling is not filing", "They were filling the forms.", "They were filing the forms.")
+    fails("drop is not dropped", "The ships drop their speed.", "The ships dropped their speed.")
+
+
 def test_designators() -> None:
     # 2026-10-07: "a U two" heard "a U-2" on every take. Same value only.
     passes("U two", "Photographs from a U two, a reconnaissance plane.", "Photographs from a U-2, a reconnaissance plane.")
