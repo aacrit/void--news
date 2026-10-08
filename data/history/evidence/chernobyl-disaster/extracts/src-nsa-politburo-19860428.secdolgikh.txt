@@ -1,0 +1,8 @@
+source: src-nsa-politburo-19860428
+locator: secdolgikh
+url: https://nsarchive.gwu.edu/sites/default/files/documents/6279037/National-Security-Archive-Doc-4-Extraordinary.pdf
+read: 2026-10-07
+note: the first report to the session, by V.I. Dolgikh, CC secretary; the working copy as translated for the National Security Archive
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+Dolgikh V. I. On April 26, at 1:30 a.m. there was an explosion at the Chernobyl NPS when the fourth block was being decelerated for repairs. All work was being performed according to regulations. Version [of events proposed by] specialists: an explosion of hydrogen occurred in the lower tank, as a result of which the graphite rods were pushed up and the top lid torn off. Seventeen people were at work at the time. One died, one was not found. The level of radiation as of 9 in the morning of April 28 was 1,000 roentgen in the vicinity of the reactor and 230 milliroentgen in the city. The population has been evacuated. Out of the 45,000 residents, only 5,000 who service the station, canteens, etc., remain in the city. The evacuees are provided for. The radioactive cloud has spread for 60 kilometers.

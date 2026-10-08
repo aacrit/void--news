@@ -1,0 +1,6 @@
+source: src-ussbs-effects-1946
+locator: sec2e
+url: https://www.atomicarchive.com/resources/documents/bombing-survey/section_II.html
+read: 2026-10-05
+
+The most striking result of the atomic bombs was the great number of casualties. The exact number of dead and injured will never be known because of the confusion after the explosions. Persons unaccounted for might have been burned beyond recognition in the falling buildings, disposed of in one of the mass cremations of the first week of recovery, or driven out of the city to die or recover without any record remaining. No sure count of even the prepaid populations existed. Because of the decline in activity in the two port cities, the constant threat of incendiary raids, and the formal evacuation programs of the Government, an unknown number of the inhabitants had either drifter away from the cities or been removed according to plan. In this uncertain situation, estimates of casualties have generally ranged between 100,000 and 180,000 for Hiroshima, and between 50,000 and 100,000 for Nagasaki. The Survey believes the dead at Hiroshima to have been between 70,000 and 80,000, with an equal number injured; at Nagasaki over 35,000 dead and somewhat more than that injured seems the most plausible estimate.

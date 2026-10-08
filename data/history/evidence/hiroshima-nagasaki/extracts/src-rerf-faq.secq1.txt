@@ -1,0 +1,135 @@
+source: src-rerf-faq
+locator: secq1
+url: https://www.rerf.or.jp/en/faq/
+read: 2026-10-05
+note: the answer to Q1 and its table, one cell per line as the page renders it; the dash in the ranges is the page's full-width character
+
+The total number of deaths is not known precisely because military personnel records in each city were destroyed; entire families perished, leaving no one to report deaths; and unknown numbers of forced laborers were present in both cities. Recent estimates of total deaths occurring within two to four months after the bombings are shown in the Table.
+
+
+
+
+
+
+
+
+
+
+Table. Estimated population size and number of acute (within two to four months) deaths in Hiroshima and Nagasaki after the atomic bombings
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Table. Estimated population size and number 
+
+of acute (within two to four months) deaths in Hiroshima 
+
+and Nagasaki after the atomic bombings 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+City
+
+
+
+Estimated 
+
+city population
+
+
+at the time of the bombings
+
+
+
+
+
+
+Estimated 
+
+number of
+
+
+acute deaths
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Hiroshima
+
+
+
+
+
+
+340,000-350,000 
+
+persons
+
+
+
+
+
+
+90,000－166,000 
+
+persons
+
+
+
+
+
+
+
+
+
+Nagasaki
+
+
+
+250,000-270,000 persons
+
+
+
+60,000－80,000 persons

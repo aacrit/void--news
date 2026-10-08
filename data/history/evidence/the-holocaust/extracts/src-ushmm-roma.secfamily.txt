@@ -1,0 +1,6 @@
+source: src-ushmm-roma
+locator: secfamily
+url: https://encyclopedia.ushmm.org/content/en/article/genocide-of-european-roma-gypsies-1939-1945
+read: 2026-10-07
+
+In general, the German police deported Roma in the Greater German Reich to Auschwitz-Birkenau, where the camp authorities housed them in a special compound called the "Gypsy family camp." In the so-called Gypsy compound, entire families lived together. In total, some 23,000 Roma and Sinti were deported to Auschwitz.

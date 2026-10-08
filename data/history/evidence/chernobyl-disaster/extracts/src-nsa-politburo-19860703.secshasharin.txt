@@ -1,0 +1,8 @@
+source: src-nsa-politburo-19860703
+locator: secshasharin
+url: https://nsarchive.gwu.edu/sites/default/files/documents/6279559/National-Security-Archive-Doc-15-Minutes-of-CC.pdf
+read: 2026-10-07
+note: Chernyaev's notes; G.A. Shasharin of the Ministry of Energy speaking
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+SHASHARIN (ministry of Energy, head of department): In the Ministry, Chernobyl was considered exemplary. Appointed the best Director. And got too “familiar” with the NPS. But it demands respect. The personnel did not know that the reactor could “speed up energy,” and we did not know it. Blame for the accident is on the personnel. But the scale of the accident—I agree—is due to the design of the reactor. We were excited about this design even though we were not sure of its safety. There was a single system for managing the protection. And everybody believed that in principle it was no good. But on the other hand, everybody worked in a state of anxiety.

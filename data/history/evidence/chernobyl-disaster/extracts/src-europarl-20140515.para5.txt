@@ -1,0 +1,8 @@
+source: src-europarl-20140515
+locator: para5
+url: https://web.archive.org/web/20170329202404/http://www.europarl.europa.eu/news/en/news-room/20140514STO47018/html/Forsmark-how-Sweden-alerted-the-world-about-the-danger-of-Chernobyl-disaster/
+read: 2026-10-07
+note: paragraph 5
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+After an analysis, they could identify the radioactive particles that they found in the grass as specific to the Soviet nuclear power plants. Also, during the weekend the wind had blown from the south-east and it had rained in the north-eastern parts of Sweden, depositing radioactive fall-out on the ground in that area. All the evidence was pointing towards one of the nuclear power plants in the Soviet Union. And late that evening, two days after the disaster, the Soviet Union declared that there had been an accident at Chernobyl in Ukraine, a republic of the Soviet Union at that time.

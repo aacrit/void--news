@@ -1,0 +1,7 @@
+source: src-longerich-1999
+locator: p4
+url: https://www.ushmm.org/m/pdfs/20050726-longerich.pdf
+read: 2026-10-07
+note: the PDF text layer splits some words with a space ('mu rder', 'perspe ctives'); those splits are kept as the layer prints them, the footnote number '3' after 'view.' is not included, and line breaks are collapsed
+
+During the past two decades research in this field has been dominated by a confrontation between two schools: the so-called “functionalists” and “intentionalists.” Whereas the “intentionalists” present the mu rder of European Jewry as the product of the ideology and long-term planning of Hitler and the Nazi leadership, the “functionalists” stress the role of the bureaucratic apparatus and the “cumulative radicalization” process that emerged from the competition between rival institutions. The confrontation between these two perspe ctives has stimulated research for a number of years. It is generally held today, however, that this debate has largely come to an impasse. It has done so after running its course through the most important phases of a typical historiographical dispute, namely, the development of arguments, their transformation into dogma, polemical discussi on and, finally, an attempt to harmonize the various points of view.

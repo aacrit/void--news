@@ -106,6 +106,21 @@ primary_source_excerpts:
   author: Emperor Hirohito
   work: Gyokuon-hoso (Jewel Voice Broadcast)
   date: August 15, 1945
+- text: The Japanese Government are ready to accept the terms enumerated in the joint declaration which was issued at Potsdam on July 26th, 1945, by the heads of the Governments of the United States, Great Britain, and China, and later subscribed by the Soviet Government, with the understanding that the said declaration does not comprise any demand which prejudices the prerogatives of His Majesty as a Sovereign Ruler.
+  author: The Japanese Government
+  work: Note transmitted by the Swiss Charge to the Secretary of State (FRUS 1945, vol. VI, doc. 406)
+  date: August 10, 1945
+  url: https://history.state.gov/historicaldocuments/frus1945v06/d406
+- text: "I am not a guinea pig nor am I an exhibit. But those of you who are here today, please don't turn your eyes away from me. Please look at me again."
+  author: Sumiteru Taniguchi
+  work: Hibakusha Statement to the 2010 NPT Review Conference, for Nihon Hidankyo
+  date: May 7, 2010
+  url: https://www.un.org/en/conf/npt/2010/pdf/japanconfederation.pdf
+- text: I was just 13 years old when the United States dropped the first atomic bomb, on my city Hiroshima. I still vividly remember that morning.
+  author: Setsuko Thurlow
+  work: Nobel Lecture for ICAN, Oslo
+  date: December 10, 2017
+  url: https://www.nobelprize.org/prizes/peace/2017/ican/lecture/
 coordinates:
   lat: 34.3955
   lng: 132.4536

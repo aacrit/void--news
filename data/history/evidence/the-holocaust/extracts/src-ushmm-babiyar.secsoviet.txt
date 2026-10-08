@@ -1,0 +1,6 @@
+source: src-ushmm-babiyar
+locator: secsoviet
+url: https://encyclopedia.ushmm.org/content/en/article/kiev-and-babi-yar
+read: 2026-10-07
+
+According to Soviet investigations undertaken in 1943, some 100,000 people, Jews and non-Jews, were murdered at Babyn Yar under the German occupation.

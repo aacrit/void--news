@@ -1,0 +1,8 @@
+source: src-ictr-bagosora-tj
+locator: para20
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-98-41/trial-judgements/en/081218.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+note: the paragraph crosses a page; the running footer and header between the two spans ("Judgement and Sentence", the page number, "18 December 2008", the case caption) are omitted
+
+20. The Chamber simply cannot accept that elite units of the Rwandan army would spontaneously engage in sustained gun and grenade fire with Rwandan gendarmes and United Nations peacekeepers, murder and assault the Prime Minister of their country, and kill five prominent personalities, unless it formed part of an organised military operation pursuant to orders from superior military authorities.

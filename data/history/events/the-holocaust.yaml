@@ -142,6 +142,61 @@ primary_source_excerpts:
   author: Jan Karski
   work: Recounting his 1943 meeting with President Roosevelt
   date: '1943'
+- text: 'Approximately 11 million Jews will be involved in the final solution of the European Jewish question'
+  author: 'Wannsee Conference minutes, the record of the meeting chaired by Reinhard Heydrich'
+  work: 'Wannsee Protocol, section III (the Avalon Project''s English text)'
+  date: 'January 20, 1942'
+  url: https://avalon.law.yale.edu/imt/wannsee.asp
+- text: 'This is a page of glory in our history which has never been written and is never to be written'
+  author: 'Heinrich Himmler'
+  work: 'Speech to SS generals at Posen, October 4, 1943 (Document 1919-PS), in the prosecution''s English translation as read into the record of the International Military Tribunal, December 13, 1945'
+  date: 'October 4, 1943'
+  url: https://avalon.law.yale.edu/imt/12-13-45.asp
+- text: 'We knew when the people were dead because their screaming stopped.'
+  author: 'Rudolf Hoess'
+  work: 'Affidavit, Document 3868-PS, paragraph 6, read into the record of the International Military Tribunal, April 15, 1946'
+  date: 'April 15, 1946'
+  url: https://avalon.law.yale.edu/imt/04-15-46.asp
+- text: 'He tore the child away from me. I heard her last cry and he shot her.'
+  author: 'Rivka Yoselewska'
+  work: 'Testimony at the trial of Adolf Eichmann, Session 30 (given in Yiddish; the official English transcript)'
+  date: 'May 8, 1961'
+  url: https://www.nizkor.org/session-030-04-eichmann-adolf/
+- text: 'This is a chronicle of the planet of Auschwitz.'
+  author: 'Yehiel Dinur (K. Zetnik)'
+  work: 'Testimony at the trial of Adolf Eichmann, Session 68 (the official English transcript)'
+  date: 'June 7, 1961'
+  url: https://www.nizkor.org/session-068-01-eichmann-adolf/
+- text: 'Neutrality helps the oppressor, never the victim. Silence encourages the tormentor, never the tormented.'
+  author: 'Elie Wiesel'
+  work: 'Nobel Peace Prize acceptance speech, Oslo'
+  date: 'December 10, 1986'
+  url: https://www.nobelprize.org/prizes/peace/1986/wiesel/acceptance-speech/
+- text: 'None of those taken away are ever heard of again.'
+  author: 'Governments of the United Nations (joint declaration, read in the House of Commons by Anthony Eden)'
+  work: 'Joint declaration of December 17, 1942, Hansard, HC Deb 17 December 1942 vol 385 c2083'
+  date: 'December 17, 1942'
+  url: https://api.parliament.uk/historic-hansard/commons/1942/dec/17/united-nations-declaration
+- text: 'I fear that what we can do at this stage must inevitably be slight.'
+  author: 'Anthony Eden'
+  work: 'Answer in the House of Commons on the joint declaration, Hansard, HC Deb 17 December 1942 vol 385 c2084'
+  date: 'December 17, 1942'
+  url: https://api.parliament.uk/historic-hansard/commons/1942/dec/17/united-nations-declaration
+- text: 'Let us not go like sheep to the slaughter, Jewish youth!'
+  author: 'Abba Kovner'
+  work: 'Manifesto of the Vilna ghetto underground, dated by Kovner January 1, 1942, as he read it at the trial of Adolf Eichmann, Session 27 (written in Hebrew, published in Yiddish, read aloud in Hebrew; the official English transcript)'
+  date: 'January 1, 1942'
+  url: https://www.nizkor.org/session-027-08-eichmann-adolf/
+- text: 'It is true that we are weak, lacking protection, but the only reply to a murderer is resistance.'
+  author: 'Abba Kovner'
+  work: 'Manifesto of the Vilna ghetto underground, dated by Kovner January 1, 1942, as he read it at the trial of Adolf Eichmann, Session 27 (the official English transcript)'
+  date: 'January 1, 1942'
+  url: https://www.nizkor.org/session-027-08-eichmann-adolf/
+- text: 'Each one had a revolver, each one had a hand-grenade; the entire unit had two rifles'
+  author: 'Zivia Lubetkin'
+  work: 'Testimony at the trial of Adolf Eichmann, Session 25, on the Warsaw ghetto uprising (the official English transcript)'
+  date: 'May 3, 1961'
+  url: https://www.nizkor.org/session-025-04-eichmann-adolf/
 coordinates:
   lat: 50.0345
   lng: 19.1783

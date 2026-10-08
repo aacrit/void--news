@@ -1,0 +1,8 @@
+source: src-un-carlsson-1999
+locator: secbelgians
+url: https://web.archive.org/web/20001203205100/http://www.un.org:80/News/ossg/rwanda_report.htm
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: section II, 'The crash of the Presidential plane; genocide begins'
+
+The tragic killing of the Belgian peacekeepers took place against a backdrop of an escalated confrontation with Rwandan soldiers outside the Prime Minister's house. Several times that morning, the soldiers guarding the Prime Minister were told by the Rwandese soldiers surrounding them to surrender their arms. According to Belgian records, at 08.49, Lt Lotin was told by his commander, Lt Col Dewez, that his group should not let themselves be disarmed, and to negotiate, to which Lotin replied that it was too late because four men were already disarmed. Dewez then stated that Lotin was authorized to surrender arms if he felt it necessary. The UNAMIR troops were subsequently taken by minibus to Camp Kigali. Lotin borrowed the Motorola of the Togolese military observer at the camp in order to inform Dewez about the situation, also stating that his men risked being lynched. Dewez, having first asked whether Lotin was not exaggerating, then informed his Sector Command and asked that the Rwandan army or Rutbat (the Bangladeshi battalion) intervene. Meanwhile, however, in Camp Kigali, the United Nations peacekeepers were badly beaten, and later, after the Ghanaian peacekeepers and the Togolese had been led away, the Belgian soldiers were brutally killed.

@@ -1,0 +1,10 @@
+source: src-insag7-1992
+locator: item6
+url: https://www-pub.iaea.org/MTCD/publications/PDF/Pub913e_web.pdf
+read: 2026-10-07
+note: section 6, conclusion (6), its first three sentences, printed page 24 (PDF page 34); the conclusion goes on to the poor procedures, the instrumentation, the rules that were violated and the unapproved changes to the test procedure
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+note: a hyphen breaking a lower-case word across a line end in the text layer is closed up
+note: the PDF is a scan with an OCR text layer; the extract was compared line by line with the rendered page (130 dpi) and agrees with it
+
+(6) The weight given in INSAG-1 in 1986 to the Soviet view presented at the Vienna meeting, which laid blame almost entirely on actions of the operating staff, is thereby lessened. Certain actions by operators that were identified in INSAG-1 as violations of rules were in fact not violations. Yet INSAG remains of the opinion that critical actions of the operators were most ill judged.

@@ -1,0 +1,7 @@
+source: src-ictr-bagosora-tj
+locator: para22
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-98-41/trial-judgements/en/081218.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+22. While this was going on, around 10.00 a.m., Bagosora was chairing a meeting of high-ranking army and gendarmerie officers at an officer training school (ESM) close by. The participants were discussing the situation after the death of the President. Nubaha left the camp, entered the meeting, and informed Bagosora about the threat to the Belgian peacekeepers. After the meeting, Bagosora arrived at Camp Kigali. He saw the dead bodies of four Belgians and became aware that others were alive in the office. He claims that he was threatened and called a traitor by the mob of soldiers, and hence withdrew. No force was used to quell the volatile situation. Shortly after Bagosora’s departure, camp soldiers killed the remaining Belgian peacekeepers with high powered weapons.

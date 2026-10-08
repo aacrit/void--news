@@ -1,0 +1,6 @@
+source: src-stroop-1061ps
+locator: sectitle
+url: https://avalon.law.yale.edu/imt/1061-ps.asp
+read: 2026-10-07
+
+THE WARSAW GHETTO IS NO MORE

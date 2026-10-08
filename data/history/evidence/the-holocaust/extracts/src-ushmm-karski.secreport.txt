@@ -1,0 +1,6 @@
+source: src-ushmm-karski
+locator: secreport
+url: https://encyclopedia.ushmm.org/content/en/article/jan-karski
+read: 2026-10-07
+
+Karski then managed to travel across German-occupied Europe to London, where he delivered a report to the Polish government-in-exile and to senior British authorities, including Foreign Secretary Anthony Eden. He described what he had witnessed and reported the evidence that Nazi Germany was murdering Jews from all over Europe. In July 1943, Karski journeyed to Washington and met with American President Franklin D. Roosevelt to give him the same report. Karski pleaded for specific actions to rescue Jews. Allied leaders, however, insisted that Germany’s military defeat must be their first priority.

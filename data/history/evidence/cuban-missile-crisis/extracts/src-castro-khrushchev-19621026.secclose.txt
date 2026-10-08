@@ -1,0 +1,8 @@
+source: src-castro-khrushchev-19621026
+locator: secclose
+url: https://microsites.jfklibrary.org/cmc/oct26/doc2.html
+read: 2026-10-07
+note: the JFK Library's web text of the letter; the page does not name the translator or the source of the English text
+note: the letter's sixth and seventh paragraphs, line breaks folded to spaces; the closing paragraph of thanks and the signature, 'Fraternally, Fidel Castro', follow it and are not held
+
+This opinion is shaped by observing the development of their aggressive policy. The imperialists, without regard for world opinion and against laws and principles, have blockaded the seas, violated our air-space, and are preparing to invade, while at the same time blocking any possibility of negotiation, even though they understand the gravity of the problem. You have been, and are, a tireless defender of peace, and I understand that these moments, when the results of your superhuman efforts are so seriously threatened, must be bitter for you. We will maintain our hopes for saving the peace until the last moment, and we are ready to contribute to this in any way we can. But, at the same time, we are serene and ready to confront a situation which we see as very real and imminent.

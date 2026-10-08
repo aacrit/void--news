@@ -1,0 +1,8 @@
+source: src-mcdoom-2020
+locator: secintro
+url: https://eprints.lse.ac.uk/103205/1/McDoom_Contested_Counting_accepted_version.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+note: the author's accepted version deposited at LSE Research Online; footnote call numbers 1 and 2 are glued to the words as the layer prints them
+
+If one examines the claims for the overall number killed, at the higher end lies the figure of 1,074,017 Rwandan dead. This number originates with the Rwandan government which conducted a nationwide census in July 2000, six years after the genocide.1 Toward the lower end lies an estimate from Human Rights Watch, one of the first organizations on the ground to investigate the genocide, of 507,000 Tutsi killed.2

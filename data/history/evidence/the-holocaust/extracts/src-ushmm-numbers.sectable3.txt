@@ -1,0 +1,26 @@
+source: src-ushmm-numbers
+locator: sectable3
+url: https://encyclopedia.ushmm.org/content/en/article/documenting-numbers-of-victims-of-the-holocaust-and-nazi-persecution
+read: 2026-10-07
+note: the rows of Table 3 ('Number of non-Jewish people murdered by Nazi Germany and its allies and collaborators (by group)'); the table's title and column heads are left out to keep within the cap for a copyrighted work
+
+Soviet prisoners of war
+around 3.3 million
+Non-Jewish (ethnic) Poles
+around 1.8 million
+Romani men, women, and children and other people derogatorily labeled as "Gypsies"
+at least 250,000, but possibly as high as 500,000
+Serb civilians murdered by Ustaša authorities of the Independent State of Croatia
+more than 310,000
+People with disabilities living in institutions and care facilities
+250,000–300,000, including at least 10,000 children
+German political opponents and dissenters
+tens of thousands
+Germans imprisoned in concentration camps as "professional criminals" and "asocials"
+tens of thousands
+Jehovah's Witnesses killed in concentration camps or executed for refusing to serve in the German military
+about 1,700
+Gay men, bisexual men, and other men accused of homosexuality
+Hundreds, possibly thousands
+Black people in Germany
+Unknown, perhaps hundreds

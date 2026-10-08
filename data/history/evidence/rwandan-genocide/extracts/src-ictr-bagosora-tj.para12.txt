@@ -1,0 +1,7 @@
+source: src-ictr-bagosora-tj
+locator: para12
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-98-41/trial-judgements/en/081218.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+12. Several elements underpinning the Prosecution case about conspiracy were not supported by sufficiently reliable evidence, for instance Bagosora’s alleged utterance in 1992 that he was returning from the Arusha negotiations to prepare for the “apocalypse”. Other examples are the four Accused’s alleged role in certain clandestine criminal organisations, including the AMASASU, the Zero Network or death squads. The testimony about a meeting in Butare in February 1994, where Bagosora and Nsengiumva allegedly drew up a list of Tutsis to be killed, was not considered credible. The Chamber has reached the same conclusion with respect to Kabiligi’s alleged speech about genocide in Ruhengeri in February 1994. There are also concerns with the reliability of the information provided by an informant, Jean-Pierre, and an anonymous letter outlining a “Machiavellian Plan”.

@@ -1,0 +1,7 @@
+source: src-nsa-ebb449
+locator: sectimeline
+url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB449/
+read: 2026-10-07
+note: four rows of the briefing book's chronology, 4 to 30 October 1962, run together as the page's HTML reads; the bracketed [2] is the page's note number
+
+October 4-Indigirka arrived in Mariel with 36 warheads for R-12, 36 warheads for FKR, 12 warheads for Lunas, and 6 nuclear bombs for Il-28s. October 22-Presidium discussed the possibility of using tactical nuclear weapons in the event of an American invasion of Cuba. October 23-Aleksandrovsk arrived in La Isabella with 24 warheads for R-14 and 44 warheads for FKRs. October 26-28-Aleksandrovsk "partially" unloaded-warheads for FKRs were unloaded and sent to units. October 30-Aleksandrovsk ordered back to Severomorsk still carrying the 24 warheads for R-14s, after probably loading the 36 R-12 warheads at Mariel harbor and departing November 3.[2]

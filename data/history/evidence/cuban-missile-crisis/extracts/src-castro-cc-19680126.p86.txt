@@ -1,0 +1,8 @@
+source: src-castro-cc-19680126
+locator: p86
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf
+read: 2026-10-07
+note: the PDF's text layer, line breaks folded to spaces; where the layer breaks a word at a line end its hyphen is kept as it prints it ('docu- ment'); nothing is corrected
+note: printed page 86: the opening of the excerpts of Castro's speech to the Central Committee of the Communist Party of Cuba, 26 January 1968, as the Bulletin prints them 'Translated from Spanish by the Cuban Council of State'; the bracketed [this] is the Bulletin's, and the '1' after 'United States.' is its footnote number; that footnote 1, on the letters he alludes to, is held as secfn1
+
+COMMANDER FIDEL CASTRO: In the early hours of [this] morning we stopped while on the topic of the reply sent to the Soviet Govern- ment in response to their letter attempting to find justifications in alleged alarms, and purporting insinuations of a nuclear strike in the sense that we had advised the USSR to attack the United States.1 These issues were made perfectly clear in that letter.

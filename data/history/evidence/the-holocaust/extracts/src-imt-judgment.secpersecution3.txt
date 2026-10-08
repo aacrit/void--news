@@ -1,0 +1,6 @@
+source: src-imt-judgment
+locator: secpersecution3
+url: https://avalon.law.yale.edu/imt/judwarcr.asp
+read: 2026-10-07
+
+Adolf Eichmann, who had been put in charge of this programme by Hitler, has estimated that the policy pursued resulted in the killing of 6,000,000 Jews, of which 4.000.000 were killed in the extermination institutions.

@@ -1,0 +1,8 @@
+source: src-unscear-2000-annex-j
+locator: para68
+url: https://www.unscear.org/unscear/uploads/documents/publications/UNSCEAR_2000_Annex-J.pdf
+read: 2026-10-07
+note: Annex J, paragraph 68, its first four sentences
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+68. The power plant personnel wore only film badges that could not register doses in excess of 20 mSv. All of these badges were overexposed. The firemen had no dosimeters and no dosimetric control. Dose rates on the roof and in the rooms of the reactor block reached hundreds of gray per hour.

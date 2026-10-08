@@ -1,0 +1,8 @@
+source: src-un-carlsson-1999
+locator: secconc5
+url: https://web.archive.org/web/20001203205100/http://www.un.org:80/News/ossg/rwanda_report.htm
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: section III, Conclusions, '1. The overriding failure', second paragraph
+
+A force numbering 2,500 should have been able to stop or at least limit massacres of the kind which began in Rwanda after the plane crash which killed the Presidents of Rwanda and Burundi. However, the Inquiry has found that the fundamental capacity problems of UNAMIR led to the terrible and humiliating situation of a UN peacekeeping force almost paralysed in the face of a wave of some of the worst brutality humankind has seen in this century.
