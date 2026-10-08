@@ -121,6 +121,41 @@ primary_source_excerpts:
   work: Nobel Lecture for ICAN, Oslo
   date: December 10, 2017
   url: https://www.nobelprize.org/prizes/peace/2017/ican/lecture/
+- text: From this point of view a demonstration of the new weapon may best be made before the eyes of representatives of all United Nations, on the desert or a barren island
+  author: James Franck and the Committee on Political and Social Problems, Metallurgical Laboratory, University of Chicago
+  work: Report of the Committee on Political and Social Problems (the Franck Report), the Internet Archive's OCR text of the scan
+  date: June 11, 1945
+  url: https://archive.org/download/TheFranckReport/ELS012-036_djvu.txt
+- text: it is the Survey's opinion that certainly prior to 31 December 1945, and in all probability prior to 1 November 1945, Japan would have surrendered even if the atomic bombs had not been dropped, even if Russia had not entered the war, and even if no invasion had been planned or contemplated.
+  author: United States Strategic Bombing Survey
+  work: Summary Report (Pacific War), page 26, the section on Japan's struggle to end the war
+  date: July 1, 1946
+  url: https://www.anesi.com/ussbs01.htm
+- text: The exact number of deaths from the atomic bombing is still unknown. Estimates place the number of dead by the end of December 1945, when the acute effects of radiation poisoning had largely subsided, at roughly 140,000.
+  author: City of Hiroshima
+  work: 'Q. How many people died because of the atomic bombing? (the City''s English website, article 1010074, as read on 2026-10-05)'
+  date: '2026'
+  url: https://www.city.hiroshima.lg.jp/english/peace/1029875/1010074.html
+- text: When the atomic bomb was dropped, Nagasaki had a population of about 240,000. However, by the end of December 1945, 73,884 of its people had been killed, and 74,909 had been injured by the A-bomb.
+  author: City of Nagasaki
+  work: NAGASAKI PEACE, official website of Nagasaki City, the damage page, as read on 2026-10-05
+  date: '2021'
+  url: https://nagasakipeace.jp/en/reference/materials/kids/higai.html
+- text: At the end of the war, about three million Koreans were living in Japan, and it is said that tens of thousands of them suffered the atomic bombing in Hiroshima.
+  author: Hiroshima Peace Memorial Museum
+  work: Monument in Memory of the Korean Victims of the A-bomb, the Peace Memorial Park virtual guide, item 11, as read on 2026-10-05
+  date: '2026'
+  url: https://www.pcf.city.hiroshima.jp/virtual/map-e/irei/tour_11_e.html
+- text: If they do not now accept our terms they may expect a rain of ruin from the air, the like of which has never been seen on this earth.
+  author: Harry S. Truman
+  work: Statement by the President Announcing the Use of the A-Bomb at Hiroshima, paragraph 10; a written release issued in Washington while the President was aboard the U.S.S. Augusta, not a broadcast
+  date: August 6, 1945
+  url: https://www.trumanlibrary.gov/library/public-papers/93/statement-president-announcing-use-bomb-hiroshima
+- text: The Japanese began the war from the air at Pearl Harbor. They have been repaid many fold.
+  author: Harry S. Truman
+  work: Statement by the President Announcing the Use of the A-Bomb at Hiroshima, paragraph 2; a written release issued in Washington, not a broadcast
+  date: August 6, 1945
+  url: https://www.trumanlibrary.gov/library/public-papers/93/statement-president-announcing-use-bomb-hiroshima
 coordinates:
   lat: 34.3955
   lng: 132.4536

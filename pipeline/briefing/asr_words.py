@@ -24,7 +24,7 @@ _SPELLING = [(re.compile(r"isation"), "ization"), (re.compile(r"ise(d|s)?$"), r"
              (re.compile(r"^programme(s)?$"), r"program\1"), (re.compile(r"our$"), "or"),
              (re.compile(r"our(s|ed|ing)$"), r"or\1"), (re.compile(r"tre(s)?$"), r"ter\1"),
              (re.compile(r"ogue(s)?$"), r"og\1"), (re.compile(r"dgement(s)?$"), r"dgment\1"),
-             (re.compile(r"ising$"), "izing")]
+             (re.compile(r"ising$"), "izing"), (re.compile(r"ence(s)?$"), r"ense\1")]
 _TENS_TEENS = {"ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen",
                "eighteen", "nineteen", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty",
                "ninety"}
@@ -109,6 +109,9 @@ def norm_words(text: str) -> list[str]:
     # each year out only once the dash is a space; "a hundred" is "one hundred".
     t = re.sub(r"(?<=\d)\s*[-‐-―]\s*(?=\d)", " to ", text or "")
     t = re.sub(r"\ba (hundred|thousand|million)\b", r"one \1", t, flags=re.I)
+    # A designator ("U-2", "R-12") is a letter and a number: split it so the
+    # number is spelled the way the script spells it ("U two").
+    t = re.sub(r"(?<=\b[A-Za-z])[-‐-―](?=\d)", " ", t)
     t = spoken_numbers(t)
     t = _regnal(t)
     t = re.sub(r"[-‐-―]", " ", t)
