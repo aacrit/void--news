@@ -1,15 +1,28 @@
 {
-  "builtAt": "2026-10-08T18:38:21.738232Z",
+  "builtAt": "2026-10-09T18:41:49.069483Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "6054758d-9314-490c-aa58-035a42cd9114",
-      "title": "UK Imposes New Sanctions on Russian Oil, Shadow Fleet, Financial Networks",
+      "id": "95d09773-fc81-4b70-9580-269e4732d162",
+      "title": "Christa Pike Regains Consciousness, Walks After Surviving Botched Execution Attempt",
       "sentences": [
         {
-          "text": "Britain sanctioned two Russian energy producers, Zarubezhneft and INK Capital, stating that UK sanctions now cover over 90% of Russia's total oil production capacity.",
+          "text": "Pike was sentenced to death for the 1995 murder of Colleen Slemmer, whom she beat, tortured, and killed with her then-boyfriend, Tadaryl Shipp, when Pike was 18 and Shipp was 17.",
           "rule": "E-13",
-          "message": "summary puts 90 beside \"ink capital\", but no source sentence carrying 90 names it and one names another \"ink ...\": \"Britain sanctioned two Russian energy producers, Zarubezhneft and INK Capital, stating tha\""
+          "message": "summary puts 18 beside \"colleen slemmer\", but no source sentence carrying 18 names it and one names another \"colleen ...\": \"Pike was sentenced to death for the 1995 murder of Colleen Slemmer, whom she beat, torture\""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "1d7d445e-8b5d-4da0-b5b9-a05a68fc8254",
+      "title": "King Charles Pays Andrew's Royal Lodge Debt After Unlawful Warrants",
+      "sentences": [
+        {
+          "text": "King Charles III paid 1.5 million pounds (US$2 million) to cover costs owed by his younger brother, the former Prince Andrew, after Andrew was forced to move out of Royal Lodge near Windsor Castle.",
+          "rule": "E-13",
+          "message": "summary puts 1.5 beside \"royal lodge\", but no source sentence carrying 1.5 names it and one names another \"royal ...\": \"King Charles III paid 1.5 million pounds (US$2 million) to cover costs owed by his younger\""
         }
       ],
       "points": [],

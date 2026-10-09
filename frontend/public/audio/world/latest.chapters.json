@@ -1,51 +1,51 @@
 {
  "version": "1.2.0",
- "title": "On Air · Thursday 08 October 2026",
+ "title": "On Air · Friday 09 October 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Headlines",
-   "endTime": 37.804
+   "endTime": 40.132
   },
   {
-   "startTime": 37.804,
-   "title": "French Protests",
-   "endTime": 122.68
+   "startTime": 40.132,
+   "title": "French Student Protests",
+   "endTime": 121.414
   },
   {
-   "startTime": 122.68,
-   "title": "Trump on Iran Strikes",
-   "endTime": 194.18
+   "startTime": 121.414,
+   "title": "New York I-C-E Shooting",
+   "endTime": 188.336
   },
   {
-   "startTime": 194.18,
-   "title": "Kramatorsk Bombing",
-   "endTime": 252.92
+   "startTime": 188.336,
+   "title": "Trump on Iran",
+   "endTime": 251.008
   },
   {
-   "startTime": 252.92,
-   "title": "Trump Clarifies Iran Remarks",
-   "endTime": 315.332
+   "startTime": 251.008,
+   "title": "Trump Investigates Fed Governor",
+   "endTime": 315.648
   },
   {
-   "startTime": 315.332,
+   "startTime": 315.648,
    "title": "Also today",
-   "endTime": 362.57
+   "endTime": 380.952
   },
   {
-   "startTime": 362.57,
-   "title": "Naked Trump Statue",
-   "endTime": 395.582
+   "startTime": 380.952,
+   "title": "A-I Chatbot Rules",
+   "endTime": 418.712
   },
   {
-   "startTime": 395.582,
+   "startTime": 418.712,
    "title": "Opinion",
-   "endTime": 579.206
+   "endTime": 604.494
   },
   {
-   "startTime": 579.206,
-   "endTime": 592.306,
+   "startTime": 604.494,
+   "endTime": 617.594,
    "title": "Also from Void"
   }
  ]

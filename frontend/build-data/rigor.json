@@ -1,54 +1,52 @@
 {
- "builtAt": "2026-10-08T18:38:21.738232Z",
- "briefCreatedAt": "2026-10-08T18:37:51.295004+00:00",
+ "builtAt": "2026-10-09T18:41:49.069483Z",
+ "briefCreatedAt": "2026-10-09T18:41:09.774363+00:00",
  "products": {
   "card_headline": {
    "sentences": 20,
-   "anchored": 2,
-   "checked": 1,
+   "anchored": 0,
+   "checked": 0,
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "byAnchor": {
-    "number": 2
-   },
-   "coverage": 5.0
+   "coverage": 0.0,
+   "byAnchor": {}
   },
   "card_summary": {
-   "sentences": 236,
-   "anchored": 65,
-   "checked": 27,
+   "sentences": 226,
+   "anchored": 60,
+   "checked": 36,
    "byAnchor": {
-    "number": 60,
+    "number": 53,
     "quote": 7
    },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "coverage": 11.4
+   "coverage": 15.9
   },
   "points": {
-   "sentences": 179,
-   "anchored": 35,
-   "checked": 16,
+   "sentences": 181,
+   "anchored": 40,
+   "checked": 25,
    "anchorTypes": [
     "number",
     "quote"
    ],
    "byAnchor": {
-    "number": 27,
+    "number": 33,
     "quote": 8
    },
-   "coverage": 8.9,
-   "machinePointsExcluded": 2
+   "coverage": 13.8,
+   "machinePointsExcluded": 3
   },
   "tldr": {
-   "sentences": 35,
+   "sentences": 32,
    "anchored": 25,
    "checked": 25,
-   "coverage": 71.4,
+   "coverage": 78.1,
    "anchorTypes": [
     "number",
     "name",
@@ -56,18 +54,19 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 14,
-    "name": 18,
-    "number": 9
+    "date": 10,
+    "name": 21,
+    "number": 8,
+    "quote": 1
    },
    "groundingRan": true,
    "shipped": true
   },
   "opinion": {
-   "sentences": 23,
-   "anchored": 6,
-   "checked": 6,
-   "coverage": 26.1,
+   "sentences": 17,
+   "anchored": 9,
+   "checked": 9,
+   "coverage": 52.9,
    "anchorTypes": [
     "number",
     "name",
@@ -75,16 +74,18 @@
     "quote"
    ],
    "byAnchor": {
-    "name": 6
+    "date": 1,
+    "name": 8,
+    "number": 1
    },
    "groundingRan": true,
    "shipped": true
   },
   "onair": {
-   "sentences": 89,
-   "anchored": 39,
-   "checked": 39,
-   "coverage": 43.8,
+   "sentences": 69,
+   "anchored": 48,
+   "checked": 48,
+   "coverage": 69.6,
    "anchorTypes": [
     "number",
     "name",
@@ -92,9 +93,9 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 2,
-    "name": 29,
-    "number": 12
+    "date": 6,
+    "name": 43,
+    "number": 10
    },
    "groundingRan": true,
    "shipped": true
@@ -103,32 +104,30 @@
  "evidence": {
   "shipped": 20,
   "freshKnown": true,
-  "fresh": 20,
+  "fresh": 19,
   "states": {
-   "confirmable": 8,
-   "index cap below writer window": 12
+   "confirmable": 13,
+   "index cap below writer window": 6,
+   "stub rows, card not fresh": 1
   }
  },
  "audit": {
   "shipped": {
-   "cannot confirm": {
-    "E-14 absent": 1
+   "advisory": {
+    "E-13 misattached": 1
    }
   },
   "bench": {
    "advisory": {
-    "E-13 misattached": 2
+    "E-13 misattached": 5
    }
   }
  },
  "run": {
   "brief": {
-   "cut_sentences": 4,
+   "cut_sentences": 3,
    "cuts_by_reason": {
-    "date": 1,
-    "name": 1,
-    "number": 1,
-    "quotation": 1
+    "name": 3
    },
    "edition": "world",
    "grounding_ran": {
@@ -138,26 +137,22 @@
    }
   },
   "onair": {
-   "cut_sentences": 1,
-   "cuts_by_reason": {
-    "name": 1
-   },
+   "cut_sentences": 0,
+   "cuts_by_reason": {},
    "grounding_ran": true
   },
-  "startedAt": "2026-10-08T18:27:04Z",
+  "startedAt": "2026-10-09T18:31:26Z",
   "stage2": {
    "candidates": 35,
-   "critique_read": 35,
+   "critique_read": 34,
    "critique_unread": 0,
-   "cut_sentences": 14,
+   "cut_sentences": 9,
    "cuts_by_reason": {
-    "number": 6,
-    "other story": 6,
-    "quotation": 2
+    "number": 11
    },
-   "dropped": 0,
+   "dropped": 1,
    "kept_failing": 0,
-   "regenerated": 7,
+   "regenerated": 3,
    "reviewed": true,
    "fresh": 35
   }
@@ -181,5 +176,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-10-08T18:38:29Z"
+ "computedAt": "2026-10-09T18:42:01Z"
 }
