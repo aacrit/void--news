@@ -1,0 +1,127 @@
+{
+ "collected_at": "2026-10-09T15:35:36Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 26,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16195837/Andrew-Mountbatten-Windsor-handed-300-000-surrendering-lease-crumbling-Royal-Lodge.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "King pays Andrew Mountbatten-Windsor's £1.5million bill to repair Royal Lodge - after former prince gets £302,000 knocked off cost for being kicked out before lease ended",
+      "published": "Fri, 09 Oct 2026 15:38:53 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/andrew-mountbatten-windsor-king-charles-37753634",
+      "title": "Should King Charles stop giving money to Andrew Mountbatten-Windsor? Take our poll and have your say",
+      "published": "Fri, 9 Oct 2026 14:53:18 +0000"
+     }
+    },
+    {
+     "score": 25,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16196661/Man-charged-murdering-Ann-Widdecombe-targeting-Nigel-Farage-motivated-extreme-left-wing-mindset-hostility-Reform-court-hears.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Man charged with murdering Ann Widdecombe and targeting Nigel Farage was motivated by extreme left-wing mindset and hostility to Reform, court hears",
+      "published": "Fri, 09 Oct 2026 15:34:55 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/joshua-kerry-nigel-farage-widdecombe-37755492",
+      "title": "Ann Widdecombe murder suspect accused of targeting Farage was 'particularly hostile' towards Reform, court hears",
+      "published": "Fri, 9 Oct 2026 15:26:21 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16195529/Celebrity-Traitors-viewers-bemused-Jerry-Halls-bonkers-gameplay-baffled-Miranda-Hart-insists-shes-living-Jerry-world.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Celebrity Traitors viewers bemused by Jerry Hall's 'bonkers' gameplay as baffled Miranda Hart insists 'she's living in Jerry world'",
+      "published": "Fri, 09 Oct 2026 10:34:54 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/celebrity-traitors-live-hannah-fry-37750819",
+      "title": "Celebrity Traitors 2026 live: Player rankings as Hannah Fry becomes blatant target",
+      "published": "Fri, 9 Oct 2026 15:31:23 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 163,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/defense-news/article-911173",
+      "title": "IDF kills three Hamas, Palestinian Islamic Jihad terrorists in Gaza Strip",
+      "published": "Fri, 09 Oct 2026 14:45:46 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/gaza/2026-10-09/ty-article/.premium/israeli-strikes-kill-three-palestinian-militants-in-gaza-idf-says/000001a1-2046-d7a3-a1f7-ea5efed30000",
+      "title": "Israeli strikes kill three Palestinian militants in Gaza, IDF says",
+      "published": "Fri, 09 Oct 2026 15:06:39 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/classified-turkish-intelligence-operation-in-moldova-comes-back-under-judicial-scrutiny/",
+      "title": "Classified Turkish intelligence operation in Moldova comes back under judicial scrutiny",
+      "published": "Tue, 06 Oct 2026 22:12:19 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/diplomacy/erdogan-putin-discuss-black-sea-security-russia-ukraine-contacts",
+      "title": "Erdoğan, Putin discuss Black Sea security, Russia-Ukraine contacts",
+      "published": "Wed, 07 Oct 2026 14:52:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/rise-of-a-new-mobster-ali-ugur-uzun-exposes-turkeys-deepening-state-mafia-nexus/",
+      "title": "Rise of new mobster Ali Ugur Uzun exposes Turkey’s deepening state-mafia nexus",
+      "published": "Wed, 07 Oct 2026 22:03:21 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 306,
+    "left": 10
+   }
+  }
+ }
+}
