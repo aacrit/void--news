@@ -719,10 +719,6 @@ H18_KNOWN: dict[str, dict[str, str]] = {
         '1890': "not in the record: 'eighteen nineties'",
         '50': "a span the writer computed; the record states no such span: 'fifty'",
     },
-    'cuban-missile-crisis': {
-        '200': "not in the record: 'two hundred'",
-        '18': "a span the writer computed; the record states no such span: 'eighteen'",
-    },
     'cuban-revolution': {
         '10': "not in the record, and a count that goes stale: 'ten' American presidents",
         '66': "time-bound: 'sixty six years later', counted to twenty twenty six",
@@ -748,10 +744,6 @@ H18_KNOWN: dict[str, dict[str, str]] = {
     'gutenberg-printing-press': {
         '19': "a span the writer computed; the record states no such span: 'nineteen'",
         '4500': "not in the record: 'four and a half thousand'",
-    },
-    'hiroshima-nagasaki': {
-        '31000': "not in the record: 'thirty one thousand'",
-        '43': "not in the record: 'forty three'",
     },
     'industrial-revolution': {
         '1763': "not in the record: 'seventeen sixty three'",

@@ -1,130 +1,237 @@
+# Cinematic variant, 2026-10-07, written to the first-listener orientation standard of
+# docs/proposals/HISTORY-FIRST-LISTENER.md (O-1..O-8) from the research brief
+# out/briefs/cuban-missile-crisis.brief.md. Sources are the event YAML and the evidence
+# ledger (data/history/evidence/cuban-missile-crisis/), nothing else. Same cast as the
+# other cinematic variants (narrator "tara"; a male reader of record for M: lines; no
+# stored extract is a woman's words, so there is no F: line), same Ken Burns register:
+# short declarative sentences, documents read plainly, the silence placed by the writer.
+# Every line the document voice reads is byte-for-byte a stored extract AND a YAML
+# primary_source_excerpt, and the extract id follows the DOCUMENT marker in a comment.
+# Three real recordings are slotted, all from the White House recording of the address
+# of 22 October 1962 (JFKWHA-142-001), each under the DOCUMENT whose read is its
+# fallback, each signed by the CEO on 2026-10-07 (H-12): the opening words, the
+# quarantine step, the retaliation step. The credit lines before them say "recording",
+# which is true because the rows are signed; if a row is ever unsigned before a render,
+# its credit line must be rewritten. What the live script says and the record does not
+# hold is cut (the brief's do-not-say list): the 162 warheads, forty years of ignorance,
+# the Sargasso Sea, San Cristobal, the Tojo note, the Joint Chiefs and Munich, the
+# three-officer rule, the six-month Jupiter deal, the Black Sea walk, 42,000 troops, the
+# Bay of Pigs figures, Operation Mongoose, the Havana chant, the hotline and the test
+# ban in the CLOSE, Arkhipov's later rank and death. The reads of Rusk ("eyeball to
+# eyeball"), Khrushchev to Russell, Castro's "We are ready" and Kennedy to O'Donnell are
+# withdrawn: the YAML carries them, no held extract does. Disagreements are said aloud
+# where they fall: what Castro asked for on the 26th, the Turkey timetable against the
+# memorandum that denies a deal, who fired on the U-2, the eyeball-to-eyeball claim
+# against the plotted positions, the Archive's two warhead counts, and Orlov's disputed
+# account of B-59. Numbers are spoken only where the event record carries them (H-18
+# reads the YAML alone for an event with no published thesis), so the Archive's warhead
+# totals, Castro's troop figure, the year of Gribkov's disclosure, the count of Jupiters
+# and the hours in the deck logs are narrated without their figures. The first draft ran
+# to 2,716 words against a ceiling near 1,900 (the event casts bm_george, 145 wpm); to
+# reach H-07 the reads of Stevenson, Khrushchev on the 23rd and the 26th, Castro's
+# "risks" and the Castro-Mikoyan record were cut and their facts narrated, SCENE 6 was
+# folded into the broadcast DOCUMENT, Rusk's Turkey remark and the Homestead remarks
+# were cut, and every narration line was trimmed. Lines beginning with "#" are inert:
+# the parser skips them (pipeline/history/script_format.py::parse_script). "# MOOD:" and
+# "# CLIP:" are the directives of docs/proposals/HISTORY-AUDIO-ARCHIVAL.md. SAY entries
+# carry the "orpheus:" prefix because history_producer.py applies only those under
+# Orpheus. This file is not the live script: nothing globs this directory.
+
 ## OPEN
-N: The story as it is usually told happens in two rooms. A cabinet room in Washington and an office in Moscow, thirteen days, two men, and a blink.
-N: The moment that came closest to ending it was neither of those rooms. It was two hundred feet under the Sargasso Sea, in a submarine that had been out of contact with Moscow for days, and it turned on one officer refusing.
-N: And the thing that makes the whole crisis look different is a number that Washington did not learn for forty years. There were already a hundred and sixty two nuclear warheads on the island.
+# MOOD: dread
+N: In October of nineteen sixty two, the United States Navy drew a line in the sea around Cuba. The President called it a quarantine.
+N: The Prime Minister of Cuba called it a blockade. The Soviet leader called it an ultimatum. The ships were the same ships.
+N: Thirteen days. One man killed. The rest is what did not happen.
 
 ## TITLE
-N: The Cuban missile crisis. October, nineteen sixty two.
+# MOOD: dread
+N: The Cuban Missile Crisis. October, nineteen sixty two.
 
-## SCENE 1 | Thirteen minutes
-N: The fourteenth of October. A U-2 flies over western Cuba and photographs construction near San Cristobal.
-N: The photographs show launch sites for Soviet medium range missiles. From there, a warhead reaches Washington in thirteen minutes.
-N: The President is briefed before breakfast on the sixteenth. By midday fourteen men are sitting in the Cabinet Room with one instruction: find a way to get them out.
-N: One of the first voices in the room argues for airstrikes immediately. The President's brother passes him a note saying he now understands how the Japanese commander felt planning Pearl Harbor.
+## SCENE 1 | The photographs
+# MOOD: procedure
+N: October, nineteen sixty two. The United States and the Soviet Union, the two superpowers of the Cold War, each hold nuclear weapons that can reach the other.
+N: Cuba is an island ninety miles by sea from the United States, allied to Moscow and led by Fidel Castro, its Prime Minister.
+N: On the sixteenth of October, in Washington, President John F. Kennedy is shown photographs from a U two, a reconnaissance plane: Soviet medium range missile sites being built on the island.
+N: Once built, the missiles could reach Washington. In September the Soviet government had said in public that its arms in Cuba were for defence only.
+N: For six days the President meets in secret with advisers the record calls ExComm, the Executive Committee of the National Security Council, choosing between an air strike and a blockade.
+
+## DOCUMENT | Robert F. Kennedy | the Attorney General's objection to an air strike, as Robert McNamara's notes of the meeting record it | October 21, 1962
+# extract: src-frus11-d36.secitem9
+# MOOD: procedure
+N: On the twenty first, the President asks his brother Robert Kennedy, the Attorney General, about a strike. Robert McNamara, the Secretary of Defense, wrote down the answer.
+M: It would be a Pearl Harbor type of attack.
+N: He said to start with the blockade. The next day the President gave his own reasons: a strike could not be certain of every missile, and would end in invasion.
 
 ## SCENE 2 | The word
-N: They argue for six days before the public is told anything.
-N: The Joint Chiefs are unanimous. Strike the sites from the air, then invade. Their chairman tells the President that anything less is appeasement, and uses Munich as the comparison, to a man whose father had been the ambassador in London during Munich.
-N: Kennedy takes a middle path and a careful word. Not a blockade, because a blockade is an act of war in international law. A quarantine.
-N: His own defence secretary makes the argument that the missiles change nothing strategically, because the Soviet Union can already reach American cities from home. What they change is the appearance of it, ninety miles offshore, and appearance is what the crisis is about.
+# MOOD: rupture
+N: The evening of the twenty second of October, the White House. Kennedy goes on television and radio.
 
-## SCENE 3 | Black Saturday
-N: On the twenty fourth the Soviet ships approaching the line stop or turn back, and that is the moment everyone remembers.
-N: The problem is that the missiles already ashore keep going up. By the twenty sixth, American intelligence believes two dozen launchers are operational.
-N: The twenty seventh is the day everything happens at once.
-N: A U-2 is shot down over Cuba by a Soviet surface to air missile. The pilot, Rudolf Anderson, is killed. Under the rules the Americans set themselves, that is the trigger for striking back.
-N: At the same time, in the Sargasso Sea, American destroyers are dropping practice depth charges on a Soviet submarine to force it up. The boat is B fifty nine. It has been submerged for days, the air is foul, the temperature inside is over fifty degrees, and it has heard nothing from Moscow.
-N: It is carrying a torpedo with a nuclear warhead. The captain concludes that war has started above him and orders it armed.
-N: Soviet regulations on that boat require three officers to agree. Two do. The third, the flotilla commander, refuses, and argues that surfacing and being humiliated is better than starting a nuclear war.
-N: His name was Vasili Arkhipov. The submarine surfaced.
+## DOCUMENT | John F. Kennedy | Radio and Television Report to the American People on the Soviet Arms Buildup in Cuba, the opening words | October 22, 1962
+# extract: src-jfk-19621022.whole
+# CLIP: id=clip-kennedy-address-opening-19621022 replaces=document status=verified source=https://www.jfklibrary.org/asset-viewer/archives/JFKWHA/1962/JFKWHA-142-001/JFKWHA-142-001 licence=public-domain-as-stated origin="White House Audio Collection" max=15s
+# MOOD: rupture
+N: This is the recording of Kennedy that evening, kept by his presidential library.
+M: Good evening my fellow citizens: This Government, as promised, has maintained the closest surveillance of the Soviet Military buildup on the island of Cuba.
 
-## ASIDE
-N: Nobody in Washington knew that had happened. Nobody in Washington knew it for another forty years.
-N: It came out at a conference in Havana, in two thousand and two, when the men who had been on that boat were in a room with the men who had been in that cabinet.
+## DOCUMENT | John F. Kennedy | the same address, the first step | October 22, 1962
+# extract: src-jfk-19621022.whole
+# CLIP: id=clip-kennedy-address-quarantine-19621022 replaces=document status=verified source=https://www.jfklibrary.org/asset-viewer/archives/JFKWHA/1962/JFKWHA-142-001/JFKWHA-142-001 licence=public-domain-as-stated origin="White House Audio Collection" max=15s
+# MOOD: rupture
+N: He lists the steps he has ordered. The first is the one the ships will enforce; the recording of Kennedy continues.
+M: First: To halt this offensive buildup, a strict quarantine on all offensive military equipment under shipment to Cuba is being initiated.
+N: The word was chosen. That afternoon Dean Rusk, the Secretary of State, had said that if asked whether the blockade was an act of war, they should say it was not.
 
-## REST
-
-## SCENE 4 | The part that was not announced
-N: That same evening the President's brother meets the Soviet ambassador privately at the Justice Department, and gives him two things.
-N: A deadline. Remove the missiles or they will be removed by force.
-N: And an offer. American Jupiter missiles will come out of Turkey within six months. But if the Soviet Union ever says that this was part of the bargain, the deal is off and the United States will deny it.
-N: On the twenty eighth, Radio Moscow announces the missiles are going home. The public version of events is that the Soviet Union backed down and the United States conceded nothing.
-N: The Jupiters came out of Turkey in April.
-
-## DOCUMENT | John F. Kennedy | Remark to aide Kenny O'Donnell | October 27, 1962
-N: John Kennedy said this to an aide on the worst day of it.
-M: It is insane and very sad that two men sitting on opposite sides of the world should be able to decide to bring an end to civilization.
+## DOCUMENT | Fidel Castro | Television and radio address, Havana, in the Foreign Broadcast Information Service's translation | October 23, 1962
+# extract: src-fbis-castro-19621023.secquarantine
+# MOOD: testimony
+N: The next night, in Havana, Fidel Castro answered on television and radio, in the translation made at the time by the Foreign Broadcast Information Service.
+M: They have already established what they call a quarantine. They are so insolent that they themselves say they call it quarantine, but that it is actually a blockade.
 
 ## REST
+# MOOD: testimony
+
+## SCENE 3 | The line
+# MOOD: procedure
+N: The twenty fourth of October, at sea. The quarantine takes effect at the hour the Proclamation names, and the Soviet ships carrying missiles never reach it.
+N: Aides later claimed the navies met eyeball to eyeball; the records put the missile ships at least five hundred nautical miles off, turned for home.
+
+## DOCUMENT | Nikita Khrushchev | Letter to President Kennedy, Moscow, in the Department of State's translation | October 24, 1962
+# extract: src-frus11-d61.whole
+# MOOD: reckoning
+N: In Moscow the same day, Nikita Khrushchev, the Soviet leader, answered Kennedy by letter, translated by the State Department.
+M: You, Mr. President, are not declaring a quarantine, but rather are setting forth an ultimatum and threatening that if we do not give in to your demands you will use force.
+
+## DOCUMENT | Fidel Castro | Letter to Nikita Khrushchev, Havana, the JFK Library's English text, which names no translator | October 26, 1962
+# extract: src-castro-khrushchev-19621026.secopinion
+# MOOD: dread
+N: On the twenty sixth, in Havana, Castro wrote to Khrushchev that he expected an attack within twenty four to seventy two hours. Of a full invasion he wrote this, in the Library's English, which names no translator.
+M: after such an invasion the Soviet Union must never allow circumstances in which the imperialists could carry out a nuclear first strike against it.
+N: The summary the Library wrote for the day says he urged a nuclear first strike. The letter names no Soviet act, and Castro said years later he meant the Americans must not strike first.
+
+## REST
+# MOOD: dread
+
+## SCENE 4 | Saturday
+# MOOD: rupture
+N: Saturday, the twenty seventh of October, Washington. Moscow radio broadcasts a new message from Khrushchev, with a condition the earlier letter did not carry: the American missiles in Turkey.
+N: Turkey borders the Soviet Union, and the United States keeps missiles there called Jupiters, placed by a decision of the NATO Council, the alliance it leads.
+N: Kennedy tells the morning meeting the Jupiters are obsolete, and that he is now risking war over them.
+
+## DOCUMENT | Nikita Khrushchev | Message to President Kennedy, Moscow, published, in the Department of State's translation | October 27, 1962
+# extract: src-frus11-d91.secturkey
+# MOOD: reckoning
+N: Khrushchev's public message set the two countries side by side.
+M: You are disturbed over Cuba. You say that this disturbs you because it is 90 miles by sea from the coast of the United States of America. But Turkey adjoins us; our sentries patrol back and forth and see each other.
+
+## SCENE 5 | The afternoon
+# MOOD: dread
+N: Four in the afternoon, the same Saturday, Washington. The meeting is told a U two has been shot down over Cuba and its pilot killed: Major Rudolf Anderson, the one death of the crisis.
+N: McNamara said invasion had become almost inevitable. Who ordered the shot is argued: Castro said later a Soviet missile commander most probably decided it; Mark Kramer, studying Soviet nuclear operations, writes that Moscow thought Castro had ordered it.
+N: The same afternoon, at the quarantine line, American destroyers drop signalling depth charges, the size of hand grenades, on a Soviet submarine, B fifty nine, to make it surface.
+N: The Navy did not know it carried a nuclear torpedo, usable under its orders if the hull was holed, with a yield of fifteen kilotons, about the Hiroshima bomb.
+N: What happened inside is one account. Vadim Orlov, a signals officer aboard, recalled the captain, Valentin Savitsky, out of contact with Moscow, ordering the torpedo readied, and Vasili Arkhipov, the deputy brigade commander, calming him until they surfaced.
+N: The Archive that published the account calls it controversial; the other submarine commanders do not believe Savitsky gave the order. B fifty nine surfaced on the twenty seventh.
+N: Thirteen days. One man killed. The rest is what did not happen.
+
+## DOCUMENT | Robert F. Kennedy | Memorandum for the Secretary of State on his meeting with Ambassador Dobrynin, written three days after it | October 30, 1962
+# extract: src-frus11-d96.whole
+# MOOD: procedure
+N: That evening, at the Justice Department, Robert Kennedy received Anatoly Dobrynin, the Soviet Ambassador, and on the thirtieth wrote his own account for the Secretary of State.
+M: He should understand that if they did not remove those bases then we would remove them. His country might take retaliatory action but he should understand that before this was over, while there might be dead Americans there would also be dead Russians.
+N: On Turkey, the memorandum says there could be no deal of this kind. A typed sentence mentioning four or five months was crossed out.
+
+## DOCUMENT | Anatoly Dobrynin, reporting the words of Robert F. Kennedy | Ciphered telegram to the Soviet Foreign Ministry, in the Cold War International History Project Bulletin's translation | October 27, 1962
+# extract: src-cwihp-bulletin-5.p80
+# MOOD: procedure
+N: Dobrynin cabled Moscow that night. His telegram has Robert Kennedy saying this of Turkey, as Dobrynin wrote it down.
+M: The greatest difficulty for the president is the public discussion of the issue of Turkey.
+N: In the cable, Robert Kennedy adds that the bases could be withdrawn in four to five months. A deal denied in Washington, a timetable recorded in Moscow.
+
+## REST
+# MOOD: procedure
+
+## DOCUMENT | Nikita Khrushchev | Message to President Kennedy, broadcast by Moscow radio, in the Department of State's translation | October 28, 1962
+# extract: src-frus11-d102.secdismantle
+# MOOD: grief
+N: Sunday, the twenty eighth of October, Moscow. Khrushchev's reply goes out over Moscow radio; this is the State Department's translation.
+M: the Soviet Government, in addition to earlier instructions on the discontinuation of further work on weapons construction sites, has given a new order to dismantle the arms which you described as offensive, and to crate and return them to the Soviet Union.
 
 ## TURN | Five accounts
-N: Five accounts, and the one that is almost always missing is the one whose territory this was.
+# MOOD: reckoning
+N: Whether anyone won is where the accounts part.
+N: Five accounts, argued from what this programme could read: the letters between the three governments, the American minutes, one ambassador's cables, Castro's broadcasts, and the documents the National Security Archive published at the fortieth anniversary. The memoirs could not be read here.
 
-## PERSPECTIVE | The American room | victor
-N: The first account is the one that was written first and taught longest, and its subject is decision making under pressure.
-N: A young president resists his own generals. He invents an option nobody had offered him. He holds his nerve for six days and then for six more, and the other side gives way.
-N: The line that fixed it in the public mind came from the Secretary of State, Dean Rusk, on the twenty fourth, watching the Soviet ships stop.
-M: We're eyeball to eyeball, and I think the other fellow just blinked.
-N: It is a good line, it was said, and it describes about one day of a thirteen day crisis.
+## PERSPECTIVE | American | victor
+# MOOD: procedure
+N: The first account is American, and it is about restraint under pressure.
+N: The President was advised to strike and chose to stop ships instead, in public, so the Soviet leader could answer in public too.
+N: The Soviet Union had placed the missiles in secret after assuring Washington in September that its arms were defensive; Kennedy read that assurance aloud and called it false.
+N: At the United Nations on the twenty fifth, Adlai Stevenson, the American ambassador, asked the Soviet representative whether the missiles existed, yes or no, and said he would wait for his answer until Hell froze over.
 
-## PERSPECTIVE | The Soviet calculation | bystander
-N: The second account starts from a map.
-N: American Jupiter missiles were already in Turkey, fifteen minutes from Moscow. Khrushchev's question, asked out loud to his defence minister on a beach on the Black Sea, was why the Americans should have that right and the Soviet Union should not.
-N: What followed was called Operation Anadyr, and it was enormous. Forty two thousand troops, three dozen medium range missiles, bombers, fighters, and those tactical warheads, moved across the Atlantic disguised as agricultural shipments.
-N: Soldiers were issued winter clothing and told they were going somewhere cold. They unpacked it in Havana.
-N: The whole plan depended on the missiles being operational before anyone noticed. He missed by about ten days.
-M: I will tell you one thing. Nuclear war is out of the question. We're not lunatics.
+## PERSPECTIVE | Soviet | bystander
+# MOOD: reckoning
+N: The second account is Soviet, and it begins in Turkey.
+N: American missiles stood on the Soviet border before any Soviet missile reached Cuba.
+N: In this account the weapons were defensive: the island had been invaded once already, at Playa Giron the year before, and Khrushchev's letter of the twenty third affirmed the arms were solely for defence.
+N: The outcome was an exchange: the missiles left Cuba, the Americans pledged not to invade, and the Jupiters left Turkey the following spring.
 
-## REST | short
+## PERSPECTIVE | Cuban | vanquished
+# MOOD: testimony
+N: The third account is Cuban, and in Cuba the event has another name: the October Crisis.
 
-## PERSPECTIVE | The Cubans | vanquished
-N: The third account belongs to the country the missiles were standing in, and it begins eighteen months earlier.
-N: In April nineteen sixty one, fourteen hundred CIA trained exiles landed at the Bay of Pigs. The invasion collapsed in three days, and it confirmed for Castro the thing he had been saying since nineteen fifty nine.
-N: What followed confirmed it further. Operation Mongoose ran dozens of plans for sabotage, economic strangulation and assassination, signed off at the top of the American government.
-N: So accepting Soviet missiles was, from Havana, not adventurism. It was a small country taking the only deterrent on offer.
-M: If they want this kind of confrontation, well, OK. We are ready.
-N: And then the deal was made without them. Castro learned that the missiles were leaving from a radio broadcast. The man whose soldiers had spent two weeks digging trenches along the northern coast, whose people would have died first, was told by Radio Moscow at the same time as everybody else.
-N: The crowds in Havana chanted at Khrushchev that what you give, you cannot take away.
+## DOCUMENT | Fidel Castro | Television and radio address, Havana, in the Foreign Broadcast Information Service's translation | October 23, 1962
+# extract: src-fbis-castro-19621023.secoffensive
+# MOOD: testimony
+N: On the twenty third, Castro reminded his listeners which rifles had been landed at Playa Giron, and which rifles had met them.
+M: The thing that determines the offensive or defensive character of the weapons is not their shape but their use, their employment.
+N: Cuba sat at no table. In November Castro told Anastas Mikoyan, for the Soviet side, that Cuba had learned of Turkey from Soviet radio; the Soviet side recorded the conversation.
 
-## PERSPECTIVE | The deterrence theorists | academic
-N: The fourth account turned the crisis into a discipline.
-N: The influential reading is that deterrence did not hold because the two leaders were rational. It held because both of them became frightened of how little either of them controlled.
-N: The useful phrase is the threat that leaves something to chance. Neither man could guarantee what his own forces would do next, and it was that, rather than any calculation, that moved them both.
-N: Which points at the problem the theorists call always and never. A nuclear weapon has to be always available, or the threat is empty, and never usable by accident, or the threat kills you. On the twenty seventh both of those nearly failed inside the same afternoon.
-N: One aircraft shot down by a local commander. One torpedo armed by a submarine captain who could not ask anyone.
+## PERSPECTIVE | Nuclear Deterrence Theory | academic
+# MOOD: reckoning
+N: The fourth account belongs to the theorists of deterrence, whose books this programme could not read; their position is narrated from the event record.
+N: In that account the crisis is the founding case: neither leader controlled every variable, and fear of an accident moved both to retreat.
+N: The twenty seventh is its evidence: a missile fired on an order Moscow had not given, a torpedo whose captain could not reach Moscow, five hundred sorties prepared for a strike the President had not ordered.
 
-## PERSPECTIVE | The declassified record | revisionist
-N: The fifth account is what happened when the files opened, and it is the reason the other four had to be rewritten.
-N: Kennedy had secretly recorded the Cabinet Room. When those tapes were released, the president on them was not the cool figure of the official story. He is uncertain. He doubles back. He pushes against the generals out of fear of where their plan ends, not out of serene judgement.
-N: The committee is less deliberative too. Men repeat themselves, talk past each other, and work from intelligence that is wrong.
-N: Soviet archives added the rest. The tactical warheads already on the island, which nobody in Washington had counted. The submarine. And the Turkish trade, which had been kept secret so successfully that for a generation the lesson taught from this crisis was that firmness works and concession is unnecessary.
-N: The record says a concession was made. It was simply not announced.
+## DOCUMENT | John F. Kennedy | the same address, the third step | October 22, 1962
+# extract: src-jfk-19621022.whole
+# CLIP: id=clip-kennedy-address-retaliation-19621022 replaces=document status=verified source=https://www.jfklibrary.org/asset-viewer/archives/JFKWHA/1962/JFKWHA-142-001/JFKWHA-142-001 licence=public-domain-as-stated origin="White House Audio Collection" max=20s
+# MOOD: dread
+N: The doctrine itself was stated on the twenty second, in the third step. The recording of Kennedy, once more.
+M: Third: It shall be the policy of this Nation to regard any nuclear missile launched from Cuba against any nation in the Western Hemisphere as an attack by the Soviet Union on the United States, requiring a full retaliatory response upon the Soviet Union.
+
+## PERSPECTIVE | Declassified Revisionist | revisionist
+# MOOD: reckoning
+N: The fifth account is built from documents declassified since, and it holds that the crisis was closer and longer than thirteen days.
+N: American intelligence never located the nuclear warheads, and found only thirty three of the medium range missiles that later photography showed.
+N: Tactical nuclear weapons, for use against an invasion force, were on the island too. General Anatoly Gribkov, who planned the deployment, revealed them at an earlier Havana conference; documents released in two thousand and two show they stayed into late November.
+N: The Archive's essay and its chronology count those warheads differently, so this programme reads no total aloud.
+N: Its second finding is Turkey: a timetable in Dobrynin's cable, a denial in Robert Kennedy's memorandum.
+
+## TURN | The shape of the disagreement
+# MOOD: reckoning
+N: Each of the five is true, and each leaves something out.
+N: The American account leaves out Turkey, and the crossed-out sentence.
+N: The Soviet account leaves out the September assurance Kennedy called false, and the ally it told by radio.
+N: The Cuban account leaves out the letter of the twenty sixth, and the warheads on the island that Cuba did not control.
+N: The theorists' account leaves out that both arsenals grew after the crisis.
+N: The documentary account leaves out the letters between Havana and Moscow that could not be read here.
 
 ## REST
-
-## TURN | What each one leaves out
-N: And what each of them is leaving out.
-N: The American account leaves out the deal. For thirty years it was a story about nerve, told by people who knew that a trade had been made and had agreed never to say so.
-N: The Soviet account presents the deployment as symmetry, which it was, and skips how much of it was a gamble on not being seen, and what it meant to move that many warheads onto an island whose government did not have a say over their use.
-N: The Cuban account is the most morally clear and the least in control. It is an argument about sovereignty made by the one party that was not at the table when the thing was settled.
-N: The deterrence account is a theory that survives by absorbing its own near misses. A framework that has to count Arkhipov as evidence of stability is doing a lot of work.
-N: And the declassified account has the advantage every later reader has. It knows how it came out. Nobody in those rooms did.
-
-## REST
+# MOOD: reckoning
 
 ## CLOSE
-N: The direct line between Washington and Moscow was installed the following summer, because the crisis had been conducted partly through public broadcasts and partly through a journalist.
-N: A test ban treaty followed in nineteen sixty three, and a non proliferation treaty five years later.
-N: Vasili Arkhipov went back to the Soviet navy, was promoted, retired as a vice admiral, and died in nineteen ninety eight, before almost anybody outside his own service knew what he had done.
-N: He was not being brave. By his own account he was following the rules, which happened to require three signatures, and he did not give his.
+# MOOD: grief
+N: Soviet missiles in Cuba were reported to the President on the sixteenth of October, nineteen sixty two, and ordered home on the twenty eighth. One man was killed, Major Rudolf Anderson, over Cuba on the twenty seventh.
+N: The American missiles in Turkey came down the following April. The last Soviet nuclear weapons left Cuba in December.
+N: Thirteen days. One man killed. The rest is what did not happen.
 
 ## SAY
-Cuban = KYOO-ban
-Cuba = KYOO-bah
-Khrushchev = KROOSH-chof
-Kennedy = KEN-eh-dee
-Cristobal = kris-TOH-bal
-ExComm = EX-kom
-Munich = MYOO-nik
-Sargasso = sar-GAS-oh
-Rudolf Anderson = ROO-dolf AN-der-son
-Arkhipov = ar-KEE-pov
-Vasili = vah-SEE-lee
-Anadyr = AN-ah-deer
-Havana = hah-VAN-ah
-Castro = KAS-troh
-Mongoose = MON-goose
-Jupiter = JOO-pit-er
-Dobrynin = doh-BRIN-in
-Rusk = RUSK
-Tojo = TOH-joh
+orpheus:Khrushchev = KROOSH chof
+orpheus:Dobrynin = dah BREE nin
+orpheus:Savitsky = sah VEET skee
+orpheus:Arkhipov = ar KHEE pof
+orpheus:Orlov = or LOFF
+orpheus:Mikoyan = mee koy AHN
+orpheus:Gribkov = grib KOFF
+orpheus:Anatoly = ah nah TOH lee
+orpheus:Giron = hee ROHN

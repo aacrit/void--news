@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-10T00:47:32+00:00",
+ "generatedAt": "2026-10-10T04:49:35+00:00",
  "episodes": {
   "alexanders-conquests": {
    "url": "/audio/history/alexanders-conquests.mp3?v=ab0c51b6",
@@ -2322,107 +2322,151 @@
    }
   },
   "cuban-missile-crisis": {
-   "url": "/audio/history/cuban-missile-crisis.mp3?v=077f9a8e",
-   "chaptersUrl": "/audio/history/cuban-missile-crisis.chapters.json?v=077f9a8e",
+   "url": "/audio/history/cuban-missile-crisis.mp3?v=5c1fb27d",
+   "chaptersUrl": "/audio/history/cuban-missile-crisis.chapters.json?v=5c1fb27d",
    "title": "The Cuban Missile Crisis",
-   "durationSeconds": 785.136,
-   "bytes": 12577853,
+   "durationSeconds": 893.388,
+   "bytes": 14312582,
    "chapters": [
     {
      "startTime": 0.0,
      "title": "Opening",
      "kind": "segment",
-     "endTime": 55.996
+     "endTime": 62.977
     },
     {
-     "startTime": 55.996,
-     "title": "Thirteen minutes",
+     "startTime": 62.977,
+     "title": "The photographs",
      "kind": "segment",
-     "endTime": 102.988
+     "endTime": 142.297
     },
     {
-     "startTime": 102.988,
+     "startTime": 142.297,
      "title": "The word",
      "kind": "segment",
-     "endTime": 157.724
+     "endTime": 157.005
     },
     {
-     "startTime": 157.724,
-     "title": "Black Saturday",
+     "startTime": 157.005,
+     "title": "John F. Kennedy's opening words, in the White House recording of the Radio and Television Address of 22 October 1962",
      "kind": "segment",
-     "endTime": 270.188
+     "endTime": 179.512
     },
     {
-     "startTime": 270.188,
-     "title": "The part that was not announced",
+     "startTime": 179.512,
+     "title": "John F. Kennedy announcing the quarantine, in the White House recording of the Radio and Television Address of 22 October 1962",
      "kind": "segment",
-     "endTime": 337.179
+     "endTime": 227.03
     },
     {
-     "startTime": 337.179,
+     "startTime": 227.03,
+     "title": "The line",
+     "kind": "segment",
+     "endTime": 311.816
+    },
+    {
+     "startTime": 311.816,
+     "title": "Saturday",
+     "kind": "segment",
+     "endTime": 362.549
+    },
+    {
+     "startTime": 362.549,
+     "title": "The afternoon",
+     "kind": "segment",
+     "endTime": 557.573
+    },
+    {
+     "startTime": 557.573,
      "title": "Five accounts",
      "kind": "segment",
-     "endTime": 345.566
+     "endTime": 581.633
     },
     {
-     "startTime": 345.566,
-     "title": "The American room",
+     "startTime": 581.633,
+     "title": "American",
      "kind": "segment",
-     "endTime": 389.755
+     "endTime": 622.668
     },
     {
-     "startTime": 389.755,
-     "title": "The Soviet calculation",
+     "startTime": 622.668,
+     "title": "Soviet",
      "kind": "segment",
-     "endTime": 452.295
+     "endTime": 656.518
     },
     {
-     "startTime": 452.295,
-     "title": "The Cubans",
+     "startTime": 656.518,
+     "title": "Cuban",
      "kind": "segment",
-     "endTime": 531.115
+     "endTime": 698.335
     },
     {
-     "startTime": 531.115,
-     "title": "The deterrence theorists",
+     "startTime": 698.335,
+     "title": "Nuclear Deterrence Theory",
      "kind": "segment",
-     "endTime": 588.007
+     "endTime": 739.339
     },
     {
-     "startTime": 588.007,
-     "title": "The declassified record",
+     "startTime": 739.339,
+     "title": "John F. Kennedy stating the policy of full retaliatory response, in the White House recording of the Radio and Television Address of 22 October 1962",
      "kind": "segment",
-     "endTime": 655.87
+     "endTime": 759.339
     },
     {
-     "startTime": 655.87,
-     "title": "What each one leaves out",
+     "startTime": 759.339,
+     "title": "Declassified Revisionist",
      "kind": "segment",
-     "endTime": 728.097
+     "endTime": 818.537
     },
     {
-     "startTime": 728.097,
+     "startTime": 818.537,
+     "title": "The shape of the disagreement",
+     "kind": "segment",
+     "endTime": 853.428
+    },
+    {
+     "startTime": 853.428,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 771.999
+     "endTime": 881.247
     },
     {
-     "startTime": 771.999,
+     "startTime": 881.247,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 785.099
+     "endTime": 893.347
     }
    ],
-   "renderedAt": "2026-09-20T00:21:56+00:00",
-   "publishedAt": "2026-09-21T01:20:07+00:00",
-   "script_sha256": "e3a5196b8c44d9f8dc03b77fe8d5a1189b33e838ec17a43d2e681eb476b20b44",
-   "script_sha256_basis": "render-history-audio.yml run 35477912876 at f82cefb6",
+   "renderedAt": "2026-10-10T04:49:34+00:00",
+   "publishedAt": "2026-10-10T04:49:34+00:00",
+   "script_sha256": "40658da31445c323dc054f1e295702c85aa6555d72da4725c82631201eec9b25",
+   "script_sha256_basis": "cuban-missile-crisis.script.json written by history_producer.py at render",
    "promo": {
     "id": "site-03-both",
     "sha": "5d5a4ff4d5fc",
     "voice": "af_kore",
-    "startTime": 771.999
-   }
+    "startTime": 881.247
+   },
+   "clips": [
+    {
+     "id": "clip-kennedy-address-opening-19621022",
+     "startTime": 157.005,
+     "endTime": 169.305,
+     "sha256": "c76feb0bc1f56bf9f82ccf4dd628f766589c208d7b4a32f3a1f651818b707aeb"
+    },
+    {
+     "id": "clip-kennedy-address-quarantine-19621022",
+     "startTime": 179.512,
+     "endTime": 189.912,
+     "sha256": "f37ee2a2ffe7fd6baddaa0d3784a6312f70f23b2f789e65a73db69f29937a871"
+    },
+    {
+     "id": "clip-kennedy-address-retaliation-19621022",
+     "startTime": 739.339,
+     "endTime": 758.139,
+     "sha256": "350a34413d1e30365cebc003bcbbc0af8effca630572ac7e6a5540fb05b6549a"
+    }
+   ]
   },
   "cuban-revolution": {
    "url": "/audio/history/cuban-revolution.mp3?v=cf42de51",
@@ -3716,106 +3760,112 @@
    }
   },
   "hiroshima-nagasaki": {
-   "url": "/audio/history/hiroshima-nagasaki.mp3?v=173acecc",
-   "chaptersUrl": "/audio/history/hiroshima-nagasaki.chapters.json?v=173acecc",
+   "url": "/audio/history/hiroshima-nagasaki.mp3?v=12012a19",
+   "chaptersUrl": "/audio/history/hiroshima-nagasaki.chapters.json?v=12012a19",
    "title": "The Atomic Bombings of Hiroshima and Nagasaki",
-   "durationSeconds": 850.286,
-   "bytes": 13621424,
+   "durationSeconds": 846.341,
+   "bytes": 13558235,
    "chapters": [
     {
      "startTime": 0.0,
      "title": "Opening",
      "kind": "segment",
-     "endTime": 52.605
+     "endTime": 65.257
     },
     {
-     "startTime": 52.605,
-     "title": "Fifteen minutes past eight",
+     "startTime": 65.257,
+     "title": "The list",
      "kind": "segment",
-     "endTime": 140.396
+     "endTime": 150.437
     },
     {
-     "startTime": 140.396,
-     "title": "The second one was aimed somewhere else",
+     "startTime": 150.437,
+     "title": "The morning",
      "kind": "segment",
-     "endTime": 201.942
+     "endTime": 226.989
     },
     {
-     "startTime": 201.942,
-     "title": "The illness with no name yet",
+     "startTime": 226.989,
+     "title": "The second city",
      "kind": "segment",
-     "endTime": 251.38
+     "endTime": 288.677
     },
     {
-     "startTime": 251.38,
-     "title": "A voice nobody had heard",
+     "startTime": 288.677,
+     "title": "The count",
      "kind": "segment",
-     "endTime": 298.551
+     "endTime": 374.261
     },
     {
-     "startTime": 298.551,
+     "startTime": 374.261,
+     "title": "The condition",
+     "kind": "segment",
+     "endTime": 491.099
+    },
+    {
+     "startTime": 491.099,
      "title": "Five accounts",
      "kind": "segment",
-     "endTime": 312.058
+     "endTime": 515.726
     },
     {
-     "startTime": 312.058,
-     "title": "The American case",
+     "startTime": 515.726,
+     "title": "American",
      "kind": "segment",
-     "endTime": 406.484
+     "endTime": 552.684
     },
     {
-     "startTime": 406.484,
-     "title": "The hibakusha",
+     "startTime": 552.684,
+     "title": "Japanese Civilian",
      "kind": "segment",
-     "endTime": 477.489
+     "endTime": 605.11
     },
     {
-     "startTime": 477.489,
-     "title": "The scientists",
+     "startTime": 605.11,
+     "title": "International / Scientific",
      "kind": "segment",
-     "endTime": 565.141
+     "endTime": 645.161
     },
     {
-     "startTime": 565.141,
-     "title": "The revisionists",
+     "startTime": 645.161,
+     "title": "Modern Revisionist",
      "kind": "segment",
-     "endTime": 636.392
+     "endTime": 702.446
     },
     {
-     "startTime": 636.392,
-     "title": "The Korean dead",
+     "startTime": 702.446,
+     "title": "Korean Forced Laborers",
      "kind": "segment",
-     "endTime": 715.069
+     "endTime": 754.947
     },
     {
-     "startTime": 715.069,
-     "title": "What each one leaves out",
+     "startTime": 754.947,
+     "title": "The shape of the disagreement",
      "kind": "segment",
-     "endTime": 795.809
+     "endTime": 802.643
     },
     {
-     "startTime": 795.809,
+     "startTime": 802.643,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 837.151
+     "endTime": 834.204
     },
     {
-     "startTime": 837.151,
+     "startTime": 834.204,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 850.251
+     "endTime": 846.304
     }
    ],
-   "renderedAt": "2026-09-20T00:04:51+00:00",
-   "publishedAt": "2026-09-21T01:28:08+00:00",
-   "script_sha256": "a9ee72cc9bb71d533a2ac83ed2bd974264da7b22c79fedd974c209252747c72a",
-   "script_sha256_basis": "render-history-audio.yml run 35477146276 at d48ba8c3",
+   "renderedAt": "2026-10-10T04:49:35+00:00",
+   "publishedAt": "2026-10-10T04:49:35+00:00",
+   "script_sha256": "4512152a94f2b6e38dc3324c8e897f2ef5302878e7c12f7b2a226db832a25f34",
+   "script_sha256_basis": "hiroshima-nagasaki.script.json written by history_producer.py at render",
    "promo": {
     "id": "weekly-03-shape",
     "sha": "f0e39c05137d",
     "voice": "af_kore",
-    "startTime": 837.151
+    "startTime": 834.204
    }
   },
   "holodomor": {
