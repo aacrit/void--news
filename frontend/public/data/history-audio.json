@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-10T00:37:01+00:00",
+ "generatedAt": "2026-10-10T00:47:32+00:00",
  "episodes": {
   "alexanders-conquests": {
    "url": "/audio/history/alexanders-conquests.mp3?v=ab0c51b6",
@@ -706,11 +706,11 @@
    }
   },
   "armenian-genocide": {
-   "url": "/audio/history/armenian-genocide.mp3?v=df4542ab",
-   "chaptersUrl": "/audio/history/armenian-genocide.chapters.json?v=df4542ab",
+   "url": "/audio/history/armenian-genocide.mp3?v=58d97375",
+   "chaptersUrl": "/audio/history/armenian-genocide.chapters.json?v=58d97375",
    "title": "The Armenian Genocide",
    "durationSeconds": 910.132,
-   "bytes": 14579920,
+   "bytes": 14579912,
    "chapters": [
     {
      "startTime": 0.0,
@@ -768,7 +768,7 @@
     },
     {
      "startTime": 677.82,
-     "title": "Genocide scholarship",
+     "title": "Genocide studies",
      "kind": "segment",
      "endTime": 709.87
     },
@@ -797,9 +797,9 @@
      "endTime": 910.083
     }
    ],
-   "renderedAt": "2026-10-10T00:17:29+00:00",
-   "publishedAt": "2026-10-10T00:17:29+00:00",
-   "script_sha256": "c70e283ec4a72d59b5258ab3830d6d9ca02caa4e9a59d8e2e04be35c2f6a930f",
+   "renderedAt": "2026-10-10T00:47:32+00:00",
+   "publishedAt": "2026-10-10T00:47:32+00:00",
+   "script_sha256": "2ba6f58e8ce7c1c486eccfd23d00975d172dfc2765355097b02a7824090837b8",
    "script_sha256_basis": "armenian-genocide.script.json written by history_producer.py at render",
    "promo": {
     "id": "site-06-sources",
