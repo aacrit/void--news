@@ -434,7 +434,6 @@ for line in DURABLE:
 SCRIPT_TIME_BOUND_KNOWN = [
     ("angkor-khmer-empire", "It remains the largest religious", "review"),
     ("angkor-khmer-empire", "park that stands today", "review"),
-    ("apollo-11-moon-landing", "his country was currently losing", "spared"),
     ("arab-spring", "still the smallest", "review"),
     ("ashoka-maurya-empire", "is still the majority", "review"),
     ("bandung-conference", "was still the currency", "spared"),

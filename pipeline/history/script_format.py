@@ -693,9 +693,6 @@ H18_KNOWN: dict[str, dict[str, str]] = {
     'angkor-khmer-empire': {
         '80': "a span the writer computed; the record states no such span: 'eighty'",
     },
-    'apollo-11-moon-landing': {
-        '240000': "not in the record: 'two hundred and forty thousand'",
-    },
     'ashoka-maurya-empire': {
         '2000': "not in the record: 'two thousand'",
     },

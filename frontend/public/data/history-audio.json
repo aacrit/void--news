@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-10T00:17:29+00:00",
+ "generatedAt": "2026-10-10T00:37:01+00:00",
  "episodes": {
   "alexanders-conquests": {
    "url": "/audio/history/alexanders-conquests.mp3?v=ab0c51b6",
@@ -456,112 +456,145 @@
    }
   },
   "apollo-11-moon-landing": {
-   "url": "/audio/history/apollo-11-moon-landing.mp3?v=b3186227",
-   "chaptersUrl": "/audio/history/apollo-11-moon-landing.chapters.json?v=b3186227",
+   "url": "/audio/history/apollo-11-moon-landing.mp3?v=034ffd12",
+   "chaptersUrl": "/audio/history/apollo-11-moon-landing.chapters.json?v=034ffd12",
    "title": "Apollo 11 and the Space Race",
-   "durationSeconds": 625.894,
-   "bytes": 10027490,
+   "durationSeconds": 829.179,
+   "bytes": 13284232,
    "chapters": [
     {
      "startTime": 0.0,
      "title": "Opening",
      "kind": "segment",
-     "endTime": 38.781
+     "endTime": 41.949
     },
     {
-     "startTime": 38.781,
+     "startTime": 41.949,
      "title": "Twenty five seconds",
      "kind": "segment",
-     "endTime": 96.0
+     "endTime": 150.106
     },
     {
-     "startTime": 96.0,
+     "startTime": 150.106,
      "title": "Eight years",
      "kind": "segment",
-     "endTime": 139.8
+     "endTime": 191.751
     },
     {
-     "startTime": 139.8,
+     "startTime": 191.751,
+     "title": "John F. Kennedy, the Moon goal, in the White House recording of the Special Message to Congress on Urgent National Needs",
+     "kind": "segment",
+     "endTime": 205.351
+    },
+    {
+     "startTime": 205.351,
      "title": "Four hundred thousand people",
      "kind": "segment",
-     "endTime": 200.408
+     "endTime": 247.113
     },
     {
-     "startTime": 200.408,
+     "startTime": 247.113,
      "title": "A signal weaker than a refrigerator bulb",
      "kind": "segment",
-     "endTime": 242.068
+     "endTime": 283.199
     },
     {
-     "startTime": 242.068,
+     "startTime": 283.199,
+     "title": "Neil Armstrong, the first words from the lunar surface, in NASA's own sound bite from its Apollo 11 audio highlights",
+     "kind": "segment",
+     "endTime": 316.55
+    },
+    {
+     "startTime": 316.55,
+     "title": "Neil Armstrong reading the plaque on the lunar module's leg, in NASA's own sound bite from its Apollo 11 audio highlights",
+     "kind": "segment",
+     "endTime": 347.29
+    },
+    {
+     "startTime": 347.29,
      "title": "Five accounts",
      "kind": "segment",
-     "endTime": 256.67
+     "endTime": 369.268
     },
     {
-     "startTime": 256.67,
+     "startTime": 369.268,
      "title": "American triumph",
      "kind": "segment",
-     "endTime": 312.478
+     "endTime": 416.371
     },
     {
-     "startTime": 312.478,
-     "title": "The Soviet programme",
+     "startTime": 416.371,
+     "title": "The Soviet space programme",
      "kind": "segment",
-     "endTime": 364.244
+     "endTime": 486.979
     },
     {
-     "startTime": 364.244,
+     "startTime": 486.979,
      "title": "The domestic critique",
      "kind": "segment",
-     "endTime": 410.771
+     "endTime": 556.253
     },
     {
-     "startTime": 410.771,
+     "startTime": 556.253,
      "title": "The engineers",
      "kind": "segment",
-     "endTime": 458.811
+     "endTime": 631.501
     },
     {
-     "startTime": 458.811,
+     "startTime": 631.501,
      "title": "The Global South",
      "kind": "segment",
-     "endTime": 508.848
+     "endTime": 699.209
     },
     {
-     "startTime": 508.848,
+     "startTime": 699.209,
      "title": "The shape of the disagreement",
      "kind": "segment",
-     "endTime": 578.765
+     "endTime": 755.724
     },
     {
-     "startTime": 578.765,
+     "startTime": 755.724,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 612.748
+     "endTime": 816.428
     },
     {
-     "startTime": 612.748,
+     "startTime": 816.428,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 625.848
+     "endTime": 829.128
     }
    ],
-   "renderedAt": "2026-09-19T23:09:20+00:00",
-   "publishedAt": "2026-09-21T01:09:43+00:00",
-   "script_sha256": null,
-   "script_sha256_basis": "local render with no workflow run on record: not provable, re-verify",
-   "script_revised_after_render": {
-    "sha256": "014b45d382ded8f35ac4973d6ba0df9c2b4dfb04f95136cab5746fd4d8728010",
-    "at": "2026-10-02",
-    "reason": "time-bound lines made durable (P2-9): 'has not resumed' and 'Nobody has been back' became the record's own date, December 1972"
-   },
+   "renderedAt": "2026-10-10T00:37:01+00:00",
+   "publishedAt": "2026-10-10T00:37:01+00:00",
+   "script_sha256": "3ecff157d34da70aa0e481b243dfe511de7d79b450d96dc7b03401aed291a6f8",
+   "script_sha256_basis": "apollo-11-moon-landing.script.json written by history_producer.py at render",
    "promo": {
     "id": "weekly-01-verbatim",
     "sha": "da7009d30a33",
     "voice": "af_kore",
-    "startTime": 612.748
-   }
+    "startTime": 816.428
+   },
+   "clips": [
+    {
+     "id": "clip-kennedy-congress-19610525",
+     "startTime": 191.751,
+     "endTime": 204.151,
+     "sha256": "a730c2c27f70a99981ac6ecbaaf06ad6cfe9149d74f5e92250c904c85e18a8bb"
+    },
+    {
+     "id": "clip-armstrong-one-small-step-19690721",
+     "startTime": 283.199,
+     "endTime": 291.423,
+     "sha256": "9b17aa7be259f84b11fb9fdfbf7c37b5eca0b47ed1e6511af2e4f80e5eed25e8"
+    },
+    {
+     "id": "clip-armstrong-plaque-19690721",
+     "startTime": 316.55,
+     "endTime": 329.269,
+     "sha256": "97eb2ab04d5618dd775c0ea64ebafb6f2c4db0c69c766865ee7966eb47adda9e"
+    }
+   ]
   },
   "arab-spring": {
    "url": "/audio/history/arab-spring.mp3?v=57ba419c",

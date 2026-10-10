@@ -465,9 +465,10 @@ def test_check_script_prints_findings():
     """
     import io, contextlib, subprocess, sys, pathlib
     root = pathlib.Path(__file__).resolve().parents[1]
-    # apollo-11 carries a real H-10 warning, so it exercises the print path.
+    # french-revolution carries a real H-10 warning, so it exercises the print
+    # path (apollo-11 did until its first-listener script cleared it, 2026-10-09).
     out = subprocess.run(
-        [sys.executable, str(root / "pipeline/history/check_script.py"), "apollo-11-moon-landing"],
+        [sys.executable, str(root / "pipeline/history/check_script.py"), "french-revolution"],
         capture_output=True, text=True, cwd=root,
     )
     assert "Traceback" not in out.stderr, f"checker crashed:\n{out.stderr}"
