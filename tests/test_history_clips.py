@@ -67,7 +67,7 @@ def test_directives_parsed() -> None:
     moods = [s.directive("MOOD").head for s in sc.segments if s.directive("MOOD")]
     check("directives: the pilot's moods are read", len(moods) >= 20, f"{len(moods)} moods")
     clips = [d for s in sc.segments for d in s.directives_of("CLIP")]
-    check("directives: two CLIP slots are read", len(clips) == 2, f"{len(clips)}")
+    check("directives: the pilot's CLIP slot is read", len(clips) == 1, f"{len(clips)}")
     nehru = next((d for d in clips if "nehru" in d.args.get("id", "")), None)
     check("directives: CLIP args parse", nehru is not None and nehru.args.get("replaces") == "document"
           and nehru.args.get("origin") == "All India Radio", repr(nehru))
@@ -122,7 +122,7 @@ from pipeline.history.ledger import load_ledger  # noqa: E402
 
 NEHRU = "clip-nehru-tryst-19470814"
 CREDIT_OLD = "N: Then, in English. Nehru, to the assembly.\n"
-CREDIT_NEW = "N: Then, in English. A recording of Nehru, from All India Radio, via the Internet Archive.\n"
+CREDIT_NEW = "N: What follows is a recording of Nehru. The Internet Archive holds it, and names All India Radio as its source.\n"
 # What faster-whisper base.en heard, recorded by verify_clip on 2026-09-25
 # (tests hold TEXT only; no audio is committed and CI runs no ASR).
 HEARD_WINDOW = ("Long years ago, we made a twist with destiny, and now the time comes when we shall "
@@ -142,6 +142,12 @@ HEARD_SHORT = ("Long years ago, we made a twist with destiny, and now the time c
                "our pledge, not only or in full measure, but very substantially. At the stroke of")
 
 assert CREDIT_NEW in RAW, "the pilot's credit line moved; update the fixture"
+assert "## SCENE 1 | The map\n" in RAW, "the pilot's SCENE 1 heading moved; update the fixture"
+# The candidate slot the pilot carried until 2026-10-04: no rights basis on the
+# allowlist, no verified provenance. H-12 and H-13 must refuse it.
+MOUNTBATTEN_SLOT = ('# CLIP: id=clip-mountbatten-broadcast-19470603 replaces=none status=candidate '
+                    'source=https://cdn.nationalarchives.gov.uk/documents/education/mountbatten-radio-broadcast.mp3 '
+                    'licence=OGL-v3-except-where-stated origin="UK National Archives education resource" max=40s\n')
 
 
 def fixture(mutate_rec=None, mutate_ver=None, script_edit=None, signed: bool = True):
@@ -199,6 +205,10 @@ def test_pilot_as_committed() -> None:
     ver = cl.load_verification(SLUG, ledger.recordings[NEHRU])
     check("pilot: the Nehru verification record passed", bool(ver and ver.get("pass")))
     check("pilot: the Nehru window is 45 s or less", ver and ver["window"]["seconds"] <= 45.0)
+    # The first-listener script (2026-10-04) dropped the Mountbatten candidate
+    # slot; it is planted back here so the blocked case keeps its coverage.
+    _, slots, _, _ = fixture(script_edit=lambda t: t.replace("## SCENE 1 | The map\n",
+                                                             "## SCENE 1 | The map\n" + MOUNTBATTEN_SLOT, 1))
     mb = next(s for s in slots if "mountbatten" in s.clip_id)
     check("pilot: Mountbatten is blocked on rights and provenance",
           {"H-12", "H-13"} <= {f.id for f in mb.findings} and not mb.admitted)
@@ -289,9 +299,10 @@ def test_h16_caps() -> None:
                                                              "## OPEN\n# MOOD: dread\n" + clip_line, 1))
     check("H-16 fires on a clip in the OPEN", any(x.id == "H-16" and "OPEN" in x.detail for x in f))
     check("H-16 stops every clip", not any(s.admitted for s in slots))
-    # The fixture carries two slots; two more make four, one over the cap of three.
+    # The fixture carries one slot; three more make four, one over the cap of three.
     extra = ("# CLIP: id=clip-extra replaces=none status=candidate max=30s\n"
-             "# CLIP: id=clip-extra-2 replaces=none status=candidate max=30s\n")
+             "# CLIP: id=clip-extra-2 replaces=none status=candidate max=30s\n"
+             "# CLIP: id=clip-extra-3 replaces=none status=candidate max=30s\n")
     _, slots, f, n = fixture(script_edit=lambda t: t.replace("## SCENE 4 | How many\n",
                                                              "## SCENE 4 | How many\n" + extra, 1))
     check("H-16 fires on a fourth clip", any(x.id == "H-16" and "at most" in x.detail for x in f))

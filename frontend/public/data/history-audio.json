@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-02T06:35:55+00:00",
+ "generatedAt": "2026-10-10T00:17:29+00:00",
  "episodes": {
   "alexanders-conquests": {
    "url": "/audio/history/alexanders-conquests.mp3?v=ab0c51b6",
@@ -673,106 +673,106 @@
    }
   },
   "armenian-genocide": {
-   "url": "/audio/history/armenian-genocide.mp3?v=7cdd24d2",
-   "chaptersUrl": "/audio/history/armenian-genocide.chapters.json?v=7cdd24d2",
+   "url": "/audio/history/armenian-genocide.mp3?v=df4542ab",
+   "chaptersUrl": "/audio/history/armenian-genocide.chapters.json?v=df4542ab",
    "title": "The Armenian Genocide",
-   "durationSeconds": 733.649,
-   "bytes": 11753270,
+   "durationSeconds": 910.132,
+   "bytes": 14579920,
    "chapters": [
     {
      "startTime": 0.0,
      "title": "Opening",
      "kind": "segment",
-     "endTime": 53.771
+     "endTime": 63.045
     },
     {
-     "startTime": 53.771,
-     "title": "The twenty fourth of April",
+     "startTime": 63.045,
+     "title": "The night of the twenty fourth",
      "kind": "segment",
-     "endTime": 98.026
+     "endTime": 211.866
     },
     {
-     "startTime": 98.026,
-     "title": "Disarmed first",
+     "startTime": 211.866,
+     "title": "The road",
      "kind": "segment",
-     "endTime": 141.917
+     "endTime": 273.054
     },
     {
-     "startTime": 141.917,
-     "title": "The law and the road",
+     "startTime": 273.054,
+     "title": "The woman from Kheiban",
      "kind": "segment",
-     "endTime": 203.447
+     "endTime": 375.999
     },
     {
-     "startTime": 203.447,
-     "title": "The end of the road",
+     "startTime": 375.999,
+     "title": "The counts",
      "kind": "segment",
-     "endTime": 258.163
+     "endTime": 453.491
     },
     {
-     "startTime": 258.163,
+     "startTime": 453.491,
      "title": "Five accounts",
      "kind": "segment",
-     "endTime": 284.399
+     "endTime": 480.68
     },
     {
-     "startTime": 284.399,
-     "title": "The Ottoman government",
+     "startTime": 480.68,
+     "title": "The Ottoman government and the Turkish state",
      "kind": "segment",
-     "endTime": 341.107
+     "endTime": 556.198
     },
     {
-     "startTime": 341.107,
-     "title": "The survivors and the diaspora",
+     "startTime": 556.198,
+     "title": "The survivors and the Republic of Armenia",
      "kind": "segment",
-     "endTime": 406.224
+     "endTime": 630.375
     },
     {
-     "startTime": 406.224,
+     "startTime": 630.375,
      "title": "The witnesses",
      "kind": "segment",
-     "endTime": 468.63
+     "endTime": 677.82
     },
     {
-     "startTime": 468.63,
-     "title": "Genocide studies",
+     "startTime": 677.82,
+     "title": "Genocide scholarship",
      "kind": "segment",
-     "endTime": 524.819
+     "endTime": 709.87
     },
     {
-     "startTime": 524.819,
-     "title": "The Convention",
+     "startTime": 709.87,
+     "title": "The Convention and the parliaments",
      "kind": "segment",
-     "endTime": 584.402
+     "endTime": 784.897
     },
     {
-     "startTime": 584.402,
+     "startTime": 784.897,
      "title": "What each one leaves out",
      "kind": "segment",
-     "endTime": 671.265
+     "endTime": 832.197
     },
     {
-     "startTime": 671.265,
+     "startTime": 832.197,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 720.501
+     "endTime": 897.983
     },
     {
-     "startTime": 720.501,
+     "startTime": 897.983,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 733.601
+     "endTime": 910.083
     }
    ],
-   "renderedAt": "2026-09-20T01:47:17+00:00",
-   "publishedAt": "2026-09-21T01:10:55+00:00",
-   "script_sha256": "1b67b8c6fbe44522ff31f68894029c0e132d9630b78f494dfff4d6c6d4c390b3",
-   "script_sha256_basis": "render-history-audio.yml run 35481638788 at 0a2f0003",
+   "renderedAt": "2026-10-10T00:17:29+00:00",
+   "publishedAt": "2026-10-10T00:17:29+00:00",
+   "script_sha256": "c70e283ec4a72d59b5258ab3830d6d9ca02caa4e9a59d8e2e04be35c2f6a930f",
+   "script_sha256_basis": "armenian-genocide.script.json written by history_producer.py at render",
    "promo": {
     "id": "site-06-sources",
     "sha": "86f1cdbf5435",
     "voice": "af_kore",
-    "startTime": 720.501
+    "startTime": 897.983
    }
   },
   "ashoka-maurya-empire": {
@@ -1315,109 +1315,119 @@
    }
   },
   "cambodian-genocide": {
-   "url": "/audio/history/cambodian-genocide.mp3?v=12be5cc7",
-   "chaptersUrl": "/audio/history/cambodian-genocide.chapters.json?v=12be5cc7",
+   "url": "/audio/history/cambodian-genocide.mp3?v=847e1327",
+   "chaptersUrl": "/audio/history/cambodian-genocide.chapters.json?v=847e1327",
    "title": "The Cambodian Genocide",
-   "durationSeconds": 818.521,
-   "bytes": 13112550,
+   "durationSeconds": 878.498,
+   "bytes": 14073396,
    "chapters": [
     {
      "startTime": 0.0,
      "title": "Opening",
      "kind": "segment",
-     "endTime": 54.077
+     "endTime": 64.059
     },
     {
-     "startTime": 54.077,
-     "title": "Forty eight hours",
+     "startTime": 64.059,
+     "title": "The road",
      "kind": "segment",
-     "endTime": 133.686
+     "endTime": 140.408
     },
     {
-     "startTime": 133.686,
-     "title": "A dam with no engineers",
+     "startTime": 140.408,
+     "title": "The camera",
      "kind": "segment",
-     "endTime": 194.703
+     "endTime": 205.775
     },
     {
-     "startTime": 194.703,
-     "title": "Fourteen thousand faces",
+     "startTime": 205.775,
+     "title": "The list",
      "kind": "segment",
-     "endTime": 250.558
+     "endTime": 287.344
     },
     {
-     "startTime": 250.558,
-     "title": "Thirteen days",
+     "startTime": 287.344,
+     "title": "The last morning",
      "kind": "segment",
-     "endTime": 303.865
+     "endTime": 347.642
     },
     {
-     "startTime": 303.865,
+     "startTime": 347.642,
+     "title": "The count",
+     "kind": "segment",
+     "endTime": 430.176
+    },
+    {
+     "startTime": 430.176,
+     "title": "The word",
+     "kind": "segment",
+     "endTime": 525.489
+    },
+    {
+     "startTime": 525.489,
      "title": "Five accounts",
      "kind": "segment",
-     "endTime": 314.044
+     "endTime": 554.711
     },
     {
-     "startTime": 314.044,
-     "title": "The Khmer Rouge",
+     "startTime": 554.711,
+     "title": "The Khmer Rouge Leadership",
      "kind": "segment",
-     "endTime": 399.015
+     "endTime": 596.336
     },
     {
-     "startTime": 399.015,
+     "startTime": 596.336,
      "title": "The Survivors",
      "kind": "segment",
-     "endTime": 472.712
+     "endTime": 638.169
     },
     {
-     "startTime": 472.712,
-     "title": "Vietnamese Liberation",
+     "startTime": 638.169,
+     "title": "Viet Nam and the Vietnamese Liberation",
      "kind": "segment",
-     "endTime": 556.794
+     "endTime": 685.625
     },
     {
-     "startTime": 556.794,
-     "title": "The Tribunal",
+     "startTime": 685.625,
+     "title": "The ECCC Tribunal and the Demographers",
      "kind": "segment",
-     "endTime": 638.122
+     "endTime": 721.164
     },
     {
-     "startTime": 638.122,
-     "title": "Regional Intervention",
+     "startTime": 721.164,
+     "title": "The Regional Intervention and the Cold War",
      "kind": "segment",
-     "endTime": 722.441
+     "endTime": 771.096
     },
     {
-     "startTime": 722.441,
+     "startTime": 771.096,
      "title": "What each one leaves out",
      "kind": "segment",
-     "endTime": 789.08
+     "endTime": 822.179
     },
     {
-     "startTime": 789.08,
+     "startTime": 822.179,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 805.391
+     "endTime": 865.76
     },
     {
-     "startTime": 805.391,
+     "startTime": 865.76,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 818.491
+     "endTime": 878.46
     }
    ],
-   "renderedAt": "2026-09-20T14:52:53+00:00",
-   "publishedAt": "2026-09-21T01:14:37+00:00",
-   "script_sha256": "1998cf7579df006bfffe384e46b48a2b8168ceac68a5e8e7aebbea99915716a1",
-   "script_sha256_basis": "render-history-audio.yml run 35517064148 at 7868c3b4",
+   "renderedAt": "2026-10-10T00:17:28+00:00",
+   "publishedAt": "2026-10-10T00:17:28+00:00",
+   "script_sha256": "d1802702b7c5f285bcedca876d0de1c6e1246d4ddfc0651331b45c9b39c96bd3",
+   "script_sha256_basis": "cambodian-genocide.script.json written by history_producer.py at render",
    "promo": {
     "id": "onair-04-front-page",
     "sha": "bf338b01af9d",
     "voice": "af_kore",
-    "startTime": 805.391
-   },
-   "audio_withdrawn": true,
-   "audio_withdrawn_reason": "2026-10-03 rev 86 WS-H: the episode reads a quotation credited to Dith Pran as 'Testimony to the ECCC, 2009'; the event record has him dying in 2008, so the line was cut from the record and the script. Re-render from the corrected script."
+    "startTime": 865.76
+   }
   },
   "chernobyl-disaster": {
    "url": "/audio/history/chernobyl-disaster.mp3?v=716c98e6",
@@ -3564,106 +3574,112 @@
    }
   },
   "haitian-revolution": {
-   "url": "/audio/history/haitian-revolution.mp3?v=9eca7a1d",
-   "chaptersUrl": "/audio/history/haitian-revolution.chapters.json?v=9eca7a1d",
+   "url": "/audio/history/haitian-revolution.mp3?v=93abec9c",
+   "chaptersUrl": "/audio/history/haitian-revolution.chapters.json?v=93abec9c",
    "title": "The Haitian Revolution",
-   "durationSeconds": 733.701,
-   "bytes": 11754119,
+   "durationSeconds": 879.412,
+   "bytes": 14087944,
    "chapters": [
     {
      "startTime": 0.0,
      "title": "Opening",
      "kind": "segment",
-     "endTime": 48.443
+     "endTime": 55.834
     },
     {
-     "startTime": 48.443,
-     "title": "The clearing",
+     "startTime": 55.834,
+     "title": "The night of the twenty second",
      "kind": "segment",
-     "endTime": 113.031
+     "endTime": 148.626
     },
     {
-     "startTime": 113.031,
-     "title": "What the colony was worth",
+     "startTime": 148.626,
+     "title": "Free, and bound",
      "kind": "segment",
-     "endTime": 181.319
+     "endTime": 223.06
     },
     {
-     "startTime": 181.319,
-     "title": "Toussaint",
+     "startTime": 223.06,
+     "title": "One fortnight",
      "kind": "segment",
-     "endTime": 271.25
+     "endTime": 302.007
     },
     {
-     "startTime": 271.25,
-     "title": "The flag",
+     "startTime": 302.007,
+     "title": "The Heros",
      "kind": "segment",
-     "endTime": 331.677
+     "endTime": 383.918
     },
     {
-     "startTime": 331.677,
+     "startTime": 383.918,
+     "title": "Gonaives",
+     "kind": "segment",
+     "endTime": 502.205
+    },
+    {
+     "startTime": 502.205,
      "title": "Five accounts",
      "kind": "segment",
-     "endTime": 338.72
+     "endTime": 525.292
     },
     {
-     "startTime": 338.72,
+     "startTime": 525.292,
      "title": "The enslaved revolutionaries",
      "kind": "segment",
-     "endTime": 390.621
+     "endTime": 592.255
     },
     {
-     "startTime": 390.621,
+     "startTime": 592.255,
      "title": "The French colonial account",
      "kind": "segment",
-     "endTime": 439.77
+     "endTime": 637.652
     },
     {
-     "startTime": 439.77,
+     "startTime": 637.652,
      "title": "The Haitian nationalist account",
      "kind": "segment",
-     "endTime": 499.16
+     "endTime": 681.904
     },
     {
-     "startTime": 499.16,
-     "title": "The academic account",
+     "startTime": 681.904,
+     "title": "The Atlantic academic account",
      "kind": "segment",
-     "endTime": 549.747
+     "endTime": 716.881
     },
     {
-     "startTime": 549.747,
+     "startTime": 716.881,
      "title": "The indemnity",
      "kind": "segment",
-     "endTime": 605.566
+     "endTime": 772.277
     },
     {
-     "startTime": 605.566,
-     "title": "The shape of the disagreement",
+     "startTime": 772.277,
+     "title": "What each one leaves out",
      "kind": "segment",
-     "endTime": 676.218
+     "endTime": 831.346
     },
     {
-     "startTime": 676.218,
+     "startTime": 831.346,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 720.568
+     "endTime": 866.671
     },
     {
-     "startTime": 720.568,
+     "startTime": 866.671,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 733.668
+     "endTime": 879.371
     }
    ],
-   "renderedAt": "2026-10-02T06:35:55+00:00",
-   "publishedAt": "2026-10-02T06:35:55+00:00",
-   "script_sha256": "aca16aaf6e6e9300651481d3b9398ec986280abc6993b2821d5d4a6b781c3127",
+   "renderedAt": "2026-10-10T00:17:29+00:00",
+   "publishedAt": "2026-10-10T00:17:29+00:00",
+   "script_sha256": "091b50e1d758be5480cf86652f747d5f0b89edcda0b7e5d8e12ea322af3aeddd",
    "script_sha256_basis": "haitian-revolution.script.json written by history_producer.py at render",
    "promo": {
     "id": "onair-05-cold-open",
     "sha": "d2845fcb5ec1",
     "voice": "af_kore",
-    "startTime": 720.568
+    "startTime": 866.671
    }
   },
   "hiroshima-nagasaki": {
@@ -5507,130 +5523,130 @@
    }
   },
   "partition-of-india": {
-   "url": "/audio/history/partition-of-india.mp3?v=4b052cd1",
-   "chaptersUrl": "/audio/history/partition-of-india.chapters.json?v=4b052cd1",
+   "url": "/audio/history/partition-of-india.mp3?v=f53c51ae",
+   "chaptersUrl": "/audio/history/partition-of-india.chapters.json?v=f53c51ae",
    "title": "The Partition of India",
-   "durationSeconds": 800.679,
-   "bytes": 12827194,
+   "durationSeconds": 851.644,
+   "bytes": 13643442,
    "chapters": [
     {
      "startTime": 0.0,
      "title": "Opening",
      "kind": "segment",
-     "endTime": 42.672
+     "endTime": 61.48
     },
     {
-     "startTime": 42.672,
-     "title": "The count",
+     "startTime": 61.48,
+     "title": "The map",
      "kind": "segment",
-     "endTime": 119.859
+     "endTime": 173.517
     },
     {
-     "startTime": 119.859,
+     "startTime": 173.517,
      "title": "Midnight",
      "kind": "segment",
-     "endTime": 148.833
+     "endTime": 198.435
     },
     {
-     "startTime": 148.833,
+     "startTime": 198.435,
      "title": "Jawaharlal Nehru, Tryst with Destiny, the English passage, in the All India Radio recording",
      "kind": "segment",
-     "endTime": 189.64
+     "endTime": 238.909
     },
     {
-     "startTime": 189.64,
+     "startTime": 238.909,
      "title": "Gurdaspur",
      "kind": "segment",
-     "endTime": 273.382
+     "endTime": 329.661
     },
     {
-     "startTime": 273.382,
+     "startTime": 329.661,
      "title": "How many",
      "kind": "segment",
-     "endTime": 368.737
+     "endTime": 419.636
     },
     {
-     "startTime": 368.737,
+     "startTime": 419.636,
      "title": "The force that was supposed to hold",
      "kind": "segment",
-     "endTime": 422.036
+     "endTime": 467.217
     },
     {
-     "startTime": 422.036,
+     "startTime": 467.217,
      "title": "The drum",
      "kind": "segment",
-     "endTime": 472.792
+     "endTime": 523.358
     },
     {
-     "startTime": 472.792,
+     "startTime": 523.358,
      "title": "Five accounts",
      "kind": "segment",
-     "endTime": 486.747
+     "endTime": 547.803
     },
     {
-     "startTime": 486.747,
+     "startTime": 547.803,
      "title": "British Imperial",
      "kind": "segment",
-     "endTime": 516.633
+     "endTime": 575.602
     },
     {
-     "startTime": 516.633,
+     "startTime": 575.602,
      "title": "Indian Nationalist",
      "kind": "segment",
-     "endTime": 544.367
+     "endTime": 599.473
     },
     {
-     "startTime": 544.367,
+     "startTime": 599.473,
      "title": "Pakistani Nationalist",
      "kind": "segment",
-     "endTime": 599.495
+     "endTime": 651.759
     },
     {
-     "startTime": 599.495,
+     "startTime": 651.759,
      "title": "Subaltern and displacement",
      "kind": "segment",
-     "endTime": 637.183
+     "endTime": 683.591
     },
     {
-     "startTime": 637.183,
+     "startTime": 683.591,
      "title": "Women's history",
      "kind": "segment",
-     "endTime": 688.429
+     "endTime": 736.557
     },
     {
-     "startTime": 688.429,
+     "startTime": 736.557,
      "title": "The shape of the disagreement",
      "kind": "segment",
-     "endTime": 755.44
+     "endTime": 796.08
     },
     {
-     "startTime": 755.44,
+     "startTime": 796.08,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 788.727
+     "endTime": 838.893
     },
     {
-     "startTime": 788.727,
+     "startTime": 838.893,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 800.627
+     "endTime": 851.593
     }
    ],
-   "renderedAt": "2026-09-25T19:55:25+00:00",
-   "publishedAt": "2026-09-25T19:55:25+00:00",
-   "script_sha256": "79db843b268622eb163dfd84b1e4a6f17b514ba9b6422d7da9966754fa47ec44",
-   "script_sha256_basis": "render-history-audio.yml run 36181105314 at 52eef066",
+   "renderedAt": "2026-10-10T00:17:29+00:00",
+   "publishedAt": "2026-10-10T00:17:29+00:00",
+   "script_sha256": "d908be6d26fb4dba1cd9dbd687743bafa45fa500709e0f99403966a43d7f955a",
+   "script_sha256_basis": "partition-of-india.script.json written by history_producer.py at render",
    "promo": {
     "id": "weekly-06-week-in-bias",
     "sha": "5d3bb7b7d195",
     "voice": "af_kore",
-    "startTime": 788.727
+    "startTime": 838.893
    },
    "clips": [
     {
      "id": "clip-nehru-tryst-19470814",
-     "startTime": 148.833,
-     "endTime": 176.883,
+     "startTime": 198.435,
+     "endTime": 226.485,
      "sha256": "13133847f145943d49a74703f1e24fb3433ad5e923aed4cf4e94d3b41219f8ee"
     }
    ]
@@ -6080,100 +6096,118 @@
    }
   },
   "scramble-for-africa": {
-   "url": "/audio/history/scramble-for-africa.mp3?v=aed82775",
-   "chaptersUrl": "/audio/history/scramble-for-africa.chapters.json?v=aed82775",
+   "url": "/audio/history/scramble-for-africa.mp3?v=aed5239d",
+   "chaptersUrl": "/audio/history/scramble-for-africa.chapters.json?v=aed5239d",
    "title": "The Scramble for Africa",
-   "durationSeconds": 770.586,
-   "bytes": 12344908,
+   "durationSeconds": 863.478,
+   "bytes": 13832719,
    "chapters": [
     {
      "startTime": 0.0,
      "title": "Opening",
      "kind": "segment",
-     "endTime": 53.99
+     "endTime": 53.51
     },
     {
-     "startTime": 53.99,
-     "title": "Berlin, November fifteenth, eighteen eighty four",
+     "startTime": 53.51,
+     "title": "The table",
      "kind": "segment",
-     "endTime": 148.201
+     "endTime": 144.924
     },
     {
-     "startTime": 148.201,
-     "title": "The Congo Free State",
+     "startTime": 144.924,
+     "title": "The paper",
      "kind": "segment",
-     "endTime": 247.36
+     "endTime": 229.363
     },
     {
-     "startTime": 247.36,
-     "title": "German South West Africa, October second, nineteen oh four",
+     "startTime": 229.363,
+     "title": "Hornkrans",
      "kind": "segment",
-     "endTime": 318.346
+     "endTime": 281.907
     },
     {
-     "startTime": 318.346,
+     "startTime": 281.907,
+     "title": "The river",
+     "kind": "segment",
+     "endTime": 368.055
+    },
+    {
+     "startTime": 368.055,
+     "title": "The order",
+     "kind": "segment",
+     "endTime": 469.669
+    },
+    {
+     "startTime": 469.669,
+     "title": "The count",
+     "kind": "segment",
+     "endTime": 530.015
+    },
+    {
+     "startTime": 530.015,
      "title": "Five accounts",
      "kind": "segment",
-     "endTime": 341.965
+     "endTime": 556.639
     },
     {
-     "startTime": 341.965,
+     "startTime": 556.639,
      "title": "The colonizers",
      "kind": "segment",
-     "endTime": 398.179
+     "endTime": 586.88
     },
     {
-     "startTime": 398.179,
+     "startTime": 586.88,
      "title": "The kingdoms that resisted",
      "kind": "segment",
-     "endTime": 462.356
+     "endTime": 632.93
     },
     {
-     "startTime": 462.356,
+     "startTime": 632.93,
      "title": "The Pan African critique",
      "kind": "segment",
-     "endTime": 529.51
+     "endTime": 671.787
     },
     {
-     "startTime": 529.51,
+     "startTime": 671.787,
      "title": "The economic ledger",
      "kind": "segment",
-     "endTime": 576.542
+     "endTime": 707.512
     },
     {
-     "startTime": 576.542,
+     "startTime": 707.512,
      "title": "North Africa's own war",
      "kind": "segment",
-     "endTime": 647.978
+     "endTime": 767.183
     },
     {
-     "startTime": 647.978,
+     "startTime": 767.183,
      "title": "What each one leaves out",
      "kind": "segment",
-     "endTime": 724.644
+     "endTime": 811.058
     },
     {
-     "startTime": 724.644,
+     "startTime": 811.058,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 757.439
+     "endTime": 850.74
     },
     {
-     "startTime": 757.439,
+     "startTime": 850.74,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 770.539
+     "endTime": 863.44
     }
    ],
-   "renderedAt": "2026-10-02T06:35:55+00:00",
-   "publishedAt": "2026-10-02T06:35:55+00:00",
-   "script_sha256": "6e454acef263ed4bc5a48d09fa08a7ec6ec8661238e3e414332c8601c76ac76c",
+   "renderedAt": "2026-10-10T00:17:28+00:00",
+   "publishedAt": "2026-10-10T00:17:28+00:00",
+   "script_sha256": "e02305a7c9acd9128d128a848f2c8d23b8f60595c7b623b50355fbc0de7d4884",
    "script_sha256_basis": "scramble-for-africa.script.json written by history_producer.py at render",
    "promo": {
     "id": "weekly-04-no-host",
     "sha": "537c6d381004",
     "voice": "af_kore",
-    "startTime": 757.439
+    "startTime": 850.74
    }
   },
   "september-11-attacks": {
@@ -6722,209 +6756,227 @@
    }
   },
   "spanish-flu-1918": {
-   "url": "/audio/history/spanish-flu-1918.mp3?v=f349fa2b",
-   "chaptersUrl": "/audio/history/spanish-flu-1918.chapters.json?v=f349fa2b",
+   "url": "/audio/history/spanish-flu-1918.mp3?v=d105db79",
+   "chaptersUrl": "/audio/history/spanish-flu-1918.chapters.json?v=d105db79",
    "title": "The 1918 Influenza Pandemic",
-   "durationSeconds": 736.81,
-   "bytes": 11804145,
+   "durationSeconds": 849.816,
+   "bytes": 13613949,
    "chapters": [
     {
      "startTime": 0.0,
      "title": "Opening",
      "kind": "segment",
-     "endTime": 43.957
+     "endTime": 52.016
     },
     {
-     "startTime": 43.957,
-     "title": "Camp Funston, Kansas, March nineteen eighteen",
+     "startTime": 52.016,
+     "title": "The camp",
      "kind": "segment",
-     "endTime": 95.854
+     "endTime": 142.929
     },
     {
-     "startTime": 95.854,
-     "title": "Camp Devens, Massachusetts, late September nineteen eighteen",
+     "startTime": 142.929,
+     "title": "The name",
      "kind": "segment",
-     "endTime": 191.511
+     "endTime": 192.871
     },
     {
-     "startTime": 191.511,
-     "title": "Philadelphia, September twenty eighth, nineteen eighteen",
+     "startTime": 192.871,
+     "title": "The count",
      "kind": "segment",
-     "endTime": 238.081
+     "endTime": 275.078
     },
     {
-     "startTime": 238.081,
+     "startTime": 275.078,
+     "title": "The river",
+     "kind": "segment",
+     "endTime": 348.106
+    },
+    {
+     "startTime": 348.106,
+     "title": "The islands",
+     "kind": "segment",
+     "endTime": 439.375
+    },
+    {
+     "startTime": 439.375,
      "title": "Five accounts",
      "kind": "segment",
-     "endTime": 250.798
+     "endTime": 463.174
     },
     {
-     "startTime": 250.798,
+     "startTime": 463.174,
      "title": "Wartime Governments and Censorship",
      "kind": "segment",
-     "endTime": 315.77
+     "endTime": 498.909
     },
     {
-     "startTime": 315.77,
+     "startTime": 498.909,
      "title": "Public Health and Medicine",
      "kind": "segment",
-     "endTime": 377.755
+     "endTime": 550.955
     },
     {
-     "startTime": 377.755,
+     "startTime": 550.955,
      "title": "Colonial and Global South Populations",
      "kind": "segment",
-     "endTime": 456.269
+     "endTime": 609.914
     },
     {
-     "startTime": 456.269,
+     "startTime": 609.914,
      "title": "Pacific and Indigenous Peoples",
      "kind": "segment",
-     "endTime": 543.823
+     "endTime": 675.156
     },
     {
-     "startTime": 543.823,
+     "startTime": 675.156,
      "title": "Epidemiology and Historical Memory",
      "kind": "segment",
-     "endTime": 632.894
+     "endTime": 746.851
     },
     {
-     "startTime": 632.894,
+     "startTime": 746.851,
      "title": "What each one leaves out",
      "kind": "segment",
-     "endTime": 700.665
+     "endTime": 797.025
     },
     {
-     "startTime": 700.665,
+     "startTime": 797.025,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 723.667
+     "endTime": 837.084
     },
     {
-     "startTime": 723.667,
+     "startTime": 837.084,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 736.767
+     "endTime": 849.784
     }
    ],
-   "renderedAt": "2026-09-20T03:41:27+00:00",
-   "publishedAt": "2026-09-21T01:46:21+00:00",
-   "script_sha256": "d9a0e9b0f501f32b9afa55bd612c7b34806032633f4d118a6c011c3b2ac62f4d",
-   "script_sha256_basis": "render-history-audio.yml run 35486556115 at b47a4fa9",
+   "renderedAt": "2026-10-10T00:17:28+00:00",
+   "publishedAt": "2026-10-10T00:17:28+00:00",
+   "script_sha256": "daf3c5a26849b951dece9799e31444d27c2820b076f84f3cf49ce00ec60e82e0",
+   "script_sha256_basis": "spanish-flu-1918.script.json written by history_producer.py at render",
    "promo": {
     "id": "site-02-outlets",
     "sha": "6ffef1fe8cbd",
     "voice": "af_kore",
-    "startTime": 723.667
+    "startTime": 837.084
    }
   },
   "srebrenica-genocide": {
-   "url": "/audio/history/srebrenica-genocide.mp3?v=24b7ce29",
-   "chaptersUrl": "/audio/history/srebrenica-genocide.chapters.json?v=24b7ce29",
+   "url": "/audio/history/srebrenica-genocide.mp3?v=8dadb9ce",
+   "chaptersUrl": "/audio/history/srebrenica-genocide.chapters.json?v=8dadb9ce",
    "title": "The Srebrenica Genocide and the Bosnian War",
-   "durationSeconds": 911.334,
-   "bytes": 14599456,
+   "durationSeconds": 885.42,
+   "bytes": 14184449,
    "chapters": [
     {
      "startTime": 0.0,
      "title": "Opening",
      "kind": "segment",
-     "endTime": 48.033
+     "endTime": 67.854
     },
     {
-     "startTime": 48.033,
-     "title": "The enclave",
+     "startTime": 67.854,
+     "title": "The sentence",
      "kind": "segment",
-     "endTime": 97.841
+     "endTime": 167.838
     },
     {
-     "startTime": 97.841,
-     "title": "Potocari, July eleventh",
+     "startTime": 167.838,
+     "title": "The afternoon",
      "kind": "segment",
-     "endTime": 199.683
+     "endTime": 298.71
     },
     {
-     "startTime": 199.683,
-     "title": "The factory, then the fields",
+     "startTime": 298.71,
+     "title": "The column",
      "kind": "segment",
-     "endTime": 311.353
+     "endTime": 315.015
     },
     {
-     "startTime": 311.353,
+     "startTime": 315.015,
+     "title": "The warehouse",
+     "kind": "segment",
+     "endTime": 386.881
+    },
+    {
+     "startTime": 386.881,
+     "title": "Branjevo",
+     "kind": "segment",
+     "endTime": 436.811
+    },
+    {
+     "startTime": 436.811,
      "title": "The graves",
      "kind": "segment",
-     "endTime": 346.348
+     "endTime": 495.59
     },
     {
-     "startTime": 346.348,
-     "title": "The second grave",
-     "kind": "segment",
-     "endTime": 440.502
-    },
-    {
-     "startTime": 440.502,
+     "startTime": 495.59,
      "title": "Five accounts",
      "kind": "segment",
-     "endTime": 456.995
+     "endTime": 523.436
     },
     {
-     "startTime": 456.995,
+     "startTime": 523.436,
      "title": "Bosniak Survivors and the Legal Record",
      "kind": "segment",
-     "endTime": 520.945
+     "endTime": 573.465
     },
     {
-     "startTime": 520.945,
+     "startTime": 573.465,
      "title": "The UN Safe Area and the Dutch Peacekeepers",
      "kind": "segment",
-     "endTime": 582.233
+     "endTime": 612.329
     },
     {
-     "startTime": 582.233,
+     "startTime": 612.329,
      "title": "Genocide Denial versus the International Juridical Finding",
      "kind": "segment",
-     "endTime": 657.963
+     "endTime": 662.271
     },
     {
-     "startTime": 657.963,
+     "startTime": 662.271,
      "title": "The Mothers of Srebrenica",
      "kind": "segment",
-     "endTime": 724.387
+     "endTime": 717.989
     },
     {
-     "startTime": 724.387,
+     "startTime": 717.989,
      "title": "Scholarship on Ethnic Cleansing in the Yugoslav Wars",
      "kind": "segment",
-     "endTime": 799.746
+     "endTime": 770.981
     },
     {
-     "startTime": 799.746,
+     "startTime": 770.981,
      "title": "What each one leaves out",
      "kind": "segment",
-     "endTime": 873.362
+     "endTime": 824.088
     },
     {
-     "startTime": 873.362,
+     "startTime": 824.088,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 898.206
+     "endTime": 872.69
     },
     {
-     "startTime": 898.206,
+     "startTime": 872.69,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 911.306
+     "endTime": 885.39
     }
    ],
-   "renderedAt": "2026-09-25T04:09:53+00:00",
-   "publishedAt": "2026-09-25T04:09:53+00:00",
-   "script_sha256": "c822dc2fa86f7d2b749ce0232463b5305c9147b559d2db6b41a3a3383c1b725d",
-   "script_sha256_basis": "render-history-audio.yml run 36092233886 at 7b5a95e8",
+   "renderedAt": "2026-10-10T00:17:28+00:00",
+   "publishedAt": "2026-10-10T00:17:28+00:00",
+   "script_sha256": "f2dc01cae99c9730e43fd2fec0c58fb93e324131f31795f7d795ee250f858750",
+   "script_sha256_basis": "srebrenica-genocide.script.json written by history_producer.py at render",
    "promo": {
     "id": "weekly-06-week-in-bias",
     "sha": "5d3bb7b7d195",
     "voice": "af_kore",
-    "startTime": 898.206
+    "startTime": 872.69
    }
   },
   "suez-crisis": {
