@@ -116,6 +116,11 @@ def test_hundreds_and_labourers() -> None:
     passes("labourers", "Forced labourers were never counted.", "Forced laborers were never counted.")
 
 
+def test_tonnes() -> None:
+    # 2026-10-10 Chernobyl render.
+    passes("tonnes", "Helicopters drop about five thousand tonnes.", "Helicopters drop about five thousand tons.")
+
+
 def test_designators() -> None:
     # 2026-10-07: "a U two" heard "a U-2" on every take. Same value only.
     passes("U two", "Photographs from a U two, a reconnaissance plane.", "Photographs from a U-2, a reconnaissance plane.")
