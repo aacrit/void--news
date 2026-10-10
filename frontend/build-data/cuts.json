@@ -1,44 +1,31 @@
 {
-  "builtAt": "2026-10-07T18:39:49.560464Z",
+  "builtAt": "2026-10-09T18:41:49.069483Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "084423a4-5d6f-44c0-85bf-e1dbb5d47d30",
-      "title": "Cornell Students Plan Sit-In Over Alleged Fraternity Assault, University Hires Investigator",
-      "sentences": [],
-      "points": [
-        {
-          "text": "Breitbart News frames the newly released video from the Cornell investigation as showing \"witnesses told Cornell investigators Jane Doe consented to group sex,\" while ABC News and Newsweek describe the fraternity members as saying they \"heard it was all consensual\" or \"the general rumor... Was that it was a consensual thing,\" with an investigator questioning how they knew.",
-          "rule": "E-14",
-          "message": "summary quotes \"the general rumor\", which appears in none of the source articles: quote it as written or paraphrase it"
-        }
-      ],
-      "left": []
-    },
-    {
-      "id": "c3a6282c-9e57-4f8a-abac-5c45ddf56aa4",
-      "title": "Kyiv Deploys AI Turrets for Defense as Russian Drone Attacks Spike",
+      "id": "95d09773-fc81-4b70-9580-269e4732d162",
+      "title": "Christa Pike Regains Consciousness, Walks After Surviving Botched Execution Attempt",
       "sentences": [
         {
-          "text": "President Zelensky stated on October 4 that Russia launched 1,900 strike drones, 1,700 guided aerial bombs, and 25 missiles against Ukraine over the preceding week.",
+          "text": "Pike was sentenced to death for the 1995 murder of Colleen Slemmer, whom she beat, tortured, and killed with her then-boyfriend, Tadaryl Shipp, when Pike was 18 and Shipp was 17.",
           "rule": "E-13",
-          "message": "summary puts 1700 beside \"president zelensky\", but no source sentence carrying 1700 names it and one names another \"president ...\": \"President Zelensky stated on October 4 that Russia launched 1,900 strike drones, 1,700 gui\""
+          "message": "summary puts 18 beside \"colleen slemmer\", but no source sentence carrying 18 names it and one names another \"colleen ...\": \"Pike was sentenced to death for the 1995 murder of Colleen Slemmer, whom she beat, torture\""
         }
       ],
       "points": [],
       "left": []
     },
     {
-      "id": "a51f603a-58b0-4df4-9ee4-f7850d45eb24",
-      "title": "Spanish Unions Call General Strike Over Housing Ahead of Snap Election",
-      "sentences": [],
-      "points": [
+      "id": "1d7d445e-8b5d-4da0-b5b9-a05a68fc8254",
+      "title": "King Charles Pays Andrew's Royal Lodge Debt After Unlawful Warrants",
+      "sentences": [
         {
-          "text": "The Economist [12] and New Haven Register [10] provide broader framing of the election as a \"gamble\" or a response to protests, without detailing the union strike.",
+          "text": "King Charles III paid 1.5 million pounds (US$2 million) to cover costs owed by his younger brother, the former Prince Andrew, after Andrew was forced to move out of Royal Lodge near Windsor Castle.",
           "rule": "E-13",
-          "message": "summary states 12, which appears in none of the source articles: source it or cut it"
+          "message": "summary puts 1.5 beside \"royal lodge\", but no source sentence carrying 1.5 names it and one names another \"royal ...\": \"King Charles III paid 1.5 million pounds (US$2 million) to cover costs owed by his younger\""
         }
       ],
+      "points": [],
       "left": []
     }
   ]

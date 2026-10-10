@@ -1,0 +1,52 @@
+{
+ "version": "1.2.0",
+ "title": "On Air · Thursday 08 October 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Headlines",
+   "endTime": 37.804
+  },
+  {
+   "startTime": 37.804,
+   "title": "French Protests",
+   "endTime": 122.68
+  },
+  {
+   "startTime": 122.68,
+   "title": "Trump on Iran Strikes",
+   "endTime": 194.18
+  },
+  {
+   "startTime": 194.18,
+   "title": "Kramatorsk Bombing",
+   "endTime": 252.92
+  },
+  {
+   "startTime": 252.92,
+   "title": "Trump Clarifies Iran Remarks",
+   "endTime": 315.332
+  },
+  {
+   "startTime": 315.332,
+   "title": "Also today",
+   "endTime": 362.57
+  },
+  {
+   "startTime": 362.57,
+   "title": "Naked Trump Statue",
+   "endTime": 395.582
+  },
+  {
+   "startTime": 395.582,
+   "title": "Opinion",
+   "endTime": 579.206
+  },
+  {
+   "startTime": 579.206,
+   "endTime": 592.306,
+   "title": "Also from Void"
+  }
+ ]
+}

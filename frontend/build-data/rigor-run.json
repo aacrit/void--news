@@ -1,8 +1,8 @@
 {
  "brief": {
-  "cut_sentences": 4,
+  "cut_sentences": 3,
   "cuts_by_reason": {
-   "name": 4
+   "name": 3
   },
   "edition": "world",
   "grounding_ran": {
@@ -12,62 +12,59 @@
   }
  },
  "onair": {
-  "cut_sentences": 2,
-  "cuts_by_reason": {
-   "name": 2
-  },
+  "cut_sentences": 0,
+  "cuts_by_reason": {},
   "grounding_ran": true
  },
  "stage2": {
   "candidates": 35,
-  "critique_read": 35,
+  "critique_read": 34,
   "critique_unread": 0,
-  "cut_sentences": 12,
+  "cut_sentences": 9,
   "cuts_by_reason": {
-   "number": 10,
-   "other story": 3
+   "number": 11
   },
-  "dropped": 0,
+  "dropped": 1,
   "fresh_ids": [
-   "00de869a-31cf-4e8c-9c82-345f06e3e811",
-   "084423a4-5d6f-44c0-85bf-e1dbb5d47d30",
-   "0e7c8da4-9729-4b6a-88e3-1ec436959f94",
-   "127e9caf-53f1-4d5f-b71e-4ff58c893061",
-   "1a2d50c2-b8c9-4847-823b-3c75939de670",
-   "1a477ac4-7da7-4f9c-b0c6-be260b32465a",
-   "2627f95f-bfd4-428e-8dab-212fd1010a8e",
-   "282fd901-2fed-4905-a4fc-3d667fa0c0b7",
-   "34c81ccc-742e-4ea3-9c6c-948ae7e51ed7",
-   "3628285f-5f60-4ab5-a045-0d6d661ab787",
-   "38aada02-1dd3-4675-97ad-7a215126cb42",
-   "39a6d05e-c1ba-4da4-b6bf-5a3d5f76a281",
-   "3bfb1ef1-d407-4b91-aa9f-a629c3292a20",
-   "472340b3-5be5-4ce6-83f0-2302f5059070",
-   "5f946989-878b-406d-9201-56c996ad01f1",
-   "702880a6-2f62-427e-8801-659053b9a55d",
-   "84453d2e-687d-4a57-9396-d5a9093e53eb",
-   "88d78885-884d-42f1-a649-818586a1ee15",
-   "898f5352-bbbd-4d08-9e88-9c118775c9fe",
-   "8ee16301-0bcb-4db1-bd2b-da56fddd8b5c",
-   "91ad9d75-81c5-4218-b7f7-b9fe03a58a43",
-   "99e55e0d-2898-44a0-9bcb-f8e1180ae91c",
-   "a27b4657-26fc-43cf-a7cd-360dfd1d5204",
-   "a39a1d7e-e712-4668-8c33-d93be30ea73d",
-   "a51f603a-58b0-4df4-9ee4-f7850d45eb24",
-   "ab104697-3daf-4df0-95ae-90b13213d029",
-   "b5f3f8cc-e079-46ab-a5b3-5ae08b718a09",
-   "ba098018-2a13-4d22-bba2-2458cac63bd6",
-   "c37b6357-9e16-4579-b9b3-10def20ab1b9",
-   "c3a6282c-9e57-4f8a-abac-5c45ddf56aa4",
-   "cff5aab5-f5ac-45f1-aedc-75f673b83005",
-   "d04acecf-02eb-4450-86d9-da2c8c74dbf0",
-   "d16dfb0e-afaa-4df5-81d5-eddfca2a3d09",
-   "de202628-9300-42f6-906f-a180ebb02b14",
-   "e2c358fa-2a22-452d-bdd2-3df14f0a8347"
+   "003e2b58-d273-4493-8787-5c4bb6087670",
+   "05ad35ed-5d6c-44bd-a6f3-35c2a0168102",
+   "0e145b6c-9466-4723-98ad-ef3a7df7e9c6",
+   "1d7d445e-8b5d-4da0-b5b9-a05a68fc8254",
+   "1e4a2b5f-8429-4132-8eb2-a55097038acc",
+   "2f385e5b-8de9-4485-be08-d854744a3c87",
+   "3884de54-252d-44b0-89ff-b89cb7117ac2",
+   "3cdf1aa9-3fbc-43f9-86e7-e68883984a46",
+   "4344b320-78fd-403f-96ae-95922f6c226d",
+   "46b76c96-76ed-43a4-a18e-eefc6f9d76a9",
+   "4c63731c-a65f-466d-b59f-f1b6ae26cacd",
+   "508d290f-0338-4ba7-b563-d57f9105353f",
+   "673fb794-d028-4803-9ffb-873801ae9eb5",
+   "6876b379-c77d-4d98-92b0-0ef7141f6fa9",
+   "76224846-39e2-4049-bc2e-bafc64d351e5",
+   "7ba29bcd-e86d-4cd3-b976-3a364ee95fb6",
+   "80339b2c-9e00-4e60-846e-83b403224b5b",
+   "84fa77f6-f44e-459c-ac13-8dd690f082f2",
+   "85cecdfa-f826-4459-9f9a-9c12ddf8a17d",
+   "8e0c694a-b780-4856-a2b7-884ace49c4cb",
+   "95d09773-fc81-4b70-9580-269e4732d162",
+   "a6789d8b-de3f-4026-9310-562c77279b75",
+   "b51c8871-ed12-4c78-b78e-3cb573ac49a7",
+   "b8779625-9d87-4741-b78d-c7f88f7bc276",
+   "bbec9bf9-c75a-4039-90e8-95951e69682d",
+   "c375257e-f82f-432a-9486-64108811239c",
+   "c3af08b6-5e57-4af2-89e5-5bd413f761ec",
+   "c97d7b30-dc12-4e26-9681-0091c7a2a874",
+   "ccb7bc6c-bcc5-4bfd-8998-eceb3e49f673",
+   "d8b77936-5899-4d23-845d-d87fe57e31cf",
+   "d920cad0-790f-4405-bd56-dd371c826163",
+   "e22d4521-4874-485a-a686-15d9f273405b",
+   "edbd8fa6-e263-427b-a80b-d5b58ead1393",
+   "eea76086-d901-4f64-8533-1318723641be",
+   "f7d31a9e-d90a-4f77-8482-e1f1cfc487fc"
   ],
   "kept_failing": 0,
-  "regenerated": 2,
+  "regenerated": 3,
   "reviewed": true
  },
- "startedAt": "2026-10-07T18:25:33Z"
+ "startedAt": "2026-10-09T18:31:26Z"
 }
