@@ -1,0 +1,7 @@
+source: src-prc-embassy-2014
+locator: secday
+url: https://us.china-embassy.gov.cn/eng/sgxw/201402/t20140228_4409430.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+The Standing Committee of the People's Congress (NPC) of China adopted the Decision on Designating September 3 as the Victory Day of the Chinese People's War of Resistance Against Japanese Aggression and the Decision on Designating December 13 as the National Memorial Day for Nanjing Massacre Victims on February 27, 2014.

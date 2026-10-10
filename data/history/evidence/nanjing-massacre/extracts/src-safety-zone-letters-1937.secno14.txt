@@ -1,0 +1,8 @@
+source: src-safety-zone-letters-1937
+locator: secno14
+url: https://www.legal-tools.org/doc/a4c38a/pdf/
+read: 2026-10-09
+note: the text is the scan's own OCR layer as the Legal Tools Database serves it, whitespace collapsed; the transcript's printed line numbers (1 to 25) and the OCR's glyph errors sit inside the text and are kept as the layer gives them
+note: transcript page 4,524, letter 'Number 14' of 19 December 1937, 5 p.m., read by Mr Sutton
+
+"Number 14 "LETTER TO .JAPA NESE El1BJ.SSY I1December 19~ 1937 " 5 p.m. "Dear Sirs: til Dm very sorry to hnve to present to you herewi th D continuaticm of the rCa ses of Disorders by Japanese Soldiers in the Safety Zone,' being cases 13 numbered 16 to 70.

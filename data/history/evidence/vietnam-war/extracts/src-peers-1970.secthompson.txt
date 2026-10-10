@@ -1,0 +1,7 @@
+source: src-peers-1970
+locator: secthompson
+url: https://tile.loc.gov/storage-services/service/ll/llmlp/RDAR-Vol-I/RDAR-Vol-I.pdf
+read: 2026-10-09
+note: the Library of Congress scan of Volume I of the Peers report, its text layer, line breaks folded to spaces; the text layer prints many words letter by letter ('k i l l e d') and some OCR misreadings ('America1' for 'Americal', 'l l t h' for '11th'); all are kept as printed
+
+A p i l o t of t h i s team, W 0 1 (now 1LT) Hugh Thompson, had been f l y i n g a t a low a l t i t u d e over My Lai ( 4 ) during the morning hours and had observed t h e actions of C/1-20 Inf. He became g r e a t l y concerned over t h e "needless and unnece ssary k i l - lings" he had witnessed. He landed h i s h e l i c o p t e r s e v e r a l t i m e s t o aid t h e i n h a b i t a n t s and i n an attempt t o s t o p t h e k i l l i n g .

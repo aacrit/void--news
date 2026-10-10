@@ -1,0 +1,7 @@
+source: src-lenin-ca-elections-1919
+locator: secbolsheviks
+url: https://www.marxists.org/archive/lenin/works/1919/dec/16.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+The Bolsheviks polled 9,023,963 votes.

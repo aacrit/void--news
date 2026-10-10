@@ -1,0 +1,8 @@
+source: src-unesco-kbs-2015
+locator: sectenmillion
+url: https://media.unesco.org/sites/default/files/webform/mow001/korea_dispersed_persons_eng.pdf
+read: 2026-10-09
+note: the same form, section 'Summary'; the broadcaster's figure, given without a source
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Ten million people were separated from their families after Korea’s division following Japanese colonial rule and the Korean War.

@@ -1,0 +1,8 @@
+source: src-radkey-1950
+locator: p16
+url: https://archive.org/download/dli.ernet.504284/504284-The%20Election%20To%20The%20Russian%20Constituent%20Assembly%20Of%201917_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+note: the head of Radkey's table on p. 16: three columns, Sviatitski, AOR (the Soviet compilation he cites as AOR) and 'Present Study'; the layer prints the table's cells one to a line and its footnote marks glued to the figures ('16,509,756®', '17.490,837b')
+
+The Vote by Parties for the Whole Country Sviatitski AOR Present Study RUSSIAN SOCIALIST PARTIES SR. 16,509,756® 17.490,837b 15,848,004 SD Bolshevik. 9,023,963 9,562,358 9,844,637 SD Menshevik. 668,064 1,248,958 1,364,826 Popular Socialist . 312,038

@@ -1,0 +1,8 @@
+source: src-hansard-lords-19200720
+locator: secdivision
+url: https://api.parliament.uk/historic-hansard/lords/1920/jul/20/punjab-disturbances-the-case-of-general
+read: 2026-10-09
+note: the text is the Hansard page's own text (UK Parliament, historic Hansard), whitespace collapsed
+note: the § section marks between the two counts are the page's own
+
+Their Lordships divided: Contents, 129; § Not-Contents, 86.

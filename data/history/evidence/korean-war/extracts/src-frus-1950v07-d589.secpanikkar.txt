@@ -1,0 +1,8 @@
+source: src-frus-1950v07-d589
+locator: secpanikkar
+url: https://history.state.gov/historicaldocuments/frus1950v07/d589
+read: 2026-10-09
+note: telegram 1934 from London, 3 October 1950, 11 a.m.; the British Foreign Office's report of a Peking telegram, at second remove from Zhou's words
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Foreign Office has just informed Embassy of receipt of telegram dated October 3 from Peiping stating that on October 3 Foreign Minister Chou En-lai called in Indian Ambassador Panikkar and informed him that if UN Armed Forces crossed 38th parallel China would send troops across frontier participate in defense North Korea. He said this action would not take place if only South Koreans crossed parallel.

@@ -1,0 +1,8 @@
+source: src-peers-1970
+locator: seccompany
+url: https://tile.loc.gov/storage-services/service/ll/llmlp/RDAR-Vol-I/RDAR-Vol-I.pdf
+read: 2026-10-09
+note: the Library of Congress scan of Volume I of the Peers report, its text layer, line breaks folded to spaces; the text layer prints many words letter by letter ('k i l l e d') and some OCR misreadings ('America1' for 'Americal', 'l l t h' for '11th'); all are kept as printed
+note: the summary's count for Company C alone, at My Lai (4)
+
+By t h e t i m e C/1-20 Inf departed My Lai (4 ) i n t h e early afternoon, moving t o t h e northeast f o r link-up with B/4-3- I n f , its members had k i l l e d a t l e a s t 175-200 ~ i e t n a m e s e men, women, and children." The evidence i n d i c a t e s t h a t only 3 or 4 were confirmed a s V i e t Cong, although t h e r e were undoubtedly s e v e r a l unarmed VC (men, women, and children) among them and many more a c t i v e supporters and sympathizers.

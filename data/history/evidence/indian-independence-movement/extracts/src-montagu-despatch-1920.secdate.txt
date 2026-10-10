@@ -1,0 +1,8 @@
+source: src-montagu-despatch-1920
+locator: secdate
+url: https://archive.org/download/disordersinquiry00unse/disordersinquiry00unse_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+note: the page folio 'xliii' sits inside the sentence, as the layer gives it
+
+On the morning of April the 13th Brigadier-General Dyer, who had arrived at Amritsar on the night of xliii the 11th, issued a proclamation forbidding inter alia processions to- parade in or outside the city

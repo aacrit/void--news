@@ -1,0 +1,8 @@
+source: src-berkman-1922
+locator: secvote
+url: https://archive.org/download/TheKronstandtRebellion/kronstadt_rebellion_Berkman_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+note: 'per? sotis' is the layer's reading of 'persons' at a line-break hyphen; 'Rronstadt' of 'Kronstadt'
+
+Resolution passed unanimously by Brigade Meeting, two per? sotis refraining from voting. PETRICHENKO Chairman Brigade Meeting PEREPELKIN Secretary Resolution passed by an overwhelming majority of the Rronstadt garrison. VASSILIEV Chairman Together with comrade Kalinin Vassiliev votes against the Resolution.

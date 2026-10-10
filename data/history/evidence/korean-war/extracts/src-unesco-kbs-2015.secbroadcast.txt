@@ -1,0 +1,8 @@
+source: src-unesco-kbs-2015
+locator: secbroadcast
+url: https://media.unesco.org/sites/default/files/webform/mow001/korea_dispersed_persons_eng.pdf
+read: 2026-10-09
+note: the same form
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+The KBS Special Live Broadcast “Finding Dispersed Families” was aired daily on channel KBS 1, beginning at 10:15 p.m. on June 30 and ending at 4 a.m. on November 14, 1983, marking a total of 453 hours and 45 minutes of live broadcasting over 138 days.

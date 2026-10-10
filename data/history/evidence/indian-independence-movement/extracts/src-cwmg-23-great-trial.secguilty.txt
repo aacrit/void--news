@@ -1,0 +1,7 @@
+source: src-cwmg-23-great-trial
+locator: secguilty
+url: https://archive.org/download/HindSwaraj-CWMG-023/CWMG-v023-XXIII-MC-BETA_djvu.txt
+read: 2026-10-09
+note: the text is the archive.org full-text (djvu.txt) layer of the electronic edition of the Collected Works (Publications Division), whitespace collapsed; line-end hyphens and glyph errors kept as the layer gives them
+
+MR. GANDHI ; I plead guilty on each count of the charge. I merely observe that the King’s name is omitted from the charge- sheet and, in my opinion, very properly.

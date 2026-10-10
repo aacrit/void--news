@@ -1,0 +1,8 @@
+source: src-yonhap-20260927
+locator: secregistered
+url: https://www.koreatimes.co.kr/southkorea/society/20260927/number-of-s-koreans-with-family-in-n-korea-down-to-less-than-33000
+read: 2026-10-09
+note: Yonhap, as The Korea Times prints it, 27 September 2026; the unification ministry's figures as submitted to a legislator
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+As of late August, a total of 134,848 people have registered as having separated family members in the North, but only 32,948 of them were still living, according to the data from the unification ministry submitted to Rep. Woo Won-shik of the ruling Democratic Party. Of the survivors, two-thirds were aged 80 and older -- 10,945 aged 80 to 89 and 11,007 aged 90 and older.

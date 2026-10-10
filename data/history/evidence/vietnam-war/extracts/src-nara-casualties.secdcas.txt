@@ -1,0 +1,7 @@
+source: src-nara-casualties
+locator: secdcas
+url: https://www.archives.gov/research/military/vietnam-war/casualty-statistics
+read: 2026-10-09
+note: the National Archives' page 'Vietnam War U.S. Military Fatal Casualty Statistics'
+
+The Vietnam Conflict Extract Data File of the Defense Casualty Analysis System (DCAS) Extract Files contains records of 58,220 U.S. military fatal casualties of the Vietnam War. These records were transferred into the custody of the National Archives and Records Administration in 2008. The earliest casualty record contains a date of death of June 8, 1956, and the most recent casualty record contains a date of death of May 28, 2006. The Defense Casualty Analysis System Extract Files were created by the Defense Manpower Data Center (DMDC) of the Office of the Secretary of Defense. The records correspond to the Vietnam Conflict statistics on the DMDC web site, which is accessible online at https://www.dmdc.osd.mil/dcas/pages/main.xhtml. The Vietnam Conflict Extract Data File of the Defense Casualty Analysis System (DCAS) Extract Files is the successor database to the Combat Area Casualties Current File. The Vietnam Conflict Extract Data File of the DCAS contains 27 more records than the Combat Area Casualties Current File as of December 1998, which contains 58,193 records.

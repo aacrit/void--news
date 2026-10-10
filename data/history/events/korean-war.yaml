@@ -139,15 +139,6 @@ legacy_points:
   were able to meet separated relatives in the North. Most participants were in their 80s and 90s. An estimated
   100,000+ South Koreans still have living relatives in the North. The waiting list shrinks only through death.'
 primary_source_excerpts:
-- text: We burned down every town in North Korea and some in South Korea, too. Over a period of three years
-    or so, we killed off — what — twenty percent of the population of Korea.
-  author: Curtis LeMay
-  work: Interview with the Office of Air Force History, Strategic Air Warfare
-  date: '1984'
-- text: In war there is no substitute for victory.
-  author: Douglas MacArthur
-  work: Address to a Joint Meeting of Congress, April 19, 1951 (after his dismissal by Truman)
-  date: April 19, 1951
 - text: If we let Korea down, the Soviet[s] will keep right on going and swallow up one piece of Asia after
     another. If we were to let Asia go, the Near East would collapse and no telling what would happen in Europe.
   author: Harry S. Truman
@@ -157,6 +148,66 @@ primary_source_excerpts:
   author: Mao Zedong
   work: 'Reported by Peng Dehuai; quoted in Jung Chang and Jon Halliday, Mao: The Unknown Story (2005)'
   date: Late November 1950
+- text: "In war, indeed, there can be no substitute for victory."
+  author: "Douglas MacArthur"
+  work: "Address at a joint meeting of the two Houses of Congress, as printed by the Senate (the printed wording)"
+  date: "April 19, 1951"
+- text: "In the simplest terms, what we are doing in Korea is this: We are trying to prevent a third world war."
+  author: "Harry S. Truman"
+  work: "Radio report to the American people on Korea, the night he relieved MacArthur (Public Papers of the Presidents)"
+  date: "April 11, 1951"
+- text: "Very little. Had they interfered in the first or second months it would have been decisive."
+  author: "Douglas MacArthur"
+  work: "Answering Truman on the chances of Chinese or Soviet interference, Wake Island, in the summary record compiled by General Bradley (Foreign Relations of the United States)"
+  date: "October 15, 1950"
+- text: "we are determined to overcome all the difficulties facing us so that Korea will not be a colony and a military springboard of the U.S. imperialists."
+  author: "Kim Il Sung and Pak Hon-yong"
+  work: "Letter to Stalin after Inchon, translated by Alexandre Mansourov from the Russian copy (Cold War International History Project Bulletin)"
+  date: "September 29, 1950"
+- text: "Lately I do not sleep at night, thinking about how to resolve the question of the unification of the whole country."
+  author: "Kim Il Sung"
+  work: "As reported by the Soviet ambassador Terenty Shtykov to Moscow, translated by Kathryn Weathersby (Cold War International History Project Bulletin); the ambassador's report, not Kim's own text"
+  date: "January 19, 1950"
+- text: "So we went over there and fought the war and eventually burned down every town in North Korea anyway, some way or another, and some in South Korea, too."
+  author: "Curtis LeMay"
+  work: "Strategic Air Warfare, group interview published by the Office of Air Force History (interview recorded in 1984, published 1988)"
+  date: "1984"
+- text: "Although we cannot sign truce, we shall not obstruct it, so long as no measures or actions taken under armistice are detrimental to our national survival."
+  author: "Syngman Rhee"
+  work: "Letter to Assistant Secretary of State Walter Robertson, Seoul (Foreign Relations of the United States)"
+  date: "July 9, 1953"
+- text: "Consequently, I took my own responsibility and ordered the Korean military police to release them at once."
+  author: "Syngman Rhee"
+  work: "Letter to General Mark Clark on the release of anti-Communist Korean prisoners of war, Seoul (Foreign Relations of the United States)"
+  date: "June 18, 1953"
+- text: "It documents that the police systematically managed Bodo League members before and during the start of the Korean War. It also functioned as an “execution list” during massacres."
+  author: "Truth and Reconciliation Commission, Republic of Korea"
+  work: "Truth and Reconciliation: Activities of the Past Three Years, on the Ulsan Bodo League list"
+  date: "2009"
+- text: "However, having thought this over thoroughly, we now consider that such actions may entail extremely serious consequences."
+  author: "Mao Zedong"
+  work: "Message to Stalin as the Soviet ambassador Roshchin cabled it to Moscow, translated from the Russian by Alexandre Mansourov (Cold War International History Project Bulletin); the Chinese-published text of the same date says the opposite"
+  date: "October 2, 1950"
+- text: "Under the current situation, we have reached a decision to order the 12 divisions stationed in advance in South Manchuria to set off on October 15."
+  author: "Mao Zedong"
+  work: "Telegram to Stalin as printed in the Chinese Party's edition of Mao's manuscripts, translated by Goncharov, Lewis and Xue; whether it was sent is disputed"
+  date: "October 2, 1950"
+- text: "I have a responsibility to the Chinese and Korean people, and to the hundreds of thousands of soldiers!"
+  author: "Peng Dehuai"
+  work: "Remark to Chai Chengwen after the Shenyang meeting, as quoted by the historian Shen Zhihua from Chinese sources (translated by Dong Gil Kim and Jeffrey Becker)"
+  date: "October 1950"
+- text: "Ten million people were separated from their families after Korea’s division following Japanese colonial rule and the Korean War."
+  author: "Korean Broadcasting System (KBS)"
+  work: "Nomination of the Finding Dispersed Families archives to the UNESCO Memory of the World Register (the broadcaster's own figure)"
+  date: "2015"
+- text: "There was a woman who fainted the moment she heard the voice of her older brother she had been separated from for 42 years."
+  author: "Korean Broadcasting System (KBS)"
+  work: "Nomination of the Finding Dispersed Families archives to the UNESCO Memory of the World Register, describing the 1983 broadcast"
+  date: "2015"
+- text: "many Korean witnesses indicate that they were strafed or bombed by U.S. airplanes around noon on July 26th, 1950."
+  author: "Charles L. Cragin"
+  work: "Pentagon briefing on No Gun Ri, summarising the Korean witnesses' testimony (State Department Washington File transcript)"
+  date: "January 11, 2001"
 coordinates:
   lat: 37.9583
   lng: 126.6772

@@ -1,0 +1,8 @@
+source: src-cwihp-mao-19501002-ru
+locator: secnotfinal
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+read: 2026-10-09
+note: the same telegram; the text layer breaks the sentence across a page
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+A final decision has not been taken on this question. This is our preliminary telegram, we wish to consult with you.

@@ -1,0 +1,8 @@
+source: src-bates-imtfe-1946
+locator: sectwelve
+url: https://www.legal-tools.org/doc/a5a0b0/pdf/
+read: 2026-10-09
+note: the text is the scan's own OCR layer as the Legal Tools Database serves it, whitespace collapsed; the transcript's printed line numbers (1 to 25) and the OCR's glyph errors sit inside the text and are kept as the layer gives them
+note: transcript page 2,630; the layer garbles 'civilians, men, women and children, were killed' between the two legible ends
+
+Professor Smythe and I concluded, as a result of our investigations and observations and checking of burials, that twelve thousand c~~lians, _. - m~n'~-~""w'oalen"ari:a~¢hildren;-"vvere~killed . inside the walls

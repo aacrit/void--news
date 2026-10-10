@@ -1,0 +1,8 @@
+source: src-unesco-kbs-2015
+locator: secpeople
+url: https://media.unesco.org/sites/default/files/webform/mow001/korea_dispersed_persons_eng.pdf
+read: 2026-10-09
+note: the same form, section 'People'; the nominating broadcaster's own summary, not testimony in the participants' words
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+There was a woman who fainted the moment she heard the voice of her older brother she had been separated from for 42 years. There were some driven to suicide by the thought of the families they had left behind in North Korea. One man, overjoyed at the reunion with his elder sister, suddenly shouted “Hurrah for KBS! Hurrah for public broadcasting!”

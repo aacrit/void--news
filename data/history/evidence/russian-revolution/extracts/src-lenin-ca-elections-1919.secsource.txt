@@ -1,0 +1,7 @@
+source: src-lenin-ca-elections-1919
+locator: secsource
+url: https://www.marxists.org/archive/lenin/works/1919/dec/16.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+The symposium issued by the Socialist-Revolutionaries, A Year of the Russian Revolution . 1917-18 (Moscow, Zemlya i Volya Publishers, 1918), contains an extremely interesting article by N. V. Svyatitsky: “Results of the All-Russia Constituent Assembly Elections (Preface)”. The author gives the returns for 54 constituencies out of the total of 79.

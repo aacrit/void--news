@@ -1,0 +1,8 @@
+source: src-macarthur-19510419
+locator: secfade
+url: https://www.govinfo.gov/content/pkg/SERIALSET-11511_00_00-019-0036-0000/pdf/SERIALSET-11511_00_00-019-0036-0000.pdf
+read: 2026-10-09
+note: the close of the same address
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+I still remember the refrain of one of the most popular barrack ballads of that day which .proclaimed most proudly that— "Old soldiers never die; they just fade away." And like the old soldier of that ballad, I now close my military career and just fade away—an old soldier who tried to do his duty as God gave him the light to see that duty. Good-by.

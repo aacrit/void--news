@@ -1,0 +1,8 @@
+source: src-cwihp-mao-19501002-ru
+locator: secpatience
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+read: 2026-10-09
+note: the same telegram
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Therefore it is better to show patience now, refrain from advancing troops, [and] actively prepare our forces, which will be more advantageous at the time of war with the enemy. Korea, while temporarily suffering defeat, will change the form of the struggle to partisan war.

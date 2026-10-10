@@ -1,0 +1,8 @@
+source: src-unesco-kbs-2015
+locator: secsummary
+url: https://media.unesco.org/sites/default/files/webform/mow001/korea_dispersed_persons_eng.pdf
+read: 2026-10-09
+note: the nomination form's summary, as UNESCO publishes it
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+The archives constitute documentary heritage of monumental value in world broadcasting history. “Finding Dispersed Families” was an epic television humanitarian campaign. Applicants for reunion totaled 100,952; 53,536 cases were broadcast, resulting in 10,189 reunions. It took 1,641 broadcasting personnel and aired live, daily, for 138 days.

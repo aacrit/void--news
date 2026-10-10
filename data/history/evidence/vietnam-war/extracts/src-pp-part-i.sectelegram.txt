@@ -1,0 +1,8 @@
+source: src-pp-part-i
+locator: sectelegram
+url: https://nara-media-001.s3.amazonaws.com/arcmedia/research/pentagon-papers/Pentagon-Papers-Part-I.pdf
+read: 2026-10-09
+note: NARA's 2011 scan of the Report of the Office of the Secretary of Defense Vietnam Task Force, its text layer (the scan's own OCR), line breaks folded to spaces; OCR misreadings ('l east', 'vrere'), line-end hyphens, the 'TOP SECRET - Sensitive' running heads and the 'Declassified per Executive Order 13526' stamp are kept where the text layer prints them
+note: Part I; the telegram it quotes was received in Washington on 27 February 1946 ('19~6' in the text layer)
+
+Ho made repeated overtures to the United States, to the United Nations, and to China, the USSR, and the U.K. 36/ His letters presented eloquent appeals for U.S. or U.N. intervention in Vietnam on the grounds of the principles embodied in the Atlantic Charter, the UoN. Charter, and on humanitarian groundso The l ast such to be forw·arded to the U. S. prior to the Accord of 6 March 1946, is summarized in the follo ""l-ring telegram from an American diplomat in Hanoi, received in "\fashington 27 February 19~6: "Ho Chi Minh handed m~ 2 letters addressed to President of USA, China , Russia, and Britain identical copies of which I were stated to have been forwarded to other governments named.

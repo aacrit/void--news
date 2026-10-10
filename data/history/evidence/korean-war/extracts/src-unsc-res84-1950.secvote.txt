@@ -1,0 +1,10 @@
+source: src-unsc-res84-1950
+locator: secvote
+url: https://documents.un.org/doc/resolution/gen/nr0/064/97/pdf/nr006497.pdf
+read: 2026-10-09
+note: the UN scan prints English and French in two columns; the English column was taken from the PDF by word position (x0 in the left half of the page), then sliced
+note: the adoption line
+note: the copy is a scan with an OCR text layer; its misreadings are kept as read, not corrected
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Adopted at the 476th meeting by 7 votes to none, with 3 abstentions (Egypt, India. Yugoslavia).

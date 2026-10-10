@@ -1,0 +1,7 @@
+source: src-che-tricontinental-1967-en
+locator: secpublisher
+url: https://www.marxists.org/archive/guevara/1967/04/16.htm
+read: 2026-10-09
+note: the page's own provenance line
+
+Publisher: The Executive Secretariat of the Organization of the Solidarity of the Peoples of Africa, Asia, and Latin America (OSPAAAL), First Published: Havana, April 16, 1967. Online Version: Workers' Web, 1997. Che Guevara Internet Archive, 1999.

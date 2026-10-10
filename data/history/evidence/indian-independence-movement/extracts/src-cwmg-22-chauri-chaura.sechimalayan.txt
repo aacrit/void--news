@@ -1,0 +1,8 @@
+source: src-cwmg-22-chauri-chaura
+locator: sechimalayan
+url: https://archive.org/download/HindSwaraj-CWMG-022/CWMG-v022-XXII-MC-BETA_djvu.txt
+read: 2026-10-09
+note: the text is the archive.org full-text (djvu.txt) layer of the electronic edition of the Collected Works (Publications Division), whitespace collapsed; line-end hyphens and glyph errors kept as the layer gives them
+note: the '1' after 'mis- calculation' is the editors' note marker
+
+He warned me in 1919 when the Rowlatt Act agitation was started. Ahmedabad, Viramgam, and Kheda erred; Amritsar and Kasur erred. I retraced my steps, called it a Himalayan mis- calculation 1 , humbled myself before God and man, and stopped not merely mass civil disobedience but even my own which I knew was intended to be civil and non-violent.

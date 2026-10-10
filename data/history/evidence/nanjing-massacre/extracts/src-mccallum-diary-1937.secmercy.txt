@@ -1,0 +1,8 @@
+source: src-mccallum-diary-1937
+locator: secmercy
+url: https://www.legal-tools.org/doc/a4c38a/pdf/
+read: 2026-10-09
+note: the text is the scan's own OCR layer as the Legal Tools Database serves it, whitespace collapsed; the transcript's printed line numbers (1 to 25) and the OCR's glyph errors sit inside the text and are kept as the layer gives them
+note: transcript page 4,470, exhibit 309; the passage follows the reading's 'Dec. 29, 1937' heading
+
+Helpless and unarmed, they have been at the mercy of the soldiers, who have been permitted to roam about at will wherever they pleased. There is no discipline whatever and many. of them are drunk. By day they go into the buildings in our Safety Zone centers, looking for desirable women, then at night they return to get them.

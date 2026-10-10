@@ -1,0 +1,8 @@
+source: src-cwihp-kimpak-19500929
+locator: seccolony
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+read: 2026-10-09
+note: the same letter
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Dear Comrade STALIN, we are determined to overcome all the difficulties facing us so that Korea will not be a colony and a military springboard of the U.S. imperialists. We will fight for the independence, democracy and happiness of our people to the last drop of blood.

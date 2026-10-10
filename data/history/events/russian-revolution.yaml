@@ -140,6 +140,86 @@ primary_source_excerpts:
   author: Leon Trotsky
   work: History of the Russian Revolution
   date: '1930'
+- text: The Bolsheviks, having obtained a majority in the Soviets of Workers' and Soldiers' Deputies of both capitals, can and must take state power into their own hands.
+  author: Vladimir Lenin, in Yuri Sdobnikov and George Hanna's translation
+  work: The Bolsheviks Must Assume Power, a letter to the Central Committee and the Petrograd and Moscow Committees (ledger extract src-lenin-19170914.secopening)
+  date: September 12-14, 1917
+- text: No support for the Provisional Government; the utter falsity of all its promises should be made clear, particularly of those relating to the renunciation of annexations.
+  author: Vladimir Lenin, in Bernard Isaacs's translation
+  work: The Tasks of the Proletariat in the Present Revolution (the April Theses), thesis three, as published in Pravda (ledger extract src-april-theses-en.sec3)
+  date: April 7, 1917
+- text: The workers' and peasants' government, created by the Revolution of October 24-25 and basing itself on the Soviet of Workers', Soldiers' and Peasants' Deputies, calls upon all the belligerent peoples and their government to start immediate negotiations for a just, democratic peace.
+  author: The Second All-Russia Congress of Soviets, in the English of Lenin's Collected Works
+  work: Decree on Peace, read by Lenin in his Report on Peace (ledger extract src-decree-peace-en.secopening)
+  date: October 26, 1917
+- text: Accordingly, the Central Executive Committee resolves that the Constituent Assembly is hereby dissolved.
+  author: Vladimir Lenin, in Yuri Sdobnikov and George Hanna's translation
+  work: Draft Decree on the Dissolution of the Constituent Assembly, on which the enacted decree was based (ledger extract src-lenin-dissolution-1918.secresolve)
+  date: January 6, 1918
+- text: Not wishing to be separated from our beloved son, we hand down our inheritance to our brother, Grand Duke Michael Alexandrovich, and give him our blessing on mounting the throne of the Russian Empire.
+  author: Tsar Nicholas II, in Frank Golder's English
+  work: Manifesto of abdication, signed at Pskov, in Golder's Documents of Russian History (ledger extract src-nicholas-manifesto-golder.secmichael)
+  date: March 2, 1917 (March 15, New Style)
+- text: I have decided to accept the supreme power, only if that be the desire of our great people, expressed at a general election for their representatives to the Constituent Assembly
+  author: Grand Duke Michael Alexandrovich, in Frank Golder's English
+  work: Act declining the throne except by the will of a Constituent Assembly, in Golder's Documents of Russian History (ledger extract src-michael-golder.whole)
+  date: March 3, 1917 (March 16, New Style)
+- text: "We must not be deceived by the election figures: elections prove nothing."
+  author: Vladimir Lenin, in Yuri Sdobnikov and George Hanna's translation
+  work: The Bolsheviks Must Assume Power, a letter to the Central Committee (ledger extract src-lenin-19170914.secelections)
+  date: September 12-14, 1917
+- text: Unknown number, reported 1,700, mostly former officers, are held as hostages for lives of commissars
+  author: DeWitt C. Poole, United States Consul at Moscow
+  work: Telegram to the Secretary of State from Petrograd, in Papers Relating to the Foreign Relations of the United States (ledger extract src-frus-poole-19180915.whole)
+  date: September 15, 1918
+- text: Private ownership of land shall be abolished forever; land shall not be sold, purchased, leased, mortgaged, or otherwise alienated.
+  author: The Peasant Mandate on the Land, compiled from local peasant mandates, in the English of Lenin's Collected Works
+  work: Decree on Land, article four, adopting the Peasant Mandate (ledger extract src-decree-land-en.secmandate1)
+  date: October 26, 1917
+- text: The orders of the military commission of the State Duma shall be executed only in such cases as do not conflict with the orders and resolutions of the Soviet of Workers' and Soldiers' Deputies.
+  author: The Petrograd Soviet of Workers' and Soldiers' Deputies, in Frank Golder's English
+  work: Order No. 1, to the garrison of the Petrograd District, point four, in Golder's Documents of Russian History (ledger extract src-order1-golder.art4)
+  date: March 1, 1917 (March 14, New Style)
+- text: the February revolution was begun from below, overcoming the resistance of its own revolutionary organisations
+  author: Leon Trotsky, in Max Eastman's translation
+  work: The History of the Russian Revolution, volume one, chapter Five Days (ledger extract src-trotsky-eastman-1932.secfrombelow)
+  date: "1930"
+- text: To secure freedom of assembly for labor unions and peasant organisations;
+  author: The general meeting of the crews of the First and Second Squadrons of the Baltic Fleet, in Alexander Berkman's English
+  work: The Petropavlovsk resolution, Kronstadt, as Berkman prints it in The Kronstadt Rebellion (ledger extract src-berkman-1922.secres3)
+  date: March 1, 1921
+- text: military intervention there would add to the present sad confusion in Russia rather than cure it, injure her rather than help her
+  author: The United States Secretary of State to the Allied Ambassadors
+  work: Aide-memoire on intervention in Russia, Foreign Relations of the United States (ledger extract src-frus-aidememoire-19180717.secjudgment)
+  date: July 17, 1918
+- text: be merely a method of making use of Russia, not a method of serving her.
+  author: The United States Secretary of State to the Allied Ambassadors
+  work: Aide-memoire on intervention in Russia, Foreign Relations of the United States (ledger extract src-frus-aidememoire-19180717.secjudgment)
+  date: July 17, 1918
+- text: The territories lying to the west of the line determined by the contracting powers and which formerly belonged to Russia will no longer be under her sovereignty.
+  author: Germany, Austria-Hungary, Bulgaria, Turkey and Russia, in the State Department's translation
+  work: Treaty of Brest-Litovsk, article three, as Foreign Relations of the United States prints it (ledger extract src-brest-litovsk-1918.art3)
+  date: March 3, 1918
+- text: Central Committee of Commissaries issued a decree dissolving Constituent Assembly because counterrevolutionary bourgeois influenced and not acknowledging result of October revolution
+  author: David R. Francis, United States Ambassador in Russia
+  work: Telegram to the Secretary of State from Petrograd, in Papers Relating to the Foreign Relations of the United States (ledger extract src-frus-francis-19180120.whole)
+  date: January 20, 1918
+- text: would not raise the total conservative vote above 3,500,000 out of a grand total of nearly 42,000,000.
+  author: Oliver H. Radkey
+  work: The Election to the Russian Constituent Assembly of 1917 (ledger extract src-radkey-1950.p18)
+  date: "1950"
+- text: In all the Bolsheviks received 9.023.963 votes, which makes 25%
+  author: N. V. Svyatitsky, the Socialist-Revolutionary statistician of the election (Void translation from the Russian)
+  work: Results of the elections to the All-Russian Constituent Assembly, in the symposium A Year of the Russian Revolution, rendered by Void from the Russian (ledger extract src-svyatitsky-1918.secbolsheviks.en)
+  date: "1918"
+- text: The total number of votes polled in the 54 constituencies in November 1917 was 36,262,560.
+  author: Vladimir Lenin, in George Hanna's translation, reading Svyatitsky's returns
+  work: The Constituent Assembly Elections and the Dictatorship of the Proletariat (ledger extract src-lenin-ca-elections-1919.secreturns)
+  date: December 16, 1919
+- text: In the first half of 1918, the first half-year of the existence of the Extraordinary Commissions, they shot in all 22 people.
+  author: M. I. Latsis, of the Cheka (Void translation from the Russian)
+  work: The Extraordinary Commissions for the Struggle against Counter-Revolution, rendered by Void from the Russian (ledger extract src-latsis-1921.p9.en)
+  date: "1921"
 coordinates:
   lat: 59.9398
   lng: 30.3146

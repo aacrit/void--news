@@ -1,0 +1,8 @@
+source: src-hunter-minority-1920
+locator: seccrowd
+url: https://archive.org/download/disordersinquiry00unse/disordersinquiry00unse_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+note: minority report; 'varyinglv' is the layer's reading of 'varyingly'
+
+The number of those attending the meeting are varyinglv estimated from 15,000 to 20,000, but General Dyer at the time believed it to be 5,000 or 6,000.

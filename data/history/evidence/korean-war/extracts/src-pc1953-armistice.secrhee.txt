@@ -1,0 +1,9 @@
+source: src-pc1953-armistice
+locator: secrhee
+url: https://www.marxists.org/subject/china/peoples-china/1953/PC1953-15-Sup-OCR-sm.pdf
+read: 2026-10-09
+note: the same orders
+note: the copy is a scan with an OCR text layer; its misreadings are kept as read, not corrected
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+But on the side of the United Nations Command there are still some bellicose elements, particularly the Syngrnan Rhee clique, who are greatly displeased with the realisation of an armistice in Korea, and are therefore strongly opposed to the signing of the Armistice Agreement.
