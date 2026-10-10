@@ -2,6 +2,7 @@ import manifest from "../../public/data/history-audio.json";
 import { BASE_PATH } from "../lib/utils";
 import { coerceChapters } from "../lib/chapters";
 import type { AudioChapter } from "../lib/types";
+import { isNewRecording } from "./edition";
 
 /* ---------------------------------------------------------------------------
    history/audio.ts — which History events have an audio edition.
@@ -24,6 +25,8 @@ export interface HistoryEpisode {
   title: string;
   durationSeconds: number;
   chapters: AudioChapter[] | null;
+  /** A first-listener edition: the pages print "New recording" beside it. */
+  newRecording: boolean;
 }
 
 interface RawEpisode {
@@ -31,6 +34,7 @@ interface RawEpisode {
   title?: string;
   durationSeconds?: number;
   chapters?: unknown;
+  edition?: unknown;
   audio_withdrawn?: boolean;
 }
 
@@ -55,6 +59,7 @@ export function historyEpisode(slug: string): HistoryEpisode | null {
     title: raw.title ?? "",
     durationSeconds: raw.durationSeconds,
     chapters: coerceChapters(raw.chapters),
+    newRecording: isNewRecording(raw.edition),
   };
 }
 
@@ -76,11 +81,12 @@ export function withHistoryAudio<T extends {
   audioUrl?: string | null;
   audioDuration?: number | null;
   audioChapters?: AudioChapter[] | null;
+  audioNewRecording?: boolean;
 }>(event: T): T {
   const ep = historyEpisode(event.slug);
   if (!ep) return event;
   return { ...event, audioUrl: ep.url, audioDuration: ep.durationSeconds,
-           audioChapters: ep.chapters };
+           audioChapters: ep.chapters, audioNewRecording: ep.newRecording };
 }
 
 /** Same, for a list. */

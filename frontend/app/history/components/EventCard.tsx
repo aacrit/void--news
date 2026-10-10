@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { HistoricalEvent } from "../types";
 import { commonsSrcSet } from "../../lib/commonsImage";
 import { ERAS, REGIONS } from "../types";
+import { NEW_RECORDING_LABEL } from "../edition";
 
 /* ===========================================================================
    EventCard — Archive document card for event listings
@@ -85,6 +86,11 @@ export default function EventCard({ event }: EventCardProps) {
               does not start audio, and a triangle would promise a control that
               is not here. Carries a title + screen-reader label because on its
               own it is decoration. */}
+          {/* A first-listener edition says so in words, quietly, before the
+              waveform. Plain text in the meta row's own muted ink. */}
+          {event.audioUrl && event.audioNewRecording && (
+            <span className="hist-event-card__edition">{NEW_RECORDING_LABEL}</span>
+          )}
           {event.audioUrl && (
             <span
               className="hist-event-card__audio"

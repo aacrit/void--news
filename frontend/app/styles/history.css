@@ -1976,6 +1976,20 @@
   padding: 0;
 }
 
+/* ── "New recording" under the title on a first-listener edition. The card's
+   muted ink in the data voice, aligned to the title's inset. No fill, no
+   rule, no motion. ── */
+.hist-tl-card__edition {
+  display: block;
+  margin-top: -2px;
+  padding: 0 10px 8px;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: var(--hist-ink-muted);
+}
+
 /* ── Title — 1 line, wraps on hover ── */
 .hist-tl-card__title {
   font-family: var(--font-editorial);
@@ -2706,6 +2720,23 @@
   color: var(--hist-brass);
   opacity: 0.55;
   transition: opacity 250ms var(--ease-cinematic);
+}
+
+/* "New recording" beside the waveform on a first-listener edition. Words in
+   the meta row's own muted ink, no fill, no rule, no motion: a fact about the
+   card, read at the same size as its perspective count. It takes the push to
+   the right edge, and the waveform follows it. */
+.hist-event-card__edition {
+  margin-left: auto;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  letter-spacing: 0.02em;
+  color: var(--hist-ink-muted);
+  white-space: nowrap;
+}
+
+.hist-event-card__edition + .hist-event-card__audio {
+  margin-left: 0;
 }
 
 .hist-event-card:hover .hist-event-card__audio,

@@ -48,6 +48,11 @@ MAX_BYTES = 25 * 1024 * 1024
 failures: list[str] = []
 
 
+# The editions an entry may name. Mirrors publish_audio.EDITIONS (asserted in
+# main) and the frontend reader, which marks only these.
+EDITIONS = frozenset({"first-listener"})
+
+
 def check(name: str, cond: bool, detail: str = "") -> None:
     if not cond:
         failures.append(f"{name}{': ' + detail if detail else ''}")
@@ -92,6 +97,16 @@ def duration_of(path: Path) -> float | None:
         return float(out)
     except (OSError, subprocess.CalledProcessError, ValueError):
         return None   # no ffprobe on this machine: the other checks still run
+
+
+def _raises(fn, exc) -> bool:
+    try:
+        fn()
+    except exc:
+        return True
+    except Exception:
+        return False
+    return False
 
 
 def script_sha256(path: Path) -> str:
@@ -183,6 +198,12 @@ def main() -> int:
         check(f"{slug}: under the Pages per-file limit",
               isinstance(ep.get("bytes"), int) and ep["bytes"] <= MAX_BYTES,
               f"{(ep.get('bytes') or 0)/1048576:.1f} MB")
+        # The edition mark ("New recording" on the pages) is a closed set: a
+        # misspelt value would print nothing, and an unknown one would print a
+        # claim no publisher made.
+        if "edition" in ep:
+            check(f"{slug}: edition is one publish_audio.py knows",
+                  ep["edition"] in EDITIONS, repr(ep["edition"]))
 
         # The MP3 itself is only on disk in the render job. Everywhere else
         # (a fresh clone, CI, a reviewer's machine) it lives in the release,
@@ -353,6 +374,37 @@ def main() -> int:
     for rel in ("frontend/app/history/audio.ts", "frontend/app/audio/page.tsx"):
         src = (ROOT / rel).read_text(encoding="utf-8")
         check(f"{rel} filters audio_withdrawn episodes", "audio_withdrawn" in src)
+        check(f"{rel} marks editions through history/edition.ts", "isNewRecording" in src)
+    edition_src = (ROOT / "frontend/app/history/edition.ts").read_text(encoding="utf-8")
+    for ed in EDITIONS:
+        check(f"frontend/app/history/edition.ts marks the {ed!r} edition", f'"{ed}"' in edition_src)
+    try:
+        from history import publish_audio as _pa
+        check("publish_audio.EDITIONS matches this test's", set(_pa.EDITIONS) == set(EDITIONS),
+              f"{sorted(_pa.EDITIONS)} vs {sorted(EDITIONS)}")
+        # A stitch keeps the edition; a fresh render keeps only what it is told.
+        check("planted: an unknown --edition is refused",
+              _raises(lambda: _pa.build_entry("x", Path("."), edition="remastered"), ValueError))
+        real_slug = next(iter(sorted(episodes)), None)
+        if real_slug:
+            src = Path(tempfile.mkdtemp(prefix="void-hist-ed-"))
+            real_dur = _pa._duration_seconds
+            try:
+                (src / f"{real_slug}.mp3").write_bytes(b"ID3planted")
+                _pa._duration_seconds = lambda _p: 1.0
+                prior = {"edition": "first-listener", "script_sha256": None}
+                kept = _pa.build_entry(real_slug, src, prior, restitch=True)
+                fresh = _pa.build_entry(real_slug, src, prior)
+                named = _pa.build_entry(real_slug, src, {}, edition="first-listener")
+                check("planted: a restitch keeps the edition", kept.get("edition") == "first-listener")
+                check("planted: a re-render without --edition does not inherit it",
+                      "edition" not in fresh)
+                check("planted: --edition is written", named.get("edition") == "first-listener")
+            finally:
+                _pa._duration_seconds = real_dur
+                shutil.rmtree(src, ignore_errors=True)
+    except ImportError as e:
+        check("publish_audio importable", False, str(e))
     for slug in withdrawn:
         check(f"{slug}: withdrawn with a reason on record",
               bool(str(episodes[slug].get("audio_withdrawn_reason") or "").strip()))
