@@ -1,28 +1,15 @@
 {
-  "builtAt": "2026-10-09T18:41:49.069483Z",
+  "builtAt": "2026-10-10T16:59:12.889439Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "95d09773-fc81-4b70-9580-269e4732d162",
-      "title": "Christa Pike Regains Consciousness, Walks After Surviving Botched Execution Attempt",
+      "id": "c0ffb9a0-78e7-492a-a8b9-81f738f87493",
+      "title": "Blast Rocks Riyadh Airport Amid Escalating Houthi Missile Strikes",
       "sentences": [
         {
-          "text": "Pike was sentenced to death for the 1995 murder of Colleen Slemmer, whom she beat, tortured, and killed with her then-boyfriend, Tadaryl Shipp, when Pike was 18 and Shipp was 17.",
-          "rule": "E-13",
-          "message": "summary puts 18 beside \"colleen slemmer\", but no source sentence carrying 18 names it and one names another \"colleen ...\": \"Pike was sentenced to death for the 1995 murder of Colleen Slemmer, whom she beat, torture\""
-        }
-      ],
-      "points": [],
-      "left": []
-    },
-    {
-      "id": "1d7d445e-8b5d-4da0-b5b9-a05a68fc8254",
-      "title": "King Charles Pays Andrew's Royal Lodge Debt After Unlawful Warrants",
-      "sentences": [
-        {
-          "text": "King Charles III paid 1.5 million pounds (US$2 million) to cover costs owed by his younger brother, the former Prince Andrew, after Andrew was forced to move out of Royal Lodge near Windsor Castle.",
-          "rule": "E-13",
-          "message": "summary puts 1.5 beside \"royal lodge\", but no source sentence carrying 1.5 names it and one names another \"royal ...\": \"King Charles III paid 1.5 million pounds (US$2 million) to cover costs owed by his younger\""
+          "text": "Separately, Saudi Arabia has launched an air accident probe into a cockpit stabbing incident on a flydubai jet that occurred the previous week, examining aviation safety risks alongside an UAE-led criminal investigation.",
+          "rule": "E-16",
+          "message": "sentence opens on \"Separately\", announcing another story: \"Separately, Saudi Arabia has launched an air accident probe into a cockpit stabbing incide\""
         }
       ],
       "points": [],
