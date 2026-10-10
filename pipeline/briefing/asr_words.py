@@ -22,12 +22,15 @@ _NUMBER_WORDS = {"one", "two", "three", "four", "five", "six", "seven", "eight",
 # the 2026-10-03 Partition render (programme/program, organisation/organization).
 _SPELLING = [(re.compile(r"isation"), "ization"), (re.compile(r"ise(d|s)?$"), r"ize\1"),
              (re.compile(r"^programme(s)?$"), r"program\1"), (re.compile(r"our$"), "or"),
-             (re.compile(r"our(s|ed|ing)$"), r"or\1"), (re.compile(r"tre(s)?$"), r"ter\1"),
+             (re.compile(r"our(s|ed|ing|er|ers)$"), r"or\1"), (re.compile(r"tre(s)?$"), r"ter\1"),
              (re.compile(r"ogue(s)?$"), r"og\1"), (re.compile(r"dgement(s)?$"), r"dgment\1"),
              (re.compile(r"ising$"), "izing"), (re.compile(r"ence(s)?$"), r"ense\1"),
              # British doubled l, on named stems only ("filling" must not meet "filing")
              (re.compile(r"^(signa|trave|cance|labe|mode|fue|leve|tota|marsha|channe|counse"
                          r"|dia|due|quarre|equa|rive|jewe|shove|tunne|parce)ll(ing|ed|er|ers)$"), r"\1l\2")]
+_TEEN_HUNDRED = {"one": "eleven", "two": "twelve", "three": "thirteen", "four": "fourteen",
+                 "five": "fifteen", "six": "sixteen", "seven": "seventeen", "eight": "eighteen",
+                 "nine": "nineteen"}
 _TENS_TEENS = {"ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen",
                "eighteen", "nineteen", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty",
                "ninety"}
@@ -117,6 +120,10 @@ def norm_words(text: str) -> list[str]:
     t = re.sub(r"(?<=\b[A-Za-z])[-‐-―](?=\d)", " ", t)
     t = spoken_numbers(t)
     t = _regnal(t)
+    # "nineteen hundred" and "1,900" (spelled "one thousand nine hundred") are
+    # one value: fold the thousand form to the hundreds form on both sides.
+    t = re.sub(r"\bone thousand (one|two|three|four|five|six|seven|eight|nine) hundred\b",
+               lambda m: _TEEN_HUNDRED[m.group(1).lower()] + " hundred", t, flags=re.I)
     t = re.sub(r"[-‐-―]", " ", t)
     t = re.sub(r"\bper cent\b", "percent", t, flags=re.I)
     # A title the script spells out and the transcriber abbreviates.

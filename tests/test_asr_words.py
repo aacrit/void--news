@@ -109,6 +109,13 @@ def test_british_doubled_l_and_titles() -> None:
     fails("drop is not dropped", "The ships drop their speed.", "The ships dropped their speed.")
 
 
+def test_hundreds_and_labourers() -> None:
+    # 2026-10-09 Hiroshima render.
+    passes("nineteen hundred feet", "It bursts at nineteen hundred feet.", "It bursts at 1,900 feet.")
+    fails("eighteen hundred is not 1,900", "It bursts at eighteen hundred feet.", "It bursts at 1,900 feet.")
+    passes("labourers", "Forced labourers were never counted.", "Forced laborers were never counted.")
+
+
 def test_designators() -> None:
     # 2026-10-07: "a U two" heard "a U-2" on every take. Same value only.
     passes("U two", "Photographs from a U two, a reconnaissance plane.", "Photographs from a U-2, a reconnaissance plane.")
