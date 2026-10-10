@@ -46,7 +46,6 @@
 ## OPEN
 # MOOD: dread
 N: In the summer of nineteen sixty nine, the United States, a country that could not reliably integrate its own schools, landed two men on the Moon.
-N: Both of those things were true in the same season, paid for by the same government, reported in the same newspapers.
 N: Eight years, four hundred thousand people, and twenty five seconds of fuel.
 
 ## TITLE
@@ -68,7 +67,6 @@ N: They land with about twenty five seconds of fuel remaining.
 N: The first words from the surface were an address and a fact. Neil Armstrong, to Houston. Tranquility Base is the name of the landing place, on the Sea of Tranquility.
 M: Houston, Tranquility Base here. The Eagle has landed.
 N: In Mission Control a flight controller answered, and the typed transcript keeps his words. Roger, Tranquility, we copy you on the ground.
-N: You got a bunch of guys about to turn blue. We're breathing again, thanks a lot.
 N: Eight years, four hundred thousand people, and twenty five seconds of fuel.
 
 ## REST
@@ -78,7 +76,6 @@ N: Eight years, four hundred thousand people, and twenty five seconds of fuel.
 # MOOD: procedure
 N: Go back eight years, to a joint session of Congress, in May of nineteen sixty one. President John F. Kennedy is asking it to pay for a promise he will not live to see kept.
 N: At that point the United States had put one astronaut into space, Alan Shepard, for fifteen minutes on a flight that did not reach orbit. The Soviet Union had already put Yuri Gagarin, the first human in space, around the Earth.
-N: Kennedy was not promising to catch up. He was promising to skip ahead of a race his country was losing.
 
 ## DOCUMENT | John F. Kennedy | Special Message to Congress on Urgent National Needs | May 25, 1961
 # extract: src-jfk-19610525.sec9
@@ -86,12 +83,10 @@ N: Kennedy was not promising to catch up. He was promising to skip ahead of a ra
 # MOOD: procedure
 N: On the twenty fifth of May, nineteen sixty one, he put it to Congress as a commitment with a deadline attached. What follows is the recording of Kennedy made that day, kept by his presidential library.
 M: First, I believe that this nation should commit itself to achieving the goal, before this decade is out, of landing a man on the moon and returning him safely to the earth.
-N: In the next sentence he told them no space project of the period would be so difficult or so expensive.
 
 ## SCENE 3 | Four hundred thousand people
 # MOOD: procedure
 N: In the eight years that followed, across the United States, the sentence bought mainly people: a workforce that peaked near four hundred thousand, at NASA, the American space agency, and roughly twenty thousand contractor firms.
-N: It included seamstresses, who sewed the spacesuits in twenty one layers, and technicians who wound the memory of the guidance computer by hand.
 N: It cost three lives before it left the ground. On the twenty seventh of January, nineteen sixty seven, fire swept the pure oxygen cabin of Apollo one, an earlier capsule, during a test on the pad.
 N: Its crew, Gus Grissom, Ed White and Roger Chaffee, died in seconds, behind a hatch that took ninety seconds to open.
 
@@ -101,7 +96,6 @@ N: Its crew, Gus Grissom, Ed White and Roger Chaffee, died in seconds, behind a 
 ## SCENE 4 | A signal weaker than a refrigerator bulb
 # MOOD: rupture
 N: Six and a half hours after landing, at Tranquility Base, Armstrong went down the ladder. Aldrin followed him, the second person to walk on the Moon.
-N: Collins, in the command module overhead, was alone, passing behind the Moon on each orbit into a radio silence no human had been in before.
 N: The television signal came from two hundred and thirty nine thousand miles away, weaker than the bulb inside a refrigerator. About six hundred million people watched, roughly one sixth of everyone alive.
 
 ## DOCUMENT | Neil Armstrong | air-to-ground, the first step, as the Lunar Surface Journal transcribes what was heard | July 21, 1969
@@ -126,14 +120,12 @@ N: The plaque says men. NASA's typed transcript of his reading prints man, and t
 ## TURN | Five accounts
 # MOOD: reckoning
 N: What that was worth is where the accounts separate.
-N: This disagreement is not about what happened. It is about whether it should have been done first.
 N: Five accounts, each argued from what this programme could read: two speeches of Kennedy, the transcripts of the flight, the plaque, and one engineer's recollection. The books behind them could not be read here. Each gets its own case first.
 
 ## PERSPECTIVE | American triumph | victor
 # MOOD: procedure
 N: The first account is that a democracy did this in the open, and that the openness is the point.
 N: It announced a deadline in nineteen sixty one, in public, and had to meet it in public: televised launches, public failures, a congressional inquiry into the Apollo one fire.
-N: It did that without a command economy, by coordinating twenty thousand private firms toward one date.
 N: The Saturn, the rocket that carried it, never lost a crew in flight.
 
 ## DOCUMENT | John F. Kennedy | Address at Rice University, the sentence as his library quotes it | September 12, 1962
@@ -149,7 +141,6 @@ N: Sputnik, the first satellite, in October nineteen fifty seven, beeping over A
 N: What they lost was not a race of engineers but one man. Sergei Korolev, the chief designer, died on the operating table in January nineteen sixty six; he alone had held the feuding design bureaus together.
 N: Valentin Glushko, one of those feuding designers, refused to build engines for the N one, the giant rocket of the Soviet Moon effort, so it flew on thirty smaller ones, under analogue control.
 N: It flew four times and failed every time, once falling back onto its own pad weeks before Apollo eleven.
-N: Even in defeat the Soviets raced. Luna fifteen, an unmanned probe, launched three days ahead of Apollo eleven to bring lunar soil home first, and struck a mountainside hours before Eagle lifted off.
 N: Afterwards the official line held that the Soviet Union had never intended to send people to the Moon. The N one was cancelled in nineteen seventy four, and its existence denied until the Soviet collapse.
 
 ## PERSPECTIVE | The domestic critique | revisionist
@@ -157,10 +148,8 @@ N: Afterwards the official line held that the Soviet Union had never intended to
 N: The third account was made at the launch gate itself, the day before liftoff.
 N: On the fifteenth of July, Ralph Abernathy, a civil rights leader who had succeeded Martin Luther King, led several hundred marchers and four mule drawn wagons to the gates of Cape Kennedy, where the rocket stood.
 N: Thomas Paine, the administrator of NASA, met him at the gate. Abernathy said his Poor People's Campaign had come not to stop the launch but to protest a country's distorted priorities, and asked its scientists to turn their genius on hunger and poverty.
-N: Then he watched the rocket rise and, by his own account, prayed for the astronauts.
 N: In nineteen seventy the poet Gil Scott-Heron recorded a spoken word piece that set a Black family's medical debt, rat bites and rising rent against the spectacle overhead. Its title is the whole argument: Whitey on the Moon.
 N: The objection was about sequence, not science. The United States was fighting in Vietnam, cities had burned in nineteen sixty seven and again after King was killed, and the median Black family earned about sixty percent of what white families did.
-N: The critics did not deny the achievement. They asked why it had been chosen first, and by whom, and who had paid for it while going without.
 
 ## REST | short
 # MOOD: testimony
@@ -169,7 +158,6 @@ N: The critics did not deny the achievement. They asked why it had been chosen f
 # MOOD: reckoning
 N: The fourth account is made in laboratories, and its claim is that the spending bought more than a flag.
 N: The guidance computer ran on integrated circuits when the chip was a laboratory curiosity. By nineteen sixty three the space programme was buying a large share of all the chips made in the United States, and the price fell.
-N: The line from Apollo runs through that purchase to the microprocessor.
 N: The missions returned three hundred and eighty two kilograms of rock and soil, and their analysis produced the theory of how the Moon formed: a body the size of Mars striking the early Earth.
 N: And the landing itself was saved by software design. Margaret Hamilton led the software for the guidance computer at the university laboratory that built it, and coined the term software engineering to force her discipline to be taken seriously.
 N: She was in a monitoring room there when the alarms came. Her software had been written to triage under overload: near its limit the computer cleared its queue and ran only the highest priority tasks until the landing was complete.
@@ -183,8 +171,6 @@ F: There was no second chance. We knew that.
 ## PERSPECTIVE | The Global South | revisionist
 # MOOD: grief
 N: The fifth account came from what is called the Global South, the nations of Africa, Asia and Latin America, much of it independent for less than a decade.
-N: India, Nigeria, Indonesia and dozens of other states were building their first universities, fighting famine, and choosing sides in a Cold War not of their making.
-N: In this view the money both powers spent above the planet was misallocation on a global scale.
 N: In nineteen seventy, Sister Mary Jucunda, a nun in Zambia, wrote to a NASA scientist asking how he could justify spending billions on a voyage to Mars while children on Earth were starving.
 N: Ernst Stuhlinger, the scientist, replied in print: basic research had always, indirectly, fed the hungry by advancing the tools of civilization. Both were sincere, which is what makes it the hardest version of the question.
 N: The deeper objection was about authorship. The plaque said for all mankind, and mankind had not been consulted, had not funded the effort, and had not shared in its direction.
@@ -198,7 +184,6 @@ N: The Soviet account leaves out the scale of the effort that beat them, and two
 N: The domestic critique leaves out the jobs the programme created, including for Black engineers and mathematicians, and the spinoffs that later reached ordinary people.
 N: The account of the engineers leaves out that Cold War prestige paid for the science, and that crewed flights to the Moon stopped after nineteen seventy two.
 N: The Global South account leaves out the inspiration Apollo gave to the programmes India and Brazil later built, and the samples shared openly.
-N: The holes are not random. Each account omits the part that would most complicate its own conclusion.
 
 ## REST
 # MOOD: reckoning
