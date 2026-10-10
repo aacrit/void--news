@@ -1,0 +1,8 @@
+source: src-cdm-chronicle-198909
+locator: sec0910
+url: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month9/?month=9&year=1989&moc=1
+read: 2026-10-09
+note: the entry for 10 September
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+10 September 1989 In the night of 10-11 September, the Hungarian government opens the border to Austria for East German citizens. In the following days and weeks, tens of thousands of GDR citizens travel to West Germany via Austria.

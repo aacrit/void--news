@@ -1,0 +1,8 @@
+source: src-cdm-chronicle-198911
+locator: sec2330
+url: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month11/?month=11&year=1989&moc=1
+read: 2026-10-09
+note: the 11.30 p.m. entry; it does not give the minute the barrier rose
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+9 November 1989 11.30 p.m. On Bornholmer Straße, the situation is becoming a threatening one for the passport inspectors. Thousands of people are pushing towards the border crossing point. The "valve solution" has proved to be unwise. When some are allowed to leave the country, the others who have to wait push and shove even more.

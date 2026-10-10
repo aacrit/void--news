@@ -1,0 +1,8 @@
+source: src-two-plus-four-19900912
+locator: art4
+url: https://germanhistorydocs.org/en/a-new-germany-1990-2023/two-plus-four-treaty-on-germany-september-12-1990
+read: 2026-10-09
+note: GHDI's text: the State Department's translation (American Foreign Policy Current Documents 1990)
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Article 4 (1) The Governments of the Federal Republic of Germany, the German Democratic Republic and the Union of Soviet Socialist Republics state that the united Germany and the Union of Soviet Socialist Republics will settle by treaty the conditions for and the duration of the presence of Soviet armed forces on the territory of the present German Democratic Republic and of Berlin, as well as the conduct of the withdrawal of these armed forces which will be completed by the end of 1994, in connection with the implementa­tion of the undertaking of the Federal Republic of Germany and the German Democratic Republic referred to in paragraph 2 of Article 3 of the present Treaty. (2) The Governments of the French Republic, the United King­dom of Great Britain and Northern Ireland and the United States of America take note of this statement.

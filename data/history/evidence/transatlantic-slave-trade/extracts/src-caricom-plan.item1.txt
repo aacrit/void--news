@@ -1,0 +1,7 @@
+source: src-caricom-plan
+locator: item1
+url: https://caricomreparations.org/caricom/caricoms-10-point-reparation-plan/
+read: 2026-10-09
+note: point 1, Full Formal Apology; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+The healing process for victims and the descendants of the enslaved and enslavers requires as a precondition the offer of a sincere formal apology by the governments of Europe.

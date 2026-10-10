@@ -1,0 +1,7 @@
+source: src-biko-1970
+locator: secliberal
+url: https://www.saha.org.za/nonracialism/black_man_youre_on_your_own.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+The role of the white liberal in the black man's history in South Africa is a curious one. Very few black organizations were not under white direction. True to their image, the white liberals always knew what was good for the blacks and told them so. The wonder of it all is that the black people have believed in them for so long

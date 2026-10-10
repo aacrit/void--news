@@ -1,0 +1,7 @@
+source: src-ford-19740809
+locator: secnote
+url: https://www.fordlibrarymuseum.gov/the-fords/gerald-r-ford/key-speeches-and-writings-gerald-r-ford
+read: 2026-10-09
+note: the note the Library prints after the remarks
+
+NOTE: The President spoke at 12:05 p.m. in the East Room at the White House following administration of the oath of office by Chief Justice Warren E. Burger. The oath of office and the President's remarks were broadcast live on radio and television. The White House announced that Richard Nixon's letter of resignation as 37th President of the United States was tendered to Secretary of State Henry A. Kissinger in his White House office by Assistant to the President Alexander M. Haig, Jr., at 11:35 a.m.

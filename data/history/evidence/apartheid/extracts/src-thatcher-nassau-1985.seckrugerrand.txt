@@ -1,0 +1,7 @@
+source: src-thatcher-nassau-1985
+locator: seckrugerrand
+url: https://www.margaretthatcher.org/document/106151
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+Prime Minister A tiny little bit. Do you know the value of Krugerrands that are imported? Half a million pounds.

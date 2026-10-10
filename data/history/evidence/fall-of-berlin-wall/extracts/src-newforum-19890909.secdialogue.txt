@@ -1,0 +1,8 @@
+source: src-newforum-19890909
+locator: secdialogue
+url: https://germanhistorydocs.org/en/a-new-germany-1990-2023/founding-appeal-of-the-new-forum-september-9-1989
+read: 2026-10-09
+note: the same text
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+we need a democratic dialogue on the responsibilities of the state, the economy, and culture.

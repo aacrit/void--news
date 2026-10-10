@@ -1,0 +1,8 @@
+source: src-app-nixon-19740808
+locator: secresign
+url: https://www.presidency.ucsb.edu/documents/address-the-nation-announcing-decision-resign-the-office-president-the-united-states
+read: 2026-10-09
+note: The American Presidency Project's text, from the Public Papers of the Presidents
+note: two paragraphs and the sentence that announces the resignation; the text between them is cut at the paragraph
+
+I have never been a quitter. To leave office before my term is completed is abhorrent to every instinct in my body. But as President, I must put the interests of America first. America needs a full-time President and a full-time Congress, particularly at this time with problems we face at home and abroad. To continue to fight through the months ahead for my personal vindication would almost totally absorb the time and attention of both the President and the Congress in a period when our entire focus should be on the great issues of peace abroad and prosperity without inflation at home. Therefore, I shall resign the Presidency effective at noon tomorrow. Vice President Ford will be sworn in as President at that hour in this office.

@@ -1,0 +1,7 @@
+source: src-dupuis-1824
+locator: p164
+url: https://archive.org/details/journalofresiden00dupu
+read: 2026-10-09
+note: the king's words as Dupuis records them; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+When I fought Gaman, I did not make war for slaves, but because Dinkera (the king) sent me an arrogant message and killed my people, and refused to pay me gold as his father did. Then my fetische made me strong like my ancestors, and I killed Dinkera, and took his gold, and brought more than 20,000 slaves to Coomassy.

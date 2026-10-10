@@ -1,0 +1,7 @@
+source: src-anc-trc-1996
+locator: secnecklace2
+url: https://www.justice.gov.za/trc/hrvtrans/submit/anctruth.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+"Necklacing" also reflected the objective conditions under which the intensifying mass struggle against apartheid took place: the majority of people were unarmed and still had to rely on the same weapons they could find in the 1970s; and as the mass revolt against apartheid spread, it was impossible for either the ANC or the UDF/ MDM to exercise control over all aspects of the manner in which people chose to fight apartheid.

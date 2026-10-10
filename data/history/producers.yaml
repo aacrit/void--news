@@ -17,20 +17,29 @@
 # Read by pipeline/history/export_thesis.py, which writes the labels a thesis
 # needs into its JSON as `producerLabels`.
 producers:
+  abolition-committee: {label: "Thomas Clarkson", from: src-clarkson-1808}
   accused-testimony: {label: "Testimony of the accused", from: src-eccc-duch-apology}
   alexievich: {label: "Svetlana Alexievich", from: src-alexievich-nobel-lecture-2015}
   allied-governments: {label: "The governments of the United States, China and Great Britain", from: src-potsdam-19450726}
   allied-powers: {label: "Allied Powers", from: src-sevres-1920}
+  amnesty-applicant-testimony: {label: "Amnesty Committee hearing, applicants' testimony", from: src-trc-amnesty-biko-1997}
+  anc: {label: "African National Congress", from: src-mandela-rivonia-1964}
   auschwitz-museum: {label: "Auschwitz-Birkenau State Museum", from: src-aus-resistance}
   belarusian-government: {label: "Permanent Mission of the Republic of Belarus to the United Nations", from: src-belarus-mission-20220426}
+  black-consciousness-movement: {label: "South African Students' Organisation (SASO)", from: src-saso-manifesto-1971}
   boundary-commission-chairman: {label: "Cyril Radcliffe, Chairman of the Boundary Commissions", from: src-radcliffe-punjab}
+  brazilian-state: {label: "Empire of Brazil", from: src-lei-18311107}
   british-crown: {label: "Queen Victoria in Council", from: src-hertslet-charter-1889}
+  british-envoy: {label: "Joseph Dupuis, British envoy and consul for Ashantee", from: src-dupuis-1824}
   british-historian: {label: "John Relly Beard", from: src-beard-1863}
   british-planter-witness: {label: "Bryan Edwards", from: src-edwards-1797}
   british-viceroy-staff: {label: "Viceroy and his staff", from: src-abell-19470808}
   cambodian-state: {label: "Kingdom of Cambodia, National Assembly", from: src-eccc-law-2004}
+  caricom-reparations-commission: {label: "CARICOM Reparations Commission", from: src-caricom-plan}
   census-of-india: {label: "Census Commissioner for India", from: src-census-1941-vol1}
   chernobyl-forum: {label: "The Chernobyl Forum", from: src-chernobyl-forum-2006}
+  chernyaev: {label: "Anatoly Chernyaev", from: src-chernyaev-19891110}
+  chronik-der-mauer: {label: "Chronik der Mauer", from: src-cdm-victims-s}
   chugoku-shimbun: {label: "The Chugoku Shimbun", from: src-tsuboi-chugoku-2015}
   colonial-administrator: {label: "Sir F. D. Lugard", from: src-lugard-1922}
   commission-member-congress: {label: "Mehr Chand Mahajan, Punjab Boundary Commission (nominated by the Congress)", from: src-mahajan-1947}
@@ -38,8 +47,11 @@ producers:
   commission-member-sikh: {label: "Teja Singh, Punjab Boundary Commission (nominated by the Congress for the Sikhs)", from: src-tejasingh-1947}
   congo-free-state: {label: "Congo Free State Government", from: src-congo-commission-1906}
   congo-reform-association: {label: "E. D. Morel", from: src-morel-1906}
+  congress-of-the-people: {label: "The Congress of the People", from: src-freedom-charter-1955}
   constituent-assembly-of-india: {label: "Constituent Assembly of India", from: src-cad-19470814}
   constituent-assembly-of-pakistan: {label: "Constituent Assembly of Pakistan", from: src-jinnah-19470811}
+  constitutional-court-of-south-africa: {label: "Constitutional Court of South Africa", from: src-azapo-1996}
+  court-of-kings-bench: {label: "Court of King's Bench", from: src-gregson-gilbert-1783}
   cuban-government: {label: "Fidel Castro, Prime Minister of Cuba", from: src-fbis-castro-19621023}
   dallaire: {label: "Roméo Dallaire", from: src-dallaire-2003}
   dc-cam: {label: "Documentation Center of Cambodia (DC-Cam)", from: src-dccam-mapping}
@@ -50,9 +62,11 @@ producers:
   east-punjab-rehabilitation: {label: "Director General of Rural Rehabilitation, East Punjab", from: src-randhawa-1954}
   eccc: {label: "Extraordinary Chambers in the Courts of Cambodia", from: src-eccc-002-01-tj}
   echr: {label: "European Court of Human Rights", from: src-echr-perincek-2015}
+  edmund-burke: {label: "Edmund Burke", from: src-burke-1790}
   elie-wiesel: {label: "Elie Wiesel", from: src-nobel-wiesel-1986}
   ethiopian-emperor: {label: "Menelik II, King of Kings of Ethiopia", from: src-menelik-1897}
   european-parliament: {label: "European Parliament", from: src-ep-1987}
+  formerly-enslaved-narrators: {label: "Narratives by formerly enslaved people", from: src-equiano-1789}
   french-civil-commission: {label: "Polverel and Sonthonax, civil commissioners of the Republic", from: src-sonthonax-17930829}
   french-colonist-memoir: {label: "Antoine Dalmas", from: src-dalmas-1814}
   french-consulate: {label: "Napoléon Bonaparte, First Consul", from: src-napoleon-corr-7}
@@ -67,9 +81,11 @@ producers:
   french-peer: {label: "François, marquis de Barbé-Marbois", from: src-barbe-marbois-1826}
   french-republic: {label: "République française", from: src-fr-law-2001}
   gandhi: {label: "M. K. Gandhi", from: src-gandhi-19470824}
+  gdr-state: {label: "German Democratic Republic, SED Politburo", from: src-cwihp-doc8-19891109}
   german-army: {label: "Lothar von Trotha, Kommandeur der Kaiserlichen Schutztruppe", from: src-trotha-1904}
   german-bundestag: {label: "Deutscher Bundestag", from: src-bundestag-2016}
   german-court: {label: "Landgericht Berlin III", from: src-tehlirian-1921}
+  german-federal-government: {label: "Helmut Kohl, Chancellor of the Federal Republic of Germany", from: src-kohl-19891128}
   german-foreign-office: {label: "German Ambassador at Constantinople and German consuls", from: src-de-19150531}
   german-parliament-research-service: {label: "Wissenschaftliche Dienste des Deutschen Bundestages", from: src-bundestag-2004}
   german-state: {label: "Reich Main Security Office", from: src-wannsee-avalon}
@@ -88,6 +104,7 @@ producers:
   hiroshima-peace-memorial-museum: {label: "Hiroshima Peace Memorial Museum", from: src-korean-monument}
   historian-editor: {label: "Kirpal Singh", from: src-kirpal-intro-recovery}
   hrw: {label: "Human Rights Watch", from: src-hrw-leave-none-1999}
+  iachr: {label: "Inter-American Commission on Human Rights", from: src-iachr-121-18}
   iaea-insag: {label: "International Nuclear Safety Advisory Group (INSAG), IAEA", from: src-insag7-1992}
   iarc: {label: "International Agency for Research on Cancer", from: src-iarc-2006}
   ican: {label: "International Campaign to Abolish Nuclear Weapons", from: src-nobel-ican-2017}
@@ -103,24 +120,33 @@ producers:
   joint-defence-council: {label: "Joint Defence Council", from: src-jdc-19470829}
   joint-evacuation-organisations: {label: "Military Evacuation Organisations of India and Pakistan", from: src-joint-evacuation-plan-19471020}
   khmer-rouge-leadership: {label: "Pol Pot", from: src-thayer-1997}
+  kongo-crown: {label: "Afonso, King of Kongo", from: src-afonso-15260706}
   lepsius: {label: "Johannes Lepsius", from: src-lepsius-1919}
   manhattan-project-scientists: {label: "Leo Szilard and scientists of the Metallurgical Laboratory, Chicago", from: src-szilard-19450717}
   morgenthau: {label: "Henry Morgenthau", from: src-morgenthau-1918}
   muslim-league: {label: "All-India Muslim League", from: src-league-memo-1947}
   nagasaki-city: {label: "City of Nagasaki", from: src-nagasaki-city-damage}
   nama-chief: {label: "Hendrik Witbooi, kaptein of the Witbooi Nama", from: src-witbooi-1929}
+  national-assembly-1789: {label: "The National Assembly (Assemblée nationale)", from: src-ddhc-1789}
+  national-party: {label: "National Party", from: src-np-trc-1996}
   national-security-archive: {label: "National Security Archive", from: src-burr-nsa-2020}
+  neues-forum: {label: "Neues Forum", from: src-newforum-19890909}
   nihon-hidankyo: {label: "Japan Confederation of A- and H-Bomb Sufferers Organizations (Nihon Hidankyo)", from: src-hidankyo-20100507}
   niod: {label: "Netherlands Institute for War Documentation (NIOD)", from: src-niod-2002}
+  nixon-white-house: {label: "The Nixon White House", from: src-nl-wht-19720623}
+  non-aligned-movement: {label: "Ninth Conference of Non-Aligned Countries", from: src-nam-belgrade-1989}
   nurse-letter: {label: "A nurse in North Dakota (letter to the editor)", from: src-ajn-1918-12}
+  olympe-de-gouges: {label: "Olympe de Gouges", from: src-gouges-1791}
   ottoman-court-martial: {label: "Ottoman Extraordinary Court-Martial", from: src-takvim-1919}
   ottoman-government: {label: "Imperial Ottoman Government", from: src-verite-1916}
   ottoman-interior-ministry: {label: "Ottoman Ministry of the Interior", from: src-talat-1917}
   ottoman-official: {label: "Ahmed Rüstem Bey", from: src-rustem-1918}
   pakistan-state-edition: {label: "Quaid-i-Azam Papers Project, Government of Pakistan", from: src-jinnah-papers-v-intro}
   peter-longerich: {label: "Peter Longerich", from: src-longerich-1999}
+  pew-research-center: {label: "Pew Research Center", from: src-pew-trust-2025}
   physician-memoir: {label: "Victor C. Vaughan", from: src-vaughan-1926}
   polish-government-in-exile: {label: "Republic of Poland, Ministry of Foreign Affairs", from: src-polish-note-19421210}
+  political-economist: {label: "Adam Smith", from: src-smith-1776}
   press: {label: "Press reporting", from: src-hersey-1946}
   prk-state: {label: "People's Revolutionary Tribunal of the People's Republic of Kampuchea", from: src-prt-1979}
   punjab-governor: {label: "Evan Jenkins, Governor of the Punjab", from: src-jenkins-punjab-problem-1947}
@@ -128,12 +154,18 @@ producers:
   recollection: {label: "Recollections recorded by participants", from: src-shakhnazarov-castro-19871105}
   republic-of-armenia: {label: "Supreme Council of the Armenian SSR", from: src-armenia-decl-1990}
   rerf: {label: "Radiation Effects Research Foundation", from: src-rerf-faq}
+  robespierre: {label: "Maximilien Robespierre", from: src-robespierre-17921203}
+  sahistory: {label: "South African History Online", from: src-saho-election-1994}
   scholarship: {label: "Scholarship", from: src-gust-19150617-en}
   serbian-denial-literature: {label: "Marko P. Atlagić and Aleksandar L. Martinović", from: src-atlagic-2021}
   sgpc: {label: "Shiromani Gurdwara Parbandhak Committee", from: src-talib-1950}
+  sieyes: {label: "Emmanuel-Joseph Sieyès", from: src-sieyes-1789}
   signatory-powers: {label: "Plenipotentiaries at the Conference of Berlin", from: src-berlin-act-1885}
   sikh-all-parties-committee: {label: "Sikh All Parties Committee, Amritsar", from: src-sikh-note-1942}
   sikh-panthic-bodies: {label: "Panthic Assembly Party, the Shiromani Akali Dal and the Panthic Pratinidhi Board", from: src-panthic-19470614}
+  slave-trade-governor: {label: "Archibald Dalzel, Governor of Cape Coast Castle", from: src-dalzel-1793}
+  slavevoyages: {label: "Voyages: The Trans-Atlantic Slave Trade Database", from: src-sv-estimates}
+  south-african-parliament: {label: "Parliament of the Union of South Africa", from: src-pra-1950}
   south-african-railways: {label: "South African Railways and Harbours", from: src-sar-1919}
   soviet-communist-party: {label: "CPSU Central Committee Politburo", from: src-nsa-politburo-19860428}
   soviet-government: {label: "Soviet government", from: src-soviet-19450808}
@@ -143,7 +175,9 @@ producers:
   torch-authors: {label: "Ian Fairlie and David Sumner", from: src-torch-2006}
   toussaint-government: {label: "Toussaint Louverture and the central assembly of Saint-Domingue", from: src-toussaint-const-1801}
   toussaint-louverture: {label: "Toussaint Louverture", from: src-toussaint-memoire}
+  trc: {label: "Truth and Reconciliation Commission of South Africa", from: src-trc-v1-ch1}
   turkish-state: {label: "Republic of Türkiye, Ministry of Foreign Affairs", from: src-mfa-tr}
+  two-plus-four-signatories: {label: "The six signatory states of the Two Plus Four Treaty", from: src-two-plus-four-19900912}
   uk-consul: {label: "Roger Casement, His Majesty's Consul at Boma", from: src-casement-1904}
   uk-government: {label: "UK government", from: src-hansard-lords-19470220}
   uk-ministry-of-health: {label: "Ministry of Health (Great Britain)", from: src-moh-1920}
@@ -171,6 +205,10 @@ producers:
   us-prosecution-nuremberg: {label: "Office of United States Chief of Counsel for Prosecution of Axis Criminality", from: src-nca-vii-1946}
   us-public-health-service: {label: "United States Public Health Service", from: src-phr-1919-04-18}
   us-state-department: {label: "United States Department of State", from: src-us-dos-briefing-19940610}
+  us-supreme-court: {label: "Supreme Court of the United States", from: src-lii-us-v-nixon-1974}
   ushmm: {label: "United States Holocaust Memorial Museum", from: src-ushmm-riegner}
+  v-and-a: {label: "Victoria and Albert Museum", from: src-vam-o79580}
   who-iaea-undp: {label: "World Health Organization", from: src-who-iaea-undp-20050905}
+  willy-brandt-foundation: {label: "Bundeskanzler-Willy-Brandt-Stiftung", from: src-brandt-heft8-2001}
   yad-vashem: {label: "Yad Vashem", from: src-yv-faq}
+  zzf-stiftung-berliner-mauer: {label: "Hans-Hermann Hertle and Maria Nooke", from: src-hertle-nooke-2017}

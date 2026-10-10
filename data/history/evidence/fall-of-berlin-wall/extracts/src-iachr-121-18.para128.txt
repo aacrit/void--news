@@ -1,0 +1,8 @@
+source: src-iachr-121-18
+locator: para128
+url: https://www.oas.org/en/iachr/decisions/2018/USPU10573-EN.pdf
+read: 2026-10-09
+note: paragraph 128, the Argentine Forensic Anthropology Team as the Commission reports it; '105' is a note number
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Among its conclusions, the EAAF highlighted that there were no full lists of Panamanians killed during the military intervention so far, as neither of the two countries involved had made exhaustive efforts in establishing definitive lists on the number of deaths and disappeared Panamanians, or concerning the circumstances in which they died.

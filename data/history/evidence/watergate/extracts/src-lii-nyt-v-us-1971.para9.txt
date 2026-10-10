@@ -1,0 +1,8 @@
+source: src-lii-nyt-v-us-1971
+locator: para9
+url: https://www.law.cornell.edu/supremecourt/text/403/713
+read: 2026-10-09
+note: the Legal Information Institute's web text of the opinion; the locator is LII's own paragraph number, printed at the head of each paragraph, not a U.S. Reports page
+note: Justice Black, joined by Justice Douglas, concurring
+
+In the First Amendment the Founding Fathers gave the free press the protection it must have to fulfill its essential role in our democracy. The press was to serve the governed, not the governors. The Government's power to censor the press was abolished so that the press would remain forever free to censure the Government. The press was protected so that it could bare the secrets of government and inform the people. Only a free and unrestrained press can effectively expose deception in government. And paramount among the responsibilities of a free press is the duty to prevent any part of the government from deceiving the people and sending them off to distant lands to die of foreign fevers and foreign shot and shell. In my view, far from deserving condemnation for their courageous reporting, the New York Times, the Washington Post, and other newspapers should be commended for serving the purpose that the Founding Fathers saw so clearly. In revealing the workings of government that led to the Vietnam war, the newspapers nobly did precisely that which the Founders hoped and trusted they would do.

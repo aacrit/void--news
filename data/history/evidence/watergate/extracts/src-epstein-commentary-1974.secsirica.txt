@@ -1,0 +1,7 @@
+source: src-epstein-commentary-1974
+locator: secsirica
+url: https://www.commentary.org/articles/edward-epstein-3/did-the-press-uncover-watergate/
+read: 2026-10-09
+note: Commentary's web text of the essay; 'oil' for 'on' is the web text's
+
+In the end, it was not because of the reporting of Woodward and Bernstein, but because of the pressures put on the conspirators by Judge John Sirica, the grand jury, and Congressional committees that the cover-up was unraveled. After the Watergate conspirators were convicted, Judge Sirica made it abundantly clear that they could expect long prison sentences unless they cooperated with the investigation of the Senate Select Committee oil Presidential Campaign Activities (the Ervin committee). One of the convicted burglars, James McCord, clearly not content with accepting such a prison sentence, wrote Sirica that perjury had been committed at the trial and the defendants had been induced by “higher-ups” to remain silent.

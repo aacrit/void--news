@@ -1,0 +1,7 @@
+source: src-clarkson-1808
+locator: secbrookes
+url: https://www.gutenberg.org/cache/epub/10633/pg10633.txt
+read: 2026-10-09
+note: the plate of the Brookes; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+They allowed, accordingly, to every man slave 6 ft. by 1 ft. 4in. for room, to every woman 5 ft. by 1 ft. 4 in., to every boy 5 ft. by 1 ft. 2 in., and to every girl 4 ft. 6 in. by 1 ft. They then stowed them, and found them as in the annexed plate, that is, they found, (deducting the women stowed in z of figures 6 and 7, which spaces, being half of the half-deck, were allowed by Sir William Dolben's last bill to the seamen,) that only 450 could be stowed in her; and the reader will find, if he should think it worthwhile to count the figures in the plate, that, on making the deduction mentioned, they will amount to this number. The committee then thought it right to inquire how many slaves the act of Sir William Dolben allowed this vessel to carry, and they found the number to be 454; that is, they found it allowed her to carry four more than could be put in without trespassing upon the room allotted to the rest;

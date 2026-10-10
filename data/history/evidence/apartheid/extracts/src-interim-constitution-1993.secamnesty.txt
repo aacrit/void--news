@@ -1,0 +1,7 @@
+source: src-interim-constitution-1993
+locator: secamnesty
+url: https://www.justice.gov.za/trc/legal/interim.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+In order to advance such reconciliation and reconstruction, amnesty shall be granted in respect of acts, omissions and offences associated with political objectives and committed in the course of the conflicts of the past. To this end, Parliament under this Constitution shall adopt a law determining a firm cut-off date, which shall be a date after 8 October 1990 and before 6 December 1993, and providing for the mechanisms, criteria and procedures, including tribunals, if any, through which such amnesty shall be dealt with at any time after the law has been passed.

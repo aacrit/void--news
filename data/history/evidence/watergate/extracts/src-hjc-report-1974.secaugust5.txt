@@ -1,0 +1,8 @@
+source: src-hjc-report-1974
+locator: secaugust5
+url: https://archive.org/details/impeachmentofric0000unit
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (including the '¬' the OCR prints for one) are kept as printed
+note: the statement of evidence on Article I; the sentence runs on past the cut
+
+On August 5, 1974, nine days after the Committee had voted on Article I, President Nixon released to the public and submitted to the Committee on the Judiciary three additional edited White House transcripts of presidential conversations that took place on June 23, 1972, six days following the DNC break-in. Judge Sirica had that day released to the Special Prosecutor transcripts of those conversations pursuant to the mandate of the United States Supreme Court. The Committee had subpoenaed the tape recordings of those conversations, but the Presi¬ dent had refused to honor the subpoena. These transcripts conclusively confirm the finding that the Committee had already made, on the basis of clear and convincing evidence,

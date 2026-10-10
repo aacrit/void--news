@@ -1,0 +1,8 @@
+source: src-hjc-report-1974
+locator: secminority
+url: https://archive.org/details/impeachmentofric0000unit
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (including the '¬' the OCR prints for one) are kept as printed
+note: the Minority Views of Messrs. Hutchinson, Smith, Sandman, Wiggins, Dennis, Mayne, Lott, Moorhead, Maraziti and Latta, Preliminary Statement
+
+Our gratitude for his having by his resignation spared the Nation additional agony should not obscure for history our judgment that Richard Nixon, as President, committed certain acts for which he should have been impeached and removed from office. Likewise, having effectively admitted guilt of one impeach¬ able offense — obstruction of justice in connection with the Watergate investigation — Richard Nixon is not consequent¬ ly to be presumed guilty of all other offenses with which he was charged by the majority of the Committee that approved recommending to the full House three Articles of Impeachment against him. Indeed, it remains our view that, for the most part, he was not guilty of those of¬ fenses and that history should so record.

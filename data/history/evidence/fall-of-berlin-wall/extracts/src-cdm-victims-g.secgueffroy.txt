@@ -1,0 +1,8 @@
+source: src-cdm-victims-g
+locator: secgueffroy
+url: https://www.chronik-der-mauer.de/en/victims/?letter=G
+read: 2026-10-09
+note: the row of the victims list (letter G)
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Chris Gueffroy Chris Gueffroy born on June 21, 1968 shot dead on February 5, 1989 on the Britzer Zweigkanal, near the garden settlement "Harmonie" and "Sorgenfrei" on the sector border between Berlin-Treptow and Berlin-Neukölln

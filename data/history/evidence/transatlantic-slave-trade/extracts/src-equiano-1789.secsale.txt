@@ -1,0 +1,7 @@
+source: src-equiano-1789
+locator: secsale
+url: https://www.gutenberg.org/cache/epub/15399/pg15399.txt
+read: 2026-10-09
+note: chapter II; the sale at Barbados; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+We were not many days in the merchant's custody before we were sold after their usual manner, which is this:--On a signal given,(as the beat of a drum) the buyers rush at once into the yard where the slaves are confined, and make choice of that parcel they like best. The noise and clamour with which this is attended, and the eagerness visible in the countenances of the buyers, serve not a little to increase the apprehensions of the terrified Africans, who may well be supposed to consider them as the ministers of that destruction to which they think themselves devoted. In this manner, without scruple, are relations and friends separated, most of them never to see each other again. I remember in the vessel in which I was brought over, in the men's apartment, there were several brothers, who, in the sale, were sold in different lots; and it was very moving on this occasion to see and hear their cries at parting.
