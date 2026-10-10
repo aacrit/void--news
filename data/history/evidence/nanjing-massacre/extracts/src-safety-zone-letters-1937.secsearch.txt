@@ -1,0 +1,8 @@
+source: src-safety-zone-letters-1937
+locator: secsearch
+url: https://www.legal-tools.org/doc/a4c38a/pdf/
+read: 2026-10-09
+note: the text is the scan's own OCR layer as the Legal Tools Database serves it, whitespace collapsed; the transcript's printed line numbers (1 to 25) and the OCR's glyph errors sit inside the text and are kept as the layer gives them
+note: transcript page 4,521, a letter of the International Committee to the Japanese Embassy signed by John H. D. Rabe as Chairman (its date is not in the passage read), read by Mr Sutton; the OCR prints 'a' as 'e.' in many words and that is kept
+
+Since we, knm~.1 there are no groups of disarmed soldiers in the Zone and there has been no sniping in the Zone act any time, and since, . furthermore, search of' both Refugee Camps r.nd private houses' has been cD.rried out me.ny times and each time means robbery and rape.;

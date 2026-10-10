@@ -1,0 +1,8 @@
+source: src-berkman-1922
+locator: secres5
+url: https://archive.org/download/TheKronstandtRebellion/kronstadt_rebellion_Berkman_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+note: the clause runs on 'connection with the labor and peasant movements', which the layer reads 'connection v/ith ...'; the extract stops before it
+
+(5) To liberate all political prisoners of Socialist parties, as well as all workers, peasants, soldiers, and sailors imprisoned in

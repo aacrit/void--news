@@ -1,0 +1,8 @@
+source: src-cad-19491125
+locator: secinequality
+url: https://www.constitutionofindia.net/debates/25-nov-1949/
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+note: Dr. B. R. Ambedkar
+
+We must begin by acknowledging the fact that there is complete absence of two things in Indian Society. One of these is equality. On the social plane, we have in India a society based on the principle of graded inequality

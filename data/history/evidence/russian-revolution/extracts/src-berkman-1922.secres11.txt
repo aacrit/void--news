@@ -1,0 +1,7 @@
+source: src-berkman-1922
+locator: secres11
+url: https://archive.org/download/TheKronstandtRebellion/kronstadt_rebellion_Berkman_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+
+(11) To give the peasants full freedom of action in regard to their land, and also the right to keep cattle, on condition that the peasants manage v/ith their own means; that is, without employing hired labor;

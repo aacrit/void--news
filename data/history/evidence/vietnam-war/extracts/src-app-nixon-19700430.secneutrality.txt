@@ -1,0 +1,7 @@
+source: src-app-nixon-19700430
+locator: secneutrality
+url: https://www.presidency.ucsb.edu/documents/address-the-nation-the-situation-southeast-asia-1
+read: 2026-10-09
+note: The American Presidency Project's text, from the Public Papers of the Presidents
+
+Cambodia, a small country of 7 million people, has been a neutral nation since the Geneva agreement of 1954--an agreement, incidentally, which was signed by the Government of North Vietnam. American policy since then has been to scrupulously respect the neutrality of the Cambodian people. We have maintained a skeleton diplomatic mission of fewer than 15 in Cambodia's capital, and that only since last August. For the previous 4 years, from 1965 to 1969, we did not have any diplomatic mission whatever in Cambodia. And for the past 5 years, we have provided no military assistance whatever and no economic assistance to Cambodia. North Vietnam, however, has not respected that neutrality. For the past 5 years--as indicated on this map that you see here--North Vietnam has occupied military sanctuaries all along the Cambodian frontier with South Vietnam.

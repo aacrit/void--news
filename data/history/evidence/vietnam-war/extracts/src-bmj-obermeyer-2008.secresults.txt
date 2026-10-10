@@ -1,0 +1,7 @@
+source: src-bmj-obermeyer-2008
+locator: secresults
+url: https://www.bmj.com/content/336/7659/1482
+read: 2026-10-09
+note: the BMJ's web text of the abstract
+
+Results From 1955 to 2002, data from the surveys indicated an estimated 5.4 million violent war deaths (95% confidence interval 3.0 to 8.7 million) in 13 countries, ranging from 7000 in the Democratic Republic of Congo to 3.8 million in Vietnam.

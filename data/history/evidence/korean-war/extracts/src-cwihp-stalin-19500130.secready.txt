@@ -1,0 +1,8 @@
+source: src-cwihp-stalin-19500130
+locator: secready
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_5.pdf
+read: 2026-10-09
+note: CWIHP Bulletin 5, Document VII, translated by Kathryn Weathersby
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+1. I received your report. I understand the dissatisfaction of Comrade Kim Il Sung, but he must understand that such a large matter in regard to South Korea such as he wants to undertake needs large preparation. The matter must be organized so that there would not be too great a risk. If he wants to discuss this matter with me, then I will always be ready to receive him and discuss with him. Transmit all this to Kim Il Sung and tell him that I am ready to help him in this matter.

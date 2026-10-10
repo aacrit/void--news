@@ -1,0 +1,8 @@
+source: src-truman-19500629
+locator: secnotwar
+url: https://www.trumanlibrary.gov/library/public-papers/179/presidents-news-conference-0
+read: 2026-10-09
+note: the same conference, question 5
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Q. Mr. President, everybody is asking in this country, are we or are we not at war? THE PRESIDENT. We are not at war. Q. Mr. President, another question that is being asked is, are we going to use ground troops in Korea? THE PRESIDENT. No comment on that. Q. Mr. President, in that connection it has been asked whether there might be any possibility of having to use the atomic bomb? THE PRESIDENT. No comment.

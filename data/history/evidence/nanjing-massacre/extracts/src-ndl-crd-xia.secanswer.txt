@@ -1,0 +1,8 @@
+source: src-ndl-crd-xia
+locator: secanswer
+url: https://crd.ndl.go.jp/reference/entry/index.php?id=1000089680&page=ref_view
+read: 2026-10-09
+note: the text is the page's own text in Japanese, whitespace collapsed; a Void translation is beside it (.en.txt)
+note: the library's answer, in part
+
+当館契約データベースにて検索しましたが、該当の判例を発見できませんでした。 ＊調査ずみ資料 ■「判例体系」 キーワード：「三代川三千代」、「平成18年（ワ）第9972号」、「南京虐殺」、「夏淑琴」、「東中野修道」等による検索 なお、新聞記事の検索をしましたところ ■「Ｇ－サーチ」 キーワード：「南京虐殺」「裁判判決」 しんぶん赤旗 2007.11.3 14頁（全982字）「南京大虐殺生存者が勝訴」という新聞記事がありました。 ２ 関連資料 判決の出た2007年以降に出版された「南京大虐殺」関連書籍について調査したところ、下記資料に判決の抜粋が掲載されておりましたので、ご案内します。 ■『南京大虐殺と｢百人斬り競争｣の全貌』（2009 金曜日 資料コード8133790901 1階210.7コ） p179「＜資料＞夏淑琴名誉毀損訴訟・東京地裁判決 抜粋／2007年11月2日 三代川三千代裁判長」

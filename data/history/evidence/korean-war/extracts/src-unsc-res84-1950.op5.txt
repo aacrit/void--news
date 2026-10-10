@@ -1,0 +1,10 @@
+source: src-unsc-res84-1950
+locator: op5
+url: https://documents.un.org/doc/resolution/gen/nr0/064/97/pdf/nr006497.pdf
+read: 2026-10-09
+note: the UN scan prints English and French in two columns; the English column was taken from the PDF by word position (x0 in the left half of the page), then sliced
+note: operative paragraph 5
+note: the copy is a scan with an OCR text layer; its misreadings are kept as read, not corrected
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+5. Authorizes the unified command at its discretion to use the United Nations flag in the course of operations against North Korean forces concurrently with the flags of the various nations participating;

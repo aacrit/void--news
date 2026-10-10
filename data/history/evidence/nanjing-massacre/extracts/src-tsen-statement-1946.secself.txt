@@ -1,0 +1,8 @@
+source: src-tsen-statement-1946
+locator: secself
+url: https://www.legal-tools.org/doc/a4c38a/pdf/
+read: 2026-10-09
+note: the text is the scan's own OCR layer as the Legal Tools Database serves it, whitespace collapsed; the transcript's printed line numbers (1 to 25) and the OCR's glyph errors sit inside the text and are kept as the layer gives them
+note: transcript page 4,464, exhibit 308
+
+That I am seventy-one 5 years of age and am Director of Dormitories of 6 Ging1ing College. ! have been associated with the 7 college for twent~-two consecutive years.

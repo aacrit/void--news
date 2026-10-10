@@ -1,0 +1,7 @@
+source: src-lenin-19171024
+locator: secnight
+url: https://www.marxists.org/archive/lenin/works/1917/oct/24.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+We must at all costs, this very evening, this very night, arrest the government, having first disarmed the officer cadets (defeating them, if they resist), and so on. We must not wait! We may lose everything!

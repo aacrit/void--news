@@ -1,0 +1,8 @@
+source: src-yonhap-20260927
+locator: seclast
+url: https://www.koreatimes.co.kr/southkorea/society/20260927/number-of-s-koreans-with-family-in-n-korea-down-to-less-than-33000
+read: 2026-10-09
+note: the same report
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+The last time South Korea hosted reunions for separated families was in August 2018.

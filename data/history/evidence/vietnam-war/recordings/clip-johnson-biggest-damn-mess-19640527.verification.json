@@ -1,0 +1,56 @@
+{
+ "clip_id": "clip-johnson-biggest-damn-mess-19640527",
+ "slug": "vietnam-war",
+ "tool": "faster-whisper",
+ "tool_version": "1.2.1",
+ "model": "base.en",
+ "compute_type": "int8",
+ "beam_size": 5,
+ "source": {
+  "file": "https://lbj-prod-staticfiles-4pgcba8v8q69.s3.amazonaws.com/artifacts/audio/2018-08/clip_lbj_wh6405_10_3522_Bundy.wav",
+  "md5": "79cf8308b368ff7962d701599a80c7c1",
+  "md5_expected": "79cf8308b368ff7962d701599a80c7c1",
+  "rate": 44100
+ },
+ "window": {
+  "in": 26.8,
+  "out": 32.48,
+  "seconds": 5.68
+ },
+ "excerpt_sha256": "cca0364fa87a46bc3653f82cfdfe04547d5062a37f7c98e18fcfaf6df0c34947",
+ "excerpt_pcm": "s16le mono at the source rate, ffmpeg atrim, -bitexact",
+ "reference": "I don’t think it’s worth fighting for and I don’t think we can get out. And it’s just the biggest damn mess that I ever saw.",
+ "hypothesis": "I don't think it's worth fighting for and I don't think we can get out and it's just the biggest damn mess it is.",
+ "wer": 0.1333,
+ "coverage": 0.8667,
+ "counts": {
+  "ref_words": 30,
+  "hyp_words": 28,
+  "substitutions": 2,
+  "deletions": 2,
+  "insertions": 0,
+  "first_matched_ref": 0,
+  "last_matched_ref": 25,
+  "lead_insertions": 0,
+  "trail_insertions": 0
+ },
+ "diff": [
+  "i don t think it s worth fighting for and i don t think we can get out and it s just the biggest damn mess",
+  "[-that]",
+  "[-i]",
+  "[ever -> it]",
+  "[saw -> is]"
+ ],
+ "thresholds": {
+  "coverage_min": 0.7,
+  "edge_slack_words": 1,
+  "edge_insert_max": 2
+ },
+ "pass": false,
+ "why": [
+  "the window does not close on the transcript's last words"
+ ],
+ "verified_at": "2026-10-10T06:15:47Z",
+ "signed": false,
+ "note": "a pass verifies the words in this window against the stored transcript. It does not verify the occasion, the date or the rights, and it signs nothing."
+}

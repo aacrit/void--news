@@ -1,0 +1,8 @@
+source: src-nicholas-diary-ru
+locator: sec19170302
+url: https://www.prlib.ru/news/1292269
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+note: the entry for 2 March 1917 as the Presidential Library's article quotes it, with a cut it marks '<…>'; the article's own words introduce it: 'В дневнике, который Николай вёл всю свою жизнь, он написал 2 марта 1917 года'
+
+«Суть та, что во имя спасения России и удержания армии на фронте и спокойствия нужно сделать этот шаг. Я согласился. <…> В час ночи уехал из Пскова с тяжёлым чувством пережитого. Кругом измена и трусость, и обман».

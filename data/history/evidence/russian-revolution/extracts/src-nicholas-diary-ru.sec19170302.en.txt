@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-nicholas-diary-ru.sec19170302
+names: России=Russia; Пскова=Pskov
+
+"The gist is that, in the name of saving Russia and of keeping the army at the front and calm, this step must be taken. I agreed. <...> At one o'clock at night I left Pskov with a heavy feeling of what I had lived through. All around, treason and cowardice, and deceit."

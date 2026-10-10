@@ -1,0 +1,8 @@
+source: src-cwmg-17-congress-punjab-report
+locator: sectotal
+url: https://archive.org/download/HindSwaraj-CWMG-017/CWMG-v017-XVII-MC-BETA_djvu.txt
+read: 2026-10-09
+note: the text is the archive.org full-text (djvu.txt) layer of the electronic edition of the Collected Works (Publications Division), whitespace collapsed; line-end hyphens and glyph errors kept as the layer gives them
+note: the report's total for the whole period of martial law in the Punjab, not for Jallianwala Bagh alone
+
+If our figures are correct, and we hold them to be so, nearly 1,200 lives were lost, at least 3,600 men wounded, and some permanently disabled.

@@ -1,0 +1,57 @@
+{
+ "clip_id": "clip-johnson-kitchen-19640527",
+ "slug": "vietnam-war",
+ "tool": "faster-whisper",
+ "tool_version": "1.2.1",
+ "model": "base.en",
+ "compute_type": "int8",
+ "beam_size": 5,
+ "source": {
+  "file": "https://lbj-prod-staticfiles-4pgcba8v8q69.s3.amazonaws.com/artifacts/audio/2018-08/clip_lbj_wh6405_10_3522_Bundy.wav",
+  "md5": "79cf8308b368ff7962d701599a80c7c1",
+  "md5_expected": "79cf8308b368ff7962d701599a80c7c1",
+  "rate": 44100
+ },
+ "window": {
+  "in": 64.4,
+  "out": 69.7,
+  "seconds": 5.3
+ },
+ "excerpt_sha256": "d81e799d385f1e92b88604a6497cd0fb46905aeee5b9cfd23279fcff1f228a51",
+ "excerpt_pcm": "s16le mono at the source rate, ffmpeg atrim, -bitexact",
+ "reference": "Of course, if you start running from the Communists, they may just chase you right into your own kitchen.",
+ "hypothesis": "Now, of course, you start running the Communists. They may just chase you right in your own kitchen.",
+ "wer": 0.2105,
+ "coverage": 0.8421,
+ "counts": {
+  "ref_words": 19,
+  "hyp_words": 18,
+  "substitutions": 1,
+  "deletions": 2,
+  "insertions": 1,
+  "first_matched_ref": 0,
+  "last_matched_ref": 18,
+  "lead_insertions": 1,
+  "trail_insertions": 0
+ },
+ "diff": [
+  "[+now]",
+  "of course",
+  "[-if]",
+  "you start running",
+  "[-from]",
+  "the communists they may just chase you right",
+  "[into -> in]",
+  "your own kitchen"
+ ],
+ "thresholds": {
+  "coverage_min": 0.7,
+  "edge_slack_words": 1,
+  "edge_insert_max": 2
+ },
+ "pass": true,
+ "why": [],
+ "verified_at": "2026-10-10T06:16:17Z",
+ "signed": false,
+ "note": "a pass verifies the words in this window against the stored transcript. It does not verify the occasion, the date or the rights, and it signs nothing."
+}

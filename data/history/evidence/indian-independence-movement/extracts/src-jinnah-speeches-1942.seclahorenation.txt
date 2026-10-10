@@ -1,0 +1,8 @@
+source: src-jinnah-speeches-1942
+locator: seclahorenation
+url: https://archive.org/download/in.ernet.dli.2015.189842/2015.189842.Some-Recent-Speeches-And-Writings-Of-Mr-Jinnah_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+note: presidential address, Lahore session, March 1940
+
+The Musalmans are not a minority. The Musalmans are a nation by any definition.

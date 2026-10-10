@@ -1,0 +1,7 @@
+source: src-peers-1970
+locator: sec128
+url: https://tile.loc.gov/storage-services/service/ll/llmlp/RDAR-Vol-I/RDAR-Vol-I.pdf
+read: 2026-10-09
+note: the Library of Congress scan of Volume I of the Peers report, its text layer, line breaks folded to spaces; the text layer prints many words letter by letter ('k i l l e d') and some OCR misreadings ('America1' for 'Americal', 'l l t h' for '11th'); all are kept as printed
+
+By t h e evening of 16 March 1968, TF Barker had re- ported a t o t a l of 128 VC k i l l e d , 3 weapons captured, assorted mines, boobytraps and equipment captured and destroyed, and f r i e n d l y c a s u a l t i e s of 2 k i l l e d and- 11 wounded from t h e f i r s t day's action i n t h e Son My operation. With t h e possible ex- ception of one man, s l i g h t l y wounded, from A Company, none of t h e TF Barker c a s u a l t i e s was i n f l i c t e d by d i r e c t enemy f i r e

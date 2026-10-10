@@ -1,0 +1,8 @@
+source: src-cad-19491125
+locator: secgood
+url: https://www.constitutionofindia.net/debates/25-nov-1949/
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+note: Dr. B. R. Ambedkar, Chairman of the Drafting Committee; the page labels the paragraph 11.165.326
+
+Because I feel, however good a Constitution may be, it is sure to turn out bad because those who are called to work it, happen to be a bad lot. However bad a Constitution may be, it may turn out to be good if those who are called to work it, happen to be a good lot.

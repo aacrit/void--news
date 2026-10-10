@@ -1,0 +1,7 @@
+source: src-reed-1919
+locator: sectrotsky
+url: https://www.gutenberg.org/cache/epub/3076/pg3076-images.html
+read: 2026-10-09
+note: Project Gutenberg's HTML of eBook #3076, tags removed; whitespace collapsed, nothing else changed
+
+Kameniev jangled the bell, shouting, “Keep your seats and we’ll go on with our business!” And Trotzky, standing up with a pale, cruel face, letting out his rich voice in cool contempt, “All these so-called Socialist compromisers, these frightened Mensheviki, Socialist Revolutionaries, Bund —let them go! They are just so much refuse which will be swept into the garbage-heap of history!”
