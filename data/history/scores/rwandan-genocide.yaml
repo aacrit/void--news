@@ -1,0 +1,331 @@
+# The documentary score for "The Rwandan Genocide", as note data on one sampled
+# real instrument. Rendered by pipeline/history/score.py; the samples live in
+# ~/.cache/void-score-samples (never in the repository) and are pinned by sha256.
+#
+# The music claims nothing about the event. Nothing in it is a music of Rwanda
+# or of anywhere in Africa: no drum of any kind, no plucked string, no inanga,
+# no pentatonic turn, no ostinato, no pulse. Nothing in it is a music of the
+# church (no bell, no chime, no organ, no choir), because the churches are in
+# the script. No brass, nothing that swells to a blow, nothing that rises in
+# alarm. The moment itself is dry (mood.py), and what follows it is one stroke
+# of a bow drawn out of silence and let go. Testimony is dry, and the silence
+# around a survivor's words is the loudest thing in the episode; this score is
+# built to leave it alone.
+#
+# The palette is ONE instrument, which no earlier score uses, presented as
+# what it is: a bowed psaltery, a small triangular zither of steel strings
+# played with a short bow, one string a note. It is heard two ways. A LONG
+# STROKE of the bow: the note rises for a second and a half to two seconds
+# and dies over the next three or four, a glassy, bright, near-sine tone with
+# the grain of the bow in it. A SHORT STROKE: the bow touches and leaves, and
+# the string rings for two to four seconds. Every note here is one recorded
+# stroke played once and cut at its length. No stroke is looped; no note is
+# held longer than the recording holds it. The instrument lives in one
+# register, B4 to D sharp 6, and the score stays there. The eleven earlier
+# scores each have a low voice; this one deliberately has none. Under the
+# narration it is a thread, not a floor, and the floor is silence.
+#
+# The theme is built from the house cell (tonic, fifth, tonic, third: the shape
+# of the On Air motif), in G sharp minor, the one key none of the eleven uses,
+# at 46 beats a minute: one beat is 1.304 s. The cell is said twice. First in
+# short strokes, dry, one a beat (beats 1 to 4), each left to ring. A beat and
+# a half of only the ring. Then in long strokes, slowly, from beat 7, the same
+# four notes, each one bow, with the low B (the third, an octave down) drawn
+# under them at beats 5.5 and 14. Then, alone, one short stroke on G sharp at
+# beat 18, and the title is spoken into its ring. The outro says the cell once
+# more in short strokes over a long G sharp and a long B, and ends in silence.
+# Dread is long strokes overlapping so one is always sounding, with two short
+# strokes off the seam; procedure is short strokes alone and dry, one every
+# two beats, the cell on G sharp, then on D sharp, then on G sharp closing on
+# the second; reckoning is four long strokes with silence between them, under
+# the deepest duck; grief is long strokes alone, faint, the one fall from the
+# high third to the tonic, and then the low B.
+#
+# Cues are keyed to the producer's moods and segment kinds, never to a line of
+# text, so the cinematic variant renders from this manifest whatever moods it
+# picks. Where each cue plays is the producer's (mood_plan): the theme under
+# the TITLE, the first word 1.2 s before its end; beds under the spoken body by
+# mood, ducked to the mood's floor; transitions in the clear before a scene;
+# the rupture entry on the last word of the moment, or 1,200 ms after a clip's
+# trailing silence, never under it; the outro at the close, with the house
+# promo riding its held bars, so it is at most 13.75 s and silent at its end.
+slug: rwandan-genocide
+title: The Rwandan Genocide
+version: 1
+key: G#
+mode: minor, natural; the sixth is never sounded, the seventh (F sharp) is left unraised and heard once, in the procedure bed, and the second (A sharp) closes the procedure bed's third statement
+tempo_bpm: 46
+house_cell: [0, 7, 0, 3]
+textures: []
+
+instruments:
+  # The renderer's `kind: pluck` is its word for a recording played once from
+  # its onset and never looped: a note with no length is the whole stroke, a
+  # note with a length is cut there and released. That is what a bow stroke
+  # is, so both articulations use it.
+  bow:
+    library: Versilian Community Sample Library (VCSL, Versilian Studios), Psaltery, Bowed and Plucked, the "LongBow" set (the "_Main" microphone, one long stroke of the bow per string, every whole tone). The files are named an octave below what they sound (the file "G#4" measures 831.9 Hz, G#5, within 3 cents, by harmonic product spectrum; "F#4" measures 740.4 Hz, F#5, within 1 cent; "A#3" measures 466.8 Hz, Bb4, within 2 cents; "D4" measures 588.0 Hz, D5, within 2 cents; "A#4" measures 933.1 Hz, Bb5, within 1 cent; "D5" measures 1175.3 Hz, D6, within 1 cent); `note` is the sounding pitch. G sharp and F sharp are recordings of those notes, unshifted; B4, D sharp 5, B5 and D sharp 6 are each one semitone over the recorded B flat 4, D5, B flat 5 and D6. Nothing is shifted more than one semitone. Each recording is one stroke, 5.7 to 7.7 s to silence, that rises over 1.5 to 2 s to its fullest (the G sharp peaks at 2 to 2.5 s) and falls 10 dB in the next half second and 25 to 30 dB within two seconds of its peak; what follows is the bow leaving the string, so every cue cuts a stroke before that, a G sharp at 3.5 beats (4.6 s), a B4 or D sharp 5 at 4 beats (5.2 s), a B5 at 2.6 beats (3.4 s), a D sharp 6 at 2 beats (2.6 s), each then released over 0.8 s. No stroke is looped and no note outlasts its recording
+    role_as_presented: a bowed psaltery, long strokes of the bow
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme calls it public domain, no royalties, no credit, no special terms)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VCSL/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios, Versilian Community Sample Library
+    kind: pluck
+    attack_s: 0.0
+    release_s: 0.8
+    gain_db: 0.0
+    samples:
+      - {file: "vcsl/Chordophones/Zithers/Psaltery, Bowed and Plucked/LongBow/BowedPsaltery_A#3_Main_LongBow_rr2.wav", note: Bb4, sha256: e3538b10f32200b70e4fdeb60eea57d395109b5a080181c2cb7cfde6c0b772bb, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Psaltery%2C%20Bowed%20and%20Plucked/LongBow/BowedPsaltery_A%233_Main_LongBow_rr2.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Psaltery, Bowed and Plucked/LongBow/BowedPsaltery_D4_Main_LongBow_rr1.wav", note: D5, sha256: 4c64bc3bddc10651c780eddc0e8438d76c4e93128158ed345daeacb7702244b4, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Psaltery%2C%20Bowed%20and%20Plucked/LongBow/BowedPsaltery_D4_Main_LongBow_rr1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Psaltery, Bowed and Plucked/LongBow/BowedPsaltery_F#4_Main_LongBow_rr1.wav", note: F#5, sha256: 267f96c92e22650c10823d2f7ed7566271a49d42e8cab0fcf8c959056e2f50cb, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Psaltery%2C%20Bowed%20and%20Plucked/LongBow/BowedPsaltery_F%234_Main_LongBow_rr1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Psaltery, Bowed and Plucked/LongBow/BowedPsaltery_G#4_Main_LongBow_rr1.wav", note: G#5, sha256: e4c218392289a921bc3400790bdf9609f68b21d0f0d407e5230b38f190c1a91f, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Psaltery%2C%20Bowed%20and%20Plucked/LongBow/BowedPsaltery_G%234_Main_LongBow_rr1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Psaltery, Bowed and Plucked/LongBow/BowedPsaltery_A#4_Main_LongBow_rr2.wav", note: Bb5, sha256: 7ff17a523bb91a683f7247848e15b8ca98e8fa958e75c9f5977b5c53e9425fcb, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Psaltery%2C%20Bowed%20and%20Plucked/LongBow/BowedPsaltery_A%234_Main_LongBow_rr2.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Psaltery, Bowed and Plucked/LongBow/BowedPsaltery_D5_Main_LongBow_rr2.wav", note: D6, sha256: 3eeb910716fdfe81cc6b44d2ebbe77dd4bc33ff16397b7b51058d3f811f84d65, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Psaltery%2C%20Bowed%20and%20Plucked/LongBow/BowedPsaltery_D5_Main_LongBow_rr2.wav"}
+
+  short:
+    library: Versilian Community Sample Library (VCSL, Versilian Studios), Psaltery, Bowed and Plucked, the "Spiccato" set (the "_Main" microphone, one short stroke of the bow per string, the string left to ring). The files are named an octave below what they sound (the file "G#4" measures 830.4 Hz, G#5, within 1 cent, by harmonic product spectrum; "F#4" measures 740.3 Hz, F#5, within 1 cent; "A#3" measures 464.5 Hz, Bb4, 6 cents under; "D4" measures 587.1 Hz, D5, within 1 cent; "A#4" measures 932.4 Hz, Bb5, within 1 cent; "D5" measures 1175.3 Hz, D6, within 1 cent); `note` is the sounding pitch. G sharp, F sharp and A sharp are recordings of those notes, unshifted; B4, D sharp 5, B5 and D sharp 6 are each one semitone over the recorded B flat 4, D5, B flat 5 and D6. Nothing is shifted more than one semitone. Each recording is the bow touching and leaving, then the string ringing 2.6 to 4.5 s to silence; in half-second frames a stroke falls 9 to 19 dB in its first half second and 30 dB or more within two seconds. The D6 recording carries the bow's return at 2.5 to 3.5 s, 20 dB under its onset, so every D sharp 6 is cut at 1.8 beats (2.3 s), before it. A note given no length rings out; a note given a length is cut there and released over 0.1 s
+    role_as_presented: a bowed psaltery, short strokes of the bow
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme calls it public domain, no royalties, no credit, no special terms)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VCSL/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios, Versilian Community Sample Library
+    kind: pluck
+    attack_s: 0.0
+    release_s: 0.1
+    gain_db: 0.0
+    samples:
+      - {file: "vcsl/Chordophones/Zithers/Psaltery, Bowed and Plucked/Spiccato/BowedPsaltery_A#3_Main_Spic_rr1.wav", note: Bb4, sha256: 752f1a690f15081ea44d0dfdc9b716b8016dd555495b76daaf4387160f66a9a2, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Psaltery%2C%20Bowed%20and%20Plucked/Spiccato/BowedPsaltery_A%233_Main_Spic_rr1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Psaltery, Bowed and Plucked/Spiccato/BowedPsaltery_D4_Main_Spic_rr1.wav", note: D5, sha256: 0e2e2d36dbff1f127fc34f8de4e7e976604a5286ba463fc29b6f9a13d67536bf, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Psaltery%2C%20Bowed%20and%20Plucked/Spiccato/BowedPsaltery_D4_Main_Spic_rr1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Psaltery, Bowed and Plucked/Spiccato/BowedPsaltery_F#4_Main_Spic_rr1.wav", note: F#5, sha256: 9bf0894ab20b9f052ffa40d030c8428cf75a2f832d70cda87ab3177d35f4d3eb, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Psaltery%2C%20Bowed%20and%20Plucked/Spiccato/BowedPsaltery_F%234_Main_Spic_rr1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Psaltery, Bowed and Plucked/Spiccato/BowedPsaltery_G#4_Main_Spic_rr3.wav", note: G#5, sha256: 3c459dfd6a050aaa77230345f49b991b2ee26bdf9cad63712689d1062b6000f5, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Psaltery%2C%20Bowed%20and%20Plucked/Spiccato/BowedPsaltery_G%234_Main_Spic_rr3.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Psaltery, Bowed and Plucked/Spiccato/BowedPsaltery_A#4_Main_Spic_rr1.wav", note: Bb5, sha256: 96adf499d7fda636c63ee6a3bedf76ec05b9ae40085922500aa5ada1728e34f1, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Psaltery%2C%20Bowed%20and%20Plucked/Spiccato/BowedPsaltery_A%234_Main_Spic_rr1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Psaltery, Bowed and Plucked/Spiccato/BowedPsaltery_D5_Main_Spic_rr1.wav", note: D6, sha256: bcacdb29ca3eee4e181a7d18ce0b98e61b5b53c1b2483d5c4af4d8eb449bc806, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Psaltery%2C%20Bowed%20and%20Plucked/Spiccato/BowedPsaltery_D5_Main_Spic_rr1.wav"}
+
+# Note rows are [instrument, note, start in beats, length in beats or null, velocity].
+# One beat is 1.304 s. A note with null is the whole recorded stroke; one with a
+# length is cut there and released (0.8 s for a long stroke, 0.1 s for a short).
+cues:
+  # Statement 1, under the TITLE. Short strokes say the cell on G sharp, one a
+  # beat from beat 1, each left to ring. Beats 5 to 5.5 carry only the ring.
+  # The low B is drawn under at beat 5.5, and from beat 7 the long strokes say
+  # the same four notes, one bow each, the third (B5) last and shortest, with
+  # the low B drawn again under it at beat 14. At beat 18 (23.5 s) one short
+  # stroke on G sharp, alone; the title's first word lands at 24.8 s, inside
+  # its ring.
+  theme:
+    claims: []
+    length_s: 26.0
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 1200
+    notes:
+      - [short, G#5, 1, null, 0.50]
+      - [short, D#6, 2, 1.8, 0.40]
+      - [short, G#5, 3, null, 0.46]
+      - [short, B5, 4, null, 0.44]
+      - [bow, B4, 5.5, 4.0, 0.26]
+      - [bow, G#5, 7, 3.5, 0.34]
+      - [bow, D#6, 9.5, 2.0, 0.24]
+      - [bow, G#5, 11, 3.5, 0.32]
+      - [bow, B5, 13.5, 2.6, 0.26]
+      - [bow, B4, 14, 4.0, 0.24]
+      - [short, G#5, 18, null, 0.46]
+
+  # Statement 3, at the close: a long G sharp and the low B drawn together,
+  # and the cell once more in short strokes over them, one a beat from beat 2;
+  # the last ring is gone by 10.5 s and the cue is faded to silence inside
+  # 13.0 s so the promo can ride it.
+  outro:
+    claims: []
+    length_s: 13.0
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 3000
+    tail_silence: true
+    notes:
+      - [bow, G#5, 0, 3.5, 0.34]
+      - [bow, B4, 0.5, 4.0, 0.26]
+      - [short, G#5, 2, null, 0.48]
+      - [short, D#6, 3, 1.8, 0.38]
+      - [short, G#5, 4, null, 0.44]
+      - [short, B5, 5, null, 0.42]
+
+  # On the last word of the moment, or after a recording's trailing silence:
+  # nothing struck. One long stroke on G sharp and the low B under it, drawn
+  # out of silence over 1.8 s, held 1.2 s and let go over 3 s, inside the 6 s
+  # mood_plan opens. No blow, no low note, no swell to one.
+  rupture_entry:
+    claims: []
+    length_s: 6.0
+    peak_dbfs: -16.0
+    room_wet: 1.4
+    swell: [1.8, 1.2, 3.0]
+    notes:
+      - [bow, G#5, 0, 3.5, 0.30]
+      - [bow, B4, 0.3, 3.2, 0.22]
+
+  # The change of voice (the cable, the order, the broadcast, the account read
+  # by the document voice): one short stroke on G sharp, cut.
+  sting:to_document:
+    claims: []
+    length_s: 0.9
+    peak_dbfs: -22.0
+    room_wet: 0.5
+    fade_out_ms: 150
+    notes:
+      - [short, G#5, 0, 0.3, 0.50]
+
+  # The music returning after a recording, once its trailing silence is over.
+  # Defined for the producer's grammar; it fires only if the cinematic variant
+  # admits a clip.
+  sting:from_clip:
+    claims: []
+    length_s: 2.4
+    peak_dbfs: -20.0
+    room_wet: 1.0
+    swell: [0.5, 0.9, 1.0]
+    notes:
+      - [bow, G#5, 0, 1.0, 0.36]
+      - [short, B5, 0.1, 1.2, 0.36]
+
+  # Dread (the lists, the radio, the roadblocks going up, the cables nobody
+  # acted on): long strokes on the low B and on G sharp, each one bow, laid so
+  # the next rises as the last dies and one is always sounding; the fifth
+  # (D sharp 5) twice. Two short strokes, G sharp and D sharp, off the seam.
+  # The first sound is at 0.65 s, not 0; the last stroke begins at 27.8 beats
+  # and its tail folds under the first.
+  bed:dread:
+    claims: []
+    length_s: 39.13
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 0.6
+    notes:
+      - [bow, B4, 0.5, 4.0, 0.26]
+      - [bow, G#5, 2.6, 3.5, 0.30]
+      - [bow, B4, 5.5, 4.0, 0.25]
+      - [bow, G#5, 8.0, 3.5, 0.30]
+      - [bow, D#5, 11.0, 4.0, 0.26]
+      - [bow, B4, 14.0, 4.0, 0.25]
+      - [bow, G#5, 16.4, 3.5, 0.30]
+      - [bow, B4, 19.6, 4.0, 0.25]
+      - [bow, G#5, 22.0, 3.5, 0.30]
+      - [bow, D#5, 25.0, 4.0, 0.26]
+      - [bow, B4, 27.8, 4.0, 0.25]
+      - [short, G#5, 10.2, null, 0.30]
+      - [short, D#5, 23.3, null, 0.28]
+
+  # Procedure (the accords, the mandate, the dates, the votes, the counts of
+  # troops): short strokes alone, dry, one every two beats, each left to ring
+  # before the next so nothing gathers. The cell on G sharp, then the cell on
+  # D sharp (D sharp, A sharp, D sharp, F sharp), then the cell on G sharp
+  # closing on the second instead of the third. The count starts on beat 1,
+  # not 0, so the loop's seam falls between strokes.
+  bed:procedure:
+    claims: []
+    length_s: 33.913
+    fold: true
+    rms_dbfs: -32.0
+    room_wet: 0.0
+    notes:
+      - [short, G#5, 1, null, 0.50]
+      - [short, D#6, 3, 1.8, 0.40]
+      - [short, G#5, 5, null, 0.46]
+      - [short, B5, 7, null, 0.42]
+      - [short, D#5, 9, null, 0.48]
+      - [short, A#5, 11, null, 0.40]
+      - [short, D#5, 13, null, 0.44]
+      - [short, F#5, 15, null, 0.42]
+      - [short, G#5, 17, null, 0.50]
+      - [short, D#6, 19, 1.8, 0.40]
+      - [short, G#5, 21, null, 0.46]
+      - [short, A#5, 23, null, 0.40]
+
+  # Reckoning (the numbers, the tribunals, what each report leaves out): four
+  # long strokes with silence between them, G sharp, the low B, G sharp, the
+  # fifth, under the deepest duck. No short stroke. The first bow is drawn at
+  # 0.9 s, not 0, and the last is gone by 35.5 s, so the seam falls in the
+  # silence.
+  bed:reckoning:
+    claims: []
+    length_s: 39.13
+    fold: true
+    rms_dbfs: -29.0
+    room_wet: 0.3
+    notes:
+      - [bow, G#5, 0.7, 3.5, 0.32]
+      - [bow, B4, 8.0, 4.0, 0.26]
+      - [bow, G#5, 15.3, 3.5, 0.32]
+      - [bow, D#5, 22.6, 4.0, 0.28]
+
+  # Grief (the churches, the river, the orphans, the close): long strokes
+  # alone, faint, with gaps, so the bed falls near-silent between bows; the
+  # one fall, from the high third (B5) to the tonic, once, and then the low B
+  # again. No short stroke. The first bow is drawn at 0.5 s, not 0, and the
+  # last is gone by 36.2 s, so the seam falls in a gap.
+  bed:grief:
+    claims: []
+    length_s: 39.13
+    fold: true
+    rms_dbfs: -36.0
+    room_wet: 1.0
+    notes:
+      - [bow, B4, 0.4, 4.0, 0.24]
+      - [bow, G#5, 3.6, 3.5, 0.26]
+      - [bow, B4, 9.2, 4.0, 0.24]
+      - [bow, B5, 12.6, 2.6, 0.22]
+      - [bow, G#5, 14.8, 3.5, 0.26]
+      - [bow, B4, 19.8, 4.0, 0.24]
+      - [bow, G#5, 23.6, 3.5, 0.26]
+
+  # Into a dread scene, in the clear: G sharp and the low B drawn together on
+  # a swell, both let go.
+  transition:dread:
+    claims: []
+    length_s: 3.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    swell: [0.4, 1.9, 1.5]
+    notes:
+      - [bow, G#5, 0, 1.4, 0.32]
+      - [bow, B4, 0, 1.3, 0.26]
+
+  # Into a procedure scene: three short strokes, dry, the cell's opening, left
+  # to ring.
+  transition:procedure:
+    claims: []
+    length_s: 4.3
+    peak_dbfs: -14.0
+    room_wet: 0.0
+    fade_out_ms: 900
+    notes:
+      - [short, G#5, 0, null, 0.50]
+      - [short, D#6, 1, 1.8, 0.42]
+      - [short, G#5, 2, null, 0.46]
+
+  # Into a grief scene: the fall, the high third onto the tonic, each one
+  # bow, the low B faint under both.
+  transition:grief:
+    claims: []
+    length_s: 4.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    fade_out_ms: 800
+    notes:
+      - [bow, B5, 0, 0.9, 0.24]
+      - [bow, G#5, 1.0, 1.5, 0.28]
+      - [bow, B4, 0, 1.6, 0.18]
+
+  # Into the numbers and the reports: one long G sharp, and one short stroke
+  # on the low B under it, left to ring.
+  transition:reckoning:
+    claims: []
+    length_s: 4.2
+    peak_dbfs: -14.0
+    room_wet: 0.3
+    fade_out_ms: 800
+    notes:
+      - [bow, G#5, 0, 1.6, 0.32]
+      - [short, B4, 0.6, null, 0.34]
