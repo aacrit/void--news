@@ -7,7 +7,7 @@ sidecar are copied under `frontend/public/audio/history/`, and one manifest,
 the History page knows which events have an audio edition without probing the
 CDN for 78 files that mostly do not exist yet.
 
-    python pipeline/history/publish_audio.py <slug> [slug ...] --from DIR
+    python pipeline/history/publish_audio.py <slug> [slug ...] --from DIR [--edition first-listener]
 
 Where the files live is a decision with a shelf life. `docs/HISTORY-AUDIO.md`
 picks Cloudflare R2 for the full 78-episode catalogue, because ~750 MB of MP3
@@ -40,6 +40,15 @@ MANIFEST = ROOT / "frontend" / "public" / "data" / "history-audio.json"
 # constraint, but a runaway render must fail here and not at deploy time.
 MAX_BYTES = 25 * 1024 * 1024
 
+# Which edition of an episode a manifest entry is. Absent means the original
+# recording. "first-listener" is a re-made episode: a script written to the
+# orientation standard (a listener who has never heard of the event) and
+# rendered with Orpheus. The pages print a quiet "New recording" beside it.
+# It is set by the person publishing, with --edition, because it is a claim
+# about the SCRIPT as much as the voice, and nothing in the render record can
+# vouch for that alone. tests/test_history_audio.py holds the value to this set.
+EDITIONS = frozenset({"first-listener"})
+
 
 def _duration_seconds(mp3: Path) -> float:
     out = subprocess.run(
@@ -61,7 +70,7 @@ def _load_manifest() -> dict:
 
 
 def build_entry(slug: str, src_dir: Path, existing: dict | None = None, *,
-                restitch: bool = False) -> dict:
+                restitch: bool = False, edition: str | None = None) -> dict:
     """The manifest entry for a rendered (or re-stitched) episode.
 
     The fingerprint hashes the WHOLE file. It used to hash the first 1 KB,
@@ -71,6 +80,8 @@ def build_entry(slug: str, src_dir: Path, existing: dict | None = None, *,
     is when the file last changed. The staleness test compares
     `script_sha256` (the rendered script's content) with today's script.
     """
+    if edition is not None and edition not in EDITIONS:
+        raise ValueError(f"{slug}: unknown edition {edition!r} (allowed: {sorted(EDITIONS)})")
     mp3 = src_dir / f"{slug}.mp3"
     sidecar = src_dir / f"{slug}.chapters.json"
     promo_file = src_dir / f"{slug}.promo.json"
@@ -137,6 +148,18 @@ def build_entry(slug: str, src_dir: Path, existing: dict | None = None, *,
     # job did, so a hash taken now could vouch for a script the audio never
     # spoke. A stitch does not re-render, so it keeps the render's hash and,
     # if the episode was withdrawn, keeps it withdrawn.
+    # The edition. A stitch re-publishes the same recording, so it keeps the
+    # edition it had. A fresh render carries only what the publisher names: a
+    # re-render without --edition is a different recording and does not
+    # inherit the mark of the one it replaces.
+    if restitch:
+        if existing.get("edition"):
+            entry["edition"] = existing["edition"]
+    elif edition:
+        entry["edition"] = edition
+    elif existing.get("edition"):
+        print(f"  [history] {slug}: was edition {existing['edition']!r}; this publish "
+              f"names none, so the mark is dropped (pass --edition to keep it)")
     script_file = src_dir / f"{slug}.script.json"
     if restitch:
         entry["script_sha256"] = existing.get("script_sha256")
@@ -174,8 +197,10 @@ def build_entry(slug: str, src_dir: Path, existing: dict | None = None, *,
     return entry
 
 
-def publish(slug: str, src_dir: Path, manifest: dict, *, restitch: bool = False) -> dict:
-    entry = build_entry(slug, src_dir, manifest["episodes"].get(slug), restitch=restitch)
+def publish(slug: str, src_dir: Path, manifest: dict, *, restitch: bool = False,
+            edition: str | None = None) -> dict:
+    entry = build_entry(slug, src_dir, manifest["episodes"].get(slug), restitch=restitch,
+                        edition=edition)
     AUDIO_DIR.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(src_dir / f"{slug}.mp3", AUDIO_DIR / f"{slug}.mp3")
     sidecar = src_dir / f"{slug}.chapters.json"
@@ -212,6 +237,9 @@ def main() -> int:
     ap.add_argument("--pending", type=int, metavar="N",
                     help="print, as JSON, the next N events with a script and no "
                          "published episode, then exit (0 = all)")
+    ap.add_argument("--edition", choices=sorted(EDITIONS),
+                    help="mark the published episode(s) as this edition; "
+                         "first-listener = re-made script and Orpheus render")
     a = ap.parse_args()
 
     if a.pending is not None:
@@ -222,7 +250,7 @@ def main() -> int:
 
     manifest = _load_manifest()
     for slug in a.slugs:
-        entry = publish(slug, Path(a.src), manifest)
+        entry = publish(slug, Path(a.src), manifest, edition=a.edition)
         print(f"  [history] {slug}: {entry['durationSeconds']/60:.1f} min, "
               f"{entry['bytes']//1024} KB, {len(entry['chapters'])} chapters")
 

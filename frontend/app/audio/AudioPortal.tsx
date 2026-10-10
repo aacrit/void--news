@@ -7,6 +7,7 @@ import OnAirPanel from "../components/OnAirPanel";
 import { episodeFromBrief, type HistoryAudioPayload, type ProgrammeKind } from "../lib/episode";
 import type { WeeklyDigestData } from "../lib/types";
 import AudioPlay from "./AudioPlay";
+import { NEW_RECORDING_LABEL } from "../history/edition";
 
 /* ---------------------------------------------------------------------------
    AudioPortal: /audio is the player (CEO 2026-10-03).
@@ -27,6 +28,8 @@ export interface PortalHistoryEpisode extends HistoryAudioPayload {
   slug: string;
   chapterCount: number;
   clock: string;
+  /** A first-listener edition (manifest `edition`). */
+  newRecording: boolean;
 }
 
 export interface PortalIssue {
@@ -186,6 +189,7 @@ export default function AudioPortal({ daily, issues, withdrawnLabel, history }: 
                 <Link href={`/history/${e.slug}`} className="audio-episode__title">{e.title}</Link>
                 <span className="audio-episode__meta">
                   {e.clock}{e.chapterCount ? ` · ${e.chapterCount} chapters` : ""}
+                  {e.newRecording ? ` · ${NEW_RECORDING_LABEL}` : ""}
                 </span>
               </div>
               <AudioPlay kind="history" label={`Play ${e.title}`} compact payload={e} />

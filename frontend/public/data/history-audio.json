@@ -567,6 +567,7 @@
    ],
    "renderedAt": "2026-10-10T00:37:01+00:00",
    "publishedAt": "2026-10-10T00:37:01+00:00",
+   "edition": "first-listener",
    "script_sha256": "3ecff157d34da70aa0e481b243dfe511de7d79b450d96dc7b03401aed291a6f8",
    "script_sha256_basis": "apollo-11-moon-landing.script.json written by history_producer.py at render",
    "promo": {
@@ -799,6 +800,7 @@
    ],
    "renderedAt": "2026-10-10T00:47:32+00:00",
    "publishedAt": "2026-10-10T00:47:32+00:00",
+   "edition": "first-listener",
    "script_sha256": "2ba6f58e8ce7c1c486eccfd23d00975d172dfc2765355097b02a7824090837b8",
    "script_sha256_basis": "armenian-genocide.script.json written by history_producer.py at render",
    "promo": {
@@ -1453,6 +1455,7 @@
    ],
    "renderedAt": "2026-10-10T00:17:28+00:00",
    "publishedAt": "2026-10-10T00:17:28+00:00",
+   "edition": "first-listener",
    "script_sha256": "d1802702b7c5f285bcedca876d0de1c6e1246d4ddfc0651331b45c9b39c96bd3",
    "script_sha256_basis": "cambodian-genocide.script.json written by history_producer.py at render",
    "promo": {
@@ -2439,6 +2442,7 @@
    ],
    "renderedAt": "2026-10-10T04:49:34+00:00",
    "publishedAt": "2026-10-10T04:49:34+00:00",
+   "edition": "first-listener",
    "script_sha256": "40658da31445c323dc054f1e295702c85aa6555d72da4725c82631201eec9b25",
    "script_sha256_basis": "cuban-missile-crisis.script.json written by history_producer.py at render",
    "promo": {
@@ -3750,6 +3754,7 @@
    ],
    "renderedAt": "2026-10-10T00:17:29+00:00",
    "publishedAt": "2026-10-10T00:17:29+00:00",
+   "edition": "first-listener",
    "script_sha256": "091b50e1d758be5480cf86652f747d5f0b89edcda0b7e5d8e12ea322af3aeddd",
    "script_sha256_basis": "haitian-revolution.script.json written by history_producer.py at render",
    "promo": {
@@ -3859,6 +3864,7 @@
    ],
    "renderedAt": "2026-10-10T04:49:35+00:00",
    "publishedAt": "2026-10-10T04:49:35+00:00",
+   "edition": "first-listener",
    "script_sha256": "4512152a94f2b6e38dc3324c8e897f2ef5302878e7c12f7b2a226db832a25f34",
    "script_sha256_basis": "hiroshima-nagasaki.script.json written by history_producer.py at render",
    "promo": {
@@ -5717,6 +5723,7 @@
    ],
    "renderedAt": "2026-10-10T00:17:29+00:00",
    "publishedAt": "2026-10-10T00:17:29+00:00",
+   "edition": "first-listener",
    "script_sha256": "d908be6d26fb4dba1cd9dbd687743bafa45fa500709e0f99403966a43d7f955a",
    "script_sha256_basis": "partition-of-india.script.json written by history_producer.py at render",
    "promo": {
@@ -6284,6 +6291,7 @@
    ],
    "renderedAt": "2026-10-10T00:17:28+00:00",
    "publishedAt": "2026-10-10T00:17:28+00:00",
+   "edition": "first-listener",
    "script_sha256": "e02305a7c9acd9128d128a848f2c8d23b8f60595c7b623b50355fbc0de7d4884",
    "script_sha256_basis": "scramble-for-africa.script.json written by history_producer.py at render",
    "promo": {
@@ -6938,6 +6946,7 @@
    ],
    "renderedAt": "2026-10-10T00:17:28+00:00",
    "publishedAt": "2026-10-10T00:17:28+00:00",
+   "edition": "first-listener",
    "script_sha256": "daf3c5a26849b951dece9799e31444d27c2820b076f84f3cf49ce00ec60e82e0",
    "script_sha256_basis": "spanish-flu-1918.script.json written by history_producer.py at render",
    "promo": {
@@ -7053,6 +7062,7 @@
    ],
    "renderedAt": "2026-10-10T00:17:28+00:00",
    "publishedAt": "2026-10-10T00:17:28+00:00",
+   "edition": "first-listener",
    "script_sha256": "f2dc01cae99c9730e43fd2fec0c58fb93e324131f31795f7d795ee250f858750",
    "script_sha256_basis": "srebrenica-genocide.script.json written by history_producer.py at render",
    "promo": {

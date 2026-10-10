@@ -120,6 +120,9 @@ export interface HistoricalEvent {
   audioDuration?: number | null;
   /** Chapter marks for the audio edition. Null on events with no episode. */
   audioChapters?: AudioChapter[] | null;
+  /** The episode is a first-listener edition (manifest `edition`): a re-made
+      script and a new render. Drawn as a quiet "New recording". */
+  audioNewRecording?: boolean;
 }
 
 export interface RedactedEvent {

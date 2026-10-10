@@ -34,6 +34,7 @@ export default function EventHero({ event }: { event: HistoricalEvent }) {
               durationSeconds={event.audioDuration ?? 0}
               chapters={event.audioChapters ?? null}
               accountCount={event.perspectives.length}
+              newRecording={!!event.audioNewRecording}
             />
           ) : (
             <p className="hist-hero-pending">

@@ -8,6 +8,7 @@ import { HOOKS, CTAS } from "../hooks";
 import { ARC_FEATURES } from "../arc-features";
 import { commonsSrcSet } from "../../lib/commonsImage";
 import { THREADS, buildThreadMembership } from "../threads";
+import { NEW_RECORDING_LABEL } from "../edition";
 /* CartographerStrip deferred — removed from timeline view, kept as component for future arc/map pages */
 
 /* ===========================================================================
@@ -1446,6 +1447,7 @@ function TimelineCard({
 
   const year = extractYear(event.dateSort, event.datePrimary);
 
+  const newRecording = !!(event.audioUrl && event.audioNewRecording);
   const severityClass = `hist-tl-card--${event.severity}`;
   const entranceClass = entranceReady && !reducedMotion ? " hist-tl-card--entrance" : "";
   const focusedClass = focused && !reducedMotion ? " hist-tl-card--focused" : "";
@@ -1463,7 +1465,7 @@ function TimelineCard({
       href={`/history/${event.slug}`}
       className={`hist-tl-card hist-tl-card--${side} ${severityClass}${entranceClass}${focusedClass}${isPulsed ? " hist-tl-card--conn-pulse" : ""}`}
       data-slug={event.slug}
-      aria-label={`${event.title}, ${event.datePrimary}`}
+      aria-label={`${event.title}, ${event.datePrimary}${newRecording ? `, ${NEW_RECORDING_LABEL.toLowerCase()}` : ""}`}
       style={{
         ...(reducedMotion ? {} : { "--card-index": index }),
         "--photo-sat": photoSat,
@@ -1481,6 +1483,11 @@ function TimelineCard({
       {/* Title */}
       <div className="hist-tl-card__body">
         <h3 className="hist-tl-card__title">{event.title}</h3>
+        {/* A first-listener edition, said in words under the title: the
+            card's own muted ink, data voice, no fill and no motion. */}
+        {newRecording && (
+          <span className="hist-tl-card__edition">{NEW_RECORDING_LABEL}</span>
+        )}
       </div>
 
       {/* Connection count badge — bottom-right, only when connections exist */}

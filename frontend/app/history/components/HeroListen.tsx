@@ -2,6 +2,7 @@
 
 import { useAudio } from "../../components/AudioProvider";
 import type { AudioChapter } from "../../lib/types";
+import { NEW_RECORDING_LABEL } from "../edition";
 
 /* ===========================================================================
    HeroListen — the hero's Listen button.
@@ -30,6 +31,8 @@ interface HeroListenProps {
   durationSeconds: number;
   chapters: AudioChapter[] | null;
   accountCount: number;
+  /** A first-listener edition: the meta line ends "New recording". */
+  newRecording?: boolean;
 }
 
 export default function HeroListen({
@@ -40,6 +43,7 @@ export default function HeroListen({
   durationSeconds,
   chapters,
   accountCount,
+  newRecording = false,
 }: HeroListenProps) {
   const { playHistory, nowPlaying, isPlaying } = useAudio();
   /* The control reads the shared player, so while this account is the audio
@@ -56,7 +60,7 @@ export default function HeroListen({
       aria-label={
         playingThis
           ? `Pause ${title}`
-          : `Listen to ${title}, ${accountCount} accounts`
+          : `Listen to ${title}, ${accountCount} accounts${newRecording ? `, ${NEW_RECORDING_LABEL.toLowerCase()}` : ""}`
       }
     >
       <svg
@@ -74,6 +78,7 @@ export default function HeroListen({
       <span className="hist-hero-listen__label">{playingThis ? "Pause" : "Listen"}</span>
       <span className="hist-hero-listen__meta">
         {accountCount} accounts · {formatClock(durationSeconds)}
+        {newRecording ? ` · ${NEW_RECORDING_LABEL}` : ""}
       </span>
     </button>
   );

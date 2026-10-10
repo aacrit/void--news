@@ -9,6 +9,7 @@ import { issueLabel } from "../weekly/format";
 import type { AudioChapter } from "../lib/types";
 import CopyButton from "../press/CopyButton";
 import AudioPortal from "./AudioPortal";
+import { isNewRecording } from "../history/edition";
 import "../styles/prose-page.css";
 import "./audio.css";
 
@@ -54,6 +55,7 @@ interface HistoryEpisode {
   durationSeconds: number;
   publishedAt?: string | null;
   chapters?: AudioChapter[] | null;
+  edition?: string;
   audio_withdrawn?: boolean;
 }
 
@@ -149,6 +151,7 @@ export default function AudioPage() {
       publishedAt: e.publishedAt ?? null,
       chapterCount: e.chapters?.length ?? 0,
       clock: clock(e.durationSeconds),
+      newRecording: isNewRecording(e.edition),
     }));
 
   return (
