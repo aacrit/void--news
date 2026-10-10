@@ -1,0 +1,11 @@
+source: src-berlin-act-1885
+locator: art13
+url: https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+
+Art. XIII. — The navigation of the Congo, without excepting any of its
+branches or outlets, is, and shall remain, free for the merchant ships
+of all nations equally, whether carrying cargo or ballast, for the transport of goods or passengers. It shall be regulated by the provisions
+of this Act of Navigation, and by the Rules to be made in pursuance
+thereof.

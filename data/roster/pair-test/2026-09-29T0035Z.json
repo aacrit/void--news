@@ -1,0 +1,113 @@
+{
+ "collected_at": "2026-09-29T00:35:01Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16166935/water-schools-forced-close-Thames-Water.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Thousands of homes are left without water and schools forced to close amid burst Thames Water pipe across Surrey and London",
+      "published": "Mon, 28 Sep 2026 20:52:16 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/thames-water-outage-london-surrey-37708932",
+      "title": "Thames Water: Thousands without water in 18 London and Surrey postcodes - list",
+      "published": "Mon, 28 Sep 2026 20:44:45 +0000"
+     }
+    },
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16167881/Huge-fire-industrial-estate.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Huge fire erupts on industrial estate with 'explosions heard' and trains cancelled",
+      "published": "Tue, 29 Sep 2026 01:31:41 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/thatcham-fire-colthrop-business-park-37712358",
+      "title": "Thatcham fire - live: Explosions as huge blaze erupts at industrial estate with trains cancelled",
+      "published": "Mon, 28 Sep 2026 22:53:14 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16167297/Police-officer-died-hit-train-gross-misconduct.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Police officer, 24, who died after being hit by train was being investigated for gross misconduct",
+      "published": "Mon, 28 Sep 2026 20:44:07 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/dorset-police-officer-alex-ayre-37712416",
+      "title": "Tributes to 'deeply loved' Dorset police officer, 24, who died after being hit by train",
+      "published": "Mon, 28 Sep 2026 23:32:11 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16167299/Rio-Ferdinand-Joleon-Lescott-Premier-League-medal.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Rio Ferdinand tells Joleon Lescott to hand over his Premier League medal as he doubles down on calling for Man City to be stripped of titles after guilty verdict",
+      "published": "Mon, 28 Sep 2026 20:44:48 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/man-city-115-charges-live-37706564",
+      "title": "Man City charges LIVE: Punishment latest as 115 charges verdict decided",
+      "published": "Mon, 28 Sep 2026 22:00:06 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 142,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 135,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/09/turkey-shelters-emirati-brotherhood-figures-accused-of-plotting-to-oust-uae-rulers/",
+      "title": "Turkey shelters Emirati Brotherhood figures accused of plotting to oust UAE rulers",
+      "published": "Sun, 20 Sep 2026 22:18:23 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 308,
+    "left": 10
+   }
+  }
+ }
+}

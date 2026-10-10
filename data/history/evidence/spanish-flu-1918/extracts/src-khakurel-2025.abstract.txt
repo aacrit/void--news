@@ -1,0 +1,6 @@
+source: src-khakurel-2025
+locator: abstract
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12205443/fullTextXML
+read: 2026-09-25
+
+Previous studies investigating the 1918–1920 influenza pandemic have provided a comprehensive overview of the spread of the pandemic and possible explanations for high mortality rates in Alaska, USA. Our understanding of the role of nonpharmaceutical interventions (NPIs) is limited, however. To gain an overview of various agencies’ efforts to protect communities during the pandemic, we conducted a mixed-method assessment of a large pool of digitized historical newspapers and archival materials covering Alaska’s local and territorial responses to the pandemic. The study encompassed 14 local units of Alaska that implemented NPIs during October 1918–January 1919. Analyses indicated that 8 local units avoided the outbreak by implementing NPIs and that the other 6 units controlled the spread of influenza by implementing NPIs after the virus was introduced. In addition, some Indigenous communities escaped the pandemic by implementing mandatory and voluntary restrictions. Information on the effects NPI of could guide future influenza pandemic preparedness and response.

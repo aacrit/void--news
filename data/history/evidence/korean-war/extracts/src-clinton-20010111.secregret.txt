@@ -1,0 +1,8 @@
+source: src-clinton-20010111
+locator: secregret
+url: https://www.presidency.ucsb.edu/documents/statement-the-korean-war-incident-no-gun-ri
+read: 2026-10-09
+note: the statement as the American Presidency Project prints it
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+On behalf of the United States of America, I deeply regret that Korean civilians lost their lives at No Gun Ri in late July 1950. The intensive, yearlong investigation into this incident has served as a painful reminder of the tragedies of war and the scars they leave behind on people and on nations. Although we have been unable to determine precisely the events that occurred at No Gun Ri, the U.S. and South Korean Governments have concluded in the Statement of Mutual Understanding that an unconfirmed number of innocent Korean refugees were killed or injured there.

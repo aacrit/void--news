@@ -1,0 +1,7 @@
+source: src-blom-2003
+locator: p1
+url: https://bmgn-lchr.nl/article/download/URN%3ANBN%3ANL%3AUI%3A10-1-106756/4311/4389
+read: 2026-09-24
+note: line-break hyphenation in the PDF text layer (Сре- бреници) rejoined; nothing else changed
+
+De verschillen in waardering, toonzetting en invalshoek tussen de recensieartikelen van J. W. L. Brouwer, J. W. Honig en P. Lagrou zijn opmerkelijk groot. Waar Brouwer 'de onvolkomenheden in de redactie het meest in het oog' vielen, ziet Lagrou in het Srebrenica-rapport 'een mijlpaal' in de geschiedschrijving van het recente verleden. Waar Honig opent met 'De hoofdbezwaren tegen het NIOD-rapport luiden kort en bondig : het werk is te lang en het kwam te laat'

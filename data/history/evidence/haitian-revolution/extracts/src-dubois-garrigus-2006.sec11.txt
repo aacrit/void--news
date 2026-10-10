@@ -1,0 +1,7 @@
+source: src-dubois-garrigus-2006
+locator: sec11
+url: https://today.duke.edu/showcase/haitideclaration/declarationstext.html
+read: 2026-09-25
+note: the paragraph beginning We have dared to be free
+
+We have dared to be free, let us be thus by ourselves and for ourselves. Let us imitate the grown child: his own weight breaks the boundary that has become an obstacle to him. What people fought for us? What people wanted to gather the fruits of our labor? And what dishonorable absurdity to conquer in order to be enslaved. Enslaved?... Let us leave this description for the French; they have conquered but are no longer free.

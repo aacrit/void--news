@@ -1,0 +1,6 @@
+source: src-honigsbaum-2013
+locator: para14
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3867839/fullTextXML
+read: 2026-09-25
+
+However, the first public indication that the Spanish flu had returned, and possibly in more dangerous form, came in September when it was reported that the Prime Minister Lloyd George had been taken ill in Manchester. Lloyd George had succumbed to the disease during a morale-boosting trip to Manchester on 12 September and spent ten days confined to a sick bed in the town hall, much of them hooked up to a ventilator to ease his laboured breathing. Judging by the recollections of the Secretary of State for War Sir Maurice Hankey, Lloyd George’s illness was very serious indeed and, according to his valet, at one point it had been ‘touch and go’.

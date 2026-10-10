@@ -1,0 +1,8 @@
+source: src-indus-waters-treaty-1960
+locator: art3
+url: https://treaties.un.org/doc/Publication/UNTS/Volume%20419/volume-419-I-6032-English.pdf
+read: 2026-09-25
+note: United Nations Treaty Series, vol. 419, No. 6032; the PDF's line breaks are joined and its line-break hyphens rejoined
+note: Article III, paragraph 1
+
+(1) Pakistan shall receive for unrestricted use all those waters of the Western Rivers which India is under obligation to let flow under the provisions of Paragraph (2).

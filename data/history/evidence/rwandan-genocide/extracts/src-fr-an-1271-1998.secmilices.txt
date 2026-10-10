@@ -1,0 +1,8 @@
+source: src-fr-an-1271-1998
+locator: secmilices
+url: https://www.assemblee-nationale.fr/11/dossiers/rwanda/r1271.asp
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: part 3, 'L’absence de liens avec les milices'
+
+Face à cette montée et à cette organisation de la violence et des massacres, la France n’a en aucune manière incité, encouragé, aidé ou soutenu ceux qui ont orchestré le génocide et l’ont déclenché dans les jours qui ont suivi l’attentat.

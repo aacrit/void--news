@@ -1,0 +1,7 @@
+source: src-nsa-ebb75
+locator: secintro
+url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB75/index2.htm
+read: 2026-10-04
+note: the briefing book's opening paragraph; the page's HTML read as text
+
+Washington, D.C., 31 October 2002-- Forty years ago today, the U.S. Navy forced to the surface a Soviet submarine, which unbeknownst to the Navy, was carrying a nuclear-tipped torpedo. This was the third surfacing of a Soviet submarine during the Cuban Missile Crisis. After a day of persistent tracking by the U.S. destroyer, the Charles P. Cecil, commanded by Captain Charles Rozier, Soviet submarine B-36, commanded by Captain Aleksei Dubivko, exhausted its batteries forcing it to come to the surface. On 27 and 30 October respectively, U.S. Navy anti-submarine warfare (ASW) forces surfaced Soviet submarines B-59 and B-130.

@@ -1,0 +1,7 @@
+source: src-crs-agent-orange-2020
+locator: secbienhoa
+url: https://www.congress.gov/crs_external_products/R/PDF/R44268/R44268.23.pdf
+read: 2026-10-09
+note: the Congressional Research Service PDF, its text layer, line breaks folded to spaces
+
+USAID and the Ministry of National Defence signed a five-year, $183 million nonrefundable aid agreement on May 11, 2018, for the decontamination of Bien Hoa airport.74 At the time of the signing of the agreement, the project was projected to take 10 years at an estimated cost of $390 million. Approximately 500,000 cubic meters of soil, or nearly 50 hectares (123 acres) of land, are to be decontaminated.

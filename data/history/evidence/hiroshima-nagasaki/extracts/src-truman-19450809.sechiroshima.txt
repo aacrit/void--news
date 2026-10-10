@@ -1,0 +1,9 @@
+source: src-truman-19450809
+locator: sechiroshima
+url: https://www.trumanlibrary.gov/library/public-papers/97/radio-report-american-people-potsdam-conference
+read: 2026-10-05
+note: two consecutive paragraphs; a blank line separates them here as the page separates them
+
+The British, Chinese, and United States Governments have given the Japanese people adequate warning of what is in store for them. We have laid down the general terms on which they can surrender. Our warning went unheeded; our terms were rejected. Since then the Japanese have seen what our atomic bomb can do. They can foresee what it will do in the future.
+
+The world will note that the first atomic bomb was dropped on Hiroshima, a military base. That was because we wished in this first attack to avoid, insofar as possible, the killing of civilians. But that attack is only a warning of things to come. If Japan does not surrender, bombs will have to be dropped on her war industries and, unfortunately, thousands of civilian lives will be lost. I urge Japanese civilians to leave industrial cities immediately, and save themselves from destruction.

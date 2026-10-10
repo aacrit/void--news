@@ -1,0 +1,7 @@
+source: src-gandhi-19470824
+locator: para6
+url: https://archive.org/details/Swaraj-Gandhi-1947-08-24
+read: 2026-09-25
+note: paragraph 6 of the Collected Works text (vol. 89, No. 103, p. 84, from Harijan, 7-9-1947) as the archive.org item's description reproduces it; a report of the speech in the third person, in English
+
+Lastly, he had heard that Khulna was to celebrate its entry into Pakis tan. He deplored such celebration after the Award. But he was consoled by Shaheed Saheb that the celebration would be joint and that the Hindus were associating with it. Nevertheless, he could not regard the example with happiness. The jubilant parties ought to restrain themselves, as the aggrieved ones should accept the Award with perfect resignation. It must be regarded as final except to the extent that the ministers of the two Dominions agreed to vary it for the mutual satisfaction of the parties concerned. There was no other worthy or gentlemanly way.

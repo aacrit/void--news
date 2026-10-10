@@ -1,0 +1,6 @@
+source: src-dicke-2015
+locator: para18b
+url: https://pmc.ncbi.nlm.nih.gov/articles/PMC7313928/
+read: 2026-09-25
+
+What is nearly certain is that this flu spread from there to Camp Funston (now part of Fort Riley), Kansas, where, in March and April, it left eleven hundred of the roughly twenty-six thousand troops training there hospitalized and thirty-eight dead.

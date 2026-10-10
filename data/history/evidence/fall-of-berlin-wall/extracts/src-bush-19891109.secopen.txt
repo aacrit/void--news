@@ -1,0 +1,8 @@
+source: src-bush-19891109
+locator: secopen
+url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/docs/Bush%20press%20conference%2011%209%2089.pdf
+read: 2026-10-09
+note: the Public Papers text as the National Security Archive reproduces it (NSAEBB 490, Document 10)
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+I welcome the decision by the East German leadership to open the borders to those wishing to emigrate or travel. And this, if it's implemented fully, certainly conforms with the Helsinki Final Act, which the GDR [German Democratic Republic] signed. And if the GDR goes forward now, this wall built in '61 will have very little relevance. And it clearly is a good development in terms of human rights. And I must say that after discussing this here with the Secretary of State and the national security adviser, I am very pleased with this development.

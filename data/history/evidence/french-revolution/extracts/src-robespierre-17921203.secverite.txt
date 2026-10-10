@@ -1,0 +1,7 @@
+source: src-robespierre-17921203
+locator: secverite
+url: https://archive.org/download/opiniondemaximil00robe_1/opiniondemaximil00robe_1_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (long s read as f and other misreadings included); line breaks collapsed to spaces, nothing else changed
+
+Oui , la peine de mort, en général , est un crime, et par cette raison seule , que d’après les principes indestructibles de la nature , elle ne peut être justifiée que dans les cas où elle est nécessaire à la sûreté des individus ou du corps social. Or „ jamais la sûreté publique ne la provoque contre les délits or- dinaires, parce que la s ciété peut toujours les prévenir par d’au- tres moyens, et mettre le coupable dans l’impuissance de lui nuire. Mais un roi détrôné, au sein d’une révolution qui n’est rien moins que cimentée par des loix justes ; un roi dont le nom seul attire le fléau de la guerre sur la nation agitée ; ni la prison, ni l’exil ne peut rendre son existence indifférente au bonheur public ; et cette cruelle exception aux loix ordi- naires que la justice avoue, ne peut être imputée qu’à la nature de ses crimes. Je prononce à regret cette fatale vérité.... mais Louis doit mourir , parce qu’il faut que la patrie vive.

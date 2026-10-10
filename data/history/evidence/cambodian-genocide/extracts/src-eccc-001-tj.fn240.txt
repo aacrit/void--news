@@ -1,0 +1,6 @@
+source: src-eccc-001-tj
+locator: fn240
+url: https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/20100726_Judgement_Case_001_ENG_PUBLIC.pdf
+read: 2026-09-25
+
+240 See Amended Closing Order, paras 107, 140; “S-21 Prisoner List (1975-1978)”, E3/38 Annex A. This list was a collation by the Office of the Co-Prosecutors of previous lists compiled by DC-Cam based on the original prisoner lists and execution logs of S-21. The Combined S-21 Prisoner List contained 107 entries which appeared to be duplicate entries and were thus removed by the Office of the Co-Prosecutors from the Revised Prisoner List. See “Co-Prosecutors' Rule 92 Motion to disclose analysis of the revised S-21 Prisoner List”, E68, 19 May 2009, paras 3-4.

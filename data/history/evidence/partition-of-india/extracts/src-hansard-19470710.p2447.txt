@@ -1,0 +1,7 @@
+source: src-hansard-19470710
+locator: p2447
+url: https://api.parliament.uk/historic-hansard/commons/1947/jul/10/indian-independence-bill
+read: 2026-09-25
+note: p is the Hansard column; HC Deb 10 July 1947 vol 439 cc2441-550
+
+I will now turn to the provisions of the Bill itself. The House is, I recognise, being asked to pass this Bill in a very short time. I have a great deal of sympathy with the hon. Member for Farnham (Mr. Nicholson) in the point he made. I agree that the time given is not commensurate with its great importance. But we are really constrained by the urgency of the matter.

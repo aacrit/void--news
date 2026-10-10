@@ -1,0 +1,9 @@
+source: src-top-xi
+locator: item155
+url: https://archive.org/download/constitutionalre06nich/constitutionalre06nich_djvu.txt
+read: 2026-09-25
+note: item n is the document number in the volume: No. 155, note 1, page 89: the editors' footnote quoting Lord Mountbatten's reply of 17 June 1947 to Mr R. A. Butler
+
+1 Lord Mountbatten replied on 17 June thanking Mr Butler for his congratulations. He added:
+
+‘I am trying to keep up the momentum of our good start, and hope to be able to carry the thing through without any major troubles.

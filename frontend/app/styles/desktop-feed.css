@@ -1,0 +1,127 @@
+/* ===========================================================================
+   Desktop Feed v2 — Three-zone broadsheet layout
+   Zone 1 (Lead): asymmetric 2fr|1fr, stories 0-1
+   Zone 2 (Digest): headline-only rows, stories 2-7
+   Zone 3 (Wire): 4-5 col ultra-compact grid, stories 8+
+   SkyboxBanner: 40px collapsed brief
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Skybox Banner — Single-line collapsed brief
+   --------------------------------------------------------------------------- */
+
+
+/* ---------------------------------------------------------------------------
+   Skybox Overlay — Full brief modal
+   --------------------------------------------------------------------------- */
+
+
+@keyframes skbPanelIn {
+  from { opacity: 0; transform: scale(0.96) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ---------------------------------------------------------------------------
+   Zone 1: Broadsheet Lead — asymmetric 2fr | 1fr
+   --------------------------------------------------------------------------- */
+
+
+/* Broadsheet unfold: stories materialize in place.
+   320ms (was 500ms): the reader clicked to read — the unfold character
+   survives, the wait does not. */
+
+@keyframes broadsheetUnfold {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* At narrower desktop, stack lead stories */
+
+/* Typewriter entrance: left-to-right wipe */
+
+
+/* ---------------------------------------------------------------------------
+   Zone 3: Wire — ultra-compact grid
+   --------------------------------------------------------------------------- */
+
+
+/* .wire-card__sources removed 2026-05-14 — Sigil already shows source count.
+   The "23src" callout was redundant meta noise. Dead component class anyway
+   (no JSX uses .wire-card; cards render via .story-card[data-variant="wire"]). */
+
+
+/* Hover: page-catch on wire headline. Underline-draw effect removed
+   2026-05-14 — appearing underlines read as "something happened,"
+   which the subconscious-microinteractions rule explicitly disallows. */
+
+/* Active press */
+
+/* Focus delegation: stretch-link focus lifts the wire card */
+
+
+/* ---------------------------------------------------------------------------
+   Feed Recession — depth effect when Deep Dive opens
+   ---------------------------------------------------------------------------
+   When Deep Dive opens, the feed behind it recesses via a subtle scale
+   transform. The defocus blur is handled exclusively by the backdrop-filter
+   on .deep-dive-backdrop (see layout.css) — a direct filter: blur() on
+   .page-main was also in place previously, which compounded with the
+   backdrop-filter and caused GPU jank. The backdrop-filter alone is
+   sufficient for the cinematic rack-out and is GPU-accelerated.
+
+   Kaminski, Schindler's List — the background crowd is never just dimmed,
+   it is actively defocused, creating physical separation between subject
+   and environment. */
+
+
+/* ---------------------------------------------------------------------------
+   Reduced motion
+   --------------------------------------------------------------------------- */
+
+
+/* ---------------------------------------------------------------------------
+   F12 — Lead Sigil must not steal the card's click target
+   ---------------------------------------------------------------------------
+   The lead headline (.lead-headline, LeadStory split layout) is a block <h1>,
+   so the inline-flex Sigil established an oversized inline line box (the xl mark
+   is 72px tall) that overlapped the headline text on the line above it. The
+   Sigil sits at z-index:10 with pointer-events:auto (so its own bias popup works
+   on hover/tap), so that invisible overlap captured clicks meant for the
+   stretch-link and blocked the Deep Dive on the lead card.
+
+   Fix: lay the lead headline out as flex, exactly like the working
+   .story-card__headline (components.css), so the Sigil becomes a compact,
+   top-aligned, non-shrinking flex item BESIDE the headline text rather than an
+   overlapping inline box. The text fills the row and stays under the stretch-
+   link (click -> Deep Dive); the Sigil keeps its own contained hit region
+   (click -> bias popup). No pixel is claimed by both. Desktop-only: MobileFeed
+   does not render .lead-headline. */
+.lead-headline {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Title text fills the row so the Sigil + caret sit to its SIDE, not stacked
+   below it. This must target the real title span (.lead-headline__text): the
+   first DOM child is the visually-hidden ".sr-only Top story." span, so the
+   old `> span:first-child` selector applied the grow to that hidden span and
+   left the title at auto width, which pushed the Sigil (and its balance-beam,
+   the "double lines") onto the next row. */
+.lead-headline > .lead-headline__text {
+  flex: 1 1 12ch;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Compact, top-aligned Sigil — mirrors the .story-card__headline .sigil rule so
+   the mark + lean label stack vertically and the box hugs its own content. */
+.lead-headline .sigil {
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  align-self: flex-start;
+}

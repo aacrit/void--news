@@ -1,0 +1,7 @@
+source: src-frus11-d90
+locator: secjupiter
+url: https://history.state.gov/historicaldocuments/frus1961-63v11/d90
+read: 2026-10-04
+note: Document 90, Summary Record of the Seventh Meeting of the Executive Committee of the National Security Council, October 27, 1962, 10 a.m.: the President on the Jupiter missiles; the slice begins at the verb because the volume breaks the line after 'The President'
+
+recalled that over a year ago we wanted to get the Jupiter missiles out of Turkey because they had become obsolete and of little military value. If the missiles in Cuba added 50% to Soviet nuclear capability, then to trade these missiles for those in Turkey would be of great military value. But we are now in the position of risking war in Cuba and in Berlin over missiles in Turkey which are of little military value.

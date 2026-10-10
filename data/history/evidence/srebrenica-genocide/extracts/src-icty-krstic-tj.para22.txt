@@ -1,0 +1,7 @@
+source: src-icty-krstic-tj
+locator: para22
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+
+22. From the outset, both parties to the conflict violated the “safe area” agreement. The Trial Chamber heard evidence of a deliberate Bosnian Serb strategy to limit access by international aid convoys into the enclave.30 Colonel Thomas Karremans (the Dutch Bat Commander) testified that his personnel were prevented from returning to the enclave by Bosnian Serb forces and that equipment and ammunition were also prevented from getting in.31 Essentials, like food, medicine and fuel, became increasingly scarce. Some Bosnian Muslims in Srebrenica complained of attacks by Bosnian Serb soldiers.32

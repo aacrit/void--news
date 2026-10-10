@@ -1,0 +1,8 @@
+source: src-mountbatten-19480319
+locator: p703
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: p is the page of Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947 (2nd ed., 2005), read from the Internet Archive text layer; line breaks are joined and the layer's soft hyphens rejoined
+note: Document 236, the postscript to Mountbatten's letter to Sir Evan Jenkins enclosed with his letter to Lord Ismay of 19 March 1948; Liaquat Ali Khan's words as Mountbatten reports them, secondhand; 'thatit' is the layer's
+
+P.S. After the above was written, Liaquat Ali Khan himself, at to-day’s Joint Defence Council meeting brought this question up again. He said that the documents concerned showed thatit was intended to allot Ferozepur and Zira tehsils to Pakistan. The matter is thus becoming urgent.

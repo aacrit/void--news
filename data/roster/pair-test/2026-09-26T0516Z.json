@@ -1,0 +1,97 @@
+{
+ "collected_at": "2026-09-26T05:16:16Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16160653/manchester-city-premier-league-guilty-expulsion.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Manchester City found guilty RECAP: Betting SUSPENDED on relegation as rivals call for title stripping",
+      "published": "Fri, 25 Sep 2026 23:20:38 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/man-city-charges-verdict-live-37703247",
+      "title": "Man City verdict LIVE: Premier League club found guilty of 114 charges as rivals 'consider legal action'",
+      "published": "Fri, 25 Sep 2026 22:00:57 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16161821/trump-rejects-iran-ceasefire-proposal.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Trump trolls Iran with photo of 'TRUMP STRAIT' minutes after rejecting 7-day ceasefire deal",
+      "published": "Sat, 26 Sep 2026 06:11:23 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/world-news/donald-trump-rejects-ceasefire-deal-37704745",
+      "title": "Donald Trump trolls Iran with 'Trump Strait' photo after rejecting ceasefire deal - Wall Street Journal reports",
+      "published": "Sat, 26 Sep 2026 04:58:55 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 120,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/article-909744",
+      "title": "Netanyahu did not discuss UAE's October 7 warning at Gaza security meeting week of attack - report",
+      "published": "Sat, 26 Sep 2026 00:38:16 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-security/2026-09-25/ty-article/report-bin-zayed-warned-netanyahu-days-before-oct-7-sources-say/000001a0-d9b8-dfbb-afa4-fbf8844a0000",
+      "title": "NYT: Sources confirm Haaretz report of UAE president's Oct. warning to Netanyahu",
+      "published": "Fri, 25 Sep 2026 21:54:56 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": "HTTPError: 403 Client Error: Forbidden for url: https://www.indiatoday.in/rss/home"
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/turkish-officials-hit-back-at-israeli-minister-over-remarks-on-erdogan/news",
+      "title": "Turkish officials hit back at Israeli minister over remarks on Erdoğan",
+      "published": "Thu, 24 Sep 2026 14:54:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/09/turkey-shelters-emirati-brotherhood-figures-accused-of-plotting-to-oust-uae-rulers/",
+      "title": "Turkey shelters Emirati Brotherhood figures accused of plotting to oust UAE rulers",
+      "published": "Sun, 20 Sep 2026 22:18:23 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 313,
+    "left": 10
+   }
+  }
+ }
+}

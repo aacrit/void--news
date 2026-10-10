@@ -1,0 +1,8 @@
+source: src-hansard-19461212
+locator: p1348
+url: https://api.parliament.uk/historic-hansard/commons/1946/dec/12/india-constitution
+read: 2026-09-25
+note: p is the Hansard column; HC Deb 12 December 1946 vol 431 cc1346-452, Sir Stafford Cripps moving the motion
+note: the League's resolution as Cripps read it; 'contempated' is the page's
+
+On 29th July the Muslim League passed a resolution withdrawing their earlier acceptance of the Mission's scheme. I need not go into the reasons in detail which are set out in that resolution; it will suffice to say that they felt they had been misled, and that they would not be safe in proceeding to join in the scheme laid down by the Cabinet Mission. It was in that resolution of July 29th that the Muslim League declared for what they termed "direct action." Their declaration was in these words: The Council of the All-India Muslim League is convinced that now the time has come for the Muslim nation to resort to direct action to achieve Pakistan, and get rid of the present slavery under the British, and contempated future caste Hindu domination.

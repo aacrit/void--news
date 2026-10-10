@@ -1,0 +1,8 @@
+source: src-app-nixon-19691103
+locator: secsilent
+url: https://www.presidency.ucsb.edu/documents/address-the-nation-the-war-vietnam
+read: 2026-10-09
+note: The American Presidency Project's text, from the Public Papers of the Presidents
+note: the sentence runs on past the cut; the double hyphens are the Project's
+
+And so tonight--to you, the great silent majority of my fellow Americans--I ask for your support. I pledged in my campaign for the Presidency to end the war in a way that we could win the peace. I have initiated a plan of action which will enable me to keep that pledge. The more support I can have from the American people,

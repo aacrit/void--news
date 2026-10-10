@@ -1,0 +1,7 @@
+source: src-nicholas-manifesto-golder
+locator: secmichael
+url: https://archive.org/download/documentsofrussi027937mbp/documentsofrussi027937mbp_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+
+Not wishing to be separated from our beloved son, we hand down our inheritance to our brother, Grand Duke Michael Alexandrovich, and give him our blessing on mounting the throne of the Russian Empire.

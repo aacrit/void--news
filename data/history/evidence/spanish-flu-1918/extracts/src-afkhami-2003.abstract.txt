@@ -1,0 +1,7 @@
+source: src-afkhami-2003
+locator: abstract
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A12955964&resultType=core&format=json
+read: 2026-09-25
+note: the abstract as the Europe PMC record carries it, read from the REST endpoint named above; cut at a sentence end to stay within the 150-word cap where the abstract is longer
+
+The global demographic impact of the 1918-19 influenza pandemic continues to fascinate researchers and scholars. This paper examines the social and demographic effects of this outbreak on Iranian society, through a comprehensive investigation of the modes of transmission and propagation, mortality rates, and other distinctive features of the region, and reveals the importance of taking a country's unique sociopolitical settings into account. Iran was one of the regions hit hardest by the pandemic, with mortality rates significantly higher than in most regions of the world. Though globally the victims of influenza lived primarily in urban areas, it was Iran's rural regions that suffered the most casualties. In addition, contrary to the prevailing notion that the 1918 influenza targeted the young and healthy, this paper suggests that famine, opium consumption, malaria, and anemia were fundamentally responsible for the high mortality in Iran.

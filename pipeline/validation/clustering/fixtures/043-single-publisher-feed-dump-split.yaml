@@ -1,0 +1,94 @@
+id: single-publisher-feed-dump-split-2026-08-10
+name: "One outlet's feed of distinct stories about a recurring subject must SPLIT (O6 RULE A)"
+failure_date: "2026-08-10"
+failure_kind: single-publisher-feed-dump
+articles:
+  # ONE publisher (Daily Wire). Every article names the same recurring subject
+  # (Will Scharf) plus Trump / the White House, so the pile is entity-saturated
+  # and topic_coherence reports 1.00 -- yet these are FIVE distinct stories.
+  - id: scharf-eo1
+    title: "Will Scharf Reads Trump Executive Order Slashing Regulations"
+    summary: "Will Scharf read a Trump executive order slashing federal regulations."
+    full_text: >
+      White House Staff Secretary Will Scharf read aloud a Trump executive order
+      slashing federal regulations during an Oval Office signing. Scharf
+      described the deregulation order as President Trump signed it at the
+      Resolute Desk.
+    source: { slug: daily-wire, country: US, tier: us_major }
+    published_at: "2026-08-09T09:00Z"
+  - id: scharf-eo2
+    title: "Will Scharf Details Trump Order on Federal Hiring Freeze"
+    summary: "Will Scharf detailed a Trump order imposing a federal hiring freeze."
+    full_text: >
+      Will Scharf detailed a Trump executive order imposing a federal hiring
+      freeze. The White House Staff Secretary read the hiring order to reporters
+      as Trump signed the measure in the Oval Office.
+    source: { slug: daily-wire, country: US, tier: us_major }
+    published_at: "2026-08-09T09:30Z"
+  - id: scharf-court
+    title: "Will Scharf Argues Tariff Case Before Supreme Court"
+    summary: "Will Scharf argued the Trump tariff case before the Supreme Court."
+    full_text: >
+      Will Scharf, arguing as an attorney, appeared before the Supreme Court to
+      defend the Trump tariff policy. Scharf told the justices the president
+      holds the trade authority as the court weighed the tariff case.
+    source: { slug: daily-wire, country: US, tier: us_major }
+    published_at: "2026-08-09T09:45Z"
+  - id: scharf-profile
+    title: "Who Is Will Scharf? The Man Behind Trump's Executive Orders"
+    summary: "A profile of Will Scharf, the White House Staff Secretary."
+    full_text: >
+      Will Scharf, the White House Staff Secretary, has become the face of
+      Trump's executive orders. This profile of Scharf traces his path from
+      Missouri Senate candidate to the Oval Office desk.
+    source: { slug: daily-wire, country: US, tier: us_major }
+    published_at: "2026-08-09T10:00Z"
+  - id: scharf-senate
+    title: "Will Scharf's Missouri Senate Ambitions Resurface in New Report"
+    summary: "A report says Will Scharf may revive his Missouri Senate ambitions."
+    full_text: >
+      A new report says Will Scharf may revive his Missouri Senate ambitions.
+      Scharf, who ran in a Republican primary before joining the White House, is
+      weighing another statewide campaign, sources told the outlet.
+    source: { slug: daily-wire, country: US, tier: us_major }
+    published_at: "2026-08-09T10:20Z"
+  - id: scharf-pardon
+    title: "Will Scharf Reads Trump Pardon for January 6 Defendants"
+    summary: "Will Scharf read a Trump pardon proclamation for January 6 defendants."
+    full_text: >
+      Will Scharf read a Trump pardon proclamation for January 6 defendants
+      during a White House ceremony. The Staff Secretary described the clemency
+      grant as Trump signed the pardons in the Oval Office.
+    source: { slug: daily-wire, country: US, tier: us_major }
+    published_at: "2026-08-09T10:40Z"
+expectation:
+  type: should_split
+  member_ids: [scharf-eo1, scharf-court, scharf-pardon]
+  min_clusters: 2
+rationale: |
+  Live over-merge (2026-08-10), verified SEPARATE from the Branch-B Phase-2/3
+  df-gate work. One outlet (Daily Wire) publishes a feed of DISTINCT stories
+  about a recurring subject (Will Scharf, the White House Staff Secretary): a
+  deregulation executive order, a hiring-freeze order, a tariff argument before
+  the Supreme Court, a personal profile, a Missouri Senate report, and a January
+  6 pardon. Because "Will Scharf" plus Trump / the White House appear in every
+  article, the entity-overlap merge collapses them into one cluster.
+
+  This bag defeats every prior split trigger:
+    * entity_convergence pins to 1.0 (the subject recurs), so the
+      coherent-override exempts it.
+    * topic_coherence reports 1.00 (BLIND -- do NOT use it as the success
+      measure).
+    * title_jac (0.17) sits ABOVE the old feed-dump title floor of 0.15, so even
+      the >=30-article feed-dump trigger would have missed it, and the pile is
+      well under 30 articles anyway.
+
+  O6 RULE A keys on single-publisher dominance (dominant_publisher_share = 1.00,
+  one outlet) PLUS low title agreement (title_jac < 0.25), checked BEFORE the
+  coherent-override precisely because such a pile is entity-saturated. A genuine
+  well-covered event is carried by many outlets (dominant_publisher_share low)
+  or its sibling headlines repeat the event's vocabulary (title_jac high), so it
+  fails the rule; _force_split_cluster is the backstop.
+
+  Success measure: hand-labeled split (the distinct Scharf stories land in
+  different clusters), NOT topic_coherence.

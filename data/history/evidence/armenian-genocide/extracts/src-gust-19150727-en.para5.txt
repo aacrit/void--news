@@ -1,0 +1,8 @@
+source: src-gust-19150727-en
+locator: para5
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-07-27-DE-001
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+note: the translation is the online edition's own (sponsored by the Zoryan Institute), held here as the edition prints it, at most 150 words
+
+3) As was reported to me on 17 th inst., it was observed in Rumkaleh, Biredjik and Djerablus that bodies had been floating past on the Euphrates for a total of 25 days. The corpses were all bound together in the same way, two by two, back to back. This regularity indicates that they were not the result of butchery, but had been killed intentionally by the authorities. Rumour has it, and this is probable, that the bodies had been thrown into the river in Adiaman by soldiers. As is reported below, the bodies had stopped floating past for an interval of several days and then began again, in much larger numbers. This time they were mainly the bodies of women and children.

@@ -1,0 +1,20 @@
+[
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "es",
+  "score": 28,
+  "a": {
+   "title": "US, German scientists win Nobel medicine prize for work on light and brain",
+   "summary": "American Karl Deisseroth and Germans Peter Hegemann and Georg Nagel won the 2026 Nobel Prize in Physiology or Medicine ​on Monday for developing optogenetics, a technique that uses light to control individual nerve cells in the brain.",
+   "link": "https://www.france24.com/en/video/20261006-us-german-scientists-win-nobel-medicine-prize-for-work-on-light-and-brain",
+   "published": "Tue, 06 Oct 2026 12:05:18 GMT"
+  },
+  "b": {
+   "title": "Dos alemanes y un estadounidense ganan premio Nobel de Medicina por su trabajo en optogenética",
+   "summary": "Las investigaciones del psiquiatra y neurólogo estadounidense Karl Deisseroth y de sus colegas alemanes Peter Hegemann y Georg Nagel fueron las galardonadas con el Premio Nobel de Medicina por su trabajo en la optogenética. Los descubrimientos de los tres científicos podrían aportar información valiosa para futuros tratamientos para trastornos neurológicos y sensoriales, como la enfermedad de Park",
+   "link": "https://www.france24.com/es/video/20261006-dos-alemanes-y-un-estadounidense-ganan-premio-nobel-de-medicina-por-su-trabajo-en-optogen%C3%A9tica",
+   "published": "Tue, 06 Oct 2026 04:39:25 GMT"
+  }
+ }
+]

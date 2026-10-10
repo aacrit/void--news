@@ -1,0 +1,1537 @@
+# The evidence ledger for vietnam-war (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Begun 2026-10-09 for the cinematic Orpheus episode (docs/proposals/HISTORY-AUDIO-ARCHIVAL.md,
+# policy B; docs/proposals/HISTORY-FIRST-LISTENER.md): the sources the script's document voice
+# reads from, the record its narration is checked against, and the recordings it may play.
+# Every entry was fetched on 2026-10-09 from the URL it names; every extract under extracts/
+# was sliced from the fetched copy by a builder script (out/ledger-vietnam-war/build.py, start
+# marker to end marker, whitespace folded to single spaces; the two other changes, Unicode NFC
+# for Vietnamese pages and U+02BC written as U+2019 in the FRUS transcript, are stated in the
+# extract's own note), never retyped. Nothing here was written from memory.
+# The five perspectives of the event YAML are held at parity as far as free copies allow: the
+# American containment case in its presidents' own words; the Vietnamese state's record (the
+# declaration in Vietnamese and in two English translations, the Sơn Mỹ figure, the official
+# casualty figures as a Hanoi historian and a veterans' association print them); the anti-war
+# record (the Pentagon Papers, the Court, the Peers report, NSA's own history of Tonkin); the
+# Lao state's and the United States' accounts of the bombing of Laos and the House record of
+# Cambodia; and the Tricontinental text in Spanish and English. Every book the event YAML names
+# is a controlled lending copy or has no free copy; those are listed under gaps, with the Hmong
+# and Khmer voices this session could not reach.
+# Translation provenance is stated per entry. Where the ledger holds a text only in Vietnamese or
+# Spanish, no English for it is held, and any English the brief gives is a working gloss.
+# This is NOT a thesis ledger: no positions, contested claims, exhibits or analyses are
+# adjudicated here, and the event renders the Hearing. The bar of §4e is not claimed.
+# Where two held sources disagree, both are held and the disagreement is listed under
+# `disagreements` at the end, unadjudicated. Casualty figures are held per producer and are
+# never averaged.
+slug: vietnam-war
+bootstrapped: 2026-10-09
+
+entries:
+  # ----------------------------------------------------------- Tier A: the Vietnamese state's own record
+  - id: src-ho-declaration-1945-sw
+    tier: A
+    kind: primary-document
+    author: "Ho Chi Minh, for the Provisional Government of the Democratic Republic of Viet-Nam"
+    title: "Declaration of Independence of the Democratic Republic of Viet-Nam, 2 September 1945 (English translation, Selected Works)"
+    container: "Ho Chi Minh, Selected Works, volume 3 (Hanoi, 1960-1962)"
+    publisher: "Marxists Internet Archive, transcribing Ho Chi Minh, Selected Works (Hanoi, 1960-1962)"
+    place: null
+    year: 1945
+    edition: "TRANSLATION PROVENANCE: the English is the one printed in Ho Chi Minh, Selected Works (Hanoi, 1960-1962), volume 3, an edition published in Hanoi; the archive's page names that source and a proofreader (Janet Mullen) and no translator. The Vietnamese original is held as src-chinhphu-declaration-vi; a third English text, the Pentagon Papers' own, is held as src-pp-part-i.secdeclaration"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.marxists.org/reference/archive/ho-chi-minh/works/1945/declaration-independence.htm'}
+    access:
+      free_copy: "https://www.marxists.org/reference/archive/ho-chi-minh/works/1945/declaration-independence.htm"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Vietnamese Declaration of Independence (the page's <title>; its source line: 'Ho Chi Minh, Selected Works (Hanoi, 1960-1962), Vol. 3')"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: drv-government
+    position: null
+    rights: copyright
+
+  - id: src-chinhphu-declaration-vi
+    tier: A
+    kind: primary-document
+    author: "Hồ Chí Minh, Chính phủ Lâm thời nước Việt Nam Dân chủ Cộng hòa (the text as published by the Government of the Socialist Republic of Viet Nam)"
+    title: "Tuyên ngôn Độc lập, 2 tháng 9 năm 1945 (the Vietnamese original, on the Government portal's page 'Nghe Tuyên ngôn Độc lập do Chủ tịch Hồ Chí Minh đọc ngày 2/9/1945')"
+    container: null
+    publisher: "Cổng Thông tin điện tử Chính phủ (Government of the Socialist Republic of Viet Nam), media.chinhphu.vn"
+    place: null
+    year: 1945
+    edition: "the portal's page of 1 September 2026, which names its source as Trung tâm Lưu trữ Quốc gia III (National Archives Centre III) and embeds an audio player; the audio file is not in the page source and is not held. No English rendering of this text is held"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://media.chinhphu.vn/chu-tich-ho-chi-minh-doc-tuyen-ngon-doc-lap-nam-1945-102260831123435279.htm'}
+    access:
+      free_copy: "https://media.chinhphu.vn/chu-tich-ho-chi-minh-doc-tuyen-ngon-doc-lap-nam-1945-102260831123435279.htm"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Nghe Tuyên ngôn Độc lập do Chủ tịch Hồ Chí Minh đọc ngày 2/9/1945 (the page's <title>; page dated 01/09/2026)"
+    language: vi
+    region_of_authorship: southeast-asia
+    producer: vietnamese-government
+    position: null
+    rights: copyright
+
+  - id: src-qn-sonmy-2026
+    tier: A
+    kind: primary-document
+    author: Quảng Ngãi Provincial People's Committee (the provincial portal's English news edition)
+    title: Commemoration of 58th Anniversary of Sơn Mỹ Massacre
+    container: null
+    publisher: Quảng Ngãi Provincial Portal (quangngai.gov.vn)
+    place: null
+    year: 2026
+    edition: the portal's own English text; it reports the speech of the provincial Party Secretary
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://quangngai.gov.vn/en/news/people-s-committee-news/commemoration-of-58th-anniversary-of-son-my-massacre.html'}
+    access:
+      free_copy: "https://quangngai.gov.vn/en/news/people-s-committee-news/commemoration-of-58th-anniversary-of-son-my-massacre.html"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Commemoration of 58th Anniversary of Sơn Mỹ Massacre (the page's <title>; dated Monday, 16/03/2026)"
+    language: en
+    region_of_authorship: southeast-asia
+    producer: quang-ngai-provincial-government
+    position: null
+    rights: copyright
+
+  # ----------------------------------------------------------- Tier A: the United States government's own record
+  - id: src-pp-part-i
+    tier: A
+    kind: report
+    author: "Office of the Secretary of Defense, Vietnam Task Force"
+    title: "Report of the Office of the Secretary of Defense Vietnam Task Force (the Pentagon Papers), Part I: Vietnam and the U.S., 1940-1950"
+    container: null
+    publisher: National Archives and Records Administration
+    place: null
+    year: 1969
+    edition: "NARA's 2011 release scan with its own OCR text layer; the year is the study's completion as NARA's page dates it (begun 1967, completed in 1969; see src-nara-pentagon-papers.secintro)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://nara-media-001.s3.amazonaws.com/arcmedia/research/pentagon-papers/Pentagon-Papers-Part-I.pdf'}
+    access:
+      free_copy: "https://nara-media-001.s3.amazonaws.com/arcmedia/research/pentagon-papers/Pentagon-Papers-Part-I.pdf"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "[Part I] Vietnam and the U.S., 1940-1950 (the link text on NARA's release page; the PDF, 275 pages, opens 'Declassified per Executive Order 13526 ... Date: 2011 I Vietnam and the U.S., 1940-1950')"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-pp-part-iva5
+    tier: A
+    kind: report
+    author: "Office of the Secretary of Defense, Vietnam Task Force"
+    title: "Report of the Office of the Secretary of Defense Vietnam Task Force (the Pentagon Papers), Part IV.A.5: Evolution of the War. Origins of the Insurgency"
+    container: null
+    publisher: National Archives and Records Administration
+    place: null
+    year: 1969
+    edition: NARA's 2011 release scan with its OCR text layer
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://nara-media-001.s3.amazonaws.com/arcmedia/research/pentagon-papers/Pentagon-Papers-Part-IV-A-5.pdf'}
+    access:
+      free_copy: "https://nara-media-001.s3.amazonaws.com/arcmedia/research/pentagon-papers/Pentagon-Papers-Part-IV-A-5.pdf"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "[Part IV. A. 5.] Evolution of the War. Origins of the Insurgency (NARA's link text; the PDF has 373 pages)"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-pp-part-ivb2
+    tier: A
+    kind: report
+    author: "Office of the Secretary of Defense, Vietnam Task Force"
+    title: "Report of the Office of the Secretary of Defense Vietnam Task Force (the Pentagon Papers), Part IV.B.2: Counterinsurgency: Strategic Hamlet Program, 1961-1963"
+    container: null
+    publisher: National Archives and Records Administration
+    place: null
+    year: 1969
+    edition: NARA's 2011 release scan with its OCR text layer
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://nara-media-001.s3.amazonaws.com/arcmedia/research/pentagon-papers/Pentagon-Papers-Part-IV-B-2.pdf'}
+    access:
+      free_copy: "https://nara-media-001.s3.amazonaws.com/arcmedia/research/pentagon-papers/Pentagon-Papers-Part-IV-B-2.pdf"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "[Part IV. B. 2.] Evolution of the War. Counterinsurgency: Strategic Hamlet Progr[am] (NARA's link text, cut as the page prints it; the PDF has 60 pages)"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-pp-part-ivc2b
+    tier: A
+    kind: report
+    author: "Office of the Secretary of Defense, Vietnam Task Force"
+    title: "Report of the Office of the Secretary of Defense Vietnam Task Force (the Pentagon Papers), Part IV.C.2.b: Military Pressures Against NVN, July - October 1964"
+    container: null
+    publisher: National Archives and Records Administration
+    place: null
+    year: 1969
+    edition: NARA's 2011 release scan with its OCR text layer
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://nara-media-001.s3.amazonaws.com/arcmedia/research/pentagon-papers/Pentagon-Papers-Part-IV-C-2b.pdf'}
+    access:
+      free_copy: "https://nara-media-001.s3.amazonaws.com/arcmedia/research/pentagon-papers/Pentagon-Papers-Part-IV-C-2b.pdf"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "[Part IV. C. 2. b.] Evolution of the War. Military Pressures Against NVN. July - (NARA's link text, cut as the page prints it; the PDF has 103 pages)"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-nara-pentagon-papers
+    tier: A
+    kind: primary-document
+    author: National Archives and Records Administration
+    title: Pentagon Papers (the National Archives' release page)
+    container: null
+    publisher: National Archives and Records Administration
+    place: null
+    year: 2011
+    edition: web page introducing the release of the complete report on the leak's 40th anniversary; it links all 48 PDFs
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.archives.gov/research/pentagon-papers'}
+    access:
+      free_copy: "https://www.archives.gov/research/pentagon-papers"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Pentagon Papers | National Archives"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-frus-1964-68-v27-d53
+    tier: A
+    kind: primary-document
+    author: "Office of the Historian, U.S. Department of State (transcript of a recorded telephone conversation between Lyndon B. Johnson and McGeorge Bundy)"
+    title: "Foreign Relations of the United States, 1964-1968, Volume XXVII, Mainland Southeast Asia; Regional Affairs, Document 53: Telephone Conversation Between President Johnson and the President's Special Assistant for National Security Affairs (Bundy), Washington, May 27, 1964, 11:24 a.m."
+    container: "Foreign Relations of the United States, 1964-1968, Volume XXVII"
+    publisher: "Office of the Historian, U.S. Department of State"
+    place: null
+    year: 1964
+    edition: the Office of the Historian's web text of the FRUS transcript; the LBJ Library's recording of the same call is the recording rows below
+    volume: XXVII
+    document_number: "53"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://history.state.gov/historicaldocuments/frus1964-68v27/d53'}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1964-68v27/d53"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Historical Documents - Office of the Historian (the page's <title>; its heading: '53. Telephone Conversation Between President Johnson and the President's Special Assistant for National Security Affairs (Bundy)')"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-statute-78-384
+    tier: A
+    kind: resolution
+    author: Congress of the United States
+    title: "Joint Resolution to promote the maintenance of international peace and security in southeast Asia, Public Law 88-408 (the Gulf of Tonkin Resolution)"
+    container: null
+    publisher: "U.S. Government Publishing Office (United States Statutes at Large, volume 78)"
+    place: null
+    year: 1964
+    edition: "the Statutes at Large page as govinfo serves it; it does not carry the vote counts, which are held from src-pp-part-ivc2b.secvotes"
+    volume: "78"
+    document_number: "Public Law 88-408; H. J. Res. 1145; approved August 10, 1964"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.govinfo.gov/content/pkg/STATUTE-78/pdf/STATUTE-78-Pg384.pdf'}
+    access:
+      free_copy: "https://www.govinfo.gov/content/pkg/STATUTE-78/pdf/STATUTE-78-Pg384.pdf"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "384 PUBLIC LAW 88-408 AUG. 10, 1964 [78 STAT. (the PDF's running head; one page)"
+    language: en
+    region_of_authorship: americas
+    producer: us-congress
+    position: null
+    rights: public
+
+  - id: src-app-eisenhower-19540407
+    tier: A
+    kind: testimony
+    author: "Dwight D. Eisenhower, President of the United States"
+    title: "The President's News Conference, April 7, 1954"
+    container: Public Papers of the Presidents (The American Presidency Project's text)
+    publisher: The American Presidency Project (Gerhard Peters and John T. Woolley)
+    place: null
+    year: 1954
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.presidency.ucsb.edu/documents/the-presidents-news-conference-361'}
+    access:
+      free_copy: "https://www.presidency.ucsb.edu/documents/the-presidents-news-conference-361"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "The President's News Conference | The American Presidency Project"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-app-lbj-19640804
+    tier: A
+    kind: primary-document
+    author: "Lyndon B. Johnson, President of the United States"
+    title: "Radio and Television Report to the American People Following Renewed Aggression in the Gulf of Tonkin, August 4, 1964"
+    container: Public Papers of the Presidents (The American Presidency Project's text)
+    publisher: The American Presidency Project (Gerhard Peters and John T. Woolley)
+    place: null
+    year: 1964
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.presidency.ucsb.edu/documents/radio-and-television-report-the-american-people-following-renewed-aggression-the-gulf'}
+    access:
+      free_copy: "https://www.presidency.ucsb.edu/documents/radio-and-television-report-the-american-people-following-renewed-aggression-the-gulf"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Radio and Television Report to the American People Following Renewed Aggression in the Gulf of Tonkin | The American Presidency Project"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-app-lbj-19650407
+    tier: A
+    kind: primary-document
+    author: "Lyndon B. Johnson, President of the United States"
+    title: "Address at Johns Hopkins University: \"Peace Without Conquest.\", April 7, 1965"
+    container: Public Papers of the Presidents (The American Presidency Project's text)
+    publisher: The American Presidency Project (Gerhard Peters and John T. Woolley)
+    place: null
+    year: 1965
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.presidency.ucsb.edu/documents/address-johns-hopkins-university-peace-without-conquest'}
+    access:
+      free_copy: "https://www.presidency.ucsb.edu/documents/address-johns-hopkins-university-peace-without-conquest"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Address at Johns Hopkins University: \"Peace Without Conquest.\" | The American Presidency Project"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-app-lbj-19680331
+    tier: A
+    kind: primary-document
+    author: "Lyndon B. Johnson, President of the United States"
+    title: "The President's Address to the Nation Announcing Steps To Limit the War in Vietnam and Reporting His Decision Not To Seek Reelection, March 31, 1968"
+    container: Public Papers of the Presidents (The American Presidency Project's text)
+    publisher: The American Presidency Project (Gerhard Peters and John T. Woolley)
+    place: null
+    year: 1968
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.presidency.ucsb.edu/documents/the-presidents-address-the-nation-announcing-steps-limit-the-war-vietnam-and-reporting-his'}
+    access:
+      free_copy: "https://www.presidency.ucsb.edu/documents/the-presidents-address-the-nation-announcing-steps-limit-the-war-vietnam-and-reporting-his"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "The President's Address to the Nation Announcing Steps To Limit the War in Vietnam and Reporting His Decision Not To Seek Reelection | The American Presidency Project"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-app-nixon-19691103
+    tier: A
+    kind: primary-document
+    author: "Richard Nixon, President of the United States"
+    title: "Address to the Nation on the War in Vietnam, November 3, 1969"
+    container: Public Papers of the Presidents (The American Presidency Project's text)
+    publisher: The American Presidency Project (Gerhard Peters and John T. Woolley)
+    place: null
+    year: 1969
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.presidency.ucsb.edu/documents/address-the-nation-the-war-vietnam'}
+    access:
+      free_copy: "https://www.presidency.ucsb.edu/documents/address-the-nation-the-war-vietnam"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Address to the Nation on the War in Vietnam | The American Presidency Project"
+    language: en
+    region_of_authorship: americas
+    producer: nixon-white-house
+    position: null
+    rights: public
+
+  - id: src-app-nixon-19700430
+    tier: A
+    kind: primary-document
+    author: "Richard Nixon, President of the United States"
+    title: "Address to the Nation on the Situation in Southeast Asia, April 30, 1970"
+    container: Public Papers of the Presidents (The American Presidency Project's text)
+    publisher: The American Presidency Project (Gerhard Peters and John T. Woolley)
+    place: null
+    year: 1970
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.presidency.ucsb.edu/documents/address-the-nation-the-situation-southeast-asia-1'}
+    access:
+      free_copy: "https://www.presidency.ucsb.edu/documents/address-the-nation-the-situation-southeast-asia-1"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Address to the Nation on the Situation in Southeast Asia. | The American Presidency Project"
+    language: en
+    region_of_authorship: americas
+    producer: nixon-white-house
+    position: null
+    rights: public
+
+  - id: src-nsa-hanyok-2001
+    tier: A
+    kind: report
+    author: "Robert J. Hanyok, Center for Cryptologic History, National Security Agency"
+    title: "\"Skunks, Bogies, Silent Hounds, and the Flying Fish: The Gulf of Tonkin Mystery, 2-4 August 1964\""
+    container: Cryptologic Quarterly
+    publisher: National Security Agency
+    place: null
+    year: 2001
+    edition: "the declassified PDF of the classified Cryptologic Quarterly article, its byline 'ROBERT J. HANYOK'; the PDF prints no issue date, and the year 2001 is the catalogue dating ('Winter 2000/Spring 2001') shown in a search listing of Brill's Primary Sources, which was not fetched; treat the year as unverified"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.nsa.gov/portals/75/documents/news-features/declassified-documents/gulf-of-tonkin/articles/release-1/rel1_skunks_bogies.pdf'}
+    access:
+      free_copy: "https://www.nsa.gov/portals/75/documents/news-features/declassified-documents/gulf-of-tonkin/articles/release-1/rel1_skunks_bogies.pdf"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "\"Skunks, Bogies, Silent Hounds, and the Flying Fish: The Gulf of Tonkin Mystery, 2-4 August 1964\" (the PDF's title metadata; 56 pages)"
+    language: en
+    region_of_authorship: americas
+    producer: us-national-security-agency
+    position: null
+    rights: public
+
+  - id: src-peers-1970
+    tier: A
+    kind: report
+    author: Department of the Army (the inquiry directed by Lieutenant General William R. Peers)
+    title: "Report of the Department of the Army Review of the Preliminary Investigations into the My Lai Incident, Volume I, The Report of the Investigation"
+    container: null
+    publisher: "Library of Congress (Military Legal Resources), scanning the Department of the Army's report"
+    place: null
+    year: 1970
+    edition: the Library of Congress scan with its text layer; its first page is a Department of the Army memorandum 'CS (Peers Inquiry) 1 4 March 1970' to the Secretary of the Army and the Chief of Staff
+    volume: Volume I
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://tile.loc.gov/storage-services/service/ll/llmlp/RDAR-Vol-I/RDAR-Vol-I.pdf'}
+    access:
+      free_copy: "https://tile.loc.gov/storage-services/service/ll/llmlp/RDAR-Vol-I/RDAR-Vol-I.pdf"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Report of the Department of the Army Review of the Preliminary Investigations into the My Lai Incident, Volume I, The Report of the Investigation (the PDF's title metadata; 395 pages)"
+    language: en
+    region_of_authorship: americas
+    producer: us-army
+    position: null
+    rights: public
+
+  - id: src-obama-laos-2016
+    tier: A
+    kind: primary-document
+    author: "Barack Obama, President of the United States"
+    title: "Remarks of President Obama to the People of Laos, Lao National Cultural Hall, Vientiane, September 6, 2016"
+    container: null
+    publisher: "The White House, Office of the Press Secretary (Obama White House archive)"
+    place: null
+    year: 2016
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://obamawhitehouse.archives.gov/the-press-office/2016/09/06/remarks-president-obama-people-laos'}
+    access:
+      free_copy: "https://obamawhitehouse.archives.gov/the-press-office/2016/09/06/remarks-president-obama-people-laos"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Remarks of President Obama to the People of Laos | whitehouse.gov"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-state-laos-2018
+    tier: A
+    kind: report
+    author: "United States Department of State, Bureau of Political-Military Affairs"
+    title: "Special Report: U.S. Conventional Weapons Destruction in Laos"
+    container: null
+    publisher: United States Department of State
+    place: null
+    year: 2018
+    edition: "the archived 2017-2021 site; the page is dated July 17, 2018"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://2017-2021.state.gov/special-report-u-s-conventional-weapons-destruction-in-laos/'}
+    access:
+      free_copy: "https://2017-2021.state.gov/special-report-u-s-conventional-weapons-destruction-in-laos/"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Special Report: U.S. Conventional Weapons Destruction in Laos - United States Department of State"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-nara-casualties
+    tier: A
+    kind: dataset
+    author: National Archives and Records Administration
+    title: Vietnam War U.S. Military Fatal Casualty Statistics
+    container: null
+    publisher: National Archives and Records Administration
+    place: null
+    year: 2008
+    edition: "web page describing the Defense Casualty Analysis System extract file, 'current as of April 29, 2008', transferred to NARA in 2008"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.archives.gov/research/military/vietnam-war/casualty-statistics'}
+    access:
+      free_copy: "https://www.archives.gov/research/military/vietnam-war/casualty-statistics"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Vietnam War U.S. Military Fatal Casualty Statistics | National Archives"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-lii-nyt-v-us-1971
+    tier: A
+    kind: judgment
+    author: "Supreme Court of the United States (per curiam, with concurring and dissenting opinions)"
+    title: "New York Times Co. v. United States, 403 U.S. 713 (1971)"
+    container: "United States Reports, volume 403"
+    publisher: "Legal Information Institute, Cornell Law School (web text of the opinion)"
+    place: null
+    year: 1971
+    edition: LII's web text with its own paragraph numbers
+    volume: "403"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.law.cornell.edu/supremecourt/text/403/713'}
+    access:
+      free_copy: "https://www.law.cornell.edu/supremecourt/text/403/713"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "NEW YORK TIMES COMPANY, Petitioner, v. UNITED STATES. ... | Supreme Court | US Law | LII / Legal Information Institute"
+    language: en
+    region_of_authorship: americas
+    producer: us-supreme-court
+    position: null
+    rights: public
+
+  # ----------------------------------------------------------- Tier A: Congress
+  - id: src-hjc-report-1974
+    tier: A
+    kind: report
+    author: "United States House of Representatives, Committee on the Judiciary (Peter W. Rodino, Jr., Chairman)"
+    title: "Impeachment of Richard M. Nixon, President of the United States: The Final Report of the Committee on the Judiciary, House of Representatives"
+    container: null
+    publisher: "The Viking Press, reprinting the committee's report of August 20, 1974"
+    place: New York
+    year: 1975
+    edition: "the Viking Press trade edition scanned by the Internet Archive (not a lending item); only the committee's report and the members' views, works of the United States government, are extracted. The OCR text was fetched for the watergate ledger the same day and is reused"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: impeachmentofric0000unit, hathitrust: null, url: 'https://archive.org/details/impeachmentofric0000unit'}
+    access:
+      free_copy: "https://archive.org/details/impeachmentofric0000unit"
+      verified_at: "2026-10-09"
+      verified_by: archive-item-fetch
+      verified_title: "Impeachment of Richard M. Nixon, President of the United States : the final report of the Committee on the Judiciary, House of Representatives"
+    language: en
+    region_of_authorship: americas
+    producer: us-congress
+    position: null
+    rights: public
+
+  # ----------------------------------------------------------- Tier A: the treaties
+  - id: src-unts-geneva-1954
+    tier: A
+    kind: treaty
+    author: "The Geneva Conference on the problem of restoring peace in Indo-China (Cambodia, the Democratic Republic of Viet-Nam, France, Laos, the People's Republic of China, the State of Viet-Nam, the USSR, the United Kingdom and the United States)"
+    title: "Final Declaration, dated the 21st July, 1954, of the Geneva Conference on the problem of restoring peace in Indo-China, with the related declarations (as annexed to registration I-13295)"
+    container: null
+    publisher: "United Nations, Treaty Series, volume 935"
+    place: null
+    year: 1954
+    edition: "texts communicated to the UN Secretariat by the United States on 15 January 1975 'for the purpose of information'; the authentic text of the Final Declaration is French and the English is the translation 'supplied by the Government of the United States of America', as the volume's footnotes say"
+    volume: "935"
+    document_number: "I-13295 (annex, printed page 95 onward)"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://treaties.un.org/doc/Publication/UNTS/Volume%20935/volume-935-I-13295-English.pdf'}
+    access:
+      free_copy: "https://treaties.un.org/doc/Publication/UNTS/Volume%20935/volume-935-I-13295-English.pdf"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: No. 13295 ... Final Declaration of the Geneva Conference on the problem of restoring peace in Indo-China ... Done at Geneva on 21 July 1954 (the PDF's first page)
+    language: en
+    region_of_authorship: global
+    producer: geneva-conference
+    position: null
+    rights: public
+
+  - id: src-unts-paris-1973
+    tier: A
+    kind: treaty
+    author: "The United States of America, the Democratic Republic of Viet-Nam, the Provisional Revolutionary Government of the Republic of South Viet-Nam and the Republic of Viet-Nam"
+    title: "Agreement on ending the war and restoring peace in Viet-Nam, signed at Paris on 27 January 1973"
+    container: null
+    publisher: "United Nations, Treaty Series, volume 935"
+    place: null
+    year: 1973
+    edition: authentic texts English and Vietnamese; registered by the United States on 13 May 1974; the Vietnamese text is in the same volume and is not extracted
+    volume: "935"
+    document_number: I-13295
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://treaties.un.org/doc/Publication/UNTS/Volume%20935/volume-935-I-13295-English.pdf'}
+    access:
+      free_copy: "https://treaties.un.org/doc/Publication/UNTS/Volume%20935/volume-935-I-13295-English.pdf"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "No. 13295 (a) UNITED STATES OF AMERICA, DEMOCRATIC REPUBLIC OF VIET-NAM, PROVISIONAL REVOLUTIONARY GOVERNMENT OF THE REPUBLIC OF SOUTH VIET-NAM and REPUBLIC OF VIET-NAM Agreement on ending the war and restoring peace in Viet-Nam. Signed at Paris on 27 January 1973 (the PDF's first page)"
+    language: en
+    region_of_authorship: global
+    producer: paris-agreement-parties
+    position: null
+    rights: public
+
+  # ----------------------------------------------------------- Tier A: the Lao government
+  - id: src-undp-lao-2009
+    tier: A
+    kind: report
+    author: "Government of the Lao PDR, National Regulatory Authority for the UXO/Mine Action Sector (foreword by H.E. Duangchay Phichit, Chairman of the NRA, Deputy Prime Minister and Minister of Defence), with UNDP Lao PDR and UXO Lao"
+    title: "Hazardous Ground: Cluster Munitions and UXO in the Lao PDR"
+    container: null
+    publisher: UNDP Lao PDR
+    place: null
+    year: 2009
+    edition: "no printed date; the year is inferred from the text, which dates the Lao ratification of the Convention on Cluster Munitions to March 2009 and its first data to 2008"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://files.acquia.undp.org/public/migration/la/UNDP_LA_Hazardous-Ground.pdf'}
+    access:
+      free_copy: "https://files.acquia.undp.org/public/migration/la/UNDP_LA_Hazardous-Ground.pdf"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: Hazardous Ground Cluster Munitions and UXO in the Lao PDR (the PDF's first page; 48 pages)
+    language: en
+    region_of_authorship: southeast-asia
+    producer: lao-government
+    position: null
+    rights: copyright
+
+  # ----------------------------------------------------------- Tier B: research service and scholarship
+  - id: src-crs-agent-orange-2020
+    tier: B
+    kind: report
+    author: Congressional Research Service
+    title: "U.S. Agent Orange/Dioxin Assistance to Vietnam (R44268, updated May 13, 2020)"
+    container: null
+    publisher: Congressional Research Service
+    place: null
+    year: 2020
+    edition: the report's author line is not extracted and is not named here
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.congress.gov/crs_external_products/R/PDF/R44268/R44268.23.pdf'}
+    access:
+      free_copy: "https://www.congress.gov/crs_external_products/R/PDF/R44268/R44268.23.pdf"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "U.S. Agent Orange/Dioxin Assistance to Vietnam (the PDF's title metadata; 'Updated May 13, 2020')"
+    language: en
+    region_of_authorship: americas
+    producer: us-congress
+    position: null
+    rights: public
+
+  - id: src-bmj-obermeyer-2008
+    tier: B
+    kind: journal-article
+    author: "Ziad Obermeyer, Christopher J. L. Murray and Emmanuela Gakidou"
+    title: "Fifty years of violent war deaths from Vietnam to Bosnia: analysis of data from the world health survey programme"
+    container: "BMJ 2008;336:1482 (doi:10.1136/bmj.a137)"
+    publisher: BMJ
+    place: null
+    year: 2008
+    edition: "the BMJ's web text; the page notes a correction (Errata, 26 June 2008), which is not held"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.bmj.com/content/336/7659/1482'}
+    access:
+      free_copy: "https://www.bmj.com/content/336/7659/1482"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Fifty years of violent war deaths from Vietnam to Bosnia: analysis of data from the world health survey programme | The BMJ"
+    language: en
+    region_of_authorship: global
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-vu-quang-hien-ussh
+    tier: B
+    kind: journal-article
+    author: Vũ Quang Hiển (PGS. TS.)
+    title: Hậu quả của cuộc chiến tranh Việt Nam (1954-1975) - mấy vấn đề bàn luận
+    container: null
+    publisher: "Trường Đại học Khoa học Xã hội và Nhân văn, Đại học Quốc gia Hà Nội (USSH, VNU Hanoi)"
+    place: null
+    year: 2015
+    edition: the university's web text; the year is that of the neighbouring items the page lists (17/05/2015) and is not printed on the article itself; no English rendering is held
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://ussh.vnu.edu.vn/vi/nckh/san-pham-nghien-cuu-tieu-bieu/hau-qua-cua-cuoc-chien-tranh-viet-nam-1954-1975-may-van-de-ban-luan-11757.html'}
+    access:
+      free_copy: "https://ussh.vnu.edu.vn/vi/nckh/san-pham-nghien-cuu-tieu-bieu/hau-qua-cua-cuoc-chien-tranh-viet-nam-1954-1975-may-van-de-ban-luan-11757.html"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Hậu quả của cuộc chiến tranh Việt Nam (1954-1975) - mấy vấn đề bàn luận (the page's <title>)"
+    language: vi
+    region_of_authorship: southeast-asia
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-walrus-owen-2006
+    tier: B
+    kind: journal-article
+    author: Taylor Owen (the page's byline)
+    title: Bombs Over Cambodia
+    container: null
+    publisher: The Walrus
+    place: null
+    year: 2006
+    edition: "the magazine's web text of the October 2006 piece; the page names only Taylor Owen, though the piece is often cited as Owen and Ben Kiernan; Kiernan's name does not appear in the fetched text"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://thewalrus.ca/2006-10-history/'}
+    access:
+      free_copy: "https://thewalrus.ca/2006-10-history/"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Bombs Over Cambodia | The Walrus (published October 12, 2006, updated May 27, 2020)"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  # ----------------------------------------------------------- Tier A: the Tricontinental
+  - id: src-che-tricontinental-1967-en
+    tier: A
+    kind: primary-document
+    author: Ernesto Che Guevara
+    title: Message to the Tricontinental (English text)
+    container: null
+    publisher: "Marxists Internet Archive (Che Guevara Internet Archive), from Workers' Web, 1997"
+    place: null
+    year: 1967
+    edition: "TRANSLATION PROVENANCE: the page names its publisher as the Executive Secretariat of OSPAAAL, Havana, first published April 16, 1967, and its online source as Workers' Web, 1997; it names no translator, so the English is of unstated provenance. The Spanish is held as src-che-tricontinental-1967-es"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.marxists.org/archive/guevara/1967/04/16.htm'}
+    access:
+      free_copy: "https://www.marxists.org/archive/guevara/1967/04/16.htm"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: Message to the Tricontinental
+    language: en
+    region_of_authorship: americas
+    producer: che-guevara
+    position: null
+    rights: copyright
+
+  - id: src-che-tricontinental-1967-es
+    tier: A
+    kind: primary-document
+    author: Ernesto Che Guevara
+    title: "\"Crear dos, tres ... muchos Vietnam\": Mensaje a los pueblos del mundo a través de la Tricontinental"
+    container: null
+    publisher: "Marxists Internet Archive (Archivo Che Guevara), from the Biblioteca de Textos Marxistas en Internet"
+    place: null
+    year: 1967
+    edition: "the page: 'Primera edición: En La Habana, Cuba, el 16 de abril de 1967, en forma de folleto como suplemento especial para la revista Tricontinental' (sectitle)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.marxists.org/espanol/guevara/04_67.htm'}
+    access:
+      free_copy: "https://www.marxists.org/espanol/guevara/04_67.htm"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Che Guevara (1967): \"Mensaje a los pueblos del mundo a traves de la Tricontinental.\" (the page's <title>)"
+    language: es
+    region_of_authorship: americas
+    producer: che-guevara
+    position: null
+    rights: copyright
+
+  # ----------------------------------------------------------- Tier C: commemorative figures
+  - id: src-qn-ccb-2023
+    tier: C
+    kind: reference
+    author: "Hội Cựu chiến binh tỉnh Quảng Ninh, Ban Tuyên giáo - Phong trào (Quảng Ninh Provincial Veterans' Association)"
+    title: 27/7 và những con số liên quan
+    container: null
+    publisher: Quảng Ninh Provincial Portal (quangninh.gov.vn)
+    place: null
+    year: 2023
+    edition: a commemorative list of figures posted on the provincial portal by the veterans' association; it names no source for them; no English rendering is held
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: 'https://www.quangninh.gov.vn/bannganh/hoicuuchienbinh/Trang/ChiTietTinTuc.aspx?nid=395'}
+    access:
+      free_copy: "https://www.quangninh.gov.vn/bannganh/hoicuuchienbinh/Trang/ChiTietTinTuc.aspx?nid=395"
+      verified_at: "2026-10-09"
+      verified_by: document-fetch
+      verified_title: "Bài viết chi tiết (the page's <title>; its heading: '27/7 VÀ NHỮNG CON SỐ LIÊN QUAN', dated 24/07/2023)"
+    language: vi
+    region_of_authorship: southeast-asia
+    producer: vietnam-veterans-association
+    position: null
+    rights: copyright
+
+  # ----------------------------------------------------------- not read (gaps)
+  - id: src-mcnamara-1995
+    tier: B
+    kind: memoir
+    author: Robert S. McNamara
+    title: "In Retrospect: The Tragedy and Lessons of Vietnam"
+    container: null
+    publisher: null
+    place: null
+    year: 1995
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: 'no free copy found on a primary or archival host; the YAML marks the book ''verified: false'''}
+    language: en
+    region_of_authorship: americas
+    producer: recollection
+    position: null
+    rights: copyright
+
+  - id: src-ellsberg-statement-19710628
+    tier: A
+    kind: primary-document
+    author: Daniel Ellsberg
+    title: "Statement to the press after indictment, June 28, 1971 (as the event YAML names it)"
+    container: null
+    publisher: null
+    place: null
+    year: 1971
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: no free copy of the statement's text was found on a primary or archival host; the watergate ledger records the same gap}
+    language: en
+    region_of_authorship: americas
+    producer: recollection
+    position: null
+    rights: copyright
+
+  - id: src-ellsberg-2002
+    tier: B
+    kind: memoir
+    author: Daniel Ellsberg
+    title: "Secrets: A Memoir of Vietnam and the Pentagon Papers"
+    container: null
+    publisher: Viking
+    place: New York
+    year: 2002
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: secretsmemoirofv0000ells, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: 'the Internet Archive''s copy is a controlled lending item (access-restricted, printdisabled), which this container cannot open'}
+    language: en
+    region_of_authorship: americas
+    producer: recollection
+    position: null
+    rights: copyright
+
+  - id: src-cronkite-19680227
+    tier: A
+    kind: testimony
+    author: Walter Cronkite (CBS News)
+    title: "CBS News special broadcast from Vietnam, February 27, 1968 (as the event YAML names it)"
+    container: null
+    publisher: CBS News
+    place: null
+    year: 1968
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: no transcript or recording with a stated licence was found on a primary or archival host; the broadcast is CBS's}
+    language: en
+    region_of_authorship: americas
+    producer: press
+    position: null
+    rights: copyright
+
+  - id: src-eisenhower-1963
+    tier: B
+    kind: memoir
+    author: Dwight D. Eisenhower
+    title: Mandate for Change
+    container: null
+    publisher: null
+    place: null
+    year: 1963
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: not searched in a free full-text copy; the 80 percent remark is held only as the Pentagon Papers characterise it (src-pp-part-iva5.seceighty)}
+    language: en
+    region_of_authorship: americas
+    producer: recollection
+    position: null
+    rights: copyright
+
+  - id: src-congressional-record-19640807
+    tier: A
+    kind: testimony
+    author: United States Senate (Senator Wayne Morse)
+    title: "Congressional Record, Senate, the debate on the Southeast Asia resolution, August 1964 (Morse's 'history will record' speech)"
+    container: null
+    publisher: U.S. Government Printing Office
+    place: null
+    year: 1964
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: 'not fetched: the bound Congressional Record volume for 1964 was not located on govinfo in a form this session could cut; Morse''s words are therefore not held'}
+    language: en
+    region_of_authorship: americas
+    producer: us-congress
+    position: null
+    rights: copyright
+
+  - id: src-vn-1995-casualty-release
+    tier: A
+    kind: primary-document
+    author: "Government of the Socialist Republic of Viet Nam (Vietnam News Agency release, April 1995)"
+    title: The government's release of war casualty figures on the twentieth anniversary of 30 April 1975
+    container: null
+    publisher: null
+    place: null
+    year: 1995
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: the release itself was not found; the AP report of it on the Virginian-Pilot archive at scholar.lib.vt.edu answered 410 and its Wayback copy is limited to the Virginia Tech campus; the official figures are held as Vũ Quang Hiển states them (src-vu-quang-hien-ussh.seccasualties)}
+    language: vi
+    region_of_authorship: southeast-asia
+    producer: vietnamese-government
+    position: null
+    rights: copyright
+
+  - id: src-hirschman-1995
+    tier: B
+    kind: journal-article
+    author: "Charles Hirschman, Samuel Preston and Vu Manh Loi"
+    title: "Vietnamese Casualties During the American War: A New Estimate"
+    container: null
+    publisher: Population and Development Review
+    place: null
+    year: 1995
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: 'the author''s copy at faculty.washington.edu redirected to the faculty site''s front page on 2026-10-09; its 966,000 is held only as the BMJ reports it (src-bmj-obermeyer-2008.seccomparison)'}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-herring-1979
+    tier: B
+    kind: monograph
+    author: George C. Herring
+    title: "America's Longest War: The United States and Vietnam, 1950-1975"
+    container: null
+    publisher: McGraw-Hill (the Internet Archive copy is the 1986 edition)
+    place: New York
+    year: 1979
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: americaslongestw0000herr, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: 'the Internet Archive''s copy is a controlled lending item (access-restricted, printdisabled), which this container cannot open'}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-mcmaster-1997
+    tier: B
+    kind: monograph
+    author: H. R. McMaster
+    title: Dereliction of Duty
+    container: null
+    publisher: HarperCollins
+    place: New York
+    year: 1997
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: derelictionofdut00mcma, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: 'the Internet Archive''s copy is a controlled lending item (access-restricted, printdisabled), which this container cannot open'}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-karnow-1983
+    tier: B
+    kind: monograph
+    author: Stanley Karnow
+    title: "Vietnam: A History"
+    container: null
+    publisher: Viking Press
+    place: New York
+    year: 1983
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: vietnamhistory00karn, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: 'the Internet Archive''s copy is a controlled lending item (access-restricted, printdisabled), which this container cannot open; the Ho Chi Minh ''ten of my men'' remark the event YAML attributes to it is therefore not held'}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-hersh-1970
+    tier: B
+    kind: monograph
+    author: Seymour M. Hersh
+    title: "My Lai 4: A Report on the Massacre and Its Aftermath"
+    container: null
+    publisher: Random House
+    place: New York
+    year: 1970
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: mylai4reportonma00hers, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: 'the Internet Archive''s copy is a controlled lending item (access-restricted, printdisabled), which this container cannot open'}
+    language: en
+    region_of_authorship: americas
+    producer: press
+    position: null
+    rights: copyright
+
+  - id: src-kurlantzick-2017
+    tier: B
+    kind: monograph
+    author: Joshua Kurlantzick
+    title: "A Great Place to Have a War: America in Laos and the Birth of a Military CIA"
+    container: null
+    publisher: "Simon & Schuster"
+    place: New York
+    year: 2017
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: greatplacetohave0000kurl, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: 'the Internet Archive''s copy is a controlled lending item (access-restricted, printdisabled), which this container cannot open'}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-shawcross-1979
+    tier: B
+    kind: monograph
+    author: William Shawcross
+    title: "Sideshow: Kissinger, Nixon, and the Destruction of Cambodia"
+    container: null
+    publisher: Simon and Schuster
+    place: New York
+    year: 1979
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: sideshowkissinge0000shaw, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: 'the Internet Archive''s copy is a controlled lending item (access-restricted, printdisabled), which this container cannot open'}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-branfman-1972
+    tier: B
+    kind: edited-documents
+    author: Fred Branfman (ed.)
+    title: "Voices from the Plain of Jars: Life Under an Air War"
+    container: null
+    publisher: null
+    place: null
+    year: 1972
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: 'no free copy found; the YAML marks it ''verified: false''; the ''anonymous Laotian farmer'' quotation is therefore not held (President Obama, 2016, quotes ''one Laotian'' as saying the ''bombs fell like rain'', src-obama-laos-2016.secbombs)'}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-giap-1962
+    tier: A
+    kind: primary-document
+    author: Vo Nguyen Giap
+    title: "People's War, People's Army"
+    container: null
+    publisher: Praeger (the Internet Archive copy)
+    place: New York
+    year: 1962
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: peopleswarpeople0000vong, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: 'the Internet Archive''s copy is a controlled lending item (access-restricted, printdisabled), which this container cannot open'}
+    language: en
+    region_of_authorship: southeast-asia
+    producer: drv-government
+    position: null
+    rights: copyright
+
+  - id: src-fanon-1961
+    tier: B
+    kind: monograph
+    author: Frantz Fanon
+    title: The Wretched of the Earth
+    container: null
+    publisher: "Grove Press (the Internet Archive copy, 1968)"
+    place: New York
+    year: 1961
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: wretchedofearth00fano, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: 'the Internet Archive''s copy is a controlled lending item (access-restricted, printdisabled), which this container cannot open'}
+    language: en
+    region_of_authorship: africa
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-vang-pao-attributed
+    tier: C
+    kind: testimony
+    author: Vang Pao (attributed)
+    title: "'We were America's secret army...' (the event YAML: 'Attributed, Hmong community accounts')"
+    container: null
+    publisher: null
+    place: null
+    year: 1975
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: no source is named by the YAML and none was found; the quotation is not held}
+    language: en
+    region_of_authorship: southeast-asia
+    producer: recollection
+    position: null
+    rights: copyright
+
+positions: []
+contested: []
+exhibits: []
+analyses: []
+
+gaps:
+  - entry: src-mcnamara-1995
+    what: "McNamara's 'We were wrong, terribly wrong' and the eleven causes; the YAML excerpt and the live script's closing DOCUMENT rest on it and are not verified"
+    tried: ['https://archive.org/advancedsearch.php?q=title%3A%28In+Retrospect%29+creator%3A%28McNamara%29']
+    status: no free copy found
+  - entry: src-ellsberg-statement-19710628
+    what: "Ellsberg's 28 June 1971 statement, the YAML excerpt and an M: line of the live script"
+    tried: ['https://www.archives.gov/research/pentagon-papers']
+    status: no free text found
+  - entry: src-ellsberg-2002
+    what: "Ellsberg's account of copying the study (the 'October 1, 1969' start, Russo, months of photocopying)"
+    tried: ['https://archive.org/details/secretsmemoirofv0000ells']
+    status: lending copy
+  - entry: src-cronkite-19680227
+    what: "Cronkite's 'stalemate' broadcast, a YAML excerpt and a DOCUMENT in the live script; Johnson's reported reaction ('If I've lost Cronkite...') has no source at all in the record"
+    tried: ['https://www.cbsnews.com/']
+    status: no transcript with a stated source and licence found
+  - entry: src-eisenhower-1963
+    what: Eisenhower's own words on '80 percent'
+    tried: ['https://archive.org/details/mandateforchange00eise']
+    status: not read
+  - entry: src-congressional-record-19640807
+    what: Morse's speech of 6-7 August 1964 and the Senate roll call in the Record itself; the votes are held from the Pentagon Papers
+    tried: ['https://www.govinfo.gov/app/collection/crecb']
+    status: not located in a cuttable form
+  - entry: src-vn-1995-casualty-release
+    what: "The Vietnamese government's own 1995 release (1.1 million combatants, about 2 million civilians)"
+    tried: ['https://scholar.lib.vt.edu/VA-news/VA-Pilot/issues/1995/vp950404/04040331.htm', 'https://web.archive.org/web/2015id_/http://scholar.lib.vt.edu/VA-news/VA-Pilot/issues/1995/vp950404/04040331.htm']
+    status: "410, and the archived copy is campus-only"
+  - entry: src-hirschman-1995
+    what: "Hirschman, Preston and Vu Manh Loi's own estimate and its error band"
+    tried: ['https://faculty.washington.edu/charles/pubs/Vietnamese_Casualties_During_the_American_War.pdf']
+    status: redirected to the site's front page
+  - entry: src-herring-1979
+    what: "Herring's legitimacy argument, named in the YAML's containment account"
+    tried: ['https://archive.org/details/americaslongestw0000herr']
+    status: lending copy
+  - entry: src-mcmaster-1997
+    what: McMaster's account of the Joint Chiefs
+    tried: ['https://archive.org/details/derelictionofdut00mcma']
+    status: lending copy
+  - entry: src-karnow-1983
+    what: "Karnow, the YAML's source for Ho's 'ten of my men' remark, an M: line in the live script"
+    tried: ['https://archive.org/details/vietnamhistory00karn']
+    status: lending copy
+  - entry: src-hersh-1970
+    what: Hersh's own account of My Lai and its publication
+    tried: ['https://archive.org/details/mylai4reportonma00hers']
+    status: lending copy
+  - entry: src-kurlantzick-2017
+    what: "The CIA's war in Laos and the Hmong army (the YAML's 30,000 soldiers, 30,000 killed, Vang Pao's evacuation)"
+    tried: ['https://archive.org/details/greatplacetohave0000kurl']
+    status: lending copy
+  - entry: src-shawcross-1979
+    what: Shawcross on the Cambodian bombing and Sihanouk
+    tried: ['https://archive.org/details/sideshowkissinge0000shaw']
+    status: lending copy
+  - entry: src-branfman-1972
+    what: Laotian testimony from the Plain of Jars
+    tried: ['https://archive.org/advancedsearch.php?q=voices+from+the+plain+of+jars']
+    status: no free copy found
+  - entry: src-giap-1962
+    what: Giap's own theory of people's war
+    tried: ['https://archive.org/details/peopleswarpeople0000vong']
+    status: lending copy
+  - entry: src-fanon-1961
+    what: "Fanon, named by the YAML's Global South account"
+    tried: ['https://archive.org/details/wretchedofearth00fano']
+    status: lending copy
+  - entry: src-vang-pao-attributed
+    what: "The Vang Pao quotation, an M: line in the live script"
+    tried: []
+    status: no source named or found
+  - what: "A Hmong account in the Hmong community's own words, and any Cambodian account of the bombing in Khmer, from a repository with a free copy"
+    tried: ['https://files.acquia.undp.org/public/migration/la/UNDP_LA_Hazardous-Ground.pdf']
+    status: "not found in this session; the Lao state's voice is held (src-undp-lao-2009), the Hmong and the Cambodian voices are not"
+  - what: A recording of Johnson's 4 August 1964 address or of Ho Chi Minh reading the declaration from a repository that states its rights
+    tried: ['https://www.lbjlibrary.org/object/video/president-johnsons-vietnam-address-8464-mp498', 'https://media.chinhphu.vn/chu-tich-ho-chi-minh-doc-tuyen-ngon-doc-lap-nam-1945-102260831123435279.htm']
+    status: the LBJ Library's film of the address is CBS's donation (no public-domain statement); the Government portal's player names no file and states no licence. No candidate is written
+
+# ------------------------------------------------------------- recordings
+# Archival audio artifacts (docs/proposals/HISTORY-AUDIO-ARCHIVAL.md §4a). A recording is a
+# factual claim four times over: this speaker, this occasion, this date, these words. Every
+# `*_as_stated` field is copied from the repository's own page or file headers as fetched on
+# `fetched_at`, never from memory. `transcript` is verbatim from the ledger extract named in
+# `transcript_extract`. `verification` names the record pipeline/history/verify_clip.py wrote;
+# its WER, coverage, excerpt sha256 and verified_at are the check's, never hand-typed.
+# `signed_by` / `signed_at` are the CEO's, per clip, and nothing plays in an episode until both
+# are set (policy B, §2). Every row here is left UNSIGNED for the CEO.
+# All three are windows of ONE file, the LBJ Library's recording of the 27 May 1964 call with
+# Bundy (the Apollo 11 precedent: several windows of one public-domain file). H-16 allows at most
+# three clips per episode; an episode should take at most two of these, so that the call does
+# not stand in for the war.
+recordings:
+  # A candidate that FAILS the transcript gate, kept so the reason is on the record. No `# CLIP:` directive should name it.
+  - id: clip-johnson-biggest-damn-mess-19640527
+    kind: audio
+    title: "Lyndon B. Johnson, 'the biggest damn mess that I ever saw', in the LBJ Library's recording of his call with McGeorge Bundy, 27 May 1964"
+    speaker: Lyndon B. Johnson
+    occasion: "Telephone conversation between President Johnson and his Special Assistant for National Security Affairs, McGeorge Bundy, 11:24 a.m., recorded by the White House; LBJ Library telephone conversation #3522 (WH6405.10)"
+    date: "1964-05-27"
+    date_as_stated: "the Library's item page: 'ORIGIN DATE 05/27/1964'; FRUS: 'Washington, May 27, 1964, 11:24 a.m.' (src-frus-1964-68-v27-d53.secmess)"
+    repository: Lyndon Baines Johnson Presidential Library (National Archives and Records Administration)
+    accession: "LBJ Library telephone conversation #3522 (the file name: clip_lbj_wh6405_10_3522_Bundy)"
+    url: "https://www.lbjlibrary.org/object/audio/may-27-1964-president-johnson-expresses-anguish-over-vietnam-war-his-national-security"
+    file: "https://lbj-prod-staticfiles-4pgcba8v8q69.s3.amazonaws.com/artifacts/audio/2018-08/clip_lbj_wh6405_10_3522_Bundy.wav"
+    file_md5: 79cf8308b368ff7962d701599a80c7c1
+    file_md5_as_stated: "the Library publishes no checksum on its page; the file's S3 ETag as served on 2026-10-09 is \"79cf8308b368ff7962d701599a80c7c1\", which equals the md5 of the file as fetched (40,337,452 bytes, audio/x-wav, Last-Modified Thu, 02 Aug 2018 14:31:21 GMT); recorded so the render job refuses a changed file"
+    title_as_stated: "May 27, 1964: President Johnson expresses anguish over the Vietnam War to his National Security Adviser McGeorge Bundy"
+    creator_as_stated: "'CREDIT LBJ Library telephone conversation, #3522.' (the item page); the page names no recordist"
+    origin_as_stated: "the Library's audio object page, which serves the file as 'clip_lbj_wh6405_10_3522_Bundy.wav' with a 'Download (WAV, 38.5 MB)' link; the file is a clip of the conversation (457.3 s, mono PCM, 44.1 kHz), not the whole call; the Library's lbjtapes.org page for the same conversation ('WH6405-10-3522') serves a separate MP3, which is not used"
+    uploader_as_stated: the Library's own site and storage; no third-party uploader
+    licence_as_stated: "the item page: 'RIGHTS Public domain'"
+    licence_url: "https://www.lbjlibrary.org/object/audio/may-27-1964-president-johnson-expresses-anguish-over-vietnam-war-his-national-security"
+    rights_basis: public-domain-as-stated
+    rights_reading: "A presidential telephone conversation recorded by the White House and served by the federal presidential library, whose item page states 'RIGHTS Public domain'. The words are the President's own, spoken in office to a member of his staff. Admissible under policy B with the CEO's signature"
+    fetched_at: "2026-10-09"
+    duration_s: 457.34
+    excerpt: {in: '00:00:26.800', out: '00:00:32.480'}
+    transcript_extract: src-frus-1964-68-v27-d53.secmess
+    transcript: I don’t think it’s worth fighting for and I don’t think we can get out. And it’s just the biggest damn mess that I ever saw.
+    verification: recordings/clip-johnson-biggest-damn-mess-19640527.verification.json
+    observed: "NOT ADMITTED. The record: faster-whisper base.en, WER 0.133, coverage 0.867, FAIL ('the window does not close on the transcript's last words'): base.en heard '... the biggest damn mess it is.' for '... the biggest damn mess that I ever saw.' Moving the out point to 32.56 s and the in point to 26.90 s gave the same hearing. FRUS prints 'that I ever saw' and the Library's own title for the call (on lbjtapes.org) quotes 'just the biggest damn mess I ever saw'; the ASR does not confirm either ending, and the bar is not lowered: the document voice reads the line. The window sits between Johnson's 'in that area.' (ends about 26.4 s) and Bundy's 'It is an awful mess' (about 32.6 s). The file is mono PCM, 44.1 kHz, 7 min 37 s"
+    shows: "Johnson's voice, ten weeks before the Gulf of Tonkin, saying he does not think Vietnam is worth fighting for and does not think the United States can get out"
+    does_not_show: "what he decided; Bundy's answer ('It is an awful mess.'), which begins about 0.1 s after the window closes; the rest of the call"
+    signed_by: null
+    signed_at: null
+
+  - id: clip-johnson-another-korea-19640527
+    kind: audio
+    title: "Lyndon B. Johnson, 'getting into another Korea', in the LBJ Library's recording of his call with McGeorge Bundy, 27 May 1964"
+    speaker: Lyndon B. Johnson
+    occasion: "Telephone conversation between President Johnson and his Special Assistant for National Security Affairs, McGeorge Bundy, 11:24 a.m., recorded by the White House; LBJ Library telephone conversation #3522 (WH6405.10)"
+    date: "1964-05-27"
+    date_as_stated: "the Library's item page: 'ORIGIN DATE 05/27/1964'; FRUS: 'Washington, May 27, 1964, 11:24 a.m.' (src-frus-1964-68-v27-d53.secmess)"
+    repository: Lyndon Baines Johnson Presidential Library (National Archives and Records Administration)
+    accession: "LBJ Library telephone conversation #3522 (the file name: clip_lbj_wh6405_10_3522_Bundy)"
+    url: "https://www.lbjlibrary.org/object/audio/may-27-1964-president-johnson-expresses-anguish-over-vietnam-war-his-national-security"
+    file: "https://lbj-prod-staticfiles-4pgcba8v8q69.s3.amazonaws.com/artifacts/audio/2018-08/clip_lbj_wh6405_10_3522_Bundy.wav"
+    file_md5: 79cf8308b368ff7962d701599a80c7c1
+    file_md5_as_stated: "the Library publishes no checksum on its page; the file's S3 ETag as served on 2026-10-09 is \"79cf8308b368ff7962d701599a80c7c1\", which equals the md5 of the file as fetched (40,337,452 bytes, audio/x-wav, Last-Modified Thu, 02 Aug 2018 14:31:21 GMT); recorded so the render job refuses a changed file"
+    title_as_stated: "May 27, 1964: President Johnson expresses anguish over the Vietnam War to his National Security Adviser McGeorge Bundy"
+    creator_as_stated: "'CREDIT LBJ Library telephone conversation, #3522.' (the item page); the page names no recordist"
+    origin_as_stated: "the Library's audio object page, which serves the file as 'clip_lbj_wh6405_10_3522_Bundy.wav' with a 'Download (WAV, 38.5 MB)' link; the file is a clip of the conversation (457.3 s, mono PCM, 44.1 kHz), not the whole call; the Library's lbjtapes.org page for the same conversation ('WH6405-10-3522') serves a separate MP3, which is not used"
+    uploader_as_stated: the Library's own site and storage; no third-party uploader
+    licence_as_stated: "the item page: 'RIGHTS Public domain'"
+    licence_url: "https://www.lbjlibrary.org/object/audio/may-27-1964-president-johnson-expresses-anguish-over-vietnam-war-his-national-security"
+    rights_basis: public-domain-as-stated
+    rights_reading: "A presidential telephone conversation recorded by the White House and served by the federal presidential library, whose item page states 'RIGHTS Public domain'. The words are the President's own, spoken in office to a member of his staff. Admissible under policy B with the CEO's signature"
+    fetched_at: "2026-10-09"
+    duration_s: 457.34
+    excerpt: {in: '00:00:05.860', out: '00:00:13.560'}
+    transcript_extract: src-frus-1964-68-v27-d53.secmess
+    transcript: "I don’t know what in the hell, it looks like to me that we’re getting into another Korea. It just worries the hell out of me."
+    verification: recordings/clip-johnson-another-korea-19640527.verification.json
+    observed: "The record: faster-whisper base.en, WER 0.143, coverage 0.857, PASS; base.en heard 'it would look like me' for 'it looks like to me that'. The window opens before 'I don't know' and closes after 'out of me.', before 'I don't see what we can ever hope to get out of there'. A 1964 telephone recording: narrow band, some hiss"
+    shows: "Johnson's voice at the opening of the same call, comparing Vietnam with Korea"
+    does_not_show: "the sentence that opens the call before the window ('I will tell you the more, I just stayed awake last night thinking of this thing'); what he decided"
+    signed_by: null
+    signed_at: null
+
+  - id: clip-johnson-kitchen-19640527
+    kind: audio
+    title: "Lyndon B. Johnson, 'chase you right into your own kitchen', in the LBJ Library's recording of his call with McGeorge Bundy, 27 May 1964"
+    speaker: Lyndon B. Johnson
+    occasion: "Telephone conversation between President Johnson and his Special Assistant for National Security Affairs, McGeorge Bundy, 11:24 a.m., recorded by the White House; LBJ Library telephone conversation #3522 (WH6405.10)"
+    date: "1964-05-27"
+    date_as_stated: "the Library's item page: 'ORIGIN DATE 05/27/1964'; FRUS: 'Washington, May 27, 1964, 11:24 a.m.' (src-frus-1964-68-v27-d53.secmess)"
+    repository: Lyndon Baines Johnson Presidential Library (National Archives and Records Administration)
+    accession: "LBJ Library telephone conversation #3522 (the file name: clip_lbj_wh6405_10_3522_Bundy)"
+    url: "https://www.lbjlibrary.org/object/audio/may-27-1964-president-johnson-expresses-anguish-over-vietnam-war-his-national-security"
+    file: "https://lbj-prod-staticfiles-4pgcba8v8q69.s3.amazonaws.com/artifacts/audio/2018-08/clip_lbj_wh6405_10_3522_Bundy.wav"
+    file_md5: 79cf8308b368ff7962d701599a80c7c1
+    file_md5_as_stated: "the Library publishes no checksum on its page; the file's S3 ETag as served on 2026-10-09 is \"79cf8308b368ff7962d701599a80c7c1\", which equals the md5 of the file as fetched (40,337,452 bytes, audio/x-wav, Last-Modified Thu, 02 Aug 2018 14:31:21 GMT); recorded so the render job refuses a changed file"
+    title_as_stated: "May 27, 1964: President Johnson expresses anguish over the Vietnam War to his National Security Adviser McGeorge Bundy"
+    creator_as_stated: "'CREDIT LBJ Library telephone conversation, #3522.' (the item page); the page names no recordist"
+    origin_as_stated: "the Library's audio object page, which serves the file as 'clip_lbj_wh6405_10_3522_Bundy.wav' with a 'Download (WAV, 38.5 MB)' link; the file is a clip of the conversation (457.3 s, mono PCM, 44.1 kHz), not the whole call; the Library's lbjtapes.org page for the same conversation ('WH6405-10-3522') serves a separate MP3, which is not used"
+    uploader_as_stated: the Library's own site and storage; no third-party uploader
+    licence_as_stated: "the item page: 'RIGHTS Public domain'"
+    licence_url: "https://www.lbjlibrary.org/object/audio/may-27-1964-president-johnson-expresses-anguish-over-vietnam-war-his-national-security"
+    rights_basis: public-domain-as-stated
+    rights_reading: "A presidential telephone conversation recorded by the White House and served by the federal presidential library, whose item page states 'RIGHTS Public domain'. The words are the President's own, spoken in office to a member of his staff. Admissible under policy B with the CEO's signature"
+    fetched_at: "2026-10-09"
+    duration_s: 457.34
+    excerpt: {in: '00:01:04.400', out: '00:01:09.700'}
+    transcript_extract: src-frus-1964-68-v27-d53.secmess
+    transcript: "Of course, if you start running from the Communists, they may just chase you right into your own kitchen."
+    verification: recordings/clip-johnson-kitchen-19640527.verification.json
+    observed: "The record: faster-whisper base.en, WER 0.210, coverage 0.842, PASS; base.en heard 'Now, of course, you start running the Communists. They may just chase you right in your own kitchen.' The word 'Now' at the head of the window is heard by the ASR and is not in the FRUS transcript; it is recorded as a lead insertion, and a writer must not credit the clip with words it does not carry. Opening the window at 64.2 s gave coverage 0.737; 64.7 s gave 0.789. The window closes after 'kitchen.', before Bundy's reply"
+    shows: "Johnson's voice, in the same call, stating the case for staying: the containment argument in the doubter's own words"
+    does_not_show: "Bundy's reply ('Yeah, that’s the trouble ...'), which follows; that the two halves of the call contradict each other is the listener's to hear, not the clip's to say"
+    signed_by: null
+    signed_at: null
+
+
+# ------------------------------------------------------------- disagreements held, not adjudicated
+# Where two held sources disagree, both are held. This is a list for the writer, not a verdict.
+# Casualty and tonnage figures are listed per producer and are never averaged.
+# 1. Jefferson in Ho Chi Minh's mouth. Three texts are held and none is Jefferson's sentence. The
+#    Selected Works English: "All men are created equal. They are endowed by their Creator with
+#    certain inalienable rights, among these are Life, Liberty, and the pursuit of Happiness."
+#    (src-ho-declaration-1945-sw.secopening). The Pentagon Papers' English: "All men are created
+#    equal; they are endowed by their Creator with certain unalienable Rights; among these ..."
+#    (src-pp-part-i.secdeclaration). The Vietnamese as the Government portal prints it: "Tất cả
+#    mọi người đều sinh ra có quyền bình đẳng, tạo hóa cho họ những quyền không ai có thể xâm
+#    phạm được." (src-chinhphu-declaration-vi.secopening). The ledger holds no copy of the 1776
+#    text. The event YAML and the live script say Ho quoted Jefferson "word for word"; the held
+#    record shows a Vietnamese rendering and two English renderings of it that differ from each
+#    other, and nothing that compares either with Jefferson's own words.
+# 2. The crowd. The Government portal: read "trước hàng vạn đồng bào" at Ba Đình Square
+#    (src-chinhphu-declaration-vi.secopening; "hàng vạn" is "tens of thousands", a working gloss).
+#    The event YAML and the live script: "half a million people". No held source gives half a million.
+# 3. Ho's appeals. The Pentagon Papers: "at least, eight communications from Ho to the President of
+#    the United States, or to the Secretary of State, from October, 1945, to February, 1946", and
+#    "There is no record of U.S. reply to any of HO's appeals for aid." (src-pp-part-i.secletters).
+#    The YAML: "eight times" to Truman, "The letters went unanswered", "The State Department filed
+#    them". The count in the record is a floor ("at least"), the addressee is the President OR the
+#    Secretary of State, and "no record of reply" is the study's wording.
+# 4. Eighty percent. The Pentagon Papers: "President Eisenhower is widely quoted to the effect that
+#    in 1954 as many as 80% of the Vietnamese people would have voted for Ho Chi Minh ... in an
+#    election against Bao Dai", and "by 1956 the proportion ... would have been much smaller than
+#    80%" (src-pp-part-iva5.seceighty). Eisenhower's own words are a gap (src-eisenhower-1963). The
+#    YAML quotes a sentence from his memoir that the ledger does not hold.
+# 5. Geneva and the elections. The Final Declaration: "general elections shall be held in July
+#    1956" (src-unts-geneva-1954.secpara7). The United States "TAKES NOTE" and declares it "will
+#    refrain from the threat or the use of force to disturb them" (secusdeclaration). The State of
+#    Viet-Nam undertakes not to use force "despite the objections and reservations it has expressed"
+#    (secstateofvietnam). Diem, 16 July 1955, as the Pentagon Papers quote him: "we remain skeptical
+#    concerning the possibility of fulfilling the conditions of free elections in the North", and the
+#    study: "Diem obdurately refused to open talks with the Hanoi government" (src-pp-part-iva5.secdiem).
+#    The YAML says the United States "refused to sign" and "installed" Diem, and that "Diem canceled
+#    the elections"; the held record has the United States taking note and Diem refusing talks.
+# 6. The second Tonkin attack. The Pentagon Papers (1968-69): "the evidence does not support beliefs
+#    (which have been expressed) that the incident was staged" and points to "a deliberate DRV
+#    decision" (src-pp-part-ivc2b.secsecondattack). NSA's history: "no attack happened that night"
+#    (src-nsa-hanyok-2001.secfindings). Johnson on television that evening: the attack "was repeated
+#    today by a number of hostile vessels attacking two U.S. destroyers with torpedoes"
+#    (src-app-lbj-19640804.secopening). Not staged, and not real: the two held government histories
+#    are not answering the same question.
+# 7. What the sonar heard. NSA: the Desoto mission reported "all others were caused by reflections
+#    off the two destroyers' screws", and Sharp relayed doubts "because of freak weather, over-eager
+#    sonar operators, and the absence of visual sightings" (src-nsa-hanyok-2001.secsharp). The live
+#    script and the YAML: operators "picked up their own ship's propeller wake". Screws (propellers)
+#    and reflections are held; "wake" is not.
+# 8. What Johnson knew, and when. NSA: Sharp's doubts reached the Pentagon at about 1400 EST on 4
+#    August (secsharp); Johnson's "Hell, those damn, stupid sailors were just shooting at flying
+#    fish" is printed "a few days later" with no footnote (secflyingfish), so the remark is held only
+#    secondhand. The live script: "President Johnson knew within days that the second attack never
+#    happened." The held record supports doubt reported the same day and a remark reported without
+#    a source, not knowledge.
+# 9. The vote. The Pentagon Papers: "by votes of 88 to 2 in the Senate and 416 to 0 in the House",
+#    the day after committee discussion on 6 August (src-pp-part-ivc2b.secvotes). The statute was
+#    approved 10 August (src-statute-78-384.secresolution). The live script's "five hundred and four
+#    votes to two" adds two separate votes into one. The names of the two senators who voted no are
+#    not in any held extract.
+# 10. The dominoes. Eisenhower's own answer lists "the loss of Indochina, of Burma, of Thailand, of
+#    the Peninsula, and Indonesia following" (src-app-eisenhower-19540407.secdomino). The live script:
+#    "Laos and Cambodia would go next". The YAML: "Thailand, then Malaysia, then Indonesia". Laos,
+#    Cambodia and Malaysia are not in his answer.
+# 11. The hamlets. The Pentagon Papers: by the end of summer 1962 the GVN "claimed that 3,225 of the
+#    planned 11,316 hamlets had already been completed and that over 33 percent of the nation's total
+#    population was already living in completed hamlets" (src-pp-part-ivb2.sechamlets). The YAML
+#    and the live script: 8,600 hamlets and 8.7 million people by October 1963, "fabricated". Neither
+#    figure nor the word is held.
+# 12. My Lai, the dead. The Army's inquiry: "at least 175 and may exceed 400" in two hamlets of Son
+#    My Village, 16-19 March 1968 (src-peers-1970.secfindings); for Company C at My Lai (4), "at
+#    least 175-200" (seccompany). A notice the report attributes to the other side: "502 people were
+#    massacred at Tu Cung and Co Luy Hamlets" (secnotice). The Quảng Ngãi provincial government, 2026:
+#    "504 civilians" (src-qn-sonmy-2026.secceremony, seckilled). The YAML and the live script state
+#    504 as fact. The task force itself reported "a total of 128 VC killed" (sec128); the YAML
+#    attributes the 128 to Medina.
+# 13. My Lai, Thompson. The report: Thompson "landed his helicopter several times to aid the
+#    inhabitants and in an attempt to stop the killing" (secthompson); his door gunner testified that
+#    Thompson told the crew that if the American troops fired on the Vietnamese while he was trying to
+#    get them out of the bunker, the crew was to fire back at them (secbunker). The live script: he
+#    ordered his door gunner "to fire on any American who keeps killing". The held order is
+#    conditional and concerns one bunker.
+# 14. Cambodia, the tonnage. Representative Conyers, 1974: from 18 March 1969 to 1 May 1970, 3,695
+#    B-52 sorties and 105,837 tons; to August 1973, "more than 150,000 sorties dropped in excess of
+#    500,000 tons" (src-hjc-report-1974.secconyers). The Walrus, 2006, from the Air Force database:
+#    "2,756,941 tons' worth, dropped in 230,516 sorties on 113,716 sites" from 4 October 1965, so "not
+#    under Nixon, but under Lyndon Johnson" (src-walrus-owen-2006.sectonnage). The YAML: 2.7 million
+#    tons, 1969-1973. The start date and the total both differ by source.
+# 15. Cambodia, the dead and the cause. The Walrus: "Previously, it was estimated that between 50,000
+#    and 150,000 Cambodian civilians were killed ... surely higher" (seccasualties), and the bombs
+#    "drove ordinary Cambodians into the arms of the Khmer Rouge" (secdominoes). The YAML: "an
+#    estimated 100,000-150,000". The Administration's case, as the House report records it:
+#    "Cambodia's ruler, Prince Sihanouk, had privately agreed to the bombing" (secjustification).
+#    Nixon, 30 April 1970: "American policy since then has been to scrupulously respect the
+#    neutrality of the Cambodian people" (src-app-nixon-19700430.secneutrality), while the House
+#    report dates the MENU strikes from 18 March 1969, reported as "in South Vietnam rather than in
+#    Cambodia" (secmenu). The committee voted 26 to 12 not to report the article (seccambodia).
+# 16. Laos, the missions and the casualties. The Lao government's report: "more than 500,000 bombing
+#    missions dropped over two million tons" (src-undp-lao-2009.secscale). The YAML and the live
+#    script: 580,000 missions. On the dead, the same report gives "more than 22,000 people ... have
+#    fallen victim to UXO and bombies, almost half of whom died" since the conflict ended, and a
+#    survey of "more than 50,000 UXO casualties" 1964-2007, "20,000 since the conflict ended"
+#    (seccasualties). The YAML: "UXO killed more than 20,000 Laotians". Victims (killed or injured)
+#    are not deaths.
+# 17. Laos, unexploded. The Lao report: "More than 270 million bombies", "an average failure rate of
+#    30 percent", "as many as 80 million" (secscale). The State Department, 2018: "as many as one-third
+#    ... failed", "more than 80 million" (src-state-laos-2018.secintro). An estimate stated as a range
+#    by one and a floor by the other.
+# 18. The Vietnamese dead, per producer, never averaged. The official figures as Vũ Quang Hiển
+#    states them: nearly 2 million civilians dead, about 1.1 million soldiers of the People's Army
+#    (with the Liberation Army) dead, 600,000 wounded or sick (src-vu-quang-hien-ussh.seccasualties).
+#    The Quảng Ninh veterans' list: 1,146,250 martyrs in all, 849,018 of them in the resistance
+#    against the Americans (src-qn-ccb-2023.secnumbers), and more than 4 million civilians "dead and
+#    disabled for life" across the wars against France and America and later (seccivilians). The
+#    BMJ survey study: 3.8 million violent war deaths in Vietnam, 1955 to 2002, and 1.7 million for
+#    1965-1975, against the Vietnam Life History Survey's 966,000 for 1965-1975
+#    (src-bmj-obermeyer-2008.secresults, seccomparison). The YAML's "3.8 million Vietnamese" is the
+#    BMJ's 1955-2002 total, not a 1955-1975 war total.
+# 19. The American dead. The National Archives: the DCAS file "contains records of 58,220 U.S.
+#    military fatal casualties", the earliest date of death "June 8, 1956", the most recent "May 28,
+#    2006"; its predecessor file held 58,193 (src-nara-casualties.secdcas). The live script counts
+#    58,220 names on Maya Lin's wall; the wall's own count is not held, and the two lists are not
+#    shown to be the same list.
+# 20. Agent Orange. The Congressional Research Service: "an estimated 18-20 million gallons of
+#    herbicides—including approximately 11-12 million gallons of Agent Orange—over about 12,000
+#    square miles of southern Vietnam between 1961 and 1971" (src-crs-agent-orange-2020.secranchhand).
+#    The YAML: Agent Orange alone, "20 million gallons", "4.5 million acres", 1962-1971. Danang: cost
+#    "over $110 million", about 90,000 m3, "officially declared completed on November 9, 2017"
+#    (secdanang); the YAML says completed in 2018. Bien Hoa: "10 years at an estimated cost of $390
+#    million", about 500,000 cubic meters (secbienhoa). Senator Leahy on both governments' positions
+#    on birth defects (secleahy); the YAML's Vietnamese Red Cross figure is not held.
+# 21. The Tricontinental. The YAML's "Create two, three — many Vietnams — that is the watchword" is
+#    in neither held text. The English: "should two, three or many Vietnams flourish throughout the
+#    world" (src-che-tricontinental-1967-en.secvietnams); the Spanish: "si dos, tres, muchos Vietnam
+#    florecieran" (src-che-tricontinental-1967-es.secvietnams), under the title "CREAR DOS, TRES ...
+#    MUCHOS VIETNAM" (sectitle). It is a message published in Havana on 16 April 1967 "en forma de
+#    folleto como suplemento especial para la revista Tricontinental" (sectitle), not a speech at
+#    the conference; the live script puts Guevara "at the Tricontinental Conference in Havana, in
+#    April 1967".
+# 22. The Pentagon Papers. The National Archives: "commissioned by Secretary of Defense Robert
+#    McNamara in 1967", "48 boxes and approximately 7,000 declassified pages", and "small portions
+#    of the report were leaked to the press" in June 1971 (src-nara-pentagon-papers.secintro). The
+#    YAML: "47 volumes and 7,000 pages", passed whole to the Times.
+# 23. Whom Johnson was talking to. FRUS: the 27 May 1964 call is with Bundy, 11:24 a.m.
+#    (src-frus-1964-68-v27-d53.secmess). The YAML summary puts the same words in "a recorded phone call
+#    with Secretary of Defense Robert McNamara"; its own notable_quotes context and the live script say
+#    Bundy. The held record says Bundy.

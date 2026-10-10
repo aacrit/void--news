@@ -1,0 +1,18 @@
+source: src-hasegawa-2007
+locator: p27
+url: https://www.cambridge.org/core/services/aop-cambridge-core/content/view/0E9580B3E03434472A15432EB6D8AE05/S1557466007021742a.pdf/the-atomic-bombs-and-the-soviet-invasion-what-drove-japans-decision-to-surrender.pdf
+read: 2026-10-07
+note: page 27, the close of the Conclusions; [100] is the article's note number
+
+This is, of course, not to deny completely the
+effect of the atomic bomb on Japan’s
+policymakers. It certainly injected a sense of
+urgency in finding an acceptable end to the
+war. Kido stated that while the peace party and
+the war party had previously been equally
+balanced in the scale, the atomic bomb helped
+to tip the balance in favor of the peace
+party.[100] It would be more accurate to say
+that the Soviet entry into the war, adding to
+that tipped scale, then completely toppled the
+scale itself.

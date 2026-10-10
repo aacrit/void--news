@@ -1,0 +1,7 @@
+source: src-ictr-akayesu-tj
+locator: para107
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-96-4/trial-judgements/en/980902.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+107. The Rwandan army and the militia immediately erected roadblocks around the city of Kigali. Before dawn on April 7 1994, in various parts of the country, the Presidential Guard and the militia started killing the Tutsi as well as Hutu known to be in favour of the Arusha Accords and power-sharing between the Tutsi and the Hutu. Among the first victims, were a number of ministers of the coalition government, including its Prime Minister, Agathe Uwilingiyimana (MDR), the president of the Supreme Court and virtually the entire leadership of the parti social démocrate (PSD). The constitutional vacuum thus created cleared the way for the establishment of the self-proclaimed Hutupower interim government, mainly under the aegis of retired Colonel Théoneste Bagosora.

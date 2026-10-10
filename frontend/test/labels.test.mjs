@@ -1,0 +1,535 @@
+/**
+ * Label and hygiene parity, without a test framework.
+ *
+ * Two things this file guards, both of which shipped broken:
+ *
+ * 1. ONE LEAN LADDER. leanToBucket, leanLabel and the deleted tiltLabel and
+ *    sigilLabelInfo used to cut the same 0-100 number at three different sets
+ *    of boundaries, so a story at lean 60 read "Right" on the feed card,
+ *    "Right Tilt" in the Sigil popup and "Center-Right" in the Deep Dive. On
+ *    the 2026-09-06 feed every confidently-labelled story disagreed with
+ *    itself across surfaces. The assertions below sweep 0..100 and require
+ *    the bucket, the label and the abbreviation to agree at every value.
+ *
+ * 2. THE PYTHON AND TYPESCRIPT SUMMARY HYGIENE AGREE. summaryHygiene.ts and
+ *    utils/summary_hygiene.py are hand-kept in lock-step; the fixture list
+ *    here is asserted from both sides (tests/test_summary_hygiene_parity.py
+ *    runs the same strings through the Python).
+ *
+ * Run: node test/labels.test.mjs   (compiles the TS it needs first)
+ */
+import { execFileSync } from "node:child_process";
+import { mkdtempSync, rmSync, writeFileSync, readFileSync, readdirSync, existsSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const ROOT = resolve(import.meta.dirname, "..");
+const out = mkdtempSync(join(tmpdir(), "void-labels-"));
+let failures = 0;
+
+function check(name, cond, detail = "") {
+  if (cond) return;
+  failures += 1;
+  console.log(`FAIL  ${name}${detail ? `: ${detail}` : ""}`);
+}
+
+function compile(files) {
+  execFileSync("npx", ["tsc", ...files,
+    "--outDir", out, "--module", "es2022", "--target", "es2022",
+    "--moduleResolution", "bundler", "--skipLibCheck"],
+    { cwd: ROOT, stdio: "pipe" });
+}
+
+// biasColors reads CSS variables through getColors(); under Node there is no
+// document, so it falls back to the SSR palette. No stub needed.
+compile(["app/lib/biasColors.ts", "app/lib/summaryHygiene.ts", "app/lib/outletVotes.ts", "app/lib/feedMapping.ts",
+  "app/components/about/demoSigil.ts"]);
+
+/* tsc anchors output at the common root of what it compiled and emits import
+   specifiers extensionless, which Node's ESM resolver refuses. Find each file
+   and add the extension, as episode.test.mjs does. */
+function collect(dir) {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+    const p = join(dir, e.name);
+    return e.isDirectory() ? collect(p) : p.endsWith(".js") ? [p] : [];
+  });
+}
+const emitted = collect(out);
+for (const file of emitted) {
+  writeFileSync(file, readFileSync(file, "utf8").replace(
+    /(\bfrom\s+["'])(\.[^"']*?)(["'])/g,
+    (m, a, spec, b) => (spec.endsWith(".js") ? m : `${a}${spec}.js${b}`)));
+}
+const load = (name) => import(pathToFileURL(emitted.find((f) => f.endsWith(`/${name}`))).href);
+
+const bias = await load("biasColors.js");
+const hygiene = await load("summaryHygiene.js");
+const votes = await load("outletVotes.js");
+const demo = await load("demoSigil.js");
+
+/* ---- 1. one ladder ---------------------------------------------------- */
+
+/* The bands are the midpoints between the seven outlet baselines
+   (10, 20, 35, 50, 65, 80, 90), so every baseline sits inside the bucket that
+   bears its own name. A score exactly on a boundary takes the rung nearer the
+   centre, which is why 15 is `left` rather than `far-left` and its mirror 85
+   is `right` rather than `far-right`.
+
+   Until 2026-09-21 these were 0-20 / 21-35 / 36-45 / 46-55 / 56-65 / 66-80 /
+   81-100, which put the `left` baseline (20) in FAR LEFT and the
+   `center-left` baseline (35) in LEFT, while the right-hand rungs landed
+   correctly. The table below is the fix; the assertions under it are what
+   stop it regressing. */
+const BANDS = [
+  [0,  14,  "far-left",     "Far Left",     "FL"],
+  [15, 27,  "left",         "Left",         "L"],
+  [28, 42,  "center-left",  "Center-Left",  "CL"],
+  [43, 57,  "center",       "Center",       "C"],
+  [58, 72,  "center-right", "Center-Right", "CR"],
+  [73, 85,  "right",        "Right",        "R"],
+  [86, 100, "far-right",    "Far Right",    "FR"],
+];
+
+for (const [lo, hi, bucket, label, abbr] of BANDS) {
+  for (let v = lo; v <= hi; v++) {
+    check(`leanToBucket(${v})`, bias.leanToBucket(v) === bucket, bias.leanToBucket(v));
+    check(`leanLabel(${v})`, bias.leanLabel(v) === label, bias.leanLabel(v));
+    check(`leanLabelAbbr(${v})`, bias.leanLabelAbbr(v) === abbr, bias.leanLabelAbbr(v));
+  }
+}
+
+// tiltToBucket survives only as an alias. If it ever becomes a second ladder
+// again, this fails at the first value where they diverge.
+for (let v = 0; v <= 100; v++) {
+  check(`tiltToBucket(${v}) is leanToBucket`,
+    bias.tiltToBucket(v) === bias.leanToBucket(v));
+}
+
+// tiltDescriptor must describe the band the label names, never another one.
+const LEFTISH = new Set(["far-left", "left", "center-left"]);
+const RIGHTISH = new Set(["far-right", "right", "center-right"]);
+for (let v = 0; v <= 100; v++) {
+  const d = bias.tiltDescriptor(v).toLowerCase();
+  const b = bias.leanToBucket(v);
+  if (LEFTISH.has(b)) check(`tiltDescriptor(${v}) says left`, d.includes("left"), d);
+  else if (RIGHTISH.has(b)) check(`tiltDescriptor(${v}) says right`, d.includes("right"), d);
+  else check(`tiltDescriptor(${v}) says balanced`, d.includes("balanced"), d);
+}
+
+/* ---- the ladder is anchored to the roster's own baselines -------------- */
+/*
+   The boundaries were `<=20, <=35, <=45, <=55, <=65, <=80` until 2026-09-21,
+   which put four baselines on a bucket's upper edge. On the left that edge is
+   the LEAST extreme end of the bucket, so the rung landed one step too far out
+   and the error only ran one way:
+
+       roster `left`        scores 20  ->  the page said FAR LEFT
+       roster `center-left` scores 35  ->  the page said LEFT
+
+   A left-leaning outlet was shown as more extreme than this product's own
+   roster rates it, while the right-hand rungs were correct. This is the check
+   that makes that impossible: every baseline must land in the bucket that
+   bears its own name.
+*/
+for (const [name, score] of bias.LEAN_BASELINES) {
+  check(`an outlet rated ${name} (scores ${score}) is called ${name}`,
+    bias.leanToBucket(score) === name,
+    `leanToBucket(${score}) = ${bias.leanToBucket(score)}`);
+}
+
+/* The label and the bucket are one decision, so they cannot drift apart. */
+for (let v = 0; v <= 100; v += 1) {
+  const b = bias.leanToBucket(v);
+  const l = bias.leanLabel(v).toLowerCase().replace(/\s+/g, "-");
+  check(`label agrees with bucket at ${v}`, l === b, `${l} vs ${b}`);
+}
+
+/* Monotone: the ladder may never step back toward the centre as v rises. */
+const ORDER = ["far-left","left","center-left","center","center-right","right","far-right"];
+let prevIdx = 0;
+for (let v = 0; v <= 100; v += 1) {
+  const i = ORDER.indexOf(bias.leanToBucket(v));
+  check(`ladder never steps backwards at ${v}`, i >= prevIdx, `${i} after ${prevIdx}`);
+  prevIdx = i;
+}
+
+/* Symmetry: a score N points left of centre must sit as many rungs from the
+   middle as the same distance right of it. The old boundaries failed this. */
+for (const d of [5, 10, 15, 20, 25, 30, 35, 40]) {
+  const li = ORDER.indexOf(bias.leanToBucket(50 - d));
+  const ri = ORDER.indexOf(bias.leanToBucket(50 + d));
+  check(`symmetric at +/-${d}`, (3 - li) === (ri - 3),
+    `${bias.leanToBucket(50 - d)} vs ${bias.leanToBucket(50 + d)}`);
+}
+
+/* ---- storyLeanLabel is the gate AND the ladder ------------------------- */
+
+const wide = { leanLeftCount: 2, leanCenterCount: 4, leanRightCount: 9,
+               polarization: 40, aggregateConfidence: 0.8, leanMeasuredCount: 15 };
+
+const confident = bias.storyLeanLabel(62, wide, 20);
+check("confident label uses the one ladder",
+  confident.text === bias.leanLabel(62) && confident.abbr === bias.leanLabelAbbr(62),
+  `${confident.text}/${confident.abbr}`);
+check("confident label is not suppressed", confident.suppressed === false);
+
+// 4b: the lean must be MEASURED from at least LABEL_MIN_MEASURED articles.
+const thin = { ...wide, leanMeasuredCount: bias.LABEL_MIN_MEASURED - 1 };
+check("a lean measured from too few articles is suppressed",
+  bias.storyLeanLabel(62, thin, 20).suppressed === true);
+check("... and says so: Not measured, never Balanced",
+  bias.storyLeanLabel(62, thin, 20).text === "Not measured" &&
+  bias.storyLeanLabel(62, thin, 20).state === "unmeasured");
+check("a measured story at the centre reads Balanced",
+  bias.storyLeanLabel(50, { leanLeftCount: 3, leanCenterCount: 6, leanRightCount: 3,
+                            polarization: 5, aggregateConfidence: 0.9,
+                            leanMeasuredCount: 20 }, 20).text === "Balanced");
+check("the word Flat is gone",
+  !Object.values(bias).some((v) => v === "Flat"));
+const atFloor = { ...wide, leanMeasuredCount: bias.LABEL_MIN_MEASURED };
+check("exactly LABEL_MIN_MEASURED is enough",
+  bias.storyLeanLabel(62, atFloor, 20).suppressed === false);
+check("a payload with no measured count keeps the old behaviour",
+  bias.storyLeanLabel(62, { ...wide, leanMeasuredCount: undefined }, 20)
+    .suppressed === false);
+
+check("unscored beats everything",
+  bias.storyLeanLabel(62, wide, 20, true).text === "Unscored");
+check("a suppressed label withholds the score",
+  bias.storyLeanLabel(50, { leanLeftCount: 0, leanCenterCount: 5, leanRightCount: 0,
+                            polarization: 0, aggregateConfidence: 0.9,
+                            leanMeasuredCount: 20 }, 20).suppressed === true);
+
+/* ---- the shape of the roster ------------------------------------------ */
+/*
+   The card reads the roster, not the mean. A point estimate must be withheld
+   when it is uncertain, which is why the old gate went quiet on 20 of 35
+   stories; a distribution never has to be. Every case below is a real story
+   from the 2026-09-21 feed, and the last three are the ones that make the
+   rule honest rather than merely talkative.
+*/
+const shape = (L, C, R) =>
+  bias.leanShapeLabel({ leanLeftCount: L, leanCenterCount: C, leanRightCount: R });
+
+for (const [L, C, R, want, why] of [
+  [7, 2, 8, "Split", "hollow centre: seven left, eight right, two in the middle"],
+  [19, 26, 14, "Split", "bimodal with a fat centre; the mean of this is 51"],
+  [0, 11, 2, "Consensus", "eleven of thirteen in the centre bucket"],
+  [4, 7, 13, "Leans right", "thirteen right against four left"],
+  [14, 39, 9, "Balanced", "centre holds the mass and the wings are even"],
+  /* The fall-through cases. A first draft of this rule called the next one
+     Balanced, on a story with NO right-of-centre coverage at all. */
+  [3, 4, 0, "7 placed", "zero right-of-centre coverage is not balance"],
+  [1, 5, 0, "6 placed", "one wing article is not a roster"],
+  [2, 0, 1, "3 placed", "too little coverage to say anything"],
+]) {
+  check(`roster ${L}/${C}/${R} reads "${want}" (${why})`, shape(L, C, R) === want,
+    `got "${shape(L, C, R)}"`);
+}
+
+/* Symmetry again, one layer up: mirroring a roster must mirror the word. */
+for (const [L, C, R] of [[4, 7, 13], [7, 2, 8], [12, 5, 3], [1, 20, 6]]) {
+  const a = shape(L, C, R), b = shape(R, C, L);
+  const mirrored = a.replace("right", "LR").replace("left", "right").replace("LR", "left");
+  check(`mirroring ${L}/${C}/${R} mirrors the word`, mirrored === b, `${a} vs ${b}`);
+}
+
+/* A shape word is never printed without the evidence for THAT word. */
+for (let L = 0; L <= 12; L++) for (let R = 0; R <= 12; R++) for (const C of [0, 3, 9, 30]) {
+  const w = shape(L, C, R);
+  if (w === "Split" || w === "Balanced") {
+    check(`"${w}" needs both wings at ${L}/${C}/${R}`, L >= 2 && R >= 2, `${L} left, ${R} right`);
+    check(`"${w}" needs ${bias.SHAPE_MIN_WINGS} wing articles at ${L}/${C}/${R}`,
+      L + R >= bias.SHAPE_MIN_WINGS, `${L + R} wing articles`);
+  }
+  if (w.startsWith("Leans")) {
+    check(`"Leans" needs wing evidence at ${L}/${C}/${R}`,
+      L + R >= bias.SHAPE_MIN_WINGS, `${L + R} wing articles`);
+  }
+}
+
+/* ---- leanShareTilt: wings only, and enough of them -------------------- */
+/*
+   The denominator was left + center + right until 2026-09-21, so neutral wire
+   volume diluted a real split out of existence: a story carried 14 left to 5
+   right landed at 0.153 against a 0.20 threshold purely because 40 centre
+   articles sat in the denominator, while a nearly identical 16:6 story passed.
+
+   Fixing the denominator alone trades that for a worse lie, which is why
+   LABEL_MIN_WING_ARTICLES exists: measured on the 2026-09-20 feed, five
+   clusters had one or two wing articles and would have read as a FULLY
+   lopsided roster (tilt +/-1.0) on the new denominator. Those cases are here
+   by number.
+*/
+const tilt = (L, C, R) => bias.leanShareTilt(
+  { leanLeftCount: L, leanCenterCount: C, leanRightCount: R });
+
+check("wire volume no longer dilutes a real split",
+  Math.abs(tilt(14, 40, 5) + 9 / 19) < 1e-9,
+  `14L/40C/5R -> ${tilt(14, 40, 5)}`);
+check("... and that split now clears the threshold",
+  Math.abs(tilt(14, 40, 5)) >= bias.LABEL_MIN_SHARE_TILT);
+check("a symmetric roster reads zero", tilt(6, 30, 6) === 0);
+
+/* The five shapes from the measured feed that MUST stay silent. */
+check("one left article out of six is not a lopsided roster",
+  tilt(1, 5, 0) === 0, `1L/5C/0R -> ${tilt(1, 5, 0)}`);
+check("two left out of nine is not a lopsided roster",
+  tilt(2, 7, 0) === 0, `2L/7C/0R -> ${tilt(2, 7, 0)}`);
+check("one right article out of three is not a lopsided roster",
+  tilt(0, 2, 1) === 0, `0C/2C/1R -> ${tilt(0, 2, 1)}`);
+check("three left out of eight is not a lopsided roster",
+  tilt(3, 5, 0) === 0, `3L/5C/0R -> ${tilt(3, 5, 0)}`);
+check("exactly LABEL_MIN_WING_ARTICLES wings is enough to read",
+  tilt(0, 10, bias.LABEL_MIN_WING_ARTICLES) === 1,
+  `0L/10C/${bias.LABEL_MIN_WING_ARTICLES}R -> ${tilt(0, 10, bias.LABEL_MIN_WING_ARTICLES)}`);
+check("one wing short of the floor reads zero",
+  tilt(0, 10, bias.LABEL_MIN_WING_ARTICLES - 1) === 0);
+
+/* The threshold was re-derived for the new denominator, not carried over:
+   on wings-only, 3:2 is not lopsided and 4:1 is. */
+check("a 3:2 wing split is not lopsided",
+  Math.abs(tilt(3, 20, 2)) < bias.LABEL_MIN_SHARE_TILT,
+  `3L/2R -> ${tilt(3, 20, 2)}`);
+check("a 4:1 wing split is lopsided",
+  Math.abs(tilt(1, 20, 4)) >= bias.LABEL_MIN_SHARE_TILT,
+  `1L/4R -> ${tilt(1, 20, 4)}`);
+check("the full analyzed count still gates a three-article cluster",
+  tilt(1, 0, 1) === 0);
+check("no spread at all reads zero", bias.leanShareTilt(null) === 0);
+
+/* End to end: the two cards that changed state on the measured feed, and one
+   that correctly did not. Route 2 also needs the mean to agree in sign. */
+const lopsidedLeft = { leanLeftCount: 12, leanCenterCount: 78, leanRightCount: 5,
+                       polarization: 11, aggregateConfidence: 0.67,
+                       leanMeasuredCount: 95 };
+check("12 left vs 5 right across 72 sources reads a direction",
+  bias.storyLeanLabel(48, lopsidedLeft, 72).state === "confident",
+  bias.storyLeanLabel(48, lopsidedLeft, 72).text);
+const allRight = { leanLeftCount: 0, leanCenterCount: 29, leanRightCount: 6,
+                   polarization: 0, aggregateConfidence: 0.65,
+                   leanMeasuredCount: 35 };
+check("0 left vs 6 right across 24 sources reads a direction",
+  bias.storyLeanLabel(55, allRight, 24).state === "confident",
+  bias.storyLeanLabel(55, allRight, 24).text);
+const oneWing = { leanLeftCount: 1, leanCenterCount: 11, leanRightCount: 0,
+                  polarization: 0, aggregateConfidence: 0.67,
+                  leanMeasuredCount: 12 };
+check("one wing article does NOT read a direction",
+  bias.storyLeanLabel(49, oneWing, 10).state !== "confident",
+  bias.storyLeanLabel(49, oneWing, 10).text);
+
+/* ---- one vote per outlet: the card's word IS the Bench's word ---------- */
+/*
+   CEO decision 3 (2026-10-02). The card counted ARTICLES in the pipeline and
+   the Bench counted the first article per OUTLET here, and on the 2026-10-01
+   feed 3 of the 20 cards printed a different word from their own Deep Dive
+   (one card "Leans left" on 14/10/4 articles, its Bench "Split" on 6/6/4
+   outlets) while Bench.tsx said the two could never differ. Both now count
+   outlets by one rule; this re-derives the Bench from every committed
+   deepdive file and requires the card's histogram and word to match it.
+*/
+{
+  const ten = votes.outletVotes([
+    ...Array.from({ length: 10 }, () => ({ name: "RT", politicalLean: 90 })),
+    { name: "The Guardian", politicalLean: 20 },
+    { name: "Fox", politicalLean: 80, leanUnscored: true },
+  ]);
+  check("ten articles from one outlet are one vote", ten.length === 2 && ten[0].articles === 10,
+    JSON.stringify(ten.map((v) => [v.name, v.articles])));
+  const mean = votes.outletVotes([{ name: "JNS", politicalLean: 65 }, { name: "jns ", politicalLean: 70 }]);
+  check("an outlet sits at the mean of its articles", mean.length === 1 && mean[0].lean === 67.5,
+    JSON.stringify(mean));
+}
+
+/* Decision 2 by example: the word and its count, from one set of counts. */
+{
+  const s = { leanLeftCount: 4, leanCenterCount: 3, leanRightCount: 15 };
+  check("the card's count reads the CEO's example",
+    bias.leanShapeLabel(s) === "Leans right"
+      && bias.leanShapeCount(s)?.full === "15 of 22 outlets right of centre"
+      && bias.leanShapeCount(s)?.short === "15 of 22 right",
+    JSON.stringify(bias.leanShapeCount(s)));
+  check("a thin roster prints N placed, never N measured",
+    bias.leanShapeLabel({ leanLeftCount: 1, leanCenterCount: 2, leanRightCount: 0 }) === "3 placed");
+  check("the legend defines N placed", bias.LEAN_SHAPE_LEGEND.some((t) => t.term === "N placed")
+    && !bias.LEAN_SHAPE_LEGEND.some((t) => /measured/.test(t.term)));
+  check("the Sigil prints the count from the same rule",
+    /leanShapeCount\(data\.biasSpread\)/.test(readFileSync(join(ROOT, "app/components/Sigil.tsx"), "utf8")));
+}
+
+const KEYS = ["far_left", "left", "center_left", "center", "center_right", "right", "far_right"];
+const FEED = join(ROOT, "build-data/feed.json");
+const DD = join(ROOT, "public/data/deepdive");
+const STATE = new Set(JSON.parse(readFileSync(join(ROOT, "../data/sources.json"), "utf8"))
+  .filter((s) => s.state_affiliated).map((s) => String(s.name).toLowerCase().trim()));
+let compared = 0;
+if (existsSync(FEED)) {
+  const feed = JSON.parse(readFileSync(FEED, "utf8"));
+  for (const c of feed.clusters ?? []) {
+    const path = join(DD, `${c.id}.json`);
+    if (!existsSync(path)) continue;
+    const bd = c.bias_diversity ?? {};
+    const card = {
+      leanBuckets: KEYS.map((k) => bd.lean_buckets?.[k] ?? 0),
+      leanLeftCount: bd.lean_left_count ?? 0,
+      leanCenterCount: bd.lean_center_count ?? 0,
+      leanRightCount: bd.lean_right_count ?? 0,
+    };
+    /* The Bench's own rows, exactly as the Deep Dive maps them. */
+    const rows = JSON.parse(readFileSync(path, "utf8")).flatMap((r) => {
+      const a = r.article ?? {};
+      const b = (a.bias_scores ?? [])[0];
+      if (!b) return [];
+      return [{ name: a.source?.name ?? `article:${a.id}`, politicalLean: b.political_lean,
+                leanUnscored: b.lean_unscored === true }];
+    });
+    /* CEO decision 1: the outlets the pipeline names as state-affiliated
+       leave the columns, exactly as DeepDiveSpectrum takes them out. */
+    const stateNames = new Set((bd.lean_state_outlets ?? []).map((n) => n.toLowerCase().trim()));
+    for (const n of bd.lean_state_outlets ?? []) {
+      check(`${c.id.slice(0, 8)}: "${n}" is state-affiliated in the roster`, STATE.has(n.toLowerCase().trim()));
+    }
+    const voted = votes.outletVotes(rows);
+    for (const v of voted) {
+      check(`${c.id.slice(0, 8)}: state outlet "${v.name}" is set apart, never in a column`,
+        !STATE.has(v.name.toLowerCase().trim()) || stateNames.has(v.name.toLowerCase().trim()));
+    }
+    const placed = voted.filter((v) => !stateNames.has(v.name.toLowerCase().trim()));
+    if (!placed.length) continue; // nothing measured: the Bench draws no columns
+    const bench = votes.outletSpread(placed.map((v) => v.lean));
+    compared += 1;
+    check(`${c.id.slice(0, 8)}: the card's histogram is one vote per outlet`, bd.lean_vote === "outlet");
+    check(`${c.id.slice(0, 8)}: the card's seven counts are the Bench's columns`,
+      bench.leanBuckets.join("/") === card.leanBuckets.join("/"),
+      `card ${card.leanBuckets.join("/")} vs Bench ${bench.leanBuckets.join("/")}`);
+    /* CEO decision 2: the count printed under the word is the histogram's,
+       number for number. */
+    const tally = bias.leanShapeCount(card);
+    const T = card.leanLeftCount + card.leanCenterCount + card.leanRightCount;
+    const word = bias.leanShapeLabel(card);
+    const nums = tally ? tally.full.match(/\d+/g).map(Number) : [];
+    const want = word === "Leans right" ? [card.leanRightCount, T]
+      : word === "Leans left" ? [card.leanLeftCount, T]
+      : word === "Consensus" ? [card.leanCenterCount, T]
+      : (word === "Split" || word === "Balanced")
+        ? [card.leanLeftCount, card.leanCenterCount, card.leanRightCount, T]
+        : [];
+    check(`${c.id.slice(0, 8)}: the printed count is the histogram's`,
+      nums.join("/") === want.join("/") && (tally === null) === (want.length === 0),
+      `"${tally?.full ?? word}" vs ${want.join("/")}`);
+    if (!tally) check(`${c.id.slice(0, 8)}: a thin word states the placed count`, word === `${T} placed`, word);
+    check(`${c.id.slice(0, 8)}: card word = Bench word`,
+      bias.leanShapeLabel(card) === bias.leanShapeLabel(bench),
+      `card "${bias.leanShapeLabel(card)}" vs Bench "${bias.leanShapeLabel(bench)}"`);
+  }
+  check("the committed export has stories to compare", compared > 0, `${compared} compared`);
+}
+
+/* ---- the /about demos carry a roster (P1-12) --------------------------- */
+/*
+   demoSigil passed no wing counts, so the real Sigil on /about printed
+   "0 measured" beside "Lean Center-Left" and "In agreement". Every demo
+   setting the sliders can reach, and the three archetypes, must now print a
+   nonzero count under any word, and the counts must be the demo's sources.
+*/
+{
+  const bad = [];
+  const settings = [];
+  for (let lean = 0; lean <= 100; lean += 5)
+    for (let spread = 0; spread <= 40; spread += 4)
+      for (let n = 1; n <= 15; n += 2) settings.push([lean, spread, n]);
+  settings.push([28, 16, 12], [50, 3, 14], [78, 6, 3], [38, 20, 9]); // BeatVerdict + BeatSigil defaults
+  for (const [lean, spread, n] of settings) {
+    const s = demo.demoSigil(lean, spread, n).biasSpread;
+    const placed = (s.leanLeftCount ?? 0) + (s.leanCenterCount ?? 0) + (s.leanRightCount ?? 0);
+    const word = bias.leanShapeLabel(s);
+    if (placed !== n || /^0 /.test(word) || (s.leanBuckets ?? []).reduce((a, b) => a + b, 0) !== n) {
+      bad.push(`${lean}/${spread}/${n}: "${word}", ${placed} placed of ${n}`);
+    }
+  }
+  check("every /about demo prints a real count under its word", bad.length === 0, bad.slice(0, 3).join("; "));
+  check("the consensus archetype reads Consensus",
+    bias.leanShapeLabel(demo.demoSigil(50, 3, 14).biasSpread) === "Consensus",
+    bias.leanShapeLabel(demo.demoSigil(50, 3, 14).biasSpread));
+}
+
+/* ---- the share card says what the card says (CEO decision 4) ---------- */
+/*
+   `story/[id]/ogCard.tsx` gated on `leanLabelState`, the confidence-gated
+   mean, a third rule: audit 6 found a card printing "Leans right" whose
+   share card would print no lean at 0.463 confidence. It now prints
+   `storyShapeLabel` from the archive row, so the gate is twofold: the file
+   uses the card's rule, and on every story of the latest edition the archive
+   row the share card reads gives the word the feed card gives. The synthetic
+   cluster below is `archiveRowToStory`'s, field for field.
+*/
+{
+  const og = readFileSync(join(ROOT, "app/story/[id]/ogCard.tsx"), "utf8");
+  check("the share card prints the card's word (storyShapeLabel)", /storyShapeLabel\(/.test(og));
+  check("the share card no longer reads the confidence gate", !/leanLabelState\s*\(/.test(og));
+  const ARCH = join(ROOT, "build-data/archive.json");
+  if (existsSync(FEED) && existsSync(ARCH)) {
+    const fm = await load("feedMapping.js");
+    const feed = JSON.parse(readFileSync(FEED, "utf8"));
+    const byId = new Map((feed.clusters ?? []).map((c) => [c.id, c]));
+    const rows = JSON.parse(readFileSync(ARCH, "utf8"));
+    const latest = rows.reduce((m, r) => (r.printed_on > m ? r.printed_on : m), "");
+    let shared = 0;
+    for (const row of rows.filter((r) => r.printed_on === latest)) {
+      const c = byId.get(row.source_cluster_id);
+      if (!c) continue;
+      const [fromArchive] = fm.mapClustersToStories([{
+        id: row.id, title: row.title, summary: row.summary, category: row.category,
+        section: "world", sections: ["world"], importance_score: row.rank_world,
+        source_count: row.source_count, first_published: row.first_published,
+        last_updated: row.first_published, divergence_score: row.divergence_score,
+        headline_rank: row.headline_rank, coverage_velocity: 0,
+        bias_diversity: row.bias_diversity, consensus_points: row.consensus_points,
+        divergence_points: row.divergence_points, rank_world: row.rank_world,
+        claim_consensus: row.claim_consensus, cached_image_url: null, is_international: false,
+      }], true);
+      const [fromFeed] = fm.mapClustersToStories([c], true);
+      if (!fromArchive || !fromFeed) continue;
+      shared += 1;
+      const ogWord = bias.storyShapeLabel(fromArchive.biasSpread, !!fromArchive.sigilData.unscored).text;
+      const cardWord = bias.storyShapeLabel(fromFeed.sigilData.biasSpread, !!fromFeed.sigilData.unscored).text;
+      check(`${row.id.slice(0, 8)}: share card word = card word`, ogWord === cardWord,
+        `share "${ogWord}" vs card "${cardWord}"`);
+    }
+    check("the latest edition has share cards to compare", shared > 0, `${shared} compared`);
+  }
+}
+
+/* ---- 2. summary hygiene parity ---------------------------------------- */
+
+// The Python side asserts the SAME expectations on the same strings.
+const RAW_EXCERPT = [
+  "Sign up for our newsletter to get the day's top stories.",
+  "Why it matters: the vote splits the caucus three ways.",
+  "The minister resigned on Tuesday. Photo: Getty Images",
+  "Troops entered the city at dawn - reuters.com",
+  "The council met on Tuesday (Ahmed Gomaa/Anadolu)",
+  "The governmentSaid the investigationContinues into the collapse.",
+];
+const CLEAN = [
+  "The Senate voted 61 to 38 on Tuesday to confirm the nominee. Two Republicans crossed over.",
+  "Pfizer said the mRNA candidate cut hospitalisations by 42 percent in the mRNA arm of the trial.",
+  "Apple shipped 4.2 million iPhone units in the quarter, up from 3.8 million a year earlier.",
+];
+for (const s of RAW_EXCERPT) {
+  check(`isRawExcerpt(${s.slice(0, 28)}...)`, hygiene.isRawExcerpt(s) === true);
+}
+for (const s of CLEAN) {
+  check(`clean summary kept (${s.slice(0, 28)}...)`, hygiene.isRawExcerpt(s) === false);
+}
+
+writeFileSync(join(out, ".done"), "");
+rmSync(out, { recursive: true, force: true });
+
+if (failures) {
+  console.log(`\n${failures} label/hygiene parity failure(s)`);
+  process.exit(1);
+}
+console.log("PASS  one lean ladder across 0..100, storyLeanLabel gate, hygiene parity");

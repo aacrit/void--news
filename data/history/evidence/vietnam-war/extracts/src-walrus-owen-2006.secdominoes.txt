@@ -1,0 +1,7 @@
+source: src-walrus-owen-2006
+locator: secdominoes
+url: https://thewalrus.ca/2006-10-history/
+read: 2026-10-09
+note: the same web text
+
+The Cambodian bombing campaign had two unintended side effects that ultimately combined to produce the very domino effect that the Vietnam War was supposed to prevent. First, the bombing forced the Vietnamese Communists deeper and deeper into Cambodia, bringing them into greater contact with Khmer Rouge insurgents. Second, the bombs drove ordinary Cambodians into the arms of the Khmer Rouge, a group that seemed initially to have slim prospects of revolutionary success.

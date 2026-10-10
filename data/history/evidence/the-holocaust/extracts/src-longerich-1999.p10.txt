@@ -1,0 +1,7 @@
+source: src-longerich-1999
+locator: p10
+url: https://www.ushmm.org/m/pdfs/20050726-longerich.pdf
+read: 2026-10-07
+note: the PDF text layer splits some words with a space ('Brow ning', 'murd er', 'act ual'); kept as printed by the layer; the footnote numbers 25 and 26 are part of the layer's text and kept; line breaks collapsed
+
+Most researchers, like Christopher Brow ning, Philippe Burrin and others, argue that a decision to murder the European Jews was taken at some point in the second half of 1941. The months of October and, more recently, December are named relatively frequently.25 Richard Breitman is an exception among participants in this debate since he argues that a fundamental decision was taken in early 1941 and that this decision was implemented in August and September of that year.26 In contrast to prevalent trends among hist orians, I have tried to stress the events in the phase before the beginning of the act ual mass murder as being formative for the Holocaust. On the other hand, I take the view that the decision-making process concerning the principal question of the murd er of the European Jews was not fully concluded until the spring/summer of 1942.

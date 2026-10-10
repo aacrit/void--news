@@ -1,0 +1,8 @@
+source: src-lii-us-v-nixon-1974
+locator: para60
+url: https://www.law.cornell.edu/supremecourt/text/418/683
+read: 2026-10-09
+note: the Legal Information Institute's web text of the opinion; the locator is LII's own paragraph number, printed at the head of each paragraph, not a U.S. Reports page
+note: why the decision was eight to nothing: eight Justices decided it
+
+Mr. Justice REHNQUIST took no part in the consideration or decision of these cases.

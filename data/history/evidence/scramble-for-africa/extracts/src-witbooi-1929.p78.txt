@@ -1,0 +1,25 @@
+source: src-witbooi-1929
+locator: p78
+url: https://archive.org/download/diedagboekvanhen00witb/diedagboekvanhen00witb_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: the letter of 30 May 1890 continued, page 78 of the edition; the editor's footnote marks are left as printed
+
+landen heden,*) en dat zyn landen op het water,*) en
+dat zyn ook zelfstandige koningryken en alle verscheidene volken hebben hunne eigene hoofden, en ieder
+hoof heef zyn eigen volk en land, waarover hy alleen
+te bevelen en te orderen heef, dat geen ander mensch
+of kapitein reg heef, om hem in krach te bevelen en
+te orderen, om zoo te doen, en om niet zoo te doen
+want ieder hoof op deze wereld, dat is slechts een plaats
+bekleeder van onzer aller grooten God, en en staat alleen
+verantwoording schuldig voor dien grooten God, de
+Koning aller koningen, en Heer aller heeren, voor wien
+wy allen, die onder den hemel leven, zullen onze kniën
+buigen, en by Hem alleen hulp vragen, raad en troos,
+kracht en bescherming in alle deze zware omstandigheden des levens, want Hy geef allen gewilliglyk die
+Hem daarom bidden. Maar lieve kapitein! U hebt
+nu ander regering aangenomen, en u [hebt] zich in
+die regering ingegeven, om van die menschelijke regering beschermd te worden, van alle gevaren, ten eerste,
+en te naaste, tegen my, in dit oorlog, wat van ouds
+tusschen ons staat, om daarvan beschermd, en geholpen

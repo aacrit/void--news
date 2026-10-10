@@ -1,0 +1,9 @@
+source: src-hrw-leave-none-1999
+locator: secnumberssites
+url: https://www.hrw.org/reports/1999/rwanda/
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: section 'Numbers'
+note: the edition's contents page is the entry's free copy; the passage was read on its chapter page, https://www.hrw.org/reports/1999/rwanda/Geno1-3-04.htm
+
+Estimates of persons killed at any one site vary widely, often by a factor of ten or more, perhaps because most have been made by untrained observers. At the parish of Rukara, for example, estimates ranged from 500 to 5,000. In 1995, a Rwandan government commission set the death toll at the Murambi Technical School in Gikongoro at some 20,000, a figure which some have since raised to 70,000, although the bodies exhumed there at the time of the 1996 commemoration of the genocide numbered in the range of 5,000. As many as 50,000 have been said to have perished at Bisesero, but a recent list of persons killed at that site totaled just over 5100 names. Similarly, some claim that 35,000 were slain in the Nyamata church, which appears to have a capacity of some 3,000.

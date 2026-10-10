@@ -1,0 +1,8 @@
+source: src-cwihp-mao-19501002-ru
+locator: secserious
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+read: 2026-10-09
+note: CWIHP Bulletin 6-7, Mansourov's Document 12: Mao's answer as the Soviet ambassador Roshchin cabled it on 3 October 1950, translated from the Russian
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+We originally planned to move several volunteer divisions to North Korea to render assistance to the Korean comrades when the enemy advanced north of the 38th parallel. However, having thought this over thoroughly, we now consider that such actions may entail extremely serious consequences. In the first place, it is very difficult to resolve the Korean question with a few divisions (our troops are extremely poorly equipped, there is no confidence in the success of military operations against American troops), the enemy can force us to retreat.

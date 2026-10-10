@@ -1,0 +1,7 @@
+source: src-blancpain-2003
+locator: abstract
+url: https://www.persee.fr/doc/outre_1631-0438_2003_num_90_340_4054
+read: 2026-09-25
+note: the French abstract as the Persée record prints it
+
+Il y a loin de l'immense trafic de la traite des esclaves à la petite querelle sur l'indemnité qu'Haïti eut à payer à la France pour la reconnaissance de son indépendance et, plus tard, aux divers emprunts qu'Haïti plaça sur le marché de Paris pour équilibrer ses finances. Ignorance ou démagogie sont trop souvent mélangés. Cet article replace ces questions dans leurs cadres historiques.

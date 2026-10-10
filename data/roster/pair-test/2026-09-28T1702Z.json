@@ -1,0 +1,70 @@
+{
+ "collected_at": "2026-09-28T17:02:13Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16166067/Lacey-Turner-Strictly-injuries-rehearsals-battered-bandaged-feet-leaderboard.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Lacey Turner displays her Strictly injuries as she arrives at rehearsals with battered and bandaged feet after placing third on leaderboard",
+      "published": "Mon, 28 Sep 2026 11:25:27 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/lacey-turner-strictly-come-dancing-37711454",
+      "title": "Strictly star Lacey Turner’s famous sister posts emotional tribute after first dance",
+      "published": "Mon, 28 Sep 2026 15:40:55 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 142,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.indiatoday.in/india/law-news/story/supreme-court-collegium-recommends-sunita-agarwal-devendra-upadhyaya-aparesh-singh-3005175-2026-09-28?utm_source=rss",
+      "title": "Collegium recommends three High Court Chief Justices for Supreme Court",
+      "published": "Mon, 28 Sep 2026 21:56:44 +0530"
+     },
+     "left": {
+      "url": "https://www.thehindu.com/news/national/supreme-court-collegium-proposes-second-woman-as-apex-court-judge-in-2026/article71520601.ece",
+      "title": "Supreme Court Collegium proposes second woman as apex court judge in 2026",
+      "published": "Mon, 28 Sep 2026 21:17:03 +0530"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 135,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [],
+   "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://nordicmonitor.com/feed/"
+  }
+ }
+}

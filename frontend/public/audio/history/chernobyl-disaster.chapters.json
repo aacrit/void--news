@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The Chernobyl Disaster",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 48.252
+  },
+  {
+   "startTime": 48.252,
+   "title": "Twenty three minutes past one",
+   "endTime": 113.184
+  },
+  {
+   "startTime": 113.184,
+   "title": "The roof",
+   "endTime": 178.56
+  },
+  {
+   "startTime": 178.56,
+   "title": "Thirty six hours",
+   "endTime": 259.793
+  },
+  {
+   "startTime": 259.793,
+   "title": "The liquidators",
+   "endTime": 300.525
+  },
+  {
+   "startTime": 300.525,
+   "title": "Five accounts",
+   "endTime": 311.493
+  },
+  {
+   "startTime": 311.493,
+   "title": "The Soviet state",
+   "endTime": 353.097
+  },
+  {
+   "startTime": 353.097,
+   "title": "The liquidators and the evacuated",
+   "endTime": 394.722
+  },
+  {
+   "startTime": 394.722,
+   "title": "The epidemiologists",
+   "endTime": 472.729
+  },
+  {
+   "startTime": 472.729,
+   "title": "The reactor engineers",
+   "endTime": 520.278
+  },
+  {
+   "startTime": 520.278,
+   "title": "Glasnost and the collapse",
+   "endTime": 563.495
+  },
+  {
+   "startTime": 563.495,
+   "title": "The shape of the disagreement",
+   "endTime": 621.472
+  },
+  {
+   "startTime": 621.472,
+   "title": "Legacy",
+   "endTime": 660.042
+  },
+  {
+   "startTime": 660.042,
+   "endTime": 673.142,
+   "title": "Also from Void News"
+  }
+ ]
+}

@@ -1,0 +1,7 @@
+source: src-frus-aidememoire-19180717
+locator: secjudgment
+url: https://history.state.gov/historicaldocuments/frus1918Russiav02/d345
+read: 2026-10-09
+note: the Office of the Historian's text of FRUS as served, tags removed; whitespace collapsed, nothing else changed
+
+It is the clear and fixed judgment of the Government of the United States, arrived at after repeated and very searching reconsiderations of the whole situation in Russia, that military intervention there would add to the present sad confusion in Russia rather than cure it, injure her rather than help her, and that it would be of no advantage in the prosecution of our main design, to win the war against Germany. It can not, therefore, take part in such intervention or sanction it in principle. Military intervention would, in its judgment, even supposing it to be efficacious in its immediate avowed object of delivering an attack upon Germany from the east, be merely a method of making use of Russia, not a method of serving her.

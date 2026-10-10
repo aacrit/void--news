@@ -1,0 +1,8 @@
+source: src-unsc-418-1977
+locator: op2
+url: https://documents.un.org/doc/resolution/gen/nr0/297/01/pdf/nr029701.pdf
+read: 2026-10-09
+note: the text is the scan's OCR layer, whitespace collapsed; its glyph errors are kept as printed (e.g. 'ail' for 'all')
+note: operative paragraph 2 to the page's first footnote; the paragraph continues on the next page
+
+2. Decides that all States shall cease forthwith any provision to South Africa of arms and related matfriel of ail types, including the sale or transfer of weapons and ammunition, military vehicles and equipment, para- mi litary police equipmcnt, and spare parts for the afore- mentioncd,

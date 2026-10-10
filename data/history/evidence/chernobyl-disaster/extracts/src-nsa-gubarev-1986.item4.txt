@@ -1,0 +1,7 @@
+source: src-nsa-gubarev-1986
+locator: item4
+url: https://nsarchive.gwu.edu/sites/default/files/documents/6279556/National-Security-Archive-Doc-12-Letter-from.pdf
+read: 2026-10-07
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+4. The entire system of civil defense turned out to be completely paralyzed. There were not even any working dosimeters.

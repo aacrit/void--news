@@ -1,0 +1,7 @@
+source: src-un-a54549
+locator: para304
+url: https://documents.un.org/doc/undoc/gen/n99/348/76/pdf/n9934876.pdf
+read: 2026-09-24
+note: the paragraph crosses a page; the running header between the two spans is omitted
+
+304. The advancing Serb forces now entered the town encountering little or no resistance either from UNPROFOR or from the ARBiH. The Serb flag was hoisted above a bakery at the southern end of the town at 1407 hours, according to one individual who was there at the time. The residents of Srebrenica town, including those who had sought refuge at the B Company base, began to flee northwards in the direction of Potogari at approximately 1430 hours. Srebrenica had fallen. Until that point, at least three (but possibly up to five) requests for air support by Dutchbat had been turned down at various levels in the chain of command. Dutchbat had also not fired a single shot directly at the advancing Serb forces.

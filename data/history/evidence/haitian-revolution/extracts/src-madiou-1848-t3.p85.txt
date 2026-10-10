@@ -1,0 +1,8 @@
+source: src-madiou-1848-t3
+locator: p85
+url: https://archive.org/download/histoiredhaiti03madi/histoiredhaiti03madi_djvu.txt
+read: 2026-09-25
+note: tome III, page 85: the morning of Vertières
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+
+_ le corps de réserve destiné à demeurer auprès de lui, ces deux premiers bataillons de la 4e, de la 8e, et de la 20e. Le 26 Brumaire (18 Novembre 1803), à la pointe du jour, le général Clervaux or- _ donna” de commencer l'attaque. Les français battaient la diane dans

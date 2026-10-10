@@ -1,0 +1,7 @@
+source: src-nl-trial-tapes
+locator: secintro
+url: https://www.nixonlibrary.gov/watergate-trial-tapes
+read: 2026-10-09
+note: the Nixon Library's page 'Watergate Trial Tapes', its introduction
+
+The Watergate Trial Conversations are excerpted Nixon White House tape conversations that were played in open court in U.S. v. Mitchell, et al. and U.S. v. Connally. The segments are a portion of the approximately 60 hours of tape subpoenaed by the Watergate Special Prosecution Force (WSPF). These conversations include the segments referred to as the "Smoking Gun" and "Cancer on the Presidency." About the Transcripts While every effort has been made to ensure that the electronic version is a faithful copy, these electronic versions may not be identical in every respect to the original typewritten transcripts.

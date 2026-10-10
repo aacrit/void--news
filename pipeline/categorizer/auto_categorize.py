@@ -10,7 +10,29 @@ Uses rule-based NLP (no LLM API calls):
     - spaCy NER entity type boosting
 """
 
+import re
+from functools import lru_cache
+
 from utils.nlp_shared import get_nlp
+
+
+@lru_cache(maxsize=4096)
+def _keyword_pattern(keyword: str) -> "re.Pattern":
+    """Word-boundary matcher for a keyword (2026-07-01 review CAT-3).
+
+    The LEFT boundary is always strict (a non-alphanumeric must precede), which
+    is what kills the substring false positives: 'ev' inside 'review', 'epa'
+    inside 'repatriates', 'eu' inside 'euro'. For single-word keywords of >=5
+    letters the RIGHT boundary additionally allows a trailing inflection
+    (s/es/ed/ing/d) so 'arrest' still matches 'arrests'/'arrested' and 'flood'
+    matches 'floods' -- recall that plain substring matching gave for free and
+    that strict both-side boundaries would silently lose (which mislabeled
+    'Israel Arrests ... West Bank' as economy via the lone word 'bank'). Short
+    abbreviations (<5) and multi-word phrases stay strict on both sides."""
+    esc = re.escape(keyword)
+    if len(keyword) >= 5 and keyword.isalpha():
+        return re.compile(r"(?<![a-z0-9])" + esc + r"(?:s|es|ed|ing|d)?(?![a-z0-9])")
+    return re.compile(r"(?<![a-z0-9])" + esc + r"(?![a-z0-9])")
 
 
 # ---------------------------------------------------------------------------
@@ -33,6 +55,25 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "white house": 3, "capitol": 3, "supreme court": 3,
         "judicial": 2, "justice": 1, "constitution": 2, "constitutional": 2,
         "lobby": 2, "lobbyist": 3, "donor": 2, "fundraising": 2,
+        # Law enforcement / political-judicial actions
+        "arrested": 2, "arrest": 2, "detained": 2, "indicted": 3,
+        "charged": 2, "convicted": 2, "sentenced": 2, "extradited": 3,
+        "prime minister": 3, "minister": 2, "sworn in": 3,
+        # Crime & justice — governance/judicial system
+        "crime": 2, "criminal": 2, "murder": 2, "homicide": 3,
+        "robbery": 2, "theft": 1, "fraud": 2, "corruption": 3,
+        "trial": 2, "verdict": 3, "jury": 2, "plaintiff": 2,
+        "prosecution": 3, "prosecutor": 3, "defendant": 2,
+        "lawsuit": 2, "litigation": 2, "ruling": 2,
+        "prison": 2, "inmate": 2, "parole": 2, "probation": 2,
+        "death penalty": 3, "execution": 2, "death row": 3,
+        "shooting": 1, "gun violence": 3, "mass shooting": 3,
+        "fbi": 3, "doj": 3, "department of justice": 3,
+        # Immigration — policy/governance
+        "immigration": 3, "immigrant": 2, "deportation": 3,
+        "border": 2, "asylum": 2, "visa": 2, "refugee": 2,
+        "migrant": 2, "migration": 2, "citizenship": 2,
+        "ice": 2, "customs": 1, "undocumented": 2,
     },
     "economy": {
         "gdp": 3, "inflation": 3, "market": 2, "stock": 2,
@@ -49,6 +90,10 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "investor": 2, "investment": 2, "venture capital": 3,
         "ipo": 3, "merger": 3, "acquisition": 2, "bankruptcy": 3,
         "supply chain": 2, "manufacturing": 2, "industrial": 1,
+        # v5.6: Strengthen export/trade signals — "S. Korea monthly exports"
+        # was miscategorized as health due to weak economy keyword matching
+        "exports": 3, "imports": 3, "trade surplus": 3,
+        "trade deficit": 3, "trade balance": 3, "ceo": 2,
     },
     "technology": {
         # AI/ML — strong signals
@@ -77,6 +122,28 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         # Big tech companies
         "google": 2, "apple": 2, "meta platforms": 3, "amazon web services": 3,
         "microsoft azure": 3, "cloud computing": 3, "tech startup": 3,
+        # AI-specific terms (often categorized as "general" without these).
+        # 2026-06-29: bare "ai" REMOVED — as a 2-char substring it matched
+        # inside common words (rem-AI-n, cl-AI-ms, cert-AI-n, camp-AI-gn),
+        # falsely tagging unrelated stories technology->science. Phrase forms
+        # are safe substrings; real AI coverage still resolves via openai /
+        # anthropic / "ai model" / chatbot / llm / "artificial intelligence".
+        "ai model": 3, "ai models": 3, "ai chatbot": 3, "ai system": 2,
+        "ai tool": 2, "ai race": 3, "a.i.": 3,
+        "chatbot": 3, "llm": 3, "gpt": 3, "anthropic": 3,
+        "copilot": 2, "deepfake": 3, "neural network": 3,
+        "training data": 3, "foundation model": 3, "transformer": 2,
+        "tech regulation": 3, "antitrust": 2, "data privacy": 3,
+        "social media": 2, "algorithm": 2, "encryption": 2,
+        "startup": 1, "unicorn": 2,
+        # Consumer tech / messaging apps (2026-07-01 review CAT-4): a pure
+        # app story like "WhatsApp to launch usernames" matched no tech
+        # keyword and fell to conflict via a GPE boost.
+        "whatsapp": 3, "telegram app": 3, "signal app": 3, "imessage": 3,
+        "messaging app": 3, "username": 2, "usernames": 2, "sim card": 2,
+        "sim-binding": 3, "smartphone": 2, "iphone": 2, "android": 2,
+        "instagram": 2, "tiktok": 2, "youtube": 1, "gadget": 2,
+        "operating system": 2, "data center": 2, "chip": 1, "chipmaker": 3,
     },
     "health": {
         "vaccine": 3, "vaccination": 3, "disease": 2, "hospital": 2,
@@ -94,6 +161,11 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "biotech": 2, "biotechnology": 3, "genome": 3,
         "surgical": 2, "transplant": 2, "organ": 1,
         "insurance": 1, "medicare": 2, "medicaid": 2,
+        # Disease-outbreak vocabulary (2026-07-01 review): "UN Warns Ebola
+        # Outbreak..." had no health keyword and fell to general.
+        "ebola": 3, "outbreak": 2, "cholera": 3, "measles": 3, "mpox": 3,
+        "malaria": 3, "tuberculosis": 3, "polio": 3, "dengue": 3,
+        "quarantine": 2, "contagious": 2, "immunization": 3,
     },
     "environment": {
         "climate": 3, "carbon": 2, "pollution": 3, "renewable": 3,
@@ -111,10 +183,16 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "earthquake": 2, "tsunami": 2, "volcanic": 2,
         "water quality": 3, "air quality": 3, "smog": 3,
         "plastic": 1, "microplastic": 3, "ocean acidification": 3,
+        # Extreme-heat vocabulary (2026-07-01 review CAT-4): a heatwave
+        # cluster matched no environment keyword and fell to "general".
+        "heat wave": 3, "heatwave": 3, "heat advisory": 3, "extreme heat": 3,
+        "record heat": 3, "record temperatures": 3, "heat-related": 3,
+        "scorching": 2, "sweltering": 2, "heat dome": 3, "temperatures": 1,
+        "wildfires": 3, "blaze": 1,
     },
     "conflict": {
-        "war": 3, "military": 2, "attack": 2, "troops": 3,
-        "defense": 2, "weapons": 2, "conflict": 2, "ceasefire": 3,
+        "war": 3, "military": 3, "attack": 2, "troops": 3,
+        "defense": 2, "weapons": 3, "conflict": 2, "ceasefire": 3,
         "nato": 3, "terrorism": 3, "terrorist": 3,
         "airstrike": 3, "bombing": 3, "missile": 3, "drone strike": 3,
         "invasion": 3, "occupation": 2, "siege": 3,
@@ -126,19 +204,41 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "pentagon": 3, "armed forces": 3, "navy": 2, "army": 2,
         "combat": 3, "battlefield": 3, "frontline": 3,
         "coup": 3, "revolution": 2, "civil war": 3,
+        # 2026-07-22: revolt/protest signals so uprising coverage reliably lands
+        # in conflict (tightens void --revolt's active-portal live pre-filter).
+        "protest": 2, "protester": 2, "protesters": 2, "uprising": 3,
+        "regime": 2, "regime change": 3, "junta": 3, "crackdown": 3,
+        "general strike": 3, "self-immolation": 3, "mutiny": 3,
+        "dissident": 2, "revolutionary": 2,
         "hostage": 3, "kidnapping": 2, "assassination": 3,
         "espionage": 3, "intelligence": 1, "cia": 2,
+        # Military-specific terms to outweigh politics NER boosts
+        "strike": 2, "strikes": 2, "shelling": 3, "artillery": 3,
+        "airforce": 3, "warship": 3, "submarine": 3,
+        "killed": 2, "wounded": 2, "fighters": 2,
+        # v5.6: Nuclear disambiguation — "nuclear" in news context is almost
+        # always geopolitical, not science. "nuclear threat eliminated" was
+        # miscategorized as science; these phrases anchor it to conflict.
+        "nuclear": 2, "nuclear threat": 3, "nuclear program": 3,
+        "nuclear deal": 3, "nuclear arsenal": 3, "nuclear capability": 3,
+        "nuclear talks": 3, "nuclear strike": 3,
+        # v5.6: Kidnapping/abduction — conflict, not general crime
+        "kidnapped": 3, "abducted": 3, "hostage crisis": 3,
     },
     "science": {
-        "research": 2, "study": 1, "discovery": 2, "nasa": 3,
+        # 2026-06-28 (O10): dropped the generic terms that fired on hard news —
+        # "study"/"launch"/"theory" (launch an offensive, conspiracy theory) and
+        # "journal" (matched the outlet "Wall Street Journal"). Science stories
+        # still resolve via the specific terms below.
+        "research": 2, "discovery": 2, "nasa": 3,
         "space": 2, "experiment": 2, "scientific": 2, "laboratory": 2,
         "physics": 3, "chemistry": 3, "biology": 2, "astronomy": 3,
         "telescope": 3, "satellite": 2, "mars": 3, "moon": 2,
-        "spacex": 3, "rocket": 2, "launch": 1, "orbit": 2,
+        "spacex": 3, "rocket": 2, "orbit": 2,
         "particle": 2, "molecule": 2, "atom": 2, "quantum": 2,
         "fossil": 2, "paleontology": 3, "archaeology": 3,
-        "peer-reviewed": 3, "journal": 1, "thesis": 2,
-        "hypothesis": 2, "theory": 1, "breakthrough": 2,
+        "peer-reviewed": 3, "thesis": 2,
+        "hypothesis": 2, "breakthrough": 2,
         "neuroscience": 3, "genetics": 3, "dna": 3, "rna": 3,
         "evolution": 2, "species": 1, "climate science": 3,
         "observatory": 3, "cosmic": 3, "galaxy": 3, "universe": 2,
@@ -159,6 +259,25 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "podcast": 2, "documentary": 2, "animation": 2,
         "photography": 2, "sculpture": 2, "painting": 2,
         "cultural": 2, "heritage": 2, "tradition": 1,
+        # v5.6: Celebrity trouble stories — often miscategorized as
+        # health/politics when the subject is a public figure
+        "dui": 2, "mugshot": 2, "rehab": 2, "tabloid": 2,
+        "paparazzi": 2, "red carpet": 2, "memoir": 2,
+        # Religion — maps to culture desk (no standalone religion category)
+        "pope": 3, "vatican": 3, "catholic": 2, "church": 1,
+        "easter": 2, "christmas": 2, "ramadan": 2, "eid": 2,
+        "mosque": 2, "synagogue": 2, "temple": 1, "rabbi": 2,
+        "imam": 2, "bishop": 2, "cardinal": 2, "archbishop": 3,
+        "evangelical": 2, "protestant": 2, "orthodox": 1,
+        "buddhist": 2, "hindu": 2, "muslim": 1, "christian": 1,
+        "prayer": 1, "worship": 2, "congregation": 2,
+        "religious": 2, "faith": 1, "clergy": 2, "sermon": 2,
+        "pilgrimage": 2, "holy": 1, "sacred": 1, "scripture": 2,
+        # Education — maps to culture desk
+        "university": 1, "college": 1, "school": 1, "student": 1,
+        "professor": 2, "campus": 2, "graduation": 2, "tuition": 2,
+        "scholarship": 2, "academic": 1, "curriculum": 2,
+        "school board": 3, "teacher": 1, "principal": 1,
     },
     "sports": {
         "game": 1, "championship": 3, "player": 2, "team": 1,
@@ -173,9 +292,18 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "tennis": 2, "golf": 2, "soccer": 2, "football": 2,
         "basketball": 2, "baseball": 2, "hockey": 2,
         "boxing": 2, "mma": 3, "ufc": 3, "wrestling": 2,
+        # Combat sports — "fighter" often miscategorized as conflict
+        "fighter": 2, "fight": 1, "bout": 2, "knockout": 3,
+        "heavyweight": 3, "middleweight": 3, "lightweight": 3,
+        "welterweight": 3, "featherweight": 3, "bantamweight": 3,
+        "title fight": 3, "undercard": 3, "ringside": 3,
+        "round": 1, "ko": 2, "tko": 3, "decision": 1,
         "medal": 2, "record-breaking": 2, "season": 1,
         "injury": 1, "suspension": 2, "contract": 1,
         "espn": 3, "sporting": 2, "match": 1, "race": 1,
+        # Additional sports
+        "cricket": 2, "rugby": 2, "f1": 3, "formula 1": 3,
+        "grand prix": 3, "marathon": 2, "triathlon": 2,
     },
 }
 
@@ -183,13 +311,13 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
 # NER entity label to category boost mapping
 # ---------------------------------------------------------------------------
 NER_CATEGORY_BOOST: dict[str, dict[str, float]] = {
-    "GPE": {"politics": 0.5, "conflict": 0.3},
+    "GPE": {"politics": 0.3, "conflict": 0.3},  # balanced (was 0.5/0.3)
     "ORG": {"economy": 0.3},
     "PERSON": {"politics": 0.2, "culture": 0.2},
     "MONEY": {"economy": 0.5},
     "PERCENT": {"economy": 0.3},
     "DATE": {},  # generic, no boost
-    "NORP": {"politics": 0.3, "conflict": 0.2},
+    "NORP": {"politics": 0.2, "conflict": 0.2},  # balanced (was 0.3/0.2)
     "FAC": {"culture": 0.2},
     "EVENT": {"sports": 0.3, "culture": 0.3, "conflict": 0.2},
     "PRODUCT": {"technology": 0.1},
@@ -203,13 +331,13 @@ NER_CATEGORY_BOOST: dict[str, dict[str, float]] = {
 # cluster-level category stored in the DB uses these merged desk slugs.
 # ---------------------------------------------------------------------------
 DESK_MAP: dict[str, str] = {
-    "politics": "politics",       # Politics + Conflict → "Politics"
-    "conflict": "politics",
+    "politics": "politics",       # Politics (domestic governance, elections, policy)
+    "conflict": "conflict",       # Conflict (war, military, terrorism, security)
     "economy": "economy",         # Economy (unchanged)
     "technology": "science",      # Science + Tech → "Science"
     "science": "science",
-    "health": "health",           # Health + Environment → "Health"
-    "environment": "health",
+    "health": "health",           # Health (unchanged)
+    "environment": "environment", # Environment (climate, disasters, conservation)
     "culture": "culture",         # Culture + Sports → "Culture"
     "sports": "culture",
     "general": "general",
@@ -219,6 +347,72 @@ DESK_MAP: dict[str, str] = {
 def map_to_desk(fine_category: str) -> str:
     """Map a fine-grained category slug to its merged desk slug."""
     return DESK_MAP.get(fine_category, fine_category)
+
+
+# 2026-05-21 nlp-engineer fix — early categorizer for Axis 6 EMA.
+# The full categorize_article() uses spaCy NER + keyword density + entity
+# boosting (≥10ms per article). It runs at pipeline step 7. But step 5's
+# bias analysis needs the article's category NOW to look up the per-source
+# per-topic EMA (source_topic_lean table) and blend it into the political
+# lean score. Without a category at step 5, the 30% topic-blend in
+# political_lean.py:858 is dead code on read — the per-topic EMA axis
+# has been wired but dormant for the entire production lifetime.
+#
+# This is a microsecond-grade URL/section-only pre-categorizer. It
+# correctly tags 60-70% of articles whose URL path or section metadata
+# is unambiguous. The remaining articles get category="" and topic_lean
+# stays None at step 5 (matching prior behavior). Step 7 still runs the
+# full NLP categorizer to refine and store the final cluster category.
+
+_URL_CATEGORY_PATTERNS: list[tuple[re.Pattern, str]] = [
+    (re.compile(r"/(?:politics|election|elections|political|campaign|campaigns)(?:/|$)", re.IGNORECASE), "politics"),
+    (re.compile(r"/(?:world|international|global|foreign[-_ ]?affairs|world[-_ ]?news)(?:/|$)", re.IGNORECASE), "world"),
+    (re.compile(r"/(?:business|economy|economic|markets|finance|financial|money|stocks|investing)(?:/|$)", re.IGNORECASE), "business"),
+    (re.compile(r"/(?:tech|technology|tech[-_ ]?news|software|hardware|ai[-_ ]?news|gadgets)(?:/|$)", re.IGNORECASE), "tech"),
+    (re.compile(r"/(?:science|sciences|scientific|research|space|astronomy|physics|biology|chemistry)(?:/|$)", re.IGNORECASE), "science"),
+    (re.compile(r"/(?:health|healthcare|medical|medicine|wellness|fitness|nutrition)(?:/|$)", re.IGNORECASE), "health"),
+    (re.compile(r"/(?:climate|environment|environmental|sustainability|green|weather)(?:/|$)", re.IGNORECASE), "climate"),
+    (re.compile(r"/(?:sports|sport|games|nfl|nba|mlb|soccer|football|cricket|olympics)(?:/|$)", re.IGNORECASE), "sports"),
+    (re.compile(r"/(?:culture|arts|entertainment|movies|music|tv|television|books|literature|theater)(?:/|$)", re.IGNORECASE), "culture"),
+    (re.compile(r"/(?:opinion|opinions|editorial|editorials|op[-_]?ed|column|columns|commentary)(?:/|$)", re.IGNORECASE), "opinion"),
+    (re.compile(r"/(?:lifestyle|food|travel|fashion|home|garden|family|parenting)(?:/|$)", re.IGNORECASE), "lifestyle"),
+    (re.compile(r"/(?:law|legal|crime|courts|justice|police)(?:/|$)", re.IGNORECASE), "crime"),
+    (re.compile(r"/(?:education|schools|university|college|academic)(?:/|$)", re.IGNORECASE), "education"),
+]
+
+_SECTION_CATEGORY_MAP: dict[str, str] = {
+    "politics": "politics", "world": "world", "international": "world",
+    "business": "business", "economy": "business", "markets": "business",
+    "tech": "tech", "technology": "tech",
+    "science": "science", "health": "health", "climate": "climate",
+    "sports": "sports", "culture": "culture", "entertainment": "culture",
+    "arts": "culture", "opinion": "opinion", "editorial": "opinion",
+    "lifestyle": "lifestyle", "crime": "crime", "education": "education",
+}
+
+
+def categorize_early(article: dict) -> str:
+    """Return a single best-guess category from URL + section only.
+
+    Designed for step 4 (pre-bias-analysis) where we need a category
+    string for the per-topic EMA lookup but can't afford full NLP
+    categorization yet. Returns empty string when neither signal
+    resolves — in that case the topic_lean blend at step 5 stays None.
+
+    No spaCy, no keyword density, no entity recognition. Pure regex +
+    dict lookup on already-fetched article metadata. ~5 microseconds.
+    """
+    # Section metadata is the strongest signal: outlets self-classify.
+    section = (article.get("section") or "").strip().lower()
+    if section in _SECTION_CATEGORY_MAP:
+        return _SECTION_CATEGORY_MAP[section]
+    # URL path: /politics/, /world/, /tech/, etc. Many outlets put the
+    # category in the second URL segment.
+    url = article.get("url") or ""
+    for pat, cat in _URL_CATEGORY_PATTERNS:
+        if pat.search(url):
+            return cat
+    return ""
 
 
 def categorize_article(article: dict) -> list[str]:
@@ -246,16 +440,29 @@ def categorize_article(article: dict) -> list[str]:
     if word_count == 0:
         return ["general"]  # safe default for empty articles
 
-    # 1. Keyword matching scores
+    # 1. Keyword matching scores (title keywords get 2x weight)
+    #
+    # 2026-07-01 (review CAT-3): keyword hits are matched on WORD BOUNDARIES,
+    # not raw substrings. The old combined_lower.count(keyword) matched short
+    # abbreviations inside unrelated words — "ev" inside "review"/"revolution",
+    # "epa" inside "repatriates", "ai" inside "campaign" — which made
+    # `environment` a false-positive magnet (the #1 SCOTUS lead was tagged
+    # environment via "ev"). _boundary_count() requires non-alphanumeric
+    # neighbors so "ev" only matches the standalone token.
+    title_lower = title.lower()
     category_scores: dict[str, float] = {}
     for category, keywords in CATEGORY_KEYWORDS.items():
         score = 0.0
         for keyword, weight in keywords.items():
-            count = combined_lower.count(keyword)
+            pat = _keyword_pattern(keyword)
+            count = len(pat.findall(combined_lower))
             if count > 0:
                 # Normalize by word count to avoid length bias
                 density = count / max(word_count / 100, 1)
                 score += density * weight
+            # Title bonus: keywords in the title are the strongest signal
+            if pat.search(title_lower):
+                score += weight * 2.0
         category_scores[category] = score
 
     # 2. NER entity type boosting
@@ -293,9 +500,9 @@ def categorize_article(article: dict) -> list[str]:
     # Minimum score threshold: if the best score is very low, the article
     # couldn't be confidently classified — return "general" rather than
     # a misleading label based on a single weak keyword match.
-    # Threshold of 1.5 requires at least one moderate keyword hit (weight 2
-    # appearing once in a 100-word article, or multiple weight-1 hits).
-    MIN_SCORE_THRESHOLD = 1.5
+    # Threshold of 1.0 requires at least one weak keyword hit. Lowered from
+    # 1.5 to reduce "general" catch-all assignments (was 20% of clusters).
+    MIN_SCORE_THRESHOLD = 1.0
     if primary_score < MIN_SCORE_THRESHOLD:
         return ["general"]
 
@@ -308,4 +515,103 @@ def categorize_article(article: dict) -> list[str]:
         else:
             break  # sorted, so remaining are lower
 
+    # Title-based hard override (v5.9) — strong title markers force category
+    # regardless of keyword scoring. Catches: "fires AG" → politics (not economy),
+    # "boxing odds" → sports (not environment), "F-15 shot down" → conflict.
+    import re
+    _tl = title_lower
+
+    # v6.1 (2026-05-14) — Mass-casualty pre-override. A title carrying a hard
+    # death-toll number ("storm kills 100", "bombing kills 9") belongs in
+    # `conflict` under the current 10-category taxonomy, not `science` or
+    # `environment` where storm/island keywords pull it. Skip when title
+    # carries retrospective markers (study/report/model) so genuine analytical
+    # pieces about historical death tolls stay in their subject category.
+    _mass_casualty_skip = any(
+        w in _tl
+        for w in ("study", "report finds", "report shows", "research finds",
+                  "estimates", "estimated", "model", "modeled", "modeling",
+                  "estimate that", "found that")
+    )
+    if not _mass_casualty_skip:
+        # v6.2 (2026-05-15): expanded verb set to catch all conjugations.
+        # The original regex used a small explicit list (killed|kills|dead...)
+        # which missed "Storm Kills Over 100" (UP storm — title-case "Kills"
+        # tokenises fine, but the audit revealed other present-tense forms
+        # like "Floods Killing 50" and "Bombing Killed dozens" weren't catching
+        # because the connector word between verb and number varied.
+        # New rule: any "kill*" word stem + optional connector ("over",
+        # "at least", "about", "nearly") + number ≥ 5.
+        _cas = re.search(
+            r"\b(?:kill\w*|dead|deaths|fatalit\w*|dies|died)\s+"
+            r"(?:(?:over|at\s+least|about|nearly|more\s+than|some)\s+)?"
+            r"(\d{1,4})\b",
+            _tl,
+        )
+        if _cas and int(_cas.group(1)) >= 5:
+            if result[0] != "conflict":
+                result = ["conflict"] + [c for c in result if c != "conflict"]
+    _TITLE_OVERRIDES = [
+        # Sports: league names, match-ups, odds, scores
+        (r"\b(nba|nfl|mlb|nhl|mls|ufc|mma|premier league|la liga|bundesliga|serie a)\b", "sports"),
+        (r"\b(boxing|bout|heavyweight|middleweight|lightweight|welterweight|knockout|ko|tko)\b", "sports"),
+        (r"\b(fighter|fight night|title fight|ringside|undercard)\b", "sports"),
+        (r"\bvs\.?\s", "sports"),  # "X vs Y" pattern
+        (r"\b(odds|prediction|picks|fantasy|draft pick|free agent|trade deadline)\b", "sports"),
+        (r"\b(quarterback|touchdown|home run|slam dunk|hat trick|penalty kick)\b", "sports"),
+        (r"\b(lakers|celtics|yankees|dodgers|cowboys|patriots|warriors|chiefs)\b", "sports"),
+        (r"\b(cricket|rugby|f1|formula 1|grand prix|marathon|triathlon)\b", "sports"),
+        # Accidents/disasters (no dedicated desk) -> general, so a fatal crash
+        # is not mislabeled "conflict" by the "killed/injured" keywords or the
+        # mass-casualty pre-override. Placed BEFORE the conflict markers so a
+        # military cause ("plane shot down", "missile") still wins for a mixed
+        # title (later override in this list takes precedence). (2026-06-28)
+        (r"\b(?:plane|jet|aircraft|airliner|helicopter|chopper)\b.{0,18}?"
+         r"\bcrash(?:e[ds])?\b"                       # "plane crashes/crashed/has crashed"
+         r"|\bcrash(?:e[ds])?\s+into\b"               # "crashed into a building"
+         r"|\b(?:plane|jet|air|helicopter)\s+crash\b" # "plane crash" (noun)
+         r"|\b(?:train derail\w*|derailment|building collapse|bridge collapse|"
+         r"ferry (?:capsiz\w*|sink\w*)|bus crash\w*|car crash\w*|stampede)\b", "general"),
+        # Conflict: military hardware, combat actions
+        (r"\b(f-15|f-35|f-16|b-52|warplane|fighter jet|warship|submarine)\b", "conflict"),
+        (r"\b(shot down|downed|airstrike|shelling|bombardment|missile strike)\b", "conflict"),
+        # v6.1: military arrests / infiltration / bombing — strong conflict
+        # markers that incidental environment/science keywords ("island",
+        # "storm") can otherwise hijack.
+        (r"\b(drone strike|car bomb|suicide bomb|bazaar bombing|market bombing)\b", "conflict"),
+        (r"\b(irgc\s+(?:arrests?|members?|infiltration)|infiltrators?\s+(?:detained|arrested))\b", "conflict"),
+        (r"\b(narco-terrorist|narco terror|terror plot|terror attack)\b", "conflict"),
+        # v6.3 (2026-05-15): bilateral/diplomatic summit titles — strong
+        # politics override. Production audit caught a Trump-Xi Iran
+        # summit cluster mis-tagged as `category=science, section=us`
+        # because wire-desk briefings were dense in "research / launch /
+        # discovery" vocabulary that pulled the score toward science.
+        # Title-level summit + pair-name signal forces politics.
+        (r"\b(?:trump|biden|xi|putin|modi|netanyahu|starmer|zelensky|macron)[-\s]+"
+         r"(?:trump|biden|xi|putin|modi|netanyahu|starmer|zelensky|macron)\b", "politics"),
+        (r"\b(?:bilateral|trilateral|g[-\s]?7|g[-\s]?20|brics)\s+(?:summit|talks|meeting)\b", "politics"),
+        (r"\b(?:summit|talks|meeting)\s+(?:on|over|about)\s+(?:iran|china|russia|nuclear|trade|sanctions|tariffs)\b", "politics"),
+        (r"\b(?:state|presidential|prime\s+minister'?s?)\s+visit\s+to\b", "politics"),
+        # Politics: appointments, firings, executive actions
+        (r"\b(fires|fired|ousts|ousted|appoints|appointed|nominates|sworn in)\b", "politics"),
+        (r"\b(attorney general|secretary of|chief of staff|executive order)\b", "politics"),
+        # Culture/Religion: strong religious markers
+        (r"\b(pope|vatican|easter|ramadan|eid al|dalai lama)\b", "culture"),
+    ]
+    for pattern, override_cat in _TITLE_OVERRIDES:
+        if re.search(pattern, _tl):
+            if result[0] != override_cat:
+                result = [override_cat] + [c for c in result if c != override_cat]
+            break
+
     return result
+
+
+# NOTE (2026-07-01): a title+summary `categorize_cluster()` was prototyped
+# here during the top-50 review, but main's O10 headline-primary path
+# (main.py / rerank.py) proved strictly better — the cluster HEADLINE is immune
+# to the off-topic summary an over-merged cluster accumulates, whereas voting
+# over the summary re-imported that pollution. The engine fixes that made O10
+# correct on the flagged cases live above: word-boundary keyword matching
+# (kills ev/epa/eu/ai substring false positives) and the consumer-tech /
+# extreme-heat vocabulary. No separate cluster-categorizer is needed.

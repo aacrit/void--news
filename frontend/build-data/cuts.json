@@ -1,0 +1,19 @@
+{
+  "builtAt": "2026-10-10T16:59:12.889439Z",
+  "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
+  "cards": [
+    {
+      "id": "c0ffb9a0-78e7-492a-a8b9-81f738f87493",
+      "title": "Blast Rocks Riyadh Airport Amid Escalating Houthi Missile Strikes",
+      "sentences": [
+        {
+          "text": "Separately, Saudi Arabia has launched an air accident probe into a cockpit stabbing incident on a flydubai jet that occurred the previous week, examining aviation safety risks alongside an UAE-led criminal investigation.",
+          "rule": "E-16",
+          "message": "sentence opens on \"Separately\", announcing another story: \"Separately, Saudi Arabia has launched an air accident probe into a cockpit stabbing incide\""
+        }
+      ],
+      "points": [],
+      "left": []
+    }
+  ]
+}

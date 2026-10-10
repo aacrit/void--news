@@ -1,0 +1,13 @@
+source: src-uzoigwe-1985
+locator: p30
+url: https://archive.org/download/unesco_general_history_africa_vii/general_history_africa_vii_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: the sentence carries a footnote number glued to 'Africa' by the text layer
+
+that the conference, contrary to popular opinion, did not partition Africa*®
+is correct only in the most technical sense. To all intents and purposes
+the appropriation of territory did take place at the conference and the
+question of future appropriation is clearly implied in its decisions. By 1885,
+in fact, the broad lines of the final partition of Africa had already been
+drawn.

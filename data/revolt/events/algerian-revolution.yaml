@@ -1,0 +1,244 @@
+slug: algerian-revolution
+title: The Algerian War of Independence
+subtitle: A settler colony of one million loses a war fought mostly out of sight
+date_display: 1954-1962
+date_start: 1954
+date_end: 1962
+date_precision: year
+era: anticolonial
+region: africa
+country: Algeria
+revolt_type: anticolonial
+status: concluded
+summary: The FLN's coordinated attacks on All Saints' Day 1954 opened an eight-year war against French rule that killed hundreds of thousands, brought down France's own Fourth Republic, and ended with nearly a million pied-noir settlers leaving within months of Algerian independence.
+significance: One of the defining anticolonial wars of the twentieth century, it demonstrated that a colonial power with overwhelming military superiority could still be exhausted into withdrawal by a protracted guerrilla and urban campaign paired with its own domestic political fracture.
+grievances:
+  - kind: Settler control of land and political power
+    intensity: 85
+    evidence: Pied-noir settlers, roughly 10 percent of Algeria's population, controlled the majority of the colony's arable farmland and nearly all senior administrative posts through the mid-1950s.
+  - kind: Denial of political rights
+    intensity: 80
+    evidence: The 1947 Algerian Statute created a second electoral college so that roughly 1 million European settlers held equal representation with roughly 9 million Muslim Algerians.
+  - kind: The Setif massacre
+    intensity: 90
+    evidence: French forces and settler militias killed an estimated several thousand to over ten thousand Algerians in reprisals after independence demonstrations on May 8, 1945, a date Algerians remember as the war's true origin.
+actors:
+  - actor_type: vanguard
+    name: The FLN
+    description: The National Liberation Front, formed in 1954 to unify Algeria's fractured nationalist movements.
+    role_in_arc: Coordinated the All Saints' Day attacks and led the political and military campaign through to the 1962 Evian Accords.
+    defected: false
+  - actor_type: masses
+    name: The ALN
+    description: The FLN's guerrilla army, operating from rural bases and cross-border sanctuaries.
+    role_in_arc: Fought a sustained rural and mountain guerrilla campaign against French forces for the length of the war.
+    defected: false
+  - actor_type: old-regime
+    name: The French colonial administration
+    description: France's civil and military government of Algeria, then legally three departments of metropolitan France.
+    role_in_arc: Deployed up to 500,000 troops and interned hundreds of thousands of Algerians in an escalating counterinsurgency campaign.
+    defected: false
+  - actor_type: counter-revolutionaries
+    name: The OAS
+    description: A settler and dissident-military organization formed in 1961 to keep Algeria French by force.
+    role_in_arc: Carried out bombings and assassinations against both Algerian civilians and French officials negotiating independence, including an assassination attempt on de Gaulle.
+    defected: false
+  - actor_type: foreign-backer
+    name: Tunisia and Morocco
+    description: Newly independent neighboring states that hosted FLN sanctuary bases and training camps.
+    role_in_arc: Provided cross-border refuge that sustained ALN operations even as the French army built fortified lines to seal the borders.
+    defected: false
+tactics:
+  - tactic_type: guerrilla-warfare
+    description: ALN units operated from rural and mountain bases, avoiding direct engagement with superior French firepower.
+    prominence: primary
+  - tactic_type: urban-uprising
+    description: The 1956-57 Battle of Algiers brought bombing and assassination campaigns into the capital itself, provoking a brutal French counter-campaign of mass arrest and torture.
+    prominence: primary
+  - tactic_type: sabotage
+    description: Attacks on settler farms, infrastructure, and the colonial economy pressured the settler population's willingness to remain.
+    prominence: secondary
+resistance_type: armed
+phases:
+  - phase: old-regime-crisis
+    label: Setif and stalled reform
+    t_start: 0
+    t_end: 0.12
+    intensity: 55
+    reached: true
+    summary: Post-1945 repression and failed reform proposals leave Algerian nationalists convinced legal channels are closed.
+    key_events:
+      - Setif massacre, May 8, 1945
+      - 1947 Algerian Statute creates unequal electoral colleges
+  - phase: the-spark
+    label: Toussaint Rouge
+    date_start: '1954-11-01'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 70
+    reached: true
+    summary: The FLN coordinates roughly 30 attacks across Algeria on All Saints' Day, announcing the war's start.
+    key_events:
+      - All Saints' Day attacks, November 1, 1954
+      - FLN founding proclamation broadcast
+  - phase: moderate-phase
+    label: The Soummam Congress
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 55
+    reached: true
+    summary: FLN delegates meet in the Soummam valley in 1956 to unify military and political command under a single structure.
+    key_events:
+      - Soummam Congress, August 1956
+  - phase: radical-phase
+    label: The Battle of Algiers
+    date_start: '1956-09-30'
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 85
+    reached: true
+    summary: An FLN bombing campaign in Algiers is met by a French paratrooper mass arrest, interrogation, and torture campaign that dismantles the urban FLN network within months.
+    key_events:
+      - Battle of Algiers begins, September 1956
+      - French forces claim the urban network dismantled, 1957
+  - phase: terror-virtue
+    label: Internment and reprisal
+    t_start: 0.72
+    t_end: 0.84
+    intensity: 80
+    reached: true
+    summary: French forces intern an estimated two million rural Algerians in regroupment camps while FLN reprisals target harkis and rival nationalist factions.
+    key_events:
+      - Regroupment camp policy expands, 1957-1960
+      - FLN purges the rival MNA faction
+  - phase: thermidor
+    label: The generals' putsch
+    date_start: '1961-04-21'
+    t_start: 0.84
+    t_end: 0.92
+    intensity: 65
+    reached: true
+    summary: Dissident French generals seize Algiers in a failed putsch against de Gaulle's negotiations, splitting the French military and accelerating a negotiated exit.
+    key_events:
+      - Algiers putsch, April 1961
+      - OAS terror campaign intensifies, 1961-62
+  - phase: consolidation
+    label: Evian and independence
+    date_start: '1962-03-18'
+    t_start: 0.92
+    t_end: 1
+    intensity: 55
+    reached: true
+    summary: The Evian Accords end the war, and a July 1962 referendum delivers overwhelming support for independence.
+    key_events:
+      - Evian Accords signed, March 18, 1962
+      - Independence referendum, July 1, 1962
+      - Independence declared, July 5, 1962
+outcome: independence
+peak_participation_pct: null
+crossed_participation_threshold: null
+military_defection: partial
+foreign_intervention: direct-military
+duration_days: 2804
+death_toll: 'French and Algerian estimates diverge sharply: French figures put Algerian deaths near 350,000, while the Algerian government has cited a figure near 1 million; both sides broadly agree on around 25,000 French military deaths.'
+death_toll_low: 350000
+death_toll_high: 1000000
+regime_before: colonial
+regime_after: one-party
+democratization_delta: 1
+success_factors:
+  - factor_key: armed-campaign-attrition
+    label: Protracted armed campaigns can win by exhausting the incumbent's will more than by defeating its army
+    framework: chenoweth
+    status: confirmed
+    direction: favors-movement
+    base_rate: Armed campaigns succeed in roughly 26% of historical cases; protracted wars exceeding a decade more often succeed through attrition of the incumbent's domestic political will than through outright military victory
+    rationale: Eight years of war and over a million rotated French conscripts wore down metropolitan political support for the war faster than the French army broke the ALN's rural sanctuary network.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: foreign-sanctuary-support
+    label: Cross-border sanctuary sustains protracted challenger campaigns
+    framework: goldstone
+    status: confirmed
+    direction: favors-movement
+    base_rate: Foreign material and sanctuary support correlates with sustaining protracted challenger campaigns, though the wider literature also finds it often correlates with weaker post-victory institutions
+    rationale: Tunisian and Moroccan sanctuary kept ALN cross-border operations alive even as France built the fortified Morice Line to try to seal the border.
+    sources:
+      - 'Goldstone, Revolutions: A Very Short Introduction (2014)'
+  - factor_key: elite-fracture
+    label: Elite fracture within the incumbent power often precedes a negotiated exit
+    framework: skocpol
+    status: confirmed
+    direction: favors-movement
+    base_rate: Skocpol's model finds a split within the incumbent's own governing and military elite a frequent precursor to negotiated withdrawal rather than continued suppression
+    rationale: The April 1961 generals' putsch against de Gaulle exposed exactly this fracture within the French military and accelerated the Evian negotiations that followed within a year.
+    sources:
+      - Skocpol, States and Social Revolutions (1979)
+key_figures:
+  - name: Ahmed Ben Bella
+    role: FLN leader, first president of independent Algeria
+    born: 1918
+    died: 2012
+  - name: Ferhat Abbas
+    role: Nationalist leader, first president of the FLN's provisional government
+    born: 1899
+    died: 1985
+  - name: Charles de Gaulle
+    role: President of France, negotiated the Evian Accords
+    born: 1890
+    died: 1970
+  - name: Larbi Ben M'hidi
+    role: FLN military leader in the Battle of Algiers
+    born: 1923
+    died: 1957
+legacy_points:
+  - French and Algerian death toll estimates still diverge by hundreds of thousands, a gap that continues to shape memory politics on both sides of the Mediterranean today.
+  - Roughly 900,000 pied-noir settlers left Algeria within months of independence in 1962, one of the fastest mass departures of a settler population in modern history.
+  - The war's political fallout ended France's Fourth Republic and brought Charles de Gaulle back to power in 1958.
+  - The FLN's one-party rule after 1962 shaped Algerian governance for decades, a direct continuation of the wartime political structure.
+related_revolt_slugs:
+  - cuban-revolution
+  - latin-american-independence
+related_history_slugs: []
+is_published: true
+perspectives:
+  - viewpoint: FLN nationalist view
+    viewpoint_type: revolutionary
+    region_origin: Algeria
+    narrative: Armed struggle became the only remaining avenue after a decade of failed legal reform, and eight years of sustained sacrifice, not French goodwill, produced independence.
+    key_arguments:
+      - The Setif massacre of 1945 proved peaceful demonstration would be met with reprisal killing
+      - The unequal electoral college made legislative change structurally impossible
+      - Independence came only after sustained armed and political pressure, not through French reform
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - the Setif massacre
+      - the scale of wartime sacrifice
+    omitted:
+      - the FLN's own purges of rival nationalist factions
+      - the treatment of harkis after independence
+  - viewpoint: French veteran and pied-noir retrospective view
+    viewpoint_type: diaspora
+    region_origin: France
+    narrative: A community whose roots in Algeria spanned generations lost its homes within months, and the brutality both sides inflicted during the war is often flattened into a single-sided colonial narrative.
+    key_arguments:
+      - Multi-generational settler communities are frequently erased from independence-era narratives
+      - The FLN's own violence against harkis and rival Algerians remains undercounted in most accounts
+      - French conscripts, many of them reluctant nineteen-year-olds, also paid a heavy cost in the war
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - settler displacement
+      - harki reprisals after independence
+    omitted:
+      - settler-era land and political inequality
+      - the 1945 Setif reprisal killings
+media: []
+connections:
+  - target_slug: cuban-revolution
+    connection_type: parallel
+    description: Both were contemporaneous anticolonial and anti-dictatorial guerrilla wars fought and won within roughly the same decade.
+  - target_slug: latin-american-independence
+    connection_type: parallel
+    description: Both pitted a colonized population against a settler-linked metropolitan power, though separated by more than a century.

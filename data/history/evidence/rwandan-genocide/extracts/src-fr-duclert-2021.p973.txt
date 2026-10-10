@@ -1,0 +1,8 @@
+source: src-fr-duclert-2021
+locator: p973
+url: https://www.vie-publique.fr/files/rapport/pdf/279186.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+note: the sentence that closes the paragraph begun on page 972; the next line is the heading 'Des responsabilités accablantes'
+
+La recherche établit donc un ensemble de responsabilités, lourdes et accablantes.

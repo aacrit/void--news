@@ -1,0 +1,8 @@
+source: src-cdm-chronicle-198910
+locator: sec1002
+url: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month10/?month=10&year=1989&moc=1
+read: 2026-10-09
+note: the entry for 2 October
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+2 October 1989 A "Monday demonstration" in Leipzig with up to 20,000 participants. The slogans include: "Freedom, equality, brotherhood," "We’re staying here," "Gorbi, Gorbi," "Allow Neues Forum," and "Freedom for the prisoners."

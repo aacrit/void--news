@@ -1,0 +1,11 @@
+source: src-casement-1904
+locator: p27
+url: https://archive.org/download/CasementReport/CasementReportSmall_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+
+a, somewhat similar state of affairs prevails to that existing at F *. Bolobo used
+to be one of the most important native Settlements along the south bank of the Upper
+Congo, and the population in the early days of civilized rule numbered fully 40,000
+people, chiefly of the Bohangi tribe. To-day the population is believed to be not more
+than 7,000 or 8,000 souls. The Bolobo men were famous in former days for their

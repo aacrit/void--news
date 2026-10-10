@@ -1,0 +1,8 @@
+source: src-icty-krstic-tj
+locator: para37
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+note: the paragraph crosses a page; the footnote block and running header between the two spans are omitted
+
+37. Faced with the reality that Srebrenica had fallen under Bosnian Serb forces control, thousands of Bosnian Muslim residents from Srebrenica fled to Poto~ari seeking protection within the UN compound. By the evening of 11 July 1995, approximately 20,000 to 25,000 Bosnian Muslim refugees were gathered in Potocari. Several thousand had pressed inside the UN compound itself, while the rest were spread throughout the neighbouring factories and fields. Though the vast majority were women, children, elderly or disabled,63 witnesses estimated that there were at least 300 men inside the perimeter of the UN compound and between 600 and 900 men in the crowd outside.64

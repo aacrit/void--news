@@ -1,0 +1,6 @@
+back-translation of: src-armenia-decl-1990.item11.en
+made: 2026-09-25, in a separate pass from the English rendering alone, without sight of the original
+parity against the original: names Հայաստանի Հանրապետությունը, Օսմանյան Թուրքիայում, Արևմտյան Հայաստանում all present; numbers 11 and 1915 present; nothing added
+differences from the original: the verb is rendered սատարում է for the original's սատար է կանգնում, and թվականի for թվականին; the sense is the same
+
+11. Հայաստանի Հանրապետությունը սատարում է 1915 թվականի Օսմանյան Թուրքիայում և Արևմտյան Հայաստանում հայոց ցեղասպանության միջազգային ճանաչման հասնելու գործին։

@@ -1,0 +1,16 @@
+source: src-berlin-act-1885
+locator: art9
+url: https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+
+Art. IX. — Seeing that trading in slaves is forbidden in conformity
+with the principles of international law as recognized by the Signatory
+Powers, and seeing also that the operations, which, by sea or land,
+furnish slaves to trade, ought likewise to be regarded as forbidden, the
+Powers which do or shall exercise sovereign rights or influence in the
+territories forming the Conventional basin of the Congo declare that
+these territories may not serve as a market or means of transit for the
+trade in slaves, of whatever race they may be. Each of the Powers
+binds itself to employ all the means at its disposal for putting an end
+to this trade and for punishing those who engage in it.

@@ -1,0 +1,7 @@
+source: src-singh-dutt-statement-1929
+locator: secdeaf
+url: https://www.marxists.org/archive/bhagat-singh/1929/06/06.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+we dropped the bomb on the floor of the Assembly Chamber to register our protest on behalf of those who had no other means left to give expression to their heart-rending agony. Our sole purpose was "to make the deaf hear" and to give the heedless a timely warning.

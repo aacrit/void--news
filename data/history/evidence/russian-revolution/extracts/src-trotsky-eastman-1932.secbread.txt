@@ -1,0 +1,7 @@
+source: src-trotsky-eastman-1932
+locator: secbread
+url: https://www.marxists.org/archive/trotsky/1930/hrr/ch07.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+A mass of women, not all of them workers, flocked to the municipal duma demanding bread. It was like demanding milk from a he-goat. Red banners appeared in different parts of the city, and inscriptions on them showed that the workers wanted bread, but neither autocracy nor war.

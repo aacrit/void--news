@@ -1,0 +1,8 @@
+source: src-un-carlsson-1999
+locator: secintro
+url: https://web.archive.org/web/20001203205100/http://www.un.org:80/News/ossg/rwanda_report.htm
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: the first paragraph of section I, Introduction
+
+Approximately 800,000 people were killed during the 1994 genocide in Rwanda. The systematic slaughter of men, women and children which took place over the course of about 100 days between April and July of 1994 will forever be remembered as one of the most abhorrent events of the twentieth century. Rwandans killed Rwandans, brutally decimating the Tutsi population of the country, but also targetting moderate Hutus. Appalling atrocities were committed, by militia and the armed forces, but also by civilians against other civilians.

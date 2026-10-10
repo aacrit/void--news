@@ -1,0 +1,8 @@
+source: src-beard-1863
+locator: p286
+url: https://archive.org/download/toussaintlouvert00bear_0/toussaintlouvert00bear_0_djvu.txt
+read: 2026-09-25
+note: page 286: the sentence on the death
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+
+Thus, in the beginning of April, in the year 1803, died Tous- | saint L’Ouverture. A grandson of an African king, he passed _ the greater number of his days in slavery, and rose to be a

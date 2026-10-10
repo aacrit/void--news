@@ -1,0 +1,6 @@
+source: src-radcliffe-punjab
+locator: para11
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+
+11. I have not found it possible to preserve undivided the irrigation system of the Upper Bari Doab Canal, which extends from Madhopur in the Pathankot Tahsil to the western border of the district of Lahore, although I have made small adjustments of the I.ahorc-Amritsar district boundary to mitigate some of the consequences of this severance; nor can I see any means of preserving under one territorial jurisdiction the Mandi Hydro-electric Scheme which supplies power in the districts of Kangra, Gurdaspur, Amritsar, Lahore, Jullundur, Ludhiana, Ferozepore, Sheikhupura, and Lyallpur. I think it only right to express the hope that, where the drawing of a boundary line cannot avoid disrupting such unitary services as canal irrigation, railways, and electric power transmission, a solution may be found by agreement between the two States for some joint control of what has hitherto been a valuable common service.

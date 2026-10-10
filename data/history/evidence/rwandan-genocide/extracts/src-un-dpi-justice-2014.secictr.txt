@@ -1,0 +1,7 @@
+source: src-un-dpi-justice-2014
+locator: secictr
+url: https://www.un.org/en/preventgenocide/rwanda/assets/pdf/Backgrounder%20Justice%202014.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+The first trial started in January 1997, and by December 2012, the Tribunal had completed the trial phase of its mandate. Of the 92 persons indicted for genocide, crimes against humanity and war crimes, 49 were found guilty and convicted, 2 cases were withdrawn, 10 were referred to national jurisdictions (2 to France, and 8 to Rwanda), 2 accused died before completion of their cases, and 14 of the accused were acquitted. Nine accused are still at large. As of March 2014, the cases against 12 accused remain on appeal.

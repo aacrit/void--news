@@ -1,0 +1,7 @@
+source: src-cwmg-76-aicc-resolution
+locator: secsanction
+url: https://archive.org/download/HindSwaraj-CWMG-076/CWMG-v076-LXXVI-MC-BETA_djvu.txt
+read: 2026-10-09
+note: the text is the archive.org full-text (djvu.txt) layer of the electronic edition of the Collected Works (Publications Division), whitespace collapsed; line-end hyphens and glyph errors kept as the layer gives them
+
+The Committee resolves, therefore, to sanction, for the vindication of India’s inalienable right to free- dom and independence, the starting of a mass struggle on non-violent lines on the widest possible scale, so that the country might utilize all the non- violent strength it has gathered during the last twenty-two years of peaceful struggle.

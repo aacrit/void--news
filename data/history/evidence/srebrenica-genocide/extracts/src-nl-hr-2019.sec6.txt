@@ -1,0 +1,7 @@
+source: src-nl-hr-2019
+locator: sec6
+url: https://data.rechtspraak.nl/uitspraken/content?id=ECLI:NL:HR:2019:1284
+read: 2026-09-24
+note: the English translation the Supreme Court published; section 6
+
+6 Decision The Supreme Court: in the principal appeal: - sets aside the judgment of the Court of Appeal of The Hague of 27 June 2017; - issues a judicial declaration entailing that the State acted wrongfully by not offering the male refugees who were in the compound on 13 July 1995 the choice of remaining in the compound, thus depriving them of the 10% chance of not being exposed to inhumane treatment and execution by the Bosnian Serbs; - denies any other or additional claims; in the cross-appeal: - rejects the appeal; in the principal appeal and the cross-appeal: - compensates the costs of the proceedings at first instance, on appeal and in cassation thus that each party bears its own costs.

@@ -1,0 +1,7 @@
+source: src-equiano-1789
+locator: seccapture
+url: https://www.gutenberg.org/cache/epub/15399/pg15399.txt
+read: 2026-10-09
+note: chapter II; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+One day, when all our people were gone out to their works as usual, and only I and my dear sister were left to mind the house, two men and a woman got over our walls, and in a moment seized us both, and, without giving us time to cry out, or make resistance, they stopped our mouths, and ran off with us into the nearest wood.

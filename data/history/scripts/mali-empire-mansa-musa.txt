@@ -1,0 +1,159 @@
+## OPEN
+N: In twenty twelve a website published a list of the richest people who have ever lived, and put a fourteenth century West African king at the top of it with a figure of four hundred billion dollars.
+N: Time and the BBC repeated it. The number is not real. Nobody can convert a medieval gold economy into modern dollars.
+N: The interesting thing is what the list leaves out. Not how rich the man was. What happened to a city when he walked through it, and what he left behind in a town on the edge of the Sahara.
+
+## TITLE
+N: The Mali Empire, and Mansa Musa's pilgrimage. Twelve thirty five to fourteen hundred.
+
+## SCENE 1 | July, thirteen twenty four
+N: July, thirteen twenty four. A caravan comes into Cairo from the west, after fifteen hundred miles of desert.
+N: By the accounts collected afterwards it is sixty thousand people. Twelve thousand of them are slaves, each carrying four pounds of gold in bars. Eighty camels carry three hundred pounds of gold dust apiece.
+N: At the head of it is Mansa Musa, the tenth ruler of Mali, on his way to Mecca.
+N: He is received at the Citadel by the Mamluk sultan. He is expected to kiss the sultan's hand, and he declines, on the grounds that as a Muslim ruler he owes that to God and to nobody else.
+N: Then he starts giving the gold away.
+
+## DOCUMENT | Shihab al-Din al-Umari | Masalik al-Absar fi Mamalik al-Amsar | c. 1337-1349
+N: Shihab al-Din al-Umari was an Arab historian in Damascus. He came to Cairo twelve years later and interviewed people who had been there.
+M: This man spread upon Cairo the flood of his generosity: there was no person, officer of the court, or holder of any office of the Sultanate who did not receive a sum of gold from him. So much gold was current in Cairo that it ruined the value of money.
+
+## ASIDE
+N: Read that last line again, because it is not a compliment. It is a market report.
+N: Gold in Cairo was not treasure. It was the currency. Charity on that scale is not generosity arriving, it is money supply arriving, and the people it lands on are holding the old price.
+
+## REST
+
+## SCENE 2 | The boy who could not walk
+N: The empire he ruled began, in its own telling, with a child who could not walk until he was seven.
+N: Sundiata Keita was the son of a king of Niani and the second of his wives, exiled as a boy to keep him alive. He came back a hunter and a soldier.
+N: Around twelve thirty five he met Sumanguru Kante of the Sosso at Kirina and destroyed him. In the griots' version the sorcerer king is undone by a rooster's spur mounted on an arrow, the one weakness he had let slip.
+N: The next year, by tradition, an assembly at Kurukan Fuga set out how the thing he had just built would be governed: consensus among the clans, protection for women, and a ban on the enslavement of Mande people by Mande people. Historians argue about how much of that charter is thirteenth century and how much is later.
+N: What is not in dispute is who kept it. The griots, the djeli, are hereditary historians and musicians whose families have carried the Sundiata epic for eight hundred years.
+
+## SCENE 3 | Two thirds of the world's gold
+N: Mali's wealth was not a treasury. It was a position on a map.
+N: The empire held the gold fields of Bambuk and Bure, which produced something close to two thirds of the gold in circulation in the Old World, and it held the routes north across the Sahara.
+N: Gold went north. Salt came south, cut in slabs from the mines at Taghaza. In a place where salt is what keeps food and people alive, the two traded closer to parity than a modern ear expects.
+N: At its height the empire covered about one point three million square kilometres, which is larger than France, Germany, Spain and Italy together.
+
+## DOCUMENT | Shihab al-Din al-Umari | Masalik al-Absar, based on interviews with Cairene merchants | c. 1337-1349
+N: Al-Umari again, writing down what the merchants of Cairo told him about the size of it.
+M: I was told that Mansa Musa brought with him from his country one hundred loads of gold, each weighing three qintars.
+
+## REST
+
+## SCENE 4 | Timbuktu
+N: On the way home Musa brought Timbuktu into the empire, and an architect back from Cairo with him.
+N: The Sankore Madrasah, rebuilt under his patronage, drew scholars from across the Islamic world. Estimates put its students at around twenty five thousand, at a time when the University of Paris had fewer.
+N: What they produced was written down. Astronomy, mathematics, medicine, law, poetry and letters, in Arabic and in African languages, running eventually to somewhere between four hundred thousand and seven hundred thousand manuscripts.
+N: They were not kept in one place, which is the reason they still exist. They went into family libraries, into chests, into the sand.
+N: In twenty twelve, when armed groups took Timbuktu and burned part of the Ahmed Baba Institute, a librarian named Abdel Kader Haidara and a network of Malian families moved roughly three hundred and fifty thousand manuscripts out of the city to Bamako, in footlockers, on donkey carts and down the Niger by boat.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of this empire, and one thing to say before they start.
+N: Four of the five survive in writing, and almost all of that writing is Arabic, produced by men in Cairo and Damascus and Tangier. The Mande account of Mali is oral. That asymmetry is not a detail about the sources. It is most of the argument.
+
+## PERSPECTIVE | The Mande tradition | victor
+N: The first account is the one the griots have carried, and its claim is that it is history, not folklore.
+N: Its case is that an oral tradition maintained by trained specialists, with rules about who may recite and in what order, is a technology of memory rather than a failure to invent writing. It can be checked against itself, performer against performer, lineage against lineage.
+N: And it holds the one thing the Arabic sources do not contain: the empire's account of its own founding, and the charter it says it agreed to.
+
+## PERSPECTIVE | The Songhai and the subject peoples | vanquished
+N: The second account is from the people who were inside the empire and did not choose to be.
+N: Mali was an empire, which means conquest. Wolof, Serer, Tukulor, Songhai and Mossi among dozens of others came under it by war, tribute or marriage.
+N: Gao, the Songhai city on the Niger, had been trading for four centuries before Mali existed. Under Malian rule its princes were held at court as hostages and its cities paid tribute in gold, slaves and grain. In fourteen sixty eight the Songhai under Sunni Ali took Timbuktu back and built a larger empire on the same routes.
+N: The Mossi sacked Timbuktu in thirteen twenty nine, five years after the hajj. The Tuareg, who drove the caravans the whole economy depended on, sacked it again in fourteen thirty three and remember Mali as southern rule over the desert.
+N: And the caravan that crossed the Sahara with all that gold had twelve thousand enslaved people carrying it. The charter's protection runs to Mande people. The mines and the households ran on everyone else.
+
+## REST | short
+
+## PERSPECTIVE | The North African merchants | bystander
+N: The third account is the one that wrote most of the record, and it is a trading relationship, not an admiring one.
+N: The mints of Fez and Tunis and the Mamluk treasury in Cairo could not have held a gold standard without Bambuk and Bure. The dependency ran one way, the condescension the other.
+N: Ibn Battuta, the Moroccan traveller, spent eight months in Mali in thirteen fifty two and wrote the most detailed account anyone has. He admired the courts.
+M: They are seldom unjust, and have a greater abhorrence of injustice than any other people. Their sultan shows no mercy to anyone who is guilty of the least act of it.
+N: He was also scandalised. Women went unveiled, received male visitors and ran their own trade, and he wrote that down as a deficiency rather than as a society that had taken Islam on its own terms.
+N: The Catalan Atlas of thirteen seventy five, drawn on Majorca from information that came up this chain, shows Musa on a throne holding a nugget. It is the first sub Saharan ruler on a European map, and it puts him there as a source of gold.
+
+## PERSPECTIVE | The postcolonial historians | revisionist
+N: The fourth account begins with a sentence from Berlin.
+N: In eighteen thirty, Hegel told his students that Africa is no historical part of the world, that it has no movement or development to exhibit. That judgement was taught in colonial curricula for a century.
+N: Cheikh Anta Diop and Joseph Ki-Zerbo built the rebuttal, and Mali is the exhibit. A state of one point three million square kilometres. Two thirds of the world's gold. A university city with a written scholarly tradition, four hundred years before Europeans reached the interior.
+N: The manuscripts are the part that cannot be argued with, which is why the twenty twelve rescue mattered beyond Mali.
+N: And the case is not finished. A twenty seventeen survey of world history textbooks found Africa taking about twelve per cent of the pages, more than half of that about slavery and colonisation.
+
+## PERSPECTIVE | The Egyptian economy | bystander
+N: The fifth account is Cairo's, and it is arithmetic.
+N: The gold dinar lost between ten and twenty five per cent of its value against silver. Merchants who had sold to the caravan at good prices were holding a currency worth less by the time they spent it. Lenders were repaid in money that had shrunk.
+N: Al-Maqrizi, writing a century later, still had the figure to hand, because the money changers of Cairo were still using it as a reference point.
+M: The members of his entourage proceeded to buy Turkish and Ethiopian slave girls, singing girls and garments, so that the rate of the gold dinar fell by six dirhams.
+N: Musa noticed. On the way home he borrowed gold from Cairo's lenders at rates al-Umari called remarkably high, pulling the metal back out of the market. As far as anyone can tell he is the only medieval ruler who moved a foreign economy in both directions on one trip.
+N: Al-Umari came through twelve years later and reported the market had still not recovered.
+
+## REST
+
+## TURN | What each one leaves out
+N: Each account is carrying something and leaving something behind.
+N: The Mande tradition leaves out the conquered. It is the story of the founding told by the founders, and the subject peoples are in it as territory.
+N: The Songhai and Mossi account leaves out that the Songhai did not dismantle what Mali built. They kept the routes, the scholarship and most of the administration, and recentred it on their own city.
+N: The North African record leaves out that it is a record of a periphery written from a centre, by men who framed an empire larger than western Europe as a discovery.
+N: The economic account leaves out everything that is not a price. Read only Cairo's ledgers and Mali is a monetary shock, not a civilisation.
+N: And the postcolonial account, which is the most recent and the most sympathetic, leaves out two things it knows about. That it measures African achievement on scales Europe chose, in square kilometres and tonnes of gold. And that the empire it is defending owned people.
+
+## REST
+
+## CLOSE
+N: Musa died around thirteen thirty seven. The succession fell apart, the provinces went, and by the fourteen sixties Timbuktu belonged to Songhai.
+N: The Catalan Atlas is in Paris. The manuscripts are in Bamako and in family libraries across the Sahel, some still in the trunks they left in.
+N: The griots are still performing, four to eight hours at a time, the same epic.
+N: And in Cairo, for twelve years after a man came through on his way to Mecca, the price of gold was wrong.
+
+## SAY
+Mansa = MAN-sah
+Musa = MOO-sah
+Sundiata = soon-JAH-tah
+Keita = KAY-tah
+Niani = nee-AH-nee
+Sumanguru = soo-man-GOO-roo
+Kante = KAHN-tay
+Sosso = SO-so
+Kirina = kee-REE-nah
+griots = GREE-ohz
+griot = GREE-oh
+djeli = JEH-lee
+Kurukan = koo-roo-KAHN
+Fuga = FOO-gah
+Mande = MAN-day
+Bambuk = bam-BOOK
+Bure = boo-RAY
+Taghaza = tag-HAH-zah
+Timbuktu = tim-buk-TOO
+Sankore = san-KO-ray
+Madrasah = MAD-rah-sah
+Haidara = hy-DAR-ah
+Bamako = BAH-mah-koh
+Niger = NEE-zhair
+Umari = oo-MAR-ee
+Maqrizi = ma-KREE-zee
+Battuta = bat-TOO-tah
+Mamluk = MAM-look
+Songhai = SONG-hy
+Tuareg = TWAH-reg
+Mossi = MOSS-ee
+Gao = GOW
+Wolof = WO-lof
+Serer = SEH-rair
+Tukulor = TOO-koo-lor
+Hegel = HAY-gul
+Cheikh = SHAKE
+Anta = AN-tah
+Diop = DYOP
+Ki-Zerbo = kee-ZAIR-bo
+qintars = KIN-tarz
+dinar = DEE-nar
+dirhams = DEER-hamz
+hajj = HAJ
+Mecca = MEK-ah
+Sahel = sah-HEL

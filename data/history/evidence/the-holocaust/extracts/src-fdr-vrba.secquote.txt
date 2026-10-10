@@ -1,0 +1,6 @@
+source: src-fdr-vrba
+locator: secquote
+url: https://www.fdrlibrary.org/vrba-wetzler-report
+read: 2026-10-07
+
+“Prominent guests from Berlin were present at the inauguration of the first crematorium in March 1943. The "program" consisted of the gassing and burning of 8,000 Cracow Jews. The guests, both officers and civilians, were extremely satisfied with the results and the special peep-hole fitted into the door of the gas chamber was in constant use. They were lavish in their praise of this newly erected installation.” (Vrba-Wetzler report, p. 13)

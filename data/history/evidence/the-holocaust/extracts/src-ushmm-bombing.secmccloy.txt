@@ -1,0 +1,6 @@
+source: src-ushmm-bombing
+locator: secmccloy
+url: https://encyclopedia.ushmm.org/content/en/article/the-united-states-and-the-holocaust-why-auschwitz-was-not-bombed
+read: 2026-10-07
+
+In the summer and fall of 1944, the World Jewish Congress and the War Refugee Board (WRB) forwarded requests to bomb Auschwitz to the US War Department. These requests were denied. On August 14, John J. McCloy, Assistant Secretary of War, advised that “such an operation could be executed only by the diversion of considerable air support…now engaged in decisive operations elsewhere and would in any case be of such doubtful efficacy that it would not warrant the use of our resources.” Yet within a week, the US Army Air Force carried out a heavy bombing of the I.G. Farben synthetic oil and rubber (Buna) works near Auschwitz III—less than five miles from the Auschwitz-Birkenau killing center.

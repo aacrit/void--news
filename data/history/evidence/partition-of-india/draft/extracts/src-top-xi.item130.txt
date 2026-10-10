@@ -1,0 +1,8 @@
+source: src-top-xi
+locator: item130
+url: https://archive.org/download/constitutionalre06nich/constitutionalre06nich_djvu.txt
+read: 2026-09-25
+note: item n is the document number in the volume
+note: No. 130, Sardar Patel to Mountbatten, 10 June 1947, on the Muslim League Council's resolution of 9 June; the layer's doubled spaces are single
+
+2. You will notice that the Resolution is contradictory and there is studied evasion of straightforward acceptance. At one place, it says it cannot agree to the partition of Bengal and the Punjab or give its consent to such partition. At another place, it says it accepts the fundamental principles of the plan of June 3rd as a compromise.

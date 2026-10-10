@@ -1,0 +1,113 @@
+{
+ "collected_at": "2026-09-30T15:19:44Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16172391/Manchester-City-guilty-police-investigation-Premier-League.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Man City face mounting calls for POLICE investigation into 'sham' financial dealings - as supporters' group urges fans to stay 'strong together' following bombshell Premier League verdict",
+      "published": "Wed, 30 Sep 2026 13:26:11 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/manchester-city-owner-sheikh-mansour-37720056",
+      "title": "Manchester City owner Sheikh Mansour faces being STRIPPED of club in brutal punishment",
+      "published": "Wed, 30 Sep 2026 14:20:08 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16171693/Burnham-Labour-rejoin-EU-election-manifesto-Brussels.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Burnham hints at going 'all the way' with election pledge to rejoin EU... months after saying he wouldn't reverse Brexit for fear of damaging democracy",
+      "published": "Wed, 30 Sep 2026 12:37:20 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/politics/labour-andy-burnham-brexit-eu-37712568",
+      "title": "Labour - live: UK 'would be welcomed back with open arms' into EU as Andy Burnham hints at Brexit reversal",
+      "published": "Wed, 30 Sep 2026 14:47:29 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16171795/Heartbroken-Micah-Richards-Man-City-ANGRY-Premier-League-guilty-900m-sham-deals.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "'Heartbroken' Micah Richards says Man City verdict has left him 'ANGRY' after Premier League found club guilty of benefiting from £900m sham deals - with his 2012 title now shrouded in doubt",
+      "published": "Wed, 30 Sep 2026 13:05:54 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/manchester-city-charges-verdict-live-37706564",
+      "title": "Man City charges LIVE: Pep Guardiola statement, punishment latest, dressing room leak",
+      "published": "Wed, 30 Sep 2026 14:51:54 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/crime-desk/article-16172407/christa-pike-execution-tennessee-death-row-colleen-slemmer-murder.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Christa Pike execution halted after death chamber witnesses had already ARRIVED... as judge agrees to consider childhood sexual abuse: Live updates",
+      "published": "Wed, 30 Sep 2026 16:16:40 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/us-news/christa-pike-execution-halted-just-37716147",
+      "title": "Christa Pike execution halted just one hour before lethal injection after 'serious concerns' raised",
+      "published": "Wed, 30 Sep 2026 14:31:19 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 136,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/09/turkey-shelters-emirati-brotherhood-figures-accused-of-plotting-to-oust-uae-rulers/",
+      "title": "Turkey shelters Emirati Brotherhood figures accused of plotting to oust UAE rulers",
+      "published": "Sun, 20 Sep 2026 22:18:23 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 311,
+    "left": 10
+   }
+  }
+ }
+}

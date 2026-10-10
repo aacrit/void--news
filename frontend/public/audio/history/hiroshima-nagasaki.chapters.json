@@ -1,0 +1,82 @@
+{
+ "version": "1.2.0",
+ "title": "The Atomic Bombings of Hiroshima and Nagasaki",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 65.257
+  },
+  {
+   "startTime": 65.257,
+   "title": "The list",
+   "endTime": 150.437
+  },
+  {
+   "startTime": 150.437,
+   "title": "The morning",
+   "endTime": 226.989
+  },
+  {
+   "startTime": 226.989,
+   "title": "The second city",
+   "endTime": 288.677
+  },
+  {
+   "startTime": 288.677,
+   "title": "The count",
+   "endTime": 374.261
+  },
+  {
+   "startTime": 374.261,
+   "title": "The condition",
+   "endTime": 491.099
+  },
+  {
+   "startTime": 491.099,
+   "title": "Five accounts",
+   "endTime": 515.726
+  },
+  {
+   "startTime": 515.726,
+   "title": "American",
+   "endTime": 552.684
+  },
+  {
+   "startTime": 552.684,
+   "title": "Japanese Civilian",
+   "endTime": 605.11
+  },
+  {
+   "startTime": 605.11,
+   "title": "International / Scientific",
+   "endTime": 645.161
+  },
+  {
+   "startTime": 645.161,
+   "title": "Modern Revisionist",
+   "endTime": 702.446
+  },
+  {
+   "startTime": 702.446,
+   "title": "Korean Forced Laborers",
+   "endTime": 754.947
+  },
+  {
+   "startTime": 754.947,
+   "title": "The shape of the disagreement",
+   "endTime": 802.643
+  },
+  {
+   "startTime": 802.643,
+   "title": "Legacy",
+   "endTime": 834.204
+  },
+  {
+   "startTime": 834.204,
+   "endTime": 846.304,
+   "title": "Also from Void News"
+  }
+ ]
+}

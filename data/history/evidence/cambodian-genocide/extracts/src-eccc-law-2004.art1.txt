@@ -1,0 +1,6 @@
+source: src-eccc-law-2004
+locator: art1
+url: https://www.eccc.gov.kh/sites/default/files/legal-documents/KR_Law_as_amended_27_Oct_2004_Eng.pdf
+read: 2026-09-25
+
+Article 1: The purpose of this law is to bring to trial senior leaders of Democratic Kampuchea and those who were most responsible for the crimes and serious violations of Cambodian penal law, international humanitarian law and custom, and international conventions recognized by Cambodia, that were committed during the period from 17 April 1975 to 6 January 1979.

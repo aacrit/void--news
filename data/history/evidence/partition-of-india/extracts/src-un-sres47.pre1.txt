@@ -1,0 +1,7 @@
+source: src-un-sres47
+locator: pre1
+url: https://documents.un.org/doc/resolution/gen/nr0/047/72/pdf/nr004772.pdf
+read: 2026-09-25
+note: the heading and the first two preambular paragraphs of resolution 47 (1948) of 21 April 1948, S/726, as the PDF text layer prints them; the layer's soft hyphens are rejoined and its 'J ammu' is kept
+
+47 (1948). Resolution of 21 April 1948 [S/726] The Security Council, Having considered the complaint of the Government of India concerning the dispute over the State of J ammu and Kashmir, Having heard the representative of India in support of that complaint and the reply and counter-complaints of the representative of Pakistan,

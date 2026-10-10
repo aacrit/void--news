@@ -1,0 +1,8 @@
+source: src-un-carlsson-1999
+locator: sec925
+url: https://web.archive.org/web/20001203205100/http://www.un.org:80/News/ossg/rwanda_report.htm
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: section II, 'UNAMIR II established'
+
+According to notes from the consultations, the original draft's use of the word genocide was changed to "acts of genocide" as a compromise after China objected to use of the term genocide on its own.

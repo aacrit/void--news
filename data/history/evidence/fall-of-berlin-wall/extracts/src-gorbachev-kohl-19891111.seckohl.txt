@@ -1,0 +1,8 @@
+source: src-gorbachev-kohl-19891111
+locator: seckohl
+url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/docs/1989-11-11%20Gorbachev-Kohl.pdf
+read: 2026-10-09
+note: Soviet record, Gorbachev Foundation archive; translated by Svetlana Savranskaya
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+We want the people of the GDR to stay home, and we do not strive to have the entire GDR population move to the FRG. And not at all because, as some are claiming, we would not be able to resolve the problems that would result from that. For example, 230,000 people have moved from the GDR to the FRG this year, and all of them were accommodated. But a mass migration to the FRG would be an absurd development; we want the Germans to be able to build their future at home. I would also like to inform you, even though the information is still preliminary, that today by 12 noon hundreds of thousands of people have crossed the GDR border. However, there is an impression that the majority are just visitors, and have no intention of staying in the FRG.

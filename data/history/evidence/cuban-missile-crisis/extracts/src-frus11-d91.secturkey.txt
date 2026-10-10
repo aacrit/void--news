@@ -1,0 +1,7 @@
+source: src-frus11-d91
+locator: secturkey
+url: https://history.state.gov/historicaldocuments/frus1961-63v11/d91
+read: 2026-10-04
+note: Document 91, Message From Chairman Khrushchev to President Kennedy, Moscow, October 27, 1962: the passage on Turkey, as the volume prints the translation
+
+You are disturbed over Cuba. You say that this disturbs you because it is 90 miles by sea from the coast of the United States of America. But Turkey adjoins us; our sentries patrol back and forth and see each other. Do you consider, then, that you have the right to demand security for your own country and the removal of the weapons you call offensive, but do not accord the same right to us? You have placed destructive missile weapons, which you call offensive, in Turkey, literally next to us. How then can recognition of our equal military capacities be reconciled with such unequal relations between our great states? This is irreconcilable.

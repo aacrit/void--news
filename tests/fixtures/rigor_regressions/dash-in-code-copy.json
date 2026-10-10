@@ -1,0 +1,17 @@
+{
+ "class": "dash-in-code-copy",
+ "gate": "tests/test_prompt_grounding.py::copy_literals",
+ "product": "card",
+ "covers": [
+  "pipeline/editorial/corrections.json#2026-10-02-fallback-dash"
+ ],
+ "note": "A rule-based fallback string carrying an em dash.",
+ "planted": {
+  "check": "dash",
+  "source": "def fallback():\n    return [\"Single-source coverage — no cross-source comparison available\"]\n"
+ },
+ "clean": {
+  "check": "dash",
+  "source": "def fallback():\n    return [\"Single-source coverage; no cross-source comparison available\"]\n"
+ }
+}

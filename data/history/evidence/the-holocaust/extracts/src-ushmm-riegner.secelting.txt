@@ -1,0 +1,6 @@
+source: src-ushmm-riegner
+locator: secelting
+url: https://encyclopedia.ushmm.org/content/en/article/the-riegner-telegram
+read: 2026-10-07
+
+On August 8, 1942, Gerhart Riegner, who had spent the previous few days pondering the information he had received from Sagalowitz, visited the American consulate in Geneva, which reported that he arrived “in great agitation.” That day, he dictated a telegram to American vice-consul Howard Elting, Jr. Riegner’s telegram explained that between three and a half and four million Jews in Nazi-occupied territory “should after deportation and concentration in east [be] at one blow exterminated in order to resolve once [and] for all Jewish question in Europe.” Unaware that mass murder was already taking place, Riegner told Elting that the campaign was planned for the fall, and that the Nazis were considering the use of prussic acid [likely a reference to Zyklon B] to gas Jews.

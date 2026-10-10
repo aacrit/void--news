@@ -1,0 +1,10 @@
+source: src-berlin-act-1885
+locator: art36
+url: https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+
+Art. XXXVI.— The Signatory Powers of the present General Act
+reserve to themselves to introduce into it subsequently, and by common
+accord, such modifications and improvements as experience may show
+to be expedient.*

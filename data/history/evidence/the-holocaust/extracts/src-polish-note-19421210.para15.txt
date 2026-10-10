@@ -1,0 +1,7 @@
+source: src-polish-note-19421210
+locator: para15
+url: https://archive.org/details/the_mass_extermination_of_jews_in_german_occupied_poland
+read: 2026-10-07
+note: the Internet Archive OCR layer (_djvu.txt); double spaces collapsed
+
+15. According to all available information, of the 250,000 Jews deported from the Warsaw ghetto up to September 1st, 1942, only two small transports, numbering about 4,000 people, are known to have been sent eastwards in the direction of Brest-Litovsk and Malachowicze, allegedly to be employed on work behind the front line. It has not been possible to ascertain whether any of the other Jews deported from the Warsaw ghetto still survive, and it must be feared that they have been all put to death.

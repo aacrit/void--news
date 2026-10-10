@@ -1,0 +1,6 @@
+source: src-radcliffe-sylhet
+locator: para11
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+
+11. With regard to the District of Cachar, one thana, Hailakandi, has a Muslim majority and is contiguous to the Muslim thanas of Badarpur and Karimganj in the District of Sylhet. This thana forms, with the thana of Katlichara immediately to its south, the subdivision of Hailakandi, and in the sub-division as a whole Muslims enjoy a very small majority being 51 per cent, of the total population. I think that the dependence of Katlichara on Hailakandi for normal communications makes it important that the area should be under one jurisdiction, and that the Muslims would have at any rate a strong presumptive claim for the transfer of the sub-division of Hailakandi, comprising a population of 166,536, from the Province of Assam to the Province of East Bengal.

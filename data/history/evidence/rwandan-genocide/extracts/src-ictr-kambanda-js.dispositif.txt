@@ -1,0 +1,7 @@
+source: src-ictr-kambanda-js
+locator: dispositif
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-97-23/trial-judgements/en/980904.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+SENTENCES Jean Kambanda born on 19 October 1955 in Gishamvu Commune, Butare Prefecture, Rwanda TO LIFE IMPRISONMENT

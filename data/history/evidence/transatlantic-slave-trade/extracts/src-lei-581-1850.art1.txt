@@ -1,0 +1,7 @@
+source: src-lei-581-1850
+locator: art1
+url: https://www.planalto.gov.br/ccivil_03/leis/lim/lim581.htm
+read: 2026-10-09
+note: article 1, first sentence; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Art. 1º As embarcações brasileiras encontradas em qualquer parte, e as estrangeiras encontradas nos portos, enseadas, ancoradouros, ou mares territoriaes do Brasil, tendo a seu bordo escravos, cuja importação he prohibida pela Lei de sete de Novembro de mil oitocentos trinta e hum, ou havendo-os desembarcado, serão apprehendidas pelas Autoridades, ou pelos Navios de guerra brasileiros, e consideradas importadoras de escravos.

@@ -1,0 +1,10 @@
+source: src-hansard-18931109
+locator: p547
+url: https://api.parliament.uk/historic-hansard/commons/1893/nov/09/motion-for-adjournment
+read: 2026-09-25
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: Lobengula's letter of 10 August 1889 as Labouchere read it, and Labouchere's next sentences; section marks dropped
+
+The advice was practically to be very careful about giving concessions, and under no circumstances to give an exclusive concession. The Indunas returned to Matabeleland with this letter from the Queen. On August 10 Lobengula writes—
+The white people are troubling me very much about gold. If the Queen hears that I have given away the whole country it is not so. I have no one in my country who knows how to write. I do not understand where the dispute is, because I have no knowledge of writing. I thank the Queen for the word which my messengers gave me by mouth, that the Queen says I am not to let anyone dig for gold in my country except to dig for me as my servants.
+That was how Lobengula understood the letter of the Queen. In October, 1889, without any further communication with Lobengula, the Company's Charter was granted. This change was notified to Lobengula in the following letter from the Queen, and the document was a very important one:—

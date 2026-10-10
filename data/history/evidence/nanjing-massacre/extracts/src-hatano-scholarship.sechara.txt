@@ -1,0 +1,8 @@
+source: src-hatano-scholarship
+locator: sechara
+url: https://www.jiia.or.jp/eng/upload/eng/ResourceLibrary_History_Hatano_181222.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation is kept as the layer prints it
+note: page 22, section 'Atrocities and War Crimes'; a copyrighted article, held at most 150 words
+
+With regard to the Nanjing Massacre, which has be- come a basic resource for patriotic education in China, Hata [1997], Fu- jiwara Akira [1997], and Kasahara [1997a] have authored representative works. Hara Takeshi 原剛 [2008] examined Japanese soldiers’ diaries, memoirs, and detailed battlefield records concerning the Nanjing Inci- dent, estimating that close to 20,000 people were “illegally murdered.”

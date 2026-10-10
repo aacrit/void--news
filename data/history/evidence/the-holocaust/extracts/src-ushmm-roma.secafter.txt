@@ -1,0 +1,6 @@
+source: src-ushmm-roma
+locator: secafter
+url: https://encyclopedia.ushmm.org/content/en/article/genocide-of-european-roma-gypsies-1939-1945
+read: 2026-10-07
+
+Only in late 1965 did the West German compensation law explicitly acknowledge that the acts of persecution that took place before 1943 were racially motivated, creating eligibility for most Roma to apply for compensation for their suffering and loss under the Nazi regime. By this time, many of those who became eligible had already died. In March 1982 Federal Chancellor, Helmut Schmidt, formally stated that German Roma had been victims of genocide.

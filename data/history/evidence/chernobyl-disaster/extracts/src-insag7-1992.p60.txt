@@ -1,0 +1,10 @@
+source: src-insag7-1992
+locator: p60
+url: https://www-pub.iaea.org/MTCD/publications/PDF/Pub913e_web.pdf
+read: 2026-10-07
+note: Annex I, the report of the Commission of the USSR State Committee for the Supervision of Safety in Industry and Nuclear Power (SCSSINP), as printed in INSAG-7 in English, printed page 60 (PDF page 70). The sentence in quotation marks is the Commission quoting the USSR report to the IAEA meeting of August 1986 (its ref. [33])
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+note: a hyphen breaking a lower-case word across a line end in the text layer is closed up
+note: the PDF is a scan with an OCR text layer; the extract was compared line by line with the rendered page (130 dpi) and agrees with it
+
+In fact, all the causes of the accident were reduced exclusively to personnel errors. The decisions taken by the Interdepartment Science and Technology Council paved the way for the one-sided presentation of information on the causes and circumstances of the accident submitted to the IAEA, a wide range of specialists and the general public. No mention was made in the report presented by the USSR at the meeting of IAEA experts in Vienna in August 1986 [33] of the version suggesting a disruption in circulation of the MCPs. That report states that: "the prime cause of the accident was an extremely improbable combination of violations of instructions and operating rules committed by the staff of the unit."

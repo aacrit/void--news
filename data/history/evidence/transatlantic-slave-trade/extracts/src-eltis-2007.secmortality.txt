@@ -1,0 +1,7 @@
+source: src-eltis-2007
+locator: secmortality
+url: https://legacy.slavevoyages.org/blog/brief-overview-trans-atlantic-slave-trade
+read: 2026-10-09
+note: the same essay; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Throughout the slave trade era, filthy conditions ensured endemic gastro-intestinal diseases, and a range of epidemic pathogens that, together with periodic breakouts of violent resistance, meant that between 12 and 13 percent of those embarked did not survive the voyage.

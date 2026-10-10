@@ -1,0 +1,7 @@
+source: src-equiano-1789
+locator: secmanumission
+url: https://www.gutenberg.org/cache/epub/15399/pg15399.txt
+read: 2026-10-09
+note: chapter VII; the deed of manumission as Equiano prints it; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Know ye, that I the aforesaid Robert King, for and in consideration of the sum of seventy pounds current money of the said island, to me in hand paid, and to the intent that a negro man-slave, named Gustavus Vassa, shall and may become free

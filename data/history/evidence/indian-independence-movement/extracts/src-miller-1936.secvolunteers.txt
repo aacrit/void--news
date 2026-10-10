@@ -1,0 +1,7 @@
+source: src-miller-1936
+locator: secvolunteers
+url: https://archive.org/download/in.ernet.dli.2015.82149/2015.82149.I-Found-No-Peace_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+
+The sheds were literally swarming and buzzed like a beehive with some 2,500 Congress or Gandhi men dressed in the regulation uniform of rough homespun cotton dhotis and triangular Gandhi caps,

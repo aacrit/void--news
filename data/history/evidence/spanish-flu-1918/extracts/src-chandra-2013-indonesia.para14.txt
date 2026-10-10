@@ -1,0 +1,6 @@
+source: src-chandra-2013-indonesia
+locator: para14
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3687026/fullTextXML
+read: 2026-09-25
+
+The single most influential estimate of Indonesian mortality from the pandemic comes from Brown (1987), which seems to be the only relatively recent work to deal primarily with the subject. In addressing the pandemic in Indonesia, that study raised a number of interesting questions. These include speculation about mortality from the pandemic: ‘In Indonesia, it seems probable that at least 1.5 million people died’ (Brown 1987, p. 235). The rationale for, or source of this estimate was not provided, but as the only relatively recent estimate of mortality in Indonesia it has entered into the recent literature on global mortality from the pandemic (e.g., Patterson and Pyle 1991, p. 14; Johnson and Mueller 2002, p. 112).

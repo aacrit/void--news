@@ -1,0 +1,7 @@
+source: src-toussaint-memoire
+locator: p101
+url: https://archive.org/download/mmoiresdugn00tous/mmoiresdugn00tous_djvu.txt
+read: 2026-09-25
+note: the memoir's closing sentence, page 101
+
+mes plaies sont très profondes ; portez y le remède salulaire pour les empêcher de jamais s'ouvrir ; vous êtes médecin ; je compte entièrement sur votre justice et balance ^ !

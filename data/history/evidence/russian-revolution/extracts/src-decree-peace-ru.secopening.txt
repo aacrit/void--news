@@ -1,0 +1,8 @@
+source: src-decree-peace-ru
+locator: secopening
+url: https://istmat.org/node/27648
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+note: the site prints '24‑25' with a non-breaking hyphen; held as served
+
+Рабочее и Крестьянское Правительство, созданное революцией 24‑25 октября и опирающееся на Советы Рабочих, Солдатских и Крестьянских Депутатов, предлагает всем воюющим народам и их правительствам начать немедленно переговоры о справедливом, демократическом мире.

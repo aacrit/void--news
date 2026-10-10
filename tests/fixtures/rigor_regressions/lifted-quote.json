@@ -1,0 +1,17 @@
+{
+ "class": "lifted-quote",
+ "gate": "pipeline/editorial/derived_grounding.py::check_lifted_quote",
+ "product": "radio",
+ "covers": [
+  "pipeline/editorial/corrections.json#2026-10-03-radio-purged"
+ ],
+ "note": "Reported speech lifts a quotation's words and ends on a word the speaker never said.",
+ "planted": {
+  "evidence": "He told troops that those who “clung to the woke department ... no longer work here.”",
+  "sentence": "The secretary told troops that those who clung to the woke department would be purged."
+ },
+ "clean": {
+  "evidence": "He told troops that those who “clung to the woke department ... no longer work here.”",
+  "sentence": "The secretary told troops that those who clung to the woke department no longer work here."
+ }
+}

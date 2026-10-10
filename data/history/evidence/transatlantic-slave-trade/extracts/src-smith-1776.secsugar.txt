@@ -1,0 +1,7 @@
+source: src-smith-1776
+locator: secsugar
+url: https://www.gutenberg.org/cache/epub/3300/pg3300.txt
+read: 2026-10-09
+note: Book III, chapter II; 'colonies.,' is the Gutenberg text's punctuation; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+In our sugar colonies., on the contrary, the whole work is done by slaves, and in our tobacco colonies a very great part of it. The profits of a sugar plantation in any of our West Indian colonies, are generally much greater than those of any other cultivation that is known either in Europe or America; and the profits of a tobacco plantation, though inferior to those of sugar, are superior to those of corn, as has already been observed.

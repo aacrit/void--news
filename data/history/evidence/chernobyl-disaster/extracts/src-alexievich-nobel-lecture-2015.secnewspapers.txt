@@ -1,0 +1,7 @@
+source: src-alexievich-nobel-lecture-2015
+locator: secnewspapers
+url: https://www.nobelprize.org/prizes/literature/2015/alexievich/lecture/
+read: 2026-10-07
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+All the information about Chernobyl in the newspapers was in military language: explosion, heroes, soldiers, evacuation … The KGB worked right at the station. They were looking for spies and saboteurs. Rumors circulated that the accident was planned by western intelligence services in order to undermine the socialist camp. Military equipment was on its way to Chernobyl, soldiers were coming. As usual, the system worked like it was war time, but in this new world, a soldier with a shiny new machine gun was a tragic figure. The only thing he could do was absorb large doses of radiation and die when he returned home. Before my eyes pre-Chernobyl people turned into the people of Chernobyl.

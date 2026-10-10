@@ -1,0 +1,17 @@
+{
+ "class": "unsourced-number",
+ "gate": "pipeline/editorial/derived_grounding.py::check_numbers",
+ "product": "brief",
+ "covers": [
+  "pipeline/editorial/corrections.json#2026-10-03-brief-swinney-figure"
+ ],
+ "note": "A figure the card does not carry.",
+ "planted": {
+  "evidence": "The First Minister said the changes would cost pensioners £4 billion annually by 2049/50, nearly £2,000 each in real terms.",
+  "sentence": "The First Minister said the changes would cost pensioners £1,000 per year."
+ },
+ "clean": {
+  "evidence": "The First Minister said the changes would cost pensioners £4 billion annually by 2049/50, nearly £2,000 each in real terms.",
+  "sentence": "The First Minister said the changes would cost pensioners nearly £2,000 each."
+ }
+}

@@ -1,0 +1,6 @@
+source: src-hersey-1946
+locator: sec1c
+url: https://www.newyorker.com/magazine/1946/08/31/hiroshima
+read: 2026-10-05
+
+Hiroshima was a fan-shaped city, lying mostly on the six islands formed by the seven estuarial rivers that branch out from the Ota River; its main commercial and residential districts, covering about four square miles in the center of the city, contained three-quarters of its population, which had been reduced by several evacuation programs from a wartime peak of 380,000 to about 245,000.

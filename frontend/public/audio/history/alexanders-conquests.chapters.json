@@ -1,0 +1,87 @@
+{
+ "version": "1.2.0",
+ "title": "The Conquests of Alexander",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 55.094
+  },
+  {
+   "startTime": 55.094,
+   "title": "Thebes, before the crossing",
+   "endTime": 84.405
+  },
+  {
+   "startTime": 84.405,
+   "title": "Anatolia, three thirty four to three thirty three before the common era",
+   "endTime": 135.302
+  },
+  {
+   "startTime": 135.302,
+   "title": "Tyre, Gaza, and Egypt, three hundred and thirty two before the common era",
+   "endTime": 196.07
+  },
+  {
+   "startTime": 196.07,
+   "title": "Gaugamela, the first of October, three hundred and thirty one before the common era",
+   "endTime": 235.09
+  },
+  {
+   "startTime": 235.09,
+   "title": "Maracanda, three hundred and twenty seven before the common era",
+   "endTime": 305.926
+  },
+  {
+   "startTime": 305.926,
+   "title": "The Hyphasis, and the road home, three hundred and twenty six to three hundred and twenty three before the common era",
+   "endTime": 361.791
+  },
+  {
+   "startTime": 361.791,
+   "title": "Five accounts",
+   "endTime": 376.642
+  },
+  {
+   "startTime": 376.642,
+   "title": "Greco-Macedonian",
+   "endTime": 449.101
+  },
+  {
+   "startTime": 449.101,
+   "title": "Persian / Achaemenid",
+   "endTime": 527.086
+  },
+  {
+   "startTime": 527.086,
+   "title": "Indian / Paurava",
+   "endTime": 599.562
+  },
+  {
+   "startTime": 599.562,
+   "title": "Modern Central Asian",
+   "endTime": 661.426
+  },
+  {
+   "startTime": 661.426,
+   "title": "Revisionist / Anti-Heroic",
+   "endTime": 743.495
+  },
+  {
+   "startTime": 743.495,
+   "title": "What each one leaves out",
+   "endTime": 831.383
+  },
+  {
+   "startTime": 831.383,
+   "title": "Legacy",
+   "endTime": 854.712
+  },
+  {
+   "startTime": 854.712,
+   "endTime": 867.812,
+   "title": "Also from Void News"
+  }
+ ]
+}

@@ -1,0 +1,148 @@
+## OPEN
+N: Congress authorized this war five hundred and four votes to two.
+N: What it was voting on was a second attack on an American destroyer in the Gulf of Tonkin. The first attack, two days earlier, was real. The second was not: sonar operators had picked up their own ship's propeller wake and read it as torpedoes.
+N: NSA documents declassified in two thousand five confirmed it. President Johnson knew within days that the second attack never happened.
+N: He escalated anyway.
+
+## TITLE
+N: The Vietnam War. Nineteen fifty five to nineteen seventy five.
+
+## SCENE 1 | The night the sonar lied
+N: August the fourth, nineteen sixty four. The destroyer USS Maddox radios that it is under a second torpedo attack in the Gulf of Tonkin.
+N: President Johnson goes on television that evening and announces retaliatory airstrikes. Three days later, Congress passes the Gulf of Tonkin Resolution.
+N: By December, a hundred eighty four thousand American troops are in Vietnam.
+
+## DOCUMENT | Lyndon B. Johnson | Recorded phone call with McGeorge Bundy | May 27, 1964
+N: Three months before that vote, on a recorded call with his national security adviser McGeorge Bundy, this is what Johnson himself thought of the war he was about to escalate.
+M: I don't think it's worth fighting for and I don't think we can get out. And it's just the biggest damn mess that I ever saw.
+
+## ASIDE
+N: He said this in May. He escalated in August anyway, on a pretext his own Navy had already gotten wrong once.
+N: The resolution gave him the legal authority to fight a war without ever asking Congress to declare one.
+
+## REST
+
+## SCENE 2 | A borrowed sentence
+N: September the second, nineteen forty five, the day Japan formally surrenders. Ho Chi Minh stands before half a million people in Hanoi and declares Vietnamese independence.
+N: He opens by quoting Thomas Jefferson, word for word.
+
+## DOCUMENT | Ho Chi Minh | Declaration of Independence of the Democratic Republic of Vietnam | September 2, 1945
+N: This is how Ho Chi Minh opened the declaration that founded his country.
+M: All men are created equal. They are endowed by their Creator with certain inalienable rights; among these are Life, Liberty, and the pursuit of Happiness.
+
+## ASIDE
+N: He was not being ironic. Between October nineteen forty five and February nineteen forty six, Ho wrote to President Truman eight times asking for American support against French recolonization. The letters went unanswered.
+N: France returned. The Viet Minh fought them for eight years.
+
+## REST
+
+## SCENE 3 | Sixteen thousand men in a valley
+N: May the seventh, nineteen fifty four. At Dien Bien Phu, sixteen thousand French soldiers surrender in a jungle valley their own commanders had called impregnable.
+N: The Geneva Accords that follow divide Vietnam at the seventeenth parallel and promise reunification elections within two years.
+N: The elections are never held. Eisenhower later wrote that Ho Chi Minh would have won eighty percent of the vote.
+
+## SCENE 4 | Stalemate
+N: By nineteen sixty eight, the United States has dropped more bomb tonnage on Indochina than all sides combined dropped in the whole of the Second World War.
+N: January the thirtieth, the Vietnamese Lunar New Year. Eighty thousand North Vietnamese and Viet Cong fighters attack thirty six provincial capitals and the United States Embassy compound in Saigon, all at once. A Viet Cong squad fights inside the embassy walls for six hours.
+N: General Westmoreland had told Congress two months earlier that the enemy was losing.
+
+## DOCUMENT | Walter Cronkite | CBS Evening News special broadcast | February 27, 1968
+N: Walter Cronkite broadcast this from the ruins of Hue.
+M: It seems now more certain than ever that the bloody experience of Vietnam is to end in a stalemate.
+
+## ASIDE
+N: Johnson is reported to have told an aide that losing Cronkite meant losing Middle America. He announced on March the thirty first that he would not seek reelection.
+N: The war went on for seven more years.
+
+## REST
+
+## SCENE 5 | Six weeks later
+N: March the sixteenth, nineteen sixty eight. Soldiers of Charlie Company enter the hamlet of My Lai in Quang Ngai Province.
+N: Over four hours they kill five hundred four unarmed civilians: women, children, infants, elderly men.
+N: Warrant Officer Hugh Thompson, flying a helicopter overhead, lands between the soldiers and the villagers left alive, and orders his door gunner to fire on any American who keeps killing.
+N: The Army covers up the massacre for a year. Seymour Hersh breaks the story in November nineteen sixty nine and wins the Pulitzer Prize for it.
+N: Of the twenty six soldiers charged, one is convicted. Lieutenant William Calley serves three and a half years of house arrest.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of a war whose name is itself contested. Americans call it the Vietnam War. The Vietnamese call it the American War, and count it the third: after France, after Japan.
+
+## PERSPECTIVE | American Cold War / Containment | vanquished
+N: The logic looked clean on a whiteboard. If South Vietnam fell to communism, Eisenhower had said at a press conference in April nineteen fifty four, Laos and Cambodia would go next, then the rest of Southeast Asia: dominoes.
+N: Kennedy's advisers called themselves the best and the brightest. Robert McNamara had run the Ford Motor Company. He proposed to run this war the same way: body counts, kill ratios, hamlets pacified.
+N: The Strategic Hamlet Program reported eight thousand six hundred fortified villages by October nineteen sixty three, housing eight million seven hundred thousand people. Many of the villages existed only on paper.
+N: The Gulf of Tonkin Resolution passed the Senate eighty eight votes to two. This was not one man's war.
+N: Senator Wayne Morse was one of the two votes against it.
+M: I believe that history will record that we have made a great mistake.
+
+## PERSPECTIVE | Vietnamese Revolutionary / Anti-Colonial | victor
+N: Ho Chi Minh had spent thirty years building toward that moment in Hanoi. He washed dishes at a hotel in London in nineteen thirteen. In Paris he petitioned the Versailles Peace Conference for Vietnamese self-determination, and rented a morning suit to deliver it. He founded the Viet Minh in a cave at Pac Bo in May nineteen forty one.
+N: General Vo Nguyen Giap had been a history teacher. His wife died in a French colonial prison in nineteen forty one. At Dien Bien Phu he dragged artillery up the mountainsides by hand, using porters who carried supplies on modified bicycles.
+N: To the French negotiators across the table, Ho Chi Minh put the arithmetic of the whole war in one sentence.
+M: You can kill ten of my men for every one I kill of yours. But even at those odds, you will lose and I will win.
+
+## PERSPECTIVE | Anti-War / Pentagon Papers | revisionist
+N: Daniel Ellsberg had believed in this war. He held a doctorate from Harvard, a position at the RAND Corporation, and had carried an M sixteen on patrol through the Mekong Delta as a State Department civilian.
+N: In nineteen sixty seven, Robert McNamara commissioned a secret history of the war. It ran to forty seven volumes and seven thousand pages, and it documented that four administrations had known the war could not be won and escalated anyway.
+N: Ellsberg photocopied it at night for months, starting in October nineteen sixty nine. The New York Times began publishing it in June nineteen seventy one. The government obtained a federal injunction, the first prior restraint in American press history. The Supreme Court overturned it, six votes to three, in fifteen days.
+N: After his indictment, Ellsberg told the press exactly why he had done it.
+M: I felt that as an American citizen, as a responsible citizen, I could no longer cooperate in concealing this information from the American public.
+
+## PERSPECTIVE | Laotian and Cambodian / Spillover | vanquished
+N: Laos was not at war with the United States. Neither was Cambodia. The bombs came anyway.
+N: Between nineteen sixty four and nineteen seventy three, the United States flew five hundred eighty thousand bombing missions over Laos, a country the size of Utah with three million people, roughly one mission every eight minutes for nine years. Congress never authorized it.
+N: The CIA ran a secret army of thirty thousand Hmong highlanders under General Vang Pao. When the United States withdrew in nineteen seventy five, it evacuated only a fraction of them.
+N: In Cambodia, secret bombing between nineteen sixty nine and nineteen seventy three killed an estimated one hundred to one hundred fifty thousand civilians, and radicalized the population that the Khmer Rouge then recruited.
+N: Vang Pao later described what his soldiers had been to Washington.
+M: We were America's secret army. We fought their war. When it was over, they forgot us.
+
+## PERSPECTIVE | Postcolonial / Global South | revisionist
+N: The arithmetic alone was the argument. The United States spent one hundred sixty eight billion dollars on this war and deployed two million seven hundred thousand personnel, with nuclear weapons, B fifty two bombers, and napalm. North Vietnam's economy in nineteen sixty five was worth about two billion dollars, and its air force flew two hundred Soviet aircraft against five thousand.
+N: The Soviet Union supplied surface to air missiles that shot down two hundred five American aircraft, including fifteen B fifty twos over Hanoi in December nineteen seventy two. China sent three hundred twenty thousand troops between nineteen sixty five and nineteen sixty eight.
+N: At the Tricontinental Conference in Havana, in April nineteen sixty seven, Che Guevara called for the world to follow this example.
+M: Create two, three, many Vietnams. That is the watchword.
+N: On April the thirtieth, nineteen seventy five, a North Vietnamese tank crashed through the gates of the Presidential Palace in Saigon. The last Americans had left by helicopter from the embassy roof the night before.
+
+## REST | short
+
+## TURN | What each one leaves out
+N: What each account has to leave out.
+N: The American Cold War account never mentions that the incident which triggered escalation was fabricated, or that the draft sent to Vietnam fell hardest on the poorest Americans and on Black Americans.
+N: The Vietnamese Revolutionary account is silent on the land reform executions in North Vietnam between nineteen fifty three and nineteen fifty six, which killed an estimated three thousand to fifteen thousand people.
+N: The Pentagon Papers account has no room for the South Vietnamese who fought and died opposing the North, or for the war's critics who wanted it escalated, not ended.
+N: The Laotian and Cambodian account is right about the bombing and silent on why the bombs were falling there: North Vietnam was already using that territory as a supply route.
+N: And the Global South account, which counts every rifle and every ruble, has no line at all for the three million eight hundred thousand Vietnamese dead, or the one million six hundred thousand who later fled the government that won.
+
+## REST
+
+## DOCUMENT | Robert McNamara | In Retrospect: The Tragedy and Lessons of Vietnam | 1995
+N: Robert McNamara had been Secretary of Defense for seven years and had sent fifty eight thousand two hundred twenty Americans to their deaths. Twenty years later, he wrote this.
+M: We were wrong, terribly wrong. We owe it to future generations to explain why.
+
+## CLOSE
+N: Maya Lin's black granite wall on the National Mall lists those fifty eight thousand two hundred twenty names, in the order they died.
+N: It does not list Vietnamese names.
+
+## SAY
+Vietnam = vee-et-NAHM
+Ho Chi Minh = HOH chee MIN
+Hanoi = ha-NOY
+Saigon = sy-GON
+Tonkin = TON-kin
+Maddox = MAD-ox
+Dien Bien Phu = dee-EN bee-EN FOO
+Vo Nguyen Giap = voh NWEN zhap
+Pac Bo = pahk BOH
+Vang Pao = vahng POW
+Hmong = mung
+Khmer Rouge = kmair ROOZH
+Mekong = MAY-kong
+Quang Ngai = kwahng NYE
+My Lai = mee LYE
+Guevara = geh-VAR-ah
+McNamara = mak-nah-MAR-ah
+Westmoreland = WEST-mor-land
+Cronkite = KRON-kyte
+Ellsberg = ELZ-berg
+Bundy = BUN-dee

@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Void - Brand Book</title>
+<style>
+  :root {
+    --ink: #1A1A1A; --ink-2: #4A4540; --paper: #F0EBDD; --paper-2: #E8E2D4;
+    --rule: #D4CCC2; --news: #B26F52; --history: #5C4033; --weekly: #B91C1C;
+    --vision: #946B15;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    margin: 0; color: var(--ink); background: var(--paper);
+    font-family: Georgia, 'Times New Roman', serif; line-height: 1.5;
+  }
+  .page {
+    width: 210mm; min-height: 297mm; padding: 22mm 20mm; margin: 0 auto;
+    background: var(--paper); position: relative;
+  }
+  @page { size: A4; margin: 0; }
+  @media print { .page { page-break-after: always; box-shadow: none; }
+    .page:last-child { page-break-after: auto; } }
+  @media screen { body { padding: 24px; background: #cfc8b8; }
+    .page { box-shadow: 0 2px 24px rgba(0,0,0,.25); margin-bottom: 24px; } }
+  h1, h2, h3 { font-weight: 700; letter-spacing: .01em; margin: 0 0 .4em; }
+  h1 { font-size: 34pt; line-height: 1.08; }
+  h2 { font-size: 19pt; border-bottom: 2px solid var(--ink); padding-bottom: 6px;
+       margin-bottom: 18px; }
+  h3 { font-size: 12pt; }
+  p, li { font-size: 10.5pt; color: var(--ink-2); }
+  .kicker { font-family: 'Barlow Condensed', Arial, sans-serif;
+    text-transform: uppercase; letter-spacing: .22em; font-size: 9pt;
+    color: var(--news); font-weight: 700; margin-bottom: 10px; }
+  .mono { font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 9pt; }
+  .cover { display: flex; flex-direction: column; justify-content: center;
+    min-height: 253mm; }
+  .cover .lockup { width: 150mm; margin: 8mm 0 14mm; }
+  .cover p.lede { font-size: 13pt; max-width: 150mm; color: var(--ink); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10mm 14mm; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8mm; }
+  .logo-cell { text-align: center; }
+  .logo-cell img { width: 100%; display: block; }
+  .logo-cell .cap { margin-top: 6px; font-size: 8.5pt; }
+  .icon-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 8mm;
+    align-items: center; }
+  .icon-row img { width: 26mm; margin: 0 auto; display: block; }
+  .swatches { display: grid; grid-template-columns: repeat(4,1fr); gap: 5mm; }
+  .sw { border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; }
+  .sw .chip { height: 26mm; }
+  .sw .meta { padding: 4px 7px; background: #fff; }
+  .sw .name { font-size: 8.5pt; font-weight: 700; color: var(--ink); }
+  .spectrum { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px;
+    margin-top: 4mm; }
+  .spectrum .band { height: 20mm; border-radius: 2px; }
+  .spectrum .lbl { font-size: 7pt; text-align: center; margin-top: 3px;
+    color: var(--ink-2); }
+  table { width: 100%; border-collapse: collapse; margin-top: 4mm; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--rule);
+    font-size: 10pt; vertical-align: top; }
+  th { font-family: 'Barlow Condensed', Arial, sans-serif; text-transform: uppercase;
+    letter-spacing: .12em; font-size: 8.5pt; color: var(--ink); }
+  .accent-dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%;
+    margin-right: 6px; vertical-align: middle; }
+  .callout { background: var(--paper-2); border-left: 3px solid var(--news);
+    padding: 10px 14px; margin: 5mm 0; font-size: 10pt; }
+  .bad { color: #9C2C22; } .good { color: #2B784A; }
+  .type-specimen { font-size: 30pt; line-height: 1.1; color: var(--ink); margin: 3mm 0; }
+  .foot { position: absolute; bottom: 12mm; left: 20mm; right: 20mm;
+    display: flex; justify-content: space-between; font-size: 7.5pt;
+    color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 5px;
+    font-family: 'Barlow Condensed', Arial, sans-serif; letter-spacing: .1em;
+    text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<section class="page cover">
+  <div class="kicker">Brand Book &middot; Version 1.0</div>
+  <h1>Show the bias.<br>Do not hide it.</h1>
+  <img class="lockup" src="../logos/png/void-news-horizontal-800.png" alt="Void News lockup">
+  <p class="lede">One parent brand, Void, with four product editions that share
+    a single mark: News, History, Weekly, Vision. The Sigil is not decoration.
+    It is a diagram of what the product does. Every rule in this book protects
+    that promise.</p>
+  <div class="foot"><span>Void &mdash; Brand Book</span><span>The record, measured.</span></div>
+</section>
+
+<!-- THE SIGIL -->
+<section class="page">
+  <div class="kicker">The Mark</div>
+  <h2>1. What the Sigil means</h2>
+  <div class="grid2">
+    <div>
+      <img src="../logos/png/void-news-icon-512.png" style="width:60mm;display:block;margin-bottom:6mm" alt="Sigil">
+      <p><strong>Coverage ring</strong> &mdash; the breadth of sources. A hollow
+        lens, the analytical "void" you look through. The O in VOID.</p>
+      <p><strong>Level balance beam</strong> with <span class="mono">|-|</span>
+        end ticks &mdash; the multi-axis bias reading. Level means balanced. In
+        motion it sweeps the lean spectrum.</p>
+      <p><strong>Foot</strong> (post and base) &mdash; the instrument's stand,
+        the method. Measurement moves; the method does not. It never tilts.</p>
+    </div>
+    <div>
+      <h3>The logo performs the methodology</h3>
+      <p>When the beam sweeps in the animated mark it crosses blue, green, red,
+        the same spectrum the product paints across every story.</p>
+      <div class="spectrum" style="grid-template-columns:repeat(4,1fr)">
+        <div><div class="band" style="background:#B26F52"></div><div class="lbl">Accent / level</div></div>
+        <div><div class="band" style="background:#3F72B0"></div><div class="lbl">Left</div></div>
+        <div><div class="band" style="background:#3E7C57"></div><div class="lbl">Centre</div></div>
+        <div><div class="band" style="background:#B0433B"></div><div class="lbl">Right</div></div>
+      </div>
+      <div class="callout"><strong>Never</strong> fill the ring (it is a lens),
+        tilt the foot, or freeze the beam in a bias colour. A fixed blue or red
+        Sigil implies the brand itself leans. The sweep is motion only.</div>
+    </div>
+  </div>
+  <div class="foot"><span>Void &mdash; Brand Book</span><span>01 &middot; The Sigil</span></div>
+</section>
+
+<!-- LOGO SUITE -->
+<section class="page">
+  <div class="kicker">The Suite</div>
+  <h2>2. The four brands</h2>
+  <div class="grid2">
+    <div class="logo-cell"><img src="../logos/png/void-news-horizontal-800.png"><div class="cap mono">void-news &middot; terracotta #B26F52</div></div>
+    <div class="logo-cell"><img src="../logos/png/void-history-horizontal-800.png"><div class="cap mono">void-history &middot; umber #5C4033</div></div>
+    <div class="logo-cell"><img src="../logos/png/void-weekly-horizontal-800.png"><div class="cap mono">void-weekly &middot; red #B91C1C</div></div>
+    <div class="logo-cell"><img src="../logos/png/void-vision-horizontal-800.png"><div class="cap mono">void-vision &middot; brass #946B15</div></div>
+  </div>
+  <h3 style="margin-top:10mm">The icon scales to a favicon</h3>
+  <div class="icon-row">
+    <img src="../logos/png/void-news-icon-256.png">
+    <img src="../logos/png/void-history-icon-256.png">
+    <img src="../logos/png/void-weekly-icon-256.png">
+    <img src="../logos/png/void-vision-icon-256.png">
+  </div>
+  <div class="foot"><span>Void &mdash; Brand Book</span><span>02 &middot; The Suite</span></div>
+</section>
+
+<!-- LOGO USAGE -->
+<section class="page">
+  <div class="kicker">Usage</div>
+  <h2>3. Clear space &amp; minimum sizes</h2>
+  <p>Minimum clear space on all sides equals the height of the Sigil ring (its
+    diameter). Nothing &mdash; type, image edge, another logo &mdash; enters that zone.</p>
+  <table>
+    <tr><th>Asset</th><th>Digital min</th><th>Print min</th></tr>
+    <tr><td>Icon (Sigil)</td><td>16 px</td><td>8 mm</td></tr>
+    <tr><td>Horizontal lockup</td><td>120 px wide</td><td>24 mm wide</td></tr>
+    <tr><td>Wordmark</td><td>100 px wide</td><td>20 mm wide</td></tr>
+  </table>
+  <h3 style="margin-top:8mm">Treatments</h3>
+  <div class="grid4" style="margin-top:3mm">
+    <div class="logo-cell"><img src="../logos/png/void-news-icon-512-light.png"><div class="cap">Full colour, paper</div></div>
+    <div class="logo-cell"><img src="../logos/png/void-news-icon-512-dark.png"><div class="cap">Reversed, ink</div></div>
+    <div class="logo-cell"><img src="../logos/png/void-history-icon-512-light.png"><div class="cap">History, paper</div></div>
+    <div class="logo-cell"><img src="../logos/png/void-vision-icon-512-dark.png"><div class="cap">Vision, ink</div></div>
+  </div>
+  <div class="callout" style="margin-top:8mm"><strong>Never</strong> stretch,
+    skew, add a shadow, gradient, or outline; rebuild the wordmark in another
+    typeface; or place the colour mark on a ground that drops it below 3:1
+    contrast (switch to black or reversed).</div>
+  <div class="foot"><span>Void &mdash; Brand Book</span><span>03 &middot; Usage</span></div>
+</section>
+
+<!-- COLOR -->
+<section class="page">
+  <div class="kicker">Colour</div>
+  <h2>4. Colour system</h2>
+  <h3>Brand accents (large marks only)</h3>
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:#B26F52"></div><div class="meta"><div class="name">News Terracotta</div><div class="mono">#B26F52</div></div></div>
+    <div class="sw"><div class="chip" style="background:#5C4033"></div><div class="meta"><div class="name">History Umber</div><div class="mono">#5C4033</div></div></div>
+    <div class="sw"><div class="chip" style="background:#B91C1C"></div><div class="meta"><div class="name">Weekly Red</div><div class="mono">#B91C1C</div></div></div>
+    <div class="sw"><div class="chip" style="background:#946B15"></div><div class="meta"><div class="name">Vision Brass</div><div class="mono">#946B15</div></div></div>
+  </div>
+  <h3 style="margin-top:8mm">Bias spectrum (earned, never decorative)</h3>
+  <div class="spectrum">
+    <div><div class="band" style="background:#0E2E70"></div><div class="lbl">Far left</div></div>
+    <div><div class="band" style="background:#1B5298"></div><div class="lbl">Left</div></div>
+    <div><div class="band" style="background:#2E78B4"></div><div class="lbl">Ctr-left</div></div>
+    <div><div class="band" style="background:#2B784A"></div><div class="lbl">Centre</div></div>
+    <div><div class="band" style="background:#C4503E"></div><div class="lbl">Ctr-right</div></div>
+    <div><div class="band" style="background:#9C2C22"></div><div class="lbl">Right</div></div>
+    <div><div class="band" style="background:#6E1610"></div><div class="lbl">Far right</div></div>
+  </div>
+  <h3 style="margin-top:8mm">Ink &amp; paper carry the page</h3>
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:#F0EBDD"></div><div class="meta"><div class="name">Morning paper</div><div class="mono">#F0EBDD</div></div></div>
+    <div class="sw"><div class="chip" style="background:#14120F"></div><div class="meta"><div class="name">Evening ink</div><div class="mono">#14120F</div></div></div>
+    <div class="sw"><div class="chip" style="background:#1A1A1A"></div><div class="meta"><div class="name">Ink primary</div><div class="mono">#1A1A1A</div></div></div>
+    <div class="sw"><div class="chip" style="background:#9A5638"></div><div class="meta"><div class="name">News ink (AA text)</div><div class="mono">#9A5638</div></div></div>
+  </div>
+  <div class="callout" style="margin-top:8mm">Green means centre only. Never use
+    the centre green to signal "good," or the right-hand red for an error state.
+    That corrupts the one place colour carries data. Accent is a spice, not a
+    base: if a screen looks colourful, it is wrong.</div>
+  <div class="foot"><span>Void &mdash; Brand Book</span><span>04 &middot; Colour</span></div>
+</section>
+
+<!-- TYPE + VOICE -->
+<section class="page">
+  <div class="kicker">Type &amp; Voice</div>
+  <h2>5. Typography</h2>
+  <div class="type-specimen">Void carries meaning in serif.</div>
+  <p class="mono">Playfair Display (editorial) &middot; Inter (structural) &middot;
+    Barlow Condensed (meta) &middot; IBM Plex Mono (data)</p>
+  <p>The one-line rule: serif carries meaning, mono carries measurements, and the
+    two never trade jobs.</p>
+
+  <h2 style="margin-top:12mm">6. Voice</h2>
+  <h3>Show, don't tell</h3>
+  <p class="bad">Bad: "Tensions are rising significantly between the two nations."</p>
+  <p class="good">Good: "Both countries recalled their ambassadors within 48 hours.
+    Neither has done that since 1979."</p>
+  <h3 style="margin-top:5mm">Arrive late, leave early</h3>
+  <p class="bad">Bad: "The Partition of India was a complex process that began with
+    British colonial rule and led to two nations in 1947."</p>
+  <p class="good">Good: "A lawyer who'd never been to India drew the border in five
+    weeks. 15 million crossed it."</p>
+  <h3 style="margin-top:5mm">No em dashes</h3>
+  <p>They are an AI tell. Rewrite as two short sentences, or use a comma, colon, or
+    parentheses. The single exception is spoken audio scripts, where an em dash is
+    a breath mark for text-to-speech.</p>
+
+  <table style="margin-top:8mm">
+    <tr><th>Brand</th><th>Accent</th><th>Voice register</th></tr>
+    <tr><td><span class="accent-dot" style="background:#B26F52"></span>Void News</td><td class="mono">#B26F52</td><td>The flagship. Daily, measured, the record.</td></tr>
+    <tr><td><span class="accent-dot" style="background:#5C4033"></span>Void History</td><td class="mono">#5C4033</td><td>Archival, long-view, multi-perspective.</td></tr>
+    <tr><td><span class="accent-dot" style="background:#B91C1C"></span>Void Weekly</td><td class="mono">#B91C1C</td><td>Magazine. Argued, essayistic, the week's through-line.</td></tr>
+    <tr><td><span class="accent-dot" style="background:#946B15"></span>Void Vision</td><td class="mono">#946B15</td><td>The umbrella and YouTube. The bare Sigil is the master mark.</td></tr>
+  </table>
+  <div class="foot"><span>Void &mdash; Brand Book</span><span>05 &middot; Type &amp; Voice</span></div>
+</section>
+
+</body>
+</html>

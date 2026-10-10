@@ -1,0 +1,7 @@
+source: src-miller-1936
+locator: secdate
+url: https://archive.org/download/in.ernet.dli.2015.82149/2015.82149.I-Found-No-Peace_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+
+I received on the evening of May 20, 1930, an important tip from a friendly Gandhi sympathizer. He told me they were planning the biggest demonstration yet at Dharasana, about a hundred and fifty miles north of Bombay.

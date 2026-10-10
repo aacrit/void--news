@@ -1,0 +1,7 @@
+source: src-tatoyan-2020
+locator: p55
+url: https://agmipublications.am/index.php/ijags/article/download/26/24
+read: 2026-09-25
+note: the abstract, p. 55; a copyrighted article, held at most 150 words
+
+It is shown that the number of refugees is about 70% higher than the number of the Armenian population for the same areas before WWI mentioned in the official Ottoman statistics and corresponds approximately to the figures of the Armenian patriarchate. If account is taken that some people were already dead by the time the refugee censuses were carried out and also that the populations of some settlements within the administrative units in question were not evacuated at all but massacred, then the actual number of the Armenian population in these areas was even higher.

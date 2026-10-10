@@ -1,0 +1,44 @@
+{
+  "_comment": [
+    "Three rules, nothing else. Run by `npm test` (see test/css-lint.mjs).",
+    "1. No raw cubic-bezier() outside tokens.css: every curve is a named --ease-* token.",
+    "2. font-family names one of the four semantic tokens (--font-editorial, --font-structural,",
+    "   --font-meta, --font-data), or Paper's --np-font-* aliases of them, or inherit.",
+    "3. border-radius is 0, 50%, inherit or a var(). A literal radius that predates the scale carries a",
+    "   stylelint-disable-next-line comment on the line above it; reportNeedlessDisables makes",
+    "   that comment an error once the literal is gone, so the list only shrinks.",
+    "games.css and revolt.css are hidden routes and are exempt from all three, as in the class",
+    "parity gate. tokens.css defines the curves and the font stacks, so it is exempt from 1 and 2.",
+    "ig-render.css is exempt from 2 by decision (the Instagram renderer)."
+  ],
+  "reportNeedlessDisables": true,
+  "rules": {
+    "function-disallowed-list": ["cubic-bezier"],
+    "declaration-property-value-allowed-list": {
+      "font-family": ["/^(var\\(--font-(editorial|structural|meta|data)\\)|var\\(--np-font-(head|body|label)\\)|inherit)$/"],
+      "border-radius": ["/^(0|50%|inherit|var\\(--[\\w-]+\\))$/"]
+    }
+  },
+  "overrides": [
+    {
+      "files": ["app/styles/games.css", "app/styles/revolt.css"],
+      "rules": {
+        "function-disallowed-list": null,
+        "declaration-property-value-allowed-list": null
+      }
+    },
+    {
+      "files": ["app/styles/tokens.css"],
+      "rules": {
+        "function-disallowed-list": null,
+        "declaration-property-value-allowed-list": { "border-radius": ["/^(0|50%|inherit|var\\(--[\\w-]+\\))$/"] }
+      }
+    },
+    {
+      "files": ["app/styles/ig-render.css"],
+      "rules": {
+        "declaration-property-value-allowed-list": { "border-radius": ["/^(0|50%|inherit|var\\(--[\\w-]+\\))$/"] }
+      }
+    }
+  ]
+}

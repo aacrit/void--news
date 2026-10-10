@@ -1,0 +1,26 @@
+source: src-hansard-18841120
+locator: whole
+url: https://api.parliament.uk/historic-hansard/commons/1884/nov/20/the-west-african-conference-action-of
+read: 2026-09-25
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: the debate heading the site prints, then the exchange; the section marks and column numbers are dropped
+
+HC Deb 20 November 1884 vol 294 cc57-8
+MR. JACOB BRIGHT
+asked the Under Secretary of State for Foreign Affairs, If he has seen the following statement from the London Correspondent of The Manchester Guardian , and if there is any truth in it:—
+It is, I understand, finally decided that our representative at the forthcoming Conference on the Affairs of the Congo at Berlin shall he instructed to support with firmness the claims of Portugal, which had been practically conceded before the Conference was proposed?
+LORD EDMOND FITZMAURICE
+Her Majesty's Government must decline at present to give any information in regard to the instructions given to their Representatives; but I have already stated that the decision of territorial claims is not among the bases of the Conference.
+MR. JACOB BRIGHT
+What I wish to ask is this—Whether the noble Lord is not aware that the proposition for conceding the Sovereignty of the Congo to Portugal has been all but universally condemned in this House and in the country?
+LORD EDMOND FITZMAURICE
+I am aware that considerable hostility was manifested, both in this House and "elsewhere," towards the Treaty of last year.
+MR. ARTHUR ARNOLD
+asked whether, if the Conference at Berlin should arrive at any conclusion on this subject, it would be laid before this House before it was accepted?
+LORD EDMOND FITZMAURICE
+No, Sir; I am not aware that it would.
+SIR HERBERT MAXWELL
+May I ask whether it is true, as reported in The Times this morning, that a Committee of Experts has been appointed to arrange the details of the agreement; and, if that is the case, can the noble Lord say to whom the interests of Great Britain are to be entrusted?
+LORD EDMOND FITZMAURICE
+I cannot undertake from day to day to give information of the proceedings of the Conference, and for this reason—that a pledge of secrecy has been given by all the Powers in regard to those proceedings; and if I were to depart from the rule of this House in one particular I should be obliged to depart from it
+from day to day, until I had departed from it altogether.

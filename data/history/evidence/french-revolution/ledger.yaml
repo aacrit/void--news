@@ -1,0 +1,770 @@
+# The evidence ledger for french-revolution (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Begun 2026-10-09 for the History episode's writer brief: the sources its document voice
+# may read from and the record its narration is checked against. Every entry was fetched on
+# 2026-10-09 from the URL it names; every extract under extracts/ was sliced from the fetched
+# copy by a builder script (start marker to end marker, out/ledger-french-revolution/build.py),
+# never retyped. Whitespace runs are collapsed to single spaces and nothing else is changed;
+# where a scan's OCR layer is the free copy the extract keeps the layer's glyphs (long s read
+# as f, misreadings) and says so in a note. Nothing here was written from memory.
+#
+# Translations. A French extract that the episode may need in English carries a rendering
+# beside it (`<extract>.en.txt`): every rendering in this ledger is a Void translation, made
+# here at $0 and never to be presented as a published quotation. Where a PUBLISHED English
+# translation is held, it is its own entry with its translator named (the Conseil
+# constitutionnel's English of the 1789 Declaration; Whitcomb 1899 for Sieyes; Hunt 1996 for
+# Olympe de Gouges; Bienvenu as the Liberty, Equality, Fraternity site prints him for
+# Robespierre; Dubois and Garrigus for the Haitian declaration; Cocks for Michelet; Bonner for
+# Tocqueville). Three passages the event YAML already quotes in an English that no held
+# translation carries are held in French ONLY, deliberately (see gaps): article 1 of the
+# Declaration (second sentence), Robespierre's sentence on virtue and terror, and his
+# "Louis must die". An English text of any of them would sit within a few words of the YAML's
+# divergent excerpt and fail tests/test_history_quote_ledger.py, and this task may append to
+# the YAML but not alter it.
+#
+# This is NOT a thesis ledger: no positions, contested claims, exhibits or analyses are
+# adjudicated, and the event renders the Hearing. The bar of §4e is not claimed. The death
+# counts are carried below as each producer's figure with its method, never averaged.
+slug: french-revolution
+bootstrapped: 2026-10-09
+
+entries:
+  # ----------------------------------------------------------- Tier A: the Assembly, 1789
+  - id: src-ddhc-1789
+    tier: A
+    kind: primary-document
+    author: The National Assembly (Assemblée nationale)
+    title: "Déclaration des droits de l'homme et du citoyen de 1789"
+    container: "the Conseil constitutionnel's text of the bloc de constitutionnalité"
+    publisher: Conseil constitutionnel
+    place: Paris
+    year: 1789
+    edition: "the official French text as the Conseil constitutionnel serves it; preamble and 17 articles"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.conseil-constitutionnel.fr/le-bloc-de-constitutionnalite/declaration-des-droits-de-l-homme-et-du-citoyen-de-1789"}
+    access:
+      free_copy: "https://www.conseil-constitutionnel.fr/le-bloc-de-constitutionnalite/declaration-des-droits-de-l-homme-et-du-citoyen-de-1789"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Déclaration des Droits de l'Homme et du Citoyen de 1789 | Conseil constitutionnel"
+    language: fr
+    region_of_authorship: europe
+    producer: national-assembly-1789
+    position: null
+    rights: official
+    perspective: [republican, colonial, haitian]
+    shows: "the Declaration's own words: that men are born and remain free and equal in rights (art. 1), that sovereignty resides essentially in the nation (art. 3), law as the expression of the general will (art. 6), and that a society without a guarantee of rights or a separation of powers has no constitution (art. 16)"
+    does_not_show: "the date of adoption, which the page's text does not carry in the extracts held (26 August 1789 is the YAML's date); who drafted it; and whether 'les hommes' was meant to include women, the enslaved or the colonies, on which the text is silent"
+
+  - id: src-ddhc-1789-en
+    tier: A
+    kind: primary-document
+    author: The National Assembly (Assemblée nationale), in the Conseil constitutionnel's English translation
+    title: "Declaration of Human and Civic Rights of 26 August 1789 (English translation)"
+    container: null
+    publisher: Conseil constitutionnel
+    place: Paris
+    year: 1789
+    edition: "the Conseil constitutionnel's own English translation; the page names no translator. Its title gives the date 26 August 1789"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.conseil-constitutionnel.fr/en/declaration-of-human-and-civic-rights-of-26-august-1789"}
+    access:
+      free_copy: "https://www.conseil-constitutionnel.fr/en/declaration-of-human-and-civic-rights-of-26-august-1789"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Declaration of Human and Civic Rights Of 26 August 1789 | Conseil constitutionnel"
+    language: en
+    region_of_authorship: europe
+    producer: national-assembly-1789
+    position: null
+    rights: official
+    perspective: [republican]
+    translation: "published translation by the Conseil constitutionnel (translator not named)"
+    shows: "an official English for articles 1 (first sentence only, see gaps), 3, 6 and 16"
+    does_not_show: "the second sentence of article 1 as an extract (deliberately; see gaps)"
+
+  - id: src-sieyes-1789
+    tier: A
+    kind: primary-document
+    author: Emmanuel-Joseph Sieyès (published without his name)
+    title: "Qu'est-ce que le Tiers-État ? (seconde édition, corrigée)"
+    container: null
+    publisher: null
+    place: null
+    year: 1789
+    edition: "the University of Maryland copy of the second edition, corrected, 1789, read from the Internet Archive scan"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "questcequeletier00siey_0", hathitrust: null, url: "https://archive.org/details/questcequeletier00siey_0"}
+    access:
+      free_copy: "https://archive.org/download/questcequeletier00siey_0/questcequeletier00siey_0_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Qu'est-ce que le tiers-etat?."
+    language: fr
+    region_of_authorship: europe
+    producer: sieyes
+    position: null
+    rights: public
+    perspective: [republican]
+    shows: "the pamphlet's three questions and answers: the Third Estate is everything, has been nothing in the political order, and asks to become something"
+    does_not_show: "the month of publication (the scan's title page gives only 1789) or the first edition's wording; the author's name, which the title page does not print"
+
+  - id: src-sieyes-whitcomb-1899
+    tier: A
+    kind: edited-documents
+    author: Emmanuel-Joseph Sieyès, translated by Merrick Whitcomb
+    title: "Extract from 'What is the Third Estate?', in French Philosophers of the Eighteenth Century"
+    container: "Translations and Reprints from the Original Sources of European History, vol. VI, no. 1"
+    publisher: "The Department of History of the University of Pennsylvania"
+    place: Philadelphia
+    year: 1899
+    edition: "Whitcomb's translation of extracts from the Paris edition of 1839, pp. 33 to 41 (his note); the same English the Internet Modern History Sourcebook prints without naming its source"
+    volume: "VI"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "frenchphilosoph00whitgoog", hathitrust: null, url: "https://archive.org/details/frenchphilosoph00whitgoog"}
+    access:
+      free_copy: "https://archive.org/download/frenchphilosoph00whitgoog/frenchphilosoph00whitgoog_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "French Philosophers of the Eighteenth Century"
+    language: en
+    region_of_authorship: americas
+    producer: sieyes
+    position: null
+    rights: public
+    perspective: [republican]
+    translation: "published translation, Merrick Whitcomb, 1899"
+    shows: "Sieyès in English: 'Who puts them forth? The Third Estate.' and 'What is the Third Estate? It is the whole.'"
+    does_not_show: "the pamphlet's opening questions ('Everything ... Nothing ... Something'), which Whitcomb's extract does not translate; those are held only in French (src-sieyes-1789.secopening) with a Void translation"
+
+  - id: src-ap-17890620-arrete
+    tier: A
+    kind: edict
+    author: The National Assembly (the Communes), on the motion of Target
+    title: "Communes : décret du 20 juin 1789 sur la nécessité de ne pas se séparer avant de donner une Constitution au royaume et annonçant le serment du Jeu de Paume"
+    container: "Archives parlementaires de 1787 à 1860, première série, tome VIII (5 mai au 15 septembre 1789), p. 138"
+    publisher: "Librairie administrative P. Dupont (1875); served by Persée"
+    place: Paris
+    year: 1789
+    edition: "the Archives parlementaires text of 1875 as Persée serves it"
+    volume: "VIII"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/arcpa_0000-0000_1875_num_8_1_4522_t2_0138_0000_8"}
+    access:
+      free_copy: "https://www.persee.fr/doc/arcpa_0000-0000_1875_num_8_1_4522_t2_0138_0000_8"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Communes : décret du 20 juin 1789 sur la nécessité de ne pas se séparer avant de donner une Constitution au royaume et annonçant le serment du Jeu de Paume - Persée"
+    language: fr
+    region_of_authorship: europe
+    producer: national-assembly-1789
+    position: null
+    rights: public
+    perspective: [republican]
+    shows: "the text of the Tennis Court Oath: adopted 'à l'unanimité des voix, moins une'; that wherever its members are gathered, there is the National Assembly; the oath never to separate until the Constitution of the kingdom is established; each member to sign"
+    does_not_show: "the number of signatories, or the name of the one dissenter (Persée lists a separate item on Martin d'Auch's refusal, not fetched)"
+
+  - id: src-ap-17890620-mounier
+    tier: A
+    kind: primary-document
+    author: The National Assembly (the Communes), reporting Mounier's motion
+    title: "Communes : remarque de M. Mounier sur l'empêchement fait à l'Assemblée d'accéder à la salle des Etats généraux, lors de la séance du 20 juin 1789"
+    container: "Archives parlementaires de 1787 à 1860, première série, tome VIII, p. 138"
+    publisher: "Librairie administrative P. Dupont (1875); served by Persée"
+    place: Paris
+    year: 1789
+    edition: "the Archives parlementaires text of 1875 as Persée serves it"
+    volume: "VIII"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/arcpa_0000-0000_1875_num_8_1_4522_t2_0138_0000_7"}
+    access:
+      free_copy: "https://www.persee.fr/doc/arcpa_0000-0000_1875_num_8_1_4522_t2_0138_0000_7"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Communes : remarque de M. Mounier sur l'empêchement fait à l'Assemblée d'accéder à la salle des Etats généraux, lors de la séance du 20 juin 1789 - Persée"
+    language: fr
+    region_of_authorship: europe
+    producer: national-assembly-1789
+    position: null
+    rights: public
+    perspective: [republican]
+    shows: "why the deputies were in a tennis court: the hall of the Estates General occupied by armed men, no other place offered, notice by letters of the marquis de Brézé and by posted notices; obliged to meet at the Jeu de Paume, rue du Vieux-Versailles"
+    does_not_show: "that the deputies locked themselves in; the record says they were kept out of their own hall"
+
+  - id: src-ap-17890620-serment
+    tier: A
+    kind: primary-document
+    author: The National Assembly (the Communes)
+    title: "Communes : serment du Jeu de Paume du 20 juin 1789"
+    container: "Archives parlementaires de 1787 à 1860, première série, tome VIII, pp. 138 to 139"
+    publisher: "Librairie administrative P. Dupont (1875); served by Persée"
+    place: Paris
+    year: 1789
+    edition: "the Archives parlementaires text of 1875 as Persée serves it"
+    volume: "VIII"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/arcpa_0000-0000_1875_num_8_1_4522_t2_0138_0000_9"}
+    access:
+      free_copy: "https://www.persee.fr/doc/arcpa_0000-0000_1875_num_8_1_4522_t2_0138_0000_9"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Communes : serment du Jeu de Paume du 20 juin 1789 - Persée"
+    language: fr
+    region_of_authorship: europe
+    producer: national-assembly-1789
+    position: null
+    rights: public
+    perspective: [republican, colonial]
+    shows: "the oath taken first by the President and secretaries, then by the Assembly; on the same day twelve deputies of Saint-Domingue admitted provisionally, who took the oath and signed"
+    does_not_show: "who the twelve deputies were or whom they represented (the colony's planters, on the record elsewhere; not held here)"
+
+  # ----------------------------------------------------------- Tier A: Robespierre
+  - id: src-robespierre-17921203
+    tier: A
+    kind: primary-document
+    author: Maximilien Robespierre, deputy for Paris
+    title: "Opinion de Maximilien Robespierre, député du département de Paris, sur le jugement de Louis XVI, imprimée par ordre de la Convention nationale"
+    container: null
+    publisher: Imprimerie nationale
+    place: Paris
+    year: 1792
+    edition: "the Newberry Library's copy, read from the Internet Archive scan"
+    volume: null
+    document_number: "Législation, No. 75"
+    identifiers: {isbn: null, doi: null, archive_org: "opiniondemaximil00robe_1", hathitrust: null, url: "https://archive.org/details/opiniondemaximil00robe_1"}
+    access:
+      free_copy: "https://archive.org/download/opiniondemaximil00robe_1/opiniondemaximil00robe_1_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Opinion de Maximilien Robespierre, député du département de Paris, sur le jugement de Louis XVI : imprimée par ordre de la Convention nationale."
+    language: fr
+    region_of_authorship: europe
+    producer: robespierre
+    position: null
+    rights: public
+    perspective: [republican, royalist]
+    shows: "Robespierre's own printed words: that the death penalty in general is a crime, justified only where necessary to the safety of individuals or the social body; and 'Je prononce à regret cette fatale vérité.... mais Louis doit mourir, parce qu'il faut que la patrie vive'"
+    does_not_show: "the day it was spoken: the print carries the year 1792 only (3 December 1792 is the YAML's date, not on the print). No English is held (see gaps)"
+
+  - id: src-robespierre-17940205
+    tier: A
+    kind: report
+    author: Maximilien Robespierre, in the name of the Committee of Public Safety
+    title: "Rapport sur les principes de morale politique qui doivent guider la Convention nationale dans l'administration intérieure de la République, fait au nom du Comité de salut public, le 18 pluviôse, l'an 2e"
+    container: null
+    publisher: "Imprimerie des 86 départemens, rue fauxbourg Poissonnière, Paris"
+    place: Paris
+    year: 1794
+    edition: "the Newberry Library's copy of a Paris printing, read from the Internet Archive scan; its heading dates the report 18 pluviôse an II"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "rapportsurlespri00robe_18", hathitrust: null, url: "https://archive.org/details/rapportsurlespri00robe_18"}
+    access:
+      free_copy: "https://archive.org/download/rapportsurlespri00robe_18/rapportsurlespri00robe_18_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Rapport sur les principes de morale politique qui doivent guider la Convention nationale dans l'administration intérieure de la République : fait au nom du Comité de salut public, le l8 pluviose, l'an 2e. de la République /"
+    language: fr
+    region_of_authorship: europe
+    producer: robespierre
+    position: null
+    rights: public
+    perspective: [republican, academic]
+    shows: "the sentence the YAML quotes in English, in Robespierre's French: 'Si le ressort du gouvernement populaire dans la paix, est la vertu, le ressort du gouvernement populaire en révolution est à la fois la vertu et la terreur : la vertu, sans laquelle la terreur est funeste ; la terreur, sans laquelle la vertu est impuissante'; and 'la terreur n'est autre chose que la justice prompte, sévère, inflexible'"
+    does_not_show: "the date of delivery as a calendar date: the print says 18 pluviôse an II; the Archives parlementaires title Persée gives for the speech says 'séance du 17 pluviôse an II (5 février 1794)' (search result, not fetched). See the brief"
+
+  - id: src-robespierre-bienvenu-1970
+    tier: A
+    kind: edited-documents
+    author: Maximilien Robespierre, translated by Richard Bienvenu
+    title: "Robespierre, 'On Political Morality' (5 February 1794), in Liberty, Equality, Fraternity: Exploring the French Revolution"
+    container: "Richard Bienvenu, The Ninth of Thermidor (Oxford University Press, copyright 1970), pp. 32 to 49, as the site credits it"
+    publisher: "Roy Rosenzweig Center for History and New Media and American Social History Project"
+    place: null
+    year: 1794
+    edition: "the site's text, 'used by permission of Oxford University Press'"
+    volume: null
+    document_number: "item 413"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://revolution.chnm.org/d/413"}
+    access:
+      free_copy: "https://revolution.chnm.org/d/413"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Robespierre, \"On Political Morality\" · LIBERTY, EQUALITY, FRATERNITY: EXPLORING THE FRENCH REVOUTION"
+    language: en
+    region_of_authorship: americas
+    producer: robespierre
+    position: null
+    rights: copyright
+    perspective: [republican]
+    translation: "published translation, Richard Bienvenu (copyright 1970, Oxford University Press)"
+    shows: "Robespierre in English: the order of things the Republic seeks; and 'Terror is nothing but prompt, severe, inflexible justice; it is therefore an emanation of virtue'"
+    does_not_show: "the virtue-and-terror sentence itself, deliberately (see gaps). The site's own date field reads 'February 5, 1704', a typing error; its introduction says 5 February 1794"
+
+  # ----------------------------------------------------------- Tier A: Olympe de Gouges
+  - id: src-gouges-1791
+    tier: A
+    kind: primary-document
+    author: Olympe de Gouges
+    title: "Les droits de la femme. A la Reine (with the Déclaration des droits de la femme et de la citoyenne)"
+    container: null
+    publisher: null
+    place: null
+    year: 1791
+    edition: "the Newberry Library's copy, read from the Internet Archive scan; the Archive's record dates it 1790, the Liberty, Equality, Fraternity site September 1791; the pamphlet's pages held carry no date"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "lesdroitsdelafem00goug", hathitrust: null, url: "https://archive.org/details/lesdroitsdelafem00goug"}
+    access:
+      free_copy: "https://archive.org/download/lesdroitsdelafem00goug/lesdroitsdelafem00goug_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Les droits de la femme : à la reine."
+    language: fr
+    region_of_authorship: europe
+    producer: olympe-de-gouges
+    position: null
+    rights: public
+    perspective: [academic, republican]
+    shows: "article 1 ('La Femme naît libre et demeure égale à l'homme en droits'), article X (the scaffold and the Tribune) and the opening of the postamble ('Femme, réveille-toi'), in her French"
+    does_not_show: "her trial or execution, which no held document records; the year of publication on the page"
+
+  - id: src-gouges-hunt-1996
+    tier: A
+    kind: edited-documents
+    author: Olympe de Gouges, translated by Lynn Hunt
+    title: "Olympe de Gouges, The Declaration of the Rights of Woman (September 1791), in Liberty, Equality, Fraternity: Exploring the French Revolution"
+    container: "Lynn Hunt, ed. and trans., The French Revolution and Human Rights: A Brief Documentary History (Bedford/St. Martin's, 1996), pp. 124 to 129, as the site credits it"
+    publisher: "Roy Rosenzweig Center for History and New Media and American Social History Project"
+    place: null
+    year: 1791
+    edition: "the site's text"
+    volume: null
+    document_number: "item 293"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://revolution.chnm.org/d/293"}
+    access:
+      free_copy: "https://revolution.chnm.org/d/293"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Olympe de Gouges, The Declaration of the Rights of Woman (September 1791) · LIBERTY, EQUALITY, FRATERNITY: EXPLORING THE FRENCH REVOUTION"
+    language: en
+    region_of_authorship: americas
+    producer: olympe-de-gouges
+    position: null
+    rights: copyright
+    perspective: [academic]
+    translation: "published translation, Lynn Hunt (1996)"
+    shows: "article 10 ('woman has the right to mount the scaffold, so she should have the right equally to mount the rostrum'), the postscript's opening and the preamble's first sentence, in Hunt's English"
+    does_not_show: "article 1 in English, deliberately (see gaps)"
+
+  # ----------------------------------------------------------- Tier A: slavery and the colonies
+  - id: src-decret-16-pluviose-anii
+    tier: A
+    kind: edict
+    author: Convention nationale, on the wording proposed by Delacroix (de l'Eure)
+    title: "Décret d'abolition de l'esclavage, proposé par Delacroix (de l'Eure), lors de la séance du 16 pluviôse an II (4 février 1794)"
+    container: "Archives parlementaires de 1787 à 1860, première série, tome LXXXIV (9 au 25 pluviôse an II), p. 284"
+    publisher: "Librairie administrative P. Dupont (1962); served by Persée"
+    place: Paris
+    year: 1794
+    edition: "the Archives parlementaires text as Persée serves it"
+    volume: "LXXXIV"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.persee.fr/doc/arcpa_0000-0000_1962_num_84_1_34717_t1_0284_0000_5"}
+    access:
+      free_copy: "https://www.persee.fr/doc/arcpa_0000-0000_1962_num_84_1_34717_t1_0284_0000_5"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Décret d'abolition de l'esclavage, proposé par Delacroix (de l'Eure), lors de la séance du 16 pluviôse an II (4 février 1794) - Persée"
+    language: fr
+    region_of_authorship: europe
+    producer: french-convention
+    position: null
+    rights: official
+    perspective: [colonial, haitian]
+    shows: "the decree as adopted amid acclamations: slavery of the negroes abolished in all the colonies; all men without distinction of colour domiciled in the colonies are French citizens with all the rights of the constitution; referred to the Committee of Public Safety for execution"
+    does_not_show: "why the Convention voted it (no motive is in the text); the deputies from Saint-Domingue who were present, and what happened in the colonies afterwards"
+
+  - id: src-sonthonax-17930829
+    tier: A
+    kind: primary-document
+    author: Léger-Félicité Sonthonax, civil commissioner of the Republic
+    title: "Proclamation. Au nom de la République. Nous Léger-Félicité Sonthonax, commissaire civil de la République: the general emancipation of the North province, 29 August 1793"
+    container: null
+    publisher: "Imprimerie de P. Catineau, Cap-Français"
+    place: Cap-Français
+    year: 1793
+    edition: "the John Carter Brown Library's copy, read from the Internet Archive scan (the same copy the haitian-revolution ledger holds)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "proclamationauno00sont", hathitrust: null, url: "https://archive.org/details/proclamationauno00sont"}
+    access:
+      free_copy: "https://archive.org/download/proclamationauno00sont/proclamationauno00sont_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Proclamation. Au nom de la République. : Nous Léger-Félicité Sonthonax, commissaire civil de la République, délégué aux Iles françaises de l'Amérique sous le vent, pour y rétablir l'ordre & la tranquillité publique"
+    language: fr
+    region_of_authorship: americas
+    producer: french-civil-commission
+    position: null
+    rights: public
+    perspective: [colonial, haitian]
+    shows: "article 1, that the Declaration of the Rights of Man and of the Citizen be printed, published and posted everywhere; article 2, that all the negroes and people of mixed blood in slavery are declared free with the rights of French citizens, subject to a regime set out in the articles that follow"
+    does_not_show: "why he issued it (a Spanish invasion, the need for soldiers and acting without authority from Paris are the YAML's and the script's claims, and nothing held here carries them); the labour regime of the later articles, not extracted here"
+
+  - id: src-loi-30-floreal-anx
+    tier: A
+    kind: primary-document
+    author: The Corps législatif of the French Republic, promulgated by Bonaparte, First Consul
+    title: "Loi relative à la traite des noirs et au régime des colonies, 30 floréal an X (20 May 1802)"
+    container: null
+    publisher: Imprimerie de la République
+    place: Paris
+    year: 1802
+    edition: "read from the Internet Archive scan (the same copy the haitian-revolution ledger holds)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "LoiTraiteNoirRgimeColonies1802", hathitrust: null, url: "https://archive.org/details/LoiTraiteNoirRgimeColonies1802"}
+    access:
+      free_copy: "https://archive.org/download/LoiTraiteNoirRgimeColonies1802/LoiRelativeLaTraiteDesNoirsEtAuRgimeDesColonies1802_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Loi relative la traite des noirs et au régime des colonies, 1802"
+    language: fr
+    region_of_authorship: europe
+    producer: french-legislature
+    position: null
+    rights: public
+    perspective: [colonial]
+    shows: "articles I and II: slavery MAINTAINED, under the laws before 1789, in the colonies restored to France by the treaty of Amiens and in the colonies beyond the Cape of Good Hope"
+    does_not_show: "Guadeloupe, Guyane or Saint-Domingue, none of which it names; any restoration of slavery where the 1794 decree had been applied"
+
+  - id: src-haiti-declaration-dubois-garrigus
+    tier: A
+    kind: edited-documents
+    author: Jean-Jacques Dessalines, general in chief, and the generals of the native army (the text written by Louis Boisrond-Tonnerre, as the page's introduction says), translated by Laurent Dubois and John Garrigus
+    title: "The Haitian Declaration of Independence, 1 January 1804, in translation"
+    container: "Laurent Dubois and John D. Garrigus, Slave Revolution in the Caribbean 1789-1804: A Brief History with Documents, as the page credits it"
+    publisher: Duke University (Duke Today, Rediscovering Haiti's Declaration of Independence)
+    place: Durham, North Carolina
+    year: 1804
+    edition: "the page's text, 'a translation of the document by Laurent Dubois and John Garrigus as published in Slave Revolution in the Caribbean'"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://today.duke.edu/showcase/haitideclaration/declarationstext.html"}
+    access:
+      free_copy: "https://today.duke.edu/showcase/haitideclaration/declarationstext.html"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Rediscovering Haiti's Declaration of Independence | The Declaration's Text (in Translation)"
+    language: en
+    region_of_authorship: americas
+    producer: haitian-state
+    position: null
+    rights: copyright
+    perspective: [haitian]
+    translation: "published translation, Laurent Dubois and John Garrigus"
+    shows: "the declaration's own words on 14 years of struggle and on having 'dared to be free'"
+    does_not_show: "the French original (held in the haitian-revolution ledger's sources, not here); anything said in 1789 to 1799 in France"
+
+  # ----------------------------------------------------------- Tier A: the royalist and conservative record
+  - id: src-burke-1790
+    tier: A
+    kind: primary-document
+    author: Edmund Burke
+    title: "Reflections on the Revolution in France (1790), in The Works of the Right Honourable Edmund Burke, vol. III"
+    container: "The Works of the Right Honourable Edmund Burke, in twelve volumes, volume the third"
+    publisher: John C. Nimmo
+    place: London
+    year: 1790
+    edition: "the Nimmo edition of 1887 as Project Gutenberg's HTML prints it, with the edition's page numbers"
+    volume: "III"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.gutenberg.org/ebooks/15679"}
+    access:
+      free_copy: "https://www.gutenberg.org/cache/epub/15679/pg15679-images.html"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Burke's Writings and Speeches, Volume the Third | Project Gutenberg"
+    language: en
+    region_of_authorship: europe
+    producer: edmund-burke
+    position: null
+    rights: public
+    perspective: [royalist]
+    shows: "'the age of chivalry is gone'; society as a partnership 'between those who are living, those who are dead, and those who are to be born'; and 'By hating vices too much, they come to love men too little' (p. 458 of this edition, in the Reflections, not in the 1791 Letter)"
+    does_not_show: "a prediction that the Revolution would end in a general's coup: no held passage carries it (see the brief); the date of publication, which the extracts do not print (1 November 1790 is the YAML's date)"
+
+  # ----------------------------------------------------------- Tier B: historians and the counts
+  - id: src-greer-1935
+    tier: B
+    kind: monograph
+    author: Donald Greer
+    title: "The Incidence of the Terror during the French Revolution: A Statistical Interpretation"
+    container: null
+    publisher: Harvard University Press
+    place: Cambridge, Massachusetts
+    year: 1935
+    edition: "the University of Michigan copy digitized by Google, read page at a time in HathiTrust's text-only view; HathiTrust's rights statement: Public Domain, Google-digitized"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: "mdp.39015002601550", url: "https://hdl.handle.net/2027/mdp.39015002601550"}
+    access:
+      free_copy: "https://babel.hathitrust.org/cgi/pt?id=mdp.39015002601550"
+      verified_at: 2026-10-09
+      verified_by: repository-record
+      verified_title: "The incidence of the terror during the French Revolution; a statistical interpretation"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: public
+    perspective: [academic]
+    shows: "the census of death sentences (16,594, 'exclusive of persons condemned in absentia'); the guess of at least ten or twelve thousand executed without trial; the estimate of 35,000 to 40,000 deaths including prisons; Paris 2,639 (16%) and the provinces 13,955 (84%); the noyades as Lallié, Fleury, and Vélasque and Martin counted them"
+    does_not_show: "how many were guillotined as against shot or drowned (not on the pages held); a figure for the Vendée war as a whole"
+
+  - id: src-martin-2017
+    tier: B
+    kind: chapter
+    author: Jean-Clément Martin
+    title: "27. La « Terreur » coûte la vie à 500 000 personnes"
+    container: "La Terreur (collection Vérités et légendes), pp. 191 to 196, as Cairn's record and address give it"
+    publisher: Perrin
+    place: Paris
+    year: 2017
+    edition: "the chapter's opening as Cairn serves it to a reader without a subscription; ISBN 9782262067731"
+    volume: null
+    document_number: null
+    identifiers: {isbn: "9782262067731", doi: null, archive_org: null, hathitrust: null, url: "https://shs.cairn.info/la-terreur--9782262067731-page-191?lang=fr"}
+    access:
+      free_copy: "https://shs.cairn.info/la-terreur--9782262067731-page-191?lang=fr"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "27. La « Terreur » coûte la vie à 500 000 personnes | Cairn.info"
+    language: fr
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+    rights: copyright
+    perspective: [academic]
+    shows: "the history of the count: Prudhomme's 2 022 903 (1797), Berriat-Saint-Prix's 14 807, Greer's figures as Martin reads them, and the 35 000 to 40 000 range becoming a reference; the chapter title states the legend it examines, not Martin's own figure"
+    does_not_show: "the rest of the chapter (behind the subscription), including whatever figure Martin himself gives"
+
+  - id: src-rolland-boulestreau-2024
+    tier: B
+    kind: journal-article
+    author: Anne Rolland-Boulestreau
+    title: "1794, l'année des massacres en guerre de Vendée ?"
+    container: "Annales historiques de la Révolution française, no. 418 (2024/4), pp. 85 to 108"
+    publisher: Armand Colin
+    place: Paris
+    year: 2024
+    edition: "the article's notes as Cairn serves them to a reader without a subscription"
+    volume: "418"
+    document_number: null
+    identifiers: {isbn: null, doi: "10.3917/ahrf.418.0085", archive_org: null, hathitrust: null, url: "https://shs.cairn.info/revue-annales-historiques-de-la-revolution-francaise-2024-4-page-85?lang=fr&tab=resume"}
+    access:
+      free_copy: "https://shs.cairn.info/revue-annales-historiques-de-la-revolution-francaise-2024-4-page-85?lang=fr&tab=resume"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "1794, l’année des massacres en guerre de Vendée ? | Cairn.info"
+    language: fr
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+    rights: copyright
+    perspective: [academic, royalist]
+    shows: "note 85: the toll of the conflict still hard to put in figures; Hussenet's estimate of 170 000 dead at the least and 220 000 at the most, Blues and Whites together"
+    does_not_show: "Hussenet's own method (his book is not held); the article's body"
+
+  - id: src-biard-linton-2020
+    tier: B
+    kind: chapter
+    author: Michel Biard and Marisa Linton
+    title: "Chapitre 8. Quels bilans ?"
+    container: "Terreur (collection Mnémosya), pp. 161 to 183, as Cairn's record and address give it"
+    publisher: Armand Colin
+    place: Paris
+    year: 2020
+    edition: "the chapter's notes as Cairn serves them to a reader without a subscription; ISBN 9782200623517"
+    volume: null
+    document_number: null
+    identifiers: {isbn: "9782200623517", doi: null, archive_org: null, hathitrust: null, url: "https://shs.cairn.info/terreur--9782200623517-page-161?lang=fr"}
+    access:
+      free_copy: "https://shs.cairn.info/terreur--9782200623517-page-161?lang=fr"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Chapitre 8. Quels bilans ? | Cairn.info"
+    language: fr
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+    rights: copyright
+    perspective: [academic]
+    shows: "note 14: Hussenet's 'Quel bilan ?' (pp. 107 to 148 of his volume) and another number in it for republican losses, up to 50 000 men"
+    does_not_show: "the chapter's own totals (behind the subscription)"
+
+  - id: src-michelet-cocks
+    tier: B
+    kind: monograph
+    author: Jules Michelet, translated by Charles Cocks
+    title: "Historical View of the French Revolution, from its earliest indications to the flight of the King in 1791"
+    container: null
+    publisher: G. Bell and Sons
+    place: London
+    year: 1847
+    edition: "Cocks's translation in the Bell edition of 1888, Cornell University Library's copy, read from the Internet Archive scan; the French original is of 1847"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "cu31924024313474", hathitrust: null, url: "https://archive.org/details/cu31924024313474"}
+    access:
+      free_copy: "https://archive.org/download/cu31924024313474/cu31924024313474_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Historical view of the French Revolution, from its earliest indications to the flight of the King in 1791"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+    rights: public
+    perspective: [republican]
+    translation: "published translation, Charles Cocks"
+    shows: "'The Revolution is nothing but the tardy reaction of justice against the government of favour and the religion of grace.' (Introduction, p. 23 of this edition)"
+    does_not_show: "Michelet's French; the YAML's wording ('belated ... favoritism'), which this translation does not carry"
+
+  - id: src-tocqueville-bonner-1856
+    tier: B
+    kind: monograph
+    author: Alexis de Tocqueville, translated by John Bonner
+    title: "The Old Regime and the Revolution"
+    container: null
+    publisher: Harper and Brothers
+    place: New York
+    year: 1856
+    edition: "Bonner's translation, the Library of Congress copy, read from the Internet Archive scan"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "oldregimerevolut00tocq", hathitrust: null, url: "https://archive.org/details/oldregimerevolut00tocq"}
+    access:
+      free_copy: "https://archive.org/download/oldregimerevolut00tocq/oldregimerevolut00tocq_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "The Old Regime and the Revolution"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+    rights: public
+    perspective: [royalist, academic]
+    translation: "published translation, John Bonner (1856)"
+    shows: "Book II, chapter II: administrative centralization was not a conquest of the Revolution but a feature of the old regime, the only one that outlived it"
+    does_not_show: "any judgement on the Terror or on Napoleon in the passage held"
+
+# Each producer's figure, its method and its population, as the held extracts give them.
+# NOT averaged, NOT reconciled, and no Void estimate. Read with the extract named. Figures
+# held only at second hand say so.
+death_toll_ranges:
+  - producer: Greer 1935 (src-greer-1935.p26)
+    figure: "16,594; 'if every death sentence of the period were known it is extremely doubtful that the total would reach 17,000'"
+    counts: "death sentences of the period (the 'obituary census of the Terror'), exclusive of persons condemned in absentia and a few reprieved or escaped; ALL courts and commissions, not the Paris Revolutionary Tribunal alone, and not only by guillotine"
+    method: "lists of victims by department or region, from court records, as monographs print them"
+  - producer: Greer 1935 (src-greer-1935.p38)
+    figure: "Paris 2,639 (16%); the provinces 13,955 (84%); the Loire-Inférieure 3,548 (21%)"
+    counts: "the same death sentences, by where they were rendered"
+    method: "the census of p. 26, distributed (his Table I)"
+  - producer: Greer 1935 (src-greer-1935.p37)
+    figure: "'at least ten or twelve thousand persons executed without trial' (a guess, his word); 'between thirty-five and forty thousand persons' in all"
+    counts: "all who 'lost their lives as a consequence of terrorism', including those who died in the prisons and those killed without any form of trial"
+    method: "'if the figures we have cited may be taken as a rough index'; he states 'the impossibility of determining with any degree of exactitude the total death roll'"
+  - producer: Lallié, Fleury, and Vélasque and G. Martin, as Greer reports them (src-greer-1935.p35, p36)
+    figure: "noyades of Nantes: 4,860 (Lallié); 2,800 (Fleury); 2,000 or less (Vélasque and Martin); against a 'tale of ten, twenty, or thirty thousand'"
+    counts: "the drowned of Nantes"
+    method: "at second hand; Greer accepts the last 'based on a careful analysis of the existing evidence'"
+  - producer: Prudhomme 1797, as Jean-Clément Martin reports him (src-martin-2017.para1)
+    figure: "2 022 903 dead 'du fait de la Révolution', of whom 120 000 in the Vendée, 184 000 in the colonies, 800 000 in the armies, and 18 613 'toutes causes confondues'"
+    counts: "the whole Revolution, as Prudhomme framed it"
+    method: "at second hand; Martin: figures 'avancés sans preuves', discredited by his partisan positions"
+  - producer: Berriat-Saint-Prix (nineteenth century), as Martin reports him (src-martin-2017.para2a)
+    figure: "14 807"
+    counts: "condemned to death judicially"
+    method: "at second hand; not described"
+  - producer: Greer as Martin reads him (src-martin-2017.para2a, para2b)
+    figure: "16 594 tried and executed; 10 000 to 12 000 deaths in prison; a similar number killed without trial; 35 000 to 40 000 in all"
+    counts: "as Martin states them"
+    method: "Martin's summary. Greer's own p. 37 gives 'ten or twelve thousand' for those executed WITHOUT TRIAL and gives no separate prison figure on the pages held. The two readings differ: say Greer's, from Greer"
+  - producer: Hussenet 2007, as Rolland-Boulestreau reports him (src-rolland-boulestreau-2024.fn85)
+    figure: "170 000 at the least, 220 000 at the most"
+    counts: "the Vendée war, 'Bleus et Blancs confondus' (republicans and insurgents together)"
+    method: "at second hand; Hussenet's 'Quel bilan ?' is not held"
+  - producer: Hussenet 2007, as Biard and Linton report him (src-biard-linton-2020.fn14)
+    figure: "up to a maximum of 50 000 men"
+    counts: "republican losses in the Vendée war"
+    method: "at second hand"
+  - producer: the event YAML and the live script (not a held source)
+    figure: "'an estimated 16,594 people by guillotine' by 'the Revolutionary Tribunal'; '~40,000 executed'; '170,000-250,000 in the Vendee'; '600,000-1,000,000' for the whole period"
+    counts: "as written"
+    method: "no held source carries the tribunal-and-guillotine framing (Greer's 16,594 is all courts, and Paris is 2,639), the upper 250,000 for the Vendée, or the 600,000 to 1,000,000"
+
+positions: []
+contested: []
+exhibits: []
+analyses: []
+
+# ------------------------------------------------------------------ gaps
+# RULE B: a source the free record could not reach, or a claim it could not carry, is
+# published here by name, with what was tried.
+gaps:
+  - entry: src-ddhc-1789-en
+    what: "Article 1 of the Declaration as the event YAML quotes it (primary_source_excerpts) and the live script reads it in the document voice: 'Men are born and remain free and equal in rights. Social distinctions may be based only upon general usefulness.'"
+    tried: ["https://www.conseil-constitutionnel.fr/en/declaration-of-human-and-civic-rights-of-26-august-1789", "https://avalon.law.yale.edu/18th_century/rightsof.asp", "https://revolution.chnm.org/d/295", "https://oll.libertyfund.org/quotes/liberty-in-the-french-declaration-of-the-rights-of-man-and-of-the-citizen-1789"]
+    status: "No translation read carries the YAML's second sentence. The Conseil constitutionnel's English: 'Social distinctions may be based only on considerations of the common good.' Avalon (Yale): 'Social distinctions may be founded only upon the general good.' Hunt (1996), on the Liberty, Equality, Fraternity site: 'Social distinctions may be based only on common utility.' The Liberty Fund page answered HTTP 403. The French is held whole (src-ddhc-1789.art1: 'Les distinctions sociales ne peuvent être fondées que sur l'utilité commune'). Only the first sentence is held in English, because any English extract of the second sentence would fail the YAML's divergent excerpt under tests/test_history_quote_ledger.py, and this task may not alter the YAML. The YAML excerpt is therefore unpinned and withdrawn; the first sentence is appended as its own excerpt. Pin the whole article once the YAML excerpt is corrected to a held translation"
+  - entry: src-robespierre-17940205
+    what: "Robespierre's sentence on virtue and terror as the event YAML (primary_source_excerpts, and the Republican narrative) and the live script give it: 'If the basis of popular government in peacetime is virtue, the basis of popular government during a revolution is both virtue and terror.'"
+    tried: ["https://revolution.chnm.org/d/413", "https://sourcebooks.fordham.edu/mod/robespierre-terror.asp", "https://sites.pitt.edu/~syd/terror.html"]
+    status: "No translation read carries the YAML's wording. Bienvenu, on the Liberty, Equality, Fraternity site: 'If the mainspring of popular government in peacetime is virtue, amid revolution it is at the same time [both] virtue and terror: virtue, without which terror is fatal; terror, without which virtue is impotent.' The Internet Modern History Sourcebook (no translator named): 'If the spring of popular government in time of peace is virtue, the springs of popular government in revolution are at once virtue and terror: virtue, without which terror is fatal; terror, without which virtue is powerless.' The Pittsburgh page, which names its source as Raymond P. Stearns (ed.), Pageant of Europe (1947), pp. 404 to 405, and names no translator: 'If the basis of popular government in time of peace is virtue, the basis of popular government in time of revolution is both virtue and terror: virtue without terror is murderous, terror without which virtue is powerless.' That is the nearest to the YAML ('in peacetime', 'during a revolution') but not the same words. The YAML's Republican narrative adds 'virtue, without which terror is destructive; terror, without which virtue is impotent', which no translation read carries. Note that the three translations disagree on the clause the YAML omits: 'fatal' (Bienvenu, the Sourcebook), 'murderous' (Stearns); the French is 'funeste'. The French is held (src-robespierre-17940205.secterreur); no English of the sentence is held, for the reason given under src-ddhc-1789-en"
+  - entry: src-robespierre-17921203
+    what: "'It is with regret that I pronounce the fatal truth: Louis must die so that the country may live.' (event YAML primary_source_excerpts, dated December 3, 1792; read by the live script)"
+    tried: ["https://archive.org/download/opiniondemaximil00robe_1/opiniondemaximil00robe_1_djvu.txt", "https://revolution.chnm.org/items/show/526"]
+    status: "The printed Opinion reads 'Je prononce à regret cette fatale vérité.... mais Louis doit mourir, parce qu'il faut que la patrie vive': 'because the country must live', not 'so that the country may live', and the print carries no day. The English page on the Liberty, Equality, Fraternity site was found by search and deliberately not fetched or held, for the reason given under src-ddhc-1789-en. The YAML excerpt is unpinned and withdrawn"
+  - what: "Madame Roland's words at the scaffold, 'O liberty! What crimes are committed in thy name!' (event YAML primary_source_excerpts, dated November 8, 1793; read by the live script)"
+    tried: []
+    status: "No document carrying the words was sought or found; they are reported speech by nature, and the YAML gives no source. Unverified and withdrawn. The live script's framing ('What Madame Roland is recorded as saying, looking at a statue of Liberty') is not carried either"
+  - what: "Louis XVI's words on the scaffold ('I die innocent ...'), the event YAML's Royalist notable quote"
+    tried: []
+    status: "not sought; no document held. Unverified"
+  - what: "Toussaint Louverture's 'tree of liberty' words on his arrest, the event YAML's Haitian notable quote"
+    tried: []
+    status: "not held in this ledger. The haitian-revolution ledger holds French texts that carry a form of the words (its extracts of Lacroix 1819 and Saint-Rémy 1853), but the quote gate is per event, so the quotation is withdrawn here. Not re-fetched for this event"
+  - what: "Napoleon's 'The liberty of the blacks is an insult to the dignity of Europe' (event YAML Colonial notable quote, cited there to Dubois, Avengers of the New World)"
+    tried: ["https://archive.org/metadata/avengersofnewwor0000dubo"]
+    status: "the book is a controlled lending copy; the YAML itself gives the words at second hand. Unverified and withdrawn"
+  - what: "Antoine Barnave's 'The colonies are not part of France. They are possessions.' (event YAML Colonial narrative)"
+    tried: []
+    status: "not sought; no document held. Do not speak it"
+  - what: "C.L.R. James, The Black Jacobins (1938), and its sentence on the slaves of San Domingo and the revolutionary slogans (event YAML notable quotes, twice)"
+    tried: ["https://archive.org/metadata/blackjacobinstou0000jame"]
+    status: "copyrighted; the Internet Archive item is a controlled lending copy (access-restricted-item: true). Unverified and withdrawn"
+  - what: "François Furet, Interpreting the French Revolution (1978/1981), and 'The French Revolution is over.' (event YAML notable quote)"
+    tried: ["https://archive.org/metadata/interpretingfren0000fure"]
+    status: "copyrighted; controlled lending copy. Unverified and withdrawn. Furet's position is the YAML's paraphrase only"
+  - what: "Simon Schama, Citizens (1989); William Doyle, The French Revolution: A Very Short Introduction (2001); Laurent Dubois, Avengers of the New World and A Colony of Citizens (2004); Joan Landes, Women and the Public Sphere (1988); the Stanford edition of Burke's Reflections; the McGill-Queen's translation of de Maistre's Considerations on France"
+    tried: ["https://archive.org/metadata/citizenschronicl0000simo", "https://archive.org/metadata/frenchrevolution00doyl_0", "https://archive.org/metadata/avengersofnewwor00", "https://archive.org/metadata/colonyofcitizens0000dubo", "https://archive.org/metadata/womenpublicspher0000land", "https://archive.org/metadata/reflectionsonrev0000burk_v5d4", "https://archive.org/metadata/considerationson0000mais"]
+    status: "every Internet Archive item the event YAML names for these is a controlled lending copy (access-restricted-item: true) that this container cannot open. Not cited. Burke is held instead from the Nimmo edition (src-burke-1790); de Maistre is not held"
+  - what: "R. R. Palmer, The Age of the Democratic Revolution (1959 to 1964); Georges Lefebvre; Albert Soboul; Reynald Secher"
+    tried: []
+    status: "not sought; no free copy known. The YAML's figures and characterisations from them are not held. Secher's 'genocide' classification of the Vendée is the YAML's statement only"
+  - what: "Jacques Hussenet (dir.), « Détruisez la Vendée ! » (2007), the source of the 170 000 to 220 000 Vendée estimate"
+    tried: ["https://shs.cairn.info/visages-de-la-terreur--9782200600129-page-155?lang=fr"]
+    status: "not read; held only at second hand in two notes (Rolland-Boulestreau 2024, note 85; Biard and Linton 2020, note 14). The Cairn chapter 'Dénombrer les victimes de la Terreur. La Vendée et au-delà' (Visages de la Terreur, 2014) serves its notes but not its body to a reader without a subscription; nothing was taken from it"
+  - entry: src-greer-1935
+    what: "Greer's tables (Tables I to III) and his breakdown by method of execution"
+    tried: ["https://babel.hathitrust.org/cgi/ssd?id=mdp.39015002601550"]
+    status: "the book is public domain at HathiTrust, but its text-only view sits behind a browser check that refuses scripted requests (HTTP 403); the pages were read in a browser session page at a time and saved by script. The tables were not extracted; only the prose pages named"
+  - what: "The live script's claims on the Bastille (seven prisoners, four forgers, two insane, 82 retired soldiers and 32 Swiss guards, four hours, the governor's head on a pike, demolition planned on grounds of cost, stones sold as souvenirs), the 88 per cent of wages on bread, the debt of four and a half billion livres, the 1614 date, the 98 per cent, the vote of 387 to 334, the 150,000 emigrés, the 750,000 of the levée en masse, 500,000 enslaved, 40% of sugar and 60% of coffee, Delgrès and 300 at Matouba"
+    tried: []
+    status: "none is carried by any document held in this ledger; each is the event YAML's statement only. The brief lists them as not to be said as fact until held"
+
+# No sound recording exists of any event of 1789 to 1799; nothing to admit.
+recordings: []

@@ -1,0 +1,8 @@
+source: src-trck-2009
+locator: secbombing
+url: https://truthcommissions.humanities.mcmaster.ca/wp-content/uploads/2021/02/South-Korea_TRC_Report-of-Activities.pdf
+read: 2026-10-09
+note: the same report, on U.S. aerial bombing
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Even if massacres related to U.S. Forces transpired in the course of legitimate military operations, it is difficult to regard them as mere wartime usual accidents. The fact that aerial bombings continued to produce civilian deaths suggests that the U.S. Forces did not properly plan for the operations. # # It is evident that in the course of planning for the aerial bombing operations, the U.S. Air Force sometimes failed to take into consideration the innocent civilians in the targeted areas.

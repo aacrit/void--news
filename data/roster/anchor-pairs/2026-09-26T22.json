@@ -1,0 +1,74 @@
+[
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 21,
+  "a": {
+   "title": "'A once-in-a-lifetime event': Faithful and curious flock to Pope Leo XIV's Mass in Paris",
+   "summary": "Some 700,000 people are estimated to have packed the Champs-Élysées and Place de la Concorde in Paris on Saturday for Pope Leo XIV's open-air Mass, the high point of his first official visit to France. Scouts, nuns, families and curious onlookers told FRANCE 24 why they came, from quiet prayer to hopes of spotting Canadian singer Céline Dion.",
+   "link": "https://www.france24.com/en/france/20260926-a-once-in-a-lifetime-event-faithful-and-curious-flock-to-pope-leo-xiv-s-mass-in-paris",
+   "published": "Sat, 26 Sep 2026 16:24:04 GMT"
+  },
+  "b": {
+   "title": "700 000 fidèles réunis pour la messe géante de Léon XIV à Paris",
+   "summary": "Le pape Léon XIV célèbre une messe solennelle en plein air place de la Concorde, devant une foule exceptionnelle déployée le long des Champs-Élysées jusqu’à l’avenue de la Grande-Armée. Selon le Vatican, près de 700 000 fidèles suivent cette cérémonie, point d’orgue de la visite du pape à Paris.",
+   "link": "https://www.france24.com/fr/vid%C3%A9o/20260926-700-000-fid%C3%A8les-r%C3%A9unis-pour-la-messe-g%C3%A9ante-de-l%C3%A9on-xiv-%C3%A0-paris",
+   "published": "Sat, 26 Sep 2026 14:31:20 GMT"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 24,
+  "a": {
+   "title": "Europe Today: Trump's state dinner for Xi Jinping, Pope Leo's first visit to France",
+   "summary": "Trump and Xi Jinping's high-stakes Washington summit was closely watched in Europe, as Pope Leo XIV arrives in France for the first time. Also on the show: an interview with Danish minister Martin Lidegaard on the US-Denmark deal on Greenland and an update on the Ceuta migration crisis.",
+   "link": "https://www.euronews.com/2026/09/25/europe-today-trumps-state-dinner-for-xi-jinping-pope-leos-first-visit-to-france",
+   "published": "Fri, 25 Sep 2026 08:02:11 +0200"
+  },
+  "b": {
+   "title": "Europe Today : dîner d'État de Trump pour Xi Jinping, première visite du pape Léon XIV en France",
+   "summary": "Sommet Trump-Xi à Washington suivi en Europe, arrivée du pape Léon XIV en France, entretien sur l'accord États-Unis-Danemark sur le Groenland et crise migratoire à Ceuta.",
+   "link": "https://fr.euronews.com/2026/09/25/europe-today-diner-detat-de-trump-pour-xi-jinping-premiere-visite-du-pape-leon-xiv-en-fran",
+   "published": "Fri, 25 Sep 2026 08:03:43 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 22,
+  "a": {
+   "title": "South Africa fires up world’s biggest braai in bid for Guinness record",
+   "summary": "South Africa brought thousands of people together at Pretoria’s Loftus Versfeld Stadium on 24 September 2026 in a bid to reclaim the Guinness World Records title for the most people barbecuing simultaneously.",
+   "link": "https://www.euronews.com/video/2026/09/25/south-africa-fires-up-worlds-biggest-braai-in-bid-for-guinness-record",
+   "published": "Fri, 25 Sep 2026 12:56:38 +0200"
+  },
+  "b": {
+   "title": "L'Afrique du Sud tente le record Guinness du plus grand barbecue du monde",
+   "summary": "Des milliers de Sud-Africains se sont retrouvés au stade Loftus Versfeld de Pretoria, le 24 septembre 2026, pour tenter de reconquérir le record Guinness du plus grand nombre de personnes faisant un barbecue en même temps.",
+   "link": "https://fr.euronews.com/video/2026/09/25/lafrique-du-sud-allume-le-plus-grand-braai-du-monde-pour-un-record-guinness",
+   "published": "Fri, 25 Sep 2026 12:57:43 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 20,
+  "a": {
+   "title": "Ukraine: Russian drone barrage on Kyiv kills teenage boy and wounds 20 residents",
+   "summary": "A 14-year-old boy was killed after a Russian drone tore into a 16-storey apartment block in Kyiv’s Pecherskyi district overnight on Friday 25 September 2026.",
+   "link": "https://www.euronews.com/video/2026/09/25/ukraine-russian-drone-barrage-on-kyiv-kills-teenage-boy-and-wounds-20-residents",
+   "published": "Fri, 25 Sep 2026 15:50:33 +0200"
+  },
+  "b": {
+   "title": "Ukraine : tir nourri de drones sur Kyiv, un jeune de 14 ans décédé",
+   "summary": "Un garçon de 14 ans a été tué dans la nuit du vendredi 25 septembre 2026, lorsqu’un drone russe a frappé un immeuble de 16 étages dans le quartier de Pecherskyi, à Kyiv.",
+   "link": "https://fr.euronews.com/video/2026/09/25/ukraine-un-tir-nourri-de-drones-russes-sur-kiev-tue-un-adolescent-et-fait-20-blesses",
+   "published": "Fri, 25 Sep 2026 15:52:02 +0200"
+  }
+ }
+]

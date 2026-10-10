@@ -1,0 +1,52 @@
+{
+ "version": "1.2.0",
+ "title": "On Air · Saturday 10 October 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Headlines",
+   "endTime": 34.021
+  },
+  {
+   "startTime": 34.021,
+   "title": "TRUMP APPOINTS PRESS SECRETARY",
+   "endTime": 98.36
+  },
+  {
+   "startTime": 98.36,
+   "title": "BLAST ROCKS RIYADH AIRPORT",
+   "endTime": 182.624
+  },
+  {
+   "startTime": 182.624,
+   "title": "CORNELL SWATTING INCIDENT",
+   "endTime": 250.952
+  },
+  {
+   "startTime": 250.952,
+   "title": "NORTHERN IRELAND MARCH BANNED",
+   "endTime": 334.128
+  },
+  {
+   "startTime": 334.128,
+   "title": "Also today",
+   "endTime": 406.62
+  },
+  {
+   "startTime": 406.62,
+   "title": "E-U CHINA TRADE DEAL",
+   "endTime": 450.885
+  },
+  {
+   "startTime": 450.885,
+   "title": "Opinion",
+   "endTime": 642.526
+  },
+  {
+   "startTime": 642.526,
+   "endTime": 655.626,
+   "title": "Also from Void"
+  }
+ ]
+}

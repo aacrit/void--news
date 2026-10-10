@@ -1,0 +1,8 @@
+source: src-cwihp-bulletin-5
+locator: p80
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf
+read: 2026-10-04
+note: the PDF's text layer, line breaks folded to spaces; where the layer breaks a word at a line end its hyphen is kept as it prints it ('docu- ment'); nothing is corrected
+note: printed page 80: Dobrynin's cable to the Soviet Foreign Ministry of 27 October 1962, in the Bulletin's translation, Robert Kennedy's words on Turkey as Dobrynin reported them; the extract opens at the second of his quoted answers
+
+“The greatest difficulty for the president is the public discussion of the issue of Turkey. Formally the deployment of missile bases in Turkey was done by a special decision of the NATO Council. To announce now a unilateral decision by the presi- dent of the USA to withdraw missile bases from Turkey—this would damage the entire structure of NATO and the US position as the leader of NATO, where, as the Soviet government knows very well, there are many arguments. In short, if such a decision were announced now it would seriously tear apart NATO.” “However, President Kennedy is ready to come to agree on that question with N.S. Khrushchev, too. I think that in order to with- draw these bases from Turkey,” R. Kennedy said, “we need 4-5 months.

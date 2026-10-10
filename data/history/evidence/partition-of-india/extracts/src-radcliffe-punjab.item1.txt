@@ -1,0 +1,7 @@
+source: src-radcliffe-punjab
+locator: item1
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: item n is paragraph n of Annexure A, the schedule of the Punjab award; paragraph 1 is unnumbered in the print
+
+The boundary between the East and West Punjab shall commence on the north at the point where the west branch of the Ujh river enters the Punjab Province from the State of Kashmir. The boundary shall follow the line of that river down the western boundary of the Pathankot Tahsil to the point where the Pathankot, Shakargarh and Gurdaspur tahsils meet. The tahsil boundary and not the actual course of the Ujh river shall constitute the boundary between the East and West Punjab.

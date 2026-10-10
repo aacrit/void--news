@@ -1,0 +1,7 @@
+source: src-verite-1916
+locator: p14
+url: https://archive.org/download/vritsurlemou00hlebuoft/vritsurlemou00hlebuoft_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer; the item binds the 1916 pamphlet with two Russian officers' notes of 1919, and only the pamphlet is cited; hyphens rejoined, spacing collapsed
+
+La répétition de pareils faits dans toutes les parties de l'Empire et la nécessité primordiale d'assurer la tranquillité intérieure et la défense extérieure du Pays ont rendu indispensable l'éloignement des arméniens des endroits où leur présence était considérée comme nuisible; c'est ce qui nécessita leur transfert en des localités plus sûres et hors de l'influence étrangère. Pendant l'application de cette mesure, les arméniens furent parfois victimes de regrettables abus et violences; mais si déplorables qu'ils soient ces faits étaient inévitables à cause de l'indignation profonde des populations musulmanes contre les arméniens qui travaillaient par la révolte et la trahison à mettre en danger l'existence d'un pays dont ils étaient les nationaux.

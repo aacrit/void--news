@@ -1,0 +1,7 @@
+source: src-nsa-dobbs-eyeball-2008
+locator: secships
+url: https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/dobbs/
+read: 2026-10-07
+note: the third sentence of the same paragraph; 'It' is Dobbs's book, which the sentence before 'plots the positions of Soviet and American ships on October 24, 1962'. That sentence also paraphrases the Secretary of State and is not held here: the page is not a source for his words, and how its wording differs from the event YAML's is set out in ledger.yaml under disagreements, item 5
+
+It shows that the missile-carrying ships were already headed back to the Soviet Union at this point, and were at least 500 nautical miles from the closest American warship.

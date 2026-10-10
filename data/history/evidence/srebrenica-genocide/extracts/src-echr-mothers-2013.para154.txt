@@ -1,0 +1,7 @@
+source: src-echr-mothers-2013
+locator: para154
+url: https://hudoc.echr.coe.int/app/conversion/pdf/?library=ECHR&id=001-122255&filename=001-122255.pdf
+read: 2026-09-24
+note: the paragraph crosses a page; the running header between the two spans is omitted
+
+154. The Court finds that since operations established by United Nations Security Council resolutions under Chapter VII of the United Nations Charter are fundamental to the mission of the United Nations to secure international peace and security, the Convention cannot be interpreted in a manner which would subject the acts and omissions of the Security Council to domestic jurisdiction without the accord of the United Nations.

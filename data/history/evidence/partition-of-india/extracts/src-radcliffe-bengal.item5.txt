@@ -1,0 +1,7 @@
+source: src-radcliffe-bengal
+locator: item5
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: item n is paragraph n of Annexure A, the schedule of the Bengal award
+
+5. The line shall then turn south-east down the River Ganges along the boundary between the Districts of Malda and Murshidabad; Rajshahi and Murshidabad; Rajshahi and Nadia; to the point in the north-western corner of the District of Nadia where the channel of the River Mathabanga takes off from the River Ganges^ The district boundaries, and not the actual course of the River Ganges, shall constitute the boundary between East and West Bengal.

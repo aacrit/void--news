@@ -1,0 +1,662 @@
+[
+ {
+  "name": "Addis Fortune",
+  "id": "addis-fortune",
+  "was": "https://news.google.com/rss/search?q=site:addisfortune.net+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://addisfortune.news/feed",
+  "evidence": {
+   "items": 12,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "addisfortune.net",
+   "title": "(Addis) Fortune &#8211; The Largest English Weekly in Ethiopia!",
+   "sample": "https://addisfortune.news/wegagen-swells-balance-sheet-promises"
+  },
+  "why_held": "0 of 12 links on addisfortune.net: a feed whose items point elsewhere is what we are migrating away from"
+ },
+ {
+  "name": "The Advocate (Baton Rouge)",
+  "id": "baton-rouge-advocate",
+  "was": "https://news.google.com/rss/search?q=site:theadvocate.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.theadvocate.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "evidence": {
+   "items": 0,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "theadvocate.com",
+   "title": "",
+   "sample": null
+  },
+  "why_held": "feed status 429"
+ },
+ {
+  "name": "Bhutan Broadcasting Service",
+  "id": "bbs-bhutan",
+  "was": "https://news.google.com/rss/search?q=site:bbs.bt+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.bbs.bt/feed/",
+  "evidence": {
+   "items": 7,
+   "on_expected": 7,
+   "articles": 7,
+   "expected_domain": "bbs.bt",
+   "title": "BBSCL",
+   "sample": "https://www.bbs.bt/246708/"
+  },
+  "why_held": "only 7 items"
+ },
+ {
+  "name": "BOOM",
+  "id": "boom-factcheck",
+  "was": "https://news.google.com/rss/search?q=site:boomlive.in+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
+  "now": "https://www.boomlive.in/google_feeds.xml",
+  "evidence": {
+   "items": 4,
+   "on_expected": 4,
+   "articles": 4,
+   "expected_domain": "boomlive.in",
+   "title": "BOOM Fact Check: Debunking Misinformation and Fake news",
+   "sample": "https://www.boomlive.in/fact-check/old-video-of-meghalaya-content-creator-woman-falsely-shared-as-bihar-molestation-victim-32253"
+  },
+  "why_held": "only 4 items"
+ },
+ {
+  "name": "Botswana Guardian",
+  "id": "botswana-guardian",
+  "was": "https://news.google.com/rss/search?q=site:botswanaguardian.co.bw+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://bettingbotswana.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "co.bw",
+   "title": "Betting Botswana",
+   "sample": "https://bettingbotswana.com/maldives-vs-lebanon-01-10-2026/"
+  },
+  "why_held": "0 of 10 links on co.bw: a feed whose items point elsewhere is what we are migrating away from"
+ },
+ {
+  "name": "Caribbean Media Corporation (CMC)",
+  "id": "caribbean-media-corp",
+  "was": "https://news.google.com/rss/search?q=site:cmccaribbean.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.cmccaribbean.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "cmccaribbean.com",
+   "title": "The Caribbean Media Corporation",
+   "sample": "https://www.cmccaribbean.com/press-release/request-for-proposals/"
+  },
+  "why_held": "newest item is 23.1 days old: a feed that stopped is not a daily feed"
+ },
+ {
+  "name": "Wyoming Tribune Eagle",
+  "id": "cheyenne-tribune-eagle",
+  "was": "https://news.google.com/rss/search?q=site:wyomingnews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "http://www.wyomingnews.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "evidence": {
+   "items": 0,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "wyomingnews.com",
+   "title": "",
+   "sample": null
+  },
+  "why_held": "feed status 429"
+ },
+ {
+  "name": "China Dialogue",
+  "id": "china-dialogue",
+  "was": "https://news.google.com/rss/search?q=site:chinadialogue.net+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://dialogue.earth/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "chinadialogue.net",
+   "title": "Dialogue Earth",
+   "sample": "https://dialogue.earth/en/climate/nepal-disaster-is-a-warning-for-perus-glacier-defences/"
+  },
+  "why_held": "0 of 10 links on chinadialogue.net: a feed whose items point elsewhere is what we are migrating away from"
+ },
+ {
+  "name": "ColomboPage",
+  "id": "colombo-page",
+  "was": "https://news.google.com/rss/search?q=site:colombopage.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://colombopage.com/feed/",
+  "evidence": {
+   "items": 9,
+   "on_expected": 9,
+   "articles": 9,
+   "expected_domain": "colombopage.com",
+   "title": "เว็บแทงบอล UFABET",
+   "sample": "https://colombopage.com/%e0%b8%a3%e0%b8%b2%e0%b8%84%e0%b8%b2%e0%b8%9a%e0%b8%ad%e0%b8%a5/"
+  },
+  "why_held": "only 9 items"
+ },
+ {
+  "name": "Competitive Enterprise Institute",
+  "id": "competitive-enterprise-institute",
+  "was": "https://news.google.com/rss/search?q=site:cei.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://cei.org/feed/",
+  "evidence": {
+   "items": 4,
+   "on_expected": 4,
+   "articles": 4,
+   "expected_domain": "cei.org",
+   "title": "Competitive Enterprise Institute",
+   "sample": "https://cei.org/2026/06/11/aicoas-heavy-handed-approach-would-harm-consumers-stifle-innovation-and-degrade-security-and-privacy/"
+  },
+  "why_held": "only 4 items"
+ },
+ {
+  "name": "Down To Earth",
+  "id": "down-to-earth",
+  "was": "https://news.google.com/rss/search?q=site:downtoearth.org.in+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.downtoearth.org.in/stories.rss",
+  "evidence": {
+   "items": 0,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "downtoearth.org.in",
+   "title": "downtoearth",
+   "sample": null
+  },
+  "why_held": "only 0 items"
+ },
+ {
+  "name": "Ecuador Times",
+  "id": "ecuador-times",
+  "was": "https://news.google.com/rss/search?q=site:ecuadortimes.net+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.ecuadortimes.net/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "ecuadortimes.net",
+   "title": "EcuadorTimes.net | Breaking News, Ecuador News, World, Sports, Entertainment",
+   "sample": "https://www.ecuadortimes.net/cristian-espinosa-was-appointed-ambassador-of-ecuador-to-the-united-states/"
+  },
+  "why_held": "newest item is 819.8 days old: a feed that stopped is not a daily feed"
+ },
+ {
+  "name": "Education Dive",
+  "id": "education-dive",
+  "was": "https://news.google.com/rss/search?q=site:educationdive.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.highereddive.com/feeds/news/?referrer_site=www.educationdive.com",
+  "evidence": {
+   "items": 10,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "educationdive.com",
+   "title": "Higher Ed Dive - Latest News",
+   "sample": "https://www.highereddive.com/news/university-of-minnesota-eyes-225m-in-budget-cuts/831413/"
+  },
+  "why_held": "0 of 10 links on educationdive.com: a feed whose items point elsewhere is what we are migrating away from"
+ },
+ {
+  "name": "New Era (Namibia)",
+  "id": "eland-new-era",
+  "was": "https://news.google.com/rss/search?q=site:neweralive.na+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://neweralive.na/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "neweralive.na",
+   "title": "New Era",
+   "sample": "https://neweralive.na/watch-agriculture-minister-inge-zaamwani-has-expressed-concern-over-the-declared-outbreak-of-fmd/"
+  },
+  "why_held": "channel title does not name the outlet: 'New Era'"
+ },
+ {
+  "name": "Environmental Health News",
+  "id": "environmental-health-news",
+  "was": "https://news.google.com/rss/search?q=site:ehn.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.ehn.org/feeds/feed.rss",
+  "evidence": {
+   "items": 30,
+   "on_expected": 1,
+   "articles": 1,
+   "expected_domain": "ehn.org",
+   "title": "EHN",
+   "sample": "https://www.ehn.org/power-line-emf-childhood-cancer"
+  },
+  "why_held": "1 of 30 links on ehn.org: a feed whose items point elsewhere is what we are migrating away from"
+ },
+ {
+  "name": "Fierce Pharma",
+  "id": "fiercepharma",
+  "was": "https://news.google.com/rss/search?q=site:fiercepharma.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.fiercepharma.com/rss/Fierce%20Pharma%20Homepage/xml",
+  "evidence": {
+   "items": 2,
+   "on_expected": 2,
+   "articles": 2,
+   "expected_domain": "fiercepharma.com",
+   "title": "Fierce Pharma - Fierce Pharma Homepage",
+   "sample": "https://www.fiercepharma.com/sponsored/what-world-s-biggest-biologics-production-plant-means-for-cdmo-client-satisfaction"
+  },
+  "why_held": "only 2 items"
+ },
+ {
+  "name": "The Grand Rapids Press",
+  "id": "grand-rapids-press",
+  "was": "https://news.google.com/rss/search?q=site:mlive.com/grand-rapids+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.mlive.com/arc/outboundfeeds/rss/",
+  "evidence": {
+   "items": 50,
+   "on_expected": 50,
+   "articles": 50,
+   "expected_domain": "mlive.com",
+   "title": "mlive.com",
+   "sample": "https://www.mlive.com/news/2026/09/man-arrested-for-driving-intoxicated-after-3-passengers-seriously-injured-in-crash.html"
+  },
+  "why_held": "channel title does not name the outlet: 'mlive.com'"
+ },
+ {
+  "name": "IndiaSpend",
+  "id": "india-spend",
+  "was": "https://news.google.com/rss/search?q=site:indiaspend.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.isignal.in/google_feeds.xml",
+  "evidence": {
+   "items": 4,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "indiaspend.com",
+   "title": "ISignal: India's Data Desk",
+   "sample": "https://www.isignal.in/agriculture/why-diverting-maize-for-ethanol-is-affecting-poultry-farmers-989946"
+  },
+  "why_held": "only 4 items"
+ },
+ {
+  "name": "The Institute for Faith & Freedom",
+  "id": "institute-faith-freedom",
+  "was": "https://news.google.com/rss/search?q=site:faithandfreedom.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.faithandfreedom.com/feed/",
+  "evidence": {
+   "items": 5,
+   "on_expected": 5,
+   "articles": 5,
+   "expected_domain": "faithandfreedom.com",
+   "title": "The Institute for Faith and Freedom",
+   "sample": "https://www.faithandfreedom.com/author-qa-all-in-for-jesus-with-dr-gary-scott-smith-72/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=author-qa-all-in-for-jesus-with-dr-gary-scott-smith-72"
+  },
+  "why_held": "only 5 items"
+ },
+ {
+  "name": "The John Solomon Reports",
+  "id": "just-the-news-spotlight",
+  "was": "https://news.google.com/rss/search?q=site:justthenews.com/john-solomon-reports+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://justthenews.com/rss.xml",
+  "evidence": {
+   "items": 20,
+   "on_expected": 20,
+   "articles": 20,
+   "expected_domain": "justthenews.com",
+   "title": "Just The News - Not The Noise",
+   "sample": "https://justthenews.com/nation/technology/new-mexico-jury-determines-facebook-liable-privacy-case?utm_source=justthenews.com&amp;utm_medium=feed&amp;utm_campaign=external-news-aggregators"
+  },
+  "why_held": "channel title does not name the outlet: 'Just The News - Not The Noise'"
+ },
+ {
+  "name": "Kafkadesk",
+  "id": "kafkadesk",
+  "was": "https://news.google.com/rss/search?q=site:kafkadesk.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://kafkadesk.org/feed/",
+  "evidence": {
+   "items": 1,
+   "on_expected": 1,
+   "articles": 1,
+   "expected_domain": "kafkadesk.org",
+   "title": "kafkadesk.org",
+   "sample": "https://kafkadesk.org/hello-world/"
+  },
+  "why_held": "only 1 items"
+ },
+ {
+  "name": "Manhattan Institute",
+  "id": "manhattan-institute",
+  "was": "https://news.google.com/rss/search?q=site:manhattan-institute.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://manhattan.institute/rss.xml",
+  "evidence": {
+   "items": 10,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "manhattan-institute.org",
+   "title": "Manhattan Institute",
+   "sample": "https://manhattan.institute/article/are-bonds-safe-that-depends-on-what-safe-means"
+  },
+  "why_held": "0 of 10 links on manhattan-institute.org: a feed whose items point elsewhere is what we are migrating away from"
+ },
+ {
+  "name": "National Herald",
+  "id": "national-herald-india",
+  "was": "https://news.google.com/rss/search?q=site:nationalheraldindia.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.nationalheraldindia.com/stories.rss",
+  "evidence": {
+   "items": 2,
+   "on_expected": 2,
+   "articles": 2,
+   "expected_domain": "nationalheraldindia.com",
+   "title": "National Herald",
+   "sample": "https://www.nationalheraldindia.com/politics/election-commissions-bid-at-damage-control-raises-more-questions"
+  },
+  "why_held": "only 2 items"
+ },
+ {
+  "name": "Panama Today",
+  "id": "panama-today",
+  "was": "https://news.google.com/rss/search?q=site:panamatoday.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.panamatoday.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "panamatoday.com",
+   "title": "Panama Today",
+   "sample": "https://www.panamatoday.com/mexico-travel-guide-best-beach-resorts-and-warm-weather-escapes/"
+  },
+  "why_held": "newest item is 92.3 days old: a feed that stopped is not a daily feed"
+ },
+ {
+  "name": "The Point Newspaper",
+  "id": "point-newspaper-gambia",
+  "was": "https://news.google.com/rss/search?q=site:thepoint.gm+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://thepoint.gm/posts/rss/xml",
+  "evidence": {
+   "items": 8,
+   "on_expected": 8,
+   "articles": 8,
+   "expected_domain": "thepoint.gm",
+   "title": "Headlines - The Point Newspaper, Banjul, The Gambia RSS",
+   "sample": "https://thepoint.gm/africa/gambia/headlines/barrow-to-embark-on-19-day-nationwide-meet-the-people-tour-from-october-1"
+  },
+  "why_held": "only 8 items"
+ },
+ {
+  "name": "Pravda.sk (English)",
+  "id": "pravo-english",
+  "was": "https://news.google.com/rss/search?q=site:spectator.sme.sk+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://spectator.sme.sk/rss",
+  "evidence": {
+   "items": 20,
+   "on_expected": 20,
+   "articles": 20,
+   "expected_domain": "sme.sk",
+   "title": "Slovak Spectator | The Slovak Spectator | articles",
+   "sample": "https://spectator.sme.sk/politics-and-society/c/news-digest-bratislava-is-trying-to-bring-people-back-to-the-banks-of-the-danube?utm_source=rss&utm_medium=feed&utm_campaign=spectator-rss"
+  },
+  "why_held": "channel title does not name the outlet: 'Slovak Spectator | The Slovak Spectator | articles'"
+ },
+ {
+  "name": "Prothom Alo (English)",
+  "id": "prothom-alo-english",
+  "was": "https://news.google.com/rss/search?q=site:en.prothomalo.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://en.prothomalo.com/stories.rss",
+  "evidence": {
+   "items": 5,
+   "on_expected": 5,
+   "articles": 5,
+   "expected_domain": "prothomalo.com",
+   "title": "Prothom Alo English",
+   "sample": "https://en.prothomalo.com/international/fto8josgxv"
+  },
+  "why_held": "only 5 items"
+ },
+ {
+  "name": "Quartz",
+  "id": "quartz",
+  "was": "https://news.google.com/rss/search?q=site:qz.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://qz.com/rss",
+  "evidence": {
+   "items": 1,
+   "on_expected": 1,
+   "articles": 1,
+   "expected_domain": "qz.com",
+   "title": "Quartz",
+   "sample": "https://qz.com/mrna-flu-vaccine-fda-approval-strain-mismatch-091826"
+  },
+  "why_held": "only 1 items"
+ },
+ {
+  "name": "Sarajevo Times",
+  "id": "sarajevo-times",
+  "was": "https://news.google.com/rss/search?q=site:sarajevotimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://sarajevotimes.com/feed/",
+  "evidence": {
+   "items": 5,
+   "on_expected": 5,
+   "articles": 5,
+   "expected_domain": "sarajevotimes.com",
+   "title": "Sarajevo Times",
+   "sample": "https://sarajevotimes.com/dragons-hold-a-training-session-in-warsaw-ahead-the-trip-to-bucharest/"
+  },
+  "why_held": "only 5 items"
+ },
+ {
+  "name": "Sierra Leone Telegraph",
+  "id": "sierra-leone-telegraph",
+  "was": "https://news.google.com/rss/search?q=site:thesierraleonetelegraph.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.thesierraleonetelegraph.com/feed/",
+  "evidence": {
+   "items": 9,
+   "on_expected": 9,
+   "articles": 9,
+   "expected_domain": "thesierraleonetelegraph.com",
+   "title": "The Sierra Leone Telegraph",
+   "sample": "https://www.thesierraleonetelegraph.com/dangote-calls-on-africa-to-keep-its-capital-at-home-as-industrialization-takes-centre-stage-at-unstoppable-africa/"
+  },
+  "why_held": "only 9 items"
+ },
+ {
+  "name": "Sixth Tone",
+  "id": "sixth-tone",
+  "was": "https://news.google.com/rss/search?q=site:sixthtone.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://api.sixthtone.com/cont/output/rssApi",
+  "evidence": {
+   "items": 0,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "sixthtone.com",
+   "title": "Sixth Tone RSS",
+   "sample": null
+  },
+  "why_held": "only 0 items"
+ },
+ {
+  "name": "The American Spectator Blog",
+  "id": "spectator-us-blog",
+  "was": "https://news.google.com/rss/search?q=site:spectator.org/blog+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://spectator.org/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "spectator.org",
+   "title": "The American Spectator | USA News and Politics",
+   "sample": "https://spectator.org/blessed-fulton-sheen-a-saint-for-america/"
+  },
+  "why_held": "only 0 items under /blog/: the roster lists this edition, and the feed is another section of the domain"
+ },
+ {
+  "name": "The Tashkent Times",
+  "id": "tashkent-times",
+  "was": "https://news.google.com/rss/search?q=site:tashkenttimes.uz+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://tashkenttimes.uz/?format=feed&amp;type=rss",
+  "evidence": {
+   "items": 4,
+   "on_expected": 4,
+   "articles": 4,
+   "expected_domain": "tashkenttimes.uz",
+   "title": "Tashkent Times - Tashkent Times",
+   "sample": "https://tashkenttimes.uz/national/18795-uzbekistan-india-elevate-ties-to-comprehensive-strategic-partnership-as-modi-makes-historic-visit-to-tashkent"
+  },
+  "why_held": "only 4 items"
+ },
+ {
+  "name": "The Florida Capital Star",
+  "id": "the-florida-capital-star",
+  "was": "https://news.google.com/rss/search?q=site:floridacapitalstar.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://thestarnewsnetwork.com/feed/",
+  "evidence": {
+   "items": 5,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "floridacapitalstar.com",
+   "title": "The Star News Network",
+   "sample": "https://thestarnewsnetwork.com/?p=537740"
+  },
+  "why_held": "only 5 items"
+ },
+ {
+  "name": "The Georgia Star News",
+  "id": "the-georgia-star",
+  "was": "https://news.google.com/rss/search?q=site:georgiastarnews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://thestarnewsnetwork.com/feed/",
+  "evidence": {
+   "items": 5,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "georgiastarnews.com",
+   "title": "The Star News Network",
+   "sample": "https://thestarnewsnetwork.com/?p=537740"
+  },
+  "why_held": "only 5 items"
+ },
+ {
+  "name": "The Michigan Star",
+  "id": "the-michigan-star",
+  "was": "https://news.google.com/rss/search?q=site:themichiganstar.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://thestarnewsnetwork.com/feed/",
+  "evidence": {
+   "items": 5,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "themichiganstar.com",
+   "title": "The Star News Network",
+   "sample": "https://thestarnewsnetwork.com/?p=537740"
+  },
+  "why_held": "only 5 items"
+ },
+ {
+  "name": "The News Minute",
+  "id": "the-news-minute",
+  "was": "https://news.google.com/rss/search?q=site:thenewsminute.com+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
+  "now": "https://www.thenewsminute.com/stories.rss",
+  "evidence": {
+   "items": 1,
+   "on_expected": 1,
+   "articles": 1,
+   "expected_domain": "thenewsminute.com",
+   "title": "thenewsminute",
+   "sample": "https://www.thenewsminute.com/kerala/animal-welfare-or-misstep-proposal-to-relocate-thiruvananthapuram-zoo-leads-to-debate"
+  },
+  "why_held": "only 1 items"
+ },
+ {
+  "name": "The Ohio Star",
+  "id": "the-ohio-star",
+  "was": "https://news.google.com/rss/search?q=site:theohiostar.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://thestarnewsnetwork.com/feed/",
+  "evidence": {
+   "items": 5,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "theohiostar.com",
+   "title": "The Star News Network",
+   "sample": "https://thestarnewsnetwork.com/?p=537740"
+  },
+  "why_held": "only 5 items"
+ },
+ {
+  "name": "The Tennessee Star",
+  "id": "the-tennessee-star",
+  "was": "https://news.google.com/rss/search?q=site:tennesseestar.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://tennesseestar.com/feed/",
+  "evidence": {
+   "items": 7,
+   "on_expected": 5,
+   "articles": 5,
+   "expected_domain": "tennesseestar.com",
+   "title": "Tennessee Star",
+   "sample": "https://tennesseestar.com/?p=542349"
+  },
+  "why_held": "only 7 items"
+ },
+ {
+  "name": "The Virginia Star",
+  "id": "the-virginia-star",
+  "was": "https://news.google.com/rss/search?q=site:thevirginiastar.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://thestarnewsnetwork.com/feed/",
+  "evidence": {
+   "items": 5,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "thevirginiastar.com",
+   "title": "The Star News Network",
+   "sample": "https://thestarnewsnetwork.com/?p=537740"
+  },
+  "why_held": "only 5 items"
+ },
+ {
+  "name": "Kaniva Tonga",
+  "id": "tonga-daily-news",
+  "was": "https://news.google.com/rss/search?q=site:kanivatonga.nz+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://kanivatonga.co.nz/feed/",
+  "evidence": {
+   "items": 4,
+   "on_expected": 0,
+   "articles": 0,
+   "expected_domain": "kanivatonga.nz",
+   "title": "Kaniva Tonga News",
+   "sample": "https://kanivatonga.co.nz/2026/09/tributes-flow-for-victim-of-veitongo-alleged-fatal-crash/"
+  },
+  "why_held": "only 4 items"
+ },
+ {
+  "name": "Matangi Tonga Online",
+  "id": "tonga-matangi",
+  "was": "https://news.google.com/rss/search?q=site:matangitonga.to+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://matangitonga.to/rss.xml",
+  "evidence": {
+   "items": 8,
+   "on_expected": 8,
+   "articles": 8,
+   "expected_domain": "matangitonga.to",
+   "title": "Matangi Tonga",
+   "sample": "https://matangitonga.to/2026/09/22/pacific-leaders-call-antarctic-krill-protection"
+  },
+  "why_held": "only 8 items"
+ },
+ {
+  "name": "Weekend Argus",
+  "id": "weekend-argus-za",
+  "was": "https://news.google.com/rss/search?q=site:iol.co.za/weekend-argus+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://iol.co.za/rss/",
+  "evidence": {
+   "items": 30,
+   "on_expected": 30,
+   "articles": 30,
+   "expected_domain": "iol.co.za",
+   "title": "IOL",
+   "sample": "https://iol.co.za/sport/soccer/bafana/2026-09-26-mofokeng-magic-kabini-heroics-help-to-lift-the-dark-clouds-as-mosimane-savours-bafana-return/"
+  },
+  "why_held": "channel title does not name the outlet: 'IOL'"
+ },
+ {
+  "name": "Yemen Times",
+  "id": "yemen-times",
+  "was": "https://news.google.com/rss/search?q=site:yementimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://yementimes.com/feed/",
+  "evidence": {
+   "items": 9,
+   "on_expected": 9,
+   "articles": 9,
+   "expected_domain": "yementimes.com",
+   "title": "Yemen Times archives",
+   "sample": "https://yementimes.com/welcome-to-the-yemen-times-archives/"
+  },
+  "why_held": "only 9 items"
+ }
+]

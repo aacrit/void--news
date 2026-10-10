@@ -1,0 +1,7 @@
+source: src-kurt-2016
+locator: para5
+url: https://journals.openedition.org/eac/997
+read: 2026-09-25
+note: the article's numbered paragraph as OpenEdition prints it, footnote call numbers kept; a copyrighted article, held at most 150 words
+
+The CUP’s official directives disclose the process by which conversion was to be implemented. Through his orders, Talat Pasha, widely considered to be the architect of the Armenian Genocide, authorized the conversion of untold numbers of Armenians. Besides specific instructions to guide local elites, Talat Pasha issued several national decrees categorizing those to be persecuted and those to be deported.

@@ -1,0 +1,8 @@
+source: src-dod-nogunri-20010111
+locator: secorders
+url: https://usinfo.org/wf-archive/2001/010112/epf503.htm
+read: 2026-10-09
+note: the same briefing
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Orders to fire: All the veterans interviewed by the U.S. Army who fired at refugees stated that they did not receive any order to fire. Some other veterans, however, stated that they believed that such an order must have been given.

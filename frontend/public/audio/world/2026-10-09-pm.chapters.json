@@ -1,0 +1,52 @@
+{
+ "version": "1.2.0",
+ "title": "On Air · Friday 09 October 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Headlines",
+   "endTime": 40.132
+  },
+  {
+   "startTime": 40.132,
+   "title": "French Student Protests",
+   "endTime": 121.414
+  },
+  {
+   "startTime": 121.414,
+   "title": "New York I-C-E Shooting",
+   "endTime": 188.336
+  },
+  {
+   "startTime": 188.336,
+   "title": "Trump on Iran",
+   "endTime": 251.008
+  },
+  {
+   "startTime": 251.008,
+   "title": "Trump Investigates Fed Governor",
+   "endTime": 315.648
+  },
+  {
+   "startTime": 315.648,
+   "title": "Also today",
+   "endTime": 380.952
+  },
+  {
+   "startTime": 380.952,
+   "title": "A-I Chatbot Rules",
+   "endTime": 418.712
+  },
+  {
+   "startTime": 418.712,
+   "title": "Opinion",
+   "endTime": 604.494
+  },
+  {
+   "startTime": 604.494,
+   "endTime": 617.594,
+   "title": "Also from Void"
+  }
+ ]
+}

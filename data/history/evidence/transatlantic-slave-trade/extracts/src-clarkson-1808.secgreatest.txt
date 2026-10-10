@@ -1,0 +1,7 @@
+source: src-clarkson-1808
+locator: secgreatest
+url: https://www.gutenberg.org/cache/epub/10633/pg10633.txt
+read: 2026-10-09
+note: chapter X; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Thus, on the 22nd of May, 1787, the representatives of all the four classes, of which I have been giving a history from the year 1516, met together, and were united in that committee, to which I have been all along directing the attention of the reader; a committee, which, labouring afterwards with Mr. Wilberforce as a parliamentary head, did, under Providence, in the space of twenty years, contribute to put an end to a trade, which, measuring its magnitude by its crimes and sufferings, was the greatest practical evil that ever afflicted the human race.

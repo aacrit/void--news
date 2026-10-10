@@ -1,0 +1,142 @@
+## OPEN
+N: Most people think the Cherokee lost this fight in court. They had the strongest case in the history of federal Indian law, and they won it.
+N: In eighteen thirty two, in Worcester versus Georgia, Chief Justice John Marshall ruled that Georgia's laws had no force on Cherokee land, and that the Cherokee Nation was a sovereign nation only the federal government could deal with.
+N: Andrew Jackson is said to have answered that John Marshall had made his decision, and could now enforce it himself. Whether he used those exact words is disputed.
+N: What happened next is not disputed. He ignored the ruling, and six years later marched the Cherokee out at gunpoint anyway.
+
+## TITLE
+N: The Trail of Tears. Eighteen thirty to eighteen thirty eight. Five nations forced from their homelands: Cherokee, Chickasaw, Choctaw, Creek and Seminole.
+
+## SCENE 1 | The crossing at Memphis
+N: December eighteen thirty one, on the bank of the Mississippi at Memphis. A visitor named Alexis de Tocqueville watches a column of Choctaw people cross the river in the depth of winter.
+N: They are the first of the Five Tribes ordered out under the new law, seventeen thousand Choctaw walking from Mississippi toward land none of them has seen.
+N: The government has contracted private suppliers to provide the column with food and blankets. Many of the suppliers deliver spoiled meat, or nothing at all.
+
+## DOCUMENT | Alexis de Tocqueville | Democracy in America | 1835
+N: Tocqueville wrote down what he saw that day.
+M: The Indians had their families with them, and they brought in their train the wounded and the sick, with children newly born and old men upon the verge of death.
+
+## ASIDE
+N: Between twenty five hundred and six thousand Choctaw died of exposure, cholera, dysentery and starvation across three separate marches between eighteen thirty one and eighteen thirty three.
+N: This is the template the rest of the operation follows.
+
+## REST
+
+## SCENE 2 | A manufactured crisis
+N: Alabama, eighteen thirty six. The Creek, also called the Muscogee, are next.
+N: Federal agents let white squatters onto Creek land, and the conflicts that follow are used to justify sending in the army.
+N: Fourteen thousand six hundred and nine Creek are transported to Indian Territory. Many of them in chains.
+N: An estimated three thousand five hundred die on the way, or in the first year after arrival.
+
+## SCENE 3 | A nation on paper
+N: By the eighteen twenties, the Cherokee Nation has a written constitution, a legislature, courts, and a newspaper, the Cherokee Phoenix, printed in English and in a syllabary a man named Sequoyah invented.
+N: None of it matters once gold turns up at Dahlonega, Georgia, in eighteen twenty eight.
+N: In eighteen thirty five, a faction of fewer than five hundred Cherokee, out of seventeen thousand, signs the Treaty of New Echota, ceding every acre east of the Mississippi for five million dollars.
+N: Principal Chief John Ross calls the treaty fraudulent. The Senate ratifies it anyway, by a single vote.
+
+## DOCUMENT | John Ross | Letter to the U.S. Senate protesting the Treaty of New Echota | 1836
+N: Ross wrote directly to the Senate to say so.
+M: The instrument in question is not the act of our nation; we are not parties to its covenants; it has not received the sanction of our people.
+
+## ASIDE
+N: Fifteen thousand nine hundred and sixty four Cherokee signed a petition against that treaty. Nearly the entire adult nation.
+N: The Senate ratified it anyway.
+
+## REST
+
+## SCENE 4 | General Order Number Twenty Five
+N: May eighteen thirty eight. General Winfield Scott arrives in Cherokee country with seven thousand federal troops and state militia.
+N: Soldiers move through Cherokee towns, giving families minutes to gather what they can carry before burning the houses behind them.
+N: Families are marched into stockade camps, thirteen of them, and held there through the summer heat, with drought and contaminated water. Disease kills hundreds before the march west even begins.
+
+## SCENE 5 | The trail
+N: The main groups leave between the fall of eighteen thirty eight and March of the following year, walking eight hundred to twelve hundred miles on routes through Tennessee, Kentucky, Illinois, Missouri and Arkansas.
+N: The Mississippi crossing at Cape Girardeau is delayed for weeks by ice. Rations run short. Measles and pneumonia move through the columns.
+N: Quatie Ross, the wife of Principal Chief John Ross, gives her blanket to a sick child during a river crossing, and dies of pneumonia near Little Rock, Arkansas.
+N: About four thousand Cherokee die on the trail. One in four of everyone who set out.
+
+## ASIDE
+N: The Cherokee have their own name for it. Nunna daul Tsuny.
+N: The Trail Where They Cried.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of the same eight years.
+
+## PERSPECTIVE | The Jacksonian case | victor
+N: The Indian Removal Act of eighteen thirty passed the House by a vote of one hundred and one to ninety seven. A real fight, not a formality.
+N: Jackson called the policy benevolent: protection, not expulsion.
+M: It gives me pleasure to announce to Congress that the benevolent policy of the Government is approaching a happy consummation.
+N: His case was that Georgia, Alabama and Mississippi had already extended their own laws over tribal land, and that the federal government could not keep what he called a foreign nation inside a state's borders forever.
+N: Secretary of War Lewis Cass called it an even trade of land for land, with annuities and help resettling, and blamed the suffering during the first Choctaw march on bad contractors rather than a bad policy.
+
+## PERSPECTIVE | The Cherokee Nation | vanquished
+N: The Cherokee case starts from the fact that they had already done everything the United States said civilization required.
+N: A written constitution modeled on the American one, a legislature, courts, roads, schools, and a newspaper printed in English and in Sequoyah's own syllabary.
+N: In eighteen thirty two, the Supreme Court found the Cherokee Nation sovereign and ruled that Georgia's law had no force on their land.
+N: The government that had just told them how to become civilized ignored its own court the moment the ruling was inconvenient.
+N: Fewer than five hundred Cherokee signed away the nation's land at New Echota. Fifteen thousand nine hundred and sixty four signed a petition against it.
+
+## REST | short
+
+## PERSPECTIVE | The Georgia settlers | victor
+N: For the settlers of Georgia, Tennessee, Alabama and Mississippi, this was never abstract. It was land.
+N: Gold turned up at Dahlonega, Georgia, in eighteen twenty eight, and within a year ten thousand white prospectors had crossed onto Cherokee ground.
+N: The Five Tribes held about twenty five million acres of the most fertile territory in the American Southeast: cotton land, river bottom land, land with timber, game and gold. Georgia handed Cherokee land to white citizens by lottery in eighteen thirty two.
+N: Their argument was blunt rather than moral. White expansion was not going to stop, the states were not going to protect Cherokee rights, and a court ruling was not going to survive a fight the federal government was not willing to have with Georgia.
+N: The cotton grown on that land was picked by enslaved labor. Removal and slavery expanded together, on the same ground.
+
+## PERSPECTIVE | The settler colonial reading | revisionist
+N: The academic reading starts from a number. Historian Claudio Saunt calculates the land vacated by the Five Tribes at about seventy four million dollars in today's money, one of the largest transfers of wealth in American history.
+N: Patrick Wolfe argued that removal was not a betrayal of American ideals but an expression of them.
+M: Settler colonialism destroys to replace. It is not an event but a structure.
+N: In this reading, the Declaration of Independence had already called Native people merciless Indian savages, and Thomas Jefferson proposed removal decades before Jackson carried it out.
+N: The United Nations defines ethnic cleansing as using force to make an area ethnically uniform. By that definition, this reading argues, the Trail of Tears qualifies, and the live argument now is whether it also meets the higher bar of genocide.
+
+## PERSPECTIVE | Indigenous sovereignty today | indigenous
+N: The word this account rejects is removal itself. Between seventeen eighty five and eighteen thirty five, the United States signed twenty eight treaties with the Cherokee alone, each one recognizing Cherokee nationhood.
+N: The deportation itself was carried out under a treaty too, so the government used the very mechanism that had recognized Cherokee sovereignty to violate it.
+N: Not every nation went quietly. The Seminole fought three wars rather than relocate. The second lasted seven years, cost the United States twenty million dollars and fifteen hundred soldiers, and ended with no formal surrender. Several hundred Seminole never surrendered and stayed in the Florida Everglades.
+N: The same logic did not stop at the Mississippi. Cherokee children were later sent to boarding schools whose founder, Richard Henry Pratt, described his goal as killing the Indian to save the man.
+N: In two thousand twenty, the Supreme Court cited those removal era treaties to rule in McGirt versus Oklahoma that much of eastern Oklahoma remains Indian country. Justice Neil Gorsuch wrote for the majority.
+M: On the far end of the Trail of Tears was a promise.
+
+## REST
+
+## TURN | What each one leaves out
+N: What each account leaves out.
+N: The Jacksonian case leaves out that Worcester versus Georgia had already rejected its state sovereignty argument, that the treaty it worked from was signed by fewer than five hundred people, and that Jackson himself had financial interests in southern land speculation.
+N: The Cherokee case leaves out that some Cherokee held enslaved people themselves, that the nation was bitterly divided between resistance and accommodation, and that the constitution written to prove they were civilized had just taken the vote away from Cherokee women.
+N: The settlers' case leaves out the fifteen thousand people who died, the treaty signed by a fraction of the nation it claimed to speak for, and every voice of the people being removed.
+N: The structural reading leaves out the missionaries and the political opposition who fought removal at the time and lost, and it can turn the people who lived through it into a case study rather than a family.
+N: The sovereignty case is quieter about the divisions inside the nations themselves, including a fight over Cherokee Freedmen citizenship that the treaty of eighteen sixty six created, and that the Cherokee Nation is still arguing about today.
+
+## REST
+
+## CLOSE
+N: By the end of the decade, about sixty thousand people had been forced out of the Southeast. Nearly fifteen thousand of them did not survive it.
+N: In two thousand twenty, the Supreme Court ruled in McGirt versus Oklahoma that half of Oklahoma's land falls under tribal criminal jurisdiction, resting on the treaties signed during and after removal.
+N: The route is now a National Historic Trail, two thousand two hundred miles long, marked out in nineteen eighty seven.
+N: Every September, the Cherokee Nation walks part of it again.
+
+## SAY
+Cherokee = CHERR-oh-kee
+Chickasaw = CHICK-uh-saw
+Choctaw = CHOK-taw
+Creek = kreek
+Muscogee = mus-KOH-gee
+Seminole = SEM-uh-nohl
+Tocqueville = TOKE-vil
+Dahlonega = duh-LON-uh-guh
+New Echota = new eh-CHOH-tuh
+Sequoyah = sih-KWOY-uh
+Worcester = WUSS-ter
+Nunna daul Tsuny = NOO-nuh dahl TSUH-nee
+Quatie = KWAY-tee
+Girardeau = jih-RAR-doh
+Arkansas = AR-kan-saw
+McGirt = muh-GURT
+Gorsuch = GOR-such
+Saunt = sawnt
+Muscogee Nation = mus-KOH-gee NAY-shun

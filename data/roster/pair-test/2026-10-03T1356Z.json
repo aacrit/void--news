@@ -1,0 +1,140 @@
+{
+ "collected_at": "2026-10-03T13:56:50Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 25,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16180249/Celebrity-Traitors-star-Amol-Rajan-admits-played-wrong-game-breaks-silence-Maya-Jama-Richard-E-Grants-murder-victim.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Celebrity Traitors star Amol Rajan admits he 'played the wrong game' as he breaks his silence after being Maya Jama and Richard E Grant's first murder victim",
+      "published": "Sat, 03 Oct 2026 11:56:45 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/bbc-celebrity-traitors-live-updates-37724646",
+      "title": "Celebrity Traitors' Richard E Grant apologised to Amol Rajan in 'clear the air' lunch",
+      "published": "Sat, 3 Oct 2026 13:29:41 +0000"
+     }
+    },
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16178471/Alison-Hammond-seen-clutching-chest-rushed-Morning-studio-live-air-suddenly-falling-ill.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Alison Hammond shares video from her hospital bed and says her heart is being checked out after she was seen clutching her chest and rushed off air live on This Morning",
+      "published": "Sat, 03 Oct 2026 00:22:43 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/breaking-alison-hammond-update-hospital-37730122",
+      "title": "Alison Hammond shares update from home after scary hospital dash from This Morning",
+      "published": "Sat, 3 Oct 2026 12:52:43 +0000"
+     }
+    },
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16179297/Pictured-Boy-6-killed-Ford-Transit-tipper-bike.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Pictured: Boy, 6, killed when he was hit by a Ford Transit tipper outside his home after he asked to go for a bike ride",
+      "published": "Sat, 03 Oct 2026 01:52:58 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/boy-6-full-personality-dead-37730977",
+      "title": "Boy, 6, 'full of personality' dead after being hit by van outside home",
+      "published": "Sat, 3 Oct 2026 13:02:54 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16180085/pilot-stabbed-FlyDubai-plane-Israel-Omani-national-British-university.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Flydubai terror pilot spent years in ISIS-controlled Syria before being fired from previous airline job over his extremist Islamist views - as fury grows he was allowed to fly planes to Israel",
+      "published": "Sat, 03 Oct 2026 14:13:42 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/world-news/flydubai-flight-hamam-al-hammami-37730503",
+      "title": "FlyDubai - live: Co-pilot Hamam al Hammami who 'attacked captain' had studied with UK uni",
+      "published": "Sat, 3 Oct 2026 13:36:18 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 119,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/defense-news/article-910449",
+      "title": "IDF targets Yahya Sinwar's successor, Hamas Gaza leader Ali al-Amoudi, in strike",
+      "published": "Sat, 03 Oct 2026 11:35:24 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/gaza/2026-10-03/ty-article/.premium/israeli-strike-kills-four-people-in-gaza-medics-say/000001a0-ff05-d27a-abae-ff750d890000",
+      "title": "Report: IDF targeted Hamas political chief in Gaza strike that killed six Palestinians",
+      "published": "Sat, 03 Oct 2026 02:50:47 +0300"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/article-910399",
+      "title": "First Arkia repatriation flight lands in Israel after returning from Dubai",
+      "published": "Fri, 02 Oct 2026 08:23:52 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-security/2026-10-02/ty-article/.premium/israeli-carriers-israir-and-arkia-announce-repatriation-flights-from-dubai/000001a0-fb02-d3f9-abf6-ff6b78960000",
+      "title": "First Arkia repatriation flight after hijacking departs Dubai for Tel Aviv",
+      "published": "Fri, 02 Oct 2026 11:10:32 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 24,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 136,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/new-party-walkout-during-erdogan-speech-draws-criticism-in-turkiye/news",
+      "title": "New Party walkout during Erdoğan speech draws criticism in Türkiye",
+      "published": "Fri, 02 Oct 2026 15:09:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/09/turkey-shelters-emirati-brotherhood-figures-accused-of-plotting-to-oust-uae-rulers/",
+      "title": "Turkey shelters Emirati Brotherhood figures accused of plotting to oust UAE rulers",
+      "published": "Sun, 20 Sep 2026 22:18:23 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 306,
+    "left": 10
+   }
+  }
+ }
+}

@@ -1,0 +1,7 @@
+source: src-burr-nsa-2020
+locator: secdoc53
+url: https://nsarchive.gwu.edu/briefing-book/nuclear-vault/2020-08-04/atomic-bomb-end-world-war-ii
+read: 2026-10-07
+note: the editor's commentary on Document 53 ('Magic' Diplomatic Summary No. 1221, July 29, 1945); 'apparently said' is the editor's hedge on Suzuki's words and is kept; [51] is the page's note number
+
+The next day, in response to questions from journalists about the government’s reaction to the ultimatum, Prime Minister Suzuki apparently said that “We can only ignore [mokusatsu] it. We will do our utmost to complete the war to the bitter end.” That, Bix argues, represents a “missed opportunity” to end the war and spare the Japanese from continued U.S. aerial attacks.[51] Togo’s private position was more nuanced than Suzuki’s; he told Sato that “we are adopting a policy of careful study.”

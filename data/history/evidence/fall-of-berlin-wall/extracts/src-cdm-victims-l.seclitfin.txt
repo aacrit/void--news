@@ -1,0 +1,8 @@
+source: src-cdm-victims-l
+locator: seclitfin
+url: https://www.chronik-der-mauer.de/en/victims/?letter=L
+read: 2026-10-09
+note: the row of the victims list (letter L)
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Günter Litfin Günter Litfin born on January 19, 1937 shot dead on August 24, 1961 in the Humboldt Harbor near Charité Hospital at the sector border between Berlin-Mitte and Berlin-Tiergarten

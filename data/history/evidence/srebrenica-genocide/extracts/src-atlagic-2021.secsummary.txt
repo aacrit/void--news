@@ -1,0 +1,7 @@
+source: src-atlagic-2021
+locator: secsummary
+url: https://scindeks-clanci.ceon.rs/data/pdf/0353-9008/2021/0353-90082155147A.pdf
+read: 2026-09-24
+note: the three opening sentences of the article's English summary
+
+There was no genocide against the Muslim population in Srebrenica in July 1995 because genocide did not occur. Crimes were committed in Srebrenica. The Republika Srpska Army did not intend to commit genocide.

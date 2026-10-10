@@ -1,0 +1,6 @@
+source: src-wannsee-avalon
+locator: seciii
+url: https://avalon.law.yale.edu/imt/wannsee.asp
+read: 2026-10-07
+
+III. Another possible solution of the problem has now taken the place of emigration, i.e. the evacuation of the Jews to the East, provided that the Fuehrer gives the appropriate approval in advance. These actions are, however, only to be considered provisional, but practical experience is already being collected which is of the greatest importance in relation to the future final solution of the Jewish question. Approximately 11 million Jews will be involved in the final solution of the European Jewish question, distributed as follows among the individual countries:

@@ -1,0 +1,8 @@
+source: src-brandt-heft8-2001
+locator: secdietz
+url: https://willy-brandt.de/wp-content/uploads/heft_08_waechst_zusammen.pdf
+read: 2026-10-09
+note: Rother's account of the publisher's reply, quoted at second hand
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Er schlug uns dann vor, die fragliche Passage in der Rede vom 10. November 1989 unterzubringen, und zwar genau an der auf S. 36 des Buchs enthaltenen Stelle. Er trug dies selbst handschriftlich ins Manuskript ein [...].“ Eine vom Verlagsleiter überlassene Fotokopie illustriert dies. Jedoch formulierte Willy Brandt: „Es wächst zusammen, was zusammengehört.“ In der gedruckten Fassung wurde „Es“ durch „Jetzt“ ersetzt.
