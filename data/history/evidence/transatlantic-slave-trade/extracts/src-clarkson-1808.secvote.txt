@@ -1,0 +1,7 @@
+source: src-clarkson-1808
+locator: secvote
+url: https://www.gutenberg.org/cache/epub/10633/pg10633.txt
+read: 2026-10-09
+note: the division on Wilberforce's motion; the date of this debate is not in the extract; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Mr. Wilberforce made a short reply to some arguments in the course of the debate; after which, at half-past three in the morning, the House divided. There appeared for Mr. Wilberforce's motion eighty-eight, and against it one hundred and sixty-three; so that it was lost by a majority of seventy-five votes.

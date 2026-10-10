@@ -1,0 +1,7 @@
+source: src-cobbett-17890512
+locator: seccondensed
+url: https://archive.org/details/10279136bsb
+read: 2026-10-09
+note: Wilberforce's speech of 12 May 1789 as Cobbett's Parliamentary History prints it, read from the scan's OCR layer; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+So much misery condensed in so little room, is more than the human imagination had ever before conceived.

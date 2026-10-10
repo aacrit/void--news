@@ -1,0 +1,1181 @@
+# The evidence ledger for fall-of-berlin-wall (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Begun 2026-10-09 for the Orpheus episode and its writer brief (out/briefs/fall-of-berlin-wall.brief.md):
+# the sources the script's document voice may read from and the record its narration is checked
+# against. Every entry was fetched on 2026-10-09 from the URL it names; every extract under
+# extracts/ was sliced from the fetched copy by a builder script (start marker to end marker,
+# out/ledger-fall-of-berlin-wall/build.py), never retyped, with the copy's whitespace collapsed
+# and that said in a note. Nothing here was written from memory. A work the free record could
+# not reach is listed under `gaps`, by name, with what was tried.
+# Translation provenance: every English text of a German or Russian original names its
+# translator in the entry (Sargeant for the CWIHP documents, Zubok and Melyakova for Chernyaev,
+# Savranskaya for the Gorbachev-Kohl record, Riemer for Kohl, Brown and Cooper for the New Forum,
+# Burnett for Mau, the State Department for the treaty); the RBTH interview names none. German
+# extracts are held in German and NO English rendering is held, official or Void's: nothing here
+# may be read in the document voice in a translation this ledger made.
+# Five perspectives at parity: West German/NATO (Reagan, Bush, Kohl, the treaty); East German
+# citizens' movement (New Forum, the election and accession record, Jäger); Soviet (Chernyaev,
+# the Gorbachev-Kohl record and message, Gorbachev in 2014, Shevardnadze as Hertle quotes him);
+# reunification critics (Mau, the Bundestag research service, the unity report); Global South
+# (the Non-Aligned Movement, the General Assembly, the Inter-American Commission).
+# Hosts: digitalarchive.wilsoncenter.org did not resolve (no address record, by dns.google), and
+# web.archive.org answered HTTP 429 to every fetch on the day, so the Wilson Center documents are
+# held from the CWIHP Bulletin PDF on www.wilsoncenter.org, which prints the same translations.
+# This is NOT a thesis ledger: no positions, contested claims, exhibits or analyses are
+# adjudicated here, and the event renders the Hearing. The bar of §4e is not claimed.
+slug: fall-of-berlin-wall
+bootstrapped: '2026-10-09'
+entries:
+- id: src-cwihp-doc8-19891109
+  tier: A
+  kind: primary-document
+  author: Günter Schabowski, SED Politburo member, with Helga Labs, Gerhard Beil and Manfred Banaschak; transcript by Hans-Hermann Hertle; translated by Howard Sargeant
+  title: Günter Schabowski's Press Conference in the GDR International Press Center, 9 November 1989, 6:53-7:01 p.m. (Document No. 8)
+  container: Cold War International History Project Bulletin, Issue 12/13 (Fall/Winter 2001)
+  publisher: Woodrow Wilson International Center for Scholars, Cold War International History Project
+  place: Washington
+  year: 1989
+  edition: the Bulletin's English translation 'for CWIHP by Howard Sargeant' of Hertle's transcript of the television broadcast (the document's source line); printed pp. 157-158
+  volume: null
+  document_number: Document No. 8
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+  access:
+    free_copy: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Cold War International History Project Bulletin, Issue 12/13 (Fall/Winter 2001)
+  language: en
+  region_of_authorship: europe
+  producer: gdr-state
+  position: null
+  rights: copyright
+  shows: the exchange in which Schabowski, asked when the rule takes effect, says 'immediately, without delay', and that he had been handed the information just before he came over
+  does_not_show: the German words (src-cdm-pk-19891109 holds them); who asked the timing question (this transcript writes 'many voices' and 'Question'); anything off camera
+- id: src-cwihp-doc6-19891109
+  tier: A
+  kind: primary-document
+  author: GDR Council of Ministers (draft presented by its Chairman, signed Willi Stoph); translated by Howard Sargeant
+  title: 'Material for the Session/For Circulation in the Council of Ministers, Draft: Temporary Transition Rules for Travel and Permanent Exit from the GDR, Berlin, 9 November 1989 (Document No. 6)'
+  container: Cold War International History Project Bulletin, Issue 12/13 (Fall/Winter 2001)
+  publisher: Woodrow Wilson International Center for Scholars, Cold War International History Project
+  place: Washington
+  year: 1989
+  edition: translated for CWIHP by Howard Sargeant from the BStU copy (MfS Working Group Nieber 553, sheets 15-19); printed p. 155
+  volume: null
+  document_number: Document No. 6
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+  access:
+    free_copy: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Cold War International History Project Bulletin, Issue 12/13 (Fall/Winter 2001)
+  language: en
+  region_of_authorship: europe
+  producer: gdr-state
+  position: null
+  rights: copyright
+  shows: 'the draft the note card carried: point 2 opens ''Starting immediately'', point 3 dates the press release 10 November'
+  does_not_show: whether the Council of Ministers ever approved it before the press conference, and what Schabowski was told about the release date
+- id: src-cwihp-doc9-19891110
+  tier: A
+  kind: letter
+  author: Mikhail Gorbachev; translated by Howard Sargeant
+  title: Verbal Message from Mikhail Gorbachev to Helmut Kohl, 10 November 1989 (Document No. 9)
+  container: Cold War International History Project Bulletin, Issue 12/13 (Fall/Winter 2001)
+  publisher: Woodrow Wilson International Center for Scholars, Cold War International History Project
+  place: Washington
+  year: 1989
+  edition: translated for CWIHP by Howard Sargeant from the SAPMO-BA copy (the German text the GDR received); printed p. 158
+  volume: null
+  document_number: Document No. 9
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+  access:
+    free_copy: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Cold War International History Project Bulletin, Issue 12/13 (Fall/Winter 2001)
+  language: en
+  region_of_authorship: europe
+  producer: soviet-government
+  position: null
+  rights: copyright
+  shows: 'Moscow''s first written word to Bonn after the crossings opened: ''a chaotic situation could easily develop'''
+  does_not_show: any order to Soviet forces; Kohl's reply
+- id: src-hertle-cwihp-2001
+  tier: B
+  kind: journal-article
+  author: Hans-Hermann Hertle
+  title: 'The Fall of the Wall: The Unintended Dissolution of East Germany''s Ruling Regime'
+  container: Cold War International History Project Bulletin, Issue 12/13 (Fall/Winter 2001)
+  publisher: Woodrow Wilson International Center for Scholars, Cold War International History Project
+  place: Washington
+  year: 2001
+  edition: the article as the Bulletin prints it, pp. 131-164
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+  access:
+    free_copy: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Cold War International History Project Bulletin, Issue 12/13 (Fall/Winter 2001)
+  language: en
+  region_of_authorship: europe
+  producer: scholarship
+  position: null
+  rights: copyright
+  shows: 'the historian who reconstructed the night: the news broadcasts from 7 to 8:15 p.m. and the agency flashes at 7:05 and 7:41; crossings told to wait, the ''let off steam'' maneuver, controls ceased at Bornholmer Strasse at 11:30 p.m. by the controllers'' own decision, Moscow asleep, Shevardnadze''s later account of rejecting force'
+  does_not_show: the name of the officer (the passage says 'the chief officer of passport control'); a Soviet document of the night (Shevardnadze is a recollection Hertle quotes)
+- id: src-cdm-pk-19891109
+  tier: A
+  kind: primary-document
+  author: Günter Schabowski and the journalists present; transcription by Hans-Hermann Hertle
+  title: Internationale Pressekonferenz von Günter Schabowski (in Begleitung der SED-ZK-Mitglieder Helga Labs, Gerhard Beil und Manfred Banaschak), 9. November 1989 (Ton-Abschrift)
+  container: null
+  publisher: Chronik der Mauer (Bundeszentrale für politische Bildung, Deutschlandradio, Zentrum für Zeithistorische Forschung Potsdam)
+  place: Berlin/Potsdam
+  year: 1989
+  edition: '''Wörtliche Transkription des Kamera- und Tonmitschnitts von Hans-Hermann Hertle (Auszug)''; the revised (''NEU'') PDF, which names each questioner'
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.chronik-der-mauer.de/system/files/dokument_pdf/1989_11_09_CdM_Dok_Schabowski_PK_Transkription_NEU_0.pdf
+  access:
+    free_copy: https://www.chronik-der-mauer.de/system/files/dokument_pdf/1989_11_09_CdM_Dok_Schabowski_PK_Transkription_NEU_0.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Internationale Pressekonferenz von Günter Schabowski ... (Ton-Abschrift) [PDF]
+  language: de
+  region_of_authorship: europe
+  producer: gdr-state
+  position: null
+  rights: copyright
+  shows: 'the German words, and who asked when: Janowski (Voice of America), Brinkmann (Bild-Zeitung) and Niemeyer (DAPA, by his own account), not Ehrman, whose question came earlier and concerned the travel law'
+  does_not_show: an independent confirmation of Niemeyer's role (its own footnote says there is none); an English rendering (none is held, official or Void's)
+- id: src-hertle-nooke-2017
+  tier: B
+  kind: report
+  author: Hans-Hermann Hertle and Maria Nooke
+  title: 'The Victims at the Berlin Wall, 1961-1989: Findings of a Research Project by the Centre for Contemporary History Potsdam and the Berlin Wall Foundation (August 2017; first version July 2011)'
+  container: null
+  publisher: Zentrum für Zeithistorische Forschung Potsdam and Stiftung Berliner Mauer (published on Chronik der Mauer)
+  place: Potsdam/Berlin
+  year: 2017
+  edition: the English summary of findings, status August 2017
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.chronik-der-mauer.de/system/files/dokument_pdf/2017_08_08_Hertle_Nooke_140_Victims_Berlin_Wall_FINAL_0.pdf
+  access:
+    free_copy: https://www.chronik-der-mauer.de/system/files/dokument_pdf/2017_08_08_Hertle_Nooke_140_Victims_Berlin_Wall_FINAL_0.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Hans-Hermann Hertle/Maria Nooke, The Victims at the Berlin Wall, 1961-1989 [PDF]
+  language: en
+  region_of_authorship: europe
+  producer: zzf-stiftung-berliner-mauer
+  position: null
+  rights: copyright
+  shows: the count (at least 140), its definition, its sources (576 cases checked), its composition (101 escapees, 30 non-escapees and 1 Soviet soldier, 8 border soldiers), the 251 checkpoint deaths counted apart, and the earlier counts of 78, 86, 92, 122 and 'more than 200'
+  does_not_show: a name-by-name list (the four victims' rows are held separately from the Chronicle); any count for the inner-German border or the Baltic; whether a later revision exists
+- id: src-cdm-victims-s
+  tier: B
+  kind: dataset
+  author: Chronik der Mauer (biographies by the ZZF and the Berlin Wall Foundation)
+  title: Victims at the Wall, names with S
+  container: null
+  publisher: Chronik der Mauer
+  place: Berlin/Potsdam
+  year: n.d. (read 2026-10-09)
+  edition: the list page's row for Ida Siekmann
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.chronik-der-mauer.de/en/victims/?letter=S
+  access:
+    free_copy: https://www.chronik-der-mauer.de/en/victims/?letter=S
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Victims at the Wall | Chronicle of the Wall
+  language: en
+  region_of_authorship: europe
+  producer: chronik-der-mauer
+  position: null
+  rights: copyright
+  shows: Ida Siekmann, fatally injured on 22 August 1961 after jumping from her window at Bernauer Strasse 48
+  does_not_show: her biography (not fetched)
+- id: src-cdm-victims-l
+  tier: B
+  kind: dataset
+  author: Chronik der Mauer (biographies by the ZZF and the Berlin Wall Foundation)
+  title: Victims at the Wall, names with L
+  container: null
+  publisher: Chronik der Mauer
+  place: Berlin/Potsdam
+  year: n.d. (read 2026-10-09)
+  edition: the list page's row for Günter Litfin
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.chronik-der-mauer.de/en/victims/?letter=L
+  access:
+    free_copy: https://www.chronik-der-mauer.de/en/victims/?letter=L
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Victims at the Wall | Chronicle of the Wall
+  language: en
+  region_of_authorship: europe
+  producer: chronik-der-mauer
+  position: null
+  rights: copyright
+  shows: Günter Litfin, shot dead on 24 August 1961 in the Humboldt Harbor
+  does_not_show: his biography (not fetched)
+- id: src-cdm-victims-g
+  tier: B
+  kind: dataset
+  author: Chronik der Mauer (biographies by the ZZF and the Berlin Wall Foundation)
+  title: Victims at the Wall, names with G
+  container: null
+  publisher: Chronik der Mauer
+  place: Berlin/Potsdam
+  year: n.d. (read 2026-10-09)
+  edition: the list page's row for Chris Gueffroy
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.chronik-der-mauer.de/en/victims/?letter=G
+  access:
+    free_copy: https://www.chronik-der-mauer.de/en/victims/?letter=G
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Victims at the Wall | Chronicle of the Wall
+  language: en
+  region_of_authorship: europe
+  producer: chronik-der-mauer
+  position: null
+  rights: copyright
+  shows: Chris Gueffroy, shot dead on 5 February 1989 on the Britzer Zweigkanal
+  does_not_show: his biography; the hour of the shooting
+- id: src-cdm-victims-f
+  tier: B
+  kind: dataset
+  author: Chronik der Mauer (biographies by the ZZF and the Berlin Wall Foundation)
+  title: Victims at the Wall, names with F
+  container: null
+  publisher: Chronik der Mauer
+  place: Berlin/Potsdam
+  year: n.d. (read 2026-10-09)
+  edition: the list page's row for Winfried Freudenberg
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.chronik-der-mauer.de/en/victims/?letter=F
+  access:
+    free_copy: https://www.chronik-der-mauer.de/en/victims/?letter=F
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Victims at the Wall | Chronicle of the Wall
+  language: en
+  region_of_authorship: europe
+  producer: chronik-der-mauer
+  position: null
+  rights: copyright
+  shows: 'Winfried Freudenberg, fatally injured on 8 March 1989 in a hot-air balloon crash: the last death the count includes, a month after Gueffroy'
+  does_not_show: his biography (not fetched)
+- id: src-cdm-chronicle-198909
+  tier: B
+  kind: chronicle
+  author: Chronik der Mauer
+  title: Chronicle of the Berlin Wall 1989, September
+  container: null
+  publisher: Chronik der Mauer
+  place: Berlin/Potsdam
+  year: n.d. (read 2026-10-09)
+  edition: the English chronicle, month page; the page states no date of writing
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month9/?month=9&year=1989&moc=1
+  access:
+    free_copy: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month9/?month=9&year=1989&moc=1
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Chronicle of the Berlin Wall 1989 | Chronicle of the Wall
+  language: en
+  region_of_authorship: europe
+  producer: chronik-der-mauer
+  position: null
+  rights: copyright
+  shows: 'Leipzig, 4 September: around 1,200 after the Monday prayer, chanting ''We want out!''; Hungary opens its border in the night of 10-11 September'
+  does_not_show: how many crossed through Hungary in the first days (it says 'tens of thousands' over days and weeks)
+- id: src-cdm-chronicle-198910
+  tier: B
+  kind: chronicle
+  author: Chronik der Mauer
+  title: Chronicle of the Berlin Wall 1989, October
+  container: null
+  publisher: Chronik der Mauer
+  place: Berlin/Potsdam
+  year: n.d. (read 2026-10-09)
+  edition: the English chronicle, month page; no date of writing on the page
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month10/?month=10&year=1989&moc=1
+  access:
+    free_copy: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month10/?month=10&year=1989&moc=1
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Chronicle of the Berlin Wall 1989 | Chronicle of the Wall
+  language: en
+  region_of_authorship: europe
+  producer: chronik-der-mauer
+  position: null
+  rights: copyright
+  shows: Leipzig's numbers by date (up to 20,000 on 2 October, 70,000 on 9 October, 300,000 on 23 October); Honecker's fall and Krenz's election on 17/18 October
+  does_not_show: a figure for 30 October; the slogan 'Wir sind das Volk' (the 2 October entry lists other slogans)
+- id: src-cdm-chronicle-198911
+  tier: B
+  kind: chronicle
+  author: Chronik der Mauer
+  title: Chronicle of the Berlin Wall 1989, November
+  container: null
+  publisher: Chronik der Mauer
+  place: Berlin/Potsdam
+  year: n.d. (read 2026-10-09)
+  edition: the English chronicle, month page; no date of writing on the page
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month11/?month=11&year=1989&moc=1
+  access:
+    free_copy: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month11/?month=11&year=1989&moc=1
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Chronicle of the Berlin Wall 1989 | Chronicle of the Wall
+  language: en
+  region_of_authorship: europe
+  producer: chronik-der-mauer
+  position: null
+  rights: copyright
+  shows: 'the night hour by hour from the police and Stasi side: 80 people at three crossings at 8.15 p.m., 500 to 1,000 at Bornholmer at 9.30, thousands at 11.30; the Soviet commander leaving 350,000 men in barracks ''in accordance with the instructions from Moscow'' on 10 November; Leipzig''s motto on 20 November'
+  does_not_show: the minute the barrier rose (the 11.30 entry describes the pressure, not the opening); the content of Moscow's instructions
+- id: src-cdm-chronicle-198912
+  tier: B
+  kind: chronicle
+  author: Chronik der Mauer
+  title: Chronicle of the Berlin Wall 1989, December
+  container: null
+  publisher: Chronik der Mauer
+  place: Berlin/Potsdam
+  year: n.d. (read 2026-10-09)
+  edition: the English chronicle, month page; no date of writing on the page
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month12/?month=12&year=1989&moc=1
+  access:
+    free_copy: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month12/?month=12&year=1989&moc=1
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Chronicle of the Berlin Wall 1989 | Chronicle of the Wall
+  language: en
+  region_of_authorship: europe
+  producer: chronik-der-mauer
+  position: null
+  rights: copyright
+  shows: Gorbachev calling the Ten-Point Programme a 'diktat' to Genscher (4 December); Krenz leaving his last state offices (6 December)
+  does_not_show: Gorbachev's words in a record of that conversation (none held)
+- id: src-cdm-chronik-198910-de
+  tier: B
+  kind: chronicle
+  author: Chronik der Mauer
+  title: Chronik 1989, Oktober (German edition)
+  container: null
+  publisher: Chronik der Mauer
+  place: Berlin/Potsdam
+  year: n.d. (read 2026-10-09)
+  edition: the German chronicle, with the 6/7 October entry opened; the English page does not carry this passage
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.chronik-der-mauer.de/chronik/_year1989/_month10/?month=10&year=1989&opennid=171932&moc=1
+  access:
+    free_copy: https://www.chronik-der-mauer.de/chronik/_year1989/_month10/?month=10&year=1989&opennid=171932&moc=1
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Chronik 1989 | Chronik der Mauer
+  language: de
+  region_of_authorship: europe
+  producer: chronik-der-mauer
+  position: null
+  rights: copyright
+  shows: that 'Wer zu spät kommt, den bestraft das Leben' was Gerasimov's evening formulation, and what Gorbachev said at the Neue Wache and before the SED Politburo
+  does_not_show: a record of the Politburo meeting itself (the chronicle's summary only); any English wording
+- id: src-reagan-19870612
+  tier: A
+  kind: primary-document
+  author: Ronald Reagan, President of the United States
+  title: Remarks on East-West Relations at the Brandenburg Gate in West Berlin, June 12, 1987
+  container: null
+  publisher: Ronald Reagan Presidential Library and Museum (National Archives and Records Administration)
+  place: Simi Valley, California
+  year: 1987
+  edition: the Library's web text of the Public Papers (page break '(Pg. 636)' kept where it falls)
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.reaganlibrary.gov/archives/speech/remarks-east-west-relations-brandenburg-gate-west-berlin
+  access:
+    free_copy: https://www.reaganlibrary.gov/archives/speech/remarks-east-west-relations-brandenburg-gate-west-berlin
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Remarks on East-West Relations at the Brandenburg Gate in West Berlin | Ronald Reagan
+  language: en
+  region_of_authorship: americas
+  producer: us-government
+  position: null
+  rights: public
+  shows: the line as delivered in the Public Papers
+  does_not_show: the drafting history (who tried to cut the line is not on the page); any reaction in East Berlin
+- id: src-bush-19891109
+  tier: A
+  kind: primary-document
+  author: George H. W. Bush, President of the United States
+  title: Remarks and a Question-and-Answer Session With Reporters on the Relaxation of East German Border Controls, November 9, 1989
+  container: null
+  publisher: National Security Archive (Electronic Briefing Book No. 490, Document 10), reproducing the Public Papers text
+  place: Washington
+  year: 1989
+  edition: the Public Papers text as the Archive's PDF carries it; the Bush Library's own page (public-papers/1174) now redirects to the Library's home page
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/docs/Bush%20press%20conference%2011%209%2089.pdf
+  access:
+    free_copy: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/docs/Bush%20press%20conference%2011%209%2089.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Remarks and a Question-and-Answer Session With Reporters on the Relaxation of East German Border Controls [PDF]
+  language: en
+  region_of_authorship: americas
+  producer: us-government
+  position: null
+  rights: public
+  shows: the President's first statement, 3:34 p.m. Washington time, and 'I am not an emotional kind of guy'
+  does_not_show: 'anything said in private; the telephone call to Kohl (not held: the Library''s memcon address answered 404)'
+- id: src-chernyaev-19891110
+  tier: A
+  kind: primary-document
+  author: Anatoly Chernyaev, foreign-policy aide to Gorbachev; translated by Vladislav Zubok and Anna Melyakova
+  title: Diary of Anatoly Chernyaev regarding the Collapse of the Berlin Wall, November 10, 1989
+  container: null
+  publisher: National Security Archive (Electronic Briefing Book No. 490, Document 12)
+  place: Washington
+  year: 1989
+  edition: the Archive's English translation of the manuscript diary 'on file at the National Security Archive'
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/docs/1989-11-10%20Chernyaev%20diary.pdf
+  access:
+    free_copy: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/docs/1989-11-10%20Chernyaev%20diary.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: 'Document No. 15: Diary of Anatoly Chernyaev regarding the Collapse of the Berlin Wall [PDF]'
+  language: en
+  region_of_authorship: europe
+  producer: chernyaev
+  position: null
+  rights: copyright
+  shows: 'the private reaction of Gorbachev''s closest aide the next day: ''This entire era in the history of the socialist system is over'''
+  does_not_show: Gorbachev's own reaction; any decision
+- id: src-gorbachev-kohl-19891111
+  tier: A
+  kind: primary-document
+  author: Mikhail Gorbachev and Helmut Kohl; Soviet record; translated by Svetlana Savranskaya
+  title: Record of Telephone Conversation between Mikhail Gorbachev and Helmut Kohl, November 11, 1989
+  container: null
+  publisher: National Security Archive (Electronic Briefing Book No. 490, Document 11)
+  place: Washington
+  year: 1989
+  edition: the Archive's English of the Gorbachev Foundation record (Fond 1, Opis 1), with the record's own elisions
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/docs/1989-11-11%20Gorbachev-Kohl.pdf
+  access:
+    free_copy: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/docs/1989-11-11%20Gorbachev-Kohl.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: 'Document No. 17: Record of Telephone Conversation between Mikhail Gorbachev and Helmut Kohl [PDF]'
+  language: en
+  region_of_authorship: europe
+  producer: soviet-government
+  position: null
+  rights: copyright
+  shows: Kohl's 'We want the people of the GDR to stay home' and figures, and Gorbachev's warning against 'chaos'
+  does_not_show: the West German record of the same call; the elided passages
+- id: src-rbth-gorbachev-2014
+  tier: A
+  kind: testimony
+  author: Mikhail Gorbachev, interviewed by Maxim Korshunov
+  title: 'Mikhail Gorbachev: I am against all walls (16 October 2014)'
+  container: null
+  publisher: Russia Beyond the Headlines (RBTH)
+  place: null
+  year: 2014
+  edition: the interview as the outlet prints it in English; the page names no translator and does not say which language the interview was given in
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.rbth.com/international/2014/10/16/mikhail_gorbachev_i_am_against_all_walls_40673.html
+  access:
+    free_copy: https://www.rbth.com/international/2014/10/16/mikhail_gorbachev_i_am_against_all_walls_40673.html
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: 'Mikhail Gorbachev: I am against all walls - Russia Beyond'
+  language: en
+  region_of_authorship: europe
+  producer: gorbachev
+  position: null
+  rights: copyright
+  shows: 'Gorbachev, twenty-five years on: the leadership ''unanimously'' decided not to let troops leave their garrisons; NATO expansion ''was not discussed at all''; expansion a ''violation of the spirit'' of 1990'
+  does_not_show: a 1989 document for the decision he describes (none is held); the YAML's 'Interfax' (this is RBTH)
+- id: src-nsa-nato-2017
+  tier: B
+  kind: edited-documents
+  author: Svetlana Savranskaya and Tom Blanton, National Security Archive
+  title: 'NATO Expansion: What Gorbachev Heard (Briefing Book, December 12, 2017)'
+  container: null
+  publisher: National Security Archive, George Washington University
+  place: Washington
+  year: 2017
+  edition: the briefing book's web text (the editors' essay and document notes; the documents themselves are linked scans, not held)
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://nsarchive.gwu.edu/briefing-book/russia-programs/2017-12-12/nato-expansion-what-gorbachev-heard-western-leaders-early
+  access:
+    free_copy: https://nsarchive.gwu.edu/briefing-book/russia-programs/2017-12-12/nato-expansion-what-gorbachev-heard-western-leaders-early
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: 'NATO Expansion: What Gorbachev Heard | National Security Archive'
+  language: en
+  region_of_authorship: americas
+  producer: national-security-archive
+  position: null
+  rights: copyright
+  shows: 'Baker''s ''not one inch eastward'' formula and the Soviet record''s ''not an inch of NATO''s present military jurisdiction'', and the scholars on each side of the promise question (Kramer: a ''myth''; Shifrinson: a double game)'
+  does_not_show: the documents themselves; any treaty text making the assurance (the Two Plus Four treaty is held separately)
+- id: src-nsa-ebb490-2014
+  tier: B
+  kind: edited-documents
+  author: Thomas Blanton and Svetlana Savranskaya, National Security Archive
+  title: The Fall of the Berlin Wall, 25th Anniversary (Electronic Briefing Book No. 490, November 9, 2014)
+  container: null
+  publisher: National Security Archive, George Washington University
+  place: Washington
+  year: 2014
+  edition: the briefing book's introduction
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/
+  access:
+    free_copy: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: The Fall of the Berlin Wall, 25th Anniversary
+  language: en
+  region_of_authorship: americas
+  producer: national-security-archive
+  position: null
+  rights: copyright
+  shows: 'the editors'' reading: ''accident and contingency, rather than conspiracy or strategy''; and their summary that Schabowski ''read from his briefing papers'' the words'
+  does_not_show: the documents' own words (four are held as entries of their own)
+- id: src-kohl-19891128
+  tier: A
+  kind: primary-document
+  author: Helmut Kohl, Chancellor of the Federal Republic of Germany; translated by Jeremiah Riemer
+  title: Helmut Kohl's Ten-Point Plan for German Unity (November 28, 1989)
+  container: null
+  publisher: German Historical Institute Washington, German History in Documents and Images (GHDI)
+  place: Washington
+  year: 1989
+  edition: GHDI's English excerpt (with editorial ellipses), from the Bulletin des Presse- und Informationsamtes der Bundesregierung of 29 November 1989
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://germanhistorydocs.org/en/a-new-germany-1990-2023/helmut-kohl-s-ten-point-plan-for-german-unity-november-28-1989.pdf
+  access:
+    free_copy: https://germanhistorydocs.org/en/a-new-germany-1990-2023/helmut-kohl-s-ten-point-plan-for-german-unity-november-28-1989.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Helmut Kohl's Ten-Point Plan for German Unity (November 28, 1989) [PDF]
+  language: en
+  region_of_authorship: europe
+  producer: german-federal-government
+  position: null
+  rights: copyright
+  shows: 'the plan in Kohl''s words: confederative structures ''with the aim of creating a federation'', after free elections in the GDR; reunification ''the political aim'''
+  does_not_show: whom Kohl consulted beforehand (nothing held says he did or did not); the Bundestag record itself (Plenarprotokoll 11/177 was not fetched)
+- id: src-two-plus-four-19900912
+  tier: A
+  kind: treaty
+  author: The Federal Republic of Germany, the German Democratic Republic, France, the USSR, the United Kingdom and the United States
+  title: Treaty on the Final Settlement with Respect to Germany (Two-Plus-Four Treaty), September 12, 1990
+  container: null
+  publisher: German Historical Institute Washington, German History in Documents and Images (GHDI)
+  place: Washington
+  year: 1990
+  edition: the State Department's translation (American Foreign Policy Current Documents 1990), from the Bundesgesetzblatt 1990 II 1318-1324
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://germanhistorydocs.org/en/a-new-germany-1990-2023/two-plus-four-treaty-on-germany-september-12-1990
+  access:
+    free_copy: https://germanhistorydocs.org/en/a-new-germany-1990-2023/two-plus-four-treaty-on-germany-september-12-1990
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Two-Plus-Four Treaty on Germany (September 12, 1990) | German History in Documents and Images
+  language: en
+  region_of_authorship: europe
+  producer: two-plus-four-signatories
+  position: null
+  rights: public
+  shows: the border with Poland to be confirmed by treaty; Soviet withdrawal 'completed by the end of 1994'; the alliance right untouched
+  does_not_show: any word on NATO beyond Germany; the Soviet troop numbers or the payment for the withdrawal
+- id: src-newforum-19890909
+  tier: A
+  kind: primary-document
+  author: Neues Forum (founding signatories incl. Bärbel Bohley, Katja Havemann, Rolf Henrich, Jens Reich); translated by Allison Brown and Belinda Cooper
+  title: Founding Appeal of the New Forum (September 9, 1989)
+  container: null
+  publisher: German Historical Institute Washington, German History in Documents and Images (GHDI)
+  place: Washington
+  year: 1989
+  edition: 'GHDI''s English, from Jarausch and Gransow, Uniting Germany: Documents and Debates (1994), of Die ersten Texte des Neuen Forums (1990)'
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://germanhistorydocs.org/en/a-new-germany-1990-2023/founding-appeal-of-the-new-forum-september-9-1989
+  access:
+    free_copy: https://germanhistorydocs.org/en/a-new-germany-1990-2023/founding-appeal-of-the-new-forum-september-9-1989
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Founding Appeal of the New Forum (September 9, 1989) | German History in Documents and Images
+  language: en
+  region_of_authorship: europe
+  producer: neues-forum
+  position: null
+  rights: copyright
+  shows: 'the appeal in the movement''s words: a broken relationship between state and society, a ''democratic dialogue'', ''justice, democracy, peace, and protection of nature'''
+  does_not_show: the YAML's wording ('tasks of the rule of law') which is another translation not held; signature counts; any word on unification (the appeal does not raise it)
+- id: src-bundestag-volkskammer
+  tier: B
+  kind: reference
+  author: German Bundestag (Parliament and History pages)
+  title: The freely elected People's Chamber
+  container: null
+  publisher: Deutscher Bundestag
+  place: Berlin
+  year: n.d. (read 2026-10-09)
+  edition: the Bundestag's English web page; it gives no date of writing
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.bundestag.de/en/parliament/history/parliamentarism/peoples_chamber/peoples_chamber-201326
+  access:
+    free_copy: https://www.bundestag.de/en/parliament/history/parliamentarism/peoples_chamber/peoples_chamber-201326
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: The freely elected People's Chamber - German Bundestag
+  language: en
+  region_of_authorship: europe
+  producer: german-bundestag
+  position: null
+  rights: copyright
+  shows: the 18 March 1990 result (Alliance for Germany 48% on 'rapid monetary union'; Alliance 90 2.9%) and the accession vote of 22/23 August 1990, 294 to 62 with seven abstentions
+  does_not_show: the Volkskammer's own record; the reasons voters gave
+- id: src-bt-wd-treuhand-2019
+  tier: B
+  kind: report
+  author: Wissenschaftliche Dienste des Deutschen Bundestages (WD 1)
+  title: Ausgewählte Aspekte zur Treuhandanstalt (WD 1 - 3000 - 013/19, 17 June 2019)
+  container: null
+  publisher: Deutscher Bundestag
+  place: Berlin
+  year: 2019
+  edition: the research service's paper; its own notice says it is not the Bundestag's view
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.bundestag.de/resource/blob/654324/13300c4bd78c543053232e6d566fd9c0/WD-1-013-19-pdf-data.pdf
+  access:
+    free_copy: https://www.bundestag.de/resource/blob/654324/13300c4bd78c543053232e6d566fd9c0/WD-1-013-19-pdf-data.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Ausgewählte Aspekte zur Treuhandanstalt (WD 1 - 3000 - 013/19) [PDF]
+  language: de
+  region_of_authorship: europe
+  producer: german-parliament-research-service
+  position: null
+  rights: copyright
+  shows: 'that the first freely elected Volkskammer passed the Treuhand law on 17 June 1990; the Treuhand''s figures: about 8,000 enterprises with about four million workers in 1990; 14,500 privatised by 1994; 1.5 million job commitments; Seibel on the loss of a third of all jobs'
+  does_not_show: how many jobs were lost in Treuhand firms (the paper's figures are commitments and totals, not losses); the YAML's 8,500 and 2.5 million (neither appears)
+- id: src-einheit-2023
+  tier: A
+  kind: report
+  author: Die Bundesregierung (Beauftragter der Bundesregierung für Ostdeutschland)
+  title: Jahresbericht der Bundesregierung zum Stand der Deutschen Einheit 2023
+  container: null
+  publisher: Presse- und Informationsamt der Bundesregierung
+  place: Berlin
+  year: 2023
+  edition: the government's annual report as the federal publications portal serves it
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.publikationen-bundesregierung.de/resource/blob/2277952/2226090/19e8d0dba83e65e13266838329366e15/zum-stand-der-deutschen-einheit-2023-download-bk-amt-data.pdf
+  access:
+    free_copy: https://www.publikationen-bundesregierung.de/resource/blob/2277952/2226090/19e8d0dba83e65e13266838329366e15/zum-stand-der-deutschen-einheit-2023-download-bk-amt-data.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Zum Stand der Deutschen Einheit, Bericht der Bundesregierung 2023 [PDF]
+  language: de
+  region_of_authorship: europe
+  producer: german-federal-government
+  position: null
+  rights: official
+  shows: East Germans' share of leadership posts in the upper federal authorities (12.4% with Berlin, 7.7% without) against a population share of about 20%
+  does_not_show: productivity or wealth as a share of the West (the tables were not sliced; the YAML's 79% and 'less than half' are not held); DAX boards; the judiciary or the army
+- id: src-mau-2024
+  tier: B
+  kind: monograph
+  author: Steffen Mau; translated by David Burnett
+  title: 'Ungleich vereint: Warum der Osten anders bleibt (Suhrkamp, 2024), translated excerpt ''Unity Without Equality: Why the East is Still Different'', pp. 7-23'
+  container: null
+  publisher: Litrix.de
+  place: null
+  year: 2024
+  edition: Litrix's English excerpt of the introduction (© 2025 Litrix.de)
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.litrix.de/apps/litrix_publications/data/pdf2/lp_mau_ungleich_en.pdf
+  access:
+    free_copy: https://www.litrix.de/apps/litrix_publications/data/pdf2/lp_mau_ungleich_en.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Translated excerpt Steffen Mau Ungleich vereint [PDF]
+  language: en
+  region_of_authorship: europe
+  producer: scholarship
+  position: null
+  rights: copyright
+  shows: 'the sociologist in his own words: ''The one side feels colonized''; the Treuhand''s two images; ''East and West are still unequal''; and his distance from the claim that East Germans are a ''product'' of the West'
+  does_not_show: the book's data chapters; the YAML's English title and '2023' edition (the excerpt gives Suhrkamp 2024)
+- id: src-brandt-heft8-2001
+  tier: B
+  kind: chapter
+  author: Bundeskanzler-Willy-Brandt-Stiftung (Bernd Rother; Timothy Garton Ash)
+  title: Wächst zusammen, was zusammengehört? Deutschland und Europa zehn Jahre nach dem Fall der Mauer (Schriftenreihe Heft 8)
+  container: null
+  publisher: Bundeskanzler-Willy-Brandt-Stiftung
+  place: Berlin
+  year: 2001
+  edition: the Foundation's booklet with Rother's essay and transcripts of Brandt's interviews of 10 November 1989
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://willy-brandt.de/wp-content/uploads/heft_08_waechst_zusammen.pdf
+  access:
+    free_copy: https://willy-brandt.de/wp-content/uploads/heft_08_waechst_zusammen.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Wächst zusammen, was zusammengehört? (Heft 8) [PDF]
+  language: de
+  region_of_authorship: europe
+  producer: willy-brandt-foundation
+  position: null
+  rights: copyright
+  shows: that the sentence is missing from the recording of the Schöneberg speech, that Brandt said it in interviews on 10 November, and that he himself wrote it into the printed speech later
+  does_not_show: anything Brandt said on 9 November (the YAML's date); an English wording
+- id: src-tonline-jaeger-2019
+  tier: B
+  kind: testimony
+  author: Harald Jäger, answering readers' questions (S. Sperling, M. von Lüpke, A. Wölk, A. Krüger)
+  title: 'Grenzöffner Harald Jäger: "Man sagt, ich habe die Mauer geöffnet" (2 November 2019)'
+  container: null
+  publisher: t-online
+  place: null
+  year: 2019
+  edition: the article's printed answers (the page says more is in its video, which is not held)
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.t-online.de/nachrichten/panorama/wissen/geschichte/id_86669552/grenzoeffner-harald-jaeger-man-sagt-ich-habe-die-mauer-geoeffnet-.html
+  access:
+    free_copy: https://www.t-online.de/nachrichten/panorama/wissen/geschichte/id_86669552/grenzoeffner-harald-jaeger-man-sagt-ich-habe-die-mauer-geoeffnet-.html
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: 'Grenzöffner Harald Jäger: "Man sagt, ich habe die Mauer geöffnet"'
+  language: de
+  region_of_authorship: europe
+  producer: press
+  position: null
+  rights: copyright
+  shows: 'Jäger''s own words thirty years on: ''meine schrecklichste und meine schönste Nacht'', left alone by his superiors; his reaction to Schabowski''s sentence; the article''s own introduction calls him Oberstleutnant and deputy head of the passport control unit'
+  does_not_show: the 2009 Spiegel interview the YAML cites (not found); the time he lifted the barrier
+- id: src-iachr-121-18
+  tier: A
+  kind: report
+  author: Inter-American Commission on Human Rights
+  title: Report No. 121/18, Case 10.573, Merits (Publication), José Isabel Salas Galindo and others, United States (5 October 2018)
+  container: null
+  publisher: Organization of American States, Inter-American Commission on Human Rights
+  place: Washington
+  year: 2018
+  edition: the Commission's English report, OEA/Ser.L/V/II.169 Doc. 138
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.oas.org/en/iachr/decisions/2018/USPU10573-EN.pdf
+  access:
+    free_copy: https://www.oas.org/en/iachr/decisions/2018/USPU10573-EN.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: REPORT No. 121/18 CASE 10.573 MERITS REPORT (PUBLICATION) [PDF]
+  language: en
+  region_of_authorship: americas
+  producer: iachr
+  position: null
+  rights: official
+  shows: the death toll of the Panama invasion as a disagreement (Southern Command 202 civilians; other sources 300 to 600; petitioners more than 2,000; Physicians for Human Rights at least 300), the forensic team's 'no full lists', and the Commission's finding on distinction
+  does_not_show: a count the Commission makes itself (it makes none); anything about Berlin
+- id: src-un-ares-44-240
+  tier: A
+  kind: resolution
+  author: United Nations General Assembly
+  title: Resolution 44/240, Effects of the military intervention by the United States of America in Panama on the situation in Central America (29 December 1989)
+  container: null
+  publisher: United Nations
+  place: New York
+  year: 1989
+  edition: the UN's scanned print with its OCR layer, glyph errors kept
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://documents.un.org/doc/resolution/gen/nr0/549/99/pdf/nr054999.pdf
+  access:
+    free_copy: https://documents.un.org/doc/resolution/gen/nr0/549/99/pdf/nr054999.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: A/RES/44/240 [PDF of the printed resolutions]
+  language: en
+  region_of_authorship: global
+  producer: un-general-assembly
+  position: null
+  rights: public
+  shows: the Assembly 'strongly deplores' the intervention and demands withdrawal
+  does_not_show: the vote (not printed on the page); who sponsored it
+- id: src-nam-belgrade-1989
+  tier: A
+  kind: resolution
+  author: Ninth Conference of Heads of State or Government of Non-Aligned Countries, Belgrade, 4-7 September 1989
+  title: Final documents of the Ninth Conference of Heads of State or Government of Non-Aligned Countries (circulated as A/44/551-S/20870, 29 September 1989)
+  container: null
+  publisher: United Nations
+  place: New York
+  year: 1989
+  edition: the UN's scanned print with its OCR layer; large parts are illegible in the layer
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://documents.un.org/doc/undoc/gen/n89/228/77/pdf/n8922877.pdf
+  access:
+    free_copy: https://documents.un.org/doc/undoc/gen/n89/228/77/pdf/n8922877.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: A/44/551 S/20870 [PDF]
+  language: en
+  region_of_authorship: global
+  producer: non-aligned-movement
+  position: null
+  rights: public
+  shows: 'the Movement''s own view two months before the Wall fell: a conflict ''older and deeper than the cold war and bloc confrontation''; super-power detente will not by itself resolve the world''s conflicts'
+  does_not_show: what the illegible words name; anything said after 9 November
+positions: []
+contested: []
+exhibits: []
+analyses: []
+gaps:
+- what: The event YAML's excerpt 'As far as I know, it takes effect immediately, without delay.' (Schabowski)
+  tried:
+  - https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+  - https://www.chronik-der-mauer.de/system/files/dokument_pdf/1989_11_09_CdM_Dok_Schabowski_PK_Transkription_NEU_0.pdf
+  - https://digitalarchive.wilsoncenter.org/document/gunter-schabowskis-press-conference-gdr-international-press-center-653-701-pm
+  status: 'not in any held text. The CWIHP translation reads ''That comes into effect, according to my information, immediately, without delay'' (src-cwihp-doc8-19891109.secanswer); the German is ''Das tritt nach meiner Kenntnis ist das sofort, (leiser Zuruf: unverzüglich), unverzüglich'' (src-cdm-pk-19891109.secantwort). The Wilson Center Digital Archive host did not resolve (no address record) and its Wayback copy answered HTTP 429. The held wording is appended to the YAML as a new excerpt; the old one stays unverified'
+- what: Harald Jäger, 'I was the one who opened the Berlin Wall. On November 9, 1989. The most beautiful day of my life.' (Der Spiegel, 2009, per the YAML)
+  tried:
+  - web search for the Spiegel interview and its German wording
+  status: 'not found. What is held is his 2019 answer to t-online readers, in German: the night was ''meine schrecklichste und meine schönste Nacht'' (src-tonline-jaeger-2019.secnight). ''Most beautiful day of my life'' is not held in any language'
+- what: '''He who arrives too late is punished by life'' as Gorbachev''s words to Honecker on 7 October 1989'
+  tried:
+  - https://www.chronik-der-mauer.de/chronik/_year1989/_month10/?month=10&year=1989&opennid=171932&moc=1
+  status: 'the Chronicle says ''Nicht Gorbatschow, sondern sein Pressesprecher Gennadi Gerassimow'' made the sentence that evening; before the SED Politburo Gorbachev said ''Wenn wir zurückbleiben, bestraft uns das Leben sofort'' (src-cdm-chronik-198910-de.secgorbatschow, German, summary not a minute). No English record of the Politburo meeting is held. In 2014 Gorbachev said of history: ''It punishes those who are late'' (src-rbth-gorbachev-2014.secpunish)'
+- what: Willy Brandt's 'Now what belongs together will grow together' dated by the YAML to 'the night of November 9, 1989'
+  tried:
+  - https://willy-brandt.de/wp-content/uploads/heft_08_waechst_zusammen.pdf
+  status: the Foundation's booklet shows the sentence was said in interviews on 10 November (src-brandt-heft8-2001.secsfb, 'Jetzt sind wir in einer Situation, in der wieder zusammenwächst, was zusammengehört'), is missing from the recording of the Schöneberg speech (secaudio), and was written into the printed speech by Brandt later (secdietz). No English wording is held
+- what: Bärbel Bohley, 'We wanted justice and got the rule of law. We wanted freedom and got the free market.'
+  tried:
+  - web search for the German 'Wir wollten Gerechtigkeit und bekamen den Rechtsstaat' with a primary source
+  status: no primary source found; the first half circulates in German without a dated original, the second half was not found at all. Not held
+- what: Daniela Dahn, 'We were not liberated. We were taken over.' (Die Zeit, 2019, per the YAML); Westwärts und nicht vergessen (1996)
+  tried: []
+  status: not sought beyond the search above; no open copy. Not held. The critics' account is carried in Mau's own words (src-mau-2024)
+- what: Vladimir Putin, 'The collapse of the Soviet Union was the greatest geopolitical catastrophe of the century' (Address to the Federal Assembly, 25 April 2005)
+  tried:
+  - https://en.kremlin.ru/events/president/transcripts/22931
+  - http://en.kremlin.ru/events/president/transcripts/22931
+  - https://web.archive.org/web/20261004080628/http://www.en.kremlin.ru/events/president/transcripts/22931
+  status: the Kremlin's https address refused the connection from this machine and the Wayback copy answered HTTP 429; the page was read only over plain http, so it is not held (only https copies are admitted). That http copy of the Kremlin's English reads 'a major geopolitical disaster of the century', not the YAML's wording. Not said in the document voice
+- what: Vijay Prashad, The Darker Nations (2007), and the YAML's quotation 'The Cold War had been a cage ...'
+  tried: []
+  status: 'the YAML marks the book verified: false; no open copy sought; the quotation is not held. The Global South account is carried by the Non-Aligned Movement''s own 1989 declaration, the General Assembly and the Inter-American Commission'
+- what: Francis Fukuyama, 'The End of History?' (The National Interest, 1989) and the YAML's quotation
+  tried:
+  - https://archive.org/details/endofhistorylast00fuku
+  status: the essay is copyrighted and was not read; the archive item is the 1992 book, a lending copy. Not held
+- what: 'The books the YAML lists: Kohl (2014), Sarotte (2014, 2021), Zelikow and Rice (1995), Fulbrook (2005), Sebestyen (2009), Funder (2003), Taubman (2017), Gorbachev''s Memoirs (1996), Hensel (2002), Stiglitz (2002)'
+  tried: []
+  status: 'not opened: the archive.org items the YAML names are lending copies or in copyright; none is cited for a fact here. Their arguments are carried, where needed, by the documents and by Hertle, Mau and the National Security Archive'
+- what: Panama dead 'between 500 and 4,000' (the YAML and the live script)
+  tried:
+  - https://www.oas.org/en/iachr/decisions/2018/USPU10573-EN.pdf
+  status: neither bound is held. The Inter-American Commission reports Southern Command's 202 civilians, other sources' 300 to 600, the petitioners' more than 2,000 and Physicians for Human Rights' at least 300 (src-iachr-121-18.para135, .para22, .para120). The same report gives the official military dead as 314 Panamanian troops (para22, the petitioners' summary) and as 'fewer than 100 servicemen' (para135)
+- what: Treuhand 'eliminated 2.5 million jobs', '8,500 state-owned enterprises', industrial output down 70% by 1992, unemployment over 25%
+  tried:
+  - https://www.bundestag.de/resource/blob/654324/13300c4bd78c543053232e6d566fd9c0/WD-1-013-19-pdf-data.pdf
+  status: none held. The Bundestag research service gives about 8,000 enterprises with about four million workers (secowner), 14,500 privatised and 1.5 million job commitments (secintro), and Seibel's 'Verlust von einem Drittel der Arbeitsplätze' after the currency union (secseibel)
+- what: Eastern productivity at 79% of the West in 2023, household wealth less than half, 'over 2 trillion euros' in transfers, 'fewer than 2% of top positions'
+  tried:
+  - https://www.publikationen-bundesregierung.de/resource/blob/2277952/2226090/19e8d0dba83e65e13266838329366e15/zum-stand-der-deutschen-einheit-2023-download-bk-amt-data.pdf
+  status: the 2023 unity report was read but its productivity tables were not sliced; none of these figures is held. What is held is the share of East Germans in leadership posts in the upper federal authorities (src-einheit-2023.secleaders), dated to the report's survey
+- what: 'Soviet forces in East Germany: the YAML''s 380,000 troops and 5,000 tanks; ''General Boris Snetkov ... received no instructions from Moscow'''
+  tried:
+  - https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month11/?month=11&year=1989&moc=1
+  status: 'not held. The Chronicle says ''In accordance with the instructions from Moscow, General Snetkov ... leaves the soldiers in their barracks: 350,000 men'' (src-cdm-chronicle-198911.secsnetkov, 10 November). No tank count is held'
+- what: The Wall's construction figures (96 miles, 302 watchtowers, automatic firearms on trip wires) and the 13 August 1961 night
+  tried: []
+  status: not sought; no held extract carries them
+- what: Poland's June 1989 election (99 of 100 Senate seats), the Pan-European Picnic count, Hungary's '13,000 in three days'
+  tried:
+  - https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month9/?month=9&year=1989&moc=1
+  status: Poland not sought. The Chronicle says only 'tens of thousands ... in the following days and weeks' for Hungary (src-cdm-chronicle-198909.sec0910). The National Security Archive's 2014 introduction says 'some 300 East Germans' crossed after the 19 August picnic (page fetched, not sliced)
+- what: The Bush-Kohl telephone conversation of 10 November 1989 (Bush Library memcon)
+  tried:
+  - https://bush41library.tamu.edu/files/memcons-telcons/1989-11-10--Kohl.pdf
+  - https://www.bush41library.gov/files/memcons-telcons/1989-11-10--Kohl.pdf
+  status: the old address redirects to the Library's home page and the new one answered HTTP 404
+- what: Kohl's Ten-Point speech in the Bundestag's own record (Plenarprotokoll 11/177) and the Bundestag sitting of 9 November 1989 (11/173)
+  tried: []
+  status: not fetched; the speech is held in GHDI's English excerpt (src-kohl-19891128)
+- what: 'Recordings: the GDR television broadcast of the press conference; Reagan''s speech at the Brandenburg Gate'
+  tried: []
+  status: no recording row is written. The press conference footage is GDR television (Deutsches Rundfunkarchiv), with no basis on policy B's allowlist found; the Reagan Library's video of the speech was not examined. Optional under the brief; none is proposed
+recordings: []
+
+# ------------------------------------------------------------- disagreements held, not adjudicated
+# Where two held sources disagree, both are held. A list for the writer, not a verdict.
+# 1. Who asked 'when'. The CWIHP English has 'Question: (many voices)' and 'Question: When does it
+#    come into effect?' with no name (src-cwihp-doc8-19891109.secwhen); Ehrman (ANSA) is named only
+#    for an earlier question about 'mistakes' (.secehrman). Hertle's revised German transcription
+#    names Janowski (Voice of America), Brinkmann (Bild) and Niemeyer (DAPA), the last 'basierend
+#    auf der eigenen Aussage' with no independent confirmation (src-cdm-pk-19891109.secwann,
+#    .secantwort, .fn1). The YAML and the live script give the question to Ehrman.
+# 2. Whether Schabowski read 'immediately' or said it. The transcripts show him looking through
+#    his papers and a murmured prompt (secanswer; secantwort 'leiser Zuruf: unverzüglich'); the
+#    National Security Archive's editors write that he 'read from his briefing papers the words'
+#    (src-nsa-ebb490-2014.secread). The draft itself says 'Starting immediately' in point 2 and
+#    dates the press release 10 November in point 3 (src-cwihp-doc6-19891109).
+# 3. How many at the crossings, when. Volkspolizei report, 8.15 p.m.: 80 people at three
+#    crossings (src-cdm-chronicle-198911.sec2015); 9.30 p.m.: 500 to 1,000 at Bornholmer
+#    (.sec2130); 11.30 p.m.: 'Thousands' (.sec2330). The YAML's 'By 8:00 p.m., thousands' is none of these.
+# 4. The opening at Bornholmer: Hertle, controls ceased at 11:30 p.m. by the controllers' own
+#    decision (src-hertle-cwihp-2001.p138); the Chronicle's 11.30 p.m. entry describes the pressure,
+#    not the opening. Jäger is 'head of Ministry of Security passport control' in the Chronicle's link
+#    captions (not in a held extract) and 'stellvertretender Leiter der Passkontrolleinheit' in t-online
+#    (src-tonline-jaeger-2019.secintro).
+# 5. The dead at the Wall: at least 140 (Hertle and Nooke, by a stated criterion that includes
+#    30 non-escapees, one Soviet soldier and eight border soldiers) against 78, 86, 92, 122 and
+#    'more than 200' (Working Group 13 August) by earlier counts (src-hertle-nooke-2017.p1, .secdefinition,
+#    .p2, .p3); 251 deaths at checkpoints counted apart (.seccheckpoints). Not averaged.
+# 6. First and last: Siekmann, fatally injured 22 August 1961 (src-cdm-victims-s); Litfin, the
+#    first shot dead, 24 August 1961 (src-cdm-victims-l); Gueffroy, the last shot dead, 5 February
+#    1989 (src-cdm-victims-g; the YAML says 6 February); Freudenberg, the last death, 8 March 1989
+#    (src-cdm-victims-f).
+# 7. Leipzig: 1,200 on 4 September (src-cdm-chronicle-198909.sec0904; the YAML says 1,000);
+#    300,000 on 23 October (src-cdm-chronicle-198910.sec1023; the YAML says 30 October).
+# 8. Soviet troops: 350,000 men (src-cdm-chronicle-198911.secsnetkov) against the YAML's 380,000.
+# 9. Soviet non-intervention, decision or absence: 'instructions from Moscow' to leave them in
+#    barracks (secsnetkov, 10 November); Gorbachev in 2014, a 'unanimous' decision 'not to let our
+#    troops leave their garrisons' (src-rbth-gorbachev-2014.secgarrisons); Hertle, the Soviet
+#    leadership 'sound asleep' during the night (src-hertle-cwihp-2001.secmoscow); Shevardnadze,
+#    recalled, 'we only rejected one possibility from the beginning, that of the use of force'
+#    (secforce, at second hand). The YAML's 'received no instructions' is not held.
+# 10. The NATO assurance: Baker's 'not one inch eastward' and the Soviet record's 'not an inch of
+#    NATO's present military jurisdiction' (src-nsa-nato-2017.seclead, .secdoc06); Gorbachev in
+#    2014: 'not discussed at all', the assurance concerned the GDR's territory, but expansion was
+#    'a violation of the spirit' (src-rbth-gorbachev-2014.secnato, .secspirit); Kramer calls the
+#    pledge a 'myth', Shifrinson a double game (src-nsa-nato-2017.secpanel); the treaty is silent
+#    beyond Germany (src-two-plus-four-19900912.art6).
+# 11. The Treuhand: about 8,000 enterprises (src-bt-wd-treuhand-2019.secowner) against the YAML's
+#    8,500; 14,500 privatised (secintro) counts enterprises and parts after splitting, a different count.
+# 12. Panama: 202 civilians (Southern Command) / 300 to 600 / more than 2,000 / at least 300
+#    (src-iachr-121-18.para135, .para22, .para120); military dead 314 (para22) or 'fewer than
+#    100' (para135) inside the same report.
+# 13. The critics among themselves: Mau, 'The one side feels colonized' as a description of a
+#    feeling, and his distance from the claim that East Germans are a 'product' of the West
+#    (src-mau-2024.p3, .p6), against the YAML's 'colonization' as the critics' thesis.

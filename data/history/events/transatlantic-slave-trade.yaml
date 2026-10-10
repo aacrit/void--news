@@ -111,6 +111,71 @@ primary_source_excerpts:
   author: Frederick Douglass
   work: Speech at Rochester, New York
   date: July 5, 1852
+- text: 'The profits of a sugar plantation in any of our West Indian colonies, are generally much greater than those of any other cultivation that is known either in Europe or America'
+  author: 'Adam Smith'
+  work: 'An Inquiry into the Nature and Causes of the Wealth of Nations, Book III, chapter II'
+  date: '1776'
+  url: https://www.gutenberg.org/cache/epub/3300/pg3300.txt
+- text: 'It has been decided, whether wisely or unwisely is not now the question, that a portion of our fellow-creatures may become the subject of property. This, therefore, was a throwing overboard of goods, and of part to save the residue.'
+  author: 'Lee, Solicitor General, and Chambre, counsel for the shipowners'
+  work: 'Gregson v. Gilbert, Court of King''s Bench, argument for the owners, as reported in Douglas''s Reports, vol. 3 (1831), p. 232 and following'
+  date: '1783'
+  url: https://archive.org/details/reportscasesarg04glengoog
+- text: 'towards compensating the Persons at present entitled to the Services of the Slaves to be manumitted and set free by virtue of this Act for the Loss of such Services'
+  author: 'Parliament of the United Kingdom'
+  work: 'An Act for the Abolition of Slavery throughout the British Colonies (3 & 4 Will. IV c. 73), section XXIV, as transcribed by The Statutes Project'
+  date: '1833'
+  url: https://statutes.org.uk/site/the-statutes/nineteenth-century/1833-3-4-william-4-c-73-abolition-of-slavery-act/
+- text: 'The shrieks of the women, and the groans of the dying, rendered the whole a scene of horror almost inconceivable.'
+  author: 'Olaudah Equiano'
+  work: 'The Interesting Narrative of the Life of Olaudah Equiano, chapter II'
+  date: '1789'
+  url: https://www.gutenberg.org/cache/epub/15399/pg15399.txt
+- text: 'Its horrors, ah! who can describe? None can so truly depict its horrors as the poor unfortunate, miserable wretch that has been confined within its portals.'
+  author: 'Mahommah Gardo Baquaqua'
+  work: 'Biography of Mahommah G. Baquaqua (Detroit, 1854), p. 42, written and revised from his own words by Samuel Moore'
+  date: '1854'
+  url: https://docsouth.unc.edu/neh/baquaqua/baquaqua.html
+- text: 'During the trans-Atlantic slave trade alone, approximately 12 million slaves were exported from Africa. Another 6 million were exported in the other three slave trades.'
+  author: 'Nathan Nunn'
+  work: 'The Long-Term Effects of Africa''s Slave Trades, NBER Working Paper 13367'
+  date: '2007'
+  url: https://www.nber.org/system/files/working_papers/w13367/w13367.pdf
+- text: 'Combining contemporary household survey data with historic data on slave shipments, we show that individuals whose ancestors were heavily raided during the slave trade today exhibit less trust in neighbors, relatives, and their local government.'
+  author: 'Nathan Nunn and Leonard Wantchekon'
+  work: 'The Slave Trade and the Origins of Mistrust in Africa, NBER Working Paper 14783, abstract'
+  date: '2009'
+  url: https://www.nber.org/system/files/working_papers/w14783/w14783.pdf
+- text: 'By the end of the trade, because of the environment of ubiquitous insecurity that had developed, individuals - even friends and family members - began to turn on one another, kidnapping, tricking, and selling each other into slavery'
+  author: 'Nathan Nunn and Leonard Wantchekon'
+  work: 'The Slave Trade and the Origins of Mistrust in Africa, NBER Working Paper 14783, introduction'
+  date: '2009'
+  url: https://www.nber.org/system/files/working_papers/w14783/w14783.pdf
+- text: 'So much misery condensed in so little room, is more than the human imagination had ever before conceived.'
+  author: 'William Wilberforce'
+  work: 'Speech to the House of Commons, 12 May 1789, as reported in Cobbett''s Parliamentary History of England, vol. 28 (1816)'
+  date: 'May 12, 1789'
+  url: https://archive.org/details/10279136bsb
+- text: 'a trade, which, measuring its magnitude by its crimes and sufferings, was the greatest practical evil that ever afflicted the human race.'
+  author: 'Thomas Clarkson'
+  work: 'The History of the Rise, Progress and Accomplishment of the Abolition of the African Slave-Trade by the British Parliament, chapter X'
+  date: '1808'
+  url: https://www.gutenberg.org/cache/epub/10633/pg10633.txt
+- text: 'But if they think it bad now, why did they think it good before.'
+  author: 'The King of Ashantee, as recorded by Joseph Dupuis'
+  work: 'Journal of a Residence in Ashantee (London, 1824), p. 163; the king''s words as the British envoy recorded them in English'
+  date: '1824'
+  url: https://archive.org/details/journalofresiden00dupu
+- text: 'I cannot make war to catch slaves in the bush, like a thief. My ancestors never did so.'
+  author: 'The King of Ashantee, as recorded by Joseph Dupuis'
+  work: 'Journal of a Residence in Ashantee (London, 1824), p. 163; the king''s words as the British envoy recorded them in English'
+  date: '1824'
+  url: https://archive.org/details/journalofresiden00dupu
+- text: 'But I must own, to the shame of my own countrymen, that I was first kidnapped and betrayed by some of my own complexion, who were the first cause of my exile, and slavery; but if there were no buyers there would be no sellers.'
+  author: 'Ottobah Cugoano'
+  work: 'Narrative of the Enslavement of Ottobah Cugoano, a Native of Africa (1787), as reprinted in The Negro''s Memorial (London, 1825)'
+  date: '1787'
+  url: https://docsouth.unc.edu/neh/cugoano/cugoano.html
 coordinates:
   lat: 6.4969
   lng: 2.6289

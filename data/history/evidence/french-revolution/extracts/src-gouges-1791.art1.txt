@@ -1,0 +1,7 @@
+source: src-gouges-1791
+locator: art1
+url: https://archive.org/download/lesdroitsdelafem00goug/lesdroitsdelafem00goug_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (long s read as f and other misreadings included); line breaks collapsed to spaces, nothing else changed
+
+La Femme naît libre et demeure égale à l’homme en droits. Les distinctions sociales ne peuvent être fondées que sur l’utilité commune.

@@ -1,0 +1,7 @@
+source: src-gouges-hunt-1996
+locator: art10
+url: https://revolution.chnm.org/d/293
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+10. No one should be disturbed for his fundamental opinions; woman has the right to mount the scaffold, so she should have the right equally to mount the rostrum, provided that these manifestations do not trouble public order as established by law.

@@ -1,0 +1,8 @@
+source: src-nsa-ebb490-2014
+locator: secaccident
+url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/
+read: 2026-10-09
+note: the editors' introduction (Blanton and Savranskaya)
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+The historic events of the night of November 9, 1989 came about from accident and contingency, rather than conspiracy or strategy, according to the documents.

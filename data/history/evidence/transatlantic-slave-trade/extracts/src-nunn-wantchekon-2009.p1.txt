@@ -1,0 +1,7 @@
+source: src-nunn-wantchekon-2009
+locator: p1
+url: https://www.nber.org/system/files/working_papers/w14783/w14783.pdf
+read: 2026-10-09
+note: the introduction, PDF text layer; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Early in the slave trade, slaves were primarily captured through state organized raids and warfare. By the end of the trade, because of the environment of ubiquitous insecurity that had developed, individuals - even friends and family members - began to turn on one another, kidnapping, tricking, and selling each other into slavery

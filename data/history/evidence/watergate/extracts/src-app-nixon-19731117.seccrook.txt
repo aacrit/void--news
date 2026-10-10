@@ -1,0 +1,8 @@
+source: src-app-nixon-19731117
+locator: seccrook
+url: https://www.presidency.ucsb.edu/documents/question-and-answer-session-the-annual-convention-the-associated-press-managing-editors
+read: 2026-10-09
+note: The American Presidency Project's text, from the Public Papers of the Presidents
+note: Nixon's answer on his personal finances, in the question-and-answer session at the Associated Press Managing Editors convention
+
+Let me just say this, and I want to say this to the television audience: I made my mistakes, but in all of my years of public life, I have never profited, never profited from public service--I have earned every cent. And in all of my years of public life, I have never obstructed justice. And I think, too, that I could say that in my years of public life, that I welcome this kind of examination, because people have got to know whether or not their President is a crook. Well, I am not a crook. I have earned everything I have got.

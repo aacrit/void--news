@@ -1,0 +1,7 @@
+source: src-hansard-18070223
+locator: secsecond
+url: https://api.parliament.uk/historic-hansard/commons/1807/feb/23/slave-trade-abolition-bill
+read: 2026-10-09
+note: a member opposing the bill names the question: the second reading; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+I must, for the reasons I have given, vote against the second reading of the bill.

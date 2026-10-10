@@ -1,0 +1,8 @@
+source: src-caaa-1986
+locator: sec101
+url: https://www.govinfo.gov/content/pkg/STATUTE-100/pdf/STATUTE-100-Pg1086.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation and glyph errors are kept as the layer prints them
+note: the layer interleaves the margin citation '22 USC 5011.'
+
+SEC. 101. (a) United States policy toward the Government of South 22 USC 5011. Africa shall be designed to bring about reforms in that system of government that will lead to the establishment of a nonracial democracy.

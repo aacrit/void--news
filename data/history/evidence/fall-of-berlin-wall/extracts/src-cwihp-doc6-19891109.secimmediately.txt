@@ -1,0 +1,8 @@
+source: src-cwihp-doc6-19891109
+locator: secimmediately
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+read: 2026-10-09
+note: p. 155, Document No. 6, the draft resolution signed by Willi Stoph; translated for CWIHP by Howard Sargeant from the BStU copy
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+2. Starting immediately, the following temporary transition regulations for travel abroad and permanent exits from the GDR are in effect:

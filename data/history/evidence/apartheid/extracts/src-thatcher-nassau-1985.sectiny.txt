@@ -1,0 +1,8 @@
+source: src-thatcher-nassau-1985
+locator: sectiny
+url: https://www.margaretthatcher.org/document/106151
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+note: the transcript is the Foundation's, from a Central Office of Information transcript in the Thatcher papers (Churchill Archive Centre)
+
+Prime Minister Well, aren't they tiny? Just look at what we were faced with! Full, mandatory, economic sanctions; a ban on all imports; a ban on all exports.

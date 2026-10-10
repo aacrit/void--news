@@ -1,0 +1,7 @@
+source: src-eltis-2007
+locator: secrebellion
+url: https://legacy.slavevoyages.org/blog/brief-overview-trans-atlantic-slave-trade
+read: 2026-10-09
+note: the same essay; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Probably about one in ten slaving voyages experienced major rebellions, of which the attempts to control increased the costs of a slave voyage to the point where far fewer slaves entered the traffic than would have been the case without resistance.

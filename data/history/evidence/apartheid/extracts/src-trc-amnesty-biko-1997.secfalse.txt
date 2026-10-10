@@ -1,0 +1,7 @@
+source: src-trc-amnesty-biko-1997
+locator: secfalse
+url: https://www.justice.gov.za/trc/amntrans/pe/snyman.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+MR BOOYENS : So, you in fact lied to the inquest court?

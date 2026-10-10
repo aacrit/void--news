@@ -1,0 +1,8 @@
+source: src-ssc-final-1974
+locator: secbreakin
+url: https://archive.org/details/FinalReportOfTheSenateSelectCommitteeOnPresidentialCampaignActivities
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (including the '¬' the OCR prints for one) are kept as printed
+note: chapter 1, 'The Watergate Break-in and Its Prelude', its opening paragraph; the footnote numbers are printed inline ('headquarters on the sixth floor of the Watergate Office Building. 2')
+
+In the early morning hours of June 17, 1972, James McCord, Bernard L. Barker, Frank Sturgis, Eugenio Martinez and Virgilio Gonzales illegally entered the Democratic National Committee head- quarters on the sixth floor of the Watergate Office Building. 2 Nearby, in a room in the Watergate Hotel, Howard Hunt and G. Gordon Liddy, the supervisors of this burglary operation, stood by keeping in walkie- talkie communication with Alfred Baldwin who served as a lookout across the street from the Watergate complex in the Howard Johnson Motor Lodge. 3 The mission was ill-fated. Within a short time after the break-in, a Washington Metropolitan Police Department plain- clothes unit in an unmarked car responded to a call to assist a guard at the Watergate Office Building. 4 The guard, Frank Wills, had become suspicious when, for the second time that night, he found masking tape on the edge of a door in the garage leading to the office building. 5 The tape had been placed to hold back the locking mech- anism, permitting the door to be opened without a key. 6 Earlier that night, Wills had removed tape from the same door thinking it had been inadvertently left by a building engineer.

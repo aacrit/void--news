@@ -1,0 +1,8 @@
+source: src-sieyes-whitcomb-1899
+locator: p35
+url: https://archive.org/download/frenchphilosoph00whitgoog/frenchphilosoph00whitgoog_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (long s read as f and other misreadings included); line breaks collapsed to spaces, nothing else changed
+note: the last sentences of Whitcomb's extract, which he translates from the Paris edition of 1839, pp. 33 to 41 (his note on p. 32)
+
+The Third Estate embraces then all that which belongs to the nation; and all that which is not the Third Estate, cannot be regarded as being of the nation. What is the Third Estate? It is the whole.

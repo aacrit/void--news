@@ -1,0 +1,7 @@
+source: src-vam-o79580
+locator: secmotto
+url: https://api.vam.ac.uk/v2/museumobject/O79580
+read: 2026-10-09
+note: the record's summaryDescription field (JSON), HTML tags removed; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Wedgwood is popularly credited as the originator of the motto on the medallion: 'Am I not a man and a brother?'. He had extensive trading links with Liverpool, the foremost slave port of the day. However, there is evidence to suggest that the phrase was first employed in 1778 by Rev Dr Peter Peckard, Chancellor of Magdalene College, Cambridge, who used it as the title of an abolitionist pamphlet supplied to the National Legislator.

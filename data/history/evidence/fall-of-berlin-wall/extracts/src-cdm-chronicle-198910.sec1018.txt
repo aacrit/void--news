@@ -1,0 +1,8 @@
+source: src-cdm-chronicle-198910
+locator: sec1018
+url: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month10/?month=10&year=1989&moc=1
+read: 2026-10-09
+note: the entry for 17/18 October
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+17/18 October 1989 A fierce power struggle in the SED Politburo ends with the downfall of Erich Honecker, who is forced to cite health reasons as being behind his resignation from the SED Central Committee. Egon Krenz becomes the new SED general secretary.

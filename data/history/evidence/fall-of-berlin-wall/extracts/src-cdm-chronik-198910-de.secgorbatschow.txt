@@ -1,0 +1,8 @@
+source: src-cdm-chronik-198910-de
+locator: secgorbatschow
+url: https://www.chronik-der-mauer.de/chronik/_year1989/_month10/?month=10&year=1989&opennid=171932&moc=1
+read: 2026-10-09
+note: the German chronicle's entry for 6/7 October 1989; the page closes the last quotation with a straight double quote
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+In einem spontanen Interview an der Ost-Berliner Neuen Wache äußert Michail Gorbatschow den Satz: „Gefahren warten nur auf jene, die nicht auf das Leben reagieren!" Vor dem SED-Politbüro variiert er diesen Satz: „Wenn wir zurückbleiben, bestraft uns das Leben sofort." Nicht Gorbatschow, sondern sein Pressesprecher Gennadi Gerassimow, macht daraus am Abend den Ausspruch „Wer zu spät kommt, den bestraft das Leben!"

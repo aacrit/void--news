@@ -1,0 +1,7 @@
+source: src-freedom-charter-1955
+locator: pre1
+url: https://omalley.nelsonmandela.org/index.php/site/q/03lv01538/04lv01600/05lv01611/06lv01612.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+WE, THE PEOPLE OF SOUTH AFRICA, declare for all our country and the world to know: that South Africa belongs to all who live in it, black and white, and that no government can justly claim authority unless it is based on the will of all the people; that our people have been robbed of their birthright to land, liberty and peace by a form of government founded on injustice and inequality; that our country will never be prosperous or free until all our people live in brotherhood, enjoying equal rights and opportunities; that only a democratic state, based on the will of all the people, can secure to all their birthright without distinction of colour, race, sex or belief;

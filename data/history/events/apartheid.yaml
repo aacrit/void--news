@@ -137,6 +137,91 @@ primary_source_excerpts:
   author: Nelson Mandela
   work: Long Walk to Freedom
   date: '1994'
+- text: 'For my own part I have made my choice. I will not leave South Africa, nor will I surrender. Only through hardship, sacrifice and militant action can freedom be won. The struggle is my life. I will continue fighting for freedom until the end of my days.'
+  author: 'Nelson Mandela'
+  work: 'The Struggle is my Life, press statement issued from underground (United Nations text)'
+  date: 'June 26, 1961'
+  url: https://www.un.org/en/events/mandeladay/struggle.shtml
+- text: 'I do not, however, deny that I planned sabotage. I did not plan it in a spirit of recklessness, nor because I have any love of violence.'
+  author: 'Nelson Mandela'
+  work: 'Statement from the dock, Rivonia Trial (United Nations text)'
+  date: 'April 20, 1964'
+  url: https://www.un.org/en/events/mandeladay/court_statement_1964.shtml
+- text: 'South Africa belongs to all who live in it, black and white, and that no government can justly claim authority unless it is based on the will of all the people'
+  author: 'The Congress of the People'
+  work: 'The Freedom Charter, adopted at Kliptown, preamble (the O''Malley Archives text)'
+  date: 'June 26, 1955'
+  url: https://omalley.nelsonmandela.org/index.php/site/q/03lv01538/04lv01600/05lv01611/06lv01612.htm
+- text: '"white person" means a person who in appearance obviously is, or who is generally accepted as a white person, but does not include a person who, although in appearance obviously a white person, is generally accepted as a coloured person'
+  author: 'Parliament of the Union of South Africa'
+  work: 'Population Registration Act, No. 30 of 1950, section 1, definition (xv) (statute book scan, Digital Innovation South Africa)'
+  date: 'June 22, 1950'
+  url: https://disa.ukzn.ac.za/sites/default/files/pdf_files/leg19500707.028.020.030.pdf
+- text: 'Many of those who took part in the struggle from the side of the Government, especially most of the Afrikaners, believed, to start with, that they were defending the right of their people to national self-determination in their own state within a territorially partitioned South Africa.'
+  author: 'F.W. de Klerk'
+  work: 'Submission to the Truth and Reconciliation Commission as Leader of the National Party'
+  date: '1996'
+  url: https://www.justice.gov.za/trc/hrvtrans/submit/np_truth.htm
+- text: 'During their freedom struggle their homes were burned, their country was devastated and more than 20 000 of their women and children died in concentration camps.'
+  author: 'F.W. de Klerk'
+  work: 'Submission to the Truth and Reconciliation Commission as Leader of the National Party, on the Afrikaners in the Anglo-Boer War'
+  date: '1996'
+  url: https://www.justice.gov.za/trc/hrvtrans/submit/np_truth.htm
+- text: 'I, and many other leading figures, have already publicly apologised for the pain and suffering caused by former policies of the National Party.'
+  author: 'F.W. de Klerk'
+  work: 'Submission to the Truth and Reconciliation Commission as Leader of the National Party'
+  date: '1996'
+  url: https://www.justice.gov.za/trc/hrvtrans/submit/np_truth.htm
+- text: 'Black Consciousness is an attitude of mind, a way of life; (ii) The basic tenet of Black Consciousness is that the black man must reject all value systems that seek to make him a foreigner in the country of his birth and reduce his basic human dignity;'
+  author: 'South African Students'' Organisation'
+  work: 'SASO Policy Manifesto, point 4(b), as reprinted by the South African History Archive'
+  date: '1971'
+  url: https://www.saha.org.za/nonracialism/black_man_youre_on_your_own.htm
+- text: 'True to their image, the white liberals always knew what was good for the blacks and told them so. The wonder of it all is that the black people have believed in them for so long'
+  author: 'Steve Biko'
+  work: '''Black Souls in White Skins?'', SASO Newsletter, written as Frank Talk, as reprinted by the South African History Archive'
+  date: 'August 1970'
+  url: https://www.saha.org.za/nonracialism/black_man_youre_on_your_own.htm
+- text: 'I am against the superior-inferior white-black stratification that makes the white a perpetual teacher and the black a perpetual pupil'
+  author: 'Steve Biko'
+  work: '''Black Souls in White Skins?'', SASO Newsletter, written as Frank Talk, as reprinted by the South African History Archive'
+  date: 'August 1970'
+  url: https://www.saha.org.za/nonracialism/black_man_youre_on_your_own.htm
+- text: 'Deplores that the recent disturbances in the Union of South Africa should have led to the loss of life of so many Africans and extends to the families of the victims its deepest sympathies;'
+  author: 'United Nations Security Council'
+  work: 'Resolution 134 (1960), operative paragraph 2'
+  date: 'April 1, 1960'
+  url: https://documents.un.org/doc/resolution/gen/nr0/157/23/pdf/nr015723.pdf
+- text: 'It is the sense of the Congress that the African National Congress should strongly condemn and take effective actions against the execution by fire, commonly known as "necklacing", of any person in any country.'
+  author: 'Congress of the United States'
+  work: 'Comprehensive Anti-Apartheid Act of 1986, Public Law 99-440, section 108'
+  date: 'October 2, 1986'
+  url: https://www.govinfo.gov/content/pkg/STATUTE-100/pdf/STATUTE-100-Pg1086.pdf
+- text: 'Well, aren''t they tiny? Just look at what we were faced with! Full, mandatory, economic sanctions; a ban on all imports; a ban on all exports.'
+  author: 'Margaret Thatcher'
+  work: 'Press conference at the Commonwealth summit, Nassau, answering whether the three measures agreed were sanctions (Margaret Thatcher Foundation transcript)'
+  date: 'October 20, 1985'
+  url: https://www.margaretthatcher.org/document/106151
+- text: 'there is a need for understanding but not for vengeance, a need for reparation but not for retaliation, a need for ubuntu but not for victimisation.'
+  author: 'Parliament of the Republic of South Africa'
+  work: 'Constitution of the Republic of South Africa, Act 200 of 1993, closing provision ''National Unity and Reconciliation'''
+  date: '1993'
+  url: https://www.justice.gov.za/trc/legal/interim.htm
+- text: 'There is no doubt that members of the security establishment would have scuppered the negotiated settlement had they thought they were going to run the gauntlet of trials for their involvement in past violations.'
+  author: 'Desmond Tutu'
+  work: 'Foreword by the Chairperson, Truth and Reconciliation Commission of South Africa Report, Volume One, paragraph 22'
+  date: '1998'
+  url: https://www.justice.gov.za/trc/report/finalreport/Volume%201.pdf
+- text: 'One of the criteria to be satisfied before amnesty could be granted was full disclosure of the truth. Freedom was granted in exchange for truth.'
+  author: 'Desmond Tutu'
+  work: 'Foreword by the Chairperson, Truth and Reconciliation Commission of South Africa Report, Volume One, paragraph 29'
+  date: '1998'
+  url: https://www.justice.gov.za/trc/report/finalreport/Volume%201.pdf
+- text: 'He was carried by Mbuyiswa Makhubo of Orlando West. We rushed to Phomolong clinic, which was nearby. On arrival at the clinic the doctor named Wilson said he was sorry there was nothing he can do because he was already deceased.'
+  author: 'Antoinette Sithole'
+  work: 'Statement to the Truth and Reconciliation Commission on the death of her brother Hector Peterson, as quoted in the Commission''s Report, Volume Three, chapter 6, paragraph 130'
+  date: '1998'
+  url: https://www.justice.gov.za/trc/report/finalreport/Volume%203.pdf
 coordinates:
   lat: -33.9249
   lng: 18.4241

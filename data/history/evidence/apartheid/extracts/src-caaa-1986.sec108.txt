@@ -1,0 +1,7 @@
+source: src-caaa-1986
+locator: sec108
+url: https://www.govinfo.gov/content/pkg/STATUTE-100/pdf/STATUTE-100-Pg1086.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation and glyph errors are kept as the layer prints them
+
+SEC. 108. It is the sense of the Congress that the African National Congress should strongly condemn and take effective actions against the execution by fire, commonly known as "necklacing", of any person in any country.

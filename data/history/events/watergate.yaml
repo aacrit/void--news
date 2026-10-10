@@ -121,6 +121,66 @@ primary_source_excerpts:
   author: Gerald Ford
   work: Remarks on taking the oath of office
   date: August 9, 1974
+- text: Now, for the first time in the 182 years since the founding of the Republic, the federal courts are asked to hold that the First Amendment does not mean what it says
+  author: Justice Hugo Black
+  work: Concurring opinion, New York Times Co. v. United States, 403 U.S. 713
+  date: June 30, 1971
+  url: https://www.law.cornell.edu/supremecourt/text/403/713
+- text: Now, at age 91, W. Mark Felt, number two at the F.B.I. in the early 70s, is finally admitting to that historic, anonymous role.
+  author: John D. O'Connor
+  work: I'm the Guy They Called Deep Throat, Vanity Fair
+  date: July 2005
+  url: https://www.vanityfair.com/news/politics/2005/07/deepthroat200507
+- text: In the past few days, however, it has become evident to me that I no longer have a strong enough political base in the Congress to justify continuing that effort.
+  author: Richard Nixon
+  work: Address to the Nation Announcing Decision To Resign the Office of President
+  date: August 8, 1974
+  url: https://www.presidency.ucsb.edu/documents/address-the-nation-announcing-decision-resign-the-office-president-the-united-states
+- text: I have never been a quitter. To leave office before my term is completed is abhorrent to every instinct in my body.
+  author: Richard Nixon
+  work: Address to the Nation Announcing Decision To Resign the Office of President
+  date: August 8, 1974
+  url: https://www.presidency.ucsb.edu/documents/address-the-nation-announcing-decision-resign-the-office-president-the-united-states
+- text: This duty rests on taxi drivers, Justices, and the New York Times.
+  author: Chief Justice Warren Burger
+  work: Dissenting opinion, New York Times Co. v. United States, 403 U.S. 713
+  date: June 30, 1971
+  url: https://www.law.cornell.edu/supremecourt/text/403/713
+- text: The generalized assertion of privilege must yield to the demonstrated, specific need for evidence in a pending criminal trial.
+  author: Chief Justice Warren Burger
+  work: Opinion of the Court, United States v. Nixon, 418 U.S. 683
+  date: July 24, 1974
+  url: https://www.law.cornell.edu/supremecourt/text/418/683
+- text: Richard M. Nixon, using the powers of his high office, engaged personally and through his subordinates and agents, in a course of conduct or plan designed to delay, impede, and obstruct the investigation of such unlawful entry
+  author: House Committee on the Judiciary
+  work: Article I of the articles of impeachment, as printed in the Committee's final report
+  date: July 27, 1974
+  url: https://archive.org/details/impeachmentofric0000unit
+- text: Some 800 witnesses were examined, approximately 250 under oath in executive sessions, 50 in public sessions, and the balance in interviews.
+  author: Senate Select Committee to Study Governmental Operations with Respect to Intelligence Activities
+  work: Intelligence Activities and the Rights of Americans, Book II, Final Report, p. IX, n. 7
+  date: '1976'
+  url: https://www.intelligence.senate.gov/sites/default/files/94755_II.pdf
+- text: In any event, the fact remains that it was not the press which exposed Watergate; it was agencies of government itself.
+  author: Edward Jay Epstein
+  work: Did the Press Uncover Watergate?, Commentary
+  date: July 1974
+  url: https://www.commentary.org/articles/edward-epstein-3/did-the-press-uncover-watergate/
+- text: The prosecutors and the grand jury thus developed an airtight case against Liddy, Hunt, and the five burglars well in advance of, and without any assistance from, Woodward, Bernstein, or any other reporters.
+  author: Edward Jay Epstein
+  work: Did the Press Uncover Watergate?, Commentary
+  date: July 1974
+  url: https://www.commentary.org/articles/edward-epstein-3/did-the-press-uncover-watergate/
+- text: I began by telling the President that there was a cancer growing on the Presidency
+  author: John Dean
+  work: Statement to the Senate Select Committee on Presidential Campaign Activities, Hearings, Book 3, p. 998
+  date: June 25, 1973
+  url: https://archive.org/details/presidentialcamp03unit
+- text: Trust in government began eroding amid the escalation of the Vietnam War. The decline continued in the 1970s with the Watergate scandal and worsening economic struggles.
+  author: Pew Research Center
+  work: 'Public Trust in Government: 1958-2025'
+  date: December 4, 2025
+  url: https://www.pewresearch.org/politics/2025/12/04/public-trust-in-government-1958-2025/
 coordinates:
   lat: 38.8997
   lng: -77.0553

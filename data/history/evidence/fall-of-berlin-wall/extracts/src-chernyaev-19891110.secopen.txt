@@ -1,0 +1,8 @@
+source: src-chernyaev-19891110
+locator: secopen
+url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/docs/1989-11-10%20Chernyaev%20diary.pdf
+read: 2026-10-09
+note: translated by Vladislav Zubok and Anna Melyakova (the document's source line)
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+The Berlin Wall has collapsed. This entire era in the history of the socialist system is over. After the PUWP and the HSWP went Honecker. Today we received messages about the "retirement" of Deng Xiaopeng and Todor Zhivkov. Only our "best friends" Castro, Ceauşescu, and Kim Il Sung are still around--people who hate our guts.

@@ -1,0 +1,8 @@
+source: src-ssc-final-1974
+locator: secervin3
+url: https://archive.org/details/FinalReportOfTheSenateSelectCommitteeOnPresidentialCampaignActivities
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (including the '¬' the OCR prints for one) are kept as printed
+note: chapter 11, the individual views of Senator Sam J. Ervin, Jr., his third preliminary point
+
+3. Watergate was not invented by enemies of the Nixon administra- tion or even by the news media. On the contrary, Watergate was per- petrated upon America by White House and political aides, whom President Nixon himself had entrusted with the management of his campaign for reelection to the Presidency, a campaign which was di- vorced to a marked degree from the campaigns of other Republicans who sought election to public office in 1972.

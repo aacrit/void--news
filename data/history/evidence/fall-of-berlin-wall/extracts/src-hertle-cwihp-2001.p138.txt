@@ -1,0 +1,8 @@
+source: src-hertle-cwihp-2001
+locator: p138
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+read: 2026-10-09
+note: p. 138; the 'chief officer of passport control' is not named in this passage
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Passport controllers and border soldiers at the Bornholmer Strasse crossing, fearing for their lives, made the decision on their own to cease all controls at 11:30 p.m. “We’re opening the floodgates now!” announced the chief officer of passport control, and the barriers were raised. The border guards gave way to the pressure from the crowds until midnight at most of the border crossings in the inner city, allowing East Berliners to cross without papers. The same thing happened until 1:00 a.m. at the border control points around Berlin and on other parts of the German-German border. Thousands of Berliners crossed the fortifications and the Wall at the Brandenburg Gate, and then strolled for several hours around Pariser Platz. Dances of joy erupted along the Wall; the symbol of the division of Germany had fallen.

@@ -109,6 +109,82 @@ primary_source_excerpts:
   author: Madame Roland (Manon Roland)
   work: Spoken on the scaffold before her execution
   date: November 8, 1793
+- text: Men are born and remain free and equal in rights.
+  author: National Assembly of France, in the Conseil constitutionnel's English translation
+  work: Declaration of the Rights of Man and of the Citizen, article 1, first sentence, as the Conseil constitutionnel serves it (ledger extract src-ddhc-1789-en.art1)
+  date: August 26, 1789
+- text: The principle of any Sovereignty lies primarily in the Nation. No corporate body, no individual may exercise any authority that does not expressly emanate from it.
+  author: National Assembly of France, in the Conseil constitutionnel's English translation
+  work: Declaration of the Rights of Man and of the Citizen, article 3 (ledger extract src-ddhc-1789-en.art3)
+  date: August 26, 1789
+- text: What is the Third Estate? It is the whole.
+  author: Emmanuel-Joseph Sieyes, in Merrick Whitcomb's translation (1899)
+  work: What is the Third Estate?, the last lines of Whitcomb's extract in Translations and Reprints from the Original Sources of European History (ledger entry src-sieyes-whitcomb-1899)
+  date: "1789"
+- text: Decrees that all the members of this Assembly shall at once take a solemn oath never to separate, and to reassemble wherever circumstances require, until the Constitution of the kingdom is established and set on solid foundations
+  author: The National Assembly, the Tennis Court Oath (Void translation from the French)
+  work: Decree of 20 June 1789 as the Archives parlementaires print it, rendered by Void from the French (ledger extract src-ap-17890620-arrete.whole.en)
+  date: June 20, 1789
+- text: Terror is nothing but prompt, severe, inflexible justice; it is therefore an emanation of virtue.
+  author: Maximilien Robespierre, in Richard Bienvenu's translation
+  work: Report on the principles of political morality, for the Committee of Public Safety, as the Liberty, Equality, Fraternity site prints Bienvenu's translation (ledger extract src-robespierre-bienvenu-1970.secjustice). The French print is dated 18 pluviose an II
+  date: February 5, 1794
+- text: The Revolution is nothing but the tardy reaction of justice against the government of favour and the religion of grace.
+  author: Jules Michelet
+  work: Historical View of the French Revolution, Introduction, in Charles Cocks's translation, Bell edition (ledger entry src-michelet-cocks)
+  date: "1847"
+- text: But the age of chivalry is gone. That of sophisters, economists, and calculators has succeeded; and the glory of Europe is extinguished forever.
+  author: Edmund Burke
+  work: Reflections on the Revolution in France, in the Nimmo edition of his Works (ledger entry src-burke-1790)
+  date: "1790"
+- text: it becomes a partnership not only between those who are living, but between those who are living, those who are dead, and those who are to be born.
+  author: Edmund Burke
+  work: Reflections on the Revolution in France, in the Nimmo edition of his Works (ledger entry src-burke-1790)
+  date: "1790"
+- text: By hating vices too much, they come to love men too little.
+  author: Edmund Burke
+  work: Reflections on the Revolution in France, in the Nimmo edition of his Works (ledger entry src-burke-1790)
+  date: "1790"
+- text: We have dared to be free, let us be thus by ourselves and for ourselves.
+  author: Jean-Jacques Dessalines and the generals
+  work: The Haitian Declaration of Independence, Gonaives, in Laurent Dubois and John Garrigus's published translation (ledger extract src-haiti-declaration-dubois-garrigus.secdared)
+  date: January 1, 1804
+- text: remember that I counted on your constancy and courage when I threw myself into the career of liberty to fight the despotism and tyranny you had struggled against for 14 years.
+  author: Jean-Jacques Dessalines
+  work: The Haitian Declaration of Independence, Gonaives, in Laurent Dubois and John Garrigus's published translation (ledger extract src-haiti-declaration-dubois-garrigus.secconstancy)
+  date: January 1, 1804
+- text: All the negroes and people of mixed blood now in slavery are declared free, to enjoy all the rights attached to the quality of French citizen; they shall however be subject to a regime whose provisions are contained in the following articles.
+  author: Leger-Felicite Sonthonax, civil commissioner of the Republic (Void translation from the French)
+  work: Proclamation of 29 August 1793 for the province of the North, article II, rendered by Void from the French (ledger extract src-sonthonax-17930829.art2.en)
+  date: August 29, 1793
+- text: The declaration of the rights of man and of the citizen shall be printed, published and posted everywhere it is needed
+  author: Leger-Felicite Sonthonax, civil commissioner of the Republic (Void translation from the French)
+  work: Proclamation of 29 August 1793 for the province of the North, article 1, rendered by Void from the French (ledger extract src-sonthonax-17930829.art1.en)
+  date: August 29, 1793
+- text: The National Convention declares the slavery of the negroes abolished in all the colonies; in consequence, it decrees that all men, without distinction of colour, domiciled in the colonies, are French citizens, and shall enjoy all the rights assured by the constitution.
+  author: The National Convention (Void translation from the French)
+  work: Decree of 16 pluviose an II as the Archives parlementaires print it, rendered by Void from the French (ledger extract src-decret-16-pluviose-anii.whole.en)
+  date: February 4, 1794
+- text: slavery shall be maintained in conformity with the laws and regulations in force before 1789.
+  author: The Corps legislatif, promulgated by Bonaparte, First Consul (Void translation from the French)
+  work: Law of 30 floreal an X on the slave trade and the regime of the colonies, article I, which applies this to the colonies restored to France by the treaty of Amiens; rendered by Void from the French (ledger extract src-loi-30-floreal-anx.art1.en)
+  date: May 20, 1802
+- text: Taken together they make possible the obituary census of the Terror, which we have been able to fix at 16,594 victims, exclusive of persons condemned in absentia (contumace)
+  author: Donald Greer
+  work: The Incidence of the Terror during the French Revolution (ledger entry src-greer-1935)
+  date: "1935"
+- text: it is probable that between thirty-five and forty thousand persons, including those who succumbed in the prisons and those killed without any form of trial, lost their lives as a consequence of terrorism.
+  author: Donald Greer
+  work: The Incidence of the Terror during the French Revolution (ledger entry src-greer-1935)
+  date: "1935"
+- text: woman has the right to mount the scaffold, so she should have the right equally to mount the rostrum
+  author: Olympe de Gouges, in Lynn Hunt's translation
+  work: Declaration of the Rights of Woman and of the Female Citizen, article X (ledger extract src-gouges-hunt-1996.art10)
+  date: "1791"
+- text: Women, wake up; the tocsin of reason sounds throughout the universe; recognize your rights.
+  author: Olympe de Gouges, in Lynn Hunt's translation
+  work: Declaration of the Rights of Woman and of the Female Citizen, the closing address (ledger extract src-gouges-hunt-1996.secpostscript)
+  date: "1791"
 coordinates:
   lat: 48.8532
   lng: 2.3694

@@ -1,0 +1,8 @@
+source: src-saho-election-1994
+locator: p1
+url: https://sahistory.org.za/sites/default/files/election_results_1994.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation and glyph errors are kept as the layer prints them
+note: the table's head and its first row; SAHO's table names no source and marks two figures '(approx.)'
+
+26-29 April 1994 National Assembly Election Registered Voters 22,709,152 (approx.) Total Votes (Voter Turnout) 19,726,610 (approx. 86.9%) Invalid/Blank Votes 193,112 Total Valid Votes 19,533,498 Party Number of Votes % of Votes Number of Seats (400) African National Congress (ANC) 12,237,655 62.65% 252

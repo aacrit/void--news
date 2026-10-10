@@ -1,0 +1,7 @@
+source: src-hmt-foi-2018
+locator: p1
+url: https://assets.publishing.service.gov.uk/media/5a7d78a6e5274a676d53243f/FOI2018-00186_-_Slavery_Abolition_Act_1833_-_pdf_for_disclosure_log__003_.pdf
+read: 2026-10-09
+note: page 1, PDF text layer; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+The Government used £20 million to fund the Slavery Abolition Act 1833. In 1833, this was equivalent to approximately 40% of the Government’s total annual expenditure.

@@ -1,0 +1,8 @@
+source: src-hertle-nooke-2017
+locator: p1
+url: https://www.chronik-der-mauer.de/system/files/dokument_pdf/2017_08_08_Hertle_Nooke_140_Victims_Berlin_Wall_FINAL_0.pdf
+read: 2026-10-09
+note: p. 1, 'Objectives'; the earlier counts and their producers as the study names them
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+When the project begun in 2005 – 44 years after the Berlin Wall was built and 15 years after the East German archives were opened –, there were still no reliable data on the number of people killed at the Wall.1 Depending on the sources, purpose and date of the studies, the figures varied between 78 (Central Registry of State Judicial Administrations in Salzgitter), 86 (Berlin Public Prosecution Service), 92 (Berlin Police President), 122 (Central Investigation Office for Government and Unification Criminality) and more than 200 deaths (Working Group 13 August).

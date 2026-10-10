@@ -1,0 +1,7 @@
+source: src-trc-v1-ch1
+locator: para29
+url: https://www.justice.gov.za/trc/report/finalreport/Volume%201.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation and glyph errors are kept as the layer prints them
+
+For all these reasons, our nation, through those who negotiated the transition from apartheid to democracy, chose the option of individual and not blanket amnesty. And we believe that this individual amnesty has demonstrated its value. One of the criteria to be satisfied before amnesty could be granted was full disclosure of the truth. Freedom was granted in exchange for truth. We have, through these means, been able to uncover much of what happened in the past. We know now what happened to Steve Biko, to the PEBCO Three, to the Cradock Four. We now know who ordered the Church Street bomb attack and who was responsible for the St James’ Church massacre. We have been able to exhume the remains of about fifty activists who were abducted, killed and buried secretly.
