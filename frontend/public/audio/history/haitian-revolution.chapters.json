@@ -6,71 +6,76 @@
   {
    "startTime": 0.0,
    "title": "Opening",
-   "endTime": 48.443
+   "endTime": 55.834
   },
   {
-   "startTime": 48.443,
-   "title": "The clearing",
-   "endTime": 113.031
+   "startTime": 55.834,
+   "title": "The night of the twenty second",
+   "endTime": 148.626
   },
   {
-   "startTime": 113.031,
-   "title": "What the colony was worth",
-   "endTime": 181.319
+   "startTime": 148.626,
+   "title": "Free, and bound",
+   "endTime": 223.06
   },
   {
-   "startTime": 181.319,
-   "title": "Toussaint",
-   "endTime": 271.25
+   "startTime": 223.06,
+   "title": "One fortnight",
+   "endTime": 302.007
   },
   {
-   "startTime": 271.25,
-   "title": "The flag",
-   "endTime": 331.677
+   "startTime": 302.007,
+   "title": "The Heros",
+   "endTime": 383.918
   },
   {
-   "startTime": 331.677,
+   "startTime": 383.918,
+   "title": "Gonaives",
+   "endTime": 502.205
+  },
+  {
+   "startTime": 502.205,
    "title": "Five accounts",
-   "endTime": 338.72
+   "endTime": 525.292
   },
   {
-   "startTime": 338.72,
+   "startTime": 525.292,
    "title": "The enslaved revolutionaries",
-   "endTime": 390.621
+   "endTime": 592.255
   },
   {
-   "startTime": 390.621,
+   "startTime": 592.255,
    "title": "The French colonial account",
-   "endTime": 439.77
+   "endTime": 637.652
   },
   {
-   "startTime": 439.77,
+   "startTime": 637.652,
    "title": "The Haitian nationalist account",
-   "endTime": 499.16
+   "endTime": 681.904
   },
   {
-   "startTime": 499.16,
-   "title": "The academic account",
-   "endTime": 549.747
+   "startTime": 681.904,
+   "title": "The Atlantic academic account",
+   "endTime": 716.881
   },
   {
-   "startTime": 549.747,
+   "startTime": 716.881,
    "title": "The indemnity",
-   "endTime": 605.566
+   "endTime": 772.277
   },
   {
-   "startTime": 605.566,
-   "title": "The shape of the disagreement",
-   "endTime": 676.218
+   "startTime": 772.277,
+   "title": "What each one leaves out",
+   "endTime": 831.346
   },
   {
-   "startTime": 676.218,
+   "startTime": 831.346,
    "title": "Legacy",
-   "endTime": 720.568
+   "endTime": 866.671
   },
   {
-   "startTime": 720.568,
-   "endTime": 733.668,
+   "startTime": 866.671,
+   "endTime": 879.371,
    "title": "Also from Void News"
   }
  ]

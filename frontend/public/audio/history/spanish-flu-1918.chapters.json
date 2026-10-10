@@ -6,66 +6,76 @@
   {
    "startTime": 0.0,
    "title": "Opening",
-   "endTime": 43.957
+   "endTime": 52.016
   },
   {
-   "startTime": 43.957,
-   "title": "Camp Funston, Kansas, March nineteen eighteen",
-   "endTime": 95.854
+   "startTime": 52.016,
+   "title": "The camp",
+   "endTime": 142.929
   },
   {
-   "startTime": 95.854,
-   "title": "Camp Devens, Massachusetts, late September nineteen eighteen",
-   "endTime": 191.511
+   "startTime": 142.929,
+   "title": "The name",
+   "endTime": 192.871
   },
   {
-   "startTime": 191.511,
-   "title": "Philadelphia, September twenty eighth, nineteen eighteen",
-   "endTime": 238.081
+   "startTime": 192.871,
+   "title": "The count",
+   "endTime": 275.078
   },
   {
-   "startTime": 238.081,
+   "startTime": 275.078,
+   "title": "The river",
+   "endTime": 348.106
+  },
+  {
+   "startTime": 348.106,
+   "title": "The islands",
+   "endTime": 439.375
+  },
+  {
+   "startTime": 439.375,
    "title": "Five accounts",
-   "endTime": 250.798
+   "endTime": 463.174
   },
   {
-   "startTime": 250.798,
+   "startTime": 463.174,
    "title": "Wartime Governments and Censorship",
-   "endTime": 315.77
+   "endTime": 498.909
   },
   {
-   "startTime": 315.77,
+   "startTime": 498.909,
    "title": "Public Health and Medicine",
-   "endTime": 377.755
+   "endTime": 550.955
   },
   {
-   "startTime": 377.755,
+   "startTime": 550.955,
    "title": "Colonial and Global South Populations",
-   "endTime": 456.269
+   "endTime": 609.914
   },
   {
-   "startTime": 456.269,
+   "startTime": 609.914,
    "title": "Pacific and Indigenous Peoples",
-   "endTime": 543.823
+   "endTime": 675.156
   },
   {
-   "startTime": 543.823,
+   "startTime": 675.156,
    "title": "Epidemiology and Historical Memory",
-   "endTime": 632.894
+   "endTime": 746.851
   },
   {
-   "startTime": 632.894,
+   "startTime": 746.851,
    "title": "What each one leaves out",
-   "endTime": 700.665
+   "endTime": 797.025
   },
   {
-   "startTime": 700.665,
+   "startTime": 797.025,
    "title": "Legacy",
-   "endTime": 723.667
+   "endTime": 837.084
   },
   {
-   "startTime": 723.667,
-   "endTime": 736.767,
+   "startTime": 837.084,
+   "endTime": 849.784,
    "title": "Also from Void News"
   }
  ]

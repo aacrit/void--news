@@ -24,7 +24,10 @@ _SPELLING = [(re.compile(r"isation"), "ization"), (re.compile(r"ise(d|s)?$"), r"
              (re.compile(r"^programme(s)?$"), r"program\1"), (re.compile(r"our$"), "or"),
              (re.compile(r"our(s|ed|ing)$"), r"or\1"), (re.compile(r"tre(s)?$"), r"ter\1"),
              (re.compile(r"ogue(s)?$"), r"og\1"), (re.compile(r"dgement(s)?$"), r"dgment\1"),
-             (re.compile(r"ising$"), "izing"), (re.compile(r"ence(s)?$"), r"ense\1")]
+             (re.compile(r"ising$"), "izing"), (re.compile(r"ence(s)?$"), r"ense\1"),
+             # British doubled l, on named stems only ("filling" must not meet "filing")
+             (re.compile(r"^(signa|trave|cance|labe|mode|fue|leve|tota|marsha|channe|counse"
+                         r"|dia|due|quarre|equa|rive|jewe|shove|tunne|parce)ll(ing|ed|er|ers)$"), r"\1l\2")]
 _TENS_TEENS = {"ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen",
                "eighteen", "nineteen", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty",
                "ninety"}
@@ -116,6 +119,9 @@ def norm_words(text: str) -> list[str]:
     t = _regnal(t)
     t = re.sub(r"[-‐-―]", " ", t)
     t = re.sub(r"\bper cent\b", "percent", t, flags=re.I)
+    # A title the script spells out and the transcriber abbreviates.
+    t = re.sub(r"\bMr\b\.?", "mister", t)
+    t = re.sub(r"\bMrs\b\.?", "missus", t)
     t = "".join(c for c in unicodedata.normalize("NFD", t) if unicodedata.category(c) != "Mn")
     words = [_canon(w) for w in re.findall(r"[a-z0-9]+", t.lower())]
     # "nineteen oh four" spells back as "nineteen o four" (Scramble render).

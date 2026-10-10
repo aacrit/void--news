@@ -693,9 +693,6 @@ H18_KNOWN: dict[str, dict[str, str]] = {
     'angkor-khmer-empire': {
         '80': "a span the writer computed; the record states no such span: 'eighty'",
     },
-    'apollo-11-moon-landing': {
-        '240000': "not in the record: 'two hundred and forty thousand'",
-    },
     'ashoka-maurya-empire': {
         '2000': "not in the record: 'two thousand'",
     },
@@ -781,9 +778,6 @@ H18_KNOWN: dict[str, dict[str, str]] = {
         '11': "a span the writer computed; the record states no such span: 'eleven'",
         '300': "not in the record: 'three hundred'",
         '430': "not in the record: 'four hundred and thirty'",
-    },
-    'partition-of-india': {
-        '2e+06': "not in the record: 'two million'",
     },
     'silk-road': {
         '3000': "a span the writer computed; the record states no such span: 'three thousand'",
@@ -932,9 +926,6 @@ H11_KNOWN: dict[str, tuple[str, ...]] = {
     'assassination-of-caesar': (
         "Marcus Brutus Letter to Cicero, quoted in Cicero's Ad Familiares, 43 BCE",
     ),
-    'cambodian-genocide': (
-        'Zbigniew Brzezinski Quoted in Elizabeth Becker, When the War Was Over, 1986',
-    ),
     'chernobyl-disaster': (
         'Mikhail Gorbachev  Memoir reflection quoted in Serhii Plokhy, Chernobyl | Mikhail Gorbachev Reflecting on the disaster two decades later',
         'Soviet official framing Substance of the 1986 Vienna report and the 1987 trial, paraphrased',
@@ -944,9 +935,6 @@ H11_KNOWN: dict[str, tuple[str, ...]] = {
     ),
     'fall-of-rome': (
         'Theodoric the Great As quoted in Cassiodorus, Variae, Letter to Emperor Anastasius, c. 508 CE',
-    ),
-    'haitian-revolution': (
-        "Napoleon Bonaparte Attributed remark after learning of Leclerc's death, November 1802",
     ),
     'indian-independence-movement': (
         'Mohandas K. Gandhi Widely attributed; used in Congress mobilization literature',
@@ -965,9 +953,6 @@ H11_KNOWN: dict[str, tuple[str, ...]] = {
     ),
     'rwandan-genocide': (
         "Agathe Uwilingiyimana  Phone call to UNAMIR headquarters, April 7, 1994 (paraphrased in Dallaire's account)",
-    ),
-    'scramble-for-africa': (
-        'Omar al-Mukhtar Attributed statement during interrogation before his execution, September 16, 1931',
     ),
     'six-day-war': (
         'Yitzhak Rabin Quoted in Le Monde, February 1968',

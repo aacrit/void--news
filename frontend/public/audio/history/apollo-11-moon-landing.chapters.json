@@ -6,71 +6,86 @@
   {
    "startTime": 0.0,
    "title": "Opening",
-   "endTime": 38.781
+   "endTime": 41.949
   },
   {
-   "startTime": 38.781,
+   "startTime": 41.949,
    "title": "Twenty five seconds",
-   "endTime": 96.0
+   "endTime": 150.106
   },
   {
-   "startTime": 96.0,
+   "startTime": 150.106,
    "title": "Eight years",
-   "endTime": 139.8
+   "endTime": 191.751
   },
   {
-   "startTime": 139.8,
+   "startTime": 191.751,
+   "title": "John F. Kennedy, the Moon goal, in the White House recording of the Special Message to Congress on Urgent National Needs",
+   "endTime": 205.351
+  },
+  {
+   "startTime": 205.351,
    "title": "Four hundred thousand people",
-   "endTime": 200.408
+   "endTime": 247.113
   },
   {
-   "startTime": 200.408,
+   "startTime": 247.113,
    "title": "A signal weaker than a refrigerator bulb",
-   "endTime": 242.068
+   "endTime": 283.199
   },
   {
-   "startTime": 242.068,
+   "startTime": 283.199,
+   "title": "Neil Armstrong, the first words from the lunar surface, in NASA's own sound bite from its Apollo 11 audio highlights",
+   "endTime": 316.55
+  },
+  {
+   "startTime": 316.55,
+   "title": "Neil Armstrong reading the plaque on the lunar module's leg, in NASA's own sound bite from its Apollo 11 audio highlights",
+   "endTime": 347.29
+  },
+  {
+   "startTime": 347.29,
    "title": "Five accounts",
-   "endTime": 256.67
+   "endTime": 369.268
   },
   {
-   "startTime": 256.67,
+   "startTime": 369.268,
    "title": "American triumph",
-   "endTime": 312.478
+   "endTime": 416.371
   },
   {
-   "startTime": 312.478,
-   "title": "The Soviet programme",
-   "endTime": 364.244
+   "startTime": 416.371,
+   "title": "The Soviet space programme",
+   "endTime": 486.979
   },
   {
-   "startTime": 364.244,
+   "startTime": 486.979,
    "title": "The domestic critique",
-   "endTime": 410.771
+   "endTime": 556.253
   },
   {
-   "startTime": 410.771,
+   "startTime": 556.253,
    "title": "The engineers",
-   "endTime": 458.811
+   "endTime": 631.501
   },
   {
-   "startTime": 458.811,
+   "startTime": 631.501,
    "title": "The Global South",
-   "endTime": 508.848
+   "endTime": 699.209
   },
   {
-   "startTime": 508.848,
+   "startTime": 699.209,
    "title": "The shape of the disagreement",
-   "endTime": 578.765
+   "endTime": 755.724
   },
   {
-   "startTime": 578.765,
+   "startTime": 755.724,
    "title": "Legacy",
-   "endTime": 612.748
+   "endTime": 816.428
   },
   {
-   "startTime": 612.748,
-   "endTime": 625.848,
+   "startTime": 816.428,
+   "endTime": 829.128,
    "title": "Also from Void News"
   }
  ]
