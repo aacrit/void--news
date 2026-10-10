@@ -47,7 +47,6 @@ N: Hiroshima and Nagasaki. August, nineteen forty five.
 N: The summer of nineteen forty five, the last summer of the Second World War. Germany surrendered in May. Japan fights on, against the United States, Britain and China.
 N: Hiroshima and Nagasaki are two cities of Japan: about three hundred and fifty thousand people by the City of Hiroshima's count, about two hundred and forty thousand by Nagasaki's.
 N: In the United States a secret programme, the Manhattan Project, has built the first atomic bomb, tested once in the New Mexico desert on the sixteenth of July. Before the summer is out, one bomb each will destroy these two cities.
-N: In May, at a meeting chaired by Henry Stimson, the Secretary of War, the notes record agreement on no warning, and on a war plant closely surrounded by workers' houses as the best target.
 N: On the twenty fifth of July the War Department orders the bomber group formed for the weapon to deliver its first special bomb, after about the third of August, on one of a list: Hiroshima, Kokura, Niigata, Nagasaki.
 N: The same day Harry Truman, the President, writes in his diary that the target will be a purely military one.
 N: The next day, from Potsdam, the United States, China and Britain publish their terms: unconditional surrender of Japan's armed forces, or prompt and utter destruction.
@@ -55,9 +54,6 @@ N: The next day, from Potsdam, the United States, China and Britain publish thei
 ## SCENE 2 | The morning
 # MOOD: rupture
 N: The sixth of August, Hiroshima, a quarter past eight in the morning. The Enola Gay, flown by Colonel Paul Tibbets, commander of the bomber group, releases a uranium bomb called Little Boy.
-N: It bursts above the city at a height the American record puts at nineteen hundred feet; the yield was later estimated at fifteen kilotons.
-N: Sunao Tsuboi, a student of twenty, is walking to class, a kilometre from the burst by the museum's account, one point two by his own.
-N: He later told a Hiroshima newspaper of a flash like many camera flashes, of being blown several metres, and then of silence, even the cicadas stopped.
 
 ## DOCUMENT | Setsuko Thurlow | Nobel Lecture for the International Campaign to Abolish Nuclear Weapons, Oslo | December 10, 2017
 # extract: src-nobel-ican-2017.secthurlow2
@@ -100,7 +96,6 @@ M: The exact number of deaths from the atomic bombing is still unknown. Estimate
 # MOOD: grief
 N: The City of Nagasaki, in its own words.
 M: When the atomic bomb was dropped, Nagasaki had a population of about 240,000. However, by the end of December 1945, 73,884 of its people had been killed, and 74,909 had been injured by the A-bomb.
-N: The United States Strategic Bombing Survey, reporting in nineteen forty six, counted seventy to eighty thousand in Hiroshima, killed or missing and presumed dead. John Hersey, an American reporter, wrote a hundred thousand the same year.
 N: The American project's own report gives lower figures for both cities. The Radiation Effects Research Foundation, which studies the survivors, says the total is not known precisely: military records were destroyed, and forced labourers were never counted.
 
 ## REST
@@ -137,7 +132,6 @@ N: The first account is American, and it begins at Pearl Harbor, the Japanese at
 # MOOD: procedure
 N: The second paragraph of the statement released in Truman's name.
 M: The Japanese began the war from the air at Pearl Harbor. They have been repaid many fold.
-N: On the ninth, by radio from Washington, Truman called Hiroshima a military base and urged Japanese civilians to leave industrial cities.
 N: Richard Frank, a historian who defends the decision, writes that the Japanese sought not surrender but a negotiated end that kept the old order, and that the invasion was abandoned not as unnecessary but as unthinkable.
 
 ## PERSPECTIVE | Japanese Civilian | vanquished
@@ -149,7 +143,6 @@ N: The second account belongs to the survivors, hibakusha: in Thurlow's words, t
 # MOOD: testimony
 N: Sumiteru Taniguchi was sixteen, riding his bicycle in Nagasaki, one point eight kilometres north of the burst; the heat burned his entire back. In two thousand and ten he spoke for Nihon Hidankyo, the survivors' confederation, at the United Nations.
 M: I am not a guinea pig nor am I an exhibit. But those of you who are here today, please don't turn your eyes away from me. Please look at me again.
-N: In this account the question is not whether the bombs shortened the war, but whether anything can justify a weapon aimed at a city.
 
 ## PERSPECTIVE | International / Scientific | bystander
 # MOOD: reckoning
@@ -161,7 +154,6 @@ N: The third account is the scientists', who built the bomb and argued against u
 N: On the eleventh of June a committee at the University of Chicago, led by the physicist James Franck, reported on what the weapon meant.
 M: From this point of view a demonstration of the new weapon may best be made before the eyes of representatives of all United Nations, on the desert or a barren island
 N: Its summary warned that if the United States were first to release this means of indiscriminate destruction it would sacrifice public support throughout the world and precipitate the race of armaments.
-N: In July Leo Szilard, a physicist of the same laboratory, and his co-signers petitioned the President not to use the bomb unless Japan, told the terms in detail, had refused to surrender.
 
 ## PERSPECTIVE | Modern Revisionist | revisionist
 # MOOD: reckoning
@@ -172,7 +164,6 @@ N: The fourth account is the revisionists', historians who hold that the bombs w
 # MOOD: reckoning
 N: The Survey, in nineteen forty six, having questioned the surviving Japanese leaders.
 M: it is the Survey's opinion that certainly prior to 31 December 1945, and in all probability prior to 1 November 1945, Japan would have surrendered even if the atomic bombs had not been dropped, even if Russia had not entered the war, and even if no invasion had been planned or contemplated.
-N: Gar Alperovitz, the school's founder, wrote in two thousand and fifteen that to key American military leaders the bombs were not a matter of military necessity, and that James Byrnes, the Secretary of State, saw a diplomatic weapon.
 N: Tsuyoshi Hasegawa, a historian of the Soviet entry, argues that the invasion had the more important effect, that the Nagasaki bomb had little, and that Hiroshima did not move Togo or the emperor off Moscow's mediation.
 
 ## PERSPECTIVE | Korean Forced Laborers | vanquished
@@ -184,7 +175,6 @@ N: The fifth account is Korean. Korea was a colony of Japan, annexed in nineteen
 # MOOD: grief
 N: The museum's own guide to the Korean monument says this.
 M: At the end of the war, about three million Koreans were living in Japan, and it is said that tens of thousands of them suffered the atomic bombing in Hiroshima.
-N: The monument stood at the western end of Honkawa Bridge, outside the Peace Memorial Park, near where a prince of Korea's royal family was found dead. It was moved into the park in July nineteen ninety nine.
 N: The Foundation says forced labourers in both cities were never counted. Tens of thousands, it is said, and no one holds the number.
 
 ## TURN | The shape of the disagreement
@@ -203,7 +193,6 @@ N: The Korean account leaves out that the City counts its colonial dead inside t
 # MOOD: grief
 N: Two cities, the sixth and the ninth of August, nineteen forty five. Japan's acceptance was transmitted on the fourteenth and broadcast on the fifteenth; the surrender was signed on the second of September.
 N: The City of Hiroshima counts roughly a hundred and forty thousand dead by that December, the City of Nagasaki seventy three thousand eight hundred and eighty four; the Foundation says the true number is not known.
-N: The Genbaku Dome, the one structure left standing where the first bomb exploded, was inscribed by UNESCO in nineteen ninety six.
 N: The all clear had been given, twice.
 
 ## SAY
