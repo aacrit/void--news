@@ -1,0 +1,52 @@
+{
+ "version": "1.2.0",
+ "title": "On Air · Monday 12 October 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Headlines",
+   "endTime": 42.15
+  },
+  {
+   "startTime": 42.15,
+   "title": "U-S Authorizes Russian Diesel",
+   "endTime": 127.58
+  },
+  {
+   "startTime": 127.58,
+   "title": "U-K Sanctions Iran",
+   "endTime": 222.973
+  },
+  {
+   "startTime": 222.973,
+   "title": "Munition Kills Teenager",
+   "endTime": 288.486
+  },
+  {
+   "startTime": 288.486,
+   "title": "Judge Halts Trump Ads",
+   "endTime": 362.702
+  },
+  {
+   "startTime": 362.702,
+   "title": "Also today",
+   "endTime": 427.255
+  },
+  {
+   "startTime": 427.255,
+   "title": "Nobel Prize in Economics",
+   "endTime": 445.307
+  },
+  {
+   "startTime": 445.307,
+   "title": "Opinion",
+   "endTime": 649.999
+  },
+  {
+   "startTime": 649.999,
+   "endTime": 663.099,
+   "title": "Also from Void"
+  }
+ ]
+}

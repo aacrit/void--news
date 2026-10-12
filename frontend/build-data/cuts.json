@@ -1,19 +1,28 @@
 {
-  "builtAt": "2026-10-10T16:59:12.889439Z",
+  "builtAt": "2026-10-12T21:23:36.297240Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "c0ffb9a0-78e7-492a-a8b9-81f738f87493",
-      "title": "Blast Rocks Riyadh Airport Amid Escalating Houthi Missile Strikes",
+      "id": "9572d526-7ff8-48f1-a7bd-c263d7ec79e6",
+      "title": "Man Mauled to Death by Tiger After Entering Enclosure at UK Wildlife Park",
       "sentences": [
         {
-          "text": "Separately, Saudi Arabia has launched an air accident probe into a cockpit stabbing incident on a flydubai jet that occurred the previous week, examining aviation safety risks alongside an UAE-led criminal investigation.",
-          "rule": "E-16",
-          "message": "sentence opens on \"Separately\", announcing another story: \"Separately, Saudi Arabia has launched an air accident probe into a cockpit stabbing incide\""
+          "text": "Emergency services responded shortly after 1:30 p.m. on October 10, and the man was pronounced dead at the scene.",
+          "rule": "E-13",
+          "message": "summary states 30, which appears in none of the source articles: source it or cut it"
         }
       ],
       "points": [],
       "left": []
+    },
+    {
+      "id": "c0b47c33-c8ed-4bd9-bbbf-d488e8155dc6",
+      "title": "Elon Musk Becomes Top Midterm Donor, Giving Over $276 Million to Republicans",
+      "sentences": [],
+      "points": [],
+      "left": [
+        "headline puts 276 beside \"elon musk becomes top midterm donor\", but no source sentence carrying 276 names it and one names another \"elon ...\": \"Elon Musk Becomes Top Midterm Donor, Giving Over $276 Million to Republicans\""
+      ]
     }
   ]
 }
