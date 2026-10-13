@@ -1,28 +1,25 @@
 {
-  "builtAt": "2026-10-12T21:23:36.297240Z",
+  "builtAt": "2026-10-13T19:22:07.758090Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "9572d526-7ff8-48f1-a7bd-c263d7ec79e6",
-      "title": "Man Mauled to Death by Tiger After Entering Enclosure at UK Wildlife Park",
+      "id": "091772b9-3585-4ff9-8559-5f22807eb402",
+      "title": "Trump Defends Russian Diesel Deal Amid Bipartisan Congressional Criticism",
       "sentences": [
         {
-          "text": "Emergency services responded shortly after 1:30 p.m. on October 10, and the man was pronounced dead at the scene.",
+          "text": "The Wall Street Journal's Editorial Board wrote that Trump made a major concession, allowing Russian energy companies to rake in some $4.5 billion, but Putin gave nothing in return, citing Russian strikes on power stations in Ukraine.",
           "rule": "E-13",
-          "message": "summary states 30, which appears in none of the source articles: source it or cut it"
+          "message": "summary puts 4.5 beside \"wall street journal editorial board\", but no source sentence carrying 4.5 names it and one names another \"wall ...\": \"The Wall Street Journal's Editorial Board wrote that Trump made a major concession, allowi\""
         }
       ],
-      "points": [],
+      "points": [
+        {
+          "text": "The Wall Street Journal's Editorial Board claims Trump's concession on diesel sanctions will allow Russian energy companies to \"rake in some $4.5 billion,\" a specific financial figure not mentioned in other articles.",
+          "rule": "E-14",
+          "message": "summary quotes \"rake in some $4.5 billion,\", which appears in none of the source articles: quote it as written or paraphrase it"
+        }
+      ],
       "left": []
-    },
-    {
-      "id": "c0b47c33-c8ed-4bd9-bbbf-d488e8155dc6",
-      "title": "Elon Musk Becomes Top Midterm Donor, Giving Over $276 Million to Republicans",
-      "sentences": [],
-      "points": [],
-      "left": [
-        "headline puts 276 beside \"elon musk becomes top midterm donor\", but no source sentence carrying 276 names it and one names another \"elon ...\": \"Elon Musk Becomes Top Midterm Donor, Giving Over $276 Million to Republicans\""
-      ]
     }
   ]
 }

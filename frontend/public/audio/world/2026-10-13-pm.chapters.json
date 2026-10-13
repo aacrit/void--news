@@ -1,0 +1,52 @@
+{
+ "version": "1.2.0",
+ "title": "On Air · Tuesday 13 October 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Headlines",
+   "endTime": 39.078
+  },
+  {
+   "startTime": 39.078,
+   "title": "Saudi Arabia Strikes Yemen",
+   "endTime": 125.72
+  },
+  {
+   "startTime": 125.72,
+   "title": "Bulgaria Summons Ambassador",
+   "endTime": 207.503
+  },
+  {
+   "startTime": 207.503,
+   "title": "French School Protests",
+   "endTime": 285.191
+  },
+  {
+   "startTime": 285.191,
+   "title": "U-K Blames Iran",
+   "endTime": 351.956
+  },
+  {
+   "startTime": 351.956,
+   "title": "Also today",
+   "endTime": 411.732
+  },
+  {
+   "startTime": 411.732,
+   "title": "Apple Unveils HomeView",
+   "endTime": 453.735
+  },
+  {
+   "startTime": 453.735,
+   "title": "Opinion",
+   "endTime": 684.085
+  },
+  {
+   "startTime": 684.085,
+   "endTime": 697.185,
+   "title": "Also from Void"
+  }
+ ]
+}

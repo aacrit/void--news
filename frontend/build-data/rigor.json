@@ -1,54 +1,54 @@
 {
- "builtAt": "2026-10-12T21:23:36.297240Z",
- "briefCreatedAt": "2026-10-12T21:22:57.895515+00:00",
+ "builtAt": "2026-10-13T19:22:07.758090Z",
+ "briefCreatedAt": "2026-10-13T19:21:31.737061+00:00",
  "products": {
   "card_headline": {
    "sentences": 20,
-   "anchored": 3,
+   "anchored": 2,
    "checked": 0,
    "anchorTypes": [
     "number",
     "quote"
    ],
    "byAnchor": {
-    "number": 3
+    "number": 2
    },
    "coverage": 0.0
   },
   "card_summary": {
-   "sentences": 214,
-   "anchored": 53,
-   "checked": 16,
+   "sentences": 243,
+   "anchored": 66,
+   "checked": 34,
    "byAnchor": {
-    "number": 51,
-    "quote": 3
+    "number": 66,
+    "quote": 1
    },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "coverage": 7.5
+   "coverage": 14.0
   },
   "points": {
-   "sentences": 162,
-   "anchored": 33,
-   "checked": 11,
+   "sentences": 171,
+   "anchored": 40,
+   "checked": 19,
    "anchorTypes": [
     "number",
     "quote"
    ],
    "byAnchor": {
-    "number": 31,
-    "quote": 2
+    "number": 35,
+    "quote": 5
    },
-   "coverage": 6.8,
-   "machinePointsExcluded": 11
+   "coverage": 11.1,
+   "machinePointsExcluded": 0
   },
   "tldr": {
-   "sentences": 20,
-   "anchored": 17,
-   "checked": 17,
-   "coverage": 85.0,
+   "sentences": 29,
+   "anchored": 22,
+   "checked": 22,
+   "coverage": 75.9,
    "anchorTypes": [
     "number",
     "name",
@@ -56,18 +56,18 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 3,
-    "name": 15,
-    "number": 6
+    "date": 6,
+    "name": 19,
+    "number": 9
    },
    "groundingRan": true,
    "shipped": true
   },
   "opinion": {
-   "sentences": 17,
-   "anchored": 6,
-   "checked": 6,
-   "coverage": 35.3,
+   "sentences": 29,
+   "anchored": 3,
+   "checked": 3,
+   "coverage": 10.3,
    "anchorTypes": [
     "number",
     "name",
@@ -75,18 +75,17 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 3,
-    "name": 5,
-    "number": 2
+    "date": 2,
+    "name": 3
    },
    "groundingRan": true,
    "shipped": true
   },
   "onair": {
-   "sentences": 82,
+   "sentences": 83,
    "anchored": 43,
    "checked": 43,
-   "coverage": 52.4,
+   "coverage": 51.8,
    "anchorTypes": [
     "number",
     "name",
@@ -94,9 +93,9 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 7,
-    "name": 34,
-    "number": 12
+    "date": 8,
+    "name": 32,
+    "number": 13
    },
    "groundingRan": true,
    "shipped": true
@@ -107,28 +106,21 @@
   "freshKnown": true,
   "fresh": 20,
   "states": {
-   "confirmable": 7,
-   "index cap below writer window": 13
+   "confirmable": 11,
+   "index cap below writer window": 9
   }
  },
  "audit": {
   "shipped": {
    "advisory": {
-    "E-13 misattached": 4
-   },
-   "cannot confirm": {
-    "E-13 misattached": 2
+    "E-13 misattached": 3
    }
   },
   "bench": {
    "advisory": {
-    "E-13 misattached": 2
+    "E-13 misattached": 1
    },
    "cannot confirm": {
-    "E-13 absent": 2,
-    "E-14 absent": 1
-   },
-   "confirmed": {
     "E-13 misattached": 1
    }
   }
@@ -137,8 +129,7 @@
   "brief": {
    "cut_sentences": 3,
    "cuts_by_reason": {
-    "name": 2,
-    "number": 1
+    "name": 3
    },
    "edition": "world",
    "grounding_ran": {
@@ -150,24 +141,25 @@
   "onair": {
    "cut_sentences": 2,
    "cuts_by_reason": {
-    "name": 2
+    "name": 1,
+    "number": 1
    },
    "grounding_ran": true
   },
-  "startedAt": "2026-10-12T21:09:07Z",
+  "startedAt": "2026-10-13T19:02:20Z",
   "stage2": {
    "candidates": 35,
-   "critique_read": 34,
+   "critique_read": 35,
    "critique_unread": 0,
-   "cut_sentences": 10,
+   "cut_sentences": 12,
    "cuts_by_reason": {
-    "number": 7,
-    "other story": 3,
+    "number": 13,
+    "other story": 1,
     "quotation": 1
    },
-   "dropped": 1,
+   "dropped": 0,
    "kept_failing": 0,
-   "regenerated": 6,
+   "regenerated": 5,
    "reviewed": true,
    "fresh": 35
   }
@@ -191,5 +183,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-10-12T21:23:48Z"
+ "computedAt": "2026-10-13T19:22:19Z"
 }
