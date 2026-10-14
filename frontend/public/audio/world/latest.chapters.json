@@ -1,51 +1,51 @@
 {
  "version": "1.2.0",
- "title": "On Air · Tuesday 13 October 2026",
+ "title": "On Air · Wednesday 14 October 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Headlines",
-   "endTime": 39.078
+   "endTime": 40.018
   },
   {
-   "startTime": 39.078,
-   "title": "Saudi Arabia Strikes Yemen",
-   "endTime": 125.72
+   "startTime": 40.018,
+   "title": "Ukraine Energy Attacks",
+   "endTime": 109.968
   },
   {
-   "startTime": 125.72,
-   "title": "Bulgaria Summons Ambassador",
-   "endTime": 207.503
+   "startTime": 109.968,
+   "title": "Black Sea Drone Strikes",
+   "endTime": 182.371
   },
   {
-   "startTime": 207.503,
-   "title": "French School Protests",
-   "endTime": 285.191
+   "startTime": 182.371,
+   "title": "Colombia Jerusalem Embassy",
+   "endTime": 248.907
   },
   {
-   "startTime": 285.191,
-   "title": "U-K Blames Iran",
-   "endTime": 351.956
+   "startTime": 248.907,
+   "title": "O-pen-A-I Arrest",
+   "endTime": 318.92
   },
   {
-   "startTime": 351.956,
+   "startTime": 318.92,
    "title": "Also today",
-   "endTime": 411.732
+   "endTime": 382.473
   },
   {
-   "startTime": 411.732,
-   "title": "Apple Unveils HomeView",
-   "endTime": 453.735
+   "startTime": 382.473,
+   "title": "Apple HomeView Display",
+   "endTime": 422.002
   },
   {
-   "startTime": 453.735,
+   "startTime": 422.002,
    "title": "Opinion",
-   "endTime": 684.085
+   "endTime": 633.017
   },
   {
-   "startTime": 684.085,
-   "endTime": 697.185,
+   "startTime": 633.017,
+   "endTime": 646.117,
    "title": "Also from Void"
   }
  ]

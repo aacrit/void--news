@@ -1,54 +1,54 @@
 {
- "builtAt": "2026-10-13T19:22:07.758090Z",
- "briefCreatedAt": "2026-10-13T19:21:31.737061+00:00",
+ "builtAt": "2026-10-14T16:43:18.072422Z",
+ "briefCreatedAt": "2026-10-14T16:42:42.109040+00:00",
  "products": {
   "card_headline": {
    "sentences": 20,
-   "anchored": 2,
+   "anchored": 1,
    "checked": 0,
    "anchorTypes": [
     "number",
     "quote"
    ],
    "byAnchor": {
-    "number": 2
+    "number": 1
    },
    "coverage": 0.0
   },
   "card_summary": {
-   "sentences": 243,
-   "anchored": 66,
-   "checked": 34,
+   "sentences": 216,
+   "anchored": 52,
+   "checked": 30,
    "byAnchor": {
-    "number": 66,
-    "quote": 1
+    "number": 50,
+    "quote": 3
    },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "coverage": 14.0
+   "coverage": 13.9
   },
   "points": {
-   "sentences": 171,
-   "anchored": 40,
-   "checked": 19,
+   "sentences": 174,
+   "anchored": 36,
+   "checked": 23,
+   "byAnchor": {
+    "number": 23,
+    "quote": 15
+   },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "byAnchor": {
-    "number": 35,
-    "quote": 5
-   },
-   "coverage": 11.1,
-   "machinePointsExcluded": 0
+   "coverage": 13.2,
+   "machinePointsExcluded": 3
   },
   "tldr": {
-   "sentences": 29,
-   "anchored": 22,
-   "checked": 22,
-   "coverage": 75.9,
+   "sentences": 38,
+   "anchored": 29,
+   "checked": 29,
+   "coverage": 76.3,
    "anchorTypes": [
     "number",
     "name",
@@ -56,18 +56,19 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 6,
-    "name": 19,
-    "number": 9
+    "date": 14,
+    "name": 20,
+    "number": 10,
+    "quote": 1
    },
    "groundingRan": true,
    "shipped": true
   },
   "opinion": {
-   "sentences": 29,
-   "anchored": 3,
-   "checked": 3,
-   "coverage": 10.3,
+   "sentences": 23,
+   "anchored": 4,
+   "checked": 4,
+   "coverage": 17.4,
    "anchorTypes": [
     "number",
     "name",
@@ -76,16 +77,18 @@
    ],
    "byAnchor": {
     "date": 2,
-    "name": 3
+    "name": 3,
+    "number": 1,
+    "quote": 1
    },
    "groundingRan": true,
    "shipped": true
   },
   "onair": {
-   "sentences": 83,
-   "anchored": 43,
-   "checked": 43,
-   "coverage": 51.8,
+   "sentences": 79,
+   "anchored": 38,
+   "checked": 38,
+   "coverage": 48.1,
    "anchorTypes": [
     "number",
     "name",
@@ -93,9 +96,9 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 8,
-    "name": 32,
-    "number": 13
+    "date": 5,
+    "name": 30,
+    "number": 6
    },
    "groundingRan": true,
    "shipped": true
@@ -106,30 +109,26 @@
   "freshKnown": true,
   "fresh": 20,
   "states": {
-   "confirmable": 11,
-   "index cap below writer window": 9
+   "confirmable": 12,
+   "index cap below writer window": 8
   }
  },
  "audit": {
-  "shipped": {
-   "advisory": {
-    "E-13 misattached": 3
-   }
-  },
+  "shipped": {},
   "bench": {
-   "advisory": {
-    "E-13 misattached": 1
-   },
    "cannot confirm": {
     "E-13 misattached": 1
+   },
+   "confirmed": {
+    "E-13 misattached": 2
    }
   }
  },
  "run": {
   "brief": {
-   "cut_sentences": 3,
+   "cut_sentences": 5,
    "cuts_by_reason": {
-    "name": 3
+    "name": 5
    },
    "edition": "world",
    "grounding_ran": {
@@ -139,27 +138,28 @@
    }
   },
   "onair": {
-   "cut_sentences": 2,
+   "cut_sentences": 3,
    "cuts_by_reason": {
-    "name": 1,
+    "date": 1,
+    "hedge": 1,
     "number": 1
    },
    "grounding_ran": true
   },
-  "startedAt": "2026-10-13T19:02:20Z",
+  "startedAt": "2026-10-14T16:30:13Z",
   "stage2": {
    "candidates": 35,
    "critique_read": 35,
    "critique_unread": 0,
-   "cut_sentences": 12,
+   "cut_sentences": 6,
    "cuts_by_reason": {
-    "number": 13,
-    "other story": 1,
+    "number": 3,
+    "other story": 7,
     "quotation": 1
    },
-   "dropped": 0,
+   "dropped": 3,
    "kept_failing": 0,
-   "regenerated": 5,
+   "regenerated": 6,
    "reviewed": true,
    "fresh": 35
   }
@@ -183,5 +183,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-10-13T19:22:19Z"
+ "computedAt": "2026-10-14T16:43:30Z"
 }

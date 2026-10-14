@@ -1,25 +1,49 @@
 {
-  "builtAt": "2026-10-13T19:22:07.758090Z",
+  "builtAt": "2026-10-14T16:43:18.072422Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "091772b9-3585-4ff9-8559-5f22807eb402",
-      "title": "Trump Defends Russian Diesel Deal Amid Bipartisan Congressional Criticism",
+      "id": "58ca2a60-54be-498f-8982-a094cbbaf9d5",
+      "title": "Trump Claims Massive Greenland Exploration; Official Says 'Far Away'",
       "sentences": [
         {
-          "text": "The Wall Street Journal's Editorial Board wrote that Trump made a major concession, allowing Russian energy companies to rake in some $4.5 billion, but Putin gave nothing in return, citing Russian strikes on power stations in Ukraine.",
-          "rule": "E-13",
-          "message": "summary puts 4.5 beside \"wall street journal editorial board\", but no source sentence carrying 4.5 names it and one names another \"wall ...\": \"The Wall Street Journal's Editorial Board wrote that Trump made a major concession, allowi\""
+          "text": "However, Greenland's deputy mining minister, Jørgen Hammeken-Holm, responded that \"We are very far away from ‘massive’ exploration,\" and noted that while U.S. companies are undertaking many smaller explorations, these activities could take years to become operational.",
+          "rule": "E-14",
+          "message": "summary quotes \"we are very far away from 'massive' exploration,\", which appears in none of the source articles: quote it as written or paraphrase it"
         }
       ],
       "points": [
         {
-          "text": "The Wall Street Journal's Editorial Board claims Trump's concession on diesel sanctions will allow Russian energy companies to \"rake in some $4.5 billion,\" a specific financial figure not mentioned in other articles.",
+          "text": "The Daily Beast and CNN report Greenland's deputy mining minister Jørgen Hammeken-Holm stated that \"We are very far away from ‘massive’ exploration,\" contradicting Trump's claim.",
           "rule": "E-14",
-          "message": "summary quotes \"rake in some $4.5 billion,\", which appears in none of the source articles: quote it as written or paraphrase it"
+          "message": "summary quotes \"we are very far away from 'massive' exploration,\", which appears in none of the source articles: quote it as written or paraphrase it"
         }
       ],
       "left": []
+    },
+    {
+      "id": "16afa8ff-5a77-4cab-92b6-6fe1454277c7",
+      "title": "Palestinian Authority Postpones Elections to September 2027, Allies Express Regret",
+      "sentences": [
+        {
+          "text": "This marks another delay for Palestinian elections, which have not been held since 2006 for the Legislative Council.",
+          "rule": "E-13",
+          "message": "summary states 2006, which appears in none of the source articles: source it or cut it"
+        }
+      ],
+      "points": [],
+      "left": [
+        "headline puts 2027 beside \"palestinian authority postpones elections\", but no source sentence carrying 2027 names it and one names another \"palestinian ...\": \"Palestinian Authority Postpones Elections to September 2027, Allies Express Regret\""
+      ]
+    },
+    {
+      "id": "761af640-b846-47ad-b339-f6200b750602",
+      "title": "Congo Ebola Cases Surpass 9,000 as Deaths Exceed 4,300",
+      "sentences": [],
+      "points": [],
+      "left": [
+        "headline puts 4300 beside \"congo ebola cases surpass\", but no source sentence carrying 4300 names it and one names another \"congo ...\": \"Congo Ebola Cases Surpass 9,000 as Deaths Exceed 4,300\""
+      ]
     }
   ]
 }

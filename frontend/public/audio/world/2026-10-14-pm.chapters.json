@@ -1,0 +1,52 @@
+{
+ "version": "1.2.0",
+ "title": "On Air · Wednesday 14 October 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Headlines",
+   "endTime": 40.018
+  },
+  {
+   "startTime": 40.018,
+   "title": "Ukraine Energy Attacks",
+   "endTime": 109.968
+  },
+  {
+   "startTime": 109.968,
+   "title": "Black Sea Drone Strikes",
+   "endTime": 182.371
+  },
+  {
+   "startTime": 182.371,
+   "title": "Colombia Jerusalem Embassy",
+   "endTime": 248.907
+  },
+  {
+   "startTime": 248.907,
+   "title": "O-pen-A-I Arrest",
+   "endTime": 318.92
+  },
+  {
+   "startTime": 318.92,
+   "title": "Also today",
+   "endTime": 382.473
+  },
+  {
+   "startTime": 382.473,
+   "title": "Apple HomeView Display",
+   "endTime": 422.002
+  },
+  {
+   "startTime": 422.002,
+   "title": "Opinion",
+   "endTime": 633.017
+  },
+  {
+   "startTime": 633.017,
+   "endTime": 646.117,
+   "title": "Also from Void"
+  }
+ ]
+}
