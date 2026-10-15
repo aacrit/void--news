@@ -1,11 +1,11 @@
 {
- "builtAt": "2026-10-14T16:43:18.072422Z",
- "briefCreatedAt": "2026-10-14T16:42:42.109040+00:00",
+ "builtAt": "2026-10-15T16:20:51.027001Z",
+ "briefCreatedAt": "2026-10-15T16:20:09.858460+00:00",
  "products": {
   "card_headline": {
    "sentences": 20,
    "anchored": 1,
-   "checked": 0,
+   "checked": 1,
    "anchorTypes": [
     "number",
     "quote"
@@ -13,42 +13,42 @@
    "byAnchor": {
     "number": 1
    },
-   "coverage": 0.0
+   "coverage": 5.0
   },
   "card_summary": {
-   "sentences": 216,
-   "anchored": 52,
-   "checked": 30,
+   "sentences": 224,
+   "anchored": 59,
+   "checked": 38,
    "byAnchor": {
-    "number": 50,
-    "quote": 3
+    "number": 51,
+    "quote": 9
    },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "coverage": 13.9
+   "coverage": 17.0
   },
   "points": {
-   "sentences": 174,
-   "anchored": 36,
-   "checked": 23,
+   "sentences": 150,
+   "anchored": 37,
+   "checked": 26,
    "byAnchor": {
-    "number": 23,
-    "quote": 15
+    "number": 30,
+    "quote": 8
    },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "coverage": 13.2,
+   "coverage": 17.3,
    "machinePointsExcluded": 3
   },
   "tldr": {
-   "sentences": 38,
-   "anchored": 29,
-   "checked": 29,
-   "coverage": 76.3,
+   "sentences": 24,
+   "anchored": 20,
+   "checked": 20,
+   "coverage": 83.3,
    "anchorTypes": [
     "number",
     "name",
@@ -56,19 +56,18 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 14,
-    "name": 20,
-    "number": 10,
-    "quote": 1
+    "date": 3,
+    "name": 17,
+    "number": 12
    },
    "groundingRan": true,
    "shipped": true
   },
   "opinion": {
    "sentences": 23,
-   "anchored": 4,
-   "checked": 4,
-   "coverage": 17.4,
+   "anchored": 7,
+   "checked": 7,
+   "coverage": 30.4,
    "anchorTypes": [
     "number",
     "name",
@@ -76,19 +75,18 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 2,
-    "name": 3,
-    "number": 1,
-    "quote": 1
+    "date": 1,
+    "name": 7,
+    "number": 3
    },
    "groundingRan": true,
    "shipped": true
   },
   "onair": {
-   "sentences": 79,
+   "sentences": 106,
    "anchored": 38,
    "checked": 38,
-   "coverage": 48.1,
+   "coverage": 35.8,
    "anchorTypes": [
     "number",
     "name",
@@ -96,9 +94,9 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 5,
-    "name": 30,
-    "number": 6
+    "date": 4,
+    "name": 29,
+    "number": 11
    },
    "groundingRan": true,
    "shipped": true
@@ -109,26 +107,37 @@
   "freshKnown": true,
   "fresh": 20,
   "states": {
-   "confirmable": 12,
-   "index cap below writer window": 8
+   "confirmable": 14,
+   "index cap below writer window": 6
   }
  },
  "audit": {
-  "shipped": {},
-  "bench": {
-   "cannot confirm": {
+  "shipped": {
+   "advisory": {
     "E-13 misattached": 1
    },
-   "confirmed": {
+   "cannot confirm": {
+    "E-14 absent": 2
+   }
+  },
+  "bench": {
+   "advisory": {
     "E-13 misattached": 2
+   },
+   "cannot confirm": {
+    "E-13 absent": 1
+   },
+   "confirmed": {
+    "E-13 misattached": 1
    }
   }
  },
  "run": {
   "brief": {
-   "cut_sentences": 5,
+   "cut_sentences": 6,
    "cuts_by_reason": {
-    "name": 5
+    "name": 4,
+    "number": 2
    },
    "edition": "world",
    "grounding_ran": {
@@ -138,28 +147,26 @@
    }
   },
   "onair": {
-   "cut_sentences": 3,
+   "cut_sentences": 1,
    "cuts_by_reason": {
-    "date": 1,
-    "hedge": 1,
-    "number": 1
+    "name": 1
    },
    "grounding_ran": true
   },
-  "startedAt": "2026-10-14T16:30:13Z",
+  "startedAt": "2026-10-15T16:08:07Z",
   "stage2": {
    "candidates": 35,
-   "critique_read": 35,
+   "critique_read": 34,
    "critique_unread": 0,
-   "cut_sentences": 6,
+   "cut_sentences": 8,
    "cuts_by_reason": {
-    "number": 3,
-    "other story": 7,
+    "number": 4,
+    "other story": 12,
     "quotation": 1
    },
-   "dropped": 3,
+   "dropped": 1,
    "kept_failing": 0,
-   "regenerated": 6,
+   "regenerated": 4,
    "reviewed": true,
    "fresh": 35
   }
@@ -183,5 +190,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-10-14T16:43:30Z"
+ "computedAt": "2026-10-15T16:21:01Z"
 }

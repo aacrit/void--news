@@ -1,51 +1,46 @@
 {
  "version": "1.2.0",
- "title": "On Air · Wednesday 14 October 2026",
+ "title": "On Air · Thursday 15 October 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Headlines",
-   "endTime": 40.018
+   "endTime": 39.783
   },
   {
-   "startTime": 40.018,
-   "title": "Ukraine Energy Attacks",
-   "endTime": 109.968
+   "startTime": 39.783,
+   "title": "Peshawar School Roof Collapse",
+   "endTime": 125.214
   },
   {
-   "startTime": 109.968,
-   "title": "Black Sea Drone Strikes",
-   "endTime": 182.371
+   "startTime": 125.214,
+   "title": "Albanian Protests Continue",
+   "endTime": 236.266
   },
   {
-   "startTime": 182.371,
-   "title": "Colombia Jerusalem Embassy",
-   "endTime": 248.907
+   "startTime": 236.266,
+   "title": "White House Press Access",
+   "endTime": 320.162
   },
   {
-   "startTime": 248.907,
-   "title": "O-pen-A-I Arrest",
-   "endTime": 318.92
+   "startTime": 320.162,
+   "title": "Trump on Execution",
+   "endTime": 407.791
   },
   {
-   "startTime": 318.92,
+   "startTime": 407.791,
    "title": "Also today",
-   "endTime": 382.473
+   "endTime": 467.011
   },
   {
-   "startTime": 382.473,
-   "title": "Apple HomeView Display",
-   "endTime": 422.002
-  },
-  {
-   "startTime": 422.002,
+   "startTime": 467.011,
    "title": "Opinion",
-   "endTime": 633.017
+   "endTime": 644.956
   },
   {
-   "startTime": 633.017,
-   "endTime": 646.117,
+   "startTime": 644.956,
+   "endTime": 658.056,
    "title": "Also from Void"
   }
  ]
