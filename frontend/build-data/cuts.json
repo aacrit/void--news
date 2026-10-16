@@ -1,46 +1,14 @@
 {
-  "builtAt": "2026-10-15T16:20:51.027001Z",
+  "builtAt": "2026-10-16T16:00:13.989098Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "bf021429-41ef-4bda-9372-911e0cb99cc4",
-      "title": "Russia Restarts Diesel Exports After Deal With US President Trump",
-      "sentences": [
-        {
-          "text": "Russia's Deputy Prime Minister of Energy Alexander Novak stated on Thursday that Russia will supply up to 3.5 million tons of diesel to the world market, including the US, through the end of 2026, following a deal with Washington on sanctions relief.",
-          "rule": "E-13",
-          "message": "summary puts 2026 beside \"russia deputy prime minister of energy alexander novak\", but no source sentence carrying 2026 names it and one names another \"russia ...\": \"Russia's Deputy Prime Minister of Energy Alexander Novak stated on Thursday that Russia wi\""
-        }
-      ],
-      "points": [],
-      "left": []
-    },
-    {
-      "id": "b6852ffd-9bbe-4c0f-81ee-6c74d814ab66",
-      "title": "Trump Announces Greenland Resource Exploration; Greenland Government Counters Claim",
-      "sentences": [
-        {
-          "text": "Greenland's government countered Trump's claims, stating, \"We are very far away from 'massive' exploration.\" Denmark stated US resource exploration in Greenland must respect local laws.",
-          "rule": "E-14",
-          "message": "summary quotes \"we are very far away from 'massive' exploration.\", which appears in none of the source articles: quote it as written or paraphrase it"
-        }
-      ],
-      "points": [
-        {
-          "text": "President Trump stated that \"Massive Oil, Gas, and Mineral Exploration is getting ready to begin\" in Greenland, while Greenland's government countered, stating, \"We are very far away from 'massive' exploration.\"",
-          "rule": "E-14",
-          "message": "summary quotes \"we are very far away from 'massive' exploration.\", which appears in none of the source articles: quote it as written or paraphrase it"
-        }
-      ],
-      "left": []
-    },
-    {
-      "id": "67812c02-3035-4824-a47f-f1be51454e79",
-      "title": "Social Security Announces 3.6 Percent COLA, Higher Taxable Wage Base for 2027",
+      "id": "060c8404-5945-42c8-97f8-506fac7381bc",
+      "title": "Africa CDC Reports $700 Million Ebola Funds Unaccounted in Congo",
       "sentences": [],
       "points": [],
       "left": [
-        "headline puts 3.6 beside \"social security announces\", but no source sentence carrying 3.6 names it and one names another \"social ...\": \"Social Security Announces 3.6 Percent COLA, Higher Taxable Wage Base for 2027\""
+        "headline puts 700 beside \"africa cdc reports\", but no source sentence carrying 700 names it and one names another \"africa ...\": \"Africa CDC Reports $700 Million Ebola Funds Unaccounted in Congo\""
       ]
     }
   ]
