@@ -281,6 +281,27 @@ def main() -> int:
     print("points that failed their check are not evidence (rev 86, gap 1)")
     points_are_evidence_only_once_checked()
 
+    print("\na quotation that never closes is cut, not shipped (2026-10-17)")
+    iran = {"id": "iran", "title": "Trump Suggests Strike on Pickaxe Mountain",
+            "summary": ("Trump suggested Washington may need to strike Pickaxe "
+                        "Mountain. Trump stated, \"We'll knock it out fast,\" and "
+                        "said, \"No, I don't see that.\" The Iran war began on "
+                        "February 28 with US-Israeli strikes.")}
+    planted = ("Trump suggested Washington may need to strike Pickaxe Mountain. "
+               "Trump stated, \"We'll knock it out fast,\" and dismissed ground "
+               "troops, saying, \"No, I don't see that. The Iran war began on "
+               "February 28 with US-Israeli strikes.")
+    out, cuts = dg.ground_text(planted, iran, product="tldr")
+    check("Iran war began" not in out and "Pickaxe Mountain." in out
+          and any("never closes" in c.reason for c in cuts),
+          f"the unclosed span is cut and the sentence before it kept ({out!r})")
+    closed = ("Trump suggested Washington may need to strike Pickaxe Mountain. "
+              "Trump said, \"No, I don't see that.\" The Iran war began on "
+              "February 28 with US-Israeli strikes.")
+    out, cuts = dg.ground_text(closed, iran, product="tldr")
+    check(not any("never closes" in c.reason for c in cuts),
+          f"a closed quotation is not cut as unclosed ({[c.reason for c in cuts]})")
+
     if failures:
         print(f"\n{len(failures)} FAILED")
         return 1

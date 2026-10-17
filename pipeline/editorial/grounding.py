@@ -255,8 +255,14 @@ def numbers_in(text: str) -> list[str]:
 # Sentences, context words and proper names. Used at index time over the
 # sources and at check time over the card, so both sides tokenise alike.
 # --------------------------------------------------------------------------
+# The closing quote or bracket stays with its sentence. It used to sit in the
+# separator and was split away: `said, "No, I don't see that." The Iran war...`
+# came back as `said, "No, I don't see that. The Iran war...`, so the 2026-10-17
+# TL;DR put Void's own background line inside Trump's quotation.
+_CLOSERS = r"\"'”’)\]"
 _SENT_RE = re.compile(
-    r"(?<=[.!?])[\"'”’)\]]*\s+(?=[\"'“‘(\[]?[A-Z0-9])")
+    rf"(?:(?<=[.!?])|(?<=[.!?][{_CLOSERS}])|(?<=[.!?][{_CLOSERS}][{_CLOSERS}]))"
+    r"\s+(?=[\"'“‘(\[]?[A-Z0-9])")
 _WORD_RE = re.compile(r"[A-Za-z][A-Za-z'’&.-]*")
 _CAP = r"[A-Z][\w'’&.-]*"
 _LINK = r"(?:of|the|de|al|bin|von|van|la|du)"

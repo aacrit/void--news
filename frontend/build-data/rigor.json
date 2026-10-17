@@ -45,10 +45,10 @@
    "machinePointsExcluded": 3
   },
   "tldr": {
-   "sentences": 30,
-   "anchored": 24,
-   "checked": 24,
-   "coverage": 80.0,
+   "sentences": 31,
+   "anchored": 25,
+   "checked": 25,
+   "coverage": 80.6,
    "anchorTypes": [
     "number",
     "name",
@@ -189,5 +189,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-10-17T14:55:10Z"
+ "computedAt": "2026-10-17T19:19:23Z"
 }
