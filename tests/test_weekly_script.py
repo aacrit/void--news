@@ -90,6 +90,26 @@ def clean_for_band(issue, band=None):
     return build_clean(issue, cover_words=words)
 
 
+# The clean fixture is built from the NEWEST real issue, so it may say no date
+# or name of its own: "Tuesday, September fifteenth" and "Mette Frederiksen"
+# were Issue #26's, and when #29 became the newest W-13 failed its own clean
+# rundown and every branch's build-check went red (2026-10-17). W-06 asks only
+# that the beat exist.
+DATELINE = "E: This week, in the north."
+
+
+def _printed_name(issue):
+    """A two-word proper name this issue prints, which W-13 must therefore pass."""
+    from briefing.weekly_parse import unsourced_terms
+    from briefing.weekly_script import issue_text
+    text = issue_text(issue)
+    for m in re.finditer(r"\b([A-Z][a-z]{2,} [A-Z][a-z]{2,})\b", text):
+        line = f"{m.group(1)} spoke for the kingdom."
+        if not unsourced_terms(line, text, set()):
+            return m.group(1)
+    return None
+
+
 def build_clean(issue, cover_words=700):
     """A rundown that passes every validator, built from the real issue."""
     cols = _bench_columns(issue.get("opinions") or [])
@@ -111,7 +131,7 @@ def build_clean(issue, cover_words=700):
     lines += ["## CONTENTS", "E: Inside this week.", "E: The Arctic, contested.",
               "E: Two columnists, one story.", "E: The week, measured."]
     lines += ["## COVER"] + _filler("E", cover_words)
-    lines += ["## DATELINE", "E: Tuesday, September fifteenth."]
+    lines += ["## DATELINE", DATELINE]
     lines += ["## COVER"] + _filler("E", 250)
     lines += ["## TOPIC", "E: The two columns below argue about the same agreement."]
     lines += ["## LEFT"] + [f"L: {s}" for s in left]
@@ -202,7 +222,7 @@ def test_planted(issue):
 
     # W-06 — the dateline beat.
     check("W-06 catches a missing dateline",
-          _fails(issue, clean.replace("## DATELINE\nE: Tuesday, September fifteenth.\n", "", 1),
+          _fails(issue, clean.replace(f"## DATELINE\n{DATELINE}\n", "", 1),
                  "W-06"))
 
     # W-07 — length.
@@ -261,8 +281,10 @@ def test_w13(issue):
     for seg in ("COVER", "DATELINE", "TOPIC", "TURN", "EDITORIAL"):
         planted = clean.replace(f"## {seg}\n", f"## {seg}\nE: Nine hundred and seventy three thousand bases were promised.\n", 1)
         check(f"W-13 reads the Editor in {seg}", _fails(issue, planted, "W-13"))
-    named = clean.replace("## CLOSE\n", "## CLOSE\nE: Mette Frederiksen spoke for the kingdom.\n", 1)
-    check("W-13 passes a name the issue prints", not _fails(issue, named, "W-13"),
+    printed = _printed_name(issue)
+    check("the issue prints a two-word name to test with", printed is not None)
+    named = clean.replace("## CLOSE\n", f"## CLOSE\nE: {printed} spoke for the kingdom.\n", 1)
+    check(f"W-13 passes a name the issue prints ({printed})", not _fails(issue, named, "W-13"),
           str([f.detail for f in validate_script(parse_script(named), issue) if f.id == "W-13"]))
     sourced = clean.replace("## CLOSE\n", "## CLOSE\nE: Void scored more than sixty thousand "
                             "articles, and the European Union was among them.\n", 1)
