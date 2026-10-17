@@ -741,9 +741,12 @@
      preview on The Brief and below the head on Opinion). */
   .skb__compact-col--tldr,
   .skb__compact-col--opinion {
+    /* Label stacked over the head (2026-10-17). In its own 13.5rem column
+       the kicker left an empty block under "THE BRIEF" and "OPINION" for
+       every line of head and preview beside it. */
     display: grid;
-    grid-template-columns: 13.5rem minmax(0, 1fr) 1.5rem;
-    column-gap: var(--space-5);
+    grid-template-columns: minmax(0, 1fr) 1.5rem;
+    column-gap: var(--space-3);
     row-gap: var(--space-1);
     align-items: baseline;
     padding: var(--space-3) var(--space-4);
@@ -763,15 +766,15 @@
     display: none;
   }
   .skb__compact-col .skb__compact-hl {
-    grid-column: 2;
-    grid-row: 1;
+    grid-column: 1;
+    grid-row: 2;
     margin: 0;
     font-size: var(--text-base);
     line-height: 1.3;
   }
   .skb__compact-col .skb__compact-preview {
-    grid-column: 2;
-    grid-row: 2;
+    grid-column: 1;
+    grid-row: 3;
     padding-right: 0;
   }
   .skb__compact-col--opinion .skb__compact-hl--opinion {
@@ -783,7 +786,7 @@
     display: none;
   }
   .skb__compact-col .skb__compact-expand {
-    grid-column: 3;
+    grid-column: 2;
     grid-row: 1;
     position: static;
     justify-self: end;

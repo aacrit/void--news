@@ -142,7 +142,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     {mounted && brief.created_at && <span className="skb__compact-time">{timeAgo(brief.created_at)}</span>}
                   </div>
                   {brief.tldr_headline && <h3 className="skb__compact-hl skb__compact-hl--tldr">{String(brief.tldr_headline)}</h3>}
-                  <p className="skb__compact-preview skb__compact-preview--tldr">{briefTeaser(String(brief.tldr_text), 230)}</p>
+                  <p className="skb__compact-preview skb__compact-preview--tldr">{briefTeaser(String(brief.tldr_text), 150)}</p>
                   <span className="skb__compact-expand" aria-hidden="true"><CaretRight size={14} weight="bold" /></span>
                 </div>
 
