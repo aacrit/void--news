@@ -485,10 +485,9 @@
   font-size: clamp(0.9375rem, 0.85rem + 0.35vw, 1.0625rem);
   line-height: 1.75;
   color: var(--fg-secondary);
-  /* Left-aligned at the reading measure. Justified at the full banner width
-     it ran about 160 characters a line and opened rivers (2026-09-26). */
+  /* Full banner width, left-aligned (CEO 2026-10-17: use the whole width).
+     Justified at this width it opened rivers (2026-09-26), so it stays ragged. */
   text-align: left;
-  max-width: var(--measure-read);
 }
 
 .skb__section-body--tldr p + p {
@@ -502,10 +501,9 @@
   line-height: 1.7;
   letter-spacing: 0.005em;
   color: var(--fg-tertiary);
-  /* Left-aligned at the reading measure. Justified at the full banner width
-     it ran about 160 characters a line and opened rivers (2026-09-26). */
+  /* Full banner width, left-aligned (CEO 2026-10-17: use the whole width).
+     Justified at this width it opened rivers (2026-09-26), so it stays ragged. */
   text-align: left;
-  max-width: var(--measure-read);
 }
 
 .skb__section-body--opinion p + p {
@@ -711,24 +709,6 @@
    "S officials" beside it (2026-10-17). */
 .skb__section-body--no-dropcap p:first-child::first-letter {
   all: unset;
-}
-
-/* Wide screens: one story per paragraph, so the paragraphs run in two
-   columns, each at the reading measure. At one measure the expanded Brief
-   left the right half of the banner empty for the whole read (2026-10-17).
-   Row-major, so the order still reads story one, story two, left to right. */
-@media (min-width: 1100px) {
-  .skb__section-body--tldr {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, var(--measure-read)));
-    column-gap: var(--space-7);
-    row-gap: var(--space-4);
-    align-items: start;
-    max-width: none;
-  }
-  .skb__section-body--tldr p + p {
-    margin-top: 0;
-  }
 }
 
 @media (hover: none) {
