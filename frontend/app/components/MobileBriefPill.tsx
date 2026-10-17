@@ -112,14 +112,6 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
   const pillHeadline = brief.tldr_headline || tldrSentences[0] || "Daily Brief";
   const opinionHeadline = brief.opinion_headline || (brief.opinion_text || "").split(/(?<=[.!?])\s+/)[0] || null;
   const hasOpinion = !!(brief.opinion_text && opinionHeadline);
-  // First sentence of the opinion body becomes the collapsed teaser. If the
-  // opinion_headline IS the first sentence, fall back to the second to avoid
-  // duplicating the headline.
-  const opinionSentences = String(brief.opinion_text || "").split(/(?<=[.!?])\s+/).filter(Boolean);
-  const firstOpinionSentence = opinionSentences[0] || "";
-  const opinionTeaser = firstOpinionSentence && firstOpinionSentence !== opinionHeadline
-    ? firstOpinionSentence
-    : (opinionSentences[1] || "");
 
   /* Collapsed pill — TL;DR teaser (headline + preview) + Opinion teaser.
      CEO 2026-05-14: filter buried inside topics dropdown, freeing room for
@@ -137,14 +129,17 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
           <div className="mbp__teaser-tldr">
             <span className="mbp__teaser-cmd">The Brief <span className="mbp__teaser-desc">&middot; in one read</span></span>
             <span className="mbp__teaser-hl">{pillHeadline}</span>
-            <span className="mbp__teaser-preview">{tldrPreview}</span>
+            {/* The head is the teaser. A one-line preview under it always
+                cut mid-sentence, and Opinion's repeated the same fact a
+                third time above the lead story (2026-10-17). It stays only
+                as the fallback for a brief with no head. */}
+            {!brief.tldr_headline && <span className="mbp__teaser-preview">{tldrPreview}</span>}
           </div>
 
           {hasOpinion && (
             <div className={`mbp__teaser-opinion${brief.opinion_lean ? ` mbp__teaser-opinion--${brief.opinion_lean}` : ""}`}>
               <span className="mbp__teaser-cmd mbp__teaser-cmd--opinion">Opinion <span className="mbp__teaser-desc">&middot; one lens</span></span>
               <span className="mbp__teaser-hl mbp__teaser-hl--opinion">{opinionHeadline}</span>
-              {opinionTeaser && <span className="mbp__teaser-preview mbp__teaser-preview--opinion">{opinionTeaser}</span>}
             </div>
           )}
 

@@ -76,8 +76,22 @@
   min-width: 0;
 }
 
+/* The lead's margin column (2026-10-17): head and summary in the measure,
+   the Sigil beside both. The summary starts under the head, not under the
+   dial's caption, and takes a fourth line for the width the column costs. */
+.msc__hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto 1fr;
+  column-gap: var(--space-3);
+  align-items: start;
+}
+.msc__hero-grid > .msc__headline--hero { grid-column: 1; grid-row: 1; }
+.msc__hero-grid > .msc__summary { grid-column: 1; grid-row: 2; -webkit-line-clamp: 4; }
+.msc__hero-grid > .msc__sigil-wrapper--hero { grid-column: 2; grid-row: 1 / span 2; }
+
 /* Sigil stacks vertically in mobile headlines */
-.msc__headline--hero .sigil,
+.msc__sigil-wrapper--hero .sigil,
 .msc__headline--compact .sigil {
   flex-direction: column;
   align-items: center;
@@ -92,7 +106,7 @@
    exists on desktop and not on the phone is the same card saying two
    things. Floored at 10px (9px until 2026-09-26), nowrap, allowed to run
    wider than the mark. */
-.msc__headline--hero .sigil__lean-label,
+.msc__sigil-wrapper--hero .sigil__lean-label,
 .msc__headline--compact .sigil__lean-label {
   display: block;
   font-size: 10px;
@@ -1156,10 +1170,6 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   max-width: 44ch;
-}
-
-.mbp__teaser-preview--opinion {
-  -webkit-line-clamp: 1;
 }
 
 .mbp__teaser-chevron {

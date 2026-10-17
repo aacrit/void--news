@@ -131,37 +131,31 @@ export default function MobileStoryCard({
           {/* Hero headline is page <h1> when this card is rank 0 (the
               feed's top story on mobile). Falls back to <h2> for any other
               "hero" usage. UAT 2026-05-13 P0-5 — zero-<h1> page outline. */}
-          {globalIndex === 0 ? (
-            <h1 className="msc__headline msc__headline--hero">
-              <span>{story.title}</span>
-              <div
-                className="msc__sigil-wrapper"
-                onPointerDown={handleSigilPointerDown}
-                onPointerUp={handleSigilPointerUp}
-                onPointerLeave={handleSigilPointerUp}
-              >
-                <Sigil data={story.sigilData} size="xl" instant tabbable={false} />
-              </div>
-            </h1>
-          ) : (
-            <h2 className="msc__headline msc__headline--hero">
-              <span>{story.title}</span>
-              <div
-                className="msc__sigil-wrapper"
-                onPointerDown={handleSigilPointerDown}
-                onPointerUp={handleSigilPointerUp}
-                onPointerLeave={handleSigilPointerUp}
-              >
-                <Sigil data={story.sigilData} size="xl" instant tabbable={false} />
-              </div>
-            </h2>
-          )}
-          {story.summary?.trim() && <p className="msc__summary"><CardSummary text={story.summary} max={140} /></p>}
-          {!story.summary?.trim() && (
-            <p className="msc__summary msc__summary--pending">
-              {story.source.count} source{story.source.count !== 1 ? 's' : ''} covering this story
-            </p>
-          )}
+          {/* The Sigil takes a margin column beside the headline AND the
+              summary (2026-10-17). Inside the headline it set the row's
+              height, so a three-line head sat above an empty block the
+              height of the dial and its caption before the summary began. */}
+          <div className="msc__hero-grid">
+            {globalIndex === 0 ? (
+              <h1 className="msc__headline msc__headline--hero"><span>{story.title}</span></h1>
+            ) : (
+              <h2 className="msc__headline msc__headline--hero"><span>{story.title}</span></h2>
+            )}
+            <div
+              className="msc__sigil-wrapper msc__sigil-wrapper--hero"
+              onPointerDown={handleSigilPointerDown}
+              onPointerUp={handleSigilPointerUp}
+              onPointerLeave={handleSigilPointerUp}
+            >
+              <Sigil data={story.sigilData} size="xl" instant tabbable={false} />
+            </div>
+            {story.summary?.trim() && <p className="msc__summary"><CardSummary text={story.summary} max={140} /></p>}
+            {!story.summary?.trim() && (
+              <p className="msc__summary msc__summary--pending">
+                {story.source.count} source{story.source.count !== 1 ? 's' : ''} covering this story
+              </p>
+            )}
+          </div>
         </>
       ) : (
         /* Compact layout: headline + inline sm Sigil (40px) + (optional) category row.
