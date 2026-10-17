@@ -413,8 +413,21 @@ _ORPHAN_RE = re.compile(
 )
 
 
+# A period after one of these is not a sentence end: "on Friday, Oct. 16, to
+# arrange a meeting" split at "Oct." and the date read as an orphan fragment
+# (served 2026-10-17, a false failure on correct copy).
+_NON_TERMINAL_ABBREV = (
+    "Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug", "Sep", "Sept", "Oct",
+    "Nov", "Dec", "Mr", "Mrs", "Ms", "Dr", "St", "Sen", "Rep", "Gov", "Gen",
+    "Lt", "Col", "Sgt", "Capt", "Prof", "No", "Vol", "vs", "Jr", "Sr",
+)
+_SENTENCE_END = re.compile(
+    r'(?<=[.!?])' + ''.join(rf'(?<!\b{a}\.)' for a in _NON_TERMINAL_ABBREV) + r'\s+'
+)
+
+
 def _sentences(text: str) -> list[str]:
-    return [s.strip() for s in re.split(r'(?<=[.!?])\s+', text) if s.strip()]
+    return [s.strip() for s in _SENTENCE_END.split(text) if s.strip()]
 
 
 # A summary sentence that opens on a lowercase subordinating conjunction is a

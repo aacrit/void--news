@@ -496,8 +496,19 @@ def check_hedge(sent: str) -> str | None:
     return "a hedge stands in for attribution (E-15)" if found else None
 
 
+def check_quote_closed(sent: str, ev: Evidence | None = None) -> str | None:
+    """A quotation that never closes makes whatever follows it the speaker's.
+    The 2026-10-17 TL;DR shipped `saying, "No, I don't see that. The Iran war
+    began on February 28 with US-Israeli strikes.`, so Void's own background
+    line read as Trump's words. `_sentences` keeps an open quotation joined to
+    what follows it, so the cut takes the whole unclosed span (S-04)."""
+    return "a quotation that never closes (S-04)" if _open_quote(sent) else None
+
+
 def sentence_problem(sent: str, ev: Evidence, prev: str | None = None) -> str | None:
     """The first reason this sentence cannot ship against this story, or None."""
+    if check_quote_closed(sent):
+        return check_quote_closed(sent)
     for fn in (check_numbers, check_names, check_dates, check_quotes,
                check_lifted_quote):
         why = fn(sent, ev)

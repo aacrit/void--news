@@ -13,6 +13,7 @@ fixture that trips ten checks at once cannot prove the eleventh works.
 
 Run: python tests/test_verify_gate.py   (exit 0 = every assertion holds)
 """
+import importlib.util
 import subprocess
 import sys
 from pathlib import Path
@@ -104,10 +105,25 @@ def main() -> int:
     else:
         print("PASS: short render rejected against the configured feed size")
 
+    # A date abbreviation is not a sentence end (2026-10-17: "on Friday, Oct.
+    # 16, to arrange a meeting" split at "Oct." and main went red on correct
+    # copy). The real orphan fragment must still be caught.
+    vspec = importlib.util.spec_from_file_location("verify_production", VERIFY)
+    vp = importlib.util.module_from_spec(vspec); vspec.loader.exec_module(vp)
+    dated = "Umerov met Kushner on Friday, Oct. 16, to arrange a meeting. Dr. Lee spoke."
+    orphan = "The bank moved funds. 375 million into Saddam-era Iraq went unreported."
+    date_ok = not any(vp._ORPHAN_RE.match(t) for t in vp._sentences(dated))
+    orphan_caught = any(vp._ORPHAN_RE.match(t) for t in vp._sentences(orphan))
+    if date_ok and orphan_caught:
+        print("PASS: an abbreviated month is not split; a real orphan fragment still fails")
+    else:
+        print(f"FAIL: sentence split (date kept whole={date_ok}, orphan caught={orphan_caught})")
+        ok = False
+
     # verify_audio.fetch: a 429 is "later", not "broken" (2026-10-03: the CDN
     # answered brief.json 429 and main went red with On Air serving fine).
     # Planted: one 429 then a 200 must succeed; a 404 must raise at once.
-    import importlib.util, io, urllib.error, urllib.request
+    import io, urllib.error, urllib.request
     spec = importlib.util.spec_from_file_location("verify_audio", VERIFY.parent / "verify_audio.py")
     va = importlib.util.module_from_spec(spec); spec.loader.exec_module(va)
     va._RETRY_DELAYS = (0, 0, 0)

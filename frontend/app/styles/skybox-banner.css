@@ -707,6 +707,30 @@
    Touch device guards
    --------------------------------------------------------------------------- */
 
+/* An initialism keeps its letters together: the drop cap set "U" large and
+   "S officials" beside it (2026-10-17). */
+.skb__section-body--no-dropcap p:first-child::first-letter {
+  all: unset;
+}
+
+/* Wide screens: one story per paragraph, so the paragraphs run in two
+   columns, each at the reading measure. At one measure the expanded Brief
+   left the right half of the banner empty for the whole read (2026-10-17).
+   Row-major, so the order still reads story one, story two, left to right. */
+@media (min-width: 1100px) {
+  .skb__section-body--tldr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, var(--measure-read)));
+    column-gap: var(--space-7);
+    row-gap: var(--space-4);
+    align-items: start;
+    max-width: none;
+  }
+  .skb__section-body--tldr p + p {
+    margin-top: 0;
+  }
+}
+
 @media (hover: none) {
   .skb__compact-col:hover .skb__compact-expand { opacity: 0.5; color: var(--fg-muted); border-color: transparent; background: transparent; }
 }
