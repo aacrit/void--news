@@ -1,0 +1,8 @@
+source: src-nam-belgrade-1989
+locator: secdetente
+url: https://documents.un.org/doc/undoc/gen/n89/228/77/pdf/n8922877.pdf
+read: 2026-10-09
+note: a later section of the final documents, as the OCR layer carries it
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+3. They noted that super-power detente will not by itself resolve the conflicts which exist in various parts of the world.

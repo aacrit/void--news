@@ -1,0 +1,8 @@
+source: src-cwmg-76-aicc-resolution
+locator: secwithdrawal
+url: https://archive.org/download/HindSwaraj-CWMG-076/CWMG-v076-LXXVI-MC-BETA_djvu.txt
+read: 2026-10-09
+note: the text is the archive.org full-text (djvu.txt) layer of the electronic edition of the Collected Works (Publications Division), whitespace collapsed; line-end hyphens and glyph errors kept as the layer gives them
+note: Appendix X; the editors' source is The Indian Annual Register, 1942, Harijan, 9-8-1942 and The Transfer of Power, Vol. II
+
+The A. I. C. C., therefore, repeats with all emphasis the demand for the withdrawal of the British power from India.

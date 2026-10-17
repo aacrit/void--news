@@ -1,0 +1,7 @@
+source: src-schofield-2022
+locator: p23
+url: https://strategicstudies.org.pk/index.php/strategic_studies/article/download/138/103
+read: 2026-09-25
+note: page 23; the PDF's line breaks are joined
+
+Finally, following a ceasefire agreed by India and Pakistan to take place at one minute before midnight on December 31, 1948, UNCIP adopted another resolution on January 5, 1949,

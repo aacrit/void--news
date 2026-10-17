@@ -1,0 +1,6 @@
+source: src-ushmm-karski
+locator: secizbica
+url: https://encyclopedia.ushmm.org/content/en/article/jan-karski
+read: 2026-10-07
+
+In late 1942, Karski was smuggled in and out of the Warsaw ghetto and Izbica, a transit ghetto for Jews being sent to the Belzec killing center. In both places, he witnessed the horrific conditions imposed by the Germans that had caused tens of thousands of Jews to die of starvation and disease. In Izbica, disguised as a guard, he saw thousands of Jews being crammed into freight cars. Karski learned that the train was taking them to be murdered.

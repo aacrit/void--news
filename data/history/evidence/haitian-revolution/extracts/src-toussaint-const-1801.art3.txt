@@ -1,0 +1,8 @@
+source: src-toussaint-const-1801
+locator: art3
+url: https://archive.org/download/constitutionfran00sain/constitutionfran00sain_djvu.txt
+read: 2026-09-25
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: Titre II, article 3
+
+Titre II. De ses habltans. 3. Les esclaves ne sont^ point souffert5 [pertr.itted) dans ce territoire- l'esclavage est aboli pour J sciais. Tous les hommes nés dans ce pays , vivent et meurent hommes Ijbres et français.

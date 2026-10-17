@@ -1,0 +1,17 @@
+source: src-berlin-act-1885
+locator: art1
+url: https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: Article I with the first of its three enumerated regions
+
+Art. I. — -The trade of all nations shall enjoy complete freedom : —
+Basin of the Congo Defined.
+
+1. In all the regions forming the basin of the Congo and its outlets.
+This basin is bounded by the watersheds (or mountain ridges) of the
+adjacent basins, namely, in particular, those of the Niari, the Ogowe,
+the Schari, and the Nile on the north ; by the eastern watershed line
+of the affluents of Lake Tanganyika on the east ; and by the watersheds
+of the basins of the Zambesi and the Loge on the south. It therefore
+comprises all the regions watered by the Congo and its affluents, including Lake Tanganyika, with its eastern tributaries.

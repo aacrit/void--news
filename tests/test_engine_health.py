@@ -1,0 +1,313 @@
+#!/usr/bin/env python3
+"""The engine's input is measured, and a collapse in it cannot pass silently.
+
+For weeks half the roster was scored on a headline and nothing counted it
+(`docs/proposals/OUTLET-BASELINE-PROGRAMME-2026-09-22.md` section 0). And on
+2026-09-19..23 about 2,500 direct-feed articles a day fell back to their RSS
+summary, the direct full-body share sat at 45-48% against 69-71% on healthy
+runs, and nothing noticed that either. `validation/engine_health.py` measures
+both; `export_static.py` writes them to `frontend/build-data/engine.json`.
+
+Two modes:
+
+  python tests/test_engine_health.py            (auto-merge CI)
+      The measurement is right on a planted fixture, the gate fires on a planted
+      collapse, and the committed engine.json is well formed and consistent.
+      Deliberately does NOT fail on the data's floor here: a bad scraping day
+      must not freeze every code branch (CLAUDE.md, "main is production").
+
+  python tests/test_engine_health.py --floors   (pipeline.yml, AFTER the data commit)
+      Fails the run when the committed engine.json is under the floor. The paper
+      still ships; the run goes red, which is the alarm.
+
+Runs with no network and no VOID_SQLITE_PATH.
+"""
+from __future__ import annotations
+
+import json
+import pathlib
+import sqlite3
+import sys
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "pipeline"))
+
+from validation import engine_health as eh  # noqa: E402
+
+ENGINE_JSON = ROOT / "frontend" / "build-data" / "engine.json"
+failures: list[str] = []
+
+
+def check(name, ok, detail=""):
+    print(f"  {'ok  ' if ok else 'FAIL'}  {name}" + (f"  ({detail})" if detail and not ok else ""))
+    if not ok:
+        failures.append(name)
+
+
+if "--floors" in sys.argv:
+    health = json.loads(ENGINE_JSON.read_text(encoding="utf-8"))
+    print(eh.format_summary(health))
+    probs = eh.problems(health)
+    # A floor that reads a stale file cannot fail. On the first run after rev 82
+    # the export never rewrote engine.json (the workflow's VOID_EXPORT_ONLY list
+    # omitted `engine`) and this check passed on the previous day's numbers.
+    import os
+    db = os.environ.get("VOID_SQLITE_PATH")
+    if db and pathlib.Path(db).exists():
+        newest = sqlite3.connect(db).execute(
+            "select max(fetched_at) from articles").fetchone()[0]
+        probs += eh.stale(health, newest)
+    else:
+        probs.append("VOID_SQLITE_PATH not set: cannot tell whether engine.json "
+                     "describes this run")
+    for w in eh.budget_warnings(health):
+        print(f"  WARN  {w}")
+    for p in probs:
+        print(f"  FAIL  {p}")
+    sys.exit(1 if probs else 0)
+
+
+# --- 1. The measurement, on a planted fixture --------------------------------
+def fixture(direct_full: int, direct_short: int) -> sqlite3.Connection:
+    c = sqlite3.connect(":memory:")
+    c.executescript("""
+        create table sources (id text primary key, rss_url text, political_lean_baseline text);
+        create table articles (id text primary key, source_id text, word_count integer,
+                               fetched_at text);
+        create table bias_scores (article_id text, rationale text);
+    """)
+    c.execute("insert into sources values ('d1', 'https://outlet.example/rss', 'left')")
+    c.execute("insert into sources values ('d2', 'https://other.example/feed', 'unrated')")
+    c.execute("insert into sources values ('g1', "
+              "'https://news.google.com/rss/search?q=site:x.example', 'right')")
+    n = 0
+
+    def art(sid, words, rationale=None, when="2026-09-25 16:00:00"):
+        nonlocal n
+        n += 1
+        c.execute("insert into articles values (?,?,?,?)", (f"a{n}", sid, words, when))
+        if rationale is not None:
+            c.execute("insert into bias_scores values (?,?)", (f"a{n}", json.dumps(rationale)))
+
+    for i in range(direct_full):
+        art("d1", 400, {"lean": {"text_shift": [0.0, 2.0, -4.0][i % 3], "unscored": False}})
+    for _ in range(direct_short):
+        art("d1", 40, {"framing": {}})
+    art("d2", 500, {"lean": {"text_shift": 9.0, "unscored": False}})    # unplaced: excluded
+    art("d1", 500, {"lean": {"text_shift": 50.0, "unscored": True}})    # unscored: excluded
+    for _ in range(4):
+        art("g1", 11, {"framing": {}})                                   # headline only
+    art("d1", 900, {"lean": {"text_shift": 7.0}}, when="2026-09-23 16:00:00")  # older run
+    return c
+
+
+h = eh.compute(fixture(direct_full=6, direct_short=2))
+check("an article from an older run is outside the window", h["run"]["articles"] == 14,
+      str(h["run"]))
+check("a Google News feed is classed as google_news",
+      h["feeds"]["google_news"]["articles"] == 4 and h["feeds"]["google_news"]["full_share"] == 0)
+check("direct full share counts 150+ words over all direct articles",
+      h["feeds"]["direct"]["full_share"] == round(8 / 10, 4), str(h["feeds"]["direct"]))
+check("everything under 150 words is scored on the outlet alone",
+      h["scoring"]["outlet_only"] == 6 and h["scoring"]["text_read"] == 8, str(h["scoring"]))
+m = h["text_movement_rated"]
+check("text movement uses rated, measured rows only (unplaced and unscored excluded)",
+      m["articles"] == 6, str(m))
+check("mean |text_shift| is the mean of the absolute shifts", m["mean_abs"] == 2.0, str(m))
+check("the share that did not move is reported", m["zero_share"] == round(2 / 6, 4), str(m))
+
+# --- 2. The gate fires on a planted collapse, and only then ------------------
+check("a healthy run has no problems", eh.problems(h) == [], str(eh.problems(h)))
+collapsed = eh.compute(fixture(direct_full=4, direct_short=6))      # 5/11 = 45%
+probs = eh.problems(collapsed)
+check("a direct full-body share of 45% (the 2026-09-19..23 regime) fails",
+      any("floor" in p for p in probs), str(probs))
+check("the floor sits between the measured regimes (45-48% bad, 69-71% healthy)",
+      0.48 < eh.FULL_SHARE_FLOOR < 0.69)
+empty = {"feeds": {"direct": {"articles": 0}}, "text_movement_rated": {"articles": 0}}
+check("a run with no direct articles or no measured shift fails", len(eh.problems(empty)) == 2)
+
+# --- 3. The committed export ---------------------------------------------------
+check("frontend/build-data/engine.json is committed", ENGINE_JSON.exists())
+if ENGINE_JSON.exists():
+    e = json.loads(ENGINE_JSON.read_text(encoding="utf-8"))
+    for key in ("run", "thresholds", "feeds", "scoring", "text_movement_rated"):
+        check(f"engine.json carries '{key}'", key in e)
+    check("its thresholds are the module's",
+          e.get("thresholds") == {"full_body_words": eh.FULL_BODY_WORDS,
+                                  "headline_words": eh.HEADLINE_WORDS,
+                                  "direct_full_share_floor": eh.FULL_SHARE_FLOOR},
+          str(e.get("thresholds")))
+    s, r = e.get("scoring", {}), e.get("run", {})
+    check("text_read + outlet_only = the run's articles",
+          s.get("text_read", -1) + s.get("outlet_only", -1) == r.get("articles"))
+    f = e.get("feeds", {})
+    check("the feed classes sum to the run's articles",
+          f.get("direct", {}).get("articles", 0) + f.get("google_news", {}).get("articles", 0)
+          == r.get("articles"))
+
+# --- 4. Copy quotes the engine, not a memory of it ----------------------------
+import re  # noqa: E402
+
+bounds = (ROOT / "frontend" / "app" / "lib" / "leanBounds.ts").read_text(encoding="utf-8")
+lean_src = (ROOT / "pipeline" / "analyzers" / "political_lean.py").read_text(encoding="utf-8")
+main_src = (ROOT / "pipeline" / "main.py").read_text(encoding="utf-8")
+
+
+def ts_const(name):
+    m = re.search(rf"export const {name} = (\d+);", bounds)
+    return int(m.group(1)) if m else None
+
+
+def py_const(name):
+    m = re.search(rf"^{name} = (\d+)", lean_src, re.M)
+    return int(m.group(1)) if m else None
+
+
+check("leanBounds RATED_DELTA_MAX is political_lean._TEXT_DELTA_MAX",
+      ts_const("RATED_DELTA_MAX") == py_const("_TEXT_DELTA_MAX") is not None,
+      f"{ts_const('RATED_DELTA_MAX')} vs {py_const('_TEXT_DELTA_MAX')}")
+check("leanBounds UNRATED_DELTA_MAX is political_lean._CENTER_TEXT_DELTA_MAX",
+      ts_const("UNRATED_DELTA_MAX") == py_const("_CENTER_TEXT_DELTA_MAX") is not None)
+gate = re.search(r"if word_count < (\d+):", main_src)
+check("leanBounds FULL_TEXT_WORDS is main.py's word-count gate and engine_health's",
+      gate and ts_const("FULL_TEXT_WORDS") == int(gate.group(1)) == eh.FULL_BODY_WORDS,
+      f"{ts_const('FULL_TEXT_WORDS')} vs {gate and gate.group(1)} vs {eh.FULL_BODY_WORDS}")
+
+src_client = (ROOT / "frontend" / "app" / "sources" / "SourcesClient.tsx").read_text(encoding="utf-8")
+check("/sources prints the measured movement from engine.json",
+      "engine.text_movement_rated.mean_abs" in src_client
+      and "engine.scoring.outlet_only_share" in src_client)
+check("/sources restates no measured movement as a literal",
+      not re.search(r"\d+(\.\d+)?\s+points on average", src_client))
+# /press (P1-10, 2026-10-02). Its method callout said "on a full feature, the
+# article's own words lead" against a 10 point cap and a measured mean near
+# 1.4. It now reads engine.json and leanBounds exactly as /sources does, and
+# may not write an engine number by hand where either provides one.
+press = (ROOT / "frontend" / "app" / "press" / "page.tsx").read_text(encoding="utf-8")
+press_code = re.sub(r"/\*[\s\S]*?\*/", "", press)
+check("/press prints the measured movement from engine.json",
+      "engine.text_movement_rated.mean_abs" in press_code
+      and "engine.text_movement_rated.zero_share" in press_code
+      and 'join(process.cwd(), "build-data", "engine.json")' in press_code)
+check("/press quotes delta_max from leanBounds, not a literal",
+      "{RATED_DELTA_MAX}" in press_code and "{FULL_TEXT_WORDS}" in press_code)
+check("/press restates no engine number as a literal",
+      not re.search(r"\d+(\.\d+)?\s+points\b|\b\d+%\s+of them|\bunder \d+ words",
+                    press_code), "a hand-written points, share or word-count figure")
+check("/press no longer says the words lead",
+      not re.search(r"own words\s+lead", press_code))
+
+retired = {
+    "frontend/app/components/about/AboutPipeline.tsx": "a full article leans on its words",
+    "frontend/app/components/about/beats/BeatSigil.tsx": "so its words carry more",
+    "frontend/app/sources/SourcesClient.tsx": "never overrides one that reads against type",
+}
+for path, phrase in retired.items():
+    check(f"retired claim is gone: '{phrase}'",
+          phrase not in (ROOT / path).read_text(encoding="utf-8"))
+
+# --- 4b. The export the pipeline runs actually writes engine.json -------------
+check("a stale engine.json is refused by the floor",
+      eh.stale({"run": {"newest_fetch": "2026-09-25 16:12:17"}}, "2026-09-26 15:17:45") != [])
+check("a current engine.json is accepted",
+      eh.stale({"run": {"newest_fetch": "2026-09-26 15:17:45"}}, "2026-09-26 15:17:45") == [])
+_wf = (ROOT / ".github" / "workflows" / "pipeline.yml").read_text(encoding="utf-8")
+_only = re.findall(r"VOID_EXPORT_ONLY:\s*([\w,]+)", _wf)
+check("every VOID_EXPORT_ONLY list in pipeline.yml includes engine",
+      _only and all("engine" in x.split(",") for x in _only), str(_only))
+check("the floor step has the state DB, so it can detect a stale file",
+      re.search(r"Engine health floor.*?VOID_SQLITE_PATH: pipeline_state\.db.*?--floors",
+                _wf, re.S) is not None)
+
+# --- 5. The pipeline runs the floor after it commits, not before ---------------
+wf = (ROOT / ".github" / "workflows" / "pipeline.yml").read_text(encoding="utf-8")
+i_commit = wf.find("- name: Commit refreshed static data to main")
+i_floor = wf.find("tests/test_engine_health.py --floors")
+check("pipeline.yml runs the floor check", i_floor > 0)
+check("and runs it after the data commit, so a bad day still ships the paper",
+      i_commit > 0 and i_floor > i_commit)
+
+# --- 6. Runtime and the flash meter (P2-1, P2-12, rev 85) ---------------------
+def run_fixture(duration_s, metrics):
+    c = fixture(direct_full=6, direct_short=2)
+    c.execute("""create table pipeline_runs (id text, started_at text, completed_at text,
+                 status text, duration_seconds real, llm_metrics text)""")
+    c.execute("insert into pipeline_runs values ('old', '2026-09-24 11:00:00', "
+              "'2026-09-24T13:00:00+00:00', 'completed', 9999, '{}')")
+    c.execute("insert into pipeline_runs values ('r1', '2026-09-25 11:00:00', "
+              "'2026-09-25T13:00:00+00:00', 'completed', ?, ?)",
+              (duration_s, json.dumps(metrics)))
+    c.execute("insert into pipeline_runs values ('live', '2026-09-26 11:00:00', null, "
+              "'running', null, null)")
+    return eh.compute(c)
+
+
+flash = "gemini-2.5-flash"
+usage = {"requests_by_model": {flash: 14, "gemini-2.5-flash-lite": 52},
+         "calls_by_model": {flash: 12, "gemini-2.5-flash-lite": 50},
+         "uncounted_calls_by_model": {"gemini-2.5-flash-lite": 3},
+         "flash_model": flash, "lite_model": "gemini-2.5-flash-lite"}
+h6 = run_fixture(95 * 60, {"phases": {"scrape": 1200.0, "rerank": 120.0}, "gemini_usage": usage})
+check("engine.json carries the newest completed run's runtime, in minutes",
+      h6.get("runtime", {}).get("total_minutes") == 95.0
+      and h6["runtime"].get("run_id") == "r1", str(h6.get("runtime")))
+check("and its phases, in minutes",
+      h6["runtime"].get("phases_minutes") == {"scrape": 20.0, "rerank": 2.0},
+      str(h6["runtime"].get("phases_minutes")))
+check("the meter reports requests by model, retries and count_call=False included",
+      h6.get("llm", {}).get("flash_requests") == 14
+      and h6["llm"]["requests_by_model"]["gemini-2.5-flash-lite"] == 52, str(h6.get("llm")))
+check("a healthy runtime and meter raise nothing",
+      eh.budget_problems(h6) == [] and eh.budget_warnings(h6) == [])
+check("a run over 150 minutes fails",
+      any("150-minute" in p for p in eh.problems(run_fixture(151 * 60, {}))))
+slow = run_fixture(120 * 60, {})
+check("a run between 110 and 150 minutes warns and does not fail",
+      eh.budget_problems(slow) == [] and len(eh.budget_warnings(slow)) == 1)
+check("the ceilings are the plan's", (eh.RUNTIME_WARN_MINUTES, eh.RUNTIME_FAIL_MINUTES) == (110, 150))
+over = dict(usage, requests_by_model={flash: 21})
+check("21 flash requests in a run fails",
+      any("flash" in p for p in eh.budget_problems(run_fixture(60 * 60, {"gemini_usage": over}))))
+near = dict(usage, requests_by_model={flash: 19})
+nh = run_fixture(60 * 60, {"gemini_usage": near})
+check("19 flash requests warns and does not fail",
+      eh.budget_problems(nh) == [] and len(eh.budget_warnings(nh)) == 1)
+check("the flash gate is the free tier's 20 a day, warning over 18",
+      (eh.FLASH_DAILY_CAP, eh.FLASH_WARN) == (20, 18))
+legacy = run_fixture(100 * 60, {"summaries_total": 35})
+check("a run from before rev 85 (no phases, no meter) is tolerated",
+      legacy["runtime"]["phases_minutes"] == {} and "llm" not in legacy
+      and eh.budget_problems(legacy) == [], str(legacy.get("runtime")))
+check("a DB with no pipeline_runs table is tolerated", "runtime" not in h)
+pcw = run_fixture(60 * 60, {"phrase_counts": {"halted": False, "projection_warn": True,
+                                              "days_to_ceiling": 9.5, "daily_gain": 420000,
+                                              "ceiling": 8000000}})
+check("phrase_counts under two weeks from its ceiling warns and does not fail",
+      eh.budget_problems(pcw) == [] and any("phrase_counts" in w for w in eh.budget_warnings(pcw)))
+pch = run_fixture(60 * 60, {"phrase_counts": {"halted": True, "ceiling": 8000000}})
+check("phrase_counts halted at its ceiling fails",
+      any("HALTED" in p for p in eh.budget_problems(pch)))
+check("an engine.json without the blocks raises nothing",
+      eh.budget_problems({}) == [] and eh.budget_warnings({}) == [])
+if ENGINE_JSON.exists():
+    e = json.loads(ENGINE_JSON.read_text(encoding="utf-8"))
+    if "runtime" in e:
+        check("a committed runtime block is well formed",
+              isinstance(e["runtime"].get("phases_minutes"), dict)
+              and "total_minutes" in e["runtime"])
+    if "llm" in e:
+        check("a committed llm block names the flash model and its count",
+              isinstance(e["llm"].get("flash_requests"), int) and e["llm"].get("flash_model"))
+
+_main = (ROOT / "pipeline" / "main.py").read_text(encoding="utf-8")
+check("main.py records phase timings and the meter into llm_metrics",
+      '"phases": phase_durations(_PHASE_MARKS' in _main and '"gemini_usage": _gemini_usage' in _main)
+_gc = (ROOT / "pipeline" / "summarizer" / "gemini_client.py").read_text(encoding="utf-8")
+check("gemini_client sends every request through the meter (one generate_content call site)",
+      _gc.count("generate_content(") == 1 and "def _send(" in _gc)
+
+if failures:
+    print(f"\nFAIL  {len(failures)} engine-health check(s)")
+    sys.exit(1)
+print("\nPASS  the engine's input is measured, and a collapse in it cannot pass silently")

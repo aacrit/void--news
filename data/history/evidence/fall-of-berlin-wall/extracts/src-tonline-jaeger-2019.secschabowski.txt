@@ -1,0 +1,8 @@
+source: src-tonline-jaeger-2019
+locator: secschabowski
+url: https://www.t-online.de/nachrichten/panorama/wissen/geschichte/id_86669552/grenzoeffner-harald-jaeger-man-sagt-ich-habe-die-mauer-geoeffnet-.html
+read: 2026-10-09
+note: the same page
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Harald Jäger: "Was redet dieser Mensch für einen geistigen Dünnschiss?" Kurz gesagt, genau das habe ich für diesen Satz empfunden und auch gedacht. Man hätte im Normalfall uns vorher mindestens 14 Tage unterrichtet, dass die Grenzübergangsstelle ab sofort die DDR-Bürger ausreisen lassen darf.

@@ -1,0 +1,7 @@
+source: src-state-laos-2018
+locator: secintro
+url: https://2017-2021.state.gov/special-report-u-s-conventional-weapons-destruction-in-laos/
+read: 2026-10-09
+note: the State Department's archived page (2017-2021 site), Bureau of Political-Military Affairs, dated July 17, 2018
+
+From 1964-1973, the United States dropped more than two million tons of bombs on Laos during U.S. military operations to disrupt North Vietnamese military supply routes. While the full extent and impact of unexploded ordnance (UXO) left behind has yet to be determined, as many as one-third of all U.S. cluster munitions failed to explode as designed. As a result, much of Laos’ land remains contaminated with more than 80 million small, unexploded cluster sub munitions, known to area residents as “bombies,” which decades later remain a serious safety hazard and a significant impediment to economic development.

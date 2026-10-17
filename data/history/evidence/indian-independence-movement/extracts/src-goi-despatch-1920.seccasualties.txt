@@ -1,0 +1,8 @@
+source: src-goi-despatch-1920
+locator: seccasualties
+url: https://archive.org/download/disordersinquiry00unse/disordersinquiry00unse_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+note: the Government of India's despatch to the Secretary of State, dated Simla, 3 May 1920, printed at the head of the Calcutta edition
+
+It should be here stated that the result of official enquiries which included a care¬ ful scrutiny of the information gathered by the Sewa Samiti, (a Social Service Society) places the figures at 379 killed and 192 wounded.

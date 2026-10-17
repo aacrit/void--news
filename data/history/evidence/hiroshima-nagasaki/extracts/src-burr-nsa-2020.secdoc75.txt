@@ -1,0 +1,7 @@
+source: src-burr-nsa-2020
+locator: secdoc75
+url: https://nsarchive.gwu.edu/briefing-book/nuclear-vault/2020-08-04/atomic-bomb-end-world-war-ii
+read: 2026-10-07
+note: the editor's commentary on Document 75 (the Hoshina memorandum on the conference of 9-10 August 1945), its first four sentences
+
+Zenshiro Hoshina, a senior naval official, attended the conference and prepared a detailed account. With Prime Minister Suzuki presiding, each of the ministers had a chance to state their views directly to Hirohito. While Army Minister Anami tacitly threatened a coup (“civil war”), the emperor accepted the majority view that the reply to the Potsdam declaration should include only one condition not the four urged by “Big Six.” Nevertheless, the condition that Hirohito accepted was not the one that foreign minister Togo had brought to the conference.

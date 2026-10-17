@@ -1,0 +1,7 @@
+source: src-eccc-glance-2014
+locator: p4
+url: https://www.eccc.gov.kh/sites/default/files/ECCC%20at%20a%20Glance%20-%20EN%20-%20April%202014_FINAL.pdf
+read: 2026-09-25
+note: a finance table, stored one cell per line as the text layer prints it
+
+Cambodia United Nations Total Expenditures 2006-2013 $ 49.6 million $ 154.9 million $ 204.6 million Budget 2014-2015 $ 12.4 million $ 48.1 million* $ 60.5 million * Inclusive of contingency fund (source: ECCC Budget and Finance Offices)

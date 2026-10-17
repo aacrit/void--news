@@ -1,0 +1,8 @@
+source: src-hjc-report-1974
+locator: secjustification
+url: https://archive.org/details/impeachmentofric0000unit
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (the OCR prints them as '¬') are kept as printed; the copy was fetched for the watergate ledger on the same day and reused here
+note: the Administration's case as the committee report states it; the footnote text and running heads fall inside the passage and are kept
+
+Later, during the Senate Armed Services Committee hearings on the Cambodian bombing, military and Ad¬ ministration officials explained that the bombing was not publicized because of the delicate diplomatic and military the President, civilian and military officials of the Department of Defense, and State Department officials. Some classified documents were not made available to the Committee. OTHER MATTERS 313 situation in Southeast Asia prior to the American incur¬ sion into Cambodia. They stated that it was their under¬ standing that Cambodia’s ruler, Prince Sihanouk, had pri¬ vately agreed to the bombing of Cambodia prior to his overthrow. It was further stated that certain Members of Congress had been informed of the military action and that this constituted sufficient notice to Congress of the President’s military decision. Finally, the submission of false data to Congress was said to have resulted from the highly classified nature of the accurate bombing sta¬ tistics.

@@ -1,0 +1,7 @@
+source: src-alsj-a11-landing
+locator: sec1024557
+url: https://www.apollojournals.org/alsj/a11/a11.landing.html
+read: 2026-10-03
+note: the transmissions at 102:45:57 to 102:46:16 ground elapsed time; the page's HTML read as text, whitespace collapsed; the editor's parentheses are his
+
+102:45:57 Duke: (Reporting that Houston has received telemetry confirming engine shutdown and that they have heard Buzz’s transmission regarding address 413) We copy you down, Eagle. 102:45:58 Armstrong (onboard): Engine arm is off. (Pause) (Now on voice-activated comm) Houston, Tranquility Base here. The Eagle has landed. 102:46:06 Duke: (Responding to Neil's transmission but momentarily tongue-tied) Roger, Twan...(correcting himself) Tranquility. We copy you on the ground. You got a bunch of guys about to turn blue. We're breathing again. Thanks a lot. 102:46:16 Aldrin: Thank you.

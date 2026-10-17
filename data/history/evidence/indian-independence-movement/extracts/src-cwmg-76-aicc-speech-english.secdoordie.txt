@@ -1,0 +1,8 @@
+source: src-cwmg-76-aicc-speech-english
+locator: secdoordie
+url: https://archive.org/download/HindSwaraj-CWMG-076/CWMG-v076-LXXVI-MC-BETA_djvu.txt
+read: 2026-10-09
+note: the text is the archive.org full-text (djvu.txt) layer of the electronic edition of the Collected Works (Publications Division), whitespace collapsed; line-end hyphens and glyph errors kept as the layer gives them
+note: the English speech of the same evening, from a typed office copy (Nehru Memorial Museum and Library), as the editors say
+
+Where shall I go and where shall I take the forty crores of India ? How is this vast mass of humanity to be aflame in the cause of world-deliverance, unless and until it has touched and felt freedom? Today they have no touch of life left. It has been crushed out of them. If lustre is to be put into their eyes, freedom has to come not tomorrow but to- day. I have, therefore, pledged the Congress and the Congress has pledged herself that she will do or die.

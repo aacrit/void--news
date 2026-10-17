@@ -1,0 +1,6 @@
+source: src-stroop-1061ps
+locator: secwomen
+url: https://avalon.law.yale.edu/imt/1061-ps.asp
+read: 2026-10-07
+
+During this armed resistance the women belonging to the battle groups were equipped the same as the men; some were members of the Chaluzim movement.

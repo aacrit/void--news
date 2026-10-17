@@ -1,0 +1,6 @@
+source: src-ussbs-effects-1946
+locator: sec2b
+url: https://www.atomicarchive.com/resources/documents/bombing-survey/section_II.html
+read: 2026-10-05
+
+In Nagasaki, no fire storm arose, and the uneven terrain of the city confined the maximum intensity of damage to the valley over which the bomb exploded. The area of nearly complete devastation was thus much smaller; only about 1.8 square miles. Casualties were lower also; between 35,000 and 40,000 were killed, and about the same number injured. People in the tunnel shelters escaped injury, unless exposed in the entrance shaft.

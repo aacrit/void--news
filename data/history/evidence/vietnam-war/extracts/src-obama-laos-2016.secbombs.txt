@@ -1,0 +1,7 @@
+source: src-obama-laos-2016
+locator: secbombs
+url: https://obamawhitehouse.archives.gov/the-press-office/2016/09/06/remarks-president-obama-people-laos
+read: 2026-10-09
+note: the Obama White House archive's transcript of the President's remarks to the people of Laos, Lao National Cultural Hall, Vientiane, 6 September 2016; the double hyphens are the transcript's
+
+At the time, the U.S. government did not acknowledge America’s role. It was a secret war, and for years, the American people did not know. Even now, many Americans are not fully aware of this chapter in our history, and it’s important that we remember today. Over nine years -- from 1964 to 1973 -- the United States dropped more than two million tons of bombs here in Laos -- more than we dropped on Germany and Japan combined during all of World War II. It made Laos, per person, the most heavily bombed country in history. As one Laotian said, the “bombs fell like rain.” Villages and entire valleys were obliterated. The ancient Plain of Jars was devastated. Countless civilians were killed.

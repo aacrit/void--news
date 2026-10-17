@@ -1,0 +1,6 @@
+source: src-imt-judgment
+locator: secpersecution1
+url: https://avalon.law.yale.edu/imt/judwarcr.asp
+read: 2026-10-07
+
+In the summer of 1941, however, plans were made for the " final solution" of the Jewish question in all of Europe. This " final solution " meant the extermination of the Jews, which early in 1939 Hitler had threatened would be one of the consequences of an outbreak of war, and a special section in the Gestapo under Adolf Eichmann, as head of Section B4 of the Gestapo, was formed to carry out the policy.

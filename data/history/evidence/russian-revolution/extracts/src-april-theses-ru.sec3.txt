@@ -1,0 +1,8 @@
+source: src-april-theses-ru
+locator: sec3
+url: https://www.marxists.org/russkij/lenin/1917/04/07a.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+note: the page is served in windows-1251 and was decoded from it; the Russian archive's copy, which names its original as the magister.msk.ru page
+
+3. Никакой поддержки Временному правительству, разъяснение полной лживости всех его обещаний, особенно относительно отказа от аннексий. Разоблачение, вместо недопустимого, сеющего иллюзии, «требования», чтобы это правительство, правительство капиталистов, перестало быть империалистским.

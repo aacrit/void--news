@@ -1,0 +1,8 @@
+source: src-brest-litovsk-1918
+locator: art6
+url: https://avalon.law.yale.edu/20th_century/bl34.asp
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+note: the first paragraph of article 6 only; 'Ukrainia' is the page's spelling
+
+Russia undertakes to conclude peace at once with the Ukrainian people's republic and to recognize the treaty of peace between the state and the powers of the Quadruple Alliance. The territory of the Ukraine must be, at once, cleared of Russian troops and of the Russian Red Guard. Russia ceases all agitation or propaganda against the government or the public institutions of the Ukrainia people's republic.

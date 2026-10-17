@@ -1,0 +1,7 @@
+source: src-brest-litovsk-1918
+locator: art1
+url: https://avalon.law.yale.edu/20th_century/bl34.asp
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+Germany, Austria-Hungary, Bulgaria and Turkey on the one hand and Russia on the other declare that the condition of war between them has ceased. They have decided to live in peace and accord in the future.

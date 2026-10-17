@@ -1,0 +1,9 @@
+source: src-toussaint-procl-17970829
+locator: sec3
+url: https://archive.org/download/proclamationtous00tous/proclamationtous00tous_djvu.txt
+read: 2026-09-25
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: the paragraph addressed to the cultivateurs
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+CurrivarTeuns, mes frères ct mes amis ! Que Îx reconnaissance que vous devez à la France, pour le bienfait inestimable de la liberté qu’elle vous a donné , vous attache aux devoirs de votre état. Montrez aux détracteurs mêmes de cette liberté que vous en êtes dignes, que vous en sentez tout le prix, et que vous savez la défendre , en soutenant du fruit do vos labenrs une guerre qui n’& été entreprise par vos ennemis que pour vous rendre l'esclavage. Prouvez-leur qu’un sol cultivé par des mains libres peut aussi bien fructifier que celui qui est cultivé ar des esclaves. Vous y parviendrez , mes amis, par

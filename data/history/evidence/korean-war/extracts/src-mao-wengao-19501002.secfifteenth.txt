@@ -1,0 +1,8 @@
+source: src-mao-wengao-19501002
+locator: secfifteenth
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+read: 2026-10-09
+note: the same text, point 4
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+4. Under the current situation, we have reached a decision to order the 12 divisions stationed in advance in South Manchuria to set off on October 15.

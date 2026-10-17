@@ -1,0 +1,7 @@
+source: src-nasa-plaque
+locator: caption
+url: https://science.nasa.gov/resource/apollo-11-plaque/
+read: 2026-10-03
+note: the second paragraph of the image's caption as the page prints it; the page's HTML read as text
+
+The plaque was covered with a thin sheet of stainless steel during flight. Astronaut Michael Collins, command module pilot, remained with the Command and Service Modules (CSM) in lunar orbit while astronauts Neil A. Armstrong, commander, and Edwin E. "Buzz" Aldrin Jr., lunar module pilot, explored the moon. The plaque says: "Here men from the planet Earth first set foot upon the moon, July 1969 A.D. We came in peace for all mankind."

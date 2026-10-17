@@ -1,0 +1,8 @@
+source: src-bt-wd-treuhand-2019
+locator: secowner
+url: https://www.bundestag.de/resource/blob/654324/13300c4bd78c543053232e6d566fd9c0/WD-1-013-19-pdf-data.pdf
+read: 2026-10-09
+note: section 2 of the paper
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Am 17. Juni 1990 beschließt die erste frei gewählte Volkskammer der DDR das Treuhandgesetz. Dies sieht unter anderem die Privatisierung der bisher volkseigenen Betriebe „so rasch und so weit wie möglich“ vor. Mit der Verabschiedung des Staatsvertrages zur Währungs-, Wirtschafts-, und Sozialunion am 21. Juni 1990 wird die Treuhandanstalt (THA) Eigentümerin von rund 8.000 DDR-Betrieben mit etwa vier Millionen Arbeitnehmerinnen und Arbeitnehmern.

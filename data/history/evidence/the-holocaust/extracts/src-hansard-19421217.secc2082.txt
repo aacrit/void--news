@@ -1,0 +1,6 @@
+source: src-hansard-19421217
+locator: secc2082
+url: https://api.parliament.uk/historic-hansard/commons/1942/dec/17/united-nations-declaration
+read: 2026-10-07
+
+Mr. Silverman (by Private Notice) asked the Secretary of State for Foreign Affairs whether he has any statement to make regarding the plan of the German Government to deport all Jews from the occupied countries to Eastern Europe and there put them to death before the end of the year?

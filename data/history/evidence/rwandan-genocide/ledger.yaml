@@ -1,0 +1,1138 @@
+# The evidence ledger for rwandan-genocide (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Every entry was fetched on 2026-10-07 from the URL it names; every extract under
+# extracts/ was sliced from the fetched copy by a start and an end string that occur
+# in it verbatim, never retyped. Nothing here was written from memory. An entry the
+# free record could not reach, or reached only as an image with no text, is listed
+# under `gaps`, by name, with what was tried.
+#
+# Perspectives the record is built to serve, at parity: the survivors (court
+# testimony and one published survivor statement), the international community
+# and the United Nations (the cables, the Council, the Secretariat, the inquiry, the
+# US State Department), the perpetrators' own record (two guilty pleas as the
+# tribunal records them, and the tribunal's findings), the RPF and the post-genocide
+# Rwandan state (the presidency, the state's commissioned report), and scholarship
+# (counts and their methods, said as disagreements). No RTLM audio is held.
+slug: rwandan-genocide
+bootstrapped: 2026-10-07
+
+entries:
+  # ----------------------------------------------------------- Tier A: the tribunal
+  - id: src-ictr-akayesu-tj
+    tier: A
+    kind: judgment
+    author: International Criminal Tribunal for Rwanda, Trial Chamber I
+    title: "The Prosecutor versus Jean-Paul Akayesu, Judgement"
+    container: null
+    publisher: ICTR
+    place: Arusha
+    year: 1998
+    edition: null
+    volume: null
+    document_number: "Case No. ICTR-96-4-T, 2 September 1998"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-96-4/trial-judgements/en/980902.pdf"}
+    access:
+      free_copy: "https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-96-4/trial-judgements/en/980902.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Prosecutor versus Jean-Paul Akayesu, Case No. ICTR-96-4-T, Judgement"
+    language: en
+    region_of_authorship: africa
+    producer: ictr
+    position: tribunal-record
+    rights: public
+    does_not_show: "Who planned the genocide nationally: the case is one bourgmestre in one commune, Taba. Its historical chapter (paras. 78 to 111) is the chamber's summary of expert evidence, chiefly Alison Des Forges, not a finding beyond reasonable doubt. Witness JJ's words are the chamber's English record of testimony given in Kinyarwanda through interpreters (para. 154 records one contested translation)."
+
+  - id: src-ictr-kambanda-js
+    tier: A
+    kind: judgment
+    author: International Criminal Tribunal for Rwanda, Trial Chamber I
+    title: "The Prosecutor versus Jean Kambanda, Judgement and Sentence"
+    container: null
+    publisher: ICTR
+    place: Arusha
+    year: 1998
+    edition: null
+    volume: null
+    document_number: "Case No. ICTR-97-23-S, 4 September 1998"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-97-23/trial-judgements/en/980904.pdf"}
+    access:
+      free_copy: "https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-97-23/trial-judgements/en/980904.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Prosecutor versus Jean Kambanda, Case No. ICTR 97-23-S, Judgement and Sentence"
+    language: en
+    region_of_authorship: africa
+    producer: ictr
+    position: perpetrators-admissions
+    rights: public
+    does_not_show: "Kambanda's own words, except the one phrase the plea agreement quotes ('you refuse to give your blood to your country and the dogs drink it for nothing'): para. 39 is the chamber's summary of the admissions in a plea agreement signed on 28 April 1998. The judgment holds no statement 'We, the members of the government, do not know how to stop the massacres'. It does not record the later attempt to withdraw the plea, which this record has not read (see gaps)."
+
+  - id: src-ictr-ruggiu-js
+    tier: A
+    kind: judgment
+    author: International Criminal Tribunal for Rwanda, Trial Chamber I
+    title: "The Prosecutor versus Georges Ruggiu, Judgement and Sentence"
+    container: null
+    publisher: ICTR
+    place: Arusha
+    year: 2000
+    edition: null
+    volume: null
+    document_number: "Case No. ICTR-97-32-I, 1 June 2000"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-97-32/trial-judgements/en/000601.pdf"}
+    access:
+      free_copy: "https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-97-32/trial-judgements/en/000601.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Prosecutor versus Georges Ruggiu, Case No. ICTR-97-32-I, Judgement and Sentence"
+    language: en
+    region_of_authorship: africa
+    producer: ictr
+    position: perpetrators-admissions
+    rights: public
+    does_not_show: "Any RTLM broadcast in full or in Kinyarwanda: Ruggiu broadcast in French, and the plea agreement summarises what he admits to having said. The station's founders were tried in the Media case (Nahimana et al.), whose served text layer this record could not use (see gaps)."
+
+  - id: src-ictr-bagosora-tj
+    tier: A
+    kind: judgment
+    author: International Criminal Tribunal for Rwanda, Trial Chamber I
+    title: "The Prosecutor v. Théoneste Bagosora, Gratien Kabiligi, Aloys Ntabakuze, Anatole Nsengiyumva, Judgement and Sentence"
+    container: null
+    publisher: ICTR
+    place: Arusha
+    year: 2008
+    edition: null
+    volume: null
+    document_number: "Case No. ICTR-98-41-T, 18 December 2008"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-98-41/trial-judgements/en/081218.pdf"}
+    access:
+      free_copy: "https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-98-41/trial-judgements/en/081218.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Prosecutor v. Théoneste Bagosora et al., Case No. ICTR-98-41-T, Judgement and Sentence, 18 December 2008"
+    language: en
+    region_of_authorship: africa
+    producer: ictr
+    position: tribunal-record
+    rights: public
+    does_not_show: "The appeal (14 December 2011), which this record has not read: the trial chamber's findings are held as the trial chamber made them. The extracts are from the judgment's own summary (Chapter I), not the full findings. The chamber does not say who fired the missile."
+
+  # ----------------------------------------------------------- Tier A: the United Nations
+  - id: src-unamir-cable-19940111
+    tier: A
+    kind: primary-document
+    author: UNAMIR Force Headquarters, Kigali (the Force Commander)
+    title: "Outgoing code cable to Baril, DPKO, New York: 'Request for protection for informant'"
+    container: "National Security Archive Electronic Briefing Book No. 452, The Rwanda 'Genocide Fax': What We Know Now, document 3"
+    publisher: National Security Archive
+    place: Washington
+    year: 1994
+    edition: null
+    volume: null
+    document_number: "11 January 1994; Bates L0016678-L0016679 (WM002285-WM002286)"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive2.gwu.edu/NSAEBB/NSAEBB452/docs/doc03.pdf"}
+    access:
+      free_copy: "https://nsarchive2.gwu.edu/NSAEBB/NSAEBB452/docs/doc03.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "OUTGOING CODE CABLE, DATE: 11 JANUARY 1994, TO: BARIL\\DPKO\\UNATIONS NEW YORK, SUBJECT: REQUEST FOR PROTECTION FOR INFORMANT"
+    language: en
+    region_of_authorship: africa
+    producer: unamir
+    position: united-nations
+    rights: public
+    does_not_show: "Who sent it, in the text layer: the FROM field is blank as the scan's OCR prints it; the Briefing Book's index and the Carlsson inquiry name Dallaire. It holds no request to raid the caches in those words: paragraph 9 says 'IT IS OUR INTENTION TO TAKE ACTION WITHIN THE NEXT 36 HOURS'. It does not use the words 'I have been in contact with the informant who has confirmed the following', which the event record quotes. The informant's reliability was doubted by the Force Commander in paragraph 11 and by the Bagosora trial chamber (para. 12)."
+
+  - id: src-un-dpko-cable-19940111
+    tier: A
+    kind: primary-document
+    author: Kofi Annan, United Nations Department of Peacekeeping Operations, New York
+    title: "Outgoing code cable to Booh-Booh and Dallaire: 'Contacts with Informant'"
+    container: "National Security Archive Electronic Briefing Book No. 452, document 5"
+    publisher: National Security Archive
+    place: Washington
+    year: 1994
+    edition: null
+    volume: null
+    document_number: "11 January 1994, cable UNAMIR 100 (as the OCR reads it)"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive2.gwu.edu/NSAEBB/NSAEBB452/docs/doc05.pdf"}
+    access:
+      free_copy: "https://nsarchive2.gwu.edu/NSAEBB/NSAEBB452/docs/doc05.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "OUTGOING CODE CABLE, TO: BOOH-BOOH/DALLAIRE, FROM: ANNAN, UNATIONS, DATE: 11 January 1994, SUBJECT: Contacts with Informant"
+    language: en
+    region_of_authorship: global
+    producer: un-dpko
+    position: united-nations
+    rights: public
+    does_not_show: "Who drafted it: it goes out over Annan's name; the reply refers to 'paragraph 7 of your cable' and to MIR-79, the Special Representative's cable, not to the Force Commander's. It does not forbid sharing with anyone but tells the mission to inform the President and the Belgian, French and US ambassadors."
+
+  - id: src-un-sres-872
+    tier: A
+    kind: resolution
+    author: United Nations Security Council
+    title: "Resolution 872 (1993)"
+    container: null
+    publisher: United Nations
+    place: New York
+    year: 1993
+    edition: null
+    volume: null
+    document_number: "S/RES/872 (1993), 5 October 1993"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://documents.un.org/doc/undoc/gen/n93/540/63/pdf/n9354063.pdf"}
+    access:
+      free_copy: "https://documents.un.org/doc/undoc/gen/n93/540/63/pdf/n9354063.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Resolution 872 (1993), adopted by the Security Council at its 3288th meeting, on 5 October 1993"
+    language: en
+    region_of_authorship: global
+    producer: un-security-council
+    position: united-nations
+    rights: public
+    does_not_show: "A troop number: the resolution authorises the first contingent 'at the level specified by the Secretary-General's report'; the figure of 2,548 is the report's (S/26488), as the Carlsson inquiry records."
+
+  - id: src-un-sres-912
+    tier: A
+    kind: resolution
+    author: United Nations Security Council
+    title: "Resolution 912 (1994)"
+    container: null
+    publisher: United Nations
+    place: New York
+    year: 1994
+    edition: null
+    volume: null
+    document_number: "S/RES/912 (1994), 21 April 1994"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://documents.un.org/doc/undoc/gen/n94/190/85/pdf/n9419085.pdf"}
+    access:
+      free_copy: "https://documents.un.org/doc/undoc/gen/n94/190/85/pdf/n9419085.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Resolution 912 (1994), adopted by the Security Council at its 3368th meeting, on 21 April 1994"
+    language: en
+    region_of_authorship: global
+    producer: un-security-council
+    position: united-nations
+    rights: public
+    does_not_show: "The number 270, or the word genocide: operative paragraph 8 authorises 'a force level as set out in paragraphs 15 to 18 of the Secretary-General's report of 20 April 1994'. The vote is not in the text; the Carlsson inquiry records it as unanimous."
+
+  - id: src-un-s1994-470
+    tier: A
+    kind: report
+    author: United Nations Secretary-General
+    title: "Special report of the Secretary-General on the United Nations Assistance Mission for Rwanda"
+    container: null
+    publisher: United Nations
+    place: New York
+    year: 1994
+    edition: null
+    volume: null
+    document_number: "S/1994/470, 20 April 1994"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://documents.un.org/doc/undoc/gen/n94/186/70/pdf/n9418670.pdf"}
+    access:
+      free_copy: "https://documents.un.org/doc/undoc/gen/n94/186/70/pdf/n9418670.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "S/1994/470, 20 April 1994, Special report of the Secretary-General on the United Nations Assistance Mission for Rwanda"
+    language: en
+    region_of_authorship: global
+    producer: un-secretariat
+    position: united-nations
+    rights: public
+    does_not_show: "That 270 were soldiers: paragraph 16 counts an infantry company, military observers and civilian staff together, 'the total being estimated at about 270'. Paragraph 7 puts the military strength on 20 April at 1,515, already down from 2,165, before any Council vote."
+
+  - id: src-un-sres-918
+    tier: A
+    kind: resolution
+    author: United Nations Security Council
+    title: "Resolution 918 (1994)"
+    container: null
+    publisher: United Nations
+    place: New York
+    year: 1994
+    edition: null
+    volume: null
+    document_number: "S/RES/918 (1994), 17 May 1994"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://documents.un.org/doc/undoc/gen/n94/218/36/pdf/n9421836.pdf"}
+    access:
+      free_copy: "https://documents.un.org/doc/undoc/gen/n94/218/36/pdf/n9421836.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Resolution 918 (1994), adopted by the Security Council at its 3377th meeting, on 17 May 1994"
+    language: en
+    region_of_authorship: global
+    producer: un-security-council
+    position: united-nations
+    rights: public
+    does_not_show: "That the 5,500 arrived: the Carlsson inquiry records that troops were not found. The arms embargo of operative paragraph 13 dates from 17 May 1994, not from the Arusha Accords."
+
+  - id: src-un-sres-929
+    tier: A
+    kind: resolution
+    author: United Nations Security Council
+    title: "Resolution 929 (1994)"
+    container: null
+    publisher: United Nations
+    place: New York
+    year: 1994
+    edition: null
+    volume: null
+    document_number: "S/RES/929 (1994), 22 June 1994"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://documents.un.org/doc/undoc/gen/n94/260/27/pdf/n9426027.pdf"}
+    access:
+      free_copy: "https://documents.un.org/doc/undoc/gen/n94/260/27/pdf/n9426027.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Resolution 929 (1994), adopted by the Security Council at its 3392nd meeting, on 22 June 1994"
+    language: en
+    region_of_authorship: global
+    producer: un-security-council
+    position: united-nations
+    rights: public
+    does_not_show: "France, Turquoise, a troop number or a 'safe zone': the resolution welcomes an offer by 'Member States' (S/1994/734) and authorises a two-month operation under national command. The vote is not in the text; the Carlsson inquiry says it was not unanimous."
+
+  - id: src-un-sres-955
+    tier: A
+    kind: resolution
+    author: United Nations Security Council
+    title: "Resolution 955 (1994), with the Statute of the International Tribunal for Rwanda"
+    container: null
+    publisher: United Nations
+    place: New York
+    year: 1994
+    edition: null
+    volume: null
+    document_number: "S/RES/955 (1994), 8 November 1994"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://documents.un.org/doc/undoc/gen/n95/140/97/pdf/n9514097.pdf"}
+    access:
+      free_copy: "https://documents.un.org/doc/undoc/gen/n95/140/97/pdf/n9514097.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Resolution 955 (1994), adopted by the Security Council at its 3453rd meeting, on 8 November 1994"
+    language: en
+    region_of_authorship: global
+    producer: un-security-council
+    position: united-nations
+    rights: public
+    does_not_show: "Crimes outside 1994: the tribunal's jurisdiction runs from 1 January to 31 December 1994, so RPF killings after that date, and the wars in Zaire, are outside it."
+
+  - id: src-un-sres-2150
+    tier: A
+    kind: resolution
+    author: United Nations Security Council
+    title: "Resolution 2150 (2014)"
+    container: null
+    publisher: United Nations
+    place: New York
+    year: 2014
+    edition: null
+    volume: null
+    document_number: "S/RES/2150 (2014), 16 April 2014"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://documents.un.org/doc/undoc/gen/n14/302/51/pdf/n1430251.pdf"}
+    access:
+      free_copy: "https://documents.un.org/doc/undoc/gen/n14/302/51/pdf/n1430251.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Resolution 2150 (2014), adopted by the Security Council at its 7155th meeting, on 16 April 2014"
+    language: en
+    region_of_authorship: global
+    producer: un-security-council
+    position: united-nations
+    rights: public
+    does_not_show: "How 'more than a million' was counted: the resolution recalls the figure without a source. It recites the ICTR Appeals Chamber's judicial notice of 16 June 2006 and the Commission of Experts' report (S/1994/1405), neither of which this record has read."
+
+  - id: src-un-carlsson-1999
+    tier: A
+    kind: report
+    author: Independent Inquiry into the actions of the United Nations during the 1994 genocide in Rwanda (Ingvar Carlsson, Han Sung-Joo, Rufus M. Kupolati)
+    title: "Report of the Independent Inquiry into the Actions of the United Nations during the 1994 Genocide in Rwanda"
+    container: "transmitted to the Security Council as S/1999/1257"
+    publisher: United Nations
+    place: New York
+    year: 1999
+    edition: null
+    volume: null
+    document_number: "15 December 1999 (S/1999/1257)"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://web.archive.org/web/20001203205100/http://www.un.org:80/News/ossg/rwanda_report.htm"}
+    access:
+      free_copy: "https://web.archive.org/web/20001203205100/http://www.un.org:80/News/ossg/rwanda_report.htm"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "REPORT OF THE INDEPENDENT INQUIRY INTO THE ACTIONS OF THE UNITED NATIONS DURING THE 1994 GENOCIDE IN RWANDA, 15 DECEMBER 1999"
+    language: en
+    region_of_authorship: global
+    producer: un-independent-inquiry
+    position: united-nations
+    rights: public
+    notes: "The UN's own HTML edition, as the Internet Archive captured it on 3 December 2000. The ODS copy of S/1999/1257 (https://documents.un.org/doc/undoc/gen/n99/395/47/img/n9939547.pdf) is an image with no text layer."
+    does_not_show: "The sentence 'The overriding failure was the lack of resources and political will of member states', which the event record quotes: the report's own words are held at secconc1 and secintroii. The inquiry's mandate is the UN's conduct; it does not investigate the RPF or France."
+
+  - id: src-un-sgsm6552
+    tier: A
+    kind: primary-document
+    author: Kofi Annan, Secretary-General of the United Nations
+    title: "Address to the Parliament of Rwanda, Kigali, 7 May 1998 (press release SG/SM/6552 AFR/56)"
+    container: null
+    publisher: United Nations Department of Public Information
+    place: New York
+    year: 1998
+    edition: null
+    volume: null
+    document_number: "SG/SM/6552 AFR/56, 6 May 1998"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://web.archive.org/web/20010504213058/http://www.un.org:80/News/Press/docs/1998/19980506.sgsm6552.html"}
+    access:
+      free_copy: "https://web.archive.org/web/20010504213058/http://www.un.org:80/News/Press/docs/1998/19980506.sgsm6552.html"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "SG/SM/6552 AFR/56: SECRETARY-GENERAL, IN 'MISSION OF HEALING' TO RWANDA, PLEDGES SUPPORT OF UNITED NATIONS FOR COUNTRY'S SEARCH FOR PEACE AND PROGRESS"
+    language: en
+    region_of_authorship: global
+    producer: un-secretariat
+    position: united-nations
+    rights: public
+    does_not_show: "The words 'The international community failed Rwanda, and that must leave us always with a sense of bitter regret', which the event record and the episode attribute to this address: neither this text nor the 1999 statement carries them. It is the text as issued 'CHECK AGAINST DELIVERY', not a record of what was said in the chamber."
+
+  - id: src-un-sgsm7263
+    tier: A
+    kind: primary-document
+    author: Kofi Annan, Secretary-General of the United Nations
+    title: "Statement on receiving the report of the Independent Inquiry (press release SG/SM/7263 AFR/196)"
+    container: null
+    publisher: United Nations Department of Public Information
+    place: New York
+    year: 1999
+    edition: null
+    volume: null
+    document_number: "SG/SM/7263 AFR/196, 16 December 1999"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://web.archive.org/web/20010504133208/http://www.un.org:80/News/Press/docs/1999/19991216.sgsm7263.doc.html"}
+    access:
+      free_copy: "https://web.archive.org/web/20010504133208/http://www.un.org:80/News/Press/docs/1999/19991216.sgsm7263.doc.html"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "SG/SM/7263 AFR/196: KOFI ANNAN EMPHASIZES COMMITMENT TO ENABLING UN NEVER AGAIN TO FAIL IN PROTECTING CIVILIAN POPULATION FROM GENOCIDE OR MASS SLAUGHTER"
+    language: en
+    region_of_authorship: global
+    producer: un-secretariat
+    position: united-nations
+    rights: public
+    does_not_show: "The sentence the event record attributes to Annan: its nearest words are 'All of us must bitterly regret that we did not do more to prevent it'."
+
+  - id: src-un-dpi-justice-2014
+    tier: A
+    kind: report
+    author: United Nations Department of Public Information, Outreach Programme on the Rwanda Genocide
+    title: "Background Note: The Justice and Reconciliation Process in Rwanda"
+    container: null
+    publisher: United Nations
+    place: New York
+    year: 2014
+    edition: null
+    volume: null
+    document_number: "March 2014"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.un.org/en/preventgenocide/rwanda/assets/pdf/Backgrounder%20Justice%202014.pdf"}
+    access:
+      free_copy: "https://www.un.org/en/preventgenocide/rwanda/assets/pdf/Backgrounder%20Justice%202014.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "BACKGROUND NOTE: The Justice and Reconciliation Process in Rwanda, Department of Public Information, March 2014"
+    language: en
+    region_of_authorship: global
+    producer: un-dpi
+    position: united-nations
+    rights: public
+    does_not_show: "A source for its Gacaca figures ('more than 1.2 million cases', closed 4 May 2012), which disagree with the 1,958,634 cases the Gacaca service's closing report gives as Nyseth Brehm et al. cite it."
+
+  # ----------------------------------------------------------- Tier A: the United States
+  - id: src-us-dos-briefing-19940610
+    tier: A
+    kind: primary-document
+    author: United States Department of State, Office of the Spokesman (briefer Christine Shelly)
+    title: "Daily Press Briefing, Friday, June 10, 1994 (DPC #89)"
+    container: "US Department of State Electronic Research Collection, University of Illinois at Chicago"
+    publisher: United States Department of State
+    place: Washington
+    year: 1994
+    edition: null
+    volume: null
+    document_number: "DPC #89, 10 June 1994, 1:27 p.m."
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://web.archive.org/web/20000126075448/http://dosfan.lib.uic.edu:80/ERC/briefing/daily_briefings/1994/9406/940610db.html"}
+    access:
+      free_copy: "https://web.archive.org/web/20000126075448/http://dosfan.lib.uic.edu:80/ERC/briefing/daily_briefings/1994/9406/940610db.html"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "U.S. DEPARTMENT OF STATE DAILY PRESS BRIEFING, Friday, June 10, 1994, Briefers: Christine Shelly"
+    language: en
+    region_of_authorship: americas
+    producer: us-state-department
+    position: united-states
+    rights: public
+    notes: "The live host dosfan.lib.uic.edu did not answer on 2026-10-07; the transcript is read in the Internet Archive's capture of 26 January 2000."
+    does_not_show: "The internal guidance the reporter asks about; the briefer says 'I have guidance which I try to use as best as I can'. The transcript spells her name 'Shelly'; the event record spells it 'Shelley'. The State Department documents of April and May 1994 (NSA Briefing Book 53) are image scans with no text layer and are not held (see gaps)."
+
+  # ----------------------------------------------------------- Tier A: France
+  - id: src-fr-an-1271-1998
+    tier: A
+    kind: report
+    author: "Assemblée nationale, Mission d'information de la Commission de la défense nationale et des forces armées et de la Commission des affaires étrangères (président Paul Quilès; rapporteurs Pierre Brana et Bernard Cazeneuve)"
+    title: "Rapport d'information sur les opérations militaires menées par la France, d'autres pays et l'ONU au Rwanda entre 1990 et 1994"
+    container: null
+    publisher: Assemblée nationale
+    place: Paris
+    year: 1998
+    edition: null
+    volume: null
+    document_number: "N° 1271, enregistré le 15 décembre 1998"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.assemblee-nationale.fr/11/dossiers/rwanda/r1271.asp"}
+    access:
+      free_copy: "https://www.assemblee-nationale.fr/11/dossiers/rwanda/r1271.asp"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Mission d'information sur le Rwanda, N° 1271, Rapport d'information déposé ... le 15 décembre 1998"
+    language: fr
+    region_of_authorship: europe
+    producer: french-national-assembly
+    position: french-state
+    rights: official
+    does_not_show: "Mitterrand's remark 'in those countries, a genocide isn't too important', which the event record attributes to him via Le Figaro: the report's text does not carry it. The English of the held passage is a Void translation."
+
+  - id: src-fr-duclert-2021
+    tier: A
+    kind: report
+    author: "Commission de recherche sur les archives françaises relatives au Rwanda et au génocide des Tutsi (président Vincent Duclert)"
+    title: "La France, le Rwanda et le génocide des Tutsi (1990-1994). Rapport remis au Président de la République le 26 mars 2021"
+    container: null
+    publisher: "Commission de recherche; DILA (vie-publique.fr); Armand Colin"
+    place: Paris
+    year: 2021
+    edition: null
+    volume: null
+    document_number: "remis le 26 mars 2021"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.vie-publique.fr/files/rapport/pdf/279186.pdf"}
+    access:
+      free_copy: "https://www.vie-publique.fr/files/rapport/pdf/279186.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "La France, le Rwanda et le génocide des Tutsi (1990-1994). Rapport remis au Président de la République le 26 mars 2021"
+    language: fr
+    region_of_authorship: europe
+    producer: duclert-commission
+    position: french-state
+    rights: copyright
+    notes: "The PDF carries a copyright line for the Commission (2021); held within the cap. It prints its conclusion in French (pp. 961 to 979) and in its own English (from p. 980)."
+    does_not_show: "The phrase 'heavy and overwhelming responsibilities' (the report's English is 'both serious and overwhelming'), French arms deliveries continuing after the genocide began (the report's English at p. 984 records orders 'as of April 8' to suspend export authorisations), or the Mitterrand remark quoted in the event record."
+
+  # ----------------------------------------------------------- Tier A: the post-genocide Rwandan state
+  - id: src-rw-muse-2021
+    tier: A
+    kind: report
+    author: "Levy Firestone Muse LLP (Robert F. Muse), for the Government of Rwanda"
+    title: "A Foreseeable Genocide: The Role of the French Government in Connection with the Genocide Against the Tutsi in Rwanda"
+    container: null
+    publisher: Government of Rwanda
+    place: Kigali and Washington
+    year: 2021
+    edition: null
+    volume: null
+    document_number: "April 2021 (submitted 19 April 2021)"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.gov.rw/fileadmin/user_upload/gov_user_upload/2021.04.19_MUSE_REPORT.pdf"}
+    access:
+      free_copy: "https://www.gov.rw/fileadmin/user_upload/gov_user_upload/2021.04.19_MUSE_REPORT.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "A FORESEEABLE GENOCIDE: The Role of the French Government in Connection with the Genocide Against the Tutsi in Rwanda"
+    language: en
+    region_of_authorship: americas
+    producer: government-of-rwanda
+    position: rwandan-state
+    rights: copyright
+    does_not_show: "The RPF's own conduct, which is outside its subject. Its figure of 'more than one million' killed carries no method in the passage held. Kayumba's account is his recollection as the report prints it; the words he attributes to a French soldier are secondhand."
+
+  - id: src-rw-kagame-2014
+    tier: A
+    kind: primary-document
+    author: Paul Kagame, President of the Republic of Rwanda
+    title: "20th Commemoration of the Genocide Against the Tutsi, Amahoro National Stadium, 7 April 2014 (the presidency's account, 'Historical clarity is a duty of memory that we cannot escape')"
+    container: null
+    publisher: Office of the President of Rwanda (paulkagame.rw)
+    place: Kigali
+    year: 2014
+    edition: null
+    volume: null
+    document_number: "7 April 2014"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.paulkagame.rw/historical-clarity-is-a-duty-of-memory-that-we-cannot-escape/"}
+    access:
+      free_copy: "https://www.paulkagame.rw/historical-clarity-is-a-duty-of-memory-that-we-cannot-escape/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Historical clarity is a duty of memory that we cannot escape (Kigali, 7 April 2014)"
+    language: en
+    region_of_authorship: africa
+    producer: government-of-rwanda
+    position: rwandan-state
+    rights: copyright
+    does_not_show: "The full speech: the page is the presidency's account, quoting passages. It holds no 'There will be no more Hutus and Tutsis. We are all Rwandans', which the event record attributes to a 2000 inaugural address (see gaps)."
+
+  # ----------------------------------------------------------- Tier B: documentation and scholarship
+  - id: src-hrw-leave-none-1999
+    tier: B
+    kind: report
+    author: Alison Des Forges, Human Rights Watch and Fédération Internationale des Ligues des Droits de l'Homme
+    title: "Leave None to Tell the Story: Genocide in Rwanda"
+    container: null
+    publisher: Human Rights Watch
+    place: New York
+    year: 1999
+    edition: null
+    volume: null
+    document_number: "March 1999"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.hrw.org/reports/1999/rwanda/"}
+    access:
+      free_copy: "https://www.hrw.org/reports/1999/rwanda/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Leave None to Tell the Story: Genocide in Rwanda (HRW Report, March 1999)"
+    language: en
+    region_of_authorship: americas
+    producer: hrw
+    position: scholarship
+    rights: copyright
+    notes: "Read in the HTML edition on hrw.org; each extract's url is its chapter page. The entry's free_copy is the edition's contents page; extracts name the chapter page they were cut from."
+    does_not_show: "A count of its own for the RPF: it reports Gersony's and Sendashonga's estimates and says it has 'too little data to confirm or revise' them. Gersony's report itself was never issued."
+
+  - id: src-mcdoom-2020
+    tier: B
+    kind: journal-article
+    author: Omar Shahabudin McDoom
+    title: "Contested Counting: Toward a Rigorous Estimate of the Death Toll in the Rwandan Genocide"
+    container: Journal of Genocide Research
+    publisher: Taylor and Francis
+    place: null
+    year: 2020
+    edition: null
+    volume: "22(1), 83-93"
+    identifiers: {isbn: null, doi: "10.1080/14623528.2019.1703252", archive_org: null, hathitrust: null, url: "https://eprints.lse.ac.uk/103205/1/McDoom_Contested_Counting_accepted_version.pdf"}
+    access:
+      free_copy: "https://eprints.lse.ac.uk/103205/1/McDoom_Contested_Counting_accepted_version.pdf"
+      verified_at: 2026-10-07
+      verified_by: crossref-title-match
+      verified_title: "Contested Counting: Toward a Rigorous Estimate of the Death Toll in the Rwandan Genocide"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: scholarship
+    rights: copyright
+    notes: "The author's accepted version (LSE Research Online); 'there may be differences between this version and the published version'."
+    does_not_show: "The Rwandan census itself: its 1,074,017 and 934,218 are McDoom's report of the MINALOC report, which this record holds only as an image scan (see gaps). His 491,000 to 522,000 counts Tutsi only, inside Rwanda, 6 April to 19 July 1994."
+
+  - id: src-nysethbrehm-2014
+    tier: B
+    kind: journal-article
+    author: Hollie Nyseth Brehm, Christopher Uggen and Jean-Damascène Gasanabo
+    title: "Genocide, Justice, and Rwanda's Gacaca Courts"
+    container: Journal of Contemporary Criminal Justice
+    publisher: SAGE
+    place: null
+    year: 2014
+    edition: null
+    volume: "30(3), 333-352"
+    identifiers: {isbn: null, doi: "10.1177/1043986214536660", archive_org: null, hathitrust: null, url: "http://users.soc.umn.edu/~uggen/NysethBrehm_Uggen_Gasanabo_JCCJ_14.pdf"}
+    access:
+      free_copy: "https://web.archive.org/web/20250125213125/http://users.soc.umn.edu/%7Euggen/NysethBrehm_Uggen_Gasanabo_JCCJ_14.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Genocide, Justice, and Rwanda's Gacaca Courts, Journal of Contemporary Criminal Justice 30(3)"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: scholarship
+    rights: copyright
+    does_not_show: "The number of courts (the event record's 12,000) or the dates 2005 to 2012: the passage held gives cases and verdicts only. Its figures are the Gacaca service's closing report as the authors cite it."
+
+  # ----------------------------------------------------------- not read (see gaps)
+  - id: src-ictr-media-tj
+    tier: A
+    kind: judgment
+    author: International Criminal Tribunal for Rwanda, Trial Chamber I
+    title: "The Prosecutor v. Ferdinand Nahimana, Jean-Bosco Barayagwiza, Hassan Ngeze, Judgement and Sentence"
+    container: null
+    publisher: ICTR
+    place: Arusha
+    year: 2003
+    edition: null
+    volume: null
+    document_number: "Case No. ICTR-99-52-T, 3 December 2003"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-99-52/trial-judgements/en/031203.pdf"}
+    access: {free_copy: null, verified_at: 2026-10-07, verified_by: document-fetch, verified_title: "The Prosecutor v. Ferdinand Nahimana, Jean-Bosco Barayagwiza, Hassan Ngeze, Case No. ICTR-99-52-T"}
+    language: en
+    region_of_authorship: africa
+    producer: ictr
+    position: null
+    rights: public
+
+  - id: src-dallaire-2003
+    tier: B
+    kind: memoir
+    author: Roméo Dallaire with Brent Beardsley
+    title: "Shake Hands with the Devil: The Failure of Humanity in Rwanda"
+    container: null
+    publisher: Random House Canada
+    place: Toronto
+    year: 2003
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: shakehandswithde00dall, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null}
+    language: en
+    region_of_authorship: americas
+    producer: dallaire
+    position: null
+    rights: copyright
+
+  - id: src-rw-mucyo-2008
+    tier: A
+    kind: report
+    author: "Commission nationale indépendante chargée de rassembler les éléments de preuve montrant l'implication de l'État français dans le génocide perpétré au Rwanda en 1994 (président Jean de Dieu Mucyo)"
+    title: "Rapport de la Commission Mucyo"
+    container: null
+    publisher: Government of Rwanda
+    place: Kigali
+    year: 2008
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null}
+    language: fr
+    region_of_authorship: africa
+    producer: government-of-rwanda
+    position: null
+    rights: null
+
+  - id: src-rw-minaloc-2002
+    tier: A
+    kind: dataset
+    author: "République du Rwanda, Ministère de l'Administration Locale, de l'Information et des Affaires Sociales (MINALOC)"
+    title: "Dénombrement des victimes du génocide. Rapport final"
+    container: null
+    publisher: MINALOC
+    place: Kigali
+    year: 2002
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null}
+    language: fr
+    region_of_authorship: africa
+    producer: government-of-rwanda
+    position: null
+    rights: null
+
+  - id: src-rw-gacaca-2012
+    tier: A
+    kind: report
+    author: National Service of Gacaca Courts
+    title: "Summary of the report presented at the closing of Gacaca courts activities"
+    container: null
+    publisher: Republic of Rwanda
+    place: Kigali
+    year: 2012
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null}
+    language: en
+    region_of_authorship: africa
+    producer: government-of-rwanda
+    position: null
+    rights: null
+
+gaps:
+  - entry: src-ictr-media-tj
+    what: "The Media judgment (Nahimana, Barayagwiza, Ngeze, 2003), the tribunal's record of RTLM and Kangura, and its 2007 appeal"
+    tried: ["https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-99-52/trial-judgements/en/031203.pdf", "https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-99-52/appeals-chamber-judgements/en/071128.pdf", "https://unictr.irmct.org/en/cases/ictr-99-52"]
+    status: "both PDFs were fetched (34.7 MB and 26.0 MB) but are scans whose OCR text layer is unusable for verbatim slicing ('w here d id a ll the Insota nyi', words run together in the appeal); no clean text copy was found. RTLM is held here only as two broadcasters' admissions (Kambanda, Ruggiu) the tribunal records. No RTLM audio is held, by rule."
+  - entry: src-dallaire-2003
+    what: "Dallaire's memoir, the source of 'I know there is a God, because in Rwanda I shook hands with the devil' and 'The world moved on, but I could not'"
+    tried: ["https://archive.org/details/shakehandswithde00dall"]
+    status: "a copyrighted 2003 book; the Internet Archive item is a controlled-lending copy with no open text; neither sentence is verified here and both stay withdrawn"
+  - entry: src-rw-mucyo-2008
+    what: "The Rwandan Mucyo Commission report on France's role (2008)"
+    tried: ["web search for an official Rwandan host of the report"]
+    status: "no Rwandan government host of the report was found; it is known here only through press accounts, which this record does not cite. The Rwandan state's position on France is held through the 2021 Muse report instead."
+  - entry: src-rw-minaloc-2002
+    what: "The Rwandan government's census of victims, MINALOC, 2002 (1,074,017 declared; 934,218 enumerated, as McDoom reports)"
+    tried: ["https://francegenocidetutsi.org/DenombrementDesVictimesDuGenocidePerpetreContreLesTutsiAvril2004.pdf", "https://francegenocidetutsi.org/MinAlocStudy.pdf", "http://cnlg.gov.rw/IMG/pdf/denombrement_des_victimes_du_genocide_perpetre_contre_les_tutsi_avril_2004.pdf"]
+    status: "the two mirrored PDFs (3.3 MB and 36.9 MB) are image scans with no text layer; the CNLG host did not answer. The figures are held as McDoom (2020) reports them."
+  - entry: src-rw-gacaca-2012
+    what: "The Gacaca service's closing report (June 2012)"
+    tried: ["web search for 'Summary of the report presented at the closing of gacaca courts activities'"]
+    status: "no official copy found online; its case counts are held as Nyseth Brehm, Uggen and Gasanabo (2014) cite them, and the UN backgrounder's different figures are held beside them"
+  - what: "The Gersony findings (UNHCR, September 1994)"
+    tried: ["HRW, Leave None to Tell the Story, 'The Gersony Mission'"]
+    status: "no written report was issued: HRW records that Gersony 'was told to write no report'. His estimate is held as HRW and McDoom report it."
+  - what: "The US government's internal documents of April and May 1994 (NSA Electronic Briefing Book 53: the Defense Intelligence Agency, the 1 May 'Discussion Paper', the 15 April talking points for UNAMIR withdrawal)"
+    tried: ["https://nsarchive2.gwu.edu/NSAEBB/NSAEBB53/rw050194.pdf", "https://nsarchive2.gwu.edu/NSAEBB/NSAEBB53/rw041594.pdf", "https://nsarchive2.gwu.edu/NSAEBB/NSAEBB53/rw041194.pdf", "https://nsarchive2.gwu.edu/NSAEBB/NSAEBB53/rw011194.pdf"]
+    status: "the PDFs are image scans (Acrobat Capture, 2001) with no text layer; the event record's 'Defense Intelligence Agency report from April 11 described the situation as genocide' and the legal adviser's instruction are not verified here. The US record is held as the 10 June briefing transcript."
+  - what: "Kofi Annan's 'The international community failed Rwanda, and that must leave us always with a sense of bitter regret'"
+    tried: ["SG/SM/6552 (address to the Parliament of Rwanda, 7 May 1998)", "SG/SM/7263 (statement on the Carlsson report, 16 December 1999)"]
+    status: "both texts were read whole and neither carries the sentence; it is not found in any source held. Annan's own words in both are held."
+  - what: "Jean Kambanda's 'We, the members of the government, do not know how to stop the massacres' (event record: 'Statement to ICTR investigators after his arrest, 1997')"
+    tried: ["Kambanda Judgement and Sentence (held whole as fetched)", "web search"]
+    status: "not in the judgment; the investigators' interview transcripts are not public in any copy found. Not verified."
+  - what: "Agathe Uwilingiyimana's telephone words ('We are in a crisis of killings ... Prepare an intervention')"
+    tried: ["the Carlsson inquiry (held)", "the Bagosora judgment summary (held)"]
+    status: "the event record calls them 'paraphrased in Dallaire's account'; the memoir is not readable here and neither the inquiry nor the tribunal records them. Not verified."
+  - what: "Notable quotations attributed to Wole Soyinka (1999), François Mitterrand (via Le Figaro, 1998), Filip Reyntjens (2013), Paul Kagame (2000 inaugural) and two unnamed survivors (Kigali Genocide Memorial 2004; Ibuka 2006)"
+    tried: ["Quilès report and Duclert report searched for the Mitterrand words", "paulkagame.rw (2014 speech only)", "no open copy of the Soyinka or Reyntjens books"]
+    status: "none found in any source held; the two survivor quotations name no speaker and no archive item. All stay withdrawn."
+  - what: "The ICTR Appeals Chamber's judicial notice of 16 June 2006 (Karemera et al.) and the Commission of Experts' final report (S/1994/1405)"
+    tried: ["recited in S/RES/2150 (2014), held"]
+    status: "not fetched; cited here only as resolution 2150 recites them"
+  - what: "A rights-clear archival recording for the episode"
+    tried: ["UN and ICTR audiovisual holdings considered; none fetched or transcribed"]
+    status: "no recording is held: nothing was verified against a transcript under policy B within this pass, and RTLM audio is never held as a clip"
+
+# ------------------------------------------------------------- positions and their adjudication
+positions:
+  - id: survivors-testimony
+    name: The survivors, in the record of the courts and the state
+    holders: ["Witness JJ, a Tutsi woman of Taba commune, testifying before the ICTR (Akayesu, 1998)", "Bernard Kayumba, a survivor of Bisesero, interviewed for the Muse report (2021)"]
+    rests_on: [src-ictr-akayesu-tj, src-rw-muse-2021]
+    claim: "The killing and the rapes were done at close range by people with authority over the victims, at the places where they had gone for protection, and help from outside came late."
+    omits: "Survivors' own unmediated words: every survivor here is heard through a court's English summary or a government-commissioned report. No Gacaca hearing record is held."
+    adjudications:
+      - claim: "Tutsi women who sought refuge at the bureau communal of Taba were raped repeatedly by Interahamwe while the bourgmestre was present, and the rapes were part of the destruction of the group."
+        verdict: supported
+        basis: presence
+        rests_on: [src-ictr-akayesu-tj.para421, src-ictr-akayesu-tj.para731, src-un-dpi-justice-2014.secictr]
+        reasoning: "The chamber records Witness JJ's testimony and finds sexual violence 'an integral part of the process of destruction'; the UN's 2014 backgrounder records the judgment as the first to conclude that rape could constitute genocide. Two producers, the tribunal and the UN Secretariat, though the second reports the first."
+      - claim: "At Bisesero, French soldiers met survivors on 27 June 1994, left, and returned on 30 June, and the survivors were attacked in between."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-rw-muse-2021.p205, src-fr-duclert-2021.p985]
+        reasoning: "Kayumba's account carries the dates; the Duclert commission, a different producer, calls Bisesero 'the human tragedy' and 'the profound failure' for France, without the dates in the passage held. One producer for the dates, so qualified."
+
+  - id: tribunal-record
+    name: The tribunal's findings
+    holders: ["ICTR Trial Chamber I (Akayesu, 1998)", "ICTR Trial Chamber I (Bagosora et al., 2008)"]
+    rests_on: [src-ictr-akayesu-tj, src-ictr-bagosora-tj]
+    claim: "A genocide of the Tutsi took place; the first killings after the plane fell were an organised military operation; but a conspiracy to commit genocide before 7 April 1994 was not proven against the four senior officers tried."
+    omits: "The RPF, whose conduct is outside every case held; and the death toll, which the Akayesu chamber gives only as a range of others' estimates."
+    adjudications:
+      - claim: "The killing of the Prime Minister and of five prominent personalities on 7 April was part of an organised military operation pursuant to orders from superior military authorities."
+        verdict: supported
+        basis: presence
+        rests_on: [src-ictr-bagosora-tj.para20, src-ictr-bagosora-tj.para18, src-un-carlsson-1999.secpm]
+        reasoning: "The chamber's finding, and the UN inquiry's separate reconstruction of soldiers entering the UNV compound and shooting the Prime Minister. Two producers agree on who killed her (soldiers, not militia); the inquiry does not rule on orders."
+      - claim: "The genocide was planned in advance by the accused senior officers."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-ictr-bagosora-tj.para13, src-ictr-bagosora-tj.para14, src-ictr-kambanda-js.para39, src-un-sgsm6552.secopening]
+        reasoning: "The chamber accepts 'indications which may be construed as evidence of a plan' but acquits all four of conspiracy because the evidence is also consistent with preparations for a power struggle or the war. Kambanda's plea admits groups 'which had planned the elimination of the Tutsi', and Annan in 1998 calls the campaign 'planned'. The record supports planning by some; it does not support the planning claim against these four."
+
+  - id: perpetrators-admissions
+    name: The perpetrators' own record, as the tribunal took their pleas
+    holders: ["Jean Kambanda, interim Prime Minister (plea agreement, 28 April 1998)", "Georges Ruggiu, RTLM broadcaster (plea agreement, 11 May 2000)"]
+    rests_on: [src-ictr-kambanda-js, src-ictr-ruggiu-js]
+    claim: "The interim government ran the massacres, set up the roadblocks, distributed arms and used the radio to incite; RTLM's 'Inyenzi' came to mean persons to be killed, and 'go to work' came to mean go kill."
+    omits: "Their own words at length: the admissions are the chamber's summary of plea agreements negotiated with the Prosecutor. Kambanda later sought to withdraw his plea; that record is not held."
+    adjudications:
+      - claim: "Roadblocks manned by soldiers and Interahamwe went up in Kigali as soon as the President's death was announced."
+        verdict: supported
+        basis: presence
+        rests_on: [src-ictr-kambanda-js.para39, src-ictr-akayesu-tj.para107, src-un-carlsson-1999.secconc5a]
+        reasoning: "Kambanda's admission (vi) ('as soon as the death of President J.B. Habyarimana was announced on the Radio') and the Akayesu chamber ('immediately erected roadblocks') are the tribunal's; the Carlsson inquiry, a second producer, records that after the plane was shot down 'Roadblocks were set up'. None of the three gives 'within one hour'; that timing is not in any extract held."
+      - claim: "RTLM broadcasts incited the killing of Tutsi and moderate Hutu."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-ictr-ruggiu-js.para44, src-ictr-kambanda-js.para39]
+        reasoning: "Two pleas, Ruggiu's admission (xi) and Kambanda's (vii), both taken by the ICTR: one producer, so qualified. The tribunal's own trial of the station's founders (the Media case) could not be read here."
+
+  - id: united-nations
+    name: The United Nations' own account of its failure
+    holders: ["Independent Inquiry (Carlsson, Han, Kupolati, 1999)", "Secretary-General Kofi Annan (1998, 1999)", "The Security Council (resolutions 872, 912, 918, 929, 955, 2150)", "UNAMIR and DPKO (the cables of 11 January 1994)"]
+    rests_on: [src-un-carlsson-1999, src-un-sgsm6552, src-un-sgsm7263, src-un-sres-912, src-un-sres-918, src-un-sres-929, src-unamir-cable-19940111, src-un-dpko-cable-19940111, src-un-s1994-470]
+    claim: "The failure was the system's as a whole: a mission too small, a mandate never corrected, a Secretariat that read genocide as a broken ceasefire, and member states without the will to act or to say the word."
+    omits: "The killers, whom an account of institutional failure passes over, and the RPF."
+    adjudications:
+      - claim: "On 21 April 1994 the Council cut UNAMIR to about 270."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-un-sres-912.whole, src-un-s1994-470.para16, src-un-carlsson-1999.sec912, src-ictr-akayesu-tj.para108]
+        reasoning: "The resolution authorises the force level of the Secretary-General's report, whose paragraph 16 estimates 'about 270' including civilian staff; the inquiry says 'about 270'. The Akayesu chamber says 450. The Secretariat's paragraph 7 shows the military already at 1,515 on 20 April. The cut is supported; the number depends on who counts what."
+      - claim: "UN headquarters refused the Force Commander's plan to act on the informant's information as beyond the mandate, and told him to inform the President."
+        verdict: supported
+        basis: presence
+        rests_on: [src-un-dpko-cable-19940111.whole, src-un-carlsson-1999.seccable, src-unamir-cable-19940111.whole]
+        reasoning: "The reply cable itself ('We cannot agree to the operation contemplated ... it clearly goes beyond the mandate'; 'SRSG and FC should request urgent meeting with the President') and the inquiry's reconstruction, two producers."
+      - claim: "The informant's information was reliable and everything it warned of happened."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-unamir-cable-19940111.whole, src-ictr-bagosora-tj.para12, src-ictr-bagosora-tj.para22]
+        reasoning: "The Force Commander himself recorded 'certain reservations' and the 'possibility of a trap'; the Bagosora chamber records 'concerns with the reliability of the information provided by an informant, Jean-Pierre'. Belgian peacekeepers were killed (para. 22), as the cable warned, but the tribunal did not find the cable's plan proved."
+
+  - id: united-states
+    name: The United States government in public
+    holders: ["State Department spokesman Christine Shelly (10 June 1994)"]
+    rests_on: [src-us-dos-briefing-19940610]
+    claim: "'Acts of genocide have occurred', with a formulation agreed with the lawyers 'because there are obligations which arise in connection with the use of the term'."
+    omits: "The internal record, which this ledger cannot read (image scans), and US action at the Council, known here only through the Carlsson inquiry."
+    adjudications:
+      - claim: "Governments avoided the word genocide because of what it would oblige them to do."
+        verdict: supported
+        basis: presence
+        rests_on: [src-us-dos-briefing-19940610.secobligations, src-un-carlsson-1999.secword, src-un-carlsson-1999.sec925]
+        reasoning: "The US spokesman links the formulation to 'obligations which arise in connection with the use of the term'; the UN inquiry finds the reluctance 'motivated by a lack of will to act' and records 'acts of genocide' as a compromise after China objected. Two producers."
+
+  - id: french-state
+    name: The French state's two inquiries
+    holders: ["Assemblée nationale, mission d'information (Quilès, 1998)", "Commission Duclert (2021)"]
+    rests_on: [src-fr-an-1271-1998, src-fr-duclert-2021]
+    claim: "1998: France in no way incited, encouraged, aided or supported the organisers, though errors of judgement and institutional failures were made. 2021: France was not complicit in the sense of willing to join the genocide, but was blind, slow, and bears serious and overwhelming responsibilities."
+    omits: "Each other's evidence: the 1998 mission had no access to the presidential archives that the 2021 commission read; neither is a court."
+    adjudications:
+      - claim: "France was not complicit in the genocide."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-fr-duclert-2021.p986, src-fr-an-1271-1998.secmilices, src-rw-muse-2021.secpreface]
+        reasoning: "Both French inquiries deny complicity, the second only 'if by this we mean a willingness to join a genocidal operation'. The Rwandan state's report holds France bears 'significant responsibility for having enabled a foreseeable genocide'. Both French findings are one state's; the Rwandan finding is the other party's. Qualified, and published as a disagreement."
+
+  - id: rwandan-state
+    name: The post-genocide Rwandan state
+    holders: ["President Paul Kagame (7 April 2014)", "The Government of Rwanda's commissioned report (Muse, 2021)"]
+    rests_on: [src-rw-kagame-2014, src-rw-muse-2021]
+    claim: "The genocide against the Tutsi killed more than a million in a hundred days; it was planned and carried out by Rwandans but its roots go beyond the country, and France enabled it knowingly."
+    omits: "Killings by the RPF, which neither text held mentions."
+    adjudications:
+      - claim: "More than one million people were killed."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-rw-muse-2021.secexecsum, src-un-sres-2150.whole, src-mcdoom-2020.secintro]
+        reasoning: "The Security Council in 2014 recalls 'more than a million'; the state's census counted 1,074,017 declared victims as McDoom reports. McDoom estimates 491,000 to 522,000 Tutsi killed and HRW at least half a million. The figures count different things; the higher figure stands as the state's and the Council's, not as settled."
+
+  - id: scholarship
+    name: Documentation and scholarship on the count
+    holders: ["Alison Des Forges, Human Rights Watch (1999)", "Omar McDoom (2020)", "Nyseth Brehm, Uggen and Gasanabo (2014)"]
+    rests_on: [src-hrw-leave-none-1999, src-mcdoom-2020, src-nysethbrehm-2014]
+    claim: "The number of Tutsi killed lies near half a million on the best demographic reconstruction; site figures were often inflated by a factor of ten; the RPF killed civilians in the tens of thousands, by estimates no one has been able to confirm."
+    omits: "The survivors' and the state's figures except as the scholars report them."
+    adjudications:
+      - claim: "The RPF killed between 25,000 and 45,000 people from April to August 1994."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-hrw-leave-none-1999.secnumbersrpf, src-mcdoom-2020.sechutu, src-hrw-leave-none-1999.secrpfdenials]
+        reasoning: "Gersony's estimate survives only as HRW and McDoom report it; no written report was issued. HRW has 'too little data to confirm or revise'; RPF authorities put the Gersony cases at sixty to seventy. Nothing held can test the range."
+      - claim: "Murambi, Bisesero and Nyamata tolls of 20,000 to 70,000, 50,000 and 35,000 are reliable."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-hrw-leave-none-1999.secnumberssites]
+        reasoning: "HRW sets each against a smaller count (some 5,000 exhumed at Murambi in 1996; just over 5,100 names at Bisesero; a church capacity of some 3,000 at Nyamata). One producer; the figures disagree and are published as disagreeing."
+
+# ------------------------------------------------------------- where the record disagrees
+contested:
+  - id: death-toll
+    claim: "How many were killed in Rwanda from April to July 1994"
+    rows:
+      - position: tribunal-record
+        holds: "Estimates vary from 500,000 to 1,000,000 or more (the chamber's summary, not its finding)."
+        figures: ["500000", "1000000"]
+        source: src-ictr-akayesu-tj
+        locator: para111
+      - position: united-nations
+        holds: "Approximately 800,000 people (the Independent Inquiry, 1999)."
+        figures: ["800000"]
+        source: src-un-carlsson-1999
+        locator: secintro
+      - position: united-nations
+        holds: "More than a million people, including Hutu and others who opposed the genocide (Security Council, 2014)."
+        figures: ["1000000"]
+        source: src-un-sres-2150
+        locator: whole
+      - position: rwandan-state
+        holds: "More than one million (the Government of Rwanda's commissioned report, 2021); 1,074,017 declared victims in the 2000 census, 934,218 enumerated, as McDoom reports the census."
+        figures: ["1000000", "1074017", "934218"]
+        source: src-rw-muse-2021
+        locator: secexecsum
+      - position: scholarship
+        holds: "At least half a million killed; 507,000 Tutsi, about 77 percent of those registered (HRW, 1999)."
+        figures: ["500000", "507000"]
+        source: src-hrw-leave-none-1999
+        locator: secnumbers
+      - position: scholarship
+        holds: "Between 491,000 and 522,000 Tutsi killed inside Rwanda, 6 April to 19 July 1994 (McDoom, 2020), from a baseline of about 800,000 Tutsi and 278,000 to 309,000 survivors."
+        figures: ["491000", "522000"]
+        source: src-mcdoom-2020
+        locator: secconclusion
+  - id: rpf-killings
+    claim: "How many civilians the RPF killed in 1994"
+    rows:
+      - position: scholarship
+        holds: "Gersony: 25,000 to 45,000, April to August 1994; Sendashonga: some 60,000, April 1994 to August 1995 (as HRW reports them)."
+        figures: ["25000", "45000", "60000"]
+        source: src-hrw-leave-none-1999
+        locator: secnumbersrpf
+      - position: scholarship
+        holds: "Des Forges 25,000 to 30,000; Gersony 25,000 to 45,000 (McDoom, who calls them a lower bound)."
+        figures: ["25000", "30000", "45000"]
+        source: src-mcdoom-2020
+        locator: sechutu
+      - position: rwandan-state
+        holds: "RPF authorities said the victims of killings documented by Gersony numbered only sixty to seventy (as HRW reports them)."
+        figures: []
+        source: src-hrw-leave-none-1999
+        locator: secrpfdenials
+  - id: france
+    claim: "What France is answerable for"
+    rows:
+      - position: french-state
+        holds: "France in no way incited, encouraged, aided or supported those who orchestrated the genocide (National Assembly, 1998)."
+        figures: []
+        source: src-fr-an-1271-1998
+        locator: secmilices
+      - position: french-state
+        holds: "Not complicit in the sense of a willingness to join a genocidal operation; blind to its preparation; responsibilities 'both serious and overwhelming' (Duclert, 2021)."
+        figures: []
+        source: src-fr-duclert-2021
+        locator: p986
+      - position: rwandan-state
+        holds: "The French government bears significant responsibility for having enabled a foreseeable genocide, and was not blind (Muse, 2021)."
+        figures: []
+        source: src-rw-muse-2021
+        locator: secpreface
+  - id: planning
+    claim: "Whether the genocide was planned before 6 April 1994"
+    rows:
+      - position: tribunal-record
+        holds: "Indications of a plan, but also consistent with a power struggle or war measures; conspiracy before 7 April not proven against the four accused."
+        figures: []
+        source: src-ictr-bagosora-tj
+        locator: para14
+      - position: perpetrators-admissions
+        holds: "Kambanda admits that groups within military, militia and political structures had planned the elimination of the Tutsi and Hutu political opponents."
+        figures: []
+        source: src-ictr-kambanda-js
+        locator: para39
+      - position: united-nations
+        holds: "A concerted, planned, systematic and methodical campaign of mass extermination (Annan, 1998)."
+        figures: []
+        source: src-un-sgsm6552
+        locator: secopening
+  - id: force-after-21-april
+    claim: "To what the Council cut UNAMIR on 21 April 1994"
+    rows:
+      - position: united-nations
+        holds: "About 270 in all, infantry company, observers and civilian staff (the Secretary-General's option, S/1994/470)."
+        figures: ["270"]
+        source: src-un-s1994-470
+        locator: para16
+      - position: united-nations
+        holds: "About 270, from 2,539 (the inquiry's chronology)."
+        figures: ["270", "2539"]
+        source: src-un-carlsson-1999
+        locator: secchron
+      - position: tribunal-record
+        holds: "450 troops (the Akayesu chamber's summary)."
+        figures: ["450"]
+        source: src-ictr-akayesu-tj
+        locator: para108
+  - id: kigali-taken
+    claim: "When the RPF took Kigali"
+    rows:
+      - position: united-nations
+        holds: "The RPF forces captured Kigali, under 4 July 1994 in the inquiry's chronology."
+        figures: []
+        source: src-un-carlsson-1999
+        locator: secchronjul4
+      - position: tribunal-record
+        holds: "The killing continued up to 18 July 1994, 'when the RPF triumphantly entered Kigali' (the Akayesu chamber's summary)."
+        figures: ["18"]
+        source: src-ictr-akayesu-tj
+        locator: para111
+  - id: gacaca-count
+    claim: "How many cases the Gacaca courts tried, and when they closed"
+    rows:
+      - position: scholarship
+        holds: "1,958,634 cases, 1,681,648 found guilty (the closing report as Nyseth Brehm et al. cite it)."
+        figures: ["1958634"]
+        source: src-nysethbrehm-2014
+        locator: p339
+      - position: united-nations
+        holds: "More than 12,000 courts tried more than 1.2 million cases; officially closed on 4 May 2012 (UN DPI, 2014)."
+        figures: ["12000"]
+        source: src-un-dpi-justice-2014
+        locator: secgacaca
+
+# ------------------------------------------------------------- exhibits
+exhibits:
+  - id: ex-cable-11jan
+    kind: document
+    title: "The UNAMIR cable of 11 January 1994, 'Request for protection for informant'"
+    creator: UNAMIR Force Headquarters, Kigali
+    date: "11 January 1994"
+    repository: National Security Archive, Electronic Briefing Book 452
+    accession: "doc03; L0016678-L0016679"
+    licence: UN document, public
+    url: "https://nsarchive2.gwu.edu/NSAEBB/NSAEBB452/docs/doc03.pdf"
+    source: src-unamir-cable-19940111
+    locator: whole
+  - id: ex-res-912
+    kind: document
+    title: "Security Council resolution 912 (1994)"
+    creator: United Nations Security Council
+    date: "21 April 1994"
+    repository: United Nations Official Document System
+    accession: "S/RES/912 (1994)"
+    licence: UN document, public
+    url: "https://documents.un.org/doc/undoc/gen/n94/190/85/pdf/n9419085.pdf"
+    source: src-un-sres-912
+    locator: whole
+  - id: ex-dpko-reply
+    kind: document
+    title: "The DPKO reply of 11 January 1994, 'Contacts with Informant'"
+    creator: United Nations Department of Peacekeeping Operations (over Kofi Annan's name)
+    date: "11 January 1994"
+    repository: National Security Archive, Electronic Briefing Book 452
+    accession: "doc05; WM002253-WM002254"
+    licence: UN document, public
+    url: "https://nsarchive2.gwu.edu/NSAEBB/NSAEBB452/docs/doc05.pdf"
+    source: src-un-dpko-cable-19940111
+    locator: whole
+
+# ------------------------------------------------------------- analyses
+analyses:
+  - id: an-death-toll-figures
+    title: One death toll, eight figures
+    method: "Every figure for all persons killed (not Tutsi only) that a held Tier A or B extract gives, one row per figure, with its producer; a 'more than' or 'at least' figure enters as its stated bound. The result is the range of the column."
+    finding: "The figures for everyone killed run from 500,000 to 1,074,017: the lowest is a floor ('at least half a million', HRW; the bottom of the Akayesu chamber's range), the highest is the Rwandan census's count of declared victims as McDoom reports it."
+    confidence: "moderate: the range is arithmetic on eight figures from five producers, but the figures count different things (victims of the genocide, of the conflict, declared or enumerated) and two are bounds, so the range is a spread of claims, not an interval estimate"
+    against: "McDoom's 491,000 to 522,000 counts Tutsi only and is left out by the method; included, it would lower the bottom of the range to 491,000. The Secretary-General's 250,000 to 500,000 of 31 May 1994 is a count made during the killing, reported by the Carlsson inquiry but not held as an extract, and is left out."
+    result: [500000, 1074017]
+    derivation:
+      compute: range
+      column: figure
+      columns: [document, producer, figure]
+      rows:
+        - {document: "Akayesu Judgement, para. 111, low", producer: ictr, figure: 500000, extract: src-ictr-akayesu-tj.para111}
+        - {document: "Akayesu Judgement, para. 111, high ('or more')", producer: ictr, figure: 1000000, extract: src-ictr-akayesu-tj.para111}
+        - {document: "Carlsson inquiry, introduction", producer: un-independent-inquiry, figure: 800000, extract: src-un-carlsson-1999.secintro}
+        - {document: "Annan, statement of 16 December 1999", producer: un-secretariat, figure: 800000, extract: src-un-sgsm7263.whole}
+        - {document: "Resolution 2150 (2014), 'more than a million'", producer: un-security-council, figure: 1000000, extract: src-un-sres-2150.whole}
+        - {document: "HRW, 'at least half a million'", producer: hrw, figure: 500000, extract: src-hrw-leave-none-1999.secnumbers}
+        - {document: "Rwandan census, declared victims, as McDoom reports it", producer: scholarship, figure: 1074017, extract: src-mcdoom-2020.secintro}
+        - {document: "Muse report, 'more than one million'", producer: government-of-rwanda, figure: 1000000, extract: src-rw-muse-2021.secexecsum}
+  - id: an-force-after-cut
+    title: The force after 21 April on three counts
+    method: "Every figure a held extract gives for the size of UNAMIR after the decision of 21 April 1994, one row per figure. The result is the range of the column."
+    finding: "Three documents put the reduced mission at 270, about 270 and 450; the 270 of the Secretary-General's option counts civilian staff in it."
+    confidence: "high for the range, which is three figures read from three documents of two producers; low for any one of them as a head count, since none says how many were actually present"
+    against: "none found in the resolution itself, which gives no figure, nor in the Bagosora summary or the Carlsson conclusions; the Secretary-General's paragraph 7 shows the military at 1,515 on 20 April, a strength before the vote, not after it"
+    result: [270, 450]
+    derivation:
+      compute: range
+      column: troops
+      columns: [document, troops]
+      rows:
+        - {document: "S/1994/470, para. 16 ('about 270')", troops: 270, extract: src-un-s1994-470.para16}
+        - {document: "Carlsson inquiry, chronology ('to 270 from 2,539')", troops: 270, extract: src-un-carlsson-1999.secchron}
+        - {document: "Akayesu Judgement, para. 108", troops: 450, extract: src-ictr-akayesu-tj.para108}

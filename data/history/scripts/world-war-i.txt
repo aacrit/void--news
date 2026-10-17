@@ -1,0 +1,148 @@
+## OPEN
+N: Gavrilo Princip was nineteen, and he had already missed his chance once that day. Another conspirator's bomb had bounced off the Archduke's car earlier and wounded bystanders instead.
+N: Then the driver took a wrong turn onto the wrong street in Sarajevo, realized his mistake, and stopped the car to reverse it. Princip was standing a few feet away, outside a delicatessen.
+N: He fired twice. The heir to the Austro-Hungarian throne and his wife Sophie were both dead within minutes.
+N: And it took thirty seven days for that one shooting to become a war between five empires.
+
+## TITLE
+N: World War I. The twenty eighth of July, nineteen fourteen, to the eleventh of November, nineteen eighteen.
+
+## SCENE 1 | Belgium, August 4, 1914
+N: Five weeks after Sarajevo, German columns cross into Belgium at dawn, marching fast for Paris under the Schlieffen Plan.
+N: Belgium's neutrality has stood since eighteen thirty nine, under a treaty Germany itself signed. Britain signed that same treaty.
+N: The night before, in London, Foreign Secretary Edward Grey watches the street lamps being lit outside his office.
+
+## DOCUMENT | Sir Edward Grey | Recalled in his memoir Twenty-Five Years | August 3, 1914
+N: Grey said what he was watching, though he would not write it down for years.
+M: The lamps are going out all over Europe, we shall not see them lit again in our lifetime.
+
+## ASIDE
+N: By the next night Belgium is invaded and Britain is at war too. Six alliances, decades of rivalry, and railway timetables nobody could reverse just turned a Balkan assassination into a war across a continent.
+
+## REST
+
+## SCENE 2 | The Somme, July 1, 1916
+N: A line of trenches has run roughly four hundred forty miles from the North Sea to the Swiss border, and for three years it barely moves.
+N: That morning, British soldiers climb out of their trenches into machine gun fire that a week long bombardment was supposed to have silenced.
+N: By nightfall fifty seven thousand four hundred seventy are casualties, nineteen thousand two hundred forty of them dead. It is the bloodiest single day in the British Army's history.
+N: At Verdun that same year, French and German losses over ten months pass seven hundred thousand men. Poison gas had already reached Ypres in April nineteen fifteen. Tanks would reach the Somme by September.
+
+## SCENE 3 | A world war
+N: Britain draws nearly one and a half million men from India, and hundreds of thousands more from Africa, the Caribbean, Australia, New Zealand and Canada.
+N: France sends roughly four hundred fifty thousand troops from its African colonies, about two hundred thousand of them West African tirailleurs.
+N: One hundred forty thousand Chinese laborers dig trenches and haul shells behind the Western Front.
+N: In East Africa at least ninety five thousand porters of the British Carrier Corps die of disease and exhaustion, and a war driven famine kills hundreds of thousands of civilians who never held a rifle.
+
+## REST
+
+## SCENE 4 | A joint session of Congress, April 2, 1917
+N: By nineteen seventeen the war is consuming the states that started it. Three years of casualties and hunger have broken Tsarist Russia, and the monarchy falls that February.
+N: That April, President Woodrow Wilson stands before a joint session of Congress and asks for a declaration of war.
+
+## DOCUMENT | Woodrow Wilson | Address to a Joint Session of Congress requesting a declaration of war | April 2, 1917
+N: Woodrow Wilson gives the war its most durable phrase.
+M: The world must be made safe for democracy.
+
+## ASIDE
+N: By October the Bolsheviks have seized power in a country the war had already emptied. America arriving on one side and Russia collapsing on the other change what this war can still decide.
+
+## REST
+
+## SCENE 5 | Versailles, June 28, 1919
+N: Germany's final offensive stalls in the summer of nineteen eighteen. With the British naval blockade starving its cities and its allies collapsing, its high command asks the civilian government to seek terms.
+N: The armistice takes effect at eleven in the morning on November eleventh, nineteen eighteen.
+N: Five years to the day after Sarajevo, the Treaty of Versailles is signed. Article two thirty one assigns Germany responsibility for the war, and a nineteen twenty one commission fixes reparations at one hundred thirty two billion gold marks.
+N: A British delegate named John Maynard Keynes resigns from the conference in protest.
+
+## DOCUMENT | John Maynard Keynes | The Economic Consequences of the Peace | 1919
+N: Keynes wrote down what he thought this peace would do.
+M: The policy of reducing Germany to servitude for a generation, of degrading the lives of millions of human beings, and of depriving a whole nation of happiness should be abhorrent and detestable.
+
+## ASIDE
+N: Twenty years later he was proved right. About twenty million people are already dead, and four empires, German, Austro-Hungarian, Russian and Ottoman, have ceased to exist.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of the same catastrophe, and the argument over which one is right has run for more than a century without settling.
+
+## PERSPECTIVE | The Entente and the Allied victors | victor
+N: The first account says the war had an aggressor, and the aggressor was Germany.
+N: When Austria-Hungary moved to punish Serbia, Berlin promised it unconditional support, a blank cheque, even at the risk of a European war. Germany then invaded neutral Belgium to reach Paris fast, breaking a treaty it had signed itself.
+N: In nineteen sixty one the German historian Fritz Fischer worked through the imperial German archives and found Berlin's own war aims: annexations in Belgium and France and a colonial empire in central Africa, drafted that same September while German armies still expected to win.
+N: The German chancellor, Theobald von Bethmann Hollweg, once asked the British ambassador in astonishment why Britain would fight over a treaty. The ambassador reported his own words home.
+M: Just for a word, neutrality, just for a scrap of paper, Great Britain is going to make war.
+N: For the victors, Versailles was accountability, not vengeance. France had lost one point four million dead and seen its industrial north wrecked in the German retreat. The state that started the war would pay to rebuild what it destroyed.
+
+## PERSPECTIVE | Germany and the Central Powers | vanquished
+N: The second account says the war looked defensive from Berlin, not aggressive.
+N: Russia ordered general mobilization on July thirtieth, nineteen fourteen, before Germany did. Germany faced a two front war and struck France first through Belgium, planning to turn east afterward.
+N: This was the Schlieffen Plan: a gamble born of geography, in this account, not a scheme of conquest.
+N: The British naval blockade cut off food and fertilizer imports, and by the winter of nineteen sixteen German civilians were surviving on rationed turnips. Malnutrition and disease from that blockade killed hundreds of thousands of them.
+N: In the autumn of nineteen eighteen the German army was still holding enemy territory. Its own high command asked for the armistice and let the new government sign it and take the blame.
+N: When the peace terms arrived, the German minister Philipp Scheidemann rose before the National Assembly, and resigned rather than sign them.
+M: What hand would not wither that binds itself and us in these chains?
+
+## PERSPECTIVE | The soldiers and the frontline experience | vanquished
+N: The third account is the one the governments could not describe: what it was actually like in the trenches.
+N: To cross the ground between the lines, no man's land, meant walking into machine gun fire across barbed wire. Chlorine gas rolled across the front at Ypres in April nineteen fifteen, followed by phosgene and mustard gas that blinded and burned.
+N: Men who survived it physically intact still broke down with what doctors began calling shell shock.
+N: The British poet Wilfred Owen served in those trenches and was killed leading his men across a canal on November fourth, nineteen eighteen, one week before the armistice.
+N: He wrote of a gas victim to expose what he called the old lie: that it is sweet and fitting to die for one's country.
+M: My friend, you would not tell with such high zest, to children ardent for some desperate glory, the old lie: dulce et decorum est, pro patria mori.
+
+## REST | short
+
+## PERSPECTIVE | The colonial world and the Global South | revisionist
+N: The fourth account says the name world war was earned in the colonies, and the colonies paid a price Europe's memory of the war rarely counts.
+N: More than a million Indian soldiers served overseas, from Flanders to Mesopotamia to East Africa, and at least sixty two thousand of them died. Of the tirailleurs who fought in Europe, around thirty thousand were killed.
+N: The East African campaign ran on the backs of African porters. At least ninety five thousand carriers of the British Carrier Corps died there, most of disease and exhaustion.
+N: An anonymous Indian soldier, in a letter home the wartime censors read and kept, put it in five words.
+M: This is not war. It is the ending of the world.
+N: In nineteen nineteen, the men who had crossed oceans to fight for freedom came home to find they still did not have their own. British led troops opened fire on an unarmed crowd at Amritsar that April.
+
+## PERSPECTIVE | Revisionist historiography | academic
+N: The fifth account says the argument over who caused the war has never actually been settled.
+N: Fritz Fischer's nineteen sixty one archival work forced most historians to accept that German leaders were willing to risk a general war. Others point instead to the alliance system, the naval arms race, and railway mobilization timetables that once triggered could not be stopped for diplomacy to work.
+N: The centenary brought the pendulum back toward shared responsibility, in a book whose title supplied the metaphor everyone still uses.
+N: Christopher Clark called the leaders of nineteen fourteen sleepwalkers.
+M: The protagonists of nineteen fourteen were sleepwalkers, watchful but unseeing, haunted by dreams, yet blind to the reality of the horror they were about to bring into the world.
+N: On one point, at least, the historians largely agree. John Maynard Keynes warned this same peace would produce another catastrophe within a generation, and he was right.
+
+## REST
+
+## TURN | What each one leaves out
+N: And here is what each one cannot say from where it stands.
+N: The Allied account calls Germany the aggressor and has little to say about its own empire's record of conquest, or about the mobilization orders Russia and France signed in that same July crisis.
+N: The German account is right that Russia mobilized first, and it built a political movement on an army that was never actually beaten in the field, when its own high command was the one that asked for the armistice.
+N: The soldiers' account shares the mud and the gas fairly across every uniform, and it has almost nothing to say about why the guns were firing in the first place, or about the colonial troops standing in those same trenches.
+N: The colonial account counts the dead and the famine precisely, and it spends little time on the European statesmen who made the decisions that put those men on the boats.
+N: And the historians' account, which spares no one else its scrutiny, gives its longest chapters to cabinets and telegrams, and comparatively few sentences to the people who were actually dying.
+
+## REST
+
+## CLOSE
+N: The armistice took effect at eleven in the morning on November eleventh, nineteen eighteen. The fighting had lasted four years and three months.
+N: Ho Chi Minh, then a young man living in Paris, petitioned that same year's peace conference for basic rights for the Vietnamese. Nobody answered him.
+N: And the influenza that spread through the crowded troop ships and trenches in nineteen eighteen kept killing long after the guns stopped. It killed more people than the war did.
+
+## SAY
+Gavrilo Princip = gah-VREE-loh PRIN-tsip
+Sarajevo = sar-ah-YAY-voh
+Austro-Hungarian = OSS-troh-hung-GAIR-ee-an
+Schlieffen Plan = SHLEE-fen plan
+Verdun = vair-DUHN
+Ypres = EE-pruh
+Somme = SUM
+Theobald von Bethmann Hollweg = TAY-oh-bahlt fon BET-mahn HOL-vayg
+Philipp Scheidemann = FIL-ip SHY-deh-mahn
+Tsarist = ZAR-ist
+Bolsheviks = BOHL-sheh-viks
+tirailleurs = tee-ry-ERR
+Mesopotamia = mess-oh-poh-TAY-mee-ah
+Amritsar = AM-rit-sar
+dulce et decorum est = DUL-cheh et deh-KOR-um est
+pro patria mori = proh PAH-tree-ah MOR-ee
+Ho Chi Minh = hoh chee MIN
+Keynes = KAYNZ
+Entente = ahn-TAHNT

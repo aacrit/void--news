@@ -1,0 +1,8 @@
+source: src-lii-nyt-v-us-1971
+locator: para7
+url: https://www.law.cornell.edu/supremecourt/text/403/713
+read: 2026-10-09
+note: the Legal Information Institute's web text of the opinion; the locator is LII's own paragraph number, printed at the head of each paragraph, not a U.S. Reports page
+note: Justice Black, joined by Justice Douglas, concurring
+
+Our Government was launched in 1789 with the adoption of the Constitution. The Bill of Rights, including the First Amendment, followed in 1791. Now, for the first time in the 182 years since the founding of the Republic, the federal courts are asked to hold that the First Amendment does not mean what it says, but rather means that the Government can halt the publication of current news of vital importance to the people of this country.

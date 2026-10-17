@@ -1,0 +1,33 @@
+# Rev 85 (P2-5). Weekly update PRs for every manifest the product ships from.
+# Dependabot opens PRs on dependabot/* branches, which auto-merge-claude.yml
+# does not watch, so each one is reviewed and merged by hand.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:17"
+    open-pull-requests-limit: 5
+  - package-ecosystem: npm
+    directory: /worker
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:17"
+    open-pull-requests-limit: 5
+  - package-ecosystem: pip
+    directory: /pipeline
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:17"
+    open-pull-requests-limit: 5
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:17"
+    open-pull-requests-limit: 5

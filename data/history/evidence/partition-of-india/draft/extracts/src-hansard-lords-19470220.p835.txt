@@ -1,0 +1,8 @@
+source: src-hansard-lords-19470220
+locator: p835
+url: https://api.parliament.uk/historic-hansard/lords/1947/feb/20/indian-policy
+read: 2026-09-25
+note: p is the Hansard column; HL Deb 20 February 1947 vol 145 cc835-41, the Government's statement as Lord Pethick-Lawrence read it to the Lords
+note: the page's heading line and the opening of the statement; the column marker is dropped
+
+HL Deb 20 February 1947 vol 145 cc835-41 § THE SECRETARY OF STATE FOR INDIA AND BURMA (LORD PETHICK-LAWRENCE) My Lords, I will, with your Lordships' permission, make a statement on Indian policy.

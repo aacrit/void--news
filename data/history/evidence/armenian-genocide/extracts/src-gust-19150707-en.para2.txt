@@ -1,0 +1,8 @@
+source: src-gust-19150707-en
+locator: para2
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-07-07-DE-001
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+note: the translation is the online edition's own (sponsored by the Zoryan Institute), held here as the edition prints it, at most 150 words
+
+The expulsion and relocation of the Armenian people was limited until 14 days ago to the provinces nearest to the eastern theatre of war and to certain areas in the province of Adana; since then the Porte has resolved to extend these measures also to the provinces of Trebizond, Mamuret-ul-Aziz and Sivas and has begun with these measures even though these parts of the country are not threatened by any enemy invasion for the time being.

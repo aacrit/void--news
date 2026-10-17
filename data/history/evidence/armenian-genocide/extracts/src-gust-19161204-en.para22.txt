@@ -1,0 +1,8 @@
+source: src-gust-19161204-en
+locator: para22
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1916-12-04-DE-001
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+note: the translation is the online edition's own (sponsored by the Zoryan Institute), held here as the edition prints it, at most 150 words
+
+The fear I spoke of in my report from Erzurum, namely that the evacuation of the Armenians would be tantamount to their annihilation resp. that this was the purpose behind it, has unfortunately turned out to be true. Those evacuees of this tribe who are still living in Mesopotamia are in a desolate condition. It would not be saying too much if I tell you that the Turkish Armenians, with the exception of several hundred thousand living in Constantinople and other larger cities, have been practically wiped out.

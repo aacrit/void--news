@@ -1,0 +1,8 @@
+source: src-hjc-report-1974
+locator: seccambodia
+url: https://archive.org/details/impeachmentofric0000unit
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (the OCR prints them as '¬') are kept as printed; the copy was fetched for the watergate ledger on the same day and reused here
+note: the report's 'Other Matters', the proposed article on Cambodia and the vote
+
+On July 30, 1974, the Committee considered a proposed Article of Impeachment dealing with the unauthorized bombing of Cambodia and the concealment from the Con¬ gress of that bombing: In his conduct of the office of President of the United States, Richard M. Nixon, in violation of his constitutional oath faithfully to execute the office of President of the United States and, to the best of his ability, preserve, protect, and defend the Constitution of the United States, and in disregard of his constitutional duty to take care that the laws be faithfully executed, on and subsequent to March 17, 1969, authorized, ordered, and ratified the concealment from the Congress of the facts and the submission to the Congress of false and misleading state¬ ments concerning the existence, scope and nature of American bombing operations in Cambodia in derogation of the power of the Congress to declare war, to make appropriations and to raise and support armies, and by such conduct warrants impeachment and trial and re¬ moval from office. The Committee, by a vote of 26-12, decided not to report the proposed Article to the House.

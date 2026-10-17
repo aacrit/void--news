@@ -1,0 +1,7 @@
+source: src-abbas-2020
+locator: p164
+url: https://pssr.org.pk/issues/v4/2/a-study-of-settlement-of-refugees-in-the-thal-desert-1947-1969.pdf
+read: 2026-09-25
+note: the introduction, page 164; the PDF's line breaks are joined; the census figure is the authors', citing the Census of Pakistan 1951, p. 3, which this record does not hold
+
+The partition of Subcontinent in 1947 resulted in the migration of almost 15 million people and the death of 0.5 Million as well (William, 1953). The newly established state of Pakistan was surrounded by numerous hardships and influx of the refugees was one of them. According to the census of Pakistan 1951, 7.15 Million people migrated from India to Pakistan out of which 4.8 million in the province of Punjab alone constituting 68.22 per cent of the total refugees in the country (Census of Pakistan, 1951, P. 3).

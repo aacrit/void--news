@@ -1,0 +1,8 @@
+source: src-cwmg-43-sabarmati-speech
+locator: secmarchers
+url: https://archive.org/download/HindSwaraj-CWMG-043/CWMG-v043-XLIII-MC-BETA_djvu.txt
+read: 2026-10-09
+note: the text is the archive.org full-text (djvu.txt) layer of the electronic edition of the Collected Works (Publications Division), whitespace collapsed; line-end hyphens and glyph errors kept as the layer gives them
+note: the caret is the editors' note marker; the slice runs through the speech's sentence, the page's two notes and the editors' correction 'Actually seventy-eight', which is a note, not Gandhi's words
+
+The seventy-two^ men joining the march should once again read the Ashram rules and think whether or not they should join the march. Those inmates of the Ashram who have any dependents will not be able to draw money from the Ashram for them. None should join the struggle with that * The source does not mention the date. It is, however, apparent that this was delivered on the morning of the 12th before the beginning of the march. ^ Actually seventy-eight; for a list of the names, vide Appendix II.

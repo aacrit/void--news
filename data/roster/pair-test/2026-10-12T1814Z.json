@@ -1,0 +1,100 @@
+{
+ "collected_at": "2026-10-12T18:14:39Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 30,
+     "right": {
+      "url": "https://www.dailymail.com/sport/olympics/article-16203063/matthew-richardson-cycling-championships-misconduct-china.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Britain's star cyclist - one half of GB's golden couple - is SENT HOME from World Championships in China over 'misconduct'",
+      "published": "Mon, 12 Oct 2026 18:55:53 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/other-sports/cycling/team-gb-matt-richardson-statement-37764468",
+      "title": "Team GB star Matthew Richardson SENT HOME from World Championships as statement released",
+      "published": "Mon, 12 Oct 2026 17:20:53 +0000"
+     }
+    },
+    {
+     "score": 26,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16203051/Natasha-Kaplinsky-SPLITS-husband.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Natasha Kaplinsky SPLITS from husband of 20 years as friends tell RICHARD EDEN ex-BBC star is 'devastated'",
+      "published": "Mon, 12 Oct 2026 18:10:10 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/strictly-winner-natasha-kaplinksy-splits-37764480",
+      "title": "Strictly winner Natasha Kaplinksy splits from husband Justin Bower after 20 years",
+      "published": "Mon, 12 Oct 2026 17:31:42 +0000"
+     }
+    },
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16203355/Strictlys-Delta-Goodrem-forced-pull-weekends-live-following-rib-injury-just-days-topped-leaderboard.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Strictly's Delta Goodrem is forced to pull out of this weekend's live show following a rib injury just days after she topped the leaderboard",
+      "published": "Mon, 12 Oct 2026 19:10:44 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/delta-goodrem-bbc-strictly-injury-37764542",
+      "title": "Delta Goodrem 'absolutely gutted' as injury forces her out of Strictly Come Dancing this week",
+      "published": "Mon, 12 Oct 2026 17:41:51 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 154,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/classified-turkish-intelligence-operation-in-moldova-comes-back-under-judicial-scrutiny/",
+      "title": "Classified Turkish intelligence operation in Moldova comes back under judicial scrutiny",
+      "published": "Tue, 06 Oct 2026 22:12:19 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 313,
+    "left": 10
+   }
+  }
+ }
+}

@@ -1,0 +1,10 @@
+source: src-unsc-res82-1950
+locator: secvote
+url: https://documents.un.org/doc/resolution/gen/nr0/064/95/pdf/nr006495.pdf
+read: 2026-10-09
+note: the UN scan prints English and French in two columns; the English column was taken from the PDF by word position (x0 in the left half of the page), then sliced
+note: part III and the adoption line; the scan's '173rd meeting' is an OCR misreading of the 473rd (the footnote on the same page cites the 473rd meeting); the footnote marker 10 is fused to the line
+note: the copy is a scan with an OCR text layer; its misreadings are kept as read, not corrected
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Calls upon all Member States to render every assistance to the United Nations in the execution of this resolution • See Official Records of the Security Council, Fifth Year, No. 1,5, 473rd meeting, p. 2, footnote 2 (document S/1496, incorporating Sf 1496/Corr. I). and. to refrain from giving assistance lo the North Korean authorities. Adopted at the 173rd meeting by 9 votes to none, with 1 abstention ( Yugoslavia) .10

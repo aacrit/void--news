@@ -1,0 +1,7 @@
+source: src-greer-1935
+locator: p36
+url: https://babel.hathitrust.org/cgi/pt?id=mdp.39015002601550
+read: 2026-10-09
+note: read page at a time in HathiTrust's text-only view (seq 58); continues the sentence of p. 35 ('and the recent research of MM.'); the footnote reference prints glued to the word before it ('less.42' is note 42); line breaks collapsed to spaces
+
+Vélasque and Martin has shrunk it to 2,000 or less.42 In a matter so trapped in mystery, certainty is out of the question; but the last figure is based on a careful analysis of the existing evidence.

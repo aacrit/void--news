@@ -1,0 +1,8 @@
+source: src-belarus-mission-20220426
+locator: para1-2
+url: https://un.mfa.gov.by/en/mission/news/eaa6e518d02a53ec.html
+read: 2026-10-07
+note: the statement's first two paragraphs
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+On April 26, 1986 the world was shocked by a terrible tragedy – an explosion at the Chernobyl Nuclear Power Plant in the north of Ukraine (then USSR). This accident was the largest man-made disaster in the history of nuclear energy. As a result of the explosion, large volumes of radioactive substances were released into the atmosphere, which then spread throughout the western part of the USSR and part of Europe. Radioactive contamination changed the lives of millions forever, and the consequences of this catastrophe are still felt today. The Chernobyl disaster has a particular significance for Belarus. Nuclear contamination of its vast areas led to the resettlement and disruption of the normal way of life of hundreds of thousands of Belarusians.

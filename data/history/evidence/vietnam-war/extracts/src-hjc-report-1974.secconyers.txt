@@ -1,0 +1,8 @@
+source: src-hjc-report-1974
+locator: secconyers
+url: https://archive.org/details/impeachmentofric0000unit
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (the OCR prints them as '¬') are kept as printed; the copy was fetched for the watergate ledger on the same day and reused here
+note: the Additional Views of Mr. Conyers, printed page 404
+
+It is important to note that the facts pertinent to the Cambodian bombing are not in question. On 1 1 February 1969, General Creighton Abrams, Commander of the United States Military Assistance Command Vietnam, rec¬ ommended and requested authorization to conduct bomb¬ ing strikes in Cambodia. Between 12 February and 17 March 1969, this request was considered by the President in meetings of the National Security Council. On 17 March 1969, President Nixon authorized the bombing of Cambodia. The bombing began on 18 March 1969 and continued unabated until 15 August 1973. From 18 March 1969 to 1 May 1970, when the United States initiated ground combat operations in Cambodia, 3,695 B-52 sorties were conducted, during which a total of 105,837 tons of bombs were dropped on Cambodia. From the beginning to the end of the bombing campaign in August, 1973, more than 150,000 sorties dropped in excess of 500,000 tons of bombs in Cambodia.

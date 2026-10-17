@@ -1,0 +1,7 @@
+source: src-nirala-kulli-bhat
+locator: p80
+url: https://archive.org/download/dli.ernet.525743/525743-Kulli%20Bhat_djvu.txt
+read: 2026-09-25
+note: the Digital Library of India text layer misreads several conjuncts; the passage was checked word by word against the page scan (leaf 80) on 2026-09-25 and is stored as the page prints it: भाभी गुज़रीं for the text layer's भासी गजरीं, बीमार for बीभार, आफ़त for आफ्रत, सुबह for छुबह, चाचाजी for चावाजी, जीवन for जीयपन, है। for दे |
+
+दादा के गुज़रने के तीसरे दिन भाभी गुज़रीं । उनकी दूधपीती लड़की बीमार थी। रात को उसे साथ लेकर सोया। बिल्ली रात-भर आफ़त किए रही। सुबह उसके प्राण निकल गए। नदी के किनारे उसे ले जाकर गाड़ा । फिर चाचाजी ने प्रयाण किया। गाड़ी गंगा को जैसे लाश ही ढोती रही । भाभी के तीन लड़के बीमार पड़े । किसी तरह सेवा-शुश्रुषा से अच्छे हुए। इस समय का अनुभव जीवन का विचित्र अनुभव है।

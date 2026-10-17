@@ -1,0 +1,8 @@
+source: src-bt-wd-treuhand-2019
+locator: secintro
+url: https://www.bundestag.de/resource/blob/654324/13300c4bd78c543053232e6d566fd9c0/WD-1-013-19-pdf-data.pdf
+read: 2026-10-09
+note: section 1 of the paper; the '1' that follows in the text layer is a footnote mark and is not held
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Von 1990 bis 1994 privatisiert sie 14.500 Unternehmen und erzielt daraus rund 65 Milliarden DM an Erlösen. Zudem erhält sie rund 207 Milliarden DM an Investitions- und 1,5 Millionen Arbeitsplatzzusagen.

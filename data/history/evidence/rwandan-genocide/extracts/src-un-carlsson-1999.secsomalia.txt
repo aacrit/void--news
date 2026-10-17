@@ -1,0 +1,8 @@
+source: src-un-carlsson-1999
+locator: secsomalia
+url: https://web.archive.org/web/20001203205100/http://www.un.org:80/News/ossg/rwanda_report.htm
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: section III, Conclusions, '7. The shadow of Somalia'; the page prints 'By May 1994, when the genocide in Rwanda began', and it is held as printed
+
+For the Government of the United States the events in Mogadishu were a watershed in its policy towards UN peacekeeping. By May 1994, when the genocide in Rwanda began, President Clinton had enacted PDD25, a directive which placed strict conditions on US support for United Nations peacekeeping. The killings of the peacekeepers in Somalia also had a restrictive effect on the UN Secretariat, in particular with regard to the risks that could be assumed during peacekeeping operations and in respect to the interpretation of mandates. This legacy of Somalia was of particular importance to the conduct of UNAMIR.

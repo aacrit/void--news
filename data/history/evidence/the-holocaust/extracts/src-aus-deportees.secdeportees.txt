@@ -1,0 +1,6 @@
+source: src-aus-deportees
+locator: secdeportees
+url: https://www.auschwitz.org/en/history/the-number-of-victims/
+read: 2026-10-07
+
+As a result of the inclusion of Auschwitz in the process of the mass extermination of the Jews, the number of deportees began to soar. About 197 thousand Jews were deported there in 1942, about 270 thousand the following year, and over 600 thousand in 1944, for a total of almost 1.1 million. Among them, about 200 thousand people were selected as capable of labor and registered as prisoners in the camp.

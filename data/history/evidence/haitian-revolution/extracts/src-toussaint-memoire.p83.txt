@@ -1,0 +1,8 @@
+source: src-toussaint-memoire
+locator: p83
+url: https://archive.org/download/mmoiresdugn00tous/mmoiresdugn00tous_djvu.txt
+read: 2026-09-25
+note: the memoir's own text on the arrest and the embarkation, page 83 of the 1853 edition; the editor's footnote figures (^, 1) are the layer's
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+Lorsque je fus arrêté, je n'avais d'autres vêtements que ceux que je portais sur moi. J'écrivis à mon épouse pour la prier de m'envoyer les choses dont j'avais le plus pressant besoin au Cap, où j'espérais qu'on allait me conduire. Ce billet avait été remis à l'aide-de-camp du général Leclerc avec prière de le faire passer ; mais il ne parvint pas à sa destination, et je ne reçus rien. Dès que je fus à bord de la frégate la Créole, on mit à la voile et on me conduisit à quatre lieues du Cap, où se trouvait le vaisseau le Héros ^ à bord duquel on me fit monter. Le lendemain mon épouse, ainsi que mes enfants qui avaient été arrêtés avec elle, y arriva aussi. On mit de suite à la voile pour France ^ Après une traversée de trentedeux jours \ pendant laquelle j'essuyai non-seulement les plus grandes fatigues, mais même des désagréments tels qu'il est inpossible de se l'imaginer, à moins d'en avoir été

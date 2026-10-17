@@ -1,0 +1,12 @@
+source: src-franck-19450611
+locator: secdemo
+url: https://archive.org/download/TheFranckReport/ELS012-036_djvu.txt
+read: 2026-10-05
+note: the Internet Archive's OCR layer, glyph errors kept ('srupervigion')
+
+From this point of view a demonstration of the new weapon may best be made before the eyes of 
+representatives of all United Nations, on the desert or a barren island The best possible 
+atmosphere for the achievement of an international agreement could, be achieved if America would be 
+able to say to the world, "You see what weapon we had but did not use. We ; are ready to renounce its 
+use in the future and to join other nations in working out adequate srupervigion of the use of this 
+nuclear weapon."

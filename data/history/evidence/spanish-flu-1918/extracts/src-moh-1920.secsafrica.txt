@@ -1,0 +1,7 @@
+source: src-moh-1920
+locator: secsafrica
+url: https://archive.org/download/pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920/PandemicofInfluenzaHMSO_entire_book_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+The earliest outbreak of epidemic influenza in the Union occurred in the vicinity of the Harbour area, Durban, on the 14th September 1918. Thence, it spread to the central Rand area, where numerous cases were observed on or about the 18th September, chiefly among natives working in the mines. Several thousand natives were attacked within a few days, but the mortality among them was comparatively low.

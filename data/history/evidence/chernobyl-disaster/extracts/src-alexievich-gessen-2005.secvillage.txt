@@ -1,0 +1,8 @@
+source: src-alexievich-gessen-2005
+locator: secvillage
+url: https://www.nobelprize.org/prizes/literature/2015/alexievich/prose/
+read: 2026-10-07
+note: from 'Children's Chorus' as the Nobel Prize site excerpts it; the excerpt lists the children's names and ages but does not say which child speaks each passage
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+In a year they evacuated all of us and buried the village. My father’s a cab driver, he drove there and told us about it. First they’d tear a big pit in the ground, five meters deep. Then the firemen would come up and use their hoses to wash the house from its roof to its foundation, so that no radioactive dust gets kicked up. They wash the windows, the roof, the door, all of it. Then a crane drags the house from its spot and puts it down into the pit. There’s dolls and books and cans all scattered around. The excavator picks them up. Then it covers everything with sand and clay, leveling it. And then instead of a village, you have an empty field.

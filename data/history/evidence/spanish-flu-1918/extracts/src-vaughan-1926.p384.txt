@@ -1,0 +1,7 @@
+source: src-vaughan-1926
+locator: p384
+url: https://archive.org/download/doctorsmemories013852mbp/doctorsmemories013852mbp_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+I see hundreds of young, stalwart men in the uniform of their country coming into the wards of the hospital in groups of ten or more. They are placed on the cots until every bed is full and yet others crowd in. The faces soon 384 A DOCTOR'S MEMORIES wear a bluish cast; a distressing cough brings up the blood stained sputum. In the morning the dead bodies are stacked about the morgue like cord wood. This picture was painted on my memory cells at the division hospital, Camp Devens, in 1918, when the deadly influenza demonstrated the inferiority of human inventions in the destruction of human life.

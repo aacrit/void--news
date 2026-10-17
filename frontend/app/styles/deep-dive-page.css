@@ -1,0 +1,214 @@
+/* ===========================================================================
+   deep-dive-page.css — Mobile full-page Deep Dive ("next screen")
+
+   The Deep Dive on phones is no longer a modal or bottom sheet. It is its own
+   full-height page that REPLACES the feed: its own Void News masthead
+   (<NavBar/>) at the top, a compact Story / Spread segmented switch, and the
+   analysis content scrolling underneath. The hardware/browser Back button
+   returns to the feed (history.pushState on open). Reuses the shared dd-*
+   content vocabulary from components.css; this file only adds the page shell,
+   the top toolbar, and the compact segmented control.
+
+   Scoped to phones only — the desktop Deep Dive is the in-feed InlineDeepDive.
+   =========================================================================== */
+
+.dd-page {
+  display: block;
+  min-height: 100vh;
+  /* Leave room for the layout-level mobile tab bar so the last section and the
+     CTA are never trapped under it. */
+  padding: 0 var(--space-4) calc(env(safe-area-inset-bottom, 0px) + 96px);
+}
+
+/* Top toolbar — Back to feed on the left, prev/next + share on the right. */
+.dd-page__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) 0 var(--space-2);
+  position: sticky;
+  /* Under the masthead, not behind it. Both stuck at top: 0 and the
+     masthead's higher z-index covered this bar, so it read as scrolled away
+     (2026-09-26). --masthead-h is the masthead's live height (NavBar). */
+  top: var(--masthead-h, var(--nav-height, 53px));
+  z-index: 4;
+  background: var(--bg-primary);
+}
+
+.dd-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 44px;
+  padding: var(--space-1) var(--space-2) var(--space-1) 0;
+  background: none;
+  border: none;
+  color: var(--fg-secondary);
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+.dd-page__back:hover { color: var(--fg-primary); }
+.dd-page__back-label { white-space: nowrap; }
+
+.dd-page__bar-right {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* Prev / next story walkers + share — all >=44px touch targets. */
+.dd-page__nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.dd-page__nav-btn,
+.dd-page__share {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  background: none;
+  border: none;
+  color: var(--fg-secondary);
+  cursor: pointer;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
+  border-radius: 8px;
+  position: relative;
+}
+.dd-page__nav-btn:hover:not(:disabled),
+.dd-page__share:hover { color: var(--fg-primary); }
+.dd-page__nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+.dd-page__counter {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs, 0.7rem);
+  color: var(--fg-tertiary);
+  letter-spacing: 0.06em;
+  min-width: 2.4em;
+  text-align: center;
+}
+
+.dd-page__share-toast {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 2px;
+  white-space: nowrap;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs, 0.7rem);
+  color: var(--fg-secondary);
+  background: var(--bg-elevated, var(--bg-secondary));
+  border: 1px solid var(--border-subtle, var(--border-color));
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
+  border-radius: 6px;
+  padding: 2px 8px;
+  z-index: 5;
+}
+
+/* Headline + meta */
+.dd-page__headline {
+  margin: var(--space-2) 0 var(--space-2);
+}
+
+/* Compact segmented switch — a slim underline-pill toggle. Deliberately low,
+   nothing like the old full-width tab band. Sticky under the toolbar so the
+   reader can flip Story <-> Spread while scrolled into either panel. */
+
+.dd-page__panel { display: block; }
+.dd-page__panel[hidden] { display: none; }
+
+/* Subtle inline loading line — replaces the full-panel shimmer. Only shown
+   while the source roster / spectrum are genuinely still being fetched; the
+   summary + Sigil (already carried on the story) render immediately above it. */
+.dd-page__loading {
+  color: var(--fg-muted);
+  padding: var(--space-3) 0;
+}
+.dd-page__loading::after {
+  content: "";
+  display: inline-block;
+  width: 0.5em;
+  margin-left: 2px;
+  animation: ddPageDots 1.2s steps(4, end) infinite;
+}
+@keyframes ddPageDots {
+  0% { content: ""; }
+  25% { content: "."; }
+  50% { content: ".."; }
+  75% { content: "..."; }
+}
+
+/* Single short whole-panel fade on open — no per-section stagger. */
+.anim-dd-page {
+  animation: ddPageFade 140ms ease-out both;
+}
+@keyframes ddPageFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-dd-page { animation: none; }
+  .dd-page__loading::after { animation: none; content: "..."; }
+}
+
+/* ===========================================================================
+   Spectrum-aligned source columns (Spread page)
+
+   Replaces the old flat "Sources (N)" roster. Sources are bucketed into Left /
+   Center / Right and rendered in three equal-width columns that line up under
+   the <DeepDiveSpectrum> Left/Center/Right thirds, so the reader sees which
+   outlets form each cluster. Each column scrolls independently (fixed
+   max-height + overflow-y), mirroring the Sources page's scrollable lists.
+   Because the column already encodes the lean, rows carry no per-row lean dot:
+   only the outlet name (ellipsized) and a compact monospace tier glyph.
+   =========================================================================== */
+
+
+/* Three equal tracks. minmax(0, 1fr) lets each column shrink below its content
+   width so long names ellipsize instead of forcing page-level x-scroll. */
+.dd-src-cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  align-items: start;
+}
+
+
+/* Header: lean name + count, with a lean-colored accent rule underneath that
+   matches the spectrum gradient (blue → green → red). --col-lean is set inline
+   from getLeanColor so it stays theme-reactive. */
+
+/* Independently scrollable list — its own scrollbar, contained overscroll so a
+   flick inside one column never scrolls the page. */
+
+
+/* Empty side — keeps the 3-column alignment instead of collapsing. */
+
+/* ===========================================================================
+   Source Ledger (.dd-ledger) — the full roster as one spectrum-ordered index.
+   Replaces the old three-column truncating scroll boxes. Full-width rows, no
+   inner scroll, no ellipsis: the list flows with the page. Left band, then
+   Center, then Right, reading DOWN the same axis the spectrum reads across; each
+   row's monogram tile carries the lean color (and the self-hosted outlet logo),
+   tying the ledger to the graph above it.
+   =========================================================================== */
+
+/* Collapsed disclosure (mobile "All N sources") with a lean-distribution teaser */
+
+
+/* Desktop: the three bands sit side by side as columns aligned under the
+   spectrum's Left / Center / Right thirds (the roster reads under the point on
+   the axis, like the Sources page). Full-height, no inner scroll, names wrap
+   rather than truncate. Mobile keeps the vertical stack above. */
+
+/* Band header: small-caps label + count + a lean-colored full-width hairline */
+
+
+/* Monogram tile: same visual language as the spectrum pins (lean-bordered),
+   holding the self-hosted outlet favicon when present, the lean letter when not. */
+

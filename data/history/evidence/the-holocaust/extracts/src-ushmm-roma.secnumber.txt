@@ -1,0 +1,6 @@
+source: src-ushmm-roma
+locator: secnumber
+url: https://encyclopedia.ushmm.org/content/en/article/genocide-of-european-roma-gypsies-1939-1945
+read: 2026-10-07
+
+It is still not known precisely how many Roma were killed during the period of the Holocaust. This reflects the fact that we cannot know for certain how many Roma lived in Europe before World War II; one estimate puts the prewar Romani population at between 1 and 1.5 million. Another reason why the number of victims is uncertain is the late recognition and recording of the genocide. Survivor testimony and forensic evidence are still emerging to testify to local events. On the basis of the evidence available to date, historians estimate that the Germans and their allies killed at least 250,000 European Roma during World War II. Some scholars estimate that the full death toll may well reach around 500,000.

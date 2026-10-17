@@ -1,0 +1,7 @@
+source: src-mit-hamilton-2009
+locator: para6
+url: https://news.mit.edu/2009/apollo-vign-0717
+read: 2026-10-03
+note: Margaret Hamilton's contribution to the MIT News piece, the paragraph beginning 'I thought of all the years'; the page's HTML read as text
+
+I thought of all the years of preparing for this day and how fortunate I was to work with and share this experience with the many talented and dedicated people who made this possible. There was no second chance. We knew that. We took our work seriously, many of us beginning this journey while still in our 20s. Coming up with solutions and new ideas was an adventure. Dedication and commitment were a given. Mutual respect was across the board. Because software was a mystery, a black box, upper management gave us total freedom and trust. We had to find a way and we did. Looking back, we were the luckiest people in the world; there was no choice but to be pioneers; no time to be beginners.

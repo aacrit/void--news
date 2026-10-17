@@ -1,0 +1,8 @@
+source: src-imtfe-judgment-ch8
+locator: secpow
+url: https://www.ibiblio.org/hyperwar/PTO/IMTFE/IMTFE-8.html
+read: 2026-10-09
+note: the text is the HyperWar Foundation's HTML transcription of the Judgment (transcribed by Patrick Clancey), whitespace collapsed; its typing errors are kept as it prints them (e.g. 'tow' for 'two'); the transcription's page markers ('--1014--', the printed page of the Judgment) are removed by the builder and the page is given here instead
+note: printed pages 1013 to 1014
+
+Large parties of Chinese soldiers laid down their arms and surrendered outside Nanking; within 72 hours after their surrender, they were killed in groups by machine gun fire along the bank of the Yangtze River. Over 30,000 such prisoners of war were so killed. There was not even a pretence of trial of these prisoners so massacred.

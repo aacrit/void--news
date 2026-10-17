@@ -1,0 +1,6 @@
+source: src-ushmm-riegner
+locator: secharrison
+url: https://encyclopedia.ushmm.org/content/en/article/the-riegner-telegram
+read: 2026-10-07
+
+Elting forwarded the message to the American legation in Bern, adding that Riegner’s information “may well contain an element of truth.” Minister Leland Harrison, the highest ranking US diplomat in Switzerland, did not believe Riegner, writing that a mass murder plan was likely a “war rumor inspired by fear.” Still, he forwarded the message to the State Department in Washington, DC.

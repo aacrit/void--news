@@ -1,0 +1,7 @@
+source: src-spreeuwenberg-2018
+locator: abstract
+url: https://pmc.ncbi.nlm.nih.gov/articles/PMC7314216/
+read: 2026-09-25
+note: the opening of the abstract, within the extract cap; the abstract's closing figure, 17.4 million, is held in para20
+
+Mortality estimates of the 1918 influenza pandemic vary considerably, and recent estimates have suggested that there were 50 million to 100 million deaths worldwide. We investigated the global mortality burden using an indirect estimation approach and 2 publicly available data sets: the Human Mortality Database (13 countries) and data extracted from the records of the Statistical Abstract for British India. The all-cause Human Mortality Database was used to estimate mortality annually for 1916–1921 for detailed age groups. Three different calculation methods were applied to the data (low, medium, and high scenarios), and we used a multilevel regression model to control for distorting factors (e.g., war and the underlying time trend in mortality). Total pandemic mortality was an estimated 15 million deaths worldwide in 1918 (n = 2.5 million in 1919) after including the rates for British India and controlling for wars and the underlying mortality trend.

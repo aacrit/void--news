@@ -1,0 +1,31 @@
+source: src-casement-1904
+locator: p75
+url: https://archive.org/download/CasementReport/CasementReportSmall_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: T 7's statement, the Blue Book's letters standing for the witness's name
+
+T 7's Statement. \
+
+States she belonged to the village of R*, where she lived with her grandmother. K*
+was attacked by the State soldiers long ago. It was in S T's time. She docs not know if
+he was with the soldiers, but she heard the bugle blow when they were going away. It was iu
+the afternoon when they came, they began catching and tying the people, and killed lots of them.
+A lot of people— she thinks perhaps fifty —ran away, and she was in the crowd with them, but
+the soldiers came after them and killed them all but herself. She was small, and she «hd into the
+bnsh. The people killed were many, and women— there were not many children. The children
+had scattered when the soldiers eame, but she stayed with the big people, thinking she might
+be safe.
+
+When they were all killed she waited in the grass for two nights. She was very frightened,
+and her throat was sore with thirst, and she looked about and at last she found some water- in a
+pot. She stayed on in the grass a third night, and buffaloes came near her and she was very
+frightened— and they went away. When the morning came she thought she would be better to
+move, and went away and got up a tree. She was three days without food, and was very hungry.
+In the tree she was near her grandmother's house, and she looked around and, seeing no soldiers,
+she crept to her grandmother's house and got some food and got up the tree again. The
+soldiers had gone away hunting tor buffaloes, and it was then she was able to get down from the
+tree. The soldiers eame back, and they came towards the trees and bushes calling out :
+" Now we see you ; come down, come down ! " This they used to do, so that people, thinking
+they were really discovered, should give themselves up ; but she thought she would stay on, and
+eo she stayed up the tree. Soon afterwards the soldiers went, but she was still afraid to come

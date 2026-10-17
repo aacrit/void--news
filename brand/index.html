@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en" data-mode="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Void - Brand Pack</title>
+<style>
+  :root {
+    --font-editorial: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --font-structural: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    --font-meta: 'Barlow Condensed', 'Franklin Gothic Medium', 'Arial Narrow', sans-serif;
+    --font-data: 'IBM Plex Mono', Menlo, Consolas, monospace;
+
+    --paper: #F0EBDD;
+    --paper-2: #E8E2D4;
+    --card: #F5F0E4;
+    --ink: #1A1A1A;
+    --ink-2: #4A4540;
+    --muted: #6B6560;
+    --divider: #D4CCC2;
+    --accent: #946B15;
+    --news: #B26F52;
+    --history: #5C4033;
+    --weekly: #B91C1C;
+    --vision: #946B15;
+    --shadow: rgba(28,26,23,0.10);
+    --chip-dark: #1C1A17;
+  }
+  html[data-mode="dark"] {
+    --paper: #1C1A17;
+    --paper-2: #252320;
+    --card: #2A2725;
+    --ink: #EDE8E0;
+    --ink-2: #B8B0A5;
+    --muted: #9A938B;
+    --divider: #403B35;
+    --accent: #D4A574;
+    --news: #D89A7C;
+    --history: #8B7355;
+    --weekly: #EF5350;
+    --vision: #D4A574;
+    --shadow: rgba(0,0,0,0.35);
+    --chip-dark: #0F0D0B;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-structural);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    transition: background .4s ease, color .4s ease;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; }
+
+  /* ---- top bar ---- */
+  header.bar {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px;
+    background: color-mix(in srgb, var(--paper) 82%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--divider);
+  }
+  .bar .brand { font-family: var(--font-editorial); font-weight: 700; font-size: 20px; letter-spacing: .02em; }
+  .bar .brand span { color: var(--accent); }
+  .toggle {
+    font-family: var(--font-meta); text-transform: uppercase; letter-spacing: .08em;
+    font-size: 12px; padding: 7px 14px; border: 1px solid var(--divider);
+    border-radius: 2px; background: var(--card); color: var(--ink); cursor: pointer;
+  }
+  .toggle:hover { border-color: var(--accent); }
+
+  /* ---- hero ---- */
+  .hero { text-align: center; padding: 72px 0 40px; border-bottom: 1px solid var(--divider); }
+  .hero img.sigil { width: 132px; height: 132px; margin-bottom: 8px; }
+  .hero h1 {
+    font-family: var(--font-editorial); font-weight: 700;
+    font-size: clamp(2.4rem, 1.8rem + 3vw, 4rem); margin: 8px 0 4px; letter-spacing: -0.02em;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero .kicker {
+    font-family: var(--font-meta); text-transform: uppercase; letter-spacing: .18em;
+    font-size: 13px; color: var(--muted);
+  }
+  .hero .lede { max-width: 620px; margin: 18px auto 0; color: var(--ink-2); font-size: 17px; }
+
+  /* ---- sections ---- */
+  section { padding: 56px 0; border-bottom: 1px solid var(--divider); }
+  .sec-kicker {
+    font-family: var(--font-meta); text-transform: uppercase; letter-spacing: .16em;
+    font-size: 12px; color: var(--accent); margin-bottom: 8px;
+  }
+  h2 { font-family: var(--font-editorial); font-weight: 700; font-size: 30px; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sec-note { color: var(--muted); margin: 0 0 28px; max-width: 640px; }
+
+  /* ---- brand blocks ---- */
+  .brand-block { margin-bottom: 40px; }
+  .brand-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+  .brand-head h3 { font-family: var(--font-editorial); font-weight: 700; font-size: 22px; margin: 0; }
+  .brand-head .dot { width: 12px; height: 12px; border-radius: 50%; align-self: center; }
+  .brand-head .accent-hex { font-family: var(--font-data); font-size: 12px; color: var(--muted); }
+  .lockups { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 720px) { .lockups { grid-template-columns: 1fr; } }
+  .chip {
+    border: 1px solid var(--divider); border-radius: 4px; padding: 26px 22px;
+    display: flex; align-items: center; justify-content: center; min-height: 128px;
+    box-shadow: 0 1px 2px var(--shadow);
+  }
+  .chip.light { background: #F0EBDD; }
+  .chip.dark { background: var(--chip-dark); border-color: #322d27; }
+  .chip img { max-width: 100%; max-height: 84px; }
+  /* Phase 2 raster/social: let full-size marks, banners, and native-px
+     icon demos render at their intended dimensions (override the 84px cap). */
+  #raster .chip img, #social .chip img { max-height: none; }
+  #raster .chip, #social .chip { min-height: 0; }
+  .chip .icon-row { display: flex; align-items: center; gap: 24px; }
+  .chip .icon-row img { height: 64px; width: 64px; }
+  .chip .cap {
+    position: absolute; margin-top: -108px; margin-left: -0;
+  }
+  .row-label { font-family: var(--font-meta); text-transform: uppercase; letter-spacing: .1em; font-size: 11px; color: var(--muted); margin: 18px 0 8px; }
+
+  /* ---- swatches ---- */
+  .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 12px; }
+  .swatch {
+    border: 1px solid var(--divider); border-radius: 4px; overflow: hidden; cursor: pointer;
+    background: var(--card); transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .swatch:hover { transform: translateY(-2px); box-shadow: 0 6px 18px var(--shadow); }
+  .swatch .chipcolor { height: 66px; }
+  .swatch .meta { padding: 8px 10px; }
+  .swatch .nm { font-size: 12px; font-weight: 600; }
+  .swatch .hx { font-family: var(--font-data); font-size: 11px; color: var(--muted); }
+  .copied { color: var(--accent) !important; }
+
+  /* ---- type ---- */
+  .type-row { padding: 16px 0; border-top: 1px solid var(--divider); }
+  .type-row:first-child { border-top: none; }
+  .type-meta { font-family: var(--font-meta); text-transform: uppercase; letter-spacing: .12em; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .spec-editorial { font-family: var(--font-editorial); font-weight: 700; font-size: 40px; line-height: 1.12; letter-spacing: -0.02em; }
+  .spec-structural { font-family: var(--font-structural); font-size: 18px; }
+  .spec-meta { font-family: var(--font-meta); text-transform: uppercase; letter-spacing: .1em; font-size: 22px; }
+  .spec-data { font-family: var(--font-data); font-size: 20px; }
+
+  /* ---- guidelines mini ---- */
+  .guide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 720px) { .guide-grid { grid-template-columns: 1fr; } }
+  .guide-card { background: var(--card); border: 1px solid var(--divider); border-radius: 4px; padding: 20px 22px; }
+  .guide-card h4 { font-family: var(--font-editorial); font-size: 18px; margin: 0 0 8px; }
+  .guide-card p { margin: 0 0 8px; font-size: 14px; color: var(--ink-2); }
+  .ex-bad { color: #9C2C22; } html[data-mode="dark"] .ex-bad { color: #CC3E34; }
+  .ex-good { color: #2B784A; } html[data-mode="dark"] .ex-good { color: #48B870; }
+  .ex { font-size: 13px; }
+
+  /* ---- downloads ---- */
+  .dl-group { margin-bottom: 26px; }
+  .dl-group h4 { font-family: var(--font-meta); text-transform: uppercase; letter-spacing: .12em; font-size: 13px; color: var(--accent); margin: 0 0 10px; }
+  .dl-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 6px; }
+  .dl {
+    display: flex; align-items: center; gap: 8px; text-decoration: none;
+    font-family: var(--font-data); font-size: 12.5px; color: var(--ink-2);
+    padding: 7px 10px; border: 1px solid var(--divider); border-radius: 3px; background: var(--card);
+  }
+  .dl:hover { border-color: var(--accent); color: var(--ink); }
+  .dl .arr { color: var(--accent); }
+
+  footer { padding: 40px 0 64px; text-align: center; color: var(--muted); font-size: 13px; }
+  footer .sig { font-family: var(--font-editorial); font-weight: 700; color: var(--ink); }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--ink); color: var(--paper); font-family: var(--font-data); font-size: 13px;
+    padding: 10px 18px; border-radius: 3px; opacity: 0; pointer-events: none; transition: all .25s ease;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="brand">V<span>&#9678;</span>ID <span>--</span>brand</div>
+  <button class="toggle" id="themeToggle">Evening Edition</button>
+</header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <img class="sigil" src="animated/void-news-sigil-animated.svg" alt="Void animated Sigil">
+    <div class="kicker">Brand Pack &middot; v1.0</div>
+    <h1>V<span>&#9678;</span>ID</h1>
+    <div class="kicker">News &middot; History &middot; Weekly &middot; Vision</div>
+    <p class="lede">One mark, four editions. The Sigil is a working diagram: a coverage ring for the breadth of sources, a level balance beam for the bias measurement, a fixed foot for the method. The beam above is live. Hover nothing; it performs the methodology on its own.</p>
+  </div>
+
+  <!-- ================= LOGO SUITE ================= -->
+  <section id="logos">
+    <div class="sec-kicker">01 &middot; Logo Suite</div>
+    <h2>The Marks</h2>
+    <p class="sec-note">Each brand ships three assets - horizontal lockup, wordmark, and icon - in three treatments: full color, one-color black (#111), and reversed white. Shown here on both editions. Every file is a resolution-independent SVG master.</p>
+
+    <div id="brandBlocks"></div>
+  </section>
+
+  <!-- ================= ANIMATED ================= -->
+  <section id="animated">
+    <div class="sec-kicker">02 &middot; Motion</div>
+    <h2>The Living Sigil</h2>
+    <p class="sec-note">The flagship animated mark: the beam sweeps level, tilts left (blue), balances (green), tilts right (red), and settles back to the brand accent - the same spectrum the product paints across every story. Self-contained SVG (inline CSS, loops, honors reduced-motion) and a Lottie JSON twin. The other brands reuse it with a recolor.</p>
+    <div class="lockups">
+      <div class="chip light"><img src="animated/void-news-sigil-animated.svg" alt="Animated Sigil, light" style="height:120px;width:120px"></div>
+      <div class="chip dark"><img src="video/void-news-sigil-ink.gif" alt="Sigil beam-sweep GIF, ink ground" style="height:120px;width:120px"></div>
+    </div>
+    <div class="row-label">Downloads</div>
+    <div class="dl-list">
+      <a class="dl" href="animated/void-news-sigil-animated.svg" download><span class="arr">&darr;</span> void-news-sigil-animated.svg</a>
+      <a class="dl" href="animated/void-news-sigil-animated.json" download><span class="arr">&darr;</span> void-news-sigil-animated.json (Lottie)</a>
+      <a class="dl" href="video/void-news-sigil-ink.gif" download><span class="arr">&darr;</span> void-news-sigil-ink.gif</a>
+      <a class="dl" href="video/void-news-sigil-transparent.gif" download><span class="arr">&darr;</span> void-news-sigil-transparent.gif</a>
+    </div>
+    <p class="sec-note" style="margin-top:14px">The GIF above (ink ground) is the raster loop; a transparent 1-bit twin ships alongside. MP4 (H.264) and WebM (VP9 alpha) render from the 88 frame PNGs in <code style="font-family:var(--font-data)">video/frames/</code> via <code style="font-family:var(--font-data)">brand/render-video.sh</code> in CI (a full ffmpeg). The dev box only carries Playwright&rsquo;s capture-only ffmpeg, so the file encodes are deferred; the frames are done.</p>
+  </section>
+
+  <!-- ================= RASTER ================= -->
+  <section id="raster">
+    <div class="sec-kicker">03 &middot; Raster</div>
+    <h2>Every Pixel Size</h2>
+    <p class="sec-note">64 PNG exports in <code style="font-family:var(--font-data)">logos/png/</code>. The icon is drawn directly from the Sigil geometry in Pillow (supersample x4 + LANCZOS), so it holds the ring, beam, and foot cleanly down to 16&nbsp;px. Lockups are rendered from the SVG masters. Each icon ships transparent at 16/32/48/64/128/256/512/1024 plus 512 on both grounds.</p>
+
+    <div class="row-label">Icon at native 16 / 32 / 48 / 64 / 128 px (Void News)</div>
+    <div class="chip light" style="display:flex;align-items:flex-end;gap:22px;padding:26px 28px">
+      <img src="logos/png/void-news-icon-16.png" alt="16px" width="16" height="16">
+      <img src="logos/png/void-news-icon-32.png" alt="32px" width="32" height="32">
+      <img src="logos/png/void-news-icon-48.png" alt="48px" width="48" height="48">
+      <img src="logos/png/void-news-icon-64.png" alt="64px" width="64" height="64">
+      <img src="logos/png/void-news-icon-128.png" alt="128px" width="128" height="128">
+    </div>
+
+    <div class="row-label">Icon 512 on both grounds &middot; four brands</div>
+    <div class="lockups">
+      <div class="chip light"><img src="logos/png/void-news-icon-512-light.png" alt="News on paper" style="width:120px;height:120px"></div>
+      <div class="chip dark"><img src="logos/png/void-history-icon-512-dark.png" alt="History on ink" style="width:120px;height:120px"></div>
+      <div class="chip light"><img src="logos/png/void-weekly-icon-512-light.png" alt="Weekly on paper" style="width:120px;height:120px"></div>
+      <div class="chip dark"><img src="logos/png/void-vision-icon-512-dark.png" alt="Vision on ink" style="width:120px;height:120px"></div>
+    </div>
+
+    <div class="row-label">Horizontal lockup 800px &middot; light &amp; dark</div>
+    <div class="lockups">
+      <div class="chip light" style="flex:1;min-width:280px"><img src="logos/png/void-news-horizontal-800-light.png" alt="News lockup light" style="width:100%;height:auto"></div>
+      <div class="chip dark" style="flex:1;min-width:280px"><img src="logos/png/void-vision-horizontal-800-dark.png" alt="Vision lockup dark" style="width:100%;height:auto"></div>
+    </div>
+
+    <div class="row-label">Downloads (representative &middot; full set of 64 in logos/png/)</div>
+    <div class="dl-list">
+      <a class="dl" href="logos/png/void-news-icon-1024.png" download><span class="arr">&darr;</span> void-news-icon-1024.png</a>
+      <a class="dl" href="logos/png/void-news-icon-512-light.png" download><span class="arr">&darr;</span> void-news-icon-512-light.png</a>
+      <a class="dl" href="logos/png/void-news-horizontal-1600.png" download><span class="arr">&darr;</span> void-news-horizontal-1600.png</a>
+      <a class="dl" href="logos/png/" ><span class="arr">&rarr;</span> browse logos/png/ (64 files)</a>
+    </div>
+  </section>
+
+  <!-- ================= SOCIAL ================= -->
+  <section id="social">
+    <div class="sec-kicker">04 &middot; Social</div>
+    <h2>Ready to Post</h2>
+    <p class="sec-note">Seven platform assets in <code style="font-family:var(--font-data)">social/</code>, each sized to spec with the mark centred inside the circular-crop and TV-safe zones. Void Vision (brass) fronts YouTube; Void News (terracotta) fronts Instagram, X, and Bluesky.</p>
+
+    <div class="row-label">Avatars &middot; YouTube 800 / X 400 / Bluesky 512 / Instagram 320</div>
+    <div class="lockups">
+      <div class="chip dark"><img src="social/youtube-void-vision-avatar-800.png" alt="YouTube avatar" style="width:110px;height:110px;border-radius:50%"></div>
+      <div class="chip light"><img src="social/x-void-news-avatar-400.png" alt="X avatar" style="width:110px;height:110px;border-radius:50%"></div>
+      <div class="chip light"><img src="social/bluesky-void-news-avatar-512.png" alt="Bluesky avatar" style="width:110px;height:110px;border-radius:50%"></div>
+      <div class="chip light"><img src="social/instagram-void-news-avatar-320.png" alt="Instagram avatar" style="width:110px;height:110px;border-radius:50%"></div>
+    </div>
+
+    <div class="row-label">YouTube channel banner 2560x1440 (safe area 1546x423)</div>
+    <div class="chip dark" style="padding:0;overflow:hidden"><img src="social/youtube-void-vision-banner-2560x1440.png" alt="YouTube banner" style="width:100%;height:auto;display:block"></div>
+
+    <div class="row-label">X header 1500x500 &middot; Bluesky banner 3000x1000</div>
+    <div class="lockups">
+      <div class="chip light" style="flex:1;min-width:280px;padding:0;overflow:hidden"><img src="social/x-void-news-header-1500x500.png" alt="X header" style="width:100%;height:auto;display:block"></div>
+      <div class="chip light" style="flex:1;min-width:280px;padding:0;overflow:hidden"><img src="social/bluesky-void-news-banner-3000x1000.png" alt="Bluesky banner" style="width:100%;height:auto;display:block"></div>
+    </div>
+
+    <div class="row-label">Downloads</div>
+    <div class="dl-list">
+      <a class="dl" href="social/youtube-void-vision-avatar-800.png" download><span class="arr">&darr;</span> youtube-void-vision-avatar-800.png</a>
+      <a class="dl" href="social/youtube-void-vision-banner-2560x1440.png" download><span class="arr">&darr;</span> youtube-void-vision-banner-2560x1440.png</a>
+      <a class="dl" href="social/x-void-news-avatar-400.png" download><span class="arr">&darr;</span> x-void-news-avatar-400.png</a>
+      <a class="dl" href="social/x-void-news-header-1500x500.png" download><span class="arr">&darr;</span> x-void-news-header-1500x500.png</a>
+      <a class="dl" href="social/bluesky-void-news-avatar-512.png" download><span class="arr">&darr;</span> bluesky-void-news-avatar-512.png</a>
+      <a class="dl" href="social/bluesky-void-news-banner-3000x1000.png" download><span class="arr">&darr;</span> bluesky-void-news-banner-3000x1000.png</a>
+      <a class="dl" href="social/instagram-void-news-avatar-320.png" download><span class="arr">&darr;</span> instagram-void-news-avatar-320.png</a>
+    </div>
+  </section>
+
+  <!-- ================= COLOR ================= -->
+  <section id="color">
+    <div class="sec-kicker">05 &middot; Color</div>
+    <h2>The Palette</h2>
+    <p class="sec-note">Click any swatch to copy its HEX. Brand accents are decorative (large marks); the bias spectrum is earned by data and never used for decoration. Full four-space reference in palette.md.</p>
+
+    <div class="row-label">Brand Accents (Morning Edition)</div>
+    <div class="swatch-grid" id="swBrand"></div>
+
+    <div class="row-label">Bias Spectrum &middot; blue &rarr; green (center only) &rarr; red</div>
+    <div class="swatch-grid" id="swBias"></div>
+
+    <div class="row-label">Ink &amp; Paper</div>
+    <div class="swatch-grid" id="swInk"></div>
+  </section>
+
+  <!-- ================= TYPE ================= -->
+  <section id="type">
+    <div class="sec-kicker">06 &middot; Type</div>
+    <h2>Four Faces, Four Jobs</h2>
+    <p class="sec-note">Editorial authority meets data terminal. The tension between a high-contrast Didone and a monospace face is the whole brand. (Web fonts load in the product; this page falls back to system serif/sans/mono, so exact rendering will differ from Playfair et al.)</p>
+
+    <div class="type-row">
+      <div class="type-meta">Playfair Display &middot; Editorial &middot; headlines, masthead</div>
+      <div class="spec-editorial">A lawyer who&rsquo;d never been to India drew the border in five weeks.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">Inter &middot; Structural &middot; body, UI</div>
+      <div class="spec-structural">Same stories, same order, for everyone. No accounts, no recommendation algorithms. The newspaper principle, encoded.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">Barlow Condensed &middot; Meta &middot; kickers, datelines</div>
+      <div class="spec-meta">World &middot; Filed 06:00 UTC &middot; 69 sources</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">IBM Plex Mono &middot; Data &middot; scores, counts, the --flag heritage</div>
+      <div class="spec-data">lean -3.2 &nbsp; rigor 0.71 &nbsp; polarization 100 &nbsp; void --news</div>
+    </div>
+  </section>
+
+  <!-- ================= VOICE ================= -->
+  <section id="voice">
+    <div class="sec-kicker">07 &middot; Voice &amp; Rules</div>
+    <h2>How Void Speaks</h2>
+    <p class="sec-note">The writing is as disciplined as the design. Three non-negotiable rules.</p>
+    <div class="guide-grid">
+      <div class="guide-card">
+        <h4>Show, don&rsquo;t tell</h4>
+        <p>Never assert significance. Juxtapose concrete facts; let the reader conclude.</p>
+        <p class="ex ex-bad">Bad: &ldquo;Tensions are rising significantly.&rdquo;</p>
+        <p class="ex ex-good">Good: &ldquo;Both recalled their ambassadors within 48 hours. Neither has done that since 1979.&rdquo;</p>
+      </div>
+      <div class="guide-card">
+        <h4>Arrive late, leave early</h4>
+        <p>Enter at the last moment; exit before the point is spelled out. The gap is where understanding happens.</p>
+        <p class="ex ex-good">Good: &ldquo;A lawyer who&rsquo;d never been to India drew the border in five weeks. 15 million crossed it.&rdquo;</p>
+      </div>
+      <div class="guide-card">
+        <h4>No em dashes</h4>
+        <p>Em and en dashes are banned in all on-screen copy. An AI tell. Use two sentences, a comma, a semicolon, or parentheses.</p>
+        <p class="ex ex-bad">Bad: &ldquo;Rates cut Tuesday - the third this quarter.&rdquo;</p>
+        <p class="ex ex-good">Good: &ldquo;Rates cut Tuesday. Third this quarter.&rdquo;</p>
+      </div>
+      <div class="guide-card">
+        <h4>What the Sigil means</h4>
+        <p>Coverage ring = breadth of sources. Level beam = the bias reading. Foot = the method, fixed. Clear space = one ring height. Never fill the ring; never tilt the foot; never freeze the beam on a bias color.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DOWNLOADS ================= -->
+  <section id="downloads">
+    <div class="sec-kicker">08 &middot; The Pack</div>
+    <h2>Download Everything</h2>
+    <p class="sec-note">Every asset in the pack. Right-click &rarr; Save, or click to download.</p>
+    <div id="dlAll"></div>
+  </section>
+
+  <footer>
+    <p><span class="sig">Void</span> brand pack &middot; generated from the live product tokens.<br>
+    Regenerate the SVG masters with <code style="font-family:var(--font-data)">python brand/generate.py</code>; the raster / social / animation exports with the <code style="font-family:var(--font-data)">build_*.py</code> scripts. Print book: <a href="guidelines/void-brand-book.pdf" download>void-brand-book.pdf</a>. See README.md.</p>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast">Copied</div>
+
+<script>
+  // ---- theme toggle ----
+  var html = document.documentElement;
+  var tgl = document.getElementById('themeToggle');
+  function setMode(m){ html.setAttribute('data-mode', m); tgl.textContent = m === 'light' ? 'Evening Edition' : 'Morning Edition'; }
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) setMode('dark');
+  tgl.addEventListener('click', function(){ setMode(html.getAttribute('data-mode') === 'light' ? 'dark' : 'light'); });
+
+  // ---- brand data ----
+  var BRANDS = [
+    { slug:'void-news', name:'Void News', accent:'#B26F52', role:'Flagship' },
+    { slug:'void-history', name:'Void History', accent:'#5C4033', role:'Archive' },
+    { slug:'void-weekly', name:'Void Weekly', accent:'#B91C1C', role:'Magazine' },
+    { slug:'void-vision', name:'Void Vision', accent:'#946B15', role:'Umbrella + YouTube' }
+  ];
+
+  var bb = document.getElementById('brandBlocks');
+  BRANDS.forEach(function(b){
+    var el = document.createElement('div');
+    el.className = 'brand-block';
+    el.innerHTML =
+      '<div class="brand-head">'+
+        '<span class="dot" style="background:'+b.accent+'"></span>'+
+        '<h3>'+b.name+'</h3>'+
+        '<span class="accent-hex">'+b.role+' &middot; '+b.accent+'</span>'+
+      '</div>'+
+      '<div class="lockups">'+
+        '<div class="chip light"><img src="logos/'+b.slug+'-horizontal-color.svg" alt="'+b.name+' lockup, color"></div>'+
+        '<div class="chip dark"><img src="logos/'+b.slug+'-horizontal-reversed.svg" alt="'+b.name+' lockup, reversed"></div>'+
+      '</div>'+
+      '<div class="row-label">Wordmark &middot; Icon</div>'+
+      '<div class="lockups">'+
+        '<div class="chip light"><img src="logos/'+b.slug+'-wordmark-color.svg" alt="'+b.name+' wordmark"></div>'+
+        '<div class="chip dark"><div class="icon-row">'+
+          '<img src="logos/'+b.slug+'-icon-reversed.svg" alt="icon reversed">'+
+          '<img src="logos/'+b.slug+'-icon-color.svg" alt="icon color">'+
+        '</div></div>'+
+      '</div>';
+    bb.appendChild(el);
+  });
+
+  // ---- swatches ----
+  var SW_BRAND = [
+    ['News terracotta','#B26F52'],['News ink','#9A5638'],['History umber','#5C4033'],
+    ['History alt','#8B7355'],['Weekly red','#B91C1C'],['Weekly alt','#EF5350'],
+    ['Vision brass','#946B15'],['Brass snap','#B8872A']
+  ];
+  var SW_BIAS = [
+    ['Far left','#0E2E70'],['Left','#1B5298'],['Center-left','#2E78B4'],['Center','#2B784A'],
+    ['Center-right','#C4503E'],['Right','#9C2C22'],['Far right','#6E1610']
+  ];
+  var SW_INK = [
+    ['Paper','#F0EBDD'],['Paper card','#F5F0E4'],['Ink','#1A1A1A'],['Ink body','#4A4540'],
+    ['Walnut','#1C1A17'],['Cream','#EDE8E0'],['One-color','#111111']
+  ];
+  function buildSwatches(id, data){
+    var host = document.getElementById(id);
+    data.forEach(function(s){
+      var d = document.createElement('div');
+      d.className = 'swatch';
+      d.innerHTML = '<div class="chipcolor" style="background:'+s[1]+'"></div>'+
+        '<div class="meta"><div class="nm">'+s[0]+'</div><div class="hx">'+s[1]+'</div></div>';
+      d.addEventListener('click', function(){ copy(s[1], d.querySelector('.hx')); });
+      host.appendChild(d);
+    });
+  }
+  buildSwatches('swBrand', SW_BRAND);
+  buildSwatches('swBias', SW_BIAS);
+  buildSwatches('swInk', SW_INK);
+
+  // ---- copy ----
+  var toast = document.getElementById('toast');
+  function copy(text, hxEl){
+    var done = function(){
+      toast.textContent = 'Copied ' + text;
+      toast.classList.add('show');
+      if (hxEl){ var o = hxEl.textContent; hxEl.classList.add('copied'); setTimeout(function(){ hxEl.classList.remove('copied'); }, 900); }
+      setTimeout(function(){ toast.classList.remove('show'); }, 1200);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(function(){ fallback(text); done(); });
+    } else { fallback(text); done(); }
+  }
+  function fallback(text){
+    var ta = document.createElement('textarea'); ta.value = text;
+    ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta);
+    ta.select(); try { document.execCommand('copy'); } catch(e){} document.body.removeChild(ta);
+  }
+
+  // ---- downloads (explicit manifest) ----
+  var DL = {
+    'Logos - Void News': ['horizontal','wordmark','icon'].reduce(pack('void-news'), []),
+    'Logos - Void History': ['horizontal','wordmark','icon'].reduce(pack('void-history'), []),
+    'Logos - Void Weekly': ['horizontal','wordmark','icon'].reduce(pack('void-weekly'), []),
+    'Logos - Void Vision': ['horizontal','wordmark','icon'].reduce(pack('void-vision'), []),
+    'Animated': ['animated/void-news-sigil-animated.svg','animated/void-news-sigil-animated.json'],
+    'Color': ['color/colors.css','color/colors.json','color/palette.md'],
+    'Type & Guidelines': ['type/type.md','guidelines/guidelines.md'],
+    'Pack': ['README.md','generate.py']
+  };
+  function pack(slug){ return function(acc, kind){
+    ['color','black','reversed'].forEach(function(t){ acc.push('logos/'+slug+'-'+kind+'-'+t+'.svg'); });
+    return acc;
+  }; }
+  var dlAll = document.getElementById('dlAll');
+  Object.keys(DL).forEach(function(group){
+    var g = document.createElement('div'); g.className = 'dl-group';
+    var files = DL[group].map(function(f){
+      var name = f.indexOf('/') >= 0 ? f.split('/').pop() : f;
+      return '<a class="dl" href="'+f+'" download><span class="arr">&darr;</span> '+name+'</a>';
+    }).join('');
+    g.innerHTML = '<h4>'+group+'</h4><div class="dl-list">'+files+'</div>';
+    dlAll.appendChild(g);
+  });
+</script>
+</body>
+</html>

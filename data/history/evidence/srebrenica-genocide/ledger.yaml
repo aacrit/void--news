@@ -1,0 +1,983 @@
+# The evidence ledger for srebrenica-genocide (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Every entry was resolved or fetched on 2026-09-24 from the URL it names; every
+# extract under extracts/ was sliced from the fetched copy, never retyped.
+# Nothing here was written from memory. An entry the free record could not
+# reach is listed under `gaps`, by name, with what was tried.
+slug: srebrenica-genocide
+bootstrapped: 2026-09-24
+
+entries:
+  # ----------------------------------------------------------- Tier A: primary record
+  - id: src-icty-krstic-tj
+    tier: A
+    kind: judgment
+    author: International Criminal Tribunal for the former Yugoslavia, Trial Chamber
+    title: "Prosecutor v. Radislav Krstić, Judgement"
+    container: null
+    publisher: ICTY
+    place: The Hague
+    year: 2001
+    edition: null
+    volume: null
+    document_number: "Case No. IT-98-33-T, 2 August 2001"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf"}
+    access:
+      free_copy: "https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf"
+      verified_at: 2026-09-24
+      verified_by: document-fetch
+      verified_title: "Prosecutor v. Radislav Krstić, Judgement, Case No. IT-98-33-T, 2 August 2001"
+    language: en
+    region_of_authorship: europe
+    producer: icty
+    position: tribunal-record
+    rights: public
+
+  - id: src-icty-krstic-aj
+    tier: A
+    kind: judgment
+    author: International Criminal Tribunal for the former Yugoslavia, Appeals Chamber
+    title: "Prosecutor v. Radislav Krstić, Judgement (Appeals Chamber)"
+    container: null
+    publisher: ICTY
+    place: The Hague
+    year: 2004
+    edition: null
+    volume: null
+    document_number: "Case No. IT-98-33-A, 19 April 2004"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.icty.org/x/cases/krstic/acjug/en/krs-aj040419e.pdf"}
+    access:
+      free_copy: "https://www.icty.org/x/cases/krstic/acjug/en/krs-aj040419e.pdf"
+      verified_at: 2026-09-24
+      verified_by: document-fetch
+      verified_title: "Prosecutor v. Radislav Krstić, Judgement, Case No. IT-98-33-A, 19 April 2004"
+    language: en
+    region_of_authorship: europe
+    producer: icty
+    position: tribunal-record
+    rights: public
+
+  - id: src-icty-erdemovic-sj
+    tier: A
+    kind: judgment
+    author: International Criminal Tribunal for the former Yugoslavia, Trial Chamber
+    title: "Prosecutor v. Dražen Erdemović, Sentencing Judgement"
+    container: null
+    publisher: ICTY
+    place: The Hague
+    year: 1996
+    edition: null
+    volume: null
+    document_number: "Case No. IT-96-22-T, 29 November 1996"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.icty.org/x/cases/erdemovic/tjug/en/erd-tsj961129e.pdf"}
+    access:
+      free_copy: "https://www.icty.org/x/cases/erdemovic/tjug/en/erd-tsj961129e.pdf"
+      verified_at: 2026-09-24
+      verified_by: document-fetch
+      verified_title: "Prosecutor v. Dražen Erdemović, Sentencing Judgement, Case No. IT-96-22-T, 29 November 1996"
+    language: en
+    region_of_authorship: europe
+    producer: icty
+    position: tribunal-record
+    rights: public
+
+  - id: src-icty-mladic-tj
+    tier: A
+    kind: judgment
+    author: International Criminal Tribunal for the former Yugoslavia, Trial Chamber
+    title: "Prosecutor v. Ratko Mladić, Judgement, Volume IV of V"
+    container: null
+    publisher: ICTY
+    place: The Hague
+    year: 2017
+    edition: null
+    volume: IV
+    document_number: "Case No. IT-09-92-T, 22 November 2017"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.icty.org/x/cases/mladic/tjug/en/171122-4of5_1.pdf"}
+    access:
+      free_copy: "https://www.icty.org/x/cases/mladic/tjug/en/171122-4of5_1.pdf"
+      verified_at: 2026-09-24
+      verified_by: document-fetch
+      verified_title: "Prosecutor v. Ratko Mladić, Judgement, Volume IV of V, Case No. IT-09-92-T, 22 November 2017"
+    language: en
+    region_of_authorship: europe
+    producer: icty
+    position: tribunal-record
+    rights: public
+
+  - id: src-un-sres-819
+    tier: A
+    kind: resolution
+    author: United Nations Security Council
+    title: "Resolution 819 (1993)"
+    container: null
+    publisher: United Nations
+    place: New York
+    year: 1993
+    edition: null
+    volume: null
+    document_number: "S/RES/819 (1993), 16 April 1993"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://documents.un.org/doc/undoc/gen/n93/221/90/pdf/n9322190.pdf"}
+    access:
+      free_copy: "https://documents.un.org/doc/undoc/gen/n93/221/90/pdf/n9322190.pdf"
+      verified_at: 2026-09-24
+      verified_by: document-fetch
+      verified_title: "Resolution 819 (1993), adopted by the Security Council at its 3199th meeting, on 16 April 1993"
+    language: en
+    region_of_authorship: global
+    producer: un-security-council
+    position: united-nations
+    rights: public
+
+  - id: src-un-a54549
+    tier: A
+    kind: report
+    author: United Nations Secretary-General
+    title: "Report of the Secretary-General pursuant to General Assembly resolution 53/35: The fall of Srebrenica"
+    container: null
+    publisher: United Nations
+    place: New York
+    year: 1999
+    edition: null
+    volume: null
+    document_number: "A/54/549, 15 November 1999"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://documents.un.org/doc/undoc/gen/n99/348/76/pdf/n9934876.pdf"}
+    access:
+      free_copy: "https://documents.un.org/doc/undoc/gen/n99/348/76/pdf/n9934876.pdf"
+      verified_at: 2026-09-24
+      verified_by: document-fetch
+      verified_title: "Report of the Secretary-General pursuant to General Assembly resolution 53/35: The fall of Srebrenica, A/54/549"
+    language: en
+    region_of_authorship: global
+    producer: un-secretariat
+    position: united-nations
+    rights: public
+
+  - id: src-un-ares78282
+    tier: A
+    kind: resolution
+    author: United Nations General Assembly
+    title: "Resolution 78/282. International Day of Reflection and Commemoration of the 1995 Genocide in Srebrenica"
+    container: null
+    publisher: United Nations
+    place: New York
+    year: 2024
+    edition: null
+    volume: null
+    document_number: "A/RES/78/282, adopted 23 May 2024"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://documents.un.org/doc/undoc/gen/n24/152/96/pdf/n2415296.pdf"}
+    access:
+      free_copy: "https://documents.un.org/doc/undoc/gen/n24/152/96/pdf/n2415296.pdf"
+      verified_at: 2026-09-24
+      verified_by: document-fetch
+      verified_title: "78/282. International Day of Reflection and Commemoration of the 1995 Genocide in Srebrenica, A/RES/78/282"
+    language: en
+    region_of_authorship: global
+    producer: un-general-assembly
+    position: united-nations
+    rights: public
+
+  - id: src-echr-mothers-2013
+    tier: A
+    kind: judgment
+    author: European Court of Human Rights, Third Section
+    title: "Stichting Mothers of Srebrenica and Others v. the Netherlands, Decision"
+    container: null
+    publisher: Council of Europe
+    place: Strasbourg
+    year: 2013
+    edition: null
+    volume: null
+    document_number: "Application no. 65542/12, 11 June 2013"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://hudoc.echr.coe.int/eng?i=001-122255"}
+    access:
+      free_copy: "https://hudoc.echr.coe.int/app/conversion/pdf/?library=ECHR&id=001-122255&filename=001-122255.pdf"
+      verified_at: 2026-09-24
+      verified_by: document-fetch
+      verified_title: "Decision, Application no. 65542/12, Stichting Mothers of Srebrenica and Others against the Netherlands"
+    language: en
+    region_of_authorship: europe
+    producer: echr
+    position: the-lawsuits
+    rights: public
+
+  - id: src-nl-hr-2019
+    tier: A
+    kind: judgment
+    author: Supreme Court of the Netherlands (Hoge Raad), Civil Law Division
+    title: "Mothers of Srebrenica: the State of the Netherlands v. Stichting Mothers of Srebrenica and Others, Judgment of the Supreme Court of the Netherlands (English translation)"
+    container: null
+    publisher: De Rechtspraak
+    place: The Hague
+    year: 2019
+    edition: null
+    volume: null
+    document_number: "ECLI:NL:HR:2019:1284, case 17/04567, 19 July 2019"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://uitspraken.rechtspraak.nl/details?id=ECLI:NL:HR:2019:1284"}
+    access:
+      free_copy: "https://data.rechtspraak.nl/uitspraken/content?id=ECLI:NL:HR:2019:1284"
+      verified_at: 2026-09-24
+      verified_by: document-fetch
+      verified_title: "Hoge Raad, 19-07-2019 / 17/04567 (Eng) Mothers of Srebrenica; Supreme Court of the Netherlands, Civil Law Division, Number 17/04567, Judgment"
+    language: en
+    region_of_authorship: europe
+    producer: dutch-supreme-court
+    position: the-lawsuits
+    rights: public
+
+  - id: src-icj-2007
+    tier: A
+    kind: judgment
+    author: International Court of Justice
+    title: "Application of the Convention on the Prevention and Punishment of the Crime of Genocide (Bosnia and Herzegovina v. Serbia and Montenegro), Judgment"
+    container: null
+    publisher: ICJ
+    place: The Hague
+    year: 2007
+    edition: null
+    volume: null
+    document_number: "26 February 2007"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.icj-cij.org/case/91"}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null}
+    language: en
+    region_of_authorship: global
+    producer: icj
+    position: null
+    rights: public
+
+  - id: src-niod-2002
+    tier: A
+    kind: report
+    author: Netherlands Institute for War Documentation (NIOD)
+    title: "Srebrenica: a 'safe' area. Reconstruction, background, consequences and analyses of the fall of a Safe Area"
+    container: null
+    publisher: NIOD
+    place: Amsterdam
+    year: 2002
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null}
+    language: nl
+    region_of_authorship: europe
+    producer: niod
+    position: dutch-inquiry-debate
+    rights: null
+
+  # ----------------------------------------------------------- Tier B: peer-reviewed scholarship
+  - id: src-brunborg-2003
+    tier: B
+    kind: journal-article
+    author: Helge Brunborg, Torkild Hovde Lyngstad and Henrik Urdal
+    title: "Accounting for Genocide: How Many Were Killed in Srebrenica?"
+    container: European Journal of Population
+    publisher: Springer
+    place: null
+    year: 2003
+    edition: null
+    volume: "19(3), 229-248"
+    identifiers: {isbn: null, doi: "10.1023/a:1024949307841", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-24, verified_by: crossref-title-match, verified_title: "Accounting for Genocide: How Many Were Killed in Srebrenica?"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+
+  - id: src-honig-2007
+    tier: B
+    kind: journal-article
+    author: Jan Willem Honig
+    title: "Strategy and Genocide: Srebrenica as an Analytical Challenge"
+    container: Southeast European and Black Sea Studies
+    publisher: Taylor and Francis
+    place: null
+    year: 2007
+    edition: null
+    volume: "7(3), 399-416"
+    identifiers: {isbn: null, doi: "10.1080/14683850701566260", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-24, verified_by: crossref-title-match, verified_title: "Strategy and Genocide: Srebrenica as an Analytical Challenge"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+
+  - id: src-nettelfield-wagner-2014
+    tier: B
+    kind: monograph
+    author: Lara J. Nettelfield and Sarah E. Wagner
+    title: "Srebrenica in the Aftermath of Genocide"
+    container: null
+    publisher: Cambridge University Press
+    place: Cambridge
+    year: 2014
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: "10.1017/CBO9781139034968", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-24, verified_by: crossref-title-match, verified_title: "Srebrenica in the Aftermath of Genocide"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+
+  - id: src-wagner-2008
+    tier: B
+    kind: monograph
+    author: Sarah E. Wagner
+    title: "To Know Where He Lies: DNA Technology and the Search for Srebrenica's Missing"
+    container: null
+    publisher: University of California Press
+    place: Berkeley
+    year: 2008
+    edition: null
+    volume: null
+    identifiers: {isbn: null, doi: "10.1525/9780520942622", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-24, verified_by: crossref-title-match, verified_title: "To Know Where He Lies"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+
+  - id: src-mulaj-2017
+    tier: B
+    kind: journal-article
+    author: Klejda Mulaj
+    title: "Genocide and the ending of war: Meaning, remembrance and denial in Srebrenica, Bosnia"
+    container: Crime, Law and Social Change
+    publisher: Springer
+    place: null
+    year: 2017
+    edition: null
+    volume: "68(1-2), 123-143"
+    identifiers: {isbn: null, doi: "10.1007/s10611-017-9690-6", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-24, verified_by: crossref-title-match, verified_title: "Genocide and the ending of war: Meaning, remembrance and denial in Srebrenica, Bosnia"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+
+  - id: src-vukusic-2018
+    tier: B
+    kind: journal-article
+    author: Iva Vukušić
+    title: "Nineteen Minutes of Horror: Insights from the Scorpions Execution Video"
+    container: Genocide Studies and Prevention
+    publisher: University of South Florida Libraries
+    place: null
+    year: 2018
+    edition: null
+    volume: "12(2), 35-53"
+    identifiers: {isbn: null, doi: "10.5038/1911-9933.12.2.1527", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-24, verified_by: crossref-title-match, verified_title: "Nineteen Minutes of Horror: Insights from the Scorpions Execution Video"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+
+  - id: src-rijnhout-2021
+    tier: B
+    kind: journal-article
+    author: Rianka Rijnhout
+    title: "Mothers of Srebrenica: Causation and Partial Liability under Dutch Tort Law"
+    container: Utrecht Journal of International and European Law
+    publisher: Ubiquity Press
+    place: null
+    year: 2021
+    edition: null
+    volume: "36(2), 127-140"
+    identifiers: {isbn: null, doi: "10.5334/ujiel.543", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-24, verified_by: crossref-title-match, verified_title: "Mothers of Srebrenica: Causation and Partial Liability under Dutch Tort Law"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: the-lawsuits
+
+  - id: src-spijkers-2021
+    tier: B
+    kind: journal-article
+    author: Otto Spijkers
+    title: "Legal Monuments for Srebrenica in the Hague"
+    container: Utrecht Journal of International and European Law
+    publisher: Ubiquity Press
+    place: null
+    year: 2021
+    edition: null
+    volume: "36(2), 118-126"
+    identifiers: {isbn: null, doi: "10.5334/ujiel.542", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-24, verified_by: crossref-title-match, verified_title: "Legal Monuments for Srebrenica in the Hague"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: the-lawsuits
+
+  - id: src-delpla-2007
+    tier: B
+    kind: journal-article
+    author: Isabelle Delpla
+    title: "Faits, responsabilités, intelligibilité : comparer les enquêtes et les rapports sur Srebrenica"
+    container: Cultures et Conflits
+    publisher: OpenEdition
+    place: null
+    year: 2007
+    edition: null
+    volume: "65, 119-136"
+    identifiers: {isbn: null, doi: "10.4000/conflits.2221", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-24, verified_by: crossref-title-match, verified_title: "Faits, responsabilités, intelligibilité : comparer les enquêtes et les rapports sur Srebrenica"}
+    language: fr
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+
+  - id: src-ringrose-2020
+    tier: B
+    kind: journal-article
+    author: Michelle E. Ringrose
+    title: "The Politicization of the Genocide Label: Genocide Rhetoric in the UN Security Council"
+    container: Genocide Studies and Prevention
+    publisher: University of South Florida Libraries
+    place: null
+    year: 2020
+    edition: null
+    volume: "14(1), 124-142"
+    identifiers: {isbn: null, doi: "10.5038/1911-9933.14.1.1603", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-24, verified_by: crossref-title-match, verified_title: "The Politicization of the Genocide Label: Genocide Rhetoric in the UN Security Council"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+
+  - id: src-gerstein-karcic-2025
+    tier: B
+    kind: journal-article
+    author: Ben Gerstein and Hikmet Karčić
+    title: "The United Nations General Assembly Resolution on Srebrenica and the Struggle Against Genocide Denial"
+    container: Comparative Southeast European Studies
+    publisher: De Gruyter
+    place: null
+    year: 2025
+    edition: null
+    volume: "73(1), 3-35"
+    identifiers: {isbn: null, doi: "10.1515/soeu-2025-0001", archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: 2026-09-24, verified_by: crossref-title-match, verified_title: "The United Nations General Assembly Resolution on Srebrenica and the Struggle Against Genocide Denial"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: bosniak-scholarship
+
+  - id: src-karcic-2022
+    tier: B
+    kind: journal-article
+    author: Hikmet Karčić
+    title: "Elitocide: Systematic killing of imams in Srebrenica and surroundings 1992-1995"
+    original_title: "Elitocid: Sistematsko ubijanje imama u Srebrenici i okolini od 1992. do 1995. godine"
+    container: Historijski pogledi
+    publisher: Centar za istraživanje moderne i savremene historije Tuzla
+    place: Tuzla
+    year: 2022
+    edition: null
+    volume: "5(7), 457-472"
+    identifiers: {isbn: null, doi: "10.52259/historijskipogledi.2022.5.7.457", archive_org: null, hathitrust: null, url: "https://pogledi.cimoshis.org/wp-content/uploads/2022/06/17.-Hikmet-Karcic-72022.pdf"}
+    access:
+      free_copy: "https://pogledi.cimoshis.org/wp-content/uploads/2022/06/17.-Hikmet-Karcic-72022.pdf"
+      verified_at: 2026-09-24
+      verified_by: crossref-title-match
+      verified_title: "Elitocide: Systematic killing of imams in Srebrenica and surroundings 1992-1995."
+    language: bs
+    region_of_authorship: europe
+    producer: scholarship
+    position: bosniak-scholarship
+
+  - id: src-bakic-2021
+    tier: B
+    kind: journal-article
+    author: Sarina Bakić
+    title: "Srebrenica is not a Metaphor: The Significance of the Srebrenica Memorial Center Potočari for Understanding Genocide"
+    container: "Bosnian Studies: Journal for Research of Bosnian Thought and Culture"
+    publisher: Institute for Bosnian Studies, Preporod
+    place: Sarajevo
+    year: 2021
+    edition: null
+    volume: "5(1), 52-62"
+    identifiers: {isbn: null, doi: "10.47999/bos.2021.5.1.54-64", archive_org: null, hathitrust: null, url: "https://ibs.preporod.ba/bosnian-studies/index.php/journal/article/view/54"}
+    access:
+      free_copy: "https://ibs.preporod.ba/bosnian-studies/index.php/journal/article/download/54/47/"
+      verified_at: 2026-09-24
+      verified_by: crossref-title-match
+      verified_title: "Srebrenica is not a Metaphor"
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: bosniak-scholarship
+
+  - id: src-pintar-2024
+    tier: B
+    kind: journal-article
+    author: Olga Manojlović Pintar
+    title: "Upotreba istorije, poricanje zločina i koncept nekažnjivosti u Republici Srpskoj (1992-2022)"
+    container: Tokovi istorije
+    publisher: Institut za noviju istoriju Srbije
+    place: Belgrade
+    year: 2024
+    edition: null
+    volume: "32(1), 301-338"
+    identifiers: {isbn: null, doi: "10.31212/tokovi.2024.1.man.301-338", archive_org: null, hathitrust: null, url: "https://tokovi.istorije.rs/lat/uploaded/1%202024/Tokovi%20istorije%201%202024%20MANOJLOVIC%20PINTAR.pdf"}
+    access:
+      free_copy: "https://tokovi.istorije.rs/lat/uploaded/1%202024/Tokovi%20istorije%201%202024%20MANOJLOVIC%20PINTAR.pdf"
+      verified_at: 2026-09-24
+      verified_by: crossref-title-match
+      verified_title: "Upotreba istorije, poricanje zločina i koncept nekažnjivosti u Republici Srpskoj (1992–2022)"
+    language: sr
+    region_of_authorship: europe
+    producer: scholarship
+    position: serbian-critical
+
+  - id: src-brouwer-2003
+    tier: B
+    kind: journal-article
+    author: J. W. L. Brouwer
+    title: "Gedegen en evenwichtig? Het NIOD-rapport nader beschouwd"
+    container: "BMGN - Low Countries Historical Review"
+    publisher: KNHG
+    place: The Hague
+    year: 2003
+    edition: null
+    volume: "118(3), 293-307"
+    identifiers: {isbn: null, doi: "10.18352/bmgn-lchr.5880", archive_org: null, hathitrust: null, url: "https://bmgn-lchr.nl/article/view/4308"}
+    access:
+      free_copy: "https://bmgn-lchr.nl/article/download/URN%3ANBN%3ANL%3AUI%3A10-1-106748/4308/4386"
+      verified_at: 2026-09-24
+      verified_by: crossref-title-match
+      verified_title: "Gedegen en evenwichtig? Het NIOD-rapport nader beschouwd"
+    language: nl
+    region_of_authorship: europe
+    producer: scholarship
+    position: dutch-inquiry-debate
+
+  - id: src-blom-2003
+    tier: B
+    kind: journal-article
+    author: J. C. H. Blom, B. G. J. de Graaff and D. C. L. Schoonoord
+    title: "Oordelen in uitersten"
+    container: "BMGN - Low Countries Historical Review"
+    publisher: KNHG
+    place: The Hague
+    year: 2003
+    edition: null
+    volume: "118(3), 337-356"
+    identifiers: {isbn: null, doi: "10.18352/bmgn-lchr.5883", archive_org: null, hathitrust: null, url: "https://bmgn-lchr.nl/article/view/4311"}
+    access:
+      free_copy: "https://bmgn-lchr.nl/article/download/URN%3ANBN%3ANL%3AUI%3A10-1-106756/4311/4389"
+      verified_at: 2026-09-24
+      verified_by: crossref-title-match
+      verified_title: "Oordelen in uitersten"
+    language: nl
+    region_of_authorship: europe
+    producer: niod
+    position: dutch-inquiry-debate
+
+  # ----------------------------------------------------------- Tier D: positional
+  - id: src-atlagic-2021
+    tier: D
+    kind: advocacy
+    author: Marko P. Atlagić and Aleksandar L. Martinović
+    title: "The Srebrenica massacre of 1995 is the biggest triumph of propaganda"
+    original_title: "Masakr u Srebrenici 1995. godine je najveći trijumf propagande"
+    container: Baština
+    publisher: Institut za srpsku kulturu Priština-Leposavić
+    place: Leposavić
+    year: 2021
+    edition: null
+    volume: "55, 147-162"
+    identifiers: {isbn: null, doi: "10.5937/bastina31-34114", archive_org: null, hathitrust: null, url: "https://scindeks-clanci.ceon.rs/data/pdf/0353-9008/2021/0353-90082155147A.pdf"}
+    access:
+      free_copy: "https://scindeks-clanci.ceon.rs/data/pdf/0353-9008/2021/0353-90082155147A.pdf"
+      verified_at: 2026-09-24
+      verified_by: crossref-title-match
+      verified_title: "The Srebrenica massacre of 1995 is the biggest triumph of propaganda"
+    language: sr
+    region_of_authorship: europe
+    producer: serbian-denial-literature
+    position: serbian-denial
+
+# ------------------------------------------------------------- what the free record could not reach
+gaps:
+  - entry: src-icj-2007
+    what: "The ICJ judgment of 26 February 2007 (Bosnia and Herzegovina v. Serbia and Montenegro)"
+    tried: ["https://www.icj-cij.org/sites/default/files/case-related/91/091-20070226-JUD-01-00-EN.pdf", "https://icj-cij.org/sites/default/files/case-related/91/091-20070226-JUD-01-00-EN.pdf", "https://www.worldcourts.com/icj/eng/decisions/2007.02.26_bosnia_v_serbia.htm"]
+    status: "the ICJ site answers the PDF with a Cloudflare challenge page (HTTP 403) and the mirror answered 403; the finding is cited here only as the General Assembly's resolution of 2024 recites it"
+  - entry: src-niod-2002
+    what: "The NIOD report of 2002, in Dutch or in its English edition"
+    tried: ["https://publications.niod.knaw.nl/publications/srebrenicareportniod_en.pdf", "https://www.niod.nl/en/srebrenica-report"]
+    status: "the publications host did not answer and niod.nl answered HTTP 429 twice; the report is known here through the Dutch Supreme Court's findings of fact and the BMGN debate"
+  - entry: src-brunborg-2003
+    what: "The demographic count of the missing and dead"
+    tried: ["https://link.springer.com/content/pdf/10.1023/A:1024949307841.pdf"]
+    status: "paywalled; the publisher's PDF link answers a challenge page"
+  - entry: src-honig-2007
+    what: "Honig's strategic reading of the fall"
+    tried: ["https://doi.org/10.1080/14683850701566260"]
+    status: "paywalled; no open copy found"
+  - entry: src-nettelfield-wagner-2014
+    what: "The standard monograph on the aftermath"
+    tried: ["https://doi.org/10.1017/CBO9781139034968"]
+    status: "paywalled; no open chapter found"
+  - entry: src-wagner-2008
+    what: "The ethnography of the DNA identification"
+    tried: ["https://doi.org/10.1525/9780520942622"]
+    status: "paywalled; no open chapter found"
+  - entry: src-mulaj-2017
+    what: "Mulaj on remembrance and denial"
+    tried: ["https://link.springer.com/content/pdf/10.1007/s10611-017-9690-6.pdf"]
+    status: "paywalled; the publisher's PDF link answers a challenge page"
+  - entry: src-vukusic-2018
+    what: "Vukušić on the Scorpions execution video"
+    tried: ["https://digitalcommons.usf.edu/cgi/viewcontent.cgi?article=1527&context=gsp"]
+    status: "the open-access repository answered HTTP 403 to the PDF"
+  - entry: src-rijnhout-2021
+    what: "Rijnhout on causation and the 10 per cent liability"
+    tried: ["https://www.utrechtjournal.org/articles/543", "https://doi.org/10.5334/ujiel.543"]
+    status: "the journal's article pages answer HTTP 404 since its platform moved; the DOI resolves to the 404"
+  - entry: src-spijkers-2021
+    what: "Spijkers on the Hague cases as legal monuments"
+    tried: ["https://www.utrechtjournal.org/articles/542", "https://doi.org/10.5334/ujiel.542"]
+    status: "the journal's article pages answer HTTP 404 since its platform moved; the DOI resolves to the 404"
+  - entry: src-delpla-2007
+    what: "Delpla's comparison of the UN, French and NIOD inquiries"
+    tried: ["https://doi.org/10.4000/conflits.2221", "https://journals.openedition.org/conflits/pdf/2221"]
+    status: "OpenEdition answers a JavaScript challenge page (Anubis) to every request"
+  - entry: src-ringrose-2020
+    what: "Ringrose on the genocide label in the Security Council"
+    tried: ["https://digitalcommons.usf.edu/cgi/viewcontent.cgi?article=1603&context=gsp"]
+    status: "the open-access repository answered HTTP 403 to the PDF"
+  - entry: src-gerstein-karcic-2025
+    what: "Gerstein and Karčić on the 2024 General Assembly resolution"
+    tried: ["https://doi.org/10.1515/soeu-2025-0001", "https://www.degruyterbrill.com/document/doi/10.1515/soeu-2025-0001/pdf"]
+    status: "the publisher answers a bot check (HTTP 202, empty body) to every request"
+  - what: "The Republika Srpska government's reports of 2002 (Bureau for Relations with the Hague Tribunal) and 2004 (Commission for the Investigation of the Events in and around Srebrenica)"
+    tried: ["https://html.duckduckgo.com/html/?q=Komisija+za+istra%C5%BEivanje+doga%C4%91aja+u+i+oko+Srebrenice+2004+izvje%C5%A1taj+pdf"]
+    status: "no open archive found that holds either report; the search endpoint answered a challenge page; both are known here only as Manojlović Pintar describes them"
+  - what: "The Mladić appeal judgment (IRMCT, 8 June 2021) and the Karadžić appeal judgment (IRMCT, 20 March 2019)"
+    tried: ["https://www.irmct.org/sites/default/files/case_documents/210608-judgement-mladic-mict-13-56-a-en.pdf", "https://www.irmct.org/sites/default/files/case_documents/190320-judgement-karadzic-13-55-A.pdf"]
+    status: "the guessed IRMCT paths answered HTTP 404; both judgments are cited here only as the General Assembly's resolution of 2024 recites them"
+  - what: "The filmed statement Mladić made on entering Srebrenica on 11 July 1995 and the Erdemović testimony at the Rule 61 hearing of 5 July 1996"
+    tried: ["https://www.icty.org/x/cases/karadzic/tdec/en/960711.pdf"]
+    status: "no free copy of the film or the hearing transcript was reached; the Krstić judgment records that the walk through the town was filmed, and Erdemović's words are held here as the sentencing judgment quotes them"
+
+# ------------------------------------------------------------- positions and their adjudication
+positions:
+  - id: tribunal-record
+    name: The tribunal's findings
+    holders: ["ICTY Trial Chamber (Krstić, 2001)", "ICTY Appeals Chamber (Krstić, 2004)", "ICTY Trial Chamber (Mladić, 2017)"]
+    rests_on: [src-icty-krstic-tj, src-icty-krstic-aj, src-icty-mladic-tj, src-icty-erdemovic-sj]
+    claim: "Bosnian Serb forces executed several thousand captured men after the fall, in the range of 7,000 to 8,000, with the intent to destroy the Bosnian Muslims of Srebrenica in part, which the law names genocide."
+    omits: "What the record of the crime says about the fall itself: the judgments settle what was done to the captured men, not what the Security Council, UNPROFOR or the Bosnian government could have done before 11 July 1995."
+    adjudications:
+      - claim: "The total number of men executed is likely to be within the range of 7,000 to 8,000."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-icty-krstic-tj.para84, src-icty-krstic-tj.para80, src-un-ares78282.whole]
+        reasoning: "The tribunal's 2001 range rests on exhumations to 2000 and a stated minimum of 2,028 bodies; the General Assembly's 2024 resolution counts at least 8,372 lives lost. Two producers, two figures; the later and larger count is the one the record now carries, so the tribunal's range stands as a floor, not a total."
+      - claim: "The bodies in the graves were not combat casualties but executed prisoners."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-icty-krstic-tj.para75, src-icty-krstic-tj.para77, src-un-a54549.para2]
+        reasoning: "The Secretariat's report reproduces the confirming judge's 1995 summary of the same evidence, so a second producer records the same finding; but the tribunal itself does not rule out that a share of the bodies were men killed in combat, and a claim the court hedges cannot be stronger on this page than in the judgment."
+  - id: united-nations
+    name: The United Nations' own account
+    holders: ["The Secretary-General (A/54/549, 1999)", "The Security Council (resolution 819, 1993)", "The General Assembly (resolution 78/282, 2024)"]
+    rests_on: [src-un-a54549, src-un-sres-819, src-un-ares78282]
+    claim: "The safe area was declared without the consent of the parties and without a credible military deterrent, and the failure to hold it ran from the Council to the field."
+    omits: "The perpetrators' own chain of command, which an account of institutional failure passes over, and the count of the dead, which the Secretariat's report leaves to the tribunal."
+    adjudications:
+      - claim: "The Netherlands battalion was lightly armed and outnumbered by a besieging force of 1,000 to 2,000 well-equipped soldiers."
+        verdict: supported
+        basis: presence
+        rests_on: [src-un-a54549.para230, src-un-a54549.para472, src-icty-krstic-tj.para20, src-icty-krstic-tj.para21]
+        reasoning: "The tribunal, from its own evidence, puts the peacekeepers at no more than 600 lightly armed men and the Drina Corps at between 1,000 and 2,000 soldiers with tanks, armoured vehicles, artillery and mortars, which is the Secretariat's account in different words. Two producers agree on the numbers and the arms."
+      - claim: "Up to 20,000 people were killed in and around the six safe areas."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-un-a54549.para3]
+        reasoning: "No document in the free record counts the dead across all six safe areas; the tribunal counts Srebrenica alone. The figure stands as the Secretariat's and nothing here can test it."
+  - id: the-lawsuits
+    name: The courts on liability
+    holders: ["Supreme Court of the Netherlands (2019)", "European Court of Human Rights (2013)", "Rijnhout", "Spijkers"]
+    rests_on: [src-nl-hr-2019, src-echr-mothers-2013, src-rijnhout-2021, src-spijkers-2021]
+    claim: "The Dutch State is liable for 10 per cent of the damage to the relatives of the men evacuated from the compound on 13 July 1995 and for nothing before 23:00 on 11 July; the United Nations keeps its immunity."
+    omits: "The men outside the compound, whom the Dutch judgment does not reach, and the perpetrators, whom a civil suit against a state cannot name as defendants."
+    adjudications:
+      - claim: "About 350 male refugees were inside the compound on 13 July 1995."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-nl-hr-2019.sec4, src-icty-krstic-tj.para37]
+        reasoning: "The tribunal's witnesses put at least 300 men inside the perimeter of the compound on the evening of 11 July and 600 to 900 in the crowd outside; the Dutch court's approximately 350 male refugees still in the compound on 13 July is of the same order and from a different producer. The two counts are not of the same day, so they agree without confirming each other."
+      - claim: "The United Nations' immunity from Dutch jurisdiction served a legitimate purpose and was not disproportionate."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-echr-mothers-2013.para154, src-echr-mothers-2013.para169, src-echr-mothers-2013.para162]
+        reasoning: "The Strasbourg court's own decision is the only record of this holding in the free ledger, and the same decision records that the claims commission the 1993 status agreement required was never set up. One producer, so the verdict is capped at qualified, and the court's own finding of the unmet remedy is the qualification."
+  - id: dutch-inquiry-debate
+    name: The Dutch inquiry and its critics
+    holders: ["Blom, de Graaff and Schoonoord (NIOD, 2003)", "Brouwer (2003)"]
+    rests_on: [src-blom-2003, src-brouwer-2003, src-niod-2002]
+    claim: "The NIOD report was accepted by parliament as thorough and balanced, and its reviewers disagreed sharply on whether its length and its lateness were faults or the price of the method."
+    omits: "The report's own text, which the free record does not hold, so this position is known here through the debate about it and through the Dutch Supreme Court's use of it."
+    adjudications:
+      - claim: "The NIOD report's findings of fact were adopted by the Dutch courts as the established facts of the case."
+        verdict: qualified
+        basis: presence
+        rests_on: [src-nl-hr-2019.sec5]
+        reasoning: "The Supreme Court's judgment builds its established facts on the NIOD report and cites it by page, so the report's authority in the Dutch record is documented; but the judgment is one producer and the report itself could not be read, so the verdict is capped at qualified."
+  - id: serbian-denial
+    name: Denial in Serbia and Republika Srpska
+    holders: ["Atlagić and Martinović (2021)"]
+    rests_on: [src-atlagic-2021]
+    described_by: [src-pintar-2024.abstract]
+    claim: "No genocide occurred, because no statement by a Republika Srpska official wanting the Muslim population destroyed can be found; the real number of Muslim victims was between 800 and 1,200; the figure of 8,000 was constructed for propaganda by the United States and the Bosnian leadership."
+    omits: "The forensic record of blindfolds, ligatures and reburied graves that the tribunal set out, and the count of bodies exhumed, which the position's own abstract does not mention."
+    adjudications:
+      - claim: "The real number of Muslim victims is between 800 and 1,200, and the figure of 8,000 is exaggerated."
+        verdict: contradicted
+        basis: presence
+        rests_on: [src-icty-krstic-tj.para80, src-icty-krstic-tj.para84, src-un-ares78282.whole]
+        reasoning: "By 2000 the prosecution's exhumations had established a minimum of 2,028 bodies in the graves examined, above the position's ceiling of 1,200 before a single unexhumed grave is counted; the tribunal's range is 7,000 to 8,000, and the General Assembly's resolution recites at least 8,372 lives lost, a recital of a figure and not a count of its own. Two producers, the tribunal and the General Assembly, contradict the figure."
+      - claim: "No statement by a Republika Srpska official wanting the Muslim population destroyed can be found, so there was no intent and no genocide."
+        verdict: contradicted
+        basis: presence
+        rests_on: [src-atlagic-2021.p16, src-icty-krstic-tj.para598, src-icty-krstic-aj.para37, src-icty-mladic-tj.para5214, src-un-ares78282.whole]
+        reasoning: "The position's strongest line is that its authors could not find a statement of intent. The tribunal did not infer intent from a statement: the Trial Chamber found the intent to kill all the military-aged men to be, in itself, an intent to destroy the group in part, and the Appeals Chamber affirmed that the forces deliberately and methodically killed the male prisoners solely on the basis of their identity and called the crime genocide; the Mladić chamber convicted on the Srebrenica genocide count; the General Assembly recites eight genocide verdicts and the ICJ's 2007 determination. The absence the position relies on is not the test the courts applied, and two producers carry the finding."
+      - claim: "The United States asked the Bosnian leadership to have 5,000 Muslims killed to justify bombing the Serbs."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-atlagic-2021.p16, src-atlagic-2021.abstract]
+        reasoning: "No document in the free record carries this conversation or anything about it, and a claim about a private conversation cannot be tested against artifacts that do not mention it. It is published here as the position's own words, in the article's own English summary, and nothing more."
+  - id: serbian-critical
+    name: Serbian critical historiography
+    holders: ["Manojlović Pintar (Institute for Recent History of Serbia, 2024)"]
+    rests_on: [src-pintar-2024]
+    claim: "Three official reports on Srebrenica, of 2002, 2004 and 2021, reached conflicting conclusions, and they reflect shifts in Republika Srpska's official political discourse."
+    omits: "The reports themselves, which the free record does not hold, so what they concluded is known here only as this scholarship summarises them."
+    adjudications:
+      - claim: "Both the International Court of Justice and the tribunal classified the crime as genocide."
+        verdict: supported
+        basis: presence
+        rests_on: [src-icty-krstic-aj.para37, src-un-ares78282.whole]
+        reasoning: "The Appeals Chamber's judgment names the crime genocide, and the General Assembly's 2024 resolution recites the ICJ's determination of 26 February 2007 that the acts committed in Srebrenica were genocide. Two producers, the tribunal and the General Assembly, carry the two classifications."
+      - claim: "The Republika Srpska government's reports of 2002 and 2004 reached conflicting conclusions."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-pintar-2024.p32]
+        reasoning: "Neither report could be read from an open archive, so the conflict between them is recorded here as this scholarship describes it and cannot be tested against the documents."
+  - id: bosniak-scholarship
+    name: Bosniak scholarship and memory
+    holders: ["Karčić (Institute for the Islamic Tradition of Bosniaks, 2022)", "Bakić (University of Sarajevo, 2021)", "Gerstein and Karčić (2025)"]
+    rests_on: [src-karcic-2022, src-bakic-2021, src-gerstein-karcic-2025]
+    claim: "The killing of the enclave's imams from 1992 was one segment of a genocide against the Bosniaks of the Drina valley, and the memorial at Potočari is the ground on which continuing denial is fought."
+    omits: "The wartime conduct of the enclave's own forces, which the tribunal's record discusses and this scholarship leaves to the courts."
+    adjudications:
+      - claim: "A genocide took place in and around Srebrenica, and its denial continues."
+        verdict: supported
+        basis: presence
+        rests_on: [src-icty-krstic-aj.para37, src-un-ares78282.whole]
+        reasoning: "The tribunal's appellate finding and the General Assembly's 2024 resolution, which condemns any denial of the genocide as a historical event, carry both halves of the claim from two producers."
+      - claim: "The Islamic Community's May 1995 report counted 51 imams in the Srebrenica area, and they were sought out to be killed."
+        verdict: untestable
+        basis: absence
+        rests_on: [src-karcic-2022.p2]
+        reasoning: "No judgment or UN document in the free record counts the enclave's imams or records the targeting of clergy as such, so the claim stands on the scholarship's own war reports and testimonies and cannot be tested here."
+
+# ------------------------------------------------------------- where the record disagrees
+contested:
+  - id: death-toll
+    claim: "How many men and boys were killed after the fall of Srebrenica"
+    rows:
+      - position: tribunal-record
+        holds: "Several thousand executed; the total likely within the range of 7,000 to 8,000, with a minimum of 2,028 bodies in the graves exhumed by 2000."
+        figures: ["7000", "8000", "2028"]
+        source: src-icty-krstic-tj
+        locator: para84
+      - position: united-nations
+        holds: "At least 8,372 lives lost, as the General Assembly's resolution of 23 May 2024 recites."
+        figures: ["8372"]
+        source: src-un-ares78282
+        locator: whole
+      - position: serbian-denial
+        holds: "Between 800 and 1,200 Muslim victims in Srebrenica and its surroundings; the figure of 8,000 exaggerated and politically constructed."
+        figures: ["800", "1200"]
+        source: src-atlagic-2021
+        locator: abstract
+  - id: responsibility-for-the-fall
+    claim: "Who is answerable for the fall of the safe area"
+    rows:
+      - position: united-nations
+        holds: "The safe areas were established by the Security Council without the consent of the parties and without any credible military deterrent; the fundamental mistakes lay above the units in the field."
+        figures: []
+        source: src-un-a54549
+        locator: para499
+      - position: tribunal-record
+        holds: "From the outset both parties violated the safe area agreement; the Bosnian Serb strategy of limiting aid convoys is documented, and the enclave's 28th Division was not as weak as it has been portrayed."
+        figures: []
+        source: src-icty-krstic-tj
+        locator: para22
+      - position: the-lawsuits
+        holds: "The Dutch State cannot be held liable for Dutchbat's inability to prevent the capture of Srebrenica; its acts until 23:00 on 11 July 1995 were under UN command and control."
+        figures: []
+        source: src-nl-hr-2019
+        locator: sec5
+      - position: serbian-denial
+        holds: "The Army of Republika Srpska had no plan to capture Srebrenica and only wanted to reduce the enclave to the town."
+        figures: []
+        source: src-atlagic-2021
+        locator: p16
+  - id: the-word-genocide
+    claim: "Whether the killing is genocide"
+    rows:
+      - position: tribunal-record
+        holds: "The law calls the massacre at Srebrenica by its proper name: genocide."
+        figures: []
+        source: src-icty-krstic-aj
+        locator: para37
+      - position: united-nations
+        holds: "Eight tribunal judgments contain genocide verdicts, and the ICJ determined in 2007 that the acts committed in Srebrenica constituted genocide."
+        figures: []
+        source: src-un-ares78282
+        locator: whole
+      - position: serbian-denial
+        holds: "There was no genocide because genocide did not occur; crimes were committed, but the Army of Republika Srpska did not intend to commit genocide."
+        figures: []
+        source: src-atlagic-2021
+        locator: secsummary
+
+# ------------------------------------------------------------- exhibits
+exhibits:
+  - id: ex-res-819
+    kind: document
+    title: "Security Council resolution 819 (1993), operative paragraph 1"
+    creator: United Nations Security Council
+    date: "16 April 1993"
+    repository: United Nations Official Document System
+    accession: "S/RES/819 (1993)"
+    licence: UN document, public
+    url: "https://documents.un.org/doc/undoc/gen/n93/221/90/pdf/n9322190.pdf"
+    source: src-un-sres-819
+    locator: op1
+  - id: ex-krstic-84
+    kind: document
+    title: "Krstić Trial Judgement, paragraph 84"
+    creator: ICTY Trial Chamber
+    date: "2 August 2001"
+    repository: ICTY court records
+    accession: "IT-98-33-T"
+    licence: UN tribunal record, public
+    url: "https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf"
+    source: src-icty-krstic-tj
+    locator: para84
+  - id: ex-a54549-503
+    kind: document
+    title: "The Secretary-General's report, paragraph 503"
+    creator: United Nations Secretary-General
+    date: "15 November 1999"
+    repository: United Nations Official Document System
+    accession: "A/54/549"
+    licence: UN document, public
+    url: "https://documents.un.org/doc/undoc/gen/n99/348/76/pdf/n9934876.pdf"
+    source: src-un-a54549
+    locator: para503
+  - id: ex-memorial-2009
+    kind: image
+    title: "Gravestones at the Srebrenica-Potočari memorial"
+    creator: Michael Büker
+    date: "18 March 2009"
+    repository: Wikimedia Commons
+    accession: "File:Srebrenica_massacre_memorial_gravestones_2009_1.jpg"
+    licence: CC BY-SA 3.0
+    url: "https://commons.wikimedia.org/wiki/File:Srebrenica_massacre_memorial_gravestones_2009_1.jpg"
+    image: "https://upload.wikimedia.org/wikipedia/commons/0/07/Srebrenica_massacre_memorial_gravestones_2009_1.jpg"
+    shows: "the memorial cemetery at Potočari as it stood in March 2009, fourteen years after the killing"
+    does_not_show: "anything of July 1995; the graves photographed are reburials after identification, not the primary or secondary graves the tribunal describes"
+  - id: ex-funeral-2010
+    kind: image
+    title: "Rows of graves at the Potočari memorial on the day of the 2010 funeral"
+    creator: Paul Katzenberger
+    date: "11 July 2010"
+    repository: Wikimedia Commons
+    accession: "File:Graves_srebrenica_bosnia_and_herzegovina.jpg"
+    licence: CC BY-SA 3.0
+    url: "https://commons.wikimedia.org/wiki/File:Graves_srebrenica_bosnia_and_herzegovina.jpg"
+    image: "https://upload.wikimedia.org/wikipedia/commons/7/73/Graves_srebrenica_bosnia_and_herzegovina.jpg"
+    shows: "the memorial cemetery on 11 July 2010, the anniversary burial; the file page dates it 2010, where the event record dates the same image 2007"
+    does_not_show: "the crime, the compound or the graves of 1995"
+
+# ------------------------------------------------------------- the thesis's own analysis
+analyses:
+  - id: an-crowd-counts
+    title: One crowd, ten counts
+    method: "Every figure the fetched primary documents give for the number of people who gathered at Potočari on 11 to 13 July 1995, one row per figure, with the document and the moment it counts. The result is the range of the column."
+    finding: "The record counts the crowd at Potočari at between 15,000 and 30,000, and the two lowest figures are the two the battalion commander wrote on the day."
+    confidence: "high for the range, which is the extreme of ten figures from seven documents of two producers; the figures count different moments over three days, so the range is a spread of counts, not a change in the crowd"
+    against: "the tribunal's own paragraph 34 gives 20,000 to 30,000 as the number who had fled to the compound and surrounding areas, a wider upper bound than paragraph 37's 25,000 from the same producer; it is included as the last two rows rather than resolved"
+    result: [15000, 30000]
+    derivation:
+      compute: range
+      column: count
+      columns: [document, moment, count]
+      rows:
+        - {document: "Karremans, report of 12 July 1995 (P 404/88)", moment: "as of 12 July", count: 17500, extract: src-icty-krstic-tj.fn2}
+        - {document: "Mandžić, testimony (T. 963)", moment: "the crowd at Potočari", count: 25000, extract: src-icty-krstic-tj.fn2}
+        - {document: "UNMO fax of 13 July 1995 (P 77/26), low", moment: "still to be transported on 13 July", count: 20000, extract: src-icty-krstic-tj.fn2}
+        - {document: "UNMO fax of 13 July 1995 (P 77/26), high", moment: "still to be transported on 13 July", count: 25000, extract: src-icty-krstic-tj.fn2}
+        - {document: "Krstić Trial Judgement, paragraph 37, low", moment: "evening of 11 July", count: 20000, extract: src-icty-krstic-tj.para37}
+        - {document: "Krstić Trial Judgement, paragraph 37, high", moment: "evening of 11 July", count: 25000, extract: src-icty-krstic-tj.para37}
+        - {document: "UN military observers, report at 1600 hours (A/54/549, paragraph 308)", moment: "1600 hours, 11 July", count: 20000, extract: src-un-a54549.para308}
+        - {document: "Karremans, message after meeting Mladić (A/54/549, paragraph 315)", moment: "12 July", count: 15000, extract: src-un-a54549.para315}
+        - {document: "Krstić Trial Judgement, paragraph 34, low", moment: "when the air strikes were abandoned, 11 July", count: 20000, extract: src-icty-krstic-tj.para34}
+        - {document: "Krstić Trial Judgement, paragraph 34, high", moment: "when the air strikes were abandoned, 11 July", count: 30000, extract: src-icty-krstic-tj.para34}
+  - id: an-execution-sites
+    title: The execution sites in the tribunal's own table of contents
+    method: "The mass execution sites are listed as the sub-headings (a) to (i) of the Krstić Trial Judgement's section on the Drina Corps' involvement, each with the date the chamber gave it. One row per sub-heading; the result is the count."
+    finding: "The chamber's own table of contents lists nine mass execution sites: eight dated from 13 to 16 July 1995, four of them on 13 July, and the ninth, Kozluk, undated in its heading."
+    confidence: "high: the count is of headings in a document held whole, and a heading is either present or not"
+    against: "none found in the Krstić trial judgment's table of contents, which is the only list of sites in the free record; heading (j) covers smaller-scale executions the count leaves out, so nine is the chamber's count of mass execution sites, not of all killings"
+    result: 9
+    derivation:
+      compute: count
+      column: site
+      columns: [heading, site, date]
+      rows:
+        - {heading: "(a)", site: "Jadar River", date: "13 July 1995, morning", extract: src-icty-krstic-tj.toc}
+        - {heading: "(b)", site: "Cerska Valley", date: "13 July 1995, afternoon", extract: src-icty-krstic-tj.toc}
+        - {heading: "(c)", site: "Kravica Warehouse", date: "13 July 1995, late afternoon", extract: src-icty-krstic-tj.toc}
+        - {heading: "(d)", site: "Tišća", date: "13 to 14 July 1995", extract: src-icty-krstic-tj.toc}
+        - {heading: "(e)", site: "Grbavci School and Orahovac", date: "14 July 1995", extract: src-icty-krstic-tj.toc}
+        - {heading: "(f)", site: "Petkovci School and Petkovci Dam", date: "14 to 15 July 1995", extract: src-icty-krstic-tj.toc}
+        - {heading: "(g)", site: "Pilica School and Branjevo Military Farm", date: "14 to 16 July 1995", extract: src-icty-krstic-tj.toc}
+        - {heading: "(h)", site: "Pilica Cultural Dom", date: "16 July 1995", extract: src-icty-krstic-tj.toc}
+        - {heading: "(i)", site: "Kozluk", date: "undated in the heading", extract: src-icty-krstic-tj.toc}
+  - id: an-graves-disturbed
+    title: How many of the primary graves were dug up
+    method: "From the tribunal's summary of the prosecution's exhumations to 2000: the number of primary gravesites and the number of them later disturbed. The result is the share, disturbed over primary."
+    finding: "Of the 14 primary gravesites the prosecution had exhumed by 2000, 8 had been dug up and their bodies moved: 4 in every 7."
+    confidence: "high: both figures are in one sentence of the judgment, and the share is arithmetic"
+    against: "none found in the Krstić trial judgment, the Secretary-General's report or the Mladić judgment volume held; the share is of the graves exhumed by 2000, not of all graves, and the judgment itself says the graves are still being found"
+    result: 0.5714
+    derivation:
+      compute: ratio
+      column: disturbed
+      over: primary
+      columns: [exhumed, primary, disturbed, secondary]
+      rows:
+        - {exhumed: 21, primary: 14, disturbed: 8, secondary: 7, extract: src-icty-krstic-tj.para71}
+  - id: an-clock-11-july
+    title: The afternoon of 11 July 1995 on two clocks
+    method: "Every clock time the two fetched records give for the afternoon of 11 July 1995, one row per time, with the event it times and the producer. The result is the range of the column."
+    finding: "Four clock times from two records run from 1407 to 1600: the Serb flag over the town at 1407 and the only NATO strike at 1440 in the Secretariat's account, the strike at around 1430 in the tribunal's, and the observers' report of upwards of 20,000 people converging on Potočari at 1600."
+    confidence: "moderate: the two producers put the one strike ten minutes apart, and the tribunal's 'around 1430' is an approximation the Secretariat's 'approximately 1440' does not confirm"
+    against: "the two records disagree by ten minutes on the strike, and neither gives a time for Mladić's entry into the town, so the table cannot say whether the strike came before or after it"
+    result: [1407, 1600]
+    derivation:
+      compute: range
+      column: clock
+      columns: [event, producer, clock]
+      rows:
+        - {event: "Serb flag hoisted above a bakery at the southern end of the town", producer: un-secretariat, clock: 1407, extract: src-un-a54549.para304}
+        - {event: "NATO bombs VRS tanks advancing towards the town", producer: icty, clock: 1430, extract: src-icty-krstic-tj.para34}
+        - {event: "Two NATO aircraft drop two bombs on vehicles south of the town", producer: un-secretariat, clock: 1440, extract: src-un-a54549.para305}
+        - {event: "UN military observers report upwards of 20,000 converging on Potočari", producer: un-secretariat, clock: 1600, extract: src-un-a54549.para308}

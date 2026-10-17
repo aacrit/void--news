@@ -1,0 +1,9 @@
+source: src-madiou-1848-t3
+locator: p142
+url: https://archive.org/download/histoiredhaiti03madi/histoiredhaiti03madi_djvu.txt
+read: 2026-09-25
+note: tome III, page 142: the paragraph of the proclamation that carries J'ai vengé l'Amérique, which the layer prints as Jal vengé
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+Oui, nous avons rendu à ces vrais cannibales, guerre pour guerre, crimes pour crines, outrages pour outrages. Oui, j'ai sauv mon pays, Jal vengé l'Amérique. Mon orgueil et ma gloire sont dans l’avéu que j'en fais à La face des “mortels et des dieux. Qu'importe le Jugement que prononceront sur moi les, races contemporaines et futures? J'ai fait mon devoir; ma propre estime me reste; 11 me suffit. Mais que dis-je? La conservation de mes

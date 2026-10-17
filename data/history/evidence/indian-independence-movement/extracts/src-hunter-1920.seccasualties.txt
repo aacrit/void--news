@@ -1,0 +1,8 @@
+source: src-hunter-1920
+locator: seccasualties
+url: https://archive.org/download/disordersinquiry00unse/disordersinquiry00unse_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+note: 'afiout' is the layer's reading of 'about'; the asterisk is a note marker ('Social service league')
+
+At first it was thought that afiout 200 had been killed and this number was apparently referred to as the list of casualties. Recently an investigation into the numbers has been completed by the Government with the assistance of a list compiled by the Allahabad Seva Samiti* As a result of this investi¬ gation it was discovered that approximately 379 people were killed. Of these about 87 were strangers or villagers who had come into Amritsar from the neighbouring district. No figure was given for the wounded ; but their number may be taken as probably three times as great as the number of killed.

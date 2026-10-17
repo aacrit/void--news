@@ -1,0 +1,6 @@
+source: src-hiroshima-city-deaths
+locator: para1
+url: https://www.city.hiroshima.lg.jp/english/peace/1029875/1010074.html
+read: 2026-10-05
+
+The population of Hiroshima when the bomb was dropped was approximately 350,000. This figure includes residents, military personnel, people from surrounding towns and villages mobilized to demolish buildings in the city, and people from Japan's colonies: Korea, Taiwan, and the Chinese continent. Some of the latter were conscripted laborers. A few foreign students from China and Southeast Asia and U.S. prisoners of war were also in the city.

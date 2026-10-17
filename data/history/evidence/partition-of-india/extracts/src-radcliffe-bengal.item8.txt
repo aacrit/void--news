@@ -1,0 +1,7 @@
+source: src-radcliffe-bengal
+locator: item8
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: item n is paragraph n of Annexure A, the schedule of the Bengal award
+
+8. The line shall then run southwards along the boundary between the Districts of Khulna and 24-Parganas, to the point where •that boundary meets the Bay of Bengal.

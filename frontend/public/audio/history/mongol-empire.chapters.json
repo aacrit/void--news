@@ -1,0 +1,82 @@
+{
+ "version": "1.2.0",
+ "title": "The Mongol Empire",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 69.686
+  },
+  {
+   "startTime": 69.686,
+   "title": "The cangue",
+   "endTime": 131.986
+  },
+  {
+   "startTime": 131.986,
+   "title": "The Onon river, 1206",
+   "endTime": 202.02
+  },
+  {
+   "startTime": 202.02,
+   "title": "Otrar, 1219",
+   "endTime": 272.63
+  },
+  {
+   "startTime": 272.63,
+   "title": "Karakorum, 1254",
+   "endTime": 318.176
+  },
+  {
+   "startTime": 318.176,
+   "title": "Yamen, 1279",
+   "endTime": 349.421
+  },
+  {
+   "startTime": 349.421,
+   "title": "Five accounts",
+   "endTime": 358.81
+  },
+  {
+   "startTime": 358.81,
+   "title": "The Mongol court",
+   "endTime": 423.063
+  },
+  {
+   "startTime": 423.063,
+   "title": "The Chinese court",
+   "endTime": 489.109
+  },
+  {
+   "startTime": 489.109,
+   "title": "The Persian world",
+   "endTime": 544.957
+  },
+  {
+   "startTime": 544.957,
+   "title": "The Russian principalities",
+   "endTime": 603.407
+  },
+  {
+   "startTime": 603.407,
+   "title": "The revisionist argument",
+   "endTime": 655.152
+  },
+  {
+   "startTime": 655.152,
+   "title": "What each one leaves out",
+   "endTime": 736.308
+  },
+  {
+   "startTime": 736.308,
+   "title": "Legacy",
+   "endTime": 775.347
+  },
+  {
+   "startTime": 775.347,
+   "endTime": 788.447,
+   "title": "Also from Void News"
+  }
+ ]
+}

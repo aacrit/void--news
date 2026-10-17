@@ -1,0 +1,8 @@
+source: src-commissaires-17930702-fr
+locator: sec1
+url: https://archive.org/download/proclamation10sain/proclamation10sain_djvu.txt
+read: 2026-09-25
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: the paragraph beginning Non, la Colonie ne périra pas, in the French column
+
+Non, la Colonie ne périra pas; elle ne courbera pas la tête fous le joug des tyrans; elle renaîtra de fes cendres; elle fera régénérée ; elle deviendra comme la France la terre de la liberté et de l’épalité, et la république françaife y trouvera encore des enfans dignes d'elle,

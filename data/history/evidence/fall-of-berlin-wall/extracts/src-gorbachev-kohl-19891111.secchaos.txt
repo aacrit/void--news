@@ -1,0 +1,8 @@
+source: src-gorbachev-kohl-19891111
+locator: secchaos
+url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/docs/1989-11-11%20Gorbachev-Kohl.pdf
+read: 2026-10-09
+note: the same record
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+I think, Mr. Chancellor, we are experiencing a historic turn toward new relations, toward a new world. And we should not allow ourselves to impair this turn by our awkward actions, or, moreover, to push developments toward an unpredictable course, toward chaos, by forcing events. That would be undesirable in all respects.

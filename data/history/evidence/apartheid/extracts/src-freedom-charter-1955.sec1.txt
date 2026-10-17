@@ -1,0 +1,7 @@
+source: src-freedom-charter-1955
+locator: sec1
+url: https://omalley.nelsonmandela.org/index.php/site/q/03lv01538/04lv01600/05lv01611/06lv01612.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+The people shall govern! Every man and woman shall have the right to vote for and to stand as a candidate for all bodies which make laws; All people shall be entitled to take part in the administration of the country; The rights of the people shall be the same, regardless of race, colour or sex; All bodies of minority rule, advisory boards, councils and authorities shall be replaced by democratic organs of self-government.

@@ -1,0 +1,8 @@
+source: src-castro-cc-19680126
+locator: secfn1
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf
+read: 2026-10-07
+note: the PDF's text layer, line breaks folded to spaces; where the layer breaks a word at a line end its hyphen is kept as it prints it ('docu- ment'); nothing is corrected
+note: printed page 87: the Bulletin editors' footnote 1 to the speech, on the Castro-Khrushchev correspondence of 26-31 October 1962; the unclosed parenthesis is the Bulletin's
+
+1. [Ed. note: Castro is here alluding to his exchange of correspondence with Khrushchev of 26-31 October 1962 (esp. Castro’s letters of October 26 and 31 and Khrushchev’s letter of October 30), first released by the Cuban government and published in the Cuban Communist Party newspaper Granma on 23 Novem- ber 1990, and published as an appendix to James G. Blight, Bruce J. Allyn, and David A. Welch, Cuba On the Brink: Castro, the Missile Crisis, and the Soviet Collapse (New York: Pantheon, 1993, 474-91.]

@@ -1,0 +1,7 @@
+source: src-hirohito-19450814-ja
+locator: para2
+url: https://www.mext.go.jp/b_menu/hakusho/html/others/detail/1317941.htm
+read: 2026-10-07
+note: the rescript's second paragraph as the Ministry prints it, in the original Japanese; the page prints 共同宜言 here and 共同宣言 (joint declaration) in the third paragraph; the extract keeps the page's glyph and the signed original was not read; no English rendering is held (see gaps)
+
+朕ハ帝國政府ヲシテ米英支蘇四國ニ對シ其ノ共同宜言ヲ受諾スル旨通告セシメタリ

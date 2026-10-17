@@ -1,0 +1,8 @@
+source: src-cdm-chronicle-198911
+locator: sec2130
+url: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month11/?month=11&year=1989&moc=1
+read: 2026-10-09
+note: the 9.30 p.m. entry
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+9 November 1989 9.30 p.m. Between 500 and 1,000 people have gathered at the Bornholmer Strasse border crossing point. The State Security Service decides on a "valve solution", i.e. to let people through the border gradually.

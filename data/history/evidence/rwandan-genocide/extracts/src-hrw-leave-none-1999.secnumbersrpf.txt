@@ -1,0 +1,9 @@
+source: src-hrw-leave-none-1999
+locator: secnumbersrpf
+url: https://www.hrw.org/reports/1999/rwanda/
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: section 'Numbers'
+note: the edition's contents page is the entry's free copy; the passage was read on its chapter page, https://www.hrw.org/reports/1999/rwanda/Geno1-3-04.htm
+
+The first estimate of numbers slain by the RPF was made by Gersony in his 1994 report. He concluded that the RPF killed between 25,000 and 45,000 persons in the months of April to August 1994. Seth Sendashonga, former minister of the interior and early member of the RPF, estimated that the RPF killed some 60,000 people between April 1994 and August 1995, with more than half killed in the first four months of that period. It seems likely, although not certain, that these estimates include persons killed in the course of combat, both civilians and militia.

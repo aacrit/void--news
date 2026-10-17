@@ -1,0 +1,8 @@
+source: src-trc-v1-ch2
+locator: para46
+url: https://www.justice.gov.za/trc/report/finalreport/Volume%201.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation and glyph errors are kept as the layer prints them
+note: the Report spells the town 'Sharpville' here
+
+The sixty-nine people killed at Sharpville were not armed Umkhonto weSizwe (MK) cadres or even human rights’ activists. They were just ordinary men and women protesting against the hated dompas.

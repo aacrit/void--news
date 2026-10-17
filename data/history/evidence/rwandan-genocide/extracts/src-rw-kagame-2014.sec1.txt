@@ -1,0 +1,8 @@
+source: src-rw-kagame-2014
+locator: sec1
+url: https://www.paulkagame.rw/historical-clarity-is-a-duty-of-memory-that-we-cannot-escape/
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: the first quoted passage of the presidency's account of the speech; the opening quotation mark sits before 'We' in the page
+
+We have pursued justice and reconciliation as best we could. But it does not restore what we lost. Time and again these past twenty years, Rwandans have given of themselves. You have stood before the community to bear witness and listened to others do the same. You have taken responsibility and you have forgiven. Your sacrifices are a gift to the nation. They are the seed from which the new Rwanda grows. Thank you for allowing your humanity and patriotism to prevail over your grief and loss. Thank you very much.”

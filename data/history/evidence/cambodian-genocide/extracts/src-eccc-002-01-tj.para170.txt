@@ -1,0 +1,7 @@
+source: src-eccc-002-01-tj
+locator: para170
+url: https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/2014-08-07%2017:04/E313_Trial%20Chamber%20Judgement%20Case%20002_01_ENG.pdf
+read: 2026-09-25
+note: the paragraph's list of provincial towns is cut after Phnom Penh at the end of its second sentence
+
+170. On 17 April 1975, the Khmer Rouge moved at least two million people from Phnom Penh.498 The evacuees were provided insufficient, if any, accommodation and

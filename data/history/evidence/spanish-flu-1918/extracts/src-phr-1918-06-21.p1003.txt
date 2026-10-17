@@ -1,0 +1,8 @@
+source: src-phr-1918-06-21
+locator: p1003
+url: https://archive.org/download/jstor-4574823/4574823_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+note: the stray « before may is a text-layer artefact
+
+PUBLIC HEALTH REPORTS VOL. 33 JUNE 21, 1918 No. 25 Influenza a Probable Cause of Fever of Undetermined Nature in Southern States. Fevers of an undetermined nature were reported during April and May at various points from Norfolk to Louisiana. An examination of the records and reports of the physicians who have treated these cases leads to the belief that these fevers were mainly influenza of mild type. It is possible, however, that all cases reported were not of the same disease, and in one locality in Louisiana dengue «may have occurred.

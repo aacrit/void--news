@@ -1,0 +1,8 @@
+source: src-crs-agent-orange-2020
+locator: secranchhand
+url: https://www.congress.gov/crs_external_products/R/PDF/R44268/R44268.23.pdf
+read: 2026-10-09
+note: the Congressional Research Service PDF, its text layer, line breaks folded to spaces
+note: footnote numbers print inline
+
+During the Vietnam War,1 the U.S. military conducted Operation Ranch Hand, a program that sprayed an estimated 18-20 million gallons of herbicides—including approximately 11-12 million gallons of Agent Orange2—over about 12,000 square miles of southern Vietnam between 1961 and 1971.3

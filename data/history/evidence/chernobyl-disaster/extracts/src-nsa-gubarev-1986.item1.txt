@@ -1,0 +1,8 @@
+source: src-nsa-gubarev-1986
+locator: item1
+url: https://nsarchive.gwu.edu/sites/default/files/documents/6279556/National-Security-Archive-Doc-12-Letter-from.pdf
+read: 2026-10-07
+note: the letter's opening and its point 1
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+From May 4 to 9, I was in the area of the Chernobyl Power Station. I believe I have an obligation to share some of my observations. 1. Evacuation of Pripyat. The situation with radiation in the city was clear within an hour. No planned emergency evacuation measures existed: people did not know what to do. According to all instructions and orders, which have been in existence for the last 25 years, the decision regarding evacuation of the population from the danger zone had to be taken by the local leadership. By the time the Government commission arrived, they could have evacuated everyone even on foot. But nobody was willing to take the responsibility (the Swedes first evacuated people from the zone of their station, and only later started to find out that the radiation release did not happen there).

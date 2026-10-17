@@ -1,0 +1,7 @@
+source: src-gainot-mace-2003
+locator: abstract
+url: https://www.persee.fr/doc/outre_1631-0438_2003_num_90_340_4041
+read: 2026-09-25
+note: the English abstract as the Persée record prints it (the French abstract follows it on the record)
+
+The French expédition sent by Bonaparte to Santo Domingo in 1802- 1803 passed through several phases. This article recounts the last period of the French occupation, from the death of Leclerc in November 1802 to the capitulation of Rochambeau in November 1803. It examines the reasons that transformed the possible defeat into a probable defeat. The spread of yellow fever as well as the renewal of the war with Britain are facile explanations concealing the direct responsibilities of the colonial authorities. But thèse authorities themselves were divided and looked for scapegoats. At time of the arrival of Leclerc, the black troops were divided, but from then on the division reigned among the French. Confronted with this double threat of the dissolution of their authority and the reestablishment of slavery, these black officers temporarily reunited, and mobilized the majority of the population behind the goal of national independence

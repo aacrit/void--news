@@ -1,0 +1,7 @@
+source: src-clarkson-1808
+locator: secbrookes2
+url: https://www.gutenberg.org/cache/epub/10633/pg10633.txt
+read: 2026-10-09
+note: the plate of the Brookes; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+The advantages, however, obtained by it were considerable; for the Brookes was now restricted to 450 slaves, whereas it was proved that she carried 609 in a former voyage.

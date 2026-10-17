@@ -1,0 +1,6 @@
+rendering: void-translation
+of: src-pintar-2024.p32
+names: Сребреници=Srebrenica; Републике Српске=Republika Srpska; Хашким трибуналом=Hague Tribunal
+checked_against: src-pintar-2024.p37
+
+The article presents the conflicting conclusions of three reports on Srebrenica: of the Bureau of the Government of Republika Srpska for Relations with the Hague Tribunal of the Government of Republika Srpska (2002), of the Commission for the Investigation of the Events in and around Srebrenica from 10 to 19 July 1995 (2004), and of the Independent International Commission for the Investigation of the Suffering of All Peoples in the Srebrenica Region in the Period 1992–1995 (2021).

@@ -1,0 +1,7 @@
+source: src-clarkson-1808
+locator: secquakers
+url: https://www.gutenberg.org/cache/epub/10633/pg10633.txt
+read: 2026-10-09
+note: the footnote to chapter X; the list of names is a table the text file does not carry; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+All the members were of the society of the Quakers, except Mr. Sharp, Sansom, and myself. Joseph Gurney Bevan was present on the day before this meeting. He desired to belong to the society, but to be excused from belonging to the committee.

@@ -1,0 +1,7 @@
+source: src-un-sres-929
+locator: op4
+url: https://documents.un.org/doc/undoc/gen/n94/260/27/pdf/n9426027.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+4. Decides that the mission of Member States cooperating with the Secretary-General will be limited to a period of two months following the adoption of the present resolution, unless the Secretary-General determines at an earlier date that the expanded UNAMIR is able to carry out its mandate;

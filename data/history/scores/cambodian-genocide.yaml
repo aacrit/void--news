@@ -1,0 +1,362 @@
+# The documentary score for "The Cambodian Genocide", as note data on sampled
+# real instruments. Rendered by pipeline/history/score.py; the samples live in
+# ~/.cache/void-score-samples (never in the repository) and are pinned by sha256.
+#
+# The music claims nothing about the event. Nothing here imitates a regional,
+# religious or folk music, a named instrument of the region, a bell, a gong, a
+# loudspeaker or a march: the palette is a viola section, a bassoon and one
+# double bass, bowed and plucked, each presented as what it is. None of the
+# three earlier composed scores uses any of them. The theme is built from the
+# house cell (tonic, fifth, tonic, third: the shape of the On Air motif), in F,
+# in the minor mode with the seventh left unraised and the sixth raised (D, not
+# Db), heard once as a passing note, at 48 beats a minute in two-beat bars:
+# eight bars, sixteen beats of exactly 1.25 s. The cell is taken with its fifth
+# BELOW the tonic rather than above, so the line's first move is a fall; its one
+# reach upward is a fourth, to Bb, and from there it walks down by step through
+# the whole second half and stops on the fifth, C, a fourth under where it
+# began. It does not come home under the title. The outro takes the same
+# descent one step further and lands on F. The viola never ornaments, the
+# bassoon breathes where a player would, and the plucked bass keeps a count,
+# one note to a beat, under procedure. Testimony and rupture carry no bed at
+# all (mood.py): a survivor's words and the moment itself are in silence.
+#
+# Cues are keyed to the producer's moods and segment kinds, never to a line of
+# text, so the cinematic variant renders from this manifest whatever moods it
+# picks. Where each cue plays is the producer's (mood_plan): the theme under
+# the TITLE, the first word inside its release; beds under the spoken body by
+# mood, ducked to the mood's floor; transitions in the clear before a scene;
+# the rupture entry on the last word of the moment, or 1,200 ms after a clip's
+# trailing silence, never under it; the outro at the close, with the house
+# promo riding its held bars, so it is at most 13.75 s and silent at its end.
+slug: cambodian-genocide
+title: The Cambodian Genocide
+version: 1
+key: F
+mode: minor, with the seventh left unraised and the sixth raised
+tempo_bpm: 48
+house_cell: [0, 7, 0, 3]
+textures: []
+
+instruments:
+  viola:
+    library: VSCO 2 Community Edition (Versilian Studios), Viola Section, sustain vibrato, softest layer (v1). The files are named an octave below what they sound (the file "D3" measures 294 Hz, D4); `note` is the sounding pitch. Five recordings cover the line at one semitone of shift, two at most
+    role_as_presented: a viola section
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: sustain
+    attack_s: 0.7
+    release_s: 0.9
+    loop_start_s: 1.4
+    gain_db: 0.0
+    samples:
+      - {file: vsco2ce/Strings/Viola Section/susvib/ViolaEns_susvib_E2_v1_1.wav, note: E3, sha256: 5c4c636583ce43b694583e8cbf7a14d1f3efcb0e871fe7dedff8a6b354c432bf, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Viola%20Section/susvib/ViolaEns_susvib_E2_v1_1.wav"}
+      - {file: vsco2ce/Strings/Viola Section/susvib/ViolaEns_susvib_B2_v1_1.wav, note: B3, sha256: ad96d747c5125adec8f069c49091ee3ba937efd4a5b909d3c4938f17e3c8513d, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Viola%20Section/susvib/ViolaEns_susvib_B2_v1_1.wav"}
+      - {file: vsco2ce/Strings/Viola Section/susvib/ViolaEns_susvib_D3_v1_1.wav, note: D4, sha256: 61ab4cfc0ea90c683433a7c50b3bb4fa86a81c9d4854589562707d54ed028349, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Viola%20Section/susvib/ViolaEns_susvib_D3_v1_1.wav"}
+      - {file: vsco2ce/Strings/Viola Section/susvib/ViolaEns_susvib_F3_v1_1.wav, note: F4, sha256: 7a37f00ecb58fcaa5c32427a5ffb30950787b40c247409a8e18cfe0880955fd8, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Viola%20Section/susvib/ViolaEns_susvib_F3_v1_1.wav"}
+      - {file: vsco2ce/Strings/Viola Section/susvib/ViolaEns_susvib_A3_v1_1.wav, note: A4, sha256: 7cea6482a8f67536e3108f01b688d54d198e5820ffcd0ac5a49652d38f6ec065, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Viola%20Section/susvib/ViolaEns_susvib_A3_v1_1.wav"}
+
+  bassoon:
+    library: VSCO 2 Community Edition (Versilian Studios), Bassoon, sustain, softest layer (v1). The files are named an octave below what they sound (the file "F1" measures 87.3 Hz, F2); `note` is the sounding pitch. Every note it plays is a recording of that note, unshifted
+    role_as_presented: a bassoon
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: sustain
+    attack_s: 0.5
+    release_s: 0.6
+    loop_start_s: 1.0
+    gain_db: 0.0
+    samples:
+      - {file: vsco2ce/Woodwinds/Bassoon/sus/PSBassoon_F1_v1_1.wav, note: F2, sha256: 608e46b7b18cee5ebfe6a8d385eb57038cc3ef89f408c1448ded53e1cc123a29, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Woodwinds/Bassoon/sus/PSBassoon_F1_v1_1.wav"}
+      - {file: vsco2ce/Woodwinds/Bassoon/sus/PSBassoon_A#1_v1_1.wav, note: Bb2, sha256: 2e0fc56aacb70e26631a3979069b5c379ae18fb6a48dc944ea0e48f2d332127d, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Woodwinds/Bassoon/sus/PSBassoon_A%231_v1_1.wav"}
+      - {file: vsco2ce/Woodwinds/Bassoon/sus/PSBassoon_C2_v1_1.wav, note: C3, sha256: 709401175aa7010b579e3bd1b5b9709797e489cbfdb9b5c4a8ab504098a61239, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Woodwinds/Bassoon/sus/PSBassoon_C2_v1_1.wav"}
+
+  bass:
+    library: VSCO 2 Community Edition (Versilian Studios), Solo Contrabass, sustain without vibrato, softest layer (v1). The files are named an octave below what they sound (the file "E0" measures 41.2 Hz, E1); `note` is the sounding pitch. F is one semitone from the recorded E
+    role_as_presented: a double bass, bowed
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: sustain
+    attack_s: 0.6
+    release_s: 0.8
+    loop_start_s: 1.5
+    gain_db: 0.0
+    samples:
+      - {file: vsco2ce/Strings/Solo Contrabass/SusNV/BKCtbss_SusNV_E0_v1_rr1.wav, note: E1, sha256: b510c6c2eb4fb0acba5eaaaa703ebe19025cad3749f645c41f883e4217b338fa, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Contrabass/SusNV/BKCtbss_SusNV_E0_v1_rr1.wav"}
+      - {file: vsco2ce/Strings/Solo Contrabass/SusNV/BKCtbss_SusNV_C1_v1_rr1.wav, note: C2, sha256: c930941735e707b109878f4734110412ebe26b983c2b3e300510175aedf5e61c, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Contrabass/SusNV/BKCtbss_SusNV_C1_v1_rr1.wav"}
+      - {file: vsco2ce/Strings/Solo Contrabass/SusNV/BKCtbss_SusNV_E1_v1_rr1.wav, note: E2, sha256: 90428ce30d89c2eab94187a2d2c589758bc7027b8f0c8d3e2cce165972f60e21, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Contrabass/SusNV/BKCtbss_SusNV_E1_v1_rr1.wav"}
+
+  # The same double bass, plucked: for the count and the stings.
+  bass_pizz:
+    library: VSCO 2 Community Edition (Versilian Studios), Solo Contrabass, pizzicato. Softest layer (v1) except the C, which is the third layer's first take, the one take of that string the pitch check finds in tune (+2 cents; the v1 takes measure +11 and +17). Named an octave below what they sound; `note` is the sounding pitch
+    role_as_presented: a double bass, plucked
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: pluck
+    release_s: 0.4
+    gain_db: 0.0
+    samples:
+      - {file: vsco2ce/Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_E0_v1_rr1.wav, note: E1, sha256: 7901d4aa056d2a6057a264ce98fc9e66a7ce48575d077a30f14083aa798cd188, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Contrabass/Pizz/BKCtbss_Pizz_E0_v1_rr1.wav"}
+      - {file: vsco2ce/Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_C1_v3_rr1.wav, note: C2, sha256: 706d82ca773408bb6cd6f22466d5d017c1d36a9055f3a6b6af864407b26c5a0d, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Contrabass/Pizz/BKCtbss_Pizz_C1_v3_rr1.wav"}
+      - {file: vsco2ce/Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_F#1_v1_rr1.wav, note: F#2, sha256: 6f91a2747ce3cea061c670f7bf5dc8611eef1c3af8d6e2dca75b6dac5a65bfc6, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Contrabass/Pizz/BKCtbss_Pizz_F%231_v1_rr1.wav"}
+      - {file: vsco2ce/Strings/Solo Contrabass/Pizz/BKCtbss_Pizz_G#1_v1_rr1.wav, note: Ab2, sha256: bf377a41759c17794901957edc89ff48fb405f98879549916d9b228492f7f8d1, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Contrabass/Pizz/BKCtbss_Pizz_G%231_v1_rr1.wav"}
+
+# Note rows are [instrument, note, start in beats, length in beats or null, velocity].
+# null length on a pluck lets the recording decay on its own. One beat is 1.25 s.
+cues:
+  # Statement 1, under the TITLE: the line once, the bowed bass on F under it
+  # and the bassoon on the fifth, taking a breath at the halfway bar. Bars 1
+  # to 4 are the cell with its fifth below, then a step down and home; bars 5
+  # to 8 reach a fourth to Bb and walk down by step, D natural the one colour
+  # note, to stop on C. The first word of the title lands inside the last
+  # note's release.
+  theme:
+    claims: []
+    length_s: 24.0
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    notes:
+      - [viola, F4, 0, 2, 0.74]
+      - [viola, C4, 2, 1, 0.78]
+      - [viola, F4, 3, 1, 0.68]
+      - [viola, Ab4, 4, 2, 0.56]
+      - [viola, G4, 6, 1, 0.66]
+      - [viola, F4, 7, 1, 0.68]
+      - [viola, Bb4, 8, 2, 0.60]
+      - [viola, Ab4, 10, 1, 0.54]
+      - [viola, G4, 11, 1, 0.66]
+      - [viola, F4, 12, 1, 0.68]
+      - [viola, Eb4, 13, 1, 0.88]
+      - [viola, D4, 14, 1, 0.86]
+      - [viola, C4, 15, 2.6, 0.74]
+      - [bass, F2, 0, 17.6, 0.40]
+      - [bassoon, C3, 0, 7.8, 0.19]
+      - [bassoon, C3, 8.2, 9.4, 0.19]
+
+  # Statement 3, at the close: the descent again, one step further, onto F;
+  # the bassoon leaves the fifth for the tonic with it. Everything released
+  # by 9.3 s and faded to silence inside 13.6 s so the house promo can ride it.
+  outro:
+    claims: []
+    length_s: 13.6
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 2400
+    tail_silence: true
+    notes:
+      - [viola, Eb4, 0, 1, 0.88]
+      - [viola, D4, 1, 1, 0.86]
+      - [viola, C4, 2, 1.5, 0.78]
+      - [viola, F3, 3.5, 2.6, 0.44]
+      - [bass, F2, 0, 6.6, 0.38]
+      - [bassoon, C3, 0, 3.5, 0.20]
+      - [bassoon, F2, 3.5, 3.1, 0.26]
+      - [bass_pizz, F2, 0, null, 0.45]
+      - [bass_pizz, F1, 3.5, null, 0.40]
+
+  # On the last word of a rupture scene, or after a recording's trailing
+  # silence: the theme's last two notes on a swell, inside the 6 s mood_plan
+  # opens.
+  rupture_entry:
+    claims: []
+    length_s: 6.0
+    peak_dbfs: -15.0
+    room_wet: 1.4
+    swell: [0.5, 2.8, 2.7]
+    notes:
+      - [viola, D4, 0, 1, 0.80]
+      - [viola, C4, 1, 2.2, 0.66]
+      - [bass, F2, 0, 3.2, 0.45]
+
+  # The change of voice (a memoir, a slogan, an interview): one plucked low
+  # note, touched.
+  sting:to_document:
+    claims: []
+    length_s: 0.9
+    peak_dbfs: -22.0
+    room_wet: 0.6
+    fade_out_ms: 150
+    notes:
+      - [bass_pizz, F2, 0, 0.3, 0.55]
+
+  # The music returning after a recording, once its trailing silence is over.
+  # The live script carries no clip, so this key is defined for the producer's
+  # grammar and fires only if the cinematic variant admits one.
+  sting:from_clip:
+    claims: []
+    length_s: 2.4
+    peak_dbfs: -20.0
+    room_wet: 1.0
+    swell: [0.8, 0.6, 1.0]
+    notes:
+      - [bass, C2, 0, 0.9, 0.50]
+      - [bass_pizz, F2, 0, 1.2, 0.40]
+
+  # Dread (the city emptied, the dam, the prison): the bowed bass on F held,
+  # the bassoon faint on Bb above it, the theme's one reach left hanging and
+  # unresolved, breathing at the halfway bar; the plucked F an octave down
+  # once every 20 s.
+  bed:dread:
+    claims: []
+    length_s: 40.0
+    fold: true
+    rms_dbfs: -34.0
+    room_wet: 0.6
+    notes:
+      - [bass, F2, 0, 32, 0.55]
+      - [bassoon, Bb2, 0, 14.5, 0.20]
+      - [bassoon, Bb2, 16, 14.5, 0.20]
+      - [bass_pizz, F1, 0, null, 0.30]
+      - [bass_pizz, F1, 16, null, 0.26]
+
+  # Procedure (the logs, the quotas, the intake, the paragraphs of the
+  # judgment): the plucked bass keeping the count, dry. The house cell, one
+  # note every 1.25 s, the last note alternating.
+  bed:procedure:
+    claims: []
+    length_s: 40.0
+    fold: true
+    rms_dbfs: -33.0
+    room_wet: 0.0
+    notes:
+      - [bass_pizz, F2, 0, null, 0.62]
+      - [bass_pizz, C2, 1, null, 0.46]
+      - [bass_pizz, F2, 2, null, 0.52]
+      - [bass_pizz, Ab2, 3, null, 0.46]
+      - [bass_pizz, F2, 4, null, 0.62]
+      - [bass_pizz, C2, 5, null, 0.46]
+      - [bass_pizz, F2, 6, null, 0.52]
+      - [bass_pizz, G2, 7, null, 0.46]
+      - [bass_pizz, F2, 8, null, 0.62]
+      - [bass_pizz, C2, 9, null, 0.46]
+      - [bass_pizz, F2, 10, null, 0.52]
+      - [bass_pizz, Ab2, 11, null, 0.46]
+      - [bass_pizz, F2, 12, null, 0.62]
+      - [bass_pizz, C2, 13, null, 0.46]
+      - [bass_pizz, F2, 14, null, 0.52]
+      - [bass_pizz, G2, 15, null, 0.46]
+      - [bass_pizz, F2, 16, null, 0.62]
+      - [bass_pizz, C2, 17, null, 0.46]
+      - [bass_pizz, F2, 18, null, 0.52]
+      - [bass_pizz, Ab2, 19, null, 0.46]
+      - [bass_pizz, F2, 20, null, 0.62]
+      - [bass_pizz, C2, 21, null, 0.46]
+      - [bass_pizz, F2, 22, null, 0.52]
+      - [bass_pizz, G2, 23, null, 0.46]
+      - [bass_pizz, F2, 24, null, 0.62]
+      - [bass_pizz, C2, 25, null, 0.46]
+      - [bass_pizz, F2, 26, null, 0.52]
+      - [bass_pizz, Ab2, 27, null, 0.46]
+      - [bass_pizz, F2, 28, null, 0.62]
+      - [bass_pizz, C2, 29, null, 0.46]
+      - [bass_pizz, F2, 30, null, 0.52]
+      - [bass_pizz, G2, 31, null, 0.46]
+
+  # Reckoning (the turn, the five accounts, what each leaves out): the plucked
+  # bass alone on F every 2.5 s, the low F every 20 s. No melody, the thinnest
+  # bed, under the deepest duck. The count starts on the second beat, not the
+  # first, so the loop's seam falls inside a decaying pluck rather than on an
+  # attack: a sparse bed has almost no motion between notes, and a pluck that
+  # began on sample 0 was the loop's only step (seam ratio 24.7 against the
+  # 3.0 the gate allows).
+  bed:reckoning:
+    claims: []
+    length_s: 40.0
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 0.3
+    notes:
+      - [bass_pizz, F1, 1, null, 0.55]
+      - [bass_pizz, F2, 3, null, 0.40]
+      - [bass_pizz, F2, 5, null, 0.40]
+      - [bass_pizz, F2, 7, null, 0.40]
+      - [bass_pizz, F2, 9, null, 0.40]
+      - [bass_pizz, F2, 11, null, 0.40]
+      - [bass_pizz, F2, 13, null, 0.40]
+      - [bass_pizz, F2, 15, null, 0.40]
+      - [bass_pizz, F1, 17, null, 0.55]
+      - [bass_pizz, F2, 19, null, 0.40]
+      - [bass_pizz, F2, 21, null, 0.40]
+      - [bass_pizz, F2, 23, null, 0.40]
+      - [bass_pizz, F2, 25, null, 0.40]
+      - [bass_pizz, F2, 27, null, 0.40]
+      - [bass_pizz, F2, 29, null, 0.40]
+      - [bass_pizz, F2, 31, null, 0.40]
+
+  # Grief (the famine, the graves, the sister, the doctor's wife): the bassoon
+  # alone on its low F, breathing once; the viola, low and thin, states the
+  # theme's last four notes once (F, Eb, D, C) and then is silent. The last
+  # 28 s of the loop are the bassoon alone.
+  bed:grief:
+    claims: []
+    length_s: 40.0
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 1.0
+    notes:
+      - [bassoon, F2, 0, 15, 0.34]
+      - [bassoon, F2, 16, 15.5, 0.32]
+      - [viola, F4, 2, 2, 0.56]
+      - [viola, Eb4, 4, 1, 0.70]
+      - [viola, D4, 5, 1, 0.68]
+      - [viola, C4, 6, 3, 0.60]
+
+  # Into a dread scene, in the clear: the bowed F swelling with the fourth
+  # faint above it, one low pluck.
+  transition:dread:
+    claims: []
+    length_s: 3.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    swell: [0.3, 2.1, 1.4]
+    notes:
+      - [bass, F2, 0, 1.8, 0.60]
+      - [bassoon, Bb2, 0, 1.8, 0.22]
+      - [bass_pizz, F1, 0.2, null, 0.45]
+
+  # Into a procedure scene: three strokes of the count, dry.
+  transition:procedure:
+    claims: []
+    length_s: 4.6
+    peak_dbfs: -14.0
+    room_wet: 0.0
+    fade_out_ms: 900
+    notes:
+      - [bass_pizz, F2, 0, null, 0.62]
+      - [bass_pizz, C2, 1, null, 0.50]
+      - [bass_pizz, F2, 2, null, 0.52]
+
+  # Into a grief scene: the theme's last two notes on the viola, alone, the
+  # bassoon's F under them.
+  transition:grief:
+    claims: []
+    length_s: 4.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    notes:
+      - [viola, D4, 0, 1.0, 0.80]
+      - [viola, C4, 1, 1.4, 0.66]
+      - [bassoon, F2, 0, 2.4, 0.30]
+
+  # Into the turn and the accounts: the count arriving.
+  transition:reckoning:
+    claims: []
+    length_s: 4.2
+    peak_dbfs: -14.0
+    room_wet: 0.3
+    fade_out_ms: 800
+    notes:
+      - [bass_pizz, F1, 0, null, 0.58]
+      - [bass_pizz, F2, 1, null, 0.46]
+      - [bass_pizz, F2, 2, null, 0.46]

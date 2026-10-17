@@ -1,0 +1,8 @@
+source: src-un-ares-44-240
+locator: op2
+url: https://documents.un.org/doc/resolution/gen/nr0/549/99/pdf/nr054999.pdf
+read: 2026-10-09
+note: OCR layer kept ('lJnited' for 'United'; soft hyphens of the scan kept)
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+2. Demands the immediate cessation of the interven­ tion and the withdrawal from Panama of the armed inva­ sion forces of the lJnited States;

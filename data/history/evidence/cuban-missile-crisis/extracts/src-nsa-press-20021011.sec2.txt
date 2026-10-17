@@ -1,0 +1,7 @@
+source: src-nsa-press-20021011
+locator: sec2
+url: https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/press3.htm
+read: 2026-10-04
+note: the release's second paragraph, the sentence on the Dobrynin meeting; the page's HTML read as text
+
+Within five minutes of this briefing, the President's brother was meeting with Soviet ambassador Dobrynin to tell him "time is of the essence and we shouldn't miss the chance," reiterating the President's pledge not to invade Cuba and assuring Dobrynin the US missiles would come out of Turkey in 4-5 months as long as nothing was said publicly about it.

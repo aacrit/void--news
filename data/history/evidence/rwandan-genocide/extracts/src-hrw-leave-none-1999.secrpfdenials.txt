@@ -1,0 +1,9 @@
+source: src-hrw-leave-none-1999
+locator: secrpfdenials
+url: https://www.hrw.org/reports/1999/rwanda/
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: section 'Accusations of RPF Abuses', cut at a sentence end
+note: the edition's contents page is the entry's free copy; the passage was read on its chapter page, https://www.hrw.org/reports/1999/rwanda/Geno15-8-03.htm
+
+When faced with accusations of killings and other abuses by their soldiers, RPF authorities sometimes denied the charges or they admitted the killings but tried to minimize the numbers involved, such as claiming that victims of killings documented by Gersony numbered only sixty to seventy. If it was clear that RPF soldiers had killed, as with the clergy at Byimana, they responded quickly with statements of regret, explanations, and promises of punishment for the offenders. RPF leaders occasionally sought to justify civilian deaths as the unavoidable consequence of combat but most often they portrayed the killings as spontaneous acts of vengeance by recently recruited young soldiers who were not yet fully trained.

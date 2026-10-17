@@ -1,0 +1,35 @@
+{
+ "_why": "A feed whose channel title uses the outlet's OWN domain brand or a former name instead of its masthead. apply_feeds.py accepts a title matching one of these tokens for that roster id. Declared per outlet, in a reviewable file, rather than by loosening the title check: the check exists because a guessed-but-live domain passes a domain test by construction, and the Botswana Guardian hijack passed the version that had no title test at all. An entry here is an assertion that this brand IS this outlet, and it can be argued with.",
+ "_not_listed_and_why": {
+  "grand-rapids-press": "Publishes on mlive.com, which is Advance's Michigan NETWORK site carrying several papers, and the roster holds two rows on mlive.com. Giving both the network feed would attribute Detroit and Ann Arbor copy to the Grand Rapids Press and draw the same article twice on the Bench.",
+  "weekend-argus-za": "Publishes on iol.co.za, and IOL (South Africa) is already a roster row with that feed. A second row on the same feed is the syndication double-count this work exists to remove.",
+  "pravo-english": "Its discovered feed is on sme.sk, titled 'Slovak Spectator'. That is a DIFFERENT Slovak outlet, not a rebrand. The title check caught a wrong-domain discovery, which is exactly what it is for.",
+  "just-the-news-spotlight": "Its discovered feed is justthenews.com's site feed. John Solomon Reports is a programme on Just the News, so the feed would fill this row with general Just the News output.",
+  "kyrgyz-akipress-2": "Its discovered feed titles itself 'Vybory' (Elections). That is a section feed, not the outlet's main feed."
+ },
+ "tokens": {
+  "st-louis-post-dispatch": [
+   "stltoday"
+  ],
+  "harrisburg-patriot-news": [
+   "pennlive"
+  ],
+  "inc-magazine": [
+   "inc.com"
+  ],
+  "vanuatu-daily-post": [
+   "dailypost"
+  ],
+  "quad-city-times": [
+   "qctimes"
+  ],
+  "sports-illustrated": [
+   "si feed",
+   "si.com"
+  ],
+  "anchorage-daily-news": [
+   "alaska dispatch",
+   "adn.com"
+  ]
+ }
+}

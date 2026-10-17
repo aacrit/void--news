@@ -1,0 +1,99 @@
+id: norovirus-bokoharam-semicolon-2026-05-15
+name: "Semicolon-joined unrelated events (must split — garbage detector)"
+failure_date: "2026-05-15"
+failure_kind: garbage-aggregation
+articles:
+  # ---- Norovirus on cruise ship ----
+  - id: noro-1
+    title: "Norovirus outbreak hits 480 passengers on Caribbean cruise ship"
+    summary: "A norovirus outbreak has hit 480 passengers and 38 crew aboard the Carnival Vista, the CDC said Wednesday."
+    full_text: >
+      A norovirus outbreak has hit 480 passengers and 38 crew aboard the
+      Carnival Vista cruise ship, the US Centers for Disease Control and
+      Prevention said Wednesday. The ship docked early in Galveston after a
+      seven-day Caribbean itinerary. Crew sealed off three decks for
+      sanitization. Carnival said it offered passengers a 50-percent future
+      cruise credit. The Vessel Sanitation Program inspectors will board
+      Thursday for an unscheduled audit. The outbreak is the second
+      norovirus event for Carnival in 2026.
+    source: { slug: ap-news, country: US, tier: us_major }
+    published_at: "2026-05-15T13:00Z"
+  - id: noro-2
+    title: "Carnival Vista quarantines decks after gastrointestinal outbreak"
+    summary: "Carnival Vista quarantined three decks after a gastrointestinal outbreak affected 480 passengers."
+    full_text: >
+      Carnival Vista quarantined three decks after a gastrointestinal outbreak
+      affected 480 passengers. The CDC's Vessel Sanitation Program will
+      conduct an unscheduled inspection at port in Galveston. Passengers
+      reported symptoms beginning Tuesday afternoon. The cruise line apologised
+      and offered partial refunds. The ship's medical officer said most
+      patients had recovered within 24 hours. The outbreak strain has been
+      preliminarily identified as norovirus genotype GII.4.
+    source: { slug: cnn, country: US, tier: us_major }
+    published_at: "2026-05-15T14:30Z"
+  # ---- Boko Haram raid in Borno (completely unrelated to cruise ship) ----
+  - id: boko-1
+    title: "Boko Haram raid in Borno state kills 22 villagers"
+    summary: "A Boko Haram raid in Borno state in northeast Nigeria killed 22 villagers overnight."
+    full_text: >
+      A Boko Haram raid in Borno state in northeast Nigeria killed 22 villagers
+      overnight, the Nigerian army said Wednesday. The attack on Mafa village
+      began around 2 a.m. local time. Survivors said the militants set fire to
+      grain stores before withdrawing. The Nigerian air force said two ground
+      patrols intercepted the retreating group at dawn. Borno governor Babagana
+      Zulum visited the site and declared three days of mourning. The Multinational
+      Joint Task Force is coordinating a follow-up sweep. The raid is the
+      deadliest in Borno since February.
+    source: { slug: reuters, country: NG, tier: us_major }
+    published_at: "2026-05-15T08:00Z"
+  - id: boko-2
+    title: "Nigeria: 22 killed in Boko Haram attack on Borno village"
+    summary: "Nigerian army says 22 villagers killed in overnight Boko Haram attack on Mafa village in Borno state."
+    full_text: >
+      The Nigerian army says 22 villagers were killed in an overnight Boko
+      Haram attack on Mafa village in Borno state. The militants raided
+      shortly after 2 a.m. local time. Borno Governor Babagana Zulum
+      declared three days of mourning. The Multinational Joint Task Force
+      will lead a follow-up sweep. The Nigerian Senate's defence committee
+      called for an emergency briefing. The Nigerian president was briefed
+      en route to a regional ECOWAS meeting.
+    source: { slug: bbc-news, country: NG, tier: international }
+    published_at: "2026-05-15T09:30Z"
+  # ---- The garbage cluster: a single article whose title joins the two events with a semicolon ----
+  - id: agg-1
+    title: "Norovirus outbreak hits Caribbean cruise; Boko Haram raid in Borno kills 22"
+    summary: "Health authorities responded to a norovirus outbreak on a Caribbean cruise; in Nigeria a Boko Haram raid killed 22 villagers."
+    full_text: >
+      Health authorities responded to a norovirus outbreak on a Caribbean
+      cruise; in Nigeria a Boko Haram raid killed 22 villagers. The CDC
+      will inspect the Carnival Vista at port in Galveston. Separately, the
+      Nigerian army said 22 villagers were killed in an overnight raid on
+      Mafa village in Borno state. Borno Governor Babagana Zulum declared
+      three days of mourning. The Multinational Joint Task Force is
+      coordinating the response. Carnival offered affected passengers a 50
+      percent future cruise credit. The two stories were briefed together
+      at the morning State Department spokesperson press call.
+    source: { slug: independent-aggregator, country: US, tier: independent }
+    published_at: "2026-05-15T15:00Z"
+expectation:
+  type: should_split
+  member_ids: [noro-1, noro-2, boko-1, boko-2, agg-1]
+  min_clusters: 2
+rationale: |
+  Production failure 2026-05-15: a single aggregator article joined two
+  completely unrelated stories with a semicolon ("Norovirus outbreak hits
+  Caribbean cruise; Boko Haram raid in Borno kills 22") and the
+  cluster-title-generator preserved the semicolon, then the title-Jaccard
+  Phase 3 pulled both story threads into the same cluster — an obvious
+  garbage cluster.
+
+  Path A's Phase 4 garbage-title force-split adds a regex matching titles
+  joined by `; ` between two ≥20-character clauses both starting with
+  capitals, plus the existing "Three Unrelated" / "Stories Span" patterns.
+  This fixture forces the splitter to recognize the semicolon-joined
+  pattern and break the aggregate cluster into >=2 distinct clusters
+  (norovirus + Boko Haram raid).
+
+  Note: this is a synthetic edge case — production rarely has the
+  semicolon-joined title pattern from a single source, but it occurs when
+  aggregator/wire-aggregation feeds compress two stories into one rollup.

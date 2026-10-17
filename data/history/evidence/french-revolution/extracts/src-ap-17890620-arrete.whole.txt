@@ -1,0 +1,8 @@
+source: src-ap-17890620-arrete
+locator: whole
+url: https://www.persee.fr/doc/arcpa_0000-0000_1875_num_8_1_4522_t2_0138_0000_8
+read: 2026-10-09
+note: Persée's text layer of the Archives parlementaires, held as it prints it, the ¬ at a printed line-break hyphen included; line breaks collapsed to spaces, nothing else changed
+note: 'lixer' is the layer's reading of 'fixer'
+
+L'Assemblée ayant délibéré a pris, sur la pro¬ position de M. Target, l'arrêté suivant à l'unani¬ mité des voix, moins une : « L'Assemblée nationale, considérant qu'appelée à lixer la Constitution du royaume, opérer la ré¬ génération de l'ordre ' public, et maintenir les vrais principes de la monarchie, rien ne peut em¬ pêcher qu'elle ne continue ses délibérations dans quelque lieu qu'elle soit forcée de s'établir, et qu'enfin partout où ses membres sont réunis, là est l'Assemblée nationale. « Arrête que tous les membres de cette Assem¬ blée prêteront, à l'instant, serment solennel de ne jamais se séparer, et de se rassembler partout où les circonstances l'exigeront, jusqu'à ce que la Constitution du royaume soit établie et affermie sur des fondements solides ; et que ledit serment étant prêté, tous les membres et chacun d'eux en particulier, confirmeront par leur signature cette résolution inébranlable. »

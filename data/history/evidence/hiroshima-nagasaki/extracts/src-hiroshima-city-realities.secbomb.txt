@@ -1,0 +1,6 @@
+source: src-hiroshima-city-realities
+locator: secbomb
+url: https://www.city.hiroshima.lg.jp/english/peace/1029920/1009857.html
+read: 2026-10-05
+
+600 meters over the city and with a blinding flash, the atomic bomb exploded 43 seconds after being dropped, creating a fireball that blazed like a small sun. More than one million degrees Celsius at its center, in one second the fireball reached a radius of over 200 meters, and the surface temperatures near the hypocenter rose to 3,000 to 4,000℃.

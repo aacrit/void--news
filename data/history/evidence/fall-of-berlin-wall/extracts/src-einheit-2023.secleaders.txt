@@ -1,0 +1,8 @@
+source: src-einheit-2023
+locator: secleaders
+url: https://www.publikationen-bundesregierung.de/resource/blob/2277952/2226090/19e8d0dba83e65e13266838329366e15/zum-stand-der-deutschen-einheit-2023-download-bk-amt-data.pdf
+read: 2026-10-09
+note: the report's section on East Germans in leadership posts in the upper federal authorities; '6' after the sentence is a note mark, not held
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+So hat sich der Anteil in der aktuellen Erhebung bei allen Führungskräften im Vergleich zum Stichtag 30. September 2022 von 11,3 auf 12,4 Prozent (mit Berlin) und von 6,0 Prozent auf 7,7 Prozent (ohne Berlin) erhöht. Auf der Ebene der Behördenleitungen zeigt sich ein Anstieg der Anteile gebürtiger Ostdeutscher von 4,1 auf 5,3 Prozent (mit Berlin) bzw. von 2,7 auf 4,0 Prozent (ohne Berlin). Der Anteil unter den Abteilungsleitungen verzeichnet eine leichte Steigerung über die beiden Jahre von 13 auf 14,2 Prozent (mit Berlin) bzw. von 6,9 auf 9,0 Prozent (ohne Berlin). Die A­ nteile der ostdeutschen Führungskräfte bleiben jedoch weiterhin deutlich unter ihrem Bevölkerungsanteil von rund 20 Prozent.

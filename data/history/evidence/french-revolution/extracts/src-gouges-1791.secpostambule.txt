@@ -1,0 +1,8 @@
+source: src-gouges-1791
+locator: secpostambule
+url: https://archive.org/download/lesdroitsdelafem00goug/lesdroitsdelafem00goug_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (long s read as f and other misreadings included); line breaks collapsed to spaces, nothing else changed
+note: the layer prints the page's signature mark and page number between 'recon-' and 'nois' ('Aé ( ^ )'); held as printed
+
+Femme , réveille-toi ; le tocfin de la raison se fait entendre dans tout l’univers ; recon- Aé ( ^ ) nois tes droits.

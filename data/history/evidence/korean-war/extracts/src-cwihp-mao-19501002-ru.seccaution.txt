@@ -1,0 +1,8 @@
+source: src-cwihp-mao-19501002-ru
+locator: seccaution
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+read: 2026-10-09
+note: the same telegram; the bracket is the translator's
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Many comrades in the CC CPC [Central Committee of the Communist Party of China] judge that it is necessary to show caution here.

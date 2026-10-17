@@ -1,0 +1,56 @@
+{
+ "clip_id": "clip-haldeman-trace-the-money-19720623",
+ "slug": "watergate",
+ "tool": "faster-whisper",
+ "tool_version": "1.2.1",
+ "model": "base.en",
+ "compute_type": "int8",
+ "beam_size": 5,
+ "source": {
+  "file": "https://www.nixonlibrary.gov/sites/default/files/forresearchers/find/tapes/watergate/trial/exhibit_01.mp3",
+  "md5": "df13bdff511cedc8e30e5e140f21f5b0",
+  "md5_expected": "df13bdff511cedc8e30e5e140f21f5b0",
+  "rate": 44100
+ },
+ "window": {
+  "in": 16.0,
+  "out": 25.6,
+  "seconds": 9.6
+ },
+ "excerpt_sha256": "0cff4ab87977e282cdf82f1c00fd371a90c88b5873b25dac0db627b0230955df",
+ "excerpt_pcm": "s16le mono at the source rate, ffmpeg atrim, -bitexact",
+ "reference": "and they have, their investigation is now leading into some productive areas, because they've been able to trace the money, not through the money itself, but through the bank",
+ "hypothesis": "And they have, their investigation is now beating its productive areas because they've been able to produce the money, not through the money itself, but through the bank.",
+ "wer": 0.1333,
+ "coverage": 0.8667,
+ "counts": {
+  "ref_words": 30,
+  "hyp_words": 29,
+  "substitutions": 3,
+  "deletions": 1,
+  "insertions": 0,
+  "first_matched_ref": 0,
+  "last_matched_ref": 29,
+  "lead_insertions": 0,
+  "trail_insertions": 0
+ },
+ "diff": [
+  "and they have their investigation is now",
+  "[-leading]",
+  "[into -> beating]",
+  "[some -> its]",
+  "productive areas because they ve been able to",
+  "[trace -> produce]",
+  "the money not through the money itself but through the bank"
+ ],
+ "thresholds": {
+  "coverage_min": 0.7,
+  "edge_slack_words": 1,
+  "edge_insert_max": 2
+ },
+ "pass": true,
+ "why": [],
+ "verified_at": "2026-10-10T05:21:48Z",
+ "signed": false,
+ "note": "a pass verifies the words in this window against the stored transcript. It does not verify the occasion, the date or the rights, and it signs nothing."
+}

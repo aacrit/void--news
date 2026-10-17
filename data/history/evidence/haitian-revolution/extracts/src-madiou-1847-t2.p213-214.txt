@@ -1,0 +1,9 @@
+source: src-madiou-1847-t2
+locator: p213-214
+url: https://archive.org/download/histoiredhaiti02madi/histoiredhaiti02madi_djvu.txt
+read: 2026-09-25
+note: tome II, pages 213 to 214: the death at the fort de Joux as Madiou tells it
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+de Neuchâtel au château de Joux. Vers le milisu d'Avril il annonça au capitaine Coiomier qu'il allait entreprendre un nouveau voyage en Suisse. [Il fui dit qu'il lui laissait encore le commandement de la forteresse ;. mais que cette fois, il ne lui donnerait pas les elefs Le …cachots, parceque les prisonniers n'avaient besoin de rien. If parti el revint au bout de quatre fours. Quand 1} révit le cepitaine, ï était agité, inquiet ; il répétait souvent Îés mûômes paroks. ° ordonna d'un air empressé « d'apporter à Foussaint sa raïon ordinaire; Jl se rendit ensuite dans son cachot, accompagné de Golomier. . Mais Toussaint avait cessé de vivre, fl fut trouvé assis sur sa couche de paille, appuyé contre une cheminée, ayant la tète penchée - du côté droit, et les deux ie sur ses cuisses. Ses traits exe _ primaient les ‘tourments de la plus afffeuse douleur. Tout dans son …ttitude annonçait un crime affreux. Le gouverneur Favaït laissé mourir de faim pendant ses quatre jours d'absence. Ce fut en vain

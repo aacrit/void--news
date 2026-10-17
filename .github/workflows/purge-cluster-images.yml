@@ -1,0 +1,34 @@
+name: Purge cluster images (one-off, copyright)
+
+# One-off removal of re-hosted scraped news-publisher images: empties the
+# cluster-images Storage bucket and NULLs story_clusters.cached_image_url. The
+# cacher stage that created them is disabled (main.py step 8e). Runs in CI with
+# the service-role key. Idempotent. Manual trigger only.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: purge-cluster-images
+  cancel-in-progress: false
+
+# Rev 85 (audit 5 L4): least privilege. This job reads the repo and writes
+# nothing to it, so the token gets read access only.
+permissions:
+  contents: read
+
+jobs:
+  purge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install supabase python-dotenv
+      - name: Purge cluster images
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python -m pipeline.admin.purge_cluster_images

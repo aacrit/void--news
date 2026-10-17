@@ -1,0 +1,8 @@
+source: src-cdm-chronicle-198910
+locator: sec1009
+url: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month10/?month=10&year=1989&moc=1
+read: 2026-10-09
+note: the entry for 9 October
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+9 October 1989 "Tag der Entscheidung" (Decision Day) in Leipzig: 70,000 people demonstrate peacefully for reforms.

@@ -1,0 +1,7 @@
+source: src-martin-2017
+locator: para1
+url: https://shs.cairn.info/la-terreur--9782262067731-page-191?lang=fr
+read: 2026-10-09
+note: the chapter's opening as Cairn serves it to a reader without a subscription; whitespace collapsed, nothing else changed
+
+La question du bilan humain de la Terreur et de la Révolution française est récurrente. Et polémique. L’évaluation du nombre des victimes débute en 1792, lorsque des listes sont dressées, pour discréditer les assassins ou pour dénoncer les contre-révolutionnaires. Dès le lendemain de Thermidor, en 1797, le publiciste Prudhomme, ancien Girondin passé du côté de la Contre-Révolution, estime dans son Histoire générale et impartiale des erreurs et fautes commises pendant la Révolution française que 2 022 903 individus sont morts du fait de la Révolution, dont 120 000 en Vendée, 184 000 dans les colonies, 800 000 dans les armées et 18 613 toutes causes confondues.

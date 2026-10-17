@@ -1,0 +1,7 @@
+source: src-un-sres39
+locator: op1
+url: https://documents.un.org/doc/resolution/gen/nr0/047/64/pdf/nr004764.pdf
+read: 2026-09-25
+note: the heading, preamble and Part A of resolution 39 (1948), S/654; the layer's soft hyphens are rejoined and a footnote reference glued to Part A is kept
+
+39 (1948). Resolution of 20 January 1948 [S/654] The Security Council, Considering that it may investigate any dispute or any situation which might, by its continuance, endanger the maintenance of international peace and security and that, in the existing state of affairs between India and Pakistan, such an investigation is a matter of urgency, Adopts the following resolution : A. A Commission of the Security Council is hereby established, composed of representatives of three Members of the United Nations, one to be selected by India, one to be selected by Pakistan, and the third to be designated by the two so selected. 3 Each representative on the Commission shall be entitled to select his alternates and assistants.

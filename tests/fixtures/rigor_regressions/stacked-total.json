@@ -1,0 +1,17 @@
+{
+ "class": "stacked-total",
+ "gate": "pipeline/editorial/derived_grounding.py::check_total",
+ "product": "brief",
+ "covers": [
+  "pipeline/editorial/corrections.json#2026-10-03-brief-hegseth-total"
+ ],
+ "note": "A total stated after parts that do not sum to it (20 plus 10 called 20).",
+ "planted": {
+  "prev": "The secretary announced a 20 percent reduction in senior positions.",
+  "sentence": "This follows 10 percent cuts last year, totaling a 20 percent reduction."
+ },
+ "clean": {
+  "prev": "The secretary announced an additional 10 percent reduction in senior positions.",
+  "sentence": "This follows 10 percent cuts last year, totaling a 20 percent reduction."
+ }
+}

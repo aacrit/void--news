@@ -1,0 +1,7 @@
+source: src-hsra-leaflet-1929
+locator: secideas
+url: https://www.marxists.org/archive/bhagat-singh/1929/04/08.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+it is easy to kill individuals but you cannot kill the ideas. Great empires crumbled while the ideas survived, Bourbons and Czars fell, while the revolution marched ahead triumphantly.

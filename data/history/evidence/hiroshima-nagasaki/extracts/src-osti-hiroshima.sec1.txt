@@ -1,0 +1,29 @@
+source: src-osti-hiroshima
+locator: sec1
+url: https://www.osti.gov/opennet/manhattan-project-history/Events/1945/hiroshima.htm
+read: 2026-10-05
+note: line breaks are the page's; '(right)' where it occurs is the page's figure reference
+
+The bomber, piloted by the commander of the 509th
+Composite Group, Colonel Paul Tibbets, flew at low
+altitude on automatic pilot before climbing to 31,000 feet
+as it neared the target area. At approximately 8:15
+a.m. Hiroshima time the Enola Gay released
+"Little Boy," its 9,700-pound
+uranium gun-type bomb , over the
+city. Tibbets immediately dove away to avoid the
+anticipated shock wave. Forty-three seconds later, a
+huge explosion lit the morning sky as
+Little Boy detonated 1,900 feet above the city, directly
+over a parade field where soldiers of the Japanese Second
+Army were doing calisthenics. Though already eleven
+and a half miles away, the Enola Gay was rocked
+by the blast. At first, Tibbets thought he was
+taking flak. After a second
+shock wave (reflected from the ground) hit the plane, the
+crew looked back at Hiroshima. "The city was
+hidden by that awful cloud . . . boiling up, mushrooming,
+terrible and incredibly tall," Tibbets
+recalled. The yield of the
+explosion was later estimated at 15 kilotons (the
+equivalent of 15,000 tons of TNT).

@@ -1,0 +1,10 @@
+source: src-hansard-18931109
+locator: p546-547
+url: https://api.parliament.uk/historic-hansard/commons/1893/nov/09/motion-for-adjournment
+read: 2026-09-25
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: Lord Knutsford's reply in the Queen's name, as Labouchere read it; section marks and the column number dropped
+
+These Indunas came to England; they were presented to Queen Victoria, and the following letter was sent by Lord Knutsford:—
+The Queen has heard the words of Lobengula. They say that Lobengula is much troubled by white men who come into his country and ask to dig gold, and that he begs for advice and help. Lobengula is the ruler of his country, and the Queen does not interfere in the government of that country; but as he desires advice Her Majesty is ready to give it, and, having
+consulted Her Principal Secretary of State holding the Seals of Office for the Colonial Department, now replies as follows:—In the first place, the Queen wishes Lobengula to understand distinctly that Englishmen who have gone out to Matabeleland to ask leave to dig for stones have not gone with the Queen's authority, and that he should not believe any statements made by them to that effect. The Queen advises Lobengula not to grant hastily concessions of land, or leave to dig, but to consider all applications very carefully. It is not wise to put too much power into the hands of the men who come first, and to exclude other deserving men. A King gives a stranger an ox, not a whole herd of cattle.

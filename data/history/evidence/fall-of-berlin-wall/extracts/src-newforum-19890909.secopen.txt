@@ -1,0 +1,8 @@
+source: src-newforum-19890909
+locator: secopen
+url: https://germanhistorydocs.org/en/a-new-germany-1990-2023/founding-appeal-of-the-new-forum-september-9-1989
+read: 2026-10-09
+note: GHDI's English, from Jarausch and Gransow, Uniting Germany, translated by Allison Brown and Belinda Cooper
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Communication between the state and society has obviously broken down in our country. Evidence of this is widespread disillusionment, to the point of withdrawal into the private sphere or mass emigration. Elsewhere, refugee movements of this size are caused by poverty, hunger, and violence. None of that exists here.

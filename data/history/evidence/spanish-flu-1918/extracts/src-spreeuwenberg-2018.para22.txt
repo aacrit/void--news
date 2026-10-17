@@ -1,0 +1,6 @@
+source: src-spreeuwenberg-2018
+locator: para22
+url: https://pmc.ncbi.nlm.nih.gov/articles/PMC7314216/
+read: 2026-09-25
+
+In conclusion, we have developed an indirect estimation method using vital statistics population data. Our best estimate (a total of 15 million deaths in 1918) is lower than recent estimates (50–100 million) and shows that researchers need to be careful with the methods they choose to make their estimates. For example, researchers must take into account wars and other possible causes of increases in numbers of deaths, and the underlying time trends in mortality. We also show that it is important to test the theoretical feasibility of estimates (e.g., 100 million deaths), because results of such tests suggest the true estimate is very unlikely to be higher than 25 million and probably closer to our final estimate of 17.4 million deaths (1918 and 1919 combined).

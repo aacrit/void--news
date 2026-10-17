@@ -1,0 +1,8 @@
+source: src-saac-tani-1947
+locator: sectotal
+url: https://www.saac.gov.cn/zt/2014-12/11/content_77681.htm
+read: 2026-10-09
+note: the text is the page's own text in Chinese (simplified characters, as the archive publishes it), whitespace collapsed; a Void translation is beside it (.en.txt)
+note: a passage of the judgment of 10 March 1947 as the archive quotes it inside its introduction (the archive's quotation marks are not held)
+
+在谷寿夫部队驻南京之期间内，计于中华门外花神庙、宝塔桥、石观音、下关草鞋山等处，我被俘军民遭日军用机枪集体射杀并焚尸灭迹者，有单耀亭等19万余人。此外零星屠杀，其尸体经慈善机关收埋者15万余具。被害总数达30万人以上。尸横遍地，惨绝人寰。其残酷之情形，尤非笔楮所忍形容。

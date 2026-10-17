@@ -1,0 +1,8 @@
+source: src-trc-special-index
+locator: item11
+url: https://www.justice.gov.za/trc/special/index.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+note: the index's entry for the Mandela United Football Club hearings, the eleventh hearing type in its list
+
+Mandela United Football Club Hearings Johannesburg, 24 Nov - 4 Dec 1997 and Johannesburg, 28 - 29 Jan 1998

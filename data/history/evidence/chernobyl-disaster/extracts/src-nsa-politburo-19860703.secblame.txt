@@ -1,0 +1,8 @@
+source: src-nsa-politburo-19860703
+locator: secblame
+url: https://nsarchive.gwu.edu/sites/default/files/documents/6279559/National-Security-Archive-Doc-15-Minutes-of-CC.pdf
+read: 2026-10-07
+note: Chernyaev's notes; Gorbachev speaking
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+The [station] personnel are to blame for the accident; but the scale of the accident is due to the design of the reactor.

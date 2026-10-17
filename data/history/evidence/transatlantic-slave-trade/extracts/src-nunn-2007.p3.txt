@@ -1,0 +1,7 @@
+source: src-nunn-2007
+locator: p3
+url: https://www.nber.org/system/files/working_papers/w13367/w13367.pdf
+read: 2026-10-09
+note: the PDF text layer; the paper's notice permits quotation of short sections with credit; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+During the trans-Atlantic slave trade alone, approximately 12 million slaves were exported from Africa. Another 6 million were exported in the other three slave trades. These ﬁgures do not include those who were killed during the raids or those who died on their journey to the coast. The total eﬀect of the slave trades, according to calculations by Patrick Manning [1990, p. 171], was that by 1850 Africa’s population was only half of what it would have been had the slave trades not taken place.

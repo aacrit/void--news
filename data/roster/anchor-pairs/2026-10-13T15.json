@@ -1,0 +1,110 @@
+[
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 19,
+  "a": {
+   "title": "Germany&apos;s women: Ena Mahmutovic makes her case to become Germany&apos;s next No.1 goalkeeper",
+   "summary": "Germany&apos;s win against Australia saw Ena Mahmutovic excel in goal. The 22-year-old Bayern Munich goalkeeper is considered the successor to Ann-Katrin Berger and is making a name for herself.",
+   "link": "https://www.dw.com/en/germany-s-women-ena-mahmutovic-makes-her-case-to-become-germany-s-next-no-1-goalkeeper/a-79609341?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "DFB-Frauen: Ena Mahmutovic nutzt Tor-Chance gegen Berger",
+   "summary": "Die DFB-Frauen gewinnen ihr Testspiel gegen Australien. Im Tor macht Ena Mahmutovic dabei eine gute Figur. Die 22-jährige Bayern-Keeperin gilt als Nachfolgerin von Ann-Katrin Berger und kann Punkte sammeln.",
+   "link": "https://www.dw.com/de/dfb-frauen-ena-mahmutovic-nutzt-tor-chance-gegen-berger/a-79598336?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 18,
+  "a": {
+   "title": "Ronaldo stays on under cloud as Messi exits internationals",
+   "summary": "Just hours before Lionel Messi played his last match for Argentina, Cristiano Ronaldo posted his latest salvo in a row with Portugal. Ronaldo wants to play on despite the troubles, while Messi bathed in adulation.",
+   "link": "https://www.dw.com/en/ronaldo-stays-on-under-cloud-as-messi-exits-internationals/a-79574551?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Messi weint, Ronaldo flüchtet: Das Ende zweier Ären",
+   "summary": "Zwei große Nationalmannschaftskarrieren im Fußball gehen zu Ende. Doch während Lionel Messi in Argentinien als gefeierter Held abtritt, flüchtet Cristiano Ronaldo als beleidigter Altstar von Portugals Selecao.",
+   "link": "https://www.dw.com/de/messi-weint-ronaldo-flüchtet-das-ende-zweier-ären/a-79574118?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 36,
+  "a": {
+   "title": "Europe Today: Trump claims Ukraine-Russia energy ceasefire as Baltics stay on alert",
+   "summary": "Donald Trump says Russia and Ukraine have agreed an energy ceasefire. Volodymyr Zelenskyy says it was news to him. As he addresses the Warsaw Security Forum, we hear from Latvia's FM Baiba Braže, Doha after a deadly Riyadh airport attack, and France's debt fears.",
+   "link": "https://www.euronews.com/2026/10/12/europe-today-trump-claims-ukraine-russia-energy-ceasefire-as-baltics-stay-on-alert",
+   "published": "Mon, 12 Oct 2026 08:01:50 +0200"
+  },
+  "b": {
+   "title": "Europe Today : Trump annonce une trêve énergétique Ukraine-Russie, les pays baltes restent en alerte",
+   "summary": "Donald Trump affirme que la Russie et l'Ukraine acceptent une trêve énergétique, Zelenskyy dément ; Baiba Braže, Doha et la dette française en débat.",
+   "link": "https://fr.euronews.com/2026/10/12/europe-today-trump-annonce-une-treve-energetique-ukraine-russie-les-pays-baltes-restent-en",
+   "published": "Mon, 12 Oct 2026 08:03:28 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 24,
+  "a": {
+   "title": "Pakistan: Passenger train derailment kills at least five, injures more than 30",
+   "summary": "At least five people were killed and more than 30 injured when the Rehman Baba Express derailed near Multan, Pakistan, early on Tuesday, 13 October. An investigation has been launched into the cause of the accident.",
+   "link": "https://www.euronews.com/video/2026/10/13/pakistan-passenger-train-derailment-kills-at-least-five-injures-more-than-30",
+   "published": "Tue, 13 Oct 2026 10:04:08 +0200"
+  },
+  "b": {
+   "title": "Pakistan: déraillement d'un train de passagers fait au moins cinq morts et plus de 30 blessés",
+   "summary": "Au moins cinq personnes ont été tuées et plus de 30 blessées lorsque le train Rehman Baba Express a déraillé près de Multan, au Pakistan, tôt mardi 13 octobre. Une enquête est ouverte sur les causes de l'accident.",
+   "link": "https://fr.euronews.com/video/2026/10/13/pakistan-deraillement-dun-train-de-passagers-fait-au-moins-cinq-morts-et-plus-de-30-blesse",
+   "published": "Tue, 13 Oct 2026 10:05:22 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 22,
+  "a": {
+   "title": "Life-threatening Hurricane Isaias makes landfall in Florida, bringing high winds and heavy rain",
+   "summary": "The US' National Weather Service (NWS) has warned a life-threatening storm surge is expected from Dauphin Island, Alabama, to Suwannee, Florida.",
+   "link": "https://www.euronews.com/2026/10/10/life-threatening-hurricane-isaias-makes-landfall-in-florida-bringing-high-winds-and-heavy-",
+   "published": "Sat, 10 Oct 2026 09:03:14 +0200"
+  },
+  "b": {
+   "title": "L'ouragan Isaias, potentiellement dangereux, frappe la Floride avec des vents violents et de fortes pluies",
+   "summary": "Le Service météorologique national américain (NWS) a averti qu'une marée cyclonique potentiellement mortelle était attendue entre l'île de Dauphin, en Alabama, et le fleuve Suwannee, en Floride.",
+   "link": "https://fr.euronews.com/2026/10/10/louragan-isaias-potentiellement-mortel-frappe-la-floride-avec-des-vents-violents-et-de-for",
+   "published": "Sat, 10 Oct 2026 10:07:17 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 19,
+  "a": {
+   "title": "12 killed and more than 300 wounded in attack on Riyadh airport",
+   "summary": "Turki Al-Maliki, a spokesperson for the Saudi-led coalition forces, said that the attack had been carried out by Yemen's Houthi rebels and that it had targeted a passenger terminal.",
+   "link": "https://www.euronews.com/2026/10/10/evacuations-and-injuries-reported-at-riyadh-airport-after-another-alleged-houthi-attack",
+   "published": "Sat, 10 Oct 2026 17:48:55 +0200"
+  },
+  "b": {
+   "title": "Attaque contre l'aéroport de Riyad : 12 morts et plus de 300 blessés",
+   "summary": "Turki Al-Maliki, porte-parole de la coalition dirigée par l'Arabie saoudite, a attribué l'attaque aux rebelles houthis du Yémen, affirmant que celle-ci avait visé un terminal passagers.",
+   "link": "https://fr.euronews.com/2026/10/10/riyad-evacuations-et-blesses-signales-a-laeroport-apres-une-nouvelle-attaque-attribuee-aux",
+   "published": "Sat, 10 Oct 2026 18:35:52 +0200"
+  }
+ }
+]

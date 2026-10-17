@@ -1,0 +1,7 @@
+source: src-hansard-19470603
+locator: p37
+url: https://api.parliament.uk/historic-hansard/commons/1947/jun/03/india-transfer-of-power
+read: 2026-09-25
+note: p is the Hansard column; HC Deb 03 June 1947 vol 438 cc35-46
+
+For the immediate purpose of deciding on the issue of partition, the members of the Legislative Assemblies of Bengal and the Punjab will sit in two parts according to Muslim majority districts (as laid down in the Appendix to the White Paper) and non-Muslim majority districts. This is only a preliminary step of a purely temporary nature as it is evident that for the purposes of final partition of these Provinces a detailed investigation of boundary questions will be needed; and, as soon as a decision involving partition has been taken for either Province, a Boundary Commission will be set up by the Governor-General, the membership and terms of reference of which will be settled in consultation with those concerned. It will be instructed to demarcate the boundaries of the two parts of the Punjab on the basis of ascertaining the contiguous majority areas of Muslims and non-Muslims. It will also be instructed to take into account other factors. Similar instructions will be given to the Bengal Boundary Commission. Until the report of a Boundary Commission has been put into effect, the provisional boundaries indicated in the Appendix to the White Paper will be used.

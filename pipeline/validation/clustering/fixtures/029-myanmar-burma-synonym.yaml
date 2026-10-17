@@ -1,0 +1,104 @@
+id: myanmar-burma-synonym-2026-05-15
+name: "Myanmar ⇔ Burma synonym pair (junta crackdown across naming conventions)"
+failure_date: "2026-05-15"
+failure_kind: synonym-fragmentation
+articles:
+  # Modern wire/Reuters/AP outlets use "Myanmar" — the government's preferred
+  # name since 1989. Some UK / older / heritage outlets (BBC, Daily Telegraph,
+  # State Department under certain admins) still use "Burma". This naming
+  # split causes story fragmentation.
+  - id: my-reuters
+    title: "Myanmar junta sentences 14 protesters to prison after Yangon rally"
+    summary: "Myanmar's military junta sentenced 14 protesters to prison terms ranging from 5 to 15 years after a Yangon rally, lawyers said Wednesday."
+    full_text: >
+      Myanmar's military junta sentenced 14 protesters to prison terms
+      ranging from 5 to 15 years after a Yangon rally, lawyers for the
+      defendants said Wednesday. The sentences were handed down by a
+      special court inside Insein Prison. Defendants included three
+      teachers and a doctor. The Assistance Association for Political
+      Prisoners said total post-coup detentions now exceed 26,000. The
+      United Nations Special Rapporteur condemned the sentencing.
+      Australia's ambassador-designate, Joanne Loundes, said Canberra was
+      "deeply concerned." Min Aung Hlaing's State Administration Council
+      did not comment.
+    source: { slug: reuters, country: SG, tier: us_major }
+    published_at: "2026-05-15T11:00Z"
+  - id: my-ap
+    title: "Myanmar court hands 14 protesters long prison terms after Yangon demonstration"
+    summary: "A Myanmar court handed 14 protesters long prison terms after a Yangon demonstration, lawyers and rights groups said."
+    full_text: >
+      A Myanmar court handed 14 protesters long prison terms after a Yangon
+      demonstration, lawyers and rights groups said. The closed-door
+      hearing inside Insein Prison delivered sentences of 5 to 15 years.
+      The Assistance Association for Political Prisoners (AAPP) said the
+      defendants had been held for nearly two years without bail. The
+      United Nations Special Rapporteur said the trial had violated due
+      process. The military junta of Min Aung Hlaing has been in power
+      since the February 2021 coup. The European Union's foreign-policy
+      chief called for "immediate release."
+    source: { slug: ap-news, country: US, tier: us_major }
+    published_at: "2026-05-15T13:30Z"
+  - id: bu-bbc
+    title: "Burma: 14 protesters jailed after Yangon march by Aung Hlaing junta"
+    summary: "Burma: 14 protesters were jailed after a Yangon march by Aung Hlaing's junta, the BBC's Asia correspondent reports."
+    full_text: >
+      Burma: 14 protesters were jailed after a Yangon march by Aung Hlaing's
+      junta, the BBC's Asia correspondent reports. The closed-door hearing
+      inside Insein Prison handed down sentences of 5 to 15 years. The
+      Assistance Association for Political Prisoners said the defendants
+      had been held for nearly two years. Three teachers and a doctor are
+      among the convicted. The United Nations Special Rapporteur on Burma
+      condemned the trial. The British government's Foreign Office called
+      the sentences "politically motivated." The State Administration
+      Council of Min Aung Hlaing did not comment publicly.
+    source: { slug: bbc-news, country: GB, tier: international }
+    published_at: "2026-05-15T14:00Z"
+  - id: bu-telegraph
+    title: "Burma junta jails 14 democracy protesters as crackdown deepens"
+    summary: "Burma's military junta jailed 14 democracy protesters as the post-coup crackdown deepens, a court in Yangon ruled."
+    full_text: >
+      Burma's military junta jailed 14 democracy protesters as the post-
+      coup crackdown deepens, a court inside Insein Prison ruled Wednesday.
+      Sentences ranged from 5 to 15 years. The convicted included three
+      teachers and a doctor who had marched in February's anniversary
+      protests in Yangon. The Foreign Office in London called the
+      sentences "politically motivated." The Assistance Association for
+      Political Prisoners said total post-coup detentions exceed 26,000.
+      The Daily Telegraph's Asia correspondent reports the trial lasted
+      less than four hours.
+    source: { slug: the-telegraph, country: GB, tier: international }
+    published_at: "2026-05-15T15:30Z"
+  - id: my-irrawaddy
+    title: "14 jailed in Yangon as Myanmar military escalates anti-protest sentencing"
+    summary: "Fourteen protesters were jailed in Yangon as Myanmar military escalates anti-protest sentencing, AAPP confirmed."
+    full_text: >
+      Fourteen protesters were jailed in Yangon as Myanmar's military
+      escalates anti-protest sentencing, the Assistance Association for
+      Political Prisoners (AAPP) confirmed. The closed-door hearing
+      inside Insein Prison delivered sentences of 5 to 15 years. The
+      defendants included three teachers, a doctor, and a Buddhist
+      monk. The military's State Administration Council, headed by Min
+      Aung Hlaing, did not comment publicly. The trial was the largest
+      single-day politically motivated sentencing batch since February's
+      anniversary protests.
+    source: { slug: irrawaddy, country: MM, tier: independent }
+    published_at: "2026-05-15T10:00Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [my-reuters, my-ap, bu-bbc, bu-telegraph, my-irrawaddy]
+  min_clusters: 1
+  max_clusters: 2
+  min_source_count: 3
+rationale: |
+  Synonym-pair test: same story (14 protesters jailed in Yangon by the
+  military junta) split because Reuters/AP/Irrawaddy use "Myanmar" while
+  BBC/Daily Telegraph use "Burma". Both naming conventions are valid;
+  the SYNONYM_PAIRS frozenset enumerates ("myanmar", "burma") so the
+  Phase 2.55 alias-merge pass should collapse the cluster. Stemmed-title
+  Jaccard floor of 0.20 is satisfied easily by the shared
+  "protesters/protester", "jailed/jail", "Yangon", "junta" stems.
+
+  Allow up to 2 clusters since some Burma-only outlets may legitimately
+  not co-cluster with the Myanmar-named ones if their entity-overlap is
+  thin. Min source count of 3 confirms the merge actually surfaces the
+  story above the importance ranker's promotion floor.

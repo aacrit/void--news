@@ -1,0 +1,9 @@
+source: src-hrw-leave-none-1999
+locator: secnumbers
+url: https://www.hrw.org/reports/1999/rwanda/
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: section 'Numbers', cut to stay within the 150-word cap; 'Based onthese' is the page's own spacing
+note: the edition's contents page is the entry's free copy; the passage was read on its chapter page, https://www.hrw.org/reports/1999/rwanda/Geno1-3-04.htm
+
+Seltzer estimated the number of persons killed in the genocide as at least one half million. Professor Gérard Prunier estimated that 130,000 Tutsi were alive in July, but his figures did not include those in Zaire or Tanzania, perhaps another 20,000. If this number of 150,000 survivors is subtracted from an estimated population of 657,000 Tutsi, this leaves 507,000 Tutsi killed, close to Seltzer’s minimum assessment, and representing the annihilation of about 77 percent of the population registered as Tutsi. Using other data from Butare prefecture, our researchers computed an estimated loss of 75 percent of the Tutsi population in that prefecture. Based onthese preliminary data, we would conclude that at least half a million persons were killed in the genocide, a loss that represented about three quarters of the Tutsi population of Rwanda.

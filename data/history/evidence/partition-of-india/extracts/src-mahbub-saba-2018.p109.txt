@@ -1,0 +1,6 @@
+source: src-mahbub-saba-2018
+locator: p109
+url: https://journals.iium.edu.my/asiatic/index.php/ajell/article/download/1212/801
+read: 2026-09-25
+
+… it is well-documented that the communal violence on the Eastern side was more protracted than the frenetic massacres in the state of Punjab on the Western side, which began as the rumours of division spread before the official announcement of Partition on August 17th 1947. That is to say, communal violence on the Eastern side was more episodic, beginning with the Kolkata and Noakhali riots in 1946, while in comparison, the Western side experienced intense and frantic rioting leading to widespread massacres from 1947 to 1950.

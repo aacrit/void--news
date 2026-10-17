@@ -1,0 +1,12 @@
+source: src-radcliffe-punjab
+locator: para5
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+
+5. The public sittings of the Commission took place at Lahore, and extended from Monday the 21st of July 1947 to Thursday the 31st of July 1947, inclusive, with the exception of Sunday, the 27th of July. The main arguments were conducted by counsel on behalf of the Indian National Congress, the Muslim League, and the Sikh
+
+10
+
+11
+
+meinDers of the Punjab Legislative Assembly: but a number of other interested parties appeared and argued before the Commission. In view of the fact that I was acting also as Chairman of the Bengal Boundary Commission, whose proceedings were taking place simultaneously with the proceedings of the Punjab Boundary Commission,. I did not attend the public sittings in person, but made arrangements to study daily the record of the proceedings and of all material submitted for our consideration.

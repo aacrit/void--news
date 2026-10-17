@@ -1,0 +1,7 @@
+source: src-med-1946-ch7
+locator: secashworth
+url: https://avalon.law.yale.edu/20th_century/mp07.asp
+read: 2026-10-05
+note: Commander F. L. Ashworth's narrative as the report quotes it
+
+"During the approach to the target the special instruments installed in the plane told us that the bomb was ready to function. We were prepared to drop the second atomic bomb on Japan. But fate was against us, for the target was completely obscured by smoke and haze. Three times we attempted bombing runs, but without success. Then with anti-aircraft fire bursting around us and with a number of enemy fighters coming up after us, we headed for our secondary target, Nagasaki.

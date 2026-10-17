@@ -1,0 +1,70 @@
+id: trump-xi-iran-summit-2026-05
+name: "Trump-Xi Iran summit (must tag category=politics, section=us)"
+failure_date: "2026-05-15"
+failure_kind: mis-tagged
+articles:
+  - id: tx-1
+    title: "Trump and Xi to discuss Iran sanctions at September Beijing summit"
+    summary: "President Trump and Chinese President Xi Jinping will discuss Iran sanctions enforcement at a September summit in Beijing, the White House announced Wednesday."
+    full_text: >
+      President Trump and Chinese President Xi Jinping will discuss Iran sanctions
+      enforcement at a September summit in Beijing, the White House announced Wednesday.
+      Press Secretary Karoline Leavitt said the agenda will include trade, Taiwan, and
+      the role of Chinese state-owned banks in processing Iranian oil revenue. Treasury
+      Secretary Scott Bessent and US Trade Representative Jamieson Greer will accompany
+      Trump. Chinese foreign ministry spokeswoman Mao Ning told a press briefing the
+      visit would be "of strategic significance." Senate Foreign Relations Chair Jim
+      Risch praised the bilateral framing, calling it "a return to great-power
+      diplomacy." Senate Minority Whip Dick Durbin warned the administration to "not
+      trade Taiwan for sanctions enforcement." The summit will be Trump's third meeting
+      with Xi this year. The two leaders last met in Bangkok in March.
+    source: { slug: ap-news, country: US, tier: wire }
+    published_at: "2026-05-14T14:00Z"
+  - id: tx-2
+    title: "White House: Trump-Xi summit September agenda includes Iran"
+    summary: "The White House said Wednesday that the September Trump-Xi summit agenda includes Iran sanctions, trade, and Taiwan."
+    full_text: >
+      The White House said Wednesday that the September Trump-Xi summit agenda will
+      include Iran sanctions, trade, and Taiwan policy. National Security Adviser Mike
+      Waltz briefed reporters on Air Force One as Trump returned from a fundraiser in
+      Florida. Waltz said the agenda was "agreed at staff level" and that no decisions
+      would be made on Taiwan sales without congressional consultation. Senate Majority
+      Leader Thune endorsed the meeting. House Speaker Mike Johnson called the visit
+      "an opportunity to drive a wedge between Beijing and Tehran." White House counsel
+      will brief the Senate Intelligence Committee in closed session next Tuesday. The
+      Beijing visit will be Trump's third foreign trip in eight weeks. Reuters confirmed
+      the summit dates as September 22 to 24.
+    source: { slug: reuters, country: US, tier: wire }
+    published_at: "2026-05-14T15:00Z"
+  - id: tx-3
+    title: "Trump heads to Beijing in September with Iran sanctions on agenda"
+    summary: "President Trump heads to Beijing in September with Iran sanctions on the bilateral agenda, the White House confirmed Wednesday."
+    full_text: >
+      President Trump heads to Beijing in September with Iran sanctions on the bilateral
+      agenda, the White House confirmed Wednesday afternoon. The Wall Street Journal's
+      foreign-policy desk reports the meeting was finalized in a phone call between Trump
+      and Xi on Tuesday morning. Senate Republican Tom Cotton said any reduction in
+      sanctions would be "a strategic gift to Tehran." Senate Democrat Tim Kaine said
+      the visit "must come with congressional consultation on Taiwan." US Trade
+      Representative Jamieson Greer will travel as part of the delegation. Treasury's
+      Office of Foreign Assets Control briefed reporters on the current secondary-
+      sanctions framework. Iran's foreign ministry called any US-China discussion of
+      sanctions enforcement "a violation of Iranian sovereignty." Beijing has not
+      commented further on the announced agenda.
+    source: { slug: wsj, country: US, tier: international }
+    published_at: "2026-05-14T16:30Z"
+expectation:
+  type: should_tag
+  key_phrase: "Trump Xi Beijing summit Iran"
+  expected_section: us
+  expected_category: politics
+  min_overlap: 0.5
+rationale: |
+  Mis-tagging failure. The story is fundamentally a US presidential
+  foreign-policy story (Trump leads the agenda, Senate reactions
+  dominate the body, US Treasury is named) — should tag section=us
+  and category=politics. Production tagged it section=south-asia
+  category=science on 2026-05-15, likely because (a) "Iran" + "Tehran"
+  triggered Asia/Middle East section markers, and (b) the categorizer's
+  weak NER->category boost mistakenly fired science from "strategic
+  significance" / "framework" / "dynamics" vocabulary in the briefings.

@@ -1,0 +1,8 @@
+source: src-mccallum-diary-1937
+locator: secfifteen
+url: https://www.legal-tools.org/doc/a4c38a/pdf/
+read: 2026-10-09
+note: the text is the scan's own OCR layer as the Legal Tools Database serves it, whitespace collapsed; the transcript's printed line numbers (1 to 25) and the OCR's glyph errors sit inside the text and are kept as the layer gives them
+note: transcript page 4,468, exhibit 309; the reading continues 'time' after the transcript's line number and margin rule
+
+Foreigners , whe~ present,' have been able in 22 most cases to prevent this. But fifteen or twenty 23 of us available cannot be in every build'ing all the

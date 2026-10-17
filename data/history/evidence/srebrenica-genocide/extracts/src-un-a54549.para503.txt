@@ -1,0 +1,6 @@
+source: src-un-a54549
+locator: para503
+url: https://documents.un.org/doc/undoc/gen/n99/348/76/pdf/n9934876.pdf
+read: 2026-09-24
+
+503. The United Nations experience in Bosnia was one of the most difficult and painful in our history. It is with the deepest regret and remorse that we have reviewed our own actions and decisions in the face of the assault on Srebrenica. Through error, misjudgement and an inability to recognize the scope of the evil confronting us, we failed to do our part to help save the people of Srebrenica from the Serb campaign of mass murder. No one regrets more than we the opportunities for achieving peace and justice that were missed. No one laments more than we the failure of the international community to take decisive action to halt the suffering and end a war that had produced so many victims. Srebrenica crystallized a truth understood only too late by the United Nations and the world at large: that Bosnia was as much a moral cause as a military conflict. The tragedy of Srebrenica will haunt our history forever.

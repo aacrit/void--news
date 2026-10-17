@@ -1,0 +1,6 @@
+source: src-nobel-ican-2017
+locator: secthurlow2
+url: https://www.nobelprize.org/prizes/peace/2017/ican/lecture/
+read: 2026-10-05
+
+I was just 13 years old when the United States dropped the first atomic bomb, on my city Hiroshima. I still vividly remember that morning. At 8:15, I saw a blinding bluish-white flash from the window. I remember having the sensation of floating in the air.

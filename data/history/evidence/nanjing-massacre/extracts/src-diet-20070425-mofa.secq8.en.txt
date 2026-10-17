@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-diet-20070425-mofa.secq8
+names: 南京=Nanjing
+
+"1. The Government of Japan considers that it cannot be denied that, after the Japanese army's entry into Nanjing (1937), the killing of many non-combatants, looting and other acts occurred." "2. However, there are various views on the actual number of victims, and the Government considers it difficult to determine which number is correct."
