@@ -1,14 +1,36 @@
 {
-  "builtAt": "2026-10-16T16:00:13.989098Z",
+  "builtAt": "2026-10-17T14:54:58.087479Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "060c8404-5945-42c8-97f8-506fac7381bc",
-      "title": "Africa CDC Reports $700 Million Ebola Funds Unaccounted in Congo",
+      "id": "05de661c-7ab2-40cd-b51d-d68ed310a660",
+      "title": "Kenya Confirms Third Ebola Case Amid DRC Outbreak",
+      "sentences": [],
+      "points": [
+        {
+          "text": "Sources [10] and [13] report on over $700 million in Ebola response funds being unaccounted for in the Congo, a detail not mentioned in all other articles.",
+          "rule": "E-13",
+          "message": "summary states 13, which appears in none of the source articles: source it or cut it"
+        }
+      ],
+      "left": []
+    },
+    {
+      "id": "9f87f42b-0a25-4d92-903e-fe70e718258a",
+      "title": "US Naval Blockade Costs Iran $25 Billion, IRGC Unable to Pay Troops",
       "sentences": [],
       "points": [],
       "left": [
-        "headline puts 700 beside \"africa cdc reports\", but no source sentence carrying 700 names it and one names another \"africa ...\": \"Africa CDC Reports $700 Million Ebola Funds Unaccounted in Congo\""
+        "headline puts 25 beside \"pay troops\", but no source sentence carrying 25 names it and one names another \"pay ...\": \"US Naval Blockade Costs Iran $25 Billion, IRGC Unable to Pay Troops\""
+      ]
+    },
+    {
+      "id": "c6d344ae-37c4-4c1e-be6c-146f657feeb9",
+      "title": "Apple iPhone Duo Pre-Orders Overwhelm Supply, Deliveries Slip to 2027",
+      "sentences": [],
+      "points": [],
+      "left": [
+        "headline puts 2027 beside \"phone duo pre-orders overwhelm supply\", but no source sentence carrying 2027 names it and one names another \"phone ...\": \"Apple iPhone Duo Pre-Orders Overwhelm Supply, Deliveries Slip to 2027\""
       ]
     }
   ]

@@ -1,46 +1,51 @@
 {
  "version": "1.2.0",
- "title": "On Air · Friday 16 October 2026",
+ "title": "On Air · Saturday 17 October 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Headlines",
-   "endTime": 40.423
+   "endTime": 40.422
   },
   {
-   "startTime": 40.423,
-   "title": "Pakistan School Collapse",
-   "endTime": 117.584
+   "startTime": 40.422,
+   "title": "Zelensky announces summit proposal",
+   "endTime": 119.965
   },
   {
-   "startTime": 117.584,
-   "title": "Albanian Protests Intensify",
-   "endTime": 193.364
+   "startTime": 119.965,
+   "title": "Pakistan supports Saudi Arabia",
+   "endTime": 200.794
   },
   {
-   "startTime": 193.364,
-   "title": "Zacharia Bar Exam",
-   "endTime": 260.923
+   "startTime": 200.794,
+   "title": "Bill to block diesel deal",
+   "endTime": 273.981
   },
   {
-   "startTime": 260.923,
-   "title": "Omar Home Raid",
-   "endTime": 338.51
+   "startTime": 273.981,
+   "title": "Police clash in France",
+   "endTime": 335.957
   },
   {
-   "startTime": 338.51,
+   "startTime": 335.957,
    "title": "Also today",
-   "endTime": 408.845
+   "endTime": 394.966
   },
   {
-   "startTime": 408.845,
+   "startTime": 394.966,
+   "title": "Judge tosses charges",
+   "endTime": 418.543
+  },
+  {
+   "startTime": 418.543,
    "title": "Opinion",
-   "endTime": 617.887
+   "endTime": 581.622
   },
   {
-   "startTime": 617.887,
-   "endTime": 630.987,
+   "startTime": 581.622,
+   "endTime": 594.722,
    "title": "Also from Void"
   }
  ]
