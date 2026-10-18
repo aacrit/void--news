@@ -1,0 +1,47 @@
+{
+ "version": "1.2.0",
+ "title": "On Air · Sunday 18 October 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Headlines",
+   "endTime": 45.84
+  },
+  {
+   "startTime": 45.84,
+   "title": "Canadian Base Explosion",
+   "endTime": 128.925
+  },
+  {
+   "startTime": 128.925,
+   "title": "West Bank Attacks",
+   "endTime": 236.159
+  },
+  {
+   "startTime": 236.159,
+   "title": "France Protests",
+   "endTime": 293.352
+  },
+  {
+   "startTime": 293.352,
+   "title": "Ukraine Drone Strikes",
+   "endTime": 379.573
+  },
+  {
+   "startTime": 379.573,
+   "title": "Also today",
+   "endTime": 437.339
+  },
+  {
+   "startTime": 437.339,
+   "title": "Opinion",
+   "endTime": 640.191
+  },
+  {
+   "startTime": 640.191,
+   "endTime": 653.291,
+   "title": "Also from Void"
+  }
+ ]
+}
