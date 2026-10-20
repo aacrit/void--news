@@ -1,51 +1,51 @@
 {
  "version": "1.2.0",
- "title": "On Air · Monday 19 October 2026",
+ "title": "On Air · Tuesday 20 October 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Headlines",
-   "endTime": 42.832
+   "endTime": 44.156
   },
   {
-   "startTime": 42.832,
-   "title": "France Curfews and Riots",
-   "endTime": 126.045
+   "startTime": 44.156,
+   "title": "French Curfews and Unrest",
+   "endTime": 128.414
   },
   {
-   "startTime": 126.045,
-   "title": "Australian M-P Attacked",
-   "endTime": 199.472
+   "startTime": 128.414,
+   "title": "West Bank Settler Attacks",
+   "endTime": 217.073
   },
   {
-   "startTime": 199.472,
-   "title": "Israel Settler Arrests",
-   "endTime": 282.002
+   "startTime": 217.073,
+   "title": "France Deploys Military",
+   "endTime": 272.878
   },
   {
-   "startTime": 282.002,
-   "title": "Supreme Court Rejects Plea",
-   "endTime": 346.981
+   "startTime": 272.878,
+   "title": "Australian Lawmaker Attacked",
+   "endTime": 354.581
   },
   {
-   "startTime": 346.981,
+   "startTime": 354.581,
    "title": "Also today",
-   "endTime": 413.732
+   "endTime": 401.553
   },
   {
-   "startTime": 413.732,
-   "title": "Women's Health Initiative",
-   "endTime": 446.669
+   "startTime": 401.553,
+   "title": "Christiane Amanpour Leaving CNN",
+   "endTime": 434.404
   },
   {
-   "startTime": 446.669,
+   "startTime": 434.404,
    "title": "Opinion",
-   "endTime": 688.963
+   "endTime": 645.618
   },
   {
-   "startTime": 688.963,
-   "endTime": 702.063,
+   "startTime": 645.618,
+   "endTime": 658.718,
    "title": "Also from Void"
   }
  ]

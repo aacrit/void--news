@@ -1,28 +1,15 @@
 {
-  "builtAt": "2026-10-19T18:34:12.832452Z",
+  "builtAt": "2026-10-20T16:41:43.819937Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "3df410c0-f78e-4bb2-9859-7683bdd2baeb",
-      "title": "Trump Criticizes Zelensky Over Refinery Strikes, Peace Talks Amid Diesel Deal",
+      "id": "32e805e5-da0c-4829-aff3-a3fbe88e97ec",
+      "title": "DOJ Charges 28 Noncitizens in California Voter Fraud Probe",
       "sentences": [
         {
-          "text": "This was the first call between Zelensky and senior US officials since tensions spiked 10 days ago after Trump's diesel deal with Russia.",
-          "rule": "E-13",
-          "message": "summary states 10, which appears in none of the source articles: source it or cut it"
-        }
-      ],
-      "points": [],
-      "left": []
-    },
-    {
-      "id": "aa05343b-de76-45d7-9186-190242023746",
-      "title": "Katie Zacharia Criticized for Edited Oval Office Photos After Firing",
-      "sentences": [
-        {
-          "text": "Zacharia was ousted after just five days in the job last week, following an awkward 14-minute debut briefing in the James S.",
-          "rule": "E-13",
-          "message": "summary puts 14 beside \"james s\", but no source sentence carrying 14 names it and one names another \"james ...\": \"Zacharia was ousted after just five days in the job last week, following an awkward 14-min\""
+          "text": "Separately, federal investigators are reportedly examining allegations of immigration fraud and citizenship irregularities involving Representative Ilhan Omar, with reports indicating the collection of DNA evidence.",
+          "rule": "E-16",
+          "message": "sentence opens on \"Separately\", announcing another story: \"Separately, federal investigators are reportedly examining allegations of immigration frau\""
         }
       ],
       "points": [],
