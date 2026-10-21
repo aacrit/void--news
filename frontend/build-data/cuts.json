@@ -1,15 +1,15 @@
 {
-  "builtAt": "2026-10-20T16:41:43.819937Z",
+  "builtAt": "2026-10-21T16:42:37.369040Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "32e805e5-da0c-4829-aff3-a3fbe88e97ec",
-      "title": "DOJ Charges 28 Noncitizens in California Voter Fraud Probe",
+      "id": "f8b1b9a6-ae8d-4985-a9f4-aee7a0119a1d",
+      "title": "Putin says US citizen Stephen Hubbard freed: Russian media",
       "sentences": [
         {
-          "text": "Separately, federal investigators are reportedly examining allegations of immigration fraud and citizenship irregularities involving Representative Ilhan Omar, with reports indicating the collection of DNA evidence.",
-          "rule": "E-16",
-          "message": "sentence opens on \"Separately\", announcing another story: \"Separately, federal investigators are reportedly examining allegations of immigration frau\""
+          "text": "In addition, American envoy Steve Witkoff, who is on a visit to Russia, said, \"I would like to thank you on behalf of our president, and I thank you on behalf of the U.S.\"Putin reportedly said that Hubbard was at Pulkovo Airport in Saint Petersburg, adding that Witkoff had thanked the Russian leader for the release.",
+          "rule": "E-14",
+          "message": "summary quotes \"i would like to thank you on behalf of our president, and i thank you \", which appears in none of the source articles: quote it as written or paraphrase it"
         }
       ],
       "points": [],
