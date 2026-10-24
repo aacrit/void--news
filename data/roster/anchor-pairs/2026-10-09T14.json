@@ -1,0 +1,38 @@
+[
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 18,
+  "a": {
+   "title": "Ronaldo stays on under cloud as Messi exits internationals",
+   "summary": "Just hours before Lionel Messi played his last match for Argentina, Cristiano Ronaldo posted his latest salvo in a row with Portugal. Ronaldo wants to play on despite the troubles, while Messi bathed in adulation.",
+   "link": "https://www.dw.com/en/ronaldo-stays-on-under-cloud-as-messi-exits-internationals/a-79574551?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Messi weint, Ronaldo flüchtet: Das Ende zweier Ären",
+   "summary": "Zwei große Nationalmannschaftskarrieren im Fußball gehen zu Ende. Doch während Lionel Messi in Argentinien als gefeierter Held abtritt, flüchtet Cristiano Ronaldo als beleidigter Altstar von Portugals Selecao.",
+   "link": "https://www.dw.com/de/messi-weint-ronaldo-flüchtet-das-ende-zweier-ären/a-79574118?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "es",
+  "score": 22,
+  "a": {
+   "title": "US to livestream Army execution of Fort Hood shooter, Pentagon official says",
+   "summary": "The US will livestream the Army's upcoming firing squad execution on December 3 of Nidal Hasan, who killed 13 people at Fort Hood, Texas, in a 2009 shooting spree, a Pentagon official said, in what would be an unprecedented move. Hasan, a former ​Army psychiatrist, is ‌set to become the first person to be executed by firing squad by the US military since 1945.",
+   "link": "https://www.france24.com/en/video/20261009-us-to-livestream-army-execution-of-fort-hood-shooter-pentagon-official-says",
+   "published": "Fri, 09 Oct 2026 10:46:59 GMT"
+  },
+  "b": {
+   "title": "¿Quién es Nidal Hasan, el exmilitar cuyo fusilamiento las autoridades planean transmitir?",
+   "summary": "El exmayor del Ejército Nidal Hasan, condenado a muerte por asesinar a 13 personas en un ataque en la base de Fort Hood, Texas, en 2009, será el primer militar ejecutado por un pelotón de fusilamiento desde la Segunda Guerra Mundial. El secretario de Defensa de Estados Unidos, Pete Hegseth, afirmó este jueves que la ejecución, prevista para el 3 de diciembre, será pública; y un funcionario del Pen",
+   "link": "https://www.france24.com/es/ee-uu-y-canad%C3%A1/20261009-qui%C3%A9n-es-nidal-hasan-el-exmilitar-cuyo-fusilamiento-el-pent%C3%A1gono-planea-transmitir-en-directo",
+   "published": "Fri, 09 Oct 2026 02:13:01 GMT"
+  }
+ }
+]

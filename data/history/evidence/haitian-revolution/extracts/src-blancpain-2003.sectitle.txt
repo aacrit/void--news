@@ -1,0 +1,7 @@
+source: src-blancpain-2003
+locator: sectitle
+url: https://www.persee.fr/doc/outre_1631-0438_2003_num_90_340_4054
+read: 2026-09-25
+note: the article's title as the Persée record page prints it in its <title>, the page's " - Persée" suffix removed; nothing else changed
+
+Note sur les « dettes » de l'esclavage : le cas de l'indemnité payée par Haïti (1825-1883)

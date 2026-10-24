@@ -1,0 +1,8 @@
+source: src-nysethbrehm-2014
+locator: p339
+url: http://users.soc.umn.edu/~uggen/NysethBrehm_Uggen_Gasanabo_JCCJ_14.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+note: the authors' PDF as hosted on the University of Minnesota server; the page is the journal's, 30(3) p. 339, read from the running numbers
+
+Overall, the gacaca courts completed 1,958,634 cases (National Service of Gacaca Jurisdictions, 2012). Table 1 illustrates the case breakdown by category of genocidal crime, showing that, by far, the majority of the cases were crimes against property (Category 3). Thirty-three percent of the cases involved crimes against people, with 3% of all cases falling in Category 1, the category reserved for the cases deemed most serious. Table 1 also includes the percentage of individuals found guilty in each category. The likelihood of a guilty verdict was highest for property crimes in Category 3 (96%), followed by those in Category 1 (88%).

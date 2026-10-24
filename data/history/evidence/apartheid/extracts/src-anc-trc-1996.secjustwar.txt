@@ -1,0 +1,7 @@
+source: src-anc-trc-1996
+locator: secjustwar
+url: https://www.justice.gov.za/trc/hrvtrans/submit/anctruth.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+We have already stated the second element that bears on this issue - that the ANC only opted to exercise its right to resort to a just war when the apartheid regime closed all avenues to a peaceful resolution of the injustice represented by colonialism of a special type.

@@ -1,0 +1,8 @@
+source: src-hertle-cwihp-2001
+locator: secforce
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+read: 2026-10-09
+note: p. 138; Shevardnadze's later recollection as Hertle quotes it (Hertle's note 71), not a 1989 document; held at second hand
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+“Before the meeting, a phone conversation took place between Mikhail Gorbachev and myself. We had made contact as usual, whenever we had to discuss such important issues [...] We spoke about different options, and we only rejected one possibility from the beginning, that of the use of force [...] The events were the result of a mass movement that could not be held back by any government.”

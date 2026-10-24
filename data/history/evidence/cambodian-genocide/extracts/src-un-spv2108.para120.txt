@@ -1,0 +1,7 @@
+source: src-un-spv2108
+locator: para120
+url: https://documents.un.org/doc/undoc/gen/nl7/900/05/pdf/nl790005.pdf
+read: 2026-09-25
+note: the ODS scan's text layer is optical character recognition of a 1979 print; misreads (Throuahout that oeriod, cliaue) are stored as the layer prints them
+
+120. Throuahout that oeriod. the Pol Pot-Iena Sarv cliaue strove to i&&y the ‘war against Viet Na&. Of the-23 divisions which the Kampuchean Army had at the time, the Pol Pot-Ieng Sat-y clique massed 19 on the border between Viet Nam and Kampuchea. Encouraging racial hatred against the Vietnamese people, it sought relentlessly to achieve its aim of invasion of many areas of South Viet Nam. So as to achieve that goal, it spread the fable, for domestic Kampuchean consumption, that Viet Nam had been weakened in its endeavour to cope with innumerable difIiculties and was suffering from insurmountable domestic division and, consequently, Kampuchea, having conquered the Americans and with the support of 800 million Chinese, would surely conquer Viet Nam.

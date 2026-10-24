@@ -1,0 +1,8 @@
+source: src-mau-2024
+locator: sectreuhand
+url: https://www.litrix.de/apps/litrix_publications/data/pdf2/lp_mau_ungleich_en.pdf
+read: 2026-10-09
+note: p. 3
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+The Treuhand agency, for instance, responsible for the restructuring and sale of state-run East German enterprises after reunification still has the image of a ruthless and destructive institution in the East, whereas the West saw it as a necessary evil.

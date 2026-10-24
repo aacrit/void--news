@@ -1,0 +1,7 @@
+source: src-qn-sonmy-2026
+locator: seckilled
+url: https://quangngai.gov.vn/en/news/people-s-committee-news/commemoration-of-58th-anniversary-of-son-my-massacre.html
+read: 2026-10-09
+note: the same news item, the provincial Party Secretary's speech as the portal reports it
+
+Fifty-eight years ago, on the morning of March 16, 1968, 504 innocent civilians were brutally killed. The massacre shocked global public opinion and exposed the atrocities committed by the U.S. military against the Vietnamese people, sparking strong anti-war movements in the United States and around the world.

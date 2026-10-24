@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>void --news — Engine Evolution</title>
+<style>
+  :root{
+    --bg:#0c0d10;
+    --bg-alt:#15171c;
+    --panel:#1a1d24;
+    --panel-2:#22262e;
+    --line:#2a2e38;
+    --ink:#e8eaef;
+    --ink-dim:#b3b8c4;
+    --mute:#7c8493;
+    --accent:#d9a455;
+    --green:#62c47b;
+    --red:#e57373;
+    --amber:#e6b864;
+    --blue:#7eb6e3;
+    --violet:#b894e3;
+    --serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
+    --sans:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif;
+    --mono:'JetBrains Mono','SF Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;font-size:14.5px}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px dotted rgba(217,164,85,.4)}
+  a:hover{border-bottom-style:solid}
+  .wrap{max-width:1240px;margin:0 auto;padding:48px 28px 80px}
+  header.hero{border-bottom:1px solid var(--line);padding-bottom:32px;margin-bottom:48px}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin-bottom:14px}
+  h1{font-family:var(--serif);font-weight:600;font-size:44px;line-height:1.1;margin:0 0 14px;letter-spacing:-.01em}
+  h1 em{font-style:italic;color:var(--accent)}
+  .deck{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--ink-dim);max-width:760px;line-height:1.45}
+  .stats{display:flex;gap:36px;margin-top:28px;flex-wrap:wrap}
+  .stat{}
+  .stat .n{font-family:var(--serif);font-size:30px;color:var(--ink)}
+  .stat .l{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--mute);text-transform:uppercase}
+
+  h2{font-family:var(--serif);font-weight:600;font-size:28px;margin:54px 0 14px;letter-spacing:-.005em}
+  h2::before{content:"§ ";color:var(--mute);font-weight:400}
+  h3{font-family:var(--sans);font-weight:600;font-size:16px;letter-spacing:.02em;margin:28px 0 10px;color:var(--ink)}
+  p{margin:0 0 14px;color:var(--ink-dim)}
+  code{font-family:var(--mono);font-size:12.5px;background:var(--panel-2);padding:1px 6px;border-radius:3px;color:var(--accent)}
+
+  /* TIMELINE / GANTT */
+  .timeline-wrap{background:var(--bg-alt);border:1px solid var(--line);border-radius:6px;padding:24px;overflow-x:auto}
+  .timeline-wrap svg{display:block;min-width:1180px}
+
+  /* CONSTANTS CHART */
+  .chart-wrap{background:var(--bg-alt);border:1px solid var(--line);border-radius:6px;padding:24px;margin-top:14px;overflow-x:auto}
+  .chart-wrap svg{display:block;min-width:1180px}
+  .legend{display:flex;flex-wrap:wrap;gap:18px;margin-top:14px;font-family:var(--mono);font-size:11.5px}
+  .legend-item{display:inline-flex;align-items:center;gap:7px;color:var(--ink-dim)}
+  .legend-swatch{width:18px;height:3px;border-radius:1px}
+
+  /* ERA CARDS */
+  .era{background:var(--bg-alt);border:1px solid var(--line);border-radius:6px;margin-bottom:24px;overflow:hidden}
+  .era-head{padding:22px 26px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:18px;flex-wrap:wrap}
+  .era-num{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--mute)}
+  .era-title{font-family:var(--serif);font-size:24px;font-weight:600;margin:0;flex:1}
+  .era-dates{font-family:var(--mono);font-size:11.5px;color:var(--mute)}
+  .era-body{padding:24px 26px;display:grid;grid-template-columns:1fr 1fr;gap:36px}
+  @media(max-width:880px){.era-body{grid-template-columns:1fr}}
+  .era-body h4{font-family:var(--sans);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute);margin:0 0 10px;font-weight:600}
+  .era-summary{font-family:var(--serif);font-size:16px;line-height:1.55;color:var(--ink);margin:0 0 18px}
+
+  /* COMMIT LIST */
+  ul.commits{list-style:none;margin:0;padding:0}
+  ul.commits li{padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px;display:grid;grid-template-columns:80px 70px 1fr;gap:12px;align-items:baseline}
+  ul.commits li:last-child{border-bottom:none}
+  .csha{font-family:var(--mono);color:var(--accent);font-size:11.5px}
+  .cdate{font-family:var(--mono);font-size:11px;color:var(--mute)}
+  .cmsg{color:var(--ink-dim);line-height:1.45}
+
+  /* CONSTANTS TABLE */
+  table.const-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--line)}
+  table.const-table th,table.const-table td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line)}
+  table.const-table th{background:var(--panel-2);font-weight:600;color:var(--ink);letter-spacing:.04em;font-size:11px;text-transform:uppercase}
+  table.const-table td.cname{color:var(--ink)}
+  table.const-table td.cval{color:var(--accent)}
+  .change-up{color:var(--green)}
+  .change-down{color:var(--red)}
+  .pill{display:inline-block;padding:2px 8px;border-radius:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+  .pill-new{background:rgba(98,196,123,.16);color:var(--green)}
+  .pill-reg{background:rgba(229,115,115,.16);color:var(--red)}
+  .pill-tune{background:rgba(230,184,100,.16);color:var(--amber)}
+  .pill-feat{background:rgba(126,182,227,.16);color:var(--blue)}
+  .pill-rev{background:rgba(184,148,227,.16);color:var(--violet)}
+
+  /* ALGORITHM DIAGRAM */
+  .arch-wrap{background:var(--bg-alt);border:1px solid var(--line);border-radius:6px;padding:24px;margin-top:14px;overflow-x:auto}
+  .arch-wrap svg{display:block;min-width:1180px}
+
+  /* TLDR */
+  .tldr{background:rgba(217,164,85,.06);border-left:3px solid var(--accent);padding:18px 22px;border-radius:0 4px 4px 0;margin:24px 0}
+  .tldr h3{margin-top:0;color:var(--accent)}
+
+  /* DETAILS */
+  details{margin:6px 0}
+  summary{cursor:pointer;color:var(--accent);font-family:var(--mono);font-size:12px;padding:4px 0}
+  details[open] summary{color:var(--ink-dim)}
+  .diff-block{background:#0a0c10;border:1px solid var(--line);border-radius:4px;padding:12px;font-family:var(--mono);font-size:12px;line-height:1.55;color:var(--ink-dim);margin:8px 0;overflow-x:auto;white-space:pre}
+  .diff-plus{color:var(--green)}
+  .diff-minus{color:var(--red)}
+  .diff-info{color:var(--mute)}
+
+  footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11.5px;color:var(--mute);text-align:center;letter-spacing:.06em}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">void --news / engineering archaeology</div>
+  <h1>Engine evolution, <em>2026-03-18 → 2026-05-30</em></h1>
+  <div class="deck">
+    Seventy-five days, seventy-eight engine-touching commits, eight distinct eras. From a single
+    TF-IDF threshold to a seven-phase clustering pipeline with cohesion gating and headline
+    signals — and back toward simplicity again after a catastrophic ten-day regression cycle.
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="n">78</div><div class="l">engine commits</div></div>
+    <div class="stat"><div class="n">75</div><div class="l">days elapsed</div></div>
+    <div class="stat"><div class="n">8</div><div class="l">distinct eras</div></div>
+    <div class="stat"><div class="n">7</div><div class="l">clustering phases</div></div>
+    <div class="stat"><div class="n">2</div><div class="l">total rewrites</div></div>
+    <div class="stat"><div class="n">11</div><div class="l">commits in worst 3 days</div></div>
+  </div>
+</header>
+
+<section>
+<h2>Timeline at a glance</h2>
+<p>Each row is one era of the engine. Bar length is calendar duration; colour signals whether the era added capability (green), tuned existing logic (amber), regressed (red), or unwound prior layers (violet). Vertical markers flag the major milestones.</p>
+
+<div class="timeline-wrap" aria-label="Era timeline Gantt chart">
+<svg viewBox="0 0 1200 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t-title">
+  <title id="t-title">Engine evolution timeline, March to May 2026</title>
+  <style>
+    .axis{stroke:#3a3f4b;stroke-width:1}
+    .tick-text{fill:#7c8493;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.04em}
+    .era-label{fill:#e8eaef;font-family:'Iowan Old Style',serif;font-size:14px;font-style:italic}
+    .era-sub{fill:#b3b8c4;font-family:'JetBrains Mono',monospace;font-size:10.5px}
+    .marker-text{fill:#d9a455;font-family:'JetBrains Mono',monospace;font-size:10px}
+    .grid{stroke:#22262e;stroke-width:1;stroke-dasharray:2 4}
+  </style>
+
+  <!-- timeline axis: x = days from 2026-03-18; total = 73 days mapped to x = 60..1140 -->
+  <!-- Helper: x(d) = 60 + d * 14.79; d=0 (3/18), d=14 (4/1), d=44 (5/1), d=73 (5/30) -->
+  <line class="axis" x1="60" y1="380" x2="1140" y2="380"/>
+  <!-- ticks: month labels -->
+  <g>
+    <line class="grid" x1="60" y1="60" x2="60" y2="380"/>
+    <text class="tick-text" x="60" y="400" text-anchor="middle">MAR 18</text>
+    <line class="grid" x1="267" y1="60" x2="267" y2="380"/>
+    <text class="tick-text" x="267" y="400" text-anchor="middle">APR 01</text>
+    <line class="grid" x1="710" y1="60" x2="710" y2="380"/>
+    <text class="tick-text" x="710" y="400" text-anchor="middle">MAY 01</text>
+    <line class="grid" x1="858" y1="60" x2="858" y2="380"/>
+    <text class="tick-text" x="858" y="400" text-anchor="middle">MAY 11</text>
+    <line class="grid" x1="1006" y1="60" x2="1006" y2="380"/>
+    <text class="tick-text" x="1006" y="400" text-anchor="middle">MAY 21</text>
+    <line class="grid" x1="1139" y1="60" x2="1139" y2="380"/>
+    <text class="tick-text" x="1139" y="400" text-anchor="middle">MAY 30</text>
+  </g>
+
+  <!-- Eras (y rows) — color codes: green=feat, amber=tune, red=regress, violet=unwind -->
+  <!-- Era 1: 3/18 - 3/20 (d=0..2)  → x 60..89 -->
+  <g>
+    <rect x="60" y="78" width="29" height="28" fill="#62c47b" opacity=".85" rx="3"/>
+    <text class="era-label" x="100" y="98">Era 1 · Foundation</text>
+    <text class="era-sub" x="100" y="112">MVP · TF-IDF · ranker v2 → v4</text>
+  </g>
+  <!-- Era 2: 3/20 - 3/31 (d=2..13) → x 89..253 -->
+  <g>
+    <rect x="89" y="118" width="164" height="28" fill="#7eb6e3" opacity=".85" rx="3"/>
+    <text class="era-label" x="263" y="138">Era 2 · Editions &amp; Gemini</text>
+    <text class="era-sub" x="263" y="152">Multi-edition · ranker v5.0 → v5.4 · same-event cap</text>
+  </g>
+  <!-- Era 3: 4/3 - 4/5 (d=16..18) → x 296..325 -->
+  <g>
+    <rect x="296" y="158" width="29" height="28" fill="#e6b864" opacity=".85" rx="3"/>
+    <text class="era-label" x="335" y="178">Era 3 · Fragmentation patches</text>
+    <text class="era-sub" x="335" y="192">Phase 3 title-Jaccard born · v5.5 → v6.0</text>
+  </g>
+  <!-- Era 4: 4/5 - 5/14 (d=18..57) → x 325..903 — long quiet stretch -->
+  <g>
+    <rect x="325" y="198" width="578" height="28" fill="#3a3f4b" opacity=".7" rx="3"/>
+    <text class="era-label" x="913" y="218">Era 4 · Steady-state</text>
+    <text class="era-sub" x="913" y="232">Mostly auxiliary tuning, 4 small engine touches over 5 weeks</text>
+  </g>
+  <!-- Era 5: 5/15 - 5/18 (d=58..61) → x 918..962 -->
+  <g>
+    <rect x="918" y="238" width="44" height="28" fill="#62c47b" opacity=".85" rx="3"/>
+    <text class="era-label" x="972" y="258">Era 5 · 3-phase rewrite</text>
+    <text class="era-sub" x="972" y="272">IDF entity merge · wire-fingerprint · synonym/anchor · Phase 5 cap</text>
+  </g>
+  <!-- Era 6: 5/21 (d=64) — single day → x 1006..1020 -->
+  <g>
+    <rect x="1006" y="278" width="14" height="28" fill="#7eb6e3" opacity=".85" rx="3"/>
+    <text class="era-label" x="1028" y="298">Era 6 · Ranker hardening</text>
+    <text class="era-sub" x="1028" y="312">6 ranker commits in 24h: wire-aware, NGO, conditional mega-cap</text>
+  </g>
+  <!-- Era 7: 5/24 - 5/26 (d=67..69) → x 1050..1095 -->
+  <g>
+    <rect x="1050" y="318" width="45" height="28" fill="#e57373" opacity=".85" rx="3"/>
+    <text class="era-label" x="1105" y="338">Era 7 · Regression cascade</text>
+    <text class="era-sub" x="1105" y="352">11 commits, iter A→E, adaptive thresholds, cohesion-trip overreach</text>
+  </g>
+  <!-- Era 8: 5/28+ (d=71) → x 1109..1140 -->
+  <g>
+    <rect x="1109" y="358" width="31" height="14" fill="#b894e3" opacity=".95" rx="3"/>
+    <text class="era-sub" x="1100" y="368" text-anchor="end" fill="#b894e3">Era 8 · Unwind</text>
+  </g>
+
+  <!-- Major event markers (vertical lines with labels above) -->
+  <g>
+    <!-- 4fddaf1 May 15 d=58 x=918 — 3-phase rewrite -->
+    <line x1="918" y1="62" x2="918" y2="240" stroke="#62c47b" stroke-width="1" stroke-dasharray="3 3"/>
+    <text class="marker-text" x="918" y="56" text-anchor="middle" fill="#62c47b">3-phase rewrite</text>
+    <!-- 4fad614 May 24 d=67 x=1050 — cohesion-gated mega-cap -->
+    <line x1="1050" y1="62" x2="1050" y2="320" stroke="#e57373" stroke-width="1" stroke-dasharray="3 3"/>
+    <text class="marker-text" x="1050" y="56" text-anchor="middle" fill="#e57373">cohesion-trip lands</text>
+    <!-- c2ac66c May 28 d=71 x=1109 — unwind -->
+    <line x1="1109" y1="62" x2="1109" y2="360" stroke="#b894e3" stroke-width="1" stroke-dasharray="3 3"/>
+    <text class="marker-text" x="1109" y="56" text-anchor="middle" fill="#b894e3">6-fix unwind</text>
+    <!-- baseline "10 days ago worked" -->
+    <line x1="962" y1="62" x2="962" y2="240" stroke="#d9a455" stroke-width="1" stroke-dasharray="2 4"/>
+    <text class="marker-text" x="962" y="44" text-anchor="middle" fill="#d9a455">"worked perfectly"</text>
+    <text class="marker-text" x="962" y="56" text-anchor="middle" fill="#d9a455">— user, May 27</text>
+  </g>
+</svg>
+</div>
+</section>
+
+<section>
+<h2>Constants in flight</h2>
+<p>Six knobs control most of clustering behaviour. Here is each knob's trajectory from the day it was introduced. The catastrophic Era 7 layered <em>adaptive</em> overrides on top of these constants, breaking the calibration without renaming them — that's why the regression was so hard to spot in code review.</p>
+
+<div class="chart-wrap" aria-label="Key constants over time">
+<svg viewBox="0 0 1200 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="c-title">
+  <title id="c-title">Key clustering constants over time</title>
+  <style>
+    .ax{stroke:#3a3f4b;stroke-width:1}
+    .axt{fill:#7c8493;font-family:'JetBrains Mono',monospace;font-size:10.5px}
+    .gr{stroke:#22262e;stroke-width:1;stroke-dasharray:2 4}
+    .pt{r:3}
+  </style>
+  <!-- y axis: 0 (no merge) → 4.0 / 100 mapped to y 320..40 -->
+  <!-- x axis: same as timeline; x(d) = 60 + d*14.79 -->
+  <line class="ax" x1="60" y1="40" x2="60" y2="320"/>
+  <line class="ax" x1="60" y1="320" x2="1140" y2="320"/>
+
+  <!-- y ticks (normalised to 0..1 mapped 320..40) -->
+  <g>
+    <line class="gr" x1="60" y1="40" x2="1140" y2="40"/>
+    <text class="axt" x="52" y="44" text-anchor="end">1.0</text>
+    <line class="gr" x1="60" y1="110" x2="1140" y2="110"/>
+    <text class="axt" x="52" y="114" text-anchor="end">0.75</text>
+    <line class="gr" x1="60" y1="180" x2="1140" y2="180"/>
+    <text class="axt" x="52" y="184" text-anchor="end">0.50</text>
+    <line class="gr" x1="60" y1="250" x2="1140" y2="250"/>
+    <text class="axt" x="52" y="254" text-anchor="end">0.25</text>
+    <text class="axt" x="52" y="324" text-anchor="end">0.0</text>
+  </g>
+
+  <!-- x ticks -->
+  <g>
+    <text class="axt" x="60" y="340" text-anchor="middle">3/18</text>
+    <text class="axt" x="267" y="340" text-anchor="middle">4/1</text>
+    <text class="axt" x="710" y="340" text-anchor="middle">5/1</text>
+    <text class="axt" x="918" y="340" text-anchor="middle">5/15</text>
+    <text class="axt" x="1050" y="340" text-anchor="middle">5/24</text>
+    <text class="axt" x="1139" y="340" text-anchor="middle">5/30</text>
+  </g>
+
+  <!-- Phase 1 cosine similarity threshold: started 0.3, dropped to 0.2 (mar 20), kept 0.2 through rewrite (replaced) -->
+  <!-- y=320 - 0.3*280=236; 0.2 → 264 -->
+  <polyline points="60,236 89,236 89,264 296,264 296,264 918,264" fill="none" stroke="#7eb6e3" stroke-width="2.5"/>
+  <circle cx="60" cy="236" r="3" fill="#7eb6e3"/>
+  <circle cx="89" cy="264" r="3" fill="#7eb6e3"/>
+  <circle cx="918" cy="264" r="3" fill="#7eb6e3"/>
+
+  <!-- ENTITY_MERGE_IDF_THRESHOLD: born May 15 at 2.0 (norm = 2/4 = 0.5 → y=180), Era 7 went 3.0 (y=110) adaptive, c2ac66c back to 2.0 -->
+  <polyline points="918,180 1080,180 1080,110 1109,110 1109,180 1140,180" fill="none" stroke="#62c47b" stroke-width="2.5"/>
+  <circle cx="918" cy="180" r="3" fill="#62c47b"/>
+  <circle cx="1080" cy="110" r="3.5" fill="#e57373"/>
+  <circle cx="1109" cy="180" r="3.5" fill="#b894e3"/>
+
+  <!-- TITLE_JACCARD_THRESHOLD: 0.55 (apr 3) → 0.45 (apr 4) → 0.27 (may 15 rewrite, single threshold), unchanged since -->
+  <polyline points="296,166 311,166 311,194 918,194 918,242 1140,242" fill="none" stroke="#e6b864" stroke-width="2.5" stroke-dasharray="0"/>
+  <circle cx="296" cy="166" r="3" fill="#e6b864"/>
+  <circle cx="311" cy="194" r="3" fill="#e6b864"/>
+  <circle cx="918" cy="242" r="3" fill="#e6b864"/>
+
+  <!-- ANCHOR_TITLE_JACCARD_FLOOR: born May 15 at 0.15 (y=278), May 18 0.22 (y=258), May 25 went 0.18 then back to 0.22 -->
+  <polyline points="918,278 962,278 962,258 1066,258 1066,266 1075,266 1075,258 1140,258" fill="none" stroke="#b894e3" stroke-width="2.5"/>
+  <circle cx="918" cy="278" r="3" fill="#b894e3"/>
+  <circle cx="962" cy="258" r="3" fill="#b894e3"/>
+
+  <!-- ANCHOR_IDF_FRACTION_OF_MAX: born May 15 at 0.60 (y=152), May 18 to 0.70 (y=124), Era 7 adaptive 0.80 (y=96), c2ac66c back 0.70 -->
+  <polyline points="918,152 962,152 962,124 1080,124 1080,96 1109,96 1109,124 1140,124" fill="none" stroke="#e57373" stroke-width="2.5"/>
+  <circle cx="918" cy="152" r="3" fill="#e57373"/>
+  <circle cx="962" cy="124" r="3" fill="#e57373"/>
+  <circle cx="1080" cy="96" r="3.5" fill="#e57373"/>
+  <circle cx="1109" cy="124" r="3.5" fill="#b894e3"/>
+
+  <!-- MEGA_COHESION_FLOOR: introduced May 24 (4fad614) at 30 (norm 30/100 = 0.30, y=236), c2ac66c added MIN_SOURCES=40 gate -->
+  <polyline points="1050,236 1140,236" fill="none" stroke="#d9a455" stroke-width="2.5"/>
+  <circle cx="1050" cy="236" r="3.5" fill="#d9a455"/>
+
+  <!-- Major event vertical markers -->
+  <line x1="918" y1="40" x2="918" y2="320" stroke="#62c47b" stroke-width="1" stroke-dasharray="3 3" opacity=".5"/>
+  <line x1="1050" y1="40" x2="1050" y2="320" stroke="#e57373" stroke-width="1" stroke-dasharray="3 3" opacity=".5"/>
+  <line x1="1109" y1="40" x2="1109" y2="320" stroke="#b894e3" stroke-width="1" stroke-dasharray="3 3" opacity=".5"/>
+</svg>
+</div>
+<div class="legend">
+  <span class="legend-item"><span class="legend-swatch" style="background:#7eb6e3"></span>Phase 1 cosine similarity (replaced by IDF rewrite May 15)</span>
+  <span class="legend-item"><span class="legend-swatch" style="background:#62c47b"></span>ENTITY_MERGE_IDF_THRESHOLD (Phase 2)</span>
+  <span class="legend-item"><span class="legend-swatch" style="background:#e6b864"></span>TITLE_JACCARD_THRESHOLD (Phase 3)</span>
+  <span class="legend-item"><span class="legend-swatch" style="background:#b894e3"></span>ANCHOR_TITLE_JACCARD_FLOOR (Phase 2.6)</span>
+  <span class="legend-item"><span class="legend-swatch" style="background:#e57373"></span>ANCHOR_IDF_FRACTION_OF_MAX (Phase 2.6)</span>
+  <span class="legend-item"><span class="legend-swatch" style="background:#d9a455"></span>MEGA_COHESION_FLOOR (Phase 5)</span>
+</div>
+</section>
+
+<section>
+<h2>Architecture, then vs. now</h2>
+<p>The two engines side by side. The left is what shipped on 2026-03-20 — a single agglomerative pass with one knob. The right is today's seven-phase pipeline. The middle shows the 2026-05-15 inflection point that introduced everything to the right of it.</p>
+<div class="arch-wrap" aria-label="Architecture comparison diagram">
+<svg viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="a-title">
+  <title id="a-title">Pipeline architecture comparison</title>
+  <style>
+    .ar-box{fill:#1a1d24;stroke:#2a2e38;stroke-width:1.5;rx:6}
+    .ar-new{fill:#1a2520;stroke:#62c47b;stroke-width:1.5;rx:6}
+    .ar-reg{fill:#251a1a;stroke:#e57373;stroke-width:1.5;rx:6}
+    .ar-title{fill:#e8eaef;font-family:'Iowan Old Style',serif;font-style:italic;font-size:16px}
+    .ar-name{fill:#e8eaef;font-family:'JetBrains Mono',monospace;font-size:11.5px}
+    .ar-sub{fill:#7c8493;font-family:'JetBrains Mono',monospace;font-size:10px}
+    .ar-arrow{stroke:#3a3f4b;stroke-width:1.5;fill:none;marker-end:url(#a)}
+    .ar-arrow-acc{stroke:#d9a455;stroke-width:1.5;fill:none;marker-end:url(#b)}
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3a3f4b"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#d9a455"/>
+    </marker>
+  </defs>
+
+  <!-- LEFT: Foundation era (Mar 18-20) -->
+  <text class="ar-title" x="80" y="30">Foundation engine · 2026-03-20</text>
+  <text class="ar-sub" x="80" y="46">1 phase, 1 knob</text>
+
+  <rect class="ar-box" x="60" y="60" width="160" height="48"/>
+  <text class="ar-name" x="140" y="84" text-anchor="middle">RSS articles</text>
+  <text class="ar-sub" x="140" y="98" text-anchor="middle">N ≈ 400–800</text>
+
+  <path class="ar-arrow" d="M 140 110 L 140 140"/>
+
+  <rect class="ar-box" x="60" y="146" width="160" height="58"/>
+  <text class="ar-name" x="140" y="170" text-anchor="middle">cluster_articles()</text>
+  <text class="ar-sub" x="140" y="186" text-anchor="middle">TF-IDF cosine</text>
+  <text class="ar-sub" x="140" y="198" text-anchor="middle">similarity_threshold=0.3</text>
+
+  <path class="ar-arrow" d="M 140 210 L 140 240"/>
+
+  <rect class="ar-box" x="60" y="248" width="160" height="48"/>
+  <text class="ar-name" x="140" y="270" text-anchor="middle">rank_importance()</text>
+  <text class="ar-sub" x="140" y="284" text-anchor="middle">v2: 5-signal</text>
+
+  <path class="ar-arrow" d="M 140 300 L 140 330"/>
+
+  <rect class="ar-box" x="60" y="338" width="160" height="48"/>
+  <text class="ar-name" x="140" y="362" text-anchor="middle">homepage feed</text>
+
+  <!-- MIDDLE: arrow with annotation -->
+  <text class="ar-sub" x="380" y="180" text-anchor="middle">75 days · 78 commits</text>
+  <path class="ar-arrow-acc" d="M 280 210 L 480 210"/>
+  <text class="ar-sub" x="380" y="232" text-anchor="middle" fill="#d9a455">May 15: 3-phase rewrite</text>
+  <text class="ar-sub" x="380" y="246" text-anchor="middle" fill="#d9a455">+ wire fingerprint</text>
+  <text class="ar-sub" x="380" y="260" text-anchor="middle" fill="#d9a455">+ Phase 5 cap</text>
+
+  <!-- RIGHT: Current engine -->
+  <text class="ar-title" x="520" y="30">Current engine · 2026-05-30</text>
+  <text class="ar-sub" x="520" y="46">7 phases, ~20 knobs, wire-aware, mega-capped, headline-gated</text>
+
+  <rect class="ar-box" x="520" y="60" width="160" height="48"/>
+  <text class="ar-name" x="600" y="84" text-anchor="middle">RSS articles</text>
+  <text class="ar-sub" x="600" y="98" text-anchor="middle">N ≈ 6,500–13,000</text>
+
+  <path class="ar-arrow" d="M 600 110 L 600 130"/>
+
+  <rect class="ar-box" x="520" y="138" width="160" height="38"/>
+  <text class="ar-name" x="600" y="160" text-anchor="middle">deduplicate_articles()</text>
+  <text class="ar-sub" x="600" y="172" text-anchor="middle">wire fingerprint · is_wire_copy</text>
+
+  <path class="ar-arrow" d="M 600 178 L 600 198"/>
+
+  <rect class="ar-box" x="520" y="206" width="160" height="34"/>
+  <text class="ar-name" x="600" y="226" text-anchor="middle">Phase 1 · TF-IDF</text>
+
+  <path class="ar-arrow" d="M 600 242 L 600 258"/>
+
+  <rect class="ar-new" x="520" y="266" width="160" height="34"/>
+  <text class="ar-name" x="600" y="286" text-anchor="middle">Phase 2 · IDF entity merge</text>
+
+  <path class="ar-arrow" d="M 600 302 L 600 318"/>
+
+  <rect class="ar-box" x="520" y="326" width="160" height="34"/>
+  <text class="ar-name" x="600" y="346" text-anchor="middle">Phase 2.5 · canonical pairs</text>
+
+  <path class="ar-arrow" d="M 600 362 L 600 378"/>
+
+  <rect class="ar-box" x="520" y="386" width="160" height="34"/>
+  <text class="ar-name" x="600" y="406" text-anchor="middle">Phase 2.55 · synonyms</text>
+
+  <!-- Right column of pipeline -->
+  <path class="ar-arrow" d="M 700 326 L 740 326 L 740 70 L 740 70"/>
+
+  <rect class="ar-new" x="730" y="60" width="160" height="34"/>
+  <text class="ar-name" x="810" y="80" text-anchor="middle">Phase 2.6 · anchor entity</text>
+
+  <path class="ar-arrow" d="M 810 96 L 810 116"/>
+
+  <rect class="ar-box" x="730" y="124" width="160" height="34"/>
+  <text class="ar-name" x="810" y="144" text-anchor="middle">Phase 3 · title Jaccard</text>
+
+  <path class="ar-arrow" d="M 810 160 L 810 180"/>
+
+  <rect class="ar-box" x="730" y="188" width="160" height="34"/>
+  <text class="ar-name" x="810" y="208" text-anchor="middle">Phase 4 · garbage-title split</text>
+
+  <path class="ar-arrow" d="M 810 224 L 810 244"/>
+
+  <rect class="ar-reg" x="730" y="252" width="160" height="48"/>
+  <text class="ar-name" x="810" y="272" text-anchor="middle">Phase 5 · mega-cap</text>
+  <text class="ar-sub" x="810" y="288" text-anchor="middle">cohesion-gated (Era 7)</text>
+
+  <path class="ar-arrow" d="M 810 308 L 810 328"/>
+
+  <rect class="ar-box" x="730" y="336" width="160" height="34"/>
+  <text class="ar-name" x="810" y="356" text-anchor="middle">wire-aware src count</text>
+
+  <!-- ranker column -->
+  <path class="ar-arrow" d="M 890 353 L 940 353 L 940 80 L 940 80"/>
+
+  <rect class="ar-box" x="940" y="60" width="200" height="34"/>
+  <text class="ar-name" x="1040" y="80" text-anchor="middle">rank_importance v6.3</text>
+
+  <path class="ar-arrow" d="M 1040 96 L 1040 116"/>
+
+  <rect class="ar-box" x="940" y="124" width="200" height="34"/>
+  <text class="ar-name" x="1040" y="144" text-anchor="middle">edition_ranker</text>
+
+  <path class="ar-arrow" d="M 1040 160 L 1040 180"/>
+
+  <rect class="ar-new" x="940" y="188" width="200" height="48"/>
+  <text class="ar-name" x="1040" y="208" text-anchor="middle">is_headline gate (Era 7)</text>
+  <text class="ar-sub" x="1040" y="222" text-anchor="middle">coverage AND rank AND ¬mega AND conf</text>
+
+  <path class="ar-arrow" d="M 1040 244 L 1040 264"/>
+
+  <rect class="ar-box" x="940" y="272" width="200" height="34"/>
+  <text class="ar-name" x="1040" y="292" text-anchor="middle">rerank.py (holistic)</text>
+
+  <path class="ar-arrow" d="M 1040 308 L 1040 328"/>
+
+  <rect class="ar-box" x="940" y="336" width="200" height="34"/>
+  <text class="ar-name" x="1040" y="356" text-anchor="middle">homepage feed</text>
+</svg>
+</div>
+</section>
+
+<section>
+<h2>Era by era</h2>
+
+<!-- ERA 1 -->
+<div class="era" id="era-1">
+  <div class="era-head">
+    <span class="era-num">ERA 01</span>
+    <h3 class="era-title">Foundation · single-pass TF-IDF</h3>
+    <span class="era-dates">2026-03-18 → 2026-03-20 · 3 days</span>
+    <span class="pill pill-feat">FEATURE</span>
+  </div>
+  <div class="era-body">
+    <div>
+      <h4>What shipped</h4>
+      <p class="era-summary">A direct-from-textbook pipeline: parse RSS, vectorize titles + summaries with scikit-learn's TfidfVectorizer, run agglomerative clustering with a single cosine-similarity threshold, then rank with a 5-signal importance score. One file, one knob, ~400 articles a day.</p>
+      <h4>Constants</h4>
+      <table class="const-table">
+        <tr><td class="cname">similarity_threshold</td><td class="cval">0.30 (→ 0.2 → 0.3)</td></tr>
+        <tr><td class="cname">phases in clustering</td><td class="cval">1</td></tr>
+        <tr><td class="cname">ranker signals</td><td class="cval">5 → 10</td></tr>
+        <tr><td class="cname">wire awareness</td><td class="cval">none</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>Commits</h4>
+      <ul class="commits">
+        <li><span class="csha">0386db9</span><span class="cdate">Mar 18</span><span class="cmsg">Phase 1 MVP — frontend, pipeline, source list, Supabase schema</span></li>
+        <li><span class="csha">9776c7b</span><span class="cdate">Mar 18</span><span class="cmsg">Bias aggregation, v2 ranking, real bias display</span></li>
+        <li><span class="csha">79d9bbd</span><span class="cdate">Mar 20</span><span class="cmsg">Clustering v2: entity-overlap merge pass + threshold tuning</span></li>
+        <li><span class="csha">1889c59</span><span class="cdate">Mar 20</span><span class="cmsg">Fix over-merging: filter common entities, raise threshold to 3</span></li>
+        <li><span class="csha">d03324a</span><span class="cdate">Mar 20</span><span class="cmsg">Revert threshold 0.2 → 0.3 — 0.2 created garbage</span></li>
+        <li><span class="csha">95e4ba1</span><span class="cdate">Mar 20</span><span class="cmsg">Ranking engine v4.0: 10-signal formula for top-10 headlines</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ERA 2 -->
+<div class="era" id="era-2">
+  <div class="era-head">
+    <span class="era-num">ERA 02</span>
+    <h3 class="era-title">Editions, Gemini, and the same-event cap</h3>
+    <span class="era-dates">2026-03-20 → 2026-03-31 · 11 days</span>
+    <span class="pill pill-feat">FEATURE</span>
+  </div>
+  <div class="era-body">
+    <div>
+      <h4>What shipped</h4>
+      <p class="era-summary">The pipeline gained Gemini editorial-importance scoring at $0 (free tier), an "additive not multiplicative" adjustment that prevented bloat. Multi-edition routing landed (US / India / Nepal / Germany), then ranker v5.0 → v5.4 introduced the same-event cap and tabloid gate. The first sign that one large cluster could dominate everything if left unconstrained.</p>
+      <h4>Constants</h4>
+      <table class="const-table">
+        <tr><td class="cname">similarity_threshold</td><td class="cval">0.3 (steady)</td></tr>
+        <tr><td class="cname">ranker version</td><td class="cval">v5.0 → v5.4</td></tr>
+        <tr><td class="cname">same-event cap</td><td class="cval">added</td></tr>
+        <tr><td class="cname">soft-news gate</td><td class="cval">0.78x</td></tr>
+        <tr><td class="cname">tabloid gate</td><td class="cval">0.75x</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>Key commits</h4>
+      <ul class="commits">
+        <li><span class="csha">cbf6329</span><span class="cdate">Mar 20</span><span class="cmsg">Ranking v5.0: Gemini editorial intelligence at $0</span></li>
+        <li><span class="csha">0a53c5d</span><span class="cdate">Mar 21</span><span class="cmsg">v5.1: divergence damper, spectrum bonus</span></li>
+        <li><span class="csha">5402f7d</span><span class="cdate">Mar 28</span><span class="cmsg">Ranking v5.4: same-event cap, mega-cluster prevention</span></li>
+        <li><span class="csha">b2a65bf</span><span class="cdate">Mar 28</span><span class="cmsg">Per-edition ranking, India sources, tabloid gate</span></li>
+        <li><span class="csha">f6f45a1</span><span class="cdate">Mar 31</span><span class="cmsg">Bias calibration + ranker v5.5 + signal_tracker sync</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ERA 3 -->
+<div class="era" id="era-3">
+  <div class="era-head">
+    <span class="era-num">ERA 03</span>
+    <h3 class="era-title">Fragmentation patches · Phase 3 is born</h3>
+    <span class="era-dates">2026-04-03 → 2026-04-05 · 3 days</span>
+    <span class="pill pill-tune">TUNE</span>
+  </div>
+  <div class="era-body">
+    <div>
+      <h4>What shipped</h4>
+      <p class="era-summary">Production showed cluster fragmentation — the same story appearing as 3-4 sibling clusters. The patch was a new <code>merge_duplicate_title_clusters()</code> pass: title Jaccard over stemmed word sets. Starting threshold 0.55, lowered to 0.45 within a day after still missing real merges. Iran/Israel/Pentagon entity blocklists were added to a separate filter to prevent transitive bridges. Ranker v6.0 extracted the edition ranker to its own module.</p>
+      <h4>Constants</h4>
+      <table class="const-table">
+        <tr><td class="cname">jaccard_threshold (Phase 3)</td><td class="cval">0.55 → 0.45</td></tr>
+        <tr><td class="cname">cluster purity check</td><td class="cval">added</td></tr>
+        <tr><td class="cname">ranker version</td><td class="cval">v5.5 → v6.0</td></tr>
+        <tr><td class="cname">lead gate, thin penalty</td><td class="cval">added</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>Key commits</h4>
+      <ul class="commits">
+        <li><span class="csha">1f128a7</span><span class="cdate">Apr 3</span><span class="cmsg">Fix cluster fragmentation: add Phase 3 title-similarity merge</span></li>
+        <li><span class="csha">ac7df60</span><span class="cdate">Apr 4</span><span class="cmsg">Lower Jaccard, unblock Iran/Israel/Pentagon entities</span></li>
+        <li><span class="csha">f153287</span><span class="cdate">Apr 4</span><span class="cmsg">Cluster purity check: eject outlier articles from junk drawers</span></li>
+        <li><span class="csha">708d9f7</span><span class="cdate">Apr 5</span><span class="cmsg">Ranking engine v6.0: extract edition ranker, fix 5 structural issues</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ERA 4 -->
+<div class="era" id="era-4">
+  <div class="era-head">
+    <span class="era-num">ERA 04</span>
+    <h3 class="era-title">The long quiet stretch</h3>
+    <span class="era-dates">2026-04-05 → 2026-05-14 · 39 days</span>
+    <span class="pill pill-tune">TUNE</span>
+  </div>
+  <div class="era-body">
+    <div>
+      <h4>What shipped</h4>
+      <p class="era-summary">Forty days of mostly auxiliary work — frontend, audio, sources, history — with only four touches to the engine itself. The 2026-04-11 commit tightened entity blocklists; 2026-04-28 fixed singleton emission for empty-document articles; 2026-05-13 was a UAT P0/P1 sweep across the broader pipeline. The engine was effectively stable. This is the era the user remembers as <em>"worked perfectly."</em></p>
+      <h4>Constants</h4>
+      <table class="const-table">
+        <tr><td class="cname">entity blocklist</td><td class="cval">tightened (Apr 11)</td></tr>
+        <tr><td class="cname">singleton handling</td><td class="cval">fixed (Apr 28)</td></tr>
+        <tr><td class="cname">core thresholds</td><td class="cval">unchanged</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>Key commits</h4>
+      <ul class="commits">
+        <li><span class="csha">23c17f4</span><span class="cdate">Apr 11</span><span class="cmsg">Tighten entity blocklist + size caps to prevent mega-cluster contamination</span></li>
+        <li><span class="csha">b376946</span><span class="cdate">Apr 28</span><span class="cmsg">Emit empty-document articles as singleton clusters</span></li>
+        <li><span class="csha">2d0be89</span><span class="cdate">May 13</span><span class="cmsg">UAT P0+P1 sweep — sonnet latch, brief stub, image cache, retention</span></li>
+        <li><span class="csha">6ce753b</span><span class="cdate">May 14</span><span class="cmsg">Ranker+layout: ship all audit findings + inline-badge compression</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ERA 5 -->
+<div class="era" id="era-5">
+  <div class="era-head">
+    <span class="era-num">ERA 05</span>
+    <h3 class="era-title">The 3-phase rewrite</h3>
+    <span class="era-dates">2026-05-15 → 2026-05-18 · 4 days</span>
+    <span class="pill pill-new">REWRITE</span>
+  </div>
+  <div class="era-body">
+    <div>
+      <h4>What shipped</h4>
+      <p class="era-summary">The clustering engine was rebuilt from the ground up. TF-IDF cosine survived as Phase 1, but everything downstream was new: IDF-weighted entity merging (Phase 2), summit-pair editorial overrides (Phase 2.5), synonym/alias resolution (Phase 2.55), anchor-entity merging on rare proper nouns (Phase 2.6), garbage-title force-split (Phase 4), and a mega-cluster soft cap with sanity guard (Phase 5). Wire-syndication fingerprinting tagged AP/Reuters echoes so source counts didn't inflate. By 5/18 a 120-source hard ceiling capped transitive merge chains. The validation suite jumped from 21 to 33 fixtures, 97% pass rate.</p>
+      <h4>New constants</h4>
+      <table class="const-table">
+        <tr><td class="cname">ENTITY_MERGE_IDF_THRESHOLD</td><td class="cval">2.0</td></tr>
+        <tr><td class="cname">TITLE_JACCARD_THRESHOLD</td><td class="cval">0.27</td></tr>
+        <tr><td class="cname">ANCHOR_IDF_FRACTION_OF_MAX</td><td class="cval">0.60 → 0.70</td></tr>
+        <tr><td class="cname">ANCHOR_TITLE_JACCARD_FLOOR</td><td class="cval">0.15 → 0.22</td></tr>
+        <tr><td class="cname">ANCHOR_MIN_SHARED</td><td class="cval">2</td></tr>
+        <tr><td class="cname">MEGA_CLUSTER_THRESHOLD</td><td class="cval">75</td></tr>
+        <tr><td class="cname">MERGE_HARD_CEILING</td><td class="cval">120</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>Key commits</h4>
+      <ul class="commits">
+        <li><span class="csha">4fddaf1</span><span class="cdate">May 15</span><span class="cmsg">Clustering: 3-phase rewrite — IDF-weighted entity merge + wire-fingerprinting</span></li>
+        <li><span class="csha">5b982cd</span><span class="cdate">May 15</span><span class="cmsg">Phase 2.5 summit-pair collapse + Phase 4 spans-split</span></li>
+        <li><span class="csha">960943b</span><span class="cdate">May 15</span><span class="cmsg">Path A complete — synonym/anchor/mega-cluster — 96.8% prod pass</span></li>
+        <li><span class="csha">504d221</span><span class="cdate">May 16</span><span class="cmsg">Phase 5 sanity guard — refuse to ship shattered re-splits</span></li>
+        <li><span class="csha">fb33f28</span><span class="cdate">May 17</span><span class="cmsg">Replace Phase 5 sanity guard with avg-articles heuristic</span></li>
+        <li><span class="csha">1330640</span><span class="cdate">May 17</span><span class="cmsg">Tighten Phase 2.6 anchor thresholds for production scale</span></li>
+        <li><span class="csha">70abb08</span><span class="cdate">May 17</span><span class="cmsg">Hard merge ceiling (120 sources) across all 5 merge phases</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ERA 6 -->
+<div class="era" id="era-6">
+  <div class="era-head">
+    <span class="era-num">ERA 06</span>
+    <h3 class="era-title">Ranker hardening</h3>
+    <span class="era-dates">2026-05-21 · 1 day</span>
+    <span class="pill pill-feat">FEATURE</span>
+  </div>
+  <div class="era-body">
+    <div>
+      <h4>What shipped</h4>
+      <p class="era-summary">Six ranker commits in a single 22-hour window. Wire-aware coverage math (so rerank no longer double-counted AP echoes), v6.3 cross-spectrum bonus that required a centre wire + 3 partisan articles (closing the predictable-reaction loophole), tier-2 NGO authority recognition for groups like Amnesty, a refined 0.70–0.85x conditional mega-cap multiplier replacing the flat 0.65x, and a sensationalism gate exemption for high-factual-rigor stories (so Beirut airstrike reporting wasn't demoted as tabloid).</p>
+      <h4>What changed in scoring</h4>
+      <table class="const-table">
+        <tr><td class="cname">mega-cap multiplier</td><td class="cval">0.65 flat → 0.70–0.85 conditional</td></tr>
+        <tr><td class="cname">cross-spectrum bonus gate</td><td class="cval">+ centre wire required + 3 partisan</td></tr>
+        <tr><td class="cname">NGO authority</td><td class="cval">tier-2 recognised</td></tr>
+        <tr><td class="cname">sensationalism gate</td><td class="cval">exempt if factual ≥ 55</td></tr>
+        <tr><td class="cname">consequentiality floor</td><td class="cval">18 (NGO) · 30 (Fed-tier)</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>Commits</h4>
+      <ul class="commits">
+        <li><span class="csha">ba3536e</span><span class="cdate">May 21</span><span class="cmsg">Wire-aware coverage math (rerank fetches wire fields)</span></li>
+        <li><span class="csha">3e99783</span><span class="cdate">May 21</span><span class="cmsg">Cross-spectrum bonus requires centre wire + 3 partisan (v6.3)</span></li>
+        <li><span class="csha">3a46a39</span><span class="cdate">May 21</span><span class="cmsg">NGO tier-2 authority + softer consequentiality floor</span></li>
+        <li><span class="csha">9d2cb44</span><span class="cdate">May 21</span><span class="cmsg">Refined mega_capped multiplier (0.65 flat → 0.70–0.85)</span></li>
+        <li><span class="csha">0d54c0d</span><span class="cdate">May 21</span><span class="cmsg">Sensationalism gate exempts high factual-rigor clusters</span></li>
+        <li><span class="csha">9f84af0</span><span class="cdate">May 21</span><span class="cmsg">WHO authority tier-1 + strip month-name "march"</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ERA 7 -->
+<div class="era" id="era-7">
+  <div class="era-head">
+    <span class="era-num">ERA 07</span>
+    <h3 class="era-title">The regression cascade · iter A through E</h3>
+    <span class="era-dates">2026-05-24 → 2026-05-26 · 3 days, 11 commits</span>
+    <span class="pill pill-reg">REGRESSION</span>
+  </div>
+  <div class="era-body">
+    <div>
+      <h4>What went wrong</h4>
+      <p class="era-summary">Day-1 audit found an 80-article "Observer" false-merge (publisher-bridge). The fix shipped as a cohesion-gated mega-cap (<code>MEGA_COHESION_FLOOR=30</code>, articles ≥ 20) plus a new <code>is_headline</code> signal. Within hours <code>is_headline</code> failed to fire anywhere; that triggered iterations B through E that layered <em>adaptive</em> overrides on top of the static thresholds — three-tier corpus-volume scaling for the ranker, two-band adaptive entity-merge IDF (2.0 → 3.0), adaptive anchor IDF (0.70 → 0.80), a 36h recluster window. Each layer was a band-aid for a symptom the previous layer created. By 5/26 the engine had a recluster-only path that processed zero articles (a wipe bug), a Phase 5 trip that shattered any 12-source cluster with multi-desk title diversity, and a rerank writeback that overwrote correct headline flags with strict busy-mode thresholds every single run.</p>
+      <h4>What broke</h4>
+      <table class="const-table">
+        <tr><td class="cname">MEGA_COHESION_FLOOR</td><td class="cval">30 (new — too broad)</td></tr>
+        <tr><td class="cname">MEGA_COHESION_MIN_ARTICLES</td><td class="cval">20 (no source floor)</td></tr>
+        <tr><td class="cname">adaptive entity threshold</td><td class="cval">3.0 when corpus &lt; 8K</td></tr>
+        <tr><td class="cname">adaptive anchor IDF</td><td class="cval">0.80 when corpus &lt; 8K</td></tr>
+        <tr><td class="cname">is_headline rank floor</td><td class="cval">22 / 35 / 45 (3-band)</td></tr>
+        <tr><td class="cname">is_headline conf floor</td><td class="cval">30 / 50 / 60 (3-band)</td></tr>
+        <tr><td class="cname">recluster preload</td><td class="cval">silently wiped at main.py:1339</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>The 11 commits</h4>
+      <ul class="commits">
+        <li><span class="csha">2ea12aa</span><span class="cdate">May 24 14:58</span><span class="cmsg">5-fix patch for catastrophic clustering regression</span></li>
+        <li><span class="csha">4fad614</span><span class="cdate">May 24 15:24</span><span class="cmsg">Cohesion-gated mega-cap + first-class is_headline signal</span></li>
+        <li><span class="csha">fdc202e</span><span class="cdate">May 24 15:52</span><span class="cmsg">Paginate recluster preload + 36h lookback</span></li>
+        <li><span class="csha">32d47bd</span><span class="cdate">May 24 16:13</span><span class="cmsg">is_headline v3 — saturating curve</span></li>
+        <li><span class="csha">930be39</span><span class="cdate">May 24 16:37</span><span class="cmsg">Fix NameError on cohesion_score</span></li>
+        <li><span class="csha">ea883f2</span><span class="cdate">May 24 16:54</span><span class="cmsg">Hill-curve src_pts + lower threshold</span></li>
+        <li><span class="csha">612a5e9</span><span class="cdate">May 24 17:19</span><span class="cmsg">is_headline used wrong source count (wire bug)</span></li>
+        <li><span class="csha">89383cf</span><span class="cdate">May 24 20:35</span><span class="cmsg">Drop garbage-title articles + tighten is_headline</span></li>
+        <li><span class="csha">c5742bd</span><span class="cdate">May 25 19:01</span><span class="cmsg">Adaptive is_headline + Phase 2.6 Jaccard 0.22 → 0.18</span></li>
+        <li><span class="csha">996cbe7</span><span class="cdate">May 25 19:35</span><span class="cmsg">Revert Jaccard 0.18 → 0.22 + recursive sub-cap</span></li>
+        <li><span class="csha">311dcc0</span><span class="cdate">May 26 23:51</span><span class="cmsg">Three-tier corpus-volume scaling for is_headline</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ERA 8 -->
+<div class="era" id="era-8">
+  <div class="era-head">
+    <span class="era-num">ERA 08</span>
+    <h3 class="era-title">The unwind</h3>
+    <span class="era-dates">2026-05-28 → present · ongoing</span>
+    <span class="pill pill-rev">UNWIND</span>
+  </div>
+  <div class="era-body">
+    <div>
+      <h4>What shipped</h4>
+      <p class="era-summary">A 9-angle multi-finder code review (4 parallel adversarial agents) surfaced six root-cause regressions from Era 7. One commit unwound them all: the recluster wipe bug got an <code>if not recluster_only</code> guard; Phase 5 cohesion-trip gained a 40-source floor; rerank's corpus_size switched from all-time-DB to a 48h window; both adaptive overrides reverted to static; Phase 5 sub-cap now applies wire-aware collapse before threshold comparison; tabloid keyword matching switched from substring to word-boundary tokens. Validation suite stayed clean (33 CORRECT / 1 ACCEPTABLE / 1 WRONG). The next run lifted max source_count from 3 to 13 and headlines from 0 to firing again — partial recovery. The structural fragmentation in Phase 2 (the <code>len(shared) ≥ 3</code> gate against shared low-specificity entities like Trump + Iran) remains an open issue.</p>
+      <h4>Restored constants</h4>
+      <table class="const-table">
+        <tr><td class="cname">ENTITY_MERGE_IDF_THRESHOLD</td><td class="cval">2.0 (static, reverted)</td></tr>
+        <tr><td class="cname">ANCHOR_IDF_FRACTION_OF_MAX</td><td class="cval">0.70 (static, reverted)</td></tr>
+        <tr><td class="cname">MEGA_COHESION_MIN_SOURCES</td><td class="cval">40 (NEW — required floor)</td></tr>
+        <tr><td class="cname">corpus_size in rerank</td><td class="cval">48h window count</td></tr>
+        <tr><td class="cname">Phase 5 sub-cap</td><td class="cval">wire-aware before threshold</td></tr>
+        <tr><td class="cname">tabloid keyword match</td><td class="cval">token, not substring</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>Commit</h4>
+      <ul class="commits">
+        <li><span class="csha">c2ac66c</span><span class="cdate">May 28</span><span class="cmsg">Unwind 10 days of layered band-aids — 6 root-cause fixes</span></li>
+      </ul>
+      <h4>Still open</h4>
+      <ul class="commits">
+        <li><span class="csha">—</span><span class="cdate">deferred</span><span class="cmsg">MERGE_HARD_CEILING transitive bypass via union-find (real structural bug, requires component-size tracker)</span></li>
+        <li><span class="csha">—</span><span class="cdate">deferred</span><span class="cmsg">Phase 2 len(shared) ≥ 3 gate too strict for low-specificity-only overlap (Trump + Iran case)</span></li>
+        <li><span class="csha">—</span><span class="cdate">deferred</span><span class="cmsg">Phase 3 TITLE_JACCARD_THRESHOLD = 0.27 may need 0.22 (calibration question, not a bug)</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section>
+<h2>What the data taught us</h2>
+
+<div class="tldr">
+  <h3>Three patterns showed up over and over</h3>
+  <p><strong>1. Symptom-driven fixes accrete dead weight.</strong> The Era 7 cascade is the textbook case. Each commit "fixed" the next symptom without going back to find the original cause. By the end, three different adaptive thresholds were all band-aiding the same underlying problem (Phase 5 over-firing) — and unwinding any single one didn't help because the others still tripped.</p>
+  <p><strong>2. Production-scale calibration drifts silently.</strong> The Era 5 thresholds (entity 2.0, jaccard 0.27, anchor 0.70) were calibrated against a 33-fixture validation suite. Production corpus distributions (7K articles, IDF for "Trump" ≈ 2.2 not 5.0) differ. The suite stays green while real-world clustering degrades. Era 4's calm wasn't because the engine was robust — it was because the news cycle happened to give the engine entity overlap it could see.</p>
+  <p><strong>3. The same knob keeps appearing under different names.</strong> <code>similarity_threshold</code>, <code>ENTITY_MERGE_IDF_THRESHOLD</code>, adaptive overrides, <code>MEGA_COHESION_FLOOR</code>, <code>MEGA_COHESION_MIN_SOURCES</code>, the literal <code>35.0</code> in the chain-merge-dissolve branch — all are "how lenient is the merge?" If we'd kept a single named scalar with intentional callsites, the regression would have been one diff line not three layered overrides.</p>
+</div>
+
+<h3>Open architectural debts (not in any era's "what shipped")</h3>
+<p><strong>Union-find ceiling bypass.</strong> <code>_would_exceed_ceiling</code> compares <code>clusters[find(i)].source_count + clusters[find(j)].source_count &gt; 120</code>. But <code>union()</code> only updates parent pointers — never accumulates merged sizes back into <code>clusters[root]</code>. Transitive A→B→C→D chains pass each pairwise check while producing a 150-source mega. The Era 5 hard ceiling has been silently bypassed since the day it shipped.</p>
+<p><strong>Phase 2 distinguishing-entity gate.</strong> Both <code>len(shared) ≥ 3</code> and <code>distinguishing_shared ≥ 1</code> assume each cluster carries ≥ 3 named entities. Production reality: many articles mention only 2–3 entities total, and the relevant ones (Trump, Iran, Newsmax) are all in <code>_LOW_SPECIFICITY_ENTITIES</code>. The fallback Jaccard path also requires <code>len(shared) ≥ 3</code>, so it doesn't rescue. Result: real wide-coverage stories where each desk picks a different secondary detail (Hormuz vs. Witkoff vs. ceasefire) end up fragmented across 4-5 sibling clusters.</p>
+<p><strong>Two-corpus_size mismatch.</strong> main.py passes <code>len(stored_articles)</code> (this run's fetch, 4–13K). rerank.py originally passed <code>len(articles_by_id)</code> (all-time DB, 40K+). The unwind switched rerank to a 48h window. There's still semantic drift between "how much fresh news was there" and "how many clusters are competing." A single, named, run-level corpus signal would remove this ambiguity entirely.</p>
+
+</section>
+
+<footer>void --news · engineering archaeology · generated 2026-05-30</footer>
+
+</div>
+</body>
+</html>

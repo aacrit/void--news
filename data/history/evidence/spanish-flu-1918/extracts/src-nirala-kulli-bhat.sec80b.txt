@@ -1,0 +1,7 @@
+source: src-nirala-kulli-bhat
+locator: sec80b
+url: https://archive.org/download/dli.ernet.525743/525743-Kulli%20Bhat_djvu.txt
+read: 2026-09-25
+note: the same page, five lines lower; checked against the page scan (leaf 80) on 2026-09-25 and stored as printed: गंगा for the text layer's भंगा, ऊँचे for ऊंचे, बाहर for बाइर
+
+रोज़ गंगा देखने जाया करता था । एक ऊँचे टीले पर बैठकर लाशों का दृश्य देखता था । मन की अवस्था बयान से बाहर।

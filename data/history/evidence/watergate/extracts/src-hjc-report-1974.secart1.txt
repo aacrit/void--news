@@ -1,0 +1,8 @@
+source: src-hjc-report-1974
+locator: secart1
+url: https://archive.org/details/impeachmentofric0000unit
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (including the '¬' the OCR prints for one) are kept as printed
+note: the committee's Article I as the report prints it, its opening paragraphs; the means it lists follow and are not held
+
+Article I In his conduct of the office of President of the United States, Richard M. Nixon, in violation of his constitutional oath faithfully ! to execute the office of President of the United States and, to the best of his ability, preserve, pro¬ tect, and defend the Constitution of the United States, and in violation of his constitutional duty to take care that the laws be faithfully executed, has prevented, obstructed, and impeded the administration of justice, in that: On June 17, 1972, and prior thereto, agents of the Committee for the Re-election of the President com¬ mitted unlawful entry of the headquarters of the Demo¬ cratic National Committee in Washington, District of Columbia, for the purpose of securing political intelligence. Subsequent thereto, Richard M. Nixon, using the powers of his high office, engaged personally and through his subordinates and agents, in a course of conduct or plan designed to delay, impede, and obstruct the investigation of such unlawful entry; to cover up, conceal and protect those responsible; and to conceal the existence and scope of other unlawful covert activities.

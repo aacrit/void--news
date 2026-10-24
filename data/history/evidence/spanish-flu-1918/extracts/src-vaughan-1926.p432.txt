@@ -1,0 +1,8 @@
+source: src-vaughan-1926
+locator: p432
+url: https://archive.org/download/doctorsmemories013852mbp/doctorsmemories013852mbp_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+note: the running head 432 A DOCTOR'S MEMORIES is swept into the text layer mid-sentence, and the closing quotation mark after camp is printed as /'; stored as the text layer prints them
+
+I went directly to the Surgeon General's office, where General Richard was officiating, as General Gorgas was in Europe. Scarcely looking up from his papers the general said, as I entered the door: "You will proceed 432 A DOCTOR'S MEMORIES immediately to Devens. The Spanish influenza has struck that camp/' Then, laying aside his papers and looking into my suffused eyes, he said: "No, you will go home and go to bed." I took the next train for Camp Devens and arrived early the next morning. I am not going into the history of the influenza epidemic. It encircled the world, visited the remotest corners, taking toll of the most robust, sparing neither soldier nor civilian, and flaunting its red flag in the face of science.

@@ -43,8 +43,22 @@ ALTER TABLE articles ALTER COLUMN section SET DEFAULT 'world';
 -- 5. MUST HAVE: CHECK constraint on bias_scores.confidence
 -- ============================================================================
 
-ALTER TABLE bias_scores ADD CONSTRAINT IF NOT EXISTS chk_confidence_range
-  CHECK (confidence BETWEEN 0.0 AND 1.0);
+-- PostgreSQL has no ADD CONSTRAINT IF NOT EXISTS; the original form was a
+-- syntax error that aborted this whole file, so a fresh-DB replay halted at
+-- 003 and migrations 004+ never applied. Guarded DO-block instead.
+-- (Production tracks 003 as applied by filename, so this rewrite is inert
+-- there; it exists for disaster-recovery / fresh-environment bootstrap.)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'chk_confidence_range'
+      AND conrelid = 'bias_scores'::regclass
+  ) THEN
+    ALTER TABLE bias_scores ADD CONSTRAINT chk_confidence_range
+      CHECK (confidence BETWEEN 0.0 AND 1.0);
+  END IF;
+END $$;
 
 -- ============================================================================
 -- 6. MUST HAVE: Stale cluster cleanup function

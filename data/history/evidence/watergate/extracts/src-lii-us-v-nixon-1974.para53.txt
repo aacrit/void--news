@@ -1,0 +1,7 @@
+source: src-lii-us-v-nixon-1974
+locator: para53
+url: https://www.law.cornell.edu/supremecourt/text/418/683
+read: 2026-10-09
+note: the Legal Information Institute's web text of the opinion; the locator is LII's own paragraph number, printed at the head of each paragraph, not a U.S. Reports page
+
+We conclude that when the ground for asserting privilege as to subpoenaed materials sought for use in a criminal trial is based only on the generalized interest in confidentiality, it cannot prevail over the fundamental demands of due process of law in the fair administration of criminal justice. The generalized assertion of privilege must yield to the demonstrated, specific need for evidence in a pending criminal trial.

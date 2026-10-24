@@ -1,0 +1,7 @@
+source: src-walrus-owen-2006
+locator: seccasualties
+url: https://thewalrus.ca/2006-10-history/
+read: 2026-10-09
+note: the same web text
+
+Previously, it was estimated that between 50,000 and 150,000 Cambodian civilians were killed by the bombing. Given the fivefold increase in tonnage revealed by the database, the number of casualties is surely higher.

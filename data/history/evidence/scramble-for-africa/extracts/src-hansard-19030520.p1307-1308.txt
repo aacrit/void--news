@@ -1,0 +1,10 @@
+source: src-hansard-19030520
+locator: p1307-1308
+url: https://api.parliament.uk/historic-hansard/commons/1903/may/20/congo-free-state
+read: 2026-09-25
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: the debate heading the site prints, then the motion as Herbert Samuel moved it and Sir John Gorst's first paragraph; section marks and the speaker's constituency line dropped
+
+HC Deb 20 May 1903 vol 122 cc1289-332
+Motion made, and Question proposed, "That the Government of the Congo Free State having, at its inception, guaranteed to the Powers that its native subjects should be governed with humanity, and that no trading monopoly or privilege should be permitted within its dominions, and both these guarantees having been constantly violated, this House requests His Majesty's Government to confer with the other Powers, signatories of the Berlin General Act by virtue of which the Congo Free State exists, in order that measures may be adopted to abate the evils prevalent in that State."—( Mr. Herbert Samuel. )
+said he hoped the Government might be able to accept this Motion, and that, strengthened by resolution of the House of Commons, they would take some practical step for the deliverance of the Congo territory from the evils which had been described. He did not think anybody now could doubt the substantial accuracy of the description given by the hon. Member who moved the Resolution of the condition of the natives in the Congo State. The evidence was perfectly overwhelming. In his early days he was in a position to test the accuracy of the evidence of missionaries as to semi-civilised races, and he formed the opinion that on the whole they could not have more reliable testimony as to anything which had happened among semi-civilised people than that given by missionaries, and in this case their evidence was amply confirmed. In that particular case one could well understand the reticence of the missionary, and he thought that what had been stated by the mover and seconder of the Resolution would convince the House that a man required a great deal of

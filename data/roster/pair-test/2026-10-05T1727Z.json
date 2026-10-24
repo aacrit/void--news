@@ -1,0 +1,113 @@
+{
+ "collected_at": "2026-10-05T17:27:04Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 40,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16184615/British-Airways-flight-Chicago-declares-emergency-dropping-28-000ft-minutes-flying-Ireland.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "British Airways flight to Chicago declares emergency after 'dropping 28,000ft in minutes' while flying over Ireland",
+      "published": "Mon, 05 Oct 2026 17:33:37 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/ba295-emergency-british-airways-flight-37736678",
+      "title": "British Airways BA295 live: Flight to Chicago drops 28,000ft in mid-air emergency",
+      "published": "Mon, 5 Oct 2026 17:17:50 +0000"
+     }
+    },
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16183475/Katie-Price-ex-husband-Kieran-Hayler-arrives-court-trial.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Kieran Hayler accuses Katie Price of 'setting him up' as court told he 'pinned down and raped 13-year-old girl'",
+      "published": "Mon, 05 Oct 2026 17:02:56 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/kieran-hayler-rape-trial-updates-37735999",
+      "title": "Katie Price's ex Kieran Hayler 'pinned down and raped 13-year-old girl', court told",
+      "published": "Mon, 5 Oct 2026 17:10:49 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/lifestyle/article-16183525/As-Match-Day-hosts-Mark-Chapman-Kelly-Cates-start-dating-rules-office-romance-survive-break-job-intact.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "As Match of the Day co-hosts Mark Chapman and Kelly Cates 'start dating', all the rules to an office romance... and how to survive a break-up with your job intact",
+      "published": "Mon, 05 Oct 2026 14:52:37 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/mark-chapman-wife-charity-cates-37737121",
+      "title": "Mark Chapman's wife's tragic death, charity stunts and new Kelly Cates romance",
+      "published": "Mon, 5 Oct 2026 17:07:00 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/crime-in-israel/article-910629",
+      "title": "Israeli lecturer indicted for planning mass terror attack against Palestinians, Arab Israelis",
+      "published": "Mon, 05 Oct 2026 11:45:41 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-security/2026-10-05/ty-article/.premium/israeli-professor-indicted-for-plotting-mass-casualty-terror-attacks-on-arabs/000001a1-0b67-da41-a5ed-ab67f04c0000",
+      "title": "Israeli professor indicted for plotting mass-casualty terror attacks on Arabs and Palestinians",
+      "published": "Mon, 05 Oct 2026 13:15:16 +0300"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/diaspora/antisemitism/article-910677",
+      "title": "Man who planned attack on Israeli embassy in London sentenced to life in prison",
+      "published": "Mon, 05 Oct 2026 17:17:35 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/world-news/europe/2026-10-05/ty-article/man-who-planned-attack-on-londons-israeli-embassy-jailed-for-at-least-20-years/000001a1-0c99-d502-ada5-bdd93b710000",
+      "title": "Man who planned terror attack on London's Israeli embassy jailed for at least 20 years",
+      "published": "Mon, 05 Oct 2026 19:15:22 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 132,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 306,
+    "left": 10
+   }
+  }
+ }
+}

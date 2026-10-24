@@ -1,0 +1,7 @@
+source: src-sv-estimates
+locator: secdisembark
+url: https://legacy.slavevoyages.org/assessment/estimates
+read: 2026-10-09
+note: the page's form submitted with rows: broad disembarkation regions; columns: flag; cells: only disembarked; 1501 to 1866 (a POST to the url; the table is the page's response); sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Spain / Uruguay Portugal / Brazil Great Britain Netherlands U.S.A. France Denmark / Baltic Totals Europe 0 2,636 3,438 2,004 119 664 0 8,861 Mainland North America 1,851 382 264,911 1,212 110,531 8,877 983 388,747 British Caribbean 5,794 7,919 2,208,296 6,996 64,836 22,922 1,488 2,318,251 French Caribbean 725 2,562 90,984 12,736 6,242 1,003,905 3,061 1,120,215 Dutch Americas 0 500 32,445 392,022 9,575 5,188 4,998 444,728 Danish West Indies 277 0 25,594 5,161 2,799 7,782 67,385 108,998 Spanish Americas 808,851 195,483 103,010 24,197 54,902 92,943 13,526 1,292,912 Brazil 1,033 4,821,127 3,804 27,702 1,174 9,403 130 4,864,373 Africa 66,391 69,206 841 3,210 2,476 13,282 162 155,568 Totals 884,922 5,099,815 2,733,323 475,240 252,654 1,164,966 91,733 10,702,653

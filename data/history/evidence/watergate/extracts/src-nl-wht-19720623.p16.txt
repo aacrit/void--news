@@ -1,0 +1,8 @@
+source: src-nl-wht-19720623
+locator: p16
+url: https://www.nixonlibrary.gov/sites/default/files/forresearchers/find/tapes/watergate/trial/exhibit_01.pdf
+read: 2026-10-09
+note: the Nixon Library's electronic copy of the typewritten transcript prepared for the Watergate trials, line breaks folded to spaces; speaker labels, ellipses, the dashes and the hyphens the copy prints at a line end ('investi- gation') are kept as printed; the Library warns that the electronic versions 'may not be identical in every respect to the original typewritten transcripts'
+note: printed page 16; the row of asterisks before it marks a passage the transcript omits; printed pages 9 to 15 are not in the exhibit
+
+PRESIDENT: When you get in these people when you...get these people in, say: "Look, the problem is that this will open the whole, the whole Bay of Pigs thing, and the President just feels that" ah, without going into the details... don't, don't lie to them to the extent to say there is no involvement, but just say this is sort of a comedy of errors, bizarre, without getting into it, "the President believes that it is going to open the whole Bay of Pigs thing up again. And, ah because these people are plugging for, for keeps and that they should call the FBI in and say that we wish for the country, don't go any further into this case", period!

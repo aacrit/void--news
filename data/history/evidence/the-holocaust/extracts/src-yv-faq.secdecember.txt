@@ -1,0 +1,6 @@
+source: src-yv-faq
+locator: secdecember
+url: https://www.yadvashem.org/holocaust/faqs.html
+read: 2026-10-07
+
+On December 12, it is known that Hitler met with some of his intimate circle and told them that the systematic mass murder which had begun in the Soviet Union would be extended to the Jews of Germany, the last group to be included in the plans for murder. From this meeting we know that the decision to include all Jews in the murder was made before December 12 – most likely during the autumn of 1941. On January 20, 1942, after hundreds of thousands of Jews had already been murdered, Heydrich convened various senior members of the German bureaucracy in what has come to be known as the Wansee Conference to discuss and coordinate the "Final Solution."

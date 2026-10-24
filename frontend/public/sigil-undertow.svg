@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-label="UNDERTOW">
+  <!--
+    UNDERTOW Sigil — sinusoidal wave with undertow pull beneath.
+    Surface wave on top, deeper slower current below.
+    Minimal typographic mark, not an icon.
+  -->
+  <style>
+    .ut-stroke { stroke: #EDE8E0; stroke-width: 1.8; stroke-linecap: round; }
+    .ut-under { stroke: #EDE8E0; stroke-width: 1.2; stroke-linecap: round; opacity: 0.4; }
+    @media (prefers-color-scheme: light) {
+      .ut-stroke { stroke: #1A1A1A; }
+      .ut-under { stroke: #1A1A1A; }
+    }
+  </style>
+
+  <!-- Surface wave — active, crisp sinusoidal -->
+  <path class="ut-stroke" d="M4,14 C8,9 12,9 16,14 C20,19 24,19 28,14" />
+
+  <!-- Undertow current — deeper, slower, reversed direction, ghosted -->
+  <path class="ut-under" d="M6,22 C10,19 14,19 18,22 C22,25 26,25 28,22" />
+</svg>

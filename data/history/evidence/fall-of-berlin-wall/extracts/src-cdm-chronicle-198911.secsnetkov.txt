@@ -1,0 +1,8 @@
+source: src-cdm-chronicle-198911
+locator: secsnetkov
+url: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month11/?month=11&year=1989&moc=1
+read: 2026-10-09
+note: the entry for 7 p.m. on 10 November
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+10 November 1989 7.00 p.m. A briefing takes place in the Soviet embassy in East Berlin. In accordance with the instructions from Moscow, General Snetkov, the top commander of the Soviet troops in East Germany, leaves the soldiers in their barracks: 350,000 men.

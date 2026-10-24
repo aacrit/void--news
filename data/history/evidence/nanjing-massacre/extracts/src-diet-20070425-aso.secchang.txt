@@ -1,0 +1,8 @@
+source: src-diet-20070425-aso
+locator: secchang
+url: https://www.shugiin.go.jp/internet/itdb_kaigirokua.nsf/html/kaigirokua/000516620070425008.htm
+read: 2026-10-09
+note: the text is the page's own text in Japanese, whitespace collapsed; a Void translation is beside it (.en.txt)
+note: Foreign Minister Aso Taro's answer
+
+今例に出されました、アイリス・チャンの書きました「レイプ・オブ・南京」という話につきましては、いわゆる歴史家の間でも、不正確な記述が多数存在し、歴史書としての信憑性に乏しいという評価があることは私どもも承知をいたしております。

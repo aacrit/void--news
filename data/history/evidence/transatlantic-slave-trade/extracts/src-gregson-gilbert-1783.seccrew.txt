@@ -1,0 +1,7 @@
+source: src-gregson-gilbert-1783
+locator: seccrew
+url: https://archive.org/details/reportscasesarg04glengoog
+read: 2026-10-09
+note: counsel for the owners, arguing; '*' is the OCR's reading of a full stop; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+The crew themselves suffered so severely, that seven out of seventeen died after their arrival at Jamaica* There was no evidence, as stated on the other side, of any negroes being thrown overboard after the nuns. Nor was it the fact that the slaves were destroyed in order to throw the loss on the underwriters. Forty or fifty of the negroes were suffered to die, and thirty were lying dead when the vessel arrived at Jamaica

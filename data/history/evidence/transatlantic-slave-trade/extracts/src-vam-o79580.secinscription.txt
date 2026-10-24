@@ -1,0 +1,7 @@
+source: src-vam-o79580
+locator: secinscription
+url: https://api.vam.ac.uk/v2/museumobject/O79580
+read: 2026-10-09
+note: the record's physicalDescription field (JSON); sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Oval medallion of white jasper with a black relief of a chained black male slave in a half-kneeling posture facing right. Set in a gilt metal hoop. Inscribed at the edge with 'AM I NOT A MAN AND A BROTHER?'.

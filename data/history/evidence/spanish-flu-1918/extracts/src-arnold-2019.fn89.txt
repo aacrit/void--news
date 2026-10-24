@@ -1,0 +1,6 @@
+source: src-arnold-2019
+locator: fn89
+url: https://doi.org/10.1017/S0080440119000082
+read: 2026-09-25
+
+89 Nirala, Suryakant Tripathi, A Life Misspent (New York, 2016), 53–4

@@ -1,0 +1,8 @@
+source: src-ssc-hearings-book3-1973
+locator: p998
+url: https://archive.org/details/presidentialcamp03unit
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (including the '¬' the OCR prints for one) are kept as printed
+note: John Dean's prepared statement read to the committee, 25 June 1973, on his meeting with the President of 21 March 1973; printed page 998 of Book 3
+
+I began by telling the President that there was a cancer growing on the Presidency and that if the cancer was not removed that the Presi- dent himself would be killed by it. I also told him that it was important that this cancer be removed immediately because it was growing more deadly every day. I then gave him what I told him would be a broad overview of the situation and I would come back and fill in the details and answer any questions he might have about the matter.

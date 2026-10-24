@@ -1,0 +1,8 @@
+source: src-cad-19481104
+locator: secvillage
+url: https://www.constitutionofindia.net/debates/04-nov-1948/
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+note: Dr. B. R. Ambedkar, moving the Draft Constitution
+
+I hold that these village republics have been the ruination of India. I am therefore surprised that those who condemn Provincialism and communalism should come forward as champions of the village. What is the village but a sink of localism, a den of ignorance, narrow-mindedness and communalism?

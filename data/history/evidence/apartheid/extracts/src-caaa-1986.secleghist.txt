@@ -1,0 +1,8 @@
+source: src-caaa-1986
+locator: secleghist
+url: https://www.govinfo.gov/content/pkg/STATUTE-100/pdf/STATUTE-100-Pg1086.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation and glyph errors are kept as the layer prints them
+note: the legislative history printed at the end of the public law
+
+WEEKLY COMPILATION OF PRESIDENTIAL DOCUMENTS, Vol. 22 (1986): Oct. 2, Presidential veto message. CONGRESSIONAL RECORD, Vol. 132 (1986): Sept. 29, House overrode veto. Oct. 2, Senate overrode veto.

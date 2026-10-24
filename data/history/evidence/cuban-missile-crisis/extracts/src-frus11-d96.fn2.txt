@@ -1,0 +1,7 @@
+source: src-frus11-d96
+locator: fn2
+url: https://history.state.gov/historicaldocuments/frus1961-63v11/d96
+read: 2026-10-04
+note: Document 96, the volume's footnote 2, on the sentence crossed out of the memorandum
+
+The following typed sentence at the end of this paragraph was crossed out: “If some time elapsed—and per your instructions, I mentioned four or five months—I said I was sure that these matters could be resolved satisfactory.”

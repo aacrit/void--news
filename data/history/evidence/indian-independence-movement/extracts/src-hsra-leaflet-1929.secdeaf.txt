@@ -1,0 +1,8 @@
+source: src-hsra-leaflet-1929
+locator: secdeaf
+url: https://www.marxists.org/archive/bhagat-singh/1929/04/08.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+note: the Marxists Internet Archive's transcription from shahidbhagatsingh.org; 'Valiant' is the transcription's spelling of Vaillant
+
+THE HINDUSTAN SOCIALIST REPUBLICAN ARMY (NOTICE) It takes a loud voice to make the deaf hear, with these immortal words uttered on a similar occasion by Valiant, a French anarchist martyr, do we strongly justify this action of ours.

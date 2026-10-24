@@ -1,0 +1,8 @@
+source: src-peers-1970
+locator: secnotice
+url: https://tile.loc.gov/storage-services/service/ll/llmlp/RDAR-Vol-I/RDAR-Vol-I.pdf
+read: 2026-10-09
+note: the Library of Congress scan of Volume I of the Peers report, its text layer, line breaks folded to spaces; the text layer prints many words letter by letter ('k i l l e d') and some OCR misreadings ('America1' for 'Americal', 'l l t h' for '11th'); all are kept as printed
+note: the report's account of a notice it attributes to the other side, captured by the Americal Division on 11 December 1969 and dated 28 March 1968
+
+The n o t i c e s t a t e d t h a t 5 0 2 people w e r e massacred a t Tu Cung and Co Luy Hamlets, including 67 o l d people, 170 c h i l d r e n , and 130 women.

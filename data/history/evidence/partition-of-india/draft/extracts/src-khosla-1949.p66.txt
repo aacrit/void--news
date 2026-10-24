@@ -1,0 +1,8 @@
+source: src-khosla-1949
+locator: p66
+url: https://archive.org/download/stern-reckoning/Stern%20Reckoning_djvu.txt
+read: 2026-09-25
+note: the layer's soft hyphens (¬) are rejoined, a hyphen at a line break is kept without the break, and line breaks are joined; OCR glyphs are kept as printed
+note: 'the Muslims fared almost as badly the Hindus' is printed without 'as'
+
+These figures give a total of 570 dead only. It is estimated that more than five thousand persons were killed and more than fifteen thousand injured, and if the hospital figures are accepted as a basis for determining the ratio of the Muslim and Hindu casualties it will be clear that the Muslims fared almost as badly the Hindus. When this circumstance came to light the Muslim League leaders and the Muslim League Press asserted vehemently that the rioting was started by the supporters of the Congress and some of them even went so far as to say that the Hindus had prepared a deeply laid plan to commit wholesale murder of Muslims on Direct Action Day in order to discredit the Muslim League.

@@ -1,0 +1,7 @@
+source: src-unsc-134-1960
+locator: op4
+url: https://documents.un.org/doc/resolution/gen/nr0/157/23/pdf/nr015723.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation and glyph errors are kept as the layer prints them
+
+4. Calls upon the Government of the Union of South Africa to initiate measures aimed at bringing about racial harmony based on equality in order to ensure that the present situation does not continue or recur, and to abandon its policies of apartheid and racial discrimination;

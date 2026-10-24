@@ -1,0 +1,8 @@
+source: src-hertle-cwihp-2001
+locator: secnews
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+read: 2026-10-09
+note: pp. 137-138 of Hertle's article (the text layer joins the two pages)
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Schabowski’s announcement was the lead story in both the East and West German nightly news broadcasts that aired after the press conference, between 7 p.m. and 8:15 p.m. Western press services—including West German television—interpreted the contradiction-laden statements from Schabowski to mean an immediate “opening of the border.” The Associated Press headline from 7:05 p.m. read “GDR opens borders,” and the German Press Agency released the “sensational information” at 7:41 p.m. that “the GDR border is open.” The climax of these instances of reporting leading events was the late news from the West German public station First German Television (ADR). Anchorman Hanns Joachim Friedrichs announced that “the gates in the Berlin Wall stand wide open,” while a live shot immediately following the announcement showed the still-closed border, a picture that was quickly declared an exception.

@@ -1,0 +1,119 @@
+id: trump-iran-low-specificity-merge-2026-05-30
+name: "Trump-Iran story: shared entities are all low-specificity yet desks pick different details — must merge"
+failure_date: "2026-05-30"
+failure_kind: low-specificity-fragmentation
+articles:
+  - id: ti-situation-room
+    title: "Trump Holds Off Iran Deal Decision After Two-Hour Situation Room Meeting"
+    summary: "President Trump held off on a decision regarding the Iran deal following a two-hour Situation Room meeting Friday, with the meeting concluding without an immediate resolution."
+    full_text: >
+      President Trump held off on a decision regarding the Iran deal following a
+      two-hour Situation Room meeting on Friday. The meeting, which the Washington
+      Post reported was called to decide on extending an Iran ceasefire, concluded
+      without an immediate resolution. Newsmax, citing the New York Times, stated
+      that the Iran deal remains unresolved after the discussion. Senior officials
+      attended the high-level session as talks concerning the Iran deal reached a
+      critical stage. Trump headed into the meeting specifically to make a decision
+      on the deal. The discussions involved key officials and focused on the future
+      of the agreement. Vice President JD Vance and Secretary of State Marco Rubio
+      were among those present. Trump told reporters he would announce his decision
+      "very soon."
+    source: { slug: i24news, country: IL, tier: international }
+    published_at: "2026-05-30T18:30Z"
+  - id: ti-red-lines
+    title: "Trump Insists on Red Lines as Iran Deal Still Elusive"
+    summary: "President Trump reiterated Iran's red lines during a Friday Situation Room meeting, indicating specific conditions on a deal that remains elusive."
+    full_text: >
+      Iranian foreign ministry spokesman Esmaeil Baqaei told state media Friday
+      that the Islamic Republic's exchanges of messages with the US are continuing,
+      but that no final agreement has been reached yet. President Trump reiterated
+      Iran's red lines during a Friday Situation Room meeting, indicating specific
+      conditions or boundaries that any deal would need to satisfy. Newsmax reported
+      the meeting lasted two hours and produced no immediate breakthrough. The deal
+      remains elusive despite weeks of shuttle diplomacy by Special Envoy Steve
+      Witkoff. Tehran has demanded sanctions relief and a guarantee no future
+      administration could unilaterally abrogate the deal.
+    source: { slug: newsmax, country: US, tier: us_major }
+    published_at: "2026-05-30T19:15Z"
+  - id: ti-hormuz
+    title: "Trump to Decide Imminently on Iran Deal, Says Hormuz Strait Must Open"
+    summary: "Trump signaled he is close to a decision on the Iran deal, telling reporters the Strait of Hormuz must remain open to international shipping."
+    full_text: >
+      Trump signaled he is close to a decision on the Iran deal, telling reporters
+      after Friday's two-hour Situation Room meeting that the Strait of Hormuz must
+      remain open to international shipping. The strait, a critical chokepoint for
+      global oil supplies, has been the subject of Iranian threats since last
+      month's shipping incidents. Trump said any deal would have to address Iran's
+      missile and naval posture in the Persian Gulf, not just the nuclear program.
+      Special Envoy Steve Witkoff has been leading the shuttle diplomacy with
+      Tehran. Asharq Al-Awsat reported that Gulf states have privately pressed
+      Washington to make freedom of navigation a non-negotiable condition. Vice
+      President JD Vance attended the Situation Room session along with Secretary
+      of State Marco Rubio. Saudi and Emirati officials have communicated through
+      back channels that any sanctions relief should be conditional on Iranian
+      behaviour in the strait. Newsmax cited senior administration officials
+      saying a final announcement could come within 48 hours.
+    source: { slug: asharq-al-awsat, country: SA, tier: international }
+    published_at: "2026-05-30T19:45Z"
+  - id: ti-navigation-charge
+    title: "Iran Says Hormuz Navigation Will Now Be Charged as Talks Stall"
+    summary: "Iran's ambassador to India said free navigation through Hormuz is over and that ships will now be charged for passage."
+    full_text: >
+      Iran's ambassador to India said free navigation through the Strait of Hormuz
+      is over and that ships passing through the strait will now be charged for
+      navigation services, security and other facilities. The statement came hours
+      after President Trump's two-hour Situation Room meeting on the Iran deal
+      concluded without a final decision. The Iranian foreign ministry distanced
+      itself from the ambassador's remarks, calling them "personal interpretations,"
+      but did not explicitly retract them. Special Envoy Steve Witkoff has been
+      conducting indirect talks with Tehran. The Iranian foreign ministry
+      spokesman Esmaeil Baqaei said exchanges of messages with the United States
+      continue. Trump told reporters at the White House that the Hormuz issue
+      was central to any agreement. Newsmax cited Iranian state media confirming
+      the ambassador's comments. Tanker brokers in Singapore reported a 2 percent
+      jump in tanker rates within an hour of the comments reaching wire services.
+    source: { slug: ani-news, country: IN, tier: domestic }
+    published_at: "2026-05-30T20:10Z"
+  - id: ti-bolton
+    title: "Bolton slams proposed Iran deal: 'Big defeat for the United States'"
+    summary: "Former national security adviser John Bolton sharply criticized the Trump administration's negotiating posture on the Iran deal."
+    full_text: >
+      Former national security adviser John Bolton sharply criticized the Trump
+      administration's approach to negotiating with Iran, calling a tentative deal
+      under consideration "a mistake" driven by President Trump's concerns about
+      high gas prices ahead of the midterm elections. "It's a big defeat for the
+      United States," Bolton, who served in Trump's first term, said. Bolton
+      argued the two-hour Situation Room meeting Trump convened on Friday could
+      not produce a deal that addressed Iran's long-range missile program. Vice
+      President JD Vance and Secretary of State Marco Rubio attended the
+      Situation Room session. Special Envoy Steve Witkoff has led shuttle
+      diplomacy with Tehran. The deal under discussion would lift major
+      sanctions in exchange for a verifiable cap on uranium enrichment. The
+      Strait of Hormuz remains a central concern raised by Gulf partners.
+      Newsmax interviewed Bolton shortly after the Situation Room readout.
+    source: { slug: the-hill, country: US, tier: us_major }
+    published_at: "2026-05-30T21:00Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [ti-situation-room, ti-red-lines, ti-hormuz, ti-navigation-charge, ti-bolton]
+  min_clusters: 1
+  max_clusters: 1
+  min_source_count: 5
+rationale: |
+  Production failure 2026-05-30: this story appeared as 5 separate clusters
+  with sc=6/4/4/3/2 (19 total sources). All five articles describe the same
+  event — President Trump's Friday Situation Room meeting on extending the
+  Iran deal — but each desk picks a different secondary detail (Witkoff vs
+  Hormuz vs Bolton vs Iran's UN ambassador vs red lines). The named entities
+  that overlap pairwise tend to be just {trump, iran} (or {trump, iran,
+  newsmax} in one pair), all of which the rewrite-era Phase 2 placed in
+  _LOW_SPECIFICITY_ENTITIES. Pre-simplification gate fires distinguishing_shared >= 1,
+  which fails when only trump+iran (both downweighted) overlap.
+
+  Post-simplification (REVERT 01): Phase 2 uses simple set-intersection.
+  {trump, iran, deal} or {trump, iran, hormuz} count as 3 shared entities;
+  the time gate (within 48h, all 5 articles within 3h of each other) and
+  the size cap (5 articles, well under 50) both pass. Merge fires.
+
+  This is the canonical regression fixture for the May 15 rewrite's
+  failure mode.

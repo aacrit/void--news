@@ -1,0 +1,6 @@
+source: src-nobel-wiesel-1986
+locator: secsilence
+url: https://www.nobelprize.org/prizes/peace/1986/wiesel/acceptance-speech/
+read: 2026-10-07
+
+And then I explained to him how naive we were, that the world did know and remain silent. And that is why I swore never to be silent whenever and wherever human beings endure suffering and humiliation. We must always take sides. Neutrality helps the oppressor, never the victim. Silence encourages the tormentor, never the tormented.

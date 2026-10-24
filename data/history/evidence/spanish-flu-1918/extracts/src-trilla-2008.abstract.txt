@@ -1,0 +1,7 @@
+source: src-trilla-2008
+locator: abstract
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A18652556&resultType=core&format=json
+read: 2026-09-25
+note: the abstract as the Europe PMC record carries it, read from the REST endpoint named above; cut at a sentence end to stay within the 150-word cap where the abstract is longer
+
+The 1918-1919 influenza pandemic was the most devastating epidemic in modern history. Here, we review epidemiological and historical data about the 1918-1919 influenza epidemic in Spain. On 22 May 1918, the epidemic was a headline in Madrid's ABC newspaper. The infectious disease most likely reached Spain from France, perhaps as the result of the heavy railroad traffic of Spanish and Portuguese migrant workers to and from France. The total numbers of persons who died of influenza in Spain were officially estimated to be 147,114 in 1918, 21,235 in 1919, and 17,825 in 1920. However, it is likely that >260,000 Spaniards died of influenza; 75% of these persons died during the second period of the epidemic, and 45% died during October 1918 alone. The Spanish population growth index was negative for 1918 (net loss, 83,121 persons).

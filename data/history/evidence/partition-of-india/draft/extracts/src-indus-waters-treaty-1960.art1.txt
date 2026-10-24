@@ -1,0 +1,8 @@
+source: src-indus-waters-treaty-1960
+locator: art1
+url: https://treaties.un.org/doc/Publication/UNTS/Volume%20419/volume-419-I-6032-English.pdf
+read: 2026-09-25
+note: United Nations Treaty Series, vol. 419, No. 6032; the PDF's line breaks are joined and its line-break hyphens rejoined
+note: Article I, paragraphs 5 and 6
+
+(5) The term "Eastern Rivers" means The Sutlej, The Beas and The Ravi taken together. (6) The term "Western Rivers" means The Indus, The Jhelum and The Chenab taken together.

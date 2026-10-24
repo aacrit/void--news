@@ -1,0 +1,9 @@
+source: src-pc1953-peoples-daily
+locator: seceditorial
+url: https://www.marxists.org/subject/china/peoples-china/1953/PC1953-15-Sup-OCR-sm.pdf
+read: 2026-10-09
+note: the editorial of the Peking People's Daily, 28 July 1953, as the same supplement prints it
+note: the copy is a scan with an OCR text layer; its misreadings are kept as read, not corrected
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Three years ogo, the reactionary Syngman Rhee clique, working in collusion with the be,llieose elements of the United States, uhleashed the Korean war whieh seriously jeopardised the peace and security of the Far East and the world.

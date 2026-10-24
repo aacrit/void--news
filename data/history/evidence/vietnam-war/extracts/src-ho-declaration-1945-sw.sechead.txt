@@ -1,0 +1,7 @@
+source: src-ho-declaration-1945-sw
+locator: sechead
+url: https://www.marxists.org/reference/archive/ho-chi-minh/works/1945/declaration-independence.htm
+read: 2026-10-09
+note: the Marxists Internet Archive's page heading and source line: the English text is the one printed in Ho Chi Minh, Selected Works (Hanoi, 1960-1962), volume 3, as the page says; the page names no translator; the archive transcribed it and names a proofreader
+
+President Ho Chi Minh delivering his address in Hanoi on 2 September 1945. Source: Ho Chi Minh, Selected Works (Hanoi, 1960-1962), Vol. 3. Proofed: Janet Mullen

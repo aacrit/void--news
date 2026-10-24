@@ -1,0 +1,7 @@
+source: src-wrb-19441126
+locator: secforeword
+url: http://www.fdrlibrary.marist.edu/_resources/images/hol/hol00522.pdf
+read: 2026-10-07
+note: the PDF's OCR layer, glyphs as read ('deliberateq', 'actual:cy' are its renderings of 'deliberately', 'actually'); line breaks collapsed
+
+It is a fact beyond denial that the Germans have deliberateq and systematically murdered millions of innocent civilians - Jews and Christians alike - all over Europe. This campaign of terror and brutality., which is unprecedented in all history and 'Which even now continues unabated_, is part of the German plan to subju.­ gate the free peoples of the world. So revolting and diabolical are the German atrocities that the m:tms of civilized people find it ditficult to believe that they have actual:cy taken place.

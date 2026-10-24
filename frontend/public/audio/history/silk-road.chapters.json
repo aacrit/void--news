@@ -1,0 +1,72 @@
+{
+ "version": "1.2.0",
+ "title": "The Silk Road",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 45.585
+  },
+  {
+   "startTime": 45.585,
+   "title": "A failed diplomat",
+   "endTime": 162.442
+  },
+  {
+   "startTime": 162.442,
+   "title": "What actually moved",
+   "endTime": 193.265
+  },
+  {
+   "startTime": 193.265,
+   "title": "Paper, powder, and the compass",
+   "endTime": 278.94
+  },
+  {
+   "startTime": 278.94,
+   "title": "Five accounts",
+   "endTime": 286.217
+  },
+  {
+   "startTime": 286.217,
+   "title": "The Chinese court",
+   "endTime": 354.204
+  },
+  {
+   "startTime": 354.204,
+   "title": "The Sogdians",
+   "endTime": 439.368
+  },
+  {
+   "startTime": 439.368,
+   "title": "The Buddhist transmission",
+   "endTime": 510.042
+  },
+  {
+   "startTime": 510.042,
+   "title": "The Islamic golden age",
+   "endTime": 575.085
+  },
+  {
+   "startTime": 575.085,
+   "title": "The disease road",
+   "endTime": 649.552
+  },
+  {
+   "startTime": 649.552,
+   "title": "What each one leaves out",
+   "endTime": 736.342
+  },
+  {
+   "startTime": 736.342,
+   "title": "Legacy",
+   "endTime": 776.831
+  },
+  {
+   "startTime": 776.831,
+   "endTime": 789.931,
+   "title": "Also from Void News"
+  }
+ ]
+}

@@ -1,0 +1,8 @@
+source: src-tsen-statement-1946
+locator: secvautrin
+url: https://www.legal-tools.org/doc/a4c38a/pdf/
+read: 2026-10-09
+note: the text is the scan's own OCR layer as the Legal Tools Database serves it, whitespace collapsed; the transcript's printed line numbers (1 to 25) and the OCR's glyph errors sit inside the text and are kept as the layer gives them
+note: transcript page 4,464, exhibit 308, statement of Mrs Shui Fang Tsen dated 8 April 1946, read by Mr Sutton
+
+"Japanese soldiers would enter t he grounds on the pretext of looking for soldiers but were in fact looking for our girls. Miss Vautrin was the foreign lady in charge here and she did a marvelous work in keeping the sOldiers from carrying off our girls. In spite of all that she and I and the rest of us could do on the night of December 17, 1937, the soldiers entered the grounds and carried off eleven girls.

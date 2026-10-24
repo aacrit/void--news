@@ -1,0 +1,8 @@
+source: src-un-carlsson-1999
+locator: seccable
+url: https://web.archive.org/web/20001203205100/http://www.un.org:80/News/ossg/rwanda_report.htm
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: section II, 'The 11 January Cable': the Inquiry's own summary of the cable, not the cable's words
+
+Secondly, the informant said that the Interahamwe had trained 1,700 men in the camps of the RGF, scattered in groups of 40 throughout Kigali. He had been ordered to register all Tutsi in Kigali, and suspected it was for their extermination. He said that his personnel was able to kill up to 1,000 Tutsi in 20 minutes.

@@ -1,0 +1,8 @@
+source: src-trck-2009
+locator: secbodo
+url: https://truthcommissions.humanities.mcmaster.ca/wp-content/uploads/2021/02/South-Korea_TRC_Report-of-Activities.pdf
+read: 2026-10-09
+note: Truth and Reconciliation Commission, Republic of Korea, Truth and Reconciliation: Activities of the Past Three Years; the McMaster Truth Commission Database's copy; '#' marks in the text layer are the PDF's paragraph glyphs
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+The Commission decided on October 10, 2006, that the Bodo League massacres would be investigated. Members of the Bodo League were detained and killed in penitentiaries across the nation before and after the Korean War. The Bodo League massacres were committed in a highly orchestrated manner, and the Commission determined that the massacres deserved investigation.

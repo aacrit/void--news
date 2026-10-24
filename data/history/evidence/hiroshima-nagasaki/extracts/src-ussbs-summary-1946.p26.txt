@@ -1,0 +1,21 @@
+source: src-ussbs-summary-1946
+locator: p26
+url: https://www.anesi.com/ussbs01.htm
+read: 2026-10-05
+note: page 26 of the report as the host transcribes it; hard line breaks are the transcription's
+
+There is little point in attempting precisely to impute Japan's unconditional
+surrender to any one of the numerous causes which jointly and cumulatively were
+responsible for Japan's disaster. The time lapse between military impotence and
+political acceptance of the inevitable might have been shorter had the political
+structure of Japan permitted a more rapid and decisive determination of national
+policies. Nevertheless, it seems clear that, even without the atomic bombing
+attacks, air supremacy over Japan could have exerted sufficient pressure to bring
+about unconditional surrender and obviate the need for invasion.
+
+Based on a detailed investigation of all the facts, and supported by the
+testimony of the surviving Japanese leaders involved, it is the Survey's opinion
+that certainly prior to 31 December 1945, and in all probability prior to 1 November
+1945, Japan would have surrendered even if the atomic bombs had not been dropped,
+even if Russia had not entered the war, and even if no invasion had been planned or
+contemplated.

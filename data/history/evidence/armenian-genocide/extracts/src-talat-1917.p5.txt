@@ -1,0 +1,7 @@
+source: src-talat-1917
+locator: p5
+url: https://www.gomidas.org/uploads/Talaat%20Pashas%20Report%20on%20the%20Armenian%20Genocide.pdf
+read: 2026-09-25
+note: the editor's epigraph, quoting Morgenthau's diary as the editor prints it; a copyrighted edition, held at most 150 words
+
+Talaat stated that “they had already disposed of three quarters of them [Armenians], that there were none left in Bitlis, Van, Erzeroum, and that the hatred was so intense now that they have to finish it. . . . He said they would take care of the Armenians at Zor and elsewhere but they did not want them in Anatolia. I told him three times that they were making a serious mistake and would regret it. He said, ‘We know we have made mistakes, but we never regret.’” —Diaries of Ambassador Henry Morgenthau

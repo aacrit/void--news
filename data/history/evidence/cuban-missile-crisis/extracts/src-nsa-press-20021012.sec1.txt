@@ -1,0 +1,7 @@
+source: src-nsa-press-20021012
+locator: sec1
+url: https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/press4.htm
+read: 2026-10-04
+note: the release's first paragraph; the page's HTML read as text
+
+During the third session of the historic 40th anniversary conference on the Cuban missile crisis, participants including Cuban president Fidel Castro and former US secretary of defense Robert McNamara discussed newly declassified documents showing that the crisis did not end after the famous "13 days," but continued at a high level until late November, in large part because of Cuban rejection of Soviet concessions. The documents show that the Soviet nuclear-armed tactical weapons in Cuba stayed there after the missiles were withdrawn, and may even have been intended for Cuban custody.

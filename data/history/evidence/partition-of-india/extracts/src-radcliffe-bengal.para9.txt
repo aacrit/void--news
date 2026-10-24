@@ -1,0 +1,7 @@
+source: src-radcliffe-bengal
+locator: para9
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: paragraph 9 of the Bengal report; the OCR layer drops the numeral
+
+After much discussion, my colleagues found that they were unable to arrive at an agreed view on any of these major issues. There were of course considerable areas of the Province in the southwest and north-east and east, which provoked no controversy on either side: but, in the absence of any reconciliation on all main questions affecting the drawing of the boundary itself, my colleagues assented to the view at the close of our discussions that I had no alternative but to proceed to give my own decision.

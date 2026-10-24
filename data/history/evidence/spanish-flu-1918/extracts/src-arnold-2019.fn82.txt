@@ -1,0 +1,6 @@
+source: src-arnold-2019
+locator: fn82
+url: https://doi.org/10.1017/S0080440119000082
+read: 2026-09-25
+
+82 I see no reason to doubt Gandhi's own assertion that he was suffering from dysentery and exhaustion and not, as some recent writers claim, from influenza. Nor do I see grounds for arguing that the epidemic ‘pushed India closer to independence’. Spinney, Laura, Pale Rider: The Spanish Flu of 1918 and How It Changed the World (2017), 8, 254–60

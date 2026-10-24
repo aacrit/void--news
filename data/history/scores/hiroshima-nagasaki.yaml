@@ -1,0 +1,354 @@
+# The documentary score for "Hiroshima and Nagasaki", as note data on sampled
+# real instruments. Rendered by pipeline/history/score.py; the samples live in
+# ~/.cache/void-score-samples (never in the repository) and are pinned by sha256.
+#
+# The music claims nothing about the event. Nothing here imitates a music of
+# Japan or an instrument of Japan (no koto, no shakuhachi, no drum colour), no
+# line in it is pentatonic (the cell is answered by the second, the fourth and
+# the sixth of the scale every time it is stated), nothing in it pulses, and
+# nothing in it swells to a blow: the moment itself is dry (mood.py), and the
+# music that follows it is one low key of a piano, struck once, softly. The
+# palette is three instruments none of the nine earlier composed scores uses:
+# a grand piano, close-miked at its second velocity layer (the Apollo and Srebrenica
+# scores hold an upright, a different instrument and a different sound), and
+# two baroque recorders, a bass and a tenor, European duct flutes recorded on
+# steady breath with no vibrato and no bend, presented as what they are. The
+# piano is the only thing that moves: single keys, each released before the
+# next so the damper falls and no chord gathers, with two exceptions that are
+# left to ring. The recorders never move; they hold a bare fifth, tonic and
+# fifth, under the piano, and in dread the tenor once holds the sixth instead.
+# Grief and testimony carry silence: testimony and rupture have no bed at all,
+# and the grief bed is the bass recorder breathing alone, with gaps of about
+# two seconds between its breaths, the tenor stating three notes once.
+#
+# The theme is built from the house cell (tonic, fifth, tonic, third: the
+# shape of the On Air motif), in F sharp, in the minor mode with the sixth and
+# seventh left unraised, at 44 beats a minute: one beat is 1.364 s. The piano
+# states the cell on F sharp (beats 0 to 4) and steps home through the fourth
+# and the second (beats 6 to 8). The recorders enter under the second phrase,
+# the bass on F sharp, the tenor on C sharp. Beats 9 and 10 rest. Beats 11 to
+# 14 climb by step, A, B, C sharp, to D, the sixth, and STOP there, left to
+# ring over the fifth the recorders hold: a minor sixth over the tonic, a
+# minor ninth over the fifth, the one step of the scale that leans hardest on
+# the note above it and is not given it. The recorders release; then, alone,
+# the piano's low F sharp, once, and the title is spoken into its decay. The
+# outro takes the fall, D, C sharp, B, A, onto F sharp, once, and the low F
+# sharp under it. The grief bed's tenor states the last three notes of that
+# fall, A, G sharp, F sharp, and stops.
+#
+# Cues are keyed to the producer's moods and segment kinds, never to a line of
+# text, so the cinematic variant renders from this manifest whatever moods it
+# picks. Where each cue plays is the producer's (mood_plan): the theme under
+# the TITLE, the first word 1.2 s before its end; beds under the spoken body by
+# mood, ducked to the mood's floor; transitions in the clear before a scene;
+# the rupture entry on the last word of the moment, or 1,200 ms after a clip's
+# trailing silence, never under it; the outro at the close, with the house
+# promo riding its held bars, so it is at most 13.75 s and silent at its end.
+slug: hiroshima-nagasaki
+title: Hiroshima and Nagasaki
+version: 1
+key: F#
+mode: minor, with the sixth and seventh left unraised; the theme stops on the sixth and only the outro completes the fall
+tempo_bpm: 44
+house_cell: [0, 7, 0, 3]
+textures: []
+
+instruments:
+  piano:
+    library: Versilian Community Sample Library (VCSL, Versilian Studios), Grand Piano, Steinway B, the "JHPiano_Sus_Close" set (the close microphone, the second velocity layer "vl2", one take per key, every whole tone). The files sound at the pitch they are named (the file "C4" measures 261.9 Hz, within 2 cents, by harmonic product spectrum; "F#2" measures 92.5 Hz, within 1 cent; "D5" measures 589.4 Hz, within 5 cents); `note` is the sounding pitch. F sharp, G sharp and D are recordings of those notes, unshifted; A is one semitone over the G sharp, B one over the A sharp, C sharp one over the C. Nothing is shifted more than one semitone. Each recording is a key struck at this layer and left to ring, 19 to 29 s to silence; in half-second frames a note falls 20 dB in 1.5 to 7 s and 40 dB in 6 to 23 s, the low keys the slowest. A note given a length is the key released at that point, the damper falling over 0.4 s; a note given none rings out
+    role_as_presented: a grand piano
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme calls it public domain, no royalties, no credit, no special terms)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VCSL/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios, Versilian Community Sample Library
+    kind: pluck
+    attack_s: 0.0
+    release_s: 0.4
+    gain_db: 0.0
+    samples:
+      - {file: "vcsl/Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_F#2_vl2_rr1.wav", note: F#2, sha256: 70d2fc9948a95686c5e31b93844eda9fb4aa833a6b74bea2793161b3ffa8d1af, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_F%232_vl2_rr1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_F#3_vl2_rr1.wav", note: F#3, sha256: 95a7f90813206645c7fa4a2b39703f1a74d7fd4d4db2992b8fd222da0fbb360d, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_F%233_vl2_rr1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_F#4_vl2_rr1.wav", note: F#4, sha256: 0e55a62e4f21c9cf765785d598e6df4dd696f7703721bf916e7d23bb59b058c1, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_F%234_vl2_rr1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_G#4_vl2_rr1.wav", note: Ab4, sha256: 67789ba22e2831a15ec967773b87ff3f659425effd8edd8862c4795ac6cf4fa1, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_G%234_vl2_rr1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_A#4_vl2_rr1.wav", note: Bb4, sha256: 90cd801d71632c66de69da4b7483e292264c734e0af24be9c48bcfb2b97b7ad8, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_A%234_vl2_rr1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_C5_vl2_rr1.wav", note: C5, sha256: f53297008efdec0753c8eedd90a8f97d5d4363ffd897ce06b0dd48de009d1dae, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_C5_vl2_rr1.wav"}
+      - {file: "vcsl/Chordophones/Zithers/Grand Piano, Steinway B/Sus/JHPiano_Sus_Close_D5_vl2_rr1.wav", note: D5, sha256: 814072dc61808e5bab55c5973a9050df49fc11c770a7ac8cfdc801c674ae44aa, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Chordophones/Zithers/Grand%20Piano%2C%20Steinway%20B/Sus/JHPiano_Sus_Close_D5_vl2_rr1.wav"}
+
+  bass_recorder:
+    library: Versilian Community Sample Library (VCSL, Versilian Studios), Baroque Bass Recorder, the Sustain set (the "_Main" microphone, one take per key). The files are named an octave below what they sound (the file "F#2" measures 185.1 Hz, F#3, within 1 cent, by harmonic product spectrum; "D3" measures 294.1 Hz, D4, within 3 cents); `note` is the sounding pitch. Every note this manifest asks of it is a recording of that note, unshifted. The "F#2" recording is a note held 4.3 s, steady within 1 dB in half-second frames from 0.5 s to its end; the "D3" recording holds 8.1 s, steady within 1 dB from its onset to 6 s. A hold longer than the recording loops the region below with an equal-power crossfade
+    role_as_presented: a baroque bass recorder
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme calls it public domain, no royalties, no credit, no special terms)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VCSL/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios, Versilian Community Sample Library
+    kind: sustain
+    attack_s: 0.35
+    release_s: 0.5
+    gain_db: 0.0
+    samples:
+      - {file: "vcsl/Aerophones/Edge-blown Aerophones/Baroque Bass Recorder/Sustain/BassRecorder_Sus_F#2_rr1_Main.wav", note: F#3, loop_start_s: 0.6, loop_end_s: 3.9, sha256: f36eb0ce9617816beb37b0c7dc77ca790f8b7829bc61342d9c3904fe29a47b21, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Baroque%20Bass%20Recorder/Sustain/BassRecorder_Sus_F%232_rr1_Main.wav"}
+      - {file: "vcsl/Aerophones/Edge-blown Aerophones/Baroque Bass Recorder/Sustain/BassRecorder_Sus_D3_rr1_Main.wav", note: D4, loop_start_s: 0.5, loop_end_s: 6.0, sha256: ebe2e0c4819b808137b1634d2f70888ed06a8dfc3791a5aaa656c3c754626f3c, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Baroque%20Bass%20Recorder/Sustain/BassRecorder_Sus_D3_rr1_Main.wav"}
+
+  tenor_recorder:
+    library: Versilian Community Sample Library (VCSL, Versilian Studios), Baroque Tenor Recorder, the Sustain set (the "_Main" microphone, one take per key). The files are named an octave below what they sound (the file "D3" measures 293.5 Hz, D4, within 1 cent; "F#3" measures 369.9 Hz, F#4, within 1 cent; "G#3" measures 416.5 Hz, Ab4, within 5 cents); `note` is the sounding pitch. D, F sharp and G sharp are recordings of those notes, unshifted; C sharp is one semitone under the D, A one over the G sharp, both inside the instrument's own range. Nothing is shifted more than one semitone. The recordings hold 7.3 to 8.5 s; the loop regions below sit inside the part of each that measures steady within 2 dB in half-second frames. A hold longer than the recording loops that region with an equal-power crossfade
+    role_as_presented: a baroque tenor recorder
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme calls it public domain, no royalties, no credit, no special terms)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VCSL/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios, Versilian Community Sample Library
+    kind: sustain
+    attack_s: 0.35
+    release_s: 0.5
+    gain_db: 0.0
+    samples:
+      - {file: "vcsl/Aerophones/Edge-blown Aerophones/Baroque Tenor Recorder/Sustain/TenRecorder_Sus_D3_rr1_Main.wav", note: D4, loop_start_s: 4.5, loop_end_s: 7.0, sha256: c59cad8370536db0cc27f371ed7d2a46f1087ae17097c316bcddb14771758a2e, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Baroque%20Tenor%20Recorder/Sustain/TenRecorder_Sus_D3_rr1_Main.wav"}
+      - {file: "vcsl/Aerophones/Edge-blown Aerophones/Baroque Tenor Recorder/Sustain/TenRecorder_Sus_F#3_rr1_Main.wav", note: F#4, loop_start_s: 2.5, loop_end_s: 4.5, sha256: 35f40900dc698e4d889e1390728165e481b710fb055065483374f3795d6a75df, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Baroque%20Tenor%20Recorder/Sustain/TenRecorder_Sus_F%233_rr1_Main.wav"}
+      - {file: "vcsl/Aerophones/Edge-blown Aerophones/Baroque Tenor Recorder/Sustain/TenRecorder_Sus_G#3_rr1_Main.wav", note: Ab4, loop_start_s: 4.0, loop_end_s: 6.5, sha256: a192bbc1ca88e7569853d67bebac9cdc6f74e2e42a6dd23ca7dad74ef96f69ea, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Baroque%20Tenor%20Recorder/Sustain/TenRecorder_Sus_G%233_rr1_Main.wav"}
+
+# Note rows are [instrument, note, start in beats, length in beats or null, velocity].
+# One beat is 1.364 s. A piano note with a length is a key released there; one
+# with null rings out. A recorder note always has a length: breath does not decay.
+cues:
+  # Statement 1, under the TITLE. The piano states the cell on F sharp and
+  # steps home through B and G sharp, each key released before the next. The
+  # bass recorder enters on F sharp at beat 4.5 and the tenor on C sharp at
+  # 6.5, a bare fifth held under the rest. Beats 9 and 10 rest. Beats 11 to 14
+  # climb A, B, C sharp to D, the sixth, left to ring over the fifth; the
+  # recorders release at beat 16; at beat 17.5 (23.9 s) the low F sharp alone,
+  # and the title's first word lands at 25.8 s, inside its decay.
+  theme:
+    claims: []
+    length_s: 27.0
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 1200
+    notes:
+      - [piano, F#4, 0, 1.9, 0.50]
+      - [piano, C#5, 2, 0.9, 0.42]
+      - [piano, F#4, 3, 0.9, 0.46]
+      - [piano, A4, 4, 1.9, 0.48]
+      - [piano, B4, 6, 0.9, 0.42]
+      - [piano, G#4, 7, 0.9, 0.40]
+      - [piano, F#4, 8, 2.8, 0.46]
+      - [piano, A4, 11, 0.9, 0.42]
+      - [piano, B4, 12, 0.9, 0.42]
+      - [piano, C#5, 13, 0.9, 0.44]
+      - [piano, D5, 14, null, 0.50]
+      - [piano, F#3, 17.5, null, 0.42]
+      - [bass_recorder, F#3, 4.5, 11.5, 0.30]
+      - [tenor_recorder, C#4, 6.5, 9.5, 0.21]
+
+  # Statement 3, at the close: the fall completed, D, C sharp, B, A, onto F
+  # sharp, over the recorders' fifth, and the low F sharp under the last.
+  # Everything released or fading by 9 s and faded to silence inside 13.0 s so
+  # the house promo can ride it.
+  outro:
+    claims: []
+    length_s: 13.0
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 3000
+    tail_silence: true
+    notes:
+      - [piano, D5, 0, 0.9, 0.46]
+      - [piano, C#5, 1, 0.9, 0.44]
+      - [piano, B4, 2, 1.4, 0.42]
+      - [piano, A4, 3.5, 1.4, 0.42]
+      - [piano, F#4, 5, null, 0.46]
+      - [piano, F#3, 6.5, null, 0.40]
+      - [bass_recorder, F#3, 0, 6.0, 0.28]
+      - [tenor_recorder, C#4, 0, 6.0, 0.20]
+
+  # On the last word of the moment, or after a recording's trailing silence:
+  # the piano's lowest F sharp, once, softly, and the bass recorder's F sharp
+  # drawn in faint under its decay and let go, inside the 6 s mood_plan opens.
+  # No blow, no swell to one: the swell here is the recorder's breath.
+  rupture_entry:
+    claims: []
+    length_s: 6.0
+    peak_dbfs: -15.0
+    room_wet: 1.4
+    swell: [0.4, 2.6, 2.8]
+    notes:
+      - [piano, F#2, 0.2, null, 0.46]
+      - [bass_recorder, F#3, 0.6, 2.6, 0.24]
+
+  # The change of voice (the order, the diary, the survivor's account read
+  # by the document voice): one key, released.
+  sting:to_document:
+    claims: []
+    length_s: 0.9
+    peak_dbfs: -22.0
+    room_wet: 0.6
+    fade_out_ms: 150
+    notes:
+      - [piano, C#5, 0, 0.35, 0.55]
+
+  # The music returning after a recording, once its trailing silence is over.
+  # The live script carries no clip, so this key is defined for the producer's
+  # grammar and fires only if the cinematic variant admits one.
+  sting:from_clip:
+    claims: []
+    length_s: 2.4
+    peak_dbfs: -20.0
+    room_wet: 1.0
+    swell: [0.6, 0.8, 0.9]
+    notes:
+      - [bass_recorder, F#3, 0, 1.0, 0.40]
+      - [piano, A4, 0.1, 0.8, 0.40]
+
+  # Dread (the Target Committee, the city left unbombed on purpose, the
+  # morning, the second city): the bass recorder's F sharp in five breaths of
+  # 5.45 s on an 8 s cycle with two seconds between them, the tenor's C sharp
+  # in five breaths taken while the bass is full and held across its gaps, so
+  # one of the two is always sounding and the stack is a bare fifth with no third; the third tenor
+  # breath holds D, the sixth, instead, and the fourth takes C sharp back.
+  # The piano's lowest F sharp once near the start, F sharp an octave up once
+  # past the middle, both off the seam. The first sound is at 0.7 s, not 0.
+  bed:dread:
+    claims: []
+    length_s: 40.0
+    fold: true
+    rms_dbfs: -34.0
+    room_wet: 0.6
+    notes:
+      - [bass_recorder, F#3, 0.5, 4.0, 0.42]
+      - [bass_recorder, F#3, 6.37, 4.0, 0.40]
+      - [bass_recorder, F#3, 12.23, 4.0, 0.42]
+      - [bass_recorder, F#3, 18.1, 4.0, 0.40]
+      - [bass_recorder, F#3, 23.97, 4.0, 0.42]
+      - [tenor_recorder, C#4, 3.43, 4.0, 0.22]
+      - [tenor_recorder, C#4, 9.3, 4.0, 0.21]
+      - [tenor_recorder, D4, 15.17, 4.0, 0.22]
+      - [tenor_recorder, C#4, 21.03, 4.0, 0.21]
+      - [tenor_recorder, C#4, 26.9, 4.0, 0.22]
+      - [piano, F#2, 1.2, null, 0.30]
+      - [piano, F#3, 16, null, 0.26]
+
+  # Procedure (the committee, the order, the leaflets, the dates, the
+  # surrender terms): the piano alone, dry, one key every two beats, each
+  # released before the next so nothing gathers into a chord. The house cell,
+  # the last note alternating between the third and the second. The count
+  # starts on beat 1, not 0, so the loop's seam falls between keys.
+  bed:procedure:
+    claims: []
+    length_s: 43.636
+    fold: true
+    rms_dbfs: -33.0
+    room_wet: 0.0
+    notes:
+      - [piano, F#4, 1, 1.8, 0.50]
+      - [piano, C#5, 3, 1.8, 0.40]
+      - [piano, F#4, 5, 1.8, 0.44]
+      - [piano, A4, 7, 1.8, 0.40]
+      - [piano, F#4, 9, 1.8, 0.50]
+      - [piano, C#5, 11, 1.8, 0.40]
+      - [piano, F#4, 13, 1.8, 0.44]
+      - [piano, G#4, 15, 1.8, 0.40]
+      - [piano, F#4, 17, 1.8, 0.50]
+      - [piano, C#5, 19, 1.8, 0.40]
+      - [piano, F#4, 21, 1.8, 0.44]
+      - [piano, A4, 23, 1.8, 0.40]
+      - [piano, F#4, 25, 1.8, 0.50]
+      - [piano, C#5, 27, 1.8, 0.40]
+      - [piano, F#4, 29, 1.8, 0.44]
+      - [piano, G#4, 31, 1.8, 0.40]
+
+  # Reckoning (the counts, the accounts, what each leaves out): the piano's
+  # F sharp alone every four beats, released, and the low F sharp twice a
+  # loop. No melody, the thinnest bed, under the deepest duck. The first key
+  # falls on beat 1, so the seam falls in the silence between keys.
+  bed:reckoning:
+    claims: []
+    length_s: 43.636
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 0.3
+    notes:
+      - [piano, F#4, 1, 1.5, 0.38]
+      - [piano, F#3, 3, 2.5, 0.44]
+      - [piano, F#4, 5, 1.5, 0.38]
+      - [piano, F#4, 9, 1.5, 0.38]
+      - [piano, F#4, 13, 1.5, 0.38]
+      - [piano, F#4, 17, 1.5, 0.38]
+      - [piano, F#3, 19, 2.5, 0.44]
+      - [piano, F#4, 21, 1.5, 0.38]
+      - [piano, F#4, 25, 1.5, 0.38]
+      - [piano, F#4, 29, 1.5, 0.38]
+
+  # Grief (the dead, the burned, the survivors, the close): the bass
+  # recorder's F sharp alone, faint, in four breaths of 7.5 s on a 10 s cycle,
+  # so the bed falls near-silent for about two seconds four times a loop,
+  # which is what grief is given here; the dread bed's breaths overlap, these
+  # do not. The tenor, quiet, states the end of the theme's fall once, A, G
+  # sharp, F sharp, and is then silent; the piano is silent throughout. The
+  # last 29 s of the loop are the bass recorder alone. The first breath is
+  # taken at 0.4 s, not 0, and the last ends at 38.4 s, so the seam falls in
+  # a gap.
+  bed:grief:
+    claims: []
+    length_s: 40.0
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 1.0
+    notes:
+      - [bass_recorder, F#3, 0.3, 5.5, 0.34]
+      - [bass_recorder, F#3, 7.63, 5.5, 0.32]
+      - [bass_recorder, F#3, 14.97, 5.5, 0.34]
+      - [bass_recorder, F#3, 22.3, 5.5, 0.32]
+      - [tenor_recorder, A4, 2, 1.2, 0.20]
+      - [tenor_recorder, G#4, 3.3, 1.2, 0.20]
+      - [tenor_recorder, F#4, 4.6, 3.0, 0.22]
+
+  # Into a dread scene, in the clear: the recorders' fifth drawn in on a
+  # swell, the piano's lowest F sharp under it, released.
+  transition:dread:
+    claims: []
+    length_s: 3.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    swell: [0.3, 2.1, 1.4]
+    notes:
+      - [bass_recorder, F#3, 0, 1.6, 0.40]
+      - [tenor_recorder, C#4, 0, 1.6, 0.22]
+      - [piano, F#2, 0.1, 1.8, 0.34]
+
+  # Into a procedure scene: three keys, dry, released.
+  transition:procedure:
+    claims: []
+    length_s: 4.3
+    peak_dbfs: -14.0
+    room_wet: 0.0
+    fade_out_ms: 900
+    notes:
+      - [piano, F#4, 0, 0.9, 0.50]
+      - [piano, C#5, 1, 0.9, 0.42]
+      - [piano, F#4, 2, 1.2, 0.46]
+
+  # Into a grief scene: the fall stopping short, G sharp onto F sharp in the
+  # tenor, held, the bass recorder's F sharp under it.
+  transition:grief:
+    claims: []
+    length_s: 4.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    fade_out_ms: 800
+    notes:
+      - [tenor_recorder, G#4, 0, 0.8, 0.20]
+      - [tenor_recorder, F#4, 1, 1.6, 0.22]
+      - [bass_recorder, F#3, 0, 2.5, 0.30]
+
+  # Into the counts and the accounts: the count arriving, low then high.
+  transition:reckoning:
+    claims: []
+    length_s: 4.2
+    peak_dbfs: -14.0
+    room_wet: 0.3
+    fade_out_ms: 800
+    notes:
+      - [piano, F#3, 0, 2.5, 0.46]
+      - [piano, F#4, 1, 1.5, 0.38]
+      - [piano, F#4, 2, 1.5, 0.38]

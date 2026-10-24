@@ -1,0 +1,8 @@
+source: src-hansard-lords-19460516
+locator: p274
+url: https://api.parliament.uk/historic-hansard/lords/1946/may/16/india-statement-by-the-cabinet-mission
+read: 2026-09-25
+note: p is the Hansard column; HL Deb 16 May 1946 vol 141 cc271-87, the Cabinet Mission's statement as Viscount Addison read it to the Lords
+note: the page's stray apostrophe in 'proportion is kept as printed
+
+7. We, therefore, considered whether a smaller sovereign Pakistan confined to the Muslim majority areas alone might be a possible basis of compromise. Such a Pakistan is regarded by the Muslim League as quite impracticable because it would entail the exclusion from Pakistan of (a) the whole of the Ambala and Jullundur divisions in the Punjab; (b) the whole of Assam except the district of Sylhet; and (c) a large part of Western Bengal, including Calcutta, in Which city the percentage of the Muslim population is 23.6 per cent. We ourselves are also convinced that any solution which involves a radical partition of the Punjab and Bengal, as this would do, would be contrary to the wishes and interests of a very large 'proportion of the inhabitants of these provinces. Bengal and the Punjab each has its own common language and a long history and tradition. Moreover, any division of the Punjab would of necessity divide the Sikhs, leaving substantial bodies of Sikhs on both sides of the boundary.

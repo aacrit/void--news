@@ -1,0 +1,7 @@
+source: src-eccc-002-02-tj
+locator: para4469
+url: https://www.legal-tools.org/doc/8v76lk/pdf/
+read: 2026-09-25
+note: from Judge YOU Ottara's separate opinion; the paragraph runs across a page break (pp. 2234 to 2235) and footnote 14357 between the halves is removed
+
+4469. In my view, the resulting approach which the Trial Chamber has necessarily followed is much too narrow. It risks implying an overly formalistic, and entirely unrealistic, approach to the definition and identification of genocides. The ECCC could have considered, for example, whether persons who were targeted for destruction were essential to the survival of the Cambodian national group as it existed in 1975.14357 It

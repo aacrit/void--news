@@ -1,0 +1,8 @@
+source: src-sieyes-1789
+locator: secopening
+url: https://archive.org/download/questcequeletier00siey_0/questcequeletier00siey_0_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (long s read as f and other misreadings included); line breaks collapsed to spaces, nothing else changed
+note: the layer prints the second question's numeral as '1°.' and the paragraph's first letters as 'Ij e'; the scan is of the 'Seconde Édition, corrigée', 1789
+
+Ij e plan de cet Ecrie eft aflez fimple. Nous avons irois queftions à nous faire. 1°. Qu'eft-ce que le Tiers- Etat ? Tout. 1°. Qu'a-t-il été jufqu'à préfent dans l'ordre politique î Rien. 3 °. Que demande-t-il ? A devenir quelque CHOSE. On va voir fi les rcponfes font juftes.

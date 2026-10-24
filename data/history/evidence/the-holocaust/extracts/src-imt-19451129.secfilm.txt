@@ -1,0 +1,6 @@
+source: src-imt-19451129
+locator: secfilm
+url: https://avalon.law.yale.edu/imt/11-29-45.asp
+read: 2026-10-07
+
+COMMANDER DONOVAN: Yes, Sir. The United States now offers in evidence an official documentary motion picture report on Nazi concentration camps. This report has been compiled from motion pictures taken by Allied military photographers as the Allied armies in the West liberated the areas in which these camps were located. The accompanying narration is taken directly from the reports of the military photographers who filmed the camps.

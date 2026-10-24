@@ -1,0 +1,8 @@
+source: src-cad-19491125
+locator: secanarchy
+url: https://www.constitutionofindia.net/debates/25-nov-1949/
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+note: Dr. B. R. Ambedkar
+
+It means we must abandon the bloody methods of revolution. It means that we must abandon the method of civil disobedience, non-cooperation and satyagraha. When there was no way left for constitutional methods for achieving economic and social objectives, there was a great deal of justification for unconstitutional methods. But where constitutional methods are open, there can be no justification for these unconstitutional methods. These methods are nothing but the Grammar of Anarchy and the sooner they are abandoned, the better for us.

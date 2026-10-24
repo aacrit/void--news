@@ -1,0 +1,26 @@
+source: src-bluebook-1918
+locator: p54-55
+url: https://archive.org/download/b32172266/b32172266_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: Daniel Kariko's affidavit as the report prints it; the page number is dropped
+
+Under-Chief Daniel Kariko states on oath : —
+
+Our people were compelled to work on farms, and the farmers had them
+chained up by the police and flogged without mercy for the slightest little
+thing. . . . Then the wite of Barmenias Zerua (the daughter-in-law of
+Chief Zacharias Zerua of Otjimbingwe) was cruelly murdered in cold blood
+near Omaruru by a German named Dietrich. She was shot by him 14 days
+after her baby was born because she refused to be false to Herero law and to
+her own husband. ‘This broke our hearts, because the family of Zerua is a
+great old Herero family from which many big chiefs had come in past years, and
+nearly all the reigning chiefs in 1903 were related to the Zerua family. We
+were more than astonished too when the German murderer was declared not
+guilty and liberated.. This decided us for war. Later on we heard that the.
+murderer had been re-arrested and on a new trial given three years. Three
+years for a chief’s daughter’s life when we ourselves would have sentenced a
+Herero murderer to death. We could see then that there was no justice for
+us and no protection. Dietrich was released from gaol after a short time
+and made an Under-Officer of the German troops who shot down our men,
+women, and children in the rebellion.

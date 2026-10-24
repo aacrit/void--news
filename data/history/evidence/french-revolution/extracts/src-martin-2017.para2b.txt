@@ -1,0 +1,7 @@
+source: src-martin-2017
+locator: para2b
+url: https://shs.cairn.info/la-terreur--9782262067731-page-191?lang=fr
+read: 2026-10-09
+note: the second paragraph of the open opening, second part; whitespace collapsed, nothing else changed
+
+Il conclut que le nombre des morts « de la Révolution » s’établit entre 35 000 et 40 000. La fourchette, aussi peu précise qu’elle soit, devient pourtant une référence, d’autant qu’elle est comparable à celle de la répression de la Commune (1871). Autrement dit, la « Semaine sanglante » d’Adolphe Thiers aurait été aussi meurtrière que les deux ou trois années de la « Terreur », comparaison régulièrement faite par les partisans de la Révolution pour minimiser l’importance de l’épisode de 1793-1794…

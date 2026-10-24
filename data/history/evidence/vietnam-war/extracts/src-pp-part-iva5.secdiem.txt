@@ -1,0 +1,8 @@
+source: src-pp-part-iva5
+locator: secdiem
+url: https://nara-media-001.s3.amazonaws.com/arcmedia/research/pentagon-papers/Pentagon-Papers-Part-IV-A-5.pdf
+read: 2026-10-09
+note: NARA's 2011 scan of the Report of the Office of the Secretary of Defense Vietnam Task Force, its text layer (the scan's own OCR), line breaks folded to spaces; OCR misreadings ('l east', 'vrere'), line-end hyphens, the 'TOP SECRET - Sensitive' running heads and the 'Declassified per Executive Order 13526' stamp are kept where the text layer prints them
+note: Part IV.A.5; the quotation is the study's of Premier Diem's radio broadcast of 16 July 1955, as its footnote names it; ')' for ',' is the text layer's
+
+Thus) backed by the U.S,) Diem obdurately refused to open talks with the Hanoi government . He continued to maintai n that the Government of South Vietnam had not signed the Geneva Agreements and thus was not bound by them . "Our policy is a policy for peace. But nothing will l ead us astray of our goal) the unity of our country) a unity in fre edom and not i n slavery. Serving the cause of our nation) more than ever we will struggle for the reunification of our homel and . "We do not rej ect the principle of free elections as peaceful and democratic means to achieve that unity. However) if elections constitute one of the bases of true democracy) they will be meaningful only on the condition that they be absolutely free. II Now) faced with a r egime of oppression as practiced by t he Viet Minh) we remain skeptical concerning the possibility of fulfilling the conditions of free elections in the North.

@@ -1,0 +1,7 @@
+source: src-un-convention-1948
+locator: sectitle
+url: https://treaties.un.org/doc/Publication/UNTS/Volume%2078/volume-78-I-1021-English.pdf
+read: 2026-09-25
+note: the UNTS heading of No. 1021
+
+Convention on the Prevention and Punishment of the Crime of Genocide. Adopted by the General Assembly of the United Nations on 9 December 1948

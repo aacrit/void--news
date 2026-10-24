@@ -1,0 +1,6 @@
+source: src-imt-judgment
+locator: secpersecution4
+url: https://avalon.law.yale.edu/imt/judwarcr.asp
+read: 2026-10-07
+
+Stroop recorded that his action at Warsaw eliminated "a proved total of 56,065 people. To that we have to add the number of those killed through blasting, fire, etc., which cannot be counted."

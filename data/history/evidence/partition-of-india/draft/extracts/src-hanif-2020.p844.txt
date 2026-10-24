@@ -1,0 +1,7 @@
+source: src-hanif-2020
+locator: p844
+url: https://pssr.org.pk/issues/v4/2/state-religion-and-religious-minorities-in-pakistan-remembering-the-participation-of-christians-in-punjab-legislative-assembly-1947-55.pdf
+read: 2026-09-25
+note: page 844; the PDF's line breaks are joined; the vote is the author's account of the meeting of the Punjab Legislative Assembly of 23 June 1947 that the paragraph before describes, citing A Citizen Report on Minorities in India and Pakistan, which this record does not hold
+
+The vote itself was 88 for remaining with India and 91 for joining Pakistan. The three votes (actually four) which created the majority were the three votes of Christian members Dewan Bahadur Singha, Mr. Cecil Gibbon and Mr Fazal Elahi, plus Singha’s additional vote as Assembly Speaker and thus it was decided that Punjab would be part of Pakistan.

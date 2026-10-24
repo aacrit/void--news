@@ -1,0 +1,8 @@
+source: src-cwmg-78-jinnah-letter
+locator: secnation
+url: https://archive.org/download/HindSwaraj-CWMG-078/CWMG-v078-LXXVIII-MC-BETA_djvu.txt
+read: 2026-10-09
+note: the text is the archive.org full-text (djvu.txt) layer of the electronic edition of the Collected Works (Publications Division), whitespace collapsed; line-end hyphens and glyph errors kept as the layer gives them
+note: Appendix VI, 'Letter from M. A. Jinnah', September 17, 1944, as the Collected Works prints it; the printed date is '1 944' in the layer
+
+We maintain and hold that Muslims and Hindus are two major nations by any definition or test of a nation. We are a nation of hundred million, and what is more, we are a nation with our own distinctive culture and civilization, language and litera- ture, art and architecture, names and nomenclature, sense of value and pro- portion, legal laws and moral codes, customs and calendar, history and tra- ditions, aptitudes and ambitions; in short, we have our own distinctive out- look on life and of life. By all canons of international law we are a nation.

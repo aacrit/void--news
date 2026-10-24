@@ -1,0 +1,6 @@
+source: src-ussbs-effects-1946
+locator: sec2d
+url: https://www.atomicarchive.com/resources/documents/bombing-survey/section_II.html
+read: 2026-10-05
+
+The official Japanese figures summed up the building destruction at 62,000 out of a total of 90,000 buildings in the urban area, or 69 percent.

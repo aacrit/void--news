@@ -1,0 +1,7 @@
+source: src-eichmann-s025
+locator: seclubetkin2
+url: https://www.nizkor.org/session-025-04-eichmann-adolf/
+read: 2026-10-07
+note: 'there will surely by many' is the transcript's own text
+
+It is difficult to describe, and there will surely by many who will not believe it, that when the Germans came near the foot of one of our strong points and passed by in formation, and we threw the bombs and the hand-grenades, and we saw German blood pouring in the streets of Warsaw, after so much Jewish blood and tears had previously flowed in the streets of Warsaw – we felt within us, great rejoicing and it was of no importance what would happen the following day.

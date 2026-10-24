@@ -1,0 +1,7 @@
+source: src-clarkson-1808
+locator: secmiles
+url: https://www.gutenberg.org/cache/epub/10633/pg10633.txt
+read: 2026-10-09
+note: Clarkson on his own work; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+For seven years I had a correspondence to maintain with four hundred persons with my own hand. I had some book or other annually to write in behalf of the cause. In this time I had travelled more than thirty-five thousand miles in search of evidence, and a great part of these journeys in the night.

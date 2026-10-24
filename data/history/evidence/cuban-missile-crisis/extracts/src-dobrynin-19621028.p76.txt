@@ -1,0 +1,8 @@
+source: src-dobrynin-19621028
+locator: p76
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf
+read: 2026-10-07
+note: the PDF's text layer, line breaks folded to spaces; where the layer breaks a word at a line end its hyphen is kept as it prints it ('docu- ment'); nothing is corrected
+note: printed page 76: Dobrynin's ciphered telegram of 28 October 1962 on his meeting with Robert Kennedy that day, in the Bulletin's translation (Mark H. Doctoroff)
+
+In parting, R. Kennedy once again requested that strict secrecy be maintained about the agree- ment with Turkey. “Especially so that the corre- spondents don’t find out. At our place for the time being even Salinger does not know about it”

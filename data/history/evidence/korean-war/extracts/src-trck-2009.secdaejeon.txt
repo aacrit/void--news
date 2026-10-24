@@ -1,0 +1,8 @@
+source: src-trck-2009
+locator: secdaejeon
+url: https://truthcommissions.humanities.mcmaster.ca/wp-content/uploads/2021/02/South-Korea_TRC_Report-of-Activities.pdf
+read: 2026-10-09
+note: the same report, 'Daejeon Massacres - Verified on November 25, 2008'
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+The Commission verified that in late September 1950, North Korean soldiers massacred 1,557 people, including members of rightwing parties, American and South Korean POWs, foreigners, and Christians.

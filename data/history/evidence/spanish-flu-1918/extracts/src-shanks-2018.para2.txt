@@ -1,0 +1,6 @@
+source: src-shanks-2018
+locator: para2
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC6136635/fullTextXML
+read: 2026-09-25
+
+The tragic narrative of how the SS Talune (Figure 1A) brought influenza and thus mass mortality from Auckland, New Zealand to Fiji, Tonga, and Samoa with a ship captain, who denied knowing that influenza was an infectious disease, has been previously described [5,6,7,8,9].

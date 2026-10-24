@@ -1,0 +1,8 @@
+source: src-saso-manifesto-1971
+locator: sec1
+url: https://www.saha.org.za/nonracialism/black_man_youre_on_your_own.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+note: point 1 of the manifesto; the page sets the acronym 'SASO' that opens the point as a separate link and an editorial note marker 'ii' inside it, so the extract begins after them
+
+is a black student organization working for the liberation of the black man, ii first from psychological oppression by themselves through inferiority complex, and secondly from the physical one accruing out of living in a white racist society.

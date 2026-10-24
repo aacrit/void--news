@@ -1,0 +1,8 @@
+source: src-govcn-20241130
+locator: seccount
+url: https://english.www.gov.cn/news/202411/30/content_WS674a5b93c6d0868f4e8ed8b6.html
+read: 2026-10-09
+note: Xinhua, as the State Council's English site prints it, 30 November 2024; 'About 74 years ago' is the agency's own phrase, dated to 2024
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+About 74 years ago, the CPV crossed the Yalu River and fought alongside the army and civilians of the Democratic People's Republic of Korea. After an arduous fight that lasted almost three years, the CPV eventually won the War to Resist U.S. Aggression and Aid Korea. More than 197,000 CPV soldiers were confirmed killed in the war.

@@ -1,0 +1,30 @@
+source: src-berlin-act-1885
+locator: pre1
+url: https://archive.org/download/mapofafricabytre02hert/mapofafricabytre02hert_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: the preamble as Hertslet's translation prints it, from the sovereigns to the words 'to wit'
+
+Her Majesty tlie Queen of the United Kingdom of Great Britain
+and Ireland, Empress of India ; His Majesty the German Emperor,
+King of Prussia ; His Majesty the Emperor of Austria, King of Bohemia,
+&c., and Apostolic King of Hungary ; His Majesty the King of the
+Belgians ; His Majesty the King of Denmark ; His Majesty the King
+of Spain ; the President of the United States of America ; the President
+of the French Republic ; His Majesty the King of Italy ; His Majesty
+the King of the Netherlands, Grand Duke of Luxemburg, &c. ; His
+Majesty the King of Portugal and the Algarves, &c. ; His Majesty the
+Emperor of all the Russias ; His Majesty the King of Sweden and
+Norway, &c. ; and His Majesty the Emperor of the Ottomans, wishing,
+. in a spirit of good and mutual accord, to regulate the conditions most
+favourable to the development of trade and civilization in certain
+regions of Africa, and to assure to all nations the advantages of free
+' navigation on the two chief rivers of Africa flowing into the Atlantic
+Ocean ; being desirous, on the other hand, to obviate the misunderstanding and disputes which might in future arise from new acts of
+occupation (“prises de possession ”) on the coast of Africa; and
+concerned, at the same time, as to the means of furthering the moral
+and material well-being of the native populations, have resolved, on
+the invitation addressed to them by the Imperial Government of
+Germany, in agreement with the Government of the French Republic,
+to meet for those purposes in Conference at Berlin, and have appointed
+as their Plenipotentiaries, to wit : —

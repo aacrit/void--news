@@ -1,0 +1,8 @@
+source: src-fr-duclert-2021
+locator: p986
+url: https://www.vie-publique.fr/files/rapport/pdf/279186.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+note: the report's own English text of its conclusion, printed in the same volume; cut at a sentence end to stay within the 150-word cap: the sentence that follows is held in French at p973 with its English as an official parallel
+
+Is France an accomplice to the genocide of the Tutsi? If by this we mean a willingness to join a genocidal operation, nothing in the archives that were examined demonstrates this. Nevertheless, for a long time, France was involved with a regime that encouraged racist massacres. It remained blind to the preparation of a genocide by the most radical elements of this regime. It adopted a binary view opposing on the one hand the “Hutu ally” embodied by President Habyarimana, and on the other hand the enemy described as «Ugandan-Tutsi» for the RPF. It was slow to break with Rwanda’s interim government that carried out the genocide and continued to place the RPF threat at the top of its agenda. France reacted belatedly with Operation Turquoise, which did save many lives, but not those of the vast majority of Rwandan Tutsi exterminated in the first weeks of the genocide.

@@ -1,0 +1,87 @@
+{
+ "collected_at": "2026-09-27T14:18:26Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16163873/Orange-Order-parade-today-northern-ireland.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "DUP accuses Sinn Fein of breaking the law over Orange Order parade delay after joining protesters blocking Garvaghy Road",
+      "published": "Sun, 27 Sep 2026 14:45:25 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/garvaghy-road-liveorange-order-given-37706507",
+      "title": "Garvaghy Road LIVE: PM calls for ‘calm on all sides’ as thousands block Orange Order march",
+      "published": "Sun, 27 Sep 2026 13:53:43 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16151151/England-vs-Spain-UEFA-Nations-League-LIVE-Three-Lions-world-champions-match-World-Cup.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "England vs Spain - UEFA Nations League RECAP: Reaction as world champions come from behind to beat Three Lions in thriller",
+      "published": "Sat, 26 Sep 2026 23:47:20 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/thomas-tuchel-failed-main-england-37707204",
+      "title": "Thomas Tuchel has failed his main England task and Spain defeat felt inevitable",
+      "published": "Sun, 27 Sep 2026 12:28:59 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 112,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 135,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/turkish-officials-hit-back-at-israeli-minister-over-remarks-on-erdogan/news",
+      "title": "Turkish officials hit back at Israeli minister over remarks on Erdoğan",
+      "published": "Thu, 24 Sep 2026 14:54:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/09/turkey-shelters-emirati-brotherhood-figures-accused-of-plotting-to-oust-uae-rulers/",
+      "title": "Turkey shelters Emirati Brotherhood figures accused of plotting to oust UAE rulers",
+      "published": "Sun, 20 Sep 2026 22:18:23 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 313,
+    "left": 10
+   }
+  }
+ }
+}

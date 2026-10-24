@@ -1,0 +1,8 @@
+source: src-chernobyl-forum-2006
+locator: p14
+url: https://www.iaea.org/sites/default/files/chernobyl.pdf
+read: 2026-10-07
+note: Forum Expert Group Report: Health Consequences, printed page 14 (PDF page 12)
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+How many people died as a result of the accident and how many more are likely to die in the future? The number of deaths attributable to the Chernobyl accident has been of paramount interest to the general public, scientists, the mass media, and politicians. Claims have been made that tens or even hundreds of thousands of persons have died as a result of the accident. These claims are highly exaggerated. Confusion about the impact of Chernobyl on mortality has arisen owing to the fact that, in the years since 1986, thousands of emergency and recovery operation workers as well as people who lived in ‘contaminated’ territories have died of diverse natural causes that are not attributable to radiation. However, widespread expectations of ill health and a tendency to attribute all health problems to exposure to radiation have led local residents to assume that Chernobyl-related fatalities were much higher.

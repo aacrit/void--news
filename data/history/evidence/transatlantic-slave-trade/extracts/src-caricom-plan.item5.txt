@@ -1,0 +1,7 @@
+source: src-caricom-plan
+locator: item5
+url: https://caricomreparations.org/caricom/caricoms-10-point-reparation-plan/
+read: 2026-10-09
+note: point 5, Public Health Crisis; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Over 10 million Africans were imported into the Caribbean during the 400 years of slavery. At the end of slavery in the late 19th century less than 2 million remained.

@@ -1,0 +1,7 @@
+source: src-wever-2014
+locator: para45
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4181817/fullTextXML
+read: 2026-09-25
+note: the Camp Devens letter of 29 September 1918 (Grist, BMJ 1979) as the article reproduces it; the bracketed [sic] marks are the article's
+
+On September 29, 1918, a U.S. Army physician described the rapid clinical course of fatal influenza at Fort Devens. “These men start with what appears to be an ordinary attack of LaGrippe or Influenza, and when brought to the Hosp. they very rapidly develop the most viscious [sic] type of Pneumonia that has ever been seen. Two hours after admission they have the Mahogony spots over the cheek bones, and a few hours later you can begin to see the Cyanosis extending from their ears and spreading all over the face, until it is hard to distinguish the colored men from the white. It is only a matter of a few hours then until death comes, and it is simply a struggle for air until they suffocate. It is horrible.

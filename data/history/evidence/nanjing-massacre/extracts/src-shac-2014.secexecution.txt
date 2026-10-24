@@ -1,0 +1,8 @@
+source: src-shac-2014
+locator: secexecution
+url: https://www.saac.gov.cn/zt/2014-12/11/content_77681.htm
+read: 2026-10-09
+note: the text is the page's own text in Chinese (simplified characters, as the archive publishes it), whitespace collapsed; a Void translation is beside it (.en.txt)
+note: the archive's own account (2014), not the judgment
+
+法庭当庭判处谷寿夫以极刑。4月26日，谷寿夫被执行枪决。 谷寿夫判决书现藏于中国第二历史档案馆。

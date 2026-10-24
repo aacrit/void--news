@@ -1,0 +1,7 @@
+source: src-ambedkar-1945
+locator: secchoice
+url: https://archive.org/download/in.ernet.dli.2015.278459/2015.278459.What-Congress_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+
+I responded to the call of humanity and saved the life of Mr. Gandhi by agreeing to alter the Communal Award in a manner satisfactory to Mr. Gandhi. This agree- ment is known as the Poona Pact.

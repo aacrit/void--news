@@ -1,0 +1,8 @@
+source: src-bryce-1916
+locator: p664
+url: https://archive.org/download/treatmentofarmen00grea/treatmentofarmen00grea_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer of the HMSO printing; end-of-line hyphens rejoined, spacing collapsed, the layer's glyph errors otherwise kept
+note: Annexe F, the statistical estimate of the American Committee for Armenian and Syrian Relief's fifth bulletin of 24 May 1916, p. 664
+
+Here, in January, 1915, the Armenians numbered between sixteen hundred thousand and two million. Precise statistics do not exist. The estimates of the Turkish Government are usually considered to be too low and those of the Armenian Patriarchate sometimes too high, suggesting a tendency in the one case to minimize and in the other to exaggerate the size and consequent importance of the Armenian population. Twelve months later, in January, 1916, from one-third to one-half of the Armenians in Turkey had fallen victims of deportation, disease, starvation or massacre. If we accept the estimate that the Armenian population of Turkey at the beginning of 1915 was between 1,600,000 and 2,000,000, we should compute the number of deaths at between 450,000 and 850,000. We shall probably be safe in saying that the Armenian dead number at least 600,000.

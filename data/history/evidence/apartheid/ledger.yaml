@@ -1,0 +1,920 @@
+# The evidence ledger for apartheid (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Begun 2026-10-09 for the first-listener rewrite of the episode. Every entry was fetched on
+# 2026-10-09 from the URL it names; every extract under extracts/ was sliced from the fetched
+# copy by a builder script (start marker to end marker in the whitespace-collapsed text of
+# the fetched page; scratch out/ledger-apartheid/build.py), never retyped. Nothing here was
+# written from memory. Where a scan's OCR layer or a PDF text layer is the free copy, the
+# extract keeps the layer's glyphs and line-end hyphens and says so in a note.
+#
+# This is NOT a thesis ledger: no positions, contested claims, exhibits or analyses are
+# adjudicated here, and the event renders the Hearing. The bar of §4e is not claimed.
+#
+# The five perspectives of the event YAML, at parity, each in its own holders' words:
+#   ANC / liberation movement   Mandela at Rivonia (1964) and underground (1961); the Freedom
+#                               Charter (1955); the ANC's own submission to the TRC (1996)
+#   Afrikaner nationalist       the Population Registration Act (1950) in the state's words;
+#                               the National Party's submission to the TRC by F W de Klerk (1996)
+#   Black Consciousness         the SASO Policy Manifesto and Biko's 'Black Souls in White
+#                               Skins?' (1970), as the South African History Archive reprints them
+#   International sanctions     Security Council resolutions 134 (1960), 181 (1963), 418 (1977);
+#                               the US Comprehensive Anti-Apartheid Act (1986); Thatcher at Nassau (1985)
+#   Truth and Reconciliation    the 1993 Constitution's closing provision, the 1995 Act, the
+#                               Constitutional Court in AZAPO (1996), the TRC Report, and one
+#                               amnesty hearing (the death of Steve Biko, 1997)
+#
+# DISAGREEMENTS the record holds (each figure with its producer; never averaged):
+#   Sharpeville dead: the TRC Report's own legislation register says 67 killed and 186 wounded
+#     (src-trc-v1-ch13.p458); its chronology and its Transvaal finding say 69 killed, with 186
+#     wounded (src-trc-v3-ch1.p14) or 'more than 300 injured' (src-trc-v3-ch6.secsharpevillefinding).
+#   Soweto 1976 dead: 575 is the OFFICIAL figure in every TRC passage, for the whole revolt, not
+#     the first week (src-trc-v3-ch1.p18; .ch6.para108; .ch6.para168). Wounded: 'over 2 000'
+#     (p18), 2 380 (para108), 2 389 per the Cillie Commission (para168). The YAML's 'at least 176
+#     in its first week' is not held.
+#   Hector Pieterson: the TRC Report calls him 'thirteen-year-old Hector Zolile Peterson'
+#     (src-trc-v3-ch6.para127); the YAML says 12. Spelling: the Report prints Peterson and
+#     Mbuyiswa Makhubo; the YAML Pieterson and Mbuyisa Makhubu.
+#   Racial groups under the Population Registration Act: the 1950 Act classifies every person
+#     as 'a white person, a coloured person or a native' (three), with ethnic sub-groups by
+#     proclamation (src-pra-1950.sec5); the TRC Report says 'one of four' (src-trc-v1-ch2.para26,
+#     src-trc-v1-ch13.p453) and quotes definitions that are not the 1950 wording (para26).
+#   Amnesty applications: 7 127 (TRC Report vol 1, src-trc-v1-ch10.para2, 1998) against 7115
+#     (vol 6, src-trc-v6-s1.sec3para4, 2003).
+#   Boer women and children who died in the camps: 'more than 20 000' in the National Party's
+#     submission (src-np-trc-1996.secmemory); the YAML's 27,927 is not held.
+#   Statements to the TRC: 'some 21 300 persons filed gross human rights violations petitions'
+#     (src-trc-v1-ch2.para45). These are statements, not testimony heard in public; the YAML's
+#     'heard testimony from 21,000 victims' is not what the Report says.
+#   3.5 million: the Report gives 'at least 3.5 million black South Africans' for expulsions,
+#     forced migration, passes and forced removals together (src-trc-v1-ch2.para45b), not for
+#     the Group Areas Act alone, as the YAML does.
+#   Biko's death: the inquest found no one responsible; the TRC found the probabilities are that
+#     he died of injuries sustained in detention and could not confirm a perpetrator
+#     (src-trc-v3-ch2.secbiko, .secbikofinding); the applicants told the Amnesty Committee his
+#     head hit a wall in a scuffle (src-trc-amnesty-biko-1997.secbooyens); counsel for his widow
+#     counted 'over 80 specific falsehoods' (.secbizos). Tutu's foreword says 'We know now what
+#     happened to Steve Biko' (src-trc-v1-ch1.para29). All four are said, none settled here.
+#   The 1994 vote: SAHO's table gives polling as 26-29 April 1994 and total votes as
+#     '19,726,610 (approx.)' (src-saho-election-1994.p1); the YAML says 27 April and 19.7 million.
+#   Necklacing: the ANC says it 'was never the policy of the ANC' and was at times the work of
+#     state agents (src-anc-trc-1996.secnecklace2); the US Congress in 1986 called on the ANC to
+#     'strongly condemn' it (src-caaa-1986.sec108).
+slug: apartheid
+bootstrapped: 2026-10-09
+
+entries:
+  # ----------------------------------------------------------- Tier A: the apartheid state's law
+  - id: src-pra-1950
+    tier: A
+    kind: primary-document
+    author: Parliament of the Union of South Africa
+    title: "Population Registration Act, No. 30 of 1950"
+    container: "Statutes of the Union of South Africa, 1950, pp. 275 to 297"
+    publisher: "Digital Innovation South Africa (University of KwaZulu-Natal), scan of the statute book"
+    place: Cape Town
+    year: 1950
+    edition: "the statute book's English text (the Act notes that the Afrikaans text was signed); DISA's PDF scan with its OCR layer, read whole. The same scan is on Wikimedia Commons, credited there to UKZN; the DISA copy is cited"
+    volume: null
+    document_number: "Act No. 30 of 1950"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://disa.ukzn.ac.za/leg19500707028020030"}
+    access:
+      free_copy: "https://disa.ukzn.ac.za/sites/default/files/pdf_files/leg19500707.028.020.030.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Population Registration Act, Act No 30 of 1950 | Digital Innovation South Africa"
+    language: en
+    region_of_authorship: africa
+    producer: south-african-parliament
+    position: null
+    rights: public
+    does_not_show: "how the Act was applied, who was reclassified, or any count of people classified; the ethnic sub-groups were set later by proclamation and are not in the Act; the Act's later amendments (which the TRC Report quotes) are not held"
+
+  - id: src-gaa-1950
+    tier: A
+    kind: primary-document
+    author: Parliament of the Union of South Africa
+    title: "Group Areas Act, No. 41 of 1950"
+    container: "Statutes of the Union of South Africa, 1950"
+    publisher: "Digital Innovation South Africa (University of KwaZulu-Natal), scan of the statute book"
+    place: Cape Town
+    year: 1950
+    edition: "DISA's scan has no text layer; nothing could be sliced from it"
+    volume: null
+    document_number: "Act No. 41 of 1950"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://disa.ukzn.ac.za/leg19500707028020041"}
+    access:
+      free_copy: null
+      verified_at: 2026-10-09
+      verified_by: repository-record
+      verified_title: "Group Areas Act, Act No 41 of 1950 | Digital Innovation South Africa"
+    language: en
+    region_of_authorship: africa
+    producer: south-african-parliament
+    position: null
+    rights: public
+    does_not_show: "nothing is held from it; what the Act did is held only as the TRC Report describes it (src-trc-v1-ch2.para30, src-trc-v1-ch13.p453)"
+
+  # ----------------------------------------------------------- Tier A: the liberation movement
+  - id: src-freedom-charter-1955
+    tier: A
+    kind: primary-document
+    author: The Congress of the People
+    title: "The Freedom Charter, adopted at the Congress of the People, Kliptown, 26 June 1955"
+    container: "The O'Malley Archives: Pre-Transition (1902-1989), Documents and Reports, 1955"
+    publisher: "Nelson Mandela Foundation (the O'Malley Archives, compiled by Padraig O'Malley)"
+    place: Johannesburg
+    year: 1955
+    edition: "the archive's web text, read whole"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://omalley.nelsonmandela.org/index.php/site/q/03lv01538/04lv01600/05lv01611/06lv01612.htm"}
+    access:
+      free_copy: "https://omalley.nelsonmandela.org/index.php/site/q/03lv01538/04lv01600/05lv01611/06lv01612.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "The Freedom Charter 26 June 1955 - The O'Malley Archives"
+    language: en
+    region_of_authorship: africa
+    producer: congress-of-the-people
+    position: null
+    rights: copyright
+    does_not_show: "who drafted it, how many attended at Kliptown, or the police raid on the congress; the page carries only the text"
+
+  - id: src-mandela-rivonia-1964
+    tier: A
+    kind: testimony
+    author: Nelson Mandela, First Accused
+    title: "Statement from the dock at the opening of the defence case in the Rivonia Trial, Pretoria Supreme Court, 20 April 1964"
+    container: "United Nations, Nelson Mandela International Day pages"
+    publisher: United Nations
+    place: Pretoria
+    year: 1964
+    edition: "the UN's web text, read whole, with its closing note on the convictions (11 June 1964, eight accused). The Nelson Mandela Foundation's page of 20 April 2011 prints the same closing paragraph and says he spoke 'for more than four hours'; it also says the speech was typewritten and signed"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.un.org/en/events/mandeladay/court_statement_1964.shtml"}
+    access:
+      free_copy: "https://www.un.org/en/events/mandeladay/court_statement_1964.shtml"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Nelson Mandela's Statement from the Dock at the Opening of the Defence Case in the Rivonia Trial - 1964"
+    language: en
+    region_of_authorship: africa
+    producer: anc
+    position: null
+    rights: copyright
+    does_not_show: "the sentence (life imprisonment, by the UN page's note) or its date beyond 'at the conclusion of the trial'; the judge's reasons; his age; that he spoke 'without notes' (the Foundation's page says the speech was typewritten)"
+
+  - id: src-mandela-19610626
+    tier: A
+    kind: primary-document
+    author: Nelson Mandela
+    title: "The Struggle is my Life: press statement issued on 26 June 1961"
+    container: "United Nations, Nelson Mandela International Day pages"
+    publisher: United Nations
+    place: Johannesburg
+    year: 1961
+    edition: "the UN's web text, read whole. The Nelson Mandela Foundation's archive record of the same statement (za-com-mr-s-9) answered HTTP 403"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.un.org/en/events/mandeladay/struggle.shtml"}
+    access:
+      free_copy: "https://www.un.org/en/events/mandeladay/struggle.shtml"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "The Struggle is my Life - Nelson Mandela's Press Statement Issued 1961"
+    language: en
+    region_of_authorship: africa
+    producer: anc
+    position: null
+    rights: copyright
+    does_not_show: "where he was when he issued it; it announces that he will not surrender, not that he has gone abroad"
+
+  - id: src-anc-trc-1996
+    tier: A
+    kind: primary-document
+    author: African National Congress
+    title: "Statement to the Truth and Reconciliation Commission, August 1996"
+    container: "Truth and Reconciliation Commission web archive, Human Rights Violations: submissions"
+    publisher: Department of Justice and Constitutional Development, Republic of South Africa
+    place: Johannesburg
+    year: 1996
+    edition: "the web text, read whole"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/hrvtrans/submit/anctruth.htm"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/hrvtrans/submit/anctruth.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "ANC Submission to the Truth and Reconciliation Commission"
+    language: en
+    region_of_authorship: africa
+    producer: anc
+    position: null
+    rights: copyright
+    does_not_show: "the TRC's own findings on the ANC (Report vol 5 and vol 6 s3 ch2, not held); any count of necklacing deaths"
+
+  # ----------------------------------------------------------- Tier A: the National Party
+  - id: src-np-trc-1996
+    tier: A
+    kind: primary-document
+    author: F. W. de Klerk, Leader of the National Party
+    title: "Submission to the Truth and Reconciliation Commission by Mr F W de Klerk, Leader of the National Party"
+    container: "Truth and Reconciliation Commission web archive, Human Rights Violations: submissions"
+    publisher: Department of Justice and Constitutional Development, Republic of South Africa
+    place: Cape Town
+    year: 1996
+    edition: "the web text, read whole; the page does not print its date, and the year is the TRC's 1996 party-submission round as the TRC index lists it"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/hrvtrans/submit/np_truth.htm"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/hrvtrans/submit/np_truth.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "NP Submission TRC"
+    language: en
+    region_of_authorship: africa
+    producer: national-party
+    position: null
+    rights: copyright
+    does_not_show: "the 1948-1966 leaders' own words (Malan, Verwoerd): it is the party's account in 1996, after the transition; the camp deaths it gives are its own figure with no source"
+
+  # ----------------------------------------------------------- Tier A: Black Consciousness
+  - id: src-saso-manifesto-1971
+    tier: A
+    kind: primary-document
+    author: South African Students' Organisation (SASO)
+    title: "SASO Policy Manifesto"
+    container: "South African History Archive, online documentary history of non-racialism, chapter 'Black Man, You're On Your Own'; the page cites 'SASO on the Attack: An Introduction to the South African Student Organization, 1973'"
+    publisher: South African History Archive (SAHA)
+    place: Johannesburg
+    year: 1971
+    edition: "the manifesto's points 1 to 5 as the SAHA page reprints them; the page's editorial note markers (ii, iii) sit inside the text and are kept. The year of adoption is not on the page: the page cites a 1973 SASO publication, and 1971 is the year the event YAML and the search record give, unconfirmed here"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.saha.org.za/nonracialism/black_man_youre_on_your_own.htm"}
+    access:
+      free_copy: "https://www.saha.org.za/nonracialism/black_man_youre_on_your_own.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "SAHA - South African History Archive - Black Man, You're On Your Own"
+    language: en
+    region_of_authorship: africa
+    producer: black-consciousness-movement
+    position: null
+    rights: copyright
+    does_not_show: "the slogan 'Black man, you are on your own' as a SASO principle: the page carries it only as a later interviewee's paraphrase; who drafted the manifesto"
+
+  - id: src-biko-1970
+    tier: A
+    kind: primary-document
+    author: "Steve Biko, writing as 'Frank Talk'"
+    title: "'Black Souls in White Skins?', the first 'I Write What I Like' column, SASO Newsletter, August 1970"
+    container: "South African History Archive, online documentary history of non-racialism, chapter 'Black Man, You're On Your Own'"
+    publisher: South African History Archive (SAHA)
+    place: Johannesburg
+    year: 1970
+    edition: "excerpts as the SAHA page reprints them, with the page's ellipses; the page says the column was 'later revealed to have been authored by SASO President Steve Biko'"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.saha.org.za/nonracialism/black_man_youre_on_your_own.htm"}
+    access:
+      free_copy: "https://www.saha.org.za/nonracialism/black_man_youre_on_your_own.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "SAHA - South African History Archive - Black Man, You're On Your Own"
+    language: en
+    region_of_authorship: africa
+    producer: black-consciousness-movement
+    position: null
+    rights: copyright
+    does_not_show: "the sentence 'The most potent weapon in the hands of the oppressor is the mind of the oppressed' (not on this page; see gaps); the column in full"
+
+  # ----------------------------------------------------------- Tier A: the TRC Report
+  - id: src-trc-v1-ch1
+    tier: A
+    kind: report
+    author: "Desmond Tutu, Chairperson, Truth and Reconciliation Commission"
+    title: "Truth and Reconciliation Commission of South Africa Report, Volume One, Chapter One: Foreword by Chairperson"
+    container: "Truth and Reconciliation Commission of South Africa Report, Volume One (1998)"
+    publisher: "Truth and Reconciliation Commission; the Department of Justice and Constitutional Development's web archive"
+    place: Cape Town
+    year: 1998
+    edition: "the PDF's own text layer"
+    volume: "1"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/report/"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/report/finalreport/Volume%201.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "TRC/Report (index page linking 'TRC Final Report - Volume 1')"
+    language: en
+    region_of_authorship: africa
+    producer: trc
+    position: null
+    rights: official
+    does_not_show: "the sentence 'Without forgiveness there is no future, but without confession there can be no forgiveness' (not found in the volume; see gaps); the number of amnesties granted"
+
+  - id: src-trc-v1-ch2
+    tier: A
+    kind: report
+    author: Truth and Reconciliation Commission of South Africa
+    title: "TRC Report, Volume One, Chapter Two: Historical Context"
+    container: "Truth and Reconciliation Commission of South Africa Report, Volume One (1998)"
+    publisher: "Truth and Reconciliation Commission; the Department of Justice and Constitutional Development's web archive"
+    place: Cape Town
+    year: 1998
+    edition: "the PDF's own text layer"
+    volume: "1"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/report/"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/report/finalreport/Volume%201.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "TRC/Report (index page linking 'TRC Final Report - Volume 1')"
+    language: en
+    region_of_authorship: africa
+    producer: trc
+    position: null
+    rights: official
+    does_not_show: "a source for its 3.5 million; which amended text of the Population Registration Act it quotes"
+
+  - id: src-trc-v1-ch5
+    tier: A
+    kind: report
+    author: Truth and Reconciliation Commission of South Africa
+    title: "TRC Report, Volume One, Chapter Five: Concepts and Principles"
+    container: "Truth and Reconciliation Commission of South Africa Report, Volume One (1998)"
+    publisher: "Truth and Reconciliation Commission; the Department of Justice and Constitutional Development's web archive"
+    place: Cape Town
+    year: 1998
+    edition: "the PDF's own text layer"
+    volume: "1"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/report/"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/report/finalreport/Volume%201.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "TRC/Report (index page linking 'TRC Final Report - Volume 1')"
+    language: en
+    region_of_authorship: africa
+    producer: trc
+    position: null
+    rights: official
+    does_not_show: "'I am because we are' (the YAML's gloss of ubuntu, not in this passage); which language the Nguni proverb it quotes is in"
+
+  - id: src-trc-v1-ch10
+    tier: A
+    kind: report
+    author: Truth and Reconciliation Commission of South Africa
+    title: "TRC Report, Volume One, Chapter Ten: Amnesty Committee"
+    container: "Truth and Reconciliation Commission of South Africa Report, Volume One (1998)"
+    publisher: "Truth and Reconciliation Commission; the Department of Justice and Constitutional Development's web archive"
+    place: Cape Town
+    year: 1998
+    edition: "the PDF's own text layer"
+    volume: "1"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/report/"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/report/finalreport/Volume%201.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "TRC/Report (index page linking 'TRC Final Report - Volume 1')"
+    language: en
+    region_of_authorship: africa
+    producer: trc
+    position: null
+    rights: official
+    does_not_show: "how many applications were granted: the Committee had not finished in 1998"
+
+  - id: src-trc-v1-ch13
+    tier: A
+    kind: report
+    author: Truth and Reconciliation Commission of South Africa
+    title: "TRC Report, Volume One, Chapter Thirteen: Addenda, Apartheid Legislation"
+    container: "Truth and Reconciliation Commission of South Africa Report, Volume One (1998)"
+    publisher: "Truth and Reconciliation Commission; the Department of Justice and Constitutional Development's web archive"
+    place: Cape Town
+    year: 1998
+    edition: "the PDF's own text layer; locators are the printed page numbers (PDF page = printed page + 3)"
+    volume: "1"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/report/"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/report/finalreport/Volume%201.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "TRC/Report (index page linking 'TRC Final Report - Volume 1')"
+    language: en
+    region_of_authorship: africa
+    producer: trc
+    position: null
+    rights: official
+    does_not_show: "the Acts' own wording (it summarises them, citing Horrell and Dugard)"
+
+  - id: src-trc-v2-ch1
+    tier: A
+    kind: report
+    author: Truth and Reconciliation Commission of South Africa
+    title: "TRC Report, Volume Two, Chapter One: National Overview"
+    container: "Truth and Reconciliation Commission of South Africa Report, Volume Two (1998)"
+    publisher: "Truth and Reconciliation Commission; the Department of Justice and Constitutional Development's web archive"
+    place: Cape Town
+    year: 1998
+    edition: "the PDF's own text layer"
+    volume: "2"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/report/"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/report/finalreport/Volume%202.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "TRC/Report (index page linking 'TRC Final Report - Volume 2')"
+    language: en
+    region_of_authorship: africa
+    producer: trc
+    position: null
+    rights: official
+    does_not_show: "the share of the land the homelands held or the share of the population assigned to them"
+
+  - id: src-trc-v2-ch3
+    tier: A
+    kind: report
+    author: Truth and Reconciliation Commission of South Africa
+    title: "TRC Report, Volume Two, Chapter Three: The State inside South Africa between 1960 and 1990"
+    container: "Truth and Reconciliation Commission of South Africa Report, Volume Two (1998)"
+    publisher: "Truth and Reconciliation Commission; the Department of Justice and Constitutional Development's web archive"
+    place: Cape Town
+    year: 1998
+    edition: "the PDF's own text layer"
+    volume: "2"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/report/"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/report/finalreport/Volume%202.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "TRC/Report (index page linking 'TRC Final Report - Volume 2')"
+    language: en
+    region_of_authorship: africa
+    producer: trc
+    position: null
+    rights: official
+    does_not_show: "the outcome of the Biko amnesty applications (pending in 1998); where Biko was arrested"
+
+  - id: src-trc-v2-ch5
+    tier: A
+    kind: report
+    author: Truth and Reconciliation Commission of South Africa
+    title: "TRC Report, Volume Two, Chapter Five: The Homelands from 1960 to 1990"
+    container: "Truth and Reconciliation Commission of South Africa Report, Volume Two (1998)"
+    publisher: "Truth and Reconciliation Commission; the Department of Justice and Constitutional Development's web archive"
+    place: Cape Town
+    year: 1998
+    edition: "the PDF's own text layer"
+    volume: "2"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/report/"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/report/finalreport/Volume%202.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "TRC/Report (index page linking 'TRC Final Report - Volume 2')"
+    language: en
+    region_of_authorship: africa
+    producer: trc
+    position: null
+    rights: official
+    does_not_show: "whether any state other than South Africa recognised the 'independent' homelands"
+
+  - id: src-trc-v3-ch1
+    tier: A
+    kind: report
+    author: Truth and Reconciliation Commission of South Africa
+    title: "TRC Report, Volume Three, Chapter One, Appendix: National Chronology"
+    container: "Truth and Reconciliation Commission of South Africa Report, Volume Three (1998)"
+    publisher: "Truth and Reconciliation Commission; the Department of Justice and Constitutional Development's web archive"
+    place: Cape Town
+    year: 1998
+    edition: "the PDF's own text layer; locators are printed page numbers"
+    volume: "3"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/report/"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/report/finalreport/Volume%203.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "TRC/Report (index page linking 'TRC Final Report - Volume 3')"
+    language: en
+    region_of_authorship: africa
+    producer: trc
+    position: null
+    rights: official
+    does_not_show: "sources for its counts"
+
+  - id: src-trc-v3-ch2
+    tier: A
+    kind: report
+    author: Truth and Reconciliation Commission of South Africa
+    title: "TRC Report, Volume Three, Chapter Two: Regional Profile, Eastern Cape"
+    container: "Truth and Reconciliation Commission of South Africa Report, Volume Three (1998)"
+    publisher: "Truth and Reconciliation Commission; the Department of Justice and Constitutional Development's web archive"
+    place: Cape Town
+    year: 1998
+    edition: "the PDF's own text layer"
+    volume: "3"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/report/"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/report/finalreport/Volume%203.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "TRC/Report (index page linking 'TRC Final Report - Volume 3')"
+    language: en
+    region_of_authorship: africa
+    producer: trc
+    position: null
+    rights: official
+    does_not_show: "a roadblock near Grahamstown: it says only that he was detained on 18 August 1977 in Port Elizabeth"
+
+  - id: src-trc-v3-ch6
+    tier: A
+    kind: report
+    author: Truth and Reconciliation Commission of South Africa
+    title: "TRC Report, Volume Three, Chapter Six: Regional Profile, Transvaal"
+    container: "Truth and Reconciliation Commission of South Africa Report, Volume Three (1998)"
+    publisher: "Truth and Reconciliation Commission; the Department of Justice and Constitutional Development's web archive"
+    place: Cape Town
+    year: 1998
+    edition: "the PDF's own text layer"
+    volume: "3"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/report/"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/report/finalreport/Volume%203.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "TRC/Report (index page linking 'TRC Final Report - Volume 3')"
+    language: en
+    region_of_authorship: africa
+    producer: trc
+    position: null
+    rights: official
+    does_not_show: "a first-week Soweto death toll; Nzima's photograph itself; that the image became 'the most reproduced' of apartheid"
+
+  - id: src-trc-v6-s1
+    tier: A
+    kind: report
+    author: "Truth and Reconciliation Commission of South Africa, Amnesty Committee"
+    title: "TRC Report, Volume Six, Section One: Report of the Amnesty Committee"
+    container: "Truth and Reconciliation Commission of South Africa Report, Volume Six (2003)"
+    publisher: "Truth and Reconciliation Commission; the Department of Justice and Constitutional Development's web archive"
+    place: Cape Town
+    year: 2003
+    edition: "the PDF's own text layer, which splits some words with spaces ('re q u i rements'); the extract held is free of that"
+    volume: "6"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/report/"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/report/finalreport/vol6_s1.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "TRC/Report (index page linking 'vol6_s1.pdf')"
+    language: en
+    region_of_authorship: africa
+    producer: trc
+    position: null
+    rights: official
+    does_not_show: "a total of amnesties granted in the text layer read (a table may carry it; it was not found as text)"
+
+  - id: src-trc-amnesty-biko-1997
+    tier: A
+    kind: testimony
+    author: "Amnesty Committee hearing, applicant H Snyman (with Siebert, Nieuwoudt, Marx and Beneke), Port Elizabeth, 10 September 1997"
+    title: "Truth and Reconciliation Commission, Amnesty Hearings: H Snyman, case 3918/96, day 1 (the killing of Steve Biko)"
+    container: "Truth and Reconciliation Commission web archive, Amnesty transcripts 1997, Port Elizabeth"
+    publisher: Department of Justice and Constitutional Development, Republic of South Africa
+    place: "New Brighton, Port Elizabeth"
+    year: 1997
+    edition: "the transcript's web text, read whole"
+    volume: null
+    document_number: "AM 3918/96"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/amntrans/am1997.htm"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/amntrans/pe/snyman.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Truth and Reconciliation Commission Amnesty Hearings, date 10 September 1997, held at New Brighton, Port Elizabeth, name H Snyman, case number 3918/96, day 1 (the page's own head; its <title> is empty)"
+    language: en
+    region_of_authorship: africa
+    producer: amnesty-applicant-testimony
+    position: null
+    rights: official
+    does_not_show: "the Committee's decision on these applications (not held); the applicants' account is their own and was contested at the hearing"
+
+  - id: src-trc-special-index
+    tier: C
+    kind: reference
+    author: Truth and Reconciliation Commission of South Africa (web archive)
+    title: "TRC/Special Hearings (index of the special and institutional hearings, with dates and transcripts)"
+    container: "Truth and Reconciliation Commission web archive"
+    publisher: Department of Justice and Constitutional Development, Republic of South Africa
+    place: Pretoria
+    year: 1998
+    edition: "the index page as served; the year is that of the last hearing it lists that is held here (January 1998), not a date the page prints"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/special/index.htm"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/special/index.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "TRC/Special Hearings"
+    language: en
+    region_of_authorship: africa
+    producer: trc
+    position: null
+    rights: official
+    does_not_show: "what was said at either hearing (the transcripts it links were not read), who testified, or what the Commission found"
+
+  # ----------------------------------------------------------- Tier A: the settlement
+  - id: src-interim-constitution-1993
+    tier: A
+    kind: primary-document
+    author: Parliament of the Republic of South Africa
+    title: "Constitution of the Republic of South Africa, Act 200 of 1993: 'National Unity and Reconciliation' (the closing provision)"
+    container: "Truth and Reconciliation Commission web archive, Legal background"
+    publisher: Department of Justice and Constitutional Development, Republic of South Africa
+    place: Cape Town
+    year: 1993
+    edition: "the archive's web text of the provision, read whole"
+    volume: null
+    document_number: "Act 200 of 1993"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/legal/index.htm"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/legal/interim.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "National Unity and Reconciliation"
+    language: en
+    region_of_authorship: africa
+    producer: south-african-parliament
+    position: null
+    rights: public
+    does_not_show: "who drafted the sentence or where; its cut-off date was later moved (src-trc-v1-ch10.para2)"
+
+  - id: src-pnura-1995
+    tier: A
+    kind: primary-document
+    author: Parliament of the Republic of South Africa
+    title: "Promotion of National Unity and Reconciliation Act 34 of 1995"
+    container: null
+    publisher: Department of Justice and Constitutional Development, Republic of South Africa
+    place: Cape Town
+    year: 1995
+    edition: "the Department's consolidated PDF; assented to 19 July 1995, commenced 1 December 1995, as its head prints"
+    volume: null
+    document_number: "Act 34 of 1995"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/legislation/acts/1995-034.pdf"}
+    access:
+      free_copy: "https://www.justice.gov.za/legislation/acts/1995-034.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Promotion of National Unity and Reconciliation Act 34 of 1995 (PDF metadata title)"
+    language: en
+    region_of_authorship: africa
+    producer: south-african-parliament
+    position: null
+    rights: public
+    does_not_show: "how the Act worked in practice"
+
+  - id: src-azapo-1996
+    tier: A
+    kind: judgment
+    author: "Constitutional Court of South Africa (Mahomed DP)"
+    title: "Azanian Peoples Organization (AZAPO) and Others v President of the Republic of South Africa and Others, Case CCT 17/96, decided 25 July 1996"
+    container: "Truth and Reconciliation Commission web archive, Legal background"
+    publisher: Department of Justice and Constitutional Development, Republic of South Africa
+    place: Johannesburg
+    year: 1996
+    edition: "the archive's web text of the judgment, read whole"
+    volume: null
+    document_number: "CCT 17/96"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.justice.gov.za/trc/legal/azapo.htm"}
+    access:
+      free_copy: "https://www.justice.gov.za/trc/legal/azapo.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "CONSTITUTIONAL COURT OF SOUTH AFRICA (page title); Case CCT 17/96 in its head"
+    language: en
+    region_of_authorship: africa
+    producer: constitutional-court-of-south-africa
+    position: null
+    rights: official
+    does_not_show: "what the families argued in their own words (only as the Court states it)"
+
+  # ----------------------------------------------------------- Tier A: the international record
+  - id: src-unsc-134-1960
+    tier: A
+    kind: resolution
+    author: United Nations Security Council
+    title: "Resolution 134 (1960) of 1 April 1960 [S/4300], Question relating to the situation in the Union of South Africa"
+    container: "Resolutions and Decisions of the Security Council, 1960"
+    publisher: United Nations
+    place: New York
+    year: 1960
+    edition: "the UN's PDF of the bilingual annual volume, its OCR layer"
+    volume: null
+    document_number: "S/RES/134 (1960)"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://docs.un.org/en/S/RES/134(1960)"}
+    access:
+      free_copy: "https://documents.un.org/doc/resolution/gen/nr0/157/23/pdf/nr015723.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Resolutions adopted and decisions taken by the Security Council in 1960: 134 (1960). Resolution of 1 April 1960 [S/4300]"
+    language: en
+    region_of_authorship: global
+    producer: un-security-council
+    position: null
+    rights: public
+    does_not_show: "the word Sharpeville or any death toll: it speaks of 'large-scale killings of unarmed and peaceful demonstrators' and 'the loss of life of so many Africans'"
+
+  - id: src-unsc-181-1963
+    tier: A
+    kind: resolution
+    author: United Nations Security Council
+    title: "Resolution 181 (1963) of 7 August 1963 [S/5386]"
+    container: "Resolutions and Decisions of the Security Council, 1963"
+    publisher: United Nations
+    place: New York
+    year: 1963
+    edition: "the UN's PDF, its OCR layer"
+    volume: null
+    document_number: "S/RES/181 (1963)"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://docs.un.org/en/S/RES/181(1963)"}
+    access:
+      free_copy: "https://documents.un.org/doc/resolution/gen/nr0/200/54/pdf/nr020054.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "181 (1963). Resolution of 7 August 1963 [S/5386)"
+    language: en
+    region_of_authorship: global
+    producer: un-security-council
+    position: null
+    rights: public
+    does_not_show: "the word 'voluntary': it 'solemnly calls upon' states; the Council itself calls it a voluntary embargo in 418 (1977)"
+
+  - id: src-unsc-418-1977
+    tier: A
+    kind: resolution
+    author: United Nations Security Council
+    title: "Resolution 418 (1977) of 4 November 1977"
+    container: "Resolutions and Decisions of the Security Council, 1977"
+    publisher: United Nations
+    place: New York
+    year: 1977
+    edition: "the UN's PDF, its OCR layer (glyph errors kept)"
+    volume: null
+    document_number: "S/RES/418 (1977)"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://docs.un.org/en/S/RES/418(1977)"}
+    access:
+      free_copy: "https://documents.un.org/doc/resolution/gen/nr0/297/01/pdf/nr029701.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Resolution 418 (1977) of 4 Novemher [November] 1977 (heading as the layer reads it)"
+    language: en
+    region_of_authorship: global
+    producer: un-security-council
+    position: null
+    rights: public
+    does_not_show: "that it was the first mandatory sanction against a member state: the resolution says nothing about precedent; nor whether states complied"
+
+  - id: src-caaa-1986
+    tier: A
+    kind: primary-document
+    author: Congress of the United States (99th Congress)
+    title: "Comprehensive Anti-Apartheid Act of 1986, Public Law 99-440, 100 Stat. 1086, Oct. 2, 1986"
+    container: "United States Statutes at Large, volume 100"
+    publisher: "U.S. Government Publishing Office (govinfo)"
+    place: Washington
+    year: 1986
+    edition: "govinfo's PDF of the Statutes at Large, its text layer"
+    volume: "100"
+    document_number: "Public Law 99-440"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.govinfo.gov/content/pkg/STATUTE-100/pdf/STATUTE-100-Pg1086.pdf"}
+    access:
+      free_copy: "https://www.govinfo.gov/content/pkg/STATUTE-100/pdf/STATUTE-100-Pg1086.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "100 STAT. 1086, Public Law 99-440, Oct. 2, 1986 (head of page 1)"
+    language: en
+    region_of_authorship: americas
+    producer: us-congress
+    position: null
+    rights: public
+    does_not_show: "the override vote counts (313-83, 78-21 in the YAML); any count of companies that divested"
+
+  - id: src-thatcher-nassau-1985
+    tier: A
+    kind: primary-document
+    author: "Margaret Thatcher, Prime Minister of the United Kingdom"
+    title: "Press Conference at Nassau Commonwealth Summit, 20 October 1985"
+    container: "Margaret Thatcher Foundation, Speeches, Interviews and Other Statements"
+    publisher: Margaret Thatcher Foundation
+    place: "Nassau, Bahamas"
+    year: 1985
+    edition: "the Foundation's text, from a Central Office of Information transcript in the Thatcher papers (Churchill Archive Centre), as the page states; venue 'Nassau Beach Hotel' marked uncertain by the Foundation"
+    volume: null
+    document_number: "document 106151"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.margaretthatcher.org/document/106151"}
+    access:
+      free_copy: "https://www.margaretthatcher.org/document/106151"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Press Conference at Nassau Commonwealth Summit | Margaret Thatcher Foundation"
+    language: en
+    region_of_authorship: europe
+    producer: uk-government
+    position: null
+    rights: copyright
+    does_not_show: "'The lady's not for sanctioning' (not in this transcript; see gaps); what the three measures were, beyond her answers"
+
+  # ----------------------------------------------------------- Tier C: compiled tables
+  - id: src-saho-election-1994
+    tier: C
+    kind: dataset
+    author: South African History Online
+    title: "26-29 April 1994 National Assembly Election (results table)"
+    container: null
+    publisher: South African History Online
+    place: Cape Town
+    year: 1994
+    edition: "SAHO's one-page PDF; it names no source and marks two figures '(approx.)'. The year is the election's; the table's own date is not printed"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://sahistory.org.za/sites/default/files/election_results_1994.pdf"}
+    access:
+      free_copy: "https://sahistory.org.za/sites/default/files/election_results_1994.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "26-29 April 1994 National Assembly Election (head of the PDF)"
+    language: en
+    region_of_authorship: africa
+    producer: sahistory
+    position: null
+    rights: null
+    does_not_show: "the Independent Electoral Commission's own report (not read); queue lengths or waiting times"
+
+positions: []
+contested: []
+exhibits: []
+analyses: []
+
+gaps:
+  - entry: src-gaa-1950
+    what: "The Group Areas Act, No. 41 of 1950, in its own words"
+    tried: ["https://disa.ukzn.ac.za/sites/default/files/pdf_files/leg19500707.028.020.041.pdf", "https://sahistory.org.za/sites/default/files/group_areas_act.pdf"]
+    status: "DISA's scan of the statute book has no text layer, so nothing can be sliced from it without retyping; SAHO's PDF is a typescript of the Act's last section and schedules bound with unrelated documents, not the operative sections. What the Act did is carried from the TRC Report (src-trc-v1-ch2.para30, src-trc-v1-ch13.p453). The YAML's 3.5 million is NOT a Group Areas Act figure in the Report (src-trc-v1-ch2.para45b)"
+  - what: "Biko, 'The most potent weapon in the hands of the oppressor is the mind of the oppressed' (the YAML's excerpt and notable quote, 'Cape Town conference, 1971')"
+    tried: ["https://www.saha.org.za/nonracialism/black_man_youre_on_your_own.htm", "https://sahistory.org.za/archive/quotes-steve-biko"]
+    status: "The essay that carries it is collected in I Write What I Like (1978), in copyright, and no lawful full copy was found. SAHO's page is a list of quotations without the document, not a source. Unverified; withdrawn by the quote ledger; the brief does not offer it as a read"
+  - what: "'Black man, you are on your own' as a SASO founding principle of 1969 (YAML notable quote)"
+    tried: ["https://www.saha.org.za/nonracialism/black_man_youre_on_your_own.htm"]
+    status: "The SAHA page holds the words only inside a later interviewee's paraphrase ('Black man you are on your own, you must free yourself'), not as Biko's or SASO's; no 1969 document was found"
+  - what: "Mandela, Long Walk to Freedom (1994), and the YAML line 'If you want to make peace with your enemy, you have to work with your enemy. Then he becomes your partner'"
+    tried: ["https://openlibrary.org/books/OL1097546M"]
+    status: "in copyright; no lawful open copy. The live script reads the line in the document voice; it is unverified and must not be read"
+  - what: "Verwoerd, 'We did not colonize the Bantu peoples' land. We found a largely empty country' (YAML notable quote, 'Parliamentary debate on the Bantustan policy, 1959')"
+    tried: []
+    status: "no Hansard of the House of Assembly was sought in this session. Unverified; the live script reads it in the document voice and must not"
+  - what: "De Klerk, 'Today we have closed the book on apartheid' (YAML, after the 1992 referendum)"
+    tried: []
+    status: "no text of his referendum-night statement was found; the referendum's 68.7% is not held either"
+  - what: "Thatcher, 'The lady's not for sanctioning' (YAML, which itself calls it a paraphrase)"
+    tried: ["https://www.margaretthatcher.org/document/106151"]
+    status: "not in the Nassau press-conference transcript; what she did say there is held (src-thatcher-nassau-1985). The live script reads the paraphrase in a document voice; it must not"
+  - what: "Tutu, 'Without forgiveness there is no future, but without confession there can be no forgiveness' (YAML, 'Opening address to the TRC, 1996') and 'A person with ubuntu is open and available to others' (No Future Without Forgiveness, 1999)"
+    tried: ["https://www.justice.gov.za/trc/report/finalreport/Volume%201.pdf"]
+    status: "neither sentence is in Volume One of the Report, which carries his foreword; no text of a 1996 opening address was found; the 1999 book is in copyright. Unverified. His own words on amnesty and restorative justice are held (src-trc-v1-ch1.para22, .para29, .para36)"
+  - what: "Tutu, 'Anyone who thinks they are going to help end apartheid by having nice lunches with South African businessmen is deluded' (YAML, 1986)"
+    tried: []
+    status: "no source document named or found"
+  - what: "The YAML's figures with no held source: 17 million pass-law prosecutions 1948-1986; ten homelands on 13% of the land for 75% of the people; 155 US companies divested; Chase Manhattan's $500 million and the rand's 35% in two weeks; $20 billion divested by pension funds; 470 Voortrekkers and 15,000-20,000 Zulu at Blood River; 116,000 interned and 27,927 dead in the camps; 12,000 Broederbond members; 50,000 armed men under Viljoen; the override votes 313-83 and 78-21; Boipatong's 45 dead; 1,500 amnesties granted; 87% of the land in 1994; the 2024 Gini of 0.63 and unemployment figures"
+    tried: []
+    status: "not held. The TRC Report gives 13% only as the 1936 extension of the reserves (src-trc-v3-ch1, chronology for 1913, not sliced), 'Ten homeland administrations' (src-trc-v2-ch1.para40) and 'some eight million Africans' de-nationalised by 1981 (src-trc-v2-ch5.para33); the NP gives 'more than 20 000' camp dead (src-np-trc-1996.secmemory)"
+  - what: "Books the event YAML names as sources: Thompson, A History of South Africa (1990); Woods, Biko (1978); Massie, Loosing the Bonds (1997); Krog, Country of My Skull (1998)"
+    tried: ["https://archive.org/metadata/historyofsouthaf00thom", "https://archive.org/metadata/biko0000wood", "https://archive.org/metadata/loosingbondsunit00mass", "https://archive.org/metadata/countryofmyskull00krog"]
+    status: "all four Internet Archive items are controlled lending copies (access-restricted-item: true), not openable here"
+  - what: "Books the event YAML names with no identifier: Giliomee (2003), Welsh (2009), Callinicos (2004), Kasrils (1993), Hirson (1979), Klotz (1995), Hadland (2003), Biko, I Write What I Like (1978), Tutu (1999)"
+    tried: []
+    status: "no open copy sought; in copyright"
+  - what: "Archival recordings (for example Mandela's speech on his release in 1990, or de Klerk's address of 2 February 1990)"
+    tried: []
+    status: "none sought in this session; no recording is admitted (recordings: [])"
+
+recordings: []

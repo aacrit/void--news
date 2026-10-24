@@ -1,0 +1,8 @@
+source: src-hsra-leaflet-1929
+locator: secsigned
+url: https://www.marxists.org/archive/bhagat-singh/1929/04/08.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+note: [B] and [C] are the transcriber's note markers
+
+"Long Live the Revolution." [B] Signed, Balraj [C] Commander-in-Chief

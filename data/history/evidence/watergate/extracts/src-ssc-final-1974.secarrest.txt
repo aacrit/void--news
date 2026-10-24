@@ -1,0 +1,8 @@
+source: src-ssc-final-1974
+locator: secarrest
+url: https://archive.org/details/FinalReportOfTheSenateSelectCommitteeOnPresidentialCampaignActivities
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (including the '¬' the OCR prints for one) are kept as printed
+note: chapter 1; 'Biddy' and 'Beeper' are the OCR's readings of the names in the scan, kept as printed; the surgical gloves and the $4,200 are what police found in the burglars' hotel rooms the next afternoon
+
+A second piece of tape was placed on the basement garage door, an action that was the burglars’ undoing. For it was the Watergate guard, Frank Wills, who had found the first piece of tape and removed it, thinking that one of the engineers for the building had put it on the door. When he made his rounds again and saw the door retaped, he telephoned the police. 62 Within minutes, Sergeant Beeper’s plainclothes squad arrived at the Watergate Office Building, searched the stairwell and entered the sixth floor offices of the Democratic National Committee headquarters. When Officer Barrett discovered the burglars and yelled, “Hold it ! Come out !,” the break-in team was apprehended in the midst of setting up photographic equipment. The next afternoon, Beeper obtained search warrants for the rooms which the burglars had occupied. 63 There police found $4,200 in $100 bills, all with serial numbers in sequence, more electronic equipment, sets of blue surgical gloves, and a small notebook containing the name, E. Howard Hunt, 64 The burglary was over, but the Watergate scandal had just begun.

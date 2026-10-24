@@ -1,0 +1,7 @@
+source: src-sar-1919
+locator: p97
+url: https://archive.org/download/sar-influenza-epidemic-of-1918-gmar-1919/Influenza%20Epidemic%20of%201918_GMAR1919_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+The influenza epidemic which ravaged the country and took such heavy toll of the Railways and Harbours staff, broke out simultaneously at widely divergent centres and reached an acute stage within a remarkably short time after making its appearance in South Africa. The earliest recorded date upon which it was noticed amongst the railway staff was 9th September, 1918. Several cases then occurred at Durban, but they were so mild and recovery so rapid that thé outbreak was not recognized as the forerunner of an epidemic that was, in a few weeks, to claim so many victims. About 6th October, there was a recurrence at Durban when the disease became more ‘general and more severe. Nevertheless, the Durban area, where the epidemic first broke out, escaped very lightly.

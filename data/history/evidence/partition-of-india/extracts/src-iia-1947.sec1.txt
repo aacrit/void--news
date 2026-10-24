@@ -1,0 +1,7 @@
+source: src-iia-1947
+locator: sec1
+url: https://www.legislation.gov.uk/ukpga/Geo6/10-11/30/data.xht?view=snippet&wrap=true
+read: 2026-09-25
+note: section 1(1) and 1(2) as legislation.gov.uk prints the enacted text; the quotation marks around the defined terms are set on separate lines in the source
+
+As from the fifteenth day of August, nineteen hundred and forty-seven, two independent Dominions shall be set up in India, to be known respectively as India and Pakistan. (2) The said Dominions are hereafter in this Act referred to as “ the new Dominions ”, and the said fifteenth day of August is hereafter in this Act referred to as “ the appointed day ”.

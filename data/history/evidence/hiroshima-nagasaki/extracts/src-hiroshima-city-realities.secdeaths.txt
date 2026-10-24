@@ -1,0 +1,8 @@
+source: src-hiroshima-city-realities
+locator: secdeaths
+url: https://www.city.hiroshima.lg.jp/english/peace/1029920/1009857.html
+read: 2026-10-05
+
+Various institutions have investigated the number of people who perished in the bombing, but so far, the precise number is unknown. The City of Hiroshima estimates that approximately 140,000 people had died by the end of December 1945, when the acute effects by the radiation subsided.
+
+It is thought that approximately 350,000 people were in the city when the bomb exploded on August 6, 1945. This figure includes ordinary citizens, military personnel, and people from surrounding towns and villages who commuted to work or were mobilized for building demolition work. Those who were involved in the tragedy were not only Japanese, but also people with various nationalities, such as Japanese-Americans who were born in the US, German priests, exchange students from countries in Southeast Asia, people from Korea and Taiwan, which were then Japanese colonies, and mainland China, as well as US prisoners of war.

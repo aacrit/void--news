@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-lei-18311107.art1
+names: Brazil=Brazil
+
+Art. 1. All slaves who enter the territory or ports of Brazil, coming from abroad, are free.

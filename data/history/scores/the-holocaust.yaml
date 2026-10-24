@@ -1,0 +1,309 @@
+# The documentary score for "The Holocaust", as note data on one sampled real
+# instrument. Rendered by pipeline/history/score.py; the samples live in
+# ~/.cache/void-score-samples (never in the repository) and are pinned by sha256.
+#
+# The music claims nothing about the event. Nothing in it is a music of the
+# people it was done to or of the people who did it: no clarinet, no solo
+# violin, no cantorial line, no mode with a flattened second, no horn, no
+# brass, no choir, no organ, no drum, no pulse, no swell to a blow. The moment
+# itself is dry (mood.py), and what follows it is one low note struck once and
+# left alone. Testimony is dry, and the silence around a survivor's words is
+# the loudest thing in the episode. This score has fewer notes than any of the
+# twelve before it, and the gaps are the point: a note is struck, it dies, and
+# nothing fills the time until the next.
+#
+# The palette is ONE instrument, which no earlier score strikes: a vibraphone
+# (the Armenian score bows one, which is a different sound; this one is played
+# with mallets, as a vibraphone is). The motor is off, so nothing wavers: a
+# measured 0.5 dB or less of modulation on every bar used. It is heard two
+# ways. SOFT mallets, the softest layer the library holds: a dull onset and a
+# long cold ring, 8 to 10 s on the low bars, 6 to 8 s on the high. HARD
+# mallets, the softer of the two layers recorded: a clearer onset, used dry
+# and cut short for the ledger of procedure. Every note here is one recorded
+# strike played once and cut at its length or left to ring. No strike is
+# looped; no note is held longer than the recording holds it.
+#
+# The theme is built from the house cell (tonic, fifth, tonic, third: the
+# shape of the On Air motif) on D, with the third minor and the sixth raised,
+# so the only note outside the cell is a B natural that does not resolve.
+# All twelve minor keys are taken by the twelve earlier scores, so the pitch
+# class is reused from the Apollo score, with the third lowered (Apollo is
+# D major on violin, upright piano, cello and harp at 60), at 36 beats a
+# minute, the slowest of the thirteen: one beat is 1.667 s. The cell is said
+# once under the title, one note every two beats, each left to ring (beats
+# 1 to 7). Two beats of only the ring. Then the B natural (beat 9.5) with the
+# low A drawn under it, and the tonic alone (beat 12.5) with the low D under
+# it, into whose ring the title is spoken. The outro says the cell once more
+# over a low A and ends on the third, unresolved, into silence. Dread is the
+# low A and low D alone, struck so seldom that each has died before the next;
+# procedure is hard mallets, dry, the cell on D twice, one strike every three
+# beats, cut so nothing gathers, the second statement closing on the second;
+# reckoning is four strikes with ten seconds of silence between them, under
+# the deepest duck; grief is the soft strikes faint and far apart, the one
+# fall from the high third to the tonic, the B natural once, and the low A.
+#
+# Cues are keyed to the producer's moods and segment kinds, never to a line of
+# text, so the cinematic variant renders from this manifest whatever moods it
+# picks. Where each cue plays is the producer's (mood_plan): the theme under
+# the TITLE, the first word 1.2 s before its end; beds under the spoken body by
+# mood, ducked to the mood's floor; transitions in the clear before a scene;
+# the rupture entry on the last word of the moment, or 1,200 ms after a clip's
+# trailing silence, never under it; the outro at the close, with the house
+# promo riding its held bars, so it is at most 13.75 s and silent at its end.
+slug: the-holocaust
+title: The Holocaust
+version: 1
+key: D
+mode: minor, with the sixth raised (B natural, heard once in the theme and once in each of the dread and grief beds, never resolved) and the seventh never sounded; the second (E) is heard once, closing the procedure bed's second statement
+tempo_bpm: 36
+house_cell: [0, 7, 0, 3]
+textures: []
+
+instruments:
+  # The renderer's `kind: pluck` is its word for a recording played once from
+  # its onset and never looped: a note with no length is the whole strike, a
+  # note with a length is cut there and released. That is what a mallet
+  # strike is, so both articulations use it.
+  soft:
+    library: Versilian Community Sample Library (VCSL, Versilian Studios), Vibraphone, the "Soft Mallets" set, softest layer (v1), the "Main" microphone, motor off. The files are named an octave below what they sound (the file "A2" measures 220.0 Hz, A3, by the strongest spectral peak over 0.5 to 2.5 s, within 1 cent; "C3" measures 261.6 Hz, C4, within 1 cent; "B3" measures 493.7 Hz, B4, within 1 cent; "D4" measures 587.3 Hz, D5, within 1 cent; "F4" measures 698.5 Hz, F5, within 1 cent; "A4" measures 880.0 Hz, A5, within 1 cent); `note` is the sounding pitch. A3, B4, D5, F5 and A5 are recordings of those notes, unshifted. The one low tonic, D4, is the recorded C4 two semitones up (the library's bars run in thirds, F A C E G B D, and holds no D4); nothing else is shifted. The lowest bar the library holds (F3) falls 18 dB in its first half second and beats 10 dB; it is not used. Each strike rings to silence on its own; A3 is 30 dB down at 6.5 s and 50 dB down at 9.5 s; C4 and B4 30 dB at 5 s and 50 dB at 7.5 to 8 s; D5 30 dB at 5 s and 50 dB at 8 s; F5 30 dB at 4 s and 50 dB at 6 s; A5 30 dB at 3.5 s and 50 dB at 6 s. The modulation of each ring between 2.5 and 9 Hz measures 0.5 dB peak to peak or less, so the motor was off. No strike is looped and no note outlasts its recording
+    role_as_presented: a vibraphone, soft mallets, motor off
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme calls it public domain, no royalties, no credit, no special terms)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VCSL/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios, Versilian Community Sample Library
+    kind: pluck
+    attack_s: 0.0
+    release_s: 0.6
+    gain_db: 0.0
+    samples:
+      - {file: "vcsl/Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_A2_v1_rr1_Main.wav", note: A3, sha256: b6e23a94322107d0ab884d7c38e51be538eb45f613c6a24e980c2261151bed75, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Idiophones/Struck%20Idiophones/Vibraphone/Soft%20Mallets/Vibes_soft_A2_v1_rr1_Main.wav"}
+      - {file: "vcsl/Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_C3_v1_rr2_Main.wav", note: C4, sha256: 1dda9a4c3205c365345d66dcb68c8e09c0dca76a310b8fe8108e43c7e8c1cd0a, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Idiophones/Struck%20Idiophones/Vibraphone/Soft%20Mallets/Vibes_soft_C3_v1_rr2_Main.wav"}
+      - {file: "vcsl/Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_B3_v1_rr1_Main.wav", note: B4, sha256: 7edfbd70f93781d2cbb17c2fc8befe474de9987c6353db2358af4e13a0269345, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Idiophones/Struck%20Idiophones/Vibraphone/Soft%20Mallets/Vibes_soft_B3_v1_rr1_Main.wav"}
+      - {file: "vcsl/Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_D4_v1_rr1_Main.wav", note: D5, sha256: daedf613863d4de0a383d66b2db6ab9ffd8dc492d16ff7d735cf3b3107046a26, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Idiophones/Struck%20Idiophones/Vibraphone/Soft%20Mallets/Vibes_soft_D4_v1_rr1_Main.wav"}
+      - {file: "vcsl/Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_F4_v1_rr1_Main.wav", note: F5, sha256: 95b7d6eeb71d77cce607c0c52b0a6dfd23d0eeedc2eb393fb9a6c5a5768f4aa5, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Idiophones/Struck%20Idiophones/Vibraphone/Soft%20Mallets/Vibes_soft_F4_v1_rr1_Main.wav"}
+      - {file: "vcsl/Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_A4_v1_rr1_Main.wav", note: A5, sha256: 48e942290a982768d7a0038e28a76a99cb666673518b29ebdc55de5e1491025f, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Idiophones/Struck%20Idiophones/Vibraphone/Soft%20Mallets/Vibes_soft_A4_v1_rr1_Main.wav"}
+
+  hard:
+    library: Versilian Community Sample Library (VCSL, Versilian Studios), Vibraphone, the "Hard Mallets" set, the softer of its two layers (v2), the "Main" microphone, motor off. The files are named an octave below what they sound (the file "A2" measures 219.9 Hz, A3, by the strongest spectral peak over 0.5 to 2.5 s, within 1 cent; "B3" measures 493.9 Hz, B4, within 1 cent; "D4" measures 587.3 Hz, D5, within 1 cent; "F4" measures 698.5 Hz, F5, within 1 cent; "A4" measures 880.0 Hz, A5, within 1 cent); `note` is the sounding pitch. A3, B4, D5, F5 and A5 are recordings of those notes, unshifted; the one E5, which closes the procedure bed, is the recorded F5 one semitone down. Nothing else is shifted. The A3 strike falls 19 dB in its first half second and then rings, 30 dB down at 2.5 s and 50 dB at 6 s; B4 is 30 dB down at 6.5 s, D5 at 6 s, F5 at 4 s and A5 at 5 s, and all are 50 dB down inside 9 s. The modulation of each ring between 2.5 and 9 Hz measures 0.3 dB peak to peak or less, so the motor was off. A note given no length rings out; a note given a length is cut there and released over 0.15 s
+    role_as_presented: a vibraphone, hard mallets, motor off
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme calls it public domain, no royalties, no credit, no special terms)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VCSL/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios, Versilian Community Sample Library
+    kind: pluck
+    attack_s: 0.0
+    release_s: 0.15
+    gain_db: 0.0
+    samples:
+      - {file: "vcsl/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_A2_v2_rr1_Main.wav", note: A3, sha256: bb888513871856e89b87d5db9c03be9763c3b524caeb36b6c2010613bec5bf2a, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Idiophones/Struck%20Idiophones/Vibraphone/Hard%20Mallets/Vibes_hard_A2_v2_rr1_Main.wav"}
+      - {file: "vcsl/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_B3_v2_rr1_Main.wav", note: B4, sha256: 8ae8f9a67ff3c5942bd796987ef96fbaaafadf4edfe5dc8734b8a1ab4e0ff7b4, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Idiophones/Struck%20Idiophones/Vibraphone/Hard%20Mallets/Vibes_hard_B3_v2_rr1_Main.wav"}
+      - {file: "vcsl/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_D4_v2_rr1_Main.wav", note: D5, sha256: a0ff7c922a24fde71a675c57c69c222d619feaa4c91c25bdf6830e0dc1108a74, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Idiophones/Struck%20Idiophones/Vibraphone/Hard%20Mallets/Vibes_hard_D4_v2_rr1_Main.wav"}
+      - {file: "vcsl/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_F4_v2_rr1_Main.wav", note: F5, sha256: 24e4a7a9d1e6dd221ab478fa57793e3575e3b5f666dc75a1ad5d58d05ac7f129, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Idiophones/Struck%20Idiophones/Vibraphone/Hard%20Mallets/Vibes_hard_F4_v2_rr1_Main.wav"}
+      - {file: "vcsl/Idiophones/Struck Idiophones/Vibraphone/Hard Mallets/Vibes_hard_A4_v2_rr1_Main.wav", note: A5, sha256: 9fa4d639ba513db9d02ae1d18c1258dc8ce391f37752a8fd096a99d6f8b7bb47, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Idiophones/Struck%20Idiophones/Vibraphone/Hard%20Mallets/Vibes_hard_A4_v2_rr1_Main.wav"}
+
+# Note rows are [instrument, note, start in beats, length in beats or null, velocity].
+# One beat is 1.667 s. A note with null is the whole recorded strike; one with a
+# length is cut there and released (0.6 s for soft mallets, 0.15 s for hard).
+cues:
+  # Statement 1, under the TITLE. Soft mallets say the cell on D5, one note
+  # every two beats from beat 1, each left to ring; beats 7 to 9.5 carry only
+  # the ring. The B natural at beat 9.5, with the low A struck under it a beat
+  # later. The tonic alone at beat 12.5, and the low D under it at beat 13.5
+  # (22.5 s); the title's first word lands at 24.8 s, inside its ring.
+  theme:
+    claims: []
+    length_s: 26.0
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 1500
+    notes:
+      - [soft, D5, 1, null, 0.50]
+      - [soft, A5, 3, null, 0.38]
+      - [soft, D5, 5, null, 0.46]
+      - [soft, F5, 7, null, 0.40]
+      - [soft, B4, 9.5, null, 0.36]
+      - [soft, A3, 10.5, null, 0.40]
+      - [soft, D5, 12.5, null, 0.44]
+      - [soft, D4, 13.5, null, 0.36]
+
+  # Statement 2, at the close: the low A, then the cell once more over its
+  # ring, one strike every 1.4 beats, ending on the third, which is cut at
+  # 2.4 beats and gone by 12.9 s; the cue is faded to silence inside 13.0 s
+  # so the promo can ride it.
+  outro:
+    claims: []
+    length_s: 13.0
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 3000
+    tail_silence: true
+    notes:
+      - [soft, A3, 0.3, null, 0.34]
+      - [soft, D5, 0.8, null, 0.46]
+      - [soft, A5, 2.2, null, 0.36]
+      - [soft, D5, 3.6, null, 0.42]
+      - [soft, F5, 5.0, 2.4, 0.38]
+
+  # On the last word of the moment, or after a recording's trailing silence:
+  # one low A, struck once with the soft mallet at the quietest the score
+  # strikes anything, and left to die inside the 6 s mood_plan opens. Not the
+  # tonic: nothing resolves here. No swell, no second note.
+  rupture_entry:
+    claims: []
+    length_s: 6.0
+    peak_dbfs: -18.0
+    room_wet: 1.2
+    fade_out_ms: 2000
+    notes:
+      - [soft, A3, 0, null, 0.32]
+
+  # The change of voice (the decree, the minute, the timetable, the account
+  # read by the document voice): one hard strike on D5, cut.
+  sting:to_document:
+    claims: []
+    length_s: 0.9
+    peak_dbfs: -22.0
+    room_wet: 0.4
+    fade_out_ms: 150
+    notes:
+      - [hard, D5, 0, 0.35, 0.45]
+
+  # The music returning after a recording, once its trailing silence is over.
+  # Defined for the producer's grammar; it fires only if the cinematic variant
+  # admits a clip.
+  sting:from_clip:
+    claims: []
+    length_s: 2.4
+    peak_dbfs: -20.0
+    room_wet: 1.0
+    fade_out_ms: 800
+    notes:
+      - [soft, D5, 0, null, 0.40]
+      - [soft, A5, 0.3, null, 0.30]
+
+  # Dread (the laws, the lists, the trains being timetabled, the ghetto
+  # closing): the low A and the low D alone, soft, struck so seldom (7 to 8 s
+  # apart) that each low ring has fallen 30 dB before the next low strike;
+  # the B natural once, faint, and the high third once, faint, off the seam. The first strike is at 0.67 s, not
+  # 0; the last begins at 34.7 s and its tail folds under the first.
+  bed:dread:
+    claims: []
+    length_s: 40.0
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 0.6
+    notes:
+      - [soft, A3, 0.4, null, 0.30]
+      - [soft, D4, 4.6, null, 0.28]
+      - [soft, A3, 9.2, null, 0.30]
+      - [soft, B4, 11.8, null, 0.22]
+      - [soft, D4, 14.0, null, 0.28]
+      - [soft, A3, 18.6, null, 0.30]
+      - [soft, F5, 20.8, null, 0.18]
+
+  # Procedure (the conference, the decrees, the quotas, the counts): hard
+  # mallets alone, dry, one strike every three beats, each cut at a beat and
+  # a half so nothing gathers. The cell on D5, then the cell on D5 closing on
+  # the second (E5) instead of the third. The count starts on beat 1, not 0,
+  # and the last strike is gone by 39.3 s, so the loop's seam falls in silence.
+  bed:procedure:
+    claims: []
+    length_s: 40.0
+    fold: true
+    rms_dbfs: -32.0
+    room_wet: 0.0
+    notes:
+      - [hard, D5, 1, 1.5, 0.46]
+      - [hard, A5, 4, 1.5, 0.38]
+      - [hard, D5, 7, 1.5, 0.44]
+      - [hard, F5, 10, 1.5, 0.40]
+      - [hard, D5, 13, 1.5, 0.46]
+      - [hard, A5, 16, 1.5, 0.38]
+      - [hard, D5, 19, 1.5, 0.44]
+      - [hard, E5, 22, 1.5, 0.38]
+
+  # Reckoning (the numbers, the trials, what each count leaves out): four soft
+  # strikes with ten seconds between them, the tonic, the low fifth, the high
+  # third, the low tonic, under the deepest duck. The first is at 0.83 s, not
+  # 0, and the last is 50 dB down by 39 s, so the seam falls in the silence.
+  bed:reckoning:
+    claims: []
+    length_s: 40.0
+    fold: true
+    rms_dbfs: -28.0
+    room_wet: 0.3
+    notes:
+      - [soft, D5, 0.5, null, 0.34]
+      - [soft, A3, 6.5, null, 0.32]
+      - [soft, F5, 12.5, null, 0.30]
+      - [soft, D4, 18.5, null, 0.30]
+
+  # Grief (the pits, the camps, the survivors, the close): soft strikes
+  # alone, faint, far apart, so the bed falls near-silent between them; the
+  # one fall, from the high third to the tonic, once; the B natural once; the
+  # low A three times. The first strike is at 0.5 s, not 0, and the last
+  # (30.7 s) is close to 50 dB down as it folds under the first.
+  bed:grief:
+    claims: []
+    length_s: 40.0
+    fold: true
+    rms_dbfs: -36.0
+    room_wet: 1.0
+    notes:
+      - [soft, A3, 0.3, null, 0.26]
+      - [soft, F5, 3.2, null, 0.22]
+      - [soft, D5, 5.6, null, 0.24]
+      - [soft, A3, 9.4, null, 0.26]
+      - [soft, B4, 12.4, null, 0.20]
+      - [soft, D4, 14.8, null, 0.24]
+      - [soft, A3, 18.4, null, 0.26]
+
+  # Into a dread scene, in the clear: the low A, then the low D a beat behind
+  # it, both left to ring and faded.
+  transition:dread:
+    claims: []
+    length_s: 3.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    fade_out_ms: 1200
+    notes:
+      - [soft, A3, 0, null, 0.34]
+      - [soft, D4, 0.6, null, 0.30]
+
+  # Into a procedure scene: two hard strikes, dry, the cell's opening, cut.
+  transition:procedure:
+    claims: []
+    length_s: 4.0
+    peak_dbfs: -14.0
+    room_wet: 0.0
+    fade_out_ms: 800
+    notes:
+      - [hard, D5, 0, 1.2, 0.46]
+      - [hard, A5, 1, 1.2, 0.38]
+
+  # Into a grief scene: the fall, the high third onto the tonic, soft, the
+  # low A faint under both.
+  transition:grief:
+    claims: []
+    length_s: 4.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    fade_out_ms: 1000
+    notes:
+      - [soft, F5, 0, null, 0.26]
+      - [soft, A3, 0.2, null, 0.22]
+      - [soft, D5, 1.0, null, 0.28]
+
+  # Into the numbers and the trials: one soft D5, and one hard strike on the
+  # low A under it, left to ring.
+  transition:reckoning:
+    claims: []
+    length_s: 4.2
+    peak_dbfs: -14.0
+    room_wet: 0.3
+    fade_out_ms: 900
+    notes:
+      - [soft, D5, 0, null, 0.34]
+      - [hard, A3, 0.8, null, 0.30]

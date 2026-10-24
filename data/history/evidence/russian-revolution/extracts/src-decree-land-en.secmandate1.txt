@@ -1,0 +1,8 @@
+source: src-decree-land-en
+locator: secmandate1
+url: https://www.marxists.org/archive/lenin/works/1917/oct/25-26/26d.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+note: point (1) of the Peasant Mandate on the Land, which the decree's article 4 adopts
+
+(1) Private ownership of land shall be abolished forever; land shall not be sold, purchased, leased, mortgaged, or otherwise alienated. All land, whether state, crown, monastery, church, factory, entailed, private, public, peasant, etc., shall be confiscated without compensation and become the property of the whole people, and pass into the use of all those who cultivate it.

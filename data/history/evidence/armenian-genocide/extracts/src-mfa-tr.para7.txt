@@ -1,0 +1,7 @@
+source: src-mfa-tr
+locator: para7
+url: https://www.mfa.gov.tr/the-events-of-1915-and-the-turkish-armenian-controversy-over-history_-an-overview.en.mfa
+read: 2026-09-25
+note: paragraphs of the page's body text counted from its first paragraph; held at most 150 words
+
+Ottoman Government took a number of measures for safe transfer during the relocation. However, under war-time conditions exacerbated by internal strife, local groups seeking revenge, banditry, famine, epidemics, and a failing state apparatus (including unruly officials who were court-martialed and sentenced to capital punishment by the Ottoman Government in 1916, much before the end of the War) all combined to produce what became a tragedy. Nevertheless, no authentic evidence exists to support the claim that there was a premeditated plan by the Ottoman Government to kill off Armenians. Moreover, the Ottoman socio-cultural fabric did not harbor racist attitudes that would facilitate such a horrific crime. Loss of life, regardless of numbers and regardless of possible guilt on the part of the victims, is tragic and must be remembered. However, it is factually problematic, morally unsound and legally unfounded to call this episode a “genocide.”

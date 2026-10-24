@@ -1,0 +1,15 @@
+source: src-gewald-2004
+locator: p62-63
+url: https://scholarlypublications.universiteitleiden.nl/access/item:2888838/view
+read: 2026-09-25
+note: sliced from the PDF's text layer; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed
+note: the end of von Estorff as Gewald translates him, and Gewald's next paragraph
+note: the repository's text layer prints 'hè' for 'he' and 'mto' for 'into'; left as the layer prints them
+
+ally feil into our hands [unsere Gewalt kamen]; sections of the people escaped
+now and later through the Sandveld into English territory [present-day Botswana]. It was a policy as gruesome as it was senseless, to hammer the people
+so much; we could have still saved many of them and their rieh herds, if we had
+pardoned and taken them up again; they had been punished enough. I suggested this to General von Trotha, but hè wanted their total extermination.
+(von Estorff, 1979: 117; author's translation)
+In early 1905, the German parliament rescinded von Trotha's extermination order, after which time captured Herero were placed into concentration camps (Konzentrationslager) and put to work as forced laborers. By
+late 1905, an estimated 8,800 Herero were conflned in camps, working on

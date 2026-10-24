@@ -1,0 +1,8 @@
+source: src-iachr-121-18
+locator: para148
+url: https://www.oas.org/en/iachr/decisions/2018/USPU10573-EN.pdf
+read: 2026-10-09
+note: paragraph 148, one alleged victim's case as the petitioners state it
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+148. Rolando Braddick Vásquez, identified in Case No. 270, was 34-year-old Panamanian national who worked as a seaport engineer.140 According to the statement made, on December 22, 1989, at about 9 a.m. he was in line to answer a call made by Arias Calderón at the “Albrook traffic stop” and “a shootout began”141 in which Rolando Braddick received multiple gunshot injuries. His remains were buried in a mass grave in Jardín de Paz.

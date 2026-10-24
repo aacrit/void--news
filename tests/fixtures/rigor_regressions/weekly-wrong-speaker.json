@@ -1,0 +1,17 @@
+{
+ "class": "weekly-wrong-speaker",
+ "gate": "none",
+ "product": "weekly",
+ "covers": [
+  "frontend/build-data/weekly-corrections.json (entries whose \"classes\" name this class)"
+ ],
+ "known_gap": "A statement credited to the wrong named person passes every Weekly rule when both names are in the week's reporting: ground_text checks that names exist, not who said what. E-19 (speaker, shingle) is planned in the factual-rigor plan, gap 5.",
+ "planted": {
+  "text": "Jens-Frederik Nielsen described the deal as recognizing the sovereignty of the Kingdom.",
+  "source_text": "Mette Frederiksen described the deal as recognizing the sovereignty of the Kingdom. Jens-Frederik Nielsen attended."
+ },
+ "clean": {
+  "text": "Mette Frederiksen described the deal as recognizing the sovereignty of the Kingdom.",
+  "source_text": "Mette Frederiksen described the deal as recognizing the sovereignty of the Kingdom. Jens-Frederik Nielsen attended."
+ }
+}

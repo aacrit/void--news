@@ -1,0 +1,6 @@
+source: src-ushmm-treblinka
+locator: secguards
+url: https://encyclopedia.ushmm.org/content/en/article/treblinka
+read: 2026-10-07
+
+Under the leadership of German authorities stood a police auxiliary guard unit of between 90 and 150 men. All of these men were either former Soviet prisoners of war (POWs) of various nationalities or Ukrainian civilians selected or recruited for this purpose. Members of the guard unit were trained at a special facility of the SS and Police Leader in Lublin, the Trawniki training camp.

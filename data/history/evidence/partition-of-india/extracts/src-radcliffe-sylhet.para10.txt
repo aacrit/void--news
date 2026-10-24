@@ -1,0 +1,6 @@
+source: src-radcliffe-sylhet
+locator: para10
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+
+10. Out of 55 thanas in Sylhet, 8 have non-Muslim majorities: but of these eight, two—Sulla anti Ajmiriganj (which is in any event divided almost evenly between Muslims and non-Muslims), are entirely surrounded by preponderatingly Muslim areas, and must therefore go with them to East Bengal. The dther six thanas comprising a population of over 530,000 people stretch in a continuous line along part of the southern border of Sylhet District. They are divided between two sub divisions, of which one. South Sylhet, comprising population of over 515,000 people, has in fact a non-Muslim majority of some 40,000; while the other, Karimganj, with a population of over 568,000 people, has a Muslim majority that is a little larger.

@@ -1,0 +1,17 @@
+{
+ "class": "weekly-off-week-content",
+ "gate": "pipeline/briefing/weekly_parse.py::ground_text",
+ "product": "weekly",
+ "covers": [
+  "frontend/build-data/weekly-corrections.json (entries whose \"classes\" name this class)"
+ ],
+ "note": "A department or a brief about an event no story printed that week names people and places the week's reporting does not.",
+ "planted": {
+  "text": "Recep Tayyip Erdogan addressed the UN General Assembly.",
+  "source_text": "Danish Prime Minister Mette Frederiksen signed the agreement on Friday."
+ },
+ "clean": {
+  "text": "Mette Frederiksen signed the agreement on Friday.",
+  "source_text": "Danish Prime Minister Mette Frederiksen signed the agreement on Friday."
+ }
+}

@@ -1,0 +1,8 @@
+source: src-pnura-1995
+locator: sec3
+url: https://www.justice.gov.za/legislation/acts/1995-034.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation and glyph errors are kept as the layer prints them
+note: section 3(1)(a)
+
+(1) The objectives of the Commission shall be to promote national unity and reconciliation in a spirit of understanding which transcends the conflicts and divisions of the past by- (a) establishing as complete a picture as possible of the causes, nature and extent of the gross violations of human rights which were committed during the period from 1 March 1960 to the cut-off date, including the antecedents, circumstances, factors and context of such violations, as well as the perspectives of the victims and the motives and perspectives of the persons responsible for the commission of the violations, by conducting investigations and holding hearings;

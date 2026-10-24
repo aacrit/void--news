@@ -1,0 +1,8 @@
+source: src-ssc-final-1974
+locator: secmexican
+url: https://archive.org/details/FinalReportOfTheSenateSelectCommitteeOnPresidentialCampaignActivities
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (including the '¬' the OCR prints for one) are kept as printed
+note: the report's account of the Mexican checks; it counts '$6,500 in new $100 bills' found on the five men, where the break-in chapter counts '$4,200 in $100 bills' in their hotel rooms
+
+A search by police of the five men arrested in the “Watergate bur- glary” on June 17, 1972, produced $6,500 in new $100 bills, most of which were serially numbered. In the process of tracing these bills it was discovered that five checks totaling $114,000 originally contrib- uted to the Finance Committee To Re-Elect the President had been run through an account of one of the Watergate burglars, Barnard Barker. F our of these checks, totaling $89,000, had been drawn on an account in the Banco International of Mexico City and were payable to Manuel Ogarrio Daguerre (Ogarrio) , a Mexican national.

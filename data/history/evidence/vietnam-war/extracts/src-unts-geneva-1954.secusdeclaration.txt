@@ -1,0 +1,8 @@
+source: src-unts-geneva-1954
+locator: secusdeclaration
+url: https://treaties.un.org/doc/Publication/UNTS/Volume%20935/volume-935-I-13295-English.pdf
+read: 2026-10-09
+note: the United Nations Treaty Series PDF for volume 935, registration I-13295, its text layer, line breaks folded to spaces; footnote numbers print inline ('Viet-Nam.2')
+note: the United States' unilateral declaration: it 'TAKES NOTE' of the agreements and of paragraphs 1 to 12 of the Declaration
+
+DECLARATION BY THE REPRESENTATIVE OF THE UNITED STATES OF AMERICA The Government of the United States being resolved to devote its efforts to the strengthening of peace in accordance with the principles and purposes of the United Nations TAKES NOTE of the Agreements concluded at Geneva on July 20 and 21, 1954 between the (a) Franco-Laotian Command and the Command of the Peoples Army of Viet-Nam ; (b) The Royal Khmer Army Command and the Command of the Peoples Army of Viet-Nam; (c) Franco-Vietnamese Command and the Command of the Peoples Army of Viet-Nam and of paragraphs 1 to 12 inclusive of the Declaration presented to the Geneva Conference on July 21, 1954 DECLARES with regard to the aforesaid Agreements and paragraphs that (i) it will refrain from the threat or the use of force to disturb them, in accordance with Art. 2(4) of the Charter of the United Nations dealing with the obligation of Members to refrain in their international relations from the threat or use of force ; and (ii) it would view any renewal of the aggression in violation of the aforesaid agreements with grave concern and as seriously threatening international peace and security.

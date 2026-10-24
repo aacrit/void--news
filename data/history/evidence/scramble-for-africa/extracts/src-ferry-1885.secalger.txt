@@ -1,0 +1,7 @@
+source: src-ferry-1885
+locator: secalger
+url: https://www2.assemblee-nationale.fr/decouvrir-l-assemblee/histoire/grands-discours-parlementaires/jules-ferry-28-juillet-1885
+read: 2026-09-25
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+
+M. Jules Ferry . Est-ce que vous pouvez nier, est-ce que quelqu'un peut nier qu'il y a plus de justice, plus d'ordre matériel et moral, plus d'équité, plus de vertus sociales dans l'Afrique du Nord depuis que la France a fait sa conquête ? Quand nous sommes allés à Alger pour détruire la piraterie, et assurer la liberté du commerce dans la Méditerranée, est-ce que nous faisions oeuvre de forbans, de conquérants, de dévastateurs ? Est-il possible de nier que, dans l'Inde, et malgré les épisodes douloureux qui se rencontrent dans l'histoire de cette conquête, il y a aujourd'hui infiniment plus de justice, plus de lumière, d'ordre, de vertus publiques et privées depuis la conquête anglaise qu'auparavant ?

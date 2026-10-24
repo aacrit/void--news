@@ -1,0 +1,7 @@
+source: src-khosla-1949
+locator: p299
+url: https://archive.org/download/stern-reckoning/Stern%20Reckoning_djvu.txt
+read: 2026-09-25
+note: the paragraph runs on from page 298; the layer's soft hyphens are rejoined
+
+deposed to by eye-witnesses. Taking these factors into consideration the loss of non-Muslim life has been estimated at a figure between 200,000 and 250,000. It is believed that an equal number of Muslims perished in the course of the riots in India. The loss of non-Muslim property is estimated at about twenty thousand million rupees.

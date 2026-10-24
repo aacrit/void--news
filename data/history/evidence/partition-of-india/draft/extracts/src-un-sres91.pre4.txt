@@ -1,0 +1,7 @@
+source: src-un-sres91
+locator: pre4
+url: https://documents.un.org/doc/resolution/gen/nr0/072/10/pdf/nr007210.pdf
+read: 2026-09-25
+note: the English column of the bilingual printing (Resolutions and Decisions of the Security Council 1951); the PDF's line breaks are joined
+
+Reminding the Governments and authorities concerned of the principle embodied in its resolutions 47 (1948) of 21 April 1948, 51 (1948) of 3 June 1948 and 80 (1950) of 14 March 1950 and the United Nations Commission for India and Pakistan resolutions of 13 August 1948 and 5 January 1949, that the final disposition of the State of Jammu and Kashmir will be made in accordance with the will of the people expressed through the democratic method of a free and impartial plebiscite conducted under the auspices of the United Nations,

@@ -1,0 +1,19 @@
+source: src-uzoigwe-1985
+locator: p28
+url: https://archive.org/download/unesco_general_history_africa_vii/general_history_africa_vii_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: cut at the cap after the sentence on effective occupation
+
+in the conference, any European nation which, in the future, took possession
+of an African coast or declared a ‘protectorate’ there, had to notify such
+action to the signatory powers of the Berlin Act in order to have its claims
+ratified. This was the so-called doctrine of spheres of influence to which
+was linked the absurd concept of the hinterland, which came to be
+interpreted to mean that possession of a coast also implied ownership of
+its hinterland to an almost unlimited distance. Article 35 stipulated that
+an occupier of any such coastal possessions had also to demonstrate that
+it possessed sufficient ‘authority’ there ‘to protect existing rights, and, as
+the case may be, freedom of trade and of transit under the conditions
+agreed upon’. This was the so-called doctrine of effective occupation that
+was to make the conquest of Africa such a murderous business.

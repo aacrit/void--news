@@ -1,0 +1,43 @@
+source: src-soviet-19450808
+locator: whole
+url: https://avalon.law.yale.edu/wwii/s4.asp
+read: 2026-10-05
+note: the Avalon text; 'Molotoff' and 'Mr. Sato' are the text's spellings
+
+On Aug. 8, People's Commissar for Foreign Affairs of the U.S.S.R. Molotoff received the Japanese Ambassador, Mr. Sato, and gave him, on behalf of the Soviet Government, the following for transmission to the Japanese Government:
+
+
+
+
+
+"After the defeat and capitulation of Hitlerite Germany, Japan became the only great power that still stood for the continuation of the war.
+
+
+
+
+
+"The demand of the three powers, the United States, Great Britain and China, on July 26 for the unconditional surrender of the Japanese armed forces was rejected by Japan, and thus the proposal of the Japanese Government to the Soviet Union on mediation in the war in the Far East loses all basis.
+
+
+
+
+
+"Taking into consideration the refusal of Japan to capitulate, the Allies submitted to the Soviet Government a proposal to join the war against Japanese aggression and thus shorten the duration of the war, reduce the number of victims and facilitate the speedy restoration of universal peace.
+
+
+
+
+
+"Loyal to its Allied duty, the Soviet Government has accepted the proposals of the Allies and has joined in the declaration of the Allied powers of July 26.
+
+
+
+
+
+"The Soviet Government considers that this policy is the only means able to bring peace nearer, free the people from further sacrifice and suffering and give the Japanese people the possibility of avoiding the dangers and destruction suffered by Germany after her refusal to capitulate unconditionally.
+
+
+
+
+
+"In view of the above, the Soviet Government declares that from tomorrow, that is from Aug. 9, the Soviet Government will consider itself to be at war with Japan."

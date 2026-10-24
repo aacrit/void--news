@@ -1,0 +1,1794 @@
+[
+ {
+  "name": "African Business",
+  "id": "african-business",
+  "was": "https://news.google.com/rss/search?q=site:african.business+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://african.business/feed",
+  "evidence": {
+   "items": 25,
+   "on_expected": 25,
+   "articles": 25,
+   "expected_domain": "african.business",
+   "title": "African Business",
+   "sample": "https://african.business/2026/09/technology-information/living-with-drought-can-technology-save-african-agriculture"
+  }
+ },
+ {
+  "name": "Aftenposten (English)",
+  "id": "aftenposten-english",
+  "was": "https://news.google.com/rss/search?q=site:aftenposten.no+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.aftenposten.no/rss",
+  "evidence": {
+   "items": 25,
+   "on_expected": 25,
+   "articles": 25,
+   "expected_domain": "aftenposten.no",
+   "title": "Aftenposten Title",
+   "sample": "https://vink.aftenposten.no/artikkel/vrpGKj/det-er-lenge-siden-vi-har-faatt-saa-god-service"
+  }
+ },
+ {
+  "name": "Agencia Brasil (English)",
+  "id": "agencia-brasil-english",
+  "was": "https://news.google.com/rss/search?q=site:agenciabrasil.ebc.com.br+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://agenciabrasil.ebc.com.br/rss.xml",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "ebc.com.br",
+   "title": "Agência Brasil",
+   "sample": "https://agenciabrasil.ebc.com.br/radioagencia-nacional/geral/audio/2020-06/negado-o-pedido-de-prisao-domiciliar-para-fabricio-queiroz"
+  }
+ },
+ {
+  "name": "AKIpress (English)",
+  "id": "akipress-english",
+  "was": "https://news.google.com/rss/search?q=site:akipress.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://akipress.com/rss",
+  "evidence": {
+   "items": 20,
+   "on_expected": 20,
+   "articles": 20,
+   "expected_domain": "akipress.com",
+   "title": "AKIpress News Agency",
+   "sample": "https://akipress.com/news:920312"
+  }
+ },
+ {
+  "name": "Alpha News",
+  "id": "alpha-news-mn",
+  "was": "https://news.google.com/rss/search?q=site:alphanews.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://alphanews.org/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "alphanews.org",
+   "title": "Alpha News MN",
+   "sample": "https://alphanews.org/they-said-voter-fraud-didnt-exist-federal-authorities-make-wave-of-election-crime-arrests-ahead-of-midterms/"
+  }
+ },
+ {
+  "name": "Alt News",
+  "id": "alt-news",
+  "was": "https://news.google.com/rss/search?q=site:altnews.in+when:24h&ceid=IN:en&hl=en-IN&gl=IN",
+  "now": "https://www.altnews.in/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "altnews.in",
+   "title": "Alt News",
+   "sample": "https://www.altnews.in/bengal-bypolls-suvendu-adhikari-tells-minorities-to-pass-october-6-test-to-stay-with-government/"
+  }
+ },
+ {
+  "name": "Amandala (Belize)",
+  "id": "amandala-belize",
+  "was": "https://news.google.com/rss/search?q=site:amandala.com.bz+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://amandala.com.bz/news/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "com.bz",
+   "title": "Amandala Newspaper",
+   "sample": "https://amandala.com.bz/news/amandala-3962-friday-september-18-2026/"
+  }
+ },
+ {
+  "name": "Anchorage Daily News",
+  "id": "anchorage-daily-news",
+  "was": "https://news.google.com/rss/search?q=site:adn.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.adn.com/arc/outboundfeeds/rss/",
+  "evidence": {
+   "items": 25,
+   "on_expected": 25,
+   "articles": 25,
+   "expected_domain": "adn.com",
+   "title": "Alaska Dispatch News",
+   "sample": "https://www.adn.com/sports/2026/09/21/the-rewind-chugiak-cross-country-sweeps-smokin-stampede-titles-allie-ostrander-finishes-12th-at-world-road-running-championships/"
+  }
+ },
+ {
+  "name": "MLive / Ann Arbor News",
+  "id": "ann-arbor-news",
+  "was": "https://news.google.com/rss/search?q=site:mlive.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.mlive.com/arc/outboundfeeds/rss/",
+  "evidence": {
+   "items": 50,
+   "on_expected": 50,
+   "articles": 50,
+   "expected_domain": "mlive.com",
+   "title": "mlive.com",
+   "sample": "https://www.mlive.com/redwings/2026/09/good-goaltending-no-offense-as-red-wings-lose-preseason-opener.html"
+  }
+ },
+ {
+  "name": "Arab News",
+  "id": "arab-news",
+  "was": "https://news.google.com/rss/search?q=site:arabnews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.arabnews.com/rss.xml",
+  "evidence": {
+   "items": 50,
+   "on_expected": 50,
+   "articles": 50,
+   "expected_domain": "arabnews.com",
+   "title": "Arab News",
+   "sample": "https://www.arabnews.com/middle-east/armed-group-shuts-libya-pipeline-valve-at-key-oil-field-3002612"
+  }
+ },
+ {
+  "name": "The Asian Age",
+  "id": "asian-age",
+  "was": "https://news.google.com/rss/search?q=site:asianage.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.asianage.com/google_feeds.xml",
+  "evidence": {
+   "items": 13,
+   "on_expected": 13,
+   "articles": 13,
+   "expected_domain": "asianage.com",
+   "title": "The Asian Age | Home",
+   "sample": "https://www.asianage.com/opinion/edit/aa-edit-athletes-all-at-sea-in-japans-asiad-1989459"
+  }
+ },
+ {
+  "name": "The Tribune (Bahamas)",
+  "id": "bahamas-tribune",
+  "was": "https://news.google.com/rss/search?q=site:tribune242.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.tribune242.com/rss/headlines/",
+  "evidence": {
+   "items": 20,
+   "on_expected": 20,
+   "articles": 20,
+   "expected_domain": "tribune242.com",
+   "title": "tribune242.com stories",
+   "sample": "https://tribune242.com/news/2026/sep/21/brothers-accused-of-letting-three-year-old-hold-rifle/"
+  }
+ },
+ {
+  "name": "Bahrain Mirror",
+  "id": "bahrain-mirror",
+  "was": "https://news.google.com/rss/search?q=site:bahrainmirror.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://bahrainmirror.com/en_rss.xml",
+  "evidence": {
+   "items": 12,
+   "on_expected": 12,
+   "articles": 12,
+   "expected_domain": "bahrainmirror.com",
+   "title": "Bahrain Mirror",
+   "sample": "http://bahrainmirror.com/en/news/65584.html"
+  }
+ },
+ {
+  "name": "The Baltic Times",
+  "id": "baltic-times",
+  "was": "https://news.google.com/rss/search?q=site:baltictimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.baltictimes.com/rss/",
+  "evidence": {
+   "items": 50,
+   "on_expected": 50,
+   "articles": 49,
+   "expected_domain": "baltictimes.com",
+   "title": "The Baltic Times",
+   "sample": "http://www.baltictimes.com/tarmo_soomere_elected_to_the_european_academy_of_engineering/"
+  }
+ },
+ {
+  "name": "Barbados Today",
+  "id": "barbados-today",
+  "was": "https://news.google.com/rss/search?q=site:barbadostoday.bb+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://barbadostoday.bb/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "barbadostoday.bb",
+   "title": "Barbados Today",
+   "sample": "https://barbadostoday.bb/2026/09/21/yuh-good-seven-polyclinics-now-offer-adolescent-healthcare/"
+  }
+ },
+ {
+  "name": "Bismarck Tribune",
+  "id": "bismarck-tribune",
+  "was": "https://news.google.com/rss/search?q=site:bismarcktribune.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://bismarcktribune.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "bismarcktribune.com",
+   "title": "bismarcktribune.com - RSS Results",
+   "sample": "https://bismarcktribune.com/opinion/column/article_84920a70-056e-4705-baad-6bea009ba7b7.html"
+  }
+ },
+ {
+  "name": "The Scoop (Brunei)",
+  "id": "brunei-times",
+  "was": "https://news.google.com/rss/search?q=site:thescoop.co+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://thescoop.co/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "thescoop.co",
+   "title": "The Scoop",
+   "sample": "https://thescoop.co/2026/09/18/silent-anchor-strengthening-the-brunei-us-security-partnership-through-shared-commitments/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=silent-anchor-strengthening-the-brunei-us-security-partnership-through-shared-commitments"
+  }
+ },
+ {
+  "name": "Buenos Aires Times",
+  "id": "buenos-aires-times",
+  "was": "https://news.google.com/rss/search?q=site:batimes.com.ar+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.batimes.com.ar/feed",
+  "evidence": {
+   "items": 100,
+   "on_expected": 100,
+   "articles": 100,
+   "expected_domain": "batimes.com.ar",
+   "title": "Buenos Aires Times",
+   "sample": "https://www.batimes.com.ar/news/argentina/argentina-sends-eight-suspects-to-trial-over-amia-bombing.phtml"
+  }
+ },
+ {
+  "name": "CABAR.asia",
+  "id": "cabar-asia",
+  "was": "https://news.google.com/rss/search?q=site:cabar.asia+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://cabar.asia/en/feed",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "cabar.asia",
+   "title": "CABAR.asia",
+   "sample": "https://cabar.asia/en/vacancy-project-evaluator"
+  }
+ },
+ {
+  "name": "Caucasus Watch",
+  "id": "caucasus-watch",
+  "was": "https://news.google.com/rss/search?q=site:caucasuswatch.de+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://caucasuswatch.de/feed",
+  "evidence": {
+   "items": 20,
+   "on_expected": 20,
+   "articles": 20,
+   "expected_domain": "caucasuswatch.de",
+   "title": "Caucasus Watch",
+   "sample": "https://caucasuswatch.de/de/insights/irans-krieg-erreicht-den-sudkaukasus-wie-der-konflikt-die-region-umgestaltet.html"
+  }
+ },
+ {
+  "name": "Charleston Gazette-Mail",
+  "id": "charleston-gazette-mail",
+  "was": "https://news.google.com/rss/search?q=site:wvgazettemail.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.wvgazettemail.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "wvgazettemail.com",
+   "title": "www.wvgazettemail.com - RSS Results",
+   "sample": "https://www.wvgazettemail.com/opinion/editorial/gazette-mail-editorial-media-bans-show-thin-skin-weakness/article_94e97a10-b8a4-40e1-a1e1-aaced311eb3f.html"
+  }
+ },
+ {
+  "name": "The Post and Courier",
+  "id": "charleston-post-courier",
+  "was": "https://news.google.com/rss/search?q=site:postandcourier.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.postandcourier.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "postandcourier.com",
+   "title": "www.postandcourier.com - RSS Results",
+   "sample": "https://www.postandcourier.com/news/obituaries/deaths-and-funerals-tuesday-september-22-2026/article_fdffdd83-cf4b-47bb-8d75-88b99ade154d.html"
+  }
+ },
+ {
+  "name": "The Chronicle of Philanthropy",
+  "id": "chronicle-philanthropy",
+  "was": "https://news.google.com/rss/search?q=site:philanthropy.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.philanthropy.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "philanthropy.com",
+   "title": "Chronicle of Philanthropy",
+   "sample": "https://www.philanthropy.com/news/9-pro-athletes-who-give-like-champions/"
+  }
+ },
+ {
+  "name": "The Cipher Brief",
+  "id": "cipher-brief",
+  "was": "https://news.google.com/rss/search?q=site:thecipherbrief.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.thecipherbrief.com/feeds/feed.rss",
+  "evidence": {
+   "items": 30,
+   "on_expected": 30,
+   "articles": 29,
+   "expected_domain": "thecipherbrief.com",
+   "title": "The Cipher Brief",
+   "sample": "https://www.thecipherbrief.com/the-authority-we-cannot-keep"
+  }
+ },
+ {
+  "name": "Circle of Blue",
+  "id": "circle-of-blue",
+  "was": "https://news.google.com/rss/search?q=site:circleofblue.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.circleofblue.org/feed/",
+  "evidence": {
+   "items": 12,
+   "on_expected": 12,
+   "articles": 12,
+   "expected_domain": "circleofblue.org",
+   "title": "Circle of Blue",
+   "sample": "https://www.circleofblue.org/2026/agriculture/federal-clean-fuel-tax-credit-extends-to-gas-from-animal-manure/"
+  }
+ },
+ {
+  "name": "Club of Mozambique",
+  "id": "club-of-mozambique",
+  "was": "https://news.google.com/rss/search?q=site:clubofmozambique.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://clubofmozambique.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "clubofmozambique.com",
+   "title": "Mozambique",
+   "sample": "https://clubofmozambique.com/news/dubai-declares-10-days-of-mourning-for-rulers-brother-sheikh-ahmed-bin-rashid-al-maktoum/"
+  }
+ },
+ {
+  "name": "Concord Monitor",
+  "id": "concord-monitor",
+  "was": "https://news.google.com/rss/search?q=site:concordmonitor.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.concordmonitor.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "concordmonitor.com",
+   "title": "Concord Monitor",
+   "sample": "https://www.concordmonitor.com/2026/09/22/obit-rosemarie-hughes-smith-212351823/"
+  }
+ },
+ {
+  "name": "ConservativeHome",
+  "id": "conservative-home",
+  "was": "https://news.google.com/rss/search?q=site:conservativehome.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://conservativehome.com/feed/",
+  "evidence": {
+   "items": 15,
+   "on_expected": 15,
+   "articles": 15,
+   "expected_domain": "conservativehome.com",
+   "title": "Conservative Home",
+   "sample": "https://conservativehome.com/2026/09/22/the-tories-are-not-running-out-of-time/"
+  }
+ },
+ {
+  "name": "Cook Islands News",
+  "id": "cook-islands-news",
+  "was": "https://news.google.com/rss/search?q=site:cookislandsnews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.cookislandsnews.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "cookislandsnews.com",
+   "title": "Cook Islands News",
+   "sample": "https://www.cookislandsnews.com/internal/opinion/editorials/opinion-editorial-a-lifeline-for-tongareva-and-a-promise-to-our-pa-enua/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=opinion-editorial-a-lifeline-for-tongareva-and-a-promise-to-our-pa-enua"
+  }
+ },
+ {
+  "name": "QCostaRica",
+  "id": "costa-rica-tico-times-2",
+  "was": "https://news.google.com/rss/search?q=site:qcostarica.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://qcostarica.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "qcostarica.com",
+   "title": "Q COSTA RICA",
+   "sample": "https://qcostarica.com/fertility-in-costa-rica-is-projected-to-fall-to-1-12-children-per-woman-by-2026-according-to-the-university-of-costa-rica/"
+  }
+ },
+ {
+  "name": "The Saturday Paper",
+  "id": "crikey-news-2",
+  "was": "https://news.google.com/rss/search?q=site:thesaturdaypaper.com.au+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.thesaturdaypaper.com.au/feed.xml",
+  "evidence": {
+   "items": 30,
+   "on_expected": 30,
+   "articles": 30,
+   "expected_domain": "thesaturdaypaper.com.au",
+   "title": "The Saturday Paper",
+   "sample": "https://www.thesaturdaypaper.com.au/post/albanese-urges-action-climate-crisis?utm_source=rss&amp;utm_medium=feed&amp;utm_campaign=the_saturday_paper_rss"
+  }
+ },
+ {
+  "name": "OnCuba News",
+  "id": "cuban-window",
+  "was": "https://news.google.com/rss/search?q=site:oncubanews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://oncubanews.com/en/feed/",
+  "evidence": {
+   "items": 25,
+   "on_expected": 25,
+   "articles": 25,
+   "expected_domain": "oncubanews.com",
+   "title": "OnCubaNews English",
+   "sample": "https://oncubanews.com/en/cuba/cuba-says-88-of-approved-reforms-already-have-legal-backing/"
+  }
+ },
+ {
+  "name": "Dayton Daily News",
+  "id": "dayton-daily-news",
+  "was": "https://news.google.com/rss/search?q=site:daytondailynews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.daytondailynews.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "daytondailynews.com",
+   "title": "www.daytondailynews.com - RSS Results",
+   "sample": "https://www.daytondailynews.com/lifestyles/food/review-fleming-s-tomahawk-tuesday-shows-how-a-steak-should-be-prepared/article_1218b90b-970f-58ba-a1d8-4a455899e98b.html"
+  }
+ },
+ {
+  "name": "Der Standard (English)",
+  "id": "der-standard-english",
+  "was": "https://news.google.com/rss/search?q=site:derstandard.at+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.derstandard.at/rss",
+  "evidence": {
+   "items": 160,
+   "on_expected": 160,
+   "articles": 160,
+   "expected_domain": "derstandard.at",
+   "title": "derStandard.at | Nachrichten, Kommentare &amp; Community",
+   "sample": "https://www.derstandard.at/story/3000000340399/fall-gunkl-ist-anwaelten-jedes-mittel-erlaubt-um-mutmassliche-straftaeter-zu-verteidigen?ref=rss"
+  }
+ },
+ {
+  "name": "Disability Scoop",
+  "id": "disability-scoop",
+  "was": "https://news.google.com/rss/search?q=site:disabilityscoop.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.disabilityscoop.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "disabilityscoop.com",
+   "title": "Disability Scoop",
+   "sample": "https://www.disabilityscoop.com/2026/09/22/major-foundations-form-disability-focused-credit-union/32181/"
+  }
+ },
+ {
+  "name": "Business Daily Africa",
+  "id": "east-african-business",
+  "was": "https://news.google.com/rss/search?q=site:businessdailyafrica.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.businessdailyafrica.com/bd/rss.xml",
+  "evidence": {
+   "items": 25,
+   "on_expected": 25,
+   "articles": 25,
+   "expected_domain": "businessdailyafrica.com",
+   "title": "- Business Daily",
+   "sample": "https://www.businessdailyafrica.com/bd/corporate/industry/regulator-caps-electric-vehicles-charging-costs-5603798"
+  }
+ },
+ {
+  "name": "Education Week",
+  "id": "education-week",
+  "was": "https://news.google.com/rss/search?q=site:edweek.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.edweek.org/index.rss",
+  "evidence": {
+   "items": 11,
+   "on_expected": 11,
+   "articles": 11,
+   "expected_domain": "edweek.org",
+   "title": "Education Week - K-12 education news and information",
+   "sample": "https://www.edweek.org/events/webinar/measuring-what-matters-redefining-student-assessment"
+  }
+ },
+ {
+  "name": "El Universal (English)",
+  "id": "el-universal-english",
+  "was": "https://news.google.com/rss/search?q=site:eluniversal.com.mx+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.eluniversal.com.mx/arc/outboundfeeds/rss/",
+  "evidence": {
+   "items": 100,
+   "on_expected": 100,
+   "articles": 100,
+   "expected_domain": "eluniversal.com.mx",
+   "title": "El Universal",
+   "sample": "https://www.eluniversal.com.mx/estados/huracan-polo-provoca-suspension-de-clases-sigue-en-vivo-los-estados-que-aplican-esta-medida/"
+  }
+ },
+ {
+  "name": "Election Law Blog",
+  "id": "election-law-blog",
+  "was": "https://news.google.com/rss/search?q=site:electionlawblog.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://electionlawblog.org/feed/",
+  "evidence": {
+   "items": 20,
+   "on_expected": 20,
+   "articles": 20,
+   "expected_domain": "electionlawblog.org",
+   "title": "Election Law Blog",
+   "sample": "https://electionlawblog.org/2026/missouri-gerrymandering-youll-get-whiplash-from-the-speed-of-the-scotus-reprimand/"
+  }
+ },
+ {
+  "name": "Food & Environment Reporting Network",
+  "id": "fern-ag-insider",
+  "was": "https://news.google.com/rss/search?q=site:thefern.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://thefern.org/feed/",
+  "evidence": {
+   "items": 20,
+   "on_expected": 20,
+   "articles": 20,
+   "expected_domain": "thefern.org",
+   "title": "Food and Environment Reporting Network",
+   "sample": "https://thefern.org/2026/09/meet-americas-de-facto-food-safety-chief/"
+  }
+ },
+ {
+  "name": "The Friday Times",
+  "id": "friday-times-pk",
+  "was": "https://news.google.com/rss/search?q=site:thefridaytimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://thefridaytimes.com/rss/news",
+  "evidence": {
+   "items": 100,
+   "on_expected": 100,
+   "articles": 100,
+   "expected_domain": "thefridaytimes.com",
+   "title": "The Friday Times - News",
+   "sample": "https://www.thefridaytimes.com/21-Sep-2026/else-will-safeguard-public-interest"
+  }
+ },
+ {
+  "name": "GB News",
+  "id": "gb-news",
+  "was": "https://news.google.com/rss/search?q=site:gbnews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.gbnews.com/feeds/feed.rss",
+  "evidence": {
+   "items": 30,
+   "on_expected": 30,
+   "articles": 30,
+   "expected_domain": "gbnews.com",
+   "title": "GB News",
+   "sample": "https://www.gbnews.com/news/world/british-contractor-killed-rpg-isis-islamist-terroris-mozambique-hotel"
+  }
+ },
+ {
+  "name": "Global Initiative Against Transnational Organized Crime",
+  "id": "gi-toc",
+  "was": "https://news.google.com/rss/search?q=site:globalinitiative.net+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://globalinitiative.net/feed/",
+  "evidence": {
+   "items": 12,
+   "on_expected": 12,
+   "articles": 12,
+   "expected_domain": "globalinitiative.net",
+   "title": "Global Initiative",
+   "sample": "https://globalinitiative.net/analysis/gitoc-in-abu-dhabi/"
+  }
+ },
+ {
+  "name": "Gibraltar Chronicle",
+  "id": "gibraltar-chronicle",
+  "was": "https://news.google.com/rss/search?q=site:chronicle.gi+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.chronicle.gi/feed/",
+  "evidence": {
+   "items": 30,
+   "on_expected": 30,
+   "articles": 30,
+   "expected_domain": "chronicle.gi",
+   "title": "Gibraltar Chronicle",
+   "sample": "https://www.chronicle.gi/the-new-four-corners/"
+  }
+ },
+ {
+  "name": "Governing",
+  "id": "governing-magazine",
+  "was": "https://news.google.com/rss/search?q=site:governing.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.governing.com/index.rss",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "governing.com",
+   "title": "Governing: State and local government news and analysis",
+   "sample": "https://www.governing.com/finance/when-cities-pay-cash-for-infrastructure-who-really-pays"
+  }
+ },
+ {
+  "name": "Guyana Chronicle",
+  "id": "guyana-chronicle",
+  "was": "https://news.google.com/rss/search?q=site:guyanachronicle.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://guyanachronicle.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "guyanachronicle.com",
+   "title": "Guyana Chronicle",
+   "sample": "https://guyanachronicle.com/2026/09/22/mottley-hosting-cpl-final-a-triumph-barbados-ready-for-more/"
+  }
+ },
+ {
+  "name": "The Patriot-News",
+  "id": "harrisburg-patriot-news",
+  "was": "https://news.google.com/rss/search?q=site:pennlive.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.pennlive.com/arc/outboundfeeds/rss/",
+  "evidence": {
+   "items": 50,
+   "on_expected": 50,
+   "articles": 50,
+   "expected_domain": "pennlive.com",
+   "title": "pennlive.com",
+   "sample": "https://www.pennlive.com/lottery/2026/09/powerball-see-the-winning-numbers-in-mondays-313-million-drawing.html"
+  }
+ },
+ {
+  "name": "Heatmap News",
+  "id": "heatmap-news",
+  "was": "https://news.google.com/rss/search?q=site:heatmap.news+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://heatmap.news/feeds/feed.rss",
+  "evidence": {
+   "items": 30,
+   "on_expected": 30,
+   "articles": 30,
+   "expected_domain": "heatmap.news",
+   "title": "Heatmap News",
+   "sample": "https://heatmap.news/daily/carbon-removal-climate-week"
+  }
+ },
+ {
+  "name": "Helena Independent Record",
+  "id": "helena-independent-record",
+  "was": "https://news.google.com/rss/search?q=site:helenair.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://helenair.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "helenair.com",
+   "title": "helenair.com - RSS Results",
+   "sample": "https://helenair.com/sports/college/big-sky-conference/university-of-montana/pdf_7311ae47-e024-57c6-9a1c-f5ed60263bb4.html"
+  }
+ },
+ {
+  "name": "Hell Gate",
+  "id": "hell-gate",
+  "was": "https://news.google.com/rss/search?q=site:hellgatenyc.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://hellgatenyc.com/all-posts/rss/",
+  "evidence": {
+   "items": 15,
+   "on_expected": 15,
+   "articles": 13,
+   "expected_domain": "hellgatenyc.com",
+   "title": "Hell Gate",
+   "sample": "https://hellgatenyc.com/governor-hochul-ai-kill-switch/"
+  }
+ },
+ {
+  "name": "The Heritage Foundation Commentary",
+  "id": "heritage-foundation-daily-signal",
+  "was": "https://news.google.com/rss/search?q=site:heritage.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.heritage.org/rss",
+  "evidence": {
+   "items": 20,
+   "on_expected": 20,
+   "articles": 20,
+   "expected_domain": "heritage.org",
+   "title": "Heritage RSS Feed",
+   "sample": "https://www.heritage.org/progressivism/report/trojan-horses-covert-foreign-malign-influence-operations-america"
+  }
+ },
+ {
+  "name": "HousingWire",
+  "id": "housing-wire",
+  "was": "https://news.google.com/rss/search?q=site:housingwire.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.housingwire.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "housingwire.com",
+   "title": "HousingWire",
+   "sample": "https://www.housingwire.com/articles/never-quote-commission-text/"
+  }
+ },
+ {
+  "name": "Hudson Institute",
+  "id": "hudson-institute",
+  "was": "https://news.google.com/rss/search?q=site:hudson.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.hudson.org/rss.xml",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "hudson.org",
+   "title": "Hudson Institute",
+   "sample": "https://www.hudson.org/peoples-liberation-army-2027-nukes-pivot-asia-pirouette-bryan-clark"
+  }
+ },
+ {
+  "name": "Hürriyet Daily News",
+  "id": "hurriyet-daily-news",
+  "was": "https://news.google.com/rss/search?q=site:hurriyetdailynews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.hurriyetdailynews.com/rss/news",
+  "evidence": {
+   "items": 64,
+   "on_expected": 64,
+   "articles": 64,
+   "expected_domain": "hurriyetdailynews.com",
+   "title": "Hürriyet Daily News",
+   "sample": "https://www.hurriyetdailynews.com/erdogans-new-york-agenda-spans-diplomacy-defense-and-trade-227108"
+  }
+ },
+ {
+  "name": "Hyperallergic",
+  "id": "hyperallergic",
+  "was": "https://news.google.com/rss/search?q=site:hyperallergic.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://hyperallergic.com/rss/",
+  "evidence": {
+   "items": 15,
+   "on_expected": 15,
+   "articles": 15,
+   "expected_domain": "hyperallergic.com",
+   "title": "Hyperallergic",
+   "sample": "https://hyperallergic.com/the-worst-national-pavilions-at-the-venice-biennale/"
+  }
+ },
+ {
+  "name": "Il Giornale (English)",
+  "id": "il-giornale-english",
+  "was": "https://news.google.com/rss/search?q=site:ilgiornale.it+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.ilgiornale.it/arc/outboundfeeds/rss/",
+  "evidence": {
+   "items": 100,
+   "on_expected": 100,
+   "articles": 100,
+   "expected_domain": "ilgiornale.it",
+   "title": "",
+   "sample": "https://www.ilgiornale.it/news/nazionale/preparavano-e-testavano-molotov-presi-quattro-giovanissimi-antagonisti/"
+  }
+ },
+ {
+  "name": "Inc. Magazine",
+  "id": "inc-magazine",
+  "was": "https://news.google.com/rss/search?q=site:inc.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.inc.com/rss",
+  "evidence": {
+   "items": 39,
+   "on_expected": 39,
+   "articles": 39,
+   "expected_domain": "inc.com",
+   "title": "Inc.com",
+   "sample": "https://www.inc.com/kevin-haynes/beleaguered-flock-safety-offers-all-1500-employees-most-generous-buyout-ever-healthcare-and-stock-options-included/91408715"
+  }
+ },
+ {
+  "name": "Iraq Oil Report",
+  "id": "iraq-oil-report",
+  "was": "https://news.google.com/rss/search?q=site:iraqoilreport.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.iraqoilreport.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "iraqoilreport.com",
+   "title": "Iraq Oil Report",
+   "sample": "https://www.iraqoilreport.com/?p=47975"
+  }
+ },
+ {
+  "name": "Kabul Now",
+  "id": "kabul-now",
+  "was": "https://news.google.com/rss/search?q=site:kabulnow.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://kabulnow.com/feed/",
+  "evidence": {
+   "items": 12,
+   "on_expected": 12,
+   "articles": 12,
+   "expected_domain": "kabulnow.com",
+   "title": "KabulNow",
+   "sample": "https://kabulnow.com/2026/09/rights-groups-call-on-un-to-extend-afghanistan-rapporteurs-mandate-expand-scrutiny/"
+  }
+ },
+ {
+  "name": "Kiplinger",
+  "id": "kiplinger",
+  "was": "https://news.google.com/rss/search?q=site:kiplinger.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.kiplinger.com/feeds.xml",
+  "evidence": {
+   "items": 50,
+   "on_expected": 50,
+   "articles": 50,
+   "expected_domain": "kiplinger.com",
+   "title": "Latest from Kiplinger",
+   "sample": "https://www.kiplinger.com/investing/stocks/nasdaq-jumps-599-points-to-hit-a-new-high-stock-market-today"
+  }
+ },
+ {
+  "name": "Kloop Media",
+  "id": "kloop-news",
+  "was": "https://news.google.com/rss/search?q=site:kloop.kg+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://kloop.kg/feed/",
+  "evidence": {
+   "items": 12,
+   "on_expected": 12,
+   "articles": 12,
+   "expected_domain": "kloop.kg",
+   "title": "KLOOP.KG &#8212; Новости Кыргызстана",
+   "sample": "https://kloop.kg/blog/2026/09/21/ty-mozhesh-stat-muchenikom-eto-tvoe-ispytanie-kazahskij-prokuror-chechenskomu-aktivistu-movlaevu/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=ty-mozhesh-stat-muchenikom-eto-tvoe-ispytanie-kazahskij-prokuror-chechenskomu-aktivistu-movlaevu"
+  }
+ },
+ {
+  "name": "La Nacion",
+  "id": "la-nacion-argentina",
+  "was": "https://news.google.com/rss/search?q=site:lanacion.com.ar+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.lanacion.com.ar/arc/outboundfeeds/rss/",
+  "evidence": {
+   "items": 83,
+   "on_expected": 83,
+   "articles": 83,
+   "expected_domain": "lanacion.com.ar",
+   "title": "LA NACION",
+   "sample": "https://www.lanacion.com.ar/espectaculos/personajes/tom-cruise-dio-su-opinion-sobre-el-avance-de-la-inteligencia-artificial-en-el-cine-nid22092026/"
+  }
+ },
+ {
+  "name": "The Laotian Times",
+  "id": "laotian-times",
+  "was": "https://news.google.com/rss/search?q=site:laotiantimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://laotiantimes.com/feed/",
+  "evidence": {
+   "items": 13,
+   "on_expected": 13,
+   "articles": 13,
+   "expected_domain": "laotiantimes.com",
+   "title": "Laotian Times",
+   "sample": "https://laotiantimes.com/2026/09/21/tencent-esports-competition-solution-to-power-esports-competition-at-the-20th-asian-games/"
+  }
+ },
+ {
+  "name": "Las Vegas Review-Journal",
+  "id": "las-vegas-review-journal",
+  "was": "https://news.google.com/rss/search?q=site:reviewjournal.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.reviewjournal.com/feed/",
+  "evidence": {
+   "items": 30,
+   "on_expected": 30,
+   "articles": 30,
+   "expected_domain": "reviewjournal.com",
+   "title": "",
+   "sample": "https://www.reviewjournal.com/crime/shootings/off-duty-metro-officer-injured-in-shooting-in-western-las-vegas-3889538/"
+  }
+ },
+ {
+  "name": "Liberty Nation",
+  "id": "liberty-nation",
+  "was": "https://news.google.com/rss/search?q=site:libertynation.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.libertynation.com/feed/",
+  "evidence": {
+   "items": 50,
+   "on_expected": 50,
+   "articles": 48,
+   "expected_domain": "libertynation.com",
+   "title": "Main Feed",
+   "sample": "https://www.libertynation.com/where-the-millions-of-immigrants-landed-in-the-us/"
+  }
+ },
+ {
+  "name": "Libya Herald",
+  "id": "libya-herald",
+  "was": "https://news.google.com/rss/search?q=site:libyaherald.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://libyaherald.com/rss.xml",
+  "evidence": {
+   "items": 50,
+   "on_expected": 50,
+   "articles": 50,
+   "expected_domain": "libyaherald.com",
+   "title": "Libya Herald",
+   "sample": "https://libyaherald.com/2026/09/libyan-business-council-to-lead-trade-delegation-to-torontos-buildings-show-2026-from-2-to-4-december/"
+  }
+ },
+ {
+  "name": "Logic Magazine",
+  "id": "logic-magazine",
+  "was": "https://news.google.com/rss/search?q=site:logicmag.io+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://logicmag.io/rss.xml",
+  "evidence": {
+   "items": 11,
+   "on_expected": 11,
+   "articles": 11,
+   "expected_domain": "logicmag.io",
+   "title": "Logic(s) Magazine",
+   "sample": "https://logicmag.io/2026/meditations-on-life-and-logics"
+  }
+ },
+ {
+  "name": "Madagascar-Tribune (English)",
+  "id": "madagascar-tribune-en",
+  "was": "https://news.google.com/rss/search?q=site:madagascar-tribune.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.madagascar-tribune.com/spip.php?page=backend",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "madagascar-tribune.com",
+   "title": "Madagascar-Tribune.com",
+   "sample": "https://www.madagascar-tribune.com/Filiere-aurifere-l-exportation-legale-de-l-or-relancee-apres-plusieurs.html"
+  }
+ },
+ {
+  "name": "The North Africa Post",
+  "id": "maghreb-times",
+  "was": "https://news.google.com/rss/search?q=site:northafricapost.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://northafricapost.com/feed",
+  "evidence": {
+   "items": 20,
+   "on_expected": 20,
+   "articles": 20,
+   "expected_domain": "northafricapost.com",
+   "title": "The North Africa Post",
+   "sample": "https://northafricapost.com/100425-religious-ceremony-chaired-by-king-mohammed-vi-commemorates-28th-anniversary-of-passing-of-late-king-hassan-ii.html"
+  }
+ },
+ {
+  "name": "Portland Press Herald",
+  "id": "maine-press-herald",
+  "was": "https://news.google.com/rss/search?q=site:pressherald.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.pressherald.com/feed/",
+  "evidence": {
+   "items": 50,
+   "on_expected": 50,
+   "articles": 50,
+   "expected_domain": "pressherald.com",
+   "title": "The Portland Press Herald",
+   "sample": "https://www.pressherald.com/2026/09/22/obituary-david-james-ferrante-sr-2/"
+  }
+ },
+ {
+  "name": "Malaysiakini",
+  "id": "malaysiakini",
+  "was": "https://news.google.com/rss/search?q=site:malaysiakini.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.malaysiakini.com/en/rss/news.rss",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "malaysiakini.com",
+   "title": "News - Malaysiakini",
+   "sample": "https://www.malaysiakini.com/news/885510-snapshot-jan-7-decision-on-bars-bid-to-challenge-najibs-reduced-sentence-orang-asli-man-killed-in-tiger-attack"
+  }
+ },
+ {
+  "name": "Marshall Islands Journal",
+  "id": "marshall-islands-journal",
+  "was": "https://news.google.com/rss/search?q=site:marshallislandsjournal.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://marshallislandsjournal.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "marshallislandsjournal.com",
+   "title": "The Marshall Islands Journal",
+   "sample": "https://marshallislandsjournal.com/nitijela-approves-compact/"
+  }
+ },
+ {
+  "name": "Mental Floss",
+  "id": "mental-floss",
+  "was": "https://news.google.com/rss/search?q=site:mentalfloss.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.mentalfloss.com/feed",
+  "evidence": {
+   "items": 79,
+   "on_expected": 79,
+   "articles": 79,
+   "expected_domain": "mentalfloss.com",
+   "title": "Mentalfloss Feed",
+   "sample": "https://www.mentalfloss.com/language/words/why-us-cities-have-spanish-names?utm_source=RSS"
+  }
+ },
+ {
+  "name": "Modern Farmer",
+  "id": "modern-farmer",
+  "was": "https://news.google.com/rss/search?q=site:modernfarmer.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://modernfarmer.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "modernfarmer.com",
+   "title": "Modern Farmer",
+   "sample": "https://modernfarmer.com/2026/05/succession-sowing/"
+  }
+ },
+ {
+  "name": "Moldova.org",
+  "id": "moldova-org",
+  "was": "https://news.google.com/rss/search?q=site:moldova.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.moldova.org/feed/",
+  "evidence": {
+   "items": 20,
+   "on_expected": 20,
+   "articles": 19,
+   "expected_domain": "moldova.org",
+   "title": "Moldova.org",
+   "sample": "https://www.moldova.org/ziua-internationala-a-pacii-2026-pacea-se-construieste-in-fiecare-zi-impreuna-cu-femeile-si-comunitatile/"
+  }
+ },
+ {
+  "name": "MINA (Montenegro News Agency)",
+  "id": "montenegro-news-agency",
+  "was": "https://news.google.com/rss/search?q=site:mina.news+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://mina.news/feed",
+  "evidence": {
+   "items": 50,
+   "on_expected": 50,
+   "articles": 50,
+   "expected_domain": "mina.news",
+   "title": "MINA",
+   "sample": "https://mina.news/article/najava-doga%C4%91aja-za-22.-septembarT88"
+  }
+ },
+ {
+  "name": "Morning Brew",
+  "id": "morning-brew",
+  "was": "https://news.google.com/rss/search?q=site:morningbrew.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.morningbrew.com/feed.xml",
+  "evidence": {
+   "items": 40,
+   "on_expected": 40,
+   "articles": 40,
+   "expected_domain": "morningbrew.com",
+   "title": "Morning Brew",
+   "sample": "https://www.morningbrew.com/stories/faa-launches-ai-tool-to-reduce-flight-delays?utm_source=&amp;utm_medium=syndication&amp;utm_campaign=feed"
+  }
+ },
+ {
+  "name": "Nepali Times",
+  "id": "nepali-times",
+  "was": "https://news.google.com/rss/search?q=site:nepalitimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://nepalitimes.com/feed",
+  "evidence": {
+   "items": 30,
+   "on_expected": 30,
+   "articles": 19,
+   "expected_domain": "nepalitimes.com",
+   "title": "Nepali Times",
+   "sample": "https://nepalitimes.com/duane-berian-clifford-jones-49"
+  }
+ },
+ {
+  "name": "The New Indian Express",
+  "id": "new-indian-express",
+  "was": "https://news.google.com/rss/search?q=site:newindianexpress.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.newindianexpress.com/stories.rss",
+  "evidence": {
+   "items": 173,
+   "on_expected": 173,
+   "articles": 173,
+   "expected_domain": "newindianexpress.com",
+   "title": "newindianexpress",
+   "sample": "https://www.newindianexpress.com/sport/sports-news/2026/Sep/22/infantino-open-to-independent-fifa-governance-review-after-backlash-over-failed-ffe-project"
+  }
+ },
+ {
+  "name": "New Lines Magazine",
+  "id": "new-lines-magazine",
+  "was": "https://news.google.com/rss/search?q=site:newlinesmag.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://newlinesmag.com/feed/",
+  "evidence": {
+   "items": 20,
+   "on_expected": 20,
+   "articles": 20,
+   "expected_domain": "newlinesmag.com",
+   "title": "New Lines Magazine",
+   "sample": "https://newlinesmag.com/reportage/how-uganda-became-a-holding-ground-for-americas-deportees/"
+  }
+ },
+ {
+  "name": "Newsroom NZ",
+  "id": "newsroom-nz",
+  "was": "https://news.google.com/rss/search?q=site:newsroom.co.nz+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://newsroom.co.nz/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "newsroom.co.nz",
+   "title": "Newsroom",
+   "sample": "https://newsroom.co.nz/2026/09/22/live-updates-the-nicky-hager-bombshell-if-it-is-a-bombshell/"
+  }
+ },
+ {
+  "name": "Newsroom Panama",
+  "id": "newsroom-panama",
+  "was": "https://news.google.com/rss/search?q=site:newsroompanama.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://newsroompanama.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "newsroompanama.com",
+   "title": "Newsroom Panama",
+   "sample": "https://newsroompanama.com/2026/09/21/your-morning-smile-755/"
+  }
+ },
+ {
+  "name": "Nyasa Times",
+  "id": "nyasa-times",
+  "was": "https://news.google.com/rss/search?q=site:nyasatimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.nyasatimes.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "nyasatimes.com",
+   "title": "Malawi News | Breaking News, Politics, Business &amp; Sports | Nyasa Times",
+   "sample": "https://www.nyasatimes.com/prophet-bushiris-massive-salvation-crusade-set-to-hit-lilongwe-this-saturday/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=prophet-bushiris-massive-salvation-crusade-set-to-hit-lilongwe-this-saturday"
+  }
+ },
+ {
+  "name": "Onet News",
+  "id": "onet-english",
+  "was": "https://news.google.com/rss/search?q=site:onet.pl+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://wiadomosci.onet.pl/.feed",
+  "evidence": {
+   "items": 20,
+   "on_expected": 20,
+   "articles": 20,
+   "expected_domain": "onet.pl",
+   "title": "Wiadomości wiadomosci.onet.pl",
+   "sample": "https://wiadomosci.onet.pl/swiat/donald-trump-chce-otworzyc-bazy-na-grenlandii-ujawniono-plany-usa/3r9ednp"
+  }
+ },
+ {
+  "name": "PNAS (Proceedings of the National Academy of Sciences)",
+  "id": "pnas-news",
+  "was": "https://news.google.com/rss/search?q=site:pnas.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.pnas.org/action/showFeed?ui=3d9&mi=3bryy4&type=search&feed=rss&query=%2526DOResourceTypeId%253Djournal-club%2526content%253DdigitalObject%2526sortBy%253DEarliest%2526target%253Ddigital-object-search",
+  "evidence": {
+   "items": 20,
+   "on_expected": 20,
+   "articles": 20,
+   "expected_domain": "pnas.org",
+   "title": "Proceedings of the National Academy of Sciences: Keyword search for query",
+   "sample": "https://www.pnas.org/do/10.1073/journal-club.e46bdc9c-78fe-41fc-809e-614b786b92ed/full/?mi=3bryy4&amp;af=R&amp;DOResourceTypeId=journal-club&amp;content=digitalObject&amp;sortBy=Earliest&amp;target=digital-object-search"
+  }
+ },
+ {
+  "name": "Popular Information",
+  "id": "popular-information",
+  "was": "https://news.google.com/rss/search?q=site:popular.info+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://popular.info/feed",
+  "evidence": {
+   "items": 20,
+   "on_expected": 20,
+   "articles": 20,
+   "expected_domain": "popular.info",
+   "title": "Popular Information",
+   "sample": "https://popular.info/p/update-maga-incs-audacious-new-ads"
+  }
+ },
+ {
+  "name": "Post-Courier (Papua New Guinea)",
+  "id": "post-courier-png",
+  "was": "https://news.google.com/rss/search?q=site:postcourier.com.pg+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.postcourier.com.pg/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "com.pg",
+   "title": "Post Courier",
+   "sample": "https://www.postcourier.com.pg/nasfund-onboards-1300-workers-in-arob/"
+  }
+ },
+ {
+  "name": "Prensa Latina (English)",
+  "id": "prensa-latina-english",
+  "was": "https://news.google.com/rss/search?q=site:plenglish.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.plenglish.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "plenglish.com",
+   "title": "Prensa Latina",
+   "sample": "https://www.plenglish.com/news/2026/09/01/new-report-challenges-flavio-bolsonaros-account-regarding-film/"
+  }
+ },
+ {
+  "name": "Prison Policy Initiative",
+  "id": "prison-policy-initiative",
+  "was": "https://news.google.com/rss/search?q=site:prisonpolicy.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.prisonpolicy.org/feeds/ppi.xml",
+  "evidence": {
+   "items": 52,
+   "on_expected": 21,
+   "articles": 21,
+   "expected_domain": "prisonpolicy.org",
+   "title": "Prison Policy Initiative",
+   "sample": "https://www.prisonpolicy.org/blog/2026/09/15/trump-crime/"
+  }
+ },
+ {
+  "name": "Project Syndicate",
+  "id": "project-syndicate",
+  "was": "https://news.google.com/rss/search?q=site:project-syndicate.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.project-syndicate.org/rss",
+  "evidence": {
+   "items": 20,
+   "on_expected": 20,
+   "articles": 20,
+   "expected_domain": "project-syndicate.org",
+   "title": "Project Syndicate",
+   "sample": "https://www.project-syndicate.org/commentary/central-and-eastern-europe-offers-blueprint-for-reviving-eu-dynamism-by-marcin-piatkowski-1-2026-09?utm_source=rss&amp;utm_medium=feed&amp;utm_campaign=main&amp;utm_content=en"
+  }
+ },
+ {
+  "name": "Puck",
+  "id": "puck-news",
+  "was": "https://news.google.com/rss/search?q=site:puck.news+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://puck.news/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "puck.news",
+   "title": "Puck",
+   "sample": "https://puck.news/breaking-down-the-warnermount-settlement-how-bonta-caved/"
+  }
+ },
+ {
+  "name": "Quad-City Times",
+  "id": "quad-city-times",
+  "was": "https://news.google.com/rss/search?q=site:qctimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://qctimes.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "qctimes.com",
+   "title": "qctimes.com - RSS Results",
+   "sample": "https://qctimes.com/lifestyles/announcements/obituaries/image_c6ccad8c-e2df-519b-abc5-01dd42569d84.html"
+  }
+ },
+ {
+  "name": "Radio Dabanga",
+  "id": "radio-dabanga",
+  "was": "https://news.google.com/rss/search?q=site:dabangasudan.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.dabangasudan.org/ar/feed",
+  "evidence": {
+   "items": 12,
+   "on_expected": 12,
+   "articles": 12,
+   "expected_domain": "dabangasudan.org",
+   "title": "Dabanga Radio TV Online",
+   "sample": "https://www.dabangasudan.org/ar/all-news/article/__trashed-3"
+  }
+ },
+ {
+  "name": "Rapid City Journal",
+  "id": "rapid-city-journal",
+  "was": "https://news.google.com/rss/search?q=site:rapidcityjournal.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://rapidcityjournal.com/search/?f=rss&c=&l=25&s=start_time&sd=desc",
+  "evidence": {
+   "items": 25,
+   "on_expected": 25,
+   "articles": 25,
+   "expected_domain": "rapidcityjournal.com",
+   "title": "rapidcityjournal.com - RSS Results",
+   "sample": "https://rapidcityjournal.com/news/local/obituaries/image_ebebf5df-3431-50e8-8748-83f665520082.html"
+  }
+ },
+ {
+  "name": "RealClearInvestigations",
+  "id": "real-clear-investigations",
+  "was": "https://news.google.com/rss/search?q=site:realclearinvestigations.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.realclearinvestigations.com/index.xml",
+  "evidence": {
+   "items": 72,
+   "on_expected": 72,
+   "articles": 72,
+   "expected_domain": "realclearinvestigations.com",
+   "title": "RealClearInvestigations - Homepage",
+   "sample": "https://www.realclearinvestigations.com/2026/09/21/trumps_ai_investments_grow_as_he_resists_a_slowdown_1207178.html"
+  }
+ },
+ {
+  "name": "RealClearMarkets",
+  "id": "real-clear-markets",
+  "was": "https://news.google.com/rss/search?q=site:realclearmarkets.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.realclearmarkets.com/index.xml",
+  "evidence": {
+   "items": 118,
+   "on_expected": 118,
+   "articles": 106,
+   "expected_domain": "realclearmarkets.com",
+   "title": "RealClearMarkets - Homepage",
+   "sample": "https://www.realclearmarkets.com/2026/09/21/golds_rushing_out_of_united_states_cue_the_panic_1207000.html"
+  }
+ },
+ {
+  "name": "Ricochet",
+  "id": "ricochet",
+  "was": "https://news.google.com/rss/search?q=site:ricochet.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://ricochet.com/feed/",
+  "evidence": {
+   "items": 50,
+   "on_expected": 50,
+   "articles": 50,
+   "expected_domain": "ricochet.com",
+   "title": "",
+   "sample": "https://ricochet.com/2013494/tuesday-memes-thanks-for-the-meme-ories/"
+  }
+ },
+ {
+  "name": "RPP Noticias (English)",
+  "id": "rpp-english",
+  "was": "https://news.google.com/rss/search?q=site:rpp.pe+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://rpp.pe/rss",
+  "evidence": {
+   "items": 60,
+   "on_expected": 60,
+   "articles": 60,
+   "expected_domain": "rpp.pe",
+   "title": "RPP NOTICIAS",
+   "sample": "https://rpp.pe/campanas/publirreportaje/tcl-presenta-en-peru-la-tab-a1-plus-nxtpaper-su-nueva-tablet-de-122-pulgadas-enfocada-en-productividad-y-cuidado-visual-noticia-1708673"
+  }
+ },
+ {
+  "name": "Samoa News",
+  "id": "samoa-news",
+  "was": "https://news.google.com/rss/search?q=site:samoanews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.samoanews.com/rss1.xml",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "samoanews.com",
+   "title": "Samoa News - Latest and Breaking Sports, Politics, Business, and Samoan News fro",
+   "sample": "https://www.samoanews.com/local-news/zoning-boards-role-and-enforcement-authority-question-lawmakers"
+  }
+ },
+ {
+  "name": "Semafor",
+  "id": "semafor",
+  "was": "https://news.google.com/rss/search?q=site:semafor.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.semafor.com/rss.xml",
+  "evidence": {
+   "items": 188,
+   "on_expected": 188,
+   "articles": 188,
+   "expected_domain": "semafor.com",
+   "title": "Semafor",
+   "sample": "https://www.semafor.com/article/09/21/2026/iran-wars-peacemakers-also-have-skin-in-the-game"
+  }
+ },
+ {
+  "name": "Sojourners",
+  "id": "sojourners",
+  "was": "https://news.google.com/rss/search?q=site:sojo.net+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://sojo.net/rss.xml",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "sojo.net",
+   "title": "Sojourners",
+   "sample": "https://sojo.net/protectdemocracy"
+  }
+ },
+ {
+  "name": "Sports Illustrated",
+  "id": "sports-illustrated",
+  "was": "https://news.google.com/rss/search?q=site:si.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.si.com/feed",
+  "evidence": {
+   "items": 89,
+   "on_expected": 89,
+   "articles": 89,
+   "expected_domain": "si.com",
+   "title": "SI Feed",
+   "sample": "https://www.si.com/nfl/rams/onsi/rams-winners-losers-giants-matthew-stafford-davante-adams?utm_source=RSS"
+  }
+ },
+ {
+  "name": "St. Louis Post-Dispatch",
+  "id": "st-louis-post-dispatch",
+  "was": "https://news.google.com/rss/search?q=site:stltoday.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.stltoday.com/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "stltoday.com",
+   "title": "www.stltoday.com - RSS Results",
+   "sample": "https://www.stltoday.com/contests/html_0cd24b50-19ba-4520-99e7-8af4729f67de.html"
+  }
+ },
+ {
+  "name": "St. Lucia Times",
+  "id": "st-lucia-times",
+  "was": "https://news.google.com/rss/search?q=site:stluciatimes.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://stluciatimes.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "stluciatimes.com",
+   "title": "St. Lucia Times",
+   "sample": "https://stluciatimes.com/184198/2026/09/one-third-country-national-leaves-saint-lucia/"
+  }
+ },
+ {
+  "name": "Sunday Standard (Botswana)",
+  "id": "standard-botswana",
+  "was": "https://news.google.com/rss/search?q=site:sundaystandard.info+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.sundaystandard.info/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "sundaystandard.info",
+   "title": "Sunday Standard",
+   "sample": "https://www.sundaystandard.info/inflation-eases-marginally-as-electricity-food-costs-rise/"
+  }
+ },
+ {
+  "name": "Stimson Center",
+  "id": "stimson-center",
+  "was": "https://news.google.com/rss/search?q=site:stimson.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.stimson.org/feed/",
+  "evidence": {
+   "items": 12,
+   "on_expected": 12,
+   "articles": 12,
+   "expected_domain": "stimson.org",
+   "title": "Stimson Center",
+   "sample": "https://www.stimson.org/2026/nuclear-security-news-and-member-updates-roundup-august-2026/"
+  }
+ },
+ {
+  "name": "Suriname Herald",
+  "id": "suriname-herald",
+  "was": "https://news.google.com/rss/search?q=site:srherald.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.srherald.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "srherald.com",
+   "title": "Suriname Herald",
+   "sample": "https://www.srherald.com/suriname/2026/09/22/matawai-gezag-legt-interne-geschillen-bij-na-urenlange-krutu/"
+  }
+ },
+ {
+  "name": "SVT Nyheter (English)",
+  "id": "svt-news-english",
+  "was": "https://news.google.com/rss/search?q=site:svt.se+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.svt.se/rss.xml",
+  "evidence": {
+   "items": 100,
+   "on_expected": 100,
+   "articles": 100,
+   "expected_domain": "svt.se",
+   "title": "SVT Nyheter",
+   "sample": "https://www.svt.se/nyheter/utrikes/varldsledarna-samlas-i-new-york-tunga-moten-pa-rad"
+  }
+ },
+ {
+  "name": "Tangle",
+  "id": "tangle-news",
+  "was": "https://news.google.com/rss/search?q=site:readtangle.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.readtangle.com/archive/rss/",
+  "evidence": {
+   "items": 15,
+   "on_expected": 15,
+   "articles": 15,
+   "expected_domain": "readtangle.com",
+   "title": "Tangle",
+   "sample": "https://www.readtangle.com/trump-hard-to-hear-at-first-event-following-television-pool-boycott/"
+  }
+ },
+ {
+  "name": "Task & Purpose",
+  "id": "task-and-purpose",
+  "was": "https://news.google.com/rss/search?q=site:taskandpurpose.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://taskandpurpose.com/feed/",
+  "evidence": {
+   "items": 25,
+   "on_expected": 25,
+   "articles": 25,
+   "expected_domain": "taskandpurpose.com",
+   "title": "Task &amp; Purpose",
+   "sample": "https://taskandpurpose.com/news/air-force-lucas-drone-recovered-eglin/"
+  }
+ },
+ {
+  "name": "Tax Justice Network",
+  "id": "tax-justice-network",
+  "was": "https://news.google.com/rss/search?q=site:taxjustice.net+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://taxjustice.net/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "taxjustice.net",
+   "title": "Tax Justice Network",
+   "sample": "https://taxjustice.net/2026/09/11/un-framework-convention-roundup-of-the-fifth-session-of-negotiations/"
+  }
+ },
+ {
+  "name": "Tempo (English)",
+  "id": "tempo-english",
+  "was": "https://news.google.com/rss/search?q=site:en.tempo.co+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://rss.tempo.co/en",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "tempo.co",
+   "title": "Tempo.co english RSS Feed",
+   "sample": "https://en.tempo.co/read/2120059/bmkg-warns-of-year-end-disasters-as-rainy-season-approaches"
+  }
+ },
+ {
+  "name": "The Fuller Project",
+  "id": "the-19th-2",
+  "was": "https://news.google.com/rss/search?q=site:fullerproject.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.fullerproject.org/rss/",
+  "evidence": {
+   "items": 15,
+   "on_expected": 15,
+   "articles": 15,
+   "expected_domain": "fullerproject.org",
+   "title": "Fuller",
+   "sample": "https://www.fullerproject.org/sydney-sweeneys-ad-and-the-rise-of-women-betting/"
+  }
+ },
+ {
+  "name": "The Advocate",
+  "id": "the-advocate-lgbtq",
+  "was": "https://news.google.com/rss/search?q=site:advocate.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.advocate.com/feeds/feed.rss",
+  "evidence": {
+   "items": 30,
+   "on_expected": 30,
+   "articles": 29,
+   "expected_domain": "advocate.com",
+   "title": "Advocate.com",
+   "sample": "https://www.advocate.com/newsletter/advocate-nl-9-21-26"
+  }
+ },
+ {
+  "name": "The Appeal",
+  "id": "the-appeal",
+  "was": "https://news.google.com/rss/search?q=site:theappeal.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://theappeal.org/theappeal",
+  "evidence": {
+   "items": 40,
+   "on_expected": 40,
+   "articles": 40,
+   "expected_domain": "theappeal.org",
+   "title": "The Appeal",
+   "sample": "https://theappeal.org/this-back-to-school-season-kids-face-a-new-fear-ice-taking-their-parents/"
+  }
+ },
+ {
+  "name": "The Art Newspaper",
+  "id": "the-art-newspaper",
+  "was": "https://news.google.com/rss/search?q=site:theartnewspaper.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.theartnewspaper.com/rss.xml",
+  "evidence": {
+   "items": 61,
+   "on_expected": 61,
+   "articles": 61,
+   "expected_domain": "theartnewspaper.com",
+   "title": "The Art Newspaper - International art news and events",
+   "sample": "https://www.theartnewspaper.com/2026/09/21/new-york-city-museum-building-boom-bronx-museum-canyon-metropolitan-museum"
+  }
+ },
+ {
+  "name": "The East African",
+  "id": "the-east-african",
+  "was": "https://news.google.com/rss/search?q=site:theeastafrican.co.ke+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.theeastafrican.co.ke/rss.xml",
+  "evidence": {
+   "items": 40,
+   "on_expected": 40,
+   "articles": 40,
+   "expected_domain": "theeastafrican.co.ke",
+   "title": "- The EastAfrican",
+   "sample": "https://www.theeastafrican.co.ke/tea/news/east-africa/au-and-un-condemn-houthi-for-attacks-5603768"
+  }
+ },
+ {
+  "name": "The Independent Uganda",
+  "id": "the-independent-uganda",
+  "was": "https://news.google.com/rss/search?q=site:independent.co.ug+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.independent.co.ug/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "independent.co.ug",
+   "title": "The Independent Uganda:",
+   "sample": "https://www.independent.co.ug/kitgum-high-court-dismisses-minister-anywars-bid-for-voter-register-in-petition/"
+  }
+ },
+ {
+  "name": "The Sentry",
+  "id": "the-sentry",
+  "was": "https://news.google.com/rss/search?q=site:thesentry.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://thesentry.org/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "thesentry.org",
+   "title": "The Sentry",
+   "sample": "https://thesentry.org/2026/09/16/81042/new-report-traces-the-fragmented-chain-of-responsibility-behind-malis-expanding-deadly-air-campaign/"
+  }
+ },
+ {
+  "name": "Timor-Leste News (Tatoli)",
+  "id": "timor-leste-news",
+  "was": "https://news.google.com/rss/search?q=site:tatoli.tl+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://tatoli.tl/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "tatoli.tl",
+   "title": "TATOLI Agência Noticiosa de Timor-Leste",
+   "sample": "https://tatoli.tl/2026/09/22/husi-foho-matebian-too-mehara-dalan-naruk-no-re-organizasaun-rezistensia/"
+  }
+ },
+ {
+  "name": "TOLOnews",
+  "id": "tolonews",
+  "was": "https://news.google.com/rss/search?q=site:tolonews.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://tolonews.com/rss.xml",
+  "evidence": {
+   "items": 30,
+   "on_expected": 30,
+   "articles": 30,
+   "expected_domain": "tolonews.com",
+   "title": "TOLOnews RSS Feed",
+   "sample": "https://tolonews.com/pa/afghanistan-200926"
+  }
+ },
+ {
+  "name": "Trinidad and Tobago Newsday",
+  "id": "trinidad-newsday",
+  "was": "https://news.google.com/rss/search?q=site:newsday.co.tt+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://newsday.co.tt/feed/",
+  "evidence": {
+   "items": 20,
+   "on_expected": 20,
+   "articles": 20,
+   "expected_domain": "co.tt",
+   "title": "Trinidad and Tobago Newsday",
+   "sample": "https://newsday.co.tt/2026/05/30/auction-sale/"
+  }
+ },
+ {
+  "name": "Vanuatu Daily Post",
+  "id": "vanuatu-daily-post",
+  "was": "https://news.google.com/rss/search?q=site:dailypost.vu+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.dailypost.vu/search/?f=rss&amp;t=article&amp;l=50&amp;s=start_time&amp;sd=desc&amp;k%5B%5D=%23topstory",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "dailypost.vu",
+   "title": "www.dailypost.vu - RSS Results",
+   "sample": "https://www.dailypost.vu/supreme-court-sends-long-running-efate-land-dispute-back-for-fresh-hearing/image_d7bc057d-6252-42bb-b779-a05a384be8ff.html"
+  }
+ },
+ {
+  "name": "VoteVets",
+  "id": "votevets",
+  "was": "https://news.google.com/rss/search?q=site:votevets.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://votevets.org/feed",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "votevets.org",
+   "title": "VoteVets",
+   "sample": "https://votevets.org/in-the-news/veteran-speaks-out-trumps-massive-beyond-the-pale-arch-sacrilegious-monument"
+  }
+ },
+ {
+  "name": "Washington Blade",
+  "id": "washington-blade",
+  "was": "https://news.google.com/rss/search?q=site:washingtonblade.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.washingtonblade.com/feed/",
+  "evidence": {
+   "items": 10,
+   "on_expected": 10,
+   "articles": 10,
+   "expected_domain": "washingtonblade.com",
+   "title": "Washington Blade: LGBTQ News, Politics, LGBTQ Rights, Gay News",
+   "sample": "https://www.washingtonblade.com/2026/09/21/white-house-press-pool-pushes-back-after-trump-bars-three-outlets/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=white-house-press-pool-pushes-back-after-trump-bars-three-outlets"
+  }
+ },
+ {
+  "name": "The Western Journal",
+  "id": "western-journal",
+  "was": "https://news.google.com/rss/search?q=site:westernjournal.com+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.westernjournal.com/feed/",
+  "evidence": {
+   "items": 30,
+   "on_expected": 30,
+   "articles": 30,
+   "expected_domain": "westernjournal.com",
+   "title": "The Western Journal",
+   "sample": "https://www.westernjournal.com/hope-remember-2018-blue-wave-fizzled-turns-dems-2026-numbers-arent-even-half/"
+  }
+ },
+ {
+  "name": "Wiener Zeitung",
+  "id": "wiener-zeitung-english",
+  "was": "https://news.google.com/rss/search?q=site:wienerzeitung.at+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.wienerzeitung.at/rss.xml",
+  "evidence": {
+   "items": 45,
+   "on_expected": 45,
+   "articles": 45,
+   "expected_domain": "wienerzeitung.at",
+   "title": "Wiener Zeitung",
+   "sample": "https://www.wienerzeitung.at/a/jobwechsel-geplant-so-hoch-waere-das-einstiegsgehalt"
+  }
+ },
+ {
+  "name": "Word on Fire",
+  "id": "word-on-fire",
+  "was": "https://news.google.com/rss/search?q=site:wordonfire.org+when:24h&ceid=US:en&hl=en-US&gl=US",
+  "now": "https://www.wordonfire.org/feed/",
+  "evidence": {
+   "items": 48,
+   "on_expected": 48,
+   "articles": 48,
+   "expected_domain": "wordonfire.org",
+   "title": "Word on Fire",
+   "sample": "https://www.wordonfire.org/reflections/a-ordinary2026-wk25-tuesday/"
+  }
+ }
+]

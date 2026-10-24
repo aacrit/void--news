@@ -1,0 +1,7 @@
+source: src-yakubu-opondo-2025
+locator: p165
+url: https://jceeas.bdi.uni-obuda.hu/index.php/jceeas/article/download/347/428
+read: 2026-09-25
+note: page 165, the authors' footnotes 2 and 3, as the PDF's text layer prints them
+
+2 Senior Research Fellow, Institute of African and Diaspora Studies, Faculty of Arts, University of Lagos, Akoka, Lagos, Nigeria; ORCID: 0000-0001-6653-8338; yakubumosesjo@gmail.com. 3 Senior Lecturer, Department of History and Political Science, Moi University, Eldoret, Kenya; ORCID: 0000- 0002-0622-9434; opondopaul1@gmail.com.

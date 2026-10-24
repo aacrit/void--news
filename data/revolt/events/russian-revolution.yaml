@@ -1,0 +1,252 @@
+slug: russian-revolution
+title: The Russian Revolution
+subtitle: Eight months separated a liberal republic from a one-party dictatorship
+date_display: February 1917 to 1923 (civil war conclusion)
+date_start: 1917
+date_end: 1923
+date_precision: year
+era: modern-nationalist
+region: europe
+country: Russia
+revolt_type: communist
+status: concluded
+summary: Bread shortages and 1.7 million war dead broke the Romanov monarchy in five days of Petrograd strikes. A Provisional Government tried to keep fighting Germany while soldiers deserted by the hundred thousand. On October 25, Bolshevik Red Guards seized the Winter Palace with fewer than ten casualties, then spent five years defeating White armies, Allied interventionists, and rival socialists to hold the state they had taken.
+significance: The first Marxist government to hold state power for more than a few weeks, and the template every subsequent 20th-century communist seizure of power copied or reacted against.
+analytical_outlook: A movement that seized power in a near-vacuum, then spent five years and roughly 7 to 12 million civil war deaths converting a fragile coup into a durable one-party state.
+grievances:
+  - kind: War exhaustion
+    intensity: 95
+    evidence: 1.7 million Russian soldiers killed by early 1917; desertions ran over 200,000 in the month before the February uprising.
+  - kind: Food scarcity
+    intensity: 90
+    evidence: Petrograd bread rationing cut to 1 pound per person per day in February 1917; women textile workers began the strike that triggered the revolution on International Women's Day.
+  - kind: Land hunger
+    intensity: 85
+    evidence: Roughly 80 percent of Russians were peasants; nobles and the church held disproportionate farmland while peasant plots shrank across the 1861 to 1917 period.
+  - kind: Autocratic rigidity
+    intensity: 75
+    evidence: Nicholas II dissolved or restricted the Duma repeatedly after 1906 and refused ministers responsible to it even as the war effort collapsed.
+actors:
+  - actor_type: vanguard
+    name: Bolshevik Party
+    description: Lenin's faction of the Russian Social Democratic Labour Party, roughly 24,000 members in February 1917, over 350,000 by October.
+    role_in_arc: Organized the October seizure of power under the slogan 'Peace, Land, Bread'
+    defected: false
+  - actor_type: old-regime
+    name: Provisional Government
+    description: Liberal-to-moderate-socialist government formed after the Tsar's abdication, led successively by Lvov and Kerensky.
+    role_in_arc: Held nominal power for eight months, lost legitimacy by continuing the war
+    defected: false
+  - actor_type: masses
+    name: Petrograd Soviet
+    description: Elected council of workers' and soldiers' deputies, meeting alongside the Provisional Government from February 1917.
+    role_in_arc: Formed the 'dual power' rival authority the Bolsheviks eventually captured
+    defected: false
+  - actor_type: military-defectors
+    name: Imperial Russian Army
+    description: Roughly 7 million men under arms by 1917, exhausted by the Brusilov offensive's 1916 casualties.
+    role_in_arc: Mass desertion and the Petrograd garrison's refusal to fire on crowds ended the monarchy
+    defected: true
+  - actor_type: old-regime
+    name: Nicholas II
+    description: Tsar of Russia since 1894, commanded the army in person from 1915.
+    role_in_arc: Abdicated March 2, 1917 after generals withdrew their support
+    defected: false
+tactics:
+  - tactic_type: general-strike
+    description: Petrograd factory strikes beginning February 23, 1917 grew from 90,000 to over 300,000 workers within four days.
+    prominence: primary, February phase
+  - tactic_type: armed-insurgency
+    description: Red Guards, sailors from Kronstadt, and Bolshevik-aligned soldiers occupied Petrograd's telegraph, bridges, and stations overnight on October 24-25.
+    prominence: primary, October phase
+  - tactic_type: parallel-institutions
+    description: Bolsheviks won majorities in the Petrograd and Moscow soviets by September 1917 and used soviet structures to coordinate the October action.
+    prominence: secondary
+resistance_type: hybrid
+phases:
+  - phase: old-regime-crisis
+    label: War and Famine
+    t_start: 0
+    t_end: 0.12
+    intensity: 40
+    reached: true
+    summary: Three years of war losses and urban food shortages hollow out support for the monarchy.
+    key_events:
+      - 1916 Brusilov offensive casualties exceed 500,000
+      - Petrograd bread rationing introduced late 1916
+  - phase: the-spark
+    label: February Days
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 60
+    reached: true
+    summary: Petrograd strikes escalate into a five-day uprising; the Petrograd garrison mutinies rather than fire on crowds, and the Tsar abdicates within a week.
+    key_events:
+      - Strikes begin February 23, 1917
+      - Nicholas II abdicates March 2, 1917
+  - phase: moderate-phase
+    label: Dual Power
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 45
+    reached: true
+    summary: The Provisional Government and the Petrograd Soviet govern in uneasy parallel while the war continues.
+    key_events:
+      - Lenin returns to Petrograd in the sealed train, April 1917
+      - July Days street violence in Petrograd
+  - phase: dual-power
+    label: Kornilov Affair to October Seizure
+    t_start: 0.48
+    t_end: 0.6
+    intensity: 65
+    reached: true
+    summary: General Kornilov's failed August coup arms the Bolshevik-aligned Red Guards, who occupy Petrograd's infrastructure and storm the Winter Palace in October with minimal resistance.
+    key_events:
+      - Kornilov affair, August 1917
+      - Bolsheviks win Petrograd Soviet majority, September 1917
+      - Winter Palace falls, October 25, 1917 (Julian calendar), fewer than ten deaths
+  - phase: radical-phase
+    label: Civil War
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 95
+    reached: true
+    summary: Red, White, and foreign interventionist armies fight across the former empire.
+    key_events:
+      - Civil war fighting 1918-1921
+      - Execution of the Romanov family, July 1918
+      - Allied intervention forces land at Archangel and Vladivostok
+  - phase: terror-virtue
+    label: Red Terror and War Communism
+    t_start: 0.72
+    t_end: 0.84
+    intensity: 85
+    reached: true
+    summary: The Cheka conducts mass executions and the state seizes grain by force, provoking peasant uprisings the Red Army crushes in turn.
+    key_events:
+      - Red Terror declared, September 1918
+      - Kronstadt rebellion crushed, March 1921
+  - phase: consolidation
+    label: New Economic Policy and the USSR
+    t_start: 0.92
+    t_end: 1
+    intensity: 50
+    reached: true
+    summary: The Bolsheviks defeat the last White armies, retreat from forced requisitioning under the NEP, and formalize one-party rule under the new Soviet Union.
+    key_events:
+      - New Economic Policy adopted, 1921
+      - USSR formally established, December 1922
+ate_its_children: true
+outcome: consolidated-autocracy
+peak_participation_pct: null
+peak_participation_display: over 300,000 Petrograd strikers by February 26, 1917
+crossed_participation_threshold: null
+military_defection: full
+foreign_intervention: direct-military
+duration_days: 2160
+death_toll: 7 to 12 million dead in the ensuing civil war, including famine and disease deaths
+death_toll_low: 7000000
+death_toll_high: 12000000
+regime_before: monarchy
+regime_after: one-party
+democratization_delta: -3
+success_factors:
+  - factor_key: military-defection
+    label: Security force defection
+    framework: chenoweth
+    status: Petrograd garrison refused orders to fire on crowds in February 1917; full army collapse followed by autumn
+    direction: favors-movement
+    base_rate: Security force defection is the single strongest predictor of movement success across both nonviolent and armed campaigns
+    rationale: The February uprising succeeded within days once garrison troops joined strikers rather than suppressing them; the October seizure met almost no armed resistance because loyal forces had evaporated.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: elite-fracture
+    label: Elite and military fracture
+    framework: skocpol
+    status: Generals withdrew support from the Tsar in March 1917; the officer corps later split between Red and White armies
+    direction: favors-movement
+    base_rate: Skocpol identifies state breakdown via war strain and elite defection as a precondition for social revolution, distinct from ideology or leadership
+    rationale: Skocpol's States and Social Revolutions uses 1917 Russia as a central case for revolution driven by international military pressure fracturing the state apparatus before any revolutionary organization could have engineered it alone.
+    sources:
+      - Skocpol, States and Social Revolutions (1979)
+  - factor_key: armed-campaign-rate
+    label: Armed campaign base rate
+    framework: chenoweth
+    status: The October seizure and subsequent civil war were armed; nonviolent civil resistance was not the primary mechanism after February
+    direction: indeterminate
+    base_rate: Chenoweth and Stephan find armed campaigns succeed in roughly 26 percent of cases historically, versus about 53 percent for primarily nonviolent campaigns
+    rationale: The Bolsheviks' success came less from mass civil resistance than from a small, disciplined party exploiting a state that had already collapsed via military defeat, complicating a clean armed-versus-nonviolent comparison.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+key_figures:
+  - name: Vladimir Lenin
+    role: Bolshevik Party leader, first head of the Soviet government
+    born: 1870
+    died: 1924
+    wikipedia: https://en.wikipedia.org/wiki/Vladimir_Lenin
+  - name: Alexander Kerensky
+    role: Provisional Government prime minister from July 1917
+    born: 1881
+    died: 1970
+    wikipedia: https://en.wikipedia.org/wiki/Alexander_Kerensky
+  - name: Leon Trotsky
+    role: Petrograd Soviet chairman, organizer of the October insurrection and the Red Army
+    born: 1879
+    died: 1940
+    wikipedia: https://en.wikipedia.org/wiki/Leon_Trotsky
+  - name: Nicholas II
+    role: Last Tsar of Russia, abdicated March 1917
+    born: 1868
+    died: 1918
+    wikipedia: https://en.wikipedia.org/wiki/Nicholas_II_of_Russia
+legacy_points:
+  - Established the Soviet Union, which endured as a global superpower until its 1991 dissolution.
+  - Provided the organizational template (vanguard party, soviets, armed insurrection) copied or adapted by later communist movements in China, Cuba, and Vietnam.
+  - Triggered the founding of the Third International in 1919, exporting Bolshevik organizing methods to Communist parties worldwide.
+  - The civil war's Red Terror and later Stalinist purges became the reference case for the 'revolution eats its own children' pattern of radical movements turning on their founders.
+related_revolt_slugs:
+  - iranian-revolution
+  - fall-of-communism-1989
+related_history_slugs:
+  - russian-revolution
+is_published: true
+perspectives:
+  - viewpoint: Bolshevik organizer
+    viewpoint_type: revolutionary
+    region_origin: europe
+    narrative: To Bolshevik organizers, October was not a coup but the rescue of a revolution the Provisional Government had betrayed by continuing an unpopular war and stalling land reform. The soviets, not a self-appointed cabinet, represented the workers and soldiers who had actually overthrown the Tsar.
+    key_arguments:
+      - The Provisional Government lacked a popular mandate and kept fighting a war soldiers had already abandoned
+      - Soviet power represented direct working-class representation absent from the liberal cabinet
+    sources: []
+    notable_quotes:
+      - text: All power to the soviets
+        speaker: Bolshevik slogan, 1917
+        context: Central campaign slogan through the spring and summer of 1917
+    emphasized:
+      - Land and peace as immediate popular demands
+      - The soviets as organic democratic bodies
+    omitted:
+      - The Bolsheviks' own minority status in the Constituent Assembly election of November 1917, which they dissolved by force in January 1918
+  - viewpoint: Structural historian
+    viewpoint_type: academic
+    region_origin: global
+    narrative: Structural historians read 1917 as a case where total war broke the Russian state's capacity to govern before any organized opposition could take credit. The Bolsheviks did not cause the collapse; they were the best-organized faction positioned to exploit it once it happened.
+    key_arguments:
+      - State breakdown from military strain preceded and enabled the political vacuum both revolutions filled
+      - The Bolsheviks succeeded through organizational discipline in a fluid, disintegrating environment rather than mass popular consensus
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - Fiscal and military collapse of the Tsarist state
+      - The narrowness of the October vote of support relative to Russia's population
+    omitted:
+      - The lived urgency of famine and casualties driving individual participants, which structural analysis tends to flatten
+media: []
+connections:
+  - target_slug: iranian-revolution
+    connection_type: parallel
+    description: Both replaced a monarchy with an ideologically disciplined minority movement that outmaneuvered broader, less organized coalitions during the transition.
+  - target_slug: arab-spring
+    connection_type: counter-example
+    description: Where 1917's Bolsheviks had a disciplined party ready to fill the power vacuum, most 2011 Arab Spring uprisings lacked an equivalent organized successor, producing different outcomes from a similar collapse of the old order.

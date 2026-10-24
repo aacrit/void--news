@@ -1,0 +1,8 @@
+source: src-cdm-pk-19891109
+locator: fn1
+url: https://www.chronik-der-mauer.de/system/files/dokument_pdf/1989_11_09_CdM_Dok_Schabowski_PK_Transkription_NEU_0.pdf
+read: 2026-10-09
+note: footnote 1 of the transcription
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+1 Angabe basierend auf der eigenen Aussage von Ralph T. Niemeyer. Eine Bestätigung von unabhängiger Seite liegt bislang nicht vor.

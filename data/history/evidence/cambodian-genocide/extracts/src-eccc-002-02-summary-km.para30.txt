@@ -1,0 +1,7 @@
+source: src-eccc-002-02-summary-km
+locator: para30
+url: https://d.dccam.org/Archives/Chronology/pdf/Summary_of_Judgement_Case_002-02_KH.pdf
+read: 2026-09-25
+note: the PDF text layer of this Khmer document substitutes and reorders some glyphs (ោម for ចាម, an added រ before វៀតណាម, spaces inside words); the passage is stored as the layer prints it, and the page image at the URL is the authority
+
+ដូរចនះ អងគជំន ំជក្មះយេ់រ ើញថា ឧក្កិដាកមែក្បេ័យពូជសាសន៍ និងឧក្កិដាកមែក្បឆ្ំងនឹង មន សសជាតិ ក្តូវបានក្បក្ពឹតតរេើជនជាតិោម រក្កាមទក្មង់ជាកា រធេើមន សសឃាត កា សម្លាប់ ងាគេ កា ោក់កនុងមនទី ំឃាំង កា រធេើោ ណកមែ កា រធេើទ កេប ករមនញរោយមូេរេត នរយបាយ និង កា រធេើទ កេប ករមនញរោយមូេរេត សាសន្ទ និងអំរពើអមន សសធម៌រ្សងៗរទៀតរក្កាមទក្មង់ ជាកា ជរមាៀសរោយបងេំ។

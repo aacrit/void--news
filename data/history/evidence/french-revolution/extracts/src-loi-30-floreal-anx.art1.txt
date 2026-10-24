@@ -1,0 +1,8 @@
+source: src-loi-30-floreal-anx
+locator: art1
+url: https://archive.org/download/LoiTraiteNoirRgimeColonies1802/LoiRelativeLaTraiteDesNoirsEtAuRgimeDesColonies1802_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (long s read as f and other misreadings included); line breaks collapsed to spaces, nothing else changed
+note: articles I and II, held together
+
+Art. I.*’ Dans les colonies restituées à la France en exécution du traité d’Amiens, du 6 germinal an X, l'esclavage sera maintenu conformément aux lois et ré- glemens antérieurs à 1789. II. Il en sera de même dans les autres colonies fran- çaises au-delà du Cap de Bonne-Espérance.

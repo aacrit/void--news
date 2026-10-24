@@ -1,0 +1,33 @@
+name: Load void --revolt content
+
+# Loads data/revolt/events/*.yaml into the revolt_* Supabase tables.
+# Idempotent (upsert on slug + delete-then-insert children), so safe to re-run
+# after editing YAML. Manual trigger only.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: load-revolt-content
+  cancel-in-progress: false
+
+# Rev 85 (audit 5 L4): least privilege. This job reads the repo and writes
+# nothing to it, so the token gets read access only.
+permissions:
+  contents: read
+
+jobs:
+  load:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install pyyaml supabase python-dotenv
+      - name: Load revolt content
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python -m pipeline.revolt.content_loader

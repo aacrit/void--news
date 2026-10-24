@@ -1,0 +1,8 @@
+source: src-icty-krstic-tj
+locator: para205
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+note: the opening sentences of paragraph 205
+
+205. Between 1,000 and 1,500 Bosnian Muslim men from the column fleeing through the woods, who had been captured and detained in Sandi}i Meadow, were bussed or marched to the Kravica Warehouse on the afternoon of 13 July 1995.487 At around 18.00 hours, when the warehouse was full, the soldiers started throwing grenades and shooting directly into the midst of the men packed inside.

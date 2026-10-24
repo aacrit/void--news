@@ -1,0 +1,9 @@
+source: src-madiou-1848-t3
+locator: p141
+url: https://archive.org/download/histoiredhaiti03madi/histoiredhaiti03madi_djvu.txt
+read: 2026-09-25
+note: tome III, page 141: the count of the victims and the heading of the proclamation; Madiou's ellipsis is his own
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+Cependant la proclamation qui annonça à la nation lextermination générale des Français que presque chaque bras avait exécutée, fut accueillie avec enthousiasme par les Haïtiens, modérés et ultra-révolutionnaires. , * Le nombre des victimes . hommes, femmes et enfans s'élevait à trois mille envirou. Liberté, | | -ou la Mort. J. DESSALINES, Gouverneur. Général. AUX HABITANS D HAÏTI. Des forfaits jusqu’alers inouïs faisaient frémir la nature; la mesure était à son comble. ........

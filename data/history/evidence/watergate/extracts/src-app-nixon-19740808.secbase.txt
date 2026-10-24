@@ -1,0 +1,7 @@
+source: src-app-nixon-19740808
+locator: secbase
+url: https://www.presidency.ucsb.edu/documents/address-the-nation-announcing-decision-resign-the-office-president-the-united-states
+read: 2026-10-09
+note: The American Presidency Project's text, from the Public Papers of the Presidents
+
+In the past few days, however, it has become evident to me that I no longer have a strong enough political base in the Congress to justify continuing that effort. As long as there was such a base, I felt strongly that it was necessary to see the constitutional process through to its conclusion, that to do otherwise would be unfaithful to the spirit of that deliberately difficult process and a dangerously destabilizing precedent for the future.

@@ -1,0 +1,153 @@
+## OPEN
+N: Two things about the name.
+N: It was invented in eighteen seventy seven, by a German geographer, about four hundred years after the thing it describes had stopped working. Nobody who ever travelled it called it that.
+N: And there was no road. There was no single route, no surface, no map. There was a shifting braid of paths that moved with the politics, and the cargo that mattered most on it was not silk.
+
+## TITLE
+N: The Silk Road. Second century before the common era, to the fifteenth century.
+
+## SCENE 1 | A failed diplomat
+N: One hundred and thirty eight years before the common era. A Han official named Zhang Qian leaves the capital with a hundred men and one instruction: find a people called the Yuezhi, somewhere far to the west, and make them allies against the nomads raiding the northern frontier.
+N: Within a year he is captured by exactly those nomads.
+N: He stays with them for ten years. He marries a Xiongnu woman. He has a son. Then he escapes, and continues west, because he still has the instruction.
+N: He reaches the Ferghana valley. He crosses into Bactria. He finds the Yuezhi, who are settled, comfortable, and completely uninterested in a war.
+N: He gets home in one hundred and twenty five, thirteen years after leaving, with one of his hundred men. The mission was a total failure.
+
+## ASIDE
+N: What he brought back instead was a report, and one detail in it changed the empire's picture of the world.
+N: In the markets of Bactria he had seen cloth and bamboo from Sichuan. Chinese goods, thousands of miles west, arrived through India, years before any Chinese official had gone looking.
+N: The routes already existed. What Zhang Qian did was not discover them. It was make them visible to a court that could fund them.
+
+## DOCUMENT | Zhang Qian (as recorded by Sima Qian) | Records of the Grand Historian | ~90 BCE
+N: The historian Sima Qian wrote his report down two generations later, and this is Zhang Qian describing what lay to the south.
+M: From the capital of the Yuezhi kingdom it is possible to go south to the kingdom of Shendu. The people there are numerous and sedentary, and their customs are similar to those of the Yuezhi.
+
+## REST
+
+## SCENE 2 | What actually moved
+N: Silk went west, and it is the cargo the west noticed, because it was the one the rich were spending on.
+
+## DOCUMENT | Pliny the Elder | Natural History, Book XII | 77 CE
+N: Pliny the Elder, in Rome, filed the complaint that every empire eventually files about its own imports.
+M: By the lowest reckoning, India, China, and the Arabian peninsula take from our empire one hundred million sesterces every year. That is the sum which our luxuries and our women cost us.
+
+## SCENE 3 | Paper, powder, and the compass
+N: But the freight that changed things was not the luxury.
+N: Paper went west. Gunpowder went west. The magnetic compass went west. Glassmaking went east, out of Rome and Persia. Cotton went in both directions. The Chinese lute, the pipa, is a Persian instrument that walked.
+N: And religions moved as cargo moves, with the people carrying the goods. Buddhism went from India into China across Central Asia over five centuries. Nestorian Christians reached the Tang capital in six hundred and thirty five, and carved a stone in Xi'an in seven eighty one to say so. Manichaeism came out of Persia and became a state religion on the steppe. Islam went east along the same roads.
+N: The geography was never one line. A northern route ran around the Taklamakan desert through the oasis towns, Turpan, Kucha, Kashgar, then climbed the Pamirs. A southern route hugged the other edge through Khotan, where jade had been traded since three thousand years before Christ. And there was a sea route, from Guangzhou to the Persian Gulf and down the coast of East Africa.
+N: At the Tang peak the overland network ran about six thousand four hundred kilometres, and the sea route roughly doubled it.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of one network, and none of them is a story about a road.
+
+## PERSPECTIVE | The Chinese court | victor
+N: The first is imperial, and it treats the whole thing as foreign policy.
+N: Zhang Qian's intelligence failure got a military answer. Between one hundred and twenty one and one hundred and nineteen, Han armies drove the Xiongnu out of the Hexi corridor, the strip of usable ground between the Tibetan plateau and the Gobi, and garrison towns went in behind them. Those four towns were the gateway for the next fifteen hundred years.
+N: The frame the court used was the tribute system. Foreign rulers sent embassies with gifts and received Chinese goods and Chinese titles in return.
+N: Which means that in the Chinese record there is no trade. There is the natural movement of goods toward the centre of civilisation, and merchants who are tolerated, occasionally celebrated, and never equals.
+N: The Protectorate of the Western Regions, set up in sixty before the common era, administered the oasis states of the Tarim basin as dependencies. Not partners. Dependencies.
+
+## PERSPECTIVE | The Sogdians | indigenous
+N: The second account belongs to the people who actually ran it, and almost nobody has heard of them.
+N: The Sogdians came from the Zerafshan valley, from Samarkand and Bukhara and Panjakent. They spoke an eastern Iranian language, wrote in a script out of Aramaic, and did business in at least seven languages. Their inscriptions turn up from Mongolia to the Black Sea.
+N: In the Tang capital they controlled the wine trade and the horse trade and much of the banking. They ran the postal relay stations. Their caravanserais stood in every oasis from Turpan to Merv.
+N: And Sogdiana was never an empire. It was a set of city states, each run by its own merchant families.
+N: That is the whole reason you have not heard of them. Empires write histories. City states write contracts.
+N: In nineteen oh seven an archaeologist pulled a bundle of letters out of a ruined Chinese watchtower. They are Sogdian, they date to about three hundred and thirteen, and they describe the collapse of a Chinese dynasty, the sack of a capital and the famine after it, from ground level, in commercial correspondence. Exchange rates. Prices. Debts. And a woman named Miwnay, stranded, writing to a husband who has not sent for her.
+
+## REST | short
+
+## PERSPECTIVE | The Buddhist transmission | bystander
+N: The third account follows the texts.
+N: In six twenty nine a monk called Xuanzang left the Tang capital illegally. Travel beyond the frontier was forbidden. He crossed the Gobi alone and nearly died of thirst. A Buddhist king in Turpan held him for a month, wanting him as a court monk. He went over the Tian Shan in summer, when the passes were barely open.
+N: He spent sixteen years in India, most of them at Nalanda, a monastic university in Bihar holding ten thousand monks.
+N: He came home in six forty five with six hundred and fifty seven Buddhist texts, a hundred and fifty relics and seven statues, and the emperor who had forbidden the journey received him as a hero.
+N: Then the part nobody plans. Xuanzang wrote up a hundred and thirty eight kingdoms in detail. Twelve hundred years later, when the British began the Archaeological Survey of India, they used that seventh century Chinese travel diary to find the Buddhist sites India had forgotten, including Nalanda itself.
+
+## PERSPECTIVE | The Islamic golden age | academic
+N: The fourth account turns on a battle that almost nobody counts as important.
+N: In seven fifty one an Abbasid army and a Tang army met at the Talas river, in what is now Kyrgyzstan. The Arabs won. Neither side followed it up. As battles go it decided nothing.
+N: Among the Chinese prisoners were papermakers.
+N: Within a few decades there were paper mills in Samarkand. Baghdad had one by seven ninety three. By nine hundred, paper had replaced papyrus and parchment across the Islamic world. By eleven hundred it was in Spain. By fourteen fifty Gutenberg was printing on it.
+N: And the Abbasid capital sat at the western hub of the whole network. The House of Wisdom, founded around eight thirty, translated Greek, Persian, Indian and Chinese works into Arabic. Euclid, Ptolemy, Aristotle, Galen and the Indian mathematician Aryabhata all passed through Baghdad on their way to medieval Europe.
+
+## PERSPECTIVE | The disease road | revisionist
+N: The fifth account says the network's most consequential export was not a technology.
+N: The caravanserais that sheltered merchants sheltered rats. The ships that carried pepper carried fleas.
+N: Genomic work on plague strains, published in the last decade, puts the origin of the Black Death in Central Asia, near the Tian Shan. At a cemetery by lake Issyk-Kul there is a spike of burials in thirteen thirty eight and thirteen thirty nine, and some of the tombstones name the cause. Pestilence.
+N: From there it travelled the trade network west. In thirteen forty six a Mongol army besieging a Genoese post in Crimea is reported to have thrown plague dead over the walls. Genoese ships left for Constantinople, then Messina, then everywhere.
+N: In seven years it killed somewhere between seventy five and two hundred million people. A third to a half of Europe, and comparable shares of the Middle East and Central Asia.
+N: The road that carried paper carried that.
+
+## REST
+
+## TURN | What each one leaves out
+N: And what each account cannot hold.
+N: The imperial account leaves out the traders. When every exchange is written down as tribute flowing to the centre, the people who actually moved the goods appear only as foreigners being permitted.
+N: The Sogdian account survives as contracts, which is precise about prices and silent about everything else. We know their exchange rates. We do not know what they thought they were building.
+N: The Buddhist account runs on a few extraordinary travellers, and a handful of heroic journeys is a bad model for a transmission that took five centuries and was carried mostly by people whose names are gone.
+N: The golden age account is usually told from the far end, as the route by which Greek learning reached Europe, which measures Baghdad by what it forwarded instead of what it made.
+N: And the disease account, told alone, turns a network into a villain. The connection that moved the plague is the same connection that moved paper. There is no version of this where you get one and not the other.
+
+## DOCUMENT | Marco Polo | Attributed deathbed remark | 1324
+N: One line, and a warning about it. Marco Polo is supposed to have said this as he was dying, and the only source is a chronicler writing it down afterwards, so it may be something he never said.
+M: I have not told half of what I saw.
+
+## CLOSE
+N: The network did not collapse. It atrophied.
+N: In fourteen ninety eight Vasco da Gama reached India by sea and cut out every middleman between Lisbon and Calicut. A ship carries more than a camel and does not need to be fed across a desert, and bulk trade went to the water.
+N: The name arrived four centuries after that, from a geographer in Berlin who never walked it.
+N: And the letters that a Sogdian woman wrote to a husband who had stopped answering spent sixteen hundred years in a watchtower on the frontier, in a language that had no readers left, before anyone opened them.
+
+## SAY
+Zhang Qian = JAHNG CHYEN
+Yuezhi = yoo-EH-jer
+Xiongnu = SHYUNG-noo
+Ferghana = fer-GAH-nah
+Bactria = BAK-tree-ah
+Sichuan = SESH-wahn
+Sima Qian = SUH-mah CHYEN
+Shendu = SHEN-doo
+Pliny = PLIN-ee
+sesterces = ses-TER-seez
+pipa = PEE-pah
+Nestorian = nes-TOR-ee-an
+Manichaeism = MAN-ih-kee-izm
+Taklamakan = tak-lah-mah-KAHN
+Turpan = TOOR-pahn
+Kucha = KOO-chah
+Kashgar = KASH-gar
+Pamirs = pah-MEERZ
+Khotan = hoh-TAHN
+Guangzhou = gwahng-JOH
+Hexi = HUH-shee
+Gobi = GOH-bee
+Tarim = tah-REEM
+Sogdians = SOG-dee-anz
+Sogdiana = sog-dee-AH-nah
+Zerafshan = zer-af-SHAHN
+Samarkand = SAM-ar-kand
+Bukhara = boo-KAR-ah
+Panjakent = PAN-jah-kent
+caravanserais = ka-rah-VAN-suh-rize
+Merv = MERV
+Miwnay = MIV-nay
+Xuanzang = shwen-DZAHNG
+Nalanda = nah-LAN-dah
+Bihar = bih-HAR
+Tian Shan = TYEN SHAHN
+Abbasid = ah-BAH-sid
+Talas = TAH-las
+Kyrgyzstan = KEER-giz-stan
+Euclid = YOO-klid
+Ptolemy = TOL-em-ee
+Galen = GAY-len
+Aryabhata = ar-yah-BAH-tah
+Issyk-Kul = iss-ik KOOL
+Genoese = jen-oh-EEZ
+Messina = meh-SEE-nah
+Vasco da Gama = VAS-koh dah GAH-mah
+Calicut = KAL-ih-kut

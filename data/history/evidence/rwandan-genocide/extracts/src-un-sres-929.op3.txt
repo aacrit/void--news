@@ -1,0 +1,7 @@
+source: src-un-sres-929
+locator: op3
+url: https://documents.un.org/doc/undoc/gen/n94/260/27/pdf/n9426027.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+3. Acting under Chapter VII of the Charter of the United Nations, authorizes the Member States cooperating with the Secretary-General to conduct the operation referred to in paragraph 2 above using all necessary means to achieve the humanitarian objectives set out in subparagraphs 4 (a) and (b) of resolution 925 (1994);

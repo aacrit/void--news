@@ -1,0 +1,8 @@
+source: src-gust-19161204-en
+locator: para26
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1916-12-04-DE-001
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+note: the translation is the online edition's own (sponsored by the Zoryan Institute), held here as the edition prints it, at most 150 words
+
+A large part of the Young Turkish Committee is of the opinion that the Ottoman Empire should only be built upon a purely Mohammedan, pan-Turkish foundation. Those inhabitants who are neither Mohammedan nor Turkish should be made to become so by force or, if that is not possible, annihilated.

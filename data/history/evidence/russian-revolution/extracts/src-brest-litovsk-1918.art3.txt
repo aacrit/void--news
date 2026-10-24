@@ -1,0 +1,8 @@
+source: src-brest-litovsk-1918
+locator: art3
+url: https://avalon.law.yale.edu/20th_century/bl34.asp
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+note: '(3)' in the text is the page's note mark: the map of Appendix I was not transmitted
+
+The territories lying to the west of the line determined by the contracting powers and which formerly belonged to Russia will no longer be under her sovereignty. The line determined upon is marked on the appended map (Appendix I), which is an important part of the present treaty of peace. (3) The precise location of this line will be worked out by a German-Russian commission. In respect to the mentioned territories no obligations towards Russia are to be considered as issuing from their formerly having belonged to that country. Russia gives up all interference in the internal affairs of the said territories. Germany and Austria-Hungary intend to determine the future fate of the said territories with the consent of their inhabitants.

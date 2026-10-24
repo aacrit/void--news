@@ -1,0 +1,7 @@
+source: src-app-lbj-19680331
+locator: secwithdraw
+url: https://www.presidency.ucsb.edu/documents/the-presidents-address-the-nation-announcing-steps-limit-the-war-vietnam-and-reporting-his
+read: 2026-10-09
+note: The American Presidency Project's text, from the Public Papers of the Presidents
+
+With America's sons in the fields far away, with America's future under challenge right here at home, with our hopes and the world's hopes for peace in the balance every day, I do not believe that I should devote an hour or a day of my time to any personal partisan causes or to any duties other than the awesome duties of this office--the Presidency of your country. Accordingly, I shall not seek, and I will not accept, the nomination of my party for another term as your President.

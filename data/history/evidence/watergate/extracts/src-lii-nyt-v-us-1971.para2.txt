@@ -1,0 +1,8 @@
+source: src-lii-nyt-v-us-1971
+locator: para2
+url: https://www.law.cornell.edu/supremecourt/text/403/713
+read: 2026-10-09
+note: the Legal Information Institute's web text of the opinion; the locator is LII's own paragraph number, printed at the head of each paragraph, not a U.S. Reports page
+note: the per curiam opinion
+
+'Any system of prior restraints of expression comes to this Court bearing a heavy presumption against its constitutional validity.' Bantam Books, Inc. v. Sullivan, 372 U.S. 58, 70, 83 S.Ct. 631, 639, 9 L.Ed.2d 584 (1963); see also Near v. Minnesota ex rel. Olson, 283 U.S. 697, 51 S.Ct. 625, 75 L.Ed. 1357 (1931). The Government 'thus carries a heavy burden of showing justification for the imposition of such a restraint.' Organization for a Better Austin v. Keefe, 402 U.S. 415, 419, 91 S.Ct. 1575, 1578, 29 L.Ed.2d 1 (1971). The District Court for the Southern District of New York in the New York Times case, 328 F.Supp. 324, and the District Court for the District of Columbia and the Court of Appeals for the District of Columbia Circuit, 446 F.2d 1327, in the Washington Post case held that the Government had not met that burden. We agree.

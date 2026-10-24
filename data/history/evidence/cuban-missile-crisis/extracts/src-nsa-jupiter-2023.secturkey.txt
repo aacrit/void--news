@@ -1,0 +1,7 @@
+source: src-nsa-jupiter-2023
+locator: secturkey
+url: https://nsarchive.gwu.edu/briefing-book/cuban-missile-crisis-nuclear-vault/2023-04-20/jupiter-missiles-and-cuban-missile
+read: 2026-10-07
+note: the editors' sentences on the dismantling in Turkey, April 1963; the page's HTML read as text
+
+On April 15, dismantling began in Turkey. The day before, as part of the arrangements, the Polaris submarine U.S.S. Sam Houston stopped at Izmir for a multi-day visit that provided positive media coverage. On April 25, 1963, Secretary of Defense McNamara sent a brief note to President Kennedy that the last Jupiter in Turkey “came down yesterday.”

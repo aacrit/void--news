@@ -1,0 +1,8 @@
+source: src-nsa-nato-2017
+locator: seclead
+url: https://nsarchive.gwu.edu/briefing-book/russia-programs/2017-12-12/nato-expansion-what-gorbachev-heard-western-leaders-early
+read: 2026-10-09
+note: the briefing book's opening sentence, cut at a comma before its list of document origins
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+U.S. Secretary of State James Baker’s famous “not one inch eastward” assurance about NATO expansion in his meeting with Soviet leader Mikhail Gorbachev on February 9, 1990, was part of a cascade of assurances about Soviet security given by Western leaders to Gorbachev and other Soviet officials throughout the process of German unification in 1990 and on into 1991,

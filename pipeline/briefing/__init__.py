@@ -2,9 +2,11 @@
 Daily Brief generator for void --news.
 
 Produces per-edition editorial briefs:
-  - TL;DR text (3-line summary for homepage display)
-  - Audio script (BBC World Service-style broadcast)
-  - Audio file (Gemini 2.5 Flash TTS, native multi-speaker)
+  - TL;DR text (the written brief for the homepage)
+  - Opinion column (+ its spoken editorial script)
+  - On Air radio show: radio_script_generator (the rundown) ->
+    radio_producer (Kokoro voices, original music, chapters). The legacy
+    single-call audio script + produce_audio() remain the fallback.
 
 Called as step 7d in the main pipeline, after editorial triage (7c)
 and before cluster storage (8).

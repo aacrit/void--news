@@ -1,0 +1,7 @@
+source: src-alaska-1919
+locator: secclaxton
+url: https://archive.org/download/influenzainalas00apprgoog/influenzainalas00apprgoog_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+Dr. Claxton. Probably it is mostly among the natives. It seems to have been more severe among them. For* instance, in Nome there were about 300 natives. One hundred and seventy-six of those had died at our last report from Nome — more than half of them — and in the Nome district 750 had been reported to us by the 28th of December. It seems to have been more severe among the adult men and women than among the children. For that reason, large numbers of orphan children are left, and they must be cared for in some way.

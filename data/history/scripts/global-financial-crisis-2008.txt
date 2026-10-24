@@ -1,0 +1,134 @@
+## OPEN
+N: The story people tell is that two thousand and eight was a shock, a storm out of a clear sky, an accident nobody could have priced in.
+N: Warren Buffett had already called the instruments at the center of it "financial weapons of mass destruction" in two thousand and two, six years before Lehman Brothers fell.
+N: Raghuram Rajan, the IMF's chief economist, told a room of central bankers in two thousand and five that the financial system carried a real risk of a catastrophic meltdown, and was, by his own account, received as a Luddite.
+N: The commission that spent two years investigating the wreckage did not call any of it an accident.
+
+## TITLE
+N: The Global Financial Crisis. September fifteenth, two thousand and eight.
+
+## SCENE 1 | A Manhattan courtroom, one forty five in the morning
+N: One forty five in the morning, September fifteenth, two thousand and eight. In a Manhattan federal court, lawyers file the bankruptcy petition for Lehman Brothers.
+N: The bank was founded in eighteen fifty. It survived the Civil War, two world wars, and the Great Depression.
+N: It lists six hundred thirty nine billion dollars in assets and six hundred nineteen billion dollars in debt. It is the largest bankruptcy filing in United States history.
+N: By the time markets open in Asia, the short term credit that moves through the global economy every day has begun to freeze.
+
+## SCENE 2 | The machine, ten years in the building
+N: Mortgage brokers wrote home loans to borrowers who could not document their income.
+N: Investment banks bought those loans by the thousand, bundled them into mortgage backed securities, sliced the securities into collateralized debt obligations, and sold the pieces to pension funds, town councils, and banks from Dusseldorf to Reykjavik.
+N: Credit rating agencies stamped much of this paper triple A, the same grade as United States Treasury bonds.
+N: On top of it sat credit default swaps, a market of side bets on whether the mortgages would pay, grown into the tens of trillions of dollars.
+
+## DOCUMENT | Warren Buffett | Berkshire Hathaway Chairman's Letter to Shareholders | 2002
+N: Buffett had already written down what he thought of it, in his letter to Berkshire Hathaway's shareholders.
+M: In our view, derivatives are financial weapons of mass destruction, carrying dangers that, while now latent, are potentially lethal.
+
+## ASIDE
+N: Almost no one who was buying stopped. The market kept growing for six more years.
+
+## REST
+
+## SCENE 3 | Eighteen months of dominoes
+N: The dominoes fell for eighteen months. In March two thousand and eight, the Federal Reserve backstopped the fire sale of Bear Stearns to JPMorgan with a guarantee of roughly twenty nine billion dollars.
+N: On September seventh, the Treasury seized Fannie Mae and Freddie Mac, which stood behind about half of all American mortgages.
+N: Lehman fell on September fifteenth. The next day the government lent eighty five billion dollars to the insurer AIG, which had written credit default swaps it could not honor. The commitment eventually reached one hundred eighty two billion.
+N: That same day, a large money market fund broke the buck, its shares falling below one dollar, and a quiet run began on the three point five trillion dollar market that businesses use to make payroll.
+
+## SCENE 4 | Washington, September 29, 2008
+N: The House of Representatives rejects a seven hundred billion dollar bank rescue. The Dow Jones Industrial Average falls seven hundred seventy seven point six eight points that afternoon, its largest single day point drop to that date, erasing more than one trillion dollars in value.
+N: Four days later, Congress reverses itself and passes the Troubled Asset Relief Program.
+N: Treasury Secretary Henry Paulson, a former chief executive of Goldman Sachs, and Federal Reserve Chairman Ben Bernanke, a scholar of the Great Depression, inject capital directly into the banks.
+N: Bernanke later testifies that twelve of the thirteen most important American financial institutions had been at risk of failing within weeks.
+
+## REST
+
+## SCENE 5 | Reykjavik and beyond
+N: The contagion does not respect borders. Iceland's three largest banks, holding assets nearly ten times the size of the country's economy, collapse within a single week in October two thousand and eight.
+N: World trade falls roughly twelve percent in two thousand and nine, the steepest drop since the nineteen thirties.
+N: The International Labour Organization estimates that global unemployment rises by more than thirty million.
+N: In the United States alone, about eight point seven million jobs disappear, unemployment reaches ten percent, and roughly ten million families lose their homes to foreclosure.
+
+## DOCUMENT | Queen Elizabeth II | Remark at the opening of a new building at the London School of Economics | November 5, 2008
+N: Two months after Lehman fell, Queen Elizabeth the Second visited the London School of Economics and asked the economists there the question everyone was asking.
+F: Why did nobody notice it?
+
+## ASIDE
+N: Buffett had noticed it in two thousand and two. Rajan had noticed it in two thousand and five and been called a Luddite for it.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of one collapse, and each one answers a different question about what actually happened.
+
+## PERSPECTIVE | The Deregulation Account | academic
+N: The Financial Crisis Inquiry Commission's majority report, released in January two thousand and eleven, located the cause in a system that had been deregulated, over leveraged, and left to police itself.
+N: The nineteen ninety nine repeal of the Glass Steagall Act tore down the wall between deposit taking banks and investment banks, and a two thousand act exempted credit default swaps from regulation entirely.
+N: In two thousand and four, the Securities and Exchange Commission loosened its leverage limits, letting the five biggest investment banks borrow more than thirty dollars for every dollar of their own capital.
+N: Alan Greenspan, who had chaired the Federal Reserve for nineteen years and championed self regulation, told Congress in October two thousand and eight that he had found a flaw in his own understanding of how markets worked.
+N: The Commission's own verdict, after two years and more than seven hundred witnesses, was blunt.
+M: We conclude this financial crisis was avoidable. The crisis was the result of human action and inaction, not of Mother Nature or computer models gone haywire.
+
+## PERSPECTIVE | The Firefighters | victor
+N: Henry Paulson, Ben Bernanke, and Timothy Geithner, the three officials most identified with the rescue, later wrote a joint book arguing they had been handed a burning building, not the matches.
+N: By September two thousand and eight the panic was self fulfilling. Healthy institutions were failing because lenders, terrified of the next Lehman, refused to lend to anyone.
+N: Bernanke had spent his academic career studying how the Federal Reserve's passivity turned the nineteen twenty nine crash into the Great Depression.
+N: Unemployment peaked at ten percent, painful, but far short of the twenty five percent of the nineteen thirties, and the banks repaid the rescue program with interest.
+N: Bernanke testified to the commission investigating the crisis about exactly how close the system had come to collapse.
+M: Out of maybe the thirteen most important financial institutions in the United States, twelve were at risk of failure within a period of a week or two.
+
+## PERSPECTIVE | Main Street and Occupy | vanquished
+N: On September seventeenth, two thousand and eleven, a few hundred people occupied Zuccotti Park, a block from Wall Street.
+N: Their slogan, we are the ninety nine percent, named a grievance that the bailout had crystallized. The banks that crashed the economy had been rescued with public money, and no one had gone to jail.
+N: The main program for homeowners reached only a fraction of the families it promised to help, while Treasury injected capital into the banks within weeks. Roughly ten million families lost their homes to foreclosure.
+N: Richard Fuld, who had run Lehman into the largest bankruptcy in American history, had taken home close to five hundred million dollars in the years before it filed.
+N: Neil Barofsky, the inspector general appointed to oversee the bailout, put the suspicion at the center of all of it into one sentence.
+M: The suspicions that the system is rigged in favor of the largest banks and their elites are true.
+
+## PERSPECTIVE | The Global Periphery | revisionist
+N: The crisis was made in the mortgage markets of the United States and Europe, but the bill arrived everywhere.
+N: When Western banks pulled money home to cover their losses, capital fled the developing world. A study for the Asian Development Bank estimated that developing Asia alone lost nine point six trillion dollars in financial assets in two thousand and eight.
+N: World trade fell about twelve percent in two thousand and nine, and migrant workers sent home less money to families who depended on it.
+N: China met the collapse of its export markets with a stimulus of four trillion yuan, roughly five hundred eighty six billion dollars, and the G twenty, seating China, India, and Brazil, replaced the G seven as the venue where the crisis was managed.
+N: Brazil's president, Luiz Inacio Lula da Silva, stood beside Britain's prime minister in two thousand and nine and said exactly who he blamed.
+M: This crisis was caused by the irrational behaviour of white people with blue eyes, who before the crisis appeared to know everything and now demonstrate that they know nothing.
+
+## PERSPECTIVE | The Causes Debate | academic
+N: Historians and economists agree on the sequence of the collapse and disagree, still, on its root.
+N: Ben Bernanke's rival explanation blamed a global saving glut. Surpluses from China, oil exporters, and aging economies poured into American assets and drove down long term interest rates, inflating the housing bubble from the outside.
+N: Peter Wallison, in a solo dissent from the Commission's report, argued the true cause was government housing policy, the affordable housing mandates on Fannie Mae and Freddie Mac.
+N: Critics answered that mortgages packaged by private Wall Street firms defaulted at many times the rate of those bought by Fannie and Freddie, and that the worst subprime lenders operated outside those mandates entirely.
+N: Wallison put his own conclusion as plainly as it can be put.
+M: The sine qua non of the financial crisis was U.S. government housing policy.
+
+## REST | short
+
+## TURN | What each one leaves out
+N: And here is what each account cannot hold.
+N: The Deregulation account has little to say about the borrowers and brokers who falsified mortgage applications, or about the global savings glut pouring in from outside the country it blames.
+N: The Firefighters account is quiet about moral hazard, about too big to fail entrenched rather than ended, and about the officials' own regulatory roles before the crisis they had to put out.
+N: The Main Street and Occupy account has little patience for the legal difficulty of prosecuting recklessness that was not, technically, fraud, and it does not mention that the rescue program it condemns was repaid at a profit.
+N: The Global Periphery account counts the developing world's losses precisely, and says less about the emerging markets that recovered faster than the West did, or the debt China's own stimulus quietly built up.
+N: And the Causes Debate account, generous to every theory, is the quietest of all about plain fraud at the level of the individual loan, the one explanation none of the three competing schools wants to own.
+
+## REST
+
+## CLOSE
+N: Treasury eventually recovered its investment in the banks, at a profit.
+N: Not one senior Wall Street executive went to prison for the crisis.
+N: The distance between those two facts became the politics of the next decade.
+
+## SAY
+Lehman = LEE-man
+Fuld = FYOOLD
+Paulson = PAWL-suhn
+Bernanke = ber-NAHN-kee
+Geithner = GYT-ner
+Greenspan = GREEN-span
+Rajan = RAH-jahn
+Barofsky = buh-ROF-skee
+Wallison = WAL-ih-suhn
+Zuccotti = zoo-KOT-ee
+Reykjavik = RAY-kyuh-vik
+Dusseldorf = DOOS-el-dorf
+Glass Steagall = glass STEE-gul
+Luiz Inacio Lula da Silva = loo-EEZ ee-NAH-see-oh LOO-lah dah SEEL-vah

@@ -1,0 +1,8 @@
+source: src-trc-special-index
+locator: item2
+url: https://www.justice.gov.za/trc/special/index.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+note: the index's entry for the business hearings, the second hearing type in its list
+
+Business Hearings Johannesburg, 11 - 13 Nov 1997

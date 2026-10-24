@@ -1,0 +1,7 @@
+source: src-ictr-akayesu-tj
+locator: para83
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-96-4/trial-judgements/en/980902.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+83. In the early 1930s, Belgian authorities introduced a permanent distinction by dividing the population into three groups which they called ethnic groups, with the Hutu representing about 84% of the population, while the Tutsi (about 15%) and Twa (about 1%) accounted for the rest. In line with this division, it became mandatory for every Rwandan to carry an identity card mentioning his or her ethnicity. The Chamber notes that the reference to ethnic background on identity cards was maintained, even after Rwanda's independence and was, at last, abolished only after the tragic events the country experienced in 1994.

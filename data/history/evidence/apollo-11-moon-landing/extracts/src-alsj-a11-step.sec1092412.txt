@@ -1,0 +1,7 @@
+source: src-alsj-a11-step
+locator: sec1092412
+url: https://www.apollojournals.org/alsj/a11/a11.step.html
+read: 2026-10-03
+note: the transmission at 109:24:12 ground elapsed time; the page's HTML read as text
+
+109:24:12 Armstrong: Okay. I'm going to step off the LM now. (Long Pause)

@@ -1,0 +1,8 @@
+source: src-unsc-418-1977
+locator: secdate
+url: https://documents.un.org/doc/resolution/gen/nr0/297/01/pdf/nr029701.pdf
+read: 2026-10-09
+note: the text is the scan's OCR layer, whitespace collapsed; its glyph errors are kept as printed (e.g. 'ail' for 'all')
+note: the heading; 'Novemher' is the layer's reading of 'November'
+
+Resolution 418 (1977) of 4 Novemher 1977
