@@ -1,15 +1,15 @@
 {
-  "builtAt": "2026-10-21T16:42:37.369040Z",
+  "builtAt": "2026-10-24T15:00:23.570261Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "f8b1b9a6-ae8d-4985-a9f4-aee7a0119a1d",
-      "title": "Putin says US citizen Stephen Hubbard freed: Russian media",
+      "id": "f01e8711-edfd-4338-b839-bc2756e0f6da",
+      "title": "France protests: 70,000 police deployed as Paris closes major museums",
       "sentences": [
         {
-          "text": "In addition, American envoy Steve Witkoff, who is on a visit to Russia, said, \"I would like to thank you on behalf of our president, and I thank you on behalf of the U.S.\"Putin reportedly said that Hubbard was at Pulkovo Airport in Saint Petersburg, adding that Witkoff had thanked the Russian leader for the release.",
-          "rule": "E-14",
-          "message": "summary quotes \"i would like to thank you on behalf of our president, and i thank you \", which appears in none of the source articles: quote it as written or paraphrase it"
+          "text": "Elsewhere, authorities and rattled shopkeepers geared up for potential new street violence.",
+          "rule": "E-16",
+          "message": "sentence opens on \"Elsewhere\", announcing another story: \"Elsewhere, authorities and rattled shopkeepers geared up for potential new street violence\""
         }
       ],
       "points": [],
