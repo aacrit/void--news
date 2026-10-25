@@ -1,0 +1,38 @@
+[
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 20,
+  "a": {
+   "title": "Wagner brothers begin new NBA chapter on different paths",
+   "summary": "After five years, brothers Franz and Moritz Wagner are no longer playing together for the Orlando Magic. In the new NBA season, their separation will likely mean the new &quot;German&quot; team is the Charlotte Hornets.",
+   "link": "https://www.dw.com/en/wagner-brothers-begin-new-nba-chapter-on-different-paths/a-79712668?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Das Ende der Wagners - auf getrennten Wegen in die neue NBA-Saison",
+   "summary": "Nach fünf Jahren spielen die Brüder Franz und Moritz Wagner nicht mehr gemeinsam für die Orlando Magic. In der neuen NBA-Saison haben sie ganz unterschiedliche Rollen. Neuer &quot;deutscher Klub&quot; sind die Charlotte Hornets.",
+   "link": "https://www.dw.com/de/das-ende-der-wagners-auf-getrennten-wegen-in-die-neue-nba-saison/a-79709596?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "es",
+  "score": 22,
+  "a": {
+   "title": "What to know as Brazilians choose between Lula and Bolsonaro in tense presidential runoff",
+   "summary": "Brazilians are set on Sunday to choose between leftist incumbent President Luiz Inacio Lula da Silva and far-right candidate Flavio Bolsonaro in the runoff vote of a deeply polarizing presidential election, and one which will determine whether the US significantly expands its growing influence in Latin America.",
+   "link": "https://www.france24.com/en/americas/20261025-what-to-know-as-brazilians-choose-between-lula-and-bolsonaro-in-tense-presidential-runoff",
+   "published": "Sun, 25 Oct 2026 06:05:34 GMT"
+  },
+  "b": {
+   "title": "Entre polarización y desinformación: ¿cómo llega Brasil al balotaje?",
+   "summary": "Brasil elige este domingo quién será su presidente durante los próximos cuatro años. El balotaje enfrenta a Luiz Inácio Lula da Silva y Flávio Bolsonaro, en una contienda marcada por la polarización y la desinformación. El ganador asumirá el cargo el 5 de enero de 2027. Lula da Silva y Bolsonaro cerraron este 24 de octubre sus campañas electorales. ¿Cómo llega el país a las urnas? Lo conversamos c",
+   "link": "https://www.france24.com/es/video/20261025-entre-polarizaci%C3%B3n-y-desinformaci%C3%B3n-c%C3%B3mo-llega-brasil-al-balotaje",
+   "published": "Sun, 25 Oct 2026 01:21:06 GMT"
+  }
+ }
+]
