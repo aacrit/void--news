@@ -1,0 +1,100 @@
+{
+ "collected_at": "2026-10-25T13:23:27Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16235969/Nadia-Sawalha-sues-ITV-axed-Loose-Women-Palestine-views.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Nadia Sawalha sues ITV after being axed from Loose Women over pro-Palestine views",
+      "published": "Sun, 25 Oct 2026 09:42:28 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/nadia-sawalha-taking-itv-court-37808248",
+      "title": "Nadia Sawalha 'taking ITV to court' after claiming she was 'bullied' over Palestine views",
+      "published": "Sun, 25 Oct 2026 12:59:02 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16229511/Manchester-United-vs-Bournemouth-Liverpool-vs-Brighton-Premier-League-LIVE-fire-Michael-Carrick-searches-response-Reds-battle-form-Seagulls.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Manchester United vs Bournemouth and Liverpool vs Brighton - Premier League LIVE: Under-fire Michael Carrick searches for response as Reds battle in-form Seagulls",
+      "published": "Sun, 25 Oct 2026 13:19:37 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/man-utd-fernandes-dropped-carrick-37808422",
+      "title": "Bruno Fernandes DROPPED as Man Utd boss Michael Carrick reacts to midweek outburst",
+      "published": "Sun, 25 Oct 2026 12:34:44 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16236957/meghan-thomas-markle-letter-abused-girls.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "I know you've abused young girls... you will never see Archie and Lilibet: Meghan's final letter to father Thomas",
+      "published": "Sun, 25 Oct 2026 11:42:34 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/meghan-dad-thomas-markle-letter-37808026",
+      "title": "Meghan 'told Thomas Markle Sr she knew about child sex allegations' in final letter to dad",
+      "published": "Sun, 25 Oct 2026 11:55:11 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 119,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/whatever-our-enemies-do-erdogans-son-rallies-diaspora-network-in-europe-as-german-intelligence-warns-of-ankaras-spying-on-dissidents/",
+      "title": "Erdogan’s son vows to stand against enemies at diaspora rally in Germany",
+      "published": "Mon, 12 Oct 2026 22:01:54 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 311,
+    "left": 10
+   }
+  }
+ }
+}
