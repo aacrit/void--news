@@ -1,36 +1,36 @@
 {
- "builtAt": "2026-10-26T17:57:32.322972Z",
- "briefCreatedAt": "2026-10-26T17:57:17.018959+00:00",
+ "builtAt": "2026-10-27T17:28:27.751961Z",
+ "briefCreatedAt": "2026-10-27T17:28:13.983887+00:00",
  "products": {
   "card_headline": {
    "sentences": 20,
-   "anchored": 2,
-   "checked": 1,
+   "anchored": 5,
+   "checked": 0,
    "anchorTypes": [
     "number",
     "quote"
    ],
    "byAnchor": {
-    "number": 2
+    "number": 5
    },
-   "coverage": 5.0
+   "coverage": 0.0
   },
   "card_summary": {
-   "sentences": 40,
-   "anchored": 8,
-   "checked": 1,
+   "sentences": 42,
+   "anchored": 12,
+   "checked": 0,
    "anchorTypes": [
     "number",
     "quote"
    ],
    "byAnchor": {
-    "number": 7,
-    "quote": 1
+    "number": 9,
+    "quote": 3
    },
-   "coverage": 2.5
+   "coverage": 0.0
   },
   "points": {
-   "sentences": 20,
+   "sentences": 21,
    "anchored": 0,
    "checked": 0,
    "anchorTypes": [
@@ -39,7 +39,7 @@
    ],
    "coverage": 0.0,
    "byAnchor": {},
-   "machinePointsExcluded": 72
+   "machinePointsExcluded": 71
   },
   "tldr": {
    "sentences": 29,
@@ -103,25 +103,20 @@
  "evidence": {
   "shipped": 20,
   "freshKnown": true,
-  "fresh": 0,
+  "fresh": 1,
   "states": {
-   "confirmable": 4,
-   "index cap below writer window": 5,
-   "stub rows, card not fresh": 11
+   "confirmable": 1,
+   "index cap below writer window": 7,
+   "stub rows, card not fresh": 12
   }
  },
  "audit": {
   "shipped": {
    "cannot confirm": {
-    "E-13 misattached": 1,
     "E-14 absent": 1
    }
   },
-  "bench": {
-   "cannot confirm": {
-    "E-14 absent": 1
-   }
-  }
+  "bench": {}
  },
  "run": {
   "brief": {
@@ -134,18 +129,18 @@
     "tldr": true
    }
   },
-  "startedAt": "2026-10-26T17:48:11Z",
+  "startedAt": "2026-10-27T17:20:10Z",
   "stage2": {
    "candidates": 35,
    "critique_read": 0,
-   "critique_unread": 35,
+   "critique_unread": 34,
    "cut_sentences": 0,
    "cuts_by_reason": {},
    "dropped": 0,
-   "kept_failing": 15,
+   "kept_failing": 9,
    "regenerated": 0,
    "reviewed": true,
-   "fresh": 0
+   "fresh": 1
   }
  },
  "corrections": {
@@ -167,5 +162,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-10-26T17:57:41Z"
+ "computedAt": "2026-10-27T17:28:39Z"
 }

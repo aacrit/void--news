@@ -12,14 +12,16 @@
  "stage2": {
   "candidates": 35,
   "critique_read": 0,
-  "critique_unread": 35,
+  "critique_unread": 34,
   "cut_sentences": 0,
   "cuts_by_reason": {},
   "dropped": 0,
-  "fresh_ids": [],
-  "kept_failing": 15,
+  "fresh_ids": [
+   "41083d54-a6ce-4232-864e-5ee9a03f5409"
+  ],
+  "kept_failing": 9,
   "regenerated": 0,
   "reviewed": true
  },
- "startedAt": "2026-10-26T17:48:11Z"
+ "startedAt": "2026-10-27T17:20:10Z"
 }
