@@ -31,9 +31,18 @@
 /* Phones: sit above the tab bar, never on it (the card is offered on arrival
    now, while the tab bar is the reader's first control). */
 @media (max-width: 767px) {
+  /* Pinned to both gutters. `left: 50%` leaves a fixed box only half the
+     viewport to shrink-fit into, so on a 390px phone the card was 195px
+     wide, its button broke over two lines and it stood in the middle of the
+     feed like a tower (2026-10-28). */
   .onb-invite {
+    left: var(--space-4);
+    right: var(--space-4);
+    max-width: none;
+    transform: translateY(140%);
     bottom: calc(env(safe-area-inset-bottom, 0px) + var(--tab-bar-height) + var(--space-3));
   }
+  .onb-invite--visible { transform: translateY(0); }
 }
 .onb-invite__grain { display: none; }
 .onb-invite__content { display: flex; align-items: center; gap: var(--space-4); flex: 1; flex-wrap: wrap; }
