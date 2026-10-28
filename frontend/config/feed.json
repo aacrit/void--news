@@ -1,8 +1,9 @@
 {
   "displayed": 20,
-  "candidates": 35,
+  "moreStories": 10,
+  "candidates": 45,
   "pool": 100,
   "minDisplayable": 20,
   "leadBand": 10,
-  "archiveCap": 20
+  "archiveCap": 30
 }

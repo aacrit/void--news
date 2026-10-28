@@ -368,7 +368,7 @@ adds nothing to the state that anything reads back.
 
 | Section | State |
 |---|---|
-| **News** (daily feed) | Live. Top 20, two-stage pipeline, 35-cluster bench. |
+| **News** (daily feed) | Live. Top 20 cards plus a "More stories" band of up to 10 headline links (ranks 21-30, 2026-10-28), two-stage pipeline, 45-cluster bench. |
 | **On Air** (daily radio) | Live. Kokoro three voices, chapters, mastered to -16 LUFS. |
 | **The Brief** (TL;DR + Opinion) | Live. One story per paragraph. |
 | **Weekly** | Live. **Vol. I, No. 1 published 2026-09-20**, the first issue on the Sunday cadence and the first ever to carry departments. Aug 24-30 is kept as the pilot. |

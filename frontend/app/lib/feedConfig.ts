@@ -11,6 +11,9 @@ import cfg from "../../config/feed.json";
 
 /** Cards rendered on the homepage. */
 export const FEED_DISPLAYED: number = cfg.displayed;
+/** The "More stories" band under the cards: up to this many of the next ranks,
+ *  as headline links to their printed /story/ pages. Never required. */
+export const FEED_MORE_STORIES: number = cfg.moreStories;
 /** Stage 2 bench size: clusters summarized, critiqued and validated. */
 export const FEED_CANDIDATES: number = cfg.candidates;
 /** Build fails below this many displayable stories. */
