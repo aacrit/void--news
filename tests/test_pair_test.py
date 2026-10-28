@@ -75,6 +75,21 @@ check("every pair is (higher-rated, lower-rated) on the roster", all(
        "right": 80, "far-right": 90}[pt.roster()[l]["political_lean_baseline"]]
     for _, r, l in pt.PAIRS))
 
+# One article, one observation. Collections overlap, and the stored partner can
+# change between them: one Haaretz article was stored against three Jerusalem
+# Post articles. Counted per URL pair, that was three observations of one text.
+def _m(score, r, l):
+    return {"score": score, "right": {"url": r}, "left": {"url": l}}
+picked = pt.one_to_one([_m(25, "r1", "l1"), _m(22, "r2", "l1"), _m(20, "r3", "l1"),
+                        _m(19, "r2", "l2")])
+check("matches are one to one across collections, best score first",
+      [(x["right"]["url"], x["left"]["url"]) for x in picked] == [("r1", "l1"), ("r2", "l2")],
+      str(picked))
+loaded = pt.load_matches(pt.MIN_SCORE)
+check("no stored article is counted twice on either side", all(
+    len({m[side]["url"] for m in ms}) == len(ms)
+    for ms in loaded.values() for side in ("right", "left")))
+
 if failures:
     print(f"\nFAIL  {len(failures)} pair-test check(s)")
     sys.exit(1)

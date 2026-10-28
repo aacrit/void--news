@@ -130,19 +130,41 @@ def collect() -> int:
 # --------------------------------------------------------------------------- score
 
 def load_matches(min_score: int) -> dict[str, list[dict]]:
-    """Every stored match at or above the bar, de-duplicated by URL pair: the
-    feeds overlap between collections, so the same pair is seen repeatedly."""
-    seen = set()
-    out: dict[str, list[dict]] = {pid: [] for pid, _, _ in PAIRS}
+    """Every stored match at or above the bar, ONE TO ONE across collections.
+
+    The matcher is greedy one-to-one within a single collection, but the feeds
+    overlap between collections and the partner on the other side changes: one
+    Haaretz article was stored against three Jerusalem Post articles, one Nordic
+    Monitor piece against three Daily Sabah pieces. De-duplicating by URL PAIR
+    let each of those count as a separate observation, which inflated n and
+    weighted one article several times. The same greedy best-first rule now runs
+    over the union, so no article on either side is used twice."""
+    best: dict[str, dict[tuple[str, str], dict]] = {pid: {} for pid, _, _ in PAIRS}
     for path in sorted(glob.glob(str(OUT_DIR / "*.json"))):
         doc = json.loads(pathlib.Path(path).read_text(encoding="utf-8"))
         for pid, rec in doc.get("pairs", {}).items():
+            if pid not in best:
+                continue
             for m in rec.get("matches", []):
-                key = (m["right"]["url"], m["left"]["url"])
-                if m["score"] < min_score or key in seen or pid not in out:
+                if m["score"] < min_score:
                     continue
-                seen.add(key)
-                out[pid].append(m)
+                key = (m["right"]["url"], m["left"]["url"])
+                if key not in best[pid] or m["score"] > best[pid][key]["score"]:
+                    best[pid][key] = m
+    return {pid: one_to_one(list(cands.values())) for pid, cands in best.items()}
+
+
+def one_to_one(matches: list[dict]) -> list[dict]:
+    """Greedy best-first by match score; each URL on either side used once.
+    Ties break on the URL pair so the result does not depend on file order."""
+    used_r, used_l, out = set(), set(), []
+    for m in sorted(matches, key=lambda m: (-m["score"], m["right"]["url"], m["left"]["url"])):
+        r, l = m["right"]["url"], m["left"]["url"]
+        if r in used_r or l in used_l:
+            continue
+        used_r.add(r)
+        used_l.add(l)
+        out.append(m)
     return out
 
 
