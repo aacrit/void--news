@@ -98,12 +98,15 @@ jobs:
           key: void-state-v1-${{ github.run_id }}
           restore-keys: |
             void-state-v1-
+      # Existence is tested in the shell, never with hashFiles(): hashFiles reads
+      # the whole file, and on 2026-10-28 it timed out at 120 s on the 218 MB
+      # phrase DB, which skipped saving that day's counts and failed the run.
       - name: Bootstrap state DB (cold cache — durable snapshot, else legacy backup)
-        if: hashFiles('pipeline_state.db') == ''
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -e
+          if [ -f pipeline_state.db ]; then echo "State DB restored from cache."; exit 0; fi
           echo "No cached state DB; restoring from the latest durable state snapshot."
           restored=""
           # Primary (Supabase-free): the gzipped SQLite state each prior run uploads.
@@ -145,10 +148,10 @@ jobs:
           restore-keys: |
             void-phrases-v1-
       - name: Bootstrap phrase counts DB (cold cache)
-        if: hashFiles('phrase_counts.db') == ''
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          if [ -f phrase_counts.db ]; then echo "Phrase counts restored from cache."; exit 0; fi
           for rid in $(gh run list --workflow=pipeline.yml --status success -L 12 \
                          --json databaseId --jq '.[].databaseId'); do
             if gh run download "$rid" -n void-phrase-snapshot --dir _psnap 2>/dev/null \
@@ -358,14 +361,16 @@ jobs:
       # fast primary; this artifact is the resilience floor the cold-cache
       # bootstrap restores from, replacing the Supabase pg_dump. Gzipped ~40 MB.
       - name: Snapshot state DB
+        id: statesnap
         if: always()
         run: |
           if [ -f pipeline_state.db ]; then
             gzip -c pipeline_state.db > pipeline_state.db.gz
             ls -lh pipeline_state.db.gz
+            echo "gz=true" >> "$GITHUB_OUTPUT"
           fi
       - name: Upload state snapshot
-        if: always() && hashFiles('pipeline_state.db.gz') != ''
+        if: always() && steps.statesnap.outputs.gz == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: void-state-snapshot
@@ -373,19 +378,24 @@ jobs:
           retention-days: 90
           if-no-files-found: warn
 
+      - name: Check phrase counts DB
+        id: pcfile
+        if: always()
+        run: |
+          if [ -f phrase_counts.db ]; then echo "present=true" >> "$GITHUB_OUTPUT"; fi
       - name: Save phrase counts DB to cache
-        if: always() && hashFiles('phrase_counts.db') != ''
+        if: always() && steps.pcfile.outputs.present == 'true'
         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: phrase_counts.db
           key: void-phrases-v1-${{ github.run_id }}
       - name: Snapshot phrase counts DB
-        if: always() && hashFiles('phrase_counts.db') != ''
+        if: always() && steps.pcfile.outputs.present == 'true'
         run: |
           gzip -c phrase_counts.db > phrase_counts.db.gz
           ls -lh phrase_counts.db phrase_counts.db.gz
       - name: Upload phrase counts snapshot
-        if: always() && hashFiles('phrase_counts.db.gz') != ''
+        if: always() && steps.pcfile.outputs.present == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: void-phrase-snapshot

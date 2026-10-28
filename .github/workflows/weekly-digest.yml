@@ -125,11 +125,13 @@ jobs:
             void-state-v1-
 
       - name: Bootstrap state DB (cold cache — durable snapshot)
-        if: hashFiles('pipeline_state.db') == ''
+        # Tested in the shell: hashFiles() reads the whole file and timed out
+        # on a 218 MB database in pipeline.yml on 2026-10-28.
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -e
+          if [ -f pipeline_state.db ]; then echo "State DB restored from cache."; exit 0; fi
           echo "No cached state DB; restoring from the latest durable state snapshot."
           for rid in $(gh run list --workflow=pipeline.yml --status success -L 12 \
                          --json databaseId --jq '.[].databaseId'); do
