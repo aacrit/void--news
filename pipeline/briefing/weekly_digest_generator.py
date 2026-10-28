@@ -2427,19 +2427,24 @@ def generate_weekly_digest(editions=None, week_offset=0):
             used_ids.update(c.get("id") for c in t["clusters"] if c.get("id"))
 
         # Cover image: freely licensed sources only (Wikimedia Commons first).
-        cover_image = None
-        if covers and covers[0].get("cluster_id"):
+        def _pick_cover_image(lead):
+            if not (lead and lead.get("cluster_id")):
+                return None
             print(f"\n  ── COVER IMAGE ──")
-            cover_image = find_cover_image_for_cluster(
-                covers[0]["cluster_id"],
-                covers[0].get("headline", ""),
+            found = find_cover_image_for_cluster(
+                lead["cluster_id"],
+                lead.get("headline", ""),
                 supabase_client=supabase,
-                alt_title=covers[0].get("cluster_title", ""),
+                alt_title=lead.get("cluster_title", ""),
             )
-            if cover_image:
-                print(f"    ✓ {cover_image['source']}: {cover_image['url'][:80]}...")
+            if found:
+                found["cluster_id"] = lead["cluster_id"]
+                print(f"    ✓ {found['source']}: {found['url'][:80]}...")
             else:
                 print(f"    No suitable cover image found")
+            return found
+
+        cover_image = _pick_cover_image(covers[0] if covers else None)
 
         # Section 2: Opinions (5-6 topics × rotating leans)
         print(f"\n  ── THE OPINIONS ──")
@@ -2678,6 +2683,15 @@ def generate_weekly_digest(editions=None, week_offset=0):
         print(f"    {len(covers)} cover(s), {len(opinions)} column(s), "
               f"{len((recap or {}).get('stories') or [])} recap item(s), "
               f"editorial {'kept' if weekly_opinion else 'dropped'} after the check")
+        # The cover picture belongs to the lead that SURVIVED the check. Issue
+        # #30 printed a photograph of the White House Correspondents' Dinner
+        # shooting over "Black Sea Shipping Under Drone Assault": the picture
+        # was chosen for a lead the check then dropped, and stayed on the cover
+        # of the story that moved up into its place.
+        lead_now = covers[0] if covers else None
+        if (cover_image or {}).get("cluster_id") != (lead_now or {}).get("cluster_id"):
+            print("    [cover] the lead changed in the check; the cover picture is chosen again")
+            cover_image = _pick_cover_image(lead_now)
 
         # Section 7: Audio.
         print(f"\n  ── AUDIO ──")

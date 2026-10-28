@@ -179,14 +179,20 @@ check("and reports its net gain and days to the ceiling",
       r1["daily_gain"] == r1["rows_after"] - r1["rows_before"] > 0
       and r1["days_to_ceiling"] is not None,
       str({k: r1.get(k) for k in ("daily_gain", "days_to_ceiling")}))
-conn.execute("insert into pc_run values ('2026-10-02T11:00:00Z', 2000000, 2370000, 400000, 30000, 850)")
+# Fixtures are placed relative to the ceiling, so raising it on a measurement
+# does not rewrite them.
+far, near = pc.DAILY_MAX_ROWS - 5_550_000, pc.DAILY_MAX_ROWS - 5_000_000
+conn.execute("insert into pc_run values ('2026-10-02T11:00:00Z', ?, ?, 400000, 30000, 850)",
+             (far - 370000, far))
 proj = pc.projection(conn)
-check("+370k a day from 2.37M is about 15 days to 8M, no warning",
-      proj["days_to_ceiling"] == round((pc.DAILY_MAX_ROWS - 2370000) / 370000, 1)
+check("+370k a day with 5.55M of room is about 15 days to the ceiling, no warning",
+      proj["days_to_ceiling"] == round(5_550_000 / 370000, 1)
       and not proj["projection_warn"], str(proj))
-conn.execute("insert into pc_run values ('2026-10-03T11:00:00Z', 2370000, 3000000, 700000, 70000, 850)")
-check("+630k a day from 3M is under 14 days and warns", pc.projection(conn)["projection_warn"])
-conn.execute("insert into pc_run values ('2026-10-04T11:00:00Z', 3000000, 2900000, 100000, 200000, 850)")
+conn.execute("insert into pc_run values ('2026-10-03T11:00:00Z', ?, ?, 700000, 70000, 850)",
+             (near - 630000, near))
+check("+630k a day with 5M of room is under 14 days and warns", pc.projection(conn)["projection_warn"])
+conn.execute("insert into pc_run values ('2026-10-04T11:00:00Z', ?, ?, 100000, 200000, 850)",
+             (near, near - 100000))
 proj = pc.projection(conn)
 check("a shrinking table projects no ceiling and does not warn",
       proj["days_to_ceiling"] is None and not proj["projection_warn"], str(proj))
@@ -208,6 +214,19 @@ finally:
 after = conn.execute("select count(*) from outlet_phrase_counts").fetchone()[0]
 check("past the ceiling the run records nothing", rep["halted"] and not phrases_for(conn, "b"))
 check("and prunes nothing to fit", after == before, f"{before} -> {after}")
+
+# A halted table still runs its ordinary retention rules, so it can come back
+# under the ceiling by itself (it could not: run #412 halted from 10-23 on).
+conn = fresh()
+pc.record_daily(conn, [{"source_id": "a", "full_text": BODY}], day0)
+before = conn.execute("select count(*) from outlet_phrase_counts").fetchone()[0]
+pc.DAILY_MAX_ROWS = before - 1
+try:
+    rep = pc.record_daily(conn, [{"source_id": "b", "full_text": BODY}], "2026-10-15T11:00:00Z")
+finally:
+    pc.DAILY_MAX_ROWS = saved
+check("past the ceiling, retention still runs and a table it clears records again",
+      rep["pruned"] > 0 and not rep["halted"], str({k: rep.get(k) for k in ("pruned", "halted")}))
 
 # --- 6. The IP invariant holds on the daily path ----------------------------
 conn = fresh()
