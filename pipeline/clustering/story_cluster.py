@@ -429,31 +429,63 @@ def _generate_cluster_summary(articles: list[dict], title: str = "") -> str:
             return True
         return bool(keywords & _title_keywords(a.get("title", "") or ""))
 
-    def _collect(min_len: int, on_topic_only: bool) -> list[str]:
+    def _norm(t: str) -> str:
+        return re.sub(r"[^a-z0-9]+", " ", (t or "").lower()).strip()
+
+    # A Google News item's "summary" is its own headline. Shipped as a card
+    # summary it repeats the head word for word (run #412, 2026-10-27: two of
+    # the twenty, both failing S-02 and S-03 on the served page).
+    member_titles = {_norm(a.get("title", "")) for a in articles} | {_norm(title)}
+    member_titles.discard("")
+
+    def _echoes_a_title(text: str) -> bool:
+        n = _norm(text)
+        return any(n == t or (len(n) <= len(t) + 25 and (n.startswith(t) or t.startswith(n)))
+                   for t in member_titles)
+
+    def _lead(a: dict) -> str:
+        # The opening of the article itself, for a member whose feed blurb is
+        # missing or only its headline. Same sanitizer as the blurb; the
+        # summary post-checks trim it to the card's word budget.
+        body = (a.get("full_text", "") or "").strip()
+        if len(body) < 200:
+            return ""
+        return body[:900]
+
+    def _collect(min_len: int, on_topic_only: bool, leads: bool) -> list[str]:
         out = []
         for a in articles:
             if on_topic_only and not _on_topic(a):
                 continue
-            s = (a.get("summary", "") or "").strip()
-            if s and len(s) >= min_len:
+            s = (a.get("full_text", "") or "")[:900] if leads else (a.get("summary", "") or "")
+            s = s.strip()
+            if leads and len(s) < 200:
+                continue
+            if s and len(s) >= min_len and not _echoes_a_title(s):
                 out.append(s)
         return out
 
-    # On-topic members first; widen to all members only if none qualify.
-    summaries = (
-        _collect(40, True) or _collect(40, False)
-        or _collect(15, True) or _collect(15, False)
-    )
-    if summaries:
-        summaries.sort(key=len, reverse=True)
+    def _best(candidates: list[str], floor: int) -> str:
         # sanitize_summary strips CMS/RSS scaffolding + mid-word truncation the
         # raw member excerpt carries (the null-tier tail ships this verbatim);
         # _sanitize_editorial then enforces the em-dash / significance rules.
-        for s in summaries:
-            cleaned = sanitize_summary(s)
-            if len(cleaned) >= 40:
-                return _sanitize_editorial(cleaned)
-        return _sanitize_editorial(sanitize_summary(summaries[0]))
+        cleaned = [c for c in (sanitize_summary(x) for x in candidates)
+                   if len(c) >= floor and not _echoes_a_title(c)]
+        return _sanitize_editorial(max(cleaned, key=len)) if cleaned else ""
+
+    # Feed blurbs first, on-topic members before the rest. A blurb has to
+    # carry a card (250 chars, about two sentences); when none does, the
+    # opening of an on-topic article does, and only then a short blurb.
+    for leads in (False, True):
+        for on_topic_only in (True, False):
+            got = _best(_collect(40, on_topic_only, leads), 250)
+            if got:
+                return got
+    for min_len in (40, 15):
+        for on_topic_only in (True, False):
+            got = _best(_collect(min_len, on_topic_only, leads=False), 40)
+            if got:
+                return got
     # No usable summary — fall back to an on-topic title, then any title.
     for on_topic_only in (True, False):
         for a in articles:

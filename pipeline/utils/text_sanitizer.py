@@ -77,9 +77,9 @@ def _publisher_names() -> frozenset[str]:
 _EDITORIAL_PREFIX_RE = re.compile(
     r"^\s*(?:"
     r"INSIGHT|ANALYSIS|OPINION|EXCLUSIVE|EXCLUSIVELY|COMMENT|EDITORIAL|"
-    r"WATCH|LIVE|UPDATE|BREAKING|DEVELOPING|SPECIAL REPORT|FACT CHECK|"
-    r"EXPLAINER|PROFILE|FEATURE|RECAP|REVEALED"
-    r")\s*[:,\-–—]\s*",
+    r"WATCH|LIVE(?: NOW| UPDATES?)?|UPDATE|BREAKING(?: NEWS)?|DEVELOPING|"
+    r"SPECIAL REPORT|FACT CHECK|JUST IN|EXPLAINER|PROFILE|FEATURE|RECAP|REVEALED"
+    r")\s*[:,|\-–—]\s*",
     re.IGNORECASE,
 )
 
@@ -271,13 +271,38 @@ _BOILERPLATE_RES = [
 _UNICODE_JUNK_RE = re.compile(r"[​-‏‪-‮﻿]")
 
 
+# Words that are camel-cased in their own right. The seam splitter below must
+# not read them as two words glued by HTML stripping: run #412 (2026-10-27)
+# shipped "i Phone", "Mac Book Pro" and "i Mac" on the front page.
+_CAMEL_WORDS = frozenset(w.lower() for w in (
+    "iPhone", "iPad", "iPod", "iMac", "iCloud", "iTunes", "iOS", "MacBook",
+    "AirPods", "AirTag", "AirPlay", "FaceTime", "YouTube", "LinkedIn",
+    "PayPal", "WhatsApp", "WeChat", "TikTok", "PlayStation", "JavaScript",
+    "BlackRock", "SoftBank", "FedEx", "DoorDash", "JetBlue", "GoFundMe",
+    "AstraZeneca", "GlaxoSmithKline", "ExxonMobil", "BlackBerry", "PepsiCo",
+    "HarperCollins", "OpenAI", "ChatGPT", "DeepSeek", "DeepMind", "SpaceX",
+    "PricewaterhouseCoopers", "SharePoint", "PowerPoint", "GitHub",
+    "eBay", "eBook", "QAnon", "WikiLeaks", "MasterCard", "StarLink",
+))
+
+
+def _split_camel_seam(m: "re.Match[str]") -> str:
+    word = m.group(0)
+    if word.lower().strip(".,;:!?'\"()") in _CAMEL_WORDS:
+        return word
+    # Split at a seam only when the letters before it form a run of four or
+    # more: a shorter lead is a name or brand prefix (McDonald, DeSantis,
+    # MacArthur, LaGuardia, iPhone), not a glued word.
+    return re.sub(r"([A-Za-z]?[a-z]+)(?=[A-Z][a-z])",
+                  lambda r: r.group(1) + (" " if len(r.group(1)) >= 4 else ""),
+                  word)
+
+
 def _fix_missing_spaces(text: str) -> str:
     """Insert a space at obvious lowercase|Uppercase and word|date joins that
     scrapers produce when stripping HTML ('lostSubmitted', 'magazineonLinkedIn',
-    'firstThe')."""
-    # letter followed by capital that starts a new word run
-    text = re.sub(r"(?<=[a-z])(?=[A-Z][a-z])", " ", text)
-    return text
+    'firstThe'). Leaves real camel-cased words and Mc/Mac/De/La names alone."""
+    return re.sub(r"\S*[a-z][A-Z][a-z]\S*", _split_camel_seam, text)
 
 
 def _repair_runons(text: str) -> str:
@@ -349,9 +374,18 @@ _PHOTO_CREDIT_RE = re.compile(
     re.IGNORECASE,
 )
 
+# Colon dateline: "CAIRO: ...", "KARACHI/CAIRO: ..." (Arab News, Dawn, The
+# Nation). All caps, at least three letters, so "US: ..." is left alone.
+_DATELINE_COLON_RE = re.compile(
+    r"^\s*[A-Z][A-Z.'\-]{2,}(?:[/ ][A-Z][A-Z.'\-]{1,}){0,3}\s*:\s+(?=[A-Z\"“‘'])"
+)
+# Section kicker before a pipe: "SPECIAL REPORT | ...", "ANALYSIS | ...".
+_KICKER_PIPE_RE = re.compile(r"^\s*[A-Z][A-Z&' ]{2,30}\s*\|\s+")
+
 _LEADING_CREDIT_RES = [
     _BYLINE_RE, _PHOTO_CREDIT_RE,
     _DATELINE_STRONG_RE, _DATELINE_DATE_RE, _DATELINE_EMDASH_RE,
+    _DATELINE_COLON_RE, _KICKER_PIPE_RE,
     _OUTLET_SLUG_RE,
 ]
 

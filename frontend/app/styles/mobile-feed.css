@@ -87,7 +87,7 @@
   align-items: start;
 }
 .msc__hero-grid > .msc__headline--hero { grid-column: 1; grid-row: 1; }
-.msc__hero-grid > .msc__summary { grid-column: 1; grid-row: 2; -webkit-line-clamp: 4; }
+.msc__hero-grid > .msc__summary { grid-column: 1; grid-row: 2; -webkit-line-clamp: 6; }
 .msc__hero-grid > .msc__sigil-wrapper--hero { grid-column: 2; grid-row: 1 / span 2; }
 
 /* Sigil stacks vertically in mobile headlines */
@@ -140,8 +140,10 @@
   /* CEO 2026-08-09: secondary cards now carry a short summary. The headline
      alone was not enough context to decide whether to open a story. Clamped
      to 2 lines (the hero keeps 3) so cards stay compact. Inherits the box /
-     font / color from .msc__summary above. */
-  -webkit-line-clamp: 2;
+     font / color from .msc__summary above. Four lines since 2026-10-28: two
+     lines of a 390px column is about fourteen words, which read as a one-line
+     summary and cut most of them mid-clause. */
+  -webkit-line-clamp: 4;
   margin-top: var(--space-1);
   margin-bottom: 0;
 }
