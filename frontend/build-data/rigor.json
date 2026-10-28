@@ -1,36 +1,36 @@
 {
- "builtAt": "2026-10-27T17:28:27.751961Z",
- "briefCreatedAt": "2026-10-27T17:28:13.983887+00:00",
+ "builtAt": "2026-10-28T18:14:22.730481Z",
+ "briefCreatedAt": "2026-10-28T18:13:37.957866+00:00",
  "products": {
   "card_headline": {
    "sentences": 20,
-   "anchored": 5,
-   "checked": 0,
+   "anchored": 3,
+   "checked": 1,
+   "byAnchor": {
+    "number": 3
+   },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "byAnchor": {
-    "number": 5
-   },
-   "coverage": 0.0
+   "coverage": 5.0
   },
   "card_summary": {
-   "sentences": 42,
+   "sentences": 34,
    "anchored": 12,
-   "checked": 0,
+   "checked": 2,
+   "byAnchor": {
+    "number": 9,
+    "quote": 5
+   },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "byAnchor": {
-    "number": 9,
-    "quote": 3
-   },
-   "coverage": 0.0
+   "coverage": 5.9
   },
   "points": {
-   "sentences": 21,
+   "sentences": 19,
    "anchored": 0,
    "checked": 0,
    "anchorTypes": [
@@ -39,7 +39,7 @@
    ],
    "coverage": 0.0,
    "byAnchor": {},
-   "machinePointsExcluded": 71
+   "machinePointsExcluded": 76
   },
   "tldr": {
    "sentences": 29,
@@ -103,11 +103,11 @@
  "evidence": {
   "shipped": 20,
   "freshKnown": true,
-  "fresh": 1,
+  "fresh": 2,
   "states": {
-   "confirmable": 1,
-   "index cap below writer window": 7,
-   "stub rows, card not fresh": 12
+   "confirmable": 5,
+   "index cap below writer window": 2,
+   "stub rows, card not fresh": 13
   }
  },
  "audit": {
@@ -129,18 +129,18 @@
     "tldr": true
    }
   },
-  "startedAt": "2026-10-27T17:20:10Z",
+  "startedAt": "2026-10-28T18:05:51Z",
   "stage2": {
    "candidates": 35,
    "critique_read": 0,
-   "critique_unread": 34,
+   "critique_unread": 31,
    "cut_sentences": 0,
    "cuts_by_reason": {},
    "dropped": 0,
-   "kept_failing": 9,
+   "kept_failing": 8,
    "regenerated": 0,
    "reviewed": true,
-   "fresh": 1
+   "fresh": 4
   }
  },
  "corrections": {
@@ -162,5 +162,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-10-27T17:28:39Z"
+ "computedAt": "2026-10-28T18:14:35Z"
 }
