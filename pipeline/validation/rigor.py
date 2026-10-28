@@ -237,9 +237,11 @@ def displayable(c: dict) -> bool:
 
 
 def shipped_cards(feed: dict) -> list[dict]:
-    """The cards the front page renders: the first `displayed` displayable."""
+    """What the front page lets a reader open: the first `displayed` displayable
+    cards, then the `moreStories` band below them (2026-10-28). The band links
+    to the same printed pages, so it is held to the same floors."""
     cfg = _load(FEED_CONFIG, {}) or {}
-    n = int(cfg.get("displayed") or 20)
+    n = int(cfg.get("displayed") or 20) + int(cfg.get("moreStories") or 0)
     return [c for c in (feed.get("clusters") or []) if displayable(c)][:n]
 
 

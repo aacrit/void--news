@@ -200,13 +200,21 @@ fl, _ = floors_for(tree([card(cid2, CARD_OK + " " + point_rival)], {cid2: pre_re
 check("the same attachment on the CARD is enforced (E-13 contexts)",
       any("E-13 misattached" in x for x in fl["F-1"]), str(fl["F-1"]))
 
-bench = [card(f"22222222-0000-0000-0000-0000000000{i:02d}") for i in range(21)]
-bench[20]["summary"] = planted_number
+# Shipped = the displayed cards plus the "More stories" band (feed.json). The
+# first bench card past both is audited and reported, never failed.
+_cfg = json.loads(rigor.FEED_CONFIG.read_text(encoding="utf-8"))
+n_ship = int(_cfg["displayed"]) + int(_cfg.get("moreStories") or 0)
+bench = [card(f"22222222-0000-0000-0000-0000000000{i:02d}") for i in range(n_ship + 1)]
+bench[n_ship]["summary"] = planted_number
 recs = {c["id"]: pre_record(c["id"]) for c in bench}
 fl, audit = floors_for(tree(bench, recs))
-check("a card past the displayed twenty is reported, never failed",
-      not fl["F-1"] and any(f["status"] == "confirmed" for f in audit["cards"][20]["findings"])
-      and not audit["cards"][20]["shipped"], str(fl["F-1"]))
+check("a card past the shipped set is reported, never failed",
+      not fl["F-1"] and any(f["status"] == "confirmed" for f in audit["cards"][n_ship]["findings"])
+      and not audit["cards"][n_ship]["shipped"], str(fl["F-1"]))
+bench[n_ship - 1]["summary"] = planted_number
+fl, _ = floors_for(tree(bench, recs))
+check("a card in the More stories band is held to F-1 like a displayed card",
+      bool(fl["F-1"]), str(fl["F-1"]))
 
 # ===================================================================== F-2
 print("\n-- F-2: evidence exists for every shipped card")

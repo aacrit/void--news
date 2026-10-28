@@ -13,6 +13,29 @@ because it sends the next session chasing a fixed bug.
 
 ## Blocked on a CEO decision
 
+**The pair test has a number, and it says stop (2026-10-28).** First scoring,
+after the matcher was made one to one across collections
+(`data/roster/pair-test-scores/2026-10-28.json`). Pooled AUC **0.443** over 106
+same-event pairs (CI 0.396 to 0.495), against the programme's 0.65 stop line.
+Daily Mail against the Mirror: 0.458 over 95 pairs, and **67 of the 95 score
+both articles exactly 50**: the text instrument reads nothing in either. On the
+26 pairs it does split, it puts the Mail further right 9 times, by a mean of 3
+points. Israel is unmeasured (all 33 refused at robots.txt from the container
+that scored it; re-run it from an Actions runner). India and Turkey are under
+the 20-pair floor. So the rule in `OUTLET-BASELINE-PROGRAMME-2026-09-22.md`
+fires for the CURRENT engine: keep the roster label as a label. Open for the
+CEO: whether to re-run the same pairs against the derived lexicon (the 2026-10-28
+Fable review's phase 2) before the programme is closed, since this test scored
+the hand lexicon, not the derived one.
+
+**More stories band, phase 1 of 30 (shipped 2026-10-28; phase 2 is a CEO
+call).** `feed.json` `moreStories: 10`, bench 45, archive 30: ranks 21 to 30 as
+headline links under the cards (`MoreStories.tsx`), held to F-1/F-2 as shipped
+cards. Phase 2, a flat 30, changes the locked top-20 decision and is gated on 14
+runs of phase 1: thin cards in ranks 21 to 30 at 40% or less and the cut rate
+no more than 1.5 times today's. Six History promos say "twenty stories" and
+must be re-stitched before it.
+
 **Block 5a is DECIDED (CEO Decision 8, 2026-10-02): the pronoun scrubber is
 retired.** The 3k post-check no longer rewrites we/our/us/my; a sentence in the
 first person outside quotation marks is cut whole, by E-03's own rule

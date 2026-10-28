@@ -30,6 +30,7 @@ def check_python_matches_json() -> list[str]:
     cfg = json.loads(CONFIG.read_text())
     pairs = [
         ("displayed", feed_config.DISPLAYED),
+        ("moreStories", feed_config.MORE_STORIES),
         ("candidates", feed_config.CANDIDATES),
         ("pool", feed_config.POOL),
         ("minDisplayable", feed_config.MIN_DISPLAYABLE),

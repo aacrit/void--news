@@ -64,7 +64,8 @@ import SkyboxBanner from "./SkyboxBanner";
 // FloatingPlayer is now mounted globally in MobileNav (layout.tsx) so it renders
 // on every route, including /weekly. It reads the global AudioProvider directly.
 import { hapticConfirm, hapticLight } from "../lib/haptics";
-import { FEED_DISPLAYED, FEED_LEAD_BAND } from "../lib/feedConfig";
+import { FEED_DISPLAYED, FEED_LEAD_BAND, FEED_MORE_STORIES } from "../lib/feedConfig";
+import MoreStories from "./MoreStories";
 const UnifiedOnboarding = dynamic(() => import("./UnifiedOnboarding"), { ssr: false });
 import { useStoryKeyboardNav } from "./KeyboardShortcuts";
 const KeyboardShortcutsOverlay = dynamic(() => import("./KeyboardShortcuts").then(m => ({ default: m.KeyboardShortcutsOverlay })), { ssr: false });
@@ -751,6 +752,13 @@ function HomeContentInner({
     [filteredStories],
   );
 
+  // The "More stories" band: the next ranks after the cards, as headline links
+  // to their printed pages (MoreStories filters to stories that have one).
+  const moreStories = useMemo(
+    () => filteredStories.slice(EDITION_FEED_SIZE, EDITION_FEED_SIZE + FEED_MORE_STORIES),
+    [filteredStories],
+  );
+
   // Deep link: ?story=<id> opens that story's inline deep dive once the feed
   // has loaded. Used by void --revolt to jump into a story's popout. No-ops
   // silently if the story isn't in the loaded feed.
@@ -1008,6 +1016,7 @@ function HomeContentInner({
                     kbdFocusIndex={kbdFocusIndex}
                     editionMeta={editionMeta}
                   />
+                  <MoreStories stories={moreStories} startRank={EDITION_FEED_SIZE + 1} />
 
                   {/* World overflow — international stories that didn't make
                       the homepage cut. Rendered inline as one continuous scroll
@@ -1086,6 +1095,8 @@ function HomeContentInner({
                   )}
 
                   {/* World overflow removed 2026-06-02 single-feed. */}
+
+                  <MoreStories stories={moreStories} startRank={EDITION_FEED_SIZE + 1} />
 
                   {/* The wordmark used to render in this line as well as in
                       the footer immediately below it, with nothing between the
