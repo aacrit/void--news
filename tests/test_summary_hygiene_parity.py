@@ -12,6 +12,12 @@ defect the floor pass was written to stop.
 The fixture strings here are asserted IDENTICALLY by frontend/test/labels.test.mjs.
 Adding a case to one file means adding it to the other.
 
+The second half is Python only: the rule-based summary the floor writes when
+Gemini is unavailable (every card from 2026-10-21, a 402 on the key). Run #412
+served "i Phone" and "Mac Book Pro", "CAIRO:" and "SPECIAL REPORT |" openers,
+"BREAKING NEWS:" and "LIVE NOW:" heads, and two cards whose summary was their
+own headline again. Each is a fixture below.
+
 Run: python tests/test_summary_hygiene_parity.py
 """
 import sys
@@ -40,7 +46,48 @@ CLEAN = [
 ]
 
 
+def rule_based_cases() -> list[tuple[str, bool]]:
+    from utils.text_sanitizer import normalize_headline, sanitize_summary
+    from clustering.story_cluster import _generate_cluster_summary
+
+    head = "Israelis are voting on whether to oust Netanyahu in first election"
+    body = ("Israelis voted on Tuesday in a parliamentary election. Polls opened "
+            "at 7 a.m. and close at 10 p.m. The opposition is led by a former "
+            "prime minister. Turnout at midday was 32 percent, the elections "
+            "committee said, slightly higher than at the last vote. Results are "
+            "expected overnight.")
+    echo = _generate_cluster_summary(
+        [{"title": head, "summary": head, "full_text": body}], head)
+    product = sanitize_summary("Apple unveiled a new MacBook Pro and iMac, and "
+                               "said the iPhone line would follow in the spring.")
+    return [
+        ("a brand's own capital is not a glued word",
+         "MacBook Pro and iMac" in product and "iPhone" in product),
+        ("a glued word is still split",
+         "lost Submitted" in sanitize_summary("The bill was lostSubmitted to the "
+                                              "committee on Tuesday for review.")),
+        ("a colon dateline is stripped",
+         sanitize_summary("KARACHI/CAIRO: Officials from three nations met in "
+                          "Tehran on Monday to discuss the war.").startswith("Officials")),
+        ("a kicker before a pipe is stripped",
+         sanitize_summary("SPECIAL REPORT | Uganda says it has contained the "
+                          "outbreak, but cases in Kenya remain.").startswith("Uganda")),
+        ("BREAKING NEWS: leaves the head",
+         normalize_headline("BREAKING NEWS: Xi sends condolences over the death "
+                            "of Fukuda").startswith("Xi")),
+        ("LIVE NOW: leaves the head",
+         normalize_headline("LIVE NOW: Senate candidate holds a press "
+                            "conference in Detroit").startswith("Senate")),
+        ("a blurb that is its own headline gives way to the article's opening",
+         echo.startswith("Israelis voted") and echo.endswith(".")),
+    ]
+
+
 def main() -> int:
+    rb_failed = 0
+    for name, ok in rule_based_cases():
+        print(f"{'PASS' if ok else 'FAIL'}  rule-based summary: {name}")
+        rb_failed += 0 if ok else 1
     failed = 0
     for s in RAW_EXCERPT:
         if not is_raw_excerpt(s):
@@ -52,7 +99,7 @@ def main() -> int:
             print(f"FAIL  python blanks what the TypeScript keeps: {s[:60]!r}")
     total = len(RAW_EXCERPT) + len(CLEAN)
     print(f"{total - failed}/{total} hygiene fixtures agree with the TypeScript")
-    return 1 if failed else 0
+    return 1 if failed or rb_failed else 0
 
 
 if __name__ == "__main__":

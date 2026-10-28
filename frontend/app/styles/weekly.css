@@ -1888,6 +1888,11 @@ a.wk-archive__item:hover { color: var(--wk-accent); }
     display: block;
     margin-block: var(--space-6);
   }
+  /* The end matter shares the grid and was left out of this list: its four
+     column gaps sat on top of a 100% text column and ran it 36px past a
+     390px screen (2026-10-28). */
+  .wk-endmatter, .wk-index { display: block; }
+  .wk-endmatter > * + * { margin-top: var(--space-5); }
 
   .wk-feature__body { font-size: 1rem; }
   .wk-feature__lede { font-size: 1.0625rem; }
