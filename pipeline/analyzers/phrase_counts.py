@@ -391,9 +391,15 @@ RETAIN_MIN_OUTLETS_LATE = 20
 # Warn when the last run's net gain would reach DAILY_MAX_ROWS within this many
 # days (`projection`). Two weeks is long enough to measure and decide.
 PROJECTION_WARN_DAYS = 14
-# At 26 bytes a row, ~210 MB of counts: the most this file may cost the Actions cache,
-# beside a state DB of 433 MB (105 MB gzipped) on 2026-09-25.
-DAILY_MAX_ROWS = 8_000_000
+# Raised from 8M on 2026-10-28, on the measurement the line above asks for. The
+# snapshot of run #412: 8,217,678 rows in 214 MB (26 bytes a row, 81 MB
+# gzipped), halted since 10-23. Net gain over 10-15..10-22 was ~260,000 rows a
+# day against ~40,000 pruned: the retention rules do NOT hold, because a phrase
+# any outlet re-uses is never dormant. 4.9M of the rows sit in phrases at 20+
+# outlets, the ones the derivation scores. 16M is ~430 MB (~165 MB gzipped)
+# and about thirty days of growth; it buys the time to replace the dormancy
+# rule with one that bounds the table (docs/OPEN-ITEMS.md), not a steady state.
+DAILY_MAX_ROWS = 16_000_000
 
 GATE_SIGHTINGS = 3
 GATE_GEN_DAYS = 7
@@ -611,6 +617,14 @@ def record_daily(conn: sqlite3.Connection, rows, now: str) -> dict:
               "written": 0, "pruned": 0, "skipped_short": 0, "capped": 0,
               "halted": False, "gated": 0, "gate_rotated": False, "gate_fill": 0.0}
     if total > DAILY_MAX_ROWS:
+        # The retention rules still run on a halted day: they are the same rules
+        # as any other day, not a prune to fit, and skipping them left the table
+        # unable ever to come back under the ceiling on its own.
+        report["pruned"] = prune(conn, now)
+        report["rows_after"] = conn.execute("select count(*) from pc_count").fetchone()[0]
+        conn.commit()
+        total = report["rows_after"]
+    if total > DAILY_MAX_ROWS:
         report["halted"] = True
         report.update(projection(conn))
         print(f"  PHRASE COUNTS HALTED: {total:,} rows exceeds DAILY_MAX_ROWS "
@@ -687,7 +701,7 @@ def record_daily(conn: sqlite3.Connection, rows, now: str) -> dict:
            on conflict(source_id) do update set articles = articles + excluded.articles,
            updated_at = excluded.updated_at""",
         ((s, n, now) for s, n in per_outlet.items()))
-    report["pruned"] = prune(conn, now)
+    report["pruned"] += prune(conn, now)
     report["rows_after"] = conn.execute("select count(*) from pc_count").fetchone()[0]
     conn.execute(
         """insert into pc_run(run_at, rows_before, rows_after, written, pruned, articles)

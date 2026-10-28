@@ -1436,6 +1436,43 @@ def test_quotations_verbatim():
     check("there was a committed issue to check", seen > 0)
 
 
+def test_cover_picture_is_the_leads():
+    """W-T19  the cover picture names the story it sits on.
+
+    The picture is resolved for the lead essay, and the source check can drop
+    that lead after the picture is chosen. Issue #30 then printed the White
+    House Correspondents' Dinner shooting over "Black Sea Shipping Under Drone
+    Assault", and Issue #28 an oil-price chart over a Flydubai cockpit attack:
+    each picture was its dropped lead's. The caption names the Wikipedia
+    subject the picture shows, so it must share a content word with the lead
+    it is printed on (its headline, its reported title, or a day of its
+    timeline). Run over every committed issue, the archive included.
+    """
+    print("\nW-T19  the cover picture belongs to the cover story")
+    from media.image_search import _subject_words
+    path = ROOT / "frontend/build-data/weekly-issues.json"
+    issues = json.loads(path.read_text()) if path.exists() else []
+    for issue in issues:
+        cap = (issue.get("cover_image_caption") or "").strip()
+        if not issue.get("cover_image_url"):
+            continue
+        covers = issue.get("cover_text")
+        if isinstance(covers, str):
+            covers = json.loads(covers or "[]")
+        lead = (covers or [{}])[0] or {}
+        words = (_subject_words(issue.get("cover_headline") or "")
+                 | _subject_words(lead.get("headline") or "")
+                 | _subject_words(lead.get("cluster_title") or ""))
+        for day in lead.get("timeline") or []:
+            words |= _subject_words(day.get("title") or "")
+        shared = _subject_words(cap) & words
+        check(f"Issue #{issue.get('issue_number')}: cover picture {cap[:40]!r} "
+              f"is of the lead {str(issue.get('cover_headline'))[:40]!r}",
+              bool(cap) and bool(shared),
+              "" if cap and shared else
+              ("no caption" if not cap else "no shared subject word with the lead"))
+
+
 def main():
     print("void --weekly gates")
     test_headline_guard()
@@ -1448,6 +1485,7 @@ def main():
     test_drop_path()
     test_kill_list_parity()
     test_image_captions()
+    test_cover_picture_is_the_leads()
     test_week_spread()
     test_end_matter()
     test_end_matter_frontend()

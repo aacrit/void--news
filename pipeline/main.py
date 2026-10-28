@@ -784,12 +784,11 @@ def _generate_consensus_divergence(
             "(emphasis and language choices vary)"
         )
 
-    # Ensure we always have at least one point in each list when there are
-    # multiple sources, to avoid empty sections in the UI.
-    if not consensus:
-        consensus.append(
-            "Sources broadly agree on the key facts of this story"
-        )
+    # No consensus line is invented when no axis agreed. The fallback used to
+    # be "Sources broadly agree on the key facts of this story", a claim about
+    # facts that nothing here compares (every line above reads a bias axis),
+    # printed under "What they agree on". SpreadDisagreement omits an empty
+    # track. The divergence fallback stays: it reports what was measured.
     if not divergence:
         divergence.append(
             "No major divergence detected across sources on this story"

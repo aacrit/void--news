@@ -785,7 +785,14 @@ failed rundown turns main red.
 days.** The replay ran out of corpus at 2.7M rows (123 MB, part of it filters
 since shrunk), still growing close to linearly, with the 7-day prune firing and
 the 28-day one not yet reached. Read the `[9e]` line each day: rows before and
-after, pruned, capped, file size. `DAILY_MAX_ROWS` (8M) halts recording loudly
+after, pruned, capped, file size. **2026-10-28: it reached the ceiling.** 8.2M rows
+(214 MB) halted recording from 10-23 to 10-27 and failed every pipeline run. Net
+gain ~260k rows a day against ~40k pruned: a phrase any outlet re-uses is never
+dormant, so the dormancy rule cannot bound the table. The ceiling went to 16M
+(~30 days) and a halted run now still applies retention. **Before ~2026-11-25 the
+retention rule has to change to one that bounds growth** (e.g. a first-seen
+column and a deadline to reach `MIN_OUTLETS`), or the halt returns.
+`DAILY_MAX_ROWS` (was 8M) halts recording loudly
 and never prunes to fit. If rows are still climbing ~200k a day after day 30,
 the late rule needs tightening before the ceiling is reached, and the cache
 cost (`void-phrases-v1-`, one entry per run) wants checking against the
