@@ -10,21 +10,16 @@
   }
  },
  "stage2": {
-  "candidates": 35,
+  "candidates": 45,
   "critique_read": 0,
-  "critique_unread": 31,
+  "critique_unread": 45,
   "cut_sentences": 0,
   "cuts_by_reason": {},
   "dropped": 0,
-  "fresh_ids": [
-   "0024fd37-2e0b-4232-b327-81c95c6fa813",
-   "49c2c71d-cd9c-4d19-98f2-effb97576d13",
-   "a19fd43a-dcb1-4828-aa95-86c6f635d19a",
-   "ffbff553-7cc6-4066-9f86-7b5be9d73c9c"
-  ],
-  "kept_failing": 8,
+  "fresh_ids": [],
+  "kept_failing": 15,
   "regenerated": 0,
   "reviewed": true
  },
- "startedAt": "2026-10-28T18:05:51Z"
+ "startedAt": "2026-10-29T18:15:17Z"
 }

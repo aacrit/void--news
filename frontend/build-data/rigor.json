@@ -1,6 +1,6 @@
 {
- "builtAt": "2026-10-28T18:14:22.730481Z",
- "briefCreatedAt": "2026-10-28T18:13:37.957866+00:00",
+ "builtAt": "2026-10-29T18:27:44.905821Z",
+ "briefCreatedAt": "2026-10-29T18:27:05.625612+00:00",
  "products": {
   "card_headline": {
    "sentences": 30,
@@ -16,21 +16,21 @@
    "coverage": 3.3
   },
   "card_summary": {
-   "sentences": 53,
-   "anchored": 17,
+   "sentences": 61,
+   "anchored": 21,
    "checked": 2,
    "byAnchor": {
-    "number": 14,
-    "quote": 6
+    "number": 18,
+    "quote": 4
    },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "coverage": 3.8
+   "coverage": 3.3
   },
   "points": {
-   "sentences": 29,
+   "sentences": 31,
    "anchored": 0,
    "checked": 0,
    "anchorTypes": [
@@ -39,7 +39,7 @@
    ],
    "coverage": 0.0,
    "byAnchor": {},
-   "machinePointsExcluded": 112
+   "machinePointsExcluded": 108
   },
   "tldr": {
    "sentences": 29,
@@ -103,20 +103,24 @@
  "evidence": {
   "shipped": 30,
   "freshKnown": true,
-  "fresh": 3,
+  "fresh": 0,
   "states": {
-   "confirmable": 7,
-   "index cap below writer window": 3,
+   "confirmable": 3,
+   "index cap below writer window": 7,
    "stub rows, card not fresh": 20
   }
  },
  "audit": {
   "shipped": {
    "cannot confirm": {
-    "E-14 absent": 1
+    "E-13 misattached": 5
    }
   },
-  "bench": {}
+  "bench": {
+   "cannot confirm": {
+    "E-13 misattached": 3
+   }
+  }
  },
  "run": {
   "brief": {
@@ -129,18 +133,18 @@
     "tldr": true
    }
   },
-  "startedAt": "2026-10-28T18:05:51Z",
+  "startedAt": "2026-10-29T18:15:17Z",
   "stage2": {
-   "candidates": 35,
+   "candidates": 45,
    "critique_read": 0,
-   "critique_unread": 31,
+   "critique_unread": 45,
    "cut_sentences": 0,
    "cuts_by_reason": {},
    "dropped": 0,
-   "kept_failing": 8,
+   "kept_failing": 15,
    "regenerated": 0,
    "reviewed": true,
-   "fresh": 4
+   "fresh": 0
   }
  },
  "corrections": {
@@ -162,5 +166,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-10-28T23:12:01Z"
+ "computedAt": "2026-10-29T18:27:56Z"
 }
