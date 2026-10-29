@@ -77,6 +77,14 @@ except ImportError:  # pragma: no cover
     def sanitize_summary(t):
         return t
 
+try:
+    from utils.summary_hygiene import _RAW_EXCERPT_PATTERNS, is_raw_excerpt as _is_raw_excerpt
+except ImportError:  # pragma: no cover
+    _RAW_EXCERPT_PATTERNS = []
+
+    def _is_raw_excerpt(t):
+        return False
+
 
 # ---------------------------------------------------------------------------
 # Calibrated thresholds — single source of truth for clustering signal
@@ -410,6 +418,33 @@ def _generate_cluster_title(articles: list[dict]) -> str:
     return _sanitize_editorial(best)
 
 
+_NEUTRAL_BASELINES = frozenset({"center", "center-left", "center-right"})
+_ENGLISH_MARKERS = frozenset({
+    "the", "of", "to", "and", "in", "is", "was", "for", "on", "that", "with",
+    "said", "by", "at", "from", "has", "have", "are", "were", "it", "its",
+})
+
+
+def _reads_english(text: str) -> bool:
+    """The feed is written in English. An Italian lead shipped as a card
+    summary on 2026-10-28 ("Le scuse sono arrivate..."), picked for being the
+    longest member text. English prose runs at about a quarter function words;
+    a share under 8% of these markers is another language."""
+    words = re.findall(r"[^\W\d_]+", (text or "").lower())
+    if len(words) < 8:
+        return True
+    return sum(w in _ENGLISH_MARKERS for w in words) / len(words) >= 0.08
+
+
+def _reads_as_prose(text: str) -> bool:
+    """An article opening that is running prose, not page furniture. Scraped
+    bodies on 2026-10-28 opened with bylines, timestamps, "Republish this
+    story" and section menus, one short line each; prose is paragraphs."""
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+    short = sum(1 for ln in lines if len(ln) < 60)
+    return bool(lines) and short <= 1 and len(lines[0]) >= 80
+
+
 def _generate_cluster_summary(articles: list[dict], title: str = "") -> str:
     """Pick the longest substantive member summary, preferring members that are
     on-topic with the cluster headline.
@@ -443,44 +478,63 @@ def _generate_cluster_summary(articles: list[dict], title: str = "") -> str:
         return any(n == t or (len(n) <= len(t) + 25 and (n.startswith(t) or t.startswith(n)))
                    for t in member_titles)
 
-    def _lead(a: dict) -> str:
-        # The opening of the article itself, for a member whose feed blurb is
-        # missing or only its headline. Same sanitizer as the blurb; the
-        # summary post-checks trim it to the card's word budget.
-        body = (a.get("full_text", "") or "").strip()
-        if len(body) < 200:
-            return ""
-        return body[:900]
-
-    def _collect(min_len: int, on_topic_only: bool, leads: bool) -> list[str]:
+    def _collect(min_len: int, on_topic_only: bool, leads: bool,
+                 pool: list[dict] | None = None) -> list[str]:
+        # leads=True reads the opening of the article itself, for members whose
+        # feed blurb is missing or only its headline.
         out = []
-        for a in articles:
+        for a in (articles if pool is None else pool):
             if on_topic_only and not _on_topic(a):
                 continue
             s = (a.get("full_text", "") or "")[:900] if leads else (a.get("summary", "") or "")
             s = s.strip()
-            if leads and len(s) < 200:
+            if leads and (len(s) < 200 or not _reads_as_prose(s)):
                 continue
-            if s and len(s) >= min_len and not _echoes_a_title(s):
+            if s and len(s) >= min_len and not _echoes_a_title(s) and _reads_english(s):
                 out.append(s)
         return out
+
+    def _display_safe(text: str) -> str:
+        # The text before any raw-excerpt marker, ended on a full sentence, or
+        # "" when nothing safe is left. The longest candidate on 2026-10-28 was
+        # an Axios blurb carrying "Why it matters:"; the floor's guard then
+        # rejected the whole summary and shipped the headline in its place, on
+        # five of the twenty cards.
+        if not _is_raw_excerpt(text):
+            return text
+        cut = min((m.start() for rx in _RAW_EXCERPT_PATTERNS for m in [rx.search(text)] if m),
+                  default=0)
+        head = sanitize_summary(text[:cut]) if cut else ""
+        return head if head and not _is_raw_excerpt(head) else ""
 
     def _best(candidates: list[str], floor: int) -> str:
         # sanitize_summary strips CMS/RSS scaffolding + mid-word truncation the
         # raw member excerpt carries (the null-tier tail ships this verbatim);
         # _sanitize_editorial then enforces the em-dash / significance rules.
-        cleaned = [c for c in (sanitize_summary(x) for x in candidates)
+        cleaned = [c for c in (_display_safe(sanitize_summary(x)) for x in candidates)
                    if len(c) >= floor and not _echoes_a_title(c)]
         return _sanitize_editorial(max(cleaned, key=len)) if cleaned else ""
+
+    # Whose words: the card is written in Void's voice, and an extract is
+    # somebody else's. A centre-rated or wire outlet's sentences go first; a
+    # wing outlet's framing ("the 'trans' regime", 2026-10-28) only when no
+    # neutral member carries the story. Outlets with no recorded baseline (a
+    # caller that did not attach one) all share the first pool, as before.
+    neutral = [a for a in articles
+               if (a.get("source_lean_baseline") or "") in _NEUTRAL_BASELINES
+               or (a.get("source_type") or a.get("type") or "") == "wire"
+               or not a.get("source_lean_baseline")]
+    pools = [neutral, articles] if neutral and len(neutral) < len(articles) else [articles]
 
     # Feed blurbs first, on-topic members before the rest. A blurb has to
     # carry a card (250 chars, about two sentences); when none does, the
     # opening of an on-topic article does, and only then a short blurb.
     for leads in (False, True):
         for on_topic_only in (True, False):
-            got = _best(_collect(40, on_topic_only, leads), 250)
-            if got:
-                return got
+            for pool in pools:
+                got = _best(_collect(40, on_topic_only, leads, pool), 250)
+                if got:
+                    return got
     for min_len in (40, 15):
         for on_topic_only in (True, False):
             got = _best(_collect(min_len, on_topic_only, leads=False), 40)
