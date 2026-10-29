@@ -58,6 +58,35 @@ def rule_based_cases() -> list[tuple[str, bool]]:
             "expected overnight.")
     echo = _generate_cluster_summary(
         [{"title": head, "summary": head, "full_text": body}], head)
+    huerta = ("Dolores Huerta, the labor organizer who co-founded the United Farm "
+              "Workers with Cesar Chavez, died on Tuesday at 96, her family said. She "
+              "coined the rallying cry that became a slogan for generations of "
+              "organizers and was jailed more than twenty times for union protests. "
+              "Why it matters: The civil rights legend helped lead strikes.")
+    marked = _generate_cluster_summary(
+        [{"title": "Dolores Huerta dies at 96", "summary": huerta}], "Dolores Huerta dies at 96")
+    italian = ("Le scuse sono arrivate, ma la polemica è già costata cara al club. "
+               "L'attaccante ha pubblicato un video che ha fatto discutere molto in Cina "
+               "e la società ha dovuto intervenire con una nota ufficiale nella serata.")
+    english = ("Real Madrid apologised to China on Tuesday after a video posted by "
+               "the striker drew complaints from fans, the club said in a statement. "
+               "The club said the post had been removed and that it respected its supporters.")
+    foreign = _generate_cluster_summary(
+        [{"title": "Real Madrid apology to China", "summary": italian + " " + italian},
+         {"title": "Real Madrid apology to China", "summary": english}],
+        "Real Madrid apology to China")
+    wing = ("The council voted to approve the plan in a move critics call a radical "
+            "takeover by the regime, and the measure passed after a long fight that "
+            "activists say proves the regime will stop at nothing to get its way here.")
+    centre = ("The council voted 7 to 2 on Tuesday to approve the housing plan, which "
+              "adds 1,200 units over five years, the city clerk said. Two members "
+              "opposed it, citing the cost of new roads and the loss of a public park.")
+    neutral_pick = _generate_cluster_summary(
+        [{"title": "Council approves housing plan", "summary": wing + " " + wing,
+          "source_lean_baseline": "far-right"},
+         {"title": "Council approves housing plan", "summary": centre,
+          "source_lean_baseline": "center"}],
+        "Council approves housing plan")
     product = sanitize_summary("Apple unveiled a new MacBook Pro and iMac, and "
                                "said the iPhone line would follow in the spring.")
     return [
@@ -80,6 +109,14 @@ def rule_based_cases() -> list[tuple[str, bool]]:
                             "conference in Detroit").startswith("Senate")),
         ("a blurb that is its own headline gives way to the article's opening",
          echo.startswith("Israelis voted") and echo.endswith(".")),
+        # 2026-10-28: the longest blurb carried "Why it matters:", the floor's
+        # guard rejected the whole summary and the card shipped its headline.
+        ("the text before a raw-excerpt marker is kept, the marker is not",
+         "Why it matters" not in marked and marked.startswith("Dolores Huerta")),
+        ("a member written in another language is never the card's summary",
+         not foreign.startswith("Le scuse")),
+        ("a centre outlet's blurb is preferred to a wing outlet's",
+         neutral_pick.startswith("The council voted")),
     ]
 
 
