@@ -1,0 +1,140 @@
+{
+ "collected_at": "2026-10-31T14:49:28Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 27,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16253897/Aston-Villa-legal-action-against-Jamie-Carragher-pundit-claimed-Unai-Emery-replace-Michael-Carrick-Man-United-told-fans-f-off.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Aston Villa threaten legal action against Jamie Carragher after pundit claimed Unai Emery should replace Michael Carrick at Man United and told fans to 'shut the f*** up'",
+      "published": "Sat, 31 Oct 2026 11:10:09 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/aston-villa-jamie-carragher-comments-37829768",
+      "title": "What did Jamie Carragher say about Aston Villa? Furious response and what comes next",
+      "published": "Sat, 31 Oct 2026 12:46:27 +0000"
+     }
+    },
+    {
+     "score": 27,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16254513/Romesh-Ranganathan-breaks-silence-incredible-Celebrity-Traitors-victory.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Romesh Ranganathan breaks his silence on 'incredible' Celebrity Traitors victory as he reflects on his 'full-on' castle stint and confesses he 'walked a thin line between a great game and a terrible one'",
+      "published": "Sat, 31 Oct 2026 12:35:08 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/celebrity-traitors-final-2026-live-37821589",
+      "title": "Celebrity Traitors final LIVE: Romesh Ranganathan 'embarrassed' to win as stars snub reunion",
+      "published": "Sat, 31 Oct 2026 13:54:56 +0000"
+     }
+    },
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16254543/Kate-Prince-Louis-pumpkin-celebrate-Halloween.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Princess Kate posts adorable throwback snap of Prince Louis playing with a pumpkin when he was aged just one to celebrate Halloween",
+      "published": "Sat, 31 Oct 2026 13:03:45 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/kate-middleton-prince-louis-halloween-37829792",
+      "title": "Kate releases sweet new photo of Prince Louis as a toddler crouching over a pumpkin for Halloween",
+      "published": "Sat, 31 Oct 2026 13:39:59 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 115,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/influencers-26/50jews-26/article-908123",
+      "title": "No. 2: Benjamin Netanyahu: Shaping Israel’s politics and global image for a generation",
+      "published": "Thu, 10 Sep 2026 18:30:37 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/elections/2026-10-30/ty-article-magazine/.premium/from-assad-to-lieberman-the-israelization-of-the-golan-druze-reached-the-polls/000001a1-8c94-dd03-a7bf-9ef64c2b0000",
+      "title": "From Assad to Lieberman: The Israelization of the Druze in the Golan reached the polls",
+      "published": "Fri, 30 Oct 2026 18:48:28 +0200"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.jpost.com/israel-election-2026/article-913353",
+      "title": "Mossad joins Shin Bet probe into alleged Qatar election interference - report",
+      "published": "Fri, 30 Oct 2026 16:51:53 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/elections/2026-10-31/ty-article/.premium/mossad-to-help-probe-suspected-election-interference-by-countries-beyond-qatar/000001a1-8e44-d1ca-a5b7-bf74bf350000",
+      "title": "Mossad to assist Shin Bet in probe of potential election interference by countries other than Qatar",
+      "published": "Sat, 31 Oct 2026 00:02:07 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 132,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/erdogans-family-business-ties-complicate-azerbaijan-dispute/",
+      "title": "Erdogan’s family business ties complicate Azerbaijan dispute",
+      "published": "Mon, 26 Oct 2026 23:01:29 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailysabah.com/world/mid-east/syria-mulls-joining-turkiye-saudi-pakistan-mecca-defence-alliance",
+      "title": "Syria mulls joining Türkiye-Saudi-Pakistan Mecca Defence Alliance",
+      "published": "Sat, 31 Oct 2026 12:34:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/turkey-mimics-nato-in-building-military-alliance-with-pakistan-and-saudi-arabia/",
+      "title": "Turkey mimics NATO in building military alliance with Pakistan and Saudi Arabia",
+      "published": "Wed, 28 Oct 2026 23:12:05 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 306,
+    "left": 10
+   }
+  }
+ }
+}
