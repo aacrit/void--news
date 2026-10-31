@@ -1,0 +1,74 @@
+[
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 25,
+  "a": {
+   "title": "&apos;Star Trek&apos; star Patrick Stewart dies age 86",
+   "summary": "The Shakespearean actor landed the role of a lifetime as &quot;Star Trek&quot; Captain Picard. He passed away at age 86.",
+   "link": "https://www.dw.com/en/star-trek-star-patrick-stewart-dies-age-86/a-79803071?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Star-Trek-Schauspieler Patrick Stewart ist tot",
+   "summary": "Als Captain Picard auf der Enterprise gelangte Shakespeare-Mime Patrick Stewart zu Weltruhm. Im Alter von 86 Jahren ist er jetzt in Los Angeles gestorben. Fans und Stars trauern.",
+   "link": "https://www.dw.com/de/star-trek-schauspieler-patrick-stewart-ist-tot/a-79803535?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 20,
+  "a": {
+   "title": "Wagner brothers begin new NBA chapter on different paths",
+   "summary": "After five years, brothers Franz and Moritz Wagner are no longer playing together for the Orlando Magic. In the new NBA season, their separation will likely mean the new &quot;German&quot; team is the Charlotte Hornets.",
+   "link": "https://www.dw.com/en/wagner-brothers-begin-new-nba-chapter-on-different-paths/a-79712668?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Das Ende der Wagners - auf getrennten Wegen in die neue NBA-Saison",
+   "summary": "Nach fünf Jahren spielen die Brüder Franz und Moritz Wagner nicht mehr gemeinsam für die Orlando Magic. In der neuen NBA-Saison haben sie ganz unterschiedliche Rollen. Neuer &quot;deutscher Klub&quot; sind die Charlotte Hornets.",
+   "link": "https://www.dw.com/de/das-ende-der-wagners-auf-getrennten-wegen-in-die-neue-nba-saison/a-79709596?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 19,
+  "a": {
+   "title": "Harry Kane: Ballon d’Or for Bayern Munich striker",
+   "summary": "Bayern Munich striker Harry Kane has won football&apos;s most prestigious individual prize, beating Kylian Mbappe and Lamine Yamal. Kane has developed even more in the Bundesliga despite an uneven league.",
+   "link": "https://www.dw.com/en/harry-kane-ballon-d-or-for-bayern-munich-striker/a-79723299?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Bayern-Stürmer Harry Kane gewinnt den Ballon d&apos;Or",
+   "summary": "Harry Kane beendet die jahrzehntelange Ballon d&apos;Or-Durststrecke des FC Bayern München. Der englische Nationalstürmer hat sich seit seinem Wechsel in die Bundesliga sogar noch weiterentwickelt - und wird dafür belohnt.",
+   "link": "https://www.dw.com/de/bayern-stürmer-harry-kane-gewinnt-den-ballon-d-or/a-79760904?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 26,
+  "a": {
+   "title": "PSG secure 9th consecutive win thanks to Achraf Hakimi hat-trick",
+   "summary": "A night to remember for PSG in Le Havre. In the opening fixture of Ligue 1's ninth round, the French champions thrashed Le Havre at the Stade Océane, inspired by an outstanding performance from Achraf Hakimi. The Moroccan star scored a hat-trick and provided two assists, playing a decisive role in all five of his team's goals. PSG strengthened their grip on top spot, while Le Havre remain rooted t",
+   "link": "https://www.france24.com/en/tv-shows/sports/20261031-psg-secure-9th-consecutive-win-thanks-to-achraf-hakimi-hat-trick",
+   "published": "Sat, 31 Oct 2026 09:51:06 GMT"
+  },
+  "b": {
+   "title": "Ligue 1 : le PSG enchaîne une sixième victoire consécutive, Achraf Hakimi signe un triplé",
+   "summary": "Soir de gala au Havre pour le PSG. En ouverture de la 9e journée de Ligue 1, vendredi, les Parisiens ont écrasé Le Havre au stade Océane grâce à un Achraf Hakimi omniprésent (5-1). Auteur d’un triplé et de deux passes décisives, le Marocain a été décisif sur l’ensemble des cinq buts de son équipe. Avec cette sixième victoire de rang en championnat de France, le PSG consolide sa première place, tan",
+   "link": "https://www.france24.com/fr/%C3%A9missions/sports/20261031-psg-encha%C3%AEne-9e-victoire-cons%C3%A9cutive-gr%C3%A2ce-tripl%C3%A9-d-achraf-hakimi",
+   "published": "Sat, 31 Oct 2026 10:20:09 GMT"
+  }
+ }
+]
