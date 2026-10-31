@@ -1,0 +1,252 @@
+# Cinematic variant, 2026-10-10, written to the first-listener orientation standard of
+# docs/proposals/HISTORY-FIRST-LISTENER.md (O-1..O-8) after the Srebrenica model. Same cast
+# (narrator "tara"; leo reads the men's documents and the institutions' records as M:; zoe
+# reads the women's testimony as F:, Yoselewska and Lubetkin), same Ken Burns register:
+# short declarative sentences, documents read plainly, the silence placed by the writer.
+# Every orientation fact is from the event YAML or the evidence ledger
+# (data/history/evidence/the-holocaust/), and nothing else: Rule 1. Every line the document
+# voice reads is byte-for-byte a stored extract and present in the YAML excerpts; the extract
+# id follows the marker in a comment. A perpetrator's words (the Wannsee minutes, Ohlendorf,
+# Hoess, Himmler) are read flat, as documents of record, never performed; the two English
+# translations of the Wannsee minutes are said aloud, not smoothed. Survivor testimony is
+# read dry, as the court recorded it. Death tolls are given per producer with the producer's
+# method and never averaged. The Roma account has no Roma voice in this record and says so.
+# Not said, because the record does not carry it: the railway fares, "natural diminution",
+# "eleven million" as a total of victims, Hoess's ten thousand a day, Treblinka's staff
+# numbers, the Roma 2,897, Wiesel's "bear witness" line, Levi, Arendt, Evian, the
+# parachutists. Lines beginning with "#" are inert: the parser skips them
+# (pipeline/history/script_format.py::parse_script). This file is not the live script:
+# nothing globs this directory.
+
+## OPEN
+# MOOD: dread
+N: At noon on the twentieth of January, nineteen forty two, fifteen men met for about ninety minutes in a villa on the Wannsee lake outside Berlin.
+N: The minutes they kept put the Jews of Europe at approximately eleven million. Hundreds of thousands had already been murdered.
+N: Thirty copies were made, marked a secret Reich matter. One survived.
+N: The killers kept the minutes.
+
+## TITLE
+# MOOD: dread
+N: The Holocaust, nineteen forty one to nineteen forty five.
+
+## SCENE 1 | The pits
+# MOOD: procedure
+N: The summer of nineteen forty one. Germany, under Hitler's National Socialist regime, has been at war since September nineteen thirty nine and holds Poland, Lithuania and much of the continent.
+N: This is the Second World War in Europe. The regime means to kill the Jews of Europe, every one; that, the Nuremberg judgment later said, is what the Final Solution meant.
+N: The Einsatzgruppen, SS and police task forces, follow the army into the Soviet Union.
+N: At Babi Yar, on the twenty ninth and thirtieth of September, a detachment of Einsatzgruppe C shot thirty three thousand seven hundred and seventy one Jews, by its own reports to Berlin.
+N: Otto Ohlendorf commanded Einsatzgruppe D. In January nineteen forty six, before the International Military Tribunal, the Allied court at Nuremberg, he was asked for his count.
+
+## DOCUMENT | Otto Ohlendorf | testimony at the International Military Tribunal, Nuremberg, in the record's English | January 3, 1946
+# extract: src-imt-19460103.secohlendorf
+# MOOD: procedure
+N: Ohlendorf's answer, read as the record has it.
+M: In the year between June 1941 to June 1942 the Einsatzkommandos reported 90,000 people liquidated.
+N: Asked whether that included men, women and children, he said yes.
+
+## SCENE 2 | The minutes
+# MOOD: procedure
+N: At noon on the twentieth of January, nineteen forty two, in the dining room of an SD guesthouse on the Wannsee, Reinhard Heydrich, head of the Security Police and SD, convenes state secretaries and SS and party officers.
+N: Adolf Eichmann, the SS officer in charge of the programme, takes the minutes. The subject is the Final Solution of the Jewish Question.
+
+## DOCUMENT | Wannsee Conference minutes, the record of the meeting chaired by Reinhard Heydrich | Wannsee Protocol, section III, the Avalon Project's English text, translator unnamed | January 20, 1942
+# extract: src-wannsee-avalon.seciii
+# MOOD: procedure
+N: Section three of the Wannsee minutes, in the Avalon Project's English, translator unnamed. Read flat, as a document.
+M: Approximately 11 million Jews will be involved in the final solution of the European Jewish question
+N: Then the minutes say what road work in the East will do to the able-bodied, and two English versions differ.
+N: Avalon has a large portion eliminated by natural causes, and the remnant treated accordingly. The Wannsee memorial has a large portion drop out through natural reduction, and the remnant given suitable treatment.
+N: Thirty copies. The killers kept the minutes.
+
+## REST
+# MOOD: dread
+
+## SCENE 3 | The ditch
+# MOOD: testimony
+N: The eighth of May, nineteen sixty one. Jerusalem. Adolf Eichmann is on trial, and the survivors are being called.
+N: Rivka Yoselewska, born in a townlet of about five hundred Jewish families, testified in Yiddish; the official transcript is in English.
+
+## DOCUMENT | Rivka Yoselewska | testimony at the trial of Adolf Eichmann, Session 30, given in Yiddish, the official English transcript | May 8, 1961
+# extract: src-eichmann-s030.secyoselewska2
+# MOOD: testimony
+N: Rivka Yoselewska, in the court's English.
+F: He tore the child away from me. I heard her last cry and he shot her.
+N: She climbed out from among the bodies.
+
+## REST | short
+# MOOD: grief
+
+## SCENE 4 | The camps
+# MOOD: dread
+N: Auschwitz, in German-occupied Poland. Rudolf Hoess became its commandant on the first of May, nineteen forty, and by his affidavit was ordered in June nineteen forty one to build extermination facilities there.
+N: Five killing centres ran in occupied Poland: Chelmno, Belzec, Sobibor, Treblinka and Auschwitz-Birkenau.
+N: By the time Treblinka was dismantled in the autumn of nineteen forty three, its personnel had murdered an estimated nine hundred and twenty five thousand Jews, by the United States Holocaust Memorial Museum's count.
+
+## DOCUMENT | Rudolf Hoess | affidavit, Document 3868-PS, paragraph 6, read into the record of the International Military Tribunal | April 15, 1946
+# extract: src-imt-19460415.secaffidavit6
+# MOOD: procedure
+N: At Auschwitz Hoess used Zyklon B, a crystallised prussic acid. His affidavit was read at Nuremberg on the fifteenth of April, nineteen forty six. Read flat.
+M: We knew when the people were dead because their screaming stopped.
+N: His affidavit put the Auschwitz dead at about three million. The Auschwitz museum, in a study of nineteen ninety two, counts approximately one point one million, one million of them Jews; the Washington museum, from transport and gassing records, approximately one million Jews.
+
+## DOCUMENT | Heinrich Himmler | speech to SS generals at Posen, Document 1919-PS, in the prosecution's English translation as read into the record of the International Military Tribunal | October 4, 1943
+# extract: src-imt-19451213.secposen1
+# MOOD: procedure
+N: Posen, the fourth of October, nineteen forty three. Heinrich Himmler, head of the SS, to his major generals, in the prosecution's translation read at Nuremberg in December nineteen forty five. Read flat.
+M: This is a page of glory in our history which has never been written and is never to be written
+
+## REST
+# MOOD: dread
+
+## SCENE 5 | What was known
+# MOOD: procedure
+N: Geneva, the eighth of August, nineteen forty two. Gerhart Riegner dictates a telegram at the American consulate: the Jews in occupied territory are to be exterminated at one blow. The American minister in Switzerland calls it a war rumour inspired by fear, and forwards it.
+
+## DOCUMENT | Governments of the United Nations (joint declaration, read in the House of Commons by Anthony Eden) | joint declaration of December 17, 1942, Hansard | December 17, 1942
+# extract: src-hansard-19421217.secc2083a
+# MOOD: procedure
+N: On the seventeenth of December, nineteen forty two, Anthony Eden, the Foreign Secretary, reads the Allied governments' joint declaration to the House of Commons. It calls Poland the principal Nazi slaughterhouse.
+M: None of those taken away are ever heard of again.
+N: It reckons the dead in many hundreds of thousands, promises punishment after the war, and does not promise rescue. The members then stood in silence.
+N: In the summer of nineteen forty four requests to bomb Auschwitz were denied; within a week of the refusal the Air Force bombed the oil and rubber works near Auschwitz three.
+
+## REST | short
+# MOOD: grief
+
+## SCENE 6 | Resistance
+# MOOD: rupture
+N: Vilna, in Lithuania, the first of January, nineteen forty two. In the ghetto, the quarter the Germans had sealed the city's Jews into, Abba Kovner writes a manifesto to its youth.
+
+## DOCUMENT | Abba Kovner | manifesto of the Vilna ghetto underground, as read at the trial of Adolf Eichmann, Session 27, the official English transcript | January 1, 1942
+# extract: src-eichmann-s027.seckovner
+# MOOD: rupture
+N: Kovner wrote it in Hebrew; it was published in Yiddish; he read it in Hebrew to the court in Jerusalem on the fourth of May, nineteen sixty one. Its first line.
+M: Let us not go like sheep to the slaughter, Jewish youth!
+
+## DOCUMENT | Zivia Lubetkin | testimony at the trial of Adolf Eichmann, Session 25, the official English transcript | May 3, 1961
+# extract: src-eichmann-s025.seclubetkin
+# MOOD: testimony
+N: Warsaw, nineteen forty three. The Jews of the ghetto fought the SS when it entered. Zivia Lubetkin fought in it, and told the court in Jerusalem what weapons they had.
+F: Each one had a revolver, each one had a hand-grenade; the entire unit had two rifles
+
+## REST
+# MOOD: grief
+
+## SCENE 7 | The family camp
+# MOOD: grief
+N: Auschwitz-Birkenau, nineteen forty four. Roma and Sinti from the Reich were held in the Gypsy family camp, whole families together.
+N: In May the SS sealed the compound to kill its inhabitants; the Roma, warned and armed with iron pipes and shovels, refused to come out, and the SS withdrew.
+N: On the second of August the SS killed those who remained, almost all in the gas chambers; some twenty one thousand of the Roma and Sinti sent to Auschwitz died there.
+
+## DOCUMENT | Yehiel Dinur (K. Zetnik) | testimony at the trial of Adolf Eichmann, Session 68, the official English transcript | June 7, 1961
+# extract: src-eichmann-s068.secdinur
+# MOOD: testimony
+N: Jerusalem, the seventh of June, nineteen sixty one. Yehiel Dinur, who published as K. Zetnik, was asked why he wrote under that name; it was not a pen name, he said.
+M: This is a chronicle of the planet of Auschwitz.
+N: The transcript then records that the witness rose, came down from the stand, and collapsed on the platform.
+
+## REST
+# MOOD: grief
+
+## DOCUMENT | Yad Vashem | Frequently asked questions, the Holocaust Resource Center, the web page as served | October 7, 2026
+# extract: src-yv-faq.secnumber
+# MOOD: reckoning
+N: How many. The Washington museum says six million Jews, calculated from Nazi German documents and prewar and postwar demographic data. Yad Vashem, the memorial in Jerusalem, answers in its own words.
+M: There is no precise figure for the number of Jews killed in the Holocaust.
+N: Its research puts the toll between five and six million: Raul Hilberg's early count of five point one million, Jacob Leschinsky's of five point nine five million.
+N: Beside them, by the Washington museum's count, around three point three million Soviet prisoners of war, two hundred and fifty to three hundred thousand people with disabilities, and the Roma, counted later.
+
+## TURN | Five accounts
+# MOOD: reckoning
+N: Five accounts of the Holocaust, argued from what this programme could read: the killers' own minutes, affidavits and reports; survivors' sworn testimony at Nuremberg and in Jerusalem; Hansard; two memorials' counts. The books could not be read.
+
+## PERSPECTIVE | Survivor Testimony | vanquished
+# MOOD: grief
+# extract: src-nobel-wiesel-1986.secsilence
+N: The first account is the survivors': the world knew and stayed silent, and a witness who lived owes the dead his voice.
+N: Elie Wiesel, a survivor of Auschwitz, accepted the Nobel Peace Prize in Oslo on the tenth of December, nineteen eighty six, and said it in his own English.
+M: Neutrality helps the oppressor, never the victim. Silence encourages the tormentor, never the tormented.
+
+## PERSPECTIVE | Perpetrator / Bureaucratic | academic
+# MOOD: procedure
+# extract: src-ghwk-conference.secrank
+N: The second account reads the killers' paperwork and asks when it was decided. Hoess put Himmler's order in the summer of nineteen forty one; Yad Vashem says most likely that autumn, and no written order from Hitler has been found.
+N: The Wannsee memorial draws the line.
+M: It would therefore be incorrect to say that the murder of European Jews was decided at the Wannsee Conference.
+N: The conference, it says, coordinated a genocide already decided above it, across almost the whole of Europe.
+
+## PERSPECTIVE | Bystander Nation | bystander
+# MOOD: procedure
+# extract: src-hansard-19421217.secc2084
+N: The third account is the Allies'. Told in August nineteen forty two, they declared it in December and promised punishment. Asked the same day what more could be done, Eden answered.
+M: I fear that what we can do at this stage must inevitably be slight.
+N: Jan Karski, a courier of the Polish underground who had been inside the Warsaw ghetto, carried his report to London and, in July nineteen forty three, to Roosevelt; the answer was that Germany's defeat came first.
+
+## PERSPECTIVE | Zionist Response | academic
+# MOOD: reckoning
+# extract: src-eichmann-s027.seckovner2
+N: The fourth account is Israel's, built in the Jerusalem courtroom, where one hundred and twelve witnesses, most of them survivors, told their stories for the first time to a mass audience in Hebrew.
+N: The trial, this account says, was to teach a generation raised on contempt for what it saw as European Jewish passivity; Kovner's manifesto was read into the record, and ends like this.
+M: It is true that we are weak, lacking protection, but the only reply to a murderer is resistance.
+N: Its lesson: Jews are safe only in a sovereign state able to defend itself. Israeli historians have since argued that a lesson used for the state distorts the memory it rests on.
+
+## PERSPECTIVE | Roma / Forgotten Victims | vanquished
+# MOOD: grief
+# extract: src-yv-faq.secroma
+N: The fifth account is the Roma's, and no Roma voice is held in this record; the memorials speak for it. Yad Vashem states the range.
+M: Estimates range from 200,000 to over 500,000 victims.
+N: The Washington museum gives at least two hundred and fifty thousand, possibly around five hundred thousand, and says why it cannot be precise: nobody knows how many Roma lived in Europe before the war.
+N: West Germany's compensation law acknowledged the persecution as racial only in late nineteen sixty five; its chancellor called it genocide in nineteen eighty two.
+
+## TURN | What each one leaves out
+# MOOD: reckoning
+N: Each is true as far as it goes. The survivors' account cannot speak for the dead, and says so. The paperwork account dates a meeting to the minute and cannot find the order.
+N: The Allied account counts what was known, not what was tried; the bombing of Auschwitz was refused as a diversion of air support of doubtful efficacy.
+N: The Israeli account reads a courtroom as a founding, and leaves out the survivors who rebuilt their lives elsewhere. The Roma account rests on a prewar count nobody made, and this record holds no Roma witness in her own words.
+
+## REST
+# MOOD: grief
+
+## CLOSE
+# MOOD: grief
+N: Between nineteen forty one and nineteen forty five Germany and its allies killed six million Jews by the Washington museum's count, between five and six million by Yad Vashem's: by shooting in the east and by gas at five killing centres in occupied Poland.
+N: With them, around three point three million Soviet prisoners of war, hundreds of thousands of people with disabilities, and at least two hundred and fifty thousand Roma.
+N: The Allies knew by December nineteen forty two, and did not promise rescue.
+N: Thirty copies, marked a secret Reich matter. One survived. The killers kept the minutes.
+
+## SAY
+orpheus:Wannsee = VAHN zay
+orpheus:Heydrich = HY drikh
+orpheus:Eichmann = IKE mahn
+orpheus:Einsatzgruppe = INE zats GROO peh
+orpheus:Einsatzkommandos = INE zats ko MAHN dohs
+orpheus:Babi Yar = BAH bee YAR
+orpheus:Ohlendorf = OH len dorf
+orpheus:Yoselewska = yo seh LEF skah
+orpheus:Rivka = RIV kah
+orpheus:Hoess = HERSS
+orpheus:Himmler = HIM ler
+orpheus:Chelmno = HELM no
+orpheus:Belzec = BEL zhets
+orpheus:Sobibor = soh BEE bor
+orpheus:Treblinka = treb LIN kah
+orpheus:Birkenau = BEER keh now
+orpheus:Zyklon = TSEE klon
+orpheus:Posen = POH zen
+orpheus:Riegner = REEG ner
+orpheus:Gerhart = GAIR hart
+orpheus:Vilna = VIL nah
+orpheus:Kovner = KOV ner
+orpheus:Abba = AH bah
+orpheus:Lubetkin = loo BET kin
+orpheus:Zivia = ZEEV yah
+orpheus:Dinur = dee NOOR
+orpheus:Yehiel = yeh khee EL
+orpheus:Zetnik = TSET nik
+orpheus:Sinti = SIN tee
+orpheus:Yad Vashem = yahd vah SHEM
+orpheus:Hilberg = HIL berg
+orpheus:Leschinsky = leh SHIN skee
+orpheus:Wiesel = vee ZEL
+orpheus:Elie = EL ee
+orpheus:Karski = KAR skee

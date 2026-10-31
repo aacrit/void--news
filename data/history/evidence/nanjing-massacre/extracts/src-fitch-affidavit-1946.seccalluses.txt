@@ -1,0 +1,8 @@
+source: src-fitch-affidavit-1946
+locator: seccalluses
+url: https://www.legal-tools.org/doc/a4c38a/pdf/
+read: 2026-10-09
+note: the text is the scan's own OCR layer as the Legal Tools Database serves it, whitespace collapsed; the transcript's printed line numbers (1 to 25) and the OCR's glyph errors sit inside the text and are kept as the layer gives them
+note: transcript pages 4,463 to 4,464, exhibit 307; 'excerpts or paraphrases' of his diary, as he swears
+
+"The Japanese observe no system in seizing 23 people from our camps. Callouses on hands or cropped 24 heads ~re proof sufficient that the man was once 25 a soldier, and a sure death warrant.

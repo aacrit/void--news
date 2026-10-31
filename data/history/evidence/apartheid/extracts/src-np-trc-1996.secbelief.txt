@@ -1,0 +1,7 @@
+source: src-np-trc-1996
+locator: secbelief
+url: https://www.justice.gov.za/trc/hrvtrans/submit/np_truth.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+Many of those who took part in the struggle from the side of the Government, especially most of the Afrikaners, believed, to start with, that they were defending the right of their people to national self-determination in their own state within a territorially partitioned South Africa.

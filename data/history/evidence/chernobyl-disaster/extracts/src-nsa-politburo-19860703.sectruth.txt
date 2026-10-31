@@ -1,0 +1,8 @@
+source: src-nsa-politburo-19860703
+locator: sectruth
+url: https://nsarchive.gwu.edu/sites/default/files/documents/6279559/National-Security-Archive-Doc-15-Minutes-of-CC.pdf
+read: 2026-10-07
+note: Chernyaev's notes; Gorbachev's closing remarks
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+The situation is very serious. And by no means will we agree to hide the truth—neither when solving practical issues, nor when explaining things to the public. We bear responsibility both for the analysis of what happened and for the correctness of our conclusions. Our work now is in full view of all our people and of the entire world. And it is impermissible to think that we can get away with half-measures and tricky solutions. We need [to provide] full information about what happened. A cowardly position is not worthy of a politician.

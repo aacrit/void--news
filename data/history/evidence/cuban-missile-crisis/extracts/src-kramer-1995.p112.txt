@@ -1,0 +1,8 @@
+source: src-kramer-1995
+locator: p112
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf
+read: 2026-10-07
+note: the PDF's text layer, line breaks folded to spaces; where the layer breaks a word at a line end its hyphen is kept as it prints it ('docu- ment'); nothing is corrected
+note: printed page 112: Mark Kramer, 'The "Lessons" of the Cuban Missile Crisis for Warsaw Pact Nuclear Operations', continued from page 110, whose last sentence reads 'The rules of engagement for Soviet troops in Cuba did not permit the' and runs on here as 'downing of American planes except those carrying out an attack.20'
+
+When the U-2 was shot down, no one in Moscow was quite sure what had happened—Khrushchev and most others mistakenly thought that Castro had ordered Soviet troops to fire at the plane— but everyone was certain that further inci- dents of this sort might cause the crisis to spin out of control.

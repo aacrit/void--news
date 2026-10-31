@@ -1,0 +1,8 @@
+source: src-hansard-19420910
+locator: seckilled
+url: https://api.parliament.uk/historic-hansard/commons/1942/sep/10/india-situation
+read: 2026-10-09
+note: the text is the Hansard page's own text (UK Parliament, historic Hansard), whitespace collapsed
+note: the Prime Minister (Mr. Churchill)
+
+The whole administration of the government of the 390,000,000 who live in India is carried on by Indians, there being under 600 British members of the Indian Civil Service. All the public services are working. In five provinces, including two of the greatest and comprising 110,000,000 people, provincial ministers responsible to their Legislatures stand at their posts. In many places, both in town and country, the population has rallied to the support of the civil power. The Congress conspiracy against the communications is breaking down. Acts of pillage and arson are being repressed and punished with incredibly small loss of life. Less than 500 persons have been killed over this mighty area of territory and population

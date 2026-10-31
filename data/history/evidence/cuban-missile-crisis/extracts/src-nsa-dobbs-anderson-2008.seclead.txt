@@ -1,0 +1,7 @@
+source: src-nsa-dobbs-anderson-2008
+locator: seclead
+url: https://nsarchive2.gwu.edu/nsa/cuba_mis_cri/dobbs/anderson.htm
+read: 2026-10-07
+note: the posting's opening paragraphs, 25 June 2008; the page's HTML read as text
+
+American signals intelligence collectors tracked the activation of Soviet air defenses prior to the shootdown of a U.S. spy plane at the peak of the Cuban missile crisis, according to documents published on the Web today by the National Security Archive. A new book by Washington Post reporter Michael Dobbs shows that the destruction of the U-2 piloted by Major Rudolf Anderson, Jr. on October 27, 1962, was closely connected to the deployment of Soviet nuclear cruise missiles in the vicinity of the U.S. naval base at Guantanamo. Soviet generals feared that the spy plane had uncovered the forward launch position of the cruise missiles, just 15 miles from Guantanamo.

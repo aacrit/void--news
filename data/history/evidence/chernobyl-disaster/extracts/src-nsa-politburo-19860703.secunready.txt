@@ -1,0 +1,8 @@
+source: src-nsa-politburo-19860703
+locator: secunready
+url: https://nsarchive.gwu.edu/sites/default/files/documents/6279559/National-Security-Archive-Doc-15-Minutes-of-CC.pdf
+read: 2026-10-07
+note: Chernyaev's notes; Gorbachev speaking
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+And what do we have when push came to shove? Chernobyl exploded and nothing was ready: not civil defense, not medical services—they did not even have an adequate supply of dosimeters; the fire services did not know what to do. Everybody shat in their pants. Weddings were celebrated in the vicinity. Kids were playing outdoors. The [emergency] alert system is no good at all. And no emergency shutdown either.

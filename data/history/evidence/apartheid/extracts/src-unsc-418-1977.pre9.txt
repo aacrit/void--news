@@ -1,0 +1,7 @@
+source: src-unsc-418-1977
+locator: pre9
+url: https://documents.un.org/doc/resolution/gen/nr0/297/01/pdf/nr029701.pdf
+read: 2026-10-09
+note: the text is the scan's OCR layer, whitespace collapsed; its glyph errors are kept as printed (e.g. 'ail' for 'all')
+
+Acting therefore under Chapter VII of the Charter of the United Nations,

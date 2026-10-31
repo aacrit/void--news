@@ -1,0 +1,7 @@
+source: src-talat-1917
+locator: p20
+url: https://www.gomidas.org/uploads/Talaat%20Pashas%20Report%20on%20the%20Armenian%20Genocide.pdf
+read: 2026-09-25
+note: the editor's rendering of the original notes to the opening summary page, then the editor's own note 2; a copyrighted edition, held at most 150 words
+
+[NOTE]: The number of Gregorian [Apostolic] Armenians in the 1914 census is 1,187,818 and Armenian Catholics 63,967 bringing their total to 1,256,403 [sic]. Because of the incomplete nature of the data, the true figure for these communities should be around 1,500,000. The number of Armenians who are today counted as locals and outsiders [including those of Constantinople] is 284,157 and this figure should be increased by 30 percent bringing their number to around 350,000 to 400,000. 2 Some provinces which had Armenian populations are missing among those listed in Talaat’s report. These are Edirne, Chatalja, Kale-i Sultaniye (Chanakkale), Menteshe, Teke (Antalya), Janik, Kudus (Jerusalem).

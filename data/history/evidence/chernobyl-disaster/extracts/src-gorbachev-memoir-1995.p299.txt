@@ -1,0 +1,9 @@
+source: src-gorbachev-memoir-1995
+locator: p299
+url: https://www.gorby.ru/presscenter/2026/aprel/post_8265
+read: 2026-10-07
+note: Gorbachev, Zhizn' i reformy, book 1, p. 299, as the Gorbachev Foundation quotes it in its post of 24 April 2026; the closing guillemet is the post's. The parenthesis naming Shcherbina is printed in the post; whether it is the memoir's or the Foundation's insertion is not shown
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+note: a space that the page's markup puts between the italic parenthesis and the full stop is removed ('Щербины).')
+
+28 апреля Рыжков доложил на Политбюро о первых результатах работы комиссии (под руководством Б.Е. Щербины). Вечером 28 апреля на этой основе было дано сообщение по телевидению, а на следующий день – в газетах. Затем сообщения публиковались регулярно по мере поступления новых сведений. Отвожу решительно обвинение в том, что советское руководство намеренно утаивало всю правду о Чернобыле. Просто мы тогда ее еще не знали».

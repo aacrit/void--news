@@ -1,0 +1,8 @@
+source: src-cwihp-bulletin-5
+locator: p110
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf
+read: 2026-10-04
+note: the PDF's text layer, line breaks folded to spaces; where the layer breaks a word at a line end its hyphen is kept as it prints it ('docu- ment'); nothing is corrected
+note: printed page 110: Mark Kramer, on the order of 8 September 1962 and the cables of 22 and 25 October; a footnote number printed against 'Moscow' is the Bulletin's
+
+A written order to this effect was prepared on 8 Sep- tember 1962, but in the end Malinovskii declined to sign it. Thus, at the time of the crisis Pliev had no independent authority to order the use of nuclear weapons or even to order that nuclear warheads, which were stored separately from the missiles, be re- leased for possible employment. The limita- tions on Pliev’s scope of action during the crisis were reinforced by two cables trans- mitted by Malinovskii on October 22 and 25, which “categorically” prohibited any use of nuclear weapons under any circumstances without explicit authorization from Mos- cow.14

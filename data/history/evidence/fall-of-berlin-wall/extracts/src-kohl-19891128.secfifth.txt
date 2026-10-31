@@ -1,0 +1,8 @@
+source: src-kohl-19891128
+locator: secfifth
+url: https://germanhistorydocs.org/en/a-new-germany-1990-2023/helmut-kohl-s-ten-point-plan-for-german-unity-november-28-1989.pdf
+read: 2026-10-09
+note: GHDI's English, translated by Jeremiah Riemer from the Bulletin des Presse- und Informationsamtes der Bundesregierung
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Fifth: We are also prepared to take yet another decisive step, namely, to develop confederative structures between both states in Germany, with the aim of creating a federation, that is, a federal order, in Germany. However, that absolutely presupposes a democratically legitimized government in the GDR.

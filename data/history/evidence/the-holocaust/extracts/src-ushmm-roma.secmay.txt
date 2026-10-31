@@ -1,0 +1,6 @@
+source: src-ushmm-roma
+locator: secmay
+url: https://encyclopedia.ushmm.org/content/en/article/genocide-of-european-roma-gypsies-1939-1945
+read: 2026-10-07
+
+In May 1944, the camp leadership decided to murder the inhabitants of the Gypsy compound. The SS guards surrounded and sealed off the compound. When ordered to come out, the Roma refused, having been warned and having armed themselves with iron pipes, shovels, and other tools used for labor. The SS leaders chose not to confront the Roma directly and withdrew.

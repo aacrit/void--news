@@ -1,0 +1,960 @@
+# The evidence ledger for watergate (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Begun 2026-10-09 for the cinematic Orpheus episode (docs/proposals/HISTORY-AUDIO-ARCHIVAL.md,
+# policy B; docs/proposals/HISTORY-FIRST-LISTENER.md): the sources the script's document voice
+# reads from, the record its narration is checked against, and the recordings it may play.
+# Every entry was fetched on 2026-10-09 from the URL it names; every extract under extracts/
+# was sliced from the fetched copy by a builder script (out/ledger-watergate/build.py, start
+# marker to end marker, whitespace folded to single spaces and nothing else), never retyped.
+# Nothing here was written from memory.
+# Three hosts could not be read: washingtonpost.com (the 1972 stories on wp-srv) dropped the
+# connection to a plain fetch and to a browser-headed one, and web.archive.org answered 429 on
+# every attempt; electionstudies.org answered 403; the Internet Archive's text of the Statement
+# of Information submitted on behalf of President Nixon answered 500. Every book the event YAML
+# names is a controlled lending copy on the Internet Archive, which this container cannot open.
+# Those are listed under gaps. The American National Election Studies series is read here as
+# the Pew Research Center prints it.
+# Where the Internet Archive holds a scanned government volume, the extract is the item's OCR
+# text (its _djvu.txt) and keeps the OCR's misreadings and line-end hyphens as printed.
+# This is NOT a thesis ledger: no positions, contested claims, exhibits or analyses are
+# adjudicated here, and the event renders the Hearing. The bar of §4e is not claimed.
+# Where two held sources disagree, both are held and the disagreement is listed under
+# `disagreements` at the end, unadjudicated.
+slug: watergate
+bootstrapped: 2026-10-09
+
+entries:
+  # ----------------------------------------------------------- Tier A: the White House's own record
+  - id: src-nl-wht-19720623
+    tier: A
+    kind: primary-document
+    author: "Watergate Special Prosecution Force (transcript of a White House recording: Richard Nixon and H. R. Haldeman)"
+    title: "Transcript of a Recording of a Meeting between the President and H.R. Haldeman in the Oval Office on June 23, 1972 from 10:04 to 11:39 AM (Watergate trial exhibit)"
+    container: "Nixon Presidential Library, Watergate Trial Tapes"
+    publisher: Richard Nixon Presidential Library and Museum (National Archives and Records Administration)
+    place: Yorba Linda, California
+    year: 1972
+    edition: "the Library's electronic copy of the typewritten trial transcript, 9 PDF pages carrying printed pages 3 to 8, 16 and 17; printed page 8 is marked '(repl. 10/28/74)'. The conversation is 741-2, cassette E-2 segment 1, which the Library's page calls 'The Smoking Gun' conversation (src-nl-trial-tapes.sec7412)"
+    volume: null
+    document_number: "conversation 741-2"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nixonlibrary.gov/sites/default/files/forresearchers/find/tapes/watergate/trial/exhibit_01.pdf"}
+    access:
+      free_copy: "https://www.nixonlibrary.gov/sites/default/files/forresearchers/find/tapes/watergate/trial/exhibit_01.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "TRANSCRIPT OF A RECORDING OF A MEETING BETWEEN THE PRESIDENT AND H.R. HALDEMAN IN THE OVAL OFFICE ON JUNE 23, 1972 FROM 10:04 TO 11:39 AM (the PDF's first page)"
+    language: en
+    region_of_authorship: americas
+    producer: nixon-white-house
+    position: null
+    rights: public
+
+  - id: src-nl-wht-19730321
+    tier: A
+    kind: primary-document
+    author: "Watergate Special Prosecution Force (transcript of a White House recording: Richard Nixon, John Dean and H. R. Haldeman)"
+    title: "Transcript of a Recording of a Meeting among the President, John Dean, and H.R. Haldeman in the Oval Office, on March 21, 1973, from 10:12 to 11:55 AM (Watergate trial exhibit)"
+    container: "Nixon Presidential Library, Watergate Trial Tapes"
+    publisher: Richard Nixon Presidential Library and Museum (National Archives and Records Administration)
+    place: Yorba Linda, California
+    year: 1973
+    edition: "the Library's electronic copy of the typewritten trial transcript, 108 PDF pages; conversation 886-8, which the Library's page calls the 'Cancer on the Presidency' conversation"
+    volume: null
+    document_number: "conversation 886-8"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nixonlibrary.gov/sites/default/files/forresearchers/find/tapes/watergate/trial/exhibit_12.pdf"}
+    access:
+      free_copy: "https://www.nixonlibrary.gov/sites/default/files/forresearchers/find/tapes/watergate/trial/exhibit_12.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "TRANSCRIPT OF A RECORDING OF A MEETING AMONG THE PRESIDENT, JOHN DEAN, AND H.R. HALDEMAN IN THE OVAL OFFICE, ON MARCH 21, 1973, FROM 10:12 TO 11:55 AM (the PDF's first page)"
+    language: en
+    region_of_authorship: americas
+    producer: nixon-white-house
+    position: null
+    rights: public
+
+  - id: src-app-nixon-19731117
+    tier: A
+    kind: primary-document
+    author: Richard Nixon, President of the United States
+    title: "Question-and-Answer Session at the Annual Convention of the Associated Press Managing Editors Association, Orlando, Florida, November 17, 1973"
+    container: "Public Papers of the Presidents (The American Presidency Project's text)"
+    publisher: "The American Presidency Project (Gerhard Peters and John T. Woolley)"
+    place: null
+    year: 1973
+    edition: "web text, node 255556; the Public Papers' note places it in the Contemporary Hotel at Walt Disney World, broadcast live"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.presidency.ucsb.edu/documents/question-and-answer-session-the-annual-convention-the-associated-press-managing-editors"}
+    access:
+      free_copy: "https://www.presidency.ucsb.edu/documents/question-and-answer-session-the-annual-convention-the-associated-press-managing-editors"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Question-and-Answer Session at the Annual Convention of the Associated Press Managing Editors Association, Orlando, Florida | The American Presidency Project"
+    language: en
+    region_of_authorship: americas
+    producer: nixon-white-house
+    position: null
+    rights: public
+
+  - id: src-app-nixon-19740808
+    tier: A
+    kind: primary-document
+    author: Richard Nixon, President of the United States
+    title: "Address to the Nation Announcing Decision To Resign the Office of President of the United States, August 8, 1974"
+    container: "Public Papers of the Presidents (The American Presidency Project's text)"
+    publisher: "The American Presidency Project (Gerhard Peters and John T. Woolley)"
+    place: null
+    year: 1974
+    edition: "web text"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.presidency.ucsb.edu/documents/address-the-nation-announcing-decision-resign-the-office-president-the-united-states"}
+    access:
+      free_copy: "https://www.presidency.ucsb.edu/documents/address-the-nation-announcing-decision-resign-the-office-president-the-united-states"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Address to the Nation Announcing Decision To Resign the Office of President of the United States | The American Presidency Project"
+    language: en
+    region_of_authorship: americas
+    producer: nixon-white-house
+    position: null
+    rights: public
+
+  - id: src-ford-19740809
+    tier: A
+    kind: primary-document
+    author: Gerald R. Ford, President of the United States
+    title: "Remarks Upon Taking the Oath of Office as President, August 9, 1974; and Remarks on Signing a Proclamation Granting Pardon to Richard Nixon, September 8, 1974"
+    container: "Key Speeches and Writings of Gerald R. Ford (both are items on this one page)"
+    publisher: Gerald R. Ford Presidential Library and Museum (National Archives and Records Administration)
+    place: null
+    year: 1974
+    edition: "the Library's web text, with its note; the same page links the Library's recording of the remarks (the recording row below)"
+    volume: null
+    document_number: "740001"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.fordlibrarymuseum.gov/the-fords/gerald-r-ford/key-speeches-and-writings-gerald-r-ford"}
+    access:
+      free_copy: "https://www.fordlibrarymuseum.gov/the-fords/gerald-r-ford/key-speeches-and-writings-gerald-r-ford"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Key Speeches and Writings of Gerald R. Ford | Gerald R. Ford (the page's heading for the item: 'Remarks Upon Taking the Oath of Office as President, August 9, 1974'; https://www.fordlibrarymuseum.gov/library/speeches/740001.asp redirects here)"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  # ----------------------------------------------------------- Tier A: the courts
+  - id: src-lii-us-v-nixon-1974
+    tier: A
+    kind: judgment
+    author: Supreme Court of the United States (opinion of the Court by Chief Justice Burger)
+    title: "United States v. Nixon, 418 U.S. 683 (1974)"
+    container: United States Reports, volume 418
+    publisher: "Legal Information Institute, Cornell Law School (web text of the opinion)"
+    place: null
+    year: 1974
+    edition: "LII's web text, with its own paragraph numbers; the Library of Congress serves the scanned U.S. Reports at https://tile.loc.gov/storage-services/service/ll/usrep/usrep418/usrep418683/usrep418683.pdf (fetched 2026-10-09, 34 pages; its text layer breaks words at line ends, so the extracts are taken from LII)"
+    volume: "418"
+    document_number: "Nos. 73-1766 and 73-1834; argued July 8, decided July 24, 1974"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.law.cornell.edu/supremecourt/text/418/683"}
+    access:
+      free_copy: "https://www.law.cornell.edu/supremecourt/text/418/683"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "United States v. Nixon, 418 U.S. 683 (1974)"
+    language: en
+    region_of_authorship: americas
+    producer: us-supreme-court
+    position: null
+    rights: public
+
+  - id: src-lii-nyt-v-us-1971
+    tier: A
+    kind: judgment
+    author: Supreme Court of the United States (per curiam, with concurring and dissenting opinions)
+    title: "New York Times Co. v. United States, 403 U.S. 713 (1971)"
+    container: United States Reports, volume 403
+    publisher: "Legal Information Institute, Cornell Law School (web text of the opinion)"
+    place: null
+    year: 1971
+    edition: "LII's web text, with its own paragraph numbers; the Library of Congress scan is https://tile.loc.gov/storage-services/service/ll/usrep/usrep403/usrep403713/usrep403713.pdf (fetched 2026-10-09, 51 pages)"
+    volume: "403"
+    document_number: "Nos. 1873 and 1885; argued June 26, decided June 30, 1971"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.law.cornell.edu/supremecourt/text/403/713"}
+    access:
+      free_copy: "https://www.law.cornell.edu/supremecourt/text/403/713"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "New York Times Co. v. United States, 403 U.S. 713 (1971)"
+    language: en
+    region_of_authorship: americas
+    producer: us-supreme-court
+    position: null
+    rights: public
+
+  # ----------------------------------------------------------- Tier A: Congress
+  - id: src-ssc-final-1974
+    tier: A
+    kind: report
+    author: "United States Senate, Select Committee on Presidential Campaign Activities (Sam J. Ervin, Jr., Chairman)"
+    title: "The Final Report of the Select Committee on Presidential Campaign Activities, United States Senate, pursuant to S. Res. 60, February 7, 1973"
+    container: null
+    publisher: U.S. Government Printing Office
+    place: Washington
+    year: 1974
+    edition: "June 1974 (the title page); the scan on the Internet Archive with its OCR text, the item marked Public Domain Mark 1.0. Chapter 11 holds the individual views of senators, which are each senator's own"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "FinalReportOfTheSenateSelectCommitteeOnPresidentialCampaignActivities", hathitrust: null, url: "https://archive.org/details/FinalReportOfTheSenateSelectCommitteeOnPresidentialCampaignActivities"}
+    access:
+      free_copy: "https://archive.org/details/FinalReportOfTheSenateSelectCommitteeOnPresidentialCampaignActivities"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Final Report of the Senate Select Committee on Presidential Campaign Activities"
+    language: en
+    region_of_authorship: americas
+    producer: us-congress
+    position: null
+    rights: public
+
+  - id: src-ssc-hearings-book3-1973
+    tier: A
+    kind: testimony
+    author: "United States Senate, Select Committee on Presidential Campaign Activities (testimony of John W. Dean III)"
+    title: "Presidential Campaign Activities of 1972, Senate Resolution 60: Watergate and Related Activities, Phase I: Watergate Investigation, Book 3 (June 25 and 26, 1973)"
+    container: Hearings before the Select Committee on Presidential Campaign Activities, 93rd Congress, 1st Session
+    publisher: U.S. Government Printing Office
+    place: Washington
+    year: 1973
+    edition: "the Boston Public Library copy scanned by the Internet Archive, with its OCR text"
+    volume: "Book 3"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: presidentialcamp03unit, hathitrust: null, url: "https://archive.org/details/presidentialcamp03unit"}
+    access:
+      free_copy: "https://archive.org/details/presidentialcamp03unit"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Presidential campaign activities of 1972, Senate resolution 60; Watergate and related activities (the item's title; its OCR text opens 'WASHINGTON, D.C., JUNE 25 AND 26, 1973 Book 3')"
+    language: en
+    region_of_authorship: americas
+    producer: us-congress
+    position: null
+    rights: public
+
+  - id: src-hjc-report-1974
+    tier: A
+    kind: report
+    author: "United States House of Representatives, Committee on the Judiciary (Peter W. Rodino, Jr., Chairman)"
+    title: "Impeachment of Richard M. Nixon, President of the United States: The Final Report of the Committee on the Judiciary, House of Representatives"
+    container: null
+    publisher: "The Viking Press, reprinting the committee's report of August 20, 1974"
+    place: New York
+    year: 1975
+    edition: "the Viking Press trade edition ('Published in 1975 by The Viking Press, Inc.'), with an introduction by R. W. Apple, Jr., scanned by the Internet Archive (not a lending item); only the committee's report and the members' views, which are works of the United States government, are extracted; Apple's introduction is not held"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: impeachmentofric0000unit, hathitrust: null, url: "https://archive.org/details/impeachmentofric0000unit"}
+    access:
+      free_copy: "https://archive.org/details/impeachmentofric0000unit"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Impeachment of Richard M. Nixon, President of the United States : the final report of the Committee on the Judiciary, House of Representatives"
+    language: en
+    region_of_authorship: americas
+    producer: us-congress
+    position: null
+    rights: public
+
+  - id: src-church-book2-1976
+    tier: A
+    kind: report
+    author: "United States Senate, Select Committee to Study Governmental Operations with Respect to Intelligence Activities (Frank Church, Chairman)"
+    title: "Intelligence Activities and the Rights of Americans, Book II, Final Report of the Select Committee to Study Governmental Operations with Respect to Intelligence Activities"
+    container: null
+    publisher: U.S. Government Printing Office; served by the Senate Select Committee on Intelligence
+    place: Washington
+    year: 1976
+    edition: "the scanned report with a text layer, 404 PDF pages; the title page reads '94TH CONGRESS, 2d Session', and its report number is garbled in the text layer"
+    volume: "Book II"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.intelligence.senate.gov/sites/default/files/94755_II.pdf"}
+    access:
+      free_copy: "https://www.intelligence.senate.gov/sites/default/files/94755_II.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Intelligence Activities and the Rights of Americans, Book II (the PDF's report; its page IX holds the committee's account of its own record)"
+    language: en
+    region_of_authorship: americas
+    producer: us-congress
+    position: null
+    rights: public
+
+  - id: src-nara-pentagon-papers
+    tier: A
+    kind: primary-document
+    author: National Archives and Records Administration
+    title: "Pentagon Papers (the National Archives' release page)"
+    container: archives.gov research pages
+    publisher: National Archives and Records Administration
+    place: null
+    year: 2011
+    edition: "web page introducing the release of the complete report on the leak's 40th anniversary"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.archives.gov/research/pentagon-papers"}
+    access:
+      free_copy: "https://www.archives.gov/research/pentagon-papers"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Pentagon Papers | National Archives"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  # ----------------------------------------------------------- Tier B: data and critique
+  - id: src-pew-trust-2025
+    tier: B
+    kind: dataset
+    author: Pew Research Center
+    title: "Public Trust in Government: 1958-2025"
+    container: null
+    publisher: Pew Research Center
+    place: null
+    year: 2025
+    edition: "web page dated December 4, 2025 (the 2024 URL redirects here); its trend line is compiled from the American National Election Studies, Gallup, ABC/Washington Post, CBS/New York Times and CNN polls, as its data table names them"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.pewresearch.org/politics/2025/12/04/public-trust-in-government-1958-2025/"}
+    access:
+      free_copy: "https://www.pewresearch.org/politics/2025/12/04/public-trust-in-government-1958-2025/"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Public Trust in Government: 1958-2025 | Pew Research Center"
+    language: en
+    region_of_authorship: americas
+    producer: pew-research-center
+    position: null
+    rights: copyright
+
+  - id: src-epstein-commentary-1974
+    tier: B
+    kind: journal-article
+    author: Edward Jay Epstein
+    title: "Did the Press Uncover Watergate?"
+    container: Commentary
+    publisher: Commentary
+    place: null
+    year: 1974
+    edition: "the magazine's web text of the July 1974 issue; the producer id `scholarship` is the class the registry offers for a critic's essay, not a claim that it is peer-reviewed"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.commentary.org/articles/edward-epstein-3/did-the-press-uncover-watergate/"}
+    access:
+      free_copy: "https://www.commentary.org/articles/edward-epstein-3/did-the-press-uncover-watergate/"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Did the Press Uncover Watergate? (Commentary, July 1974, by Edward Jay Epstein)"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  # ----------------------------------------------------------- Tier C: press and catalogue
+  - id: src-oconnor-vanityfair-2005
+    tier: C
+    kind: chronicle
+    author: John D. O'Connor
+    title: "\"I'm the Guy They Called Deep Throat\""
+    container: Vanity Fair
+    publisher: Condé Nast
+    place: null
+    year: 2005
+    edition: "the magazine's web text of the July 2005 piece; the page says O'Connor is 'a San Francisco attorney' and that this is his first piece for the magazine"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.vanityfair.com/news/politics/2005/07/deepthroat200507"}
+    access:
+      free_copy: "https://www.vanityfair.com/news/politics/2005/07/deepthroat200507"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "W. Mark Felt Reveals Himself as Deep Throat, Ends Years of Post-Watergate Speculation | Vanity Fair"
+    language: en
+    region_of_authorship: americas
+    producer: press
+    position: null
+    rights: copyright
+
+  - id: src-nl-trial-tapes
+    tier: C
+    kind: reference
+    author: Richard Nixon Presidential Library and Museum (catalogue page)
+    title: "Watergate Trial Tapes"
+    container: nixonlibrary.gov
+    publisher: Richard Nixon Presidential Library and Museum (National Archives and Records Administration)
+    place: Yorba Linda, California
+    year: 2018
+    edition: "the Library's page listing the conversations played in open court, with cassette, conversation and exhibit numbers and an abstract of each; the year is the Last-Modified date of the files it serves (1 August 2018)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nixonlibrary.gov/watergate-trial-tapes"}
+    access:
+      free_copy: "https://www.nixonlibrary.gov/watergate-trial-tapes"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Watergate Trial Tapes | Richard Nixon Museum and Library"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  # ----------------------------------------------------------- not read (gaps)
+  - id: src-wapo-19720618
+    tier: A
+    kind: chronicle
+    author: The Washington Post
+    title: "The Washington Post's Watergate reporting of 1972 to 1974 (its wp-srv Watergate archive)"
+    container: The Washington Post
+    publisher: The Washington Post
+    place: Washington
+    year: 1972
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Post's own Watergate pages (wp-srv/national/longterm/watergate) dropped the connection to every fetch on 2026-10-09 and the Wayback Machine answered 429; the Post's 1972 to 1974 reporting is therefore not held at all"}
+    language: en
+    region_of_authorship: americas
+    producer: press
+    position: null
+    rights: copyright
+
+  - id: src-woodward-bernstein-1974
+    tier: B
+    kind: memoir
+    author: Bob Woodward and Carl Bernstein
+    title: "All the President's Men"
+    container: null
+    publisher: Quartet Books (the Internet Archive copy's edition)
+    place: London
+    year: 1974
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: allpresidentsmen00wood, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copy is a controlled lending item, which this container cannot open"}
+    language: en
+    region_of_authorship: americas
+    producer: press
+    position: null
+    rights: copyright
+
+  - id: src-ellsberg-2002
+    tier: B
+    kind: memoir
+    author: Daniel Ellsberg
+    title: "Secrets: A Memoir of Vietnam and the Pentagon Papers"
+    container: null
+    publisher: Viking
+    place: New York
+    year: 2002
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: secretsmemoirofv0000ells, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copy is a controlled lending item, which this container cannot open"}
+    language: en
+    region_of_authorship: americas
+    producer: recollection
+    position: null
+    rights: copyright
+
+  - id: src-ellsberg-statement-19710628
+    tier: A
+    kind: primary-document
+    author: Daniel Ellsberg
+    title: "Public statement after surrendering to federal authorities, June 28, 1971 (as the event YAML names it)"
+    container: null
+    publisher: null
+    place: null
+    year: 1971
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "no free copy of the statement's text was found on a primary or archival host; the National Archives' Pentagon Papers page links only a 1973 interview"}
+    language: en
+    region_of_authorship: americas
+    producer: recollection
+    position: null
+    rights: copyright
+
+  - id: src-graham-1997
+    tier: B
+    kind: memoir
+    author: Katharine Graham
+    title: "Personal History"
+    container: null
+    publisher: Vintage (the Internet Archive copy's edition)
+    place: New York
+    year: 1998
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: personalhistory00grah, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copy is a controlled lending item, which this container cannot open"}
+    language: en
+    region_of_authorship: americas
+    producer: recollection
+    position: null
+    rights: copyright
+
+  - id: src-nixon-rn-1978
+    tier: B
+    kind: memoir
+    author: Richard Nixon
+    title: "RN: The Memoirs of Richard Nixon"
+    container: null
+    publisher: Grosset and Dunlap
+    place: New York
+    year: 1978
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: rnmemoirsofricha0000nixo, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copy is a controlled lending item, which this container cannot open"}
+    language: en
+    region_of_authorship: americas
+    producer: recollection
+    position: null
+    rights: copyright
+
+  - id: src-haldeman-1978
+    tier: B
+    kind: memoir
+    author: H. R. Haldeman with Joseph DiMona
+    title: "The Ends of Power"
+    container: null
+    publisher: Times Books
+    place: New York
+    year: 1978
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: endsofpower0000hald, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copy is a controlled lending item, which this container cannot open"}
+    language: en
+    region_of_authorship: americas
+    producer: recollection
+    position: null
+    rights: copyright
+
+  - id: src-frost-nixon-1977
+    tier: A
+    kind: testimony
+    author: Richard Nixon, interviewed by David Frost
+    title: "The Nixon Interviews with David Frost (broadcast May 1977)"
+    container: null
+    publisher: null
+    place: null
+    year: 1977
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "no transcript or recording with a stated licence was found on a primary or archival host; 'When the president does it, that means that it is not illegal' and 'I let down my friends' are therefore not held"}
+    language: en
+    region_of_authorship: americas
+    producer: recollection
+    position: null
+    rights: copyright
+
+  - id: src-stclair-statement-1974
+    tier: A
+    kind: primary-document
+    author: "United States House of Representatives, Committee on the Judiciary (the information submitted on behalf of President Nixon by his special counsel, James St. Clair, as the committee's report names him)"
+    title: "Statement of Information Submitted on Behalf of President Nixon: Hearings before the Committee on the Judiciary, House of Representatives, Book I"
+    container: null
+    publisher: U.S. Government Printing Office
+    place: Washington
+    year: 1974
+    edition: null
+    volume: "Book I"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: statementofinfor01unit, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive item is listed (not a lending item) but its text answered 500 on two attempts on 2026-10-09; the President's case is held here as the Court and the House minority state it"}
+    language: en
+    region_of_authorship: americas
+    producer: nixon-white-house
+    position: null
+    rights: public
+
+  - id: src-church-mtp-19750817
+    tier: A
+    kind: testimony
+    author: Frank Church
+    title: "Interview on Meet the Press, NBC, August 17, 1975 (the event YAML's 'no place to hide' quotation)"
+    container: null
+    publisher: null
+    place: null
+    year: 1975
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "no transcript was found on a primary or archival host"}
+    language: en
+    region_of_authorship: americas
+    producer: press
+    position: null
+    rights: copyright
+
+  - id: src-kutler-1990
+    tier: B
+    kind: monograph
+    author: Stanley I. Kutler
+    title: "The Wars of Watergate: The Last Crisis of Richard Nixon"
+    container: null
+    publisher: "Knopf, distributed by Random House"
+    place: New York
+    year: 1990
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: warsofwatergatel0000kutl, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copy is a controlled lending item, which this container cannot open"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-holland-2012
+    tier: B
+    kind: monograph
+    author: Max Holland
+    title: "Leak: Why Mark Felt Became Deep Throat"
+    container: null
+    publisher: University Press of Kansas
+    place: Lawrence
+    year: 2012
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: leakwhymarkfeltb0000holl, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copy is a controlled lending item, which this container cannot open"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-perlstein-2008
+    tier: B
+    kind: monograph
+    author: Rick Perlstein
+    title: "Nixonland: The Rise of a President and the Fracturing of America"
+    container: null
+    publisher: Scribner
+    place: New York
+    year: 2008
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: nixonlandriseofp0000perl, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copy is a controlled lending item, which this container cannot open"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-graff-2022
+    tier: B
+    kind: monograph
+    author: Garrett M. Graff
+    title: "Watergate: A New History"
+    container: null
+    publisher: "Avid Reader Press, an imprint of Simon & Schuster"
+    place: New York
+    year: 2022
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: watergatenewhist0000graf, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "the Internet Archive's copy is a controlled lending item, which this container cannot open"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-anes-trust
+    tier: B
+    kind: dataset
+    author: American National Election Studies
+    title: "American National Election Studies, Trust in Government Index (as the event YAML names it)"
+    container: null
+    publisher: American National Election Studies
+    place: null
+    year: 1958
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "electionstudies.org answered 403 to every fetch on 2026-10-09; the series is read as the Pew Research Center prints it (src-pew-trust-2025)"}
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+positions: []
+contested: []
+exhibits: []
+analyses: []
+
+gaps:
+  - entry: src-wapo-19720618
+    what: "The Washington Post's reporting of 1972 to 1974, the press account's own record; the press account is held here only through Justice Black, Senator Ervin's individual views and the 2005 Vanity Fair piece"
+    tried: ["https://www.washingtonpost.com/wp-srv/national/longterm/watergate/articles/061872-1.htm", "https://web.archive.org/web/2019id_/https://www.washingtonpost.com/wp-srv/national/longterm/watergate/articles/061872-1.htm"]
+    status: "connection dropped (washingtonpost.com) and 429 (web.archive.org), 2026-10-09"
+  - entry: src-woodward-bernstein-1974
+    what: "Woodward and Bernstein's book, the source of the press account's method ('two sources', 'follow the money'); nothing from it is held"
+    tried: ["https://archive.org/details/allpresidentsmen00wood"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-ellsberg-2002
+    what: "Ellsberg's memoir; his account of copying the study is not held"
+    tried: ["https://archive.org/details/secretsmemoirofv0000ells"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-ellsberg-statement-19710628
+    what: "Ellsberg's statement of 28 June 1971, the event YAML's first-person excerpt; it is spoken in the live script as a DOCUMENT and is not verified"
+    tried: ["https://www.archives.gov/research/pentagon-papers"]
+    status: "no free text found"
+  - entry: src-graham-1997
+    what: "Graham's memoir, the source of the stock offering and the television licences; not held"
+    tried: ["https://archive.org/details/personalhistory00grah"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-nixon-rn-1978
+    what: "Nixon's memoir, the executive-power account's own statement of the cover-up as containment; not held"
+    tried: ["https://archive.org/details/rnmemoirsofricha0000nixo"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-haldeman-1978
+    what: "Haldeman's memoir; not held"
+    tried: ["https://archive.org/details/endsofpower0000hald"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-frost-nixon-1977
+    what: "The Frost interviews; 'When the president does it, that means that it is not illegal' is spoken in the live script as an M: line and is not verified"
+    tried: ["https://archive.org/advancedsearch.php?q=nixon frost 1977"]
+    status: "no transcript with a stated source and licence found"
+  - entry: src-stclair-statement-1974
+    what: "The President's own case to the House Judiciary Committee"
+    tried: ["https://archive.org/download/statementofinfor01unit/statementofinfor01unit_djvu.txt"]
+    status: "500 on two attempts, 2026-10-09"
+  - entry: src-church-mtp-19750817
+    what: "Church's 'no place to hide' interview; it is spoken in the live script as an M: line and is not verified"
+    tried: ["https://www.intelligence.senate.gov/sites/default/files/94755_II.pdf"]
+    status: "the Committee's report does not carry it; no transcript found"
+  - entry: src-kutler-1990
+    what: "The institutional account's anchor text; its position is narrated from the event YAML and nothing is quoted from it"
+    tried: ["https://archive.org/details/warsofwatergatel0000kutl"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-holland-2012
+    what: "Holland's argument on Felt's motive, and the event YAML's claim that 'follow the money' was written for the film; neither is held"
+    tried: ["https://archive.org/details/leakwhymarkfeltb0000holl"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-perlstein-2008
+    what: "Perlstein's book; nothing from it is held"
+    tried: ["https://archive.org/details/nixonlandriseofp0000perl"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-graff-2022
+    what: "Graff's book; nothing from it is held"
+    tried: ["https://archive.org/details/watergatenewhist0000graf"]
+    status: "a controlled lending copy, which this container cannot open"
+  - entry: src-anes-trust
+    what: "The ANES trust series in its own publication; read here through Pew"
+    tried: ["https://electionstudies.org/resources/anes-guide/top-tables/?id=116"]
+    status: "403, 2026-10-09"
+  - what: "A recording of Nixon's resignation address of 8 August 1974 from a repository that states its rights"
+    tried: ["https://www.nixonlibrary.gov/white-house-tapes", "https://millercenter.org/the-presidency/presidential-speeches/august-8-1974-address-nation-announcing-decision-resign-office", "https://archive.org/details/nixon-resigns-8.8.74"]
+    status: "the Nixon Library page names no file for it; the Miller Center serves a file under its university's copyright notice with no statement for the recording; the Internet Archive item is a third-party upload with no licence and no provenance. No candidate is written"
+  - what: "The audio of the 21 March 1973 'cancer on the Presidency' conversation, exhibit 12"
+    tried: ["https://www.nixonlibrary.gov/sites/default/files/forresearchers/find/tapes/watergate/trial/exhibit_12.mp3"]
+    status: "404; the transcript (exhibit_12.pdf) is held"
+
+# ------------------------------------------------------------- recordings
+# Archival audio artifacts (docs/proposals/HISTORY-AUDIO-ARCHIVAL.md §4a). A recording is a
+# factual claim four times over: this speaker, this occasion, this date, these words. Every
+# `*_as_stated` field is copied from the repository's own page or file headers as fetched on
+# `fetched_at`, never from memory. `transcript` is verbatim from the ledger extract named in
+# `transcript_extract`. `verification` names the record pipeline/history/verify_clip.py wrote;
+# its WER, coverage, excerpt sha256 and verified_at are the check's, never hand-typed.
+# `signed_by` / `signed_at` are the CEO's, per clip, and nothing plays in an episode until both
+# are set (policy B, §2). Every row here is left UNSIGNED for the CEO.
+recordings:
+  - id: clip-ford-nightmare-19740809
+    kind: audio
+    title: "Gerald R. Ford, 'our long national nightmare is over', in the Ford Library's recording of his remarks on taking the oath of office"
+    speaker: Gerald R. Ford
+    occasion: "Remarks Upon Taking the Oath of Office as President, the East Room of the White House, after the oath administered by Chief Justice Warren E. Burger"
+    date: "1974-08-09"
+    date_as_stated: "the Library's heading 'Remarks Upon Taking the Oath of Office as President, August 9, 1974'; its note: 'The President spoke at 12:05 p.m. in the East Room at the White House' (extract src-ford-19740809.secnote)"
+    repository: "Gerald R. Ford Presidential Library and Museum (National Archives and Records Administration)"
+    accession: "740001"
+    url: "https://www.fordlibrarymuseum.gov/the-fords/gerald-r-ford/key-speeches-and-writings-gerald-r-ford"
+    file: "https://www.fordlibrarymuseum.gov/sites/default/files/2024-04/740001.mp3"
+    file_md5: "2d5347fba3987a8aa6ab06a43d46e267"
+    file_md5_as_stated: "the Library publishes no checksum. This is the md5 of the file as fetched on 2026-10-09 from the page's link 'Listen to the entire speech in .mp3 format (9.3 MB)' (9,531,161 bytes, audio/mpeg, Last-Modified Thu, 11 Apr 2024 22:59:33 GMT, ETag 916f19-66186b55-c203cf8004fc4ea9), recorded so the render job refuses a changed file"
+    title_as_stated: "Gerald R. Ford's Remarks Upon Taking the Oath of Office as President"
+    creator_as_stated: "the page names no recordist; the file opens with the Chief Justice administering the oath and an announcer's 'Ladies and gentlemen, the President of the United States' (heard by an ASR pass over the whole file)"
+    origin_as_stated: "the Library's page of key speeches, which links the file under the item's heading; the page does not say which of the Library's audiovisual collections the file comes from"
+    uploader_as_stated: "the Library's own site; no third-party uploader"
+    licence_as_stated: "the Library's audiovisual collections page: 'Much of the Library's audiovisual holdings, including all White House-produced photographs, motion picture films, and audiotapes, are in the public domain. Other material, such as donated items and White House Communications Agency news videotapes, are subject to copyright law'. Its FAQ: 'Works prepared by U.S. Government employees as part of their official duties are in the public domain.' No statement is attached to the file itself"
+    licence_url: "https://www.fordlibrarymuseum.gov/digital-research-room/library-collections/ford-library-audiovisual-collections"
+    rights_basis: public-domain-as-stated
+    rights_reading: "The President's own words, recorded at a White House event and served by the federal library that holds the White House's audiotapes, which it states are in the public domain when White House-produced. OPEN QUESTION FOR THE SIGNER: the page does not say whether this file is a White House Communications Agency audiotape (public domain by the Library's statement) or taken from a network broadcast (which the Library says is subject to copyright); the remarks were 'broadcast live on radio and television' (secnote). The words themselves are a work of the United States government under 17 U.S.C. 105. Admissible under policy B only if the CEO accepts the Library's statement for this file"
+    fetched_at: 2026-10-09
+    duration_s: 597.01
+    excerpt: {in: "00:06:54.800", out: "00:07:09.300"}
+    transcript_extract: src-ford-19740809.secnightmare
+    transcript: "My fellow Americans, our long national nightmare is over. Our Constitution works; our great Republic is a government of laws and not of men."
+    verification: recordings/clip-ford-nightmare-19740809.verification.json
+    observed: "The window opens in the pause after 'the best policy in the end.' and closes in the pause after 'not of men.', before 'Here the people rule.' The record: faster-whisper base.en heard every word (WER 0.000, coverage 1.000, PASS). The file is mono, 44.1 kHz MP3, 9 min 57 s; the passage sits at 6 min 55 s"
+    shows: "Ford's voice saying the two sentences the event YAML quotes, and the sentence that follows them"
+    does_not_show: "the oath itself, the rest of the remarks (including the request for prayers for Richard Nixon and his family), the room, and who made the recording"
+    signed_by: null
+    signed_at: null
+
+  - id: clip-haldeman-trace-the-money-19720623
+    kind: audio
+    title: "H. R. Haldeman telling Nixon the FBI can trace the money, in the White House recording of 23 June 1972 played at the Watergate trials"
+    speaker: H. R. Haldeman
+    occasion: "Meeting between the President and H. R. Haldeman in the Oval Office, 10:04 to 11:39 a.m., conversation 741-2, the 'Smoking Gun' conversation, recorded by the White House taping system"
+    date: "1972-06-23"
+    date_as_stated: "'DATE: Friday, June 23, 1972 ... Conversation Number: 741-2' (src-nl-trial-tapes.sec7412); the transcript's heading 'ON JUNE 23, 1972 FROM 10:04 TO 11:39 AM' (src-nl-wht-19720623.p3)"
+    repository: "Richard Nixon Presidential Library and Museum (National Archives and Records Administration), Watergate Trial Tapes"
+    accession: "conversation 741-2, cassette E-2 segment 1"
+    url: "https://www.nixonlibrary.gov/watergate-trial-tapes"
+    file: "https://www.nixonlibrary.gov/sites/default/files/forresearchers/find/tapes/watergate/trial/exhibit_01.mp3"
+    file_md5: "df13bdff511cedc8e30e5e140f21f5b0"
+    file_md5_as_stated: "the Library publishes no checksum. This is the md5 of the file as fetched on 2026-10-09 (6,636,540 bytes, audio/mpeg, Last-Modified Wed, 01 Aug 2018 03:32:47 GMT, ETag 6543fc-5b6129df-bfd74dc0d30f5918), recorded so the render job refuses a changed file"
+    title_as_stated: "'The Smoking Gun' conversation (the page's abstract for conversation 741-2)"
+    creator_as_stated: "the White House taping system; 'excerpted Nixon White House tape conversations that were played in open court in U.S. v. Mitchell, et al. and U.S. v. Connally' (src-nl-trial-tapes.secintro)"
+    origin_as_stated: "the trial-tapes page lists the conversation as 'E - 2 Segment 1 (8 minutes)'; it embeds its players through media entities that do not render in the page source, so the file is matched to the conversation by its name beside exhibit_01.pdf, whose heading is this meeting, by its length (464.5 s, about the page's eight minutes) and by an ASR pass, which hears the transcript's opening ('the FBI is not under control', 'trace the money')"
+    uploader_as_stated: "the Library's own site; no third-party uploader"
+    licence_as_stated: "the Library's research FAQ: 'In general, all government records are in the public domain and may be freely used. We do have some donated or other materials that might be subject to copyright restrictions.' Its terms page: 'The U.S. Government exercises no intellectual property claims on materials created by or for its offices (17 U.S.C 105)'"
+    licence_url: "https://www.nixonlibrary.gov/research/research-frequently-asked-questions-faqs"
+    rights_basis: public-domain-as-stated
+    rights_reading: "A White House recording made by the government's own taping system, held by the National Archives as a presidential record and played in open court; the Library states government records are in general public domain. The voice is Haldeman's, a federal employee speaking in his office. Admissible under policy B with the CEO's signature"
+    fetched_at: 2026-10-09
+    duration_s: 464.54
+    excerpt: {in: "00:00:16.000", out: "00:00:25.600"}
+    transcript_extract: src-nl-wht-19720623.p3
+    transcript: "and they have, their investigation is now leading into some productive areas, because they've been able to trace the money, not through the money itself, but through the bank"
+    verification: recordings/clip-haldeman-trace-the-money-19720623.verification.json
+    observed: "A 1972 room recording through the taping system: low level and hiss. The window is the clause about the money, cut at 'through the bank' before 'you know, sources'. The record: WER 0.133, coverage 0.867, PASS; base.en heard 'beating its' for 'leading into some' and 'produce' for 'trace'. The file is mono, 44.1 kHz MP3, 7 min 45 s; the passage sits 16 s in"
+    shows: "Haldeman's voice, six days after the arrests, telling the President where the FBI's investigation was going"
+    does_not_show: "the proposal that follows it (Walters to call Gray), which is on the same page of the transcript, and Nixon's agreement; what the President heard or understood"
+    signed_by: null
+    signed_at: null
+
+  # A candidate that FAILS the transcript gate, kept so the reason is on the record.
+  # No `# CLIP:` directive should name it.
+  - id: clip-nixon-play-it-tough-19720623
+    kind: audio
+    title: "Richard Nixon, 'Play it tough', in the White House recording of 23 June 1972 played at the Watergate trials (candidate)"
+    speaker: Richard Nixon
+    occasion: "Meeting between the President and H. R. Haldeman in the Oval Office, 10:04 to 11:39 a.m., conversation 741-2, after the President's 'You call them in.'"
+    date: "1972-06-23"
+    date_as_stated: "as clip-haldeman-trace-the-money-19720623"
+    repository: "Richard Nixon Presidential Library and Museum (National Archives and Records Administration), Watergate Trial Tapes"
+    accession: "conversation 741-2, cassette E-2 segment 1"
+    url: "https://www.nixonlibrary.gov/watergate-trial-tapes"
+    file: "https://www.nixonlibrary.gov/sites/default/files/forresearchers/find/tapes/watergate/trial/exhibit_01.mp3"
+    file_md5: "df13bdff511cedc8e30e5e140f21f5b0"
+    file_md5_as_stated: "as clip-haldeman-trace-the-money-19720623"
+    title_as_stated: "'The Smoking Gun' conversation (the page's abstract for conversation 741-2)"
+    creator_as_stated: "the White House taping system"
+    origin_as_stated: "as clip-haldeman-trace-the-money-19720623"
+    uploader_as_stated: "the Library's own site; no third-party uploader"
+    licence_as_stated: "as clip-haldeman-trace-the-money-19720623: 'In general, all government records are in the public domain and may be freely used.'"
+    licence_url: "https://www.nixonlibrary.gov/research/research-frequently-asked-questions-faqs"
+    rights_basis: public-domain-as-stated
+    rights_reading: "As clip-haldeman-trace-the-money-19720623; the voice is the President's"
+    fetched_at: 2026-10-09
+    duration_s: 464.54
+    excerpt: {in: "00:05:40.600", out: "00:05:45.100"}
+    transcript_extract: src-nl-wht-19720623.p8
+    transcript: "Good deal! Play it tough. That's the way they play it and that's the way we are going to play it."
+    verification: recordings/clip-nixon-play-it-tough-19720623.verification.json
+    observed: "NOT ADMITTED. The record: WER 0.826, coverage 0.348, FAIL ('coverage under 0.7; 4 recognised words before the transcript begins'); base.en heard 'We've got a good deal. Play it down so it ain't playing. That's what we're gonna play.' The bar is not lowered; the document voice reads the line instead. The 'Bay of Pigs' instruction (printed page 16, about 6 min 6 s into the file) was tried in a whole-file pass and the model lost the speech entirely, so no row is written for it"
+    shows: "Nixon's voice approving the plan"
+    does_not_show: "the plan itself, which Haldeman sets out on printed pages 3 to 7; the 'Bay of Pigs' instruction on printed page 16"
+    signed_by: null
+    signed_at: null
+
+# ------------------------------------------------------------- disagreements held, not adjudicated
+# Where two held sources disagree, both are held. This is a list for the writer, not a verdict.
+# 1. The money found on 17 June 1972. The Senate report's break-in chapter: police found
+#    '$4,200 in $100 bills, all with serial numbers in sequence' and 'sets of blue surgical
+#    gloves' in the burglars' hotel rooms the next afternoon (src-ssc-final-1974.secarrest).
+#    Its chapter on the Mexican checks: a search of 'the five men arrested' 'produced $6,500 in
+#    new $100 bills, most of which were serially numbered' (src-ssc-final-1974.secmexican).
+#    The gloves are placed in the rooms, not on the men.
+# 2. Who uncovered Watergate. Senator Ervin credits Judge Sirica, 'the investigative reporting
+#    of Carl Bernstein, Bob Woodward, and other representatives of a free press', the Select
+#    Committee and the Special Prosecutors together (src-ssc-final-1974.secervin13); Epstein,
+#    the same summer: 'it was not the press which exposed Watergate; it was agencies of
+#    government itself' (src-epstein-commentary-1974.secconclusion).
+# 3. How the tapes came out. The Senate report: Butterfield 'was interviewed simply because he
+#    was a satellite on Mr. Haldeman's chart', and told the committee of the taping system when
+#    Deputy Minority Counsel Donald Sanders asked (src-ssc-final-1974.secbutterfield). The event
+#    YAML calls it 'the accident of a question'. The House report dates the public disclosure
+#    to 16 July 1973 (src-hjc-report-1974.sectapes).
+# 4. Felt. Haldeman on the tape, 23 June 1972: Felt 'wants to cooperate because... he's
+#    ambitious' (src-nl-wht-19720623.p4). Epstein, 1974: the prosecutors 'now believe' the source
+#    was 'probably Mark W. Felt, Jr.', and he suspects a composite
+#    (src-epstein-commentary-1974.secdeepthroat). Vanity Fair, 2005: Felt 'is finally admitting'
+#    the role and is 'one of American democracy's heroes' (src-oconnor-vanityfair-2005.seclead);
+#    Gray 'chose to leave an increasingly frustrated Felt in charge' (secgray). Holland's motive
+#    argument is a gap.
+# 5. What the June 23 tape proves, and when the House minority moved. The committee: the
+#    transcripts 'conclusively confirm the finding that the Committee had already made'
+#    (src-hjc-report-1974.secaugust5). The ten members of the minority: before them they 'did
+#    not, and still do not, believe that the evidence ... was sufficient', and after them the
+#    obstruction charge 'may be taken as substantially confessed' (secminority1); on the other
+#    articles, 'for the most part, he was not guilty' (secminority).
+# 6. The size of the Pentagon Papers leak. The Archives: 'small portions of the report were
+#    leaked to the press' and the complete report is 'approximately 7,000 declassified pages',
+#    34% of it released for the first time in 2011 (src-nara-pentagon-papers.secintro). Chief
+#    Justice Burger in 1971: 'the analysis of 7,000 pages of complex material'
+#    (src-lii-nyt-v-us-1971.para84). The event YAML has Ellsberg photocopying 7,000 pages and
+#    passing 'the volumes' to the Times.
+# 7. What the Court said about deference. Chief Justice Burger's sentence 'each branch ... must
+#    initially interpret the Constitution, and the interpretation of its powers by any branch
+#    is due great respect' is followed in the same paragraph by Marbury: 'the province and duty
+#    of the judicial department to say what the law is' (src-lii-us-v-nixon-1974.para28). Read
+#    alone, the first sentence states the President's side of the argument, not the holding,
+#    which is para53.
+# 8. Trust. Pew's table: NES 77 in October 1964 and 36 in December 1974, but 73 in 1958, 65 in
+#    1966, 62 in 1968 and 53 in 1972 (src-pew-trust-2025.sectable). The event YAML's 'roughly
+#    three in four ... in the late 1950s and 1960s' holds for 1958 and 1964 only.
+# 9. Dean's words. On the tape: 'We have a cancer--within, close to the Presidency, that's
+#    growing' (src-nl-wht-19730321.p5). Before the Senate, recounting it: 'I began by telling
+#    the President that there was a cancer growing on the Presidency' (src-ssc-hearings-
+#    book3-1973.p998). The event YAML's 'We have a cancer within, close to the presidency, that
+#    is growing' is neither, and is attributed to the testimony.
+# 10. The third-rate burglary. The Senate report: Ziegler on 19 June 1972 'declined to comment
+#    on what he termed a "third-rate burglary attempt."' (src-ssc-final-1974.secthirdrate).
+# 11. When the Plumbers broke into Dr. Fielding's office. The House report: 'On September 3,
+#    1971, a team consisting of Bernard Barker, Felipe De- Diego and Eugenio Martinez ...
+#    illegally broke into the office of Dr. Lewis Fielding, Ellsberg's psychiatrist'
+#    (src-hjc-report-1974.secfielding). The event YAML and the live script: 'Three days after the
+#    ruling' of 30 June 1971. The two cannot both be right; the held record says September.
+# 12. Felt's title. Epstein, 1974: 'then a deputy associate director of the FBI'
+#    (src-epstein-commentary-1974.secdeepthroat); Vanity Fair, 2005: 'number two at the F.B.I.'
+#    (src-oconnor-vanityfair-2005.seclead); the event YAML: 'FBI Associate Director'.

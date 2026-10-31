@@ -1,0 +1,8 @@
+source: src-hjc-report-1974
+locator: secminority1
+url: https://archive.org/details/impeachmentofric0000unit
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (including the '¬' the OCR prints for one) are kept as printed
+note: the same Minority Views, their summary on Article I; the running head and page number '480' fall inside the passage and are kept where the OCR prints them
+
+( 1 ) With respect to proposed Article I, we believe that the charges of conspiracy to obstruct justice, and 480 SUPPLEMENTAL, ADDITIONAL, SEPARATE . . . VIEWS obstruction of justice, which are contained in the Article in essence, if not in terms, may be taken as substantially confessed by Mr. Nixon on August 5, 1974, and corrob¬ orated by ample other evidence in the record. Prior to Mr. Nixon’s revelation of the contents of three conversations between him and his former Chief of Staff, H. R. Halde- man, that took place on June 23, 1972, we did not, and still do not, believe that the evidence of presidential in¬ volvement in the Watergate cover-up conspiracy, as de¬ veloped at that time, was sufficient to warrant Members of the House, or dispassionate jurors in the Senate, in finding Mr. Nixon guilty of an impeachable offense beyond a rea¬ sonable doubt, which we believe to be the appropriate standard.

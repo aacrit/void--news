@@ -1,0 +1,7 @@
+source: src-trc-v1-ch1
+locator: para22
+url: https://www.justice.gov.za/trc/report/finalreport/Volume%201.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation and glyph errors are kept as the layer prints them
+
+However, there were even more compelling reasons for avoiding the Nuremberg option. There is no doubt that members of the security establishment would have scuppered the negotiated settlement had they thought they were going to run the gauntlet of trials for their involvement in past violations. It is certain that we would not, in such circumstances, have experienced a reasonably peaceful transition from repression to democracy. We need to bear this in mind when we criticise the amnesty provisions in the Commission’s founding Act. We have the luxury of being able to complain because we are now reaping the benefits of a stable and democratic dispensation. Had the miracle of the negotiated settlement not occurred, we would have been overwhelmed by the bloodbath that virtually everyone predicted as the inevitable ending for South Africa.

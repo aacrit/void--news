@@ -1,0 +1,6 @@
+source: src-ushmm-riegner
+locator: secwelles
+url: https://encyclopedia.ushmm.org/content/en/article/the-riegner-telegram
+read: 2026-10-07
+
+From early September to late November 1942, Welles solicited evidence and testimonials from American diplomatic personnel in Switzerland, the International Red Cross, and the Vatican. Ultimately, the evidence convinced him that Riegner’s news must be true. On November 24, 1942, Welles invited Wise to the State Department and, according to Wise, confided that the evidence did “confirm and justify your deepest fears.”

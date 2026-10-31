@@ -1,0 +1,7 @@
+source: src-ap-17890620-serment
+locator: whole
+url: https://www.persee.fr/doc/arcpa_0000-0000_1875_num_8_1_4522_t2_0138_0000_9
+read: 2026-10-09
+note: Persée's text layer of the Archives parlementaires, held as it prints it, the ¬ at a printed line-break hyphen included; line breaks collapsed to spaces, nothing else changed
+
+Lecture faite de l'arrêté, M. le Président a demandé pour lui et pour les secrétaires, à prêter le serment les premiers ; ce qu'ils ont fait à l'ins¬ tant ; ensuite, l'Assemblée a prêté le même ser¬ ment entre les mains de son président. M. le Président avant rendu compte à l'Assemblée que le bureau de vérification avait été unanimement d'avis de l'admission provi¬ soire de douze députés de Saint-Domingue, l'As¬ semblée nationale a décidé que lesdiïs députés seraient admis provisoirement ; ce dont ils ont témoigné leur vive reconnaissance. En consé¬ quence, ils ont prêté le serment, et ont été admis à signer l'Arrêté.

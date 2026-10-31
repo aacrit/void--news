@@ -1,0 +1,8 @@
+source: src-jenkins-19480407
+locator: p706
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: p is the page of Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947 (2nd ed., 2005), read from the Internet Archive text layer; line breaks are joined and the layer's soft hyphens rejoined
+note: Document 238, the head of Lord Ismay's telegram to Mountbatten of 7 April 1948
+
+(SENT: 20.15 hours, 7th April 1948) IMPORTANT No. 1153. TOP SECRET © Please pass following for private eyes only to Lord Mountbatten from Lord Ismay, in continuation of telegram No. 1139. BEGINS: Following is text of letter to you from Jenkins.

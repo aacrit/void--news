@@ -1,0 +1,8 @@
+source: src-sonthonax-17930829
+locator: art12
+url: https://archive.org/download/proclamationauno00sont/proclamationauno00sont_djvu.txt
+read: 2026-09-25
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+XII. Les revenus de chaque habitation feront partagés en trois portions égales, dédudion faite des impofitions, lefquelles font prélevées fur la totalité. Un tiers demeure affeéié à la propriété de la terre, & appartiendra au propriétaire. Il aura la joui/Tance d'un autre tiers pour les frais de fefancevaloir ; le tiers reftant fera partagé entre les cultivateurs de la manière qui va être fixée.

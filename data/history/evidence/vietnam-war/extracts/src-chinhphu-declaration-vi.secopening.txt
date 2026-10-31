@@ -1,0 +1,7 @@
+source: src-chinhphu-declaration-vi
+locator: secopening
+url: https://media.chinhphu.vn/chu-tich-ho-chi-minh-doc-tuyen-ngon-doc-lap-nam-1945-102260831123435279.htm
+read: 2026-10-09
+note: the Vietnamese text as the Government's portal prints it, with the portal's own introductory sentence (it says the declaration was read 'trước hàng vạn đồng bào', before tens of thousands of compatriots, at Ba Đình Square); Unicode normalised to NFC, the only change beyond whitespace; no translation is held for this extract, and any English for it in the brief is a working gloss, not a quotation
+
+Bản Tuyên ngôn Độc lập do Chủ tịch Hồ Chí Minh soạn thảo và đọc trước hàng vạn đồng bào tại Quảng trường Ba Đình, Hà Nội vào ngày 2 tháng 9 năm 1945, khai sinh ra nước Việt Nam Dân chủ Cộng hòa. Hỡi đồng bào cả nước! Tất cả mọi người đều sinh ra có quyền bình đẳng, tạo hóa cho họ những quyền không ai có thể xâm phạm được. Trong những quyền ấy có quyền được sống, quyền tự do và quyền mưu cầu hạnh phúc.

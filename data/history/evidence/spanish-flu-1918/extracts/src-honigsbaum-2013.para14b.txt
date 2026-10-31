@@ -1,0 +1,6 @@
+source: src-honigsbaum-2013
+locator: para14b
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3867839/fullTextXML
+read: 2026-09-25
+
+In the meantime, The Times censored several of Milligan’s medical bulletins, waiting until the 18th to report that the Prime Minister was on his way to recovery.

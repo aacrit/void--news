@@ -1,0 +1,7 @@
+source: src-un-s1994-470
+locator: para16
+url: https://documents.un.org/doc/undoc/gen/n94/186/70/pdf/n9418670.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+16. The team would require the support of an infantry company to provide security, as well as a number of military observers to monitor the situation, apart from civilian staff, the total being estimated at about 270. The remainder of UNAMIR personnel would be withdrawn, but UNAMIR, as a mission, would continue to exist. The Special Representative, with a small staff, would continue his efforts to resume his role as intermediary in the political negotiations, with the aim of bringing back the two sides to the Arusha peace process.

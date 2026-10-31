@@ -1,0 +1,8 @@
+source: src-hjc-report-1974
+locator: sectapes
+url: https://archive.org/details/impeachmentofric0000unit
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (including the '¬' the OCR prints for one) are kept as printed
+note: the statement of evidence on Article I; the running head and page number '179' fall inside the passage and are kept where the OCR prints them
+
+On July 16, 1973, ten weeks after Cox’s first request for STATEMENT OF EVIDENCE ON ARTICLE I 179 the April 15 tape, Alexander Butterfield publicly disclosed before the Senate Select Committee the existence of the White House taping system. (Book IX, 380-81) Two days later, the President ordered the taping system discon¬ nected, and custody of the tapes transferred from the Secret Service to a White House aide. (Book IX, 385-86)

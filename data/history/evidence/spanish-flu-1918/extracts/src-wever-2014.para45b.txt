@@ -1,0 +1,7 @@
+source: src-wever-2014
+locator: para45b
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4181817/fullTextXML
+read: 2026-09-25
+note: the same letter, continued
+
+One can stand it to see one, two or twenty men die, but to see these poor devils dropping out like flies sort of gets on your nerves. We have been averaging about 100 deaths per day, and still keeping it up.

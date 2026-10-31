@@ -1,0 +1,7 @@
+source: src-wever-2014
+locator: para35
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC4181817/fullTextXML
+read: 2026-09-25
+note: from a soldier's letter of 24 September 1918 from Camp Devens, in the first author's collection, as the article reproduces it
+
+Have not had too [sic] go too [sic] the hospital though I have been sick enough too [sic] be there, but anyones chances are pretty slim, that goes there so I keep quiet about my being sick and done my own doctoring and think I am better off than most of them. The doctors say that they have got it checked now. I hope so, as every day there has been an average of about twenty deaths here a day, some toll for a camp.”

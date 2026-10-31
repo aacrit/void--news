@@ -1,0 +1,7 @@
+source: src-frus11-d21
+locator: secgeography
+url: https://history.state.gov/historicaldocuments/frus1961-63v11/d21
+read: 2026-10-04
+note: Document 21, Off the Record Meeting on Cuba, October 16, 1962, 6:30-7:55 p.m.; the President's lines on geography as the volume prints them, with the editors' bracketed doubts
+
+JFK: … let’s just say that, uh, they get, they get these in there and then you can’t, uh, they get sufficient capacity so we can’t, uh, with warheads. Then you don’t want to knock ’em out [’cause?], uh, there’s too much of a gamble. Then they just begin to build up those air bases there and then put more and more. I suppose they really… . Then they start getting ready to squeeze us in Berlin, doesn’t that… . You may say it doesn’t make any difference if you get blown up by an ICBM flyingfrom the Soviet Union or one that was ninety miles away. Geography doesn’t mean that much.

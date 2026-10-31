@@ -1,0 +1,7 @@
+source: src-act-1833
+locator: sec24
+url: https://statutes.org.uk/site/the-statutes/nineteenth-century/1833-3-4-william-4-c-73-abolition-of-slavery-act/
+read: 2026-10-09
+note: section XXIV, the compensation clause; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+XXIV. And whereas, towards compensating the Persons at present entitled to the Services of the Slaves to be manumitted and set free by virtue of this Act for the Loss of such Services, His Majesty’s most dutiful and loyal Subjects the Commons of Great Britain and Ireland in Parliament assembled have resolved to give and grant to His Majesty the Sum of Twenty Millions Pounds Sterling;

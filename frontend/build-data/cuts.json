@@ -1,0 +1,19 @@
+{
+  "builtAt": "2026-10-24T15:00:23.570261Z",
+  "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
+  "cards": [
+    {
+      "id": "f01e8711-edfd-4338-b839-bc2756e0f6da",
+      "title": "France protests: 70,000 police deployed as Paris closes major museums",
+      "sentences": [
+        {
+          "text": "Elsewhere, authorities and rattled shopkeepers geared up for potential new street violence.",
+          "rule": "E-16",
+          "message": "sentence opens on \"Elsewhere\", announcing another story: \"Elsewhere, authorities and rattled shopkeepers geared up for potential new street violence\""
+        }
+      ],
+      "points": [],
+      "left": []
+    }
+  ]
+}

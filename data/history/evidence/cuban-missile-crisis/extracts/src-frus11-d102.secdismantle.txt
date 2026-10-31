@@ -1,0 +1,7 @@
+source: src-frus11-d102
+locator: secdismantle
+url: https://history.state.gov/historicaldocuments/frus1961-63v11/d102
+read: 2026-10-04
+note: Document 102, Message From Chairman Khrushchev to President Kennedy, Moscow, October 28, 1962: the paragraph giving the order to dismantle, as the volume prints the translation
+
+In order to eliminate as rapidly as possible the conflict which endangers the cause of peace, to give an assurance to all people who crave peace, and to reassure the American people, who, I am certain, also want peace, as do the people of the Soviet Union, the Soviet Government, in addition to earlier instructions on the discontinuation of further work on weapons construction sites, has given a new order to dismantle the arms which you described as offensive, and to crate and return them to the Soviet Union.

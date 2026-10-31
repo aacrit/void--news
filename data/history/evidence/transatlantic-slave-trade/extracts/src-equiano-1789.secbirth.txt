@@ -1,0 +1,7 @@
+source: src-equiano-1789
+locator: secbirth
+url: https://www.gutenberg.org/cache/epub/15399/pg15399.txt
+read: 2026-10-09
+note: chapter I; Equiano's own statement of his birthplace and year; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+This kingdom is divided into many provinces or districts: in one of the most remote and fertile of which, called Eboe, I was born, in the year 1745, in a charming fruitful vale, named Essaka.

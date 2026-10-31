@@ -1,0 +1,7 @@
+source: src-alexievich-nobel-lecture-2015
+locator: secbelarus
+url: https://www.nobelprize.org/prizes/literature/2015/alexievich/lecture/
+read: 2026-10-07
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+I resisted writing about Chernobyl for a long time. I didn’t know how to write about it, what instrument to use, how to approach the subject. The world had almost never heard anything about my little country, tucked away in a corner of Europe, but now its name was on everyone’s tongue. We, Belarusians, had become the people of Chernobyl. The first to encounter the unknown.

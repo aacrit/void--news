@@ -1,0 +1,8 @@
+source: src-cwihp-kimpak-19500929
+locator: secair
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+read: 2026-10-09
+note: CWIHP Bulletin 6-7 (Winter 1995/96), the Kim Il Sung and Pak Hon-yong letter to Stalin of 29 September 1950, in Alexandre Y. Mansourov's article and translation from the Russian text in the Presidential Archive
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+The enemy’s air force numbering about a thousand airplanes of various types, facing no rebuff from our side, totally dominate the air space and perform air raids at the fronts and in the rear day and night.

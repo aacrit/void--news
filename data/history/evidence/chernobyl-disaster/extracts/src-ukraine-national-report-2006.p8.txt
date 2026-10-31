@@ -1,0 +1,10 @@
+source: src-ukraine-national-report-2006
+locator: p8
+url: https://www.osti.gov/etdeweb/servlets/purl/20775483
+read: 2026-10-07
+note: chapter 1, 'Some mistakes and poor decisions', 'Mistakes during 1986-1987', item 1, its first six sentences, printed page 8 (PDF page 9); the item goes on to call the concealment an error
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+note: a hyphen breaking a lower-case word across a line end in the text layer is closed up
+note: the PDF is a scan with an OCR text layer; the extract was compared line by line with the rendered page (150 dpi). The page prints line-end hyphens ('opin-ions', 'impos-sible', 'pro-hibited', 'meas-ures'), closed up here, and an en dash in '(Minsredmash – Ministry', which the layer gives as a hyphen and is restored
+
+1. Information about the catastrophe was concealed from the public, as a result of a decision of the country's leaders and Minsredmash (Minsredmash – Ministry of Atomic Industry of the USSR). One of the arguments for concealing the catastrophe was to prevent panic among the population. Such opinions were not unfounded. However, the scale of the catastrophe was such that concealing it was impossible. Information on resettling the residents of the towns of Prypiat and Chornobyl (on 27.04.86 and 06.05.86 respectively) immediately spread among the population of Ukraine, Belarus and Russia. At the same time, until mid-May 1986, the physicians of the Ministry of Health, and the mass media were prohibited to inform the population of the USSR about accident recovery work; personal hygiene measures, and on the extent of the accident. Radiation contamination maps and radiation level data were classified until 1989.

@@ -1,0 +1,7 @@
+source: src-radcliffe-punjab
+locator: item2
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: item n is paragraph n of Annexure A, the schedule of the Punjab award
+
+2. From the point of meeting of the three tahsils above mentioned, the boundary between the East and West Punjab shall follow the line of the Ujh river to its junction with the river Ravi and thereafter the line of the river Ravi along the boundary between the tahsils of Gurdaspur and Shakargarh, the boundary between the tahsils of Batala and Shakargarh, the boundary between the tahsils of Batala and Narowal, the boundary between the tahsils of Ajnala and Narowal, and the boundary between the tahsils of Ajnala and Shahdara, to the point on the river Ravi where the district of Amritsar is divided from the district of Lahore. The tahsil boundaries referred to, and not the actual course of the river Ujh or the river Ravi, shall constitute the boundary between the East and West Punjab.

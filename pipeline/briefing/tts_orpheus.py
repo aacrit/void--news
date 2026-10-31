@@ -1,0 +1,284 @@
+"""Orpheus 3B as a TtsEngine: local GPU only, every unit word-checked.
+
+Orpheus (canopylabs/orpheus-3b-0.1-ft; Apache-2.0 as stated, built on Llama
+3.2, so treated as Llama-licensed) is the most natural voice the 2026-10-03
+History audition heard, and the only one that changed words: "to the Commons"
+became "to the comments" on two seeds. So this engine never returns a line
+the ASR gate has not heard back word for word (tts_orpheus_worker.py), and a
+line that never passes is reported, not hidden.
+
+It runs in its own venv with CUDA torch (VOID_ORPHEUS_PYTHON, default
+~/.venv-orpheus then ~/.venv-audition-orpheus). A GitHub runner has no GPU,
+so it is never in the default engine chain: a render opts in with
+`history_producer.py --engine orpheus` on a machine that has one.
+
+There is no speed control. A turn's mood speed (Kokoro's pace knob) maps to a
+temperature instead: the slow moods sample cooler, which reads steadier.
+"""
+from __future__ import annotations
+
+import json
+import os
+import re
+import shutil
+import subprocess
+import tempfile
+import time
+from pathlib import Path
+
+from briefing.tts_engines import EngineResult, TurnSpec, _to_24k_mono, PYDUB_AVAILABLE
+
+try:
+    from pydub import AudioSegment
+    from pydub.silence import detect_leading_silence
+except ImportError:  # pragma: no cover
+    AudioSegment = None
+
+# Casting: the 2026-10-03 audition chose tara as the narrator; Orpheus has no
+# male voice as natural, so the men's documents go to leo and the women's to
+# zoe. A reader of record never changes per speaker.
+ORPHEUS_VOICES = {"A": "tara", "B": "leo", "C": "zoe"}
+MALE = ("leo", "dan", "zac")
+FEMALE = ("tara", "leah", "jess", "mia", "zoe")
+_CAST_RE = re.compile(r"^#\s*CAST:\s*(.+)$", re.M)
+
+
+def orpheus_cast(raw_script: str) -> tuple[dict[str, str], str]:
+    """Casting for one episode. Tara narrates unless the script's header says
+    otherwise (CEO 2026-10-03: "Tara remains primary"; a story that demands a
+    different narrator gets one, with its reason written down):
+
+        # CAST: narrator=dan reason=<why this story needs him>
+
+    A reader of record never doubles as the narrator: a male narrator moves
+    the men's documents to the next male voice, a female narrator the women's.
+    Returns ({"A","B","C"} voices, reason)."""
+    m = _CAST_RE.search(raw_script or "")
+    fields: dict[str, str] = {}
+    if m:
+        body = m.group(1)
+        reason = ""
+        if "reason=" in body:
+            body, reason = body.split("reason=", 1)
+        for tok in body.split():
+            if "=" in tok:
+                k, v = tok.split("=", 1)
+                fields[k.strip().lower()] = v.strip().lower()
+        fields["reason"] = reason.strip()
+    narrator = fields.get("narrator", ORPHEUS_VOICES["A"])
+    if narrator not in MALE + FEMALE:
+        raise ValueError(f"# CAST: narrator={narrator!r} is not a built-in Orpheus voice {MALE + FEMALE}")
+    if narrator != ORPHEUS_VOICES["A"] and not fields.get("reason"):
+        raise ValueError("# CAST: a narrator other than tara needs reason=<why the story demands it>")
+    doc_m = fields.get("doc_m") or next(v for v in ("leo", "dan", "zac") if v != narrator)
+    doc_f = fields.get("doc_f") or next(v for v in ("zoe", "leah", "mia") if v != narrator)
+    if doc_m not in MALE or doc_f not in FEMALE or narrator in (doc_m, doc_f):
+        raise ValueError(f"# CAST: readers must be distinct built-ins (narrator {narrator}, M {doc_m}, F {doc_f})")
+    return {"A": narrator, "B": doc_m, "C": doc_f}, fields.get("reason") or "Tara, the primary narrator"
+SAMPLING = {"top_p": 0.8, "repetition_penalty": 1.1}
+SEEDS = {"A": 1947, "B": 1948, "C": 1949}
+SENTENCE_GAP_MS = 160
+EDGE_KEEP_MS = 120
+MIN_UNIT_WORDS = 4
+
+_ABBR = {"mr", "mrs", "ms", "dr", "st", "sir", "gen", "lt", "col", "no", "vol", "mt", "jr", "sr"}
+_BOUNDARY = re.compile(r"[.!?][\"')\]]?\s+(?=[\"'(]?[A-Z])")
+
+
+# VOID_ORPHEUS_MODE=natural (2026-10-03, after the first full render sounded
+# "stitched together" with "inorganic" slow passages): one generation per
+# script line so the voice carries its own arc and pauses; one temperature
+# for the whole episode and retries that change only the seed, so a re-take
+# is the same performance; every line levelled to one speech loudness; the
+# model's own breaths kept. "sentence" is the first render's behaviour.
+MODE = os.environ.get("VOID_ORPHEUS_MODE", "natural").strip().lower()
+LINE_MAX_WORDS = 45
+NATURAL_TEMPERATURE = 0.6
+NATURAL_KEEP_MS = 300
+NATURAL_GAP_MS = 250
+SPEECH_TARGET_DBFS = -20.0
+
+
+def line_units(text: str, max_words: int = LINE_MAX_WORDS) -> list[str]:
+    """The whole line when it fits; otherwise whole sentences grouped up to
+    `max_words`. Never changes a character."""
+    text = re.sub(r"\s+", " ", text).strip()
+    if len(text.split()) <= max_words:
+        return [text]
+    units, cur = [], []
+    for sent in split_sentences(text, min_words=1):
+        if cur and len(" ".join(cur + [sent]).split()) > max_words:
+            units.append(" ".join(cur))
+            cur = []
+        cur.append(sent)
+    if cur:
+        units.append(" ".join(cur))
+    if " ".join(units) != text:
+        raise AssertionError(f"line split altered the text: {text!r}")
+    return units
+
+
+def level(seg, target_dbfs: float = SPEECH_TARGET_DBFS, floor_dbfs: float = -45.0):
+    """Gain a take so its SPEECH (10 ms frames above the floor) sits at one
+    loudness. Orpheus's output level varies take to take; Kokoro's did not."""
+    frames = [seg[i:i + 10] for i in range(0, len(seg), 10)]
+    loud = [f for f in frames if f.dBFS > floor_dbfs]
+    if not loud:
+        return seg
+    import math
+    rms = math.sqrt(sum(f.rms ** 2 for f in loud) / len(loud))
+    if rms <= 0:
+        return seg
+    current = 20 * math.log10(rms / seg.max_possible_amplitude)
+    return seg.apply_gain(target_dbfs - current)
+
+
+def temperature_for(speed: float | None) -> float:
+    """Kokoro's mood speed, read as delivery: slower moods sample cooler."""
+    if speed is None:
+        return 0.6
+    return 0.5 if speed < 0.96 else 0.6
+
+
+def split_sentences(text: str, min_words: int = MIN_UNIT_WORDS) -> list[str]:
+    """Split at sentence ends without changing a character; a sentence under
+    `min_words` rides with its neighbour (very short generations degrade)."""
+    text = re.sub(r"\s+", " ", text).strip()
+    pieces, start = [], 0
+    for m in _BOUNDARY.finditer(text):
+        tok = re.search(r"(\S+)$", text[start:m.start() + 1])
+        word = (tok.group(1) if tok else "").rstrip(".!?\"')]").lower()
+        if (len(word) == 1 and word.isalpha()) or word in _ABBR:
+            continue
+        pieces.append(text[start:m.end()].strip())
+        start = m.end()
+    pieces.append(text[start:].strip())
+    merged, carry = [], ""
+    for p in (p for p in pieces if p):
+        p = f"{carry} {p}".strip() if carry else p
+        if len(p.split()) < min_words:
+            carry = p
+            continue
+        merged.append(p)
+        carry = ""
+    if carry:
+        if merged:
+            merged[-1] = f"{merged[-1]} {carry}"
+        else:
+            merged.append(carry)
+    if " ".join(merged) != text:
+        raise AssertionError(f"sentence split altered the text: {text!r}")
+    return merged
+
+
+def _trim(seg, keep_ms: int = EDGE_KEEP_MS, thresh: float = -45.0):
+    lead = detect_leading_silence(seg, silence_threshold=thresh, chunk_size=10)
+    trail = detect_leading_silence(seg.reverse(), silence_threshold=thresh, chunk_size=10)
+    a, b = max(0, lead - keep_ms), len(seg) - max(0, trail - keep_ms)
+    return seg[a:b] if b > a else seg
+
+
+class OrpheusEngine:
+    name = "orpheus"
+
+    def __init__(self, voices: dict[str, str] | None = None, python: str | None = None,
+                 name_tokens: set[str] | None = None, ledger_path: Path | None = None,
+                 seed_offset: int = 0):
+        self.voices = dict(voices or ORPHEUS_VOICES)
+        self.python = python or os.environ.get("VOID_ORPHEUS_PYTHON", "").strip() or self._find_python()
+        self.name_tokens = sorted(name_tokens or set())
+        self.ledger_path = ledger_path
+        self.seed_offset = seed_offset
+        self._worker = Path(__file__).parent / "tts_orpheus_worker.py"
+        self.ledger: dict = {}
+
+    @staticmethod
+    def _find_python() -> str:
+        home = Path.home()
+        for cand in (home / ".venv-orpheus" / "bin" / "python",
+                     home / ".venv-audition-orpheus" / "bin" / "python"):
+            if cand.exists():
+                return str(cand)
+        return ""
+
+    def available(self) -> tuple[bool, str]:
+        if not PYDUB_AVAILABLE:
+            return False, "pydub not installed"
+        if not self.python or not Path(self.python).exists():
+            return False, "no Orpheus venv (VOID_ORPHEUS_PYTHON)"
+        probe = subprocess.run([self.python, "-c", "import torch,snac,faster_whisper;"
+                                "assert torch.cuda.is_available()"], capture_output=True, text=True, timeout=180)
+        if probe.returncode != 0:
+            return False, f"Orpheus venv not usable (needs CUDA, snac, faster-whisper): {probe.stderr.strip()[-200:]}"
+        return True, "ok"
+
+    def voice_id(self, role) -> str:
+        return self.voices[role]
+
+    def synthesize_batch(self, turns: list[TurnSpec], *, deadline_s: float = 0) -> EngineResult:
+        from briefing.asr_words import norm_words
+        res = EngineResult(engine=self.name)
+        if not turns:
+            return res
+        work = Path(tempfile.mkdtemp(prefix="void-orpheus-"))
+        try:
+            jobs, by_turn = [], {}
+            for t in turns:
+                by_turn[t.idx] = []
+                natural = MODE == "natural"
+                pieces = line_units(t.text) if natural else split_sentences(t.text)
+                for k, piece in enumerate(pieces):
+                    uid = f"{t.idx:04d}_{k:02d}"
+                    by_turn[t.idx].append(uid)
+                    job = {"id": uid, "text": piece, "ref_words": norm_words(piece),
+                           "name_tokens": self.name_tokens, "voice": self.voices[t.role],
+                           "seed": SEEDS[t.role] + self.seed_offset,
+                           "temperature": NATURAL_TEMPERATURE if natural else temperature_for(t.speed),
+                           **SAMPLING}
+                    if natural:
+                        job.update(seed_retries=5, low_temp=False)
+                    jobs.append(job)
+            (work / "jobs.json").write_text(json.dumps(jobs, indent=1), encoding="utf-8")
+            t0 = time.time()
+            cache = os.environ.get("VOID_ORPHEUS_CACHE", "").strip() or str(Path.home() / ".cache" / "void-orpheus-units")
+            p = subprocess.run([self.python, str(self._worker), "--jobs", str(work / "jobs.json"),
+                                "--out", str(work / "out"), "--cache", cache])
+            result_path = work / "out" / "result.json"
+            if p.returncode != 0 or not result_path.exists():
+                res.failed = {t.idx: f"orpheus worker exited {p.returncode}" for t in turns}
+                return res
+            result = json.loads(result_path.read_text(encoding="utf-8"))
+            units = result["units"]
+            for t in turns:
+                pieces = []
+                for uid in by_turn[t.idx]:
+                    wav = work / "out" / f"{uid}.wav"
+                    if not wav.exists():
+                        break
+                    take = _to_24k_mono(AudioSegment.from_file(str(wav), format="wav"))
+                    if MODE == "natural":
+                        pieces.append(level(_trim(take, keep_ms=NATURAL_KEEP_MS, thresh=-50.0)))
+                    else:
+                        pieces.append(_trim(take))
+                if len(pieces) != len(by_turn[t.idx]):
+                    res.failed[t.idx] = "a unit produced no audio"
+                    continue
+                seg = AudioSegment.silent(duration=0, frame_rate=24000)
+                for k, piece in enumerate(pieces):
+                    if k:
+                        seg += AudioSegment.silent(duration=NATURAL_GAP_MS if MODE == "natural" else SENTENCE_GAP_MS,
+                                                   frame_rate=24000)
+                    seg += piece
+                res.audio[t.idx] = seg
+            failed_units = {u: v for u, v in units.items() if not v.get("passed")}
+            res.timing = dict(result["timing"], wall_s=round(time.time() - t0, 1),
+                              units=len(jobs), units_failed=len(failed_units))
+            self.ledger = {"engine": "orpheus", "voices": self.voices, "sampling": SAMPLING,
+                           "versions": result["versions"], "timing": res.timing,
+                           "units": {j["id"]: dict(units.get(j["id"], {}), text=j["text"]) for j in jobs}}
+            if self.ledger_path:
+                self.ledger_path.parent.mkdir(parents=True, exist_ok=True)
+                self.ledger_path.write_text(json.dumps(self.ledger, indent=1), encoding="utf-8")
+            return res
+        finally:
+            shutil.rmtree(work, ignore_errors=True)

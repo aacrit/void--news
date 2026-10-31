@@ -1,0 +1,23 @@
+source: src-congo-commission-1906
+locator: p67
+url: https://archive.org/download/congoreportofcom00cong/congoreportofcom00cong_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+
+but little to seek out the real culprit. The prestations were due from the village as a whole; when
+they were not forthcoming the chiefs were arrested
+and some of the inhabitants taken at random, often
+the women were held as hostages. This system
+had for its purpose the moral compulsion upon the
+delinquents to stimulate their efforts in order to
+liberate their chief or their wives. This proved efficacious and, perhaps, as we were often told, did
+not appear in the eyes of the natives, imbued with
+the idea of solidarity, so reprehensible as it would to
+us. But whatever one may think of the ideas of the
+natives, any procedure, such as the detention of the
+women as hostages, outrages our notion of justice
+too violently to be tolerated. The State has, for
+a long time, forbidden this practice, but has been
+unable to suppress it. Likewise the arrest of the
+chiefs, who are not always personally to blame, has
+the effect of diminishing their authority or even

@@ -1,0 +1,7 @@
+source: src-jfkl-cmc-19621026
+locator: secday
+url: https://microsites.jfklibrary.org/cmc/oct26/
+read: 2026-10-07
+note: the Library's own summary of the day on its Cuban Missile Crisis pages for October 26, its first two paragraphs
+
+A Soviet-chartered freighter is stopped at the quarantine line and searched for contraband military supplies. None are found and the ship is allowed to proceed to Cuba. Photographic evidence shows accelerated construction of the missile sites and the uncrating of Soviet IL-28 bombers at Cuban airfields. In a private letter, Fidel Castro urges Nikita Khrushchev to initiate a nuclear first strike against the United States in the event of an American invasion of Cuba.

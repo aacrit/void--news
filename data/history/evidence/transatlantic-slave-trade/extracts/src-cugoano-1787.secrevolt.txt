@@ -1,0 +1,7 @@
+source: src-cugoano-1787
+locator: secrevolt
+url: https://docsouth.unc.edu/neh/cugoano/cugoano.html
+read: 2026-10-09
+note: the shipboard plot, as the 1825 reprint prints it; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+And when we found ourselves at last taken away, death was more preferable than life; and a plan was concerted amongst us, that we might burn and blow up the ship, and to perish all together in the flames: but we were betrayed by one of our own countrywomen, who slept with some of the headmen of the ship, for it was common for the dirty filthy sailors to take the African women and lie upon their bodies; but the men were chained and pent up in holes. It was the women and boys which were to burn the ship, with the approbation and groans of the rest; though that was prevented, the discovery was likewise a cruel bloody scene.

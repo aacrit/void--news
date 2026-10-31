@@ -1,0 +1,7 @@
+source: src-pew-trust-2025
+locator: sectable
+url: https://www.pewresearch.org/politics/2025/12/04/public-trust-in-government-1958-2025/
+read: 2026-10-09
+note: the data table behind the page's first chart, headed 'Date Individual polls Smoothed trend', its rows from 1958 to 1976 (the table runs newest first); table cells are separated here by a space and rows by ' ; ', the only change from the markup; NES is the National Election Study
+
+10/15/1976 NES 33 36 ; 9/05/1976 CBS/NYT 40 35 ; 6/15/1976 CBS/NYT 33 35 ; 3/01/1976 GALLUP 33 34 ; 2/08/1976 CBS/NYT 36 35 ; 12/01/1974 NES 36 36 ; 10/15/1972 NES 53 53 ; 12/01/1970 NES 54 54 ; 10/15/1968 NES 62 62 ; 12/01/1966 NES 65 65 ; 10/15/1964 NES 77 77 ; 12/01/1958 NES 73 73 ;

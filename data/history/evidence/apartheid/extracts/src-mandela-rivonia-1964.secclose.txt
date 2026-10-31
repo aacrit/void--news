@@ -1,0 +1,8 @@
+source: src-mandela-rivonia-1964
+locator: secclose
+url: https://www.un.org/en/events/mandeladay/court_statement_1964.shtml
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+note: the statement's closing paragraph; the Nelson Mandela Foundation's page of 20 April 2011 prints the same words
+
+During my lifetime I have dedicated myself to this struggle of the African people. I have fought against white domination, and I have fought against black domination. I have cherished the ideal of a democratic and free society in which all persons live together in harmony and with equal opportunities. It is an ideal which I hope to live for and to achieve. But if needs be, it is an ideal for which I am prepared to die.

@@ -1,0 +1,8 @@
+source: src-chernobyl-forum-2006
+locator: p16
+url: https://www.iaea.org/sites/default/files/chernobyl.pdf
+read: 2026-10-07
+note: printed page 16 (PDF page 14). The sentence begins on page 15 ('The international expert group predicts that among the 600 000 persons receiving more significant exposures ... the possible increase in cancer mortality due to this'); that part is not held because a stretch of it is in a font whose text layer is unreadable
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+radiation exposure might be up to a few per cent. This might eventually represent up to four thousand fatal cancers in addition to the approximately 100 000 fatal cancers to be expected due to all other causes in this population. Among the 5 million persons residing in other ‘contaminated’ areas, the doses are much lower and any projected increases are more speculative, but are expected to make a difference of less than one per cent in cancer mortality. Such increases would be very difficult to detect with available epidemiological tools, given the normal variation in cancer mortality rates. So far, epidemiological studies of residents of contaminated areas in Belarus, Russia and Ukraine have not provided clear and convincing evidence for a radiation-induced increase in general population mortality, and in particular, for fatalities caused by leukaemia, solid cancers (other than thyroid cancer), and non-cancer diseases.

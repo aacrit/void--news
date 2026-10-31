@@ -1,0 +1,431 @@
+# The documentary score for "The Partition of India", as note data on sampled
+# real instruments. Rendered by pipeline/history/score.py; the samples live in
+# ~/.cache/void-score-samples (never in the repository) and are pinned by sha256.
+#
+# The music claims nothing about the event. The narration never names a
+# musical tradition, a period or a recording for it, and nothing here does
+# either: the bowed
+# melody is a solo violin and is presented as one; the drone is a real tanpura
+# pluck; the held tones are a real harmonium. The theme is built from the house
+# cell (tonic, fifth, tonic, third: the shape of the On Air motif), in G, in a
+# minor mode with the third, sixth and seventh flattened, at 50 beats a minute
+# in two-beat bars: eight bars, sixteen beats of 1.2 s.
+#
+# Where each cue plays is the producer's (mood_plan): the theme at the top of
+# the programme in the clear, the first word inside its release; beds under the
+# spoken body by mood, ducked; transitions in the clear before a scene; the
+# rupture entry 1,200 ms after the Nehru clip's last word, never under it; the
+# outro at the close, with the house promo riding its held bars from 1 s after
+# the last word, so it is at most 13.75 s and silent at its end.
+slug: partition-of-india
+title: The Partition of India
+version: 1
+key: G
+mode: minor, with the third, sixth and seventh flattened
+tempo_bpm: 50
+house_cell: [0, 7, 0, 3]
+textures: []
+
+instruments:
+  violin:
+    library: VSCO 2 Community Edition (Versilian Studios), Solo Violin, arco vibrato, p
+    role_as_presented: a solo violin
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: sustain
+    attack_s: 0.12
+    release_s: 0.9
+    loop_start_s: 1.2
+    gain_db: 0.0
+    samples:
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_G3_p.wav, note: G3, sha256: c52d8ef3e2882984c09da1b7c7ef40b82e997bc78cfdd380fe167bbcb94b03de, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_G3_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_A3_p.wav, note: A3, sha256: 8daa4ca0eba8a834814435047e36b47826e730a7796c325966323f53debc9e46, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_A3_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_C4_p.wav, note: C4, sha256: 592ebf4404ccafc7164c13cc543911ba9a2fe5f5e70dbb200807e2ae37b25035, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_C4_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_E4_p.wav, note: E4, sha256: 57c5aec0678a5d582d87ab33cd2f8954fea26ffd04c932eb6753d6a78e08736b, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_E4_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_G4_p.wav, note: G4, sha256: ad1ba8442a6b40919093c9c831a8171c7030f7e651fbe075ab87764665deef88, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_G4_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_A4_p.wav, note: A4, sha256: 0d05607b46b78690893006d5aa7923ac304c7fb497df1e96536dc88ac5ac487f, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_A4_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_C5_p.wav, note: C5, sha256: 77a2133b5f97e1ec0edb759c0c552fc3efa7caf4ce1e0a4aa22625cf4c9da130, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_C5_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_E5_p.wav, note: E5, sha256: c60c3bcfc64ea00ebf8d97b16f2876c892393839a017a945c5e557359b6369a4, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_E5_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_G5_p.wav, note: G5, sha256: 537df6072b0922a0231a6b3fad117e84bcaaa3e60ca68c665776a83c9bd9062d, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_G5_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_A5_p.wav, note: A5, sha256: 204834bfb91ee62d53d3b2c9e9d37928617f643922f434323508a15a70ee591c, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_A5_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_C6_p.wav, note: C6, sha256: 48039f28964328d0b8235b8d61e39b06f8d22f836a6940fa036fe7004fc58e6c, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_C6_p.wav"}
+
+  harp:
+    library: VSCO 2 Community Edition (Versilian Studios), Harp, mf
+    role_as_presented: a harp
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: pluck
+    release_s: 0.25
+    gain_db: 0.0
+    samples:
+      - {file: vsco2ce/Strings/Harp/KSHarp_D2_mf.wav, note: D2, sha256: b9cbdc08e43fc0b28ac70246df991cb390f5cbd7f31519b3cc7f70d283b70566, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Harp/KSHarp_D2_mf.wav"}
+      - {file: vsco2ce/Strings/Harp/KSHarp_F2_mf.wav, note: F2, sha256: d5c0fb42c176af334fd6f6d1b97858556619c51e177efb5b0c6c23bc19ce6dad, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Harp/KSHarp_F2_mf.wav"}
+      - {file: vsco2ce/Strings/Harp/KSHarp_A2_mf.wav, note: A2, sha256: 1df9f4d138ca3931fcb458bcdf01304cadf2e5f4eef67bbc17b0e42c0e60fce6, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Harp/KSHarp_A2_mf.wav"}
+      - {file: vsco2ce/Strings/Harp/KSHarp_C3_mf.wav, note: C3, sha256: e5d232771704e140959819de8cf2a3e0ba49d021ca77354c42664ce4fce6d9f3, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Harp/KSHarp_C3_mf.wav"}
+      - {file: vsco2ce/Strings/Harp/KSHarp_E3_mf.wav, note: E3, sha256: aafa9d41ec0f77da8f2891055af8b3f9557e0ba1f1df93d53ae6e1fda07afae5, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Harp/KSHarp_E3_mf.wav"}
+      - {file: vsco2ce/Strings/Harp/KSHarp_G3_mf.wav, note: G3, sha256: 62600eb1b37bc2829ca65351f7ca7e506c9ae472abd5bea0765a8b8fa7df2772, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Harp/KSHarp_G3_mf.wav"}
+      - {file: vsco2ce/Strings/Harp/KSHarp_B3_mf.wav, note: B3, sha256: f6f71be8c640822ef48a448b245585659acdfcc7ed5774e10f37be2fc02fcab4, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Harp/KSHarp_B3_mf.wav"}
+      - {file: vsco2ce/Strings/Harp/KSHarp_D4_mf.wav, note: D4, sha256: ebfde8aab4411019e37e3426f4dd88d6a52a38c2d0261d7f10ec63d8ff584dc7, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Harp/KSHarp_D4_mf.wav"}
+      - {file: vsco2ce/Strings/Harp/KSHarp_F4_mf.wav, note: F4, sha256: db27ebbb37334c10e06f2ae63f4d9ff555e4d11704fcc6f0bcf503863867e577, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Harp/KSHarp_F4_mf.wav"}
+      - {file: vsco2ce/Strings/Harp/KSHarp_A4_mf.wav, note: A4, sha256: 3665f3975cad4a33f46784aa4f896f4b4319ba2b7831e892d975bc38c9f09f23, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Harp/KSHarp_A4_mf.wav"}
+
+  tanpura:
+    library: Freesound 416606, "Tanpura note A sharp.wav" by luckylittleraven (one plucked string, 5.06 s; the fundamental measures 116.3 Hz, Bb2)
+    role_as_presented: a tanpura
+    licence_as_stated: Creative Commons 0 (the sound page's licence line, read 2026-10-03)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://freesound.org/people/luckylittleraven/sounds/416606/
+    rights_basis: cc0-as-stated
+    credit_line: luckylittleraven on Freesound (CC0)
+    source_note: the original WAV needs a Freesound login; the HQ preview MP3 is what the site serves without credentials, so that is the pinned file, decoded once with ffmpeg to a WAV beside it
+    kind: pluck
+    release_s: 0.5
+    gain_db: -2.0
+    samples:
+      - {file: freesound/416606_2112203-hq.mp3, decode: mp3, note: Bb2, sha256: 2daf37e049f87ea95c49dcadfd66b0aacb359d48f3009049c9a59651d5951a12, url: "https://cdn.freesound.org/previews/416/416606_2112203-hq.mp3"}
+
+  harmonium:
+    library: Freesound 330410, "Harmonium Samples - All Keys and Drones" by donyaquick (every key held in turn, chromatic from C3; recorded at Yale's Euterpea studio, as the page states)
+    role_as_presented: a harmonium
+    licence_as_stated: Creative Commons 0 (the sound page's licence line, read 2026-10-03)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://freesound.org/people/donyaquick/sounds/330410/
+    rights_basis: cc0-as-stated
+    credit_line: donyaquick on Freesound (CC0)
+    source_note: the original 96 kHz WAV needs a Freesound login; the HQ preview MP3 is pinned and decoded once. Each slice below is one held key, located by pitch tracking; the renderer re-checks the pitch of every slice before it plays
+    kind: sustain
+    attack_s: 0.6
+    release_s: 0.6
+    loop_start_s: 0.4
+    gain_db: 0.0
+    samples:
+      - file: freesound/330410_1089898-hq.mp3
+        decode: mp3
+        sha256: b2f3a5cbc57fb9937e494a30a30389c010d640313598e22a5ba764bcdb4b8214
+        url: "https://cdn.freesound.org/previews/330/330410_1089898-hq.mp3"
+        slices:
+          - {note: G3, start_s: 71.6, end_s: 80.0}
+          - {note: Bb3, start_s: 99.5, end_s: 106.3}
+          - {note: D4, start_s: 137.0, end_s: 143.6}
+
+  # The same harmonium, touched rather than held: for the one-note sting.
+  harmonium_touch:
+    library: Freesound 330410, as above
+    role_as_presented: a harmonium
+    licence_as_stated: Creative Commons 0 (the sound page's licence line, read 2026-10-03)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://freesound.org/people/donyaquick/sounds/330410/
+    rights_basis: cc0-as-stated
+    credit_line: donyaquick on Freesound (CC0)
+    kind: sustain
+    attack_s: 0.08
+    release_s: 0.45
+    loop_start_s: 0.4
+    gain_db: 0.0
+    samples:
+      - file: freesound/330410_1089898-hq.mp3
+        decode: mp3
+        sha256: b2f3a5cbc57fb9937e494a30a30389c010d640313598e22a5ba764bcdb4b8214
+        url: "https://cdn.freesound.org/previews/330/330410_1089898-hq.mp3"
+        slices:
+          - {note: G3, start_s: 71.6, end_s: 80.0}
+
+# Note rows are [instrument, note, start in beats, length in beats or null, velocity].
+# null length on a pluck lets the recording decay on its own. One beat is 1.2 s.
+cues:
+  # Statement 1. The line once, over the open fifth; the drone cycles under it.
+  theme:
+    claims: []
+    length_s: 22.0
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    notes:
+      - [violin, G4, 0, 2, 0.80]
+      - [violin, D5, 2, 1, 0.72]
+      - [violin, G4, 3, 1, 0.74]
+      - [violin, Bb4, 4, 3, 0.84]
+      - [violin, A4, 7, 1, 0.70]
+      - [violin, G4, 8, 2, 0.78]
+      - [violin, F4, 10, 1, 0.74]
+      - [violin, Eb4, 11, 1, 0.74]
+      - [violin, D4, 12, 4.6, 0.80]
+      - [harmonium, G3, 0, 16.4, 0.50]
+      - [harmonium, D4, 0, 16.4, 0.28]
+      - [tanpura, D3, 0, null, 0.45]
+      - [tanpura, G3, 1, null, 0.32]
+      - [tanpura, G3, 2, null, 0.32]
+      - [tanpura, G2, 3, null, 0.50]
+      - [tanpura, D3, 4, null, 0.45]
+      - [tanpura, G3, 5, null, 0.32]
+      - [tanpura, G3, 6, null, 0.32]
+      - [tanpura, G2, 7, null, 0.50]
+      - [tanpura, D3, 8, null, 0.45]
+      - [tanpura, G3, 9, null, 0.32]
+      - [tanpura, G3, 10, null, 0.32]
+      - [tanpura, G2, 11, null, 0.50]
+      - [tanpura, D3, 12, null, 0.45]
+      - [tanpura, G3, 13, null, 0.32]
+      - [tanpura, G3, 14, null, 0.32]
+      - [tanpura, G2, 15, null, 0.50]
+
+  # Statement 3, at the close: the line's last phrase, resolving onto the
+  # drone, which is left alone and decays to silence inside 13.6 s.
+  outro:
+    claims: []
+    length_s: 13.6
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 1800
+    tail_silence: true
+    notes:
+      - [violin, A4, 0, 1, 0.70]
+      - [violin, G4, 1, 2, 0.74]
+      - [violin, F4, 3, 1, 0.70]
+      - [violin, Eb4, 4, 1, 0.70]
+      - [violin, D4, 5, 3, 0.74]
+      - [harmonium, G3, 0, 8.2, 0.50]
+      - [harmonium, D4, 0, 8.2, 0.28]
+      - [tanpura, G2, 0, null, 0.50]
+      - [tanpura, D3, 2, null, 0.40]
+      - [tanpura, G2, 4, null, 0.50]
+      - [tanpura, G2, 6, null, 0.45]
+
+  # After the Nehru clip's trailing silence: the theme's last phrase and a
+  # tanpura swell, inside the 6 s mood_plan opens for it.
+  rupture_entry:
+    claims: []
+    length_s: 6.0
+    peak_dbfs: -15.0
+    room_wet: 1.4
+    swell: [0.6, 2.6, 2.8]
+    notes:
+      - [violin, F4, 0, 1, 0.60]
+      - [violin, Eb4, 1, 1, 0.66]
+      - [violin, D4, 2, 2.2, 0.72]
+      - [tanpura, G2, 0, null, 0.50]
+      - [tanpura, D3, 0.4, null, 0.40]
+      - [tanpura, G2, 0.85, null, 0.55]
+      - [tanpura, G3, 1.25, null, 0.30]
+      - [tanpura, G2, 1.7, null, 0.60]
+
+  # The change of voice: one low harmonium note, touched.
+  sting:to_document:
+    claims: []
+    length_s: 0.9
+    peak_dbfs: -22.0
+    room_wet: 0.6
+    fade_out_ms: 150
+    notes:
+      - [harmonium_touch, G3, 0, 0.35, 0.60]
+
+  # The music returning after a recording, once its trailing silence is over.
+  # Partition's one clip sits in a rupture scene, so this key is defined for
+  # the producer's grammar and never fires in this episode.
+  sting:from_clip:
+    claims: []
+    length_s: 2.4
+    peak_dbfs: -20.0
+    room_wet: 1.0
+    swell: [0.8, 0.6, 1.0]
+    notes:
+      - [tanpura, G3, 0, null, 0.40]
+      - [harmonium, G3, 0, 1.3, 0.50]
+
+  # OPEN and SCENE 5: the drone and the low harmonium G. No melody.
+  bed:dread:
+    claims: []
+    length_s: 38.4
+    fold: true
+    rms_dbfs: -34.0
+    room_wet: 0.6
+    notes:
+      - [harmonium, G3, 0, 32, 0.55]
+      - [tanpura, D3, 0, null, 0.40]
+      - [tanpura, G3, 1, null, 0.28]
+      - [tanpura, G3, 2, null, 0.28]
+      - [tanpura, G2, 3, null, 0.45]
+      - [tanpura, D3, 4, null, 0.40]
+      - [tanpura, G3, 5, null, 0.28]
+      - [tanpura, G3, 6, null, 0.28]
+      - [tanpura, G2, 7, null, 0.45]
+      - [tanpura, D3, 8, null, 0.40]
+      - [tanpura, G3, 9, null, 0.28]
+      - [tanpura, G3, 10, null, 0.28]
+      - [tanpura, G2, 11, null, 0.45]
+      - [tanpura, D3, 12, null, 0.40]
+      - [tanpura, G3, 13, null, 0.28]
+      - [tanpura, G3, 14, null, 0.28]
+      - [tanpura, G2, 15, null, 0.45]
+      - [tanpura, D3, 16, null, 0.40]
+      - [tanpura, G3, 17, null, 0.28]
+      - [tanpura, G3, 18, null, 0.28]
+      - [tanpura, G2, 19, null, 0.45]
+      - [tanpura, D3, 20, null, 0.40]
+      - [tanpura, G3, 21, null, 0.28]
+      - [tanpura, G3, 22, null, 0.28]
+      - [tanpura, G2, 23, null, 0.45]
+      - [tanpura, D3, 24, null, 0.40]
+      - [tanpura, G3, 25, null, 0.28]
+      - [tanpura, G3, 26, null, 0.28]
+      - [tanpura, G2, 27, null, 0.45]
+      - [tanpura, D3, 28, null, 0.40]
+      - [tanpura, G3, 29, null, 0.28]
+      - [tanpura, G3, 30, null, 0.28]
+      - [tanpura, G2, 31, null, 0.45]
+
+  # SCENE 1 and the British account: the harp on a strict clock, dry, no
+  # drone. The house cell, the last note alternating.
+  bed:procedure:
+    claims: []
+    length_s: 38.4
+    fold: true
+    rms_dbfs: -33.0
+    room_wet: 0.0
+    notes:
+      - [harp, G3, 0, null, 0.70]
+      - [harp, D4, 1, null, 0.55]
+      - [harp, G3, 2, null, 0.58]
+      - [harp, Bb3, 3, null, 0.55]
+      - [harp, G3, 4, null, 0.70]
+      - [harp, D4, 5, null, 0.55]
+      - [harp, G3, 6, null, 0.58]
+      - [harp, A3, 7, null, 0.55]
+      - [harp, G3, 8, null, 0.70]
+      - [harp, D4, 9, null, 0.55]
+      - [harp, G3, 10, null, 0.58]
+      - [harp, Bb3, 11, null, 0.55]
+      - [harp, G3, 12, null, 0.70]
+      - [harp, D4, 13, null, 0.55]
+      - [harp, G3, 14, null, 0.58]
+      - [harp, A3, 15, null, 0.55]
+      - [harp, G3, 16, null, 0.70]
+      - [harp, D4, 17, null, 0.55]
+      - [harp, G3, 18, null, 0.58]
+      - [harp, Bb3, 19, null, 0.55]
+      - [harp, G3, 20, null, 0.70]
+      - [harp, D4, 21, null, 0.55]
+      - [harp, G3, 22, null, 0.58]
+      - [harp, A3, 23, null, 0.55]
+      - [harp, G3, 24, null, 0.70]
+      - [harp, D4, 25, null, 0.55]
+      - [harp, G3, 26, null, 0.58]
+      - [harp, Bb3, 27, null, 0.55]
+      - [harp, G3, 28, null, 0.70]
+      - [harp, D4, 29, null, 0.55]
+      - [harp, G3, 30, null, 0.58]
+      - [harp, A3, 31, null, 0.55]
+
+  # Gurdaspur, the turns and the Indian and Pakistani accounts: a harp pulse
+  # on G, no melody, the thinnest bed.
+  bed:reckoning:
+    claims: []
+    length_s: 38.4
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 0.3
+    notes:
+      - [harp, G2, 0, null, 0.60]
+      - [harp, G3, 1, null, 0.45]
+      - [harp, G3, 2, null, 0.45]
+      - [harp, G3, 3, null, 0.45]
+      - [harp, G2, 4, null, 0.60]
+      - [harp, G3, 5, null, 0.45]
+      - [harp, G3, 6, null, 0.45]
+      - [harp, G3, 7, null, 0.45]
+      - [harp, G2, 8, null, 0.60]
+      - [harp, G3, 9, null, 0.45]
+      - [harp, G3, 10, null, 0.45]
+      - [harp, G3, 11, null, 0.45]
+      - [harp, G2, 12, null, 0.60]
+      - [harp, G3, 13, null, 0.45]
+      - [harp, G3, 14, null, 0.45]
+      - [harp, G3, 15, null, 0.45]
+      - [harp, G2, 16, null, 0.60]
+      - [harp, G3, 17, null, 0.45]
+      - [harp, G3, 18, null, 0.45]
+      - [harp, G3, 19, null, 0.45]
+      - [harp, G2, 20, null, 0.60]
+      - [harp, G3, 21, null, 0.45]
+      - [harp, G3, 22, null, 0.45]
+      - [harp, G3, 23, null, 0.45]
+      - [harp, G2, 24, null, 0.60]
+      - [harp, G3, 25, null, 0.45]
+      - [harp, G3, 26, null, 0.45]
+      - [harp, G3, 27, null, 0.45]
+      - [harp, G2, 28, null, 0.60]
+      - [harp, G3, 29, null, 0.45]
+      - [harp, G3, 30, null, 0.45]
+      - [harp, G3, 31, null, 0.45]
+
+  # How many, the women's account, the close: the line inverted within the
+  # mode (each interval mirrored about G), the violin high and thin over the
+  # harmonium's open fifth. No tanpura. The second half of the loop is the
+  # harmonium alone.
+  bed:grief:
+    claims: []
+    length_s: 38.4
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 1.0
+    notes:
+      - [harmonium, G3, 0, 32, 0.45]
+      - [harmonium, D4, 0, 32, 0.28]
+      - [violin, G5, 2, 2, 0.50]
+      - [violin, C5, 4, 1, 0.45]
+      - [violin, G5, 5, 1, 0.45]
+      - [violin, Eb5, 6, 3, 0.50]
+      - [violin, F5, 9, 1, 0.45]
+      - [violin, G5, 10, 2, 0.50]
+      - [violin, A5, 12, 1, 0.45]
+      - [violin, Bb5, 13, 1, 0.45]
+      - [violin, C6, 14, 4, 0.50]
+
+  # Into a dread scene, in the clear: the harmonium G swelling, one low pluck.
+  transition:dread:
+    claims: []
+    length_s: 3.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    swell: [0.3, 2.1, 1.4]
+    notes:
+      - [harmonium, G3, 0, 2.6, 0.60]
+      - [tanpura, G2, 0.3, null, 0.50]
+
+  # Into a procedure scene: three strokes of the clock, dry.
+  transition:procedure:
+    claims: []
+    length_s: 4.0
+    peak_dbfs: -14.0
+    room_wet: 0.0
+    notes:
+      - [harp, G3, 0, null, 0.70]
+      - [harp, D4, 1, null, 0.60]
+      - [harp, G3, 2, null, 0.60]
+
+  # Into a grief scene: the violin high and alone, the fifth under it.
+  transition:grief:
+    claims: []
+    length_s: 4.4
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    notes:
+      - [violin, G5, 0, 2.4, 0.50]
+      - [harmonium, G3, 0, 2.6, 0.40]
+
+  # Into the turn and the accounts: the pulse arriving.
+  transition:reckoning:
+    claims: []
+    length_s: 3.4
+    peak_dbfs: -14.0
+    room_wet: 0.3
+    notes:
+      - [harp, G2, 0, null, 0.60]
+      - [harp, G3, 1, null, 0.50]
+      - [harp, G3, 2, null, 0.50]

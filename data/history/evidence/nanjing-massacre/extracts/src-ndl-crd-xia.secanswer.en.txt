@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-ndl-crd-xia.secanswer
+names: 夏淑琴=Xia Shuqin; 東中野修道=Higashinakano Shudo; 三代川三千代=三代川三千代
+
+We searched the databases this library subscribes to, but could not find the case. * Materials searched: "Hanrei Taikei", with the keywords "三代川三千代", "Heisei 18 (wa) No. 9972", "Nanjing massacre", "Xia Shuqin", "Higashinakano Shudo" and others. A search of newspaper articles found, in "G-Search" (keywords "Nanjing massacre", "court judgment"): Shimbun Akahata, 2007.11.3, page 14 (982 characters in all), an article headed "Survivor of the Nanjing Great Massacre wins". ２ (2). Related materials. Searching the books on the "Nanjing Great Massacre" published from 2007, when the judgment was given, we found an excerpt of the judgment in the following, to which we refer you: "The Nanjing Great Massacre and the whole picture of the 'hundred-man killing contest'" (2009, Kinyobi; library code 8133790901, first floor, 210.7) p179 "[Document] Xia Shuqin defamation suit, Tokyo District Court judgment, excerpt / 2 November 2007, presiding judge 三代川三千代".

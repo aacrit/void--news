@@ -1,0 +1,7 @@
+source: src-moh-1920
+locator: secclinical
+url: https://archive.org/download/pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920/PandemicofInfluenzaHMSO_entire_book_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+Contrasted with the extensive and acute but non-fatal outbreak of June 1918, the world-wide " plague" of influenza of the following autumn and winter, with its millions of deaths, presented very different clinical characters; and in the multitude of severe cases one saw the constantly repeated picture of a dreadful malady which few physicians had seen the like before. Those who had experienced the minor epidemics of " purulent bronchitis with heliotrope cyanosis and fatal ending " that had occurred here and there in military camps in America, England and France during 1916 and 1917 had already become familiar with some of the worst features, especially the dreaded blueness, of what was probably the same malady under a different name ; but now it was a question of seeing hundreds or even thousands of cases in districts in which the fatal " purulent bronchitis " had affected but a few.

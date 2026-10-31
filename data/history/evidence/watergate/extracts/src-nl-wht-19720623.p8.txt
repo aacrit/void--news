@@ -1,0 +1,8 @@
+source: src-nl-wht-19720623
+locator: p8
+url: https://www.nixonlibrary.gov/sites/default/files/forresearchers/find/tapes/watergate/trial/exhibit_01.pdf
+read: 2026-10-09
+note: the Nixon Library's electronic copy of the typewritten transcript prepared for the Watergate trials, line breaks folded to spaces; speaker labels, ellipses, the dashes and the hyphens the copy prints at a line end ('investi- gation') are kept as printed; the Library warns that the electronic versions 'may not be identical in every respect to the original typewritten transcripts'
+note: printed page 8, which the page marks '(repl. 10/28/74)'; the label PRESIDENT: is printed twice in succession, as kept here
+
+PRESIDENT: You call them in. PRESIDENT: Good. Good deal! Play it tough. That's the way they play it and that's the way we are going to play it.

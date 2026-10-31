@@ -1,0 +1,10 @@
+source: src-radcliffe-punjab
+locator: para10
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+
+10. I have hesitated long over those not inconsiderable areas east of the Sutlej River and in the angle of the Beas and Sutlej Rivers in which Muslim majorities are found. But on the whole I have come to the conclusion that it would be in the true interests of neither State to extend the territories of the West Punjab to a strip on the far side of the Sutlej and that there are factors such as the disruption of railway communications and water systems that ought
+
+13
+
+in this instance to displace the primary claims of contiguous majorities. But I must call attention to the fact that the Dipalpur Canal, which serves areas in the West Punjab, takes off from the Ferozepore headworks and I find it difficult to envisage a satisfactory demarcation of boundary at this point that is not accompanied by some arrangement for joint control of the intake of the different canals dependent on these headworks.

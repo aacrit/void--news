@@ -1,0 +1,7 @@
+source: src-np-trc-1996
+locator: secsepdev
+url: https://www.justice.gov.za/trc/hrvtrans/submit/np_truth.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+How would we avoid the chaos that was sweeping much of the rest of Africa - that was depicted in horrific photographs of refugees fleeing from the Congo or Angola - and yet ensure justice and full political rights for Black South Africans? How could we defend ourselves against expansionist international communism and terrorism and yet make all South Africans free? The solution that we then came up with was "separate development".

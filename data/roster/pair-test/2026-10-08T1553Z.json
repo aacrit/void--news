@@ -1,0 +1,70 @@
+{
+ "collected_at": "2026-10-08T15:53:16Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16192593/Josie-Gibson-gives-update-arm-scars-having-8-000-arm-lift-amid-lipoedema-battle-reveals-plans-three-surgeries-legs.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Josie Gibson gives an update on her scars after having an £8,000 arm lift amid lipoedema battle - as she reveals plans to have three more surgeries on her legs",
+      "published": "Thu, 08 Oct 2026 11:21:40 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/josie-gibson-arm-lift-lipedema-37748965",
+      "title": "Josie Gibson reveals results of £8,000 arm lift surgery after lipedema battle",
+      "published": "Thu, 8 Oct 2026 15:44:23 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 154,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/diaspora/antisemitism/article-910984",
+      "title": "‘Surge’ endures as 38% of American Jews remain engaged in Jewish life after October 7, survey finds",
+      "published": "Thu, 08 Oct 2026 05:59:27 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/us-news/2026-10-08/ty-article-magazine/.premium/post-october-7-u-s-jews-finding-new-ways-to-belong-but-many-still-struggle/000001a1-1a63-dbd6-a5a5-9bf72b6d0000",
+      "title": "Three years after October 7, American Jews are finding new ways to connect – but many still struggle to belong",
+      "published": "Thu, 08 Oct 2026 13:00:14 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [],
+   "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://nordicmonitor.com/feed/"
+  }
+ }
+}

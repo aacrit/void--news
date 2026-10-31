@@ -1,0 +1,6 @@
+source: src-un-a54549
+locator: para502
+url: https://documents.un.org/doc/undoc/gen/n99/348/76/pdf/n9934876.pdf
+read: 2026-09-24
+
+502. The cardinal lesson of Srebrenica is that a deliberate and systematic attempt to terrorize, expel or murder an entire people must be met decisively with all necessary means, and with the political will to carry the policy through to its logical conclusion.

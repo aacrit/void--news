@@ -1,0 +1,7 @@
+source: src-alexievich-nobel-lecture-2015
+locator: secfree
+url: https://www.nobelprize.org/prizes/literature/2015/alexievich/lecture/
+read: 2026-10-07
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+Following on the heels of Afghanistan, Chernobyl made us free people. For me the world parted: inside the zone I didn’t feel Belarusian, or Russian, or Ukrainian, but a representative of a biological species that could be destroyed. Two catastrophes coincided: in the social sphere, the socialist Atlantis was sinking; and on the cosmic – there was Chernobyl.

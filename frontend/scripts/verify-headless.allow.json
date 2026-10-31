@@ -1,0 +1,12 @@
+[
+  {
+    "check": "axe",
+    "match": ".sigil-word",
+    "reason": "The wordmark is a logotype. WCAG 1.4.3 exempts text that is part of a logo or brand name; the VOID NEWS letters wear the news accent by design (SigilWordmark.tsx)."
+  },
+  {
+    "check": "axe",
+    "match": ".nav-logo-mark",
+    "reason": "The masthead wordmark, same logotype exemption."
+  }
+]

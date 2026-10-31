@@ -1,0 +1,7 @@
+source: src-afonso-15260706
+locator: secdate
+url: https://archive.org/download/monumentamissionariaafricana/MonumentaMission%C3%A1riaAfricana-01.001_djvu.txt
+read: 2026-10-09
+note: the dating clause, the signature and the edition's archive reference (Torre do Tombo, Corpo Cronologico I-34-94); sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+desta nosa cydade de Cõgo, escryta aos bj djas de yulho, dom Joham Teyxeira o fez, de jb°xxbj annos / / a) EIRey i* dom A.° Endereço: Ao muyto poderoso e ex[ce] lente príncipe dom João Remetente: Del Rey de Manycõgo. ATT—CC-I-34-94.

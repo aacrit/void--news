@@ -1,0 +1,7 @@
+source: src-abbas-2020
+locator: abstract
+url: https://pssr.org.pk/issues/v4/2/a-study-of-settlement-of-refugees-in-the-thal-desert-1947-1969.pdf
+read: 2026-09-25
+note: the last sentence of the abstract, page 164; the PDF's line breaks are joined; 'thirtyone' is the PDF's, and the abstract ends without a full stop
+
+Thal Development Authority during twenty years of its functioning not only settled more than thirtyone thousand families of refugees in the Thal desert but also provided them with all basic facilities of life such as education, health, roads, employment etc

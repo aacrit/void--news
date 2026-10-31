@@ -1,0 +1,8 @@
+source: src-armistice-19530727
+locator: art1
+url: https://www.usfk.mil/portals/105/documents/sofa/g_armistice_agreement.pdf
+read: 2026-10-09
+note: Article I, paragraph 1
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+1. A military demarcation line shall be fixed and both sides shall withdraw two (2) kilometers from this line so as to establish a demilitarized zone between the opposing forces. A demilitarized zone shall be established as a buffer zone to prevent the occurrence of incidents which might lead to a resumption of hostilities.

@@ -1,0 +1,7 @@
+source: src-heuveline-2015
+locator: secdiscussion
+url: https://www.ncbi.nlm.nih.gov/research/bionlp/RESTful/pmcoa.cgi/BioC_json/PMC4562795/unicode
+read: 2026-09-25
+note: the paragraph of the Discussion that states the main conclusion
+
+The main conclusion remains that the uncertainty surrounding PPR death toll estimates is substantial. While the current range of death-toll estimates can be narrowed to 1.0 to 2.1 million excess deaths after ruling out a couple of less methodologically sound estimates, the 95% SI derived here is about 50% wider, stretching from 1.201 to 2.757 million excess deaths. The 95% SI is 728,000 to 1.455 million for violent deaths alone, nearly twice as wide as the range of existing estimates. Wide intervals are to be expected in such contexts: a survey of 1955-2002 war mortality in 13 countries yielded a 95% confidence interval ranging from 3.0 to 8.7-million deaths.

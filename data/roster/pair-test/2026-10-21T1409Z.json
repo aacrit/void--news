@@ -1,0 +1,127 @@
+{
+ "collected_at": "2026-10-21T14:09:35Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 27,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16226635/Andy-Burnham-admits-concerns-cutting-Ukraines-access-crucial-Starlink-services-amid-claims-Elon-Musk-ordered-slowdown-talks-Donald-Trump.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Andy Burnham admits 'concerns' about cutting of Ukraine's access to crucial Starlink services - amid claims Elon Musk ordered slowdown after talks with Donald Trump",
+      "published": "Wed, 21 Oct 2026 13:43:49 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/politics/pmqs-burnham-kemi-jackdaw-pension-37794341",
+      "title": "PMQs - Andy Burnham makes new energy bills pledge before hitting back at Donald Trump's Ukraine betrayal",
+      "published": "Wed, 21 Oct 2026 13:18:51 +0000"
+     }
+    },
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16226831/Marine-engineer-visited-prostitute-aroused-raping-murdering-partner-court-hears.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Marine engineer visited prostitute after becoming 'aroused' by raping and murdering his partner, court hears",
+      "published": "Wed, 21 Oct 2026 15:06:28 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/coercive-man-visited-two-sex-37794080",
+      "title": "'Coercive' man 'visited two sex workers after raping and murdering partner'",
+      "published": "Wed, 21 Oct 2026 13:26:53 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16226059/storm-austen-rain-wind-storms-weather-england.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Storm Austen's 80mph winds: Met Office issues amber warning for 'flying debris, tiles blown off roofs and power cuts'",
+      "published": "Wed, 21 Oct 2026 13:56:05 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/met-office-weather-forecast-snow-37793570",
+      "title": "Met Office weather maps show six counties facing snow on Friday – full list",
+      "published": "Wed, 21 Oct 2026 13:48:46 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 118,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/article-912403",
+      "title": "WATCH: IDF detains 90 West Bank olive harvest volunteers, including US congressional nominee Lander",
+      "published": "Wed, 21 Oct 2026 13:25:23 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/west-bank/2026-10-21/ty-article/.premium/democratic-congressional-candidate-brad-lander-detained-in-west-bank-group-says/000001a1-5de3-da49-abe9-5ffb7b750000",
+      "title": "Israel briefly detains U.S. congressional candidate Brad Lander in West Bank",
+      "published": "Wed, 21 Oct 2026 13:00:27 +0300"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/influencers-26/50jews-26/article-908123",
+      "title": "No. 2: Benjamin Netanyahu: Shaping Israel’s politics and global image for a generation",
+      "published": "Thu, 10 Sep 2026 18:30:37 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-politics/2026-10-19/ty-article/.premium/confidant-of-israeli-president-who-threatened-him-over-netanyahu-pardon-dies/000001a1-50be-dcda-abbf-74ff29cf0000",
+      "title": "Confidant of Israel's President Herzog who threatened him over Netanyahu pardon dies at 76",
+      "published": "Mon, 19 Oct 2026 05:41:05 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/whatever-our-enemies-do-erdogans-son-rallies-diaspora-network-in-europe-as-german-intelligence-warns-of-ankaras-spying-on-dissidents/",
+      "title": "Erdogan’s son vows to stand against enemies at diaspora rally in Germany",
+      "published": "Mon, 12 Oct 2026 22:01:54 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 308,
+    "left": 10
+   }
+  }
+ }
+}

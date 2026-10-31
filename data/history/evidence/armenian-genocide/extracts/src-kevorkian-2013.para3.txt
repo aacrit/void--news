@@ -1,0 +1,7 @@
+source: src-kevorkian-2013
+locator: para3
+url: https://journals.openedition.org/eac/347
+read: 2026-09-25
+note: the article's numbered paragraph as OpenEdition prints it, footnote call numbers kept; a copyrighted article, held at most 150 words
+
+Concernant les archives ottomanes conservées à Istanbul, il faut souligner l’ouverture en 2005 du fonds du Deuxième Bureau, attaché au ministère de l’Intérieur, comprenant les archives du Directorat pour l’installation des tribus et des émigrés (principalement étudiées et publiées par Fuat Dündar 7 ). L’étude de ce fonds a mis en lumière nombre de points obscurs du programme d’« ingénierie démographique » que le Comité central jeune-turc a mis en œuvre. Elle apporte des connaissances décisives sur la planification administrative des déportations, sur la volonté des chefs jeunes-turcs de transformer la composition démographique de l’Asie Mineure, au besoin en éradiquant les groupes susceptibles d’entraver leur projet.

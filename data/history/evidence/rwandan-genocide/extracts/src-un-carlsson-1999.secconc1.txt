@@ -1,0 +1,8 @@
+source: src-un-carlsson-1999
+locator: secconc1
+url: https://web.archive.org/web/20001203205100/http://www.un.org:80/News/ossg/rwanda_report.htm
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: section III, Conclusions, '1. The overriding failure', first paragraph
+
+The overriding failure in the response of the United Nations before and during the genocide in Rwanda can be summarized as a lack of resources and a lack of will to take on the commitment which would have been necessary to prevent or to stop the genocide. UNAMIR, the main component of the United Nations presence in Rwanda, was not planned, dimensioned, deployed or instructed in a way which provided for a proactive and assertive role in dealing with a peace process in serious trouble. The mission was smaller than the original recommendations from the field suggested. It was slow in being set up, and was beset by debilitating administrative difficulties. It lacked well-trained troops and functioning materiel. The mission's mandate was based on an analysis of the peace process which proved erroneous, and which was never corrected despite the significant warning signs that the original mandate had become inadequate. By the time the genocide started, the mission was not functioning as a cohesive whole: in the real hours and days of deepest crisis, consistent testimony points to a lack of political leadership, lack of military capacity, severe problems of command and control and lack of coordination and discipline.

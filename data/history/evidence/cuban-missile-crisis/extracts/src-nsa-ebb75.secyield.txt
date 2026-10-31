@@ -1,0 +1,7 @@
+source: src-nsa-ebb75
+locator: secyield
+url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB75/index2.htm
+read: 2026-10-04
+note: the editors' sentence on the torpedoes' yield; the page's HTML read as text
+
+The U.S. effort to surface the Soviet submarines involved considerable risk; exhausted by weeks undersea in difficult circumstances and worried that the U.S. Navy's practice depth charges were dangerous explosives, senior officers on several of the submarines, notably B-59 and B-130, were rattled enough to talk about firing nuclear torpedoes, whose 15 kiloton explosive yields approximated the bomb that devastated Hiroshima in August 1945.

@@ -1,0 +1,238 @@
+/* ===========================================================================
+   brand.css: the subtle layer.
+
+   Seven touches a reader feels rather than notices, every one of them a
+   token and a rule, none of them JavaScript. Imported last from globals.css
+   so they sit on top of the section skins. Each has an assertion in
+   scripts/verify-headless.mjs, so a touch that quietly rots fails a gate
+   instead of fading out.
+
+     1. Browser chrome: the scrollbar and the selection wear the section.
+     2. The nameplate draws its rule in.
+     3. A long read carries a brass reading rule under the masthead that
+        tracks the scroll (scroll-driven animation, no script).
+     4. While audio plays, the wordmark's beam rocks in brass.
+     5. A Deep Dive or a History event prints as a sheet: chrome gone, white
+        paper, black ink, the print masthead and the page's own address.
+
+   The status bar (theme-color) lives in the layouts and ThemeToggle, because
+   a meta tag is not CSS; it is listed here so the set is in one place.
+
+   Colour discipline: brass and the section accents only. No bias colour is
+   used decoratively (the existing sigil-word-sweep cycles the lean palette,
+   which is why the on-air beam does not reuse it).
+   =========================================================================== */
+
+/* ── 1. Browser chrome ─────────────────────────────────────────────────────
+   The scrollbar thumb is the token the palette already carries
+   (--scrollbar-thumb, light and dark), tinted by the section: History umber
+   on History, magazine red on Weekly. Standard properties first; the WebKit
+   pseudo-elements are the fallback for engines without scrollbar-color. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+
+:root:has(.hist-page) {
+  --scrollbar-thumb: color-mix(in srgb, var(--palette-history) 55%, var(--hist-bg));
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--palette-history) 80%, var(--hist-bg));
+}
+:root:has(.wk-page) {
+  --scrollbar-thumb: color-mix(in srgb, var(--palette-weekly) 45%, var(--wk-paper));
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--palette-weekly) 70%, var(--wk-paper));
+}
+
+/* Selection: a wash of the accent under the ink, not an inversion. The old
+   rule swapped foreground and background, which on a warm page read like a
+   terminal. 24% keeps the text legible in both modes. */
+::selection {
+  background-color: color-mix(in srgb, var(--accent-warm) 24%, transparent);
+  color: var(--fg-primary);
+}
+:root:has(.hist-page) ::selection {
+  background-color: color-mix(in srgb, var(--palette-history) 24%, transparent);
+}
+:root:has(.wk-page) ::selection {
+  background-color: color-mix(in srgb, var(--palette-weekly) 24%, transparent);
+}
+@supports not (background-color: color-mix(in srgb, red 24%, transparent)) {
+  ::selection {
+    background-color: var(--fg-primary);
+    color: var(--bg-primary);
+  }
+}
+
+/* ── 2. The nameplate draws in ─────────────────────────────────────────────
+   The rule under History / Weekly / Paper is drawn from the left on hover
+   and on keyboard focus, and stays drawn on the section's own landing where
+   the nameplate is aria-current. The same device the old .nav-history link
+   used, with the section accent the masthead already carries (--nav-accent),
+   the cascade step and the unfold curve. */
+.nav-nameplate {
+  position: relative;
+}
+.nav-nameplate::after {
+  content: "";
+  position: absolute;
+  left: var(--space-3);
+  right: 0;
+  bottom: calc(50% - 0.8em);
+  height: 1px;
+  background: var(--nav-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-step) var(--ease-unfold);
+  pointer-events: none;
+}
+.nav-nameplate:hover::after,
+.nav-nameplate:focus-visible::after,
+.nav-nameplate[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+/* The section links reach for their own accent: History draws its rule in
+   umber, Weekly in red, Audio in the teal, on hover and focus only. At rest
+   the masthead stays neutral (colour in chrome is the one rule the system
+   holds), and on the section's own page the current-page mark takes over. */
+.nav-sections .nav-page {
+  position: relative;
+}
+.nav-sections .nav-page::after {
+  content: "";
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: 8px;
+  height: 1px;
+  background: var(--nav-link-accent, var(--nav-accent));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-step) var(--ease-unfold);
+  pointer-events: none;
+}
+.nav-sections .nav-page:hover::after,
+.nav-sections .nav-page:focus-visible::after {
+  transform: scaleX(1);
+}
+.nav-sections .nav-page[data-section="history"] { --nav-link-accent: var(--palette-history); }
+.nav-sections .nav-page[data-section="weekly"] { --nav-link-accent: var(--palette-weekly); }
+.nav-sections .nav-page[data-section="audio"] { --nav-link-accent: var(--voice-ink); }
+
+/* ── 3. The reading rule ───────────────────────────────────────────────────
+   On a long read only (a Deep Dive page, a History event, the Weekly issue)
+   a 2px brass rule under the masthead scales with the document's scroll.
+   Driven by a scroll timeline, so there is no scroll listener and nothing
+   to jank; engines without animation-timeline simply do not draw it, and
+   reduced motion turns it off (a bar that moves with the page is motion). */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    :root:has(.story-page, .hist-hearing-page, .wk-issue) .nav-header::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: var(--sigil-brass);
+      transform: scaleX(0);
+      transform-origin: left center;
+      animation: brand-reading-progress linear both;
+      animation-timeline: scroll(root block);
+      pointer-events: none;
+    }
+  }
+}
+@keyframes brand-reading-progress {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* ── 4. On air ─────────────────────────────────────────────────────────────
+   NavBar sets data-playing while the shared player is playing. The beam of
+   the wordmark's Sigil rocks three degrees either way over six seconds, in
+   brass. Slow enough to be a breath, not a metronome. The hover sweep keeps
+   its own keyframes because it deliberately crosses the lean palette; this
+   one never does. */
+.nav-header[data-playing="true"] .sigil-word__beam {
+  stroke: var(--sigil-brass);
+  animation: brand-on-air 6s var(--ease-rack) infinite;
+}
+@keyframes brand-on-air {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(3deg); }
+  75%      { transform: rotate(-3deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-header[data-playing="true"] .sigil-word__beam {
+    animation: none;
+  }
+}
+
+/* ── 5. Print ──────────────────────────────────────────────────────────────
+   Paper has its own sheet (app/paper/paper.css). A Deep Dive and a History
+   event follow the same rule: the page is the artefact, the chrome is not.
+   The print masthead (components/PrintMast.tsx) is display: none on screen
+   and the first thing on the sheet. */
+.print-mast { display: none; }
+
+@media print {
+  :root:has(.story-page, .hist-hearing-page) {
+    color-scheme: light;
+  }
+  :root:has(.story-page, .hist-hearing-page) body,
+  :root:has(.story-page, .hist-hearing-page) .page-container,
+  :root:has(.story-page, .hist-hearing-page) .hist-page,
+  :root:has(.story-page, .hist-hearing-page) .story-page {
+    background: #fff !important;
+    color: #000 !important;
+    /* body cross-fades its background on a mode change; a sheet does not. */
+    transition: none !important;
+  }
+  :root:has(.story-page, .hist-hearing-page) .nav-header,
+  :root:has(.story-page, .hist-hearing-page) .site-footer,
+  :root:has(.story-page, .hist-hearing-page) .mtb,
+  :root:has(.story-page, .hist-hearing-page) .msp,
+  :root:has(.story-page, .hist-hearing-page) .exp-banner,
+  :root:has(.story-page, .hist-hearing-page) .fp,
+  :root:has(.story-page, .hist-hearing-page) .floating-player,
+  :root:has(.story-page, .hist-hearing-page) .hist-vignette,
+  :root:has(.story-page, .hist-hearing-page) .hist-rail-slot,
+  :root:has(.story-page, .hist-hearing-page) .dd-page__bar,
+  :root:has(.story-page, .hist-hearing-page) .kbd-overlay,
+  :root:has(.story-page, .hist-hearing-page) .search-overlay {
+    display: none !important;
+  }
+  /* Every reveal is revealed: a sheet has no scroll to trigger one. */
+  :root:has(.story-page, .hist-hearing-page) .hist-reveal,
+  :root:has(.story-page, .hist-hearing-page) .anim-stagger,
+  :root:has(.story-page, .hist-hearing-page) [class*="anim-"] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+  .print-mast {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12pt;
+    padding-bottom: 6pt;
+    margin-bottom: 14pt;
+    border-bottom: 1pt solid #000;
+    color: #000;
+  }
+  .print-mast .sigil-word {
+    color: #000;
+    --sigil-mark: #000;
+  }
+  .print-mast__url {
+    font-family: var(--font-data);
+    font-size: 8pt;
+    letter-spacing: 0.04em;
+  }
+}

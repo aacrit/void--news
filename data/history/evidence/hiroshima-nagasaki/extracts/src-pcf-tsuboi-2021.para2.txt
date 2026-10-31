@@ -1,0 +1,7 @@
+source: src-pcf-tsuboi-2021
+locator: para2
+url: https://www.pcf.city.hiroshima.jp/hpcf/heiwabunka/pce087/contents/10.html
+read: 2026-10-07
+note: the memorial notice's second paragraph
+
+Mr. Tsuboi was a student at the Hiroshima Technical College (currently the Faculty of Engineering at Hiroshima University) when he was exposed to the atomic bomb at the age of 20 on a street near Hiroshima City Hall, about 1 km from the hypocenter.

@@ -1,0 +1,8 @@
+source: src-hansard-19461212
+locator: p1350-1351
+url: https://api.parliament.uk/historic-hansard/commons/1946/dec/12/india-constitution
+read: 2026-09-25
+note: p is the Hansard column; HC Deb 12 December 1946 vol 431 cc1346-452, Sir Stafford Cripps moving the motion
+note: the column break between cc. 1350 and 1351 is dropped
+
+In Calcutta, these riots broke out after the decision of the Muslim League to set aside 16th August as "Direct Action Day." I think those riots shocked the whole world by their intensity, and they resulted in some 4,000 deaths and 10,000 people injured.

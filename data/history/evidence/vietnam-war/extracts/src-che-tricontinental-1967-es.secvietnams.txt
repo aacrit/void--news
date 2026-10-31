@@ -1,0 +1,7 @@
+source: src-che-tricontinental-1967-es
+locator: secvietnams
+url: https://www.marxists.org/espanol/guevara/04_67.htm
+read: 2026-10-09
+note: the Spanish text of the same passage; no translation of it is held
+
+¡Cómo podríamos mirar el futuro de luminoso y cercano, si dos, tres, muchos Vietnam florecieran en la superficie del globo, con su cuota de muerte y sus tragedias inmensas, con su heroísmo cotidiano, con sus golpes repetidos al imperialismo, con la obligación que entraña para éste de dispersar sus fuerzas, bajo el embate del odio creciente de los pueblos del mundo!

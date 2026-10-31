@@ -1,0 +1,13 @@
+source: src-nasa-a11-tec-1969
+locator: p385
+url: https://www.apollojournals.org/alsj/a11/a11transcript_tec.pdf
+read: 2026-10-03
+note: the PDF's text layer, line breaks as the layer has them; printed page 385 (Tape 71/5) on PDF page 257; the transcript prints 'Here Man' where the plaque and the Lunar Surface Journal print 'Here Men'
+
+04 13 52 40 CDR (EVA) For those who haven't read the plaque, we'll read the plaque that's on
+the front landing gear of this LM. First there's two hemispheres, one
+showing each of the two hemispheres of the Earth. Underneath it says
+"Here Man from the planet Earth first set foot upon the Moon, July
+1969 A.D. We came in peace for all mankind." It has the crew
+members' signatures and the signature of the President of the United
+States.

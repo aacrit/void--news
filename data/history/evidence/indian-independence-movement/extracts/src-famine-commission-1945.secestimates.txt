@@ -1,0 +1,7 @@
+source: src-famine-commission-1945
+locator: secestimates
+url: https://archive.org/download/in.ernet.dli.2015.206311/2015.206311.Famine-Inquiry_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+
+Professor K. P, ‘Chattopadhyaya, Department of Anthropology, Calcutta University, made an estimate of the total mortality in 1943 — 3*5 million deaths — which has received wide publicity. This was based on surveys of sample groups in the worst famine areas, in which the mortality rate was 10 per cent, and it was assumed "that two-thirds of the population of the province were equally affected by the famine. The method of investigation followed cannot be accepted as statisti- cally sound; to estimate the provincial death rate from a sample of this nature is unjustifiable.

@@ -1,0 +1,7 @@
+source: src-gregson-gilbert-1783
+locator: secfacts
+url: https://archive.org/details/reportscasesarg04glengoog
+read: 2026-10-09
+note: the facts as the report gives them; the sentence continues on the next page; 'die coast' is the OCR's reading of 'the coast'; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+The facts, at the trial, appeared to be, that the ship on board of which the negroes who were the subject of this policy were, on her voyage from die coast of Guinea to Jamaica, by mistake got to leeward of that island, by mistaking it for Hispaniola, which induced the captain to bear away to leeward of it, and brought the vessel to one day's water before the mistake was discovered, when they were a month's voyage from the island, against winds and currents, in consequence of which the negroes were thrown

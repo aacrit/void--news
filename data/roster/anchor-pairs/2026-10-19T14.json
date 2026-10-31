@@ -1,0 +1,38 @@
+[
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "es",
+  "score": 23,
+  "a": {
+   "title": "Brazil court orders Meta to prove it gives Lula, Bolsonaro campaign content equal treatment",
+   "summary": "Brazil’s top electoral court has given Meta 24 hours to prove it is treating campaign content from incumbent President Luiz Inácio Lula da Silva and Senator Flavio Bolsonaro equally on its online platforms, threatening a daily fine for noncompliance. The ruling follows allegations from Lula's campaign that the social media giant is suppressing Lula’s campaign content ahead of Sunday’s closely cont",
+   "link": "https://www.france24.com/en/americas/20261019-brazil-court-orders-meta-prove-gives-lula-bolsonaro-campaign-content-equal-treatment",
+   "published": "Mon, 19 Oct 2026 14:16:05 GMT"
+  },
+  "b": {
+   "title": "Elecciones Brasil 2026: ¿qué deja el primer cara a cara entre Lula y Bolsonaro?",
+   "summary": "Los candidatos a la Presidencia de Brasil, el presidente Luiz Inácio Lula da Silva y el ultraderechista Flávio Bolsonaro, se enfrentaron en un primer debate este 18 de octubre, a una semana de las elecciones. La seguridad, la economía y la política internacional fueron algunos de los temas principales de este cara a cara. En France 24, discutimos con Michael López Stewart, experto en ciencias polí",
+   "link": "https://www.france24.com/es/video/20261019-elecciones-brasil-2026-qu%C3%A9-deja-el-primer-cara-a-cara-entre-lula-y-bolsonaro",
+   "published": "Mon, 19 Oct 2026 01:47:47 GMT"
+  }
+ },
+ {
+  "newsroom": "RFI",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 20,
+  "a": {
+   "title": "Three years on from Kenya's Shakahola cult murders, families still seek closure",
+   "summary": "A court in Mombasa, Kenya, will on Monday deliver a long-awaited verdict in the Shakahola sect murder trial. Paul Nthenge Mackenzie, a self-proclaimed pastor, is accused of forcing church members, including children, to starve themselves to death in order to meet Jesus. Three years after the tragedy, families of the victims are hoping for closure so they can finally mourn their loved ones.",
+   "link": "https://www.rfi.fr/en/africa/20261018-shakahola-families-still-searching-for-their-dead-as-judgment-nears",
+   "published": "Sun, 18 Oct 2026 13:47:14 GMT"
+  },
+  "b": {
+   "title": "Kenya: verdict attendu ce lundi dans le procès de Paul MacKenzie, le gourou accusé du massacre de Shakahola",
+   "summary": "La Haute Cour de Mombasa doit rendre sa décision ce lundi 19 octobre dans le procès pour meurtre du pasteur et de ses 29 co-accusés poursuivis pour la mort d'au moins 429 personnes (530, selon des organisations de la société civile) - en grande majorité des femmes et des enfants - dont les corps avaient été exhumés de fosses communes découvertes dans la forêt de Shakahola, dans l'est du Kenya, en ",
+   "link": "https://www.rfi.fr/fr/afrique/20261019-kenya-verdict-attendu-ce-lundi-dans-le-proc%C3%A8s-de-paul-mackenzie-le-gourou-accus%C3%A9-du-massacre-de-shakahola",
+   "published": "Mon, 19 Oct 2026 03:11:29 GMT"
+  }
+ }
+]

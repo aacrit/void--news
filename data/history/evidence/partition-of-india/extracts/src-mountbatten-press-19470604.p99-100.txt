@@ -1,0 +1,8 @@
+source: src-mountbatten-press-19470604
+locator: p99-100
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: the page is the volume's, read from the scan's running numbers, which the OCR layer prints between pages: the passage lies between the two numbers given
+note: the OCR layer's 'sated' for 'stated' and its stray quotation marks are kept as printed
+
+At his press conference of June 4, 1947, Mountbatten was asked why he had, in his broadcast of the previous evening on the June 3 Partition Plan, categorically sated that ‘‘the - ultimate boundaries will be settled by a Boundary Commission and will almost certainly not be identical with: those which have been provisionally adopted.’’ Mountbatten immediately replied, ‘‘I put that in for the simple reason that in the district of Gurdaspur in the Punjab the population is 50.4 per cent Muslims, | think, and 49.6 percent non- Muslims. With a difference of 0.8 per cent you will see at once that it is unlikely that the Boundary Commission will throw the whole of the district into the Muslim majority areas.”’

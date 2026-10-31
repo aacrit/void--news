@@ -1,0 +1,8 @@
+source: src-ssc-final-1974
+locator: secbutterfield
+url: https://archive.org/details/FinalReportOfTheSenateSelectCommitteeOnPresidentialCampaignActivities
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (including the '¬' the OCR prints for one) are kept as printed
+note: the introduction's account of the staff's 'satellite' charts, printed page XXX
+
+And Mr. Butterfield, who revealed the White House taping system, was interviewed simply because he was a satellite on Mr. Hal- deman’s chart. After John Dean informed the committee that he suspected that the President had taped a conversation between them in the Oval Office on April 15, 1973, some potentially knowledgeable witnesses were asked whether the President did, in fact, tape conversations. When Deputy Minority Counsel Donald Sanders asked Mr. Butterfield whether he knew of any facts supporting Dean’s intimation that con- versations in the President’s office were tape recorded, Butterfield responded by informing the committee of the White House taping system.

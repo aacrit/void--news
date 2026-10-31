@@ -1,0 +1,8 @@
+source: src-appleman-1961
+locator: secblame
+url: https://webdoc.sub.gwdg.de/ebook/p/2005/CMH_2/www.army.mil/cmh-pg/books/korea/20-2-1/sn03.htm
+read: 2026-10-09
+note: the same chapter
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+There was a great South Korean up roar later over the premature destruction of the Han River bridges, and a court of inquiry sat to fix the blame for the tragic event. A Korean army court martial fixed the responsibility and blame on the ROK Army Chief Engineer for the "manner" in which he had prepared the bridges for demolition, and he was summarily executed. Some American advisers in Korea at the time believed that General Chae ordered the bridges blown and that the Chief Engineer merely carried out his orders. General Chae denied that he had given the order.

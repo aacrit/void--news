@@ -1,0 +1,8 @@
+source: src-rw-muse-2021
+locator: secpreface
+url: https://www.gov.rw/fileadmin/user_upload/gov_user_upload/2021.04.19_MUSE_REPORT.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+note: the Preface, the first of its three points of difference with the Duclert Commission; the bullet glyph before 'Responsibility' is not carried by the text layer
+
+Responsibility It appears that neither the Duclert Commission nor the French government has yet come to a conclusion on the issue of responsibility. The Commission, while speaking of “overwhelming responsibility” and examining such with abstract considerations, including “political,” “institutional,” “intellectual,” “ethical,” “cognitive” and “moral” responsibility, fails to adjudge the actual responsibility of the French government. It fails to state what the French government was responsible for having done. Specifically, it fails to pronounce that the Government of France bears significant responsibility for having enabled a foreseeable genocide. We do so here.

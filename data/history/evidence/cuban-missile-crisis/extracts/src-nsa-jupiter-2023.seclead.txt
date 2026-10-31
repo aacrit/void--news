@@ -1,0 +1,7 @@
+source: src-nsa-jupiter-2023
+locator: seclead
+url: https://nsarchive.gwu.edu/briefing-book/cuban-missile-crisis-nuclear-vault/2023-04-20/jupiter-missiles-and-cuban-missile
+read: 2026-10-07
+note: the briefing book's opening sentence; the page's HTML read as text
+
+Washington, D.C., April 20, 2023 - Sixty years ago, during April 1963, the U.S. Air Force took steps to implement the final stage of the secret U.S.-Soviet deal that helped resolve the Cuban Missile Crisis with the dismantling of the Jupiter missiles deployed in Italy and Turkey.

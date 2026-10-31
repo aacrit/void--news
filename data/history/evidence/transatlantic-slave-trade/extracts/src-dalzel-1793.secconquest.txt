@@ -1,0 +1,7 @@
+source: src-dalzel-1793
+locator: secconquest
+url: https://archive.org/details/historydahomyan00dalzgoog
+read: 2026-10-09
+note: the introduction; the OCR reads the long s as f and prints a stray mark after the year ('1727^'); sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+the conqueft of Ardra and Whydah, by the Dahomans, in 1727^ once more brought to light this ancient and warlike people

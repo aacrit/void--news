@@ -1,0 +1,6 @@
+source: src-dicke-2015
+locator: para19
+url: https://pmc.ncbi.nlm.nih.gov/articles/PMC7313928/
+read: 2026-09-25
+
+Early in June, reporters began to refer to the malady in quotes as the “Spanish influenza” as a way to distinguish it from less contagious strains.47 By the end of the month, the quotation marks began to disappear and by the middle of July were gone entirely. Even as the name was becoming established and for several months after several authors noted its origins were uncertain. The Spanish, like most English language commentators, most frequently blamed the Germans or the trenches.

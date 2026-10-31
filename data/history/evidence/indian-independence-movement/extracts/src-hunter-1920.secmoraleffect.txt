@@ -1,0 +1,8 @@
+source: src-hunter-1920
+locator: secmoraleffect
+url: https://archive.org/download/disordersinquiry00unse/disordersinquiry00unse_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+note: Dyer's own report (to the General Staff, 25 August 1919) as the majority quotes it; the layer prints 'oi' for 'of' and a hyphenation sign '¬'
+
+In his report he says : — “ I fired and continued to fire until the crowd dispersed, and I consider this is the least amount of firing which would produce the necessary moral and widespread effect it was my duty to produce if I was to justify my action. If more troops had been at hand the casualties would have been greater in proportion. It was no longer a question oi merely dispersing the crowd , but one of producing a sufficient moral effect from a military point of view not only on those who were present, but more especially throughout the Punjab. There could be no question of undue severity.” In our view this was unfor¬ tunately a mistaken conception of his duty.

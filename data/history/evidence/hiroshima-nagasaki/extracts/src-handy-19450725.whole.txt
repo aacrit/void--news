@@ -1,0 +1,38 @@
+source: src-handy-19450725
+locator: whole
+url: https://www.osti.gov/opennet/manhattan-project-history/publications/droporder.pdf
+read: 2026-10-05
+note: the Department of Energy's typed transcript; it prints 'Spaats' and 'Nilgata' where the original reads Spaatz and Niigata, and '??' for the postal zone; held as typed
+
+War Department 
+Office of the Chief of Staff 
+Washington ??, D.C. 
+ 
+25 July 1945 
+ 
+To: General Carl Spaats 
+Commanding General 
+United States Army Strategic Air Forces 
+ 
+1.  The 509 Composite Group, 20th Air Force will deliver its first special bomb as soon as 
+weather will permit visual bombing after about 3 August 1945 on one of the targets: Hiroshima, 
+Kokura, Nilgata and Nagasaki.  To carry military and civilian scientific personnel from the War 
+Department to observe and record the effects of the explosion of the bomb, additional aircraft 
+will accompany the airplane carrying the bomb.  The observing planes will stay several miles 
+distant from the point of impact of the bomb. 
+ 
+2.  Additional bombs will be delivered on the above targets as soon as made ready by the project 
+staff.  Further instructions will be issued concerning targets other than those listed above. 
+ 
+3.  Dissemination of any and all information concerning the use of the weapon against Japan is 
+reserved to the Secretary of War and the President of the United States. No communiqués on the 
+subject or releases of information will be issued by Commanders in the field without specific 
+prior authority.  Any news stories will be sent to the War Department for special clearance. 
+ 
+4.  The forgoing directive is issued to you by direction and with the approval of the Secretary of 
+War and of the Chief of Staff, USA.  It is desired that you personally deliver one copy of this 
+directive to General MacArthur and one copy to Admiral Nimitz for their information. 
+ 
+Thos. T. Handy [signed] 
+General, G.S.C. 
+Acting Chief of Staff

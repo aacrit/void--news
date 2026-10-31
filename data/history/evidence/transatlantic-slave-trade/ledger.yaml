@@ -1,0 +1,841 @@
+# The evidence ledger for transatlantic-slave-trade (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Begun 2026-10-09 for the Orpheus episode and the first-listener script: the sources the
+# script's document voice may read from and the record its narration is checked against.
+# Every entry was fetched on 2026-10-09 from the URL it names; every extract under extracts/
+# was sliced from the fetched copy by a builder script (start marker to end marker, runs of
+# whitespace collapsed; scratch out/ledger-transatlantic-slave-trade/build.py), never retyped.
+# Where a scan's OCR layer is the free copy, the extract keeps the layer's glyphs (the long s
+# read as f, note marks, line-end hyphens) and says so in a note. Nothing here was written
+# from memory. A work the free record could not reach is listed under `gaps`, by name, with
+# what was tried.
+#
+# This is NOT a thesis ledger: no positions, contested claims, exhibits or analyses are
+# adjudicated here, and the event renders the Hearing. The bar of §4e is not claimed.
+# `perspective:` on an entry names the event YAML perspective it chiefly serves (five, at
+# parity); `does_not_show:` says what the document cannot carry.
+#
+# Three quotations the event YAML carries were checked against the documents they name and
+# are deliberately NOT held, because holding the passage would make a misattribution pass
+# the quote gate or would sit beside a divergent copy (see gaps): the sentence the YAML gives
+# to Wilberforce, which is Equiano's (Narrative, 1789), in a different form; Ghezo's "ruling
+# principle"; and the "Ashanti trader" line given to Bowdich.
+#
+# Translations: four Void translations (`*.en.txt`, rendering: void-translation) of the
+# Kongo letter of 1526 and of three Brazilian laws. None is a published translation.
+slug: transatlantic-slave-trade
+bootstrapped: 2026-10-09
+
+entries:
+  # ------------------------------------------------- the count: the Trans-Atlantic Slave Trade Database
+  - id: src-sv-estimates
+    tier: A
+    kind: dataset
+    author: "Voyages: The Trans-Atlantic Slave Trade Database (David Eltis, David Richardson and collaborators), Estimates"
+    title: "Estimates (the Assessment page of the Trans-Atlantic Slave Trade Database)"
+    container: "SlaveVoyages, legacy site (legacy.slavevoyages.org); the current site (www.slavevoyages.org) renders only by script and returned no table to a plain fetch"
+    publisher: SlaveVoyages (Emory University and partner institutions)
+    place: Atlanta
+    year: 2026
+    edition: "the estimates as the legacy site served them on 2026-10-09; full extent of coverage 1501 to 1866 by the page's own statement. Three tables were read: the default (25-year periods by flag, embarked), and two the page's own form produced (broad disembarkation regions by flag, disembarked; embarkation regions by flag, embarked)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://legacy.slavevoyages.org/assessment/estimates"}
+    access:
+      free_copy: "https://legacy.slavevoyages.org/assessment/estimates"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Estimates"
+    language: en
+    region_of_authorship: americas
+    producer: slavevoyages
+    position: null
+    rights: copyright
+    perspective: all five (the count every account starts from)
+    does_not_show: "deaths before embarkation (capture, the march to the coast, the barracoons) or after landing; any name; an estimate is an inference from documented voyages plus an allowance for undocumented ones (src-eltis-lachance-2010), not a count of persons. The two embarked tables total 12,521,337 and 12,521,335 by rounding"
+
+  - id: src-sv-method
+    tier: B
+    kind: report
+    author: David Eltis
+    title: "The Trans-Atlantic Slave Trade Database (methodology essay)"
+    container: "SlaveVoyages, Essays (legacy site); the site dates it to 2008"
+    publisher: SlaveVoyages (Emory University)
+    place: Atlanta
+    year: 2008
+    edition: "the web text of the legacy site"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://legacy.slavevoyages.org/blog/methodology-trans-atlantic"}
+    access:
+      free_copy: "https://legacy.slavevoyages.org/blog/methodology-trans-atlantic"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "The Trans-Atlantic Slave Trade Database"
+    language: en
+    region_of_authorship: americas
+    producer: slavevoyages
+    position: null
+    rights: copyright
+    perspective: all five
+    does_not_show: "the voyages themselves; it states the database's coverage (some trace of 85 percent of voyages that embarked captives) and the arithmetic from 36,000 voyages to the estimate"
+
+  - id: src-eltis-lachance-2010
+    tier: B
+    kind: report
+    author: David Eltis and Paul F. Lachance
+    title: "Estimates of the Size and Direction of Transatlantic Slave Trade"
+    container: "Voyages: The Trans-Atlantic Slave Trade Database, downloads"
+    publisher: SlaveVoyages (Emory University)
+    place: Atlanta
+    year: 2010
+    edition: "the PDF the legacy site serves, text layer"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://legacy.slavevoyages.org/documents/download/2010estimates-method.pdf"}
+    access:
+      free_copy: "https://legacy.slavevoyages.org/documents/download/2010estimates-method.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Estimates of the Size and Direction of Transatlantic Slave Trade"
+    language: en
+    region_of_authorship: americas
+    producer: slavevoyages
+    position: null
+    rights: copyright
+    perspective: all five
+    does_not_show: "Curtin's 1969 total, or any other scholar's total: the essay names Curtin's census and Klein's data sets but the passages read give no rival figure"
+
+  - id: src-eltis-2007
+    tier: B
+    kind: chapter
+    author: David Eltis
+    title: "A Brief Overview of the Trans-Atlantic Slave Trade"
+    container: "SlaveVoyages, Essays; reposted on the site's blog March 14, 2024; the site says it was originally published in 2007"
+    publisher: SlaveVoyages (Emory University)
+    place: Atlanta
+    year: 2007
+    edition: "the web text of the legacy site"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://legacy.slavevoyages.org/blog/brief-overview-trans-atlantic-slave-trade"}
+    access:
+      free_copy: "https://legacy.slavevoyages.org/blog/brief-overview-trans-atlantic-slave-trade"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "A Brief Overview of the Trans-Atlantic Slave Trade"
+    language: en
+    region_of_authorship: americas
+    producer: slavevoyages
+    position: null
+    rights: copyright
+    perspective: all five
+    does_not_show: "the 2026 estimates: its shares (Brazil about forty percent, the United States 5 percent, 12 to 13 percent dying at sea) are the 2007 essay's and do not all agree with the current tables (see the brief)"
+
+  # ------------------------------------------------- the people carried: narratives by the formerly enslaved
+  - id: src-equiano-1789
+    tier: A
+    kind: memoir
+    author: Olaudah Equiano, or Gustavus Vassa
+    title: "The Interesting Narrative of the Life of Olaudah Equiano, or Gustavus Vassa, the African. Written by Himself"
+    container: null
+    publisher: "Printed for and sold by the Author (London); Project Gutenberg eBook #15399"
+    place: London
+    year: 1789
+    edition: "the first edition's text as Project Gutenberg prints it: title page 'Printed for and sold by the Author, No. 10, Union-Street', dedication dated March 24, 1789"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.gutenberg.org/ebooks/15399"}
+    access:
+      free_copy: "https://www.gutenberg.org/cache/epub/15399/pg15399.txt"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "The Interesting Narrative of the Life of Olaudah Equiano, Or Gustavus Vassa, The African"
+    language: en
+    region_of_authorship: europe
+    producer: formerly-enslaved-narrators
+    position: null
+    rights: public
+    perspective: African Diasporic; Abolition Movement (the dedication to Parliament)
+    does_not_show: "any record but his own: the birthplace (Eboe, 1745) is his statement and is not checked here against any other document (see gaps, Carretta). It carries no sales figure for the book"
+
+  - id: src-cugoano-1787
+    tier: A
+    kind: memoir
+    author: Ottobah Cugoano
+    title: "Narrative of the Enslavement of Ottobah Cugoano, a Native of Africa; published by himself, in the Year 1787"
+    container: "The Negro's Memorial; or, Abolitionist's Catechism; by an Abolitionist (London: Hatchard and Co., and J. and A. Arch, 1825), Appendix, pp. 120-127"
+    publisher: "Documenting the American South, University of North Carolina at Chapel Hill (electronic edition, 1999)"
+    place: London
+    year: 1787
+    edition: "the 1825 reprint of the 1787 narrative as DocSouth transcribed it; the 1787 Thoughts and Sentiments itself was not read"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://docsouth.unc.edu/neh/cugoano/cugoano.html"}
+    access:
+      free_copy: "https://docsouth.unc.edu/neh/cugoano/cugoano.html"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Narrative of the Enslavement of Ottobah Cugoano, a Native of Africa; published by himself, in the Year 1787"
+    language: en
+    region_of_authorship: europe
+    producer: formerly-enslaved-narrators
+    position: null
+    rights: public
+    perspective: African State / Political Economy (who sold him); African Diasporic (the shipboard plot)
+    does_not_show: "the name of the ship, the year of his crossing, or the people who sold him"
+
+  - id: src-baquaqua-1854
+    tier: A
+    kind: memoir
+    author: "Mahommah Gardo Baquaqua; written and revised from his own words by Samuel Moore"
+    title: "Biography of Mahommah G. Baquaqua, a Native of Zoogoo, in the Interior of Africa"
+    container: null
+    publisher: "Detroit, 1854; Documenting the American South, University of North Carolina at Chapel Hill"
+    place: Detroit
+    year: 1854
+    edition: "DocSouth's electronic edition, which prints the original's page markers ('Page 43')"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://docsouth.unc.edu/neh/baquaqua/baquaqua.html"}
+    access:
+      free_copy: "https://docsouth.unc.edu/neh/baquaqua/baquaqua.html"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Biography of Mahommah G. Baquaqua, a Native of Zoogoo, in the Interior of Africa"
+    language: en
+    region_of_authorship: americas
+    producer: formerly-enslaved-narrators
+    position: null
+    rights: public
+    perspective: African Diasporic (the crossing to Brazil)
+    does_not_show: "his words unmediated: the book says it was written and revised from his own words by Samuel Moore. It gives no year of the crossing in the passages held"
+
+  - id: src-prince-1831
+    tier: A
+    kind: memoir
+    author: "Mary Prince (related by herself; with a supplement by the editor)"
+    title: "The History of Mary Prince, a West Indian Slave. Related by Herself"
+    container: null
+    publisher: "London, 1831; Documenting the American South, University of North Carolina at Chapel Hill"
+    place: London
+    year: 1831
+    edition: "DocSouth's electronic edition"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://docsouth.unc.edu/neh/prince/prince.html"}
+    access:
+      free_copy: "https://docsouth.unc.edu/neh/prince/prince.html"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "The History of Mary Prince, a West Indian Slave. Related by Herself"
+    language: en
+    region_of_authorship: europe
+    producer: formerly-enslaved-narrators
+    position: null
+    rights: public
+    perspective: African Diasporic
+    does_not_show: "the Atlantic crossing: she was born into slavery in Bermuda. The text was taken down from her words by others (the editor's note says 'taken down from the mouth of this negro woman')"
+
+  - id: src-douglass-1855
+    tier: A
+    kind: memoir
+    author: Frederick Douglass
+    title: "My Bondage and My Freedom (appendix: 'What to the Slave is the Fourth of July? Extract from an Oration, at Rochester, July 5, 1852')"
+    container: null
+    publisher: "Project Gutenberg eBook #202 (the 1855 imprint is not in the passages read)"
+    place: New York
+    year: 1855
+    edition: "Douglass's own 1855 reprint of an extract of the 1852 oration, as Project Gutenberg prints it; the 1852 pamphlet was not read"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.gutenberg.org/ebooks/202"}
+    access:
+      free_copy: "https://www.gutenberg.org/cache/epub/202/pg202.txt"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "My Bondage and My Freedom"
+    language: en
+    region_of_authorship: americas
+    producer: formerly-enslaved-narrators
+    position: null
+    rights: public
+    perspective: African Diasporic
+    does_not_show: "the Atlantic trade: the speech is about slavery in the United States in 1852. The book's appendix calls it an extract; the full 1852 text may differ"
+
+  # ------------------------------------------------- the European ledger: courts, Parliament, the Treasury, the economist
+  - id: src-gregson-gilbert-1783
+    tier: A
+    kind: judgment
+    author: "Court of King's Bench (Lord Mansfield, Willes J., Buller J.); reported by Sylvester Douglas"
+    title: "Gregson v. Gilbert (Easter Term, 23 George III, 1783)"
+    container: "Reports of Cases Argued and Determined in the Court of King's Bench, by Sylvester Douglas, vol. 3 (London, 1831), p. 232 and following (the volume index gives 232)"
+    publisher: "Internet Archive (Google scan of the 1831 volume; the OCR is the item's djvu.xml layer)"
+    place: London
+    year: 1783
+    edition: "Douglas's third volume, first printed 1831 from his manuscript; the item carries no text file, so the OCR words were read from its djvu.xml"
+    volume: "3 Doug. 232"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: reportscasesarg04glengoog, hathitrust: null, url: "https://archive.org/details/reportscasesarg04glengoog"}
+    access:
+      free_copy: "https://archive.org/details/reportscasesarg04glengoog"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Reports of Cases Argued and Determined in the Court of King's Bench: By the Right Hon. Sylvester ..."
+    language: en
+    region_of_authorship: europe
+    producer: court-of-kings-bench
+    position: null
+    rights: public
+    perspective: European Economic / Mercantilist
+    does_not_show: "the ship's name (the report never says Zong), the captain's name, the dates of the killings, or any second trial: the report ends 'Rule absolute on payment of costs', a new trial ordered. Counsel's statements are arguments, not findings"
+
+  - id: src-cobbett-17890512
+    tier: A
+    kind: primary-document
+    author: "William Wilberforce, in the House of Commons, 12 May 1789, as reported"
+    title: "Debate on Mr. Wilberforce's Resolutions respecting the Slave Trade, May 12, 1789"
+    container: "Cobbett's Parliamentary History of England, vol. 28 (London, 1816)"
+    publisher: "Internet Archive (Bayerische Staatsbibliothek scan, item 10279136bsb)"
+    place: London
+    year: 1789
+    edition: "the scan's OCR text layer, which is poor on the two-column pages; only clean spans are held"
+    volume: "28"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: 10279136bsb, hathitrust: null, url: "https://archive.org/details/10279136bsb"}
+    access:
+      free_copy: "https://archive.org/details/10279136bsb"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Cobbett's parliamentary history of England: from the Norman conquest, in 1066 to the year 1803. 28"
+    language: en
+    region_of_authorship: europe
+    producer: uk-parliament
+    position: null
+    rights: public
+    perspective: Abolition Movement; European Economic (Norris, quoted to be refuted)
+    does_not_show: "a verbatim record: the Parliamentary History compiles reports of debates. It does NOT carry the sentence the event YAML attributes to Wilberforce (see gaps)"
+
+  - id: src-hansard-18070223
+    tier: A
+    kind: primary-document
+    author: House of Commons
+    title: "Slave Trade Abolition Bill, HC Deb 23 February 1807 vol 8 cc945-95"
+    container: "Hansard 1803-2005 (historic Hansard)"
+    publisher: UK Parliament
+    place: London
+    year: 1807
+    edition: "the historic Hansard web text"
+    volume: "8"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://api.parliament.uk/historic-hansard/commons/1807/feb/23/slave-trade-abolition-bill"}
+    access:
+      free_copy: "https://api.parliament.uk/historic-hansard/commons/1807/feb/23/slave-trade-abolition-bill"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "SLAVE TRADE ABOLITION BILL. (Hansard, 23 February 1807)"
+    language: en
+    region_of_authorship: europe
+    producer: uk-parliament
+    position: null
+    rights: official
+    perspective: Abolition Movement
+    does_not_show: "the final passage of the bill or royal assent; this is the second-reading division only"
+
+  - id: src-act-1807
+    tier: A
+    kind: primary-document
+    author: Parliament of the United Kingdom
+    title: "An Act for the Abolition of the Slave Trade (47 Geo. III sess. 1 c. 36)"
+    container: "The Statutes Project (statutes.org.uk), a transcription of the printed Act"
+    publisher: The Statutes Project
+    place: London
+    year: 1807
+    edition: "the host's transcription; the King's Printer's text itself was not read"
+    volume: null
+    document_number: "47 Geo. III sess. 1 c. 36"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://statutes.org.uk/site/the-statutes/nineteenth-century/1807-47-geo-3-1-c36-slave-trade/"}
+    access:
+      free_copy: "https://statutes.org.uk/site/the-statutes/nineteenth-century/1807-47-geo-3-1-c36-slave-trade/"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "1807: 47 George 3 sess. 1 c.36: Abolition of Slave Trade | The Statutes Project"
+    language: en
+    region_of_authorship: europe
+    producer: uk-parliament
+    position: null
+    rights: public
+    perspective: Abolition Movement
+    does_not_show: "slavery itself, which the Act left in place; enforcement"
+
+  - id: src-act-1833
+    tier: A
+    kind: primary-document
+    author: Parliament of the United Kingdom
+    title: "An Act for the Abolition of Slavery throughout the British Colonies (3 & 4 Will. IV c. 73)"
+    container: "The Statutes Project (statutes.org.uk), a transcription of the printed Act"
+    publisher: The Statutes Project
+    place: London
+    year: 1833
+    edition: "the host's transcription, with its bracketed marginal notes"
+    volume: null
+    document_number: "3 & 4 Will. IV c. 73"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://statutes.org.uk/site/the-statutes/nineteenth-century/1833-3-4-william-4-c-73-abolition-of-slavery-act/"}
+    access:
+      free_copy: "https://statutes.org.uk/site/the-statutes/nineteenth-century/1833-3-4-william-4-c-73-abolition-of-slavery-act/"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "1833: 3 & 4 William 4 c.73: Abolition of Slavery Act. | The Statutes Project"
+    language: en
+    region_of_authorship: europe
+    producer: uk-parliament
+    position: null
+    rights: public
+    perspective: European Economic / Mercantilist (the compensation); Abolition Movement
+    does_not_show: "how many people it freed, how the twenty millions was paid out, or when apprenticeship actually ended: the Act sets 1 August 1838 (non-praedial) and 1 August 1840 (praedial) as limits"
+
+  - id: src-hmt-foi-2018
+    tier: A
+    kind: report
+    author: "HM Treasury, Information Rights Unit"
+    title: "Freedom of Information Act 2000: Slavery Abolition Act 1833 (FOI2018/00186), 31 January 2018"
+    container: "HM Treasury disclosure log, GOV.UK"
+    publisher: HM Treasury
+    place: London
+    year: 2018
+    edition: "the disclosure-log PDF, text layer"
+    volume: null
+    document_number: "FOI2018/00186"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://assets.publishing.service.gov.uk/media/5a7d78a6e5274a676d53243f/FOI2018-00186_-_Slavery_Abolition_Act_1833_-_pdf_for_disclosure_log__003_.pdf"}
+    access:
+      free_copy: "https://assets.publishing.service.gov.uk/media/5a7d78a6e5274a676d53243f/FOI2018-00186_-_Slavery_Abolition_Act_1833_-_pdf_for_disclosure_log__003_.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "Freedom of Information Act 2000: Slavery Abolition Act 1833"
+    language: en
+    region_of_authorship: europe
+    producer: uk-government
+    position: null
+    rights: official
+    perspective: European Economic / Mercantilist; Abolition Movement
+    does_not_show: "who held the gilts or who paid the interest; it says nothing about Black British taxpayers. It calls the loan 'the Slavery Abolition Act (1835) Loan' and gives no amount borrowed"
+
+  - id: src-smith-1776
+    tier: A
+    kind: monograph
+    author: Adam Smith
+    title: "An Inquiry into the Nature and Causes of the Wealth of Nations"
+    container: null
+    publisher: "London, 1776; Project Gutenberg eBook #3300"
+    place: London
+    year: 1776
+    edition: "Project Gutenberg's text (edition not stated in the passages held)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.gutenberg.org/ebooks/3300"}
+    access:
+      free_copy: "https://www.gutenberg.org/cache/epub/3300/pg3300.txt"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "An Inquiry into the Nature and Causes of the Wealth of Nations"
+    language: en
+    region_of_authorship: europe
+    producer: political-economist
+    position: null
+    rights: public
+    perspective: European Economic / Mercantilist
+    does_not_show: "the Atlantic crossing; Smith argues from 'the experience of all ages and nations', not from plantation accounts"
+
+  # ------------------------------------------------- the abolitionists
+  - id: src-clarkson-1808
+    tier: A
+    kind: memoir
+    author: Thomas Clarkson
+    title: "The History of the Rise, Progress and Accomplishment of the Abolition of the African Slave-Trade by the British Parliament"
+    container: null
+    publisher: "Project Gutenberg eBook #10633 (titled there '(1839)')"
+    place: London
+    year: 1808
+    edition: "the text Project Gutenberg prints, which its title dates 1839 (a later edition of the 1808 work); first published 1808"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.gutenberg.org/ebooks/10633"}
+    access:
+      free_copy: "https://www.gutenberg.org/cache/epub/10633/pg10633.txt"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "The History of the Rise, Progress and Accomplishment of the Abolition of the African Slave-Trade, by the British Parliament (1839)"
+    language: en
+    region_of_authorship: europe
+    producer: abolition-committee
+    position: null
+    rights: public
+    perspective: Abolition Movement
+    does_not_show: "the committee's twelve names (a table the text file does not carry); the date of the 1791 division; a Zong count that adds up: 132 selected, then 54 + 42 + 16 thrown and the rest of 26 leaping, which is 122"
+
+  - id: src-vam-o79580
+    tier: B
+    kind: reference
+    author: Victoria and Albert Museum
+    title: "Medallion, white jasper with black relief, modelled by William Hackwood, made by Josiah Wedgwood and Sons, Etruria, ca. 1787 (museum number 414:1304-1885)"
+    container: "V&A Collections, object O79580"
+    publisher: Victoria and Albert Museum
+    place: London
+    year: 2026
+    edition: "the collections API record, read as JSON; the reader's page is https://collections.vam.ac.uk/item/O79580/"
+    volume: null
+    document_number: "414:1304-1885"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://collections.vam.ac.uk/item/O79580/"}
+    access:
+      free_copy: "https://api.vam.ac.uk/v2/museumobject/O79580"
+      verified_at: 2026-10-09
+      verified_by: repository-record
+      verified_title: "API record O79580: objectType Medallion, maker Hackwood, William, date ca. 1787 (the record carries no title)"
+    language: en
+    region_of_authorship: europe
+    producer: v-and-a
+    position: null
+    rights: copyright
+    perspective: Abolition Movement
+    does_not_show: "how many were made; it says the medallions were NOT sold commercially and that the motto may predate Wedgwood (Peckard, 1778)"
+
+  # ------------------------------------------------- the African continent
+  - id: src-afonso-15260706
+    tier: A
+    kind: letter
+    author: "Afonso, King of Kongo (signed 'ElRey dom A.'; the scribe is named as dom Joham Teyxeira)"
+    title: "Letter of the King of Kongo to King João III of Portugal, Kongo, 6 July 1526"
+    container: "António Brásio, ed., Monumenta Missionaria Africana, Africa Ocidental, first series, vol. 1 (1471-1531) (Lisbon, 1952), pp. 468-471 by the volume contents; original: Arquivo Nacional da Torre do Tombo, Corpo Cronológico I-34-94"
+    publisher: "Internet Archive (item monumentamissionariaafricana, file 01.001)"
+    place: "the city of Kongo (the letter dates itself 'desta nosa cydade de Cõgo')"
+    year: 1526
+    edition: "Brásio's transcription in the archive's OCR layer; the original manuscript was not read. Page numbers are the volume's table of contents'"
+    volume: "1"
+    document_number: "ATT, CC-I-34-94"
+    identifiers: {isbn: null, doi: null, archive_org: monumentamissionariaafricana, hathitrust: null, url: "https://archive.org/details/monumentamissionariaafricana"}
+    access:
+      free_copy: "https://archive.org/download/monumentamissionariaafricana/MonumentaMission%C3%A1riaAfricana-01.001_djvu.txt"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Monumenta Missionária Africana 1471-1665"
+    language: pt
+    region_of_authorship: africa
+    producer: kongo-crown
+    position: null
+    rights: copyright
+    perspective: African Continental
+    does_not_show: "numbers of people taken; that the merchants themselves kidnap: the letter says the merchants carry people off and that thieves and men of bad conscience steal them to sell. No English is published here; the rendering is a Void translation"
+
+  - id: src-nunn-2007
+    tier: B
+    kind: journal-article
+    author: Nathan Nunn
+    title: "The Long-Term Effects of Africa's Slave Trades (NBER Working Paper 13367)"
+    container: "NBER Working Paper Series, September 2007; published in revised form in the Quarterly Journal of Economics, 2008 (not read)"
+    publisher: National Bureau of Economic Research
+    place: Cambridge, Massachusetts
+    year: 2007
+    edition: "the working paper PDF, text layer; its notice permits short sections to be quoted with credit"
+    volume: null
+    document_number: "w13367"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nber.org/papers/w13367"}
+    access:
+      free_copy: "https://www.nber.org/system/files/working_papers/w13367/w13367.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "THE LONG-TERM EFFECTS OF AFRICA'S SLAVE TRADES"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+    perspective: African Continental
+    does_not_show: "the event YAML's '72-112% of potential population growth': the figure is not in the paper's passages read, and the population claim it carries is Manning's (half by 1850), cited by Nunn"
+
+  - id: src-nunn-wantchekon-2009
+    tier: B
+    kind: journal-article
+    author: Nathan Nunn and Leonard Wantchekon
+    title: "The Slave Trade and the Origins of Mistrust in Africa (NBER Working Paper 14783)"
+    container: "NBER Working Paper Series, March 2009; published in the American Economic Review, 2011 (not read)"
+    publisher: National Bureau of Economic Research
+    place: Cambridge, Massachusetts
+    year: 2009
+    edition: "the working paper PDF, text layer"
+    volume: null
+    document_number: "w14783"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nber.org/papers/w14783"}
+    access:
+      free_copy: "https://www.nber.org/system/files/working_papers/w14783/w14783.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "THE SLAVE TRADE AND THE ORIGINS OF MISTRUST IN AFRICA"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+    perspective: African Continental
+    does_not_show: "'institutional weakness' or 'social cohesion' as the YAML words them: the finding is lower trust in relatives, neighbours and the local government council, from the 2005 Afrobarometer"
+
+  # ------------------------------------------------- the African states that sold
+  - id: src-dupuis-1824
+    tier: A
+    kind: memoir
+    author: "Joseph Dupuis, British envoy and consul for Ashantee, recording the King of Ashantee"
+    title: "Journal of a Residence in Ashantee"
+    container: null
+    publisher: "Internet Archive item journalofresiden00dupu (the 1824 London edition; its imprint page was not read)"
+    place: London
+    year: 1824
+    edition: "the scan's OCR text layer; it keeps the edition's note marks"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: journalofresiden00dupu, hathitrust: null, url: "https://archive.org/details/journalofresiden00dupu"}
+    access:
+      free_copy: "https://archive.org/details/journalofresiden00dupu"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "Journal of a residence in Ashantee, comprising notes and researches relative to the Gold Coast, and the interior of Western Africa, chiefly collected from Arabic mss. and information communicated by the Moslems of Guinea"
+    language: en
+    region_of_authorship: europe
+    producer: british-envoy
+    position: null
+    rights: public
+    perspective: African State / Political Economy
+    does_not_show: "the king's own words in his own language: this is a British envoy's English record of an interpreted conversation. The king is not named in the extracts held (the book calls him 'the king'; it uses 'Sai' elsewhere); the year of the audience (1820) is not in the extracts"
+
+  - id: src-dalzel-1793
+    tier: A
+    kind: chronicle
+    author: "Archibald Dalzel, formerly Governor at Whydah, Governor of Cape Coast Castle"
+    title: "The History of Dahomy, an Inland Kingdom of Africa; compiled from authentic memoirs"
+    container: null
+    publisher: "London, 1793; Internet Archive item historydahomyan00dalzgoog"
+    place: London
+    year: 1793
+    edition: "the scan's OCR text layer, long s read as f"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: historydahomyan00dalzgoog, hathitrust: null, url: "https://archive.org/details/historydahomyan00dalzgoog"}
+    access:
+      free_copy: "https://archive.org/details/historydahomyan00dalzgoog"
+      verified_at: 2026-10-09
+      verified_by: archive-item-fetch
+      verified_title: "The History of Dahomy: An Inland Kingdom of Africa; Comp. from Authentic ..."
+    language: en
+    region_of_authorship: europe
+    producer: slave-trade-governor
+    position: null
+    rights: public
+    perspective: African State / Political Economy
+    does_not_show: "a Dahomean source: Dalzel, a slave-trade governor, compiles the reign of 'Trudo' (the king the event YAML calls Agaja) from earlier European accounts. The figure of captives taken a year is not held (the OCR of his export figures is unreliable)"
+
+  # ------------------------------------------------- Brazil, the United States, the Caribbean
+  - id: src-lei-18311107
+    tier: A
+    kind: primary-document
+    author: "The Regency, in the name of the Emperor Pedro II (Empire of Brazil)"
+    title: "Lei de 7 de novembro de 1831 (declares free all slaves coming from outside the Empire)"
+    container: "Presidência da República, Casa Civil, legislation site"
+    publisher: Presidência da República (Brazil)
+    place: Rio de Janeiro
+    year: 1831
+    edition: "the Presidency's web text, which notes it does not replace the text published in the Coleção das Leis do Brasil"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.planalto.gov.br/ccivil_03/leis/lim/lim-7-11-1831.htm"}
+    access:
+      free_copy: "https://www.planalto.gov.br/ccivil_03/leis/lim/lim-7-11-1831.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "LIM-7-11-1831"
+    language: pt
+    region_of_authorship: americas
+    producer: brazilian-state
+    position: null
+    rights: official
+    perspective: African Diasporic (Brazil); Abolition Movement (outside Britain)
+    does_not_show: "whether it was enforced: the 1850 law (src-lei-581-1850) was passed to repress the traffic this law had prohibited"
+
+  - id: src-lei-581-1850
+    tier: A
+    kind: primary-document
+    author: "Emperor Pedro II and the General Assembly (Empire of Brazil)"
+    title: "Lei nº 581, de 4 de setembro de 1850 (measures to repress the traffic in Africans)"
+    container: "Presidência da República, Casa Civil, legislation site"
+    publisher: Presidência da República (Brazil)
+    place: Rio de Janeiro
+    year: 1850
+    edition: "the Presidency's web text"
+    volume: null
+    document_number: "Lei 581"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.planalto.gov.br/ccivil_03/leis/lim/lim581.htm"}
+    access:
+      free_copy: "https://www.planalto.gov.br/ccivil_03/leis/lim/lim581.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "LIM581"
+    language: pt
+    region_of_authorship: americas
+    producer: brazilian-state
+    position: null
+    rights: official
+    perspective: African Diasporic (Brazil)
+    does_not_show: "the name 'Eusébio de Queirós' (not in the extracts); its effect, which Eltis states (src-eltis-2007.secend)"
+
+  - id: src-lei-3353-1888
+    tier: A
+    kind: primary-document
+    author: "The Princess Imperial Regent, in the name of the Emperor Pedro II (Empire of Brazil)"
+    title: "Lei nº 3.353, de 13 de maio de 1888 (declares slavery in Brazil extinct)"
+    container: "Presidência da República, Casa Civil, legislation site"
+    publisher: Presidência da República (Brazil)
+    place: Rio de Janeiro
+    year: 1888
+    edition: "the Presidency's web text"
+    volume: null
+    document_number: "Lei 3.353"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.planalto.gov.br/ccivil_03/leis/lim/lim3353.htm"}
+    access:
+      free_copy: "https://www.planalto.gov.br/ccivil_03/leis/lim/lim3353.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "LIM3353"
+    language: pt
+    region_of_authorship: americas
+    producer: brazilian-state
+    position: null
+    rights: official
+    perspective: African Diasporic (Brazil)
+    does_not_show: "that Brazil was the last country in the Americas to abolish slavery; any compensation (the law has two articles)"
+
+  - id: src-us-constitution
+    tier: A
+    kind: primary-document
+    author: The Federal Convention
+    title: "The Constitution of the United States, Article I, Section 9"
+    container: "National Archives, America's Founding Documents, a transcription"
+    publisher: National Archives and Records Administration
+    place: Washington
+    year: 1787
+    edition: "the National Archives transcript"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.archives.gov/founding-docs/constitution-transcript"}
+    access:
+      free_copy: "https://www.archives.gov/founding-docs/constitution-transcript"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "The Constitution of the United States: A Transcription | National Archives"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+    perspective: Abolition Movement (the United States)
+    does_not_show: "the 1807 Act of Congress that used the clause (not read); the word 'slave' (the clause says 'such Persons')"
+
+  - id: src-fed-scf-2019
+    tier: A
+    kind: report
+    author: "Neil Bhutta, Andrew C. Chang, Lisa J. Dettling and Joanne W. Hsu, Board of Governors of the Federal Reserve System"
+    title: "Disparities in Wealth by Race and Ethnicity in the 2019 Survey of Consumer Finances (FEDS Notes, September 28, 2020)"
+    container: FEDS Notes
+    publisher: Board of Governors of the Federal Reserve System
+    place: Washington
+    year: 2020
+    edition: "the web text"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.federalreserve.gov/econres/notes/feds-notes/disparities-in-wealth-by-race-and-ethnicity-in-the-2019-survey-of-consumer-finances-20200928.html"}
+    access:
+      free_copy: "https://www.federalreserve.gov/econres/notes/feds-notes/disparities-in-wealth-by-race-and-ethnicity-in-the-2019-survey-of-consumer-finances-20200928.html"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "The Fed - Disparities in Wealth by Race and Ethnicity in the 2019 Survey of Consumer Finances"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+    perspective: African Diasporic
+    does_not_show: "a cause: the note measures the gap and does not attribute it to the slave trade. Its 2019 medians ($188,200 and $24,100) are not the event YAML's $171,000 and $17,600"
+
+  - id: src-caricom-plan
+    tier: A
+    kind: report
+    author: CARICOM Reparations Commission
+    title: "CARICOM 10-Point Reparation Plan"
+    container: "Caribbean Reparations Commission website"
+    publisher: CARICOM Reparations Commission
+    place: null
+    year: 2014
+    edition: "the web text as served 2026-10-09; the page itself prints no date (the commission was established in 2013, by the page)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://caricomreparations.org/caricom/caricoms-10-point-reparation-plan/"}
+    access:
+      free_copy: "https://caricomreparations.org/caricom/caricoms-10-point-reparation-plan/"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "10-Point Reparation Plan - Caribbean Reparations Commission"
+    language: en
+    region_of_authorship: americas
+    producer: caricom-reparations-commission
+    position: null
+    rights: copyright
+    perspective: African Diasporic
+    does_not_show: "the year 2014 (the page is undated; the year is the event YAML's); any European government's reply. Its 'over 10 million' to the Caribbean is its own figure (see the brief)"
+
+positions: []
+contested: []
+exhibits: []
+analyses: []
+
+gaps:
+  - entry: src-cobbett-17890512
+    what: "The event YAML's primary_source_excerpt attributed to William Wilberforce, Speech to the House of Commons, May 12, 1789: 'Is not the slave trade entirely a war with the heart of man? And surely that which is begun by breaking down the barriers of virtue, involves in its continuance destruction to every principle of justice and religion.' Also the perspective notable_quote of its first sentence"
+    tried: ["https://archive.org/details/10279136bsb", "https://www.gutenberg.org/cache/epub/15399/pg15399.txt"]
+    status: "The OCR of the 12 May 1789 debate in Cobbett vol. 28 was searched; the sentence is not found there. The words are OLAUDAH EQUIANO's, in his Narrative of 1789 (chapter V), in a different form: 'But is not the slave trade entirely a war with the heart of man? And surely that which is begun by breaking down the barriers of virtue involves in its continuance destruction to every principle, and buries all sentiments in ruin!' That passage is deliberately NOT held: holding it would let the YAML's first sentence pass the quote gate as Wilberforce's (a misattribution) and would fail tests/test_history_quote_ledger.py on the excerpt's divergent ending. Correct the YAML attribution first, then pin src-equiano-1789 at that passage"
+  - what: "King Ghezo of Dahomey, 1849: 'The slave trade is the ruling principle of my people. It is the source and the glory of their wealth.' (perspective notable_quote)"
+    tried: ["https://archive.org/details/dahomeyanddahom00forbgoog", "https://archive.org/details/dahomeyanddahom01forbgoog", "https://archive.org/details/dahomeyanddahom02forbgoog", "https://archive.org/details/dahomeyanddahom03forbgoog", "https://archive.org/details/dahomeyanddahom04forbgoog", "https://archive.org/details/dahomeydahomansb00forb"]
+    status: "Forbes, Dahomey and the Dahomans (1851), both volumes in several scans, was searched for 'ruling principle', 'glory' and 'lull'; the sentence is not in it. Its source is unknown to this ledger and it is unverified; the context the YAML gives ('to British consul at Abomey, 1849') is unverified too"
+  - what: "'We want nothing from the white man but gunpowder and shot, and we will sell slaves to get them.' attributed to an Ashanti trader, reported by Bowdich, Mission from Cape Coast Castle to Ashantee, 1819 (perspective notable_quote)"
+    tried: ["https://archive.org/details/missionfromcapec00bowd"]
+    status: "Bowdich 1819 was read whole in its OCR layer; 'gunpowder and shot' is not in it. Unverified. An Asante voice IS held instead: the King of Ashantee to Dupuis, 1820, as Dupuis records it (src-dupuis-1824)"
+  - entry: src-afonso-15260706
+    what: "The YAML's English for Afonso's letter of 1526: 'Each day the traders are kidnapping our people, children of this country, sons of our nobles and vassals, even people of our own family ... our land is entirely depopulated' (summary and notable_quote)"
+    tried: ["https://archive.org/details/monumentamissionariaafricana"]
+    status: "The Portuguese is held (Brásio's edition of the Torre do Tombo letter of 6 July 1526) with a Void translation. The YAML's English is a published translation this ledger did not read (its translator is not named in the YAML) and it does not match the original's structure: the letter says the merchants CARRY OFF ('leuam') our people every day and that thieves and men of bad conscience STEAL them ('os furtam') to sell for Portuguese goods. Not held; the notable_quote stays withdrawn"
+  - what: "Nathan Nunn, 'The slave trade was not just a removal of people. It was a removal of possibilities.' (notable_quote, 'lecture summary, 2008'), and the YAML's '72% to 112% of its potential population growth'"
+    tried: ["https://www.nber.org/system/files/working_papers/w13367/w13367.pdf", "https://scholar.harvard.edu/files/nunn/files/empirical_slavery.pdf"]
+    status: "The 2007 working paper was read (the Harvard copy answered HTTP 403). Neither the sentence nor the 72-112% figure is in it. The paper's own population claim is Manning's: by 1850 Africa's population was only half of what it would have been. Unverified"
+  - what: "Karl Marx, Capital, vol. 1, ch. 31 (notable_quote with an ellipsis) and Edward Gibbon Wakefield, A View of the Art of Colonization, 1849 (notable_quote)"
+    tried: []
+    status: "not sought this session; both stay withdrawn by the quote gate. The Marx line as the YAML prints it joins two passages with an ellipsis and could not be held as one quotation in any case"
+  - what: "Eric Williams, Capitalism and Slavery (1944)"
+    tried: ["https://archive.org/metadata/eric-williams-c-s"]
+    status: "The item the event YAML names is a community upload (collection folkscanomy) of a book still in copyright; it is not a lawful free copy and was not read. Williams's thesis is narrated from the YAML only, attributed, and no sentence of his is held"
+  - what: "Seymour Drescher, Econocide (1977); Hugh Thomas, The Slave Trade (1997); Paul Lovejoy, Transformations in Slavery (1983); John Thornton, Africa and Africans in the Making of the Atlantic World (1992); Adam Hochschild, Bury the Chains (2005); Saidiya Hartman, Lose Your Mother (2007); Joseph Inikori, Africans and the Industrial Revolution in England (2002); Karl Polanyi, Dahomey and the Slave Trade (1966)"
+    tried: ["https://archive.org/metadata/slavetradestoryo00thom", "https://archive.org/metadata/transformationsi0000love_q9a3", "https://archive.org/metadata/africaafricansin0000thor", "https://archive.org/metadata/burychainsbritis0000hoch"]
+    status: "The four Internet Archive items the YAML names are controlled lending copies (access-restricted-item: true); the others have no open copy named and none was sought. No claim of theirs is held"
+  - what: "The rival totals: Curtin's 1969 census, Inikori's and Lovejoy's revisions"
+    tried: ["https://legacy.slavevoyages.org/documents/download/2010estimates-method.pdf"]
+    status: "Eltis and Lachance name Curtin's 1969 book and his voyage sets but the passages read give no rival total. No scholar's total other than the database's is held, so the brief can state the database's method and its own spread (embarked 12,521,337; disembarked 10,702,653) but not a disagreement on the total with a named figure"
+  - what: "Vincent Carretta's argument (1999, 2005) that baptismal and naval records give Equiano's birthplace as South Carolina"
+    tried: []
+    status: "not read: paywalled journal and copyrighted monograph. The narrative holds only Equiano's own statement (src-equiano-1789.secbirth). The script must say 'by his own account'"
+  - what: "Legacies of British Slavery (UCL) on the compensation claims"
+    tried: ["https://www.ucl.ac.uk/lbs/project/"]
+    status: "HTTP 403 to a scripted fetch. No figure of theirs is held"
+  - what: "The West Africa Squadron (the YAML's '1,600 slave ships' and 'approximately 150,000' freed, 1808-1860); Liverpool's '1.5 million' (1699-1807); the '493 documented' shipboard revolts; the Amistad (1839); Equiano's '50,000 copies'; Clarkson's '250,000 households'; '300,000 British families' in the sugar boycott; the Manchester petition"
+    tried: []
+    status: "no primary record of any of these figures was found or sought this session; none is held. The nearest held figures: the estimates' 155,568 disembarked IN AFRICA (src-sv-estimates.secdisembark), which is a different measure, and Eltis's 'about one in ten slaving voyages experienced major rebellions' (src-eltis-2007.secrebellion)"
+  - what: "A Portuguese crown record of the trade or its abolition (for example the decree of 1836) and any Dahomean, Asante, Bonny or Aro record in its own hand"
+    tried: []
+    status: "not sought for Portugal this session. For the African states, the held voices are recorded by Europeans (Dupuis for Asante, Dalzel for Dahomey); the Kongo letter is the one African state document held in its own words"
+  - what: "Lord Mansfield 'ruled for the underwriters' (YAML summary)"
+    tried: ["https://archive.org/details/reportscasesarg04glengoog", "https://www.commonlii.org/uk/cases/EngR/1783/85.pdf"]
+    status: "The report (src-gregson-gilbert-1783) records a jury verdict for the owners and a new trial ordered on payment of costs ('Rule absolute'). It records no judgment for the underwriters and no second trial. CommonLII's English Reports copy answered HTTP 403"
+
+recordings: []

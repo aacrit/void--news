@@ -1,0 +1,7 @@
+source: src-app-lbj-19640804
+locator: secopening
+url: https://www.presidency.ucsb.edu/documents/radio-and-television-report-the-american-people-following-renewed-aggression-the-gulf
+read: 2026-10-09
+note: The American Presidency Project's text, from the Public Papers of the Presidents
+
+My fellow Americans: As President and Commander in Chief, it is my duty to the American people to report that renewed hostile actions against United States ships on the high seas in the Gulf of Tonkin have today required me to order the military forces of the United States to take action in reply. The initial attack on the destroyer Maddox, on August 2, was repeated today by a number of hostile vessels attacking two U.S. destroyers with torpedoes. The destroyers and supporting aircraft acted at once on the orders I gave after the initial act of aggression. We believe at least two of the attacking boats were sunk. There were no U.S. losses. The performance of commanders and crews in this engagement is in the highest tradition of the United States Navy. But repeated acts of violence against the Armed Forces of the United States must be met not only with alert defense, but with positive reply. That reply is being given as I speak to you tonight.

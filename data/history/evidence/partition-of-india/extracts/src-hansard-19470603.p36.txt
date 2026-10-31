@@ -1,0 +1,7 @@
+source: src-hansard-19470603
+locator: p36
+url: https://api.parliament.uk/historic-hansard/commons/1947/jun/03/india-transfer-of-power
+read: 2026-09-25
+note: p is the Hansard column; HC Deb 03 June 1947 vol 438 cc35-46
+
+The Provincial Legislative Assemblies of Bengal and the Punjab (excluding the European members) will therefore each be asked to meet in two parts, one representing the Muslim majority districts and the other the rest of the Province. For the purpose of determining the population of districts, the 1941 census figures will be taken as authoritative. The Muslim majority districts in these two Provinces are set out in the appendix to the White Paper of which copies will be available when I sit down.

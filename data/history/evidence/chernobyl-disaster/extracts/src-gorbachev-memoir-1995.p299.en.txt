@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-gorbachev-memoir-1995.p299
+names: Рыжков=Ryzhkov; Щербины=Shcherbina; Чернобыле=Chernobyl; Политбюро=Politburo
+
+On 28 April Ryzhkov reported to the Politburo on the first results of the commission's work (under the leadership of B.E. Shcherbina). On the evening of 28 April an announcement was made on television on this basis, and on the following day in the newspapers. After that, announcements were published regularly as new information came in. I firmly reject the accusation that the Soviet leadership deliberately concealed the whole truth about Chernobyl. We simply did not yet know it then.

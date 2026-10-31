@@ -1,0 +1,220 @@
+# Cinematic variant, 2026-10-10, written to the first-listener orientation standard of
+# docs/proposals/HISTORY-FIRST-LISTENER.md (O-1..O-7; O-8 does not apply, the YAML category
+# is disaster) from the research brief out/briefs/chernobyl-disaster.brief.md. Sources are
+# the event YAML and the evidence ledger (data/history/evidence/chernobyl-disaster/), nothing
+# else. Same cast as the other cinematic variants (narrator "tara"; leo reads the men's
+# documents and the institutions' records as M:, zoe reads the liquidator's child from
+# Alexievich's chorus as F:), same Ken Burns register: short declarative sentences, documents
+# read plainly, the silence placed by the writer. Every line the document voice reads is
+# byte-for-byte a stored extract AND a YAML primary_source_excerpt, and the extract id follows
+# the DOCUMENT marker in a comment. One excerpt was appended to the YAML for this script, a
+# verbatim span of a held extract: the Ministry of Energy's urgent report of 26 April 1986 in
+# the National Security Archive's translation, so the Soviet state is heard on the night
+# itself and the record carries its own hour (1:21) beside the Politburo's (1:30). The NSA
+# documents are the Archive's English; the two translations made for this programme
+# (Gorbachev's memoir, his address of 14 May) are narrated as substance and said to be
+# translations, never read. Alexievich's Nobel line ("We, Belarusians") is narrated, not
+# read, to keep the episode inside the length rule. No clip is slotted: the ledger admits no
+# recording. The live script's four H11_KNOWN paraphrase lines (the Soviet framing, the
+# certificates, the two epidemiologist lines) are not repeated; what the live script says
+# and the record does not hold is cut (the brief's do-not-say list): 1:23:40, the AZ-5
+# button, the positive void coefficient and the graphite tips, "a hundred times its rated
+# power", the 1,000-tonne shield, the TASS "four sentences", Ignatenko's "he was radiating",
+# "thirty six hours", "twelve hundred buses from Kyiv", "enough for three days", the worker
+# "on his way IN", Sweden's threatened alert, the ferris wheel, the robots and the
+# ninety-second shifts, the New Safe Confinement, "about thirty one" dead, "sixteen to sixty
+# thousand" (two producers fused), "Belarus absorbed 70 percent of the fallout" (the Forum's
+# 70 percent is of an area, three countries), and Gorbachev's "real cause" and "bell" lines.
+# Death figures are given per producer and never averaged. Lines beginning with "#" are
+# inert: the parser skips them (pipeline/history/script_format.py::parse_script). SAY entries
+# carry the "orpheus:" prefix because history_producer.py applies only those under Orpheus.
+# This file is not the live script: nothing globs this directory.
+
+## OPEN
+# MOOD: dread
+N: Sweden, early on a morning in April. At a nuclear power plant on the coast, a man walks back from the washroom past a radiation monitor, and the alarm sounds.
+N: The radiation is coming from his shoes. The staff go over every detector at the plant, over and over, and find nothing from the plant.
+N: The alarm had sounded over a man's shoes.
+
+## TITLE
+# MOOD: dread
+N: Chernobyl. April, nineteen eighty six.
+
+## SCENE 1 | The fourth block
+# MOOD: procedure
+N: The spring of nineteen eighty six. Ukraine is a republic of the Soviet Union, governed from Moscow by the Communist Party, whose leadership is the Politburo. Mikhail Gorbachev is General Secretary.
+N: In the north of Ukraine, near the border with Belarus, stands the Chernobyl Nuclear Power Plant. Three kilometres away is Pripyat, a town of forty nine thousand three hundred and sixty people.
+N: On the night of the twenty sixth of April, as the fourth reactor, an RBMK of Soviet design, is shut down for maintenance, it explodes. Graphite from inside it lies on the roofs.
+N: The town will stand empty, fallout will be measured across Europe, and the count of the dead will run, by who is counting, from one to two hundred thousand.
+
+## SCENE 2 | The night
+# MOOD: rupture
+N: The twenty sixth of April, the fourth block, after one in the morning.
+
+## DOCUMENT | A. N. Makukhin, First Deputy Minister of Energy and Electrification of the USSR | Regarding the Accident at Reactor No. 4 of the Chernobyl Nuclear Power Plant, urgent report to the Politburo, National Security Archive translation | April 26, 1986
+# extract: src-nsa-minenergo-19860426.whole
+# MOOD: procedure
+N: The First Deputy Minister of Energy's urgent report to the Politburo, in the Archive's translation.
+M: at 1:21 AM during the decommissioning of energy block No. 4 of the Chernobyl NPS during planned maintenance, after the reactor had been stopped, there was an explosion in the upper part of the reactor compartment.
+M: In the opinion of the three main administrators under the USSR Ministry of Health, the adoption of special measures, including evacuating the population from the city, is unnecessary.
+N: Fourteen firemen reached the site at twenty eight minutes past one. UNSCEAR, the United Nations Scientific Committee on the Effects of Atomic Radiation, records them up to seventy metres above the ground, with no dosimeters, the instruments that measure a dose.
+N: The ministry says the fire was out at half past three; UNSCEAR, most fires by about ten to five. The staff's film badges could not register more than twenty millisieverts, the record's unit of dose; every badge was overexposed.
+N: These actions, UNSCEAR writes, caused the deaths of five firefighters.
+
+## SCENE 3 | The town
+# MOOD: dread
+N: Pripyat, the evening of the twenty sixth. By UNSCEAR's account the readings were not considered too alarming; the decision to evacuate was taken at ten that night, and nearly twelve hundred buses arranged overnight.
+N: Ukraine's National Report says preparation began on the twenty sixth and was postponed by a decision of the Soviet government and the Central Committee; the wind that day blew toward the town.
+N: Around noon on the twenty seventh the order is broadcast. The evacuation begins at two in the afternoon and ends at five.
+
+## DOCUMENT | Vladimir Gubarev | Letter from the science editor of Pravda to the Central Committee about his trip to Chernobyl, National Security Archive translation | May 1986
+# extract: src-nsa-gubarev-1986.item1
+# MOOD: testimony
+N: Vladimir Gubarev, science editor of the newspaper Pravda, spent the fourth to the ninth of May in the area, and wrote to the Central Committee.
+M: The situation with radiation in the city was clear within an hour. No planned emergency evacuation measures existed: people did not know what to do.
+
+## REST
+# MOOD: testimony
+
+## SCENE 4 | Two days
+# MOOD: dread
+N: Forsmark, Sweden, early on the twenty eighth of April. The alarm sounds over a man's shoes. The operations manager goes over every detection system, and there is nothing from Forsmark.
+N: The particles in the grass are of a Soviet type; the weekend's wind blew from the south east. The source is more than a thousand kilometres away.
+N: Moscow, the same day, the Politburo in extraordinary session. A Central Committee secretary reports the explosion at half past one, all work according to regulations, one dead and one not found.
+N: The KGB chairman reports the population calm, and only a small circle of people aware of the accident. Gorbachev says a statement should be issued quickly.
+
+## DOCUMENT | A. A. Gromyko | Extraordinary session of the Politburo of the Central Committee, working copy, National Security Archive translation | April 28, 1986
+# extract: src-nsa-politburo-19860428.secgromyko
+# MOOD: procedure
+N: Gromyko, speaking at the session, on the statement.
+M: The statement should be written in such a way that it does not cause excessive anxiety or panic.
+N: Late that evening, two days after the explosion, Soviet television announces an accident at Chernobyl; the newspapers carry it the next day.
+N: Gorbachev's memoir, translated for this programme, says the leadership did not yet know the whole truth. Ukraine's National Report says information was concealed from the public by decision of the country's leaders.
+
+## SCENE 5 | The crater
+# MOOD: procedure
+N: The reactor, the twenty seventh of April to the second of May. Helicopters drop about five thousand tonnes of boron, lead, sand, clay and dolomite into the crater, in about eighteen hundred flights.
+N: The World Health Organization would count more than two hundred thousand emergency and recovery workers exposed in nineteen eighty six and nineteen eighty seven: the liquidators, the ones who helped clean up after the accident.
+
+## DOCUMENT | Mikhail Gorbachev | Session of the Politburo of the Central Committee, in Anatoly S. Chernyaev's notes, National Security Archive translation | July 3, 1986
+# extract: src-nsa-politburo-19860703.secblame
+# MOOD: reckoning
+N: Moscow, the third of July. Gorbachev, in the notes Anatoly Chernyaev kept of the Politburo session, says nothing was ready: weddings were celebrated in the vicinity, children played outdoors.
+M: The [station] personnel are to blame for the accident; but the scale of the accident is due to the design of the reactor.
+
+## TURN | Five accounts
+# MOOD: reckoning
+N: What the reactor did is measured. Who is to blame, and how many died, is where the accounts part.
+N: Five accounts, argued from what this programme could read: the Politburo's papers as the National Security Archive translates them, the UN committee's annexes, the reports of two thousand and five and two thousand and six, and the Belarusian writer Svetlana Alexievich's oral history.
+
+## PERSPECTIVE | Soviet State | official containment
+# MOOD: procedure
+N: The first account is the Soviet state's, the one the world was given first: the accident was the staff's.
+
+## DOCUMENT | The USSR delegation to the IAEA | Report presented at the Post-Accident Review Meeting, Vienna, as quoted by a commission of the USSR State Committee for the Supervision of Safety in Industry and Nuclear Power in INSAG-7 | August 1986
+# extract: src-insag7-1992.p60
+# MOOD: procedure
+N: Vienna, August. The Soviet delegation presents its report to the International Atomic Energy Agency; a later Soviet state commission quotes it.
+M: the prime cause of the accident was an extremely improbable combination of violations of instructions and operating rules committed by the staff of the unit.
+N: That commission found every cause reduced to personnel error. In June Gorbachev had told the Politburo that one or two accidents like this would be worse than a total nuclear war.
+
+## PERSPECTIVE | Liquidators and the evacuated | the exposed
+# MOOD: testimony
+N: The second account belongs to the liquidators and the evacuated, told in Alexievich's Voices from Chernobyl, an oral history of survivor testimony.
+
+## DOCUMENT | A liquidator's child | Svetlana Alexievich, Voices from Chernobyl, the Children's Chorus, translated by Keith Gessen | 2005
+# extract: src-alexievich-gessen-2005.secfather2
+# MOOD: testimony
+N: A liquidator's child, in the book's chorus of children, in Keith Gessen's translation, repeating what the father said a year later. The words are the father's, secondhand.
+F: In parting they shook our hands and gave us certificates of gratitude for our self-sacrifice.
+N: The father had come home, gone back to the factory, and told them nothing.
+N: In Stockholm in two thousand and fifteen, accepting the Nobel Prize in Literature, Alexievich said Belarusians had become the people of Chernobyl. The Chernobyl Forum, eight international agencies and three governments, put over seventy percent of Europe's contaminated area in Belarus, Russia and Ukraine.
+
+## PERSPECTIVE | Epidemiologists | the dispute over the count
+# MOOD: reckoning
+N: The third account is the epidemiologists', and it is a dispute.
+
+## DOCUMENT | World Health Organization, with the IAEA and UNDP | Joint news release, Chernobyl: the true scale of the accident, Geneva | September 5, 2005
+# extract: src-who-iaea-undp-20050905.para1-2
+# MOOD: reckoning
+N: Geneva, the fifth of September, two thousand and five. A joint news release of the World Health Organization, the IAEA and UNDP.
+M: A total of up to 4000 people could eventually die of radiation exposure from the Chernobyl nuclear power plant (NPP) accident nearly 20 years ago, an international team of more than 100 scientists has concluded.
+N: The Forum's own report says it is impossible to assess reliably, with any precision, the number of fatal cancers, and calls claims of tens or hundreds of thousands highly exaggerated. UNSCEAR, in two thousand and eleven, declines to project absolute numbers.
+N: UNSCEAR does count: twenty eight plant staff and emergency workers dead of acute radiation syndrome, the illness of a high dose, and more than six thousand thyroid cancers in those exposed as children, fifteen fatal by two thousand and five.
+
+## DOCUMENT | Ian Fairlie and David Sumner | The Other Report on Chernobyl, TORCH, commissioned by Rebecca Harms, Member of the European Parliament, Greens, executive summary | April 2006
+# extract: src-torch-2006.secestimates
+# MOOD: reckoning
+N: The next April, in Berlin, Rebecca Harms, a Green member of Europe's parliament, launches the report she commissioned from Ian Fairlie and David Sumner, and calls the four thousand a dishonour to those who have suffered.
+M: However the statement is misleading, as the figure calculated in the IAEA/WHO report is actually 9,000 fatalities.
+N: TORCH's own estimate is thirty thousand to sixty thousand worldwide. Greenpeace, the same month, puts two hundred thousand additional deaths in Belarus, Russia and Ukraine between nineteen ninety and two thousand and four.
+
+## PERSPECTIVE | Glasnost | the state that could not keep a secret
+# MOOD: reckoning
+N: The fourth account is the historians' and Gorbachev's own: glasnost, his policy of openness, met its test at Chernobyl.
+
+## DOCUMENT | Mikhail Gorbachev | Turning Point at Chernobyl, Project Syndicate, the first paragraph | April 14, 2006
+# extract: src-gorbachev-ps-2006.para1
+# MOOD: reckoning
+N: Gorbachev, twenty years on, for Project Syndicate.
+M: Indeed, the Chernobyl catastrophe was a historic turning point: there was the era before the disaster, and there is the very different era that has followed.
+
+## DOCUMENT | Government of Ukraine | Twenty years after Chornobyl Catastrophe, National Report of Ukraine, Kyiv, in the report's own translation | 2006
+# extract: src-ukraine-national-report-2006.p8
+# MOOD: reckoning
+N: Ukraine's National Report lists the mistakes of the first years: until mid May of nineteen eighty six, doctors and the press were forbidden to tell the population about the recovery work or the extent of the accident.
+M: Radiation contamination maps and radiation level data were classified until 1989.
+N: Alexievich, in her lecture, says Chernobyl, following on Afghanistan, made her people free. Ukraine voted for independence in December nineteen ninety one.
+
+## PERSPECTIVE | Reactor engineers | the design
+# MOOD: procedure
+N: The fifth account is the reactor engineers', written last, in nineteen ninety two, when INSAG revised its first report.
+
+## DOCUMENT | International Nuclear Safety Advisory Group | INSAG-7, The Chernobyl Accident: Updating of INSAG-1, conclusions, IAEA, Vienna | 1992
+# extract: src-insag7-1992.item2
+# MOOD: procedure
+N: INSAG, the International Nuclear Safety Advisory Group of the International Atomic Energy Agency, on information that had come to light since Vienna.
+M: The accident is now seen to have been the result of the concurrence of the following major factors: specific physical characteristics of the reactor; specific design features of the reactor control elements;
+M: and the fact that the reactor was brought to a state not specified by procedures or investigated by an independent safety body.
+N: INSAG lessens the weight it gave the Soviet view, and remains of the opinion that critical actions of the operators were most ill judged.
+N: The fault in the control rods, it says, was discovered at the Ignalina plant in nineteen eighty three; no correction was made.
+
+## TURN | The shape of the disagreement
+# MOOD: reckoning
+N: Each of the five is true to its documents, and each leaves something out.
+N: The state's account of staff error leaves out what its own Politburo said in July: the scale was the design's.
+N: The liquidators' account leaves out the count the record does hold: five firefighters, twenty eight of acute radiation syndrome.
+N: The epidemiologists disagree among themselves by two orders of magnitude; every figure answers a different question.
+N: Gorbachev's account leaves out that the statement of the twenty eighth was written not to cause anxiety, and that the maps stayed secret until nineteen eighty nine.
+N: The engineers' account leaves out the town: the design did not decide when Pripyat would be told.
+
+## REST
+# MOOD: reckoning
+
+## CLOSE
+# MOOD: grief
+N: Chernobyl, Soviet Ukraine, the twenty sixth of April, nineteen eighty six, twenty one minutes past one by the ministry's report. Pripyat was emptied on the twenty seventh; the accident was announced on the evening of the twenty eighth.
+N: The Politburo was told of one dead and one missing. UNSCEAR counts five firefighters, twenty eight of acute radiation syndrome, fifteen of thyroid cancer by two thousand and five.
+N: The WHO projects up to four thousand; TORCH thirty thousand to sixty thousand; Greenpeace two hundred thousand in three countries. Each counts a different people over a different time.
+N: The alarm had sounded over a man's shoes.
+
+## SAY
+orpheus:Chernobyl = CHER noh bil
+orpheus:Chornobyl = chor NOH bil
+orpheus:Pripyat = PRIP yat
+orpheus:Forsmark = FORSH mark
+orpheus:Gubarev = goo BAR yef
+orpheus:Gromyko = gro MEE koh
+orpheus:Chernyaev = cher NYAH yef
+orpheus:Alexievich = ah lek SYAY vich
+orpheus:Gorbachev = gor bah CHOF
+orpheus:Ignalina = ig nah LEE nah
+orpheus:Makukhin = mah KOO kin
+orpheus:Belarusian = bel ah ROOS ee an
+orpheus:Belarusians = bel ah ROOS ee anz
+orpheus:Kyiv = KEE yiv
+orpheus:Pravda = PRAHV dah
+orpheus:Fairlie = FAIR lee
+orpheus:Gessen = GESS en
+orpheus:UNSCEAR = UN skeer
+orpheus:INSAG = IN sag

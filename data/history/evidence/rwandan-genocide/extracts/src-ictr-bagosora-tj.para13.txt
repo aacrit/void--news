@@ -1,0 +1,8 @@
+source: src-ictr-bagosora-tj
+locator: para13
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-98-41/trial-judgements/en/081218.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+note: the paragraph crosses a page; the running footer and header between the two spans ("Judgement and Sentence", the page number, "18 December 2008", the case caption) are omitted
+
+13. The Chamber certainly accepts that there are indications which may be construed as evidence of a plan to commit genocide, in particular when viewed in light of the subsequent targeted and speedy killings immediately after the shooting down of the President’s plane. However, the evidence is also consistent with preparations for a political or military power struggle and measures adopted in the context of an on-going war with the RPF that were used for other purposes from 6 April 1994.

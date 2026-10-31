@@ -1,0 +1,7 @@
+source: src-trotsky-eastman-1932
+locator: seccossack
+url: https://www.marxists.org/archive/trotsky/1930/hrr/ch07.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+But even this did not help: standing stock-still in perfect discipline, the Cossacks did not hinder the workers from “diving” under their horses. The revolution does not choose its paths: it made its first steps toward victory under the belly of a Cossack’s horse.

@@ -1,0 +1,7 @@
+source: src-chatterji-2007
+locator: p1-2
+url: https://www.cambridge.org/core/services/aop-cambridge-core/content/view/6363F4902DA5D4F82FA351F5F0B3CFEC/9780511497384int_p1-16_CBO.pdf/introduction.pdf
+read: 2026-09-25
+note: the introduction, which the publisher serves free
+
+Partition led to huge and unexpected migrations. In the past, Hindus and Muslims had lived cheek by jowl in Bengal, in the main quite amicably. Now they were forced to go their separate ways, with deeply destabilising consequences. Between 1947 and 1967, at least 6 million Hindu refugees from East Bengal crossed into West Bengal. This mass migration and the struggles of the refugees in the new province to find shelter, jobs and security are the subject of chapter 3.

@@ -1,0 +1,6 @@
+source: src-eichmann-s068
+locator: secdinur
+url: https://www.nizkor.org/session-068-01-eichmann-adolf/
+read: 2026-10-07
+
+Q. What was the reason that you hid your identity behind the pseudonym “K. Zetnik,” Mr. Dinur? A. It was not a pen name. I do not regard myself as a writer and a composer of literary material. This is a chronicle of the planet of Auschwitz. I was there for about two years. Time there was not like it is here on earth. Every fraction of a minute there passed on a different scale of time.

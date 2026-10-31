@@ -1,0 +1,6 @@
+source: src-ushmm-riegner
+locator: secdeclaration
+url: https://encyclopedia.ushmm.org/content/en/article/the-riegner-telegram
+read: 2026-10-07
+
+State Department staff were hesitant to confirm Wise’s announcement, and complained internally about the publicity. Yet this public pressure led the United States, Great Britain, the Soviet Union, and nine Allied governments-in-exile to release a “Declaration on Atrocities” on December 17, 1942. This statement condemned the “bloody cruelties” and “cold-blooded extermination” of the Jews and vowed that the Allies would punish war criminals after the fighting stopped. The declaration did not promise Allied rescue. American and British troops had begun fighting only one month before in North Africa, and were very far from killing centers in German-occupied Poland, where most of the mass killing was taking place.

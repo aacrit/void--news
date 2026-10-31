@@ -1,0 +1,652 @@
+# The evidence ledger for nanjing-massacre (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Begun 2026-10-09 for the first-listener rewrite of the episode. Every entry was fetched on
+# 2026-10-09 from the URL it names; every extract under extracts/ was sliced from the fetched
+# copy by a builder script (start marker to end marker in the whitespace-collapsed text of the
+# fetched page; scratch out/ledger-nanjing-massacre/build.py), never retyped. Nothing here was
+# written from memory. Where a scan's OCR layer is the free copy (the Tokyo trial transcripts
+# on the Legal Tools Database), the extract keeps the layer's glyph errors and the transcript's
+# printed line numbers as the layer gives them, and says so in a note. Chinese and Japanese
+# extracts carry a Void translation beside them (.en.txt), never presented as a quotation.
+#
+# This is NOT a thesis ledger: no positions, contested claims, exhibits or analyses are
+# adjudicated here, and the event renders the Hearing. The bar of §4e is not claimed.
+#
+# The five perspectives of the event YAML, at parity, each in its own holders' words:
+#   Chinese National Memory        the Nanjing tribunal's judgment on Tani Hisao (1947) as the
+#                                  Second Historical Archives of China publish it (2014); the
+#                                  Nanking District Court prosecutor's estimate (1946) as the
+#                                  Tokyo prosecution named it; the PRC Embassy in Washington (2014)
+#   Western Witnesses / Safety Zone the Committee's letters signed by John H. D. Rabe, and the
+#                                  affidavits and diary of Fitch and McCallum, as read into the
+#                                  Tokyo record (29 August 1946); Bates on the stand (29 July 1946)
+#   Japanese Historiography/Memory the Ministry of Foreign Affairs' Q&A as read into the Diet
+#                                  record, Foreign Minister Aso and the member Watanabe Shu
+#                                  (25 April 2007); Hatano Sumio's survey of Japanese scholarship
+#   Survivor Testimony             statements of Nanjing residents (Mrs Tsen of Ginling College,
+#                                  Sun Yuen Cheng, Lee Tih Sung, Mrs Loh Sung Sze, Chu Yong Ung
+#                                  and Chang Chi Hsiang) read into the Tokyo record; for Xia
+#                                  Shuqin, only the National Diet Library's record of her case
+#   Legal Record                   the Tokyo Judgment (1948), chapter VIII and the verdict on
+#                                  Matsui; the defence's objection to unsworn statements
+#
+# DISAGREEMENTS the record holds (each figure with its producer; never averaged):
+#   The dead. The Tokyo Judgment says, in its chapter on Nanking, 'over 200,000' civilians and
+#     prisoners murdered in Nanking and its vicinity in the first six weeks, on later estimates,
+#     with burial societies counting 'more than 155,000' bodies (src-imtfe-judgment-ch8.sectotal);
+#     in its verdict on Matsui the same Judgment says 'upwards of 100,000 people were killed' in
+#     'six or seven weeks' (src-imtfe-judgment-ch10.secnanking). The Nanking District Court
+#     prosecutor's report of 20 January 1946 gives 'approximately 260,000 dead', and the
+#     Tsung-shan-tang (Chongshantang) teams 112,266 buried (src-imtfe-prosecution-exh324.sec260000,
+#     as the Tokyo prosecution summarised it). The Nanjing tribunal (1947) gives more than 190,000
+#     shot and burned plus more than 150,000 buried by charities, 'more than 300,000' in total
+#     (src-saac-tani-1947.sectotal), and in the next passage 'several hundred thousand'
+#     (.seccommon). The PRC (2014): 'Over 300,000 people were slaughtered' (src-prc-embassy-2014.
+#     secmassacre). The Japanese government: 'difficult to determine which number is correct'
+#     (src-diet-20070425-mofa.secq8); its Foreign Minister in 2007 doubted 300,000 against the city's
+#     size (src-diet-20070425-aso.secthirty). Hara Takeshi (2008), as Hatano reports him: 'close to
+#     20,000 people were illegally murdered' (src-hatano-scholarship.sechara). The YAML's 40,000
+#     (Hata) and 160,000-170,000 (Kasahara) are not held.
+#   Civilians killed in the first days. The Judgment: 'At least 12,000' in 'the first tow or three
+#     days' (src-imtfe-judgment-ch8.secindiscriminate); Bates told the Tribunal he and Smythe
+#     concluded 'twelve thousand' civilians were killed 'inside the walls' (src-bates-imtfe-1946.sectwelve,
+#     the middle of the sentence garbled by the OCR layer), and the Committee buried more than thirty thousand soldiers
+#     (src-bates-imtfe-1946.secsurrender). Prisoners of war: 'Over 30,000' (src-imtfe-judgment-ch8.secpow).
+#   Rape. The Judgment: 'Approximately 20,000 cases' in the first month (src-imtfe-judgment-ch8.
+#     secrape). McCallum's diary as read: an estimate whose figure the OCR layer garbles
+#     (src-mccallum-diary-1937 entry). The YAML's 80,000 is not held.
+#   The duration. 'the first six weeks' (ch8.sectotal); 'six or seven weeks', from 13 December 1937
+#     to 'early in February 1938' (ch10.secnanking); the PRC: 'more than 40 days' (src-prc-embassy-
+#     2014.secmassacre).
+#   Iris Chang's book. The PRC framing is not held for it; Foreign Minister Aso says historians judge
+#     it inaccurate (src-diet-20070425-aso.secchang); the member Watanabe called it fabricated
+#     (src-diet-20070425-watanabe.secchang). Neither is a verdict on the massacre itself, which the
+#     Ministry says cannot be denied (src-diet-20070425-mofa.secq8).
+#   Plain-clothes soldiers. The Judgment finds the murder of male civilians was done 'on the pretense
+#     that Chinese soldiers had removed their uniforms' (ch8.secmen); Bates describes the callus and
+#     hat-mark inspections (src-bates-imtfe-1946.seccalluses); the member Watanabe argued in the Diet
+#     that executing plain-clothes soldiers may be said to be unavoidable under the Hague rules
+#     (src-diet-20070425-watanabe.secexecution).
+#   Statements as evidence. The defence asked that the residents' statements not be called
+#     affidavits; the President: 'It goes to weight, not to admissibility'
+#     (src-imtfe-defence-affidavits-1946.secstatements).
+#   Sun Yuen Cheng's statement ends 'The massacre happened December, 1938', a year after the fall of
+#     the city, as the record prints it (src-sun-yuen-cheng-1946 entry note).
+slug: nanjing-massacre
+bootstrapped: 2026-10-09
+
+entries:
+  # ----------------------------------------------------------- Tier A: the Tokyo Judgment
+  - id: src-imtfe-judgment-ch8
+    tier: A
+    kind: judgment
+    author: International Military Tribunal for the Far East
+    title: "Judgment of the International Military Tribunal for the Far East, Chapter VIII: Conventional War Crimes (Atrocities), section 'The Rape of Nanking'"
+    container: "Judgment of the International Military Tribunal for the Far East (November 1948)"
+    publisher: "HyperWar Foundation (ibiblio), HTML transcription by Patrick Clancey"
+    place: Tokyo
+    year: 1948
+    edition: "the HyperWar transcription of the Judgment, read whole for the chapter; it carries the printed page numbers as markers ('--1011--') and its own typing errors ('tow', 'committee' for 'commit'), kept. The Judgment's printed text was not compared"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.ibiblio.org/hyperwar/PTO/IMTFE/IMTFE-8.html"}
+    access:
+      free_copy: "https://www.ibiblio.org/hyperwar/PTO/IMTFE/IMTFE-8.html"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "HyperWar: International Military Tribunal for the Far East [Chapter 8]"
+    language: en
+    region_of_authorship: east-asia
+    producer: imtfe
+    position: null
+    rights: official
+    does_not_show: "Prince Asaka (not named in this chapter or in chapter X); any order to 'kill all captives'; the killing contest; the Nanjing tribunal; how the 'later' estimates were made, or by whom"
+
+  - id: src-imtfe-judgment-ch10
+    tier: A
+    kind: judgment
+    author: International Military Tribunal for the Far East
+    title: "Judgment of the International Military Tribunal for the Far East, Chapter X: Verdicts, 'MATSUI, Iwane'"
+    container: "Judgment of the International Military Tribunal for the Far East (November 1948)"
+    publisher: "HyperWar Foundation (ibiblio), HTML transcription by Patrick Clancey"
+    place: Tokyo
+    year: 1948
+    edition: "the HyperWar transcription, read whole for the chapter; page markers removed in the extracts, typing errors kept"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.ibiblio.org/hyperwar/PTO/IMTFE/IMTFE-10.html"}
+    access:
+      free_copy: "https://www.ibiblio.org/hyperwar/PTO/IMTFE/IMTFE-10.html"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "HyperWar: International Military Tribunal for the Far East [Chapter 10]"
+    language: en
+    region_of_authorship: east-asia
+    producer: imtfe
+    position: null
+    rights: official
+    does_not_show: "the sentence on Matsui, or the date or manner of his execution (the sentences are not in this chapter); any finding on Prince Asaka"
+
+  # ----------------------------------------------------------- Tier A: the Tokyo trial record
+  - id: src-bates-imtfe-1946
+    tier: A
+    kind: testimony
+    author: "Miner Searle Bates, professor of history, University of Nanking, founding member of the International Committee for the Nanking Safety Zone"
+    title: "Testimony of M. S. Bates, direct examination by Mr Sutton, International Military Tribunal for the Far East, Transcript of Proceedings, 29 July 1946 (pp. 2616 to 2686)"
+    container: "International Military Tribunal for the Far East, Transcript of Proceedings"
+    publisher: "Legal Tools Database (International Criminal Court), scan of the transcript with its OCR layer"
+    place: Tokyo
+    year: 1946
+    edition: "the scan's OCR layer, read for the Bates testimony; the layer interleaves the printed line numbers and garbles some lines (his twelve thousand civilians inside the walls is legible only at its two ends, src-bates-imtfe-1946.sectwelve)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.legal-tools.org/doc/a5a0b0/"}
+    access:
+      free_copy: "https://www.legal-tools.org/doc/a5a0b0/pdf/"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "INTE~~ATIONAL MILITARY TRIBUNAL FOR THE FAR EAST TRANSCRIPT OF PROCEEDINGS (PDF head: July 29, 1946, pp. 2616--2686 inc.)"
+    language: en
+    region_of_authorship: east-asia
+    producer: safety-zone-witnesses
+    position: null
+    rights: official
+    does_not_show: "his cross-examination, if any; the case reports themselves; an account by any Chinese member of the Committee"
+
+  - id: src-fitch-affidavit-1946
+    tier: A
+    kind: testimony
+    author: "George A. Fitch, Director of the Safety Zone (his own description), affidavit read by Mr Sutton as exhibit 307"
+    title: "Affidavit of George A. Fitch, sworn 18 June 1946, read into the Transcript of Proceedings of the International Military Tribunal for the Far East, 29 August 1946"
+    container: "International Military Tribunal for the Far East, Transcript of Proceedings, 29 August 1946 (pp. 4449 to 4565)"
+    publisher: "Legal Tools Database (International Criminal Court), scan of the transcript with its OCR layer"
+    place: Tokyo
+    year: 1946
+    edition: "the scan's OCR layer; Fitch swears the passages are 'excerpts or paraphrases' of a diary he kept, so none is certainly the diary's wording. The date 18 June 1946 is the transcript's index of exhibits"
+    volume: null
+    document_number: "IMTFE exhibit 307 (prosecution document 1947)"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.legal-tools.org/doc/a4c38a/"}
+    access:
+      free_copy: "https://www.legal-tools.org/doc/a4c38a/pdf/"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "INTERNATIONAL MILITARY TRIBUNAL FOR THE FAR EAST TRANSCRIPT .OF PROCEEDING~ (PDF head: AUGUST 29, 1946, pp. 4449--4565 inc.)"
+    language: en
+    region_of_authorship: east-asia
+    producer: safety-zone-witnesses
+    position: null
+    rights: official
+    does_not_show: "the diary itself; the film of John Magee, or its being carried out of the city in a coat lining (not mentioned)"
+
+  - id: src-mccallum-diary-1937
+    tier: A
+    kind: testimony
+    author: "James McCallum, of the hospital in Nanking (as the diary implies), exhibit 309"
+    title: "'Diary Notes Written by Mr. James McCallum, Japanese Occupation of Nanking, December 1937 - January 1938', portions read into the Transcript of Proceedings, 29 August 1946"
+    container: "International Military Tribunal for the Far East, Transcript of Proceedings, 29 August 1946 (pp. 4449 to 4565)"
+    publisher: "Legal Tools Database (International Criminal Court), scan of the transcript with its OCR layer"
+    place: Tokyo
+    year: 1937
+    edition: "the OCR layer of the reading; the transcript's index of exhibits dates the affidavit enclosing the diary 27 June 1940; the year is that of the diary entries. His estimate of rapes a night is garbled by the layer ('100008:$'e5') and is not usable"
+    volume: null
+    document_number: "IMTFE exhibit 309"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.legal-tools.org/doc/a4c38a/"}
+    access:
+      free_copy: "https://www.legal-tools.org/doc/a4c38a/pdf/"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "INTERNATIONAL MILITARY TRIBUNAL FOR THE FAR EAST TRANSCRIPT .OF PROCEEDING~ (PDF head: AUGUST 29, 1946)"
+    language: en
+    region_of_authorship: east-asia
+    producer: safety-zone-witnesses
+    position: null
+    rights: official
+    does_not_show: "his profession or post, stated nowhere in the passages read; the parts of the diary the prosecutor skipped"
+
+  - id: src-safety-zone-letters-1937
+    tier: A
+    kind: letter
+    author: "International Committee for the Nanking Safety Zone, letters signed by John H. D. Rabe, Chairman"
+    title: "Letters of the International Committee for the Nanking Safety Zone to the Japanese Embassy, December 1937 to January 1938, read into the Transcript of Proceedings, 29 August 1946"
+    container: "International Military Tribunal for the Far East, Transcript of Proceedings, 29 August 1946 (pp. 4449 to 4565)"
+    publisher: "Legal Tools Database (International Criminal Court), scan of the transcript with its OCR layer"
+    place: Nanking
+    year: 1937
+    edition: "the OCR layer of Mr Sutton's reading; the layer often prints 'a' as 'e.' and that is kept. Smythe's affidavit, read the same day, says the letters are 'correctly set forth' in Hsu Shuhsi's Documents of the Nanking Safety Zone (1939), which is not held (see gaps)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.legal-tools.org/doc/a4c38a/"}
+    access:
+      free_copy: "https://www.legal-tools.org/doc/a4c38a/pdf/"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "INTERNATIONAL MILITARY TRIBUNAL FOR THE FAR EAST TRANSCRIPT .OF PROCEEDING~ (PDF head: AUGUST 29, 1946)"
+    language: en
+    region_of_authorship: east-asia
+    producer: nanking-safety-zone-committee
+    position: null
+    rights: official
+    does_not_show: "Rabe's diary, or any word of his outside the Committee's letters; the swastika flag; his letter to Hitler; the zone's size or population"
+
+  - id: src-imtfe-prosecution-exh324
+    tier: A
+    kind: testimony
+    author: "International Prosecution Section (Mr Sutton), naming and summarising the report of the Chief Prosecutor of the District Court of Nanking, 20 January 1946"
+    title: "Exhibit 324 (prosecution document 1702), as tendered and summarised in the Transcript of Proceedings, 29 August 1946"
+    container: "International Military Tribunal for the Far East, Transcript of Proceedings, 29 August 1946 (pp. 4449 to 4565)"
+    publisher: "Legal Tools Database (International Criminal Court), scan of the transcript with its OCR layer"
+    place: Tokyo
+    year: 1946
+    edition: "the OCR layer; the report was summarised, not read, and its own text is not held"
+    volume: null
+    document_number: "IMTFE exhibit 324"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.legal-tools.org/doc/a4c38a/"}
+    access:
+      free_copy: "https://www.legal-tools.org/doc/a4c38a/pdf/"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "INTERNATIONAL MILITARY TRIBUNAL FOR THE FAR EAST TRANSCRIPT .OF PROCEEDING~ (PDF head: AUGUST 29, 1946)"
+    language: en
+    region_of_authorship: east-asia
+    producer: imtfe-prosecution
+    position: null
+    rights: official
+    does_not_show: "how the 260,000 was reached; the Red Swastika Society's total (the OCR layer of that page is illegible)"
+
+  - id: src-imtfe-defence-affidavits-1946
+    tier: A
+    kind: testimony
+    author: "Major Furness, counsel for the defence, and the President of the Tribunal"
+    title: "Exchange on the residents' statements, Transcript of Proceedings, 29 August 1946"
+    container: "International Military Tribunal for the Far East, Transcript of Proceedings, 29 August 1946 (pp. 4449 to 4565)"
+    publisher: "Legal Tools Database (International Criminal Court), scan of the transcript with its OCR layer"
+    place: Tokyo
+    year: 1946
+    edition: "the OCR layer"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.legal-tools.org/doc/a4c38a/"}
+    access:
+      free_copy: "https://www.legal-tools.org/doc/a4c38a/pdf/"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "INTERNATIONAL MILITARY TRIBUNAL FOR THE FAR EAST TRANSCRIPT .OF PROCEEDING~ (PDF head: AUGUST 29, 1946)"
+    language: en
+    region_of_authorship: east-asia
+    producer: imtfe-defence-counsel
+    position: null
+    rights: official
+    does_not_show: "the defence's case on Nanking (its witnesses were not read here); the earlier objection by Mr Logan to trial on affidavits, which is in the same transcript but not sliced"
+
+  # ----------------------------------------------------------- Tier A: Nanjing residents, in the Tokyo record
+  - id: src-tsen-statement-1946
+    tier: A
+    kind: testimony
+    author: "Mrs Shui Fang Tsen, Director of Dormitories, Ginling College"
+    title: "Statement of Mrs Shui Fang Tsen, 8 April 1946, exhibit 308, read into the Transcript of Proceedings, 29 August 1946"
+    container: "International Military Tribunal for the Far East, Transcript of Proceedings, 29 August 1946 (pp. 4449 to 4565)"
+    publisher: "Legal Tools Database (International Criminal Court), scan of the transcript with its OCR layer"
+    place: Nanking
+    year: 1946
+    edition: "the OCR layer; her count of women on the college grounds is illegible in the layer and is not held"
+    volume: null
+    document_number: "IMTFE exhibit 308 (prosecution document 1736)"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.legal-tools.org/doc/a4c38a/"}
+    access:
+      free_copy: "https://www.legal-tools.org/doc/a4c38a/pdf/"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "INTERNATIONAL MILITARY TRIBUNAL FOR THE FAR EAST TRANSCRIPT .OF PROCEEDING~ (PDF head: AUGUST 29, 1946)"
+    language: en
+    region_of_authorship: east-asia
+    producer: survivor-testimony
+    position: null
+    rights: official
+    does_not_show: "the 10,000 women of the YAML (her figure is illegible); Minnie Vautrin's own words"
+
+  - id: src-sun-yuen-cheng-1946
+    tier: A
+    kind: testimony
+    author: "Sun Yuen Cheng, rice merchant of Nanking"
+    title: "Statement of Sun Yuen Cheng, 7 April 1946, exhibit 310, read into the Transcript of Proceedings, 29 August 1946"
+    container: "International Military Tribunal for the Far East, Transcript of Proceedings, 29 August 1946 (pp. 4449 to 4565)"
+    publisher: "Legal Tools Database (International Criminal Court), scan of the transcript with its OCR layer"
+    place: Nanking
+    year: 1946
+    edition: "the OCR layer; translated to him by Colonel Tu, as the statement says. It ends 'The massacre happened December, 1938.', the year the record prints, a year after the fall of the city"
+    volume: null
+    document_number: "IMTFE exhibit 310"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.legal-tools.org/doc/a4c38a/"}
+    access:
+      free_copy: "https://www.legal-tools.org/doc/a4c38a/pdf/"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "INTERNATIONAL MILITARY TRIBUNAL FOR THE FAR EAST TRANSCRIPT .OF PROCEEDING~ (PDF head: AUGUST 29, 1946)"
+    language: en
+    region_of_authorship: east-asia
+    producer: survivor-testimony
+    position: null
+    rights: official
+    does_not_show: "his own words in Chinese; any check of his 10,000 by another witness; the exact date of the shooting he describes"
+
+  - id: src-lee-tih-sung-1946
+    tier: A
+    kind: testimony
+    author: "Lee Tih Sung, of Nanking, aged 28"
+    title: "Statement of Lee Tih Sung, 7 April 1946, exhibit 311, read into the Transcript of Proceedings, 29 August 1946"
+    container: "International Military Tribunal for the Far East, Transcript of Proceedings, 29 August 1946 (pp. 4449 to 4565)"
+    publisher: "Legal Tools Database (International Criminal Court), scan of the transcript with its OCR layer"
+    place: Nanking
+    year: 1946
+    edition: "the OCR layer; translated to him by Henry Chiu, as the statement says"
+    volume: null
+    document_number: "IMTFE exhibit 311 (prosecution document 1729)"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.legal-tools.org/doc/a4c38a/"}
+    access:
+      free_copy: "https://www.legal-tools.org/doc/a4c38a/pdf/"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "INTERNATIONAL MILITARY TRIBUNAL FOR THE FAR EAST TRANSCRIPT .OF PROCEEDING~ (PDF head: AUGUST 29, 1946)"
+    language: en
+    region_of_authorship: east-asia
+    producer: survivor-testimony
+    position: null
+    rights: official
+    does_not_show: "his own words in Chinese (the English is a translation made for the prosecution and uses a slur)"
+
+  - id: src-loh-sung-sze-1946
+    tier: A
+    kind: testimony
+    author: "Mrs Loh Sung Sze, widow, of Nanking"
+    title: "Statement of Mrs Loh Sung Sze, 6 April 1946, exhibit 312, read into the Transcript of Proceedings, 29 August 1946"
+    container: "International Military Tribunal for the Far East, Transcript of Proceedings, 29 August 1946 (pp. 4449 to 4565)"
+    publisher: "Legal Tools Database (International Criminal Court), scan of the transcript with its OCR layer"
+    place: Nanking
+    year: 1946
+    edition: "the OCR layer; translated by Henry Chiu; signed by fingerprint"
+    volume: null
+    document_number: "IMTFE exhibit 312 (prosecution document 1739)"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.legal-tools.org/doc/a4c38a/"}
+    access:
+      free_copy: "https://www.legal-tools.org/doc/a4c38a/pdf/"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "INTERNATIONAL MILITARY TRIBUNAL FOR THE FAR EAST TRANSCRIPT .OF PROCEEDING~ (PDF head: AUGUST 29, 1946)"
+    language: en
+    region_of_authorship: east-asia
+    producer: survivor-testimony
+    position: null
+    rights: official
+    does_not_show: "her husband's name; the regiment, named in Chinese in the original and not read"
+
+  - id: src-chu-chang-statement-1946
+    tier: A
+    kind: testimony
+    author: "Chu Yong Ung and Chang Chi Hsiang, of Nanking"
+    title: "Joint statement of Chu Yong Ung and Chang Chi Hsiang, exhibit 314, read into the Transcript of Proceedings, 29 August 1946"
+    container: "International Military Tribunal for the Far East, Transcript of Proceedings, 29 August 1946 (pp. 4449 to 4565)"
+    publisher: "Legal Tools Database (International Criminal Court), scan of the transcript with its OCR layer"
+    place: Nanking
+    year: 1946
+    edition: "the OCR layer; translated by Henry Chiu. The prosecutor spells the name 'Chu Yang Ung' when tendering it and the statement 'CHU YONG UNG'"
+    volume: null
+    document_number: "IMTFE exhibit 314 (prosecution document 1719)"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.legal-tools.org/doc/a4c38a/"}
+    access:
+      free_copy: "https://www.legal-tools.org/doc/a4c38a/pdf/"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "INTERNATIONAL MILITARY TRIBUNAL FOR THE FAR EAST TRANSCRIPT .OF PROCEEDING~ (PDF head: AUGUST 29, 1946)"
+    language: en
+    region_of_authorship: east-asia
+    producer: survivor-testimony
+    position: null
+    rights: official
+    does_not_show: "the date of the killings, or the suburb (its name is 'omitted' in the reading)"
+
+  # ----------------------------------------------------------- Tier A: the Nanjing tribunal and the PRC
+  - id: src-saac-tani-1947
+    tier: A
+    kind: judgment
+    author: "Military Tribunal for the Trial of War Criminals, Ministry of National Defence, Nanking (the Nanjing War Crimes Tribunal)"
+    title: "Judgment on Tani Hisao, 10 March 1947, as quoted by the Second Historical Archives of China in '南京大屠杀主犯之一谷寿夫判决书' (2014)"
+    container: "State Archives Administration of China, special topic pages, 12 December 2014"
+    publisher: "State Archives Administration of China (source line: Second Historical Archives of China)"
+    place: Nanking
+    year: 1947
+    edition: "passages of the judgment as the archive quotes them, in simplified characters; the judgment whole is not on the page. Read with curl because the site's certificate chain fails Python's default store"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.saac.gov.cn/zt/2014-12/11/content_77681.htm"}
+    access:
+      free_copy: "https://www.saac.gov.cn/zt/2014-12/11/content_77681.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "南京大屠杀主犯之一谷寿夫判决书"
+    language: zh
+    region_of_authorship: east-asia
+    producer: nanjing-war-crimes-tribunal
+    position: null
+    rights: official
+    does_not_show: "the judgment whole; its evidence for the 190,000 and 150,000; the trial of Mukai and Noda (not on this page)"
+
+  - id: src-shac-2014
+    tier: B
+    kind: state-history
+    author: Second Historical Archives of China
+    title: "'南京大屠杀主犯之一谷寿夫判决书' (the judgment on Tani Hisao, one of the principal culprits of the Nanjing Massacre), the archive's introduction"
+    container: "State Archives Administration of China, special topic pages, 12 December 2014"
+    publisher: State Archives Administration of China
+    place: Beijing
+    year: 2014
+    edition: "the archive's own account surrounding the quoted judgment; dated 2014年12月12日 on the page"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.saac.gov.cn/zt/2014-12/11/content_77681.htm"}
+    access:
+      free_copy: "https://www.saac.gov.cn/zt/2014-12/11/content_77681.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "南京大屠杀主犯之一谷寿夫判决书"
+    language: zh
+    region_of_authorship: east-asia
+    producer: second-historical-archives-of-china
+    position: null
+    rights: official
+    does_not_show: "a source for its dates beyond the archive's own holding"
+
+  - id: src-prc-embassy-2014
+    tier: A
+    kind: primary-document
+    author: "Embassy of the People's Republic of China in the United States of America"
+    title: "NEWSLETTER Issue I of 2014: China Designated the Victory Day of the Chinese People's War of Resistance Against Japanese Aggression and the National Memorial Day for Nanjing Massacre Victims"
+    container: "Embassy of the People's Republic of China in the United States, Embassy Highlights, 27 February 2014"
+    publisher: "Embassy of the People's Republic of China in the United States of America"
+    place: Washington
+    year: 2014
+    edition: "the web text, read whole"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://us.china-embassy.gov.cn/eng/sgxw/201402/t20140228_4409430.htm"}
+    access:
+      free_copy: "https://us.china-embassy.gov.cn/eng/sgxw/201402/t20140228_4409430.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "NEWSLETTER Issue I of 2014_Embassy of the People's Republic of China in the United States of America"
+    language: en
+    region_of_authorship: north-america
+    producer: prc-government
+    position: null
+    rights: official
+    does_not_show: "the NPC Standing Committee's decision in its own words; the memorial hall, its wall or its opening in 1985; the 14 million war dead of the YAML"
+
+  # ----------------------------------------------------------- Japan: the government, the Diet, scholarship
+  - id: src-diet-20070425-mofa
+    tier: A
+    kind: primary-document
+    author: "Ministry of Foreign Affairs of Japan, 'Historical Issues Q&A', question 8, as read into the Diet record by the member Watanabe Shu"
+    title: "第166回国会 外務委員会 第8号 (House of Representatives, Committee on Foreign Affairs, 166th Diet, No. 8), 25 April 2007"
+    container: "House of Representatives of Japan, Diet committee minutes"
+    publisher: House of Representatives of Japan
+    place: Tokyo
+    year: 2007
+    edition: "the minutes' web text; the Ministry's answer is quoted in it at second hand, as it stood in 2007"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.shugiin.go.jp/internet/itdb_kaigirokua.nsf/html/kaigirokua/000516620070425008.htm"}
+    access:
+      free_copy: "https://www.shugiin.go.jp/internet/itdb_kaigirokua.nsf/html/kaigirokua/000516620070425008.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "第166回国会　外務委員会　第8号（平成19年4月25日（水曜日））"
+    language: ja
+    region_of_authorship: east-asia
+    producer: japanese-government
+    position: null
+    rights: official
+    does_not_show: "the Ministry's current page or its English text (not readable from here; see gaps)"
+
+  - id: src-diet-20070425-aso
+    tier: A
+    kind: testimony
+    author: "Aso Taro, Minister for Foreign Affairs of Japan"
+    title: "Answer to the member Watanabe Shu, House of Representatives, Committee on Foreign Affairs, 166th Diet, No. 8, 25 April 2007"
+    container: "House of Representatives of Japan, Diet committee minutes"
+    publisher: House of Representatives of Japan
+    place: Tokyo
+    year: 2007
+    edition: "the minutes' web text"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.shugiin.go.jp/internet/itdb_kaigirokua.nsf/html/kaigirokua/000516620070425008.htm"}
+    access:
+      free_copy: "https://www.shugiin.go.jp/internet/itdb_kaigirokua.nsf/html/kaigirokua/000516620070425008.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "第166回国会　外務委員会　第8号（平成19年4月25日（水曜日））"
+    language: ja
+    region_of_authorship: east-asia
+    producer: japanese-government
+    position: null
+    rights: official
+    does_not_show: "which historians he means; any figure the government accepts"
+
+  - id: src-diet-20070425-watanabe
+    tier: A
+    kind: testimony
+    author: "Watanabe Shu, member of the House of Representatives (Democratic Party, as he introduces himself)"
+    title: "Questions to the Foreign Minister, House of Representatives, Committee on Foreign Affairs, 166th Diet, No. 8, 25 April 2007"
+    container: "House of Representatives of Japan, Diet committee minutes"
+    publisher: House of Representatives of Japan
+    place: Tokyo
+    year: 2007
+    edition: "the minutes' web text"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.shugiin.go.jp/internet/itdb_kaigirokua.nsf/html/kaigirokua/000516620070425008.htm"}
+    access:
+      free_copy: "https://www.shugiin.go.jp/internet/itdb_kaigirokua.nsf/html/kaigirokua/000516620070425008.htm"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "第166回国会　外務委員会　第8号（平成19年4月25日（水曜日））"
+    language: ja
+    region_of_authorship: east-asia
+    producer: japanese-diet-member
+    position: null
+    rights: official
+    does_not_show: "a scholar's view: he is a legislator; Ishihara's 1990 interview (not held)"
+
+  - id: src-hatano-scholarship
+    tier: B
+    kind: journal-article
+    author: Hatano Sumio
+    title: "Japanese-Language Scholarship Concerning the History of the Sino-Japanese War and Wartime China (1937-1945)"
+    container: "Japan Institute of International Affairs, Resource Library (History); the article says it was first posted in the Toyo Bunko Repository (ERNEST)"
+    publisher: The Japan Institute of International Affairs
+    place: Tokyo
+    year: 2018
+    edition: "the JIIA PDF's own text layer; the year is the file name's date (181222), not a date the article prints"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.jiia.or.jp/eng/upload/eng/ResourceLibrary_History_Hatano_181222.pdf"}
+    access:
+      free_copy: "https://www.jiia.or.jp/eng/upload/eng/ResourceLibrary_History_Hatano_181222.pdf"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "JAPANESE-LANGUAGE SCHOLARSHIP CONCERNING THE HISTORY OF THE SINO-JAPANESE WAR AND WARTIME CHINA (1937-1945) (head of the PDF)"
+    language: en
+    region_of_authorship: east-asia
+    producer: scholarship
+    position: null
+    rights: copyright
+    does_not_show: "Hata's or Kasahara's own figures (the article names their books, not their counts); the three-school division of the YAML"
+
+  # ----------------------------------------------------------- Tier C: the Xia Shuqin case
+  - id: src-ndl-crd-xia
+    tier: C
+    kind: reference
+    author: "National Diet Library, Collaborative Reference Database (a participating library's record)"
+    title: "Reference record 1000089680: the judgment of 2 November 2007, Heisei 18 (wa) No. 9972 (Xia Shuqin v. Higashinakano Shudo)"
+    container: "Collaborative Reference Database (レファレンス協同データベース)"
+    publisher: National Diet Library
+    place: Tokyo
+    year: 2009
+    edition: "the record as served; the year is the latest publication the answer cites (2009), not a date the page prints"
+    volume: null
+    document_number: "1000089680"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://crd.ndl.go.jp/reference/detail?page=ref_view&id=1000089680"}
+    access:
+      free_copy: "https://crd.ndl.go.jp/reference/entry/index.php?id=1000089680&page=ref_view"
+      verified_at: 2026-10-09
+      verified_by: document-fetch
+      verified_title: "the record's question head: 平成19年11月2日判決言渡 平成18年（ワ）第9972号 損害賠償等反訴請求事件"
+    language: ja
+    region_of_authorship: east-asia
+    producer: national-diet-library
+    position: null
+    rights: null
+    does_not_show: "the judgment's text, its findings, the damages awarded, the appeal or the Supreme Court; anything Xia Shuqin said; her family's deaths"
+
+positions: []
+contested: []
+exhibits: []
+analyses: []
+
+gaps:
+  - what: "Xia Shuqin in her own words: the YAML and the live script's 'Seven of my family were killed in front of me. How can they say it did not happen?' (H11_KNOWN marks the line 'Survivor testimony, recounted through her Tokyo defamation case, 2007')"
+    tried: ["https://crd.ndl.go.jp/reference/entry/index.php?id=1000089680&page=ref_view", "https://www.courts.go.jp/hanrei/search1/index.html", "https://adhoc.yalepages.org/Media/PDFs/Nanking/NMP0343.pdf"]
+    status: "No verbatim primary source of the sentence was found. The National Diet Library's reference record says its judgment databases do not carry the Tokyo District Court judgment of 2 November 2007 and points to an excerpt printed in a 2009 book (src-ndl-crd-xia.secanswer), not openly readable. John Magee's film notes at Yale (NMP0343, 24 pages) may describe her family's case in 1937-38, but the scan has no text layer and was not read. The line is unverified and must not be spoken as her words. The 4 million yen, the 2009 Supreme Court ruling and her family's deaths are not held either"
+  - what: "The Ministry of Foreign Affairs of Japan's own pages: 'Historical Issues Q&A' (https://www.mofa.go.jp/policy/q_a/faq16.html) and the Japan-China Joint History Research Report, provisional translation (https://www.mofa.go.jp/mofaj/files/100512970.pdf)"
+    tried: ["https://www.mofa.go.jp/policy/q_a/faq16.html", "https://www.mofa.go.jp/mofaj/files/100512970.pdf", "https://web.archive.org/web/20260719150757id_/https://www.mofa.go.jp/policy/q_a/faq16.html", "https://archive.ph/newest/https://www.mofa.go.jp/policy/q_a/faq16.html"]
+    status: "mofa.go.jp answered HTTP 403 to every request from this machine; the Wayback Machine answered 429 for the length of the session; archive.ph refused. The Ministry's Q&A is held only as a Diet member read it into the record in 2007 (src-diet-20070425-mofa.secq8). The Joint History Research Report, and with it each side's figure and method as the two committees wrote them, is NOT held: neither the Japanese side's range nor the Chinese side's figure may be quoted from it"
+  - what: "Documents of the Nanking Safety Zone, ed. Hsu Shuhsi (Shanghai: Kelly and Walsh, 1939)"
+    tried: ["https://archive.org/metadata/bwb_W9-DEE-408", "https://babel.hathitrust.org/cgi/pt?id=mdp.39015001149114"]
+    status: "The Internet Archive copy is a controlled lending copy (access-restricted-item: true) and HathiTrust shows limited view only. The Committee's letters are held only as the prosecution read some of them into the Tokyo record (src-safety-zone-letters-1937), with OCR errors"
+  - what: "Minnie Vautrin's diary (the YAML's 16 December 1937 entry, 'There probably is no crime that has not been committed in this city today...'), and Yale's Nanking Massacre Project scans of the Committee's letters (NMP0149, NMP0158, NMP0159)"
+    tried: ["https://adhoc.yalepages.org/Media/PDFs/Nanking/Vautrin.pdf", "https://adhoc.yalepages.org/Media/PDFs/Nanking/NMP0158.pdf", "https://adhoc.yalepages.org/Media/PDFs/Nanking/NMP0149.pdf"]
+    status: "Yale's PDFs are scans of the typescripts with no text layer. A trial OCR of the diary's pages for 15 to 17 December (RapidOCR, CPU) misread letters on most lines ('vben Te have' for 'when we have'), so nothing could be sliced without retyping. The YAML's Vautrin excerpt and the live script's DOCUMENT reading of it are unverified. Her colleague Mrs Tsen's statement of 1946 is held (src-tsen-statement-1946)"
+  - what: "John Rabe's diary, The Good Man of Nanking (ed. Erwin Wickert; English 1998), and the YAML's two Rabe excerpts ('Last night up to 1,000 women and girls are said to have been raped...' of 17 December 1937; 'You simply cannot conceive of the misery')"
+    tried: []
+    status: "the English translation is in copyright and no lawful open copy was sought out or found. Both YAML excerpts, the live script's Rabe DOCUMENT and its 'You simply cannot conceive of the misery' line are unverified. Rabe's own words held here are the Committee's letters he signed (src-safety-zone-letters-1937)"
+  - what: "The Nanjing tribunal's judgment on Mukai Toshiaki and Noda Tsuyoshi, and the Tokyo Nichi Nichi Shimbun's reports of the killing contest (the YAML's 89 to 78 and 106 to 105, the photographs, the execution on 28 January 1948)"
+    tried: []
+    status: "no official or archival text was found in this session. Every particular of the contest in the live script is unverified"
+  - what: "The sentence on Matsui and its execution on 23 December 1948; Prince Asaka, the 'kill all captives' order and MacArthur's immunity for the imperial family; Radhabinod Pal's dissent"
+    tried: ["https://www.ibiblio.org/hyperwar/PTO/IMTFE/IMTFE-8.html", "https://www.ibiblio.org/hyperwar/PTO/IMTFE/IMTFE-10.html"]
+    status: "the two chapters held name no Asaka and carry no sentence; the sentences and Pal's dissent were not fetched. All of these are unverified"
+  - what: "Iris Chang, The Rape of Nanking (1997), and the YAML's 'The Nanking massacre would be the forgotten Holocaust of World War II'; Shintaro Ishihara's Playboy interview (1990); the memorial hall's inscription 'We must remember...'"
+    tried: []
+    status: "in copyright or not found; unverified. The live script reads Chang's and Ishihara's lines in the document voice; neither may be spoken as their words"
+  - what: "Japanese scholarship's counts: Hata Ikuhiko (about 40,000), Kasahara Tokushi (160,000 to 170,000), and the three schools of the YAML"
+    tried: ["https://www.jiia.or.jp/eng/upload/eng/ResourceLibrary_History_Hatano_181222.pdf"]
+    status: "Hatano's survey names their books but not their figures; the one count it gives is Hara Takeshi's 'close to 20,000' illegally murdered (src-hatano-scholarship.sechara). The YAML's 40,000, 30,000 soldiers and 10,000 civilians, and 160,000-170,000 are not held"
+  - what: "The YAML's figures with no held source: the Safety Zone's 200,000-250,000 and 3.86 square kilometres; 'roughly two dozen' foreigners; 14 million Chinese war dead; 80 to 100 million refugees; Ginling's 10,000 women; 20,000 to 80,000 women raped; 4 million yen; Chang's half a million copies; the memorial's opening on 15 August 1985; 'ten-foot characters'"
+    tried: []
+    status: "not held. The Judgment gives over one-half of 'one million inhabitants' fleeing (src-imtfe-judgment-ch8.secapproach) and 'Approximately 20,000 cases of rape' (.secrape)"
+  - what: "Books the event YAML names as sources: Chang (1997); Fogel (2000); Wakabayashi (2007); Honda (1999); Yoshida (2006); Rabe ed. Wickert (1998); Timperley, What War Means (1938); Hu (2000); Brook (1999); Li, Sabella and Liu (2002); Minear (1971)"
+    tried: []
+    status: "not sought in this session; in copyright save perhaps Timperley, whose open copy was not found"
+  - what: "Archival recordings (newsreel of the fall of the city; Magee's 16 mm film)"
+    tried: []
+    status: "none sought; no recording is admitted (recordings: [])"
+
+recordings: []

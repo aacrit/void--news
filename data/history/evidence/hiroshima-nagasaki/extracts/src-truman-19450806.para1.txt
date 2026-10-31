@@ -1,0 +1,7 @@
+source: src-truman-19450806
+locator: para1
+url: https://www.trumanlibrary.gov/library/public-papers/93/statement-president-announcing-use-bomb-hiroshima
+read: 2026-10-05
+note: paragraph 1 of the statement as the Library prints it
+
+SIXTEEN HOURS AGO an American airplane dropped one bomb on Hiroshima, an important Japanese Army base. That bomb had more power than 20,000 tons of T.N.T. It had more than two thousand times the blast power of the British "Grand Slam" which is the largest bomb ever yet used in the history of warfare.

@@ -1,0 +1,141 @@
+id: supreme-court-generic-anchor-overmerge-reject-2026-08-07
+name: "Indian Supreme Court and US SCOTUS share only the generic words 'Supreme Court' — must NOT merge"
+failure_date: "2026-08-05"
+failure_kind: generic-anchor-bridge
+articles:
+  # Story A — the Indian Supreme Court stays action against a Banerjee aide.
+  - id: in-sc-1
+    title: "Supreme Court Rules on Banerjee Aide Arrest"
+    summary: "India's top court ruled on the arrest of a Banerjee aide."
+    full_text: >
+      The Supreme Court of India ruled Tuesday on the arrest of Abhishek
+      Banerjee, an aide to West Bengal chief minister Mamata Banerjee, in a graft
+      probe by the Enforcement Directorate. Justice Khanna granted interim relief
+      at a packed hearing in New Delhi as Trinamool Congress supporters gathered
+      outside.
+    source: { slug: the-hindu, country: IN, tier: international }
+    published_at: "2026-08-05T09:00Z"
+  - id: in-sc-2
+    title: "Supreme Court Rules on Banerjee Aide Detention"
+    summary: "An Indian court ruled on a Banerjee aide detention."
+    full_text: >
+      India's Supreme Court ruled on the detention of Abhishek Banerjee in the
+      Enforcement Directorate money-laundering matter. The Khanna bench stayed
+      coercive action and set the next Kolkata hearing for August, as Mamata
+      Banerjee welcomed the order.
+    source: { slug: ndtv, country: IN, tier: international }
+    published_at: "2026-08-05T10:30Z"
+
+  # Story B — the US Supreme Court rules on a Louisiana voting map. Shares only
+  # {supreme, court, rule} with Story A; no specific entity in common.
+  - id: us-sc-1
+    title: "Supreme Court Rules on Louisiana Voting Map"
+    summary: "US justices ruled on a Louisiana voting map."
+    full_text: >
+      The US Supreme Court ruled on a Louisiana congressional voting map under
+      the Voting Rights Act. Chief Justice Roberts wrote the opinion on racial
+      gerrymandering, with Justice Jackson dissenting, in a case watched by
+      redistricting lawyers nationwide in Washington.
+    source: { slug: ap-news, country: US, tier: us_major }
+    published_at: "2026-08-05T14:00Z"
+  - id: us-sc-2
+    title: "Supreme Court Rules on Louisiana Map Case"
+    summary: "US justices ruled on a Louisiana map case."
+    full_text: >
+      The US Supreme Court ruled on the Louisiana redistricting dispute testing
+      Section 2 of the Voting Rights Act. Roberts and Kagan shaped the majority on
+      the gerrymander challenge brought by Black voters, reshaping congressional
+      lines before the midterms in Washington.
+    source: { slug: reuters, country: US, tier: us_major }
+    published_at: "2026-08-05T14:40Z"
+
+  # Distractor court stories — six MORE unrelated "Supreme Court Rules on X"
+  # events. Their only purpose is to make {supreme, court, rule} high-frequency
+  # across the day's titles (df well above the discriminative floor), which is
+  # exactly what those words look like on any real news day. Each carries a
+  # distinct specific entity so it clusters cleanly on its own.
+  - id: d0
+    title: "Supreme Court Rules on Bolsonaro Ballot Appeal"
+    summary: "Brazil's court ruled on a Bolsonaro appeal."
+    full_text: >
+      Brazil's Supreme Court rejected former president Jair Bolsonaro's appeal
+      against an eight-year ban from office over his attacks on the electronic
+      ballot system, with Justice de Moraes leading the panel in Brasilia.
+    source: { slug: folha, country: BR, tier: international }
+    published_at: "2026-08-05T08:00Z"
+  - id: d1
+    title: "Supreme Court Rules on Pakistan Assembly Seats"
+    summary: "Pakistan's court ruled on assembly seats."
+    full_text: >
+      Pakistan's Supreme Court restored reserved parliamentary seats to Imran
+      Khan's party PTI, overturning an election commission decision, in a verdict
+      read by the chief justice in Islamabad that reshaped the National Assembly
+      balance.
+    source: { slug: dawn, country: PK, tier: international }
+    published_at: "2026-08-05T08:20Z"
+  - id: d2
+    title: "Supreme Court Rules on Israel Judicial Overhaul"
+    summary: "Israel's court ruled on the judicial overhaul."
+    full_text: >
+      Israel's Supreme Court struck down a key plank of the Netanyahu
+      government's judicial overhaul, ruling the reasonableness law
+      unconstitutional, in a narrow decision that deepened the political crisis in
+      Jerusalem.
+    source: { slug: haaretz, country: IL, tier: international }
+    published_at: "2026-08-05T08:40Z"
+  - id: d3
+    title: "Supreme Court Rules on Kenya Finance Bill"
+    summary: "Kenya's court ruled on the finance bill."
+    full_text: >
+      Kenya's Supreme Court reinstated the finance bill tax measures championed
+      by President Ruto, overturning an appeals court block, allowing the treasury
+      to collect new levies from Nairobi employers.
+    source: { slug: nation-africa, country: KE, tier: international }
+    published_at: "2026-08-05T09:10Z"
+  - id: d4
+    title: "Supreme Court Rules on Philippine Pork Barrel"
+    summary: "The Philippine court ruled on the pork barrel scam."
+    full_text: >
+      The Philippine Supreme Court ordered a fresh probe into the pork barrel
+      scam, directing the ombudsman to charge lawmakers who diverted development
+      funds, in a ruling handed down in Manila.
+    source: { slug: inquirer, country: PH, tier: international }
+    published_at: "2026-08-05T09:30Z"
+  - id: d5
+    title: "Supreme Court Rules on South Africa Land Reform"
+    summary: "South Africa's court ruled on land reform."
+    full_text: >
+      South Africa's Supreme Court upheld the land expropriation framework backed
+      by President Ramaphosa, dismissing a challenge from farming unions, in a
+      judgment delivered in Bloemfontein.
+    source: { slug: news24, country: ZA, tier: international }
+    published_at: "2026-08-05T09:50Z"
+expectation:
+  type: should_split
+  member_ids: [in-sc-1, us-sc-1]
+  min_clusters: 2
+rationale: |
+  Live over-merge (2026-08-05 top-50, card #48): an "Supreme Court Stays Arrest
+  of Banerjee Aide" cluster (n=14) had bridged the INDIAN Supreme Court story to
+  US SCOTUS coverage purely on the shared generic phrase "Supreme Court", and the
+  shipped summary described the Indian case while most members were US.
+
+  The two stories share ONLY the stems {supreme, court, rule}. Every one of those
+  is a generic institutional word that appears across many unrelated court
+  stories on any real news day (the six distractor clusters here reproduce that
+  high document-frequency). None is a specific, distinguishing entity.
+
+  This fixture is DATA-DRIVEN and requires no hand-listed stop-word:
+    * PAIR-ONLY (delete the six distractors and cluster just the four SCOTUS
+      articles) collapses the Indian and US stories into ONE cluster — the
+      generic title bridge merges them absent any corpus context.
+    * FULL CORPUS (as written) splits them: with eight "Supreme Court Rules on X"
+      stories present, {supreme, court, rule} are high-df / low-IDF, so the
+      Phase-3 discriminative-stem gate (PHASE3_STEM_DF_*) refuses to let them be
+      the sole merge driver, and Phase 2 finds no shared specific entity. Each
+      same-story pair (Indian, US) still merges on its own concrete entities
+      (Banerjee/Enforcement Directorate; Louisiana/Voting Rights Act).
+
+  The same mechanism automatically rejects "military", a bare country name, or
+  any FUTURE generic bridge word ("summit", "election", "festival") without ever
+  enumerating it, because a generic term is defined by its high df that day.

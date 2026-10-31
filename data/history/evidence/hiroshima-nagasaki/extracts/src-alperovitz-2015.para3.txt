@@ -1,0 +1,7 @@
+source: src-alperovitz-2015
+locator: para3
+url: https://www.thenation.com/article/world/us-hiroshima-nuclear-bomb-anniversary/
+read: 2026-10-07
+note: paragraph 3 of the article; 'The Navy Museum acknowledges' refers to a museum plaque the article quotes in paragraph 2, which is not held
+
+Indeed, it would have been surprising if they had: Despite the terrible concentrated power of atomic weapons, the firebombing of Tokyo earlier in 1945 and the destruction of numerous Japanese cities by conventional bombing killed far more people. The Navy Museum acknowledges what many historians have long known: It was only with the entry of the Soviet Union’s Red Army into the war two days after the bombing of Hiroshima that the Japanese moved to finally surrender. Japan was used to losing cities to American bombing; what their military leaders feared more was the destruction of the country’s military by an all-out Red Army assault.

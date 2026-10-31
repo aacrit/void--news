@@ -1,0 +1,8 @@
+source: src-michael-golder
+locator: whole
+url: https://archive.org/download/documentsofrussi027937mbp/documentsofrussi027937mbp_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+note: Golder dates it March 16, 1917 (New Style) at Petrograd, from 'Izvestiia of the Committee of Petrograd Journalists', No. 9, March 17, 1917; the text runs across pp. 298 to 299 and the layer prints the footnote and running head between 'secret' and 'ballot', held as printed
+
+A heavy burden has been laid on me by my brother who has passed over to me the imperial throne of Russia at a time of un- precedented war and popular disturbances. Animated by the thought which is in the minds of all, that the good of the State is above other considerations, I have decided to accept the supreme power, only if that be the desire of our great people, expressed at a general election for their representatives to the Constituent Assembly, which should determine the form of govern- ment and lay down the fundamental laws of the Russian Empire. With a prayer to God for His blessings, I beseech all citizens of the Empire to subject themselves to the Provisional Government, which is created by and invested with full power by the State Duma, until the summoning, at the earliest possible moment, of a Con- stituent Assembly, selected by universal, direct, equal, and secret 7 "Izvestiia of the Committee of Petrograd Journalists," No. 9, March 17, 1917* THE DUMA AND THE SOVIET 299 ballot, which shall establish a government in accordance with the will of the people.

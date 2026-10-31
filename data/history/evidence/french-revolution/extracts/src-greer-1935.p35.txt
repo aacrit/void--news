@@ -1,0 +1,7 @@
+source: src-greer-1935
+locator: p35
+url: https://babel.hathitrust.org/cgi/pt?id=mdp.39015002601550
+read: 2026-10-09
+note: read page at a time in HathiTrust's text-only view (seq 57); the sentence runs on to p. 36 (extract p36); footnote reference numbers print glued to the figure before them ('4,860;40' is 4,860 with note 40); line breaks collapsed to spaces
+
+The historiography of the Terror is filled with exaggerations of numbers, but none is more fantastic than the tale of ten, twenty, or thirty thousand people sent to the bottom of the Loire in the sinister gabares of the noyades. Alfred Lallié reduced the total to 4,860;40 the Comte de Fleury contracted it to 2,800;41 and the recent research of MM.

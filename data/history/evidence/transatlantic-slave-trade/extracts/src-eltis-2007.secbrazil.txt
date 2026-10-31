@@ -1,0 +1,7 @@
+source: src-eltis-2007
+locator: secbrazil
+url: https://legacy.slavevoyages.org/blog/brief-overview-trans-atlantic-slave-trade
+read: 2026-10-09
+note: the essay as the site reposted it on March 14, 2024; the site says it was originally published in 2007; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+The slave traffic to Brazil, eventually accounting for about forty percent of the trade, got underway around 1560.

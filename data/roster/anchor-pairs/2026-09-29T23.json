@@ -1,0 +1,38 @@
+[
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 27,
+  "a": {
+   "title": "Celine Dion surprises Paris Fashion Week with performance at L'Oréal show",
+   "summary": "Canadian singer Celine Dion made a surprise appearance at L'Oréal's fashion show in Paris, performing on stage with the Eiffel Tower in the background alongside a star-studded line-up of celebrities and models.",
+   "link": "https://www.euronews.com/video/2026/09/29/celine-dion-surprises-paris-fashion-week-with-performance-at-loreal-show",
+   "published": "Tue, 29 Sep 2026 14:26:25 +0200"
+  },
+  "b": {
+   "title": "Celine Dion surprend la Fashion Week de Paris lors du défilé L'Oréal",
+   "summary": "La chanteuse canadienne Céline Dion a fait une apparition surprise au défilé de mode de L'Oréal à Paris, chantant sur scène avec la tour Eiffel en toile de fond aux côtés d'un parterre de célébrités et de mannequins.",
+   "link": "https://fr.euronews.com/video/2026/09/29/celine-dion-surprend-la-fashion-week-de-paris-lors-du-defile-loreal",
+   "published": "Tue, 29 Sep 2026 14:27:33 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 25,
+  "a": {
+   "title": "Tigray rebels push into Afar as Ethiopia blames neighbours",
+   "summary": "The TPLF advanced toward Afdeera after taking Erebti, with at least 150,000 people feared displaced in Afar alone. The offensive targets the Djibouti corridor, through which almost all of Ethiopia's international trade flows, giving the rebels potential leverage over the federal government.",
+   "link": "https://www.euronews.com/2026/09/28/tigray-rebels-push-into-afar-as-ethiopia-blames-neighbours",
+   "published": "Mon, 28 Sep 2026 13:46:10 +0200"
+  },
+  "b": {
+   "title": "Les rebelles du Tigré avancent en Afar, l'Éthiopie accuse ses voisins",
+   "summary": "Le TPLF avance vers Afdeera après la prise d'Erebti; au moins 150 000 personnes déplacées dans l'Afar. L'offensive vise le corridor de Djibouti, par où passe l'essentiel du commerce extérieur éthiopien, donnant aux rebelles un moyen de pression sur le gouvernement fédéral.",
+   "link": "https://fr.euronews.com/2026/09/28/les-rebelles-du-tigre-avancent-en-afar-lethiopie-accuse-ses-voisins",
+   "published": "Mon, 28 Sep 2026 13:47:13 +0200"
+  }
+ }
+]

@@ -1,0 +1,7 @@
+source: src-hansard-lords-19200720
+locator: secmotion
+url: https://api.parliament.uk/historic-hansard/lords/1920/jul/20/punjab-disturbances-the-case-of-general
+read: 2026-10-09
+note: the text is the Hansard page's own text (UK Parliament, historic Hansard), whitespace collapsed
+
+Debate on the. Motion of Viscount FINLAY, "That this House deplores the conduct of the case of General Dyer as unjust to that officer, and as establishing a precedent dangerous to the preservation of order in face of rebellion,"

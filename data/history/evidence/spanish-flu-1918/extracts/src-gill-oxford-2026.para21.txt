@@ -1,0 +1,6 @@
+source: src-gill-oxford-2026
+locator: para21
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13311354/fullTextXML
+read: 2026-09-25
+
+In the year 1917, the subject of data protection was not the sensitive matter which it later became. While Dr Hammond was conducting ‘a study of 156 consecutive necropsies made during February and early March, 1917’, Major Guinness and his staff were recording careful details in regard to those who had died. A list of those patients whom Hammond sent for post-mortem examination, therefore, has proved a simple one to construct. One hundred and fifty-six men and one woman died at Etaples, from causes other than wounds, during the period beginning on 1 February and ending on 19 March 1917.

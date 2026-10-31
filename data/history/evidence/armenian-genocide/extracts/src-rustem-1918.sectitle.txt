@@ -1,0 +1,8 @@
+source: src-rustem-1918
+locator: sectitle
+url: https://archive.org/download/laguerremondiale00ahmeuoft/laguerremondiale00ahmeuoft_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer; hyphens rejoined, spacing collapsed, the page number between the pages removed
+note: the title page; the layer garbles the printer's line
+
+AHMED RUSTEM BEY CI-DEVANT AMBASSADEUR DE TURQUIE A WASHINGTON 4R GUERRE MONDIALE ET LÀ QUESTION VRCO-ARMÉNIENNE BERSE - IMPRIMERIE STMMPFLI 4 C'f 1918

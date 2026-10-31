@@ -1,0 +1,7 @@
+source: src-moh-1920
+locator: secspaincommission
+url: https://archive.org/download/pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920/PandemicofInfluenzaHMSO_entire_book_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+In order to meet the many opinions expressed at first as to the true nature of the epidemic, a Spanish Medical Commission was sent to Paris to collect information, particularly as to the identity of the epidemic in Spain with that occurring in France and other countries of Europe. Their conclusions were that the Spanish epidemic and that in France were identical, not only from the clinical, but also from the bacteriological and epidemiological points of view.

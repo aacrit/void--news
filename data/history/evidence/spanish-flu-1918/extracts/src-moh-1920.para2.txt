@@ -1,0 +1,7 @@
+source: src-moh-1920
+locator: para2
+url: https://archive.org/download/pandemic-of-influenza-1918-1919_UK-MinistryofHealth_HMSO-1920/PandemicofInfluenzaHMSO_entire_book_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+2. This document deals with one of the great historic scourges of our time, a pestilence which affected the well-being of millions of men and women and destroyed more human lives in a few months than did the European war in five years, carrying off upwards of 150,000 persons in England and Wales alone.

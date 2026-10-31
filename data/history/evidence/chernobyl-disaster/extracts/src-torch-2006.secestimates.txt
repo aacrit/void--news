@@ -1,0 +1,8 @@
+source: src-torch-2006
+locator: secestimates
+url: https://www.nirs.org/wp-content/uploads/c20/torch.pdf
+read: 2026-10-07
+note: Executive summary, 'Estimated Future Excess Cancer Deaths', its second and third paragraphs, printed page 11 (PDF page 12); the first gives published estimates of 4,000 to 22,000 excess cancer deaths for Belarus, Ukraine and Russia and 14,000 to 30,000 for the world. 'release' for 'released' is the report's own
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+The IAEA, in its 5 September 2005 press release “Chernobyl: The True Scale of the Accident” stated that up to 4,000 people could eventually die of radiation exposure from Chernobyl. This figure has been quoted extensively by the world media. However the statement is misleading, as the figure calculated in the IAEA/WHO report is actually 9,000 fatalities. Depending on the risk factor used (ie the risk of fatal cancer per person sievert), the TORCH Report estimates that the worldwide collective dose of 600,000 person sieverts will result in 30,000 to 60,000 excess cancer deaths, 7 to 15 times the figure release in the IAEA’s press statement.

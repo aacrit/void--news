@@ -1,0 +1,10 @@
+source: src-unsc-res82-1950
+locator: fn10
+url: https://documents.un.org/doc/resolution/gen/nr0/064/95/pdf/nr006495.pdf
+read: 2026-10-09
+note: the UN scan prints English and French in two columns; the English column was taken from the PDF by word position (x0 in the left half of the page), then sliced
+note: footnote 10 to the adoption line of resolution 82; the scan runs the words together
+note: the copy is a scan with an OCR text layer; its misreadings are kept as read, not corrected
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+10 Onemember(Union of Soviet Socialist Republics) was absent.

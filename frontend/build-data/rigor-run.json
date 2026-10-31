@@ -1,0 +1,27 @@
+{
+ "brief": {
+  "cut_sentences": 0,
+  "cuts_by_reason": {},
+  "edition": "world",
+  "grounding_ran": {
+   "opinion": true,
+   "script": true,
+   "tldr": true
+  }
+ },
+ "stage2": {
+  "candidates": 45,
+  "critique_read": 0,
+  "critique_unread": 44,
+  "cut_sentences": 0,
+  "cuts_by_reason": {},
+  "dropped": 0,
+  "fresh_ids": [
+   "629fd44c-3ff4-4137-86ed-8f735ebefb55"
+  ],
+  "kept_failing": 10,
+  "regenerated": 0,
+  "reviewed": true
+ },
+ "startedAt": "2026-10-31T16:57:20Z"
+}

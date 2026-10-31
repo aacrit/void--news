@@ -1,0 +1,19 @@
+source: src-hertslet-charter-1889
+locator: p174
+url: https://archive.org/download/mapofafricabytre01hert/mapofafricabytre01hert_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: Hertslet's footnote to the Charter, on the Moffat agreement of 11 February 1888 and the concession of 30 October 1888
+
+t On the llth Febrnarj, 1888, an Agreement was entered into by
+Lobengnla, Ruler of the tribe known as the Amandebele, together with the
+Mashona and Makakalalca, tributaries of the same, by which he agreed, on
+behalf of himself and people, that he would refrain from entering into a.ny
+correspondence or Treaty with any foreign State or Power to sell, alienate,
+or cede, or permit or coiaitenance any sale, alienation, or cession of the
+whole or any part of the said Amandebele country under liis chieftainship,
+or upon_any other subject, without the previous knowledge and sanction of
+Her Majesty's High Commissioner for South Africa (S.P., vol. Ixxix, p. 868) ;
+and on the 30th October, 1888, a Concession was granted by Lobengu'a,
+King of Matabeleland, to the representatives of the British South Africa
+Company.

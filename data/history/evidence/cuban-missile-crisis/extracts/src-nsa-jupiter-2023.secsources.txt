@@ -1,0 +1,7 @@
+source: src-nsa-jupiter-2023
+locator: secsources
+url: https://nsarchive.gwu.edu/briefing-book/cuban-missile-crisis-nuclear-vault/2023-04-20/jupiter-missiles-and-cuban-missile
+read: 2026-10-07
+note: the editors' sentence on the posting's sources, which names the Chairman of the Joint Chiefs of Staff in 1963; the page's HTML read as text
+
+Like Part I, this posting includes declassified documents that have not been published before, with material from Italian archives and the records of Joint Chiefs of Staff Chairman Maxwell Taylor.

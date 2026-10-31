@@ -1,0 +1,7 @@
+source: src-un-a54549
+locator: para2
+url: https://documents.un.org/doc/undoc/gen/n99/348/76/pdf/n9934876.pdf
+read: 2026-09-24
+note: the UN PDF text layer renders the names Karadzic and Mladic with substitute glyphs (Karad• ie, Mladie); the passage is stored as the text layer prints it
+
+2. On 16 November 1995, the International Tribunal for the Former Yugoslavia indicted Radovan Karad• ie (“President of the Republika Srpska”) and Ratko Mladie (Commander of the Bosnian Serb Army) for their alleged direct responsibility for the atrocities committed in July 1995 against the Bosnian Muslim population of the United Nations-designated safe area of Srebrenica. After a review of the evidence submitted by the Prosecutor, Judge Riad confirmed the indictment, stating that: “After Srebrenica fell to besieging Serbian forces in July 1995, a truly terrible massacre of the Muslim population appears to have taken place. The evidence tendered by the Prosecutor describes scenes of unimaginable savagery: thousands of men executed and buried in mass grave s, hundreds of men buried alive, men and women mutilated and slaughtered, children killed before their mothers’ eyes, a grandfather forced to eat the liver of his own grandson. These are truly scenes from hell, written on the darkest pages of human history.”1

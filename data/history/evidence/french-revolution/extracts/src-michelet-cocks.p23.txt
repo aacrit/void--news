@@ -1,0 +1,7 @@
+source: src-michelet-cocks
+locator: p23
+url: https://archive.org/download/cu31924024313474/cu31924024313474_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (long s read as f and other misreadings included); line breaks collapsed to spaces, nothing else changed
+
+The Revolution is nothing but the tardy reaction of justice against the government of favour and the religion of grace.

@@ -1,0 +1,226 @@
+slug: belarus-2020
+title: 'Belarus: The Uncounted Vote'
+subtitle: Hundreds of thousands marched against a disputed election; the security forces held anyway
+date_display: 2020 to present
+date_start: 2020
+date_precision: year
+era: square-revolutions
+region: europe
+country: Belarus
+revolt_type: democratic-uprising
+status: dormant
+summary: Alexander Lukashenko, in power since 1994, claimed 80 percent of the vote in the August 2020 presidential election against Sviatlana Tsikhanouskaya, a former English teacher who entered the race after authorities jailed or exiled the other opposition candidates. Independent exit polling and leaked precinct data suggested Tsikhanouskaya won. Hundreds of thousands marched in Minsk for months, the largest protests in Belarusian history. Security forces detained more than 35,000 people and the UN documented torture in detention; by early 2021 the street movement had been suppressed and Tsikhanouskaya was leading an opposition-in-exile from Lithuania.
+significance: 'Belarus is a case in which nearly every condition the literature associates with a successful nonviolent transition was present, mass and sustained cross-class protest, a genuinely popular opposition candidate, wide international non-recognition of the result, except one: the security forces never broke. It shows the limits of participation-based models of nonviolent success when a ruler is willing to use unlimited detention and has an external guarantor.'
+analytical_outlook: 'Lukashenko has governed since 2020 in closer dependence on Russia, including hosting Russian troops staged for the invasion of Ukraine, and claimed a seventh term in a January 2025 election Western governments dismissed as neither free nor fair. The movement persists as an exile government, a political prisoner population authorities periodically use as a bargaining chip, and a diaspora infrastructure, but it has no organized presence inside the country capable of forcing a reopening. Placement on the arc: a movement that reached a radical, near-insurrectionary phase and was pushed back into a prolonged, quiet suppression rather than reaching any form of consolidation.'
+grievances:
+  - kind: electoral
+    intensity: 90
+    evidence: Official results gave Lukashenko 80 percent; independent exit polling, leaked precinct tallies and the scale of the subsequent protests all contradicted the announced margin.
+  - kind: political
+    intensity: 85
+    evidence: Lukashenko had governed since 1994 through elections opposition figures and Western observers repeatedly called neither free nor fair.
+  - kind: repression
+    intensity: 88
+    evidence: More than 35,000 people were detained in the months after the election; the UN documented systematic torture, including beatings, at the Okrestina detention center in Minsk.
+repression_level: severe
+actors:
+  - actor_type: masses
+    name: The Sunday marchers
+    description: Weekly marches that drew an estimated 100,000 to 200,000 people in Minsk at their August-September 2020 peak, alongside women's chain protests and workplace strikes.
+    role_in_arc: Sustained the largest and most consistently nonviolent protest wave in Belarusian history for roughly six months.
+    defected: false
+  - actor_type: vanguard
+    name: Sviatlana Tsikhanouskaya and the Coordination Council
+    description: Tsikhanouskaya, a former English teacher who ran after her husband was jailed, and the council formed to negotiate a transfer of power.
+    role_in_arc: Provided the movement's public leadership and, after exile, an internationally recognized opposition government.
+    defected: false
+  - actor_type: security-forces
+    name: OMON riot police and the KGB
+    description: Belarus's internal security services, which retained the Soviet-era name KGB.
+    role_in_arc: Carried out mass detention and documented torture without any reported unit-level defection.
+    defected: false
+  - actor_type: foreign-intervener
+    name: Russia
+    description: Moscow backed Lukashenko diplomatically and financially through the crackdown and after.
+    role_in_arc: Removed any prospect that Lukashenko would need to negotiate, and deepened Belarus's dependence on Russia afterward.
+    defected: false
+tactics:
+  - tactic_type: mass-demonstration
+    description: Sunday marches that drew the largest crowds in Belarusian history, alongside daily neighborhood protests.
+    prominence: high
+  - tactic_type: general-strike
+    description: Strikes at state factories, including the Minsk Wheel Tractor Plant and Belaruskali potash works, that the government treated as an unprecedented threat.
+    prominence: high
+  - tactic_type: civil-disobedience
+    description: Women's chains dressed in white carrying flowers, and a nationwide campaign reviving the pre-1994 red-and-white national flag.
+    prominence: medium
+resistance_type: nonviolent
+phases:
+  - phase: old-regime-crisis
+    label: The field is cleared
+    date_start: 2020-05
+    t_start: 0
+    t_end: 0.12
+    intensity: 35
+    reached: true
+    summary: Authorities jail or exile Lukashenko's leading challengers ahead of the vote, leaving Tsikhanouskaya, a political outsider, as the consolidated opposition candidate.
+    key_events:
+      - Arrests of leading opposition figures
+      - Tsikhanouskaya registers as a candidate
+  - phase: the-spark
+    label: A claimed landslide
+    date_start: '2020-08-09'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 75
+    reached: true
+    summary: Lukashenko claims 80 percent of the vote. Police attack the first protests with rubber bullets and stun grenades; the crackdown itself becomes the movement's fuel.
+    key_events:
+      - 9 August 2020 election
+      - Mass detention and documented torture at Okrestina
+  - phase: radical-phase
+    label: The largest marches in the country's history
+    date_start: '2020-08-16'
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 90
+    reached: true
+    summary: An estimated 100,000 to 200,000 march in Minsk. Factory strikes spread to state industry. The Coordination Council seeks a transfer of power the government refuses to discuss.
+    key_events:
+      - Peak Sunday march, 16 August 2020
+      - Strikes at state enterprises
+  - phase: thermidor
+    label: The winter crackdown
+    date_start: 2020-11
+    t_start: 0.84
+    t_end: 0.92
+    intensity: 40
+    reached: true
+    summary: Mass detentions, expulsions and the criminalization of protest symbols exhaust the street movement through the winter. Weekly marches end by early 2021.
+    key_events:
+      - Winter crackdown
+      - Criminalization of the red-and-white flag
+outcome: failed-suppressed
+peak_participation_pct: null
+peak_participation_display: An estimated 100,000 to 200,000 marched in Minsk alone at the August 2020 peak, in a country of about 9.4 million, a figure some analysts put close to or above the 3.5 percent threshold once other cities are counted.
+crossed_participation_threshold: true
+military_defection: none
+foreign_intervention: material
+duration_days: null
+death_toll: At least four deaths were documented in direct connection with the crackdown; the toll from prison conditions and subsequent repression is disputed and likely higher.
+death_toll_low: 4
+death_toll_high: null
+regime_before: personalist
+regime_after: personalist
+democratization_delta: -1
+success_factors:
+  - factor_key: resistance_method
+    label: Method of struggle
+    framework: chenoweth
+    status: Overwhelmingly nonviolent across six months of protest.
+    direction: favors-movement
+    base_rate: About 53 percent of nonviolent campaigns from 1900 to 2006 succeeded, versus about 26 percent for armed ones.
+    rationale: Method was not the limiting factor; discipline held even as the crackdown escalated.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+    as_of: '2020'
+    confidence: high
+  - factor_key: peak_participation
+    label: Peak participation
+    framework: chenoweth
+    status: Plausibly at or above the commonly cited 3.5 percent threshold once nationwide, not just Minsk, turnout is counted.
+    direction: favors-movement
+    base_rate: No nonviolent campaign that mobilized at least 3.5 percent of the population at its peak had failed to achieve its stated aim, in the dataset built through 2006.
+    rationale: Belarus 2020 is one of the clearest post-2006 test cases of whether that rule still holds when other conditions are absent; on the outcome to date, it did not hold here.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+      - 'Chenoweth, Civil Resistance: What Everyone Needs to Know (2021)'
+    as_of: '2021'
+    confidence: medium
+  - factor_key: security_defection
+    label: Did the security forces defect
+    framework: chenoweth
+    status: None. OMON and the KGB carried out mass detention and documented torture without a reported unit-level break.
+    direction: favors-regime
+    base_rate: Defection of the security forces is the single strongest predictor of a nonviolent campaign's success.
+    rationale: Belarus is frequently cited as the counter-example showing that even a crossed-threshold, disciplined nonviolent campaign can fail without this variable.
+    sources:
+      - Nepstad, Nonviolent Revolutions (2011)
+    as_of: '2021'
+    confidence: high
+  - factor_key: external_support
+    label: The regime's foreign backing
+    framework: chenoweth
+    status: Russia backed Lukashenko financially and diplomatically through the crackdown, closing off any need to negotiate.
+    direction: favors-regime
+    base_rate: External patronage that removes a ruler's need to bargain correlates with lower odds of a nonviolent campaign's success.
+    rationale: A besieged Lukashenko with no outside lender or guarantor would have faced far more pressure to negotiate an exit.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+    as_of: '2021'
+    confidence: medium
+key_figures:
+  - name: Alexander Lukashenko
+    role: President since 1994, claimed a disputed sixth term in 2020 and seventh in 2025
+    born: 1954
+    wikipedia: https://en.wikipedia.org/wiki/Alexander_Lukashenko
+  - name: Sviatlana Tsikhanouskaya
+    role: 2020 opposition candidate, now leading an exile government from Lithuania
+    born: 1982
+    wikipedia: https://en.wikipedia.org/wiki/Sviatlana_Tsikhanouskaya
+legacy_points:
+  - Produced the largest protests in Belarusian history and still did not move a security apparatus willing to detain more than 35,000 people.
+  - Left Tsikhanouskaya leading an internationally recognized opposition-in-exile with no organized presence inside the country.
+  - Pushed Lukashenko into closer dependence on Russia, including hosting Russian troops staged for the 2022 invasion of Ukraine.
+related_revolt_slugs:
+  - georgia-eu-protests
+  - fall-of-communism-1989
+related_history_slugs: []
+live_query:
+  strong:
+    - Lukashenko
+    - Tsikhanouskaya
+    - Tikhanovskaya
+  context:
+    - Belarus
+    - Minsk
+  exclude: []
+analysis_reviewed_at: '2026-07-01'
+prediction_confidence: low
+is_published: true
+perspectives:
+  - viewpoint: The 2020 protest movement
+    viewpoint_type: movement
+    region_origin: Minsk
+    narrative: We did everything the textbooks say works. We stayed peaceful for six months against tear gas and worse. The count was taken in daylight and the world knew it. What we did not have was a single crack in the men who carried the batons.
+    key_arguments:
+      - Discipline and scale were both present; the missing variable was security-force loyalty.
+      - The movement continues in exile, not as a defeat but as a paused campaign.
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - The scale of detentions
+      - Documented torture at Okrestina
+    omitted:
+      - Internal debate over strategy after the street movement was suppressed
+  - viewpoint: The analyst
+    viewpoint_type: academic
+    region_origin: Global
+    narrative: Belarus 2020 is the case researchers cite to show the 3.5 percent rule is a strong correlation, not a law. Nearly every favorable condition held. A security apparatus willing to jail tens of thousands, backed by an external patron with no interest in a negotiated exit, was enough to hold the state together anyway.
+    key_arguments:
+      - Belarus complicates any claim that crossing 3.5 percent guarantees success.
+      - Foreign backing that removes the need to negotiate is a durable regime survival strategy.
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - The limits of participation-threshold models
+      - Russian backing
+    omitted: []
+media: []
+connections:
+  - target_slug: georgia-eu-protests
+    connection_type: parallel
+    description: Both followed a disputed election in a state within Russia's orbit, and both tested whether sustained nonviolent protest can succeed without a break in the security forces.
+  - target_slug: fall-of-communism-1989
+    connection_type: counter-example
+    description: 1989's Eastern European transitions depended on Moscow declining to intervene militarily; Belarus in 2020 shows the opposite condition, an external patron actively propping up the government, producing the opposite outcome.

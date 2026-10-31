@@ -1,0 +1,8 @@
+source: src-pp-part-ivc2b
+locator: secvotes
+url: https://nara-media-001.s3.amazonaws.com/arcmedia/research/pentagon-papers/Pentagon-Papers-Part-IV-C-2b.pdf
+read: 2026-10-09
+note: NARA's 2011 scan of the Report of the Office of the Secretary of Defense Vietnam Task Force, its text layer (the scan's own OCR), line breaks folded to spaces; OCR misreadings ('l east', 'vrere'), line-end hyphens, the 'TOP SECRET - Sensitive' running heads and the 'Declassified per Executive Order 13526' stamp are kept where the text layer prints them
+note: Part IV.C.2.b; ')' for ',' and 'follOl-TiDj2.' for 'following' are the text layer's
+
+On the evening of 4 August) in con- j unctj.on with his testing of Congressional opinion regarding reprisal action) President Johnson disclosed his intention to request a resolution i n support of U.S. Southeast Asian policy . This he did through a formal message to both houses on 5 August . Concurrently) identical draft resolutions) the language of .Thich had been prepared by executive agencies) were introduced in the Senate by J . William Fulbright (D.) Ark.) and in t he House by Thomas E. Morgan (D.) Pa; ) and co-sponsored by bi-partisan leadership . 39/ Discussed in committee on 6 August) in r esponse to testimony by~eading Administration officials) the resolution was passed the follOl-TiDj2. day -- by votes of 88 to 2 i n the Senate and 416 to 0 in the House

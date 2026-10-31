@@ -1,0 +1,7 @@
+source: src-bundestag-2016
+locator: p1
+url: https://dserver.bundestag.de/btd/18/086/1808613.pdf
+read: 2026-09-25
+note: Drucksache 18/8613, p. 1, section I, paragraphs 2 and 3; line-end hyphens rejoined
+
+Deutscher Bundestag Drucksache 18/8613 18. Wahlperiode 31.05.2016 Im Auftrag des damaligen jungtürkischen Regimes begannen am 24. April 1915 im osmanischen Konstantinopel die planmäßige Vertreibung und Vernichtung von über einer Million ethnischer Armenier. Ihr Schicksal steht beispielhaft für die Geschichte der Massenvernichtungen, der ethnischen Säuberungen, der Vertreibungen, ja der Völkermorde, von denen das 20. Jahrhundert auf so schreckliche Weise gezeichnet ist. Der Bundestag bedauert die unrühmliche Rolle des Deutschen Reiches, das als militärischer Hauptverbündeter des Osmanischen Reiches trotz eindeutiger Informationen auch von Seiten deutscher Diplomaten und Missionare über die organisierte Vertreibung und Vernichtung der Armenier nicht versucht hat, diese Verbrechen gegen die Menschlichkeit zu stoppen.

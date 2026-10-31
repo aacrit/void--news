@@ -1,0 +1,7 @@
+source: src-ddhc-1789-en
+locator: art16
+url: https://www.conseil-constitutionnel.fr/en/declaration-of-human-and-civic-rights-of-26-august-1789
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+Any society in which no provision is made for guaranteeing rights or for the separation of powers, has no Constitution.

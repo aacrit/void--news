@@ -1,0 +1,7 @@
+source: src-icty-krstic-tj
+locator: para78
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+
+78. Most significantly, the forensic evidence presented by the Prosecution also demonstrates that, during a period of several weeks in September and early October 1995, Bosnian Serb forces dug up many of the primary mass gravesites and reburied the bodies in still more remote locations.162 Forensic tests have linked certain primary gravesites and certain secondary gravesites, namely: Branjevo Military Farm and Can~ari Road 12; Petkovci Dam and Liplje 2; Orahovac (Lazete 2) and Hod`i}i Road 5; Orahovac (Lazete 1) and Hod`i}i Road 3 and 4; Glogova and Zeleni Jadar 5; and Kozluk and Can~ari Road 3. 163 The reburial evidence demonstrates a concerted campaign to conceal the bodies of the men in these primary gravesites, which was undoubtedly prompted by increasing international scrutiny of the events following the take-over of Srebrenica. Such extreme measures would not have been necessary had the majority of the bodies in these primary graves been combat victims.

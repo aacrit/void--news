@@ -1,0 +1,7 @@
+source: src-caricom-plan
+locator: item2
+url: https://caricomreparations.org/caricom/caricoms-10-point-reparation-plan/
+read: 2026-10-09
+note: point 2, Repatriation; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Over 10 million Africans were stolen from their homes and forcefully transported to the Caribbean as the enslaved chattel and property of Europeans. The transatlantic slave trade is the largest forced migration in human history and has no parallel in terms of man’s inhumanity to man.

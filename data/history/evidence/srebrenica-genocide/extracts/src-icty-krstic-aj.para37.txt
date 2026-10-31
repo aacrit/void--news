@@ -1,0 +1,7 @@
+source: src-icty-krstic-aj
+locator: para37
+url: https://www.icty.org/x/cases/krstic/acjug/en/krs-aj040419e.pdf
+read: 2026-09-24
+note: the paragraph crosses a page; the footnote and running header between the two spans are omitted
+
+37. The gravity of genocide is reflected in the stringent requirements which must be satisfied before this conviction is imposed. These requirements – the demanding proof of specific intent and the showing that the group was targeted for destruction in its entirety or in substantial part – guard against a danger that convictions for this crime will be imposed lightly. Where these requirements are satisfied, however, the law must not shy away from referring to the crime committed by its proper name. By seeking to eliminate a part of the Bosnian Muslims, the Bosnian Serb forces committed genocide. They targeted for extinction the forty thousand Bosnian Muslims living in Srebrenica, a group which was emblematic of the Bosnian Muslims in general. They stripped all the male Muslim prisoners, military and civilian, elderly and young, of their personal belongings and identification, and deliberately and methodically killed them solely on the basis of their identity. The Bosnian Serb forces were aware, when they embarked on this genocidal venture, that the harm they caused would continue to plague the Bosnian Muslims. The Appeals Chamber states unequivocally that the law condemns, in appropriate terms, the deep and lasting injury inflicted, and calls the massacre at Srebrenica by its proper name: genocide.

@@ -1,0 +1,7 @@
+source: src-ford-19740809
+locator: secpardon
+url: https://www.fordlibrarymuseum.gov/the-fords/gerald-r-ford/key-speeches-and-writings-gerald-r-ford
+read: 2026-10-09
+note: the Ford Library's text of the Remarks on Signing a Proclamation Granting Pardon to Richard Nixon, September 8, 1974, on the same page of key speeches, from the reading of the proclamation to the note; the bracketed stage directions and '(January)' are the Library's
+
+[At this point, the President began reading from the proclamation granting the pardon.] "Now, therefore, I, Gerald R. Ford, President of the United States, pursuant to the pardon power conferred upon me by Article II, Section 2, of the Constitution, have granted and by these presents do grant a full, free, and absolute pardon unto Richard Nixon for all offenses against the United States which he, Richard Nixon, has committed or may have committed or taken part in during the period from July (January) 20, 1969 through August 9, 1974." [The President signed the proclamation and then resumed reading.] "In witness whereof, I have hereunto set my hand this eighth day of September, in the year of our Lord nineteen hundred and seventy-four, and of the Independence of the United States of America the one hundred and ninety-ninth." NOTE: The President spoke at 11:05 a.m. in the Oval Office at the White House, where he signed Proclamation 4311 granting the pardon.

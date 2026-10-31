@@ -1,0 +1,8 @@
+source: src-svyatitsky-1918
+locator: secbolsheviks
+url: https://archive.org/download/godrusskojrevoljutsii19171918ggsbs30/godrusskojrevoljutsii19171918ggsbs30_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+note: the layer prints the fraction after '25% или 1' as '1/.'; read on the scan as one quarter is NOT claimed here
+
+Всего большевики получили 9.023.963 голоса, что составляетъ 25% или 1/. всЪхъ поданныхъ на выборахъ голосовъ. Отсюда видно насколько большевики «пользовались признанемъ» всей страны въ розовую пору своего торжества и «побЪды».

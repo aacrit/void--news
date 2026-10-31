@@ -11,10 +11,19 @@ import LogoWordmark from "./LogoWordmark";
 
 export default function LoadingSkeleton() {
   const [visible, setVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), 300);
+    const timer = setTimeout(() => setVisible(true), 100);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
   }, []);
 
   if (!visible) return null;
@@ -26,48 +35,78 @@ export default function LoadingSkeleton() {
         <LogoWordmark height={14} />
       </div>
 
-      {/* Lead story skeleton */}
-      <div className="skeleton-lead">
-        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", marginBottom: "var(--space-3)" }}>
-          <div className="shimmer-line" style={{ width: 80, height: 14 }} />
-          <div className="shimmer-line" style={{ width: 50, height: 12 }} />
-        </div>
-        {/* Headline lines */}
-        <div className="shimmer-line" style={{ width: "75%", height: 40, marginBottom: "var(--space-2)" }} />
-        <div className="shimmer-line" style={{ width: "55%", height: 40, marginBottom: "var(--space-3)" }} />
-        {/* Summary lines */}
-        <div className="shimmer-line" style={{ width: "90%", height: 16, marginBottom: "var(--space-2)" }} />
-        <div className="shimmer-line" style={{ width: "70%", height: 16, marginBottom: "var(--space-4)" }} />
-        {/* Meta items */}
-        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-5)" }}>
-          <div className="shimmer-line" style={{ width: 90, height: 16 }} />
-          <div className="shimmer-line" style={{ width: 30, height: 24 }} />
-        </div>
-      </div>
+      {isMobile ? (
+        /* ── Mobile skeleton — matches MobileFeed layout ── */
+        <div className="skeleton-mobile">
+          {/* Hero card placeholder */}
+          <div className="skeleton-mobile__hero">
+            <div className="shimmer-line" style={{ width: 60, height: 10, marginBottom: 8 }} />
+            <div className="shimmer-line" style={{ width: "90%", height: 22, marginBottom: 6 }} />
+            <div className="shimmer-line" style={{ width: "70%", height: 22, marginBottom: 10 }} />
+            <div className="shimmer-line" style={{ width: "100%", height: 14, marginBottom: 4 }} />
+            <div className="shimmer-line" style={{ width: "85%", height: 14, marginBottom: 4 }} />
+            <div className="shimmer-line" style={{ width: "60%", height: 14 }} />
+          </div>
 
-      {/* Medium story skeletons */}
-      <div className="skeleton-grid">
-        {[0, 1, 2].map((i) => (
-          <div key={i} style={{ padding: "var(--space-3) 0" }}>
-            {/* Meta items */}
-            <div style={{ display: "flex", gap: "var(--space-3)", marginBottom: "var(--space-2)" }}>
-              <div className="shimmer-line" style={{ width: 60, height: 12 }} />
-              <div className="shimmer-line" style={{ width: 40, height: 12 }} />
+          {/* Brief pill placeholder */}
+          <div className="skeleton-mobile__pill">
+            <div className="shimmer-line" style={{ width: "100%", height: 44, borderRadius: 8 }} />
+          </div>
+
+          {/* 5 compact card placeholders */}
+          {[0, 1, 2, 3, 4].map((i) => (
+            <div key={i} className="skeleton-mobile__card">
+              <div className="skeleton-mobile__card-text">
+                <div className="shimmer-line" style={{ width: 50, height: 8, marginBottom: 6 }} />
+                <div className="shimmer-line" style={{ width: "90%", height: 14, marginBottom: 4 }} />
+                <div className="shimmer-line" style={{ width: "60%", height: 14 }} />
+              </div>
+              <div className="shimmer-line" style={{ width: 32, height: 32, borderRadius: "50%", flexShrink: 0 }} />
             </div>
-            {/* Headline lines */}
-            <div className="shimmer-line" style={{ width: "90%", height: 22, marginBottom: "var(--space-2)" }} />
-            <div className="shimmer-line" style={{ width: "65%", height: 22, marginBottom: "var(--space-2)" }} />
-            {/* Summary lines */}
-            <div className="shimmer-line" style={{ width: "95%", height: 14, marginBottom: "var(--space-1)" }} />
-            <div className="shimmer-line" style={{ width: "80%", height: 14, marginBottom: "var(--space-3)" }} />
-            {/* Meta items */}
-            <div style={{ display: "flex", gap: "var(--space-3)" }}>
-              <div className="shimmer-line" style={{ width: 70, height: 14 }} />
-              <div className="shimmer-line" style={{ width: 24, height: 20 }} />
+          ))}
+        </div>
+      ) : (
+        /* ── Desktop skeleton — matches actual layout: SkyboxBanner → hero → feed-grid ── */
+        <>
+          {/* SkyboxBanner placeholder — 2-column compact bar */}
+          <div className="skeleton-skybox">
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
+              <div>
+                <div className="shimmer-line" style={{ width: 90, height: 10, marginBottom: 6 }} />
+                <div className="shimmer-line" style={{ width: "80%", height: 14, marginBottom: 6 }} />
+                <div className="shimmer-line" style={{ width: "60%", height: 10 }} />
+              </div>
+              <div>
+                <div className="shimmer-line" style={{ width: 100, height: 10, marginBottom: 6 }} />
+                <div className="shimmer-line" style={{ width: "70%", height: 14, marginBottom: 6 }} />
+                <div className="shimmer-line" style={{ width: "50%", height: 10 }} />
+              </div>
             </div>
           </div>
-        ))}
-      </div>
+
+          {/* Hero slot — single full-width lead story shimmer */}
+          <div style={{ paddingTop: "var(--space-4)", marginBottom: "var(--space-5)", borderBottom: "1px solid var(--border-subtle)", paddingBottom: "var(--space-5)" }}>
+            <div className="shimmer-line" style={{ width: 80, height: 10, marginBottom: "var(--space-3)" }} />
+            <div className="shimmer-line" style={{ width: "75%", height: 36, marginBottom: "var(--space-2)" }} />
+            <div className="shimmer-line" style={{ width: "55%", height: 36, marginBottom: "var(--space-4)" }} />
+            <div className="shimmer-line" style={{ width: "95%", height: 14, marginBottom: "var(--space-2)" }} />
+            <div className="shimmer-line" style={{ width: "90%", height: 14, marginBottom: "var(--space-2)" }} />
+            <div className="shimmer-line" style={{ width: "70%", height: 14 }} />
+          </div>
+
+          {/* Feed grid — 3-column story card shimmer (matches feed-grid) */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0 var(--space-5)" }}>
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <div key={i} style={{ borderRight: (i % 3) < 2 ? "1px solid var(--border-subtle)" : "none", paddingRight: (i % 3) < 2 ? "var(--space-5)" : 0, paddingBottom: "var(--space-4)", borderBottom: "1px solid var(--border-subtle)", marginBottom: "var(--space-4)" }}>
+                <div className="shimmer-line" style={{ width: "85%", height: 18, marginBottom: "var(--space-2)" }} />
+                <div className="shimmer-line" style={{ width: "65%", height: 18, marginBottom: "var(--space-3)" }} />
+                <div className="shimmer-line" style={{ width: "95%", height: 12, marginBottom: "var(--space-1)" }} />
+                <div className="shimmer-line" style={{ width: "80%", height: 12 }} />
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       <span className="sr-only">Loading stories, please wait...</span>
     </div>

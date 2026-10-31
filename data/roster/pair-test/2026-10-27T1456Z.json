@@ -1,0 +1,87 @@
+{
+ "collected_at": "2026-10-27T14:56:52Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16242375/Michael-Carrick-STAYING-Man-United-decide-against-sacking-fire-boss-day-crisis-talks.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Michael Carrick is STAYING: Man United decide against wielding axe after day of crisis talks - but under-pressure boss must still convince chiefs he is the right man for the job",
+      "published": "Tue, 27 Oct 2026 13:21:18 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/man-united-manager-latest-live-37813167",
+      "title": "Michael Carrick future LIVE: Man Utd make decision for Chelsea as players and staff informed",
+      "published": "Tue, 27 Oct 2026 14:33:22 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16242339/Manhunt-father-teenager-killed-A66-Middlesbrough-crash-fails-appear-court-assaulting-celebrant-sons-funeral.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Manhunt for father of teenager killed in A66 Middlesbrough crash after he fails to appear in court for assaulting celebrant at son's funeral",
+      "published": "Tue, 27 Oct 2026 12:42:58 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/gye-worthy-a66-funeral-assault-37814739",
+      "title": "Dad of teen killed in A66 crash arrested after failing to appear in court",
+      "published": "Tue, 27 Oct 2026 13:32:54 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 139,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/erdogans-family-business-ties-complicate-azerbaijan-dispute/",
+      "title": "Erdogan’s family business ties complicate Azerbaijan dispute",
+      "published": "Mon, 26 Oct 2026 23:01:29 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 317,
+    "left": 10
+   }
+  }
+ }
+}

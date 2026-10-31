@@ -1,0 +1,8 @@
+source: src-pp-part-iva5
+locator: seceighty
+url: https://nara-media-001.s3.amazonaws.com/arcmedia/research/pentagon-papers/Pentagon-Papers-Part-IV-A-5.pdf
+read: 2026-10-09
+note: NARA's 2011 scan of the Report of the Office of the Secretary of Defense Vietnam Task Force, its text layer (the scan's own OCR), line breaks folded to spaces; OCR misreadings ('l east', 'vrere'), line-end hyphens, the 'TOP SECRET - Sensitive' running heads and the 'Declassified per Executive Order 13526' stamp are kept where the text layer prints them
+note: Part IV.A.5: the study's own reading of the 80 percent remark, which it does not quote
+
+President Eisenhower i s widely quoted to the effect t hat in 1954 as many as 80% of the Vietnamese people would have voted for Ho Chi Minh) as the popular hero of their liberation, in an el ection against Bao Dai. In October 1955, Diem ran against Bao Dai in a referendwn and .ron -- by a dubiously ovenThelm:Lng vote, but he plainly won nevertheless . It is aftaost certain that by 1956 the proportion which might have voted for Ho -- in a free election agai nst Diem -- would have been much small er than 80%.

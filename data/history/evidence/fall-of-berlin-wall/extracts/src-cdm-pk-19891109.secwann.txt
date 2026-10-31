@@ -1,0 +1,8 @@
+source: src-cdm-pk-19891109
+locator: secwann
+url: https://www.chronik-der-mauer.de/system/files/dokument_pdf/1989_11_09_CdM_Dok_Schabowski_PK_Transkription_NEU_0.pdf
+read: 2026-10-09
+note: page 2 of the PDF; the speaker labels are Hertle's
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Riccardo Ehrman, Journalist, ANSA: Ohne Pass? Ohne Pass? – (Nein, nein!) Krzysztof Janowski, Journalist, Voice of America: Ab wann tritt das ...? (...Stimmengewirr...) Ab wann tritt das in Kraft? Günter Schabowski: Bitte? Peter Brinkmann, Journalist, Bild-Zeitung: Ab sofort? Ab ...?

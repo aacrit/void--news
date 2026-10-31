@@ -1,0 +1,53 @@
+source: src-med-1946-ch10
+locator: sectablea
+url: https://avalon.law.yale.edu/20th_century/mp10.asp
+read: 2026-10-05
+note: Table A, one cell per line as the page renders it
+
+The number of total casualties has been estimated at various times since the bombings with wide discrepancies. The Manhattan Engineer District's best available figures are:
+
+
+
+
+
+
+
+
+
+
+TABLE A 
+
+
+Estimates of Casualties 
+
+Hiroshima 
+
+Nagasaki 
+
+
+Pre-raid population 
+
+255,000 
+
+195,000 
+
+
+Dead 
+
+66,000 
+
+39,000 
+
+
+Injured 
+
+69,000 
+
+25,000 
+
+
+Total Casualties 
+
+135,000 
+
+64,000

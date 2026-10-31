@@ -1,0 +1,7 @@
+source: src-pa-bhagwant-singh
+locator: para1
+url: https://www.1947partitionarchive.org/bhagwant-singh-jawanda/
+read: 2026-09-25
+note: the second sentence of paragraph 1 of the story as the Archive's page prints it; the account is the Archive's summary of the interview, in the third person
+
+The middle of 5 brothers, Mr. Jawanda was born in 1924 and raised within a large extended family in his father’s village of Shanker, Ludhiana District, Punjab.

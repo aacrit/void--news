@@ -1,0 +1,8 @@
+source: src-hansard-19460222
+locator: secmutiny
+url: https://api.parliament.uk/historic-hansard/commons/1946/feb/22/royal-indian-navy-mutiny
+read: 2026-10-09
+note: the text is the Hansard page's own text (UK Parliament, historic Hansard), whitespace collapsed
+note: the Prime Minister (Mr. Attlee)
+
+On Wednesday, 20th February, the situation in Bombay became more serious, 7,000 ratings having joined the mutiny.

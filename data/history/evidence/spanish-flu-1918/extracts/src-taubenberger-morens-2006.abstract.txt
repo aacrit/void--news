@@ -1,0 +1,6 @@
+source: src-taubenberger-morens-2006
+locator: abstract
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3291398/fullTextXML
+read: 2026-09-25
+
+The "Spanish" influenza pandemic of 1918–1919, which caused ≈50 million deaths worldwide, remains an ominous warning to public health. Many questions about its origins, its unusual epidemiologic features, and the basis of its pathogenicity remain unanswered. The public health implications of the pandemic therefore remain in doubt even as we now grapple with the feared emergence of a pandemic caused by H5N1 or other virus. However, new information about the 1918 virus is emerging, for example, sequencing of the entire genome from archival autopsy tissues. But, the viral genome alone is unlikely to provide answers to some critical questions. Understanding the 1918 pandemic and its implications for future pandemics requires careful experimentation and in-depth historical analysis.

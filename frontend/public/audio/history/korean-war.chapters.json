@@ -1,0 +1,82 @@
+{
+ "version": "1.2.0",
+ "title": "The Korean War",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 48.458
+  },
+  {
+   "startTime": 48.458,
+   "title": "Thirty minutes and a map",
+   "endTime": 91.111
+  },
+  {
+   "startTime": 91.111,
+   "title": "The bridges",
+   "endTime": 172.515
+  },
+  {
+   "startTime": 172.515,
+   "title": "Inchon",
+   "endTime": 222.601
+  },
+  {
+   "startTime": 222.601,
+   "title": "The river at night",
+   "endTime": 312.189
+  },
+  {
+   "startTime": 312.189,
+   "title": "The wrong war",
+   "endTime": 382.064
+  },
+  {
+   "startTime": 382.064,
+   "title": "Five accounts",
+   "endTime": 409.004
+  },
+  {
+   "startTime": 409.004,
+   "title": "American / UN Coalition",
+   "endTime": 465.691
+  },
+  {
+   "startTime": 465.691,
+   "title": "North Korean / DPRK, Fatherland Liberation War",
+   "endTime": 547.928
+  },
+  {
+   "startTime": 547.928,
+   "title": "South Korean / ROK, 6.25 War",
+   "endTime": 629.483
+  },
+  {
+   "startTime": 629.483,
+   "title": "Chinese, War to Resist American Aggression and Aid Korea",
+   "endTime": 714.076
+  },
+  {
+   "startTime": 714.076,
+   "title": "Civilian, Divided Families",
+   "endTime": 798.95
+  },
+  {
+   "startTime": 798.95,
+   "title": "What each one leaves out",
+   "endTime": 855.583
+  },
+  {
+   "startTime": 855.583,
+   "title": "Legacy",
+   "endTime": 870.407
+  },
+  {
+   "startTime": 870.407,
+   "endTime": 883.507,
+   "title": "Also from Void News"
+  }
+ ]
+}

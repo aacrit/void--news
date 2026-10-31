@@ -1,0 +1,7 @@
+source: src-trotsky-eastman-1932
+locator: secfrombelow
+url: https://www.marxists.org/archive/trotsky/1930/hrr/ch07.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+Thus the fact is that the February revolution was begun from below, overcoming the resistance of its own revolutionary organisations, the initiative being taken of their own accord by the most oppressed and downtrodden part of the proletariat – the women textile workers, among them no doubt many soldiers’ wives. The overgrown breadlines had provided the last stimulus. About 90,000 workers, men and women, were on strike that day.

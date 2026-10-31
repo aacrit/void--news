@@ -1,0 +1,7 @@
+source: src-pa-sarla-dutta
+locator: para4
+url: https://www.1947partitionarchive.org/sarla-dutta/
+read: 2026-09-25
+note: the fourth paragraph of the story, in her own voice
+
+Communal harmony was at its best in Mirpur when I was growing up. My parents never restricted me from going to my friends’ or neighbours’ houses based on their caste or religion. In 1947, Mirpur was badly affected by the riots and violence that ensued. Gun-firing and fires broke out in and around the city. Although the military arrived to escort the people, for some reason, the people received little to no help at that point in time. When chaos erupted, we all began walking in the same direction, forming a kafila (caravan).

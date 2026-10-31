@@ -1,0 +1,8 @@
+source: src-nsa-hanyok-2001
+locator: secflyingfish
+url: https://www.nsa.gov/portals/75/documents/news-features/declassified-documents/gulf-of-tonkin/articles/release-1/rel1_skunks_bogies.pdf
+read: 2026-10-09
+note: NSA's declassified PDF of the Cryptologic Quarterly article, its text layer, line breaks folded to spaces; the classification markings the text layer garbles ('TeP 8E6AE"fl', '(SI/SI)') and line-end hyphens are kept as printed
+note: a photograph caption ('A Dou9l:.is A-4 Skyhawk ...') falls inside the passage in the text layer and is kept; the article gives no footnote for the remark, so it is held as the article's, secondhand
+
+As for the Tonkin Gulf incident itself, President Johnson summed it up best just a few (V) A Dou9l:.is A-4 Skyhawk attilck plane qtapults ff.om a qrriet in the Gulfo{Tonkin during ;itt;:ick operations in August 1964. days later: "Hell, those damn, stupid sailors were just shooting at flying fish."

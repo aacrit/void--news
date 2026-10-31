@@ -1,0 +1,127 @@
+{
+ "collected_at": "2026-10-15T13:43:33Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 26,
+     "right": {
+      "url": "https://www.dailymail.com/news/royals/article-16211567/Clinging-like-survivors-Body-language-expert-claims-Harrys-protective-clutch-Meghans-shoulder-revealed-inner-tension.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "'Clinging together like survivors': Body language expert claims Harry's 'protective' clutch of Meghan's shoulder revealed 'inner tension'",
+      "published": "Thu, 15 Oct 2026 14:40:44 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/prince-harry-meghan-nottingham-live-37771520",
+      "title": "Prince Harry and Meghan live: Duchess of Sussex says 'it’s great to be back' as crowds cheer",
+      "published": "Thu, 15 Oct 2026 13:33:49 +0000"
+     }
+    },
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16210705/Tiger-attack-victim-mauled-death-Yorkshire-zoo-suffered-multiple-traumatic-injuries-inquest-hears.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Tiger attack victim's family expressed 'concerns' about his contact with mental health services before he was mauled to death at Yorkshire zoo, inquest hears",
+      "published": "Thu, 15 Oct 2026 12:02:58 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/william-chapman-tiger-attack-victims-37774044",
+      "title": "William Chapman: Tiger attack victim's neighbour noticed two changes in him before tragic death",
+      "published": "Thu, 15 Oct 2026 12:33:49 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/middle-east/iran-news/article-911807",
+      "title": "Kamala Harris criticizes Biden administration's failure to curb Israel's conduct during Gaza war",
+      "published": "Thu, 15 Oct 2026 14:04:10 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/us-news/2026-10-14/ty-article/.premium/kamala-harris-biden-shouldve-acted-to-stop-israels-horrific-conduct-in-gaza/000001a1-3b5d-d1eb-abe1-7f7d8f900000",
+      "title": "Kamala Harris says Biden should have done more to stop Israel's 'horrific conduct' in Gaza",
+      "published": "Wed, 14 Oct 2026 20:39:12 +0300"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/politics-and-diplomacy/article-911759",
+      "title": "Qatargate suspect Urich met with Qatar's 'head of Israel project' months after October 7 - report",
+      "published": "Thu, 15 Oct 2026 08:22:15 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-politics/2026-10-15/ty-article/.premium/exclusive-netanyahu-aides-met-qataris-in-2022-even-after-he-returned-to-power/000001a1-3c18-d00f-afaf-bd7acdb10000",
+      "title": "Exclusive: Netanyahu advisers met Qatari officials in 2022 while working on World Cup campaign",
+      "published": "Thu, 15 Oct 2026 00:12:51 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/classified-turkish-intelligence-operation-in-moldova-comes-back-under-judicial-scrutiny/",
+      "title": "Classified Turkish intelligence operation in Moldova comes back under judicial scrutiny",
+      "published": "Tue, 06 Oct 2026 22:12:19 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/erdogan-calls-for-grand-consensus-amid-terror-free-turkiye-success",
+      "title": "Erdoğan calls for ‘grand consensus’ amid terror-free Türkiye success",
+      "published": "Thu, 01 Oct 2026 14:09:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/whatever-our-enemies-do-erdogans-son-rallies-diaspora-network-in-europe-as-german-intelligence-warns-of-ankaras-spying-on-dissidents/",
+      "title": "Erdogan’s son vows to stand against enemies at diaspora rally in Germany",
+      "published": "Mon, 12 Oct 2026 22:01:54 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 308,
+    "left": 10
+   }
+  }
+ }
+}

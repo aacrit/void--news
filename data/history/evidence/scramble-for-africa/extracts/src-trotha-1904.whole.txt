@@ -1,0 +1,38 @@
+source: src-trotha-1904
+locator: whole
+url: https://germanhistorydocs.org/de/das-wilhelminische-kaiserreich-und-der-erste-weltkrieg-1890-1918/lothar-von-trothas-vernichtungsbefehl-2-oktober-1904
+read: 2026-09-25
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: the transcription as GHDI publishes it, from the first words of the proclamation to the signature; the copy's heading (Abschrift. Osombo-Windhuk, 2.10.04, Kommando der Schutztruppe, J. Nr. 3737) is carried in the entry, not here
+
+Ich der große General der Deutschen Soldaten sende diesen Brief
+an das Volk der Herero.
+Die Herero sind nicht mehr Deutsche Untertanen. Sie haben
+gemordet und gestohlen, haben verwundeten Soldaten Ohren und Nasen
+und andere Körperteile abgeschnitten und wollen jetzt aus Feigheit
+nicht mehr kämpfen. Ich sage dem Volk: Jeder der einen der Kapitäne
+an eine meiner Stationen als Gefangenen abliefert, erhält tausend
+Mark, wer Samuel Maherero bringt, erhält fünftausend Mark. Das Volk
+der Herero muß jedoch das Land verlassen. Wenn das Volk dies nicht
+tut, so werde ich es mit dem Groot Rohr [kapholländisch, Geschütz,
+Kanone] dazu zwingen.
+Innerhalb der Deutschen Grenze wird jeder Herero mit oder ohne
+Gewehr, mit oder ohne Vieh erschossen, ich nehme keine Weiber und
+keine Kinder mehr auf, treibe sie zu ihrem Volke zurück oder lasse
+auch auf sie schießen.
+Dies sind meine Worte an das Volk der Herero.
+Der große
+General des mächtigen Deutschen Kaisers.
+Dieser Erlaß ist bei den Appells den Truppen mitzuteilen mit dem
+Hinzufügen, daß auch der Truppe, die einen der Kapitäne fängt, die
+entsprechende Belohnung zu teil wird, und daß das Schießen auf
+Weiber und Kinder so zu verstehen ist, daß über sie hinweggeschossen
+wird, um sie zum Laufen zu zwingen. Ich nehme mit Bestimmtheit an,
+daß dieser Erlaß dazu führen wird, keine männliche Gefangene mehr zu
+machen, aber nicht zu Grausamkeiten gegen Weiber und Kinder
+ausartet. Diese werden schon fortlaufen, wenn zweimal über sie
+hinweggeschossen wird. Die Truppe wird sich des guten Rufes der
+Deutschen Soldaten bewußt bleiben.
+Der Kommandeur.
+gez. v. Trotha
+Generalleutnant.

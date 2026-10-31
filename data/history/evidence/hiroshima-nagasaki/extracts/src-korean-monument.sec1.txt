@@ -1,0 +1,13 @@
+source: src-korean-monument
+locator: sec1
+url: https://www.pcf.city.hiroshima.jp/virtual/map-e/irei/tour_11_e.html
+read: 2026-10-05
+note: the page's own text begins 'apan': its first letter is dropped by the page's markup
+
+apan took control of Korea during the Meiji
+Restoration and annexed in 1910. Many Koreans who had lost their means of
+livelihood were forced to come to Japan in search of work. Moreover, to
+make up for the wartime labor shortage, Japan also brought many Koreans
+to work in Japan through forced service or conscription. At the end of the
+war, about three million Koreans were living in Japan, and it is said that
+tens of thousands of them suffered the atomic bombing in Hiroshima.

@@ -1,0 +1,7 @@
+source: src-mandela-rivonia-1964
+locator: secviolence
+url: https://www.un.org/en/events/mandeladay/court_statement_1964.shtml
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+At the beginning of June 1961, after a long and anxious assessment of the South African situation, I, and some colleagues, came to the conclusion that as violence in this country was inevitable, it would be unrealistic and wrong for African leaders to continue preaching peace and non-violence at a time when the Government met our peaceful demands with force.
