@@ -1,0 +1,140 @@
+{
+ "collected_at": "2026-11-01T15:29:00Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16255515/Trump-judge-Epstein-lawsuit-Wall-Street-Journal.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Judge tosses Trump's $10bn lawsuit against Wall Street Journal over Epstein birthday card just days before midterms",
+      "published": "Sun, 01 Nov 2026 01:06:11 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/politics/donald-trump-epstein-lawsuit-dismissed-37831493",
+      "title": "Donald Trump dealt stinging legal defeat over Epstein birthday book days from Midterms",
+      "published": "Sun, 1 Nov 2026 12:59:54 +0000"
+     }
+    },
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16256653/Five-teenage-boys-seriously-hurt-stabbed-Halloween-party.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Five teenage boys seriously hurt after being stabbed at Halloween party",
+      "published": "Sun, 01 Nov 2026 15:23:39 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/eastleigh-halloween-party-teens-stabbing-37831706",
+      "title": "Five teenage boys seriously injured in stabbing at Eastleigh party on Halloween",
+      "published": "Sun, 1 Nov 2026 14:22:22 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16252215/Liverpool-vs-Arsenal-Premier-League-LIVE.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Liverpool vs Arsenal - Premier League: Trey Nyoni is handed his first top-flight start for the Reds, while Christos Tzolis is back in the Gunners' XI after being out with a hamstring injury",
+      "published": "Sun, 01 Nov 2026 15:26:53 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/liverpool-arsenal-live-stream-online-37825954",
+      "title": "Liverpool vs Arsenal live stream details and how to watch online",
+      "published": "Sun, 1 Nov 2026 15:00:00 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 111,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/influencers-26/50jews-26/article-908123",
+      "title": "No. 2: Benjamin Netanyahu: Shaping Israel’s politics and global image for a generation",
+      "published": "Thu, 10 Sep 2026 18:30:37 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/elections/2026-10-30/ty-article-magazine/.premium/from-assad-to-lieberman-the-israelization-of-the-golan-druze-reached-the-polls/000001a1-8c94-dd03-a7bf-9ef64c2b0000",
+      "title": "From Assad to Lieberman: The Israelization of the Druze in the Golan reached the polls",
+      "published": "Fri, 30 Oct 2026 18:48:28 +0200"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/opinion/article-913221",
+      "title": "By excluding Arab citizens, Netanyahu's rivals may hand him another term - opinion",
+      "published": "Sun, 01 Nov 2026 15:53:35 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/elections/2026-10-29/ty-article/.premium/shin-bet-election-interference-probe-does-not-implicate-whole-group-of-voters/000001a1-8858-d125-a3b1-edde70160000",
+      "title": "Shin Bet: Election interference probe does not implicate whole group of voters",
+      "published": "Thu, 29 Oct 2026 19:45:06 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 132,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/erdogans-family-business-ties-complicate-azerbaijan-dispute/",
+      "title": "Erdogan’s family business ties complicate Azerbaijan dispute",
+      "published": "Mon, 26 Oct 2026 23:01:29 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailysabah.com/world/mid-east/syria-considers-joining-mecca-defense-pact",
+      "title": "Syria considers joining Mecca defense pact",
+      "published": "Sat, 31 Oct 2026 12:34:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/turkey-mimics-nato-in-building-military-alliance-with-pakistan-and-saudi-arabia/",
+      "title": "Turkey mimics NATO in building military alliance with Pakistan and Saudi Arabia",
+      "published": "Wed, 28 Oct 2026 23:12:05 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 308,
+    "left": 10
+   }
+  }
+ }
+}
