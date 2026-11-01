@@ -1,0 +1,92 @@
+[
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 25,
+  "a": {
+   "title": "&apos;Star Trek&apos; star Patrick Stewart dies age 86",
+   "summary": "The Shakespearean actor landed the role of a lifetime as &quot;Star Trek&quot; Captain Picard. He passed away at age 86.",
+   "link": "https://www.dw.com/en/star-trek-star-patrick-stewart-dies-age-86/a-79803071?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Star-Trek-Schauspieler Patrick Stewart ist tot",
+   "summary": "Als Captain Picard auf der Enterprise gelangte Shakespeare-Mime Patrick Stewart zu Weltruhm. Im Alter von 86 Jahren ist er jetzt in Los Angeles gestorben. Fans und Stars trauern.",
+   "link": "https://www.dw.com/de/star-trek-schauspieler-patrick-stewart-ist-tot/a-79803535?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 20,
+  "a": {
+   "title": "Wagner brothers begin new NBA chapter on different paths",
+   "summary": "After five years, brothers Franz and Moritz Wagner are no longer playing together for the Orlando Magic. In the new NBA season, their separation will likely mean the new &quot;German&quot; team is the Charlotte Hornets.",
+   "link": "https://www.dw.com/en/wagner-brothers-begin-new-nba-chapter-on-different-paths/a-79712668?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Das Ende der Wagners - auf getrennten Wegen in die neue NBA-Saison",
+   "summary": "Nach fünf Jahren spielen die Brüder Franz und Moritz Wagner nicht mehr gemeinsam für die Orlando Magic. In der neuen NBA-Saison haben sie ganz unterschiedliche Rollen. Neuer &quot;deutscher Klub&quot; sind die Charlotte Hornets.",
+   "link": "https://www.dw.com/de/das-ende-der-wagners-auf-getrennten-wegen-in-die-neue-nba-saison/a-79709596?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 19,
+  "a": {
+   "title": "Harry Kane: Ballon d’Or for Bayern Munich striker",
+   "summary": "Bayern Munich striker Harry Kane has won football&apos;s most prestigious individual prize, beating Kylian Mbappe and Lamine Yamal. Kane has developed even more in the Bundesliga despite an uneven league.",
+   "link": "https://www.dw.com/en/harry-kane-ballon-d-or-for-bayern-munich-striker/a-79723299?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Bayern-Stürmer Harry Kane gewinnt den Ballon d&apos;Or",
+   "summary": "Harry Kane beendet die jahrzehntelange Ballon d&apos;Or-Durststrecke des FC Bayern München. Der englische Nationalstürmer hat sich seit seinem Wechsel in die Bundesliga sogar noch weiterentwickelt - und wird dafür belohnt.",
+   "link": "https://www.dw.com/de/bayern-stürmer-harry-kane-gewinnt-den-ballon-d-or/a-79760904?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 20,
+  "a": {
+   "title": "Poland rocked by Constitutional showdown",
+   "summary": "Poland’s constitutional crisis deepened on Saturday as the European Commission urged President Karol Nawrocki to recognise new judges appointed by Prime Minister Donald Tusk. The standoff comes ahead of next year’s parliamentary election, with polls suggesting a close race between Tusk’s coalition and the nationalist right. Camille Corcoran reports.",
+   "link": "https://www.france24.com/en/poland-rocked-by-constitutional-showdown",
+   "published": "Sun, 01 Nov 2026 13:41:40 GMT"
+  },
+  "b": {
+   "title": "Crise politique en Pologne : Bruxelles fait pression sur le président polonais",
+   "summary": "La Commission européenne a pris le parti du Premier ministre polonais Donald Tusk samedi 31 octobre en appelant le président polonais Karol Nawrocki à valider la nomination de juges pour dénouer une profonde crise politique à Varsovie.",
+   "link": "https://www.france24.com/fr/vid%C3%A9o/20261101-crise-politique-en-pologne-bruxelles-fait-pression-sur-le-pr%C3%A9sident-polonais",
+   "published": "Sun, 01 Nov 2026 12:26:23 GMT"
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 19,
+  "a": {
+   "title": "France: Route du Rhum fleet ready to depart",
+   "summary": "The Route du Rhum, billed as the world’s biggest solo transatlantic race, is set to depart from Saint-Malo in Brittany. Skippers will sail alone to Guadeloupe, with professionals and amateur sailors competing in the race, held every four years. Selina Sykes reports.",
+   "link": "https://www.france24.com/en/france-route-du-rhum-fleet-ready-to-depart",
+   "published": "Sun, 01 Nov 2026 13:12:44 GMT"
+  },
+  "b": {
+   "title": "Route du Rhum : en direct du départ à Saint-Malo",
+   "summary": "Les 115 marins engagés dans la 13e Route du Rhum ont pris le départ dimanche à 13 h 02 à Saint-Malo pour une traversée de l'Atlantique en solitaire vers la Guadeloupe que les plus rapides devraient atteindre en six jours seulement. Notre envoyé spécial Cédric Ferreira était au cœur de l'action, aux côtés des marins.",
+   "link": "https://www.france24.com/fr/vid%C3%A9o/20261101-route-du-rhum-en-direct-du-d%C3%A9part-%C3%A0-saint-malo",
+   "published": "Sun, 01 Nov 2026 12:33:32 GMT"
+  }
+ }
+]
