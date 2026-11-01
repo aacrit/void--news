@@ -17,11 +17,11 @@
   "cuts_by_reason": {},
   "dropped": 0,
   "fresh_ids": [
-   "629fd44c-3ff4-4137-86ed-8f735ebefb55"
+   "f008c558-e355-44f7-87fb-756dc6950bb8"
   ],
-  "kept_failing": 10,
+  "kept_failing": 8,
   "regenerated": 0,
   "reviewed": true
  },
- "startedAt": "2026-10-31T16:57:20Z"
+ "startedAt": "2026-11-01T17:51:24Z"
 }

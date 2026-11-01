@@ -1,36 +1,36 @@
 {
- "builtAt": "2026-10-31T17:07:48.148835Z",
- "briefCreatedAt": "2026-10-31T17:07:13.293948+00:00",
+ "builtAt": "2026-11-01T18:01:40.112525Z",
+ "briefCreatedAt": "2026-11-01T18:01:09.362797+00:00",
  "products": {
   "card_headline": {
    "sentences": 30,
-   "anchored": 4,
+   "anchored": 3,
    "checked": 0,
    "anchorTypes": [
     "number",
     "quote"
    ],
    "byAnchor": {
-    "number": 4
+    "number": 3
    },
    "coverage": 0.0
   },
   "card_summary": {
-   "sentences": 70,
-   "anchored": 21,
-   "checked": 1,
+   "sentences": 73,
+   "anchored": 19,
+   "checked": 2,
+   "byAnchor": {
+    "number": 17,
+    "quote": 2
+   },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "byAnchor": {
-    "number": 17,
-    "quote": 4
-   },
-   "coverage": 1.4
+   "coverage": 2.7
   },
   "points": {
-   "sentences": 27,
+   "sentences": 30,
    "anchored": 0,
    "checked": 0,
    "anchorTypes": [
@@ -39,7 +39,7 @@
    ],
    "coverage": 0.0,
    "byAnchor": {},
-   "machinePointsExcluded": 104
+   "machinePointsExcluded": 105
   },
   "tldr": {
    "sentences": 29,
@@ -103,20 +103,15 @@
  "evidence": {
   "shipped": 30,
   "freshKnown": true,
-  "fresh": 0,
+  "fresh": 1,
   "states": {
-   "confirmable": 6,
+   "confirmable": 4,
    "index cap below writer window": 5,
-   "stub rows, card not fresh": 19
+   "stub rows, card not fresh": 21
   }
  },
  "audit": {
-  "shipped": {
-   "cannot confirm": {
-    "E-13 misattached": 8,
-    "E-14 absent": 2
-   }
-  },
+  "shipped": {},
   "bench": {}
  },
  "run": {
@@ -130,7 +125,7 @@
     "tldr": true
    }
   },
-  "startedAt": "2026-10-31T16:57:20Z",
+  "startedAt": "2026-11-01T17:51:24Z",
   "stage2": {
    "candidates": 45,
    "critique_read": 0,
@@ -138,7 +133,7 @@
    "cut_sentences": 0,
    "cuts_by_reason": {},
    "dropped": 0,
-   "kept_failing": 10,
+   "kept_failing": 8,
    "regenerated": 0,
    "reviewed": true,
    "fresh": 1
@@ -163,5 +158,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-10-31T17:08:00Z"
+ "computedAt": "2026-11-01T18:01:52Z"
 }
