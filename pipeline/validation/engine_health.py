@@ -118,7 +118,7 @@ def runtime_and_llm(conn: sqlite3.Connection) -> dict:
     usage = m.get("gemini_usage")
     if isinstance(usage, dict) and usage:
         req = usage.get("requests_by_model") or {}
-        flash = usage.get("flash_model") or "gemini-2.5-flash"
+        flash = usage.get("flash_model") or "gemini-3.8-flash"
         out["llm"] = {
             "requests_by_model": req,
             "calls_by_model": usage.get("calls_by_model") or {},
