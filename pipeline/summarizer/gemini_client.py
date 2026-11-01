@@ -50,8 +50,16 @@ except ImportError:
 #                          calls/day, well under flash's 20/day cap), so we
 #                          spend the higher-quality flash tier where it shows.
 # Callers pick per-call via generate_json(..., model=...). Both overridable.
-_MODEL = os.environ.get("GEMINI_MODEL", "").strip() or "gemini-2.5-flash-lite"
-_FLASH_MODEL = os.environ.get("GEMINI_FLASH_MODEL", "").strip() or "gemini-2.5-flash"
+#
+# 2026-11-01: the 2.5 pair is closed to new projects. The key moved to a new
+# free project (the old one sat on prepaid billing at zero and answered 402),
+# and run #417 got 404 on every call: "models/gemini-2.5-flash is no longer
+# available to new users. Please update your code to use models/gemini-3.8-flash"
+# (and gemini-3.5-flash-lite for the lite tier). The defaults are the names
+# Google's own error gave. Their free-tier caps are read in AI Studio's rate
+# limits page, not assumed from the 2.5 numbers above.
+_MODEL = os.environ.get("GEMINI_MODEL", "").strip() or "gemini-3.5-flash-lite"
+_FLASH_MODEL = os.environ.get("GEMINI_FLASH_MODEL", "").strip() or "gemini-3.8-flash"
 
 # Rate limiting state (module-level singleton). flash-lite free tier is 15 RPM,
 # so ~4.2s spacing (≈14 RPM) keeps every run under the per-minute ceiling — this

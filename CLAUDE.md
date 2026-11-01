@@ -283,8 +283,10 @@ and the live page. Thirty-five commits described as done were not live.
 
 | Model | Cap | Spends on |
 |---|---|---|
-| `gemini-2.5-flash` | **20 requests/DAY** | daily brief (~2-4) + candidate summaries (~10) ≈ 13/day |
-| `gemini-2.5-flash-lite` | high RPD | Stage 2 critique pass, history/weekly support calls |
+| `gemini-3.8-flash` (`GEMINI_FLASH_MODEL`) | free-tier cap: read it in AI Studio (2.5-flash was 20/DAY) | daily brief (~2-4) + candidate summaries (~10) ≈ 13/day |
+| `gemini-3.5-flash-lite` (`GEMINI_MODEL`) | free-tier cap: read it in AI Studio (2.5-lite showed 20/DAY on 2026-11-01) | Stage 2 critique pass, history/weekly support calls |
+
+The 2.5 pair answers 404 to new projects (2026-11-01, the key moved to a new free project after the old one's prepaid billing hit zero and answered 402 from 10-21).
 
 The flash day-cap is the binding constraint on anything new. Claude retired
 2026-06-22 (`claude_client.is_available()` hard-returns `False`), Groq deleted
