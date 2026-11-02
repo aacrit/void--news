@@ -23,10 +23,21 @@ both articles exactly 50**: the text instrument reads nothing in either. On the
 points. Israel is unmeasured (all 33 refused at robots.txt from the container
 that scored it; re-run it from an Actions runner). India and Turkey are under
 the 20-pair floor. So the rule in `OUTLET-BASELINE-PROGRAMME-2026-09-22.md`
-fires for the CURRENT engine: keep the roster label as a label. Open for the
-CEO: whether to re-run the same pairs against the derived lexicon (the 2026-10-28
-Fable review's phase 2) before the programme is closed, since this test scored
-the hand lexicon, not the derived one.
+fires for the CURRENT engine: keep the roster label as a label. **Re-run 2026-11-02 against the
+engine's OWN derived lexicon (CEO-approved), and it also says stop.** Derived
+from the run #412 phrase counts with all 8 pair outlets held out of the fit
+(193 rated outlets), nine variants (raw and furniture-filtered, top 100/300/1000):
+pooled AUC 0.34 to 0.59 over 115 pairs; the hand lexicon on the same articles
+0.47; Mail vs Mirror 0.46 to 0.61 (n=105). The best variant is carried by
+other outlets' templates ("image", "facebook", "privacy"), and after filtering
+the phrases that fire on both tabloids are the same generic verbs. The derived
+list is US-partisan by construction (183 of 343 rated outlets are US). Evidence:
+`data/roster/pair-test-scores/2026-11-02-derived-{auc,scores}.json` (scores and
+URLs only). Recommendation: close the programme at this phase, keep the roster
+label as a label and `delta_max` as the public claim. What would reopen it: a
+UK-only derivation (Mail and Mirror held out) scoring >= 0.65 on the same 105
+pairs, which needs more than the 37 UK outlets now harvested; Israel needs a
+fetch path robots.txt permits before it can be measured at all.
 
 **More stories band, phase 1 of 30 (shipped 2026-10-28; phase 2 is a CEO
 call).** `feed.json` `moreStories: 10`, bench 45, archive 30: ranks 21 to 30 as
