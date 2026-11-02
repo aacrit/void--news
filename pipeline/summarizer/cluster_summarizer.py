@@ -1233,6 +1233,22 @@ def _cut_first_person_sentences(summary: str) -> str:
     return " ".join(kept) if kept else s
 
 
+def _drop_unsourced_directions(s: str, source_text: str) -> str:
+    try:
+        from editorial.headline_guard import drop_unsourced_directions
+    except ImportError:  # pragma: no cover
+        from pipeline.editorial.headline_guard import drop_unsourced_directions
+    return drop_unsourced_directions(s, source_text)
+
+
+def _guard_headline(head: str, text: str) -> str:
+    try:
+        from editorial.headline_guard import guard_headline
+    except ImportError:  # pragma: no cover
+        from pipeline.editorial.headline_guard import guard_headline
+    return guard_headline(head, text)
+
+
 def _apply_summary_postchecks(summary: str, source_text: str = "") -> str:
     """Run the Phase-3 hygiene chain on a summary. Deterministic, order matters:
     content-level drops first (exact dup, near-dup, unknown padding, ungrounded
@@ -1249,6 +1265,7 @@ def _apply_summary_postchecks(summary: str, source_text: str = "") -> str:
     s = _collapse_unknown_padding(s)               # 3c unknown/ongoing padding
     if source_text:
         s = _drop_ungrounded_ages(s, source_text)  # 3e ungrounded ages
+        s = _drop_unsourced_directions(s, source_text)  # 3e-bis "eastern Kherson"
     s = _drop_terminal_restatement(s)              # 3b terminal restatement
     s = _trim_summary_to_word_cap(s)               # 3a hard 90-word trim
     s = _trim_incomplete_tail_sentence(s)          # 3g completeness (drop truncation)
@@ -3050,7 +3067,7 @@ def _store_cluster_summary(supabase, cid: str, result: dict, h: str,
     summary, content-hash, tier from the provider that answered, consensus /
     divergence / editorial fields) is identical to the pre-batch inline path."""
     update_payload = {
-        "title": result["headline"],
+        "title": _guard_headline(result["headline"], result["summary"]),
         # Storage-boundary hard cap (runaway guard). summarize/finalize already
         # trim (no-op here); wrapping the stored value guarantees the invariant
         # regardless of which path produced result.
@@ -3725,7 +3742,7 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = _F
         if not result:
             continue  # keep the pass-1 rule_based summary
         payload = {
-            "title": result["headline"],
+            "title": _guard_headline(result["headline"], result["summary"]),
             "summary": result["summary"],
             "summary_article_hash": _content_hash(articles),
             "summary_tier": _tier_for_label(result.get("_generator") or ""),

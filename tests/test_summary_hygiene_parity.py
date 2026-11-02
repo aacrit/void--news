@@ -49,6 +49,7 @@ CLEAN = [
 def rule_based_cases() -> list[tuple[str, bool]]:
     from utils.text_sanitizer import normalize_headline, sanitize_summary
     from clustering.story_cluster import _generate_cluster_summary
+    from editorial.headline_guard import drop_unsourced_directions, guard_headline, house_case
 
     head = "Israelis are voting on whether to oust Netanyahu in first election"
     body = ("Israelis voted on Tuesday in a parliamentary election. Polls opened "
@@ -117,6 +118,32 @@ def rule_based_cases() -> list[tuple[str, bool]]:
          not foreign.startswith("Le scuse")),
         ("a centre outlet's blurb is preferred to a wing outlet's",
          neutral_pick.startswith("The council voted")),
+        # 2026-11-02, served: the Brief's head said "Kherson Truce Collapses"
+        # over text that said the truce "expired".
+        ("a head claiming more than its text loses the clause that does",
+         guard_headline("Tehran Threatens Wider War as Kherson Truce Collapses",
+                        "The ceasefire in Kherson expired on Sunday without an "
+                        "extension. Iran ordered commanders to prepare a response.")
+         == "Tehran Threatens Wider War"),
+        ("a head whose verb its text carries is kept",
+         guard_headline("Talks Collapse After Delegates Walk Out",
+                        "Talks collapsed when delegates walked out.")
+         == "Talks Collapse After Delegates Walk Out"),
+        # 2026-11-02, served: "the eastern Kherson region"; Kherson is southern.
+        ("a compass word no source pairs with the place is dropped",
+         drop_unsourced_directions("The truce ended in the eastern Kherson region.",
+                                   "The truce in the southern Kherson region ended.")
+         == "The truce ended in the Kherson region."),
+        ("a compass word a source pairs with the place stays",
+         drop_unsourced_directions("Fighting continued in southern Kherson.",
+                                   "Kherson, in the south of the country, saw fighting.")
+         == "Fighting continued in southern Kherson."),
+        ("a Title Case head lowers its joining words and writes 300 as digits",
+         house_case("Police Arrest Over Three Hundred In Delhi Protest Of Election")
+         == "Police Arrest Over 300 in Delhi Protest of Election"),
+        ("a sentence-case head is left as written",
+         house_case("Israel's opposition wins in a landslide")
+         == "Israel's opposition wins in a landslide"),
     ]
 
 
