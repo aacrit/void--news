@@ -105,6 +105,36 @@ check("a phase lasts until the next mark, and a re-entered phase accumulates",
 for name in ("fetch", "scrape", "bias", "cluster", "rank", "rerank", "stage2", "brief_audio"):
     check(f"main.py marks the '{name}' phase", f'_phase("{name}")' in src)
 
+# Overload is retried; a quota error is not (2026-11-01: four 503 "high
+# demand" replies left the Weekly with no cover and nothing was published).
+_sleep, _rl, _gc = gc.time.sleep, gc._rate_limit, gc._get_client
+gc.time.sleep, gc._rate_limit = (lambda s: None), (lambda: None)
+_OVER = "503 UNAVAILABLE. This model is currently experiencing high demand."
+
+
+def _client(errors):
+    seq = list(errors)
+
+    class _Models:
+        def generate_content(self, **kw):
+            if seq:
+                raise Exception(seq.pop(0))
+            return type("R", (), {"text": '{"ok": 1}'})()
+    return type("C", (), {"models": _Models()})()
+
+
+try:
+    gc._get_client = lambda: _client([_OVER, _OVER])
+    check("text: two overloads, then the answer", gc.generate_text("x") == '{"ok": 1}')
+    gc._get_client = lambda: _client([_OVER, _OVER])
+    check("json: two overloads, then the answer", gc.generate_json("x") == {"ok": 1})
+    gc._get_client = lambda: _client([_OVER] * 3)
+    check("a third overload gives up", gc.generate_text("x") is None)
+    gc._get_client = lambda: _client(["429 RESOURCE_EXHAUSTED quota", "never reached"])
+    check("a quota error is never retried", gc.generate_text("x") is None)
+finally:
+    gc.time.sleep, gc._rate_limit, gc._get_client = _sleep, _rl, _gc
+
 if failures:
     print(f"\nFAIL  {len(failures)} runtime check(s)")
     sys.exit(1)
