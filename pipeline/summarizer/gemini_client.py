@@ -148,6 +148,20 @@ _persistent_failure: bool = False
 _MAX_TRANSPORT_RETRIES: int = 3
 _TRANSPORT_BACKOFF_BASE: float = 1.5  # seconds; 1.5, 3.0, 6.0
 
+# A 503 "model is currently experiencing high demand" is the service shedding
+# load, not an answer. It was retried only when a caller opted into
+# max_retries (most pass 0) and never on the text path, so on 2026-11-01 four
+# overload replies in a row left the Weekly with no written cover and the
+# issue was not published. Two waits, 30 s then 60 s, before giving up; never
+# applied to a 429, which is a real cap.
+_MAX_OVERLOAD_RETRIES: int = 2
+_OVERLOAD_BACKOFF: tuple[float, ...] = (30.0, 60.0)
+
+
+def _is_overload(error_str: str) -> bool:
+    return ("503" in error_str or "unavailable" in error_str
+            or "overloaded" in error_str or "high demand" in error_str)
+
 # Substrings that mark a transient transport-layer drop (retryable). Matched
 # against str(exception) + the exception CLASS NAME lowercased, because httpx
 # transport exceptions (ReadTimeout, RemoteProtocolError, ConnectError) often
@@ -282,6 +296,7 @@ def generate_json(
     # those never reached the model so they do NOT burn daily quota.
     attempt = 0
     transport_retries = 0
+    overload_retries = 0
     text = ""
     while True:
         try:
@@ -361,12 +376,13 @@ def generate_json(
                     time.sleep(10)
                     continue
                 return None
-            if "503" in error_str or "unavailable" in error_str or "overloaded" in error_str or "high demand" in error_str:
-                # 503 = transient server overload — wait longer before retry
+            if _is_overload(error_str) and not _is_quota_error(error_str):
+                # 503 = transient server overload: wait, then try again, on a
+                # budget of its own (see _MAX_OVERLOAD_RETRIES).
                 print(f"  [warn] Gemini API error (attempt {attempt + 1}): {e}")
-                if attempt < max_retries:
-                    attempt += 1
-                    time.sleep(30)
+                if overload_retries < _MAX_OVERLOAD_RETRIES:
+                    time.sleep(_OVERLOAD_BACKOFF[overload_retries])
+                    overload_retries += 1
                     continue
                 return None
             # Genuinely terminal: a blocked/invalid key or a hard spending cap.
@@ -418,6 +434,7 @@ def generate_text(
     _meter_call(use_model, count_call)
 
     transport_retries = 0
+    overload_retries = 0
     while True:
         try:
             _rate_limit()
@@ -447,6 +464,13 @@ def generate_text(
                     continue
                 print(f"  [warn] Gemini transport drop — retries exhausted: {e}")
                 return None
+            if _is_overload(error_str) and not _is_quota_error(error_str) \
+                    and overload_retries < _MAX_OVERLOAD_RETRIES:
+                print(f"  [warn] Gemini overloaded (overload retry "
+                      f"{overload_retries + 1}/{_MAX_OVERLOAD_RETRIES}): {e}")
+                time.sleep(_OVERLOAD_BACKOFF[overload_retries])
+                overload_retries += 1
+                continue
             if any(k in error_str for k in (
                 "api key not valid", "api_key_invalid", "invalid api key",
                 "permission_denied", "permission denied", "suspended", "spending cap",
