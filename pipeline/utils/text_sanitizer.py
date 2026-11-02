@@ -235,6 +235,17 @@ def normalize_headline(title: str) -> str:
         cleaned = _desensationalize_headline(t)
         t = cleaned if len(cleaned) >= 15 else ""
 
+    # One house style for every head (2026-11-02): short joining words lower
+    # case in a Title Case head, spelled numbers of ten or more as digits.
+    try:
+        from editorial.headline_guard import house_case
+    except ImportError:  # pragma: no cover
+        try:
+            from pipeline.editorial.headline_guard import house_case
+        except ImportError:
+            house_case = None  # type: ignore
+    if house_case and t:
+        t = house_case(t)
     return t.strip()
 
 

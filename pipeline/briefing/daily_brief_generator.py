@@ -47,6 +47,7 @@ except ImportError:
     _strip_significance = lambda t: t
 from briefing.voice_rotation import get_voices_for_today, get_opinion_host
 from editorial.standard import title_word_stems
+from editorial.headline_guard import guard_headline
 from editorial.prompt_safety import neutralise, wrap_source  # noqa: E402
 
 # Groq + Claude retired; Gemini Flash is the sole brief LLM (carry-forward on fail).
@@ -2152,7 +2153,13 @@ def generate_daily_briefs(
                             # Written editorial fields are sanitized (em-dash
                             # ban); the audio script keeps its dashes (TTS
                             # prosody) and loses only the significance words.
-                            "tldr_headline": _sanitize_editorial(raw.get("tldr_headline") or "") or None,
+                            # The head may not claim more than the text under it
+                            # ("Kherson Truce Collapses" over "expired", 2026-11-02).
+                            "tldr_headline": guard_headline(
+                                _sanitize_editorial(raw.get("tldr_headline") or ""),
+                                tldr,
+                                fallback=str((top_clusters[0] or {}).get("title") or ""),
+                            ) or None,
                             "tldr_text": _sanitize_multiline(tldr.strip()),
                             "opinion_text": None,
                             "opinion_headline": None,
