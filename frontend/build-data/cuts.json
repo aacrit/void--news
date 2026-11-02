@@ -1,19 +1,15 @@
 {
-  "builtAt": "2026-10-24T15:00:23.570261Z",
+  "builtAt": "2026-11-02T01:16:17.833893Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "f01e8711-edfd-4338-b839-bc2756e0f6da",
-      "title": "France protests: 70,000 police deployed as Paris closes major museums",
-      "sentences": [
-        {
-          "text": "Elsewhere, authorities and rattled shopkeepers geared up for potential new street violence.",
-          "rule": "E-16",
-          "message": "sentence opens on \"Elsewhere\", announcing another story: \"Elsewhere, authorities and rattled shopkeepers geared up for potential new street violence\""
-        }
-      ],
+      "id": "d9c99607-3077-4e56-9992-2c9af0dc636f",
+      "title": "Saudi Arabia Internet Penetration Hits 99.6 Percent in Government Survey",
+      "sentences": [],
       "points": [],
-      "left": []
+      "left": [
+        "headline puts 99.6 beside \"government survey\", but no source sentence carrying 99.6 names it and one names another \"government ...\": \"Saudi Arabia Internet Penetration Hits 99.6 Percent in Government Survey\""
+      ]
     }
   ]
 }

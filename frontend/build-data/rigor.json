@@ -1,35 +1,8 @@
 {
- "builtAt": "2026-11-01T18:01:40.112525Z",
- "briefCreatedAt": "2026-11-01T18:01:09.362797+00:00",
+ "builtAt": "2026-11-02T01:16:17.833893Z",
+ "briefCreatedAt": "2026-11-02T01:15:58.747612+00:00",
  "products": {
   "card_headline": {
-   "sentences": 30,
-   "anchored": 3,
-   "checked": 0,
-   "anchorTypes": [
-    "number",
-    "quote"
-   ],
-   "byAnchor": {
-    "number": 3
-   },
-   "coverage": 0.0
-  },
-  "card_summary": {
-   "sentences": 73,
-   "anchored": 19,
-   "checked": 2,
-   "byAnchor": {
-    "number": 17,
-    "quote": 2
-   },
-   "anchorTypes": [
-    "number",
-    "quote"
-   ],
-   "coverage": 2.7
-  },
-  "points": {
    "sentences": 30,
    "anchored": 0,
    "checked": 0,
@@ -38,14 +11,40 @@
     "quote"
    ],
    "coverage": 0.0,
-   "byAnchor": {},
-   "machinePointsExcluded": 105
+   "byAnchor": {}
+  },
+  "card_summary": {
+   "sentences": 233,
+   "anchored": 49,
+   "checked": 43,
+   "anchorTypes": [
+    "number",
+    "quote"
+   ],
+   "byAnchor": {
+    "number": 49
+   },
+   "coverage": 18.5
+  },
+  "points": {
+   "sentences": 178,
+   "anchored": 32,
+   "checked": 29,
+   "anchorTypes": [
+    "number",
+    "quote"
+   ],
+   "byAnchor": {
+    "number": 32
+   },
+   "coverage": 16.3,
+   "machinePointsExcluded": 0
   },
   "tldr": {
-   "sentences": 29,
-   "anchored": 23,
-   "checked": 23,
-   "coverage": 79.3,
+   "sentences": 24,
+   "anchored": 17,
+   "checked": 17,
+   "coverage": 70.8,
    "anchorTypes": [
     "number",
     "name",
@@ -53,19 +52,18 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 6,
-    "name": 17,
-    "number": 11,
-    "quote": 3
+    "date": 3,
+    "name": 12,
+    "number": 10
    },
    "groundingRan": true,
    "shipped": true
   },
   "opinion": {
-   "sentences": 25,
-   "anchored": 3,
-   "checked": 3,
-   "coverage": 12.0,
+   "sentences": 18,
+   "anchored": 4,
+   "checked": 4,
+   "coverage": 22.2,
    "anchorTypes": [
     "number",
     "name",
@@ -75,16 +73,16 @@
    "byAnchor": {
     "date": 1,
     "name": 2,
-    "number": 1
+    "number": 3
    },
    "groundingRan": true,
    "shipped": true
   },
   "onair": {
-   "sentences": 74,
-   "anchored": 38,
-   "checked": 38,
-   "coverage": 51.4,
+   "sentences": 71,
+   "anchored": 29,
+   "checked": 29,
+   "coverage": 40.8,
    "anchorTypes": [
     "number",
     "name",
@@ -92,9 +90,9 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 9,
-    "name": 27,
-    "number": 13
+    "date": 5,
+    "name": 19,
+    "number": 7
    },
    "groundingRan": true,
    "shipped": true
@@ -103,21 +101,31 @@
  "evidence": {
   "shipped": 30,
   "freshKnown": true,
-  "fresh": 1,
+  "fresh": 30,
   "states": {
-   "confirmable": 4,
-   "index cap below writer window": 5,
-   "stub rows, card not fresh": 21
+   "confirmable": 28,
+   "index cap below writer window": 2
   }
  },
  "audit": {
-  "shipped": {},
-  "bench": {}
+  "shipped": {
+   "advisory": {
+    "E-13 misattached": 2
+   }
+  },
+  "bench": {
+   "confirmed": {
+    "E-13 misattached": 1
+   }
+  }
  },
  "run": {
   "brief": {
-   "cut_sentences": 0,
-   "cuts_by_reason": {},
+   "cut_sentences": 10,
+   "cuts_by_reason": {
+    "date": 1,
+    "name": 9
+   },
    "edition": "world",
    "grounding_ran": {
     "opinion": true,
@@ -125,18 +133,29 @@
     "tldr": true
    }
   },
-  "startedAt": "2026-11-01T17:51:24Z",
+  "onair": {
+   "cut_sentences": 3,
+   "cuts_by_reason": {
+    "name": 2,
+    "number": 1
+   },
+   "grounding_ran": true
+  },
+  "startedAt": "2026-11-02T00:45:52Z",
   "stage2": {
    "candidates": 45,
-   "critique_read": 0,
-   "critique_unread": 44,
-   "cut_sentences": 0,
-   "cuts_by_reason": {},
-   "dropped": 0,
-   "kept_failing": 8,
-   "regenerated": 0,
+   "critique_read": 45,
+   "critique_unread": 0,
+   "cut_sentences": 10,
+   "cuts_by_reason": {
+    "number": 8,
+    "other story": 2
+   },
+   "dropped": 1,
+   "kept_failing": 0,
+   "regenerated": 3,
    "reviewed": true,
-   "fresh": 1
+   "fresh": 45
   }
  },
  "corrections": {
@@ -158,5 +177,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-11-01T18:01:52Z"
+ "computedAt": "2026-11-02T01:16:32Z"
 }
