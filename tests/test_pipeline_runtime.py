@@ -135,6 +135,50 @@ try:
 finally:
     gc.time.sleep, gc._rate_limit, gc._get_client = _sleep, _rl, _gc
 
+# Flash -> flash-lite fallback (CEO decision C, 2026-11-03).
+_calls: list = []
+
+
+def _plan_client(plan):
+    class _Models:
+        def generate_content(self, model, **kw):
+            _calls.append(model)
+            if plan.get(model):
+                raise Exception(plan[model])
+            return type("R", (), {"text": '{"ok": 1}'})()
+    return type("C", (), {"models": _Models()})()
+
+
+_sleep, _rl, _gc = gc.time.sleep, gc._rate_limit, gc._get_client
+gc.time.sleep, gc._rate_limit = (lambda s: None), (lambda: None)
+_DAY = "429 RESOURCE_EXHAUSTED GenerateRequestsPerDayPerProjectPerModel-FreeTier"
+try:
+    gc._flash_parked = False
+    gc._get_client = lambda: _plan_client({gc._FLASH_MODEL: _OVER})
+    _calls.clear()
+    got = gc.generate_text("x", model=gc._FLASH_MODEL)
+    check("an overloaded flash request is answered by flash-lite",
+          got == '{"ok": 1}' and gc.last_model_used() == gc._MODEL and _calls[-1] == gc._MODEL,
+          str(_calls))
+    check("an overload does not park flash", not gc._flash_parked)
+    gc._get_client = lambda: _plan_client({gc._FLASH_MODEL: "429 RESOURCE_EXHAUSTED per minute"})
+    gc.generate_json("x", model=gc._FLASH_MODEL)
+    check("a per-minute 429 falls back once and does not park flash", not gc._flash_parked)
+    gc._get_client = lambda: _plan_client({gc._FLASH_MODEL: _DAY})
+    _calls.clear()
+    got = gc.generate_json("x", model=gc._FLASH_MODEL)
+    check("a per-day flash refusal is answered by flash-lite and parks flash",
+          got == {"ok": 1} and gc._flash_parked, str(_calls))
+    _calls.clear()
+    gc.generate_json("x", model=gc._FLASH_MODEL)
+    check("a parked flash is not asked again", _calls == [gc._MODEL], str(_calls))
+    _calls.clear()
+    check("a caller with its own ladder is told no without a request",
+          gc.generate_json("x", model=gc._FLASH_MODEL, fallback=False) is None and not _calls)
+finally:
+    gc._flash_parked = False
+    gc.time.sleep, gc._rate_limit, gc._get_client = _sleep, _rl, _gc
+
 # Every request has a deadline (run #419 hung 2h25m in [8d] with none), and a
 # timed-out request is retried once, not three times.
 check("the Gemini client is built with a request timeout",
