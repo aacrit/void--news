@@ -135,6 +135,17 @@ try:
 finally:
     gc.time.sleep, gc._rate_limit, gc._get_client = _sleep, _rl, _gc
 
+# Every request has a deadline (run #419 hung 2h25m in [8d] with none), and a
+# timed-out request is retried once, not three times.
+check("the Gemini client is built with a request timeout",
+      "HttpOptions(timeout=_TIMEOUT_MS)" in (ROOT / "pipeline" / "summarizer" /
+                                              "gemini_client.py").read_text())
+check("a timeout is retried once; a dropped connection three times",
+      gc._transport_retry_limit("readtimeout timed out") == 1
+      and gc._transport_retry_limit("server disconnected") == gc._MAX_TRANSPORT_RETRIES)
+check("main.py dumps every stack before the 4-hour kill",
+      "faulthandler.dump_traceback_later" in src)
+
 if failures:
     print(f"\nFAIL  {len(failures)} runtime check(s)")
     sys.exit(1)
