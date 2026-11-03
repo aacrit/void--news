@@ -148,6 +148,18 @@ _persistent_failure: bool = False
 _MAX_TRANSPORT_RETRIES: int = 3
 _TRANSPORT_BACKOFF_BASE: float = 1.5  # seconds; 1.5, 3.0, 6.0
 
+# Per-request deadline (milliseconds). A batched summary on flash has taken
+# well under a minute; three minutes is the point past which an answer is not
+# coming. A request that times out is retried ONCE, not three times: a stalled
+# endpoint would otherwise cost twelve minutes per call.
+_TIMEOUT_MS: int = int(os.environ.get("GEMINI_TIMEOUT_MS", "") or 180_000)
+_MAX_TIMEOUT_RETRIES: int = 1
+
+
+def _transport_retry_limit(error_str: str) -> int:
+    return _MAX_TIMEOUT_RETRIES if "timeout" in error_str or "timed out" in error_str \
+        else _MAX_TRANSPORT_RETRIES
+
 # A 503 "model is currently experiencing high demand" is the service shedding
 # load, not an answer. It was retried only when a caller opted into
 # max_retries (most pass 0) and never on the text path, so on 2026-11-01 four
@@ -204,7 +216,14 @@ def _get_client():
     api_key = os.environ.get("GEMINI_API_KEY", "").strip()
     if not api_key:
         return None
-    _client = genai.Client(api_key=api_key)
+    # A request with no deadline hung run #419 (2026-11-02): [8d] logged at
+    # 21:50, then nothing until Actions cancelled the job at its 4-hour limit,
+    # so no edition shipped that day. Every request now has one.
+    try:
+        _client = genai.Client(api_key=api_key,
+                               http_options=types.HttpOptions(timeout=_TIMEOUT_MS))
+    except Exception:  # pragma: no cover - an SDK without HttpOptions.timeout
+        _client = genai.Client(api_key=api_key)
     return _client
 
 
@@ -354,7 +373,7 @@ def generate_json(
             # model (or dropped mid-response), so a retry does NOT burn quota.
             # This is the fix for the 08-04 run's ~22 tier=None cards.
             if _is_transient_transport(error_str) and not _is_quota_error(error_str):
-                if transport_retries < _MAX_TRANSPORT_RETRIES:
+                if transport_retries < _transport_retry_limit(error_str):
                     transport_retries += 1
                     backoff = _TRANSPORT_BACKOFF_BASE * (2 ** (transport_retries - 1))
                     print(f"  [warn] Gemini transport drop "
@@ -454,7 +473,7 @@ def generate_text(
             error_str = (str(e) + " " + type(e).__name__).lower()
             # Transient transport drop — retry with backoff (does not burn quota).
             if _is_transient_transport(error_str) and not _is_quota_error(error_str):
-                if transport_retries < _MAX_TRANSPORT_RETRIES:
+                if transport_retries < _transport_retry_limit(error_str):
                     transport_retries += 1
                     backoff = _TRANSPORT_BACKOFF_BASE * (2 ** (transport_retries - 1))
                     print(f"  [warn] Gemini transport drop "
