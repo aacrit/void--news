@@ -4720,6 +4720,14 @@ def main():
 
 
 if __name__ == "__main__":
+    # If the run is still going this far in, print every thread's stack to the
+    # log before Actions kills the job at 240 minutes. Run #419 (2026-11-02)
+    # went silent in [8d] for 2h25m and was cancelled with no trace of where;
+    # this makes the next hang name its own line. Off with VOID_HANG_DUMP_S=0.
+    import faulthandler
+    _dump_after = int(os.environ.get("VOID_HANG_DUMP_S", "") or 12600)
+    if _dump_after > 0:
+        faulthandler.dump_traceback_later(_dump_after, repeat=False, exit=False)
     main()
     # Hard-exit the moment all work is done. The scrape phase (Playwright /
     # headless Chromium) can leave a lingering child process or a non-daemon
