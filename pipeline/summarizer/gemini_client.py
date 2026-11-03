@@ -242,7 +242,7 @@ def calls_remaining() -> int:
     return max(0, _MAX_CALLS_PER_RUN - _call_count)
 
 
-def generate_json(
+def _generate_json_on(
     prompt: str,
     system_instruction: str | None = None,
     max_retries: int = 0,
@@ -394,6 +394,7 @@ def generate_json(
                     attempt += 1
                     time.sleep(10)
                     continue
+                _note_failure(use_model, error_str)
                 return None
             if _is_overload(error_str) and not _is_quota_error(error_str):
                 # 503 = transient server overload: wait, then try again, on a
@@ -403,6 +404,7 @@ def generate_json(
                     time.sleep(_OVERLOAD_BACKOFF[overload_retries])
                     overload_retries += 1
                     continue
+                _note_failure(use_model, error_str)
                 return None
             # Genuinely terminal: a blocked/invalid key or a hard spending cap.
             # NOT bare "billing"/"credit" — those appear in transient quota text.
@@ -418,7 +420,7 @@ def generate_json(
             return None
 
 
-def generate_text(
+def _generate_text_on(
     prompt: str,
     system_instruction: str | None = None,
     count_call: bool = True,
@@ -498,7 +500,89 @@ def generate_text(
                 print(f"  [error] Gemini terminal failure — disabling for this run: {e}")
             else:
                 print(f"  [warn] Gemini text generation failed: {e}")
+                _note_failure(use_model, error_str)
             return None
+
+
+# FLASH -> FLASH-LITE FALLBACK (CEO decision C, 2026-11-03). The free tier is
+# 20 requests a day PER MODEL (the 429 names GenerateRequestsPerDayPerProject
+# PerModel-FreeTier, limit 20), and flash was refused twice that week: a 503
+# overload storm took both Weekly covers on 11-01 and 11-03, and a 429 took the
+# Weekly editorial on 11-03. Flash-lite has its own 20. So a flash request that
+# ends in overload or quota is asked once more of flash-lite instead of failing,
+# and a flash quota refusal parks flash for the rest of the process, so later
+# calls go straight to lite instead of spending a request to be refused.
+_last_failure: str = ""
+_flash_parked: bool = False
+_last_model_used: str = ""
+
+
+def _note_failure(model: str, error_str: str) -> None:
+    global _last_failure, _flash_parked
+    if _is_quota_error(error_str):
+        _last_failure = "quota"
+        # Only a per-DAY refusal parks flash; a per-minute 429 passes in a minute.
+        if model == _FLASH_MODEL and not _flash_parked and _MODEL != _FLASH_MODEL \
+                and "perday" in error_str.replace("_", "").replace("-", ""):
+            _flash_parked = True
+            print(f"  [gemini] {_FLASH_MODEL} daily quota refused: "
+                  f"later flash requests go to {_MODEL}")
+    elif _is_overload(error_str):
+        _last_failure = "overload"
+    else:
+        _last_failure = "other"
+
+
+def _with_lite_fallback(call, model, fallback):
+    global _last_failure, _last_model_used
+    want = (model or "").strip() or _MODEL
+    if want == _FLASH_MODEL and _flash_parked:
+        if not fallback:
+            # The caller runs its own ladder: say no without spending a
+            # request flash will refuse, and let the ladder move on.
+            _last_failure, _last_model_used = "quota", ""
+            return None
+        want = _MODEL
+    _last_failure = ""
+    result = call(want)
+    if result is None and fallback and want == _FLASH_MODEL and _MODEL != _FLASH_MODEL \
+            and _last_failure in ("quota", "overload"):
+        print(f"  [gemini] {_FLASH_MODEL} {_last_failure}: asking {_MODEL} instead")
+        want = _MODEL
+        result = call(want)
+    _last_model_used = want if result is not None else ""
+    return result
+
+
+def last_model_used() -> str:
+    """The model that answered the most recent generate_json/generate_text, or
+    "" when it failed. A fallback can answer a flash request with lite."""
+    return _last_model_used
+
+
+def generate_json(prompt: str, system_instruction: str | None = None,
+                  max_retries: int = 0, count_call: bool = True,
+                  max_output_tokens: int = 8192, model: str | None = None,
+                  temperature: float = 0.2, fallback: bool = True) -> dict | None:
+    """`_generate_json_on`, with the flash -> flash-lite fallback above.
+    Pass fallback=False when the caller runs its own model ladder."""
+    return _with_lite_fallback(
+        lambda m: _generate_json_on(prompt, system_instruction=system_instruction,
+                                    max_retries=max_retries, count_call=count_call,
+                                    max_output_tokens=max_output_tokens, model=m,
+                                    temperature=temperature),
+        model, fallback)
+
+
+def generate_text(prompt: str, system_instruction: str | None = None,
+                  count_call: bool = True, max_output_tokens: int = 8192,
+                  model: str | None = None, fallback: bool = True) -> str | None:
+    """`_generate_text_on`, with the flash -> flash-lite fallback above."""
+    return _with_lite_fallback(
+        lambda m: _generate_text_on(prompt, system_instruction=system_instruction,
+                                    count_call=count_call,
+                                    max_output_tokens=max_output_tokens, model=m),
+        model, fallback)
 
 
 def is_available() -> bool:
