@@ -583,7 +583,7 @@ export const LEAN_SHAPE_LEGEND: LeanLegendTerm[] = [
     definition: [
       "Too little to read a shape: fewer than", String(SHAPE_MIN_TOTAL), "outlets placed, or fewer than",
       String(SHAPE_MIN_WINGS), "left or right of centre. The card states how many were placed.",
-      "Placed means positioned from the outlet's record, the article's words, or both.",
+      "Placed means the outlet has a position on the left-right axis.",
     ].join(" "),
   },
   {

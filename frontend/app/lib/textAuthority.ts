@@ -67,7 +67,7 @@ export function textAuthority(confidence?: number | null): TextAuthority {
  *  invites a reading of certainty that this number does not carry. */
 export function authorityNote(confidence?: number | null): string | null {
   return textAuthority(confidence) === "headline"
-    ? "Scored from the headline. This publisher does not serve us the article text, so this mark sits on its outlet's baseline."
+    ? "Scored from the headline. This publisher does not serve us the article text, so only its outlet's placement is known, and the other axes were not read."
     : null;
 }
 

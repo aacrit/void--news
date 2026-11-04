@@ -108,6 +108,37 @@ tracker = (ROOT / "pipeline" / "analyzers" / "topic_outlet_tracker.py").read_tex
 check("the tracker does not import the scorer",
       "political_lean import" not in tracker and "import political_lean" not in tracker)
 
+# --- 3. the words do not move the lean (CEO decision B, 2026-11-04) --------
+# The pair test could not tell a left outlet's copy from a right one's better
+# than chance (AUC 0.443 hand lexicon, 0.34..0.59 derived; 0.75 to proceed), so
+# the article's text no longer moves political lean. The score is the outlet's
+# placement, whatever the copy says, and an unrated outlet's article carries no
+# lean measurement at all. Re-enabling needs a lexicon that clears the pair
+# test AND a CEO decision; this check makes the second one visible.
+from analyzers.political_lean import BASELINE_MAP  # noqa: E402
+
+LEFT_COPY = ("Corporate greed and the billionaire class keep crushing working "
+             "families while climate justice, reproductive rights and union "
+             "power are gutted by far-right extremists. ") * 15
+RIGHT_COPY = ("Radical leftists, open borders and woke ideology are destroying "
+              "the economy while patriots defend the Second Amendment, law and "
+              "order and family values against socialist overreach. ") * 15
+for src in SOURCES:
+    want = BASELINE_MAP.get(src["political_lean_baseline"], 50)
+    for side, copy in (("left-coded", LEFT_COPY), ("right-coded", RIGHT_COPY)):
+        r = analyze_political_lean({"full_text": copy, "title": "Bill"}, src)
+        check(f"{src['name']}: {side} copy leaves the lean on the outlet",
+              r["score"] == want and r["rationale"]["text_shift"] == 0,
+              f"score {r['score']} (outlet {want}), text_shift {r['rationale']['text_shift']}")
+        unrated = src["political_lean_baseline"] == "unrated"
+        check(f"{src['name']}: {side} copy is {'unscored' if unrated else 'scored'}",
+              bool(r["rationale"].get("unscored")) == unrated,
+              str(r["rationale"].get("unscored")))
+state = {"name": "State", "political_lean_baseline": "right", "state_affiliated": True}
+r = analyze_political_lean({"full_text": LEFT_COPY, "title": "Bill"}, state)
+check("a state-affiliated outlet's lean is its placement too",
+      r["score"] == BASELINE_MAP["right"], str(r["score"]))
+
 if failures:
     print(f"\nFAIL  {len(failures)} self-fed-prior check(s)")
     sys.exit(1)
