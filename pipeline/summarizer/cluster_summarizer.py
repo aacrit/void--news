@@ -64,10 +64,12 @@ def _smart_generate_json(prompt: str,
         wants_flash = (model or "") == GEMINI_FLASH_MODEL
         models_to_try = [GEMINI_FLASH_MODEL, None] if wants_flash else [None]
         for m in models_to_try:
+            # fallback=False: this ladder is its own, and the tier label
+            # below names the model asked, so it must be the model that wrote.
             result = gemini_generate_json(
                 prompt, system_instruction=system_instruction,
                 count_call=True, max_output_tokens=max_output_tokens,
-                model=m, temperature=temperature,
+                model=m, temperature=temperature, fallback=False,
             )
             if result and isinstance(result, dict):
                 label = "gemini-flash" if m == GEMINI_FLASH_MODEL else "gemini-flash-lite"

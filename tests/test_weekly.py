@@ -1437,41 +1437,47 @@ def test_quotations_verbatim():
 
 
 def test_cover_picture_is_the_leads():
-    """W-T19  the cover picture names the story it sits on.
+    """W-T19  every picture names the story it sits on.
 
-    The picture is resolved for the lead essay, and the source check can drop
-    that lead after the picture is chosen. Issue #30 then printed the White
-    House Correspondents' Dinner shooting over "Black Sea Shipping Under Drone
-    Assault", and Issue #28 an oil-price chart over a Flydubai cockpit attack:
-    each picture was its dropped lead's. The caption names the Wikipedia
-    subject the picture shows, so it must share a content word with the lead
-    it is printed on (its headline, its reported title, or a day of its
-    timeline). Run over every committed issue, the archive included.
+    Issue #30 printed the White House Correspondents' Dinner shooting over a
+    Black Sea story and Issue #28 an oil-price chart over a cockpit attack:
+    each picture was a dropped lead's. Issue #32 (2026-11-04) printed a deer
+    tick ("Lyme disease") over the Ebola cover: it shared the one word
+    "disease". So a caption must share a content word with its story (head,
+    reported title, timeline), and when it shares only ONE, that word must be
+    a name: an acronym, or a word capitalised mid-sentence in the story's
+    reported titles or its own text. Run over every committed issue, the
+    cover and every cover item's picture.
     """
-    print("\nW-T19  the cover picture belongs to the cover story")
-    from media.image_search import _subject_words
+    print("\nW-T19  every picture belongs to its story")
+    from media.image_search import _subject_words, name_words
     path = ROOT / "frontend/build-data/weekly-issues.json"
     issues = json.loads(path.read_text()) if path.exists() else []
     for issue in issues:
-        cap = (issue.get("cover_image_caption") or "").strip()
-        if not issue.get("cover_image_url"):
-            continue
         covers = issue.get("cover_text")
         if isinstance(covers, str):
             covers = json.loads(covers or "[]")
-        lead = (covers or [{}])[0] or {}
-        words = (_subject_words(issue.get("cover_headline") or "")
-                 | _subject_words(lead.get("headline") or "")
-                 | _subject_words(lead.get("cluster_title") or ""))
-        for day in lead.get("timeline") or []:
-            words |= _subject_words(day.get("title") or "")
-        shared = _subject_words(cap) & words
-        check(f"Issue #{issue.get('issue_number')}: cover picture {cap[:40]!r} "
-              f"is of the lead {str(issue.get('cover_headline'))[:40]!r}",
-              bool(cap) and bool(shared),
-              "" if cap and shared else
-              ("no caption" if not cap else "no shared subject word with the lead"))
-
+        covers = [c for c in (covers or []) if isinstance(c, dict)]
+        lead = covers[0] if covers else {}
+        slots = []
+        if issue.get("cover_image_url"):
+            slots.append(("cover", issue.get("cover_image_caption"),
+                          {**lead, "headline": issue.get("cover_headline") or lead.get("headline")}))
+        for n, c in enumerate(covers, 1):
+            if c.get("image_url"):
+                slots.append((f"item {n}", c.get("image_caption"), c))
+        for where, cap, story in slots:
+            cap = (cap or "").strip()
+            texts = [story.get("headline") or "", story.get("cluster_title") or ""] + \
+                [d.get("title") or "" for d in story.get("timeline") or []]
+            words = set().union(*[_subject_words(t) for t in texts])
+            shared = _subject_words(cap) & words
+            names = name_words(*texts, (story.get("text") or "")[:800])
+            ok = bool(cap) and (len(shared) >= 2 or bool(shared & names))
+            check(f"Issue #{issue.get('issue_number')} {where}: picture {cap[:40]!r} "
+                  f"is of {str(story.get('headline'))[:40]!r}", ok,
+                  "" if ok else ("no caption" if not cap else
+                                 f"shares only {sorted(shared) or 'nothing'}, not a name"))
 
 def main():
     print("void --weekly gates")

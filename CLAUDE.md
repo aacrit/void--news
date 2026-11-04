@@ -283,8 +283,10 @@ and the live page. Thirty-five commits described as done were not live.
 
 | Model | Cap | Spends on |
 |---|---|---|
-| `gemini-3.8-flash` (`GEMINI_FLASH_MODEL`) | free-tier cap: read it in AI Studio (2.5-flash was 20/DAY) | daily brief (~2-4) + candidate summaries (~10) ≈ 13/day |
-| `gemini-3.5-flash-lite` (`GEMINI_MODEL`) | free-tier cap: read it in AI Studio (2.5-lite showed 20/DAY on 2026-11-01) | Stage 2 critique pass, history/weekly support calls |
+| `gemini-3.8-flash` (`GEMINI_FLASH_MODEL`) | **20 requests/DAY** (429 `GenerateRequestsPerDayPerProjectPerModel-FreeTier`, limit 20, 2026-11-03) | daily brief (~2-4) + candidate summaries (~10) ≈ 13/day |
+| `gemini-3.5-flash-lite` (`GEMINI_MODEL`) | **20 requests/DAY**, its own | Stage 2 critique pass, history/weekly support calls, and every flash request that flash refuses |
+
+A Weekly (~15-20 flash requests) and a daily run cannot both run fully on flash in one Pacific day. Since 2026-11-03 a flash request refused for overload (503) or quota (429) is asked once more of flash-lite, and a per-DAY 429 parks flash for the rest of the process (`gemini_client._with_lite_fallback`). Every request has a 180 s deadline.
 
 The 2.5 pair answers 404 to new projects (2026-11-01, the key moved to a new free project after the old one's prepaid billing hit zero and answered 402 from 10-21).
 
