@@ -6,7 +6,7 @@ import Sigil from "../../Sigil";
 import { demoSigil } from "../demoSigil";
 import { BEATS, SIX_AXES } from "../../../film/data";
 import { leanLabel } from "../../../lib/biasColors";
-import { RATED_DELTA_MAX, FULL_TEXT_WORDS } from "../../../lib/leanBounds";
+import { FULL_TEXT_WORDS } from "../../../lib/leanBounds";
 
 /* ---------------------------------------------------------------------------
    Beat 2 — "One mark reads the bias."
@@ -100,12 +100,11 @@ export default function BeatSigil() {
           ))}
         </ul>
         <p className="beat__more-note">
-          Every score reads two things: what the outlet has published before, and what this article
-          actually says. On political lean the track record sets the anchor. An article under{" "}
-          {FULL_TEXT_WORDS} words is scored on the record alone; a full article from a rated outlet can move{" "}
-          {RATED_DELTA_MAX} points off it at most.{" "}
-          <Link href="/sources#methodology">How far they moved on the latest run</Link>. All rule-based
-          NLP, no LLM, and the same text always gives the same result. Every score shows how it was reached.
+          Political lean is the outlet&rsquo;s placement on the left-right axis; the article&rsquo;s words
+          do not move it, because tested on reports of the same event they did no better than chance. The
+          other axes read what this article actually says, once it runs to {FULL_TEXT_WORDS} words.{" "}
+          <Link href="/sources#methodology">How the method works</Link>. All rule-based NLP, no LLM, and the
+          same text always gives the same result. Every score shows how it was reached.
         </p>
       </details>
     </section>

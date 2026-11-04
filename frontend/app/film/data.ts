@@ -77,8 +77,8 @@ export interface BiasAxis {
 export const SIX_AXES: BiasAxis[] = [
   {
     name: "Political Lean",
-    brief: "Where it falls left to right, from the outlet's track record and the article's own words.",
-    signals: "Keyword lexicons, entity sentiment (NER + TextBlob), framing phrases, and the outlet's historical baseline, which the article's words may move by a bounded number of points.",
+    brief: "Where the outlet that published it falls left to right.",
+    signals: "The outlet's placement on the seven-point roster. The article's words do not move it: tested on reports of the same event, they did no better than chance at telling left from right.",
   },
   {
     name: "Sensationalism",
@@ -189,7 +189,7 @@ export const TRANSPARENCY_TOOLS: ProductWorld[] = [
 
 export const FIRST_PRINCIPLES = [
   `A front page, not a feed. The same ${FEED_DISPLAYED} stories, in the same order, for every reader.`,
-  "Every bias score weighs two things: the outlet's track record and the article's own words. No black box, no opinion.",
+  "Political lean is the outlet's placement; the other bias scores read the article's own words. No black box, no opinion.",
   "Free to read. No paywall. No account. No feed tuned to you.",
 ];
 

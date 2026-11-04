@@ -181,53 +181,36 @@ not supplement with prior knowledge."
 Newspaper principle. Same stories, same order, for everyone. No accounts, no
 recommendation algorithms.
 
-### Bias scoring weighs BOTH outlet and text
-Not one or the other. Public copy on `/about` and `/sources#methodology` must
-lead with "both", never "words not the outlet" (it does, and carries no ratio).
+### Political lean is the outlet's placement (CEO decision B, 2026-11-04)
+The article's words do **not** move political lean. Every article takes its
+outlet's placement on the seven-point roster; an outlet with no placement
+(`unrated`/`varies`) gives an unscored row that votes on no story's lean. The
+other axes (sensationalism, opinion, factual rigor, framing) are still read
+from the article's own words, once it reaches 150 words (under that, an
+article carries fixed default scores on the other axes). Public copy on `/about`, `/sources`, `/press` and
+`/film` says exactly that, and must never again claim the score weighs "both"
+or that the words move it (`tests/test_engine_health.py`).
 
-**It is not a weighted blend, and this file used to say it was.** The claim
-"~50/50 on a short wire item, ~90/10 text-weighted on a full article" was
-wrong in structure and inverted in magnitude. The engine is
-baseline-anchored with a BOUNDED deviation:
-
-    score = baseline + clamp((text_score - 50) * 1.0, ±delta_max) * confidence
-    confidence = min(1.0, words / 150)          # LENGTH, not certainty
-
-So `delta_max` is the whole of the text's authority, and it is small.
-Measured 2026-09-22 by driving a 600-word article to each extreme of the
-lexicon:
-
-| Outlet | baseline | most a max-left article reaches | most a max-right article reaches |
-|---|---|---|---|
-| rated `left` | 20 | 10 | 30 |
-| rated `center` | 50 | 40 | 60 |
-| rated `right` | 80 | 70 | 90 |
-| `unrated`/`varies` | 50 | 26 | 74 |
-| state-affiliated | its own | ±8 | ±8 |
-
-**Measured per run, not claimed** (`build-data/engine.json`, printed on
-`/sources`). Run #379 (2026-09-25): 58.5% of articles were under 150 words and
-never reached the text analyzer; across 3,635 full articles from rated outlets
-the words moved the score a mean of 1.54 points and left 61.1% exactly on the
-baseline.
-
-A rated outlet's article can move **10 points, never more**, however long it is
-and whatever it says. Length only decides how much of that 10 it earns. So on a
-full article the outlet dominates roughly 5 to 1, which is the opposite of
-"90/10 text-weighted", and the ONLY row with real text authority is the unrated
-one at ±24.
-
-That is a capability limit, not a dishonesty: the architecture is built to grant
-more, and `docs/proposals/OUTLET-BASELINE-PROGRAMME-2026-09-22.md` is the work
-to earn it. Do not quote a blend ratio for this engine anywhere; quote
-`delta_max`.
+Why: the pair test (same-event article pairs from opposed outlets,
+`scripts/roster/pair_test.py`) scored the hand lexicon at AUC 0.443 and the
+derived lexicons at 0.34 to 0.59, against 0.75 to proceed and 0.65 to stop.
+The words could not tell a left outlet's copy from a right one's better than
+chance, so the bounded nudge (10 points rated, 24 unrated, 8 state) was noise
+printed as measurement. `_TEXT_DELTA_MAX`, `_CENTER_TEXT_DELTA_MAX` and
+`_STATE_TEXT_DELTA_MAX` are 0 in `political_lean.py` and mirrored as 0 in
+`app/lib/leanBounds.ts`; `tests/test_lean_prior_is_not_self_fed.py` asserts
+left- and right-coded copy leave every outlet on its placement and that an
+unrated outlet's article is always unscored. The text score is still computed
+and kept in the rationale, because the next lexicon has to be tested against
+something. Turning the words back on needs a lexicon that clears the pair test
+AND a CEO decision. Do not quote a blend ratio or a text cap anywhere.
 
 ---
 
 ## Locked decisions (CEO)
 
 Cinematic Press design · 6-axis bias model · Cloudflare stack · static export ·
-1,061 sources (3 tiers, 7-point lean) · no personalization · $0/mo LLM cost ·
+1,061 sources (3 tiers, 7-point lean) · lean is the outlet's placement (2026-11-04) · no personalization · $0/mo LLM cost ·
 1×/day pipeline · **top-20 homepage feed** (moved from 50 on 2026-09-07 — the
 one locked decision that has ever changed) · Claude Max CLI for agent work.
 

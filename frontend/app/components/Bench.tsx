@@ -161,6 +161,23 @@ function BenchWork({ source: s }: { source: BenchSource }) {
       </div>
     );
   }
+  /* Since 2026-11-04 the words do not move the lean (delta_max 0): the score
+     is the outlet's placement, and the keyword hits still kept in the
+     rationale are not shown, because beside a lean they would read as its
+     cause. An older row keeps its own arithmetic, which was true of it. */
+  if (r.deltaMax === 0) {
+    return (
+      <div className="bench__card-work" data-work="outlet-only">
+        {mean}
+        <dl className="bench__card-work-list">
+          <div><dt>Outlet placement</dt><dd>{fmtPts(r.sourceBaseline)}</dd></div>
+        </dl>
+        <p className="bench__card-work-note">
+          Lean is the outlet&apos;s placement. The article&apos;s words do not move it.
+        </p>
+      </div>
+    );
+  }
   const shift = typeof r.textShift === "number" ? r.textShift : null;
   const dir = shift === null || Math.abs(shift) < 0.05 ? "" : shift < 0 ? " left" : " right";
   const left = (r.topLeftKeywords ?? []).slice(0, 3);

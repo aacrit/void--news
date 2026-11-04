@@ -175,23 +175,25 @@ check("leanBounds FULL_TEXT_WORDS is main.py's word-count gate and engine_health
       f"{ts_const('FULL_TEXT_WORDS')} vs {gate and gate.group(1)} vs {eh.FULL_BODY_WORDS}")
 
 src_client = (ROOT / "frontend" / "app" / "sources" / "SourcesClient.tsx").read_text(encoding="utf-8")
-check("/sources prints the measured movement from engine.json",
-      "engine.text_movement_rated.mean_abs" in src_client
-      and "engine.scoring.outlet_only_share" in src_client)
-check("/sources restates no measured movement as a literal",
-      not re.search(r"\d+(\.\d+)?\s+points on average", src_client))
-# /press (P1-10, 2026-10-02). Its method callout said "on a full feature, the
-# article's own words lead" against a 10 point cap and a measured mean near
-# 1.4. It now reads engine.json and leanBounds exactly as /sources does, and
-# may not write an engine number by hand where either provides one.
+# CEO decision B (2026-11-04): the words no longer move political lean
+# (delta_max 0, political_lean.py). The two pages that printed how far the words
+# moved the score, and the cap on it, now say the lean is the outlet's
+# placement. A page that went back to printing a movement or a cap would be
+# describing an engine that no longer exists.
+check("leanBounds has no text authority left to quote (both caps are 0)",
+      ts_const("RATED_DELTA_MAX") == 0 and ts_const("UNRATED_DELTA_MAX") == 0,
+      f"{ts_const('RATED_DELTA_MAX')}, {ts_const('UNRATED_DELTA_MAX')}")
 press = (ROOT / "frontend" / "app" / "press" / "page.tsx").read_text(encoding="utf-8")
 press_code = re.sub(r"/\*[\s\S]*?\*/", "", press)
-check("/press prints the measured movement from engine.json",
-      "engine.text_movement_rated.mean_abs" in press_code
-      and "engine.text_movement_rated.zero_share" in press_code
-      and 'join(process.cwd(), "build-data", "engine.json")' in press_code)
-check("/press quotes delta_max from leanBounds, not a literal",
-      "{RATED_DELTA_MAX}" in press_code and "{FULL_TEXT_WORDS}" in press_code)
+src_code = re.sub(r"/\*[\s\S]*?\*/", "", src_client)
+for name, code in (("/sources", src_code), ("/press", press_code)):
+    check(f"{name} prints no text movement and no cap on it",
+          "text_movement_rated" not in code and "RATED_DELTA_MAX" not in code,
+          "the words do not move the lean, so there is no movement to report")
+    check(f"{name} says the words do not move the lean",
+          re.search(r"words\s+(?:no longer|do not)\s+move", code) is not None)
+check("/sources restates no measured movement as a literal",
+      not re.search(r"\d+(\.\d+)?\s+points on average", src_client))
 check("/press restates no engine number as a literal",
       not re.search(r"\d+(\.\d+)?\s+points\b|\b\d+%\s+of them|\bunder \d+ words",
                     press_code), "a hand-written points, share or word-count figure")

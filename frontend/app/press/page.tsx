@@ -8,25 +8,6 @@ import "../styles/prose-page.css";
 import "../privacy/privacy.css";
 import "./press.css";
 import { ROSTER_SOURCES_TEXT, ROSTER_COUNTRIES } from "../lib/rosterConfig";
-import { readFileSync } from "fs";
-import { join } from "path";
-import { RATED_DELTA_MAX, UNRATED_DELTA_MAX, FULL_TEXT_WORDS } from "../lib/leanBounds";
-import { type EngineStats, engineComplete, engineRunDate, pct } from "../lib/engineStats";
-
-/** What the engine did on the latest run, read at build time exactly as
- *  /sources reads it. The method callout used to say "on a full feature, the
- *  article's own words lead", against a 10 point cap and a measured mean
- *  movement near 1.4 points (audit 2026-10-02). Unreadable: the measured
- *  sentence is left out rather than guessed. */
-function loadEngine(): EngineStats | null {
-  try {
-    return JSON.parse(
-      readFileSync(join(process.cwd(), "build-data", "engine.json"), "utf-8"),
-    ) as EngineStats;
-  } catch {
-    return null;
-  }
-}
 
 export const metadata: Metadata = {
   title: "Press | Void News",
@@ -91,7 +72,6 @@ const PROGRAMMES = [
 ] as const;
 
 export default function PressPage() {
-  const engine = loadEngine();
   return (
     <article className="press">
       <Link href="/" className="pwa-back" aria-label="Back to news feed">
@@ -246,25 +226,17 @@ export default function PressPage() {
 
         <div className="press-callout">
           <strong>
-            We do not judge a story by its outlet alone, and we do not judge it
-            by its words alone. We use both.
+            Political lean is the outlet&rsquo;s placement, not a reading of the
+            article.
           </strong>{" "}
-          On political lean the outlet&rsquo;s track record sets the anchor and
-          the article&rsquo;s words move the score from there, within bounds:{" "}
-          {RATED_DELTA_MAX} points at most for an outlet we have rated,{" "}
-          {UNRATED_DELTA_MAX} for one we have not. An article under{" "}
-          {FULL_TEXT_WORDS} words is scored on the record alone. A longer
-          article earns more of that bound, never more than all of it.
-          {engineComplete(engine) && (
-            <>
-              {" "}On the run of {engineRunDate(engine)}, across{" "}
-              {engine.text_movement_rated.articles.toLocaleString("en-US")} full
-              articles from rated outlets, the words moved the score{" "}
-              {engine.text_movement_rated.mean_abs.toFixed(1)} points on average
-              and left {pct(engine.text_movement_rated.zero_share)} of them exactly
-              on the record.
-            </>
-          )}
+          Every article takes its outlet&rsquo;s place on the left-right axis.
+          We tested whether our language analysis could tell a left-leaning
+          outlet&rsquo;s report of an event from a right-leaning outlet&rsquo;s
+          report of the same event, and it did no better than chance, so the
+          words no longer move the lean. An outlet we have not placed on the
+          axis does not vote on which way a story leans. Sensationalism,
+          opinion, factual rigor and framing are still read from the
+          article&rsquo;s own words.
         </div>
 
         <div
@@ -304,8 +276,8 @@ export default function PressPage() {
             <div className="press-axis__n">Axis 1</div>
             <h3>Political lean</h3>
             <p>
-              Left to right placement, weighing the outlet&rsquo;s track record
-              and the article&rsquo;s own language.
+              Left to right placement of the outlet that published the story.
+              The article&rsquo;s own language does not move it.
             </p>
           </div>
           <div className="press-axis">

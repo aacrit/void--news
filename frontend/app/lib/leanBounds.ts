@@ -16,11 +16,16 @@
    rated outlet a full article's words can move the score 10 points at most, and
    on 2026-09-25 they moved it 1.54 on average. The copy was the architecture's
    intent, not its behaviour.
+
+   Both caps are 0 since 2026-11-04 (CEO decision B): the words no longer move
+   political lean, so no page may print a cap or a movement. They stay here,
+   asserted equal to the pipeline, so that turning the words back on is a
+   visible change in two places rather than a silent one in one.
    --------------------------------------------------------------------------- */
 
 /** Most a rated outlet's article can move off the outlet's lean, in points. */
-export const RATED_DELTA_MAX = 10;
+export const RATED_DELTA_MAX = 0;
 /** Most an unrated outlet's article can move off the neutral midpoint. */
-export const UNRATED_DELTA_MAX = 24;
+export const UNRATED_DELTA_MAX = 0;
 /** Under this many words an article is scored on its outlet's record alone. */
 export const FULL_TEXT_WORDS = 150;

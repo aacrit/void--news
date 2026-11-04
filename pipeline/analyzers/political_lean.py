@@ -517,16 +517,21 @@ _TEXT_NEUTRAL_PIVOT = 50.0    # text_score of genuinely non-partisan copy
 _TEXT_AUTHORITY = 1.0         # how much of the text's deviation carries through
 
 # How far the article's own words may move the score off the outlet baseline.
-_TEXT_DELTA_MAX = 10          # outlet has a known partisan reputation: it anchors, text modulates.
-                              # Held at 10 by ground truth: the national-review-analysis-regulation
-                              # fixture (baseline 80, heavily right-coded copy) expects <= 90.
-_CENTER_TEXT_DELTA_MAX = 24   # outlet is baselined "center" (62.6% of the roster, mostly the
-                              # international/independent long tail where "center" means
-                              # UNRATED rather than measured-centrist). There is no reputation
-                              # signal to preserve, so the article's own words are all we have
-                              # and they get correspondingly more authority.
-_STATE_TEXT_DELTA_MAX = 8     # tighter for state-affiliated: their non-Western vocab makes
-                              # text less reliable, so government alignment anchors harder
+#
+# ZERO since 2026-11-04 (CEO decision B). The words no longer move political
+# lean at all: the score IS the outlet's placement. The pair test (same-event
+# article pairs from opposed outlets, scripts/roster/pair_test.py) scored the
+# hand lexicon at AUC 0.443 and the derived lexicons at 0.34 to 0.59, against a
+# 0.75 bar to proceed and 0.65 to stop: the text signal could not tell a left
+# outlet's copy from a right one's better than chance, so a nudge built on it
+# was noise printed as measurement. The text score is still COMPUTED and kept
+# in the rationale (text_score, keyword hits), because the next lexicon has to
+# be tested against something; it is shown nowhere as part of the lean.
+# Before: rated 10, unrated 24, state-affiliated 8. Re-enabling is a CEO call
+# and needs a lexicon that clears the pair test first.
+_TEXT_DELTA_MAX = 0
+_CENTER_TEXT_DELTA_MAX = 0
+_STATE_TEXT_DELTA_MAX = 0
 _CENTER_BASELINE_LO = 40      # inclusive bounds of the "no reputation signal" baseline band
 _CENTER_BASELINE_HI = 60
 _LENGTH_FULL_CONFIDENCE = 150  # words at which text earns full calibration authority
@@ -997,7 +1002,8 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
                           "confidence": 0.0,
                           "top_left_keywords": [],
                           "top_right_keywords": [], "framing_phrases_found": [],
-                          "entity_sentiments": {}, "state_affiliated": is_state_affiliated},
+                          "entity_sentiments": {}, "state_affiliated": is_state_affiliated,
+                          "unscored": is_unrated},
         }
 
     # 1. Keyword-based score (0-100) + top keywords + distinct keyword count
@@ -1073,14 +1079,11 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
     # Measured 2026-08-13: 52% of live article volume comes from unrated
     # outlets, and 98% of a real sample from them scored text_score exactly 50.
     # Averaging that majority in is what pinned every cluster mean to ~50.
-    unscored = (
-        is_unrated
-        and total_distinct <= 2
-        and abs(framing_shift) < 2.0
-        and abs(entity_shift) < 2.0
-        and abs(sentence_direction) < 2.0
-        and not is_state_affiliated
-    )
+    # Since 2026-11-04 the words carry no lean authority, so an UNRATED
+    # outlet's article has no lean measurement whatever its text says: its 50
+    # is the absence of a placement and is always unscored. (Before, it was
+    # unscored only when the text showed no signal either.)
+    unscored = is_unrated
 
     return {
         "score": score,
