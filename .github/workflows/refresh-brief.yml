@@ -62,10 +62,21 @@ jobs:
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: .venv-tts
-          key: venv-tts-py3.11-${{ hashFiles('pipeline/requirements-tts.txt') }}
-      - name: Build TTS venv (cache miss)
-        if: (inputs.mode == 'full' || inputs.mode == 'radio' || inputs.mode == 'radio-revoice') && steps.tts-venv.outputs.cache-hit != 'true'
-        run: python -m venv .venv-tts && .venv-tts/bin/pip install -q -r pipeline/requirements-tts.txt
+          key: venv-tts-py3.11-v2-${{ hashFiles('pipeline/requirements-tts.txt') }}
+      - name: Build TTS venv (cache miss, or a venv that cannot run)
+        if: (inputs.mode == 'full' || inputs.mode == 'radio' || inputs.mode == 'radio-revoice')
+        # The cached venv's python is a symlink to the runner's toolcache
+        # Python. A patch bump (3.11.17 -> 3.11.18, 2026-11-03) left it
+        # pointing at nothing: Kokoro read as unavailable, On Air fell back
+        # to edge-tts with no chapters, and auto-merge's radio-audio job
+        # failed. Rebuild whenever the restored venv cannot run.
+        run: |
+          if [ -x .venv-tts/bin/python ] && .venv-tts/bin/python -c "import sys" 2>/dev/null; then
+            echo "TTS venv restored and runnable."
+          else
+            rm -rf .venv-tts
+            python -m venv .venv-tts && .venv-tts/bin/pip install -q -r pipeline/requirements-tts.txt
+          fi
       - name: Fetch Kokoro model files (verified against kokoro.lock.json)
         if: inputs.mode == 'full' || inputs.mode == 'radio' || inputs.mode == 'radio-revoice'
         run: python pipeline/briefing/kokoro_assets.py
