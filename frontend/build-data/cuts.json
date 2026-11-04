@@ -1,14 +1,45 @@
 {
-  "builtAt": "2026-11-02T01:16:17.833893Z",
+  "builtAt": "2026-11-03T19:42:08.803452Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "d9c99607-3077-4e56-9992-2c9af0dc636f",
-      "title": "Saudi Arabia Internet Penetration Hits 99.6 Percent in Government Survey",
+      "id": "e56eba52-578d-486d-bf62-863cf5b5f7cf",
+      "title": "United States Removes South Africa and Rwanda From Preferential Trade Pact",
+      "sentences": [
+        {
+          "text": "South African Minister of Parks Tau acknowledged the announcement and confirmed the government will maintain a 60-day notice period to address concerns while supporting affected sectors, noting that trade totaled 28.8 billion dollars in 2025.",
+          "rule": "E-13",
+          "message": "summary states 28.8, which appears in none of the source articles: source it or cut it"
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "b90c38d4-4f50-43d1-bd8c-70e6d917c666",
+      "title": "OpenAI Lobbys 2028 Candidates on Artificial Intelligence Policy and Data Centers",
       "sentences": [],
       "points": [],
       "left": [
-        "headline puts 99.6 beside \"government survey\", but no source sentence carrying 99.6 names it and one names another \"government ...\": \"Saudi Arabia Internet Penetration Hits 99.6 Percent in Government Survey\""
+        "headline puts 2028 beside \"openai lobbys\", but no source sentence carrying 2028 names it and one names another \"openai ...\": \"OpenAI Lobbys 2028 Candidates on Artificial Intelligence Policy and Data Centers\""
+      ]
+    },
+    {
+      "id": "520234e3-ef3f-4b17-a9e6-97794a0f09ab",
+      "title": "Europe Enters Winter With Lowest Gas Reserves Since 2013 as Washington Pushes Pipeline Proposal",
+      "sentences": [],
+      "points": [],
+      "left": [
+        "headline puts 2013 beside \"europe enters winter with lowest gas reserves since\", but no source sentence carrying 2013 names it and one names another \"europe ...\": \"Europe Enters Winter With Lowest Gas Reserves Since 2013 as Washington Pushes Pipeline Pro\""
+      ]
+    },
+    {
+      "id": "7800fdbf-22bb-4a0e-a9e4-7ca2569b2456",
+      "title": "Oracle Stock Plummets as Software Giant Files for $20 Billion Debt and Equity Sale",
+      "sentences": [],
+      "points": [],
+      "left": [
+        "headline puts 20 beside \"oracle stock plummets\", but no source sentence carrying 20 names it and one names another \"oracle ...\": \"Oracle Stock Plummets as Software Giant Files for $20 Billion Debt and Equity Sale\""
       ]
     }
   ]
