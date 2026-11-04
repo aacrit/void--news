@@ -33,8 +33,10 @@ other outlets' templates ("image", "facebook", "privacy"), and after filtering
 the phrases that fire on both tabloids are the same generic verbs. The derived
 list is US-partisan by construction (183 of 343 rated outlets are US). Evidence:
 `data/roster/pair-test-scores/2026-11-02-derived-{auc,scores}.json` (scores and
-URLs only). Recommendation: close the programme at this phase, keep the roster
-label as a label and `delta_max` as the public claim. What would reopen it: a
+URLs only). **Decided 2026-11-04 (CEO, option B): the words no longer move
+political lean.** Every article takes its outlet's placement, `delta_max` is 0,
+unrated outlets are unscored, and the public copy says so (CLAUDE.md, "Political
+lean is the outlet's placement"). The programme is closed at this phase. What would reopen it: a
 UK-only derivation (Mail and Mirror held out) scoring >= 0.65 on the same 105
 pairs, which needs more than the 37 UK outlets now harvested; Israel needs a
 fetch path robots.txt permits before it can be measured at all.

@@ -18,6 +18,40 @@ lives in this file.
 
 ---
 
+## Political lean is the outlet's placement; the words no longer move it (2026-11-04)
+
+CEO decision B, after the pair test said stop twice: the hand lexicon scored
+AUC 0.443 over 106 same-event pairs (2026-10-28) and the engine's own derived
+lexicon 0.34 to 0.59 over 115 (2026-11-02), against 0.75 to proceed and 0.65
+to stop. The text instrument could not tell a left outlet's report of an event
+from a right outlet's report of the same event better than chance, so the
+bounded nudge it drove (10 points rated, 24 unrated, 8 state-affiliated) was
+noise printed as a measurement, and the public claim that "every score weighs
+both the outlet and the words" described it as a reading.
+
+1. `political_lean.py`: `_TEXT_DELTA_MAX`, `_CENTER_TEXT_DELTA_MAX` and
+   `_STATE_TEXT_DELTA_MAX` are 0. The score is the outlet's baseline. The text
+   score and keyword hits are still computed and kept in the rationale, as the
+   test bed for any future lexicon.
+2. An unrated outlet's article is ALWAYS `unscored` now (it was unscored only
+   when its text also carried no signal). Without the words its 50 is the
+   absence of a placement, and counting it would put hundreds of unplaced
+   outlets in the Center column.
+3. Copy: `/press`, `/sources` (axis card and methodology), `/about` (hero,
+   pipeline, Sigil beat, FAQ), `/film`, the Bench card and the "N placed"
+   definition now say lean is the outlet's placement and the other axes read
+   the words. The Bench card shows "Outlet placement" and no keyword list for a
+   row scored after the change; an older row keeps its own arithmetic. `/press`
+   and `/sources` no longer print "the words moved the score N points".
+4. Gates: `tests/test_lean_prior_is_not_self_fed.py` plants left- and
+   right-coded copy on every outlet class and asserts the score stays on the
+   placement and unrated rows are unscored (12 failures against the old
+   engine). `tests/test_engine_health.py` now asserts both caps are 0 and that
+   neither page prints a movement or a cap. Bias validation suite: 0 wrong, 0
+   catastrophic of 215 (206 correct, 9 acceptable; was 207 and 8).
+
+---
+
 ## rev 86 WS-R (rigor): every product can be corrected, every past error class has its gate, and the archive loses its contamination openers (2026-10-03)
 
 Gap items 4 and 10 and the WS-R line of `docs/proposals/FACTUAL-RIGOR-PLAN-2026-10-02.md`.

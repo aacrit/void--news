@@ -19,7 +19,7 @@ import LogoIcon from "../components/LogoIcon";
 // drift apart (F9). Live DB row count can include inactive/duplicate rows.
 import { SOURCE_TIERS } from "../film/data";
 import ErrorBoundary from "../components/ErrorBoundary";
-import { RATED_DELTA_MAX, UNRATED_DELTA_MAX, FULL_TEXT_WORDS } from "../lib/leanBounds";
+import { FULL_TEXT_WORDS } from "../lib/leanBounds";
 import { type EngineStats, engineComplete, engineRunDate, googleNewsHeadlineOnly, pct } from "../lib/engineStats";
 import { useInView } from "../lib/sharedObserver";
 
@@ -51,12 +51,12 @@ const AXES_DATA: {
     range: "0 to 100",
     low: "Far Left",
     high: "Far Right",
-    what: "Where an article falls on the left-right spectrum. The outlet\u2019s track record sets the anchor and the article\u2019s own words move it from there, within bounds, so calm copy from a partisan outlet stays near its record and partisan copy moves further out. Where an outlet has no placement on this axis, the article is read from its words alone, and if they carry no signal the article counts as coverage without voting on the lean.",
+    what: "Where the outlet that published the article sits on the left-right spectrum. Every article takes its outlet\u2019s placement. The article\u2019s own words do not move it: tested on reports of the same event from left- and right-leaning outlets, our language analysis did no better than chance at telling them apart. An outlet with no placement on this axis does not vote on which way a story leans.",
     signals: [
-      "Keyword frequency against curated left/right phrase lists",
-      "Positive or negative tone around named political figures",
-      "Framing phrases that signal ideological perspective",
-      "Each outlet\u2019s historical baseline, moved by the article\u2019s words within a fixed bound",
+      "Each outlet\u2019s placement on the seven-point roster",
+      "One vote per outlet when a story\u2019s lean is counted",
+      "State-affiliated outlets counted on their own rung",
+      "Unplaced outlets shown as coverage, never as a vote",
     ],
   },
   {
@@ -562,36 +562,29 @@ function Methodology({ sources, engine }: { sources: SpectrumSource[]; engine: E
           ================================================================ */}
       <InfographicScene layout="lr">
         <div className="meth-scene__callout">
-          <h3 className="meth-scene__heading">Two Things, Six Lenses</h3>
+          <h3 className="meth-scene__heading">Six Lenses</h3>
           <p className="meth__body">
-            Void News reads two things: what the outlet has published before,
-            and what this specific article actually says. Both, across six
-            axes, by rule-based NLP. No LLM calls. The same text always produces
-            the same scores. On political lean the track record sets the anchor
-            and the words move the score from there, within bounds: {RATED_DELTA_MAX}{" "}
-            points at most for an outlet we have rated, {UNRATED_DELTA_MAX} for one
-            we have not. An article under {FULL_TEXT_WORDS}{" "}
-            words is not read for
-            lean at all; it takes its outlet&rsquo;s placement, and if the outlet
-            has none it does not vote. Sensationalism, opinion, and framing are
-            read from the words of a full article. Every score discloses how it
-            was reached.
+            Void News reads every article on six axes, by rule-based NLP. No
+            LLM calls. The same text always produces the same scores.
+            Political lean is the one axis that is not read from the article:
+            it is the outlet&rsquo;s placement on the left-right axis, and every
+            article from that outlet takes it. We tested whether the words
+            could do better, on reports of the same event from left- and
+            right-leaning outlets, and they did no better than chance, so they
+            no longer move the lean. Sensationalism, opinion, factual rigor and
+            framing are read from the words of a full article. Every score
+            discloses how it was reached.
             {engineComplete(engine) && (
               <>
                 <br /><br />
                 What that came to on the run of {engineRunDate(engine)}: of{" "}
                 {engine.run.articles.toLocaleString("en-US")} articles collected,{" "}
                 {pct(engine.scoring.outlet_only_share)} were under {FULL_TEXT_WORDS}{" "}
-                words and were not read for lean.{" "}
+                words, too short to read for the other axes.{" "}
                 {googleNewsHeadlineOnly(engine).toLocaleString("en-US")} of them came
                 from the {engine.feeds.google_news.sources.toLocaleString("en-US")}{" "}
                 sources that reach us through Google News, which delivers a
-                headline and nothing more. Across{" "}
-                {engine.text_movement_rated.articles.toLocaleString("en-US")} full
-                articles from rated outlets, the words moved the score{" "}
-                {engine.text_movement_rated.mean_abs.toFixed(1)} points on average
-                and left {pct(engine.text_movement_rated.zero_share)} of them exactly
-                on the record.
+                headline and nothing more.
               </>
             )}
             <br /><br />
@@ -599,8 +592,8 @@ function Methodology({ sources, engine }: { sources: SpectrumSource[]; engine: E
             American and British politics well and describes much of the world
             badly, so a national daily in Nairobi or Tokyo is marked{" "}
             <em>not placed on this axis</em> rather than assigned a position we
-            cannot defend. Those articles are still read for their own words,
-            and still count as coverage. What they do not do is vote on which
+            cannot defend. Those articles are still read on the other axes, and
+            still count as coverage. What they do not do is vote on which
             way a story leans, because inventing a placement would put a
             measurement in front of you that we never made.
           </p>
