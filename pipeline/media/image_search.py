@@ -589,7 +589,33 @@ def _subject_words(text):
     return out
 
 
-def resolve_subjects(headline: str, max_candidates: int = 6) -> list[dict]:
+def name_words(*texts: str) -> set[str]:
+    """Proper names a set of headlines carries: acronyms anywhere, and words
+    capitalised mid-sentence in a sentence-case head. A Title Case head
+    capitalises everything, so only its acronyms count.
+
+    The overlap guard took ANY shared content word, and on 2026-11-04 the
+    Weekly's Ebola cover ("Borders Fail to Contain the Spread of Disease")
+    resolved to "Lyme disease" on the word "disease" and printed a deer tick.
+    A single shared word now has to be one of these names."""
+    import re
+    out: set[str] = set()
+    for t in texts:
+        words = re.findall(r"[^\W\d_][\w'-]*", t or "", re.UNICODE)
+        if not words:
+            continue
+        long_words = [w for w in words if len(w) >= 4]
+        title_case = bool(long_words) and sum(w[:1].isupper() for w in long_words) / len(long_words) >= 0.6
+        for i, w in enumerate(words):
+            if w.isupper() and len(w) >= 2:
+                out.add(w.lower())
+            elif not title_case and i > 0 and w[:1].isupper():
+                out.add(re.sub(r"'s$", "", w.lower()))
+    return out
+
+
+def resolve_subjects(headline: str, max_candidates: int = 6,
+                     anchors: set[str] | None = None) -> list[dict]:
     """Every article a headline is plausibly about, best overlap first.
 
     Returns [{"subject", "file", "url"}], empty when nothing shared a content
@@ -648,6 +674,9 @@ def resolve_subjects(headline: str, max_candidates: int = 6) -> list[dict]:
         shared = hw & _subject_words(title)
         if not shared:
             continue          # THE GUARD. Not "best effort" — no answer.
+        if len(shared) < 2 and anchors is not None and not (shared & anchors):
+            # One shared common noun ("disease", "war") is not a subject.
+            continue
         scored.append((len(shared), -pg.get("index", 999), title, fname, img))
 
     if not scored:
@@ -731,7 +760,7 @@ def find_subject_image(headline: str, *alternates: str) -> dict | None:
     for q in (headline, *alternates):
         if not q:
             continue
-        for sub in resolve_subjects(q):
+        for sub in resolve_subjects(q, anchors=name_words(headline, *alternates)):
             if tried >= 8:        # bounded: every candidate costs a request
                 break
             tried += 1

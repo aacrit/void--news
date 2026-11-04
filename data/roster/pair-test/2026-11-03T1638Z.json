@@ -1,0 +1,101 @@
+{
+ "collected_at": "2026-11-03T16:38:32Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16262367/King-Charles-meeting-Commonwealth-leaders-Antigua-slavery-reparations-row.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "King Charles says 'shameful' transatlantic slave trade 'fills my heart with horror' - but insists 'we cannot change the past' in speech to Commonwealth leaders in Antigua",
+      "published": "Tue, 03 Nov 2026 16:25:02 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/king-charles-slave-trade-commonwealth-37839162",
+      "title": "King Charles says slave trade 'fills my heart with horror' but stops short of apology",
+      "published": "Tue, 3 Nov 2026 15:30:59 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.jpost.com/israel-election-2026/article-913674",
+      "title": "Eisenkot may get the mandate, but haredi parties hold key to Israel's next government - analysis",
+      "published": "Tue, 03 Nov 2026 11:06:37 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/elections/2026-11-01/ty-article/.premium/haredi-party-may-not-name-netanyahu-as-pm-choice-for-first-time-since-2009/000001a1-97f1-d216-a5af-f7f394c60000",
+      "title": "Haredi party weighs withholding recommendation from all candidates for prime minister",
+      "published": "Sun, 01 Nov 2026 20:54:37 +0200"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/american-politics/article-913692",
+      "title": "'Loyalty should never require abandoning values': Haley Stevens defends Rogers midterms endorsement",
+      "published": "Tue, 03 Nov 2026 13:32:31 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/usmidterms2026/2026-11-01/ty-article/.premium/haley-stevens-backs-gop-in-michigan-senate-race-after-israel-feud-with-el-sayed/000001a1-983c-df63-ade5-fa7f36ff0000",
+      "title": "Democrat Haley Stevens backs GOP in Michigan Senate race after Israel feud with El-Sayed",
+      "published": "Sun, 01 Nov 2026 20:01:21 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/erdogan-sends-radio-message-to-azerbaijan-flying-over-airspace/news",
+      "title": "Erdoğan sends radio message to Azerbaijan flying over airspace",
+      "published": "Mon, 02 Nov 2026 15:05:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/erdogans-family-business-ties-complicate-azerbaijan-dispute/",
+      "title": "Erdogan’s family business ties complicate Azerbaijan dispute",
+      "published": "Mon, 26 Oct 2026 23:01:29 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 310,
+    "left": 10
+   }
+  }
+ }
+}

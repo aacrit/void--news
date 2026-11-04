@@ -45,8 +45,13 @@ def _issue():
     and taking "the newest issue" here turned every branch's build-check red
     with a KeyError instead of testing anything."""
     rows = [r for r in json.loads(ISSUES.read_text(encoding="utf-8")) if isinstance(r, dict)]
+    # And a bias report: the clean rundown's NUMBERS segment reads its figures.
+    # Issue #32 (run 2026-11-04, three days after its week) found that week's
+    # bias rows already pruned and printed "Insufficient data", so building
+    # from it failed W-09/W-13 on a fixture, not on the validators.
     paired = [r for r in rows
-              if {"L", "R"} <= set(_bench_columns(r.get("opinions") or []))]
+              if {"L", "R"} <= set(_bench_columns(r.get("opinions") or []))
+              and not str(r.get("bias_report_text") or "").startswith("Insufficient data")]
     if not paired:
         raise SystemExit("FAIL  no published issue carries a left/right pair to build WA-01 from")
     return max(paired, key=lambda r: r.get("issue_number") or 0)
