@@ -814,9 +814,47 @@ def test_bench_index_keeps_whole_bodies_over_stubs() -> None:
     print("PASS  8f keeps a whole-body index over the same articles' stubs")
 
 
+def test_e13_title_case_head_is_not_one_long_name() -> None:
+    """A Title Case head's capitals are not a name.
+
+    Run #421 (2026-11-04) held the whole edition: the attachment check read
+    "Jakarta Following Wiretapping Investigation" as one name, found no source
+    putting 20,000 beside it, and found another "Jakarta ..." beside 20,000 in
+    a source. The same head in sentence case passed. A real misattachment in a
+    Title Case head, a name the summary also writes, must still fail.
+    """
+    import sys, pathlib
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "pipeline"))
+    from editorial.standard import validate_candidate
+
+    filler = " Police closed two roads near the parliament. " + "Filler. " * 40
+    src = ("About 20,000 people marched past Jakarta Police headquarters on Tuesday.\n"
+           "The wiretapping investigation was made public on Monday.\n"
+           "Police closed two roads near the parliament.")
+    card = {"title": "20,000 Protest in Jakarta Following Wiretapping Investigation",
+            "summary": "Thousands marched in Jakarta after a wiretapping investigation "
+                       "was made public." + filler,
+            "source_text": src}
+    found = [f.message for f in validate_candidate(card) if f.id == "E-13"]
+    assert not found, found
+    lower = dict(card, title="20,000 protest in Jakarta following wiretapping investigation")
+    assert "E-13" not in [f.id for f in validate_candidate(lower)]
+
+    moved = {"title": "Operation Inherent Resolve Cost 4,419 US Lives",
+             "summary": ("The withdrawal marks the end of Operation Inherent Resolve, "
+                         "which began in 2014." + filler),
+             "source_text": ("The withdrawal marks the end of Operation Inherent Resolve, "
+                             "which began in 2014.\nThe Pentagon reported 4,419 U.S. "
+                             "military deaths during Operation Iraqi Freedom.")}
+    assert "E-13" in [f.id for f in validate_candidate(moved)], \
+        [f.message for f in validate_candidate(moved)]
+    print("PASS  E-13 reads names, not Title Case, in a head, and still catches a moved number")
+
+
 ALL_TESTS = (
     test_e13_catches_a_fabricated_number,
     test_e13_appositive_age_is_attached_to_its_name,
+    test_e13_title_case_head_is_not_one_long_name,
     test_e14_catches_an_invented_quotation,
     test_points_are_checked_and_a_failing_point_is_dropped,
     test_cached_card_is_judged_against_its_stored_index,
