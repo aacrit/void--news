@@ -678,6 +678,38 @@ def _numbers(text: str) -> set[str]:
 _DEFINITE = re.compile(r"\bthe\s+([a-z]+)\b")
 
 
+_HEAD_WORD = re.compile(r"[A-Za-z][\w'’.-]*")
+
+
+def _headline_names_text(title: str, summary: str) -> str:
+    """The head with Title Case capitals that mark no name taken down.
+
+    A Title Case head capitalises every word, so a name reader sees one long
+    name: run #421 (2026-11-04) read "Jakarta Following Wiretapping
+    Investigation" as a name, found no source putting 20,000 beside it, and
+    held the whole edition on a head whose number its sources carry beside
+    Jakarta. A word keeps its capital only when the summary also capitalises
+    it past a sentence's first word, or it is an acronym. A sentence-case head
+    is returned as written.
+    """
+    words = _HEAD_WORD.findall(title or "")
+    long_words = [w for w in words if len(w) >= 4]
+    if not long_words or sum(w[:1].isupper() for w in long_words) / len(long_words) < 0.6:
+        return title
+    named = set()
+    for s in sentences(summary or ""):
+        for w in _HEAD_WORD.findall(s)[1:]:
+            if w[:1].isupper():
+                named.add(w.lower())
+
+    def fold(m: "re.Match[str]") -> str:
+        w = m.group(0)
+        if w.isupper() or w.lower() in named:
+            return w
+        return w.lower()
+    return _HEAD_WORD.sub(fold, title)
+
+
 def _card_sentences(title: str, summary: str):
     """(field, sentence, names attached in it), in reading order.
 
@@ -690,7 +722,8 @@ def _card_sentences(title: str, summary: str):
     parts = [("headline", title)] if title else []
     parts += [("summary", s) for s in sentences(summary or "")]
     for field, sent in parts:
-        names = list(_grounding.proper_names(sent))
+        names = list(_grounding.proper_names(
+            _headline_names_text(sent, summary) if field == "headline" else sent))
         for m in _DEFINITE.finditer(sent):
             word = m.group(1)
             for nm in reversed(seen):
