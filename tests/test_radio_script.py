@@ -345,6 +345,27 @@ def test_prompt_and_generation() -> None:
     check(r is not None and not any(has_quotation_marks(t.text) for s in r.segments for t in s.turns),
           "no quotation mark survives the strip")
 
+    # R-05, run #422 (2026-11-05): every attempt kept "significantly" in story
+    # one and the show fell back to the legacy path. A significance word has a
+    # deterministic repair (the page copy's stripper, which keeps a negated
+    # one), so it is cut and the script re-validated. Any other banned phrase
+    # survives the strip and still loses the rundown.
+    sig = clean.replace("has called the idea a hostile act",
+                        "has called the idea a hostile act significantly")
+    assert sig != clean
+    r, rep, label = generate_radio_rundown(rows, date=datetime.datetime(2026, 9, 18, tzinfo=datetime.timezone.utc),
+                                           generate_fn=lambda s, u: sig)
+    check(r is not None and label == "gemini-flash",
+          "a significance word on every attempt is stripped and the script accepted")
+    check(r is not None and not any("significant" in t.text.lower() for s in r.segments for t in s.turns),
+          "no significance word survives the strip")
+    other = clean.replace("has called the idea a hostile act",
+                          "has called the idea a hostile act. Let's dive in")
+    r, rep, label = generate_radio_rundown(rows, date=datetime.datetime(2026, 9, 18, tzinfo=datetime.timezone.utc),
+                                           generate_fn=lambda s, u: other)
+    check(r is None and label == "gemini-flash-rejected",
+          "a banned phrase the stripper cannot remove still rejects the rundown")
+
 
 if __name__ == "__main__":
     raw = test_clean_fixture()
