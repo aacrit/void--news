@@ -18,6 +18,29 @@ lives in this file.
 
 ---
 
+## On Air: a banned significance word is repaired, and a gapped fallback episode is refused (2026-11-05)
+
+Run #422 lost the Kokoro show and then shipped a broken substitute.
+
+1. The radio rundown failed R-05 on every attempt over one adverb
+   ("alter the composition of the state leadership significantly") and the
+   day fell back to the legacy edge-tts path. When every remaining failure is
+   R-02 or R-05, the turns now go through `strip_quotation_marks` and
+   `strip_significance` (the page copy's stripper, which keeps a negated "no
+   significant damage") and are re-validated. Any other banned phrase
+   survives the strip and still fails, so nothing banned can pass.
+2. The legacy path sent all 37 turns at once, the service answered 9 with
+   "No audio was received", and the episode shipped without those lines. A
+   refused turn is now retried on its own twice; a turn that never lands
+   refuses the episode, because a dropped line can cut an attribution and
+   change what a story says.
+
+Gates: `tests/test_radio_script.py` (a significance word on every attempt is
+repaired; "Let's dive in" still rejects) and `tests/test_radio_assembly.py`
+(a turn refused once lands on retry; one that never lands returns None).
+
+---
+
 ## Political lean is the outlet's placement; the words no longer move it (2026-11-04)
 
 CEO decision B, after the pair test said stop twice: the hand lexicon scored
