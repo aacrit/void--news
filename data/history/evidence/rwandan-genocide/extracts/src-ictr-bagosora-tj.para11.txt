@@ -1,0 +1,7 @@
+source: src-ictr-bagosora-tj
+locator: para11
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-98-41/trial-judgements/en/081218.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+11. The Chamber considers that Nsengiyumva was involved in the maintenance of lists of suspected accomplices of the RPF or others opposed to the ruling regime, and that Bagosora, Kabiligi and Nsengiyumva played a role in the creation, arming and training of civilian militia. However, it was not proven beyond reasonable doubt that these efforts were directed at killing Tutsi civilians with the intention to commit genocide.

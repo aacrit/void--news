@@ -1,0 +1,6 @@
+source: src-gill-oxford-2026
+locator: para9
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC13311354/fullTextXML
+read: 2026-09-25
+
+Hammond’s paper describes an exhaustive piece of research. During February and March, 1917, he and his colleagues conducted ‘156 consecutive necropsies’. They discovered thereby the ‘prevalence of bronchitis of a purulent type’. It occurred ‘as a primary condition in 45 and as a secondary condition in 26 of the cases examined. Altogether purulent bronchitis was found in 45.5 per cent of the total cases’.

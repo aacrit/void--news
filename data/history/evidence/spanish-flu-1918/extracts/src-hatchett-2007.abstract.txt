@@ -1,0 +1,7 @@
+source: src-hatchett-2007
+locator: abstract
+url: https://pmc.ncbi.nlm.nih.gov/articles/PMC1849867/
+read: 2026-09-25
+note: the opening of the abstract, within the extract cap
+
+Nonpharmaceutical interventions (NPIs) intended to reduce infectious contacts between persons form an integral part of plans to mitigate the impact of the next influenza pandemic. Although the potential benefits of NPIs are supported by mathematical models, the historical evidence for the impact of such interventions in past pandemics has not been systematically examined. We obtained data on the timing of 19 classes of NPI in 17 U.S. cities during the 1918 pandemic and tested the hypothesis that early implementation of multiple interventions was associated with reduced disease transmission. Consistent with this hypothesis, cities in which multiple interventions were implemented at an early phase of the epidemic had peak death rates ≈50% lower than those that did not and had less-steep epidemic curves.

@@ -1,0 +1,7 @@
+source: src-frus-aidememoire-19180717
+locator: secadmissible
+url: https://history.state.gov/historicaldocuments/frus1918Russiav02/d345
+read: 2026-10-09
+note: the Office of the Historian's text of FRUS as served, tags removed; whitespace collapsed, nothing else changed
+
+Military action is admissible in Russia, as the Government of the United States sees the circumstances, only to help the Czecho-Slovaks consolidate their forces and get into successful cooperation with their Slavic kinsmen and to steady any efforts at self-government or self-defense in which the Russians themselves may be willing to accept assistance. Whether from Vladivostok or from Murmansk and Archangel, the only legitimate object for which American or Allied troops can be employed, it submits, is to guard military stores which may subsequently be needed by Russian forces and to render such aid as may be acceptable to the Russians in the organization of their own self-defense.

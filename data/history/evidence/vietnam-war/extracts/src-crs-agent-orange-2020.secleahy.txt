@@ -1,0 +1,8 @@
+source: src-crs-agent-orange-2020
+locator: secleahy
+url: https://www.congress.gov/crs_external_products/R/PDF/R44268/R44268.23.pdf
+read: 2026-10-09
+note: the Congressional Research Service PDF, its text layer, line breaks folded to spaces
+note: Senator Patrick Leahy's statement to the Senate as the report quotes it
+
+On the one hand, the Government of Vietnam for years blamed Agent Orange for seemingly any case of birth defect in the country, no matter how farfetched. On the other hand, the U.S. Government consistently denied causation between Agent Orange and birth defects in Vietnam and refused to accept any responsibility for the alleged harm. For years, the issue remained a contentious one for our countries.

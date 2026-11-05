@@ -1,0 +1,8 @@
+source: src-hjc-report-1974
+locator: secfielding
+url: https://archive.org/details/impeachmentofric0000unit
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (including the '¬' the OCR prints for one) are kept as printed
+note: the statement of evidence on Article II, on the Plumbers and Dr. Fielding's office
+
+In August, 1971, after obtaining Ehrlichman’s approval for a covert operation, provided it was not traceable, Plumbers co-directors Egil Krogh and David Young authorized Hunt and Liddy to undertake an operation to gain access to Ellsberg’s psychi¬ atric records. (Book VII, 1240-44) On September 3, 1971, a team consisting of Bernard Barker, Felipe De- Diego and Eugenio Martinez (all of whom subsequently participated in one of the Watergate break-ins), acting under the direction and immediate supervision of Hunt and Liddy, illegally broke into the office of Dr. Lewis Fielding, Ellsberg’s psychiatrist. (Book VII, 1281-87)

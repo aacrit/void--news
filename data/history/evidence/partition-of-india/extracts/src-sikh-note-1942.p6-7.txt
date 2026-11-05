@@ -1,0 +1,8 @@
+source: src-sikh-note-1942
+locator: p6-7
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: the page is the volume's, read from the scan's running numbers, which the OCR layer prints between pages: the passage lies between the two numbers given
+note: the OCR layer's Mulatan and Jullunder are kept as printed
+
+The population of the Punjab is so distributed that the two western divisions of Rawalpindi and Mulatan are predominantly Muslim and the two eastern divisions of Ambala and Jullunder are predominantly non-Muslim. The three central districts of Amritsar, Gurdaspur and Lahore have a balanced population. The separate figures of population foreach district of the Punjab are attached as annexure to this statement. Ifanew province of a contiguous area of the two divisions of Ambala and Jullundur plus the three districts of Lahore. Gurdaspur and Amritsar is carved out, it will have a total population of 12,151,000 (according to the 1931 census) with non-Muslim forming 63% and Muslims 37% of the population. The other province to the west of the River Ravi comprising Multan and Rawalpindi Divisions plus the three districts Sheikhupura, Sialkot and Gujranwala will have a total population of 11,429,000, with Muslims forming 77.3% and non-muslims 22.7% of the population.

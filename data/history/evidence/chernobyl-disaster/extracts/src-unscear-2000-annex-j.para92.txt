@@ -1,0 +1,9 @@
+source: src-unscear-2000-annex-j
+locator: para92
+url: https://www.unscear.org/unscear/uploads/documents/publications/UNSCEAR_2000_Annex-J.pdf
+read: 2026-10-07
+note: Annex J, paragraph 92, to the end of its sixth sentence
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+note: the text layer carries no character for the dash in the range or for the superscript minus ('110 mR h1'); the rendered page prints '1-10 mR h-1' (checked at 300 dpi) and that is written here with ASCII hyphens
+
+92. In Ukraine, the residents of Pripyat (49,360 persons) and of the nearest railway station, Yanov (254 persons), 3 km from the reactor, were the first to be evacuated. On the evening of 26 April 1986, the radiation exposures in Pripyat were not considered too alarming. Exposure-rate readings were in the range 1-10 mR h-1 [I1], but with the seriousness of the accident becoming evident, the decision to evacuate the residents of the town was taken at 22:00. During the night, arrangements were made for nearly 1,200 buses that would be needed to transport the residents. Around noon on 27 April the evacuation order was broadcast to the people, and the evacuation began at 14:00 and finished at 17:00. The over 40,000 evacuees were taken in by families who lived in settlements in the surrounding districts, especially Polesskoe district of Ukraine.

@@ -1,0 +1,7 @@
+source: src-polish-note-19421210
+locator: para19
+url: https://archive.org/details/the_mass_extermination_of_jews_in_german_occupied_poland
+read: 2026-10-07
+note: the Internet Archive OCR layer (_djvu.txt); double spaces collapsed
+
+19. It is not possible to estimate the exact numbers of Jews who have been exterminated in Poland since the occupation of the country by the armed forces of the German Reich. But all the reports agree that the total number of killed runs into many hundreds of thousands of innocent victims — men, women and children — and that of the 3,130,000 Jews in Poland before the outbreak of war, over a third have perished during the last three years.

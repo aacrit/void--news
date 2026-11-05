@@ -1,0 +1,10 @@
+source: src-insag7-1992
+locator: p1
+url: https://www-pub.iaea.org/MTCD/publications/PDF/Pub913e_web.pdf
+read: 2026-10-07
+note: section 1, Introduction, printed page 1 (PDF page 11): INSAG's account of what the Soviet experts told the Vienna meeting in August 1986
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+note: a hyphen breaking a lower-case word across a line end in the text layer is closed up
+note: the PDF is a scan with an OCR text layer; the extract was compared line by line with the rendered page (130 dpi) and agrees with it
+
+The Soviet presentation of the detailed account was accompanied by statements of violations by operators of procedures and rules. In the absence of evidence it was not possible to examine the appropriateness of these procedures and rules, or the protection system, in relation to the reactor's design characteristics. The assertion was made that the accident arose through a low probability coincidence of a number of violations of rules and procedures by the operating staff and those responsible for authorizing the test.

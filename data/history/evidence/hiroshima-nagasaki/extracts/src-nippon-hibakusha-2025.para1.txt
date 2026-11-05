@@ -1,0 +1,6 @@
+source: src-nippon-hibakusha-2025
+locator: para1
+url: https://www.nippon.com/en/japan-data/h02464/
+read: 2026-10-05
+
+According to statistics from Japan’s Ministry of Health, Labor, and Welfare, there were 99,130 people officially designated as hibakusha or atomic bomb survivors, as of March 31, 2025. Under the former Act on Medical Care for Atomic Bomb Survivors, booklets entitling hibakusha to medical treatment were first distributed in 1957. The number of officially recognized hibakusha reached a peak of 372,264 in 1981 before dropping below 200,000 in March 2014 and falling below 100,000 this year. The average age of survivors is now 86.13 (up 0.55 compared with the previous year).

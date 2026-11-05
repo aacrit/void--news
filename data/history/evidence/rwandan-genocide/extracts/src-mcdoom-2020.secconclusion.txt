@@ -1,0 +1,8 @@
+source: src-mcdoom-2020
+locator: secconclusion
+url: https://eprints.lse.ac.uk/103205/1/McDoom_Contested_Counting_accepted_version.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+note: the author's accepted version; the opening of the conclusion, cut at a sentence end
+
+Conclusion I have estimated between 491,000 and 522,000 Tutsi, nearly two thirds of Rwanda’s pre-genocide Tutsi population, were killed between 6 April and 19 July 1994. I calculated this death toll by subtracting my estimate of between 278,000 and 309,000 Tutsi survivors from my estimate of a baseline Tutsi population of almost exactly 800,000, or 10.8% of the overall population, on the eve of the genocide. My estimate is in line with Human Rights Watch’s (HRW) early estimate of 507,000, though HRW relied on the 1991 national census to estimate a pre-genocide Tutsi population of 657,000 and assumed there were 150,000 survivors.

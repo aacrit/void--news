@@ -1,0 +1,377 @@
+# The documentary score for "The 1918 Influenza Pandemic", as note data on
+# sampled real instruments. Rendered by pipeline/history/score.py; the samples
+# live in ~/.cache/void-score-samples (never in the repository) and are pinned
+# by sha256.
+#
+# The music claims nothing about the event. Nothing here imitates a period
+# tune, a march, a hymn, a bugle, a bell, a siren, a telegraph or a child's
+# rhyme: the palette is a flute played without vibrato, a horn, and a marimba,
+# each presented as what it is. None of the five earlier composed scores uses
+# any of them. This is a story of hospitals, censorship, schoolchildren and
+# numbers too large to hold, so the score is plain and quiet: the flute never
+# ornaments and never vibrates, the horn holds one note at a time and never
+# plays a line (so nothing in it is a call), and the marimba keeps a count,
+# dry, one note to a beat, under procedure. Grief and testimony carry silence:
+# testimony and rupture have no bed at all (mood.py), and the grief bed is the
+# horn alone for thirty of its forty-two seconds. The theme is built from the
+# house cell (tonic, fifth, tonic, third: the shape of the On Air motif), in A,
+# in the minor mode with the sixth and seventh left unraised, at 45 beats a
+# minute in two-beat bars: eight bars, sixteen beats of 1.333 s, then a hold.
+# A, C and E, the three notes of the cell, are each a recording of that note,
+# unshifted. Bars 1 to 4 state the cell on A and step down home. Bars 5 to 8
+# rise by step, B, C, D, to E held, then fall by step, D, C, and stop on B,
+# the step above home, and hold it over the horn's A: the theme never comes
+# home. The outro takes the last step, B to A, once, at the close. The counts
+# in this story were revised upward for a century and the one apology came
+# eighty-four years late, and the line is built the same way: a figure that
+# is counted, rises, falls back, and is not settled until the end.
+#
+# Cues are keyed to the producer's moods and segment kinds, never to a line of
+# text, so the cinematic variant renders from this manifest whatever moods it
+# picks. Where each cue plays is the producer's (mood_plan): the theme under
+# the TITLE, the first word inside its release; beds under the spoken body by
+# mood, ducked to the mood's floor; transitions in the clear before a scene;
+# the rupture entry on the last word of the moment, or 1,200 ms after a clip's
+# trailing silence, never under it; the outro at the close, with the house
+# promo riding its held bars, so it is at most 13.75 s and silent at its end.
+slug: spanish-flu-1918
+title: The 1918 Influenza Pandemic
+version: 1
+key: A
+mode: minor, with the sixth and seventh left unraised; the theme ends on the second and only the outro resolves it
+tempo_bpm: 45
+house_cell: [0, 7, 0, 3]
+textures: []
+
+instruments:
+  flute:
+    library: VSCO 2 Community Edition (Versilian Studios), Flute, sustain without vibrato (susNV), softest layer (v1). The files are named an octave below what they sound (the file "A3" measures 440.0 Hz, A4, by two independent estimators; "C3" measures 261 Hz, C4, the instrument's lowest note); `note` is the sounding pitch. A, C and E are recordings of those notes, unshifted; B and D are shifted one and two semitones from the C; nothing is asked of it below C4
+    role_as_presented: a flute, played without vibrato
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: sustain
+    attack_s: 0.3
+    release_s: 0.6
+    loop_start_s: 1.0
+    gain_db: 0.0
+    # Loop regions are the steady part of each recording, measured in 0.5 s
+    # frames: every one holds within about a decibel from 1 s to the point
+    # named, then falls away (the A4 drops 10 dB at 9 s, the E4 drifts 3 dB
+    # after 7.5 s), so no loop cycle starts in a decay. No cue holds the flute
+    # past its recording (the longest hold is 6.3 beats, 8.4 s), so nothing
+    # loops today; the regions are set for any hold that one day does.
+    samples:
+      - {file: vsco2ce/Woodwinds/Flute/susNV/LDFlute_susNV_C3_v1_1.wav, note: C4, loop_end_s: 8.8, sha256: 4f221909317e257e4d0bc49f10479643c80cb213a0486455c1bdc1d6ed13a450, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Woodwinds/Flute/susNV/LDFlute_susNV_C3_v1_1.wav"}
+      - {file: vsco2ce/Woodwinds/Flute/susNV/LDFlute_susNV_E3_v1_1.wav, note: E4, loop_end_s: 7.5, sha256: 87c667c2af888ed86dff87f2452248de3e3d958fc93848a4426b7c16f85f09da, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Woodwinds/Flute/susNV/LDFlute_susNV_E3_v1_1.wav"}
+      - {file: vsco2ce/Woodwinds/Flute/susNV/LDFlute_susNV_A3_v1_1.wav, note: A4, loop_end_s: 8.5, sha256: 6fc8d707afddfaaf3003551b95a83b52f514adbe488bfea1c8c5250080a07278, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Woodwinds/Flute/susNV/LDFlute_susNV_A3_v1_1.wav"}
+      - {file: vsco2ce/Woodwinds/Flute/susNV/LDFlute_susNV_C4_v1_1.wav, note: C5, loop_end_s: 9.0, sha256: 105a6dbced98de7ae04a317bdd3ba1a5c6b90dc94034439b68cce6635e2781df, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Woodwinds/Flute/susNV/LDFlute_susNV_C4_v1_1.wav"}
+      - {file: vsco2ce/Woodwinds/Flute/susNV/LDFlute_susNV_E4_v1_1.wav, note: E5, loop_end_s: 8.5, sha256: b609d37fb577e2a0f64f20800fba4bed067151375349bf713c0d4e803f862580, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Woodwinds/Flute/susNV/LDFlute_susNV_E4_v1_1.wav"}
+
+  horn:
+    library: VSCO 2 Community Edition (Versilian Studios), F Horn, sustain, softest layer (v1). The files are named an octave below what they sound (the file "A#1" measures 117 Hz, Bb2, by two independent estimators; "F2" measures 174 Hz, F3); `note` is the sounding pitch. The A the horn holds is one semitone under the recorded Bb, the E one semitone under the recorded F. It plays one note at a time, as a horn does, and breathes at the halfway bar of every long hold
+    role_as_presented: a horn
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: sustain
+    attack_s: 1.2
+    release_s: 1.0
+    gain_db: 0.0
+    # Both recordings open with an accented attack 4 to 5 dB above the tone
+    # that follows (the 1.2 s attack ramp above takes most of it off) and the
+    # Bb swells again by 3 dB around 4 to 5 s; the loop regions below are the
+    # steady stretch after that, within about half a decibel. No cue in this
+    # manifest holds the horn past its recording (the longest hold is 7.6
+    # beats, 10.1 s, against 13.7 s), so the regions are measured and set for
+    # any future hold that needs them, and nothing loops today.
+    samples:
+      - {file: vsco2ce/Brass/F Horn/sus/MOHorn_sus_A#1_v1_1.wav, note: Bb2, loop_start_s: 5.0, loop_end_s: 10.5, sha256: 134f9c522ea928e5bfebb49c649b5eeb809075f1b9f42ac6b984f16ff7457fec, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Brass/F%20Horn/sus/MOHorn_sus_A%231_v1_1.wav"}
+      - {file: vsco2ce/Brass/F Horn/sus/MOHorn_sus_F2_v1_1.wav, note: F3, loop_start_s: 1.5, loop_end_s: 6.0, sha256: d3dcfb6c90cb76954887eb56a85041d5e758bad21234ec0ed11e476d6f05352b, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Brass/F%20Horn/sus/MOHorn_sus_F2_v1_1.wav"}
+
+  marimba:
+    library: VSCO 2 Community Edition (Versilian Studios), Marimba (Outrigger), single hits, the one dynamic published ("loud"), played here at low velocity. The files are named an octave below what they sound (the file "B2" measures 247 Hz, B3, by two independent estimators; "F3" measures 349 Hz, F4; the low bars "C2" and "G2" measure 131 and 196 Hz, C3 and G3); `note` is the sounding pitch. The count's B is a recording of that note; its A is two semitones from the G, its C one from the B, its E one from the F, and the low A three from the C
+    role_as_presented: a marimba
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: pluck
+    release_s: 0.4
+    gain_db: 0.0
+    samples:
+      - {file: vsco2ce/Percussion/Marimba/Marimba_hit_Outrigger_C2_loud_01.wav, note: C3, sha256: bfad3b0e57d04c31e6079aba11fb0a6c5c84627fd4bc46e4e0923663586c460c, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Percussion/Marimba/Marimba_hit_Outrigger_C2_loud_01.wav"}
+      - {file: vsco2ce/Percussion/Marimba/Marimba_hit_Outrigger_G2_loud_01.wav, note: G3, sha256: 3bd173f56481e537c3489a94d1e4dd59c304f9f98679c7c90890fc9f5795c25d, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Percussion/Marimba/Marimba_hit_Outrigger_G2_loud_01.wav"}
+      - {file: vsco2ce/Percussion/Marimba/Marimba_hit_Outrigger_B2_loud_01.wav, note: B3, sha256: a329138008daae1c03652822d7079c0e1e9941071b8c22195e1985f0c685fdeb, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Percussion/Marimba/Marimba_hit_Outrigger_B2_loud_01.wav"}
+      - {file: vsco2ce/Percussion/Marimba/Marimba_hit_Outrigger_F3_loud_01.wav, note: F4, sha256: 379e749add43b12959fae06cc272f1871899cc05460faf41ead77b93e5d01843, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Percussion/Marimba/Marimba_hit_Outrigger_F3_loud_01.wav"}
+
+# Note rows are [instrument, note, start in beats, length in beats or null, velocity].
+# null length on a pluck lets the recording decay on its own. One beat is 1.333 s.
+cues:
+  # Statement 1, under the TITLE: the line once over the horn's A, the marimba
+  # marking the bar groups. Bars 1 to 4 are the cell on A and the step home;
+  # bars 5 to 8 the rise by step to E held, the fall by step, and the stop on
+  # B, held over A and never resolved. The horn breathes at the halfway bar
+  # and once more under the fall, and is full again for the landing on B.
+  # The first word of the title lands inside the last note's release.
+  theme:
+    claims: []
+    length_s: 26.0
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    notes:
+      - [flute, A4, 0, 2, 0.72]
+      - [flute, E5, 2, 1, 0.62]
+      - [flute, A4, 3, 1, 0.68]
+      - [flute, C5, 4, 2, 0.68]
+      - [flute, B4, 6, 1, 0.64]
+      - [flute, A4, 7, 1, 0.68]
+      - [flute, B4, 8, 1, 0.62]
+      - [flute, C5, 9, 1, 0.64]
+      - [flute, D5, 10, 1, 0.64]
+      - [flute, E5, 11, 3, 0.62]
+      - [flute, D5, 14, 1, 0.64]
+      - [flute, C5, 15, 1, 0.66]
+      - [flute, B4, 16, 2.6, 0.68]
+      - [horn, A2, 0, 7.6, 0.46]
+      - [horn, A2, 8.4, 5.6, 0.44]
+      - [horn, A2, 14.8, 3.8, 0.46]
+      - [marimba, A2, 0, null, 0.55]
+      - [marimba, A3, 8, null, 0.42]
+      - [marimba, A2, 16, null, 0.50]
+
+  # Statement 3, at the close: the fall again, D, C, B, and then the one step
+  # the theme withheld, onto A, over the horn's A. Everything released by
+  # 9.8 s and faded to silence inside 13.6 s so the house promo can ride it.
+  outro:
+    claims: []
+    length_s: 13.6
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 2400
+    tail_silence: true
+    notes:
+      - [flute, D5, 0, 1, 0.62]
+      - [flute, C5, 1, 1, 0.62]
+      - [flute, B4, 2, 1, 0.60]
+      - [flute, A4, 3, 3.2, 0.66]
+      - [horn, A2, 0, 6.6, 0.42]
+      - [marimba, A2, 0, null, 0.50]
+      - [marimba, A3, 3, null, 0.40]
+
+  # On the last word of a rupture scene, or after a recording's trailing
+  # silence: the theme's last two notes on a swell, the stop on B over the
+  # horn's A, inside the 6 s mood_plan opens.
+  rupture_entry:
+    claims: []
+    length_s: 6.0
+    peak_dbfs: -15.0
+    room_wet: 1.4
+    swell: [0.5, 2.8, 2.7]
+    notes:
+      - [flute, C5, 0, 1, 0.60]
+      - [flute, B4, 1, 2.2, 0.66]
+      - [horn, A2, 0, 3.2, 0.45]
+
+  # The change of voice (a physician's letter, an army report, a public
+  # notice): one low marimba note, touched.
+  sting:to_document:
+    claims: []
+    length_s: 0.9
+    peak_dbfs: -22.0
+    room_wet: 0.6
+    fade_out_ms: 150
+    notes:
+      - [marimba, A2, 0, 0.3, 0.55]
+
+  # The music returning after a recording, once its trailing silence is over.
+  # The live script carries no clip, so this key is defined for the producer's
+  # grammar and fires only if the cinematic variant admits one.
+  sting:from_clip:
+    claims: []
+    length_s: 2.4
+    peak_dbfs: -20.0
+    room_wet: 1.0
+    swell: [0.8, 0.6, 1.0]
+    notes:
+      - [horn, E3, 0, 0.9, 0.45]
+      - [marimba, A3, 0, 1.2, 0.40]
+
+  # Dread (the camps, the wave turning, the wards): the horn's A held in four
+  # breaths of ten seconds, as a player holds it; the flute faint two octaves
+  # up on E, the fifth, in five breaths of eight, each of its breaths taken
+  # while the horn is full and each of the horn's while the flute is, and the
+  # flute's last hold running a quarter beat past the seam so its release
+  # crosses into its own attack. So one of the two is always sounding, and no
+  # hold outlasts its recording, so nothing in this bed loops a sample: the
+  # first cut held the horn 20 s against a 13.7 s recording and the renderer's
+  # loop crossfade, not phase-aligned at Bb2, cut 4 dB where the flute also
+  # breathed (a 10 dB hole, measured; 33 dB before the breaths were separated).
+  # The stack is a hollow fifth with no third anywhere. The low marimba A once
+  # every 21 s, off the seam.
+  bed:dread:
+    claims: []
+    length_s: 42.667
+    fold: true
+    rms_dbfs: -34.0
+    room_wet: 0.6
+    notes:
+      - [horn, A2, 0, 7.5, 0.60]
+      - [horn, A2, 8, 7.5, 0.58]
+      - [horn, A2, 16, 7.5, 0.60]
+      - [horn, A2, 24, 7.5, 0.58]
+      - [flute, E4, 0, 4.0, 0.22]
+      - [flute, E4, 4.7, 6.3, 0.22]
+      - [flute, E4, 11.7, 6.3, 0.21]
+      - [flute, E4, 18.7, 6.3, 0.22]
+      - [flute, E4, 25.7, 6.075, 0.21]
+      - [marimba, A2, 1, null, 0.30]
+      - [marimba, A2, 17, null, 0.26]
+
+  # Procedure (the parade, the closures, the weekly dead, the mortality
+  # tables): the marimba keeping the count, dry. The house cell, one note
+  # every 1.333 s, the last note alternating.
+  bed:procedure:
+    claims: []
+    length_s: 42.667
+    fold: true
+    rms_dbfs: -33.0
+    room_wet: 0.0
+    notes:
+      - [marimba, A3, 0, null, 0.62]
+      - [marimba, E4, 1, null, 0.46]
+      - [marimba, A3, 2, null, 0.52]
+      - [marimba, C4, 3, null, 0.46]
+      - [marimba, A3, 4, null, 0.62]
+      - [marimba, E4, 5, null, 0.46]
+      - [marimba, A3, 6, null, 0.52]
+      - [marimba, B3, 7, null, 0.46]
+      - [marimba, A3, 8, null, 0.62]
+      - [marimba, E4, 9, null, 0.46]
+      - [marimba, A3, 10, null, 0.52]
+      - [marimba, C4, 11, null, 0.46]
+      - [marimba, A3, 12, null, 0.62]
+      - [marimba, E4, 13, null, 0.46]
+      - [marimba, A3, 14, null, 0.52]
+      - [marimba, B3, 15, null, 0.46]
+      - [marimba, A3, 16, null, 0.62]
+      - [marimba, E4, 17, null, 0.46]
+      - [marimba, A3, 18, null, 0.52]
+      - [marimba, C4, 19, null, 0.46]
+      - [marimba, A3, 20, null, 0.62]
+      - [marimba, E4, 21, null, 0.46]
+      - [marimba, A3, 22, null, 0.52]
+      - [marimba, B3, 23, null, 0.46]
+      - [marimba, A3, 24, null, 0.62]
+      - [marimba, E4, 25, null, 0.46]
+      - [marimba, A3, 26, null, 0.52]
+      - [marimba, C4, 27, null, 0.46]
+      - [marimba, A3, 28, null, 0.62]
+      - [marimba, E4, 29, null, 0.46]
+      - [marimba, A3, 30, null, 0.52]
+      - [marimba, B3, 31, null, 0.46]
+
+  # Reckoning (the turn, the five accounts, what each leaves out): the
+  # marimba alone on A every 2.667 s, the low A every 21 s. No melody, the
+  # thinnest bed, under the deepest duck. The count starts on the second
+  # beat, not the first, so the loop's seam falls inside a decaying note
+  # rather than on an attack (the sparse-bed seam rule).
+  bed:reckoning:
+    claims: []
+    length_s: 42.667
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 0.3
+    notes:
+      - [marimba, A2, 1, null, 0.55]
+      - [marimba, A3, 3, null, 0.40]
+      - [marimba, A3, 5, null, 0.40]
+      - [marimba, A3, 7, null, 0.40]
+      - [marimba, A3, 9, null, 0.40]
+      - [marimba, A3, 11, null, 0.40]
+      - [marimba, A3, 13, null, 0.40]
+      - [marimba, A3, 15, null, 0.40]
+      - [marimba, A2, 17, null, 0.55]
+      - [marimba, A3, 19, null, 0.40]
+      - [marimba, A3, 21, null, 0.40]
+      - [marimba, A3, 23, null, 0.40]
+      - [marimba, A3, 25, null, 0.40]
+      - [marimba, A3, 27, null, 0.40]
+      - [marimba, A3, 29, null, 0.40]
+      - [marimba, A3, 31, null, 0.40]
+
+  # Grief (India, the Samoas, the numbers, the close): the horn's A alone,
+  # faint, in four breaths of ten seconds, so the bed falls near-silent for
+  # about a second four times a cycle, which is what grief is given here; the
+  # flute, quiet, states the theme's fall once (E, D, C, and the stop on B)
+  # and then is silent. The last 30 s of the loop are the horn alone. No hold
+  # outlasts its recording, so nothing here loops a sample.
+  bed:grief:
+    claims: []
+    length_s: 42.667
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 1.0
+    notes:
+      - [horn, A2, 0, 7.5, 0.42]
+      - [horn, A2, 8, 7.5, 0.40]
+      - [horn, A2, 16, 7.5, 0.42]
+      - [horn, A2, 24, 7.5, 0.40]
+      - [flute, E5, 2, 2, 0.34]
+      - [flute, D5, 4, 1, 0.34]
+      - [flute, C5, 5, 1, 0.34]
+      - [flute, B4, 6, 3, 0.36]
+
+  # Into a dread scene, in the clear: the horn's A swelling with the flute's
+  # E faint above it, one low marimba note.
+  transition:dread:
+    claims: []
+    length_s: 3.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    swell: [0.3, 2.1, 1.4]
+    notes:
+      - [horn, A2, 0, 1.8, 0.55]
+      - [flute, E4, 0, 1.8, 0.28]
+      - [marimba, A2, 0.2, null, 0.42]
+
+  # Into a procedure scene: three strokes of the count, dry.
+  transition:procedure:
+    claims: []
+    length_s: 4.6
+    peak_dbfs: -14.0
+    room_wet: 0.0
+    fade_out_ms: 900
+    notes:
+      - [marimba, A3, 0, null, 0.62]
+      - [marimba, E4, 1, null, 0.50]
+      - [marimba, A3, 2, null, 0.52]
+
+  # Into a grief scene: the theme's last two notes on the flute, alone, the
+  # horn's A under them.
+  transition:grief:
+    claims: []
+    length_s: 4.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    notes:
+      - [flute, C5, 0, 1.0, 0.50]
+      - [flute, B4, 1, 1.4, 0.52]
+      - [horn, A2, 0, 2.4, 0.40]
+
+  # Into the turn and the accounts: the count arriving.
+  transition:reckoning:
+    claims: []
+    length_s: 4.2
+    peak_dbfs: -14.0
+    room_wet: 0.3
+    fade_out_ms: 800
+    notes:
+      - [marimba, A2, 0, null, 0.58]
+      - [marimba, A3, 1, null, 0.46]
+      - [marimba, A3, 2, null, 0.46]

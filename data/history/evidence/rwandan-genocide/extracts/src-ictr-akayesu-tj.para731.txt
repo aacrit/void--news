@@ -1,0 +1,8 @@
+source: src-ictr-akayesu-tj
+locator: para731
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-96-4/trial-judgements/en/980902.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+note: the footnote call number 181 is printed as the layer prints it, glued to 'victims'
+
+731. With regard, particularly, to the acts described in paragraphs 12(A) and 12(B) of the Indictment, that is, rape and sexual violence, the Chamber wishes to underscore the fact that in its opinion, they constitute genocide in the same way as any other act as long as they were committed with the specific intent to destroy, in whole or in part, a particular group, targeted as such. Indeed, rape and sexual violence certainly constitute infliction of serious bodily and mental harm on the victims181 and are even, according to the Chamber, one of the worst ways of inflict harm on the victim as he or she suffers both bodily and mental harm. In light of all the evidence before it, the Chamber is satisfied that the acts of rape and sexual violence described above, were committed solely against Tutsi women, many of whom were subjected to the worst public humiliation, mutilated, and raped several times, often in public, in the Bureau Communal premises or in other public places, and often by more than one assailant. These rapes resulted in physical and psychological destruction of Tutsi women, their families and their communities. Sexual violence was an integral part of the process of destruction, specifically targeting Tutsi women and specifically contributing to their destruction and to the destruction of the Tutsi group as a whole.

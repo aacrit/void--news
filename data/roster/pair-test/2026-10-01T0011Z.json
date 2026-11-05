@@ -1,0 +1,113 @@
+{
+ "collected_at": "2026-10-01T00:11:13Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16171887/Manosphere-influencer-Louis-Theroux-documentary-court.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "'Manosphere' influencer who starred in Louis Theroux documentary is fined £4,500 after asking Polish Sainsbury's worker if she 'likes English wood'",
+      "published": "Wed, 30 Sep 2026 15:45:33 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/ed-matthews-fined-sainsburys-worker-37719867",
+      "title": "Manosphere influencer Ed Matthews fined £4.5k after comment to supermarket worker",
+      "published": "Wed, 30 Sep 2026 20:28:31 +0000"
+     }
+    },
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16172391/Manchester-City-guilty-police-investigation-Premier-League.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Man City face mounting calls for POLICE investigation into 'sham' financial dealings - as supporters' group urges fans to stay 'strong together' following bombshell Premier League verdict",
+      "published": "Wed, 30 Sep 2026 17:52:50 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/man-city-guilty-etihad-statement-37721082",
+      "title": "Man City sponsor threatens Premier League with legal action as row escalates further",
+      "published": "Wed, 30 Sep 2026 20:23:56 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16173303/andy-burnham-man-city-guilty-verdict-concern-sale.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Andy Burnham admits concern Man City owners will be forced to SELL after being found guilty of overseeing £900m 'sham': Prime Minister praises their investment into the city",
+      "published": "Wed, 30 Sep 2026 19:12:51 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/manchester-city-charges-verdict-live-37706564",
+      "title": "Man City charges LIVE: Jurgen Klopp speaks, Pep Guardiola statement, punishment latest",
+      "published": "Wed, 30 Sep 2026 22:00:24 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16171693/Burnham-Labour-rejoin-EU-election-manifesto-Brussels.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Burnham hints at election pledge to rejoin EU - and possibly another referendum - months after saying he wouldn't reverse Brexit for fear of damaging democracy",
+      "published": "Wed, 30 Sep 2026 17:02:58 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/politics/labour-andy-burnham-brexit-eu-37712568",
+      "title": "Labour - recap: UK 'would be welcomed back with open arms' into EU as Andy Burnham hints at Brexit reversal",
+      "published": "Wed, 30 Sep 2026 21:31:35 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 132,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 136,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/09/turkey-shelters-emirati-brotherhood-figures-accused-of-plotting-to-oust-uae-rulers/",
+      "title": "Turkey shelters Emirati Brotherhood figures accused of plotting to oust UAE rulers",
+      "published": "Sun, 20 Sep 2026 22:18:23 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 312,
+    "left": 10
+   }
+  }
+ }
+}

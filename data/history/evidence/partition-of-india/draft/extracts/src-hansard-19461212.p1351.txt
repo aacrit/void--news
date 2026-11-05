@@ -1,0 +1,8 @@
+source: src-hansard-19461212
+locator: p1351
+url: https://api.parliament.uk/historic-hansard/commons/1946/dec/12/india-constitution
+read: 2026-09-25
+note: p is the Hansard column; HC Deb 12 December 1946 vol 431 cc1346-452, Sir Stafford Cripps moving the motion
+note: 'I am coining to that' before the passage is the page's; the passage starts after it
+
+Next, came the outbreak in Eastern Bengal on 10th October when gangs of roving Muslim hooligans carried a reign of terror into those parts resulting in the driving out of 50,000 evacuees and causing the death of 200 or more persons. That was accompanied by abductions, rape, and forced conversions. As a result, wild rumours circulated greatly exaggerating even that position, which in itself was bad enough. Shortly afterwards, even worse violence and murder broke out in Bihar, and spread to the United Provinces. It is not possible to give the figures of dead and wounded in Bihar with any accuracy—practically all of them were Muslims, and many of them were women and children—but it is probably not an exaggerated estimate to put the number of the dead alone at 5,000. In the United Provinces there was a very serious riot in the Meerut district, and other connected outbreaks of a lesser degree. It is estimated that since the beginning of September there have been 445 deaths in that Province. In Bombay too, communal outbreaks have been continuing since 2nd September, and down to 18th November, 622 persons have been killed.

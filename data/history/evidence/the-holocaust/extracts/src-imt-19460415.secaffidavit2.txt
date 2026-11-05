@@ -1,0 +1,8 @@
+source: src-imt-19460415
+locator: secaffidavit2
+url: https://avalon.law.yale.edu/imt/04-15-46.asp
+read: 2026-10-07
+note: the printed volume's page number ('414') and running head ('15 April 46') fall inside the paragraph and are omitted here; nothing else is
+note: affidavit 3868-PS, Exhibit USA-819, read into the record in English by Col. Amen; the record says the Prosecution had it 'in four languages'
+
+COL. AMEN: I will omit the first paragraph and start with Paragraph 2: "I have been constantly associated with the administration of concentration camps since 1934, serving at Dachau until 1938; then as Adjutant in Sachsenhausen from 1938 to 1 May 1940, when I was appointed Commandant of Auschwitz. I commanded Auschwitz until 1 December 1943, and estimate that at least 2,500,000 victims were executed and exterminated there by gassing and burning, and at least another half million succumbed to starvation and disease making a total dead of about 3,000,000. This figure represents about 70 or 80 percent of all persons sent to Auschwitz as prisoners, the remainder having been selected and used for slave labor in the concentration camp industries; included among the executed and burned were approximately 20,000 Russian prisoners of war (previously screened out of prisoner-of-war cages by the Gestapo) who were delivered at Auschwitz in Wehrmacht transports operated by regular Wehrmacht officers and men. The remainder of the total number of victims included about 100,000 German Jews, and great Numbers of citizens, mostly Jewish, from Holland, France, Belgium, Poland, Hungary, Czechoslovakia, Greece, or other countries. We executed about 400,000 Hungarian Jews alone at Auschwitz in the summer of 1944."

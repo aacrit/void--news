@@ -1,0 +1,7 @@
+source: src-un-spv2108
+locator: para73
+url: https://documents.un.org/doc/undoc/gen/nl7/900/05/pdf/nl790005.pdf
+read: 2026-09-25
+note: the ODS scan's text layer is optical character recognition of a 1979 print; misreads (to&y for today) are stored as the layer prints them
+
+Prince NORODOM SIHANOUK (Democratic Kampuchea) (interpretationfrom French): First, I wish to thank the members of the Council most sincerely for the genuine sympathy they have extended to the people of Democratic Kampuchea. As a result of that sympathy, to&y I have been granted the honour of coming here to give them an objective account of the Kampuchean problem, or, rather, the current Kampuchean-Vietnamese problem. As indeed the whole world knows, my country is the victim of a large-scale act of flagrant aggression by the Socialist Republic of Viet Nam, a country which had described itself as our “brother”, our “faithful companion in arms in the anticolonialist and anti-imperialist struggle’*, a country which had asserted that it was a “socialist comrade**, “belonging, as does Cambodia, to the camp of the non-aligned States”.

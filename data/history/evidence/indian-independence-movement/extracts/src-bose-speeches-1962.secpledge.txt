@@ -1,0 +1,8 @@
+source: src-bose-speeches-1962
+locator: secpledge
+url: https://archive.org/download/selectedspeeches00subh/selectedspeeches00subh_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+note: 'I.N.A. on Indian Soil', July 4, 1944
+
+Friends, one year ago, when I made certain demands of you, I told you that if you gave me Total Mobilization I would give you a Second Front. I have redeemed that pledge.

@@ -1,0 +1,15 @@
+source: src-ferry-1885
+locator: secraces
+url: https://www2.assemblee-nationale.fr/decouvrir-l-assemblee/histoire/grands-discours-parlementaires/jules-ferry-28-juillet-1885
+read: 2026-09-25
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: the exchange on the 'races supérieures', with the interruptions as the Assemblée's edition prints them
+
+Messieurs, il faut parler plus haut et plus vrai ! il faut dire ouvertement qu'en effet les races supérieures ont un droit vis-à-vis des races inférieures... (Rume urs sur plusieurs bancs à l'extrême gauche .)
+M. Jules Maigne . Oh ! vous osez dire cela dans le pays où ont été proclamés les droits de l'homme !
+M. de Guilloutet . C'est la justification de l'esclavage et de la traite des nègres !
+M. Jules Ferry . Si l'honorable M. Maigne a raison, si la déclaration des droits de l'homme a été écrite pour les noirs de l'Afrique équatoriale, alors de quel droit allez-vous leur imposer les échanges, les trafics ? Ils ne vous appellent pas ! ( Interruptions à l'extrême gauche et à droite. - Très bien ! très bien ! sur divers bancs à gauche .)
+M. Raoul Duval . Nous ne voulons pas les leur imposer ! C'est vous qui les leur imposez !
+M. Jules Maigne . Proposer et imposer sont choses fort différentes !
+M. Georges Périn . Vous ne pouvez pas cependant faire des échanges forcés !
+M. Jules Ferry . Je répète qu'il y a pour les races supérieures un droit, parce qu'il y a un devoir pour elles. Elles ont le devoir de civiliser les races inférieures... ( Marques d'approbation surles mêmes bancs à gauche - Nouvelles interruptions à l'extrême gauche et à droite .)

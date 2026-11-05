@@ -1,0 +1,8 @@
+source: src-nsa-ebb490-2014
+locator: secread
+url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/
+read: 2026-10-09
+note: the editors' introduction
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Visibly rattled from the shouted questions about travel and the Wall, Schabowski read from his briefing papers the words "immediately, without delay" when asked about the timing of the changes that would allow any East German to emigrate

@@ -1,0 +1,7 @@
+source: src-truman-19450806
+locator: para10
+url: https://www.trumanlibrary.gov/library/public-papers/93/statement-president-announcing-use-bomb-hiroshima
+read: 2026-10-05
+note: paragraph 10
+
+It was to spare the Japanese people from utter destruction that the ultimatum of July 26 was issued at Potsdam. Their leaders promptly rejected that ultimatum. If they do not now accept our terms they may expect a rain of ruin from the air, the like of which has never been seen on this earth. Behind this air attack will follow sea and land forces in such numbers and power as they have not yet seen and with the fighting skill of which they are already well aware.

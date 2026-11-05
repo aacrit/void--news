@@ -1,0 +1,8 @@
+source: src-cwihp-doc8-19891109
+locator: seccareful
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+read: 2026-10-09
+note: p. 158
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+I’m expressing myself so carefully because I’m not up to date on this question, but just before I came over here I was given this information.

@@ -1,0 +1,114 @@
+{
+ "collected_at": "2026-10-16T13:33:39Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/sport/rugbyunion/article-16214619/Rugby-star-South-African-Lions-dies-heart-attack-day-game-France.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Rugby star tragically found dead in French hotel after suffering 'heart attack' on eve of his team's Champions Cup clash with La Rochelle",
+      "published": "Fri, 16 Oct 2026 13:38:27 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/rugby-union/lions-player-dies-la-rochelle-37780322",
+      "title": "Rugby player in his 30s found dead in shower at team hotel in France",
+      "published": "Fri, 16 Oct 2026 13:03:43 +0000"
+     }
+    },
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16213953/Sir-Rod-Stewart-health-surgery-Penny-Lancaster.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Sir Rod Stewart, 81, says he's feeling 'brilliant' after undergoing heart surgery as he munches on Maltesers following theatre date night with wife Penny Lancaster, 55",
+      "published": "Fri, 16 Oct 2026 12:33:57 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/sir-rod-stewart-81-sweary-37780006",
+      "title": "Sir Rod Stewart, 81, sweary response as he gives health update after heart procedure",
+      "published": "Fri, 16 Oct 2026 12:24:45 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 150,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.indiatoday.in/india/story/cjp-protest-live-updates-tiranga-march-delhi-connaught-place-central-park-cockroach-janta-party-abhijeet-dipke-3018651-2026-10-16?utm_source=rss",
+      "title": "Live: After Abhijeet Dipke, Neha Bora detained as cops crack down on Tiranga Yatra",
+      "published": "Fri, 16 Oct 2026 12:21:35 +0530"
+     },
+     "left": {
+      "url": "https://www.thehindu.com/news/national/cjp-delhi-tiranga-march-oct-16-2026-live-updates/article71590925.ece",
+      "title": "CJP Tiranga protest LIVE | John Brittas with 100 protestors reach Central Park; Dipke, Neha detained by police",
+      "published": "Fri, 16 Oct 2026 18:58:00 +0530"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/classified-turkish-intelligence-operation-in-moldova-comes-back-under-judicial-scrutiny/",
+      "title": "Classified Turkish intelligence operation in Moldova comes back under judicial scrutiny",
+      "published": "Tue, 06 Oct 2026 22:12:19 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/erdogan-calls-for-grand-consensus-amid-terror-free-turkiye-success",
+      "title": "Erdoğan calls for ‘grand consensus’ amid terror-free Türkiye success",
+      "published": "Thu, 01 Oct 2026 14:09:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/whatever-our-enemies-do-erdogans-son-rallies-diaspora-network-in-europe-as-german-intelligence-warns-of-ankaras-spying-on-dissidents/",
+      "title": "Erdogan’s son vows to stand against enemies at diaspora rally in Germany",
+      "published": "Mon, 12 Oct 2026 22:01:54 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 304,
+    "left": 10
+   }
+  }
+ }
+}

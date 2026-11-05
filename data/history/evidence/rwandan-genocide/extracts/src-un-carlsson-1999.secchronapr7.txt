@@ -1,0 +1,8 @@
+source: src-un-carlsson-1999
+locator: secchronapr7
+url: https://web.archive.org/web/20001203205100/http://www.un.org:80/News/ossg/rwanda_report.htm
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: Annex I, Chronology of Events, the entry for 7 April 1994
+
+April 7: Early in the morning, the number of the guards in the residence of the Prime Minister, Mrs Agathe Uwilingiyimana, was increased with a group of soldiers dispatched from the airport to the residence of the Prime Minister. The RTLM broadcast that the RPF and a contingent of United Nations forces were responsible for the crash of the presidential plane. During the morning, the Prime Minister sought refuge at the United Nations Volunteer (UNV) compound in Kigali, but members of the Presidential Guards broke into the compound and shot the Prime Minister. 10 UNAMIR Belgian peacekeepers, who were assigned to protect her, were tortured and murdered.

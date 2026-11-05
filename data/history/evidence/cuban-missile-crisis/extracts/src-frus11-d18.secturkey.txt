@@ -1,0 +1,17 @@
+source: src-frus11-d18
+locator: secturkey
+url: https://history.state.gov/historicaldocuments/frus1961-63v11/d18
+read: 2026-10-04
+note: Document 18, Transcript of a Meeting at the White House, October 16, 1962, 11:50 a.m.; the exchange on the Jupiter missiles in Turkey as the volume prints it, speaker labels and the editors' question marks included
+
+Rusk: Still, about why the Soviets are doing this, um, Mr. McCone suggested some weeks ago that one thing Mr. Khrushchev may have in mind is that, uh, uh, he knows that we have a substantial nuclear superiority, but he also knows that we don’t really live under fear of his nuclear weapons to the extent that, uh, he has to live under fear of ours. Also we have nuclear weapons nearby, in Turkey and places like that. Um… .
+
+JFK: How many weapons do we have in Turkey?
+
+Taylor?: We have Jupiter missiles…
+
+Bundy?: Yeah. We have how many?
+
+McNamara?: About fifteen, I believe it is.
+
+Bundy?: I think that’s right. I think that’s right.

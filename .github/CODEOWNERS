@@ -1,0 +1,7 @@
+# Rev 85 (P0-7, audit 5 H3). Workflows run from the pushed commit with
+# contents: write, and main is production, so a change to the files that
+# decide what may merge must be reviewed by the owner. auto-merge-claude.yml
+# refuses any branch that touches .github/; this file is what makes that
+# refusal binding once "Require review from Code Owners" is enabled on main.
+/.github/ @aacrit
+/.claude/hooks/ @aacrit

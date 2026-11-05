@@ -1,0 +1,7 @@
+source: src-gregson-gilbert-1783
+locator: secmansfield
+url: https://archive.org/details/reportscasesarg04glengoog
+read: 2026-10-09
+note: Lord Mansfield's opinion; 'pay- ment' is the printed line-end hyphen; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+This is a very uncommon case, and deserves a reconsideration. There is great weight in the objection, that the evidence does not support the statement of the loss made in the declaration. There is no evidence of the ship being foul and leaky, and that certainly was not the cause of the delay. There is weight, also, in the circum- stance of the throwing overboard of the negroes after the rain (if the fact be so), for which, upon the evidence, there appears to have been no necessity. There should, on the ground of reconsideration only, be a new trial, on the pay- ment of costs.

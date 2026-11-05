@@ -1,0 +1,13 @@
+source: src-radcliffe-punjab
+locator: para12
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: the OCR layer prints New Delhi as N ew Delhi and a stray comma before it
+
+12. I am conscious too that the award cannot go far towards satisfying sentiments and aspirations deeply held on either side but directly in conflict as to their bearing on the placing of the boundary. If means are to be found to gratify to the full those sentiments and aspirations, 1 think that they must be found in political arrangements with which I am not concerned, and not in the decision of a boundary line drawn under the terms of reference of this Commission.
+
+, N ew Delhi,
+
+The 12th August 1947.
+
+CYRIL RADCLIFFE.

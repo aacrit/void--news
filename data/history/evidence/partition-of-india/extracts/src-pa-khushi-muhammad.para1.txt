@@ -1,0 +1,7 @@
+source: src-pa-khushi-muhammad
+locator: para1
+url: https://www.1947partitionarchive.org/khushi-muhammad-jut/
+read: 2026-09-25
+note: the opening of paragraph 1 of the story as the Archive's page prints it; the account is the Archive's summary of the interview, in the third person
+
+Khushi Muhammad Jut, son of Gainda Jut of the Mallan Haar Gotra, was born at the village of Aloona Tola in the district of Ludhiana, now in the Indian Punjab. He migrated to Chak 302 GB Bhatti Chak in 1947 when the Partition of India took place. He shared his memories, saying that he was seven years old when Pakistan was created.

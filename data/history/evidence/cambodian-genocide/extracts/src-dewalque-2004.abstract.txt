@@ -1,0 +1,6 @@
+source: src-dewalque-2004
+locator: abstract
+url: https://documents1.worldbank.org/curated/en/924261468743657099/pdf/wps3446.pdf
+read: 2026-09-25
+
+Abstract This paper studies the long-term impact of genocide during the period of the Khmer Rouge (1975-79) in Cambodia and contributes to the literature on the economic analysis of conflict. Using mortality data for siblings from the Cambodia Demographic and Health Survey in 2000, it shows that excess mortality was extremely high and heavily concentrated during 1974-80. Adult males have been the most likely to die, indicating that violent death played a major role. Individuals with an urban or educated background were more likely to die. Infant mortality was also at very high levels during the period

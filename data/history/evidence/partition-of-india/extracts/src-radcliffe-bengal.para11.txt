@@ -1,0 +1,6 @@
+source: src-radcliffe-bengal
+locator: para11
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+
+11. I have done what I can in drawing the line to eliminate any avoidable cutting of railway communications and of river systems, which are of importance to the life of the province: but it is quite impossible to draw a boundary under our terms of reference without causing some interruption of this sort, and I can only express the hope that arrangements can be made and maintained between the two States that will minimize the consequences of this interruption as far as possible.

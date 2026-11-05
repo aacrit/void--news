@@ -1,0 +1,7 @@
+source: src-radcliffe-punjab
+locator: item6
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: item n is paragraph n of Annexure A, the schedule of the Punjab award; paragraph 6, whose numeral the OCR layer prints as (i.
+
+So much of the Punjab Province as lies to the west of the line demarcated in the preceding paragraphs shall be the territory of the West Punjab. So much of the territory of the Punjab Province as lies to the east of that line shall be the territory of the East Punjab.

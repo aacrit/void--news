@@ -1,0 +1,7 @@
+source: src-sv-estimates
+locator: secregion
+url: https://legacy.slavevoyages.org/assessment/estimates
+read: 2026-10-09
+note: the page's form submitted with rows: embarkation regions; columns: flag; cells: only embarked; 1501 to 1866. Its totals differ from the default table's by rounding (12,521,335 against 12,521,337); both are as the site prints them; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Spain / Uruguay Portugal / Brazil Great Britain Netherlands U.S.A. France Denmark / Baltic Totals Senegambia and off-shore Atlantic 122,088 221,612 226,637 9,205 43,791 124,247 7,933 755,513 Sierra Leone 85,432 16,907 163,393 2,276 56,494 61,048 3,221 388,771 Windward Coast 10,558 9,248 200,905 79,102 13,375 23,681 0 336,869 Gold Coast 6,705 68,394 718,127 103,375 126,259 115,574 70,887 1,209,321 Bight of Benin 132,018 1,009,212 353,853 126,913 4,402 348,897 23,765 1,999,060 Bight of Biafra 188,288 156,167 1,030,582 28,677 7,037 182,284 1,525 1,594,560 West Central Africa and St. Helena 432,789 4,018,540 534,280 204,788 29,464 472,288 2,425 5,694,574 South-east Africa and Indian ocean islands 83,646 348,185 31,663 0 24,504 53,383 1,286 542,667 Totals 1,061,524 5,848,265 3,259,440 554,336 305,326 1,381,402 111,042 12,521,335

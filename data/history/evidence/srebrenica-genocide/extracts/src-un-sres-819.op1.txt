@@ -1,0 +1,6 @@
+source: src-un-sres-819
+locator: op1
+url: https://documents.un.org/doc/undoc/gen/n93/221/90/pdf/n9322190.pdf
+read: 2026-09-24
+
+1. Demands that all parties and others concerned treat Srebrenica and its surroundings as a safe area which should be free from any armed attack or any other hostile act;

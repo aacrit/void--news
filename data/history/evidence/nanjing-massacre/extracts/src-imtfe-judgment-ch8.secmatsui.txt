@@ -1,0 +1,8 @@
+source: src-imtfe-judgment-ch8
+locator: secmatsui
+url: https://www.ibiblio.org/hyperwar/PTO/IMTFE/IMTFE-8.html
+read: 2026-10-09
+note: the text is the HyperWar Foundation's HTML transcription of the Judgment (transcribed by Patrick Clancey), whitespace collapsed; its typing errors are kept as it prints them (e.g. 'tow' for 'two'); the transcription's page markers ('--1014--', the printed page of the Judgment) are removed by the builder and the page is given here instead
+note: printed pages 1015 to 1016; the statement inside the quotation marks is Matsui's of 18 December 1937 as the Judgment quotes it
+
+MATSUI, who had remained in a rear area until 17 December, made a triumphal entry into the city on that day, and on 18 December held a religious service for the dead, after which he issued a statement in the course of which he said: "I extend much sympathy to millions of innocent people in the Kiangpei and Chekiang districts, who suffered the evils of war. Now the flag of the rising sun is floating high over Nanking, and the Imperial Way is shining in the southern parts of the Yangtze-Kiang. The dawn of the renaissance of the East is on the verge of offering itself. On this occasion, I hope for reconsideration of the situation by the 400 million people of China."

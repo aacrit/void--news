@@ -1,0 +1,127 @@
+{
+ "collected_at": "2026-11-04T16:37:21Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 32,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16262963/Andrew-Mountbatten-Windsor-served-summons-court.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Andrew Mountbatten-Windsor served summons to give evidence in High Court fraud case after gifts up to £750,000 were received from an elderly Turkish woman",
+      "published": "Wed, 04 Nov 2026 10:18:35 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/prince-andrew-court-summons-trial-37842705",
+      "title": "Andrew Mountbatten-Windsor is summoned to give evidence in fraud trial",
+      "published": "Wed, 4 Nov 2026 15:55:02 +0000"
+     }
+    },
+    {
+     "score": 32,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16265337/Prince-Harry-Meghan-Markle-Brussels-trip.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Harry and Meghan to travel to Brussels to deliver joint speech in first public appearance since Thomas Markle 'child sex abuse' accusations came to light",
+      "published": "Wed, 04 Nov 2026 16:29:39 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/harry-meghan-overseas-trip-brussels-37843290",
+      "title": "Prince Harry and Meghan announce overseas trip for first appearance since Thomas Markle allegations",
+      "published": "Wed, 4 Nov 2026 15:24:23 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16263129/trump-paralyzed-private-residence-white-house-aides-purge-susie-wiles-marco-rubio.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Trump 'paralyzed' by fury as he hides in private residence and refuses to see anyone: Explosive fly-on-wall account as 'panicking' aides walk out of White House and brace for 'purge'... with 'delusional' Susie Wiles and Rubio at top of list",
+      "published": "Wed, 04 Nov 2026 15:12:58 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/politics/us-midterms-2026-results-trump-37836989",
+      "title": "US midterms 2026 live: White House issues panicked 'Trump is still your president' statement after doomsday defeat",
+      "published": "Wed, 4 Nov 2026 15:47:35 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16264429/Sadiq-Khan-MPs-US-midterms-Trump-Republicans-Democrats.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Sadiq Khan joins Labour MPs gloating at US midterms meltdown for Trump's Republicans",
+      "published": "Wed, 04 Nov 2026 12:03:13 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/politics/donald-trump-midterms-election-nightmare-37843503",
+      "title": "Donald Trump faces two-year nightmare after Republican wipeout in midterms",
+      "published": "Wed, 4 Nov 2026 15:52:10 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 174,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.jpost.com/israel-election-2026/article-913793",
+      "title": "Zini appears to backtrack request to interrogate Arab MKs in election's foreign interference probe",
+      "published": "Wed, 04 Nov 2026 12:19:16 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/elections/2026-11-03/ty-article/.premium/shin-bet-chief-seeks-election-probe-of-arab-party-leaders-but-withholds-evidence/000001a1-a2ee-d950-abfb-fafed4ad0000",
+      "title": "Shin Bet chief seeking probe of Arab party leaders on election interference while withholding evidence",
+      "published": "Tue, 03 Nov 2026 22:03:29 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/erdogan-sends-radio-message-to-azerbaijan-flying-over-airspace/news",
+      "title": "Erdoğan sends radio message to Azerbaijan flying over airspace",
+      "published": "Mon, 02 Nov 2026 15:05:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/erdogans-family-business-ties-complicate-azerbaijan-dispute/",
+      "title": "Erdogan’s family business ties complicate Azerbaijan dispute",
+      "published": "Mon, 26 Oct 2026 23:01:29 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 320,
+    "left": 10
+   }
+  }
+ }
+}

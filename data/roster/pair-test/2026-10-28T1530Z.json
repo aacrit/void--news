@@ -1,0 +1,126 @@
+{
+ "collected_at": "2026-10-28T15:30:08Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16240171/Tommy-Robinson-guilty-harassing-Daily-Mail-journalists-jurors-heard-used-bully-boy-tactics-intimidate-reporters-exposed-UK-riots-shame.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Tommy Robinson found guilty of harassing Daily Mail journalists after jurors heard he used 'bully-boy tactics' to intimidate reporters who exposed his UK riots shame",
+      "published": "Wed, 28 Oct 2026 15:22:41 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/tommy-robinson-found-guilty-harassment-37819340",
+      "title": "Tommy Robinson found guilty of harassing two Daily Mail journalists using 'bully-boy tactics'",
+      "published": "Wed, 28 Oct 2026 14:44:00 +0000"
+     }
+    },
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16245369/Prince-Harry-upstage-William-Charles-Meghan-event-Christmas.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Prince Harry 'never intends to upstage William or Charles' - as he and Meghan plan one more public event before Christmas",
+      "published": "Wed, 28 Oct 2026 14:23:20 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/prince-harry-charles-caribbean-tour-37819201",
+      "title": "Prince Harry 'mindful' of King’s Caribbean tour and 'doesn’t set out' to overshadow royals",
+      "published": "Wed, 28 Oct 2026 14:34:50 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16239695/Autumn-Budget-2026-live-updates-John-Healey.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Autumn Budget 2026 live updates: Kemi Badenoch says country is 'overspent' as Chancellor launches tax raid on savers to fund cost of living",
+      "published": "Wed, 28 Oct 2026 15:23:25 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/uk-autumn-budget-today-live-37815319",
+      "title": "UK Budget 2026 Live: Millions to get £100 off energy bills as minimum wage increased and rise in bank tax",
+      "published": "Wed, 28 Oct 2026 15:24:32 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/lifestyle/article-16245189/Fleetwood-Town-Arsenal-Carabao-Cup-WAGs.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Nothing League Two about these WAGs! The glamorous partners who supported Fleetwood Town in shock defeat over Arsenal - including Molly-Mae's manager",
+      "published": "Wed, 28 Oct 2026 14:37:48 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/conor-haughey-fleetwood-arsenal-cup-37818936",
+      "title": "Conor Haughey: British teenager praised for helping Fleetwood Town dump Arsenal out of Carabao Cup",
+      "published": "Wed, 28 Oct 2026 14:09:41 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16245475/michael-carrick-bruno-fernandes-man-united-carrington.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Michael Carrick holds Carrington summit with Bruno Fernandes amid tension between Man United boss and captain after Bournemouth snub and 'loyalty' dig",
+      "published": "Wed, 28 Oct 2026 12:12:37 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/man-united-manager-latest-live-37813167",
+      "title": "Michael Carrick future LIVE: Eddie Howe plan as sack timeline emerges after Man Utd talks",
+      "published": "Wed, 28 Oct 2026 15:02:50 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 146,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 25,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/erdogans-family-business-ties-complicate-azerbaijan-dispute/",
+      "title": "Erdogan’s family business ties complicate Azerbaijan dispute",
+      "published": "Mon, 26 Oct 2026 23:01:29 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 315,
+    "left": 10
+   }
+  }
+ }
+}

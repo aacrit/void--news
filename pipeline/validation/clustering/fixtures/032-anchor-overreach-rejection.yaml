@@ -1,0 +1,77 @@
+id: anchor-overreach-rejection-2026-05-17
+name: "Anchor-entity over-reach: tangential clusters sharing rare entities but no title overlap must NOT merge"
+failure_date: "2026-05-17"
+failure_kind: anchor-overreach
+articles:
+  - id: anc-bp-resign
+    title: "BP CEO Bernard Looney quits after personal-disclosure breach"
+    summary: "Bernard Looney resigned as chief executive of BP after admitting he failed to disclose personal relationships with colleagues."
+    full_text: >
+      Bernard Looney has resigned as chief executive of BP, the company said on
+      Tuesday. The 53-year-old, who took the top job in 2020, admitted he had
+      not been "fully transparent" about personal relationships with company
+      colleagues. The board accepted his resignation with immediate effect.
+      Chief financial officer Murray Auchincloss will serve as interim chief
+      executive while a permanent replacement is sought. BP shares fell 1.8%
+      in early London trading. Looney had been credited with sharpening BP's
+      net-zero pivot. The board said it would commission an external review.
+    source: { slug: financial-times, country: GB, tier: international }
+    published_at: "2026-05-16T08:00Z"
+  - id: anc-bp-strategy
+    title: "BP strategy under interim leader Auchincloss: net-zero pace under scrutiny"
+    summary: "Murray Auchincloss inherits a sharpened net-zero target and pressure from oil majors moving in the opposite direction."
+    full_text: >
+      Murray Auchincloss takes the reins at BP with a sharpened net-zero
+      target and mounting pressure from competitors moving in the opposite
+      direction. Investors want clarity on whether BP will hold its 25% scope-3
+      emissions cut by 2030 or revise pace amid sustained crude prices. The
+      board commissioned an external review of governance. Auchincloss must
+      navigate the same investor-relations footing Bernard Looney had cultivated.
+    source: { slug: bloomberg, country: US, tier: us_major }
+    published_at: "2026-05-16T13:30Z"
+  - id: anc-shell-results
+    title: "Shell beats earnings estimates as LNG arm propels Q1 results"
+    summary: "Shell reported first-quarter earnings ahead of analyst estimates, driven by a strong performance from its integrated gas and LNG businesses."
+    full_text: >
+      Shell beat analyst earnings estimates in the first quarter, with
+      adjusted earnings of $7.7 billion. The integrated gas and LNG businesses
+      drove the strong performance. CEO Wael Sawan said the buyback programme
+      would continue at $3.5 billion. The London-listed company highlighted
+      its 4-year LNG offtake deal with Auchincloss-led BP as evidence of
+      sector consolidation. Chairman Andrew Mackenzie addressed pay structure
+      questions at the AGM. Net debt fell to $40.5bn from $43.5bn.
+    source: { slug: reuters, country: US, tier: us_major }
+    published_at: "2026-05-16T07:30Z"
+  - id: anc-shell-asset
+    title: "Shell to divest African downstream assets, focus on LNG"
+    summary: "Shell announced it will divest its downstream assets across several African markets, doubling down on its LNG-led strategy."
+    full_text: >
+      Shell will divest downstream retail and refining assets across several
+      African markets, the company said on Wednesday. The move follows a wider
+      portfolio review under CEO Wael Sawan and aligns with the integrated
+      gas focus. Shell's chairman Andrew Mackenzie said the strategy "sharpens
+      the cash-generating core." Analyst Auchincloss-style commentary from
+      ratings agencies has been positive. The divestment is expected to raise
+      $1.8bn over 18 months. Local employees will transfer to the new owners.
+    source: { slug: bbc-news, country: GB, tier: international }
+    published_at: "2026-05-16T11:00Z"
+expectation:
+  type: should_split
+  member_ids: [anc-bp-resign, anc-shell-results]
+  min_clusters: 2
+rationale: |
+  These are two distinct stories — BP's CEO resignation and Shell's Q1
+  earnings — that happen to share rare anchor entities ("Auchincloss",
+  "Mackenzie") via passing mentions across articles. Pre-fix, Phase 2.6's
+  loose ANCHOR_TITLE_JACCARD_FLOOR=0.15 + ANCHOR_MAX_DOC_FREQ_PCT=0.05
+  at production scale would let these two clusters merge.
+
+  Post-fix (2026-05-17):
+    • ANCHOR_IDF_FRACTION_OF_MAX=0.70 (was 0.60)
+    • ANCHOR_MAX_DOC_FREQ_PCT=0.025 (was 0.05)
+    • ANCHOR_TITLE_JACCARD_FLOOR=0.22 (was 0.15)
+    • MERGE_HARD_CEILING=120 across all merge phases
+
+  Titles share almost no tokens ("BP CEO Bernard Looney quits…" vs
+  "Shell beats earnings estimates…"). Stem-Jaccard is well below 0.22.
+  Anchor merge should NOT fire. Expect ≥2 distinct clusters in output.

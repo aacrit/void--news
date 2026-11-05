@@ -1,0 +1,8 @@
+source: src-ambedkar-1945
+locator: secliberator
+url: https://archive.org/download/in.ernet.dli.2015.278459/2015.278459.What-Congress_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+note: 'Mr*.' is the layer's reading of 'Mr.'
+
+Can Mr. Gandhi be called a liberator of the Untouchables ? Does this not show that Mr*. Gandhi is more anxious to tighten the tie which binds the Untouchables to the apron strings of the Hindus than to free them from the thraldom of the Hindus ?

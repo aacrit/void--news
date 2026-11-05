@@ -1,0 +1,44 @@
+source: src-wrb-19441126
+locator: p28
+url: http://www.fdrlibrary.marist.edu/_resources/images/hol/hol00522.pdf
+read: 2026-10-07
+note: the PDF's OCR layer, glyphs as read; the layer separates the table's country column from its figures column and misreads some figures ('soo,ooo', 'so,ooo'), so only the first row (Poland by truck, approximately 300,000), the last row (various camps, 300,000) and the total (approximately 1,765,000) are legible as figures; the report's own page number is 28 ('- 28 -'), the PDF's page 35
+
+Careful estb ate of the numter of Jews gassed
+in BIRKENAU between April 1942 ani April 1944 (according
+to countries of origin}.
+Poland . -(transported by truck) •.••••.• approximately 300,000
+" • • train ••••••.•
+Holland ••.•.•.........•••........•.•.
+Greece
+France
+Belgium
+• • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •
+• • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •
+• • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •
+Germany ••••••••••••••••••••••••••••••
+Yougoalavia, Italy and Norway ••••••••
+Li thuan1a ••••••••••••••••••••••••••••
+Bohemta, Moravia and Austria •••••••••
+Slovakia . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+..
+II
+•
+"
+•
+•
+"
+"
+"
+soo,ooo
+100,000
+45,000
+150,000
+50,000
+so,ooo
+50,000
+50,000
+30,000
+30,000
+Vari cus camps for foreign Jews in f .oland • 300,000
+approximately 1,765,000

@@ -1,0 +1,6 @@
+source: src-barry-2004
+locator: para30
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC340389/fullTextXML
+read: 2026-09-25
+
+These men, and probably others unnamed by the paper, were exposed to influenza and would have arrived in Funston between February 26 and March 2. On March 4 the first soldier at the camp reported ill with influenza at sick call. The camp held an average of 56,222 troops. Within three weeks more than eleven hundred others were sick enough to require hospitalization, and thousands more – the precise number was not recorded – needed treatment at infirmaries scattered around the base.

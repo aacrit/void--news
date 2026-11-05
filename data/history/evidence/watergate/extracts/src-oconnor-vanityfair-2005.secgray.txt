@@ -1,0 +1,7 @@
+source: src-oconnor-vanityfair-2005
+locator: secgray
+url: https://www.vanityfair.com/news/politics/2005/07/deepthroat200507
+read: 2026-10-09
+note: the magazine's web text, two sentences on L. Patrick Gray
+
+What’s more, Hoover, who had died that May, was no longer around to protect Felt or the bureau’s Old Guard, the F.B.I. chief having been replaced by an interim successor, L. Patrick Gray, a Republican lawyer who hoped to permanently land Hoover’s job. Gray, with his eyes on that prize, chose to leave an increasingly frustrated Felt in charge of the F.B.I.’s day-to-day operations.

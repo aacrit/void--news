@@ -1,0 +1,8 @@
+source: src-lii-us-v-nixon-1974
+locator: para28
+url: https://www.law.cornell.edu/supremecourt/text/418/683
+read: 2026-10-09
+note: the Legal Information Institute's web text of the opinion; the locator is LII's own paragraph number, printed at the head of each paragraph, not a U.S. Reports page
+note: the opinion of the Court, delivered by Chief Justice Burger; the first sentence states the deference the Court then declines to extend to an absolute privilege
+
+In the performance of assigned constitutional duties each branch of the Government must initially interpret the Constitution, and the interpretation of its powers by any branch is due great respect from the others. The President's counsel, as we have noted, reads the Constitution as providing an absolute privilege of confidentiality for all Presidential communications. Many decisions of this Court, however, have unequivocally reaffirmed the holding of Marbury v. Madison, 1 Cranch, 137, 2 L.Ed. 60 (1803), that '(i)t is emphatically the province and duty of the judicial department to say what the law is.' Id., at 177, 2 L.Ed. 60.

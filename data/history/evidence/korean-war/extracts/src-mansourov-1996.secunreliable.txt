@@ -1,0 +1,8 @@
+source: src-mansourov-1996
+locator: secunreliable
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+read: 2026-10-09
+note: Mansourov's note 30, CWIHP Bulletin 6-7
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+That appears to leave two principal alternatives: 1) that both Russian documents, and others in the Presidential Archives collection that are logically and chronologically consistent with the events they describe, are elaborate fakes (which I find highly unlikely, especially as the collection includes plenty of documents that are highly incriminating regarding the Soviet role in the war); or 2) (what I find more likely) that the published Chinese version of the October 2 telegram is unreliable: inaccurate, unsent, or perhaps misdated; nor can one exclude the possibility that the text was altered or falsified by Chinese authorities to present what they deemed to be a more ideologically or politically correct version of history.

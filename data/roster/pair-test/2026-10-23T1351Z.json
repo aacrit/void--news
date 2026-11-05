@@ -1,0 +1,153 @@
+{
+ "collected_at": "2026-10-23T13:51:08Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16232151/police-raped-David-Carrick-Sir-Mark-Rowley-resign.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Female police officer raped by David Carrick says Met chief Sir Mark Rowley should resign as she receives six-figure payout from force",
+      "published": "Fri, 23 Oct 2026 09:00:56 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/police-officer-raped-met-cop-37802785",
+      "title": "Police officer raped by Met cop David Carrick calls for Scotland Yard chief to resign",
+      "published": "Fri, 23 Oct 2026 12:15:28 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16233117/Michael-Carricks-five-minute-monologue-Manchester-United.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Michael Carrick's five-minute monologue: Under-fire boss admits Man United have 'lost our way', demands 'humility' from Bruno Fernandes and Co and refuses to say if he'll keep the captaincy",
+      "published": "Fri, 23 Oct 2026 14:49:26 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/michael-carrick-future-man-utd-37803988",
+      "title": "Michael Carrick makes Man Utd vow in emotional six-minute speech as pressure mounts",
+      "published": "Fri, 23 Oct 2026 13:13:45 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16232159/Storm-Austen-hits-Britain-Met-Office-amber-alert.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Storm Austen demolishes part of Brighton's historic West Pier as 80mph winds batter Britain leaving schools closed, flights axed and 18,000 homes without power",
+      "published": "Fri, 23 Oct 2026 14:49:50 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/weather-storm-austen-uk-forecast-37801808",
+      "title": "Storm Austen live: Brighton West Pier collapses amid new Met Office warnings",
+      "published": "Fri, 23 Oct 2026 13:34:09 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 141,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/influencers-26/50jews-26/article-908123",
+      "title": "No. 2: Benjamin Netanyahu: Shaping Israel’s politics and global image for a generation",
+      "published": "Thu, 10 Sep 2026 18:30:37 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-politics/2026-10-20/ty-article/netanyahu-says-iran-trying-to-interfere-in-israels-elections/000001a1-5a56-d014-afa7-fbf700d90000",
+      "title": "'This is not spin': Netanyahu says Iran wants to interfere in Israel's elections",
+      "published": "Tue, 20 Oct 2026 21:20:34 +0300"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.jpost.com/middle-east/article-912630",
+      "title": "Huckabee questions Board of Peace’s ability to carry out Trump's Gaza peace plan - report",
+      "published": "Fri, 23 Oct 2026 01:07:31 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-security/2026-10-21/ty-article/.premium/kushner-shares-article-urging-israel-to-cooperate-with-gaza-board-of-peace/000001a1-5ebb-da79-a5fd-5efb1c3f0000",
+      "title": "Kushner shares WSJ article urging Israel to cooperate with Gaza Board of Peace before election",
+      "published": "Wed, 21 Oct 2026 21:44:55 +0300"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/defense-news/article-912642",
+      "title": "Netanyahu orders Hebron sealed off, full West Bank closure after Hamas terror attack",
+      "published": "Fri, 23 Oct 2026 07:29:39 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-security/2026-10-23/ty-article/idf-two-israelis-wounded-in-west-bank-shooting-attack-near-hebron/000001a1-670e-d29a-a1a5-e7af44bc0000",
+      "title": "Five Israelis wounded in West Bank shooting near Hebron: Two Palestinian assailants killed",
+      "published": "Fri, 23 Oct 2026 07:58:08 +0300"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/article-912609",
+      "title": "IDF sources: Detention of US lawmaker nominee, 90 West Bank volunteers was complex - exclusive",
+      "published": "Thu, 22 Oct 2026 20:39:20 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/west-bank/2026-10-21/ty-article/.premium/democratic-congressional-candidate-brad-lander-detained-in-west-bank-group-says/000001a1-5de3-da49-abe9-5ffb7b750000",
+      "title": "Israel briefly detains U.S. congressional candidate Brad Lander in West Bank",
+      "published": "Wed, 21 Oct 2026 13:00:27 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/whatever-our-enemies-do-erdogans-son-rallies-diaspora-network-in-europe-as-german-intelligence-warns-of-ankaras-spying-on-dissidents/",
+      "title": "Erdogan’s son vows to stand against enemies at diaspora rally in Germany",
+      "published": "Mon, 12 Oct 2026 22:01:54 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 309,
+    "left": 10
+   }
+  }
+ }
+}

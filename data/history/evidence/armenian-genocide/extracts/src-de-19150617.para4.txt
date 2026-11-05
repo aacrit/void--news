@@ -1,0 +1,7 @@
+source: src-de-19150617
+locator: para4
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-06-17-DE-003
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+
+Daß die Verbannung der Armenier nicht allein durch militärische Rücksichten motiviert ist, liegt zutage. Der Minister des Innern Talaat Bey hat sich hierüber kürzlich gegenüber dem zur Zeit bei der Kaiserlichen Botschaft beschäftigten Dr. Mordtmann ohne Rückhalt dahin ausgesprochen "daß die Pforte den Weltkrieg dazu benutzen wollte, um mit ihren inneren Feinden - den einheimischen Christen - gründlich aufzuräumen, ohne dabei durch die diplomatische Intervention des Auslandes gestört zu werden; das sei auch im Interesse der mit der Türkei verbündeten Deutschen, da die Türkei auf diese Weise gestärkt würde."

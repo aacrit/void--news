@@ -1,0 +1,7 @@
+source: src-baquaqua-1854
+locator: p42-43
+url: https://docsouth.unc.edu/neh/baquaqua/baquaqua.html
+read: 2026-10-09
+note: the electronic edition's page marker 'Page 43' falls inside the passage and is kept as the edition prints it; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Its horrors, ah! who can describe? None can so truly depict its horrors as the poor unfortunate, miserable wretch that has been confined within its portals. Oh! friends of humanity, pity the poor African, who has been trepanned and sold away from friends and home, and consigned to the hold of a slave ship, to await even more horrors and miseries in a distant land, amongst the religious and benevolent. Yes, even in their very midst; but to the ship! We were thrust into the hold of the vessel in a state of nudity, the males being crammed on one side and the females on the other; the hold was so low that we could not stand up, but were obliged to crouch upon the floor or sit down; day and night were the same to us, sleep being denied Page 43 as from the confined position of our bodies, and we became desperate through suffering and fatigue. Oh! the loathsomeness and filth of that horrible place will never be effaced from my memory; nay, as long as memory holds her seat in this distracted brain, will I remember that.

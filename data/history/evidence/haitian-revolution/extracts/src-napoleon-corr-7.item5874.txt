@@ -1,0 +1,9 @@
+source: src-napoleon-corr-7
+locator: item5874
+url: https://archive.org/download/correspondancede07napouoft/correspondancede07napouoft_djvu.txt
+read: 2026-09-25
+note: No. 5874, Exposé de la situation de la République, 1 frimaire an X (22 November 1801): the heading and the two paragraphs on Saint-Domingue, Guadeloupe and Martinique (page 331); the page header removed
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+5874. — EXPOSÉ DE LA SITUATION DE LA RÉPUBLIQUE. Taris, 1er frimaire an X (22 novembre 1801). A Saint-Domingue et à la Guadeloupe, il n'est plus d'esclaves; tout y est libre, tout y restera libre. La sagesse et le temps y ramèneront l'ordre et y rétabliront la culture et les travaux. A la Martinique, ce seront des principes différents. La Martinique a conservé l'esclavage, et l'esclavage y sera conservé. Il en a trop coûté à L'humanité pour tenter encore, dans cette partie, une révolution nouvelle.

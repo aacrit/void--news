@@ -1,0 +1,8 @@
+source: src-cwihp-stalin-19501001
+locator: secdivisions
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+read: 2026-10-09
+note: CWIHP Bulletin 6-7, Mansourov's Document 10, Filippov (Stalin) to Mao Zedong and Zhou Enlai, 1 October 1950
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+I think that if in the current situation you consider it possible to send troops to assist the Koreans, then you should move at least five-six divisions toward the 38th parallel at once so as to give our Korean comrades an opportunity to organize combat reserves north of the 38th parallel under the cover of your troops. The Chinese divisions could be considered as volunteers, with Chinese in command at the head, of course.

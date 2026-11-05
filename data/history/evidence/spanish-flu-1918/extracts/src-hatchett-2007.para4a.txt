@@ -1,0 +1,6 @@
+source: src-hatchett-2007
+locator: para4a
+url: https://pmc.ncbi.nlm.nih.gov/articles/PMC1849867/
+read: 2026-09-25
+
+The contrast of mortality outcomes between Philadelphia and St. Louis is particularly striking (Fig. 1). The first cases of disease among civilians in Philadelphia were reported on September 17, 1918, but authorities downplayed their significance and allowed large public gatherings, notably a city-wide parade on September 28, 1918, to continue. School closures, bans on public gatherings, and other social distancing interventions were not implemented until October 3, when disease spread had already begun to overwhelm local medical and public health resources. In contrast, the first cases of disease among civilians in St. Louis were reported on October 5, and authorities moved rapidly to introduce a broad series of measures designed to promote social distancing, implementing these on October 7.

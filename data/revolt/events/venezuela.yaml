@@ -1,0 +1,216 @@
+slug: venezuela
+title: 'Venezuela: The Ballot-Box Standoff'
+subtitle: An opposition that keeps winning votes it is not allowed to count
+date_display: 2014 to present
+date_start: 2014
+date_precision: year
+era: square-revolutions
+region: americas
+country: Venezuela
+revolt_type: democratic-uprising
+status: dormant
+summary: Venezuela holds the largest oil reserves on earth and a population that has watched its economy collapse and roughly a quarter of its people leave. Waves of protest in 2014, 2017 and 2019 failed to dislodge the government. In 2024 the opposition says it won the presidential election by a wide margin and published the tallies to prove it. The government declared itself the winner without releasing the count.
+significance: Venezuela is a case of a movement with majorities and mobilization that still cannot cross the last step, because the state controls the courts, the count and the guns. It tests whether elections can end an autocracy that has learned to survive them.
+analytical_outlook: 'The opposition has repeatedly won public support without winning power, because the security forces and the electoral authority remain loyal to the government. The record on removing entrenched autocracies through contested elections alone, without an elite or military fracture, is poor. Placement on the arc: a recurring spark that has not produced dual power or a security-force break.'
+grievances:
+  - kind: economic
+    intensity: 90
+    evidence: Years of hyperinflation and shortages; an estimated seven to eight million people have emigrated.
+  - kind: political
+    intensity: 85
+    evidence: Courts, the electoral council and the legislature packed to favor the ruling party.
+  - kind: electoral
+    intensity: 88
+    evidence: A 2024 presidential result declared without publishing polling-station tallies.
+repression_level: high
+actors:
+  - actor_type: masses
+    name: The opposition electorate
+    description: A cross-class majority that has repeatedly voted against the government.
+    role_in_arc: Provides the votes and the crowds, but not the leverage.
+    defected: false
+  - actor_type: vanguard
+    name: The opposition leadership
+    description: Figures including Maria Corina Machado and Edmundo Gonzalez around the 2024 campaign.
+    role_in_arc: Organized the electoral challenge and documented the tallies.
+    defected: false
+  - actor_type: security-forces
+    name: The armed forces and colectivos
+    description: A military tied to the government by patronage and pro-government armed groups.
+    role_in_arc: The decisive bloc that has not defected.
+    defected: false
+tactics:
+  - tactic_type: mass-demonstration
+    description: Repeated waves of street protest in 2014, 2017 and 2019.
+    prominence: high
+  - tactic_type: parallel-institutions
+    description: The opposition documented and published its own vote tallies in 2024.
+    prominence: medium
+  - tactic_type: boycott-noncooperation
+    description: International non-recognition and sanctions pressure.
+    prominence: medium
+resistance_type: nonviolent
+phases:
+  - phase: old-regime-crisis
+    label: An oil economy collapses
+    date_start: '2014'
+    t_start: 0
+    t_end: 0.12
+    intensity: 45
+    reached: true
+    summary: Falling oil prices and mismanagement trigger shortages, inflation and the first protest wave.
+    key_events:
+      - 2014 protests
+      - Economic collapse
+  - phase: the-spark
+    label: Recurring uprisings
+    date_start: '2017'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 65
+    reached: true
+    summary: Mass protests in 2017 and a rival presidency in 2019 challenge the government and fail to move it.
+    key_events:
+      - 2017 protests
+      - The 2019 presidential standoff
+  - phase: moderate-phase
+    label: The electoral route
+    date_start: '2024'
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 60
+    reached: true
+    summary: The opposition contests the 2024 election, claims a wide win and publishes tallies. The result is declared against it.
+    key_events:
+      - 2024 election
+      - Disputed result
+  - phase: dual-power
+    label: A rival authority
+    t_start: 0.48
+    t_end: 0.6
+    intensity: 0
+    reached: false
+    summary: Not durably reached. The 2019 rival presidency never controlled the state.
+    key_events: []
+  - phase: consolidation
+    label: A settled order
+    t_start: 0.92
+    t_end: 1
+    intensity: 0
+    reached: false
+    summary: Not reached.
+    key_events: []
+outcome: ongoing-unresolved
+peak_participation_pct: null
+peak_participation_display: Large repeated protest waves and a decisive electoral majority in 2024, without the security-force break that turns votes into power.
+crossed_participation_threshold: false
+military_defection: none
+foreign_intervention: diplomatic
+duration_days: null
+death_toll_low: null
+death_toll_high: null
+regime_before: personalist
+regime_after: unresolved
+democratization_delta: null
+success_factors:
+  - factor_key: resistance_method
+    label: Method of struggle
+    framework: chenoweth
+    status: Nonviolent and electoral.
+    direction: favors-movement
+    base_rate: About 53 percent of nonviolent campaigns from 1900 to 2006 succeeded, versus about 26 percent of armed ones.
+    rationale: Method keeps the favorable base rate available, but method alone has not sufficed here.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+    as_of: '2026'
+    confidence: medium
+  - factor_key: security_defection
+    label: Did the security forces defect
+    framework: chenoweth
+    status: No. The military remains bound to the government by patronage.
+    direction: favors-regime
+    base_rate: Defection of the security forces is the single strongest predictor of a campaign’s success.
+    rationale: Every Venezuelan protest wave has broken against an intact military.
+    sources:
+      - Nepstad, Nonviolent Revolutions (2011)
+    as_of: '2026'
+    confidence: high
+  - factor_key: elite_fracture
+    label: Did the ruling elite split
+    framework: goldstone
+    status: No durable split within the governing bloc.
+    direction: favors-regime
+    base_rate: Revolutions rarely succeed until the ruling elite fractures.
+    rationale: Oil patronage and the fear of prosecution have kept the elite together.
+    sources:
+      - Goldstone, Revolution and Rebellion in the Early Modern World (1991)
+    as_of: '2026'
+    confidence: high
+  - factor_key: peak_participation
+    label: Peak participation
+    framework: chenoweth
+    status: Large but episodic; sustained mobilization has faded between waves.
+    direction: indeterminate
+    base_rate: No campaign that mobilized at least 3.5 percent of the population at its peak has failed.
+    rationale: Emigration and exhaustion have thinned each successive wave.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+    as_of: '2026'
+    confidence: medium
+key_figures:
+  - name: Maria Corina Machado
+    role: Opposition leader behind the 2024 campaign
+    wikipedia: https://en.wikipedia.org/wiki/Mar%C3%ADa_Corina_Machado
+  - name: Nicolas Maduro
+    role: President since 2013
+    wikipedia: https://en.wikipedia.org/wiki/Nicol%C3%A1s_Maduro
+legacy_points:
+  - A movement that has won public majorities without winning power.
+  - Roughly a quarter of the population has emigrated during the crisis.
+  - The 2024 dispute turned on published vote tallies the government would not release.
+related_revolt_slugs: []
+related_history_slugs: []
+live_query:
+  strong:
+    - Maduro
+    - Machado
+    - Gonzalez
+    - Guaido
+    - Chavismo
+  context:
+    - Venezuela
+    - Caracas
+    - Venezuelan
+  exclude: []
+analysis_reviewed_at: '2026-07-01'
+prediction_confidence: medium
+is_published: true
+perspectives:
+  - viewpoint: The opposition
+    viewpoint_type: movement
+    region_origin: Venezuela
+    narrative: We do not need to seize anything. We won the vote and we can prove it, receipt by receipt. What stands between the count and the country is not the people. It is a government that will not let the numbers be read aloud.
+    key_arguments:
+      - The 2024 tallies show a decisive opposition win.
+      - The obstacle is state control of the count and the guns.
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - The published tallies
+      - The scale of emigration
+    omitted: []
+  - viewpoint: The analyst
+    viewpoint_type: academic
+    region_origin: Global
+    narrative: Venezuela is a standing lesson that majorities do not equal leverage. Without a fracture in the military or the elite, an autocracy that controls the count can lose every honest tally and keep every office.
+    key_arguments:
+      - Votes without a security-force break rarely move an autocracy.
+      - Elite cohesion is the government’s core asset.
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - Security-force loyalty
+      - Elite cohesion
+    omitted: []
+media: []
+connections: []

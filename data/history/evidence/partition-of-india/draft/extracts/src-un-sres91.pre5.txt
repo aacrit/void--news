@@ -1,0 +1,7 @@
+source: src-un-sres91
+locator: pre5
+url: https://documents.un.org/doc/resolution/gen/nr0/072/10/pdf/nr007210.pdf
+read: 2026-09-25
+note: the English column of the bilingual printing (Resolutions and Decisions of the Security Council 1951); the PDF's line breaks are joined
+
+Affirming that the convening of a constituent assembly as recommended by the General Council of the "All Jammu and Kashmir National Conference" and any action that assembly might attempt to take to determine the future shape and affiliation of the entire State or any part thereof would not constitute a disposition of the State in accordance with the above principle,

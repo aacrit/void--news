@@ -1,0 +1,8 @@
+source: src-imtfe-judgment-ch10
+locator: secverdict
+url: https://www.ibiblio.org/hyperwar/PTO/IMTFE/IMTFE-10.html
+read: 2026-10-09
+note: the text is the HyperWar Foundation's HTML transcription of the Judgment (transcribed by Patrick Clancey), whitespace collapsed; its typing errors are kept as it prints them (e.g. 'tow' for 'two'); the transcription's page markers ('--1014--', the printed page of the Judgment) are removed by the builder and the page is given here instead
+note: printed page 1181; the sentence is not in this chapter and is not held
+
+The Tribunal holds the accused MATSUI guilty under Count 55 and not guilty under Counts 1, 27, 29, 31, 32, 35, 36 and 54.

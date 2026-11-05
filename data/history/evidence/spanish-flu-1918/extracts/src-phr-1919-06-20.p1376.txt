@@ -1,0 +1,7 @@
+source: src-phr-1919-06-20
+locator: p1376
+url: https://archive.org/download/jstor-4575203/4575203_djvu.txt
+read: 2026-09-25
+note: the table's heading, its three column groups, its Union row and its source note, in the text layer's order; the four province rows between them are omitted, marked [...]; in the Union row the nine figures are case incidence (European, other than European, total), case fatality (the same three) and death rate per 1,000 (the same three)
+
+Table X.— Case incidence, cane fatality, and death rates from influenza in Union of South Africa during the period Aug. 1 to Nov. SO, 1918. 1 Case incidence, per cent. Case fatality, per cent. Death rate per 1,000. [...] Union 32.06 46.03 42.79 2.57 5.90 5.32 8.26 27.19 22.80 [...] 1 Report of the Influenza Epidemic Commission, Union of South Africa, 1919

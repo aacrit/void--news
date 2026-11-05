@@ -1,0 +1,8 @@
+source: src-nicholas-manifesto-ru
+locator: secabdicate
+url: https://www.prlib.ru/news/1292269
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+note: the Presidential Library's article quotes the manifesto with cuts it marks by '…'; this sentence is quoted whole
+
+В эти решительные дни в жизни России почли мы долгом совести облегчить народу нашему тесное единение и сплочение всех сил народных для скорейшего достижения победы и в согласии с Государственной Думою признали мы за благо отречься от престола государства Российского и сложить с себя верховную власть.

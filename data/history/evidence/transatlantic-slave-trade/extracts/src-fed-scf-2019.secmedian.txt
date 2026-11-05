@@ -1,0 +1,7 @@
+source: src-fed-scf-2019
+locator: secmedian
+url: https://www.federalreserve.gov/econres/notes/feds-notes/disparities-in-wealth-by-race-and-ethnicity-in-the-2019-survey-of-consumer-finances-20200928.html
+read: 2026-10-09
+note: the note's first findings paragraph; the figures are in 2019 dollars; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+In the 2019 survey, White families have the highest level of both median and mean family wealth: $188,200 and $983,400, respectively (Figure 1). Black and Hispanic families have considerably less wealth than White families. Black families' median and mean wealth is less than 15 percent that of White families, at $24,100 and $142,500, respectively.

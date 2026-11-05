@@ -1,0 +1,7 @@
+source: src-app-nixon-19700430
+locator: secgiant
+url: https://www.presidency.ucsb.edu/documents/address-the-nation-the-situation-southeast-asia-1
+read: 2026-10-09
+note: The American Presidency Project's text, from the Public Papers of the Presidents
+
+If, when the chips are down, the world's most powerful nation, the United States of America, acts like a pitiful, helpless giant, the forces of totalitarianism and anarchy will threaten free nations and free institutions throughout the world.

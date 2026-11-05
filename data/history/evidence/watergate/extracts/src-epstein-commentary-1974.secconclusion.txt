@@ -1,0 +1,7 @@
+source: src-epstein-commentary-1974
+locator: secconclusion
+url: https://www.commentary.org/articles/edward-epstein-3/did-the-press-uncover-watergate/
+read: 2026-10-09
+note: Commentary's web text of the essay; its closing paragraph
+
+In any event, the fact remains that it was not the press which exposed Watergate; it was agencies of government itself. So long as journalists maintain their usual professional blind spot toward the inner conflicts and workings of the institutions of government, they will no doubt continue to speak of Watergate in terms of the David and Goliath myth, with Bernstein and Woodward as David and the government as Goliath.

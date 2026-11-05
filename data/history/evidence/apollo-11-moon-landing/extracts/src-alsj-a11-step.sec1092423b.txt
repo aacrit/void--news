@@ -1,0 +1,7 @@
+source: src-alsj-a11-step
+locator: sec1092423b
+url: https://www.apollojournals.org/alsj/a11/a11.step.html
+read: 2026-10-03
+note: the editor's second bracketed note after 109:24:23, on the time of the first step; the page's HTML read as text, whitespace collapsed
+
+[The raw NASA transcript give the start of this transmission as 109:24:48, which is clearly inconsistent with what has gone before. The Apollo 11 Mission Report gives "initial contact" as 109:24:15 or 02:56:15 GMT/UTC on 21 July 1969. Later in the mission, NASA tells the press that the first step came at 109:24:20. An examination of the restored video indicates that, to the extent that the audio and video tracks are properly synched, Neil puts his left foot firmly on the surface five seconds after the start of his transmission "I'm going to step off the LM now." and six seconds before he starts to say "That's one small step."

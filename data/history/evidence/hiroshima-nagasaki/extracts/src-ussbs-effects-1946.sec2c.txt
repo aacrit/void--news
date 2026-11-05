@@ -1,0 +1,6 @@
+source: src-ussbs-effects-1946
+locator: sec2c
+url: https://www.atomicarchive.com/resources/documents/bombing-survey/section_II.html
+read: 2026-10-05
+
+If there were, as seems probable, about 245,000 people in the city at the time of the attack, the density in the congested area must have been about 35,000 per square mile. Five completed evacuation programs and a sixth then in progress had reduced the population from its wartime peak of 380,000.

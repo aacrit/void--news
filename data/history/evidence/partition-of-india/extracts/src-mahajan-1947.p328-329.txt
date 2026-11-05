@@ -1,0 +1,8 @@
+source: src-mahajan-1947
+locator: p328-329
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: the page is the volume's, read from the scan's running numbers, which the OCR layer prints between pages: the passage lies between the two numbers given
+note: the OCR layer's 'anon-' and 'bore' are kept as printed
+
+There, however, a much stronger reason than this for saying that this district is anon- Muslim majority district. In order to determine the wishes of the people of the Frontier Province and of Sylhet a plebiscite was taken according to the statement of His Majesty of the 3rd of June and the persons who were entitled to vote in this were those whose names were bore on the electoral rolls prepared under the Act of 1935. If a plebiscite is taken on the lines on which it was taken in Sylhet or in the North-West Frontier Province, then it . would appear that plebiscite would go in favour of the non-Muslims, The electoral rolls disclose that in the Gurdaspur district there are 74,790 Muslims voters as against 81,525 non-Muslim voters. If for the purpose of exercise of political rights in the matter of partition the test laid down in other parts of India is the plebiscite test,then I do not see why that test should not be employed in this district when the population majority is one per cent or 1- 1/2 per cent.

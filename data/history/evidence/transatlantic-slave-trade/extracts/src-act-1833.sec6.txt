@@ -1,0 +1,7 @@
+source: src-act-1833
+locator: sec6
+url: https://statutes.org.uk/site/the-statutes/nineteenth-century/1833-3-4-william-4-c-73-abolition-of-slavery-act/
+read: 2026-10-09
+note: section VI, the limit for non-praedial apprentices; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+VI. And be it further enacted, That no Person who by virtue of this Act or of any such Act of Assembly, Ordinance, or Order in Council as aforesaid, shall become a non-praedial apprenticed Labourer, shall continue in such Apprenticeship beyond the First Day of August One thousand eight hundred and thirty-eight.

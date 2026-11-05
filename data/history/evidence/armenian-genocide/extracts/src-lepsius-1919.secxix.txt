@@ -1,0 +1,8 @@
+source: src-lepsius-1919
+locator: secxix
+url: https://archive.org/download/deutschlandundar00leps/deutschlandundar00leps_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer; hyphens rejoined, spacing collapsed, the layer's glyph errors (a comma for a full stop after 27, ** for a closing quotation mark) kept
+note: the editor's introduction, pp. XIX to XX, with its footnote 1
+
+Am 27, Mai erschien das „Provisorische Gesetz über die Verschickung verdächtiger Personen**. Artikel 2 lautet : „Die Kommandanten der Armeen, Armeekorps und Divisionen können, wenn militärische Bedürfnisse es fordern, die Bevölkerung von Städten und Dörfern, die sie der Schuld des Verrats oder der Spionage für verdächtig halten, dislozieren und in anderen Orten ansiedeln." Schuldbeweise sind für die Strafe der Verschickung nicht erforderlich. Verdacht genügt. So wurde es in Konstantinopel, so im ganzen Reich gehalten. Von den etwa 600 Verhafteten sind 8 wieder freigelassen worden. Die andern sind spurlos verschwunden. Zohrab und Wartkes sind auf dem Wege nach Diarbekr in der Gegend von Urfa ermordet worden.

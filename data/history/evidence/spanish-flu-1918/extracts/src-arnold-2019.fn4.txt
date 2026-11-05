@@ -1,0 +1,6 @@
+source: src-arnold-2019
+locator: fn4
+url: https://doi.org/10.1017/S0080440119000082
+read: 2026-09-25
+
+4 In Bombay Presidency there were 675,222 influenza deaths in October 1918: Annual Report of the Sanitary Commissioner for the Government of Bombay, 1918 (Bombay, 1919), 23. In Punjab 962,937 deaths were attributed to influenza between 1 October and 31 December 1918: Report of the Sanitary Administration of the Punjab, 1918 (Lahore, 1919), app. D, xi.

@@ -1,0 +1,8 @@
+source: src-castro-cc-19680126
+locator: sectroops
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf
+read: 2026-10-07
+note: the PDF's text layer, line breaks folded to spaces; where the layer breaks a word at a line end its hyphen is kept as it prints it ('docu- ment'); nothing is corrected
+note: printed page 86: Castro on the number of Soviet troops, in the Council of State's translation as the Bulletin prints it
+
+Let me add here, in case anyone is unaware of it, that at the time of the missile issue, there were over 40,000 Soviet troops stationed in Cuba. The imperialists must also have known that, but they never declared the amount, they limited themselves to speculative figures, which revealed their interest in reducing the amount, perhaps due to possible effects on public opinion.

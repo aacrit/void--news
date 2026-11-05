@@ -1,0 +1,6 @@
+source: src-aus-resistance
+locator: secpilecki
+url: https://www.auschwitz.org/en/history/resistance/
+read: 2026-10-07
+
+One of its founders was Witold Pilecki (Tomasz Serafiński), the so-called “volunteer for Auschwitz.” He deliberately allowed himself to be captured during a street roundup in Warsaw in September 1940, in order to reach Auschwitz so that he could inform his superiors about conditions there and found the clandestine organization.

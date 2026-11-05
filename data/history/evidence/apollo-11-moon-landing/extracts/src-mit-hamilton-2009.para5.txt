@@ -1,0 +1,7 @@
+source: src-mit-hamilton-2009
+locator: para5
+url: https://news.mit.edu/2009/apollo-vign-0717
+read: 2026-10-03
+note: Margaret Hamilton's contribution, the part of the paragraph beginning 'I had lived through several missions' from 'I was standing in the SCAMA'; sliced at 150 words or fewer because the page is MIT's copyright
+
+I was standing in the SCAMA [Switching, Conference, And Monitoring Arrangement] room at Draper [the Instrumentation Lab, which later became Draper Laboratory] listening to the conversations between the astronauts and Mission Control when all of a sudden the normal mission sequences were interrupted by priority displays of 1201 and 1202 alarms, giving the astronauts a go/no go decision (to land or not to land). I looked across the room at Fred Martin and he back at me. What could possibly cause these alarms to be triggered at this most crucial time? It quickly became clear that the software was not only informing everyone that there was a hardware-related problem, but that the software was compensating for it. With only minutes to spare, the decision was made to go for the landing. The rest is history.

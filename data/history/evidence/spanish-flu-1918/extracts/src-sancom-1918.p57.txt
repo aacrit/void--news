@@ -1,0 +1,8 @@
+source: src-sancom-1918
+locator: p57
+url: https://archive.org/download/b31492551/b31492551_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+note: the table that follows this sentence is stored as the next extract, sec57table
+
+Without any claim to accuracy it is suggested that the mortality directly hand indirectly due to influenza was in the neighbourhood of the mean of the General Population.] WITH THE GOVERNMENT OF INDIA FOR 1918. 5 last 3 figures, viz. , 7,089,694. This mean is taken for the purpose of this report, and the mortality and death rates for the Local Governments and Administrations are calculated in a similar manner : the figures in this report consequently differ slightly from those given in the provincial sanitary reports, and are given in the following table : —

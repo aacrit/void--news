@@ -1,0 +1,8 @@
+source: src-montagu-despatch-1920
+locator: secforce
+url: https://archive.org/download/disordersinquiry00unse/disordersinquiry00unse_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+note: the Secretary of State's despatch No. 108-Public, India Office, 26 May 1920, as the Calcutta edition prints it; its recapitulation of the facts
+
+with a special party consisting of 50 Indian Infantry armed with rifles, 40 Indian Infantry armed only with “ Kukris ” (type of sword), and two armoured cars. He pro¬ ceeded straight to Jallianwala Bagh dropping his picket parties en route and on arrival marched his infantry through a narrow lane into- the Bagh and deployed them immediately right and left of the entrance.. The armoured cars he left outside, as the lane was too narrow to admit them. Having deployed his troops Brigadier-General Dyer at once- gave orders to open fire and continued a controlled fire on the dense crowd facing him in the enclosure (which he estimated at about 5,000 persons)

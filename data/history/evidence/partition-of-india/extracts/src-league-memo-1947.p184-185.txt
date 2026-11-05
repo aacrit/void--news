@@ -1,0 +1,8 @@
+source: src-league-memo-1947
+locator: p184-185
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: the page is the volume's, read from the scan's running numbers, which the OCR layer prints between pages: the passage lies between the two numbers given
+note: the OCR layer's 'outof' is kept as printed
+
+10. If these principles are accepted, it will be found that, subject to considerations rising outof other factors, the Pathankot Tehsil of the Gurdaspur District, would be detached from the West Punjab and included in East Punjab. In every other Tehsil of the Gurdaspur District, and in every Tehsil of the remaining sixteen districts at present included to West Punjab, the Muslims have an overall majority. The Ajnala Tehsil of the Amritsar District, which has a majority of Muslims in its population and is contiguous to the Lahore, Sialkot and Gurdaspur Districts, will be included in the West Punjab.

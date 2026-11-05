@@ -1,0 +1,8 @@
+source: src-lemay-sawf-1988
+locator: secburned
+url: https://media.defense.gov/2025/Aug/27/2003789020/-1/-1/0/STRATEGIC_AIR_WARFARE.PDF
+read: 2026-10-09
+note: Strategic Air Warfare (Office of Air Force History, 1988), the group interview of 15 June 1984; the text layer drops the dashes around 'what' and fuses the footnote marker 94 to the next word
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Right at the start of the war, unofficially I slipped a message in “under the carpet” in the Pentagon that we ought to turn SAC loose with incendiaries on some North Korean towns. The answer came back, under the carpet again, that there would be too many civilian casualties; we couldn’t do anything like that. So we went over there and fought the war and eventually burned down every town in North Korea anyway, some way or another, and some in South Korea, too. We even burned down Pusan-an accident, but we burned it down anyway. The Marines started a battle down there with no enemy in sight. Over a period of three years or so, we killed off-whattwenty percent of the population of Korea as direct casualties of war, or from starvation and exposure?94Over a period of three years, this seemed to be acceptable to everybody, but to kill a few people at the start right away, no, we can’t seem to stomach that.

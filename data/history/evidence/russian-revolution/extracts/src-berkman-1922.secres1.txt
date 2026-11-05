@@ -1,0 +1,8 @@
+source: src-berkman-1922
+locator: secres1
+url: https://archive.org/download/TheKronstandtRebellion/kronstadt_rebellion_Berkman_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+note: the Petropavlovsk resolution of 1 March 1921 in Berkman's English; the layer's 'Ike', 'v/orkers' and 'electii/ns' are its readings of 'the', 'workers' and 'elections'
+
+(1) In view of the fact that the present Soviets do not express Ike will of the v/orkers and peasants, immediately to hold new electii/ns by secret ballot, the pre-election campaign to have full freedom of agitation among the workers and peasants;

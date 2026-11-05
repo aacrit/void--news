@@ -1,0 +1,8 @@
+source: src-kurt-2016
+locator: para1
+url: https://journals.openedition.org/eac/997
+read: 2026-09-25
+note: the article's numbered paragraph as OpenEdition prints it, footnote call numbers kept; a copyrighted article, held at most 150 words
+note: the paragraph from its sentence on the Armenian case, the opening sentences on Lemkin left out
+
+The Armenian Genocide involves a combination of the above acts. During World War I, mass murder, deportation, and forced assimilation were three faces of the same process of destruction organized by the Young Turk regime. The main objective of the whole process was to demographically reduce the Ottoman Armenian community from existence to absence as well as erasing their material and cultural presence from the Ottoman heartland and eastern provinces. Whereas Armenian men were mostly perished in the eastern provinces, Armenian women and children were most often deported and absorbed into Muslim households. After enduring forced marches where they were terrorized and forced to bear witness to the execution of their elders, these young women and children were left isolated from their families and were thus deemed prime candidates for absorption into Muslim households, 2 a process referred to as “conversion.”

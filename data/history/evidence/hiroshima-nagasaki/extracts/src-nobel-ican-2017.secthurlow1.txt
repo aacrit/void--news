@@ -1,0 +1,6 @@
+source: src-nobel-ican-2017
+locator: secthurlow1
+url: https://www.nobelprize.org/prizes/peace/2017/ican/lecture/
+read: 2026-10-05
+
+I speak as a member of the family of hibakusha – those of us who, by some miraculous chance, survived the atomic bombings of Hiroshima and Nagasaki. For more than seven decades, we have worked for the total abolition of nuclear weapons.

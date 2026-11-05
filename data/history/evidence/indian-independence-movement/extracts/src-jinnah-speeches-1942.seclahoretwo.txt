@@ -1,0 +1,8 @@
+source: src-jinnah-speeches-1942
+locator: seclahoretwo
+url: https://archive.org/download/in.ernet.dli.2015.189842/2015.189842.Some-Recent-Speeches-And-Writings-Of-Mr-Jinnah_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+note: presidential address, Lahore session, March 1940; the layer prints '*' for full stops in this passage
+
+The Hindus and Muslims belong to two different religious philosophies, social customs, literatures* They neither intermarry nor interdine together and, indeed, they belong to two different civilisa- tions which are based mainly on conflicting ideas and conceptions* Their aspects on life and of life are different. It is quite clear that Hindus and Musalmans derive their inspiration from different sources of history. They have different epics, different heroes, and different episodes* Very often the hero of one is a foe of the other and, likewise, their victories and defeats overlap* To yoke together two such nations under a single state, one as a numerical minority and the other as a majority, must lead to growing discontent and final destruction of any fabric that may be so built up for the government of such a state*

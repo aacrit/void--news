@@ -1,0 +1,8 @@
+source: src-clo-19480429
+locator: p611
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: the section on Sargodha, to its count of women reported to be with Pathans; the page is the volume's as the Internet Archive's page index gives it
+note: the layer's 'to do with pathans' is kept as printed; paragraph breaks are joined
+
+(b) Sargodha The total number of persons still to be evacuated is about 300. Most of them are converts, About 100 women have still to be recovered; 28 are reported to do with pathans

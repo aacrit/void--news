@@ -1,0 +1,7 @@
+source: src-undp-lao-2009
+locator: seccasualties
+url: https://files.acquia.undp.org/public/migration/la/UNDP_LA_Hazardous-Ground.pdf
+read: 2026-10-09
+note: the UNDP Lao PDR PDF, its text layer, line breaks folded to spaces; the report carries no printed date, and its own text dates the ratification of the Convention on Cluster Munitions to March 2009
+
+Since the end of the Indochina conflict, more than 22,000 people in the Lao PDR have fallen victim to UXO and bombies, almost half of whom died. Even now, one person is killed or injured almost every day. The Lao PDR accounts for the highest proportion of all confirmed cluster munitions casualties in the world. During 2008, the National Regulatory Authority conducted the Lao National Survey of UXO Victims and Accidents. This has yielded details of more than 50,000 UXO casualties to have occurred between 1964 and 2007. Results from the ongoing data collection and analysis are expected to reveal that, of these, more than 30,000 people were killed or injured during the conflict and 20,000 since the conflict ended.

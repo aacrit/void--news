@@ -1,0 +1,235 @@
+# Cinematic variant, 2026-10-10, written to the first-listener orientation standard of
+# docs/proposals/HISTORY-FIRST-LISTENER.md (O-1..O-8) from the research brief
+# out/briefs/rwandan-genocide.brief.md. Sources are the event YAML and the evidence
+# ledger (data/history/evidence/rwandan-genocide/), nothing else. Same cast as the other
+# cinematic variants (narrator "tara"; leo reads the men's documents and the institutions'
+# records as M:, zoe reads Witness JJ and Christine Shelly as F:), same Ken Burns register.
+# Every line the document voice reads is byte-for-byte a stored extract AND a YAML
+# primary_source_excerpt, and the extract id follows the DOCUMENT marker in a comment.
+# Nine excerpts were appended to the YAML for this script, each a verbatim span of a held
+# extract: the cable's paragraph 5 (the 1,700 men), the Bagosora chamber's acquittal on
+# conspiracy, Kambanda's dates in office, the Carlsson chronology's 270 from 2,539, McDoom's
+# range, Human Rights Watch on the RPF, the UN's Gacaca count and closing date, and the
+# Akayesu chamber's paragraph on the 1930s cards. The cable's "ALL TUTSI" sentence is
+# narrated, never read: the OCR prints "ALL.TUTSI". The live script's Uwilingiyimana phone
+# call and the Annan "bitter regret" line do not return; neither is held. The death toll is
+# said per producer and never averaged; the tribunal's acquittal on conspiracy before 7
+# April is said aloud each time planning comes up. Cut, from the brief's do-not-say list:
+# "within one hour", the typed lists, the Falcon 50 and the missile, "cockroaches", the
+# Butare "Tutsi prefect" and "ten days later", the Nyamata and Murambi figures, Kambanda
+# "do not know how to stop", "first head of government to plead guilty", the rape and HIV
+# figures, "no court had recognised before", "shook hands with the devil", "tribal ...
+# ancient hatreds", the eighty five / fourteen / one split (the record says about 84 / 15
+# / 1), "twelve thousand courts" beside "one point nine six million" (two producers), the
+# GDP, aid and parliament figures, R2P, "five times the rate of the Nazi camps". Also not
+# said because no extract carries it: that Rwanda is small or in central Africa (the record
+# places it in Africa), the hour of the Prime Minister's death, the thirty-six hours, the
+# RPF's killing estimates as numbers. Lines beginning with "#" are inert: the parser skips
+# them (pipeline/history/script_format.py::parse_script). SAY entries carry the "orpheus:"
+# prefix because history_producer.py applies only those under Orpheus. This file is not
+# the live script: nothing globs this directory.
+
+## OPEN
+# MOOD: dread
+N: Kigali, the capital of Rwanda, the eleventh of January, nineteen ninety four. A cable goes to New York from the United Nations force in the city.
+N: An informant, a trainer of militia, says he has been ordered to register all Tutsi in Kigali, and says what he suspects it is for. New York answers the same day.
+N: Every Rwandan carried a card that named what he was.
+
+## TITLE
+# MOOD: dread
+N: The Rwandan genocide. April to July, nineteen ninety four.
+
+## SCENE 1 | The cable
+# MOOD: procedure
+N: Rwanda, a country in Africa, in the spring of nineteen ninety four. Its people carry identity cards marked Hutu, Tutsi or Twa, three groups the Belgian authorities fixed in the early nineteen thirties: about eighty four percent Hutu, about fifteen percent Tutsi.
+N: The government of President Habyarimana has been at war since nineteen ninety with the Rwandan Patriotic Front, the RPF, a Tutsi-led rebel army under Paul Kagame. The Arusha Accords, a peace agreement, bind the two sides to share power.
+N: UNAMIR, the United Nations Assistance Mission for Rwanda, created by the Security Council in October nineteen ninety three, is there under a Canadian general, Romeo Dallaire.
+N: In about a hundred days from April, in the words of the UN's own inquiry, Rwandans will kill Rwandans. How many, no two producers agree.
+N: On the eleventh of January Dallaire's headquarters reports an informant: a top-level trainer of the Interahamwe, the armed militia of the ruling party.
+N: Seventeen hundred men, he says, trained in army camps and scattered through Kigali in groups of forty; Belgian soldiers to be provoked and killed, to bring a Belgian withdrawal; and a register of all Tutsi in Kigali.
+
+## DOCUMENT | UNAMIR Force Headquarters, Kigali | Code cable to Baril, DPKO, New York, "Request for protection for informant", paragraph 6, as the National Security Archive's copy prints it | January 11, 1994
+# extract: src-unamir-cable-19940111.whole
+# MOOD: dread
+N: The cable from UNAMIR headquarters, on what the register is for.
+M: HE SUSPECTS IT IS FOR THEIR EXTERMINATION.
+N: The same cable records the commander's reservations, and a possible trap.
+
+## DOCUMENT | Kofi Annan, Department of Peacekeeping Operations | Code cable to Booh-Booh and Dallaire, "Contacts with Informant", sent over his name | January 11, 1994
+# extract: src-un-dpko-cable-19940111.whole
+# MOOD: procedure
+N: New York replies the same day, over the name of Kofi Annan, of the Department of Peacekeeping Operations.
+M: We cannot agree to the operation contemplated in paragraph 7 of your cable,
+M: as it clearly goes beyond the mandate entrusted to UNAMIR under resolution 872 (1993).
+N: The mission is told instead to take what it knows to the President.
+
+## SCENE 2 | The seventh of April
+# MOOD: rupture
+N: Kigali, the evening of the sixth of April. The plane carrying the Presidents of Rwanda and Burundi is shot down. The army and the militia immediately put up roadblocks around the city.
+N: Before dawn on the seventh, across the country, the Presidential Guard and the militia begin killing Tutsi, and Hutu known to favour the Accords. Among the first is the Prime Minister, Agathe Uwilingiyimana.
+N: Ten Belgian peacekeepers had been sent to escort her to Radio Rwanda. Her compound was attacked; she fled over the wall to a United Nations compound, where soldiers found her later that morning and shot her.
+N: Dallaire had asked New York about using force to save her, and was told: not to fire until fired upon. The ten Belgians were killed at Camp Kigali; Belgium withdrew its contingent, the core of the force.
+N: On the twenty first of April the Security Council cut the mission: to two hundred and seventy, from two thousand five hundred and thirty nine, says the UN's own inquiry; to four hundred and fifty troops, says the tribunal's Akayesu judgment.
+N: A retired colonel, Theoneste Bagosora, was tried for the first killings; in two thousand and eight the tribunal found them an organised military operation under orders.
+
+## DOCUMENT | International Criminal Tribunal for Rwanda, Trial Chamber I | Prosecutor v. Bagosora and others, Judgement and Sentence, paragraph 14 | December 18, 2008
+# extract: src-ictr-bagosora-tj.para14
+# MOOD: reckoning
+N: On whether the genocide was planned before the seventh of April, the chamber accepted indications of a plan, found them also consistent with a power struggle in a war with the RPF, and ruled.
+M: Consequently, the Prosecution has not proven beyond reasonable doubt that the only reasonable inference to be drawn from the evidence is that the four Accused conspired amongst themselves or with others to commit genocide before it unfolded from 7 April 1994.
+M: The Chamber has acquitted them of the count of conspiracy.
+
+## REST
+# MOOD: reckoning
+
+## SCENE 3 | The hundred days
+# MOOD: procedure
+N: Rwanda, the eighth of April. Jean Kambanda becomes Prime Minister of the interim government, until the seventeenth of July; his guilty plea, in nineteen ninety eight, admits what that government did.
+N: It armed the Interahamwe and a second party's youth wing, trained before April, he admits, for the massacres; one man's admission, where the tribunal acquitted Bagosora of conspiring before the seventh.
+N: It dismissed the official in charge of Butare for opposing the massacres, and in cabinet followed their course and took no action to stop them.
+N: A radio station, Radio Television Libre des Mille Collines, whose broadcasts incited killing, told listeners to go to work; one of its broadcasters admitted the phrase came to mean killing Tutsi and the Hutu who opposed the interim government.
+
+## DOCUMENT | Jean Kambanda, Prime Minister of the interim government | the phrase his plea agreement admits he uttered, as the ICTR's Judgement and Sentence quotes it in English, paragraph 39 (x) | September 4, 1998
+# extract: src-ictr-kambanda-js.para39
+# MOOD: testimony
+N: Kambanda went on that station in June. He admits a phrase it broadcast again and again, here in the tribunal's English of his Kinyarwanda.
+M: you refuse to give your blood to your country and the dogs drink it for nothing.
+
+## SCENE 4 | The word
+# MOOD: reckoning
+N: The State Department, the tenth of June. At the daily briefing a reporter asks the spokesperson, Christine Shelly, how she would describe the events in Rwanda.
+
+## DOCUMENT | Christine Shelly, State Department spokesperson | US Department of State Daily Press Briefing, the transcript's spelling of her name | June 10, 1994
+# extract: src-us-dos-briefing-19940610.secrwanda
+# MOOD: procedure
+N: Christine Shelly answers the question.
+F: Based on the evidence we have seen from observations on the ground, we have every reason to believe that acts of genocide have occurred in Rwanda.
+N: A reporter asks how many acts of genocide it takes to make genocide.
+F: Alan, that's just not a question that I'm in a position to answer.
+N: On the twenty second of June the Security Council authorises member states to mount an operation in Rwanda, using all necessary means; France carries it out, as Operation Turquoise.
+N: Kigali falls to the RPF on the fourth of July, by the UN inquiry's chronology, or the eighteenth, by the Akayesu judgment. In November the Security Council sets up a tribunal for Rwanda.
+
+## TURN | Five accounts
+# MOOD: reckoning
+N: What happened is admitted, in pleas and judgments. Who let it happen, who planned it, and how many died is where the accounts part.
+N: Five accounts, from what this programme could read: two cables, Security Council papers, the tribunal's judgments and pleas, a State Department transcript, the UN and French inquiries, a presidency's text, two counts of the dead. The memoirs could not be read.
+
+## PERSPECTIVE | Tutsi Survivors | vanquished
+# MOOD: testimony
+N: The first account is the survivors', held here as the tribunal recorded it: testimony in Kinyarwanda, through interpreters, in the court's English.
+
+## DOCUMENT | Witness JJ, a Tutsi woman of Taba commune | Testimony before the ICTR, as the Akayesu Judgement records it in the court's English, paragraph 421 | September 2, 1998
+# extract: src-ictr-akayesu-tj.para421
+# MOOD: testimony
+N: Witness JJ, a Tutsi woman of Taba commune, had taken refuge at the commune office. She told the chamber she could not count the times she was raped.
+F: each time you encountered attackers they would rape you
+N: In the forest, in the sorghum fields, the record adds. She left her baby with a Hutu couple who said they had milk; they killed him.
+
+## DOCUMENT | International Criminal Tribunal for Rwanda, Trial Chamber I | Prosecutor v. Akayesu, Judgement, paragraph 731 | September 2, 1998
+# extract: src-ictr-akayesu-tj.para731
+# MOOD: testimony
+N: The chamber's finding on what she and the other women described.
+M: Sexual violence was an integral part of the process of destruction, specifically targeting Tutsi women and specifically contributing to their destruction and to the destruction of the Tutsi group as a whole.
+
+## PERSPECTIVE | UN Peacekeeping | bystander
+# MOOD: reckoning
+N: The second account is the peacekeepers' and the United Nations' own. Its inquiry, chaired by Ingvar Carlsson, reported in nineteen ninety nine on approximately eight hundred thousand killed.
+
+## DOCUMENT | Kofi Annan, Secretary-General of the United Nations | Address to the Parliament of Rwanda, Kigali, as issued in press release SG/SM/6552, checked against delivery | May 7, 1998
+# extract: src-un-sgsm6552.secopening
+# MOOD: reckoning
+N: A year earlier Kofi Annan, by then Secretary-General, addressed Rwanda's parliament in Kigali, in a text issued to be checked against delivery.
+M: We will not deny that, in their greatest hour of need, the world failed the people of Rwanda.
+
+## PERSPECTIVE | International Community | bystander
+# MOOD: procedure
+N: The third account is the governments': the United States, which found its words on the tenth of June, and France, whose own commission found it long involved with a regime that encouraged racist massacres.
+
+## DOCUMENT | Duclert Commission | La France, le Rwanda et le genocide des Tutsi, the report's own English text of its conclusion | March 26, 2021
+# extract: src-fr-duclert-2021.p986
+# MOOD: reckoning
+N: In two thousand and twenty one that commission, chaired by the historian Vincent Duclert, reported from the state's archives on whether France was an accomplice.
+M: If by this we mean a willingness to join a genocidal operation, nothing in the archives that were examined demonstrates this.
+N: Not an accomplice, but blind to the preparation of a genocide, and slow to break with the interim government that carried it out. Turquoise did save many lives, it found, but not the vast majority of Tutsi, killed in the first weeks.
+
+## PERSPECTIVE | Pan-African | revisionist
+# MOOD: grief
+N: The fourth account begins before nineteen ninety four, in the colonial record; historians across Africa hold it, and this programme could read it only in the tribunal's own history.
+
+## DOCUMENT | International Criminal Tribunal for Rwanda, Trial Chamber I | Prosecutor v. Akayesu, Judgement, the chamber's history of Rwanda, paragraph 83 | September 2, 1998
+# extract: src-ictr-akayesu-tj.para83
+# MOOD: grief
+N: The Akayesu chamber, on the nineteen thirties.
+M: In the early 1930s, Belgian authorities introduced a permanent distinction by dividing the population into three groups which they called ethnic groups, with the Hutu representing about 84% of the population, while the Tutsi (about 15%) and Twa (about 1%) accounted for the rest.
+N: The chamber notes the card was kept after independence and abolished only after nineteen ninety four. Every Rwandan carried the card.
+
+## PERSPECTIVE | Post-Genocide Rwanda | academic
+# MOOD: reckoning
+N: The fifth account is the Rwandan state's, and the scholars' who count.
+
+## DOCUMENT | Paul Kagame, President of Rwanda | Speech at the twentieth commemoration, Amahoro National Stadium, Kigali, as the presidency's account quotes it | April 7, 2014
+# extract: src-rw-kagame-2014.sec2
+# MOOD: reckoning
+N: Paul Kagame, who led the RPF in nineteen ninety four and is President of Rwanda, spoke at Amahoro stadium in Kigali at the twentieth commemoration.
+M: The people who planned and carried out the Genocide were Rwandans, but the history and root causes go beyond this country.
+
+## DOCUMENT | Human Rights Watch | Leave None to Tell the Story: Genocide in Rwanda, the section on the Rwandan Patriotic Front | 1999
+# extract: src-hrw-leave-none-1999.secrpf
+# MOOD: reckoning
+N: The RPF has no document of its own here. Human Rights Watch, in nineteen ninety nine, wrote this of it.
+M: In defeating the interim government and its army, the RPF ended the genocide. At the same time, its troops committed grave violations of international humanitarian law by attacking and killing unarmed civilians.
+N: The dead are counted differently by each who counts: the tribunal, five hundred thousand to a million or more; the UN inquiry and Annan, approximately eight hundred thousand; Rwanda's government, more than one million.
+N: Human Rights Watch, at least half a million; the scholar Omar McDoom, between four hundred and ninety one thousand and five hundred and twenty two thousand Tutsi.
+N: Justice came in Gacaca courts, communities electing judges to hear every charge but planning: more than twelve thousand courts, more than one point two million cases, by the UN's account, closed in two thousand and twelve.
+
+## TURN | The shape of the disagreement
+# MOOD: reckoning
+N: Each of the five accounts is true, and each leaves something out.
+N: The peacekeepers' account leaves out that the cable's own author recorded reservations, and a possible trap.
+N: The colonial account leaves out what Rwanda's President said: that the people who planned and carried it out were Rwandans.
+N: The state's account leaves out the RPF's own killings, counted by estimate and by denial.
+
+## REST
+# MOOD: reckoning
+
+## CLOSE
+# MOOD: grief
+N: Rwanda, April to July, nineteen ninety four. A government, its army and its militia killed the Tutsi, and the Hutu who opposed them, in about a hundred days, while a United Nations force cut to two hundred and seventy, or four hundred and fifty, watched.
+N: The tribunal counts five hundred thousand to a million or more; the UN inquiry approximately eight hundred thousand; Rwanda's government more than a million; the scholars fewer. Planning before the seventh of April, the tribunal did not find proven.
+N: Every Rwandan carried the card.
+
+## SAY
+orpheus:Rwanda = roo AHN dah
+orpheus:Rwandan = roo AHN dan
+orpheus:Rwandans = roo AHN danz
+orpheus:Kigali = kee GAH lee
+orpheus:Hutu = HOO too
+orpheus:Tutsi = TOOT see
+orpheus:Twa = TWAH
+orpheus:Habyarimana = hah byah ree MAH nah
+orpheus:Uwilingiyimana = oo wee ling ee yee MAH nah
+orpheus:Interahamwe = in teh rah HAHM way
+orpheus:Kinyarwanda = kin yah RWAHN dah
+orpheus:Arusha = ah ROO shah
+orpheus:Dallaire = dah LAIR
+orpheus:Bagosora = bah goh SOR ah
+orpheus:Theoneste = tay oh NEST
+orpheus:Kambanda = kahm BAHN dah
+orpheus:Akayesu = ah kah YAY soo
+orpheus:Taba = TAH bah
+orpheus:Butare = boo TAH ray
+orpheus:Kagame = kah GAH may
+orpheus:Amahoro = ah mah HOH roh
+orpheus:Gacaca = gah CHAH chah
+orpheus:Burundi = boo ROON dee
+orpheus:Carlsson = KARL son
+orpheus:Duclert = doo KLAIR
+orpheus:Turquoise = toor KWAHZ
+orpheus:Mille = MEEL
+orpheus:Collines = koh LEEN
+orpheus:Libre = LEE bruh
+orpheus:McDoom = mik DOOM
+orpheus:Booh-Booh = boo BOO
+orpheus:Baril = bah REEL
+orpheus:UNAMIR = oo nah MEER
+orpheus:Shelly = SHEL ee

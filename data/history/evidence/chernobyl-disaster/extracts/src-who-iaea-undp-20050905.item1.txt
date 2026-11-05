@@ -1,0 +1,8 @@
+source: src-who-iaea-undp-20050905
+locator: item1
+url: https://www.who.int/news/item/05-09-2005-chernobyl-the-true-scale-of-the-accident
+read: 2026-10-07
+note: the first bullet under 'Major study findings'
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+Approximately 1000 on-site reactor staff and emergency workers were heavily exposed to high-level radiation on the first day of the accident; among the more than 200 000 emergency and recovery operation workers exposed during the period from 1986-1987, an estimated 2200 radiation-caused deaths can be expected during their lifetime.

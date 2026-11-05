@@ -1,0 +1,7 @@
+source: src-jinnah-papers-xiv
+locator: p642
+url: https://archive.org/download/jinnah-papers-volume-14/Jinnah%20Papers%2C%20Volume%2014_djvu.txt
+read: 2026-09-25
+note: p is the page of Z. H. Zaidi (ed.), Jinnah Papers, vol. XIV (2006), Appendix II.1, Jinnah's interview with the Associated Press of India on the Calcutta situation, Bombay, 17 August 1946 (the editors date it in brackets), from Waheed Ahmad, The Nation's Voice, V, 214-15; the passage ends before the interview's last sentences; line breaks joined
+
+BOMBAY, [17 August 1946] “I unreservedly condemn the acts of violence and deeply sympathize with those who have suffered”, said Mr. M.A. Jinnah, interviewed by the API on the situation in Calcutta. He added: “At present I do not know who is responsible for the resultant loss of life and property which has been reported in the press. I have no official reports from any quarters—either the Provincial Muslim League Executive or the Government of Bengal. “Those who are guilty of resorting to indefensible conduct and hooliganism must be dealt with according to law, as their actions were (so far as the Muslim League is concerned) contrary to expressed instructions and they have only played into the hands of the enemies of the Muslim League.

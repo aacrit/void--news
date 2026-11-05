@@ -1,0 +1,7 @@
+source: src-kevorkian-2013
+locator: para2
+url: https://journals.openedition.org/eac/347
+read: 2026-09-25
+note: the article's numbered paragraph as OpenEdition prints it, footnote call numbers kept; a copyrighted article, held at most 150 words
+
+Au cours de ces vingt dernières années de nombreux fonds d’archives ont été étudiés ou publiés, documentant le génocide des Arméniens : archives diplomatiques américaines et témoignages des missionnaires (Ara Sarafian 1 , Londres, et Hans-Lukas Kieser 2 , Zürich) ; archives diplomatiques allemandes (Wolfgang Gust 3 ) ; archives ottomanes du Premier ministre (Istanbul, direction des Archives), donnant le versant administratif de la question 4 ; archives arméniennes sur le génocide (Patriarcat Arménien de Constantinople et fonds Andonian, Raymond Kévorkian 5 , Paris), et sur les rescapés (Vahé Tachjian 6 , Berlin, et Raymond Kévorkian). Ces matériaux, principalement les archives consulaires, ont permis de grandes avancées dans la connaissance des procédures d’extermination des populations dans les provinces.

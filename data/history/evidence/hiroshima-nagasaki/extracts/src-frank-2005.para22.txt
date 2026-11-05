@@ -1,0 +1,7 @@
+source: src-frank-2005
+locator: para22
+url: https://www.washingtonexaminer.com/weekly-standard/why-truman-dropped-the-bomb
+read: 2026-10-07
+note: paragraph 22, two consecutive sentences from its middle; the paragraph continues with the Japanese historians' findings, which are not held
+
+But this evidence also shows that the demise of Olympic came not because it was deemed unnecessary, but because it had become unthinkable. It is hard to imagine anyone who could have been president at the time (a spectrum that includes FDR, Henry Wallace, William O. Douglas, Harry Truman, and Thomas Dewey) failing to authorize use of the atomic bombs in this circumstance.

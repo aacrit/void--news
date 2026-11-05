@@ -1,0 +1,6 @@
+source: src-echr-mothers-2013
+locator: dispositif
+url: https://hudoc.echr.coe.int/app/conversion/pdf/?library=ECHR&id=001-122255&filename=001-122255.pdf
+read: 2026-09-24
+
+For these reasons, the Court unanimously Declares the application inadmissible.

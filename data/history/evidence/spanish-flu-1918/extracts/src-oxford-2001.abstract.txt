@@ -1,0 +1,7 @@
+source: src-oxford-2001
+locator: abstract
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A11779384&resultType=core&format=json
+read: 2026-09-25
+note: the abstract as the Europe PMC record carries it, read from the REST endpoint named above; cut at a sentence end to stay within the 150-word cap where the abstract is longer
+
+This discussion piece examines the likely epicentre of the influenza pandemic of 1918-1919. Contrary to previous studies that have proposed a Chinese origin, there is documentation that suggests that, in this instance, the virus spread eastwards to China from Europe. Although more recent oubreaks of influenza have undoubtedly had an Oriental origin, the evidence indicates that future outbreaks could conceivably arise anywhere in the world.

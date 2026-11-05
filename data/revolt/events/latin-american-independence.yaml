@@ -1,0 +1,236 @@
+slug: latin-american-independence
+title: The Spanish American Wars of Independence
+subtitle: Napoleon topples a king in Madrid, and a continent stops asking Spain's permission
+date_display: 1808-1826
+date_start: 1808
+date_end: 1826
+date_precision: year
+era: atlantic
+region: americas
+country: Spanish America (Venezuela, Colombia, Ecuador, Peru, Bolivia, Argentina, Chile, Mexico, and beyond)
+revolt_type: anticolonial
+status: concluded
+summary: Napoleon's 1808 invasion of Spain and imposition of his brother Joseph Bonaparte as king stripped Madrid of the authority its American colonies had always answered to. Creole-led juntas formed across the viceroyalties claiming to rule in the exiled king's name, then declared outright independence, and two decades of campaigning under Simon Bolivar and Jose de San Martin produced more than a dozen new republics by 1826.
+significance: The dismantling, within a single generation, of nearly the entire Spanish American empire, a process driven as much by Spain's own metropolitan collapse as by any single military campaign, and one that left the new republics with independence but, in most cases, decades of subsequent civil conflict.
+grievances:
+  - kind: Loss of Spanish royal legitimacy
+    intensity: 75
+    evidence: Napoleon's 1808 invasion of Spain and the forced abdication of Ferdinand VII in favor of Joseph Bonaparte left the American colonies without a legitimate king to answer to, opening the legal argument for local self-rule.
+  - kind: Exclusion of creole elites from senior office
+    intensity: 68
+    evidence: Colonial administrative and church posts above a certain rank were reserved by policy for peninsulares born in Spain, regardless of a creole candidate's wealth or education.
+  - kind: Bourbon trade restrictions
+    intensity: 60
+    evidence: Colonial trade was legally restricted to Spain alone for most of the eighteenth century, and Bourbon-era tax increases in the decades before 1808 had already generated repeated local unrest.
+  - kind: Caste-based legal hierarchy
+    intensity: 55
+    evidence: The casta system assigned differentiated legal rights by racial classification, constraining the political and economic standing of mixed-race, indigenous, and enslaved populations throughout the viceroyalties.
+actors:
+  - actor_type: vanguard
+    name: Simon Bolivar
+    description: Venezuelan-born creole officer and political leader.
+    role_in_arc: Led campaigns across present-day Venezuela, Colombia, Ecuador, Peru, and Bolivia, and envisioned a unified Gran Colombia that did not outlast his own lifetime.
+    defected: false
+  - actor_type: vanguard
+    name: Jose de San Martin
+    description: Argentine-born officer trained in the Spanish army before joining the independence cause.
+    role_in_arc: Led the crossing of the Andes and the liberation campaigns in Argentina, Chile, and Peru before ceding leadership of the Peruvian campaign to Bolivar in 1822.
+    defected: false
+  - actor_type: old-regime
+    name: Royalist Spanish forces
+    description: Troops loyal to the Spanish crown, reinforced from Spain after Ferdinand VII's 1814 restoration.
+    role_in_arc: Fought a prolonged and often brutal counterinsurgency, particularly in Venezuela and Peru, before the final defeats at Ayacucho in 1824 and Callao in 1826.
+    defected: false
+  - actor_type: masses
+    name: Llanero cavalry and mixed-race soldiers
+    description: Plains horsemen and soldiers of mixed racial background who formed the bulk of Bolivar's fighting force in Venezuela.
+    role_in_arc: Provided the decisive manpower for Bolivar's Venezuelan and Colombian campaigns, often under promises of legal equality only partially honored after independence.
+    defected: false
+  - actor_type: foreign-backer
+    name: British volunteers and merchants
+    description: British Legion volunteers and arms merchants who supported the independence campaigns.
+    role_in_arc: Supplied weapons, loans, and several thousand volunteer soldiers who fought alongside Bolivar's armies.
+    defected: false
+tactics:
+  - tactic_type: armed-insurgency
+    description: Continental campaigns and set-piece battles, including Boyaca in 1819 and Ayacucho in 1824, decided control of entire viceroyalties.
+    prominence: primary
+  - tactic_type: guerrilla-warfare
+    description: Llanero irregular cavalry raids sustained the Venezuelan independence campaign through years when conventional forces could not hold territory.
+    prominence: primary
+  - tactic_type: parallel-institutions
+    description: Creole-led juntas formed in Caracas, Buenos Aires, and Bogota in 1810, initially claiming to govern in the exiled king's name before moving to outright independence.
+    prominence: secondary
+resistance_type: armed
+phases:
+  - phase: old-regime-crisis
+    label: Madrid falls
+    date_start: '1808-05-02'
+    t_start: 0
+    t_end: 0.12
+    intensity: 55
+    reached: true
+    summary: Napoleon's invasion of Spain and the forced abdication of Ferdinand VII strip the American colonies of a legitimate king to answer to.
+    key_events:
+      - Napoleon invades Spain, 1808
+      - Joseph Bonaparte installed as king, 1808
+  - phase: the-spark
+    label: The juntas form
+    date_start: '1810-04-19'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 60
+    reached: true
+    summary: Creole-led juntas form across the viceroyalties in 1810, claiming authority in the exiled king's name while local governance slips from Madrid's control.
+    key_events:
+      - Caracas junta formed, April 19, 1810
+      - Buenos Aires and Bogota juntas formed, 1810
+  - phase: moderate-phase
+    label: Governing in the king's name
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 55
+    reached: true
+    summary: The juntas govern nominally in Ferdinand VII's name through 1810 and 1811, a legal fiction that thins as fighting with royalist forces spreads.
+    key_events:
+      - Venezuela's first declaration of independence, July 5, 1811
+  - phase: radical-phase
+    label: The Admirable Campaign
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 80
+    reached: true
+    summary: Formal independence declarations and years of campaign warfare follow, including Bolivar's 1813 Admirable Campaign into Venezuela.
+    key_events:
+      - Bolivar's Admirable Campaign, 1813
+      - War to the Death decree issued, 1813
+  - phase: terror-virtue
+    label: Restoration and reconquest
+    t_start: 0.72
+    t_end: 0.84
+    intensity: 75
+    reached: true
+    summary: Ferdinand VII's 1814 restoration to the Spanish throne brings a reinforced royalist reconquest and brutal reprisals on both sides through the following years.
+    key_events:
+      - Ferdinand VII restored, 1814
+      - Royalist reconquest of Venezuela and New Granada, 1815-16
+  - phase: consolidation
+    label: Ayacucho and independence
+    date_start: '1824-12-09'
+    t_start: 0.92
+    t_end: 1
+    intensity: 60
+    reached: true
+    summary: Bolivar and San Martin's converging campaigns culminate at Ayacucho in December 1824, and the last royalist stronghold at Callao surrenders in 1826.
+    key_events:
+      - Battle of Ayacucho, December 9, 1824
+      - Callao surrenders, January 1826
+outcome: independence
+peak_participation_pct: null
+crossed_participation_threshold: null
+military_defection: partial
+foreign_intervention: material
+duration_days: 6300
+death_toll: Estimates run into the hundreds of thousands across two decades of campaigning and reprisal, though comprehensive figures remain imprecise given the number of separate theaters involved.
+death_toll_low: 200000
+death_toll_high: 600000
+regime_before: colonial
+regime_after: democracy
+democratization_delta: 2
+success_factors:
+  - factor_key: incumbent-metropolitan-crisis
+    label: Collapse of the incumbent's metropolitan capacity, not challenger tactics alone, decided the outcome
+    framework: skocpol
+    status: confirmed
+    direction: favors-movement
+    base_rate: Incumbent state capacity collapse at the metropole is frequently the decisive variable in colonial independence outcomes
+    rationale: Spain's own occupation by Napoleon and later civil conflict between liberals and absolutists left it with dwindling capacity to reinforce or resupply its American armies for most of the two decades of fighting.
+    sources:
+      - Skocpol, States and Social Revolutions (1979)
+  - factor_key: foreign-material-support
+    label: Foreign material and financial backing correlates with independence success but not reliably with stable institutions after
+    framework: goldstone
+    status: partial
+    direction: indeterminate
+    base_rate: Foreign material and financial backing correlates with independence success though not reliably with stable post-victory institutions
+    rationale: British arms sales, loans, and volunteer legions materially aided Bolivar's campaigns, yet most of the resulting republics endured decades of civil war and caudillo rule after 1826 rather than immediate stability.
+    sources:
+      - 'Goldstone, Revolutions: A Very Short Introduction (2014)'
+  - factor_key: broad-multiclass-mobilization
+    label: Mobilization spanning multiple social classes expands a challenger's available manpower
+    framework: tilly
+    status: confirmed
+    direction: favors-movement
+    base_rate: Mobilization spanning multiple social classes, not narrow elite-led rebellion alone, expands a challenger's available manpower and resource base
+    rationale: Bolivar's Venezuelan campaigns depended heavily on llanero cavalry and mixed-race soldiers, a far broader coalition than the creole elite alone could have fielded.
+    sources:
+      - Tilly, From Mobilization to Revolution (1978)
+key_figures:
+  - name: Simon Bolivar
+    role: Leader of the northern independence campaigns
+    born: 1783
+    died: 1830
+  - name: Jose de San Martin
+    role: Leader of the southern independence campaigns
+    born: 1778
+    died: 1850
+  - name: Miguel Hidalgo
+    role: Priest who launched Mexico's independence movement
+    born: 1753
+    died: 1811
+  - name: Bernardo O'Higgins
+    role: Leader of Chile's independence movement
+    born: 1778
+    died: 1842
+legacy_points:
+  - The wars produced more than a dozen new republics across the hemisphere within two decades, ending three centuries of Spanish colonial rule outside Cuba and Puerto Rico.
+  - Bolivar's vision of a unified Gran Colombia collapsed into separate Venezuela, Colombia, and Ecuador by 1830, within a decade of independence.
+  - Most new states adopted republican constitutions while retaining much of the old casta-era racial hierarchy in practice for generations afterward.
+  - The wars cemented caudillo militarism as the dominant post-independence political pattern across much of the region for most of the nineteenth century.
+related_revolt_slugs:
+  - haitian-revolution
+  - american-revolution
+related_history_slugs:
+  - bolivarian-revolutions
+is_published: true
+perspectives:
+  - viewpoint: Bolivarian liberationist view
+    viewpoint_type: revolutionary
+    region_origin: Venezuela and Colombia
+    narrative: A continental project of unified American self-rule, cut short by regional rivalry and the same elite fragmentation that had once served the independence cause.
+    key_arguments:
+      - Bolivar's writings explicitly argued for continental unity as a defense against renewed European intervention
+      - The rapid collapse of Gran Colombia after 1830 vindicated his own warnings about regional factionalism
+      - Broad participation by llanero and mixed-race soldiers reflected a genuinely popular, not merely elite, independence movement
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - Bolivar's unity project
+      - broad military participation
+    omitted:
+      - the limited practical extension of legal equality to non-white soldiers after victory
+      - the civil wars that followed independence in nearly every new republic
+  - viewpoint: Royalist and loyalist retrospective view
+    viewpoint_type: counter-revolutionary
+    region_origin: Spain
+    narrative: The wars fractured a functioning, if imperfect, multi-ethnic imperial order into a series of unstable and often authoritarian successor states that took generations to approach the administrative capacity Spanish rule had provided.
+    key_arguments:
+      - The viceroyalties had functioning administrative and legal institutions that many successor states struggled to replicate for decades
+      - Independence-era warfare and subsequent caudillo conflicts caused substantial loss of life and economic disruption
+      - Several new republics experienced political instability lasting through most of the nineteenth century
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - post-independence civil conflict
+      - administrative disruption
+    omitted:
+      - the exclusion of creole elites and the caste system's constraints under colonial rule
+      - the extended decline of Spain's own capacity that made reconquest impossible regardless of local administration
+media: []
+connections:
+  - target_slug: haitian-revolution
+    connection_type: inspired
+    description: Haiti's 1804 independence, achieved years earlier through slave revolt against a European power, unsettled and inspired Spanish American elites in different measure.
+  - target_slug: american-revolution
+    connection_type: provided-model
+    description: Republican constitutional templates and revolutionary rhetoric from the United States circulated widely among Spanish American independence leaders.

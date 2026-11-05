@@ -1,0 +1,7 @@
+source: src-lei-3353-1888
+locator: art1
+url: https://www.planalto.gov.br/ccivil_03/leis/lim/lim3353.htm
+read: 2026-10-09
+note: article 1; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Art. 1.° E’ declarada extincta, desde a data desta Lei, a escravidão no Brazil.

@@ -1,0 +1,8 @@
+source: src-brandt-heft8-2001
+locator: secsfb
+url: https://willy-brandt.de/wp-content/uploads/heft_08_waechst_zusammen.pdf
+read: 2026-10-09
+note: the booklet's transcript of the SFB 'Mittagsecho' radio interview of 10 November 1989, recorded at the Rathaus Schöneberg
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Jetzt sind wir in einer Situation, in der wieder zusammenwächst, was zusammengehört. Das gilt für Europa im Ganzen.

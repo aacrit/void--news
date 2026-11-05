@@ -1,0 +1,7 @@
+source: src-morgenthau-1918
+locator: p309
+url: https://archive.org/download/ambassadormorgen00morguoft/ambassadormorgen00morguoft_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer of the 1919 printing; hyphens rejoined, spacing collapsed, running heads between pages removed, glyph errors kept
+
+The real purpose of the deportation was robbery and destruction; it really represented a new method of massacre. When the Turkish authorities gave the orders for these deportations, they were merely giving the death warrant to a whole race; they understood this well, and, in their conversations with me, they made no particular attempt to conceal the fact.

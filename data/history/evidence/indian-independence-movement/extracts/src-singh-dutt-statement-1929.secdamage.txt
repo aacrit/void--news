@@ -1,0 +1,7 @@
+source: src-singh-dutt-statement-1929
+locator: secdamage
+url: https://www.marxists.org/archive/bhagat-singh/1929/06/06.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+the bombs that were thrown in the Assembly Chamber resulted in slight damage to an empty bench and some slight abrasions in less than half a dozen cases,

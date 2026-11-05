@@ -1,0 +1,6 @@
+source: src-chandra-2013-indonesia
+locator: abstract
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3687026/fullTextXML
+read: 2026-09-25
+
+The influenza pandemic of 1918–19 was the single most lethal short-term epidemic of the twentieth century. For Indonesia, the world's fourth most populous country, the most widely used estimate of mortality from that pandemic is 1.5 million. We estimated mortality from the influenza pandemic in Java and Madura, home to the majority of Indonesia's population, using panel data methods and data from multiple quinquennial population counts and two decennial censuses. The new estimates suggest that, for Java alone, population loss was in the range of 4.26–4.37 million, or more than twice the established estimate for mortality for all of Indonesia. We conclude that the standing estimates of mortality from influenza in Java and Indonesia need to be revised upward significantly.

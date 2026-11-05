@@ -1,0 +1,8 @@
+source: src-truman-19500627
+locator: secorder
+url: https://www.trumanlibrary.gov/library/public-papers/173/statement-president-situation-korea
+read: 2026-10-09
+note: Public Papers of the Presidents, Harry S. Truman, 1950, Item 173
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+IN KOREA the Government forces, which were armed to prevent border raids and to preserve internal security, were attacked by invading forces from North Korea. The Security Council of the United Nations called upon the invading troops to cease hostilities and to withdraw to the 38th parallel. This they have not done, but on the contrary have pressed the attack. The Security Council called upon all members of the United Nations to render every assistance to the United Nations in the execution of this resolution. In these circumstances I have ordered United States air and sea forces to give the Korean Government troops cover and support.

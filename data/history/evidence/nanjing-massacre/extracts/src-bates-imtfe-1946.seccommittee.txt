@@ -1,0 +1,8 @@
+source: src-bates-imtfe-1946
+locator: seccommittee
+url: https://www.legal-tools.org/doc/a5a0b0/pdf/
+read: 2026-10-09
+note: the text is the scan's own OCR layer as the Legal Tools Database serves it, whitespace collapsed; the transcript's printed line numbers (1 to 25) and the OCR's glyph errors sit inside the text and are kept as the layer gives them
+note: transcript page 2,625
+
+This committee was set up in the last days .. 4 of November, .1937, anticipat .. ing ... th~ attack ot the _,.-.,--"""",-",,,,,,, ','_ "cC ... 5 Japanese, Army upon Nanking.

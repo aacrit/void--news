@@ -1,0 +1,7 @@
+source: src-berkman-1922
+locator: secres3
+url: https://archive.org/download/TheKronstandtRebellion/kronstadt_rebellion_Berkman_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+
+(3) To secure freedom of assembly for labor unions and peasant organisations;

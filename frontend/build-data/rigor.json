@@ -1,0 +1,176 @@
+{
+ "builtAt": "2026-11-05T21:12:20.910097Z",
+ "briefCreatedAt": "2026-11-05T21:11:38.041232+00:00",
+ "products": {
+  "card_headline": {
+   "sentences": 30,
+   "anchored": 1,
+   "checked": 0,
+   "anchorTypes": [
+    "number",
+    "quote"
+   ],
+   "byAnchor": {
+    "number": 1
+   },
+   "coverage": 0.0
+  },
+  "card_summary": {
+   "sentences": 175,
+   "anchored": 39,
+   "checked": 11,
+   "byAnchor": {
+    "number": 38,
+    "quote": 1
+   },
+   "anchorTypes": [
+    "number",
+    "quote"
+   ],
+   "coverage": 6.3
+  },
+  "points": {
+   "sentences": 161,
+   "anchored": 19,
+   "checked": 6,
+   "anchorTypes": [
+    "number",
+    "quote"
+   ],
+   "byAnchor": {
+    "number": 19
+   },
+   "coverage": 3.7,
+   "machinePointsExcluded": 20
+  },
+  "tldr": {
+   "sentences": 29,
+   "anchored": 23,
+   "checked": 23,
+   "coverage": 79.3,
+   "anchorTypes": [
+    "number",
+    "name",
+    "date",
+    "quote"
+   ],
+   "byAnchor": {
+    "date": 5,
+    "name": 22,
+    "number": 2
+   },
+   "groundingRan": true,
+   "shipped": true
+  },
+  "opinion": {
+   "sentences": 8,
+   "anchored": 3,
+   "checked": 3,
+   "coverage": 37.5,
+   "anchorTypes": [
+    "number",
+    "name",
+    "date",
+    "quote"
+   ],
+   "byAnchor": {
+    "name": 3
+   },
+   "groundingRan": true,
+   "shipped": true
+  },
+  "onair": {
+   "sentences": 50,
+   "anchored": 28,
+   "checked": 28,
+   "coverage": 56.0,
+   "anchorTypes": [
+    "number",
+    "name",
+    "date",
+    "quote"
+   ],
+   "byAnchor": {
+    "date": 6,
+    "name": 27,
+    "number": 3
+   },
+   "groundingRan": true,
+   "shipped": true
+  }
+ },
+ "evidence": {
+  "shipped": 30,
+  "freshKnown": true,
+  "fresh": 7,
+  "states": {
+   "confirmable": 10,
+   "index cap below writer window": 3,
+   "stub rows, card not fresh": 17
+  }
+ },
+ "audit": {
+  "shipped": {
+   "cannot confirm": {
+    "E-13 misattached": 4
+   }
+  },
+  "bench": {
+   "advisory": {
+    "E-13 misattached": 2
+   },
+   "cannot confirm": {
+    "E-13 misattached": 2
+   }
+  }
+ },
+ "run": {
+  "brief": {
+   "cut_sentences": 1,
+   "cuts_by_reason": {
+    "date": 1
+   },
+   "edition": "world",
+   "grounding_ran": {
+    "opinion": true,
+    "script": true,
+    "tldr": true
+   }
+  },
+  "startedAt": "2026-11-05T19:28:07Z",
+  "stage2": {
+   "candidates": 45,
+   "critique_read": 28,
+   "critique_unread": 16,
+   "cut_sentences": 0,
+   "cuts_by_reason": {
+    "number": 1
+   },
+   "dropped": 1,
+   "kept_failing": 4,
+   "regenerated": 6,
+   "reviewed": true,
+   "fresh": 7
+  }
+ },
+ "corrections": {
+  "entries": 11,
+  "ungated": [],
+  "unapplied": 0,
+  "bySurface": {
+   "card": 6,
+   "deepdive": 1,
+   "brief": 2,
+   "opinion": 1,
+   "radio": 1
+  }
+ },
+ "floors": {
+  "F-1": "pass",
+  "F-2": "pass",
+  "F-3": "pass",
+  "F-5": "pass"
+ },
+ "floorDetail": {},
+ "computedAt": "2026-11-05T21:12:34Z"
+}

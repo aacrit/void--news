@@ -1,0 +1,6 @@
+source: src-un-a54549
+locator: para3
+url: https://documents.un.org/doc/undoc/gen/n99/348/76/pdf/n9934876.pdf
+read: 2026-09-24
+
+3. The United Nations had a mandate to “deter attacks” on Srebrenica and five other “safe areas” in Bosnia and Herzegovina. Despite that mandate, up to 20,000 people, overwhelmingly from the Bosnian Muslim community, were killed in and around the safe areas. In addition, a majority of the 117 members of the United Nations Protection Force (UNPROFOR) who lost their lives in Bosnia and Herzegovina died in or around the safe areas. In requesting the submission of the present report, the General Assembly has afforded me the opportunity to explain why the United Nations failed to deter the Serb attack on Srebrenica and the appalling events that followed.

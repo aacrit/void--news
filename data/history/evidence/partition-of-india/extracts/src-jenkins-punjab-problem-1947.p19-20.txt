@@ -1,0 +1,8 @@
+source: src-jenkins-punjab-problem-1947
+locator: p19-20
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: the page is the volume's, read from the scan's running numbers, which the OCR layer prints between pages: the passage lies between the two numbers given
+note: the OCR layer's Grudaspur for Gurdaspur is kept as printed
+
+But it is not clear how the Lahore Division should be divided. On population alone Amritsar should go to the non-Muslini State, and the other five districts (Lahore Gurdaspur, Sialkot, Gujranwala and Sheikhupura) to the Muslim State. But when we getdown to details we inevitably find that crude population figures are not necessarily the only criterion. Within districts communities are not evenly distributed - city and town populations often have a different communal composition from thatof the adjoining countryside; and in some districts the population of Tahsils differs widely. For example. in Gurdaspur with 590,000 Muslims and 560,000 non-Muslims, the Pathankot Tahsil is predominantly non-Muslim while in the other three Tahsils the Muslims have small majorities. Again even within a Tahsil there may be fairly solid communal blocks - the Riarki tract of the Batala Tahsil of Grudaspur adjoins the Manjha and resembles it in many ways, though the Batala Tahsil as a whole (including Batala city) has a small Muslim majority.

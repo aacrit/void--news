@@ -1,0 +1,8 @@
+source: src-ndl-crd-xia
+locator: secquestion
+url: https://crd.ndl.go.jp/reference/entry/index.php?id=1000089680&page=ref_view
+read: 2026-10-09
+note: the text is the page's own text in Japanese, whitespace collapsed; a Void translation is beside it (.en.txt)
+note: the question as the library records it; the record's status line reads 未解決 (unresolved)
+
+質問 未解決 平成19年11月2日判決言渡 平成18年（ワ）第9972号 損害賠償等反訴請求事件 反訴原告：夏淑琴 反訴被告：東中野修道 内 容：「南京虐殺の徹底検証」とい書籍の記述によって 名誉を毀損されたことによる裁判。 東京地方裁判所民事第10部 裁判長裁判官：三代川三千代 上記の裁判判決の全文を知りたい。

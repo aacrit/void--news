@@ -1,0 +1,7 @@
+source: src-mit-hamilton-2009
+locator: para7
+url: https://news.mit.edu/2009/apollo-vign-0717
+read: 2026-10-03
+note: Margaret Hamilton's contribution, the part of the paragraph beginning 'From my own perspective' that describes the alarms; sliced at 150 words or fewer because the page is MIT's copyright
+
+Onboard software had discovered that the CPU was fast approaching overload and there would not be enough time to perform landing functions unless emergency steps were taken. With the software's global error detection and recovery mechanisms, nominal displays were interrupted with priority displays of 1201 and 1202 alarms. Every time the CPU approached overload, the software cleared out its entire queue of processes, restarted its functions; allowing only the highest priority ones to perform until the landing was completed. The source of the error was later found to be in the astronaut checklist document; instructing the astronaut to place the rendezvous radar hardware switch in the wrong position, thus stealing valuable CPU time. The mechanisms the software used for this emergency were thought by many to have saved the Apollo 11 mission.

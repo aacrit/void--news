@@ -1,0 +1,196 @@
+#!/usr/bin/env python3
+"""The runtime levers of rev 85 do what they say (P2-1, P2-12).
+
+  - the Gemini meter counts every REQUEST by model, including retries and calls
+    made with count_call=False, and survives the module being imported twice;
+  - Kokoro runs two workers unless VOID_KOKORO_WORKERS asks for more and the
+    runner has the cores and memory for them;
+  - main.py's phase clock turns marks into durations.
+
+No network, no API key, no VOID_SQLITE_PATH.
+"""
+from __future__ import annotations
+
+import ast
+import importlib.util
+import pathlib
+import sys
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "pipeline"))
+failures: list[str] = []
+
+
+def check(name, ok, detail=""):
+    print(f"  {'ok  ' if ok else 'FAIL'}  {name}" + (f"  ({detail})" if detail and not ok else ""))
+    if not ok:
+        failures.append(name)
+
+
+# --- 1. The meter --------------------------------------------------------------
+from summarizer import gemini_client as gc  # noqa: E402
+
+
+class _Resp:
+    def __init__(self, text):
+        self.text = text
+
+
+class _Models:
+    def __init__(self, replies):
+        self.replies = list(replies)
+        self.sent = []
+
+    def generate_content(self, model, contents, config):
+        self.sent.append(model)
+        return _Resp(self.replies.pop(0))
+
+
+class _Client:
+    def __init__(self, replies):
+        self.models = _Models(replies)
+
+
+if gc.GEMINI_AVAILABLE:
+    gc._MIN_INTERVAL = 0.0
+    gc.reset_usage()
+    gc._client = _Client(['{"a": 1}', "not json", '{"b": 2}', "plain text"])
+    gc.generate_json("p", count_call=False, model=gc._FLASH_MODEL)
+    gc.generate_json("p", max_retries=1, model=gc._FLASH_MODEL)   # one parse failure, one retry
+    gc.generate_text("p")                                            # default (lite) model
+    u = gc.get_usage()
+    check("a count_call=False request is metered",
+          u["uncounted_calls_by_model"].get(gc._FLASH_MODEL) == 1, str(u))
+    check("a retry is a second request against the same model",
+          u["requests_by_model"].get(gc._FLASH_MODEL) == 3
+          and u["calls_by_model"].get(gc._FLASH_MODEL) == 2, str(u))
+    check("requests are kept per model", u["requests_by_model"].get(gc._MODEL) == 1, str(u))
+    # A second import under the package path shares the same meter.
+    spec = importlib.util.spec_from_file_location(
+        "pipeline_summarizer_gemini_client_copy", ROOT / "pipeline" / "summarizer" / "gemini_client.py")
+    copy = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(copy)
+    check("a second copy of the module reads the same meter",
+          copy.get_usage()["requests_by_model"] == u["requests_by_model"])
+    gc.reset_usage()
+    gc._client = None
+else:
+    print("  skip  google-genai not installed: meter behaviour not exercised")
+check("get_usage names the flash model the gate reads", gc.get_usage()["flash_model"] == gc._FLASH_MODEL)
+
+# --- 2. Kokoro workers -----------------------------------------------------------
+from briefing.tts_engines import KOKORO_WORKER_MB, default_kokoro_workers  # noqa: E402
+
+check("default is 2 even on a big runner (run #386 died at 4)",
+      default_kokoro_workers(cpu=4, mem_mb=16000, env={}) == 2)
+check("2 cores: 2 workers", default_kokoro_workers(cpu=2, mem_mb=16000, env={}) == 2)
+check("4 asked with room for four: 4 workers", default_kokoro_workers(
+    cpu=4, mem_mb=16000, env={"VOID_KOKORO_WORKERS": "4"}) == 4)
+check("4 asked without the memory: 2 workers", default_kokoro_workers(
+    cpu=4, mem_mb=4 * KOKORO_WORKER_MB - 1, env={"VOID_KOKORO_WORKERS": "4"}) == 2)
+check("4 asked on 2 cores: 2 workers", default_kokoro_workers(
+    cpu=2, mem_mb=16000, env={"VOID_KOKORO_WORKERS": "4"}) == 2)
+check("a junk override falls back to the default",
+      default_kokoro_workers(cpu=4, mem_mb=16000, env={"VOID_KOKORO_WORKERS": "x"}) == 2)
+
+# --- 3. The phase clock ------------------------------------------------------------
+src = (ROOT / "pipeline" / "main.py").read_text(encoding="utf-8")
+fn = next(n for n in ast.parse(src).body
+          if isinstance(n, ast.FunctionDef) and n.name == "phase_durations")
+ns: dict = {}
+exec(compile(ast.Module(body=[fn], type_ignores=[]), "main.py", "exec"), ns)
+d = ns["phase_durations"]([("a", 0.0), ("b", 10.0), ("a", 25.0)], 30.0)
+check("a phase lasts until the next mark, and a re-entered phase accumulates",
+      d == {"a": 15.0, "b": 15.0}, str(d))
+for name in ("fetch", "scrape", "bias", "cluster", "rank", "rerank", "stage2", "brief_audio"):
+    check(f"main.py marks the '{name}' phase", f'_phase("{name}")' in src)
+
+# Overload is retried; a quota error is not (2026-11-01: four 503 "high
+# demand" replies left the Weekly with no cover and nothing was published).
+_sleep, _rl, _gc = gc.time.sleep, gc._rate_limit, gc._get_client
+gc.time.sleep, gc._rate_limit = (lambda s: None), (lambda: None)
+_OVER = "503 UNAVAILABLE. This model is currently experiencing high demand."
+
+
+def _client(errors):
+    seq = list(errors)
+
+    class _Models:
+        def generate_content(self, **kw):
+            if seq:
+                raise Exception(seq.pop(0))
+            return type("R", (), {"text": '{"ok": 1}'})()
+    return type("C", (), {"models": _Models()})()
+
+
+try:
+    gc._get_client = lambda: _client([_OVER, _OVER])
+    check("text: two overloads, then the answer", gc.generate_text("x") == '{"ok": 1}')
+    gc._get_client = lambda: _client([_OVER, _OVER])
+    check("json: two overloads, then the answer", gc.generate_json("x") == {"ok": 1})
+    gc._get_client = lambda: _client([_OVER] * 3)
+    check("a third overload gives up", gc.generate_text("x") is None)
+    gc._get_client = lambda: _client(["429 RESOURCE_EXHAUSTED quota", "never reached"])
+    check("a quota error is never retried", gc.generate_text("x") is None)
+finally:
+    gc.time.sleep, gc._rate_limit, gc._get_client = _sleep, _rl, _gc
+
+# Flash -> flash-lite fallback (CEO decision C, 2026-11-03).
+_calls: list = []
+
+
+def _plan_client(plan):
+    class _Models:
+        def generate_content(self, model, **kw):
+            _calls.append(model)
+            if plan.get(model):
+                raise Exception(plan[model])
+            return type("R", (), {"text": '{"ok": 1}'})()
+    return type("C", (), {"models": _Models()})()
+
+
+_sleep, _rl, _gc = gc.time.sleep, gc._rate_limit, gc._get_client
+gc.time.sleep, gc._rate_limit = (lambda s: None), (lambda: None)
+_DAY = "429 RESOURCE_EXHAUSTED GenerateRequestsPerDayPerProjectPerModel-FreeTier"
+try:
+    gc._flash_parked = False
+    gc._get_client = lambda: _plan_client({gc._FLASH_MODEL: _OVER})
+    _calls.clear()
+    got = gc.generate_text("x", model=gc._FLASH_MODEL)
+    check("an overloaded flash request is answered by flash-lite",
+          got == '{"ok": 1}' and gc.last_model_used() == gc._MODEL and _calls[-1] == gc._MODEL,
+          str(_calls))
+    check("an overload does not park flash", not gc._flash_parked)
+    gc._get_client = lambda: _plan_client({gc._FLASH_MODEL: "429 RESOURCE_EXHAUSTED per minute"})
+    gc.generate_json("x", model=gc._FLASH_MODEL)
+    check("a per-minute 429 falls back once and does not park flash", not gc._flash_parked)
+    gc._get_client = lambda: _plan_client({gc._FLASH_MODEL: _DAY})
+    _calls.clear()
+    got = gc.generate_json("x", model=gc._FLASH_MODEL)
+    check("a per-day flash refusal is answered by flash-lite and parks flash",
+          got == {"ok": 1} and gc._flash_parked, str(_calls))
+    _calls.clear()
+    gc.generate_json("x", model=gc._FLASH_MODEL)
+    check("a parked flash is not asked again", _calls == [gc._MODEL], str(_calls))
+    _calls.clear()
+    check("a caller with its own ladder is told no without a request",
+          gc.generate_json("x", model=gc._FLASH_MODEL, fallback=False) is None and not _calls)
+finally:
+    gc._flash_parked = False
+    gc.time.sleep, gc._rate_limit, gc._get_client = _sleep, _rl, _gc
+
+# Every request has a deadline (run #419 hung 2h25m in [8d] with none), and a
+# timed-out request is retried once, not three times.
+check("the Gemini client is built with a request timeout",
+      "HttpOptions(timeout=_TIMEOUT_MS)" in (ROOT / "pipeline" / "summarizer" /
+                                              "gemini_client.py").read_text())
+check("a timeout is retried once; a dropped connection three times",
+      gc._transport_retry_limit("readtimeout timed out") == 1
+      and gc._transport_retry_limit("server disconnected") == gc._MAX_TRANSPORT_RETRIES)
+check("main.py dumps every stack before the 4-hour kill",
+      "faulthandler.dump_traceback_later" in src)
+
+if failures:
+    print(f"\nFAIL  {len(failures)} runtime check(s)")
+    sys.exit(1)
+print("\nPASS  the meter counts every request, Kokoro defaults to two workers, phases are timed")

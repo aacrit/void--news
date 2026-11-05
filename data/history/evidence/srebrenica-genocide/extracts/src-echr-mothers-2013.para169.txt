@@ -1,0 +1,6 @@
+source: src-echr-mothers-2013
+locator: para169
+url: https://hudoc.echr.coe.int/app/conversion/pdf/?library=ECHR&id=001-122255&filename=001-122255.pdf
+read: 2026-09-24
+
+169. The above findings lead the Court to find that in the present case the grant of immunity to the United Nations served a legitimate purpose and was not disproportionate.

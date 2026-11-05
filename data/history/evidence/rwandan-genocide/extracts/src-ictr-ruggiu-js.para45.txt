@@ -1,0 +1,7 @@
+source: src-ictr-ruggiu-js
+locator: para45
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-97-32/trial-judgements/en/000601.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+45. The accused was fully aware of the mass persecutions of the civilian population and the Belgian contingent on political or ethnic grounds. The accused acknowledges that, during a tour of Kigali in mid-April 1994, he became aware of a plan to destroy the Tutsis as an ethnic group. Furthermore, during the hearing, at a question from the Bench, as to why he wished to change his plea, the accused answered: " I realised that some persons in Rwanda had been killed during the events of 1994, and that I was responsible and guilty of those facts, that there was a direct link with what I had said and their deaths and under these circumstances I believed that I had no other choice than to plead guilty."

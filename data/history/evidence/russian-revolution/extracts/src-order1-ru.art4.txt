@@ -1,0 +1,7 @@
+source: src-order1-ru
+locator: art4
+url: https://www.rusempire.ru/rossijskaya-imperiya/pravovye-akty-rossijskoj-imperii/658-prikaz-1-1-marta-1917-g.html
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+4) Приказы военной комиссии Государственной думы следует исполнять, за исключением тех случаев, когда они противоречат приказам и постановлениям Совета рабочих и солдатских депутатов.

@@ -1,0 +1,8 @@
+source: src-frus-1950v07-d680
+locator: secchances
+url: https://history.state.gov/historicaldocuments/frus1950v07/d680
+read: 2026-10-09
+note: 'Substance of Statements Made at Wake Island Conference on 15 October 1950', compiled by General Bradley from notes kept by the conferees (FRUS headnote); a summary record, not a verbatim transcript; the page's spaces before colons are as served; 'clown' is the page's reading
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+The President : What are the chances for Chinese or Soviet interference? General MacArthur : Very little. Had they interfered in the first or second months it would have been decisive. We are no longer fearful of their intervention. We no longer stand hat in hand. The Chinese have 300,000 men in Manchuria. Of these probably not more than 100/125,000 are distributed along the Yalu River. Only 50/60,000 could be gotten across the Yalu River. They have no Air Force. Now that we have bases for our Air Force in Korea, if the Chinese tried to get clown to Pyongyang there would be the greatest slaughter.

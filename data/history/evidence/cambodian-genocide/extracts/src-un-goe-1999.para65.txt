@@ -1,0 +1,6 @@
+source: src-un-goe-1999
+locator: para65
+url: https://documents.un.org/doc/undoc/gen/n99/059/72/pdf/n9905972.pdf
+read: 2026-09-25
+
+65. As for atrocities committed against the general Cambodian population, some commentators have asserted that the Khmer Rouge committed genocide against the Khmer national group, intending to destroy a part of it.14 The Khmer people of Cambodia do constitute a national group within the meaning of the Convention. However, whether the Khmer Rouge committed genocide with respect to part of the Khmer national group turns on complex interpretive issues, especially concerning the Khmer Rouge’s intent with respect to its non-minority-group victims. The Group does not take a position on this issue, but believes that any tribunal will have to address this question should Khmer Rouge officials be charged with genocide against the Khmer national group.

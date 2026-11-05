@@ -1,0 +1,7 @@
+source: src-douglass-1855
+locator: sechead
+url: https://www.gutenberg.org/cache/epub/202/pg202.txt
+read: 2026-10-09
+note: the appendix heading that dates the speech; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Extract from an Oration, at Rochester, July 5, 1852

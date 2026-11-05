@@ -1,0 +1,7 @@
+source: src-nara-pentagon-papers
+locator: secintro
+url: https://www.archives.gov/research/pentagon-papers
+read: 2026-10-09
+note: the National Archives' page introducing the 2011 release, its first two paragraphs
+
+The Pentagon Papers, officially titled "Report of the Office of the Secretary of Defense Vietnam Task Force", was commissioned by Secretary of Defense Robert McNamara in 1967. In June of 1971, small portions of the report were leaked to the press and widely distributed. However, the publications of the report that resulted from these leaks were incomplete and suffered from many quality issues. On the 40th anniversary of the leak to the press, the National Archives, along with the Kennedy, Johnson, and Nixon Presidential Libraries, has released the complete report. There are 48 boxes and approximately 7,000 declassified pages. Approximately 34% of the report is available for the first time.

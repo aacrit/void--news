@@ -1,0 +1,8 @@
+source: src-gust-19150805-en
+locator: para20
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-08-05-DE-002
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+note: the translation is the online edition's own (sponsored by the Zoryan Institute), held here as the edition prints it, at most 150 words
+
+Thus, in Vilayet Erzurum for example, neither weapons nor compromising documents were found. If a rebellion had been planned here, then the most advantageous moment for such an event would have been in January, when the Russians were stationed 35 km from Erzurum and Erzurum's garrison held only a few hundred gendarmes, while in Erzurum's labour battalions alone there were 3 – 4,000 Armenians.

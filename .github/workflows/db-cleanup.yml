@@ -1,0 +1,77 @@
+name: DB Cleanup
+
+permissions: {}
+
+# Standalone daily DB retention job. Defends the Free-Plan 0.5 GB cap by
+# pruning diagnostic tables (engine_snapshots, sandbox_runs, engine_runs)
+# and stale articles. Runs independently of the main pipeline so cleanup
+# happens even on days the pipeline.yml cron fails or is skipped.
+#
+# UNSCHEDULED (rev 85). It ran daily at 09:00 against the decommissioned
+# Supabase project, pruning a database nothing reads (CLAUDE.md, "Jobs that
+# still run against the dead Supabase"). Manual dispatch only.
+
+on:
+  workflow_dispatch:
+    inputs:
+      snapshot_days:
+        description: 'engine_snapshots retention (days)'
+        required: false
+        default: '3'
+      article_days:
+        description: 'articles retention (days)'
+        required: false
+        default: '7'
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.11'
+      - name: Install minimal dependencies
+        run: pip install supabase==2.* python-dotenv==1.*
+      - name: Run cleanup
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SNAPSHOT_DAYS: ${{ inputs.snapshot_days || '3' }}
+          ARTICLE_DAYS: ${{ inputs.article_days || '7' }}
+        run: |
+          python <<'PY'
+          import os
+          from supabase import create_client
+
+          sb = create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_KEY"])
+          snap_days = int(os.environ["SNAPSHOT_DAYS"])
+          article_days = int(os.environ["ARTICLE_DAYS"])
+
+          print(f"[cleanup] snapshot_days={snap_days} article_days={article_days}")
+
+          # Diagnostic tables (migration 060)
+          try:
+              r = sb.rpc("cleanup_diagnostic_tables", {
+                  "snapshot_days": snap_days,
+              }).execute()
+              print(f"[cleanup] diagnostic_tables: {r.data}")
+          except Exception as e:
+              print(f"[cleanup] diagnostic_tables RPC failed: {e}")
+
+          # Articles (migration 050)
+          try:
+              r = sb.rpc("cleanup_stale_articles", {"days": article_days}).execute()
+              print(f"[cleanup] articles pruned: {r.data}")
+          except Exception as e:
+              print(f"[cleanup] articles RPC failed: {e}")
+
+          # Stale clusters
+          try:
+              r = sb.rpc("cleanup_stale_clusters").execute()
+              print(f"[cleanup] clusters pruned: {r.data}")
+          except Exception as e:
+              print(f"[cleanup] clusters RPC failed: {e}")
+
+          print("[cleanup] done")
+          PY

@@ -1,0 +1,7 @@
+source: src-qn-sonmy-2026
+locator: secceremony
+url: https://quangngai.gov.vn/en/news/people-s-committee-news/commemoration-of-58th-anniversary-of-son-my-massacre.html
+read: 2026-10-09
+note: the English edition of the Quảng Ngãi provincial portal, a news item dated 16 March 2026; the portal's photograph caption (a name and title) falls inside the passage and is kept
+
+On the morning of March 16, at the Sơn Mỹ Memorial Site, the Quảng Ngãi Department of Culture, Sports and Tourism held an incense-offering ceremony to commemorate the 58th anniversary of the massacre of 504 civilians in Sơn Mỹ (March 16, 1968 – March 16, 2026).

@@ -1,0 +1,7 @@
+source: src-dupuis-1824
+locator: p163
+url: https://archive.org/details/journalofresiden00dupu
+read: 2026-10-09
+note: the king's words as Dupuis records them in English; the OCR keeps the edition's note marks ('Crammo*', 'water f'); sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+But if they think it bad now, why did they think it good before. Is not your law an old law, the same as the Crammo* law ? Do you not both serve the same God, only you have different fashions and customs ? Crammos are strong- people in fetische, and they say the law is good, because the great God made the book ; so they buy slaves, and teach them good things, which they knew not before. This makes every body love the Crammos, and they go every where up and down, and the people give them food when they want it. Then these men come all the way from the great water f, and from Manding, and Dagomba, and Killinga ; they stop and trade for slaves, and then go home.

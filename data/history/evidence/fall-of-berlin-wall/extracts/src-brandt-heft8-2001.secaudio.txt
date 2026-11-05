@@ -1,0 +1,8 @@
+source: src-brandt-heft8-2001
+locator: secaudio
+url: https://willy-brandt.de/wp-content/uploads/heft_08_waechst_zusammen.pdf
+read: 2026-10-09
+note: Bernd Rother's essay in the Foundation's booklet
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Überprüft man diese Darstellung an den überlieferten Tonmitschnitten, so zeigt sich, dass der Satz fehlt. Das Deutsche Rundfunkarchiv (DRA) Frankfurt/Main vermerkt sogar ausdrücklich: „Die bekannte Passage ,Jetzt wächst zusammen, was zusammengehört’ kommt in dieser Aufnahme nicht vor“.

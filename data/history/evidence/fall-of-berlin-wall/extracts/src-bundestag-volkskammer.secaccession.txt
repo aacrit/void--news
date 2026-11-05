@@ -1,0 +1,8 @@
+source: src-bundestag-volkskammer
+locator: secaccession
+url: https://www.bundestag.de/en/parliament/history/parliamentarism/peoples_chamber/peoples_chamber-201326
+read: 2026-10-09
+note: the same page
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+At a special sitting on the night of 22 to 23 August 1990, the People’s Chamber decided, by 294 to 62 votes, with seven abstentions, that the GDR would accede to the area of application of the Basic Law in accordance with Article 23 of the Basic Law on 3 October 1990.

@@ -1,0 +1,8 @@
+source: src-hc-lahore-19470827
+locator: p502-503
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: p is the page of Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947 (2nd ed., 2005), read from the Internet Archive text layer; line breaks are joined and the layer's soft hyphens rejoined
+note: Document 160, a telegram from the High Commissioner for India, Lahore, to New Delhi, from File D/268, Broadland Archives; the page number between pp. 502 and 503, which the layer reads as '3502', is dropped; 'Itis', 'notwithoutreason', 'holocaustatS HEIKUPURA' are the layer's
+
+Mudie is sending a note with Amrit Kaur. Itis clear that transfer of population is inevitable and absolutely essential if major disasters are to be avoided. CHAMANLAL fears not withoutreason that holocaustatS HEIKUPURA will probably be repeated in many. other mofussil areas in Western Punjab and that 40,000 lives are in danger during next 48 hours. Government House Conference definitely felt that such transfer of population should take place. This should be published and would stop indiscriminate murder and arson.

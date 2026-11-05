@@ -1,0 +1,7 @@
+source: src-tsuboi-chugoku-2015
+locator: para1
+url: https://www.hiroshimapeacemedia.jp/?p=49055
+read: 2026-10-07
+note: his first answer in the interview, in the newspaper's English; the interview was conducted in Japanese and the English is the Chugoku Shimbun's
+
+After having breakfast, I was on my way to the university where I was a student, the Hiroshima Technical Institute in Senda-machi. I was in the Fujimi-cho district, about 1.2 kilometers from the hypocenter. I heard a big whooshing sound above me, to the left. I thought it was a bomb and I covered my face with my hands. There was a flash, like a great many camera flashes going off at once.

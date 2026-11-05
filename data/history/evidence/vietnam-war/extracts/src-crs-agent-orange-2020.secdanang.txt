@@ -1,0 +1,7 @@
+source: src-crs-agent-orange-2020
+locator: secdanang
+url: https://www.congress.gov/crs_external_products/R/PDF/R44268/R44268.23.pdf
+read: 2026-10-09
+note: the Congressional Research Service PDF, its text layer, line breaks folded to spaces
+
+During the life of the project, the amount of material to be decontaminated rose from an estimated 61,700 cubic meters (m3) to approximately 90,000 m3, plus an additional 60,000 m3 of “lower risk material.”34 The estimated cost of the project increased from $33.7 million to over $110 million. The Danang airport remediation was officially declared completed on November 9, 2017.

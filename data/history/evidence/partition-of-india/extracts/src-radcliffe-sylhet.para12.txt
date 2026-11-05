@@ -1,0 +1,11 @@
+source: src-radcliffe-sylhet
+locator: para12
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: the paragraph runs across a page break in the print, and the reprint's page number 9 falls inside it and is kept as the layer prints it
+
+12. But a study of the map shows, in my judgment, that a division on these lines would present problems of administration* that
+
+9
+
+might gravely affect the future welfare and happiness of the whole District. Not only would the six non-Muslim thanas of Sylhet be completely divorced from the rest of Assam if the Muslim claim to Hailakandi were recognised, but they form a strip running east and west whereas the natural division of the land is north and south and they effect an awkward severance of the railway line through Sylhet, so that, for instance, the junction for the town of Sylhet itself, the capital of the district, would lie in Assam, not in East Bengal.

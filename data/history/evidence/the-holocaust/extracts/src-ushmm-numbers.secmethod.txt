@@ -1,0 +1,6 @@
+source: src-ushmm-numbers
+locator: secmethod
+url: https://encyclopedia.ushmm.org/content/en/article/documenting-numbers-of-victims-of-the-holocaust-and-nazi-persecution
+read: 2026-10-07
+
+There is no single Nazi German document that accounts for every death in the Holocaust. Rather, there are hundreds of thousands of pages of Nazi German documents that recorded this information. One of the best documented aspects of the Holocaust by the perpetrators are transports to and gassing operations at killing centers. Thus, we know with some specificity and precision the death toll for each of the five killing centers of the Holocaust.

@@ -1,0 +1,375 @@
+# The documentary score for "The Cuban Missile Crisis", as note data on sampled
+# real instruments. Rendered by pipeline/history/score.py; the samples live in
+# ~/.cache/void-score-samples (never in the repository) and are pinned by sha256.
+#
+# The music claims nothing about the event. Nothing here imitates a music of
+# the island, a dance, a drum, a march, a bugle, a clock, a sonar ping, a
+# siren or a broadcast tone, and nothing in it pulses: the palette is one
+# pipe organ, its quiet manual stop and its quiet pedal stop, presented as
+# what it is, and none of the eight earlier composed scores uses an organ (the
+# Partition score holds a harmonium, a free reed, which is a different
+# instrument and a different sound). This is a story of two rooms where men
+# sat for thirteen days, of a boat two hundred feet down with foul air and no
+# word from Moscow, of one officer declining to sign, and of a bargain kept
+# secret for a generation, so the score is given the one instrument that
+# cannot swell with feeling: a pipe is open or shut, it breathes at a steady
+# pressure, and it holds for as long as the air lasts. The line is a single
+# voice over a single pedal; there is never a chord, so nothing in it is a
+# hymn. Dread is the pedal breathing and a bare fifth above it. Procedure is
+# the manual touched, one short note to a beat, dry. Grief and testimony carry
+# silence: testimony and rupture have no bed at all (mood.py), and the grief
+# bed is the pedal alone for thirty-five of its forty seconds, with gaps of
+# more than a second between its breaths.
+#
+# The theme is built from the house cell (tonic, fifth, tonic, third: the
+# shape of the On Air motif), in C, in the minor mode with the sixth and
+# seventh left unraised, at 42 beats a minute in two-beat bars: eight bars,
+# sixteen beats of 1.429 s, then the pedal alone. Bars 1 to 4 state the cell on
+# C and step down home. Bar 5 rests. Bars 6 to 8 climb by step, F, G, A flat,
+# to B flat, the seventh, and STOP there, held over the pedal's C: the one
+# note of the scale that asks most plainly for the octave and is not given it.
+# The deal was made and not announced; the line arrives at the step before
+# home and is left there, and the title is spoken into that. The outro takes
+# the fall, B flat, A flat, G, E flat, onto C, once. The grief bed states the
+# first three notes of that fall and stops on G, the fifth.
+#
+# Cues are keyed to the producer's moods and segment kinds, never to a line of
+# text, so the cinematic variant renders from this manifest whatever moods it
+# picks. Where each cue plays is the producer's (mood_plan): the theme under
+# the TITLE, the first word 1.2 s before its end; beds under the spoken body by
+# mood, ducked to the mood's floor; transitions in the clear before a scene;
+# the rupture entry on the last word of the moment, or 1,200 ms after a clip's
+# trailing silence, never under it; the outro at the close, with the house
+# promo riding its held bars, so it is at most 13.75 s and silent at its end.
+slug: cuban-missile-crisis
+title: The Cuban Missile Crisis
+version: 1
+key: C
+mode: minor, with the sixth and seventh left unraised; the theme stops on the seventh and only the outro completes the fall
+tempo_bpm: 42
+house_cell: [0, 7, 0, 3]
+textures: []
+
+instruments:
+  organ:
+    library: Versilian Community Sample Library (VCSL, Versilian Studios), Pipe Organ, the quiet manual stop (the "NT5_Man3Quiet" set, one microphone pair, one take per key, every third semitone). The files are named an octave below what they sound (the file "C2" measures 130.8 Hz, C3, by two independent estimators, within 1 cent; "F#2" measures 185.5 Hz, F#3, within 5 cents; "D#3" measures 311.2 Hz, Eb4, within 1 cent); `note` is the sounding pitch. C, E flat, F sharp and A are recordings of those notes, unshifted; D is one semitone under the E flat, F one under the F sharp, G one over it, A flat one under the A, B flat one over it. Nothing is shifted more than one semitone. Each recording is a key held for about 10.3 s and then released, so the loop regions below sit inside the held part, which measures steady within half a decibel in 0.5 s frames from 1 s to 9.5 s on every file used (the "C3" file rises 4 dB over its first two seconds and is looped from 2 s). A hold longer than the recording loops that region with an equal-power crossfade
+    role_as_presented: a pipe organ, its quiet manual stop
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme calls it public domain, no royalties, no credit, no special terms)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VCSL/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios, Versilian Community Sample Library
+    kind: sustain
+    attack_s: 0.25
+    release_s: 0.45
+    gain_db: 0.0
+    samples:
+      - {file: vcsl/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_F#2_rr1.wav, note: F#3, loop_start_s: 1.0, loop_end_s: 9.5, sha256: 3afa6caad64d5ef3c527b8bc4c22b7a0c55bc5dfaa6701c8b2b98c53de5876ae, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Pipe%20Organ/Quiet/NT5_Man3Quiet_F%232_rr1.wav"}
+      - {file: vcsl/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_A2_rr1.wav, note: A3, loop_start_s: 1.0, loop_end_s: 9.5, sha256: c39ec6c7e26dee6a3661e54a96c4a2a04bce08130864244458a7db1b627b3c93, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Pipe%20Organ/Quiet/NT5_Man3Quiet_A2_rr1.wav"}
+      - {file: vcsl/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_C3_rr1.wav, note: C4, loop_start_s: 2.0, loop_end_s: 9.5, sha256: 55b246625c8a2fe71c271d2335ba6cc5f12d3cd48cc691aa047197b7f825084f, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Pipe%20Organ/Quiet/NT5_Man3Quiet_C3_rr1.wav"}
+      - {file: vcsl/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_D#3_rr1.wav, note: Eb4, loop_start_s: 1.0, loop_end_s: 9.5, sha256: fa2784dca7e6ef639be46a2d9f129f480755b678c9cce145d257bb59839a77a9, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Pipe%20Organ/Quiet/NT5_Man3Quiet_D%233_rr1.wav"}
+      - {file: vcsl/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_F#3_rr1.wav, note: F#4, loop_start_s: 1.0, loop_end_s: 9.5, sha256: 7ad4206bebfaffe36d3c506e55670abf4a5bed9c72d52a8eea44fe5a20c62b9a, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Pipe%20Organ/Quiet/NT5_Man3Quiet_F%233_rr1.wav"}
+      - {file: vcsl/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_A3_rr1.wav, note: A4, loop_start_s: 1.0, loop_end_s: 9.5, sha256: 97df359ea6827d9b751cf85de91fb460d8c95871cb98dff0441494bc35ca1cb1, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Pipe%20Organ/Quiet/NT5_Man3Quiet_A3_rr1.wav"}
+      - {file: vcsl/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_C4_rr1.wav, note: C5, loop_start_s: 1.0, loop_end_s: 9.5, sha256: 14f3a97253046b883e9689d9fb5420b9eb69e7b65564e2396b5098f245b0cd10, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Pipe%20Organ/Quiet/NT5_Man3Quiet_C4_rr1.wav"}
+
+  pedal:
+    library: Versilian Community Sample Library (VCSL, Versilian Studios), Pipe Organ, the quiet pedal stop (the "NT5_PedalQuiet" set). The files are named an octave below what they sound (the file "C1" measures 65.8 Hz, C2, by harmonic product spectrum, within 9 cents; in the close recording its second harmonic, 130.8 Hz, is the strongest partial, which is why it carries on a small speaker; "F#1" measures 92.8 Hz, F#2, within 5 cents); `note` is the sounding pitch. The C it holds under the whole episode is a recording of that note, unshifted; the G of the stings is one semitone over the recorded F sharp. Each recording holds about 10.3 s then releases; the "C1" file measures steady within a decibel in 0.5 s frames from 1 s to 10 s, the "F#1" within half a decibel. No cue in this manifest holds the pedal past 9.5 s, so nothing loops today; the regions are set for any hold that one day does. The "C2" file of this set (sounding C3) beats by 10 dB and is not used
+    role_as_presented: a pipe organ, its quiet pedal stop
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme calls it public domain, no royalties, no credit, no special terms)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VCSL/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios, Versilian Community Sample Library
+    kind: sustain
+    attack_s: 0.35
+    release_s: 0.6
+    gain_db: 0.0
+    samples:
+      - {file: vcsl/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet Pedal/NT5_PedalQuiet_C1_rr1.wav, note: C2, loop_start_s: 1.0, loop_end_s: 9.5, sha256: 7aa89e427c2c244c8ff1f51f72941e602b7eeb704ba4d2c99a61438ae029397e, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Pipe%20Organ/Quiet%20Pedal/NT5_PedalQuiet_C1_rr1.wav"}
+      - {file: vcsl/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet Pedal/NT5_PedalQuiet_F#1_rr1.wav, note: F#2, loop_start_s: 1.0, loop_end_s: 9.5, sha256: 35000e5f4f69a0069cd210c773021605ac6f2d359bc95d55ea89baf04268d04c, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Pipe%20Organ/Quiet%20Pedal/NT5_PedalQuiet_F%231_rr1.wav"}
+
+  # The same manual stop, touched rather than held: a key pressed for a third
+  # of a second and released. This is how the count is kept under procedure
+  # and how a change of voice is marked. The pipe's own speech is in the
+  # recording; the short envelope here is the key going down and coming up.
+  organ_touch:
+    library: Versilian Community Sample Library (VCSL, Versilian Studios), Pipe Organ, the quiet manual stop, as above. The files are named an octave below what they sound; `note` is the sounding pitch
+    role_as_presented: a pipe organ, its quiet manual stop, touched
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme calls it public domain, no royalties, no credit, no special terms)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VCSL/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios, Versilian Community Sample Library
+    kind: sustain
+    attack_s: 0.03
+    release_s: 0.12
+    gain_db: 0.0
+    samples:
+      - {file: vcsl/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_C2_rr1.wav, note: C3, loop_start_s: 1.0, loop_end_s: 9.5, sha256: 5906348057006cfa5451a2cb3f02b8cd639d89f9ddf3cc98df3102f5c942cd5a, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Pipe%20Organ/Quiet/NT5_Man3Quiet_C2_rr1.wav"}
+      - {file: vcsl/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_C3_rr1.wav, note: C4, loop_start_s: 2.0, loop_end_s: 9.5, sha256: 55b246625c8a2fe71c271d2335ba6cc5f12d3cd48cc691aa047197b7f825084f, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Pipe%20Organ/Quiet/NT5_Man3Quiet_C3_rr1.wav"}
+      - {file: vcsl/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_D#3_rr1.wav, note: Eb4, loop_start_s: 1.0, loop_end_s: 9.5, sha256: fa2784dca7e6ef639be46a2d9f129f480755b678c9cce145d257bb59839a77a9, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Pipe%20Organ/Quiet/NT5_Man3Quiet_D%233_rr1.wav"}
+      - {file: vcsl/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_F#3_rr1.wav, note: F#4, loop_start_s: 1.0, loop_end_s: 9.5, sha256: 7ad4206bebfaffe36d3c506e55670abf4a5bed9c72d52a8eea44fe5a20c62b9a, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Pipe%20Organ/Quiet/NT5_Man3Quiet_F%233_rr1.wav"}
+      - {file: vcsl/Aerophones/Edge-blown Aerophones/Pipe Organ/Quiet/NT5_Man3Quiet_C4_rr1.wav, note: C5, loop_start_s: 1.0, loop_end_s: 9.5, sha256: 14f3a97253046b883e9689d9fb5420b9eb69e7b65564e2396b5098f245b0cd10, url: "https://raw.githubusercontent.com/sgossner/VCSL/master/Aerophones/Edge-blown%20Aerophones/Pipe%20Organ/Quiet/NT5_Man3Quiet_C4_rr1.wav"}
+
+# Note rows are [instrument, note, start in beats, length in beats or null, velocity].
+# One beat is 1.429 s. Every note here has a length: an organ does not decay.
+cues:
+  # Statement 1, under the TITLE: the line once over the pedal's C, a bare
+  # G held faint under the second half. Bars 1 to 4 are the cell on C and
+  # the step home; bar 5 rests; bars 6 to 8 climb F, G, A flat to B flat and
+  # stop there, held, over C. The pedal breathes at bar 4 and at bar 6, each
+  # release running into the next attack so the breath is a dip and not a
+  # gap, and holds under the stop: the title's first word lands at 25.8 s,
+  # inside that hold's release.
+  theme:
+    claims: []
+    length_s: 27.0
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 1200
+    notes:
+      - [organ, C4, 0, 1.75, 0.52]
+      - [organ, G4, 2, 0.8, 0.46]
+      - [organ, C4, 3, 0.8, 0.50]
+      - [organ, Eb4, 4, 2.7, 0.52]
+      - [organ, D4, 7, 0.8, 0.46]
+      - [organ, C4, 8, 1.75, 0.52]
+      - [organ, F4, 11, 0.8, 0.46]
+      - [organ, G4, 12, 0.8, 0.46]
+      - [organ, Ab4, 13, 0.8, 0.46]
+      - [organ, Bb4, 14, 3.0, 0.50]
+      - [organ, G3, 8, 9.0, 0.26]
+      - [pedal, C2, 0, 6.3, 0.50]
+      - [pedal, C2, 7.0, 4.7, 0.48]
+      - [pedal, C2, 12.0, 6.0, 0.50]
+
+  # Statement 3, at the close: the fall completed, B flat, A flat, G, E flat,
+  # onto C, over the pedal's C and the faint G. Everything released by 11.2 s
+  # and faded to silence inside 13.0 s so the house promo can ride it.
+  outro:
+    claims: []
+    length_s: 13.0
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 2400
+    tail_silence: true
+    notes:
+      - [organ, Bb4, 0, 0.8, 0.46]
+      - [organ, Ab4, 1, 0.8, 0.46]
+      - [organ, G4, 2, 1.8, 0.48]
+      - [organ, Eb4, 4, 0.8, 0.46]
+      - [organ, C4, 5, 2.5, 0.50]
+      - [organ, G3, 0, 7.2, 0.26]
+      - [pedal, C2, 0, 7.2, 0.48]
+
+  # On the last word of a rupture scene, or after a recording's trailing
+  # silence: the theme's fall begun, B flat, A flat, onto G, over the pedal's
+  # C on a swell, inside the 6 s mood_plan opens.
+  rupture_entry:
+    claims: []
+    length_s: 6.0
+    peak_dbfs: -15.0
+    room_wet: 1.4
+    swell: [0.5, 2.8, 2.7]
+    notes:
+      - [organ, Bb4, 0.2, 0.8, 0.46]
+      - [organ, Ab4, 1.2, 0.8, 0.46]
+      - [organ, G4, 2.2, 1.4, 0.48]
+      - [pedal, C2, 0, 3.4, 0.50]
+
+  # The change of voice (the President's remark, a Secretary's line, the
+  # Premier's words): one key touched.
+  sting:to_document:
+    claims: []
+    length_s: 0.9
+    peak_dbfs: -22.0
+    room_wet: 0.6
+    fade_out_ms: 150
+    notes:
+      - [organ_touch, C4, 0, 0.3, 0.60]
+
+  # The music returning after a recording, once its trailing silence is over.
+  # The live script carries no clip, so this key is defined for the producer's
+  # grammar and fires only if the cinematic variant admits one.
+  sting:from_clip:
+    claims: []
+    length_s: 2.4
+    peak_dbfs: -20.0
+    room_wet: 1.0
+    swell: [0.8, 0.6, 1.0]
+    notes:
+      - [pedal, G2, 0, 1.0, 0.50]
+      - [organ_touch, C5, 0.1, 0.4, 0.40]
+
+  # Dread (the photographs, the shootdown, the boat, the warheads nobody had
+  # counted): the pedal's C held in four breaths of 8.6 s on a 10 s cycle, as
+  # an organist holds a soft pedal note, each release running into the next
+  # attack so the breath is a dip and not a gap, and each hold ending inside
+  # the recording's held part (8.6 s plus the 0.6 s release against 10.3 s),
+  # so nothing here loops a sample. The manual's G, a twelfth above, held
+  # faint in four breaths of 9.3 s, each taken while the pedal is full and
+  # each of the pedal's while the G is, the last running past the seam so its
+  # release crosses into its own attack. One of the two is always sounding.
+  # The stack is a bare fifth with no third anywhere; one low C touched every
+  # 20 s, off the seam.
+  bed:dread:
+    claims: []
+    length_s: 40.0
+    fold: true
+    rms_dbfs: -34.0
+    room_wet: 0.6
+    notes:
+      - [pedal, C2, 0.5, 6.0, 0.60]
+      - [pedal, C2, 7.5, 6.0, 0.58]
+      - [pedal, C2, 14.5, 6.0, 0.60]
+      - [pedal, C2, 21.5, 6.0, 0.58]
+      - [organ, G3, 4, 6.5, 0.22]
+      - [organ, G3, 11, 6.5, 0.21]
+      - [organ, G3, 18, 6.5, 0.22]
+      - [organ, G3, 25, 6.5, 0.21]
+      - [organ_touch, C3, 1, 0.4, 0.34]
+      - [organ_touch, C3, 15, 0.4, 0.30]
+
+  # Procedure (the Cabinet Room, the Joint Chiefs, the word, the dates, the
+  # Jupiters, the treaties): the manual touched, one key to a beat, dry. The
+  # house cell, every 1.429 s, the last note alternating.
+  bed:procedure:
+    claims: []
+    length_s: 45.714
+    fold: true
+    rms_dbfs: -33.0
+    room_wet: 0.0
+    notes:
+      - [organ_touch, C4, 0, 0.3, 0.62]
+      - [organ_touch, G4, 1, 0.3, 0.46]
+      - [organ_touch, C4, 2, 0.3, 0.52]
+      - [organ_touch, Eb4, 3, 0.3, 0.46]
+      - [organ_touch, C4, 4, 0.3, 0.62]
+      - [organ_touch, G4, 5, 0.3, 0.46]
+      - [organ_touch, C4, 6, 0.3, 0.52]
+      - [organ_touch, D4, 7, 0.3, 0.46]
+      - [organ_touch, C4, 8, 0.3, 0.62]
+      - [organ_touch, G4, 9, 0.3, 0.46]
+      - [organ_touch, C4, 10, 0.3, 0.52]
+      - [organ_touch, Eb4, 11, 0.3, 0.46]
+      - [organ_touch, C4, 12, 0.3, 0.62]
+      - [organ_touch, G4, 13, 0.3, 0.46]
+      - [organ_touch, C4, 14, 0.3, 0.52]
+      - [organ_touch, D4, 15, 0.3, 0.46]
+      - [organ_touch, C4, 16, 0.3, 0.62]
+      - [organ_touch, G4, 17, 0.3, 0.46]
+      - [organ_touch, C4, 18, 0.3, 0.52]
+      - [organ_touch, Eb4, 19, 0.3, 0.46]
+      - [organ_touch, C4, 20, 0.3, 0.62]
+      - [organ_touch, G4, 21, 0.3, 0.46]
+      - [organ_touch, C4, 22, 0.3, 0.52]
+      - [organ_touch, D4, 23, 0.3, 0.46]
+      - [organ_touch, C4, 24, 0.3, 0.62]
+      - [organ_touch, G4, 25, 0.3, 0.46]
+      - [organ_touch, C4, 26, 0.3, 0.52]
+      - [organ_touch, Eb4, 27, 0.3, 0.46]
+      - [organ_touch, C4, 28, 0.3, 0.62]
+      - [organ_touch, G4, 29, 0.3, 0.46]
+      - [organ_touch, C4, 30, 0.3, 0.52]
+      - [organ_touch, D4, 31, 0.3, 0.46]
+
+  # Reckoning (the turn, the five accounts, what each leaves out): the manual
+  # touched on C alone every 2.9 s, the low C every 23 s. No melody, the
+  # thinnest bed, under the deepest duck. The count starts on the second beat,
+  # not the first, so the loop's seam falls in the silence between keys
+  # rather than on one (the sparse-bed seam rule).
+  bed:reckoning:
+    claims: []
+    length_s: 45.714
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 0.3
+    notes:
+      - [organ_touch, C3, 1, 0.4, 0.50]
+      - [organ_touch, C4, 3, 0.3, 0.38]
+      - [organ_touch, C4, 5, 0.3, 0.38]
+      - [organ_touch, C4, 7, 0.3, 0.38]
+      - [organ_touch, C4, 9, 0.3, 0.38]
+      - [organ_touch, C4, 11, 0.3, 0.38]
+      - [organ_touch, C4, 13, 0.3, 0.38]
+      - [organ_touch, C4, 15, 0.3, 0.38]
+      - [organ_touch, C3, 17, 0.4, 0.50]
+      - [organ_touch, C4, 19, 0.3, 0.38]
+      - [organ_touch, C4, 21, 0.3, 0.38]
+      - [organ_touch, C4, 23, 0.3, 0.38]
+      - [organ_touch, C4, 25, 0.3, 0.38]
+      - [organ_touch, C4, 27, 0.3, 0.38]
+      - [organ_touch, C4, 29, 0.3, 0.38]
+      - [organ_touch, C4, 31, 0.3, 0.38]
+
+  # Grief (the pilot, the officer who went home and was not known, the
+  # close): the pedal's C alone, faint, in four breaths of 8 s on a 10 s
+  # cycle, so the bed falls near-silent for about a second and a half four
+  # times a loop, which is what grief is given here; the dread bed's breaths
+  # overlap, these do not. The manual, quiet, states the theme's fall once, B
+  # flat, A flat, and stops on G, the fifth, and is then silent. The last 33 s
+  # of the loop are the pedal alone. No hold outlasts its recording, so
+  # nothing here loops a sample.
+  bed:grief:
+    claims: []
+    length_s: 40.0
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 1.0
+    notes:
+      - [pedal, C2, 0.4, 5.6, 0.42]
+      - [pedal, C2, 7.4, 5.6, 0.40]
+      - [pedal, C2, 14.4, 5.6, 0.42]
+      - [pedal, C2, 21.4, 5.6, 0.40]
+      - [organ, Bb4, 2, 0.8, 0.32]
+      - [organ, Ab4, 3, 0.8, 0.32]
+      - [organ, G4, 4, 1.6, 0.34]
+
+  # Into a dread scene, in the clear: the pedal's C swelling with the manual's
+  # G faint above it, one low C touched.
+  transition:dread:
+    claims: []
+    length_s: 3.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    swell: [0.3, 2.1, 1.4]
+    notes:
+      - [pedal, C2, 0, 1.9, 0.55]
+      - [organ, G3, 0, 1.9, 0.22]
+      - [organ_touch, C3, 0.15, 0.4, 0.40]
+
+  # Into a procedure scene: three keys touched, dry.
+  transition:procedure:
+    claims: []
+    length_s: 4.3
+    peak_dbfs: -14.0
+    room_wet: 0.0
+    fade_out_ms: 900
+    notes:
+      - [organ_touch, C4, 0, 0.3, 0.62]
+      - [organ_touch, G4, 1, 0.3, 0.50]
+      - [organ_touch, C4, 2, 0.3, 0.52]
+
+  # Into a grief scene: the fall stopping short, A flat onto G, held, the
+  # pedal's C under it.
+  transition:grief:
+    claims: []
+    length_s: 4.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    notes:
+      - [organ, Ab4, 0, 0.8, 0.44]
+      - [organ, G4, 1, 1.6, 0.46]
+      - [pedal, C2, 0, 2.5, 0.42]
+
+  # Into the turn and the accounts: the count arriving.
+  transition:reckoning:
+    claims: []
+    length_s: 4.2
+    peak_dbfs: -14.0
+    room_wet: 0.3
+    fade_out_ms: 800
+    notes:
+      - [organ_touch, C3, 0, 0.4, 0.50]
+      - [organ_touch, C4, 1, 0.3, 0.40]
+      - [organ_touch, C4, 2, 0.3, 0.40]

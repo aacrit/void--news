@@ -1,0 +1,7 @@
+source: src-haiti-declaration-dubois-garrigus
+locator: secconstancy
+url: https://today.duke.edu/showcase/haitideclaration/declarationstext.html
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+And you, a people so long without good fortune, witness to the oath we take, remember that I counted on your constancy and courage when I threw myself into the career of liberty to fight the despotism and tyranny you had struggled against for 14 years.

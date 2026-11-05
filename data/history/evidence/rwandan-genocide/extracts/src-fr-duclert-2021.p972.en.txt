@@ -1,0 +1,7 @@
+rendering: official-parallel
+of: src-fr-duclert-2021.p972
+names: France=France; Tutsi=Tutsi
+url: https://www.vie-publique.fr/files/rapport/pdf/279186.pdf
+read: 2026-10-07
+
+Is France an accomplice to the genocide of the Tutsi? If by this we mean a willingness to join a genocidal operation, nothing in the archives that were examined demonstrates this. Nevertheless, for a long time, France was involved with a regime that encouraged racist massacres. It remained blind to the preparation of a genocide by the most radical elements of this regime.

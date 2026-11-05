@@ -1,0 +1,7 @@
+source: src-dalzel-1793
+locator: p26
+url: https://archive.org/details/historydahomyan00dalzgoog
+read: 2026-10-09
+note: the OCR layer reads the long s as f ('himfelf', 'fhips') and keeps the edition's note marks; Trudo is the name this book gives the king of Dahomey; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+That Trudo had ideas of the advantages of trade to himfelf and his people, appears in many inftances. He had commenced thefe wars with both the maritime nations, from their having refufed him a part in their commerce. § He had an eager defire for European arms, and for fuch of their commodities as he thought were fuitable to his dignity. He had told Lambc, fome years before, that he could wi(h to have fhips come to fomc place to trade for his flaves only, and to bring him what was fit for fuch a king as he.

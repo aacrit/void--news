@@ -1,0 +1,7 @@
+source: src-douglass-1855
+locator: secjuly
+url: https://www.gutenberg.org/cache/epub/202/pg202.txt
+read: 2026-10-09
+note: the appendix extract of the 1852 oration as Douglass reprinted it in 1855; the 1852 pamphlet was not read; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+What to the American slave is your Fourth of July? I answer, a day that reveals to him, more than all other days in the year, the gross injustice and cruelty to which he is the constant victim. To him, your celebration is a sham; your boasted liberty, an unholy license; your national greatness, swelling vanity; your sounds of rejoicing are empty and heartless; your denunciations of tyrants, brass-fronted impudence; your shouts of liberty and equality, hollow mockery; your prayers and hymns, your sermons and thanksgivings, with all your religious parade and solemnity, are to him mere bombast, fraud, deception, impiety, and hypocrisy—a thin veil to cover up crimes which would disgrace a nation of savages.

@@ -1,0 +1,8 @@
+source: src-europarl-20140515
+locator: para3
+url: https://web.archive.org/web/20170329202404/http://www.europarl.europa.eu/news/en/news-room/20140514STO47018/html/Forsmark-how-Sweden-alerted-the-world-about-the-danger-of-Chernobyl-disaster/
+read: 2026-10-07
+note: paragraph 3
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+When the alarm sounded at Forsmark early in the morning of 28 April 1986, it was not immediately clear where the radioactive materials had been released despite staff scanning all the radiation detection instruments. “We found nothing,” said Claes-Göran Runermark, who was the operation manager in charge at the time. “We went over all the radiation detection systems over and over again, and there was nothing from Forsmark.”

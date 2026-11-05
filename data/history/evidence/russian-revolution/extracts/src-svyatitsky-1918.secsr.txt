@@ -1,0 +1,8 @@
+source: src-svyatitsky-1918
+locator: secsr
+url: https://archive.org/download/godrusskojrevoljutsii19171918ggsbs30/godrusskojrevoljutsii19171918ggsbs30_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+note: pre-reform spelling as printed; the layer reads ѣ and ї as 'Ъ', '$' or 'г' in places ('соцгалисты', 'н$которыхь', 'выбофахо'), held as printed
+
+то окажется, что соцгалисты- революцтонеры получили на выбофахо 20.893.734 изъ 36.257.960 голо- с0в5, поданныхь на выборатхъ, что составить 58%. Благодаря тому, что избирательные списки были составлены раньше происшедшаго въ парти с.-р. раскола, нЪфть возможности указать число голосовъ, собранныхъь въ отдфльности центральной частью парти и ея лЪвымъ крыломъ. Соотношен1е таково, что изъ 338 депутатовъ с.-р., 299 объявили себя принадлежащими къ цент- ральной парти, а 39—«лЪвыми».

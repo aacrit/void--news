@@ -1,0 +1,8 @@
+source: src-mcdoom-2020
+locator: sechutu
+url: https://eprints.lse.ac.uk/103205/1/McDoom_Contested_Counting_accepted_version.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+note: the author's accepted version; the footnote call number 24 is glued to the word as the layer prints it
+
+Two of the more widely-cited estimates, by the late Alison Des Forges of Human Rights Watch, and Robert Gersony, a UN consultant who conducted a field investigation in 1994 but whose report was not officially released, put the figure at between 25,000-30,000 and 25,000 - 45,000 respectively.24

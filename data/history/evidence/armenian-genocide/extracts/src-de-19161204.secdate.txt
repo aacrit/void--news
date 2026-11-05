@@ -1,0 +1,7 @@
+source: src-de-19161204
+locator: secdate
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1916-12-04-DE-001
+read: 2026-09-25
+note: the dateline of the document as the page prints it
+
+z. Zt. München, den 4. Dezember 1916

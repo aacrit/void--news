@@ -1,0 +1,8 @@
+source: src-bush-19891109
+locator: secnote
+url: https://nsarchive2.gwu.edu/NSAEBB/NSAEBB490/docs/Bush%20press%20conference%2011%209%2089.pdf
+read: 2026-10-09
+note: the Public Papers' note; Washington time
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Note: The President spoke at 3:34 p.m. in the Oval Office at the White House.

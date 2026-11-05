@@ -1,0 +1,54 @@
+{
+ "clip_id": "clip-nehru-tryst-19470814",
+ "slug": "partition-of-india",
+ "tool": "faster-whisper",
+ "tool_version": "1.2.1",
+ "model": "base.en",
+ "compute_type": "int8",
+ "beam_size": 5,
+ "source": {
+  "file": "https://archive.org/download/HindSwaraj-Speech-03-1/tryst.aiff",
+  "md5": "49220a9c793c8201c761cd6ca2c16c8b",
+  "md5_expected": "49220a9c793c8201c761cd6ca2c16c8b",
+  "rate": 44100
+ },
+ "window": {
+  "in": 0.0,
+  "out": 28.05,
+  "seconds": 28.05
+ },
+ "excerpt_sha256": "13133847f145943d49a74703f1e24fb3433ad5e923aed4cf4e94d3b41219f8ee",
+ "excerpt_pcm": "s16le mono at the source rate, ffmpeg atrim, -bitexact",
+ "reference": "Long years ago we made a tryst with destiny, and now the time comes when we shall redeem our pledge, not wholly or in full measure, but very substantially. At the stroke of the midnight hour, when the world sleeps, India will awake to life and freedom.",
+ "hypothesis": "Long years ago, we made a twist with destiny, and now the time comes when we shall redeem our pledge, not only or in full measure, but very substantially. At the stroke of the midnight hour, when the world sleeps, India will awake to life and freedom.",
+ "wer": 0.0426,
+ "coverage": 0.9574,
+ "counts": {
+  "ref_words": 47,
+  "hyp_words": 47,
+  "substitutions": 2,
+  "deletions": 0,
+  "insertions": 0,
+  "first_matched_ref": 0,
+  "last_matched_ref": 46,
+  "lead_insertions": 0,
+  "trail_insertions": 0
+ },
+ "diff": [
+  "long years ago we made a",
+  "[tryst -> twist]",
+  "with destiny and now the time comes when we shall redeem our pledge not",
+  "[wholly -> only]",
+  "or in full measure but very substantially at the stroke of the midnight hour when the world sleeps india will awake to life and freedom"
+ ],
+ "thresholds": {
+  "coverage_min": 0.7,
+  "edge_slack_words": 1,
+  "edge_insert_max": 2
+ },
+ "pass": true,
+ "why": [],
+ "verified_at": "2026-09-25T16:47:15Z",
+ "signed": false,
+ "note": "a pass verifies the words in this window against the stored transcript. It does not verify the occasion, the date or the rights, and it signs nothing."
+}

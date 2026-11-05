@@ -1,0 +1,8 @@
+source: src-cdm-chronicle-198909
+locator: sec0904
+url: https://www.chronik-der-mauer.de/en/chronicle/_year1989/_month9/?month=9&year=1989&moc=1
+read: 2026-10-09
+note: the first entry for 4 September
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+4 September 1989 Following the regular Monday prayer for peace in the Nikolaikirche in Leipzig, there is a demonstration by around 1,200 people. Demonstrators express their desire to be able to leave the country freely by chanting "We want out!" and demand to be allowed to travel to the West.

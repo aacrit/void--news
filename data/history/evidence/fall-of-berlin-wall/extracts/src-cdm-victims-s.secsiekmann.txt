@@ -1,0 +1,8 @@
+source: src-cdm-victims-s
+locator: secsiekmann
+url: https://www.chronik-der-mauer.de/en/victims/?letter=S
+read: 2026-10-09
+note: the row of the victims list (letter S); the page prints the name twice
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Ida Siekmann Ida Siekmann born on August 23, 1902 fatally injured on August 22, 1961 after jumping out of her apartment window at Bernauer Strasse 48 at the sector border between Berlin-Mitte and Berlin-Wedding

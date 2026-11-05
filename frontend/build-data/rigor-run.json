@@ -1,0 +1,37 @@
+{
+ "brief": {
+  "cut_sentences": 1,
+  "cuts_by_reason": {
+   "date": 1
+  },
+  "edition": "world",
+  "grounding_ran": {
+   "opinion": true,
+   "script": true,
+   "tldr": true
+  }
+ },
+ "stage2": {
+  "candidates": 45,
+  "critique_read": 28,
+  "critique_unread": 16,
+  "cut_sentences": 0,
+  "cuts_by_reason": {
+   "number": 1
+  },
+  "dropped": 1,
+  "fresh_ids": [
+   "1dcbb6ee-6a36-4b93-ba43-c4bd359952df",
+   "2f650d48-3f58-4c9e-9734-8c4bdaf07a81",
+   "5a219424-4229-4573-8d9d-308ec74de819",
+   "7a6a4b62-e818-4c13-801b-31d0aa47b717",
+   "834258e2-fdfb-4a3e-9fb3-6d6f3c43c718",
+   "97ade66b-32ba-4211-af0d-a73bed5534a0",
+   "b395447b-fb0e-4855-851f-5690ebcb43f6"
+  ],
+  "kept_failing": 4,
+  "regenerated": 6,
+  "reviewed": true
+ },
+ "startedAt": "2026-11-05T19:28:07Z"
+}

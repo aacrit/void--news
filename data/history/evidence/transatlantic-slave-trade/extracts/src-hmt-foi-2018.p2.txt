@@ -1,0 +1,7 @@
+source: src-hmt-foi-2018
+locator: p2
+url: https://assets.publishing.service.gov.uk/media/5a7d78a6e5274a676d53243f/FOI2018-00186_-_Slavery_Abolition_Act_1833_-_pdf_for_disclosure_log__003_.pdf
+read: 2026-10-09
+note: page 2, PDF text layer; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+The Slavery Abolition Act (1835) Loan was rolled over into the Government’s gilt programme, ultimately into an undated gilt, the 4% Consolidated Loan (1957 or after). The term ‘undated’ refers to the fact that this gilt was issued with an earliest potential redemption date of 1957, but it was not compulsory for the gilt to be redeemed at this date. The 4% Consolidated Loan was redeemed on 1 February 2015, as part of the Government’s decision to modernise the gilt portfolio by redeeming all remaining undated gilts.

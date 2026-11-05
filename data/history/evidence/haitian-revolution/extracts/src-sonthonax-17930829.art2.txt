@@ -1,0 +1,7 @@
+source: src-sonthonax-17930829
+locator: art2
+url: https://archive.org/download/proclamationauno00sont/proclamationauno00sont_djvu.txt
+read: 2026-09-25
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+
+II. Tojs les nègres & fang- mêlés, aftuellement dans l'efclavage, font déclarés libres pour jouir de tous les droits attachés à la qualité de citoyen •f a.nçais ; ils feront cependant afTujettis à un régime dont les difpoiîtions font contenues dans les articles fuivans.

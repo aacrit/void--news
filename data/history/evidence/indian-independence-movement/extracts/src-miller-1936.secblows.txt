@@ -1,0 +1,7 @@
+source: src-miller-1936
+locator: secblows
+url: https://archive.org/download/in.ernet.dli.2015.82149/2015.82149.I-Found-No-Peace_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+
+Suddenly, at a word of command, scores of native police rushed upon the advancing marchers and rained blows on their heads with their steel-shod lathis . Not one of the marchers even raised an arm to fend off the blows. They went down like ten- pins.

@@ -1,0 +1,18 @@
+source: src-witbooi-1929
+locator: p77
+url: https://archive.org/download/diedagboekvanhen00witb/diedagboekvanhen00witb_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: the opening of the letter to Maharero of 30 May 1890, in Witbooi's Cape Dutch as the edition prints it; the editor's footnote marks are left as printed
+
+Hornkrans den 30 Mei 1890.
+
+Wel geliefde kapitein Maharero Tsamaua 19)
+
+Tot U opperhoof van Damaraland schryf ik heden
+deze brief, want ik heb een brief”) van D. Goering
+ontvangen en ik heb groote dingen uit die brief gehoor,
+en deze dingen hebben my noodzakelykheid laten zien,
+om iets tot U te zeggen. Ik heb gehoor, en verstaan
+uit die brief, van D. Gêering, dat u zich in Duitsche
+bescherming ingegeven hebt, en dat D. Gering daar-

@@ -1,0 +1,8 @@
+source: src-khosla-1949
+locator: p65
+url: https://archive.org/download/stern-reckoning/Stern%20Reckoning_djvu.txt
+read: 2026-09-25
+note: the layer's soft hyphens (¬) are rejoined, a hyphen at a line break is kept without the break, and line breaks are joined; OCR glyphs are kept as printed
+note: Calcutta, August 1946; 'dispose^' is the layer's
+
+The following table gives the number of dead bodies collected and dispose^ of: By Government Organization . 1,182 By Anjuman Mofidul Islam . 761 By Hindu Satkar Samiti . 1,230 Total ... 3,173 This figure does not represent the total number of deaths caused in the riots.

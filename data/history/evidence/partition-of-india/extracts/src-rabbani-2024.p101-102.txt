@@ -1,0 +1,7 @@
+source: src-rabbani-2024
+locator: p101-102
+url: https://www.banglajol.info/index.php/JASBH/article/download/74464/49393
+read: 2026-09-25
+note: the passage is cut by a footnote in the text layer at the page break; the quotation of the Protocol continues on page 102
+
+Regarding the enclaves, the Land Boundary Agreement of 1974 (Article 1 Clause 12) directed, “the Indian enclaves in Bangladesh and Bangladeshi enclaves in India should be exchanged expeditiously, (except the enclaves mentioned in paragraph 14) without claim to compensation for the additional areas going to Bangladesh”. And, this was executed in the Protocol of 2011 thus: “111 Indian enclaves in Bangladesh

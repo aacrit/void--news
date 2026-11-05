@@ -1,0 +1,8 @@
+source: src-app-nixon-19731117
+locator: secnote
+url: https://www.presidency.ucsb.edu/documents/question-and-answer-session-the-annual-convention-the-associated-press-managing-editors
+read: 2026-10-09
+note: The American Presidency Project's text, from the Public Papers of the Presidents
+note: the Public Papers' note on time and place
+
+Note: The session began at 7 p.m. in the Contemporary Hotel at Walt Disney World. It was broadcast live on nationwide radio and television.

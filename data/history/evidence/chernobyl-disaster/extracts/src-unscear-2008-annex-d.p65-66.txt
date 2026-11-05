@@ -1,0 +1,8 @@
+source: src-unscear-2008-annex-d
+locator: p65-66
+url: https://www.unscear.org/unscear/uploads/documents/unscear-reports/UNSCEAR_2008_Report_Vol.II.pdf
+read: 2026-10-07
+note: paragraph 110, printed pages 65 to 66; the running head of page 66 ('66 UNSCEAR 2008 REPORT: VOLUME II') is removed; the text layer splits two words ('d ifficulty', 'p opulations') and they are closed up as the page prints them
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+110. The use of theoretical projections is fraught with difficulty. It is extremely difficult to communicate such projections accurately and honestly to officials and the general public. Moreover, there is a limit to the epidemiological knowledge that can be used to attribute conclusively an increased incidence to radiation exposure. Therefore, any radiation risk projections in the low dose area should be considered as extremely uncertain, especially when the projection of numbers of cancer deaths is based on trivial individual exposures to large populations experienced over many years.

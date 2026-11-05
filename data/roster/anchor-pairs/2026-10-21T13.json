@@ -1,0 +1,92 @@
+[
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 20,
+  "a": {
+   "title": "Wagner brothers begin new NBA chapter on different paths",
+   "summary": "After five years, brothers Franz and Moritz Wagner are no longer playing together for the Orlando Magic. In the new NBA season, their separation will likely mean the new &quot;German&quot; team is the Charlotte Hornets.",
+   "link": "https://www.dw.com/en/wagner-brothers-begin-new-nba-chapter-on-different-paths/a-79712668?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Das Ende der Wagners - auf getrennten Wegen in die neue NBA-Saison",
+   "summary": "Nach fünf Jahren spielen die Brüder Franz und Moritz Wagner nicht mehr gemeinsam für die Orlando Magic. In der neuen NBA-Saison haben sie ganz unterschiedliche Rollen. Neuer &quot;deutscher Klub&quot; sind die Charlotte Hornets.",
+   "link": "https://www.dw.com/de/das-ende-der-wagners-auf-getrennten-wegen-in-die-neue-nba-saison/a-79709596?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "es",
+  "score": 20,
+  "a": {
+   "title": "Champions League: Paris defeat Barcelona but lose three major players to injuries",
+   "summary": "Paris Saint-Germain beat FC Barcelona (4-2) and have moved to the top of the Champions League table. However, Ousmane Dembélé, Marquinhos and Khvicha Kvaratskhelia were all forced off through injury.",
+   "link": "https://www.france24.com/en/tv-shows/sports/20261021-champions-league-paris-defeat-barcelona-but-lose-3-major-players-to-injuries",
+   "published": "Wed, 21 Oct 2026 08:21:38 GMT"
+  },
+  "b": {
+   "title": "Liga de Campeones: el PSG doblega al Barça y el Liverpool resiste ante el Villarreal",
+   "summary": "En un pulso de gigantes, el Paris Saint-Germain doblegó 4-2 al Barcelona y mantuvo el liderato de la Liga de Campeones. Con esta victoria suma nueve puntos, la misma cantidad que suma el Liverpool tras vencer 4-3 al Villarreal.",
+   "link": "https://www.france24.com/es/deportes/20261020-liga-de-campeones-el-psg-doblega-al-bar%C3%A7a-y-el-liverpool-resiste-ante-el-villarreal",
+   "published": "Tue, 20 Oct 2026 22:03:26 GMT"
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "es",
+  "score": 18,
+  "a": {
+   "title": "Macron says world leaders have made 'stupid' comments on France riots based on fake AI videos",
+   "summary": "French President Emmanuel Macron took aim at world leaders including US President Donald Trump for trying to exploit the riots and looting that broke out alongside peaceful demonstrations in France Saturday for their own political advantage. Another wave of demonstrations against France's worsening cost of living is planned for the coming Saturday.",
+   "link": "https://www.france24.com/en/france/20261021-macron-says-world-leaders-have-made-stupid-comments-on-france-riots-based-on-fake-ai-videos",
+   "published": "Wed, 21 Oct 2026 11:48:11 GMT"
+  },
+  "b": {
+   "title": "Macron afirma que líderes mundiales han hecho comentarios \"estúpidos\" sobre los disturbios en Francia basándose en vídeos falsos generados por IA",
+   "summary": "El presidente francés, Emmanuel Macron, arremetió contra líderes mundiales —incluido el presidente estadounidense, Donald Trump— por intentar sacar provecho político de los disturbios y saqueos que, el sábado, se produjeron de forma paralela a las manifestaciones pacíficas en Francia. Para el próximo sábado está prevista una nueva oleada de manifestaciones contra el empeoramiento del costo de vida",
+   "link": "https://www.france24.com/es/francia/20261021-no-se-permitir%C3%A1-a-quienes-busquen-sembrar-el-caos-afirma-macron-de-cara-a-las-protestas-del-s%C3%A1bado",
+   "published": "Wed, 21 Oct 2026 11:53:26 GMT"
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 31,
+  "a": {
+   "title": "Russia releases US citizen accused of fighting for Ukraine, Putin says during Witkoff meeting",
+   "summary": "US special envoy Steve Witkoff met with Russian President Vladimir Putin in Saint Petersburg on Wednesday after talks with Ukrainian President Volodymyr Zelensky in Oslo. Putin said during the meeting that Russia had released US citizen Stephen Hubbard, who has been imprisoned for years in Russia after being charged of fighting as a mercenary for Ukraine.",
+   "link": "https://www.france24.com/en/europe/20261021-us-envoy-witkoff-to-meet-putin-in-russia-after-positive-talks-with-zelensky",
+   "published": "Wed, 21 Oct 2026 04:29:24 GMT"
+  },
+  "b": {
+   "title": "Guerre en Ukraine : l'émissaire américain en Russie après avoir rencontré Volodymyr Zelensky",
+   "summary": "Steve Witkoff, l'émissaire du président américain Donald Trump, est arrivé mercredi 21 octobre au matin à Saint-Pétersbourg pour des pourparlers avec Vladimir Poutine dans le but de mettre fin à la guerre en Ukraine. Un rendez-vous qui prend place au lendemain d'entretiens avec Volodymyr Zelensky, marqués par des progrès mutuels, selon les deux parties. Les précisions d'Anne Corpet, chroniqueuse i",
+   "link": "https://www.france24.com/fr/vid%C3%A9o/20261021-guerre-en-ukraine-l-%C3%A9missaire-am%C3%A9ricain-en-russie-apr%C3%A8s-avoir-rencontr%C3%A9-volodymyr-zelensky",
+   "published": "Wed, 21 Oct 2026 09:30:13 GMT"
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 21,
+  "a": {
+   "title": "US envoy Steve Witkoff thanks Vladimir Putin for diesel deal at Ukraine talks in Russia",
+   "summary": "US envoy Steve Witkoff is in Saint Petersburg, holding talks with Russian president Vladimir Putin. The face to face meeting comes after he met with Ukraine's president and other European leaders in Oslo. Witkoff is due to return to the Norwegian capital after his visit to Russia. Washington seeks to breathe new life into US-led efforts to end the war. Details and analysis by FRANCE 24 internation",
+   "link": "https://www.france24.com/en/us-envoy-steve-witkoff-thanks-vladimir-putin-for-diesel-deal-at-ukraine-talks-in-russia",
+   "published": "Wed, 21 Oct 2026 11:07:35 GMT"
+  },
+  "b": {
+   "title": "Alors qu'il rencontre Witkoff, Poutine annonce la libération de l'Américain Stephen Hubbard",
+   "summary": "L'émissaire américain Steve Witkoff a rencontré Vladimir Poutine mercredi matin à Saint-Pétersbourg afin de tenter de faire avancer les négociations visant à mettre fin à la guerre en Ukraine. Lors de cet entretien, le président russe a annoncé la libération de l'Américain Stephen Hubbard, emprisonné depuis 2022. Une remise en liberté faite \"sans contrepartie\", selon le président américain Donald ",
+   "link": "https://www.france24.com/fr/europe/20261021-steve-witkoff-l-%C3%A9missaire-am%C3%A9ricain-de-trump-en-russie-pour-des-pourparlers-avec-poutine",
+   "published": "Wed, 21 Oct 2026 03:51:28 GMT"
+  }
+ }
+]

@@ -1,0 +1,7 @@
+source: src-greer-1935
+locator: p38
+url: https://babel.hathitrust.org/cgi/pt?id=mdp.39015002601550
+read: 2026-10-09
+note: read page at a time in HathiTrust's text-only view (seq 60); line breaks collapsed to spaces, printed line-break hyphens kept
+
+Only 2,639, or 16%, of the 16,594 death sentences of the period were ren- dered in the capital; 13,955, or 84%, in the provinces. There were 3,548 condemnations, 21% of the total, in the Loire-Inférieure.

@@ -1,0 +1,7 @@
+source: src-schofield-2022
+locator: p24
+url: https://strategicstudies.org.pk/index.php/strategic_studies/article/download/138/103
+read: 2026-09-25
+note: page 24; the PDF's line breaks are joined; the article's footnote number 23 after 'countries.' is not part of the passage
+
+On July 27, 1949, the Agreement between Military representatives of India and Pakistan Regarding the Establishment of a Cease-fire line in the State of Jammu and Kashmir‟ was signed. Known informally as the Karachi Agreement, among other provisions, its terms stipulated that a UN Military Observer Group in India and Pakistan (UNMOGIP) would observe and report on complaints regarding violations of the 830 km long ceasefire line, which was agreed along a line roughly dividing the state between the two countries.

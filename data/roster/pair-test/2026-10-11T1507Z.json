@@ -1,0 +1,101 @@
+{
+ "collected_at": "2026-10-11T15:07:24Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16195521/Liverpool-vs-Manchester-City-Premier-League-LIVE-Follow-build-action-reaction-Anfield-visitors-play-match-guilty-verdict.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Liverpool vs Manchester City - Premier League LIVE: Enzo Maresca's side dodge awaiting home supporters ahead of hostile Anfield reception - plus updates from the 2pm games",
+      "published": "Sun, 11 Oct 2026 16:04:11 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/roy-keane-man-city-charges-37760104",
+      "title": "Roy Keane says ex-Man City stars should be DISGUSTED by club's 'dodgy dealings'",
+      "published": "Sun, 11 Oct 2026 13:43:31 +0000"
+     }
+    },
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16200431/Man-City-Liverpool-fans-slip-Enzo-Marescas-dodge-baying-home-fans-en-route-Anfield-Premier-League-leaders-braced-hostile-reception-guilty-verdict.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Man City give Liverpool fans the slip: Enzo Maresca's side dodge baying home fans en route to Anfield - with Premier League leaders braced for hostile reception after guilty verdict",
+      "published": "Sun, 11 Oct 2026 15:44:41 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/liverpool-man-city-live-score-37759400",
+      "title": "Liverpool vs Man City LIVE: Team bus dodges hostile fans at Anfield as police issue warning after 115 charges verdict",
+      "published": "Sun, 11 Oct 2026 14:30:23 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 92,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.indiatoday.in/india/story/delhi-chennai-indigo-flight-makes-emergency-landing-in-hyderabad-after-power-bank-catches-fire-onboard-3014878-2026-10-11?utm_source=rss",
+      "title": "Power bank catches fire mid-air, Delhi-Chennai IndiGo flight diverted to Hyderabad",
+      "published": "Sun, 11 Oct 2026 17:25:34 +0530"
+     },
+     "left": {
+      "url": "https://www.thehindu.com/news/cities/Hyderabad/smoke-detected-from-electronic-device-delhi-chennai-indigo-flight-diverted-to-hyderabad/article71571354.ece",
+      "title": "Smoke detected from electronic device, Delhi-Chennai IndiGo flight diverted to Hyderabad",
+      "published": "Sun, 11 Oct 2026 19:31:32 +0530"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/classified-turkish-intelligence-operation-in-moldova-comes-back-under-judicial-scrutiny/",
+      "title": "Classified Turkish intelligence operation in Moldova comes back under judicial scrutiny",
+      "published": "Tue, 06 Oct 2026 22:12:19 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 312,
+    "left": 10
+   }
+  }
+ }
+}

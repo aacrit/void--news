@@ -1,0 +1,8 @@
+source: src-castro-cc-19680126
+locator: secfire
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf
+read: 2026-10-07
+note: the PDF's text layer, line breaks folded to spaces; where the layer breaks a word at a line end its hyphen is kept as it prints it ('docu- ment'); nothing is corrected
+note: printed page 86: Castro on the order to fire on low-flying planes during the November talks with Mikoyan, in the Council of State's translation as the Bulletin prints it
+
+We had agreed not to shoot; we agreed to revoke the order to fire on the planes while the talks were under way; but made it clear that we did not consider those talks conclusive at all.

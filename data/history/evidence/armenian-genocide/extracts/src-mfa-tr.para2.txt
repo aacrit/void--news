@@ -1,0 +1,7 @@
+source: src-mfa-tr
+locator: para2
+url: https://www.mfa.gov.tr/the-events-of-1915-and-the-turkish-armenian-controversy-over-history_-an-overview.en.mfa
+read: 2026-09-25
+note: paragraphs of the page's body text counted from its first paragraph; held at most 150 words
+
+The Armenian view of history, however, selects the Armenian suffering, embellishes it in several ways and presents it as a genocide – a crime defined in international law – perpetrated by Turks against Armenians. The acceptance of this version by others has become the national objective for Armenia and the radical groups within the Armenian Diaspora. Legitimate challenges to the Armenian narrative, even when based on scholarly research or personal histories, are brushed aside as propaganda, suppressed or attacked as “denial.”

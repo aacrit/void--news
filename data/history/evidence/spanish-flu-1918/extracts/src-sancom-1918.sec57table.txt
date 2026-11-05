@@ -1,0 +1,7 @@
+source: src-sancom-1918
+locator: sec57table
+url: https://archive.org/download/b31492551/b31492551_djvu.txt
+read: 2026-09-25
+note: the table on page 57 as read from the page scan (leaf 89 of the Internet Archive item) on 2026-09-25, because the text layer scrambles its figures (U059,497 for 1,059,497, i37,49i for 137,491); the decimal point the page prints as a raised dot is written as a full stop
+
+Province. Mortality. Death rate per 1,000 of population. Delhi 23,612 56.6 Bengal 386,572 8.5 Bihar and Orissa 709,976 20.5 Assam 111,340 18.6 United Provinces of Agra and Oudh 2,034,257 43.4 Punjab 898,947 45.4 North-West Frontier Province 89,035 43.6 Central Provinces and Berar 924,949 66.4 Madras 682,169 16.7 Coorg 2,014 11.5 Bombay 1,059,497 54.9 Burma 137,491 13.9 Ajmer-Merwara 29,835 59.5 India 7,089,694

@@ -1,0 +1,7 @@
+source: src-hansard-lords-19470716
+locator: p802
+url: https://api.parliament.uk/historic-hansard/lords/1947/jul/16/indian-independence-bill
+read: 2026-09-25
+note: p is the Hansard column; HL Deb 16 July 1947 vol 150 cc802-74; the column break 803 falls inside the passage and is dropped
+
+His Majesty's Government have asked Parliament to assure for this great measure a passage so rapid as to be almost unprecedented. It may be that to some of your Lordships it will appear that we are dealing, with this Bill with its vast and unforeseeable consequences, with a degree of haste that is almost unseemly. But 803 this rapid passage is desirable for the following reason. Once a decision in principle has been taken to partition India, the difficulties of carrying on the government of the country by a Cabinet which is still unitary in form, but which is in fact divided by sharp differences of view, are naturally becoming increasingly acute. The sooner, therefore, that the two new Governments can start on their separate tasks the greater the advantages to them both.

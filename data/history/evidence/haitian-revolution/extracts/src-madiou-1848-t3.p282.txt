@@ -1,0 +1,8 @@
+source: src-madiou-1848-t3
+locator: p282
+url: https://archive.org/download/histoiredhaiti03madi/histoiredhaiti03madi_djvu.txt
+read: 2026-09-25
+note: tome III, page 282: the date Madiou gives for the end of Dessalines
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+
+entendre qu'il avait besoin, avant cette époque, de se défaire de quelques hommes qui conspiraient ét le gênaient. Mais le Destin avait fixé le terme de sa carrière au 17 Octobre 1806. Il rentraaum palais satisfait de sa promenade. ;

@@ -1,0 +1,7 @@
+source: src-decree-land-ru
+locator: art1
+url: https://istmat.org/node/27653
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+1) Помещичья собственность на землю отменяется немедленно без всякого выкупа.

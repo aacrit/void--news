@@ -1,0 +1,8 @@
+source: src-un-carlsson-1999
+locator: secturquoise
+url: https://web.archive.org/web/20001203205100/http://www.un.org:80/News/ossg/rwanda_report.htm
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: section III, Conclusions, '17. Operation Turquoise', cut at a sentence end
+
+Views diverge as to the effectiveness of the operation in saving the lives of those at risk within the humanitarian zone. Many of Inquiry's interlocutors have credited Operation Turquoise with saving a number of lives in a situation where few other initiatives were being taken to do so, although concerns were also expressed about a number of difficult issues of principle, i.a. with respect to the Operation's relationship to the United Nations.

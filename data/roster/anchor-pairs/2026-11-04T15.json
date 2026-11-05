@@ -1,0 +1,74 @@
+[
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 25,
+  "a": {
+   "title": "&apos;Star Trek&apos; star Patrick Stewart dies age 86",
+   "summary": "The Shakespearean actor landed the role of a lifetime as &quot;Star Trek&quot; Captain Picard. He passed away at age 86.",
+   "link": "https://www.dw.com/en/star-trek-star-patrick-stewart-dies-age-86/a-79803071?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Star-Trek-Schauspieler Patrick Stewart ist tot",
+   "summary": "Als Captain Picard auf der Enterprise gelangte Shakespeare-Mime Patrick Stewart zu Weltruhm. Im Alter von 86 Jahren ist er jetzt in Los Angeles gestorben. Fans und Stars trauern.",
+   "link": "https://www.dw.com/de/star-trek-schauspieler-patrick-stewart-ist-tot/a-79803535?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 25,
+  "a": {
+   "title": "King Charles and Queen Camilla caught in heavy rain during Antigua celebrations",
+   "summary": "King Charles III and Queen Camilla were caught in a downpour while attending Antigua and Barbuda’s Independence Day celebrations at Sir Vivian Richards Stadium.",
+   "link": "https://www.euronews.com/2026/11/03/king-charles-and-queen-camilla-caught-in-heavy-rain-during-antigua-celebrations",
+   "published": "Tue, 03 Nov 2026 09:26:14 +0100"
+  },
+  "b": {
+   "title": "Charles III et Camilla surpris par une forte pluie à la fête de l'indépendance d'Antigua",
+   "summary": "Le roi Charles III et la reine Camilla ont été surpris par une averse pendant les célébrations de la fête de l'indépendance d'Antigua-et-Barbuda au stade Sir Vivian Richards.",
+   "link": "https://fr.euronews.com/2026/11/03/charles-iii-et-camilla-surpris-par-une-forte-pluie-a-la-fete-de-lindependance-dantigua",
+   "published": "Tue, 03 Nov 2026 09:27:19 +0100"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 23,
+  "a": {
+   "title": "Skeleton puppets and zombies fill New York’s Halloween parade",
+   "summary": "Skeleton puppets, zombies and film characters take over Greenwich Village. Thousands join the 53rd New York Halloween parade, dancing through Manhattan.",
+   "link": "https://www.euronews.com/video/2026/11/02/skeleton-puppets-and-zombies-fill-new-yorks-halloween-parade",
+   "published": "Mon, 02 Nov 2026 13:51:30 +0100"
+  },
+  "b": {
+   "title": "La 53e parade d'Halloween de New York remplit les rues de Greenwich Village",
+   "summary": "Des marionnettes squelettes, des zombies et des personnages de films envahissent Greenwich Village. Des milliers participent à la 53e parade d'Halloween de New York en dansant dans Manhattan.",
+   "link": "https://fr.euronews.com/video/2026/11/02/la-53e-parade-dhalloween-de-new-york-remplit-les-rues-de-greenwich-village",
+   "published": "Mon, 02 Nov 2026 13:52:38 +0100"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 18,
+  "a": {
+   "title": "Ukraine’s ‘Stargate’ drone carries wounded troops from frontline",
+   "summary": "Ukraine’s Skyfall says its Stargate drone has evacuated two wounded soldiers from the front line, flying 15 km each way at up to 105 km/h.",
+   "link": "https://www.euronews.com/video/2026/11/02/ukraines-stargate-drone-carries-wounded-troops-from-frontline",
+   "published": "Mon, 02 Nov 2026 17:26:59 +0100"
+  },
+  "b": {
+   "title": "Ukraine utilise un drone d'évacuation 'Stargate' pour soldats blessés",
+   "summary": "Le drone Stargate de Skyfall Ukraine évacue deux soldats blessés depuis la ligne de front, parcourant 15 km aller-retour à une vitesse pouvant atteindre 105 km/h.",
+   "link": "https://fr.euronews.com/video/2026/11/02/ukraine-utilise-un-drone-devacuation-stargate-pour-soldats-blesses",
+   "published": "Mon, 02 Nov 2026 17:28:00 +0100"
+  }
+ }
+]

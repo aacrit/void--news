@@ -1,0 +1,50 @@
+{
+ "clip_id": "clip-kennedy-address-opening-19621022",
+ "slug": "cuban-missile-crisis",
+ "tool": "faster-whisper",
+ "tool_version": "1.2.1",
+ "model": "base.en",
+ "compute_type": "int8",
+ "beam_size": 5,
+ "source": {
+  "file": "https://static.jfklibrary.org/e713e0r7h1435052m4p47115h1cl7hw5.mp3",
+  "md5": "4f8d46b8861bf9e06c9739f152eaf58d",
+  "md5_expected": "4f8d46b8861bf9e06c9739f152eaf58d",
+  "rate": 44100
+ },
+ "window": {
+  "in": 8.6,
+  "out": 20.9,
+  "seconds": 12.3
+ },
+ "excerpt_sha256": "c76feb0bc1f56bf9f82ccf4dd628f766589c208d7b4a32f3a1f651818b707aeb",
+ "excerpt_pcm": "s16le mono at the source rate, ffmpeg atrim, -bitexact",
+ "reference": "Good evening my fellow citizens: This Government, as promised, has maintained the closest surveillance of the Soviet Military buildup on the island of Cuba.",
+ "hypothesis": "Good evening, my fellow citizens. This government, as promised, has maintained the closest surveillance of the Soviet military buildup on the island of Cuba.",
+ "wer": 0.0,
+ "coverage": 1.0,
+ "counts": {
+  "ref_words": 24,
+  "hyp_words": 24,
+  "substitutions": 0,
+  "deletions": 0,
+  "insertions": 0,
+  "first_matched_ref": 0,
+  "last_matched_ref": 23,
+  "lead_insertions": 0,
+  "trail_insertions": 0
+ },
+ "diff": [
+  "good evening my fellow citizens this government as promised has maintained the closest surveillance of the soviet military buildup on the island of cuba"
+ ],
+ "thresholds": {
+  "coverage_min": 0.7,
+  "edge_slack_words": 1,
+  "edge_insert_max": 2
+ },
+ "pass": true,
+ "why": [],
+ "verified_at": "2026-10-05T04:14:09Z",
+ "signed": false,
+ "note": "a pass verifies the words in this window against the stored transcript. It does not verify the occasion, the date or the rights, and it signs nothing."
+}

@@ -1,0 +1,7 @@
+source: src-bmj-obermeyer-2008
+locator: seccomparison
+url: https://www.bmj.com/content/336/7659/1482
+read: 2026-10-09
+note: the BMJ's web text, Discussion; reference 47 is Hirschman, Preston and Vu Manh Loi, Population and Development Review, 1995
+
+One source of comparison in Vietnam is an analysis of that country’s life history survey, which yielded an estimate of 966 000 war deaths between 1965 and 1975,47 considerably lower than the world health survey estimate (1.7 million).

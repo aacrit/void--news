@@ -1,0 +1,8 @@
+source: src-khosla-1949
+locator: p41
+url: https://archive.org/download/stern-reckoning/Stern%20Reckoning_djvu.txt
+read: 2026-09-25
+note: the layer's soft hyphens (¬) are rejoined, a hyphen at a line break is kept without the break, and line breaks are joined; OCR glyphs are kept as printed
+note: the first page of Chapter Two, whose printed number the text layer reads as '4'; Jinnah's words as the fact-finding body quotes them, secondhand: the book does not name its source in this passage
+
+The meaning and purport of “ Direct Action” were not left in doubt It meant “ good-bye to constitutional methods/’ the “forging of a pistol” and using it Mr Jinnah declaied “What we ha\c done today is the most historic a^t m our history. Nc\ei have we m the whole history ot the League done anything except bv constitutional methods and b\ constitutionalism But now we are obliged and toiced into this position I his day we bid good-bye to constitutional methods.”

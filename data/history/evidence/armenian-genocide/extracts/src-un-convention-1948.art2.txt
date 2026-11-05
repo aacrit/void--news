@@ -1,0 +1,7 @@
+source: src-un-convention-1948
+locator: art2
+url: https://treaties.un.org/doc/Publication/UNTS/Volume%2078/volume-78-I-1021-English.pdf
+read: 2026-09-25
+note: UNTS text layer; the letters of sub-paragraphs (b) and (d) are rendered by the layer as (£) and (rf)
+
+In the present Convention, genocide means any of the following acts committed with intent to destroy, in whole or in part, a national, ethnical, racial or religious group, as such : (a) Killing members of the group; (£) Causing serious bodily or mental harm to members of the group; (e) Deliberately inflicting on the group conditions of life calculated to bring about its physical destruction in whole or in part; (rf) Imposing measures intended to prevent births within the group; (e) Forcibly transferring children of the group to another group.

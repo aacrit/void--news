@@ -1,0 +1,7 @@
+source: src-trc-v1-ch1
+locator: para36
+url: https://www.justice.gov.za/trc/report/finalreport/Volume%201.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation and glyph errors are kept as the layer prints them
+
+We have been concerned, too, that many consider only one aspect of justice. Certainly, amnesty cannot be viewed as justice if we think of justice only as retributive and punitive in nature. We believe, however, that there is another kind of justice - a restorative justice which is concerned not so much with punishment as with correcting imbalances, restoring broken relationships – with healing, harmony and reconciliation. Such justice focuses on the experience of victims; hence the importance of reparation.

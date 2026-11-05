@@ -1,0 +1,7 @@
+source: src-ictr-bagosora-tj
+locator: para15
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-98-41/trial-judgements/en/081218.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+15. It was around 8.30 p.m. on 6 April 1994 that a surface-to-air missile fired from near the Kigali airport brought down the plane carrying President Habyarimana and other dignitaries. They were returning from peace negotiations in Dar es Salaam aimed at implementing the Arusha Accords. The blast heard across Kigali killed all onboard. As the plane fell to the earth, Rwanda descended into violence, and within 24 hours, armed hostilities resumed between the Rwandan military and the RPF.

@@ -1,0 +1,7 @@
+source: src-ford-19740809
+locator: secnightmare
+url: https://www.fordlibrarymuseum.gov/the-fords/gerald-r-ford/key-speeches-and-writings-gerald-r-ford
+read: 2026-10-09
+note: the Ford Library's text of the Remarks Upon Taking the Oath of Office as President, August 9, 1974, on its page of key speeches; three paragraphs
+
+In all my public and private acts as your President, I expect to follow my instincts of openness and candor with full confidence that honesty is always the best policy in the end. My fellow Americans, our long national nightmare is over. Our Constitution works; our great Republic is a government of laws and not of men. Here the people rule. But there is a higher Power, by whatever name we honor Him, who ordains not only righteousness but love, not only justice but mercy. As we bind up the internal wounds of Watergate, more painful and more poisonous than those of foreign wars, let us restore the golden rule to our political process, and let brotherly love purge our hearts of suspicion and of hate.

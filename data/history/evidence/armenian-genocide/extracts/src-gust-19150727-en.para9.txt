@@ -1,0 +1,8 @@
+source: src-gust-19150727-en
+locator: para9
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-07-27-DE-001
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+note: the translation is the online edition's own (sponsored by the Zoryan Institute), held here as the edition prints it, at most 150 words
+
+6) The signs are increasing that the government, either intentionally or unintentionally, is permitting the implementation of its measures to be taken off its hands and turned into the slaughter of the Armenians, which seems to be gradually taken over by Circassians and Kurds.

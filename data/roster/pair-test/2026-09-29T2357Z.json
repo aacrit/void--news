@@ -1,0 +1,126 @@
+{
+ "collected_at": "2026-09-29T23:57:41Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 45,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16168727/czech-republic-england-player-ratings.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Czech Republic 0-2 England PLAYER RATINGS: How did Trent Alexander-Arnold fare on his return? Who was almost embarrassed by an early error? Who proved he belongs at international level?",
+      "published": "Tue, 29 Sep 2026 21:51:04 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/england-czechia-alexander-arnold-tuchel-37716554",
+      "title": "Trent Alexander-Arnold has kept up his end of England bargain - but return might be short-lived",
+      "published": "Tue, 29 Sep 2026 21:26:00 +0000"
+     }
+    },
+    {
+     "score": 25,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16170279/man-city-appeal-premier-league.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Man City's appeal will FAIL, warns club's former advisor, as scale of cheating is laid bare by scathing Premier League statement revealing their £900m 'sham' after being found guilty of most serious of 115 charges",
+      "published": "Tue, 29 Sep 2026 23:05:54 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/roy-keane-man-city-charges-37716503",
+      "title": "Roy Keane sends brutal 'medals in the bin' message to Man City stars after 115 charges verdict",
+      "published": "Tue, 29 Sep 2026 21:25:34 +0000"
+     }
+    },
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16169139/Czech-Republic-vs-England-Nations-League-LIVE.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Czech Republic vs England - Nations League RECAP: Reaction as Three Lions claim comfortable victory against 10 men",
+      "published": "Tue, 29 Sep 2026 22:19:33 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/match-reports/england-czechia-tuchel-goals-highlights-37716161",
+      "title": "Anthony Gordon inspires England to victory over 10-man Czech Republic - 5 talking points",
+      "published": "Tue, 29 Sep 2026 20:37:27 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16169977/coastguard-police-car-barrier-River-Wear.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Three teenagers are dead after car ploughed through barrier and into River Wear: Driver, 17, is arrested",
+      "published": "Tue, 29 Sep 2026 22:47:32 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/sunderland-river-wear-car-deaths-37715389",
+      "title": "River Wear - latest: Three teens dead after car plunges into water in Sunderland",
+      "published": "Tue, 29 Sep 2026 23:47:02 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/crime-desk/article-16170509/caleb-flynn-ohio-wife-ashley-murder-trial-guilty.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "American Idol singer Caleb Flynn quivers with shock as he's found guilty of murdering wife after starting affair with mistress he met at church",
+      "published": "Wed, 30 Sep 2026 00:41:45 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/us-news/caleb-flynn-american-idol-murder-37716590",
+      "title": "Former American Idol star Caleb Flynn sobs as he is found guilty of murdering wife",
+      "published": "Tue, 29 Sep 2026 22:20:05 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 155,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 136,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/09/turkey-shelters-emirati-brotherhood-figures-accused-of-plotting-to-oust-uae-rulers/",
+      "title": "Turkey shelters Emirati Brotherhood figures accused of plotting to oust UAE rulers",
+      "published": "Sun, 20 Sep 2026 22:18:23 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 311,
+    "left": 10
+   }
+  }
+ }
+}

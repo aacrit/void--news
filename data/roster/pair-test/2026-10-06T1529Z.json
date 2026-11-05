@@ -1,0 +1,127 @@
+{
+ "collected_at": "2026-10-06T15:29:09Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 28,
+     "right": {
+      "url": "https://www.dailymail.com/news/royals/article-16186953/A-royal-wind-Prince-William-teases-Celebrity-Traitors-star-Ross-Kemp-screen-paranoia-pretends-murder-plain-sight-charity-event-Somerset.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "A royal wind-up! Prince William teases The Celebrity Traitors star Ross Kemp about his on-screen paranoia and pretends to 'murder' him in plain sight during charity event in Somerset",
+      "published": "Tue, 06 Oct 2026 16:24:44 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/ross-kemp-traitors-prince-william-37741162",
+      "title": "Prince William teases hardman Ross Kemp and asks for Celebrity Traitors spoilers",
+      "published": "Tue, 6 Oct 2026 13:56:00 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16186065/police-officers-Tasered-pepper-sprayed-disabled-pensioner.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Two police officers who Tasered and pepper-sprayed disabled pensioner, 92, in care home are sacked for using 'excessive force'",
+      "published": "Tue, 06 Oct 2026 16:22:09 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/donald-burgess-police-officers-sacked-37741568",
+      "title": "Sussex Police officers who Tasered 92-year-old amputee at care home are sacked",
+      "published": "Tue, 6 Oct 2026 14:35:59 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16186345/Kemi-Badenoch-US-Fairford-UK-missile-drone-defences-Britannia-Shield.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Kemi Badenoch blames US Fairford bomber pullout on UK's lack of missile and drone defences as she vows to spend £10bn on 'Britannia Shield'",
+      "published": "Tue, 06 Oct 2026 10:21:04 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/kemi-badenoch-has-no-real-37740593",
+      "title": "Kemi Badenoch 'has no real idea of what is needed' over £10bn UK Iron Dome, says defence expert",
+      "published": "Tue, 6 Oct 2026 15:12:17 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16186195/man-city-jamie-carragher-premier-league.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Manchester City's punishment should last up to FIVE YEARS so they are forced to sell stars, says Jamie Carragher",
+      "published": "Tue, 06 Oct 2026 14:48:40 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/man-city-charges-live-updates-37738426",
+      "title": "Man City charges LIVE: Punishment causes Premier League split as £300m 'catastrophe' looms",
+      "published": "Tue, 6 Oct 2026 15:03:20 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 142,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/defense-news/article-910767",
+      "title": "Transport Ministry rejected Shin Bet help in securing flights before flydubai hijacking - report",
+      "published": "Tue, 06 Oct 2026 13:53:07 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-security/2026-10-04/ty-article/.premium/shin-bet-warned-of-foreign-flight-crews-screening-before-plane-hijacking-attempt/000001a1-0813-dff9-a3b3-cd3f98b50000",
+      "title": "Shin Bet warned of foreign flight crews screening before flydubai hijacking attempt, sources say",
+      "published": "Sun, 04 Oct 2026 22:26:14 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.indiatoday.in/india/story/india-bloc-protest-march-live-updates-cec-gyanesh-kumar-sir-row-election-commission-congress-aap-3010394-2026-10-06?utm_source=rss",
+      "title": "Live: Rahul Gandhi, Priyanka detained as chaos erupts at Akashvani Bhawan",
+      "published": "Tue, 06 Oct 2026 07:09:45 +0530"
+     },
+     "left": {
+      "url": "https://www.thehindu.com/news/national/cec-row-protest-against-gyanesh-kumar-india-bloc-march-election-commission-sir-issue-live-updates-october-6-2026/article71549790.ece",
+      "title": "CEC row LIVE updates: Rahul, Priyanka and other Opposition MPs detained from Akashvani Bhawan",
+      "published": "Tue, 06 Oct 2026 20:56:20 +0530"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 132,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 308,
+    "left": 10
+   }
+  }
+ }
+}

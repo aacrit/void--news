@@ -1,0 +1,7 @@
+source: src-clarkson-1808
+locator: seccommittee
+url: https://www.gutenberg.org/cache/epub/10633/pg10633.txt
+read: 2026-10-09
+note: chapter XIII; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+It was shown in the latter part of the tenth chapter, that twelve individuals, all of whom were then named, met together by means which no one could have foreseen, on the 22d of May, 1787; and that, after having voted the Slave Trade to be both unjust and impolitic, they formed themselves into a committee for procuring such information and evidence, and for publishing the same, as might tend to the abolition of it

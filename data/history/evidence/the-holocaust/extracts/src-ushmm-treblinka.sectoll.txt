@@ -1,0 +1,6 @@
+source: src-ushmm-treblinka
+locator: sectoll
+url: https://encyclopedia.ushmm.org/content/en/article/treblinka
+read: 2026-10-07
+
+By the time the Treblinka killing center was dismantled in the fall of 1943, the camp personnel had murdered an estimated 925,000 Jews, as well as an unknown number of Poles, Roma, and Soviet POWs.

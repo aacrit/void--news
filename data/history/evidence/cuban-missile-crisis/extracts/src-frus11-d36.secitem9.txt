@@ -1,0 +1,9 @@
+source: src-frus11-d36
+locator: secitem9
+url: https://history.state.gov/historicaldocuments/frus1961-63v11/d36
+read: 2026-10-04
+note: Document 36, Notes on Meeting With President Kennedy, October 21, 1962, item 9: the Attorney General's two reasons against an air strike, as McNamara's notes record them
+
+9.The President directed that we be prepared to carry out the air strike Monday1 morning or any time thereafter during the remainder of the week. The President recognized that the Secretary of Defense was opposed to the air strike Monday morning, and that General Sweeney favored it. He asked the Attorney General and Mr. McCone for their opinions: a.The Attorney General stated he was opposed to such a strike because: (1)“It would be a Pearl Harbor type of attack.”(2)It would lead to unpredictable military responses by the Soviet Union which could be so serious as to lead to general nuclear war.
+
+He stated we should start with the initiation of the blockade and thereafter “play for the breaks.”

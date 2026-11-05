@@ -1,0 +1,8 @@
+source: src-hansard-19200708
+locator: secdivision
+url: https://api.parliament.uk/historic-hansard/commons/1920/jul/08/army-council-and-general-dyer
+read: 2026-10-09
+note: the text is the Hansard page's own text (UK Parliament, historic Hansard), whitespace collapsed
+note: the motion moved by Mr. Spoor, 'I beg to move that Item A [Salaries, £6,500] be reduced by £100'
+
+Question put, "That Item A be reduced by £100." § The Committee divided: Ayes, 37; Noes, 247.

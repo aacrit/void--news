@@ -1,0 +1,9 @@
+source: src-hrw-leave-none-1999
+locator: secrpf
+url: https://www.hrw.org/reports/1999/rwanda/
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: section 'The Rwandan Patriotic Front', first paragraph
+note: the edition's contents page is the entry's free copy; the passage was read on its chapter page, https://www.hrw.org/reports/1999/rwanda/Geno1-3-03.htm
+
+In defeating the interim government and its army, the RPF ended the genocide. At the same time, its troops committed grave violations of international humanitarian law by attacking and killing unarmed civilians. Unlike the genocidal authorities who undertook a complex campaign involving all the machinery of the state and aiming to involve all Hutu citizens, the RPF ran a straightforward military campaign where civilians generally provided only information or support services.

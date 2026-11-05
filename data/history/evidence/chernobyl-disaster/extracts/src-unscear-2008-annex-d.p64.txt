@@ -1,0 +1,8 @@
+source: src-unscear-2008-annex-d
+locator: p64
+url: https://www.unscear.org/unscear/uploads/documents/unscear-reports/UNSCEAR_2008_Report_Vol.II.pdf
+read: 2026-10-07
+note: Volume II, Annex D, paragraph 98 and the opening of paragraph 99, printed page 64 (PDF page 76)
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+98. The Committee has decided not to use models to project absolute numbers of effects in populations exposed to low radiation doses from the Chernobyl accident, because of unacceptable uncertainties in the predictions. It should be stressed that the approach outlined in no way contradicts the application of the LNT model for the purposes of radiation protection, where a cautious approach is conventionally and consciously applied [F11, I37]. VII. General conclusions A. health risks attributable to radiation 99. The observed health effects currently attributable to radiation exposure are as follows: - 134 plant staff and emergency workers received high doses of radiation that resulted in acute radiation syndrome (ARS), many of whom also incurred skin injuries due to beta irradiation; - The high radiation doses proved fatal for 28 of these people;

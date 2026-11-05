@@ -1,0 +1,6 @@
+source: src-ghwk-conference
+locator: secmeeting
+url: https://www.ghwk.de/en/conference
+read: 2026-10-07
+
+At noon of 20 January 1942, a meeting of approximately 90 minutes took place in the dining room of the SD guesthouse. Representatives of the SS, the NSDAP and various Reich ministries attented this meeting, which was convened by Reinhard Heydrich, Head of the Security Police and SD. The subject of the meeting was the "Final Solution of the Jewish Question". Heydrich's aim was to emphasise his leading role in the deportations and to involve important ministries and party departments in the preparations for the murder of the European Jews.

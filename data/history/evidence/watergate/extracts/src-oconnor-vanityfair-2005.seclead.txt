@@ -1,0 +1,7 @@
+source: src-oconnor-vanityfair-2005
+locator: seclead
+url: https://www.vanityfair.com/news/politics/2005/07/deepthroat200507
+read: 2026-10-09
+note: the magazine's web text, its standfirst
+
+Despite three decades of intense speculation, the identity of “Deep Throat”—the source who leaked key details of Nixon's Watergate cover-up to Washington Post reporters Bob Woodward and Carl Bernstein—has never been revealed. Now, at age 91, W. Mark Felt, number two at the F.B.I. in the early 70s, is finally admitting to that historic, anonymous role. In an exclusive, Vanity Fair puts a name and face to one of American democracy's heroes.

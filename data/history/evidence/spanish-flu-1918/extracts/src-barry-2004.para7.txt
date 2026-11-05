@@ -1,0 +1,6 @@
+source: src-barry-2004
+locator: para7
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC340389/fullTextXML
+read: 2026-09-25
+
+It has never been clear, however, where this pandemic began. Since influenza is an endemic disease, not simply an epidemic one, it is impossible to answer this question with absolute certainty. Nonetheless, in seven years of work on a history of the pandemic, this author conducted an extensive survey of contemporary medical and lay literature searching for epidemiological evidence – the only evidence available. That review suggests that the most likely site of origin was Haskell County, Kansas, an isolated and sparsely populated county in the southwest corner of the state, in January 1918 [1]. If this hypothesis is correct, it has public policy implications.

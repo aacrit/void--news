@@ -1,0 +1,8 @@
+source: src-shakhnazarov-castro-19871105
+locator: p87
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHPBulletin5_p2.pdf
+read: 2026-10-07
+note: the PDF's text layer, line breaks folded to spaces; where the layer breaks a word at a line end its hyphen is kept as it prints it ('docu- ment'); nothing is corrected
+note: printed page 87: Georgy Shakhnazarov's notes of a conversation with Fidel Castro, 5 November 1987, headed in the Bulletin '"I Know Something About The Caribbean Crisis"', Castro's words as the Soviet official recorded them twenty-five years after the event; the bracketed date is the Bulletin's. The passage before it has Castro raising the low overflights with the Soviet commander, whom the Bulletin brackets as [Gen. I. A. Pliyev], 'on the 25th or the 26th'
+
+I even sent a letter [dated October 26] to Khrushchev about that. In that letter I told the Soviet leader about my concern with the situation that had developed. I said that we should not allow the Americans to deliver a first strike at the Soviet objects in the Cuban territory, we should not allow the repetition of the events that led to the World War II. At that time the crisis situation already existed. On the day when the American planes ap- peared again, we gave orders to all Cuban anti- aircraft batteries to fire. The planes were driven off by the defensive fire. However, not a single plane had been shot down.

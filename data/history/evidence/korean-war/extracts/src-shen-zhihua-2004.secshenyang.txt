@@ -1,0 +1,8 @@
+source: src-shen-zhihua-2004
+locator: secshenyang
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_14-15.pdf
+read: 2026-10-09
+note: the same article; the date of the Shenyang meeting at which Peng's remark (secpeng) follows
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+On 8 October, Mao informed Kim Il Sung that China had decided to send troops, and asked that Pak Il-u meet with Gao Gang and CVA Commander Peng Dehuai in Shenyang to discuss the various issues involved.

@@ -1,0 +1,277 @@
+# Cinematic variant, 2026-10-04. The fifth Orpheus 3B episode (narrator "tara"; a male
+# reader of record for M: lines, a female reader for F: lines), in the Ken Burns
+# register: short declarative sentences, documents read plainly, the silence placed by
+# the writer. Re-cut from the live script against the evidence ledger
+# (data/history/evidence/spanish-flu-1918/) and the published thesis
+# (data/history/theses/spanish-flu-1918.md): every line the document voice reads is
+# verbatim from a stored extract, and the extract id follows the marker in a comment.
+# Sources are the event YAML, the ledger and the thesis, nothing else. Lines beginning
+# with "#" are inert: the parser skips them (pipeline/history/script_format.py::parse_script).
+# The mood directive on every segment is the one docs/proposals/HISTORY-AUDIO-ARCHIVAL.md
+# defines. There is no clip slot: this episode has no admitted recording, and a candidate
+# belongs in the ledger, not here. The F: lines are a nurse's letter to her own journal,
+# the one extract in this record the thesis counts among women's voices; the attribution
+# says she signed with initials. The live script's Vaughan "civilization" line, its Nirala
+# "blink of an eye" line, its Johnson and Mueller "vast figure" line, its San Francisco mask
+# notice and "Samoa mo Samoa" are in no extract this programme holds, so none is read; the
+# Nirala passage is read instead from the Void rendering of the Hindi, and said to be one.
+# Where the record disagrees with itself (the world's dead, India's dead, the share of
+# Samoa that died, the Maori ratio, where it began) the script states the figures and
+# chooses none. This file is not the live script: nothing globs this directory.
+#
+# Revised 2026-10-04 to the first-listener orientation standard
+# (docs/proposals/HISTORY-FIRST-LISTENER.md, O-1..O-8), after the CEO's note on the eight
+# Orpheus episodes and the approved Partition pilot. SCENE 1 now opens on an establishing
+# passage (the year, the First World War in its final campaigns and the troopships and
+# railways the disease travelled on, the mild spring and the changed virus, the fifteen to
+# a hundred million of the later figures) before the camp arrives, and the camp is placed
+# (an army camp outside Boston, in Massachusetts). Every SCENE opens on a time and a place;
+# every first-mentioned name carries a role the record gives (Nirala a Hindi poet; Hatchett,
+# Mecher and Lipsitch three epidemiologists; Johnson and Mueller the compilers of the dead
+# country by country; Spreeuwenberg and colleagues working from the vital records of thirteen
+# countries and British India; Taubenberger a molecular pathologist; Hultin a pathologist;
+# the Alaska telegram its assistant superintendent); every term is glossed or replaced (the
+# Surgeon General of the United States Public Health Service, Britain's Ministry of Health,
+# the Sanitary Commissioner as the official whose annual report carried British India's death
+# figures, the Registrar-General whose office registered the deaths, the United Provinces of
+# British India along the Ganges, Western Samoa as islands New Zealand has governed since
+# nineteen fourteen, American Samoa as the other half of the same islands under a United
+# States governor, Maori as the Indigenous people, Alaska as a United States territory,
+# Brevig Mission as the village where seventy two of about eighty died, "belligerents"
+# replaced by the governments at war, Spain said to be neutral); the first TURN carries one
+# how-we-know line; the CLOSE restates the particulars before the motif. Cut to pay for it:
+# "in London" (the record never places the Ministry), the name San Sebastian (the record's
+# "a health resort" carries the fact and a newcomer cannot use the name), the second
+# censorship line of the SCENE 2 aside (the second TURN carries it), "in this record" and
+# "a village" in the nurse's introduction, the dead superintendent at Nome, the year of
+# Hultin's recovery, the "returns their own authors called approximations" clause of the
+# second TURN (SCENE 3 and the motif carry it), England and Wales from the CLOSE's list of
+# figures (SCENE 3 carries it), and the words "estimates" and "record documents" rephrased
+# out of heteronym traps. Every orientation fact traces to the YAML, a ledger extract, a ledger
+# position or the thesis; nothing is from memory. Segment count, kinds and chapter titles
+# are unchanged, so the thesis's episode_marks (chapters 0, 3, 11) still point where they did.
+
+## OPEN
+# MOOD: dread
+N: In nineteen twenty the Government of India wrote that there was no method by which the deaths due to influenza could be calculated. Then it calculated: seven million eighty nine thousand six hundred and ninety four.
+N: Nobody counted the dead. Everyone who estimated them said so first.
+
+## TITLE
+# MOOD: dread
+N: The nineteen eighteen influenza pandemic. Nineteen eighteen to nineteen nineteen.
+
+## SCENE 1 | The camp
+# MOOD: rupture
+N: September, nineteen eighteen, and the First World War is in its final campaigns. The war has built the roads a disease travels: troopships and railways carry millions of young men between continents, and an influenza goes with them.
+N: In the spring it was mild and governments ignored it. By late summer the virus had changed; now it kills the young and the healthy in the greatest numbers.
+N: Later figures for its dead will run from fifteen million to a hundred million; none is a count.
+N: Camp Devens, an army camp outside Boston, in Massachusetts. On the twenty fourth a soldier writes home that he has kept quiet about being sick.
+
+## DOCUMENT | Anonymous soldier at Camp Devens | letter home, as Wever and van Bergen reproduce it | September 24, 1918
+# extract: src-wever-2014.para35
+# MOOD: testimony
+N: The soldier, in a letter a later article reproduces.
+M: every day there has been an average of about twenty deaths here a day, some toll for a camp.
+
+## DOCUMENT | Roy Grist | letter from a physician at Camp Devens, as Wever and van Bergen reproduce it | September 29, 1918
+# extract: src-wever-2014.para45
+# MOOD: testimony
+N: Five days later a physician at the same camp, Roy Grist, describes the course of the disease, in a letter the same article reproduces.
+M: It is only a matter of a few hours then until death comes, and it is simply a struggle for air until they suffocate. It is horrible.
+
+## ASIDE
+# extract: src-wever-2014.para45b
+# MOOD: grief
+N: The same letter puts the deaths at about a hundred a day. The soldier had written twenty.
+
+## REST
+# MOOD: grief
+
+## SCENE 2 | The name
+# MOOD: procedure
+N: The thirteenth of September, nineteen eighteen. The Surgeon General of the United States Public Health Service warns its quarantine stations about a disease arriving on ships from Europe, and calls it the so-called Spanish influenza.
+
+## DOCUMENT | Ministry of Health, Great Britain | Report on the Pandemic of Influenza, Part Two, the introduction | 1920
+# extract: src-moh-1920.secnaming
+# MOOD: procedure
+N: Two years later Britain's Ministry of Health published its account of the epidemic abroad, and took up the name.
+M: When it was first recognised that influenza was spreading over Europe in 1918, the source of the epidemic was attributed to Spain
+M: It cannot, therefore, be admitted that the European epidemic began in Spain.
+
+## ASIDE
+# MOOD: procedure
+N: The same report recorded one act of concealment, in neutral Spain: an allegation that the authorities of one health resort hid the influenza so as not to spoil its summer season.
+
+## REST | short
+# MOOD: procedure
+
+## SCENE 3 | The count
+# MOOD: reckoning
+N: Nineteen twenty, two years on. In India, under British rule, and in England, every office that counted the dead began by saying that it could not.
+
+## DOCUMENT | Sanitary Commissioner with the Government of India | Annual Report of the Sanitary Commissioner for 1918 | 1920
+# extract: src-sancom-1918.p56
+# MOOD: reckoning
+N: The Sanitary Commissioner with the Government of India, whose annual report carried British India's death figures, in the report for nineteen eighteen.
+M: There is no method by which the deaths actually due to influenza can be calculated.
+
+## ASIDE
+# MOOD: reckoning
+N: He then estimated the excess over the five years before in four ways, set the first aside as too high, and took the mean of the other three. Seven million eighty nine thousand six hundred and ninety four, without any claim to accuracy.
+
+## DOCUMENT | Registrar-General for England and Wales | Report on the Mortality from Influenza in England and Wales during the Epidemic | 1920
+# extract: src-rg-1920.secestimate
+# MOOD: reckoning
+N: The Registrar-General for England and Wales, whose office registered the country's deaths, the same year.
+M: It is well known that during influenza epidemics the mortality attributed to the disease does not represent the whole of that caused by it.
+
+## ASIDE
+# MOOD: reckoning
+N: His certificates allocated a hundred and fifty one thousand four hundred and forty six deaths to the disease. He added the excess under other headings, reached a hundred and ninety eight thousand, and rounded it to two hundred thousand.
+N: Nobody counted the dead. Everyone who estimated them said so first.
+
+## REST
+# MOOD: grief
+
+## SCENE 4 | The river
+# MOOD: grief
+N: Nineteen eighteen, along the Ganges in the United Provinces of British India. The Government of India's table gives the province more than two million dead that year, the largest count of any.
+N: Suryakant Tripathi, called Nirala, a Hindi poet, was twenty two when a telegram told him his wife was gravely ill. His memoir names the influenza and gives no year.
+
+## DOCUMENT | Suryakant Tripathi 'Nirala' (Void translation from the Hindi) | Kulli Bhat, a memoir, rendered by Void from the Hindi | undated
+# extract: src-nirala-kulli-bhat.p79.en
+# MOOD: grief
+N: Nirala, in a translation made by Void from the Hindi.
+M: From the newspapers I had already learned of death's reach. Coming to the bank of the Ganges I saw it with my own eyes. In the Ganges it was as if there flowed nothing but corpses.
+
+## ASIDE
+# MOOD: grief
+N: His wife had died before he reached her. Then his elder cousin, his sister-in-law, her infant daughter, his uncle. Three nephews fell ill and recovered.
+N: Every day, he wrote, he went to look at the Ganges, sat on a high mound and watched the corpses, in a state of mind beyond telling.
+
+## REST
+# MOOD: grief
+
+## SCENE 5 | The islands
+# MOOD: dread
+N: The seventh of November, nineteen eighteen, in the South Pacific. The steamer Talune, out of Auckland in New Zealand, arrives at Western Samoa, islands New Zealand has governed since nineteen fourteen. Influenza had broken out among passengers and crew on the voyage.
+
+## DOCUMENT | United States Public Health Service, from the Department of Native Affairs, Samoa | Influenza Mortality in Samoa, Public Health Reports | October 17, 1919
+# extract: src-phr-1919-10-17-samoa.p2303
+# MOOD: dread
+N: The United States Public Health Service printed the count the Department of Native Affairs at Apia had made, before and after.
+M: A report compiled by the Department of Native Affairs, Apia, Samoa, shows the decrease of the population in the islands of Upola and Savaii during the three months ended December 31, 1918, the period of the epidemic of influenza. The figures are startling.
+
+## ASIDE
+# MOOD: dread
+N: Before the epidemic, thirty eight thousand one hundred and seventy eight people. After it, thirty thousand six hundred and thirty six. Lost in one quarter of a year, seven thousand five hundred and forty two.
+N: The Ministry of Health carried the same dead against a population of thirty thousand seven hundred and thirty eight. A fifth of the people on one denominator, a quarter on the other.
+N: Fifty miles across the water, American Samoa, the other half of the same islands under a United States governor, entirely escaped: from the twentieth of November its governor held every arriving ship in five days of absolute quarantine.
+
+## REST
+# MOOD: grief
+
+## TURN | Five accounts
+# MOOD: reckoning
+N: Five accounts of this pandemic, each given its own case first.
+N: They are argued from what this programme could read: official reports of nineteen eighteen to nineteen twenty, two letters from one army camp, a nurse's letter, a poet's memoir in Hindi, and the abstracts of scholars whose books could not be reached.
+
+## PERSPECTIVE | Wartime Governments and Censorship | victor
+# MOOD: procedure
+# extract: src-moh-1920.secspain
+N: The first account belongs to the governments at war. It holds that they censored the dying to protect morale, and that Spain, neutral and uncensored, was blamed for it.
+N: Britain's Ministry of Health set the two neighbours, Spain and France, side by side.
+M: The Spanish authorities strongly maintain that the first epidemic wave of influenza that swept over Spain in May and June 1918, was due to infection introduced from France. The French authorities on the other hand as stoutly contend that France received its infection from Spain.
+
+## PERSPECTIVE | Public Health and Medicine | bystander
+# MOOD: testimony
+# extract: src-ajn-1918-12.p203
+N: The second account belongs to the doctors and the nurses.
+N: Its one witness here is a nurse on the prairie of North Dakota, in the United States, who wrote to the American Journal of Nursing in December nineteen eighteen and signed with initials.
+F: We were caught wholly unprepared, as far as organization went.
+F: They had money, but help could not be had for money.
+N: In two thousand seven three epidemiologists, Hatchett, Mecher and Lipsitch, put the peak weekly death rate in Philadelphia at two hundred and fifty seven per hundred thousand, and in St Louis, which had closed its schools and gatherings, at thirty one.
+N: Philadelphia's parade and the closure order that followed are in no document this programme holds.
+
+## PERSPECTIVE | Colonial and Global South Populations | vanquished
+# MOOD: grief
+# extract: src-census-1921.secnatural
+N: The third account says the centre of this story was never Europe or America, but India and Africa.
+N: It holds that India lost at least twelve million people, more than any other country, and that the colonial state left its rural dead unprotected and unrelieved.
+N: The Government of India's own figure was about seven million; the twelve million is a later reconstruction of a different quantity, and this programme averages neither.
+N: The Census Commissioner for India, reporting the census of nineteen twenty one, on what the epidemic did to the provinces.
+M: wiped off the whole of the natural increase in the Central Provinces and Berar, Bihar and Orissa and Bombay and substantially reduced the population in the United Provinces
+N: In South Africa the death rate for everyone other than European was more than three times the European rate.
+
+## PERSPECTIVE | Pacific and Indigenous Peoples | vanquished
+# MOOD: dread
+# extract: src-moh-1920.secnz
+N: The fourth account is the one the two Samoas make by themselves.
+N: In New Zealand a government commission counted about five deaths per thousand among Europeans in nineteen eighteen, and twenty two point six among Maori, the Indigenous people, in its last quarter. A later count puts the Maori rate at seven point three times the European.
+N: The ratios disagree; the direction does not. The Ministry of Health, carrying the commission.
+M: Native races (Maoris) were more susceptible to attack than Europeans and the disease was more fatal among them.
+N: In Alaska, then a United States territory, the assistant superintendent of the Bureau of Education at Nome telegraphed Washington on the second of January, nineteen nineteen. Ten villages affected, three wiped out entirely, the others averaging eighty five per cent dead.
+N: No source in this record was written by a Samoan, a Maori or an Alaska Native.
+
+## PERSPECTIVE | Epidemiology and Historical Memory | revisionist
+# MOOD: reckoning
+# extract: src-johnson-mueller-2002.abstract
+N: The fifth account is the scholarly one, the account of a number that would not stay still.
+N: A calculation of the nineteen twenties put the world's dead at about twenty one and a half million; a paper of nineteen ninety one, at twenty four point seven to thirty nine point three million.
+N: In two thousand two Niall Johnson and Juergen Mueller, who had compiled the dead country by country, wrote this.
+M: This paper suggests that it was of the order of 50 million.
+N: Later papers carried fifty million, and arguably a hundred million. In two thousand eighteen Spreeuwenberg and colleagues, working from the vital records of thirteen countries and British India, wrote that the true figure was very unlikely to be higher than twenty five million.
+N: In two thousand five a team led by Jeffery Taubenberger, a molecular pathologist, reconstructed the virus from lung tissue the pathologist Johan Hultin had recovered at Brevig Mission, an Alaskan village where seventy two of about eighty people had died in a week. Where it began, the genome does not say.
+
+## REST | short
+# MOOD: reckoning
+
+## TURN | What each one leaves out
+# MOOD: reckoning
+N: Each is true as far as it goes.
+N: The account of the governments has the name and no order. The one concealment in the record was a Spanish resort hiding its summer.
+N: The public health account has one nurse, and a comparison made in two thousand seven that the Public Health Service's own statistician declined to make in nineteen eighteen.
+N: The colonial account has the largest dead and the thinnest record: no provincial report, no district register, no count of Africa beyond South Africa.
+N: The Pacific account has the cleanest experiment, and no Samoan, Maori or Alaska Native voice in it.
+N: The scholarly account has sixteen figures for the world and no count.
+N: And no source in this record is by a mother who lost a child.
+
+## REST
+# MOOD: grief
+
+## CLOSE
+# MOOD: grief
+N: The influenza of nineteen eighteen travelled with the First World War and reached every inhabited continent. Its dead were estimated, never counted: about seven million in British India in one year, seven thousand five hundred and forty two in Western Samoa, and for the world a range from fifteen million to a hundred million.
+N: Britain's Ministry of Health, looking back in nineteen twenty, wrote that the disease simply had its way. It came, the report says, like a thief in the night and stole treasure.
+N: Nobody counted the dead. Everyone who estimated them said so first.
+
+## SAY
+Devens = DEV-enz
+Grist = GRIST
+Wever = VAY-ver
+van Bergen = van BUR-gen
+Suryakant Tripathi = soor-yuh-KAHNT trih-PAH-tee
+Nirala = nih-RAH-lah
+Kulli Bhat = KUL-lee BAHT
+Ganges = GAN-jeez
+Berar = beh-RAR
+Bihar = bih-HAR
+Orissa = oh-RISS-ah
+Talune = tah-LOO-nay
+Upola = oo-POH-lah
+Savaii = sah-VY-ee
+Apia = ah-PEE-ah
+Samoa = sah-MOH-ah
+Samoan = sah-MOH-an
+Maori = MAU-ree
+Maoris = MAU-reez
+Nome = NOHM
+Hatchett = HATCH-it
+Mecher = MEK-er
+Lipsitch = LIP-sitch
+Niall = NYE-al
+Juergen Mueller = YUR-gen MYOO-ler
+Taubenberger = TOW-ben-ber-ger
+Spreeuwenberg = SPRAY-ven-berg
+Hultin = HUL-tin
+Brevig Mission = BREV-ig MISH-un

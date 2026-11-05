@@ -1,0 +1,7 @@
+source: src-de-19150805
+locator: para20
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs/1915-08-05-DE-002
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+
+Es würde hier zu weit führen, auf die Ursachen der Armenierunruhen einzugehen und zu untersuchen, ob dieselben durch zweckmässige Massregeln und Verhandlungen der Regierung hätten vermieden werden können. Soviel mir bekannt, ist in dieser Hinsicht rechtzeitig nichts geschehen. Es ist ferner selbstverständlich, dass dort, wo auf Betreiben der armenischen Revolutionskomitees und russischer Emissäre Aufstände stattgefunden haben, mit aller Strenge gegen die Schuldigen vorgegangen wird. Ich hätte sogar viel schärfere rechtzeitige Vorbeugungsmassregeln der Regierung und der Militärbehörden an bedrohten Punkten erwartet und gewünscht, nicht aber, wie das meist geschehen, nachträgliche Vergeltungsmassregeln. Für einen allgemein beabsichtigten und vorbereiteten Aufstand der Armenier fehlen meines Erachtens jedoch jegliche Beweise.

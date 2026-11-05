@@ -1,0 +1,8 @@
+source: src-tonline-jaeger-2019
+locator: secnight
+url: https://www.t-online.de/nachrichten/panorama/wissen/geschichte/id_86669552/grenzoeffner-harald-jaeger-man-sagt-ich-habe-die-mauer-geoeffnet-.html
+read: 2026-10-09
+note: Jäger's written answer to a reader's question as t-online prints it ('Hier finden Sie einige seiner Antworten'); the page says more is in a video, not held
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Ich habe in der Nacht vom 9. zum 10. November meine schrecklichste und meine schönste Nacht erlebt. Schrecklich deshalb, weil ich in der Nacht von meinen damaligen Mitarbeitern, von den Vorgesetzten bis hin zur Partei- und Staatsführung allein gelassen worden bin. Man hat mir nicht geglaubt, dass zigtausend DDR-Bürger ihre Ausreise nach West-Berlin verlangt haben. Und das Schönste in der Nacht war gewesen, als wir die Kontrollen eingestellt haben und zigtausend DDR-Bürger freudestrahlend, jubelnd die Ausreise nach West-Berlin benutzt haben. Für uns war das praktisch eine rauschende Ballnacht.

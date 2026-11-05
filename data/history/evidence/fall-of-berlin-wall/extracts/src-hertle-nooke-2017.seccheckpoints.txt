@@ -1,0 +1,8 @@
+source: src-hertle-nooke-2017
+locator: seccheckpoints
+url: https://www.chronik-der-mauer.de/system/files/dokument_pdf/2017_08_08_Hertle_Nooke_140_Victims_Berlin_Wall_FINAL_0.pdf
+read: 2026-10-09
+note: p. 2, deaths at the checkpoints, counted apart from the 140
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+At least 251 mainly elderly travellers from East and West Germany died before, during or after passing through a Berlin checkpoint, predominantly as a result of heart attacks.

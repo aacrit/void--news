@@ -1,0 +1,87 @@
+{
+ "version": "1.2.0",
+ "title": "The Khmer Empire",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 52.383
+  },
+  {
+   "startTime": 52.383,
+   "title": "Phnom Kulen, eight oh two",
+   "endTime": 137.234
+  },
+  {
+   "startTime": 137.234,
+   "title": "Angkor Wat, eleven thirteen",
+   "endTime": 176.949
+  },
+  {
+   "startTime": 176.949,
+   "title": "Angkor Thom, after eleven seventy seven",
+   "endTime": 252.607
+  },
+  {
+   "startTime": 252.607,
+   "title": "Angkor, twelve ninety six",
+   "endTime": 318.948
+  },
+  {
+   "startTime": 318.948,
+   "title": "Drought, thirteen sixty two to fourteen thirty one",
+   "endTime": 373.355
+  },
+  {
+   "startTime": 373.355,
+   "title": "Le Tour du Monde, eighteen sixty three",
+   "endTime": 422.594
+  },
+  {
+   "startTime": 422.594,
+   "title": "Five accounts",
+   "endTime": 442.899
+  },
+  {
+   "startTime": 442.899,
+   "title": "The Khmer Court",
+   "endTime": 510.296
+  },
+  {
+   "startTime": 510.296,
+   "title": "The French Discovery",
+   "endTime": 560.483
+  },
+  {
+   "startTime": 560.483,
+   "title": "The Cambodian Nationalists",
+   "endTime": 606.658
+  },
+  {
+   "startTime": 606.658,
+   "title": "The Thai Successor State",
+   "endTime": 677.171
+  },
+  {
+   "startTime": 677.171,
+   "title": "The Hydraulic Archaeologists",
+   "endTime": 764.786
+  },
+  {
+   "startTime": 764.786,
+   "title": "What each one leaves out",
+   "endTime": 843.276
+  },
+  {
+   "startTime": 843.276,
+   "title": "Legacy",
+   "endTime": 872.828
+  },
+  {
+   "startTime": 872.828,
+   "endTime": 885.928,
+   "title": "Also from Void News"
+  }
+ ]
+}

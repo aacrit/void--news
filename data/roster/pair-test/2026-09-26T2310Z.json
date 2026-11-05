@@ -1,0 +1,179 @@
+{
+ "collected_at": "2026-09-26T23:10:10Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 25,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16162909/E-bike-rider-dies-crash-moped-murder-probe.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "E-bike rider, 24, dies in crash involving moped - as Metropolitan Police launch murder probe",
+      "published": "Sat, 26 Sep 2026 19:59:31 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/kensington-ebike-moped-murder-crash-37706036",
+      "title": "Murder probe after e-bike cyclist killed in horror crash in Kensington",
+      "published": "Sat, 26 Sep 2026 19:05:18 +0000"
+     }
+    },
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16162499/manchester-city-khaldoon-al-mubarak-financial-doping-verdict.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Defiant Man City insist they are INNOCENT: Chairman breaks his silence with bombshell Premier League verdict leaving club facing threat of relegation",
+      "published": "Sat, 26 Sep 2026 16:23:20 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/man-city-charges-verdict-live-37703247",
+      "title": "Man City verdict LIVE: Chairman breaks silence on 115 charges in new statement",
+      "published": "Sat, 26 Sep 2026 21:43:09 +0000"
+     }
+    },
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailymail.com/sport/boxing/article-16162097/Tyson-Fury-vs-Anthony-Joshua-claims-Gypsy-King-150m-Cardiff-mega-fight-thrown-chaos-just-24-hours-bout-confirmed.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Tyson Fury vs Anthony Joshua in chaos as Gypsy King claims rival wants to pull OUT of  £150m Cardiff mega fight just over 24 hours after bout was confirmed",
+      "published": "Sat, 26 Sep 2026 12:41:13 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/boxing/tyson-fury-anthony-joshua-fight-37706394",
+      "title": "Tyson Fury accepts replacement opponent for Anthony Joshua",
+      "published": "Sat, 26 Sep 2026 23:08:20 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16162295/Prince-Harry-does-skydive-honour-promise-102-year-old-WW2-veteran-rings-worried-Meghan-tell-landed-safely.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Prince Harry does skydive to honour promise to 102-year-old WW2 veteran then rings worried Meghan to tell her he landed safely",
+      "published": "Sat, 26 Sep 2026 18:25:22 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/prince-harry-skydive-toronto-war-37706223",
+      "title": "Moment daredevil Prince Harry honours promise made to 102-year-old Second World War veteran",
+      "published": "Sat, 26 Sep 2026 20:40:36 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16162559/Furious-Premier-League-clubs-set-trigger-800MILLION-lawsuits-against-Man-City-seismic-115-charges-verdict-lawyers-prepare-case-drag-TWO-YEARS.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Revealed: Furious Premier League clubs set to trigger £800MILLION lawsuits against Man City after seismic 115 charges verdict - as lawyers prepare for case to drag on for another TWO YEARS",
+      "published": "Sat, 26 Sep 2026 20:12:51 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/man-city-charges-keane-wright-37706094",
+      "title": "Roy Keane and Ian Wright urge Premier League to punish Man City after 'cheat' verdict",
+      "published": "Sat, 26 Sep 2026 19:31:59 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16163211/Emma-Willis-Strictly-hosts-shaky-start.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "You're making me nervous, Johannes! Emma Willis sums up the feelings of a nation as new Strictly hosts get off to shaky start",
+      "published": "Sun, 27 Sep 2026 00:00:16 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/strictly-come-dancing-hosts-presenters-37705966",
+      "title": "Strictly Come Dancing fans fume 'it doesn't work' as they adjust to new hosts and format",
+      "published": "Sat, 26 Sep 2026 19:48:56 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16151151/England-vs-Spain-UEFA-Nations-League-LIVE-Three-Lions-world-champions-match-World-Cup.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "England vs Spain - UEFA Nations League RECAP: Reaction as world champions come from behind to beat Three Lions in thriller",
+      "published": "Sat, 26 Sep 2026 23:47:20 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/match-reports/england-spain-nations-league-highlights-37706073",
+      "title": "England pay the penalty in Spain defeat after Harry Kane's miss - 5 talking points",
+      "published": "Sat, 26 Sep 2026 20:41:29 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16162235/ireland-israel-nations-league-genocide.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Ireland WILL play Israel: Stars hold FOUR-HOUR crunch talks and stage last-minute vote on controversial game after team-mate refused to take part in Nations League contest - with manager saying 'we're playing against genocide'",
+      "published": "Sat, 26 Sep 2026 14:51:25 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/gavin-bazunu-ireland-israel-statement-37706178",
+      "title": "Gavin Bazunu releases statement after Ireland star pulls out of Israel game",
+      "published": "Sat, 26 Sep 2026 20:19:10 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 132,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/defense-news/article-909763",
+      "title": "Egyptian intelligence chief visited Israel days before Oct. 7 to issue security warning - report",
+      "published": "Sat, 26 Sep 2026 10:05:04 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-security/2026-09-25/ty-article/report-bin-zayed-warned-netanyahu-days-before-oct-7-sources-say/000001a0-d9b8-dfbb-afa4-fbf8844a0000",
+      "title": "NYT: Sources confirm Haaretz report of UAE president's Oct. 7 warning to Netanyahu",
+      "published": "Fri, 25 Sep 2026 21:54:56 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 135,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/turkish-officials-hit-back-at-israeli-minister-over-remarks-on-erdogan/news",
+      "title": "Turkish officials hit back at Israeli minister over remarks on Erdoğan",
+      "published": "Thu, 24 Sep 2026 14:54:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/09/turkey-shelters-emirati-brotherhood-figures-accused-of-plotting-to-oust-uae-rulers/",
+      "title": "Turkey shelters Emirati Brotherhood figures accused of plotting to oust UAE rulers",
+      "published": "Sun, 20 Sep 2026 22:18:23 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 314,
+    "left": 10
+   }
+  }
+ }
+}

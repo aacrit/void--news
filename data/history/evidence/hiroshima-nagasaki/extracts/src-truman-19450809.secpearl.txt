@@ -1,0 +1,9 @@
+source: src-truman-19450809
+locator: secpearl
+url: https://www.trumanlibrary.gov/library/public-papers/97/radio-report-american-people-potsdam-conference
+read: 2026-10-05
+note: two consecutive paragraphs
+
+Having found the bomb we have used it. We have used it against those who attacked us without warning at Pearl Harbor, against those who have starved and beaten and executed American prisoners of war, against those who have abandoned all pretense of obeying international laws of warfare. We have used it in order to shorten the agony of war, in order to save the lives of thousands and thousands of young Americans.
+
+We shall continue to use it until we completely destroy Japan's power to make war. Only a Japanese surrender will stop us.

@@ -1,0 +1,7 @@
+source: src-cobbett-17890512
+locator: secnorris
+url: https://archive.org/details/10279136bsb
+read: 2026-10-09
+note: Wilberforce QUOTING Robert Norris, a Liverpool delegate, in order to refute him; the OCR's quotation marks are kept as the layer prints them; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Their apartments,” says Mr. Norris, “ are fitted up as much for their advantage as circumstances will admit.

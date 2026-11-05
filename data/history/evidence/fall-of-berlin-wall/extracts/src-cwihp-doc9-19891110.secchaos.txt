@@ -1,0 +1,8 @@
+source: src-cwihp-doc9-19891110
+locator: secchaos
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+read: 2026-10-09
+note: CWIHP Bulletin 12/13, p. 158, Document No. 9 (SAPMO-BA copy), translated for CWIHP by Howard Sargeant
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+With the current situation of de facto open borders and huge numbers of people moving in both directions, a chaotic situation could easily develop that might have unforeseen consequences.

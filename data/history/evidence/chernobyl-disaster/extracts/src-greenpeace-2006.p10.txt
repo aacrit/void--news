@@ -1,0 +1,9 @@
+source: src-greenpeace-2006
+locator: p10
+url: https://web.archive.org/web/20061211035033/http://www.greenpeace.org/raw/content/international/press/reports/chernobylhealthreport.pdf
+read: 2026-10-07
+note: Introduction, printed page 10
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+note: the PDF's fonts carry no ToUnicode map and the text layer is a fixed glyph shift: every character code is read 29 places higher (gpdec.py, PyMuPDF raw characters), and five punctuation glyphs are mapped by their printed form (’ “ ” – …); checked against the rendered page
+
+The range of estimates of excess mortality resulting from the Chernobyl accident spans an extremely wide range depending upon precisely what is taken into account. The most recent epidemiological evidence, published under the auspices of the Russian Academy of Sciences, suggests that the scale of the problems could be very much greater than predicted by studies published to date. For example, the 2005 IAEA report predicted that 4000 additional deaths would result from the Chernobyl accident. The most recently published figures indicate that in Belarus, Russia and the Ukraine alone the accident resulted in an estimated 200,000 additional deaths between 1990 and 2004.

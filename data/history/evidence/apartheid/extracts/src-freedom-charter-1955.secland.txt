@@ -1,0 +1,7 @@
+source: src-freedom-charter-1955
+locator: secland
+url: https://omalley.nelsonmandela.org/index.php/site/q/03lv01538/04lv01600/05lv01611/06lv01612.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+The land shall be shared among those who work it! Restrictions of land ownership on a racial basis shall be ended, and all the land re-divided amongst those who work it to banish famine and land hunger; The state shall help the peasants with implements, seed, tractors and dams to save the soil and assist the tillers; Freedom of movement shall be guaranteed to all who work on the land; All shall have the right to occupy land wherever they choose; People shall not be robbed of their cattle, and forced labour and farm prisons shall be abolished.

@@ -1,0 +1,7 @@
+source: src-census-1921
+locator: secbombay
+url: https://archive.org/download/india.history.resource.92353/92353_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+Mr. Sedgwick has dealt fully with the effect of the epidemic in various parts of the Presidency and estimates, on the basis of the vital statistics, the total mortality in the British districts, excludmg Bombay City, from influenza at.one million persons.

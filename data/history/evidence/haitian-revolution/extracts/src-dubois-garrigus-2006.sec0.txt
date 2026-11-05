@@ -1,0 +1,7 @@
+source: src-dubois-garrigus-2006
+locator: sec0
+url: https://today.duke.edu/showcase/haitideclaration/declarationstext.html
+read: 2026-09-25
+note: the heading and the first paragraph of the translation as the page prints it
+
+The Commander in Chief to the People of Haiti Citizens:  It is not enough to have expelled the barbarians who have bloodied our land for two centuries; it is not enough to have restrained those ever-evolving factions that one after another mocked the specter of liberty that France dangled before you. We must, with one last act of national authority, forever assure the empire of liberty in the country of our birth; we must take any hope of re-enslaving us away from the inhuman government that for so long kept us in the most humiliating torpor. In the end we must live independent or die. Independence or death... let these sacred words unite us and be the signal of battle and of our reunion.

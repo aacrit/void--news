@@ -1,0 +1,140 @@
+{
+ "collected_at": "2026-10-13T16:28:58Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16205883/lucian-piane-dead-rupauls-drag-race.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "RuPaul's Drag Race star Lucian Piane dead at 46 after being hit by car",
+      "published": "Tue, 13 Oct 2026 16:29:30 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/rupauls-drag-race-lucian-piane-37768375",
+      "title": "RuPaul's Drag Race star Lucian Piane dead at 46 after being hit by car",
+      "published": "Tue, 13 Oct 2026 16:09:04 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16204837/Tiger-attack-witness-picture-victim-pleads-trolls.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Pictured: Man mauled to death by tiger at Yorkshire zoo as video shows moment he walked up to the 30 stone big cat after climbing into enclosure",
+      "published": "Tue, 13 Oct 2026 17:06:35 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/tiger-attack-video-enclosure-yorkshire-37768038",
+      "title": "Chilling moment tiger attack victim William Chapman films himself walking towards animal",
+      "published": "Tue, 13 Oct 2026 16:02:59 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 140,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/politics-and-diplomacy/article-911536",
+      "title": "Netanyahu adviser asked ChatGPT to help improve Qatar's image among Israelis, Jews worldwide",
+      "published": "Tue, 13 Oct 2026 12:12:58 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-politics/2026-10-12/ty-article/.premium/report-netanyahu-aide-used-chatgpt-to-devise-strategy-to-boost-qatars-image/000001a1-3177-d438-a7a1-b7ff68be0000",
+      "title": "Report: Netanyahu aide questioned over alleged use of ChatGPT to boost Qatar's image",
+      "published": "Mon, 12 Oct 2026 22:54:36 +0300"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.jpost.com/middle-east/article-911565",
+      "title": "Riyadh's dilemma: Can Saudi Arabia stop Houthi attacks without triggering a wider war? - analysis",
+      "published": "Tue, 13 Oct 2026 14:17:24 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/middle-east-news/2026-10-11/ty-article/.premium/a-saudi-arabia-under-attack-could-dictate-the-timing-of-a-war-against-iran/000001a1-2781-d5af-a3b7-2fb1a76f0000",
+      "title": "A Saudi Arabia under attack could dictate the timing of a new U.S. war against Iran",
+      "published": "Sun, 11 Oct 2026 03:25:23 +0300"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/article-911497",
+      "title": "Elazar Yair Wilensky, 14, identified as victim of Hezbollah ordnance explosion in northern Israel",
+      "published": "Tue, 13 Oct 2026 07:29:59 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-security/2026-10-13/ty-article/.premium/teen-killed-in-northern-israel-explosion-identified-as-elazar-yair-vilansky/000001a1-33b2-dd6b-aff3-fff7ce0d0000",
+      "title": "Teen killed in northern Israel explosion identified as Elazar Yair Wilensky",
+      "published": "Tue, 13 Oct 2026 08:30:06 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/classified-turkish-intelligence-operation-in-moldova-comes-back-under-judicial-scrutiny/",
+      "title": "Classified Turkish intelligence operation in Moldova comes back under judicial scrutiny",
+      "published": "Tue, 06 Oct 2026 22:12:19 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/erdogan-calls-for-grand-consensus-amid-terror-free-turkiye-success",
+      "title": "Erdoğan calls for ‘grand consensus’ amid terror-free Türkiye success",
+      "published": "Thu, 01 Oct 2026 14:09:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/whatever-our-enemies-do-erdogans-son-rallies-diaspora-network-in-europe-as-german-intelligence-warns-of-ankaras-spying-on-dissidents/",
+      "title": "Erdogan’s son vows to stand against enemies at diaspora rally in Germany",
+      "published": "Mon, 12 Oct 2026 22:01:54 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 315,
+    "left": 10
+   }
+  }
+ }
+}

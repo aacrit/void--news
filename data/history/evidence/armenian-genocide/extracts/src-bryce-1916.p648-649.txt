@@ -1,0 +1,8 @@
+source: src-bryce-1916
+locator: p648-649
+url: https://archive.org/download/treatmentofarmen00grea/treatmentofarmen00grea_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer of the HMSO printing; end-of-line hyphens rejoined, spacing collapsed, the layer's glyph errors otherwise kept
+note: Toynbee's historical summary, chapter VI, the page break at 648/649 and the footnotes on it removed
+
+The first step is to establish the number of Armenians living within the Ottoman frontiers at the moment the deportations began. All the other figures ultimately depend upon this, but it is harder than any to obtain, for there are no independent foreign estimates of this on record, and the discrepancy between the native estimates is extreme*. The Armenian Patriarchate, after an enquiry conducted in 1912, placed the number as high as 2,100,000f ; the Ottoman Government, in its latest official returns, puts it at 1,100,000 and no more. Both parties have an equal political interest in forcing their figures, but the Armenians are likely to have had a greater respect for exactitude, or at any ^ rate a stronger sense of the futility of falsification. I he most neutral ” course under the circumstances is to halve the difference, and to take the number provisionally as being 1,600,000, with the qualification that the true figure certainly lies between this and 2,000,000, and probably approaches more closely to the latter.

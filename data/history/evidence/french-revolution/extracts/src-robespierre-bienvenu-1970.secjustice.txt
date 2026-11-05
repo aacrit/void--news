@@ -1,0 +1,8 @@
+source: src-robespierre-bienvenu-1970
+locator: secjustice
+url: https://revolution.chnm.org/d/413
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+note: the paragraph's FIRST sentence, Bienvenu's translation of 'Si le ressort du gouvernement populaire ...', is deliberately not held: see gaps (src-robespierre-17940205)
+
+Terror is nothing but prompt, severe, inflexible justice; it is therefore an emanation of virtue. It is less a special principle than a consequence of the general principle of democracy applied to our country's most pressing needs.
