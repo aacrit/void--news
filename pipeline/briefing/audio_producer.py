@@ -208,6 +208,17 @@ def _script_to_dialogue(audio_script: str) -> str:
 # edge-tts synthesis ($0 — Microsoft Neural voices)
 # ---------------------------------------------------------------------------
 
+_EDGE_RETRY_WAITS = (1.5, 4.0)
+
+
+def _decodes(path: str) -> bool:
+    """True when the file at `path` is a non-empty MP3 pydub can read."""
+    try:
+        return Path(path).stat().st_size > 0 and len(AudioSegment.from_mp3(path)) > 0
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def _synthesize_edge_tts(
     dialogue: str,
     voice_a_edge: str,
@@ -274,6 +285,20 @@ def _synthesize_edge_tts(
     loop = asyncio.new_event_loop()
     try:
         synth_results = loop.run_until_complete(_synth_all())
+        # Every turn goes out at once, and the service answers some of them
+        # with "No audio was received": run #422 (2026-11-05) lost 9 of 37
+        # turns that way and shipped the gaps. A refused turn is retried on
+        # its own, twice, with a pause, which is what the service tolerates.
+        for i, (_idx, v, txt, pth, _b) in enumerate(turn_specs):
+            for wait in _EDGE_RETRY_WAITS:
+                if not isinstance(synth_results[i], BaseException) and _decodes(pth):
+                    break
+                time.sleep(wait)
+                try:
+                    loop.run_until_complete(_synth_one(v, txt, pth))
+                    synth_results[i] = None
+                except Exception as e:  # noqa: BLE001
+                    synth_results[i] = e
     finally:
         loop.close()
 
@@ -316,7 +341,13 @@ def _synthesize_edge_tts(
         return None
 
     if failed:
-        print(f"  [warn][audio] edge-tts: {failed}/{len(turns)} turns failed")
+        # A turn that never synthesized is a line the script says was spoken
+        # and the episode does not carry. Dropping one can cut an attribution
+        # ("..., officials said") and change what a story asserts, so a
+        # gapped episode is refused and the day ships no audio instead.
+        print(f"  [warn][audio] edge-tts: {failed}/{len(turns)} turns failed after "
+              f"retries; refusing a gapped episode")
+        return None
 
     # Stitch turns: a brief beat within a story, a real pause at a story
     # boundary. 60 ms between two DIFFERENT voices reads as a hard cut; the

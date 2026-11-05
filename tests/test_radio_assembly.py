@@ -336,5 +336,57 @@ def main() -> None:
     print("\ntest_radio_assembly: all checks passed")
 
 
+def test_edge_fallback_retries_and_refuses_gaps() -> None:
+    """The legacy edge-tts path: a refused turn is retried, a gap is refused.
+
+    Run #422 (2026-11-05) sent all 37 turns at once, the service answered 9
+    with "No audio was received", and the episode shipped without those
+    lines. A turn refused once must be retried and land; a turn that never
+    lands must cost the episode, not a line of it.
+    """
+    from briefing import audio_producer as ap
+    ap._EDGE_RETRY_WAITS = (0.0, 0.0)
+    real_sleep = ap.time.sleep
+    ap.time.sleep = lambda s: None
+    tone = (Sine(220, sample_rate=24000).to_audio_segment(duration=300)
+            .apply_gain(-12).set_channels(1))
+
+    class FakeEdge:
+        def __init__(self, refusals):
+            self.refusals = refusals  # text -> how many times to refuse it
+            self.calls = {}
+
+        def Communicate(self, text, voice):  # noqa: N802 (mirrors edge_tts)
+            outer = self
+
+            class C:
+                async def save(self, path):
+                    outer.calls[text] = outer.calls.get(text, 0) + 1
+                    if outer.calls[text] <= outer.refusals.get(text, 0):
+                        raise RuntimeError("No audio was received.")
+                    tone.export(path, format="mp3")
+            return C()
+
+    dialogue = "One: First line here.\nTwo: Second line, officials said.\nOne: Third line."
+    real = getattr(ap, "_edge_tts_module", None)
+    real_flag = getattr(ap, "EDGE_TTS_AVAILABLE", False)
+    ap.EDGE_TTS_AVAILABLE = True
+    try:
+        ap._edge_tts_module = FakeEdge({"Second line, officials said.": 1})
+        pcm = ap._synthesize_edge_tts(dialogue, "va", "vb")
+        check(pcm is not None, "edge: a turn refused once is retried and the episode is made")
+        check(ap._edge_tts_module.calls.get("Second line, officials said.") == 2,
+              "edge: the refused turn was asked for exactly once more")
+        ap._edge_tts_module = FakeEdge({"Second line, officials said.": 99})
+        check(ap._synthesize_edge_tts(dialogue, "va", "vb") is None,
+              "edge: a turn that never lands refuses the episode rather than ship the gap")
+    finally:
+        ap._edge_tts_module = real
+        ap.EDGE_TTS_AVAILABLE = real_flag
+        ap.time.sleep = real_sleep
+    print("  edge fallback: retries a refused turn, refuses a gapped episode")
+
+
 if __name__ == "__main__":
+    test_edge_fallback_retries_and_refuses_gaps()
     main()

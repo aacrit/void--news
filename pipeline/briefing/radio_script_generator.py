@@ -47,6 +47,11 @@ except ImportError:  # pragma: no cover - package-relative import
         has_numerals, has_quotation_marks, spoken_date, strip_quotation_marks,
     )
 
+try:
+    from utils.prohibited_terms import strip_significance
+except ImportError:  # pragma: no cover - package-relative import
+    from pipeline.utils.prohibited_terms import strip_significance  # type: ignore
+
 # ---------------------------------------------------------------------------
 # Void's own lines (original; never borrowed)
 # ---------------------------------------------------------------------------
@@ -1181,16 +1186,27 @@ def generate_radio_rundown(
 
     if best is not None:
         rundown, report = best
-        if report.failures and all(f.id == "R-02" for f in report.failures):
-            # The retry was spent asking for reported speech. Once it is gone
-            # the marks are punctuation the engine drops anyway, so strip and
-            # re-validate rather than lose the show to them.
+        if report.failures and all(f.id in ("R-02", "R-05") for f in report.failures):
+            # Two failures have a deterministic repair, so the show is not lost
+            # to them. R-02: the retry was spent asking for reported speech;
+            # once it is gone the marks are punctuation the engine drops
+            # anyway. R-05: a significance word in Void's voice ("alter the
+            # composition of the state leadership significantly", run #422,
+            # 2026-11-05, on every attempt) is cut by the same stripper the
+            # page copy uses, which keeps a negated one ("no significant
+            # damage"). Any other R-05 phrase survives the strip and still
+            # fails the re-validation below, so nothing banned can pass.
+            kinds = {f.id for f in report.failures}
             for s in rundown.segments:
                 for t in s.turns:
-                    t.text = strip_quotation_marks(t.text)
+                    if "R-02" in kinds:
+                        t.text = strip_quotation_marks(t.text)
+                    if "R-05" in kinds:
+                        t.text = strip_significance(t.text)
             report = validate_rundown(rundown, ctx)
             if report.passed:
-                print("  [radio] quotation marks stripped after the retry; script accepted")
+                print(f"  [radio] {'/'.join(sorted(kinds))} repaired deterministically "
+                      f"after the retry; script accepted")
                 _log_ground(rundown, ctx)
                 return rundown, report, "gemini-flash"
         print(f"  [radio] no attempt passed; best had {len(report.failures)} failures")
