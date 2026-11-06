@@ -1,0 +1,52 @@
+{
+ "version": "1.2.0",
+ "title": "On Air · Friday 06 November 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Headlines",
+   "endTime": 49.98
+  },
+  {
+   "startTime": 49.98,
+   "title": "Markle Arrest",
+   "endTime": 118.073
+  },
+  {
+   "startTime": 118.073,
+   "title": "Hegseth Impeachment",
+   "endTime": 231.302
+  },
+  {
+   "startTime": 231.302,
+   "title": "Kenyan Cult",
+   "endTime": 296.793
+  },
+  {
+   "startTime": 296.793,
+   "title": "Israeli Government",
+   "endTime": 377.473
+  },
+  {
+   "startTime": 377.473,
+   "title": "Also today",
+   "endTime": 446.189
+  },
+  {
+   "startTime": 446.189,
+   "title": "McIlroy Penalty",
+   "endTime": 482.384
+  },
+  {
+   "startTime": 482.384,
+   "title": "Opinion",
+   "endTime": 592.051
+  },
+  {
+   "startTime": 592.051,
+   "endTime": 605.151,
+   "title": "Also from Void"
+  }
+ ]
+}

@@ -1,46 +1,32 @@
 {
-  "builtAt": "2026-11-03T19:42:08.803452Z",
+  "builtAt": "2026-11-06T19:31:29.796647Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "e56eba52-578d-486d-bf62-863cf5b5f7cf",
-      "title": "United States Removes South Africa and Rwanda From Preferential Trade Pact",
+      "id": "402657f3-c160-485c-8a2d-fdff94a9db28",
+      "title": "Former Senator and West Virginia Governor Jay Rockefeller Dies at Age 89",
       "sentences": [
         {
-          "text": "South African Minister of Parks Tau acknowledged the announcement and confirmed the government will maintain a 60-day notice period to address concerns while supporting affected sectors, noting that trade totaled 28.8 billion dollars in 2025.",
+          "text": "He helped establish the Children's Health Insurance Program in 1997 and chaired the Senate Intelligence Committee, where he voted for the 2002 Iraq war authorization before later expressing regret and accusing President George W.",
           "rule": "E-13",
-          "message": "summary states 28.8, which appears in none of the source articles: source it or cut it"
+          "message": "summary puts 1997 beside \"president george w\", but no source sentence carrying 1997 names it and one names another \"president ...\": \"He helped establish the Children's Health Insurance Program in 1997 and chaired the Senate\""
         }
       ],
       "points": [],
       "left": []
     },
     {
-      "id": "b90c38d4-4f50-43d1-bd8c-70e6d917c666",
-      "title": "OpenAI Lobbys 2028 Candidates on Artificial Intelligence Policy and Data Centers",
-      "sentences": [],
+      "id": "b52b88d8-89cc-46b2-b62c-f948868b501b",
+      "title": "Abdul El-Sayed Wins Michigan Senate Election as First Muslim American Senator",
+      "sentences": [
+        {
+          "text": "The 42-year-old Democrat and former Detroit public health director defeated Republican Mike Rogers after campaigning on healthcare, living costs, and opposition to United States military assistance to Israel.",
+          "rule": "E-13",
+          "message": "summary puts 42 beside \"republican mike rogers\", but no source sentence carrying 42 names it and one names another \"republican ...\": \"The 42-year-old Democrat and former Detroit public health director defeated Republican Mik\""
+        }
+      ],
       "points": [],
-      "left": [
-        "headline puts 2028 beside \"openai lobbys\", but no source sentence carrying 2028 names it and one names another \"openai ...\": \"OpenAI Lobbys 2028 Candidates on Artificial Intelligence Policy and Data Centers\""
-      ]
-    },
-    {
-      "id": "520234e3-ef3f-4b17-a9e6-97794a0f09ab",
-      "title": "Europe Enters Winter With Lowest Gas Reserves Since 2013 as Washington Pushes Pipeline Proposal",
-      "sentences": [],
-      "points": [],
-      "left": [
-        "headline puts 2013 beside \"europe enters winter with lowest gas reserves since\", but no source sentence carrying 2013 names it and one names another \"europe ...\": \"Europe Enters Winter With Lowest Gas Reserves Since 2013 as Washington Pushes Pipeline Pro\""
-      ]
-    },
-    {
-      "id": "7800fdbf-22bb-4a0e-a9e4-7ca2569b2456",
-      "title": "Oracle Stock Plummets as Software Giant Files for $20 Billion Debt and Equity Sale",
-      "sentences": [],
-      "points": [],
-      "left": [
-        "headline puts 20 beside \"oracle stock plummets\", but no source sentence carrying 20 names it and one names another \"oracle ...\": \"Oracle Stock Plummets as Software Giant Files for $20 Billion Debt and Equity Sale\""
-      ]
+      "left": []
     }
   ]
 }
