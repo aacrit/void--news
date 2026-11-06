@@ -1,0 +1,167 @@
+{
+ "collected_at": "2026-11-06T16:20:33Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 37,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16271381/Thomas-Tuchel-tells-Cole-Palmer-misses-opportunities-play-England-leaving-Chelsea-star-latest-squad.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Thomas Tuchel tells Cole Palmer he 'misses too many opportunities' to play for England after leaving Chelsea star out of his latest squad",
+      "published": "Fri, 06 Nov 2026 14:39:45 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/england-squad-announcement-live-thomas-37848875",
+      "title": "England squad recap: Thomas Tuchel explains reason behind Cole Palmer's latest snub",
+      "published": "Fri, 6 Nov 2026 15:43:58 +0000"
+     }
+    },
+    {
+     "score": 26,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16271579/bear-grylls-russell-brand-baptism-genuine.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Bear Grylls says Russell Brand's conversion to Christianity 'seemed genuine to me' after attending his private baptism - as actor now faces years in prison for rape",
+      "published": "Fri, 06 Nov 2026 14:44:36 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/bear-grylls-defends-baptising-russell-37851525",
+      "title": "Bear Grylls defends baptising Russell Brand saying his faith 'seemed genuine to me'",
+      "published": "Fri, 6 Nov 2026 14:40:07 +0000"
+     }
+    },
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16270889/england-squad-announcement-cole-palmer-jordan-henderson.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Jude Bellingham's brother Jobe gets first England call-up - as Thomas Tuchel explains axeing Cole Palmer, who 'misses too many opportunities to impress': Squad announcement RECAP",
+      "published": "Fri, 06 Nov 2026 15:57:38 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/england-squad-cole-palmer-tuchel-37851806",
+      "title": "Thomas Tuchel's brutal Cole Palmer snub is a warning shot to England hopefuls",
+      "published": "Fri, 6 Nov 2026 14:35:06 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16269367/Meghan-Markle-father-Thomas-arrest-child-porn.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Meghan Markle's estranged dad Thomas is arrested in Florida for possessing child sex abuse material after the Daily Mail reported him to the FBI over his disturbing Mexico storage unit",
+      "published": "Fri, 06 Nov 2026 16:14:41 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/thomas-markle-arrest-meghan-dad-37852125",
+      "title": "Meghan’s dad Thomas Markle 'arrested by FBI over alleged child sex abuse images'",
+      "published": "Fri, 6 Nov 2026 15:35:56 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/crime-desk/article-16270125/Katy-Perry-room-one-Russell-Brands-attacks.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Katy Perry 'in the room' during one of Russell Brand's attacks",
+      "published": "Fri, 06 Nov 2026 01:51:51 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/russell-brand-katy-perry-prison-37851980",
+      "title": "Katy Perry said ex ‘should be in jail’ ahead of Russell Brand guilty verdict",
+      "published": "Fri, 6 Nov 2026 15:03:46 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 206,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/opinion/article-913942",
+      "title": "The alliance with America is changing, and Israel cannot afford to ignore it - opinion",
+      "published": "Fri, 06 Nov 2026 11:51:09 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-politics/2026-11-06/ty-article/.premium/netanyahu-says-end-of-u-s-aid-shows-strength-of-israel-u-s-relations/000001a1-b03d-dd7a-a3ed-f17d6e1a0000",
+      "title": "Netanyahu says end of U.S. aid shows 'strength' of Israel-U.S. relations in first response",
+      "published": "Fri, 06 Nov 2026 11:53:19 +0200"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/politics-and-diplomacy/article-914054",
+      "title": "Netanyahu's state comptroller pick Michael Rabello withdraws candidacy after vote controversy",
+      "published": "Fri, 06 Nov 2026 12:47:47 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-politics/2026-11-06/ty-article/.premium/netanyahus-attorney-withdraws-candidacy-for-israels-state-watchdog/000001a1-b086-dda9-a5e9-b7dff4ef0000",
+      "title": "Netanyahu's attorney withdraws candidacy for Israel's state watchdog",
+      "published": "Fri, 06 Nov 2026 14:30:19 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.indiatoday.in/education-today/story/cbse-releases-class-10-12-board-exam-date-sheet-for-2027-exams-to-begin-february-16-3033934-2026-11-06?utm_source=rss",
+      "title": "CBSE Class 10, 12 board exams 2027: Datesheet out, exams from February 16",
+      "published": "Fri, 06 Nov 2026 19:09:36 +0530"
+     },
+     "left": {
+      "url": "https://www.thehindu.com/education/cbse-class-x-xii-10-12-board-exam-dates-schedule-2027/article71674940.ece",
+      "title": "CBSE class 10, 12 board exams to begin on February 16, 2027",
+      "published": "Fri, 06 Nov 2026 21:35:02 +0530"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/erdogans-family-business-ties-complicate-azerbaijan-dispute/",
+      "title": "Erdogan’s family business ties complicate Azerbaijan dispute",
+      "published": "Mon, 26 Oct 2026 23:01:29 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 315,
+    "left": 10
+   }
+  }
+ }
+}
