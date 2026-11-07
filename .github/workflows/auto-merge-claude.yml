@@ -194,6 +194,7 @@ jobs:
           python tests/test_summary_hygiene_parity.py
           python pipeline/validation/test_disaster_severity.py
           python tests/test_radio_script.py
+          python tests/test_onair_show.py          # On Air, the conversation: C-01..C-15, the template edition, the score standard, the timeline
           python tests/test_brief_inputs.py           # the brief writer is never handed a story with no summary
           python tests/test_onair_sidecar.py         # the chapters served beside On Air are that episode's; the voice label names who read it
           python tests/test_history_audio.py
