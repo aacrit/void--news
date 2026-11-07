@@ -1,14 +1,17 @@
 # On Air: the conversation
 
-Last updated: 2026-11-07 (rev 1, the first conversation-format build; replaces
-the 2026-09-18 bulletin as the daily programme. `docs/ON-AIR-RADIO.md` stays
-as the bulletin's record; `VOID_ONAIR_FORMAT=rundown` restores it)
+Last updated: 2026-11-07 (rev 2, after the CEO's first ear test: three anchors,
+the Opinion as a conversation, a score with a pulse, more music under the
+voice, a studio floor. Rev 1 the same day replaced the 2026-09-18 bulletin as
+the daily programme; `docs/ON-AIR-RADIO.md` stays as the bulletin's record and
+`VOID_ONAIR_FORMAT=rundown` restores it)
 
 On Air is the daily programme of Void News: eight to eleven minutes, in the
-manner of a serious daily news podcast. Two voices talk the day's lead
-through, one asking and one answering; they change places for the second
-story; the rest of the desk goes quickly; the Opinion is read by a third
-voice that reads nothing else; a close. It is generated once a day by the
+manner of a serious daily news podcast. Three anchors. Two of them talk the
+day's lead through, one asking and one answering; they change places for the
+second story; the rest of the desk goes quickly; the third makes the day's
+Opinion as an argument drawn out by the anchor's questions, and speaks
+nowhere else; a close. It is generated once a day by the
 pipeline (step 7d) and served as one MP3 with chapters.
 
 This document is the positive definition of the show. The code that enforces it:
@@ -40,8 +43,9 @@ SECOND      B asks (one clause of bridge first), A answers; three to six exchang
 page-turn
 DESK        A: "The rest of the desk."  ranks 3-8, one or two sentences each, alternating
                                                                   [bed: desk, the pulse, throughout]
-entrance    6.0 s, featured, minor shading; C starts 1.8 s before it ends
-OPINION     C, the brief's opinion script, and nothing else      [bed: opinion under the first and the last paragraph]
+entrance    6.0 s, featured, minor shading; A's opening starts 1.6 s before it ends
+OPINION     A: "Now, the Opinion. Through a <lens> lens today. <question>"  C argues, A draws it out;
+            two to five exchanges                                 [bed: opinion under the first and the last exchange]
 CLOSE       A: "That's On Air from Void News. <one fact to carry> Every source, every story, at Void News."
 outro       14.0 s, featured, resolving to the low D; the house promo rides it (unchanged)
 ```
@@ -53,18 +57,28 @@ archived; it starts at the page-turn), `The desk` (kind `briefs`), `Opinion`
 that meaning), `Also from Void` (the promo). `news_start_seconds` is where
 the lead's first question begins.
 
-**The Opinion is read only when it was written for this edition.** A
+**The Opinion is spoken only when it was written for this edition.** A
 carried-forward opinion belongs to another day's stories, so the show ships
 without the segment (two voices, no entrance, no Opinion chapter) rather than
-read it as today's.
+read it as today's. When it is spoken, it is the brief's written opinion
+(`opinion_text`) rendered as a conversation: C's lines are read against that
+text by the grounding pass, so the show adds no claim the Opinion did not
+make; A's questions draw the argument out and never argue back. The first
+line is fixed: `Now, the Opinion. Through a pragmatic lens today.` (the lens
+from `opinion_lean`), then the headline as a question (C-14).
 
 ## The conversation
 
-A question is a real question a careful listener would ask next, at most 28
-words, ending in a question mark; it carries no claim the story does not
-make. An answer is 18 to 120 words, two to five sentences, from its own story
-only, never a question. The voices are never named, never greet or thank
-anyone, never react. Each story ends on the coverage: A asks how the outlets
+It has to sound like people talking, not a bulletin read in turns (CEO,
+first ear test). The asker may open with one short bridge clause that picks up
+the last answer before the question ("So the Senate flipped. What does that
+mean for January?"); now and then the asker's line is a short statement from
+the story that the other voice picks up, so an exchange is any asker line
+followed by the other voice, and at least half of the asker's lines are
+questions. Contractions where a person would use them. An asker's line is at
+most 34 words; an answer is 14 to 120 words, two to five sentences, from its
+own story only, never a question, and may end by handing back in a few
+words. The voices are never named, never greet or thank anyone, never react. Each story ends on the coverage: A asks how the outlets
 are covering it or where they sit; B answers from the Divergence points and
 the Coverage line, naming outlets as the points name them.
 
@@ -84,22 +98,24 @@ confirm it. A roster under five outlets gives no line.
 | C-04 | No a.m./p.m. clock forms, no print datelines | fail |
 | C-05 | No borrowed or AI-podcast phrase, no significance word (the radio list, `BANNED_PHRASES`), no host named or thanked, no identifier spoken | fail |
 | C-06 | Word budgets per segment and in all (`WORD_BUDGETS`, `TOTAL_BUDGET`), +-25 % | fail |
-| C-07 | The shape: the asker opens, questions and answers alternate, questions under the cap and mostly questions, answers inside their budget and never questions; five to ten exchanges in LEAD, three to seven in SECOND; the cold open is one A line and a fact | fail |
+| C-07 | The shape: the asker opens, asker and answerer alternate, the asker's lines under the cap and at least half of them questions, answers inside their budget and never questions; five to ten exchanges in LEAD, three to seven in SECOND, two to five in OPINION (A asks, C answers); the cold open is one A line and a fact | fail |
 | C-08 | The desk opens on "The rest of the desk.", five to seven items, each at most 34 words, a fact not a question, never more items than stories | fail |
-| C-09 | Each of A and B carries 35-65 % of the words | fail |
+| C-09 | Over the news segments, each of A and B carries 35-65 % of the words | fail |
 | C-10 | Sentences under twenty-four words | warn |
 | C-11 | Grounded attribution (the radio's R-14): an attributed clause keeps 0.6 of the story's words for that speaker | fail |
 | C-12 | No unattributed statement of law (R-15) | fail |
 | C-13 | SAY respellings are lowercase syllables | warn |
+| C-14 | The Opinion opens on `Now, the Opinion.` and names its lens | fail |
+| C-00 | C speaks only in OPINION, B never there; an OPINION segment only on a day with a written opinion, and always on such a day | fail |
 | C-15 | A chapter title is at most seven words, no digits | warn |
 
 Then the grounding pass (`ground_show`, `editorial/derived_grounding`): every
 line is read against its own story (LEAD and COLD against rank 1, SECOND
-against rank 2, each desk item against its rank, the framing and the close
-against the day), and a sentence the story does not carry is cut. An answer
-cut whole takes its question with it; a question left dangling at the end
-goes; same-voice neighbours left by a cut are merged, so the voices still
-alternate. `grounding_ran.onair` is True only when the pass completed.
+against rank 2, each desk item against its rank, C's lines against the
+Opinion text, the framing and the close against the day), and a sentence the
+story does not carry is cut. An answer cut whole takes the asker's line that
+set it up with it; an asker's line left dangling at the end goes; same-voice
+neighbours left by a cut are merged, so the voices still alternate. `grounding_ran.onair` is True only when the pass completed.
 
 Ranks are bound from the feed by position (LEAD is rank 1, SECOND rank 2,
 the desk's first item rank 3); the model never copies an id.
@@ -126,14 +142,17 @@ this chain). Casting, 2026-11-07, overridable with `VOID_KOKORO_VOICE_A/B/C`:
 | Role | Voice | Why |
 |---|---|---|
 | A, the anchor | `af_heart` | the roster's A-grade voice goes to the voice heard most |
-| B, the desk | `am_michael` | a darker American voice, so the two sides of a conversation are told apart at once |
+| B, the desk | `am_fenrir` | the CEO heard `am_michael` as robotic on the first ear test; fenrir is the provisional desk until the audition pack is heard (`scratch` audition files, every Kokoro voice slated) |
 | C, the Opinion | `af_bella` | A-grade, and it reads nothing else, so the firewall is audible the moment it starts |
 
 One house pace, 0.95, on all three (CEO 2026-09-19); no voice is stretched.
 
 **The voice chain** (`voice_chain`, the film studio's A13/A38 applied per
-line, in numpy at 48 kHz): trim the silence (60 ms kept), level the line to
--20 LUFS integrated, the house warmth (+2.5 dB bell at 200 Hz, Q 1.2; -2.5 dB
+line, in numpy at 48 kHz): trim the silence (60 ms kept), a light spectral
+gate (each bin's 15th-percentile magnitude is its noise profile; a bin under
+2.5 times it is lowered 14 dB, the gain smoothed over five frames; speech is
+untouched, the residue between words goes down), level the line to -20 LUFS
+integrated, the house warmth (+2.5 dB bell at 200 Hz, Q 1.2; -2.5 dB
 high shelf with its half-gain point at 6 kHz, zero-phase), re-level, and a
 soft knee over -4 dBFS that touches only a line whose crest would reach the
 ceiling. Then a constant-power pan: A 7 % left, B 7 % right, C centred. The
@@ -151,38 +170,46 @@ D A D F# over a D pedal) binds every cue; the day's date seeds the voicing
 placement of the motif's fragments), so no two days carry the same bed while
 every day carries the same motif.
 
-The palette, from the founder's notes on the film score: sub-bass (a soft
-heartbeat on D1, 40 ms rise, a slow fall) carries the weight; pads are voiced
-from G4 up so no sustained tone sits in the voice's low-mids; a felt-piano
-pluck carries the motif; a short synthesised room; almost no treble. "Not
-loud. Dramatic when needed, silent when it deserves."
+The palette, from the founder's notes on the film score and the CEO's first
+ear test ("beats, the way the Daily and the BBC do it, in Void's voice"): a
+pulse under everything that plays, a soft kick (a sine sweeping 130 to 44 Hz
+over 70 ms) with a sub heartbeat on D1 under it and a shaker-like tick in
+1.8 to 4.2 kHz on the off-beats (`drums`: half-time under the conversations,
+four-on-the-floor on the desk, a dotted figure under the Opinion, a bar in
+sixteen dropped so it breathes); the motif running as an eighth-note ostinato
+in two-bar phrases (`ostinato`, D A D F# A D F# A from the fourth octave, in
+minor for the Opinion); pads voiced from G4 up so no sustained tone sits in
+the voice's low-mids; the felt-piano motif on top; a short synthesised room;
+almost no treble. Tempo 76 to 88. "Not loud. Dramatic when needed, silent
+when it deserves."
 
 | | Standard | Check |
 |---|---|---|
 | Dialogue | -20 LUFS integrated, per line | the voice chain |
-| Bed under speech | -32 LUFS in the voice's gaps (12 dB under); levelled on the gaps when they total 4 s | `level_bed`, `bed-level` |
-| Duck | -12 dB under voice, a 1.0 s eased pre-roll at full depth on the onset, held across gaps under 1.2 s, 0.6 s release; never over 2 dB in any 100 ms | `duck_envelope`, `duck-slope` |
+| Bed under speech | -28 LUFS in the voice's gaps (8 dB under; was -32 in rev 1, CEO: more music); levelled on the gaps when they total 4 s | `level_bed`, `bed-level` |
+| Duck | -10 dB under voice, a 1.0 s eased pre-roll at full depth on the onset, held across gaps under 1.2 s, 0.6 s release; never over 2 dB in any 100 ms | `duck_envelope`, `duck-slope` |
 | Featured (theme, entrance, outro) | loudest 3 s window at -26 LUFS, never louder | `level_featured`, `featured-level` |
 | Page-turn | never louder than the bed it leads into (+0.5 dB on the loudest 400 ms) | `level_transition`, `transition-ceiling` |
 | Band shape (beds) | sub-bass under 100 Hz kept (24 dB/oct low-pass) + everything over 400 Hz (24 dB/oct high-pass), -3 dB shelf at 5 kHz; at most 10 % of the energy over 100 Hz in 150-400 Hz; at most 2 % above 5 kHz | `shape_bed`, `bed-low-end`, `music-treble` |
 | Breathing | a bed's 100 ms level spread (p90 - p10) at least 6 dB | `bed-breathing` |
 | Repetition | no 4 s stretch heard near-identically three times in a row (chroma 0.97, third-octave spectrum 0.95, rhythm r 0.90) | `score-repetition` |
 | Fades | an entry from silence 1.5 s or more, an exit as long | the renderers |
-| Phone check | the mix as a small speaker plays it: inside spoken windows (within 10 dB of the line's mean), the voice over the music in 150 Hz to 4 kHz by at least 15 dB; the music is lowered by the shortfall, logged | `phone_check` |
+| Phone check | the mix as a small speaker plays it: inside spoken windows (within 10 dB of the line's mean), the voice over the music in 150 Hz to 4 kHz by at least 12 dB; where a window fails, the music dips by the shortfall in THAT window only, eased over 0.6 s, so the bed keeps its level everywhere else; only if that is not enough does the whole bus come down | `phone_check`, `phone_fix` |
 | Master | -16 LUFS integrated, -1.5 dBTP, linear loudnorm with the limiter anchored | `loudnorm_two_pass` |
 
 A bed that fails breathing, low-end or repetition is drawn once more from a
 second seed; the better render ships and the finding is logged with the
-cue (`[onair][score]`). The standard is quieter or stricter than the film's
-on every number it changes (a 12 dB duck against 9, a 0.6 s release against
-0.25): never louder, never laxer.
+cue (`[onair][score]`). Against the film's A29 block the radio is louder by
+design where the CEO asked for it (a bed at -28 against -32, a 10 dB duck
+against 9 with a 0.6 s release against 0.25) and no laxer anywhere else.
 
 Where the music goes is in the running order above: beds enter under the
-framing, leave after the second answer (the facts get dense; "silent when it
+framing, leave after the third answer (the facts get dense; "silent when it
 deserves"), visit once in the middle of a long conversation, and return for
 the coverage; while a bed plays, the gap between an answer and the next
-question is 1.7 s instead of 0.75, so the music gets a breath. Room tone at
--57 dBFS sits under everything, so a silence is never digital zero.
+question is 1.4 s instead of 0.55, so the music gets a breath. A studio
+floor at -70 dBFS sits under everything so a silence is never digital zero;
+the -57 dBFS room tone of rev 1 read as noise and is gone.
 
 ## Operating it
 

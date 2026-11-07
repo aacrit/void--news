@@ -1679,8 +1679,9 @@ def _produce_onair_edition(edition: str, clusters: list[dict], brief: dict, brie
                  reverse=True)[:DISPLAYED]
     # A carried-forward opinion was written for another day's stories; the
     # show reads only an opinion written for this edition.
-    editorial = None if (brief.get("_carried") or brief.get("_opinion_carried")) else brief.get("opinion_audio_script")
-    print(f"  [onair:{edition}] script over the top {len(top)} (opinion: {'yes' if editorial else 'no'})")
+    fresh_opinion = not (brief.get("_carried") or brief.get("_opinion_carried"))
+    opinion_text = brief.get("opinion_text") if fresh_opinion else None
+    print(f"  [onair:{edition}] script over the top {len(top)} (opinion: {'yes' if opinion_text else 'no'})")
     previous_titles: list[str] = []
     try:
         prev = json.loads(Path(os.environ.get("VOID_STATIC_DATA_DIR", "frontend/public/data"))
@@ -1689,7 +1690,9 @@ def _produce_onair_edition(edition: str, clusters: list[dict], brief: dict, brie
                            if isinstance(c, dict) and c.get("kind") == "story" and c.get("title")]
     except Exception:
         previous_titles = []
-    show, report, label = generate_show(top, previous_titles=previous_titles)
+    show, report, label = generate_show(top, previous_titles=previous_titles, opinion_text=opinion_text,
+                                        opinion_headline=brief.get("opinion_headline") if opinion_text else None,
+                                        opinion_lean=brief.get("opinion_lean") if opinion_text else None)
     if show is None:
         print(f"  [onair:{edition}] no script ({label})")
         return False
@@ -1697,8 +1700,8 @@ def _produce_onair_edition(edition: str, clusters: list[dict], brief: dict, brie
         print(f"  [onair:{edition}] script {show.words} words, ~{report.metrics.get('est_minutes')} min, "
               f"A share {report.metrics.get('speaker_share_a')}, {label}")
     result = produce_show(
-        show, editorial, edition,
-        opinion_headline=None if editorial is None else brief.get("opinion_headline"),
+        show, None, edition,
+        opinion_headline=brief.get("opinion_headline") if opinion_text else None,
         permalinks=permalinks_from_archive(), label=label,
     )
     if result is None:

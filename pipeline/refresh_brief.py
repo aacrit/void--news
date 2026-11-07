@@ -348,7 +348,7 @@ def main():
             from briefing.onair_producer import produce_show, permalinks_from_archive
             from briefing.spoken_text import spoken_date
             top = [c for c in all_clusters if edition in (c.get("sections") or [edition])][:20]
-            editorial = None if args.no_opinion else brief.get("opinion_audio_script")
+            opinion_text = None if args.no_opinion else brief.get("opinion_text")
             stored = (current or {}).get("audio_script") if args.revoice else None
             show = report = None
             label = "none"
@@ -356,7 +356,9 @@ def main():
                 print("  --revoice: the current brief carries no script to re-render")
             elif args.script_file or stored:
                 source = Path(args.script_file).read_text(encoding="utf-8") if args.script_file else stored
-                ctx = Context(top=top, date_spoken=spoken_date(datetime.now(timezone.utc)), has_opinion=bool(editorial))
+                ctx = Context(top=top, date_spoken=spoken_date(datetime.now(timezone.utc)), has_opinion=bool(opinion_text),
+                              opinion_text=opinion_text, opinion_headline=brief.get("opinion_headline") if opinion_text else None,
+                              opinion_lean=brief.get("opinion_lean") if opinion_text else None)
                 show = parse_show(source)
                 bind_ranks(show, ctx)
                 report = validate_show(show, ctx)
@@ -371,12 +373,14 @@ def main():
                     show.generator = label
                     ground_and_log(show, ctx)
             else:
-                show, report, label = generate_show(top)
+                show, report, label = generate_show(top, opinion_text=opinion_text,
+                                                    opinion_headline=brief.get("opinion_headline") if opinion_text else None,
+                                                    opinion_lean=brief.get("opinion_lean") if opinion_text else None)
             edition_output["onair_script"] = show.to_text() if show else None
             edition_output["onair_findings"] = [f"{f.id} {f.level} [{f.segment}] {f.detail}" for f in report.findings] if report else None
             if show is not None and not (args.dry_run and not args.render_dir):
                 radio_result = produce_show(
-                    show, editorial, edition, opinion_headline=None if editorial is None else brief.get("opinion_headline"),
+                    show, None, edition, opinion_headline=brief.get("opinion_headline") if opinion_text else None,
                     permalinks=permalinks_from_archive(), out_dir=args.render_dir, label=label,
                 )
                 if radio_result:

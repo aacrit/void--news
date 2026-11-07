@@ -73,7 +73,7 @@ SITE_URL = os.environ.get("PODCAST_SITE_URL", "https://news.voidvision.org").rst
 # VOID_KOKORO_VOICE_A/B/C override. Every voice at the one house pace.
 VOICES = {
     "A": os.environ.get("VOID_KOKORO_VOICE_A", "af_heart"),
-    "B": os.environ.get("VOID_KOKORO_VOICE_B", "am_michael"),
+    "B": os.environ.get("VOID_KOKORO_VOICE_B", "am_fenrir"),    # CEO 2026-11-07: michael read as robotic; fenrir pending the ear test
     "C": os.environ.get("VOID_KOKORO_VOICE_C", "af_bella"),
 }
 SPEED = float(os.environ.get("VOID_KOKORO_SPEED", "0.95") or 0.95)
@@ -86,31 +86,31 @@ GAPS = {
     "signon_into_theme": 2.4,  # the sign-on starts this long before the theme ends
     "title_lines": 0.7,
     "title_to_lead": 1.3,
-    "question_to_answer": 0.42,
-    "answer_to_question": 0.75,
-    "answer_to_question_bedded": 1.7,   # while a bed plays, the music gets a breath between exchanges
+    "question_to_answer": 0.32,
+    "answer_to_question": 0.55,
+    "answer_to_question_bedded": 1.4,   # while a bed plays, the music gets a breath between exchanges
     "same_voice": 0.3,
     "story_to_pageturn": 0.7,
     "pageturn_to_story": 0.35,  # the next voice starts this long before the page-turn ends
     "desk_lead_to_item": 0.6,
     "desk_items": 0.55,
     "desk_to_entrance": 0.9,
-    "c_into_entrance": 1.8,    # C starts this long before the entrance ends
+    "a_into_entrance": 1.6,    # A's opening of the Opinion starts this long before the entrance ends
     "opinion_paragraphs": 0.65,
     "opinion_to_close": 1.0,
     "desk_to_close": 1.0,
     "outro_into_signoff": 0.4, # the outro starts this long before the sign-off ends
     "tail": 0.6,
 }
-ROOM_TONE_DBFS = -57.0
+ROOM_TONE_DBFS = -70.0     # a studio: present only so a silence is never digital zero (CEO 2026-11-07: -57 read as noise)
 LOUDNESS_I, LOUDNESS_TP, LOUDNESS_LRA = -16.0, -1.5, 11.0
 MAX_FILE_SIZE = 12 * 1024 * 1024
 BITRATE_LADDER = (("128k", 2), ("96k", 2), ("96k", 1))
-PHONE_VOICE_MARGIN_DB = 15.0
+PHONE_VOICE_MARGIN_DB = 12.0
 
 # Where the lead bed leaves and returns: after this many answers it goes out,
 # and it comes back under the last exchange (the coverage).
-BED_OUT_AFTER_ANSWERS = {"LEAD": 2, "SECOND": 1}
+BED_OUT_AFTER_ANSWERS = {"LEAD": 3, "SECOND": 2}
 ANCHOR_OPINION_VOICE = "C"
 
 
@@ -197,26 +197,31 @@ def opinion_paragraphs(script: str | None) -> list[str]:
     return out
 
 
-def build_cues(show: Show, opinion_script: str | None) -> list[Cue]:
+def build_cues(show: Show, opinion_script: str | None = None) -> list[Cue]:
+    """The spoken lines in order. The Opinion comes from the show's own
+    OPINION segment (A asks, C argues); `opinion_script`, a monologue, is
+    read by C only when the show carries no OPINION segment (a script from
+    before 2026-11-07)."""
     cues: list[Cue] = []
     say = show.say or None
     for s in show.segments:
         exch = 0
+        asker = s.turns[0].speaker if s.turns else "A"
         for i, t in enumerate(s.turns):
             text = normalize_for_speech(t.text, say)
             if not text.strip():
                 continue
-            if s.kind in ("LEAD", "SECOND") and i and t.is_question:
+            if s.kind in ("LEAD", "SECOND", "OPINION") and i and t.speaker == asker:
                 exch += 1
             cues.append(Cue(kind=s.kind, role=t.speaker, text=text, seg_title=s.title, rank=s.rank,
                             cluster_id=s.cluster_id, exchange=exch, is_question=t.is_question))
-    paras = opinion_paragraphs(opinion_script)
-    if paras:
-        # the opinion sits between the desk and the close
-        close_i = next((i for i, c in enumerate(cues) if c.kind == "CLOSE"), len(cues))
-        op = [Cue(kind="OPINION", role=ANCHOR_OPINION_VOICE, text=normalize_for_speech(p, None), exchange=k)
-              for k, p in enumerate(paras)]
-        cues = cues[:close_i] + op + cues[close_i:]
+    if opinion_script and not any(c.kind == "OPINION" for c in cues):
+        paras = opinion_paragraphs(opinion_script)
+        if paras:
+            close_i = next((i for i, c in enumerate(cues) if c.kind == "CLOSE"), len(cues))
+            op = [Cue(kind="OPINION", role=ANCHOR_OPINION_VOICE, text=normalize_for_speech(p, None), exchange=k)
+                  for k, p in enumerate(paras)]
+            cues = cues[:close_i] + op + cues[close_i:]
     for i, c in enumerate(cues):
         c.idx = i
     return cues
@@ -231,6 +236,10 @@ def _gap(prev: Cue | None, cur: Cue, bedded: set[tuple[str, int]] = frozenset())
                 ("DESK", "CLOSE"): GAPS["desk_to_close"]}.get((prev.kind, cur.kind), 0.8)
     if cur.kind == "TITLE":
         return GAPS["title_lines"]
+    if cur.kind in ("LEAD", "SECOND", "OPINION") and prev.role != cur.role:
+        if prev.is_question:
+            return GAPS["question_to_answer"]
+        return GAPS["answer_to_question_bedded"] if (cur.kind, cur.exchange) in bedded else GAPS["answer_to_question"]
     if cur.kind in ("LEAD", "SECOND"):
         if prev.role == cur.role:
             return GAPS["same_voice"]
@@ -265,10 +274,10 @@ def build_timeline(cues: list[Cue], lengths: dict[int, float], v: S.Voicing) -> 
     theme_len, pageturn_len, entrance_len, outro_len = 7.0, 3.4, 6.0, 14.0
     # The exchanges a bed plays under: the first few and the last (the coverage).
     bedded: set[tuple[str, int]] = set()
-    for kind in ("LEAD", "SECOND"):
+    for kind in ("LEAD", "SECOND", "OPINION"):
         ex = sorted({c.exchange for c in cues if c.kind == kind})
         if ex:
-            k = BED_OUT_AFTER_ANSWERS[kind]
+            k = BED_OUT_AFTER_ANSWERS.get(kind, 1)
             bedded.update((kind, e) for e in ex[:k + 1])
             bedded.add((kind, ex[-1]))
             if len(ex) >= 6:
@@ -294,7 +303,7 @@ def build_timeline(cues: list[Cue], lengths: dict[int, float], v: S.Voicing) -> 
             en_at = prev.end + GAPS["desk_to_entrance"]
             music.append(MusicCue("featured", "entrance", en_at, en_at + entrance_len))
             opinion_start = en_at
-            t = en_at + entrance_len - GAPS["c_into_entrance"]
+            t = en_at + entrance_len - GAPS["a_into_entrance"]
         else:
             t = prev.end + _gap(prev, c, bedded)
         c.start, c.end = t, t + length
@@ -345,9 +354,13 @@ def build_timeline(cues: list[Cue], lengths: dict[int, float], v: S.Voicing) -> 
     if op:
         en = next((m for m in music if m.name == "entrance"), None)
         start = (en.end - 1.2) if en else op[0].start - 2.0
-        music.append(MusicCue("bed", "opinion", start, min(op[0].end + 2.5, op[-1].end)))
-        if len(op) > 2 and op[-1].start - 2.0 > op[0].end + 8.0:
-            music.append(MusicCue("bed", "opinion", op[-1].start - 2.2, op[-1].end + 0.8))
+        answers = [c for c in op if c.role == "C"] or op
+        first_out = answers[0].end + 1.0
+        music.append(MusicCue("bed", "opinion", start, min(first_out + 2.5, op[-1].end)))
+        last_ex = op[-1].exchange
+        tail = [c for c in op if c.exchange == last_ex]
+        if tail and tail[0].start - 2.0 > first_out + 8.0:
+            music.append(MusicCue("bed", "opinion", tail[0].start - 2.2, op[-1].end + 0.8))
     close = seg_cues("CLOSE")
     if close:
         start = close[0].start - 1.6
@@ -387,11 +400,37 @@ def trim_silence(x: np.ndarray, thresh_db: float = -45.0, keep_s: float = 0.06) 
     return x[a:b]
 
 
+def spectral_gate(x: np.ndarray, *, reduction_db: float = 14.0, ratio: float = 2.5) -> np.ndarray:
+    """A light spectral gate (the film studio's denoise, in one pass): the
+    noise profile is each bin's 15th-percentile magnitude over the line; a
+    bin under `ratio` times its profile is lowered by `reduction_db`, with
+    the gain smoothed over time so nothing flutters. Speech is untouched;
+    the residue between words goes down."""
+    from scipy.signal import stft, istft
+    if len(x) < 4096:
+        return x
+    nper = 1024
+    f, t, Z = stft(x, fs=SR, nperseg=nper, noverlap=nper * 3 // 4, padded=True)
+    mag = np.abs(Z)
+    profile = np.percentile(mag, 15, axis=1, keepdims=True) + 1e-9
+    mask = (mag < ratio * profile).astype(np.float64)
+    # smooth the mask over time (a 5-frame moving mean) so the gain never steps
+    k = np.ones(5) / 5.0
+    mask = np.apply_along_axis(lambda row: np.convolve(row, k, mode="same"), 1, mask)
+    gain = 1.0 - mask * (1.0 - 10 ** (-reduction_db / 20))
+    _, y = istft(Z * gain, fs=SR, nperseg=nper, noverlap=nper * 3 // 4)
+    y = y[: len(x)]
+    if len(y) < len(x):
+        y = np.pad(y, (0, len(x) - len(y)))
+    return y
+
+
 def voice_chain(x: np.ndarray) -> tuple[np.ndarray, dict]:
-    """A13/A38 for one synthetic line: level to the dialogue target, the
-    house warmth, re-level, then peak control that only touches a line whose
-    crest would reach the ceiling."""
+    """A13/A38 for one synthetic line: trim, a light spectral gate, level to
+    the dialogue target, the house warmth, re-level, then peak control that
+    only touches a line whose crest would reach the ceiling."""
     x = trim_silence(x)
+    x = spectral_gate(x)
     x, g1 = S.level_to(x, S.DIALOGUE_LUFS)
     x = S.voice_house_eq(x)
     x, g2 = S.level_to(x, S.DIALOGUE_LUFS)
@@ -511,17 +550,22 @@ def render_score(tl: Timeline, v: S.Voicing) -> tuple[np.ndarray, list[str]]:
     return bus[:n], notes
 
 
-def phone_check(voice: np.ndarray, music: np.ndarray, cues: list[Cue]) -> tuple[float, float]:
-    """The mix as a small speaker plays it: mono, a 150 Hz high-pass, a roll-off
-    over 8 kHz. Inside every spoken line, on 1 s windows every 0.5 s that hold
-    speech (within 10 dB of the line's mean), the voice's level in 150 Hz to
-    4 kHz over the music's. Returns (minimum margin in dB, where it was)."""
+def _phone_bands(voice: np.ndarray, music: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     from scipy import signal
     sos_hp = signal.butter(4, 150.0, btype="high", fs=SR, output="sos")
     sos_bp = signal.butter(2, [150.0, 4000.0], btype="band", fs=SR, output="sos")
     v = signal.sosfilt(sos_bp, signal.sosfilt(sos_hp, voice))
     m = signal.sosfilt(sos_bp, signal.sosfilt(sos_hp, music))
-    worst, where = 99.0, 0.0
+    return v, m
+
+
+def phone_windows(voice: np.ndarray, music: np.ndarray, cues: list[Cue]) -> list[tuple[float, float]]:
+    """The mix as a small speaker plays it: mono, a 150 Hz high-pass, a roll-off
+    over 8 kHz. Inside every spoken line, on 1 s windows every 0.5 s that hold
+    speech (within 10 dB of the line's mean), the voice's level in 150 Hz to
+    4 kHz over the music's. Returns (window start, margin dB) for every window."""
+    v, m = _phone_bands(voice, music)
+    out: list[tuple[float, float]] = []
     for c in cues:
         a0, b0 = int(c.start * SR), int(c.end * SR)
         if b0 - a0 < SR:
@@ -533,11 +577,51 @@ def phone_check(voice: np.ndarray, music: np.ndarray, cues: list[Cue]) -> tuple[
             pv = float(np.mean(v[a:b] ** 2)) + 1e-12
             pm = float(np.mean(m[a:b] ** 2)) + 1e-12
             if 10 * math.log10(pv) >= line_mean - 10.0:
-                margin = 10 * math.log10(pv / pm)
-                if margin < worst:
-                    worst, where = margin, t
+                out.append((t, 10 * math.log10(pv / pm)))
             t += 0.5
-    return worst, where
+    return out
+
+
+def phone_check(voice: np.ndarray, music: np.ndarray, cues: list[Cue]) -> tuple[float, float]:
+    """Minimum phone margin in dB and where it was."""
+    w = phone_windows(voice, music, cues)
+    if not w:
+        return 99.0, 0.0
+    t, margin = min(w, key=lambda x: x[1])
+    return margin, t
+
+
+def phone_fix(voice: np.ndarray, music: np.ndarray, cues: list[Cue], *, target_db: float = PHONE_VOICE_MARGIN_DB,
+              passes: int = 3) -> tuple[np.ndarray, int]:
+    """Lower the music ONLY where a spoken window is under the margin: an
+    extra dip of the shortfall, eased in and out over 0.6 s, so the bed keeps
+    its level everywhere else (CEO 2026-11-07: more music, not less).
+    Returns the music and the number of windows that needed it."""
+    fixed = 0
+    for _ in range(passes):
+        failing = [(t, m) for t, m in phone_windows(voice, music, cues) if m < target_db]
+        if not failing:
+            break
+        step = 0.01
+        env = np.zeros(int(len(music) / SR / step) + 2)
+        for t, m in failing:
+            need = target_db - m + 0.5
+            i0, i1 = int(t / step), int((t + 1.0) / step)
+            env[i0:i1] = np.minimum(env[i0:i1], -need)
+        # ease every edge: a 0.6 s raised cosine on both sides of each dip
+        k = int(0.6 / step)
+        ramp = 0.5 - 0.5 * np.cos(np.linspace(0, math.pi, k))
+        smooth = env.copy()
+        for i in range(1, len(env)):
+            if env[i] < env[i - 1]:
+                a = max(0, i - k)
+                smooth[a:i] = np.minimum(smooth[a:i], env[i] * ramp[-(i - a):])
+            if env[i] > env[i - 1]:
+                b = min(len(env), i + k)
+                smooth[i:b] = np.minimum(smooth[i:b], env[i - 1] * (1 - ramp[: b - i]))
+        music = S.apply_envelope(music, smooth, step)
+        fixed += len(failing)
+    return music, fixed
 
 
 # ---------------------------------------------------------------------------
@@ -696,7 +780,7 @@ def _to_stereo(mono: np.ndarray, pan: float) -> np.ndarray:
 # Produce
 # ---------------------------------------------------------------------------
 
-def produce_show(show: Show, opinion_script: str | None, edition: str = "world", *,
+def produce_show(show: Show, opinion_script: str | None = None, edition: str = "world", *,
                  opinion_headline: str | None = None, permalinks: dict[str, str] | None = None,
                  engines: list | None = None, out_dir: Path | str | None = None,
                  date: datetime | None = None, label: str = "") -> Optional[ShowResult]:
@@ -750,11 +834,15 @@ def produce_show(show: Show, opinion_script: str | None, edition: str = "world",
         print(f"  [onair][score] {line}")
     margin, where = phone_check(voice_mono, music, cues)
     if margin < PHONE_VOICE_MARGIN_DB:
-        drop = PHONE_VOICE_MARGIN_DB - margin + 0.5
+        music, n_fixed = phone_fix(voice_mono, music, cues)
         print(f"  [onair][score] phone-check margin {margin:.1f} dB at {where:.1f}s, under {PHONE_VOICE_MARGIN_DB}; "
-              f"music down {drop:.1f} dB")
-        music = music * (10 ** (-drop / 20))
+              f"the music dips in {n_fixed} spoken window(s), nowhere else")
         margin, where = phone_check(voice_mono, music, cues)
+        if margin < PHONE_VOICE_MARGIN_DB - 1.0:
+            drop = PHONE_VOICE_MARGIN_DB - margin
+            music = music * (10 ** (-drop / 20))
+            print(f"  [onair][score] phone-check still {margin:.1f} dB; music down {drop:.1f} dB throughout")
+            margin, where = phone_check(voice_mono, music, cues)
     print(f"  [onair][score] phone-check: voice over music {margin:.1f} dB in the worst spoken second (at {where:.1f}s)")
     room = S.room_tone(n / SR, seed=v.seed % 1000, level_dbfs=ROOM_TONE_DBFS)[:n]
     mix = voice_st + np.stack([music, music], axis=1) + np.stack([room, room], axis=1)

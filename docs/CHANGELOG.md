@@ -18,6 +18,32 @@ lives in this file.
 
 ---
 
+## On Air rev 2: three anchors, a pulse, a studio floor (2026-11-07, after the first ear test)
+
+The CEO's ear test of rev 1, the same afternoon: the format is right; more
+music and less noise ("recorded in a studio"); more conversational; the male
+voice robotic; the Opinion conversational too, three anchors in all; the score
+wants beats, as the Daily and the BBC have them, in Void's voice.
+
+- Noise: the -57 dBFS room tone was the noise (Kokoro's own silences sit at
+  -70). Floor to -70; a light spectral gate per line.
+- Score: a pulse under everything that plays (kick, sub, ticks; `drums`), the
+  motif as an eighth-note ostinato in phrases, tempo 76-88; beds -28 LUFS in
+  the gaps (from -32), duck -10 (from -12); the phone check now dips the music
+  only in the failing window (`phone_fix`) instead of lowering the whole bus.
+- Conversation: an exchange is any asker line followed by the other voice; a
+  bridge clause before a question, a statement the desk picks up, contractions;
+  at least half the asker's lines are questions; gaps tightened.
+- The Opinion as a conversation: `## OPINION` (A asks, C argues, 2-5
+  exchanges), C's lines grounded against the written opinion, the lens named
+  on the opening line (C-14), C nowhere else and B never there (C-00). The
+  template edition renders it from the opinion's own sentences.
+- Desk voice `am_fenrir` provisionally; the CEO has the audition pack (every
+  Kokoro voice slated, through the house chain) to pick A, B and C.
+- Today's episode re-rendered and published under the same name; a preview
+  with the Opinion conversation (Thursday's carried opinion, for the ear only)
+  was sent to the CEO and not published.
+
 ## On Air becomes a conversation; the Brief stops carrying another day's text as today's (2026-11-07)
 
 The CEO on the live site: the TL;DR's headlines had not changed in days, and
