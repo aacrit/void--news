@@ -7,8 +7,8 @@ voicing so no two episodes carry the same bed while every episode carries the
 same motif. The standard the cues are measured against, in one block:
 
     dialogue                 -20 LUFS integrated, per line (the producer)
-    bed under speech         -32 LUFS in the voice's gaps (12 dB under)
-    duck under voice         -12 dB, 1.0 s eased pre-roll, held across gaps < 1.2 s
+    bed under speech         -28 LUFS in the voice's gaps (8 dB under)
+    duck under voice         -10 dB, 1.0 s eased pre-roll, held across gaps < 1.2 s
     featured (title, outro)  -26 LUFS short-term, never louder
     transition / sting       never louder than the bed it leads into (+0.5 dB)
     band shape (beds)        sub-bass under 100 Hz kept, low-mids 150-400 Hz cut
@@ -45,10 +45,10 @@ SR = 48000
 # ---------------------------------------------------------------------------
 
 DIALOGUE_LUFS = -20.0
-BED_LUFS = -32.0                 # bed under speech, in the gaps
+BED_LUFS = -28.0                 # bed under speech, in the gaps (CEO 2026-11-07: more music; was -32)
 FEATURED_LUFS = -26.0            # title, entrance, outro: heard for themselves
 TRANSITION_OVER_BED_MAX_DB = 0.5
-DUCK_DB = -12.0
+DUCK_DB = -10.0
 DUCK_PREROLL_S = 1.0             # eased attack, full depth ON the onset (A37)
 DUCK_HOLD_S = 1.2                # a gap shorter than this keeps the duck
 DUCK_RELEASE_S = 0.6             # the ramp back up after the hold
@@ -278,6 +278,85 @@ def sub_pulse(hz: float, dur_s: float, *, amp: float = 1.0) -> np.ndarray:
     return amp * x / (np.max(np.abs(x)) + 1e-9)
 
 
+def kick(dur_s: float = 0.6, *, amp: float = 1.0, hz_from: float = 130.0, hz_to: float = 44.0) -> np.ndarray:
+    """A soft kick: a sine sweeping down over 70 ms, 4 ms rise, a 300 ms fall.
+    Most of it is under 100 Hz, which is where the bed shaping keeps the weight."""
+    n = int(dur_s * SR)
+    t = _t(n)
+    f = hz_to + (hz_from - hz_to) * np.exp(-t / 0.045)
+    ph = 2 * math.pi * np.cumsum(f) / SR
+    env = np.minimum(1.0, t / 0.004) * np.exp(-t / 0.30)
+    x = np.sin(ph) * env
+    x = signal.sosfilt(_sos_butter(2, 900.0, "low"), x)
+    return amp * x / (np.max(np.abs(x)) + 1e-9)
+
+
+def tick(dur_s: float = 0.09, *, amp: float = 1.0, lo_hz: float = 1800.0, hi_hz: float = 4200.0,
+         rng: np.random.Generator | None = None) -> np.ndarray:
+    """A shaker-like tick: a 30 ms noise burst in 1.8 to 4.2 kHz, under the
+    treble shelf, so the pulse is felt as a clock rather than heard as hiss."""
+    rng = rng or np.random.default_rng(3)
+    n = int(dur_s * SR)
+    t = _t(n)
+    x = rng.normal(0, 1, n) * np.minimum(1.0, t / 0.003) * np.exp(-t / 0.022)
+    x = signal.sosfilt(signal.butter(4, [lo_hz, hi_hz], btype="band", fs=SR, output="sos"), x)
+    return amp * x / (np.max(np.abs(x)) + 1e-9)
+
+
+def ostinato(v: "Voicing", canvas: np.ndarray, *, start_s: float, bars: int, notes: tuple[str, ...],
+             amp: float, step_beats: float = 0.5, bright: float = 0.8, rest_every: int = 0,
+             octave_shift: int = 0) -> None:
+    """The motif as a running figure: eighth-note plucks cycling through
+    `notes`, a rest where `rest_every` says, each pluck a little different."""
+    t = start_s
+    end = start_s + bars * 4 * v.beat_s
+    k = 0
+    while t < end and t < len(canvas) / SR:
+        if not (rest_every and (k % rest_every) == rest_every - 1):
+            name = notes[k % len(notes)]
+            a = amp * (0.75 + 0.25 * float(v.rng.random())) * (1.15 if k % 4 == 0 else 1.0)
+            place(canvas, felt_pluck(note_hz(name) * (2 ** octave_shift), 1.6, amp=a, bright=bright, rng=v.rng), t)
+        t += step_beats * v.beat_s
+        k += 1
+
+
+def drums(v: "Voicing", canvas: np.ndarray, *, start_s: float, dur_s: float, pattern: str,
+          kick_amp: float, tick_amp: float, sub_hz: float | None = None) -> None:
+    """The pulse. pattern: 'half' (kick on 1 and 3, ticks on 2 and 4), 'four'
+    (kick every beat, ticks on the off eighths), 'dotted' (kick on 1 and the
+    'and' of 2, a tick on 4), 'sparse' (kick on 1 only). A kick carries a
+    sub pulse under it when sub_hz is given. A bar in sixteen is dropped
+    now and then so the pulse breathes."""
+    beat = v.beat_s
+    t = start_s
+    bar = 0
+    while t < start_s + dur_s:
+        drop = bar > 0 and v.rng.random() < 0.0625
+        for b in range(4):
+            at = t + b * beat
+            if at >= start_s + dur_s:
+                break
+            k_here = {"half": b in (0, 2), "four": True, "dotted": b == 0, "sparse": b == 0}[pattern]
+            if pattern == "dotted" and b == 1:
+                place(canvas, kick(amp=kick_amp * 0.8), at + 0.5 * beat)
+                if sub_hz:
+                    place(canvas, sub_pulse(sub_hz, 1.2, amp=kick_amp * 0.7), at + 0.5 * beat)
+            if k_here and not drop:
+                place(canvas, kick(amp=kick_amp * (1.0 if b == 0 else 0.85)), at)
+                if sub_hz:
+                    place(canvas, sub_pulse(sub_hz, 1.3, amp=kick_amp * 0.9 if b == 0 else kick_amp * 0.7), at)
+            if pattern == "half" and b in (1, 3):
+                place(canvas, tick(amp=tick_amp, rng=v.rng), at)
+            elif pattern == "four":
+                place(canvas, tick(amp=tick_amp * (0.6 if b % 2 else 1.0), rng=v.rng), at + 0.5 * beat)
+                if b in (1, 3):
+                    place(canvas, tick(amp=tick_amp * 0.5, rng=v.rng), at)
+            elif pattern == "dotted" and b == 3:
+                place(canvas, tick(amp=tick_amp, rng=v.rng), at)
+        t += 4 * beat
+        bar += 1
+
+
 def room_ir(decay_s: float = 1.4, lp_hz: float = 2600.0, seed: int = 7) -> np.ndarray:
     rng = np.random.default_rng(seed)
     n = int(decay_s * 3 * SR)
@@ -328,6 +407,8 @@ def place(canvas: np.ndarray, x: np.ndarray, at_s: float) -> None:
 MOTIF_CELL = ("D3", "A3", "D3", "F#3")
 MOTIF_BASS = "D2"
 MOTIF_SUB = "D1"
+OSTINATO = ("D4", "A4", "D5", "F#5", "A4", "D5", "F#5", "A5")        # the cell, running
+OSTINATO_MINOR = ("D4", "A4", "D5", "F5", "A4", "D5", "F5", "A5")
 
 # Chord cycles, each a different colour of the same key. The day's seed
 # picks one per segment and a tempo, so the bed is new every day and the
@@ -357,7 +438,7 @@ CYCLES = {
         [("A4", "D5", "F#5"), ("B4", "D5", "G5"), ("A4", "C#5", "E5"), ("A4", "D5", "F#5")],
     ],
 }
-TEMPOS_BPM = (58, 62, 66, 72)
+TEMPOS_BPM = (76, 80, 84, 88)
 
 
 @dataclass
@@ -393,15 +474,17 @@ def _motif_phrase(v: Voicing, *, start_s: float, canvas: np.ndarray, octave_shif
               start_s + k * step_beats * v.beat_s)
 
 
-def _bed_core(v: Voicing, segment: str, dur_s: float, *, pulse: bool, pulse_every_beats: float,
-              motif_every_s: float, motif_octave: int, pad_amp: float, pluck_amp: float,
-              chord_s: float, ir: np.ndarray) -> np.ndarray:
-    """A bed: slow pad chords, a sub heartbeat, sparse motif fragments at
-    irregular bars, no two bars alike. Composed to length; never looped."""
+def _bed_core(v: Voicing, segment: str, dur_s: float, *, pattern: str, kick_amp: float, tick_amp: float,
+              ostinato_amp: float, ostinato_every_bars: int, ostinato_bars: int, motif_every_s: float,
+              motif_octave: int, pad_amp: float, pluck_amp: float, chord_s: float, ir: np.ndarray,
+              minor: bool = False) -> np.ndarray:
+    """A bed: slow pad chords, the pulse (kick, sub, ticks), the motif running
+    as an ostinato in phrases, sparse motif fragments between. Composed to
+    length; never looped; a bar dropped now and then so it breathes."""
     n = int(dur_s * SR)
     pad = np.zeros(n)
     plucks = np.zeros(n)
-    subs = np.zeros(n)
+    beats = np.zeros(n)
     chords = v.cycle[segment]
     t = 0.0
     i = 0
@@ -413,8 +496,7 @@ def _bed_core(v: Voicing, segment: str, dur_s: float, *, pulse: bool, pulse_ever
             place(pad, pad_tone(note_hz(name), length, amp=amp, attack_s=2.4, release_s=2.6,
                                 breath_hz=0.07 + 0.02 * j, breath_depth=0.3,
                                 phase=float(v.rng.uniform(0, 6.28)), rng=v.rng), t)
-        # a regional pluck at most once a chord: the chord's root, low
-        if v.rng.random() < 0.55:
+        if v.rng.random() < 0.5:
             root_hz = note_hz(chord[0])
             if root_hz < BED_LOWMID_HZ:
                 root_hz *= 2.0     # a sustained root in the low-mids is taken out of the score
@@ -422,21 +504,24 @@ def _bed_core(v: Voicing, segment: str, dur_s: float, *, pulse: bool, pulse_ever
                   t + v.beat_s * float(v.rng.integers(1, 4)))
         t += chord_s
         i += 1
-    if pulse:
-        root_hz = note_hz(MOTIF_SUB)
-        beat = 0.0
-        while beat < dur_s:
-            # a rest in two beats of eight, drawn, so the pulse breathes
-            if v.rng.random() > 0.25:
-                place(subs, sub_pulse(root_hz, 1.4, amp=1.0), beat)
-            beat += pulse_every_beats * v.beat_s
-    # motif fragments at irregular distances, never twice in the same bar
+    if pattern != "none":
+        drums(v, beats, start_s=0.0, dur_s=dur_s, pattern=pattern, kick_amp=kick_amp, tick_amp=tick_amp,
+              sub_hz=note_hz(MOTIF_SUB))
+    # the ostinato in phrases: `ostinato_bars` bars on, then off until the next phrase
+    notes = OSTINATO_MINOR if minor else OSTINATO
+    bar_s = 4 * v.beat_s
+    at = bar_s * float(v.rng.integers(0, 2))
+    while at < dur_s - bar_s:
+        ostinato(v, plucks, start_s=at, bars=ostinato_bars, notes=notes, amp=ostinato_amp,
+                 rest_every=int(v.rng.choice([0, 8, 6])), octave_shift=motif_octave)
+        at += bar_s * (ostinato_every_bars + int(v.rng.integers(0, 2)))
+    # motif fragments at irregular distances, between the phrases
     at = motif_every_s * (0.6 + 0.6 * v.rng.random())
     while at < dur_s - 6.0:
         _motif_phrase(v, start_s=at, canvas=plucks, octave_shift=motif_octave, amp=pluck_amp,
                       step_beats=1.0 if v.rng.random() < 0.6 else 0.5)
         at += motif_every_s * (0.7 + 0.8 * v.rng.random())
-    mix = reverberate(pad, 0.35, ir) + reverberate(plucks, 0.45, ir) + subs * 0.9
+    mix = reverberate(pad, 0.35, ir) + reverberate(plucks, 0.4, ir) + beats * 0.95
     return mix
 
 
@@ -445,21 +530,25 @@ def _normalise(x: np.ndarray, peak: float = 0.8) -> np.ndarray:
     return x * (peak / m) if m > 0 else x
 
 
-def render_theme(v: Voicing, dur_s: float = 7.0, *, ir: np.ndarray | None = None) -> np.ndarray:
-    """The title: the sub, a D pad opening, the motif twice (low, then up an
-    octave, brighter), landing on the fifth. Featured: it is heard for itself."""
+def render_theme(v: Voicing, dur_s: float = 8.0, *, ir: np.ndarray | None = None) -> np.ndarray:
+    """The title: the ostinato from the first beat with the kick under it, a D
+    pad opening, the motif on top (low, then up an octave), landing on the
+    fifth. Featured: it is heard for itself."""
     ir = ir if ir is not None else room_ir(1.8, 2400.0, v.seed)
     n = int(dur_s * SR)
     c = np.zeros(n)
-    place(c, pad_tone(note_hz("D2"), dur_s, amp=0.5, attack_s=1.2, release_s=2.0, breath_depth=0.15, rng=v.rng), 0.0)
-    place(c, pad_tone(note_hz("A4"), dur_s - 0.8, amp=0.22, attack_s=2.0, release_s=2.0, breath_depth=0.2, rng=v.rng), 0.8)
-    beats = [0.0, 1.0, 2.0, 3.0]
-    for b in beats:
-        place(c, sub_pulse(note_hz(MOTIF_SUB), 1.4, amp=0.9), b * v.beat_s)
-    _motif_phrase(v, start_s=0.25 * v.beat_s, canvas=c, octave_shift=0, amp=0.55, step_beats=0.5, bright=0.45)
-    _motif_phrase(v, start_s=2.4 * v.beat_s, canvas=c, octave_shift=1, amp=0.45, step_beats=0.5, bright=0.7)
-    place(c, felt_pluck(note_hz("A4"), 3.5, amp=0.35, bright=0.6, rng=v.rng), 4.5 * v.beat_s)
-    out = reverberate(c, 0.4, ir)
+    place(c, pad_tone(note_hz("D2"), dur_s, amp=0.5, attack_s=1.0, release_s=2.0, breath_depth=0.15, rng=v.rng), 0.0)
+    place(c, pad_tone(note_hz("A4"), dur_s - 0.8, amp=0.2, attack_s=2.0, release_s=2.0, breath_depth=0.2, rng=v.rng), 0.8)
+    bars = max(1, int((dur_s - 2.0) / (4 * v.beat_s)))
+    ostinato(v, c, start_s=0.0, bars=bars, notes=OSTINATO, amp=0.34, bright=0.85)
+    drums(v, c, start_s=0.0, dur_s=bars * 4 * v.beat_s, pattern="half", kick_amp=0.95, tick_amp=0.18,
+          sub_hz=note_hz(MOTIF_SUB))
+    _motif_phrase(v, start_s=0.5 * v.beat_s, canvas=c, octave_shift=0, amp=0.5, step_beats=1.0, bright=0.45)
+    _motif_phrase(v, start_s=4.5 * v.beat_s, canvas=c, octave_shift=1, amp=0.42, step_beats=1.0, bright=0.7)
+    place(c, felt_pluck(note_hz("A5"), 3.5, amp=0.34, bright=0.6, rng=v.rng), bars * 4 * v.beat_s)
+    place(c, kick(amp=1.0), bars * 4 * v.beat_s)
+    place(c, sub_pulse(note_hz(MOTIF_SUB), 1.6, amp=1.0), bars * 4 * v.beat_s)
+    out = reverberate(c, 0.35, ir)
     out = shape_bed(out)
     return _normalise(fade(out, 0.02, 1.8))
 
@@ -468,54 +557,66 @@ def render_bed(v: Voicing, segment: str, dur_s: float, *, ir: np.ndarray | None 
     ir = ir if ir is not None else room_ir(1.6, 2200.0, v.seed + 1)
     dur_s = max(dur_s, 4.5)
     if segment == "lead":
-        x = _bed_core(v, "lead", dur_s, pulse=True, pulse_every_beats=2.0, motif_every_s=16.0,
-                      motif_octave=1, pad_amp=0.42, pluck_amp=0.4, chord_s=4 * v.beat_s * 2, ir=ir)
+        x = _bed_core(v, "lead", dur_s, pattern="half", kick_amp=0.9, tick_amp=0.16, ostinato_amp=0.26,
+                      ostinato_every_bars=4, ostinato_bars=2, motif_every_s=18.0, motif_octave=0,
+                      pad_amp=0.40, pluck_amp=0.36, chord_s=4 * v.beat_s * 2, ir=ir)
     elif segment == "second":
-        x = _bed_core(v, "second", dur_s, pulse=True, pulse_every_beats=2.0, motif_every_s=18.0,
-                      motif_octave=2, pad_amp=0.36, pluck_amp=0.36, chord_s=4 * v.beat_s * 2, ir=ir)
+        x = _bed_core(v, "second", dur_s, pattern="half", kick_amp=0.85, tick_amp=0.14, ostinato_amp=0.24,
+                      ostinato_every_bars=4, ostinato_bars=2, motif_every_s=20.0, motif_octave=1,
+                      pad_amp=0.36, pluck_amp=0.32, chord_s=4 * v.beat_s * 2, ir=ir)
     elif segment == "desk":
-        x = _bed_core(v, "desk", dur_s, pulse=True, pulse_every_beats=1.0, motif_every_s=12.0,
-                      motif_octave=2, pad_amp=0.30, pluck_amp=0.42, chord_s=4 * v.beat_s, ir=ir)
+        x = _bed_core(v, "desk", dur_s, pattern="four", kick_amp=0.95, tick_amp=0.22, ostinato_amp=0.30,
+                      ostinato_every_bars=2, ostinato_bars=2, motif_every_s=30.0, motif_octave=0,
+                      pad_amp=0.28, pluck_amp=0.3, chord_s=4 * v.beat_s, ir=ir)
     elif segment == "opinion":
-        x = _bed_core(v, "opinion", dur_s, pulse=True, pulse_every_beats=3.0, motif_every_s=22.0,
-                      motif_octave=2, pad_amp=0.44, pluck_amp=0.3, chord_s=4 * v.beat_s * 2, ir=ir)
+        x = _bed_core(v, "opinion", dur_s, pattern="dotted", kick_amp=0.85, tick_amp=0.12, ostinato_amp=0.22,
+                      ostinato_every_bars=5, ostinato_bars=2, motif_every_s=24.0, motif_octave=1,
+                      pad_amp=0.42, pluck_amp=0.28, chord_s=4 * v.beat_s * 2, ir=ir, minor=True)
     else:
-        x = _bed_core(v, "close", dur_s, pulse=True, pulse_every_beats=2.0, motif_every_s=10.0,
-                      motif_octave=1, pad_amp=0.42, pluck_amp=0.4, chord_s=4 * v.beat_s, ir=ir)
+        x = _bed_core(v, "close", dur_s, pattern="half", kick_amp=0.9, tick_amp=0.14, ostinato_amp=0.28,
+                      ostinato_every_bars=2, ostinato_bars=2, motif_every_s=12.0, motif_octave=0,
+                      pad_amp=0.40, pluck_amp=0.36, chord_s=4 * v.beat_s, ir=ir)
     x = shape_bed(x)
     return _normalise(fade(x, ENTRY_FADE_MIN_S + 0.5, EXIT_FADE_MIN_S + 1.0))
 
 
 def render_transition(v: Voicing, *, ir: np.ndarray | None = None, dur_s: float = 3.4) -> np.ndarray:
-    """The motif's cell alone, in the clear: a page turned, not a jingle."""
+    """The motif's cell alone over one kick: a page turned, not a jingle."""
     ir = ir if ir is not None else room_ir(1.6, 2200.0, v.seed + 2)
     n = int(dur_s * SR)
     c = np.zeros(n)
-    _motif_phrase(v, start_s=0.05, canvas=c, octave_shift=0, amp=0.5, step_beats=0.5, bright=0.5)
-    place(c, sub_pulse(note_hz(MOTIF_SUB), 1.2, amp=0.7), 0.0)
+    place(c, kick(amp=0.9), 0.0)
+    place(c, sub_pulse(note_hz(MOTIF_SUB), 1.2, amp=0.8), 0.0)
+    _motif_phrase(v, start_s=0.05, canvas=c, octave_shift=0, amp=0.5, step_beats=0.5, bright=0.6)
+    for k in range(3):
+        place(c, tick(amp=0.14, rng=v.rng), 0.05 + (k + 1) * 0.5 * v.beat_s)
     out = shape_bed(reverberate(c, 0.4, ir))
     return _normalise(fade(out, 0.01, 1.2))
 
 
 def render_entrance(v: Voicing, *, ir: np.ndarray | None = None, dur_s: float = 6.0) -> np.ndarray:
-    """The opinion entrance: minor shading, a dotted sub pulse, ends on an
-    open fifth. Featured, so the segment is announced by the music alone."""
+    """The opinion entrance: the ostinato in minor over a dotted pulse, ends
+    on an open fifth. Featured, so the segment is announced by the music alone."""
     ir = ir if ir is not None else room_ir(2.0, 2000.0, v.seed + 3)
     n = int(dur_s * SR)
     c = np.zeros(n)
-    place(c, pad_tone(note_hz("D2"), dur_s, amp=0.45, attack_s=1.0, release_s=2.2, breath_depth=0.15, rng=v.rng), 0.0)
-    place(c, pad_tone(note_hz("F3"), dur_s - 0.6, amp=0.22, attack_s=1.6, release_s=2.0, rng=v.rng), 0.6)
-    for k, b in enumerate((0.0, 1.5, 2.0, 3.5, 4.0)):
-        place(c, sub_pulse(note_hz(MOTIF_SUB), 1.3, amp=0.85 if k % 2 == 0 else 0.6), b * v.beat_s * 0.8)
-    for k, name in enumerate(("D3", "F3", "A3", "D4")):
-        place(c, felt_pluck(note_hz(name), 3.0, amp=0.42, bright=0.4, rng=v.rng), 0.3 + k * 0.6 * v.beat_s)
-    place(c, felt_pluck(note_hz("A3"), 3.6, amp=0.4, bright=0.4, rng=v.rng), dur_s - 2.4)
-    out = shape_bed(reverberate(c, 0.45, ir))
+    place(c, pad_tone(note_hz("D2"), dur_s, amp=0.45, attack_s=0.8, release_s=2.2, breath_depth=0.15, rng=v.rng), 0.0)
+    place(c, pad_tone(note_hz("F4"), dur_s - 0.6, amp=0.2, attack_s=1.4, release_s=2.0, rng=v.rng), 0.6)
+    bars = max(1, int((dur_s - 1.6) / (4 * v.beat_s)))
+    ostinato(v, c, start_s=0.0, bars=bars, notes=OSTINATO_MINOR, amp=0.32, bright=0.6)
+    drums(v, c, start_s=0.0, dur_s=bars * 4 * v.beat_s, pattern="dotted", kick_amp=0.9, tick_amp=0.14,
+          sub_hz=note_hz(MOTIF_SUB))
+    land = bars * 4 * v.beat_s
+    place(c, felt_pluck(note_hz("A4"), 3.6, amp=0.42, bright=0.4, rng=v.rng), land)
+    place(c, felt_pluck(note_hz("D4"), 3.6, amp=0.36, bright=0.4, rng=v.rng), land)
+    place(c, kick(amp=1.0), land)
+    out = shape_bed(reverberate(c, 0.42, ir))
     return _normalise(fade(out, 0.02, 1.6))
 
 
 def render_outro(v: Voicing, *, ir: np.ndarray | None = None, dur_s: float = 14.0) -> np.ndarray:
-    """Four bars resolving to the low D, then the fall to true silence."""
+    """Four bars of the ostinato and the pulse resolving to the low D, then
+    the fall to true silence."""
     ir = ir if ir is not None else room_ir(2.2, 2200.0, v.seed + 4)
     n = int(dur_s * SR)
     c = np.zeros(n)
@@ -523,16 +624,19 @@ def render_outro(v: Voicing, *, ir: np.ndarray | None = None, dur_s: float = 14.
     for i, chord in enumerate(chords):
         at = i * 2 * v.beat_s
         for j, name in enumerate(chord):
-            place(c, pad_tone(note_hz(name), 4.5 * v.beat_s, amp=0.4 if j == 0 else 0.26, attack_s=0.9,
+            place(c, pad_tone(note_hz(name), 4.5 * v.beat_s, amp=0.38 if j == 0 else 0.24, attack_s=0.9,
                               release_s=1.8, breath_depth=0.15, rng=v.rng), at)
-        place(c, sub_pulse(note_hz(MOTIF_SUB), 1.4, amp=0.9), at)
+    land = 8 * v.beat_s
+    ostinato(v, c, start_s=0.0, bars=2, notes=OSTINATO, amp=0.32, bright=0.8)
+    drums(v, c, start_s=0.0, dur_s=land, pattern="half", kick_amp=0.9, tick_amp=0.16, sub_hz=note_hz(MOTIF_SUB))
     _motif_phrase(v, start_s=0.3, canvas=c, octave_shift=0, amp=0.5, step_beats=0.5, bright=0.5)
     _motif_phrase(v, start_s=4 * v.beat_s + 0.3, canvas=c, octave_shift=1, amp=0.4, step_beats=0.5, bright=0.6)
-    land = 8 * v.beat_s
-    place(c, felt_pluck(note_hz("D3"), 5.5, amp=0.55, bright=0.3, rng=v.rng), land)
+    place(c, felt_pluck(note_hz("D4"), 5.5, amp=0.5, bright=0.3, rng=v.rng), land)
+    place(c, felt_pluck(note_hz("A4"), 5.5, amp=0.36, bright=0.3, rng=v.rng), land)
     place(c, pad_tone(note_hz("D2"), dur_s - land, amp=0.5, attack_s=0.6, release_s=4.5, breath_depth=0.1, rng=v.rng), land)
+    place(c, kick(amp=1.0), land)
     place(c, sub_pulse(note_hz(MOTIF_SUB), 2.0, amp=1.0), land)
-    out = shape_bed(reverberate(c, 0.42, ir))
+    out = shape_bed(reverberate(c, 0.4, ir))
     return _normalise(fade(out, 0.02, 4.5))
 
 

@@ -358,7 +358,7 @@ adds nothing to the state that anything reads back.
 | Section | State |
 |---|---|
 | **News** (daily feed) | Live. Top 20 cards plus a "More stories" band of up to 10 headline links (ranks 21-30, 2026-10-28), two-stage pipeline, 45-cluster bench. |
-| **On Air** (daily) | Live. **The conversation since 2026-11-07**: two voices talk the lead through, change places for the second story, read the desk; the Opinion in a third voice; a score composed per episode to the film studio's standard; Kokoro only, never edge-tts; a grounded template edition when no model answers. `docs/ON-AIR-CONVERSATION.md`. |
+| **On Air** (daily) | Live. **The conversation since 2026-11-07** (rev 2 the same day): three anchors; two talk the lead through and change places for the second story, read the desk; the third makes the Opinion as an argument drawn out by questions; a score with a pulse composed per episode to the film studio's standard; Kokoro only, never edge-tts; a grounded template edition when no model answers. `docs/ON-AIR-CONVERSATION.md`. |
 | **The Brief** (TL;DR + Opinion) | Live. One story per paragraph. |
 | **Weekly** | Live. **Vol. I, No. 1 published 2026-09-20**, the first issue on the Sunday cadence and the first ever to carry departments. Aug 24-30 is kept as the pilot. |
 | **Weekly audio** ("The Argument") | Live. Three Kokoro anchors, 11 chapters, mastered to -16 LUFS, verified against the served file. Rendered by **manual `audio-only` dispatch**; no scheduled run has produced one yet. There is no fallback: a failed render ships no audio rather than a quiet legacy substitute. |
