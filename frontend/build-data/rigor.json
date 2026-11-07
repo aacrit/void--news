@@ -1,6 +1,6 @@
 {
- "builtAt": "2026-11-06T19:31:29.796647Z",
- "briefCreatedAt": "2026-11-06T19:30:47.689710+00:00",
+ "builtAt": "2026-11-07T17:44:40.376502Z",
+ "briefCreatedAt": "2026-11-07T17:44:14.472481+00:00",
  "products": {
   "card_headline": {
    "sentences": 30,
@@ -16,31 +16,32 @@
    "coverage": 10.0
   },
   "card_summary": {
-   "sentences": 171,
-   "anchored": 39,
-   "checked": 21,
+   "sentences": 262,
+   "anchored": 69,
+   "checked": 45,
+   "byAnchor": {
+    "number": 68,
+    "quote": 2
+   },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "byAnchor": {
-    "number": 39
-   },
-   "coverage": 12.3
+   "coverage": 17.2
   },
   "points": {
-   "sentences": 154,
-   "anchored": 30,
-   "checked": 19,
+   "sentences": 190,
+   "anchored": 45,
+   "checked": 32,
+   "byAnchor": {
+    "number": 45
+   },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "byAnchor": {
-    "number": 30
-   },
-   "coverage": 12.3,
-   "machinePointsExcluded": 9
+   "coverage": 16.8,
+   "machinePointsExcluded": 3
   },
   "tldr": {
    "sentences": 29,
@@ -103,17 +104,21 @@
   "freshKnown": true,
   "fresh": 30,
   "states": {
-   "confirmable": 12,
-   "index cap below writer window": 18
+   "confirmable": 19,
+   "index cap below writer window": 11
   }
  },
  "audit": {
-  "shipped": {},
-  "bench": {
+  "shipped": {
+   "advisory": {
+    "E-13 misattached": 1
+   },
    "cannot confirm": {
-    "E-13 absent": 1
+    "E-13 absent": 1,
+    "E-13 misattached": 2
    }
-  }
+  },
+  "bench": {}
  },
  "run": {
   "brief": {
@@ -126,27 +131,18 @@
     "tldr": true
    }
   },
-  "onair": {
-   "cut_sentences": 4,
-   "cuts_by_reason": {
-    "name": 1,
-    "number": 3
-   },
-   "grounding_ran": true
-  },
-  "startedAt": "2026-11-06T18:55:53Z",
+  "startedAt": "2026-11-07T17:12:31Z",
   "stage2": {
    "candidates": 45,
-   "critique_read": 42,
-   "critique_unread": 0,
-   "cut_sentences": 15,
+   "critique_read": 43,
+   "critique_unread": 1,
+   "cut_sentences": 13,
    "cuts_by_reason": {
-    "number": 13,
-    "other story": 4
+    "number": 17
    },
    "dropped": 0,
    "kept_failing": 0,
-   "regenerated": 7,
+   "regenerated": 11,
    "reviewed": true,
    "fresh": 45
   }
@@ -170,5 +166,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-11-06T19:31:44Z"
+ "computedAt": "2026-11-07T17:44:48Z"
 }
