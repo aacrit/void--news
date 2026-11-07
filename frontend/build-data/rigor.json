@@ -44,10 +44,10 @@
    "machinePointsExcluded": 3
   },
   "tldr": {
-   "sentences": 29,
-   "anchored": 23,
-   "checked": 23,
-   "coverage": 79.3,
+   "sentences": 14,
+   "anchored": 10,
+   "checked": 10,
+   "coverage": 71.4,
    "anchorTypes": [
     "number",
     "name",
@@ -56,8 +56,8 @@
    ],
    "byAnchor": {
     "date": 5,
-    "name": 22,
-    "number": 2
+    "name": 8,
+    "number": 5
    },
    "groundingRan": true,
    "shipped": true
@@ -80,10 +80,10 @@
    "shipped": true
   },
   "onair": {
-   "sentences": 69,
-   "anchored": 36,
-   "checked": 36,
-   "coverage": 52.2,
+   "sentences": 74,
+   "anchored": 43,
+   "checked": 43,
+   "coverage": 58.1,
    "anchorTypes": [
     "number",
     "name",
@@ -91,9 +91,9 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 2,
-    "name": 31,
-    "number": 10
+    "date": 11,
+    "name": 30,
+    "number": 13
    },
    "groundingRan": true,
    "shipped": true
@@ -166,5 +166,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-11-07T17:44:48Z"
+ "computedAt": "2026-11-07T20:09:18Z"
 }

@@ -18,6 +18,61 @@ lives in this file.
 
 ---
 
+## On Air becomes a conversation; the Brief stops carrying another day's text as today's (2026-11-07)
+
+The CEO on the live site: the TL;DR's headlines had not changed in days, and
+On Air was "extremely broken", not Kokoro. Both were true, for one cause.
+
+**What happened.** Gemini flash answered the brief with `504 DEADLINE_EXCEEDED`
+twice on 2026-11-07, and the On Air rundown the same; `_is_overload` read only
+a 503 as overload, so neither request went to flash-lite. The brief carried
+forward the last successful one (written 2026-11-05 21:11) and the page
+stamped it with the row's `created_at`, "2h ago". The rundown's lite retry
+failed one word-budget check, so the show fell to the legacy edge-tts path:
+Andrew and Ava, no chapters, the day-old script. The 11-05 and 11-06 runs had
+failed outright.
+
+**The fixes, each with its check:**
+
+1. A 504 and "deadline expired" are overload (`gemini_client._is_overload`),
+   so the lite fallback fires for them.
+2. When no model answers, the Brief is written from the day's own summaries,
+   one story per paragraph (`daily_brief_generator._desk_brief`, generator
+   `desk`), not carried from another day. An opinion is an argument, so the
+   last one written is carried instead of a summary "through a lens", and it
+   says so.
+3. `daily_briefs.written_at` and `opinion_written_at` (additive columns): when
+   the text was written. The page shows that time and, when it is more than
+   20 hours before the row, "Written Wednesday. Today's brief could not be
+   written; this one is kept until it can." (`lib/verification.ts`
+   `writtenAt`, `carriedLabel`; SkyboxBanner, MobileBriefPill).
+4. **On Air, the conversation** (`docs/ON-AIR-CONVERSATION.md`): two voices talk
+   the lead through (A asks, B answers), change places for the second story,
+   read the desk, the Opinion in a third voice, a close; each story ends on the
+   coverage, with a Coverage line counting the roster's votes one per outlet.
+   Script: `onair_show.py`, C-01..C-15, the grounding pass, one flash request
+   and one repair, then a grounded template edition from the stories' own
+   points: never another engine, never another day's script. Score:
+   `onair_score.py`, composed from note data per episode, one motif, the day's
+   voicing from the date, held to the film studio's A29 block (beds -32 LUFS in
+   the gaps, -12 dB duck with a 1.0 s eased pre-roll, featured -26, band-shaped
+   bass-heavy and treble-free, breathing, no tiled loop, a phone check), master
+   -16 LUFS / -1.5 dBTP. Voices: Kokoro only, `af_heart` anchor, `am_michael`
+   desk, `af_bella` Opinion, per-line levelling to -20 LUFS and the house warmth
+   EQ (A38) in place of the brightening ffmpeg chain. Production:
+   `onair_producer.py`. Gate: `tests/test_onair_show.py` (a planted defect per
+   validator and per score check). `VOID_ONAIR_FORMAT=rundown|legacy` keeps
+   the old paths.
+5. A carried-forward opinion is not read on the show; the episode ships with
+   two voices and no Opinion chapter rather than read another day's argument
+   as today's.
+6. Today's episode (2026-11-07-pm) was rendered from a script written by hand
+   from the feed's evidence through the same validators and grounding pass
+   (`tests/fixtures/onair_show_2026-11-07.txt`, generator `onair:written:kokoro`),
+   and the Brief rewritten as the desk brief; `rigor.json` recomputed. The
+   podcast channel description no longer claims the score weighs "both the
+   outlet and its words" (CEO decision B).
+
 ## On Air: a banned significance word is repaired, and a gapped fallback episode is refused (2026-11-05)
 
 Run #422 lost the Kokoro show and then shipped a broken substitute.

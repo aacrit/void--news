@@ -53,6 +53,7 @@ PROMPTS = [
     ("briefing/weekly_digest_generator.py", "_WEEKLY_OPINION_AUDIO_PROMPT", False),
     ("briefing/weekly_rundown.py", "SYSTEM", False),
     ("briefing/radio_script_generator.py", "_SYSTEM", False),
+    ("briefing/onair_show.py", "_SYSTEM", False),
     ("summarizer/cluster_summarizer.py", "_SYSTEM_INSTRUCTION", False),
 ]
 
@@ -69,6 +70,7 @@ INJECTION_PROMPTS = [
     ("briefing/daily_brief_generator.py", "_OPINION_SYSTEM_INSTRUCTION"),
     ("briefing/daily_brief_generator.py", "_OPINION_USER_PROMPT"),
     ("briefing/radio_script_generator.py", "_SYSTEM"),
+    ("briefing/onair_show.py", "_SYSTEM"),
 ]
 # The builders that put scraped or card text into a prompt, and what each must
 # call. A builder that pastes text bare fails here.
@@ -77,6 +79,7 @@ INJECTION_BUILDERS = [
     ("summarizer/cluster_summarizer.py", "_build_critique_prompt", "wrap_source("),
     ("briefing/daily_brief_generator.py", "_build_stories_block", "wrap_source("),
     ("briefing/radio_script_generator.py", "build_stories_block", "_wrap_source("),
+    ("briefing/onair_show.py", "build_stories_block", "_wrap_source("),
 ]
 # Not yet carrying the clause, each with its reason. A row here is a known gap,
 # printed on every run, not a pass.
@@ -132,6 +135,7 @@ NO_TERMINAL_NAME = [
     "briefing/weekly_digest_generator.py",
     "briefing/weekly_rundown.py",
     "briefing/radio_script_generator.py",
+    "briefing/onair_show.py",
     "summarizer/cluster_summarizer.py",
     "history/audio_script_generator.py",
 ]

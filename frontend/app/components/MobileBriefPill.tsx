@@ -9,7 +9,7 @@ import LogoIcon from "./LogoIcon";
 import { hapticLight, hapticConfirm } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
 import { splitBriefParagraphs } from "../lib/briefText";
-import { isUnverified } from "../lib/verification";
+import { isUnverified, writtenAt, carriedLabel } from "../lib/verification";
 import UnverifiedLabel from "./UnverifiedLabel";
 import { episodeFromBrief, sameEpisode } from "../lib/episode";
 import { AUDIO_ENABLED } from "../lib/audioGate";
@@ -155,7 +155,7 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
       <div className="mbp__header">
         <LogoIcon size={14} animation="idle" />
         <span className="mbp__cmd">The Brief</span>
-        {brief.created_at && <span className="mbp__time">{timeAgo(brief.created_at)}</span>}
+        {writtenAt(brief, "tldr") && <span className="mbp__time">{timeAgo(writtenAt(brief, "tldr") as string)}</span>}
         <div className="mbp__header-actions">
           <button
             className="mbp__pill-chevron-btn"
@@ -184,6 +184,7 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
       {/* TL;DR — full text once the pill is expanded (no inner "Read more"). */}
       {brief.tldr_headline && <h3 className="mbp__hl mbp__hl--tldr">{brief.tldr_headline}</h3>}
       {isUnverified(brief, "tldr") && <UnverifiedLabel />}
+      {carriedLabel(brief, "tldr") && <p className="mbp__carried">{carriedLabel(brief, "tldr")}. Today&rsquo;s brief could not be written; this one is kept until it can.</p>}
       <div className="mbp__preview mbp__preview--tldr">
         {tldrParagraphs.map((para, i) => <p key={i}>{para}</p>)}
       </div>
@@ -200,6 +201,7 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
             <p className="mbp__desc mbp__desc--opinion">The day&rsquo;s coverage, argued from one lens</p>
             {opinionHeadline && <h3 className="mbp__hl mbp__hl--opinion">{opinionHeadline}</h3>}
             {isUnverified(brief, "opinion") && <UnverifiedLabel />}
+            {carriedLabel(brief, "opinion") && <p className="mbp__carried">{carriedLabel(brief, "opinion")}. Today&rsquo;s opinion could not be written; this one is kept until it can.</p>}
             <div className="mbp__preview mbp__preview--opinion">
               {splitBriefParagraphs(brief.opinion_text).map((para, i) => <p key={i}>{para}</p>)}
             </div>

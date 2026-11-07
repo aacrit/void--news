@@ -125,6 +125,25 @@ claims about its own confidence. It needs a decision, not a tweak.
 
 ## Known defects, not yet fixed
 
+### On Air, the conversation: first day (2026-11-07)
+
+- The first episode (2026-11-07-pm) was scripted by hand from the feed's
+  evidence, not by Gemini; the daily run from 2026-11-08 writes it with the
+  new prompt. The prompt has not yet been exercised against the model: the
+  first few runs should be read in the log (`[onair]` attempt lines) and
+  the validators' budgets tuned if the model lands outside them often.
+- The CEO has not yet ear-tested the casting (`af_heart` anchor, `am_michael`
+  desk, `af_bella` Opinion) or the score; both are env-overridable
+  (`VOID_KOKORO_VOICE_A/B/C`; the standard's numbers in `onair_score.py`).
+- The Opinion is not read when it was carried forward, so a day with no
+  fresh opinion ships a two-voice episode. The desk brief has no opinion of
+  its own.
+- `phone_check` lowers the whole music bus by the shortfall when a quiet
+  spoken window is under 15 dB over the music; a per-window duck would keep
+  the bed where it is elsewhere.
+- The score's `bed-low-end` still fires on some short beds (under 30 s), a
+  single pluck dominating the measure; logged, not blocking.
+
 ### History audio after rev 86 WS-H (2026-10-03)
 
 - **Four episodes are `audio_withdrawn`** and serve nowhere until

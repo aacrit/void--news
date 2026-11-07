@@ -51,6 +51,10 @@ if _SQLITE_PATH:
                 # {"tldr","opinion","onair"} -> did the grounding pass
                 # complete (JSON), rev 86. False renders "Not yet verified".
                 "grounding_ran": "TEXT",
+                # When the TL;DR / Opinion text was written (ISO), which for a
+                # carried-forward brief is earlier than created_at. 2026-11-07.
+                "written_at": "TEXT",
+                "opinion_written_at": "TEXT",
             },
             "weekly_digests": {
                 "departments": "TEXT",   # front-of-book essays (JSON), 2026-09-20

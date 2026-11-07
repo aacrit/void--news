@@ -1664,6 +1664,56 @@ def _produce_radio_edition(edition: str, clusters: list[dict], brief: dict, brie
     return True
 
 
+def _produce_onair_edition(edition: str, clusters: list[dict], brief: dict, brief_row: dict) -> bool:
+    """On Air, the conversation (2026-11-07): two voices talk the lead through,
+    change places for the second story, read the desk, then the Opinion in a
+    third voice; a score composed for the episode. Kokoro only. Writes the
+    audio fields into brief_row and returns True; False means Kokoro did not
+    synthesise the show, and the caller carries the previous episode forward
+    (never the edge-tts path: a show that sounds wrong is worse than
+    yesterday's)."""
+    from briefing.onair_show import generate_show
+    from briefing.onair_producer import produce_show, permalinks_from_archive
+
+    top = sorted(clusters, key=lambda c: c.get("rank_world") or c.get("headline_rank") or 0,
+                 reverse=True)[:DISPLAYED]
+    # A carried-forward opinion was written for another day's stories; the
+    # show reads only an opinion written for this edition.
+    editorial = None if (brief.get("_carried") or brief.get("_opinion_carried")) else brief.get("opinion_audio_script")
+    print(f"  [onair:{edition}] script over the top {len(top)} (opinion: {'yes' if editorial else 'no'})")
+    previous_titles: list[str] = []
+    try:
+        prev = json.loads(Path(os.environ.get("VOID_STATIC_DATA_DIR", "frontend/public/data"))
+                          .joinpath("brief.json").read_text(encoding="utf-8"))
+        previous_titles = [c.get("title") for c in (prev.get("audio_chapters") or [])
+                           if isinstance(c, dict) and c.get("kind") == "story" and c.get("title")]
+    except Exception:
+        previous_titles = []
+    show, report, label = generate_show(top, previous_titles=previous_titles)
+    if show is None:
+        print(f"  [onair:{edition}] no script ({label})")
+        return False
+    if report is not None:
+        print(f"  [onair:{edition}] script {show.words} words, ~{report.metrics.get('est_minutes')} min, "
+              f"A share {report.metrics.get('speaker_share_a')}, {label}")
+    result = produce_show(
+        show, editorial, edition,
+        opinion_headline=None if editorial is None else brief.get("opinion_headline"),
+        permalinks=permalinks_from_archive(), label=label,
+    )
+    if result is None:
+        print(f"  [onair:{edition}] show not produced")
+        return False
+    brief_row["audio_script"] = result.audio_script
+    brief_row.update(result.as_row_fields())
+    brief_row.setdefault("grounding_ran", {})["onair"] = show.grounded is True
+    brief_row["generator"] = f"{brief.get('generator') or ''}+onair:{label}:{result.engine}".strip("+")
+    print(f"  [onair:{edition}] {result.duration_seconds:.0f}s, {len(result.chapters)} chapters, "
+          f"engine {result.engine}, {result.timing.get('wpm')} wpm, news at {result.news_start_seconds}s, "
+          f"opinion at {result.opinion_start_seconds}s, score {result.timing.get('score', {}).get('tempo_bpm')} bpm")
+    return True
+
+
 def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                               run_id: str | None) -> dict[str, dict]:
     """Step 7d, moved AFTER Stage 2 (2026-09-07).
@@ -1703,6 +1753,13 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                     "audio_script": brief.get("audio_script"),
                     "top_cluster_ids": brief.get("top_cluster_ids", []),
                     "generator": brief.get("generator"),
+                    # When the TL;DR text was WRITTEN. created_at is when this row
+                    # was stored, which for a carried-forward brief is days
+                    # later than the text (2026-11-07: a Nov 4 brief read "2
+                    # hours ago" on the page for three days). The page shows this.
+                    "written_at": brief.get("_written_at") or datetime.now(timezone.utc).isoformat(),
+                    "opinion_written_at": brief.get("_opinion_written_at") or (
+                        datetime.now(timezone.utc).isoformat() if brief.get("opinion_text") else None),
                 }
                 # Whether each derived product's grounding pass completed
                 # (rev 86). False ships with a "Not yet verified" label;
@@ -1733,7 +1790,8 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                             "audio_script,audio_url,audio_duration_seconds,"
                             "audio_voice_label,audio_voice,audio_file_size,"
                             "opinion_audio_script,top_cluster_ids,opinion_start_seconds,"
-                            "audio_chapters,news_start_seconds,grounding_ran"
+                            "audio_chapters,news_start_seconds,grounding_ran,created_at,"
+                            "written_at,opinion_written_at"
                         ).eq("edition", edition).not_.is_(
                             "tldr_headline", "null"
                         ).order(
@@ -1757,6 +1815,8 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                             brief_row["audio_chapters"] = p.get("audio_chapters")
                             brief_row["news_start_seconds"] = p.get("news_start_seconds")
                             brief_row["top_cluster_ids"] = p.get("top_cluster_ids", [])
+                            brief_row["written_at"] = p.get("written_at") or p.get("created_at")
+                            brief_row["opinion_written_at"] = p.get("opinion_written_at") or p.get("created_at")
                             # The carried text keeps the verification of the
                             # day it was written; unknown reads as unverified.
                             _pg = p.get("grounding_ran")
@@ -1777,14 +1837,28 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                     # rundown over the top 20, Kokoro voices, original music,
                     # chapters. VOID_RADIO_FORMAT=0 restores the legacy path.
                     radio_done = False
-                    if os.environ.get("VOID_RADIO_FORMAT", "1").strip().lower() not in ("0", "false", "no"):
+                    # VOID_ONAIR_FORMAT: conversation (default, 2026-11-07) |
+                    # rundown (the 2026-09-18 bulletin) | legacy (edge-tts from
+                    # the brief's own script). VOID_RADIO_FORMAT=0 still means legacy.
+                    onair_format = os.environ.get("VOID_ONAIR_FORMAT", "conversation").strip().lower() or "conversation"
+                    if os.environ.get("VOID_RADIO_FORMAT", "1").strip().lower() in ("0", "false", "no"):
+                        onair_format = "legacy"
+                    if onair_format == "conversation":
+                        try:
+                            radio_done = _produce_onair_edition(edition, clusters, brief, brief_row)
+                        except Exception as _re:
+                            print(f"  [onair:{edition}] failed; the previous episode is carried: {_re}")
+                            traceback.print_exc()
+                    elif onair_format == "rundown":
                         try:
                             radio_done = _produce_radio_edition(edition, clusters, brief, brief_row)
                         except Exception as _re:
                             print(f"  [radio:{edition}] failed, falling back to the legacy audio: {_re}")
                             traceback.print_exc()
-                    # Legacy two-host audio (edge-tts) from the brief's own script
-                    if not radio_done and brief.get("audio_script"):
+                    # Legacy two-host audio (edge-tts) from the brief's own script:
+                    # only when asked for. The conversation never falls to it
+                    # (2026-11-07: a show that sounds wrong is worse than yesterday's).
+                    if not radio_done and onair_format != "conversation" and brief.get("audio_script"):
                         voices = get_voices_for_today(edition)
                         audio_result = produce_audio(
                             brief["audio_script"], voices, edition,
@@ -1888,7 +1962,7 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                     if "PGRST204" in err_msg or "does not exist" in err_msg.lower() or "schema cache" in err_msg.lower():
                         # Extract column name from error if possible, or strip known optional cols
                         for optional_col in ("opinion_start_seconds", "audio_chapters", "news_start_seconds",
-                                             "grounding_ran"):
+                                             "grounding_ran", "written_at", "opinion_written_at"):
                             brief_row.pop(optional_col, None)
                         try:
                             supabase.table("daily_briefs").upsert(

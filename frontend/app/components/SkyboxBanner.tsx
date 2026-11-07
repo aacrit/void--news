@@ -8,7 +8,7 @@ import { hapticLight } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
 import { splitBriefParagraphs, briefTeaser, opensOnInitialism } from "../lib/briefText";
 import { useHeightMorph } from "../lib/useHeightMorph";
-import { isUnverified } from "../lib/verification";
+import { isUnverified, writtenAt, carriedLabel } from "../lib/verification";
 import UnverifiedLabel from "./UnverifiedLabel";
 
 type ExpandedSection = null | "tldr" | "opinion";
@@ -139,7 +139,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     <LogoIcon size={16} animation="idle" className="skb__compact-logo" />
                     <span className="skb__compact-cmd">The Brief</span>
                     <span className="skb__compact-desc">&middot; Today&rsquo;s top stories, in one read</span>
-                    {mounted && brief.created_at && <span className="skb__compact-time">{timeAgo(brief.created_at)}</span>}
+                    {mounted && writtenAt(brief, "tldr") && <span className="skb__compact-time">{timeAgo(writtenAt(brief, "tldr") as string)}</span>}
                   </div>
                   {brief.tldr_headline && <h3 className="skb__compact-hl skb__compact-hl--tldr">{String(brief.tldr_headline)}</h3>}
                   <p className="skb__compact-preview skb__compact-preview--tldr">{briefTeaser(String(brief.tldr_text), 150)}</p>
@@ -184,7 +184,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                   <LogoIcon size={16} animation="idle" />
                   <span className="skb__section-label-cmd">The Brief</span>
                   <span className="skb__section-desc">&middot; Today&rsquo;s top stories, in one read</span>
-                  {mounted && brief.created_at && <span className="skb__section-label-time">{timeAgo(brief.created_at)}</span>}
+                  {mounted && writtenAt(brief, "tldr") && <span className="skb__section-label-time">{timeAgo(writtenAt(brief, "tldr") as string)}</span>}
                   <button
                     ref={collapseRef}
                     className="skb__collapse-inline"
@@ -197,6 +197,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                 </div>
                 {brief.tldr_headline && <h3 className="skb__section-hl skb__section-hl--tldr">{String(brief.tldr_headline)}</h3>}
                 {isUnverified(brief, "tldr") && <UnverifiedLabel />}
+                {mounted && carriedLabel(brief, "tldr") && <p className="skb__carried">{carriedLabel(brief, "tldr")}. Today&rsquo;s brief could not be written; this one is kept until it can.</p>}
                 <div className={`skb__section-body skb__section-body--tldr${opensOnInitialism(String(brief.tldr_text)) ? " skb__section-body--no-dropcap" : ""}`}>
                   {splitBriefParagraphs(String(brief.tldr_text)).map((para, i) => <p key={i}>{para}</p>)}
                 </div>
@@ -222,6 +223,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                 </div>
                 {brief.opinion_headline && <h3 className="skb__section-hl skb__section-hl--opinion">{String(brief.opinion_headline)}</h3>}
                 {isUnverified(brief, "opinion") && <UnverifiedLabel />}
+                {mounted && carriedLabel(brief, "opinion") && <p className="skb__carried">{carriedLabel(brief, "opinion")}. Today&rsquo;s opinion could not be written; this one is kept until it can.</p>}
                 <div className="skb__section-body skb__section-body--opinion">
                   {splitBriefParagraphs(String(brief.opinion_text || "")).map((para, i) => <p key={i}>{para}</p>)}
                 </div>

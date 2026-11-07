@@ -84,9 +84,10 @@ SHOW_META = {
         "category": "News",
         "subcategory": "Daily News",
         "description": (
-            "The daily radio edition of Void News: the day's top stories read "
-            "for the ear, then the editorial. Every story scored for bias on "
-            "six axes, both the outlet and its words. No ads. No paywall."
+            "The daily conversation from Void News: two voices talk the day's "
+            "lead through, then the second story, the rest of the desk, and the "
+            "Opinion in a voice of its own. Every story scored for bias on six "
+            "axes. No ads. No paywall."
         ),
     },
     "weekly": {

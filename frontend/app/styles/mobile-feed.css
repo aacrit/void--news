@@ -1226,3 +1226,11 @@
 .mbp__opinion--left   { border-left: 2px solid var(--bias-left); padding-left: var(--space-3); }
 .mbp__opinion--center { border-left: 2px solid var(--bias-center); padding-left: var(--space-3); }
 .mbp__opinion--right  { border-left: 2px solid var(--bias-right); padding-left: var(--space-3); }
+
+/* A carried-forward text says when it was written (matches .skb__carried). */
+.mbp__carried {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+}
