@@ -15,7 +15,10 @@ belongs in one of those two.
 ## Architecture
 
 ```
-GitHub Actions (daily 10:07 UTC cron; no cron on minute 0 or 30)
+09:41 UTC scheduled task on the owner's account dispatches pipeline.yml
+GitHub Actions (daily 10:07 UTC cron, the BACKUP: GitHub starts it 7-8 h late,
+  into Gemini's US-peak overload, so it stands down if today's edition exists;
+  no cron on minute 0 or 30)
   → pipeline → pipeline_state.db (SQLite, VOID_SQLITE_PATH)
   → static JSON + MP3 committed to the repo
   → pipeline.yml dispatches deploy-cloudflare.yml (workflow_run kept as a 2nd path)
