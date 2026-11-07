@@ -48,3 +48,47 @@ export function isUnverified(
 ): boolean {
   return groundingFlags(brief)?.[product] === false;
 }
+
+/* ---------------------------------------------------------------------------
+   When the text was WRITTEN. brief.json's created_at is when the row was
+   stored; when the pipeline carries a brief or an opinion forward because
+   no model answered, that is days after the text was written (Nov 4 to 7,
+   2026: a three-day-old brief read "2h ago"). The pipeline writes
+   `written_at` and `opinion_written_at` alongside; a brief from before the
+   fields existed has neither and reads as written when stored.
+   --------------------------------------------------------------------------- */
+
+export type DatedBrief = {
+  created_at?: string | null;
+  written_at?: string | null;
+  opinion_written_at?: string | null;
+};
+
+/** ISO time the TL;DR ("tldr") or the Opinion ("opinion") was written. */
+export function writtenAt(brief: DatedBrief | null | undefined, product: "tldr" | "opinion"): string | null {
+  if (!brief) return null;
+  const own = product === "opinion" ? brief.opinion_written_at : brief.written_at;
+  return own || brief.created_at || null;
+}
+
+/** True when the text was carried forward from an earlier edition: written
+ *  more than 20 hours before this edition was stored. */
+export function isCarried(brief: DatedBrief | null | undefined, product: "tldr" | "opinion"): boolean {
+  if (!brief?.created_at) return false;
+  const w = writtenAt(brief, product);
+  if (!w) return false;
+  const stored = new Date(brief.created_at).getTime();
+  const written = new Date(w).getTime();
+  if (!isFinite(stored) || !isFinite(written)) return false;
+  return stored - written > 20 * 3600 * 1000;
+}
+
+/** "Written Wednesday": the label a carried text wears, or null. */
+export function carriedLabel(brief: DatedBrief | null | undefined, product: "tldr" | "opinion"): string | null {
+  if (!isCarried(brief, product)) return null;
+  const w = writtenAt(brief, product);
+  if (!w) return null;
+  const d = new Date(w);
+  if (!isFinite(d.getTime())) return null;
+  return `Written ${d.toLocaleDateString("en-US", { weekday: "long", timeZone: "UTC" })}`;
+}

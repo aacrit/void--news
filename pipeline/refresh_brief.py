@@ -15,7 +15,13 @@ Usage:
     python pipeline/refresh_brief.py --fixtures --dry-run --output /tmp/brief.json
     python pipeline/refresh_brief.py --snapshot-fixtures           # save current DB → test_clusters.json
 
-    # On Air radio show (default audio path since 2026-09-18; --legacy-audio for edge-tts + old script):
+    # On Air, the conversation (default since 2026-11-07; VOID_ONAIR_FORMAT=rundown for the bulletin):
+    python pipeline/refresh_brief.py --radio-only                  # regenerate ONLY today's script + audio
+    python pipeline/refresh_brief.py --radio-only --dry-run        # script + validator report, no audio, no DB
+    python pipeline/refresh_brief.py --radio-only --script-file tests/fixtures/onair_show_2026-11-07.txt \
+        --render-dir /tmp/onair                                    # render a script to a folder (no Gemini, no DB)
+    python pipeline/refresh_brief.py --radio-only --script-file X  # render a written script to the site + DB
+    # The 2026-09-18 bulletin (VOID_ONAIR_FORMAT=rundown; --legacy-audio for edge-tts + old script):
     python pipeline/refresh_brief.py --radio-only                  # regenerate ONLY the radio rundown + audio
     python pipeline/refresh_brief.py --radio-only --dry-run        # rundown + validator report, no audio, no DB
     python pipeline/refresh_brief.py --radio-only --rundown-file tests/fixtures/radio_rundown_2026-09-18.txt \
@@ -193,6 +199,10 @@ def main():
                              "asking Gemini for a new one (use after a voice, pace or mastering change)")
     parser.add_argument("--rundown-file", type=str, default=None,
                         help="Use this rundown text instead of calling Gemini (fixtures / offline renders)")
+    parser.add_argument("--script-file", type=str, default=None,
+                        help="On Air (conversation): use this script text instead of calling Gemini")
+    parser.add_argument("--no-opinion", action="store_true",
+                        help="On Air (conversation): render without the Opinion segment")
     parser.add_argument("--render-dir", type=str, default=None,
                         help="Render the radio show into this folder instead of the static site (implies no DB write)")
     parser.add_argument("--snapshot-fixtures", action="store_true",
@@ -331,7 +341,53 @@ def main():
         audio_result = None
         radio_result = None
         use_radio = not args.legacy_audio and os.environ.get("VOID_RADIO_FORMAT", "1").strip().lower() not in ("0", "false", "no")
-        if use_radio and not args.no_audio and not args.opinion_only:
+        onair_format = os.environ.get("VOID_ONAIR_FORMAT", "conversation").strip().lower() or "conversation"
+        if use_radio and onair_format == "conversation" and not args.no_audio and not args.opinion_only:
+            print("\n[4/4] On Air, the conversation..." + (" (dry run: script + validators only)" if args.dry_run and not args.render_dir else ""))
+            from briefing.onair_show import generate_show, parse_show, validate_show, bind_ranks, ground_and_log, Context
+            from briefing.onair_producer import produce_show, permalinks_from_archive
+            from briefing.spoken_text import spoken_date
+            top = [c for c in all_clusters if edition in (c.get("sections") or [edition])][:20]
+            editorial = None if args.no_opinion else brief.get("opinion_audio_script")
+            stored = (current or {}).get("audio_script") if args.revoice else None
+            show = report = None
+            label = "none"
+            if args.revoice and not stored:
+                print("  --revoice: the current brief carries no script to re-render")
+            elif args.script_file or stored:
+                source = Path(args.script_file).read_text(encoding="utf-8") if args.script_file else stored
+                ctx = Context(top=top, date_spoken=spoken_date(datetime.now(timezone.utc)), has_opinion=bool(editorial))
+                show = parse_show(source)
+                bind_ranks(show, ctx)
+                report = validate_show(show, ctx)
+                label = "file" if args.script_file else "revoice"
+                print(f"  Script from {label}: {show.words} words, passed={report.passed}")
+                for f in report.findings:
+                    print(f"    {f.id} {f.level:4} [{f.segment}] {f.detail[:110]}")
+                if not report.passed and not args.render_dir:
+                    print("  The script fails its checks; not rendering to the site")
+                    show = None
+                elif show is not None:
+                    show.generator = label
+                    ground_and_log(show, ctx)
+            else:
+                show, report, label = generate_show(top)
+            edition_output["onair_script"] = show.to_text() if show else None
+            edition_output["onair_findings"] = [f"{f.id} {f.level} [{f.segment}] {f.detail}" for f in report.findings] if report else None
+            if show is not None and not (args.dry_run and not args.render_dir):
+                radio_result = produce_show(
+                    show, editorial, edition, opinion_headline=None if editorial is None else brief.get("opinion_headline"),
+                    permalinks=permalinks_from_archive(), out_dir=args.render_dir, label=label,
+                )
+                if radio_result:
+                    print(f"  On Air: {radio_result.duration_seconds}s, {len(radio_result.chapters)} chapters, "
+                          f"{radio_result.file_size / 1024:.0f} KB, engine {radio_result.engine} -> {radio_result.audio_url}")
+                    brief["audio_script"] = radio_result.audio_script
+                    edition_output["onair_chapters"] = radio_result.chapters
+                    edition_output["onair_timing"] = radio_result.timing
+                else:
+                    print("  On Air not produced; the current audio is kept")
+        elif use_radio and not args.no_audio and not args.opinion_only:
             print("\n[4/4] On Air radio show..." + (" (dry run: rundown + validators only)" if args.dry_run and not args.render_dir else ""))
             from briefing.radio_script_generator import generate_radio_rundown, parse_rundown, validate_rundown, RundownContext
             from briefing.radio_producer import produce_radio_show, permalinks_from_archive
@@ -372,7 +428,7 @@ def main():
                     print("  Radio show failed; falling back to the legacy audio path")
             elif rundown is None:
                 print("  No usable rundown; falling back to the legacy audio path")
-        if radio_result is None and not use_radio_only_dry(args) and not args.no_audio and not args.opinion_only and not args.dry_run and brief.get("audio_script"):
+        if radio_result is None and onair_format != "conversation" and not use_radio_only_dry(args) and not args.no_audio and not args.opinion_only and not args.dry_run and brief.get("audio_script"):
             print("\n[4/4] Synthesizing audio (legacy edge-tts path)...")
             try:
                 from briefing.audio_producer import produce_audio

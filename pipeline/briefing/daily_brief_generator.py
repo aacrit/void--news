@@ -1234,6 +1234,43 @@ def _build_stories_block(clusters: list[dict], edition: str, max_stories: int = 
     return top, "\n".join(lines)
 
 
+def _desk_brief(top_clusters: list[dict], n_stories: int = 6) -> tuple[str | None, str | None]:
+    """The Brief written from the day's own story summaries, one story per
+    paragraph, for a day no model answers (2026-11-07). Returns (headline,
+    text) or (None, None) when the feed carries no summaries.
+
+    Every summary sentence has already passed Stage 2's checks against the
+    card's own evidence, so this is grounded by construction; it is plain,
+    not dry, and it is TODAY'S. It replaces carrying forward a brief written
+    for another day's stories, which read "2 hours ago" on the page for three
+    days (Nov 4 to 7). The generator label says what it is.
+    """
+    try:
+        from editorial.derived_grounding import _sentences as _split
+    except ImportError:  # pragma: no cover
+        from pipeline.editorial.derived_grounding import _sentences as _split  # type: ignore
+    paras: list[str] = []
+    for c in top_clusters[:n_stories]:
+        summary = (c.get("summary") or "").strip()
+        if isinstance(summary, list):
+            summary = " ".join(str(x) for x in summary)
+        sents = [x.strip() for x in _split(summary) if x.strip()]
+        if not sents:
+            continue
+        para, words = [], 0
+        for x in sents[:3]:
+            w = len(x.split())
+            if para and words + w > 70:
+                break
+            para.append(x)
+            words += w
+        paras.append(" ".join(para))
+    if len(paras) < 3:
+        return None, None
+    lead_title = (top_clusters[0].get("title") or "").strip().rstrip(".")
+    return (lead_title or None), "\n\n".join(paras)
+
+
 def _rule_based_tldr(top_clusters: list[dict]) -> str:
     """
     Rule-based TL;DR fallback when Gemini is unavailable.
@@ -1273,7 +1310,7 @@ def _fetch_last_successful_brief(edition: str) -> dict | None:
         res = supabase.table("daily_briefs").select(
             "tldr_headline,tldr_text,opinion_text,opinion_headline,"
             "opinion_lean,opinion_cluster_id,audio_script,"
-            "opinion_audio_script,top_cluster_ids"
+            "opinion_audio_script,top_cluster_ids,created_at"
         ).eq("edition", edition).not_.is_(
             "tldr_headline", "null"
         ).order("created_at", desc=True).limit(1).execute()
@@ -1294,6 +1331,10 @@ def _fetch_last_successful_brief(edition: str) -> dict | None:
                 # Whether THAT brief's grounding pass completed (rev 86). Read
                 # on its own so a missing column can never cost the carry.
                 "_prior_grounding": _prior_grounding(supabase, edition),
+                # When the carried text was written, so the page never stamps
+                # it with today's time (2026-11-07).
+                "_written_at": p.get("created_at"),
+                "_opinion_written_at": p.get("created_at"),
             }
     except Exception as e:
         print(f"  [warn] Could not fetch previous successful brief for {edition}: {e}")
@@ -2216,6 +2257,25 @@ def generate_daily_briefs(
         # Fallback: carry forward last successful Gemini brief instead of
         # generating a dry rule-based stub.  Only use rule-based as last resort.
         if brief_result is None:
+            desk_headline, desk_text = _desk_brief(top_clusters)
+            if desk_text:
+                # Today's stories, in their own summaries, beat another day's
+                # brief however well it was written (2026-11-07).
+                print(f"  [brief:{edition}] LLM failed ({gemini_failure_reason}) — "
+                      f"writing the desk brief from today's summaries")
+                brief_result = {
+                    "tldr_headline": desk_headline,
+                    "tldr_text": desk_text,
+                    "opinion_text": None,
+                    "opinion_headline": None,
+                    "opinion_lean": None,
+                    "opinion_cluster_id": None,
+                    "audio_script": None,
+                    "top_cluster_ids": top_ids,
+                    "generator": "desk",
+                }
+                _stats["rule_based"] += 1
+        if brief_result is None:
             print(f"  [brief:{edition}] LLM failed ({gemini_failure_reason}) — "
                   f"trying carry-forward from last successful brief")
             carried = _fetch_last_successful_brief(edition)
@@ -2260,11 +2320,23 @@ def generate_daily_briefs(
                 print(f"  [opinion:{edition}] Opinion generated — audio_script: "
                       f"{'yes' if brief_result.get('opinion_audio_script') else 'NO'}")
             elif not brief_result.get("opinion_text"):
-                # Gemini failed and no carried-forward opinion — rule-based last resort
-                print(f"  [opinion:{edition}] Gemini failed, no carry-forward — building rule-based opinion")
-                brief_result.update(_rule_based_opinion(opinion_cluster, today_lean))
-                brief_result["_opinion_cluster_ref"] = opinion_cluster
-                brief_result["_fresh_opinion"] = True
+                # Gemini failed. An opinion is an argument, so the last one
+                # written is carried, dated as such on the page; a summary
+                # presented "through a lens" is not an opinion (2026-11-07).
+                prior = _fetch_last_successful_brief(edition)
+                if prior and prior.get("opinion_text") and prior.get("opinion_headline"):
+                    print(f"  [opinion:{edition}] Gemini failed — carrying forward the last opinion")
+                    for k in ("opinion_text", "opinion_headline", "opinion_audio_script",
+                              "opinion_lean", "opinion_cluster_id"):
+                        brief_result[k] = prior.get(k)
+                    brief_result["_opinion_written_at"] = prior.get("_opinion_written_at")
+                    brief_result["_opinion_carried"] = True
+                    brief_result.setdefault("_prior_grounding", prior.get("_prior_grounding") or {})
+                else:
+                    print(f"  [opinion:{edition}] Gemini failed, no carry-forward — building rule-based opinion")
+                    brief_result.update(_rule_based_opinion(opinion_cluster, today_lean))
+                    brief_result["_opinion_cluster_ref"] = opinion_cluster
+                    brief_result["_fresh_opinion"] = True
             else:
                 print(f"  [opinion:{edition}] Gemini failed — keeping carried-forward opinion")
         elif has_carried_opinion:

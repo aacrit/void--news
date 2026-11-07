@@ -171,8 +171,15 @@ _OVERLOAD_BACKOFF: tuple[float, ...] = (30.0, 60.0)
 
 
 def _is_overload(error_str: str) -> bool:
+    # A 504 DEADLINE_EXCEEDED ("Deadline expired before operation could
+    # complete") is the same thing from the caller's side: the model did not
+    # answer. On 2026-11-07 flash returned it twice for the brief and twice
+    # for the On Air script; neither reached flash-lite, because this read
+    # only a 503 as overload, and the day shipped a three-day-old brief.
     return ("503" in error_str or "unavailable" in error_str
-            or "overloaded" in error_str or "high demand" in error_str)
+            or "overloaded" in error_str or "high demand" in error_str
+            or "504" in error_str or "deadline_exceeded" in error_str
+            or "deadline expired" in error_str)
 
 # Substrings that mark a transient transport-layer drop (retryable). Matched
 # against str(exception) + the exception CLASS NAME lowercased, because httpx

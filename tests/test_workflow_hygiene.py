@@ -65,6 +65,10 @@ ALLOWLIST: dict[str, str] = {
     "test_asr_words.py": "Orpheus word check (2026-10-07): the check runs only inside the local GPU "
                          "History render; this test runs locally until a CEO-merged .github change "
                          "adds it to auto-merge-claude.yml's gates",
+    "test_onair_show.py": "On Air, the conversation (2026-11-07): runs locally until the CEO merges "
+                          "branch claude/onair-gate-workflow, the one-line .github change that adds "
+                          "it to auto-merge-claude.yml's gates (a branch touching .github cannot "
+                          "auto-merge); that branch also removes this entry",
 }
 
 FOUR_GATES = ("tests/test_grounding.py", "tests/test_bias_defaults_gate.py",

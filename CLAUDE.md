@@ -107,6 +107,7 @@ impossible, not a note asking people to be careful:
 | `tests/test_engine_health.py` + `pipeline/validation/engine_health.py` | the engine's input collapsing unseen, and copy that quotes the engine from memory. Every run writes `build-data/engine.json` (body length by feed class, the share scored on the outlet alone, how far words moved rated outlets). `--floors` runs in `pipeline.yml` AFTER the data commit and fails the run when the direct-feed full-body share drops under 55% (healthy 69-71%; 45-48% on 2026-09-19..23, when ~2,500 direct articles a day fell back to their RSS summary and nothing noticed). Asserts `app/lib/leanBounds.ts` equals `political_lean.py` and `main.py`, and that `/sources` prints measured numbers only from the export |
 | `tests/test_phrase_counts_daily.py` | the daily lexicon corpus outgrowing its file, or storing prose. Step 9e writes to `VOID_PHRASE_DB` (its own cache and artifact, never the state DB): full bodies only, 3 per rated outlet per day by URL hash, a phrase counted from its third sighting (Bloom gate), pruned unless it spreads, compact integer storage, and a ceiling that halts rather than prunes to fit |
 | `tests/test_pair_test.py` | the pair test's AUC gate (0.75 proceed, 0.65 stop) being wrong arithmetic, or its corpus holding article text |
+| `tests/test_onair_show.py` | On Air's script breaking its grammar (C-01..C-15: Void's lines, no quotation marks, no borrowed phrase, the budgets, the shape of a conversation, the desk, the voice shares, grounded attribution, no unattributed law), a template edition that is not grounded by construction, and the score falling off its standard (a featured cue over -26 LUFS, a bed that does not breathe, a tiled loop, treble over the shelf, a duck attack over 2 dB per 100 ms), each with a planted defect |
 | `tests/test_onair_sidecar.py` | an On Air episode whose served sidecars are another day's: the legacy fallback of 2026-09-26 rewrote `latest.mp3` and left the previous day's `latest.chapters.json` beside it, and labelled two edge-tts voices with the Gemini roster. Also R-14 reading a spelled initialism ("N-A-T-O") as an added word, which is what sank that day's radio rundown |
 | `tests/test_weekly_audio_served.py` | an MP3 that is not what its own row says it is |
 | `tests/test_weekly_killlist.py` | a kill-list term in a committed Weekly issue, caught before deploy rather than by W-10 on the served page (Issues #26 and #23 carried 41 between them, 2026-09-24) |
@@ -267,7 +268,7 @@ and the live page. Thirty-five commits described as done were not live.
 | Model | Cap | Spends on |
 |---|---|---|
 | `gemini-3.8-flash` (`GEMINI_FLASH_MODEL`) | **20 requests/DAY** (429 `GenerateRequestsPerDayPerProjectPerModel-FreeTier`, limit 20, 2026-11-03) | daily brief (~2-4) + candidate summaries (~10) ≈ 13/day |
-| `gemini-3.5-flash-lite` (`GEMINI_MODEL`) | **20 requests/DAY**, its own | Stage 2 critique pass, history/weekly support calls, and every flash request that flash refuses |
+| `gemini-3.5-flash-lite` (`GEMINI_MODEL`) | **20 requests/DAY**, its own | Stage 2 critique pass, history/weekly support calls, and every flash request that flash refuses (503, 429, and since 2026-11-07 a 504 deadline) |
 
 A Weekly (~15-20 flash requests) and a daily run cannot both run fully on flash in one Pacific day. Since 2026-11-03 a flash request refused for overload (503) or quota (429) is asked once more of flash-lite, and a per-DAY 429 parks flash for the rest of the process (`gemini_client._with_lite_fallback`). Every request has a 180 s deadline.
 
@@ -334,7 +335,8 @@ adds nothing to the state that anything reads back.
 | **Paper** (the printable twenty) | `frontend/app/paper/`, `scripts/verify_sections.py` P-01..P-04, `tests/test_paper.py` |
 | Shared kill list (significance + AI slop), one regex for feed, Weekly, Opinion, promos, served pages | `pipeline/utils/prohibited_terms.py` (`find_prohibited`, `strip_significance`) |
 | Served-output gates | `scripts/verify_production.py` |
-| **On Air** radio: rundown grammar, R-01..R-15 (R-14 grounded attribution, R-15 no unattributed statement of law), voices, mastering | `docs/ON-AIR-RADIO.md` |
+| **On Air**, the conversation: the script (C-01..C-15, grounding, the template edition), the score standard, voices, the running order | `docs/ON-AIR-CONVERSATION.md`, `pipeline/briefing/{onair_show,onair_score,onair_producer}.py`, `tests/test_onair_show.py` |
+| On Air, the 2026-09-18 bulletin (`VOID_ONAIR_FORMAT=rundown`): rundown grammar, R-01..R-15 | `docs/ON-AIR-RADIO.md` |
 | **Weekly audio** "The Argument": W-01..W-13 (W-13 grounds the Editor in the issue), the moat, the dry argument | `docs/WEEKLY-AUDIO.md` |
 | **History audio**: format, casting, H-01..H-11 | `docs/HISTORY-AUDIO.md`, `docs/HISTORY-SCRIPT-BRIEF.md` |
 | **The Hearing**: `/history/[slug]`, a SERVER component. Three client islands (rail, Listen, lightbox). `omitted` appears in the turn and nowhere else | `frontend/app/history/components/Hearing.tsx`, `hearing.ts`, `docs/proposals/HISTORY-PAGE-REVAMP.md` |
@@ -356,7 +358,7 @@ adds nothing to the state that anything reads back.
 | Section | State |
 |---|---|
 | **News** (daily feed) | Live. Top 20 cards plus a "More stories" band of up to 10 headline links (ranks 21-30, 2026-10-28), two-stage pipeline, 45-cluster bench. |
-| **On Air** (daily radio) | Live. Kokoro three voices, chapters, mastered to -16 LUFS. |
+| **On Air** (daily) | Live. **The conversation since 2026-11-07**: two voices talk the lead through, change places for the second story, read the desk; the Opinion in a third voice; a score composed per episode to the film studio's standard; Kokoro only, never edge-tts; a grounded template edition when no model answers. `docs/ON-AIR-CONVERSATION.md`. |
 | **The Brief** (TL;DR + Opinion) | Live. One story per paragraph. |
 | **Weekly** | Live. **Vol. I, No. 1 published 2026-09-20**, the first issue on the Sunday cadence and the first ever to carry departments. Aug 24-30 is kept as the pilot. |
 | **Weekly audio** ("The Argument") | Live. Three Kokoro anchors, 11 chapters, mastered to -16 LUFS, verified against the served file. Rendered by **manual `audio-only` dispatch**; no scheduled run has produced one yet. There is no fallback: a failed render ships no audio rather than a quiet legacy substitute. |
@@ -378,7 +380,7 @@ adds nothing to the state that anything reads back.
 | Gemini bias reasoning | `DISABLE_GEMINI_REASONING=1` (`.github/workflows/pipeline.yml`) |
 | Editorial triage | `DISABLE_EDITORIAL_TRIAGE=1` (same file) |
 | All audio | `DISABLE_AUDIO` + `NEXT_PUBLIC_DISABLE_AUDIO` — flip together |
-| On Air radio format | `VOID_RADIO_FORMAT=0` → legacy path |
+| On Air format | `VOID_ONAIR_FORMAT=conversation` (default) / `rundown` (the bulletin) / `legacy` (edge-tts); `VOID_RADIO_FORMAT=0` → legacy |
 | Weekly audio format | `VOID_WEEKLY_AUDIO_FORMAT=0` |
 | TTS engine | `VOID_TTS_ENGINE=edge` → edge-tts fallback |
 | Export scope | `VOID_EXPORT_ONLY=feed\|brief\|weekly\|archive\|methodology\|history` |

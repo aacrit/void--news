@@ -77,6 +77,10 @@ export interface EpisodeMeta {
   /** Where STORY 1 begins, after the ident, sign-on and menu. */
   news_start_seconds: number | null;
   created_at: string;
+  /** When the TL;DR / Opinion text was written; earlier than created_at when
+   *  the pipeline carried it forward (lib/verification.ts). */
+  written_at?: string | null;
+  opinion_written_at?: string | null;
 }
 
 /* Re-exported so the history surfaces keep importing it from here. */

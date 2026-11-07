@@ -359,7 +359,9 @@ CREATE TABLE IF NOT EXISTS daily_briefs (
   generator              TEXT,                 -- 030
   audio_chapters         TEXT,                 -- radio show chapters (JSON array), 2026-09-18
   news_start_seconds     REAL,                 -- where STORY 1 begins in the MP3, 2026-09-18
-  grounding_ran          TEXT                  -- {"tldr","opinion","onair"}: grounding pass completed (JSON), rev 86
+  grounding_ran          TEXT,                 -- {"tldr","opinion","onair"}: grounding pass completed (JSON), rev 86
+  written_at             TEXT,                 -- when the TL;DR text was written; earlier than created_at when carried, 2026-11-07
+  opinion_written_at     TEXT                  -- when the Opinion text was written, 2026-11-07
 );
 CREATE UNIQUE INDEX IF NOT EXISTS idx_daily_briefs_edition_run     ON daily_briefs(edition, pipeline_run_id);
 CREATE INDEX IF NOT EXISTS        idx_daily_briefs_edition_created ON daily_briefs(edition, created_at DESC);
