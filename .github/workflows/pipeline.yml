@@ -51,6 +51,27 @@ jobs:
         with:
           ref: main
           persist-credentials: false
+      # The edition is started at 09:41 UTC by a scheduled task on the owner's
+      # account (CEO 2026-11-07: ready early morning, always), because GitHub
+      # started this cron 7 to 8 hours late, into US peak, where Gemini Flash
+      # answered 154 requests with 503 on 2026-11-05. The cron stays as the
+      # backup: when it fires and today's edition is already built, it stands
+      # down rather than spend the same Pacific day's Gemini quota twice and
+      # overwrite the morning edition.
+      - name: Stand down if today's edition already shipped
+        if: github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          built=$(python3 -c "import json; print(json.load(open('frontend/build-data/feed.json')).get('builtAt', '')[:10])")
+          today=$(date -u +%F)
+          if [ "$built" = "$today" ]; then
+            echo "Edition for $today already built; cancelling this late scheduled run."
+            gh run cancel "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY"
+            sleep 120
+            exit 1
+          fi
+          echo "No edition yet for $today (latest $built); running."
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.11'
