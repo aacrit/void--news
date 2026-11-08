@@ -1,28 +1,52 @@
 {
-  "builtAt": "2026-11-06T19:31:29.796647Z",
+  "builtAt": "2026-11-08T11:57:33.441356Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "402657f3-c160-485c-8a2d-fdff94a9db28",
-      "title": "Former Senator and West Virginia Governor Jay Rockefeller Dies at Age 89",
+      "id": "eeb14bbe-f7fb-4b83-b509-5ac6e843cb53",
+      "title": "Russia Sends Senior Delegation to Abu Dhabi for Trilateral Peace Talks",
       "sentences": [
         {
-          "text": "He helped establish the Children's Health Insurance Program in 1997 and chaired the Senate Intelligence Committee, where he voted for the 2002 Iraq war authorization before later expressing regret and accusing President George W.",
+          "text": "Russian officials announced plans to send a high-level delegation to Abu Dhabi for upcoming trilateral negotiations with Ukraine and the United States scheduled for November 10-11.",
           "rule": "E-13",
-          "message": "summary puts 1997 beside \"president george w\", but no source sentence carrying 1997 names it and one names another \"president ...\": \"He helped establish the Children's Health Insurance Program in 1997 and chaired the Senate\""
+          "message": "summary puts 11 beside \"united states\", but no source sentence carrying 11 names it and one names another \"united ...\": \"Russian officials announced plans to send a high-level delegation to Abu Dhabi for upcomin\""
         }
       ],
       "points": [],
       "left": []
     },
     {
-      "id": "b52b88d8-89cc-46b2-b62c-f948868b501b",
-      "title": "Abdul El-Sayed Wins Michigan Senate Election as First Muslim American Senator",
+      "id": "2b79249f-a523-4892-adaa-945c01e0f770",
+      "title": "New Zealand Major Parties Flatline as Dispirited Voters Upend General Election",
       "sentences": [
         {
-          "text": "The 42-year-old Democrat and former Detroit public health director defeated Republican Mike Rogers after campaigning on healthcare, living costs, and opposition to United States military assistance to Israel.",
+          "text": "The election outcome left the National-led conservative coalition holding a slim majority of 67 seats in a projected 131-seat parliament, sitting just above the 66-seat threshold required to govern.",
           "rule": "E-13",
-          "message": "summary puts 42 beside \"republican mike rogers\", but no source sentence carrying 42 names it and one names another \"republican ...\": \"The 42-year-old Democrat and former Detroit public health director defeated Republican Mik\""
+          "message": "summary states 66, which appears in none of the source articles: source it or cut it"
+        }
+      ],
+      "points": [
+        {
+          "text": "Preliminary results show the National-led conservative coalition securing 67 seats, narrowly above the 66-seat majority requirement.",
+          "rule": "E-13",
+          "message": "summary states 66, which appears in none of the source articles: source it or cut it"
+        },
+        {
+          "text": "Preliminary results show the National-led conservative coalition securing 67 seats, narrowly above the 66-seat majority requirement.",
+          "rule": "E-13",
+          "message": "summary states 67, which appears in none of the source articles: source it or cut it"
+        }
+      ],
+      "left": []
+    },
+    {
+      "id": "bf385dc6-4f7c-4e3b-88c0-876f0914caef",
+      "title": "El Hierro Declares Emergency After Thousands of Migrants Arrive by Boat",
+      "sentences": [
+        {
+          "text": "Fernando Clavijo, president of the Canary Islands, described the situation on El Hierro as absolutely unsustainable, noting that overall maritime rescue services pulled 3,261 migrants and refugees from the water off the archipelago in the first six days of November.",
+          "rule": "E-13",
+          "message": "summary puts 3261 beside \"el hierro\", but no source sentence carrying 3261 names it and one names another \"el ...\": \"Fernando Clavijo, president of the Canary Islands, described the situation on El Hierro as\""
         }
       ],
       "points": [],
