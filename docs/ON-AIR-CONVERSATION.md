@@ -148,8 +148,14 @@ this chain). Casting, 2026-11-07, overridable with `VOID_KOKORO_VOICE_A/B/C`:
 | Role | Voice | Why |
 |---|---|---|
 | A, the anchor | `af_heart` | the roster's A-grade voice goes to the voice heard most |
-| B, the desk | `am_fenrir` | the CEO heard `am_michael` as robotic on the first ear test; fenrir is the provisional desk until the audition pack is heard (`scratch` audition files, every Kokoro voice slated) |
-| C, the Opinion | `af_bella` | A-grade, and it reads nothing else, so the firewall is audible the moment it starts |
+| B, the desk | `af_bella` | the A- grade; same register as heart, so the two are panned 14 % apart |
+| C, the Opinion | `bf_emma` | the best British voice (B-), and it reads nothing else: the accent makes the firewall audible the moment it starts |
+
+All three female (CEO, 2026-11-07, third ear test): Kokoro's male voices
+were trained on minutes where heart and bella had hours, and it shows; the
+men read as synthetic however they are cast (`am_michael`, then `am_fenrir`,
+were heard and retired). The audition pack of every voice, slated, is the
+record. A male desk returns when a model that can do one is in the chain.
 
 One house pace, 0.95, on all three (CEO 2026-09-19); no voice is stretched.
 
@@ -200,7 +206,19 @@ the pad is wide, kick and bass centred.
 **The drums.** Half-time under the conversations (kick on one and three,
 rims on two and four, a tick on every off-beat), four on the floor on the
 desk with an open tick on the last off-beat, a dotted figure under the
-Opinion, a bar in eight dropped so the pulse breathes.
+Opinion, a bar dropped now and then so the pulse breathes. Off-beats swing
+(56 %), every hit and note carries a few milliseconds of human jitter and a
+little velocity variance, so no two bars land alike.
+
+**The arc** (`_arc`, CEO: "extremely dynamic and natural"). A bed enters on
+pad and bass alone; the pulse arrives in the second bar and builds across
+the eight-bar phrase; the pad swells across the phrase; a dip and a tick
+fill come before each new phrase; the ostinato and the hook come and go by
+the seed. A bed ends one of two ways: `out` (the drums leave two bars early
+and the keys sit back: the conversation takes over) or `rise` (a fill and
+everything leaning in, for the page-turn, the entrance or the outro it hands
+over to; the producer picks the ending from the timeline). The desk never
+thins: momentum.
 
 **Where it sits.** Lighter than rev 2 (CEO: it overpowered): -31 LUFS in the
 voice's gaps, 10 dB down under the voice, and it RISES: a bed that leads into

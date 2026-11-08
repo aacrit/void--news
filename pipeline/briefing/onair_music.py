@@ -354,54 +354,91 @@ def voicing_for(seed: int) -> Voicing:
     return Voicing(seed=seed, rng=rng, progression=prog)
 
 
-def _ostinato(canvas, chord: str, bar_at: float, *, amp: float, rests: set[int] = frozenset(), rng=None):
+SWING = 0.56          # off-beat eighths land at 56 % of the beat, not 50: a human pulse
+HUMAN_MS = 7.0        # timing jitter, one sigma
+
+
+def _human(rng, at: float, ms: float = HUMAN_MS) -> float:
+    return at + float(rng.normal(0, ms / 1000.0)) if rng is not None else at
+
+
+def _ostinato(canvas, chord: str, bar_at: float, *, amp: float, rests: set[int] = frozenset(), rng=None,
+              shape: float = 1.0):
+    """`shape` scales the phrase's dynamics: under 1 the line sits back, over 1
+    it leans in; the first note of a bar is always a little louder and the
+    off-beats swing."""
     for k, note in enumerate(CHORDS[chord]["ost"]):
         if k in rests:
             continue
-        at = bar_at + k * 0.5 * BEAT
-        vel = amp * (1.0 if k % 2 == 0 else 0.72) * (1.12 if k == 0 else 1.0)
+        beat_pos = k // 2 + (SWING if k % 2 else 0.0)
+        at = _human(rng, bar_at + beat_pos * BEAT)
+        vel = amp * shape * (1.0 if k % 2 == 0 else 0.68) * (1.14 if k == 0 else 1.0)
+        if rng is not None:
+            vel *= float(rng.uniform(0.86, 1.1))
         place(canvas, ep(note, 0.3, vel=vel, pan=(-0.18 if k % 2 == 0 else 0.18), rng=rng), at)
 
 
 def _hook(canvas, bar_at: float, *, amp: float, inverted: bool = False, rng=None):
-    for note, start, length in (HOOK_INVERTED if inverted else HOOK):
-        place(canvas, ep(note, length * BEAT * 0.95, vel=amp, pan=0.0, rng=rng), bar_at + start * BEAT)
+    for i, (note, start, length) in enumerate(HOOK_INVERTED if inverted else HOOK):
+        vel = amp * (1.0 if i in (0, 4) else 0.86) * (float(rng.uniform(0.92, 1.06)) if rng is not None else 1.0)
+        place(canvas, ep(note, length * BEAT * 0.95, vel=vel, pan=0.0, rng=rng), _human(rng, bar_at + start * BEAT, 5.0))
+
+
+def _fill(canvas, bar_at: float, *, amp: float, rng=None):
+    """A tick roll over the last beat into the next downbeat."""
+    for k in range(4):
+        at = _human(rng, bar_at + 3 * BEAT + k * 0.25 * BEAT, 4.0)
+        place(canvas, tick(amp=amp * (0.5 + 0.15 * k), open_=(k == 3), rng=rng), at)
+    place(canvas, rim(amp=amp * 0.7), _human(rng, bar_at + 3.5 * BEAT, 4.0))
 
 
 def _drums(canvas, kicks: list[float], start: float, bars: int, pattern: str, *, kick_amp: float, tick_amp: float,
-           rng=None, drop_bars: set[int] = frozenset()):
+           rng=None, drop_bars: set[int] = frozenset(), fill_bars: set[int] = frozenset(),
+           shape: "list[float] | None" = None):
+    """`shape[b]` scales bar b's level (0 silences it): the arc of the bed."""
     for b in range(bars):
         bar_at = start + b * BAR
         dropped = b in drop_bars
+        sc = shape[b] if shape is not None and b < len(shape) else 1.0
+        if sc <= 0.0:
+            continue
+        k_amp, t_amp = kick_amp * sc, tick_amp * sc
+        if b in fill_bars:
+            _fill(canvas, bar_at, amp=t_amp, rng=rng)
         for beat in range(4):
             at = bar_at + beat * BEAT
             if pattern == "half":
                 if beat in (0, 2) and not dropped:
-                    place(canvas, kick(amp=kick_amp * (1.0 if beat == 0 else 0.85)), at)
+                    place(canvas, kick(amp=k_amp * (1.0 if beat == 0 else 0.85)), at)
                     kicks.append(at)
                 if beat in (1, 3):
-                    place(canvas, rim(amp=tick_amp * 0.6), at)
-                place(canvas, tick(amp=tick_amp * 0.55, rng=rng), at + 0.5 * BEAT)
-            elif pattern == "four":
+                    place(canvas, rim(amp=t_amp * 0.6), _human(rng, at, 4.0))
+                place(canvas, tick(amp=t_amp * 0.55, rng=rng), _human(rng, at + SWING * BEAT, 4.0))
+                continue
+            if pattern == "four":
                 if not dropped:
-                    place(canvas, kick(amp=kick_amp * (1.0 if beat == 0 else 0.8)), at)
+                    place(canvas, kick(amp=k_amp * (1.0 if beat == 0 else 0.8)), at)
                     kicks.append(at)
-                place(canvas, tick(amp=tick_amp * (1.0 if beat % 2 else 0.7), open_=(beat == 3), rng=rng), at + 0.5 * BEAT)
+                place(canvas, tick(amp=t_amp * (1.0 if beat % 2 else 0.7), open_=(beat == 3), rng=rng),
+                      _human(rng, at + SWING * BEAT, 4.0))
                 if beat in (1, 3):
-                    place(canvas, rim(amp=tick_amp * 0.8), at)
-            elif pattern == "dotted":
+                    place(canvas, rim(amp=t_amp * 0.8), _human(rng, at, 4.0))
+                continue
+            if pattern == "dotted":
                 if beat == 0 and not dropped:
-                    place(canvas, kick(amp=kick_amp), at)
+                    place(canvas, kick(amp=k_amp), at)
                     kicks.append(at)
                 if beat == 1:
-                    place(canvas, kick(amp=kick_amp * 0.75), at + 0.5 * BEAT)
+                    place(canvas, kick(amp=k_amp * 0.75), at + 0.5 * BEAT)
                     kicks.append(at + 0.5 * BEAT)
                 if beat == 3:
-                    place(canvas, tick(amp=tick_amp, rng=rng), at)
-            elif pattern == "pulse":
+                    place(canvas, tick(amp=t_amp, rng=rng), _human(rng, at, 4.0))
+                continue
+            if pattern == "pulse":
                 if beat in (0, 2) and not dropped:
-                    place(canvas, kick(amp=kick_amp * 0.9), at)
+                    place(canvas, kick(amp=k_amp * 0.9), at)
                     kicks.append(at)
+    return
 
 
 def _bassline(canvas, chord: str, bar_at: float, *, amp: float, eighths: bool = True, full: bool = False):
@@ -445,10 +482,51 @@ def render_theme(v: Voicing, dur_s: float = 11.6) -> np.ndarray:
     return mix[: int(dur_s * SR)]
 
 
-def render_bed(v: Voicing, segment: str, dur_s: float) -> np.ndarray:
-    """Eight-bar phrases; the layers each phrase carries are drawn by the day's
-    seed, so the bed moves without ever repeating a bar; the hook once a
-    phrase on the keys, the rest ostinato; a bar in eight dropped."""
+def _arc(bars: int, ending: str, rng) -> tuple[list[float], list[float], set[int], set[int]]:
+    """The shape of a bed in bars: (drum level per bar, keys level per bar,
+    bars with a fill, bars dropped). It enters on pad and bass alone, the
+    pulse arrives, it builds across eight-bar phrases with a dip before each
+    new phrase, and it ends either thinning out ("out": the drums leave two
+    bars early and the keys sit back) or gathering ("rise": a fill and
+    everything leaning in, for the transition it hands over to)."""
+    drums = [0.0] * bars
+    keys = [0.0] * bars
+    fills: set[int] = set()
+    drops: set[int] = set()
+    for b in range(bars):
+        pos = b % 8
+        # the pulse enters at bar 2 (or bar 1 on a short bed) and builds over the phrase
+        if b == 0:
+            drums[b] = 0.0 if bars > 4 else 0.7
+        elif b == 1:
+            drums[b] = 0.55 if bars > 4 else 0.9
+        else:
+            drums[b] = 0.8 + 0.2 * min(1.0, pos / 6.0)
+        keys[b] = 0.0 if b == 0 and bars > 3 else (0.7 + 0.3 * min(1.0, pos / 5.0))
+        if pos == 7 and b < bars - 2:
+            drums[b] *= 0.55                       # the dip before a new phrase
+            if rng.random() < 0.6:
+                fills.add(b)
+    if ending == "out" and bars >= 4:
+        drums[-1] = 0.0
+        drums[-2] = 0.0
+        keys[-1] = 0.5
+        keys[-2] = 0.7
+    elif ending == "rise":
+        for k in (1, 2):
+            if bars - k >= 0:
+                drums[bars - k] = 1.0
+                keys[bars - k] = 1.0
+        if bars >= 2:
+            fills.add(bars - 1)
+    return drums, keys, fills, drops
+
+
+def render_bed(v: Voicing, segment: str, dur_s: float, *, ending: str = "out") -> np.ndarray:
+    """A bed with an arc (`_arc`): pad and bass enter alone, the pulse arrives,
+    the ostinato and the hook come and go by the day's seed, a dip and a fill
+    before each eight-bar phrase, and an ending that thins out or gathers into
+    the transition. Composed to length; never looped; a bar in eight dropped."""
     pattern = {"lead": "half", "second": "half", "desk": "four", "opinion": "dotted", "close": "half"}[segment]
     prog = v.progression[segment]
     bars = int(math.ceil(dur_s / BAR)) + 1
@@ -458,22 +536,27 @@ def render_bed(v: Voicing, segment: str, dur_s: float) -> np.ndarray:
     low = np.zeros((n, 2))
     drums = np.zeros((n, 2))
     kicks: list[float] = []
+    d_shape, k_shape, fills, _ = _arc(bars, ending, v.rng)
+    if segment == "desk":
+        d_shape = [max(x, 0.85) if b else 0.9 for b, x in enumerate(d_shape)]   # the desk never thins: momentum
     for b in range(bars):
         chord = prog[b % len(prog)]
         at = b * BAR
-        phrase = b // 8
         pos = b % 8
-        layers = v.rng.random()
-        place(pads, pad(chord, BAR + 0.4, amp=0.85 + 0.15 * (phrase % 2), attack_s=0.6, rng=v.rng), at)
-        if segment == "desk" or pos not in (3, 7) or layers < 0.5:
-            _bassline(low, chord, at, amp=0.72 if segment != "desk" else 0.85, eighths=segment == "desk" or pos % 2 == 0)
-        if pos in (0, 1, 4, 5) or segment == "desk":
+        pad_amp = 0.8 + 0.2 * (0.5 + 0.5 * math.sin(math.pi * pos / 8))       # the pad swells across the phrase
+        place(pads, pad(chord, BAR + 0.4, amp=pad_amp, attack_s=0.6, rng=v.rng), at)
+        if b > 0 or bars <= 3:
+            eighths = segment == "desk" or (pos % 2 == 0 and d_shape[b] > 0.6)
+            _bassline(low, chord, at, amp=(0.72 if segment != "desk" else 0.85) * max(0.6, d_shape[b] or 0.6),
+                      eighths=eighths)
+        if k_shape[b] > 0 and (segment == "desk" or pos in (0, 1, 4, 5) or v.rng.random() < 0.3):
             rests = {3, 7} if segment != "desk" and v.rng.random() < 0.5 else set()
-            _ostinato(keys, chord, at, amp=0.34 if segment != "desk" else 0.4, rests=rests, rng=v.rng)
-        if pos == 6 and chord in ("Dm", "Bb"):
-            _hook(keys, at, amp=0.62, inverted=(segment == "opinion"), rng=v.rng)
-    drop = {b for b in range(bars) if b % 8 == 7 and b > 0}
-    _drums(drums, kicks, 0.0, bars, pattern, kick_amp=0.9, tick_amp=0.42 if segment != "desk" else 0.5, rng=v.rng, drop_bars=drop)
+            _ostinato(keys, chord, at, amp=0.34 if segment != "desk" else 0.4, rests=rests, rng=v.rng, shape=k_shape[b])
+        if k_shape[b] > 0 and pos == 6 and chord in ("Dm", "Bb"):
+            _hook(keys, at, amp=0.62 * k_shape[b], inverted=(segment == "opinion"), rng=v.rng)
+    drop = {b for b in range(bars) if b % 8 == 3 and b > 2 and v.rng.random() < 0.5}
+    _drums(drums, kicks, 0.0, bars, pattern, kick_amp=0.9, tick_amp=0.42 if segment != "desk" else 0.5, rng=v.rng,
+           drop_bars=drop, fill_bars=fills, shape=d_shape)
     keys = tempo_delay(keys)
     pads = sidechain(pads, kicks)
     low = sidechain(low, kicks, depth_db=3.0)

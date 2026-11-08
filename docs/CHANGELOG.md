@@ -36,6 +36,15 @@ from scratch; I don't like the tunes".
   the featured level); the music bus is stereo end to end.
 - The gate measures stereo as BS.1770 does; every cue passes it; a music-only
   reel of every cue was sent to the CEO.
+- Third ear test the same evening: the bed arcs (pad and bass alone, the
+  pulse arrives, builds by phrase, dips and fills, thins out or gathers into
+  the transition it hands to), off-beats swing, hits and notes carry human
+  jitter. Cast all female (heart, bella, emma): Kokoro's men read as
+  synthetic, and the CEO chose to stay on Kokoro over a cloud voice for now.
+- Today's edition published end to end: the desk TL;DR, a fresh Opinion
+  (progressive lens, the rotation's for Nov 7, written from the lead's
+  evidence and grounded with no cuts), and the three-anchor show (9:59, six
+  chapters, Opinion at 7:36).
 
 ## On Air rev 2: three anchors, a pulse, a studio floor (2026-11-07, after the first ear test)
 
