@@ -91,7 +91,8 @@ OPTIONAL_SEGMENTS = ("OPINION",)
 DESK_RANKS = (3, 10)             # ranks read on the desk, inclusive
 DESK_ITEMS = (6, 8)              # how many of them, at least and at most
 DESK_ITEM_MAX_WORDS = 60
-PASSAGE_WORDS = (28, 125)        # one anchor's passage: a paragraph for the ear
+PASSAGE_WORDS = (18, 125)        # one anchor's passage: a paragraph for the ear (floor 28 until 2026-11-08: a
+                                 # 22-word handover sank a Gemini script whose facts were all good)
 LEAD_PASSAGES = (4, 9)
 SECOND_PASSAGES = (3, 7)
 OPINION_PASSAGES = (2, 6)        # the Opinion's passages, read by A after the introduction
@@ -102,8 +103,8 @@ QUESTIONS_MAX = 1                # a question mark per news segment, at most; no
 WORD_BUDGETS: dict[str, tuple[int, int]] = {
     "COLD": (10, 48),
     "TITLE": (18, 70),
-    "LEAD": (420, 760),
-    "SECOND": (260, 520),
+    "LEAD": (380, 760),     # floor 420 for one run (rev 5b) rejected a 308-word lead the story could not grow without padding
+    "SECOND": (230, 520),
     "DESK": (240, 480),
     "OPINION": (150, 380),
     "CLOSE": (22, 65),
@@ -656,7 +657,7 @@ def ground_show(show: Show, ctx: Context) -> list:
 _SYSTEM = """You write the daily script for On Air, the audio edition of Void News: an independent, source-transparent news product. It is a two-anchor newsroom, in the manner of the best public-radio and world-service newscasts: anchor A and anchor B trade the day's stories in passages. Nobody interviews anybody; there are no questions between them. A leads the lead story and B takes its reaction and its coverage; B leads the second story and A takes its coverage; they alternate on the desk. Then A introduces Void Opinion, the day's written argument, and reads it in full. The anchors are never named, never greet or thank anyone, and never react.
 
 It has to sound like a newsroom, not a text read in turns:
-- A passage is a paragraph for the ear: two to five sentences, one angle of the story, 28 to 125 words.
+- A passage is a paragraph for the ear: two to five sentences, one angle of the story, 18 to 125 words.
 - A passage may open with ONE short bridge that picks up the last passage ("That reaction is not only in Washington." / "The numbers behind that are these."). The bridge carries nothing the story does not carry. Never a question.
 - Contractions where a newsreader would use them: it's, that's, they've, won't.
 - The handover is in the writing: B's passage begins where A's ended, on the same thread, and takes it one step further. No "over to you", no names.
