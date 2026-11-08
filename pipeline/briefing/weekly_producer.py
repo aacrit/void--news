@@ -69,7 +69,7 @@ from briefing.spoken_text import normalize_for_speech                        # n
 from briefing.tts_engines import TurnSpec, KokoroEngine, synthesize_with_fallback   # noqa: E402
 from briefing.weekly_script import (                                         # noqa: E402
     CLOSE_PREFIX, HOST, OPINION_OPEN, SIGN_ON, SPEED, TARGET_MINUTES, MUSIC_MINUTES, WEEK_OPEN,
-    Script, cast_for_week, estimated_minutes, ground_script, parse_script, validate_script,
+    CORRESPONDENT_VOICES, HOST_VOICE, Script, cast_for_week, estimated_minutes, ground_script, parse_script, validate_script,
 )
 
 SR = S.SR
@@ -197,6 +197,14 @@ class Timeline:
 # ---------------------------------------------------------------------------
 # Lines
 # ---------------------------------------------------------------------------
+
+
+#: The roster this programme can cast (the host and both correspondents),
+#: by role name. Per-issue casting is `weekly_script.cast_for_week`; this
+#: is the set other modules read, e.g. test_house_promos asserting the
+#: house voice anchors nothing.
+VOICES = {"host": HOST_VOICE, "correspondent_1": CORRESPONDENT_VOICES[0],
+          "correspondent_2": CORRESPONDENT_VOICES[1]}
 
 def build_cues(script: Script) -> list[Cue]:
     out: list[Cue] = []

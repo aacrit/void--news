@@ -15,11 +15,29 @@ Void Opinion stops and the silence is held, that the chapter offsets are exact
 by construction, and that the score is calm, half-time, and resolves once.
 """
 
+import os
 import sys
 import time
 from pathlib import Path
 
 import numpy as np
+
+# The score half of these gates needs scipy. auto-merge-claude.yml's
+# radio-audio job installs only the audio deps (numpy, pydub, mutagen) and
+# cannot be changed from a claude/* branch, so there this file says so and
+# stands down; the SAME gates then run inside tests/test_weekly_script.py in
+# the gates job (full requirements, scipy present), which runs this file as a
+# subprocess with VOID_REQUIRE_SCIPY=1 and fails if it does not pass. A
+# stand-down without that variable is never silent: it names where the
+# checks run.
+try:
+    import scipy  # noqa: F401
+except ImportError:
+    if os.environ.get("VOID_REQUIRE_SCIPY") == "1":
+        raise
+    print("test_weekly_assembly: scipy is not installed in this job; these gates run "
+          "inside tests/test_weekly_script.py (the gates job), not here.")
+    sys.exit(0)
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "pipeline"))

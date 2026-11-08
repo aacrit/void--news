@@ -13,6 +13,7 @@ real text. Every assertion after the clean run plants exactly one defect.
 
 import json
 import re
+import os
 import sys
 from pathlib import Path
 
@@ -518,6 +519,18 @@ def main():
     print()
     if not test_wa06_the_prompt_names_the_banned_phrases():
         _failures.append("WA-06")
+    print()
+    # The assembly and score gates (tests/test_weekly_assembly.py) need scipy,
+    # which the radio-audio job does not install; they are run from here, in
+    # the gates job, and must pass.
+    import subprocess
+    env = dict(os.environ, VOID_REQUIRE_SCIPY="1")
+    asm = subprocess.run([sys.executable, str(Path(__file__).with_name("test_weekly_assembly.py"))],
+                         env=env, capture_output=True, text=True)
+    print(asm.stdout[-1500:])
+    if asm.returncode != 0:
+        print(asm.stderr[-1500:])
+        _failures.append("assembly (tests/test_weekly_assembly.py)")
     print()
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))
