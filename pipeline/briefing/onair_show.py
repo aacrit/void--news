@@ -1,12 +1,18 @@
 """On Air, the newsroom: the daily show's script. Two anchors trade the
-day's stories; a third voice reads the Opinion.
+day's stories; the anchor reads Void Opinion.
+
+Rev 5 (2026-11-07, CEO after hearing rev 4): two voices in all. The anchor,
+A, also reads the Opinion, introduced as "Void Opinion"; the third voice is
+gone, so `C:` is an unknown speaker everywhere. With one voice on both sides
+of it, the firewall between the news and the Opinion is the music (the
+entrance in onair_music) and the words (OPINION_OPEN), never the voice.
 
 Rev 4 (2026-11-07, CEO after hearing the question-and-answer format: "too
 robotic; back to a two-anchor newsroom"). Nobody interviews anybody. Anchor
 A leads the lead story in two or three passages and anchor B takes the
 reaction and the coverage; B leads the second story and A takes its
 coverage; the desk alternates; the Opinion is Void's written argument, read
-in full by voice C after A's introduction; A closes. A passage may open with
+in full by A after the introduction (rev 5); A closes. A passage may open with
 one short bridge that picks up the last passage ("That reaction is not only
 in Washington."), never a question. Every passage is cut from the story it
 is about and read against it before it is spoken (Rule 1).
@@ -21,7 +27,7 @@ is about and read against it before it is spoken (Rule 1).
     B: ...
     ## SECOND | <title>          B opens; three to six passages; A takes one or two, the coverage last
     ## DESK                      "The rest of the desk." then ranks 3 to 8, one or two sentences each, alternating
-    ## OPINION | <headline>      A: "Now, the Opinion. Through a <lens> lens today. <headline>."  then C, two to six passages
+    ## OPINION | <headline>      A: "This is Void Opinion. Through a <lens> lens today. <headline>."  then A, two to six passages
     ## CLOSE
     A: That's On Air from Void News. <one fact to carry> Every source, every story, at Void News.
     ## SAY
@@ -65,7 +71,11 @@ SIGN_ON = "From Void News, this is On Air."
 DESK_LEAD = "The rest of the desk."
 CLOSE_PREFIX = "That's On Air from Void News."
 CLOSE_TAG = "Every source, every story, at Void News."
-OPINION_OPEN = "Now, the Opinion."
+# CEO 2026-11-07 (rev 5): the On Air Opinion segment is introduced and titled
+# "Void Opinion". A spoken programme segment title, not a lockup; see the
+# Brand section of CLAUDE.md before "fixing" it back to plain "Opinion".
+OPINION_OPEN = "This is Void Opinion."
+OPINION_CHAPTER = "Void Opinion"
 LENS = {"left": "progressive", "center": "pragmatic", "right": "conservative"}
 FORMULAS = (SIGN_ON, DESK_LEAD, CLOSE_PREFIX, CLOSE_TAG, OPINION_OPEN, "Our lead.", "The second story.",
             "The outlets agree on this much.", "The coverage splits here.", "And the roster.",
@@ -80,7 +90,7 @@ DESK_ITEM_MAX_WORDS = 34
 PASSAGE_WORDS = (28, 125)        # one anchor's passage: a paragraph for the ear
 LEAD_PASSAGES = (4, 8)
 SECOND_PASSAGES = (3, 6)
-OPINION_PASSAGES = (2, 6)        # C's passages, after A's introduction
+OPINION_PASSAGES = (2, 6)        # the Opinion's passages, read by A after the introduction
 OPINION_PASSAGE_WORDS = (28, 140)
 SECOND_VOICE_PASSAGES = {"LEAD": (1, 3), "SECOND": (1, 2)}   # how many passages the other anchor takes
 MAX_RUN = 3                      # one voice never reads more than this many passages in a row
@@ -96,11 +106,12 @@ WORD_BUDGETS: dict[str, tuple[int, int]] = {
 }
 TOTAL_BUDGET = (820, 1800)
 BUDGET_TOLERANCE = 0.25
-SHARE_BOUNDS = (0.35, 0.65)      # each of A and B carries this share of the words
+SHARE_BOUNDS = (0.35, 0.65)      # each of A and B carries this share of the NEWS words (the Opinion is A's, uncounted)
+SPEAKERS = ("A", "B")           # rev 5: two voices; C is an unknown speaker
 SENTENCE_MAX_WORDS = 24
 
 _MARKER_RE = re.compile(r"^\s*#{1,3}\s*(COLD|TITLE|LEAD|SECOND|DESK|OPINION|CLOSE|SAY)\b\s*(?:\|\s*(.*?))?\s*$", re.I)
-_TURN_RE = re.compile(r"^\s*\**\s*([ABC])\s*[:\-–—]\s*\**\s*(.+?)\s*$")
+_TURN_RE = re.compile(r"^\s*\**\s*([A-Z])\s*[:\-–—]\s*\**\s*(.+?)\s*$")
 
 
 # ---------------------------------------------------------------------------
@@ -165,7 +176,8 @@ class Show:
 
     def words_by_speaker(self, news_only: bool = True) -> dict[str, int]:
         """Words per voice; by default over the news segments, where A and B
-        share the show (the Opinion is C's and A's questions are few)."""
+        share the show (the Opinion is A's alone and would push A over the
+        share, so C-09 never counts it)."""
         out = {"A": 0, "B": 0}
         for s in self.segments:
             if news_only and s.kind == "OPINION":
@@ -389,12 +401,10 @@ def validate_show(show: Show, ctx: Context) -> Report:
     # Line-level rules
     for s in show.segments:
         for t in s.turns:
-            if t.speaker not in ("A", "B", "C"):
-                fail("C-00", s.kind, f"unknown speaker {t.speaker!r}")
-            if t.speaker == "C" and s.kind != "OPINION":
-                fail("C-00", s.kind, "C reads the Opinion and nothing else")
+            if t.speaker not in SPEAKERS:
+                fail("C-00", s.kind, f"unknown speaker {t.speaker!r}; On Air has two voices, A and B")
             if s.kind == "OPINION" and t.speaker == "B":
-                fail("C-00", s.kind, "B does not take part in the Opinion")
+                fail("C-00", s.kind, "B does not take part in the Opinion; the anchor reads it")
             if has_quotation_marks(t.text):
                 fail("C-02", s.kind, f"quotation marks are never read aloud; use reported speech: {t.text[:70]!r}")
             if has_numerals(t.text):
@@ -439,10 +449,10 @@ def validate_show(show: Show, ctx: Context) -> Report:
         elif ctx.lens_line and ctx.lens_line not in first.text:
             fail("C-14", "OPINION", f"the Opinion's first line names its lens: {ctx.lens_line!r}")
         body = opinion.turns[1:]
-        if any(t.speaker != "C" for t in body):
-            fail("C-14", "OPINION", "after A's introduction only C speaks in the Opinion")
+        if any(t.speaker != "A" for t in body):
+            fail("C-14", "OPINION", "the anchor, A, reads the whole Opinion; nobody else speaks in it")
         if not (OPINION_PASSAGES[0] <= len(body) <= OPINION_PASSAGES[1]):
-            fail("C-14", "OPINION", f"{len(body)} passages from C; {OPINION_PASSAGES[0]} to {OPINION_PASSAGES[1]}")
+            fail("C-14", "OPINION", f"{len(body)} passages of the Opinion; {OPINION_PASSAGES[0]} to {OPINION_PASSAGES[1]}")
         for t in body:
             if not (OPINION_PASSAGE_WORDS[0] <= t.words <= OPINION_PASSAGE_WORDS[1]):
                 fail("C-14", "OPINION", f"a passage of the Opinion is {OPINION_PASSAGE_WORDS[0]} to "
@@ -627,8 +637,8 @@ def ground_show(show: Show, ctx: Context) -> list:
         # a passage cut whole simply goes; same-voice neighbours stay separate passages
         merged: list[Turn] = kept
         s.turns = merged
-        if s.kind == "OPINION" and not any(t.speaker == "C" for t in merged):
-            s.turns = []
+        if s.kind == "OPINION" and not any(t.text.strip() and not t.text.startswith(OPINION_OPEN) for t in merged):
+            s.turns = []      # the introduction alone is not an Opinion
         if s.kind == "DESK":
             bind_ranks(show, ctx)
     show.segments = [s for s in show.segments if s.turns]
@@ -639,7 +649,7 @@ def ground_show(show: Show, ctx: Context) -> list:
 # Prompt
 # ---------------------------------------------------------------------------
 
-_SYSTEM = """You write the daily script for On Air, the audio edition of Void News: an independent, source-transparent news product. It is a two-anchor newsroom, in the manner of the best public-radio and world-service newscasts: anchor A and anchor B trade the day's stories in passages. Nobody interviews anybody; there are no questions between them. A leads the lead story and B takes its reaction and its coverage; B leads the second story and A takes its coverage; they alternate on the desk. A third voice, C, reads the day's Opinion in full after A introduces it. The anchors are never named, never greet or thank anyone, and never react.
+_SYSTEM = """You write the daily script for On Air, the audio edition of Void News: an independent, source-transparent news product. It is a two-anchor newsroom, in the manner of the best public-radio and world-service newscasts: anchor A and anchor B trade the day's stories in passages. Nobody interviews anybody; there are no questions between them. A leads the lead story and B takes its reaction and its coverage; B leads the second story and A takes its coverage; they alternate on the desk. Then A introduces Void Opinion, the day's written argument, and reads it in full. The anchors are never named, never greet or thank anyone, and never react.
 
 It has to sound like a newsroom, not a text read in turns:
 - A passage is a paragraph for the ear: two to five sentences, one angle of the story, 28 to 125 words.
@@ -658,7 +668,7 @@ You write for the EAR:
 - When you attribute a claim ("X says"), the clause after the verb is what the story reports X said: cut it, never reword it. A court, a law or the Constitution never does anything in your own voice; say who says so.
 - Show, don't tell. Never "significant", "notable", "interestingly", "crucially", "it should be noted", "marks a". Concrete facts, then stop.
 - Each news story ends on the coverage, read by the other anchor: how the outlets differ (the Divergence points, naming outlets as the points name them) and where they sit (the Coverage line).
-- The Opinion is Void's own written argument for the day, handed to you in full. C reads it as written, passage by passage: the same sentences, in the same order, nothing added, nothing softened, nothing cut. A introduces it in one fixed line.
+- Void Opinion is Void's own written argument for the day, handed to you in full. A introduces it in one fixed line and then reads it as written, passage by passage: the same sentences, in the same order, nothing added, nothing softened, nothing cut. B does not speak in it.
 
 Output PLAIN TEXT in exactly the marker format the instructions specify. No JSON, no markdown fences, no commentary before or after."""
 
@@ -668,7 +678,7 @@ _USER_TEMPLATE = """Today is {DATE_SPOKEN}. Write today's On Air from these stor
 STORIES
 {STORIES}
 
-FORMAT. Reproduce these markers exactly, in this order. Every spoken line starts with "A:", "B:" or "C:". Nothing else is spoken.
+FORMAT. Reproduce these markers exactly, in this order. Every spoken line starts with "A:" or "B:". There are two voices; nothing else is spoken.
 
 ## COLD
 A: <one or two sentences, {COLD_LO}-{COLD_HI} words: the single hardest fact in story [1], present tense, no adjectives, no name of the show. It plays in the clear before the music.>
@@ -714,17 +724,17 @@ RULES THAT FAIL THE SCRIPT IF BROKEN
 - No quotation marks anywhere. No digits anywhere. No a.m./p.m. Nobody is named as an anchor, greeted or thanked. No reactions.
 - Never these phrases: "Up first", "Here's what we're covering", "First the headlines", "Stay with us", "And finally", "Welcome", "Thanks", "Absolutely", "Wow", "Great question", "That's fascinating", "significant", "notable", "interestingly", "crucially", "marks a".
 - Over the news segments, A and B each carry between thirty-five and sixty-five percent of the words. Total {TOTAL_LO} to {TOTAL_HI} words. The length comes from the lead, not from padding.
-- C speaks only in OPINION; nobody else speaks there after A's introduction.{OPINION_RULE}
+- B never speaks in OPINION; A introduces it and reads all of it.{OPINION_RULE}
 {RETRY}"""
 
 _OPINION_BLOCK = """
 ## OPINION | <the Opinion's headline, at most seven words, no digits>
 A: {OPINION_OPEN} {LENS_LINE} <the Opinion's headline, as a sentence>
-C: <the Opinion's first passage, as written: {OP_P_LO}-{OP_P_HI} words>
-C: <the next passage, as written>
-<C reads the whole Opinion, two to six passages, its paragraphs as they stand; {OP_LO}-{OP_HI} words in all. Nothing added, nothing cut.>
+A: <the Opinion's first passage, as written: {OP_P_LO}-{OP_P_HI} words>
+A: <the next passage, as written>
+<A reads the whole Opinion, two to six passages, its paragraphs as they stand; {OP_LO}-{OP_HI} words in all. Nothing added, nothing cut.>
 """
-_OPINION_RULE = (" C's passages are the Opinion's own sentences in their own order, complete; A adds no fact. "
+_OPINION_RULE = (" The Opinion's passages are its own sentences in their own order, complete; A adds no fact. "
                  "The first OPINION line is exactly \"A: {OPINION_OPEN} {LENS_LINE} <headline as a sentence>\".")
 
 
@@ -788,7 +798,7 @@ def build_prompt(top: list[dict], date_spoken: str, *, previous_titles: list[str
                                               OP_P_LO=OPINION_PASSAGE_WORDS[0], OP_P_HI=OPINION_PASSAGE_WORDS[1],
                                               OP_LO=WORD_BUDGETS["OPINION"][0], OP_HI=WORD_BUDGETS["OPINION"][1])
         opinion_rule = _OPINION_RULE.format(OPINION_OPEN=OPINION_OPEN, LENS_LINE=lens_line)
-        stories += "\nTHE OPINION (Void's own argument today; C speaks it, A draws it out)\n" + _wrap_source(
+        stories += "\nTHE OPINION (Void's own argument today; A introduces it as Void Opinion and reads it whole)\n" + _wrap_source(
             "opinion", f"Headline: {opinion_headline or ''}\nLens: {lens or 'unstated'}\n\n{opinion_text.strip()}") + "\n"
     user = _USER_TEMPLATE.format(
         DATE_SPOKEN=date_spoken, N=len(top), DESK_HI=min(DESK_RANKS[1], len(top)),
@@ -925,7 +935,7 @@ def template_show(top: list[dict], date: datetime | None = None, *, opinion_text
         lens_line = f" Through a {lens} lens today." if lens else ""
         head = _as_sentence(opinion_headline)
         turns = [Turn("A", f"{OPINION_OPEN}{lens_line} {head}".replace("  ", " ").strip())]
-        turns += [Turn("C", c) for c in chunks[:6]]
+        turns += [Turn("A", c) for c in chunks[:6]]
         show.segments.append(Segment("OPINION", title=_short_title(opinion_headline, 7), turns=turns))
     carry = _points(lead, "consensus_points", 1) or ""
     show.segments.append(Segment("CLOSE", turns=[Turn("A", f"{CLOSE_PREFIX} {carry} {CLOSE_TAG}".replace("  ", " "))]))

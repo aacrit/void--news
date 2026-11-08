@@ -58,7 +58,8 @@ PROMOTABLE = SECTIONS + ("site",)
 SECTION_NAMES = {"onair": "On Air", "weekly": "Weekly", "history": "History",
                  "site": "Void News"}
 
-# The house voice anchors nothing: On Air is am_puck / af_bella / af_heart,
+# The house voice anchors nothing: On Air is af_aoede and a male second anchor
+# (onair_producer.VOICES, rev 5),
 # Weekly is bm_lewis / am_michael / af_heart, History casts from six narrators
 # in casting.py. A voice the listener has not heard for the last quarter of an
 # hour is what makes the promo read as the station rather than the presenter

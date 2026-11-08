@@ -12,9 +12,10 @@ same motif. The standard the cues are measured against, in one block:
     duck under voice         -10 dB, 1.0 s eased pre-roll, held across gaps < 1.2 s
     featured (title, outro)  -26 LUFS short-term, never louder
     transition / sting       never louder than the bed it leads into (+0.5 dB)
-    band shape (beds)        sub-bass under 100 Hz kept, low-mids 150-400 Hz cut
-                             (24 dB/oct high-pass at 400 Hz), treble shelf -3 dB
-                             at 5 kHz; at most 2 % of a cue's energy above 5 kHz
+    band shape (beds)        bass under 130 Hz kept (rev 5; 100 before), low-mids
+                             150-400 Hz cut (24 dB/oct high-pass at 400 Hz), treble
+                             shelf -3 dB at 5 kHz; at most 2 % of a cue's energy
+                             above 5 kHz, at most 10 % of it in 150-400 Hz
     breathing (beds)         100 ms level spread p90-p10 >= 6 dB
     fades                    an entry from silence >= 1.5 s, an exit >= 1.5 s
     repetition               no 4 s stretch tiled three times inside a cue
@@ -58,7 +59,13 @@ DUCK_PREROLL_S = 1.0             # eased attack, full depth ON the onset (A37)
 DUCK_HOLD_S = 1.2                # a gap shorter than this keeps the duck
 DUCK_RELEASE_S = 0.6             # the ramp back up after the hold
 BED_LOWMID_HZ = 400.0            # 24 dB/oct high-pass: the low-mids go
-SUB_BASS_HZ = 100.0              # 24 dB/oct low-pass: the sub-bass stays
+# 24 dB/oct low-pass: the bass stays. Rev 5 (2026-11-08, CEO: "a little more
+# bass") moved it from 100 to 130 Hz so a bass note keeps its OCTAVE (the
+# roots sit at 49-87 Hz; their octaves at 98-175 Hz are what a small speaker
+# reproduces of the note). 130 passes the octave of every root up to C2
+# whole and shades D2's and F2's; the 150-400 Hz limit below and the phone
+# margin (150 Hz-4 kHz) are untouched because the pass-band ends under them.
+SUB_BASS_HZ = 130.0
 TREBLE_HZ = 5000.0
 TREBLE_SHELF_DB = -3.0
 MUSIC_TREBLE_MAX_SHARE = 0.02
@@ -201,7 +208,9 @@ def peaking_coeffs(f0: float, gain_db: float, q: float):
 
 
 def shape_bed(x: np.ndarray) -> np.ndarray:
-    """A29 refined: the sub-bass kept, the low-mids cut, the treble shelved."""
+    """A29 refined: the bass kept (under SUB_BASS_HZ, 130 Hz since rev 5 so a
+    bass note's octave survives), the low-mids cut (130 to 400 Hz is a hole by
+    design: the voice's fundamentals live there), the treble shelved."""
     if len(x) < 64:
         return x
     sub = signal.sosfiltfilt(_sos_butter(4, SUB_BASS_HZ, "low"), x, axis=0)
@@ -292,7 +301,10 @@ def place(canvas: np.ndarray, x: np.ndarray, at_s: float) -> None:
         canvas[i:i + n] += x[:n]
 
 
-THEME_S, PAGETURN_S, ENTRANCE_S, OUTRO_S = 14.0, 3.6, 6.8, 15.0
+THEME_S, PAGETURN_S, OUTRO_S = 14.0, 3.6, 15.0
+ENTRANCE_S = M.ENTRANCE_S             # 11.4 s, four bars (rev 5); the music owns the number
+ENTRANCE_VOICE_S = M.ENTRANCE_VOICE_S  # 9.8 s in: the anchor speaks once the hook's last note has landed
+STOP_RING_S = M.STOP_RING_S           # a stopped bed: its hit is this long before its end
 THEME_DOWNBEAT_S = 4 * M.BAR          # where the sign-on lands inside the theme
 
 
@@ -304,11 +316,15 @@ def render_theme(v: Voicing, dur_s: float = THEME_S, *, ir=None) -> np.ndarray:
 
 
 def render_bed(v: Voicing, segment: str, dur_s: float, *, ir=None, ending: str = "out") -> np.ndarray:
-    """`ending` is "out" (the bed thins and leaves) or "rise" (it gathers into
-    the transition it hands over to)."""
+    """`ending` is "out" (the bed thins and leaves), "rise" (it gathers into
+    the transition it hands over to) or "stop" (it ends on a hit STOP_RING_S
+    before its end and rings out: the desk before the Opinion's entrance). A
+    stopped bed's exit fade is the ring itself, so the fade only cleans the
+    last second."""
     dur_s = max(dur_s, 4.5)
     x = M.render_bed(v.music, segment, dur_s, ending=ending)
-    return _normalise(fade(shape_bed(x), ENTRY_FADE_MIN_S + 0.5, EXIT_FADE_MIN_S + 1.0))
+    out_s = EXIT_FADE_MIN_S + 1.0 if ending != "stop" else min(1.0, STOP_RING_S - 1.5)
+    return _normalise(fade(shape_bed(x), ENTRY_FADE_MIN_S + 0.5, out_s))
 
 
 def render_transition(v: Voicing, *, ir=None, dur_s: float = PAGETURN_S) -> np.ndarray:
@@ -318,6 +334,8 @@ def render_transition(v: Voicing, *, ir=None, dur_s: float = PAGETURN_S) -> np.n
 
 
 def render_entrance(v: Voicing, *, ir=None, dur_s: float = ENTRANCE_S) -> np.ndarray:
+    """"Void Opinion": the music composes its own 1.5 s swell from silence, so
+    the fade only guards the edges; the held last note goes out over 1.4 s."""
     x = M.render_entrance(v.music, dur_s)
     return _normalise(fade(shape_bed(x), 0.02, 1.4))
 
@@ -471,6 +489,32 @@ def _rhythm(seg: np.ndarray) -> np.ndarray:
     env = np.sqrt(np.mean(seg[: m * n].reshape(m, n) ** 2, axis=1))
     flux = np.diff(env, prepend=env[:1])
     return flux
+
+
+def chroma_profile(x: np.ndarray) -> np.ndarray:
+    """The 12-bin pitch-class profile of a whole cue (100 Hz to 2 kHz), unit
+    norm: two cues' profiles dot to their cosine similarity."""
+    return _chroma(mono(x))
+
+
+def clock_density(x: np.ndarray) -> float:
+    """Onsets a second in the clock's band (2 to 6 kHz: ticks, rims, the
+    kick's click), on a 50 ms grid, a peak of the band's level flux over its
+    median plus one sigma. The news beds carry a tick on every off-beat; the
+    Opinion's room carries one whisper a bar; the entrance none."""
+    m = mono(x)
+    if len(m) < SR:
+        return 0.0
+    band = signal.sosfilt(signal.butter(4, [2000.0, 6000.0], btype="band", fs=SR, output="sos"), m)
+    n = int(0.05 * SR)
+    k = len(band) // n
+    env = np.sqrt(np.mean(band[: k * n].reshape(k, n) ** 2, axis=1))
+    flux = np.diff(env, prepend=env[:1])
+    thr = float(np.median(flux) + np.std(flux))
+    if thr <= 1e-7:
+        return 0.0
+    peaks = sum(1 for i in range(1, k - 1) if flux[i] > thr and flux[i] >= flux[i - 1] and flux[i] >= flux[i + 1])
+    return peaks / (k * 0.05)
 
 
 def tiled_loop(x: np.ndarray, window_s: float = 4.0) -> bool:

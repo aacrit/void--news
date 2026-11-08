@@ -21,6 +21,13 @@ Usage:
     python pipeline/refresh_brief.py --radio-only --script-file tests/fixtures/onair_show_2026-11-07.txt \
         --render-dir /tmp/onair                                    # render a script to a folder (no Gemini, no DB)
     python pipeline/refresh_brief.py --radio-only --script-file X  # render a written script to the site + DB
+    python pipeline/refresh_brief.py --radio-only --script-file X --static-site
+                                   # publish with no database: read the feed export and brief.json, render
+                                   # through produce_show into frontend/public/audio/<edition>/ (named by
+                                   # the EDITION's date, from the feed's builtAt), and write the episode's
+                                   # fields back into frontend/public/data/brief.json; then run
+                                   # pipeline/validation/rigor.py --write. The path On Air rev 5's first
+                                   # episode was published by (2026-11-08)
     # The 2026-09-18 bulletin (VOID_ONAIR_FORMAT=rundown; --legacy-audio for edge-tts + old script):
     python pipeline/refresh_brief.py --radio-only                  # regenerate ONLY the radio rundown + audio
     python pipeline/refresh_brief.py --radio-only --dry-run        # rundown + validator report, no audio, no DB
@@ -126,6 +133,58 @@ def _fetch_clusters_feed_export(editions: list[str]) -> list[dict]:
     return out
 
 
+def _feed_built_at() -> datetime | None:
+    """The moment the published feed was built: the edition an offline render
+    belongs to. A render after midnight UTC is still that edition's."""
+    path = Path(__file__).resolve().parents[1] / "frontend" / "build-data" / "feed.json"
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8")).get("builtAt") or ""
+        return datetime.fromisoformat(raw.replace("Z", "+00:00")).astimezone(timezone.utc)
+    except Exception:
+        return None
+
+
+def _edition_moment(arg: str | None, static: bool) -> datetime:
+    """--edition-date YYYY-MM-DD (noon UTC, the pm slot), else the feed's
+    builtAt for an offline render, else now."""
+    if arg:
+        d = datetime.strptime(arg, "%Y-%m-%d")
+        return d.replace(hour=12, tzinfo=timezone.utc)
+    if static:
+        built = _feed_built_at()
+        if built is not None:
+            return built
+    return datetime.now(timezone.utc)
+
+
+def _publish_static_brief(result, show, label: str, edition: str) -> None:
+    """Write a rendered episode's fields into the published brief.json, the
+    way export_static writes the row after the daily run, and retire the
+    episode it supersedes when that one was a render of the same edition
+    under another name (2026-11-08: Saturday's show had been published as
+    2026-11-08-am)."""
+    path = Path(__file__).resolve().parents[1] / "frontend" / "public" / "data" / "brief.json"
+    brief = json.loads(path.read_text(encoding="utf-8"))
+    old_url = (brief.get("audio_url") or "").split("?")[0]
+    brief.update(result.as_row_fields())
+    brief["audio_script"] = result.audio_script
+    brief.setdefault("grounding_ran", {})
+    if isinstance(brief["grounding_ran"], dict):
+        brief["grounding_ran"]["onair"] = show.grounded is True
+    gen = [g for g in (brief.get("generator") or "").split("+") if g and not g.startswith(("onair:", "radio:"))]
+    brief["generator"] = "+".join(gen + [f"onair:{label}:{result.engine}"])
+    path.write_text(json.dumps(brief, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(f"  brief.json: audio fields written ({brief['audio_url']}, {brief['audio_voice']}, "
+          f"{brief['audio_voice_label']}, {len(brief.get('audio_chapters') or [])} chapters)")
+    new_url = (brief.get("audio_url") or "").split("?")[0]
+    if old_url and old_url != new_url and old_url.startswith(f"/audio/{edition}/"):
+        root = path.parents[1] / "audio" / edition
+        stem = Path(old_url).name[:-4]
+        for f in root.glob(f"{stem}.*"):
+            f.unlink()
+            print(f"  retired the superseded render of this edition: /audio/{edition}/{f.name}")
+
+
 def _fetch_clusters_fixtures(editions: list[str]) -> list[dict]:
     """Load frozen test clusters from fixtures file."""
     if not _FIXTURES_PATH.exists():
@@ -205,6 +264,11 @@ def main():
                         help="On Air (conversation): render without the Opinion segment")
     parser.add_argument("--render-dir", type=str, default=None,
                         help="Render the radio show into this folder instead of the static site (implies no DB write)")
+    parser.add_argument("--static-site", action="store_true",
+                        help="On Air: publish with no database, from the feed export and brief.json into the "
+                             "static audio tree and brief.json (see the usage line)")
+    parser.add_argument("--edition-date", type=str, default=None,
+                        help="YYYY-MM-DD the episode belongs to (default: the feed's builtAt offline, else today)")
     parser.add_argument("--snapshot-fixtures", action="store_true",
                         help="Save current DB clusters to test_clusters.json and exit")
     args = parser.parse_args()
@@ -236,7 +300,7 @@ def main():
     print("[1/4] Fetching clusters...")
     if args.fixtures:
         all_clusters = _fetch_clusters_fixtures(editions)
-    elif args.rundown_file and args.render_dir:
+    elif (args.rundown_file or args.script_file) and (args.render_dir or args.static_site):
         all_clusters = _fetch_clusters_feed_export(editions)
     else:
         all_clusters = _fetch_clusters_db(editions)
@@ -256,7 +320,7 @@ def main():
         # dry-run needs it (the editorial script decides the running order).
         if args.fixtures or (args.dry_run and not args.radio_only):
             current = None
-        elif args.rundown_file and args.render_dir:
+        elif (args.rundown_file or args.script_file) and (args.render_dir or args.static_site):
             current = _current_brief_static()
         else:
             current = _get_current_brief(edition)
@@ -270,6 +334,8 @@ def main():
                     brief[k] = current.get(k)
             elif not args.dry_run and not args.render_dir:
                 print("  No current brief to attach the radio show to")
+                if args.static_site:
+                    return
         elif not args.opinion_only:
             print("\n[2/4] Generating TL;DR + audio script via Gemini...")
             briefs = generate_daily_briefs(all_clusters, {}, edition_sections=[edition])
@@ -349,6 +415,8 @@ def main():
             from briefing.spoken_text import spoken_date
             top = [c for c in all_clusters if edition in (c.get("sections") or [edition])][:20]
             opinion_text = None if args.no_opinion else brief.get("opinion_text")
+            edition_at = _edition_moment(args.edition_date, bool(args.static_site or args.render_dir))
+            print(f"  Edition: {edition_at.strftime('%A %d %B %Y, %H:%M UTC')}")
             stored = (current or {}).get("audio_script") if args.revoice else None
             show = report = None
             label = "none"
@@ -356,13 +424,13 @@ def main():
                 print("  --revoice: the current brief carries no script to re-render")
             elif args.script_file or stored:
                 source = Path(args.script_file).read_text(encoding="utf-8") if args.script_file else stored
-                ctx = Context(top=top, date_spoken=spoken_date(datetime.now(timezone.utc)), has_opinion=bool(opinion_text),
+                ctx = Context(top=top, date_spoken=spoken_date(edition_at), has_opinion=bool(opinion_text),
                               opinion_text=opinion_text, opinion_headline=brief.get("opinion_headline") if opinion_text else None,
                               opinion_lean=brief.get("opinion_lean") if opinion_text else None)
                 show = parse_show(source)
                 bind_ranks(show, ctx)
                 report = validate_show(show, ctx)
-                label = "file" if args.script_file else "revoice"
+                label = "written" if args.script_file else "revoice"
                 print(f"  Script from {label}: {show.words} words, passed={report.passed}")
                 for f in report.findings:
                     print(f"    {f.id} {f.level:4} [{f.segment}] {f.detail[:110]}")
@@ -373,7 +441,7 @@ def main():
                     show.generator = label
                     ground_and_log(show, ctx)
             else:
-                show, report, label = generate_show(top, opinion_text=opinion_text,
+                show, report, label = generate_show(top, date=edition_at, opinion_text=opinion_text,
                                                     opinion_headline=brief.get("opinion_headline") if opinion_text else None,
                                                     opinion_lean=brief.get("opinion_lean") if opinion_text else None)
             edition_output["onair_script"] = show.to_text() if show else None
@@ -382,7 +450,10 @@ def main():
                 radio_result = produce_show(
                     show, None, edition, opinion_headline=brief.get("opinion_headline") if opinion_text else None,
                     permalinks=permalinks_from_archive(), out_dir=args.render_dir, label=label,
+                    date=edition_at,
                 )
+                if radio_result and args.static_site and not args.render_dir:
+                    _publish_static_brief(radio_result, show, label, edition)
                 if radio_result:
                     print(f"  On Air: {radio_result.duration_seconds}s, {len(radio_result.chapters)} chapters, "
                           f"{radio_result.file_size / 1024:.0f} KB, engine {radio_result.engine} -> {radio_result.audio_url}")
@@ -455,8 +526,8 @@ def main():
             print(f"\n[4/4] Audio: {reason}")
 
         # --- Store to DB (skip in dry-run) ---
-        if args.dry_run or args.render_dir:
-            print("\n  DB write: skipped (dry-run)")
+        if args.dry_run or args.render_dir or args.static_site:
+            print("\n  DB write: skipped (" + ("static site" if args.static_site else "dry-run") + ")")
             continue
 
         print("\n  Storing to DB...")
