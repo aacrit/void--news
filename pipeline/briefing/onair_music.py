@@ -36,8 +36,8 @@ Form (the cues), each composed to the length the producer asks for:
     outro      the cycle in full, the bell doubling the hook, landing on D major
 
 The Opinion's bed (`segment == "opinion"`): the harmonic rhythm halves (two
-bars a chord) and the cycle starts on VI, not i; one soft kick a bar and no
-ticks; the bass walks root and fifth in half notes instead of eighths; a
+bars a chord), the cycle starts on VI and never lands on i; one soft kick a
+bar and no clock; the bass walks root and fifth in half notes instead of eighths; a
 sparse bell line, one note in two beats, in place of the ostinato; the pad
 warmer (its filter opens to 800 Hz, not 1100) and slower. Measurably: fewer
 onsets a second than any news bed and a chroma profile further from theirs.
@@ -507,13 +507,13 @@ def _drums(canvas, kicks: list[float], start: float, bars: int, pattern: str, *,
                     kicks.append(at)
                 continue
             if pattern == "slow":
-                # the Opinion's room: one soft kick on the downbeat, a closed
-                # tick on three at a whisper; no rims, no off-beats
+                # the Opinion's room: one soft kick on the downbeat and no
+                # clock at all (no ticks, no rims): an argument, not a bulletin.
+                # Measured as `onair_score.clock_density`, the news beds carry
+                # over twice the onsets in 2-6 kHz whatever the seed.
                 if beat == 0 and not dropped:
                     place(canvas, kick(amp=k_amp * 0.8), at)
                     kicks.append(at)
-                if beat == 2:
-                    place(canvas, tick(amp=t_amp * 0.35, rng=rng), _human(rng, at, 4.0))
     return
 
 

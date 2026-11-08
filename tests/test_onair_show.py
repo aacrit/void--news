@@ -285,8 +285,10 @@ def score() -> None:
     theme, _ = S.level_featured(S.render_theme(v))
     check(not S.check_cue(theme, "featured"), f"the theme meets the featured standard ({[f.id for f in S.check_cue(theme, 'featured')]})")
     peak = None
+    beds: dict[str, np.ndarray] = {}
     for seg, dur in (("lead", 40.0), ("desk", 30.0), ("opinion", 30.0)):
         bed, _ = S.level_bed(S.render_bed(v, seg, dur))
+        beds[seg] = bed
         f = S.check_cue(bed, "bed")
         check(not f, f"the {seg} bed meets the bed standard ({[x.id for x in f]})")
         check(abs(S.lufs_integrated(bed) - S.BED_LUFS) < 0.6, f"the {seg} bed sits at {S.BED_LUFS} LUFS ({S.lufs_integrated(bed):.1f})")
@@ -297,6 +299,7 @@ def score() -> None:
     outro, _ = S.level_featured(S.render_outro(v))
     check(not S.check_cue(outro, "featured"), "the outro meets the featured standard")
     check(float(np.max(np.abs(outro[-S.SR // 2:]))) < 1e-3, "the outro falls to silence")
+    score_rev5(v, beds, theme, tr)
     # planted defects
     loud = theme * 10 ** (4.0 / 20)
     check(any(f.id == "featured-level" for f in S.check_cue(loud, "featured")), "a featured cue 4 dB over the ceiling is caught")
@@ -319,9 +322,59 @@ def score() -> None:
     check(any(f.id == "duck-slope" for f in S.check_duck(steep)), "a steep attack is caught")
 
 
+def score_rev5(v, beds: dict, theme: np.ndarray, pageturn: np.ndarray) -> None:
+    """Rev 5 (2026-11-08): the firewall between the news and the Opinion is the
+    music, so each of its three parts is measured. (1) The Opinion's bed is
+    the same show in another room: fewer clock onsets a second than any news
+    bed (one whisper a bar against a tick on every off-beat) and a pitch-class
+    profile further from the news beds' than they are from each other. (2) The
+    desk bed STOPS: a hit STOP_RING_S before its end, the ring gone to the
+    floor by the end, nothing after it. (3) The entrance is its own cue: it
+    swells from silence rather than hitting, carries no clock, and its
+    third-octave spectrum is far from the theme's and the page-turn's. Each
+    also still meets the standard it is held to."""
+    op, news = beds["opinion"], {k: beds[k] for k in ("lead", "desk")}
+    op_clock, news_clock = S.clock_density(op), {k: S.clock_density(x) for k, x in news.items()}
+    check(op_clock <= 0.6 * min(news_clock.values()),
+          f"the opinion bed carries under 60% of the news beds' clock ({op_clock:.2f}/s vs {min(news_clock.values()):.2f}/s)")
+    centre = np.mean([S.chroma_profile(x) for x in news.values()], axis=0)
+    centre /= np.linalg.norm(centre)
+    op_cos = float(S.chroma_profile(op) @ centre)
+    news_cos = min(float(S.chroma_profile(x) @ centre) for x in news.values())
+    check(op_cos < news_cos - 0.03, f"the opinion bed's pitch profile sits apart from the news beds' ({op_cos:.3f} vs {news_cos:.3f})")
+    check(S.M.PROGRESSIONS["opinion"] and all("Dm" not in p and "D" not in p for p in S.M.PROGRESSIONS["opinion"]),
+          "the Opinion never lands on the tonic chord")
+    # the stop
+    stop, _ = S.level_bed(S.render_bed(v, "desk", 25.0, ending="stop"))
+    check(not S.check_cue(stop, "bed"), f"a stopped desk bed still meets the bed standard ({[f.id for f in S.check_cue(stop, 'bed')]})")
+    mom = S.lufs_momentary(stop)
+    hit = int((len(stop) / S.SR - S.STOP_RING_S - 0.1) / 0.1)
+    check(float(mom[hit]) >= float(np.max(mom)) - 3.0, f"the stop is a hit, within 3 dB of the bed's loudest moment ({mom[hit]:.1f} vs {np.max(mom):.1f})")
+    check(float(mom[min(len(mom) - 1, hit + 15)]) <= float(mom[hit]) - 5.0, "the ring is 5 dB down 1.5 s after the hit")
+    check(float(mom[-1]) <= float(np.max(mom)) - 30.0, f"the stopped bed ends at the floor ({mom[-1]:.1f} LUFS momentary)")
+    tail = stop[-int(0.4 * S.SR):]
+    check(20 * np.log10(float(np.sqrt(np.mean(tail ** 2))) + 1e-12) < -55.0, "nothing plays after the ring")
+    # the entrance
+    en, _ = S.level_featured(S.render_entrance(v))
+    check(not S.check_cue(en, "featured"), f"the entrance meets the featured standard ({[f.id for f in S.check_cue(en, 'featured')]})")
+    check(abs(len(en) / S.SR - S.ENTRANCE_S) < 0.01 and 8.0 <= S.ENTRANCE_S <= 12.0, f"the entrance is {S.ENTRANCE_S} s, a section break")
+    check(S.M.BAR + 9.0 * S.M.BEAT <= S.ENTRANCE_VOICE_S < S.ENTRANCE_S,
+          f"the anchor speaks after the hook's last note has landed and before the cue ends ({S.ENTRANCE_VOICE_S} s)")
+    emom = S.lufs_momentary(en)
+    check(float(np.max(emom[:7])) <= float(np.max(emom)) - 6.0, "the entrance swells from silence; it does not hit")
+    check(S.clock_density(en) <= 0.5 * S.clock_density(theme), f"the entrance carries no clock ({S.clock_density(en):.2f}/s vs the theme's {S.clock_density(theme):.2f}/s)")
+    to_theme = float(S._third_octave(S.mono(en)) @ S._third_octave(S.mono(theme)))
+    to_pt = float(S._third_octave(S.mono(en)) @ S._third_octave(S.mono(pageturn)))
+    check(to_theme <= 0.85 and to_pt <= 0.75, f"the entrance's spectrum is its own (cos to theme {to_theme:.2f}, to page-turn {to_pt:.2f})")
+    # the bass: the beds keep most of their energy under 120 Hz and the low-mids stay cut
+    for seg, x in beds.items():
+        check(S.band_share(x, 40.0, 120.0) >= 0.75 and S.band_share(x, 150.0, 400.0, 100.0) <= S.BED_LOWMID_MAX_SHARE,
+              f"the {seg} bed's weight is in the bass ({S.band_share(x, 40.0, 120.0):.0%} in 40-120 Hz, {S.band_share(x, 150.0, 400.0, 100.0):.1%} in 150-400)")
+
+
 # ---------------------------------------------------------------- timeline and chapters
 def timeline() -> None:
-    from briefing.onair_producer import build_cues, build_timeline, chapters_from_timeline, ShowResult
+    from briefing.onair_producer import build_cues, build_timeline, chapters_from_timeline, ShowResult, bed_ending, GAPS
     raw = FIXTURE.read_text(encoding="utf-8")
     v = S.voicing_for("onair:world:2026-11-07")
     show = parse_show(raw)
@@ -342,6 +395,7 @@ def timeline() -> None:
     check(names.count("lead") >= 2, "the lead bed leaves and comes back")
     beds = [m for m in tl.music if m.role == "bed"]
     check(all(m.end - m.start >= 4.5 for m in beds), "every bed is long enough to be judged")
+    timeline_rev5(tl, bed_ending, GAPS)
     ch = chapters_from_timeline(tl, opinion_headline="An argument", permalinks={stories()[0]["id"]: "/story/x/"})
     kinds = [c["kind"] for c in ch]
     check(kinds == ["headlines", "story", "story", "briefs", "opinion"], f"chapter kinds ({kinds})")
@@ -363,6 +417,39 @@ def timeline() -> None:
     cues = build_cues(show, None)
     tl = build_timeline(cues, {c.idx: 0.4 * len(c.text.split()) for c in cues}, v)
     check("entrance" not in [m.name for m in tl.music] and tl.opinion_start is None, "no opinion, no entrance")
+    desk_bed = [m for m in tl.music if m.name == "desk"][-1]
+    check(bed_ending(tl, desk_bed)[0] == "out", "no opinion, the desk bed goes out rather than stopping")
+
+
+def timeline_rev5(tl, bed_ending, GAPS: dict) -> None:
+    """The move into the Opinion, in the timeline (rev 5): the desk bed ends
+    on its stop (the hit `desk_to_stop` after the desk's last word, the ring
+    STOP_RING_S after that), the floor is held with no music for
+    `stop_to_entrance`, the entrance starts there (and that is where the
+    Opinion chapter starts), the anchor speaks at ENTRANCE_VOICE_S into it,
+    and the Opinion's bed enters under the voice, never before it."""
+    desk = [c for c in tl.cues if c.kind == "DESK"]
+    op = [c for c in tl.cues if c.kind == "OPINION"]
+    en = next(m for m in tl.music if m.name == "entrance")
+    desk_bed = [m for m in tl.music if m.name == "desk"][-1]
+    ending, into = bed_ending(tl, desk_bed)
+    check(ending == "stop" and into is en, f"the desk bed stops before the entrance; it does not rise ({ending})")
+    check(abs(desk_bed.end - (desk[-1].end + GAPS["desk_to_stop"] + S.STOP_RING_S)) < 0.01,
+          "the desk bed ends once its stop has rung out after the desk's last word")
+    check(abs(en.start - desk_bed.end - GAPS["stop_to_entrance"]) < 0.01 and GAPS["stop_to_entrance"] >= 1.5,
+          f"the floor is held {GAPS['stop_to_entrance']} s between the stop and the entrance")
+    check(not any(m is not en and m.start < en.start and m.end > desk_bed.end for m in tl.music),
+          "no music plays in the held silence")
+    check(not any(c.start < en.start and c.end > desk_bed.end for c in tl.cues), "nobody speaks in the held silence")
+    check(tl.opinion_start == en.start, "the Opinion chapter starts where the entrance does")
+    check(abs(op[0].start - (en.start + S.ENTRANCE_VOICE_S)) < 0.01 and op[0].start < en.end,
+          "the anchor's introduction lands on the entrance's last bar")
+    op_bed = [m for m in tl.music if m.name == "opinion"][0]
+    check(op[0].start <= op_bed.start < en.end, "the Opinion's bed enters under the anchor's introduction, not before it")
+    lead_tail = [m for m in tl.music if m.name == "lead"][-1]
+    close_bed = [m for m in tl.music if m.name == "close"][-1]
+    check(bed_ending(tl, lead_tail)[0] == "rise" and bed_ending(tl, close_bed)[0] == "rise",
+          "the lead's coverage bed still rises into the page-turn and the close into the outro")
 
 
 def main() -> int:

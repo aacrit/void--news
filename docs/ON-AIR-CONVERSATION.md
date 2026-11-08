@@ -66,13 +66,18 @@ SECOND      B leads; three to six passages, 230-420 words; A takes one or two, i
                                                                   [bed: second, the same shape]
 page-turn
 DESK        A: "The rest of the desk."  ranks 3-8, one or two sentences each, alternating
-                                                                  [bed: desk, the pulse, throughout]
-entrance    6.8 s, featured: i to iv, a dotted pulse, the hook inverted, left on the dominant;
-            A's introduction starts 1.6 s before it ends
+                                                                  [bed: desk, the pulse, throughout,
+                                                                   and it STOPS: a hit 0.5 s after the
+                                                                   desk's last word, the ring, 2.6 s]
+silence     1.6 s of the -70 dBFS floor; no music, no voice
+entrance    11.4 s, featured, "Void Opinion": a sub pedal on VI swells from the silence, then the
+            hook in dotted augmentation on a bell over VI iv V, the tonic held over the dominant;
+            no pulse, no riser. A's introduction starts 9.8 s in, on the held last note
 OPINION     A: "This is Void Opinion. Through a <lens> lens today. <headline>"  then A reads the
             Opinion's paragraphs as written: two to six passages, 150-380 words
-                                                                  [bed: opinion under the first two
-                                                                   passages and the last]
+                                                                  [bed: opinion, the slow room, from
+                                                                   under A's introduction, under the
+                                                                   first two passages and the last]
 CLOSE       A: "That's On Air from Void News. <one fact to carry> Every source, every story, at Void News."
 outro       15.0 s, featured: the cycle in full, a riser, the landing on D major (the lift), the pad
             falling to silence; the house promo rides it (unchanged)
@@ -239,66 +244,147 @@ chord cycle, a hook, an ostinato, patches, an arrangement per cue. The day's
 seed chooses only the chord cycle per segment and which bars carry which
 layers, so the bed moves every day and the hook is the same every day.
 
+**Rev 5 (2026-11-08): the music is the firewall.** The same voice now reads
+the news and the Opinion, so the move between them can no longer be a
+change of voice. It is three things the ear cannot miss, each measured by
+the gate: the desk STOPS (no rise, a hit, the ring, nothing); a silence is
+HELD (1.6 s of the -70 dBFS floor, no music, no voice); and "Void Opinion"
+ENTERS on a cue that shares the show's seven notes and nothing else of its
+manner. Then the Opinion's bed is the same show in another room. And the
+whole score carries more bass where a speaker can feel it.
+
 **The writing.** D minor at 84 beats a minute. The cycle is i VI III VII
-(Dm Bb F C), the cinematic cadence, with alternates per segment (i VI iv V;
-the Opinion on i iv VI V, left unresolved). The hook is two bars on electric
-piano that fall to the tonic: D5 C5 A4 F4, G4 F4 D4; inverted (rising, left
-on the dominant) for the Opinion's entrance. Under it an eighth-note
-ostinato of chord tones in the fourth and fifth octaves, a pulse bass on the
-chord root in the sub (every bass note under 100 Hz, so the band shape keeps
-it whole), and a pad voiced from the third octave up. The outro lands on D
-major.
+(Dm Bb F C), the cinematic cadence, with alternates per segment (i VI iv V).
+The hook is two bars on electric piano that fall to the tonic: D5 C5 A4 F4,
+G4 F4 D4. Under it an eighth-note ostinato of chord tones in the fourth and
+fifth octaves, a pulse bass on the chord root in the sub, and a pad voiced
+from the third octave up. The outro lands on D major, the bell doubling the
+hook's second statement an octave up on the way.
+
+**The Opinion's harmony** (`PROGRESSIONS["opinion"]`) never lands on i: it
+starts on VI and moves VI iv III V, VI III iv V or iv VI III V, two bars a
+chord (`OPINION_BARS_PER_CHORD`), so the harmonic rhythm is half the news's.
+The news is home; the Opinion is the argument; the tonic is only ever the
+hook's hanging note.
+
+**The entrance, bar by bar** (`render_entrance`, 11.4 s, `ENTRANCE_S`,
+four bars; `ENTRANCE_HARMONY` Bb Bb Gm Asus):
+
+1. Out of the held silence a sub pedal on Bb (VI) swells in over 1.5 s, its
+   octave with it, under a warm Bb pad (filter to 800 Hz, a 2 s attack).
+   Nothing else: the ground returns alone.
+2. The hook begins on the bell, in dotted augmentation (`HOOK_AUGMENTED`,
+   every value 1.5x: D5 held three beats, C5, A4, F4), over VI, where the
+   tonic is the third of the chord: a new colour on the same note.
+3. The pedal moves to G (iv); the hook continues (G4, F4).
+4. The pedal moves to A (V) under a sus pad, and the hook's last note, the
+   tonic D, is held over the dominant: unresolved. A speaks here
+   (`ENTRANCE_VOICE_S`, 9.8 s in, once the note has landed), and the Opinion's
+   bed enters under the voice on VI: a deceptive resolution, not where the
+   news goes.
+
+What it is not: no kick, no tick, no rim, no riser, no impact, no ostinato,
+the hook not at tempo. Those are the news. Measured (`tests/test_onair_show.py`,
+`score_rev5`): it swells from silence (its first second at least 6 dB under
+its loudest 400 ms); it carries under half the theme's clock onsets; its
+third-octave spectrum is far from the theme's (cosine 0.77 against rev 4's
+0.96) and the page-turn's (0.57).
+
+**The stop** (`render_bed(..., ending="stop")`, `STOP_RING_S` 2.6 s). The
+desk bed's last downbeat is a hit (impact, a long bass root, the pad
+released); every other tail is gated at that beat; the ring decays to the
+floor by the bed's end; the exit fade is the ring itself. The composition is
+shifted so the hit falls exactly 2.6 s before the end (the first part bar is
+pad alone, under the entry fade). The producer's `bed_ending` reads it from
+the timeline: a bed the entrance follows within 3 s stops; one a page-turn
+or the outro follows within 2.5 s rises; the rest go out. Measured: the hit
+within 3 dB of the bed's loudest moment, 5 dB down 1.5 s later, 30 dB down
+at the end, and nothing after the ring.
+
+**The Opinion's bed** (`segment == "opinion"`): one soft kick a bar and NO
+clock (no ticks, no rims); the bass walks root and fifth in half notes
+(`_bassline(walk=True)`, the fifth placed in the sub, 40 to 90 Hz) instead
+of eighths; a sparse bell line, one note in two beats, in place of the
+ostinato, with the inverted hook's first three notes on the bell once a
+phrase; the pad warmer and slower (filter to 800 Hz, a 1.1 s attack);
+longer rooms. Measured against the news beds of the same day: under 60 % of
+their clock onsets a second (0.5 to 0.7 against 1.5 or more, on every seed
+and render order tried), and a pitch-class profile further from their
+centroid than they are from each other (0.80 against 0.99).
 
 **The patches**, all synthesised: `ep` is a two-operator FM electric piano
 (a 1:1 modulator whose index falls with the note, a 14:1 modulator for the
 30 ms attack, a 3 kHz lowpass, a 1.4 s release) through a dotted-eighth
-ping-pong delay; `pad` is six detuned saws, three a side, through a 24 dB/oct
-lowpass that opens from 400 to 1100 Hz over the attack, breathing slowly;
-`bass` is a sub sine under a plucked saw whose cutoff falls 320 to 110 Hz;
-`kick` is a 150 to 45 Hz sweep with a 4 ms click so a phone hears it; `tick`
-and `rim` are the clock, in 2.5 to 5 kHz and at 760 Hz; `riser` is noise
-rising into a downbeat; `impact` is the downbeat it lands on. Pads and bass
-pump 3 to 5 dB on every kick (`sidechain`). Two decorrelated rooms, one a
-side (`reverb`). Stereo throughout: keys alternate left and right by note,
-the pad is wide, kick and bass centred.
+ping-pong delay; `bell` (rev 5) is a 3.5:1 FM glass with a second carrier
+4 cents off, a 3 kHz lowpass and a 2.6 s release, the Opinion's register and
+the outro's upper voice; `pad` is six detuned saws, three a side, through a
+24 dB/oct lowpass that opens from 400 to 1100 Hz over the attack (800 under
+the Opinion), breathing slowly, and opening 120 Hz further in each later
+phrase of a news bed; `bass` is a sub sine with its octave at -9 dB (rev 5)
+under a plucked saw whose cutoff falls 320 to 110 Hz; `sub_pedal` (rev 5) is
+the held sub with its octave, the entrance's floor; `kick` is a 150 to 42 Hz
+sweep with a 4 ms click so a phone hears it; `tick` and `rim` are the clock,
+in 2.5 to 5 kHz and at 760 Hz; `riser` is noise rising into a downbeat;
+`impact` is the downbeat it lands on. Pads and bass pump 3 to 5 dB on every
+kick (`sidechain`). Two decorrelated rooms, one a side (`reverb`). Stereo
+throughout: keys alternate left and right by note, the pad is wide, kick and
+bass centred.
+
+**The bass** (rev 5, CEO: "a little more bass"). It is in the sub and bass
+register, not the low-mids: the roots sit at 49 to 87 Hz and their octaves
+at 98 to 175 Hz, and the band shape's low-pass moved from 100 to 130 Hz
+(`SUB_BASS_HZ`) so a bass note keeps the octave a small speaker can
+reproduce of it. The bass bus is up (0.72 to 0.82 under the conversations,
+0.85 to 0.95 on the desk), the kick decays longer and sweeps to 42 Hz, and
+the outro holds a sub pedal under its landing. In numbers, at the production
+level: the share of a bed's energy in 40 to 120 Hz rose from 0.72-0.80 to
+0.83-0.86, the theme's from 0.51 to 0.60, the entrance's from 0.66 to 0.82;
+the 150-400 Hz share stayed at 0.02-0.03 (limit 0.10); the music's level in
+the phone band (150 Hz-4 kHz) FELL 1.0 to 2.4 dB on every bed, so the phone
+margin widened by that much. 130 to 400 Hz is still a hole by design: the
+voice's fundamentals live there.
 
 **The drums.** Half-time under the conversations (kick on one and three,
 rims on two and four, a tick on every off-beat), four on the floor on the
-desk with an open tick on the last off-beat, a dotted figure under the
-Opinion, a bar dropped now and then so the pulse breathes. Off-beats swing
-(56 %), every hit and note carries a few milliseconds of human jitter and a
-little velocity variance, so no two bars land alike.
+desk with an open tick on the last off-beat, one kick a bar and no clock
+under the Opinion, a bar dropped now and then so the pulse breathes.
+Off-beats swing (56 %), every hit and note carries a few milliseconds of
+human jitter and a little velocity variance, so no two bars land alike.
 
 **The arc** (`_arc`, CEO: "extremely dynamic and natural"). A bed enters on
 pad and bass alone; the pulse arrives in the second bar and builds across
-the eight-bar phrase; the pad swells across the phrase; a dip and a tick
-fill come before each new phrase; the ostinato and the hook come and go by
-the seed. A bed ends one of two ways: `out` (the drums leave two bars early
-and the keys sit back: the conversation takes over) or `rise` (a fill and
-everything leaning in, for the page-turn, the entrance or the outro it hands
-over to; the producer picks the ending from the timeline). The desk never
-thins: momentum.
+the eight-bar phrase; the pad swells across the phrase and opens further in
+each later phrase; from the second phrase a bell answers the ostinato; a dip
+and a tick fill come before each new phrase; the ostinato and the hook come
+and go by the seed. A bed ends one of three ways: `out` (the drums leave two
+bars early and the keys sit back: the conversation takes over), `rise` (a
+fill and everything leaning in, for the page-turn or the outro it hands over
+to) or `stop` (the desk before the Opinion, above); the producer picks the
+ending from the timeline (`bed_ending`). The desk never thins: momentum.
 
 **Where it sits.** Lighter than rev 2 (CEO: it overpowered): -31 LUFS in the
 voice's gaps, 10 dB down under the voice, and it RISES: a bed that leads into
-a page-turn, the entrance or the outro climbs up to +6 dB over its last ten
-seconds (capped so its loudest three seconds never pass the featured cue it
-hands over to), so the music arrives at the transition instead of being cut
-off under it. The theme is heard for itself; the sign-on lands on its
-downbeat.
+a page-turn or the outro climbs up to +6 dB over its last ten seconds
+(capped so its loudest three seconds never pass the featured cue it hands
+over to), so the music arrives at the transition instead of being cut off
+under it. The bed before the entrance does not rise: it stops. The theme is
+heard for itself; the sign-on lands on its downbeat.
 
 | | Standard | Check |
 |---|---|---|
 | Dialogue | -20 LUFS integrated, per line | the voice chain |
 | Bed under speech | -31 LUFS in the voice's gaps (rev 1 -32, rev 2 -28 overpowered); levelled on the gaps when they total 4 s | `level_bed`, `bed-level` |
-| The rise | +6 dB over the last 10 s into a page-turn, the entrance or the outro, eased; capped at the featured level | `rise_into` |
+| The rise | +6 dB over the last 10 s into a page-turn or the outro, eased; capped at the featured level; never into the entrance | `rise_into`, `bed_ending` |
+| The stop | the bed the entrance follows ends on a hit 2.6 s before its end, within 3 dB of its loudest moment, 5 dB down 1.5 s later, at the floor by the end; then 1.6 s of floor with no music and no voice before the entrance | `render_bed(ending="stop")`, `bed_ending`, `score_rev5`, `timeline_rev5` |
 | Duck | -10 dB under voice, a 1.0 s eased pre-roll at full depth on the onset, held across gaps under 1.2 s, 0.6 s release; never over 2 dB in any 100 ms | `duck_envelope`, `duck-slope` |
 | Featured (theme, entrance, outro) | loudest 3 s window at -26 LUFS, never louder | `level_featured`, `featured-level` |
+| The entrance | 11.4 s; swells from silence (first second 6 dB under its loudest 400 ms); under half the theme's clock onsets; third-octave cosine to the theme at most 0.85, to the page-turn at most 0.75; the anchor speaks after the hook's last note has landed | `score_rev5` |
+| The Opinion's bed | under 60 % of the news beds' clock onsets a second; its chroma cosine to the news beds' centroid at least 0.03 under theirs; its progressions never hold the tonic chord | `clock_density`, `chroma_profile`, `score_rev5` |
 | Page-turn | never louder than the bed it leads into (+0.5 dB on the loudest 400 ms) | `level_transition`, `transition-ceiling` |
-| Band shape (beds) | sub-bass under 100 Hz kept (24 dB/oct low-pass) + everything over 400 Hz (24 dB/oct high-pass), -3 dB shelf at 5 kHz; at most 10 % of the energy over 100 Hz in 150-400 Hz; at most 2 % above 5 kHz | `shape_bed`, `bed-low-end`, `music-treble` |
+| Band shape (beds) | bass under 130 Hz kept (24 dB/oct low-pass; 100 Hz before rev 5, moved so a bass note keeps its octave) + everything over 400 Hz (24 dB/oct high-pass), -3 dB shelf at 5 kHz; at most 10 % of the energy over 100 Hz in 150-400 Hz; at most 2 % above 5 kHz; at least 75 % of a bed's energy in 40-120 Hz | `shape_bed`, `bed-low-end`, `music-treble`, `score_rev5` |
 | Breathing | a bed's 100 ms level spread (p90 - p10) at least 6 dB | `bed-breathing` |
 | Repetition | no 4 s stretch heard near-identically three times in a row (chroma 0.97, third-octave spectrum 0.95, rhythm r 0.90) | `score-repetition` |
-| Fades | an entry from silence 1.5 s or more, an exit as long | the renderers |
+| Fades | an entry from silence 1.5 s or more, an exit as long (a stopped bed's exit is its ring) | the renderers |
 | Phone check | the mix as a small speaker plays it: inside spoken windows (within 10 dB of the line's mean), the voice over the music in 150 Hz to 4 kHz by at least 12 dB; where a window fails, the music dips by the shortfall in THAT window only, eased over 0.6 s, so the bed keeps its level everywhere else; only if that is not enough does the whole bus come down | `phone_check`, `phone_fix` |
 | Master | -16 LUFS integrated, -1.5 dBTP, linear loudnorm with the limiter anchored | `loudnorm_two_pass` |
 
@@ -311,10 +397,12 @@ against 9 with a 0.6 s release against 0.25) and no laxer anywhere else.
 Where the music goes is in the running order above: beds enter under the
 framing, leave after the third answer (the facts get dense; "silent when it
 deserves"), visit once in the middle of a long conversation, and return for
-the coverage, rising into the page-turn; while a bed plays, the gap between
-a handover is 1.25 s instead of 0.72, so the music gets
-a breath. A studio floor at -70 dBFS sits under everything so a silence is
-never digital zero; the -57 dBFS room tone of rev 1 read as noise and is gone.
+the coverage, rising into the page-turn; the desk bed runs throughout and
+stops; the Opinion's bed enters under A's introduction, never before it;
+while a bed plays, the gap between a handover is 1.25 s instead of 0.72, so
+the music gets a breath. A studio floor at -70 dBFS sits under everything
+so a silence is never digital zero (it is all that plays in the 1.6 s before
+the entrance); the -57 dBFS room tone of rev 1 read as noise and is gone.
 
 ## Operating it
 

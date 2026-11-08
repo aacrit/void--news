@@ -132,16 +132,18 @@ claims about its own confidence. It needs a decision, not a tweak.
   new prompt. The prompt has not yet been exercised against the model: the
   first few runs should be read in the log (`[onair]` attempt lines) and
   the validators' budgets tuned if the model lands outside them often.
-- Casting (CEO 2026-11-07, rev 4): `af_heart` anchor, `bf_emma` second
-  anchor, `af_aoede` Opinion, all female; `af_bella` retired as too
-  artificial over a full episode, and Kokoro's men read as synthetic.
-  `bf_emma` is a B- voice carrying a third of the news: the next ear test
-  should judge it over the full nine minutes, not a clip. A male
-  desk waits on a better model in the chain (Gemini's own multi-speaker TTS
-  on the existing key is the candidate; needs a quota probe, segment-sized
-  requests, the ASR word check and Kokoro as the fallback; CEO deferred).
+- Casting (rev 5, 2026-11-08): `af_aoede` anchors and reads Void Opinion,
+  `am_puck` is the second anchor, two voices in all. Puck was chosen on a
+  slated audition of every Kokoro man (table in `docs/ON-AIR-CONVERSATION.md`)
+  but has not yet been heard by the CEO over a full episode; no Kokoro man is
+  graded above C+, and the other two C+ men were retired by ear. Fallback
+  `VOID_KOKORO_VOICE_B=bm_george`. Puck reads about 13 % faster than aoede at
+  the house pace; judge it on the ear test before touching the pace rule.
+- Void Opinion on the page: the audio chapter is titled Void Opinion (CEO);
+  the `/onair` page's own "Opinion" labels are unchanged until the CEO says
+  whether they should follow.
 - The Opinion is not spoken when it was carried forward, so a day with no
-  fresh opinion ships a two-voice episode. The desk brief has no opinion of
+  fresh opinion ships an episode with no Void Opinion segment. The desk brief has no opinion of
   its own. The Opinion conversation has not yet been heard on a fresh
   opinion; the first run that writes one should be listened to.
 - The score's `bed-low-end` still fires on some short beds (under 30 s), a

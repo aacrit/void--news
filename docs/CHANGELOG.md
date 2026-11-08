@@ -18,6 +18,72 @@ lives in this file.
 
 ---
 
+## On Air rev 5: two voices, Void Opinion, a heavier score, the first episode through the engine (2026-11-08)
+
+The CEO on rev 4: "Overall it looks good, but we need to change a few things."
+Eight asks, all done in the repository.
+
+- **Two voices.** `af_aoede`, rev 4's Opinion voice, is now anchor A (cold
+  open, sign-on, the lead, the close) and also reads the Opinion; there is
+  no third voice. B is male: every Kokoro `am_*`/`bm_*` voice was auditioned
+  on the same Kyiv passage through the real chain, slated, and measured
+  (pace, pitch range and motion, clicks, buzz over 6 kHz) against the Kokoro
+  repo's own grades. `am_puck` was chosen (C+, trained on hours, clean, nine
+  semitones under aoede); `am_michael` and `am_fenrir`, the other C+ men, the
+  CEO had already retired; `bm_fable` buzzed after the chain; `bm_george` is
+  the named fallback. Table in `docs/ON-AIR-CONVERSATION.md`. `C:` is now an
+  unknown speaker everywhere (C-00), B never speaks in the Opinion, C-09
+  measures the news segments only so the Opinion does not push A over the
+  share, and `audio_voice_label` says "Two voices" in every case.
+- **Void Opinion.** The Opinion opens "This is Void Opinion. Through a <lens>
+  lens today. <headline>" (C-14 fails any other opening), and the audio
+  chapter is titled `Void Opinion` (kind still `opinion`,
+  `opinion_start_seconds` still the entrance). **CEO 2026-11-07: the On Air
+  Opinion segment is introduced and titled Void Opinion.** This is a spoken
+  segment title and an exception to the brand rule that only VOID NEWS gets
+  the word; recorded in `CLAUDE.md` Brand so it is not "fixed" back. Page copy
+  on `/onair` was left alone pending the CEO's word (the chapter list shows the
+  title from the data).
+- **The firewall is the music and the words.** With one voice on both sides,
+  the move into the Opinion is three things, each measured in the gate: the
+  desk bed no longer rises into the entrance but STOPS (`ending="stop"`: its
+  last downbeat lands 2.6 s before its end, an impact, a long bass root, a
+  released pad, every other tail gated, the ring decaying to the floor); 1.6 s
+  of the -70 dBFS floor alone; then an 11.4 s entrance in the clear (a Bb sub
+  pedal and warm pad out of the silence, then the hook in dotted augmentation
+  on a new FM `bell` patch, reharmonised VI iv V and left held on the
+  unresolved D; no kick, no clock). A speaks 9.8 s in, over the held note.
+  Against rev 4 its spectrum's cosine to the theme fell from 0.96 to 0.77.
+- **The Opinion's bed.** Never the tonic chord, two bars a chord (half the news's
+  harmonic rhythm), one soft kick a bar and no clock (0.5-0.7 onsets/s in
+  2-6 kHz against the news beds' 1.5 and up), a bass that walks root and
+  fifth, a sparse bell line instead of the ostinato, a warmer pad. The gate
+  asserts the clock density and the chroma distance from the news beds.
+- **More bass, richer beds.** `SUB_BASS_HZ` 100 to 130 Hz: the old low-pass removed the
+  octave of every bass root, which is all a phone reproduces of a bass note.
+  `bass()` carries an octave sine, the bass bus is about 1 dB up, the kick is longer
+  and deeper, the outro holds a sub pedal. Beds' energy share in 40-120 Hz
+  0.72-0.80 to 0.83-0.86; the 150-400 Hz share stays 2-3 % (limit 10 %); the
+  music's level in the phone band fell 1.0-2.4 dB, so the voice's margin
+  widened. A bug fixed in passing: the re-draw of a bed that failed a check
+  built `Voicing` with fields it no longer has and would have raised.
+- **The first episode through the engine.** `refresh_brief.py --radio-only
+  --script-file ... --static-site` reads the feed export and the published
+  brief, renders through `produce_show`, writes the static audio tree and the
+  episode's fields into `brief.json`, and retires the render it supersedes.
+  `_write_audio_static(when=)` names the file by the edition's moment (the
+  feed's `builtAt` offline), not the clock: Saturday's rev 4 episode had been
+  published as `2026-11-08-am` because it was rendered after midnight UTC.
+  The fixture script changed only where the format required it (the Opinion's
+  first line, its passages from `C:` to `A:`); grounding cut nothing.
+  The episode: `frontend/public/audio/world/2026-11-07-pm.mp3`, 8:54,
+  `kokoro:af_aoede+am_puck`, six chapters, Void Opinion from 6:38, phone
+  margin 16.8 dB, -15.96 LUFS / -1.96 dBTP; the misnamed `2026-11-08-am`
+  render is retired; `rigor.json` recomputed (On Air grounding ran, floors
+  F-1..F-5 pass).
+- Also: the merge of `claude/onair-gate-workflow` (the CEO's, by hand, PR #45)
+  puts `tests/test_onair_show.py` in the auto-merge gates.
+
 ## On Air rev 4: a two-anchor newsroom, the Opinion read whole (2026-11-07, after the fourth ear test)
 
 The CEO heard the full 1107 render and called the question-and-answer format
