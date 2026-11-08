@@ -303,9 +303,11 @@ def render_theme(v: Voicing, dur_s: float = THEME_S, *, ir=None) -> np.ndarray:
     return _normalise(fade(shape_bed(x), 0.01, 1.0))
 
 
-def render_bed(v: Voicing, segment: str, dur_s: float, *, ir=None) -> np.ndarray:
+def render_bed(v: Voicing, segment: str, dur_s: float, *, ir=None, ending: str = "out") -> np.ndarray:
+    """`ending` is "out" (the bed thins and leaves) or "rise" (it gathers into
+    the transition it hands over to)."""
     dur_s = max(dur_s, 4.5)
-    x = M.render_bed(v.music, segment, dur_s)
+    x = M.render_bed(v.music, segment, dur_s, ending=ending)
     return _normalise(fade(shape_bed(x), ENTRY_FADE_MIN_S + 0.5, EXIT_FADE_MIN_S + 1.0))
 
 

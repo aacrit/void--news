@@ -63,10 +63,10 @@
    "shipped": true
   },
   "opinion": {
-   "sentences": 8,
-   "anchored": 3,
-   "checked": 3,
-   "coverage": 37.5,
+   "sentences": 14,
+   "anchored": 8,
+   "checked": 8,
+   "coverage": 57.1,
    "anchorTypes": [
     "number",
     "name",
@@ -74,16 +74,18 @@
     "quote"
    ],
    "byAnchor": {
-    "name": 3
+    "date": 4,
+    "name": 5,
+    "number": 3
    },
    "groundingRan": true,
    "shipped": true
   },
   "onair": {
-   "sentences": 76,
-   "anchored": 43,
-   "checked": 43,
-   "coverage": 56.6,
+   "sentences": 84,
+   "anchored": 44,
+   "checked": 44,
+   "coverage": 52.4,
    "anchorTypes": [
     "number",
     "name",
@@ -91,8 +93,8 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 11,
-    "name": 30,
+    "date": 12,
+    "name": 31,
     "number": 13
    },
    "groundingRan": true,
@@ -166,5 +168,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-11-08T00:30:11Z"
+ "computedAt": "2026-11-08T00:49:34Z"
 }

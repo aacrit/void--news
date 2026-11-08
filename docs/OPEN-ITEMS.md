@@ -132,10 +132,11 @@ claims about its own confidence. It needs a decision, not a tweak.
   new prompt. The prompt has not yet been exercised against the model: the
   first few runs should be read in the log (`[onair]` attempt lines) and
   the validators' budgets tuned if the model lands outside them often.
-- Casting is provisional after the first ear test: `af_heart` anchor,
-  `am_fenrir` desk (michael read as robotic), `af_bella` Opinion. The CEO has
-  the audition pack of every Kokoro voice; set `VOID_KOKORO_VOICE_A/B/C` in
-  `pipeline.yml` once chosen.
+- Casting (CEO 2026-11-07, third ear test): `af_heart` anchor, `af_bella`
+  desk, `bf_emma` Opinion, all female; Kokoro's men read as synthetic. A male
+  desk waits on a better model in the chain (Gemini's own multi-speaker TTS
+  on the existing key is the candidate; needs a quota probe, segment-sized
+  requests, the ASR word check and Kokoro as the fallback; CEO deferred).
 - The Opinion is not spoken when it was carried forward, so a day with no
   fresh opinion ships a two-voice episode. The desk brief has no opinion of
   its own. The Opinion conversation has not yet been heard on a fresh

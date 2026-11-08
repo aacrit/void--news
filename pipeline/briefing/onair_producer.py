@@ -72,12 +72,16 @@ SITE_URL = os.environ.get("PODCAST_SITE_URL", "https://news.voidvision.org").rst
 # that reads nothing else, so the firewall is audible the moment it starts.
 # VOID_KOKORO_VOICE_A/B/C override. Every voice at the one house pace.
 VOICES = {
+    # CEO 2026-11-07 (third ear test): the roster's three best voices, all
+    # female, because that is what Kokoro is good at. The anchor takes the A
+    # grade, the desk the A-, the Opinion the best British voice so the
+    # firewall is audible the moment it starts.
     "A": os.environ.get("VOID_KOKORO_VOICE_A", "af_heart"),
-    "B": os.environ.get("VOID_KOKORO_VOICE_B", "am_fenrir"),    # CEO 2026-11-07: michael read as robotic; fenrir pending the ear test
-    "C": os.environ.get("VOID_KOKORO_VOICE_C", "af_bella"),
+    "B": os.environ.get("VOID_KOKORO_VOICE_B", "af_bella"),
+    "C": os.environ.get("VOID_KOKORO_VOICE_C", "bf_emma"),
 }
 SPEED = float(os.environ.get("VOID_KOKORO_SPEED", "0.95") or 0.95)
-PAN = {"A": -0.07, "B": 0.07, "C": 0.0}
+PAN = {"A": -0.14, "B": 0.14, "C": 0.0}     # heart and bella share a register; the pan tells them apart
 
 # Silence grammar, seconds. A conversation breathes more slowly than a bulletin.
 GAPS = {
@@ -502,14 +506,16 @@ def render_score(tl: Timeline, v: S.Voicing) -> tuple[np.ndarray, list[str]]:
     # beds first, so a page-turn can be levelled to the bed it leads into
     for m in [m for m in tl.music if m.role == "bed"]:
         dur = m.end - m.start
-        x = S.render_bed(v, m.name, dur)
+        hands_over = any(c.role != "bed" and c.name != "theme" and abs(c.start - m.end) <= 2.5 for c in tl.music)
+        ending = "rise" if hands_over else "out"
+        x = S.render_bed(v, m.name, dur, ending=ending)
         x, g = S.level_bed(x, gaps_in(m))
         findings = S.check_cue(x, "bed", gaps=gaps_in(m))
         if any(f.id in ("score-repetition", "bed-breathing", "bed-low-end") for f in findings):
             # one more draw of the dice before it ships with the note
             alt = S.Voicing(seed=v.seed + 101, tempo_bpm=v.tempo_bpm, cycle=v.cycle,
                             rng=np.random.default_rng(v.seed + 101))
-            x2 = S.render_bed(alt, m.name, dur)
+            x2 = S.render_bed(alt, m.name, dur, ending=ending)
             x2, g2 = S.level_bed(x2, gaps_in(m))
             f2 = S.check_cue(x2, "bed", gaps=gaps_in(m))
             if len(f2) < len(findings):
@@ -861,7 +867,8 @@ def produce_show(show: Show, opinion_script: str | None = None, edition: str = "
     room = S.room_tone(n / SR, seed=v.seed % 1000, level_dbfs=ROOM_TONE_DBFS)[:n]
     if len(music) < n:
         music = np.pad(music, ((0, n - len(music)), (0, 0)))
-    mix = voice_st + music + np.stack([room, room], axis=1)
+    music = music[:n]
+    mix = voice_st[:n] + music + np.stack([room[:n], room[:n]], axis=1)
     mix = mix[: int(tl.total * SR)]
 
     work = Path(tempfile.mkdtemp(prefix="void-onair-"))
