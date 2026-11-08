@@ -18,6 +18,20 @@ lives in this file.
 
 ---
 
+## On Air: the first engine-written episode, and the budget that sank Gemini's script (2026-11-08)
+
+The first scheduled run of rev 5c (run 428, after the spaCy CDN's 504s killed
+two dispatches) shipped today's episode end to end through the engine, 11:36,
+but as the template edition (`onair:template-after-gemini`): Gemini's two
+attempts failed on C-06 (the lead at 308 words against rev 5b's raised floor
+of 420, 315 with tolerance) and C-07 (one 22-word handover under the 28-word
+passage floor). Both rules were the cause, not the script: rev 5b raised the
+lead's floor to make the show longer, and a story that carries 308 words
+cannot reach it without padding. The lead's floor goes back to 380 (SECOND to
+230) and the passage floor to 18; the show's length comes from the pace, the
+pauses and the eight-story desk, which do not depend on one story's size. The
+same run's engine-health floor failed on 22 flash requests (cap 20), logged.
+
 ## The Argument rev 2: who writes it, and Void Opinion (2026-11-08, CEO)
 
 - The script is Gemini's, through the Sunday run, until the format is final.

@@ -55,7 +55,7 @@ theme       14.0 s, featured: four bars into a downbeat, and the sign-on lands O
             (S.THEME_DOWNBEAT_S); the pad holds under the voice while the lead bed crossfades in
 TITLE       A: "From Void News, this is On Air. It's <day>."  B: today, in one or two sentences
                                                                   [bed: lead, from under the framing]
-LEAD        A leads; four to nine passages of 28-125 words, 420-760 words; B takes one to three,
+LEAD        A leads; four to nine passages of 18-125 words, 380-760 words; B takes one to three,
             including the last (the coverage); no voice reads more than three in a row
                                                                   [bed under the first two passages,
                                                                    one visit in the middle of a long
@@ -147,7 +147,7 @@ confirm it. A roster under five outlets gives no line.
 | C-04 | No a.m./p.m. clock forms, no print datelines | fail |
 | C-05 | No borrowed or AI-podcast phrase, no significance word (the radio list, `BANNED_PHRASES`), no host named or thanked, no identifier spoken | fail |
 | C-06 | Word budgets per segment and in all (`WORD_BUDGETS`, `TOTAL_BUDGET`), +-25 % | fail |
-| C-07 | The shape: the leader opens (A in LEAD, B in SECOND), four to eight passages in LEAD and three to six in SECOND, each 28-125 words; the other anchor takes one to three (LEAD) or one or two (SECOND), usually the last; no voice reads more than three passages in a row; at most one question mark in a segment (the anchors never interview each other); the cold open is one A line and a fact; the TITLE's lineup is B's | fail |
+| C-07 | The shape: the leader opens (A in LEAD, B in SECOND), four to eight passages in LEAD and three to six in SECOND, each 18-125 words; the other anchor takes one to three (LEAD) or one or two (SECOND), usually the last; no voice reads more than three passages in a row; at most one question mark in a segment (the anchors never interview each other); the cold open is one A line and a fact; the TITLE's lineup is B's | fail |
 | C-08 | The desk opens on "The rest of the desk.", six to eight items (ranks 3-10), each at most 60 words, a fact not a question, never more items than stories | fail |
 | C-09 | Over the news segments, each of A and B carries 35-65 % of the words (the Opinion is A's alone and is not counted, or it would push A over) | fail |
 | C-10 | Sentences under twenty-four words | warn |
