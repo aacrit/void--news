@@ -249,7 +249,7 @@ def score() -> None:
     check(any(f.id == "score-repetition" for f in S.check_cue(looped, "bed")), "a tiled loop is caught")
     steady = np.sin(2 * np.pi * 440.0 * np.arange(10 * S.SR) / S.SR) * 0.01
     check(any(f.id == "bed-breathing" for f in S.check_cue(steady, "bed")), "a bed that does not breathe is caught")
-    bright = S.render_bed(v, "lead", 12.0) + 0.02 * np.random.default_rng(1).normal(0, 1, int(12.0 * S.SR))
+    bright = S.render_bed(v, "lead", 12.0) + 0.02 * np.random.default_rng(1).normal(0, 1, (int(12.0 * S.SR), 2))
     check(any(f.id == "music-treble" for f in S.check_cue(bright, "bed")), "treble over the shelf is caught")
     env = S.duck_envelope(30.0, [(5.0, 9.0), (9.6, 14.0), (17.0, 20.0)])
     check(not S.check_duck(env), "the eased pre-roll never falls over 2 dB in 100 ms")

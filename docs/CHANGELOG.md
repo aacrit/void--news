@@ -18,6 +18,25 @@ lives in this file.
 
 ---
 
+## On Air rev 3: the score written from scratch (2026-11-07, after the second ear test)
+
+The CEO on rev 2: the bed overpowers; it should be lighter and grow into the
+transitions; and the music itself "designed surgically, with perfection,
+from scratch; I don't like the tunes".
+
+- `pipeline/briefing/onair_music.py`: a composed score, stereo. D minor, 84
+  bpm, i VI III VII with alternates per segment, a two-bar electric-piano hook
+  falling to the tonic (inverted for the Opinion), an eighth-note ostinato, a
+  sub pulse bass, a pad, a kick with a click, ticks and rims, risers and
+  downbeats, a sidechain pump, dotted-eighth delay, two rooms; the outro lands
+  on D major. The theme is four bars into a downbeat and the sign-on lands on
+  it. `onair_score.py` keeps the standard and delegates the sound.
+- Beds -31 LUFS in the gaps (rev 2 -28), rising up to +6 dB over the last ten
+  seconds into a page-turn, the entrance or the outro (`rise_into`, capped at
+  the featured level); the music bus is stereo end to end.
+- The gate measures stereo as BS.1770 does; every cue passes it; a music-only
+  reel of every cue was sent to the CEO.
+
 ## On Air rev 2: three anchors, a pulse, a studio floor (2026-11-07, after the first ear test)
 
 The CEO's ear test of rev 1, the same afternoon: the format is right; more

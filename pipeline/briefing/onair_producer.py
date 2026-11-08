@@ -83,7 +83,7 @@ PAN = {"A": -0.07, "B": 0.07, "C": 0.0}
 GAPS = {
     "cold_in": 0.6,            # room tone before the first word
     "cold_to_theme": 1.1,
-    "signon_into_theme": 2.4,  # the sign-on starts this long before the theme ends
+    "signon_into_theme": 2.4,  # (rev 3: the sign-on lands on the theme's downbeat, S.THEME_DOWNBEAT_S)
     "title_lines": 0.7,
     "title_to_lead": 1.3,
     "question_to_answer": 0.32,
@@ -271,7 +271,7 @@ def build_timeline(cues: list[Cue], lengths: dict[int, float], v: S.Voicing) -> 
     """Place every voice line and every music cue. Music lengths come from
     the renderers' fixed durations (theme 7.0, page-turn 3.4, entrance 6.0,
     outro 14.0); beds are composed to the span they are given."""
-    theme_len, pageturn_len, entrance_len, outro_len = 7.0, 3.4, 6.0, 14.0
+    theme_len, pageturn_len, entrance_len, outro_len = S.THEME_S, S.PAGETURN_S, S.ENTRANCE_S, S.OUTRO_S
     # The exchanges a bed plays under: the first few and the last (the coverage).
     bedded: set[tuple[str, int]] = set()
     for kind in ("LEAD", "SECOND", "OPINION"):
@@ -294,7 +294,7 @@ def build_timeline(cues: list[Cue], lengths: dict[int, float], v: S.Voicing) -> 
         elif prev.kind == "COLD" and c.kind == "TITLE":
             theme_at = prev.end + GAPS["cold_to_theme"]
             music.append(MusicCue("featured", "theme", theme_at, theme_at + theme_len))
-            t = theme_at + theme_len - GAPS["signon_into_theme"]
+            t = theme_at + S.THEME_DOWNBEAT_S + 0.12      # the sign-on lands on the downbeat
         elif prev.kind in ("LEAD", "SECOND") and c.kind != prev.kind:
             pt_at = prev.end + GAPS["story_to_pageturn"]
             music.append(MusicCue("transition", "pageturn", pt_at, pt_at + pageturn_len))
@@ -323,7 +323,7 @@ def build_timeline(cues: list[Cue], lengths: dict[int, float], v: S.Voicing) -> 
     lead = seg_cues("LEAD")
     if lead:
         theme_end = next((m.end for m in music if m.name == "theme"), lead[0].start - 2.0)
-        start = min(theme_end - 0.8, (title[1].start - 1.6) if len(title) > 1 else lead[0].start - 2.0)
+        start = min(theme_end - 2.6, (title[1].start - 1.6) if len(title) > 1 else lead[0].start - 2.0)
         answers = [c for c in lead if not c.is_question]
         k = min(BED_OUT_AFTER_ANSWERS["LEAD"], max(1, len(answers) - 1))
         out_at = answers[k - 1].end + 1.2 if answers else lead[-1].end
@@ -349,7 +349,7 @@ def build_timeline(cues: list[Cue], lengths: dict[int, float], v: S.Voicing) -> 
     if desk:
         pts = [m for m in music if m.name == "pageturn" and m.start < desk[0].start]
         start = (pts[-1].start + 1.6) if pts else desk[0].start - 1.8
-        music.append(MusicCue("bed", "desk", start, desk[-1].end + 1.0))
+        music.append(MusicCue("bed", "desk", start, desk[-1].end + GAPS["desk_to_entrance"] + 0.3))
     op = seg_cues("OPINION")
     if op:
         en = next((m for m in music if m.name == "entrance"), None)
@@ -480,9 +480,9 @@ def render_score(tl: Timeline, v: S.Voicing) -> tuple[np.ndarray, list[str]]:
     """Compose and level every music cue for this timeline, duck it under the
     voices, measure it, and return the music bus with the findings logged."""
     n = int(math.ceil(tl.total * SR)) + SR
-    bus = np.zeros(n)
+    bus = np.zeros((n, 2))          # the music is stereo (rev 3)
     notes: list[str] = []
-    ir = S.room_ir(1.7, 2300.0, v.seed)
+    ir = None
     speech = [(c.start, c.end) for c in tl.cues]
     bed_peaks: dict[str, float] = {}
 
@@ -514,10 +514,24 @@ def render_score(tl: Timeline, v: S.Voicing) -> tuple[np.ndarray, list[str]]:
             f2 = S.check_cue(x2, "bed", gaps=gaps_in(m))
             if len(f2) < len(findings):
                 x, g, findings = x2, g2, f2
+        # A bed that leads into a page-turn, the entrance or the outro rises
+        # into it (CEO 2026-11-07, second ear test); the rise happens AFTER
+        # the level is set on the gaps, so the bed's resting level is the
+        # standard's and only its last seconds climb.
+        leads_into = next((c for c in tl.music if c.role != "bed" and c.name != "theme"
+                           and abs(c.start - m.end) <= 2.5), None)
+        rise = 0.0
+        if leads_into is not None:
+            # never above the featured cue it hands over to
+            st = S.lufs_shortterm(x)
+            top = float(np.max(st)) if st.size else S.BED_LUFS
+            rise = max(0.0, min(S.RISE_DB, S.FEATURED_LUFS + 1.0 - top))
+            x = S.rise_into(x, rise_db=rise, hold_s=max(0.0, m.end - leads_into.start))
         m.audio = x
         m.findings = findings
         bed_peaks[m.name] = max(bed_peaks.get(m.name, -99.0), S.bed_peak_lufs(x))
         notes.append(f"bed {m.name} {m.start:.1f}-{m.end:.1f}s gain {g:+.1f}" +
+                     (f" rise +{rise:.0f} into {leads_into.name}" if leads_into is not None else "") +
                      (" " + "; ".join(f.id for f in findings) if findings else ""))
     for m in [m for m in tl.music if m.role != "bed"]:
         nxt = None
@@ -599,7 +613,7 @@ def phone_fix(voice: np.ndarray, music: np.ndarray, cues: list[Cue], *, target_d
     Returns the music and the number of windows that needed it."""
     fixed = 0
     for _ in range(passes):
-        failing = [(t, m) for t, m in phone_windows(voice, music, cues) if m < target_db]
+        failing = [(t, m) for t, m in phone_windows(voice, S.mono(music), cues) if m < target_db]
         if not failing:
             break
         step = 0.01
@@ -832,20 +846,22 @@ def produce_show(show: Show, opinion_script: str | None = None, edition: str = "
     music, notes = render_score(tl, v)
     for line in notes:
         print(f"  [onair][score] {line}")
-    margin, where = phone_check(voice_mono, music, cues)
+    margin, where = phone_check(voice_mono, S.mono(music), cues)
     if margin < PHONE_VOICE_MARGIN_DB:
         music, n_fixed = phone_fix(voice_mono, music, cues)
         print(f"  [onair][score] phone-check margin {margin:.1f} dB at {where:.1f}s, under {PHONE_VOICE_MARGIN_DB}; "
               f"the music dips in {n_fixed} spoken window(s), nowhere else")
-        margin, where = phone_check(voice_mono, music, cues)
+        margin, where = phone_check(voice_mono, S.mono(music), cues)
         if margin < PHONE_VOICE_MARGIN_DB - 1.0:
             drop = PHONE_VOICE_MARGIN_DB - margin
             music = music * (10 ** (-drop / 20))
             print(f"  [onair][score] phone-check still {margin:.1f} dB; music down {drop:.1f} dB throughout")
-            margin, where = phone_check(voice_mono, music, cues)
+            margin, where = phone_check(voice_mono, S.mono(music), cues)
     print(f"  [onair][score] phone-check: voice over music {margin:.1f} dB in the worst spoken second (at {where:.1f}s)")
     room = S.room_tone(n / SR, seed=v.seed % 1000, level_dbfs=ROOM_TONE_DBFS)[:n]
-    mix = voice_st + np.stack([music, music], axis=1) + np.stack([room, room], axis=1)
+    if len(music) < n:
+        music = np.pad(music, ((0, n - len(music)), (0, 0)))
+    mix = voice_st + music + np.stack([room, room], axis=1)
     mix = mix[: int(tl.total * SR)]
 
     work = Path(tempfile.mkdtemp(prefix="void-onair-"))
