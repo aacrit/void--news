@@ -18,6 +18,15 @@ lives in this file.
 
 ---
 
+## The Argument rev 2: who writes it, and Void Opinion (2026-11-08, CEO)
+
+- The script is Gemini's, through the Sunday run, until the format is final.
+  A Claude scheduled task that would have written the weekly script every
+  Monday 00:47 UTC was created and deleted the same morning.
+- "Void Opinion" stays on the Weekly: the editorial opens "This is Void
+  Opinion." and its chapter is titled Void Opinion. The brand exception in
+  `CLAUDE.md` now names both audio programmes.
+
 ## The Argument rev 2: three voices, a weekly score, Issue 32 published with audio (2026-11-08)
 
 The CEO: "Lets create an enhanced version of the weekly audio as well, it
