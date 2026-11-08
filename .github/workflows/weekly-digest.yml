@@ -80,7 +80,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y ffmpeg
           pip install -r pipeline/requirements.txt
-          python -m spacy download en_core_web_sm
+          for i in 1 2 3 4; do python -m spacy download en_core_web_sm && break; [ "$i" = 4 ] && exit 1; echo "spaCy download failed (attempt $i), retrying"; sleep $((i * 20)); done
 
       # ── The Argument: three Kokoro voices in their own venv (numpy 2) ──
       # This job installed ffmpeg and nothing else, which is why the weekly was
