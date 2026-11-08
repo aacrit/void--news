@@ -1,0 +1,50 @@
+{
+ "version": "1.2.0",
+ "title": "On Air \u00b7 Sunday 08 November 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Today",
+   "kind": "headlines",
+   "endTime": 42.959
+  },
+  {
+   "startTime": 42.959,
+   "title": "US Military Forms New Task Force",
+   "kind": "story",
+   "rank": 1,
+   "cluster_id": "45f0df91-df59-4c10-a43a-7e66450ca27c",
+   "endTime": 204.949
+  },
+  {
+   "startTime": 204.949,
+   "title": "US Military Aircraft Disables St Kitts",
+   "kind": "story",
+   "rank": 2,
+   "cluster_id": "fd3ef014-89ab-401e-8d54-ab1bb4985962",
+   "endTime": 348.669
+  },
+  {
+   "startTime": 348.669,
+   "title": "The desk",
+   "kind": "briefs",
+   "endTime": 498.889
+  },
+  {
+   "startTime": 498.889,
+   "title": "Void Opinion",
+   "kind": "opinion",
+   "subtitle": "New Sanctions Leave Ordinary Workers to Bear the Cost",
+   "endTime": 681.988
+  },
+  {
+   "startTime": 681.988,
+   "endTime": 696.189,
+   "title": "Also from Void",
+   "kind": "promo",
+   "subtitle": "Weekly",
+   "promo": "weekly-01-verbatim"
+  }
+ ]
+}
