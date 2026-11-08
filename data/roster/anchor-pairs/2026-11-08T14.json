@@ -1,0 +1,74 @@
+[
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 21,
+  "a": {
+   "title": "How Berlin&apos;s Arab queers are building their community",
+   "summary": "As the co-founder of the ADIRA Drag Festival, Lebanese performance artist, drag performer, DJ and cultural organizer Hassandra has become an essential part of Berlin&apos;s queer artistic landscape.",
+   "link": "https://www.dw.com/en/how-berlin-s-arab-queers-are-building-their-community/a-79833143?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Wie Berlins arabische Queers ihre Community aufbauen",
+   "summary": "Hassandra gehört zu den bekanntesten Stimmen der queeren arabischen Kunstszene in Berlin. Mit dem 2023 gegründeten ADIRA Drag Festival schafft Hassandra gemeinsam mit anderen, Räume für Austausch und Gemeinschaft.",
+   "link": "https://www.dw.com/de/wie-berlins-arabische-queers-ihre-community-aufbauen/a-79863753?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 21,
+  "a": {
+   "title": "2026 Dakar Youth Olympic Games: Golden Double for Senegal",
+   "summary": "Senegal won two gold medals in beach wrestling at the Youth Olympic Games in Dakar. Elisabeth Diatta won gold in the -55 kg category, the host country’s first gold medal at the Youth Olympic Games. Her compatriot Maguette Diop followed suit, taking gold in the -80 kg category.",
+   "link": "https://www.france24.com/en/tv-shows/sports/20261108-2026-dakar-youth-olympic-games-golden-double-for-senegal",
+   "published": "Sun, 08 Nov 2026 10:56:56 GMT"
+  },
+  "b": {
+   "title": "Jeux olympiques de la jeunesse de Dakar 2026 : doublé doré pour le Sénégal",
+   "summary": "Le Sénégal a décroché deux médailles d'or en lutte de plage aux Jeux olympiques de la jeunesse de Dakar. Elisabeth Diatta a remporté l’or dans la catégorie des -55 kg, la première du pays hôte aux JOJ. Elle a été imitée par son compatriote Maguette Diop, sacré chez les -80 kg.",
+   "link": "https://www.france24.com/fr/%C3%A9missions/sports/20261108-jeux-olympiques-jeunesse-dakar-2026-doubl%C3%A9-dor%C3%A9-pour-s%C3%A9n%C3%A9gal",
+   "published": "Sun, 08 Nov 2026 10:50:18 GMT"
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 19,
+  "a": {
+   "title": "Israel's Arab-led parties gain influence",
+   "summary": "Arab-led parties have endorsed Gadi Eisenkot despite his ruling out a coalition with them. Their support is driven by a shared goal: removing Benjamin Netanyahu from power. But could these parties ultimately hold the balance of power in forming Israel's next government? Antonia Kerrigan reports.",
+   "link": "https://www.france24.com/en/israel-s-arab-led-parties-gain-influence",
+   "published": "Sun, 08 Nov 2026 09:43:26 GMT"
+  },
+  "b": {
+   "title": "Israël : Eisenkot, rival de Netanyahu, chargé de former le prochain gouvernement",
+   "summary": "La présidence israélienne a annoncé samedi soir choisir Gadi Eisenkot, principal rival du Premier ministre Benjamin Netanyahu, pour tenter de former un nouveau gouvernement. Cette décision intervient après des élections législatives sans issue claire, qui n'ont permis à aucun des deux hommes de réunir une majorité absolue.",
+   "link": "https://www.france24.com/fr/vid%C3%A9o/20261108-isra%C3%ABl-eisenkot-rival-de-netanyahu-charg%C3%A9-de-former-le-prochain-gouvernement",
+   "published": "Sun, 08 Nov 2026 08:55:14 GMT"
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 18,
+  "a": {
+   "title": "Paraguay: Senate impeached Peña rather than accept his offer to resign",
+   "summary": "Paraguay's ousted president, Santiago Peña, has been charged over the collapse of Ueno Bank. Initially placed under house arrest, he has since been transferred to a military facility for his own safety. Nearly three million customers were locked out of their accounts after regulators seized control of the online bank. Repayments are now under way, but protests continue as customers demand access t",
+   "link": "https://www.france24.com/en/video/20261108-paraguay-senate-impeached-pe%C3%B1a-rather-than-accept-his-offer-to-resign",
+   "published": "Sun, 08 Nov 2026 10:42:59 GMT"
+  },
+  "b": {
+   "title": "Paraguay: le président destitué Santiago Peña placé en détention préventive",
+   "summary": "Le président destitué du Paraguay Santiago Peña a été placé samedi en détention provisoire, dans la foulée de son inculpation en lien avec la débâcle cette semaine de l'Ueno Bank, qui a lésé des millions d'épargnants, a annoncé un juge paraguayen.",
+   "link": "https://www.france24.com/fr/vid%C3%A9o/20261108-paraguay-le-pr%C3%A9sident-destitu%C3%A9-santiago-pe%C3%B1a-plac%C3%A9-en-d%C3%A9tention-pr%C3%A9ventive",
+   "published": "Sun, 08 Nov 2026 10:00:11 GMT"
+  }
+ }
+]
