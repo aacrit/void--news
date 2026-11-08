@@ -18,6 +18,26 @@ lives in this file.
 
 ---
 
+## On Air: a one-sample crash, the passage floor at 12, and the decisions of the evening (2026-11-08)
+
+- A redo of today's episode (Refresh: Daily Brief, radio, run 42509818072)
+  found flash's day spent (429) and asked flash-lite twice. Attempt 1 failed
+  C-06 (lead 284 words) and C-11 (Araghchi's reported words paraphrased into
+  something the story does not say: the refusal was right). Attempt 2 failed
+  only C-07, one 14-word passage. The passage floor goes to 12: a shape rule,
+  not a fact rule; C-11 and the grounding pass are untouched.
+- The template render then crashed in the mix: `room_tone(n / SR)` sized
+  itself with `int()`, and `int(33408283 / 48000 * 48000)` is 33408282, so
+  the broadcast failed after the whole voice track was synthesised. Nothing
+  shipped. `room_tone` rounds now, which also covers the two Weekly callers
+  of the same pattern; `tests/test_onair_show.py` asserts the length.
+- The live gate went red on the El-Sayed card's "inshaAllah" (a
+  transliteration read as a missing-space seam). Allowed by name;
+  `tests/test_verify_gate.py` asserts it passes and a real seam still fails.
+- CEO: the template edition stays on air until a run ships a good Gemini
+  script; a same-day redo is worth spending Gemini on when the allowance is
+  there.
+
 ## On Air: the first engine-written episode, and the budget that sank Gemini's script (2026-11-08)
 
 The first scheduled run of rev 5c (run 428, after the spaCy CDN's 504s killed
