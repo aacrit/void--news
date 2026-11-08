@@ -82,10 +82,10 @@
    "shipped": true
   },
   "onair": {
-   "sentences": 84,
-   "anchored": 44,
-   "checked": 44,
-   "coverage": 52.4,
+   "sentences": 68,
+   "anchored": 43,
+   "checked": 43,
+   "coverage": 63.2,
    "anchorTypes": [
     "number",
     "name",
@@ -93,8 +93,8 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 12,
-    "name": 31,
+    "date": 11,
+    "name": 30,
     "number": 13
    },
    "groundingRan": true,
@@ -168,5 +168,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-11-08T00:49:34Z"
+ "computedAt": "2026-11-08T01:25:11Z"
 }

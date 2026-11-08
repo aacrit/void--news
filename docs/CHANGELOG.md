@@ -18,6 +18,25 @@ lives in this file.
 
 ---
 
+## On Air rev 4: a two-anchor newsroom, the Opinion read whole (2026-11-07, after the fourth ear test)
+
+The CEO heard the full 1107 render and called the question-and-answer format
+robotic and the second voice (`af_bella`) artificial. The format goes back to
+a newsroom: passages, not exchanges. A leads the lead and B takes the
+reaction and the coverage; B leads the second and A takes the coverage;
+nobody interviews anybody (C-07 now fails a lead with more than one question
+mark, a run of four passages from one voice, a passage under 28 or over 125
+words, the wrong leader). The Opinion is no longer drawn out by questions: A
+introduces it on the fixed line with its lens and headline, and C reads the
+written Opinion whole, paragraph by paragraph (C-14), grounded against
+`opinion_text`. Cast: A `af_heart`, B `bf_emma`, C `af_aoede`. The producer's
+beds now phase by passage index (`BED_OUT_AFTER_PASSAGES`), and the handover
+gap is 0.72 s (1.25 s under a bed). Today's edition was rewritten in the new
+shape from the same frozen stories, grounded with zero cuts, and rendered:
+8 min 57 s, the Opinion from 6:44, phone margin 14.4 dB, -16 LUFS.
+`tests/test_onair_show.py` carries the new fixture, the Opinion text as its
+own fixture, and planted defects for every new rule.
+
 ## On Air rev 3: the score written from scratch (2026-11-07, after the second ear test)
 
 The CEO on rev 2: the bed overpowers; it should be lighter and grow into the

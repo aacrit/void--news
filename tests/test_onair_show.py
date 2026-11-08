@@ -1,4 +1,4 @@
-"""On Air, the conversation: the script's grammar, its validators, the
+"""On Air, the newsroom: the script's grammar, its validators, the
 template edition, the score standard and the timeline. No LLM, no TTS.
 
     python tests/test_onair_show.py
@@ -33,6 +33,8 @@ from briefing import onair_score as S  # noqa: E402
 
 FIXTURE = ROOT / "tests" / "fixtures" / "onair_show_2026-11-07.txt"
 STORIES = ROOT / "tests" / "fixtures" / "onair_stories_2026-11-07.json"
+OPINION = ROOT / "tests" / "fixtures" / "onair_opinion_2026-11-07.txt"
+OP_HEAD, OP_LEAN = "The Door Stephen Miller Will Hold", "left"
 DATE = datetime.datetime(2026, 11, 7, 19, tzinfo=datetime.timezone.utc)
 
 failures: list[str] = []
@@ -49,7 +51,18 @@ def stories() -> list[dict]:
 
 
 def ctx() -> Context:
+    """The edition as published: eight stories and the day's Opinion."""
+    return Context(top=stories(), date_spoken=spoken_date(DATE), opinion_text=OPINION.read_text(encoding="utf-8"),
+                   opinion_headline=OP_HEAD, opinion_lean=OP_LEAN)
+
+
+def ctx_no_op() -> Context:
     return Context(top=stories(), date_spoken=spoken_date(DATE))
+
+
+def without_opinion(raw: str) -> str:
+    a, b = raw.index("## OPINION"), raw.index("## CLOSE")
+    return raw[:a] + raw[b:]
 
 
 def fail_ids(report) -> set[str]:
@@ -70,8 +83,8 @@ def clean_fixture() -> str:
     bind_ranks(show, ctx())
     rep = validate_show(show, ctx())
     check(rep.passed, f"fixture passes every validator ({[f'{f.id} {f.detail[:50]}' for f in rep.failures]})")
-    check([s.kind for s in show.segments] == ["COLD", "TITLE", "LEAD", "SECOND", "DESK", "CLOSE"],
-          "fixture carries the six segments in order")
+    check([s.kind for s in show.segments] == ["COLD", "TITLE", "LEAD", "SECOND", "DESK", "OPINION", "CLOSE"],
+          "fixture carries the seven segments in order")
     lead = show.seg("LEAD")
     check(lead is not None and lead.cluster_id == stories()[0]["id"], "LEAD is bound to rank 1 by position, not copied")
     desk = show.seg("DESK")
@@ -81,8 +94,15 @@ def clean_fixture() -> str:
     check(not cuts, f"the grounding pass cuts nothing from the fixture ({[c.sentence[:60] for c in cuts]})")
     check(show.words == words_before, "grounding left the word count unchanged")
     check(TOTAL_BUDGET[0] <= show.words <= TOTAL_BUDGET[1], f"{show.words} words inside the total budget")
-    check(lead is not None and lead.exchanges() >= 5, "the lead has at least five exchanges")
-    check(any(not t.is_question for t in lead.turns if t.speaker == "A"), "the asker may make a statement the desk picks up")
+    check(lead is not None and lead.exchanges() >= 5, "the lead has at least five passages")
+    check(lead is not None and not any(t.is_question for t in lead.turns), "nobody interviews anybody in the lead")
+    check(lead is not None and lead.turns[0].speaker == "A" and lead.turns[-1].speaker == "B", "A leads the lead, B reads its coverage")
+    second = show.seg("SECOND")
+    check(second is not None and second.turns[0].speaker == "B" and second.turns[-1].speaker == "A", "B leads the second, A reads its coverage")
+    op = show.seg("OPINION")
+    check(op is not None and [t.speaker for t in op.turns] == ["A", "C", "C", "C", "C"], "A introduces the Opinion, C reads it whole")
+    check(op is not None and " ".join(t.text for t in op.turns[1:]) == " ".join(OPINION.read_text(encoding="utf-8").split()).replace("3,000", "three thousand").replace("170 billion", "one hundred seventy billion").replace("58 percent", "fifty-eight percent"),
+          "C's passages are the Opinion's own sentences, in order, complete")
     check(show.say.get("Eisenkot") == "eye-zen-kot", "SAY respellings parse and lowercase")
     check(show.to_text().startswith("## COLD"), "to_text round-trips the markers")
     return raw
@@ -97,28 +117,34 @@ def planted_defects(raw: str) -> None:
     check("C-02" in planted(raw, "pledged loyalty to the president.", 'pledged "loyalty" to the president.'),
           "C-02 fires on quotation marks")
     check("C-04" in planted(raw, "On Friday evening he was at Mar-a-Lago", "At 7 p.m. he was at Mar-a-Lago"), "C-04 fires on a clock form")
-    check("C-05" in planted(raw, "A: Let's start with what the president actually announced.", "A: Welcome back. What did the president announce?"),
+    check("C-05" in planted(raw, "A: On Friday, President Donald Trump announced", "A: Welcome back. On Friday, President Donald Trump announced"),
           "C-05 fires on a borrowed phrase")
-    check("C-05" in planted(raw, "Sharply, and along party lines.", "Sharply, and the split is significant."),
+    check("C-05" in planted(raw, "The reaction has split sharply, and along party lines.", "The reaction has split sharply, and the split is significant."),
           "C-05 fires on a significance word in Void's voice")
-    check("C-05" in planted(raw, "A: And Susie Wiles? She'd been there since the start of this term.", "A: Thanks. And Susie Wiles? She'd been there since the start of this term."),
+    check("C-05" in planted(raw, "B: That record runs across both terms.", "B: Thanks. That record runs across both terms."),
           "C-05 fires on thanking a host")
-    # C-06: empty the lead to one exchange
+    # C-06: empty the lead to one passage
     lead_start = raw.index("## LEAD")
     second_start = raw.index("## SECOND")
-    short = raw[:lead_start] + ("## LEAD | Miller Takes the West Wing\nA: What did the president announce?\n"
-                                "B: President Donald Trump announced on Friday that Stephen Miller will replace Susie Wiles "
-                                "as White House chief of staff. The change takes effect on Monday.\n\n") + raw[second_start:]
+    short = raw[:lead_start] + ("## LEAD | Miller Takes the West Wing\n"
+                                "A: President Donald Trump announced on Friday that Stephen Miller will replace Susie Wiles "
+                                "as White House chief of staff. The change takes effect on Monday. Miller is the deputy chief of staff now.\n\n") + raw[second_start:]
     show = parse_show(short)
     bind_ranks(show, ctx())
     ids = fail_ids(validate_show(show, ctx()))
-    check("C-06" in ids and "C-07" in ids, f"C-06 and C-07 fire on a one-exchange lead ({ids})")
-    check("C-07" in planted(raw, "A: Remind us what he's actually done on immigration.", "B: Remind us what he's actually done on immigration?"),
-          "C-07 fires when the answering voice asks")
-    check("C-07" in planted(raw, "A: Let's start with what the president actually announced.",
-                            "A: Let's start with what the president actually announced, and how he announced it, and when, and who "
-                            "was in the room, and what they said about it afterwards, and why he chose Friday for it, and to whom?"),
-          "C-07 fires on a question over the word cap")
+    check("C-06" in ids and "C-07" in ids, f"C-06 and C-07 fire on a one-passage lead ({ids})")
+    check("C-07" in planted(raw, "A: On Friday, President Donald Trump announced", "B: On Friday, President Donald Trump announced"),
+          "C-07 fires when the other anchor leads the lead")
+    check("C-07" in planted(raw, "B: That record runs across both terms.", "A: That record runs across both terms."),
+          "C-07 fires when one voice reads four passages in a row")
+    check("C-07" in planted(raw, "B: That record runs across both terms. Miller's forty-one,",
+                            "B: What's his record? Where did it start? Miller's forty-one,"),
+          "C-07 fires when the anchors interview each other")
+    check("C-07" in planted(raw, "A: Wiles had held the post since the start of this term, and she was the first woman to hold it. She submitted her resignation on Thursday night. According to the president's announcement, she's moving to his political operation.",
+                            "A: Wiles had held the post since the start of this term."),
+          "C-07 fires on a passage under the floor")
+    check("C-07" in planted(raw, "B: Today: Stephen Miller takes", "A: Today: Stephen Miller takes"),
+          "C-07 fires when B does not read the lineup")
     check("C-08" in planted(raw, "Police shot and arrested him.",
                             "Police shot and arrested him after a chase through the square that witnesses described at length."),
           "C-08 fires on a desk item over the word cap")
@@ -128,38 +154,51 @@ def planted_defects(raw: str) -> None:
           "C-11 fires on an attributed claim the story does not carry")
     check("C-12" in planted(raw, "Police shot and arrested him.", "The Constitution protects the square."),
           "C-12 fires on a court or a law in Void's own voice")
+    check("C-14" in planted(raw, "A: Now, the Opinion. Through a progressive lens today.", "A: Now, the Opinion."),
+          "C-14 fires when the Opinion's introduction drops its lens")
+    check("C-14" in planted(raw, "C: Ask who bears the cost", "A: Ask who bears the cost"),
+          "C-14 fires when A speaks after the introduction")
+    check("C-14" in planted(raw, "C: Ask who bears the cost of that structure and who was asked. A Fox News exit survey found fifty-eight percent of voters believed federal immigration enforcement had gone too far. The voters answered on Tuesday. The appointment came on Friday.",
+                            "C: The voters answered on Tuesday."),
+          "C-14 fires on an Opinion passage under the floor")
+    check("C-00" in planted(raw, "\nB: That record runs", "\nC: That record runs"), "C outside the Opinion fails")
     # C-09: hand every B line to A
     show = parse_show(raw.replace("\nB: ", "\nA: "))
     bind_ranks(show, ctx())
     check("C-09" in fail_ids(validate_show(show, ctx())), "C-09 fires when one voice carries the show")
-    # a cut answer takes its question with it
-    wiles = ("B: She had, and she was the first woman to hold the post. Wiles submitted her resignation on Thursday night. "
-             "According to the president's announcement, she's moving to his political operation.")
+    # a passage the story does not carry is cut, and the handover survives
+    wiles = ("A: Wiles had held the post since the start of this term, and she was the first woman to hold it. "
+             "She submitted her resignation on Thursday night. According to the president's announcement, she's moving to his political operation.")
     assert wiles in raw
-    show = parse_show(raw.replace(wiles, "B: Wiles has taken a post at the United Nations in Geneva, a city of two million."))
+    show = parse_show(raw.replace(wiles, "A: Wiles has taken a post at the United Nations in Geneva, a city of two million."))
     bind_ranks(show, ctx())
     cuts = ground_show(show, ctx())
     lead = show.seg("LEAD")
     texts = " ".join(t.text for t in lead.turns)
-    check(bool(cuts) and "Geneva" not in texts, "grounding cuts an answer the story does not carry")
-    check("And Susie Wiles?" not in texts, "a question whose answer was cut whole goes with it")
-    check(all(lead.turns[i].speaker != lead.turns[i + 1].speaker for i in range(len(lead.turns) - 1)),
-          "the voices still alternate after a cut")
+    check(bool(cuts) and "Geneva" not in texts, "grounding cuts a passage the story does not carry")
+    check(lead.turns[0].speaker == "A" and lead.turns[-1].speaker == "B", "A still leads and B still closes after a cut")
+    # the Opinion is read against the Opinion, not the stories
+    show = parse_show(raw.replace("The voters answered on Tuesday.", "The voters answered on Tuesday. Nine in ten of them live in Ohio."))
+    bind_ranks(show, ctx())
+    cuts = ground_show(show, ctx())
+    check(any("Ohio" in c.sentence for c in cuts), "a sentence the Opinion does not carry is cut from C's reading")
 
 
 # ---------------------------------------------------------------- template and prompt
 def template_and_prompt() -> None:
     show = template_show(stories(), DATE)
-    bind_ranks(show, ctx())
-    rep = validate_show(show, ctx())
+    bind_ranks(show, ctx_no_op())
+    rep = validate_show(show, ctx_no_op())
     check([s.kind for s in show.segments] == ["COLD", "TITLE", "LEAD", "SECOND", "DESK", "CLOSE"],
           "the template edition carries every segment")
     check(not any(f.id in ("C-01", "C-02", "C-04", "C-05", "C-08", "C-09", "C-11", "C-12") for f in rep.failures),
           f"the template edition breaks no line rule ({[f.id for f in rep.failures]})")
-    cuts = ground_show(show, ctx())
+    cuts = ground_show(show, ctx_no_op())
     check(not cuts, f"the template edition is grounded by construction ({[c.sentence[:50] for c in cuts]})")
     lead = show.seg("LEAD")
-    check(lead is not None and any(t.text.startswith("Of the") for t in lead.turns), "the template reads the coverage line")
+    check(lead is not None and any("Of the" in t.text for t in lead.turns), "the template reads the coverage line")
+    check(lead is not None and lead.turns[0].speaker == "A" and lead.turns[-1].speaker == "B" and not any(t.is_question for t in lead.turns),
+          "the template lead is A's passages and B's coverage, no questions")
     cov = coverage_line(stories()[0])
     check(cov == "Of the sixty outlets Void placed on this story, twenty-four sit left of centre, twenty at the centre and sixteen right of it.",
           f"coverage line is one vote per outlet, in words ({cov!r})")
@@ -169,20 +208,28 @@ def template_and_prompt() -> None:
     check(f"{SIGN_ON} It's {spoken_date(DATE)}." in user, "the prompt carries the sign-on and the day")
     check(CLOSE_PREFIX in user and CLOSE_TAG in user and DESK_LEAD in user, "the prompt carries Void's lines")
     check(f"{WORD_BUDGETS['LEAD'][0]}-{WORD_BUDGETS['LEAD'][1]} words" in user, "the prompt's budgets are the validator's")
+    check("No questions between the anchors" in user and "asks" not in system.split("Nobody interviews anybody")[0], "the prompt asks for a newsroom, not an interview")
     check("<source id=" in user, "every story is wrapped as data")
     check("Coverage:" in user, "the prompt hands the model the coverage line")
 
-    # the Opinion as a conversation: template, prompt, validators
+    # the Opinion read whole: template, prompt, validators
     op_text = ("The argument has two parts. The first part says the Senate changed hands in January. "
                "The second part says any vacancy on the court will meet a Democratic majority. "
-               "The conclusion is that the two justices face a different calendar than they did a week ago.")
+               "The conclusion is that the two justices face a different calendar than they did a week ago. "
+               "A calendar is not a verdict. It is the set of days on which a decision can still be made by the people who hold it now.\n\n"
+               "Consider what the Senate does with a vacancy. It holds hearings, it takes a vote, and it does both on its own schedule. "
+               "For two years that schedule is written by the party that won on Tuesday. The justices who might have retired this spring "
+               "know that as well as anyone in the building. We think the quiet in their chambers is the sound of that arithmetic being done.\n\n"
+               "None of this is a prediction. The court decides its own cases and the justices decide their own retirements. "
+               "What changed is only who waits on the other side of the decision, and for how long they are willing to wait.")
     show = template_show(stories(), DATE, opinion_text=op_text, opinion_headline="Two Justices and a Senate", opinion_lean="center")
     octx = Context(top=stories(), date_spoken=spoken_date(DATE), opinion_text=op_text,
                    opinion_headline="Two Justices and a Senate", opinion_lean="center")
     bind_ranks(show, octx)
     rep = validate_show(show, octx)
     op = show.seg("OPINION")
-    check(op is not None and [t.speaker for t in op.turns][:2] == ["A", "C"], "the template Opinion is A asking, C arguing")
+    check(op is not None and [t.speaker for t in op.turns][:2] == ["A", "C"] and all(t.speaker == "C" for t in op.turns[1:]),
+          "the template Opinion is A introducing, C reading")
     check(op is not None and op.turns[0].text.startswith(f"{OPINION_OPEN} Through a pragmatic lens today."),
           "the template Opinion opens on Void's line and names its lens")
     check(not rep.failures, f"the template Opinion passes ({[f.id + ' ' + f.detail[:40] for f in rep.failures]})")
@@ -192,32 +239,23 @@ def template_and_prompt() -> None:
                                 opinion_lean="left")
     check("## OPINION" in user and "Through a progressive lens today." in user and "<source id=\"opinion\"" in user,
           "the prompt carries the Opinion block, its lens and the text as data")
-    no_op = validate_show(parse_show(FIXTURE.read_text(encoding="utf-8")), octx)
+    no_op = validate_show(parse_show(without_opinion(FIXTURE.read_text(encoding="utf-8"))), ctx())
     check(any(f.id == "C-00" and f.segment == "OPINION" for f in no_op.failures),
           "an edition with an Opinion whose script carries none fails")
-    with_op = parse_show(FIXTURE.read_text(encoding="utf-8").replace("## CLOSE",
-              "## OPINION | Two Justices\nA: Now, the Opinion. Through a pragmatic lens today. What's the argument?\n"
-              "C: The argument has two parts. The first part says the Senate changed hands in January.\n"
-              "A: And where does it land?\n"
-              "C: The second part says any vacancy on the court will meet a Democratic majority.\n\n## CLOSE"))
-    bind_ranks(with_op, ctx())
-    check(any(f.id == "C-00" and f.segment == "OPINION" for f in validate_show(with_op, ctx()).failures),
+    with_op = parse_show(FIXTURE.read_text(encoding="utf-8"))
+    bind_ranks(with_op, ctx_no_op())
+    check(any(f.id == "C-00" and f.segment == "OPINION" for f in validate_show(with_op, ctx_no_op()).failures),
           "an Opinion segment on a day with no written opinion fails")
-    bind_ranks(with_op, octx)
-    check(not [f for f in validate_show(with_op, octx).failures if f.segment == "OPINION"],
-          "a two-exchange Opinion with the lens line passes")
-    c_in_lead = parse_show(FIXTURE.read_text(encoding="utf-8").replace("\nB: She had, and she was", "\nC: She had, and she was"))
-    bind_ranks(c_in_lead, ctx())
-    check(any(f.id == "C-00" for f in validate_show(c_in_lead, ctx()).failures), "C outside the Opinion fails")
 
     # generation: a model that answers garbage, then the template
-    show, rep, label = generate_show(stories(), date=DATE, generate_fn=lambda s, u: "nonsense")
+    op_kw = dict(opinion_text=OPINION.read_text(encoding="utf-8"), opinion_headline=OP_HEAD, opinion_lean=OP_LEAN)
+    show, rep, label = generate_show(stories(), date=DATE, generate_fn=lambda s, u: "nonsense", **op_kw)
     check(show is not None and label == "template-after-gemini", f"a failed model falls to the template ({label})")
-    show, rep, label = generate_show(stories(), date=DATE, generate_fn=lambda s, u: FIXTURE.read_text(encoding="utf-8"))
+    show, rep, label = generate_show(stories(), date=DATE, generate_fn=lambda s, u: FIXTURE.read_text(encoding="utf-8"), **op_kw)
     check(show is not None and label == "gemini" and show.grounded is True, f"the fixture is accepted as the model's ({label})")
     # a script with one repairable defect is repaired, not lost
     raw = FIXTURE.read_text(encoding="utf-8").replace("pledged loyalty to the president.", 'pledged "loyalty" to the president.')
-    show, rep, label = generate_show(stories(), date=DATE, generate_fn=lambda s, u: raw, max_attempts=1)
+    show, rep, label = generate_show(stories(), date=DATE, generate_fn=lambda s, u: raw, max_attempts=1, **op_kw)
     check(show is not None and label == "gemini", "quotation marks alone are stripped rather than costing the show")
 
 
@@ -267,17 +305,14 @@ def score() -> None:
 def timeline() -> None:
     from briefing.onair_producer import build_cues, build_timeline, chapters_from_timeline, ShowResult
     raw = FIXTURE.read_text(encoding="utf-8")
-    show = parse_show(raw)
-    bind_ranks(show, ctx())
     v = S.voicing_for("onair:world:2026-11-07")
-    op_raw = raw.replace("## CLOSE", "## OPINION | Two Justices\nA: Now, the Opinion. Through a pragmatic lens today. What's the argument?\n"
-                         "C: The argument has two parts, and the first part says the Senate changed hands in January, which matters.\n"
-                         "A: And where does it land?\nC: It lands on the two justices, who face a different calendar than a week ago.\n\n## CLOSE")
-    show = parse_show(op_raw)
+    show = parse_show(raw)
     bind_ranks(show, ctx())
     cues = build_cues(show, None)
     check(any(c.kind == "OPINION" and c.role == "C" for c in cues) and any(c.kind == "OPINION" and c.role == "A" for c in cues),
           "the Opinion's cues carry A and C")
+    lead_cues = [c for c in cues if c.kind == "LEAD"]
+    check([c.exchange for c in lead_cues] == list(range(len(lead_cues))), "a cue's exchange is its passage index")
     lengths = {c.idx: 0.4 * len(c.text.split()) for c in cues}
     tl = build_timeline(cues, lengths, v)
     check(all(tl.cues[i].end <= tl.cues[i + 1].start for i in range(len(tl.cues) - 1)), "no two lines overlap")
@@ -305,8 +340,8 @@ def timeline() -> None:
     r.opinion_start_seconds = 5.0
     check(r.as_row_fields()["audio_voice_label"] == "Three voices", "an Opinion, three voices on the label")
     # without an opinion, no entrance and no opinion chapter
-    show = parse_show(raw)
-    bind_ranks(show, ctx())
+    show = parse_show(without_opinion(raw))
+    bind_ranks(show, ctx_no_op())
     cues = build_cues(show, None)
     tl = build_timeline(cues, {c.idx: 0.4 * len(c.text.split()) for c in cues}, v)
     check("entrance" not in [m.name for m in tl.music] and tl.opinion_start is None, "no opinion, no entrance")
