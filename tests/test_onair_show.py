@@ -627,6 +627,10 @@ def main() -> int:
     score()
     print("--- the timeline ---")
     timeline()
+    # 2026-11-08: room_tone(n / SR) came back one sample short of n and the
+    # mix's broadcast killed a render after synthesis. Every caller passes n / SR.
+    for n in (33408283, 30000001, 48000 * 695 + 1, 7):
+        check(len(S.room_tone(n / S.SR, seed=1)) == n, f"room_tone(n / SR) is n samples long (n={n})")
     if failures:
         print(f"\n{len(failures)} FAILED")
         for f in failures:

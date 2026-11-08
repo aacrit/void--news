@@ -407,7 +407,10 @@ def room_ir(decay_s: float = 1.4, lp_hz: float = 2600.0, seed: int = 7) -> np.nd
 def room_tone(dur_s: float, seed: int = 11, level_dbfs: float = -57.0) -> np.ndarray:
     """Synthesised room tone, pink-ish, so a silence is never digital zero."""
     rng = np.random.default_rng(seed)
-    n = int(dur_s * SR)
+    # round, not int: callers pass n / SR, and int(n / SR * SR) can be n - 1,
+    # which broke the mix's broadcast on 2026-11-08 ((33408283,2) against
+    # (33408282,2)) after the whole voice track had been synthesised.
+    n = int(round(dur_s * SR))
     white = rng.normal(0, 1, n)
     x = signal.sosfilt(_sos_butter(1, 900.0, "low"), white)
     x = signal.sosfilt(_sos_butter(2, 60.0, "high"), x)
