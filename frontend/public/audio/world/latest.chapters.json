@@ -7,44 +7,46 @@
    "startTime": 0.0,
    "title": "Today",
    "kind": "headlines",
-   "endTime": 42.959
+   "endTime": 38.429
   },
   {
-   "startTime": 42.959,
-   "title": "US Military Forms New Task Force",
+   "startTime": 38.429,
+   "title": "US Task Force Targets Iranian Borders",
    "kind": "story",
    "rank": 1,
    "cluster_id": "45f0df91-df59-4c10-a43a-7e66450ca27c",
-   "endTime": 204.949
+   "url": "https://news.voidvision.org/story/bcdf31dd-db59-4b6c-94b5-cd6883d042f0/",
+   "endTime": 207.639
   },
   {
-   "startTime": 204.949,
-   "title": "US Military Aircraft Disables St Kitts",
+   "startTime": 207.639,
+   "title": "US Aircraft Disables Cargo Vessel",
    "kind": "story",
    "rank": 2,
    "cluster_id": "fd3ef014-89ab-401e-8d54-ab1bb4985962",
-   "endTime": 348.669
+   "url": "https://news.voidvision.org/story/0ddf737e-01a2-42f3-84fb-7ec21d5abce6/",
+   "endTime": 335.009
   },
   {
-   "startTime": 348.669,
+   "startTime": 335.009,
    "title": "The desk",
    "kind": "briefs",
-   "endTime": 498.889
+   "endTime": 488.489
   },
   {
-   "startTime": 498.889,
+   "startTime": 488.489,
    "title": "Void Opinion",
    "kind": "opinion",
    "subtitle": "New Sanctions Leave Ordinary Workers to Bear the Cost",
-   "endTime": 681.988
+   "endTime": 665.938
   },
   {
-   "startTime": 681.988,
-   "endTime": 696.189,
+   "startTime": 665.938,
+   "endTime": 680.139,
    "title": "Also from Void",
    "kind": "promo",
-   "subtitle": "Weekly",
-   "promo": "weekly-01-verbatim"
+   "subtitle": "Void News",
+   "promo": "site-02-outlets"
   }
  ]
 }
