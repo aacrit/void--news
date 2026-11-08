@@ -175,16 +175,16 @@ claims about its own confidence. It needs a decision, not a tweak.
 on 2026-10-02 against the printed stories (rev 85 WS-G: the Frederiksen
 attribution, two quotations, an invented one, the Sheeran cover, two columns
 withdrawn, both departments, five briefs, the article count), and W-T22 now
-holds every committed quotation to the printed week. The corrected script is
-at `data/weekly/scripts/2026-09-14.txt`, 14.2 min inside the issue's floated
-14-18 band, every validator clean. Rendering it is blocked on one thing:
-`render_weekly_audio` writes through `_write_audio_static`, which overwrites
-`frontend/public/audio/weekly-world/latest.mp3` and `latest.chapters.json`
-and rotates out all but the two newest dated files. Once Issue 27 is the
-latest, rendering Issue 26 with `--week 2026-09-14` would put the older
-episode under the current one's address. It needs a per-issue stem that
-leaves `latest.*` alone when the week is not the newest, and the workflow's
-`audio-only` mode has no week input at all.
+holds every committed quotation to the printed week. The corrected rev 1 script is
+kept at `data/weekly/scripts/v1/2026-09-14.txt`; it is not a rev 2 programme
+(the Editor carried the features; rev 2's correspondents do) and is not
+validated by WA-04. Rendering Issue 26 again means writing it in the rev 2
+grammar. Rev 2 names the file by the issue's Sunday (`2026-09-20-pm.mp3`), so
+the dated file no longer collides, but `_write_audio_static` still rewrites
+`latest.*` on every write and rotates out all but the two newest dated files,
+so rendering an older issue once Issue 32 is the latest would still put it
+under the current one's address. The workflow's `audio-only` mode has no week
+input at all.
 
 **The spoken brief has no per-story grounding check on its OUTPUT.**
 2026-09-30 aired another story's judge and date inside the Christa Pike item.
@@ -1327,11 +1327,22 @@ What is unfinished on Srebrenica:
 
 ## Weekly: no scheduled run has produced The Argument
 
-The format works and the episode is live, but it got there by manual
-`audio-only` dispatch. Every scheduled run so far fell back to the legacy read,
-and that fallback is now deleted, so the next Sunday 18:00 run either produces a
-real episode or ships none. The generator fix (`word_budget`) is what should
-make it produce one. **Watch the first scheduled run.**
+Rev 2 (2026-11-08) published Issue 32 with audio through the committed-script
+path (`render_weekly_audio --week 2026-10-26`). The Sunday run
+(`weekly-digest.yml`, 18:07 UTC) uses the same engine through one Gemini call
+(`weekly_rundown.generate`, rewritten for three voices) and has never produced
+an episode; the next one (Issue 33) is the first test of the generated path.
+What it needs that is already there: the Kokoro venv and model cache, ffmpeg,
+`VOID_KOKORO_PYTHON`. What it does not have: the flash budget is shared with
+the daily and a Sunday lands near 16-17 of 20 before the rundown's one or two
+requests, so a 429 there means a Weekly without audio (and a committed script
+rendered by `audio-only` dispatch the next day). The workflow's `audio-only`
+mode still has no week input (it renders the latest issue only). **Watch the
+first scheduled run.**
+
+The W-07 estimate rests on `VOICE_WPM` measured over one script at 0.88; a
+voice swap or a pace change re-measures it (the first estimate, made on a
+brisk passage, was two minutes short of the render).
 
 ---
 

@@ -230,7 +230,10 @@ class KokoroEngine:
         return True, "ok"
 
     def voice_id(self, role: Role) -> str:
-        return self.voices.get(role, KOKORO_VOICES[role])
+        # The default is evaluated lazily: a role the caller cast (the weekly's
+        # "H") must not raise on a roster that only knows A, B and C.
+        v = self.voices.get(role)
+        return v if v else KOKORO_VOICES[role]
 
     def synthesize_batch(self, turns: list[TurnSpec], *, deadline_s: float = 900.0) -> EngineResult:
         res = EngineResult(engine=self.name)
@@ -417,8 +420,11 @@ def synthesize_with_fallback(turns: list[TurnSpec], *, engines: list | None = No
         if not ok:
             print(f"  [tts] {eng.name}: unavailable ({why})")
             continue
-        print(f"  [tts] {eng.name}: synthesising {len(turns)} turns "
-              f"(A={eng.voice_id('A')}, B={eng.voice_id('B')}, C={eng.voice_id('C')})")
+        # the roles THESE turns carry, each with the voice that will read it
+        # (the weekly casts H/A/B, not the roster's A/B/C)
+        roles = sorted({t.role for t in turns})
+        print(f"  [tts] {eng.name}: synthesising {len(turns)} turns ("
+              + ", ".join(f"{r}={eng.voice_id(r)}" for r in roles) + ")")
         res = eng.synthesize_batch(turns, deadline_s=deadline_s)
         cov = res.coverage(turns)
         missing_required = [i for i in (required or set()) if i not in res.audio]

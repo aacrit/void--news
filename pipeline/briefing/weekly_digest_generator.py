@@ -1594,6 +1594,7 @@ def _produce_argument(issue: dict, edition: str):
         from briefing import weekly_rundown
         from briefing.weekly_producer import produce as produce_argument
         from briefing.audio_producer import _write_audio_static
+        from briefing.render_weekly_audio import issue_moment
     except Exception as e:
         print(f"    [weekly-audio] IMPORT FAILED: {e}")
         return None, 0
@@ -1630,6 +1631,7 @@ def _produce_argument(issue: dict, edition: str):
         # `latestweekly.chapters.json` beside it. Every other caller
         # passes the suffix (radio_producer.py:1195).
         sidecars={".chapters.json": sidecar.read_bytes()},
+        when=issue_moment(issue),      # named by the issue's Sunday (rev 2)
     )
     if not url:
         print("    [weekly-audio] could not write the file into the deploy tree")
@@ -2715,8 +2717,8 @@ def generate_weekly_digest(editions=None, week_offset=0):
             audio_size = argument["bytes"]
             audio_chapters = argument["chapters"]
             audio_script = argument["script"]
-            v = argument["voices"]
-            audio_voice = f"kokoro:{v['editor']}+{v['left']}+{v['right']}"
+            # the host, then the correspondent who read the left column, then the right's
+            audio_voice = argument["voice_string"]
             # The Editor reads the editorial, so the opinion is a CHAPTER
             # rather than a seek offset. The rail supersedes the two-tab split.
             ed = next((c for c in audio_chapters if c["kind"] == "editorial"), None)

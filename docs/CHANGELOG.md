@@ -18,6 +18,65 @@ lives in this file.
 
 ---
 
+## The Argument rev 2: three voices, a weekly score, Issue 32 published with audio (2026-11-08)
+
+The CEO: "Lets create an enhanced version of the weekly audio as well, it
+should feel similar yet should be completely a weekly style show with a
+little more drama and one more anchor. Embody this in the score, beats, and
+how the episode is structured. Output should be an updated engine that
+produces this week's weekly as the first output." Designed and built by the
+Fable agent; the positive definition is `docs/WEEKLY-AUDIO.md`.
+
+- **Cast.** Three Kokoro voices at On Air's pace 0.88: `af_aoede`, On Air's
+  anchor, is the host and Void's voice (the open, the contents, the
+  datelines, the framing, the turn, the numbers, the editorial, the close);
+  `am_puck` and `bf_emma` are two correspondents who carry the features in
+  passages (no interviewing), read the week in brief in turns, and read the
+  two columns, A the left and B the right. Which voice is A is drawn per
+  issue from the sha256 of the week (`cast_for_week`), so no voice owns a
+  side. The firewall holds: the host never reads a column, the
+  correspondents never voice Void's framing or editorial (W-02). W-03
+  measures airtime, not words, since the two readers are not rate-matched.
+- **Structure.** A cold open on the week's hardest image before any music; the
+  theme; the sign-on on its downbeat; the cover in passages with the dateline
+  and a toll inside it; an interlude; the host frames the argument over a
+  tension bed; a sting; the two columns dry with the 2.4 s spine; a 6.5 s rest
+  in which the frame closes; the turn; an interlude; the second feature; the
+  week in brief with breaths; the stop, the held silence, the Void Opinion
+  entrance (On Air's), the editorial read as written; the open question; the
+  outro landing on D major. The Week in Bias is read only when the issue
+  carries a report (W-09 fails one read without it; W-05 fails one left out
+  with it).
+- **Score** (`weekly_music.py`, on `onair_music`'s patches, measured by
+  `onair_score`): half-time drums, the hook at half speed, the cadence i VI
+  iv V ending on the dominant, the toll on D3, a tension bed with no drums and
+  a dominant pedal in eighths, a sting (new `sting` role: hits inside 2.5 s,
+  ends at the floor), four-bar interludes opening on a riser, the slow rooms,
+  the pushed week pulse that stops, and the only resolution at the outro. The
+  old five WAV assets are no longer used; `generate_assets.py` is untouched.
+- **Rule 1.** W-13 now reads every voice outside the columns, and
+  `ground_script` (the same `derived_grounding` pass as On Air) cuts any
+  sentence outside the columns the issue does not carry, on both paths,
+  before synthesis; the script is re-validated after a cut. W-14 holds the
+  editorial to the published text at 90 %; W-15 the features' shape; W-16 the
+  week; W-17 Void's fixed lines, the sign-on pinned to `week_start`/`week_end`.
+  Every rule has a planted defect (`tests/test_weekly_script.py` WA-01..WA-10,
+  `tests/test_weekly_assembly.py` WB-00..WB-11, the score included).
+- **Band.** `VOICE_WPM` is measured over a whole script (147/154/144 at 0.88;
+  a brisk passage reads 168/184/173 and misled the first estimate by two
+  minutes); `MUSIC_MINUTES` 2.3. Decision 6 stands: ceiling 22, floor 14.
+- **Issue 32** (`data/weekly/scripts/2026-10-26.txt`, written from the
+  published issue alone; the paired Ebola columns verbatim; the editorial
+  whole; eight of nine briefs; the Australians brief folded into the second
+  feature with the toll's revision stated): 1,908 words, 15:14, 14.6 MB, nine
+  chapters, -16.0 LUFS, -2.0 dBTP, phone margin 16.8 dB, every cue clean,
+  nothing cut. Served as `/audio/weekly-world/2026-11-01-pm.mp3` (named by the
+  issue's Sunday, so a re-render replaces its own file). The rev 1 script
+  for Issue 26 moved to `data/weekly/scripts/v1/` as record.
+- `tts_engines.KokoroEngine.voice_id` evaluated its roster default eagerly
+  and raised on a cast role the roster did not know (`H`); the `[tts]` log
+  line now names the voice per role the turns actually carry.
+
 ## On Air rev 5c: calming interludes between stories, a soothing score (2026-11-08)
 
 The CEO: "Add cool calming beats and tunes between stories. Ensure score is

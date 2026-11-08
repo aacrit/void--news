@@ -22,7 +22,7 @@ the deploy tree — which is the archive of record, exactly as
 `repair_weekly_snapshot` treats it.
 
     python -m pipeline.briefing.render_weekly_audio            # latest issue
-    python -m pipeline.briefing.render_weekly_audio --week 2026-09-14
+    python -m pipeline.briefing.render_weekly_audio --week 2026-10-26
     python -m pipeline.briefing.render_weekly_audio --dry-run  # validate only
 """
 
@@ -70,6 +70,17 @@ INDEX_COLS = ("id", "issue_number", "edition", "week_start", "week_end",
               "audio_duration_seconds", "created_at")
 
 
+def issue_moment(issue: dict):
+    """The Sunday the issue closes on, at the hour the weekly runs (18 UTC):
+    the moment the audio file is named by. None when the issue has no week."""
+    from datetime import datetime, timezone
+    try:
+        y, m, d = (int(x) for x in str(issue.get("week_end") or "").split("-"))
+        return datetime(y, m, d, 18, 0, tzinfo=timezone.utc)
+    except (TypeError, ValueError):
+        return None
+
+
 def _write_back(issue: dict, rendered: dict, url: str) -> list[str]:
     """Put the audio fields on every copy of the issue that a page reads.
 
@@ -84,9 +95,8 @@ def _write_back(issue: dict, rendered: dict, url: str) -> list[str]:
         "audio_duration_seconds": round(rendered["seconds"], 1),
         "audio_file_size": rendered["bytes"],
         "audio_chapters": rendered["chapters"],
-        "audio_voice": "kokoro:" + "+".join(
-            rendered["voices"][k] for k in ("editor", "left", "right")
-        ),
+        # host, then the correspondent who read the left column, then the right's
+        "audio_voice": rendered["voice_string"],
         "audio_voice_label": "Three voices",
         # The Editor reads the editorial, so the opinion is a CHAPTER rather
         # than a seek offset. The rail supersedes the two-tab split.
@@ -156,19 +166,24 @@ def main() -> int:
     text = path.read_text(encoding="utf-8")
     print(f"script {path.relative_to(REPO)}")
 
-    from briefing.weekly_script import parse_script, validate_script, estimated_minutes
-    from briefing.weekly_producer import VOICES
+    from briefing.weekly_script import (parse_script, validate_script, estimated_minutes, cast_for_week,
+                                        ground_script)
 
+    voices = cast_for_week(week, issue.get("edition") or "world")
     script = parse_script(text, issue.get("edition") or "world")
-    findings = validate_script(script, issue, VOICES)
-    minutes, wpm = estimated_minutes(script, VOICES)
-    print(f"{script.words} words, about {minutes:.1f} min at {wpm:.0f} wpm")
+    findings = validate_script(script, issue, voices)
+    minutes, wpm = estimated_minutes(script, voices)
+    print(f"{script.words} words, about {minutes:.1f} min at {wpm:.0f} wpm; cast {voices}")
     for f in findings:
         print(f"  {f.id} {f.level:4} [{f.segment}] {f.detail[:110]}")
     fails = [f for f in findings if f.level == "fail"]
     if fails:
         print(f"{len(fails)} failure(s); not rendering")
         return 1
+    cuts = ground_script(script, issue)
+    for c in cuts:
+        print(f"  [grounding] cut ({c.reason}): {c.sentence[:110]!r}")
+    print(f"grounding: {len(cuts)} sentence(s) cut" if cuts else "grounding: nothing cut; every sentence is the issue's")
     if a.dry_run:
         print("dry run: the script is valid against the published issue")
         return 0
@@ -192,6 +207,9 @@ def main() -> int:
         # `latestweekly.chapters.json` beside it. Every other caller
         # passes the suffix (radio_producer.py:1195).
         sidecars={".chapters.json": sidecar.read_bytes()},
+        # named by the ISSUE's Sunday, not the clock at render time, so a
+        # re-render of an issue replaces its own file (rev 2)
+        when=issue_moment(issue),
     )
     if not url:
         print("could not write the audio into the deploy tree")

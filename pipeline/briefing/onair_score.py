@@ -103,6 +103,15 @@ CALM_CLOCK_MAX = 1.0
 CALM_CLOCK_MAX_FEATURED = 1.4
 CALM_GLARE_HZ = 3000.0
 CALM_GLARE_MAX_SHARE = {"bed": 0.006, "interlude": 0.015, "featured": 0.02}
+# The sting (The Argument rev 2, 2026-11-08): a cue that hits and is CUT, before
+# the weekly's dry argument. Levelled as a featured cue (its loudest 3 s at
+# FEATURED_LUFS, never louder) and held to two shapes of its own: its loudest
+# 400 ms falls inside its first STING_HIT_BY_S (it hits, it does not swell),
+# and its last STING_TAIL_S sit at the floor (it ends; nothing fades out of it
+# into the voice that follows).
+STING_HIT_BY_S = 2.5
+STING_TAIL_S = 0.3
+STING_TAIL_DBFS = -55.0
 RISE_DB = 6.0                    # a bed rises this much into the transition it leads to
 RISE_S = 10.0                    # over this long, eased
 ENTRY_FADE_MIN_S = 1.5
@@ -636,6 +645,9 @@ def check_cue(x: np.ndarray, role: str, *, bed_peak_lufs: float | None = None,
     out: list[Finding] = []
     if role == "transition":
         role = "interlude"
+    sting = role == "sting"
+    if sting:
+        role = "featured"       # a sting is levelled and kept calm as a featured cue is
     if len(x) < SR:
         return [Finding("cue-length", f"{role}: {len(x) / SR:.2f} s is not a cue")]
     treble = band_share(x, TREBLE_HZ, None, floor_hz=100.0)
@@ -674,6 +686,16 @@ def check_cue(x: np.ndarray, role: str, *, bed_peak_lufs: float | None = None,
         st = lufs_shortterm(x)
         if st.size and float(np.max(st)) > FEATURED_LUFS + TOL_DB:
             out.append(Finding("featured-level", f"short-term max {float(np.max(st)):.1f} LUFS over {FEATURED_LUFS}"))
+    if sting:
+        mom = lufs_momentary(x)
+        if mom.size and int(np.argmax(mom)) * 0.1 > STING_HIT_BY_S:
+            out.append(Finding("sting-hit", f"the sting's loudest moment is {int(np.argmax(mom)) * 0.1:.1f} s in; "
+                                            f"it hits within {STING_HIT_BY_S} s or it is not a sting"))
+        tail = mono(x)[-int(STING_TAIL_S * SR):]
+        tail_db = 20 * math.log10(float(np.sqrt(np.mean(tail ** 2))) + 1e-12)
+        if tail_db > STING_TAIL_DBFS:
+            out.append(Finding("sting-tail", f"the sting's last {STING_TAIL_S} s sit at {tail_db:.0f} dBFS; "
+                                             f"it ends at the floor ({STING_TAIL_DBFS:.0f}) or the argument is not dry"))
     if role == "interlude":
         st = lufs_shortterm(x)
         top = float(np.max(st)) if st.size else lufs_integrated(x)
@@ -703,6 +725,11 @@ def level_featured(x: np.ndarray) -> tuple[np.ndarray, float]:
         return level_to(x, FEATURED_LUFS)
     g = FEATURED_LUFS - float(np.max(st))
     return x * (10 ** (g / 20)), g
+
+
+def level_sting(x: np.ndarray) -> tuple[np.ndarray, float]:
+    """A sting is levelled as a featured cue: its loudest 3 s at FEATURED_LUFS."""
+    return level_featured(x)
 
 
 def level_interlude(x: np.ndarray) -> tuple[np.ndarray, float]:
