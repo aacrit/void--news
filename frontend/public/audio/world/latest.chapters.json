@@ -25,24 +25,24 @@
    "rank": 2,
    "cluster_id": "eeb14bbe-f7fb-4b83-b509-5ac6e843cb53",
    "url": "https://news.voidvision.org/story/515b33dd-184b-4742-928a-59ba2cac4d52/",
-   "endTime": 337.739
+   "endTime": 340.889
   },
   {
-   "startTime": 337.739,
+   "startTime": 340.889,
    "title": "The desk",
    "kind": "briefs",
-   "endTime": 492.199
+   "endTime": 502.999
   },
   {
-   "startTime": 492.199,
+   "startTime": 502.999,
    "title": "Void Opinion",
    "kind": "opinion",
    "subtitle": "The Door Stephen Miller Will Hold",
-   "endTime": 620.898
+   "endTime": 631.698
   },
   {
-   "startTime": 620.898,
-   "endTime": 635.099,
+   "startTime": 631.698,
+   "endTime": 645.899,
    "title": "Also from Void",
    "kind": "promo",
    "subtitle": "History",

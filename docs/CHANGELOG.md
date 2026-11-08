@@ -18,6 +18,30 @@ lives in this file.
 
 ---
 
+## On Air rev 5c: calming interludes between stories, a soothing score (2026-11-08)
+
+The CEO: "Add cool calming beats and tunes between stories. Ensure score is
+also soothing." Designed by the Fable agent; the record is the "Rev 5c"
+block in `docs/ON-AIR-CONVERSATION.md` "The score".
+
+- **Interludes.** The 3.6 s page-turn is gone. Between the lead, the second
+  story and the desk an 8.6 s interlude plays in the clear: three bars of a
+  soft groove (soft kick, brush, shaker, round bass, warm pad) under a
+  melody fragment drawn from the hook, landing on Dm; the next anchor speaks
+  6.4 s in, over its release. Two in an episode never share a fragment, a
+  chord pair or a voice (ep or bell). New role `interlude`, -27 LUFS
+  short-term max, with a floor.
+- **Desk breaths.** After desk items two, four and six the gap is 2.4 s, the
+  duck lets the bed up, and a two-note bell tag sounds.
+- **Soothing, in numbers.** Bright ticks and rims replaced by a shaker and a
+  brush, a rounder kick and bass, the desk's four on the floor relaxed,
+  fewer ostinato notes, darker keys, gentler pumping, longer and darker
+  rooms. Gated on every cue: `calm-clock` (short bright onsets a second, beds
+  1.0 at most) and `calm-glare` (energy over 3 kHz). Beds went from 1.04-1.32
+  onsets a second to 0.58-0.72.
+- Today's episode re-rendered through the engine: 10:46, Void Opinion at
+  8:23, phone margin 18.7 dB, grounding cut nothing; `rigor.json` recomputed.
+
 ## On Air rev 5b: longer, at a calm pace (2026-11-08)
 
 The CEO, after hearing rev 5: "Can we make it a little longer giving more
