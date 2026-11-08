@@ -8,15 +8,22 @@ same motif. The standard the cues are measured against, in one block:
 
     dialogue                 -20 LUFS integrated, per line (the producer)
     bed under speech         -31 LUFS in the voice's gaps (11 dB under), rising +6 dB over
-                             the last 10 s into a page-turn, the entrance or the outro
+                             the last 10 s into an interlude or the outro, capped at
+                             the level of the cue it hands over to
     duck under voice         -10 dB, 1.0 s eased pre-roll, held across gaps < 1.2 s
     featured (title, outro)  -26 LUFS short-term, never louder
-    transition / sting       never louder than the bed it leads into (+0.5 dB)
+    interlude (rev 5c)       -27 LUFS short-term max: heard for itself, a breath, never
+                             as loud as the title; and never silent (integrated within
+                             6 dB of that)
     band shape (beds)        bass under 130 Hz kept (rev 5; 100 before), low-mids
                              150-400 Hz cut (24 dB/oct high-pass at 400 Hz), treble
                              shelf -3 dB at 5 kHz; at most 2 % of a cue's energy
                              above 5 kHz, at most 10 % of it in 150-400 Hz
     breathing (beds)         100 ms level spread p90-p10 >= 6 dB
+    calm (rev 5c)            every cue: at most CALM_CLOCK_MAX clock onsets a second (short,
+                             bright events in 2-6 kHz), and at most CALM_GLARE_MAX_SHARE
+                             of the energy over 100 Hz above 3 kHz (the glare band, where
+                             the ticks lived); ceilings per role (bed, interlude, featured)
     fades                    an entry from silence >= 1.5 s, an exit >= 1.5 s
     repetition               no 4 s stretch tiled three times inside a cue
 
@@ -53,7 +60,14 @@ SR = 48000
 DIALOGUE_LUFS = -20.0
 BED_LUFS = -31.0                 # bed under speech, in the gaps (CEO 2026-11-07 ear test 2: -28 overpowered; it rises into transitions instead)
 FEATURED_LUFS = -26.0            # title, entrance, outro: heard for themselves
-TRANSITION_OVER_BED_MAX_DB = 0.5
+# Rev 5c (2026-11-08, CEO: "cool calming beats and tunes between stories"):
+# the interlude between two stories is heard in the clear, so it has a level of
+# its own. 1 dB under the featured ceiling, so the title and the outro stay the
+# loudest music in the show; 4 dB over the bed's resting level, so it surfaces
+# where the page-turn (levelled to the bed it led into) never did. The bed
+# before it rises to meet it, capped at this level plus 1 dB (`rise_into`).
+INTERLUDE_LUFS = -27.0
+INTERLUDE_FLOOR_DB = 6.0         # an interlude whose integrated loudness is this far under its ceiling is not heard
 DUCK_DB = -10.0
 DUCK_PREROLL_S = 1.0             # eased attack, full depth ON the onset (A37)
 DUCK_HOLD_S = 1.2                # a gap shorter than this keeps the duck
@@ -71,6 +85,24 @@ TREBLE_SHELF_DB = -3.0
 MUSIC_TREBLE_MAX_SHARE = 0.02
 BED_LOWMID_MAX_SHARE = 0.10
 BED_BREATH_DB = 6.0
+# Calm (rev 5c, CEO: "ensure score is also soothing"), in numbers. Two
+# measures, each aimed at something the ear hears as harsh. (1) The clock is
+# COUNTED (`clock_density`: short, bright onsets a second in 2-6 kHz, where
+# ticks, rims and clicks live; a bell or a key, which rings on, is not one).
+# The rev 5 news beds carried 1.3 to 1.7 a second (a tick on every off-beat
+# and a rim on two and four), the theme 1.6; a soothing bed carries at most
+# 1.0 (a shaker on two off-beats a bar is 0.7 at 84 bpm), a featured cue at
+# most 1.4. (2) The GLARE band is weighed (`glare_share`: the share of the
+# energy over 100 Hz that lies above 3 kHz). The ticks lived at 2.5 to 5 kHz;
+# the keys are lowpassed at 2.6 kHz and the bells at 2.8, so what is up there
+# is a strike. Rev 5 beds sat at 0.5 to 1.5 %, the page-turn at 0.5 %, the
+# entrance at 1.7 % (the bells' upper sidebands); the ceilings are 0.6 % for a
+# bed, 1.5 % for an interlude (a bell melody is allowed), 2 % for a featured
+# cue. The existing treble check (>5 kHz, 2 %) stands above both.
+CALM_CLOCK_MAX = 1.0
+CALM_CLOCK_MAX_FEATURED = 1.4
+CALM_GLARE_HZ = 3000.0
+CALM_GLARE_MAX_SHARE = {"bed": 0.006, "interlude": 0.015, "featured": 0.02}
 RISE_DB = 6.0                    # a bed rises this much into the transition it leads to
 RISE_S = 10.0                    # over this long, eased
 ENTRY_FADE_MIN_S = 1.5
@@ -301,7 +333,9 @@ def place(canvas: np.ndarray, x: np.ndarray, at_s: float) -> None:
         canvas[i:i + n] += x[:n]
 
 
-THEME_S, PAGETURN_S, OUTRO_S = 14.0, 3.6, 15.0
+THEME_S, OUTRO_S = 14.0, 15.0
+INTERLUDE_S = M.INTERLUDE_S           # 8.6 s, three bars (rev 5c); the music owns the number
+INTERLUDE_VOICE_S = M.INTERLUDE_VOICE_S  # 6.4 s in: the next anchor speaks over the release bar
 ENTRANCE_S = M.ENTRANCE_S             # 11.4 s, four bars (rev 5); the music owns the number
 ENTRANCE_VOICE_S = M.ENTRANCE_VOICE_S  # 9.8 s in: the anchor speaks once the hook's last note has landed
 STOP_RING_S = M.STOP_RING_S           # a stopped bed: its hit is this long before its end
@@ -315,22 +349,27 @@ def render_theme(v: Voicing, dur_s: float = THEME_S, *, ir=None) -> np.ndarray:
     return _normalise(fade(shape_bed(x), 0.01, 1.0))
 
 
-def render_bed(v: Voicing, segment: str, dur_s: float, *, ir=None, ending: str = "out") -> np.ndarray:
+def render_bed(v: Voicing, segment: str, dur_s: float, *, ir=None, ending: str = "out",
+               accents: tuple[float, ...] = ()) -> np.ndarray:
     """`ending` is "out" (the bed thins and leaves), "rise" (it gathers into
     the transition it hands over to) or "stop" (it ends on a hit STOP_RING_S
     before its end and rings out: the desk before the Opinion's entrance). A
     stopped bed's exit fade is the ring itself, so the fade only cleans the
-    last second."""
+    last second. `accents` (rev 5c) are seconds into the bed where the desk
+    breathes and a bell tag lands."""
     dur_s = max(dur_s, 4.5)
-    x = M.render_bed(v.music, segment, dur_s, ending=ending)
+    x = M.render_bed(v.music, segment, dur_s, ending=ending, accents=tuple(accents))
     out_s = EXIT_FADE_MIN_S + 1.0 if ending != "stop" else min(1.0, STOP_RING_S - 1.5)
     return _normalise(fade(shape_bed(x), ENTRY_FADE_MIN_S + 0.5, out_s))
 
 
-def render_transition(v: Voicing, *, ir=None, dur_s: float = PAGETURN_S) -> np.ndarray:
-    """The page-turn: a riser, one downbeat, the hook's first three notes."""
-    x = M.render_pageturn(v.music, dur_s)
-    return _normalise(fade(shape_bed(x), 0.01, 1.0))
+def render_interlude(v: Voicing, index: int = 0, *, ir=None, dur_s: float = INTERLUDE_S) -> np.ndarray:
+    """The interlude between two stories (rev 5c): three bars of a laid-back
+    groove and a melody from the hook, a release bar the next anchor speaks
+    over. It starts on its downbeat (the bed has risen to meet it), so the
+    entry fade only guards the edge; the release rings out over the last 1.2 s."""
+    x = M.render_interlude(v.music, index, dur_s)
+    return _normalise(fade(shape_bed(x), 0.01, 1.2))
 
 
 def render_entrance(v: Voicing, *, ir=None, dur_s: float = ENTRANCE_S) -> np.ndarray:
@@ -497,11 +536,18 @@ def chroma_profile(x: np.ndarray) -> np.ndarray:
     return _chroma(mono(x))
 
 
+CLOCK_ONSET_RISE_DB = 6.0        # an onset in the clock's band lifts it this much over the 150 ms before it
+
+
 def clock_density(x: np.ndarray) -> float:
     """Onsets a second in the clock's band (2 to 6 kHz: ticks, rims, the
-    kick's click), on a 50 ms grid, a peak of the band's level flux over its
-    median plus one sigma. The news beds carry a tick on every off-beat; the
-    Opinion's room carries one whisper a bar; the entrance none."""
+    kick's click, a shaker), on a 50 ms grid: a peak of the band's level flux
+    over its median plus one sigma that ALSO lifts the band at least
+    CLOCK_ONSET_RISE_DB over the 150 ms before it and has fallen as far again
+    100 to 200 ms after it (rev 5c: the rise and fall tests, so neither a
+    room's noise floor nor a bell that rings on is counted as a clock). The
+    rev 5 news beds carried a tick on every off-beat; a rev 5c bed carries a
+    shaker on two; the Opinion's room and the entrance carry none."""
     m = mono(x)
     if len(m) < SR:
         return 0.0
@@ -513,8 +559,42 @@ def clock_density(x: np.ndarray) -> float:
     thr = float(np.median(flux) + np.std(flux))
     if thr <= 1e-7:
         return 0.0
-    peaks = sum(1 for i in range(1, k - 1) if flux[i] > thr and flux[i] >= flux[i - 1] and flux[i] >= flux[i + 1])
+    db = 20 * np.log10(env + 1e-12)
+    lift = 10 ** (CLOCK_ONSET_RISE_DB / 20)
+    peaks = 0
+    for i in range(1, k - 1):
+        if not (flux[i] > thr and flux[i] >= flux[i - 1] and flux[i] >= flux[i + 1]):
+            continue
+        before = float(np.mean(env[max(0, i - 3):i]))
+        after = float(np.mean(env[i + 2:i + 4])) if i + 4 <= k else 0.0
+        # a clock hit is short: the band has fallen CLOCK_ONSET_RISE_DB again
+        # 100 to 200 ms on; a bell or a key, which rings, is not a clock
+        if env[i] >= before * lift and env[i] >= after * lift and db[i] > -70.0:
+            peaks += 1
     return peaks / (k * 0.05)
+
+
+def glare_share(x: np.ndarray) -> float:
+    """The share of a cue's energy over 100 Hz that lies above CALM_GLARE_HZ
+    (3 kHz): where the ticks lived and the keys and bells do not reach. Energy,
+    not a count, so it catches a bright strike whatever its rhythm (rev 5c)."""
+    return band_share(x, CALM_GLARE_HZ, None, floor_hz=100.0)
+
+
+def crest_db(x: np.ndarray) -> float:
+    """Peak over RMS in dB, the RMS taken over the 100 ms frames that are not
+    silence: how hard a cue strikes relative to how it sits. Reported, not
+    gated: a soft kick still peaks."""
+    m = mono(x)
+    n = int(0.1 * SR)
+    if len(m) < 2 * n:
+        return 0.0
+    k = len(m) // n
+    rms = np.sqrt(np.mean(m[: k * n].reshape(k, n) ** 2, axis=1))
+    rms = rms[rms > 1e-6]
+    if not rms.size:
+        return 0.0
+    return float(20 * math.log10(float(np.max(np.abs(m))) / (float(np.sqrt(np.mean(rms ** 2))) + 1e-12)))
 
 
 def tiled_loop(x: np.ndarray, window_s: float = 4.0) -> bool:
@@ -551,8 +631,11 @@ def check_cue(x: np.ndarray, role: str, *, bed_peak_lufs: float | None = None,
               gaps: list[tuple[float, float]] | None = None) -> list[Finding]:
     """Measure one rendered, levelled cue against the standard. A bed's level
     is read in the voice's `gaps` (seconds into the cue) when they are given
-    and total at least 4 s; otherwise over its whole length."""
+    and total at least 4 s; otherwise over its whole length. Roles: bed,
+    featured, interlude (rev 5c; `transition` is kept as its old name)."""
     out: list[Finding] = []
+    if role == "transition":
+        role = "interlude"
     if len(x) < SR:
         return [Finding("cue-length", f"{role}: {len(x) / SR:.2f} s is not a cue")]
     treble = band_share(x, TREBLE_HZ, None, floor_hz=100.0)
@@ -562,6 +645,16 @@ def check_cue(x: np.ndarray, role: str, *, bed_peak_lufs: float | None = None,
         lowmid = band_share(x, 150.0, 400.0, floor_hz=100.0)
         if lowmid > BED_LOWMID_MAX_SHARE and role == "bed":
             out.append(Finding("bed-low-end", f"{role}: {lowmid:.1%} of the energy over 100 Hz sits in 150-400 Hz"))
+    # calm (rev 5c): the clock counted and the glare band weighed, on every cue
+    clock_max = CALM_CLOCK_MAX_FEATURED if role == "featured" else CALM_CLOCK_MAX
+    glare_max = CALM_GLARE_MAX_SHARE.get(role, CALM_GLARE_MAX_SHARE["bed"])
+    clock = clock_density(x)
+    if clock > clock_max:
+        out.append(Finding("calm-clock", f"{role}: {clock:.2f} clock onsets a second in 2-6 kHz; {clock_max} is the most"))
+    glare = glare_share(x)
+    if glare > glare_max:
+        out.append(Finding("calm-glare", f"{role}: {glare:.2%} of the energy over 100 Hz sits above {CALM_GLARE_HZ:.0f} Hz; "
+                                         f"{glare_max:.1%} is the most"))
     if role == "bed":
         ref = x
         if gaps:
@@ -581,11 +674,14 @@ def check_cue(x: np.ndarray, role: str, *, bed_peak_lufs: float | None = None,
         st = lufs_shortterm(x)
         if st.size and float(np.max(st)) > FEATURED_LUFS + TOL_DB:
             out.append(Finding("featured-level", f"short-term max {float(np.max(st)):.1f} LUFS over {FEATURED_LUFS}"))
-    if role == "transition" and bed_peak_lufs is not None:
-        mom = lufs_momentary(x)
-        if mom.size and float(np.max(mom)) > bed_peak_lufs + TRANSITION_OVER_BED_MAX_DB:
-            out.append(Finding("transition-ceiling",
-                               f"transition peaks {float(np.max(mom)):.1f} LUFS over the bed's {bed_peak_lufs:.1f}"))
+    if role == "interlude":
+        st = lufs_shortterm(x)
+        top = float(np.max(st)) if st.size else lufs_integrated(x)
+        if top > INTERLUDE_LUFS + TOL_DB:
+            out.append(Finding("interlude-level", f"short-term max {top:.1f} LUFS over {INTERLUDE_LUFS}"))
+        li = lufs_integrated(x)
+        if not math.isfinite(li) or li < INTERLUDE_LUFS - INTERLUDE_FLOOR_DB:
+            out.append(Finding("interlude-silent", f"integrated {li:.1f} LUFS, more than {INTERLUDE_FLOOR_DB:.0f} dB under {INTERLUDE_LUFS}"))
     return out
 
 
@@ -609,13 +705,14 @@ def level_featured(x: np.ndarray) -> tuple[np.ndarray, float]:
     return x * (10 ** (g / 20)), g
 
 
-def level_transition(x: np.ndarray, bed_peak_lufs: float) -> tuple[np.ndarray, float]:
-    """A transition is never louder than the bed it leads into: its loudest
-    400 ms lands on the bed's loudest 400 ms."""
-    mom = lufs_momentary(x)
-    if mom.size == 0 or not math.isfinite(float(np.max(mom))):
-        return level_to(x, BED_LUFS)
-    g = bed_peak_lufs - float(np.max(mom))
+def level_interlude(x: np.ndarray) -> tuple[np.ndarray, float]:
+    """Level an interlude so its LOUDEST short-term (3 s) window sits at
+    INTERLUDE_LUFS: heard for itself, a breath between stories, never as loud
+    as the title (rev 5c)."""
+    st = lufs_shortterm(x)
+    if st.size == 0 or not math.isfinite(float(np.max(st))):
+        return level_to(x, INTERLUDE_LUFS)
+    g = INTERLUDE_LUFS - float(np.max(st))
     return x * (10 ** (g / 20)), g
 
 

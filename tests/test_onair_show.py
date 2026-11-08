@@ -7,7 +7,8 @@ Pattern (tests/test_radio_script.py): the clean fixture passes every check
 and loses nothing to the grounding pass; then one planted defect per
 validator fires exactly that id. The score checks render each cue type and
 measure it against the standard in onair_score, then plant a tiled loop, a
-loud featured cue and a steep duck and see each caught.
+loud featured cue, a steep duck, a loud and a silent interlude, a rev 5 tick
+train and a pair of bright hats on a calm bed, and see each caught.
 """
 
 from __future__ import annotations
@@ -296,12 +297,17 @@ def score() -> None:
         check(abs(S.lufs_integrated(bed) - S.BED_LUFS) < 0.6, f"the {seg} bed sits at {S.BED_LUFS} LUFS ({S.lufs_integrated(bed):.1f})")
         check(S.band_share(bed, 5000.0, None, 100.0) <= S.MUSIC_TREBLE_MAX_SHARE, f"the {seg} bed carries almost no treble")
         peak = S.bed_peak_lufs(bed)
-    tr, _ = S.level_transition(S.render_transition(v), peak)
-    check(not S.check_cue(tr, "transition", bed_peak_lufs=peak), "the page-turn is never louder than the bed it leads into")
+    interludes = []
+    for i in range(2):
+        il, _ = S.level_interlude(S.render_interlude(v, i))
+        f = S.check_cue(il, "interlude")
+        check(not f, f"interlude {i} meets the interlude standard ({[x.id for x in f]})")
+        interludes.append(il)
     outro, _ = S.level_featured(S.render_outro(v))
-    check(not S.check_cue(outro, "featured"), "the outro meets the featured standard")
+    check(not S.check_cue(outro, "featured"), f"the outro meets the featured standard ({[f.id for f in S.check_cue(outro, 'featured')]})")
     check(float(np.max(np.abs(outro[-S.SR // 2:]))) < 1e-3, "the outro falls to silence")
-    score_rev5(v, beds, theme, tr)
+    stop = score_rev5(v, beds, theme, interludes)
+    score_rev5c(v, beds, theme, outro, interludes, stop)
     # planted defects
     loud = theme * 10 ** (4.0 / 20)
     check(any(f.id == "featured-level" for f in S.check_cue(loud, "featured")), "a featured cue 4 dB over the ceiling is caught")
@@ -324,21 +330,22 @@ def score() -> None:
     check(any(f.id == "duck-slope" for f in S.check_duck(steep)), "a steep attack is caught")
 
 
-def score_rev5(v, beds: dict, theme: np.ndarray, pageturn: np.ndarray) -> None:
+def score_rev5(v, beds: dict, theme: np.ndarray, interludes: list) -> np.ndarray:
     """Rev 5 (2026-11-08): the firewall between the news and the Opinion is the
     music, so each of its three parts is measured. (1) The Opinion's bed is
     the same show in another room: fewer clock onsets a second than any news
-    bed (one whisper a bar against a tick on every off-beat) and a pitch-class
+    bed (one soft kick a bar against a shaker on two off-beats) and a pitch-class
     profile further from the news beds' than they are from each other. (2) The
     desk bed STOPS: a hit STOP_RING_S before its end, the ring gone to the
     floor by the end, nothing after it. (3) The entrance is its own cue: it
     swells from silence rather than hitting, carries no clock, and its
-    third-octave spectrum is far from the theme's and the page-turn's. Each
-    also still meets the standard it is held to."""
+    third-octave spectrum is apart from the theme's and the interludes'. Each
+    also still meets the standard it is held to. Returns the stopped desk bed
+    (rendered with two breaths) for the rev 5c checks."""
     op, news = beds["opinion"], {k: beds[k] for k in ("lead", "desk")}
     op_clock, news_clock = S.clock_density(op), {k: S.clock_density(x) for k, x in news.items()}
-    check(op_clock <= 0.6 * min(news_clock.values()),
-          f"the opinion bed carries under 60% of the news beds' clock ({op_clock:.2f}/s vs {min(news_clock.values()):.2f}/s)")
+    check(min(news_clock.values()) >= 0.4 and op_clock <= 0.6 * min(news_clock.values()),
+          f"the news beds carry a soft clock and the opinion bed under 60% of it ({op_clock:.2f}/s vs {min(news_clock.values()):.2f}/s)")
     centre = np.mean([S.chroma_profile(x) for x in news.values()], axis=0)
     centre /= np.linalg.norm(centre)
     op_cos = float(S.chroma_profile(op) @ centre)
@@ -346,8 +353,8 @@ def score_rev5(v, beds: dict, theme: np.ndarray, pageturn: np.ndarray) -> None:
     check(op_cos < news_cos - 0.03, f"the opinion bed's pitch profile sits apart from the news beds' ({op_cos:.3f} vs {news_cos:.3f})")
     check(S.M.PROGRESSIONS["opinion"] and all("Dm" not in p and "D" not in p for p in S.M.PROGRESSIONS["opinion"]),
           "the Opinion never lands on the tonic chord")
-    # the stop
-    stop, _ = S.level_bed(S.render_bed(v, "desk", 25.0, ending="stop"))
+    # the stop (rendered with two desk breaths, rev 5c, which must not disturb it)
+    stop, _ = S.level_bed(S.render_bed(v, "desk", 25.0, ending="stop", accents=(8.0, 14.0)))
     check(not S.check_cue(stop, "bed"), f"a stopped desk bed still meets the bed standard ({[f.id for f in S.check_cue(stop, 'bed')]})")
     mom = S.lufs_momentary(stop)
     hit = int((len(stop) / S.SR - S.STOP_RING_S - 0.1) / 0.1)
@@ -364,14 +371,113 @@ def score_rev5(v, beds: dict, theme: np.ndarray, pageturn: np.ndarray) -> None:
           f"the anchor speaks after the hook's last note has landed and before the cue ends ({S.ENTRANCE_VOICE_S} s)")
     emom = S.lufs_momentary(en)
     check(float(np.max(emom[:7])) <= float(np.max(emom)) - 6.0, "the entrance swells from silence; it does not hit")
-    check(S.clock_density(en) <= 0.5 * S.clock_density(theme), f"the entrance carries no clock ({S.clock_density(en):.2f}/s vs the theme's {S.clock_density(theme):.2f}/s)")
+    check(S.clock_density(theme) >= 0.3 and S.clock_density(en) <= 0.5 * S.clock_density(theme),
+          f"the entrance carries no clock ({S.clock_density(en):.2f}/s vs the theme's {S.clock_density(theme):.2f}/s)")
+    # Rev 5c widened the spectral bound from 0.85 to 0.9: the calm theme now
+    # shares the entrance's warmth (both pad and bass, nothing bright), so the
+    # cosine sits near 0.84; what keeps the entrance apart is measured above
+    # and below (no clock against the theme's, the swell, the harmony).
     to_theme = float(S._third_octave(S.mono(en)) @ S._third_octave(S.mono(theme)))
-    to_pt = float(S._third_octave(S.mono(en)) @ S._third_octave(S.mono(pageturn)))
-    check(to_theme <= 0.85 and to_pt <= 0.75, f"the entrance's spectrum is its own (cos to theme {to_theme:.2f}, to page-turn {to_pt:.2f})")
+    to_il = max(float(S._third_octave(S.mono(en)) @ S._third_octave(S.mono(x))) for x in interludes)
+    check(to_theme <= 0.9 and to_il <= 0.92, f"the entrance's spectrum is its own (cos to theme {to_theme:.2f}, to the interludes {to_il:.2f})")
+    for i, il in enumerate(interludes):
+        mom = S.lufs_momentary(il)
+        check(float(np.max(mom[:7])) >= float(np.max(mom)) - 3.0, f"interlude {i} arrives on its downbeat; it does not swell like the entrance")
     # the bass: the beds keep most of their energy under 120 Hz and the low-mids stay cut
     for seg, x in beds.items():
         check(S.band_share(x, 40.0, 120.0) >= 0.75 and S.band_share(x, 150.0, 400.0, 100.0) <= S.BED_LOWMID_MAX_SHARE,
               f"the {seg} bed's weight is in the bass ({S.band_share(x, 40.0, 120.0):.0%} in 40-120 Hz, {S.band_share(x, 150.0, 400.0, 100.0):.1%} in 150-400)")
+    return stop
+
+
+def _tick(amp: float, open_: bool = False) -> np.ndarray:
+    """Rev 5's tick, kept here only to plant it: noise in 2.5 to 5 kHz with a
+    2 ms rise and a 20 ms fall (60 open)."""
+    from scipy import signal as sg
+    n = int(0.14 * S.SR)
+    t = np.arange(n) / S.SR
+    x = np.random.default_rng(7).normal(0, 1, n) * np.minimum(1.0, t / 0.002) * np.exp(-t / (0.06 if open_ else 0.02))
+    x = sg.sosfilt(sg.butter(4, [2500.0, 5000.0], btype="band", fs=S.SR, output="sos"), x)
+    return x / np.max(np.abs(x)) * amp
+
+
+def score_rev5c(v, beds: dict, theme: np.ndarray, outro: np.ndarray, interludes: list, stop: np.ndarray) -> None:
+    """Rev 5c (2026-11-08, CEO: "cool calming beats and tunes between stories;
+    ensure the score is also soothing"). (1) The interlude: three bars at its
+    own level, never as loud as the title, never silent; two in one episode
+    share no melody, chord pair or voice, and their pitch profiles differ.
+    (2) Calm, in numbers, on every cue: clock onsets a second under the
+    ceiling (rev 5's lead, second and desk beds carried 1.0 to 1.3 on this
+    meter, its close 0.8, the theme 1.1) and the glare band over 3 kHz under
+    its share (rev 5's beds 0.45 to 1.4 %); the interlude is calmer than any
+    rev 5 bed on both. (3) The desk's
+    breath: a bell tag lands where the producer says the desk pauses, the
+    ostinato rests through it, and nothing else in the bed moves (the same
+    seed with and without breaths differs only there). Planted: a loud and a
+    silent interlude; rev 5's tick train on a calm bed (caught on the clock
+    and the glare), bright open hats on two off-beats (the clock passes, the
+    glare catches it)."""
+    M = S.M
+    check(S.BED_LUFS < S.INTERLUDE_LUFS < S.FEATURED_LUFS, f"the interlude level sits between a bed and a featured cue ({S.INTERLUDE_LUFS})")
+    check(abs(S.INTERLUDE_S - 3 * M.BAR) < 0.06 and 6.0 <= S.INTERLUDE_S <= 11.5, f"the interlude is three bars ({S.INTERLUDE_S} s)")
+    check(2 * M.BAR <= S.INTERLUDE_VOICE_S < S.INTERLUDE_S, f"the next anchor speaks over the release bar ({S.INTERLUDE_VOICE_S} s in)")
+    for i, il in enumerate(interludes):
+        st = S.lufs_shortterm(il)
+        check(abs(len(il) / S.SR - S.INTERLUDE_S) < 0.01 and abs(float(np.max(st)) - S.INTERLUDE_LUFS) < 0.1,
+              f"interlude {i} is {len(il) / S.SR:.1f} s with its loudest 3 s at {float(np.max(st)):.1f} LUFS")
+        check(S.lufs_integrated(il) >= S.INTERLUDE_LUFS - S.INTERLUDE_FLOOR_DB, f"interlude {i} is heard ({S.lufs_integrated(il):.1f} LUFS integrated)")
+    plans = [M.interlude_plan(v.music, i) for i in range(2)]
+    check(plans[0][0] is not plans[1][0] and plans[0][1] != plans[1][1] and plans[0][2] != plans[1][2],
+          f"two interludes in one episode share no melody, chord pair or voice ({plans[0][1:]} vs {plans[1][1:]})")
+    cos = float(S.chroma_profile(interludes[0]) @ S.chroma_profile(interludes[1]))
+    check(cos < 0.9, f"the two interludes differ in what they play (chroma cosine {cos:.2f})")
+    check(any(f.id == "interlude-level" for f in S.check_cue(interludes[0] * 10 ** (4.0 / 20), "interlude")), "an interlude 4 dB over its ceiling is caught")
+    check(any(f.id == "interlude-silent" for f in S.check_cue(interludes[0] * 10 ** (-10.0 / 20), "interlude")), "an interlude 10 dB under its level is caught")
+    # calm
+    for name, x, role in [("theme", theme, "featured"), ("outro", outro, "featured"), *((k, b, "bed") for k, b in beds.items()),
+                          *((f"interlude {i}", il, "interlude") for i, il in enumerate(interludes))]:
+        clock_max = S.CALM_CLOCK_MAX_FEATURED if role == "featured" else S.CALM_CLOCK_MAX
+        check(S.clock_density(x) <= clock_max and S.glare_share(x) <= S.CALM_GLARE_MAX_SHARE[role],
+              f"{name} is calm: {S.clock_density(x):.2f} clock onsets/s (at most {clock_max}), {S.glare_share(x):.2%} over 3 kHz "
+              f"(at most {S.CALM_GLARE_MAX_SHARE[role]:.1%}; rev 5's lead, second and desk beds 1.0-1.3/s, its beds 0.45-1.4 %)")
+    for i, il in enumerate(interludes):
+        check(S.clock_density(il) < 0.83 and S.glare_share(il) < 0.0045,
+              f"interlude {i} is calmer than any rev 5 bed ({S.clock_density(il):.2f}/s against rev 5's quietest 0.83; "
+              f"{S.glare_share(il):.2%} against its lowest 0.45 %)")
+    check(S.CALM_CLOCK_MAX < 1.04 and S.CALM_GLARE_MAX_SHARE["bed"] < 0.0067,
+          "the calm ceilings sit under what rev 5's lead, second and desk beds measured, so rev 5 could not pass them")
+    # planted: a rev 5 tick train on every off-beat, and bright open hats on two
+    raw = S.render_bed(v, "lead", 20.0)
+    ticks = raw.copy()
+    for k in range(int(20.0 / M.BEAT)):
+        S.place(ticks, _tick(0.12), (k + 0.5) * M.BEAT)
+    ids = {f.id for f in S.check_cue(S.level_bed(ticks)[0], "bed")}
+    check("calm-clock" in ids and "calm-glare" in ids, f"rev 5's tick train on a calm bed is caught on the clock and the glare ({sorted(ids)})")
+    hats = raw.copy()
+    for k in range(int(20.0 / M.BAR)):
+        for b in (1.5, 3.5):
+            S.place(hats, _tick(0.2, open_=True), k * M.BAR + b * M.BEAT)
+    ids = {f.id for f in S.check_cue(S.level_bed(hats)[0], "bed")}
+    check("calm-glare" in ids and "calm-clock" not in ids, f"bright hats on two off-beats pass the clock count and are caught on the glare ({sorted(ids)})")
+    check(not {f.id for f in S.check_cue(S.level_bed(raw)[0], "bed")} & {"calm-clock", "calm-glare"}, "the same bed without them is calm")
+    # the desk's breath: the same bed with and without its breaths (the breath
+    # draws nothing from the day's generator, so every other note is the same)
+    # differs only where the breaths are, and there by a bell's worth
+    va, vb = S.voicing_for("onair:world:2026-11-07"), S.voicing_for("onair:world:2026-11-07")
+    acc = (8.0, 14.0)
+    with_, without = S.render_bed(va, "desk", 25.0, ending="stop", accents=acc), S.render_bed(vb, "desk", 25.0, ending="stop")
+    diff = S.mono(with_ - without)
+    n = int(1.5 * S.SR)
+    k = len(diff) // n
+    med = float(np.median(np.mean(diff[: k * n].reshape(k, n) ** 2, axis=1)))
+    at_acc = [float(np.mean(diff[int(t * S.SR): int(t * S.SR) + n] ** 2)) for t in acc]
+    check(all(e >= 8.0 * (med + 1e-18) for e in at_acc) and float(np.max(np.abs(diff))) > 0.02,
+          f"the breaths are where the bed with them differs from the bed without ({[round(e / (med + 1e-18)) for e in at_acc]}x the median window)")
+    quiet = [float(np.mean(diff[int(t * S.SR): int(t * S.SR) + n] ** 2)) for t in (2.0, 11.0, 19.0)]
+    check(all(q <= 0.15 * min(at_acc) for q in quiet), "away from the breaths the two renders agree (the breath touches nothing else)")
+    late = S.render_bed(v, "desk", 12.0, ending="stop", accents=(11.0,))
+    tail = late[-int(S.STOP_RING_S * S.SR) + int(0.4 * S.SR):]
+    check(20 * np.log10(float(np.sqrt(np.mean(tail ** 2))) + 1e-12) < -20.0, "a breath that would fall after the stop's hit is not played")
 
 
 # ---------------------------------------------------------------- timeline and chapters
@@ -392,18 +498,23 @@ def timeline() -> None:
     check(tl.news_start > 0 and tl.opinion_start is not None and tl.opinion_start > tl.news_start, "news and opinion marks")
     check(tl.outro_at < tl.last_word < tl.total, "the outro starts before the last word ends and the file outlives it")
     names = [m.name for m in tl.music]
-    check(names.count("theme") == 1 and names.count("pageturn") == 2 and names.count("entrance") == 1 and names.count("outro") == 1,
-          f"one theme, two page-turns, one entrance, one outro ({names})")
+    check(names.count("theme") == 1 and names.count("interlude") == 2 and names.count("entrance") == 1 and names.count("outro") == 1,
+          f"one theme, two interludes, one entrance, one outro ({names})")
     check(names.count("lead") >= 2, "the lead bed leaves and comes back")
     beds = [m for m in tl.music if m.role == "bed"]
     check(all(m.end - m.start >= 4.5 for m in beds), "every bed is long enough to be judged")
     timeline_rev5(tl, bed_ending, GAPS)
+    timeline_rev5c(tl, bed_ending, GAPS)
     ch = chapters_from_timeline(tl, opinion_headline="An argument", permalinks={stories()[0]["id"]: "/story/x/"})
     kinds = [c["kind"] for c in ch]
     check(kinds == ["headlines", "story", "story", "briefs", "opinion"], f"chapter kinds ({kinds})")
     check(ch[0]["startTime"] == 0.0 and all(ch[i]["startTime"] < ch[i + 1]["startTime"] for i in range(len(ch) - 1)),
           "chapters start at zero and rise")
     check(ch[1].get("rank") == 1 and ch[1].get("url") == "/story/x/" and ch[2].get("rank") == 2, "story chapters carry rank and link")
+    ils = [m for m in tl.music if m.name == "interlude"]
+    check(ch[2]["startTime"] == round(ils[0].start, 3) and ch[3]["startTime"] == round(ils[1].start, 3),
+          "the second story's and the desk's chapters start at the interlude before them")
+    check(ch[1]["startTime"] == round(tl.news_start, 3), "the lead's chapter starts at its first word (no interlude before it)")
     check(ch[4]["startTime"] == round(tl.opinion_start, 3) and ch[4].get("subtitle") == "An argument",
           "the Opinion chapter starts at its entrance music")
     check(all(ch[i]["endTime"] == ch[i + 1]["startTime"] for i in range(len(ch) - 1)) and ch[-1]["endTime"] == round(tl.total, 3),
@@ -451,7 +562,58 @@ def timeline_rev5(tl, bed_ending, GAPS: dict) -> None:
     lead_tail = [m for m in tl.music if m.name == "lead"][-1]
     close_bed = [m for m in tl.music if m.name == "close"][-1]
     check(bed_ending(tl, lead_tail)[0] == "rise" and bed_ending(tl, close_bed)[0] == "rise",
-          "the lead's coverage bed still rises into the page-turn and the close into the outro")
+          "the lead's coverage bed still rises into the interlude and the close into the outro")
+
+
+def timeline_rev5c(tl, bed_ending, GAPS: dict) -> None:
+    """Rev 5c in the timeline. The interludes: one after the lead's last word
+    and one after the second's, each `story_to_interlude` after the word, the
+    next anchor speaking INTERLUDE_VOICE_S in (over the release bar), nobody
+    speaking before that, the next bed fading in under the release, the bed
+    before each rising into it. The desk: after every second item (never the
+    last) the gap is `desk_breath`, long enough for the duck to come fully up;
+    the other gaps are `desk_items` and keep the duck down, so the desk moves;
+    the desk bed carries an accent DESK_BREATH_TAG_S into each breath."""
+    from briefing.onair_producer import DESK_BREATH_TAG_S, desk_breath_after
+    lead = [c for c in tl.cues if c.kind == "LEAD"]
+    second = [c for c in tl.cues if c.kind == "SECOND"]
+    desk = [c for c in tl.cues if c.kind == "DESK"]
+    ils = [m for m in tl.music if m.name == "interlude"]
+    check(len(ils) == 2 and all(m.role == "interlude" for m in ils), "two interludes, each in the interlude role")
+    for il, before, after in ((ils[0], lead[-1], second[0]), (ils[1], second[-1], desk[0])):
+        check(abs(il.start - (before.end + GAPS["story_to_interlude"])) < 0.01 and abs(il.end - il.start - S.INTERLUDE_S) < 0.01,
+              f"the interlude follows the story's last word by {GAPS['story_to_interlude']} s and runs {S.INTERLUDE_S} s")
+        check(abs(after.start - (il.start + S.INTERLUDE_VOICE_S)) < 0.01 and abs(after.start - (il.end - GAPS["interlude_to_story"])) < 0.01,
+              f"the next anchor starts {S.INTERLUDE_VOICE_S} s into the interlude, over its release")
+        check(not any(c.start < il.start + S.INTERLUDE_VOICE_S - 0.01 and c.end > il.start for c in tl.cues),
+              "nobody speaks over the interlude's first two bars")
+        nxt = min((m for m in tl.music if m.role == "bed" and m.start > il.start), key=lambda m: m.start)
+        check(il.start + 2 * S.M.BAR - 0.01 <= nxt.start < il.end, f"the next bed fades in under the interlude's release ({nxt.name})")
+        prev = max((m for m in tl.music if m.role == "bed" and m.start < il.start), key=lambda m: m.end)
+        ending, into = bed_ending(tl, prev)
+        check(ending == "rise" and into is il, f"the {prev.name} bed rises into the interlude ({ending})")
+    # the desk's breaths
+    items = [c for c in desk if c.exchange > 0]
+    gaps = [(a, b, round(b.start - a.end, 3)) for a, b in zip(items, items[1:])]
+    breaths = [(a, b, g) for a, b, g in gaps if desk_breath_after(a)]
+    moving = [(a, b, g) for a, b, g in gaps if not desk_breath_after(a)]
+    check(len(items) == 8 and len(breaths) == (len(items) - 1) // 2 and [a.exchange for a, _, _ in breaths] == [2, 4, 6],
+          f"an eight-item desk breathes after items 2, 4 and 6 ({[a.exchange for a, _, _ in breaths]})")
+    check(all(abs(g - GAPS["desk_breath"]) < 0.01 for _, _, g in breaths) and all(abs(g - GAPS["desk_items"]) < 0.01 for _, _, g in moving),
+          f"a breath is {GAPS['desk_breath']} s and every other desk gap {GAPS['desk_items']} s")
+    check(GAPS["desk_breath"] >= S.DUCK_RELEASE_S + S.DUCK_PREROLL_S + 0.6, "a breath is long enough for the duck to come up and stay up a moment")
+    env = S.duck_envelope(tl.total + 1.0, [(c.start, c.end) for c in tl.cues])
+    up = [float(env[int((a.end + b.start) / 2 / 0.01)]) for a, b, _ in breaths]
+    down = [float(env[int((a.end + b.start) / 2 / 0.01)]) for a, b, _ in moving]
+    check(all(u >= -0.5 for u in up), f"the music comes fully up in every breath ({[round(u, 1) for u in up]} dB)")
+    check(all(d <= S.DUCK_DB + 0.5 for d in down), f"the duck holds through the desk's other gaps, so the desk moves ({[round(d, 1) for d in down]} dB)")
+    desk_bed = [m for m in tl.music if m.name == "desk"][-1]
+    want = tuple(round(a.end + DESK_BREATH_TAG_S - desk_bed.start, 3) for a, _, _ in breaths)
+    check(desk_bed.accents == want, f"the desk bed carries one accent per breath, {DESK_BREATH_TAG_S} s after the item's last word ({desk_bed.accents})")
+    check(all(a.end < desk_bed.start + t < b.start for (a, b, _), t in zip(breaths, desk_bed.accents)), "every accent falls inside its breath")
+    # what it costs: the interludes and the breaths against rev 5's page-turns and plain gaps
+    added = 2 * (S.INTERLUDE_VOICE_S - 3.25) + len(breaths) * (GAPS["desk_breath"] - GAPS["desk_items"])
+    check(0 < added < 20.0, f"rev 5c adds about {added:.1f} s to an eight-item episode (two interludes, three breaths)")
 
 
 def main() -> int:

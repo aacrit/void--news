@@ -5,7 +5,7 @@
       -> per-line voice chain: trim, level to -20 LUFS, house warmth EQ, re-level, peak control
       -> timeline from the synthesised lengths and the gap table (chapters exact by construction)
       -> the score, composed for THIS timeline (onair_score): title, beds that enter and leave
-         where the conversation asks for them, the page-turn, the opinion entrance, the outro
+         where the conversation asks for them, the interludes, the opinion entrance, the outro
       -> levelled to the standard, ducked under the voices with the eased pre-roll, measured
       -> mix over room tone, house promo post-roll, loudnorm to -16 LUFS / -1.5 dBTP, MP3
       -> ID3 chapters, Podcasting 2.0 sidecar, the static tree (frontend/public/audio/<edition>)
@@ -18,10 +18,12 @@ Running order, what the listener hears:
     LEAD        A reads the story in passages, B takes the reaction
                 and the coverage                                       [bed out after the second passage;
                                                                        back for the last, the coverage]
-    page-turn   the motif's cell, in the clear                        [chapter: the lead's title, rank 1]
+    interlude   three bars of a calm groove and a tune from the hook,
+                in the clear; the next anchor speaks over its release  [chapter: the lead's title, rank 1]
     SECOND      B leads, A takes the coverage                          [bed: second, same shape]
-    page-turn                                                          [chapter: rank 2]
-    DESK        "The rest of the desk." ranks 3-8, alternating         [bed: desk, the pulse, throughout]
+    interlude   another melody, another chord pair, the other voice    [chapter: rank 2]
+    DESK        "The rest of the desk." ranks 3-10, alternating;
+                a breath after every second item, a bell tag in it     [bed: desk, the relaxed pulse, throughout]
     entrance    featured, minor shading, A introduces over its tail    [chapter: Void Opinion]
     OPINION     A: "This is Void Opinion." then A reads it as written  [bed: opinion under the first two and
                                                                        the last passage]
@@ -97,10 +99,15 @@ GAPS = {
     "handover": 1.0,           # one anchor's passage ends, the other's begins
     "handover_bedded": 1.7,    # while a bed plays, the music gets a breath at the handover
     "same_voice": 0.65,        # the same anchor's next passage
-    "story_to_pageturn": 1.0,
-    "pageturn_to_story": 0.35,  # the next voice starts this long before the page-turn ends
+    # Rev 5c: the page-turn is an INTERLUDE, three bars heard for themselves.
+    "story_to_interlude": 1.0,  # the story's last word, then the interlude's downbeat
+    "interlude_to_story": round(S.INTERLUDE_S - S.INTERLUDE_VOICE_S, 2),  # 2.2: the next anchor starts over the
+                                # release bar, this long before the interlude ends
     "desk_lead_to_item": 0.85,
     "desk_items": 0.9,
+    "desk_breath": 2.4,        # rev 5c: after every second desk item (never the last), a breath: long enough for
+                               # the duck to let the bed up for a second (0.6 s release, 1.0 s pre-roll) and a
+                               # bell tag to land in it (DESK_BREATH_TAG_S in); the other gaps stay 0.9
     # Rev 5: the desk STOPS, a silence is held, then "Void Opinion" enters.
     "desk_to_stop": 0.5,       # the desk bed's closing hit lands this long after the desk's last word;
                                # the bed ends S.STOP_RING_S (2.6 s) later, once the ring is gone
@@ -118,6 +125,8 @@ LOUDNESS_I, LOUDNESS_TP, LOUDNESS_LRA = -16.0, -1.5, 11.0
 MAX_FILE_SIZE = 12 * 1024 * 1024
 BITRATE_LADDER = (("128k", 2), ("96k", 2), ("96k", 1))
 PHONE_VOICE_MARGIN_DB = 12.0
+DESK_BREATH_TAG_S = 0.6          # the bell tag lands this long after the item's last word, once the duck has released
+DESK_BREATH_EVERY = 2            # a breath after every second desk item
 
 # Where a bed leaves and returns: it plays under this many passages, goes
 # out, and comes back under the last passage (the coverage, or the Opinion's
@@ -148,12 +157,13 @@ class Cue:
 
 @dataclass
 class MusicCue:
-    role: str            # featured | bed | transition
-    name: str            # theme, lead, second, desk, opinion, close, pageturn, entrance, outro
+    role: str            # featured | bed | interlude
+    name: str            # theme, lead, second, desk, opinion, close, interlude, entrance, outro
     start: float
     end: float
     audio: np.ndarray | None = None
     findings: list = field(default_factory=list)
+    accents: tuple = ()  # seconds into a bed where a bell tag lands (the desk's breaths, rev 5c)
 
 
 @dataclass
@@ -255,8 +265,18 @@ def _gap(prev: Cue | None, cur: Cue, bedded: set[tuple[str, int]] = frozenset())
             return GAPS["same_voice"]
         return GAPS["handover_bedded"] if (cur.kind, cur.exchange) in bedded else GAPS["handover"]
     if cur.kind == "DESK":
-        return GAPS["desk_lead_to_item"] if prev.text.startswith(DESK_LEAD.split(".")[0]) else GAPS["desk_items"]
+        if prev.text.startswith(DESK_LEAD.split(".")[0]):
+            return GAPS["desk_lead_to_item"]
+        return GAPS["desk_breath"] if desk_breath_after(prev) else GAPS["desk_items"]
     return 0.8
+
+
+def desk_breath_after(c: Cue) -> bool:
+    """Rev 5c: the desk breathes after every second item. `exchange` 0 is the
+    desk's opening line, so the items are 1, 2, 3 ...; a breath follows 2, 4,
+    6 ... when another desk item follows (the caller only asks for a DESK
+    neighbour, so the last item never gets one)."""
+    return c.kind == "DESK" and c.exchange >= DESK_BREATH_EVERY and c.exchange % DESK_BREATH_EVERY == 0
 
 
 def _mid_visit(music: list[MusicCue], name: str, seg: list[Cue], out_at: float, tail_start: float) -> None:
@@ -275,9 +295,9 @@ def _mid_visit(music: list[MusicCue], name: str, seg: list[Cue], out_at: float, 
 
 def build_timeline(cues: list[Cue], lengths: dict[int, float], v: S.Voicing) -> Timeline:
     """Place every voice line and every music cue. Music lengths come from
-    the renderers' fixed durations (theme 7.0, page-turn 3.4, entrance 6.0,
-    outro 14.0); beds are composed to the span they are given."""
-    theme_len, pageturn_len, entrance_len, outro_len = S.THEME_S, S.PAGETURN_S, S.ENTRANCE_S, S.OUTRO_S
+    the renderers' fixed durations (theme 14.0, interlude 8.6, entrance 11.4,
+    outro 15.0); beds are composed to the span they are given."""
+    theme_len, interlude_len, entrance_len, outro_len = S.THEME_S, S.INTERLUDE_S, S.ENTRANCE_S, S.OUTRO_S
     # The passages a bed plays under: the first few and the last (the coverage).
     bedded: set[tuple[str, int]] = set()
     for kind in ("LEAD", "SECOND", "OPINION"):
@@ -302,9 +322,10 @@ def build_timeline(cues: list[Cue], lengths: dict[int, float], v: S.Voicing) -> 
             music.append(MusicCue("featured", "theme", theme_at, theme_at + theme_len))
             t = theme_at + S.THEME_DOWNBEAT_S + 0.12      # the sign-on lands on the downbeat
         elif prev.kind in ("LEAD", "SECOND") and c.kind != prev.kind:
-            pt_at = prev.end + GAPS["story_to_pageturn"]
-            music.append(MusicCue("transition", "pageturn", pt_at, pt_at + pageturn_len))
-            t = pt_at + pageturn_len - GAPS["pageturn_to_story"]
+            # rev 5c: the interlude, heard in the clear; the next anchor speaks over its release bar
+            il_at = prev.end + GAPS["story_to_interlude"]
+            music.append(MusicCue("interlude", "interlude", il_at, il_at + interlude_len))
+            t = il_at + S.INTERLUDE_VOICE_S
         elif prev.kind == "DESK" and c.kind == "OPINION":
             # the desk bed stops on a hit, rings out, the floor is held, then the entrance
             stop_end = prev.end + GAPS["desk_to_stop"] + S.STOP_RING_S
@@ -335,7 +356,7 @@ def build_timeline(cues: list[Cue], lengths: dict[int, float], v: S.Voicing) -> 
         music.append(MusicCue("bed", name, start, min(out_at + 3.0, seg[-1].end + 0.5)))
         tail = seg[-1]
         if tail.start - 2.0 > out_at + 6.0:
-            music.append(MusicCue("bed", name, tail.start - 2.2, tail.end + GAPS["story_to_pageturn"] + 0.2))
+            music.append(MusicCue("bed", name, tail.start - 2.2, tail.end + GAPS["story_to_interlude"] + 0.2))
         _mid_visit(music, name, seg, out_at, tail.start)
 
     lead = seg_cues("LEAD")
@@ -345,19 +366,23 @@ def build_timeline(cues: list[Cue], lengths: dict[int, float], v: S.Voicing) -> 
         story_beds("lead", lead, start, 1.2)
     second = seg_cues("SECOND")
     if second:
-        pt = next((m for m in music if m.name == "pageturn" and m.start < second[0].start), None)
-        start = (pt.start + 1.6) if pt else second[0].start - 1.8
+        il = next((m for m in music if m.name == "interlude" and m.start < second[0].start), None)
+        start = (il.end - 1.6) if il else second[0].start - 1.8     # under the interlude's release, fading in
         story_beds("second", second, start, 1.0)
     desk = seg_cues("DESK")
     if desk:
-        pts = [m for m in music if m.name == "pageturn" and m.start < desk[0].start]
-        start = (pts[-1].start + 1.6) if pts else desk[0].start - 1.8
+        ils = [m for m in music if m.name == "interlude" and m.start < desk[0].start]
+        start = (ils[-1].end - 1.6) if ils else desk[0].start - 1.8
         if any(c.kind == "OPINION" for c in cues):
             # ends on the stop: the hit at desk_to_stop after the last word, the ring after it
             desk_end = desk[-1].end + GAPS["desk_to_stop"] + S.STOP_RING_S
         else:
             desk_end = desk[-1].end + 1.2
-        music.append(MusicCue("bed", "desk", start, desk_end))
+        # rev 5c: the breaths, where a bell tag lands once the duck has let the bed up
+        items = [c for c in desk if not c.text.startswith(DESK_LEAD.split(".")[0])]
+        accents = tuple(round(c.end + DESK_BREATH_TAG_S - start, 3) for i, c in enumerate(items)
+                        if desk_breath_after(c) and i + 1 < len(items))
+        music.append(MusicCue("bed", "desk", start, desk_end, accents=accents))
     op = seg_cues("OPINION")
     if op:
         en = next((m for m in music if m.name == "entrance"), None)
@@ -489,7 +514,7 @@ STOP_SILENCE_MAX_S = 3.0   # a bed whose end is followed by the entrance within 
 def bed_ending(tl: Timeline, m: MusicCue) -> tuple[str, MusicCue | None]:
     """How a bed ends, read from the timeline: ("stop", the entrance) when the
     entrance follows it within STOP_SILENCE_MAX_S, the news stopping before
-    the Opinion (rev 5); ("rise", that cue) when a page-turn or the outro
+    the Opinion (rev 5); ("rise", that cue) when an interlude or the outro
     starts within 2.5 s of its end; ("out", None) otherwise."""
     entrance = next((c for c in tl.music if c.name == "entrance" and -0.5 <= c.start - m.end <= STOP_SILENCE_MAX_S), None)
     if entrance is not None:
@@ -507,7 +532,6 @@ def render_score(tl: Timeline, v: S.Voicing) -> tuple[np.ndarray, list[str]]:
     notes: list[str] = []
     ir = None
     speech = [(c.start, c.end) for c in tl.cues]
-    bed_peaks: dict[str, float] = {}
 
     def gaps_in(m: MusicCue) -> list[tuple[float, float]]:
         out = []
@@ -522,11 +546,10 @@ def render_score(tl: Timeline, v: S.Voicing) -> tuple[np.ndarray, list[str]]:
             out.append((t - m.start, m.end - m.start))
         return out
 
-    # beds first, so a page-turn can be levelled to the bed it leads into
     for m in [m for m in tl.music if m.role == "bed"]:
         dur = m.end - m.start
         ending, leads_into = bed_ending(tl, m)
-        x = S.render_bed(v, m.name, dur, ending=ending)
+        x = S.render_bed(v, m.name, dur, ending=ending, accents=m.accents)
         x, g = S.level_bed(x, gaps_in(m))
         findings = S.check_cue(x, "bed", gaps=gaps_in(m))
         if any(f.id in ("score-repetition", "bed-breathing", "bed-low-end") for f in findings):
@@ -537,28 +560,29 @@ def render_score(tl: Timeline, v: S.Voicing) -> tuple[np.ndarray, list[str]]:
             f2 = S.check_cue(x2, "bed", gaps=gaps_in(m))
             if len(f2) < len(findings):
                 x, g, findings = x2, g2, f2
-        # A bed that leads into a page-turn or the outro rises into it (CEO
+        # A bed that leads into an interlude or the outro rises into it (CEO
         # 2026-11-07, second ear test); the rise happens AFTER the level is
         # set on the gaps, so the bed's resting level is the standard's and
         # only its last seconds climb. A bed the entrance follows STOPS
         # instead (rev 5): no rise, the hit, the ring, the held silence.
         rise = 0.0
         if ending == "rise" and leads_into is not None:
-            # never above the featured cue it hands over to
+            # never above the cue it hands over to: the featured level for the
+            # outro, the interlude's own level for an interlude (rev 5c)
             st = S.lufs_shortterm(x)
             top = float(np.max(st)) if st.size else S.BED_LUFS
-            rise = max(0.0, min(S.RISE_DB, S.FEATURED_LUFS + 1.0 - top))
+            ceiling = S.INTERLUDE_LUFS if leads_into.role == "interlude" else S.FEATURED_LUFS
+            rise = max(0.0, min(S.RISE_DB, ceiling + 1.0 - top))
             x = S.rise_into(x, rise_db=rise, hold_s=max(0.0, m.end - leads_into.start))
         m.audio = x
         m.findings = findings
-        bed_peaks[m.name] = max(bed_peaks.get(m.name, -99.0), S.bed_peak_lufs(x))
         notes.append(f"bed {m.name} {m.start:.1f}-{m.end:.1f}s gain {g:+.1f}" +
                      (f" rise +{rise:.0f} into {leads_into.name}" if ending == "rise" and leads_into is not None else "") +
                      (f" stop, {leads_into.start - m.end:.1f} s of floor before the {leads_into.name}"
                       if ending == "stop" and leads_into is not None else "") +
                      (" " + "; ".join(f.id for f in findings) if findings else ""))
+    interludes = 0
     for m in [m for m in tl.music if m.role != "bed"]:
-        nxt = None
         if m.name == "theme":
             x = S.render_theme(v, ir=ir)
             x, g = S.level_featured(x)
@@ -569,12 +593,13 @@ def render_score(tl: Timeline, v: S.Voicing) -> tuple[np.ndarray, list[str]]:
             x = S.render_outro(v, ir=ir)
             x, g = S.level_featured(x)
         else:
-            x = S.render_transition(v, ir=ir)
-            nxt = next((b for b in tl.music if b.role == "bed" and b.start >= m.start - 0.5), None)
-            peak = bed_peaks.get(nxt.name, S.BED_LUFS + 4.0) if nxt else S.BED_LUFS + 4.0
-            x, g = S.level_transition(x, peak)
-        role = "transition" if m.role == "transition" else "featured"
-        m.findings = S.check_cue(x, role, bed_peak_lufs=bed_peaks.get(nxt.name) if nxt is not None else None)
+            # rev 5c: the interludes are numbered in running order, so the
+            # second never repeats the first's melody, chord pair or voice
+            x = S.render_interlude(v, interludes, ir=ir)
+            interludes += 1
+            x, g = S.level_interlude(x)
+        role = "interlude" if m.role == "interlude" else "featured"
+        m.findings = S.check_cue(x, role)
         m.audio = x
         notes.append(f"{m.role} {m.name} {m.start:.1f}s gain {g:+.1f}" +
                      (" " + "; ".join(f.id for f in m.findings) if m.findings else ""))
@@ -690,14 +715,14 @@ def chapters_from_timeline(tl: Timeline, *, opinion_headline: str | None, permal
                 url = (permalinks or {}).get(c.cluster_id)
                 if url:
                     ch["url"] = url
-            pt = next((m for m in tl.music if m.name == "pageturn" and m.end > c.start - 0.5 and m.start < c.start), None)
-            if pt:
-                ch["startTime"] = round(pt.start, 3)
+            il = next((m for m in tl.music if m.name == "interlude" and m.end > c.start - 0.5 and m.start < c.start), None)
+            if il:
+                ch["startTime"] = round(il.start, 3)      # a story's chapter starts at the interlude before it
         elif c.kind == "DESK":
             ch = {"startTime": round(c.start, 3), "title": "The desk", "kind": "briefs"}
-            pt = next((m for m in tl.music if m.name == "pageturn" and m.end > c.start - 0.5 and m.start < c.start), None)
-            if pt:
-                ch["startTime"] = round(pt.start, 3)
+            il = next((m for m in tl.music if m.name == "interlude" and m.end > c.start - 0.5 and m.start < c.start), None)
+            if il:
+                ch["startTime"] = round(il.start, 3)
         else:  # OPINION
             ch = {"startTime": round(tl.opinion_start if tl.opinion_start is not None else c.start, 3),
                   "title": OPINION_CHAPTER_TITLE, "kind": "opinion"}
