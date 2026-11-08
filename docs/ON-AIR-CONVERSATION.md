@@ -1,10 +1,11 @@
 # On Air: the conversation
 
-Last updated: 2026-11-07 (rev 2, after the CEO's first ear test: three anchors,
-the Opinion as a conversation, a score with a pulse, more music under the
-voice, a studio floor. Rev 1 the same day replaced the 2026-09-18 bulletin as
-the daily programme; `docs/ON-AIR-RADIO.md` stays as the bulletin's record and
-`VOID_ONAIR_FORMAT=rundown` restores it)
+Last updated: 2026-11-07 (rev 3, after the CEO's second ear test: the score
+composed from scratch in `onair_music.py`, stereo, lighter under the voice
+and rising into every transition. Rev 2 the same day: three anchors, the
+Opinion as a conversation, a studio floor. Rev 1 replaced the 2026-09-18
+bulletin as the daily programme; `docs/ON-AIR-RADIO.md` stays as the
+bulletin's record and `VOID_ONAIR_FORMAT=rundown` restores it)
 
 On Air is the daily programme of Void News: eight to eleven minutes, in the
 manner of a serious daily news podcast. Three anchors. Two of them talk the
@@ -19,7 +20,8 @@ This document is the positive definition of the show. The code that enforces it:
 | What | Where |
 |---|---|
 | The script: grammar, parser, validators C-01..C-15, the grounding pass, the prompt, the template edition | `pipeline/briefing/onair_show.py` |
-| The score: loudness (BS.1770), filters, the motif, the day's voicing, every cue, the duck, the standard's checks | `pipeline/briefing/onair_score.py` |
+| The score's standard: loudness (BS.1770), band shape, levels, the rise, the duck, the checks | `pipeline/briefing/onair_score.py` |
+| The music itself: patches, harmony, the hook, the arrangement of every cue, stereo | `pipeline/briefing/onair_music.py` |
 | Production: Kokoro, the voice chain, the timeline, score placement, mix, master, chapters, sidecars | `pipeline/briefing/onair_producer.py` |
 | Pipeline wiring (`_produce_onair_edition`), the format switch, the carry rule | `pipeline/main.py` |
 | Operating it offline (`--radio-only --script-file --render-dir`, `--revoice`, `--no-opinion`) | `pipeline/refresh_brief.py` |
@@ -30,24 +32,28 @@ This document is the positive definition of the show. The code that enforces it:
 
 ```
 COLD        A, one or two sentences in the clear over room tone: the lead's hardest fact
-theme       7.0 s, featured; the sign-on starts 2.4 s before it ends, over its release
+theme       14.0 s, featured: four bars into a downbeat, and the sign-on lands ON that downbeat
+            (S.THEME_DOWNBEAT_S); the pad holds under the voice while the lead bed crossfades in
 TITLE       A: "From Void News, this is On Air. It's <day>."  A: today, in one or two sentences
                                                                   [bed: lead, from under the framing]
 LEAD        A asks, B answers; five to nine exchanges, 380-580 words, the last exchange is the coverage
                                                                   [bed out after the second answer;
                                                                    one visit in the middle of a long
                                                                    conversation; back for the coverage]
-page-turn   3.4 s, the motif's cell in the clear, never louder than the bed it leads into
+page-turn   3.6 s: a riser, one downbeat, the hook's first three notes; never louder than the bed
+            it leads into, which has risen +6 dB over its last 10 s to meet it
 SECOND      B asks (one clause of bridge first), A answers; three to six exchanges, 230-400 words
                                                                   [bed: second, the same shape]
 page-turn
 DESK        A: "The rest of the desk."  ranks 3-8, one or two sentences each, alternating
                                                                   [bed: desk, the pulse, throughout]
-entrance    6.0 s, featured, minor shading; A's opening starts 1.6 s before it ends
+entrance    6.8 s, featured: i to iv, a dotted pulse, the hook inverted and left on the dominant
+            (a question); A's opening starts 1.6 s before it ends
 OPINION     A: "Now, the Opinion. Through a <lens> lens today. <question>"  C argues, A draws it out;
             two to five exchanges                                 [bed: opinion under the first and the last exchange]
 CLOSE       A: "That's On Air from Void News. <one fact to carry> Every source, every story, at Void News."
-outro       14.0 s, featured, resolving to the low D; the house promo rides it (unchanged)
+outro       15.0 s, featured: the cycle in full, a riser, the landing on D major (the lift), the pad
+            falling to silence; the house promo rides it (unchanged)
 ```
 
 Chapters: `Today` (0 s, kind `headlines`, covers the cold open and the title),
@@ -162,31 +168,53 @@ voices had too much treble and wanted bass.
 
 ## The score
 
-Composed fresh for every episode from note data (`onair_score`), nothing
-sampled, nothing looped, and held to the house score standard (the film
-studio's A29 block, applied to radio). One motif (the radio theme's cell,
-D A D F# over a D pedal) binds every cue; the day's date seeds the voicing
-(`voicing_for`: one chord cycle per segment, a tempo from 58 to 72 bpm, the
-placement of the motif's fragments), so no two days carry the same bed while
-every day carries the same motif.
+Composed from scratch for rev 3 (`onair_music.py`), after the CEO heard rev 2
+and did not like the tunes. It is written, not generated: a key, a tempo, a
+chord cycle, a hook, an ostinato, patches, an arrangement per cue. The day's
+seed chooses only the chord cycle per segment and which bars carry which
+layers, so the bed moves every day and the hook is the same every day.
 
-The palette, from the founder's notes on the film score and the CEO's first
-ear test ("beats, the way the Daily and the BBC do it, in Void's voice"): a
-pulse under everything that plays, a soft kick (a sine sweeping 130 to 44 Hz
-over 70 ms) with a sub heartbeat on D1 under it and a shaker-like tick in
-1.8 to 4.2 kHz on the off-beats (`drums`: half-time under the conversations,
-four-on-the-floor on the desk, a dotted figure under the Opinion, a bar in
-sixteen dropped so it breathes); the motif running as an eighth-note ostinato
-in two-bar phrases (`ostinato`, D A D F# A D F# A from the fourth octave, in
-minor for the Opinion); pads voiced from G4 up so no sustained tone sits in
-the voice's low-mids; the felt-piano motif on top; a short synthesised room;
-almost no treble. Tempo 76 to 88. "Not loud. Dramatic when needed, silent
-when it deserves."
+**The writing.** D minor at 84 beats a minute. The cycle is i VI III VII
+(Dm Bb F C), the cinematic cadence, with alternates per segment (i VI iv V;
+the Opinion on i iv VI V, left unresolved). The hook is two bars on electric
+piano that fall to the tonic: D5 C5 A4 F4, G4 F4 D4; inverted (rising, left
+on the dominant) for the Opinion's entrance. Under it an eighth-note
+ostinato of chord tones in the fourth and fifth octaves, a pulse bass on the
+chord root in the sub (every bass note under 100 Hz, so the band shape keeps
+it whole), and a pad voiced from the third octave up. The outro lands on D
+major.
+
+**The patches**, all synthesised: `ep` is a two-operator FM electric piano
+(a 1:1 modulator whose index falls with the note, a 14:1 modulator for the
+30 ms attack, a 3 kHz lowpass, a 1.4 s release) through a dotted-eighth
+ping-pong delay; `pad` is six detuned saws, three a side, through a 24 dB/oct
+lowpass that opens from 400 to 1100 Hz over the attack, breathing slowly;
+`bass` is a sub sine under a plucked saw whose cutoff falls 320 to 110 Hz;
+`kick` is a 150 to 45 Hz sweep with a 4 ms click so a phone hears it; `tick`
+and `rim` are the clock, in 2.5 to 5 kHz and at 760 Hz; `riser` is noise
+rising into a downbeat; `impact` is the downbeat it lands on. Pads and bass
+pump 3 to 5 dB on every kick (`sidechain`). Two decorrelated rooms, one a
+side (`reverb`). Stereo throughout: keys alternate left and right by note,
+the pad is wide, kick and bass centred.
+
+**The drums.** Half-time under the conversations (kick on one and three,
+rims on two and four, a tick on every off-beat), four on the floor on the
+desk with an open tick on the last off-beat, a dotted figure under the
+Opinion, a bar in eight dropped so the pulse breathes.
+
+**Where it sits.** Lighter than rev 2 (CEO: it overpowered): -31 LUFS in the
+voice's gaps, 10 dB down under the voice, and it RISES: a bed that leads into
+a page-turn, the entrance or the outro climbs up to +6 dB over its last ten
+seconds (capped so its loudest three seconds never pass the featured cue it
+hands over to), so the music arrives at the transition instead of being cut
+off under it. The theme is heard for itself; the sign-on lands on its
+downbeat.
 
 | | Standard | Check |
 |---|---|---|
 | Dialogue | -20 LUFS integrated, per line | the voice chain |
-| Bed under speech | -28 LUFS in the voice's gaps (8 dB under; was -32 in rev 1, CEO: more music); levelled on the gaps when they total 4 s | `level_bed`, `bed-level` |
+| Bed under speech | -31 LUFS in the voice's gaps (rev 1 -32, rev 2 -28 overpowered); levelled on the gaps when they total 4 s | `level_bed`, `bed-level` |
+| The rise | +6 dB over the last 10 s into a page-turn, the entrance or the outro, eased; capped at the featured level | `rise_into` |
 | Duck | -10 dB under voice, a 1.0 s eased pre-roll at full depth on the onset, held across gaps under 1.2 s, 0.6 s release; never over 2 dB in any 100 ms | `duck_envelope`, `duck-slope` |
 | Featured (theme, entrance, outro) | loudest 3 s window at -26 LUFS, never louder | `level_featured`, `featured-level` |
 | Page-turn | never louder than the bed it leads into (+0.5 dB on the loudest 400 ms) | `level_transition`, `transition-ceiling` |
@@ -206,10 +234,10 @@ against 9 with a 0.6 s release against 0.25) and no laxer anywhere else.
 Where the music goes is in the running order above: beds enter under the
 framing, leave after the third answer (the facts get dense; "silent when it
 deserves"), visit once in the middle of a long conversation, and return for
-the coverage; while a bed plays, the gap between an answer and the next
-question is 1.4 s instead of 0.55, so the music gets a breath. A studio
-floor at -70 dBFS sits under everything so a silence is never digital zero;
-the -57 dBFS room tone of rev 1 read as noise and is gone.
+the coverage, rising into the page-turn; while a bed plays, the gap between
+an answer and the next question is 1.4 s instead of 0.55, so the music gets
+a breath. A studio floor at -70 dBFS sits under everything so a silence is
+never digital zero; the -57 dBFS room tone of rev 1 read as noise and is gone.
 
 ## Operating it
 

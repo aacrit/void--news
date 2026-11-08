@@ -338,7 +338,7 @@ adds nothing to the state that anything reads back.
 | **Paper** (the printable twenty) | `frontend/app/paper/`, `scripts/verify_sections.py` P-01..P-04, `tests/test_paper.py` |
 | Shared kill list (significance + AI slop), one regex for feed, Weekly, Opinion, promos, served pages | `pipeline/utils/prohibited_terms.py` (`find_prohibited`, `strip_significance`) |
 | Served-output gates | `scripts/verify_production.py` |
-| **On Air**, the conversation: the script (C-01..C-15, grounding, the template edition), the score standard, voices, the running order | `docs/ON-AIR-CONVERSATION.md`, `pipeline/briefing/{onair_show,onair_score,onair_producer}.py`, `tests/test_onair_show.py` |
+| **On Air**, the conversation: the script (C-01..C-15, grounding, the template edition), the score standard and the music, voices, the running order | `docs/ON-AIR-CONVERSATION.md`, `pipeline/briefing/{onair_show,onair_score,onair_music,onair_producer}.py`, `tests/test_onair_show.py` |
 | On Air, the 2026-09-18 bulletin (`VOID_ONAIR_FORMAT=rundown`): rundown grammar, R-01..R-15 | `docs/ON-AIR-RADIO.md` |
 | **Weekly audio** "The Argument": W-01..W-13 (W-13 grounds the Editor in the issue), the moat, the dry argument | `docs/WEEKLY-AUDIO.md` |
 | **History audio**: format, casting, H-01..H-11 | `docs/HISTORY-AUDIO.md`, `docs/HISTORY-SCRIPT-BRIEF.md` |
