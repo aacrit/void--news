@@ -118,7 +118,10 @@ jobs:
           key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
       - name: Download spaCy model
         if: steps.spacy-cache.outputs.cache-hit != 'true'
-        run: python -m spacy download en_core_web_sm
+        # Retried: on 2026-11-08 the 09:41 run died here on one 504 from
+        # github.com before any pipeline work, losing the early start.
+        run: |
+          for i in 1 2 3 4; do python -m spacy download en_core_web_sm && break; [ "$i" = 4 ] && exit 1; echo "spaCy download failed (attempt $i), retrying"; sleep $((i * 20)); done
 
       # ── Pipeline state DB (SQLite) — restored from cache, else bootstrapped ──
       - name: Restore pipeline state DB
