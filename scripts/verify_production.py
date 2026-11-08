@@ -334,6 +334,10 @@ _CONCAT_ALLOW = {
     "iphone", "ipad", "youtube", "openai", "mcdonald", "mcdonalds", "mckinsey",
     "macbook", "deepmind", "wework", "tiktok", "tiktok", "linkedin", "playstation",
     "ebay", "paypal", "airbnb", "spacex", "biontech", "msnow", "msnbc", "foxnews",
+    # Arabic phrases transliterated with an internal capital (2026-11-08: the
+    # El-Sayed card's "inshaAllah" held the edition red; it is a spelling, not
+    # a scrape seam).
+    "inshaallah", "mashaallah",
 }
 _CONCAT_RE = re.compile(r'\b([a-z]{3,})([A-Z][a-z]{2,})\b')
 _KNOWN_CONCATS = ("Israelisettler", "Senateconfirmed", "policeofficer", "primeminister")

@@ -163,6 +163,25 @@ def main() -> int:
         print(f"FAIL: verify_audio 429 retry (retried={retried}, 404 refused at once={refused})")
         ok = False
 
+    # The seam check refused a transliteration on 2026-11-08 ("inshaAllah" on
+    # the El-Sayed card held main red). A spelling with an internal capital is
+    # allowed by name; a real seam still fails.
+    spec = importlib.util.spec_from_file_location("vp_seam", VERIFY)
+    vp = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(vp)
+
+    class _P:
+        def __init__(self, t):
+            self.summaries, self.headlines = [t], []
+
+    allowed = not vp.check_concatenation(_P("He used Arabic phrases including inshaAllah and alhamdulillah."))
+    caught = bool(vp.check_concatenation(_P("The policeOfficer was named on Tuesday.")))
+    if allowed and caught:
+        print("PASS: seam check allows inshaAllah and still fails policeOfficer")
+    else:
+        print(f"FAIL: seam check (inshaAllah allowed={allowed}, policeOfficer caught={caught})")
+        ok = False
+
     return 0 if ok else 1
 
 
