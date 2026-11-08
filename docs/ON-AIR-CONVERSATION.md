@@ -1,19 +1,24 @@
-# On Air: the conversation
+# On Air: the newsroom
 
-Last updated: 2026-11-07 (rev 3, after the CEO's second ear test: the score
-composed from scratch in `onair_music.py`, stereo, lighter under the voice
-and rising into every transition. Rev 2 the same day: three anchors, the
-Opinion as a conversation, a studio floor. Rev 1 replaced the 2026-09-18
-bulletin as the daily programme; `docs/ON-AIR-RADIO.md` stays as the
-bulletin's record and `VOID_ONAIR_FORMAT=rundown` restores it)
+Last updated: 2026-11-07 (rev 4, after the CEO's fourth ear test: the
+question-and-answer format read as robotic, so On Air is a two-anchor
+newsroom again, passages and handovers with no interviewing; `af_bella`
+read as artificial and is retired, `bf_emma` is the second anchor and
+`af_aoede` reads the Opinion, which is read whole and has its own time.
+Rev 3: the score composed from scratch in `onair_music.py`. Rev 2: three
+voices, a studio floor. Rev 1 replaced the 2026-09-18 bulletin;
+`docs/ON-AIR-RADIO.md` stays as its record and `VOID_ONAIR_FORMAT=rundown`
+restores it. The file keeps its name; the format is `conversation` in the
+switch)
 
-On Air is the daily programme of Void News: eight to eleven minutes, in the
-manner of a serious daily news podcast. Three anchors. Two of them talk the
-day's lead through, one asking and one answering; they change places for the
-second story; the rest of the desk goes quickly; the third makes the day's
-Opinion as an argument drawn out by the anchor's questions, and speaks
-nowhere else; a close. It is generated once a day by the
-pipeline (step 7d) and served as one MP3 with chapters.
+On Air is the daily programme of Void News: eight to eleven minutes. Two
+anchors trade the day's stories in passages, the way a public-radio
+newsroom does: A leads the lead story and B takes its reaction and its
+coverage; B leads the second story and A takes its coverage; they alternate
+on the desk. Nobody asks anybody anything. Then A introduces the day's
+Opinion and a third voice, C, reads it as written, passage by passage, and
+speaks nowhere else. A close. Generated once a day by the pipeline (step 7d)
+and served as one MP3 with chapters.
 
 This document is the positive definition of the show. The code that enforces it:
 
@@ -34,23 +39,26 @@ This document is the positive definition of the show. The code that enforces it:
 COLD        A, one or two sentences in the clear over room tone: the lead's hardest fact
 theme       14.0 s, featured: four bars into a downbeat, and the sign-on lands ON that downbeat
             (S.THEME_DOWNBEAT_S); the pad holds under the voice while the lead bed crossfades in
-TITLE       A: "From Void News, this is On Air. It's <day>."  A: today, in one or two sentences
+TITLE       A: "From Void News, this is On Air. It's <day>."  B: today, in one or two sentences
                                                                   [bed: lead, from under the framing]
-LEAD        A asks, B answers; five to nine exchanges, 380-580 words, the last exchange is the coverage
-                                                                  [bed out after the second answer;
+LEAD        A leads; four to eight passages of 28-125 words, 380-620 words; B takes one to three,
+            including the last (the coverage); no voice reads more than three in a row
+                                                                  [bed under the first two passages,
                                                                    one visit in the middle of a long
-                                                                   conversation; back for the coverage]
+                                                                   lead, back for the coverage]
 page-turn   3.6 s: a riser, one downbeat, the hook's first three notes; never louder than the bed
-            it leads into, which has risen +6 dB over its last 10 s to meet it
-SECOND      B asks (one clause of bridge first), A answers; three to six exchanges, 230-400 words
+            it leads into, which has risen over its last 10 s to meet it
+SECOND      B leads; three to six passages, 230-420 words; A takes one or two, including the coverage
                                                                   [bed: second, the same shape]
 page-turn
 DESK        A: "The rest of the desk."  ranks 3-8, one or two sentences each, alternating
                                                                   [bed: desk, the pulse, throughout]
-entrance    6.8 s, featured: i to iv, a dotted pulse, the hook inverted and left on the dominant
-            (a question); A's opening starts 1.6 s before it ends
-OPINION     A: "Now, the Opinion. Through a <lens> lens today. <question>"  C argues, A draws it out;
-            two to five exchanges                                 [bed: opinion under the first and the last exchange]
+entrance    6.8 s, featured: i to iv, a dotted pulse, the hook inverted, left on the dominant;
+            A's introduction starts 1.6 s before it ends
+OPINION     A: "Now, the Opinion. Through a <lens> lens today. <headline>"  then C alone reads the
+            Opinion's paragraphs as written: two to six passages, 150-380 words
+                                                                  [bed: opinion under the first two
+                                                                   passages and the last]
 CLOSE       A: "That's On Air from Void News. <one fact to carry> Every source, every story, at Void News."
 outro       15.0 s, featured: the cycle in full, a riser, the landing on D major (the lift), the pad
             falling to silence; the house promo rides it (unchanged)
@@ -61,17 +69,19 @@ one `story` chapter per conversation (rank, cluster id, permalink when
 archived; it starts at the page-turn), `The desk` (kind `briefs`), `Opinion`
 (kind `opinion`, starts at the entrance music; `opinion_start_seconds` keeps
 that meaning), `Also from Void` (the promo). `news_start_seconds` is where
-the lead's first question begins.
+the lead's first passage begins.
 
 **The Opinion is spoken only when it was written for this edition.** A
 carried-forward opinion belongs to another day's stories, so the show ships
 without the segment (two voices, no entrance, no Opinion chapter) rather than
 read it as today's. When it is spoken, it is the brief's written opinion
-(`opinion_text`) rendered as a conversation: C's lines are read against that
-text by the grounding pass, so the show adds no claim the Opinion did not
-make; A's questions draw the argument out and never argue back. The first
-line is fixed: `Now, the Opinion. Through a pragmatic lens today.` (the lens
-from `opinion_lean`), then the headline as a question (C-14).
+(`opinion_text`), read whole by C: its sentences in their order, digits
+spoken as words, nothing added or cut. The grounding pass reads C's
+passages against that text, so the show cannot add a claim the Opinion did
+not make. The first line is fixed: `Now, the Opinion. Through a pragmatic
+lens today.` (the lens from `opinion_lean`), then the headline (C-14). At
+two to three hundred words it runs about a minute and a half, after its own
+entrance music and under its own bed.
 
 ## The conversation
 
@@ -104,7 +114,7 @@ confirm it. A roster under five outlets gives no line.
 | C-04 | No a.m./p.m. clock forms, no print datelines | fail |
 | C-05 | No borrowed or AI-podcast phrase, no significance word (the radio list, `BANNED_PHRASES`), no host named or thanked, no identifier spoken | fail |
 | C-06 | Word budgets per segment and in all (`WORD_BUDGETS`, `TOTAL_BUDGET`), +-25 % | fail |
-| C-07 | The shape: the asker opens, asker and answerer alternate, the asker's lines under the cap and at least half of them questions, answers inside their budget and never questions; five to ten exchanges in LEAD, three to seven in SECOND, two to five in OPINION (A asks, C answers); the cold open is one A line and a fact | fail |
+| C-07 | The shape: the leader opens (A in LEAD, B in SECOND), four to eight passages in LEAD and three to six in SECOND, each 28-125 words; the other anchor takes one to three (LEAD) or one or two (SECOND), usually the last; no voice reads more than three passages in a row; at most one question mark in a segment (the anchors never interview each other); the cold open is one A line and a fact; the TITLE's lineup is B's | fail |
 | C-08 | The desk opens on "The rest of the desk.", five to seven items, each at most 34 words, a fact not a question, never more items than stories | fail |
 | C-09 | Over the news segments, each of A and B carries 35-65 % of the words | fail |
 | C-10 | Sentences under twenty-four words | warn |
@@ -148,8 +158,8 @@ this chain). Casting, 2026-11-07, overridable with `VOID_KOKORO_VOICE_A/B/C`:
 | Role | Voice | Why |
 |---|---|---|
 | A, the anchor | `af_heart` | the roster's A-grade voice goes to the voice heard most |
-| B, the desk | `af_bella` | the A- grade; same register as heart, so the two are panned 14 % apart |
-| C, the Opinion | `bf_emma` | the best British voice (B-), and it reads nothing else: the accent makes the firewall audible the moment it starts |
+| B, the second anchor | `bf_emma` | the British voice is the clearest contrast to heart, so the handover is audible without a name; `af_bella` was retired 2026-11-07 (CEO: too artificial over a full episode) |
+| C, the Opinion | `af_aoede` | a third timbre that reads nothing else, so the firewall is audible the moment it starts |
 
 All three female (CEO, 2026-11-07, third ear test): Kokoro's male voices
 were trained on minutes where heart and bella had hours, and it shows; the
@@ -253,7 +263,7 @@ Where the music goes is in the running order above: beds enter under the
 framing, leave after the third answer (the facts get dense; "silent when it
 deserves"), visit once in the middle of a long conversation, and return for
 the coverage, rising into the page-turn; while a bed plays, the gap between
-an answer and the next question is 1.4 s instead of 0.55, so the music gets
+a handover is 1.25 s instead of 0.72, so the music gets
 a breath. A studio floor at -70 dBFS sits under everything so a silence is
 never digital zero; the -57 dBFS room tone of rev 1 read as noise and is gone.
 

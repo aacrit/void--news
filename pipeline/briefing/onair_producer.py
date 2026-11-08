@@ -1,4 +1,4 @@
-"""On Air: the conversation, produced. Voices, score, mix, master, chapters.
+"""On Air: the newsroom, produced. Voices, score, mix, master, chapters.
 
     show (onair_show.Show) + opinion script
       -> turns, normalised for speech, Kokoro only (never another engine)
@@ -14,16 +14,17 @@ Running order, what the listener hears:
 
     COLD        A, one line in the clear over room tone              [chapter: Today]
     theme       featured, the sign-on starts over its last third
-    TITLE       A: sign-on, the day, the framing                      [bed: lead, enters under the framing]
-    LEAD        A asks, B answers                                     [bed out after the second answer;
-                                                                       back for the last exchange]
+    TITLE       A: sign-on, the day; B: the framing                   [bed: lead, enters under the framing]
+    LEAD        A reads the story in passages, B takes the reaction
+                and the coverage                                       [bed out after the second passage;
+                                                                       back for the last, the coverage]
     page-turn   the motif's cell, in the clear                        [chapter: the lead's title, rank 1]
-    SECOND      B asks, A answers                                     [bed: second, same shape]
+    SECOND      B leads, A takes the coverage                          [bed: second, same shape]
     page-turn                                                          [chapter: rank 2]
-    DESK        "The rest of the desk." ranks 3-8                     [bed: desk, the pulse, throughout]
-    entrance    featured, minor shading, C starts over its tail        [chapter: Opinion]
-    OPINION     C, and nothing else                                    [bed: opinion under the first and
-                                                                       last paragraphs]
+    DESK        "The rest of the desk." ranks 3-8, alternating         [bed: desk, the pulse, throughout]
+    entrance    featured, minor shading, A introduces over its tail    [chapter: Opinion]
+    OPINION     C reads the Opinion as written, passage by passage    [bed: opinion under the first two and
+                                                                       the last passage]
     CLOSE       A, the sign-off                                        [bed: close]
     outro       featured, resolving to the low D; the house promo rides it   [chapter: Also from Void]
 
@@ -77,8 +78,8 @@ VOICES = {
     # grade, the desk the A-, the Opinion the best British voice so the
     # firewall is audible the moment it starts.
     "A": os.environ.get("VOID_KOKORO_VOICE_A", "af_heart"),
-    "B": os.environ.get("VOID_KOKORO_VOICE_B", "af_bella"),
-    "C": os.environ.get("VOID_KOKORO_VOICE_C", "bf_emma"),
+    "B": os.environ.get("VOID_KOKORO_VOICE_B", "bf_emma"),
+    "C": os.environ.get("VOID_KOKORO_VOICE_C", "af_aoede"),
 }
 SPEED = float(os.environ.get("VOID_KOKORO_SPEED", "0.95") or 0.95)
 PAN = {"A": -0.14, "B": 0.14, "C": 0.0}     # heart and bella share a register; the pan tells them apart
@@ -90,10 +91,9 @@ GAPS = {
     "signon_into_theme": 2.4,  # (rev 3: the sign-on lands on the theme's downbeat, S.THEME_DOWNBEAT_S)
     "title_lines": 0.7,
     "title_to_lead": 1.3,
-    "question_to_answer": 0.32,
-    "answer_to_question": 0.55,
-    "answer_to_question_bedded": 1.4,   # while a bed plays, the music gets a breath between exchanges
-    "same_voice": 0.3,
+    "handover": 0.72,          # one anchor's passage ends, the other's begins
+    "handover_bedded": 1.25,   # while a bed plays, the music gets a breath at the handover
+    "same_voice": 0.42,        # the same anchor's next passage
     "story_to_pageturn": 0.7,
     "pageturn_to_story": 0.35,  # the next voice starts this long before the page-turn ends
     "desk_lead_to_item": 0.6,
@@ -112,9 +112,10 @@ MAX_FILE_SIZE = 12 * 1024 * 1024
 BITRATE_LADDER = (("128k", 2), ("96k", 2), ("96k", 1))
 PHONE_VOICE_MARGIN_DB = 12.0
 
-# Where the lead bed leaves and returns: after this many answers it goes out,
-# and it comes back under the last exchange (the coverage).
-BED_OUT_AFTER_ANSWERS = {"LEAD": 3, "SECOND": 2}
+# Where a bed leaves and returns: it plays under this many passages, goes
+# out, and comes back under the last passage (the coverage, or the Opinion's
+# last paragraph). A long segment gets one visit in its middle.
+BED_OUT_AFTER_PASSAGES = {"LEAD": 2, "SECOND": 1, "OPINION": 2}
 ANCHOR_OPINION_VOICE = "C"
 
 
@@ -133,8 +134,8 @@ class Cue:
     seg_title: str = ""
     rank: int | None = None
     cluster_id: str | None = None
-    exchange: int = 0    # index of the exchange this line belongs to (LEAD/SECOND)
-    is_question: bool = False
+    exchange: int = 0    # index of the passage within its segment (LEAD/SECOND/OPINION)
+    is_question: bool = False   # kept for the row; a newsroom script carries none
 
 
 @dataclass
@@ -202,23 +203,21 @@ def opinion_paragraphs(script: str | None) -> list[str]:
 
 
 def build_cues(show: Show, opinion_script: str | None = None) -> list[Cue]:
-    """The spoken lines in order. The Opinion comes from the show's own
-    OPINION segment (A asks, C argues); `opinion_script`, a monologue, is
-    read by C only when the show carries no OPINION segment (a script from
-    before 2026-11-07)."""
+    """The spoken lines in order, each a passage. The Opinion comes from the
+    show's own OPINION segment (A introduces, C reads); `opinion_script`, a
+    monologue, is read by C only when the show carries no OPINION segment
+    (a script from before 2026-11-07)."""
     cues: list[Cue] = []
     say = show.say or None
     for s in show.segments:
-        exch = 0
-        asker = s.turns[0].speaker if s.turns else "A"
-        for i, t in enumerate(s.turns):
+        k = 0
+        for t in s.turns:
             text = normalize_for_speech(t.text, say)
             if not text.strip():
                 continue
-            if s.kind in ("LEAD", "SECOND", "OPINION") and i and t.speaker == asker:
-                exch += 1
             cues.append(Cue(kind=s.kind, role=t.speaker, text=text, seg_title=s.title, rank=s.rank,
-                            cluster_id=s.cluster_id, exchange=exch, is_question=t.is_question))
+                            cluster_id=s.cluster_id, exchange=k, is_question=t.is_question))
+            k += 1
     if opinion_script and not any(c.kind == "OPINION" for c in cues):
         paras = opinion_paragraphs(opinion_script)
         if paras:
@@ -240,26 +239,18 @@ def _gap(prev: Cue | None, cur: Cue, bedded: set[tuple[str, int]] = frozenset())
                 ("DESK", "CLOSE"): GAPS["desk_to_close"]}.get((prev.kind, cur.kind), 0.8)
     if cur.kind == "TITLE":
         return GAPS["title_lines"]
-    if cur.kind in ("LEAD", "SECOND", "OPINION") and prev.role != cur.role:
-        if prev.is_question:
-            return GAPS["question_to_answer"]
-        return GAPS["answer_to_question_bedded"] if (cur.kind, cur.exchange) in bedded else GAPS["answer_to_question"]
-    if cur.kind in ("LEAD", "SECOND"):
+    if cur.kind in ("LEAD", "SECOND", "OPINION"):
         if prev.role == cur.role:
-            return GAPS["same_voice"]
-        if prev.is_question:
-            return GAPS["question_to_answer"]
-        return GAPS["answer_to_question_bedded"] if (cur.kind, cur.exchange) in bedded else GAPS["answer_to_question"]
+            return GAPS["opinion_paragraphs"] if cur.kind == "OPINION" else GAPS["same_voice"]
+        return GAPS["handover_bedded"] if (cur.kind, cur.exchange) in bedded else GAPS["handover"]
     if cur.kind == "DESK":
         return GAPS["desk_lead_to_item"] if prev.text.startswith(DESK_LEAD.split(".")[0]) else GAPS["desk_items"]
-    if cur.kind == "OPINION":
-        return GAPS["opinion_paragraphs"]
     return 0.8
 
 
 def _mid_visit(music: list[MusicCue], name: str, seg: list[Cue], out_at: float, tail_start: float) -> None:
-    """A long conversation gets the bed back for one exchange in its middle,
-    so the music is never gone for minutes at a stretch."""
+    """A long segment gets the bed back for one passage in its middle, so
+    the music is never gone for minutes at a stretch."""
     ex = sorted({c.exchange for c in seg})
     if len(ex) < 6:
         return
@@ -276,16 +267,16 @@ def build_timeline(cues: list[Cue], lengths: dict[int, float], v: S.Voicing) -> 
     the renderers' fixed durations (theme 7.0, page-turn 3.4, entrance 6.0,
     outro 14.0); beds are composed to the span they are given."""
     theme_len, pageturn_len, entrance_len, outro_len = S.THEME_S, S.PAGETURN_S, S.ENTRANCE_S, S.OUTRO_S
-    # The exchanges a bed plays under: the first few and the last (the coverage).
+    # The passages a bed plays under: the first few and the last (the coverage).
     bedded: set[tuple[str, int]] = set()
     for kind in ("LEAD", "SECOND", "OPINION"):
         ex = sorted({c.exchange for c in cues if c.kind == kind})
         if ex:
-            k = BED_OUT_AFTER_ANSWERS.get(kind, 1)
+            k = BED_OUT_AFTER_PASSAGES.get(kind, 1)
             bedded.update((kind, e) for e in ex[:k + 1])
             bedded.add((kind, ex[-1]))
             if len(ex) >= 6:
-                bedded.add((kind, ex[len(ex) // 2]))   # a visit in the middle of a long conversation
+                bedded.add((kind, ex[len(ex) // 2]))   # a visit in the middle of a long segment
     music: list[MusicCue] = []
     t = 0.0
     prev: Cue | None = None
@@ -324,31 +315,26 @@ def build_timeline(cues: list[Cue], lengths: dict[int, float], v: S.Voicing) -> 
         return [c for c in cues if c.kind == kind]
 
     title = seg_cues("TITLE")
+
+    def story_beds(name: str, seg: list[Cue], start: float, out_pad: float) -> None:
+        k = min(BED_OUT_AFTER_PASSAGES[name.upper()], max(1, len(seg) - 1))
+        out_at = seg[k - 1].end + out_pad
+        music.append(MusicCue("bed", name, start, min(out_at + 3.0, seg[-1].end + 0.5)))
+        tail = seg[-1]
+        if tail.start - 2.0 > out_at + 6.0:
+            music.append(MusicCue("bed", name, tail.start - 2.2, tail.end + GAPS["story_to_pageturn"] + 0.2))
+        _mid_visit(music, name, seg, out_at, tail.start)
+
     lead = seg_cues("LEAD")
     if lead:
         theme_end = next((m.end for m in music if m.name == "theme"), lead[0].start - 2.0)
         start = min(theme_end - 2.6, (title[1].start - 1.6) if len(title) > 1 else lead[0].start - 2.0)
-        answers = [c for c in lead if not c.is_question]
-        k = min(BED_OUT_AFTER_ANSWERS["LEAD"], max(1, len(answers) - 1))
-        out_at = answers[k - 1].end + 1.2 if answers else lead[-1].end
-        music.append(MusicCue("bed", "lead", start, min(out_at + 3.0, lead[-1].end + 0.5)))
-        last_ex = lead[-1].exchange
-        tail = [c for c in lead if c.exchange == last_ex]
-        if tail and tail[0].start - 2.0 > out_at + 6.0:
-            music.append(MusicCue("bed", "lead", tail[0].start - 2.2, lead[-1].end + GAPS["story_to_pageturn"] + 0.2))
-        _mid_visit(music, "lead", lead, out_at, tail[0].start if tail else lead[-1].end)
+        story_beds("lead", lead, start, 1.2)
     second = seg_cues("SECOND")
     if second:
         pt = next((m for m in music if m.name == "pageturn" and m.start < second[0].start), None)
         start = (pt.start + 1.6) if pt else second[0].start - 1.8
-        answers = [c for c in second if not c.is_question]
-        k = min(BED_OUT_AFTER_ANSWERS["SECOND"], max(1, len(answers) - 1))
-        out_at = answers[k - 1].end + 1.0 if answers else second[-1].end
-        music.append(MusicCue("bed", "second", start, min(out_at + 3.0, second[-1].end + 0.5)))
-        last_ex = second[-1].exchange
-        tail = [c for c in second if c.exchange == last_ex]
-        if tail and tail[0].start - 2.0 > out_at + 6.0:
-            music.append(MusicCue("bed", "second", tail[0].start - 2.2, second[-1].end + GAPS["story_to_pageturn"] + 0.2))
+        story_beds("second", second, start, 1.0)
     desk = seg_cues("DESK")
     if desk:
         pts = [m for m in music if m.name == "pageturn" and m.start < desk[0].start]
@@ -358,13 +344,12 @@ def build_timeline(cues: list[Cue], lengths: dict[int, float], v: S.Voicing) -> 
     if op:
         en = next((m for m in music if m.name == "entrance"), None)
         start = (en.end - 1.2) if en else op[0].start - 2.0
-        answers = [c for c in op if c.role == "C"] or op
-        first_out = answers[0].end + 1.0
+        k = min(BED_OUT_AFTER_PASSAGES["OPINION"], max(1, len(op) - 1))
+        first_out = op[k - 1].end + 1.0
         music.append(MusicCue("bed", "opinion", start, min(first_out + 2.5, op[-1].end)))
-        last_ex = op[-1].exchange
-        tail = [c for c in op if c.exchange == last_ex]
-        if tail and tail[0].start - 2.0 > first_out + 8.0:
-            music.append(MusicCue("bed", "opinion", tail[0].start - 2.2, op[-1].end + 0.8))
+        tail = op[-1]
+        if tail.start - 2.0 > first_out + 8.0:
+            music.append(MusicCue("bed", "opinion", tail.start - 2.2, tail.end + 0.8))
     close = seg_cues("CLOSE")
     if close:
         start = close[0].start - 1.6

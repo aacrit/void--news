@@ -132,8 +132,11 @@ claims about its own confidence. It needs a decision, not a tweak.
   new prompt. The prompt has not yet been exercised against the model: the
   first few runs should be read in the log (`[onair]` attempt lines) and
   the validators' budgets tuned if the model lands outside them often.
-- Casting (CEO 2026-11-07, third ear test): `af_heart` anchor, `af_bella`
-  desk, `bf_emma` Opinion, all female; Kokoro's men read as synthetic. A male
+- Casting (CEO 2026-11-07, rev 4): `af_heart` anchor, `bf_emma` second
+  anchor, `af_aoede` Opinion, all female; `af_bella` retired as too
+  artificial over a full episode, and Kokoro's men read as synthetic.
+  `bf_emma` is a B- voice carrying a third of the news: the next ear test
+  should judge it over the full nine minutes, not a clip. A male
   desk waits on a better model in the chain (Gemini's own multi-speaker TTS
   on the existing key is the candidate; needs a quota probe, segment-sized
   requests, the ASR word check and Kokoro as the fallback; CEO deferred).
