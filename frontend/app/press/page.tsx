@@ -46,7 +46,7 @@ const PROGRAMMES = [
     title: "On Air",
     cadence: "Daily",
     line:
-      "The day's top stories read for the ear by three voices, then the editorial, in under fifteen minutes. Every story scored on six axes.",
+      "The day's top stories read for the ear by two anchors, then the Opinion, in under fifteen minutes. Every story scored on six axes.",
     feed: `${SITE_URL}/podcast-world.xml`,
     href: "/onair",
     section: "On Air",

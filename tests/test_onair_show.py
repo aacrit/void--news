@@ -100,9 +100,12 @@ def clean_fixture() -> str:
     second = show.seg("SECOND")
     check(second is not None and second.turns[0].speaker == "B" and second.turns[-1].speaker == "A", "B leads the second, A reads its coverage")
     op = show.seg("OPINION")
-    check(op is not None and [t.speaker for t in op.turns] == ["A", "C", "C", "C", "C"], "A introduces the Opinion, C reads it whole")
+    check(op is not None and [t.speaker for t in op.turns] == ["A", "A", "A", "A", "A"], "A introduces Void Opinion and reads it whole (rev 5: two voices)")
+    check(op is not None and op.turns[0].text.startswith("This is Void Opinion. Through a progressive lens today."),
+          "the Opinion is introduced by name: Void Opinion, then its lens")
+    check({t.speaker for s in show.segments for t in s.turns} == {"A", "B"}, "two voices in the whole script, A and B")
     check(op is not None and " ".join(t.text for t in op.turns[1:]) == " ".join(OPINION.read_text(encoding="utf-8").split()).replace("3,000", "three thousand").replace("170 billion", "one hundred seventy billion").replace("58 percent", "fifty-eight percent"),
-          "C's passages are the Opinion's own sentences, in order, complete")
+          "the Opinion's passages are its own sentences, in order, complete")
     check(show.say.get("Eisenkot") == "eye-zen-kot", "SAY respellings parse and lowercase")
     check(show.to_text().startswith("## COLD"), "to_text round-trips the markers")
     return raw
@@ -154,14 +157,27 @@ def planted_defects(raw: str) -> None:
           "C-11 fires on an attributed claim the story does not carry")
     check("C-12" in planted(raw, "Police shot and arrested him.", "The Constitution protects the square."),
           "C-12 fires on a court or a law in Void's own voice")
-    check("C-14" in planted(raw, "A: Now, the Opinion. Through a progressive lens today.", "A: Now, the Opinion."),
+    check("C-14" in planted(raw, "A: This is Void Opinion. Through a progressive lens today.", "A: This is Void Opinion."),
           "C-14 fires when the Opinion's introduction drops its lens")
-    check("C-14" in planted(raw, "C: Ask who bears the cost", "A: Ask who bears the cost"),
-          "C-14 fires when A speaks after the introduction")
-    check("C-14" in planted(raw, "C: Ask who bears the cost of that structure and who was asked. A Fox News exit survey found fifty-eight percent of voters believed federal immigration enforcement had gone too far. The voters answered on Tuesday. The appointment came on Friday.",
-                            "C: The voters answered on Tuesday."),
+    check("C-14" in planted(raw, "A: This is Void Opinion. Through a progressive lens today.", "A: Now, the Opinion. Through a progressive lens today."),
+          "C-14 fires when the Opinion's introduction does not name Void Opinion")
+    check("C-14" in planted(raw, "A: Ask who bears the cost", "B: Ask who bears the cost"),
+          "C-14 fires when B reads a passage of the Opinion")
+    check("C-00" in planted(raw, "A: Ask who bears the cost", "B: Ask who bears the cost"),
+          "C-00 fires when B speaks in the Opinion")
+    check("C-14" in planted(raw, "A: Ask who bears the cost of that structure and who was asked. A Fox News exit survey found fifty-eight percent of voters believed federal immigration enforcement had gone too far. The voters answered on Tuesday. The appointment came on Friday.",
+                            "A: The voters answered on Tuesday."),
           "C-14 fires on an Opinion passage under the floor")
-    check("C-00" in planted(raw, "\nB: That record runs", "\nC: That record runs"), "C outside the Opinion fails")
+    check("C-00" in planted(raw, "\nB: That record runs", "\nC: That record runs"), "a C line in the news fails (two voices)")
+    check("C-00" in planted(raw, "A: Ask who bears the cost", "C: Ask who bears the cost"), "a C line in the Opinion fails (two voices)")
+    check("C-00" in planted(raw, "A: The rest of the desk.\nA: In Krakow", "A: The rest of the desk.\nC: In Krakow"), "a C line on the desk fails (two voices)")
+    # C-09 counts the news only: the Opinion is all A's and must not push A over the share
+    bulk = parse_show(raw)
+    bind_ranks(bulk, ctx())
+    news, every = bulk.words_by_speaker(), bulk.words_by_speaker(news_only=False)
+    check("C-09" not in fail_ids(validate_show(bulk, ctx())) and
+          every["A"] / sum(every.values()) > news["A"] / sum(news.values()),
+          "C-09 measures the news segments only, so the Opinion read by A does not count against the share")
     # C-09: hand every B line to A
     show = parse_show(raw.replace("\nB: ", "\nA: "))
     bind_ranks(show, ctx())
@@ -181,7 +197,7 @@ def planted_defects(raw: str) -> None:
     show = parse_show(raw.replace("The voters answered on Tuesday.", "The voters answered on Tuesday. Nine in ten of them live in Ohio."))
     bind_ranks(show, ctx())
     cuts = ground_show(show, ctx())
-    check(any("Ohio" in c.sentence for c in cuts), "a sentence the Opinion does not carry is cut from C's reading")
+    check(any("Ohio" in c.sentence for c in cuts), "a sentence the Opinion does not carry is cut from the anchor's reading")
 
 
 # ---------------------------------------------------------------- template and prompt
@@ -228,15 +244,17 @@ def template_and_prompt() -> None:
     bind_ranks(show, octx)
     rep = validate_show(show, octx)
     op = show.seg("OPINION")
-    check(op is not None and [t.speaker for t in op.turns][:2] == ["A", "C"] and all(t.speaker == "C" for t in op.turns[1:]),
-          "the template Opinion is A introducing, C reading")
+    check(op is not None and len(op.turns) >= 3 and all(t.speaker == "A" for t in op.turns),
+          "the template Opinion is A introducing and A reading")
     check(op is not None and op.turns[0].text.startswith(f"{OPINION_OPEN} Through a pragmatic lens today."),
           "the template Opinion opens on Void's line and names its lens")
     check(not rep.failures, f"the template Opinion passes ({[f.id + ' ' + f.detail[:40] for f in rep.failures]})")
     cuts = ground_show(show, octx)
-    check(not cuts, "C's lines are grounded in the Opinion text by construction")
+    check(not cuts, "the Opinion's lines are grounded in the Opinion text by construction")
     system, user = build_prompt(stories(), spoken_date(DATE), opinion_text=op_text, opinion_headline="Two Justices and a Senate",
                                 opinion_lean="left")
+    check("C:" not in user and "two voices" in user, "the prompt asks for two voices and never offers a C line")
+    check(f"A: {OPINION_OPEN} Through a progressive lens today." in user, "the prompt's Opinion opens on Void Opinion")
     check("## OPINION" in user and "Through a progressive lens today." in user and "<source id=\"opinion\"" in user,
           "the prompt carries the Opinion block, its lens and the text as data")
     no_op = validate_show(parse_show(without_opinion(FIXTURE.read_text(encoding="utf-8"))), ctx())
@@ -309,8 +327,8 @@ def timeline() -> None:
     show = parse_show(raw)
     bind_ranks(show, ctx())
     cues = build_cues(show, None)
-    check(any(c.kind == "OPINION" and c.role == "C" for c in cues) and any(c.kind == "OPINION" and c.role == "A" for c in cues),
-          "the Opinion's cues carry A and C")
+    check([c.role for c in cues if c.kind == "OPINION"] == ["A"] * 5 and {c.role for c in cues} == {"A", "B"},
+          "the Opinion's cues are all A's; the show has two voices")
     lead_cues = [c for c in cues if c.kind == "LEAD"]
     check([c.exchange for c in lead_cues] == list(range(len(lead_cues))), "a cue's exchange is its passage index")
     lengths = {c.idx: 0.4 * len(c.text.split()) for c in cues}
@@ -338,7 +356,7 @@ def timeline() -> None:
                    chapters=[], engine="kokoro", voices="kokoro:a+b")
     check(r.as_row_fields()["audio_voice_label"] == "Two voices", "no Opinion, two voices on the label")
     r.opinion_start_seconds = 5.0
-    check(r.as_row_fields()["audio_voice_label"] == "Three voices", "an Opinion, three voices on the label")
+    check(r.as_row_fields()["audio_voice_label"] == "Two voices", "an Opinion, still two voices on the label (rev 5)")
     # without an opinion, no entrance and no opinion chapter
     show = parse_show(without_opinion(raw))
     bind_ranks(show, ctx_no_op())

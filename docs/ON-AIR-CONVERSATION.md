@@ -1,6 +1,11 @@
 # On Air: the newsroom
 
-Last updated: 2026-11-07 (rev 4, after the CEO's fourth ear test: the
+Last updated: 2026-11-08 (rev 5, after the CEO heard rev 4: two voices in
+all; the Opinion's voice, `af_aoede`, becomes the anchor and reads Void
+Opinion as well as the news; the second anchor is male, `am_puck`, chosen on
+a slated audition of all thirteen Kokoro men; the Opinion is introduced and
+titled "Void Opinion" with an entrance of its own and a bed of its own; more
+bass across the score. Rev 4, 2026-11-07, after the CEO's fourth ear test: the
 question-and-answer format read as robotic, so On Air is a two-anchor
 newsroom again, passages and handovers with no interviewing; `af_bella`
 read as artificial and is retired, `bf_emma` is the second anchor and
@@ -15,10 +20,19 @@ On Air is the daily programme of Void News: eight to eleven minutes. Two
 anchors trade the day's stories in passages, the way a public-radio
 newsroom does: A leads the lead story and B takes its reaction and its
 coverage; B leads the second story and A takes its coverage; they alternate
-on the desk. Nobody asks anybody anything. Then A introduces the day's
-Opinion and a third voice, C, reads it as written, passage by passage, and
-speaks nowhere else. A close. Generated once a day by the pipeline (step 7d)
-and served as one MP3 with chapters.
+on the desk. Nobody asks anybody anything. Then the news stops, the Void
+Opinion entrance plays, and A introduces Void Opinion and reads it as
+written, passage by passage. A close. Two voices in all. Generated once a
+day by the pipeline (step 7d) and served as one MP3 with chapters.
+
+**The firewall is the music and the words, not the voice** (rev 5). Since
+the same anchor reads the news and the Opinion, nothing about the voice
+tells the listener the argument has begun. Three things do: the news bed
+stops dead and the show holds a silence; the entrance, a cue with its own
+register and rhythm, plays in the clear; and A's first words are "This is
+Void Opinion." with the lens and the headline. Under the Opinion runs a bed
+of its own, plainly the same show and plainly not the news. C-14 fails a
+script whose Opinion does not open on Void Opinion.
 
 This document is the positive definition of the show. The code that enforces it:
 
@@ -55,7 +69,7 @@ DESK        A: "The rest of the desk."  ranks 3-8, one or two sentences each, al
                                                                   [bed: desk, the pulse, throughout]
 entrance    6.8 s, featured: i to iv, a dotted pulse, the hook inverted, left on the dominant;
             A's introduction starts 1.6 s before it ends
-OPINION     A: "Now, the Opinion. Through a <lens> lens today. <headline>"  then C alone reads the
+OPINION     A: "This is Void Opinion. Through a <lens> lens today. <headline>"  then A reads the
             Opinion's paragraphs as written: two to six passages, 150-380 words
                                                                   [bed: opinion under the first two
                                                                    passages and the last]
@@ -66,20 +80,24 @@ outro       15.0 s, featured: the cycle in full, a riser, the landing on D major
 
 Chapters: `Today` (0 s, kind `headlines`, covers the cold open and the title),
 one `story` chapter per conversation (rank, cluster id, permalink when
-archived; it starts at the page-turn), `The desk` (kind `briefs`), `Opinion`
-(kind `opinion`, starts at the entrance music; `opinion_start_seconds` keeps
-that meaning), `Also from Void` (the promo). `news_start_seconds` is where
+archived; it starts at the page-turn), `The desk` (kind `briefs`), `Void
+Opinion` (kind `opinion`, its headline as the subtitle, starts at the
+entrance music; `opinion_start_seconds` keeps that meaning), `Also from
+Void` (the promo). The page's own labels (the `/onair` rail's "Opinion"
+jump) are unchanged pending the CEO's word; the chapter list reads the
+chapter title from the data. `news_start_seconds` is where
 the lead's first passage begins.
 
 **The Opinion is spoken only when it was written for this edition.** A
 carried-forward opinion belongs to another day's stories, so the show ships
-without the segment (two voices, no entrance, no Opinion chapter) rather than
-read it as today's. When it is spoken, it is the brief's written opinion
-(`opinion_text`), read whole by C: its sentences in their order, digits
-spoken as words, nothing added or cut. The grounding pass reads C's
-passages against that text, so the show cannot add a claim the Opinion did
-not make. The first line is fixed: `Now, the Opinion. Through a pragmatic
-lens today.` (the lens from `opinion_lean`), then the headline (C-14). At
+without the segment (no entrance, no Opinion chapter) rather than read it
+as today's. When it is spoken, it is the brief's written opinion
+(`opinion_text`), read whole by A: its sentences in their order, digits
+spoken as words, nothing added or cut. The grounding pass reads the
+Opinion's passages against that text, so the show cannot add a claim the
+Opinion did not make. The first line is fixed: `This is Void Opinion.
+Through a pragmatic lens today.` (the lens from `opinion_lean`), then the
+headline (C-14). At
 two to three hundred words it runs about a minute and a half, after its own
 entrance music and under its own bed.
 
@@ -116,20 +134,20 @@ confirm it. A roster under five outlets gives no line.
 | C-06 | Word budgets per segment and in all (`WORD_BUDGETS`, `TOTAL_BUDGET`), +-25 % | fail |
 | C-07 | The shape: the leader opens (A in LEAD, B in SECOND), four to eight passages in LEAD and three to six in SECOND, each 28-125 words; the other anchor takes one to three (LEAD) or one or two (SECOND), usually the last; no voice reads more than three passages in a row; at most one question mark in a segment (the anchors never interview each other); the cold open is one A line and a fact; the TITLE's lineup is B's | fail |
 | C-08 | The desk opens on "The rest of the desk.", five to seven items, each at most 34 words, a fact not a question, never more items than stories | fail |
-| C-09 | Over the news segments, each of A and B carries 35-65 % of the words | fail |
+| C-09 | Over the news segments, each of A and B carries 35-65 % of the words (the Opinion is A's alone and is not counted, or it would push A over) | fail |
 | C-10 | Sentences under twenty-four words | warn |
 | C-11 | Grounded attribution (the radio's R-14): an attributed clause keeps 0.6 of the story's words for that speaker | fail |
 | C-12 | No unattributed statement of law (R-15) | fail |
 | C-13 | SAY respellings are lowercase syllables | warn |
-| C-14 | The Opinion opens on `Now, the Opinion.` and names its lens | fail |
-| C-00 | C speaks only in OPINION, B never there; an OPINION segment only on a day with a written opinion, and always on such a day | fail |
+| C-14 | The Opinion opens with A on `This is Void Opinion.` and names its lens; every passage after it is A's; two to six passages of 28-140 words | fail |
+| C-00 | Two voices: a line from any speaker but A or B (`C:` included) fails anywhere; B never speaks in OPINION; an OPINION segment only on a day with a written opinion, and always on such a day | fail |
 | C-15 | A chapter title is at most seven words, no digits | warn |
 
 Then the grounding pass (`ground_show`, `editorial/derived_grounding`): every
 line is read against its own story (LEAD and COLD against rank 1, SECOND
-against rank 2, each desk item against its rank, C's lines against the
+against rank 2, each desk item against its rank, the Opinion's passages against the
 Opinion text, the framing and the close against the day), and a sentence the
-story does not carry is cut. An answer cut whole takes the asker's line that
+story does not carry is cut (the Opinion's passages against the Opinion text). An answer cut whole takes the asker's line that
 set it up with it; an asker's line left dangling at the end goes; same-voice
 neighbours left by a cut are merged, so the voices still alternate. `grounding_ran.onair` is True only when the pass completed.
 
@@ -153,21 +171,52 @@ is carried, as the brief carries its audio when there is none.
 ## Voices
 
 Kokoro-82M, and only Kokoro (`engines=[KokoroEngine()]`; edge-tts is not in
-this chain). Casting, 2026-11-07, overridable with `VOID_KOKORO_VOICE_A/B/C`:
+this chain). Casting, rev 5 (2026-11-08), overridable with
+`VOID_KOKORO_VOICE_A/B` (there is no C):
 
 | Role | Voice | Why |
 |---|---|---|
-| A, the anchor | `af_heart` | the roster's A-grade voice goes to the voice heard most |
-| B, the second anchor | `bf_emma` | the British voice is the clearest contrast to heart, so the handover is audible without a name; `af_bella` was retired 2026-11-07 (CEO: too artificial over a full episode) |
-| C, the Opinion | `af_aoede` | a third timbre that reads nothing else, so the firewall is audible the moment it starts |
+| A, the anchor | `af_aoede` | the CEO's choice (rev 5): rev 4's Opinion voice becomes the anchor. Cold open, sign-on, the lead, the second story's coverage, half the desk, Void Opinion read whole, the close |
+| B, the second anchor | `am_puck` | the CEO asked for a male second anchor; the best of Kokoro's men on the evidence below |
 
-All three female (CEO, 2026-11-07, third ear test): Kokoro's male voices
-were trained on minutes where heart and bella had hours, and it shows; the
-men read as synthetic however they are cast (`am_michael`, then `am_fenrir`,
-were heard and retired). The audition pack of every voice, slated, is the
-record. A male desk returns when a model that can do one is in the chain.
+**The male audition (2026-11-08).** Every Kokoro `am_*` and `bm_*` voice
+read the same B passage (the Kyiv second story's first two passages: 131
+words, names, numbers, a long sentence) at 0.95 through the real voice
+chain, slated, one pack (`onair-male-voice-audition.mp3`, sent to the CEO).
+Grades are the Kokoro repo's own `VOICES.md` (target quality / training
+duration / overall). Measured: pace; median pitch; pitch range (10th to
+90th percentile, semitones; wider reads less flat); frame-to-frame pitch
+motion; clicks (sample jumps far above the line's norm); share of energy
+over 6 kHz after the chain (buzz).
 
-One house pace, 0.95, on all three (CEO 2026-09-19); no voice is stretched.
+| Voice | Grade | wpm | f0 Hz | range st | motion | clicks | >6 kHz | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| am_adam | F+ (D, hours) | 162 | 120 | 10.9 | 0.28 | 0 | 0.2 % | lowest grade on the roster |
+| am_echo | D (C, minutes) | 175 | 110 | 8.2 | 0.25 | 16 | 0.8 % | artefacts |
+| am_eric | D (C, minutes) | 186 | 154 | 8.1 | 0.33 | 0 | 0.1 % | thin training |
+| am_fenrir | C+ (B, hours) | 186 | 130 | 8.2 | 0.26 | 0 | 0.3 % | **heard and retired by the CEO** (rev 2) |
+| am_liam | D (C, minutes) | 183 | 126 | 9.0 | 0.28 | 0 | 0.5 % | thin training |
+| am_michael | C+ (B, hours) | 138 | 118 | 7.7 | 0.31 | 10 | 1.0 % | **heard and retired by the CEO** (rev 1: robotic); artefacts |
+| am_onyx | D (C, minutes) | 176 | 94 | 6.4 | 0.19 | 0 | 0.1 % | thin training |
+| **am_puck** | **C+ (B, hours)** | 192 | 107 | 6.6 | 0.19 | 0 | 0.3 % | **chosen**: the best grade not already retired, trained on hours, clean |
+| am_santa | D- (C, minutes) | 157 | 158 | 10.9 | 0.53 | 0 | 0.3 % | a character voice |
+| bm_daniel | D (C, minutes) | 179 | 121 | 5.3 | 0.28 | 0 | 0.2 % | flattest; thin training |
+| bm_fable | C (B, minutes) | 173 | 119 | 8.5 | 0.25 | 2,422 | 4.9 % | buzz and clicks after the chain |
+| bm_george | C (B, minutes) | 147 | 137 | 5.5 | 0.30 | 0 | 0.3 % | runner-up: clean, British, but flat and trained on minutes |
+| bm_lewis | D+ (C, hours) | 142 | 113 | 8.4 | 0.41 | 0 | 0.2 % | the Weekly's voice; lower grade |
+| *af_aoede (A, reference)* | C+ | 170 | 174 | 6.6 | 0.20 | 0 | 0.1 % | |
+
+`am_puck` and `af_aoede` sit about nine semitones apart (107 against 174
+Hz), so the handover is audible without a name, and share a pitch range
+(6.6 st each), so neither sounds more animated than the other. Puck reads
+about 13 % faster than aoede at the house pace; that is left as it is (one
+house pace, CEO 2026-09-19). Honest caveat: no Kokoro man is graded above
+C+, and the CEO heard the other two C+ men as synthetic. Puck was the
+anchor of the 2026-09-18 bulletin and was not retired, but it has not been
+heard over a full conversation episode before this one; `bm_george` is the
+fallback if it does not hold up (`VOID_KOKORO_VOICE_B=bm_george`).
+
+One house pace, 0.95, on both (CEO 2026-09-19); no voice is stretched.
 
 **The voice chain** (`voice_chain`, the film studio's A13/A38 applied per
 line, in numpy at 48 kHz): trim the silence (60 ms kept), a light spectral
@@ -177,7 +226,7 @@ untouched, the residue between words goes down), level the line to -20 LUFS
 integrated, the house warmth (+2.5 dB bell at 200 Hz, Q 1.2; -2.5 dB
 high shelf with its half-gain point at 6 kHz, zero-phase), re-level, and a
 soft knee over -4 dBFS that touches only a line whose crest would reach the
-ceiling. Then a constant-power pan: A 7 % left, B 7 % right, C centred. The
+ceiling. Then a constant-power pan, two positions: A 7 % left, B 7 % right. The
 old ffmpeg chain (80 Hz high-pass, +2.5 dB at 4 kHz, de-esser, 3:1) brightened
 the voice; this does the opposite, on the founder's note that the synthetic
 voices had too much treble and wanted bass.
@@ -291,8 +340,10 @@ release, never under its first bars. The bed is under the framing and the
 first two answers, gone for the third, back for the coverage; it breathes
 between exchanges. Both voices within the first sixty seconds; the questions
 sound like questions. No names, no thanks, no reactions. The page-turn reads
-as a page turned, not a jingle. The desk moves. The entrance announces the
-Opinion with no spoken throw; a third voice reads it. The outro resolves to
+as a page turned, not a jingle. The desk moves. The news bed stops and the
+show holds its breath; the entrance is heard as a new section before a word
+of it; "This is Void Opinion." and the same anchor reads the argument over a
+bed that is the show's but not the news's. The outro resolves to
 the low D and falls to silence under the promo. No treble on the music; the
 sub never muddies a word on a phone. Chapters show in the player and the
 podcast app.

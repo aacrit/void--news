@@ -22,8 +22,8 @@ Running order, what the listener hears:
     SECOND      B leads, A takes the coverage                          [bed: second, same shape]
     page-turn                                                          [chapter: rank 2]
     DESK        "The rest of the desk." ranks 3-8, alternating         [bed: desk, the pulse, throughout]
-    entrance    featured, minor shading, A introduces over its tail    [chapter: Opinion]
-    OPINION     C reads the Opinion as written, passage by passage    [bed: opinion under the first two and
+    entrance    featured, minor shading, A introduces over its tail    [chapter: Void Opinion]
+    OPINION     A: "This is Void Opinion." then A reads it as written  [bed: opinion under the first two and
                                                                        the last passage]
     CLOSE       A, the sign-off                                        [bed: close]
     outro       featured, resolving to the low D; the house promo rides it   [chapter: Also from Void]
@@ -67,22 +67,19 @@ except ImportError:  # pragma: no cover
 SR = S.SR
 SITE_URL = os.environ.get("PODCAST_SITE_URL", "https://news.voidvision.org").rstrip("/")
 
-# Casting (2026-11-07). The anchor is the most-heard voice and gets the
-# roster's A-grade voice; the desk is a darker American voice so the two
-# sides of the conversation are told apart at once; the Opinion keeps a voice
-# that reads nothing else, so the firewall is audible the moment it starts.
-# VOID_KOKORO_VOICE_A/B/C override. Every voice at the one house pace.
+# Casting, rev 5 (CEO 2026-11-07, after hearing rev 4): TWO voices. The
+# anchor, A, is af_aoede (rev 4's Opinion voice): the cold open, the sign-on,
+# the lead, the close, and Void Opinion, which A reads whole. B, the second
+# anchor, is male, the best of Kokoro's men on the audition of 2026-11-08
+# (docs/ON-AIR-CONVERSATION.md "Voices" has the table). With one voice on
+# both sides, the firewall between the news and the Opinion is the music and
+# the words, never the voice. VOID_KOKORO_VOICE_A/B override; there is no C.
 VOICES = {
-    # CEO 2026-11-07 (third ear test): the roster's three best voices, all
-    # female, because that is what Kokoro is good at. The anchor takes the A
-    # grade, the desk the A-, the Opinion the best British voice so the
-    # firewall is audible the moment it starts.
-    "A": os.environ.get("VOID_KOKORO_VOICE_A", "af_heart"),
-    "B": os.environ.get("VOID_KOKORO_VOICE_B", "bf_emma"),
-    "C": os.environ.get("VOID_KOKORO_VOICE_C", "af_aoede"),
+    "A": os.environ.get("VOID_KOKORO_VOICE_A", "af_aoede"),
+    "B": os.environ.get("VOID_KOKORO_VOICE_B", "am_puck"),
 }
 SPEED = float(os.environ.get("VOID_KOKORO_SPEED", "0.95") or 0.95)
-PAN = {"A": -0.14, "B": 0.14, "C": 0.0}     # heart and bella share a register; the pan tells them apart
+PAN = {"A": -0.14, "B": 0.14}     # two positions: the anchor a touch left, the second anchor a touch right
 
 # Silence grammar, seconds. A conversation breathes more slowly than a bulletin.
 GAPS = {
@@ -98,8 +95,11 @@ GAPS = {
     "pageturn_to_story": 0.35,  # the next voice starts this long before the page-turn ends
     "desk_lead_to_item": 0.6,
     "desk_items": 0.55,
-    "desk_to_entrance": 0.9,
-    "a_into_entrance": 1.6,    # A's opening of the Opinion starts this long before the entrance ends
+    # Rev 5: the desk STOPS, a silence is held, then "Void Opinion" enters.
+    "desk_to_stop": 0.5,       # the desk bed's closing hit lands this long after the desk's last word;
+                               # the bed ends S.STOP_RING_S (2.6 s) later, once the ring is gone
+    "stop_to_entrance": 1.6,   # the held silence (the -70 dBFS floor only) between the bed's end and the entrance
+    "a_into_entrance": round(S.ENTRANCE_S - S.ENTRANCE_VOICE_S, 2),   # 1.6: A speaks once the hook's last note has landed
     "opinion_paragraphs": 0.65,
     "opinion_to_close": 1.0,
     "desk_to_close": 1.0,
@@ -116,7 +116,8 @@ PHONE_VOICE_MARGIN_DB = 12.0
 # out, and comes back under the last passage (the coverage, or the Opinion's
 # last paragraph). A long segment gets one visit in its middle.
 BED_OUT_AFTER_PASSAGES = {"LEAD": 2, "SECOND": 1, "OPINION": 2}
-ANCHOR_OPINION_VOICE = "C"
+ANCHOR_OPINION_VOICE = "A"       # rev 5: the anchor reads Void Opinion
+OPINION_CHAPTER_TITLE = "Void Opinion"   # CEO 2026-11-07; the chapter's kind stays "opinion"
 
 
 # ---------------------------------------------------------------------------
@@ -182,7 +183,8 @@ class ShowResult:
             "news_start_seconds": self.news_start_seconds,
             "audio_chapters": self.chapters,
             "audio_voice": self.voices,
-            "audio_voice_label": "Three voices" if self.opinion_start_seconds is not None else "Two voices",
+            # rev 5: two voices with or without the Opinion (the anchor reads it)
+            "audio_voice_label": "Two voices",
         }
 
 
@@ -204,9 +206,9 @@ def opinion_paragraphs(script: str | None) -> list[str]:
 
 def build_cues(show: Show, opinion_script: str | None = None) -> list[Cue]:
     """The spoken lines in order, each a passage. The Opinion comes from the
-    show's own OPINION segment (A introduces, C reads); `opinion_script`, a
-    monologue, is read by C only when the show carries no OPINION segment
-    (a script from before 2026-11-07)."""
+    show's own OPINION segment (A introduces it and reads it, rev 5);
+    `opinion_script`, a monologue, is read by the anchor only when the show
+    carries no OPINION segment (a script from before 2026-11-07)."""
     cues: list[Cue] = []
     say = show.say or None
     for s in show.segments:
@@ -295,10 +297,12 @@ def build_timeline(cues: list[Cue], lengths: dict[int, float], v: S.Voicing) -> 
             music.append(MusicCue("transition", "pageturn", pt_at, pt_at + pageturn_len))
             t = pt_at + pageturn_len - GAPS["pageturn_to_story"]
         elif prev.kind == "DESK" and c.kind == "OPINION":
-            en_at = prev.end + GAPS["desk_to_entrance"]
+            # the desk bed stops on a hit, rings out, the floor is held, then the entrance
+            stop_end = prev.end + GAPS["desk_to_stop"] + S.STOP_RING_S
+            en_at = stop_end + GAPS["stop_to_entrance"]
             music.append(MusicCue("featured", "entrance", en_at, en_at + entrance_len))
             opinion_start = en_at
-            t = en_at + entrance_len - GAPS["a_into_entrance"]
+            t = en_at + S.ENTRANCE_VOICE_S
         else:
             t = prev.end + _gap(prev, c, bedded)
         c.start, c.end = t, t + length
@@ -339,11 +343,16 @@ def build_timeline(cues: list[Cue], lengths: dict[int, float], v: S.Voicing) -> 
     if desk:
         pts = [m for m in music if m.name == "pageturn" and m.start < desk[0].start]
         start = (pts[-1].start + 1.6) if pts else desk[0].start - 1.8
-        music.append(MusicCue("bed", "desk", start, desk[-1].end + GAPS["desk_to_entrance"] + 0.3))
+        if any(c.kind == "OPINION" for c in cues):
+            # ends on the stop: the hit at desk_to_stop after the last word, the ring after it
+            desk_end = desk[-1].end + GAPS["desk_to_stop"] + S.STOP_RING_S
+        else:
+            desk_end = desk[-1].end + 1.2
+        music.append(MusicCue("bed", "desk", start, desk_end))
     op = seg_cues("OPINION")
     if op:
         en = next((m for m in music if m.name == "entrance"), None)
-        start = (en.end - 1.2) if en else op[0].start - 2.0
+        start = (en.end - 1.0) if en else op[0].start - 2.0
         k = min(BED_OUT_AFTER_PASSAGES["OPINION"], max(1, len(op) - 1))
         first_out = op[k - 1].end + 1.0
         music.append(MusicCue("bed", "opinion", start, min(first_out + 2.5, op[-1].end)))
@@ -439,7 +448,7 @@ def voice_chain(x: np.ndarray) -> tuple[np.ndarray, dict]:
 def synthesize(cues: list[Cue], *, engines: list | None = None) -> tuple[dict[int, np.ndarray], object] | None:
     """Kokoro only: a show never falls to another engine. Returns the voiced
     lines (after the chain) and the engine result."""
-    engines = engines if engines is not None else [KokoroEngine(voices=VOICES, speed={"A": SPEED, "B": SPEED, "C": SPEED})]
+    engines = engines if engines is not None else [KokoroEngine(voices=VOICES, speed={"A": SPEED, "B": SPEED})]
     turns = [TurnSpec(idx=c.idx, role=c.role, text=c.text) for c in cues]
     required = {c.idx for c in cues if c.kind in ("TITLE", "CLOSE")}
     res = synthesize_with_fallback(turns, engines=engines, required=required, min_coverage=0.98)
@@ -464,6 +473,22 @@ def synthesize(cues: list[Cue], *, engines: list | None = None) -> tuple[dict[in
 # ---------------------------------------------------------------------------
 # Score placement
 # ---------------------------------------------------------------------------
+
+STOP_SILENCE_MAX_S = 3.0   # a bed whose end is followed by the entrance within this long is the one that stops
+
+
+def bed_ending(tl: Timeline, m: MusicCue) -> tuple[str, MusicCue | None]:
+    """How a bed ends, read from the timeline: ("stop", the entrance) when the
+    entrance follows it within STOP_SILENCE_MAX_S, the news stopping before
+    the Opinion (rev 5); ("rise", that cue) when a page-turn or the outro
+    starts within 2.5 s of its end; ("out", None) otherwise."""
+    entrance = next((c for c in tl.music if c.name == "entrance" and -0.5 <= c.start - m.end <= STOP_SILENCE_MAX_S), None)
+    if entrance is not None:
+        return "stop", entrance
+    leads_into = next((c for c in tl.music if c.role != "bed" and c.name not in ("theme", "entrance")
+                       and abs(c.start - m.end) <= 2.5), None)
+    return ("rise", leads_into) if leads_into is not None else ("out", None)
+
 
 def render_score(tl: Timeline, v: S.Voicing) -> tuple[np.ndarray, list[str]]:
     """Compose and level every music cue for this timeline, duck it under the
@@ -491,28 +516,25 @@ def render_score(tl: Timeline, v: S.Voicing) -> tuple[np.ndarray, list[str]]:
     # beds first, so a page-turn can be levelled to the bed it leads into
     for m in [m for m in tl.music if m.role == "bed"]:
         dur = m.end - m.start
-        hands_over = any(c.role != "bed" and c.name != "theme" and abs(c.start - m.end) <= 2.5 for c in tl.music)
-        ending = "rise" if hands_over else "out"
+        ending, leads_into = bed_ending(tl, m)
         x = S.render_bed(v, m.name, dur, ending=ending)
         x, g = S.level_bed(x, gaps_in(m))
         findings = S.check_cue(x, "bed", gaps=gaps_in(m))
         if any(f.id in ("score-repetition", "bed-breathing", "bed-low-end") for f in findings):
             # one more draw of the dice before it ships with the note
-            alt = S.Voicing(seed=v.seed + 101, tempo_bpm=v.tempo_bpm, cycle=v.cycle,
-                            rng=np.random.default_rng(v.seed + 101))
+            alt = S.Voicing(seed=v.seed + 101, tempo_bpm=v.tempo_bpm, music=S.M.voicing_for(v.seed + 101))
             x2 = S.render_bed(alt, m.name, dur, ending=ending)
             x2, g2 = S.level_bed(x2, gaps_in(m))
             f2 = S.check_cue(x2, "bed", gaps=gaps_in(m))
             if len(f2) < len(findings):
                 x, g, findings = x2, g2, f2
-        # A bed that leads into a page-turn, the entrance or the outro rises
-        # into it (CEO 2026-11-07, second ear test); the rise happens AFTER
-        # the level is set on the gaps, so the bed's resting level is the
-        # standard's and only its last seconds climb.
-        leads_into = next((c for c in tl.music if c.role != "bed" and c.name != "theme"
-                           and abs(c.start - m.end) <= 2.5), None)
+        # A bed that leads into a page-turn or the outro rises into it (CEO
+        # 2026-11-07, second ear test); the rise happens AFTER the level is
+        # set on the gaps, so the bed's resting level is the standard's and
+        # only its last seconds climb. A bed the entrance follows STOPS
+        # instead (rev 5): no rise, the hit, the ring, the held silence.
         rise = 0.0
-        if leads_into is not None:
+        if ending == "rise" and leads_into is not None:
             # never above the featured cue it hands over to
             st = S.lufs_shortterm(x)
             top = float(np.max(st)) if st.size else S.BED_LUFS
@@ -522,7 +544,9 @@ def render_score(tl: Timeline, v: S.Voicing) -> tuple[np.ndarray, list[str]]:
         m.findings = findings
         bed_peaks[m.name] = max(bed_peaks.get(m.name, -99.0), S.bed_peak_lufs(x))
         notes.append(f"bed {m.name} {m.start:.1f}-{m.end:.1f}s gain {g:+.1f}" +
-                     (f" rise +{rise:.0f} into {leads_into.name}" if leads_into is not None else "") +
+                     (f" rise +{rise:.0f} into {leads_into.name}" if ending == "rise" and leads_into is not None else "") +
+                     (f" stop, {leads_into.start - m.end:.1f} s of floor before the {leads_into.name}"
+                      if ending == "stop" and leads_into is not None else "") +
                      (" " + "; ".join(f.id for f in findings) if findings else ""))
     for m in [m for m in tl.music if m.role != "bed"]:
         nxt = None
@@ -667,7 +691,7 @@ def chapters_from_timeline(tl: Timeline, *, opinion_headline: str | None, permal
                 ch["startTime"] = round(pt.start, 3)
         else:  # OPINION
             ch = {"startTime": round(tl.opinion_start if tl.opinion_start is not None else c.start, 3),
-                  "title": "Opinion", "kind": "opinion"}
+                  "title": OPINION_CHAPTER_TITLE, "kind": "opinion"}
             if opinion_headline:
                 ch["subtitle"] = opinion_headline
         chapters.append(ch)
@@ -917,16 +941,17 @@ def produce_show(show: Show, opinion_script: str | None = None, edition: str = "
                 from briefing.audio_producer import _write_audio_static
             except ImportError:  # pragma: no cover
                 from pipeline.briefing.audio_producer import _write_audio_static  # type: ignore
-            audio_url = _write_audio_static(audio_bytes, edition, sidecars={".chapters.json": sidecar})
+            # named by the EDITION's date, not the clock at render time (an
+            # offline render after midnight UTC named Saturday's show 11-08-am)
+            audio_url = _write_audio_static(audio_bytes, edition, sidecars={".chapters.json": sidecar}, when=date)
             local_path = None
             if not audio_url:
                 return None
 
         eng = (engines or [None])[0]
-        voices = f"{res.engine}:{VOICES['A']}+{VOICES['B']}" + (f"+{VOICES['C']}" if tl.opinion_start is not None else "")
+        voices = f"{res.engine}:{VOICES['A']}+{VOICES['B']}"
         if eng is not None and hasattr(eng, "voice_id"):
-            voices = f"{res.engine}:{eng.voice_id('A')}+{eng.voice_id('B')}" + \
-                     (f"+{eng.voice_id('C')}" if tl.opinion_start is not None else "")
+            voices = f"{res.engine}:{eng.voice_id('A')}+{eng.voice_id('B')}"
         return ShowResult(
             audio_url=audio_url, duration_seconds=duration_s, file_size=len(audio_bytes),
             news_start_seconds=round(tl.news_start, 3),

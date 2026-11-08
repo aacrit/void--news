@@ -110,7 +110,7 @@ impossible, not a note asking people to be careful:
 | `tests/test_engine_health.py` + `pipeline/validation/engine_health.py` | the engine's input collapsing unseen, and copy that quotes the engine from memory. Every run writes `build-data/engine.json` (body length by feed class, the share scored on the outlet alone, how far words moved rated outlets). `--floors` runs in `pipeline.yml` AFTER the data commit and fails the run when the direct-feed full-body share drops under 55% (healthy 69-71%; 45-48% on 2026-09-19..23, when ~2,500 direct articles a day fell back to their RSS summary and nothing noticed). Asserts `app/lib/leanBounds.ts` equals `political_lean.py` and `main.py`, and that `/sources` prints measured numbers only from the export |
 | `tests/test_phrase_counts_daily.py` | the daily lexicon corpus outgrowing its file, or storing prose. Step 9e writes to `VOID_PHRASE_DB` (its own cache and artifact, never the state DB): full bodies only, 3 per rated outlet per day by URL hash, a phrase counted from its third sighting (Bloom gate), pruned unless it spreads, compact integer storage, and a ceiling that halts rather than prunes to fit |
 | `tests/test_pair_test.py` | the pair test's AUC gate (0.75 proceed, 0.65 stop) being wrong arithmetic, or its corpus holding article text |
-| `tests/test_onair_show.py` | On Air's script breaking its grammar (C-01..C-15: Void's lines, no quotation marks, no borrowed phrase, the budgets, the shape of a conversation, the desk, the voice shares, grounded attribution, no unattributed law), a template edition that is not grounded by construction, and the score falling off its standard (a featured cue over -26 LUFS, a bed that does not breathe, a tiled loop, treble over the shelf, a duck attack over 2 dB per 100 ms), each with a planted defect |
+| `tests/test_onair_show.py` | On Air's script breaking its grammar (C-01..C-15: two voices only, the Opinion introduced as Void Opinion and read by the anchor, Void's lines, no quotation marks, no borrowed phrase, the budgets, the shape of a conversation, the desk, the voice shares, grounded attribution, no unattributed law), a template edition that is not grounded by construction, and the score falling off its standard (a featured cue over -26 LUFS, a bed that does not breathe, a tiled loop, treble over the shelf, a duck attack over 2 dB per 100 ms), each with a planted defect |
 | `tests/test_onair_sidecar.py` | an On Air episode whose served sidecars are another day's: the legacy fallback of 2026-09-26 rewrote `latest.mp3` and left the previous day's `latest.chapters.json` beside it, and labelled two edge-tts voices with the Gemini roster. Also R-14 reading a spelled initialism ("N-A-T-O") as an added word, which is what sank that day's radio rundown |
 | `tests/test_weekly_audio_served.py` | an MP3 that is not what its own row says it is |
 | `tests/test_weekly_killlist.py` | a kill-list term in a committed Weekly issue, caught before deploy rather than by W-10 on the served page (Issues #26 and #23 carried 41 between them, 2026-09-24) |
@@ -361,7 +361,7 @@ adds nothing to the state that anything reads back.
 | Section | State |
 |---|---|
 | **News** (daily feed) | Live. Top 20 cards plus a "More stories" band of up to 10 headline links (ranks 21-30, 2026-10-28), two-stage pipeline, 45-cluster bench. |
-| **On Air** (daily) | Live. **A two-anchor newsroom since rev 4, 2026-11-07**: `af_heart` and `bf_emma` trade the stories in passages (A leads the lead, B the second, each story ends on the other's coverage, no interviewing), alternate on the desk; `af_aoede` reads the written Opinion whole after A introduces it, with its own entrance and bed; a score composed per episode to the film studio's standard; Kokoro only, never edge-tts; a grounded template edition when no model answers. `docs/ON-AIR-CONVERSATION.md`. |
+| **On Air** (daily) | Live. **Two voices since rev 5, 2026-11-08**: `af_aoede` anchors and `am_puck` (the best of Kokoro's men on a slated audition of all thirteen) is the second anchor; they trade the stories in passages (A leads the lead, B the second, each story ends on the other's coverage, no interviewing) and alternate on the desk; then the news bed stops, the Void Opinion entrance plays, and A reads the written Opinion whole over a bed of its own. With one voice on both sides, the firewall is the music and the words (C-14). A score composed per episode to the film studio's standard; Kokoro only, never edge-tts; a grounded template edition when no model answers; files named by the edition's date. `docs/ON-AIR-CONVERSATION.md`. |
 | **The Brief** (TL;DR + Opinion) | Live. One story per paragraph. |
 | **Weekly** | Live. **Vol. I, No. 1 published 2026-09-20**, the first issue on the Sunday cadence and the first ever to carry departments. Aug 24-30 is kept as the pilot. |
 | **Weekly audio** ("The Argument") | Live. Three Kokoro anchors, 11 chapters, mastered to -16 LUFS, verified against the served file. Rendered by **manual `audio-only` dispatch**; no scheduled run has produced one yet. There is no fallback: a failed render ships no audio rather than a quiet legacy substitute. |
@@ -405,7 +405,13 @@ History audio from the event page and from Audio. `/listen` 301s to `/audio`.
 only word that gets a lockup; a section gets a nameplate in its accent; a
 programme (On Air, The Argument, History audio) gets a title.** There is no
 VOID HISTORY or VOID WEEKLY lockup on the site, the cards or the podcast
-covers; the masthead reads VOID NEWS · History. Podcast channels are all
+covers; the masthead reads VOID NEWS · History. **One spoken exception (CEO
+2026-11-07, On Air rev 5): the On Air Opinion segment is introduced and
+titled "Void Opinion"** ("This is Void Opinion." in the script, `Void
+Opinion` as the audio chapter title). It is a programme segment's spoken
+title, not a lockup and not a section name: the section stays Opinion and
+the page copy is unchanged until the CEO says otherwise. Do not "fix" it
+back to "Opinion". Podcast channels are all
 "Void News: <programme>". Page titles are `Page | Void News` for a landing
 and `Page | Section | Void News` for a leaf (`sectionTitle()` in
 `lib/siteMeta.ts`). Themes stay: History keeps its archival paper and umber,

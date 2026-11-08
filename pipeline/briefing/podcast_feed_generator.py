@@ -84,9 +84,9 @@ SHOW_META = {
         "category": "News",
         "subcategory": "Daily News",
         "description": (
-            "The daily conversation from Void News: two voices talk the day's "
-            "lead through, then the second story, the rest of the desk, and the "
-            "Opinion in a voice of its own. Every story scored for bias on six "
+            "The daily programme from Void News: two anchors trade the day's "
+            "lead, the second story and the rest of the desk, then the anchor "
+            "reads the day's Opinion whole. Every story scored for bias on six "
             "axes. No ads. No paywall."
         ),
     },

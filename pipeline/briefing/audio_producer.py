@@ -800,7 +800,8 @@ _STATIC_AUDIO_ROOT = Path(__file__).resolve().parents[2] / "frontend" / "public"
 
 
 def _write_audio_static(audio_bytes: bytes, edition: str,
-                        sidecars: dict[str, bytes] | None = None) -> Optional[str]:
+                        sidecars: dict[str, bytes] | None = None,
+                        when=None) -> Optional[str]:
     """Cloudflare stack: write the MP3 into the deployed static site instead of
     Supabase Storage. Served from the Pages CDN at /audio/... (zero egress); the
     pipeline commits frontend/public/audio alongside the other static data.
@@ -808,7 +809,13 @@ def _write_audio_static(audio_bytes: bytes, edition: str,
     Keeps a date-stamped file (podcast-friendly) + latest.mp3, and rotates so the
     working tree holds only the last few days. Returns a site-relative URL for
     daily_briefs.audio_url. (Follow-up: move this + archive.json to R2 to keep
-    binaries out of git history.)"""
+    binaries out of git history.)
+
+    `when` is the EDITION's moment (On Air passes the date it was produced
+    for): the file is named by it, not by the clock at render time. Without
+    it, an offline render after midnight UTC named Saturday 2026-11-07's
+    episode 2026-11-08-am. The rotation keeps the two newest dated files by
+    name, so a re-render of an edition replaces its own file."""
     import os
     from pathlib import Path
     from datetime import datetime, timezone
@@ -819,7 +826,10 @@ def _write_audio_static(audio_bytes: bytes, edition: str,
     except ImportError:  # imported as pipeline.briefing.audio_producer
         from pipeline.briefing import audio_store as _store  # type: ignore
     try:
-        now = datetime.now(timezone.utc)
+        now = when if when is not None else datetime.now(timezone.utc)
+        if now.tzinfo is None:
+            now = now.replace(tzinfo=timezone.utc)
+        now = now.astimezone(timezone.utc)
         slot = "am" if now.hour < 12 else "pm"
         out_dir = _STATIC_AUDIO_ROOT / edition
         out_dir.mkdir(parents=True, exist_ok=True)
