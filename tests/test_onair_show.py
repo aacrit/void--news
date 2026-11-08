@@ -88,7 +88,7 @@ def clean_fixture() -> str:
     lead = show.seg("LEAD")
     check(lead is not None and lead.cluster_id == stories()[0]["id"], "LEAD is bound to rank 1 by position, not copied")
     desk = show.seg("DESK")
-    check(desk is not None and desk.desk_ranks == [3, 4, 5, 6, 7, 8], f"desk items bind to ranks 3-8 ({desk.desk_ranks if desk else None})")
+    check(desk is not None and desk.desk_ranks == [3, 4, 5, 6, 7, 8, 9, 10], f"desk items bind to ranks 3-10 ({desk.desk_ranks if desk else None})")
     words_before = show.words
     cuts = ground_show(show, ctx())
     check(not cuts, f"the grounding pass cuts nothing from the fixture ({[c.sentence[:60] for c in cuts]})")
@@ -149,7 +149,9 @@ def planted_defects(raw: str) -> None:
     check("C-07" in planted(raw, "B: Today: Stephen Miller takes", "A: Today: Stephen Miller takes"),
           "C-07 fires when B does not read the lineup")
     check("C-08" in planted(raw, "Police shot and arrested him.",
-                            "Police shot and arrested him after a chase through the square that witnesses described at length."),
+                            "Police shot and arrested him after a chase through the square that witnesses described at length, "
+                            "past the cloth hall and the church, while the market traders ran for cover and the city's ambulances "
+                            "and a medical helicopter arrived over the old town."),
           "C-08 fires on a desk item over the word cap")
     check("C-08" in planted(raw, f"A: {DESK_LEAD}", "A: Also on the desk."), "C-08 fires when the desk opens on another line")
     check("C-11" in planted(raw, "Schumer states he has sufficient votes within his caucus to retain his leadership position.",

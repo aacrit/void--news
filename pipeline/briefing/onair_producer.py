@@ -78,31 +78,38 @@ VOICES = {
     "A": os.environ.get("VOID_KOKORO_VOICE_A", "af_aoede"),
     "B": os.environ.get("VOID_KOKORO_VOICE_B", "am_puck"),
 }
-SPEED = float(os.environ.get("VOID_KOKORO_SPEED", "0.95") or 0.95)
+# One house pace for both voices. 0.95 from 2026-09-19 to rev 5; 0.88 since
+# CEO 2026-11-08 ("a little longer, more space for calm paced content"):
+# about 7 % slower, still one pace, no voice stretched on its own.
+SPEED = float(os.environ.get("VOID_KOKORO_SPEED", "0.88") or 0.88)
 PAN = {"A": -0.14, "B": 0.14}     # two positions: the anchor a touch left, the second anchor a touch right
 
-# Silence grammar, seconds. A conversation breathes more slowly than a bulletin.
+# Silence grammar, seconds. A conversation breathes more slowly than a bulletin,
+# and since rev 5b (CEO 2026-11-08) more slowly again: every pause between
+# passages, items and segments is about 40 % longer, so a fact lands before
+# the next one arrives, and the beds get room to be heard between voices.
 GAPS = {
     "cold_in": 0.6,            # room tone before the first word
-    "cold_to_theme": 1.1,
+    "cold_to_theme": 1.4,
     "signon_into_theme": 2.4,  # (rev 3: the sign-on lands on the theme's downbeat, S.THEME_DOWNBEAT_S)
-    "title_lines": 0.7,
-    "title_to_lead": 1.3,
-    "handover": 0.72,          # one anchor's passage ends, the other's begins
-    "handover_bedded": 1.25,   # while a bed plays, the music gets a breath at the handover
-    "same_voice": 0.42,        # the same anchor's next passage
-    "story_to_pageturn": 0.7,
+    "title_lines": 0.9,
+    "title_to_lead": 1.8,
+    "handover": 1.0,           # one anchor's passage ends, the other's begins
+    "handover_bedded": 1.7,    # while a bed plays, the music gets a breath at the handover
+    "same_voice": 0.65,        # the same anchor's next passage
+    "story_to_pageturn": 1.0,
     "pageturn_to_story": 0.35,  # the next voice starts this long before the page-turn ends
-    "desk_lead_to_item": 0.6,
-    "desk_items": 0.55,
+    "desk_lead_to_item": 0.85,
+    "desk_items": 0.9,
     # Rev 5: the desk STOPS, a silence is held, then "Void Opinion" enters.
     "desk_to_stop": 0.5,       # the desk bed's closing hit lands this long after the desk's last word;
                                # the bed ends S.STOP_RING_S (2.6 s) later, once the ring is gone
     "stop_to_entrance": 1.6,   # the held silence (the -70 dBFS floor only) between the bed's end and the entrance
     "a_into_entrance": round(S.ENTRANCE_S - S.ENTRANCE_VOICE_S, 2),   # 1.6: A speaks once the hook's last note has landed
-    "opinion_paragraphs": 0.65,
-    "opinion_to_close": 1.0,
-    "desk_to_close": 1.0,
+    "opinion_intro_to_body": 1.3,   # "This is Void Opinion. ... <headline>." then a breath before the argument
+    "opinion_paragraphs": 1.0,
+    "opinion_to_close": 1.5,
+    "desk_to_close": 1.4,
     "outro_into_signoff": 0.4, # the outro starts this long before the sign-off ends
     "tail": 0.6,
 }
@@ -243,7 +250,9 @@ def _gap(prev: Cue | None, cur: Cue, bedded: set[tuple[str, int]] = frozenset())
         return GAPS["title_lines"]
     if cur.kind in ("LEAD", "SECOND", "OPINION"):
         if prev.role == cur.role:
-            return GAPS["opinion_paragraphs"] if cur.kind == "OPINION" else GAPS["same_voice"]
+            if cur.kind == "OPINION":
+                return GAPS["opinion_intro_to_body"] if prev.exchange == 0 else GAPS["opinion_paragraphs"]
+            return GAPS["same_voice"]
         return GAPS["handover_bedded"] if (cur.kind, cur.exchange) in bedded else GAPS["handover"]
     if cur.kind == "DESK":
         return GAPS["desk_lead_to_item"] if prev.text.startswith(DESK_LEAD.split(".")[0]) else GAPS["desk_items"]

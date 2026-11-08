@@ -16,7 +16,7 @@ voices, a studio floor. Rev 1 replaced the 2026-09-18 bulletin;
 restores it. The file keeps its name; the format is `conversation` in the
 switch)
 
-On Air is the daily programme of Void News: eight to eleven minutes. Two
+On Air is the daily programme of Void News: ten to twelve minutes, at a calm pace (rev 5b). Two
 anchors trade the day's stories in passages, the way a public-radio
 newsroom does: A leads the lead story and B takes its reaction and its
 coverage; B leads the second story and A takes its coverage; they alternate
@@ -55,17 +55,17 @@ theme       14.0 s, featured: four bars into a downbeat, and the sign-on lands O
             (S.THEME_DOWNBEAT_S); the pad holds under the voice while the lead bed crossfades in
 TITLE       A: "From Void News, this is On Air. It's <day>."  B: today, in one or two sentences
                                                                   [bed: lead, from under the framing]
-LEAD        A leads; four to eight passages of 28-125 words, 380-620 words; B takes one to three,
+LEAD        A leads; four to nine passages of 28-125 words, 420-760 words; B takes one to three,
             including the last (the coverage); no voice reads more than three in a row
                                                                   [bed under the first two passages,
                                                                    one visit in the middle of a long
                                                                    lead, back for the coverage]
 page-turn   3.6 s: a riser, one downbeat, the hook's first three notes; never louder than the bed
             it leads into, which has risen over its last 10 s to meet it
-SECOND      B leads; three to six passages, 230-420 words; A takes one or two, including the coverage
+SECOND      B leads; three to seven passages, 260-520 words; A takes one or two, including the coverage
                                                                   [bed: second, the same shape]
 page-turn
-DESK        A: "The rest of the desk."  ranks 3-8, one or two sentences each, alternating
+DESK        A: "The rest of the desk."  ranks 3-10, two or three sentences each, alternating
                                                                   [bed: desk, the pulse, throughout,
                                                                    and it STOPS: a hit 0.5 s after the
                                                                    desk's last word, the ring, 2.6 s]
@@ -138,7 +138,7 @@ confirm it. A roster under five outlets gives no line.
 | C-05 | No borrowed or AI-podcast phrase, no significance word (the radio list, `BANNED_PHRASES`), no host named or thanked, no identifier spoken | fail |
 | C-06 | Word budgets per segment and in all (`WORD_BUDGETS`, `TOTAL_BUDGET`), +-25 % | fail |
 | C-07 | The shape: the leader opens (A in LEAD, B in SECOND), four to eight passages in LEAD and three to six in SECOND, each 28-125 words; the other anchor takes one to three (LEAD) or one or two (SECOND), usually the last; no voice reads more than three passages in a row; at most one question mark in a segment (the anchors never interview each other); the cold open is one A line and a fact; the TITLE's lineup is B's | fail |
-| C-08 | The desk opens on "The rest of the desk.", five to seven items, each at most 34 words, a fact not a question, never more items than stories | fail |
+| C-08 | The desk opens on "The rest of the desk.", six to eight items (ranks 3-10), each at most 60 words, a fact not a question, never more items than stories | fail |
 | C-09 | Over the news segments, each of A and B carries 35-65 % of the words (the Opinion is A's alone and is not counted, or it would push A over) | fail |
 | C-10 | Sentences under twenty-four words | warn |
 | C-11 | Grounded attribution (the radio's R-14): an attributed clause keeps 0.6 of the story's words for that speaker | fail |
@@ -221,7 +221,17 @@ anchor of the 2026-09-18 bulletin and was not retired, but it has not been
 heard over a full conversation episode before this one; `bm_george` is the
 fallback if it does not hold up (`VOID_KOKORO_VOICE_B=bm_george`).
 
-One house pace, 0.95, on both (CEO 2026-09-19); no voice is stretched.
+One house pace, on both; no voice is stretched on its own. **0.88 since
+CEO 2026-11-08** ("a little longer, more space for calm paced content"), from
+0.95 (CEO 2026-09-19). The audition above was read at 0.95.
+
+**Calm pace (rev 5b, 2026-11-08).** Three things made the show longer, and
+none of them is padding: the voices at 0.88; every pause about 40 % longer
+(handover 1.0 s, 1.7 s under a bed; the same voice 0.65 s; desk items 0.9 s;
+1.3 s between "This is Void Opinion ... <headline>" and the argument; 1.0 s
+between its paragraphs); and more of what the stories carry, chiefly a desk
+of eight stories in two or three sentences each instead of six in one or
+two. The first calm edition ran 10:35 against rev 5's 8:54.
 
 **The voice chain** (`voice_chain`, the film studio's A13/A38 applied per
 line, in numpy at 48 kHz): trim the silence (60 ms kept), a light spectral
@@ -399,7 +409,7 @@ framing, leave after the third answer (the facts get dense; "silent when it
 deserves"), visit once in the middle of a long conversation, and return for
 the coverage, rising into the page-turn; the desk bed runs throughout and
 stops; the Opinion's bed enters under A's introduction, never before it;
-while a bed plays, the gap between a handover is 1.25 s instead of 0.72, so
+while a bed plays, the gap between a handover is 1.7 s instead of 1.0, so
 the music gets a breath. A studio floor at -70 dBFS sits under everything
 so a silence is never digital zero (it is all that plays in the 1.6 s before
 the entrance); the -57 dBFS room tone of rev 1 read as noise and is gone.

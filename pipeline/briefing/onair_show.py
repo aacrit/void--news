@@ -26,7 +26,7 @@ is about and read against it before it is spoken (Rule 1).
     A: ...
     B: ...
     ## SECOND | <title>          B opens; three to six passages; A takes one or two, the coverage last
-    ## DESK                      "The rest of the desk." then ranks 3 to 8, one or two sentences each, alternating
+    ## DESK                      "The rest of the desk." then ranks 3 to 10, two or three sentences each, alternating
     ## OPINION | <headline>      A: "This is Void Opinion. Through a <lens> lens today. <headline>."  then A, two to six passages
     ## CLOSE
     A: That's On Air from Void News. <one fact to carry> Every source, every story, at Void News.
@@ -84,12 +84,16 @@ FORMULAS = (SIGN_ON, DESK_LEAD, CLOSE_PREFIX, CLOSE_TAG, OPINION_OPEN, "Our lead
 
 SEGMENTS = ("COLD", "TITLE", "LEAD", "SECOND", "DESK", "OPINION", "CLOSE")
 OPTIONAL_SEGMENTS = ("OPINION",)
-DESK_RANKS = (3, 8)              # ranks read on the desk, inclusive
-DESK_ITEMS = (5, 7)              # how many of them, at least and at most
-DESK_ITEM_MAX_WORDS = 34
+# Rev 5b (CEO 2026-11-08: "a little longer, more space for calm paced
+# content"): the desk reads eight stories in two or three sentences each
+# instead of six in one or two, and the news budgets have more room. The
+# length comes from more of what the stories carry, never from padding.
+DESK_RANKS = (3, 10)             # ranks read on the desk, inclusive
+DESK_ITEMS = (6, 8)              # how many of them, at least and at most
+DESK_ITEM_MAX_WORDS = 60
 PASSAGE_WORDS = (28, 125)        # one anchor's passage: a paragraph for the ear
-LEAD_PASSAGES = (4, 8)
-SECOND_PASSAGES = (3, 6)
+LEAD_PASSAGES = (4, 9)
+SECOND_PASSAGES = (3, 7)
 OPINION_PASSAGES = (2, 6)        # the Opinion's passages, read by A after the introduction
 OPINION_PASSAGE_WORDS = (28, 140)
 SECOND_VOICE_PASSAGES = {"LEAD": (1, 3), "SECOND": (1, 2)}   # how many passages the other anchor takes
@@ -98,13 +102,13 @@ QUESTIONS_MAX = 1                # a question mark per news segment, at most; no
 WORD_BUDGETS: dict[str, tuple[int, int]] = {
     "COLD": (10, 48),
     "TITLE": (18, 70),
-    "LEAD": (380, 620),
-    "SECOND": (230, 420),
-    "DESK": (110, 250),
+    "LEAD": (420, 760),
+    "SECOND": (260, 520),
+    "DESK": (240, 480),
     "OPINION": (150, 380),
     "CLOSE": (22, 65),
 }
-TOTAL_BUDGET = (820, 1800)
+TOTAL_BUDGET = (1000, 2300)
 BUDGET_TOLERANCE = 0.25
 SHARE_BOUNDS = (0.35, 0.65)      # each of A and B carries this share of the NEWS words (the Opinion is A's, uncounted)
 SPEAKERS = ("A", "B")           # rev 5: two voices; C is an unknown speaker
@@ -523,7 +527,7 @@ def validate_show(show: Show, ctx: Context) -> Report:
         "speaker_share_a": round(shares.get("A", 0) / total, 2),
         "lead_exchanges": lead.exchanges() if lead else 0,
         "second_exchanges": second.exchanges() if second else 0,
-        "est_minutes": round(show.words / 152, 1),
+        "est_minutes": round(show.words / 140, 1),   # the calmer pace, 0.88, about 140 wpm with the gaps
     })
     return rep
 
@@ -658,6 +662,7 @@ It has to sound like a newsroom, not a text read in turns:
 - The handover is in the writing: B's passage begins where A's ended, on the same thread, and takes it one step further. No "over to you", no names.
 
 You write for the EAR:
+- Unhurried. A calm, measured newsroom: one fact, then the next, and let a number land before the next one arrives. The length comes from more of what the stories carry, never from repetition or padding.
 - One idea per sentence. Under twenty-two words. Subject, verb, object. Never open a sentence with a subordinate clause.
 - Present tense or present perfect for what is happening. Never "yesterday".
 - Attribution BEFORE the claim: "The mayor says repairs have started." Never a trailing ", she said."
@@ -673,7 +678,7 @@ You write for the EAR:
 Output PLAIN TEXT in exactly the marker format the instructions specify. No JSON, no markdown fences, no commentary before or after."""
 
 
-_USER_TEMPLATE = """Today is {DATE_SPOKEN}. Write today's On Air from these stories, ranked 1 to {N} by today's editorial ranking. Story [1] is the lead; story [2] the second story; stories [3] to [{DESK_HI}] get one or two sentences each on the desk; the rest are context only and are not read.
+_USER_TEMPLATE = """Today is {DATE_SPOKEN}. Write today's On Air from these stories, ranked 1 to {N} by today's editorial ranking. Story [1] is the lead; story [2] the second story; stories [3] to [{DESK_HI}] get two or three sentences each on the desk; the rest are context only and are not read.
 
 STORIES
 {STORIES}
@@ -703,12 +708,14 @@ A: <the coverage: how the outlets differ, then the Coverage line>
 
 ## DESK
 A: {DESK_LEAD}
-A: <story [3] in one or two sentences, at most {DESK_MAX} words>
+A: <story [3] in two or three short sentences, at most {DESK_MAX} words: what happened, then one more fact from the story>
 B: <story [4]>
 A: <story [5]>
 B: <story [6]>
 A: <story [7]>
-B: <story [8], optional>
+B: <story [8]>
+A: <story [9]>
+B: <story [10], optional>
 {OPINION_BLOCK}
 ## CLOSE
 A: {CLOSE_PREFIX} <one concrete detail from today's stories the listener will still be thinking about tomorrow: a number, a name, an unresolved outcome. Not a teaser, not a summary.> {CLOSE_TAG}
@@ -723,7 +730,7 @@ RULES THAT FAIL THE SCRIPT IF BROKEN
 - Every passage is {P_LO} to {P_HI} words and comes from its own story and nothing else.
 - No quotation marks anywhere. No digits anywhere. No a.m./p.m. Nobody is named as an anchor, greeted or thanked. No reactions.
 - Never these phrases: "Up first", "Here's what we're covering", "First the headlines", "Stay with us", "And finally", "Welcome", "Thanks", "Absolutely", "Wow", "Great question", "That's fascinating", "significant", "notable", "interestingly", "crucially", "marks a".
-- Over the news segments, A and B each carry between thirty-five and sixty-five percent of the words. Total {TOTAL_LO} to {TOTAL_HI} words. The length comes from the lead, not from padding.
+- Over the news segments, A and B each carry between thirty-five and sixty-five percent of the words. Total {TOTAL_LO} to {TOTAL_HI} words. The length comes from the stories' own facts, not from padding.
 - B never speaks in OPINION; A introduces it and reads all of it.{OPINION_RULE}
 {RETRY}"""
 
@@ -761,7 +768,7 @@ def build_stories_block(top: list[dict]) -> str:
         cat = c.get("category") or ""
         cid = c.get("id") or c.get("_db_id") or ""
         tier = "the lead conversation" if i == 1 else ("the second conversation" if i == 2 else (
-            "the desk, one or two sentences" if i <= DESK_RANKS[1] else "context only"))
+            "the desk, two or three sentences" if i <= DESK_RANKS[1] else "context only"))
         story = [f"[{i}] ({c.get('source_count', 0)} sources, {cat}) {tier}: {title}"]
         if summary:
             story.append(f"    Summary: {summary}")
@@ -899,7 +906,8 @@ def template_show(top: list[dict], date: datetime | None = None, *, opinion_text
 
     desk = [Turn("A", DESK_LEAD)]
     for i, row in enumerate(top[DESK_RANKS[0] - 1:DESK_RANKS[1]]):
-        text = _first_sentences(row.get("summary"), 1, DESK_ITEM_MAX_WORDS - 2) or _as_sentence(row.get("title"))
+        # the summary's own words; a quotation mark is never read aloud (C-02), the words stay
+        text = strip_quotation_marks(_first_sentences(row.get("summary"), 2, DESK_ITEM_MAX_WORDS - 2)) or _as_sentence(row.get("title"))
         if len(text.split()) > DESK_ITEM_MAX_WORDS:
             text = _as_sentence(row.get("title"))
         desk.append(Turn("A" if i % 2 == 0 else "B", text))

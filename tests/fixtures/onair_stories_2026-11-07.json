@@ -234,5 +234,135 @@
     "far_right": 1
    }
   }
+ },
+ {
+  "id": "ea0bab14-f4ab-4be3-bb64-f793aae8d2cf",
+  "title": "United States Conducts Airstrikes on Iranian Air Defenses on Qeshm Island",
+  "summary": "President Donald Trump announced Friday that the United States military carried out limited airstrikes targeting Iranian air defense systems on Qeshm Island in the Strait of Hormuz. Speaking upon arrival in West Palm Beach, Florida, Trump described the action as minor, stating that forces knocked out an anti-aircraft device in roughly five to fifteen minutes. Iranian state media confirmed two projectile impacts in the Suza area of Qeshm Island. Concurrently, U.S. Central Command and the State Department's Rewards for Justice program announced a reward of up to $20 million, along with possible relocation, for information regarding Iran's nuclear program, including facilities, equipment, and scientific personnel. The military action marks the first American strikes in Iran since the U.S. midterm elections, following prior strikes on Monday against Qeshm Island, Hengam Island, and Bandar Abbas. The Iranian army claimed its air defenses intercepted a U.S. MQ-9 drone, while the Islamic Revolutionary Guard Corps reported shooting down an MQ-1 aircraft. On Saturday, IRGC spokesperson Brigadier General Hossein Mohebbi stated that Iran lifted its self-imposed 2,000-kilometer missile range restriction and is prepared to revise its nuclear doctrine if ordered by Supreme Leader Mojtaba Khamenei. Commercial transit through the Strait of Hormuz remains heavily disrupted. The United Kingdom Maritime Trade Operations reported 11 vessels attacked during the week ending November 6, resulting in three sunken ships and commercial vessel traffic operating 65 percent below pre-conflict levels.",
+  "category": "conflict",
+  "source_count": 32,
+  "disaster_severity": 0,
+  "consensus_points": [
+   "The United States military conducted strikes targeting Iranian air defenses on Qeshm Island.",
+   "U.S. Central Command offered a reward of up to $20 million for information on Iran's nuclear program.",
+   "The strikes occurred amid ongoing maritime attacks on commercial shipping in the Strait of Hormuz."
+  ],
+  "divergence_points": [
+   "Al Jazeera and Iranian state media highlight Iranian military claims of shooting down U.S. drones over southern Iran.",
+   "The Jerusalem Post devotes coverage to former CENTCOM deputy commander Robert Harward's assessment that the failure to neutralize Iran's missile arsenal remains a critical issue.",
+   "Gulf News focuses on regional military posture, specifically the IRGC's announcement removing the 2,000-kilometer missile range limit."
+  ],
+  "bias_diversity": {
+   "avg_political_lean": 47,
+   "avg_sensationalism": 12,
+   "avg_opinion_fact": 14,
+   "avg_factual_rigor": 61,
+   "avg_framing": 17,
+   "lean_spread": 14.1,
+   "framing_spread": 5.1,
+   "lean_range": 45,
+   "sensationalism_spread": 4.1,
+   "opinion_spread": 8.3,
+   "aggregate_confidence": 0.5916216194205168,
+   "analyzed_count": 42,
+   "coverage_score": 82.1,
+   "tier_breakdown": {
+    "us_major": 2,
+    "international": 23,
+    "independent": 7
+   },
+   "avg_opinion_label": "Reporting",
+   "lean_buckets": {
+    "far_left": 0,
+    "left": 0,
+    "center_left": 10,
+    "center": 4,
+    "center_right": 5,
+    "right": 2,
+    "far_right": 0
+   },
+   "lean_left_count": 10,
+   "lean_center_count": 4,
+   "lean_right_count": 7,
+   "polarization": 67,
+   "lean_measured_count": 32,
+   "lean_total_count": 42,
+   "lean_vote": "outlet",
+   "lean_outlet_count": 21,
+   "lean_article_count": 32,
+   "lean_state_count": 3,
+   "lean_state_outlets": [
+    "Asharq Al-Awsat",
+    "Gulf News",
+    "Oman Observer"
+   ]
+  }
+ },
+ {
+  "id": "a7f51a1b-054b-4413-b86f-c8dee47db1c9",
+  "title": "Coordinated Wave of Hoax Bomb Threats Targets European Airlines and Broadcasters",
+  "summary": "Coordinated bomb hoaxes targeted news organizations and commercial passenger flights across Europe on Friday, triggering military jet scrambles, route diversions, and building evacuations. Irish national broadcaster RTE evacuated its Dublin headquarters after receiving an email titled \"A Message to the West,\" sent under the pseudonym Mikhail Andropov. Identical threats targeted British broadcaster Sky News and Bulgarian television network Nova TV, demanding European governments halt assistance to Ukraine. Aviation authorities faced widespread disruptions throughout the week, with at least 35 aircraft targeted across Ireland, France, Denmark, Italy, Bulgaria, and the Czech Republic. In Prague, Czech police investigated threats against nine passenger aircraft, leading to the diversion of a Venice-bound flight while Hungarian and NATO fighter jets escorted planes through regional airspace. The French military scrambled fighter jets on Tuesday to intercept an Aer Lingus flight traveling from Dublin to Rome, redirecting the 157 passengers to a military base in Normandy. Bulgarian authorities scrambled jets on Thursday to intercept three Ryanair flights, diverting one to Plovdiv, while Italian Eurofighters escorted a Finnair flight from Helsinki to Rome. Investigators confirmed that all searched planes and newsrooms yielded no explosives or injuries. European air traffic agencies reported that overall network operations continued with minimal disruption despite the hoaxes. Spanish Foreign Minister José Manuel Albares described the operations as hybrid aggression and psychological warfare. European security officials are scheduled to convene in Brussels next week to formulate responses to coordinated hoax campaigns.",
+  "category": "conflict",
+  "source_count": 71,
+  "disaster_severity": 0,
+  "consensus_points": [
+   "Dozens of commercial flights and several television broadcasters across Europe received false bomb threats.",
+   "No explosive devices were discovered, and no injuries were reported.",
+   "Multiple European air forces scrambled fighter jets to intercept and escort affected passenger aircraft."
+  ],
+  "divergence_points": [
+   "Kyiv Post emphasizes the political demands inside the emails that threatened explosions unless Western military assistance to Ukraine ceases.",
+   "The Associated Press notes an email received by Rome airport authorities referenced an anti-feminist group targeting a feminist regime.",
+   "CNBC highlights aviation industry commentary from Covent Consulting on how targeted in-flight threats force mandatory emergency responses under international protocols."
+  ],
+  "bias_diversity": {
+   "avg_political_lean": 50,
+   "avg_sensationalism": 12,
+   "avg_opinion_fact": 18,
+   "avg_factual_rigor": 53,
+   "avg_framing": 12,
+   "lean_spread": 14.4,
+   "framing_spread": 8.9,
+   "lean_range": 55,
+   "sensationalism_spread": 3.8,
+   "opinion_spread": 7.9,
+   "aggregate_confidence": 0.5223825713653463,
+   "analyzed_count": 86,
+   "coverage_score": 78.7,
+   "tier_breakdown": {
+    "us_major": 11,
+    "international": 49,
+    "independent": 11
+   },
+   "avg_opinion_label": "Reporting",
+   "lean_buckets": {
+    "far_left": 0,
+    "left": 0,
+    "center_left": 16,
+    "center": 15,
+    "center_right": 7,
+    "right": 2,
+    "far_right": 3
+   },
+   "lean_left_count": 16,
+   "lean_center_count": 15,
+   "lean_right_count": 12,
+   "polarization": 56,
+   "lean_measured_count": 64,
+   "lean_total_count": 86,
+   "lean_vote": "outlet",
+   "lean_outlet_count": 43,
+   "lean_article_count": 64,
+   "lean_state_count": 7,
+   "lean_state_outlets": [
+    "Anadolu Agency",
+    "Asharq Al-Awsat",
+    "Bernama",
+    "Ghana News Agency",
+    "Gulf News",
+    "TASS (English)",
+    "Xinhua (English)"
+   ]
+  }
  }
 ]
