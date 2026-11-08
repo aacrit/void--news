@@ -18,6 +18,33 @@ lives in this file.
 
 ---
 
+## On Air rev 5b: longer, at a calm pace (2026-11-08)
+
+The CEO, after hearing rev 5: "Can we make it a little longer giving more
+space for calm paced content", and chose slower voices, more room and more
+content together. Nothing was padded; every added sentence is a story's own.
+
+- The house pace goes from 0.95 to 0.88, one pace for both voices (the
+  2026-09-19 rule still holds: no voice is stretched on its own).
+- Every pause about 40 % longer (`GAPS`), and a new 1.3 s breath between
+  the Void Opinion introduction and the argument (`opinion_intro_to_body`).
+- The desk reads ranks 3 to 10, two or three sentences each (`DESK_RANKS`
+  (3, 10), `DESK_ITEMS` (6, 8), 60 words an item); the lead and the second
+  story get more room (`WORD_BUDGETS` LEAD 420-760, SECOND 260-520, DESK
+  240-480, total 1,000-2,300); the prompt asks for an unhurried newsroom.
+  The template edition's desk lifts two sentences and strips quotation marks
+  it would otherwise copy from a summary (rank 10's carried one).
+- Today's script gained two desk stories (the Qeshm strikes, the European
+  bomb hoaxes) and a second fact on each of the others, plus Kyiv's power and
+  water. The frozen stories fixture grows to the top ten from the same feed
+  export. One line was corrected on the way: Krakow's injured were "more than
+  a dozen" in the summary and "ten to twelve" in the consensus points, so the
+  desk now says reports range from ten to more than a dozen (Rule 1: publish
+  the disagreement). Grounding cut nothing.
+- The episode, through the engine (`refresh_brief.py --static-site`):
+  10:35 (from 8:54), 1,409 words, Void Opinion at 8:12, phone margin
+  15.5 dB, -15.96 LUFS; `rigor.json` recomputed, floors pass.
+
 ## On Air rev 5: two voices, Void Opinion, a heavier score, the first episode through the engine (2026-11-08)
 
 The CEO on rev 4: "Overall it looks good, but we need to change a few things."
