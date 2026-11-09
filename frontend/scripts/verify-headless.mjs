@@ -470,6 +470,15 @@ async function auditPage(browser, route, width, scheme, axeSource) {
 const weeklyHasAudio = (() => {
   try { return !!JSON.parse(readFileSync(join(OUT, "data/weekly.json"), "utf8")).audio_url; } catch { return true; }
 })();
+/* The issues /audio lists: every back issue that has a recording, each under
+   its own headline (2026-11-09: Issue 33 shipped without audio and the hub
+   rightly kept Issue 32's; the check had tied the hub to the newest issue). */
+const weeklyIssuesWithAudio = (() => {
+  try {
+    const rows = JSON.parse(readFileSync(join(OUT, "..", "build-data/weekly-issues.json"), "utf8"));
+    return (Array.isArray(rows) ? rows : []).filter((r) => r && r.audio_url).length;
+  } catch { return weeklyHasAudio ? 1 : 0; }
+})();
 
 /* Feeds that carry at least one episode. /audio offers only these (P1-16):
    an address a podcast app would subscribe to and find empty is not offered,
@@ -1525,8 +1534,9 @@ async function brandChecks(browser) {
      shared player. */
   await withPage(browser, { width: 1440, route: "/audio/" }, "audio-hub", async (page) => {
     const kinds = await page.evaluate(() => [...document.querySelectorAll(".audio-play")].map((b) => b.getAttribute("data-kind")));
-    assert(kinds.includes("daily") && kinds.includes("history") && kinds.includes("weekly") === weeklyHasAudio,
-      "audio-hub-programmes", `play buttons: ${kinds.join(", ")} (weekly audio ${weeklyHasAudio ? "published" : "withheld"})`);
+    const weeklyButtons = kinds.filter((k) => k === "weekly").length;
+    assert(kinds.includes("daily") && kinds.includes("history") && weeklyButtons === weeklyIssuesWithAudio,
+      "audio-hub-programmes", `play buttons: daily ${kinds.includes("daily")}, history ${kinds.filter((k) => k === "history").length}, weekly ${weeklyButtons} for ${weeklyIssuesWithAudio} issue(s) with a recording (this week's ${weeklyHasAudio ? "published" : "withheld"})`);
     assert(await page.locator(".nav-nameplate[aria-current='page']").count() === 1, "audio-hub-nameplate", "the Audio nameplate is current");
     const addresses = (await page.locator(".audio-feed__url").allTextContents()).filter((t) => /podcast-(world|weekly|history)\.xml$/.test(t));
     assert(addresses.length === FEEDS_WITH_ITEMS.length && FEEDS_WITH_ITEMS.every((f) => addresses.some((a) => a.endsWith(f))),

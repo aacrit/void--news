@@ -18,6 +18,18 @@ lives in this file.
 
 ---
 
+## The Argument, Issue 33: shipped without audio; the /audio check tied to the newest issue (2026-11-09)
+
+The Sunday run (weekly-digest 42527822917) published Issue 33, its script
+written by Gemini as the CEO decided, but the rundown was refused on W-07:
+2,671 words, about twenty minutes against the 14-18 band. No fallback, by
+design, so the issue shipped without audio. The headless sweep then failed
+every branch: `audio-hub-programmes` required a Weekly play button on /audio
+only when the NEWEST issue had audio, while the hub rightly lists every back
+issue that has a recording, each under its own headline (Issue 32's). The
+check now counts the issues with a recording in `build-data/weekly-issues.json`
+and expects exactly that many Weekly buttons.
+
 ## On Air rev 6: the listener's memory, and disagreements instead of a coverage formula (2026-11-09, CEO)
 
 The CEO heard the 11-09 episode (the template edition: Flash answered 503 and
