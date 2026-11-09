@@ -1,6 +1,9 @@
 # On Air: the newsroom
 
-Last updated: 2026-11-08 (rev 5, after the CEO heard rev 4: two voices in
+Last updated: 2026-11-09 (rev 6, after the CEO heard the 11-09 episode: the
+listener hears the show once, start to finish, so nothing is said twice; and
+the stories no longer end on a coverage formula. See "The listener's memory"
+and "Disagreements, not coverage" below.) Rev 5, 2026-11-08, after the CEO heard rev 4: two voices in
 all; the Opinion's voice, `af_aoede`, becomes the anchor and reads Void
 Opinion as well as the news; the second anchor is male, `am_puck`, chosen on
 a slated audition of all thirteen Kokoro men; the Opinion is introduced and
@@ -18,8 +21,8 @@ switch)
 
 On Air is the daily programme of Void News: ten to twelve minutes, at a calm pace (rev 5b). Two
 anchors trade the day's stories in passages, the way a public-radio
-newsroom does: A leads the lead story and B takes its reaction and its
-coverage; B leads the second story and A takes its coverage; they alternate
+newsroom does: A leads the lead story and B takes its reaction and what
+follows; B leads the second story and A takes what follows; they alternate
 on the desk. Nobody asks anybody anything. Then the news stops, the Void
 Opinion entrance plays, and A introduces Void Opinion and reads it as
 written, passage by passage. A close. Two voices in all. Generated once a
@@ -55,8 +58,8 @@ theme       14.0 s, featured: four bars into a downbeat, and the sign-on lands O
             (S.THEME_DOWNBEAT_S); the pad holds under the voice while the lead bed crossfades in
 TITLE       A: "From Void News, this is On Air. It's <day>."  B: today, in one or two sentences
                                                                   [bed: lead, from under the framing]
-LEAD        A leads; four to nine passages of 18-125 words, 380-760 words; B takes one to three,
-            including the last (the coverage); no voice reads more than three in a row
+LEAD        A leads; four to nine passages of 12-125 words, 260-760 words; B takes one to three,
+            including the last; no voice reads more than three in a row
                                                                   [bed under the first two passages,
                                                                    one visit in the middle of a long
                                                                    lead, back for the coverage]
@@ -66,7 +69,7 @@ interlude   8.6 s, three bars, heard in the clear (rev 5c; the 3.6 s page-turn b
             chord pair, then a release bar on the tonic. Levelled to -27 LUFS short-term max
             (S.INTERLUDE_LUFS), 1 dB under the title, 4 dB over a bed; the bed before it has risen over
             its last 10 s to meet it. B starts 6.4 s in, over the release (S.INTERLUDE_VOICE_S)
-SECOND      B leads; three to seven passages, 260-520 words; A takes one or two, including the coverage
+SECOND      B leads; three to seven passages, 180-520 words; A takes one or two, including the last
                                                                   [bed: second, the same shape, fading in
                                                                    under the interlude's release]
 interlude   another melody, another chord pair, the other voice (interlude_plan: two in one episode
@@ -127,16 +130,36 @@ followed by the other voice, and at least half of the asker's lines are
 questions. Contractions where a person would use them. An asker's line is at
 most 34 words; an answer is 14 to 120 words, two to five sentences, from its
 own story only, never a question, and may end by handing back in a few
-words. The voices are never named, never greet or thank anyone, never react. Each story ends on the coverage: A asks how the outlets
-are covering it or where they sit; B answers from the Divergence points and
-the Coverage line, naming outlets as the points name them.
+words. The voices are never named, never greet or thank anyone, never react.
 
-**The Coverage line** is Void's own angle and the one number the show adds:
-"Of the sixty outlets Void placed on this story, twenty-four sit left of
-centre, twenty at the centre and sixteen right of it." One vote per outlet
-(the card's `lean_buckets`), computed by `coverage_line`, handed to the model
-as data and appended to the story's evidence so the grounding pass can
-confirm it. A roster under five outlets gives no line.
+**The listener's memory** (rev 6, CEO 2026-11-09: "the listener is going to
+listen to this in one go"). The episode is heard once, start to finish, and
+the listener keeps what they heard. So nothing is said twice: the TITLE names
+the stories and the story starts past its headline; a coverage passage never
+re-reads the cold open's fact; the desk does not repeat the lead; and the
+spoken Opinion does not open on a recap of news the listener has just heard.
+The prompt says so, and `remove_repeats` enforces it on every script, the
+model's and the template's: walking the episode in order, it cuts a sentence
+when one sentence already heard carries at least `REPEAT_CONTAINMENT` (0.7)
+of its content words. A sentence that restates and ADDS stays; only one that
+adds nothing goes, and nothing is written in its place, so the cut is safe
+under Rule 1. A remnant under the passage floor joins its neighbour. The
+Opinion on the page is untouched; only its spoken reading skips the recap,
+which is why C-14's floor is one passage and the Opinion's budget is 90-380.
+C-17 fails any script that still says something twice.
+
+**Disagreements, not coverage** (rev 6). A story no longer ends on "The
+outlets agree on this much", "The coverage splits here" and the roster line
+("Of the sixty outlets Void placed on this story..."): read every day, they
+were a template. Agreement is never narrated. A disagreement is said only
+when the accounts differ on a fact that matters (a count, who did it, what was
+decided, whether it happened), plainly and inside the story, naming who says
+what; a difference of emphasis or focus is left out, and most stories need no
+such line. The prompt hands the model the divergence points with that
+instruction and no roster line; the template reads a divergence point only
+when `material_divergence` finds a fact in it (a number, a denial, a disputed
+claim). C-16 fails a coverage formula anywhere. `coverage_line` still exists
+and is still evidence for the grounding pass; nothing reads it aloud.
 
 | Id | Rule | Level |
 |---|---|---|
@@ -147,16 +170,18 @@ confirm it. A roster under five outlets gives no line.
 | C-04 | No a.m./p.m. clock forms, no print datelines | fail |
 | C-05 | No borrowed or AI-podcast phrase, no significance word (the radio list, `BANNED_PHRASES`), no host named or thanked, no identifier spoken | fail |
 | C-06 | Word budgets per segment and in all (`WORD_BUDGETS`, `TOTAL_BUDGET`), +-25 % | fail |
-| C-07 | The shape: the leader opens (A in LEAD, B in SECOND), four to eight passages in LEAD and three to six in SECOND, each 18-125 words; the other anchor takes one to three (LEAD) or one or two (SECOND), usually the last; no voice reads more than three passages in a row; at most one question mark in a segment (the anchors never interview each other); the cold open is one A line and a fact; the TITLE's lineup is B's | fail |
+| C-07 | The shape: the leader opens (A in LEAD, B in SECOND), four to nine passages in LEAD and three to seven in SECOND, each 12-125 words; the other anchor takes one to three (LEAD) or one or two (SECOND), usually the last; no voice reads more than three passages in a row; at most one question mark in a segment (the anchors never interview each other); the cold open is one A line and a fact; the TITLE's lineup is B's | fail |
 | C-08 | The desk opens on "The rest of the desk.", six to eight items (ranks 3-10), each at most 60 words, a fact not a question, never more items than stories | fail |
 | C-09 | Over the news segments, each of A and B carries 35-65 % of the words (the Opinion is A's alone and is not counted, or it would push A over) | fail |
 | C-10 | Sentences under twenty-four words | warn |
 | C-11 | Grounded attribution (the radio's R-14): an attributed clause keeps 0.6 of the story's words for that speaker | fail |
 | C-12 | No unattributed statement of law (R-15) | fail |
 | C-13 | SAY respellings are lowercase syllables | warn |
-| C-14 | The Opinion opens with A on `This is Void Opinion.` and names its lens; every passage after it is A's; two to six passages of 28-140 words | fail |
+| C-14 | The Opinion opens with A on `This is Void Opinion.` and names its lens; every passage after it is A's; one to six passages of 28-140 words | fail |
 | C-00 | Two voices: a line from any speaker but A or B (`C:` included) fails anywhere; B never speaks in OPINION; an OPINION segment only on a day with a written opinion, and always on such a day | fail |
 | C-15 | A chapter title is at most seven words, no digits | warn |
+| C-16 | No coverage formula: "the outlets agree", "the coverage splits here", "and the roster", a count of outlets by lean (`COVERAGE_FORMULA_RE`). A disagreement in the story's own words passes | fail |
+| C-17 | Nothing said twice: no sentence the listener has already heard in this episode (`repeats_in`, the same measure `remove_repeats` cuts by) | fail |
 
 Then the grounding pass (`ground_show`, `editorial/derived_grounding`): every
 line is read against its own story (LEAD and COLD against rank 1, SECOND
@@ -174,10 +199,12 @@ the desk's first item rank 3); the model never copies an id.
 One Gemini flash request (flash-lite when flash refuses: overload, quota,
 and since 2026-11-07 a 504 deadline), one repair request with the failures
 named, then the deterministic repairs for C-02 and C-05. When nothing
-passes, **the template edition** (`template_show`): the stories' own first
-sentences, consensus and divergence points and the coverage line, in the
-show's shape, with fixed questions ("What do the outlets agree on?", "Where
-does the coverage split?", "How does the coverage lean?"). It is plain, it is
+passes, **the template edition** (`template_show`): the stories' own summary
+sentences in two-sentence passages, starting past the headline the TITLE has
+read, the other anchor taking every third passage and the last; a divergence
+point only when it is over a fact (rev 6); the close carries a summary
+sentence the stories did not reach, or Void's sign-off alone. Then the
+listener's memory runs on it like any script. It is plain, it is
 grounded by construction, it is TODAY'S, and it is labelled (`generator`
 carries `onair:template:kokoro`). The show never falls to another engine or
 to another day's script: if Kokoro does not synthesise, the previous episode

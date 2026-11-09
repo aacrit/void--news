@@ -18,6 +18,53 @@ lives in this file.
 
 ---
 
+## The Argument, Issue 33: shipped without audio; the /audio check tied to the newest issue (2026-11-09)
+
+The Sunday run (weekly-digest 42527822917) published Issue 33, its script
+written by Gemini as the CEO decided, but the rundown was refused on W-07:
+2,671 words, about twenty minutes against the 14-18 band. No fallback, by
+design, so the issue shipped without audio. The headless sweep then failed
+every branch: `audio-hub-programmes` required a Weekly play button on /audio
+only when the NEWEST issue had audio, while the hub rightly lists every back
+issue that has a recording, each under its own headline (Issue 32's). The
+check now counts the issues with a recording in `build-data/weekly-issues.json`
+and expects exactly that many Weekly buttons.
+
+## On Air rev 6: the listener's memory, and disagreements instead of a coverage formula (2026-11-09, CEO)
+
+The CEO heard the 11-09 episode (the template edition: Flash answered 503 and
+flash-lite's two scripts failed) and asked for two things.
+
+1. **"The listener is going to listen to this in one go."** The Stephen
+   Miller story was in the headlines, read again as the second story's first
+   line, and recapped again as the Opinion's first paragraph, word for word.
+   Measured on that script: 10 of its sentences had already been heard (both
+   headlines re-read, the cold open's fact twice more, the Opinion's
+   five-sentence recap). `remove_repeats` now runs on every script, the
+   model's and the template's, before validation: in episode order, a
+   sentence goes when one sentence already heard carries 70% of its content
+   words. A restatement that adds facts stays; nothing is written in a cut's
+   place. The spoken Opinion skips a recap of news just heard (the page is
+   untouched), so C-14's floor is one passage and its budget 90-380. The
+   prompt tells the model the same. C-17 fails a script that still says
+   something twice.
+2. **The coverage formula is gone.** "The outlets agree on this much", "The
+   coverage splits here" and the roster line closed every story and read as
+   a template. Agreement is never narrated; a disagreement is said only when
+   the accounts differ on a fact that matters, in the story's own words
+   ("Sources differ on the total number of injured... from 64 up to at least
+   125" stays; "some outlets focus on the personnel shifts, others on the
+   reaction" goes). The template reads a divergence point only when
+   `material_divergence` finds a number, a denial or a disputed claim in it.
+   C-16 fails a coverage formula. The roster line is no longer read aloud.
+
+Budgets that assumed a coverage passage come down: LEAD 260-760 (was 380),
+SECOND 180-520 (was 230), CLOSE 12-65 (the template's sign-off may stand
+alone when no unsaid fact is left). The template now starts each story past
+its headline and trades it in two-sentence passages. The 11-07 fixture was
+brought to rev 6 (its roster line, its two coverage-of-emphasis passages and
+five repeated sentences out, the Opinion read without the three it repeated).
+
 ## On Air: a one-sample crash, the passage floor at 12, and the decisions of the evening (2026-11-08)
 
 - A redo of today's episode (Refresh: Daily Brief, radio, run 42509818072)
