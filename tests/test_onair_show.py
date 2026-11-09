@@ -26,7 +26,8 @@ os.environ.setdefault("VOID_SQLITE_PATH", str(ROOT / "tests" / ".onair-show-test
 import numpy as np  # noqa: E402
 
 from briefing.onair_show import (  # noqa: E402
-    Context, parse_show, validate_show, bind_ranks, ground_show, template_show, build_prompt,
+    COVERAGE_FORMULA_RE, content_words, is_repeat, remove_repeats, repeats_in, material_divergence, _sentences,
+    Show, Segment, Turn, Context, parse_show, validate_show, bind_ranks, ground_show, template_show, build_prompt,
     generate_show, coverage_line, SIGN_ON, CLOSE_PREFIX, CLOSE_TAG, DESK_LEAD, OPINION_OPEN, WORD_BUDGETS, TOTAL_BUDGET,
 )
 from briefing.spoken_text import spoken_date  # noqa: E402
@@ -97,16 +98,27 @@ def clean_fixture() -> str:
     check(TOTAL_BUDGET[0] <= show.words <= TOTAL_BUDGET[1], f"{show.words} words inside the total budget")
     check(lead is not None and lead.exchanges() >= 5, "the lead has at least five passages")
     check(lead is not None and not any(t.is_question for t in lead.turns), "nobody interviews anybody in the lead")
-    check(lead is not None and lead.turns[0].speaker == "A" and lead.turns[-1].speaker == "B", "A leads the lead, B reads its coverage")
+    check(lead is not None and lead.turns[0].speaker == "A" and lead.turns[-1].speaker == "B", "A leads the lead, B takes the last passage")
     second = show.seg("SECOND")
-    check(second is not None and second.turns[0].speaker == "B" and second.turns[-1].speaker == "A", "B leads the second, A reads its coverage")
+    check(second is not None and second.turns[0].speaker == "B" and second.turns[-1].speaker == "A", "B leads the second, A takes the last passage")
     op = show.seg("OPINION")
-    check(op is not None and [t.speaker for t in op.turns] == ["A", "A", "A", "A", "A"], "A introduces Void Opinion and reads it whole (rev 5: two voices)")
+    check(op is not None and {t.speaker for t in op.turns} == {"A"} and len(op.turns) >= 3, "A introduces Void Opinion and reads it (rev 5: two voices)")
     check(op is not None and op.turns[0].text.startswith("This is Void Opinion. Through a progressive lens today."),
           "the Opinion is introduced by name: Void Opinion, then its lens")
     check({t.speaker for s in show.segments for t in s.turns} == {"A", "B"}, "two voices in the whole script, A and B")
-    check(op is not None and " ".join(t.text for t in op.turns[1:]) == " ".join(OPINION.read_text(encoding="utf-8").split()).replace("3,000", "three thousand").replace("170 billion", "one hundred seventy billion").replace("58 percent", "fifty-eight percent"),
-          "the Opinion's passages are its own sentences, in order, complete")
+    # rev 6: the spoken Opinion is its own sentences, in order; the only ones
+    # missing are the ones the listener heard in the news segments
+    written = [x.strip() for x in _sentences(" ".join(OPINION.read_text(encoding="utf-8").split())
+               .replace("3,000", "three thousand").replace("170 billion", "one hundred seventy billion")
+               .replace("58 percent", "fifty-eight percent")) if x.strip()]
+    spoken = [x.strip() for t in (op.turns[1:] if op else []) for x in _sentences(t.text) if x.strip()]
+    it = iter(written)
+    in_order = all(any(w == x for w in it) for x in spoken)
+    heard = [content_words(x) for s_ in show.segments if s_.kind in ("COLD", "TITLE", "LEAD", "SECOND", "DESK")
+             for t in s_.turns for x in _sentences(t.text)]
+    missing = [w for w in written if w not in spoken]
+    check(in_order and spoken and all(is_repeat(w, heard) for w in missing),
+          f"the Opinion's passages are its own sentences, in order; only what was already heard is left out ({missing})")
     check(show.say.get("Eisenkot") == "eye-zen-kot", "SAY respellings parse and lowercase")
     check(show.to_text().startswith("## COLD"), "to_text round-trips the markers")
     return raw
@@ -123,7 +135,7 @@ def planted_defects(raw: str) -> None:
     check("C-04" in planted(raw, "On Friday evening he was at Mar-a-Lago", "At 7 p.m. he was at Mar-a-Lago"), "C-04 fires on a clock form")
     check("C-05" in planted(raw, "A: On Friday, President Donald Trump announced", "A: Welcome back. On Friday, President Donald Trump announced"),
           "C-05 fires on a borrowed phrase")
-    check("C-05" in planted(raw, "The reaction has split sharply, and along party lines.", "The reaction has split sharply, and the split is significant."),
+    check("C-05" in planted(raw, "publicly backed the move.", "publicly backed the move, a significant shift."),
           "C-05 fires on a significance word in Void's voice")
     check("C-05" in planted(raw, "B: That record runs across both terms.", "B: Thanks. That record runs across both terms."),
           "C-05 fires on thanking a host")
@@ -164,15 +176,15 @@ def planted_defects(raw: str) -> None:
           "C-14 fires when the Opinion's introduction drops its lens")
     check("C-14" in planted(raw, "A: This is Void Opinion. Through a progressive lens today.", "A: Now, the Opinion. Through a progressive lens today."),
           "C-14 fires when the Opinion's introduction does not name Void Opinion")
-    check("C-14" in planted(raw, "A: Ask who bears the cost", "B: Ask who bears the cost"),
+    check("C-14" in planted(raw, "A: We think the question is not", "B: We think the question is not"),
           "C-14 fires when B reads a passage of the Opinion")
-    check("C-00" in planted(raw, "A: Ask who bears the cost", "B: Ask who bears the cost"),
+    check("C-00" in planted(raw, "A: We think the question is not", "B: We think the question is not"),
           "C-00 fires when B speaks in the Opinion")
-    check("C-14" in planted(raw, "A: Ask who bears the cost of that structure and who was asked. A Fox News exit survey found fifty-eight percent of voters believed federal immigration enforcement had gone too far. The voters answered on Tuesday. The appointment came on Friday.",
-                            "A: The voters answered on Tuesday."),
+    check("C-14" in planted(raw, "A: A chief of staff decides who reaches the president. On Monday, the person most identified with the policy a majority of voters rejected will hold that door. The Congress that meets him in January is one his party no longer controls. That is the check the structure left standing.",
+                            "A: A chief of staff decides who reaches the president."),
           "C-14 fires on an Opinion passage under the floor")
     check("C-00" in planted(raw, "\nB: That record runs", "\nC: That record runs"), "a C line in the news fails (two voices)")
-    check("C-00" in planted(raw, "A: Ask who bears the cost", "C: Ask who bears the cost"), "a C line in the Opinion fails (two voices)")
+    check("C-00" in planted(raw, "A: We think the question is not", "C: We think the question is not"), "a C line in the Opinion fails (two voices)")
     check("C-00" in planted(raw, "A: The rest of the desk.\nA: In Krakow", "A: The rest of the desk.\nC: In Krakow"), "a C line on the desk fails (two voices)")
     # C-09 counts the news only: the Opinion is all A's and must not push A over the share
     bulk = parse_show(raw)
@@ -203,6 +215,65 @@ def planted_defects(raw: str) -> None:
     check(any("Ohio" in c.sentence for c in cuts), "a sentence the Opinion does not carry is cut from the anchor's reading")
 
 
+# ---------------------------------------------------------------- rev 6: memory and the coverage formula
+def memory_and_coverage(raw: str) -> None:
+    check("C-16" in planted(raw, "A: Kyiv and Moscow describe different targets.",
+                            "A: The coverage splits here. Kyiv and Moscow describe different targets."),
+          "C-16 fires on 'The coverage splits here'")
+    check("C-16" in planted(raw, "B: That record runs across both terms.",
+                            "B: The outlets agree on this much. That record runs across both terms."),
+          "C-16 fires on 'The outlets agree on this much'")
+    check("C-16" in planted(raw, "A: Kyiv and Moscow describe different targets.",
+                            "A: Of the twenty-one outlets Void placed on this story, six sit left of centre. Kyiv and Moscow describe different targets."),
+          "C-16 fires on the roster line")
+    check("C-16" not in planted(raw, "A: Kyiv and Moscow describe different targets.",
+                                "A: Kyiv and Moscow describe different targets, and the accounts of the injured differ."),
+          "C-16 does not fire on a disagreement said in the story's own words")
+    # C-17: the headline read again as the story's first line; the cold open's fact again
+    check("C-17" in planted(raw, "A: On Friday, President Donald Trump announced",
+                            "A: Stephen Miller takes the chief of staff's office on Monday. On Friday, President Donald Trump announced"),
+          "C-17 fires when the story re-reads the TITLE's line")
+    check("C-17" in planted(raw, "B: That record runs across both terms.",
+                            "B: Three days after the Republican Party lost both chambers of Congress, the White House has a new chief of staff. That record runs across both terms."),
+          "C-17 fires on the cold open's sentence said again")
+    check("C-17" not in planted(raw, "B: That record runs across both terms.", "B: That record runs across both terms."),
+          "the clean fixture says nothing twice")
+
+    # the pass itself
+    show = parse_show(raw.replace("B: That record runs across both terms.",
+                                  "B: Three days after the Republican Party lost both chambers of Congress, the White House has a new chief of staff. That record runs across both terms."))
+    cuts = remove_repeats(show)
+    check(len(cuts) == 1 and cuts[0].startswith("Three days after"), f"remove_repeats cuts the repeated sentence and nothing else ({cuts})")
+    check(not repeats_in(show), "after the pass nothing is said twice")
+    check(any(t.text.startswith("That record runs") for t in show.seg("LEAD").turns), "the passage keeps its new sentences")
+    # a paraphrase that adds facts stays
+    heard = [content_words("Seven people died in the train collision that occurred Sunday in Giza province south of Cairo.")]
+    check(not is_repeat("Seven people died and at least one hundred twenty-five others were injured when two passenger trains "
+                        "collided in the al Ayyat district of Giza province.", heard),
+          "a sentence that adds to an earlier one is not a repeat")
+    check(is_repeat("Seven people died in the train collision on Sunday in Giza province, south of Cairo.", heard),
+          "a sentence that adds nothing is a repeat")
+    # an Opinion that opens on a recap of the second story: the recap goes, the argument stays
+    second_line = "President Donald Trump elevated Stephen Miller to White House chief of staff, replacing Susie Wiles."
+    op = Show(segments=[
+        Segment("SECOND", turns=[Turn("B", second_line + " Richard Walters resigned as deputy the same day.")]),
+        Segment("OPINION", turns=[Turn("A", "This is Void Opinion. Through a pragmatic lens today. Continuity matters."),
+                                  Turn("A", second_line + " Richard Walters resigned as deputy the same day."),
+                                  Turn("A", "Institutional memory resets when a chief of staff and a decade-long deputy leave "
+                                            "together, and the machinery of government slows while it is rebuilt.")]),
+        Segment("CLOSE", turns=[Turn("A", f"{CLOSE_PREFIX} {second_line} {CLOSE_TAG}")])])
+    remove_repeats(op)
+    o = op.seg("OPINION")
+    check(o is not None and len(o.turns) == 2 and o.turns[1].text.startswith("Institutional memory"),
+          f"the Opinion's recap of the news is left out of the spoken Opinion, its argument kept ({[t.text[:30] for t in (o.turns if o else [])]})")
+    check(op.seg("CLOSE").turns[0].text == f"{CLOSE_PREFIX} {CLOSE_TAG}", "the close keeps Void's lines when its middle was already said")
+    # the template reads a disagreement only when it is over a fact
+    row = {"divergence_points": ["Sources differ on the total number of injured, citing figures from 64 up to at least 125.",
+                                 "Some outlets focus on the personnel shifts, while others emphasise the political reaction."]}
+    div = material_divergence(row, 2)
+    check(div.startswith("Sources differ on the total number") and "personnel shifts" not in div,
+          f"material_divergence keeps the disputed count and drops the difference of emphasis ({div!r})")
+
 # ---------------------------------------------------------------- template and prompt
 def template_and_prompt() -> None:
     show = template_show(stories(), DATE)
@@ -215,9 +286,14 @@ def template_and_prompt() -> None:
     cuts = ground_show(show, ctx_no_op())
     check(not cuts, f"the template edition is grounded by construction ({[c.sentence[:50] for c in cuts]})")
     lead = show.seg("LEAD")
-    check(lead is not None and any("Of the" in t.text for t in lead.turns), "the template reads the coverage line")
+    check(lead is not None and not any("Of the" in t.text or COVERAGE_FORMULA_RE.search(t.text) for t in lead.turns),
+          "rev 6: the template reads no coverage line and no coverage formula")
     check(lead is not None and lead.turns[0].speaker == "A" and lead.turns[-1].speaker == "B" and not any(t.is_question for t in lead.turns),
-          "the template lead is A's passages and B's coverage, no questions")
+          "the template lead is A's passages, B takes the last, no questions")
+    title = show.seg("TITLE")
+    check(lead is not None and title is not None and not lead.turns[0].text.startswith(stories()[0]["title"].rstrip(".")),
+          "rev 6: the template's story starts past its headline, which the TITLE has just read")
+    check(not repeats_in(show), f"rev 6: the template edition says nothing twice ({repeats_in(show)[:2]})")
     cov = coverage_line(stories()[0])
     check(cov == "Of the sixty outlets Void placed on this story, twenty-four sit left of centre, twenty at the centre and sixteen right of it.",
           f"coverage line is one vote per outlet, in words ({cov!r})")
@@ -229,7 +305,9 @@ def template_and_prompt() -> None:
     check(f"{WORD_BUDGETS['LEAD'][0]}-{WORD_BUDGETS['LEAD'][1]} words" in user, "the prompt's budgets are the validator's")
     check("No questions between the anchors" in user and "asks" not in system.split("Nobody interviews anybody")[0], "the prompt asks for a newsroom, not an interview")
     check("<source id=" in user, "every story is wrapped as data")
-    check("Coverage:" in user, "the prompt hands the model the coverage line")
+    check("Coverage:" not in user and "Divergence:" not in user, "rev 6: the prompt no longer hands the model a coverage line to read")
+    check("Never narrate where the outlets agree" in system and "hears the episode once" in system,
+          "rev 6: the prompt tells the model the listener remembers, and to skip the coverage formula")
 
     # the Opinion read whole: template, prompt, validators
     op_text = ("The argument has two parts. The first part says the Senate changed hands in January. "
@@ -488,7 +566,7 @@ def timeline() -> None:
     show = parse_show(raw)
     bind_ranks(show, ctx())
     cues = build_cues(show, None)
-    check([c.role for c in cues if c.kind == "OPINION"] == ["A"] * 5 and {c.role for c in cues} == {"A", "B"},
+    check([c.role for c in cues if c.kind == "OPINION"] == ["A"] * 4 and {c.role for c in cues} == {"A", "B"},
           "the Opinion's cues are all A's; the show has two voices")
     lead_cues = [c for c in cues if c.kind == "LEAD"]
     check([c.exchange for c in lead_cues] == list(range(len(lead_cues))), "a cue's exchange is its passage index")
@@ -621,6 +699,8 @@ def main() -> int:
     raw = clean_fixture()
     print("--- planted defects ---")
     planted_defects(raw)
+    print("--- rev 6: the listener's memory, no coverage formula ---")
+    memory_and_coverage(raw)
     print("--- the template edition and the prompt ---")
     template_and_prompt()
     print("--- the score ---")
