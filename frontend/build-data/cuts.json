@@ -1,52 +1,15 @@
 {
-  "builtAt": "2026-11-08T11:57:33.441356Z",
+  "builtAt": "2026-11-09T11:52:24.935173Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "eeb14bbe-f7fb-4b83-b509-5ac6e843cb53",
-      "title": "Russia Sends Senior Delegation to Abu Dhabi for Trilateral Peace Talks",
+      "id": "057d2a56-3e20-4eb7-af97-50bcb0334ff5",
+      "title": "Donald Trump Rules Out Fresh War With Iran as Oil Prices Fall on De-escalation Hopes",
       "sentences": [
         {
-          "text": "Russian officials announced plans to send a high-level delegation to Abu Dhabi for upcoming trilateral negotiations with Ukraine and the United States scheduled for November 10-11.",
+          "text": "Oil prices dropped following Trump's comments, with Brent crude falling 1.5 percent to $96.91 a barrel and West Texas Intermediate declining 1 percent to $89.85 a barrel, extending a weekly slide driven by easing conflict fears and a growing global supply surplus.",
           "rule": "E-13",
-          "message": "summary puts 11 beside \"united states\", but no source sentence carrying 11 names it and one names another \"united ...\": \"Russian officials announced plans to send a high-level delegation to Abu Dhabi for upcomin\""
-        }
-      ],
-      "points": [],
-      "left": []
-    },
-    {
-      "id": "2b79249f-a523-4892-adaa-945c01e0f770",
-      "title": "New Zealand Major Parties Flatline as Dispirited Voters Upend General Election",
-      "sentences": [
-        {
-          "text": "The election outcome left the National-led conservative coalition holding a slim majority of 67 seats in a projected 131-seat parliament, sitting just above the 66-seat threshold required to govern.",
-          "rule": "E-13",
-          "message": "summary states 66, which appears in none of the source articles: source it or cut it"
-        }
-      ],
-      "points": [
-        {
-          "text": "Preliminary results show the National-led conservative coalition securing 67 seats, narrowly above the 66-seat majority requirement.",
-          "rule": "E-13",
-          "message": "summary states 66, which appears in none of the source articles: source it or cut it"
-        },
-        {
-          "text": "Preliminary results show the National-led conservative coalition securing 67 seats, narrowly above the 66-seat majority requirement.",
-          "rule": "E-13",
-          "message": "summary states 67, which appears in none of the source articles: source it or cut it"
-        }
-      ],
-      "left": []
-    },
-    {
-      "id": "bf385dc6-4f7c-4e3b-88c0-876f0914caef",
-      "title": "El Hierro Declares Emergency After Thousands of Migrants Arrive by Boat",
-      "sentences": [
-        {
-          "text": "Fernando Clavijo, president of the Canary Islands, described the situation on El Hierro as absolutely unsustainable, noting that overall maritime rescue services pulled 3,261 migrants and refugees from the water off the archipelago in the first six days of November.",
-          "rule": "E-13",
-          "message": "summary puts 3261 beside \"el hierro\", but no source sentence carrying 3261 names it and one names another \"el ...\": \"Fernando Clavijo, president of the Canary Islands, described the situation on El Hierro as\""
+          "message": "summary puts 96.91 beside \"west texas intermediate\", but no source sentence carrying 96.91 names it and one names another \"west ...\": \"Oil prices dropped following Trump's comments, with Brent crude falling 1.5 percent to $96\""
         }
       ],
       "points": [],
