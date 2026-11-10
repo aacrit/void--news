@@ -1,15 +1,33 @@
 {
-  "builtAt": "2026-11-09T11:52:24.935173Z",
+  "builtAt": "2026-11-10T19:43:21.922986Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "057d2a56-3e20-4eb7-af97-50bcb0334ff5",
-      "title": "Donald Trump Rules Out Fresh War With Iran as Oil Prices Fall on De-escalation Hopes",
+      "id": "5f30013f-69cc-4eec-bffb-0b0af80c6c17",
+      "title": "Senator Jon Ossoff Wins Second Term Sparking Presidential Nomination Speculation",
       "sentences": [
         {
-          "text": "Oil prices dropped following Trump's comments, with Brent crude falling 1.5 percent to $96.91 a barrel and West Texas Intermediate declining 1 percent to $89.85 a barrel, extending a weekly slide driven by easing conflict fears and a growing global supply surplus.",
+          "text": "At a Crooked Media straw vote in Washington, D.C., attended by over 900 leftists, Ossoff won nearly 39 percent of the vote, placing ahead of Representative Alexandria Ocasio-Cortez and former Transportation Secretary Pete Buttigieg, while former Vice President Kamala Harris finished last with 0.6 percent.",
           "rule": "E-13",
-          "message": "summary puts 96.91 beside \"west texas intermediate\", but no source sentence carrying 96.91 names it and one names another \"west ...\": \"Oil prices dropped following Trump's comments, with Brent crude falling 1.5 percent to $96\""
+          "message": "summary puts 900 beside \"crooked media\", but no source sentence carrying 900 names it and one names another \"crooked ...\": \"At a Crooked Media straw vote in Washington, D.C., attended by over 900 leftists, Ossoff w\""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "9aae1b6a-fb97-46e8-b887-7ad61798870e",
+      "title": "Hundreds of British Jews Accuse Board of Deputies of Genocide Denial",
+      "sentences": [
+        {
+          "text": "Separately, thousands of Ethiopian Jews gathered in Jerusalem on November 9 to mark the holy day of Sigd.",
+          "rule": "E-16",
+          "message": "sentence opens on \"Separately\", announcing another story: \"Separately, thousands of Ethiopian Jews gathered in Jerusalem on November 9 to mark the ho\""
+        },
+        {
+          "text": "The community in Israel numbers 180,000, following the 1991 Operation Solomon airlift that evacuated approximately 14,500 Ethiopian Jews during the civil war in Ethiopia.",
+          "rule": "E-13",
+          "message": "summary puts 180000 beside \"ethiopian jews\", but no source sentence carrying 180000 names it and one names another \"ethiopian ...\": \"The community in Israel numbers 180,000, following the 1991 Operation Solomon airlift that\""
         }
       ],
       "points": [],
