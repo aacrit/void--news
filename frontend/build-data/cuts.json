@@ -1,37 +1,28 @@
 {
-  "builtAt": "2026-11-10T19:43:21.922986Z",
+  "builtAt": "2026-11-11T20:09:28.596609Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "5f30013f-69cc-4eec-bffb-0b0af80c6c17",
-      "title": "Senator Jon Ossoff Wins Second Term Sparking Presidential Nomination Speculation",
-      "sentences": [
+      "id": "1fda13f8-e983-4665-9a6e-4a828b7fe937",
+      "title": "France Requests International Arrest Warrants for Three Iranian Cyberattack Suspects",
+      "sentences": [],
+      "points": [
         {
-          "text": "At a Crooked Media straw vote in Washington, D.C., attended by over 900 leftists, Ossoff won nearly 39 percent of the vote, placing ahead of Representative Alexandria Ocasio-Cortez and former Transportation Secretary Pete Buttigieg, while former Vice President Kamala Harris finished last with 0.6 percent.",
+          "text": "French and European outlets such as France 24 and RFI provide extensive operational details regarding the specific supermarket chains affected and the technical methods used in the refrigeration hack, whereas Middle Eastern outlets focus primarily on Tehran's diplomatic denials.",
           "rule": "E-13",
-          "message": "summary puts 900 beside \"crooked media\", but no source sentence carrying 900 names it and one names another \"crooked ...\": \"At a Crooked Media straw vote in Washington, D.C., attended by over 900 leftists, Ossoff w\""
+          "message": "summary states 24, which appears in none of the source articles: source it or cut it"
         }
       ],
-      "points": [],
       "left": []
     },
     {
-      "id": "9aae1b6a-fb97-46e8-b887-7ad61798870e",
-      "title": "Hundreds of British Jews Accuse Board of Deputies of Genocide Denial",
-      "sentences": [
-        {
-          "text": "Separately, thousands of Ethiopian Jews gathered in Jerusalem on November 9 to mark the holy day of Sigd.",
-          "rule": "E-16",
-          "message": "sentence opens on \"Separately\", announcing another story: \"Separately, thousands of Ethiopian Jews gathered in Jerusalem on November 9 to mark the ho\""
-        },
-        {
-          "text": "The community in Israel numbers 180,000, following the 1991 Operation Solomon airlift that evacuated approximately 14,500 Ethiopian Jews during the civil war in Ethiopia.",
-          "rule": "E-13",
-          "message": "summary puts 180000 beside \"ethiopian jews\", but no source sentence carrying 180000 names it and one names another \"ethiopian ...\": \"The community in Israel numbers 180,000, following the 1991 Operation Solomon airlift that\""
-        }
-      ],
+      "id": "11f76438-0289-43f0-bee3-58350ba2ad23",
+      "title": "Israel Rejects Aid Criticism From Board of Peace as Winter Floods Gaza",
+      "sentences": [],
       "points": [],
-      "left": []
+      "left": [
+        "summary puts 150000 beside \"winter floods gaza\", but no source sentence carrying 150000 names it and one names another \"winter ...\": \"The Board of Peace characterized Israel's response to the winter emergency as insufficient\""
+      ]
     }
   ]
 }
