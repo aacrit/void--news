@@ -88,9 +88,26 @@ def rule_based_cases() -> list[tuple[str, bool]]:
          {"title": "Council approves housing plan", "summary": centre,
           "source_lean_baseline": "center"}],
         "Council approves housing plan")
+    # Card 17 of 2026-11-12, verbatim in its glue: the scraper dropped the
+    # spaces around the page's links, and the extract shipped as the summary.
+    glued = ("Egypt deployed forces to Saudi Arabia before Sisi's public pledge, sources "
+             "sayEgyptdeployed forces and military aircraft toSaudi Arabiaand moved air "
+             "defence systems to strategic locations across the country long before "
+             "President Abdel Fattah el-Sisi publicly pledged Cairo'ssupportfor Riyadh, "
+             "Egyptian military sources have told Middle East Eye.")
+    clean = ("Egypt deployed forces and military aircraft to Saudi Arabia and moved air "
+             "defence systems to strategic locations across the country, Egyptian military "
+             "sources said. The deployment included a squadron of fighter jets, eight "
+             "helicopters and four transport aircraft, one source said on condition of anonymity.")
+    egypt_head = "Egypt helps Saudi Arabia defend sites against Houthi attacks"
+    unglued = _generate_cluster_summary(
+        [{"title": egypt_head, "summary": glued + " " + glued},
+         {"title": egypt_head, "summary": clean}], egypt_head)
     product = sanitize_summary("Apple unveiled a new MacBook Pro and iMac, and "
                                "said the iPhone line would follow in the spring.")
     return [
+        ("an extract with glued words loses to a clean one (card 17, 2026-11-12)",
+         "sayEgypt" not in unglued and "toSaudi" not in unglued and "Egyptian military" in unglued),
         ("a brand's own capital is not a glued word",
          "MacBook Pro and iMac" in product and "iPhone" in product),
         ("a glued word is still split",
