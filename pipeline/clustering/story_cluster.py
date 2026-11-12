@@ -445,6 +445,24 @@ def _reads_as_prose(text: str) -> bool:
     return bool(lines) and short <= 1 and len(lines[0]) >= 80
 
 
+_GLUED_SEAM = re.compile(r"(?<![A-Za-z'])([a-z]{2,}[A-Z][a-z]+)")
+
+
+def _reads_glued(text: str) -> bool:
+    """Words the scraper glued together when it stripped the page's links.
+
+    Served 2026-11-12 on card 17: "sources sayEgyptdeployed forces and military
+    aircraft toSaudi Arabiaand moved ... Cairo'ssupportfor Riyadh". A whole
+    lowercase word run straight into a capital is a seam, not a name: names and
+    brands open on a capital (McDonald, DeSantis) or a single letter (iPhone,
+    eBay), and the few that do not are in the sanitizer's allowlist. One seam
+    rejects the extract, because the same page that lost one space lost others
+    the case rule cannot see ("Arabiaand", "ssupportfor").
+    """
+    from utils.text_sanitizer import _CAMEL_WORDS
+    return any(m.group(1).lower() not in _CAMEL_WORDS for m in _GLUED_SEAM.finditer(text or ""))
+
+
 def _generate_cluster_summary(articles: list[dict], title: str = "") -> str:
     """Pick the longest substantive member summary, preferring members that are
     on-topic with the cluster headline.
@@ -512,7 +530,7 @@ def _generate_cluster_summary(articles: list[dict], title: str = "") -> str:
         # raw member excerpt carries (the null-tier tail ships this verbatim);
         # _sanitize_editorial then enforces the em-dash / significance rules.
         cleaned = [c for c in (_display_safe(sanitize_summary(x)) for x in candidates)
-                   if len(c) >= floor and not _echoes_a_title(c)]
+                   if len(c) >= floor and not _echoes_a_title(c) and not _reads_glued(c)]
         return _sanitize_editorial(max(cleaned, key=len)) if cleaned else ""
 
     # Whose words: the card is written in Void's voice, and an extract is
