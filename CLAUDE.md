@@ -15,10 +15,12 @@ belongs in one of those two.
 ## Architecture
 
 ```
-09:41 UTC scheduled task on the owner's account dispatches pipeline.yml
-GitHub Actions (daily 10:07 UTC cron, the BACKUP: GitHub starts it 7-8 h late,
-  into Gemini's US-peak overload, so it stands down if today's edition exists;
-  no cron on minute 0 or 30)
+GitHub Actions (daily 00:13 UTC cron, plus 04:13 and 10:07 as backups: GitHub
+  starts crons 6-10 h late, so the first to start after the 08:00 UTC Gemini
+  quota reset runs the edition and the rest stand down on today's builtAt; one
+  that starts before 08:00 waits up to 45 min or stands down; no cron on minute
+  0 or 30. A scheduled task cannot dispatch reliably: its messages arrived
+  20-44 h late, 2026-11-10/11)
   → pipeline → pipeline_state.db (SQLite, VOID_SQLITE_PATH)
   → static JSON + MP3 committed to the repo
   → pipeline.yml dispatches deploy-cloudflare.yml (workflow_run kept as a 2nd path)

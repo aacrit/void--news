@@ -15,10 +15,18 @@ permissions:
 
 on:
   schedule:
-    # 10:07 UTC (rev 85; it was 11:00). Minute 0 and 30 are the minutes every
-    # repository on GitHub schedules at, and the scheduler started this cron
-    # 4 to 7.5 hours late on runs #380 to #385 (14:55 to 18:32 against 11:00).
-    # tests/test_workflow_hygiene.py fails any cron on minute 0 or 30.
+    # GitHub starts these hours late: the 10:07 cron began at 16:18 to 20:38
+    # UTC on 2026-11-07..11 (runs #425..#433), into US peak, where Gemini Flash
+    # is overloaded and the edition lands in the evening. A scheduled task on
+    # the owner's account cannot dispatch reliably either (its 09:41 messages
+    # arrived 20 to 44 hours late on 11-10 and 11-11). So three crons, early
+    # ones first: whichever GitHub starts first after 08:00 UTC (the Gemini
+    # free quota's day boundary) runs the edition, and every later one stands
+    # down on today's builtAt. One that starts before 08:00 waits for it when
+    # it is near, else stands down for the next. Minute 0 and 30 are banned
+    # (tests/test_workflow_hygiene.py).
+    - cron: '13 0 * * *'
+    - cron: '13 4 * * *'
     - cron: '7 10 * * *'
   workflow_dispatch:
     inputs:
@@ -66,10 +74,24 @@ jobs:
           built=$(python3 -c "import json; print(json.load(open('frontend/build-data/feed.json')).get('builtAt', '')[:10])")
           today=$(date -u +%F)
           if [ "$built" = "$today" ]; then
-            echo "Edition for $today already built; cancelling this late scheduled run."
+            echo "Edition for $today already built; cancelling this scheduled run."
             gh run cancel "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY"
             sleep 120
             exit 1
+          fi
+          # The Gemini free quota resets at 08:00 UTC (midnight Pacific). A run
+          # before that would spend the day the previous edition already used.
+          now=$(date -u +%s); reset=$(date -u -d "$today 08:05" +%s)
+          if [ "$now" -lt "$reset" ]; then
+            wait=$(( reset - now ))
+            if [ "$wait" -gt 2700 ]; then
+              echo "Started $(date -u +%H:%M) UTC, before the 08:00 quota reset; a later cron runs today's edition."
+              gh run cancel "$GITHUB_RUN_ID" --repo "$GITHUB_REPOSITORY"
+              sleep 120
+              exit 1
+            fi
+            echo "Waiting $(( wait / 60 )) min for the 08:00 UTC quota reset."
+            sleep "$wait"
           fi
           echo "No edition yet for $today (latest $built); running."
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
