@@ -1,28 +1,32 @@
 {
-  "builtAt": "2026-11-11T20:09:28.596609Z",
+  "builtAt": "2026-11-12T15:59:26.066677Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "1fda13f8-e983-4665-9a6e-4a828b7fe937",
-      "title": "France Requests International Arrest Warrants for Three Iranian Cyberattack Suspects",
-      "sentences": [],
-      "points": [
+      "id": "33e700cb-a7f0-4f30-acc9-840f456ba33d",
+      "title": "Netflix Schedules Russell Brand Documentary Following Prison Sentence and Platform Fallout",
+      "sentences": [
         {
-          "text": "French and European outlets such as France 24 and RFI provide extensive operational details regarding the specific supermarket chains affected and the technical methods used in the refrigeration hack, whereas Middle Eastern outlets focus primarily on Tehran's diplomatic denials.",
-          "rule": "E-13",
-          "message": "summary states 24, which appears in none of the source articles: source it or cut it"
+          "text": "In a separate development, David Walliams faces allegations from multiple women of using his celebrity status to groom teenagers as young as 15 and engage in predatory behavior, according to an investigation published jointly by ITV News and The Guardian.",
+          "rule": "E-16",
+          "message": "sentence opens on \"In a separate development\", announcing another story: \"In a separate development, David Walliams faces allegations from multiple women of using h\""
         }
       ],
+      "points": [],
       "left": []
     },
     {
-      "id": "11f76438-0289-43f0-bee3-58350ba2ad23",
-      "title": "Israel Rejects Aid Criticism From Board of Peace as Winter Floods Gaza",
-      "sentences": [],
+      "id": "60611744-258a-4a90-9349-2afaef7764b3",
+      "title": "Death Toll Rises After Brooklyn Apartment Building Collapse",
+      "sentences": [
+        {
+          "text": "The mixed-use structure, which contained apartments above ground-floor commercial space, collapsed near a construction site at approximately 4:00 p.m. on Wednesday.",
+          "rule": "E-13",
+          "message": "summary states 0, which appears in none of the source articles: source it or cut it"
+        }
+      ],
       "points": [],
-      "left": [
-        "summary puts 150000 beside \"winter floods gaza\", but no source sentence carrying 150000 names it and one names another \"winter ...\": \"The Board of Peace characterized Israel's response to the winter emergency as insufficient\""
-      ]
+      "left": []
     }
   ]
 }

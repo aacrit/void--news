@@ -1,50 +1,43 @@
 {
  "version": "1.2.0",
- "title": "On Air \u00b7 Wednesday 11 November 2026",
+ "title": "On Air \u00b7 Thursday 12 November 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Today",
    "kind": "headlines",
-   "endTime": 41.249
+   "endTime": 36.059
   },
   {
-   "startTime": 41.249,
-   "title": "House Republicans Block Impeachment Effort",
+   "startTime": 36.059,
+   "title": "Hegseth Impeachment Derailed by Missed Votes",
    "kind": "story",
    "rank": 1,
-   "cluster_id": "550d0776-f42c-4f3f-b0f5-348987128f54",
-   "endTime": 142.299
+   "cluster_id": "f8428e1d-a54a-411a-83fd-5b760c08b545",
+   "endTime": 148.706
   },
   {
-   "startTime": 142.299,
-   "title": "Federal Judge Denies BBC Dismissal Request",
+   "startTime": 148.706,
+   "title": "Altering Defense Cooperation With Israel",
    "kind": "story",
    "rank": 2,
-   "cluster_id": "21ff25ba-ec84-41ef-b1f8-1a7cb245d9e1",
-   "endTime": 203.359
+   "cluster_id": "7d5d1b22-8d99-4306-9d9d-9bb76682e903",
+   "endTime": 237.026
   },
   {
-   "startTime": 203.359,
+   "startTime": 237.026,
    "title": "The desk",
    "kind": "briefs",
-   "endTime": 360.839
+   "endTime": 430.835
   },
   {
-   "startTime": 360.839,
-   "title": "Void Opinion",
-   "kind": "opinion",
-   "subtitle": "Procedural Maneuvers Protect Defense Leadership From Impeachment",
-   "endTime": 587.358
-  },
-  {
-   "startTime": 587.358,
-   "endTime": 601.559,
+   "startTime": 430.835,
+   "endTime": 445.036,
    "title": "Also from Void",
    "kind": "promo",
-   "subtitle": "History",
-   "promo": "history-03-particular"
+   "subtitle": "Void News",
+   "promo": "site-02-outlets"
   }
  ]
 }
