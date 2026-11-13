@@ -1,0 +1,8 @@
+source: src-indus-waters-treaty-1960
+locator: art5
+url: https://treaties.un.org/doc/Publication/UNTS/Volume%20419/volume-419-I-6032-English.pdf
+read: 2026-09-25
+note: United Nations Treaty Series, vol. 419, No. 6032; the PDF's line breaks are joined and its line-break hyphens rejoined
+note: Article V, paragraph 1
+
+(1) In consideration of the fact that the purpose of part of the system of works referred to in Article IV (1) is the replacement, from the Western Rivers and other sources, of water supplies for irrigation canals in Pakistan which, on 15th August 1947, were dependent on water supplies from the Eastern Rivers, India agrees to make a fixed contribution of Pounds Sterling 62,060,000 towards the costs of these works.

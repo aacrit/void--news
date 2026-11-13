@@ -1,0 +1,7 @@
+source: src-app-nixon-19700430
+locator: secnotinvasion
+url: https://www.presidency.ucsb.edu/documents/address-the-nation-the-situation-southeast-asia-1
+read: 2026-10-09
+note: The American Presidency Project's text, from the Public Papers of the Presidents
+
+This is not an invasion of Cambodia. The areas in which these attacks will be launched are completely occupied and controlled by North Vietnamese forces. Our purpose is not to occupy the areas. Once enemy forces are driven out of these sanctuaries and once their military supplies are destroyed, we will withdraw.

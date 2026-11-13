@@ -1,0 +1,74 @@
+[
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 20,
+  "a": {
+   "title": "Wagner brothers begin new NBA chapter on different paths",
+   "summary": "After five years, brothers Franz and Moritz Wagner are no longer playing together for the Orlando Magic. In the new NBA season, their separation will likely mean the new &quot;German&quot; team is the Charlotte Hornets.",
+   "link": "https://www.dw.com/en/wagner-brothers-begin-new-nba-chapter-on-different-paths/a-79712668?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Das Ende der Wagners - auf getrennten Wegen in die neue NBA-Saison",
+   "summary": "Nach fünf Jahren spielen die Brüder Franz und Moritz Wagner nicht mehr gemeinsam für die Orlando Magic. In der neuen NBA-Saison haben sie ganz unterschiedliche Rollen. Neuer &quot;deutscher Klub&quot; sind die Charlotte Hornets.",
+   "link": "https://www.dw.com/de/das-ende-der-wagners-auf-getrennten-wegen-in-die-neue-nba-saison/a-79709596?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 19,
+  "a": {
+   "title": "Harry Kane: Ballon d’Or for Bayern Munich striker",
+   "summary": "Bayern Munich striker Harry Kane has won football&apos;s most prestigious individual prize, beating Kylian Mbappe and Lamine Yamal. Kane has developed even more in the Bundesliga despite an uneven league.",
+   "link": "https://www.dw.com/en/harry-kane-ballon-d-or-for-bayern-munich-striker/a-79723299?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Bayern-Stürmer Harry Kane gewinnt den Ballon d&apos;Or",
+   "summary": "Harry Kane beendet die jahrzehntelange Ballon d&apos;Or-Durststrecke des FC Bayern München. Der englische Nationalstürmer hat sich seit seinem Wechsel in die Bundesliga sogar noch weiterentwickelt - und wird dafür belohnt.",
+   "link": "https://www.dw.com/de/bayern-stürmer-harry-kane-gewinnt-den-ballon-d-or/a-79760904?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 24,
+  "a": {
+   "title": "England's Kane wins Ballon d'Or, Putellas claims women's award",
+   "summary": "Harry Kane completed his long quest ⁠for football's highest individual ​honour on Monday (October 26), the Bayern Munich and England striker winning the Ballon d'Or after a record-breaking season that cemented his status as one of the game's greatest goalscorers.",
+   "link": "https://www.france24.com/en/england-s-kane-wins-ballon-d-or-putellas-claims-women-s-award",
+   "published": "Tue, 27 Oct 2026 12:37:19 GMT"
+  },
+  "b": {
+   "title": "Ballon d'Or 2026: Harry Kane et Alexia Putellas sacrés à Londres",
+   "summary": "Le serial-buteur Harry Kane, intenable la saison dernière avec le Bayern Munich et l'Angleterre, s'est adjugé le Ballon d'Or 2026, trophée individuel le plus prestigieux du football mondial, chez lui à Londres lundi au cours d'une cérémonie à l'accent résolument espagnol. Du côté des femmes, l'espagnole Alexia Putellas a remporté lundi le Ballon d'Or féminin ​pour la troisième fois de sa carrière ",
+   "link": "https://www.france24.com/fr/vid%C3%A9o/20261027-ballon-d-or-2026-harry-kane-et-alexia-putellas-sacr%C3%A9s-%C3%A0-londres",
+   "published": "Tue, 27 Oct 2026 11:15:19 GMT"
+  }
+ },
+ {
+  "newsroom": "RFI",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 29,
+  "a": {
+   "title": "Putellas and Kane win 2026 Ballon d'Or as PSG retain men's team of year prize",
+   "summary": "Spain midfielder Alexia Putellas and the Bayern Munich striker Harry Kane won the 2026 women's and men's Ballon d'Or on Monday night as Paris Saint-Germain retained the men's team of the year award.",
+   "link": "https://www.rfi.fr/en/sports/20261027-putellas-and-kane-win-2026-ballon-d-or-as-psg-take-men-s-team-of-year",
+   "published": "Tue, 27 Oct 2026 00:27:26 GMT"
+  },
+  "b": {
+   "title": "L'Espagnole Alexia Putellas et l'Anglais Harry Kane sacrés Ballon d'Or 2026",
+   "summary": "Le Ballon d'Or 2026 a été remporté cette année par l'attaquant anglais du Bayern Munich Harry Kane et la star espagnole Alexia Putellas qui le remporte pour la troisième fois de sa carrière. Suivez en direct la 70e édition du plus prestigieux trophée individuel.",
+   "link": "https://www.rfi.fr/fr/sports/20261026-en-direct-suivez-la-c%C3%A9r%C3%A9monie-du-ballon-d-or-2026",
+   "published": "Mon, 26 Oct 2026 19:16:18 GMT"
+  }
+ }
+]

@@ -1,0 +1,74 @@
+{
+ "collected_at": "2026-10-04T14:25:27Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16181917/Cristiano-Ronaldo-wife-Georgina-Rodriguez-Jesus-Ferguson.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Cristiano Ronaldo's wife Georgina Rodriguez hits out at Portugal boss Jorge Jesus - before DELETING social media post after sharing fake Sir Alex Ferguson quote",
+      "published": "Sun, 04 Oct 2026 12:26:29 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/man-utd-ronaldo-fernandes-portugal-37733233",
+      "title": "Bruno Fernandes changes his Cristiano Ronaldo tune after refusing to take Man Utd stance",
+      "published": "Sun, 4 Oct 2026 14:10:31 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 119,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 136,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/new-party-walkout-during-erdogan-speech-draws-criticism-in-turkiye/news",
+      "title": "New Party walkout during Erdoğan speech draws criticism in Türkiye",
+      "published": "Fri, 02 Oct 2026 15:09:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/09/turkey-shelters-emirati-brotherhood-figures-accused-of-plotting-to-oust-uae-rulers/",
+      "title": "Turkey shelters Emirati Brotherhood figures accused of plotting to oust UAE rulers",
+      "published": "Sun, 20 Sep 2026 22:18:23 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 307,
+    "left": 10
+   }
+  }
+ }
+}

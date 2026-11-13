@@ -1,0 +1,992 @@
+# The evidence ledger for chernobyl-disaster (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Begun 2026-10-07 for the documentary: the sources a 15-minute episode with five perspectives
+# at parity may read from (the Soviet state's account; the liquidators and the evacuated; the
+# IAEA/WHO consensus; the critics' higher estimates; Ukrainian and Belarusian national memory),
+# and the record its narration is checked against. Every entry was fetched on 2026-10-07 from
+# the URL it names; every extract under extracts/ was sliced from the fetched copy by a builder
+# script (start marker to end marker; scratch out/ledger-chernobyl/build.py), never retyped.
+# Nothing here was written from memory. Where a PDF is a scan with an OCR layer (INSAG-7, the
+# Ukrainian national report) the extract was compared line by line with the rendered page and
+# the note says what, if anything, was corrected. A Russian extract carries a Void translation
+# beside it (*.en.txt), never presented as a published quotation.
+#
+# Each entry names the perspective it serves (`perspective`) and, under `holds`, what each of
+# its extracts shows and does not show. The DEATH TOLL is held as each producer's own figure
+# with the producer's own method (`death_toll_ranges` below): it is not averaged, and no range
+# here is a Void estimate.
+#
+# This is NOT a thesis ledger: no positions, contested claims, exhibits or analyses are
+# adjudicated here, and the event renders the Hearing. The bar of §4e is not claimed.
+#
+# Five quotations the event YAML or the live script carries were checked against the documents
+# they name, or the nearest primary text, and are NOT held in the form the record gives them
+# (see gaps:). Two of them diverge from the document they name: Gorbachev's 2006 sentence, and
+# the INSAG-7 finding presented as a quotation. Three are paraphrases with no verbatim source.
+slug: chernobyl-disaster
+bootstrapped: 2026-10-07
+
+entries:
+  # =========================================================== 1. The Soviet state's account
+  - id: src-nsa-minenergo-19860426
+    tier: A
+    kind: primary-document
+    author: A. N. Makukhin, First Deputy Minister of Energy and Electrification of the USSR
+    title: "Regarding the Accident at Reactor No. 4 of the Chernobyl Nuclear Power Plant, Urgent Report to the CC CPSU Politburo, 26 April 1986"
+    container: "Top Secret Chernobyl: The Nuclear Disaster through the Eyes of the Soviet Politburo, KGB, and U.S. Intelligence (National Security Archive Electronic Briefing Book, 2019), document 2"
+    publisher: National Security Archive, George Washington University
+    place: Washington
+    year: 1986
+    edition: "the Archive's English translation (Brooke Lennox); the document is marked Secret"
+    volume: null
+    document_number: "NSA doc 2"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive.gwu.edu/sites/default/files/documents/6279035/National-Security-Archive-Doc-2-USSR-Ministry-of.pdf"}
+    access:
+      free_copy: "https://nsarchive.gwu.edu/sites/default/files/documents/6279035/National-Security-Archive-Doc-2-USSR-Ministry-of.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "USSR Ministry of Energy, \"Regarding the Accident at Reactor No. 4 of the Chernobyl Nuclear Power Plant,\" Urgent Report to the CC CPSU Politburo | National Security Archive"
+    language: en
+    region_of_authorship: europe
+    producer: soviet-government
+    position: null
+    perspective: soviet-state
+    rights: copyright
+    holds:
+      - extract: whole
+        shows: "the first report to the Politburo: an explosion 'after the reactor had been stopped', the fire 'extinguished' at 3:30, and the Ministry of Health's opinion that evacuating the city was 'unnecessary'"
+        does_not_show: "what the ministry knew when it wrote; the Archive's own summary calls the report a complete misrepresentation, which is the Archive's reading, not the document's"
+
+  - id: src-nsa-politburo-19860428
+    tier: A
+    kind: primary-document
+    author: CPSU Central Committee Politburo (working copy of the session record)
+    title: "Extraordinary Session of the CC CPSU Politburo, April 28, 1986, working copy"
+    container: "Top Secret Chernobyl (National Security Archive Electronic Briefing Book, 2019), document 4"
+    publisher: National Security Archive, George Washington University
+    place: Washington
+    year: 1986
+    edition: "translated by Svetlana Savranskaya for the National Security Archive from the text published in R. Pikhoia, Sovetskii Soyuz: Istoriya Vlasti, 1945-1991 (Novosibirsk, 2000), pp. 429-432, itself from the Archive of the President of the Russian Federation (the document's own source line)"
+    volume: null
+    document_number: "NSA doc 4"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive.gwu.edu/sites/default/files/documents/6279037/National-Security-Archive-Doc-4-Extraordinary.pdf"}
+    access:
+      free_copy: "https://nsarchive.gwu.edu/sites/default/files/documents/6279037/National-Security-Archive-Doc-4-Extraordinary.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Extraordinary Session of the CC CPSU Politburo | National Security Archive"
+    language: en
+    region_of_authorship: europe
+    producer: soviet-communist-party
+    position: null
+    perspective: soviet-state
+    rights: copyright
+    holds:
+      - extract: secdolgikh
+        shows: "the Politburo's first briefing two days on: 'All work was being performed according to regulations', a hydrogen-explosion 'version', one dead and one missing, the town evacuated"
+        does_not_show: "that the version was later abandoned; that is in INSAG-7, not here"
+      - extract: secchebrikov
+        shows: "the KGB chairman: 'only a small circle of people know about the accident'"
+        does_not_show: "any instruction to keep it so; the session goes on to decide to publish a statement"
+      - extract: secstatement
+        shows: "Gorbachev: 'We should issue a statement quickly, we must not delay'"
+        does_not_show: "the text of the statement that was issued; no copy of the TASS text is held (see gaps)"
+      - extract: secgromyko
+        shows: "Dobrynin: the Americans will notice anyway; Gromyko: the statement should not cause 'excessive anxiety or panic'"
+        does_not_show: "who drafted the announcement or when it was broadcast"
+
+  - id: src-nsa-politburo-19860605
+    tier: A
+    kind: primary-document
+    author: Anatoly S. Chernyaev (notes of the CC CPSU Politburo session)
+    title: "Minutes of CC CPSU Politburo Session, June 5, 1986 (Anatoly S. Chernyaev notes)"
+    container: "Top Secret Chernobyl (National Security Archive Electronic Briefing Book, 2019), document 13"
+    publisher: National Security Archive, George Washington University
+    place: Washington
+    year: 1986
+    edition: "translated by Svetlana Savranskaya for the National Security Archive"
+    volume: null
+    document_number: "NSA doc 13"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive.gwu.edu/sites/default/files/documents/6279557/National-Security-Archive-Doc-13-Minutes-of-CC.pdf"}
+    access:
+      free_copy: "https://nsarchive.gwu.edu/sites/default/files/documents/6279557/National-Security-Archive-Doc-13-Minutes-of-CC.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Minutes of CC CPSU Politburo Session (Anatoly S. Chernyaev notes) | National Security Archive"
+    language: en
+    region_of_authorship: europe
+    producer: soviet-communist-party
+    position: null
+    perspective: soviet-state
+    rights: copyright
+    holds:
+      - extract: secgorbachev
+        shows: "Gorbachev in June 1986: 'One or two accidents like this and we would get it worse than from a total nuclear war'"
+        does_not_show: "Gorbachev's own words verbatim; these are an aide's notes"
+
+  - id: src-nsa-politburo-19860703
+    tier: A
+    kind: primary-document
+    author: Anatoly S. Chernyaev (notes of the CC CPSU Politburo session)
+    title: "Minutes of CC CPSU Politburo Session, July 3, 1986 (Anatoly S. Chernyaev notes)"
+    container: "Top Secret Chernobyl (National Security Archive Electronic Briefing Book, 2019), document 15"
+    publisher: National Security Archive, George Washington University
+    place: Washington
+    year: 1986
+    edition: "the Archive's English translation; dated 1986 July 03 on its first line"
+    volume: null
+    document_number: "NSA doc 15"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive.gwu.edu/sites/default/files/documents/6279559/National-Security-Archive-Doc-15-Minutes-of-CC.pdf"}
+    access:
+      free_copy: "https://nsarchive.gwu.edu/sites/default/files/documents/6279559/National-Security-Archive-Doc-15-Minutes-of-CC.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Minutes of CC CPSU Politburo Session (Anatoly S. Chernyaev notes) | National Security Archive"
+    language: en
+    region_of_authorship: europe
+    producer: soviet-communist-party
+    position: null
+    perspective: soviet-state
+    rights: copyright
+    holds:
+      - extract: secunready
+        shows: "Gorbachev: nothing was ready, 'Weddings were celebrated in the vicinity. Kids were playing outdoors.'"
+        does_not_show: "where or when the weddings were; the script's 'weddings that afternoon' is not in this text"
+      - extract: secblame
+        shows: "Gorbachev, inside the Politburo, in July 1986: the personnel are to blame, 'but the scale of the accident is due to the design of the reactor'"
+        does_not_show: "what was said publicly; the August 1986 report to the IAEA blamed the staff (src-insag7-1992.p60)"
+      - extract: secshasharin
+        shows: "a Ministry of Energy official: 'The personnel did not know that the reactor could \"speed up energy,\" and we did not know it'"
+        does_not_show: "whether the design flaw was known elsewhere; INSAG-7 item 4 says the rod defect was discovered at Ignalina in 1983"
+      - extract: sectruth
+        shows: "Gorbachev's closing words: 'by no means will we agree to hide the truth'"
+        does_not_show: "whether that happened; the Ukrainian national report says the information was concealed (src-ukraine-national-report-2006.p8)"
+
+  - id: src-insag7-1992
+    tier: A
+    kind: report
+    author: International Nuclear Safety Advisory Group (INSAG), IAEA
+    title: "The Chernobyl Accident: Updating of INSAG-1 (INSAG-7), Safety Series No. 75-INSAG-7"
+    container: null
+    publisher: International Atomic Energy Agency
+    place: Vienna
+    year: 1992
+    edition: "the IAEA's PDF, a scan with an OCR text layer; Annex I prints in English the 1991 report of a Commission of the USSR State Committee for the Supervision of Safety in Industry and Nuclear Power (SCSSINP)"
+    volume: null
+    document_number: "Safety Series No. 75-INSAG-7"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www-pub.iaea.org/MTCD/publications/PDF/Pub913e_web.pdf"}
+    access:
+      free_copy: "https://www-pub.iaea.org/MTCD/publications/PDF/Pub913e_web.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "SAFETY SERIES No. 75-INSAG-7. INSAG-7 The Chernobyl Accident: Updating of INSAG-1 (the PDF's title page)"
+    language: en
+    region_of_authorship: global
+    producer: iaea-insag
+    position: null
+    perspective: iaea-who-consensus
+    rights: copyright
+    holds:
+      - extract: p1
+        shows: "INSAG's account of the Soviet presentation in Vienna, 1986: 'a low probability coincidence of a number of violations of rules and procedures by the operating staff'"
+        does_not_show: "the Soviet report's own words; those are in p60"
+      - extract: item2
+        shows: "INSAG-7's revised finding: the concurrence of reactor physics, control-element design and a state not specified by procedures"
+        does_not_show: "the event YAML's notable quote, which paraphrases this sentence ('origins ... not only in the operators but in the design') and is not in the report"
+      - extract: item4
+        shows: "the rod defect discovered at Ignalina in 1983, not corrected and not followed up"
+        does_not_show: "the 18-second insertion time the event YAML gives; no held extract carries it"
+      - extract: item6
+        shows: "INSAG-1's weight on 'the Soviet view ... which laid blame almost entirely on actions of the operating staff' is lessened, yet critical operator actions were 'most ill judged'"
+        does_not_show: "an acquittal of the operators; INSAG keeps the human factor as a major element"
+      - extract: p60
+        shows: "the VERBATIM sentence of the USSR's August 1986 report to the IAEA, as a later Soviet state commission quotes it: 'the prime cause of the accident was an extremely improbable combination of violations of instructions and operating rules committed by the staff of the unit', and that commission's judgement that all causes 'were reduced exclusively to personnel errors'"
+        does_not_show: "the 1986 report itself; it is read here through the 1991 SCSSINP Commission in INSAG-7's English (the 1986 report and INSAG-1 are gaps)"
+
+  - id: src-gorbachev-memoir-1995
+    tier: A
+    kind: memoir
+    author: Mikhail Gorbachev
+    title: "Zhizn' i reformy (Life and Reforms), book 1, p. 299, as quoted by the Gorbachev Foundation in 'M.S. Gorbachev: Remember Chernobyl in order to have a chance of a safer and more sustainable future' (24 April 2026)"
+    container: "gorby.ru, press centre, April 2026"
+    publisher: The Gorbachev Foundation (International Foundation for Socio-Economic and Political Studies)
+    place: Moscow
+    year: 1995
+    edition: "the Foundation's quotation of the memoir, with its own citation '(Горбачев М.С. Жизнь и реформы. Кн. 1. С. 299.)'; the memoir itself was not read"
+    volume: "book 1"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.gorby.ru/presscenter/2026/aprel/post_8265"}
+    access:
+      free_copy: "https://www.gorby.ru/presscenter/2026/aprel/post_8265"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "М.С. Горбачев: «Помнить о Чернобыле, чтобы иметь шанс на более безопасное и устойчивое будущее»"
+    language: ru
+    region_of_authorship: europe
+    producer: gorbachev
+    position: null
+    perspective: soviet-state
+    rights: copyright
+    holds:
+      - extract: p299
+        shows: "Gorbachev's later defence: the television announcement on the evening of 28 April, and 'I firmly reject the accusation that the Soviet leadership deliberately concealed the whole truth about Chernobyl. We simply did not yet know it then' (Void translation)"
+        does_not_show: "the memoir's own page; a published English translation of it"
+
+  - id: src-gorbachev-19860514
+    tier: A
+    kind: primary-document
+    author: Mikhail Gorbachev
+    title: "Televised address on the Chernobyl accident, 14 May 1986 (opening), as quoted by the Gorbachev Foundation (24 April 2026)"
+    container: "gorby.ru, press centre, April 2026"
+    publisher: The Gorbachev Foundation
+    place: Moscow
+    year: 1986
+    edition: "the Foundation quotes the address's opening and names no source text for it; no transcript or recording of the address was read"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.gorby.ru/presscenter/2026/aprel/post_8265"}
+    access:
+      free_copy: "https://www.gorby.ru/presscenter/2026/aprel/post_8265"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "М.С. Горбачев: «Помнить о Чернобыле, чтобы иметь шанс на более безопасное и устойчивое будущее»"
+    language: ru
+    region_of_authorship: europe
+    producer: gorbachev
+    position: null
+    perspective: soviet-state
+    rights: copyright
+    holds:
+      - extract: para1
+        shows: "that Gorbachev addressed the country on 14 May 1986 and opened 'Good evening, comrades! ... a misfortune has recently befallen us' (Void translation)"
+        does_not_show: "the rest of the address, including the casualty figures and the attack on Western coverage that secondary accounts report"
+
+  # =========================================================== 2. The liquidators and the evacuated
+  - id: src-nsa-gubarev-1986
+    tier: A
+    kind: letter
+    author: Vladimir Gubarev, science editor of Pravda
+    title: "Letter from Science Editor Vladimir Gubarev to the CC CPSU About His Trip to Chernobyl"
+    container: "Top Secret Chernobyl (National Security Archive Electronic Briefing Book, 2019), document 12"
+    publisher: National Security Archive, George Washington University
+    place: Washington
+    year: 1986
+    edition: "translated by Svetlana Savranskaya for the National Security Archive; the letter covers his visit 'From May 4 to 9' and is signed 'V. Gubarev, Pravda Science editor'; the briefing book dates it May 10, 1986"
+    volume: null
+    document_number: "NSA doc 12"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive.gwu.edu/sites/default/files/documents/6279556/National-Security-Archive-Doc-12-Letter-from.pdf"}
+    access:
+      free_copy: "https://nsarchive.gwu.edu/sites/default/files/documents/6279556/National-Security-Archive-Doc-12-Letter-from.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Letter from Science Editor Vladimir Gubarev to the CC CPSU About His Trip to Chernobyl | National Security Archive"
+    language: en
+    region_of_authorship: europe
+    producer: soviet-press-witness
+    position: null
+    perspective: liquidators-evacuees
+    rights: copyright
+    holds:
+      - extract: item1
+        shows: "an eyewitness inside the system: the radiation situation in Pripyat 'was clear within an hour'; no evacuation plan; nobody took responsibility"
+        does_not_show: "the hour of the evacuation decision (UNSCEAR gives 22:00 on 26 April; the Ukrainian report says Moscow postponed it)"
+      - extract: item2
+        shows: "soldiers and helicopter pilots without protective clothing"
+        does_not_show: "doses received"
+      - extract: item4
+        shows: "civil defence 'completely paralyzed', 'not even any working dosimeters'"
+        does_not_show: "the plant staff's own badges (UNSCEAR 2000 para. 68)"
+      - extract: item5
+        shows: "the firefighters 'performed marvelously' but lacked uniforms for radiation"
+        does_not_show: "names or deaths; the letter's last section names Telyatnikov, Pravik and Kibenkov, not held"
+      - extract: item9
+        shows: "panic in Kiev 'primarily because of the absence of information'"
+        does_not_show: "the May Day parade, which this letter does not mention"
+
+  - id: src-unscear-2000-annex-j
+    tier: A
+    kind: report
+    author: United Nations Scientific Committee on the Effects of Atomic Radiation
+    title: "Sources and Effects of Ionizing Radiation, UNSCEAR 2000 Report, Volume II, Annex J: Exposures and effects of the Chernobyl accident"
+    container: "UNSCEAR 2000 Report to the General Assembly, with Scientific Annexes, Volume II: Effects"
+    publisher: United Nations
+    place: New York
+    year: 2000
+    edition: "the annex PDF on unscear.org; cited by paragraph"
+    volume: "II"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.unscear.org/unscear/uploads/documents/publications/UNSCEAR_2000_Annex-J.pdf"}
+    access:
+      free_copy: "https://www.unscear.org/unscear/uploads/documents/publications/UNSCEAR_2000_Annex-J.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "SOURCES AND EFFECTS OF IONIZING RADIATION, UNSCEAR 2000 Report to the General Assembly, with Scientific Annexes, VOLUME II: EFFECTS (the PDF's first page)"
+    language: en
+    region_of_authorship: global
+    producer: unscear
+    position: null
+    perspective: liquidators-evacuees
+    rights: copyright
+    holds:
+      - extract: para12
+        shows: "14 firemen on the scene at 1.28 a.m., 69 in fire control, most fires out by about 4.50 a.m., five firefighters dead from these actions"
+        does_not_show: "graphite scraped off with boots, which no held extract carries"
+      - extract: para14
+        shows: "about 5,000 t of material dropped, about 1,800 helicopter flights"
+        does_not_show: "the event YAML's 'over 5,000 tons of sand, clay, lead, and boron': UNSCEAR gives approximately 5,000 t, dumped from 27 April to 2 May, of boron compounds, lead, sand and clay, dolomite and other materials"
+      - extract: para68
+        shows: "the firemen had no dosimeters; staff film badges could not register more than 20 mSv"
+        does_not_show: "individual doses"
+      - extract: para92
+        shows: "Pripyat 49,360 persons; decision to evacuate at 22:00 on 26 April; nearly 1,200 buses arranged; the evacuation 14:00 to 17:00 on 27 April"
+        does_not_show: "where the buses came from (the event YAML says Kyiv; this paragraph does not) or what residents were told to pack"
+
+  - id: src-alexievich-nobel-lecture-2015
+    tier: A
+    kind: primary-document
+    author: Svetlana Alexievich
+    title: "Nobel Lecture: On the Battle Lost, 7 December 2015"
+    container: NobelPrize.org
+    publisher: Nobel Prize Outreach / The Nobel Foundation
+    place: Stockholm
+    year: 2015
+    edition: "the lecture as NobelPrize.org serves it ('Nobel Lecture on 7 December 2015, at the Swedish Academy, Stockholm'), in English translation"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nobelprize.org/prizes/literature/2015/alexievich/lecture/"}
+    access:
+      free_copy: "https://www.nobelprize.org/prizes/literature/2015/alexievich/lecture/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Svetlana Alexievich – Nobel Prize lecture - NobelPrize.org"
+    language: en
+    region_of_authorship: europe
+    producer: alexievich
+    position: null
+    perspective: liquidators-evacuees
+    rights: copyright
+    holds:
+      - extract: secvoice2a
+        shows: "a firefighter's widow, as the lecture quotes her: they went 'in their shirtsleeves', and were flown to Moscow the next morning"
+        does_not_show: "her name; the lecture does not name her, so it does not establish that she is Lyudmilla Ignatenko"
+      - extract: secvoice2b
+        shows: "the same voice: a daughter born after his death who 'lived only a few days', 'she absorbed all the radiation herself'"
+        does_not_show: "the event YAML's 'four hours' or its sentence 'We didn't know that death could be so beautiful', neither of which is in the lecture"
+      - extract: secbelarus
+        shows: "'We, Belarusians, had become the people of Chernobyl'"
+        does_not_show: "any figure for Belarus's share of the fallout"
+      - extract: secnewspapers
+        shows: "the press 'in military language', the KGB at the station, rumours of Western sabotage"
+        does_not_show: "a document behind the rumour"
+      - extract: secfree
+        shows: "'Following on the heels of Afghanistan, Chernobyl made us free people'"
+        does_not_show: "a causal argument; it is the writer's own reflection"
+
+  - id: src-alexievich-gessen-2005
+    tier: A
+    kind: testimony
+    author: Svetlana Alexievich (collector); Keith Gessen (translator)
+    title: "Excerpt from Voices from Chernobyl: 'Children's Chorus' (NobelPrize.org prose excerpt)"
+    container: NobelPrize.org, Svetlana Alexievich, Prose
+    publisher: "Dalkey Archive Press (translation 2005), reprinted on NobelPrize.org with permission"
+    place: Stockholm
+    year: 2005
+    edition: "the page's own credit: 'translated by Keith Gessen. Copyright © Dalkey Archive Press 2005 ... First published in Russian as Tchernobylskaia Molitva by Editions Ostojie, 1997'"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nobelprize.org/prizes/literature/2015/alexievich/prose/"}
+    access:
+      free_copy: "https://www.nobelprize.org/prizes/literature/2015/alexievich/prose/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Svetlana Alexievich – Prose - NobelPrize.org"
+    language: en
+    region_of_authorship: europe
+    producer: survivor-testimony
+    position: null
+    perspective: liquidators-evacuees
+    rights: copyright
+    holds:
+      - extract: secvillage
+        shows: "a child's account of a village buried: houses washed, dragged into a pit, covered with sand and clay"
+        does_not_show: "which village, or which child of the chorus speaks"
+      - extract: secfather1
+        shows: "a liquidator's child: 'They came for my father at night' ... 'They were heroes'"
+        does_not_show: "the father's name or unit"
+      - extract: secfather2
+        shows: "the verbatim line the live script paraphrases: 'In parting they shook our hands and gave us certificates of gratitude for our self-sacrifice', spoken by the father as his child reports it"
+        does_not_show: "the script's 'A certificate that says I was there. As if that could unburn what was burned'; those words are in no held source"
+
+  # =========================================================== 3. The IAEA / WHO consensus
+  - id: src-chernobyl-forum-2006
+    tier: A
+    kind: report
+    author: The Chernobyl Forum (IAEA, WHO, UNDP, FAO, UNEP, UN-OCHA, UNSCEAR, World Bank, and the governments of Belarus, the Russian Federation and Ukraine)
+    title: "Chernobyl's Legacy: Health, Environmental and Socio-Economic Impacts and Recommendations to the Governments of Belarus, the Russian Federation and Ukraine. The Chernobyl Forum: 2003-2005. Second revised version"
+    container: null
+    publisher: International Atomic Energy Agency
+    place: Vienna
+    year: 2006
+    edition: "second revised version; 'Printed by the IAEA in Austria, April 2006' (IAEA/PI/A.87 Rev.2). Some runs of the PDF's text layer are a shifted-glyph cipher; no extract holds one"
+    volume: null
+    document_number: "IAEA/PI/A.87 Rev.2"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.iaea.org/sites/default/files/chernobyl.pdf"}
+    access:
+      free_copy: "https://www.iaea.org/sites/default/files/chernobyl.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Chernobyl's Legacy: Health, Environmental and Socia-Economic Impacts and Recommendations to the Governments of Belarus, Russian Federation and Ukraine (the PDF's metadata title, misspelling its own)"
+    language: en
+    region_of_authorship: global
+    producer: chernobyl-forum
+    position: null
+    perspective: iaea-who-consensus
+    rights: copyright
+    holds:
+      - extract: p14
+        shows: "the Forum's view of the higher counts: 'These claims are highly exaggerated'"
+        does_not_show: "which claims; it names no producer"
+      - extract: p15
+        shows: "the verbatim sentence the live script paraphrases: 'It is impossible to assess reliably, with any precision, numbers of fatal cancers caused by radiation exposure due to Chernobyl accident'"
+        does_not_show: "the script's 'statistically invisible against the background rate', which is not the Forum's wording"
+      - extract: p16
+        shows: "the projection: 'up to four thousand fatal cancers' among the 600,000 most exposed, against about 100,000 expected from all other causes; under one per cent difference among 5 million in other contaminated areas"
+        does_not_show: "a number of deaths among the 5 million; the Forum gives none here"
+      - extract: p21
+        shows: "the Forum's account of the psychological burden: people coming to think of themselves 'fatalistically as invalids'"
+        does_not_show: "any count of mental-health cases"
+      - extract: p22
+        shows: "'Over 70 percent of this area was in the three most affected countries, Belarus, Russia and Ukraine'"
+        does_not_show: "Belarus's own share; the event YAML's 'Belarus absorbed ~70% of the fallout' is not this sentence"
+
+  - id: src-who-iaea-undp-20050905
+    tier: A
+    kind: report
+    author: World Health Organization (joint news release)
+    title: "Chernobyl: the true scale of the accident. 20 Years Later a UN Report Provides Definitive Answers and Ways to Repair Lives"
+    container: WHO newsroom
+    publisher: World Health Organization
+    place: Geneva
+    year: 2005
+    edition: "'5 September 2005, Joint News Release, Geneva' as who.int serves it; TORCH calls the same release the IAEA's (src-torch-2006.secestimates)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.who.int/news/item/05-09-2005-chernobyl-the-true-scale-of-the-accident"}
+    access:
+      free_copy: "https://www.who.int/news/item/05-09-2005-chernobyl-the-true-scale-of-the-accident"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Chernobyl: the true scale of the accident"
+    language: en
+    region_of_authorship: global
+    producer: who-iaea-undp
+    position: null
+    perspective: iaea-who-consensus
+    rights: copyright
+    holds:
+      - extract: para1-2
+        shows: "'A total of up to 4000 people could eventually die'; fewer than 50 deaths directly attributed by mid-2005"
+        does_not_show: "the population the 4,000 refers to; the Forum digest ties it to the 600,000 most exposed (src-chernobyl-forum-2006.p16)"
+      - extract: item1
+        shows: "among the more than 200,000 workers of 1986-1987, 'an estimated 2200 radiation-caused deaths' over their lifetime"
+        does_not_show: "how the 2,200 sits inside the 4,000"
+
+  - id: src-unscear-2008-annex-d
+    tier: A
+    kind: report
+    author: United Nations Scientific Committee on the Effects of Atomic Radiation
+    title: "Sources and Effects of Ionizing Radiation, UNSCEAR 2008 Report, Volume II, Annex D: Health effects due to radiation from the Chernobyl accident"
+    container: "UNSCEAR 2008 Report to the General Assembly with Scientific Annexes, Volume II"
+    publisher: United Nations
+    place: New York
+    year: 2011
+    edition: "'UNITED NATIONS New York, 2011', '© United Nations, April 2011'; the full Volume II PDF"
+    volume: "II"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.unscear.org/unscear/uploads/documents/unscear-reports/UNSCEAR_2008_Report_Vol.II.pdf"}
+    access:
+      free_copy: "https://www.unscear.org/unscear/uploads/documents/unscear-reports/UNSCEAR_2008_Report_Vol.II.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "UNSCEAR_2008_Report_Vol.II (the PDF's metadata title)"
+    language: en
+    region_of_authorship: global
+    producer: unscear
+    position: null
+    perspective: iaea-who-consensus
+    rights: copyright
+    holds:
+      - extract: p64
+        shows: "the Committee 'decided not to use models to project absolute numbers of effects' at low doses; 134 ARS cases, 28 fatal"
+        does_not_show: "a total death toll; UNSCEAR declines to give one, which is itself a position on method"
+      - extract: p64-65
+        shows: "more than 6,000 thyroid cancers among those exposed as children or adolescents; 15 fatal by 2005"
+        does_not_show: "how many are attributable; it says 'a substantial fraction'"
+      - extract: p65-66
+        shows: "projections from 'trivial individual exposures to large populations' are 'extremely uncertain'"
+        does_not_show: "a rejection of the LNT model for radiation protection; para. 98 says the approach 'in no way contradicts' it"
+
+  # =========================================================== 4. The critics' higher estimates (and a modelled middle)
+  - id: src-iarc-2006
+    tier: A
+    kind: report
+    author: International Agency for Research on Cancer (Cardis E, Krewski D, Boniol M, et al., investigators)
+    title: "Briefing Document: The Cancer Burden from Chernobyl in Europe"
+    container: null
+    publisher: International Agency for Research on Cancer (WHO)
+    place: Lyon
+    year: 2006
+    edition: "the briefing document as iarc.who.int now serves it; the old iarc.fr address redirects there"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.iarc.who.int/wp-content/uploads/2018/07/IARCBriefingChernobyl.pdf"}
+    access:
+      free_copy: "https://www.iarc.who.int/wp-content/uploads/2018/07/IARCBriefingChernobyl.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "BRIEFING DOCUMENT The Cancer Burden from Chernobyl in Europe (the PDF's first page)"
+    language: en
+    region_of_authorship: europe
+    producer: iarc
+    position: null
+    perspective: critics-higher-estimates
+    rights: copyright
+    holds:
+      - extract: secconclusions
+        shows: "by 2065, about 16,000 deaths from cancers due to the accident across 40 European countries (BEIR VII risk models)"
+        does_not_show: "an IARC claim against the Forum; IARC is a WHO agency and calls the figures an order of magnitude"
+      - extract: secuncertainty
+        shows: "95% uncertainty interval for cancer deaths 6,700 to 38,000"
+        does_not_show: "a point estimate to be quoted alone"
+
+  - id: src-torch-2006
+    tier: A
+    kind: report
+    author: Ian Fairlie and David Sumner
+    title: "The Other Report on Chernobyl (TORCH)"
+    container: null
+    publisher: "Commissioned by Rebecca Harms MEP, Greens/EFA in the European Parliament; the copy read is hosted by the Nuclear Information and Resource Service"
+    place: Berlin, Brussels, London, Kyiv
+    year: 2006
+    edition: "the title page reads 'Berlin, Brussels, London, Kyiv April 2006'; the PDF's metadata title is 'DRAFT 8: Feb 25' (a leftover); an embargoed 6 April 2006 version also circulates and was not used"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nirs.org/wp-content/uploads/c20/torch.pdf"}
+    access:
+      free_copy: "https://www.nirs.org/wp-content/uploads/c20/torch.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Other Report on Chernobyl (TORCH) (the PDF's title page)"
+    language: en
+    region_of_authorship: europe
+    producer: torch-authors
+    position: null
+    perspective: critics-higher-estimates
+    rights: copyright
+    holds:
+      - extract: secestimates
+        shows: "TORCH's figure, 30,000 to 60,000 excess cancer deaths from a worldwide collective dose of 600,000 person sieverts, and its charge that the 4,000 figure is 'misleading' because the IAEA/WHO report calculated 9,000"
+        does_not_show: "the script's line 'To dismiss the low-dose deaths ... is to hide a catastrophe inside a statistic', which is in no held source"
+      - extract: secconclusions
+        shows: "'The full effects of the Chernobyl accident will most certainly never be known'"
+        does_not_show: "a single number; it gives a range"
+
+  - id: src-greens-efa-20060406
+    tier: A
+    kind: primary-document
+    author: The Greens/EFA group in the European Parliament
+    title: "The Other Report on Chernobyl (Torch): Greens launch new study on the malignant legacy of Chernobyl (publication, 06.04.2006)"
+    container: greens-efa.eu
+    publisher: Greens/EFA in the European Parliament
+    place: Brussels
+    year: 2006
+    edition: "the group's launch page, read as the PDF the page generates ('?pdf=28')"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.greens-efa.eu/en/article/document/the-other-report-on-chernobyl-torch"}
+    access:
+      free_copy: "https://www.greens-efa.eu/en/article/document/the-other-report-on-chernobyl-torch"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Other Report on Chernobyl (Torch) (the page's heading)"
+    language: en
+    region_of_authorship: europe
+    producer: greens-efa
+    position: null
+    perspective: critics-higher-estimates
+    rights: copyright
+    holds:
+      - extract: secharms
+        shows: "why TORCH was commissioned, in Rebecca Harms's words: the IAEA estimate of 'a mere 4000' was 'a dishonour to those who have and will suffer'"
+        does_not_show: "a scientific method; it is the commissioning politician's statement"
+
+  - id: src-greenpeace-2006
+    tier: A
+    kind: advocacy
+    author: Greenpeace (general editorship A. Yablokov, I. Labunska, I. Blokov)
+    title: "The Chernobyl Catastrophe: Consequences on Human Health"
+    container: null
+    publisher: Greenpeace
+    place: Amsterdam
+    year: 2006
+    edition: "'Copyright: Greenpeace, Amsterdam, the Netherlands', April 2006; the Internet Archive capture of 11 December 2006 of greenpeace.org's own URL (the live URL answers 404). Held as the primary record of Greenpeace's own claim, not as an authority on the toll"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://web.archive.org/web/20061211035033/http://www.greenpeace.org/raw/content/international/press/reports/chernobylhealthreport.pdf"}
+    access:
+      free_copy: "https://web.archive.org/web/20061211035033/http://www.greenpeace.org/raw/content/international/press/reports/chernobylhealthreport.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Chernobyl Catastrophe: Consequences on Human Health (the cover, rendered; the cover has no text layer)"
+    language: en
+    region_of_authorship: europe
+    producer: greenpeace
+    position: null
+    perspective: critics-higher-estimates
+    rights: copyright
+    holds:
+      - extract: p10
+        shows: "Greenpeace's figure: 'an estimated 200,000 additional deaths between 1990 and 2004' in Belarus, Russia and Ukraine, against the IAEA's 4,000"
+        does_not_show: "how the 200,000 was computed; it is attributed to 'the most recently published figures'"
+      - extract: p23
+        shows: "the 93,080 figure: Malko's (2006) estimate of excess cancer deaths in all affected countries, 1986-2056"
+        does_not_show: "a Greenpeace calculation; the report attributes it to Malko. The adjacent table gives 28,300 where this sentence says 28,000 solid tumours"
+
+  # =========================================================== 5. Ukraine and Belarus: national memory
+  - id: src-ukraine-national-report-2006
+    tier: A
+    kind: report
+    author: Ministry of Ukraine of Emergencies and Affairs of Population Protection from the Consequences of Chornobyl Catastrophe (editor-in-chief V. I. Baloga)
+    title: "20 years after Chornobyl Catastrophe. Future Outlook: National Report of Ukraine"
+    container: null
+    publisher: Atika
+    place: Kyiv
+    year: 2006
+    edition: "English edition, ISBN 966-326-172-2; the PDF is a scan with an OCR layer, served by OSTI's ETDEWEB"
+    volume: null
+    document_number: "UA0600901"
+    identifiers: {isbn: "966-326-172-2", doi: null, archive_org: null, hathitrust: null, url: "https://www.osti.gov/etdeweb/servlets/purl/20775483"}
+    access:
+      free_copy: "https://www.osti.gov/etdeweb/servlets/purl/20775483"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "20 years after Chornobyl Catastrophe. FUTURE OUTLOOK. National Report of Ukraine (the PDF's title page)"
+    language: en
+    region_of_authorship: europe
+    producer: ukrainian-government
+    position: null
+    perspective: ukraine-belarus-memory
+    rights: copyright
+    holds:
+      - extract: p6
+        shows: "the Ukrainian state's account: evacuation of Prypiat prepared on 26 April but 'postponed by a decision of the USSR Government and the Central Committee of the CPSU', called both without 'grave consequences' and 'certainly an huge mistake'"
+        does_not_show: "the time of the decision; the report contradicts itself on its consequences and both sentences are held"
+      - extract: p8
+        shows: "'Information about the catastrophe was concealed from the public'; media and doctors forbidden to inform until mid-May 1986; maps and radiation data 'classified until 1989'"
+        does_not_show: "the May Day parade, which this passage does not mention"
+
+  - id: src-unga-res-71-125
+    tier: A
+    kind: resolution
+    author: United Nations General Assembly
+    title: "Resolution 71/125, Persistent legacy of the Chernobyl disaster (A/RES/71/125), adopted 8 December 2016"
+    container: null
+    publisher: United Nations
+    place: New York
+    year: 2016
+    edition: "the official document, 'Distr.: General 19 December 2016'"
+    volume: null
+    document_number: "A/RES/71/125"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://documents.un.org/doc/undoc/gen/n16/430/47/pdf/n1643047.pdf"}
+    access:
+      free_copy: "https://documents.un.org/doc/undoc/gen/n16/430/47/pdf/n1643047.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "A/RES/71/125 71/125. Persistent legacy of the Chernobyl disaster"
+    language: en
+    region_of_authorship: global
+    producer: un-general-assembly
+    position: null
+    perspective: ukraine-belarus-memory
+    rights: official
+    holds:
+      - extract: op9
+        shows: "26 April designated International Chernobyl Disaster Remembrance Day, observed from 2017"
+        does_not_show: "whose initiative it was; Belarus's foreign ministry says the day was proclaimed at its initiative, which is Belarus's statement, not the resolution's"
+
+  - id: src-belarus-mission-20220426
+    tier: A
+    kind: primary-document
+    author: Permanent Mission of the Republic of Belarus to the United Nations
+    title: "The 36th Anniversary and International Chernobyl Disaster Remembrance Day (26.04.2022)"
+    container: un.mfa.gov.by, News
+    publisher: Ministry of Foreign Affairs of the Republic of Belarus
+    place: New York
+    year: 2022
+    edition: "the mission's news page"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://un.mfa.gov.by/en/mission/news/eaa6e518d02a53ec.html"}
+    access:
+      free_copy: "https://un.mfa.gov.by/en/mission/news/eaa6e518d02a53ec.html"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The 36th Anniversary and International Chernobyl Disaster Remembrance Day - Permanent Mission of the Republic of Belarus to the United Nations"
+    language: en
+    region_of_authorship: europe
+    producer: belarusian-government
+    position: null
+    perspective: ukraine-belarus-memory
+    rights: copyright
+    holds:
+      - extract: para1-2
+        shows: "the Belarusian state's framing: 'a particular significance for Belarus', resettlement of 'hundreds of thousands of Belarusians'"
+        does_not_show: "a share of the fallout; it gives none"
+
+  # =========================================================== How the world learned (the OPEN)
+  - id: src-europarl-20140515
+    tier: B
+    kind: report
+    author: European Parliament, News (press service)
+    title: "Forsmark: how Sweden alerted the world about the danger of the Chernobyl disaster (15-05-2014)"
+    container: European Parliament Newsroom
+    publisher: European Parliament
+    place: Brussels
+    year: 2014
+    edition: "the Internet Archive capture of 29 March 2017 of the Parliament's URL; the live URL answers 410 Gone. Ref. 20140514STO47018"
+    volume: null
+    document_number: "20140514STO47018"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://web.archive.org/web/20170329202404/http://www.europarl.europa.eu/news/en/news-room/20140514STO47018/html/Forsmark-how-Sweden-alerted-the-world-about-the-danger-of-Chernobyl-disaster/"}
+    access:
+      free_copy: "https://web.archive.org/web/20170329202404/http://www.europarl.europa.eu/news/en/news-room/20140514STO47018/html/Forsmark-how-Sweden-alerted-the-world-about-the-danger-of-Chernobyl-disaster/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Forsmark: how Sweden alerted the world about the danger of Chernobyl disaster | News | European Parliament"
+    language: en
+    region_of_authorship: europe
+    producer: european-parliament
+    position: null
+    perspective: outside-detection
+    rights: copyright
+    holds:
+      - extract: para1
+        shows: "the alarm: an employee 'on his way back from the restroom', radiation 'coming from his shoes'"
+        does_not_show: "the event YAML's and the script's 'on his way IN to work' / 'walked in from outside'; this account says otherwise and the two are not reconciled here"
+      - extract: para3
+        shows: "the operations manager, Claes-Göran Runermark: 'We found nothing'"
+        does_not_show: "the time of the alarm beyond 'early in the morning of 28 April 1986'"
+      - extract: para5
+        shows: "particles in the grass identified as Soviet-type; south-east wind and rain over the weekend; the Soviet declaration 'late that evening, two days after the disaster'"
+        does_not_show: "a Swedish threat to file an official alert (the event YAML's claim), which this story does not mention"
+
+  - id: src-gorbachev-ps-2006
+    tier: A
+    kind: primary-document
+    author: Mikhail Gorbachev
+    title: "Turning Point at Chernobyl"
+    container: Project Syndicate
+    publisher: Project Syndicate
+    place: null
+    year: 2006
+    edition: "published 14 April 2006 (the page's datePublished); only the first paragraph is served without a subscription"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.project-syndicate.org/commentary/turning-point-at-chernobyl"}
+    access:
+      free_copy: "https://www.project-syndicate.org/commentary/turning-point-at-chernobyl"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Turning Point at Chernobyl by Mikhail Gorbachev - Project Syndicate"
+    language: en
+    region_of_authorship: europe
+    producer: gorbachev
+    position: null
+    perspective: soviet-state
+    rights: copyright
+    holds:
+      - extract: para1
+        shows: "'Indeed, the Chernobyl catastrophe was a historic turning point'"
+        does_not_show: "the sentence before it, read and deliberately not held (see gaps); the rest of the article, behind a subscription"
+
+  # =========================================================== Named in the record, not read (gaps)
+  - id: src-tass-19860428
+    tier: A
+    kind: primary-document
+    author: TASS / Council of Ministers of the USSR
+    title: "Announcement of the accident at the Chernobyl nuclear power station, read on Vremya, 28 April 1986"
+    container: null
+    publisher: null
+    place: Moscow
+    year: 1986
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "no primary copy found"}
+    language: ru
+    region_of_authorship: europe
+    producer: soviet-government
+    position: null
+    perspective: soviet-state
+    rights: null
+
+  - id: src-insag1-1986
+    tier: A
+    kind: report
+    author: International Nuclear Safety Advisory Group (INSAG), IAEA
+    title: "Summary Report on the Post-Accident Review Meeting on the Chernobyl Accident (Safety Series No. 75-INSAG-1)"
+    container: null
+    publisher: International Atomic Energy Agency
+    place: Vienna
+    year: 1986
+    edition: null
+    volume: null
+    document_number: "Safety Series No. 75-INSAG-1"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://inis.iaea.org/records/8e700-gms57"}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "INIS record behind a bot challenge"}
+    language: en
+    region_of_authorship: global
+    producer: iaea-insag
+    position: null
+    perspective: soviet-state
+    rights: null
+
+  - id: src-alexievich-voices-1997
+    tier: A
+    kind: testimony
+    author: Svetlana Alexievich
+    title: "Voices from Chernobyl: The Oral History of a Nuclear Disaster (Tchernobylskaia Molitva, 1997)"
+    container: null
+    publisher: null
+    place: null
+    year: 1997
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "voicesfromcherno0000alek", hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "controlled lending copy"}
+    language: en
+    region_of_authorship: europe
+    producer: survivor-testimony
+    position: null
+    perspective: liquidators-evacuees
+    rights: null
+
+  - id: src-yablokov-2009
+    tier: B
+    kind: monograph
+    author: Alexey Yablokov, Vassily Nesterenko, Alexey Nesterenko
+    title: "Chernobyl: Consequences of the Catastrophe for People and the Environment (Annals of the New York Academy of Sciences, vol. 1181)"
+    container: Annals of the New York Academy of Sciences
+    publisher: New York Academy of Sciences
+    place: New York
+    year: 2009
+    edition: null
+    volume: "1181"
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access: {free_copy: null, verified_at: null, verified_by: null, verified_title: null, status: "not read"}
+    language: en
+    region_of_authorship: europe
+    producer: scholarship
+    position: null
+    perspective: critics-higher-estimates
+    rights: null
+
+# Each producer's figure, its method and its population, as the held extracts give them.
+# NOT averaged, NOT reconciled, and no Void estimate. Read with the extract named.
+death_toll_ranges:
+  - producer: Soviet record, 28 April 1986 (src-nsa-politburo-19860428.secdolgikh)
+    figure: "one died, one not found"
+    counts: "deaths at the plant reported to the Politburo two days after the explosion"
+    method: "report from the site"
+  - producer: UNSCEAR 2000 (src-unscear-2000-annex-j.para12)
+    figure: "five firefighters"
+    counts: "deaths caused by the firefighting actions"
+    method: "medical records summarised by UNSCEAR"
+  - producer: UNSCEAR 2008 (src-unscear-2008-annex-d.p64, p64-65)
+    figure: "28 of 134 ARS cases fatal; 15 thyroid-cancer deaths by 2005; no projection of total deaths"
+    counts: "observed deaths only"
+    method: "observation; the Committee declines to project absolute numbers at low dose"
+  - producer: Chernobyl Forum 2006 (src-chernobyl-forum-2006.p16)
+    figure: "up to four thousand fatal cancers"
+    counts: "the 600,000 most exposed (liquidators, evacuees, residents of the most contaminated areas)"
+    method: "projection from risk estimates of other exposed populations; under one per cent difference projected for 5 million elsewhere, not counted"
+  - producer: WHO joint news release 2005 (src-who-iaea-undp-20050905.para1-2)
+    figure: "up to 4000; fewer than 50 directly attributed by mid-2005"
+    counts: "as the release states, without naming the population"
+    method: "the Forum's projection"
+  - producer: IARC 2006 (src-iarc-2006.secconclusions, secuncertainty)
+    figure: "about 16,000 cancer deaths by 2065 (95% UI 6,700 to 38,000)"
+    counts: "570 million people in 40 European countries"
+    method: "BEIR VII risk projection models applied to updated dose estimates"
+  - producer: TORCH 2006 (src-torch-2006.secestimates)
+    figure: "30,000 to 60,000 excess cancer deaths"
+    counts: "worldwide collective dose of 600,000 person sieverts"
+    method: "collective dose times a fatal-cancer risk factor; the range is the choice of factor"
+  - producer: Greenpeace 2006, citing Malko 2006 (src-greenpeace-2006.p23)
+    figure: "93,080 excess cancer deaths"
+    counts: "all affected countries, 1986 to 2056"
+    method: "Malko's dose estimates and Belarusian health statistics"
+  - producer: Greenpeace 2006 (src-greenpeace-2006.p10)
+    figure: "an estimated 200,000 additional deaths"
+    counts: "Belarus, Russia and Ukraine, 1990 to 2004"
+    method: "attributed to 'the most recently published figures', published under the Russian Academy of Sciences"
+
+positions: []
+contested: []
+exhibits: []
+analyses: []
+
+gaps:
+  - entry: src-tass-19860428
+    what: "The text of the TASS announcement of 28 April 1986, which the event YAML quotes in five English sentences and the live script reads in three"
+    tried: ["https://www.gorby.ru/presscenter/2026/aprel/post_8265", "web search for the Russian text with 'От Совета Министров СССР'"]
+    status: "No primary copy (a Pravda or Izvestia page, a TASS wire, a Vremya transcript) was found readable. The Gorbachev Foundation's post of 24 April 2026 quotes it in Russian, citing Izvestia of 28 April 1986, as 'На Чернобыльской атомной электростанции произошел несчастный случай. Один из реакторов получил повреждение. Принимаются меры с целью устранения последствий инцидента. Пострадавшим оказана необходимая помощь. Создана правительственная комиссия для расследования происшедшего' (five sentences). A search-engine summary of other secondary pages renders the text in English as 'an accident has occurred ... one of the atomic reactors has been damaged', which differs from the Foundation's Russian ('несчастный случай', 'инцидента'). The forms disagree, and none is held. The YAML's English has no source and is not pinned; the live script's claim that the announcement was 'four sentences' agrees with no form found"
+  - entry: src-gorbachev-ps-2006
+    what: "Gorbachev's sentence on Chernobyl and the Soviet collapse, which the event YAML quotes as 'The Chernobyl accident, even more than my launch of perestroika, was perhaps the real cause of the collapse of the Soviet Union' and the live script reads in the document voice"
+    tried: ["https://www.project-syndicate.org/commentary/turning-point-at-chernobyl"]
+    status: "Read on 2026-10-07. The article's first sentence is: 'The nuclear meltdown at Chernobyl 20 years ago this month, even more than my launch of perestroika, was perhaps the main cause of the Soviet Union’s collapse five years later.' The YAML's form changes 'The nuclear meltdown at Chernobyl 20 years ago this month' to 'The Chernobyl accident', 'main cause' to 'real cause', and drops 'five years later', with no ellipsis. It is NOT held as an extract: tests/test_history_quote_ledger.py fails any YAML excerpt that diverges from a stored extract, and this task may append to the YAML but not alter it. Pin the sentence once the YAML excerpt is corrected. The YAML's other Gorbachev excerpt ('Chernobyl was a bell calling mankind ...') is not in the free paragraph and the rest is behind a subscription: unverified"
+  - entry: src-alexievich-voices-1997
+    what: "Lyudmilla Ignatenko's words 'We didn't know that death could be so beautiful. He was radiating.', which the event YAML and the live script attribute to her and to Voices from Chernobyl"
+    tried: ["https://archive.org/details/voicesfromcherno0000alek", "https://www.nobelprize.org/prizes/literature/2015/alexievich/lecture/", "https://www.nobelprize.org/prizes/literature/2015/alexievich/prose/"]
+    status: "The book is a controlled lending copy, not openable here, and is copyrighted. The Nobel lecture quotes a firefighter's widow (held: src-alexievich-nobel-lecture-2015.secvoice2a, secvoice2b) but does not name her and does not carry these sentences; the Nobel prose excerpt is a different chapter. The quotation is unverified; so are the YAML's 'He died on May 13' and the daughter who 'lived four hours' (the lecture's voice says 'only a few days')"
+  - entry: src-insag1-1986
+    what: "INSAG-1 (1986), the IAEA's summary of the Soviet presentation in Vienna"
+    tried: ["https://www-pub.iaea.org/MTCD/publications/PDF/Pub740_web.pdf", "https://www-pub.iaea.org/MTCD/Publications/PDF/Pub740e_web.pdf", "https://inis.iaea.org/records/8e700-gms57"]
+    status: "the IAEA publication URLs answer 404 and the INIS record is behind a bot challenge (HTTP 403). INSAG-7 restates INSAG-1's basis (held: src-insag7-1992.p1, item6)"
+  - entry: src-yablokov-2009
+    what: "Yablokov, Nesterenko and Nesterenko (2009), the source of the ~985,000 figure in the event YAML, and the New York Academy of Sciences' disclaimer of it"
+    tried: []
+    status: "not sought in this pass; the YAML's 985,000 and the disclaimer are unverified here. Yablokov is held only as a general editor of the Greenpeace report (src-greenpeace-2006 edition line)"
+  - what: "A primary text of the line the live script and YAML give as Soviet official framing: 'The reactor was not the problem. The people who operated it were the problem.'"
+    tried: ["src-insag7-1992.p60", "src-nsa-politburo-19860703"]
+    status: "No such sentence exists in any held source; the record itself marks it 'paraphrased'. The verbatim Soviet line is held: 'the prime cause of the accident was an extremely improbable combination of violations of instructions and operating rules committed by the staff of the unit' (src-insag7-1992.p60, the USSR's August 1986 report as quoted by the SCSSINP Commission). The Politburo's own July 1986 record is NOT that the reactor was not the problem: 'The [station] personnel are to blame for the accident; but the scale of the accident is due to the design of the reactor' (src-nsa-politburo-19860703.secblame)"
+  - what: "A primary text of the liquidator line 'They gave us certificates. A certificate that says I was there. As if that could unburn what was burned.'"
+    tried: ["https://www.nobelprize.org/prizes/literature/2015/alexievich/prose/"]
+    status: "No such words in any held source; the record marks them a paraphrase. The nearest verbatim line is a liquidator's, as his child reports it: 'In parting they shook our hands and gave us certificates of gratitude for our self-sacrifice' (src-alexievich-gessen-2005.secfather2)"
+  - what: "Primary texts of the two lines the script reads as the epidemiologists' dispute ('The number of deaths will never be known with precision ...' and 'To dismiss the low-dose deaths ... hide a catastrophe inside a statistic')"
+    tried: ["https://www.iaea.org/sites/default/files/chernobyl.pdf", "https://www.nirs.org/wp-content/uploads/c20/torch.pdf", "https://web.archive.org/web/20061211035033/http://www.greenpeace.org/raw/content/international/press/reports/chernobylhealthreport.pdf"]
+    status: "Neither sentence is in the Forum, TORCH or Greenpeace reports as read. The nearest verbatim: Forum 'It is impossible to assess reliably, with any precision, numbers of fatal cancers caused by radiation exposure due to Chernobyl accident' (src-chernobyl-forum-2006.p15); TORCH 'The full effects of the Chernobyl accident will most certainly never be known' and 'the statement is misleading, as the figure calculated in the IAEA/WHO report is actually 9,000 fatalities' (src-torch-2006); Harms 'a dishonour to those who have and will suffer' (src-greens-efa-20060406.secharms)"
+  - what: "The engineers' line 'They pushed the button that was supposed to stop the reactor, and it blew up', and the INSAG-7 notable quote ('... not only in the operators but in the design of the reactor')"
+    tried: ["https://www-pub.iaea.org/MTCD/publications/PDF/Pub913e_web.pdf"]
+    status: "The first is the record's own plain-language summary, in no document. The second is not INSAG-7's wording; the report's sentence is held (src-insag7-1992.item2)"
+  - what: "Gennady Gerasimov's 'It was glasnost that destroyed the Soviet Union ...' (event YAML notable quote)"
+    tried: []
+    status: "not found or sought in a primary source in this pass; unverified"
+  - what: "The Forsmark detection as a Swedish primary record (Forsmark, Vattenfall, the Swedish radiation authority), and the YAML's 'Sweden threatened to file an official alert'"
+    tried: ["https://www.europarl.europa.eu/news/en/news-room/20140514STO47018/html/Forsmark-how-Sweden-alerted-the-world-about-the-danger-of-Chernobyl-disaster"]
+    status: "No Swedish primary document was read. The one account held (European Parliament, 2014, quoting the plant's operations manager) says the employee set off the monitor 'on his way back from the restroom', which disagrees with the YAML ('on his way IN to work') and the script ('walked in from outside'); it does not mention a threatened alert. The disagreement is published, not resolved"
+  - what: "Declassified Ukrainian KGB (HDA SBU) documents in the Wilson Center's English translations (28 documents, 1973-1991), and the SBU's own Ukrainian publications"
+    tried: ["https://www.wilsoncenter.org/blog-post/28-newly-translated-documents-chernobyl-1973-1991", "https://digitalarchive.wilsoncenter.org/document/134290"]
+    status: "the blog post lists the documents, but digitalarchive.wilsoncenter.org did not resolve (DNS) on 2026-10-07; the Ukrainian-language SBU volumes were not sought. Ukraine is represented by its 2006 national report"
+  - what: "The national report of Belarus (2011, 'A quarter of a century after the Chernobyl catastrophe') in English, and any source for the YAML's 'Belarus absorbed roughly 70 percent of the fallout'"
+    tried: ["web search for the English edition"]
+    status: "no English edition found. No held source gives Belarus's share. The Forum's '70 percent' is of the European area above 37 kBq per square metre, shared by Belarus, Russia and Ukraine together (src-chernobyl-forum-2006.p22)"
+  - what: "Sources for figures the live script speaks that no held extract carries: the New Safe Confinement's 108 m height and 2016 move, Pripyat's average age of 26, robots failing on the roof and 90-second shifts, the Kyiv May Day parade, the upper shield's 1,000 tonnes, 'more than a hundred times its rated power', the ferris wheel due to open five days later"
+    tried: []
+    status: "not sought in this pass; each is unverified against this ledger"
+  - what: "Archival recordings (policy B, max 3)"
+    tried: []
+    status: "none admitted. The Vremya broadcast of 28 April 1986 and Gorbachev's address of 14 May 1986 exist as Soviet television; no repository copy with a rights statement on the policy-B allowlist was found, and copies on YouTube are an excluded host. No recording is proposed"
+
+recordings: []

@@ -1,0 +1,8 @@
+source: src-khabalov-1917
+locator: secteleg
+url: https://archive.org/download/padenietsarskogorezhimat1doprosyanh16/padenietsarskogorezhimat1doprosyanh16_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+note: General S. S. Khabalov's answers to the Extraordinary Commission of Inquiry of the Provisional Government, as P. E. Shchegolev's edition prints the stenographic record; the telegram's words are Khabalov's recital of it. 'Председатель' is the Commission's chairman
+
+Хабалов. — Затем, около девяти часов. я получил телеграмму за подписью его императорского величества: «Повелеваю завтра же прекратить в столице беспорядки, недопустимые в тяжелое время войны с Германией и Австрией. Николай». Председатель.—Где находится теперь эта телеграмма, генерал? Хабалов. — Не могу вам. сказать, потому Что я ее передал начальнику штаба... Может быть, начальник штаба мне ее и вернул, но я не помню...

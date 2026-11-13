@@ -1,0 +1,9 @@
+source: src-napoleon-corr-7
+locator: item5859
+url: https://archive.org/download/correspondancede07napouoft/correspondancede07napouoft_djvu.txt
+read: 2026-09-25
+note: No. 5859, proclamation of 17 brumaire an X (8 November 1801); the layer prints 1 brumaire for 17
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+5859. — PROCLAMATION. Paris, 1" brumaire an \ (8 novembre 1801). Habitants de Saint-Domingue, quelles que soient votre origine et votre couleur, vous êtes tous Français; vous êtes tous libres et tous égaux devant Dieu et devant la République. La France a été, comme Saint-Domingue, en proie aux factions et déchirée par la guerre civile et par la guerre étrangère. Mais tout a changé. Tons les peuples ont embrassé les Français et leur ont juré la paix et l'amitié. Tous les Français se sont embrassés aussi et ont juré d'être tous des amis et des frères. Venez aussi embrasser les Français et vous réjouir de revoir vos amis et vos frères d'Europe. Le Gouvernement vous envoie le capitaine général Leclcrc. Il amène avec lui de grandes forces pour vous protéger contre vos ennemis et contre les ennemis de la République. Si on vous dit : Ces' forces sont destinées à vous ravir votre liberté , répondez •. La République nous a donné la liberté, la République ne souffrira pas qu'elle nous soit enlevée. Ralliez-vous autour du capitaine général. Il vous rapporte l'abondance et la paix. Ralliez-vous tous autour de lui. Qui osera se séparer du capitaine général sera un traître à la patrie, et la colère de la République le dévorera, comme le feu dévore vos cannes desséebées.

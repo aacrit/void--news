@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-armenia-decl-1990.item11
+names: Հայաստանի Հանրապետությունը=The Republic of Armenia; Օսմանյան Թուրքիայում=Ottoman Turkey; Արևմտյան Հայաստանում=Western Armenia
+
+11. The Republic of Armenia stands in support of the task of achieving international recognition of the 1915 genocide of the Armenians in Ottoman Turkey and Western Armenia.

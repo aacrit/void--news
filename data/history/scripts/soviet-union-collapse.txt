@@ -1,0 +1,147 @@
+## OPEN
+N: A country of two hundred and ninety million people, spanning eleven time zones and one sixth of the planet's land surface, from Brest to the Bering Strait, did not end in a war. It did not end in a revolution.
+N: Three men signed three pages at a hunting lodge in a forest, and by the time anyone else found out, it was already over.
+N: The president of the country still nominally in charge found out by telephone. The whole thing took seventeen days, in paperwork.
+
+## TITLE
+N: The Collapse of the Soviet Union. December, nineteen ninety one.
+
+## SCENE 1 | Twelve minutes on television
+N: The evening of December twenty fifth, the Kremlin. Mikhail Gorbachev sits in front of a television camera and reads for twelve minutes.
+N: He is resigning as president of a country that, on paper, still has one more day left to exist.
+N: Before he finishes, he signs a decree handing control of the Soviet nuclear arsenal, roughly twenty seven thousand warheads, to Boris Yeltsin: the president of a country called Russia that has been independent for four months.
+
+## DOCUMENT | Mikhail Gorbachev | Resignation address, Soviet Central Television, Kremlin | December 25, 1991
+N: Gorbachev reads the line that ends his own job.
+M: Due to the situation which has evolved as a result of the formation of the Commonwealth of Independent States, I hereby discontinue my activities at the post of President of the U.S.S.R.
+
+## ASIDE
+N: At seven thirty two that evening, the red flag with the hammer and sickle comes down over the Kremlin's Senate dome. The Russian tricolor goes up in its place.
+N: There is no ceremony. A caretaker does it.
+N: The state had lasted sixty nine years. It had been the second superpower on Earth.
+
+## REST
+
+## SCENE 2 | Tanks in Moscow
+N: None of this began in December. It began in August.
+N: On the nineteenth, eight of the union's most senior officials, the heads of the KGB, the army, the interior ministry, and the government, declare a State of Emergency. They put Gorbachev under house arrest at his dacha in Crimea and send tanks into Moscow, to stop the signing of a treaty that would have loosened the union.
+N: Boris Yeltsin climbs onto a tank outside the Russian parliament.
+
+## DOCUMENT | Boris Yeltsin | Appeal "To the Citizens of Russia," read atop a tank outside the Russian parliament | August 19, 1991
+N: Yeltsin reads an appeal to the citizens of Russia.
+M: The legally elected president of the country has been removed from power. We are dealing with a rightist, reactionary, unconstitutional coup. We call on the citizens of Russia to give a fitting rebuff to the putschists.
+N: Crowds surround the building. Three young men die under armored vehicles that night. By the twenty first, the plotters have lost their nerve. Several are arrested. One shoots himself.
+N: The coup meant to save the union destroys it. Within days, Ukraine, Belarus, Moldova, and the rest declare independence.
+
+## REST
+
+## SCENE 3 | A referendum and a forest
+N: On December first, Ukraine holds a referendum. Ninety two point three percent vote to leave, on an eighty four percent turnout. Every region says yes, including Russian speaking Crimea. Without Ukraine, the union's second largest republic, no union is possible.
+N: One week later, three men meet at a hunting lodge in the Belovezha forest: Yeltsin of Russia, Leonid Kravchuk of Ukraine, and Stanislav Shushkevich of Belarus.
+
+## DOCUMENT | Yeltsin, Kravchuk, and Shushkevich | Agreement Establishing the Commonwealth of Independent States (Belovezha Accords) | December 8, 1991
+N: Yeltsin, Kravchuk, and Shushkevich sign an agreement declaring what has already happened.
+M: The USSR, as a subject of international law and a geopolitical reality, ceases to exist.
+
+## ASIDE
+N: In its place, they create a Commonwealth of Independent States. Gorbachev, still nominally the president of a country that no longer exists on paper, learns about it by telephone.
+
+## REST
+
+## SCENE 4 | Nothing left to govern
+N: On December twenty first, at Alma-Ata, eleven republics confirm the arrangement.
+N: On December twenty sixth, the Soviet of the Republics, the upper chamber of a parliament with nothing left to govern, votes the union out of existence.
+N: Fifteen new countries take its place. Overnight, twenty five million ethnic Russians find themselves living in foreign states, without moving an inch.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of the same seventeen days.
+
+## PERSPECTIVE | Western Triumph | victor
+N: The first account says the argument of the twentieth century got settled.
+N: Two systems had competed since nineteen seventeen: one built on markets and elections, the other on central planning and one party rule. In December, one of them dissolved itself, and the conclusion seemed to write itself.
+N: Francis Fukuyama had published an essay two years earlier, months before the Berlin Wall fell, arguing that liberal democracy might be the end point of mankind's ideological evolution. NATO and the European Union expanded east. The IMF and the World Bank sent advisers to build markets from the rubble of planning.
+N: American conservatives told a sharper version: Ronald Reagan's military buildup, and his nineteen eighty three Strategic Defense Initiative, forced the Soviet economy to spend itself into insolvency.
+N: Weeks earlier, in a speech in Kyiv, President George Bush had warned Ukrainians against what he called suicidal nationalism, wary of humiliating a nuclear power mid collapse. Then, the same night Gorbachev resigned, he addressed his own country.
+M: The Soviet Union no longer exists. This is a victory for democracy and freedom.
+N: What this account skips is how much of the outcome turned on choices made inside the Soviet system, and how fast the promised prosperity curdled for the people who had just been declared the winners.
+
+## PERSPECTIVE | Russian Statist | revisionist
+N: The second account says this was not a liberation. It was a dismemberment.
+N: Vladimir Putin gave it its defining phrase years later, in a speech to the Federal Assembly.
+M: First and foremost it is worth acknowledging that the demise of the Soviet Union was the greatest geopolitical catastrophe of the century.
+N: The grievance rests on real lines on a map. The internal borders of the union were drawn administratively in the nineteen twenties and thirties. Nikita Khrushchev transferred Crimea from Russia to Ukraine in nineteen fifty four with a stroke of the pen. When the union dissolved, those internal lines became international borders overnight, and twenty five million ethnic Russians woke up as foreigners without moving.
+N: This account also points to a referendum on March seventeenth, nineteen ninety one, when roughly seventy seven percent of those who voted chose to preserve a renewed union. Nine months later, three men in a forest ended the country anyway.
+N: What it says little about is the peoples for whom the same December was the recovery of nations the union had conquered.
+
+## PERSPECTIVE | The Newly Independent Republics | victor
+N: The third account refuses the word collapse. From the republics on the union's edge, this was not a fall. It was the end of an occupation.
+N: Lithuania had declared the restoration of its own independence in March of nineteen ninety, the first republic to break. Moscow answered first with an economic blockade, and then, on January thirteenth, nineteen ninety one, with soldiers. Fourteen unarmed civilians were crushed or shot at the Vilnius television tower.
+N: Vytautas Landsbergis, who led that movement, put it this way.
+M: We were not leaving the Soviet Union. We were returning to ourselves.
+N: The pivotal republic was Ukraine. On December first, ninety two point three percent voted to leave, including Russian speaking Crimea. Without Ukraine, no union was possible.
+N: Central Asia experienced it differently. Its leaders, Nursultan Nazarbayev of Kazakhstan foremost, tried to preserve a reformed union to the end, and were handed sovereignty almost by default. Independence still meant the recovery of statehood and language, alongside a civil war in Tajikistan that killed tens of thousands.
+
+## PERSPECTIVE | The Ordinary Citizen | vanquished
+N: The fourth account is not about geopolitics. It is about a family's savings disappearing overnight.
+N: Svetlana Alexievich spent two decades collecting the voices of people who lived through it, for a book called Secondhand Time. Engineers became street vendors in its pages. Professors sold their own libraries. One voice, whose name she never gives, put it like this.
+F: We are people who come from a country that no longer exists. But it lives on in us.
+N: On January second, nineteen ninety two, prices were freed overnight, and inflation ran past twenty five hundred percent that year. The privatization that followed handed oil, nickel, and metals empires to a handful of men who became billionaires, through loans for shares deals in nineteen ninety five and ninety six, while wages went unpaid for months. Male life expectancy in Russia fell from sixty four years to fifty seven by nineteen ninety four: a peacetime collapse.
+N: This account does not argue the union should have survived. It argues that freedom arrived, for most people who lived under it, as a decade of loss severe enough that a later strongman could win their gratitude simply by making the losing stop.
+
+## PERSPECTIVE | Scholarship on Causes | academic
+N: The fifth account is the historians', and they agree on almost nothing except the dates.
+N: Yegor Gaidar argued that the collapse of world oil prices in the mid nineteen eighties bankrupted a state that depended on energy revenue to buy the grain it could no longer grow. Archie Brown argued the opposite: that the collapse was not inevitable, and a different leader might have liberalized the economy while keeping the party's grip, the way China's leaders did. A third line credits the nations: once reform allowed protest, nationalist mobilization spread from republic to republic until the center could no longer hold.
+N: Stephen Kotkin stressed a different point: how little blood was spilled. The world's largest arsenal changed hands without a Yugoslav scale war.
+N: The historian Serhii Plokhy, who studied the final months in the most detail, summarized the disagreement itself.
+M: The Soviet collapse was neither preordained nor the product of a single cause.
+N: What the scholarship refuses is the neatest explanation of all: that an outside power simply won.
+
+## REST | short
+
+## TURN | What each one leaves out
+N: What each account has to leave out.
+N: The triumph account credits a strategy for an outcome that turned as much on choices made inside the Soviet Union as on pressure applied from outside it.
+N: The statist account is right about the stranded millions, and has to sit with the fact that it was a Russian president, Yeltsin, who signed the union out of existence.
+N: The republics' account is right that this was liberation, and it still has to answer for the minorities its own new borders left exposed.
+N: The ordinary citizen's account is right about the loss, and it never argues for the system that produced the queues and the informers it replaced.
+N: And the scholarship refuses a verdict, which is honest, and also means it leaves nobody a lesson to act on.
+
+## REST
+
+## CLOSE
+N: The Soviet arsenal, roughly twenty seven thousand warheads, split across Russia, Ukraine, Kazakhstan, and Belarus.
+N: Ukraine surrendered about nineteen hundred of them to Russia in nineteen ninety four, in exchange for a guarantee of its own borders.
+N: Russia broke that guarantee itself: first annexing Crimea in twenty fourteen, then invading in twenty twenty two.
+N: The borders drawn casually inside one country in the nineteen twenties became the front lines of Europe's largest war since nineteen forty five.
+
+## SAY
+Gorbachev = GOR-bah-chof
+Yeltsin = YELT-sin
+Kravchuk = KRAHV-chuk
+Shushkevich = shoosh-KYEV-ich
+Belovezha = bel-oh-VYEZH-ah
+Alma-Ata = AL-mah AH-tah
+Vytautas = VEE-tow-tas
+Landsbergis = LAHNDS-bear-gis
+Fukuyama = foo-koo-YAH-mah
+Alexievich = ah-lek-SYAY-vich
+Svetlana = svet-LAH-nah
+Plokhy = PLOH-khee
+Khrushchev = KHROOSH-chof
+Putin = POO-tin
+Vilnius = VIL-nee-us
+Kazakhstan = kah-zahk-STAHN
+Nazarbayev = nah-zar-BYE-yev
+Tajikistan = tah-jik-ih-STAN
+Gaidar = GY-dar
+Kotkin = KOT-kin
+Reagan = RAY-gun
+Kyiv = KEEV
+Brest = BREST
+Bering = BEHR-ing
+U.S.S.R. = U-S-S-R
+KGB = K-G-B
+IMF = I-M-F
+putschists = PUTCH-ists

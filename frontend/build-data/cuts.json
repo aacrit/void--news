@@ -1,0 +1,32 @@
+{
+  "builtAt": "2026-11-12T15:59:26.066677Z",
+  "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
+  "cards": [
+    {
+      "id": "33e700cb-a7f0-4f30-acc9-840f456ba33d",
+      "title": "Netflix Schedules Russell Brand Documentary Following Prison Sentence and Platform Fallout",
+      "sentences": [
+        {
+          "text": "In a separate development, David Walliams faces allegations from multiple women of using his celebrity status to groom teenagers as young as 15 and engage in predatory behavior, according to an investigation published jointly by ITV News and The Guardian.",
+          "rule": "E-16",
+          "message": "sentence opens on \"In a separate development\", announcing another story: \"In a separate development, David Walliams faces allegations from multiple women of using h\""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "60611744-258a-4a90-9349-2afaef7764b3",
+      "title": "Death Toll Rises After Brooklyn Apartment Building Collapse",
+      "sentences": [
+        {
+          "text": "The mixed-use structure, which contained apartments above ground-floor commercial space, collapsed near a construction site at approximately 4:00 p.m. on Wednesday.",
+          "rule": "E-13",
+          "message": "summary states 0, which appears in none of the source articles: source it or cut it"
+        }
+      ],
+      "points": [],
+      "left": []
+    }
+  ]
+}

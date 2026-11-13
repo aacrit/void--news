@@ -1,0 +1,8 @@
+source: src-lenin-dissolution-1918
+locator: fn1
+url: https://www.marxists.org/archive/lenin/works/1918/jan/06a.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+note: the editors' note 1 to the draft, in the Collected Works as the page prints it; 'p p.' and 'I vestia' are the page's text
+
+The All-Russia Central Executive Committee met on the night of January 6 (19) and by a majority against two, with five abstentions, adopted the decree. Lenin spoke on the dissolution of the Assembly (see p p. 437-41). The decree was based on Lenin’s draft and was published in Pravda and I vestia on January 7 (20), 1918.

@@ -1,0 +1,7 @@
+source: src-ho-declaration-1945-sw
+locator: secopening
+url: https://www.marxists.org/reference/archive/ho-chi-minh/works/1945/declaration-independence.htm
+read: 2026-10-09
+note: the Selected Works translation as the archive prints it; its first sentence reads 'inalienable rights, among these', where Pentagon Papers Part I prints 'unalienable Rights; among these' (src-pp-part-i.secdeclaration)
+
+"All men are created equal. They are endowed by their Creator with certain inalienable rights, among these are Life, Liberty, and the pursuit of Happiness." This immortal statement was made in the Declaration of Independence of the United States of America in 1776. In a broader sense, this means: All the peoples on the earth are equal from birth, all the peoples have a right to live, to be happy and free. The Declaration of the French Revolution made in 1791 on the Rights of Man and the Citizen also states: "All men are born free and with equal rights, and must always remain free and have equal rights." Those are undeniable truths.

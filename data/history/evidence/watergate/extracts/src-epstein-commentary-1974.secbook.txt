@@ -1,0 +1,7 @@
+source: src-epstein-commentary-1974
+locator: secbook
+url: https://www.commentary.org/articles/edward-epstein-3/did-the-press-uncover-watergate/
+read: 2026-10-09
+note: Commentary's web text of the essay; the end of its first paragraph
+
+In keeping with the mythic view of journalism, however, the book never describes the “behind-the-scenes” investigations which actually “smashed the Watergate scandal wide open”—namely the investigations conducted by the FBI, the federal prosecutors, the grand jury, and the Congressional committees. The work of almost all those institutions, which unearthed and developed all the actual evidence and disclosures of Watergate, is systematically ignored or minimized by Bernstein and Woodward. Instead, they simply focus on those parts of the prosecutors' case, the grand-jury investigation, and the FBI reports that were leaked to them.

@@ -1,0 +1,6 @@
+source: src-nagasaki-city-damage
+locator: para1
+url: https://nagasakipeace.jp/en/reference/materials/kids/higai.html
+read: 2026-10-05
+
+When the atomic bomb was dropped, Nagasaki had a population of about 240,000. However, by the end of December 1945, 73,884 of its people had been killed, and 74,909 had been injured by the A-bomb. In addition, so-called “atomic bomb disease,” caused by the heat rays, blast and radiation, afflicted the survivors, many of whom developed various diseases with the passing of time. Some A-bomb victims are still suffering from these diseases.

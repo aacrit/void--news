@@ -1,0 +1,7 @@
+source: src-vam-o79580
+locator: sectrading
+url: https://api.vam.ac.uk/v2/museumobject/O79580
+read: 2026-10-09
+note: the record's summaryDescription field (JSON); sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+The medallions were not sold commercially, and were never listed in the Wedgwood catalogues. Instead, Wedgwood probably bore the cost of their production and distribution.

@@ -1,0 +1,7 @@
+source: src-lei-18311107
+locator: art1
+url: https://www.planalto.gov.br/ccivil_03/leis/lim/lim-7-11-1831.htm
+read: 2026-10-09
+note: article 1, first sentence, as the Presidency's legislation site prints it; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Art. 1º Todos os escravos, que entrarem no territorio ou portos do Brazil, vindos de fóra, ficam livres.

@@ -1,0 +1,8 @@
+source: src-pra-1950
+locator: sec1xv
+url: https://disa.ukzn.ac.za/sites/default/files/pdf_files/leg19500707.028.020.030.pdf
+read: 2026-10-09
+note: the text is the scan's OCR layer, whitespace collapsed; its glyph errors are kept as printed (e.g. 'ail' for 'all')
+note: section 1, definition (xv)
+
+(xv) "white person" means a person who in appearance obviously is, or who is generally accepted as a white person, but does not include a person who, although in appearance obviously a white person, is generally accepted as a coloured person,

@@ -1,0 +1,1404 @@
+# The evidence ledger for hiroshima-nagasaki (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Begun 2026-10-05 for the ninth Orpheus episode and the first-listener cinematic script: the
+# sources the script's document voice reads from and the record its narration is checked
+# against. Every entry was fetched on 2026-10-05 from the URL it names; every extract under
+# extracts/ was sliced from the fetched copy by a builder script (start marker to end marker,
+# scratchpad hiro_build.py), never retyped. Nothing here was written from memory. A work the
+# free record could not reach is listed under `gaps`, by name, with what was tried. Where a
+# scan's OCR layer or a PDF text layer is the free copy, the extract keeps the layer's glyphs
+# and line breaks and says so in a note.
+# This is NOT a thesis ledger: no positions, contested claims, exhibits or analyses are
+# adjudicated here, and the event renders the Hearing. The bar of §4e is not claimed.
+#
+# Four quotations the event YAML carries were checked against the documents they name and
+# are NOT held, because the documents do not carry them in that form (see gaps:): the
+# Imperial Rescript as the YAML words it, the Franck Report sentence that names Hiroshima,
+# Thurlow's "instruments of extinction", and Taniguchi's "it is not merely a picture".
+#
+# Continued 2026-10-07 (second session): the rescript in the original Japanese from a
+# Japanese government host; Sunao Tsuboi's own account; the pocket watch; and the
+# historians of the decision in their own words, at parity and as a disagreement:
+# Frank (traditionalist), Alperovitz (critic), Hasegawa (the Soviet entry), and Burr's
+# National Security Archive commentary, which states the contested questions without
+# taking a side. A historian is held only for his own sentences; the memoir quotations
+# his article carries at second hand are not held.
+slug: hiroshima-nagasaki
+bootstrapped: 2026-10-05
+
+entries:
+  # ----------------------------------------------------------- Tier A: the United States record
+  - id: src-truman-19450806
+    tier: A
+    kind: primary-document
+    author: Harry S. Truman, President of the United States
+    title: "Statement by the President Announcing the Use of the A-Bomb at Hiroshima, August 6, 1945"
+    container: "Public Papers of the Presidents, Harry S. Truman, 1945, item 93"
+    publisher: Harry S. Truman Library and Museum (National Archives and Records Administration)
+    place: Independence, Missouri
+    year: 1945
+    edition: "the Library's web text of the Public Papers, with its editorial note: the statement was RELEASED in Washington, drafted before the President left Germany, and handed to the press by the Secretary of War while the President was at sea aboard the Augusta. It was not a radio address"
+    volume: null
+    document_number: "Public Papers 93"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.trumanlibrary.gov/library/public-papers/93/statement-president-announcing-use-bomb-hiroshima"}
+    access:
+      free_copy: "https://www.trumanlibrary.gov/library/public-papers/93/statement-president-announcing-use-bomb-hiroshima"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Statement by the President Announcing the Use of the A-Bomb at Hiroshima | Harry S. Truman"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-truman-19450809
+    tier: A
+    kind: primary-document
+    author: Harry S. Truman, President of the United States
+    title: "Radio Report to the American People on the Potsdam Conference, August 9, 1945"
+    container: "Public Papers of the Presidents, Harry S. Truman, 1945, item 97"
+    publisher: Harry S. Truman Library and Museum (National Archives and Records Administration)
+    place: Independence, Missouri
+    year: 1945
+    edition: "the Library's web text; the Library's sound recording SR61-37 of the same broadcast is described under recordings"
+    volume: null
+    document_number: "Public Papers 97"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.trumanlibrary.gov/library/public-papers/97/radio-report-american-people-potsdam-conference"}
+    access:
+      free_copy: "https://www.trumanlibrary.gov/library/public-papers/97/radio-report-american-people-potsdam-conference"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Radio Report to the American People on the Potsdam Conference | Harry S. Truman"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-truman-diary-19450725
+    tier: A
+    kind: primary-document
+    author: Harry S. Truman
+    title: "Diary note of President Harry S. Truman, July 25, 1945 (the Potsdam diary)"
+    container: "President's Secretary's Files, Truman Papers; National Archives Identifier 183568382"
+    publisher: "DocsTeach, the National Archives' education site, with the Archives' transcript"
+    place: Independence, Missouri
+    year: 1945
+    edition: "the National Archives' transcript as DocsTeach prints it; the item page marks it 'Public Domain, Free of Known Copyright Restrictions'"
+    volume: null
+    document_number: "NAID 183568382"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://docsteach.org/document/diary-note-truman-7-25-1945/"}
+    access:
+      free_copy: "https://docsteach.org/document/diary-note-truman-7-25-1945/"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Diary Note of President Harry S. Truman - DocsTeach"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-handy-19450725
+    tier: A
+    kind: primary-document
+    author: Thomas T. Handy, Acting Chief of Staff, United States Army, to General Carl Spaatz
+    title: "Directive of 25 July 1945 to deliver the first special bomb (the order to drop the atomic bomb)"
+    container: "National Archives, Record Group 77, Manhattan Engineer District; transcript published by the Department of Energy's Office of History"
+    publisher: United States Department of Energy, OSTI OpenNet
+    place: Washington
+    year: 1945
+    edition: "the Department's typed transcript (PDF); it prints 'Spaats' for Spaatz and 'Nilgata' for Niigata, which the extract keeps"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.osti.gov/opennet/manhattan-project-history/Resources/order_drop.htm"}
+    access:
+      free_copy: "https://www.osti.gov/opennet/manhattan-project-history/publications/droporder.pdf"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Manhattan Project: Order to Drop the Atomic Bomb (the page that links the transcript)"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-interim-19450531
+    tier: A
+    kind: primary-document
+    author: The Interim Committee (Henry L. Stimson, chairman); notes taken by R. Gordon Arneson
+    title: "Notes of the Interim Committee Meeting, Thursday, 31 May 1945"
+    container: "National Archives, Record Group 77, Harrison-Bundy files; a community scan on the Internet Archive"
+    publisher: "Internet Archive (uploader's scan of the declassified notes)"
+    place: Washington
+    year: 1945
+    edition: "the Internet Archive's OCR text layer of the scan, read whole; the extract keeps the layer's glyph errors and says so"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "interim-committee-may31-1945", hathitrust: null, url: "https://archive.org/details/interim-committee-may31-1945"}
+    access:
+      free_copy: "https://archive.org/download/interim-committee-may31-1945/Arneson1945_djvu.txt"
+      verified_at: 2026-10-05
+      verified_by: archive-item-fetch
+      verified_title: "Protocol of the \"Interim Committee\" meeting of May 31, 1945"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-szilard-19450717
+    tier: A
+    kind: primary-document
+    author: Leo Szilard and 68 scientists of the Metallurgical Laboratory, Chicago
+    title: "A Petition to the President of the United States, July 17, 1945"
+    container: "National Archives, Record Group 77, Harrison-Bundy files, folder 76; text as atomicarchive.com publishes it"
+    publisher: atomicarchive.com
+    place: Chicago
+    year: 1945
+    edition: "the host's web text; the host heads it '(Drafted by Leo Szilard and signed by 68 members of the Metallurgical Laboratory in Chicago)'"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.atomicarchive.com/resources/documents/manhattan-project/petition.html"}
+    access:
+      free_copy: "https://www.atomicarchive.com/resources/documents/manhattan-project/petition.html"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "A PETITION TO THE PRESIDENT OF THE UNITED STATES | The Manhattan Project | Historical Documents"
+    language: en
+    region_of_authorship: americas
+    producer: manhattan-project-scientists
+    position: null
+    rights: public
+
+  - id: src-franck-19450611
+    tier: A
+    kind: report
+    author: James Franck and the Committee on Political and Social Problems, Metallurgical Laboratory, University of Chicago
+    title: "Report of the Committee on Political and Social Problems (the Franck Report), June 11, 1945"
+    container: "Daniel Ellsberg collection, Internet Archive item TheFranckReport"
+    publisher: Internet Archive
+    place: Chicago
+    year: 1945
+    edition: "the Internet Archive's OCR text layer of the scan; the extracts keep its glyph errors and say so. Read whole: the report does NOT contain the sentence the event YAML attributes to it ('mankind will curse the names of Los Alamos and Hiroshima'); the report predates the bombing"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "TheFranckReport", hathitrust: null, url: "https://archive.org/details/TheFranckReport"}
+    access:
+      free_copy: "https://archive.org/download/TheFranckReport/ELS012-036_djvu.txt"
+      verified_at: 2026-10-05
+      verified_by: archive-item-fetch
+      verified_title: "The Franck Report"
+    language: en
+    region_of_authorship: americas
+    producer: manhattan-project-scientists
+    position: null
+    rights: public
+
+  - id: src-ussbs-effects-1946
+    tier: A
+    kind: report
+    author: United States Strategic Bombing Survey, Chairman's Office
+    title: "The Effects of Atomic Bombs on Hiroshima and Nagasaki, 30 June 1946"
+    container: "United States Strategic Bombing Survey, Pacific War reports, no. 3"
+    publisher: "United States Government Printing Office; read at atomicarchive.com, which publishes the report by section"
+    place: Washington
+    year: 1946
+    edition: "the host's web text, section II (The Effects of the Atomic Bombings); the extracts are all from that section"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.atomicarchive.com/resources/documents/bombing-survey/index.html"}
+    access:
+      free_copy: "https://www.atomicarchive.com/resources/documents/bombing-survey/section_II.html"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "The Effects of Atomic Bombs on Hiroshima and Nagasaki| The Atomic Bombings of Hiroshima and Nagasaki | Historical Documents"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-ussbs-summary-1946
+    tier: A
+    kind: report
+    author: United States Strategic Bombing Survey, Chairman's Office
+    title: "Summary Report (Pacific War), 1 July 1946"
+    container: "United States Strategic Bombing Survey, Pacific War reports, no. 1"
+    publisher: "United States Government Printing Office; read at anesi.com, a private transcription of the printed report with its page numbers"
+    place: Washington
+    year: 1946
+    edition: "the host's transcription; page 26 is the section 'Japan's Struggle to End the War', which states the same conclusion as the Survey's separate report of that title. The Truman Library holds that separate report as scans without a text layer this container could read"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.anesi.com/ussbs01.htm"}
+    access:
+      free_copy: "https://www.anesi.com/ussbs01.htm"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "United States Strategic Bombing Survey: Summary Report (Pacific War)"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-med-1946-ch7
+    tier: A
+    kind: report
+    author: Manhattan Engineer District, United States Army
+    title: "The Atomic Bombings of Hiroshima and Nagasaki, chapter 7, The Attacks (29 June 1946)"
+    container: "The Avalon Project, Yale Law School, which publishes the report by chapter"
+    publisher: Lillian Goldman Law Library, Yale Law School
+    place: New Haven
+    year: 1946
+    edition: "the Avalon web text; the chapter quotes the narrative of the second mission's weaponeer, Commander F. L. Ashworth"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://avalon.law.yale.edu/subject_menus/mpmenu.asp"}
+    access:
+      free_copy: "https://avalon.law.yale.edu/20th_century/mp07.asp"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Avalon Project - The Atomic Bombings of Hiroshima and Nagasaki (Chapter 7 - The Attacks)"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-med-1946-ch10
+    tier: A
+    kind: report
+    author: Manhattan Engineer District, United States Army
+    title: "The Atomic Bombings of Hiroshima and Nagasaki, chapter 10, Total Casualties (29 June 1946)"
+    container: "The Avalon Project, Yale Law School"
+    publisher: Lillian Goldman Law Library, Yale Law School
+    place: New Haven
+    year: 1946
+    edition: "the Avalon web text; Table A is rendered one cell per line"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://avalon.law.yale.edu/subject_menus/mpmenu.asp"}
+    access:
+      free_copy: "https://avalon.law.yale.edu/20th_century/mp10.asp"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Avalon Project - The Atomic Bombings of Hiroshima and Nagasaki (Chapter 10 - Total Casualties)"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-med-1946-ch25
+    tier: A
+    kind: testimony
+    author: Father John A. Siemes, S.J., professor at Tokyo's Catholic University, at the Jesuit novitiate at Nagatsuka outside Hiroshima
+    title: "Hiroshima, August 6th, 1945: eyewitness account, appended as chapter 25 of The Atomic Bombings of Hiroshima and Nagasaki (Manhattan Engineer District, 29 June 1946)"
+    container: "The Avalon Project, Yale Law School"
+    publisher: Lillian Goldman Law Library, Yale Law School
+    place: New Haven
+    year: 1946
+    edition: "the Avalon web text of the report's appendix; the account was written in Japan in September 1945 and is held here as the United States government report printed it"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://avalon.law.yale.edu/subject_menus/mpmenu.asp"}
+    access:
+      free_copy: "https://avalon.law.yale.edu/20th_century/mp25.asp"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Avalon Project - The Atomic Bombings of Hiroshima and Nagasaki (Chapter 25 - Eyewitness Account)"
+    language: en
+    region_of_authorship: east-asia
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-frus-19450811
+    tier: A
+    kind: primary-document
+    author: James F. Byrnes, Secretary of State, to the Swiss Charge (Grassli), for the Japanese Government
+    title: "The Secretary of State to the Swiss Charge, August 11, 1945 (the reply of the four powers to Japan's note of August 10)"
+    container: "Foreign Relations of the United States: Diplomatic Papers, 1945, The British Commonwealth, The Far East, Volume VI, Document 412"
+    publisher: Office of the Historian, United States Department of State
+    place: Washington
+    year: 1945
+    edition: "the Office of the Historian's web edition; its page-break marker is kept"
+    volume: "VI"
+    document_number: "740.00119 PW/8-1045; FRUS 1945 vol. VI doc. 412"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1945v06/d412"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1945v06/d412"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Historical Documents - Office of the Historian (FRUS 1945, vol. VI, document 412)"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  # ----------------------------------------------------------- Tier A: the Japanese record
+  - id: src-frus-19450810
+    tier: A
+    kind: primary-document
+    author: The Japanese Government, in a note carried by the Swiss Charge (Grassli) to the Secretary of State
+    title: "The Swiss Charge to the Secretary of State, August 10, 1945, transmitting the Japanese Government's acceptance of the Potsdam terms with one understanding"
+    container: "Foreign Relations of the United States: Diplomatic Papers, 1945, Volume VI, Document 406"
+    publisher: Office of the Historian, United States Department of State
+    place: Washington
+    year: 1945
+    edition: "the Office of the Historian's web edition; the words quoted within are the Japanese Government's message as the Swiss Legation delivered it in English"
+    volume: "VI"
+    document_number: "740.00119 PW/8-1045; FRUS 1945 vol. VI doc. 406"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1945v06/d406"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1945v06/d406"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Historical Documents - Office of the Historian (FRUS 1945, vol. VI, document 406)"
+    language: en
+    region_of_authorship: east-asia
+    producer: japanese-government
+    position: null
+    rights: public
+
+  - id: src-frus-19450814
+    tier: A
+    kind: primary-document
+    author: The Japanese Government, in a note carried by the Swiss Charge (Grassli) to the Secretary of State
+    title: "The Swiss Charge to the Secretary of State, August 14, 1945, transmitting the Japanese Government's communication of acceptance"
+    container: "Foreign Relations of the United States: Diplomatic Papers, 1945, Volume VI, Document 440"
+    publisher: Office of the Historian, United States Department of State
+    place: Washington
+    year: 1945
+    edition: "the Office of the Historian's web edition; its footnote 93 records that the Imperial rescript was broadcast at noon on August 15, Japan time, and refers to the New York Times for its text"
+    volume: "VI"
+    document_number: "740.00119 PW/8-1445; FRUS 1945 vol. VI doc. 440"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://history.state.gov/historicaldocuments/frus1945v06/d440"}
+    access:
+      free_copy: "https://history.state.gov/historicaldocuments/frus1945v06/d440"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Historical Documents - Office of the Historian (FRUS 1945, vol. VI, document 440)"
+    language: en
+    region_of_authorship: east-asia
+    producer: japanese-government
+    position: null
+    rights: public
+
+  - id: src-potsdam-19450726
+    tier: A
+    kind: primary-document
+    author: The President of the United States, the President of the National Government of the Republic of China and the Prime Minister of Great Britain
+    title: "Proclamation Defining Terms for Japanese Surrender (the Potsdam Declaration), July 26, 1945"
+    container: "Birth of the Constitution of Japan, National Diet Library of Japan, from the Ministry of Foreign Affairs' Nihon Gaiko Nenpyo Narabini Shuyo Bunsho, vol. 2 (1966)"
+    publisher: National Diet Library of Japan
+    place: Tokyo
+    year: 1945
+    edition: "the Library's web text"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.ndl.go.jp/constitution/e/etc/c06.html"}
+    access:
+      free_copy: "https://www.ndl.go.jp/constitution/e/etc/c06.html"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Potsdam Declaration | Birth of the Constitution of Japan"
+    language: en
+    region_of_authorship: east-asia
+    producer: allied-governments
+    position: null
+    rights: public
+
+  - id: src-hirohito-19450815
+    tier: A
+    kind: primary-document
+    author: Emperor Hirohito (the Showa Emperor)
+    title: "Imperial Rescript on the Termination of the War, broadcast August 15, 1945 (the Gyokuon-hoso), in the official English translation of 1945"
+    container: "the English text as recorded by the Federal Communications Commission and printed by the New York Times, August 15, 1945"
+    publisher: "two hosts carry it: the National Museum of Nuclear Science and History (Atomic Heritage Foundation) and Air Force Magazine's Keeper File reprint"
+    place: Tokyo
+    year: 1945
+    edition: "NOT HELD AS AN EXTRACT, by decision (see gaps). Both hosts read 'the enemy has begun to employ a new and most cruel bomb, the power of which to damage is indeed incalculable, taking the toll of many innocent lives'; the event YAML's excerpt reads 'to do damage is, indeed, incalculable'"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://ahf.nuclearmuseum.org/ahf/key-documents/jewel-voice-broadcast/"}
+    access:
+      free_copy: null
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "The Jewel Voice Broadcast - Nuclear Museum"
+    language: en
+    region_of_authorship: east-asia
+    producer: japanese-government
+    position: null
+    rights: public
+
+  # ----------------------------------------------------------- Tier A: the Soviet record
+  - id: src-soviet-19450808
+    tier: A
+    kind: primary-document
+    author: The Soviet Government, handed by V. M. Molotov to Ambassador Naotake Sato
+    title: "Soviet Declaration of War on Japan, August 8, 1945"
+    container: "The Avalon Project, Yale Law School, World War II documents"
+    publisher: Lillian Goldman Law Library, Yale Law School
+    place: New Haven
+    year: 1945
+    edition: "the Avalon text, which heads it as Molotov's announcement 'as broadcast by Moscow'; 'Molotoff' is the text's spelling"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://avalon.law.yale.edu/wwii/s4.asp"}
+    access:
+      free_copy: "https://avalon.law.yale.edu/wwii/s4.asp"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "The Avalon Project : Soviet Declaration of War on Japan"
+    language: en
+    region_of_authorship: europe
+    producer: soviet-government
+    position: null
+    rights: public
+
+  # ----------------------------------------------------------- Tier A: the cities, the survivors, the treaty
+  - id: src-hiroshima-city-deaths
+    tier: A
+    kind: primary-document
+    author: City of Hiroshima
+    title: "Q. How many people died because of the atomic bombing? (the City's English website, article 1010074)"
+    container: "The Atomic Bombing and Peace Initiatives, City of Hiroshima official website"
+    publisher: City of Hiroshima
+    place: Hiroshima
+    year: 2026
+    edition: "the page as read on 2026-10-05; the City's estimate of about 140,000 dead by the end of December 1945 and a population of about 350,000"
+    volume: null
+    document_number: "article ID 1010074"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.city.hiroshima.lg.jp/english/peace/1029875/1010074.html"}
+    access:
+      free_copy: "https://www.city.hiroshima.lg.jp/english/peace/1029875/1010074.html"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Q. How many people died because of the atomic bombing? (City of Hiroshima official website)"
+    language: en
+    region_of_authorship: east-asia
+    producer: hiroshima-city
+    position: null
+    rights: copyright
+
+  - id: src-hiroshima-city-realities
+    tier: A
+    kind: primary-document
+    author: City of Hiroshima
+    title: "The Realities of the Atomic Bombing (the City's English website, article 1009857)"
+    container: "The Atomic Bombing and Peace Initiatives, City of Hiroshima official website"
+    publisher: City of Hiroshima
+    place: Hiroshima
+    year: 2026
+    edition: "the page as read on 2026-10-05"
+    volume: null
+    document_number: "article ID 1009857"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.city.hiroshima.lg.jp/english/peace/1029920/1009857.html"}
+    access:
+      free_copy: "https://www.city.hiroshima.lg.jp/english/peace/1029920/1009857.html"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "The Realities of the Atomic Bombing (City of Hiroshima official website)"
+    language: en
+    region_of_authorship: east-asia
+    producer: hiroshima-city
+    position: null
+    rights: copyright
+
+  - id: src-nagasaki-city-damage
+    tier: A
+    kind: primary-document
+    author: City of Nagasaki
+    title: "Damage Caused by the Atomic Bombing (Kids Heiwa Nagasaki, on the Nagasaki Peace website of Nagasaki City)"
+    container: "NAGASAKI PEACE, official website of Nagasaki City"
+    publisher: City of Nagasaki
+    place: Nagasaki
+    year: 2021
+    edition: "the page as read on 2026-10-05; the City's count of 73,884 killed and 74,909 injured by the end of December 1945, in a population of about 240,000"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nagasakipeace.jp/en/reference/materials/kids/higai.html"}
+    access:
+      free_copy: "https://nagasakipeace.jp/en/reference/materials/kids/higai.html"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Damage Caused by the Atomic Bombing | Kids Heiwa Nagasaki"
+    language: en
+    region_of_authorship: east-asia
+    producer: nagasaki-city
+    position: null
+    rights: copyright
+
+  - id: src-nagasaki-city-shimohira
+    tier: A
+    kind: testimony
+    author: Sakue Shimohira, Nagasaki survivor, ten years old at the bombing
+    title: "Plea of Atomic Bomb Survivor (her testimony on the Nagasaki Peace website of Nagasaki City)"
+    container: "NAGASAKI PEACE, official website of Nagasaki City, Survivors"
+    publisher: City of Nagasaki
+    place: Nagasaki
+    year: 2006
+    edition: "the page's English text; she dates it herself, '61 years after that unforgettable day'"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nagasakipeace.jp/en/search/survivors/sakue_shimohira.html"}
+    access:
+      free_copy: "https://nagasakipeace.jp/en/search/survivors/sakue_shimohira.html"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Plea of Atomic Bomb Survivor | Survivors | Search | English | NAGASAKI PEACE official website of Nagasaki City"
+    language: en
+    region_of_authorship: east-asia
+    producer: nagasaki-city
+    position: null
+    rights: copyright
+
+  - id: src-hidankyo-20100507
+    tier: A
+    kind: testimony
+    author: Sumiteru Taniguchi, Nagasaki survivor, for the Japan Confederation of A- and H-Bomb Sufferers Organizations (Nihon Hidankyo)
+    title: "Hibakusha Statement: Humans Cannot Coexist with Nuclear Weapons, delivered to the 2010 Review Conference of the Parties to the Treaty on the Non-Proliferation of Nuclear Weapons"
+    container: "Civil Society Presentations, 2010 NPT Review Conference, United Nations, New York"
+    publisher: United Nations (the conference website's PDF)
+    place: New York
+    year: 2010
+    edition: "the UN-published PDF, three pages; the extracts keep the text layer's line breaks. The text does NOT contain the sentence the event YAML attributes to him ('it is not merely a picture. It is my body'); it reads 'I am not a guinea pig nor am I an exhibit'"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.un.org/en/conf/npt/2010/pdf/japanconfederation.pdf"}
+    access:
+      free_copy: "https://www.un.org/en/conf/npt/2010/pdf/japanconfederation.pdf"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Hibakusha Statement: Humans Cannot Coexist with Nuclear Weapons (the PDF's heading)"
+    language: en
+    region_of_authorship: east-asia
+    producer: nihon-hidankyo
+    position: null
+    rights: copyright
+
+  - id: src-nobel-ican-2017
+    tier: A
+    kind: primary-document
+    author: Setsuko Thurlow and Beatrice Fihn, for the International Campaign to Abolish Nuclear Weapons
+    title: "Nobel Lecture given by the Nobel Peace Prize Laureate 2017, ICAN, Oslo, 10 December 2017"
+    container: "NobelPrize.org"
+    publisher: Nobel Prize Outreach (copyright The Nobel Foundation 2017)
+    place: Oslo
+    year: 2017
+    edition: "the Nobel Foundation's web text; Thurlow's half is held. It does NOT contain the sentences the event YAML attributes to her ('Each warhead has the power to obliterate a city. They are not weapons of war. They are instruments of extinction')"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nobelprize.org/prizes/peace/2017/ican/lecture/"}
+    access:
+      free_copy: "https://www.nobelprize.org/prizes/peace/2017/ican/lecture/"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "International Campaign to Abolish Nuclear Weapons (ICAN) – Nobel Lecture - NobelPrize.org"
+    language: en
+    region_of_authorship: global
+    producer: ican
+    position: null
+    rights: copyright
+
+  - id: src-tpnw-2017
+    tier: A
+    kind: treaty
+    author: The States Parties to the Treaty on the Prohibition of Nuclear Weapons
+    title: "Treaty on the Prohibition of Nuclear Weapons, adopted 7 July 2017 (certified true copy)"
+    container: "United Nations Treaty Collection, chapter XXVI, 9"
+    publisher: United Nations
+    place: New York
+    year: 2017
+    edition: "the Treaty Collection's PDF of the certified true copy; the extract keeps the text layer's line breaks"
+    volume: null
+    document_number: "C.N.475.2017.TREATIES-XXVI.9"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://treaties.un.org/doc/Treaties/2017/07/20170707%2003-42%20PM/Ch_XXVI_9.pdf"}
+    access:
+      free_copy: "https://treaties.un.org/doc/Treaties/2017/07/20170707%2003-42%20PM/Ch_XXVI_9.pdf"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "TREATY ON THE PROHIBITION OF NUCLEAR WEAPONS (the PDF's title page)"
+    language: en
+    region_of_authorship: global
+    producer: united-nations
+    position: null
+    rights: official
+
+  - id: src-rerf-faq
+    tier: A
+    kind: report
+    author: Radiation Effects Research Foundation (Hiroshima and Nagasaki)
+    title: "Frequently Asked Questions, Q1: How many people died as a result of the atomic bombings?"
+    container: "RERF website"
+    publisher: Radiation Effects Research Foundation
+    place: Hiroshima
+    year: 2026
+    edition: "the page as read on 2026-10-05; the Foundation's table of estimated populations and acute deaths"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.rerf.or.jp/en/faq/"}
+    access:
+      free_copy: "https://www.rerf.or.jp/en/faq/"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Frequently Asked Questions – Radiation Effects Research Foundation (RERF)"
+    language: en
+    region_of_authorship: east-asia
+    producer: rerf
+    position: null
+    rights: copyright
+
+  - id: src-korean-monument
+    tier: A
+    kind: primary-document
+    author: Hiroshima Peace Memorial Museum
+    title: "Monument in Memory of the Korean Victims of the A-bomb (the Peace Memorial Park virtual guide, item 11)"
+    container: "Hiroshima Peace Site, virtual museum, Peace Memorial Park monuments"
+    publisher: Hiroshima Peace Memorial Museum (Hiroshima Peace Culture Foundation)
+    place: Hiroshima
+    year: 2026
+    edition: "the page as read on 2026-10-05; its first letter is dropped by the page's markup and the extract keeps that"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.pcf.city.hiroshima.jp/virtual/map-e/irei/tour_11_e.html"}
+    access:
+      free_copy: "https://www.pcf.city.hiroshima.jp/virtual/map-e/irei/tour_11_e.html"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Monument in Memory of the Korean Victims of the A-bomb"
+    language: en
+    region_of_authorship: east-asia
+    producer: hiroshima-peace-memorial-museum
+    position: null
+    rights: copyright
+
+  - id: src-unesco-775
+    tier: A
+    kind: primary-document
+    author: UNESCO World Heritage Centre
+    title: "Hiroshima Peace Memorial (Genbaku Dome), World Heritage List no. 775"
+    container: "UNESCO World Heritage List"
+    publisher: UNESCO World Heritage Centre
+    place: Paris
+    year: 1996
+    edition: "the List entry as read on 2026-10-05; the description is published under CC BY-SA IGO 3.0 as the page states"
+    volume: null
+    document_number: "775"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://whc.unesco.org/en/list/775/"}
+    access:
+      free_copy: "https://whc.unesco.org/en/list/775/"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Hiroshima Peace Memorial (Genbaku Dome) - UNESCO World Heritage Centre"
+    language: en
+    region_of_authorship: global
+    producer: unesco
+    position: null
+    rights: copyright
+
+  # ----------------------------------------------------------- Tier B: reportage and official history
+  - id: src-hersey-1946
+    tier: B
+    kind: journal-article
+    author: John Hersey
+    title: "Hiroshima (The New Yorker, August 31, 1946)"
+    container: The New Yorker
+    publisher: Conde Nast
+    place: New York
+    year: 1946
+    edition: "the magazine's web text of the 1946 article; held only as the passages cited"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.newyorker.com/magazine/1946/08/31/hiroshima"}
+    access:
+      free_copy: "https://www.newyorker.com/magazine/1946/08/31/hiroshima"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Hiroshima | The New Yorker"
+    language: en
+    region_of_authorship: americas
+    producer: press
+    position: null
+    rights: copyright
+
+  - id: src-osti-hiroshima
+    tier: B
+    kind: state-history
+    author: United States Department of Energy, Office of History and Heritage Resources
+    title: "The Manhattan Project: An Interactive History, The Atomic Bombing of Hiroshima, August 6, 1945"
+    container: "OSTI OpenNet, Manhattan Project history"
+    publisher: United States Department of Energy
+    place: Washington
+    year: 2026
+    edition: "the Department's web history as read on 2026-10-05; the page says its text is original to the Department's History Program"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.osti.gov/opennet/manhattan-project-history/Events/1945/hiroshima.htm"}
+    access:
+      free_copy: "https://www.osti.gov/opennet/manhattan-project-history/Events/1945/hiroshima.htm"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Manhattan Project: The Atomic Bombing of Hiroshima, August 6, 1945"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  - id: src-osti-nagasaki
+    tier: B
+    kind: state-history
+    author: United States Department of Energy, Office of History and Heritage Resources
+    title: "The Manhattan Project: An Interactive History, The Atomic Bombing of Nagasaki, August 9, 1945"
+    container: "OSTI OpenNet, Manhattan Project history"
+    publisher: United States Department of Energy
+    place: Washington
+    year: 2026
+    edition: "the Department's web history as read on 2026-10-05"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.osti.gov/opennet/manhattan-project-history/Events/1945/nagasaki.htm"}
+    access:
+      free_copy: "https://www.osti.gov/opennet/manhattan-project-history/Events/1945/nagasaki.htm"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Manhattan Project: The Atomic Bombing of Nagasaki, August 9, 1945"
+    language: en
+    region_of_authorship: americas
+    producer: us-government
+    position: null
+    rights: public
+
+  # ----------------------------------------------------------- Tier B: the books the event YAML names, not readable here
+  - id: src-walker-2004
+    tier: B
+    kind: monograph
+    author: J. Samuel Walker
+    title: "Prompt and Utter Destruction: Truman and the Use of Atomic Bombs Against Japan"
+    container: null
+    publisher: University of North Carolina Press
+    place: Chapel Hill
+    year: 2004
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: "10.2307/20048823", archive_org: "promptutterdestr00walk", hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: 2026-10-05
+      verified_by: crossref-title-match
+      verified_title: "Prompt and Utter Destruction: Truman and the Use of Atomic Bombs against Japan"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-alperovitz-1995
+    tier: B
+    kind: monograph
+    author: Gar Alperovitz
+    title: "The Decision to Use the Atomic Bomb and the Architecture of an American Myth"
+    container: null
+    publisher: Alfred A. Knopf
+    place: New York
+    year: 1995
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: "10.2307/2169869", archive_org: "decisiontouseato0000alpe_n6z9", hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: 2026-10-05
+      verified_by: crossref-title-match
+      verified_title: "The Decision to Use the Atomic Bomb and the Architecture of an American Myth."
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-hasegawa-2005
+    tier: B
+    kind: monograph
+    author: Tsuyoshi Hasegawa
+    title: "Racing the Enemy: Stalin, Truman, and the Surrender of Japan"
+    container: null
+    publisher: Belknap Press of Harvard University Press
+    place: Cambridge, Massachusetts
+    year: 2005
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "racingenemy00tsuy", hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-bernstein-1991
+    tier: B
+    kind: journal-article
+    author: Barton J. Bernstein
+    title: "Reconsidering the Decision to Drop the Atomic Bomb"
+    container: Diplomatic History
+    publisher: Oxford University Press
+    place: null
+    year: 1991
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-hachiya-1955
+    tier: B
+    kind: memoir
+    author: Michihiko Hachiya, director of the Hiroshima Communications Hospital
+    title: "Hiroshima Diary: The Journal of a Japanese Physician, August 6-September 30, 1945"
+    container: null
+    publisher: University of North Carolina Press
+    place: Chapel Hill
+    year: 1955
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "hiroshimadiaryjo0000hach", hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: 2026-10-05
+      verified_by: archive-item-fetch
+      verified_title: "Hiroshima diary : the journal of a Japanese physician, August 6-September 30, 1945"
+    language: en
+    region_of_authorship: east-asia
+    producer: survivor-memoir
+    position: null
+    rights: copyright
+
+  - id: src-southard-2015
+    tier: B
+    kind: monograph
+    author: Susan Southard
+    title: "Nagasaki: Life After Nuclear War"
+    container: null
+    publisher: Viking
+    place: New York
+    year: 2015
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: "nagasakilifeafte0000sout", hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: 2026-10-05
+      verified_by: archive-item-fetch
+      verified_title: "Nagasaki : life after nuclear war"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-rhodes-1986
+    tier: B
+    kind: monograph
+    author: Richard Rhodes
+    title: "The Making of the Atomic Bomb"
+    container: null
+    publisher: Simon and Schuster
+    place: New York
+    year: 1986
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: "10.2307/3106232", archive_org: "makingofatomicbo0000rhod", hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: 2026-10-05
+      verified_by: crossref-title-match
+      verified_title: "The Making of the Atomic Bomb"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-bird-sherwin-2005
+    tier: B
+    kind: monograph
+    author: Kai Bird and Martin J. Sherwin
+    title: "American Prometheus: The Triumph and Tragedy of J. Robert Oppenheimer"
+    container: null
+    publisher: Alfred A. Knopf
+    place: New York
+    year: 2005
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: "10.12987/9780300268461-030", archive_org: "American-prometheus", hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: 2026-10-05
+      verified_by: crossref-title-match
+      verified_title: "American Prometheus: The Triumph and Tragedy of J. Robert Oppenheimer"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-stimson-1947
+    tier: B
+    kind: journal-article
+    author: Henry L. Stimson
+    title: "The Decision to Use the Atomic Bomb"
+    container: "Harper's Magazine, February 1947"
+    publisher: Harper's Magazine
+    place: New York
+    year: 1947
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://harpers.org/archive/1947/02/the-decision-to-use-the-atomic-bomb/"}
+    access:
+      free_copy: null
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "The decision to use the atomic bomb, by Henry Lewis Stimson"
+    language: en
+    region_of_authorship: americas
+    producer: us-decision-maker-memoir
+    position: null
+    rights: copyright
+
+  - id: src-wake-2014
+    tier: B
+    kind: monograph
+    author: Naoko Wake
+    title: "American Survivors: Trans-Pacific Memories of Hiroshima and Nagasaki"
+    container: null
+    publisher: Cambridge University Press
+    place: Cambridge
+    year: 2021
+    edition: "the event YAML dates it 2014; Cambridge published it in 2021"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-yoneyama-1999
+    tier: B
+    kind: monograph
+    author: Lisa Yoneyama
+    title: "Hiroshima Traces: Time, Space, and the Dialectics of Memory"
+    container: null
+    publisher: University of California Press
+    place: Berkeley
+    year: 1999
+    edition: null
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: null}
+    access:
+      free_copy: null
+      verified_at: null
+      verified_by: null
+      verified_title: null
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  # ----------------------------------------------------------- Tier C: a reference for a later count
+  - id: src-nippon-hibakusha-2025
+    tier: C
+    kind: reference
+    author: Nippon.com, Japan Data (citing the Ministry of Health, Labour and Welfare)
+    title: "Japan's Population of Atomic Bomb Survivors Falls Below 100,000"
+    container: Nippon.com
+    publisher: Nippon Communications Foundation
+    place: Tokyo
+    year: 2025
+    edition: "web article; held for the Ministry's count of 99,130 certificate holders as of March 31, 2025, which the script does not speak (the event YAML carries the 2024 figure)"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.nippon.com/en/japan-data/h02464/"}
+    access:
+      free_copy: "https://www.nippon.com/en/japan-data/h02464/"
+      verified_at: 2026-10-05
+      verified_by: document-fetch
+      verified_title: "Japan’s Population of Atomic Bomb Survivors Falls Below 100,000 | Nippon.com"
+    language: en
+    region_of_authorship: east-asia
+    producer: press
+    position: null
+    rights: copyright
+
+  # ----------------------------------------------------------- added 2026-10-07: the Japanese text, a survivor, the historians
+  # Every entry below was fetched on 2026-10-07 from the URL it names; the extracts were
+  # sliced from the fetched copy by the builder out/ledger-hiroshima/build2.py (start marker
+  # to end marker, asserted to be a substring of the fetched text), never retyped.
+  - id: src-hirohito-19450814-ja
+    tier: A
+    kind: edict
+    author: Emperor Hirohito (the Showa Emperor)
+    title: "終戦ノ詔書（昭和二十年八月十四日） (Imperial Rescript on the Termination of the War, dated 14 August 1945, broadcast 15 August), in the original Japanese"
+    container: "学制百年史 資料編 (One Hundred Years of the School System, documents volume), Ministry of Education, Culture, Sports, Science and Technology"
+    publisher: Ministry of Education, Culture, Sports, Science and Technology of Japan
+    place: Tokyo
+    year: 1945
+    edition: "the Ministry's web text of the rescript, five paragraphs; the page heads it with the date 14 August 1945 (昭和二十年八月十四日), the date the rescript bears; FRUS footnote 93 (extract src-frus-19450814.fn93) gives the broadcast at noon on 15 August. No English rendering is held: see gaps"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.mext.go.jp/b_menu/hakusho/html/others/detail/1317941.htm"}
+    access:
+      free_copy: "https://www.mext.go.jp/b_menu/hakusho/html/others/detail/1317941.htm"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "終戦ノ詔書（昭和二十年八月十四日）：文部科学省"
+    language: ja
+    region_of_authorship: east-asia
+    producer: japanese-government
+    position: null
+    rights: public
+
+  - id: src-tsuboi-chugoku-2015
+    tier: A
+    kind: testimony
+    author: Sunao Tsuboi, Hiroshima survivor, co-chairperson of Nihon Hidankyo, interviewed by Uzaemonnaotsuka Tokai, editorial writer of the Chugoku Shimbun
+    title: "Interview with A-bomb survivor Sunao Tsuboi: Never give up on nuclear abolition (originally published August 2, 2015)"
+    container: "Hiroshima Peace Media Center, the Chugoku Shimbun"
+    publisher: The Chugoku Shimbun
+    place: Hiroshima
+    year: 2015
+    edition: "the newspaper's English text of an interview conducted in Japanese; his own account in the first person, as the newspaper translated it"
+    volume: null
+    document_number: "p=49055"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.hiroshimapeacemedia.jp/?p=49055"}
+    access:
+      free_copy: "https://www.hiroshimapeacemedia.jp/?p=49055"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Interview with A-bomb survivor Sunao Tsuboi: Never give up on nuclear abolition | 中国新聞ヒロシマ平和メディアセンター"
+    language: en
+    region_of_authorship: east-asia
+    producer: chugoku-shimbun
+    position: null
+    rights: copyright
+
+  - id: src-pcf-tsuboi-2021
+    tier: A
+    kind: primary-document
+    author: Hiroshima Peace Culture Foundation
+    title: "In Memory of Sunao Tsuboi (PEACE CULTURE No. 87)"
+    container: "PEACE CULTURE, the Foundation's newsletter, no. 87"
+    publisher: Hiroshima Peace Culture Foundation (the foundation that runs the Hiroshima Peace Memorial Museum)
+    place: Hiroshima
+    year: 2021
+    edition: "the newsletter's web text; it gives his distance as 'about 1 km from the hypocenter', where his 2015 interview gives 'about 1.2 kilometers'. The record carries both"
+    volume: null
+    document_number: "No. 87"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.pcf.city.hiroshima.jp/hpcf/heiwabunka/pce087/contents/10.html"}
+    access:
+      free_copy: "https://www.pcf.city.hiroshima.jp/hpcf/heiwabunka/pce087/contents/10.html"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "PEACE CULTURE No.87_10 In Memory of Sunao Tsuboi"
+    language: en
+    region_of_authorship: east-asia
+    producer: hiroshima-peace-culture-foundation
+    position: null
+    rights: copyright
+
+  - id: src-hasegawa-2007
+    tier: B
+    kind: journal-article
+    author: Tsuyoshi Hasegawa
+    title: "The Atomic Bombs and the Soviet Invasion: What Drove Japan's Decision to Surrender?"
+    container: "The Asia-Pacific Journal: Japan Focus, vol. 5, issue 8, article 2501 (August 1, 2007)"
+    publisher: Cambridge University Press (the journal's archive)
+    place: Cambridge
+    year: 2007
+    edition: "the journal's PDF, 31 pages; the article says it is a slightly revised version of an essay in Hasegawa (ed.), The End of the Pacific War: Reappraisals (Stanford, 2007). Held as the passages cited. It names its opponents (Asada Sadao, Richard Frank) and disputes the Strategic Bombing Survey's counterfactual (extract src-ussbs-summary-1946.p26)"
+    volume: "5"
+    document_number: "Article ID 2501"
+    identifiers: {isbn: null, doi: "10.1017/S1557466007021742", archive_org: null, hathitrust: null, url: "https://www.cambridge.org/core/journals/asia-pacific-journal/article/atomic-bombs-and-the-soviet-invasion-what-drove-japans-decision-to-surrender/0E9580B3E03434472A15432EB6D8AE05"}
+    access:
+      free_copy: "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/0E9580B3E03434472A15432EB6D8AE05/S1557466007021742a.pdf/the-atomic-bombs-and-the-soviet-invasion-what-drove-japans-decision-to-surrender.pdf"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Atomic Bombs and the Soviet Invasion: What Drove Japan's Decision to Surrender? | Asia-Pacific Journal | Cambridge Core"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-frank-2005
+    tier: B
+    kind: journal-article
+    author: Richard B. Frank
+    title: "Why Truman Dropped the Bomb"
+    container: "The Weekly Standard, August 8, 2005 (the page's datePublished); now hosted by the Washington Examiner"
+    publisher: Washington Examiner (the Weekly Standard archive)
+    place: Washington
+    year: 2005
+    edition: "the web text of the magazine article; the author is identified as the author of Downfall: The End of the Imperial Japanese Empire. Held as the passages cited. It is the traditionalist reply to the critics, by name of the premises it rejects"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.washingtonexaminer.com/weekly-standard/why-truman-dropped-the-bomb"}
+    access:
+      free_copy: "https://www.washingtonexaminer.com/weekly-standard/why-truman-dropped-the-bomb"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Why Truman Dropped the Bomb"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-alperovitz-2015
+    tier: B
+    kind: journal-article
+    author: Gar Alperovitz
+    title: "The War Was Won Before Hiroshima—and the Generals Who Dropped the Bomb Knew It"
+    container: "The Nation, August 6, 2015"
+    publisher: The Nation
+    place: New York
+    year: 2015
+    edition: "the magazine's web text; held as the passages cited, and only passages in his own words: the article's quotations of Leahy, Arnold, Nimitz, Halsey, Eisenhower, LeMay and Szilard are memoir and press quotations at second hand and are NOT held"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.thenation.com/article/world/us-hiroshima-nuclear-bomb-anniversary/"}
+    access:
+      free_copy: "https://www.thenation.com/article/world/us-hiroshima-nuclear-bomb-anniversary/"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The War Was Won Before Hiroshima—and the Generals Who Dropped the Bomb Knew It | The Nation"
+    language: en
+    region_of_authorship: americas
+    producer: scholarship
+    position: null
+    rights: copyright
+
+  - id: src-burr-nsa-2020
+    tier: B
+    kind: edited-documents
+    author: William Burr, editor, National Security Archive
+    title: "The Atomic Bomb and the End of World War II (Electronic Briefing Book, updated August 4, 2020)"
+    container: "The Nuclear Vault, National Security Archive, George Washington University"
+    publisher: National Security Archive
+    place: Washington
+    year: 2020
+    edition: "the 2020 update of the 2005 compilation, with the editor's commentary on each document; held as the passages cited, all of them the editor's own commentary. The editor says he 'has a point of view on the issues' and that the compilation does not stake out positions"
+    volume: null
+    document_number: null
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://nsarchive.gwu.edu/briefing-book/nuclear-vault/2020-08-04/atomic-bomb-end-world-war-ii"}
+    access:
+      free_copy: "https://nsarchive.gwu.edu/briefing-book/nuclear-vault/2020-08-04/atomic-bomb-end-world-war-ii"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "The Atomic Bomb and the End of World War II | National Security Archive"
+    language: en
+    region_of_authorship: americas
+    producer: national-security-archive
+    position: null
+    rights: copyright
+
+  - id: src-chugoku-watch-2015
+    tier: B
+    kind: journal-article
+    author: Michiko Tanaka, staff writer, the Chugoku Shimbun
+    title: "Hand of A-bombed pocket watch, in Peace Memorial Museum, breaks from aging (originally published December 11, 2015)"
+    container: "Hiroshima Peace Media Center, the Chugoku Shimbun"
+    publisher: The Chugoku Shimbun
+    place: Hiroshima
+    year: 2015
+    edition: "the newspaper's English text. The only free record held of the watch the event takes as its subtitle: a POCKET watch, four centimetres across, Kengo Nikawa's, stopped at 8:15, donated by his son in 1975; by the report's date its short hand had broken, a 1996 replica had replaced it on display (13 November 2015) and the original had gone to storage. Nothing here says where the original is now"
+    volume: null
+    document_number: "p=54789"
+    identifiers: {isbn: null, doi: null, archive_org: null, hathitrust: null, url: "https://www.hiroshimapeacemedia.jp/?p=54789"}
+    access:
+      free_copy: "https://www.hiroshimapeacemedia.jp/?p=54789"
+      verified_at: 2026-10-07
+      verified_by: document-fetch
+      verified_title: "Hand of A-bombed pocket watch, in Peace Memorial Museum, breaks from aging | 中国新聞ヒロシマ平和メディアセンター"
+    language: en
+    region_of_authorship: east-asia
+    producer: chugoku-shimbun
+    position: null
+    rights: copyright
+
+positions: []
+contested: []
+exhibits: []
+analyses: []
+
+# ------------------------------------------------------------------ gaps
+# RULE B: a source the free record could not reach, or a claim it could not
+# carry, is published here by name, with what was tried. Nothing below is in
+# the script.
+gaps:
+  - entry: src-hirohito-19450815
+    what: "The Imperial Rescript of 15 August 1945 in English, and the event YAML's excerpt of it"
+    tried: ["https://ahf.nuclearmuseum.org/ahf/key-documents/jewel-voice-broadcast/", "https://www.airandspaceforces.com/PDF/MagazineArchive/Documents/2012/August%202012/0812keeperfull.pdf", "https://www.mofa.go.jp/policy/un/disarmament/arms/testimony_of_hibakusha/", "https://www.ndl.go.jp/constitution/e/etc/c06.html"]
+    status: "Two hosts were read and both print the 1945 official translation as 'the power of which to damage is indeed incalculable'. The event YAML's excerpt and the live script read 'the power of which to do damage is, indeed, incalculable', which diverges from the text both hosts carry. The extract is deliberately NOT held: tests/test_history_quote_ledger.py fails any YAML excerpt that diverges from a stored extract, and this task may append to the YAML but not alter it. The script narrates the rescript's four words that both forms share ('a new and most cruel bomb') from the YAML summary and reads no line of it in the document voice. Pin the extract once the YAML excerpt is corrected. No Japanese government host of the English text was found: the Ministry of Foreign Affairs answered HTTP 403 and the National Diet Library's constitution site carries the Potsdam Declaration and the Instrument of Surrender but not the rescript. ADDED 2026-10-07: the rescript in the ORIGINAL Japanese is held from a Japanese government host (the Ministry of Education's text, entry src-hirohito-19450814-ja, paragraphs 2 and 3). No English rendering of it is held, official or Void's: a rendering file is read by the quote gate like any extract, and an English text of the bomb sentence would sit within a few words of the YAML's divergent excerpt and fail tests/test_history_quote_ledger.py until the YAML is corrected. The Japanese holds that the rescript names the bomb (残虐ナル爆彈) as a reason; it settles neither English wording"
+  - entry: src-franck-19450611
+    what: "The sentence the event YAML attributes to the Franck Report: 'If atomic bombs are to be added as new weapons to the arsenals of a warring world, then the time will come when mankind will curse the names of Los Alamos and Hiroshima'"
+    tried: ["https://archive.org/download/TheFranckReport/ELS012-036_djvu.txt"]
+    status: "The report was read whole. The sentence is not in it, and could not be: the report is dated June 11, 1945, and names no Japanese city. The sentence is elsewhere attributed to Oppenheimer's speech accepting the Army-Navy award at Los Alamos in November 1945; no repository text of that speech was sought here. The YAML's notable quote for the Franck Report is therefore unverified and the script does not speak it; the report's own words are read instead"
+  - entry: src-nobel-ican-2017
+    what: "The sentences the event YAML attributes to Setsuko Thurlow's Nobel lecture: 'Each warhead has the power to obliterate a city. They are not weapons of war. They are instruments of extinction'"
+    tried: ["https://www.nobelprize.org/prizes/peace/2017/ican/lecture/"]
+    status: "The lecture was read whole. Neither sentence is in Thurlow's half or in Fihn's; the words 'obliterate' and 'extinction' occur in other sentences. The YAML's quotation is unverified and the script does not speak it; three passages of what she did say in Oslo are held and one is read"
+  - entry: src-hidankyo-20100507
+    what: "The sentences the event YAML attributes to Sumiteru Taniguchi at the United Nations in 2010: 'I want you to understand that it is not merely a picture. It is my body'"
+    tried: ["https://www.un.org/en/conf/npt/2010/pdf/japanconfederation.pdf", "https://www.hiroshimapeacemedia.jp/?p=15178"]
+    status: "The UN-published text of his statement of May 7, 2010 was read whole; the sentences are not in it. What it carries about the photograph of his back is 'I am not a guinea pig nor am I an exhibit. But those of you who are here today, please don't turn your eyes away from me.' The Chugoku Shimbun's report of the same day (Hiroshima Peace Media Center) answered HTTP 403. The YAML's quotation is unverified and the script does not speak it"
+  - entry: src-hachiya-1955
+    what: "Hachiya's diary entry of August 6, 1945, which the event YAML quotes ('Those who were in the stone building came out with blood streaming from their heads ...') and which the live script reads in the document voice"
+    tried: ["https://archive.org/metadata/hiroshimadiaryjo0000hach", "https://archive.org/metadata/bwb_C0-AUB-665"]
+    status: "Both Internet Archive items the event YAML names are controlled lending copies (access-restricted-item: true) that this container cannot open. The quotation is unverified; the live script's Hachiya DOCUMENT is withdrawn by the quote ledger and the cinematic script does not read it. His role and his diary are narrated from the YAML"
+  - entry: src-stimson-1947
+    what: "Stimson's 1947 account of the decision, including his casualty estimate and his reasons for rejecting a warning"
+    tried: ["https://harpers.org/archive/1947/02/the-decision-to-use-the-atomic-bomb/"]
+    status: "paywalled: the magazine's archive page serves a subscription wall, not the article. Not cited"
+  - entry: src-walker-2004
+    what: "Walker's narrative of the decision, the source the event YAML names for the American case"
+    tried: ["https://archive.org/metadata/promptutterdestr00walk", "https://api.crossref.org/works/10.2307/20048823"]
+    status: "the Internet Archive item is a controlled lending copy (access-restricted-item: true); the DOI the event YAML attaches resolves to a JSTOR journal article of the same title, a review of the book rather than the book"
+  - entry: src-alperovitz-1995
+    what: "Alperovitz's argument that Japan was near surrender and that the bombs were aimed partly at the Soviet Union"
+    tried: ["https://archive.org/metadata/decisiontouseato0000alpe_n6z9", "https://api.crossref.org/works/10.2307/2169869"]
+    status: "controlled lending copy, not openable from this container; the DOI resolves to a JSTOR journal article of the same title, a review of the book. ADDED 2026-10-07: his position in his own words is held from his 2015 article in The Nation (src-alperovitz-2015, three passages), which is not the 1995 book and does not carry the book's evidence"
+  - entry: src-hasegawa-2005
+    what: "Hasegawa's argument that the Soviet entry, not the bombs, tipped the Supreme War Council"
+    tried: ["https://archive.org/metadata/racingenemy00tsuy"]
+    status: "the Internet Archive item the event YAML names returns an empty metadata record (dead); no open copy sought elsewhere. ADDED 2026-10-07: the same argument in his own words is held from his 2007 article in The Asia-Pacific Journal: Japan Focus (src-hasegawa-2007, four passages), open on Cambridge Core"
+  - entry: src-bernstein-1991
+    what: "Bernstein's finding on the wartime casualty estimates for the invasion of Kyushu, which the event YAML gives as 46,000 dead"
+    tried: ["https://api.crossref.org/works?query.bibliographic=Reconsidering+the+Decision+to+Drop+the+Atomic+Bomb+Bernstein+Diplomatic+History"]
+    status: "paywalled journal; no open copy found and the article was not read. The 46,000 figure is in the YAML and is not spoken in the script because the ledger holds no document carrying it"
+  - entry: src-southard-2015
+    what: "Southard's account of Nagasaki's survivors, including Taniguchi"
+    tried: ["https://archive.org/metadata/nagasakilifeafte0000sout"]
+    status: "controlled lending copy, not openable from this container"
+  - entry: src-rhodes-1986
+    what: "Rhodes on the Manhattan Project and the scientists' petitions"
+    tried: ["https://archive.org/metadata/makingofatomicbo0000rhod", "https://api.crossref.org/works/10.2307/3106232"]
+    status: "controlled lending copy; the DOI resolves to a JSTOR journal article of the same title, a review of the book"
+  - entry: src-bird-sherwin-2005
+    what: "Bird and Sherwin on Oppenheimer, including his October 1945 meeting with Truman and the 1965 recollection of the Trinity test"
+    tried: ["https://archive.org/metadata/American-prometheus", "https://api.crossref.org/works/10.12987/9780300268461-030"]
+    status: "the Internet Archive item the event YAML names is an audiobook upload (collection folksoundomy), not a text; the DOI resolves to a book chapter record. Neither Oppenheimer line in the YAML ('Now I am become Death' and 'blood on my hands') could be read in a document, so neither is spoken"
+  - entry: src-wake-2014
+    what: "Wake on the Korean and Japanese American survivors, the source of the YAML's sentence 'colonial subjects of the country that was bombed'"
+    tried: []
+    status: "no open copy sought: a monograph the YAML itself marks verified: false. The Korean account is carried from the museum's own guide to the monument"
+  - entry: src-yoneyama-1999
+    what: "Yoneyama on memory in Hiroshima"
+    tried: []
+    status: "no open copy sought: a monograph the YAML marks verified: false"
+  - what: "The United States Strategic Bombing Survey's separate report Japan's Struggle to End the War (1 July 1946)"
+    tried: ["https://www.trumanlibrary.gov/library/research-files/united-states-strategic-bombing-survey-japans-struggle-end-war", "https://www.history.navy.mil/research/library/online-reading-room/title-list-alphabetically/j/japans-struggle-end-war-1946.html", "https://digicom.bpl.lib.me.us/cgi/viewcontent.cgi?article=1022&context=books_pubs"]
+    status: "the Truman Library page serves page images with no text layer this container could read; the Navy and Maine library addresses answered HTTP 404. The identical conclusion in the Survey's Summary Report (Pacific War), page 26, is held instead (src-ussbs-summary-1946)"
+  - what: "A Japanese government host of the English Instrument of Surrender's companion documents was not needed; the 10, 11 and 14 August exchange is held from FRUS"
+    tried: ["https://avalon.law.yale.edu/subject_menus/jmenu.asp"]
+    status: "the Avalon surrender documents are the instruments of 2 September 1945 and credentials; the exchange of notes is in FRUS 1945 vol. VI, documents 406, 412 and 440, which are held"
+  - what: "The Interim Committee's notes of June 1, 1945, which the event YAML paraphrases ('used against a military-industrial target without prior warning')"
+    tried: ["https://archive.org/metadata/interim-committee-may31-1945"]
+    status: "only the notes of May 31 were found as a readable text layer; they carry the Secretary's conclusion of that day ('we could not give the Japanese any warning', 'a vital war plant employing a large number of workers and closely surrounded by workers' houses'), which is what the script reads. The June 1 recommendation as worded is not held"
+  - what: "Eisenhower's 'Japan was already defeated and dropping the bomb was completely unnecessary' (Mandate for Change, 1963), Truman's 'I never lost any sleep over it' (1958), Byrnes to Szilard on dictating terms (Szilard's recollection), Truman's 'son of a bitch' remark to Acheson, the Supreme War Council's conditions, the 'mokusatsu' exchange, the Operation Downfall casualty estimates and the Joint War Plans Committee figure"
+    tried: []
+    status: "each rests in the event YAML on a memoir or a secondary work no open copy of which was found; none was sought beyond the archive.org metadata above. None is read in the document voice, and the script narrates only what the YAML and the held documents support: Truman's own words from the statement, the radio report and the diary; the Potsdam Declaration; the Japanese note of 10 August; the Soviet declaration; the Survey's opinion"
+  - what: "The Korean dead: the event YAML's 20,000 to 40,000 and its 2.4 million Koreans in Japan, against the museum guide's 'tens of thousands' and 'about three million'"
+    tried: ["https://www.pcf.city.hiroshima.jp/virtual/map-e/irei/tour_11_e.html"]
+    status: "the record disagrees with itself; the script speaks the museum's own hedged form ('it is said that tens of thousands') and neither number. The YAML's inscription text ('given no choice but to come to Hiroshima ... their spirits unable to return home') is not the epigraph the museum guide quotes ('Souls of the dead ride to heaven on the backs of turtles') and is unverified"
+  - what: "The 8:15 pocket watch of Kengo Nikawa in the Hiroshima Peace Memorial Museum, the event's subtitle and its chosen particular"
+    tried: ["https://www.hiroshimapeacemedia.jp/?p=54789", "https://hpmmuseum.jp/modules/exhibition/index.php?action=FacilityView&facility_id=4&lang=eng", "https://hpmm-db.jp/en/"]
+    status: "the Chugoku Shimbun's report answered HTTP 403; the museum's exhibition page and Peace Database front page do not name the item. The watch rests on the event YAML's media record (a museum photograph, public domain) and the script says only what that record says: a watch recovered from the ruins, stopped at a quarter past eight, in the museum. SUPERSEDED 2026-10-07: the same Chugoku Shimbun address answered HTTP 200 and its report of 11 December 2015 is held (src-chugoku-watch-2015). It is a POCKET watch, Kengo Nikawa's, and by that date the original had gone to storage with a broken hand and a 1996 replica was on display. The live script's 'a wristwatch' and 'in a case in the museum' are not what the record carries"
+  - what: "Asada Sadao's own argument (the Hiroshima bomb more decisive than Soviet entry), and Barton Bernstein's critique of the Strategic Bombing Survey's counterfactual"
+    tried: []
+    status: "not sought as documents: both are held only as Hasegawa states them (src-hasegawa-2007.p1, .p24) and as Burr's commentary names them. Said that way, as one historian's report of another, or not said"
+  - what: "The Togo-Sato cables, the Foreign Ministry's compilation and the Hoshina memorandum in their own words (the Archive's translations of Japanese government records)"
+    tried: ["https://nsarchive.gwu.edu/briefing-book/nuclear-vault/2020-08-04/atomic-bomb-end-world-war-ii"]
+    status: "the briefing book links each as a scanned PDF; none was opened here. What is held is the editor's commentary on them (src-burr-nsa-2020.secdoc53, .secdoc67, .secdoc75), which is a historian's account of the Japanese record, not that record. Suzuki's 'mokusatsu' answer is held only in that commentary, hedged by the editor as what Suzuki 'apparently said'"
+  - what: "Sumiteru Taniguchi's words at the United Nations as the Chugoku Shimbun reported them"
+    tried: ["https://www.hiroshimapeacemedia.jp/?p=15178"]
+    status: "the page answered HTTP 200 on 2026-10-07 (it had answered 403 on 2026-10-05). The newspaper's report of 9 May 2010 renders his words differently from the UN-published text held (src-hidankyo-20100507.p3): it prints 'I'm not a guinea pig' and 'This is not a freak show'. The report is not held; the UN text is the record of what he said, and the event YAML's 'it is not merely a picture. It is my body' is in neither"
+  - what: "A recording of Truman reading the statement of 6 August 1945"
+    tried: ["https://www.trumanlibrary.gov/library/sound-recordings-collection-4"]
+    status: "none exists for that day: the statement was a written release (the Library's own note, extract src-truman-19450806.fn1). The Library's sound recordings index lists the radio report of 9 August (SR61-37), described under recordings"
+
+# ------------------------------------------------------------- recordings
+# Archival audio artifacts (docs/proposals/HISTORY-AUDIO-ARCHIVAL.md §4a). One
+# candidate was examined and is NOT admitted: the Library names a broadcaster as
+# producer and copyright holder and marks the item only 'Unrestricted', which is
+# no basis on policy B's allowlist (pipeline/history/clips.py). The row is kept
+# so the reason is on the record; no `# CLIP:` directive names it and the document
+# voice reads the words. `signed_by` and `signed_at` are the CEO's and are null.
+recordings:
+  - id: clip-truman-radio-19450809
+    kind: audio
+    title: "Harry S. Truman, the radio report to the American people on the Potsdam Conference, the sentence on Hiroshima as a military base (candidate, not admitted)"
+    speaker: Harry S. Truman
+    occasion: "Radio report to the American people on the Potsdam Conference, delivered from the White House at 10 p.m., as the Library describes it"
+    date: "1945-08-09"
+    date_as_stated: "August 9, 1945 (the item's 'Recording Date(s)')"
+    repository: "Harry S. Truman Library and Museum (National Archives and Records Administration), Sound Recordings Collection"
+    accession: "SR61-37"
+    url: "https://www.trumanlibrary.gov/soundrecording-records/sr61-37-president-trumans-radio-report-american-people-potsdam-conference"
+    file: "https://catalog.archives.gov/medialz/presidential-libraries/truman/sound-recordings/2020-03/SR61-37_1.mp3"
+    file_md5: null
+    file_md5_as_stated: "the Library publishes no checksum; the file was not fetched because the row cannot be admitted on rights (below), so no md5 is recorded"
+    title_as_stated: "President Truman's Radio Report to the American People on the Potsdam Conference"
+    creator_as_stated: "Speakers: Truman, Harry S., 1884-1972. Production and Copyright: Columbia Broadcasting System"
+    origin_as_stated: "Description: 'President Harry S. Truman's radio report to the American people on the Potsdam Conference, delivered from the White House at 10 p.m.' Original Format(s): disc, 12-inch. Running Time: 20 minutes. National Archives Identifier (NAID) 331916421. Place: Washington (D.C.), White House"
+    uploader_as_stated: "the Library's own player, served from catalog.archives.gov; no third-party uploader"
+    licence_as_stated: "Restrictions: Unrestricted (the item page's field). Production and Copyright: Columbia Broadcasting System (the item page's field). The page carries no public-domain mark and no licence URL"
+    licence_url: "https://www.trumanlibrary.gov/soundrecording-records/sr61-37-president-trumans-radio-report-american-people-potsdam-conference"
+    rights_basis: not-admissible
+    rights_reading: "NOT ADMITTED. The words are the President's, a work of the United States government, but the recording is a 1945 disc the repository credits to the Columbia Broadcasting System for 'Production and Copyright'. 'Unrestricted' is the Archives' access statement, not a public-domain statement, and a 1945 sound recording is not in the public domain in the United States under the Music Modernization Act's schedule. No basis on policy B's allowlist fits. If the CEO reads the Library's 'Unrestricted' as a statement of free use, the row needs a fetch, an md5, a window and a verification record before any signature; the sentence it would carry is read by the document voice from extract src-truman-19450809.sechiroshima"
+    fetched_at: 2026-10-05
+    duration_s: null
+    excerpt: {in: null, out: null}
+    transcript_extract: src-truman-19450809.sechiroshima
+    transcript: "The world will note that the first atomic bomb was dropped on Hiroshima, a military base. That was because we wished in this first attack to avoid, insofar as possible, the killing of civilians."
+    verification: null
+    observed: "not fetched, not cut, not verified: the rights question is decided first, and it is decided against. The item page was read on 2026-10-05 and its fields are copied above"
+    shows: "would show Truman's own voice saying the sentence the document voice reads"
+    does_not_show: "nothing plays"
+    signed_by: null
+    signed_at: null

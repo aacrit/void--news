@@ -1,0 +1,8 @@
+source: src-ssc-final-1974
+locator: secthirdrate
+url: https://archive.org/details/FinalReportOfTheSenateSelectCommitteeOnPresidentialCampaignActivities
+read: 2026-10-09
+note: the Internet Archive's OCR text of the scanned volume (the item's _djvu.txt), line breaks folded to spaces; OCR misreadings and line-end hyphens (including the '¬' the OCR prints for one) are kept as printed
+note: chapter 1, on the White House response; the footnote numbers 78 to 80 are printed inline
+
+The next day, June 19, Ronald Ziegler, also in Key Biscayne, an- nounced that the White House was not conducting an inquiry into the Watergate incident. 78 He declined to comment on what he termed a “third-rate burglary attempt.” 79 On June 20, the press reported that Hunt’s name had been found in the address books of Barker and Mar- tinez. 80 After first identifying Hunt as a consultant to Colson, the White House later denied he worked for Colson.

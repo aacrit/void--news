@@ -1,0 +1,7 @@
+source: src-act-1833
+locator: sec1
+url: https://statutes.org.uk/site/the-statutes/nineteenth-century/1833-3-4-william-4-c-73-abolition-of-slavery-act/
+read: 2026-10-09
+note: section I, in the host's transcription; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+That from and after the First Day of August One thousand eight hundred and thirty-four all Persons who in conformity with the Laws now in force in the said Colonies respectively shall on or before the First Day of August One thousand eight hundred and thirty-four have been duly registered as Slaves in any such Colony, and who on the said First Day of August One thousand eight hundred and thirty-four shall be actually within any such Colony, and who shall by such Registries appear to be on the said First Day of August One thousand eight hundred and thirty-four of the full Age of Six Years or upwards, shall by force and virtue of this Act, and without the previous Execution of any Indenture of Apprenticeship, or other Deed or Instrument for that Purpose, become and be apprenticed Labourers

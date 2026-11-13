@@ -1,0 +1,140 @@
+{
+ "collected_at": "2026-09-27T23:25:07Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16133213/Behind-scenes-Celebrity-Traitors-Joe-Marler-locked-binging-Line-Duty.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "The Celebrity Traitors star Joe Marler reveals he spent hours locked in a hotel room binging Line Of Duty and put on eight kilos after indulging in three breakfasts a day while filming",
+      "published": "Sun, 27 Sep 2026 16:02:11 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/traitors-richard-ross-jerry-maya-37707471",
+      "title": "Celebrity Traitors stars share strategies to beat each other to BBC prize pot",
+      "published": "Sun, 27 Sep 2026 23:03:03 +0000"
+     }
+    },
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16163873/Orange-Order-parade-today-northern-ireland.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Former Sinn Fein leader Gerry Adams arrives at Orange Order protest after DUP accuses the party of 'breaking the law' by joining blockade - as demonstrator hurls bottle at police car",
+      "published": "Sun, 27 Sep 2026 20:22:23 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/garvaghy-road-liveorange-order-given-37706507",
+      "title": "Garvaghy Road LIVE: PM calls for ‘calm on all sides’ as thousands block Orange Order march",
+      "published": "Sun, 27 Sep 2026 22:41:45 +0000"
+     }
+    },
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16164333/Celebrity-Traitors-paused-James-Acaster-anxious.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Celebrity Traitors filming was paused after James Acaster became 'very anxious and panicked' during 'intense' scene which forced his co-stars to step in",
+      "published": "Sun, 27 Sep 2026 17:00:45 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/celebrity-traitors-james-acaster-panic-37708140",
+      "title": "Celebrity Traitors filming halted after James Acaster 'panicked' on set",
+      "published": "Sun, 27 Sep 2026 21:15:36 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16164759/Venezuela-Fury-birthday-Noah-Price-Cheshire.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Venezuela Fury continues her 17th birthday celebrations as husband Noah Price, 19, treats her to a lavish spa weekend in Cheshire",
+      "published": "Sun, 27 Sep 2026 23:12:42 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/venezuela-fury-noah-price-birthday-37708230",
+      "title": "Venezuela Fury shows off lavish spa weekend gifted by husband for 17th birthday",
+      "published": "Sun, 27 Sep 2026 21:31:05 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16164465/Former-Man-City-chairman-David-Bernstein-expects-club-LOSE-Premier-League-status-guilty-vast-majority-115-charges.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Former Man City chairman David Bernstein expects club to LOSE Premier League status after being found guilty of vast majority of 115 charges: 'Money won't be enough'",
+      "published": "Sun, 27 Sep 2026 23:14:58 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/liam-gallagher-man-city-charges-37708137",
+      "title": "Liam Gallagher 'leaks Man City punishment' as he shares inside info over charges",
+      "published": "Sun, 27 Sep 2026 20:24:20 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 104,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/article-909903",
+      "title": "Netanyahu flew to the UAE to meet Emirati President Mohammed bin Zayed, source tells 'Post'",
+      "published": "Sun, 27 Sep 2026 22:19:37 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-security/2026-09-25/ty-article/report-bin-zayed-warned-netanyahu-days-before-oct-7-sources-say/000001a0-d9b8-dfbb-afa4-fbf8844a0000",
+      "title": "NYT: Sources confirm Haaretz report of UAE president's Oct. 7 warning to Netanyahu",
+      "published": "Fri, 25 Sep 2026 21:54:56 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 135,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/turkish-officials-hit-back-at-israeli-minister-over-remarks-on-erdogan/news",
+      "title": "Turkish officials hit back at Israeli minister over remarks on Erdoğan",
+      "published": "Thu, 24 Sep 2026 14:54:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/09/turkey-shelters-emirati-brotherhood-figures-accused-of-plotting-to-oust-uae-rulers/",
+      "title": "Turkey shelters Emirati Brotherhood figures accused of plotting to oust UAE rulers",
+      "published": "Sun, 20 Sep 2026 22:18:23 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 313,
+    "left": 10
+   }
+  }
+ }
+}

@@ -1,0 +1,7 @@
+source: src-ddhc-1789-en
+locator: art6
+url: https://www.conseil-constitutionnel.fr/en/declaration-of-human-and-civic-rights-of-26-august-1789
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+The Law is the expression of the general will. All citizens have the right to take part, personally or through their representatives, in its making. It must be the same for all, whether it protects or punishes. All citizens, being equal in its eyes, shall be equally eligible to all high offices, public positions and employments, according to their ability, and without other distinction than that of their virtues and talents.

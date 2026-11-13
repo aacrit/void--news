@@ -1,0 +1,7 @@
+source: src-hansard-19421217
+locator: secc2087
+url: https://api.parliament.uk/historic-hansard/commons/1942/dec/17/united-nations-declaration
+read: 2026-10-07
+note: the exchange between the question and the silence (the Speaker's answer) is included as printed; the marker lines '§' are omitted
+
+Is it possible, in your judgment, Mr. Speaker, for Members of the House to rise in their places and stand in silence in support of this protest against disgusting barbarism? Mr. Speaker That should be a spontaneous act by the House as a whole. Members of the House then stood in silence.

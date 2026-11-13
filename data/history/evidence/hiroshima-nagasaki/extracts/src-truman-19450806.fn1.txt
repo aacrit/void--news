@@ -1,0 +1,7 @@
+source: src-truman-19450806
+locator: fn1
+url: https://www.trumanlibrary.gov/library/public-papers/93/statement-president-announcing-use-bomb-hiroshima
+read: 2026-10-05
+note: the Library's editorial note under the statement: the statement was a written release, not a broadcast
+
+NOTE: This statement was released in Washington. It was drafted before the President left Germany, and Secretary of War Stimson was authorized to release it when the bomb was delivered. On August 6, while returning from the Potsdam Conference aboard the U.S.S. Augusta, the President was handed a message from Secretary Stimson informing him that the bomb had been dropped at 7:15 p.m. on August 5.

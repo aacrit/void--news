@@ -1,0 +1,7 @@
+source: src-lenin-dissolution-1918
+locator: secmajority
+url: https://www.marxists.org/archive/lenin/works/1918/jan/06a.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+Owing to the above-mentioned circumstances, the Party of Right Socialist-Revolutionaries, the party of Kerensky, Avksentyev and Chernov, obtained the majority in the Constituent Assembly which met on January 5.

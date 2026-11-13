@@ -1,0 +1,7 @@
+source: src-rustem-1918
+locator: p102
+url: https://archive.org/download/laguerremondiale00ahmeuoft/laguerremondiale00ahmeuoft_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer; hyphens rejoined, spacing collapsed, the page number between the pages removed
+
+Notre souci est, en effet, de déterminer si, comme on prétend, les documents, laborieusement colligés par Lord Bryce (?), démontrent, d'une part, que rien dans l'attitude des Arméniens n'a justifié la mesure de déportation adoptée par le gouvernement ottoman, et si, d'autre part, les conditions dans lesquelles cette mesure a été appliquée ne laissent aucun doute sur son but véritable, qui aurait été d'exterminer la race arménienne.

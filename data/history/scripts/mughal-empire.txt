@@ -1,0 +1,170 @@
+## OPEN
+N: In fifteen eighty two, the ruler of a subcontinent declared a new religion, debated for seven years by five faiths at his own court.
+N: It attracted fewer than twenty followers, and it died with him.
+N: A century later, that same empire ran close to a quarter of the entire world's economy, more than every state in Europe combined.
+N: The religion nobody joined and the wealth nobody could match came out of the same machine. This is a story about the machine, not the faith.
+
+## TITLE
+N: The Mughal Empire. Fifteen twenty six to eighteen fifty seven.
+
+## SCENE 1 | Panipat, April fifteen twenty six
+N: Zahir ud-Din Muhammad Babur has twelve thousand men. Ibrahim Lodi, ruler of the Delhi Sultanate, has more than a hundred thousand, and war elephants.
+N: Babur lines up matchlock guns and field artillery behind carts lashed together with rope. Lodi's army has never faced cannon fire.
+N: The elephants panic and stampede back through their own infantry.
+N: By afternoon, Ibrahim Lodi is dead on the field. Fifty five miles north of Delhi, a new dynasty has just been founded in a single day.
+
+## DOCUMENT | Babur | Baburnama | c. 1528
+N: Babur wrote the first autobiography in Islamic literature, and this is what he thought of the country he had just won.
+M: Hindustan is a place of little charm. There is no beauty in its people, no graceful social intercourse, no poetic talent or understanding, no etiquette, nobility, or manliness.
+
+## ASIDE
+N: He is not describing an enemy. He is describing his own new capital.
+N: A man who has just won an empire, and does not like the food he is going to be eating for the rest of his life.
+
+## REST
+
+## SCENE 2 | Fatehpur Sikri, fifteen seventy five to fifteen eighty two
+N: Babur's grandson Akbar takes the throne at thirteen, after his father Humayun dies falling down a library staircase.
+N: By the time Akbar dies at sixty three, the empire runs from Kabul to Bengal, from Kashmir to the Deccan, nearly the whole subcontinent.
+N: He abolishes the tax on non-Muslims in fifteen sixty four. He marries into Rajput royal families and gives their commanders army ranks. At his Hall of Worship he holds formal debates between Jesuits, Hindus, Jains, Zoroastrians and Muslims.
+N: The mansabdari system sits underneath all of it. Every commander gets a rank that fixes both his troops and his revenue, and that rank can be moved anywhere in the empire, so no province ever becomes his alone.
+
+## DOCUMENT | Abu'l-Fazl ibn Mubarak | Ain-i-Akbari | 1598
+N: Abu'l-Fazl was Akbar's own court historian, and this is how he recorded the Hall of Worship in the empire's official history.
+M: His Majesty's sacred heart is never satisfied with the knowledge of one religion. Full comprehension demands that a faith should be tested by reason and not reason by a faith.
+
+## ASIDE
+N: One third of Akbar's top ranked commanders were Hindu. That is not a debate club. That is who held the army.
+N: That same administrative machine would end up holding a quarter of the world's population together, at its peak. It needed none of them to agree on God.
+
+## REST
+
+## SCENE 3 | The Mughal court, sixteen sixteen to sixteen fifty eight
+N: An English ambassador named Thomas Roe arrives at the Mughal court around sixteen sixteen, sent to negotiate trade under the emperor Jahangir.
+N: He spends most of his time competing with Portuguese Jesuits for the emperor's attention.
+N: Decades later, Shah Jahan becomes the fifth Mughal emperor. His wife Mumtaz Mahal dies in sixteen thirty one, giving birth to their fourteenth child, and he builds her the Taj Mahal: twenty thousand workers, twenty one years, an estimated thirty two million rupees, worth roughly one billion dollars today.
+N: He also builds the Peacock Throne, set with the Koh-i-Noor diamond and valued at twice the cost of the tomb next to it. In sixteen fifty eight his own son Aurangzeb imprisons him and takes the throne.
+
+## DOCUMENT | Sir Thomas Roe | Letters from the Mughal court of Jahangir | c. 1616
+N: This is what Thomas Roe reported home to his king.
+M: I stood astonished at the prince's wealth. In his throne room he displayed more gems than I had seen in my life.
+
+## ASIDE
+N: An ambassador sent to negotiate trade spent most of his time losing a rivalry with Portuguese Jesuits for the emperor's attention.
+N: What he brought home instead was a description: a court richer than anything he had seen in his own life.
+
+## REST
+
+## SCENE 4 | The Deccan, sixteen eighty one to seventeen oh seven
+N: A century after Akbar, Aurangzeb rules the largest economy on Earth. By Angus Maddison's estimate, Mughal India produces close to a quarter of the entire world's output in seventeen hundred, more than every state in Europe combined.
+N: Aurangzeb reimposes the tax Akbar had abolished a hundred and fifteen years earlier. He orders the temples at Varanasi and Mathura demolished, and in sixteen seventy five he executes the Sikh Guru Tegh Bahadur.
+N: He spends twenty six years fighting to conquer the Deccan. The campaign empties the treasury.
+
+## DOCUMENT | Saqi Mustaid Khan | Maasir-i-Alamgiri | c. 1710
+N: Saqi Mustaid Khan wrote the court chronicle of Aurangzeb's reign, recording the emperor's own orders.
+M: The king ordered that wherever an idol temple had been demolished, a mosque should be built in its place.
+
+## ASIDE
+N: When Aurangzeb dies in seventeen oh seven, the empire that held a quarter of the world's wealth fractures into rival states within a generation.
+N: Thirty two years later, a Persian king named Nader Shah walks off with the Peacock Throne itself.
+
+## REST
+
+## SCENE 5 | Bengal, sixteen oh eight to eighteen fifty seven
+N: The East India Company arrives at the Mughal court in sixteen oh eight asking for trade. By seventeen fifty seven it wins Bengal in under a day.
+N: Robert Clive brings three thousand men against the Nawab of Bengal's fifty thousand, and the Nawab's own general, Mir Jafar, switches sides mid battle.
+N: A century later, the last Mughal emperor, Bahadur Shah Zafar, is exiled to Rangoon after an uprising against British rule.
+
+## DOCUMENT | Bahadur Shah Zafar | Urdu ghazal, composed in exile in Rangoon | c. 1858-1862
+N: Bahadur Shah Zafar wrote this poem himself, in the British cell where he would die.
+M: I came a stranger into the world, and a stranger I depart. My star was unlucky, and my short life has been a harvest of misery.
+
+## ASIDE
+N: He dies in eighteen sixty two.
+
+## REST
+
+## TURN | Five accounts
+N: On what three hundred and thirty one years of this empire actually were, five accounts do not agree, and the argument still shapes Indian policy today.
+
+## PERSPECTIVE | Mughal Imperial court | victor
+N: From inside the court, Akbar's tolerance was never sentiment. It was survival math: an empire cannot last while it alienates the eighty percent of its population that is Hindu.
+N: Abolishing the tax on non-Muslims and marrying into Rajput royal houses turned potential enemies into stakeholders in the empire itself.
+N: The portable rank system kept any single commander, in any single province, from ever building a rival kingdom.
+N: What this court left behind still stands: the Red Fort, Humayun's Tomb and Fatehpur Sikri, all UNESCO World Heritage sites built within a hundred and thirty years of each other, alongside the Taj Mahal itself.
+
+## PERSPECTIVE | Hindu Nationalist revisionism | revisionist
+N: This account, running from Savarkar's book in nineteen twenty three onward, treats the Mughal period as an interruption of Hindu civilization, not a chapter in it.
+N: Its evidence is Aurangzeb: the temples torn down at Varanasi and Mathura, the tax reimposed, the Sikh guru executed for refusing forced conversion.
+N: The mosque at Ayodhya, built in the late fifteen twenties, was demolished by a mob of a hundred and fifty thousand people in nineteen ninety two. In twenty nineteen, India's Supreme Court awarded that ground to a Hindu trust, and the Ram Mandir built there opened in twenty twenty four.
+N: The question this account asks is not whether Aurangzeb tore down temples. It is whether three hundred and thirty one years of rule should be read through him.
+
+## PERSPECTIVE | British Colonial administration | victor
+N: To the Company that inherited this empire, the takeover was not conquest. It was patience rewarded.
+N: For a century the Company operated at the pleasure of Mughal governors, paying customs and negotiating decrees, waiting for its opening.
+N: James Mill's history, the textbook used to train the Company's own civil servants, described the Mughal period as arbitrary rule and religious bigotry, and cast British administration as rational governance replacing it.
+N: Plassey, in this telling, was not a battle won by guns. It was a realignment, made possible by a general who had already agreed to change sides.
+
+## PERSPECTIVE | Subaltern and peasant | vanquished
+N: None of these courts fed themselves. A cultivator under Akbar's own tax system handed over forty to fifty percent of what he grew to the state, and zamindars took another ten to twenty five percent on top of that.
+N: When the Satnami sect rose up in Narnaul in sixteen seventy two with farm tools and homemade weapons, Aurangzeb sent ten thousand troops against their five thousand. The court chronicle records the victory. The Satnamis left no written account of their own.
+N: The workers who built the Taj Mahal over twenty one years, and the laborers who carried its marble from Rajasthan and its jade from Central Asia, are not named anywhere in the record.
+N: Irfan Habib, the historian who reconstructed the empire's own tax records centuries later, put the arithmetic in one line.
+M: The state demand amounted to one half or more of the gross produce, and the peasant was left with barely enough to survive and to provide seed for the next sowing.
+
+## PERSPECTIVE | Postcolonial historiography | academic
+N: This account, from historians like Audrey Truschke and Muzaffar Alam, rejects the idea that any single ruler can stand for the whole of it.
+N: By Richard Eaton's count, Aurangzeb destroyed roughly fifteen temples over a forty nine year reign, while also granting land and stipends to dozens of Hindu institutions.
+N: The eighteenth century fragmentation that the British account calls anarchy, this account calls decentralization. Regional successor states kept and often improved Mughal administration, and the wealth did not vanish, it redistributed.
+N: The Hindu versus Muslim reading of this whole period, in this account, is not how people at the time organized their own history. It was invented in eighteen seventeen, by an Englishman who never once set foot in India.
+
+## REST | short
+
+## TURN | What each one leaves out
+N: The Imperial account does not mention that Aurangzeb executed his own brothers and imprisoned his father to take the throne it praises.
+N: The Hindu Nationalist account does not mention forty nine years of Akbar's rule, or that Aurangzeb issued more orders protecting Hindu temples than destroying them.
+N: The Colonial account does not mention the Bengal famine that killed an estimated ten million people under its own revenue management, in the years right after the victory it calls patience rewarded.
+N: The Subaltern account does not mention the roads, the currency, and the defense that same extraction paid for.
+N: And the Postcolonial account, the most careful of the five, still leaves out the suffering those Mughal policies caused people living under them at the time, not four centuries later.
+
+## CLOSE
+N: The dynasty that spent twenty thousand workers and twenty one years on a tomb for one empress buried its own last emperor without a marker, in a cell in Rangoon, in eighteen sixty two.
+
+## SAY
+Zahir ud-Din Muhammad Babur = za-HEER ud-DEEN mo-HAM-mad BAH-ber
+Babur = BAH-ber
+Ibrahim Lodi = ib-ra-HEEM LO-dee
+Panipat = PAH-nee-pat
+Akbar = AK-bar
+Humayun = hoo-MAH-yoon
+Fatehpur Sikri = fa-TAY-poor SEEK-ree
+Abu'l-Fazl ibn Mubarak = AH-bool FAHZ-il ib-in moo-BAH-rak
+Ain-i-Akbari = EYE-nee ak-BAH-ree
+mansabdari = man-sab-DAH-ree
+Jahangir = ja-han-GEER
+Shah Jahan = SHAH ja-HAHN
+Mumtaz Mahal = moom-TAHZ ma-HAL
+Koh-i-Noor = KOH-ee-NOOR
+Nader Shah = NAH-der SHAH
+Aurangzeb = OW-rang-zeb
+Deccan = DECK-an
+Varanasi = va-RAH-na-see
+Mathura = MUT-hoo-ra
+Tegh Bahadur = TAYG ba-HAH-dor
+Maasir-i-Alamgiri = ma-AH-sir-ee ah-lam-GEE-ree
+Saqi Mustaid Khan = SAH-kee moos-TA-eed KAHN
+Bahadur Shah Zafar = ba-HAH-dor SHAH za-FAR
+Rangoon = ran-GOON
+Mir Jafar = MEER ja-FAR
+Nawab = na-WAHB
+Baburnama = BAH-ber-NAH-ma
+Ayodhya = a-YODH-ya
+Savarkar = sa-VAR-kar
+Ram Mandir = RAHM MUN-deer
+Truschke = TROOSH-kee
+Muzaffar Alam = moo-ZAF-far AH-lam
+Satnami = sut-NAH-mee
+Narnaul = nar-NOWL
+Irfan Habib = ir-FAHN ha-BEEB
+Richard Eaton = RICH-ard EE-tun
+Rajput = RAHJ-poot

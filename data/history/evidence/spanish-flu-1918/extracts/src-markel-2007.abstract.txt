@@ -1,0 +1,7 @@
+source: src-markel-2007
+locator: abstract
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID%3A17684187&resultType=core&format=json
+read: 2026-09-25
+note: the abstract as the Europe PMC record carries it, read from the REST endpoint named above; cut at a sentence end to stay within the 150-word cap where the abstract is longer
+
+Results: There were 115,340 excess pneumonia and influenza deaths (EDR, 500/100,000 population) in the 43 cities during the 24 weeks analyzed. Every city adopted at least 1 of the 3 major categories of nonpharmaceutical interventions. School closure and public gathering bans activated concurrently represented the most common combination implemented in 34 cities (79%); this combination had a median duration of 4 weeks (range, 1-10 weeks) and was significantly associated with reductions in weekly EDR. The cities that implemented nonpharmaceutical interventions earlier had greater delays in reaching peak mortality (Spearman r = -0.74, P < .001), lower peak mortality rates (Spearman r = 0.31, P = .02), and lower total mortality (Spearman r = 0.37, P = .008). There was a statistically significant association between increased duration of nonpharmaceutical interventions and a reduced total mortality burden (Spearman r = -0.39, P = .005).

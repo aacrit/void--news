@@ -1,0 +1,8 @@
+source: src-unscear-2008-annex-d
+locator: p64-65
+url: https://www.unscear.org/unscear/uploads/documents/unscear-reports/UNSCEAR_2008_Report_Vol.II.pdf
+read: 2026-10-07
+note: paragraph 99, its last two items, printed pages 64 to 65; the running head of page 65 ('ANNEX D: HEALTH EFFECTS DUE TO RADIATION FROM THE CHERNOBYL ACCIDENT 65') falls inside the sentence in the text layer and is removed
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+- The contamination of milk with 131I, for which prompt countermeasures were lacking, resulted in large doses to the thyroids of members of the general public; this led to a substantial fraction of the more than 6,000 thyroid cancers observed to date among people who were children or adolescents at the time of the accident (by 2005, 15 cases had proved fatal); - To date, there has been no persuasive evidence of any other health effect in the general population that can be attributed to radiation exposure.

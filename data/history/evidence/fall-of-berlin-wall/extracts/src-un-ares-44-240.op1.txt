@@ -1,0 +1,8 @@
+source: src-un-ares-44-240
+locator: op1
+url: https://documents.un.org/doc/resolution/gen/nr0/549/99/pdf/nr054999.pdf
+read: 2026-10-09
+note: the scan's OCR layer, glyph errors kept ('con­ �titutes', '111dependence', ',1f >;tales' for 'of States'); the paragraph number prints without its full stop
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+1 Strongly deplores the intervention in Panama by the armed forces of the United States of America, which con­ �titutes a flagrant violation of international law and of the 111dependence. sovereignty and territorial integrity ,1f >;tales:

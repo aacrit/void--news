@@ -1,0 +1,7 @@
+source: src-eltis-lachance-2010
+locator: p2
+url: https://legacy.slavevoyages.org/documents/download/2010estimates-method.pdf
+read: 2026-10-09
+note: page 2, PDF text layer; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+To construct estimates of the total slave trade, we have to allow for voyages which occurred without leaving any known trace in the historical record.

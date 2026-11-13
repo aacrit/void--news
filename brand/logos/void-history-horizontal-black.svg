@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 681 120" role="img" aria-label="VOID HISTORY horizontal lockup">
+  <text x="12" y="88" font-family="'Playfair Display', Georgia, 'Times New Roman', serif" font-weight="700" font-size="80" fill="#111111">V</text>
+  <g transform="translate(68,30.4) scale(0.64)" fill="none" stroke="#111111" stroke-linecap="round">
+    <circle cx="50" cy="50" r="41" stroke-width="8"/>
+    <line x1="4" y1="50" x2="96" y2="50" stroke-width="6"/>
+    <line x1="4" y1="42" x2="4" y2="58" stroke-width="5"/>
+    <line x1="96" y1="42" x2="96" y2="58" stroke-width="5"/>
+    <line x1="50" y1="91" x2="50" y2="112" stroke-width="6"/>
+    <path d="M35 118 C43 113 57 113 65 118" stroke-width="6"/>
+  </g>
+  <text x="138" y="88" font-family="'Playfair Display', Georgia, 'Times New Roman', serif" font-weight="700" font-size="80"><tspan fill="#111111">ID </tspan><tspan fill="#111111">HISTORY</tspan></text>
+</svg>

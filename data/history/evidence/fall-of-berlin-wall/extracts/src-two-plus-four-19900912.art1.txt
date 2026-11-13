@@ -1,0 +1,8 @@
+source: src-two-plus-four-19900912
+locator: art1
+url: https://germanhistorydocs.org/en/a-new-germany-1990-2023/two-plus-four-treaty-on-germany-september-12-1990
+read: 2026-10-09
+note: article 1(2)
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+(2) The united Germany and the Republic of Poland shall confirm the existing border between them in a treaty that is binding under international law.

@@ -1,0 +1,8 @@
+source: src-unsc-134-1960
+locator: secvote
+url: https://documents.un.org/doc/resolution/gen/nr0/157/23/pdf/nr015723.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation and glyph errors are kept as the layer prints them
+note: the Council's decision of 30 March 1960 inviting South Africa to take part without vote
+
+At its 851st meeting, on 30 March 1960, the Council decided to invite the representatives of the Union of South Africa, India, Ethiopia, Ghana, Pakistan, Guinea and Liberia to participate, without vote, in the discus- sion of the question.

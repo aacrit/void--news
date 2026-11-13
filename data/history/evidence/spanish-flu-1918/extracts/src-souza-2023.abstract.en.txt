@@ -1,0 +1,7 @@
+rendering: official-parallel
+of: src-souza-2023.abstract
+names: Diamantina=Diamantina; Minas Gerais=Minas Gerais
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10395612/fullTextXML
+read: 2026-09-25
+
+The article analyzes the influenza epidemic in 1918 in Diamantina, a town in the Brazilian state of Minas Gerais. Bibliographic and documental sources are used to investigate the influence of the Vitória-Minas railroad (Estrada de Ferro Vitória a Minas), opened in 1914, on the arrival of the disease in the town, which had until then been represented in the discourse of its elites as insalubrious and isolated. The interrelations between the spread of transportation systems across Brazil, the environment, scientific knowledge, and health-disease processes are discussed.

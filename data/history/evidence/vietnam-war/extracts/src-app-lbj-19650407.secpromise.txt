@@ -1,0 +1,8 @@
+source: src-app-lbj-19650407
+locator: secpromise
+url: https://www.presidency.ucsb.edu/documents/address-johns-hopkins-university-peace-without-conquest
+read: 2026-10-09
+note: The American Presidency Project's text, from the Public Papers of the Presidents
+note: the spaces before the question marks are the web text's
+
+Why are we in South Viet-Nam ? We are there because we have a promise to keep. Since 1954 every American President has offered support to the people of South Viet-Nam. We have helped to build, and we have helped to defend. Thus, over many years, we have made a national pledge to help South Viet-Nam defend its independence. And I intend to keep that promise. To dishonor that pledge, to abandon this small and brave nation to its enemies, and to the terror that must follow, would be an unforgivable wrong.

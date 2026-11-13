@@ -1,0 +1,336 @@
+# The documentary score for "The Srebrenica Genocide and the Bosnian War", as
+# note data on sampled real instruments. Rendered by pipeline/history/score.py;
+# the samples live in ~/.cache/void-score-samples (never in the repository) and
+# are pinned by sha256.
+#
+# The music claims nothing about the event. Nothing here imitates a regional,
+# religious or folk music, a lament tradition, a bell, a radio or a march: the
+# palette is a cello section, a solo violin and an upright piano, each presented
+# as what it is. The theme is built from the house cell (tonic, fifth, tonic,
+# third: the shape of the On Air motif), in E, in the minor mode with the sixth
+# and seventh left unraised, at 40 beats a minute in two-beat bars: eight bars,
+# sixteen beats of exactly 1.5 s, the slowest of the three composed scores. The
+# line's one reach is to the sixth (C) and it falls a semitone to B; it never
+# leaps, never ornaments, and the grief bed states it once and then leaves the
+# cello alone for the rest of the loop. Testimony and rupture carry no bed at
+# all (mood.py): a survivor's words and the moment itself are in silence.
+#
+# Cues are keyed to the producer's moods and segment kinds, never to a line of
+# text, so the cinematic variant renders from this manifest whatever moods it
+# picks. Where each cue plays is the producer's (mood_plan): the theme under
+# the TITLE, the first word inside its release; beds under the spoken body by
+# mood, ducked to the mood's floor; transitions in the clear before a scene;
+# the rupture entry 1,200 ms after a clip's last word, never under it; the
+# outro at the close, with the house promo riding its held bars, so it is at
+# most 13.75 s and silent at its end.
+slug: srebrenica-genocide
+title: The Srebrenica Genocide and the Bosnian War
+version: 1
+key: E
+mode: minor, with the sixth and seventh left unraised
+tempo_bpm: 40
+house_cell: [0, 7, 0, 3]
+textures: []
+
+instruments:
+  cello:
+    library: VSCO 2 Community Edition (Versilian Studios), Cello Section, sustain vibrato, softest layer (v1). The files are named an octave below what they sound (the file "D2" measures 147 Hz, D3); `note` is the sounding pitch. The E2 is the set's lowest recording and is played unshifted
+    role_as_presented: a cello section
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: sustain
+    attack_s: 0.9
+    release_s: 0.8
+    loop_start_s: 1.4
+    gain_db: 0.0
+    samples:
+      - {file: vsco2ce/Strings/Cello Section/susvib/susvib_E1_v1_1.wav, note: E2, sha256: de31a61b02d4e1d5a79b8bc432b0f35fe2e434290ad34402cc0f2dd7dc278cde, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Cello%20Section/susvib/susvib_E1_v1_1.wav"}
+      - {file: vsco2ce/Strings/Cello Section/susvib/susvib_G1_v1_1.wav, note: G2, sha256: 9e5d24e8e28d6c7f650f9bb2b33d43c13e341a8bd33124c64e23881378b181ba, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Cello%20Section/susvib/susvib_G1_v1_1.wav"}
+      - {file: vsco2ce/Strings/Cello Section/susvib/susvib_C1_v1_1.wav, note: C3, sha256: abdcea431f384e135c469b0f3e4ac2a437f282f521dc5bcbe22abc221536e8de, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Cello%20Section/susvib/susvib_C1_v1_1.wav"}
+      - {file: vsco2ce/Strings/Cello Section/susvib/susvib_D2_v1_1.wav, note: D3, sha256: e8640dec9febc6e39fcf06b19d2c95a85d5ff8c38f13c9879e69f551eaf38ab8, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Cello%20Section/susvib/susvib_D2_v1_1.wav"}
+      - {file: vsco2ce/Strings/Cello Section/susvib/susvib_A2_v1_1.wav, note: A3, sha256: c97a003184fdcb153d6b6c0bae8d82a90592a1b04b06bd7caaeda8b9776d5284, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Cello%20Section/susvib/susvib_A2_v1_1.wav"}
+      - {file: vsco2ce/Strings/Cello Section/susvib/susvib_C3_v1_1.wav, note: C4, sha256: a614ee7ca821b44660236e47b89620cf914ec6ad27a99bc0d9764f47dbe512e1, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Cello%20Section/susvib/susvib_C3_v1_1.wav"}
+      - {file: vsco2ce/Strings/Cello Section/susvib/susvib_E3_v1_1.wav, note: E4, sha256: d2f961e30bf64021cf4acbd88e0e7a1fd1840943ae78c62a711bcce3d109216e, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Cello%20Section/susvib/susvib_E3_v1_1.wav"}
+
+  violin:
+    library: VSCO 2 Community Edition (Versilian Studios), Solo Violin, arco vibrato, p
+    role_as_presented: a solo violin
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the Readme asks for credit and that the samples not be sold on their own)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Versilian Studios and Sam Gossner, VSCO 2 Community Edition
+    kind: sustain
+    attack_s: 0.14
+    release_s: 0.9
+    loop_start_s: 1.2
+    gain_db: 0.0
+    samples:
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_G3_p.wav, note: G3, sha256: c52d8ef3e2882984c09da1b7c7ef40b82e997bc78cfdd380fe167bbcb94b03de, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_G3_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_A3_p.wav, note: A3, sha256: 8daa4ca0eba8a834814435047e36b47826e730a7796c325966323f53debc9e46, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_A3_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_C4_p.wav, note: C4, sha256: 592ebf4404ccafc7164c13cc543911ba9a2fe5f5e70dbb200807e2ae37b25035, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_C4_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_E4_p.wav, note: E4, sha256: 57c5aec0678a5d582d87ab33cd2f8954fea26ffd04c932eb6753d6a78e08736b, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_E4_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_G4_p.wav, note: G4, sha256: ad1ba8442a6b40919093c9c831a8171c7030f7e651fbe075ab87764665deef88, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_G4_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_A4_p.wav, note: A4, sha256: 0d05607b46b78690893006d5aa7923ac304c7fb497df1e96536dc88ac5ac487f, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_A4_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_C5_p.wav, note: C5, sha256: 77a2133b5f97e1ec0edb759c0c552fc3efa7caf4ce1e0a4aa22625cf4c9da130, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_C5_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_E5_p.wav, note: E5, sha256: c60c3bcfc64ea00ebf8d97b16f2876c892393839a017a945c5e557359b6369a4, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_E5_p.wav"}
+      - {file: vsco2ce/Strings/Solo Violin/Arco Vib/LLVln_ArcoVib_G5_p.wav, note: G5, sha256: 537df6072b0922a0231a6b3fad117e84bcaaa3e60ca68c665776a83c9bd9062d, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Strings/Solo%20Violin/Arco%20Vib/LLVln_ArcoVib_G5_p.wav"}
+
+  piano:
+    library: VSCO 2 Community Edition (Versilian Studios / Ivy Audio), Upright Piano, softest layer (dyn1); the folder's MappingChart.txt maps file index i to MIDI key 21 + 2i, and only the even indices are published, so the recorded keys are a major third apart and the renderer shifts a note by two semitones at most. The file "010" measures 87.4 Hz, F2
+    role_as_presented: an upright piano
+    licence_as_stated: CC0 1.0 Universal (the repository's LICENSE file; the folder's Info.txt says credit to Ivy Audio and Versilian Studios is encouraged)
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    licence_source: https://github.com/sgossner/VSCO-2-CE/blob/master/LICENSE
+    rights_basis: cc0-as-stated
+    credit_line: Simon Dalzell of Ivy Audio and Versilian Studios, VSCO 2 Community Edition
+    kind: pluck
+    release_s: 0.4
+    gain_db: 0.0
+    samples:
+      - {file: vsco2ce/Keys/Upright Piano/Player_dyn1_rr1_010.wav, note: F2, sha256: 6bdbe8457f7b921ddfd2456aa5dd5932e60a687ca6fb255b3b80ffc6eecbd199, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Keys/Upright%20Piano/Player_dyn1_rr1_010.wav"}
+      - {file: vsco2ce/Keys/Upright Piano/Player_dyn1_rr1_012.wav, note: A2, sha256: 16be23a8378185f1b392600d3fa800a206945543866548640f7573534f76faf2, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Keys/Upright%20Piano/Player_dyn1_rr1_012.wav"}
+      - {file: vsco2ce/Keys/Upright Piano/Player_dyn1_rr1_016.wav, note: F3, sha256: f1a3a542cf70a13aa865ce130d50d72cd735449e605d1c5a45dc06b5a60b27fd, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Keys/Upright%20Piano/Player_dyn1_rr1_016.wav"}
+      - {file: vsco2ce/Keys/Upright Piano/Player_dyn1_rr1_018.wav, note: A3, sha256: 01387cb5318c5abf11410ae8e2f4ef6aa83ec03254b4bccfe865aba262a2e412, url: "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/Keys/Upright%20Piano/Player_dyn1_rr1_018.wav"}
+
+# Note rows are [instrument, note, start in beats, length in beats or null, velocity].
+# null length on a pluck lets the recording decay on its own. One beat is 1.5 s.
+cues:
+  # Statement 1, under the TITLE: the line once over the cello's open fifth, the
+  # piano marking the first bar and the halfway bar. The cell in bars 1 to 3, a
+  # step down, then the one reach to the sixth and the semitone fall to B, and
+  # the descent home. The first word of the title lands inside the last note's
+  # release.
+  theme:
+    claims: []
+    length_s: 26.5
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    notes:
+      - [violin, E4, 0, 2, 0.78]
+      - [violin, B4, 2, 1, 0.70]
+      - [violin, E4, 3, 1, 0.72]
+      - [violin, G4, 4, 2, 0.82]
+      - [violin, F#4, 6, 1, 0.70]
+      - [violin, E4, 7, 1, 0.72]
+      - [violin, C5, 8, 2, 0.84]
+      - [violin, B4, 10, 2, 0.76]
+      - [violin, G4, 12, 1, 0.72]
+      - [violin, F#4, 13, 1, 0.70]
+      - [violin, E4, 14, 2.6, 0.78]
+      - [cello, E2, 0, 16.6, 0.50]
+      - [cello, B2, 0, 16.6, 0.30]
+      - [piano, E2, 0, 8, 0.45]
+      - [piano, E2, 8, 8, 0.40]
+
+  # Statement 3, at the close: the line's last phrase (the sixth, the fall, the
+  # descent) over the fifth, the piano twice, everything released by 11 s and
+  # faded to silence inside 13.6 s so the house promo can ride it.
+  outro:
+    claims: []
+    length_s: 13.6
+    peak_dbfs: -13.0
+    room_wet: 1.0
+    fade_out_ms: 2400
+    tail_silence: true
+    notes:
+      - [violin, C5, 0, 1, 0.68]
+      - [violin, B4, 1, 1, 0.70]
+      - [violin, G4, 2, 1, 0.70]
+      - [violin, F#4, 3, 1, 0.68]
+      - [violin, E4, 4, 2.4, 0.74]
+      - [cello, E2, 0, 6.6, 0.50]
+      - [cello, B2, 0, 6.6, 0.28]
+      - [piano, E2, 0, 4, 0.50]
+      - [piano, E2, 4, 3, 0.42]
+
+  # After a recording in a rupture scene, once its trailing silence is over:
+  # the theme's last two notes on a swell, inside the 6 s mood_plan opens.
+  rupture_entry:
+    claims: []
+    length_s: 6.0
+    peak_dbfs: -15.0
+    room_wet: 1.4
+    swell: [0.5, 2.8, 2.7]
+    notes:
+      - [violin, F#4, 0, 1, 0.60]
+      - [violin, E4, 1, 2.0, 0.72]
+      - [cello, E2, 0, 3.0, 0.50]
+      - [cello, B2, 0, 3.0, 0.30]
+
+  # The change of voice (a judgment, a report, a plea): one low piano note, touched.
+  sting:to_document:
+    claims: []
+    length_s: 0.9
+    peak_dbfs: -22.0
+    room_wet: 0.6
+    fade_out_ms: 150
+    notes:
+      - [piano, E2, 0, 0.3, 0.55]
+
+  # The music returning after a recording, once its trailing silence is over.
+  sting:from_clip:
+    claims: []
+    length_s: 2.4
+    peak_dbfs: -20.0
+    room_wet: 1.0
+    swell: [0.8, 0.6, 1.0]
+    notes:
+      - [cello, B2, 0, 0.9, 0.50]
+      - [piano, E3, 0, 1.2, 0.40]
+
+  # Dread (the safe area, the enclave, the second grave): the cello's low E
+  # held, the sixth faint above it instead of the fifth, so the theme's one
+  # reach sits unresolved under the ground; the piano's E once every 24 s.
+  bed:dread:
+    claims: []
+    length_s: 48.0
+    fold: true
+    rms_dbfs: -34.0
+    room_wet: 0.6
+    notes:
+      - [cello, E2, 0, 32, 0.55]
+      - [cello, C3, 0, 32, 0.22]
+      - [piano, E2, 0, null, 0.30]
+      - [piano, E2, 16, null, 0.26]
+
+  # Procedure (the resolution, the chain of command, the paragraphs of the
+  # judgment): the piano keeping the beat, dry. The house cell, one note every
+  # 1.5 s, the last note alternating.
+  bed:procedure:
+    claims: []
+    length_s: 48.0
+    fold: true
+    rms_dbfs: -33.0
+    room_wet: 0.0
+    notes:
+      - [piano, E3, 0, null, 0.62]
+      - [piano, B3, 1, null, 0.46]
+      - [piano, E3, 2, null, 0.52]
+      - [piano, G3, 3, null, 0.46]
+      - [piano, E3, 4, null, 0.62]
+      - [piano, B3, 5, null, 0.46]
+      - [piano, E3, 6, null, 0.52]
+      - [piano, F#3, 7, null, 0.46]
+      - [piano, E3, 8, null, 0.62]
+      - [piano, B3, 9, null, 0.46]
+      - [piano, E3, 10, null, 0.52]
+      - [piano, G3, 11, null, 0.46]
+      - [piano, E3, 12, null, 0.62]
+      - [piano, B3, 13, null, 0.46]
+      - [piano, E3, 14, null, 0.52]
+      - [piano, F#3, 15, null, 0.46]
+      - [piano, E3, 16, null, 0.62]
+      - [piano, B3, 17, null, 0.46]
+      - [piano, E3, 18, null, 0.52]
+      - [piano, G3, 19, null, 0.46]
+      - [piano, E3, 20, null, 0.62]
+      - [piano, B3, 21, null, 0.46]
+      - [piano, E3, 22, null, 0.52]
+      - [piano, F#3, 23, null, 0.46]
+      - [piano, E3, 24, null, 0.62]
+      - [piano, B3, 25, null, 0.46]
+      - [piano, E3, 26, null, 0.52]
+      - [piano, G3, 27, null, 0.46]
+      - [piano, E3, 28, null, 0.62]
+      - [piano, B3, 29, null, 0.46]
+      - [piano, E3, 30, null, 0.52]
+      - [piano, F#3, 31, null, 0.46]
+
+  # Reckoning (the turn, the five accounts, what each leaves out): the piano
+  # alone on one note every 3 s, the low E every 24 s. No melody, the thinnest
+  # bed, under the deepest duck.
+  bed:reckoning:
+    claims: []
+    length_s: 48.0
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 0.3
+    notes:
+      - [piano, E2, 0, null, 0.55]
+      - [piano, E3, 2, null, 0.40]
+      - [piano, E3, 4, null, 0.40]
+      - [piano, E3, 6, null, 0.40]
+      - [piano, E3, 8, null, 0.40]
+      - [piano, E3, 10, null, 0.40]
+      - [piano, E3, 12, null, 0.40]
+      - [piano, E3, 14, null, 0.40]
+      - [piano, E2, 16, null, 0.55]
+      - [piano, E3, 18, null, 0.40]
+      - [piano, E3, 20, null, 0.40]
+      - [piano, E3, 22, null, 0.40]
+      - [piano, E3, 24, null, 0.40]
+      - [piano, E3, 26, null, 0.40]
+      - [piano, E3, 28, null, 0.40]
+      - [piano, E3, 30, null, 0.40]
+
+  # Grief (the fields, the graves, the mothers): the cello's low E alone, no
+  # fifth; the violin high and thin states the cell inverted within the key
+  # (each step mirrored about E) once, reaches the sixth and falls the
+  # semitone to B, then is silent. The last 30 s of the loop are the cello
+  # alone.
+  bed:grief:
+    claims: []
+    length_s: 48.0
+    fold: true
+    rms_dbfs: -35.0
+    room_wet: 1.0
+    notes:
+      - [cello, E2, 0, 32, 0.45]
+      - [violin, E5, 2, 2, 0.42]
+      - [violin, A4, 4, 1, 0.38]
+      - [violin, E5, 5, 1, 0.38]
+      - [violin, C5, 6, 3, 0.44]
+      - [violin, B4, 9, 3, 0.40]
+
+  # Into a dread scene, in the clear: the cello's E swelling with the sixth
+  # faint above it, one low piano note.
+  transition:dread:
+    claims: []
+    length_s: 3.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    swell: [0.3, 2.1, 1.4]
+    notes:
+      - [cello, E2, 0, 1.8, 0.60]
+      - [cello, C3, 0, 1.8, 0.24]
+      - [piano, E2, 0.2, null, 0.45]
+
+  # Into a procedure scene: three strokes of the clock, dry.
+  transition:procedure:
+    claims: []
+    length_s: 4.6
+    peak_dbfs: -14.0
+    room_wet: 0.0
+    fade_out_ms: 900
+    notes:
+      - [piano, E3, 0, null, 0.62]
+      - [piano, B3, 1, null, 0.50]
+      - [piano, E3, 2, null, 0.52]
+
+  # Into a grief scene: the violin's semitone fall, high and alone, the
+  # cello's E under it.
+  transition:grief:
+    claims: []
+    length_s: 4.8
+    peak_dbfs: -14.0
+    room_wet: 1.0
+    notes:
+      - [violin, C5, 0, 1.0, 0.50]
+      - [violin, B4, 1, 1.4, 0.48]
+      - [cello, E2, 0, 2.4, 0.40]
+
+  # Into the turn and the accounts: the pulse arriving.
+  transition:reckoning:
+    claims: []
+    length_s: 4.2
+    peak_dbfs: -14.0
+    room_wet: 0.3
+    fade_out_ms: 800
+    notes:
+      - [piano, E2, 0, null, 0.58]
+      - [piano, E3, 1, null, 0.46]
+      - [piano, E3, 2, null, 0.46]

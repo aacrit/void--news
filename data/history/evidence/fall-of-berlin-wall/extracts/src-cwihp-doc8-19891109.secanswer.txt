@@ -1,0 +1,8 @@
+source: src-cwihp-doc8-19891109
+locator: secanswer
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_12-13.pdf
+read: 2026-10-09
+note: p. 158; Labs and Beil are the SED Central Committee members beside him (the transcript's headnote and the German transcription, src-cdm-pk-19891109)
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Schabowski: (Looks through his papers...) That comes into effect, according to my information, immediately, without delay (looking through his papers further). Labs: (quietly) ...without delay. Beil: (quietly) That has to be decided by the Council of Ministers.

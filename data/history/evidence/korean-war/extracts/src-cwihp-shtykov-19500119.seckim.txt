@@ -1,0 +1,8 @@
+source: src-cwihp-shtykov-19500119
+locator: seckim
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_5.pdf
+read: 2026-10-09
+note: CWIHP Bulletin 5 (Spring 1995), Document VI, translated by Kathryn Weathersby; Kim's words as the Soviet ambassador reported them
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+“The people of the southern portion of Korea trust me and rely on our armed might. Partisans will not decide the question. The people of the south know that we have a good army. Lately I do not sleep at night, thinking about how to resolve the question of the unification of the whole country. If the matter of the liberation of the people of the southern portion of Korea and the unification of the country is drawn out, then I can lose the trust of the people of Korea.”

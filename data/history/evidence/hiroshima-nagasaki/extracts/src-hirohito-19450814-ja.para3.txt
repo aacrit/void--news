@@ -1,0 +1,7 @@
+source: src-hirohito-19450814-ja
+locator: para3
+url: https://www.mext.go.jp/b_menu/hakusho/html/others/detail/1317941.htm
+read: 2026-10-07
+note: the rescript's third paragraph, in the original Japanese; the sentence on the bomb is 加之敵ハ新ニ残虐ナル爆彈ヲ使用シテ ... 至ル; no English rendering is held (see gaps)
+
+抑々帝國臣民ノ康寧ヲ圖リ萬邦共榮ノ樂ヲ偕ニスルハ皇祖皇宗ノ遺範ニシテ朕ノ拳々措カサル所嚢ニ米英二國ニ宣戦セル所以モ亦實ニ帝國ノ自存ト東亜ノ安定トヲ庶幾スルニ出テ他國ノ主權ヲ排シ領土ヲ侵スカ如キハ固ヨリ朕カ志ニアラス然ルニ交戦已ニ四歳ヲ閲シ朕カ陸海将兵ノ勇戦朕カ百僚有司ノ勵精朕カ一億衆庶ノ奉公各々最善ヲ盡セルニ拘ラス戦局必スシモ好轉セス世界ノ大勢亦我ニ利アラス加之敵ハ新ニ残虐ナル爆彈ヲ使用シテ頻ニ無辜ヲ殺傷シ惨害ノ及フ所眞ニ測ルヘカラサルニ至ル而モ尚交戦ヲ繼續セムカ終ニ我カ民族ノ滅亡ヲ招來スルノミナラス延テ人類ノ文明ヲモ破却スヘシ斯ノ如クムハ朕何ヲ以テカ億兆ノ赤子ヲ保シ皇祖皇宗ノ神靈ニ謝セムヤ是レ朕カ帝國政府ヲシテ共同宣言ニ應セシムルニ至レル所以ナリ

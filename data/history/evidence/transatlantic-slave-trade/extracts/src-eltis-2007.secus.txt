@@ -1,0 +1,7 @@
+source: src-eltis-2007
+locator: secus
+url: https://legacy.slavevoyages.org/blog/brief-overview-trans-atlantic-slave-trade
+read: 2026-10-09
+note: the same essay; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Indeed, overall the United States absorbed only 5 percent of the slaves arriving in the Americas.

@@ -1,0 +1,8 @@
+source: src-jdc-19470829
+locator: p503
+url: https://archive.org/download/select-documents-on-partition-of-punjab-1947/Select%20Documents%20on%20Partition%20of%20Punjab%20-%201947_djvu.txt
+read: 2026-09-25
+note: p is the page of Kirpal Singh (ed.), Select Documents on Partition of Punjab 1947 (2nd ed., 2005), read from the Internet Archive text layer; line breaks are joined and the layer's soft hyphens rejoined
+note: Document 161, the minutes' heading and the list of those present; 'Cheit' and 'Inida' are the layer's
+
+Minutes of the sixth meeting of the Joint Defence Council held at Government House, ‘Lahore, on 29th August, 1947.. Filed/268 Broadland Archives. . Secret PRESENT His Excellency the Governor General of India. His Excellency the Governor General of Pakistan. Prime Minister of India. Prime Minister and Defence Minister of Pakistan. Defence Minister of India. Communications Minister of Pakistan. His Excellency the Governor of East Punjab. His Excellency the Governor of West Punjab. His Excellency the Supreme Commander Commander-in-Cheit, Inida Army. Commander-in-Chief, Pakistan Army. Commander, Punjab Boundary Force.

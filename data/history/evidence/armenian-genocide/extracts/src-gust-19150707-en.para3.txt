@@ -1,0 +1,8 @@
+source: src-gust-19150707-en
+locator: para3
+url: http://www.armenocide.de/armenocide/armgende.nsf/$$AllDocs-en/1915-07-07-DE-001
+read: 2026-09-25
+note: paragraphs counted from the first line after the dateline of the document as the page prints it, enclosure headings included
+note: the translation is the online edition's own (sponsored by the Zoryan Institute), held here as the edition prints it, at most 150 words
+
+This situation and the way in which the relocation is being carried out shows that the government is indeed pursuing its purpose of eradicating the Armenian race from the Turkish Empire.

@@ -1,0 +1,7 @@
+source: src-radkey-1950
+locator: p18
+url: https://archive.org/download/dli.ernet.504284/504284-The%20Election%20To%20The%20Russian%20Constituent%20Assembly%20Of%201917_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (misreadings included); line breaks collapsed to spaces, nothing else changed
+
+however, would not raise the total conservative vote above 3,500,000 out of a grand total of nearly 42,000,000.

@@ -1,0 +1,8 @@
+source: src-hansard-19200708
+locator: secmonstrous
+url: https://api.parliament.uk/historic-hansard/commons/1920/jul/08/army-council-and-general-dyer
+read: 2026-10-09
+note: the text is the Hansard page's own text (UK Parliament, historic Hansard), whitespace collapsed
+note: Mr. Churchill, Secretary of State for War
+
+one tremendous fact stands out—I mean the slaughter of nearly 400 persons and the wounding of probably three or four times as many, at the Jallian Wallah Bagh on 13th April. That is an episode which appears to me to be without precedent or parallel in the modern history of the British Empire. It is an event of an entirely different order from any of those tragical occurrences which take place when troops are brought into collision with the civil population. It is an extraordinary event, a monstrous event, an event which stands in singular and sinister isolation.

@@ -1,0 +1,8 @@
+source: src-pp-part-ivb2
+locator: sechamlets
+url: https://nara-media-001.s3.amazonaws.com/arcmedia/research/pentagon-papers/Pentagon-Papers-Part-IV-B-2.pdf
+read: 2026-10-09
+note: NARA's 2011 scan of the Report of the Office of the Secretary of Defense Vietnam Task Force, its text layer (the scan's own OCR), line breaks folded to spaces; OCR misreadings ('l east', 'vrere'), line-end hyphens, the 'TOP SECRET - Sensitive' running heads and the 'Declassified per Executive Order 13526' stamp are kept where the text layer prints them
+note: Part IV.B.2, the Strategic Hamlet Program
+
+By the end of the summer of 1962 GVN claimed that 3,225 of the plarmed 11, 316 hamlets had already been completed and that over 33 percent of the nation 1s total population was already living in completed hamlets ( See Table 1) .

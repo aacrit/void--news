@@ -1,0 +1,7 @@
+source: src-frus11-d41
+locator: secactofwar
+url: https://history.state.gov/historicaldocuments/frus1961-63v11/d41
+read: 2026-10-04
+note: Document 41, Minutes of the 507th Meeting of the National Security Council, October 22, 1962, 3 p.m.: the Secretary of State on whether the blockade was an act of war
+
+Secretary Rusk said that if we were asked whether our blockade was an act of war, we should say that it was not. The President asked whether friendly ships would be halted and Admiral Anderson replied in the affirmative, saying that we would challenge all ships. The President agreed that we should stop all Soviet Bloc and non-Bloc ships when the order to institute the blockade was given.

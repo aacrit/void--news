@@ -1,0 +1,7 @@
+source: src-mandela-rivonia-1964
+locator: secpasslaws
+url: https://www.un.org/en/events/mandeladay/court_statement_1964.shtml
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+Pass laws, which to the Africans are among the most hated bits of legislation in South Africa, render any African liable to police surveillance at any time. I doubt whether there is a single African male in South Africa who has not at some stage had a brush with the police over his pass. Hundreds and thousands of Africans are thrown into jail each year under pass laws.

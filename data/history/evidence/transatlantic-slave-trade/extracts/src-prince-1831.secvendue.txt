@@ -1,0 +1,7 @@
+source: src-prince-1831
+locator: secvendue
+url: https://docsouth.unc.edu/neh/prince/prince.html
+read: 2026-10-09
+note: the sale in Bermuda; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+At length the vendue master, who was to offer us for sale like sheep or cattle, arrived, and asked my mother which was the eldest. She said nothing, but pointed to me. He took me by the hand, and led me out into the middle of the street, and, turning me slowly round, exposed me to the view of those who attended the vendue.

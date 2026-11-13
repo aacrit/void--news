@@ -1,0 +1,7 @@
+source: src-alperovitz-2015
+locator: para8
+url: https://www.thenation.com/article/world/us-hiroshima-nuclear-bomb-anniversary/
+read: 2026-10-07
+note: paragraph 8
+
+The record is quite clear: From the perspective of an overwhelming number of key contemporary leaders in the US military, the dropping of atomic bombs on Hiroshima and Nagasaki was not a matter of military necessity. American intelligence had broken the Japanese codes, knew the Japanese government was trying to negotiate surrender through Moscow, and had long advised that the expected early August Russian declaration of war, along with assurances that Japan’s emperor would be allowed to stay as a figurehead, would bring surrender long before the first step in a November US invasion could begin.

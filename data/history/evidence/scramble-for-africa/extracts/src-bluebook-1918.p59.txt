@@ -1,0 +1,40 @@
+source: src-bluebook-1918
+locator: p59
+url: https://archive.org/download/b32172266/b32172266_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+note: the report's own paragraph on von Trotha, and Gottlob Kamatoto's affidavit
+
+too lenient, was superseded by von Trotha. This new commander was noted in
+Berlin for his merciless severity in dealing with natives. In the Chinese Boxer
+rebellion he had e¢arried out his Imperial master’s instructions to the letter; and
+no more worthy son of Attila could have been selected for the work in hand. He
+had just suppressed the Arab rebellion in German Hast Africa by bathing that
+country in the blood of thousands and thousands of its inhabitants, men, women
+and children; and his butchery there ended, he was ordered by Wilhelm II. to
+proceed to German South-West Africa and deal with the rebel natives. Von Trotha
+was indifferent as to the means by which his objects should be attained... Treachery
+and breaches. of faith were to him admissible. No doubt the reason and excuse
+advanced was as usual the inferior kultur-position of the natives. Shortly after
+he took command the Hereros were given to understand that reasonable terms of
+peace might be granted if their leaders came in and treated.. The subtle German
+. felt that it would be easier to dispose of the masses, once their best leaders were
+gone. In the meantime von Trotha was drawing his cordon of troops into position
+and preparing for the final massacre. Let us read in the words of two Herero eyewitnesses the manner in which von Trotha initiated his campaign.
+
+Gottlob Kamatoto (who was a servant to one of the officers in the field) states
+on oath :—
+
+I accompanied the troops to Ombakaha above Gobabis and near Epikiro
+intheSandveld. Ata farm called Otjihaenena the Germans sent out messages
+to the Hereros that the war was now over and they were to come in and make
+peace. As a result of this message seven Herero leaders came into the German
+camp to discuss peace terms. As soon as they came in they were asked where
+Samuel Maherero the chief was. They said he had gone towards the desert
+on his way to British Bechuanaland. That evening at sunset,the seven
+peace envoys were caught and tied with ropes. They were led aside and
+shot. Before being shot they protested bitterly; but seeing that they were
+doomed they accepted their fate.
+
+Relating another instance, the well-known story of German treachery at
+Ombakaha, Gerard Kamaheke (at present Herero headman at Windhuk and a

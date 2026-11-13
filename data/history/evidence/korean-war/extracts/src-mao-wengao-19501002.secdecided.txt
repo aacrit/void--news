@@ -1,0 +1,8 @@
+source: src-mao-wengao-19501002
+locator: secdecided
+url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+read: 2026-10-09
+note: the Chinese-published text (Jianguo Yilai Mao Zedong Wengao, vol. 1, 1987) in the English translation of Goncharov, Lewis and Xue, reprinted in Mansourov's note 30, CWIHP Bulletin 6-7
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+1. We have decided to send some of our troops to Korea under the name of [Chinese People’s] Volunteers to fight the United States and its lackey Syngman Rhee and to aid our Korean Comrades. From the following considerations, we think it necessary to do so: the Korean revolutionary force will meet with a fundamental defeat, and the American aggressors will rampage unchecked once they occupy the whole of Korea. This will be unfavorable to the entire East.

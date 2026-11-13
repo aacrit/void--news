@@ -1,0 +1,8 @@
+source: src-cwmg-19-tilak-fund
+locator: secbirthright
+url: https://archive.org/download/HindSwaraj-CWMG-019/CWMG-v019-XIX-MC-BETA_djvu.txt
+read: 2026-10-09
+note: the text is the archive.org full-text (djvu.txt) layer of the electronic edition of the Collected Works (Publications Division), whitespace collapsed; line-end hyphens and glyph errors kept as the layer gives them
+note: the numerals 2 and 3 are note markers: 'Literally, a sacred formula'; 'Of Tilak, which was displayed prominently in the Congress pandal'
+
+But your mantra 2 was that you should get swaraj, and if you see the letters over the picture 3 , “Swaraj is my birthright”,

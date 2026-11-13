@@ -1,0 +1,8 @@
+source: src-cdm-pk-19891109
+locator: secantwort
+url: https://www.chronik-der-mauer.de/system/files/dokument_pdf/1989_11_09_CdM_Dok_Schabowski_PK_Transkription_NEU_0.pdf
+read: 2026-10-09
+note: page 2; the '1' after DAPA is the transcript's footnote mark (fn1)
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Ralph T. Niemeyer, Journalist, DAPA1: Wann tritt das in Kraft? Günter Schabowski: (blättert in seinen Papieren) Das tritt nach meiner Kenntnis ist das sofort, (leiser Zuruf: unverzüglich), unverzüglich (blättert weiter in seinen Unterlagen) ... Helga Labs: (leise) ... unverzüglich. Gerhard Beil: (leise) Das muss der Ministerrat beschließen.

@@ -1,0 +1,8 @@
+source: src-undp-lao-2009
+locator: secforeword
+url: https://files.acquia.undp.org/public/migration/la/UNDP_LA_Hazardous-Ground.pdf
+read: 2026-10-09
+note: the UNDP Lao PDR PDF, its text layer, line breaks folded to spaces; the report carries no printed date, and its own text dates the ratification of the Convention on Cluster Munitions to March 2009
+note: the foreword, which the report signs 'H.E. Mr. Duangchay Phichit Chairman of the NRA Deputy Prime Minister and Minister of Defence'; the sentence runs on past the cut
+
+Foreword More cluster munitions were used in the Lao PDR than in any other country in the world. Nearly a third of them failed to explode and are still on the ground across the country. These unexploded bombies, as they are called locally, constitute the majority of Unexploded Ordnance (UXO) threat in our country. We in the Lao PDR know all too well the individual, community and national impact of these deadly remnants of war which is why the Government of Lao PDR has participated with enthusiasm in the process to ban cluster munitions.

@@ -1,0 +1,7 @@
+source: src-ep-1987
+locator: p119
+url: https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:C:1987:190:FULL
+read: 2026-09-25
+note: OJ C 190 of 20 July 1987, p. 119, the preamble's recitals C to F
+
+NoC 190/119 Thursday, 18 June 1987 10. Armenian question - Doc. A2-33/87 RESOLUTION on a political solution to the Armenian question C. whereas the Armenian side regards these events as planned genocide within the meaning of the 1948 UN Charter, D. whereas the Turkish State rejects the charge of genocide as unfounded, E. whereas, to date, the Turkish Government, by refusing to recognize the genocide of 1915, continues to deprive the Armenian people of the right to their own history, F. whereas the historically proven Armenian genocide has so far neither been the object of political condemnation nor received due compensation,

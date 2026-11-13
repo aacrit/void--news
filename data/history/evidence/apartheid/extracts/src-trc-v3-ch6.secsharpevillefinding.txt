@@ -1,0 +1,8 @@
+source: src-trc-v3-ch6
+locator: secsharpevillefinding
+url: https://www.justice.gov.za/trc/report/finalreport/Volume%203.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation and glyph errors are kept as the layer prints them
+note: the Commission's finding on Sharpeville, printed in capitals
+
+THE COMMISSION FINDS THAT THE POLICE DELIBERATELY OPENED FIRE ON AN UNARMED CROWD THAT HAD GATHERED PEACEFULLY AT SHARPVILLE ON 21 MARCH 1960 TO PROTEST AGAINST THE PASS LAWS. THE COMMISSION FINDS FURTHER THAT THE SAP FAILED TO GIVE THE CROWD AN ORDER TO DISPERSE BEFORE THEY BEGAN FIRING AND THAT THEY CONTINUED TO FIRE UPON THE FLEEING CROWD, RESULTING IN HUNDREDS OF PEOPLE BEING SHOT IN THE BACK. AS A RESULT OF THE EXCESSIVE FORCE USED, SIXTY-NINE PEOPLE WERE KILLED AND MORE THAN 300 INJURED.

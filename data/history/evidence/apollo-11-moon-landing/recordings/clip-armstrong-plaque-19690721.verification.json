@@ -1,0 +1,56 @@
+{
+ "clip_id": "clip-armstrong-plaque-19690721",
+ "slug": "apollo-11-moon-landing",
+ "tool": "faster-whisper",
+ "tool_version": "1.2.1",
+ "model": "base.en",
+ "compute_type": "int8",
+ "beam_size": 5,
+ "source": {
+  "file": "https://archive.org/download/NasaAudioHighlightReels/Sound-Bite_Apollo-11_We-Came-in-peace-for-all-mankind_Quote.wav",
+  "md5": "d6f541d78c11875c759400b41818449a",
+  "md5_expected": "d6f541d78c11875c759400b41818449a",
+  "rate": 48000
+ },
+ "window": {
+  "in": 0.0,
+  "out": 12.719,
+  "seconds": 12.719
+ },
+ "excerpt_sha256": "97eb2ab04d5618dd775c0ea64ebafb6f2c4db0c69c766865ee7966eb47adda9e",
+ "excerpt_pcm": "s16le mono at the source rate, ffmpeg atrim, -bitexact",
+ "reference": "Here Men from the planet Earth first set foot upon the Moon, July 1969 A.D. We came in peace for all mankind.",
+ "hypothesis": "Dear men from the planet Earth, first set foot upon the moon, July 1969, 50, became in peace for all mankind.",
+ "wer": 0.2174,
+ "coverage": 0.7826,
+ "counts": {
+  "ref_words": 23,
+  "hyp_words": 21,
+  "substitutions": 3,
+  "deletions": 2,
+  "insertions": 0,
+  "first_matched_ref": 1,
+  "last_matched_ref": 22,
+  "lead_insertions": 0,
+  "trail_insertions": 0
+ },
+ "diff": [
+  "[here -> dear]",
+  "men from the planet earth first set foot upon the moon july 1969",
+  "[-a]",
+  "[-d]",
+  "[we -> 50]",
+  "[came -> became]",
+  "in peace for all mankind"
+ ],
+ "thresholds": {
+  "coverage_min": 0.7,
+  "edge_slack_words": 1,
+  "edge_insert_max": 2
+ },
+ "pass": true,
+ "why": [],
+ "verified_at": "2026-10-04T04:55:55Z",
+ "signed": false,
+ "note": "a pass verifies the words in this window against the stored transcript. It does not verify the occasion, the date or the rights, and it signs nothing."
+}

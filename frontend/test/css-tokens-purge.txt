@@ -1,0 +1,214 @@
+Dead global tokens, derived after Phase 2 steps 1 to 7
+=======================================================
+
+A global token is a custom property declared in app/styles/tokens.css. It is
+referenced when its exact name (followed by a non-name character) appears
+anywhere under frontend/ outside node_modules, .next, out and test/, or under
+brand/: every stylesheet (a token used only inside another token's value is
+live as long as that token is), every .ts/.tsx/.js/.mjs (inline styles,
+setProperty, getPropertyValue), and public/*.html. games.css and revolt.css
+count as referrers: the routes are hidden, not deleted. A token whose only
+referrer is deleted is re-checked until nothing changes.
+
+Declarations before: 459 (326 distinct names; a name declared in both
+the light and the dark block is two declarations).
+Declarations deleted: 192 (138 distinct names), in 2 round(s).
+Declarations after: 267 (188 distinct names).
+
+Kept although nothing references them yet (a branding pass consumes them):
+  --scrollbar-thumb-hover
+  --scrollbar-thumb-hover
+
+Deleted (name, value as declared, first 60 chars):
+  --spectrum-inset                     rgba(255, 255, 255, 0.15)
+  --spectrum-zone-border               rgba(255, 255, 255, 0.2)
+  --glass-inset                        rgba(255, 255, 255, 0.2)
+  --glass-inset-strong                 rgba(255, 255, 255, 0.25)
+  --shadow-e0                          none
+  --blur-e1                            8px
+  --blur-e2                            16px
+  --blur-e3                            24px
+  --accent-ember                       #BE4326
+  --accent-ember-hover                 #A5391F
+  --accent-ember-fg                    #FBF6EC
+  --cin-amber-bright                   #AD7E1E
+  --cin-amber-dim                      #775610
+  --cin-ash                            #6B7280
+  --cin-ash-warm                       #78716C
+  --cin-ash-cool                       #64748B
+  --cin-paper-highlight                #F5EFE0
+  --cin-paper-shadow                   #E4DDD0
+  --cin-slate                          #5C6B7A
+  --cin-slate-light                    #8A96A3
+  --cin-slate-ghost                    rgba(92, 107, 122, 0.08)
+  --cin-grain-frequency                0.55
+  --cin-grain-octaves                  4
+  --cin-grain-blend-light              overlay
+  --cin-grain-blend-dark               soft-light
+  --cin-tracking-meta                  0.10em
+  --cin-weight-pullquote               400
+  --cin-rack-dim-neighbor              0.75
+  --cin-rack-blur-neighbor             0.5px
+  --cin-rack-recede-neighbor           0.999
+  --cin-rack-blur-return-dur           150ms
+  --cin-rack-dim-return-dur            180ms
+  --cin-card-glow                      0 0 0 1px color-mix(in srgb, var(--cinematic-rim-light, rgba
+  --palette-onair-surface              #1A1816
+  --cinematic-accent                   var(--cin-amber)
+  --cinematic-rim-cool                 rgba(100, 116, 139, 0.10)
+  --ease-dramatic                      cubic-bezier(0.68, -0.6, 0.32, 1.6)
+  --ease-steadicam                     cubic-bezier(0.16, 1, 0.3, 1)
+  --focus-sharp                        blur(0)
+  --focus-soft                         blur(1.5px)
+  --focus-modal                        blur(6px)
+  --focus-bokeh                        blur(8px)
+  --focus-deep                         blur(12px)
+  --z-depth-bg                         var(--z-base)
+  --z-depth-content                    var(--z-card)
+  --z-depth-float                      var(--z-sticky)
+  --z-depth-modal                      var(--z-modal)
+  --z-depth-tooltip                    var(--z-popup)
+  --parallax-mid                       0.7
+  --parallax-fg                        1.0
+  --parallax-float                     1.08
+  --shadow-cinematic-lifted            -6px 12px 40px color-mix(in srgb, var(--cinematic-shadow-tin
+  --cold-open-skybox                   40ms
+  --cold-open-lead                     80ms
+  --cin-backdrop-ramp-dur              200ms
+  --cin-backdrop-rack-out-dur          120ms
+  --cin-backdrop-vignette              radial-gradient( ellipse 65% 60% at 50% 45%, transparent 30%
+  --cin-backdrop-grade                 saturate(0.55) brightness(0.68) sepia(0.06)
+  --cin-vignette-dd-open               1.4
+  --cin-light-adapt-dur                250ms
+  --whip-pan-dur                       180ms
+  --ease-whip-out                      cubic-bezier(0.55, 0, 1, 0.45)
+  --scene-cold-open                    180ms
+  --scene-rack-focus                   120ms
+  --scene-match-cut                    200ms
+  --scene-reverse-shot                 150ms
+  --scene-whip-pan                     180ms
+  --scene-dissolve                     300ms
+  --scene-l-cut-offset                 0.4
+  --dd-feed-scale                      0.997
+  --scroll-parallax-range              300vh
+  --scroll-vignette-range              200vh
+  --cin-practical-glow-far             color-mix(in srgb, var(--cin-amber) 2%, transparent)
+  --cinematic-rim-top                  rgba(148, 107, 21, 0.08)
+  --cinematic-accent-near-bias         rgba(148, 107, 21, 0.04)
+  --cinematic-accent-far-bias          rgba(148, 107, 21, 0.12)
+  --meth-bar-track                     var(--bg-secondary)
+  --meth-mark-opacity                  0.12
+  --meth-mark-focus-opacity            0.85
+  --cat-politics                       #6366F1
+  --cat-conflict                       #E53E3E
+  --cat-science                        #2980B9
+  --cat-health                         #27AE60
+  --cat-environment                    #16A085
+  --cat-culture                        #8E44AD
+  --cinematic-accent-warm-hover        #A8781C
+  --cinematic-accent-focus             rgba(148, 107, 21, 0.22)
+  --cinematic-accent-active            #775610
+  --cinematic-rim-edge                 rgba(148, 107, 21, 0.06)
+  --cin-grade-editorial                contrast(1.04) saturate(0.88) sepia(0.06)
+  --cin-grain-seed-editorial           13
+  --line-height-editorial              1.65
+  --laid-chain-opacity-light           0.035
+  --laid-line-color-light              rgba(28, 26, 23, 1)
+  --laid-chain-color-light             rgba(28, 26, 23, 1)
+  --rack-defocus-dur                   120ms
+  --rack-refocus-dur                   180ms
+  --morph-scale-min                    0.15
+  --morph-scale-max                    1.0
+  --vignette-scroll-min                0.5
+  --vignette-scroll-max                1.0
+  --dd-breathe-scale                   1.0005
+  --dd-breathe-dur                     6s
+  --img-grade-feed                     contrast(1.03) saturate(0.95) sepia(0.02)
+  --img-grade-deepdive                 contrast(1.02) saturate(0.88) sepia(0.01)
+  --img-grade-epaper                   contrast(1.15) saturate(0) brightness(1.02)
+  --img-grade-history-receded          contrast(1.08) saturate(0.70) sepia(0.18) brightness(0.82)
+  --img-grade-history-dossier          contrast(1.03) saturate(0.65) sepia(0.15)
+  --img-grade-history-threads          saturate(0.50) sepia(0.10)
+  --cin-snap                           #B8872A
+  --cin-snap-ring                      rgba(184, 135, 42, 0.28)
+  --cin-hover-surface                  rgba(148, 107, 21, 0.05)
+  --cin-active-surface                 rgba(148, 107, 21, 0.09)
+  --cin-tracking-hero                  -0.035em
+  --cin-tracking-xl                    -0.02em
+  --cin-lh-hero                        1.12
+  --cin-lh-xl                          1.18
+  --cin-lh-lg                          1.25
+  --cin-tracking-meta-tight            0.06em
+  --cin-weight-data-emphasis           500
+  --cin-logo-glow-light                none
+  --cin-logo-glow-dark                 0 0 4px var(--cin-amber-glow, rgba(212, 165, 116, 0.4))
+  --scroll-nav-compact-range           120px
+  --spectrum-inset                     rgba(255, 255, 255, 0.08)
+  --spectrum-zone-border               rgba(255, 255, 255, 0.12)
+  --glass-inset                        rgba(255, 255, 255, 0.08)
+  --glass-inset-strong                 rgba(255, 255, 255, 0.12)
+  --cat-politics                       #818CF8
+  --cat-conflict                       #D4645A
+  --cat-science                        #5A9FCC
+  --cat-health                         #4DC47A
+  --cat-environment                    #3DBFA8
+  --cat-culture                        #A86CC1
+  --shadow-e0                          none
+  --blur-e1                            8px
+  --blur-e2                            16px
+  --blur-e3                            24px
+  --accent-ember                       #B84325
+  --accent-ember-hover                 #A2381D
+  --accent-ember-fg                    #FBF6EC
+  --cin-amber-bright                   #E0B88A
+  --cin-amber-dim                      #B08A60
+  --cin-ash                            #9CA3AF
+  --cin-ash-warm                       #A8A29E
+  --cin-ash-cool                       #94A3B8
+  --palette-onair-surface              #1A1816
+  --cin-shadow-color                   rgba(20, 16, 10, 1)
+  --cinematic-rim-cool                 rgba(148, 163, 184, 0.08)
+  --cinematic-rim-top                  rgba(200, 149, 108, 0.06)
+  --cin-backdrop-vignette              radial-gradient( ellipse 65% 60% at 50% 45%, transparent 25%
+  --cin-backdrop-grade                 saturate(0.45) brightness(0.48) sepia(0.04)
+  --cin-vignette-dd-open               1.6
+  --cin-practical-glow-far             color-mix(in srgb, var(--cin-amber) 3%, transparent)
+  --shadow-cinematic-lifted            -8px 16px 50px color-mix(in srgb, var(--cinematic-shadow-tin
+  --cin-slate                          #8A96A3
+  --cin-slate-light                    #A8B4C0
+  --cin-slate-ghost                    rgba(138, 150, 163, 0.06)
+  --cinematic-rim-edge                 rgba(212, 165, 116, 0.05)
+  --cin-grade-editorial                contrast(1.06) saturate(0.83) brightness(0.95) sepia(0.03)
+  --img-grade-feed                     contrast(1.06) saturate(0.90) sepia(0.02) brightness(0.94)
+  --img-grade-deepdive                 contrast(1.04) saturate(0.84) sepia(0.01) brightness(0.92)
+  --img-grade-epaper                   contrast(1.20) saturate(0) brightness(0.95)
+  --img-grade-history-receded          contrast(1.10) saturate(0.65) sepia(0.14) brightness(0.75)
+  --img-grade-history-dossier          contrast(1.05) saturate(0.60) sepia(0.12) brightness(0.90)
+  --img-grade-history-threads          saturate(0.45) sepia(0.08) brightness(0.90)
+  --laid-chain-opacity-light           0.025
+  --laid-line-color-light              rgba(237, 232, 224, 1)
+  --laid-chain-color-light             rgba(237, 232, 224, 1)
+  --meth-bar-track                     var(--bg-secondary)
+  --meth-mark-opacity                  0.15
+  --meth-mark-focus-opacity            0.90
+  --cin-snap                           #E8C48A
+  --cin-snap-ring                      rgba(232, 196, 138, 0.22)
+  --cin-hover-surface                  rgba(212, 165, 116, 0.06)
+  --cin-active-surface                 rgba(212, 165, 116, 0.10)
+  --cin-logo-glow-dark                 0 0 4px var(--cin-amber-glow, rgba(212, 165, 116, 0.4))
+  --type-digest-headline               var(--type-card-headline)
+  --type-wire-headline                 var(--type-card-headline)
+  --type-digest-tracking               var(--type-card-tracking)
+  --space-mobile-hero-bottom           var(--space-5)
+  --dur-instant                        0ms
+  --dur-micro                          80ms
+  --ease-in                            cubic-bezier(0.4, 0, 1, 1)
+  --ease-in-out                        cubic-bezier(0.65, 0, 0.35, 1)
+  --lean-bar-height                    46px
+  --glass-shadow                       0 4px 24px rgba(28, 26, 23, 0.08), 0 1px 2px rgba(28, 26, 23
+  --shadow-card-lead-hover             0 2px 4px rgba(28, 26, 23, 0.10), 0 10px 32px rgba(28, 26, 2
+  --glass-shadow                       0 4px 24px rgba(0, 0, 0, 0.32), 0 1px 2px rgba(0, 0, 0, 0.16
+  --shadow-card-lead-hover             0 2px 4px rgba(0, 0, 0, 0.24), 0 10px 32px rgba(0, 0, 0, 0.3
+  --z-dropdown                         30
+  --z-base                             1   (round 2)
+  --z-card                             2   (round 2)

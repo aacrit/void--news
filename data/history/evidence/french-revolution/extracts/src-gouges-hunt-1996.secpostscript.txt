@@ -1,0 +1,7 @@
+source: src-gouges-hunt-1996
+locator: secpostscript
+url: https://revolution.chnm.org/d/293
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+Women, wake up; the tocsin of reason sounds throughout the universe; recognize your rights. The powerful empire of nature is no longer surrounded by prejudice, fanaticism, superstition, and lies. The torch of truth has dispersed all the clouds of folly and usurpation. Enslaved man has multiplied his force and needs yours to break his chains. Having become free, he has become unjust toward his companion. Oh women! Women, when will you cease to be blind? What advantages have you gathered in the Revolution? A scorn more marked, a disdain more conspicuous.

@@ -1,0 +1,8 @@
+source: src-gouges-1791
+locator: art10
+url: https://archive.org/download/lesdroitsdelafem00goug/lesdroitsdelafem00goug_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (long s read as f and other misreadings included); line breaks collapsed to spaces, nothing else changed
+note: 'eAe' is the layer's reading of 'elle'
+
+Nul ne doit être inquiété pour ses opinions mêmes fondamentales , la femme a le droit de monter sur l’échafaud ; eAe doit avoir également celui de monter à la Tribune ; pourvu que ses manifestations ne troublent pas l’ordre public établi par la Loi.

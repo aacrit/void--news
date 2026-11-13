@@ -1,0 +1,18 @@
+source: src-casement-1904
+locator: p21
+url: https://archive.org/download/CasementReport/CasementReportSmall_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+
+noticed many improvements, both in the permanent way and in the general management, since the date of my last visit to Stanley Pool in January 1901. The cataract
+region, through which the railway passes, is a generally unproductive and even sterile
+tract of some 220 miles in breadth. This region is, I believe, the home, or birthplace,
+of the sleeping sickness — a terrible disease, which is, all too rapidly, eating its way into
+the heart of Africa, and bas even traversed the entire continent to well-nigh the shores
+of the Indian Ocean. The population of the Lower Congo has been gradually reduced
+by the unchecked ravages of this, as yet, undiagnosed and incurable disease, and as
+one cause of the seemingly wholesale diminution of human life which I everywhere
+observed in the regions revisited, a prominent place must be assigned to this malady.
+The natives certainly attribute their alarming death-rate to this as one of the inducing
+causes, although they attribute, and I think principally, their rapid decrease in
+numbers to other causes as well. Perhaps the most striking change observed during

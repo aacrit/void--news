@@ -1,0 +1,8 @@
+source: src-armistice-19530727
+locator: pre1
+url: https://www.usfk.mil/portals/105/documents/sofa/g_armistice_agreement.pdf
+read: 2026-10-09
+note: the preamble, in the U.S. Forces Korea copy (its source line names the State Department's text)
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+The undersigned, the Commander-in-Chief, United Nations Command, on the one hand, and the Supreme Commander of the Korean People's Army and the Commander of the Chinese People's Volunteers, on the other hand, in the interest of stopping the Korean conflict, with its great toil of suffering and bloodshed on both sides, and with the objective of establishing an armistice which will insure a complete cessation of hostilities and of all acts of armed force in Korea until a final peaceful settlement is achieved, do individually, collectively, and mutually agree to accept and to be bound and governed by the conditions and terms of armistice set forth in the following articles and paragraphs, which said conditions and terms are intended to be purely military in character and to pertain solely to the belligerents in Korea:

@@ -1,0 +1,27 @@
+source: src-hasegawa-2007
+locator: p24
+url: https://www.cambridge.org/core/services/aop-cambridge-core/content/view/0E9580B3E03434472A15432EB6D8AE05/S1557466007021742a.pdf/the-atomic-bombs-and-the-soviet-invasion-what-drove-japans-decision-to-surrender.pdf
+read: 2026-10-07
+note: page 24, section 5 (Counterfactual Hypotheses); [93] and [94] are the article's note numbers
+
+Let us examine the first proposition. The
+Summary Report (Pacific War) of the United
+States Strategic Bombing Survey, published in
+1946 concluded that Japan would have
+surrendered before November 1 without the
+atomic bombs and without the Soviet entry into
+the war. This conclusion has become the
+foundation on which the revisionist historians
+constructed their argument that the atomic
+bombs were not necessary for Japan’s
+surrender.[93] Since Barton Bernstein has
+persuasively demonstrated in his devastating
+critique of the U.S. Strategic Bombing Survey
+that its conclusion is not supported by its own
+evidence, I need not dwell on this
+supposition.[94] It suffices to state that,
+contrary to its conclusion, the evidence the
+Strategic Bombing Survey relied on
+overwhelmingly demonstrates the decisive
+effect of the atomic bombs and Soviet entry on
+Japan’s decision.

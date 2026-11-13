@@ -1,0 +1,7 @@
+source: src-mandela-rivonia-1964
+locator: secsabotage
+url: https://www.un.org/en/events/mandeladay/court_statement_1964.shtml
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+I do not, however, deny that I planned sabotage. I did not plan it in a spirit of recklessness, nor because I have any love of violence. I planned it as a result of a calm and sober assessment of the political situation that had arisen after many years of tyranny, exploitation, and oppression of my people by the Whites.

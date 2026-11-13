@@ -1,0 +1,6 @@
+source: src-taubenberger-morens-2006
+locator: para5
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3291398/fullTextXML
+read: 2026-09-25
+
+Before and after 1918, most influenza pandemics developed in Asia and spread from there to the rest of the world. Confounding definite assignment of a geographic point of origin, the 1918 pandemic spread more or less simultaneously in 3 distinct waves during an ≈12-month period in 1918–1919, in Europe, Asia, and North America (the first wave was best described in the United States in March 1918). Historical and epidemiologic data are inadequate to identify the geographic origin of the virus (21), and recent phylogenetic analysis of the 1918 viral genome does not place the virus in any geographic context (19).

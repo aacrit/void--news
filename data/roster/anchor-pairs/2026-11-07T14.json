@@ -1,0 +1,56 @@
+[
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 21,
+  "a": {
+   "title": "How Berlin&apos;s Arab queers are building their community",
+   "summary": "As the co-founder of the ADIRA Drag Festival, Lebanese performance artist, drag performer, DJ and cultural organizer Hassandra has become an essential part of Berlin&apos;s queer artistic landscape.",
+   "link": "https://www.dw.com/en/how-berlin-s-arab-queers-are-building-their-community/a-79833143?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Wie Berlins arabische Queers ihre Community aufbauen",
+   "summary": "Hassandra gehört zu den bekanntesten Stimmen der queeren arabischen Kunstszene in Berlin. Mit dem 2023 gegründeten ADIRA Drag Festival schafft Hassandra gemeinsam mit anderen, Räume für Austausch und Gemeinschaft.",
+   "link": "https://www.dw.com/de/wie-berlins-arabische-queers-ihre-community-aufbauen/a-79863753?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "es",
+  "score": 24,
+  "a": {
+   "title": "Stephen Miller named White House Chief of Staff",
+   "summary": "Following historic Republican losses in the midterm elections, Donald Trump has replaced his chief of staff, Susie Wiles, with her deputy Stephen Miller, the architect of his administration’s immigration crackdown. Wiles had been seen by some as a stabilising force in the White House, but with Democrats now controlling both chambers of Congress, Trump is reportedly seeking a more aggressive approa",
+   "link": "https://www.france24.com/en/stephen-miller-named-white-house-chief-of-staff",
+   "published": "Sat, 07 Nov 2026 12:14:16 GMT"
+  },
+  "b": {
+   "title": "¿Quién es Stephen Miller? El hombre elegido por Trump para dirigir su gabinete",
+   "summary": "El presidente de Estados Unidos, Donald Trump, nombró a Stephen Miller como nuevo jefe de gabinete de la Casa Blanca en sustitución de Susie Wiles. Considerado uno de los asesores más cercanos al mandatario y uno de los principales arquitectos de su política migratoria de línea dura.",
+   "link": "https://www.france24.com/es/video/20261107-qui%C3%A9n-es-stephen-miller-el-hombre-elegido-por-trump-para-dirigir-su-gabinete",
+   "published": "Sat, 07 Nov 2026 01:19:23 GMT"
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 22,
+  "a": {
+   "title": "Nations League: Zinedine Zidane balances surprise and continuity in his second roster",
+   "summary": "Zinedine Zidane has unveiled his France squad for the upcoming Nations League clashes against Italy and Turkey. Pablo Pagis earns a surprise first call-up, while Kylian Mbappé and several other key players return from injury",
+   "link": "https://www.france24.com/en/nations-league-zinedine-zidane-balances-surprise-and-continuity-in-his-second-roster",
+   "published": "Sat, 07 Nov 2026 13:27:01 GMT"
+  },
+  "b": {
+   "title": "Ligue des nations : Zinédine Zidane entre surprise et continuité pour sa deuxième liste",
+   "summary": "Le sélectionneur des Bleus, Zinédine Zidane, a dévoilé sa liste pour les prochains matchs de l'équipe de France en Ligue des nations, face à l'Italie et à la Turquie. Pablo Pagis crée la surprise avec une première convocation tandis que Kylian Mbappé et plusieurs cadres font leur retour.",
+   "link": "https://www.france24.com/fr/%C3%A9missions/sports/20261107-ligue-des-nations-zin%C3%A9dine-zidane-entre-surprise-et-continuit%C3%A9-pour-sa-deuxi%C3%A8me-liste",
+   "published": "Sat, 07 Nov 2026 13:32:50 GMT"
+  }
+ }
+]

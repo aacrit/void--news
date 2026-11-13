@@ -1,0 +1,6 @@
+source: src-yv-faq
+locator: secnumber
+url: https://www.yadvashem.org/holocaust/faqs.html
+read: 2026-10-07
+
+There is no precise figure for the number of Jews killed in the Holocaust. The figure commonly used is the six million quoted by Adolf Eichmann, a senior SS official. All the serious research confirms that the number of victims was between five and six million. Early calculations range from 5.1 million (Professor Raul Hilberg) to 5.95 million (Jacob Leschinsky). More recent research, by Professor Yisrael Gutman and Dr. Robert Rozett in the Encyclopedia of the Holocaust, estimates the Jewish losses at 5.59–5.86 million, and a study headed by Dr. Wolfgang Benz presents a range from 5.29 million to six million.

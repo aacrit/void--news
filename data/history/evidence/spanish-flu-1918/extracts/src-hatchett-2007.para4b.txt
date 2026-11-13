@@ -1,0 +1,6 @@
+source: src-hatchett-2007
+locator: para4b
+url: https://pmc.ncbi.nlm.nih.gov/articles/PMC1849867/
+read: 2026-09-25
+
+Philadelphia ultimately experienced a peak weekly excess pneumonia and influenza (P&I) death rate of 257/100,000 and a cumulative excess P&I death rate (CEPID) during the period September 8–December 28, 1918 (the study period) of 719/100,000. St. Louis, on the other hand, experienced a peak P&I death rate, while NPIs were in place, of 31/100,000 and had a CEPID during the study period of 347/100,000.

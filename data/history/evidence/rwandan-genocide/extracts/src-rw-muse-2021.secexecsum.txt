@@ -1,0 +1,8 @@
+source: src-rw-muse-2021
+locator: secexecsum
+url: https://www.gov.rw/fileadmin/user_upload/gov_user_upload/2021.04.19_MUSE_REPORT.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+note: the opening of the Executive Summary
+
+The 1994 Genocide Against the Tutsi in Rwanda stands as one of the darkest and most horrific chapters of the 20th century. In the span of one hundred days, more than one million human beings were killed because of ethnic hatred. Still more suffered grievous injuries and losses, the pain of which lingers to this day.

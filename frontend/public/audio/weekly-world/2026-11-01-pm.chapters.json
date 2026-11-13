@@ -1,0 +1,64 @@
+{
+ "version": "1.2.0",
+ "title": "Borders Fail to Contain the Spread of Disease",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "The week",
+   "kind": "open",
+   "endTime": 79.52
+  },
+  {
+   "startTime": 79.52,
+   "title": "Inside this week",
+   "kind": "contents",
+   "endTime": 101.44
+  },
+  {
+   "startTime": 101.44,
+   "title": "Borders and the Outbreak",
+   "kind": "cover",
+   "endTime": 191.77
+  },
+  {
+   "startTime": 191.77,
+   "title": "The Argument",
+   "kind": "topic",
+   "endTime": 410.73
+  },
+  {
+   "startTime": 410.73,
+   "title": "Madrid to Seville",
+   "kind": "second",
+   "endTime": 508.76
+  },
+  {
+   "startTime": 508.76,
+   "title": "The week in brief",
+   "kind": "week",
+   "endTime": 683.61
+  },
+  {
+   "startTime": 683.61,
+   "title": "Void Opinion",
+   "kind": "editorial",
+   "subtitle": "Authority and the Wreckage",
+   "endTime": 864.758
+  },
+  {
+   "startTime": 864.758,
+   "title": "The open question",
+   "kind": "close",
+   "endTime": 896.937
+  },
+  {
+   "startTime": 896.937,
+   "endTime": 914.138,
+   "title": "Also from Void",
+   "kind": "promo",
+   "subtitle": "On Air",
+   "promo": "onair-02-firewall"
+  }
+ ]
+}

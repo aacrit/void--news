@@ -1,0 +1,9 @@
+source: src-madiou-1848-t3
+locator: p471
+url: https://archive.org/download/histoiredhaiti03madi/histoiredhaiti03madi_djvu.txt
+read: 2026-09-25
+note: tome III, page 471: the Constitution of 20 May 1805, preliminary declaration, articles 1 and 2, as Madiou prints it
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+DÉCLARATION PRÉLIMINAIRE. Art. 1% Le peuple habitant l'ile ci devant appelée St. Domingue, convient ici de se former en état libre, souverain et indépendant de loutes autres puissances de l'univers, sous le nom d'empire d'Haïti. 2. L'esclavage est à jamais aboli.

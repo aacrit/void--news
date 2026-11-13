@@ -1,0 +1,7 @@
+source: src-sv-estimates
+locator: secflag
+url: https://legacy.slavevoyages.org/assessment/estimates
+read: 2026-10-09
+note: the page's default table (rows: 25-year periods; columns: flag; cells: only embarked; 1501 to 1866), from the 1751-1775 row to the totals; the columns are Spain / Uruguay, Portugal / Brazil, Great Britain, Netherlands, U.S.A., France, Denmark / Baltic, Totals; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+1751-1775 4,239 528,693 832,047 132,330 84,580 325,918 17,508 1,925,315 1776-1800 6,415 673,167 748,612 40,773 67,443 433,061 39,199 2,008,670 1801-1825 168,087 1,160,601 283,959 2,669 109,545 135,815 16,316 1,876,992 1826-1850 400,728 1,299,969 0 357 1,850 68,074 0 1,770,978 1851-1875 215,824 9,309 0 0 476 0 0 225,609 Totals 1,061,524 5,848,266 3,259,441 554,336 305,326 1,381,404 111,040 12,521,337

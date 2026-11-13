@@ -1,0 +1,19 @@
+source: src-hasegawa-2007
+locator: p1
+url: https://www.cambridge.org/core/services/aop-cambridge-core/content/view/0E9580B3E03434472A15432EB6D8AE05/S1557466007021742a.pdf/the-atomic-bombs-and-the-soviet-invasion-what-drove-japans-decision-to-surrender.pdf
+read: 2026-10-07
+note: page 1 of the journal's PDF; the PDF text layer's line breaks are kept; [4] is the article's note number; the slice ends at the semicolon after the second of the article's five numbered claims
+
+Two historians, Asada Sadao and Richard
+Frank, have recently confronted this issue
+head-on, arguing that the atomic bombing of
+Hiroshima had a more decisive effect on
+Japan’s decision to surrender than did Soviet
+entry into the war.[4] This essay challenges
+that view. It argues that (1) the atomic
+bombing of Nagasaki did not have much effect
+on Japan’s decision; (2) of the two factors—the
+atomic bombing of Hiroshima and Soviet entry
+into the war—the Soviet invasion had a more
+important effect on Japan’s decision to
+surrender;

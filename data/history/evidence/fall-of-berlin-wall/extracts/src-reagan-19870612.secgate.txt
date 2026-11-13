@@ -1,0 +1,8 @@
+source: src-reagan-19870612
+locator: secgate
+url: https://www.reaganlibrary.gov/archives/speech/remarks-east-west-relations-brandenburg-gate-west-berlin
+read: 2026-10-09
+note: the Library's web text of the Public Papers; the page sets a space before a comma after 'Eastern Europe', which is kept
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+General Secretary Gorbachev, if you seek peace, if you seek prosperity for the Soviet Union and Eastern Europe , if you seek liberalization: Come here to this gate! Mr. Gorbachev, open this gate! Mr. Gorbachev, tear down this wall!

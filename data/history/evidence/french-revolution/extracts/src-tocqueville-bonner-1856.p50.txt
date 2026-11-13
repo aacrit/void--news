@@ -1,0 +1,8 @@
+source: src-tocqueville-bonner-1856
+locator: p50
+url: https://archive.org/download/oldregimerevolut00tocq/oldregimerevolut00tocq_djvu.txt
+read: 2026-10-09
+note: the free copy is the scan's OCR text layer, held as the layer prints it (long s read as f and other misreadings included); line breaks collapsed to spaces, nothing else changed
+note: the layer reads 'Revolution' as 'Eevolution' throughout this passage; the opening of Book II, chapter II
+
+I ONCE heard an orator, in the days when we had po- litical assemblies, call administrative centralization " that noble conquest of the Eevolution which Europe envies us." I am willing to admit that centralization was a noble conquest, and that Europe envies us its possession ; but I deny that it was a conquest of the Eevolution. It was, on the contrary, a feature of the old regime, and, I may add, the only one which out- lived the Eevolution, because it was the only one that was suited to the new condition of society created by the Eevolution.

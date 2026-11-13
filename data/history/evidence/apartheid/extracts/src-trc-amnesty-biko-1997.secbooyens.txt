@@ -1,0 +1,8 @@
+source: src-trc-amnesty-biko-1997
+locator: secbooyens
+url: https://www.justice.gov.za/trc/amntrans/pe/snyman.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+note: counsel for four applicants (Mr Booyens) summarising their version, 10 September 1997; the transcript prints the fragment 'In the process ... applicant I do not represent.' as one sentence
+
+In the process of the scuffle, Mr Biko lost his balance and the four people; that would now be Siebert, Niewoudt, the deceased, as well as the applicant I do not represent. Initially Mr Biko's head hit the wall and all four parties fell down.

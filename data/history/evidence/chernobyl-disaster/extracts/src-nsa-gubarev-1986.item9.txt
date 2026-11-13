@@ -1,0 +1,8 @@
+source: src-nsa-gubarev-1986
+locator: item9
+url: https://nsarchive.gwu.edu/sites/default/files/documents/6279556/National-Security-Archive-Doc-12-Letter-from.pdf
+read: 2026-10-07
+note: point 9, its first three sentences
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+9. Panicky moods emerged in Kiev for many reasons, but primarily because of the absence of information. [Information] not even about what happened but about the levels of radiation in the city. Foreign propaganda had a big influence, but not a single leader of the republic spoke on TV or radio, who could say very simple words to the effect that there were no grounds to worry and no danger to the health of children and residents.

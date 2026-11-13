@@ -1,0 +1,8 @@
+source: src-dod-nogunri-20010111
+locator: sec60hours
+url: https://usinfo.org/wf-archive/2001/010112/epf503.htm
+read: 2026-10-09
+note: the same briefing; a reporter's question, which reports the victims' testimony at second hand
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+But the victims testified that it happened for over 60 hours.

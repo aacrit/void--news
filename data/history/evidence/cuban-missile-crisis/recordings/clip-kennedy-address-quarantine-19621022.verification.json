@@ -1,0 +1,53 @@
+{
+ "clip_id": "clip-kennedy-address-quarantine-19621022",
+ "slug": "cuban-missile-crisis",
+ "tool": "faster-whisper",
+ "tool_version": "1.2.1",
+ "model": "base.en",
+ "compute_type": "int8",
+ "beam_size": 5,
+ "source": {
+  "file": "https://static.jfklibrary.org/e713e0r7h1435052m4p47115h1cl7hw5.mp3",
+  "md5": "4f8d46b8861bf9e06c9739f152eaf58d",
+  "md5_expected": "4f8d46b8861bf9e06c9739f152eaf58d",
+  "rate": 44100
+ },
+ "window": {
+  "in": 552.8,
+  "out": 563.2,
+  "seconds": 10.4
+ },
+ "excerpt_sha256": "f37ee2a2ffe7fd6baddaa0d3784a6312f70f23b2f789e65a73db69f29937a871",
+ "excerpt_pcm": "s16le mono at the source rate, ffmpeg atrim, -bitexact",
+ "reference": "First: To halt this offensive buildup, a strict quarantine on all offensive military equipment under shipment to Cuba is being initiated.",
+ "hypothesis": "First, to halt this offensive buildup, a strict quarantine on all offensive military equipment on the shipment to Cuba is being initiated.",
+ "wer": 0.0952,
+ "coverage": 0.9524,
+ "counts": {
+  "ref_words": 21,
+  "hyp_words": 22,
+  "substitutions": 1,
+  "deletions": 0,
+  "insertions": 1,
+  "first_matched_ref": 0,
+  "last_matched_ref": 20,
+  "lead_insertions": 0,
+  "trail_insertions": 0
+ },
+ "diff": [
+  "first to halt this offensive buildup a strict quarantine on all offensive military equipment",
+  "[+on]",
+  "[under -> the]",
+  "shipment to cuba is being initiated"
+ ],
+ "thresholds": {
+  "coverage_min": 0.7,
+  "edge_slack_words": 1,
+  "edge_insert_max": 2
+ },
+ "pass": true,
+ "why": [],
+ "verified_at": "2026-10-05T04:14:03Z",
+ "signed": false,
+ "note": "a pass verifies the words in this window against the stored transcript. It does not verify the occasion, the date or the rights, and it signs nothing."
+}

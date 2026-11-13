@@ -1,0 +1,7 @@
+source: src-alsj-a11-landing
+locator: sec1024540
+url: https://www.apollojournals.org/alsj/a11/a11.landing.html
+read: 2026-10-03
+note: the transmission at 102:45:40 ground elapsed time and the editor's bracketed note after it; the page's HTML read as text, whitespace collapsed
+
+102:45:40 Aldrin: Contact Light. [At least one of the probes hanging from three of the footpads has touched the surface. Each of them is 67 inches (1.73 meters) long. The ladder strut doesn't have a probe. Buzz made the call at 20:17:40 GMT/UTC on 20 July 1969.]

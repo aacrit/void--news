@@ -1,0 +1,7 @@
+source: src-greer-1935
+locator: p37
+url: https://babel.hathitrust.org/cgi/pt?id=mdp.39015002601550
+read: 2026-10-09
+note: read page at a time in HathiTrust's text-only view (seq 59); the OCR of this page loses the left margin of its first five lines, which the extract does not include; line breaks collapsed to spaces, printed line-break hyphens kept
+
+One can only guess at a total of at least ten or twelve thousand persons executed without trial during the Terror. Enough has been said to reveal the impossibility of 1 determining with any degree of exactitude the total death roll of the Terror. However, if the figures we have cited may be taken as a rough index, it is probable that between thirty-five and forty thousand persons, including those who succumbed in the prisons and those killed without any form of trial, lost their lives as a consequence of terrorism. Those condemned by the courts - less than seventeen thousand consti- tute the minority.

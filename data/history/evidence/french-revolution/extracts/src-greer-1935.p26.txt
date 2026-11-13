@@ -1,0 +1,7 @@
+source: src-greer-1935
+locator: p26
+url: https://babel.hathitrust.org/cgi/pt?id=mdp.39015002601550
+read: 2026-10-09
+note: read page at a time in HathiTrust's text-only view (seq 48 of mdp.39015002601550) in a browser; the view's OCR held as it prints it; line breaks collapsed to spaces, printed line-break hyphens kept
+
+Taken together they make possible the obituary census of the Terror, which we have been able to fix at 16,594 victims, exclusive of persons condemned in absentia (contumace) and a few who were reprieved or who escaped after sentence had been passed (Tables I and III). Further research in local archives might add two or three hundred names; but if every death sentence of the period were known it is extremely doubtful that the total would reach 17,000.

@@ -1,0 +1,974 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>void --news / launch tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-primary:    #F0EBDD;
+    --bg-card:       #F5F0E4;
+    --bg-secondary:  #E8E2D4;
+    --fg-primary:    #1A1A1A;
+    --fg-secondary:  #4A4540;
+    --fg-tertiary:   #686260;
+    --fg-accent:     #946B15;
+    --ember:         #C8472D;
+    --teal:          #2F7A6F;
+    --border-subtle: #D4CCC2;
+    --border-strong: #B8B0A5;
+    --burnt-umber:   #6B4423;
+    --font-editorial: "Playfair Display", Georgia, serif;
+    --font-structural: "Inter", "Helvetica Neue", sans-serif;
+    --font-meta: "Barlow Condensed", "Franklin Gothic", sans-serif;
+    --font-data: "IBM Plex Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg-primary);
+    color: var(--fg-primary);
+    font-family: var(--font-structural);
+    line-height: 1.55;
+    padding-bottom: 96px;
+  }
+
+  /* ─── Header ──────────────────────────────────────────────────────────── */
+  header.hdr {
+    background: #0E0B08;
+    color: #F4EDE0;
+    padding: 48px 32px 28px;
+    position: relative;
+  }
+  header.hdr::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: 0.5;
+  }
+  header.hdr > * { position: relative; z-index: 2; }
+  .eyebrow {
+    font-family: var(--font-data);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    color: rgba(244, 237, 224, 0.65);
+    margin: 0 0 12px;
+  }
+  .title {
+    font-family: var(--font-editorial);
+    font-size: 44px;
+    line-height: 1.05;
+    font-weight: 700;
+    margin: 0;
+    max-width: 22ch;
+  }
+  .subtitle {
+    font-family: var(--font-editorial);
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.4;
+    color: rgba(244, 237, 224, 0.7);
+    max-width: 64ch;
+    margin: 16px 0 0;
+  }
+
+  /* ─── Progress + stat strip ───────────────────────────────────────────── */
+  .progress-shell { background: #0E0B08; padding: 0 32px 28px; }
+  .progress-bar {
+    position: relative;
+    height: 26px;
+    background: rgba(244, 237, 224, 0.06);
+    border: 1px solid rgba(244, 237, 224, 0.15);
+    overflow: hidden;
+  }
+  .progress-fill {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background: linear-gradient(90deg, var(--fg-accent) 0%, var(--ember) 100%);
+    transition: width 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .progress-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    font-family: var(--font-data);
+    font-size: 13px;
+    color: rgba(244, 237, 224, 0.95);
+    letter-spacing: 0.04em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    z-index: 2;
+  }
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    margin-top: 18px;
+    background: rgba(244, 237, 224, 0.14);
+    border: 1px solid rgba(244, 237, 224, 0.14);
+  }
+  .stat {
+    background: #0E0B08;
+    padding: 14px 16px;
+  }
+  .stat__num {
+    font-family: var(--font-editorial);
+    font-size: 26px;
+    font-weight: 700;
+    color: #F4EDE0;
+    line-height: 1;
+  }
+  .stat__num.warn { color: var(--ember); }
+  .stat__label {
+    font-family: var(--font-data);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: rgba(244, 237, 224, 0.55);
+    margin-top: 7px;
+  }
+
+  main { max-width: 900px; margin: 0 auto; padding: 40px 32px 0; }
+
+  /* ─── Legend / how-to note ────────────────────────────────────────────── */
+  .auto-note {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--fg-accent);
+    padding: 18px 22px;
+    margin-bottom: 28px;
+  }
+  .auto-note h2 {
+    font-family: var(--font-meta);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--fg-accent);
+    margin: 0 0 10px;
+  }
+  .auto-note p {
+    font-family: var(--font-structural);
+    font-size: 14px;
+    color: var(--fg-secondary);
+    margin: 0 0 8px;
+  }
+  .auto-note p:last-child { margin-bottom: 0; }
+  .auto-note code {
+    font-family: var(--font-data);
+    font-size: 12.5px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 1px 5px;
+  }
+
+  /* ─── Kind pills ──────────────────────────────────────────────────────── */
+  .pill {
+    display: inline-block;
+    font-family: var(--font-data);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border: 1px solid currentColor;
+    vertical-align: middle;
+  }
+  .pill--auto   { color: var(--teal); }
+  .pill--manual { color: var(--ember); }
+
+  /* ─── Toolbar ─────────────────────────────────────────────────────────── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .toolbar .spacer { flex: 1; }
+  .toolbar button {
+    font-family: var(--font-data);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    color: var(--fg-secondary);
+    cursor: pointer;
+  }
+  .toolbar button:hover { background: var(--bg-card); color: var(--fg-primary); }
+  .toolbar button.active { background: var(--fg-primary); color: var(--bg-primary); border-color: var(--fg-primary); }
+  .toolbar button.danger:hover { background: rgba(200,71,45,0.08); border-color: var(--ember); color: var(--ember); }
+
+  /* ─── Group ───────────────────────────────────────────────────────────── */
+  .group { margin-bottom: 40px; }
+  .group__head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding-bottom: 12px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border-strong);
+  }
+  .group__num {
+    font-family: var(--font-data);
+    font-size: 13px;
+    color: var(--fg-accent);
+    letter-spacing: 0.12em;
+  }
+  .group__title {
+    font-family: var(--font-editorial);
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    flex: 1;
+  }
+  .group__tag {
+    font-family: var(--font-data);
+    font-size: 11px;
+    color: var(--fg-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .group__intro {
+    font-family: var(--font-structural);
+    font-size: 14px;
+    font-style: italic;
+    color: var(--fg-tertiary);
+    margin: 12px 0 4px;
+  }
+
+  /* ─── Step ────────────────────────────────────────────────────────────── */
+  .step {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 14px;
+    padding: 16px 0;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .step:first-of-type { border-top: none; }
+  .step[data-done="true"] .step__title { color: var(--fg-tertiary); text-decoration: line-through; }
+  .step[data-done="true"] .step__body { opacity: 0.5; }
+  body[data-filter="manual"] .step[data-kind="auto"] { display: none; }
+  body[data-filter="open"] .step[data-done="true"] { display: none; }
+
+  .step input[type="checkbox"] {
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border-strong);
+    background: var(--bg-primary);
+    cursor: pointer;
+    margin-top: 1px;
+    position: relative;
+  }
+  .step input[type="checkbox"]:hover { border-color: var(--fg-accent); }
+  .step input[type="checkbox"]:checked { background: var(--fg-primary); border-color: var(--fg-primary); }
+  .step input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 5px; top: 1px;
+    width: 6px; height: 12px;
+    border: solid var(--bg-primary);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .step__title {
+    font-family: var(--font-structural);
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--fg-primary);
+    cursor: pointer;
+    display: inline;
+  }
+  .step__titlerow { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+  .step__body {
+    font-family: var(--font-structural);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--fg-secondary);
+    margin: 7px 0 0;
+  }
+  .step__body p { margin: 0 0 7px; }
+  .step__body p:last-child { margin-bottom: 0; }
+  .step__body code {
+    font-family: var(--font-data);
+    font-size: 12.5px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 1px 5px;
+    color: var(--fg-primary);
+  }
+  .step__body pre {
+    font-family: var(--font-data);
+    font-size: 12.5px;
+    display: block;
+    padding: 11px 14px;
+    margin: 7px 0;
+    background: #0E0B08;
+    color: #F4EDE0;
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+  .step__body a {
+    color: var(--fg-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .step__done {
+    margin-top: 9px;
+    padding: 7px 11px;
+    background: rgba(107, 68, 35, 0.06);
+    border-left: 2px solid var(--burnt-umber);
+    font-size: 13px;
+    color: var(--fg-secondary);
+  }
+  .step__done::before {
+    content: "done when · ";
+    font-family: var(--font-data);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--burnt-umber);
+  }
+
+  .done-banner {
+    display: none;
+    margin-bottom: 32px;
+    padding: 22px;
+    background: linear-gradient(135deg, var(--fg-accent) 0%, var(--ember) 100%);
+    color: #F4EDE0;
+    font-family: var(--font-editorial);
+    font-size: 22px;
+    line-height: 1.3;
+  }
+  body[data-all-done="true"] .done-banner { display: block; }
+
+  footer {
+    max-width: 900px;
+    margin: 56px auto 0;
+    padding: 28px 32px 40px;
+    border-top: 1px solid var(--border-subtle);
+    text-align: center;
+    color: var(--fg-tertiary);
+    font-family: var(--font-data);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  footer a { color: var(--fg-accent); }
+
+  @media (max-width: 640px) {
+    header.hdr { padding: 32px 20px 18px; }
+    .progress-shell { padding: 0 20px 18px; }
+    .title { font-size: 32px; }
+    .stat__num { font-size: 22px; }
+    main { padding: 28px 20px 0; }
+    .step { grid-template-columns: 24px 1fr; gap: 12px; }
+  }
+  @media print {
+    header.hdr, .progress-shell, .stat { background: white; color: black; }
+    header.hdr::after, .toolbar { display: none; }
+    .step__body pre { background: #F0EBDD; color: black; }
+  }
+</style>
+</head>
+<body data-filter="all">
+
+<header class="hdr">
+  <p class="eyebrow">void --news · go-live</p>
+  <h1 class="title">The launch tracker.</h1>
+  <p class="subtitle">One place to take void --news from a single live URL to an experimental product real people use. Green pills are automated — Claude does them on the CLI and checks them off here. Red pills are yours: buy an account, sign an app, flip a setting, share a link. Progress saves in your browser.</p>
+</header>
+
+<div class="progress-shell">
+  <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-fill" id="pbar"></div>
+    <div class="progress-label"><span id="pct">0%</span><span id="ratio">0 / 0</span></div>
+  </div>
+  <div class="stat-strip">
+    <div class="stat">
+      <div class="stat__num" id="stat-phase">Phase 0</div>
+      <div class="stat__label">private hardening</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num warn" id="stat-manual">0</div>
+      <div class="stat__label">your manual steps left</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num" id="stat-auto">0</div>
+      <div class="stat__label">automated steps left</div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="done-banner">void --news is live. Experimental, and in the open. Same stories, same order, for everyone.</div>
+
+  <div class="auto-note">
+    <h2>How to read this</h2>
+    <p><span class="pill pill--auto">auto</span> Claude builds it on the CLI and ticks the box here after it lands. You don't touch these; they're shown so you can see the whole picture.</p>
+    <p><span class="pill pill--manual">manual</span> Only you can do it: purchases, account creation, signing keys, store submissions, dashboard settings, and the actual act of sharing. Each has a short "how".</p>
+    <p>The <strong>manual steps left</strong> counter is your real to-do list. Filter to just those with the button below.</p>
+  </div>
+
+  <div class="toolbar">
+    <span class="spacer"></span>
+    <button type="button" data-filter="all" class="active">all steps</button>
+    <button type="button" data-filter="manual">my steps only</button>
+    <button type="button" data-filter="open">hide done</button>
+    <button type="button" id="reset" class="danger">reset</button>
+  </div>
+
+  <!-- ═══ 01 · A · PRODUCT CONSOLIDATION ════════════════════════════════ -->
+  <section class="group">
+    <div class="group__head">
+      <span class="group__num">01</span>
+      <h2 class="group__title">A · Product consolidation</h2>
+      <span class="group__tag">code</span>
+    </div>
+    <p class="group__intro">Shape the product for a first audience: one archive, a real feedback path, and an honest "experimental" posture everywhere it shows.</p>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="a1" checked />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="a1" class="step__title">Merge History + Revolt into a tabbed <code>/archive</code></label></div>
+        <div class="step__body">
+          <p>New <code>/archive</code> route with a History | Revolt tab switcher that mounts the existing landings — no rewrite of their data layers. Deep routes (<code>/history/[slug]</code>, <code>/revolt/active</code>, etc.) keep resolving.</p>
+        </div>
+        <div class="step__done"><code>/archive</code> shows both tabs and the build is clean.</div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="a2" checked />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="a2" class="step__title">Redirect old entry points</label></div>
+        <div class="step__body">
+          <p><code>/history → /archive</code> and <code>/revolt → /archive?tab=revolt</code> (301) so shared links and nav still land right.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="a3" checked />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="a3" class="step__title">Collapse nav to a single "Archive" link</label></div>
+        <div class="step__body">
+          <p>Replace the two links across <code>NavBar</code>, <code>Footer</code>, <code>MobileSidePanel</code>, <code>MobileTabBar</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="a4" checked />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="a4" class="step__title">Turn void --ship into a simple feedback page</label></div>
+        <div class="step__body">
+          <p>Swap the build-tracking board for a minimal feedback form (title + message + category), reusing the existing submit + rate-limit plumbing. No build states, no voting, no ship clock. You read submissions in Supabase.</p>
+        </div>
+        <div class="step__done"><code>/feedback</code> writes a row you can see in Supabase.</div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="a5" checked />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="a5" class="step__title">Add the "experimental" badge to the masthead</label></div>
+        <div class="step__body">
+          <p>Small brass pill beside the wordmark, desktop + mobile. Uses existing tokens; reads as intentional, not broken.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="a6" checked />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="a6" class="step__title">First-visit experimental banner (dismissible)</label></div>
+        <div class="step__body">
+          <p>One line: "void --news is experimental. Things will change. Tell us what breaks →" linking to Feedback. Dismissal persists.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="a7" checked />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="a7" class="step__title">Experimental wording in shared metadata</label></div>
+        <div class="step__body">
+          <p>OG/description in <code>layout.tsx</code> and <code>manifest.json</code> so a shared link and the installed app both read "experimental".</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="a8" checked />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="a8" class="step__title">Confirm parked products stay hidden</label></div>
+        <div class="step__body">
+          <p><code>/paper</code>, <code>/games</code> hidden from nav (still resolve); <code>/onair</code> audio stays gated by its flag. Verify nothing half-built is exposed.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="a9" checked />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="a9" class="step__title">Merge + verify the deploy</label></div>
+        <div class="step__body">
+          <p>Push the branch, let the gates + auto-merge run, confirm the CF Pages deploy is live with the above changes.</p>
+        </div>
+        <div class="step__done">The live site shows the archive, feedback page, and experimental tag.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 02 · B · DEV/PROD & SAFETY ════════════════════════════════════ -->
+  <section class="group">
+    <div class="group__head">
+      <span class="group__num">02</span>
+      <h2 class="group__title">B · Dev/prod &amp; safety net</h2>
+      <span class="group__tag">infra</span>
+    </div>
+    <p class="group__intro">Your daily pipeline writes the same database the public reads. Before strangers arrive: a staging surface, a backup, and a lock on main.</p>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="b1" checked />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="b1" class="step__title">Create a long-lived <code>staging</code> branch</label></div>
+        <div class="step__body">
+          <p>Cloudflare auto-builds non-production branches to a stable preview URL. This becomes your "see it before it's public" surface.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="b2" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="b2" class="step__title">Set the Cloudflare Pages "Preview" env vars</label></div>
+        <div class="step__body">
+          <p>CF dashboard → Pages → void-news → Settings → Environment variables → <strong>Preview</strong>. Add <code>NEXT_PUBLIC_SUPABASE_URL</code>, <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>, <code>NEXT_PUBLIC_BASE_PATH</code> = "" (empty), <code>NEXT_PUBLIC_DISABLE_AUDIO</code>. Preview shares one env scope across all non-prod branches — that's expected.</p>
+        </div>
+        <div class="step__done">The staging preview URL loads live data.</div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="b3" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="b3" class="step__title">Turn on branch protection for <code>main</code></label></div>
+        <div class="step__body">
+          <p>Right now a direct push to <code>main</code> deploys instantly with no gate. <a href="https://github.com/aacrit/void--news/settings/branches" target="_blank" rel="noopener">Repo → Settings → Branches</a> → add a rule for <code>main</code> → require status checks: <code>build-check</code>, <code>validate-bias</code>, <code>validate-clustering</code>. Keep auto-merge working by allowing the checks it already runs.</p>
+        </div>
+        <div class="step__done">A push that fails a check can no longer reach the live site.</div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="b4" checked />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="b4" class="step__title">Add a nightly database backup workflow</label></div>
+        <div class="step__body">
+          <p>A scheduled GitHub Action that dumps the Supabase DB and stores the artifact, so a bad migration or pipeline run during the experiment is recoverable.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="b5" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="b5" class="step__title">Run the backup once + do a test restore</label></div>
+        <div class="step__body">
+          <p>The backup client was fixed to <code>postgresql-client-17</code> (the server is Postgres 17.6; every earlier run failed on a version mismatch). Run it and prove recovery: <a href="https://github.com/aacrit/void--news/actions/workflows/backup-db.yml" target="_blank" rel="noopener">Actions → Nightly DB Backup → Run workflow</a>, download the <code>db-backup</code> artifact, then restore it into a throwaway Postgres to confirm it is real: <code>gunzip -c backup-*.sql.gz | psql &lt;scratch-db-url&gt;</code>. (Claude can dispatch the run; the restore is yours to do once.)</p>
+          <p><strong>DB size is fine</strong> now: ~272 MB, ~54% of the 0.5 GB cap and shrinking (retention works). The old "near the cap" warning is stale. <strong>Egress note:</strong> a full dump is ~272 MB read from Supabase; the free tier allows ~5 GB egress/month, so a <em>nightly</em> full backup (~8 GB/mo) would exceed it. Consider running the backup weekly (plus the automatic pre-migration dumps) to stay in budget.</p>
+        </div>
+        <div class="step__done">A downloaded dump restores cleanly into a scratch DB.</div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="b6" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="b6" class="step__title">Connect a Discord (or Slack) webhook for failure alerts</label></div>
+        <div class="step__body">
+          <p>The pipeline, deploy, and backup now alert on failure, and a daily check flags a stale feed, but only once a webhook is wired. Without this you are flying blind.</p>
+          <p><strong>Discord:</strong> a server → Server Settings → Integrations → Webhooks → New Webhook → pick a channel → Copy Webhook URL, then <strong>append <code>/slack</code></strong> to the end of that URL (Discord accepts Slack-format payloads at that suffix). <strong>Slack:</strong> create an Incoming Webhook and copy its URL as-is.</p>
+          <p>Add it as a repo secret named <code>ALERT_WEBHOOK_URL</code>: <a href="https://github.com/aacrit/void--news/settings/secrets/actions/new" target="_blank" rel="noopener">Repo → Settings → Secrets → Actions → New secret</a>. Until it is set, the alert steps no-op safely.</p>
+        </div>
+        <div class="step__done">A deliberately-failed run posts a message to your channel.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 03 · E · LAUNCH READINESS ═════════════════════════════════════ -->
+  <section class="group">
+    <div class="group__head">
+      <span class="group__num">03</span>
+      <h2 class="group__title">E · Launch readiness</h2>
+      <span class="group__tag">gate before sharing</span>
+    </div>
+    <p class="group__intro">The quality bar that must clear before the URL goes to anyone. Nothing in Phase 1 starts until this section is green.</p>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="e1" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="e1" class="step__title">Lighthouse 90+ on the live site</label></div>
+        <div class="step__body">
+          <p>Audit prod, fix regressions (perf-optimizer). Performance, accessibility, best-practices, SEO.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="e2" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="e2" class="step__title">WCAG 2.1 AA pass</label></div>
+        <div class="step__body">
+          <p>Focused audit (uat-tester) + fixes: contrast, focus order, tap targets, labels.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="e3" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="e3" class="step__title">Real-device smoke test (iPhone Safari first)</label></div>
+        <div class="step__body">
+          <p>Open the site on your own phone: feed, archive, bias Deep Dive, feedback form, install-to-home-screen. Safari/iOS is where the PWA + future app both live, so it matters most.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="e4" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="e4" class="step__title">Final security pass</label></div>
+        <div class="step__body">
+          <p>void-ciso: feedback form can't be spammed (honeypot + rate limit), anon key is anon-only, service-role key never ships to the client, CSP intact. RLS was already hardened.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="e5" checked />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="e5" class="step__title">Refresh the stale docs</label></div>
+        <div class="step__body">
+          <p><code>DEPLOYMENT.md</code> still claims GitHub Pages is live — rewrite for the Cloudflare-only reality; update the charter checklist.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="e6" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="e6" class="step__title">Your go / no-go on the public site</label></div>
+        <div class="step__body">
+          <p>Walk the live site once as a first-time visitor would. If it embarrasses you, it's not ready. When it doesn't, flip to Phase 1.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 04 · C · SOCIAL LAUNCH ════════════════════════════════════════ -->
+  <section class="group">
+    <div class="group__head">
+      <span class="group__num">04</span>
+      <h2 class="group__title">C · Social launch</h2>
+      <span class="group__tag">3-month arc</span>
+    </div>
+    <p class="group__intro">Friends first, then your network, then the indie boards — the same order Ground News used. Stay "experimental" the whole way; it lowers the bar and invites feedback.</p>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="c1" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="c1" class="step__title">Prep the share kit</label></div>
+        <div class="step__body">
+          <p>One-line pitch, 3-4 screenshots or a short GIF (lead with the bias sigil + Deep Dive — that's the hook), and a two-sentence "why I built this". Lean on the brand voice: "See through the void."</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="c2" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="c2" class="step__title">Phase 1 (Wk 1-2): share with friends &amp; family</label></div>
+        <div class="step__body">
+          <p>DM / text / email the URL to a small warm list. Say plainly it's experimental and you want to know what breaks. Point them at Feedback. Watch which feature makes someone say "oh, that's useful."</p>
+        </div>
+        <div class="step__done">The counter here flips your phase indicator to Phase 1.</div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="c3" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="c3" class="step__title">Read &amp; triage the first feedback</label></div>
+        <div class="step__body">
+          <p>Go through the Feedback submissions in Supabase. Fold the sharp ones back into this tracker as new work.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="c4" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="c4" class="step__title">Phase 2 (Wk 3-6): warm-network broadcast</label></div>
+        <div class="step__body">
+          <p>Post from your own IG / X / LinkedIn, and switch on the @void.news automated account. The Instagram setup is its own checklist — see <a href="IG-LAUNCH-CHECKLIST.html">IG-LAUNCH-CHECKLIST.html</a>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="c5" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="c5" class="step__title">Phase 3 (Wk 7-12): indie boards, then HN / Product Hunt</label></div>
+        <div class="step__body">
+          <p>BetaList, Uneed, Fazier, SaaSHub first; Show HN and Product Hunt <em>last</em>, once the product has survived real users and you have a testimonial or two. The PH spike fades by the next morning — don't spend it early.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 05 · D · APP STORES ═══════════════════════════════════════════ -->
+  <section class="group">
+    <div class="group__head">
+      <span class="group__num">05</span>
+      <h2 class="group__title">D · App stores (iOS + Android)</h2>
+      <span class="group__tag">longest lead time</span>
+    </div>
+    <p class="group__intro">The shells are already built (Capacitor, appId void.news). Android builds on your Windows machine; iOS needs a Mac, so it routes through a cloud build. Start the accounts early — they gate everything else.</p>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="d1" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="d1" class="step__title">Buy the Apple Developer Program ($99/yr)</label></div>
+        <div class="step__body">
+          <p><a href="https://developer.apple.com/programs/enroll/" target="_blank" rel="noopener">developer.apple.com/programs/enroll</a>. Enrollment/identity check can take 24-48h — do it first.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="d2" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="d2" class="step__title">Buy the Google Play Developer account ($25 one-time)</label></div>
+        <div class="step__body">
+          <p><a href="https://play.google.com/console/signup" target="_blank" rel="noopener">play.google.com/console/signup</a>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="d3" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="d3" class="step__title">Pick the iOS build host (you're on Windows)</label></div>
+        <div class="step__body">
+          <p>iOS builds need macOS + Xcode, which you don't have. Recommended: <a href="https://codemagic.io" target="_blank" rel="noopener">Codemagic</a> — cloud Mac, native Capacitor support, auto-signs with an App Store Connect API key and publishes to TestFlight. Alternatives: a GitHub Actions macOS runner, or a rented/borrowed Mac. Connect the repo once decided.</p>
+        </div>
+        <div class="step__done">A cloud macOS build of the iOS shell succeeds once.</div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="d4" checked />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="d4" class="step__title">Prep the Android project</label></div>
+        <div class="step__body">
+          <p><code>npx cap sync android</code>, set <code>versionCode</code>/<code>versionName</code>, wire the signing config to read from the keystore + secrets.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="d5" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="d5" class="step__title">Generate + back up the Android keystore</label></div>
+        <div class="step__body">
+          <p><code>keytool -genkey -v -keystore void-release.jks -keyalg RSA -keysize 2048 -validity 10000 -alias void</code>. <strong>Back it up offline in two places.</strong> Lose it and you can never update the app again.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="d6" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="d6" class="step__title">Ship Android to internal testing</label></div>
+        <div class="step__body">
+          <p>Build a signed AAB → Play Console → Internal testing track → invite your friends by email. This is the fastest way to get the real app into hands (minutes, not review days). Promote to production later.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="auto">
+      <input type="checkbox" id="d7" checked />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--auto">auto</span><label for="d7" class="step__title">Prep the iOS project + build config</label></div>
+        <div class="step__body">
+          <p><code>npx cap sync ios</code>, confirm a store-legal reverse-DNS bundle id (e.g. <code>com.void.news</code>), and add the Codemagic build config.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="d8" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="d8" class="step__title">iOS signing (App Store Connect API key)</label></div>
+        <div class="step__body">
+          <p>Create an App Store Connect API key, hand it to Codemagic for automatic code signing. Register the app id + create the app record in App Store Connect.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="d9" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="d9" class="step__title">Ship iOS to TestFlight</label></div>
+        <div class="step__body">
+          <p>Distribute the build to TestFlight and invite friends by email — no public listing, no full review. This is your iOS "friends beta" and it sidesteps App Store review timing entirely.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="d10" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="d10" class="step__title">Generate store assets + write the listings</label></div>
+        <div class="step__body">
+          <p>Icon set + screenshots per device size (the sigil feed + Deep Dive shoot best). Name, subtitle, description (say "experimental"), keywords, News category, age rating. Store display name may need to be "void news" if the <code>--</code> is rejected. Claude can generate the asset set on request.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="d11" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="d11" class="step__title">Fill privacy disclosures (both stores)</label></div>
+        <div class="step__body">
+          <p>Apple privacy nutrition label + Google Data Safety. Simple here: no accounts, no tracking. Disclose the feedback form's free text and the rate-limit fingerprint; point both at <code>/privacy</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="d12" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="d12" class="step__title">Submit both for public review</label></div>
+        <div class="step__body">
+          <p>Android review ~hours; Apple ~1-2 days. Apple may push back under Guideline 4.2 ("just a web view") — the rebuttal is the daily brief, audio, offline reading, and share target: real app value, not a bookmark. TestFlight/internal-testing already cover friends regardless of review timing.</p>
+        </div>
+        <div class="step__done">Both apps are downloadable from their stores.</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  void --news · launch tracker · kept current by Claude on the CLI<br />
+  green = automated · red = yours · full plan: <a href="LAUNCH-PLAN.md">LAUNCH-PLAN.md</a>
+</footer>
+
+<script>
+  (function () {
+    var KEY = "void-launch-tracker-v1";
+    var boxes = Array.prototype.slice.call(document.querySelectorAll('.step input[type="checkbox"]'));
+    var pbar = document.getElementById("pbar");
+    var pct = document.getElementById("pct");
+    var ratio = document.getElementById("ratio");
+    var statManual = document.getElementById("stat-manual");
+    var statAuto = document.getElementById("stat-auto");
+    var statPhase = document.getElementById("stat-phase");
+
+    function kindOf(b) { return b.closest(".step").getAttribute("data-kind"); }
+
+    // localStorage holds ONLY your explicit overrides (id -> 0|1). Boxes you never
+    // touched keep their HTML default, so auto-ticks Claude adds later always show.
+    var htmlDefault = {};
+    boxes.forEach(function (b) { htmlDefault[b.id] = b.checked; });
+
+    function load() {
+      var saved = {};
+      try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
+      boxes.forEach(function (b) {
+        b.checked = saved.hasOwnProperty(b.id) ? !!saved[b.id] : htmlDefault[b.id];
+        b.closest(".step").setAttribute("data-done", b.checked ? "true" : "false");
+      });
+    }
+    function save() {
+      var state = {};
+      boxes.forEach(function (b) {
+        // Persist only where your choice differs from the HTML default.
+        if (b.checked !== htmlDefault[b.id]) { state[b.id] = b.checked ? 1 : 0; }
+      });
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+    }
+    function phaseLabel() {
+      // c2 checked → friends are in (Phase 1); c4 → broadcast (Phase 2); c5 → boards (Phase 3).
+      var c = function (id) { var el = document.getElementById(id); return el && el.checked; };
+      if (c("c5")) return ["Phase 3", "indie boards"];
+      if (c("c4")) return ["Phase 2", "warm network"];
+      if (c("c2")) return ["Phase 1", "friends & family"];
+      return ["Phase 0", "private hardening"];
+    }
+    function render() {
+      var done = boxes.filter(function (b) { return b.checked; }).length;
+      var total = boxes.length;
+      var p = total ? Math.round((done / total) * 100) : 0;
+      pbar.style.width = p + "%";
+      pct.textContent = p + "%";
+      ratio.textContent = done + " / " + total;
+
+      var manualLeft = boxes.filter(function (b) { return kindOf(b) === "manual" && !b.checked; }).length;
+      var autoLeft = boxes.filter(function (b) { return kindOf(b) === "auto" && !b.checked; }).length;
+      statManual.textContent = manualLeft;
+      statAuto.textContent = autoLeft;
+      statManual.classList.toggle("warn", manualLeft > 0);
+
+      var ph = phaseLabel();
+      statPhase.textContent = ph[0];
+      statPhase.nextElementSibling.textContent = ph[1];
+
+      document.body.setAttribute("data-all-done", done === total && total > 0 ? "true" : "false");
+    }
+
+    boxes.forEach(function (b) {
+      b.addEventListener("change", function () {
+        b.closest(".step").setAttribute("data-done", b.checked ? "true" : "false");
+        save();
+        render();
+      });
+    });
+
+    Array.prototype.slice.call(document.querySelectorAll(".toolbar button[data-filter]")).forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        document.body.setAttribute("data-filter", btn.getAttribute("data-filter"));
+        document.querySelectorAll(".toolbar button[data-filter]").forEach(function (o) { o.classList.remove("active"); });
+        btn.classList.add("active");
+      });
+    });
+
+    document.getElementById("reset").addEventListener("click", function () {
+      if (!confirm("Reset all checkboxes? This clears your saved progress.")) return;
+      try { localStorage.removeItem(KEY); } catch (e) {}
+      boxes.forEach(function (b) { b.closest(".step").setAttribute("data-done", "false"); });
+      load();
+      render();
+    });
+
+    load();
+    render();
+  })();
+</script>
+</body>
+</html>

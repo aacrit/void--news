@@ -1,0 +1,43 @@
+{
+ "version": "1.2.0",
+ "title": "On Air \u00b7 Thursday 12 November 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Today",
+   "kind": "headlines",
+   "endTime": 36.059
+  },
+  {
+   "startTime": 36.059,
+   "title": "Hegseth Impeachment Derailed by Missed Votes",
+   "kind": "story",
+   "rank": 1,
+   "cluster_id": "f8428e1d-a54a-411a-83fd-5b760c08b545",
+   "endTime": 148.706
+  },
+  {
+   "startTime": 148.706,
+   "title": "Altering Defense Cooperation With Israel",
+   "kind": "story",
+   "rank": 2,
+   "cluster_id": "7d5d1b22-8d99-4306-9d9d-9bb76682e903",
+   "endTime": 237.026
+  },
+  {
+   "startTime": 237.026,
+   "title": "The desk",
+   "kind": "briefs",
+   "endTime": 430.835
+  },
+  {
+   "startTime": 430.835,
+   "endTime": 445.036,
+   "title": "Also from Void",
+   "kind": "promo",
+   "subtitle": "Void News",
+   "promo": "site-02-outlets"
+  }
+ ]
+}

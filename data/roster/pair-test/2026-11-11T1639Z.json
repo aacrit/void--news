@@ -1,0 +1,87 @@
+{
+ "collected_at": "2026-11-11T16:39:07Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 26,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16282895/RAF-Fairford-terror-plot-attacks-US-cell-FaceTime.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "'Mastermind' of RAF Fairford terror plot 'directed other attacks from his US cell while on FaceTime', US prosecutors say",
+      "published": "Wed, 11 Nov 2026 03:02:48 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/raf-fairford-terror-plot-prison-37866082",
+      "title": "‘Mastermind’ of RAF Fairford terror plot ‘directed other attacks from behind bars’",
+      "published": "Wed, 11 Nov 2026 15:18:04 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16283683/michael-carrick-manchester-united-sacking-monaco.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "USA CANCEL press conference: Stars gagged from talking about Mauricio Pochettino as ex-Spurs boss closes in on Man United job - with Old Trafford chiefs holding Monaco summit today",
+      "published": "Wed, 11 Nov 2026 16:32:16 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/man-utd-squad-pochettino-emery-37867232",
+      "title": "Man Utd players 'wanted Unai Emery' as Mauricio Pochettino closes in on job",
+      "published": "Wed, 11 Nov 2026 16:03:37 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 177,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 32,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/politics-and-diplomacy/article-914515",
+      "title": "Ra'am chief says Netanyahu trusted Hamas's Sinwar, vows to testify before state inquiry on Oct. 7",
+      "published": "Tue, 10 Nov 2026 22:01:45 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-politics/2026-11-10/ty-article/.premium/arab-party-leader-netanyahu-said-he-and-hamas-sinwar-understand-each-other/000001a1-c698-d0f7-adfb-f7b9901f0000",
+      "title": "Arab party leader: Netanyahu told me he and Hamas' Sinwar 'understand each other'",
+      "published": "Tue, 10 Nov 2026 20:54:16 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 309,
+    "left": 10
+   }
+  }
+ }
+}

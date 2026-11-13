@@ -1,0 +1,6 @@
+source: src-ushmm-numbers
+locator: sectotal
+url: https://encyclopedia.ushmm.org/content/en/article/documenting-numbers-of-victims-of-the-holocaust-and-nazi-persecution
+read: 2026-10-07
+
+In total, six million Jews died in the Holocaust. This number is calculated based on Nazi German documents and prewar and postwar demographic data.

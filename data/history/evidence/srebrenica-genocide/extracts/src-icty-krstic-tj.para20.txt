@@ -1,0 +1,7 @@
+source: src-icty-krstic-tj
+locator: para20
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+
+20. On 18 April 1993, the first group of UNPROFOR troops arrived in Srebrenica. Fresh troops were rotated approximately every six months after that. The peacekeepers were lightly armed and at any one time numbered no more than 600 men (a much smaller force than had been originally requested).22 They established a small command centre (the “Bravo Company compound”) in Srebrenica itself and a larger main compound about five kilometres north of the town in Potocari. In addition, the UNPROFOR peacekeepers manned thirteen observation posts (“Ops ) marking the perimeter of the enclave. Most of the time, groups of Bosnian Serb and Bosnian Muslim soldiers also maintained shadow positions near these outposts. In January 1995, a new set of UNPROFOR troops (a battalion from the Netherlands, colloquially referred to as “Dutch Bat”) rotated into the enclave.

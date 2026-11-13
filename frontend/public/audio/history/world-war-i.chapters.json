@@ -1,0 +1,82 @@
+{
+ "version": "1.2.0",
+ "title": "World War I",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 58.934
+  },
+  {
+   "startTime": 58.934,
+   "title": "Belgium, August 4, 1914",
+   "endTime": 119.7
+  },
+  {
+   "startTime": 119.7,
+   "title": "The Somme, July 1, 1916",
+   "endTime": 168.783
+  },
+  {
+   "startTime": 168.783,
+   "title": "A world war",
+   "endTime": 215.979
+  },
+  {
+   "startTime": 215.979,
+   "title": "A joint session of Congress, April 2, 1917",
+   "endTime": 267.387
+  },
+  {
+   "startTime": 267.387,
+   "title": "Versailles, June 28, 1919",
+   "endTime": 351.103
+  },
+  {
+   "startTime": 351.103,
+   "title": "Five accounts",
+   "endTime": 361.452
+  },
+  {
+   "startTime": 361.452,
+   "title": "The Entente and the Allied victors",
+   "endTime": 441.302
+  },
+  {
+   "startTime": 441.302,
+   "title": "Germany and the Central Powers",
+   "endTime": 511.729
+  },
+  {
+   "startTime": 511.729,
+   "title": "The soldiers and the frontline experience",
+   "endTime": 577.107
+  },
+  {
+   "startTime": 577.107,
+   "title": "The colonial world and the Global South",
+   "endTime": 641.364
+  },
+  {
+   "startTime": 641.364,
+   "title": "Revisionist historiography",
+   "endTime": 714.604
+  },
+  {
+   "startTime": 714.604,
+   "title": "What each one leaves out",
+   "endTime": 790.097
+  },
+  {
+   "startTime": 790.097,
+   "title": "Legacy",
+   "endTime": 821.377
+  },
+  {
+   "startTime": 821.377,
+   "endTime": 834.477,
+   "title": "Also from Void News"
+  }
+ ]
+}

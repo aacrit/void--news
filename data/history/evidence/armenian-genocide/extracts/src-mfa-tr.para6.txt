@@ -1,0 +1,7 @@
+source: src-mfa-tr
+locator: para6
+url: https://www.mfa.gov.tr/the-events-of-1915-and-the-turkish-armenian-controversy-over-history_-an-overview.en.mfa
+read: 2026-09-25
+note: paragraphs of the page's body text counted from its first paragraph; held at most 150 words
+
+In response, the Ottoman Government ordered in 1915 the Armenian population residing in or near the war zone to be relocated to the southern Ottoman provinces away from the supply routes and army transport lines on the way of the advancing Russian army. Some Armenians living away from the front, yet were reported or suspected to be involved in collaboration, were also included in mandatory transfer.

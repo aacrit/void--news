@@ -1,0 +1,7 @@
+source: src-lenin-dissolution-1918
+locator: secresolve
+url: https://www.marxists.org/archive/lenin/works/1918/jan/06a.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+Accordingly, the Central Executive Committee resolves that the Constituent Assembly is hereby dissolved.

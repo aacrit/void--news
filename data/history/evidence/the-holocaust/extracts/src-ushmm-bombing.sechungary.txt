@@ -1,0 +1,6 @@
+source: src-ushmm-bombing
+locator: sechungary
+url: https://encyclopedia.ushmm.org/content/en/article/the-united-states-and-the-holocaust-why-auschwitz-was-not-bombed
+read: 2026-10-07
+
+Allied bombardment of Auschwitz-Birkenau in mid-July 1944 would not have saved the approximately 310,000 Hungarian Jews whom the Germans had killed upon arrival at the killing center between May 15 and July 11, 1944. Moreover, barracks located not far from the gas chambers at Birkenau housed 51,117 prisoners (31,406 of them women and children).

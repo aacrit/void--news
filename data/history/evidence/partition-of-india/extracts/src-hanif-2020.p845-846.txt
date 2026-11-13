@@ -1,0 +1,7 @@
+source: src-hanif-2020
+locator: p845-846
+url: https://pssr.org.pk/issues/v4/2/state-religion-and-religious-minorities-in-pakistan-remembering-the-participation-of-christians-in-punjab-legislative-assembly-1947-55.pdf
+read: 2026-09-25
+note: the text layer's '21to' is kept as printed
+
+On June 23, 1947, he was one of the three Punjab Assembly legislators who voted for Pakistan. Gibbon was among those who during its proceedings of the Punjab Boundary Commission chaired by Sir Cyril Radcliffe he was summoned, from July 21to July 31, 1947.

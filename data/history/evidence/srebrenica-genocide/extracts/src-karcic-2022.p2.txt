@@ -1,0 +1,7 @@
+source: src-karcic-2022
+locator: p2
+url: https://pogledi.cimoshis.org/wp-content/uploads/2022/06/17.-Hikmet-Karcic-72022.pdf
+read: 2026-09-24
+note: the article's English abstract crosses a page; the running header between the two spans is omitted
+
+The Srebrenica Islamic Community Committee's May 1995 report states that there are 51 imams in their area, most of whom have been involved in the work of the Islamic Community. This paper deals with elitocide on the example of the murders of imams in Srebrenica and its surroundings from 1992 to 1995. Elitocide is one of the key segments of the genocide against Bosniaks in Podrinje, which has not been the subject of significant research so far. This paper specifically deals with the murder of imams as an important aspect of elitocide in the context of Podrinje and Bosnia and Herzegovina. The work is based on information gathered from war reports, as well as the testimonies of surviving imams and witnesses to their killings or disappearances.

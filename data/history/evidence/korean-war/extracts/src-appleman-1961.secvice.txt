@@ -1,0 +1,8 @@
+source: src-appleman-1961
+locator: secvice
+url: https://webdoc.sub.gwdg.de/ebook/p/2005/CMH_2/www.army.mil/cmh-pg/books/korea/20-2-1/sn03.htm
+read: 2026-10-09
+note: the same chapter; 'General Kim' is the ROK Army officer at headquarters after Chae had been sent south, per the passage that follows
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+There General Kim told him that the Vice Minister of Defense had ordered the blowing of the bridges at 0130 and they must be blown at once.

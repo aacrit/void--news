@@ -1,0 +1,138 @@
+## OPEN
+N: Most people picture the industrial revolution as a machine born in Britain, ahead of the world already.
+N: In seventeen fifty that picture is backwards. Britain produced less than a tenth of the world's manufactured goods. India produced almost a quarter, and a weaver in the city of Dacca could out earn a weaver in Lancashire.
+N: By nineteen thirteen, India's share had fallen to one point four percent, and Manchester was calling itself the workshop of the world.
+N: The machine did not simply arrive in Britain. Something had to happen to everyone else first.
+
+## TITLE
+N: The Industrial Revolution. Seventeen sixty to eighteen forty.
+
+## SCENE 1 | The instrument maker's repair
+N: Seventeen sixty three. James Watt is an instrument maker at the University of Glasgow, and a broken machine lands on his bench: a scale model of a steam engine.
+N: The full sized version already exists. In seventeen twelve, Thomas Newcomen installed one at a coal mine in Dudley Castle, Staffordshire, burning coal to pump water out of a coal mine.
+N: Watt gets the model running, then notices what it wastes. Every stroke cools the cylinder, and every stroke has to reheat it before it can push again.
+N: He fixes it with a second chamber that stays permanently cold. He patents the separate condenser on the fifth of January, seventeen sixty nine, and cuts fuel use by seventy five percent.
+N: By seventeen eighty four, he and his partner Matthew Boulton have built a version that turns a wheel. It goes into a cotton mill at Papplewick, Nottinghamshire, the following year.
+
+## SCENE 2 | The rules on the wall
+N: Cromford, Derbyshire, seventeen seventy one. Richard Arkwright, a barber turned industrialist, opens a water powered cotton mill on a fast moving river.
+N: Two hundred workers, many of them children, work two shifts of thirteen hours each, six days a week, their movements timed to the rhythm of the spinning frames.
+N: Arkwright posts the rules on the wall. A fine for arriving late. A fine for leaving the work station. A fine for opening a window.
+N: The pre industrial artisan controlled his own tools. Arkwright's worker serves the machine, and the machine sets the pace.
+N: Water power ties a mill to a river. Steam does not. Within twenty years of Papplewick, it has replaced water wheels in hundreds of British factories, and the mill no longer needs to be built where the river is. It needs to be built where the people are.
+
+## SCENE 3 | Nothing left to sell but time
+N: Between seventeen fifty and eighteen fifty, Parliament passes roughly four thousand Enclosure Acts, converting six point eight million acres of common land into private property.
+N: These are fields, pastures and woodlands that villagers had worked collectively for centuries. A family that had lived by small farming, cottage spinning and common grazing is left with nothing to sell but its own time.
+N: They walk to Manchester, Birmingham, Leeds, Glasgow. Manchester's population grows from twenty five thousand in seventeen seventy two to three hundred and three thousand by eighteen fifty one.
+N: Britain's population as a whole doubles, from seven point seven million in seventeen sixty to sixteen point six million by eighteen forty one. The factory has its workforce.
+
+## DOCUMENT | Sarah Gooder, age eight | Testimony to the Children's Employment Commission (Mines) | 1842
+N: In eighteen forty two, the Children's Employment Commission investigates conditions inside British coal mines, and an eight year old girl named Sarah Gooder describes her working day as a trapper, opening and closing ventilation doors underground in total darkness.
+F: I have to trap without a light, and I'm scared. I go at four and sometimes half past three in the morning, and come out at five and half past.
+
+## ASIDE
+N: The Sadler Committee had already heard testimony like it ten years earlier, and in eighteen thirty three Parliament passed the first legal limits on child labor: no child under nine in the textile mills, no more than eight hours for those under thirteen.
+N: It took a decade of testimony like hers to get that far.
+
+## REST
+
+## SCENE 4 | Seventeen hanged at York
+N: Between eighteen eleven and eighteen sixteen, workers calling themselves Luddites smash textile machinery across the Midlands and the north of England.
+N: They are not against technology as such. They are skilled croppers and weavers, and the machines being installed can be run by children for a fraction of their wages.
+N: The government sends fourteen thousand troops to stop them, more than Wellington took to the Peninsular War. In January eighteen thirteen, seventeen Luddites are hanged at York Castle.
+N: Six years later, on the sixteenth of August eighteen nineteen, cavalry charge into a crowd of sixty thousand gathered peacefully at St Peter's Field in Manchester to hear a speech on parliamentary reform. Fifteen people are killed. Between four hundred and seven hundred are hurt. The newspapers call it Peterloo, a bitter echo of Waterloo, four years before.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of one transformation, and each one is arguing about something different.
+
+## PERSPECTIVE | The Whig account | academic
+N: The first account starts with a simple fact. In seventeen hundred, an English farmer produced barely enough grain to feed his own family, and eighty percent of the population worked the land. A century and a half later, Britain fed sixteen million people, double its seventeen sixty population, with fewer farmers than before.
+N: The historian David Landes asked why this happened in Britain first. His answer was institutional: secure property rights since the Glorious Revolution of sixteen eighty eight, a patent system that rewarded Watt's condenser with a temporary monopoly, a banking system able to raise capital, and coalfields sitting conveniently close to rivers and ports.
+N: This account does not deny the suffering. It argues the suffering was temporary. The historian T.S. Ashton put the comparison as starkly as it can be put.
+M: There are today on the savannas of India and Africa tens of millions whose data of birth, statistics of health, and whose reach of life are no better than those of the English village worker of two centuries ago.
+N: Average height in Britain rose by over nine centimetres between eighteen hundred and two thousand. Life expectancy rose from thirty six years to seventy seven.
+
+## PERSPECTIVE | The Marxist account | revisionist
+N: The second account belongs to the people the first one treats as a footnote, and it starts with the enclosures themselves. The same four thousand acts that freed up labor also took away every family's insurance against a bad harvest: the common land.
+N: The historian E.P. Thompson spent three decades recovering what that felt like from the inside.
+M: I am seeking to rescue the poor stockinger, the Luddite cropper, the obsolete hand loom weaver, the utopian artisan, and even the deluded follower of Joanna Southcott, from the enormous condescension of posterity.
+N: Thompson's word for what the factory imposed was time discipline: work no longer governed by the season and the daylight, but by the clock, the bell, and the fine. Arkwright's mill ran twenty three hours out of twenty four.
+N: Robert Owen proved at his own mill in New Lanark that a factory could refuse to employ children under ten, cut hours, and still turn a profit. Almost nobody followed his example.
+
+## PERSPECTIVE | The Great Divergence account | revisionist
+N: The third account starts by pointing out that in seventeen fifty, Britain was not ahead of anyone. China's Yangzi Delta grew rice at yields English farmers would not match for a century, and India's cotton textiles were the most desired manufactured goods on earth. Europe was a buyer, not a seller.
+N: The historian Kenneth Pomeranz argued the real question is not why Europe industrialized, but why China and India, just as developed, did not. His answer was geography and coercion, not culture. Britain's coalfields sat close to its textile towns. China's sat a thousand miles from the Yangzi Delta, too far to move economically.
+N: The other advantage was the New World. Slave grown cotton from American plantations relieved a land shortage no amount of British ingenuity could have solved on its own. The historian Eric Williams traced the money directly.
+M: The commercial capitalism of the eighteenth century was developed by the slave trade and the West Indian trade. The profits from those trades fertilised the whole productive system of the country.
+
+## PERSPECTIVE | The Fossil Capital account | revisionist
+N: The fourth account asks a narrower question: why did factories switch from water power to steam at all, when water wheels in the eighteen twenties were often just as efficient, and free?
+N: The historian Andreas Malm's answer is social, not technical. A water mill has to be built where the river is, usually a rural valley where workers, hard to replace, can organize. A steam mill can be built in Manchester, where thousands of migrants from the enclosed villages compete for every job.
+M: The transition from water to steam was a transition in the social relations of production disguised as a transition in energy technology.
+N: The coal that powered it was cheap because miners worked twelve hour shifts underground in conditions that killed them young, and the carbon dioxide it released in the seventeen eighties is still in the atmosphere in twenty twenty six.
+
+## PERSPECTIVE | The Subaltern account | vanquished
+N: The fifth account is the one the other four rarely mention, and it belongs to the people the revolution was done to on the other side of the world. In seventeen fifty, a weaver in Dacca produced muslin so fine that a length long enough to drape a woman's body could be pulled through a finger ring.
+N: After Robert Clive's victory at the Battle of Plassey in seventeen fifty seven, the East India Company took control of Bengal's tax revenue and used it to buy Indian cloth for export, a practice the Company itself called the investment. The weavers were paid below market rate and punished for selling elsewhere.
+N: Then the tariffs finished the job. Indian textiles entering Britain faced duties of seventy to eighty percent. British cloth entered India at two and a half to three and a half percent. Dacca's population fell from one hundred and fifty thousand in eighteen hundred to twenty thousand by the eighteen forties. The Governor General of India, William Bentinck, reported what he saw.
+M: The misery hardly finds a parallel in the history of commerce. The bones of the cotton weavers are bleaching the plains of India.
+
+## REST | short
+
+## TURN | What each one leaves out
+N: And what each one cannot hold.
+N: The Whig account measures the grandchildren, who grew taller and lived longer, and calls the first generation's suffering a toll paid rather than communities destroyed, without asking whose cotton and whose tariff wall financed the growth.
+N: The Marxist account is precise about the fine, the bell and the strap, and mostly silent about the workers who left the land willingly for a wage no farm could match.
+N: The Great Divergence account explains why Britain and not the Yangzi Delta, and says almost nothing about the British inventors and engineers who were not merely lucky.
+N: The Fossil Capital account is right that steam served power as much as it served output, and it never asks whether the miners and mill workers who took the higher wage would have called the choice a disguise.
+N: And the Subaltern account, the one with the most to answer for, still leaves out the Indian merchants who profited inside the same system that broke the weavers, and the industrial India that partially rebuilt itself once the Company was gone.
+
+## REST
+
+## CLOSE
+N: The railway compressed all of it into a single number. The Liverpool and Manchester line opened on the fifteenth of September, eighteen thirty, and moved goods and people at thirty miles an hour, ten times the speed of a canal barge.
+N: It needed exact timekeeping to run safely, station to station, and that need became Greenwich Mean Time in eighteen forty seven, then global time zones by eighteen eighty four.
+N: The clock that ran Arkwright's shift bells now runs the world's trains.
+
+## SAY
+Dacca = DAH-kah
+Lancashire = LANG-kuh-shir
+James Watt = jaymz WOT
+Glasgow = GLAZ-goh
+Thomas Newcomen = TOM-us NOO-kuh-mun
+Dudley = DUD-lee
+Staffordshire = STAF-ord-shir
+Matthew Boulton = MATH-yoo BOHL-tun
+Papplewick = PAP-el-wik
+Nottinghamshire = NOT-ing-um-shir
+Cromford = KROM-ferd
+Derbyshire = DAR-bee-shir
+Richard Arkwright = RICH-erd ARK-rite
+Birmingham = BUR-ming-um
+Sadler = SAD-ler
+Sarah Gooder = SAIR-ah GOOD-er
+Luddites = LUD-eyts
+Wellington = WEL-ing-tun
+Peninsular = puh-NIN-syoo-lar
+Peterloo = PEE-ter-loo
+Waterloo = WAW-ter-loo
+David Landes = DAY-vid LAN-dez
+T.S. Ashton = TEE ESS ASH-tun
+Robert Owen = ROB-ert OH-en
+New Lanark = new LAN-ark
+E.P. Thompson = EE PEE TOMP-sun
+Joanna Southcott = joh-AN-ah SOWTH-kot
+Kenneth Pomeranz = KEN-eth POM-er-anz
+Yangzi = YAHNG-zee
+Eric Williams = AIR-ik WIL-yumz
+Andreas Malm = an-DRAY-us MAHLM
+Robert Clive = ROB-ert KLYVE
+Plassey = PLASS-ee
+Bengal = ben-GAWL
+Governor = GUV-er-ner
+William Bentinck = WIL-yum BEN-tink
+Liverpool = LIV-er-pool
+Greenwich = GREN-ich

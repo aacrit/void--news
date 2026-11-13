@@ -1,0 +1,241 @@
+# House promos. Two sentences each: a pitch, then the address.
+#
+# Read data/promos/README.md before editing. Every promo is validated by
+# tests/test_house_promos.py: exactly two sentences, no digits, only number
+# words tied to a constant in the code, nothing borrowed from radio, nothing
+# from the kill list, the address in the second sentence, five to ten
+# seconds at the house voice, never playing inside the section it advertises.
+#
+# `seconds` is an estimate at the house rate; `python3
+# pipeline/briefing/house_promos.py fill-seconds` rewrites it. The rendered
+# WAVs in rendered/ carry the sha of the text they were made from; changing a
+# text here retires its render until the next render job.
+#
+# promotes: onair | weekly | history | site
+# plays_in: any of onair, weekly, history (never the section promoted)
+
+promos:
+
+  # ---- On Air --------------------------------------------------------------
+
+  - id: onair-01-ranked
+    promotes: onair
+    plays_in: [weekly, history]
+    text: "Four stories, ranked by who is covering them, not by clicks. Visit news.voidvision.org to check out On Air."
+    seconds: 9.5
+    angle: ranking
+    claims: [onair_four_stories, onair_ranking, onair_daily]
+    names_url: true
+
+  - id: onair-02-firewall
+    promotes: onair
+    plays_in: [weekly, history]
+    text: "One opinion a day, read by a voice that reads nothing else. Visit news.voidvision.org to check out On Air."
+    seconds: 9.9
+    angle: opinion firewall
+    claims: [onair_opinion_firewall, onair_daily]
+    names_url: true
+
+  - id: onair-03-room-tone
+    promotes: onair
+    plays_in: [weekly, history]
+    text: "Nothing plays under the news but room tone. Visit news.voidvision.org to check out On Air."
+    seconds: 8.4
+    angle: no music under the news
+    claims: [onair_room_tone, onair_daily]
+    names_url: true
+
+  - id: onair-04-front-page
+    promotes: onair
+    plays_in: [weekly, history]
+    text: "A day's front page, read aloud in under fifteen minutes. Visit news.voidvision.org to check out On Air."
+    seconds: 9.1
+    angle: length
+    claims: [onair_under_fifteen, onair_daily]
+    names_url: true
+
+  - id: onair-05-cold-open
+    promotes: onair
+    plays_in: [weekly, history]
+    text: "It opens on the first story, not a greeting. Visit news.voidvision.org to check out On Air."
+    seconds: 8.7
+    angle: cold open
+    claims: [onair_cold_open, onair_no_thanks]
+    names_url: true
+
+  - id: onair-06-twenty-four
+    promotes: onair
+    plays_in: [weekly, history]
+    text: "Twenty stories on the page, four on the air, one order. Visit news.voidvision.org to check out On Air."
+    seconds: 9.5
+    angle: same order
+    claims: [feed_size, onair_four_stories, same_order]
+    names_url: true
+
+  # ---- Weekly, The Argument ------------------------------------------------
+
+  - id: weekly-01-verbatim
+    promotes: weekly
+    plays_in: [onair, history]
+    text: "Every line the two benches say is printed in the column. Visit news.voidvision.org to check out The Argument."
+    seconds: 9.5
+    angle: verbatim benches
+    claims: [weekly_two_benches, weekly_verbatim_column, weekly_sunday]
+    names_url: true
+
+  - id: weekly-02-question
+    promotes: weekly
+    plays_in: [onair, history]
+    text: "Left bench, right bench, an editor who ends on a question. Visit news.voidvision.org to check out The Argument."
+    seconds: 9.5
+    angle: open question
+    claims: [weekly_two_benches, weekly_open_question, weekly_sunday]
+    names_url: true
+
+  - id: weekly-03-shape
+    promotes: weekly
+    plays_in: [onair, history]
+    text: "A week of news is a different shape from a day. Visit news.voidvision.org to check out Void Weekly."
+    seconds: 9.5
+    angle: the week as a form
+    claims: [weekly_sunday]
+    names_url: true
+
+  - id: weekly-04-no-host
+    promotes: weekly
+    plays_in: [onair, history]
+    text: "One argument, two sides, and no host taking either. Visit news.voidvision.org to check out The Argument."
+    seconds: 8.7
+    angle: no side taken
+    claims: [weekly_two_benches, weekly_no_host_side, weekly_sunday]
+    names_url: true
+
+  - id: weekly-05-cover
+    promotes: weekly
+    plays_in: [onair, history]
+    text: "Sunday's issue reads the week back, then argues the cover story. Visit news.voidvision.org to check out Void Weekly."
+    seconds: 9.5
+    angle: running order
+    claims: [weekly_two_benches, weekly_sunday]
+    names_url: true
+
+  - id: weekly-06-week-in-bias
+    promotes: weekly
+    plays_in: [onair, history]
+    text: "The Week in Bias prints the numbers the coverage produced. Visit news.voidvision.org to check out Void Weekly."
+    seconds: 9.1
+    angle: the numbers as they fell
+    claims: [weekly_week_in_bias]
+    names_url: true
+
+  # ---- History -------------------------------------------------------------
+
+  - id: history-01-sides
+    promotes: history
+    plays_in: [onair, weekly]
+    text: "One event from several sides, then what each side leaves out. Visit news.voidvision.org to check out Void History."
+    seconds: 9.5
+    angle: perspectives
+    claims: [history_perspectives, history_leaves_out, history_one_event]
+    names_url: true
+
+  - id: history-02-documents
+    promotes: history
+    plays_in: [onair, weekly]
+    text: "A second voice reads the documents, and nothing else. Visit news.voidvision.org to check out Void History."
+    seconds: 8.7
+    angle: document voice
+    claims: [history_document_voice]
+    names_url: true
+
+  - id: history-03-particular
+    promotes: history
+    plays_in: [onair, weekly]
+    text: "It ends on a particular, not a moral. Visit news.voidvision.org to check out Void History."
+    seconds: 8.4
+    angle: the ending
+    claims: [history_particular, history_one_event]
+    names_url: true
+
+  - id: history-04-partition
+    promotes: history
+    plays_in: [onair, weekly]
+    text: "India's border: five weeks, by a man who had never been there. Visit news.voidvision.org to check out Void History."
+    seconds: 9.9
+    angle: one episode's fact
+    claims: [history_partition_five_weeks]
+    names_url: true
+
+  - id: history-05-quarter-hour
+    promotes: history
+    plays_in: [onair, weekly]
+    text: "A quarter of an hour each, opening in the middle of something. Visit news.voidvision.org to check out Void History."
+    seconds: 9.9
+    angle: length and cold open
+    claims: [history_quarter_hour, history_cold_open]
+    names_url: true
+
+  - id: history-06-accounts
+    promotes: history
+    plays_in: [onair, weekly]
+    text: "The winners' account, the losers' account, and the historians'. Visit news.voidvision.org to check out Void History."
+    seconds: 8.7
+    angle: perspectives
+    claims: [history_perspectives, history_one_event]
+    names_url: true
+
+  # ---- The site ------------------------------------------------------------
+
+  - id: site-01-twenty
+    promotes: site
+    plays_in: [onair, weekly, history]
+    text: "Twenty stories, one order, no account, the same for everyone. Visit news.voidvision.org to check out the front page."
+    seconds: 9.5
+    angle: the front page
+    claims: [feed_size, same_order, no_accounts]
+    names_url: true
+
+  - id: site-02-outlets
+    promotes: site
+    plays_in: [onair, weekly, history]
+    text: "Every story shows which outlets ran it and how each leans. Visit news.voidvision.org to check out Deep Dive."
+    seconds: 9.5
+    angle: the deep dive
+    claims: [outlets_shown]
+    names_url: true
+
+  - id: site-03-both
+    promotes: site
+    plays_in: [onair, weekly, history]
+    text: "Slant is scored on both the outlet and the words, by published rules. Visit news.voidvision.org to check out Sources."
+    seconds: 9.9
+    angle: the method
+    claims: [both_outlet_and_words, rules_public]
+    names_url: true
+
+  - id: site-04-nothing-knows
+    promotes: site
+    plays_in: [onair, weekly, history]
+    text: "Nothing is recommended, because nothing knows who you are. Visit news.voidvision.org to check out the front page."
+    seconds: 9.1
+    angle: no personalization
+    claims: [same_order, no_tracking]
+    names_url: true
+
+  - id: site-05-nothing-to-sign
+    promotes: site
+    plays_in: [onair, weekly, history]
+    text: "Nothing to sign up for, and nothing that follows you home. Visit news.voidvision.org to check out Void News."
+    seconds: 9.5
+    angle: free and untracked
+    claims: [no_accounts, free, no_tracking]
+    names_url: true
+
+  - id: site-06-sources
+    promotes: site
+    plays_in: [onair, weekly, history]
+    text: "Every outlet, placed from far left to far right, or marked not placed. Visit news.voidvision.org to check out Sources."
+    seconds: 9.9
+    angle: the sources page
+    claims: [sources_spectrum]
+    names_url: true

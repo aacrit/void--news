@@ -1,0 +1,7 @@
+source: src-kevorkian-2013
+locator: para6
+url: https://journals.openedition.org/eac/347
+read: 2026-09-25
+note: the article's numbered paragraph as OpenEdition prints it, footnote call numbers kept; a copyrighted article, held at most 150 words
+
+Lorsqu’il s’agit de documenter des crimes contre l’humanité, des crimes de guerre ou des génocides, les témoignages de rescapés sont loin de faire l’unanimité parmi les historiens. En matière d’historiographie des violences de masses, le document officiel, émanant de l’État génocidaire et, à la rigueur, de sources diplomatiques, notamment consulaires, a longtemps constitué « la » référence pour la communauté scientifique, le témoignage n’étant alors tenu que pour une simple représentation des événements émanant des victimes, comme si ces dernières étaient par définition inaptes à témoigner avec la distance requise.

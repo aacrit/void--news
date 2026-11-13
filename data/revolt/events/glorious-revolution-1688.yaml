@@ -1,0 +1,218 @@
+slug: glorious-revolution-1688
+title: The Glorious Revolution
+subtitle: A king invites his own overthrow and calls it an invitation
+date_display: 1688-1689
+date_start: 1688
+date_end: 1689
+date_precision: year
+era: atlantic
+region: europe
+country: England
+revolt_type: velvet-negotiated
+status: concluded
+summary: James II's Catholic heir, born June 10, 1688, turned a tolerable succession into an intolerable one. Seven English peers invited his Dutch son-in-law William of Orange to intervene; William landed with 463 ships and 15,000 men, James's army deserted around him, and Parliament crowned William and Mary jointly in February 1689.
+significance: 'Settled, without a major battle, the same question the Civil War had settled forty years earlier with an axe: that a king rules within law, not above it. The Bill of Rights it produced became a direct source text for the American framers.'
+grievances:
+  - kind: Religious succession crisis
+    intensity: 88
+    evidence: James Francis Edward, born Catholic on June 10, 1688, displaced his Protestant daughter Mary as heir, raising the prospect of a permanent Catholic dynasty.
+  - kind: Abuse of royal prerogative
+    intensity: 75
+    evidence: The 1687 Declaration of Indulgence suspended penal laws against Catholics and Dissenters by royal fiat, bypassing Parliament entirely.
+  - kind: Politicization of the army and universities
+    intensity: 62
+    evidence: James commissioned Catholic officers in violation of the Test Act and installed a Catholic president at Magdalen College, Oxford, in 1687.
+actors:
+  - actor_type: foreign-intervener
+    name: William of Orange
+    description: Stadtholder of the Dutch Republic and husband of James's daughter Mary.
+    role_in_arc: Landed at Torbay on November 5, 1688, and marched on London largely unopposed.
+    defected: false
+  - actor_type: vanguard
+    name: The Immortal Seven
+    description: Six peers and a bishop who signed the June 1688 invitation letter asking William to intervene.
+    role_in_arc: Supplied the domestic legal cover for what would otherwise have been a foreign invasion.
+    defected: false
+  - actor_type: military-defectors
+    name: John Churchill
+    description: Senior army officer under James II, later Duke of Marlborough.
+    role_in_arc: Defected to William's camp on November 24, 1688, triggering a cascade of officer desertions.
+    defected: true
+  - actor_type: old-regime
+    name: James II
+    description: King of England, Scotland, and Ireland since 1685.
+    role_in_arc: Fled London in December 1688 after his army dissolved; captured, then deliberately permitted to escape to France.
+    defected: false
+  - actor_type: vanguard
+    name: The Convention Parliament
+    description: An extralegal assembly summoned after James's flight to resolve the succession.
+    role_in_arc: Declared the throne vacant and offered it jointly to William and Mary in February 1689, conditioned on the Bill of Rights.
+    defected: false
+tactics:
+  - tactic_type: defection-fraternization
+    description: James's officer corps deserted piecemeal once Churchill broke first, leaving the king no force able to resist William's advance.
+    prominence: primary
+  - tactic_type: parallel-institutions
+    description: The Convention Parliament asserted authority over the succession the moment James fled, filling the vacuum before any rival body could.
+    prominence: primary
+  - tactic_type: elite-negotiation
+    description: The Immortal Seven's invitation turned an invasion into a rescue in the eyes of the political class.
+    prominence: secondary
+resistance_type: nonviolent
+phases:
+  - phase: old-regime-crisis
+    label: The Catholic heir
+    date_start: '1688-06-10'
+    t_start: 0
+    t_end: 0.12
+    intensity: 40
+    reached: true
+    summary: 'The birth of a Catholic prince converts a tolerable irritant into an intolerable one: a Catholic dynasty.'
+    key_events:
+      - Birth of Prince James Francis Edward, June 10, 1688
+      - Seven bishops acquitted of seditious libel, June 30, 1688
+  - phase: the-spark
+    label: The invitation and the landing
+    date_start: '1688-11-05'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 70
+    reached: true
+    summary: William's fleet lands at Torbay in November, and James's army begins to dissolve around him.
+    key_events:
+      - Immortal Seven invitation letter dispatched, June 30, 1688
+      - William lands at Torbay, November 5, 1688
+      - John Churchill defects, November 24, 1688
+  - phase: moderate-phase
+    label: Flight and vacancy
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 55
+    reached: true
+    summary: James flees London, is briefly detained by fishermen at Faversham, and is deliberately allowed to escape rather than be made a martyr.
+    key_events:
+      - James II flees London, December 11, 1688
+      - James detained then released, escapes to France, December 23, 1688
+  - phase: consolidation
+    label: The Convention settlement
+    date_start: '1689-02-13'
+    t_start: 0.92
+    t_end: 1
+    intensity: 45
+    reached: true
+    summary: The Convention Parliament declares the throne vacant, crowns William and Mary jointly, and pairs the crown with a Bill of Rights ending the sovereign's claim to suspend law unilaterally.
+    key_events:
+      - Convention Parliament declares the throne vacant, February 1689
+      - William and Mary crowned jointly, February 13, 1689
+      - Bill of Rights enacted, December 1689
+outcome: consolidated-democracy
+peak_participation_pct: null
+crossed_participation_threshold: null
+military_defection: full
+foreign_intervention: direct-military
+duration_days: 100
+death_toll: Fewer than a few dozen killed in scattered skirmishes; the campaign that toppled a king cost less blood than a single minor battle of the Civil War forty years earlier.
+death_toll_low: 10
+death_toll_high: 50
+regime_before: monarchy
+regime_after: monarchy
+democratization_delta: 1
+success_factors:
+  - factor_key: nonviolent-success-rate
+    label: Low-violence campaigns succeed more often than armed ones
+    framework: chenoweth
+    status: confirmed
+    direction: favors-movement
+    base_rate: Nonviolent campaigns succeed roughly 53% of the time historically, versus about 26% for armed campaigns (Chenoweth and Stephan)
+    rationale: The crown changed hands through mass desertion and elite realignment rather than battle, matching the pattern that low-violence transitions succeed more often.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: security-force-defection
+    label: Security force defection is the strongest single predictor
+    framework: chenoweth
+    status: confirmed
+    direction: favors-movement
+    base_rate: Movements that achieve security force defection succeed at markedly higher rates than those that do not, across the cross-national record
+    rationale: Churchill's defection on November 24 triggered a collapse of James's officer corps within days; the king had no army left to give battle with.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: elite-fracture
+    label: Elite fracture precedes regime collapse
+    framework: skocpol
+    status: confirmed
+    direction: favors-movement
+    base_rate: Skocpol's structural account identifies a split within the ruling elite, not mass mobilization alone, as the precondition for rapid state collapse
+    rationale: The Immortal Seven were peers and a bishop acting against their own king; the crisis was resolved inside the political class before it reached the street.
+    sources:
+      - Skocpol, States and Social Revolutions (1979)
+key_figures:
+  - name: William III
+    role: Stadtholder of the Dutch Republic, later King of England
+    born: 1650
+    died: 1702
+  - name: Mary II
+    role: Daughter of James II, joint monarch with William
+    born: 1662
+    died: 1694
+  - name: James II
+    role: Deposed King of England, Scotland, and Ireland
+    born: 1633
+    died: 1701
+  - name: John Churchill
+    role: Defecting general, later Duke of Marlborough
+    born: 1650
+    died: 1722
+legacy_points:
+  - The 1689 Bill of Rights barred the crown from suspending laws or raising taxes without Parliament, language later cited directly by the American framers.
+  - It fixed the principle that Parliament could determine the succession, invoked again in the 1701 Act of Settlement.
+  - England avoided the prolonged civil war it had fought only forty years earlier, cementing 'bloodless' as the revolution's defining, if contested, brand.
+  - Whig historians spent two centuries treating 1688 as the template for orderly, elite-led constitutional change, a framing later scholarship complicated by pointing to William's very real invasion force.
+related_revolt_slugs:
+  - english-civil-war
+  - american-revolution
+related_history_slugs: []
+is_published: true
+perspectives:
+  - viewpoint: Whig constitutionalist tradition
+    viewpoint_type: moderate
+    region_origin: England
+    narrative: A king violated the ancient constitution and a united political nation corrected course without bloodshed, restoring rather than overturning England's fundamental law.
+    key_arguments:
+      - James II broke settled law by ruling through prerogative alone
+      - The Convention Parliament acted to restore, not invent, constitutional balance
+      - The near-absence of violence proves the nation's underlying consensus
+    sources: []
+    notable_quotes:
+      - text: This nation is happily rescued from popery and slavery.
+        speaker: Convention Parliament address to William, 1689
+        context: Resolution accompanying the crown offer
+    emphasized:
+      - the Bill of Rights
+      - the bloodless transfer of power
+    omitted:
+      - the scale of William's invasion force
+      - the coercive pressure the landing placed on undecided elites
+  - viewpoint: Revisionist reading as a foreign-backed coup
+    viewpoint_type: academic
+    region_origin: England
+    narrative: William's fleet dwarfed the Spanish Armada a century earlier, and the outcome depended on a foreign prince's army, not domestic consensus; the label 'Glorious' was itself Whig branding applied after the fact.
+    key_arguments:
+      - William's force was larger and better organized than any domestic faction could field
+      - James's own miscalculations, not a spontaneous national uprising, opened the door
+      - the 'bloodless' framing understates the violence in Ireland and Scotland that followed within months
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - the military scale of the Dutch landing
+      - the Irish and Scottish aftermath
+    omitted:
+      - the elite consensus that legitimized William's claim
+      - the durability of the constitutional settlement that followed
+media: []
+connections:
+  - target_slug: english-civil-war
+    connection_type: parallel
+    description: Both crises pitted crown against Parliament over the same unresolved question of prerogative power, the first settled by war and regicide, the second by a negotiated succession forty years later.
+  - target_slug: american-revolution
+    connection_type: provided-model
+    description: The 1689 Bill of Rights supplied language, no taxation without consent, no standing army without Parliament's consent, that reappears nearly verbatim in colonial grievances a century later.

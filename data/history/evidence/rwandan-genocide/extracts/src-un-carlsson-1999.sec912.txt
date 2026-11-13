@@ -1,0 +1,8 @@
+source: src-un-carlsson-1999
+locator: sec912
+url: https://web.archive.org/web/20001203205100/http://www.un.org:80/News/ossg/rwanda_report.htm
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: section II, 'The continued role of UNAMIR'; the closing quotation mark follows a space in the page as served
+
+On 21 April, the Council voted unanimously to reduce UNAMIR to about 270 and to change the mission's mandate. The resolution stated that the Council was "appalled at the ensuing large-scale violence in Rwanda, which has resulted in the deaths of thousands of innocent civilians, including women and children "

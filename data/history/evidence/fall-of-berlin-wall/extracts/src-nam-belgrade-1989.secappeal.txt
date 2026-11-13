@@ -1,0 +1,8 @@
+source: src-nam-belgrade-1989
+locator: secappeal
+url: https://documents.un.org/doc/undoc/gen/n89/228/77/pdf/n8922877.pdf
+read: 2026-10-09
+note: the Declaration of the Ninth Conference, paragraph 10 as the OCR layer of the UN scan carries it; the words after 'bloc confrontation -' are illegible in the OCR layer and are not held, so the extract does not show what the conflict is named
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+We appeal to the developed world to face, with maximum will and determination and without prejudice, the conflict which is older and deeper than the cold war and bloc confrontation

@@ -1,0 +1,8 @@
+source: src-decree-land-en
+locator: secvoices
+url: https://www.marxists.org/archive/lenin/works/1917/oct/25-26/26d.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+note: from Lenin's concluding words after the decree, as the page prints them ('even in the peasants' is the page's text)
+
+Voices are being raised here that the decree itself and the Mandate were drawn up by the Socialist-Revolutionaries . What of it? Does it matter who drew them up? As a democratic government, we cannot ignore the decision of the masses of the people, even though we may disagree with it. In the fire of experience, applying the decree in practice, and carrying it out local, the peasants will themselves realise where the truth lies. And even in the peasants continue to follow the Socialist-Revolutionaries, even if they give this party a majority in the Constituent Assembly, we shall still say — what of it?

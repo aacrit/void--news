@@ -1,0 +1,114 @@
+{
+ "collected_at": "2026-10-26T15:31:02Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16238741/Jamie-Olivers-wife-Jools-diagnosed-autism-ADHD.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Jamie Oliver's wife Jools reveals she's been diagnosed with autism and ADHD as she opens up about her decision to 'come out' after it 'ruined 45 years of her life'",
+      "published": "Mon, 26 Oct 2026 10:12:06 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/jamie-oliver-wife-jools-diagnosis-37811303",
+      "title": "Jamie Oliver's wife says living with undiagnosed issue 'ruined 45 years' of her life",
+      "published": "Mon, 26 Oct 2026 14:27:35 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 137,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 29,
+     "right": {
+      "url": "https://www.jpost.com/international/article-912932",
+      "title": "Lula’s reelection in Brazil puts the brakes on Latin America’s pro-Israel shift",
+      "published": "Mon, 26 Oct 2026 16:05:34 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/world-news/2026-10-26/ty-article/lula-wins-brazil-presidential-election-besting-netanyahu-ally-bolsonaro/000001a1-75a4-df0e-a5b7-7fa4c2140000",
+      "title": "Lula wins Brazil presidential election, Netanyahu ally Bolsonaro rejects result",
+      "published": "Mon, 26 Oct 2026 03:05:13 +0200"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.jpost.com/middle-east/article-912922",
+      "title": "Egypt approves military support for Saudi Arabia after Houthi attacks escalate",
+      "published": "Mon, 26 Oct 2026 15:29:03 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/middle-east-news/2026-10-26/ty-article/egypt-authorizes-military-to-help-defend-saudi-arabia-against-houthis/000001a1-786e-d222-a3e3-7f6e6db80000",
+      "title": "Egypt's parliament approves military assistance for Saudi Arabia against Houthis",
+      "published": "Mon, 26 Oct 2026 16:55:31 +0200"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/defense-news/article-912920",
+      "title": "IDF stops short of denying report Zamir, Netanyahu clashed over Iran strike before elections",
+      "published": "Mon, 26 Oct 2026 15:16:40 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/elections/2026-10-26/ty-article/.premium/report-idf-chief-warned-u-s-that-striking-iran-would-disrupt-israels-election/000001a1-7721-dddd-a1ad-f735b3a10000",
+      "title": "Report: IDF chief warned U.S. that striking Iran would disrupt Israel's election",
+      "published": "Mon, 26 Oct 2026 11:32:37 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/whatever-our-enemies-do-erdogans-son-rallies-diaspora-network-in-europe-as-german-intelligence-warns-of-ankaras-spying-on-dissidents/",
+      "title": "Erdogan’s son vows to stand against enemies at diaspora rally in Germany",
+      "published": "Mon, 12 Oct 2026 22:01:54 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 313,
+    "left": 10
+   }
+  }
+ }
+}

@@ -1,0 +1,7 @@
+source: src-verite-1916
+locator: p11
+url: https://archive.org/download/vritsurlemou00hlebuoft/vritsurlemou00hlebuoft_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer; the item binds the 1916 pamphlet with two Russian officers' notes of 1919, and only the pamphlet is cited; hyphens rejoined, spacing collapsed
+
+Le commandant de l'Armée Impériale ayant constaté que les arméniens faisaient cause communs avec les forces ennemies, se vit forcé, en vue d'assurer les derrières de ses troupes, d'ordonner le transfert vers le sud de l'élément arménien établi dans des localités considérés comme zones militaires.

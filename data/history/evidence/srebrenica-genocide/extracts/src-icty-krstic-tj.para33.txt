@@ -1,0 +1,7 @@
+source: src-icty-krstic-tj
+locator: para33
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+
+33. By the evening of 9 July 1995, the VRS Drina Corps had pressed four kilometres deep into the enclave, halting just one kilometre short of Srebrenica town. Late on 9 July 1995, emboldened by this military success and the surprising lack of resistance from the Bosnian Muslims as well as the absence of any significant reaction from the international community, President Karadži} issued a new order authorising the VRS Drina Corps to capture the town of Srebrenica.57

@@ -1,0 +1,9 @@
+source: src-napoleon-corr-7
+locator: item5867
+url: https://archive.org/download/correspondancede07napouoft/correspondancede07napouoft_djvu.txt
+read: 2026-09-25
+note: No. 5867, to General Toussaint Louverture, 27 brumaire an X (18 November 1801), first paragraph; the layer prints the day as "2"
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: line-break hyphenation in the scan's text layer rejoined; nothing else changed
+
+5867. — AU GÉNÉRAL. TOUSSAINT LOUVERTURE. Paris, "2" brumaire an X (18 novembre 1801). La paix avec l'Angleterre et toutes les puissances de l'Europe, qui vient d'asseoir la République au premier degré de puissance et de grandeur, met le Gouvernement à même de s'occuper de la colonie de Saint-Domingue. Nous y envoyons le citoyen Leclerc , notre beaufrère, en qualité de capitaine général, comme premier magistrat de la colonie. Il est accompagné de forces convenables pour faire respecter la souveraineté du peuple français. C'est dans ces circonstances que nous nous plaisons à espérer que vous allez nous prouver, et à la France entière, la sincérité des sentiments que vous avez constamment exprimés dans les différentes lettres que vous nous avez écrites. Nous avons conçu pour vous de l'estime, et nous nous plaisons à reconnaître et à proclamer les grands services que vous avez rendus au peuple français. Si son pavillon flotte sur Saint-Domingue, c'est à vous et aux^braves noirs qu'il le doit. Appelé par vos talents et la force des circonstances au premier commandement, vous avez détruit la guerre civile, mis un frein à la persécution de quelques bommes féroces, remis en honneur la religion et le culte du Dieu de qui tout émane. La Constitution que vous avez faite, en renfermant beaucoup de bonnes choses, en contient qui sont contraires à la dignité et à la souveraineté du peuple français, dont Saint-Domingue ne forme qu'une portion.

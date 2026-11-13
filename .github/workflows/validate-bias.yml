@@ -1,5 +1,7 @@
 name: Validate Bias Engine
 
+permissions: {}
+
 on:
   push:
     branches: ['claude/**']
@@ -16,10 +18,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -30,7 +32,7 @@ jobs:
 
       - name: Cache spaCy model
         id: spacy-cache
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
           key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
@@ -42,11 +44,15 @@ jobs:
       - name: Run bias validation suite
         run: python pipeline/validation/runner.py --json
 
-      - name: Check for catastrophic failures
+      - name: Check for failures
         run: |
           result=$(python pipeline/validation/runner.py 2>&1)
           echo "$result"
-          if echo "$result" | grep -q "CATASTROPHIC"; then
+          if echo "$result" | grep -qE "CATASTROPHIC:[[:space:]]+[1-9]"; then
             echo "::error::Bias validation found CATASTROPHIC failures"
+            exit 1
+          fi
+          if echo "$result" | grep -qE "WRONG:[[:space:]]+[1-9]"; then
+            echo "::error::Bias validation found WRONG scores"
             exit 1
           fi

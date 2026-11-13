@@ -1,0 +1,6 @@
+source: src-ushmm-treblinka
+locator: secsite
+url: https://encyclopedia.ushmm.org/content/en/article/treblinka
+read: 2026-10-07
+
+The site of the killing center was heavily wooded and hidden from view. It was laid out in a trapezoid covering an area of 1,312 by 1,968 feet (an area equivalent to almost 34 soccer fields). Pine branches woven into the eight-foot tall barbed-wire fence and trees planted around the perimeter served as camouflage, blocking any view into the camp from the outside. Watchtowers 26 feet high (almost 2.5 stories) were placed along the fence and at each of the four corners.

@@ -1,0 +1,7 @@
+source: src-unsc-134-1960
+locator: op2
+url: https://documents.un.org/doc/resolution/gen/nr0/157/23/pdf/nr015723.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation and glyph errors are kept as the layer prints them
+
+2. Deplores that the recent disturbances in the Union of South Africa should have led to the loss of life of so many Africans and extends to the families of the victims its deepest sympathies;

@@ -1,0 +1,7 @@
+source: src-frank-2005
+locator: para23
+url: https://www.washingtonexaminer.com/weekly-standard/why-truman-dropped-the-bomb
+read: 2026-10-07
+note: paragraph 23; Newman's figure is Frank's report of Newman's calculation, not held from Newman
+
+Several American historians led by Robert Newman have insisted vigorously that any assessment of the end of the Pacific war must include the horrifying consequences of each continued day of the war for the Asian populations trapped within Japan’s conquests. Newman calculates that between a quarter million and 400,000 Asians, overwhelmingly noncombatants, were dying each month the war continued. Newman et al. challenge whether an assessment of Truman’s decision can highlight only the deaths of noncombatant civilians in the aggressor nation while ignoring much larger death tolls among noncombatant civilians in the victim nations.

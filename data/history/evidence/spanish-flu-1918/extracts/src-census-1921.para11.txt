@@ -1,0 +1,7 @@
+source: src-census-1921
+locator: para11
+url: https://archive.org/download/india.history.resource.92353/92353_djvu.txt
+read: 2026-09-25
+note: line-break hyphenation in the text layer rejoined and line breaks collapsed to spaces; nothing else changed
+
+11. The influenza epidemic of 1918 invaded the continent of India in two distinct waves. The first infection apparently radiated from Bombay and progressed eastward from there, but its origin and foci are uncertain. It may have been introduced from shipping in Bombay during May, and there is a suggestion of some sort of mild influenza in the Bombay district, Delhi, and Meerut in the spring ‘but the existence of the disease in epidemic form cannot be established without doubt before June. The disease became general in India in both the military and . civil population during August, and infection spread rapidly from place to place by rail, road and water. The first epidemic was most prevalent in urban areas, but it was not. ofa specially virulent type and, probably for that reason, ‘it is said to have affected young children and old people most severely. The mortality curve went to a peakin July and then dropped, and there is evidence of adistinct interval between the firstand second waves but not of any real break of continuity, as sporadic cases were reported throughout the intervening period. It is impossible to say where the more virulent virus of the second invasion came from. There are certain facts which suggest that the disease began in the Poona district in September.

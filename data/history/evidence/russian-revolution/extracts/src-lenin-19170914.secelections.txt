@@ -1,0 +1,7 @@
+source: src-lenin-19170914
+locator: secelections
+url: https://www.marxists.org/archive/lenin/works/1917/sep/14.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+We must not be deceived by the election figures: elections prove nothing.

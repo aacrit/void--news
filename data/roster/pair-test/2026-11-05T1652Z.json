@@ -1,0 +1,126 @@
+{
+ "collected_at": "2026-11-05T16:52:51Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 29,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16268759/Man-accused-murdering-soulmate-artist-dismembering-body-hiding-freezer-told-fantasies.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Man, 65, 'who murdered \"soulmate\" and hid her dismembered body in freezer with her pet guinea pigs for three years' came up with 'fantasies' about her whereabouts, court hears",
+      "published": "Thu, 05 Nov 2026 15:31:24 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/george-gordon-murder-guinea-pigs-37848085",
+      "title": "Man who ‘drank at pub after killing friend and guinea pigs’ cries in court",
+      "published": "Thu, 5 Nov 2026 16:28:00 +0000"
+     }
+    },
+    {
+     "score": 26,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16268127/Henry-Nowaks-killer-abusing-privilege-Sikhs-carry-knives.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Henry Nowak's killer has sentence increased to 25 years after judges say he displayed 'incomprehensible cruelty' by 'filming and taunting' teenager as he lay dying",
+      "published": "Thu, 05 Nov 2026 16:48:48 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/henry-nowak-vickrum-digwa-sentence-37845203",
+      "title": "Henry Nowak killer Vickrum Digwa has sentence increased after claiming it was 'excessive'",
+      "published": "Thu, 5 Nov 2026 16:13:20 +0000"
+     }
+    },
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.dailymail.com/crime-desk/article-16258107/Russell-Brand-rape-trial-liveblog-week-four.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Russell Brand trial live: Police release video of actor being interviewed after he is found guilty of one rape and three sexual assaults",
+      "published": "Thu, 05 Nov 2026 16:51:22 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/russell-brand-victims-rape-trial-37842635",
+      "title": "Harrowing words of Russell Brand's four victims — including TV and radio workers",
+      "published": "Thu, 5 Nov 2026 15:56:29 +0000"
+     }
+    },
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16268857/Kimmarie-Johnson-dead-Beverly-Hills-90210-actress.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Beverly Hills, 90210 actress Kimmarie Johnson dead at 50 after sudden 'heart event'",
+      "published": "Thu, 05 Nov 2026 16:28:25 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/kimmarie-johnson-dead-beverly-90210-37848139",
+      "title": "Beverly Hills 90210's Kimmarie Johnson dies aged 50 after 'heart event'",
+      "published": "Thu, 5 Nov 2026 16:19:26 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16267747/Married-Sight-UK-wont-return-Channel-4-sexual-assault-allegations.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Married at First Sight UK won't return to Channel 4 as it axes show and confirms it won't air already-filmed sixth season after sexual assault allegations",
+      "published": "Thu, 05 Nov 2026 13:53:10 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/mafs-uk-channel-4-axe-37847037",
+      "title": "Charities welcome Married At First Sight UK axe but say more must be done",
+      "published": "Thu, 5 Nov 2026 16:49:18 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 136,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/erdogans-family-business-ties-complicate-azerbaijan-dispute/",
+      "title": "Erdogan’s family business ties complicate Azerbaijan dispute",
+      "published": "Mon, 26 Oct 2026 23:01:29 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 321,
+    "left": 10
+   }
+  }
+ }
+}

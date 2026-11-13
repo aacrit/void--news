@@ -1,0 +1,82 @@
+{
+ "version": "1.2.0",
+ "title": "The Taiping Rebellion",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 59.424
+  },
+  {
+   "startTime": 59.424,
+   "title": "Jintian village, January 1851",
+   "endTime": 146.652
+  },
+  {
+   "startTime": 146.652,
+   "title": "Nanjing, March 1853",
+   "endTime": 232.97
+  },
+  {
+   "startTime": 232.97,
+   "title": "Nanjing, September 1856",
+   "endTime": 292.624
+  },
+  {
+   "startTime": 292.624,
+   "title": "Zeng Guofan's tent, Hunan",
+   "endTime": 337.569
+  },
+  {
+   "startTime": 337.569,
+   "title": "Nanjing, July 1864",
+   "endTime": 381.822
+  },
+  {
+   "startTime": 381.822,
+   "title": "Five accounts",
+   "endTime": 394.966
+  },
+  {
+   "startTime": 394.966,
+   "title": "Taiping Heavenly Kingdom",
+   "endTime": 459.511
+  },
+  {
+   "startTime": 459.511,
+   "title": "Qing Imperial",
+   "endTime": 530.422
+  },
+  {
+   "startTime": 530.422,
+   "title": "Western Missionary / Diplomatic",
+   "endTime": 613.904
+  },
+  {
+   "startTime": 613.904,
+   "title": "Marxist / PRC Historiography",
+   "endTime": 698.95
+  },
+  {
+   "startTime": 698.95,
+   "title": "Demographic / Humanitarian",
+   "endTime": 767.606
+  },
+  {
+   "startTime": 767.606,
+   "title": "What each one leaves out",
+   "endTime": 843.077
+  },
+  {
+   "startTime": 843.077,
+   "title": "Legacy",
+   "endTime": 859.196
+  },
+  {
+   "startTime": 859.196,
+   "endTime": 872.296,
+   "title": "Also from Void News"
+  }
+ ]
+}

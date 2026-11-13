@@ -1,0 +1,7 @@
+source: src-hmt-foi-2018
+locator: secrepaid
+url: https://assets.publishing.service.gov.uk/media/5a7d78a6e5274a676d53243f/FOI2018-00186_-_Slavery_Abolition_Act_1833_-_pdf_for_disclosure_log__003_.pdf
+read: 2026-10-09
+note: page 2, PDF text layer; sliced by script from the fetched copy, runs of whitespace collapsed to one space
+
+Money borrowed to fund the Slavery Abolition Act (1835) was therefore fully repaid in 2015. The long gap between this money being borrowed and its repayment was due to the type of financial instrument that was used, rather than the amount of money borrowed.

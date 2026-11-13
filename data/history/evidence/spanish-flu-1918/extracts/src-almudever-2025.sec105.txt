@@ -1,0 +1,6 @@
+source: src-almudever-2025
+locator: sec105
+url: https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12160415/fullTextXML
+read: 2026-09-25
+
+Para Echeverri 5, en España mueren de gripe 143.930 personas en 1918, 21.094 en 1919 y 17.841 en 1920, un total de 182.865 personas, el 75% de las cuales fallece durante el segundo brote y el 45% de las mismas lo hacen en el mes de octubre de 1918; cifra similar a la planteada por Navarro 16, que estima la mortalidad en 147.114 para el año 1918, 21.235 en 1919 y 17.825 en 1920. Sin embargo, posteriormente Echeverri31 eleva la cifra a 257.082, es decir, el 12‰ de la población española, que ascendía en esa época a 20.880.000 habitantes.

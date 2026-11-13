@@ -1,4 +1,6 @@
 # News Memory Engine — Technical Runbook
+> Historical. Written before the 2026-09-01 Supabase decommission and the Kokoro switch; the current state is CLAUDE.md.
+
 **Implementation Guide for Engineering Team**
 
 Date: 2026-03-24

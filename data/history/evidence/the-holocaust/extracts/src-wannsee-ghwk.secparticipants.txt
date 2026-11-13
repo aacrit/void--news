@@ -1,0 +1,25 @@
+source: src-wannsee-ghwk
+locator: secparticipants
+url: https://www.ghwk.de/fileadmin/Redaktion/PDF/Konferenz/Protokolle/240305_Protokoll_Englisch.pdf
+read: 2026-10-07
+note: the PDF text layer prints the transcript's two-column participant list line by line; the copy number ('30 copies', '16th copy') sits beside this list on the same page and is held in extract seccopies
+
+Protocol of Meeting.
+  The following persons participated in the meeting
+on the final solution of the Jewish question, held on 20 January 1942 at
+Am Grossen Wannsee 56–58, Berlin:
+Gauleiter Dr Meyer and    Reich Ministry
+Reich Department Head Dr Leibbrandt  for the Occupied
+      Eastern Territories
+State Secretary Dr Stuckart   Reich Ministry
+      of the Interior
+State Secretary Neumann   Office of the
+      Plenipotentiary for the
+      Four Year Plan
+State Secretary Dr Freisler   Reich Ministry of
+      Justice
+State Secretary Dr Bühler   Office of the Governor
+      General
+Undersecretary of State Luther   Foreign Office
+SS-Oberführer Klopfer     Party Chancellery
+Ministerial Director Kritzinger   Reich Chancellery

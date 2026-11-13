@@ -1,0 +1,83 @@
+{
+ "collected_at": "2026-09-26T13:23:22Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16161491/Have-Got-News-You-complaints-Victoria-Beckham-slur-upheld-BBC-bosses-Katherine-Ryan-apologises-stupid-joke.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Have I Got News For You complaints over Victoria Beckham slur are upheld by BBC bosses as Katherine Ryan apologises for 'stupid joke'",
+      "published": "Sat, 26 Sep 2026 11:48:23 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/katherine-ryan-victoria-beckham-bbc-37705320",
+      "title": "Katherine Ryan publicly apologises to Victoria Beckham after 'joke' is pulled off BBC iPlayer",
+      "published": "Sat, 26 Sep 2026 11:17:53 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16162163/Football-finance-expert-punishment-Man-City.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Football finance expert reveals why a points deduction is 'the most likely' punishment for Man City, whether Liverpool and Man United can claim 'robbed' Premier League titles and the compensation can of worms that awaits",
+      "published": "Sat, 26 Sep 2026 12:20:36 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/man-city-charges-relegation-appeal-37705353",
+      "title": "Premier League sent demand over Man City 115 charges appeal as punishment verdict given",
+      "published": "Sat, 26 Sep 2026 12:47:54 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 102,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/article-909744",
+      "title": "Netanyahu did not discuss UAE's October 7 warning at Gaza security meeting week of attack - report",
+      "published": "Sat, 26 Sep 2026 00:38:16 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-security/2026-09-25/ty-article/report-bin-zayed-warned-netanyahu-days-before-oct-7-sources-say/000001a0-d9b8-dfbb-afa4-fbf8844a0000",
+      "title": "NYT: Sources confirm Haaretz report of UAE president's Oct. warning to Netanyahu",
+      "published": "Fri, 25 Sep 2026 21:54:56 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 27,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 135,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [],
+   "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://nordicmonitor.com/feed/"
+  }
+ }
+}

@@ -1,0 +1,5 @@
+rendering: void-translation
+of: src-gorbachev-19860514.para1
+names: Чернобыльской=Chernobyl
+
+Good evening, comrades! You all know that a misfortune has recently befallen us: the accident at the Chernobyl nuclear power station. It has painfully affected Soviet people and disturbed the international public. For the first time we have come up in reality against so formidable a force as nuclear energy that has escaped control.

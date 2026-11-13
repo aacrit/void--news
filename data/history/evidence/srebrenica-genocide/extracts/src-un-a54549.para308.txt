@@ -1,0 +1,6 @@
+source: src-un-a54549
+locator: para308
+url: https://documents.un.org/doc/undoc/gen/n99/348/76/pdf/n9934876.pdf
+read: 2026-09-24
+
+308. At 1600 hours, the United Nations military observers reported that upwards of 20,000 inhabitants, mainly women, children and the elderly, were converging on the Dutchbat headquarters compound in Potogari. They added that “... the shelling of the town [had been ongoing] despite the airstrikes ... the town is in the hands of the BSA ... B-Company has left the compound in Srebrenica and is heading for Potogari ... the airstrikes on the north part of the enclave have not taken place up till now ... that means that the compound is a very easy target for all the weapons on the north ridge of the enclave”. A covering note transmitting this report stated that, “apparently, there has been too little too late”.

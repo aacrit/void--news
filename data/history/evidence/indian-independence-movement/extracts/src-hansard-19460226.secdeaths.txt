@@ -1,0 +1,8 @@
+source: src-hansard-19460226
+locator: secdeaths
+url: https://api.parliament.uk/historic-hansard/commons/1946/feb/26/india-naval-mutiny-and-civil-disturbances
+read: 2026-10-09
+note: the text is the Hansard page's own text (UK Parliament, historic Hansard), whitespace collapsed
+note: the Prime Minister (Mr. Attlee)
+
+In Bombay there have been 223 deaths and 1,037 persons have been injured

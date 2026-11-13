@@ -1,0 +1,7 @@
+source: src-frus-d1398
+locator: whole
+url: https://history.state.gov/historicaldocuments/frus1915Supp/d1398
+read: 2026-09-25
+note: the document as the Office of the Historian's page prints it, page-break markers removed, footnote text kept at the end
+
+File No. 867.4016/67 The Ambassador in France ( Sharp ) to the Secretary of State [Telegram] Paris , May 28, 1915, 11 a. m. [ Received 8 p. m. ] 796. Foreign Office note just received transmits a communication requesting that it be notified urgently to Ottoman Government as follows: May 24. For about a month the Kurd and Turkish population of Armenia has been massacring Armenians with the connivance and often assistance of Ottoman authorities. Such massacres took place in middle April (new style) at Erzerum, Dertchun, Eguine, Van, Bitlis, Mush, Sassun, Zeitun, and throughout Cilicia. Inhabitants of about one hundred villages near Van were all murdered. In that city Armenian quarter is besieged by Kurds. At the same time in Constantinople Ottoman Government ill-treats inoffensive Armenian population. In view of these new crimes of Turkey against humanity and civilization, the Allied governments announce publicly to the Sublime Porte that they will hold personally responsible [for] these crimes all members of the Ottoman Government and those of their agents who are implicated in such massacres. 2 Sharp Repeated to the Ambassador in Turkey for communication in paraphrase, May 29, No. 715. ↩

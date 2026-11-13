@@ -1,0 +1,7 @@
+source: src-wrb-19441126
+locator: secfigures
+url: http://www.fdrlibrary.marist.edu/_resources/images/hol/hol00522.pdf
+read: 2026-10-07
+note: the PDF's OCR layer, glyphs as read; line breaks collapsed
+
+The two reports were prepared independently and are repro- . duced exact:cy in the form they were received by the War Refugee Board1 except for a few deletions necessary for t he protection of persons who may still be alive. The figures concerning the size ot the Jewish corrvays and the l'lUJilbers ot men and waDen admitted to the two camps cannot be taken as mathematical:cy exact; and., in fact., are declared by the authors to be no more than reliable approximations. They are accepted as such by the Board.

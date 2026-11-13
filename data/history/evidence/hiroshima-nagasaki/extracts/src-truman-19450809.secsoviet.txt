@@ -1,0 +1,6 @@
+source: src-truman-19450809
+locator: secsoviet
+url: https://www.trumanlibrary.gov/library/public-papers/97/radio-report-american-people-potsdam-conference
+read: 2026-10-05
+
+The military arrangements made at Berlin were of course secret. One of those secrets was revealed yesterday, when the Soviet Union declared war on Japan.

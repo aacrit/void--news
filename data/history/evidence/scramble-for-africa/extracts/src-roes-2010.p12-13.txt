@@ -1,0 +1,19 @@
+source: src-roes-2010
+locator: p12-13
+url: https://eprints.whiterose.ac.uk/id/eprint/74340/2/roesAW2.pdf
+read: 2026-09-25
+note: sliced from the PDF's text layer; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed
+note: the author's accepted manuscript, whose page numbers are its own; the footnotes between are dropped
+
+demographic impact. A maximalist position, which currently appears to be dominant,
+estimates that roughly fifty per cent of the Congo‟s African population perished under
+EIC rule, which would imply a death toll running into the millions51. Opposed to this is a
+group of minimalists or, more accurately, agnostics which stresses the unreliable and
+extremely rudimentary nature of available demographic data while also pointing to often
+unspecified regional variations and the multiplicity of causes of population decline, with
+epidemics –for which Europeans alledgedly bear little responsibility– figuring most
+prominently52. According to this group, the claim that EIC rule constituted a massacre „of
+holocaust proportions‟ is based on shaky data, largely unsubstantiated and overdrawn53.
+While a firm estimate of the number of victims must indeed remain elusive, pleas of
+ignorance should not lead to an evasion or minimization of the issue of population
+decline54.

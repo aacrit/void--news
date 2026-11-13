@@ -1,0 +1,7 @@
+source: src-cwmg-17-congress-punjab-report
+locator: secdeathroll
+url: https://archive.org/download/HindSwaraj-CWMG-017/CWMG-v017-XVII-MC-BETA_djvu.txt
+read: 2026-10-09
+note: the text is the archive.org full-text (djvu.txt) layer of the electronic edition of the Collected Works (Publications Division), whitespace collapsed; line-end hyphens and glyph errors kept as the layer gives them
+
+In the matter of the death-roll, it is interesting to note that according to the Government’s own showing, they did not commence investigating the figure before the 20th August, i.e., four months after the tragedy. Mr. Thompson then announced that not more than 290 had died. Now they have practically accepted the Sewa Samiti’s* figures, viz., 500, which are based on actual tracing and represent the minimum. The exact figure will never be known, but, after careful investigation, we consider that Lala Girdhari Lai’s computation of 1,000 is by no means an exaggerated calculation. They must have been indifferent shots if, after directing their fire in the thickest part in a concentra- ted area, and among 20,000 people, the soldiers were not able to kill 1,000 men.

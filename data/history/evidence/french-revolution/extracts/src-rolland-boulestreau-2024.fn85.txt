@@ -1,0 +1,7 @@
+source: src-rolland-boulestreau-2024
+locator: fn85
+url: https://shs.cairn.info/revue-annales-historiques-de-la-revolution-francaise-2024-4-page-85?lang=fr&tab=resume
+read: 2026-10-09
+note: note 85 as Cairn serves the article's notes to a reader without a subscription; the article's body is not open; whitespace collapsed, nothing else changed
+
+Pour autant, le bilan des massacres, et même plus globalement du conflit, reste toujours aussi difficile à chiffrer. Jacques Hussenet l’estimait au minimum à 170 000 morts, au maximum à 220 000, Bleus et Blancs confondus. Voir Jacques Hussenet , op. cit. , p. 148.

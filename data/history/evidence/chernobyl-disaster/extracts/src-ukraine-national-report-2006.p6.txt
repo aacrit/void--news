@@ -1,0 +1,10 @@
+source: src-ukraine-national-report-2006
+locator: p6
+url: https://www.osti.gov/etdeweb/servlets/purl/20775483
+read: 2026-10-07
+note: chapter 1, printed page 6 (PDF page 7), from the paragraph's second sentence; the English is the report's own ('as early as it possible', 'an huge')
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+note: a hyphen breaking a lower-case word across a line end in the text layer is closed up
+note: the PDF is a scan with an OCR text layer; the extract was compared line by line with the rendered page (170 dpi) and two OCR errors are corrected to what the page prints: '«red forest*' is printed '«red forest»', and '4 Gy. or 400 rem' is printed '4 Gy or 400 rem'
+
+Preparation for their evacuation started as early as it possible on April 26, but it was postponed by a decision of the USSR Government and the Central Committee of the CPSU. Fortunately, this did not entail grave consequences. The town of Prypiat is located 4 km away from the NPP in the north-western direction. The wind on that day was blowing in the direction of the town. The pine forest (which was 1 km away from the NPP roughly in the same direction) was transformed by the radioactive plume into a «red forest». Thus, irradiation dose of 10 Gy or 1,000 rem caused senescence of pine trees in early spring. The lethal radiation exposure 0.5 level for man is 4 Gy or 400 rem. Hence, it is clear that postponing evacuation of Prypiat's residents was certainly an huge mistake.

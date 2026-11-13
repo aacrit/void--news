@@ -1,0 +1,128 @@
+{
+ "collected_at": "2026-10-22T14:07:53Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 26,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16229021/Billionaire-Republican-donor-Peter-Thiel-Trump-war-Iran-mistake.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Billionaire Republican donor Peter Thiel says he thinks Trump's war with Iran was a mistake as potentially disastrous mid-terms loom",
+      "published": "Thu, 22 Oct 2026 09:10:18 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/politics/trump-peter-thiel-iran-war-37799295",
+      "title": "Billionaire Donald Trump donor Peter Thiel embarrasses US President by admitting Iran war was a mistake",
+      "published": "Thu, 22 Oct 2026 12:35:17 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16229607/Caroline-Flacks-brother-four-times-drink-drive-limit-took-life-home-struggling-cope-death-sister-father-inquest-hears.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Caroline Flack's brother was four times drink-drive limit when he took his own life at home after struggling to cope with death of his sister and father, inquest hears",
+      "published": "Thu, 22 Oct 2026 14:11:08 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/caroline-flack-brother-paul-inquest-37799912",
+      "title": "Caroline Flack’s brother Paul ‘never recovered’ from her death and took his own life",
+      "published": "Thu, 22 Oct 2026 12:37:09 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 172,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/influencers-26/50jews-26/article-908123",
+      "title": "No. 2: Benjamin Netanyahu: Shaping Israel’s politics and global image for a generation",
+      "published": "Thu, 10 Sep 2026 18:30:37 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-politics/2026-10-20/ty-article/netanyahu-says-iran-trying-to-interfere-in-israels-elections/000001a1-5a56-d014-afa7-fbf700d90000",
+      "title": "'This is not spin': Netanyahu says Iran wants to interfere in Israel's elections",
+      "published": "Tue, 20 Oct 2026 21:20:34 +0300"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/israel-election-2026/article-912482",
+      "title": "Eisenkot leads Netanyahu as Winter, Hendel-Zelekha may not cross electoral threshold - poll",
+      "published": "Thu, 22 Oct 2026 06:04:53 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/elections/2026-10-19/ty-article/eisenkot-bloc-leads-in-new-polls-still-short-of-majority-without-arab-parties/000001a1-55d8-d80a-a3b1-dfde2d240000",
+      "title": "Eisenkot bloc leads Netanyahu in two new polls, but falls short of a majority without Arab parties",
+      "published": "Mon, 19 Oct 2026 23:54:44 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.indiatoday.in/india/story/netanyahu-invites-pm-modi-to-light-torch-with-indian-pilot-smit-machchhar-on-israels-independence-day-3022918-2026-10-22?utm_source=rss",
+      "title": "Netanyahu invites PM to light torch with Smit Machchhar on Israel Independence Day",
+      "published": "Thu, 22 Oct 2026 18:58:36 +0530"
+     },
+     "left": {
+      "url": "https://www.thehindu.com/news/national/pm-modi-emphasises-dialogue-diplomacy-in-call-with-netanyahu-over-west-asia-situation/article71611957.ece",
+      "title": "PM Modi emphasises dialogue, diplomacy in call with Netanyahu over West Asia situation",
+      "published": "Thu, 22 Oct 2026 19:13:41 +0530"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/10/whatever-our-enemies-do-erdogans-son-rallies-diaspora-network-in-europe-as-german-intelligence-warns-of-ankaras-spying-on-dissidents/",
+      "title": "Erdogan’s son vows to stand against enemies at diaspora rally in Germany",
+      "published": "Mon, 12 Oct 2026 22:01:54 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 309,
+    "left": 10
+   }
+  }
+ }
+}

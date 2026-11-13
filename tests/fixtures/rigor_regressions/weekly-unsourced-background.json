@@ -1,0 +1,17 @@
+{
+ "class": "weekly-unsourced-background",
+ "gate": "pipeline/briefing/weekly_parse.py::ground_text",
+ "product": "weekly",
+ "covers": [
+  "frontend/build-data/weekly-corrections.json (entries whose \"classes\" name this class)"
+ ],
+ "note": "Background from model knowledge: a name and a year no printed story carries. Background with no name or number in it is not caught.",
+ "planted": {
+  "text": "The island has hosted Pituffik Space Base since a treaty signed in 1951.",
+  "source_text": "The two governments signed the agreement on Friday, officials said."
+ },
+ "clean": {
+  "text": "The two governments signed the agreement on Friday.",
+  "source_text": "The two governments signed the agreement on Friday, officials said."
+ }
+}

@@ -1,0 +1,7 @@
+source: src-obama-laos-2016
+locator: secuxo
+url: https://obamawhitehouse.archives.gov/the-press-office/2016/09/06/remarks-president-obama-people-laos
+read: 2026-10-09
+note: the same transcript; the sentence runs on past the cut
+
+Many of the bombs that were dropped were never exploded. Over the years, thousands of Laotians have been killed or injured -- farmers tending their fields, children playing. The wounds -- a missing leg or arm -- last a lifetime. And that’s why, as President, I’ve dramatically increased our funding to help remove these unexploded bombs. As a result, Laos is clearing more bombs. Fewer Laotians are being hurt or killed. And together, we are saving lives. But there is still much more work to do. So today, I’m proud to announce a historic increase in these efforts. The United States will double our annual funding to $90 million over the next three years

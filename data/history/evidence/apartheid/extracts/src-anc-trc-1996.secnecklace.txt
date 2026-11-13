@@ -1,0 +1,7 @@
+source: src-anc-trc-1996
+locator: secnecklace
+url: https://www.justice.gov.za/trc/hrvtrans/submit/anctruth.htm
+read: 2026-10-09
+note: the text is the page's own text, whitespace collapsed to single spaces
+
+On a number of occasions both the ANC and UDF/MDM leadership condemned violations of human rights which occurred as a result of "peoples' courts", "necklacing", and other unacceptable practices, whilst recognising the context in which such actions took place.

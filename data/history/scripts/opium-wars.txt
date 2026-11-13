@@ -1,0 +1,148 @@
+## OPEN
+N: You call these the Opium Wars. The country that fought them never did.
+N: Forty four warships and four thousand troops sailed for China, and the government that sent them said almost nothing about opium.
+N: A vote to censure that war failed by nine votes in Parliament.
+N: The treaty that ended it ceded an island, opened five ports, and set an indemnity of twenty one million silver dollars. It never once mentioned the drug that started the fighting.
+
+## TITLE
+N: The Opium Wars. Eighteen thirty nine to eighteen sixty.
+
+## SCENE 1 | Canton, June 1839
+N: In March eighteen thirty nine, Emperor Daoguang appointed Lin Zexu Imperial Commissioner in Canton, with one order: end the opium trade.
+N: Lin demanded foreign merchants surrender their opium. When they refused, he blockaded the foreign trading posts and detained three hundred and fifty foreign traders inside them, including the British Superintendent of Trade, Charles Elliot.
+N: The traders surrendered twenty thousand two hundred and eighty three chests of opium. Roughly one thousand four hundred tons.
+N: Lin destroyed it in trenches of lime and salt water, over twenty three days, from the third of June to the twenty fifth.
+
+## DOCUMENT | Lin Zexu | Letter to Queen Victoria (never delivered) | 1839
+N: That same year, Lin Zexu wrote a letter to Queen Victoria. It was never delivered.
+M: We find that your country is sixty or seventy thousand li from China. Yet there are barbarian ships that strive to come here for trade for the purpose of making a great profit. The wealth of China is used to profit the barbarians.
+
+## ASIDE
+N: The letter asked one question. Would Britain tolerate another country flooding English cities with an addictive poison, for profit? It got no answer. It got warships instead.
+
+## REST
+
+## SCENE 2 | The Nemesis
+N: Lord Palmerston, the British Foreign Secretary, answered with forty four warships and four thousand troops.
+N: Its centerpiece was the Nemesis, a six hundred and sixty ton iron hulled steamer armed with thirty two pound guns and Congreve rockets, the first iron warship ever to see action.
+N: On the seventh of January eighteen forty one, at the Battle of Chuenpi, four British warships destroyed twenty nine Chinese junks and shore batteries in a single afternoon.
+N: The Qing army fought with matchlock muskets, two centuries behind the British percussion cap rifle. At Zhenjiang, in July eighteen forty two, Manchu bannermen fought hand to hand rather than surrender. One thousand five hundred were killed.
+
+## REST
+
+## SCENE 3 | Nanjing, August 1842
+N: The Treaty of Nanjing was signed aboard a British warship on the twenty ninth of August, eighteen forty two.
+N: China ceded Hong Kong Island to Britain forever. Five ports opened: Canton, Amoy, Fuzhou, Ningbo, Shanghai. An indemnity of twenty one million silver dollars was due.
+N: No Qing emperor had ceded sovereign territory to a foreign power since the dynasty's founding in sixteen forty four. This broke a hundred and ninety eight years of that.
+N: And the treaty said nothing about opium. British opium imports into China continued, and grew.
+
+## SCENE 4 | The Old Summer Palace
+N: The second war began over a ship, and grew when France joined after a French missionary was executed in Guangxi.
+N: It ended on the eighteenth and nineteenth of October, eighteen sixty, when three thousand five hundred British and French soldiers burned the Yuanmingyuan, the emperor's summer palace, on the order of Lord Elgin.
+N: The palace held bronzes, jades, silk scrolls, and a library of ten thousand volumes, gathered over a hundred and fifty years. It was looted first, then burned.
+
+## DOCUMENT | Lord Elgin | Dispatch justifying the burning of the Summer Palace | October 1860
+N: Elgin gave his reason plainly.
+M: The Chinese must learn and be made to feel that they are a conquered people.
+
+## DOCUMENT | Victor Hugo | Letter to Captain Butler | November 1861
+N: The writer Victor Hugo heard about the burning, and wrote to a French officer who had taken part.
+M: Two bandits entering a museum, devastating, looting and burning. One of the two victors filled his pockets, the other his coffers, and they returned to Europe arm in arm, laughing.
+
+## ASIDE
+N: The bronze zodiac heads looted from its fountain that week are still being argued over today. Some have gone back. Others are still sitting in private collections and museums somewhere else in the world.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of the same twenty one years.
+
+## PERSPECTIVE | The British ledger | victor
+N: The first account is the one that sent the fleet, and it never called this a war for drugs.
+N: China had refused two peaceful approaches. Lord Macartney would not perform the kowtow in seventeen ninety three, and was sent home. Lord Amherst was turned away at the gates in eighteen sixteen.
+N: Britain bought over thirty million pounds of Chinese tea a year, paid for entirely in silver, and opium was the one commodity that reversed the flow. By eighteen thirty eight it supplied about fifteen percent of British Indian government revenue.
+N: Lord Palmerston told Parliament the war defended one principle: a sovereign country cannot imprison foreign nationals and seize their property without legal process.
+N: William Gladstone rose to disagree.
+M: A war more unjust in its origin, a war more calculated in its progress to cover this country with permanent disgrace, I do not know.
+N: The motion to censure the government failed by nine votes.
+
+## PERSPECTIVE | The Qing court | vanquished
+N: The second account is the one that lost, and it went to war because its own people were dying.
+N: By eighteen thirty eight, between four and twelve million Chinese were addicted. Soldiers were too weak to drill. Officials spent their salaries on the drug. Silver drained out of the country to pay for it.
+N: Lin Zexu's crackdown was a public health order, backed by a death penalty for merchants who kept importing. Britain answered with warships.
+N: The Qing navy fought wooden war junks against an iron steamship. At Chuenpi, four British ships destroyed twenty nine junks in an afternoon. At Zhenjiang, one thousand five hundred Manchu soldiers died fighting hand to hand rather than surrender.
+N: Sun Yat-sen, looking back at the treaty decades later, gave the account its verdict.
+M: After this China was bled by a million wounds.
+
+## REST | short
+
+## PERSPECTIVE | The nation's rebirth | revisionist
+N: The third account is the one taught in every Chinese school today. Its claim is that the wars did not simply happen to China. They made China's twentieth century.
+N: The Treaty of Nanjing was followed by treaties with the United States in eighteen forty four, with France the same year, and dozens more. By nineteen hundred, Britain held the Yangtze Valley, France the south, Germany held Shandong, Japan held Manchuria, Russia the northeast.
+N: The Boxer Protocol of nineteen oh one added an indemnity of four hundred and fifty million taels of silver, more than the Qing government collected in a year, payable over thirty nine years.
+N: Lin Zexu is honored today as a national hero. A twenty five meter statue of him stands in Fuzhou. The ruins of the Yuanmingyuan are kept unrestored, on purpose, as what the state calls a patriotic education base.
+N: Mao Zedong closed the account on the first of October, nineteen forty nine.
+M: The Chinese people have stood up.
+
+## PERSPECTIVE | The trade across three continents | academic
+N: The fourth account does not ask who was right. It asks where the money went.
+N: As late as seventeen fifty, the Yangtze Delta and the English Midlands had comparable living standards. The gap that opened after eighteen hundred came from coal, and from Britain's access to New World cotton, sugar and silver, not from any old superiority.
+N: Opium revenue in British India rose from one million rupees in seventeen seventy three to twenty two million rupees by eighteen thirty eight, about one seventh of the government's income. Without it, Britain could not have paid for the army that held India.
+N: The treaty ports created what historians call semi colonialism. China kept nominal sovereignty while foreign councils ran the courts, the police and the taxes inside them. Chinese residents, the majority in those cities, had no vote.
+N: Opium drained an estimated one hundred million taels of silver out of China. The resulting deflation raised the real tax burden on peasants who earned copper and paid their taxes in silver. That fiscal strain fed directly into the Taiping Rebellion, which killed twenty to thirty million people.
+N: Carl Trocki put the finding in five words.
+M: Opium was the tool of empire.
+
+## PERSPECTIVE | The fields of Bengal | vanquished
+N: The fifth account starts where the opium was grown, not where it was sold or smoked.
+N: The East India Company held the monopoly on Indian opium since seventeen seventy three. Peasants who took a cash advance were bound to grow poppy on their land, and sell the whole crop back at a price the Company set, not the market.
+N: To refuse meant forfeiting the advance and, in practice, ruin. Poppy took the place of rice, wheat and pulses on some of the most fertile farmland on the Gangetic plain.
+N: By eighteen thirty eight, opium supplied about fifteen percent of British Indian government revenue. The colonial administration in India ran on the same crop that was destroying households in China.
+N: A parliamentary inquiry into the system, decades later, found that the cultivator who took the Company's advance was no longer a free agent. He had to grow what he was told, and sell at the price he was given.
+
+## REST
+
+## TURN | What each one leaves out
+N: Every one of these accounts is built from the same set of facts, and each one leaves something out.
+N: The British ledger leaves out that Britain was, by its own numbers, the world's largest narcotics trafficker of its day, and that iron steamships against wooden junks was never a contest.
+N: The Qing court's account leaves out its own dysfunction and corruption, and that Chinese merchants inside China profited from the same trade it fought a war to stop.
+N: The nation's rebirth account leaves out that Chinese growers and dealers were part of this trade too, and that the century of humiliation was followed by its own catastrophes, the Great Leap Forward and the Cultural Revolution.
+N: The academic account explains where the silver went, and says almost nothing about the human experience of an addiction at the individual level.
+N: And the Bengal account leaves out the Indian merchants who profited as intermediaries in the very trade that ruined the peasants who grew the poppy.
+
+## REST
+
+## CLOSE
+N: By the eighteen eighties, China was importing over six thousand tons of opium a year, in a trade that neither war was ever officially fought over.
+N: Twelve bronze zodiac heads once stood on a fountain at the Yuanmingyuan. They were looted the week of the burning.
+N: Some have gone back. Others are still sitting in private collections and museums somewhere else in the world, and the dispute over them has not stopped.
+
+## SAY
+Zexu = zuh-SHOO
+Daoguang = DOW-gwahng
+Canton = kan-TAHN
+Qing = CHING
+Nanjing = nahn-JING
+Fuzhou = FOO-joh
+Amoy = ah-MOY
+Ningbo = NING-boh
+Yuanmingyuan = ywahn-ming-YWAHN
+Guangxi = gwahng-SHEE
+Zhenjiang = jun-jee-AHNG
+Chuenpi = chwen-PEE
+Macartney = muh-CART-nee
+Amherst = AM-erst
+Palmerston = PAL-mer-stun
+Elgin = EL-gin
+Gladstone = GLAD-stone
+Nemesis = NEM-uh-sis
+Sun Yat-sen = SOON yaht-SEN
+Mao Zedong = MAO zuh-DUNG
+Trocki = TROCK-ee
+Shandong = shahn-DUNG
+Manchuria = man-CHUR-ee-uh
+Yangtze = YANG-tsee
+Taiping = TIE-ping
+Gangetic = gan-JET-ik
+Bengal = ben-GAWL
+Boxer = BOK-ser

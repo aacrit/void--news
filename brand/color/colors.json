@@ -1,0 +1,43 @@
+{
+  "$schema": "https://void.news/brand/colors.schema.json",
+  "name": "Void Brand Color System",
+  "version": "1.0.0",
+  "note": "Source of truth is frontend/app/styles/tokens.css. Light = Morning Edition, Dark = Evening Edition. Brand accents are decorative (large logo use); use *-ink shades for small bold labels on paper.",
+  "brand": {
+    "news":    { "role": "flagship",         "light": "#B26F52", "light_ink": "#9A5638", "dark": "#D89A7C" },
+    "history": { "role": "archive",          "light": "#5C4033", "light_alt": "#8B7355", "dark": "#8B7355" },
+    "weekly":  { "role": "magazine",         "light": "#B91C1C", "light_alt": "#EF5350", "dark": "#EF5350" },
+    "vision":  { "role": "umbrella/youtube", "light": "#946B15", "light_alt": "#B8872A", "dark": "#D4A574" }
+  },
+  "bias_spectrum": {
+    "note": "Blue (left) -> Green (center ONLY) -> Red (right). Depth encodes distance from center. Dark values are AA-tuned for walnut.",
+    "far_left":     { "light": "#0E2E70", "dark": "#5088D0" },
+    "left":         { "light": "#1B5298", "dark": "#6498D8" },
+    "center_left":  { "light": "#2E78B4", "dark": "#78AEDE" },
+    "center":       { "light": "#2B784A", "dark": "#48B870" },
+    "center_right": { "light": "#C4503E", "dark": "#D05C48" },
+    "right":        { "light": "#9C2C22", "dark": "#CC3E34" },
+    "far_right":    { "light": "#6E1610", "dark": "#B02E26" }
+  },
+  "ink_and_paper": {
+    "paper_primary":   { "light": "#F0EBDD", "dark": "#1C1A17" },
+    "paper_secondary": { "light": "#E8E2D4", "dark": "#252320" },
+    "paper_card":      { "light": "#F5F0E4", "dark": "#2A2725" },
+    "ink_primary":     { "light": "#1A1A1A", "dark": "#EDE8E0" },
+    "ink_secondary":   { "light": "#4A4540", "dark": "#B8B0A5" },
+    "ink_muted":       { "light": "#52504A", "dark": "#9A938B" },
+    "divider":         { "light": "#D4CCC2", "dark": "#403B35" }
+  },
+  "sigil_sweep": {
+    "note": "The animated Sigil beam crosses these as it tilts.",
+    "brass":  { "light": "#946B15", "dark": "#D4A574" },
+    "left":   { "light": "#3F72B0", "dark": "#6098D8" },
+    "center": { "light": "#3E7C57", "dark": "#6FB98C" },
+    "right":  { "light": "#B0433B", "dark": "#D46A62" }
+  },
+  "treatments": {
+    "one_color_black": "#111111",
+    "reversed_white":  "#FFFFFF",
+    "reversed_paper":  "#FBF6EC"
+  }
+}

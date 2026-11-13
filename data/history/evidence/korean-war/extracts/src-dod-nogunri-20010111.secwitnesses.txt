@@ -1,0 +1,8 @@
+source: src-dod-nogunri-20010111
+locator: secwitnesses
+url: https://usinfo.org/wf-archive/2001/010112/epf503.htm
+read: 2026-10-09
+note: the same briefing; Korean witnesses' testimony as the U.S. side summarises it, not in their words
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+As to air strikes, according to their statements in their testimony, many Korean witnesses indicate that they were strafed or bombed by U.S. airplanes around noon on July 26th, 1950.

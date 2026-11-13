@@ -1,0 +1,17 @@
+{
+ "class": "weekly-wrong-date",
+ "gate": "pipeline/briefing/weekly_parse.py::ground_text",
+ "product": "weekly",
+ "covers": [
+  "frontend/build-data/weekly-corrections.json (entries whose \"classes\" name this class)"
+ ],
+ "note": "A date the week's reporting does not carry. Caught through its number; a wrong WEEKDAY alone is not caught by any deterministic Weekly rule (see weekly-wrong-speaker for the other gap).",
+ "planted": {
+  "text": "The deal was announced on Saturday, September 19.",
+  "source_text": "The deal was announced late on Friday, September 18, officials said."
+ },
+ "clean": {
+  "text": "The deal was announced late on Friday, September 18.",
+  "source_text": "The deal was announced late on Friday, September 18, officials said."
+ }
+}

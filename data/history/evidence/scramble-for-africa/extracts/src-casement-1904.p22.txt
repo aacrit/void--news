@@ -1,0 +1,24 @@
+source: src-casement-1904
+locator: p22
+url: https://archive.org/download/CasementReport/CasementReportSmall_djvu.txt
+read: 2026-09-25
+note: sliced from the scan's OCR text layer as the Internet Archive serves it; line-break hyphenation rejoined and runs of spaces collapsed, nothing else changed; OCR misreadings are left as the layer prints them
+
+my journey into the interior was the great reduction observable everywhere in native
+life. Communities I had formerly known as large and flourishing centres of population are to-day entirely gone, or now exist in such diminished numbers as to he no
+longer recognizable. The southern shores of Stanley Pool had formerly a population of
+fully 5,000 Batekes, distributed through the three towns of Ngaliema's ( Leopold ville),
+Kinchasa, and ISTdolo, lying within a few miles of each other. These people, some twelve
+years ago, decided to abandon their homes, and in one night the great majority of
+them crossed over into the French territory on the north shores of Stanley Pool.
+Where formerly had stretched these populous native African villages, I saw to-day only
+a few scattered European houses, belonging either to Government officials or local traders.
+In Leopoldville to-day there are not, I should estimate, 100 of the original natives or their
+descendants now residing. At Kinchasa a few more more may he found dwelling around
+one of the European trading dep6ts, while at Ndolo none remain, and there is nothing
+there but a station of the Congo Kailway Company and a Government post. These
+Bateke people were not, perhaps, particularly desirable subjects for an energetic
+Administration, which desired, above all things, progress and speedy results. They
+were themselves interlopers from the northern shores of the Congo River, and derived
+a very profitable existence as trading middlemen, exploiting the less sophisticated
+population among whom they had established themselves. Their loss to the southern

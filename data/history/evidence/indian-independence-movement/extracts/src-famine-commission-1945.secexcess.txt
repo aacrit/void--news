@@ -1,0 +1,8 @@
+source: src-famine-commission-1945
+locator: secexcess
+url: https://archive.org/download/in.ernet.dli.2015.206311/2015.206311.Famine-Inquiry_djvu.txt
+read: 2026-10-09
+note: the text is the scan's OCR layer (archive.org djvu.txt), whitespace collapsed; line-end hyphens and glyph errors kept as printed
+note: '1*5' is the layer's reading of '1·5' (one point five)
+
+We have estimated that there were some 1*5 million deaths in excess of the average in 1943 and the first half of 1944.

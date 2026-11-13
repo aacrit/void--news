@@ -1,0 +1,9 @@
+source: src-tpnw-2017
+locator: pre6
+url: https://treaties.un.org/doc/Treaties/2017/07/20170707%2003-42%20PM/Ch_XXVI_9.pdf
+read: 2026-10-05
+note: preambular paragraph 6, counted from 'Determined'; line breaks are the PDF text layer's
+
+Mindful of the unacceptable suffering of and harm caused to the victims of 
+the use of nuclear weapons (hibakusha), as well as of those affected by the testing 
+of nuclear weapons,

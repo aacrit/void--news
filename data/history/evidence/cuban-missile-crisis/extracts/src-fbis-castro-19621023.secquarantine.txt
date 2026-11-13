@@ -1,0 +1,7 @@
+source: src-fbis-castro-19621023
+locator: secquarantine
+url: https://dataverse.tdl.org/api/access/datafile/54331
+read: 2026-10-04
+note: Castro on the word quarantine, as FBIS translated the broadcast
+
+They have already established what they call a quarantine. They are so insolent that they themselves say they call it quarantine, but that it is actually a blockade. That is what they say.

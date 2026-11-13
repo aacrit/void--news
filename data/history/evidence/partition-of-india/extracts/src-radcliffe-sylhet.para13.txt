@@ -1,0 +1,8 @@
+source: src-radcliffe-sylhet
+locator: para13
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+
+13. In those circumstances I think that some exchange of territories must be effected if a workable division is to result. Some of the non-Muslim thanas must go to East Bengal and some Muslim territory and Hailakandi must be retained by Assam. Accordingly I decide and award as follows:—
+
+A line shall be drawn from the point where the boundary between the Thanas of Patharkandi and Kulaura meets the frontier of Tripura State and shall run north along the boundary between those Thanas, then along the boundary between the Thanas of Patharkandi and Barlekha, then along the boundary between the Thanas of Karimganj and Barlekha, and then along the boundary between the Thanas of Karimganj and Beani Bazar to the point where that boundary meets the River Kusiyara. The line shall then turn to the east taking the River Kusiyara as the boundary and run to the point where that river meets the boundary between the Districts of Sylhet and Cachar. The centre line of the main stream or channel shall constitute the boundary. So much of the District of Sylhet as lies to the west and north of this line shall be detached from the Province of Assam and transferred to the Province of East Bengal. No other part of the Province of Assam shall be transferred.

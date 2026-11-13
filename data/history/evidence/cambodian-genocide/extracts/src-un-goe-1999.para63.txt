@@ -1,0 +1,7 @@
+source: src-un-goe-1999
+locator: para63
+url: https://documents.un.org/doc/undoc/gen/n99/059/72/pdf/n9905972.pdf
+read: 2026-09-25
+note: the paragraph runs across a page break (pp. 19 to 20); the page furniture between the halves is removed
+
+63. In the view of the Group of Experts, the existing historical research justifies including genocide within the jurisdiction of a tribunal to prosecute Khmer Rouge leaders. In particular, evidence suggests the need for prosecutors to investigate the commission of genocide against the Cham, Vietnamese and other minority groups, and the Buddhist monkhood.11 The Khmer Rouge subjected these groups to an especially harsh and extensive measure of the acts enumerated in the Convention. The requisite intent has support in direct and indirect evidence, including Khmer Rouge statements, eyewitness accounts and the nature and number of victims in each group, both in absolute terms and in proportion to each group’s total population.12 These groups qualify as protected groups under the Convention: the Muslim Cham as an ethnic and religious group; the Vietnamese communities as an ethnic and, perhaps, a racial group; and the Buddhist monkhood as a religious group.

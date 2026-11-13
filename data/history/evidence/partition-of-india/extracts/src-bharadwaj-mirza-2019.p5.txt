@@ -1,0 +1,7 @@
+source: src-bharadwaj-mirza-2019
+locator: p5
+url: https://kar.kent.ac.uk/77719/1/author_accepted_EEH.pdf
+read: 2026-09-25
+note: author accepted manuscript, page 5
+
+Although the possibility that British India would be partitioned upon independence had been present for several years prior to the actual event, the partition when it ﬁnally came on August the 14th, 1947 was sudden, violent and chaotic for the millions who found themselves on the wrong side of the newly created India-Pakistan border. An estimated 14.5 million people were displaced within a short span of just four years after partition (Bharadwaj, Khwaja, and Mian, 2008, p. 39).

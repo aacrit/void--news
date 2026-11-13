@@ -1,0 +1,9 @@
+source: src-radcliffe-punjab
+locator: item4
+url: https://archive.org/download/dli.csl.1040/1040_djvu.txt
+read: 2026-09-25
+note: item n is paragraph n of Annexure A, the schedule of the Punjab award; the stray 7 is the OCR layer's
+
+4. The line will then run in a south-westerly direction down the
+
+Sutlej River on the boundary between the Districts of Lahore and Ferozepore to the point where the districts of Ferozepore, Lahore and Montgomery meet. It will continue along the boundary between the districts of Ferozepore and Montgomery to the point where this boundary meets the border of Bahawalpur State. The district boundaries, and not the actual course of the Sutlej River, shall in each case constitute the boundary between the East and West Punjab. 7

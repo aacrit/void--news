@@ -1,0 +1,7 @@
+source: src-trc-v6-s1
+locator: sec3para4
+url: https://www.justice.gov.za/trc/report/finalreport/vol6_s1.pdf
+read: 2026-10-09
+note: the text is the PDF's own text layer, whitespace collapsed to single spaces; line-end hyphenation and glyph errors are kept as the layer prints them
+
+Out of a total of 7115 applications, 5489 were dealt with in chambers.

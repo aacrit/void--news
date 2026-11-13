@@ -1,0 +1,8 @@
+source: src-rw-kagame-2014
+locator: sec2
+url: https://www.paulkagame.rw/historical-clarity-is-a-duty-of-memory-that-we-cannot-escape/
+read: 2026-10-07
+note: sliced from the page's HTML rendered to text; runs of spaces collapsed, nothing else changed
+note: the second quoted passage of the presidency's account of the speech
+
+Historical clarity is a duty of memory that we cannot escape. Behind the words “Never Again”, there is a story whose truth must be told in full, no matter how uncomfortable. The people who planned and carried out the Genocide were Rwandans, but the history and root causes go beyond this country. This is why Rwandans continue to seek the most complete explanation possible for what happened. We do so with humility as a nation that nearly destroyed itself. But we are nevertheless determined to recover our dignity as a people.”

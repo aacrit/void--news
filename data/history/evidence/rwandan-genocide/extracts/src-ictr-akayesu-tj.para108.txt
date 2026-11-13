@@ -1,0 +1,7 @@
+source: src-ictr-akayesu-tj
+locator: para108
+url: https://unictr.irmct.org/sites/unictr.org/files/case-documents/ictr-96-4/trial-judgements/en/980902.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+108. Soldiers of the Rwandan Armed Forces (FAR) executed ten Belgian blue helmets, thereby provoking the withdrawal of the Belgian contingent which formed the core of UNAMIR. On April 21 1994, the UN Security Council decided to reduce the peacekeeping force to 450 troops.

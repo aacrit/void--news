@@ -1,0 +1,8 @@
+source: src-castro-khrushchev-19621026
+locator: secattack
+url: https://microsites.jfklibrary.org/cmc/oct26/doc2.html
+read: 2026-10-07
+note: the JFK Library's web text of the letter, headed 'Fidel Castro's Letter' on the Library's Cuban Missile Crisis pages for October 26; the page does not name the translator or the source of the English text; the bracketed [I] is the page's
+note: the salutation and the first two paragraphs, line breaks folded to spaces
+
+Dear Comrade Khrushchev: Given the analysis of the situation and the reports which have reached us, [I] consider an attack to be almost imminent--within the next 24 to 72 hours. There are two possible variants: the first and most probable one is an air attack against certain objectives with the limited aim of destroying them; the second, and though less probable, still possible, is a full invasion. This would require a large force and is the most repugnant form of aggression, which might restrain them. You can be sure that we will resist with determination, whatever the case. The Cuban people's morale is extremely high and the people will confront aggression heroically.

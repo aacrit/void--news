@@ -1,0 +1,6 @@
+source: src-spreeuwenberg-2018
+locator: para2
+url: https://pmc.ncbi.nlm.nih.gov/articles/PMC7314216/
+read: 2026-09-25
+
+In this article, we estimate the global death burden of the 1918 influenza pandemic. The burden has been estimated many times over the past 100 years, and the estimated burden gradually has increased. One of the oldest estimates was made by Jordan in 1927 (1), who estimated the global burden to be approximately 21.6 million deaths. Patterson and Pyle (2), in 1991, estimated the burden to be 30 million (ranging from 24.7 million to 39.3 million). In 2002, Johnson and Mueller (3) reported a range of 50 million to 100 million deaths, with 50 million closer to the results from the studies they cited, and 100 million being the upper limit, because they believed 50 million to be an underestimate (3).

@@ -1,0 +1,8 @@
+source: src-un-sres91
+locator: pre1
+url: https://documents.un.org/doc/resolution/gen/nr0/072/10/pdf/nr007210.pdf
+read: 2026-09-25
+note: the English column of the bilingual printing (Resolutions and Decisions of the Security Council 1951); the PDF's line breaks are joined
+note: the resolution's heading and the start of its first preambular paragraph
+
+91 (1951). Resolution of 30 March 1951 [S/2017/Rev.l] The Security Council, Having received and noted the report of Sir Owen Dixon,

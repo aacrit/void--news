@@ -1,0 +1,1174 @@
+# The evidence ledger for korean-war (docs/proposals/HISTORY-THESIS-PAGE.md §3, §4c, §8).
+# Begun 2026-10-09 for the Orpheus episode and its writer brief (out/briefs/korean-war.brief.md):
+# the sources the script's document voice may read from and the record its narration is checked
+# against. Every entry was fetched on 2026-10-09 from the URL it names; every extract under
+# extracts/ was sliced from the fetched copy by a builder script (start marker to end marker,
+# out/ledger-korean-war/build.py), never retyped, with the copy's whitespace collapsed and that
+# said in a note. Nothing here was written from memory. A work the free record could not reach
+# is listed under `gaps`, by name, with what was tried.
+# Translation provenance: the Soviet, North Korean and Chinese documents are held only in the
+# English of the Cold War International History Project (Weathersby for Bulletin 5, Mansourov
+# for Bulletin 6-7, Goncharov, Lewis and Xue for the Chinese-published Mao text, Kim and Becker
+# for Shen Zhihua). Kim Il Sung's January 1950 words are the Soviet ambassador's report of them.
+# No Void translation is held, and no Korean- or Chinese-language original.
+# Five perspectives at parity (the event YAML's): American/UN (the Security Council, Truman, FRUS,
+# MacArthur, LeMay, Appleman, the CRS count, No Gun Ri as Washington stated it); North Korean (the
+# Kim-Pak letter, the armistice orders, Kim through Shtykov, the Soviet record that bears on Kim's
+# agency); South Korean (the Truth and Reconciliation Commission, Rhee's letters); Chinese (Mao's
+# two texts of 2 October, Shen Zhihua, the People's Daily, the PRC count); civilians and divided
+# families (KBS's own record, the unification ministry's register, the Korean witnesses as the
+# No Gun Ri briefing reports them, the TRC's verified massacres on all sides).
+# Hosts: digitalarchive.wilsoncenter.org did not resolve (getaddrinfo failed), so the Wilson Center
+# documents are held from the CWIHP Bulletin PDFs on www.wilsoncenter.org. history.army.mil
+# answered HTTP 403; Appleman is held from the Göttingen library's 2005 copy of the Army's page.
+# This is NOT a thesis ledger: no positions, contested claims, exhibits or analyses are
+# adjudicated here, and the event renders the Hearing. The bar of §4e is not claimed.
+slug: korean-war
+bootstrapped: '2026-10-09'
+entries:
+- id: src-unsc-res82-1950
+  tier: A
+  kind: resolution
+  author: United Nations Security Council
+  title: Resolution 82 (1950) of 25 June 1950 [S/1501]
+  container: null
+  publisher: United Nations
+  place: New York
+  year: 1950
+  edition: the UN's bilingual print of the resolutions, English column read
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://documents.un.org/doc/resolution/gen/nr0/064/95/pdf/nr006495.pdf
+  access:
+    free_copy: https://documents.un.org/doc/resolution/gen/nr0/064/95/pdf/nr006495.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: 82 (1950). Resolution of 25 June 1950 [S/1501] [PDF]
+  language: en
+  region_of_authorship: global
+  producer: un-security-council
+  position: null
+  rights: public
+  shows: 'the Council ''Noting with grave concern the armed attack on the Republic of Korea by forces from North Korea'', calling for the ''immediate cessation of hostilities'' and withdrawal ''to the 38th parallel''; adopted 9 to none, one abstention (Yugoslavia); its footnote 10: the Soviet member ''was absent'''
+  does_not_show: why the Soviet member was absent (the footnote gives no reason); any finding on who fired first; the meeting's debate
+- id: src-unsc-res83-1950
+  tier: A
+  kind: resolution
+  author: United Nations Security Council
+  title: Resolution 83 (1950) of 27 June 1950 [S/1511]
+  container: null
+  publisher: United Nations
+  place: New York
+  year: 1950
+  edition: the UN's bilingual print, English column read
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://documents.un.org/doc/resolution/gen/nr0/064/96/pdf/nr006496.pdf
+  access:
+    free_copy: https://documents.un.org/doc/resolution/gen/nr0/064/96/pdf/nr006496.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: 83 (1950). Resolution of 27 June 1950 [S/1511] [PDF]
+  language: en
+  region_of_authorship: global
+  producer: un-security-council
+  position: null
+  rights: public
+  shows: 'the recommendation that Members ''furnish such assistance to the Republic of Korea as may be necessary to repel the armed attack''; footnote 12: Egypt and India did not vote, the Soviet member was absent'
+  does_not_show: the vote count in a clean reading (the scan's adoption line is garbled, 'hv 7 votes to 1 (Yugoslavia)'); Truman's orders of the same day (src-truman-19500627)
+- id: src-unsc-res84-1950
+  tier: A
+  kind: resolution
+  author: United Nations Security Council
+  title: Resolution 84 (1950) of 7 July 1950 [S/1588]
+  container: null
+  publisher: United Nations
+  place: New York
+  year: 1950
+  edition: the UN's bilingual print, English column read
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://documents.un.org/doc/resolution/gen/nr0/064/97/pdf/nr006497.pdf
+  access:
+    free_copy: https://documents.un.org/doc/resolution/gen/nr0/064/97/pdf/nr006497.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: 84 (1950). Resolution of 7 July 1950 [S/1588] [PDF]
+  language: en
+  region_of_authorship: global
+  producer: un-security-council
+  position: null
+  rights: public
+  shows: the 'unified command under the United States of America', the United States to designate the commander, the UN flag authorised; adopted 7 to none, three abstentions (Egypt, India, Yugoslavia)
+  does_not_show: how many nations sent forces (the resolution predates the contributions); the Soviet absence on this date (not in the extract held)
+- id: src-frus-1945v06-d771
+  tier: A
+  kind: primary-document
+  author: Dean Rusk (memorandum of 12 July 1950 to G. Bernard Noble), quoted in the editors' note to a SWNCC draft memorandum
+  title: Draft Memorandum to the Joint Chiefs of Staff [with the editors' note quoting Rusk on the 38th parallel], Foreign Relations of the United States, 1945, vol. VI, Document 771
+  container: null
+  publisher: U.S. Department of State, Office of the Historian
+  place: Washington
+  year: 1950
+  edition: the FRUS online edition
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://history.state.gov/historicaldocuments/frus1945v06/d771
+  access:
+    free_copy: https://history.state.gov/historicaldocuments/frus1945v06/d771
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Draft Memorandum to the Joint Chiefs of Staff - Historical Documents - Office of the Historian
+  language: en
+  region_of_authorship: north-america
+  producer: us-state-department
+  position: null
+  rights: public
+  shows: 'Rusk''s own account, written five years on: McCloy asked Bonesteel and him to ''retire to an adjoining room'', they ''recommended the 38th parallel'' to ''include the capital of Korea'' in the American area, on ''I believe, the night of August 10-11''; ''based on memory and not on documents'''
+  does_not_show: thirty minutes, a National Geographic map, or anything about who had or had not been to Korea; it is a recollection, not a 1945 record
+- id: src-truman-19500627
+  tier: A
+  kind: primary-document
+  author: Harry S. Truman
+  title: Statement by the President on the Situation in Korea, June 27, 1950 (Public Papers, Item 173)
+  container: null
+  publisher: Harry S. Truman Library and Museum (National Archives)
+  place: Independence, Missouri
+  year: 1950
+  edition: Public Papers of the Presidents, as the Truman Library serves them
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.trumanlibrary.gov/library/public-papers/173/statement-president-situation-korea
+  access:
+    free_copy: https://www.trumanlibrary.gov/library/public-papers/173/statement-president-situation-korea
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Statement by the President on the Situation in Korea | Harry S. Truman
+  language: en
+  region_of_authorship: north-america
+  producer: us-government
+  position: null
+  rights: public
+  shows: 'the order of 27 June: ''I have ordered United States air and sea forces to give the Korean Government troops cover and support'''
+  does_not_show: ground troops (not ordered in this statement); a declaration of war
+- id: src-truman-19500629
+  tier: A
+  kind: primary-document
+  author: Harry S. Truman and the White House press corps
+  title: The President's News Conference, June 29, 1950 (Public Papers, Item 179)
+  container: null
+  publisher: Harry S. Truman Library and Museum (National Archives)
+  place: Independence, Missouri
+  year: 1950
+  edition: Public Papers of the Presidents
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.trumanlibrary.gov/library/public-papers/179/presidents-news-conference-0
+  access:
+    free_copy: https://www.trumanlibrary.gov/library/public-papers/179/presidents-news-conference-0
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: The President's News Conference | Harry S. Truman
+  language: en
+  region_of_authorship: north-america
+  producer: us-government
+  position: null
+  rights: public
+  shows: '''We are not at war''; the ''bandit raid''; a reporter asks whether it would be correct ''to call this a police action under the United Nations?'' and the President answers ''Yes. That is exactly what it amounts to.'''
+  does_not_show: that Truman coined 'police action' (the reporter used it first); ground troops ('No comment')
+- id: src-truman-19510411
+  tier: A
+  kind: primary-document
+  author: Harry S. Truman
+  title: Radio Report to the American People on Korea and on U.S. Policy in the Far East, April 11, 1951 (Public Papers, Item 78)
+  container: null
+  publisher: Harry S. Truman Library and Museum (National Archives)
+  place: Independence, Missouri
+  year: 1951
+  edition: Public Papers of the Presidents
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.trumanlibrary.gov/library/public-papers/78/radio-report-american-people-korea-and-us-policy-far-east
+  access:
+    free_copy: https://www.trumanlibrary.gov/library/public-papers/78/radio-report-american-people-korea-and-us-policy-far-east
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Radio Report to the American People on Korea and on U.S. Policy in the Far East | Harry S. Truman
+  language: en
+  region_of_authorship: north-america
+  producer: us-government
+  position: null
+  rights: public
+  shows: 'the President''s reason for relieving MacArthur: ''to limit the war to Korea'', ''to prevent a third world war''; ''General MacArthur did not agree with that policy'''
+  does_not_show: any mention of atomic bombs or of MacArthur's numbers; MacArthur's side (src-macarthur-19510419)
+- id: src-frus-1950v07-d680
+  tier: A
+  kind: primary-document
+  author: General of the Army Omar N. Bradley (compiler), from notes of the conferees
+  title: Substance of Statements Made at Wake Island Conference on 15 October 1950, Foreign Relations of the United States, 1950, vol. VII, Korea, Document 680
+  container: null
+  publisher: U.S. Department of State, Office of the Historian
+  place: Washington
+  year: 1950
+  edition: the FRUS online edition
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://history.state.gov/historicaldocuments/frus1950v07/d680
+  access:
+    free_copy: https://history.state.gov/historicaldocuments/frus1950v07/d680
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Substance of Statements Made at Wake Island Conference on 15 October 1950 - Historical Documents - Office of the Historian
+  language: en
+  region_of_authorship: north-america
+  producer: us-government
+  position: null
+  rights: public
+  shows: 'Truman asks ''What are the chances for Chinese or Soviet interference?''; MacArthur: ''Very little'', 300,000 Chinese in Manchuria, ''Only 50/60,000 could be gotten across'', ''the greatest slaughter'''
+  does_not_show: a verbatim record (it is a compiled summary); anything MacArthur said in private
+- id: src-frus-1950v07-d589
+  tier: A
+  kind: primary-document
+  author: Julius C. Holmes, Chargé in the United Kingdom
+  title: The Chargé in the United Kingdom (Holmes) to the Secretary of State, London, October 3, 1950, 11 a.m., FRUS 1950, vol. VII, Document 589
+  container: null
+  publisher: U.S. Department of State, Office of the Historian
+  place: Washington
+  year: 1950
+  edition: the FRUS online edition
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://history.state.gov/historicaldocuments/frus1950v07/d589
+  access:
+    free_copy: https://history.state.gov/historicaldocuments/frus1950v07/d589
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: The Chargé in the United Kingdom (Holmes) to the Secretary of State - Historical Documents - Office of the Historian
+  language: en
+  region_of_authorship: north-america
+  producer: us-state-department
+  position: null
+  rights: public
+  shows: 'the warning as Washington received it on 3 October: Zhou told Panikkar that ''if UN Armed Forces crossed 38th parallel China would send troops'', and not ''if only South Koreans crossed'''
+  does_not_show: Zhou's own words; the phrase 'sit back with folded hands' (a public statement, not held); any American reply
+- id: src-frus-1950v07-d595
+  tier: A
+  kind: primary-document
+  author: Loy W. Henderson, Ambassador in India
+  title: The Ambassador in India (Henderson) to the Secretary of State, New Delhi, October 3, 1950, FRUS 1950, vol. VII, Document 595
+  container: null
+  publisher: U.S. Department of State, Office of the Historian
+  place: Washington
+  year: 1950
+  edition: the FRUS online edition
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://history.state.gov/historicaldocuments/frus1950v07/d595
+  access:
+    free_copy: https://history.state.gov/historicaldocuments/frus1950v07/d595
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: The Ambassador in India (Henderson) to the Secretary of State - Historical Documents - Office of the Historian
+  language: en
+  region_of_authorship: north-america
+  producer: us-state-department
+  position: null
+  rights: public
+  shows: 'Panikkar''s own reading: ''convinced that Chinese decision was final'''
+  does_not_show: the Chinese or Indian record of the conversation (the Wilson Center's archive host did not resolve)
+- id: src-macarthur-19510419
+  tier: A
+  kind: primary-document
+  author: Douglas MacArthur
+  title: Address of General of the Army Douglas MacArthur at a Joint Meeting of the Two Houses, April 19, 1951 (Senate Document No. 36, 82d Congress, 1st Session)
+  container: null
+  publisher: United States Government Printing Office
+  place: Washington
+  year: 1951
+  edition: the Senate's printed document, Serial Set 11511
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.govinfo.gov/content/pkg/SERIALSET-11511_00_00-019-0036-0000/pdf/SERIALSET-11511_00_00-019-0036-0000.pdf
+  access:
+    free_copy: https://www.govinfo.gov/content/pkg/SERIALSET-11511_00_00-019-0036-0000/pdf/SERIALSET-11511_00_00-019-0036-0000.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Address of General of the Army Douglas MacArthur at a joint meeting of the two Houses ... April 19, 1951 [PDF]
+  language: en
+  region_of_authorship: north-america
+  producer: us-government
+  position: null
+  rights: public
+  shows: 'the printed wording: ''In war, indeed, there can be no substitute for victory''; the close, ''old soldiers never die; they just fade away'''
+  does_not_show: the line as the YAML gives it ('In war there is no substitute for victory'); delivery as spoken (a recording is not examined)
+- id: src-crs-rl32492
+  tier: B
+  kind: report
+  author: Congressional Research Service (Nese F. DeBruyne)
+  title: 'American War and Military Operations Casualties: Lists and Statistics (RL32492, version 25)'
+  container: null
+  publisher: Library of Congress, Congressional Research Service
+  place: Washington
+  year: 2025
+  edition: version 25; its tables are compiled from Department of Defense sources (DCAS)
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.congress.gov/crs_external_products/RL/PDF/RL32492/RL32492.25.pdf
+  access:
+    free_copy: https://www.congress.gov/crs_external_products/RL/PDF/RL32492/RL32492.25.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: 'American War and Military Operations Casualties: Lists and Statistics [PDF]'
+  language: en
+  region_of_authorship: north-america
+  producer: us-congress
+  position: null
+  rights: public
+  shows: 'the U.S. count: 33,739 hostile deaths, 36,574 in-theater deaths, 54,246 worldwide deaths in the war years, 103,284 wounded (Table 6, ''as of August 29, 2018'')'
+  does_not_show: any Korean, Chinese or other allied count; 'killed in action' as the YAML uses it (36,574 is in-theater deaths of all causes)
+- id: src-lemay-sawf-1988
+  tier: A
+  kind: testimony
+  author: Curtis E. LeMay, in a group interview with Leon W. Johnson, David A. Burchinal and Jack J. Catton; edited by Richard H. Kohn and Joseph P. Harahan
+  title: 'Strategic Air Warfare: An Interview with Generals Curtis E. LeMay, Leon W. Johnson, David A. Burchinal, and Jack J. Catton (USAF Warrior Studies)'
+  container: null
+  publisher: Office of Air Force History, United States Air Force
+  place: Washington
+  year: 1988
+  edition: the 1988 publication of the interview of 15 June 1984, reissued as a PDF by the Department of Defense
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://media.defense.gov/2025/Aug/27/2003789020/-1/-1/0/STRATEGIC_AIR_WARFARE.PDF
+  access:
+    free_copy: https://media.defense.gov/2025/Aug/27/2003789020/-1/-1/0/STRATEGIC_AIR_WARFARE.PDF
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: 'Strategic Air Warfare: An Interview with Generals Curtis E. LeMay, ... [PDF]'
+  language: en
+  region_of_authorship: north-america
+  producer: us-government
+  position: null
+  rights: public
+  shows: 'LeMay''s own words: SAC was refused at the start ''too many civilian casualties'', then ''eventually burned down every town in North Korea anyway, some way or another, and some in South Korea, too'', ''killed off - what - twenty percent of the population of Korea as direct casualties of war, or from starvation and exposure?'' (a question, in his words)'
+  does_not_show: that LeMay ran the Korean bombing (his request for SAC was refused, by his own account); a tonnage, a city-by-city count or a source for the 'twenty percent'
+- id: src-appleman-1961
+  tier: B
+  kind: monograph
+  author: Roy E. Appleman
+  title: South to the Naktong, North to the Yalu (June-November 1950), United States Army in the Korean War, chapter III, 'Invasion Across the Parallel'
+  container: null
+  publisher: Office of the Chief of Military History, Department of the Army
+  place: Washington
+  year: 1961
+  edition: the Army's web edition (army.mil/cmh-pg) as archived in 2005 by the Göttingen State and University Library; history.army.mil answered HTTP 403 to the fetch
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://webdoc.sub.gwdg.de/ebook/p/2005/CMH_2/www.army.mil/cmh-pg/books/korea/20-2-1/sn03.htm
+  access:
+    free_copy: https://webdoc.sub.gwdg.de/ebook/p/2005/CMH_2/www.army.mil/cmh-pg/books/korea/20-2-1/sn03.htm
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: CHAPTER III Invasion Across the Parallel
+  language: en
+  region_of_authorship: north-america
+  producer: us-government
+  position: null
+  rights: public
+  shows: the Han bridges blown 'about 0215' on 28 June 'with no warning'; American officers' estimate of 'between 500 and 800 people' killed or drowned; the ROK Army Chief Engineer executed; advisers believed Chae ordered it, 'General Chae denied', others blamed the Vice Minister of Defense
+  does_not_show: a Korean count or Korean testimony; a settled finding on who gave the order; that the dead were all civilians (the extract says 'people' and names soldiers on the bridge)
+- id: src-dod-nogunri-20010111
+  tier: A
+  kind: primary-document
+  author: Secretary of Defense William S. Cohen, Charles L. Cragin and Lt. Gen. Michael W. Ackerman, with reporters
+  title: 'Transcript: Pentagon Briefing on No Gun Ri, January 11, 2001 (Washington File EPF503)'
+  container: null
+  publisher: U.S. Department of State, Office of International Information Programs (Washington File)
+  place: Washington
+  year: 2001
+  edition: the Washington File transcript of the DoD briefing; the Army's No Gun Ri Review itself is not held (see gaps)
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://usinfo.org/wf-archive/2001/010112/epf503.htm
+  access:
+    free_copy: https://usinfo.org/wf-archive/2001/010112/epf503.htm
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: 'Department of State Washington File: Transcript: Pentagon Briefing on No Gun Ri January 11, 2001'
+  language: en
+  region_of_authorship: north-america
+  producer: us-government
+  position: null
+  rights: public
+  shows: the U.S. finding, 'an unconfirmed number of Korean refugees' killed or injured; the 248 'provided to the Yongdong County office by the civilians'; veterans who fired 'did not receive any order'; Korean witnesses on air strikes 'around noon on July 26th, 1950'; a reporter's 'over 60 hours'
+  does_not_show: the Korean investigation's own text or the survivors' words; the Army report's evidence
+- id: src-clinton-20010111
+  tier: A
+  kind: primary-document
+  author: William J. Clinton
+  title: Statement on the Korean War Incident at No Gun Ri, January 11, 2001
+  container: null
+  publisher: The American Presidency Project (University of California, Santa Barbara)
+  place: Santa Barbara
+  year: 2001
+  edition: the Weekly Compilation text as the Project prints it
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.presidency.ucsb.edu/documents/statement-the-korean-war-incident-no-gun-ri
+  access:
+    free_copy: https://www.presidency.ucsb.edu/documents/statement-the-korean-war-incident-no-gun-ri
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Statement on the Korean War Incident at No Gun Ri | The American Presidency Project
+  language: en
+  region_of_authorship: north-america
+  producer: us-government
+  position: null
+  rights: public
+  shows: '''I deeply regret that Korean civilians lost their lives at No Gun Ri in late July 1950''; ''an unconfirmed number of innocent Korean refugees were killed or injured there'''
+  does_not_show: an apology for an order (it names none); a number
+- id: src-trck-2009
+  tier: A
+  kind: report
+  author: Truth and Reconciliation Commission, Republic of Korea
+  title: 'Truth and Reconciliation: Activities of the Past Three Years'
+  container: null
+  publisher: Truth and Reconciliation Commission, Republic of Korea (copy in the Truth Commission Database, McMaster University)
+  place: Seoul
+  year: 2009
+  edition: the Commission's English report (its President's greeting dates it to the third year of work); the date 2009 is the report's period, not printed on the copy read
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://truthcommissions.humanities.mcmaster.ca/wp-content/uploads/2021/02/South-Korea_TRC_Report-of-Activities.pdf
+  access:
+    free_copy: https://truthcommissions.humanities.mcmaster.ca/wp-content/uploads/2021/02/South-Korea_TRC_Report-of-Activities.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: 'Truth and Reconciliation: Activities of the Past Three Years [PDF]'
+  language: en
+  region_of_authorship: east-asia
+  producer: rok-trc
+  position: null
+  rights: copyright
+  shows: 'the Commission''s own verification: Bodo League members ''detained and killed'', ''highly orchestrated''; the Ulsan list ''functioned as an execution list'', 407 of the petitioners'' 870 identified; North Korean soldiers ''massacred 1,557 people'' in Daejeon; U.S. aerial bombing that ''failed to take into consideration the innocent civilians'''
+  does_not_show: a national total for the Bodo League dead (none is held; '200,000' appears in the report only as a petition in a play's first scene); the Commission's final 2010 report
+- id: src-rhee-19530618
+  tier: A
+  kind: letter
+  author: Syngman Rhee, President of the Republic of Korea
+  title: The President of the Republic of Korea (Rhee) to the Commander in Chief, United Nations Command (Clark), Seoul, June 18, 1953, FRUS 1952-1954, vol. XV, part 2, Document 607
+  container: null
+  publisher: U.S. Department of State, Office of the Historian
+  place: Washington
+  year: 1953
+  edition: 'the FRUS online edition (source: Mark W. Clark Collection, The Citadel)'
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://history.state.gov/historicaldocuments/frus1952-54v15p2/d607
+  access:
+    free_copy: https://history.state.gov/historicaldocuments/frus1952-54v15p2/d607
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: The President of the Republic of Korea (Rhee) to the Commander in Chief, United Nations Command (Clark) - Historical Documents - Office of the Historian
+  language: en
+  region_of_authorship: east-asia
+  producer: rok-government
+  position: null
+  rights: public
+  shows: 'Rhee in his own words: ''I took my own responsibility and ordered the Korean military police to release them at once''; he may ''have to withdraw the ROKA from your command'''
+  does_not_show: how many prisoners were released (no number in the extract); the American reaction
+- id: src-rhee-19530709
+  tier: A
+  kind: letter
+  author: Syngman Rhee, President of the Republic of Korea
+  title: The President of the Republic of Korea (Rhee) to the Assistant Secretary of State for Far Eastern Affairs (Robertson), Seoul, July 9, 1953, FRUS 1952-1954, vol. XV, part 2, Document 681
+  container: null
+  publisher: U.S. Department of State, Office of the Historian
+  place: Washington
+  year: 1953
+  edition: the FRUS online edition
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://history.state.gov/historicaldocuments/frus1952-54v15p2/d681
+  access:
+    free_copy: https://history.state.gov/historicaldocuments/frus1952-54v15p2/d681
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: The President of the Republic of Korea (Rhee) to the Assistant Secretary of State for Far Eastern Affairs (Robertson) - Historical Documents - Office of the Historian
+  language: en
+  region_of_authorship: east-asia
+  producer: rok-government
+  position: null
+  rights: public
+  shows: '''Although we cannot sign truce, we shall not obstruct it''; the demands held ''in abeyance'': withdrawal of Chinese troops and reunification before an armistice'
+  does_not_show: the signing itself (src-armistice-19530727 carries no ROK signature, and the absence is all it shows)
+- id: src-armistice-19530727
+  tier: A
+  kind: treaty
+  author: Commander-in-Chief, United Nations Command; Supreme Commander, Korean People's Army; Commander, Chinese People's Volunteers (signed by their senior delegates Nam Il and William K. Harrison, Jr.)
+  title: Agreement concerning a military armistice in Korea (The Korean War Armistice Agreement), Panmunjom, July 27, 1953
+  container: null
+  publisher: United States Forces Korea
+  place: Panmunjom
+  year: 1953
+  edition: 'the text USFK serves (its source line: the State Department''s 2004 posting)'
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.usfk.mil/portals/105/documents/sofa/g_armistice_agreement.pdf
+  access:
+    free_copy: https://www.usfk.mil/portals/105/documents/sofa/g_armistice_agreement.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: THE KOREAN WAR ARMISTICE AGREEMENT Panmunjom, Korea, July 27, 1953 [PDF]
+  language: en
+  region_of_authorship: global
+  producer: korean-armistice-commanders
+  position: null
+  rights: public
+  shows: a military armistice 'until a final peaceful settlement is achieved', 'purely military in character'; the demarcation line and 2-kilometre withdrawal; in force from 2200 hours on 27 July 1953 until superseded; signed at 10:00 by General Nam Il (KPA) and Lieutenant General Harrison (US Army, for the UNC)
+  does_not_show: a South Korean signature or the reason for its absence (see src-rhee-19530709); any peace treaty
+- id: src-pc1953-armistice
+  tier: A
+  kind: primary-document
+  author: Kim Il Sung, Supreme Commander, Korean People's Army, and Peng Teh-huai (Peng Dehuai), Commander, Chinese People's Volunteers
+  title: Armistice Orders From Marshal Kim Il Sung and General Peng Teh-huai to Their Units, July 27, 1953 (in Korean Armistice Agreement and Other Documents, Supplement to People's China, 1953, No. 15)
+  container: null
+  publisher: Foreign Languages Press, Peking (People's China), scanned by the Marxists Internet Archive
+  place: Peking
+  year: 1953
+  edition: the English supplement People's China printed in 1953; an OCR scan
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.marxists.org/subject/china/peoples-china/1953/PC1953-15-Sup-OCR-sm.pdf
+  access:
+    free_copy: https://www.marxists.org/subject/china/peoples-china/1953/PC1953-15-Sup-OCR-sm.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Korean Armistice Agreement and Other Documents (Supplement to People's China, 1953, No. 15) [PDF]
+  language: en
+  region_of_authorship: east-asia
+  producer: kpa-cpv-command
+  position: null
+  rights: copyright
+  shows: 'the other side''s word for the outcome: ''have won a glorious victory of an armistice''; ''the Syngman Rhee clique'' ''strongly opposed to the signing'''
+  does_not_show: the Korean or Chinese originals; the orders as the units received them
+- id: src-pc1953-peoples-daily
+  tier: A
+  kind: primary-document
+  author: People's Daily (Renmin Ribao), editorial
+  title: The First Step Towards a Peaceful Settlement of the Korean Question (editorial of the Peking People's Daily, July 28, 1953), in Supplement to People's China, 1953, No. 15
+  container: null
+  publisher: Foreign Languages Press, Peking (People's China), scanned by the Marxists Internet Archive
+  place: Peking
+  year: 1953
+  edition: the English supplement; an OCR scan
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.marxists.org/subject/china/peoples-china/1953/PC1953-15-Sup-OCR-sm.pdf
+  access:
+    free_copy: https://www.marxists.org/subject/china/peoples-china/1953/PC1953-15-Sup-OCR-sm.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Korean Armistice Agreement and Other Documents (Supplement to People's China, 1953, No. 15) [PDF]
+  language: en
+  region_of_authorship: east-asia
+  producer: peoples-daily
+  position: null
+  rights: copyright
+  shows: 'the Chinese Party press''s 1953 account of the war''s origin: ''the reactionary Syngman Rhee clique, working in collusion with the bellicose elements of the United States, unleashed the Korean war'' (OCR: ''uhleashed'', ''be,llieose'')'
+  does_not_show: any evidence for that claim; it is contradicted by the Soviet record (src-cwihp-shtykov-19500119, src-cwihp-stalin-19500130)
+- id: src-cwihp-politburo-19490924
+  tier: A
+  kind: primary-document
+  author: Politburo of the VKP(b) Central Committee (directive to the Soviet ambassador in Korea); translated by Kathryn Weathersby
+  title: Politburo decision to confirm the following directive to the Soviet ambassador in Korea, 24 September 1949 (Document V)
+  container: null
+  publisher: Woodrow Wilson International Center for Scholars, Cold War International History Project
+  place: Washington
+  year: 1949
+  edition: Weathersby's translation in 'To Attack, or Not to Attack? Stalin, Kim Il Sung, and the Prelude to War'; source AVP RF, Fond 059a, Opis 5a, Delo 3, Papka 11
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_5.pdf
+  access:
+    free_copy: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_5.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Cold War International History Project Bulletin, Issue 5 (Spring 1995)
+  language: en
+  region_of_authorship: europe
+  producer: soviet-government
+  position: null
+  rights: copyright
+  shows: 'Moscow refusing Kim''s proposed attack in September 1949: ''from the military point of view it is not allowed''; a prolonged war could give ''the Americans cause for any kind of interference'''
+  does_not_show: Kim's own text of the 12 August proposal; anything after January 1950
+- id: src-cwihp-shtykov-19500119
+  tier: A
+  kind: primary-document
+  author: Terenty Shtykov, Soviet ambassador in Pyongyang (reporting Kim Il Sung's words); translated by Kathryn Weathersby
+  title: Ciphered Telegram from Shtykov to Vyshinsky, 19 January 1950 (Document VI)
+  container: null
+  publisher: Woodrow Wilson International Center for Scholars, Cold War International History Project
+  place: Washington
+  year: 1950
+  edition: Weathersby's translation; source AVP RF, Fond 059a, Opis 5a, Delo 3, Papka 11, listy 87-91
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_5.pdf
+  access:
+    free_copy: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_5.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Cold War International History Project Bulletin, Issue 5 (Spring 1995)
+  language: en
+  region_of_authorship: europe
+  producer: soviet-government
+  position: null
+  rights: copyright
+  shows: 'Kim Il Sung, as the ambassador reported him after a lunch: ''Lately I do not sleep at night, thinking about how to resolve the question of the unification of the whole country''; ''for him the order of Comrade Stalin is law'''
+  does_not_show: Kim's words in Korean or in a Korean record (this is the Soviet ambassador's report, translated from Russian); the ambassador notes Kim was 'in a mood of some intoxication'
+- id: src-cwihp-stalin-19500130
+  tier: A
+  kind: primary-document
+  author: Joseph Stalin (to Shtykov); translated by Kathryn Weathersby
+  title: Ciphered telegram from Stalin to Shtykov, 30 January 1950 (Document VII)
+  container: null
+  publisher: Woodrow Wilson International Center for Scholars, Cold War International History Project
+  place: Washington
+  year: 1950
+  edition: Weathersby's translation; source AVP RF, Fond 059a, Opis 5a, Delo 3, Papka 11, list 92
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_5.pdf
+  access:
+    free_copy: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_5.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Cold War International History Project Bulletin, Issue 5 (Spring 1995)
+  language: en
+  region_of_authorship: europe
+  producer: soviet-government
+  position: null
+  rights: copyright
+  shows: 'Stalin''s assent: ''tell him that I am ready to help him in this matter'', with a request for ''a yearly minimum of 25,000 tons of lead'''
+  does_not_show: the April 1950 Moscow talks or the final approval (not held); a Chinese or Korean record
+- id: src-cwihp-kimpak-19500929
+  tier: A
+  kind: letter
+  author: Kim Il Sung and Pak Hon-yong, for the Workers' Party of Korea; translated by Alexandre Y. Mansourov
+  title: Letter from Kim Il Sung and Pak Hon-yong to Stalin, 29 September 1950
+  container: null
+  publisher: Woodrow Wilson International Center for Scholars, Cold War International History Project
+  place: Washington
+  year: 1950
+  edition: Mansourov's translation from the Russian text held in the Presidential Archive (APRF), in 'Stalin, Mao, Kim, and China's Decision to Enter the Korean War'
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+  access:
+    free_copy: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Cold War International History Project Bulletin, Issue 6-7 (Winter 1995/1996)
+  language: en
+  region_of_authorship: east-asia
+  producer: workers-party-of-korea
+  position: null
+  rights: copyright
+  shows: 'the North Korean leadership after Inchon, in its own letter: an enemy air force of ''about a thousand airplanes'' ''day and night''; ''we will fight ... to the last drop of blood''; ''we will badly need direct military assistance from the Soviet Union'''
+  does_not_show: a Korean-language original (the text is translated from the Russian copy); the DPRK's public account of the war
+- id: src-cwihp-stalin-19501001
+  tier: A
+  kind: primary-document
+  author: Joseph Stalin (as Filippov) to Mao Zedong and Zhou Enlai; translated by Alexandre Y. Mansourov
+  title: Ciphered Telegram, Filippov (Stalin) to Mao Zedong and Zhou Enlai, 1 October 1950 (Document 10)
+  container: null
+  publisher: Woodrow Wilson International Center for Scholars, Cold War International History Project
+  place: Washington
+  year: 1950
+  edition: Mansourov's translation; source APRF, fond 45, opis 1, delo 334
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+  access:
+    free_copy: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Cold War International History Project Bulletin, Issue 6-7 (Winter 1995/1996)
+  language: en
+  region_of_authorship: europe
+  producer: soviet-government
+  position: null
+  rights: copyright
+  shows: 'Stalin''s request: ''at least five-six divisions toward the 38th parallel at once'', ''as volunteers, with Chinese in command'''
+  does_not_show: any promise of Soviet air cover (none in the extract)
+- id: src-cwihp-mao-19501002-ru
+  tier: A
+  kind: primary-document
+  author: Mao Zedong (message cabled by Soviet ambassador N. V. Roshchin, received 3 October 1950); translated by Alexandre Y. Mansourov
+  title: Ciphered telegram from Roshchin in Beijing to Filippov [Stalin], 3 October 1950, conveying 2 October 1950 message from Mao to Stalin (Document 12)
+  container: null
+  publisher: Woodrow Wilson International Center for Scholars, Cold War International History Project
+  place: Washington
+  year: 1950
+  edition: Mansourov's translation from the Russian cable in the Presidential Archive
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+  access:
+    free_copy: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Cold War International History Project Bulletin, Issue 6-7 (Winter 1995/1996)
+  language: en
+  region_of_authorship: east-asia
+  producer: chinese-communist-party
+  position: null
+  rights: copyright
+  shows: 'Mao as Moscow received him on 3 October: ''such actions may entail extremely serious consequences'', ''Many comrades in the CC CPC judge that it is necessary to show caution'', ''better to show patience now'', ''A final decision has not been taken'''
+  does_not_show: a Chinese original (this is the Soviet ambassador's cable, translated from Russian); the later decision (src-mao-wengao-19501002 holds the contrary text)
+- id: src-mao-wengao-19501002
+  tier: A
+  kind: primary-document
+  author: Mao Zedong; English translation by Sergei N. Goncharov, John W. Lewis and Xue Litai
+  title: Telegram to Stalin dated 2 October 1950, as printed in Jianguo Yilai Mao Zedong Wengao, vol. 1 (1987), pp. 539-541
+  container: null
+  publisher: Woodrow Wilson International Center for Scholars, Cold War International History Project
+  place: Washington
+  year: 1950
+  edition: the Chinese-published text in the translation of Uncertain Partners (1993), reprinted in full in Mansourov's note 30
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+  access:
+    free_copy: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Cold War International History Project Bulletin, Issue 6-7 (Winter 1995/1996)
+  language: en
+  region_of_authorship: east-asia
+  producer: chinese-communist-party
+  position: null
+  rights: copyright
+  shows: 'the Party''s own published version: ''We have decided to send some of our troops to Korea under the name of Volunteers''; 12 divisions ''to set off on October 15'''
+  does_not_show: 'whether it was sent (Mansourov thinks it ''unreliable: inaccurate, unsent, or perhaps misdated''); the Chinese archive original (scholars were not admitted)'
+- id: src-mansourov-1996
+  tier: B
+  kind: journal-article
+  author: Alexandre Y. Mansourov
+  title: 'Stalin, Mao, Kim, and China''s Decision to Enter the Korean War, Sept. 16-Oct. 15, 1950: New Evidence from the Russian Archives'
+  container: null
+  publisher: Woodrow Wilson International Center for Scholars, Cold War International History Project
+  place: Washington
+  year: 1996
+  edition: the article as the Bulletin prints it, note 30
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+  access:
+    free_copy: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_6-7.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Cold War International History Project Bulletin, Issue 6-7 (Winter 1995/1996)
+  language: en
+  region_of_authorship: north-america
+  producer: scholarship
+  position: null
+  rights: copyright
+  shows: 'the scholar''s judgment on the two texts of Mao''s 2 October telegram: two alternatives, the Russian documents ''elaborate fakes'' (''highly unlikely'') or the Chinese version ''unreliable'''
+  does_not_show: any Chinese archival test of the question (none was possible to him)
+- id: src-shen-zhihua-2004
+  tier: B
+  kind: journal-article
+  author: Shen Zhihua; translated by Dong Gil Kim and Jeffrey Becker
+  title: Sino-North Korean Conflict and its Resolution during the Korean War
+  container: null
+  publisher: Woodrow Wilson International Center for Scholars, Cold War International History Project
+  place: Washington
+  year: 2004
+  edition: the article as the Bulletin prints it
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_14-15.pdf
+  access:
+    free_copy: https://www.wilsoncenter.org/sites/default/files/media/documents/publication/CWIHP_Bulletin_14-15.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Cold War International History Project Bulletin, Issue 14/15 (Winter 2003-Spring 2004)
+  language: en
+  region_of_authorship: east-asia
+  producer: scholarship
+  position: null
+  rights: copyright
+  shows: 'a Beijing-based historian from Chinese sources: Peng''s report that North Korea''s call-up took ''All men between the ages of 16 and 45''; ''I have a responsibility to the Chinese and Korean people, and to the hundreds of thousands of soldiers!''; why Pyongyang at first refused Chinese troops'
+  does_not_show: Peng's words in Chinese (quoted at second hand, through Shen's notes); the Politburo's votes
+- id: src-govcn-20241130
+  tier: C
+  kind: report
+  author: Xinhua News Agency
+  title: Remains of 43 Chinese martyrs in Korean War buried in homeland (30 November 2024)
+  container: null
+  publisher: The State Council of the People's Republic of China (english.www.gov.cn)
+  place: Beijing
+  year: 2024
+  edition: the State Council's English site, crediting Xinhua
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://english.www.gov.cn/news/202411/30/content_WS674a5b93c6d0868f4e8ed8b6.html
+  access:
+    free_copy: https://english.www.gov.cn/news/202411/30/content_WS674a5b93c6d0868f4e8ed8b6.html
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Remains of 43 Chinese martyrs in Korean War buried in homeland
+  language: en
+  region_of_authorship: east-asia
+  producer: prc-state
+  position: null
+  rights: copyright
+  shows: 'the PRC''s count as its state media gives it: ''More than 197,000 CPV soldiers were confirmed killed in the war''; the outcome as ''won'''
+  does_not_show: the YAML's 183,108 or any breakdown; how the count was made
+- id: src-unesco-kbs-2015
+  tier: B
+  kind: report
+  author: Korean Broadcasting System (KBS), nominating the archives to UNESCO
+  title: 'Nomination Form, International Memory of the World Register: The Archives of the KBS Special Live Broadcast ''Finding Dispersed Families'''
+  container: null
+  publisher: UNESCO Memory of the World
+  place: Paris
+  year: 2015
+  edition: the form as UNESCO publishes it
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://media.unesco.org/sites/default/files/webform/mow001/korea_dispersed_persons_eng.pdf
+  access:
+    free_copy: https://media.unesco.org/sites/default/files/webform/mow001/korea_dispersed_persons_eng.pdf
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Nomination Form International Memory of the World Register [PDF]
+  language: en
+  region_of_authorship: east-asia
+  producer: kbs
+  position: null
+  rights: copyright
+  shows: 'the broadcaster''s own figures: 100,952 applicants, 53,536 cases broadcast, 10,189 reunions, 138 days, 453 hours and 45 minutes; ''Ten million people were separated''; 18,523 reunited across the border ''As of 2014'''
+  does_not_show: any participant's words (the form summarises them); 'the longest live broadcast in history' (it says 'few precedents')
+- id: src-yonhap-20260927
+  tier: C
+  kind: report
+  author: Yonhap News Agency
+  title: Number of S. Koreans with family in N. Korea down to less than 33,000 (27 September 2026)
+  container: null
+  publisher: The Korea Times
+  place: Seoul
+  year: 2026
+  edition: Yonhap's report as The Korea Times prints it
+  volume: null
+  document_number: null
+  identifiers:
+    isbn: null
+    doi: null
+    archive_org: null
+    hathitrust: null
+    url: https://www.koreatimes.co.kr/southkorea/society/20260927/number-of-s-koreans-with-family-in-n-korea-down-to-less-than-33000
+  access:
+    free_copy: https://www.koreatimes.co.kr/southkorea/society/20260927/number-of-s-koreans-with-family-in-n-korea-down-to-less-than-33000
+    verified_at: '2026-10-09'
+    verified_by: document-fetch
+    verified_title: Number of S. Koreans with family in N. Korea down to less than 33,000 - The Korea Times
+  language: en
+  region_of_authorship: east-asia
+  producer: press
+  position: null
+  rights: copyright
+  shows: 'the unification ministry''s register as of late August 2026: 134,848 registered, 32,948 living; last reunions August 2018'
+  does_not_show: the ministry's own publication; a figure for any other date (every number here goes stale)
+positions: []
+contested: []
+exhibits: []
+analyses: []
+gaps:
+- what: The YAML's excerpt 'We burned down every town in North Korea and some in South Korea, too. Over a period of three years or so, we killed off ... twenty percent of the population of Korea.' (LeMay, 'Interview with the Office of Air Force History', dated 1984)
+  tried:
+  - https://media.defense.gov/2025/Aug/27/2003789020/-1/-1/0/STRATEGIC_AIR_WARFARE.PDF
+  status: not held as worded. The published interview reads 'So we went over there and fought the war and eventually burned down every town in North Korea anyway, some way or another, and some in South Korea, too' and the 'twenty percent' sentence ends as a question, 'as direct casualties of war, or from starvation and exposure?' (src-lemay-sawf-1988.secburned). The held wording is appended to the YAML; the old one stays unverified
+- what: The YAML's excerpt 'In war there is no substitute for victory.' (MacArthur, 19 April 1951)
+  tried:
+  - https://www.govinfo.gov/content/pkg/SERIALSET-11511_00_00-019-0036-0000/pdf/SERIALSET-11511_00_00-019-0036-0000.pdf
+  status: not held as worded. The Senate's printed address reads 'In war, indeed, there can be no substitute for victory' (src-macarthur-19510419.secvictory). No recording was examined, so what he said aloud is not held. The printed wording is appended to the YAML
+- what: The YAML's excerpt 'If we let Korea down, the Soviet[s] will keep right on going ...' attributed to Truman's 'Personal diary entry', 30 June 1950
+  tried:
+  - web search for the sentence and its source
+  status: not held. Secondary sources give it to George Elsey's notes of Truman's words on 26 June 1950 (Elsey Papers, Truman Library), not to a diary of 30 June; the note itself was not fetched. Neither the wording nor the date is held
+- what: 'The YAML''s excerpt ''In a revolution, you have to pay a price.'' (Mao, on his son''s death, via Chang and Halliday, Mao: The Unknown Story, 2005)'
+  tried: []
+  status: not held; the book is in copyright and was not opened. Nothing held mentions Mao Anying
+- what: Bradley, 'The wrong war, at the wrong place, at the wrong time, and with the wrong enemy' (Senate hearings, May 1951)
+  tried: []
+  status: not sought; the hearings volume (Military Situation in the Far East, 1951) was not fetched. Not held
+- what: Peng Dehuai, 'If the American troops reach our border, they could find a pretext at any time to invade' (Politburo, 2 October 1950), and the Politburo's 'four votes'
+  tried: []
+  status: not held. What is held of Peng is his report and remark as Shen Zhihua quotes them (src-shen-zhihua-2004.secpeng). The Russian record has Mao telling Stalin 'Many comrades in the CC CPC judge that it is necessary to show caution' (src-cwihp-mao-19501002-ru.seccaution)
+- what: Zhou Enlai's public warning that China would not 'sit back with folded hands', and the Chinese record of his meeting with Panikkar
+  tried:
+  - 'https://digitalarchive.wilsoncenter.org/ (the host did not resolve: getaddrinfo failed)'
+  status: not held. Held is the warning as London and New Delhi reported it to Washington on 3 October (src-frus-1950v07-d589, -d595)
+- what: Dean Rusk, 'We were bombing everything that moved in North Korea, every brick standing on top of another' (via Cumings, 2010)
+  tried: []
+  status: not held; Cumings is in copyright and the oral history was not sought
+- what: 'Casualty counts other than the U.S. and the PRC''s: ROK military (the YAML''s 137,899), North Korean military (215,000-520,000), Korean civilians (2.5 million), the YAML''s total ''3-5 million'', the PRC''s 183,108 and the ''US estimates range to 400,000'''
+  tried: []
+  status: 'none held. Held: the U.S. count (src-crs-rl32492) and the PRC''s ''More than 197,000'' (src-govcn-20241130). No ROK Ministry of National Defense or DPRK count was fetched. LeMay''s ''twenty percent'' is a question in an interview, not a count'
+- what: The bombing statistics (635,000 tons, 32,557 tons of napalm, city destruction rates, '30 to 50 atomic bombs')
+  tried: []
+  status: not sought; no held extract carries them
+- what: Inchon's '5,000 to 1', the Chosin figures (15,000 encircled by 67,000; 4,385 dead; 7,338 wounded; minus 35 degrees; '78-mile breakout'; 19,202 and 28,954 Chinese casualties), the 300,000 crossing on 19 October, Smith's 'attacking in a different direction'
+  tried: []
+  status: not held. Appleman's later volumes and the Marine Corps histories were not fetched
+- what: The No Gun Ri Review (Department of the Army Inspector General, January 2001) and the Korean government's own report
+  tried:
+  - http://www.army.mil/nogunri/ (named in the 2001 transcript; not fetched)
+  - web search (the copies found were on Wikisource, an excluded host)
+  status: not held. Held is the DoD briefing transcript of 11 January 2001 and Clinton's statement. The '250-300' and the AP's Pulitzer are not held
+- what: The Bodo League total ('100,000 to 200,000' in the live script, attributed to the Truth and Reconciliation Commission) and American photographs of the killings
+  tried:
+  - https://truthcommissions.humanities.mcmaster.ca/wp-content/uploads/2021/02/South-Korea_TRC_Report-of-Activities.pdf
+  status: 'not held. The Commission''s 2009 report gives verified cases (Ulsan: 407 identified of the petitioners'' 870) and no national total; ''more than 200,000'' appears only as a petition in the summary of a play (not sliced). No held text mentions photographs'
+- what: 'Separated-family figures in the live script: 21 rounds 1985-2018, ''three days, eleven hours'', 4,748 families, 133,000 registered, ''more than half had died'' by 2024, ''longest live television broadcast in history'', ''I just want to know if he is alive'''
+  tried:
+  - https://media.unesco.org/sites/default/files/webform/mow001/korea_dispersed_persons_eng.pdf
+  - https://www.koreajoongangdaily.com/korea/number-of-south-koreans-with-family-in-north-korea-down-to-less-than-33000/12892309 (served no article text to the fetch)
+  status: 'not held as given. Held: KBS''s 100,952 / 53,536 / 10,189 / 138 days / 453 hours 45 minutes, and 18,523 reunited ''As of 2014'' (src-unesco-kbs-2015); the ministry''s 134,848 registered and 32,948 living as of late August 2026 (src-yonhap-20260927). No woman''s words are held'
+- what: Lee Bok-soon (the live script's divided-families witness and its CLOSE)
+  tried: []
+  status: no source names her; the YAML gives none. Not held in any form
+- what: Mao Anying's death (25 November 1950, napalm, a cooking fire, age 28) and Peng Dehuai's later purge and death in 1974
+  tried: []
+  status: not held
+- what: The DPRK's own published account (Korean Central News Agency; Foreign Languages Publishing House histories) and the Sinchon killings
+  tried: []
+  status: 'not sought: no openly hosted, attributable copy was found in the time given. The North Korean leadership is held in its 1950 letter to Stalin (src-cwihp-kimpak-19500929) and in the joint armistice orders (src-pc1953-armistice); Kim''s words in January 1950 are held only through the Soviet ambassador'
+- what: Recordings (Truman's radio report of 11 April 1951, the Truman Library's SR71-35; MacArthur's address)
+  tried: []
+  status: no recording row is written; optional under the brief and none was examined
+- what: The books the YAML lists (Halberstam 2007, Cumings 1981/1990/2004/2010, Fehrenbach 1963, Pearlman 2008, Hwang 2016, Hanley et al. 2001, Chen Jian 1994, Li, Millett and Yu 2001, Chang and Halliday 2005, Roe 2000, Dunford and Kelly 2021)
+  tried: []
+  status: 'not opened: lending copies or in copyright; none is cited for a fact here'
+recordings: []
+
+# ------------------------------------------------------------- disagreements held, not adjudicated
+# Where two held sources disagree, both are held. A list for the writer, not a verdict.
+# 1. Mao's answer of 2 October 1950. The Soviet cable (Roshchin, received 3 October): 'such actions
+#    may entail extremely serious consequences', 'better to show patience now', 'A final decision has
+#    not been taken' (src-cwihp-mao-19501002-ru). The Chinese-published text of the same date: 'We
+#    have decided to send some of our troops to Korea', 12 divisions 'to set off on October 15'
+#    (src-mao-wengao-19501002). Mansourov judges the Chinese text 'unreliable: inaccurate, unsent,
+#    or perhaps misdated' and the Russian ones unlikely to be fakes (src-mansourov-1996).
+# 2. Who started the war. The People's Daily, 1953: 'the reactionary Syngman Rhee clique ...
+#    unleashed the Korean war' (src-pc1953-peoples-daily). The Soviet record: Kim pressing to
+#    attack, 'Lately I do not sleep at night' (src-cwihp-shtykov-19500119), Moscow refusing in 1949
+#    (src-cwihp-politburo-19490924) and assenting in January 1950, 'I am ready to help him'
+#    (src-cwihp-stalin-19500130). The Security Council: 'the armed attack on the Republic of Korea by
+#    forces from North Korea' (src-unsc-res82-1950.op1).
+# 3. The Han bridges. Time: 'about 0215' (src-appleman-1961.secbridge); the live script says
+#    2:30. Who ordered it: advisers believed Chae; 'General Chae denied'; others the Vice Minister
+#    of Defense, who had ordered it 'at 0130' per General Kim (secblame, secvice). Dead: 'between
+#    500 and 800 people', an estimate by 'The best informed American officers' (secbridge); the
+#    YAML's 'Eight hundred civilians' is the top of that range, and 'civilians' is not held.
+# 4. No Gun Ri. The U.S.: 'an unconfirmed number' (src-dod-nogunri-20010111.seccohen,
+#    src-clinton-20010111). 248, 'provided to the Yongdong County office by the civilians', 'not the
+#    figure that the South Korean government has given' (sec248). Duration: 'over 60 hours' as a
+#    reporter puts the victims' testimony (sec60hours). Orders: none found; some veterans
+#    'believed that such an order must have been given' (secorders). The YAML's '250-300' is held by
+#    none of these.
+# 5. 'Police action'. A reporter's phrase, which Truman accepted: 'Yes. That is exactly what it
+#    amounts to.' (src-truman-19500629.secpolice). The live script says 'He called it a police action'.
+# 6. The 38th parallel. Rusk, in 1950, from memory: he and Bonesteel withdrew to 'an adjoining
+#    room', on 'I believe, the night of August 10-11' (src-frus-1945v06-d771). The YAML's 'thirty
+#    minutes and a National Geographic map' is not held.
+# 7. Chinese dead. The PRC: 'More than 197,000' (src-govcn-20241130). The YAML: 183,108 (PRC
+#    official) and 'US estimates range to 400,000'. Only the first is held.
+# 8. American dead. 36,574 is in-theater deaths of all causes; 33,739 hostile; 54,246 worldwide
+#    in the war years (src-crs-rl32492). The YAML calls 36,574 'killed in action'. Cohen in 2001:
+#    '36,000 of whom lost their lives in battle' (briefing, not sliced).
+# 9. The armistice and the South. Rhee: 'Although we cannot sign truce, we shall not obstruct it'
+#    (src-rhee-19530709.secsign). Kim and Peng: 'the Syngman Rhee clique' 'strongly opposed to the
+#    signing' (src-pc1953-armistice.secrhee). The agreement carries the commanders of the UNC, the
+#    KPA and the CPV (src-armistice-19530727.pre1), and in this copy the senior delegates' names.
+# 10. Who won. Kim and Peng: 'a glorious victory of an armistice' (src-pc1953-armistice.secorders);
+#    Xinhua: the CPV 'eventually won' (src-govcn-20241130); Truman, the aim was 'to prevent a third
+#    world war' (src-truman-19510411.secopen); MacArthur, 'no substitute for victory'.
+# 11. Wake Island. MacArthur: Chinese intervention chances 'Very little', 'Only 50/60,000 could be
+#    gotten across' (src-frus-1950v07-d680). Panikkar, twelve days before: the Chinese decision
+#    'final' (src-frus-1950v07-d595). The Chinese crossing on 19 October is not held.
+# 12. Killings by every side. The TRC verified Bodo League killings by South Korean police
+#    (src-trck-2009.secbodo, .seculsan), North Korean soldiers' killing of 1,557 at Daejeon
+#    (.secdaejeon), and civilian deaths from U.S. bombing (.secbombing). Each perspective's
+#    account omits one of these; the TRC holds all three.
+# 13. The divided families. KBS: 'Ten million people were separated', no source given
+#    (src-unesco-kbs-2015.sectenmillion);
+#    the ministry's register: 134,848 registered (src-yonhap-20260927). Different things counted:
+#    a national estimate against applicants to a register.

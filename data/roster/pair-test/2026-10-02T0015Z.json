@@ -1,0 +1,127 @@
+{
+ "collected_at": "2026-10-02T00:15:06Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16175891/Flydubai-hijacker-suicidal-undergone-Islamist-radical-indoctrination-Benjamin-Netanyahu-says.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Flydubai hijacker 'was suicidal' and 'had undergone Islamist radical indoctrination', Benjamin Netanyahu says",
+      "published": "Thu, 01 Oct 2026 16:59:21 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/world-news/flydubai-pilot-stabbed-fz1073-israel-37716939",
+      "title": "FlyDubai FZ1073 latest: Netanyahu says hijack pilot 'used axe' in cockpit attack",
+      "published": "Thu, 1 Oct 2026 22:56:45 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16175839/Newborn-baby-girl-washing-machine-named-mother-murder-trial.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Newborn baby girl whose dead body was found on top of washing machine is named as inquest hears of 33 wounds from 15 stabbings while mother faces murder trial",
+      "published": "Thu, 01 Oct 2026 18:32:06 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/tragic-baby-stabbed-15-times-37725653",
+      "title": "Tragic baby 'stabbed 15 times' and found dead in outhouse had only just been born",
+      "published": "Thu, 1 Oct 2026 20:44:29 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16175923/Richard-E-Grant-makes-HUGE-mistake-Traitor.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Richard E. Grant makes HUGE slip-up in front of Faithfuls just minutes after being told he is a Traitor",
+      "published": "Thu, 01 Oct 2026 23:38:13 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/celebrity-traitors-richard-ross-maya-37724164",
+      "title": "Claudia Winkleman reacts to Richard E. Grant's greatest act of Traitors self sabotage",
+      "published": "Thu, 1 Oct 2026 20:15:03 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16176895/Irelands-Austria-HALTED-Israel.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Ireland's clash with Austria is HALTED as furious fans throw hundreds of tennis balls onto the pitch in protest at matches against Israel going ahead",
+      "published": "Thu, 01 Oct 2026 22:49:04 +0100"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/ireland-vs-austria-israel-protest-37725582",
+      "title": "Ireland vs Austria match suddenly halted as furious supporters stage Israel protest",
+      "published": "Thu, 1 Oct 2026 20:01:13 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 144,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.jpost.com/diaspora/antisemitism/article-910381",
+      "title": "Rabbi who coached Adam Brody for 'Nobody Wants this' says he's 'ignorant' over Gaza genocide claims",
+      "published": "Thu, 01 Oct 2026 22:54:09 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/haaretz-today/2026-09-29/ty-article/.highlight/adam-brodys-genocide-declaration-shows-gaza-is-harder-to-avoid-beyond-netflix/000001a0-ee89-dfbb-afa4-ffd9a0040000",
+      "title": "Adam Brody's 'genocide' declaration shows Gaza is harder to avoid in real life than on Netflix",
+      "published": "Tue, 29 Sep 2026 22:37:44 +0300"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 136,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/09/turkey-shelters-emirati-brotherhood-figures-accused-of-plotting-to-oust-uae-rulers/",
+      "title": "Turkey shelters Emirati Brotherhood figures accused of plotting to oust UAE rulers",
+      "published": "Sun, 20 Sep 2026 22:18:23 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 307,
+    "left": 10
+   }
+  }
+ }
+}

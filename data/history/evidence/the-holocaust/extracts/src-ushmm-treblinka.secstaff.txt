@@ -1,0 +1,6 @@
+source: src-ushmm-treblinka
+locator: secstaff
+url: https://encyclopedia.ushmm.org/content/en/article/treblinka
+read: 2026-10-07
+
+The authorities at the killing center, Treblinka II, consisted of a staff of between 25 and 35 German SS and police officials. As with the other Operation Reinhard killing centers, the majority of German camp officials belonged to the T4 (“euthanasia”) organization.

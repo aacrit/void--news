@@ -1,0 +1,8 @@
+source: src-imtfe-judgment-ch8
+locator: secrecall
+url: https://www.ibiblio.org/hyperwar/PTO/IMTFE/IMTFE-8.html
+read: 2026-10-09
+note: the text is the HyperWar Foundation's HTML transcription of the Judgment (transcribed by Patrick Clancey), whitespace collapsed; its typing errors are kept as it prints them (e.g. 'tow' for 'two'); the transcription's page markers ('--1014--', the printed page of the Judgment) are removed by the builder and the page is given here instead
+note: printed page 1017; '0n 29 April 19490' is the transcription's typing of the date and is kept
+
+Following these unfavorable reports and the pressure of public opinion aroused in nations all over the world, the Japanese GOvernment recalled MATSUI and approximately 80 of his officers, but took no action to punish any of them. MATSUI, after his return to Japan on 5 March 1938, was appointed a Cabinet Councillor and 0n 29 April 19490, was decorated by the Japanese Government for "meritorious services" in the China War.

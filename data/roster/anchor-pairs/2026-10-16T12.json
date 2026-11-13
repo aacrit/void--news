@@ -1,0 +1,110 @@
+[
+ {
+  "newsroom": "Deutsche Welle",
+  "lang_a": "en",
+  "lang_b": "de",
+  "score": 18,
+  "a": {
+   "title": "Ronaldo stays on under cloud as Messi exits internationals",
+   "summary": "Just hours before Lionel Messi played his last match for Argentina, Cristiano Ronaldo posted his latest salvo in a row with Portugal. Ronaldo wants to play on despite the troubles, while Messi bathed in adulation.",
+   "link": "https://www.dw.com/en/ronaldo-stays-on-under-cloud-as-messi-exits-internationals/a-79574551?maca=en-rss-en-all-1573-rdf",
+   "published": ""
+  },
+  "b": {
+   "title": "Messi weint, Ronaldo flüchtet: Das Ende zweier Ären",
+   "summary": "Zwei große Nationalmannschaftskarrieren im Fußball gehen zu Ende. Doch während Lionel Messi in Argentinien als gefeierter Held abtritt, flüchtet Cristiano Ronaldo als beleidigter Altstar von Portugals Selecao.",
+   "link": "https://www.dw.com/de/messi-weint-ronaldo-flüchtet-das-ende-zweier-ären/a-79574118?maca=de-rss-de-all-1119-rdf",
+   "published": ""
+  }
+ },
+ {
+  "newsroom": "France 24",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 20,
+  "a": {
+   "title": "Zelensky rallies European allies as US support for Ukraine wanes",
+   "summary": "Ukrainian President Volodymyr Zelensky sought European backing Thursday after vowing to resume strikes on Russian oil refineries despite US President Donald Trump’s demands to stop. Tensions between Kyiv and Washington have escalated in recent days over sanctions, energy infrastructure attacks and restrictions on satellite communications.",
+   "link": "https://www.france24.com/en/europe/20261015-zelensky-rallies-european-allies-as-us-support-for-ukraine-wanes",
+   "published": "Thu, 15 Oct 2026 23:06:00 GMT"
+  },
+  "b": {
+   "title": "Ukraine: Le grand lâchage ?",
+   "summary": "Le conseil européen serre les rangs autour de Volodymyr Zelensky alors que Donald Trump menace d'abandonner Kiev et que Marine Le Pen: au cas où elle accéderait à l'Elysée, l'aide française à l'Ukraine prendrait fin dans les six mois suivant son élection. On va plus loin avec Niagalé Bagayoko, Anne Corpet et Caroline de Camaret à Bruxelles.",
+   "link": "https://www.france24.com/fr/%C3%A9missions/on-va-plus-loin/20261016-ukraine-le-grand-l%C3%A2chage",
+   "published": "Fri, 16 Oct 2026 10:57:37 GMT"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 26,
+  "a": {
+   "title": "Duane Davis gets minimum 40 years in prison for orchestrating murder of Tupac Shakur",
+   "summary": "Shakur was a key figure in a hip-hop rivalry pitting the US East Coast against the West Coast. He was just 25 when he was gunned down in Las Vegas.",
+   "link": "https://www.euronews.com/2026/10/14/duane-davis-gets-minimum-40-years-in-prison-for-orchestrating-murder-of-tupac-shakur",
+   "published": "Wed, 14 Oct 2026 11:04:06 +0200"
+  },
+  "b": {
+   "title": "Duane Davis condamné à au moins 40 ans de prison pour le meurtre de Tupac Shakur",
+   "summary": "Shakur était une figure centrale de la rivalité hip-hop qui opposait la côte Est à la côte Ouest des États-Unis. Il n'avait que 25 ans lorsqu'il a été abattu à Las Vegas.",
+   "link": "https://fr.euronews.com/2026/10/14/duane-davis-condamne-a-au-moins-40-ans-de-prison-pour-le-meurtre-de-tupac-shakur",
+   "published": "Wed, 14 Oct 2026 19:46:15 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 21,
+  "a": {
+   "title": "Europe Today: Kallas speaks exclusively to Euronews as crucial EU summit kicks off",
+   "summary": "Kaja Kallas, the EU's top diplomat, speaks exclusively to Maria Tadeo as EU leaders arrive in Brussels for a crucial EU summit on spiralling energy prices, an unfinished seven-year budget, and Donald Trump's pressure on Ukraine. We also interview Abu Abughazaleh, the Jordanian Investment Minister.",
+   "link": "https://www.euronews.com/2026/10/15/europe-today-kallas-speaks-exclusively-to-euronews-as-crucial-eu-summit-kicks-off",
+   "published": "Thu, 15 Oct 2026 08:01:43 +0200"
+  },
+  "b": {
+   "title": "Europe Today : Kallas s'exprime en exclusivité sur Euronews au début d'un sommet crucial de l'UE",
+   "summary": "Kaja Kallas à Euronews : sommet de l'UE à Bruxelles sur l'énergie, le budget et l'Ukraine, et entretien avec le ministre jordanien de l'Investissement.",
+   "link": "https://fr.euronews.com/2026/10/15/europe-today-kallas-sexprime-en-exclusivite-sur-euronews-au-debut-dun-sommet-crucial-de-lu",
+   "published": "Thu, 15 Oct 2026 08:02:24 +0200"
+  }
+ },
+ {
+  "newsroom": "Euronews",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 18,
+  "a": {
+   "title": "Three children and one teacher killed in Oregon elementary school shooting",
+   "summary": "Between 400 and 450 children attend Silver Rail Elementary, where more than 40 staff work, a police spokesperson had said earlier.",
+   "link": "https://www.euronews.com/2026/10/16/four-killed-in-oregon-elementary-school-shooting-including-three-children-aged-5-to-11",
+   "published": "Fri, 16 Oct 2026 05:23:21 +0200"
+  },
+  "b": {
+   "title": "États-Unis : trois enfants et un enseignant tués dans une fusillade dans une école primaire de l'Oregon",
+   "summary": "Entre 400 et 450 élèves fréquentent l'école primaire Silver Rail, où travaillent plus de 40 membres du personnel, avait indiqué plus tôt un porte-parole de la police.",
+   "link": "https://fr.euronews.com/2026/10/16/etats-unis-trois-enfants-et-un-enseignant-tues-dans-une-fusillade-dans-une-ecole-primaire-",
+   "published": "Fri, 16 Oct 2026 08:03:49 +0200"
+  }
+ },
+ {
+  "newsroom": "RFI",
+  "lang_a": "en",
+  "lang_b": "fr",
+  "score": 21,
+  "a": {
+   "title": "Zelensky rallies European allies after defying Trump over Russia strikes",
+   "summary": "Ukraine's President Volodymyr Zelensky is seeking to rally European allies at a Brussels summit on Friday after saying Kyiv would no longer abide by US President Donald Trump's demands not to strike Russian oil refineries.",
+   "link": "https://www.rfi.fr/en/international/20261015-zelensky-rallies-european-allies-as-trump-ties-slump",
+   "published": "Thu, 15 Oct 2026 11:47:37 GMT"
+  },
+  "b": {
+   "title": "EN DIRECT - L'UE fait bloc autour de l'Ukraine, la «trêve énergétique» enterrée",
+   "summary": "Donald Trump a jugé jeudi que la reprise par l'Ukraine des frappes sur les raffineries russes était une « honte », haussant à nouveau le ton contre le président ukrainien, Volodymyr Zelensky, qui cherche le soutien de ses alliés européens à Bruxelles.",
+   "link": "https://www.rfi.fr/fr/europe/20261016-en-direct-la-reprise-des-frappes-ukrainiennes-contre-les-raffineries-russes-est-une-honte-dit-trump",
+   "published": "Fri, 16 Oct 2026 07:33:46 GMT"
+  }
+ }
+]

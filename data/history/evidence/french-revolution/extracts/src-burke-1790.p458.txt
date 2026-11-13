@@ -1,0 +1,7 @@
+source: src-burke-1790
+locator: p458
+url: https://www.gutenberg.org/cache/epub/15679/pg15679-images.html
+read: 2026-10-09
+note: Project Gutenberg's HTML of the Nimmo edition (1887), tags removed; whitespace collapsed, nothing else changed
+
+By hating vices too much, they come to love men too little.

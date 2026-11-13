@@ -1,0 +1,8 @@
+source: src-decree-land-en
+locator: art4
+url: https://www.marxists.org/archive/lenin/works/1917/oct/25-26/26d.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+note: 'folowing' is the page's spelling
+
+(4) The folowing peasant Mandate, compiled by the newspaper Izvestia Vserossiiskogo Soveta Krestyanskikh Deputatov from 242 local peasant mandates and published in No. 88 of that paper (Petrograd, No. 88, August 19, 1917), shall serve everywhere to guide the implementation of the great land reforms until a final decision on the latter is taken by the Constituent Assembly.

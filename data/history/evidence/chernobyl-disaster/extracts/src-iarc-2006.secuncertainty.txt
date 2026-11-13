@@ -1,0 +1,8 @@
+source: src-iarc-2006
+locator: secuncertainty
+url: https://www.iarc.who.int/wp-content/uploads/2018/07/IARCBriefingChernobyl.pdf
+read: 2026-10-07
+note: the boxed note on uncertainty, page 1; the box ends '(see details below)'
+note: whitespace and line breaks of the fetched copy are collapsed to single spaces
+
+The figures presented here give only an order of magnitude of the possible number of radiation-related cancers. The uncertainty associated with these predictions is large. For thyroid cancers, the 95% uncertainty interval (UI) ranges from 3,400 to 72,000; for other cancers it ranges from 11,000 to 59,000. For the number of cancer deaths, the 95% UI ranges from 6,700 to 38,000

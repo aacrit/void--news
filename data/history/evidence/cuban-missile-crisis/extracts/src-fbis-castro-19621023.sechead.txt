@@ -1,0 +1,11 @@
+source: src-fbis-castro-19621023
+locator: sechead
+url: https://dataverse.tdl.org/api/access/datafile/54331
+read: 2026-10-04
+note: the file's head: FBIS's title and transmission line, and the announcer's opening; the database file 1962_10oc_24.txt of the Fidel Castro Speech Database
+
+FIDEL CASTRO'S 23 OCTOBER INTERVIEW
+
+Havana in Spanish to the Americas 0135 GMT 24 October 1962--E
+
+(Text) Announcer: Good evening, televiewers. All Cuba's radio and television stations are in network this evening to carry the statements by the Prime Minister of the revolutionary government and the secretary general of ORI, Maj. Fidel Castro Ruz, at a particularly delicate time in the history of the world.

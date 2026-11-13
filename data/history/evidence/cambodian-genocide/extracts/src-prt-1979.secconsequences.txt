@@ -1,0 +1,7 @@
+source: src-prt-1979
+locator: secconsequences
+url: https://archive.org/download/revtribunalpolpot/revtribunalpolpot_djvu.txt
+read: 2026-09-25
+note: from the Act of Prosecution, section on the consequences; the text layer is optical character recognition of a 1990 print, and a running page title between the two halves of the sentence is removed
+
+- Some three million innocent people were massacred, on the strength of a simple survey of the population formerly living in Phnom Penh and at a commune in Siemreap province ( documents No 2.4.01 ; 2.4.05) and of data collected on the spot by Australian journalist W. Burchett in three provinces, Prey Veng, Kompong Speu and Svay Rieng (document No.2.6.06). There is good reason to estimate that after four years of rule, the Pol Pot - Ieng Sary clique have killed about three million people, among them many patriots, genuine revolutionaries, the quasi totality of intellectuals, scientists and technicians, writers and artists, a large number of students and pupils both able-bodied and educated, all of them being indispensable to national defence and construction.

@@ -1,0 +1,8 @@
+source: src-bryce-1916
+locator: p651
+url: https://archive.org/download/treatmentofarmen00grea/treatmentofarmen00grea_djvu.txt
+read: 2026-09-25
+note: Internet Archive OCR text layer of the HMSO printing; end-of-line hyphens rejoined, spacing collapsed, the layer's glyph errors otherwise kept
+note: Toynbee's historical summary, p. 651
+
+We can sum up this statistical enquiry by saying that, as far as our defective information carries us, about an equal number of Armenians in Turkey seem to have escaped, to have perished, and to have survived deportation in 1915 ; and we shall not be far wrong if, in round numbers, we estimate each of these categories at 600,000.

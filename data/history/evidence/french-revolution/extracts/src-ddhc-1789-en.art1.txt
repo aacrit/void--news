@@ -1,0 +1,8 @@
+source: src-ddhc-1789-en
+locator: art1
+url: https://www.conseil-constitutionnel.fr/en/declaration-of-human-and-civic-rights-of-26-august-1789
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+note: the FIRST SENTENCE of the article only. The Conseil's English of the second sentence reads 'Social distinctions may be based only on considerations of the common good.' and is deliberately not held as an extract: the event YAML's excerpt of article 1 renders it 'based only upon general usefulness', a wording no held translation carries, and tests/test_history_quote_ledger.py fails a YAML excerpt that sits within a few words of a stored extract without matching it. See gaps
+
+Men are born and remain free and equal in rights.

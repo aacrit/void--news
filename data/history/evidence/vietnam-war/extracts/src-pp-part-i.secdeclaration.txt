@@ -1,0 +1,8 @@
+source: src-pp-part-i
+locator: secdeclaration
+url: https://nara-media-001.s3.amazonaws.com/arcmedia/research/pentagon-papers/Pentagon-Papers-Part-I.pdf
+read: 2026-10-09
+note: NARA's 2011 scan of the Report of the Office of the Secretary of Defense Vietnam Task Force, its text layer (the scan's own OCR), line breaks folded to spaces; OCR misreadings ('l east', 'vrere'), line-end hyphens, the 'TOP SECRET - Sensitive' running heads and the 'Declassified per Executive Order 13526' stamp are kept where the text layer prints them
+note: Part I, printed pages B-33 and B-34; the study's own translation of the declaration as it quotes it, with the page break between them
+
+On 2 September 1945 -- the day Japan signed the surrender instrument Ho proclaimed the foundation of a ne,., state, issuing the follO\ving "Declara- tion of lhdependence of the Democratic Republic of Viet-Nam": ~OP SECRET - Sensitive B-33 r Declassified per Executive Order 13526, Section 3.3 NND Project Number: NND 63316. By: NWD Date: 2011 TOP SECRET - Sensitive "All men are created equal; they are endowed by their Creator with certain unalienable Rights; among these are Life, Liberty, and the pursuit of Happiness. "This immortal statement was made in the Declaration of Independence of the United States of America in 1776. In a broader sense, this means : All the peoples on the earth are equal from birth, all the peoples have a right to live, to be happy and free. "The Declaration of the French Revolution made in 1791 on the Rights of Man and the Citizen also states: 'All men are born free and with equal rights, and must always remain free and have equal rights.' "Those are undeniable truths.

@@ -1,0 +1,7 @@
+source: src-dubois-garrigus-2006
+locator: sec21
+url: https://today.duke.edu/showcase/haitideclaration/declarationstext.html
+read: 2026-09-25
+note: the heading of the Deed of independence and its first paragraph
+
+The Deed of independence Native Army Today, January 1st 1804, the general in chief of the native army, accompanied by the generals of the army, assembled in order to take measures that will insure the good of the country;

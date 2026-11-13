@@ -1,0 +1,7 @@
+source: src-hansard-19460222
+locator: seccongress
+url: https://api.parliament.uk/historic-hansard/commons/1946/feb/22/royal-indian-navy-mutiny
+read: 2026-10-09
+note: the text is the Hansard page's own text (UK Parliament, historic Hansard), whitespace collapsed
+
+The Congress Party officially disclaim participation in the mutiny, but Left Wing elements and Communists are trying to work up sympathy and it is anticipated there may be some disturbance before the situation is stabilised.

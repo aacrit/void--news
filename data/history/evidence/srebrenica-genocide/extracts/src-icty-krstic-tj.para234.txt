@@ -1,0 +1,7 @@
+source: src-icty-krstic-tj
+locator: para234
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+
+234. Mr. Drazen Erdemovi} was a member of the VRS 10th Sabotage Detachment (a Main Staff subordinate unit) and participated in the mass execution.585 Mr. Erdemovi} appeared as a Prosecution witness and testified: The men in front of us were ordered to turn their backs. When those men turned their backs to us, we shot at them. We were given orders to shoot.586

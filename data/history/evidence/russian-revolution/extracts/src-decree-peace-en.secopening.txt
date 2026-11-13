@@ -1,0 +1,7 @@
+source: src-decree-peace-en
+locator: secopening
+url: https://www.marxists.org/archive/lenin/works/1917/oct/25-26/26b.htm
+read: 2026-10-09
+note: the web page's text as served; whitespace collapsed, nothing else changed
+
+The workers' and peasants' government, created by the Revolution of October 24-25 and basing itself on the Soviet of Workers', Soldiers' and Peasants' Deputies, calls upon all the belligerent peoples and their government to start immediate negotiations for a just, democratic peace.

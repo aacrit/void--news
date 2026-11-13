@@ -1,0 +1,8 @@
+source: src-rhee-19530618
+locator: secrelease
+url: https://history.state.gov/historicaldocuments/frus1952-54v15p2/d607
+read: 2026-10-09
+note: FRUS 1952-1954, vol. XV, part 2, Document 607 (from the Mark W. Clark Collection, The Citadel); the page's [Page] marker sits inside the passage as served
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Enclosed herewith please find a copy of my statement issued this morning relating to the release of the loyal Korean prisoners of war. I know your personal view regarding this matter and I know also that you could not do anything about it on account of the international complications. Under this circumstance, if I had revealed to you in advance my idea of setting them free, it would have only embarrassed you. Furthermore, the plan would have been completely spoiled. As I have spoken to you about this matter, more than once, I do believe that these innocent boys should not have been detained in stockades so long. What is uppermost in my mind is the fear that if the Indian armed forces, a thousand or more, come to guard these boys to help the Communist brainwashers grill them and indoctrinate them for two or three long months, urging them to go back to the Communists, the Korean people will not let them alone. There will be a clash of a serious nature between the Communist or pro-Communist Indians and the anti-Communist Koreans. No one will be able to stop it. In this connection, I suggested several plans which might be agreeable to all concerned. None of these having been heeded, however, I [Page 1198] felt I had to take this final action. Consequently, I took my own responsibility and ordered the Korean military police to release them at once.

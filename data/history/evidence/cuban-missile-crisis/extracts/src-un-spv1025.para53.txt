@@ -1,0 +1,8 @@
+source: src-un-spv1025
+locator: para53
+url: https://digitallibrary.un.org/record/520771/files/S_PV-1025-EN.pdf
+read: 2026-10-04
+note: the PDF's text layer, an OCR of the scanned provisional verbatim record; the layer misreads some glyphs ('1' for 'I', 'oan' for 'can', 'soorn' for 'scorn', 'Am- bassdor' for 'Ambassador') and hyphenates at line ends; nothing is corrected here
+note: paragraph 53 of the record, Mr. Stevenson (United States of America)
+
+53, Mr, STEVENSON (United States of America): 1 am prepared to wait for my answer until Hell freezes over, if that is your decision. 1 am also prepared to present the evidence in this room.

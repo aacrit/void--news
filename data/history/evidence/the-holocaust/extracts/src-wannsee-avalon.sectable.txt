@@ -1,0 +1,87 @@
+source: src-wannsee-avalon
+locator: sectable
+url: https://avalon.law.yale.edu/imt/wannsee.asp
+read: 2026-10-07
+note: the table's B list (countries outside German control in January 1942, with the occupied USSR) as the page prints it, one cell per line; the A list precedes it in the document
+
+B.
+
+Bulgaria
+
+48,000
+
+England
+
+330,000
+
+Finland
+
+2,300
+
+Ireland
+
+4,000
+
+Italy including Sardinia
+
+58,000
+
+Albania
+
+200
+
+Croatia
+
+40,000
+
+Portugal
+
+3,000
+
+Rumania including Bessarabia
+
+342,000
+
+Sweden
+
+8,000
+
+Switzerland
+
+18,000
+
+Serbia
+
+10,000
+
+Slovakia
+
+88,000
+
+Spain
+
+6,000
+
+Turkey (European portion)
+
+55,500
+
+Hungary
+
+742,800
+
+USSR
+
+5,000,000
+
+Ukraine
+
+2,994,684
+
+White Russia excluding Bialystok
+
+446,484
+
+Total
+
+over 11,000,000

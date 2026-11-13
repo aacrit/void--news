@@ -1,0 +1,8 @@
+source: src-truman-19500629
+locator: secpolice
+url: https://www.trumanlibrary.gov/library/public-papers/179/presidents-news-conference-0
+read: 2026-10-09
+note: Public Papers, 1950, Item 179, question 11; the words 'police action' are the reporter's, and the President agrees
+note: the fetched copy's whitespace (line breaks of the text layer or the HTML) is collapsed to single spaces
+
+Q. Mr. President, could you elaborate on this statement that--I believe the direct quote was, "We are not at war." And could we use that quote in quotes? THE PRESIDENT. Yes, I will allow you to use that. We are not at war. Q. Could you elaborate sir, a little more on the reason for this move, and the peace angle on it ? THE PRESIDENT. The Republic of Korea was set up with the United Nations help. It is a recognized government by the members of the United Nations. It was unlawfully attacked by a bunch of bandits which are neighbors of North Korea. The United Nations Security Council held a meeting and passed on the situation and asked the members to go to the relief of the Korean Republic. And the members of the United Nations are going to the relief of the Korean Republic to suppress a bandit raid on the Republic of Korea. Q. Mr. President, would it be correct, against your explanation, to call this a police action under the United Nations? THE PRESIDENT. Yes. That is exactly what it amounts to.

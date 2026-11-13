@@ -1,0 +1,57 @@
+source: src-wannsee-avalon
+locator: secilist
+url: https://avalon.law.yale.edu/imt/wannsee.asp
+read: 2026-10-07
+note: the participant list of section I as the page prints it, name and office on separate lines
+
+Gauleiter Dr. Meyer
+
+and Reichsamtleiter Dr. Leibbrandt
+
+Reich Ministry for the Occupied Eastern territories
+
+Secretary of State Dr. Stuckart
+
+Reich Ministry for the Interior
+
+Secretary of State Neumann
+
+Plenipotentiary for the Four Year Plan
+
+Secretary of State Dr. Freisler
+
+Reich Ministry of Justice
+
+Secretary of State Dr. Buehler
+
+Office of the Government General
+
+Under Secretary of State Dr. Luther
+
+Foreign Office
+
+SS-Oberfuehrer Klopfer
+
+Party Chancellery
+
+Ministerialdirektor Kritzinger
+
+Reich Chancellery
+
+SS-Gruppenfuehrer Hofmann
+
+Race and Settlement Main Office
+
+SS-Gruppenfuehrer Mueller
+
+SS-Obersturmbannfuehrer Eichmann
+
+Reich Main Security Office
+
+SS-Oberfuehrer Dr. Schongarth
+
+Security Police and SD Commander of the Security Police and the SD in the Government General
+
+SS-Sturmbannfuehrer Dr. Lange
+
+Security Police and SD Commander of the Security Police and the SD for the General-District Latvia, as deputy of the Commander of the Security Police and the SD for the Reich Commissariat "Eastland".

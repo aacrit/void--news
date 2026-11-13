@@ -1,0 +1,8 @@
+source: src-icty-krstic-tj
+locator: para77
+url: https://www.icty.org/x/cases/krstic/tjug/en/krs-tj010802e.pdf
+read: 2026-09-24
+note: the ICTY PDF text layer renders some diacritics with substitute glyphs (Poto~ari for Potocari, Erdemovi} for Erdemovic, @ivanovi} for Zivanovic, ^an~ari for Cancari); the passage is stored as the text layer prints it
+note: the opening sentence of paragraph 77
+
+77. The Trial Chamber cannot rule out the possibility that a percentage of the bodies in the gravesites examined may have been of men killed in combat.

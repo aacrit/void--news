@@ -1,0 +1,7 @@
+source: src-un-sres-955
+locator: op1
+url: https://documents.un.org/doc/undoc/gen/n95/140/97/pdf/n9514097.pdf
+read: 2026-10-07
+note: line breaks in the PDF's text layer folded to spaces; nothing else changed
+
+1. Decides hereby, having received the request of the Government of Rwanda (S/1994/1115), to establish an international tribunal for the sole purpose of prosecuting persons responsible for genocide and other serious violations of international humanitarian law committed in the territory of Rwanda and Rwandan citizens responsible for genocide and other such violations committed in the territory of neighbouring States, between 1 January 1994 and 31 December 1994 and to this end to adopt the Statute of the International Criminal Tribunal for Rwanda annexed hereto;

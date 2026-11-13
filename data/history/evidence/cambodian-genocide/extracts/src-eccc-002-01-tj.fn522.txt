@@ -1,0 +1,6 @@
+source: src-eccc-002-01-tj
+locator: fn522
+url: https://www.eccc.gov.kh/sites/default/files/documents/courtdoc/2014-08-07%2017:04/E313_Trial%20Chamber%20Judgement%20Case%20002_01_ENG.pdf
+read: 2026-09-25
+
+522 Demographic Expert Report: Khmer Rouge Victims in Cambodia, April 1975-January 1979: A Critical Assessment of Major Estimates, E3/2413, 30 September 2009, p. 12, ERN (En) 00385255.

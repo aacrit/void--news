@@ -1,0 +1,8 @@
+source: src-sonthonax-17930829
+locator: secpreamble
+url: https://archive.org/download/proclamationauno00sont/proclamationauno00sont_djvu.txt
+read: 2026-09-25
+note: the free copy is the scan's OCR text layer, held as the layer prints it, long s read as f and other misreadings included
+note: the enacting words before article premier: the proclamation is ordered for execution in the province of the North
+
+Exerçant les pouvoirs qui lui ont été délégués par l'art. III du décret rendu par Ja convention nationale le 5 mars dernier ; A ordonné & ordonne ce qui fuit pour être exécuté dans la province du Nord.
