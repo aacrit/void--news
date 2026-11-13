@@ -1,28 +1,15 @@
 {
-  "builtAt": "2026-11-12T15:59:26.066677Z",
+  "builtAt": "2026-11-13T18:32:16.562265Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "33e700cb-a7f0-4f30-acc9-840f456ba33d",
-      "title": "Netflix Schedules Russell Brand Documentary Following Prison Sentence and Platform Fallout",
+      "id": "ea7bf44b-1b95-4ec2-920e-2a750fe867dd",
+      "title": "Haitian and Salvadoran Forces Take Control of Port-au-Prince Stadium",
       "sentences": [
         {
-          "text": "In a separate development, David Walliams faces allegations from multiple women of using his celebrity status to groom teenagers as young as 15 and engage in predatory behavior, according to an investigation published jointly by ITV News and The Guardian.",
-          "rule": "E-16",
-          "message": "sentence opens on \"In a separate development\", announcing another story: \"In a separate development, David Walliams faces allegations from multiple women of using h\""
-        }
-      ],
-      "points": [],
-      "left": []
-    },
-    {
-      "id": "60611744-258a-4a90-9349-2afaef7764b3",
-      "title": "Death Toll Rises After Brooklyn Apartment Building Collapse",
-      "sentences": [
-        {
-          "text": "The mixed-use structure, which contained apartments above ground-floor commercial space, collapsed near a construction site at approximately 4:00 p.m. on Wednesday.",
+          "text": "Prime Minister Alix Didier Fils-Aime hailed the military cooperation as a major win in combating gang violence alongside the United Nations-backed Gang Suppression Force, whose mandate was recently renewed by G7 foreign ministers until March 2027.",
           "rule": "E-13",
-          "message": "summary states 0, which appears in none of the source articles: source it or cut it"
+          "message": "summary puts 2027 beside \"united nations-backed gang suppression force\", but no source sentence carrying 2027 names it and one names another \"united ...\": \"Prime Minister Alix Didier Fils-Aime hailed the military cooperation as a major win in com\""
         }
       ],
       "points": [],

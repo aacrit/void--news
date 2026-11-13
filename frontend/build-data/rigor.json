@@ -1,52 +1,50 @@
 {
- "builtAt": "2026-11-12T15:59:26.066677Z",
- "briefCreatedAt": "2026-11-12T15:58:47.657784+00:00",
+ "builtAt": "2026-11-13T18:32:16.562265Z",
+ "briefCreatedAt": "2026-11-13T18:31:55.237480+00:00",
  "products": {
   "card_headline": {
    "sentences": 30,
-   "anchored": 2,
+   "anchored": 0,
    "checked": 0,
-   "byAnchor": {
-    "number": 2
-   },
-   "anchorTypes": [
-    "number",
-    "quote"
-   ],
-   "coverage": 0.0
-  },
-  "card_summary": {
-   "sentences": 216,
-   "anchored": 60,
-   "checked": 3,
-   "byAnchor": {
-    "number": 60
-   },
-   "anchorTypes": [
-    "number",
-    "quote"
-   ],
-   "coverage": 1.4
-  },
-  "points": {
-   "sentences": 175,
-   "anchored": 32,
-   "checked": 0,
-   "byAnchor": {
-    "number": 32
-   },
    "anchorTypes": [
     "number",
     "quote"
    ],
    "coverage": 0.0,
-   "machinePointsExcluded": 15
+   "byAnchor": {}
+  },
+  "card_summary": {
+   "sentences": 182,
+   "anchored": 54,
+   "checked": 32,
+   "byAnchor": {
+    "number": 54
+   },
+   "anchorTypes": [
+    "number",
+    "quote"
+   ],
+   "coverage": 17.6
+  },
+  "points": {
+   "sentences": 175,
+   "anchored": 28,
+   "checked": 20,
+   "anchorTypes": [
+    "number",
+    "quote"
+   ],
+   "byAnchor": {
+    "number": 28
+   },
+   "coverage": 11.4,
+   "machinePointsExcluded": 0
   },
   "tldr": {
-   "sentences": 34,
-   "anchored": 29,
-   "checked": 29,
-   "coverage": 85.3,
+   "sentences": 31,
+   "anchored": 21,
+   "checked": 21,
+   "coverage": 67.7,
    "anchorTypes": [
     "number",
     "name",
@@ -54,18 +52,18 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 3,
-    "name": 27,
-    "number": 9
+    "date": 5,
+    "name": 20,
+    "number": 3
    },
    "groundingRan": true,
    "shipped": true
   },
   "opinion": {
-   "sentences": 22,
-   "anchored": 7,
-   "checked": 7,
-   "coverage": 31.8,
+   "sentences": 20,
+   "anchored": 5,
+   "checked": 5,
+   "coverage": 25.0,
    "anchorTypes": [
     "number",
     "name",
@@ -73,18 +71,17 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 1,
-    "name": 4,
-    "number": 5
+    "name": 5,
+    "number": 1
    },
    "groundingRan": true,
    "shipped": true
   },
   "onair": {
-   "sentences": 40,
-   "anchored": 31,
-   "checked": 31,
-   "coverage": 77.5,
+   "sentences": 51,
+   "anchored": 30,
+   "checked": 30,
+   "coverage": 58.8,
    "anchorTypes": [
     "number",
     "name",
@@ -92,9 +89,9 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 3,
-    "name": 25,
-    "number": 11
+    "date": 6,
+    "name": 28,
+    "number": 8
    },
    "groundingRan": true,
    "shipped": true
@@ -103,36 +100,30 @@
  "evidence": {
   "shipped": 30,
   "freshKnown": true,
-  "fresh": 6,
+  "fresh": 30,
   "states": {
-   "confirmable": 2,
-   "index cap below writer window": 8,
-   "stub rows, card not fresh": 20
+   "confirmable": 21,
+   "index cap below writer window": 9
   }
  },
  "audit": {
   "shipped": {
-   "advisory": {
-    "E-13 misattached": 4
-   },
    "cannot confirm": {
-    "E-13 absent": 1,
-    "E-13 misattached": 6
+    "E-13 absent": 2
    }
   },
   "bench": {
-   "advisory": {
-    "E-13 misattached": 1
-   },
    "cannot confirm": {
-    "E-13 misattached": 2
+    "E-14 absent": 1
    }
   }
  },
  "run": {
   "brief": {
-   "cut_sentences": 0,
-   "cuts_by_reason": {},
+   "cut_sentences": 2,
+   "cuts_by_reason": {
+    "name": 2
+   },
    "edition": "world",
    "grounding_ran": {
     "opinion": true,
@@ -141,28 +132,25 @@
    }
   },
   "onair": {
-   "cut_sentences": 3,
-   "cuts_by_reason": {
-    "number": 3
-   },
+   "cut_sentences": 0,
+   "cuts_by_reason": {},
    "grounding_ran": true
   },
-  "startedAt": "2026-11-12T14:12:21Z",
+  "startedAt": "2026-11-13T18:21:52Z",
   "stage2": {
    "candidates": 45,
-   "critique_read": 27,
-   "critique_unread": 18,
-   "cut_sentences": 4,
+   "critique_read": 45,
+   "critique_unread": 0,
+   "cut_sentences": 17,
    "cuts_by_reason": {
-    "name": 1,
-    "number": 4,
-    "other story": 1
+    "number": 12,
+    "other story": 7
    },
    "dropped": 0,
-   "kept_failing": 4,
-   "regenerated": 11,
+   "kept_failing": 0,
+   "regenerated": 4,
    "reviewed": true,
-   "fresh": 7
+   "fresh": 45
   }
  },
  "corrections": {
@@ -184,5 +172,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-11-12T15:59:37Z"
+ "computedAt": "2026-11-13T18:32:27Z"
 }

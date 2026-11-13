@@ -1,43 +1,50 @@
 {
  "version": "1.2.0",
- "title": "On Air \u00b7 Thursday 12 November 2026",
+ "title": "On Air \u00b7 Friday 13 November 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Today",
    "kind": "headlines",
-   "endTime": 36.059
+   "endTime": 38.189
   },
   {
-   "startTime": 36.059,
-   "title": "Hegseth Impeachment Derailed by Missed Votes",
+   "startTime": 38.189,
+   "title": "Donald Trump Directs Vice President JD",
    "kind": "story",
    "rank": 1,
-   "cluster_id": "f8428e1d-a54a-411a-83fd-5b760c08b545",
-   "endTime": 148.706
+   "cluster_id": "406cd6f2-3893-40a8-b693-f0b967a73f00",
+   "endTime": 83.019
   },
   {
-   "startTime": 148.706,
-   "title": "Altering Defense Cooperation With Israel",
+   "startTime": 83.019,
+   "title": "Second Car Bombing in Russia Injures",
    "kind": "story",
    "rank": 2,
-   "cluster_id": "7d5d1b22-8d99-4306-9d9d-9bb76682e903",
-   "endTime": 237.026
+   "cluster_id": "4ea1de30-e190-4d3e-9605-bd1a3e429e9a",
+   "endTime": 188.669
   },
   {
-   "startTime": 237.026,
+   "startTime": 188.669,
    "title": "The desk",
    "kind": "briefs",
-   "endTime": 430.835
+   "endTime": 345.419
   },
   {
-   "startTime": 430.835,
-   "endTime": 445.036,
+   "startTime": 345.419,
+   "title": "Void Opinion",
+   "kind": "opinion",
+   "subtitle": "Domestic Inquisitions Mask Foreign Miscalculations",
+   "endTime": 532.255
+  },
+  {
+   "startTime": 532.255,
+   "endTime": 546.456,
    "title": "Also from Void",
    "kind": "promo",
-   "subtitle": "Void News",
-   "promo": "site-02-outlets"
+   "subtitle": "Weekly",
+   "promo": "weekly-03-shape"
   }
  ]
 }
