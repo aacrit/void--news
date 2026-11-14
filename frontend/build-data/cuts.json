@@ -1,15 +1,28 @@
 {
-  "builtAt": "2026-11-13T18:32:16.562265Z",
+  "builtAt": "2026-11-14T13:09:24.934437Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "ea7bf44b-1b95-4ec2-920e-2a750fe867dd",
-      "title": "Haitian and Salvadoran Forces Take Control of Port-au-Prince Stadium",
+      "id": "4374ee7e-2aa4-423f-af83-d515bbb761ad",
+      "title": "France Defeats South Africa in Nations Championship Rugby Match in Paris",
+      "sentences": [],
+      "points": [
+        {
+          "text": "France 24 and RFI English focus broadly on the match outcome and the end of a long winless streak in Paris, while The Citizen publishes detailed individual player ratings for the Springbok squad.",
+          "rule": "E-13",
+          "message": "summary states 24, which appears in none of the source articles: source it or cut it"
+        }
+      ],
+      "left": []
+    },
+    {
+      "id": "5a423c1f-afce-4308-af79-912c9b0687ef",
+      "title": "South Sudan National Elections Commission Postpones National Vote to February 2027",
       "sentences": [
         {
-          "text": "Prime Minister Alix Didier Fils-Aime hailed the military cooperation as a major win in combating gang violence alongside the United Nations-backed Gang Suppression Force, whose mandate was recently renewed by G7 foreign ministers until March 2027.",
+          "text": "South Sudan has postponed its first national elections from December 22 to February 11, 2027, according to a timetable issued by the National Elections Commission.",
           "rule": "E-13",
-          "message": "summary puts 2027 beside \"united nations-backed gang suppression force\", but no source sentence carrying 2027 names it and one names another \"united ...\": \"Prime Minister Alix Didier Fils-Aime hailed the military cooperation as a major win in com\""
+          "message": "summary puts 22 beside \"national elections commission\", but no source sentence carrying 22 names it and one names another \"national ...\": \"South Sudan has postponed its first national elections from December 22 to February 11, 20\""
         }
       ],
       "points": [],
