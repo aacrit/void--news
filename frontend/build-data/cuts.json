@@ -1,28 +1,20 @@
 {
-  "builtAt": "2026-11-14T13:09:24.934437Z",
+  "builtAt": "2026-11-15T17:40:03.958069Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "4374ee7e-2aa4-423f-af83-d515bbb761ad",
-      "title": "France Defeats South Africa in Nations Championship Rugby Match in Paris",
-      "sentences": [],
-      "points": [
-        {
-          "text": "France 24 and RFI English focus broadly on the match outcome and the end of a long winless streak in Paris, while The Citizen publishes detailed individual player ratings for the Springbok squad.",
-          "rule": "E-13",
-          "message": "summary states 24, which appears in none of the source articles: source it or cut it"
-        }
-      ],
-      "left": []
-    },
-    {
-      "id": "5a423c1f-afce-4308-af79-912c9b0687ef",
-      "title": "South Sudan National Elections Commission Postpones National Vote to February 2027",
+      "id": "fa7c5b07-1b41-4c53-b3b8-865bc7747d96",
+      "title": "Spain Declares Migration Emergency as Nearly 2,200 Migrants Arrive in Canary Islands",
       "sentences": [
         {
-          "text": "South Sudan has postponed its first national elections from December 22 to February 11, 2027, according to a timetable issued by the National Elections Commission.",
+          "text": "Spain's Maritime Rescue Service reported rescuing 1,488 migrants aboard fourteen boats on Saturday alone, breaking the previous single-day rescue record of 1,461 set on November 7, 2020.",
           "rule": "E-13",
-          "message": "summary puts 22 beside \"national elections commission\", but no source sentence carrying 22 names it and one names another \"national ...\": \"South Sudan has postponed its first national elections from December 22 to February 11, 20\""
+          "message": "summary puts 1461 beside \"spain maritime rescue service\", but no source sentence carrying 1461 names it and one names another \"spain ...\": \"Spain's Maritime Rescue Service reported rescuing 1,488 migrants aboard fourteen boats on \""
+        },
+        {
+          "text": "The surge follows an agreement on the European Union Pact on Migration and Asylum that entered into force in June 2026.",
+          "rule": "E-13",
+          "message": "summary puts 2026 beside \"european union pact\", but no source sentence carrying 2026 names it and one names another \"european ...\": \"The surge follows an agreement on the European Union Pact on Migration and Asylum that ent\""
         }
       ],
       "points": [],
