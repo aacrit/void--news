@@ -1,0 +1,74 @@
+{
+ "collected_at": "2026-11-16T18:57:39Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16295863/Leonardo-DiCaprio-52nd-birthday-party-descended-scantily-clad-women.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Moment a bus-load of scantily clad young women descend on Leonardo DiCaprio's 52nd birthday party as A-listers mingle with Love Island stars",
+      "published": "Mon, 16 Nov 2026 17:12:58 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/us-celebrity-news/leonardo-dicaprio-birthday-young-women-37882642",
+      "title": "Bus load of young women spotted arriving at Leonardo DiCaprio's 52nd birthday party",
+      "published": "Mon, 16 Nov 2026 17:01:29 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 198,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.indiatoday.in/india/story/cyclone-akvan-andhra-odisha-coast-landfall-november-20-imd-orange-alert-3040322-2026-11-16?utm_source=rss",
+      "title": "Cyclone Akvan forms over Bay of Bengal, likely to hit Andhra coast on November 20",
+      "published": "Mon, 16 Nov 2026 23:36:49 +0530"
+     },
+     "left": {
+      "url": "https://www.thehindu.com/news/national/andhra-pradesh/cyclone-akvan-to-cross-andhra-coast-between-nellore-and-tuni-by-november-20-noon-says-imd/article71706785.ece",
+      "title": "Cyclone Akvan to make landfall between Nellore and Tuni in Andhra as very severe storm on November 20",
+      "published": "Mon, 16 Nov 2026 22:34:51 +0530"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 310,
+    "left": 10
+   }
+  }
+ }
+}
