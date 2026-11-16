@@ -1,50 +1,50 @@
 {
  "version": "1.2.0",
- "title": "On Air \u00b7 Sunday 15 November 2026",
+ "title": "On Air \u00b7 Monday 16 November 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Today",
    "kind": "headlines",
-   "endTime": 34.089
+   "endTime": 36.359
   },
   {
-   "startTime": 34.089,
-   "title": "Airstrike Kills Hamas Rafah Brigade Commander",
+   "startTime": 36.359,
+   "title": "Estonia Closes Border Crossings With Russia",
    "kind": "story",
    "rank": 1,
-   "cluster_id": "29534896-130e-443b-9b68-c4764d4dabe7",
-   "endTime": 131.439
+   "cluster_id": "cf5a1346-d7e7-418e-8756-f7c7c8e21f60",
+   "endTime": 148.229
   },
   {
-   "startTime": 131.439,
-   "title": "Trilateral Meeting Planned in Shenzhen",
+   "startTime": 148.229,
+   "title": "Andy Burnham Declares Brexit Has Not",
    "kind": "story",
    "rank": 2,
-   "cluster_id": "e04ad6e2-7cb6-4756-b63d-4395b676825a",
-   "endTime": 195.349
+   "cluster_id": "d0b7be12-2491-4c23-938a-fdecb438db8d",
+   "endTime": 272.499
   },
   {
-   "startTime": 195.349,
+   "startTime": 272.499,
    "title": "The desk",
    "kind": "briefs",
-   "endTime": 361.949
+   "endTime": 437.399
   },
   {
-   "startTime": 361.949,
+   "startTime": 437.399,
    "title": "Void Opinion",
    "kind": "opinion",
-   "subtitle": "Security Corridors Fail When Summits Ignore the Streets",
-   "endTime": 581.2
+   "subtitle": "Markets do not respond to nostalgia. Prime Minister Andy Burnham stands at Mansion House on November 16, 2026, to declare that leaving the European Union has not worked. He prepares for a Brussels summit scheduled for November 20 with three distinct tests for a new accord. These criteria demand that any arrangement improve upon the existing Brexit deal, satisfy a Makerfield test for everyday life, and respect strict manifesto red lines. Those red lines forbid any return to the single market, the customs union, or the free movement of people.",
+   "endTime": 577.888
   },
   {
-   "startTime": 581.2,
-   "endTime": 595.401,
+   "startTime": 577.888,
+   "endTime": 592.089,
    "title": "Also from Void",
    "kind": "promo",
-   "subtitle": "Void News",
-   "promo": "site-02-outlets"
+   "subtitle": "Weekly",
+   "promo": "weekly-05-cover"
   }
  ]
 }
