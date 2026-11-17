@@ -1,0 +1,153 @@
+{
+ "collected_at": "2026-11-17T17:55:17Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 32,
+     "right": {
+      "url": "https://www.dailymail.com/news/royals/article-16299313/Prince-William-Kate-Earthshot-Prize-Awards-Mumbai.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Prince William and Kate take inspiration from Bollywood as they walk green carpet with host of famous guests for glittering Earthshot Prize awards ceremony in Mumbai",
+      "published": "Tue, 17 Nov 2026 17:52:08 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/william-kate-earthshot-prize-live-37885416",
+      "title": "William and Kate live: New Prince Harry clash as interview teased moments before Earthshot Prize Awards",
+      "published": "Tue, 17 Nov 2026 17:23:46 +0000"
+     }
+    },
+    {
+     "score": 23,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16299419/Thugs-choke-taxi-driver-attack-cab-robbery-jailed.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Moment thugs choke taxi driver and attack him while cab is moving during robbery - as they're jailed for a total of eight years",
+      "published": "Tue, 17 Nov 2026 15:56:32 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/horror-moment-nottingham-taxi-driver-37886933",
+      "title": "Horror moment Nottingham taxi driver strangled by thugs as moving cab spins out of control",
+      "published": "Tue, 17 Nov 2026 16:03:28 +0000"
+     }
+    },
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16298963/British-family-bill-uninsured-grandmother-dies-holiday.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "British family are left with £60,000 bill after uninsured grandmother dies on holiday",
+      "published": "Tue, 17 Nov 2026 14:40:47 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/my-childrens-nan-died-suddenly-37885420",
+      "title": "'My children's nan died suddenly on holiday - now her devastated family owe £55,000'",
+      "published": "Tue, 17 Nov 2026 16:26:33 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16298957/How-Labour-plans-tackle-Britains-youth-jobless-crisis-Key-points-Milburns-report-urges-Burnham-avoid-lost-generation-NEETs.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "How Labour plans to tackle Britain's youth jobless crisis: Key points from Milburn's report as he urges Burnham to avoid a 'lost generation' of NEETs",
+      "published": "Tue, 17 Nov 2026 11:31:21 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/politics/ruth-curtice-alan-milburn-neets-37886806",
+      "title": "RUTH CURTICE: 'Finally, a plan to help Britain's young people that isn't being done on the cheap'",
+      "published": "Tue, 17 Nov 2026 16:12:42 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/news/royals/article-16298977/kate-escalator-nerves-william-reassurance-stumble-mumbai.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "How to take the metro like a royal! Kate's escalator nerves and William's reassurance when she stumbled in Mumbai train carriage, revealed by lip reader",
+      "published": "Tue, 17 Nov 2026 15:19:39 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/kate-middleton-earthshot-william-india-37887432",
+      "title": "Russell Myers: 'William and Kate have been completely at ease on Mumbai trip with touches, whispers and jokes'",
+      "published": "Tue, 17 Nov 2026 17:42:58 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 200,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/international/article-915179",
+      "title": "UK sanctions eight Israeli settlement companies, Tzav 9 over West Bank violence, Gaza aid blockade",
+      "published": "Tue, 17 Nov 2026 13:37:52 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-security/2026-11-17/ty-article/.premium/u-k-sanctions-8-israeli-firms-tied-to-west-bank-settlement-construction/000001a1-e907-d381-ade5-ebe794170000",
+      "title": "U.K. sanctions Israeli firms, group tied to West Bank settlement construction, blocking Gaza aid",
+      "published": "Tue, 17 Nov 2026 12:23:21 +0200"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/politics-and-diplomacy/article-915172",
+      "title": "Bennett 'very optimistic' at unity tent as Eisenkot bloc weighs coalition with Netanyahu",
+      "published": "Tue, 17 Nov 2026 12:47:38 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-politics/2026-11-15/ty-article/.premium/inside-eisenkots-race-to-form-a-government/000001a1-e072-ddc9-abb7-edf24ae60000",
+      "title": "Inside Eisenkot's race to form a government",
+      "published": "Sun, 15 Nov 2026 22:10:06 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.indiatoday.in/india/story/rahul-gandhi-responds-bjp-rss-criticism-sonia-rajiv-gandhi-remarks-3040702-2026-11-17?utm_source=rss",
+      "title": "As a true Hindu...: Rahul Gandhi jabs BJP-RSS over Mama on Papa's lap remark row",
+      "published": "Tue, 17 Nov 2026 15:40:03 +0530"
+     },
+     "left": {
+      "url": "https://www.thehindu.com/news/national/rahul-gandhi-invokes-hindu-faith-to-defend-his-mama-sitting-on-papas-lap-remark/article71713190.ece",
+      "title": "Rahul Gandhi invokes Hindu faith to defend his ‘Mama sitting on Papa’s lap’ remark",
+      "published": "Tue, 17 Nov 2026 23:12:01 +0530"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 303,
+    "left": 10
+   }
+  }
+ }
+}
