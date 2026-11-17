@@ -1,28 +1,15 @@
 {
-  "builtAt": "2026-11-16T14:46:50.809740Z",
+  "builtAt": "2026-11-17T09:33:32.561023Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "b76c9ee3-47b0-4d9e-819b-c3eb271c3cff",
-      "title": "Saudi Backed Yemeni Forces Retreat From Strategic Strait as Houthis Advance",
+      "id": "db71e948-f301-43e6-905b-7a6975e76369",
+      "title": "Supreme Court Rejects Trump Appeal to Cut University Research Grants",
       "sentences": [
         {
-          "text": "The Southern Armed Forces, allied with Yemen's internationally recognized government, completed a withdrawal from positions near the Bab al-Mandeb Strait on November 15, 2026, pulling back toward the interim capital of Aden.",
+          "text": "John Sauer argued that the executive branch holds constitutional authority to ensure taxpayer money does not fund private projects promoting ideologies the administration opposes, noting that the University of California system received more than $4 billion in federal grants in 2024.",
           "rule": "E-13",
-          "message": "summary puts 15 beside \"southern armed forces\", but no source sentence carrying 15 names it and one names another \"southern ...\": \"The Southern Armed Forces, allied with Yemen's internationally recognized government, comp\""
-        }
-      ],
-      "points": [],
-      "left": []
-    },
-    {
-      "id": "7b84848b-a113-4a2d-855f-4a151fc36481",
-      "title": "Scott Bessent Urges Nvidia to Appoint Outside Chief Executive",
-      "sentences": [
-        {
-          "text": "A petition hosted on standwithjensen.com has accumulated over 150,000 self-reported signatures, including tech executives Elon Musk, Tim Sweeney, Travis Kalanick, and Steve Chen, arguing that the former chief executive was removed without due process.",
-          "rule": "E-13",
-          "message": "summary puts 150000 beside \"tim sweeney\", but no source sentence carrying 150000 names it and one names another \"tim ...\": \"A petition hosted on standwithjensen.com has accumulated over 150,000 self-reported signat\""
+          "message": "summary puts 2024 beside \"university of california\", but no source sentence carrying 2024 names it and one names another \"university ...\": \"John Sauer argued that the executive branch holds constitutional authority to ensure taxpa\""
         }
       ],
       "points": [],
