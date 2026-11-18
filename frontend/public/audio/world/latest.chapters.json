@@ -1,50 +1,50 @@
 {
  "version": "1.2.0",
- "title": "On Air \u00b7 Tuesday 17 November 2026",
+ "title": "On Air \u00b7 Wednesday 18 November 2026",
  "author": "Void News",
  "chapters": [
   {
    "startTime": 0.0,
    "title": "Today",
    "kind": "headlines",
-   "endTime": 37.549
+   "endTime": 41.449
   },
   {
-   "startTime": 37.549,
-   "title": "Supreme Court Rejects Trump Appeal to",
+   "startTime": 41.449,
+   "title": "Strikes Spark Gulf Missile Interceptions",
    "kind": "story",
    "rank": 1,
-   "cluster_id": "db71e948-f301-43e6-905b-7a6975e76369",
-   "endTime": 169.429
+   "cluster_id": "db0bd3d6-c29f-4db1-b587-296a66e1919d",
+   "endTime": 139.299
   },
   {
-   "startTime": 169.429,
-   "title": "Ukrainian Strikes Collapse Crimean Bridge Arch",
+   "startTime": 139.299,
+   "title": "New York Police Unit Disbanded",
    "kind": "story",
    "rank": 2,
-   "cluster_id": "a6a8ae52-5e2f-4a70-8b14-baf9262d8cab",
-   "endTime": 320.139
+   "cluster_id": "89091251-470b-4d03-baf1-2c15bb4e9b02",
+   "endTime": 227.409
   },
   {
-   "startTime": 320.139,
+   "startTime": 227.409,
    "title": "The desk",
    "kind": "briefs",
-   "endTime": 487.489
+   "endTime": 397.569
   },
   {
-   "startTime": 487.489,
+   "startTime": 397.569,
    "title": "Void Opinion",
    "kind": "opinion",
-   "subtitle": "Universities Should Not Pay for Executive Overreach",
-   "endTime": 730.648
+   "subtitle": "The Strait Of Hormuz Claims A Nine Month Calm",
+   "endTime": 526.558
   },
   {
-   "startTime": 730.648,
-   "endTime": 744.849,
+   "startTime": 526.558,
+   "endTime": 540.759,
    "title": "Also from Void",
    "kind": "promo",
-   "subtitle": "Void News",
-   "promo": "site-04-nothing-knows"
+   "subtitle": "History",
+   "promo": "history-06-accounts"
   }
  ]
 }
