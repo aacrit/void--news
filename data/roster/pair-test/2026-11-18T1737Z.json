@@ -1,0 +1,127 @@
+{
+ "collected_at": "2026-11-18T17:37:24Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16301933/Ex-Strictly-pro-Brendan-Cole-criticises-shows-sexualised-sex-dance-routine-says-youve-got-children-watching.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Ex Strictly pro Brendan Cole criticises show's 'sexualised' same-sex dance routine and says 'I don't want to see two men making out'",
+      "published": "Wed, 18 Nov 2026 12:49:05 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/strictly-vito-carlos-results-performance-37891153",
+      "title": "Heartbroken Vito Coppola fires back at Strictly critics over after Gu dance",
+      "published": "Wed, 18 Nov 2026 16:32:43 +0000"
+     }
+    },
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16301857/Kate-red-Princess-Wales-husband-William-Mumbai-Earthshot-Prize.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Kate's maternal touch: Princess of Wales comforts grieving mother and meets 'miracle' boy who endured 45 minutes of CPR after birth during visit to maternity hospital in India",
+      "published": "Wed, 18 Nov 2026 14:32:51 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/kate-middleton-maternity-hospital-mumbai-37890984",
+      "title": "Emotional moment Princess Kate holds hands with grieving mum who lost newborn baby",
+      "published": "Wed, 18 Nov 2026 15:28:18 +0000"
+     }
+    },
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.dailymail.com/news/royals/article-16302623/William-Kate-meet-Narendra-Modi-New-Delhi-India-tour.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Prince William and Kate meet Indian Prime Minister Narendra Modi in New Delhi as they round off princess's first foreign tour in four years in style",
+      "published": "Wed, 18 Nov 2026 17:12:45 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/william-kate-future-king-queen-37891187",
+      "title": "RUSSELL MYERS: 'Prince William and Kate have given clearest glimpse yet of the King and Queen they'll be'",
+      "published": "Wed, 18 Nov 2026 17:18:19 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16303037/ivan-toney-nightclub-assault-trial-london.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "England striker Ivan Toney loses bid to move his nightclub 'headbutt assault' trial - after he tried to secure a new date so he could play at Euro 2028",
+      "published": "Wed, 18 Nov 2026 15:17:31 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/news/ivan-toney-euro-2028-court-37891220",
+      "title": "Ivan Toney fails in bid to avoid court case clashing with Euro 2028",
+      "published": "Wed, 18 Nov 2026 15:28:31 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 213,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.indiatoday.in/newsmo/short-videos/sonia-gandhi-humiliates-savarkar-shiv-sena-tears-pages-of-her-book-3041730-2026-11-18?utm_source=rss",
+      "title": "\"Sonia Gandhi humiliates Savarkar\": Shiv Sena tears pages of her book",
+      "published": "Wed, 18 Nov 2026 19:34:09 +0530"
+     },
+     "left": {
+      "url": "https://www.thehindu.com/news/national/maharashtra/eknath-shinde-tears-sonia-gandhis-book-over-savarkar-references-seeks-ban-in-maharashtra/article71717132.ece",
+      "title": "Shiv Sena members tear pages of Sonia Gandhi’s book over Savarkar references, seek ban in Maharashtra",
+      "published": "Wed, 18 Nov 2026 23:02:24 +0530"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailysabah.com/business/economy/erdogan-wants-troubled-fund-liquidations-completed-by-year-end",
+      "title": "Erdoğan wants troubled fund liquidations completed by year-end",
+      "published": "Tue, 17 Nov 2026 16:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/11/islamic-school-in-new-jersey-reports-no-foreign-ties-in-irs-filings-despite-proven-links-to-turkey/",
+      "title": "Islamic school in New Jersey reports no foreign ties in IRS filings despite proven links to Turkey",
+      "published": "Tue, 17 Nov 2026 23:01:12 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 300,
+    "left": 10
+   }
+  }
+ }
+}
