@@ -16,20 +16,20 @@
    "coverage": 6.7
   },
   "card_summary": {
-   "sentences": 222,
-   "anchored": 65,
-   "checked": 35,
+   "sentences": 211,
+   "anchored": 64,
+   "checked": 34,
    "anchorTypes": [
     "number",
     "quote"
    ],
    "byAnchor": {
-    "number": 65
+    "number": 64
    },
-   "coverage": 15.8
+   "coverage": 16.1
   },
   "points": {
-   "sentences": 190,
+   "sentences": 185,
    "anchored": 48,
    "checked": 22,
    "anchorTypes": [
@@ -39,7 +39,7 @@
    "byAnchor": {
     "number": 48
    },
-   "coverage": 11.6,
+   "coverage": 11.9,
    "machinePointsExcluded": 3
   },
   "tldr": {
@@ -80,23 +80,19 @@
    "shipped": true
   },
   "onair": {
-   "sentences": 56,
-   "anchored": 37,
-   "checked": 37,
-   "coverage": 66.1,
+   "sentences": 0,
+   "anchored": 0,
+   "checked": 0,
+   "coverage": null,
    "anchorTypes": [
     "number",
     "name",
     "date",
     "quote"
    ],
-   "byAnchor": {
-    "date": 8,
-    "name": 36,
-    "number": 5
-   },
+   "byAnchor": {},
    "groundingRan": true,
-   "shipped": true
+   "shipped": false
   }
  },
  "evidence": {
@@ -117,7 +113,11 @@
     "E-13 misattached": 1
    }
   },
-  "bench": {}
+  "bench": {
+   "advisory": {
+    "E-13 misattached": 1
+   }
+  }
  },
  "run": {
   "brief": {
@@ -160,15 +160,15 @@
   }
  },
  "corrections": {
-  "entries": 11,
+  "entries": 14,
   "ungated": [],
   "unapplied": 0,
   "bySurface": {
-   "card": 6,
+   "card": 7,
    "deepdive": 1,
    "brief": 2,
-   "opinion": 1,
-   "radio": 1
+   "opinion": 2,
+   "radio": 2
   }
  },
  "floors": {
@@ -178,5 +178,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-11-18T09:51:29Z"
+ "computedAt": "2026-11-19T03:56:54Z"
 }

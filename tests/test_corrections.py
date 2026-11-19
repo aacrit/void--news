@@ -140,6 +140,9 @@ GATES = {
     "pipeline/editorial/derived_grounding.py::check_numbers": lambda x: _derived("check_numbers", x),
     "pipeline/editorial/derived_grounding.py::check_dates": lambda x: _derived("check_dates", x),
     "pipeline/editorial/derived_grounding.py::check_lifted_quote": lambda x: _derived("check_lifted_quote", x),
+    "pipeline/editorial/derived_grounding.py::check_headline": lambda x: _derived("check_headline", x),
+    "pipeline/editorial/standard.py::sentences": lambda x: [
+        s for s in std.sentences(x["summary"]) if re.search(r"\s[A-Z]\.$", s)],
     "pipeline/editorial/same_event.py::entity_outliers": _entity,
     "tests/test_prompt_grounding.py::copy_literals": _copy_literals,
     "pipeline/briefing/weekly_parse.py::ground_text": lambda x: wp.ground_text(x["text"], x["source_text"])[1],

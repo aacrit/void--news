@@ -443,6 +443,82 @@ def check_dates(sent: str, ev: Evidence) -> str | None:
     return None
 
 
+# A length of time written as an adjective: "nine-month-old war", "two-year
+# deal", "a 90-day pause", "nine months of calm". The noun is what the length
+# measures, and the sources must measure THAT noun. 2026-11-18's Opinion
+# headline read "The Strait Of Hormuz Claims A Nine Month Calm" against five
+# outlets saying "the nine-month-old war": the number was sourced, so
+# check_numbers passed it, and the nine months had moved from the war to the
+# calm that the war interrupted.
+_DURATION = re.compile(
+    r"\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|"
+    r"\d+(?:\.\d+)?)[- ](hour|day|week|month|year)s?"
+    r"(?:[- ](?:old|long))?(?:\s+of)?[- ]([a-z]+)\b", re.I)
+_DURATION_NUM = {**_NUM_WORD, "eleven": "11", "twelve": "12"}
+# Words that can follow the length without being what it measures.
+_DURATION_SKIP = frozenset("""
+a an the and or but to in on at by for from with as its their his her ago
+later earlier before after since ended ending period span stretch
+""".split())
+
+
+def _durations(text: str) -> list[tuple[str, str]]:
+    out = []
+    for m in _DURATION.finditer(text or ""):
+        noun = m.group(3).lower()
+        if noun in _DURATION_SKIP:
+            continue
+        n = _DURATION_NUM.get(m.group(1).lower(), m.group(1).lower())
+        out.append((f"{n} {m.group(2).lower()}", noun.rstrip("s")))
+    return out
+
+
+def check_duration_noun(sent: str, ev: Evidence) -> str | None:
+    """A length of time the sources give to one thing, written onto another.
+
+    Judged only when the sources state the same length: a length they never
+    state is check_numbers' to refuse. A noun the sources pair with that
+    length in any of its forms passes, so "nine-month conflict" stands where
+    a card already says it of this war.
+    """
+    have: dict[str, set[str]] = {}
+    for key, noun in _durations(ev.text):
+        have.setdefault(key, set()).add(noun)
+    for key, noun in _durations(sent):
+        if key in have and noun not in have[key]:
+            return (f"the sources give {key} to {sorted(have[key])[0]!r}, "
+                    f"not to {noun!r}")
+    return None
+
+
+HEADLINE_MAX_WORDS = 20
+
+
+def check_headline(headline: str, ev: Evidence) -> str | None:
+    """The first reason a headline cannot ship against its story, or None.
+
+    A headline is one claim, and title case: every word is capitalised, so
+    check_names (which reads a capitalised run as a name) would refuse every
+    headline, and is not run. The rest of the sentence checks are, plus the
+    duration check, which a headline needs most because it compresses.
+    """
+    text = (headline or "").strip()
+    if not text:
+        return None
+    # 2026-11-16's Opinion "headline" was the first paragraph of its body
+    # (86 words, four sentences), served as the title on the page and spoken
+    # as the segment's title.
+    words = len(text.split())
+    if words > HEADLINE_MAX_WORDS or len(_sentences(text)) > 1:
+        return f"not a headline: {words} words, {len(_sentences(text))} sentences"
+    for fn in (check_numbers, check_dates, check_quotes, check_lifted_quote,
+               check_duration_noun):
+        why = fn(text, ev)
+        if why:
+            return why
+    return None
+
+
 def check_quotes(sent: str, ev: Evidence) -> str | None:
     found = std.e14_quotes_are_verbatim("", sent, ev.index)
     return f"quotation not verbatim in this story's text ({found[0].message[:80]})" \

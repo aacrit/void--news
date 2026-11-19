@@ -42,6 +42,8 @@ export interface PortalIssue {
 interface Props {
   daily: { headline: string | null; dateline: string; clock: string } | null;
   issues: PortalIssue[];
+  /** Today's On Air recording was withdrawn by a radio correction. */
+  dailyWithdrawn?: boolean;
   /** The latest issue's recording was withdrawn by a correction. */
   withdrawnLabel: string | null;
   history: PortalHistoryEpisode[];
@@ -53,7 +55,7 @@ const PROGRAMMES: { kind: ProgrammeKind; name: string; cadence: string }[] = [
   { kind: "history", name: "History", cadence: "One event per episode" },
 ];
 
-export default function AudioPortal({ daily, issues, withdrawnLabel, history }: Props) {
+export default function AudioPortal({ daily, dailyWithdrawn = false, issues, withdrawnLabel, history }: Props) {
   const a = useAudio();
   const [chosen, setChosen] = useState<ProgrammeKind | null>(null);
   const offered = useRef(false);
@@ -136,6 +138,12 @@ export default function AudioPortal({ daily, issues, withdrawnLabel, history }: 
             </div>
             <AudioPlay kind="daily" label="Play today's programme" compact />
           </div>
+        ) : dailyWithdrawn ? (
+          /* A radio correction withdrew today's recording. "Not published yet"
+             would be untrue; say what /onair says. */
+          <p className="audio-prog__line" data-daily-audio="withdrawn">
+            Today&apos;s broadcast is withdrawn after a correction.
+          </p>
         ) : (
           <p className="audio-prog__line">No programme has been published yet.</p>
         )}

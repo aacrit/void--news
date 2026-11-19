@@ -132,7 +132,25 @@ _QUOTED_SPAN = re.compile(r'["“][^"”“]*["”]|[‘][^’]*[’]')
 
 
 def sentences(text: str) -> list[str]:
-    return [s.strip() for s in _SENTENCE_SPLIT.split((text or "").strip()) if s.strip()]
+    """Sentences, not split after "Mr.", "Gen." or an initial ("U.S.", "D.").
+
+    Until 2026-11-19 this split after every full stop, so "U.S. Solicitor
+    General D. John Sauer argued..." was three sentences: "U.S.", "Solicitor
+    General D." and "John Sauer argued...". E-13 confirmed the third as wrong,
+    cut-and-publish removed it, and the Nov 17 front page led with the orphan
+    "U.S. Solicitor General D." The merge rule is grounding's (one definition
+    of an abbreviation for every splitter that reads a card).
+    """
+    out: list[str] = []
+    for piece in _SENTENCE_SPLIT.split((text or "").strip()):
+        piece = piece.strip()
+        if not piece:
+            continue
+        if out and _grounding._ABBREV_END.search(out[-1]):
+            out[-1] = f"{out[-1]} {piece}"
+        else:
+            out.append(piece)
+    return out
 
 
 def outside_quote_spans(text: str) -> list[str]:

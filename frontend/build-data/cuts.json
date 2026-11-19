@@ -1,15 +1,15 @@
 {
-  "builtAt": "2026-11-17T09:33:32.561023Z",
+  "builtAt": "2026-11-18T09:51:19.950620Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "db71e948-f301-43e6-905b-7a6975e76369",
-      "title": "Supreme Court Rejects Trump Appeal to Cut University Research Grants",
+      "id": "6be4d3f1-c160-4421-aaf9-036eecfd7323",
+      "title": "Federal Prosecutors Indict Irish Man for Destroying American C-130 Hercules Plane",
       "sentences": [
         {
-          "text": "John Sauer argued that the executive branch holds constitutional authority to ensure taxpayer money does not fund private projects promoting ideologies the administration opposes, noting that the University of California system received more than $4 billion in federal grants in 2024.",
+          "text": "The U.S. Attorney's Office stated the attack left the $60 million aircraft inoperable and permanently removed it from flight status.",
           "rule": "E-13",
-          "message": "summary puts 2024 beside \"university of california\", but no source sentence carrying 2024 names it and one names another \"university ...\": \"John Sauer argued that the executive branch holds constitutional authority to ensure taxpa\""
+          "message": "summary puts 60 beside \"us attorney office\", but no source sentence carrying 60 names it and one names another \"us ...\": \"The U.S. Attorney's Office stated the attack left the $60 million aircraft inoperable and \""
         }
       ],
       "points": [],

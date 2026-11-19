@@ -47,6 +47,8 @@ interface BriefRow {
   audio_url: string | null;
   audio_duration_seconds: number | string | null;
   created_at: string | null;
+  /** Set by a radio correction (pipeline/editorial/corrections.py). */
+  audio_withdrawn?: boolean;
 }
 
 interface HistoryEpisode {
@@ -164,7 +166,7 @@ export default function AudioPage() {
           </p>
         </header>
 
-        <AudioPortal daily={daily} issues={issues} withdrawnLabel={withdrawnLabel} history={history} />
+        <AudioPortal daily={daily} dailyWithdrawn={!daily && brief?.audio_withdrawn === true} issues={issues} withdrawnLabel={withdrawnLabel} history={history} />
 
         <p className="audio-hub__elsewhere">
           <Link href="/onair" className="audio-prog__open">On Air page</Link>

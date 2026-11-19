@@ -499,6 +499,20 @@ const weeklyAudioWithdrawn = (() => {
   } catch { return false; }
 })();
 
+/* Today's On Air recording, withdrawn by a radio correction? Read the same
+   file the page reads (data/brief.json), by the same rule (app/audio/page.tsx,
+   OnAirPage.tsx): no audio_url and the row stamped audio_withdrawn. On such a
+   day there is no daily episode to offer, so no player is mounted for it, and
+   every scenario that drives today's broadcast asserts the withdrawal line
+   instead (2026-11-19: the first radio withdrawal since the gates were
+   written, and eight of them failed on a site that was telling the truth). */
+const dailyAudioWithdrawn = (() => {
+  try {
+    const b = JSON.parse(readFileSync(join(OUT, "data/brief.json"), "utf8"));
+    return !b.audio_url && b.audio_withdrawn === true;
+  } catch { return false; }
+})();
+
 /* --scenario=<text>: run only the scenarios whose name contains it, and no
    route audits (for working on one scenario; CI never passes it). */
 const SCENARIO = args.find((a) => a.startsWith("--scenario="))?.slice("--scenario=".length);
@@ -1198,12 +1212,12 @@ async function scenarios(browser) {
      two implementations. See the no-double-transport scenario. /audio carries
      the console inline (2026-10-03), which is an .fp by class, so the count
      is of every OTHER .fp, and the inline one is asserted to be there. */
-  for (const [route, expect] of [["/", true], ["/onair/", false], ["/audio/", false], ["/weekly/", true], ["/ship/", false], ["/history/", false]]) {
+  for (const [route, expect] of [["/", !dailyAudioWithdrawn], ["/onair/", false], ["/audio/", false], ["/weekly/", !dailyAudioWithdrawn], ["/ship/", false], ["/history/", false]]) {
     await withPage(browser, { width: 1440, route }, `floating-player ${route}`, async (page) => {
       await page.waitForTimeout(500);
       const n = await page.locator(".fp:not(.oap--inline)").count();
       assert((n > 0) === expect, "floating-player", `${route}: ${n} .fp, expected ${expect ? "present" : "absent"}`);
-      if (route === "/audio/") {
+      if (route === "/audio/" && !dailyAudioWithdrawn) {
         const inline = await page.locator(".oap--inline").count();
         assert(inline === 1, "audio-console-inline", `/audio carries ${inline} inline console(s), expected 1`);
       }
@@ -1535,7 +1549,7 @@ async function brandChecks(browser) {
   await withPage(browser, { width: 1440, route: "/audio/" }, "audio-hub", async (page) => {
     const kinds = await page.evaluate(() => [...document.querySelectorAll(".audio-play")].map((b) => b.getAttribute("data-kind")));
     const weeklyButtons = kinds.filter((k) => k === "weekly").length;
-    assert(kinds.includes("daily") && kinds.includes("history") && weeklyButtons === weeklyIssuesWithAudio,
+    assert(kinds.includes("daily") === !dailyAudioWithdrawn && kinds.includes("history") && weeklyButtons === weeklyIssuesWithAudio,
       "audio-hub-programmes", `play buttons: daily ${kinds.includes("daily")}, history ${kinds.filter((k) => k === "history").length}, weekly ${weeklyButtons} for ${weeklyIssuesWithAudio} issue(s) with a recording (this week's ${weeklyHasAudio ? "published" : "withheld"})`);
     assert(await page.locator(".nav-nameplate[aria-current='page']").count() === 1, "audio-hub-nameplate", "the Audio nameplate is current");
     const addresses = (await page.locator(".audio-feed__url").allTextContents()).filter((t) => /podcast-(world|weekly|history)\.xml$/.test(t));
@@ -1548,6 +1562,12 @@ async function brandChecks(browser) {
     if (weeklyAudioWithdrawn) {
       assert(await page.locator(".audio-prog--argument [data-weekly-audio='withdrawn']").count() === 1,
         "audio-hub-argument-withdrawn", `withdrawal line: ${JSON.stringify(argument.replace(/\s+/g, " ").trim().slice(0, 160))}`);
+    }
+    if (dailyAudioWithdrawn) {
+      assert(await page.locator(".audio-prog--onair [data-daily-audio='withdrawn']").count() === 1,
+        "audio-hub-daily-withdrawn", "the withdrawn broadcast is named as withdrawn, not as never published");
+      skip("audio-lands-on-player", "today's broadcast is withdrawn: nothing to cue");
+      return;
     }
     /* A reader LANDS on the player (CEO 2026-10-03): the console is in the
        page with today's programme cued, the switch has three tabs, On Air is
@@ -1805,6 +1825,15 @@ async function brandChecks(browser) {
         implementations (onair.css:5 admitted the duplication). */
   await withPage(browser, { width: 1440, route: "/onair/" }, "no-double-transport", async (page) => {
     await page.waitForTimeout(900);
+    if (dailyAudioWithdrawn) {
+      const t = await page.evaluate(() => ({
+        withdrawn: /broadcast is withdrawn/.test(document.querySelector(".onair__empty")?.textContent ?? ""),
+        transports: document.querySelectorAll(".onair__portal, .fp, .oap").length,
+      }));
+      assert(t.withdrawn && t.transports === 0, "onair-withdrawn",
+        `/onair names the withdrawal: ${t.withdrawn}; ${t.transports} transport(s) offering it`);
+      return;
+    }
     const n = await page.evaluate(() => ({
       portal: document.querySelectorAll(".onair__portal").length,
       pill: document.querySelectorAll(".fp").length,
@@ -1821,6 +1850,7 @@ async function brandChecks(browser) {
   for (const width of [1440, 390]) {
     await withPage(browser, { width, route: "/" }, `onair-panel @${width}`, async (page) => {
       await page.waitForTimeout(1200);
+      if (dailyAudioWithdrawn) { skip("onair-panel", "today's broadcast is withdrawn: no panel to open"); return; }
       const opener = width >= 768 ? ".fp__info" : ".mtb__tab--onair";
       if (await page.locator(opener).count() === 0) { skip("onair-panel", `no ${opener} at ${width}`); return; }
       const urlBefore = page.url();

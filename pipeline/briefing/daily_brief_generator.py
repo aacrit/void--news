@@ -2029,6 +2029,17 @@ def _ground_brief_result(brief_result: dict, top_clusters: list[dict],
                     cuts += more
                     if kept.strip():
                         brief_result[key] = kept
+            # The headline was never grounded before 2026-11-19: it went from
+            # the model to the page and the On Air script untouched, and
+            # 2026-11-18's moved the war's nine months onto the calm. One that
+            # fails is replaced by the story's own card title, which Stage 2
+            # validated; nothing new is written in its place.
+            head = brief_result.get("opinion_headline")
+            why = dg.check_headline(head, dg.Evidence(opinion_cluster)) if head else None
+            if why:
+                cuts.append(dg.Cut(f"opinion_headline:{edition}", head, why))
+                brief_result["opinion_headline"] = (
+                    str(opinion_cluster.get("title") or "").strip() or None)
             ran["opinion"] = True if brief_result.get("opinion_text") else None
     except Exception as e:  # grounding must never cost the edition its brief
         print(f"  [grounding][brief:{edition}] [warn] pass failed, text kept "

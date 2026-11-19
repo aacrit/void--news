@@ -232,6 +232,58 @@
     "/audio/world/2026-10-01-pm.chapters.json"
    ],
    "gate_note": "reported speech that lifts a quotation must not end on words it never said"
+  },
+  {
+   "id": "2026-11-19-opinion-headline-nine-month",
+   "product": "opinion",
+   "class": "duration-misattached",
+   "gate": "pipeline/editorial/derived_grounding.py::check_headline",
+   "date": "2026-11-19",
+   "brief": "61a876a0-3804-4202-a345-67c115a2126d",
+   "reason": "Opinion of 2026-11-18 was headlined 'The Strait Of Hormuz Claims A Nine Month Calm'. Five outlets in the story (RTE, Straits Times, Cyprus Mail, Daily Maverick, Al-Monitor) say the strike came 'despite efforts to end the nine-month-old war'; the card says the exchanges 'follow a prior period of relative calm' and gives the calm no length. The nine months are the war's. The replacement removes the length and adds nothing. The headline was never grounded before this entry.",
+   "notice": "the headline gave the length of the war to the calm before it",
+   "edits": [
+    {
+     "field": "opinion_headline",
+     "find": "Claims A Nine Month Calm",
+     "replace": "Claims A Period Of Calm"
+    }
+   ],
+   "gate_note": "a length of time in a headline must measure the noun the sources measure with it"
+  },
+  {
+   "id": "2026-11-19-radio-nine-month",
+   "product": "radio",
+   "class": "duration-misattached",
+   "gate": "pipeline/editorial/derived_grounding.py::check_headline",
+   "date": "2026-11-19",
+   "brief": "61a876a0-3804-4202-a345-67c115a2126d",
+   "reason": "On Air of 2026-11-18 speaks the Opinion headline 'The Strait of Hormuz claims a nine month calm' as the segment's title (see 2026-11-19-opinion-headline-nine-month). Withdrawn until re-rendered.",
+   "notice": "the recording is withdrawn: it gave the length of the war to the calm before it",
+   "audio": "withdrawn",
+   "audio_paths": [
+    "/audio/world/2026-11-18-am.mp3",
+    "/audio/world/2026-11-18-am.chapters.json"
+   ],
+   "gate_note": "the spoken segment title is the Opinion headline, now grounded before the script is written"
+  },
+  {
+   "id": "2026-11-19-card-solicitor-general-orphan",
+   "product": "card",
+   "class": "cut-fragment",
+   "gate": "pipeline/editorial/standard.py::sentences",
+   "date": "2026-11-19",
+   "cluster": "db71e948-f301-43e6-905b-7a6975e76369",
+   "reason": "The 2026-11-17 card 'Supreme Court Rejects Trump Appeal to Cut University Research Grants' read 'U.S. Solicitor General D. Lead counsel for the researchers...'. Cut-and-publish removed the sentence 'John Sauer argued that ...' (E-13, see cuts.json of that day) through standard.sentences, which split after the initial 'D.', so the sentence's first three words stayed and named nobody. The orphan is removed; nothing is written in its place.",
+   "notice": null,
+   "edits": [
+    {
+     "field": "summary",
+     "find": "U.S. Solicitor General D. Lead counsel",
+     "replace": "Lead counsel"
+    }
+   ],
+   "gate_note": "the editorial standard's splitter no longer breaks after an initial, and a summary sentence ending on a lone initial fails"
   }
  ]
 }
