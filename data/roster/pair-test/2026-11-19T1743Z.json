@@ -1,0 +1,166 @@
+{
+ "collected_at": "2026-11-19T17:43:13Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 36,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16306343/Claims-women-trafficked-Jeffrey-Epstein-Kings-Balmoral.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Claims women were trafficked by Jeffrey Epstein on the King's Balmoral estate being 'examined' by investigators, police chief confirms",
+      "published": "Thu, 19 Nov 2026 16:04:31 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/police-scotland-epstein-balmoral-trafficking-37875352",
+      "title": "Police 'examining' claims of women being trafficked by Epstein on Balmoral estate",
+      "published": "Thu, 19 Nov 2026 15:46:36 +0000"
+     }
+    },
+    {
+     "score": 33,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16305237/Raise-Colours-campaign-founder-cries-murdered-pub-owner-unprompted-attack-bar-dancefloor.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Moment Raise the Colours campaign founder cries as he's told he's murdered pub owner in unprompted attack on bar dancefloor",
+      "published": "Thu, 19 Nov 2026 15:17:21 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/raise-the-colours-billy-allison-37895568",
+      "title": "Moment Raise the Colours founder cries as he's told he's murdered pub owner in dancefloor attack",
+      "published": "Thu, 19 Nov 2026 15:29:27 +0000"
+     }
+    },
+    {
+     "score": 30,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16304907/Harry-Meghan-enjoy-evening-Winter-Wonderland-London-Archie-Lilibet.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Harry and Meghan enjoy an evening at Winter Wonderland in London with Archie and Lilibet",
+      "published": "Thu, 19 Nov 2026 13:17:45 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/harry-meghan-markle-winter-wonderland-37895684",
+      "title": "Prince Harry and Meghan Markle's Winter Wonderland was far from a Christmas miracle",
+      "published": "Thu, 19 Nov 2026 15:23:23 +0000"
+     }
+    },
+    {
+     "score": 27,
+     "right": {
+      "url": "https://www.dailymail.com/sport/boxing/article-16304121/Anthony-Joshua-father-boxing-star-welcomes-secret-baby-girl-weeks-Tyson-Fury-showdown.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Anthony Joshua becomes a father for the second time: Boxing star welcomes baby girl in secret with mother of his son - but won't meet her until after his fight with Tyson Fury on December 11",
+      "published": "Thu, 19 Nov 2026 09:20:03 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/who-nicole-osbourne-anthony-joshua-37893782",
+      "title": "Who is Nicole Osbourne as Anthony Joshua reveals he has a baby daughter",
+      "published": "Thu, 19 Nov 2026 16:33:02 +0000"
+     }
+    },
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16305471/Denmark-woman-oldest-person-influential-Nazi.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Denmark celebrates 112-year-old woman becoming its oldest person... then discovers she was an influential Nazi",
+      "published": "Thu, 19 Nov 2026 17:19:21 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/world-news/denmark-woman-nazi-kirsten-schwalbe-37895436",
+      "title": "Denmark celebrates its oldest ever woman as she turns 112 – then discovers she was a Nazi",
+      "published": "Thu, 19 Nov 2026 16:10:12 +0000"
+     }
+    },
+    {
+     "score": 21,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16304527/Trump-reveals-indications-Iran-looking-bioweapons-hes-quizzed-Cabinet-members-relocating-amid-growing-fears-attack-US-soil.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Trump reveals 'indications Iran is looking at bioweapons' as he's quizzed over Cabinet members relocating amid growing fears of attack on US soil",
+      "published": "Thu, 19 Nov 2026 06:56:33 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/us-news/trump-putin-xi-summit-china-37895854",
+      "title": "CHRIS BUCKTIN: 'While the world burns, Donald Trump enjoys a boys’ day out with his dictator pals'",
+      "published": "Thu, 19 Nov 2026 17:03:26 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16305673/Putin-vows-painful-response-Ukraines-attack-Crimea-bridge-moments-trilateral-world-peace-talks.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Putin vows a 'much more painful response' to Ukraine's attack on Crimea bridge and issues warning to Europe moments after trilateral 'world peace' talks",
+      "published": "Thu, 19 Nov 2026 16:13:49 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/world-news/russian-bombers-fighter-trump-putin-37895045",
+      "title": "Japan and Taiwan scramble fighter jets as Putin's nuclear-capable bombers spotted",
+      "published": "Thu, 19 Nov 2026 15:20:43 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 219,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/article-915483",
+      "title": "WATCH: Israel Police clash with haredi rioters in Jerusalem, bus of soldiers extracted from protest",
+      "published": "Thu, 19 Nov 2026 15:22:23 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-politics/2026-11-19/ty-article/.premium/police-violently-disperse-ultra-orthodox-protest-in-jerusalem/000001a1-f427-d9ff-a7b5-f5af85cf0000",
+      "title": "Israel Police violently disperse ultra-Orthodox protest in Jerusalem",
+      "published": "Thu, 19 Nov 2026 17:16:48 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/11/islamic-school-in-new-jersey-reports-no-foreign-ties-in-irs-filings-despite-proven-links-to-turkey/",
+      "title": "Islamic school in New Jersey reports no foreign ties in IRS filings despite proven links to Turkey",
+      "published": "Tue, 17 Nov 2026 23:01:12 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 295,
+    "left": 10
+   }
+  }
+ }
+}
