@@ -10,9 +10,11 @@ import UnverifiedLabel from "./UnverifiedLabel";
 import {
   chapterKindLabel,
   chapterMarks,
+  chapterTitle,
   findOpinionIndex,
   formatChapterTime,
 } from "../lib/chapters";
+import { useTodayUTC } from "../lib/useTodayUTC";
 import ScaleIcon from "./ScaleIcon";
 import CorrectionNotice from "./CorrectionNotice";
 
@@ -103,6 +105,7 @@ export default function OnAirPage() {
      controls start today's broadcast instead, and a line above the portal
      names what is playing. */
   const episode = useMemo(() => episodeFromBrief(brief), [brief]);
+  const todayUTC = useTodayUTC();
   const owns = sameEpisode(a.nowPlaying, episode);
   const playing = owns && a.isPlaying;
   const elsewhere = !owns && a.nowPlaying ? a.nowPlaying : null;
@@ -162,6 +165,8 @@ export default function OnAirPage() {
   const hasChapters = chapters.length > 0;
   const chapIndex = owns ? a.currentChapterIndex : -1;
   const currentChapter = chapIndex >= 0 ? chapters[chapIndex] : null;
+  /* "Today" only on the edition's own UTC day (chapters.ts chapterTitle). */
+  const titleOf = (c: (typeof chapters)[number]) => chapterTitle(c, episode?.publishedAt, todayUTC);
   const marks = useMemo(
     () => chapterMarks(chapters, displayDuration),
     [chapters, displayDuration]
@@ -340,7 +345,7 @@ export default function OnAirPage() {
               <div className="onair__seekwrap">
                 {hasChapters ? (
                   <div className="onair__rail">
-                    <span className="onair__rail-now" title={currentChapter?.title || undefined}>
+                    <span className="onair__rail-now" title={currentChapter ? titleOf(currentChapter) || undefined : undefined}>
                       {currentChapter ? (
                         <>
                           {chapterKindLabel(currentChapter) && (
@@ -348,7 +353,7 @@ export default function OnAirPage() {
                               {chapterKindLabel(currentChapter)}
                             </span>
                           )}
-                          <span className="onair__rail-title">{currentChapter.title}</span>
+                          <span className="onair__rail-title">{titleOf(currentChapter)}</span>
                         </>
                       ) : (
                         <span className="onair__rail-title onair__rail-title--between">
@@ -466,7 +471,7 @@ export default function OnAirPage() {
                             {formatChapterTime(c.startTime)}
                           </span>
                           <span className="onair__chap-body">
-                            <span className="onair__chap-title">{c.title}</span>
+                            <span className="onair__chap-title">{titleOf(c)}</span>
                             {c.subtitle && (
                               <span className="onair__chap-sub">{c.subtitle}</span>
                             )}

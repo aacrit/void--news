@@ -32,6 +32,10 @@ export const FIRST_VISIT_KEY = "void-news-first-visit";
 /** How long after the first sighting the note keeps showing undismissed. The
  *  same constant is inlined in the app/layout.tsx bootstrap. */
 export const FIRST_VISIT_WINDOW_MS = 12 * 60 * 60 * 1000;
+/** Fired on window when the reader dismisses the note. The tour invitation
+ *  (UnifiedOnboarding) waits for it rather than stacking a second overlay on
+ *  top of this one; the same literal is inlined there. */
+export const FIRST_VISIT_DISMISSED_EVENT = "void-news:first-visit-dismissed";
 
 function seenBefore(): boolean {
   try {
@@ -62,6 +66,7 @@ export default function FirstVisitNote() {
     try { localStorage.setItem(FIRST_VISIT_KEY, "dismissed"); } catch { /* storage blocked */ }
     try { document.documentElement.setAttribute("data-fv-seen", ""); } catch { /* no DOM */ }
     setHidden(true);
+    try { window.dispatchEvent(new Event(FIRST_VISIT_DISMISSED_EVENT)); } catch { /* no DOM */ }
   };
 
   return (

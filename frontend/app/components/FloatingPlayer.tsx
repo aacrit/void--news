@@ -6,6 +6,8 @@ import { useAudio } from "./AudioProvider";
 import LogoIcon from "./LogoIcon";
 import { hapticLight, hapticConfirm } from "../lib/haptics";
 import { BASE_PATH } from "../lib/utils";
+import { chapterTitle } from "../lib/chapters";
+import { useTodayUTC } from "../lib/useTodayUTC";
 
 /* ---------------------------------------------------------------------------
    FloatingPlayer: the pill.
@@ -54,6 +56,7 @@ export default function FloatingPlayer() {
     contentType, nowPlaying,
     chapters, currentChapterIndex,
   } = useAudio();
+  const todayUTC = useTodayUTC();
 
   const pathname = usePathname();
   const route = pathname.replace(BASE_PATH, "") || "/";
@@ -95,6 +98,8 @@ export default function FloatingPlayer() {
 
   const hasChapters = chapters.length > 0;
   const currentChapter = currentChapterIndex >= 0 ? chapters[currentChapterIndex] : null;
+  /* "Today" only on the edition's own UTC day (chapters.ts chapterTitle). */
+  const chapterLabel = currentChapter ? chapterTitle(currentChapter, nowPlaying.publishedAt, todayUTC) : null;
 
   /* The press opens the panel, not a route: the reader keeps their place. */
   const openPanel = () => {
@@ -140,10 +145,10 @@ export default function FloatingPlayer() {
           <span className="fp__title">{productLabel}</span>
           <span
             className={`fp__section${hasChapters ? " fp__section--chapter" : ""}`}
-            title={hasChapters && currentChapter ? currentChapter.title : undefined}
+            title={hasChapters && chapterLabel ? chapterLabel : undefined}
           >
             {hasChapters
-              ? currentChapter?.title ?? "On air"
+              ? chapterLabel ?? "On air"
               : isHistory ? "Account" : isWeekly ? "Issue" : inOpinion ? "Opinion" : "News"}
           </span>
         </button>

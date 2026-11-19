@@ -231,6 +231,19 @@ for (let t = 0; t <= DURATION; t += 7) {
   check(`order-independent at ${t}`, same, `${a} vs ${b}`);
 }
 
+/* "TODAY" IS TRUE ONLY ON ITS DAY (2026-11-18: /audio and /onair captioned
+   the Nov 17 edition "Today" on Nov 18). Before mount (todayUTC null) the
+   date is printed, so the static HTML and hydration agree. */
+{
+  const head = { startTime: 0, title: "Today", kind: "headlines" };
+  const ed = "2026-11-17T09:50:54+00:00";
+  check("today-before-mount-is-the-date", ch.chapterTitle(head, ed, null) === "Nov 17", ch.chapterTitle(head, ed, null));
+  check("today-on-its-day", ch.chapterTitle(head, ed, "2026-11-17") === "Today");
+  check("today-a-day-later-is-the-date", ch.chapterTitle(head, ed, "2026-11-18") === "Nov 17");
+  check("today-without-an-edition-is-not-today", ch.chapterTitle(head, null, "2026-11-18") === "Headlines");
+  check("other-titles-untouched", ch.chapterTitle({ startTime: 9, title: "Fed raises rates", kind: "story" }, ed, null) === "Fed raises rates");
+}
+
 rmSync(out, { recursive: true, force: true });
 
 if (failures) {

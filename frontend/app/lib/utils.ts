@@ -33,7 +33,7 @@ const EDITION_MONTHS = [
 /**
  * Compact dateline timestamp for the masthead: the edition's BUILD time
  * (the pipeline's completed_at), rendered in the VIEWER'S LOCAL zone and
- * ROUNDED TO THE NEAREST HOUR, with a short zone label (e.g. "4:00 PM CDT").
+ * FLOORED TO THE HOUR (never later than the build), with a short zone label (e.g. "4:00 PM CDT").
  * Rounding to the hour signals a once-a-day edition rather than a live clock;
  * the local zone makes the "as of" time relevant to each reader.
  *
@@ -55,9 +55,9 @@ export function getEditionTimestampLocal(builtAtISO?: string | null): string {
   if (!builtAtISO) return "";
   const src = new Date(builtAtISO);
   if (isNaN(src.getTime())) return "";
-  // Round to the nearest hour in the viewer's LOCAL zone. >= 30 min rounds up.
+  // Down to the hour in the viewer's LOCAL zone, never up: "as of" may not
+  // name a time after the edition was built (09:33Z used to print 10:00).
   const d = new Date(src.getTime());
-  if (d.getMinutes() >= 30) d.setHours(d.getHours() + 1);
   d.setMinutes(0, 0, 0);
   // e.g. "4:00 PM CDT" (locale + zone come from the viewer's runtime).
   return d.toLocaleTimeString(undefined, {

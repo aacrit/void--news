@@ -86,9 +86,18 @@
   outline-offset: 2px;
 }
 
-/* Touch: a full 44px tap target so the dismiss is always reachable (the glyph
-   stays visually small; only the hit area grows). */
-@media (pointer: coarse) {
+/* Touch and phone widths: a full 44px tap target so the dismiss is always
+   reachable (the glyph stays visually small; only the hit area grows). It was
+   gated on (pointer: coarse) alone, so a 390px window with a mouse measured
+   28x28 (2026-11-18). The row's own padding goes, so the banner is the 44px
+   row and the link's hit box (responsive.css) fills it: the masthead paints
+   above the banner and the page below it, so no hit box can cross the row. */
+@media (max-width: 767px), (pointer: coarse) {
+  .exp-banner {
+    padding: 0 var(--space-3);
+    /* The 44px close sits flush; the line still fits on one row at 375. */
+    gap: var(--space-1);
+  }
   .exp-banner__dismiss {
     width: 44px;
     height: 44px;

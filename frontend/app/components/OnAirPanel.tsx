@@ -14,9 +14,11 @@ import UnverifiedLabel from "./UnverifiedLabel";
 import {
   chapterKindLabel,
   chapterMarks,
+  chapterTitle,
   findOpinionIndex,
   formatChapterTime,
 } from "../lib/chapters";
+import { useTodayUTC } from "../lib/useTodayUTC";
 
 /* ---------------------------------------------------------------------------
    OnAirPanel: the player opens where the reader is.
@@ -84,6 +86,7 @@ export default function OnAirPanel({ inline = false }: { inline?: boolean } = {}
     previousEpisodes, loadEpisode,
     chapters, currentChapterIndex, seekToChapter,
   } = useAudio();
+  const todayUTC = useTodayUTC();
 
   const panelRef = useRef<HTMLDivElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
@@ -310,6 +313,8 @@ export default function OnAirPanel({ inline = false }: { inline?: boolean } = {}
 
   const hasChapters = chapters.length > 0;
   const currentChapter = currentChapterIndex >= 0 ? chapters[currentChapterIndex] : null;
+  /* "Today" only on the edition's own UTC day (chapters.ts chapterTitle). */
+  const titleOf = (c: (typeof chapters)[number]) => chapterTitle(c, nowPlaying.publishedAt, todayUTC);
   const speedLabel = `${playbackSpeed}x`;
 
   const dismiss = () => {
@@ -438,7 +443,7 @@ export default function OnAirPanel({ inline = false }: { inline?: boolean } = {}
           <div className="fp__seek">
             {hasChapters ? (
               <div className="fp__rail">
-                <span className="fp__rail-now">{currentChapter ? currentChapter.title : "On air"}</span>
+                <span className="fp__rail-now">{currentChapter ? titleOf(currentChapter) : "On air"}</span>
                 <span className="fp__rail-count"
                   aria-label={`Chapter ${currentChapterIndex + 1} of ${chapters.length}`}>
                   {/* Between chapters the readout names the length of the running
@@ -523,7 +528,7 @@ export default function OnAirPanel({ inline = false }: { inline?: boolean } = {}
                     >
                       <span className="fp__chap-time">{formatChapterTime(c.startTime)}</span>
                       <span className="fp__chap-body">
-                        <span className="fp__chap-title">{c.title}</span>
+                        <span className="fp__chap-title">{titleOf(c)}</span>
                         {c.subtitle && <span className="fp__chap-sub">{c.subtitle}</span>}
                       </span>
                       {kind && <span className="fp__chap-kind">{kind}</span>}

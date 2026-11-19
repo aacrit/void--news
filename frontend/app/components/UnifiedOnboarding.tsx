@@ -36,6 +36,23 @@ const INVITATION_LINGER = 20_000; // the card withdraws after 20s if left alone
 
 type State = "idle" | "invitation" | "prologue" | "complete";
 
+/** FirstVisitNote's dismissal event (inlined so this bundle does not pull the
+ *  note and its legend in). */
+const FIRST_VISIT_DISMISSED_EVENT = "void-news:first-visit-dismissed";
+
+/** Is the first-visit note on screen? It is prerendered and hidden by
+ *  html[data-fv-seen] for a returning reader, and unmounted once dismissed or
+ *  past its window, so a rendered box is the whole test. */
+function firstVisitNoteUp(): boolean {
+  try {
+    if (document.documentElement.hasAttribute("data-fv-seen")) return false;
+    const note = document.querySelector(".fv-note");
+    return !!note && note.getBoundingClientRect().height > 0;
+  } catch {
+    return false;
+  }
+}
+
 interface UnifiedOnboardingProps {
   active: boolean;
 }
@@ -156,15 +173,27 @@ export default function UnifiedOnboarding({ active }: UnifiedOnboardingProps) {
     }
   }, []);
 
-  // On arrival
+  // On arrival. Never on top of the first-visit note: on a phone the note,
+  // this card and the bottom nav stacked three overlays over the first two
+  // cards (2026-11-18). While the note is up the offer waits for its
+  // Dismiss, and is not made at all in a visit that leaves the note standing.
   useEffect(() => {
     if (state !== "idle" || !active) return;
 
-    exploreTimerRef.current = setTimeout(() => {
-      showInvitation();
-    }, ARRIVAL_DELAY);
+    const arm = () => {
+      if (exploreTimerRef.current) clearTimeout(exploreTimerRef.current);
+      exploreTimerRef.current = setTimeout(() => {
+        if (firstVisitNoteUp()) return;
+        showInvitation();
+      }, ARRIVAL_DELAY);
+    };
+    window.addEventListener(FIRST_VISIT_DISMISSED_EVENT, arm);
+    // The note settles in its own mount effect; look once that has run.
+    const look = setTimeout(() => { if (!firstVisitNoteUp()) arm(); }, 0);
 
     return () => {
+      clearTimeout(look);
+      window.removeEventListener(FIRST_VISIT_DISMISSED_EVENT, arm);
       if (exploreTimerRef.current) clearTimeout(exploreTimerRef.current);
     };
   }, [state, active, showInvitation]);

@@ -113,12 +113,15 @@ function LogoMark({
   imgClass,
   letterClass,
   lazy = true,
+  image = true,
 }: {
   name: string;
   size: number;
   imgClass: string;
   letterClass?: string;
   lazy?: boolean;
+  /** false renders the letter alone and requests nothing. */
+  image?: boolean;
 }) {
   const src = sourceLogoUrl(name);
   const [state, setState] = useState<"pending" | "loaded" | "failed">("pending");
@@ -132,7 +135,7 @@ function LogoMark({
       <span className={letterClass ? `${letterClass} logo-mark__letter` : "logo-mark__letter"} aria-hidden="true">
         {name.charAt(0)}
       </span>
-      {src && state !== "failed" && (
+      {image && src && state !== "failed" && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           ref={ref}
@@ -157,6 +160,13 @@ function LogoMark({
    Desktop: hover/focus shows the fixed tooltip.
    Mobile: click (onSelect) opens the naming bottom sheet.
    --------------------------------------------------------------------------- */
+/* The grid is the whole roster at once: at 1440 about 470 marks sit inside
+   the first screen, so lazy loading could not hold them back and a cold load
+   asked the CDN for 666 logos, which the rate limit answered with 429 and then
+   Error 1015 for the whole site (2026-11-18). A grid mark is its letter until
+   the reader points at it, focuses it or taps it; then that one mark fetches
+   its logo and keeps it. The list rows (lazy, one per line) and the sheet
+   still carry logos, one request per row scrolled near or source opened. */
 function SourceLogo({
   source,
   onTooltip,
@@ -166,17 +176,18 @@ function SourceLogo({
   onTooltip: (source: SpectrumSource | null, el: HTMLElement | null) => void;
   onSelect: (source: SpectrumSource) => void;
 }) {
+  const [reveal, setReveal] = useState(false);
   return (
     <button
       className="spectrum-logo"
       aria-label={`${source.name}, ${tierLabel(source.tier)}, ${normalizeLean(source.political_lean_baseline).replace(/-/g, " ")}`}
-      onPointerEnter={(e) => onTooltip(source, e.currentTarget)}
+      onPointerEnter={(e) => { setReveal(true); onTooltip(source, e.currentTarget); }}
       onPointerLeave={() => onTooltip(null, null)}
-      onFocus={(e) => onTooltip(source, e.currentTarget)}
+      onFocus={(e) => { setReveal(true); onTooltip(source, e.currentTarget); }}
       onBlur={() => onTooltip(null, null)}
-      onClick={() => onSelect(source)}
+      onClick={() => { setReveal(true); onSelect(source); }}
     >
-      <LogoMark name={source.name} size={20} imgClass="spectrum-logo__img" letterClass="spectrum-logo__fallback" />
+      <LogoMark name={source.name} size={20} imgClass="spectrum-logo__img" letterClass="spectrum-logo__fallback" image={reveal} />
     </button>
   );
 }

@@ -7851,11 +7851,34 @@ a.hist-record__figure-name:hover {
 
   .hist-tl-masthead__browse {
     flex-wrap: nowrap;
+    gap: 0;
+  }
+
+  /* The strip scrolls sideways, so it clips anything outside its own height:
+     a hit box cannot reach past it. Each era and region name is therefore its
+     own 44px box (they were 28x17 at 390, 2026-11-18), the strip's vertical
+     padding goes, and the side padding stands in for the gap it replaces. */
+  .hist-tl-masthead {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .hist-tl-masthead__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0 var(--space-1);
+    border-bottom: 0;
+  }
+  .hist-tl-masthead__link:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   /* Clear the strip the masthead now occupies. */
   .hist-tl-full__inner {
-    padding-top: calc(var(--space-4) + 32px);
+    padding-top: calc(var(--space-4) + 45px);
   }
 }
 

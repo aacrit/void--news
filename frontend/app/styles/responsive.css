@@ -215,33 +215,28 @@
 
   /* Dateline row: hidden on mobile */
 
-  /* Mobile dateline: time (with zone) always visible; date appears >=400px.
+  /* Mobile dateline: the edition DATE and the time, both, at every phone
+     width. Under 400px the date used to be hidden, so a 390px reader saw
+     "AS OF 10:00 AM UTC" with no day it belonged to (2026-11-18). The "as of"
+     prefix is what yields under 400px; the date never does.
      display:flex so the sub-spans align; pushed to the right edge of the row. */
   .nav-dateline-line {
     display: flex;
     flex: 1;
     justify-content: flex-end;
     padding: 0 var(--space-2);
-    max-width: 52vw;
-  }
-  /* Priority is the freshness time; the date + separator show only >=400px. */
-  .nav-dateline-line__date,
-  .nav-dateline-line__sep {
-    display: none;
+    max-width: 60vw;
   }
   .nav-dateline-line__time {
     color: var(--fg-secondary);
     opacity: 0.9;
   }
-
-  /* Date shows once the row is wide enough to carry both without squeezing the
-     time off the edge (iPhone 14 = 390px shows time only; >=400px adds date). */
-  @media (min-width: 400px) {
-    .nav-dateline-line__date {
-      display: inline;
+  @media (max-width: 399px) {
+    .nav-dateline-line .nav-asof {
+      display: none;
     }
     .nav-dateline-line__sep {
-      display: inline;
+      margin: 0 var(--space-1);
     }
   }
 
@@ -786,5 +781,52 @@
 
   html[data-onair-pane] .feed-grid__item:nth-child(2n+1):last-child {
     grid-column: 1 / -1;
+  }
+}
+
+/* ── Phone tap targets: 44px hit boxes, same drawing ─────────────────────
+   These controls are drawn small on purpose (an inline link, a 22px info
+   glyph, a row of era names in a 10px meta face) and were hit-tested at
+   that size at 390: the footer "Tell us what breaks." 136x14, the banner
+   close 28x28, the coverage-labels (i) 22x22, History's era chips 28x17,
+   Audio's "On Air page" 68x22, Weekly's utility row 13 to 17px tall
+   (2026-11-18). The rules that already grew some of them were gated on
+   (pointer: coarse) alone, which a narrow window with a fine pointer never
+   matched. A transparent ::before, centred on the control and at least
+   44x44, takes the touch; the control's own box and the line it sits in
+   are unchanged, so nothing moves. History's era chips sit in a strip that
+   clips, so they are sized in history.css instead. */
+@media (max-width: 767px), (pointer: coarse) {
+  .exp-banner__link,
+  .exp-banner__dismiss,
+  .lean-legend__btn,
+  .fv-note__link,
+  .fv-note__close,
+  .audio-prog__open,
+  .wk-utils__share,
+  .wk-utils__link,
+  .wk-archive__all,
+  .wk-corrections__link {
+    position: relative;
+  }
+  .exp-banner__link::before,
+  .exp-banner__dismiss::before,
+  .lean-legend__btn::before,
+  .fv-note__link::before,
+  .fv-note__close::before,
+  .audio-prog__open::before,
+  .wk-utils__share::before,
+  .wk-utils__link::before,
+  .wk-archive__all::before,
+  .wk-corrections__link::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    height: 100%;
+    min-width: 44px;
+    min-height: 44px;
+    transform: translate(-50%, -50%);
   }
 }

@@ -228,3 +228,42 @@ export function formatChapterTime(seconds: number): string {
   const s = Math.floor(seconds);
   return `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
 }
+
+const CHAPTER_MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
+/** The UTC calendar day of an ISO instant, "YYYY-MM-DD", or null. */
+export function utcDay(iso: string | null | undefined): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  return isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10);
+}
+
+/**
+ * The title a chapter is shown under.
+ *
+ * The pipeline names the opening headlines chapter "Today", which is true on
+ * the day it was recorded and false every day after: /audio and /onair went on
+ * captioning an earlier edition "Today" (2026-11-18). The word is kept only
+ * when the episode's edition day IS the reader's UTC today; otherwise the
+ * chapter is named by its date ("Nov 17").
+ *
+ * `todayUTC` is null until the page has mounted, so the server HTML and the
+ * first client render both print the date and cannot disagree; the swap to
+ * "Today" happens after mount. Every other title passes through untouched.
+ */
+export function chapterTitle(
+  c: AudioChapter,
+  editionISO: string | null | undefined,
+  todayUTC: string | null
+): string {
+  const title = c.title ?? "";
+  if (title.trim().toLowerCase() !== "today") return title;
+  const day = utcDay(editionISO);
+  if (!day) return c.kind === "headlines" ? "Headlines" : title;
+  if (todayUTC && day === todayUTC) return "Today";
+  const [, m, dd] = day.split("-").map(Number);
+  return `${CHAPTER_MONTHS[m - 1]} ${dd}`;
+}

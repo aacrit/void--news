@@ -384,8 +384,9 @@
 
 .wk-utils__link:hover { color: var(--wk-accent); }
 
-/* A 44px hit area on touch without changing the visual line height. */
-@media (pointer: coarse) {
+/* A 44px hit area on touch and at phone widths without changing the visual
+   line height (a 390px window with a mouse measured 13 to 17px, 2026-11-18). */
+@media (max-width: 767px), (pointer: coarse) {
   .wk-utils__share,
   .wk-utils__link {
     display: inline-flex;
@@ -411,7 +412,7 @@
 
 .wk-archive__all:hover { opacity: 0.7; }
 
-@media (pointer: coarse) {
+@media (max-width: 767px), (pointer: coarse) {
   .wk-archive__all { display: inline-flex; align-items: center; min-height: 44px; }
 }
 

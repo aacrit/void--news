@@ -2040,14 +2040,11 @@ async function brandChecks(browser) {
       assert(!DASH.test(r.text), "first-visit-explainer-no-dash", "no dash in the note");
       assert(/\bheadline\b/.test(r.text) && /far left/.test(r.text), "first-visit-explainer-says-how-to-read", "names the strokes under each headline, far left to far right");
       assert(r.about && r.legend, "first-visit-explainer-links", `about ${r.about}, legend ${r.legend}`);
-      /* The tour is offered on arrival, not after two minutes. Answered
-         first: Escape (used below to close the legend) also dismisses it. */
-      await page.locator(".onb-invite--visible").waitFor({ state: "visible", timeout: 6000 }).catch(() => {});
-      assert(await page.locator(".onb-invite--visible").count() === 1, "first-visit-tour-offered", "the tour invitation appears on arrival");
-      if (await page.locator(".onb-invite--visible .onb-invite__btn--skip").count()) {
-        await page.locator(".onb-invite--visible .onb-invite__btn--skip").click();
-        await page.waitForTimeout(500);
-      }
+      /* The tour never stacks on the note (2026-11-18: note, tour card and
+         bottom nav covered the first two cards at 390). While the note is up
+         no invitation is shown; it is offered once the note is dismissed. */
+      await page.waitForTimeout(2500);
+      assert(await page.locator(".onb-invite").count() === 0, "first-visit-tour-waits-for-note", "no tour invitation while the note is up");
       await page.locator(".fv-note .lean-legend__btn").click();
       await page.waitForTimeout(300);
       const panel = page.locator(".fv-note .lean-legend__panel");
@@ -2060,6 +2057,12 @@ async function brandChecks(browser) {
       await page.locator(".fv-note__close").click();
       await page.waitForTimeout(300);
       assert(await page.locator(".fv-note").count() === 0 || !(await page.locator(".fv-note").isVisible()), "first-visit-explainer-dismisses", "gone on Dismiss");
+      await page.locator(".onb-invite--visible").waitFor({ state: "visible", timeout: 6000 }).catch(() => {});
+      assert(await page.locator(".onb-invite--visible").count() === 1, "first-visit-tour-offered", "the tour invitation appears once the note is dismissed");
+      if (await page.locator(".onb-invite--visible .onb-invite__btn--skip").count()) {
+        await page.locator(".onb-invite--visible .onb-invite__btn--skip").click();
+        await page.waitForTimeout(500);
+      }
       await page.reload({ waitUntil: "networkidle" });
       await page.waitForTimeout(2500);
       const again = await page.evaluate(() => ({
