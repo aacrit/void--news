@@ -160,7 +160,18 @@ try:
     check("an overloaded flash request is answered by flash-lite",
           got == '{"ok": 1}' and gc.last_model_used() == gc._MODEL and _calls[-1] == gc._MODEL,
           str(_calls))
+    check("an overloaded flash request costs ONE flash request, not three",
+          _calls.count(gc._FLASH_MODEL) == 1, str(_calls))
     check("an overload does not park flash", not gc._flash_parked)
+    _calls.clear()
+    gc.generate_json("x", model=gc._FLASH_MODEL, fallback=False)
+    check("a ladder caller's overloaded flash request is sent once, then the ladder moves",
+          _calls == [gc._FLASH_MODEL], str(_calls))
+    gc._get_client = lambda: _plan_client({gc._MODEL: _OVER})
+    _calls.clear()
+    gc.generate_json("x")
+    check("flash-lite keeps its two overload waits (three requests)",
+          _calls == [gc._MODEL] * 3, str(_calls))
     gc._get_client = lambda: _plan_client({gc._FLASH_MODEL: "429 RESOURCE_EXHAUSTED per minute"})
     gc.generate_json("x", model=gc._FLASH_MODEL)
     check("a per-minute 429 falls back once and does not park flash", not gc._flash_parked)

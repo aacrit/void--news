@@ -170,6 +170,22 @@ _MAX_OVERLOAD_RETRIES: int = 2
 _OVERLOAD_BACKOFF: tuple[float, ...] = (30.0, 60.0)
 
 
+def _overload_retry_limit(model: str) -> int:
+    """How many times an overloaded request is sent again to the SAME model.
+
+    A refused request is spent: the free tier counts it against the model's
+    20-a-day cap. Run #451 (2026-11-18) met about seven overload refusals on
+    flash in Stage 2, sent each one three times, and the 22nd flash request
+    of the day, the daily brief's, came back a per-day 429. So flash is not
+    retried on overload while flash-lite, which has its own 20, is there to
+    take the request (`_with_lite_fallback`, or the caller's own ladder).
+    Flash-lite, and flash when it is the only model, keep the two waits.
+    """
+    if model == _FLASH_MODEL and _MODEL != _FLASH_MODEL:
+        return 0
+    return _MAX_OVERLOAD_RETRIES
+
+
 def _is_overload(error_str: str) -> bool:
     # A 504 DEADLINE_EXCEEDED ("Deadline expired before operation could
     # complete") is the same thing from the caller's side: the model did not
@@ -318,8 +334,11 @@ def _generate_json_on(
     _meter_call(use_model, count_call)
 
     # `attempt` counts model/JSON retries (bounded by max_retries, quota-costing).
-    # `transport_retries` counts transient transport-drop retries separately —
-    # those never reached the model so they do NOT burn daily quota.
+    # `transport_retries` counts transient transport-drop retries separately.
+    # Every one of them is a request (`_send` meters it), and an overload
+    # refusal (503/504) DOES count against the free tier's per-day cap: run
+    # #451 was refused a per-day 429 on its 22nd flash request, 21 of them
+    # overload refusals. See _overload_retry_limit.
     attempt = 0
     transport_retries = 0
     overload_retries = 0
@@ -407,7 +426,7 @@ def _generate_json_on(
                 # 503 = transient server overload: wait, then try again, on a
                 # budget of its own (see _MAX_OVERLOAD_RETRIES).
                 print(f"  [warn] Gemini API error (attempt {attempt + 1}): {e}")
-                if overload_retries < _MAX_OVERLOAD_RETRIES:
+                if overload_retries < _overload_retry_limit(use_model):
                     time.sleep(_OVERLOAD_BACKOFF[overload_retries])
                     overload_retries += 1
                     continue
@@ -493,9 +512,9 @@ def _generate_text_on(
                 print(f"  [warn] Gemini transport drop — retries exhausted: {e}")
                 return None
             if _is_overload(error_str) and not _is_quota_error(error_str) \
-                    and overload_retries < _MAX_OVERLOAD_RETRIES:
+                    and overload_retries < _overload_retry_limit(use_model):
                 print(f"  [warn] Gemini overloaded (overload retry "
-                      f"{overload_retries + 1}/{_MAX_OVERLOAD_RETRIES}): {e}")
+                      f"{overload_retries + 1}/{_overload_retry_limit(use_model)}): {e}")
                 time.sleep(_OVERLOAD_BACKOFF[overload_retries])
                 overload_retries += 1
                 continue
