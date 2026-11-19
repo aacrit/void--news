@@ -130,9 +130,13 @@
   overflow: hidden;
   /* Left-aligned (the max-width:767px rule below already enforces this at
      every mobile width; set here too for honesty). Capped measure guards
-     wide foldables / landscape. */
+     wide foldables / landscape. 42ch until 2026-11-19: narrower than the
+     card on every portrait phone (318px of a 358px card at 390), so the
+     compact summaries stopped short of the headline's right edge and left
+     a gap. 65ch is wider than any portrait phone and still a reading
+     measure on a foldable; the hero's grid column sets its own width. */
   text-align: left;
-  max-width: 42ch;
+  max-width: 65ch;
   margin-bottom: var(--space-2);
 }
 

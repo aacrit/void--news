@@ -1223,6 +1223,22 @@ async function scenarios(browser) {
       }
     });
   }
+  /* A compact card's summary fills the card's width on a phone. It was capped
+     at 42ch until 2026-11-19, narrower than the card on every portrait phone,
+     so the text stopped short of the headline's right edge and left a gap. */
+  for (const width of [375, 390, 430]) {
+    await withPage(browser, { width, route: "/" }, `mobile-summary-measure @${width}`, async (page) => {
+      const short = await page.evaluate(() => [...document.querySelectorAll(".msc--compact")].map((a) => {
+        const h = a.querySelector(".msc__headline--compact");
+        const s = a.querySelector(".msc__summary--compact");
+        if (!h || !s) return null;
+        const gap = Math.round(h.getBoundingClientRect().right - s.getBoundingClientRect().right);
+        return gap > 2 ? gap : null;
+      }).filter((g) => g !== null));
+      assert(short.length === 0, "mobile-summary-measure",
+        `${short.length} compact summary(ies) stop short of the headline's right edge (by ${short.slice(0, 3).join(", ")}px)`);
+    });
+  }
   /* Paper carries the front page's twenty, in order (the same extraction
      tests/test_paper.py uses, so this fails if either page renames its class). */
   ctx("/paper/", 0, "fs");
