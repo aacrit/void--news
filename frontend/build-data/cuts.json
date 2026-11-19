@@ -1,15 +1,41 @@
 {
-  "builtAt": "2026-11-18T09:51:19.950620Z",
+  "builtAt": "2026-11-19T15:03:14.701413Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "6be4d3f1-c160-4421-aaf9-036eecfd7323",
-      "title": "Federal Prosecutors Indict Irish Man for Destroying American C-130 Hercules Plane",
+      "id": "14607933-69a3-4c79-9392-193d1e178006",
+      "title": "British Prime Minister Andy Burnham Faces Backlash Over European Union Deal",
       "sentences": [
         {
-          "text": "The U.S. Attorney's Office stated the attack left the $60 million aircraft inoperable and permanently removed it from flight status.",
+          "text": "Burnham plans to introduce a cutting costs bill in the House of Commons next week using Labour's parliamentary majority, aiming to realign the United Kingdom closer to the European Union and reverse parts of the 2020 Brexit settlement.",
           "rule": "E-13",
-          "message": "summary puts 60 beside \"us attorney office\", but no source sentence carrying 60 names it and one names another \"us ...\": \"The U.S. Attorney's Office stated the attack left the $60 million aircraft inoperable and \""
+          "message": "summary puts 2020 beside \"united kingdom\", but no source sentence carrying 2020 names it and one names another \"united ...\": \"Burnham plans to introduce a cutting costs bill in the House of Commons next week using La\""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "cc800ee9-3a6b-4b25-8a40-0a8017e5a704",
+      "title": "Pacific Island Nations Fiji and Tonga Declare Severe El Nino Drought Crisis",
+      "sentences": [
+        {
+          "text": "In Tonga, Acting Prime Minister Viliami Latu declared a 27-day state of emergency effective from November 19 until December 16 to coordinate emergency services and deliver humanitarian assistance as agricultural production, livestock health, and public water supplies deteriorate.",
+          "rule": "E-13",
+          "message": "summary puts 19 beside \"acting prime minister viliami latu\", but no source sentence carrying 19 names it and one names another \"acting ...\": \"In Tonga, Acting Prime Minister Viliami Latu declared a 27-day state of emergency effectiv\""
+        }
+      ],
+      "points": [],
+      "left": []
+    },
+    {
+      "id": "5076fab8-f5e0-400a-9a9f-8508078cb413",
+      "title": "Irish Man Charged in United States With Destroying Military Aircraft",
+      "sentences": [
+        {
+          "text": "Federal prosecutors in the United States charged an Irish national with destroying a sixty million dollar United States military aircraft at Shannon Airport in County Clare, Ireland.S. Air National Guard C-130 Hercules transport plane by breaking the locking mechanism on the rear crew door.",
+          "rule": "E-13",
+          "message": "summary puts 130 beside \"united states\", but no source sentence carrying 130 names it and one names another \"united ...\": \"Federal prosecutors in the United States charged an Irish national with destroying a sixty\""
         }
       ],
       "points": [],

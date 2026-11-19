@@ -1,0 +1,50 @@
+{
+ "version": "1.2.0",
+ "title": "On Air \u00b7 Thursday 19 November 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Today",
+   "kind": "headlines",
+   "endTime": 38.079
+  },
+  {
+   "startTime": 38.079,
+   "title": "Court Rules Myanmar Committed Genocide",
+   "kind": "story",
+   "rank": 1,
+   "cluster_id": "36e19cbb-cf0b-4961-a9c9-d6f437de1a0f",
+   "endTime": 136.289
+  },
+  {
+   "startTime": 136.289,
+   "title": "Ukrainian Forces Target Crimean Bridge",
+   "kind": "story",
+   "rank": 2,
+   "cluster_id": "672e3dce-f779-4d60-8643-867de16ae26c",
+   "endTime": 225.619
+  },
+  {
+   "startTime": 225.619,
+   "title": "The desk",
+   "kind": "briefs",
+   "endTime": 384.039
+  },
+  {
+   "startTime": 384.039,
+   "title": "Void Opinion",
+   "kind": "opinion",
+   "subtitle": "The Court in The Hague Named State Genocide",
+   "endTime": 517.383
+  },
+  {
+   "startTime": 517.383,
+   "endTime": 531.584,
+   "title": "Also from Void",
+   "kind": "promo",
+   "subtitle": "Weekly",
+   "promo": "weekly-06-week-in-bias"
+  }
+ ]
+}
