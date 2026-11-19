@@ -67,7 +67,7 @@ on:
 
 jobs:
   ig-pipeline:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # Playwright 1.58 cannot install on 26.04 (ubuntu-latest from 2026-11)
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
