@@ -1,41 +1,15 @@
 {
-  "builtAt": "2026-11-19T15:03:14.701413Z",
+  "builtAt": "2026-11-20T15:00:13.027471Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "14607933-69a3-4c79-9392-193d1e178006",
-      "title": "British Prime Minister Andy Burnham Faces Backlash Over European Union Deal",
+      "id": "1711ed61-dd08-4645-b80f-41798480158b",
+      "title": "Polish Prime Minister Tusk Calls Russian Missile Incursion Provocation",
       "sentences": [
         {
-          "text": "Burnham plans to introduce a cutting costs bill in the House of Commons next week using Labour's parliamentary majority, aiming to realign the United Kingdom closer to the European Union and reverse parts of the 2020 Brexit settlement.",
+          "text": "The impacts occurred on Friday morning in southeastern Poland, approximately 47 to 60 miles from the Ukrainian border, hitting locations in Nowy Lipowiec, Rudnik nad Sanem, and Molodycz.",
           "rule": "E-13",
-          "message": "summary puts 2020 beside \"united kingdom\", but no source sentence carrying 2020 names it and one names another \"united ...\": \"Burnham plans to introduce a cutting costs bill in the House of Commons next week using La\""
-        }
-      ],
-      "points": [],
-      "left": []
-    },
-    {
-      "id": "cc800ee9-3a6b-4b25-8a40-0a8017e5a704",
-      "title": "Pacific Island Nations Fiji and Tonga Declare Severe El Nino Drought Crisis",
-      "sentences": [
-        {
-          "text": "In Tonga, Acting Prime Minister Viliami Latu declared a 27-day state of emergency effective from November 19 until December 16 to coordinate emergency services and deliver humanitarian assistance as agricultural production, livestock health, and public water supplies deteriorate.",
-          "rule": "E-13",
-          "message": "summary puts 19 beside \"acting prime minister viliami latu\", but no source sentence carrying 19 names it and one names another \"acting ...\": \"In Tonga, Acting Prime Minister Viliami Latu declared a 27-day state of emergency effectiv\""
-        }
-      ],
-      "points": [],
-      "left": []
-    },
-    {
-      "id": "5076fab8-f5e0-400a-9a9f-8508078cb413",
-      "title": "Irish Man Charged in United States With Destroying Military Aircraft",
-      "sentences": [
-        {
-          "text": "Federal prosecutors in the United States charged an Irish national with destroying a sixty million dollar United States military aircraft at Shannon Airport in County Clare, Ireland.S. Air National Guard C-130 Hercules transport plane by breaking the locking mechanism on the rear crew door.",
-          "rule": "E-13",
-          "message": "summary puts 130 beside \"united states\", but no source sentence carrying 130 names it and one names another \"united ...\": \"Federal prosecutors in the United States charged an Irish national with destroying a sixty\""
+          "message": "summary puts 47 beside \"nowy lipowiec\", but no source sentence carrying 47 names it and one names another \"nowy ...\": \"The impacts occurred on Friday morning in southeastern Poland, approximately 47 to 60 mile\""
         }
       ],
       "points": [],

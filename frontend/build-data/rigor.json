@@ -1,52 +1,52 @@
 {
- "builtAt": "2026-11-19T15:03:14.701413Z",
- "briefCreatedAt": "2026-11-19T15:02:30.849988+00:00",
+ "builtAt": "2026-11-20T15:00:13.027471Z",
+ "briefCreatedAt": "2026-11-20T14:59:30.853820+00:00",
  "products": {
   "card_headline": {
    "sentences": 30,
-   "anchored": 2,
-   "checked": 0,
+   "anchored": 1,
+   "checked": 1,
    "anchorTypes": [
     "number",
     "quote"
    ],
    "byAnchor": {
-    "number": 2
+    "number": 1
    },
-   "coverage": 0.0
+   "coverage": 3.3
   },
   "card_summary": {
-   "sentences": 222,
-   "anchored": 74,
-   "checked": 29,
+   "sentences": 204,
+   "anchored": 47,
+   "checked": 22,
    "byAnchor": {
-    "number": 74
+    "number": 47
    },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "coverage": 13.1
+   "coverage": 10.8
   },
   "points": {
-   "sentences": 175,
-   "anchored": 38,
-   "checked": 16,
+   "sentences": 183,
+   "anchored": 26,
+   "checked": 12,
    "byAnchor": {
-    "number": 38
+    "number": 26
    },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "coverage": 9.1,
+   "coverage": 6.6,
    "machinePointsExcluded": 0
   },
   "tldr": {
-   "sentences": 30,
-   "anchored": 27,
-   "checked": 27,
-   "coverage": 90.0,
+   "sentences": 34,
+   "anchored": 28,
+   "checked": 28,
+   "coverage": 82.4,
    "anchorTypes": [
     "number",
     "name",
@@ -54,37 +54,18 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 8,
-    "name": 23,
-    "number": 11
+    "date": 9,
+    "name": 22,
+    "number": 12
    },
    "groundingRan": true,
    "shipped": true
   },
   "opinion": {
-   "sentences": 20,
-   "anchored": 5,
-   "checked": 5,
-   "coverage": 25.0,
-   "anchorTypes": [
-    "number",
-    "name",
-    "date",
-    "quote"
-   ],
-   "byAnchor": {
-    "date": 1,
-    "name": 4,
-    "number": 3
-   },
-   "groundingRan": true,
-   "shipped": true
-  },
-  "onair": {
-   "sentences": 60,
-   "anchored": 31,
-   "checked": 31,
-   "coverage": 51.7,
+   "sentences": 18,
+   "anchored": 6,
+   "checked": 6,
+   "coverage": 33.3,
    "anchorTypes": [
     "number",
     "name",
@@ -93,8 +74,27 @@
    ],
    "byAnchor": {
     "date": 2,
-    "name": 26,
-    "number": 8
+    "name": 5,
+    "number": 2
+   },
+   "groundingRan": true,
+   "shipped": true
+  },
+  "onair": {
+   "sentences": 58,
+   "anchored": 39,
+   "checked": 39,
+   "coverage": 67.2,
+   "anchorTypes": [
+    "number",
+    "name",
+    "date",
+    "quote"
+   ],
+   "byAnchor": {
+    "date": 10,
+    "name": 32,
+    "number": 15
    },
    "groundingRan": true,
    "shipped": true
@@ -103,31 +103,27 @@
  "evidence": {
   "shipped": 30,
   "freshKnown": true,
-  "fresh": 26,
+  "fresh": 30,
   "states": {
-   "confirmable": 15,
-   "index cap below writer window": 13,
-   "stub rows, card not fresh": 2
+   "confirmable": 18,
+   "index cap below writer window": 12
   }
  },
  "audit": {
   "shipped": {
    "advisory": {
     "E-13 misattached": 1
-   },
-   "cannot confirm": {
-    "E-13 absent": 2,
-    "E-13 misattached": 2
    }
   },
   "bench": {}
  },
  "run": {
   "brief": {
-   "cut_sentences": 10,
+   "cut_sentences": 6,
    "cuts_by_reason": {
-    "name": 5,
-    "number": 5
+    "date": 1,
+    "name": 3,
+    "number": 2
    },
    "edition": "world",
    "grounding_ran": {
@@ -137,26 +133,25 @@
    }
   },
   "onair": {
-   "cut_sentences": 4,
-   "cuts_by_reason": {
-    "number": 4
-   },
+   "cut_sentences": 0,
+   "cuts_by_reason": {},
    "grounding_ran": true
   },
-  "startedAt": "2026-11-19T14:12:33Z",
+  "startedAt": "2026-11-20T14:16:57Z",
   "stage2": {
    "candidates": 45,
-   "critique_read": 45,
+   "critique_read": 44,
    "critique_unread": 0,
-   "cut_sentences": 5,
+   "cut_sentences": 16,
    "cuts_by_reason": {
-    "number": 5
+    "number": 11,
+    "other story": 5
    },
    "dropped": 0,
    "kept_failing": 0,
    "regenerated": 7,
    "reviewed": true,
-   "fresh": 38
+   "fresh": 45
   }
  },
  "corrections": {
@@ -178,5 +173,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-11-19T15:03:28Z"
+ "computedAt": "2026-11-20T15:00:29Z"
 }
