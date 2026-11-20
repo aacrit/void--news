@@ -184,11 +184,17 @@ export default async function RootLayout({
               the INTERSECTION of every delivered policy.
             • X-Frame-Options retained as a belt-and-suspenders click-jacking
               guard while CSP frame-ancestors propagates via headers.
+            • Cloudflare Web Analytics is NOT allowed (2026-11-20). The
+              beacon the console reports blocked is injected by the Pages
+              project's Web Analytics setting, not by this code, and /privacy
+              says "We do not run analytics". Allowing it would make that page
+              false; the fix is switching the setting off in the dashboard.
+              This meta now matches the `_headers` policy exactly.
             No backend exists; the meta-CSP is the GH Pages fallback. CF Pages
             also gets the header from _headers (accumulates). */}
         <meta
           httpEquiv="Content-Security-Policy"
-          content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; font-src 'self' data:; connect-src 'self' https://void-api.aacrit.workers.dev https://cloudflareinsights.com; media-src 'self' https:; base-uri 'self'; form-action 'self';"
+          content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://void-api.aacrit.workers.dev; media-src 'self' https:; base-uri 'self'; form-action 'self';"
         />
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
         {/* X-Frame-Options is NOT valid via <meta> (Chrome logs a console
