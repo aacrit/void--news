@@ -1995,6 +1995,23 @@ def _ground_brief_result(brief_result: dict, top_clusters: list[dict],
         ran["opinion"] = False if brief_result.get("_fresh_opinion") else (
             prior.get("opinion") is True)
     brief_result["_grounding_ran"] = ran
+    # The card gate (2026-11-20): what the export's cut-and-publish step would
+    # cut from a card is cut from the TL;DR, the scripts and the Opinion too,
+    # here, before On Air is recorded. It stays registered for the process,
+    # so main.py's On Air conversation (onair_show.ground_show) is asked the
+    # same question. A failure to build it costs nothing but the gate.
+    try:
+        try:
+            from editorial import cut_confirmed as _cc
+        except ImportError:  # pragma: no cover
+            from pipeline.editorial import cut_confirmed as _cc  # type: ignore
+        _gate_clusters = list(top_clusters or [])
+        _oc = brief_result.get("_opinion_cluster_ref")
+        if _oc and _oc not in _gate_clusters:
+            _gate_clusters.append(_oc)
+        dg.set_card_gates(_cc.card_gates(_gate_clusters), _gate_clusters)
+    except Exception as e:  # pragma: no cover - a gate never costs the brief
+        print(f"  [grounding][brief:{edition}] [warn] card gate not set: {e}")
     try:
         if not brief_result.get("_carried") and brief_result.get("tldr_text") \
                 and top_clusters:
@@ -2004,6 +2021,17 @@ def _ground_brief_result(brief_result: dict, top_clusters: list[dict],
             if text.strip():
                 brief_result["tldr_text"] = _ensure_paragraph_structure(text)
             ran["tldr"] = True
+            # The TL;DR headline went from the model to the page and the
+            # podcast item title untouched, the gap the Opinion headline had
+            # until 2026-11-19. One that fails falls back to the lead card's
+            # title; nothing new is written in its place.
+            thead = brief_result.get("tldr_headline")
+            union_ev = dg.Evidence("\n".join(dg.cluster_text(c) for c in top_clusters))
+            why = dg.check_headline(thead, union_ev) if thead else None
+            if why:
+                cuts.append(dg.Cut(f"tldr_headline:{edition}", thead, why))
+                brief_result["tldr_headline"] = (
+                    str(top_clusters[0].get("title") or "").strip() or None)
         script = brief_result.get("audio_script")
         if script and not brief_result.get("_carried") and top_clusters:
             union = dg.Evidence("\n".join(dg.cluster_text(c) for c in top_clusters))
@@ -2022,13 +2050,6 @@ def _ground_brief_result(brief_result: dict, top_clusters: list[dict],
             ran["script"] = True
         opinion_cluster = brief_result.get("_opinion_cluster_ref")
         if opinion_cluster and brief_result.get("_fresh_opinion"):
-            for key in ("opinion_text", "opinion_audio_script"):
-                if brief_result.get(key):
-                    kept, more = dg.ground_text(brief_result[key], opinion_cluster,
-                                                product=f"{key}:{edition}")
-                    cuts += more
-                    if kept.strip():
-                        brief_result[key] = kept
             # The headline was never grounded before 2026-11-19: it went from
             # the model to the page and the On Air script untouched, and
             # 2026-11-18's moved the war's nine months onto the calm. One that
@@ -2040,6 +2061,22 @@ def _ground_brief_result(brief_result: dict, top_clusters: list[dict],
                 cuts.append(dg.Cut(f"opinion_headline:{edition}", head, why))
                 brief_result["opinion_headline"] = (
                     str(opinion_cluster.get("title") or "").strip() or None)
+            # The audio script opens on the headline, read as its title. Title
+            # case reads as a name to check_names, so the title line was cut
+            # as "not in this story's text" (2026-11-19, "The Court in The
+            # Hague Named State Genocide."). A headline that passed
+            # check_headline above is the house speaking, like a formula; one
+            # that failed is not passed, so its line is still cut.
+            title = () if why else tuple(t for t in (head,) if t)
+            title += tuple(t.rstrip(".") for t in title)
+            for key in ("opinion_text", "opinion_audio_script"):
+                if brief_result.get(key):
+                    kept, more = dg.ground_text(brief_result[key], opinion_cluster,
+                                                product=f"{key}:{edition}",
+                                                formulas=title)
+                    cuts += more
+                    if kept.strip():
+                        brief_result[key] = kept
             ran["opinion"] = True if brief_result.get("opinion_text") else None
     except Exception as e:  # grounding must never cost the edition its brief
         print(f"  [grounding][brief:{edition}] [warn] pass failed, text kept "

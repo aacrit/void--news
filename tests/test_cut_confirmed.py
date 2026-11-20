@@ -120,6 +120,110 @@ def build_tree(with_head: bool = True) -> tuple[pathlib.Path, str]:
     return d, db
 
 
+def card_gate_checks() -> None:
+    """The card gate (2026-11-20): the export cut reached the cards only, after
+    the TL;DR and On Air were written from the uncut cards. On 2026-11-19 the
+    card lost "the 2020 Brexit settlement" and the TL;DR printed it and On Air
+    spoke it; on 2026-11-20 the same happened to "47 to 60 miles"."""
+    import os
+    from pipeline.editorial import derived_grounding as dg
+    from pipeline.briefing import daily_brief_generator as dbg
+
+    d, _ = build_tree(with_head=False)
+    feed = json.loads((d / "feed.json").read_text())["clusters"]
+    # Routing reads the names a sentence shares with one story alone, so the
+    # story under test gets a name no other fixture card carries. A sentence
+    # that names no story is routed nowhere and judged by no gate.
+    bad = dict(next(c for c in feed if c["id"] == BAD_CARD), title="Kestrel Valley Floods")
+    stub = next(c for c in feed if c["id"] == STUB_CARD)
+    feed = [bad if c["id"] == BAD_CARD else c for c in feed]
+    named_bad = "The flood in Kestrel Valley destroyed 4,700 homes across the region."
+    gates = cut_confirmed.card_gates(feed, build=d)
+    check("a gate for each story whose index can confirm an absence, none for a stub",
+          BAD_CARD in gates and CLEAN_CARD in gates and STUB_CARD not in gates, str(sorted(gates)))
+
+    # Without the gate, the TL;DR keeps what the card will lose: the uncut card
+    # carries 4,700, so the story's text "supports" it. That was the failure.
+    dg.clear_card_gates()
+    bad = dict(bad, summary=f"{GOOD_1} {named_bad} {GOOD_2}")
+    feed = [bad if c["id"] == BAD_CARD else c for c in feed]
+    tldr = f"Kestrel Valley officials moved families overnight. {named_bad}"
+    kept, _ = dg.ground_brief(tldr, [bad])
+    check("(the failure) without the gate the TL;DR keeps the card's wrong line", named_bad in kept, kept)
+    dg.set_card_gates(gates, feed)
+    try:
+        kept, cuts = dg.ground_brief(tldr, [bad])
+        check("with the gate the TL;DR loses the line the card gate confirms wrong",
+              named_bad not in kept and "moved families" in kept
+              and any("card gate" in c.reason for c in cuts), kept)
+
+        # On Air spells years; the gate reads them as years.
+        line = "The valley last flooded in two thousand nineteen, officials said."
+        kept, _ = dg.ground_text(line, dg.Evidence(bad))
+        check("a spoken year no source carries is cut from a script line", not kept.strip(), kept)
+        check("a spoken count is never read as a year",
+              dg.spoken_years("twenty one people") == "twenty one people"
+              and dg.spoken_years("the twenty seventeen campaign") == "the 2017 campaign")
+
+        # A whole-day line (the union) is asked of the story it names.
+        union = dg.Evidence("\n".join(dg.cluster_text(c) for c in feed))
+        kept, _ = dg.ground_text(named_bad, union)
+        check("a whole-day sentence is asked of the story it names", not kept.strip(), kept)
+        kept, cuts = dg.ground_text(BAD, union)
+        check("a whole-day sentence that names no story is judged by no gate",
+              not any("card gate" in c.reason for c in cuts), str(cuts))
+
+        # A story with no gate borrows none (2026-11-19: the ICJ sentence's
+        # "2017", in 16 of its sources, was judged by another story's index).
+        kept, cuts = dg.ground_text(f"{GOOD_1} {BAD}", dg.Evidence(stub))
+        check("a story with no gate is judged by no other story's gate",
+              not any("card gate" in c.reason for c in cuts), str(cuts))
+    finally:
+        dg.clear_card_gates()
+
+    # A misattachment cuts only a number the card lost. Replayed over
+    # 2026-11-12..20 the misattachment verdict also fired on TRUE TL;DR lines
+    # whose cards were never cut ("ages 9 and 10" beside Bedford Avenue).
+    real = rigor.audit_text
+
+    def fake(title, summary, verifier, *, where, state, point=False):
+        out = []
+        for n in ("47", "10"):
+            if f" {n} " in f" {summary} ":
+                out.append({"rule": "E-13", "kind": "misattached", "where": where,
+                            "status": "confirmed",
+                            "message": f'summary puts {n} beside "x", but no source sentence'})
+        return out
+    rigor.audit_text = fake
+    try:
+        lost_card = dict(bad, summary="Missiles landed 47 miles inside the border.")
+        g = cut_confirmed.card_gates([lost_card], build=d)[BAD_CARD]
+        check("a misattached number the card lost is cut from the TL;DR",
+              bool(g("Strikes hit towns 47 miles from the border.")))
+        check("a misattached number the card kept is not",
+              g("Two children, ages 9 and 10 , were among the dead.") is None)
+    finally:
+        rigor.audit_text = real
+
+    # The brief: TL;DR headline grounded, the Opinion's title spoken.
+    os.environ["VOID_EXPORT_BUILD_DIR"] = str(d)
+    try:
+        clean = next(c for c in feed if c["id"] == CLEAN_CARD)
+        head = "Valley Evacuated After Floods"
+        br = {"tldr_text": f"{GOOD_1}", "tldr_headline": "Flood Of Two Thousand Nineteen Returns",
+              "opinion_text": f"{GOOD_1} {GOOD_2}", "opinion_headline": head,
+              "opinion_audio_script": f"{head}. {GOOD_1}",
+              "_opinion_cluster_ref": clean, "_fresh_opinion": True}
+        cuts = dbg._ground_brief_result(br, [clean], "test")
+        check("a TL;DR headline that fails falls back to the lead card's title",
+              br["tldr_headline"] == clean["title"], str(br["tldr_headline"]))
+        check("the Opinion's spoken title survives its own grounding (title case is not a name)",
+              br["opinion_audio_script"].startswith(head), br["opinion_audio_script"][:80])
+    finally:
+        os.environ.pop("VOID_EXPORT_BUILD_DIR", None)
+        dg.clear_card_gates()
+
+
 def main() -> int:
     d, db = build_tree()
     clean_before = next(c for c in json.loads((d / "feed.json").read_text())["clusters"]
@@ -209,6 +313,8 @@ def main() -> int:
     # A summary with paragraph breaks keeps them.
     check("a paragraph break survives a cut",
           cut_confirmed.remove_sentence(f"{GOOD_1}\n\n{BAD} {GOOD_2}", BAD) == f"{GOOD_1}\n\n{GOOD_2}")
+
+    card_gate_checks()
 
     if failures:
         print(f"\n{len(failures)} check(s) failed")
