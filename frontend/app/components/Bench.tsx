@@ -287,7 +287,7 @@ function BenchCard({ data }: { data: CardData }) {
 
 /* ── One mark ───────────────────────────────────────────────────────────── */
 
-function Mark({ source, size }: { source: BenchSource; size: number }) {
+function Mark({ source, size, logos }: { source: BenchSource; size: number; logos: boolean }) {
   const [failed, setFailed] = useState(false);
   const url = size >= BENCH_FAVICON_MIN ? sourceLogoUrl(source.name) : "";
   const bucket = leanToBucket(source.politicalLean);
@@ -306,15 +306,23 @@ function Mark({ source, size }: { source: BenchSource; size: number }) {
       aria-hidden="true"
     >
       {!failed && url ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={url}
-          alt=""
-          width={size - 4}
-          height={size - 4}
-          onError={() => setFailed(true)}
-          className="bench__disc-img"
-        />
+        /* Far from the viewport the disc stays plain: the logo is requested
+           only once the Bench nears the screen (see `logos` in Bench). A
+           letter here would flash to a logo; an empty ring off screen does
+           not show at all. */
+        logos ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={url}
+            alt=""
+            width={size - 4}
+            height={size - 4}
+            loading="lazy"
+            decoding="async"
+            onError={() => setFailed(true)}
+            className="bench__disc-img"
+          />
+        ) : null
       ) : size >= BENCH_FAVICON_MIN ? (
         <span className="bench__disc-letter">{source.name.charAt(0).toUpperCase()}</span>
       ) : null}
@@ -353,6 +361,15 @@ export default function Bench({
   const [card, setCard] = useState<CardData | null>(null);
   const [pinned, setPinned] = useState<string | null>(null);
   const [drawn, setDrawn] = useState(settled);
+  /* Logo flood (2026-11-20): every mark carried an eager <img> in the
+     prerendered HTML, so opening one story asked the CDN for 35 to 72 logos
+     before hydration, and Cloudflare answered 429 and then 1015. The Bench
+     sits about two screens down at every width, past the distance at which a
+     browser starts a native lazy load, so `loading="lazy"` alone held none
+     back. The marks now ask for their logos when the Bench comes within
+     300px of the viewport, and not before. */
+  const [logos, setLogos] = useState(false);
+  const hasSources = sources.length > 0;
   const rampId = `bench-ramp-${useId().replace(/:/g, "")}`;
 
   /* Own width, because the mark size is chosen from it. Falls back to a
@@ -369,6 +386,27 @@ export default function Bench({
     setWidth(el.getBoundingClientRect().width);
     return () => ro.disconnect();
   }, []);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      const t = setTimeout(() => setLogos(true), 0);
+      return () => clearTimeout(t);
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setLogos(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "300px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+    /* Re-armed when the sources arrive: an empty Bench renders no wrapper. */
+  }, [hasSources]);
 
   useEffect(() => {
     const mq = window.matchMedia("(pointer: coarse)");
@@ -559,7 +597,7 @@ export default function Bench({
           }
         }}
       >
-        <Mark source={s} size={size} />
+        <Mark source={s} size={size} logos={logos} />
       </button>
     ) : (
       <a
@@ -575,7 +613,7 @@ export default function Bench({
         onFocus={(e) => show(e.currentTarget, s)}
         onBlur={() => setCard(null)}
       >
-        <Mark source={s} size={size} />
+        <Mark source={s} size={size} logos={logos} />
       </a>
     );
   };

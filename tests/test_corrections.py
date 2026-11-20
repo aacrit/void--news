@@ -66,6 +66,7 @@ KNOWN_GAPS = {
     "characterisation-in-void-voice",   # E-07 advisory, term list misses it
     "text-garble",                      # no corrupted-token rule
     "weekly-wrong-speaker",             # E-19 planned (factual-rigor plan gap 5)
+    "misattributed-claim",              # a claim given to the wrong party; no rule reads it
 }
 
 failures: list[str] = []

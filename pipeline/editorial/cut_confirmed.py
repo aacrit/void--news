@@ -64,6 +64,75 @@ def _sentences(text: str) -> list[str]:
     return [s for s in std.sentences(text or "") if s.strip()]
 
 
+def card_gates(clusters, build: pathlib.Path | None = None,
+               fresh: set[str] | None = None) -> dict:
+    """This module's verdict as a sentence gate, one per story.
+
+    The cut above runs at the end of the export, after the TL;DR and the On
+    Air script were written from the uncut cards and the episode recorded.
+    On 2026-11-19 it cut "reverse parts of the 2020 Brexit settlement" from a
+    card (E-13), and the TL;DR printed the same sentence and On Air spoke it.
+    The index it reads is written by Stage 2 (8f), before the brief, so the
+    brief's grounding pass asks the same question of every sentence it keeps
+    (derived_grounding.set_card_gates): a sentence the card gate would
+    CONFIRM as wrong against that story's sources is cut there too, before
+    anything is recorded. "Cannot confirm" never cuts. E-16 (a card that
+    opens on another story) is a card's own rule and is not asked.
+
+    `fresh`: the card ids Stage 2 wrote this run; read from the run counters
+    when not given. A card that is not fresh is judged as the export judges
+    it (stub rows make it "cannot confirm").
+    """
+    G, rigor = _mods()
+    build = pathlib.Path(build or rigor.build_dir())
+    if fresh is None:
+        import os
+        p = os.environ.get(rigor.RUN_ENV)
+        run = rigor._load(pathlib.Path(p)) if p else rigor._load(build / rigor.RUN_NAME)
+        fresh = rigor.fresh_ids(run) if run else None
+    gates: dict = {}
+    for c in clusters or []:
+        cid = str(c.get("id") or c.get("_db_id") or "")
+        rec = rigor.load_record(build, cid) if cid else None
+        if not rec:
+            continue
+        state = rigor.evidence_state(rec, None if fresh is None else cid in fresh)
+        if state != rigor.CONFIRMABLE:
+            continue
+        v = G.Verifier(rec)
+        # The numbers this story's CARD loses to a misattachment verdict. A
+        # misattachment ("puts N beside X, but no source sentence carrying N
+        # names X") is a judgement about phrasing, and the TL;DR rephrases:
+        # replayed over 2026-11-12..20 it also fired on true TL;DR sentences
+        # whose cards were never cut ("ages 9 and 10" beside Bedford Avenue,
+        # the Shenzhen summit "on Thursday, November 19"). Every true catch
+        # in that week was a claim the card gate had cut from the card. So a
+        # misattached number cuts here only when the card lost it too; a
+        # number in no source at all always does.
+        lost: set[str] = set()
+        for s in _sentences(c.get("summary") or ""):
+            for h in _confirmed(rigor.audit_text("", s, v, where="card", state=state)):
+                m = _PUTS.search(h["message"])
+                if h["kind"] == "misattached" and m:
+                    lost.add(m.group(1))
+
+        def gate(sent: str, v=v, state=state, lost=lost) -> str | None:
+            for h in _confirmed(rigor.audit_text("", sent, v, where="card", state=state)):
+                if h["rule"] == "E-16":
+                    continue
+                if h["kind"] == "misattached":
+                    m = _PUTS.search(h["message"])
+                    if not m or m.group(1) not in lost:
+                        continue
+                return f"the card gate confirms it ({h['rule']}): {h['message'][:160]}"
+            return None
+        gates[cid] = gate
+    return gates
+
+
+_PUTS = re.compile(r"\bputs (\S+) beside\b")
+
+
 def remove_sentence(text: str, sent: str) -> str:
     """`text` without `sent` and the spaces after it; paragraph breaks kept."""
     i = (text or "").find(sent)

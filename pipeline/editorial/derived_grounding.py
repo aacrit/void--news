@@ -246,6 +246,7 @@ class Evidence:
         self.entities = _entities(self.text)
         self.cid = None if isinstance(cluster, str) else (
             cluster.get("id") or cluster.get("_db_id"))
+        self.gate = _CARD_GATES.get(str(self.cid)) if self.cid else None
 
     def has_value(self, v: Value) -> bool:
         for s in self.values:
@@ -581,6 +582,93 @@ def check_quote_closed(sent: str, ev: Evidence | None = None) -> str | None:
     return "a quotation that never closes (S-04)" if _open_quote(sent) else None
 
 
+# ---------------------------------------------------------------------------
+# The card gate (2026-11-20). The export's cut-and-publish step
+# (cut_confirmed.py) removes a card sentence its index CONFIRMS as wrong, but
+# it runs after the TL;DR and the On Air script were written from the uncut
+# cards, so on 2026-11-19 a sentence cut from a card ("the 2020 Brexit
+# settlement") was printed in the TL;DR and spoken on air. The brief sets the
+# same verdict here, one gate per story, before it grounds anything; every
+# Evidence built for that story carries it, and a sentence grounded against
+# the whole day (a title line, a desk item, a moved TL;DR sentence) is asked
+# of the story it names most distinctly (map_sentence).
+# ---------------------------------------------------------------------------
+_CARD_GATES: dict = {}
+_GATE_EVS: list = []
+
+
+def set_card_gates(gates: dict, clusters: Iterable[dict[str, Any]] = ()) -> None:
+    """Register {cluster id: sentence -> reason or None} for this process."""
+    global _GATE_EVS
+    _CARD_GATES.clear()
+    _CARD_GATES.update(gates or {})
+    # Every story, gated or not: a whole-day sentence is routed to the story
+    # it names, and takes that story's gate or none. Routing over the gated
+    # stories only sent the 2026-11-19 ICJ sentence ("2017 military
+    # operations", in 16 of its sources) to another story's index, which
+    # "confirmed" 2017 absent: a true fact cut by a borrowed verdict.
+    _GATE_EVS = [Evidence(c) for c in clusters]
+
+
+def clear_card_gates() -> None:
+    global _GATE_EVS
+    _CARD_GATES.clear()
+    _GATE_EVS = []
+
+
+_ONES = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+_TEENS = ["ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen",
+          "seventeen", "eighteen", "nineteen"]
+_TENS_W = ["twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"]
+_TWO_DIGIT = (r"(?:" + "|".join(_TEENS) + r"|(?:" + "|".join(_TENS_W) + r")(?:[- ](?:"
+              + "|".join(_ONES) + r"))?)")
+_ONE_TO_99 = r"(?:" + _TWO_DIGIT + "|" + "|".join(_ONES) + r")"
+_YEAR_2000 = re.compile(r"\btwo thousand(?: and)?(?: (" + _ONE_TO_99 + r"))?\b", re.I)
+_YEAR_CENTURY = re.compile(r"\b(nineteen|twenty) (" + _TWO_DIGIT + r")\b", re.I)
+
+
+def _small(words: str) -> int:
+    w = words.lower().replace("-", " ").split()
+    n = 0
+    for t in w:
+        if t in _ONES:
+            n += _ONES.index(t) + 1
+        elif t in _TEENS:
+            n += _TEENS.index(t) + 10
+        elif t in _TENS_W:
+            n += (_TENS_W.index(t) + 2) * 10
+    return n
+
+
+def spoken_years(text: str) -> str:
+    """Years a script spells out, as digits, for the card gate only.
+
+    On Air writes "the two thousand twenty Brexit settlement", and E-13 reads
+    digits. Only the year shapes are rewritten ("two thousand twenty" 2020,
+    "twenty seventeen" 2017, "nineteen forty-eight" 1948): a general spoken
+    number is not, because "twenty seventeen" read as a cardinal is 37, and a
+    number no source carries would cut a true sentence.
+    """
+    text = _YEAR_2000.sub(lambda m: str(2000 + (_small(m.group(1)) if m.group(1) else 0)), text)
+    return _YEAR_CENTURY.sub(
+        lambda m: str((19 if m.group(1).lower() == "nineteen" else 20) * 100 + _small(m.group(2))),
+        text)
+
+
+def _gate_for(sent: str, ev: Evidence):
+    """The gate of the story this sentence is judged against, or None.
+
+    Evidence for one story answers with that story's gate alone: a story
+    whose index cannot confirm an absence has none, and borrows none.
+    """
+    if ev.cid:
+        return ev.gate
+    if not _GATE_EVS:
+        return None
+    ranked = map_sentence(sent, _GATE_EVS)
+    return _GATE_EVS[ranked[0]].gate if ranked else None
+
+
 def sentence_problem(sent: str, ev: Evidence, prev: str | None = None) -> str | None:
     """The first reason this sentence cannot ship against this story, or None."""
     if check_quote_closed(sent):
@@ -588,6 +676,11 @@ def sentence_problem(sent: str, ev: Evidence, prev: str | None = None) -> str | 
     for fn in (check_numbers, check_names, check_dates, check_quotes,
                check_lifted_quote):
         why = fn(sent, ev)
+        if why:
+            return why
+    gate = _gate_for(sent, ev)
+    if gate:
+        why = gate(spoken_years(sent))
         if why:
             return why
     return check_total(sent, prev) or check_hedge(sent)
