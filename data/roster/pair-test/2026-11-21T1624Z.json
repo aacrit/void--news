@@ -1,0 +1,88 @@
+{
+ "collected_at": "2026-11-21T16:24:58Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/sport/football/article-16308753/Manchester-City-vs-Fulham-Premier-League-Live-scores-team-news-updates-Enzo-Marescas-look-end-losing-streak.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Chelsea vs Leeds - Premier League: Latest updates and score as Noah Okafor grabs a second goal to heap misery on stodgy Blues, plus all the action from the 3pm kick-offs",
+      "published": "Sat, 21 Nov 2026 16:24:04 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/sport/football/match-reports/manchester-city-fulham-premier-league-37902039",
+      "title": "Man City left frustrated by VAR decision as impressive Fulham prolong crisis",
+      "published": "Sat, 21 Nov 2026 14:26:51 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 23,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.indiatoday.in/movies/regional-cinema/story/anirudh-ravichander-kavya-maran-wedding-reception-live-updates-siddharth-aditi-rao-mahesh-babu-in-chennai-3043924-2026-11-21?utm_source=rss",
+      "title": "Anirudh-Kavya wedding reception Live: CM Vijay, MK Stalin pose for a pic at event",
+      "published": "Sat, 21 Nov 2026 17:04:07 +0530"
+     },
+     "left": {
+      "url": "https://www.thehindu.com/news/national/tamil-nadu/political-rivals-cinema-veterans-share-spotlight-at-anirudh-kavya-wedding-reception/article71729098.ece",
+      "title": "Political rivals, cinema veterans share spotlight at Anirudh-Kavya wedding reception",
+      "published": "Sat, 21 Nov 2026 21:22:22 +0530"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/11/islamic-school-in-new-jersey-reports-no-foreign-ties-in-irs-filings-despite-proven-links-to-turkey/",
+      "title": "Islamic school in New Jersey reports no foreign ties in IRS filings despite proven links to Turkey",
+      "published": "Tue, 17 Nov 2026 23:01:12 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 297,
+    "left": 10
+   }
+  }
+ }
+}
