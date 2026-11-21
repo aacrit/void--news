@@ -1,0 +1,50 @@
+{
+ "version": "1.2.0",
+ "title": "On Air \u00b7 Saturday 21 November 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Today",
+   "kind": "headlines",
+   "endTime": 41.749
+  },
+  {
+   "startTime": 41.749,
+   "title": "Prime Minister Andy Burnham Agrees to Trade Deals",
+   "kind": "story",
+   "rank": 1,
+   "cluster_id": "d3ceb398-3e3e-41d0-8f93-6d75ddd27966",
+   "endTime": 114.779
+  },
+  {
+   "startTime": 114.779,
+   "title": "Yemeni Houthi Missiles Target Riyadh",
+   "kind": "story",
+   "rank": 2,
+   "cluster_id": "cee27d6b-ee40-4304-9764-3fc92e756b6e",
+   "endTime": 197.059
+  },
+  {
+   "startTime": 197.059,
+   "title": "The desk",
+   "kind": "briefs",
+   "endTime": 349.209
+  },
+  {
+   "startTime": 349.209,
+   "title": "Void Opinion",
+   "kind": "opinion",
+   "subtitle": "International Courts Lack Teeth When Sovereignty Meets Atrocities",
+   "endTime": 555.308
+  },
+  {
+   "startTime": 555.308,
+   "endTime": 569.509,
+   "title": "Also from Void",
+   "kind": "promo",
+   "subtitle": "Weekly",
+   "promo": "weekly-04-no-host"
+  }
+ ]
+}

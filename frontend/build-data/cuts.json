@@ -1,15 +1,15 @@
 {
-  "builtAt": "2026-11-20T15:00:13.027471Z",
+  "builtAt": "2026-11-21T14:17:07.985023Z",
   "rule": "a sentence or point the grounding gate confirms as wrong is cut; nothing is written in its place",
   "cards": [
     {
-      "id": "1711ed61-dd08-4645-b80f-41798480158b",
-      "title": "Polish Prime Minister Tusk Calls Russian Missile Incursion Provocation",
+      "id": "497ce090-e9af-4f42-ae86-3f591e2998c7",
+      "title": "Magnitude 6.7 Earthquake Strikes Central Peru and Shakes Andes",
       "sentences": [
         {
-          "text": "The impacts occurred on Friday morning in southeastern Poland, approximately 47 to 60 miles from the Ukrainian border, hitting locations in Nowy Lipowiec, Rudnik nad Sanem, and Molodycz.",
+          "text": "The United States Geological Survey placed the epicenter 21 miles north of Junin at a depth of 67 miles, though Peru's Geophysical Institute placed the depth at 129 kilometers in the Andean region of Junin.",
           "rule": "E-13",
-          "message": "summary puts 47 beside \"nowy lipowiec\", but no source sentence carrying 47 names it and one names another \"nowy ...\": \"The impacts occurred on Friday morning in southeastern Poland, approximately 47 to 60 mile\""
+          "message": "summary puts 21 beside \"peru geophysical institute\", but no source sentence carrying 21 names it and one names another \"peru ...\": \"The United States Geological Survey placed the epicenter 21 miles north of Junin at a dept\""
         }
       ],
       "points": [],
