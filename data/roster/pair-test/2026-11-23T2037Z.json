@@ -1,0 +1,166 @@
+{
+ "collected_at": "2026-11-23T20:37:02Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16315225/Mariella-Frostrups-Loose-Women-star-Judi-Love-wades-Im-Celeb-race-row-criticising-using-dangerous-labels-black-women.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Mariella Frostrup's Loose Women co-star Judi Love wades into I'm A Celeb race row as she criticises using 'dangerous' labels about black women",
+      "published": "Mon, 23 Nov 2026 16:53:16 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/judi-love-mariella-race-row-37907738",
+      "title": "Mariella Frostrup's Loose Women co-star supports AJ Odudu after 'hurtful' I'm A Celeb race row",
+      "published": "Mon, 23 Nov 2026 18:58:59 +0000"
+     }
+    },
+    {
+     "score": 22,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16314645/Burnham-EU-PM-MPs-reset-Brexit-Brussels-Labour.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Get ready for another Brexit referendum! Andy Burnham admits it would be 'unthinkable' for Britain to rejoin the EU without a divisive new public vote",
+      "published": "Mon, 23 Nov 2026 19:44:06 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/politics/andy-burnham-brexit-deal-referendum-37907465",
+      "title": "Andy Burnham says it'd be 'unthinkable' to take UK back into EU without referendum",
+      "published": "Mon, 23 Nov 2026 17:19:58 +0000"
+     }
+    },
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailymail.com/news/royals/article-16313813/King-Idris-Netflix-friendship-Charles-Hollywood-Trust.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "The King and Idris, a Netflix double act: Touching friendship between Charles and the Hollywood actor is at the heart of film marking 50 years of King's Trust",
+      "published": "Mon, 23 Nov 2026 10:55:12 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/royals/idris-elba-king-charles-trust-37907890",
+      "title": "Sir Idris Elba says his life would be 'entirely different' without King Charles' support",
+      "published": "Mon, 23 Nov 2026 19:47:36 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16315301/Nigel-Farage-leads-supporters-defending-Im-Celebritys-Mariella-Frostrup-against-racism-claims-calling-AJ-Odudu-aggressive.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Nigel Farage leads supporters defending I'm a Celebrity's Mariella Frostrup against racism claims after calling AJ Odudu 'aggressive'",
+      "published": "Mon, 23 Nov 2026 16:39:37 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/im-celebrity-live-stars-head-37881874",
+      "title": "I’m A Celebrity LIVE: AJ Odudu's co-host slams Mariella Frostrup as her mum devastated over race row",
+      "published": "Mon, 23 Nov 2026 20:01:16 +0000"
+     }
+    },
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16315673/Russian-oligarch-billion-divorce-sexual-prowess.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Russian oligarch fighting record £2.1billion divorce tells High Court ex-wife exaggerated his 'sexual prowess' when she claimed they slept together three times a week",
+      "published": "Mon, 23 Nov 2026 18:12:43 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/russian-oligarch-vladimir-potanina-divorce-37907472",
+      "title": "Oligarch’s ex wife told £2.1 billion she’s seeking ‘far exceeds’ standard of living in former marriage",
+      "published": "Mon, 23 Nov 2026 17:57:37 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/tvshowbiz/article-16316101/Strictly-Come-Dancing-confirms-Danny-Mac-JB-Gill-returning-Christmas-Special.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "Strictly Come Dancing confirms Danny Mac and JB Gill are the final two stars returning to the dancefloor for glitzy Christmas Special",
+      "published": "Mon, 23 Nov 2026 19:01:52 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/tv/tv-news/final-strictly-christmas-lineup-confirmed-37907735",
+      "title": "Final Strictly Come Dancing Christmas special stars revealed as actor and singer return",
+      "published": "Mon, 23 Nov 2026 19:00:12 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 180,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [
+    {
+     "score": 19,
+     "right": {
+      "url": "https://www.jpost.com/israel-news/politics-and-diplomacy/article-915874",
+      "title": "Unity government talks between Eisenkot, Netanyahu resume as Yashar, Likud teams meet",
+      "published": "Mon, 23 Nov 2026 19:23:02 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/israel-news/israel-politics/2026-11-23/ty-article/.premium/yashar-and-likud-meet-again-for-unity-government-talks/000001a2-0998-d7ca-abf6-6fdc550f0000",
+      "title": "Yashar and Likud set follow-up meeting after latest round of unity talks",
+      "published": "Mon, 23 Nov 2026 20:09:59 +0200"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.jpost.com/middle-east/article-915782",
+      "title": "Lebanese PM fumes after IDF's Captain Ella visits school in Christian village, prompting probe",
+      "published": "Mon, 23 Nov 2026 09:13:47 GMT"
+     },
+     "left": {
+      "url": "https://www.haaretz.com/middle-east-news/lebanonnews/2026-11-23/ty-article/.premium/used-students-as-military-propaganda-idf-spokesperson-visits-lebanese-school/000001a2-07ec-db5d-a5ff-fffef7270000",
+      "title": "'Used students as military propaganda': IDF Spokesperson visits Lebanese school",
+      "published": "Mon, 23 Nov 2026 13:07:33 +0200"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/11/islamic-school-in-new-jersey-reports-no-foreign-ties-in-irs-filings-despite-proven-links-to-turkey/",
+      "title": "Islamic school in New Jersey reports no foreign ties in IRS filings despite proven links to Turkey",
+      "published": "Tue, 17 Nov 2026 23:01:12 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 305,
+    "left": 10
+   }
+  }
+ }
+}
