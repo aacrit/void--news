@@ -1,52 +1,53 @@
 {
- "builtAt": "2026-11-22T13:47:32.563241Z",
- "briefCreatedAt": "2026-11-22T13:47:14.855664+00:00",
+ "builtAt": "2026-11-23T17:34:02.986115Z",
+ "briefCreatedAt": "2026-11-23T17:33:34.760274+00:00",
  "products": {
   "card_headline": {
    "sentences": 30,
-   "anchored": 4,
-   "checked": 4,
+   "anchored": 5,
+   "checked": 0,
    "anchorTypes": [
     "number",
     "quote"
    ],
    "byAnchor": {
-    "number": 4
+    "number": 5
    },
-   "coverage": 13.3
+   "coverage": 0.0
   },
   "card_summary": {
-   "sentences": 161,
-   "anchored": 43,
-   "checked": 35,
+   "sentences": 130,
+   "anchored": 31,
+   "checked": 4,
    "byAnchor": {
-    "number": 43
+    "number": 31,
+    "quote": 1
    },
    "anchorTypes": [
     "number",
     "quote"
    ],
-   "coverage": 21.7
+   "coverage": 3.1
   },
   "points": {
-   "sentences": 164,
-   "anchored": 35,
-   "checked": 28,
+   "sentences": 103,
+   "anchored": 12,
+   "checked": 3,
    "anchorTypes": [
     "number",
     "quote"
    ],
    "byAnchor": {
-    "number": 35
+    "number": 12
    },
-   "coverage": 17.1,
-   "machinePointsExcluded": 3
+   "coverage": 2.9,
+   "machinePointsExcluded": 61
   },
   "tldr": {
-   "sentences": 27,
-   "anchored": 21,
-   "checked": 21,
-   "coverage": 77.8,
+   "sentences": 11,
+   "anchored": 11,
+   "checked": 11,
+   "coverage": 100.0,
    "anchorTypes": [
     "number",
     "name",
@@ -54,18 +55,18 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 5,
-    "name": 16,
-    "number": 8
+    "date": 4,
+    "name": 10,
+    "number": 2
    },
    "groundingRan": true,
    "shipped": true
   },
   "opinion": {
-   "sentences": 28,
-   "anchored": 7,
-   "checked": 7,
-   "coverage": 25.0,
+   "sentences": 16,
+   "anchored": 6,
+   "checked": 6,
+   "coverage": 37.5,
    "anchorTypes": [
     "number",
     "name",
@@ -73,18 +74,18 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 3,
-    "name": 5,
-    "number": 1
+    "date": 1,
+    "name": 2,
+    "number": 4
    },
    "groundingRan": true,
    "shipped": true
   },
   "onair": {
-   "sentences": 64,
-   "anchored": 36,
-   "checked": 36,
-   "coverage": 56.2,
+   "sentences": 38,
+   "anchored": 34,
+   "checked": 34,
+   "coverage": 89.5,
    "anchorTypes": [
     "number",
     "name",
@@ -92,9 +93,9 @@
     "quote"
    ],
    "byAnchor": {
-    "date": 12,
-    "name": 32,
-    "number": 8
+    "date": 10,
+    "name": 26,
+    "number": 11
    },
    "groundingRan": true,
    "shipped": true
@@ -103,31 +104,32 @@
  "evidence": {
   "shipped": 30,
   "freshKnown": true,
-  "fresh": 30,
+  "fresh": 5,
   "states": {
-   "confirmable": 22,
-   "index cap below writer window": 8
+   "confirmable": 4,
+   "index cap below writer window": 3,
+   "stub rows, card not fresh": 23
   }
  },
  "audit": {
   "shipped": {
    "advisory": {
     "E-13 misattached": 1
+   },
+   "cannot confirm": {
+    "E-14 absent": 1
    }
   },
   "bench": {}
  },
  "run": {
   "brief": {
-   "cut_sentences": 7,
-   "cuts_by_reason": {
-    "name": 6,
-    "number": 1
-   },
+   "cut_sentences": 0,
+   "cuts_by_reason": {},
    "edition": "world",
    "grounding_ran": {
     "opinion": true,
-    "script": true,
+    "script": false,
     "tldr": true
    }
   },
@@ -136,21 +138,18 @@
    "cuts_by_reason": {},
    "grounding_ran": true
   },
-  "startedAt": "2026-11-22T13:11:48Z",
+  "startedAt": "2026-11-23T15:27:00Z",
   "stage2": {
    "candidates": 45,
    "critique_read": 28,
    "critique_unread": 17,
-   "cut_sentences": 16,
-   "cuts_by_reason": {
-    "number": 13,
-    "other story": 4
-   },
+   "cut_sentences": 0,
+   "cuts_by_reason": {},
    "dropped": 0,
-   "kept_failing": 0,
-   "regenerated": 1,
+   "kept_failing": 11,
+   "regenerated": 3,
    "reviewed": true,
-   "fresh": 45
+   "fresh": 6
   }
  },
  "corrections": {
@@ -172,5 +171,5 @@
   "F-5": "pass"
  },
  "floorDetail": {},
- "computedAt": "2026-11-22T13:47:42Z"
+ "computedAt": "2026-11-23T17:34:16Z"
 }
