@@ -1,0 +1,100 @@
+{
+ "collected_at": "2026-11-24T19:43:48Z",
+ "min_score": 18,
+ "pairs": {
+  "uk-tabloids": {
+   "right": "daily-mail",
+   "left": "the-mirror",
+   "matches": [
+    {
+     "score": 26,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16318949/boy-selfie-tongue-stabbing-schoolgirl-death-court.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "'Two-timing' boy 'took selfie poking tongue out' moments after stabbing schoolgirl 55 times to death, court told",
+      "published": "Tue, 24 Nov 2026 18:08:35 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/lilly-jones-murder-trial-selfie-37911619",
+      "title": "Boy murder suspect 'took tongue-out selfie moments after leaving park' where girl found dead",
+      "published": "Tue, 24 Nov 2026 18:38:50 +0000"
+     }
+    },
+    {
+     "score": 24,
+     "right": {
+      "url": "https://www.dailymail.com/crime-desk/article-16317677/Whole-life-prisoner-pleads-guilty-murdering-Soham-killer-Ian-Huntley.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "The moment Ian Huntley met a painful end: Bodycam footage captures killer's brag as child murderer lay dying - before boasting: 'I caved his head in'",
+      "published": "Tue, 24 Nov 2026 18:02:31 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/news/uk-news/anthony-russell-huntley-murder-crimes-37911083",
+      "title": "Huntley murderer's life of crime - from week long killing spree and going on run to wanting his day in court",
+      "published": "Tue, 24 Nov 2026 17:04:42 +0000"
+     }
+    },
+    {
+     "score": 18,
+     "right": {
+      "url": "https://www.dailymail.com/news/article-16318129/David-Walliams-publisher-HarperCollins-accused-former-staff-cover-claims-inappropriate-behaviour-women-girls.html?ns_mchannel=rss&amp;ito=1490&amp;ns_campaign=1490",
+      "title": "David Walliams' publisher HarperCollins accused by former staff of 'cover up' over claims of inappropriate behaviour towards women and girls",
+      "published": "Tue, 24 Nov 2026 17:41:04 +0000"
+     },
+     "left": {
+      "url": "https://www.mirror.co.uk/3am/celebrity-news/publisher-harpercollins-accused-covering-up-37911160",
+      "title": "Publisher HarperCollins accused of 'covering up' David Walliams allegations of inappropriate behaviour",
+      "published": "Tue, 24 Nov 2026 17:29:02 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 149,
+    "left": 25
+   }
+  },
+  "israel": {
+   "right": "jerusalem-post",
+   "left": "haaretz",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 26,
+    "left": 100
+   }
+  },
+  "india": {
+   "right": "india-today",
+   "left": "the-hindu",
+   "matches": [],
+   "error": null,
+   "feed_items": {
+    "right": 133,
+    "left": 60
+   }
+  },
+  "turkey": {
+   "right": "daily-sabah",
+   "left": "nordic-monitor",
+   "matches": [
+    {
+     "score": 20,
+     "right": {
+      "url": "https://www.dailysabah.com/politics/legislation/turkish-parliament-set-for-reopening-with-busy-agenda",
+      "title": "Turkish Parliament set for reopening with busy agenda",
+      "published": "Mon, 28 Sep 2026 13:28:00 +0300"
+     },
+     "left": {
+      "url": "https://nordicmonitor.com/2026/11/islamic-school-in-new-jersey-reports-no-foreign-ties-in-irs-filings-despite-proven-links-to-turkey/",
+      "title": "Islamic school in New Jersey reports no foreign ties in IRS filings despite proven links to Turkey",
+      "published": "Tue, 17 Nov 2026 23:01:12 +0000"
+     }
+    }
+   ],
+   "error": null,
+   "feed_items": {
+    "right": 304,
+    "left": 10
+   }
+  }
+ }
+}
